@@ -1,125 +1,135 @@
-Return-Path: <linux-kernel+bounces-723390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBA6AFE656
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:51:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419D7AFE645
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3354B163F92
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:50:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58A653AB8A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AEE2D542E;
-	Wed,  9 Jul 2025 10:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907672C3247;
+	Wed,  9 Jul 2025 10:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OnLTN9Cg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fk1G6/ad"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E92293C77;
-	Wed,  9 Jul 2025 10:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B6C2C15B7;
+	Wed,  9 Jul 2025 10:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057839; cv=none; b=mDd/9u8vYxXNhwFrN27hoa8gewb7q5i7ifx5maZXAM8pL7wVgbz/YS0PbXlPfWe/P97z1rTDwsnEM4Cn9b9Xa9Gket95TTHHuM69Nimurvsoqs7ryeQY0WqvYGQeDWwK0rGx4ZAmdMVnesth2iWz14OxB81ai9CL7oEOgPuPtcw=
+	t=1752057758; cv=none; b=FWUI5KTuSkqvi6OsjZGDkKhj+43uYacOKs9V2VHS2TqvoEPJPXOtFG4rEy2gXeHbcQergoe0SUyMfu2PAgYG/OKV2eVWYAHLLm0GicqMyDp0oTUp5YXSusbtQbErLV4t3YDVR3U+qa6BhBpyUF0ewyTGb7dIDR5bg/xYAcHBCBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057839; c=relaxed/simple;
-	bh=5P4dzPtGQTwTuHcsDkeuA8Wafn1PVojCmEfac+5vgxk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Umj3vBiV7+cBFQP3mqSDnoUFslzCRc6Rzg2l6d78bofOjDhdLUl6IpWFoGGVzuYrepT8WyqqO/GONCY0/+dkBYJwKy15gZx1xZwNO1FfIj7IEBURNBnFiZD2bjGm5vieUrNcRvBc18KD7vtWY0IQh3PuM3TM7y5lrNaqfvQGouI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OnLTN9Cg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E88F3C4CEF7;
-	Wed,  9 Jul 2025 10:43:53 +0000 (UTC)
+	s=arc-20240116; t=1752057758; c=relaxed/simple;
+	bh=sBRCZngRfe6dRj1UrXu3RD6/ZzAbgtyPm4EePZudNv8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p9O9S9ow9F7oqz3Pv14RO5p3A0puzlBxzGqFHcPKnTKcbkLuiu5N1SNg30+XHE3k4/lSbBpP+xVR8OhAjr6rEVnn8yqm5OQzRUhNS6JeIfZG9Kioc9gVLNITtH1J1Wui+++Gj9vsIXAKLQWBiPbF0Q23VeFoLYx7MgCY9n7lbhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fk1G6/ad; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED00C4CEF6;
+	Wed,  9 Jul 2025 10:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752057838;
-	bh=5P4dzPtGQTwTuHcsDkeuA8Wafn1PVojCmEfac+5vgxk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OnLTN9CgM4Sz6ADqscUjLSJIl04PVsg0kvHEc77kCRLVRb72H7UN60pnGSjvxUms/
-	 pi9UV3CZrc/qXPawY/9DM0bW6N4J5mZwWJY3xTaGzuFGouNAxufHLeP+ExA8Rc5GFS
-	 1XwpitottlwJyeqUQdU6SGJP4nNoNm0AUzqmnkc4ojFbxC5bH64OqaX9SZwqIUeymr
-	 PAJcZovWeBeQF4dMukqIu1QyjO54bODF6RLfvPxc9Ff2/GSyo/wUBUesJh7UXuKWi0
-	 yPmcTehHhsWoeeUrK2SZF5UysbM+j8qd5wLpk8Z3nVZSyJwLpGJvcE1cKpGJbW/1QA
-	 5sgDASx7XfjqQ==
-From: neeraj.upadhyay@kernel.org
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	paulmck@kernel.org,
-	joelagnelf@nvidia.com,
-	frederic@kernel.org,
-	boqun.feng@gmail.com,
-	urezki@gmail.com,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com,
-	qiang.zhang1211@gmail.com,
-	neeraj.iitr10@gmail.com,
-	neeraj.upadhyay@amd.com,
-	"Neeraj Upadhyay (AMD)" <neeraj.upadhyay@kernel.org>
-Subject: [PATCH rcu 15/15] rcutorture: Remove support for SRCU-lite
-Date: Wed,  9 Jul 2025 16:12:15 +0530
-Message-Id: <20250709104215.15562-16-neeraj.upadhyay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250709104215.15562-1-neeraj.upadhyay@kernel.org>
-References: <20250709104215.15562-1-neeraj.upadhyay@kernel.org>
+	s=k20201202; t=1752057757;
+	bh=sBRCZngRfe6dRj1UrXu3RD6/ZzAbgtyPm4EePZudNv8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fk1G6/adhsEYGvG8soZ6E/2YNcjbAgUWyU7Zxg7RlHgIzYt5RtbPij+lmTCTnpZu8
+	 7u7rooPYsgY3kjbHP7OK+MHgaoHUCVL4Holo2eXd+835meah8Xw3wNoQHDnXbXf5t7
+	 tLX/qgI4HZUJA/nE0HaOhFmzvJ4xLsroXfC4xB4DmYgqEAVS7P0PptwtgdX+c+lcW+
+	 P4Ov4HDCufgwShLIVwDHK3071BX+ajpOZC/MucmVbaBOmgeGFyQdgPC6kFIGVIW7gP
+	 6i3dlpZjtMKx9S5lYJaFsUUhGPAurW9YAXW1g2+D0nTxhUySJkuRmKxkYDJ2RnV1mO
+	 OI48OtRL97/vA==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32ce1b2188dso50933971fa.3;
+        Wed, 09 Jul 2025 03:42:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW4GawfGmZJIv3P9umYO0iuvEVFFhf2VForxAsnsZ2JoO2AqLUNkufSnkok1nLko/JEXuvZKxuVfAhUSMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsJbTTbCCvbaEuUeh1sJns/2/eFAMkMb1gu+WHKcCdptEyOK14
+	9KUhn3AHExQRb9R/Z/uuzFncVkNcYAqWsfkHWWwP4tzVEXi8h41sh9LUSzCLFwbadFCKq8jGQFb
+	cVMyWAw6Xlwzo+HRmJxgpclJwjQHObYQ=
+X-Google-Smtp-Source: AGHT+IGWnw6v+oWs8UVNAhgRmhN+MIznxbITpm0slRODpzWHfcIdpjJWY7BfGRIBieQjpqU2UT34QCQweiOss5dZjMI=
+X-Received: by 2002:a05:6512:2394:b0:553:522f:61bb with SMTP id
+ 2adb3069b0e04-558fa877a72mr718213e87.12.1752057756131; Wed, 09 Jul 2025
+ 03:42:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250709103541.7268-1-feng.tang@linux.alibaba.com>
+In-Reply-To: <20250709103541.7268-1-feng.tang@linux.alibaba.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 9 Jul 2025 20:42:24 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXEvxPjFsqoMzZnb2zxSf9uyLVzuzKEeKD4fLEux3NbUhw@mail.gmail.com>
+X-Gm-Features: Ac12FXyF2Jaa_zw3OTWt2PHD6pHE8hXdWa3EGEfEiZpNWct9xDnM5Xi6ZjieDTM
+Message-ID: <CAMj1kXEvxPjFsqoMzZnb2zxSf9uyLVzuzKEeKD4fLEux3NbUhw@mail.gmail.com>
+Subject: Re: [PATCH] efi: remove the rtc-wakeup capability from default value
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+On Wed, 9 Jul 2025 at 20:35, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+>
+> The kernel selftest of rtc reported a error on an ARM server:
+>
+>         RUN           rtc.alarm_alm_set ...
+>         rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
+>         rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
+>         alarm_alm_set: Test terminated by assertion
+>                  FAIL  rtc.alarm_alm_set
+>         not ok 5 rtc.alarm_alm_set
+>
+> The root cause is, the unerlying EFI firmware doesn't support wakeup
+> service (get/set alarm), while it doesn't have the efi 'RT_PROP'
+> table either. The current code logic will claim efi supports these
+> runtime service capability by default, and let following 'RT_PROP'
+> table parsing to correct it, if that table exists.
+>
+> This issue was reproduced on ARM server from another verndor, and not
+> reproudce on one x86 server (Icelake). All these 3 platforms don't have
+> 'RT_PROP' tables, so they are all claimed to support alarm service,
+> but x86 server uses real CMOS RTC device instead rtc-efi device, and
+> passes the test.
+>
+> So remove the wakeup/alarm capability from default value, and setup
+> the capability bits according to the 'RT_PROP' table parsing.
+>
 
-Because SRCU-lite is being replaced by SRCU-fast, this commit removes
-support for SRCU-lite from rcutorture.c
+What does this achieve? The test result is accurate, as the platform
+violates the spec by not implementing the RTC wakeup services, and not
+setting the RT_PROP table bits accordingly.
 
-Signed-off-by: "Paul E. McKenney" <paulmck@kernel.org>
-Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
----
- include/linux/srcu.h    | 2 +-
- kernel/rcu/rcutorture.c | 7 -------
- 2 files changed, 1 insertion(+), 8 deletions(-)
+What do we gain by pretending that the platform is not broken, and
+lying about it?
 
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 900b0d5c05f5..c20dacb563e5 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -49,7 +49,7 @@ int init_srcu_struct(struct srcu_struct *ssp);
- #define SRCU_READ_FLAVOR_LITE	0x4		// srcu_read_lock_lite().
- #define SRCU_READ_FLAVOR_FAST	0x8		// srcu_read_lock_fast().
- #define SRCU_READ_FLAVOR_ALL   (SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_NMI | \
--				SRCU_READ_FLAVOR_LITE | SRCU_READ_FLAVOR_FAST) // All of the above.
-+				SRCU_READ_FLAVOR_FAST) // All of the above.
- #define SRCU_READ_FLAVOR_SLOWGP	(SRCU_READ_FLAVOR_LITE | SRCU_READ_FLAVOR_FAST)
- 						// Flavors requiring synchronize_rcu()
- 						// instead of smp_mb().
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 213f23f20a64..7a893d51d02b 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -718,11 +718,6 @@ static int srcu_torture_read_lock(void)
- 		WARN_ON_ONCE(idx & ~0x1);
- 		ret += idx << 1;
- 	}
--	if (reader_flavor & SRCU_READ_FLAVOR_LITE) {
--		idx = srcu_read_lock_lite(srcu_ctlp);
--		WARN_ON_ONCE(idx & ~0x1);
--		ret += idx << 2;
--	}
- 	if (reader_flavor & SRCU_READ_FLAVOR_FAST) {
- 		scp = srcu_read_lock_fast(srcu_ctlp);
- 		idx = __srcu_ptr_to_ctr(srcu_ctlp, scp);
-@@ -756,8 +751,6 @@ static void srcu_torture_read_unlock(int idx)
- 	WARN_ON_ONCE((reader_flavor && (idx & ~reader_flavor)) || (!reader_flavor && (idx & ~0x1)));
- 	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
- 		srcu_read_unlock_fast(srcu_ctlp, __srcu_ctr_to_ptr(srcu_ctlp, (idx & 0x8) >> 3));
--	if (reader_flavor & SRCU_READ_FLAVOR_LITE)
--		srcu_read_unlock_lite(srcu_ctlp, (idx & 0x4) >> 2);
- 	if (reader_flavor & SRCU_READ_FLAVOR_NMI)
- 		srcu_read_unlock_nmisafe(srcu_ctlp, (idx & 0x2) >> 1);
- 	if ((reader_flavor & SRCU_READ_FLAVOR_NORMAL) || !(reader_flavor & SRCU_READ_FLAVOR_ALL))
--- 
-2.40.1
+> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+> ---
+>  drivers/firmware/efi/efi.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> index e57bff702b5f..7cf35376a2f7 100644
+> --- a/drivers/firmware/efi/efi.c
+> +++ b/drivers/firmware/efi/efi.c
+> @@ -789,6 +789,17 @@ int __init efi_config_parse_tables(const efi_config_table_t *config_tables,
+>                 }
+>         }
+>
+> +       /*
+> +        * After bootup, the runtime_supported_mask was set to be capable of
+> +        * all features, which could be kind of too optimistici. In real
+> +        * world, many platforms don't support advanced RTC wakeup runtime
+> +        * service, while they don't provide RT_PROPERTY table either, which
+> +        * led to rtc-wakeup capability being worngly claimed.
+> +        *
+> +        * So remove the wakeup capbility from default value, and let the
+> +        * RT_PROPERTY do the judge.
+> +        */
+> +       efi.runtime_supported_mask &= ~EFI_RT_SUPPORTED_WAKEUP_SERVICES;
+>         if (rt_prop != EFI_INVALID_TABLE_ADDR) {
+>                 efi_rt_properties_table_t *tbl;
+>
 
+Doesn't this break the RTC wakeup services on platforms that do
+implement them, and don't expose a RT_PROP table?
 
