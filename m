@@ -1,153 +1,153 @@
-Return-Path: <linux-kernel+bounces-723215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14A09AFE47D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D102AFE483
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8B417A0DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD2C44A3AA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA362868A6;
-	Wed,  9 Jul 2025 09:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDCE287246;
+	Wed,  9 Jul 2025 09:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AJJYDtTj"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HQo71xhS"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6925D22331C;
-	Wed,  9 Jul 2025 09:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D9A2367B3;
+	Wed,  9 Jul 2025 09:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752054299; cv=none; b=Dqzd+j9FbjaBHqTkHZWt3e5d1gojGWgrQBu0qYshXBKoYoJhz66F2casGQpAS2e2GCVXu0Wa4+DeCRA6JE3OJ2zIXFhW4jXE4qm7p2i/25SQ2zYpJT+X2e6E0tKwGygHZw+K1a0BWsyxlGFmlT4qAwtn9ze09Wvk55hvazd4bbk=
+	t=1752054355; cv=none; b=Lk3OWjNgDTkKRSmT1DC7TStsxjJQh/VtuEkhRfQYh+1edbp+wiol0YIWWFuHb3qQ4xyDj/jTHplCxbstTTQc0/Rs7S1MmFPzRJ5J3wFk0GmbIdhO8CQ+KT60M7HIfhrzKGTCKBaG+yweM8T0mFOy7qhhpPlbfEUuDI3sDfwg7Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752054299; c=relaxed/simple;
-	bh=5Uwm8AciybAtLqSa2UQmIj/q9IVonSbuazkxTlHhzeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DnEHO27p5W4XHm6qdDcnL0vZNvd8yLrhTldOkvM08psHcZPnmsNZPcELtfw6zXsR6fWgj7wZFwWqkFAp2PE9OwEDU7h+4uCmXE0CsgLvw02XPZuIIwKKBPIZvCzct/wpb4wNUCRfALmdoQ9FNtlDcLU8+l9Oj73u7htdCYdJBFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AJJYDtTj; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uwP47kBvHW0N0lMgUnQIxKO9IkXP6Lxbg24vSAmFUko=; b=AJJYDtTjmhjTWTxH8pFrVBNhMV
-	K7EdYj8mck4bOQyF/da7k5pc00nhZnX+i+A0cM3k8Zpfvu1B62tpGZ/xx/TmXWjqNJejCp6iQmxzV
-	nnLoo7bI+PyxbfOMeU4Wz9YHMUeH5Yj9tauLsYj7+q81ToKdlPhnGjVVP1AUu/Jv9UBbEZLe0WbOB
-	lDSg27Aj4/bPb/0zQHbwztfc0us5e8JFTHhhiXDRmQunKvl6iOCiLJErk7dCkiRgJXWV/p06uTL0J
-	elahxSK4nui0szw/yQjoSt+2uqi5ymKPa8idaaKc6KcaSofsdTDXCrkwzpgvSZRs5H9GlhUXx9s88
-	DxU0Mg0w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZRMC-00000008qmJ-0afJ;
-	Wed, 09 Jul 2025 09:44:52 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B1E2130065D; Wed, 09 Jul 2025 11:44:51 +0200 (CEST)
-Date: Wed, 9 Jul 2025 11:44:51 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: syzbot <syzbot+2fe61cb2a86066be6985@syzkaller.appspotmail.com>,
-	linux-perf-users@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf/core: Fix WARN in perf_sigtrap()
-Message-ID: <20250709094451.GI1613200@noisy.programming.kicks-ass.net>
-References: <685af60a.a00a0220.2e5631.0092.GAE@google.com>
- <ed888189-dad4-47e1-bfc8-4f2213eda32d@I-love.SAKURA.ne.jp>
- <f8dee957-d286-421d-976a-c0c580454fb3@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1752054355; c=relaxed/simple;
+	bh=c6W+pjdL3fLgs4DKE4VuxDUC5yEKStcV+xtF81Jhgic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gVDhZiL6wE9vAuvqnhERS/x53hhgA6QygoyqSiMoljgv1kZwefuzDHYEfJhrCCdDYfjTHYwNmaso3fRgWWFCH2QZ7BLn+BTmUsdOwDoWLQe95Np3C2vUCbQuKmuedAyybXntEu6FFaakJa11lAL5K956uIjpOez3yqBPX1/YrH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HQo71xhS; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e50ef45e-4c1a-4874-8d5f-9ca86f9a532c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752054340;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WTz2wkEPilJ291aBXf8EittiLv9aIr5saM/qqA8YaKY=;
+	b=HQo71xhSDwkfGOSIB3FWw3v/YQdNclez8WkEdYwBvOTAIOl6AqbhbkkiJL16330Fl8+IFB
+	JIkYnrPO3KuLCRrrExhedm3XPWRaiA0VaUDJTQKabNmyYEFozGZqLnF6S6ObqT2+JOBPnh
+	CPfeQNHTjT8MKj0ZxmbHLM06SQaVEyI=
+Date: Wed, 9 Jul 2025 17:45:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8dee957-d286-421d-976a-c0c580454fb3@I-love.SAKURA.ne.jp>
-
-On Sat, Jul 05, 2025 at 11:43:37PM +0900, Tetsuo Handa wrote:
-> Since commit 4f6fc7821283 ("perf: Fix sample vs do_exit()") has moved
-> perf_event_exit_task() call from after exit_task_work() to before
-> exit_task_work(), 
-
-> task_work_add() from perf_event_exit_task() now returns
-
-There is no task_work_add() in perf_event_exit_task().
-
-> 0 than -ESRCH, despite perf_event_exit_task_context() updates ctx->task
-> to TASK_TOMBSTONE. As a result, event->ctx->task == current assumption
-> no longer holds.
-
-This changelog is confusing to the point that I've no idea what it is
-trying to tell me.
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v2_00/11=5D_dm-pcache_=E2=80=93_persistent?=
+ =?UTF-8?Q?-memory_cache_for_block_devices?=
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: agk@redhat.com, snitzer@kernel.org, axboe@kernel.dk, hch@lst.de,
+ dan.j.williams@intel.com, Jonathan.Cameron@Huawei.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev, dm-devel@lists.linux.dev
+References: <20250707065809.437589-1-dongsheng.yang@linux.dev>
+ <85b5cb31-b272-305f-8910-c31152485ecf@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Dongsheng Yang <dongsheng.yang@linux.dev>
+In-Reply-To: <85b5cb31-b272-305f-8910-c31152485ecf@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
-Did you mean to say something like:
-
-Because exit_task_work() now runs after perf_event_exit_task(), it is
-possible for an already queued perf_pending_task()->perf_sigtrap() to
-observe a dead task context.
-
-> Reported-by: syzbot <syzbot+2fe61cb2a86066be6985@syzkaller.appspotmail.com>
-> Closes: https://syzkaller.appspot.com/bug?extid=2fe61cb2a86066be6985
-> Fixes: 4f6fc7821283 ("perf: Fix sample vs do_exit()")
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
-> #syz test
-> 
->  kernel/events/core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 7281230044d0..489f42defe3c 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -7208,7 +7208,8 @@ static void perf_sigtrap(struct perf_event *event)
->  	 * ctx->task or current has changed in the meantime. This can be the
->  	 * case on architectures that do not implement arch_irq_work_raise().
->  	 */
-> -	if (WARN_ON_ONCE(event->ctx->task != current))
-> +	if (WARN_ON_ONCE(event->ctx->task != current &&
-> +			 event->ctx->task != TASK_TOMBSTONE))
->  		return;
->  
-
-Also, isn't it better to simply swap the early exit tests in that
-function like so:
+在 7/8/2025 4:16 AM, Mikulas Patocka 写道:
+>
+> On Mon, 7 Jul 2025, Dongsheng Yang wrote:
+>
+>> Hi Mikulas,
+>> 	This is V2 for dm-pcache, please take a look.
+>>
+>> Code:
+>>      https://github.com/DataTravelGuide/linux tags/pcache_v2
+>>
+>> Changelogs
+>>
+>> V2 from V1:
+>> 	- introduce req_alloc() and req_init() in backing_dev.c, then we
+>> 	  can do req_alloc() before holding spinlock and do req_init()
+>> 	  in subtree_walk().
+>> 	- introduce pre_alloc_key and pre_alloc_req in walk_ctx, that
+>> 	  means we can pre-allocate cache_key or backing_dev_request
+>> 	  before subtree walking.
+>> 	- use mempool_alloc() with NOIO for the allocation of cache_key
+>> 	  and backing_dev_req.
+>> 	- some coding style changes from comments of Jonathan.
+> Hi
+>
+> mempool_alloc with GFP_NOIO never fails - so you don't have to check the
+> returned value for NULL and propagate the error upwards.
 
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 0db36b2b2448..22fdf0c187cd 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7203,6 +7203,13 @@ void perf_event_wakeup(struct perf_event *event)
- 
- static void perf_sigtrap(struct perf_event *event)
- {
-+	/*
-+	 * Both perf_pending_task() and perf_pending_irq() can race with the
-+	 * task exiting.
-+	 */
-+	if (current->flags & PF_EXITING)
-+		return;
-+
- 	/*
- 	 * We'd expect this to only occur if the irq_work is delayed and either
- 	 * ctx->task or current has changed in the meantime. This can be the
-@@ -7211,13 +7218,6 @@ static void perf_sigtrap(struct perf_event *event)
- 	if (WARN_ON_ONCE(event->ctx->task != current))
- 		return;
- 
--	/*
--	 * Both perf_pending_task() and perf_pending_irq() can race with the
--	 * task exiting.
--	 */
--	if (current->flags & PF_EXITING)
--		return;
--
- 	send_sig_perf((void __user *)event->pending_addr,
- 		      event->orig_type, event->attr.sig_data);
- }
+Hi Mikulas:
+
+    I noticed that the implementation of mempool_alloc—it waits for 5 
+seconds and retries when allocation fails.
+
+With this in mind, I propose that we handle -ENOMEM inside defer_req() 
+using a similar mechanism. something like this commit:
+
+
+https://github.com/DataTravelGuide/linux/commit/e6fc2e5012b1fe2312ed7dd02d6fbc2d038962c0
+
+
+Here are two key reasons why:
+
+(1) If we manage -ENOMEM in defer_req(), we don’t need to modify every 
+lower-level allocation to use mempool to avoid failures—for example,
+
+cache_key, backing_req, and the kmem.bvecs you mentioned. More 
+importantly, there’s no easy way to prevent allocation failure in some 
+places—for instance, bio_init_clone() could still return -ENOMEM.
+
+(2) If we use a mempool, it will block and wait indefinitely when memory 
+is unavailable, preventing the process from exiting.
+
+But with defer_req(), the user can still manually stop the pcache device 
+using dmsetup remove, releasing some memory if user want.
+
+
+What do you think?
+
+Thanx
+
+Dongsheng
+
+>
+> "backing_req->kmem.bvecs = kmalloc_array(n_vecs, sizeof(struct bio_vec),
+> GFP_NOIO)" - this call may fail and you should handle the error gracefully
+> (i.e. don't end the bio with an error). Would it be possible to trim the
+> request to BACKING_DEV_REQ_INLINE_BVECS vectors and retry it?
+> Alternativelly, you can create a mempool for the largest possible n_vecs
+> and allocate from this mempool if kmalloc_array fails.
+>
+> I'm sending two patches for dm-pcache - the first patch adds the include
+> file linux/bitfield.h - it is needed in my config. The second patch makes
+> slab caches per-module rather than per-device, if you have them
+> per-device, there are warnings about duplicate cache names.
+>
+>
+> BTW. What kind of persistent memory do you use? (afaik Intel killed the
+> Optane products and I don't know of any replacement)
+>
+> Some times ago I created a filesystem for persistent memory - see
+> git://leontynka.twibright.com/nvfs.git - I'd be interested if you can test
+> it on your persistent memory implementation.
+>
+> Mikulas
+>
 
