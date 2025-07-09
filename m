@@ -1,249 +1,134 @@
-Return-Path: <linux-kernel+bounces-723978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3FAAFED3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:11:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D42DAFED1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B98F31BC08F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:10:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BBDF5C3FA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE822E6D2F;
-	Wed,  9 Jul 2025 15:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66192E5B10;
+	Wed,  9 Jul 2025 15:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="ekwI8N1E"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xti7dCmR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3E82E5B21;
-	Wed,  9 Jul 2025 15:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6B1156F4A;
+	Wed,  9 Jul 2025 15:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752073774; cv=none; b=lpzL/7IrW2lgHLnbFKBvJE/qzh9dT98k6fsKEea9XD+WfnUA43ddHtxuUnOl7GbfYenGjkSHHfeELWKIhKtqzhUuoDrPABMRg1Izky5PoecLXAQBA7Zw6hO2r3nK9qWSHUpYsWpKXcKszyJ2OImDn8829atBhfWzi+EQvDLbD9I=
+	t=1752073371; cv=none; b=GIEqm/bJ8U0O/U+DDU7AcqgNvIATDFtJN+i26h3IzvvuZvVnkFN5zKamizJRl1jfe4I0iwgaejGzFzQsfMNys/96p1e8oWAIc1tW6I8UakFNBm2ofMQiprPweVj7KSTiznnAcMABoiFeDPYGjrUNSnJABdyo+ErVqNoRlL9uBrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752073774; c=relaxed/simple;
-	bh=M2xrUmqBER9FveKj9Oytu24y3G4UIzKu6OF9Q4CEDUM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=abmdKCdZ1r8V7ktELLDL1QtMO4DbHvoNG4eIXvjbDKoQpN2fb2YtXv0qzKSjBMmmJHAhwDPpBer6QNZadhBe5wxmMxinb6Goswz4apCzF4nBM4Tpb95xPqGCnWwsz+NVKneExyG19s7em4SX19hM8mBcXqV0JM/mZrrjxOrOYGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=ekwI8N1E; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [192.168.6.83] (office.icewarp.com [82.113.48.146])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 56345161724;
-	Wed,  9 Jul 2025 17:02:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1752073345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Pk5U405cv6cU1Xa5A5zjVsomj5p+x+CxyQEiNMHdsZo=;
-	b=ekwI8N1EO0DJTYuRUaG7d8QHOyNQS784wlDZMO5+2YoF5rY7jT2GaitrhrJbOo/7yRqI2C
-	9RVd6FlrrGskBMBmKaZmevEf+RO9NJLFw/bugNkCvj+Am0RkNQqA51ungqg5v0w1L4ZoHe
-	4AOLL83XYMDauavdWcYjtlgwPpjRtvg=
-Message-ID: <02394a08-f201-4843-9028-35c04c71c4b3@ixit.cz>
-Date: Wed, 9 Jul 2025 17:02:25 +0200
+	s=arc-20240116; t=1752073371; c=relaxed/simple;
+	bh=UmvOJsqQeOZo6uv2hXfptlbOgxzKjfEBeTjZ5Q0Wrbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EHgmdKr4rKBWl2IrC10cEAdnTgxUWm13ooljYQj1MW3AO9UIsj/Upg86dF3olIGvfQkId0VpuLdXHa8vy13aSxEYD5RhJzCwTuci7flJcBEgrkS7ScLNyyrR88yvZFQ6kp1Y37cKBxfLl+ftkHylNRfC1M9UmYqGCXElPGcsnh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xti7dCmR; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752073370; x=1783609370;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UmvOJsqQeOZo6uv2hXfptlbOgxzKjfEBeTjZ5Q0Wrbk=;
+  b=Xti7dCmRGe/emyFj6larF/be3LQjGY35LjBdjMpDuAlOdvf5lW92+ABy
+   soEDeBOYHVetFACzR39o/73BMh7GIJXHG3mnmFcedfuO6HrrWp0D//LWS
+   z5kGe3U/8tm3DotRxBzqN6bIfovDY3YMoR9PuUtqmBxvq8TN43zYYPfnb
+   P98rpBZACIm4RqDOwulC7Sc2I8XE2iN0aDNb+VU9gQ2hfJrZBlgFMHv7Q
+   AZ/wyLA8CUMHUF8Brho6DIEFmX98JpOo/VAVTmoIH5K2tWJqlN7PCMtYK
+   b8Wwt0zleFpID3llvv/+QkrqCldYbRQd0ziBWrCK2Y36EFC1As+3RtKBD
+   A==;
+X-CSE-ConnectionGUID: dtZxLbw0RbmFjcXgtgPrbg==
+X-CSE-MsgGUID: ldKpLS8iSaq0i1Zh9RUJyA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="65035753"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="65035753"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 08:02:49 -0700
+X-CSE-ConnectionGUID: jQGMFmdxT2arjTPo/Z/l4A==
+X-CSE-MsgGUID: m/zVlW8/THqyehHj9WGIWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="155431612"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 09 Jul 2025 08:02:40 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uZWJh-0003eF-2o;
+	Wed, 09 Jul 2025 15:02:37 +0000
+Date: Wed, 9 Jul 2025 23:02:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: LiangCheng Wang <zaq14760@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Wig Cheng <onlywig@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	LiangCheng Wang <zaq14760@gmail.com>
+Subject: Re: [PATCH 2/3] drm: tiny: Add support for Mayqueen Pixpaper e-ink
+ panel
+Message-ID: <202507092231.FtZkMync-lkp@intel.com>
+References: <20250708-drm-v1-2-45055fdadc8a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/7] Input: synaptics-rmi4 - add quirks for third party
- touchscreen controllers
-From: David Heidelberg <david@ixit.cz>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Kaustabh Chakraborty <kauschluss@disroot.org>, Rob Herring
- <robh@kernel.org>, Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Vincent Huang <vincent.huang@tw.synaptics.com>,
- "Jason A. Donenfeld" <Jason@zx2c4.com>, Conor Dooley <conor+dt@kernel.org>
-References: <20250410-synaptics-rmi4-v5-0-b41bb90f78b9@ixit.cz>
- <d9bac31d-ad73-4d40-9e6b-7397dd5f5b23@ixit.cz>
- <72689fa4-cb6d-4299-be29-2b7990a1c365@ixit.cz>
-Content-Language: en-US
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <72689fa4-cb6d-4299-be29-2b7990a1c365@ixit.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708-drm-v1-2-45055fdadc8a@gmail.com>
 
-Hello Dmitry,
+Hi LiangCheng,
 
-I hope you're doing well. Just a gentle reminder about the patch series 
-I sent earlier. Please let me know if there's anything I can do to help 
-move it forward.
+kernel test robot noticed the following build warnings:
 
-Thank you for your time and consideration.
+[auto build test WARNING on d7b8f8e20813f0179d8ef519541a3527e7661d3a]
 
-Best regards,
-David
+url:    https://github.com/intel-lab-lkp/linux/commits/LiangCheng-Wang/dt-bindings-vendor-prefixes-Add-Mayqueen-name/20250708-180933
+base:   d7b8f8e20813f0179d8ef519541a3527e7661d3a
+patch link:    https://lore.kernel.org/r/20250708-drm-v1-2-45055fdadc8a%40gmail.com
+patch subject: [PATCH 2/3] drm: tiny: Add support for Mayqueen Pixpaper e-ink panel
+config: sparc-randconfig-r112-20250709 (https://download.01.org/0day-ci/archive/20250709/202507092231.FtZkMync-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20250709/202507092231.FtZkMync-lkp@intel.com/reproduce)
 
-On 11/06/2025 10:10, David Heidelberg wrote:
-> Hello Dmitry,
-> 
-> is there anything else I should adjust to get these fixes merged?
-> 
-> Thank you
-> David
-> 
-> On 03/05/2025 16:02, David Heidelberg wrote:
->> Kind ping on the series.
->>
->> When the series is considered solid, it will improve Linux usability 
->> on lower-quality touchscreen replacements (including those from other 
->> vendors and models) outside of our Snapdragon 845 downstream fork.
->>
->> Thank you
->> David
->>
->> On 10/04/2025 16:28, David Heidelberg via B4 Relay wrote:
->>> With the growing popularity of running upstream Linux on mobile devices,
->>> we're beginning to run into more and more edgecases. The OnePlus 6 is a
->>> fairly well supported 2018 era smartphone, selling over a million units
->>> in it's first 22 days. With this level of popularity, it's almost
->>> inevitable that we get third party replacement displays, and as a
->>> result, replacement touchscreen controllers.
->>>
->>> The OnePlus 6 shipped with an extremely usecase specific touchscreen
->>> driver, it implemented only the bare minimum parts of the highly generic
->>> rmi4 protocol, instead hardcoding most of the register addresses.
->>> As a result, the third party touchscreen controllers that are often
->>> found in replacement screens, implement only the registers that the
->>> downstream driver reads from. They additionally have other restrictions
->>> such as heavy penalties on unaligned reads.
->>> This series attempts to implement the necessary workaround to support
->>> some of these chips with the rmi4 driver. Although it's worth noting
->>> that at the time of writing there are other unofficial controllers in
->>> the wild that don't work even with these patches.
->>> We have been shipping these patches in postmarketOS for the last several
->>> years, and they are known to not cause any regressions on the OnePlus
->>> 6/6T (with the official Synaptics controller), however I don't own any
->>> other rmi4 hardware to further validate this.
->>>
->>> ---
->>> Changes in v5:
->>> - Removed -i2c suffix from rmi4-s3706b-i2c (Krzysztof).
->>> - Link to v4: https://lore.kernel.org/r/20250402-synaptics-rmi4- 
->>> v4-0-1bb95959e564@ixit.cz
->>>
->>> Changes in v4:
->>> - Replaced patch "dt-bindings: input: syna,rmi4: document syna,pdt- 
->>> fallback-desc"
->>>    with patch documenting specific touchscreen model used in OnePlus 
->>> 6 and 6T.
->>> - Fixed zero electrode return code (Dmitry).
->>> - Switched the duplicate detection algo to bitmap (Dmitry).
->>> - Optimized rmi_device_platform_data struct to avoid unnecessary
->>>    padding.
->>> - Changed fallback_size from int to unsigned int.
->>> - Changed SoB from nickname and old address (methanal 
->>> <baclofen@tuta.io>) to
->>>    Kaustabh Chakraborty <kauschluss@disroot.org>.
->>>    Verified ownership through the sdm845 chatroom on Matrix.
->>> - Link to v3: https://lore.kernel.org/r/20250308-synaptics-rmi4- 
->>> v3-0-215d3e7289a2@ixit.cz
->>>
->>> Changes in v3:
->>> - reworded dt-bindings property description
->>> - fixed the rmi_driver_of_probe definition for non device-tree builds.
->>> - fixed some indentation issues reported by checkpatch
->>> - change rmi_pdt_entry_is_valid() variable to unsigned
->>> - Link to v2: https://lore.kernel.org/all/20230929-caleb-rmi4-quirks- 
->>> v2-0-b227ac498d88@linaro.org
->>>
->>> Changes in v2:
->>> - Improve dt-bindings patch (thanks Rob)
->>> - Add missing cast in patch 5 to fix the pointer arithmetic
->>> - Link to v1: https://lore.kernel.org/r/20230929-caleb-rmi4-quirks- 
->>> v1-0-cc3c703f022d@linaro.org
->>>
->>> ---
->>> Caleb Connolly (1):
->>>        Input: synaptics-rmi4 - handle duplicate/unknown PDT entries
->>>
->>> David Heidelberg (1):
->>>        dt-bindings: input: syna,rmi4: Document syna,rmi4-s3706b
->>>
->>> Kaustabh Chakraborty (5):
->>>        Input: synaptics-rmi4 - f12: use hardcoded values for 
->>> aftermarket touch ICs
->>>        Input: synaptics-rmi4 - f55: handle zero electrode count
->>>        Input: synaptics-rmi4 - don't do unaligned reads in IRQ context
->>>        Input: synaptics-rmi4 - read product ID on aftermarket touch ICs
->>>        Input: synaptics-rmi4 - support fallback values for PDT 
->>> descriptor bytes
->>>
->>>   .../devicetree/bindings/input/syna,rmi4.yaml       |  11 +-
->>>   drivers/input/rmi4/rmi_driver.c                    | 124 ++++++++++ 
->>> + ++++++----
->>>   drivers/input/rmi4/rmi_driver.h                    |  10 ++
->>>   drivers/input/rmi4/rmi_f01.c                       |  14 +++
->>>   drivers/input/rmi4/rmi_f12.c                       | 117 ++++++++++ 
->>> + +++-----
->>>   drivers/input/rmi4/rmi_f55.c                       |   5 +
->>>   include/linux/rmi.h                                |   3 +
->>>   7 files changed, 234 insertions(+), 50 deletions(-)
->>> ---
->>> base-commit: f0a16f5363325cc8d9382471cdc7b654c53254c9
->>> change-id: 20250308-synaptics-rmi4-c832b2f73ceb
->>>
->>> Best regards,
->>
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507092231.FtZkMync-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/gpu/drm/tiny/pixpaper.c:85:10: sparse: sparse: Initializer entry defined twice
+   drivers/gpu/drm/tiny/pixpaper.c:86:9: sparse:   also defined here
+   drivers/gpu/drm/tiny/pixpaper.c:601:10: sparse: sparse: Initializer entry defined twice
+   drivers/gpu/drm/tiny/pixpaper.c:606:10: sparse:   also defined here
+
+vim +85 drivers/gpu/drm/tiny/pixpaper.c
+
+    80	
+    81	static const struct drm_plane_funcs pixpaper_plane_funcs = {
+    82		.update_plane = drm_atomic_helper_update_plane,
+    83		.disable_plane = drm_atomic_helper_disable_plane,
+    84		.destroy = drm_plane_cleanup,
+  > 85		.reset = drm_atomic_helper_plane_reset,
+    86		DRM_GEM_SHADOW_PLANE_FUNCS,
+    87	};
+    88	
 
 -- 
-David Heidelberg
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
