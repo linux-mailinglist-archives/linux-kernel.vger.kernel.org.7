@@ -1,219 +1,248 @@
-Return-Path: <linux-kernel+bounces-724128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C90B9AFEEF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:41:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF60AFEEF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B4487A7C69
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:39:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682081894C40
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405CD21FF42;
-	Wed,  9 Jul 2025 16:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6212206B5;
+	Wed,  9 Jul 2025 16:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="JG2HV0IY"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IL/eQqbP"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2052.outbound.protection.outlook.com [40.107.92.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34B91E32BE;
-	Wed,  9 Jul 2025 16:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752079250; cv=none; b=Ohzzi9OVwIxVLQrd5Rjbkk+NooTQkNPx+CL6r+OXhY6MW5jRDMntlRsgSbVWcZVO1GoP2SQnoLUU4izgk13HelUBYssMjap2hTRPqCJWKLftfFjq3n9fW24KWT5tZz2J4yy/p3UUZgeLEYYXcQZZmf8WTt51FwyzbGLBtsX5aMg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752079250; c=relaxed/simple;
-	bh=7r6RNC92pTWhgccVhFB8ztYRkQ0IZ13I5DJTnX+3Skc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nk9QPUawG7dqSXEdpAtGQcvYwPpBv/me5RBwRVyKgr9xMm9pTIp2a/M2MTRThEDne1cB42bTff1gJv3rh9IGn9075eWwBp+Lg3eYN0pyrzh3ubkzSfU0nFobLcshDN4+05dOuxO0HaDcRn9QBgrLm+/9efPvE3rdkJ5pehKPs4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=JG2HV0IY; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1752079217; x=1752684017; i=spasswolf@web.de;
-	bh=acorGdwrivYOrNa8emyt/vNlTPPzuzWZ92rLDgjDz00=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=JG2HV0IYVwEcJH2+vuGoeiwmNnDKcc3m8xN7brCudoFObSdUzrXYVFxTiA3EpWVT
-	 Xh90jtQJhmouipx0CyawVb8KjPo9olfm+xeSa0V/5F0T617snTdqwFd/pmtkovwXj
-	 +1MHcruZOd3pqDimn1An6AIjdXhMwkf5feUj7R0F9cpkGDg6hrhJzczKDBGAyCrEd
-	 XSzn7wOw+oeQ1wWjZwSWOS+I/g8IaCmf+0fuqCUcUdIlXoQ/Dvqs5jy/5N6yKZ3WY
-	 jLkexgiDPU6QG3EwzKUfKL0wAVnZvpO8zv0skxfHmMyv7PyiKMxofPvZzPEIn3Ivs
-	 BwjWTboNh7yTgCno5A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N7xaR-1umPkR2MZn-00qqES; Wed, 09
- Jul 2025 18:40:16 +0200
-Message-ID: <5222dd9170d60b2ae93e24ce5d103c44cc1e36ea.camel@web.de>
-Subject: Re: CONFIG_DEVMEM=y breaks gettimeofday in next-20250708
-From: Bert Karwatzki <spasswolf@web.de>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Thomas
- Gleixner	 <tglx@linutronix.de>, spasswolf@web.de
-Date: Wed, 09 Jul 2025 18:40:15 +0200
-In-Reply-To: <20250709150929-7198f921-5b85-461a-acc1-ccc04e9adbab@linutronix.de>
-References: <20250701-vdso-auxclock-v1-6-df7d9f87b9b8@linutronix.de>
-	 <20250709124216.3011-1-spasswolf@web.de>
-	 <20250709150929-7198f921-5b85-461a-acc1-ccc04e9adbab@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.1-1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E8C2080C8;
+	Wed,  9 Jul 2025 16:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752079331; cv=fail; b=bNl7hMVdwUBb53b8nIKV7QBkU+uBxli9UBe18oT2WHyE3JiZxYd+k+3dMOw0p1jbYay8o2ji7c+Olw5D79Uga/HygGZySstz0y9MHxg0lCEvE70oWwEdjFXODaJIwqQ1M6E+Lljc+lK9+ARG8AfWNcpL5ypcfVFvnKATzxSP1IY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752079331; c=relaxed/simple;
+	bh=nbJ4LG498AsBH/EaFmNcyzp4ArFO4oqlhaQAYUpOY/A=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GYsLT8Ai6BeuoyEr2eGUBuM0FSwzrVkdvWUXg2yLrQ74fXblDtczNBfY/utT1Kc8JKR1V7z3P1idhSlq1o64Sh5iPnMY4SIYHMvYkcR4+KABezXVRccvEbR1qwTflVRL5csLDbwidrNFtLKw81+udCTYjHFJyJQ0v32stgBl1IQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IL/eQqbP; arc=fail smtp.client-ip=40.107.92.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v4tSgWuEPGcblJEwG2L/6cr878oEvLTNug+LlUDqIv88igpAc6OSrtwAu4Xg4b3pEcMVCiILrdh+++kHMEVWk+yElQsMqF2Z0DCDFZxFHhUen8ld552vA/RaE52COnYNWKE0TmeIHSYiUE5slKmPxk4s+CFzoLKUpSDQVANGUbi3WOmSHwGCOcKeSVkfVd1EhNL49k64qyqDeFMrbxtXuHKMi00EFPV8Vq1Ev+CUxnmHkCIMqUYodU/2yEMoweKRm0Kwv5bqcaFJ4UEE/uQP4cXFXtuvHi0lwVjTYbI8WpFSc1IP6SzFO4D7u/8ksQ8gD3VK6GgkAmkp3XbY5krjUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cBV2QBUDrDca4U0WXCM8rpCUtd5PSjn/xdH6tKOTL3g=;
+ b=OlYuBD0pXw5gr3FcYuxIZodeDBB7Ywa7ZTLkTt3IW1vDL0fFLSYgdqceMgwBRNZNYqcuB5sUkMhAhy9FCE77TS1sG+zXRivym/jqHieZcNCkGumUzc+en5oLo03LhjNRE8t86K6BtdiWJCt2fzG7kIAiu9c2z/UzMhxCt6OcE16u7jLG5vpUYunDlOOWAspgYvWlsyUEX8/Qdd0GBJFCBMvAczpy0U+FHBNaQWGunCuNOJrb7yQTyakbrULcKsmKH1rjaP6CVP1z1RuS8z5ZCtYt5t+AdrWbgfRErNHun1epcy/z1auPIvuCkJALfr/lrbPsIid7AmhFMZCvURMpDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cBV2QBUDrDca4U0WXCM8rpCUtd5PSjn/xdH6tKOTL3g=;
+ b=IL/eQqbPXXgi/Iel+UD7KevGF4+MMzEoVwC65c1Fk4aPrXu+CXO+ll9zSqklBWRHmaoOz/uVkvgv2xZFif9KXVHW9jT3smfFa1BuiGLB8+/3O1RYu8hH3XbvrSBbD0/kvG2RpXw01pfFdiPJwKt1xNNCj/1n27sn96iOleMWy78=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by CH3PR12MB8281.namprd12.prod.outlook.com (2603:10b6:610:128::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.24; Wed, 9 Jul
+ 2025 16:42:00 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%3]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
+ 16:42:00 +0000
+Message-ID: <14b5bcbb-31b3-46f4-88c6-c2a243f40802@amd.com>
+Date: Wed, 9 Jul 2025 12:41:57 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/5] drm/ttm: add new api
+ ttm_device_prepare_hibernation()
+To: Samuel Zhang <guoqing.zhang@amd.com>, alexander.deucher@amd.com,
+ christian.koenig@amd.com, rafael@kernel.org, len.brown@intel.com,
+ pavel@kernel.org, gregkh@linuxfoundation.org, dakr@kernel.org,
+ airlied@gmail.com, simona@ffwll.ch, ray.huang@amd.com,
+ matthew.auld@intel.com, matthew.brost@intel.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de
+Cc: lijo.lazar@amd.com, victor.zhao@amd.com, haijun.chang@amd.com,
+ Qing.Ma@amd.com, Owen.Zhang2@amd.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+References: <20250709100512.3762063-1-guoqing.zhang@amd.com>
+ <20250709100512.3762063-2-guoqing.zhang@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250709100512.3762063-2-guoqing.zhang@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YT1PR01CA0053.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:2e::22) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LRUCica14rnjwQi3ccJDnfNh+Oi67b8+gqM2L0T96nGSRX2H7hk
- d1Q1Fx/9L0VzCVQdMLJzYU7N/4nkNdd/h3ynZIjq3K6rID7+HjH9hpgVEWapKK7eH8HKUJJ
- SNmTBJRMhJ7VrNxH5SsMaHh75IXg0tAx0IFeRLkemKZiIocaoTX+C+InrjWv5EZAbpWC6Mj
- jrQReJWzi/ruWM3IWza2Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PlZp/GoHIGg=;oxW5ucQV2sTX4ASO7DX/pVvvWw2
- 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
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CH3PR12MB8281:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a6335f4-76f9-4c65-8b76-08ddbf0786a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WGo5OGpadVNBSG83SUNZRmMxNlozNm82UVNrR0ZIY09GN0NBZjBYbVlzOVNR?=
+ =?utf-8?B?b05VbVNkQStmVTltZWRGUzRZb3NBWTF0MkYzU0ROa3hQMFBjeVJiTW9ybGdH?=
+ =?utf-8?B?UzQ2OTc4TDZ0Vm01QWdFRjFFZ2FQQzYyZzlid25pM1d3UHUwYzdTVG9QcHZ4?=
+ =?utf-8?B?ZEVrOFc1N2NOb1Y3c0w5SVJZUnY4OXNUUHNGbENmcC9oOWFqMnhKb0FlcVc3?=
+ =?utf-8?B?R1k2VUtTUWlhTmNTM2RPNXpQa1ZFQlpjOG81TUE5WHo2RDE2a0Q5WXJFazA5?=
+ =?utf-8?B?dmdNVE9jM0U2QW53ak1RWXRHdlVPS1p0MFFFTFJ2cktURUppMzUxNEtpVWNG?=
+ =?utf-8?B?Zlk2WW4rYkw0UmcybWN1MFVIZVg3WkJzUll4Vm5KZVB5eldGR01JOTJORUd0?=
+ =?utf-8?B?SlJRSlFvMXpNU1AzTjcxZHlLNURjeFFJcitITHN2K0IwMXgvRlNFK01sZlNy?=
+ =?utf-8?B?SUFqRFVHY2RXYkVkK0M0em4rUmdEZko4VC9xZUdmY2RRdyswTnA0MGkvSUVr?=
+ =?utf-8?B?aFh5R0ZNU3pFNmZJa1NBbG9HWHo4emhpUGl6NEZtWjJSMjJhczg4L1RSQU84?=
+ =?utf-8?B?K1ZFVk1JZmRMdzNLbGxtUk9VNHlpQTVzRFhZTzdBcGJ4WlkvWHpOaG9UNUox?=
+ =?utf-8?B?V0NiVVdZbVhKb1ZIYWNOZmxCQ3ZYbkJpR1NmZHVFRFd0UHdsTU5PRnJtOVJL?=
+ =?utf-8?B?NTQrZmZxdEhybEdnazJRT3JERlFRMmw4enBzeXp5OFhmR2hqc1pOMVdPdGVn?=
+ =?utf-8?B?bzRLNGRzam95ZEdCamNaVUhuMkdOZUZFUmJVUG0wZGMwNXBZOWhJakZ6SUdM?=
+ =?utf-8?B?TTVjbHptOURYN3VKZU1NRUtFVUREaDFLOWxEVGZmcU1kc1dpY29hSnZOczZl?=
+ =?utf-8?B?ZWtURm53ZGVxTmwwbmpTbFJTcHB6WGRlMHRYTG9zdXk3MDBZOEJkdHlPNEJ4?=
+ =?utf-8?B?THZ5cHcwaEJRUjB2Zzc5MTVhejg3LytyS0pYTzBKeEMxNWQreGZMVlNDanh5?=
+ =?utf-8?B?RHRMTE1Na0xKb2pQbCttSTM2OTFTYWdFdGtrZGVJc3NIb0g5MktpdXZjYTZ0?=
+ =?utf-8?B?MEV4WmVZTWw3L09sOU1tWWVKY2NVeTVqbXJKa2d3SG8yaFRJQUl1dDB1Uy9u?=
+ =?utf-8?B?citsLzB2bmZDSW54WGlBczZFekFnYjZ4RDhhZ3ZkMHdxcGV3MjNtS0FXQUdP?=
+ =?utf-8?B?NFRLeHFySXBxbE1zNkFLeFpDQ1BLQU5MdmRDY1dNTWZNNFFkTzhab244RWxa?=
+ =?utf-8?B?azBlWFVEMVA4ZTlVdVMvVmRWdXkxeHdlQzJpM2owTTUzZSs5VHR6SEF6aWVR?=
+ =?utf-8?B?WmFVYzRaTkJjQnpJTldrSFhoeGd3MzZWTXREbzB2eHlNc1gycDBqd28wZmxN?=
+ =?utf-8?B?bzFJU1l2NTFtS2pVWkVXWDQvRFQ0Rnhuei9GY1htRnh3d2xjZEJmYXBoYW45?=
+ =?utf-8?B?U2VVNmNRWGF2bDFmMEFoazNrS2djK1B4dFNJQ3BWaWF2cjdZRnp2NkR4cHVH?=
+ =?utf-8?B?NmEwR1RHQzFtVXNGbHIxVmlTZnB3VFhtMFlBdWo1VXdCci9jSUVZTzF0VmRN?=
+ =?utf-8?B?QlM4VnIxa0lMcHhWZHhqVlhCT3VSbDlzTDFFZ3ozZlF4bGpFczkvYWF1T1Ra?=
+ =?utf-8?B?VHB2TVpFS2tSSHl3R0xlMi95ZHo1ZTJJblNYQnArSzVLRlhmK2VKNEd6R0NH?=
+ =?utf-8?B?R2l1eHNtUXJJWXRvK0JLd2NmYXp0QUx2QUljTWNqK1ZKSW5zL21wMU9zVmU1?=
+ =?utf-8?Q?TfQKgdarg5TZGesnNaT7N1ALNXiUQYfAMUHAfu2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c1BGZ0xObVQ5MVI5MXAzb2d5VXFldjB3VjZncDBlMEtKeXlkbWN1NFBXTUYv?=
+ =?utf-8?B?U1NtWXB5RkVqaVpzWXZjUmE0NkM0SHBzTkgzNlYyd1RsUTBYeVRqWThOc1I1?=
+ =?utf-8?B?MDlJREo2MU92akpHcXlWcUZxaEdCNVNFNlB2ZUs2M3F3ajZPY3k4QmE1RGpB?=
+ =?utf-8?B?YnNjMUh1eGxwMWg3WmkrQUxZeUxVTlF1dy96OFh5NGg3SHJ4bHI2KzI3c0N1?=
+ =?utf-8?B?WnQ1Y2ZyK2RIQjNRV01hQU8wRTErMDlIekJYdmlFMG1uSVN2eDZJUFhHaHVx?=
+ =?utf-8?B?cHBUZE5uRndKaXBLYkVDYnZUcWxvQ3MxZHkzVDlaMzdsY0l6aWd6TDZUZzds?=
+ =?utf-8?B?eDArZVdNZ1FNcUZhRHhWbEpKTmpMallRRmE0R2Vmc2V0RWVJVCtFVGduZDI2?=
+ =?utf-8?B?SFczdjFGNUl5TWFDbDNOOHZGNTBwR093SlozQitkM1FGZmptdmFXWEl0VUVQ?=
+ =?utf-8?B?aGRQVXhKVm9rRzRKTzk3V28zZGVVVG03Z25teXRvRGZVODZlSlRyNVJuaWdT?=
+ =?utf-8?B?MmpxaUJadVFid055aUt6MHlwZzNjUVkzNXpXbEFpOFBGMHpwMjlGeGpwN3pK?=
+ =?utf-8?B?Z2MyMk8wZ2M5cjIzTGd4Um9hL2RCSW1nSmJIVmpQNkhZMllncGJZYkErcHNH?=
+ =?utf-8?B?T25KTG9MYUNlUXExWlB2UWExZHRNTmU2MHhla1Y2ZzB1VTRITmZ5T3ZKV1p5?=
+ =?utf-8?B?RkJLMko5UkxsN3hkMFFGUmZPdHpTRmNDZGZ0QWRwNnVReDlHQTVlUmhESEZU?=
+ =?utf-8?B?NFRqNmNiQVNBRnBCQ1QwbldZRndYam9lQWE1VzZ1YkpXNkNBRnJWaFJBRjMy?=
+ =?utf-8?B?WFM5cXZzUUJkSkNWY09oWHFMSTB4VVJGc1RkN3Bsdm5HZzBFYUF3NXoxbm5M?=
+ =?utf-8?B?YjZSdStZWXh4NE1GejduVnVOM2JjV2o2T3k3TVo5TnZ3VFNJOC90WFhnZHVY?=
+ =?utf-8?B?U21pREcwR04xbkFrRktScnlJbmVmWXJOdGh1WjdPdkRZWWZYbUJtdGJ0emlC?=
+ =?utf-8?B?dzhhaXF3cXNobmJpT1ZCYXRxRjlleU9uVk04clBlYzByOThNRnFTc3JBNXBO?=
+ =?utf-8?B?dGVRUFZZMzJ0cWl4djRwa3ZGcHVqVFNVQzZ6dWhjTlMyekFISnQ2MGFUdVl5?=
+ =?utf-8?B?SXJaVWdwM052YXJiVUNNc2ZDNktpdVpEenh1UkN1RVhCaXIwOVNsbjVpeDdM?=
+ =?utf-8?B?OUV0NnV0c0pUVHhTRTg0Y0hPOEVDRU5ISnc5dFpyeC9VTVJtOHlBRk5ZWS9J?=
+ =?utf-8?B?VDRHT2FiYUlndS9TZkgzR3RHTElvZ2pXQTBHeFVoaVpablBpVWNrYWtvTEpF?=
+ =?utf-8?B?WUU3Zy9vQWNMK01XN1ZuUmE2aUVRTEVPN3JTQUlCY1ZHVWxTM2FEck5BMGJD?=
+ =?utf-8?B?aXpaZ0NtUDY0R3QwYmd1RVNWNkp3L2dQb2VOSjcyTHVJQXNMaHdUeEN4MVZz?=
+ =?utf-8?B?Wm9naC9panN3SWpONGVGdTQ2ekRFOEMrQWkzcmZpdlpHd1JXUnI3N3JkKzFh?=
+ =?utf-8?B?ZGFoRDVNNS8yZGZ5Y3VCV01vWjBCL2xKSEVXbzBvZlhmNW1zSGRhV2gycmpW?=
+ =?utf-8?B?NmxhVU9hQmI0bFYyNkovWG4vcS9iV2RjUGMzdjhOa2JPN3pKNlpaMUVDbGR5?=
+ =?utf-8?B?WlBCS1RjZFFEbU82b3o4QVQwbXUyWmpFTDU1S1dTYTZpc2EzcnI5amxuaFI3?=
+ =?utf-8?B?eXdPTVZDM0JMM2plRzl6c3h0d2lFOWZoZEg1WDZIbWRDek92TEI4VS9RVm9i?=
+ =?utf-8?B?RWIzZTVXNEhJOEUyK0d2UnozOTRIZ3ZrKzUybWJrQ0NHczFXb1ZqM1hGSmhN?=
+ =?utf-8?B?VGZxZm8vVm9hR0s1OTl1MnN0UzQya0pTNGFLRTF3dEVSREV1cXc1VUs3MVlW?=
+ =?utf-8?B?bWcvUlFXdnNSQmVmeGE0dGdZblR1eXFKRWF2WVBvUS9DOXptYktxOWJ6YUNF?=
+ =?utf-8?B?dFpHbmg4UHVLVXdaSkZmMjhRRTBlVUdIV0llWjY5MFhvbnREVjJ2TUxNR0Rv?=
+ =?utf-8?B?dXkycG41Y3pPMlE0MGd3TUh1dTl4WkRUVzlMbDYvTStNZVdpZzZtOU1TNGxy?=
+ =?utf-8?B?RUpXNWUvd2lEV1dvTnVORkhFbHJNUGRkQ25NY0FHWllTUmt1aDhSOXB4VnVK?=
+ =?utf-8?Q?arID3YuYsGMeqvm0OnBQu1AU7?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a6335f4-76f9-4c65-8b76-08ddbf0786a5
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 16:42:00.2742
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8GuFsEJwtsDmf+HCXi/eWvZQe0zXk4BYNW28Hhbh/BKHAehzU0PcjAMJNRbIuF7e0gAZrgE2Mj2VcARKRY7qhQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8281
 
-Am Mittwoch, dem 09.07.2025 um 15:17 +0200 schrieb Thomas Wei=C3=9Fschuh:
-> Hi Bert,
->=20
-> On Wed, Jul 09, 2025 at 02:42:15PM +0200, Bert Karwatzki wrote:
-> > Recently I found that my RAM has an error (memtest86+ reproducibly rep=
-orts
-> > a failing address) (this error may lead to random crashes every few da=
-ys).=20
-> > To further investigate the issue I tried using memtester which needs a=
-ccess=20
-> > to /dev/mem and so I recompiled linux next-20250708 with CONFIG_DEMEM=
-=3Dy=20
-> > and found a strange and unusual side effect:
-> >=20
-> > a) the time displayed by xfce is stuck at 1.1.1970 01:00 (UTC + 1)
-> > b) most certificates in firefox-esr fail to work due to the date being=
- 1.1.1970=20
-> > (this includes www.google.de, www.duckduckgo.com, wikipedia and youtub=
-e and many more)
-> > c) some certificates in firefox-esr still work (kernel.org, xkcd.com, =
-www.spiegel.de)
-> > d) the shell built-in time (and also /usr/bin/time) fail to work, e.g.
-> > $ time sleep 5
-> > real	0m0,000s
-> > user	0m0,000s
-> > sys	0m0,002s
-> > (even though it actually take 5 seconds for this)
-> > e) date still works correctly, e.g.
-> > $ date
-> > Mi 9. Jul 11:51:20 CEST 2025
-> > f) This example program=20
-> >=20
-> > #include <stdlib.h>
-> > #include <stdio.h>
-> > #include <sys/time.h>
-> >=20
-> > int main()
-> > {
-> > 	int ret;
-> > 	struct timeval tv;
-> > 	struct timezone tz;
-> >=20
-> > 	ret =3D gettimeofday(&tv, &tz);
-> > 	printf("gettimeofday returns ret =3D %d, tv.tv_sec =3D %lu tv.tv_usec=
- =3D %lu\n", ret, tv.tv_sec, tv.tv_usec);
-> >=20
-> > 	return 0;
-> > }
-> >=20
-> > gives the following output on affected versions:
-> >=20
-> > $
-> > gettimeofday returns ret =3D 0, tv.tv_sec =3D 0 tv.tv_usec =3D 0
->=20
-> Thanks for the report. Can you try the fix posted by Marek [0]?
-> It looks like the same issue where the vDSO fastpath is unavailable on y=
-our
-> hardware but I broke the check for it.
+On 7/9/2025 6:05 AM, Samuel Zhang wrote:
+> This new api is used for hibernation to move GTT BOs to shmem after
+> VRAM eviction. shmem will be flushed to swap disk later to reduce
+> the system memory usage for hibernation.
+> 
+> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
+> Reviewed-by: Christian König <christian.koenig@amd.com>
+> ---
+>   drivers/gpu/drm/ttm/ttm_device.c | 23 +++++++++++++++++++++++
+>   include/drm/ttm/ttm_device.h     |  1 +
+>   2 files changed, 24 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/ttm/ttm_device.c b/drivers/gpu/drm/ttm/ttm_device.c
+> index 02e797fd1891..9c9ab1903919 100644
+> --- a/drivers/gpu/drm/ttm/ttm_device.c
+> +++ b/drivers/gpu/drm/ttm/ttm_device.c
+> @@ -123,6 +123,29 @@ static int ttm_global_init(void)
+>   	return ret;
+>   }
+>   
+> +/**
+> + * ttm_device_prepare_hibernation - move GTT BOs to shmem for hibernation.
+> + *
+> + * @bdev: A pointer to a struct ttm_device to prepare hibernation for.
+> + *
+> + * Return: 0 on success, negative number on failure.
+> + */
+> +int ttm_device_prepare_hibernation(struct ttm_device *bdev)
+> +{
+> +	struct ttm_operation_ctx ctx = {
+> +		.interruptible = false,
+> +		.no_wait_gpu = false,
+> +		.force_alloc = true
 
-Yes, this fixes the issue for me.
+On linux-next (next-20250709):
 
-> If it is the same issue it still leaves the question why the fastpath is
-> broken by CONFIG_DEVMEM. Can you describe your setup a bit?
-> Are there any entries in dmesg about the tsc or the clocksource subsyste=
-m?
-=20
-I use a MSI Alpha 15 B5EEK/MS-158L amd64 laptop (AMD Ryzen 7 5800H) runnin=
-g debian sid. When booting=C2=A0
-without "tsc=3Dunstable" I get this message in dmesg (this is from next-20=
-250708 with CONFIG_DEVMEM=3Dy):
+drivers/gpu/drm/ttm/ttm_device.c: In function 
+‘ttm_device_prepare_hibernation’:
+drivers/gpu/drm/ttm/ttm_device.c:140:18: error: ‘struct 
+ttm_operation_ctx’ has no member named ‘force_alloc’
+   140 |                 .force_alloc = true
+       |                  ^~~~~~~~~~~
 
-[    C7] clocksource: timekeeping watchdog on CPU7: Marking clocksource 't=
-sc' as unstable because the skew is too large:
-[    C7] clocksource:                       'hpet' wd_nsec: 495997815 wd_n=
-ow: 36f24f3 wd_last: 302c799 mask: ffffffff
-[    C7] clocksource:                       'tsc' cs_nsec: 497721239 cs_no=
-w: 1ea2752100 cs_last: 1e43b3e700 mask: ffffffffffffffff
-[    C7] clocksource:                       Clocksource 'tsc' skewed 17234=
-24 ns (1 ms) over watchdog 'hpet' interval of 495997815 ns (495 ms)
-[    C7] clocksource:                       'hpet' (not 'tsc') is current =
-clocksource.
-[    C7] tsc: Marking TSC unstable due to clocksource watchdog
-[  T233] TSC found unstable after boot, most likely due to broken BIOS. Us=
-e 'tsc=3Dunstable'.
-[  T233] sched_clock: Marking unstable (4040049255, 1223348)<-(4058551237,=
- -15591933)
+> +	};
+> +	int ret;
+> +
+> +	do {
+> +		ret = ttm_device_swapout(bdev, &ctx, GFP_KERNEL);
+> +	} while (ret > 0);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(ttm_device_prepare_hibernation);
+> +
+>   /*
+>    * A buffer object shrink method that tries to swap out the first
+>    * buffer object on the global::swap_lru list.
+> diff --git a/include/drm/ttm/ttm_device.h b/include/drm/ttm/ttm_device.h
+> index 39b8636b1845..592b5f802859 100644
+> --- a/include/drm/ttm/ttm_device.h
+> +++ b/include/drm/ttm/ttm_device.h
+> @@ -272,6 +272,7 @@ struct ttm_device {
+>   int ttm_global_swapout(struct ttm_operation_ctx *ctx, gfp_t gfp_flags);
+>   int ttm_device_swapout(struct ttm_device *bdev, struct ttm_operation_ctx *ctx,
+>   		       gfp_t gfp_flags);
+> +int ttm_device_prepare_hibernation(struct ttm_device *bdev);
+>   
+>   static inline struct ttm_resource_manager *
+>   ttm_manager_type(struct ttm_device *bdev, int mem_type)
 
-I usually boot with "tsc=3Dunstable" but the issue occurs there, too. I ca=
-n't say yet why
-this only occurs with CONFIG_DEVMEM=3Dy.
-
-
-Bert Karwatzki
 
