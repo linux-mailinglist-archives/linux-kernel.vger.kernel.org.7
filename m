@@ -1,200 +1,114 @@
-Return-Path: <linux-kernel+bounces-724660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9CFAFF58C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:00:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2586AFF595
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04A85A1DAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2031AA8A43
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E414872622;
-	Thu, 10 Jul 2025 00:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="goaCz47L"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE38D29D0D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA8FAD23;
+	Thu, 10 Jul 2025 00:16:22 +0000 (UTC)
+Received: from audible.transient.net (audible.transient.net [24.143.126.66])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id A78073D69
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.143.126.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752105648; cv=none; b=Ucrk7NlPOoJdzu9Mbl/UC5tiCeCZhaRBqkFnLyqKIJwilZa2DLTi6mShOvloi+c53e5adMCAof4DomqHMbHb5aQlOCmKaCh1uCKy+hXaOtz8HHywFD+/vUijUgQbjkYsA0FP0FulEkbTGTUOd3xb1a9Ljnsad6k28GQGzMSXqLc=
+	t=1752106582; cv=none; b=on70icpS7hbfh/GvdkKMUMKaDgVvuWKKHYBiOFsw9UVl9Hq+ECkc1KLxDehuzg1XyuezKbDtkBRX8NQX7U8HlPiNZx1ifvhxFV3yZyOCxmU4FEH/BwWTdpGufWAJ5OJEy70wNckuVt9If3cb6NlAFAfG8mXMYozpV03rZFSxgTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752105648; c=relaxed/simple;
-	bh=LJYyGTSErihblfOKFi6BylxXoGQ687UZBJYL9fnodBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s0my2KDSTap27kOVJ1n0T0vPtqL3HEzljyaFI7cBHtiYPoSReObASvyuOINRM+p1JFehJGnc/JS5a9oQmGUO2v7W1AlP2/ariTFvWznS7GdH0oMfTQuN9ZeLWCo3t3AwhLppBugd6ZuY2DsydFVT/1fas7fhYYIlhwKviO53sfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=goaCz47L; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1752105646;
- bh=vkPooPX6zi3QRoM9CrTsbZoAxP36NlshDQEMrww4eZw=;
- b=goaCz47L+Jrhu8tQhXmV1srCl8J8AiScNfOF85pJoHjRepBGsn0rsM/ldtfrS2tM6Yq9bQT++
- sPLYJum9TMTH0yotgaJ96kqPT5mpQZ011kN4V1hDZ2aWq0BWnIcxOeCtfeIvaktZieZsqsaw9x/
- PWEANK6Kw2/FlTmayzx9YcAozgTd7h03YUnMWBNrPeBur45x7gFDvmihPsV8T4vrASn5VaZ+w67
- iqgRJbQbwQUaqrHm5u5QHwJRsdNxGKVcsX+wClbMcTA6bfIj1RsyjPVz+SXr1FRi1gKYaq2FPaA
- w4ZMLH+2Lmpmdl/mAOXXNkFfwJRkkSI4eJ18LcepMPKQ==
-X-Forward-Email-ID: 686f02a6cecacbdaffda9867
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.1.3
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <87c6249a-96f1-4557-b4eb-70e69e6d773f@kwiboo.se>
-Date: Thu, 10 Jul 2025 02:00:34 +0200
+	s=arc-20240116; t=1752106582; c=relaxed/simple;
+	bh=ZlDHScqJfWOWyzCL4r+gdpFIRQ61fogzaddKfDoU/qE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nlgbi9ysMzuBvyjy8CWkXDAR3RIC2ps5F3nc68/Oab8222wLrA9R5v+z0fLDRluRp3oGZ2KohRRvQcJoBZcjb4YegwaHh8kMg6tdCWTofRGPF+DPKb9JtKeVY9BAWIZk4aFmIbRSZLfpDg8PCYFdCgyvY5f7GpMDaRFKixiwV9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=audible.transient.net; spf=pass smtp.mailfrom=audible.transient.net; arc=none smtp.client-ip=24.143.126.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=audible.transient.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=audible.transient.net
+Received: (qmail 4019 invoked by uid 1000); 9 Jul 2025 12:04:22 -0000
+Date: Wed, 9 Jul 2025 12:04:22 +0000
+From: Jamie Heilman <jamie@audible.transient.net>
+To: Ben Skeggs <bskeggs@nvidia.com>
+Cc: Rui Salvaterra <rsalvaterra@gmail.com>, airlied@gmail.com,
+  nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] NVIDIA ION graphics broken with Linux 6.16-rc*
+Message-ID: <aG5axlstlhnUYks2@audible.transient.net>
+Mail-Followup-To: Ben Skeggs <bskeggs@nvidia.com>,
+	Rui Salvaterra <rsalvaterra@gmail.com>, airlied@gmail.com,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+References: <CALjTZvZgH0N43rMTcZiDVSX93PFL680hsYPwtp8=Ja1OWPvZ1A@mail.gmail.com>
+ <aG2mzB58k3tkxvK-@audible.transient.net>
+ <25642e5b-25ee-49b2-b08d-4c64fa2e505a@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] arm64: dts: rockchip: Add ArmSoM Sige1
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
- krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- robh@kernel.org, ziyao@disroot.org
-References: <20250708224921.2254116-5-jonas@kwiboo.se>
- <20250709070003.53484-1-amadeus@jmu.edu.cn>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250709070003.53484-1-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <25642e5b-25ee-49b2-b08d-4c64fa2e505a@nvidia.com>
 
-Hi,
-
-On 7/9/2025 9:00 AM, Chukun Pan wrote:
+Ben Skeggs wrote:
+> On 7/9/25 09:16, Jamie Heilman wrote:
+> > Rui Salvaterra wrote:
+> > > Unfortunately, bisecting is not feasible for me.
+> > That looks pretty similar to the problem I posted
+> > (https://lore.kernel.org/lkml/aElJIo9_Se6tAR1a@audible.transient.net/)
+> > that I bisected to 862450a85b85 ("drm/nouveau/gf100-: track chan
+> > progress with non-WFI semaphore release").  It still reverts cleanly
+> > as of v6.16-rc5 so you might want to give that a shot.
+> 
 > Hi,
 > 
->> +	vcc5v0_usb1_host: regulator-5v0-vcc-usb1-host {
->> +		compatible = "regulator-fixed";
->> ...
->> +		regulator-always-on;
->> +		regulator-boot-on;
->> ...
->> +	vcc5v0_usb2_host: regulator-5v0-vcc-usb2-host {
->> +		regulator-always-on;
->> +		regulator-boot-on;
->> ...
+> Thank you for bisecting!  Are you able to try the attached patch?
+
+Yeah that got graphics visible again for me, though there's something
+else horrible going on now (still? I'm not sure if its new behavior or
+not) and it blows out my dmesg ringbuffer with errors or warnings of
+some kind, that I was just about to start trying to debug that when
+some power event seems to have fried my PSU.  Combined with a bunch of
+filesystem corruption, its going to be a while a before I can get that
+system back up to that spot where I can troubleshoot it again, the
+root volume is fried and I'm going to have rebuild.  Anyway, I think
+whatever it is was probably an entirely separate issue.
+
+> From 6987c1c254285305fdc20270e21709a313632e0d Mon Sep 17 00:00:00 2001
+> From: Ben Skeggs <bskeggs@nvidia.com>
+> Date: Wed, 9 Jul 2025 10:54:15 +1000
+> Subject: [PATCH] drm/nouveau/nvif: fix null ptr deref on pre-fermi boards
 > 
-> I think these two regulators do not need boot-on?
-
-Agree, will remove the boot-on in v2.
-
+> Check that gpfifo.post() exists before trying to call it.
 > 
->> +	rfkill {
->> +		compatible = "rfkill-gpio";
->> +		label = "rfkill-wlan";
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&wifi_reg_on_h>;
->> +		radio-type = "wlan";
->> +		shutdown-gpios = <&gpio1 RK_PA6 GPIO_ACTIVE_HIGH>;
->> +	};
+> Fixes: 862450a85b85 ("drm/nouveau/gf100-: track chan progress with non-WFI semaphore release")
+> Signed-off-by: Ben Skeggs <bskeggs@nvidia.com>
+> ---
+>  drivers/gpu/drm/nouveau/nvif/chan.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Why not use mmc-pwrseq instead of rfkill?
-
-Not sure, have changed to use mmc-pwrseq in v2.
-
-> 
->> +	rfkill-bt {
->> +		compatible = "rfkill-gpio";
->> +		label = "rfkill-bt";
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&bt_reg_on_h>;
->> +		radio-type = "bluetooth";
->> +		shutdown-gpios = <&gpio1 RK_PC1 GPIO_ACTIVE_HIGH>;
->> +	};
-> 
-> Why not use shutdown-gpios of bcm43438-bt?
-
-Sure, will use that in v2.
-
-> 
->> +&i2c0 {
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&i2c0m0_xfer>;
->> +	status = "okay";
->> +
->> +	hym8563: rtc@51 {
->> +		compatible = "haoyu,hym8563";
->> +		reg = <0x51>;
->> +		#clock-cells = <0>;
->> +		clock-output-names = "hym8563";
-> 
-> CLKOUT pin is not connected.
-
-Thanks, will remove the clock-output-names for the Sige1 and the NanoPi
-Zero2 in v2, #clock-cells seem to be required by the dt-bindings.
-
-> 
->> +&sdio0 {
->> +	bus-width = <4>;
->> +	cap-sd-highspeed;
->> +	cap-sdio-irq;
->> +	disable-wp;
->> +	keep-power-in-suspend;
->> +	no-mmc;
->> +	no-sd;
->> +	non-removable;
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>, <&clkm1_32k_out>;
-> 
-> I recommend using clkm1_32k_out at the sdio-pwrseq node.
-
-Will do so in v2.
-
-> 
->> +	sd-uhs-sdr104;
->> +	vmmc-supply = <&vcc_3v3>;
->> +	vqmmc-supply = <&vcc_1v8>;
->> +	status = "okay";
-> 
-> Maybe `brcm,bcm4329-fmac` nodes can be added here?
-
-Will add to in v2.
-
-> 
->> +&uart2 {
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&uart2m1_xfer>, <&uart2m1_ctsn>, <&uart2m1_rtsn>;
->> +	uart-has-rtscts;
->> +	status = "okay";
-> 
-> You can add `brcm,bcm43438-bt` nodes here:
-> 
-> 	bluetooth {
-> 		compatible = "brcm,bcm43438-bt";
-> 		device-wakeup-gpios = <&gpio3 RK_PC3 GPIO_ACTIVE_HIGH>;
-> 		host-wakeup-gpios = <&gpio1 RK_PC2 GPIO_ACTIVE_HIGH>;
-> 		shutdown-gpios = <&gpio1 RK_PC1 GPIO_ACTIVE_HIGH>;
-> 		...
-> 	};
-
-Will use something similar in v2.
-
-See [1] for fixups I am testing for v2.
-
-[1] https://github.com/Kwiboo/linux-rockchip/commits/next-20250708-rk3528-boards/
-
-Regards,
-Jonas
-
-> 
-> Thanks,
-> Chukun
-> 
-> --
-> 2.25.1
+> diff --git a/drivers/gpu/drm/nouveau/nvif/chan.c b/drivers/gpu/drm/nouveau/nvif/chan.c
+> index baa10227d51a..80c01017d642 100644
+> --- a/drivers/gpu/drm/nouveau/nvif/chan.c
+> +++ b/drivers/gpu/drm/nouveau/nvif/chan.c
+> @@ -39,6 +39,9 @@ nvif_chan_gpfifo_post(struct nvif_chan *chan)
+>  	const u32 pbptr = (chan->push.cur - map) + chan->func->gpfifo.post_size;
+>  	const u32 gpptr = (chan->gpfifo.cur + 1) & chan->gpfifo.max;
+>  
+> +	if (!chan->func->gpfifo.post)
+> +		return 0;
+> +
+>  	return chan->func->gpfifo.post(chan, gpptr, pbptr);
+>  }
+>  
+> -- 
+> 2.49.0
 > 
 
+
+-- 
+Jamie Heilman                     http://audible.transient.net/~jamie/
 
