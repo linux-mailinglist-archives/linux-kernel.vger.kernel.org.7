@@ -1,93 +1,101 @@
-Return-Path: <linux-kernel+bounces-722765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95320AFDE94
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:49:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8A7AFDE61
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D48365843AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:49:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 750093AD499
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFE51FF5E3;
-	Wed,  9 Jul 2025 03:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7076D2192F9;
+	Wed,  9 Jul 2025 03:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="c2WhWLj2"
-Received: from epicurean-pwyll.relay-egress.a.mail.umich.edu (relay-egress-host.us-east-2.a.mail.umich.edu [18.217.159.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DiIQG9IN"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF77AD517;
-	Wed,  9 Jul 2025 03:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.217.159.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0E620468C;
+	Wed,  9 Jul 2025 03:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752032946; cv=none; b=dSiCw6THFSyQp3IABuL7Cwr0v1rZegfJzi4qLA0sNcePBiLxKz8YkN+cMYGsX0KRnVAc9NNXIWZVC4t4+OvgmbAeMcNTk363fRFrWgkEP/J0NAJVscuh7rfN+wS0wn+BntszsWsGCKMlJ5maWokFLMktUrXr1Wp4RYTxdP6S46M=
+	t=1752032412; cv=none; b=a6yD0TuBl6jVWCl9RfIDfu93bqVGo5+BD0KWhSRv8WWvpn+/rDG2wpCyunCuCfks/x2d4v3k2Rq8dm7zdeB5PNHET2WXA6v8OIF3EcnTBYik8gU0RokAMkJVTbouKN0QgHZzQEF3Ah830QNVBcjADf5ejMNm0glzaos5oVnp34E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752032946; c=relaxed/simple;
-	bh=zjvjUcwS5qfI9jHWRzf+0fkXmbuLjmAbMYytraR6Tao=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=NhJZS7D6Anq9ooTwUr3B1njh/XUOEYgoG9N5sClGWlKjNDn0THsfA065UOyaXBG3vyryPdYY1OP0K0+TUM7OqQLAgkIYlgnQSGi7J3C6T7mkRQOYDm3Becp8jhOqXSh1HEqh0viS1Aw5vslbN1jbIPCh4jDgGdl9DwOtlqJNJe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=c2WhWLj2; arc=none smtp.client-ip=18.217.159.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
-Received: from advisable-myrddin.jail.a.mail.umich.edu (ip-10-0-73-63.us-east-2.compute.internal [10.0.73.63])
-	by epicurean-pwyll.relay-egress.a.mail.umich.edu with ESMTPS
-	id 686DE6AD.359AA137.4E5FB9A4.222246;
-	Tue, 08 Jul 2025 23:49:01 -0400
-Received: from inspiring-wechuge.authn-relay.a.mail.umich.edu (ip-10-0-74-32.us-east-2.compute.internal [10.0.74.32])
-	by advisable-myrddin.jail.a.mail.umich.edu with ESMTPS
-	id 686DE47B.1ED842D5.6149EC18.933264;
-	Tue, 08 Jul 2025 23:39:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=umich.edu;
-	s=relay-1; t=1752032375;
-	bh=zjvjUcwS5qfI9jHWRzf+0fkXmbuLjmAbMYytraR6Tao=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=c2WhWLj2RRdNo3XYLXv5lxWvlmKbu/Bul0xOA1Tw6gXVdnZCqwEgoUPCMH5W86YMm
-	 ffM1Toa2+jAj+9FeLpxlKQlZvXt761mFqXIehtfh2rRY/UiNk4t16hiw1fJCCAJ3YO
-	 axsAaSDygz4JOXhtGagWeCgl8yJbecaMrwjNVPva3HAbvNA6wJcTSqVXHp6uOhTx1m
-	 accbNpYlhCvMkura/1cobgjggz44qOLJPIPEcrAR1GBTGqr92oLODzXAKf6inK8MJ0
-	 H9xzrATJuaOOEene4+oFC5TzJC3HxaiVqTsMHEwi7xPnwT3YbkEK8WjmNIlr3SXmgJ
-	 nSjjJvQeEwa8w==
-Authentication-Results: inspiring-wechuge.authn-relay.a.mail.umich.edu; 
-	iprev=pass policy.iprev=185.104.139.75 (ip-185-104-139-75.ptr.icomera.net);
-	auth=pass smtp.auth=tmgross
-Received: from localhost (ip-185-104-139-75.ptr.icomera.net [185.104.139.75])
-	by inspiring-wechuge.authn-relay.a.mail.umich.edu with ESMTPSA
-	id 686DE474.2AFF1CF8.852C2E6.1056699;
-	Tue, 08 Jul 2025 23:39:35 -0400
+	s=arc-20240116; t=1752032412; c=relaxed/simple;
+	bh=3SeS1jSZ1uKWb2RnmlmFn9EOFA/8pLBPt/77POmDd88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oQbjSv8dVBTrgvN4PVHlGvwbExGEU3bonyLZgVjUOHXmrWk0WAx0io/V4CiuGMVr1mOZueboBJXveHBlvLMMy5G5G8M0/t4T9HE3aKq8D/tYKMyyvOHTB6LSBcQrzA9ZDiwt+B1Z1FRyZ3nv+NnScX+N0dbJImeOIE6VRqYpjpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DiIQG9IN; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=l0Gq002lEzoDPmtVcJJpz54mmuMH6UsxtCTp8dFyrXg=; b=DiIQG9INQ7CtYAmMKi/xLNPP9n
+	F5LN75zy7oXey2ZZeG0Fibq2NRXqWDbPPIdMt041mH6fS3oHTtk2mErT6ZWUX5xZBN6+4w3thR4jy
+	ccfFObBRKSEAu3NlbR5BSaOBoAs6CIO9GkhKaGwGVPb0jzd+QFXKw0n7d++UQo97RQJDCLqWn4ZC1
+	CkCV+hmOjKTRlZ9OPp5j7iELhhBIbDEBRTmTPMai4i9WSNHSMBXKqwtg2qqLHIskxJWKFhIet6BqE
+	mWQ3Rr0e0TkvPBegNEOXBf1in1WMTWROUgEc8QFBup62l67fWJ7+9DTy72u/FyiSYzu5IfUaPbEsV
+	q28CpoOQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZLfE-00000002Hyu-0FaC;
+	Wed, 09 Jul 2025 03:40:08 +0000
+Message-ID: <e5f0a46d-401e-476b-a388-db3cce4b135d@infradead.org>
+Date: Tue, 8 Jul 2025 20:40:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for Jul 8 (drivers/staging/media/ipu7/ipu7.c)
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-media@vger.kernel.org, akari Ailus <sakari.ailus@linux.intel.com>
+References: <20250708201124.25e87f2a@canb.auug.org.au>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250708201124.25e87f2a@canb.auug.org.au>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Jul 2025 23:39:30 -0400
-Message-Id: <DB77N3PDLA0W.26YMMAHG8LIVF@umich.edu>
-From: "Trevor Gross" <tmgross@umich.edu>
-To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>, <alex.gaynor@gmail.com>,
- <dakr@kernel.org>, <gregkh@linuxfoundation.org>, <ojeda@kernel.org>,
- <rafael@kernel.org>, <robh@kernel.org>, <saravanak@google.com>
-Cc: <a.hindborg@kernel.org>, <aliceryhl@google.com>, <bhelgaas@google.com>,
- <bjorn3_gh@protonmail.com>, <boqun.feng@gmail.com>,
- <david.m.ertman@intel.com>, <devicetree@vger.kernel.org>,
- <gary@garyguo.net>, <ira.weiny@intel.com>, <kwilczynski@kernel.org>,
- <leon@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <lossin@kernel.org>, <netdev@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v3 3/3] rust: net::phy Change module_phy_driver macro to
- use module_device_table macro
-X-Mailer: aerc 0.20.1
-References: <20250704041003.734033-1-fujita.tomonori@gmail.com>
- <20250704041003.734033-4-fujita.tomonori@gmail.com>
-In-Reply-To: <20250704041003.734033-4-fujita.tomonori@gmail.com>
+Content-Transfer-Encoding: 7bit
 
-On Fri Jul 4, 2025 at 12:10 AM EDT, FUJITA Tomonori wrote:
-> Change module_phy_driver macro to build device tables which are
-> exported to userspace by using module_device_table macro.
->
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 
-Reviewed-by: Trevor Gross <tmgross@umich.edu>
+
+On 7/8/25 3:11 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20250704:
+> 
+
+on x86_64:
+
+# CONFIG_ACPI is not set
+# CONFIG_PCI is not set
+# CONFIG_MODULES is not set
+CONFIG_COMPILE_TEST=y
+
+
+drivers/staging/media/ipu7/ipu7.c: In function 'ipu7_pci_config_setup':
+drivers/staging/media/ipu7/ipu7.c:2260:15: error: implicit declaration of function 'pci_enable_msi'; did you mean 'pci_enable_sriov'? [-Wimplicit-function-declaration]
+ 2260 |         ret = pci_enable_msi(dev);
+      |               ^~~~~~~~~~~~~~
+      |               pci_enable_sriov
+/drivers/staging/media/ipu7/ipu7.c: At top level:
+drivers/staging/media/ipu7/ipu7.c:2775:1: warning: data definition has no type or storage class
+ 2775 | module_pci_driver(ipu7_pci_driver);
+      | ^~~~~~~~~~~~~~~~~
+drivers/staging/media/ipu7/ipu7.c:2775:1: error: type defaults to 'int' in declaration of 'module_pci_driver' [-Wimplicit-int]
+drivers/staging/media/ipu7/ipu7.c:2775:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+drivers/staging/media/ipu7/ipu7.c:2764:26: warning: 'ipu7_pci_driver' defined but not used [-Wunused-variable]
+ 2764 | static struct pci_driver ipu7_pci_driver = {
+      |                          ^~~~~~~~~~~~~~~
+@-- 
+~Randy
+
 
