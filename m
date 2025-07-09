@@ -1,132 +1,191 @@
-Return-Path: <linux-kernel+bounces-722965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78FD9AFE132
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:22:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018D8AFE137
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72F58188EEAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:23:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064D24E5416
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9D926F45A;
-	Wed,  9 Jul 2025 07:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE18B26C3BC;
+	Wed,  9 Jul 2025 07:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="u+O8eUBe"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="orQ8efhA"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF9E33997
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAB32AD2F;
+	Wed,  9 Jul 2025 07:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752045771; cv=none; b=dfKHz1a50VmmC+nEFFBI2qyBHmMcOgqlJiRQx1Ekhp5O+l/cMtfS3DtwxkJdhHBZ/MPl+GJTuXL4Q7pJ87lZUTVTgHNYU1ZuVkwUSevUinOlooBqurOnV0kOfirzdYJqXoyGJ7t1V/YFmR1YDEJx7Fg+YcbMqdmyVDXh35RGzqc=
+	t=1752045797; cv=none; b=dkJUkOmo1bheFKsHo6leVnT0qkxh/jMtSNPSugAbLUD/Q7T4dT90OCp7shgH7m2siiBaAS7nYZabv+AD54t3+OGP3Rpx0NujuBpt9PopaloEnnWzg64J4HG8Tnz+tECzqSHHjtIWd+lkHrR3DnU9K2hqnGG/lJT4ibRM9GvFT54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752045771; c=relaxed/simple;
-	bh=AJRk+myXB/Ct0dNapM9Txaj2/oHKv4lFWeN4J4Yd0o4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=in+w6vd8fGBtX2KuWaX7sO9Ekk/ORbEa7TZFLty48nSS6W/hXdivqPjU8069FUBodtHQr5DM7DR4AqgPDFtFc2xTzFYZxIzlzm4UObRflRKAUHF2KcTh6BK8H3Uew8b259DpIkk0kHQZ+h2GVg+Q/3GxSadP/xwaBfkftwkMsWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=u+O8eUBe; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250709072246euoutp021dc99b64bd888af2494d4bada90d21cf~QhFeOzxFK0658606586euoutp02z
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:22:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250709072246euoutp021dc99b64bd888af2494d4bada90d21cf~QhFeOzxFK0658606586euoutp02z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752045766;
-	bh=qIHbeL0LG8G55ANYGcdpujwUfCstWXCxAhnRkcjxSxo=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=u+O8eUBejQ0U3lDJSuGDT7O5A/2mhQfjdEr38ZnnSm3Z8lCrRXk6b+nevytM15awo
-	 25r7QXh3IEnRHwfD96bFEDkSZQ3ByBaTuHMeYQrrxorgL8Y3By2iGo6nYl2vAjLAM5
-	 n0Mdgya150E1spOOOyzKUWIQ1LJBxrPnGh+Tabqg=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250709072246eucas1p1d64e4c09a83c92497d76cb3efeaf6509~QhFdx5tSY0368803688eucas1p1I;
-	Wed,  9 Jul 2025 07:22:46 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250709072243eusmtip29880f65c5964c8e0828e1df05a890579~QhFbeaA3i1291112911eusmtip2E;
-	Wed,  9 Jul 2025 07:22:43 +0000 (GMT)
-Message-ID: <4eb09ec9-bb7b-4266-8771-26b4819f47db@samsung.com>
-Date: Wed, 9 Jul 2025 09:22:43 +0200
+	s=arc-20240116; t=1752045797; c=relaxed/simple;
+	bh=q0ZQ0QrJfAp5C5X+jeNN4b0UDlY8E81ZtxAgCpRn+y4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J8kvz1XvWl/NecN80QR5LYcFfpiNmJkYVW2J99uRmYg4xZaLWJwdp9SA514WU0NBMEPd7tPZhM8yuvvZ2jpDAPbpFTJQ9t5+7YFADC/KJ2yttbyeBACgr/byiBb8J+gob4qmBUNsppxX0weldXa1LmrVFgxHZNKd20xYkP1tOXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=orQ8efhA; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=BS97jhDzzUjHilWkR1sT96zjI2f6GoRHScLPeEPg0RU=; b=orQ8efhAs5v/QafXjseL9pXPI/
+	CgaVQ97Na5+Upe7AffCWgKzKclIueLLeSr2poR4A3+cdqCc5Tkufd4htI5GsURYhYZW5mxkfhnpXr
+	5ezQccvInW7nwm1p1x2TFO8fAwLZvKI2sgNWQjAz0GoCsWvZNaJMra6m81ANjGODJ7PXvaQCYKESJ
+	0Gw3nLDwyfs/UPk9uulyn8UZn2BGbrLZNcX6UYjg6sP0Iz3tUvBvwWyV8RcrddWFU59MvqiHEHiIz
+	w5ZCETu3nbXgEWuguQe87tnyoP0eTCScwST/H1L3E3qYohjbgctjSV+rW8AT+0KMgP8cGSrTCqfSb
+	Eef0xYSQ==;
+Received: from i53875a79.versanet.de ([83.135.90.121] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uZP8t-0001Yu-5E; Wed, 09 Jul 2025 09:22:59 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>,
+ William Breathitt Gray <wbg@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Kever Yang <kever.yang@rock-chips.com>, Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Leon Romanovsky <leon@kernel.org>, Lee Jones <lee@kernel.org>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-iio@vger.kernel.org, kernel@collabora.com,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: Re: [PATCH v2 4/7] soc: rockchip: add mfpwm driver
+Date: Wed, 09 Jul 2025 09:22:57 +0200
+Message-ID: <8203440.zQ0Gbyo6oJ@diego>
+In-Reply-To: <20250602-rk3576-pwm-v2-4-a6434b0ce60c@collabora.com>
+References:
+ <20250602-rk3576-pwm-v2-0-a6434b0ce60c@collabora.com>
+ <20250602-rk3576-pwm-v2-4-a6434b0ce60c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/12] Apply drm_bridge_connector helper for the
- Analogix DP driver
-To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
-	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
-	dianders@chromium.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250709070139.3130635-1-damon.ding@rock-chips.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250709072246eucas1p1d64e4c09a83c92497d76cb3efeaf6509
-X-Msg-Generator: CA
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250709070241eucas1p1351e2b508cc648d1fafd93640b471e7b
-X-EPHeader: CA
-X-CMS-RootMailID: 20250709070241eucas1p1351e2b508cc648d1fafd93640b471e7b
-References: <CGME20250709070241eucas1p1351e2b508cc648d1fafd93640b471e7b@eucas1p1.samsung.com>
-	<20250709070139.3130635-1-damon.ding@rock-chips.com>
 
-On 09.07.2025 09:01, Damon Ding wrote:
-> PATCH 1 is a small format optimization for struct analogid_dp_device.
-> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
-> PATCH 3-8 are preparations for the movement of the panel/bridge parsing.
-> PATCH 9 is to apply a better API for the encoder initialization.
-> PATCH 10-11 are to apply the newly added API to find panel or bridge.
-> PATCH 12 is to apply the drm_bridge_connector helper.
+Hi Nicolas,
 
-This patchset conflicts with my recent fix for Analogix DP driver 
-applied to drm-misc-fixes:
+Am Montag, 2. Juni 2025, 18:19:15 Mitteleurop=C3=A4ische Sommerzeit schrieb=
+ Nicolas Frattaroli:
+> With the Rockchip RK3576, the PWM IP used by Rockchip has changed
+> substantially. Looking at both the downstream pwm-rockchip driver as
+> well as the mainline pwm-rockchip driver made it clear that with all its
+> additional features and its differences from previous IP revisions, it
+> is best supported in a new driver.
+>=20
+> This brings us to the question as to what such a new driver should be.
+> To me, it soon became clear that it should actually be several new
+> drivers, most prominently when Uwe Kleine-K=C3=B6nig let me know that I
+> should not implement the pwm subsystem's capture callback, but instead
+> write a counter driver for this functionality.
+>=20
+> Combined with the other as-of-yet unimplemented functionality of this
+> new IP, it became apparent that it needs to be spread across several
+> subsystems.
+>=20
+> For this reason, we add a new platform bus based driver, called mfpwm
+> (short for "Multi-function PWM"). This "parent" driver makes sure that
+> only one device function driver is using the device at a time, and is in
+> charge of registering the platform bus devices for the individual device
+> functions offered by the device.
+>=20
+> An acquire/release pattern is used to guarantee that device function
+> drivers don't step on each other's toes.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
 
-https://lore.kernel.org/all/20250627165652.580798-1-m.szyprowski@samsung.com/
+> +/**
+> + * mfpwm_register_subdev - register a single mfpwm_func
+> + * @mfpwm: pointer to the parent &struct rockchip_mfpwm
+> + * @target: pointer to where the &struct platform_device pointer should =
+be
+> + *          stored, usually a member of @mfpwm
+> + * @name: sub-device name string
+> + *
+> + * Allocate a single &struct mfpwm_func, fill its members with appropria=
+te data,
+> + * and register a new platform device, saving its pointer to @target. The
+> + * allocation is devres tracked, so will be automatically freed on mfpwm=
+ remove.
+> + *
+> + * Returns: 0 on success, negative errno on error
+> + */
+> +static int mfpwm_register_subdev(struct rockchip_mfpwm *mfpwm,
+> +				 struct platform_device **target,
+> +				 const char *name)
+> +{
+> +	struct rockchip_mfpwm_func *func;
+> +	struct platform_device *child;
+> +
+> +	func =3D devm_kzalloc(&mfpwm->pdev->dev, sizeof(*func), GFP_KERNEL);
+> +	if (IS_ERR(func))
+> +		return PTR_ERR(func);
+> +	func->irq =3D mfpwm->irq;
+> +	func->parent =3D mfpwm;
+> +	func->id =3D atomic_inc_return(&subdev_id);
+> +	func->base =3D mfpwm->base;
+> +	func->core =3D mfpwm->chosen_clk;
+> +	child =3D platform_device_register_data(&mfpwm->pdev->dev, name, func->=
+id,
+> +					      func, sizeof(*func));
+> +
+> +	if (IS_ERR(child))
+> +		return PTR_ERR(child);
+> +
+> +	*target =3D child;
+> +
+> +	return 0;
+> +}
+> +
+> +static int mfpwm_register_subdevs(struct rockchip_mfpwm *mfpwm)
+> +{
+> +	int ret;
+> +
+> +	ret =3D mfpwm_register_subdev(mfpwm, &mfpwm->pwm_dev, "pwm-rockchip-v4"=
+);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D mfpwm_register_subdev(mfpwm, &mfpwm->counter_dev,
+> +				    "rockchip-pwm-capture");
+> +	if (ret)
+> +		goto err_unreg_pwm_dev;
+> +
+> +	return 0;
+> +
+> +err_unreg_pwm_dev:
+> +	platform_device_unregister(mfpwm->pwm_dev);
+> +
+> +	return ret;
+> +}
 
+I still had this lingering feeling that this _is_ a MFD just with added
+sprinkles, so asked Lee on IRC about it:
 
-> Damon Ding (12):
->    drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
->    drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to
->      &drm_bridge_funcs.atomic_enable
->    drm/bridge: analogix_dp: Add &analogix_dp_plat_data.bridge
->    drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
->    drm/exynos: exynos_dp: Remove redundant
->      &analogix_dp_plat_data.skip_connector
->    drm/bridge: analogix_dp: Remove redundant
->      &analogix_dp_plat_data.skip_connector
->    drm/bridge: analogix_dp: Add support to find panel or bridge
->    drm/rockchip: analogix_dp: Apply drmm_encoder_init() instead of
->      drm_simple_encoder_init()
->    drm/rockchip: analogix_dp: Apply analogix_dp_find_panel_or_bridge()
->    drm/exynos: exynos_dp: Apply analogix_dp_find_panel_or_bridge()
->    drm/bridge: analogix_dp: Remove unused APIs for AUX bus
->    drm/bridge: analogix_dp: Apply drm_bridge_connector helper
->
->   .../drm/bridge/analogix/analogix_dp_core.c    | 370 ++++++++++--------
->   .../drm/bridge/analogix/analogix_dp_core.h    |   8 +-
->   drivers/gpu/drm/exynos/exynos_dp.c            |  27 +-
->   .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  42 +-
->   include/drm/bridge/analogix_dp.h              |   6 +-
->   5 files changed, 217 insertions(+), 236 deletions(-)
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+	<lag> Looks like an MFD to me
+	<lag> Yes, you can use an MFD core driver to control state / manage single=
+=2Duse resources
+
+So, citing Jean Luc Picard, "Make it so" ... please :-)
+
+Heiko
+
 
 
