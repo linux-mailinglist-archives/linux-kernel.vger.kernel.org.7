@@ -1,107 +1,142 @@
-Return-Path: <linux-kernel+bounces-724501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C33AFF3B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:13:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA821AFF3BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BFCA7B412F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E05F01C83A0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCAA23C38C;
-	Wed,  9 Jul 2025 21:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C441723D2B6;
+	Wed,  9 Jul 2025 21:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ry7uaS/k"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e/Bx1v2X"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2D313B797;
-	Wed,  9 Jul 2025 21:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33E2235BE8;
+	Wed,  9 Jul 2025 21:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752095585; cv=none; b=ga8mCkMqIznjPyvO7Jym2IlIugn/cISzdi2Elw9Uh25FtJu0y2nnzPA8EsM5IoJ/A03AXUrvJsoIOAvn9yRQcsvz+nI2zF1WLC5gDuzBvbifM+Ct6KZ0bSa8dtFfY7+LnujWKu5sZ+GH0wbJ8J+vocxJiNx0HCmSJIYlPKUhzc8=
+	t=1752095661; cv=none; b=kGCWJTmk/cR74GS3bk9oI4uQclfXUcf9fOipbgiAisChhOuWPejMy0Ccs0rpuc3JEm3DlKGoRb/45DYKqR2uTr1XUwDGvfV7yDTboBtm2/Z1kNWnMLcP7ozALqDi2bVQz/ukEc8+sTFM/9zoQtLrrUOne988abPsO4EFyPn5DmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752095585; c=relaxed/simple;
-	bh=euOd07cHnX9O5CkW5J+sbo8I4BBSaxORTjOxCBxyPUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HmLwBgF2tOA5z9CdwzjjHgMX782m9VS46Di/GtbvjlYLHe50yZD3w+LPauCHHd9oqh5P+f2wAi9/1NuDPPVPfdEkfiOukU92mxwEPZBAe1FxxHo7yfD85ko3zzTgeWtFgB3KvRyWfAIE3dcY1j0YtNMXcbo5r4ynSqK/FCQRkMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ry7uaS/k; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752095584; x=1783631584;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=euOd07cHnX9O5CkW5J+sbo8I4BBSaxORTjOxCBxyPUg=;
-  b=Ry7uaS/kGrv8Cl7xGx7Z3/zvVUKJWYlBDo4l2AqLo3k4mVxffaY7Sdk+
-   B9mWJBqZ7wKlrVL6rSe7k/fT6MS9Oh3gYCoKJMTYPeBfh9wY6Cmx4XU7z
-   azuzf+WuLIGB7L2J7/bwfDTve2UqA4bik4RQ66jSPllcGCDbxRpCVH5L7
-   AOUhasJBEWRYPXV9oSBpuuNWn2t1doM0dQD6cMOX00kFcOTIbapPmSRno
-   cthxJzqh9hrySqd4tOqpGk7hkpD324Vzu4O5z6rkUoJ00jEhjsOeG/XOc
-   y9XH+xPAvE4h2vCCiF74FczyL1z+crm9gb2Ho5TeKJ+6qJspOXZha979D
-   g==;
-X-CSE-ConnectionGUID: cbwKT87RRPSvVFwpJqVd6Q==
-X-CSE-MsgGUID: HZLQBJi7QGalrSmLdlzx0g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="53582958"
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="53582958"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 14:13:03 -0700
-X-CSE-ConnectionGUID: tk7aBOlVSIm4iog4lyeLCA==
-X-CSE-MsgGUID: qwK92l/rQo6T0zx2/mhiCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="155297528"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.15])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 14:13:00 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id B41F711F89A;
-	Thu, 10 Jul 2025 00:12:57 +0300 (EEST)
-Date: Wed, 9 Jul 2025 21:12:57 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v5 06/10] media: i2c: ov9282: add led_mode v4l2 control
-Message-ID: <aG7bWXpz5sxYcLKI@kekkonen.localdomain>
-References: <20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev>
- <20250617-ov9282-flash-strobe-v5-6-9762da74d065@linux.dev>
+	s=arc-20240116; t=1752095661; c=relaxed/simple;
+	bh=9KE00Vwfvn7smHgPqWuuB+mbXhp6z0jzNeYVhG7Ib0U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aloFTlTZ3JEQR31s/IGH88wWGrVTIZeK9tgEAtGfWVBmhDYpy1lMsNCXoQoX5VzbSXOj6bXffaGBsO/RWbCwENLQEtSMEhcGhzsLOeRVG+AhnwGwWp3/hE3JoJzAQO7BGMzTRn8mEzafS12Lu6RNDallr5fTu3YOQZwj+2CirSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e/Bx1v2X; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 569Coixn030114;
+	Wed, 9 Jul 2025 21:14:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nPCEWV4vb9msc1fgEgWqYaHAbD5KVC03zhO82vm6oK8=; b=e/Bx1v2X8pPuOnn1
+	NNAYvSR6Gvuj8mtq+vZyfg4SH86zuD7TXIE2WQJkN9E7JndA4cQ+DqykiBXlX8aw
+	Ur1TjImMMd7ogJctYoIFkBiS4W+i0FKDie29UV5MM8j7pvDZaQx6RdEofki81xRE
+	QVdO9En2auEEV9gLXkm9fj/AwBDDIE9gsjPrNErBLB/hp5Ranng60Y5bt/fyGMCl
+	zWx/QCo2iMaJhfbo+Xzr/kKTP/9uFdeopBr4+LVXlKakW+Czu4vf9hUdyTI+o8kx
+	TlGuHEcmwk3/Aa4MfK4MDBF7zPE+UErHsH7/XgUGt/dgZ/M5ZMQd31JrxdvYa5Rv
+	pUB5Ww==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smcg2fvg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 21:14:08 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 569LE72t003021
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Jul 2025 21:14:07 GMT
+Received: from [10.216.6.66] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 9 Jul
+ 2025 14:14:04 -0700
+Message-ID: <f4654034-a94b-473b-907a-2687acf11af4@quicinc.com>
+Date: Thu, 10 Jul 2025 02:43:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617-ov9282-flash-strobe-v5-6-9762da74d065@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 3/3] ufs: ufs-qcom: Enable QUnipro Internal Clock
+ Gating
+To: Avri Altman <Avri.Altman@sandisk.com>,
+        "mani@kernel.org"
+	<mani@kernel.org>,
+        "James.Bottomley@HansenPartnership.com"
+	<James.Bottomley@HansenPartnership.com>,
+        "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "avri.altman@wdc.com" <avri.altman@wdc.com>,
+        "ebiggers@google.com"
+	<ebiggers@google.com>,
+        "neil.armstrong@linaro.org"
+	<neil.armstrong@linaro.org>,
+        "konrad.dybcio@oss.qualcomm.com"
+	<konrad.dybcio@oss.qualcomm.com>
+CC: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+References: <20250708212534.20910-1-quic_nitirawa@quicinc.com>
+ <20250708212534.20910-4-quic_nitirawa@quicinc.com>
+ <PH7PR16MB6196F9B8C676FA18AAC10F3FE549A@PH7PR16MB6196.namprd16.prod.outlook.com>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <PH7PR16MB6196F9B8C676FA18AAC10F3FE549A@PH7PR16MB6196.namprd16.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=P7o6hjAu c=1 sm=1 tr=0 ts=686edba0 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=f1mw9qcMm9sB_ICStggA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: JLy08inFUPqbpea98XrFHe8GXDGAlgja
+X-Proofpoint-GUID: JLy08inFUPqbpea98XrFHe8GXDGAlgja
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDE5MCBTYWx0ZWRfX3CWdF+olAPcS
+ esI5IR+C/ZhSJFZomrueeqfWaCyxQkuiiRpsbW973hxHakpr4GTTkOtobXFGnqOlsT0zB1uPKjz
+ PGz00Tup3C65hkfJNqGE7XNAhJOl5oaQrd9vJliWDG4XrcaqGBjgpkKQ7doS9Cnq7PjTCk77FgY
+ LlSUBP0lIWO0hVX6UWWD3B8aZCualBU/9pV+ZZ56iXF5e2MUoXs0hce73f8PdaInp+UKksEbFdB
+ 6VsIr/Y3LPeqRHeeY9+qEZjS1d9x2klet0lC9s1/o5GUBteQqD0jPeLC1fy8hkY4GgCIdSxwkfx
+ GFA3hZA/R08WPbn7vk0+anMSeunlcmd7XjaSK5ifEYOXjgrxe5y6ZUGwH3RIywUHY65eCZXrPgl
+ KdVYmdsZ2HA+HZV4q/9PcM9SQ7oFHLwA83myLvvruKoB+eFLzjhMuUQslgVcDANpPbUR4wKI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_05,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 phishscore=0 bulkscore=0 mlxscore=0
+ malwarescore=0 spamscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015
+ adultscore=0 mlxlogscore=757 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507090190
 
-Hi Richard,
 
-Thanks for the update.
 
-On Tue, Jun 17, 2025 at 09:31:40AM +0200, Richard Leitner wrote:
-> Add V4L2_CID_FLASH_LED_MODE support using the "strobe output enable"
-> feature of the sensor. This implements following modes:
+On 7/9/2025 10:46 AM, Avri Altman wrote:
+>> Enable internal clock gating for QUnipro by setting the following attributes to 1
+>> during host controller initialization:
+>> - DL_VS_CLK_CFG
+>> - PA_VS_CLK_CFG_REG
+>> - DME_VS_CORE_CLK_CTRL.DME_HW_CGC_EN
+>>
+>> This change is necessary to support the internal clock gating mechanism in
+>> Qualcomm UFS host controller. This is power saving feature and hence driver
+>> can continue to function correctly despite any error in enabling these feature.
+> Does this change offloads clock gating?
+> i.e. no need to set UFSHCD_CAP_CLK_GATING ?
+No , this change does not offload sw based UFS clock gating. Host 
+controller has its own internal clock gating mechanism.
 > 
->  - V4L2_FLASH_LED_MODE_NONE, which disables the strobe output
->  - V4L2_FLASH_LED_MODE_FLASH, which enables the strobe output
+> Thanks,
+> Avri
 
-I really think you should use a different control for this. The sensor can
-strobe the flash but it won't control its mode.
-
-How about calling it V4L2_FLASH_STROBE_ENABLE?
-
--- 
-Kind regards,
-
-Sakari Ailus
 
