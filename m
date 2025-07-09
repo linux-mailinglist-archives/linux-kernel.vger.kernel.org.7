@@ -1,158 +1,104 @@
-Return-Path: <linux-kernel+bounces-722921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A1AAFE0AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:01:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB236AFE0AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC7F54A823E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:01:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1215C1C2731C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C148A26B74E;
-	Wed,  9 Jul 2025 07:01:06 +0000 (UTC)
-Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BB526B757;
+	Wed,  9 Jul 2025 07:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ees+XgtX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B39267B89
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0761321ABAC;
+	Wed,  9 Jul 2025 07:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752044466; cv=none; b=j8vGFOC4c0xNw5I2Ho/L8hOM0RRiUDH2dVWu+SiG4frvdz1ZETsFac81/rAkHlcqUCRoELlhJY5L57ldGH57QZkD7jCjGDE1mJ+/GwW37Y/bMVYTjRejMGlv5FnEbujrqWhRGqSzMtUFb4Wnohosg0JT2zwKAFlFRp20eZ5wmkM=
+	t=1752044472; cv=none; b=VoV+44FJ/sr1Lkdx4V4ENkOoNa2RsJui9pRJ5GVRDIBwepDiTDlhKeGPNTJ2G6ydXSgrZuSczRig6DEHiih41fz9XTWl+cXxI14Lcxy/NzBBQYocY8o+xTEEMgka6TuiUPavWKH8Tul8qKFl7p1HtMoo+dmstJs50rYnqO6xdGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752044466; c=relaxed/simple;
-	bh=tG/YzIht748x9oejqHS0is0xE478z/njblx4OmMKI/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MRgAk4W+ehM3gMFmXl9hM6/ICbfvRQ7oScMEWaFGB90UQs+svl4SV1Oqog0YFRoH2CFSHT6UAS9qYC7Xuv6mM364w9UGqltUgxUKBRu5jKvm3PH0hwM1qWkeKLbLrq5ZBdc0H1yB21A5e9D01OWdPYj/WeThU9F49Q7cVvwzWpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 012BA442EF;
-	Wed,  9 Jul 2025 07:00:58 +0000 (UTC)
-Message-ID: <6a07cf54-8e97-4726-ba38-67feb90f3e7f@ghiti.fr>
-Date: Wed, 9 Jul 2025 09:00:58 +0200
+	s=arc-20240116; t=1752044472; c=relaxed/simple;
+	bh=hxPSyY5k5W1yAZvXq3K3ryc/SwkGUc1a7pKy7EuahwQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p1WcWaqCewtRA5Q0AhsXTp6yTi4hFJqD0HDvi2Wg4Orvasq/LiOUaJI30hk+fYlQejomxc2JT4FfZ6JryBtYa65xYGIrLMGVM0E7tq5zS1+pheRPqgLhui7+ZkAJSDSi8Yz1sEcNJO/Q2y0rua9gHKG7+QNczTsWX9G2y8sh4lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ees+XgtX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D0FC4CEF0;
+	Wed,  9 Jul 2025 07:01:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752044471;
+	bh=hxPSyY5k5W1yAZvXq3K3ryc/SwkGUc1a7pKy7EuahwQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ees+XgtXV73RpRtZCFqm9jbRNdg4BDEX7Uiy+Eu+Id3eisjdRXsK/U1Tr1fiJOijY
+	 F8HRS0MzuijbA8Cy2H8dq68eMOFCJYyH/qxkoSBUDfgwAJ2IZOhbOzcnb2nF7yLH09
+	 CFCNVCi7Uclc8E2PVv3DMBdSVdlSl39uqJ3uOKlmCS66NGRIiLkEVoBuFNAc7v++H0
+	 yIKT4wp9ELfwpBTMV4zyXHeXrbWCfTnsY81Cprk3+SF54OzS3UmG9T4vFB9HvI5mXs
+	 mDQ7Z28pxa7OqFcwIR1aCWcmOu+iCtJ2/m5yD7RR3esVmdPcludLijl25xEcQsKiTL
+	 mBJZ7lV0NIsKg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>,
+	Peng Fan <peng.fan@nxp.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] firmware: arm_scmi: convert to SYSTEM_SLEEP_PM_OPS
+Date: Wed,  9 Jul 2025 09:01:01 +0200
+Message-Id: <20250709070107.1388512-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] riscv: Enable interrupt during exception handling
-To: Nam Cao <namcao@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Peter Zijlstra <peterz@infradead.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- linux-rt-devel@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250625085630.3649485-1-namcao@linutronix.de>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250625085630.3649485-1-namcao@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefieeltdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeeufeegheehgedtvdegleegjeejfedukeegteffieejgfevjeduheffffdtlefhhfenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmegrjegvvdemrgguledvmeelrggsjeemfeduhegsnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmegrjegvvdemrgguledvmeelrggsjeemfeduhegspdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmegrjegvvdemrgguledvmeelrggsjeemfeduhegsngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopehnrghmtggroheslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdpr
- hgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepsghighgvrghshieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopegtlhhrkhiflhhlmhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhg
+Content-Transfer-Encoding: 8bit
 
-Hi Nam,
+From: Arnd Bergmann <arnd@arndb.de>
 
-On 6/25/25 10:56, Nam Cao wrote:
-> force_sig_fault() takes a spinlock, which is a sleeping lock with
-> CONFIG_PREEMPT_RT=y. However, exception handling calls force_sig_fault()
-> with interrupt disabled, causing a sleeping in atomic context warning.
->
-> This can be reproduced using userspace programs such as:
->      int main() { asm ("ebreak"); }
-> or
->      int main() { asm ("unimp"); }
->
-> There is no reason that interrupt must be disabled while handling
-> exceptions from userspace.
->
-> Enable interrupt while handling user exceptions. This also has the added
-> benefit of avoiding unnecessary delays in interrupt handling.
->
-> Fixes: f0bddf50586d ("riscv: entry: Convert to generic entry")
-> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> ---
-> v2: stop enabling interrupts for kernel exceptions. For exceptions treated
-> like NMI, it is wrong. For page faults, interrupts are already
-> (conditionally) enabled.
-> ---
->   arch/riscv/kernel/traps.c | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-> index 9c83848797a78..80230de167def 100644
-> --- a/arch/riscv/kernel/traps.c
-> +++ b/arch/riscv/kernel/traps.c
-> @@ -6,6 +6,7 @@
->   #include <linux/cpu.h>
->   #include <linux/kernel.h>
->   #include <linux/init.h>
-> +#include <linux/irqflags.h>
->   #include <linux/randomize_kstack.h>
->   #include <linux/sched.h>
->   #include <linux/sched/debug.h>
-> @@ -151,7 +152,9 @@ asmlinkage __visible __trap_section void name(struct pt_regs *regs)		\
->   {										\
->   	if (user_mode(regs)) {							\
->   		irqentry_enter_from_user_mode(regs);				\
-> +		local_irq_enable();						\
->   		do_trap_error(regs, signo, code, regs->epc, "Oops - " str);	\
-> +		local_irq_disable();						\
->   		irqentry_exit_to_user_mode(regs);				\
->   	} else {								\
->   		irqentry_state_t state = irqentry_nmi_enter(regs);		\
-> @@ -173,17 +176,14 @@ asmlinkage __visible __trap_section void do_trap_insn_illegal(struct pt_regs *re
->   
->   	if (user_mode(regs)) {
->   		irqentry_enter_from_user_mode(regs);
-> -
->   		local_irq_enable();
->   
->   		handled = riscv_v_first_use_handler(regs);
-> -
-> -		local_irq_disable();
-> -
->   		if (!handled)
->   			do_trap_error(regs, SIGILL, ILL_ILLOPC, regs->epc,
->   				      "Oops - illegal instruction");
->   
-> +		local_irq_disable();
->   		irqentry_exit_to_user_mode(regs);
->   	} else {
->   		irqentry_state_t state = irqentry_nmi_enter(regs);
-> @@ -308,9 +308,11 @@ asmlinkage __visible __trap_section void do_trap_break(struct pt_regs *regs)
->   {
->   	if (user_mode(regs)) {
->   		irqentry_enter_from_user_mode(regs);
-> +		local_irq_enable();
->   
->   		handle_break(regs);
->   
-> +		local_irq_disable();
->   		irqentry_exit_to_user_mode(regs);
->   	} else {
->   		irqentry_state_t state = irqentry_nmi_enter(regs);
+The old SET_SYSTEM_SLEEP_PM_OPS() macro leads to a warning about an
+unused function:
 
+drivers/firmware/arm_scmi/scmi_power_control.c:363:12: error: 'scmi_system_power_resume' defined but not used [-Werror=unused-function]
+  363 | static int scmi_system_power_resume(struct device *dev)
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+The proper way to do this these days is to use SYSTEM_SLEEP_PM_OPS()
+and pm_sleep_ptr().
 
-Let's also add:
+Fixes: 9a0658d3991e ("firmware: arm_scmi: power_control: Ensure SCMI_SYSPOWER_IDLE is set early during resume")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/firmware/arm_scmi/scmi_power_control.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Cc: stable@vger.kernel.org
-
-I pick this up for next week fixes PR.
-
-Thanks,
-
-Alex
-
+diff --git a/drivers/firmware/arm_scmi/scmi_power_control.c b/drivers/firmware/arm_scmi/scmi_power_control.c
+index ab0cee0d4bec..955736336061 100644
+--- a/drivers/firmware/arm_scmi/scmi_power_control.c
++++ b/drivers/firmware/arm_scmi/scmi_power_control.c
+@@ -369,7 +369,7 @@ static int scmi_system_power_resume(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops scmi_system_power_pmops = {
+-	SET_SYSTEM_SLEEP_PM_OPS(NULL, scmi_system_power_resume)
++	SYSTEM_SLEEP_PM_OPS(NULL, scmi_system_power_resume)
+ };
+ 
+ static const struct scmi_device_id scmi_id_table[] = {
+@@ -380,7 +380,7 @@ MODULE_DEVICE_TABLE(scmi, scmi_id_table);
+ 
+ static struct scmi_driver scmi_system_power_driver = {
+ 	.driver	= {
+-		.pm = &scmi_system_power_pmops,
++		.pm = pm_sleep_ptr(&scmi_system_power_pmops),
+ 	},
+ 	.name = "scmi-system-power",
+ 	.probe = scmi_syspower_probe,
+-- 
+2.39.5
 
 
