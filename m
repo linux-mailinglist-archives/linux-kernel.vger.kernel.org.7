@@ -1,56 +1,61 @@
-Return-Path: <linux-kernel+bounces-724651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C25AFF56E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:38:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF7BAFF571
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE43483493
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:38:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF8265A6123
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0482E26A0F8;
-	Wed,  9 Jul 2025 23:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EAD2676C5;
+	Wed,  9 Jul 2025 23:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLH+iYGl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gny0k8va"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523F521D001;
-	Wed,  9 Jul 2025 23:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D748633F;
+	Wed,  9 Jul 2025 23:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752104302; cv=none; b=BpJjt4LIER3yam0kXm4cuapCq4r7wUiEpDRdDSpRImCqMoly4WeAissQOZkaeQM8yrVXOcvLqVICCSKsKkzDwGIRSdn/l/2aZ+k/OFDQ5dGEk3b8Eq9H9NJZ6rPebz0MZC609G47YGd96ncYN1tm7gScAI+29lcjS3BOOX0cSX8=
+	t=1752104418; cv=none; b=evlEZIqjef4jK3PGOsjwdp0CE2EA+qM3zVYH35yaAyLbFHFF/0lGujuldBZEiibBo+OWxZqpsb5LZ1cRK2mi2xtSVw8Y2wVaYJ2lp/8krZdPK0odc731LSniw3+og0JCQ2AM/OkiMDYQfGqETOtxozT75rxu4nxbvjZDq0xQHsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752104302; c=relaxed/simple;
-	bh=+saq+jsUrUpBT+5osqmmx0pEvV9D8xuRp7bJmqNCkdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=NlgTzA/AfW3xNVBy9qT2gLjxzM/Yhunnjo8tlewy90JrzUqMymP8Jt2RzMxqqVthLayg5DmXzybThmkk89zpJgDXbxev1OSBpRR2Ajij2v0X9tUD+1yLfhoqVZD/GFaRDWErcPff4oPDYlaSa1ttNi5T8MBn5BwmNU5GxqUv3c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLH+iYGl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA26C4CEEF;
-	Wed,  9 Jul 2025 23:38:21 +0000 (UTC)
+	s=arc-20240116; t=1752104418; c=relaxed/simple;
+	bh=QGQ+IStDpzGT5TB54YyUkR1VFMdLKKuUTEtsSXqf0ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PHtMjXHgvWktxgD2bhm5UMm1jzqgWNAwwkLIPQ1EtGpSpafK+PLMRVxhj8xLucU+BDl5VO+vmbZQd8xV2zNU6gPSVHoNtZ6zYXBelV9hEa+I7obfK6bkqOdyWD4+CTMVSD56OiP5o5MatNhmb8PzOXfirv5Bi+S6i7adtDbFLsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gny0k8va; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBFBDC4CEEF;
+	Wed,  9 Jul 2025 23:40:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752104301;
-	bh=+saq+jsUrUpBT+5osqmmx0pEvV9D8xuRp7bJmqNCkdU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=XLH+iYGlSou+fshL81YHTKEnxmlfMB6lVH85uc/p0EZX1I1zxgzeaVyZGQA91E6xT
-	 kx1i1Xy7R/9kAwl9S7BhzVsQflbYiJ119OPziCYFCSsZJgjQWECEqwD109ONcrA5vW
-	 SpxdjzjpbsbqMt4gvRcaRz8tMhVjkYZBsUJpXmO35uJQAsAqtOTj3uOL+u6VF4Bxrv
-	 CY6BCcEBZ58Ow3bRCR8E/SJVmJ5END48v6ecEfesE9G0qPcl6TygvhcYfnPHb2wL1D
-	 4yK56gFhx1qLwb9ZTrOTDSM9lf9cjd7VX1XYONI4Q8B3vj4nOPoe4rx/ajVBh+azkK
-	 XfeGs4jqOTyJw==
-Date: Wed, 9 Jul 2025 18:38:20 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Parav Pandit <parav@nvidia.com>, virtualization@lists.linux.dev,
-	stefanha@redhat.com, alok.a.tiwari@oracle.com,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH RFC v5 1/5] pci: report surprise removal event
-Message-ID: <20250709233820.GA2212185@bhelgaas>
+	s=k20201202; t=1752104417;
+	bh=QGQ+IStDpzGT5TB54YyUkR1VFMdLKKuUTEtsSXqf0ok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gny0k8va9L2bC65dGRlL80H01KFvP+jcfHCjykFQ8pg+kfl/lHc2lfCoUujQJvuHt
+	 PfzkyPe2GzX2iC82RK7DVeAnz6kVGdfEO2ngQ0DVZ/lcFGMZp9RfBH+6RqtuTj/64A
+	 JH2QkxLce61L19EaDLRtvELenec0u7msn/lm61mfHVu7l2v9wVC0bakfBQwNuKK5JB
+	 ihhQOVhwmKOloqM1zSJcJe7rTzRIIWpHcyKbkNB0BNfNBtg3FxkhtQwFVfOPOEZeiM
+	 AOSt6dzUXHO9vBK9p+Nwft6YsPSSTahAp3zES+CLJtoIqIoLqdesm3XB15773Ua3WX
+	 2fRyThAg/RY4Q==
+Date: Wed, 9 Jul 2025 23:40:15 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>, Marc Zyngier <maz@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, nunodasneves@linux.microsoft.com
+Subject: Re: [PATCH v2 2/2] x86/hyperv: Switch to
+ msi_create_parent_irq_domain()
+Message-ID: <aG7932u1SvvAYh2l@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <cover.1751277765.git.namcao@linutronix.de>
+ <5c0ada725449176dfeeb1f7aa98c324066c39d2c.1751277765.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,155 +64,195 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fba3d235e38c1c6fcef2a30ed083ad9e25b20fa3.1752094439.git.mst@redhat.com>
+In-Reply-To: <5c0ada725449176dfeeb1f7aa98c324066c39d2c.1751277765.git.namcao@linutronix.de>
 
-Housekeeping: Note subject line convention. Indent with spaces in
-commit log.  Remove spurious plus signs.
+CC Nuno who is also touching on this file.
 
-On Wed, Jul 09, 2025 at 04:55:26PM -0400, Michael S. Tsirkin wrote:
-> At the moment, in case of a surprise removal, the regular remove
-> callback is invoked, exclusively.  This works well, because mostly, the
-> cleanup would be the same.
-> 
-> However, there's a race: imagine device removal was initiated by a user
-> action, such as driver unbind, and it in turn initiated some cleanup and
-> is now waiting for an interrupt from the device. If the device is now
-> surprise-removed, that never arrives and the remove callback hangs
-> forever.
-> 
-> For example, this was reported for virtio-blk:
-> 
-> 	1. the graceful removal is ongoing in the remove() callback, where disk
-> 	   deletion del_gendisk() is ongoing, which waits for the requests +to
-> 	   complete,
-> 
-> 	2. Now few requests are yet to complete, and surprise removal started.
-> 
-> 	At this point, virtio block driver will not get notified by the driver
-> 	core layer, because it is likely serializing remove() happening by
-> 	+user/driver unload and PCI hotplug driver-initiated device removal.  So
-> 	vblk driver doesn't know that device is removed, block layer is waiting
-> 	for requests completions to arrive which it never gets.  So
-> 	del_gendisk() gets stuck.
-> 
-> Drivers can artificially add timeouts to handle that, but it can be
-> flaky.
-> 
-> Instead, let's add a way for the driver to be notified about the
-> disconnect. It can then do any necessary cleanup, knowing that the
-> device is inactive.
+Nam, thanks for this patch. 
 
-This relies on somebody (typically pciehp, I guess) calling
-pci_dev_set_disconnected() when a surprise remove happens.
+Nuno's patches fix a few bugs with the current implementation. I expect
+those patches to have contextual conflicts with this patch. I would like
+to commit Nuno's patches first since those are bug fixes, and then
+circle back to this one.
 
-Do you think it would be practical for the driver's .remove() method
-to recognize that the device may stop responding at any point, even if
-no hotplug driver is present to call pci_dev_set_disconnected()?
+Nuno, can you please review this patch?
 
-Waiting forever for an interrupt seems kind of vulnerable in general.
-Maybe "artificially adding timeouts" is alluding to *not* waiting
-forever for interrupts?  That doesn't seem artificial to me because
-it's just a fact of life that devices can disappear at arbitrary
-times.
-
-It seems a little fragile to me to depend on some other part of the
-system to notice the surprise removal and tell you about it or
-schedule your work function.  I think it would be more robust for the
-driver to check directly, i.e., assume writes to the device may be
-lost, check for PCI_POSSIBLE_ERROR() after reads from the device, and
-never wait for an interrupt without a timeout.
-
-> Since cleanups can take a long time, this takes an approach
-> of a work struct that the driver initiates and enables
-> on probe, and tears down on remove.
+On Mon, Jun 30, 2025 at 12:26:15PM +0200, Nam Cao wrote:
+> Move away from the legacy MSI domain setup, switch to use
+> msi_create_parent_irq_domain().
 > 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> While doing the conversion, I noticed that hv_irq_compose_msi_msg() is
+> doing more than it is supposed to (composing message content). The
+> interrupt allocation bits should be moved into hv_msi_domain_alloc().
+> However, I have no hardware to test this change, therefore I leave a TODO
+> note.
+> 
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 > ---
->  drivers/pci/pci.h   |  6 ++++++
->  include/linux/pci.h | 45 +++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 51 insertions(+)
+>  arch/x86/hyperv/irqdomain.c | 111 ++++++++++++++++++++++++------------
+>  drivers/hv/Kconfig          |   1 +
+>  2 files changed, 77 insertions(+), 35 deletions(-)
 > 
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 12215ee72afb..3ca4ebfd46be 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -553,6 +553,12 @@ static inline int pci_dev_set_disconnected(struct pci_dev *dev, void *unused)
->  	pci_dev_set_io_state(dev, pci_channel_io_perm_failure);
->  	pci_doe_disconnected(dev);
+> diff --git a/arch/x86/hyperv/irqdomain.c b/arch/x86/hyperv/irqdomain.c
+> index 31f0d29cbc5e3..9b3b65ffbd2e2 100644
+> --- a/arch/x86/hyperv/irqdomain.c
+> +++ b/arch/x86/hyperv/irqdomain.c
+> @@ -10,6 +10,7 @@
 >  
-> +	if (READ_ONCE(dev->disconnect_work_enable)) {
-> +		/* Make sure work is up to date. */
-> +		smp_rmb();
-> +		schedule_work(&dev->disconnect_work);
+>  #include <linux/pci.h>
+>  #include <linux/irq.h>
+> +#include <linux/irqchip/irq-msi-lib.h>
+>  #include <asm/mshyperv.h>
+>  
+>  static int hv_map_interrupt(union hv_device_id device_id, bool level,
+> @@ -276,59 +277,99 @@ static void hv_teardown_msi_irq(struct pci_dev *dev, struct irq_data *irqd)
+>  		hv_status_err(status, "\n");
+>  }
+>  
+> -static void hv_msi_free_irq(struct irq_domain *domain,
+> -			    struct msi_domain_info *info, unsigned int virq)
+> -{
+> -	struct irq_data *irqd = irq_get_irq_data(virq);
+> -	struct msi_desc *desc;
+> -
+> -	if (!irqd)
+> -		return;
+> -
+> -	desc = irq_data_get_msi_desc(irqd);
+> -	if (!desc || !desc->irq || WARN_ON_ONCE(!dev_is_pci(desc->dev)))
+> -		return;
+> -
+> -	hv_teardown_msi_irq(to_pci_dev(desc->dev), irqd);
+> -}
+> -
+>  /*
+>   * IRQ Chip for MSI PCI/PCI-X/PCI-Express Devices,
+>   * which implement the MSI or MSI-X Capability Structure.
+>   */
+>  static struct irq_chip hv_pci_msi_controller = {
+>  	.name			= "HV-PCI-MSI",
+> -	.irq_unmask		= pci_msi_unmask_irq,
+> -	.irq_mask		= pci_msi_mask_irq,
+>  	.irq_ack		= irq_chip_ack_parent,
+> -	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+>  	.irq_compose_msi_msg	= hv_irq_compose_msi_msg,
+> -	.irq_set_affinity	= msi_domain_set_affinity,
+> -	.flags			= IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MOVE_DEFERRED,
+> +	.irq_set_affinity	= irq_chip_set_affinity_parent,
+>  };
+>  
+> -static struct msi_domain_ops pci_msi_domain_ops = {
+> -	.msi_free		= hv_msi_free_irq,
+> -	.msi_prepare		= pci_msi_prepare,
+> +static bool hv_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
+> +				 struct irq_domain *real_parent, struct msi_domain_info *info)
+> +{
+> +	struct irq_chip *chip = info->chip;
+> +
+> +	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
+> +		return false;
+> +
+> +	chip->flags |= IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MOVE_DEFERRED;
+> +
+> +	info->ops->msi_prepare = pci_msi_prepare;
+> +
+> +	return true;
+> +}
+> +
+> +#define HV_MSI_FLAGS_SUPPORTED	(MSI_GENERIC_FLAGS_MASK | MSI_FLAG_PCI_MSIX)
+> +#define HV_MSI_FLAGS_REQUIRED	(MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS)
+> +
+> +static struct msi_parent_ops hv_msi_parent_ops = {
+> +	.supported_flags	= HV_MSI_FLAGS_SUPPORTED,
+> +	.required_flags		= HV_MSI_FLAGS_REQUIRED,
+> +	.bus_select_token	= DOMAIN_BUS_NEXUS,
+> +	.bus_select_mask	= MATCH_PCI_MSI,
+> +	.chip_flags		= MSI_CHIP_FLAG_SET_ACK,
+> +	.prefix			= "HV-",
+> +	.init_dev_msi_info	= hv_init_dev_msi_info,
+>  };
+>  
+> -static struct msi_domain_info hv_pci_msi_domain_info = {
+> -	.flags		= MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+> -			  MSI_FLAG_PCI_MSIX,
+> -	.ops		= &pci_msi_domain_ops,
+> -	.chip		= &hv_pci_msi_controller,
+> -	.handler	= handle_edge_irq,
+> -	.handler_name	= "edge",
+> +static int hv_msi_domain_alloc(struct irq_domain *d, unsigned int virq, unsigned int nr_irqs,
+> +			       void *arg)
+> +{
+> +	/*
+> +	 * TODO: The allocation bits of hv_irq_compose_msi_msg(), i.e. everything except
+> +	 * entry_to_msi_msg() should be in here.
+> +	 */
+> +
+> +	int ret;
+> +
+> +	ret = irq_domain_alloc_irqs_parent(d, virq, nr_irqs, arg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (int i = 0; i < nr_irqs; ++i) {
+> +		irq_domain_set_info(d, virq + i, 0, &hv_pci_msi_controller, NULL,
+> +				    handle_edge_irq, NULL, "edge");
 > +	}
-> +
->  	return 0;
->  }
->  
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 05e68f35f392..723b17145b62 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -548,6 +548,10 @@ struct pci_dev {
->  	/* These methods index pci_reset_fn_methods[] */
->  	u8 reset_methods[PCI_NUM_RESET_METHODS]; /* In priority order */
->  
-> +	/* Report disconnect events. 0x0 - disable, 0x1 - enable */
-> +	u8 disconnect_work_enable;
-> +	struct work_struct disconnect_work;
-> +
->  #ifdef CONFIG_PCIE_TPH
->  	u16		tph_cap;	/* TPH capability offset */
->  	u8		tph_mode;	/* TPH mode */
-> @@ -1993,6 +1997,47 @@ pci_release_mem_regions(struct pci_dev *pdev)
->  			    pci_select_bars(pdev, IORESOURCE_MEM));
->  }
->  
-> +/*
-> + * Run this first thing after getting a disconnect work, to prevent it from
-> + * running multiple times.
-> + * Returns: true if disconnect was enabled, proceed. false if disabled, abort.
-> + */
-> +static inline bool pci_test_and_clear_disconnect_enable(struct pci_dev *pdev)
-> +{
-> +	u8 enable = 0x1;
-> +	u8 disable = 0x0;
-> +	return try_cmpxchg(&pdev->disconnect_work_enable, &enable, disable);
+> +	return 0;
 > +}
 > +
-> +/*
-> + * Caller must initialize @pdev->disconnect_work before invoking this.
-> + * The work function must run and check pci_test_and_clear_disconnect_enable.
-> + * Note that device can go away right after this call.
-> + */
-> +static inline void pci_set_disconnect_work(struct pci_dev *pdev)
+> +static void hv_msi_domain_free(struct irq_domain *d, unsigned int virq, unsigned int nr_irqs)
 > +{
-> +	/* Make sure WQ has been initialized already */
-> +	smp_wmb();
+> +	for (int i = 0; i < nr_irqs; ++i) {
+> +		struct irq_data *irqd = irq_domain_get_irq_data(d, virq);
+> +		struct msi_desc *desc;
 > +
-> +	WRITE_ONCE(pdev->disconnect_work_enable, 0x1);
+> +		desc = irq_data_get_msi_desc(irqd);
+> +		if (!desc || !desc->irq || WARN_ON_ONCE(!dev_is_pci(desc->dev)))
+> +			continue;
 > +
-> +	/* check the device did not go away meanwhile. */
-> +	mb();
-> +
-> +	if (!pci_device_is_present(pdev))
-> +		schedule_work(&pdev->disconnect_work);
+> +		hv_teardown_msi_irq(to_pci_dev(desc->dev), irqd);
+> +	}
+> +	irq_domain_free_irqs_top(d, virq, nr_irqs);
 > +}
 > +
-> +static inline void pci_clear_disconnect_work(struct pci_dev *pdev)
-> +{
-> +	WRITE_ONCE(pdev->disconnect_work_enable, 0x0);
-> +
-> +	/* Make sure to stop using work from now on. */
-> +	smp_wmb();
-> +
-> +	cancel_work_sync(&pdev->disconnect_work);
-> +}
-> +
->  #else /* CONFIG_PCI is not enabled */
+> +static const struct irq_domain_ops hv_msi_domain_ops = {
+> +	.select	= msi_lib_irq_domain_select,
+> +	.alloc	= hv_msi_domain_alloc,
+> +	.free	= hv_msi_domain_free,
+>  };
 >  
->  static inline void pci_set_flags(int flags) { }
+>  struct irq_domain * __init hv_create_pci_msi_domain(void)
+>  {
+>  	struct irq_domain *d = NULL;
+> -	struct fwnode_handle *fn;
+>  
+> -	fn = irq_domain_alloc_named_fwnode("HV-PCI-MSI");
+> -	if (fn)
+> -		d = pci_msi_create_irq_domain(fn, &hv_pci_msi_domain_info, x86_vector_domain);
+> +	struct irq_domain_info info = {
+> +		.fwnode		= irq_domain_alloc_named_fwnode("HV-PCI-MSI"),
+> +		.ops		= &hv_msi_domain_ops,
+> +		.parent		= x86_vector_domain,
+> +	};
+> +
+> +	if (info.fwnode)
+> +		d = msi_create_parent_irq_domain(&info, &hv_msi_parent_ops);
+>  
+>  	/* No point in going further if we can't get an irq domain */
+>  	BUG_ON(!d);
+> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
+> index 1cd188b73b743..e62a0f8b34198 100644
+> --- a/drivers/hv/Kconfig
+> +++ b/drivers/hv/Kconfig
+> @@ -10,6 +10,7 @@ config HYPERV
+>  	select X86_HV_CALLBACK_VECTOR if X86
+>  	select OF_EARLY_FLATTREE if OF
+>  	select SYSFB if !HYPERV_VTL_MODE
+> +	select IRQ_MSI_LIB if X86
+>  	help
+>  	  Select this option to run Linux as a Hyper-V client operating
+>  	  system.
 > -- 
-> MST
+> 2.39.5
 > 
 
