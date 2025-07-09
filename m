@@ -1,162 +1,242 @@
-Return-Path: <linux-kernel+bounces-723599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E792AAFE8FA
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A996AFE8F9
 	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DC973B748E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:31:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105D11C47411
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CD92DA76E;
-	Wed,  9 Jul 2025 12:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46332D9796;
+	Wed,  9 Jul 2025 12:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyymeOuC"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Bl45FezI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3632DA75A;
-	Wed,  9 Jul 2025 12:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABA22DAFBE
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 12:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752064289; cv=none; b=TGZywonWtEY2ahD2snHYFQyiPlqG4p79dx7BUgi0dPosQOx85UHSsQ8N542p+i8bdPcfpKJl2HFe3L5P7FBOxf7jr56ha+CXMYoaNnQXq/nw8terb5kXUPAJzphIZxfxMKwocbXhe39N+kEPWujhaKMrHIyYSfg3oQluInBgEUQ=
+	t=1752064293; cv=none; b=N/fYF4DGrqoPrVamvcTpf2XpEx7SL+teYXWCtmrZYSHKnomAaL397k9lYPnSLAzSDJib6XU2I4oFX1/pB+SZ+8S5uCBSF2AAC7LApKqkuE4qeAiDJVuEzG282CT3gsl5BNjWRtsg00ccIURfmKqNRJKxHku2jZOwBFCvI6uKcNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752064289; c=relaxed/simple;
-	bh=1pfqYJyzyICeZghezgrG610OuPjosLSdxxoic9pAJq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AqCj/I8K1Z11HuqBF9pI6oG8iwR3zvlINIeoPwlhZdqIG56eEUBWdH2HAv36FRSUx5i1rGAxej3Rw4vBLJJOuJC9yiZMYUuzJPTE4xWnL0xGdYQIns4aid6Bv0m63Ub/eQ4UxABvL6nZaS3dq1KUBmza7D/ySvfuWV7aMUtS4mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eyymeOuC; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45363645a8eso38653605e9.1;
-        Wed, 09 Jul 2025 05:31:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752064286; x=1752669086; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UfRoQVMGljbReBXs19E2sn1Xup7fKJ5lonhUu/4oGEs=;
-        b=eyymeOuCDqZyO6A8r4tFRyA1GNKpG17HzFCe8O+ToxODgVO+w8jU4a6TnqrHf6gSh2
-         wnOwDpGlfUvePAJeGB+nxHQaLe1eRj8F3mjGx51qMoZxd7KfDqXEl4yEAZ7ZDMatPU3V
-         4baT/NXcnbUWI1/yCaf7Eipnp22Xxif7dNTHxIFfQFy7IR8hcCmtavObtpsu0lCQbTnm
-         jRzA0OmPAZNb722MExRu77E4yx2ai6tFCbr9brkzFI1wnnZNe6Rth/O6EZF2qpaOH7tN
-         sW/BTRLFOVWEphOipL9MdH/NTZEzqWwwiDj1vGVdniFH7TIxO+Ztfvwr5bhYTBNXkloo
-         705Q==
+	s=arc-20240116; t=1752064293; c=relaxed/simple;
+	bh=7yd5xrkWlkddJneP+p37SueXY9r93VYw7uJzxQg3qFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j75NVMRBbpkxQ+KYSF+wAfn1Q5wJXdge7jVdi2M9It6aXoqxXZKg7kRcAUaxlpB267sT5IMAJ9+xZlk9Nywlu7+2leYsoNjGw0DZRAzybwg8biOKkqx9Lgc7bOznC9HVbpehT9hHuNMNIIGsIcvpiiIvuzoZ+HbhDJYTA3E5hvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Bl45FezI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5697jpVU010471
+	for <linux-kernel@vger.kernel.org>; Wed, 9 Jul 2025 12:31:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iJx6t7w6ssrs3a9tOwEvfHFgR1eHqpcHEVJO/pfvIZY=; b=Bl45FezI+8ohQ6Fs
+	efgc2EZuyghwoIPcmAUNMZ+PWHFI9zV5bjYaxY3C3FfMrmh7bscGdS9dCnksJPMW
+	Tj1NH4oO9KP+N9Ig+rO/QCpnd8y/g4cBHOszdZ1Eb6ybxoFTAuGls5rnOESmNiDb
+	+8/HhVGyWeodCpeQ2PWfXgnI81BYFkw1DVYMYw5nGEyKjSE5VHTUKaX15tZUpgNQ
+	DTtwY9d83yAEtyHbsF/lNRBWcBiXnWiH8P9TzMnJwCPnDDu8/j70ojlLg7ulb4cq
+	3c3BJohQmGRK451I98VQuOpn6OId4aXDm9nab7HgL+US0JqaLIkB9u0zb1kyufCm
+	Q0vytQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smap10ey-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 12:31:30 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2356ce55d33so74612155ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 05:31:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752064286; x=1752669086;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UfRoQVMGljbReBXs19E2sn1Xup7fKJ5lonhUu/4oGEs=;
-        b=TO/7Z5YYobNDp/wHEGtH2L+Flcm8YYRF0O04f1MNIfDqpcSf0LhvB1dwWXRkZJC1NY
-         idG3Ki01jGvD08wpeA9zEew5Z4c2gL1C6QCxOpcWejpYdkHtX1VmEdX75c89mrkck+R6
-         8Vzb3ZZj/0cj08relSACsRZ9uYXpEelB+RS5xyLINosXxze0YKtfFLlu3g7ZbCZpvftT
-         EFCgCxzGowqPm4diDPgsbj81VNYmyXvHITMGhSLTtrauzflWmp5/H6n0yqEUDp4IUaKs
-         KbrKWAoZw6lU0K9GXCIlO8lT13kOn1w/zW77bWSnurCEoGJ5DDj8FvAUo0/KMwIoXvgU
-         WxXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7Qt2bVVTCF9eNEKlwM3pgSnYQfjR6GSqqHwYJ1UJuqHtNTBDYj/MX3O+pZZeqNIgNgEwkdtr4Shtgohae@vger.kernel.org, AJvYcCXVTshxSXUZVqTyJt399r+wzUcp/bVSAaq5eY+lQZ9E25wTFDSF6KcKVB6HMWIGoPW+J5jr2TZfhs4zuq4=@vger.kernel.org, AJvYcCXuWljE1Q5wMIYuUXe/7sbFqfsrOC7N8rGMLH0oGcaCiysXh8KqsIIb6kLDTl4TJBMTTXuJvLuwkA4R@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy40/+plIhAmg/pEconUj5XQlpA5AJqvTBhIk/XMJeVFtVBt27S
-	xlf5JAimGq9qfRcueFYUdyscygJH08PIYbGCI7MiTmDStutkEp7AmcnpzNkNgA==
-X-Gm-Gg: ASbGncu0CePCp+ucK/o6KtMImII4Ga1EqPf1lllKb+lMsyboU4S6vd9RJw97SgIdjkB
-	9MxPZlVrREkzKLiLlAdNfhmDTDYXkJ3qT3UyVdgdd1H8y4jKje1Bk0ml1I4qQY6Ukq3vxb2z9IE
-	/lvwlopc39DybWLzrzZQ9qNfL8PXW+yM+ezn4GL+Xe8jlcnAUcf8BxlLZFo6gnY2sWfu/h63UPu
-	Jr/MfzdnDQRQCGRWj9uGbDWUGfVt3togk+fU+AulOPFCRyHGkNTmcM2NhYdCe+j9cy7QbgMCXqt
-	XQt0BFXk3N2vAv+45j9FWhmwouaz4Pm6H3/4+hBHotQs01oT5ESFDFS5fQfv+xR3+lU3noCuhK1
-	2AFDkg99jbamw0wLqWgHjrOE5VHuq9YWVUlBjSCfuz3k9XYgf
-X-Google-Smtp-Source: AGHT+IHpLYTmMGsRn85E8rtAsthFXWZR8lTlpIo/NA8OR2OMn3yEsRBVdsSn9dM0e27DNVoe/djuOw==
-X-Received: by 2002:a05:600c:198c:b0:442:d9f2:c6ef with SMTP id 5b1f17b1804b1-454d52f4e20mr22132305e9.2.1752064285807;
-        Wed, 09 Jul 2025 05:31:25 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47030baa5sm16061019f8f.12.2025.07.09.05.31.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 05:31:24 -0700 (PDT)
-Date: Wed, 9 Jul 2025 14:31:22 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: treding@nvidia.com, jonathanh@nvidia.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, tbergstrom@nvidia.com, 
-	bbasu@nvidia.com
-Subject: Re: [PATCH v2 0/8] Support for Tegra264 and Tegra254 in CBB driver
-Message-ID: <5xkzehwr7k3ycpd3buqahmvamn6gvaol3exv46oe7nfpj7aw3q@eze4dbhplgqa>
-References: <20250703103829.1721024-1-sumitg@nvidia.com>
+        d=1e100.net; s=20230601; t=1752064290; x=1752669090;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iJx6t7w6ssrs3a9tOwEvfHFgR1eHqpcHEVJO/pfvIZY=;
+        b=ZE7rjmATCvALCSWeDKRmr4zE5I2DfEPr1Rg5HvvfZrKbADeFi4qVgEvzzN3rfIyMrl
+         QBAYxRBcvVDT8LxfTibPXLojrfX6HxcTwNucqDXnkQ1NvQuX9/jVeeaHbbgyz3aBv+42
+         lwRVBRagBSw5pBSuEsoaOOVlR2jajSTvtu1o+/EhJmB0l+hDodxPMdrFTs8EUOgYoD9A
+         I4CN5mSYFBeMVxE3KJUj0k0ha//vvGhBR8RM5XG8otacgN7fXuIjcVU3EUFepJiJrbjM
+         hcJVH8qHd3vVWflcK5qf97QTiXIm7nRGrIYzJoVJuQRyrgSoaBPpI97vs6cCVwh3csmN
+         qxPw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0iLHirH2RnkU4lnP1N8ESlJmtEcaCBVYIpEv4rfXlRI90Hhajem3fscdCVUQARSYESE5XwQB2MvHOa7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHS5eoavz/7OK7zaGpGuNtIlLv5uL8988CHI+kGj0+CN3jxHN1
+	S/iRO8DusKCddr9mVbMgVQyVevSBS3rpxn81S0agJIbXj40oLJRme437vdakiu1W1BoPnPH/lVl
+	tDm6m6ISX4GJ/mODRIla/YkXOuy4E+E5AGxNMK7a0/XPRBE1ZYbf9t2md3aO6izzuD90=
+X-Gm-Gg: ASbGnctdfkXlAHE2dPiNhsKgtpP54xKy56mbKerfIXV2FfE2uL4zGT3UmDApVsNz+en
+	8glZWLFcdaVcI6+Bo2G2sEJ4o74yt2dOJThCCUuUYsBKrgIZ8r3+udiW1x/4mdkdNpVjIn8rA6t
+	gCXANU8p6WV9BzAX4fGkNkeg0nSFRQNpG8x8yxx2GNk8NcYu3r9llRLkQ4PYjy92ztId1+fKEeF
+	4IeDexQqeUamaZIUHvD04WTryXw11Xyo/2dp8KGRNjqzxy3v1H5wJrPucCWq3FRCQmVDW9OuHXz
+	fyQRKBAQkaoS18tTEBnitwXSxzGaqGeEgdhiJsXt4qxACEfFHdOn
+X-Received: by 2002:a17:903:3c47:b0:235:5a9:976f with SMTP id d9443c01a7336-23ddb2f2db9mr46315465ad.24.1752064289667;
+        Wed, 09 Jul 2025 05:31:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjreNNXd3+SYHL4S/oHX+L23Vo5LZefCgSCCamZIx++CFBdFw3mmJOU4Ve8ksAGPCCBqWoEg==
+X-Received: by 2002:a17:903:3c47:b0:235:5a9:976f with SMTP id d9443c01a7336-23ddb2f2db9mr46314845ad.24.1752064289178;
+        Wed, 09 Jul 2025 05:31:29 -0700 (PDT)
+Received: from [10.218.37.122] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431e2c5sm139239055ad.39.2025.07.09.05.31.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Jul 2025 05:31:28 -0700 (PDT)
+Message-ID: <2a18cf9e-1dd2-4e09-81f4-eb1d07324c8e@oss.qualcomm.com>
+Date: Wed, 9 Jul 2025 18:01:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qncswnh7ljhekzcb"
-Content-Disposition: inline
-In-Reply-To: <20250703103829.1721024-1-sumitg@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/11] PCI/ASPM: Clear aspm_disable as part of
+ __pci_enable_link_state()
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Manivannan Sadhasivam <mani@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
+        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+        qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
+ <20250609-mhi_bw_up-v4-6-3faa8fe92b05@qti.qualcomm.com>
+ <qo6mb3qlt3xpuvhepwcv6be4wd53neee2t6buzk4tdiy22xsub@vu7lykp3rnu2>
+ <226bab3a-54e5-94ad-9d84-0b82f9dc4e2f@linux.intel.com>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <226bab3a-54e5-94ad-9d84-0b82f9dc4e2f@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=Ar7u3P9P c=1 sm=1 tr=0 ts=686e6122 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=WFThVEArfCvG9L-vA9EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-ORIG-GUID: 6vLQrgrDwfvOg-ux_wxqtCl2bxVKj1jl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDExMiBTYWx0ZWRfX+dChi8rld3NE
+ IpHmpdjfpQLDmHJK73WyU5vXJRJZxNyHcqWZmiJqEDAOEzEDsfPkUiJtGWZ9ndKzGZneXf2GytX
+ YEgD4Ofs/NLyzIHNNtFQFwOG8/gQnPVFt0nxUoEeRegGZjzTkOM/I4vC0gOXoPfs7nv6RCvIiN3
+ wxlHHrvra3Dw8QgatDt7g/V4qdWrNhuKbV21DptohPDa46u927ocIZ/sjwKUAtSKrSW4UGI3mWY
+ UUxEnIQerxSMzAt7eAcJzy4vlovokb3OI0m7+D1sgeeeQJvh1drgKtDGX1ly9btTVyRegQxIIMI
+ Urt5t9vyEDdrbUnwUjF7KKZ6g1tWOun0YBr97sowGmZ9VR+TvlbGVynylDGOZIcoxNKu3W9bjNT
+ unkxKPEjV8wKm0F+1qOKu/k7pJxjhFmqchCU3CJoNyyQLUXITw1lnncN4khk32aIQ7AKTUse
+X-Proofpoint-GUID: 6vLQrgrDwfvOg-ux_wxqtCl2bxVKj1jl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_02,2025-07-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015 adultscore=0
+ phishscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507090112
 
 
---qncswnh7ljhekzcb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/8] Support for Tegra264 and Tegra254 in CBB driver
-MIME-Version: 1.0
 
-On Thu, Jul 03, 2025 at 04:08:21PM +0530, Sumit Gupta wrote:
-> This patch series adds support for Tegra264 and Tegra254 SoCs in the
-> Tegra CBB driver. It also includes a fix and some improvements to
-> make the driver more generic to add new SoC support.
->=20
-> The patches can be applied in sequence. Patch info:
-> - Patch 1: Fix.
-> - Patch 2: Change lingo from 'Master/Slave' to 'Initiator/Target'.
-> - Patch 3 & 4: Improvements.
-> - Patch 5: New feature for HW lookup.
-> - Patch 6 & 7: Tegra264 SoC support.
-> - Patch 8: Tegra254 SoC support.
->=20
-> ---
-> v1[1] -> v2:
-> - patch 8: change name from GB10 to Tegra254.
-> - patch 6: added ACK from Krzysztof
->=20
-> Sumit Gupta (8):
->   soc: tegra: cbb: clear err force register with err status
->   soc: tegra: cbb: change master-slave to initiator-target
->   soc: tegra: cbb: make error interrupt enable and status per SoC
->   soc: tegra: cbb: improve handling for per SoC fabric data
->   soc: tegra: cbb: support hw lookup to get timed out target address
->   dt-bindings: arm: tegra: Add NVIDIA Tegra264 CBB 2.0 binding
->   soc: tegra: cbb: add support for cbb fabrics in Tegra264
->   soc: tegra: cbb: add support for cbb fabrics in T254
->=20
->  .../arm/tegra/nvidia,tegra234-cbb.yaml        |   4 +
->  drivers/soc/tegra/cbb/tegra194-cbb.c          |  34 +-
->  drivers/soc/tegra/cbb/tegra234-cbb.c          | 758 ++++++++++++++----
->  3 files changed, 606 insertions(+), 190 deletions(-)
+On 7/9/2025 2:40 PM, Ilpo Järvinen wrote:
+> On Tue, 8 Jul 2025, Manivannan Sadhasivam wrote:
+> 
+>> On Mon, Jun 09, 2025 at 04:21:27PM GMT, Krishna Chaitanya Chundru wrote:
+>>> ASPM states are not being enabled back with pci_enable_link_state() when
+>>> they are disabled by pci_disable_link_state(). This is because of the
+>>> aspm_disable flag is not getting cleared in pci_enable_link_state(), this
+>>> flag is being properly cleared when ASPM is controlled by sysfs.
+>>>
+>>
+>> A comment in pcie_config_aspm_link() says:
+>>
+>>   /* Enable only the states that were not explicitly disabled */
+>>
+>> But the function is called from both aspm_attr_store_common() and
+>> __pci_enable_link_state(). So I don't know if this is behavior is intentional
+>> or wrong.
+> 
+> Hi,
+> 
+> I think it's intentional. Whether the behavior is useful is another good
+> question but the current behavior aligns with the explanation in the
+> comment.
+> 
+> My understanding of the situation is:
+> 
+> pci_disable_link_state() and pci_enable_link_state() are not symmetric
+> despite the names, never have been (this is one of those many quirks ASPM
+> driver has which should be eventually cleaned up, IMO).
+> 
+> It might be appropriate to rename pci_enable_link_state() to
+> pci_set_default_link_state() to match the name to its functionality (and
+> the function comment):
+> 
+>   * pci_enable_link_state - Clear and set the default device link state
+> 
+> Note: "the default ... link state".
+> 
+> 
+> I've already raised this concern earlier! As you see, my comment are
+> not getting addressed. I'd like to see the author does one of these:
+> 
+Hi llpo,
 
-Applied with a few fixups to the subject lines and commit messages.
+I replied to your comment on v3 patch[1], and I feel instead of having
+new function() we can use same API to our purpose.
+> 1) Renames pci_enable_link_state() to pci_set_default_link_state()
+> 
+> 1b) If pci_enable_link_state() is still needed after that, a new function
+> is added to symmetrically pair with pci_disable_link_state().
+> 
+> or alternatively,
+> 
+> 2) Changelog justifies very clearly why this change is okay with the
+> existing callers. (And obviously the function comment should be altered to
+> match the functionality in that case too).
+> 
+> If approach 2 is chosen, it should be very carefully reviewed when it
+> comes to the callers.
+>
+I am in favor of approach 2 which you suggested, but lets wait for other
+reviewers feedback on this. Based up on the response i will make
+necessary changes in v5.
 
-Thanks,
-Thierry
+[1] 
+https://lore.kernel.org/all/b3d818f5-942c-1761-221d-af7d7e8f3624@oss.qualcomm.com/
 
---qncswnh7ljhekzcb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhuYRoACgkQ3SOs138+
-s6EQ+w//fkomOwmgUj7XFjnfa43JfwU7dy3++PHFs+YwL0vAdqNtYZKpmBUOxzWA
-yhkdvX8JReSMUBLSxcQGZKjSNzm1qvV9/gigEtyWs2BwKT3ScJwZ8POHc75tQCsY
-TyeUe4uQdRA0EV6Tw3oYWgVuQNItSSM5SpS6TV6pcr13reloIpA4HG/NxTozlU+Y
-4nZrEku7y6QAcBILJ6Fnk7K1JL+5muQSjBP4oTmvIE9uDqQ99xc0Xe1Gi5Cs7Okq
-mvcQxh6kEqBcZHevkfi8KH2I5Ep7Oxf8+LUpTZi9EtTwUM+EhVCgcj8HLoFBFP1M
-cD3zXnYdR60xtysKVtmvNjfjxRP1LEN1e8nWcqYRxfRdPFuKC+3pzgQdxOnmkg5A
-55S0sXymQHJA1KmQC6Qa25rH9hWE8hyn+7jKTXkDLfzaDW9T8R5ULhqMXyvUkLMK
-xw8wDIJxbKGgISwUPjNh0j64r8NqGdbIzSLx+xQDUeoUV+Tzd0T6hdPNux2idbAc
-DHp/GElE7AHAFCPsMSVKuIrUhJnG/UV7pW/jMSRgwB6q1adzowRpPseM6YDGXXBD
-wgi6d5HLCWN/gfN2Howvr4110mOr717ArsPyuvv1pnyl1NiNI/VPAI+QoThmDbl5
-eL1un8qO/iZ8/ck3h6eYGtOxmOL/jH2XYt13J4tGSmqiWVCpFmE=
-=Phzg
------END PGP SIGNATURE-----
-
---qncswnh7ljhekzcb--
+- Krishna Chaitanya.
+> 
+>>> Clear the aspm_disable flag with the requested ASPM states requested by
+>>> pci_enable_link_state().
+>>>
+>>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+>>
+>> Fixes tag?
+>>
+>> - Mani
+>>
+>>> ---
+>>>   drivers/pci/pcie/aspm.c | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+>>> index 94324fc0d3e650cd3ca2c0bb8c1895ca7e647b9d..0f858ef86111b43328bc7db01e6493ce67178458 100644
+>>> --- a/drivers/pci/pcie/aspm.c
+>>> +++ b/drivers/pci/pcie/aspm.c
+>>> @@ -1453,6 +1453,7 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
+>>>   		down_read(&pci_bus_sem);
+>>>   	mutex_lock(&aspm_lock);
+>>>   	link->aspm_default = pci_calc_aspm_enable_mask(state);
+>>> +	link->aspm_disable &= ~state;
+>>>   	pcie_config_aspm_link(link, policy_to_aspm_state(link));
+>>>   
+>>>   	link->clkpm_default = (state & PCIE_LINK_STATE_CLKPM) ? 1 : 0;
+>>>
+>>> -- 
+>>> 2.34.1
+>>>
+>>
+>>
+> 
 
