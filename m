@@ -1,127 +1,244 @@
-Return-Path: <linux-kernel+bounces-723245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08BEBAFE4D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67975AFE4D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18ED016E78C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:00:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 255131622B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3AC28935D;
-	Wed,  9 Jul 2025 10:00:48 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19683288C0A;
+	Wed,  9 Jul 2025 10:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Vs+hFX9e"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B9B288518;
-	Wed,  9 Jul 2025 10:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C352D2874F3;
+	Wed,  9 Jul 2025 10:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752055248; cv=none; b=UswT9NMcDJChhfb2rcXqZT32blV62F3YXLt++ODDFhwh9eUSr6VeQAhZpCDX9SsCuFdBZAhkG+ZqVoAUhk9ZXpOKyWZuwowML6pdHwDGZlWDRZsN+2RfI+PzkpDxtqgeiFaYiSkO2piQtFm1GFUm6SwZncY0JZYxtw9cFB8f8M8=
+	t=1752055327; cv=none; b=rKDEZcTcyfODUVZAbRjK5ANaP1nn1ljy/xOIRoTCdeU+rmGB0hy/UOM0HZ7aluLg852fdaa3mF2l9+hscVWcL38BCGh0rD/PAaZvw0y+raZrtkU5ewPKQ8m/UIGfiMpeWrXtxd60Ywx+LdRFxdhE+P31rVpj1BxeRcpGR0QW+a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752055248; c=relaxed/simple;
-	bh=DiJ66SBLFFMb0WUrOcvORVE6I+A3wUkQ1Hg21qfF7hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dDOc8q9kzgD7zegEKBeKuJtgyBEc5jx8Vv4X9H5gTyv6uThvdoXIFdAhQ8ztbHp33fDxUZDzr0SFJNqpwEey8oVk5U8ulqQp8clCoovb8qvmJHIeiQp/mv8Gmts+5aqkIhrKoVdOy6ovA7YPPKA1jsM4t60jwYMajYE9FguI2IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60700a745e5so10562450a12.3;
-        Wed, 09 Jul 2025 03:00:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752055244; x=1752660044;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xWi6412PxfvPQWQmWLJWGFciwerksItXBmye60DGX6k=;
-        b=fQXzPk9/Yv+N6UcTE/7/JCqpaQx/3jshReedWy9H4EUDLX20OMCUgMtGBYYeQAoGEn
-         wmBuRB0jX90556PMAjN17wfJRRUfugAUFHzTAmSjL2HLVjVGWQ0eNxRJ/5xTm5BKojZv
-         UTPOdFkXKxk4o79oOTaF9tc3Zg3rn4gdA85gKZa70sisb4Afl+T2DwjAuKHE5SuIPhQm
-         d8FfyakKqaj4DPn2d3ySDN5b/9Qrh7/VyA7choomoXHZ8PpYM2NVzmZNjlPMTaDUWkvf
-         /TyrwtcQgtqG1hLtBv71DCF/PUPvSi3CKNs2i1emPoUvctojL0iL7gBedprKvIaj7eSK
-         fErw==
-X-Forwarded-Encrypted: i=1; AJvYcCUA7n8O65Dl8YaEFGXkExiHexAmoSAJuT7mDs3dvmE+FaPKuKPQDvvxO96JL9j3Lx0H3rrPqTe8O8/n7qE=@vger.kernel.org, AJvYcCVZzG5GXJC65PQrkQMF44qpkoGJry0eKxUrE9bRof4IzDEM8admFp2LbEHDeCZ8pJjxvpM/j6Ct@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0wShulWDY7Z9hx10Uc5gAj1vBdgVe2ntqBbAYyWC/wYfXOOZZ
-	hALraSABNFjwK9idane0rvl1H7a1LHUcL325E2fWWHVSfP9vqMIqFlLFjIbYcA==
-X-Gm-Gg: ASbGnctgyVfCwhmwaxRJ7RGZZ8tpTBVgkeTYTVxumZ1cE5G2WGy/WJO1JgzyBxqHk7V
-	OBb+TlRjIhqXuNGU4shlvUN5Ew2GzdEhiUtLQIE8BIBZTctppiq49UOcwLzQNJN4ERcvNtKfSZw
-	MpGsyyXdp8P10LGW8Wwx47J5YAy6+sAWRD9m/NA2Kkg1LNBXf+kV/LMq8K0uxnHuoRFQKKx64OD
-	DspHOY19MpjzvWc8bCG7xfJkTe+c6/UZKGq4O/quiV9cqxdfmgGlwUdvvmDOYcj5I+qYEWUqCBe
-	qTbo3JVVjQO3EdYPyOsCkbIh+dgHnYVLrI0EeSdDoL/VhzkDDmKm
-X-Google-Smtp-Source: AGHT+IHTug5FbnVKS42RlgmNzRUm0MMv7wK2bjJcwMWaBDXUVoh/N6npNnhGvrdluT21Di3sx8BJGQ==
-X-Received: by 2002:a05:6402:796:b0:60c:3c19:1e07 with SMTP id 4fb4d7f45d1cf-611a659495dmr1246210a12.15.1752055244073;
-        Wed, 09 Jul 2025 03:00:44 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:7::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fca696480sm8718676a12.27.2025.07.09.03.00.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 03:00:43 -0700 (PDT)
-Date: Wed, 9 Jul 2025 03:00:41 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>
-Cc: aeh@meta.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	edumazet@google.com, jhs@mojatatu.com, kernel-team@meta.com,
-	Erik Lundgren <elundgren@meta.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] lockdep: Speed up lockdep_unregister_key() with
- expedited RCU synchronization
-Message-ID: <aG49yaIcCPML9GsC@gmail.com>
-References: <20250321-lockdep-v1-1-78b732d195fb@debian.org>
+	s=arc-20240116; t=1752055327; c=relaxed/simple;
+	bh=mFf2lXciUCUy0DWeK8EaWfhZiWoiX1K1u9dq8jPS26Y=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BnaiU/XAQA1trN/w1vTQJH76R0r41oKqwNRACRIh9wWwDLWTHDN+oHQZyQ7v8maxVksKDKjSZC6ia0WMBjeaze/KHL5dHjueVAj+288aR/NXbefaqR+eB0ehix9JSJb914AneM5R22R91yiOYihmdqu3DYYelZ4QpvgSFOE3V88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Vs+hFX9e; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5699tBrZ025920;
+	Wed, 9 Jul 2025 10:01:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=dPEJWo
+	wSApW3ihOeZAzPSmPZW963DAdzR9LVDUMg73w=; b=Vs+hFX9exPiNGKbU50lWyn
+	/4G5HJQabRgvG/45timEAl/TJB1PAONKQ+Muxis2rVrb7D7LuqS2gi2dw1L9vL3I
+	OAG8iA5NBvFjbwBL2ER+YJGH7BNg0vFeIom5Nglvo+EVs6J9eTf5vBnC+NHYsNjd
+	qE2+dkygUgeTjobtPfQ62q+bUzSdwiJ+Fjku9tMH1VkUd6t1ogVgUXVboVC+SJi1
+	XkzzMeDUzHR0SMjZBiFQNO8cZdzxxWrbcXSYSqNLVsl9xD0ZXd5xD0CnjS5w6B0q
+	eaa0s7nJlTy0bJYBfdUudwky5dQDH2R7xm+kdiiJ9KtjWKQgWt4gR7koIP6mhd9g
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puss5h40-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 10:01:20 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5698U7XC024678;
+	Wed, 9 Jul 2025 10:01:19 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qh32f9gt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 10:01:19 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 569A1FIr35324652
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 9 Jul 2025 10:01:15 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AC0772004D;
+	Wed,  9 Jul 2025 10:01:15 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5BE8120049;
+	Wed,  9 Jul 2025 10:01:15 +0000 (GMT)
+Received: from [9.152.222.224] (unknown [9.152.222.224])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  9 Jul 2025 10:01:15 +0000 (GMT)
+Message-ID: <d3279556-9bb6-429d-a037-fe279c5e3c67@linux.ibm.com>
+Date: Wed, 9 Jul 2025 12:01:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321-lockdep-v1-1-78b732d195fb@debian.org>
+User-Agent: Mozilla Thunderbird
+From: Jens Remus <jremus@linux.ibm.com>
+Subject: Re: [PATCH v13 02/14] unwind_user: Add frame pointer support
+To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+        Sam James <sam@gentoo.org>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+References: <20250708012239.268642741@kernel.org>
+ <20250708012357.982692711@kernel.org>
+Content-Language: en-US
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <20250708012357.982692711@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Vaj3PEp9 c=1 sm=1 tr=0 ts=686e3df0 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=meVymXHHAAAA:8 a=_CACeNGGoOMxVHxd7LAA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=2JgSa4NbpEOStq-L5dxp:22
+X-Proofpoint-GUID: Gmo4rqtPTAQXrEYEpkkFAP_k6cwoLgOD
+X-Proofpoint-ORIG-GUID: Gmo4rqtPTAQXrEYEpkkFAP_k6cwoLgOD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDA4NyBTYWx0ZWRfX2P9D659LQTcK WKxc+m3p7CZdR6XikHfTqXjxBviNPfD1Dtf3cWdkRB2h+6GejEBru+1KoSO7JLGWmjcd7VQpd2c r70cVWkv7z8hLB/Toef9nszBxTD0eSOqbLoDNIAypS7UgVGwaGQMMFf9GCNJXEvt73u+XMZY7fc
+ /OIqPNLqT4/lleOVwzMMTYo9YdB4OOR6wStuo3PyOV0SbLv4cW2ONnD4MfqEcVFafpWhH2unRlr 365MELt2IQ9apjY26Z8gllYE0Q5Y20s8tEFQzTf2ZAkWRznnACBQ6AVR3RpXOyepAjK4/YUJ2OJ VjQFDppaDCGOl9OfjiqZshxbapNT85ScJabDsBcsdt5UvYyMnVWAM/L/WIpTepDmTqcfXdPkPza
+ NcW8GjUsmTVjhpN3mWe95XSfKAqdor6ONOvyHQh77xwxSD4SJumNkf7SFfwMhoAEvlWZOBj+
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_02,2025-07-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 suspectscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 bulkscore=0 mlxscore=0
+ spamscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507090087
 
-Hello Waiman, Boqun,
+On 08.07.2025 03:22, Steven Rostedt wrote:
+> From: Josh Poimboeuf <jpoimboe@kernel.org>
+> 
+> Add optional support for user space frame pointer unwinding.  If
+> supported, the arch needs to enable CONFIG_HAVE_UNWIND_USER_FP and
+> define ARCH_INIT_USER_FP_FRAME.
+> 
+> By encoding the frame offsets in struct unwind_user_frame, much of this
+> code can also be reused for future unwinder implementations like sframe.
+> 
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Co-developed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-On Fri, Mar 21, 2025 at 02:30:49AM -0700, Breno Leitao wrote:
-> lockdep_unregister_key() is called from critical code paths, including
-> sections where rtnl_lock() is held. For example, when replacing a qdisc
-> in a network device, network egress traffic is disabled while
-> __qdisc_destroy() is called for every network queue.
-> 
-> If lockdep is enabled, __qdisc_destroy() calls lockdep_unregister_key(),
-> which gets blocked waiting for synchronize_rcu() to complete.
-> 
-> For example, a simple tc command to replace a qdisc could take 13
-> seconds:
-> 
->   # time /usr/sbin/tc qdisc replace dev eth0 root handle 0x1: mq
->     real    0m13.195s
->     user    0m0.001s
->     sys     0m2.746s
-> 
-> During this time, network egress is completely frozen while waiting for
-> RCU synchronization.
-> 
-> Use synchronize_rcu_expedited() instead to minimize the impact on
-> critical operations like network connectivity changes.
-> 
-> This improves 10x the function call to tc, when replacing the qdisc for
-> a network card.
-> 
->    # time /usr/sbin/tc qdisc replace dev eth0 root handle 0x1: mq
->      real     0m1.789s
->      user     0m0.000s
->      sys      0m1.613s
+> diff --git a/kernel/unwind/user.c b/kernel/unwind/user.c
 
-Can I have this landed as a workaround for the problem above, while
-hazard pointers doesn't get merged?
+> @@ -6,13 +6,71 @@
+>  #include <linux/sched.h>
+>  #include <linux/sched/task_stack.h>
+>  #include <linux/unwind_user.h>
+> +#include <linux/uaccess.h>
+> +
+> +static struct unwind_user_frame fp_frame = {
+> +	ARCH_INIT_USER_FP_FRAME
+> +};
+> +
+> +static inline bool fp_state(struct unwind_user_state *state)
+> +{
+> +	return IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP) &&
+> +	       state->type == UNWIND_USER_TYPE_FP;
+> +}
+>  
+>  #define for_each_user_frame(state) \
+>  	for (unwind_user_start(state); !(state)->done; unwind_user_next(state))
+>  
+>  static int unwind_user_next(struct unwind_user_state *state)
+>  {
+> -	/* no implementation yet */
+> +	struct unwind_user_frame *frame;
+> +	unsigned long cfa = 0, fp, ra = 0;
+> +	unsigned int shift;
+> +
+> +	if (state->done)
+> +		return -EINVAL;
+> +
+> +	if (fp_state(state))
+> +		frame = &fp_frame;
+> +	else
+> +		goto done;
+> +
+> +	if (frame->use_fp) {
+> +		if (state->fp < state->sp)
 
-This is affecting some systems that runs the Linus' upstream kernel with
-some debug flags enabled, and I would like to have they unblocked.
+		if (state->fp <= state->sp)
 
-Once hazard pointer lands, this will be reverted. Is this a fair
-approach?
+I meanwhile came to the conclusion that for architectures, such as s390,
+where SP at function entry == SP at call site, the FP may be equal to
+the SP.  At least for the brief period where the FP has been setup and
+stack allocation did not yet take place.  For most architectures this
+can probably only occur in the topmost frame.  For s390 the FP is setup
+after static stack allocation, so --fno-omit-frame-pointer would enforce
+FP==SP in any frame that does not perform dynamic stack allocation.
 
-Thanks for your help,
---breno
+> +			goto done;
+> +		cfa = state->fp;
+> +	} else {
+> +		cfa = state->sp;
+> +	}
+> +
+> +	/* Get the Canonical Frame Address (CFA) */
+> +	cfa += frame->cfa_off;
+> +
+> +	/* stack going in wrong direction? */
+> +	if (cfa <= state->sp)
+> +		goto done;
+> +
+> +	/* Make sure that the address is word aligned */
+> +	shift = sizeof(long) == 4 ? 2 : 3;
+> +	if ((cfa + frame->ra_off) & ((1 << shift) - 1))
+> +		goto done;
+
+Do all architectures/ABI mandate register stack save slots to be aligned?
+s390 does.
+
+> +
+> +	/* Find the Return Address (RA) */
+> +	if (get_user(ra, (unsigned long *)(cfa + frame->ra_off)))
+> +		goto done;
+> +
+
+Why not validate the FP stack save slot address as well?
+
+> +	if (frame->fp_off && get_user(fp, (unsigned long __user *)(cfa + frame->fp_off)))
+> +		goto done;
+> +
+> +	state->ip = ra;
+> +	state->sp = cfa;
+> +	if (frame->fp_off)
+> +		state->fp = fp;
+> +
+> +	return 0;
+> +
+> +done:
+> +	state->done = true;
+>  	return -EINVAL;
+>  }
+
+Thanks and regards,
+Jens
+-- 
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
+
 
