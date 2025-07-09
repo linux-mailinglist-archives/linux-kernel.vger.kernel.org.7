@@ -1,206 +1,207 @@
-Return-Path: <linux-kernel+bounces-723108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2222AFE306
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:44:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B390EAFE30B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6FF3189282A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F210317F838
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08C627E1C0;
-	Wed,  9 Jul 2025 08:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD63280303;
+	Wed,  9 Jul 2025 08:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0meTvm5F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jspYD02o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4276727AC37;
-	Wed,  9 Jul 2025 08:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899B127FD51;
+	Wed,  9 Jul 2025 08:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752050674; cv=none; b=ul6tRQ5qFdaPnoaY6oWPa3BrJOOGnaYTTlYjIsO0Iaa7GyW5u55oHZsM69lDQzNmx6wfYo81Eb9ryUD9jRQFypE+tqt1e/xICdcO29igayCePUiV5N3wmuRiOwTsftZOSNGtEIiffNkFw4Zi/YCEK74FufEBQXD2YXpbzrxt+A4=
+	t=1752050718; cv=none; b=H+rkiSVk3umoroHMcitmnKt++v3cXH41kAwYwsmLcaqpa8vCRfMhM7Ub2qte6nFevnJa3qytzxPvcsgPbi4NeALdBD4ZND2Gw9dBRNMYP4N2//HscI9dIT1Jqmwnl86M2y6GBda2cFf6EIKPZ/GrjeEDTGrAcr6UhHMr51Sj5d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752050674; c=relaxed/simple;
-	bh=lwQ2KKKmVP54nbs4jel6XWDPyKiP+QppmSbUcd856N0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MygE7F7wjJB2YWgKPYot/dhJtNsLNIAC5gHyQmNLERdgWw9REfO5QYDRtAYcX1WiQcnp+zJc+Poi/KtOnBn5gWvYa0LdIhbw88Tg1/zwa7ph/iaOiv+6ZDoTrlgzj7a7XqhvnCvJ1/91iT0aqDb3WOWXXiJtiSau/v9DYgzOzjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0meTvm5F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C78BC4CEEF;
-	Wed,  9 Jul 2025 08:44:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752050673;
-	bh=lwQ2KKKmVP54nbs4jel6XWDPyKiP+QppmSbUcd856N0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0meTvm5Fs8Qz7iZrXUC7Pg2gSzJmhZapvoDupt+zSqtOMzeBBZiuzq4gK4NpMlZy2
-	 PT20Y4k9viWa4D6d/Bys4SM6I6X/AGjbplivRy8Xr+QTg+/5JeHz5G28GYFJ+of2KF
-	 gh5GTlXCy8LC3R2oojoXOyvA5S6dveG79vBipnxU=
-Date: Wed, 9 Jul 2025 10:44:29 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v4] usb: misc: qcom_eud: Access EUD_MODE_MANAGER2 through
- secure calls
-Message-ID: <2025070924-wilt-dreamt-fb25@gregkh>
-References: <20250709065533.25724-1-komal.bajaj@oss.qualcomm.com>
+	s=arc-20240116; t=1752050718; c=relaxed/simple;
+	bh=/iZqQHcDXyZQ9cwtIYRpNd8Z1fTX2ngQbJlE+f0g2zQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pJAQhXQ8wJqh12aWotzfi9Z9beUItBfz+zzOetpoMMPlHig+6/iVBzbwS4qMke/aAG/G2LZh1Vp6MMWVIU9jMCis1WXODW4RZDJdLx8Yi3atYv2WoOwn55EPVQYlgWCM0znZAVhrva//W34bIvl9o3ZRHNH40OgpA723GxCwUVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jspYD02o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F47C4CEEF;
+	Wed,  9 Jul 2025 08:45:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752050718;
+	bh=/iZqQHcDXyZQ9cwtIYRpNd8Z1fTX2ngQbJlE+f0g2zQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jspYD02obGxQ2tUFOxZlC6vJlTefCqrLp2n2f5K96myvjFXRbYh9H9CSnzCut6jbD
+	 KsZurATCD7D0U2G+/uZwUtY2GW2vc7RO/5Tg49gcKCskvXO1yxCioBLOmh/DZmACY4
+	 NKMlsBWNt1z6HjnqlsoQanCGvbP6h7542HBD8ocyI1uECEZJE+VRENE9jXaT4bjPIV
+	 s2lNVcOY2vWlIkmJkZ5S38O2K7ufQD33tpRglqhPm7lu6JUUfC6qVPsa7i2d2vIinU
+	 LRQmKmjAiYmMKQot7XNqwsw5GiGtBYw/aouw/AbKcodJ9QRXlMwIE7kBvOo/vUvu6g
+	 tkvLIYWTHbSRQ==
+Message-ID: <b42ae6bf-8505-4f39-a53a-3866d4f10fe6@kernel.org>
+Date: Wed, 9 Jul 2025 10:45:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250709065533.25724-1-komal.bajaj@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] arm64: dts: ti: Add support for Variscite
+ VAR-SOM-AM62P Symphony Board
+To: Stefano Radaelli <stefano.radaelli21@gmail.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
+References: <20250708184841.72933-1-stefano.radaelli21@gmail.com>
+ <20250708184841.72933-4-stefano.radaelli21@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250708184841.72933-4-stefano.radaelli21@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 12:25:14PM +0530, Komal Bajaj wrote:
-> EUD_MODE_MANAGER2 register is mapped to a memory region that is marked
-> as read-only for HLOS, enforcing access restrictions that prohibit
-> direct memory-mapped writes via writel().
+On 08/07/2025 20:48, Stefano Radaelli wrote:
+> Add device tree support for the Variscite Symphony carrier board with
+> the VAR-SOM-AM62P system on module.
 > 
-> Attempts to write to this region from HLOS can result in silent failures
-> or memory access violations, particularly when toggling EUD (Embedded
-> USB Debugger) state. To ensure secure register access, modify the driver
-> to use qcom_scm_io_writel(), which routes the write operation to Qualcomm
-> Secure Channel Monitor (SCM). SCM has the necessary permissions to access
-> protected memory regions, enabling reliable control over EUD state.
+> The Symphony board includes
+> - uSD Card support
+> - USB ports and OTG
+> - Additional Gigabit Ethernet interface
+> - Uart interfaces
+> - OV5640 Camera support
+> - GPIO Expander
+> - CAN, I2C and general purpose interfaces
 > 
-> SC7280, the only user of EUD is also affected, indicating that this could
-> never have worked on a properly fused device.
+> Link: https://www.variscite.it/product/single-board-computers/symphony-board/
 > 
-> Fixes: 9a1bf58ccd44 ("usb: misc: eud: Add driver support for Embedded USB Debugger(EUD)")
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
 > ---
-> Changes in v4:
-> * Added error logging in disable_eud() for SCM write failures, per Konrad’s suggestion
-> * Link to v3: https://lore.kernel.org/all/20250708085208.19089-1-komal.bajaj@oss.qualcomm.com/
+>  .../dts/ti/k3-am62p5-var-som-symphony.dts     | 545 ++++++++++++++++++
+>  1 file changed, 545 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
 > 
-> Changes in v3:
-> * Moved secure write before normal writes
-> * Added error checking in disable_eud()
-> * Use ENOMEM error code if platform_get_resource() fails
-> * Select QCOM_SCM driver if USB_QCOM_EUD is enabled
-> * Link to v2: https://lore.kernel.org/all/20250627125131.27606-1-komal.bajaj@oss.qualcomm.com/
-> 
-> Changes in v2:
-> * Drop separate compatible to be added for secure eud
-> * Use secure call to access EUD mode manager register
-> * Link to v1: https://lore.kernel.org/all/20240807183205.803847-1-quic_molvera@quicinc.com/
-> 
->  drivers/usb/misc/Kconfig    |  1 +
->  drivers/usb/misc/qcom_eud.c | 27 +++++++++++++++++++++------
->  2 files changed, 22 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
-> index 6497c4e81e95..f49d5ac0e957 100644
-> --- a/drivers/usb/misc/Kconfig
-> +++ b/drivers/usb/misc/Kconfig
-> @@ -148,6 +148,7 @@ config USB_QCOM_EUD
->  	tristate "QCOM Embedded USB Debugger(EUD) Driver"
->  	depends on ARCH_QCOM || COMPILE_TEST
->  	select USB_ROLE_SWITCH
-> +	select QCOM_SCM
-
-How is this select going to work if COMPILE_TEST is enabled on
-non-ARCH_QCOM configs?
-
-Please don't use select if at all possible, use "depends" properly.
-
-
->  	help
->  	  This module enables support for Qualcomm Technologies, Inc.
->  	  Embedded USB Debugger (EUD). The EUD is a control peripheral
-> diff --git a/drivers/usb/misc/qcom_eud.c b/drivers/usb/misc/qcom_eud.c
-> index 83079c414b4f..a58081f53db3 100644
-> --- a/drivers/usb/misc/qcom_eud.c
-> +++ b/drivers/usb/misc/qcom_eud.c
-> @@ -15,6 +15,7 @@
->  #include <linux/slab.h>
->  #include <linux/sysfs.h>
->  #include <linux/usb/role.h>
-> +#include <linux/firmware/qcom/qcom_scm.h>
->  
->  #define EUD_REG_INT1_EN_MASK	0x0024
->  #define EUD_REG_INT_STATUS_1	0x0044
-> @@ -34,7 +35,7 @@ struct eud_chip {
->  	struct device			*dev;
->  	struct usb_role_switch		*role_sw;
->  	void __iomem			*base;
-> -	void __iomem			*mode_mgr;
-> +	phys_addr_t			mode_mgr;
->  	unsigned int			int_status;
->  	int				irq;
->  	bool				enabled;
-> @@ -43,18 +44,30 @@ struct eud_chip {
->  
->  static int enable_eud(struct eud_chip *priv)
->  {
-> +	int ret;
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts b/arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
+> new file mode 100644
+> index 000000000000..ec6bdd28d57f
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
+> @@ -0,0 +1,545 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Variscite Symphony carrier board for VAR-SOM-AM62P
+> + *
+> + * Copyright (C) 2021-2022 Texas Instruments Incorporated - https://www.ti.com/
+> + * Copyright (C) 2025 Variscite Ltd. - https://www.variscite.com/
+> + *
+> + */
 > +
-> +	ret = qcom_scm_io_writel(priv->mode_mgr + EUD_REG_EUD_EN2, 1);
-> +	if (ret)
-> +		return ret;
+> +/dts-v1/;
 > +
->  	writel(EUD_ENABLE, priv->base + EUD_REG_CSR_EUD_EN);
-
-Nit, why is your local writel() function in backwards order of
-parameters from qcom_scm_io_writel()?  That's going to be a major pain
-to maintain over time, don't you think?
-
-
->  	writel(EUD_INT_VBUS | EUD_INT_SAFE_MODE,
->  			priv->base + EUD_REG_INT1_EN_MASK);
-> -	writel(1, priv->mode_mgr + EUD_REG_EUD_EN2);
->  
->  	return usb_role_switch_set_role(priv->role_sw, USB_ROLE_DEVICE);
->  }
->  
->  static void disable_eud(struct eud_chip *priv)
->  {
-> +	int ret;
+> +#include "k3-am62p5-var-som.dtsi"
 > +
-> +	ret = qcom_scm_io_writel(priv->mode_mgr + EUD_REG_EUD_EN2, 0);
-> +	if (ret) {
-> +		dev_err(priv->dev, "failed to disable eud\n");
-> +		return;
-> +	}
+> +/ {
+> +	model = "Variscite VAR-SOM-AM62P on Symphony-Board";
+
+Missing compatible.
+
 > +
->  	writel(0, priv->base + EUD_REG_CSR_EUD_EN);
-> -	writel(0, priv->mode_mgr + EUD_REG_EUD_EN2);
->  }
->  
->  static ssize_t enable_show(struct device *dev,
-> @@ -178,6 +191,7 @@ static void eud_role_switch_release(void *data)
->  static int eud_probe(struct platform_device *pdev)
->  {
->  	struct eud_chip *chip;
-> +	struct resource *res;
->  	int ret;
->  
->  	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
-> @@ -200,9 +214,10 @@ static int eud_probe(struct platform_device *pdev)
->  	if (IS_ERR(chip->base))
->  		return PTR_ERR(chip->base);
->  
-> -	chip->mode_mgr = devm_platform_ioremap_resource(pdev, 1);
-> -	if (IS_ERR(chip->mode_mgr))
-> -		return PTR_ERR(chip->mode_mgr);
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +	if (!res)
-> +		return -ENODEV;
-> +	chip->mode_mgr = res->start;
+> +	aliases {
+> +		ethernet0 = &cpsw_port1;
+> +		ethernet1 = &cpsw_port2;
+> +		mmc0 = &sdhci0;
+> +		mmc1 = &sdhci1;
+> +		mmc2 = &sdhci2;
+> +		serial0 = &main_uart0;
+> +		serial2 = &main_uart2;
+> +		serial5 = &main_uart5;
+> +		serial6 = &main_uart6;
+> +		spi5 = &main_spi2;
+> +		usb0 = &usb0;
+> +		usb1 = &usb1;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +		bootargs = "console=ttyS0,115200n8 earlycon=ns16550a,mmio32,0x02800000";
 
-No ioremap() call needed anymore?   Why not?
+Drop bootargs. It duplicates stdout-path and introduces debugging
+earlycon. Mainline usage should not be debugging one.
 
-thanks,
+> +	};
+> +
+> +	clk_ov5640_fixed: clock {
 
-greg k-h
+Please use name for all fixed clocks which matches current format
+recommendation: 'clock-<freq>' (see also the pattern in the binding for
+any other options).
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
+
+> +		#clock-cells = <0>;
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <24000000>;
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +		status = "okay";
+
+Why? Drop.
+
+> +		back {
+
+Never checked/tested. I finish my review here. You have same issues,
+like this and earlier one, in other places as well.
+
+Best regards,
+Krzysztof
 
