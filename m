@@ -1,160 +1,213 @@
-Return-Path: <linux-kernel+bounces-723820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AE0AFEB62
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:11:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D40AFEB56
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBD545484E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:04:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA09A1C87884
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A238B2DA779;
-	Wed,  9 Jul 2025 14:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149E92E54CA;
+	Wed,  9 Jul 2025 14:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pGgkqWQH"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2085.outbound.protection.outlook.com [40.107.223.85])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="doBggYFf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75584272E7C;
-	Wed,  9 Jul 2025 14:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069692; cv=fail; b=rGNKkFTLddP/FyzB/wnVmhZcSMWGoiOzKQkBJgUA01HjP6UsOMLbpDsEATPvqWSGAVnZ00Ji5qi3uZecgcLfdPufBi72kLnHbN+baMmb2vtqs1FxJ7yhv9ZiCFzkgIN46NcWW6blFmA7zbuJN01JE7mkMCYW56XuqaybEZajBz8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069692; c=relaxed/simple;
-	bh=HWvWrk5LvvuJsUChA4fWZsrKMFulhYKVFOGDhGlrcR0=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oIxmTaTMo1KMKV4HS4M8IPIuG+2ByuYiS6gXvdoRWU/8iVmwQGQZ6Yy19r6DtbxwguvFv77D3UklcS+DrdiWC3jQRTGEgw6VcVbPET56qv157fHHxCrba6HmwBDLcgck4yxNJYwmhyDlqNzNEhuhGEESns/y7D5chS+AmuCsqLM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pGgkqWQH; arc=fail smtp.client-ip=40.107.223.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yyfcqogUTzd5mwyEaAaWUG6qLTOpR+jaqrUaKOlqymDfage0rNhIjf2a99Z2HFO6Nck1k8o84Y0uIPKqBYTdXYpJj0jZ+sBrMpprlEp3UfG97vA7fEB6M8zOkepn8lPfhzoXcuzOH/PJOYpBCqeONgOiI9k2iffkawM2DOGACD0I/UnlgdtwCAEpYjSwHxob0phS5QmrVb648uty1Xj6WDRVIUCoShKM21X03XC3c/k9HLwQomnMoPLuEgM4VwbaQlEt/Y+rCksom+XymbghWTYTysliXM9xm0sQinoL0XDg4vTtsgaS6Nu6UWG/rNDvJ/2cqskiIlPYhC3aHPpoSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HWvWrk5LvvuJsUChA4fWZsrKMFulhYKVFOGDhGlrcR0=;
- b=vDFEqwu8r1hIf+t/O+lUflehx3iTPKpB/yz7JBNdAqyMzHkjp01lGwcFH0Pd8mudkCVzYKnAZzCPuAT2uWhBiB4xEDUnrud8rfjnHufNv7Zkf4sYXKpnxp+G+GYbXisEXcsO2NrsSxwEtIvuyf4EawMHv7LhBKldyYYb84OSucr/DDJXId6af15SIvG0xvyeW57uqAZNwnLP193Q2CMwwSLX242riBAV7usHLHxBPHf7Qy1tCYqCFHHMxK5tLFD5j6/RLYcZiHednAkiJmOJTOR6r4LJbnV8YGVfiwLLUGA1NdiBF5RvXfkvqfdYpiV4a+LmuxCdQ5Dp3AhPWejcHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HWvWrk5LvvuJsUChA4fWZsrKMFulhYKVFOGDhGlrcR0=;
- b=pGgkqWQHG2xaRygJi0ev2ry6IC0nGfgn/NcHEADIn2M2GoLJ/BGmRXCyuggcp1jCC9z38s56YjKtGopME52HYsEbzhh4Rlc3F/czeGvA1V96IETXOKA1s7uk/0pHHhm1c/jcLdthTj8rglyR6exO5MydS+dsCt54ngiuuzGDbj8=
-Received: from BN9PR03CA0065.namprd03.prod.outlook.com (2603:10b6:408:fc::10)
- by SA5PPF80B25317E.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8d2) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Wed, 9 Jul
- 2025 14:01:25 +0000
-Received: from BN1PEPF0000468B.namprd05.prod.outlook.com
- (2603:10b6:408:fc:cafe::d9) by BN9PR03CA0065.outlook.office365.com
- (2603:10b6:408:fc::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.21 via Frontend Transport; Wed,
- 9 Jul 2025 14:01:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF0000468B.mail.protection.outlook.com (10.167.243.136) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Wed, 9 Jul 2025 14:01:25 +0000
-Received: from BLR-L1-NDADHANI (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Jul
- 2025 09:01:21 -0500
-From: Nikunj A Dadhania <nikunj@amd.com>
-To: Ard Biesheuvel <ardb+git@google.com>, <linux-kernel@vger.kernel.org>
-CC: <linux-efi@vger.kernel.org>, <x86@kernel.org>, Ard Biesheuvel
-	<ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, Ingo Molnar
-	<mingo@kernel.org>, Dionna Amalie Glaze <dionnaglaze@google.com>, "Kevin
- Loughlin" <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v4 00/24] x86: strict separation of startup code
-In-Reply-To: <20250709080840.2233208-26-ardb+git@google.com>
-References: <20250709080840.2233208-26-ardb+git@google.com>
-Date: Wed, 9 Jul 2025 14:01:17 +0000
-Message-ID: <85v7o1v4ya.fsf@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F196272E7C;
+	Wed,  9 Jul 2025 14:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752069703; cv=none; b=gKKvwp2q9tLD97v4YoeFhdjG3y7LF3FfLeDgaUze62+4TJtxTLElTmRdclZZSgIPprBZcQx7a7j1XVx+539tWoQEUJUAmw+NajUJdBxRyqIFMgvacK++jZ0llvtQpIWjEoQpQJ0Y8OgHOyBSsMsnuF+qFMR0mZuM31NjJHBCX5Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752069703; c=relaxed/simple;
+	bh=NjF/I4wdgHCjk0VazPx1Rna6CqDY2c1+JUJEJS/Be9s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZxngoGpzhA4jDedDtoyDq/qXZnq/vVJv4czhNJIPYpy9HOpYYsTtEf5tT3MaTxzzzDMKUbx21z8GtQwJXjwSFNxhUTOXYRbq61v2ufxaPB13tWZoH/Cw76b6PdWStN3RrB6L24R+zIEorZVbq1Xa8O1tqANzyaFCWsp9IjSr8YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=doBggYFf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6ECC4CEEF;
+	Wed,  9 Jul 2025 14:01:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752069703;
+	bh=NjF/I4wdgHCjk0VazPx1Rna6CqDY2c1+JUJEJS/Be9s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=doBggYFf/++Nkqdxc3Q7xFjFV/QwdwU5eJOfW6//7LAFYowWhufJiQsrusCUOyfqy
+	 sf/+bBeGsQz2X2HYHB+wnWN6K2WV0kJQBRRm1je0Tz8WREAla21dWrkTYJ7RPOIGMZ
+	 tlFreFS9fovTT2HK6ynl5R3Aq3Jq47nvUanuW3vig06E3AzEfCB9+0PLtpoUyhbdk3
+	 NCE72IgKc5Vp+8BrPaZ8gzuYZdjxFp2LzQKTQQhUSI+S7+bVrgKSn+Pn/Mz0dpQPf4
+	 q4g67EqiFz5lsSLjAUiruqjsj5A5RE60dVQuW0T+/Y6bjoARpkJAmlzhWmc6wenCSw
+	 XCdfzawtJU22w==
+Message-ID: <1a47145a-5f6b-4610-b1db-9df18adb77fa@kernel.org>
+Date: Wed, 9 Jul 2025 16:01:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF0000468B:EE_|SA5PPF80B25317E:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84b60e94-5414-4418-fb2f-08ddbef117d1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JtrYLvyIVgCFZUiBjOLa2A+IKmNfpG6/4cUgelmJpTsrXtUIjoq0fF88vUAV?=
- =?us-ascii?Q?ux8TU/mi7A1EMQnYKP2NEGTd1MfwU0TtiWEYvXlj4XOJpWjQHJFfJ/XRbojU?=
- =?us-ascii?Q?A1+yt/4dwsx9pqbex9OpGVCKxoiiemlHxpmAxWDYucB+fqbW42XUlZr6kgjE?=
- =?us-ascii?Q?SZjERmqgxTXTHEZZvzTsQBeU/sGu37uM0R6/GSMGmvO9RhrFxCvMXyhhE3EQ?=
- =?us-ascii?Q?HsxaevK2VM4SJLD0uh20zq4/GSVw841yjQfrXJxjf22ErRpcneV0x82M34s4?=
- =?us-ascii?Q?dmsAJ0gtcsLP3na+Z7GkSA4Azo3VIL4npWcPEfKZFkUl47glFGtLGHpG9YFL?=
- =?us-ascii?Q?wHuwQaViCb9qBs8tdCTMD0sxXr9T6mVkCoAvxDeIuVQ2/EsO1HIzJC1jgT+3?=
- =?us-ascii?Q?RuvXNo9juHXay3Ps/eDwTbSXXcvloLFZJDqu8M4iL4OswYWMSqYHNhifrS/Y?=
- =?us-ascii?Q?CZkPDNbF0Y0dXOfsTNl87BWoXptaM7Ym06vRgoFQcz4yxfHKtH+sK2pbqzC9?=
- =?us-ascii?Q?f8epSjkycnRkI5udOYGR0AfgDMw7FzahOjtfaOR5glmK5GUGgxk1OnYAgdNA?=
- =?us-ascii?Q?lhhEnNI0NWrQcRQiA8GNwkZALIAvdIt1rdto6QiqxvnH34dKfGORULbAwiPC?=
- =?us-ascii?Q?MLy83lQTCMQLjv4THxJi1gw/80RvFQIqL87CWor9U+InFoZd6Mrk4jr5w/aF?=
- =?us-ascii?Q?kblMdXJsoToGJShA1uk5VpTWKlewRbNcZasslbaJDT3meZfarHjIZF7burQk?=
- =?us-ascii?Q?UQFSOZt2h3TueGhPz1O0pRfwNACrRqh22U2HA1i2qyC3EUL1LRQbEzkgYDnV?=
- =?us-ascii?Q?A9QqkeYDdCH7NTcJtHkPLXGcu7BR0nl7Ygfu1dBZKPGJrv5cYMf9ZkuJQVy3?=
- =?us-ascii?Q?VM0tDDPLiRjePWIYBoglttSBotv/RIQlSoR+WDcht6zN4ej3BCDREc5wZvAj?=
- =?us-ascii?Q?+J7OS8hK3FYOz2+82R6RzbY/xJYHinQAFSqMSLZOBufMeefs9gJKLQtHK78Z?=
- =?us-ascii?Q?BoLrXWhs877+4lOFFebVDzRvkApyJ+RX7AZoWfU1A589DGJMBmql/VeB9g2L?=
- =?us-ascii?Q?e5heJYqjZ4oU6e4OqmtDZQOncSEuNG67L5POniw0+kT3jxRCi90PVgGSYTFe?=
- =?us-ascii?Q?PoAOJnGdVV3RV0IGGCdeU6qpjUzv1kHHBe6QtynvXQD4eTbpBAKshikUUEyi?=
- =?us-ascii?Q?8rbFshkxYLnx4IDgqQ8v7uv1tUbuJmrOnCPazPzqKhZEU0bpigz/AuiAkacQ?=
- =?us-ascii?Q?zYNkgo/EGq3ACEFvJq815ST8cYFZlYsxi8kOJ+JB6Sn6ISGSofIgppmrXuiK?=
- =?us-ascii?Q?GjvHR8FOWs5RY6jDZg3sWUcbBJBGbqkr/rGnLLWnTVKXEoegNz5SwlOINvJa?=
- =?us-ascii?Q?Z4xfRG8CWkn/OzR3TVzeBYg2SgVA1mHahxNYPoJq6kRGBHJuK5ROeagp1chf?=
- =?us-ascii?Q?rqUuVmgu/Hcrn33RKjKhVxZaXhqyY1FsRv7pH9EXBP0GgLsT7x1EOcaql6Rl?=
- =?us-ascii?Q?U32EWzey/GJ4Qbv4sX6afQSpuBL9SgH7QlXQ?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 14:01:25.2032
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84b60e94-5414-4418-fb2f-08ddbef117d1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF0000468B.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF80B25317E
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] dt-bindings: perf: Add devicetree binding for custom
+ PPMU
+To: Vivek Yadav <vivek.2311@samsung.com>, pankaj.dubey@samsung.com,
+ ravi.patel@samsung.com, shradha.t@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ will@kernel.org, mark.rutland@arm.com, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, linux-fsd@tesla.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <20250708103208.79444-1-vivek.2311@samsung.com>
+ <CGME20250708103237epcas5p1c4c5d7a5f43c0c88317e74d2f2458a1b@epcas5p1.samsung.com>
+ <20250708103208.79444-4-vivek.2311@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250708103208.79444-4-vivek.2311@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Ard Biesheuvel <ardb+git@google.com> writes:
+On 08/07/2025 12:32, Vivek Yadav wrote:
+> Add the dt-binding documentation for the Samsung specific
+> Platform Performance Monitoring Unit (PPMU) driver which provides
+> performance statistics for AXI bus masters such as MFC.
 
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> Build tested defconfig and allmodconfig
->
-> !!! Boot tested on non-SEV guest ONLY !!!!
->
-> Again, I will need to lean on Tom to determine whether this breaks
-> SEV-SNP guest boot. As I mentioned before, I am still waiting for
-> SEV-SNP capable hardware to be delivered.
+A nit, subject: drop second/last, redundant "devicetree bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-This series breaks SEV-SNP guest boot, bisect points to patch 12/24
-"x86/sev: Unify SEV-SNP hypervisor feature check". If I revert this
-patch SEV-SNP guest boot fine. I will continue debugging it further.
+> 
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
+> ---
+>  .../bindings/perf/samsung,ppmu-v2.yaml        | 62 +++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/perf/samsung,ppmu-v2.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/perf/samsung,ppmu-v2.yaml b/Documentation/devicetree/bindings/perf/samsung,ppmu-v2.yaml
+> new file mode 100644
+> index 000000000000..d137d06b7034
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/perf/samsung,ppmu-v2.yaml
+> @@ -0,0 +1,62 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/perf/samsung,ppmu-v2.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung PPMU (Platform Performance Monitoring Unit)
+> +
+> +maintainers:
+> +  - Vivek Yadav <vivek.2311@samsung.com>
+> +  - Ravi Patel <ravi.patel@samsung.com>
+> +
+> +description:
+> +  PPMU (Platform Performance Monitoring Unit) provides performance statistics
+> +  such as bandwidth, read and write request, transactions count for AXI masters
+> +  like MFC.
+> +
+> +properties:
+> +  compatible:
+> +    const: samsung,ppmu-v2
 
-Regards,
-Nikunj
+What is wrong with existing bindings? Anyway, this must be SoC specific.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: Memory-mapped register address
+> +
+> +  clocks:
+> +    items:
+> +      - description: AXI bus clock
+> +      - description: Peripheral clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: aclk
+> +      - const: pclk
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Overflow interrupt for Counters
+> +      - description: Conditional Interrupt Generation (CIG)
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/fsd-clk.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    ppmu@12840000 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+
+> +        compatible = "samsung,ppmu-v2";
+> +        reg = <0x12840000 0x1000>;
+> +        interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&clock_mfc MFC_PPMU_MFCD0_IPCLKPORT_ACLK>,
+> +                 <&clock_mfc MFC_PPMU_MFCD0_IPCLKPORT_PCLK>;
+> +        clock-names = "aclk", "pclk";
+> +     };
+
+
+Best regards,
+Krzysztof
 
