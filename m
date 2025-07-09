@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-724552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80AFAFF42D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:57:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0859AFF434
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B77E566CD1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:57:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6635417CE9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9385A243951;
-	Wed,  9 Jul 2025 21:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D36C243367;
+	Wed,  9 Jul 2025 21:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ii7i5fga"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HF7v+HHj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5152F23C8CE
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDBF221DB4;
+	Wed,  9 Jul 2025 21:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752098260; cv=none; b=aQ6JuAqWmkjhEwYedp2kU2r7VWgqR8KNmH02J/462xSzULwvM/yw7PP4MbbVk0Ur6LyfQ/IM6Zgd/f1wIg8kPcDpOCLWv+I2gMZyD/JWJv+IcmrWCptSvCUKU9t1bBlGZuiE8k3VAKEY664rXCHL3zNT8e7K3uRV3uh5ltVzUU4=
+	t=1752098309; cv=none; b=f8IRrXrsUzp4OznqcmoFnBSXTQQ3BF7//HrXxRx2v0IpIuq+LzIlkyTw1vJtSoztFZIfmd0ytSt6tDxxlarQUI7leXRJj2GatgKa707n/dlIhJg5CGBOYnLskQLbonMnnWyadMslZ5XMfygXTPCKygGcnTYkHxjTFTwtENX2yZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752098260; c=relaxed/simple;
-	bh=L+oOjGdgDmkf3PbFY2vi1iBtBL7ECDGcI78dN08WW8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J5AJZBYCBWz7snsoxGWUnn+X2nu1uZttgQG+12btqtORuCx+kKazgsDF8FYIJ10bQnlPVE4LhyASKlxgxmsXscIe+q1QP3a22noiceVEFcQ1rEXY7v0hN0UV7cT2rghMDTtNgsIr99BPXYRpuanbv6/CzLw8u3YMDCav/T8dBQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ii7i5fga; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752098258; x=1783634258;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=L+oOjGdgDmkf3PbFY2vi1iBtBL7ECDGcI78dN08WW8E=;
-  b=Ii7i5fgan8WBE/7YIwH2cJCUGqvqCYdBrptXdj1tUpafdEj8Rd22QaLv
-   glsJKDiPckMHexkR02xAxlDjM5bqOni6SucSK7pYogAWCYeoI1vhNnAzq
-   undAtVOYxemY7qQS3tkQKwzAr3O5S1AwUWWWqF/VUTBe54u86TVuPlfUg
-   +VH1RLYeoDSqohBtvDWYMRzLKD/CLsyoW7iDlco/sJtmq8+QZXNMvB62u
-   YW9SmFo3GwP7Pr2JaFcDoWJjQxciZh0A7XUCxjfQsqaEJrDMiE2plRcpJ
-   xLIac521WiH+7Y9w66GEFlCWhoOsmphWAXVARns4ms39225HL0Gj1XFC4
-   w==;
-X-CSE-ConnectionGUID: /4ZUAO2JRX2TBkFe0rTV8g==
-X-CSE-MsgGUID: VTPjAJyaQaK8DtTqPfsTtw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54499456"
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="54499456"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 14:57:38 -0700
-X-CSE-ConnectionGUID: v7nhlobwR0eUOwEp+k0E0g==
-X-CSE-MsgGUID: Cg+LDhraS1KNhP9g+AP3ow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="155992453"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 14:57:37 -0700
-Date: Wed, 9 Jul 2025 14:57:36 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghuay@nvidia.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Chen Yu <yu.c.chen@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v6 22/30] x86/resctrl: Read core telemetry events
-Message-ID: <aG7l0M1axoSDk1xa@agluck-desk3>
-References: <20250626164941.106341-1-tony.luck@intel.com>
- <20250626164941.106341-23-tony.luck@intel.com>
- <37708e34-9634-4488-aeb7-6a61ab01947a@intel.com>
+	s=arc-20240116; t=1752098309; c=relaxed/simple;
+	bh=zjFlENAgBdh7xP1fuuUD0RuYSpO5zOXpYVPNVEcU4zg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=EG81XgAVH4X4DoJwxKRFMRwPhA0D/wmbz2NLI2+KOOhjhlFjyhEWKXe+FnRKr2xY6+WnNKoXbPAkrSzWi7PidF2Ug3IPlKXPogWuIu/cdQ9YGUeEY00mpkB8W26pNtmex97XAGNbvbLej/BpxMbjnwvNoyVa1T6sA0XYi2PFiKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HF7v+HHj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C68C4CEEF;
+	Wed,  9 Jul 2025 21:58:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752098308;
+	bh=zjFlENAgBdh7xP1fuuUD0RuYSpO5zOXpYVPNVEcU4zg=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=HF7v+HHj1/uWYrZ1jHPBmeinlOFXd700YJB/0ji8rRD5yDDGO2vc4Zmp3mIQ1eZrJ
+	 dp32A945DkIzZftJkqzV/nrGFQPURiSIYC3nwMmCaWYInptJZsU9hjWMZTg+ay6gXe
+	 P7m1scf30QQMKycBWbPTIpa4yEGP9Zu/McyS3TIIgvBJTmi9TMYJtnyo9iREx4G/LD
+	 0qNjId+h+yzw3HhhgiXqsCKYA0O6XamG+OuGd2KI+D3jI3n8aHE9/hRLnryDnnBg84
+	 zdQ0kiNXyPfZyNIyJPLJUlKCkSoc4ivbeUTyBJITG+QmdoSnpRXn/WztQ1n8dEf4SD
+	 QndKJGpaSnYXA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <37708e34-9634-4488-aeb7-6a61ab01947a@intel.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 09 Jul 2025 23:58:22 +0200
+Message-Id: <DB7V0GL2HVMV.BR1JSWQPDMC3@kernel.org>
+Cc: "Danilo Krummrich" <dakr@kernel.org>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Jens Axboe" <axboe@kernel.dk>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Brendan Higgins" <brendan.higgins@linux.dev>, "David
+ Gow" <davidgow@google.com>, "Rae Moar" <rmoar@google.com>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-block@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <kunit-dev@googlegroups.com>
+Subject: Re: [PATCH 7/9] rust: pin-init: use `kernel::{fmt,prelude::fmt!}`
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250709-core-cstr-fanout-1-v1-0-64308e7203fc@gmail.com>
+ <20250709-core-cstr-fanout-1-v1-7-64308e7203fc@gmail.com>
+ <DB7SVTBZ46QB.31WTHFLWDHPZY@kernel.org>
+ <CAJ-ks9nNc_pThtb+gHUcjEnvR6V0RAEG0tkv+_DHYYjXs1N7=A@mail.gmail.com>
+In-Reply-To: <CAJ-ks9nNc_pThtb+gHUcjEnvR6V0RAEG0tkv+_DHYYjXs1N7=A@mail.gmail.com>
 
-On Wed, Jul 09, 2025 at 08:48:47AM -0700, Reinette Chatre wrote:
-> Hi Tony,
-> 
-> What does the "core" in the subject refer to?
+On Wed Jul 9, 2025 at 11:01 PM CEST, Tamir Duberstein wrote:
+> On Wed, Jul 9, 2025 at 4:18=E2=80=AFPM Benno Lossin <lossin@kernel.org> w=
+rote:
+>>
+>> On Wed Jul 9, 2025 at 10:00 PM CEST, Tamir Duberstein wrote:
+>> > Reduce coupling to implementation details of the formatting machinery =
+by
+>> > avoiding direct use for `core`'s formatting traits and macros.
+>> >
+>> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>> > ---
+>> >  rust/kernel/init.rs | 4 ++--
+>> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> I usually prefix patches to init.rs with `rust: init`. I'll fix it up
+>> when picking the patch or Miguel can do it if he takes it:
+>>
+>> Acked-by: Benno Lossin <lossin@kernel.org>
+>
+> Actually, squinting at this patch more closely now, I think this isn't
+> what you had in mind. The comment says "Dummy error that can be
+> constructed outside the `kernel` crate." but the error now comes from
+> the kernel crate :(
 
-The events are collected by each core. But since resctrl reports the
-aggregated per-package values this is confusing. I'll drop "core" from
-the Subject line.
+It's a re-export, so the comment still holds.
 
-[snip]
+> Perhaps you could suggest a different modification that would both
+> meet the original intent and allow references to core::fmt to
+> disappear?
 
-> > +/*
-> > + * Read counter for an event on a domain (summing all aggregators
-> > + * on the domain).
-> > + */
-> > +int intel_aet_read_event(int domid, int rmid, enum resctrl_event_id eventid,
-> > +			 void *arch_priv, u64 *val)
-> > +{
-> > +	struct pmt_event *pevt = arch_priv;
-> > +	struct mmio_info *mmi;
-> > +	struct event_group *e;
-> > +	u64 evtcount;
-> > +	void *pevt0;
-> 
-> Should this be a struct pmt_event *?
+The code comes from a time when `Error::from_errno` was `pub(crate)`,
+but that was changed some time ago... Now we can just remove the
+`FromErrno` trait entirely from that example. Feel free to do that in
+this series or as a standalone patch.
 
-I thought that too. But container_of() gets confused about types (I
-think because the evts[] element is a flex array.
-
-With "struct pmt_event *pevt0;" the compiler complains:
-
-arch/x86/kernel/cpu/resctrl/intel_aet.c: In function ‘intel_aet_read_event’:
-./include/linux/build_bug.h:78:41: error: static assertion failed: "pointer type mismatch in container_of()"
-   78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-      |                                         ^~~~~~~~~~~~~~
-./include/linux/build_bug.h:77:34: note: in expansion of macro ‘__static_assert’
-   77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-      |                                  ^~~~~~~~~~~~~~~
-./include/linux/container_of.h:20:9: note: in expansion of macro ‘static_assert’
-   20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-      |         ^~~~~~~~~~~~~
-arch/x86/kernel/cpu/resctrl/intel_aet.c:311:13: note: in expansion of macro ‘container_of’
-  311 |         e = container_of(pevt0, struct event_group, evts);
-      |             ^~~~~~~~~~~~
-
-Making it void * is the "get of of jail free" case in container_of()
-with the test " || __same_type(*(ptr), void)"
-
-If there is a better way to do this, let me know.
-
--Tony
+---
+Cheers,
+Benno
 
