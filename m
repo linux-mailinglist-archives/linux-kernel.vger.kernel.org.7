@@ -1,140 +1,294 @@
-Return-Path: <linux-kernel+bounces-722939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5D7AFE0DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:07:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54862AFE0E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0494254168A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F336B1AA352E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F3D26E179;
-	Wed,  9 Jul 2025 07:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5281D26E16F;
+	Wed,  9 Jul 2025 07:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZbLgG3D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/c+L04s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1731D26B743;
-	Wed,  9 Jul 2025 07:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB4E21ABAC;
+	Wed,  9 Jul 2025 07:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752044848; cv=none; b=dfm7YHYEMw9YAZVFJT5VUpYvSFNLwuhDn1KuOOKplMruK/q9S0xT5faO1vATn6iophhtLBRXL/faOoZATohY2L7yWIzr/53H2QQ9V+1oUw1EZUjAbmkWtyi42BJjqIUlaOaZQnbH6IRKeXvv5bnhdV2d5g0EZJL6RJmUsPz5mXo=
+	t=1752044867; cv=none; b=AP30JsZhooHax1GXvAY6+uQy83C4vcG5712Btjh4dhi9UBE7cBUpV3XFxA1OzC4gngzu7scfiWwabSxOj3lnUZhAjMEqDath2quPgpT9mKeZkQ5TTIPljCeLPX9kSuKj9sPEXeRQpTz23lSe2hDAVpyYUiTW+S1PmyguJc47Hyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752044848; c=relaxed/simple;
-	bh=eFitu3XM1K/JAnMSBgMH0zsEkRAZ3dmUgipkjMLB9QM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lm0c9fqqnD8875zd8n3BxbVSEr/hpt3KB8sHuWL6nKqoCxfY6Ox1DTs5wshGMlmMn4I64/i11gXUgzBZf9pB16sEjYu+B9FHJseDRLpnPmW+abcvoAo4VeriboRyBcl3xW1GainYInpKMV79uk6OsRAXeVt7HFH2KUYqde3OWCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZbLgG3D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66244C4CEF1;
-	Wed,  9 Jul 2025 07:07:26 +0000 (UTC)
+	s=arc-20240116; t=1752044867; c=relaxed/simple;
+	bh=2MdHLI/kc3/sXkRraTSCSWVM2Sn/FBlCke7KGOlkVj0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=slVnkLoUV0oW+EURWnf1f07IGTsqeBxbRWGUDlEVsb0u59rGenK7OldszzjcBWEbYWNwAVb7Mng3Ih7z4PJTwv2NOIFFuzL/eSPiys1azNw3fEqvHMOYKp+bLKL6Lz/QUISR8m1aaDOxueBKIarpt0soyj6btZpMwteVZdviLh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/c+L04s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E35FC4CEF6;
+	Wed,  9 Jul 2025 07:07:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752044847;
-	bh=eFitu3XM1K/JAnMSBgMH0zsEkRAZ3dmUgipkjMLB9QM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EZbLgG3Dcbqv1dXoXE+NXDh8TUEsXWOFnGPbOwMeaJ7QPBzKEO4nNW150dnUcepp2
-	 fxMR/omUoBrtAEm8f2G/5otXz58DDUaWKW5Ydp46Y0E/lH6dluVpfZsdrGx3ARp6DG
-	 Y+OChtvtNpWDvZUEACHPrc1PYokSjLh+qnqG4YAg5SkCGH0xbCQ7i5HOLYCVgL4xi0
-	 0e6OaJ1IUbbRQGyggUXZATbrmak0Pnl8YEz7lkr+eosx+PVexmHMHi3MrmYneCAB/v
-	 e1lwwInT+B9DzdVvxOFrg5kQwMG5xJayrPSetH/+o7GAIa0/cXxboa7FIgj+uVtD3Y
-	 QK7STvB7g9Utg==
-Message-ID: <b88b5d86-21dc-428c-a514-9030ffd494a1@kernel.org>
-Date: Wed, 9 Jul 2025 09:07:25 +0200
+	s=k20201202; t=1752044867;
+	bh=2MdHLI/kc3/sXkRraTSCSWVM2Sn/FBlCke7KGOlkVj0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=k/c+L04sOc0MKjWtcSz7AvHMPOUcbH9BcbJy4JWwYwYXTxE3p1lzybhEhkJLX++af
+	 a+my1g9ygFOTa3xZR4GtPb8W8Nk4am6v5jRXVSU9AWBHT7KlKwWx9N1IoRKVhYrixp
+	 F3KnO14FwVXnzmuC1InCS9ronbphbrC/+Z4uA0AATnTbRqYGGfGFTAPyZSilI7gR/w
+	 geRdqj4W3Or+lYm1fSztBW1Q66zaI97BcziBljphYmv3vNiW2M31uxU/lDai9CbbGp
+	 XCYcr0Aj4cYC3brjB/JaSAvPNJeRR8k4blKr9O0E0cZL5/TNXT++ojjlrPGT54a7vd
+	 lZ+4m4KFctRmA==
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-40b32b6af9eso2810045b6e.1;
+        Wed, 09 Jul 2025 00:07:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVSdoAiV9FpTzMP311jSXfADa8LpkQB1kdUHNm1FBzA4EP5QhS1aZUQ66K2lxo8oREUQ64lyCg99k8=@vger.kernel.org, AJvYcCVbgPqECYC7HmM0AbZmU3Jvf2FAiAE2wJGuadQDP6J2JxaYeXtgWnNkIgy1y0gOVY7tsU0noBr18QbqY6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjIM1MocRm41U0er/ZsY+KR98fcdN/3cvyLoCjPxeY0ZOnWYMl
+	7P0AR8o3DV6UOjE2/tBjesn1a2y/hncBAvWOg0WswrpEeikzuZWYbVUR6bHkzyT4S6RNfh/Jy8P
+	8Bw4yOZmIAjXhSLpK9o08wvlK2Oqn9/o=
+X-Google-Smtp-Source: AGHT+IGp/NayOtRsLLSmbAURDrhYR2FbBuu38inQDiqYLYIswlKJVK/j/UGfnBdtwASkd+Ow+dv4iXafQ/2s9EKa99M=
+X-Received: by 2002:a05:6808:309a:b0:408:fef8:9c95 with SMTP id
+ 5614622812f47-412bc00a9aemr825692b6e.24.1752044866209; Wed, 09 Jul 2025
+ 00:07:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Bug] WARNING in vt_do_diacrit in Linux Kernel v6.14
-To: Jiri Slaby <jirislaby@kernel.org>, Luka <luka.2016.cs@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <CALm_T+2AUcGgb+ukfGg5a3=ibQzRe93gHAzjh6XUubCePk=Mig@mail.gmail.com>
- <3dfadb7b-fc5f-4165-a5ad-c3802585805e@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <3dfadb7b-fc5f-4165-a5ad-c3802585805e@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250709064404.839975-1-guoqing.zhang@amd.com> <20250709064404.839975-5-guoqing.zhang@amd.com>
+In-Reply-To: <20250709064404.839975-5-guoqing.zhang@amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Jul 2025 09:07:34 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jPd1UPL8DvhWazmVod+_T7WnLNAqRDzFu_TgR0h01A+Q@mail.gmail.com>
+X-Gm-Features: Ac12FXxcTQFO_UUbF4MOdTNwbGiNb201TkYOBWF7Xek2l7rMQeNnDteBDVBMvDo
+Message-ID: <CAJZ5v0jPd1UPL8DvhWazmVod+_T7WnLNAqRDzFu_TgR0h01A+Q@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] PM: hibernate: add new api pm_transition_event()
+To: Samuel Zhang <guoqing.zhang@amd.com>, mario.limonciello@amd.com
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, len.brown@intel.com, 
+	pavel@kernel.org, gregkh@linuxfoundation.org, dakr@kernel.org, 
+	airlied@gmail.com, simona@ffwll.ch, ray.huang@amd.com, matthew.auld@intel.com, 
+	matthew.brost@intel.com, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, lijo.lazar@amd.com, 
+	victor.zhao@amd.com, haijun.chang@amd.com, Qing.Ma@amd.com, 
+	Owen.Zhang2@amd.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/07/2025 10:46, Jiri Slaby wrote:
-> On 08. 07. 25, 9:21, Luka wrote:
->> Dear Linux Kernel Maintainers,
->>
->> I hope this message finds you well.
->>
->> I am writing to report a potential vulnerability I encountered during
->> testing of the Linux Kernel version v6.14.
->>
->> Git Commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557 (tag: v6.14)
->>
->> Bug Location: drivers/tty/vt/keyboard.c
->>
->> Bug report: https://pastebin.com/yuVJpati
->>
->> Complete log: https://pastebin.com/qKnipvvK
->>
->> Entire kernel config: https://pastebin.com/MRWGr3nv
->>
->> Root Cause Analysis:
->> The vt_do_diacrit() function in the virtual terminal subsystem
->> performs a write to a user-space pointer via __put_user_4() without
->> ensuring that the destination address is mapped and accessible.
->> Under conditions such as memory allocation failure or page table
->> unavailability, this leads to a fault during execution of the mov
->> %eax, (%rcx) instruction.
-> 
-> Which is exactly how it should behave, right? If #PF, then it jumps to 
-> __put_user_handle_exception and returns EFAULT.
-Jiri,
-Don't waste time. It's AI generated spam. Same as before.
+On Wed, Jul 9, 2025 at 8:44=E2=80=AFAM Samuel Zhang <guoqing.zhang@amd.com>=
+ wrote:
+>
+> dev_pm_ops.thaw() is called in following cases:
+> * normal case: after hibernation image has been created.
+> * error case 1: creation of a hibernation image has failed.
+> * error case 2: restoration from a hibernation image has failed.
+>
+> For normal case, it is called mainly for resume storage devices for
+> saving the hibernation image. Other devices that are not involved
+> in the image saving do not need to resume the device. But since there's
+> no api to know which case thaw() is called, device drivers can't
+> conditionally resume device in thaw().
+>
+> The new pm_transition_event() is such a api to query if thaw() is called
+> in normal case. The returned value in thaw() is:
+> * PM_EVENT_THAW: normal case, no need to resume non-storage devices.
+> * PM_EVENT_RECOVER: error case, need to resume devices.
+>
+> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
+> ---
+>  drivers/base/power/main.c |  5 +++
+>  include/linux/pm.h        | 85 +++++++++++++++++++++++----------------
+>  2 files changed, 56 insertions(+), 34 deletions(-)
+>
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 40e1d8d8a589..7e0982caa4d4 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -62,6 +62,11 @@ static LIST_HEAD(dpm_noirq_list);
+>
+>  static DEFINE_MUTEX(dpm_list_mtx);
+>  static pm_message_t pm_transition;
+> +int pm_transition_event(void)
+> +{
+> +       return pm_transition.event;
+> +}
+> +EXPORT_SYMBOL_GPL(pm_transition_event);
+>
+>  static int async_error;
+>
+> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> index 78855d794342..7e7b843ba823 100644
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -471,58 +471,59 @@ const struct dev_pm_ops name =3D { \
+>  #define pm_ptr(_ptr) PTR_IF(IS_ENABLED(CONFIG_PM), (_ptr))
+>  #define pm_sleep_ptr(_ptr) PTR_IF(IS_ENABLED(CONFIG_PM_SLEEP), (_ptr))
+>
+> -/*
+> - * PM_EVENT_ messages
+> +/**
+> + * pm_transition_event() - Query the current pm transition event value.
+> + *
+> + * One example is used to query the reason why thaw() is called.
+> + * It will return one of 2 values in this usage:
+> + * * %PM_EVENT_THAW: normal case.
+> + * * %PM_EVENT_RECOVER: error case.
+> + *
+> + * For other usage, it may return other values. See :ref:`PM_EVENT_ mess=
+ages`
+> + * for all possible values.
+> + *
+> + * Return: One of the %PM_EVENT_ messages
+> + */
+> +int pm_transition_event(void);
 
-Best regards,
-Krzysztof
+Please move the kerneldoc to where the function is defined (that is, main.c=
+).
+
+Now, I've changed my mind regarding this wrapper, sorry.
+
+I'm thinking now that "thaw" is exceptional and no other callback will
+ever need to check why it was called because it will always do the
+same thing.
+
+So this should be hibernation-specific and Mario was right.
+
+Please make it return bool, and in particular return "true" if
+pm_transition.event =3D=3D PM_EVENT_RECOVER and "false" otherwise.
+
+Specifically
+
+bool pm_hibernate_is_recovering(void)
+{
+        return pm_transition.event =3D=3D PM_EVENT_RECOVER;
+}
+
+And the changes below won't be necessary then.
+
+> +
+> +/**
+> + * DOC: PM_EVENT_ messages
+>   *
+> - * The following PM_EVENT_ messages are defined for the internal use of =
+the PM
+> + * The possible return values of %pm_transition_event().
+> + *
+> + * The following PM_EVENT_ messages are defined for the use of drivers a=
+nd PM
+>   * core, in order to provide a mechanism allowing the high level suspend=
+ and
+>   * hibernation code to convey the necessary information to the device PM=
+ core
+>   * code:
+>   *
+> - * ON          No transition.
+> + * %PM_EVENT_ON:               No transition.
+>   *
+> - * FREEZE      System is going to hibernate, call ->prepare() and ->free=
+ze()
+> - *             for all devices.
+> + * %PM_EVENT_FREEZE:   System is going to hibernate, call ->prepare() an=
+d
+> + *             ->freeze() for all devices.
+>   *
+> - * SUSPEND     System is going to suspend, call ->prepare() and ->suspen=
+d()
+> - *             for all devices.
+> + * %PM_EVENT_SUSPEND:  System is going to suspend, call ->prepare() and
+> + *             ->suspend() for all devices.
+>   *
+> - * HIBERNATE   Hibernation image has been saved, call ->prepare() and
+> + * %PM_EVENT_HIBERNATE:        Hibernation image has been saved, call ->=
+prepare() and
+>   *             ->poweroff() for all devices.
+>   *
+> - * QUIESCE     Contents of main memory are going to be restored from a (=
+loaded)
+> - *             hibernation image, call ->prepare() and ->freeze() for al=
+l
+> + * %PM_EVENT_QUIESCE:  Contents of main memory are going to be restored =
+from
+> + *             a (loaded) hibernation image, call ->prepare() and ->free=
+ze() for all
+>   *             devices.
+>   *
+> - * RESUME      System is resuming, call ->resume() and ->complete() for =
+all
+> - *             devices.
+> + * %PM_EVENT_RESUME:   System is resuming, call ->resume() and ->complet=
+e()
+> + *             for all devices.
+>   *
+> - * THAW                Hibernation image has been created, call ->thaw()=
+ and
+> + * %PM_EVENT_THAW:             Hibernation image has been created, call =
+->thaw() and
+>   *             ->complete() for all devices.
+>   *
+> - * RESTORE     Contents of main memory have been restored from a hiberna=
+tion
+> - *             image, call ->restore() and ->complete() for all devices.
+> + * %PM_EVENT_RESTORE:  Contents of main memory have been restored from a
+> + *             hibernation image, call ->restore() and ->complete() for =
+all devices.
+>   *
+> - * RECOVER     Creation of a hibernation image or restoration of the mai=
+n
+> - *             memory contents from a hibernation image has failed, call
+> + * %PM_EVENT_RECOVER:  Creation of a hibernation image or restoration of=
+ the
+> + *             main memory contents from a hibernation image has failed,=
+ call
+>   *             ->thaw() and ->complete() for all devices.
+> - *
+> - * The following PM_EVENT_ messages are defined for internal use by
+> - * kernel subsystems.  They are never issued by the PM core.
+> - *
+> - * USER_SUSPEND                Manual selective suspend was issued by us=
+erspace.
+> - *
+> - * USER_RESUME         Manual selective resume was issued by userspace.
+> - *
+> - * REMOTE_WAKEUP       Remote-wakeup request was received from the devic=
+e.
+> - *
+> - * AUTO_SUSPEND                Automatic (device idle) runtime suspend w=
+as
+> - *                     initiated by the subsystem.
+> - *
+> - * AUTO_RESUME         Automatic (device needed) runtime resume was
+> - *                     requested by a driver.
+>   */
+> -
+>  #define PM_EVENT_INVALID       (-1)
+>  #define PM_EVENT_ON            0x0000
+>  #define PM_EVENT_FREEZE                0x0001
+> @@ -537,6 +538,22 @@ const struct dev_pm_ops name =3D { \
+>  #define PM_EVENT_REMOTE                0x0200
+>  #define PM_EVENT_AUTO          0x0400
+>
+> +/*
+> + * The following PM_EVENT_ messages are defined for internal use by
+> + * kernel subsystems.  They are never issued by the PM core.
+> + *
+> + * USER_SUSPEND        Manual selective suspend was issued by userspace.
+> + *
+> + * USER_RESUME Manual selective resume was issued by userspace.
+> + *
+> + * REMOTE_WAKEUP       Remote-wakeup request was received from the devic=
+e.
+> + *
+> + * AUTO_SUSPEND        Automatic (device idle) runtime suspend was
+> + *                     initiated by the subsystem.
+> + *
+> + * AUTO_RESUME Automatic (device needed) runtime resume was
+> + *                     requested by a driver.
+> + */
+>  #define PM_EVENT_SLEEP         (PM_EVENT_SUSPEND | PM_EVENT_HIBERNATE)
+>  #define PM_EVENT_USER_SUSPEND  (PM_EVENT_USER | PM_EVENT_SUSPEND)
+>  #define PM_EVENT_USER_RESUME   (PM_EVENT_USER | PM_EVENT_RESUME)
+> --
+> 2.43.5
+>
 
