@@ -1,145 +1,96 @@
-Return-Path: <linux-kernel+bounces-723022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3462AFE1E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:06:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8BA8AFE1F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD28C566673
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:05:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039083A8C7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BA422B8C2;
-	Wed,  9 Jul 2025 08:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C502367DC;
+	Wed,  9 Jul 2025 08:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="XX6tE8mN"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNZxqAQ8"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEEB2222C3;
-	Wed,  9 Jul 2025 08:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B714231C9F;
+	Wed,  9 Jul 2025 08:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752048256; cv=none; b=MvyIuoHtxQkKV75frKMJB6PFZkgs/LPrRxEOEvBmgei+9dN7NTnelN1caxrZza86eGUUgrHMqFIxsbFECdQ+udw4FPqa/jadY2yByyby0RDgyWl0uPh4McT19BzPN+UYlb5kOL9xSOWzEeYWwU+dmqIXVUx+YjIpgU7ZTL3ZzcQ=
+	t=1752048289; cv=none; b=d0Lpnn1roPr8vA4oWS3D8wAzl32u9lQua28AdAnP3UVYwhxnTTzeglXKCO2Ea7qcG/qwCT8GB3rCJwY7kQKLYd18zjMC51vqUenOMmnvRC8LUWT/136Xt7iwBlcqXow4XYlojvlGuZ7jnqP+RKNgEMSeZCMX5I1QWRuw5n+lJTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752048256; c=relaxed/simple;
-	bh=4dvYtEbOtmwJ+1IDZR1sB8eZS1Ly2JkBVTnZJvK2PIQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VynYzggDkhbBGBUlE+hdwkt22HMwOjBl3qj7CTiLzf4icX9im4M+XYg0pWhJnsCUJJACpUvhWmfSNbC+WOMdsfkjTzFZ1aEjwRdTxLgAQj92DxFwuRAIM8fjOdwZtEaTvfH5kfzdhVJmuEXDFfA2tT3UWsuQycAnooFkfCGL0Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=XX6tE8mN; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bcVqT1NHrz9v7v;
-	Wed,  9 Jul 2025 10:04:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1752048245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ALSg0QD8uRphF8/oxSCVKyEeBf8l1V1KzIwjcnUWqG4=;
-	b=XX6tE8mNF+WRKfctp233Q8R5d91TxrSW4Wp3rGRmG54yh6tmy+CFbWrPNd+Zxh3E6r61oW
-	AAO6pSiq3hgyjQoPgOTVlYVSaYOYmU0sHh464sOvk/a8L4wxIviL21atL97v2h7wb+4qQT
-	N1dgVpUunhtHFZt8zr1YzsAVmBchkWdqzASoGoLxpiMma+IRXD7ZxSjyIEcwkYGIGdv9/C
-	NoumHmmkQIUWS37PTQQuspEbghG9yPS8SeNO8KamONfeHEG/6kw/Zbmw+35SnHmKojck1Q
-	L9EpOxY1u8Z3e0xocCbgBoOKqGbTR/enWahc5qCdqO4Uj9URDKeGtsDgMOkhgw==
-Message-ID: <ad876991-5736-4d4c-9f19-6076832d0c69@pankajraghav.com>
-Date: Wed, 9 Jul 2025 10:03:51 +0200
+	s=arc-20240116; t=1752048289; c=relaxed/simple;
+	bh=/vN4f6GloB2HKqs9li9tfVZYL82dtQ+vnhzZDOE8C7c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qlzmimi2+g89TvykC/axmcgnVYFZjmY7kJg7i3HTkky0n9I4CNCWc9JHFDwJlwXlJmT83e2RrGo+hJ9pzhqjTaypTdtCNdbVcvr3quwvUPVCDLQYYUv8NsYkJo5i95BTw2sK3H+96djOU8gL0ucyyh29f9xNrnxe+79raewNQeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNZxqAQ8; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32f3ef6178bso10925791fa.1;
+        Wed, 09 Jul 2025 01:04:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752048285; x=1752653085; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/vN4f6GloB2HKqs9li9tfVZYL82dtQ+vnhzZDOE8C7c=;
+        b=hNZxqAQ8Ac5eWIauecBd0lZJ6PbagYN8Z1/UjzfGjlPKqdbx4fr0YCP333oqImiaw6
+         8GH2RR9cl0B83ys6F8kcbSYs51QCzH4VFMMiKOBER5+RryvDnEEsjFX6PFFDgVQFUPyr
+         3uI/CBG1qJSqZLp+H6wd62nFgmGP4+tTbpKWAcZzXQx9MJs7KjkF35Jgiidh9MWC7TPt
+         9X/Ra3NvYCklJ0ynPCClmtHQbubVGTAy3H91ry8OFVlUmAkxEUcuFsAFe6bzSbhs6867
+         rnSEdYy8J8KBxoC9e4ENpTCLxKx9Uap+cpMaEV+IWzC+nf2adDVBueVzXlBXA5xpVa1l
+         I/fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752048285; x=1752653085;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/vN4f6GloB2HKqs9li9tfVZYL82dtQ+vnhzZDOE8C7c=;
+        b=iU9KlkPAiAD90RuCjASH3zdOsmwV8atXBUaMaw8z/Rv3F16mPDcvJi3XPGYx5k5f7A
+         yWH+I09OjsKPWLpmOHFXHz5PoqhSYB3cPjFb+EjKh3YPKQrcUYRK4lIwrxgA9tsPoj3F
+         4ESzyDTVPvdJT0ifvze1Q+QJrVMsR44YalNqbK6vwKUtl6MWYL3A5KMA4aiCvsb0rl4S
+         KHSl+K42wr+5cu1iLGYorYl2WoimtmPsHfKP4rVIrNI2NgAjy1aF+Ta9kg5oE0vIcBQN
+         2A+RE5tAGrxBwxsVevDI9MwfGv8VY4qUhQjGCTAr9ciybnJeBuuCjkWtP8mU3Ykmi01A
+         1UuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWcVKJM8MeyhYm/7v8h6tPcirroGVron+1iWjB896vKiw6BvUXT1kqlijHUV6P7xDwDczkQWopKwF4hy35nTI=@vger.kernel.org, AJvYcCW5EU6SuTfoQ5IJKDvANKHSkJQS89qQXHhv9EtsxqnVU/RrngJ+DMzUTjZ+J2yOCNsgNi+xNl5HqjOn6gVl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3BIQBpN/BLfu8LOtawOU1DlcL4QSDYYGnBIEoTrdCrGfKajNr
+	DCFdnOgC/DJtWP9sQVZHmVCvFMMM+d8HGw4rUiykH0gdkOHhaDprdQn6PgYQ7sywgeykixZ+mCM
+	7cx5fdsb0QidhIyFjmyEiAHnwNf5fdcqrBAyKZ6pZ+Q==
+X-Gm-Gg: ASbGncswPSxbr+vjwxuzZpoouQS6U+LUs5uzi6DnPQB/iByoxvK4Zt9gP0N8WFrgBK6
+	wmaPhOc/o12MvJGTJK6Zu5Ja0e6vNwiD+5PcIQGn8sfVZl/qDi4/5EzE/TXwPXd8iegmqJRojBY
+	64r4sDs/RzcjY4biC84OWwL0FfmE87TY1xGItrkHgeBrzFbtBvwf638KGdsUxrkGPAntwo41L2f
+	dYV
+X-Google-Smtp-Source: AGHT+IH96QsTL3RrgUgPJVlkDGHpCJxIIYfO75lVlWUgFwfF6IIJV3+4SisXlJWruFit22AOqIfUjKdaZW6v1qQVjRg=
+X-Received: by 2002:a05:651c:220d:b0:32a:714c:12d1 with SMTP id
+ 38308e7fff4ca-32f484b6366mr4164781fa.1.1752048285386; Wed, 09 Jul 2025
+ 01:04:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Pankaj Raghav <kernel@pankajraghav.com>
-Subject: Re: [PATCH v2 0/5] add static PMD zero page support
-To: Zi Yan <ziy@nvidia.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
- willy@infradead.org, linux-mm@kvack.org, x86@kernel.org,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
- gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
- <F8FE3338-F0E9-4C1B-96A3-393624A6E904@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <F8FE3338-F0E9-4C1B-96A3-393624A6E904@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250708141617.3691-2-alex.gasbarroni@gmail.com> <CABBYNZJ9jLwiieHC=ohp+EjtoO7_4Umd2giRKNe1y0u-qpP1ww@mail.gmail.com>
+In-Reply-To: <CABBYNZJ9jLwiieHC=ohp+EjtoO7_4Umd2giRKNe1y0u-qpP1ww@mail.gmail.com>
+From: Alessandro Gasbarroni <alex.gasbarroni@gmail.com>
+Date: Wed, 9 Jul 2025 10:04:09 +0200
+X-Gm-Features: Ac12FXw_h22SikHgQhsvyr9LCUfkngysfL28LGgr9rvqB3agCBrD0b5mwRreAmg
+Message-ID: <CAHsjepRDUN6Ry-M-_7MRwgKF_xAB_U8k9e4=p+u7NFFd_5VV3w@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: hci_sync: fix connectable extended advertising
+ when using static random address
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: marcel@holtmann.org, johan.hedberg@gmail.com, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Zi,
+Hi Luiz,
 
->> Add a config option STATIC_PMD_ZERO_PAGE that will always allocate the huge_zero_folio via 
->> memblock, and it will never be freed.
-> 
-> Do the above users want a PMD sized zero page or a 2MB zero page? Because on systems with non 
-> 4KB base page size, e.g., ARM64 with 64KB base page, PMD size is different. ARM64 with 64KB base 
-> page has 512MB PMD sized pages. Having STATIC_PMD_ZERO_PAGE means losing half GB memory. I am 
-> not sure if it is acceptable.
-> 
+> Hmm, we should probably be using hci_copy_identity_address instead
+> here, or have you tried and it didn't work?
 
-That is a good point. My intial RFC patches allocated 2M instead of a PMD sized
-page.
-
-But later David wanted to reuse the memory we allocate here with huge_zero_folio. So
-if this config is enabled, we simply just use the same pointer for huge_zero_folio.
-
-Since that happened, I decided to go with PMD sized page.
-
-This config is still opt in and I would expect the users with 64k page size systems to not enable
-this.
-
-But to make sure we don't enable this for those architecture, I could do a per-arch opt in with
-something like this[1] that I did in my previous patch:
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 340e5468980e..c3a9d136ec0a 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -153,6 +153,7 @@ config X86
- 	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
- 	select ARCH_WANT_HUGETLB_VMEMMAP_PREINIT if X86_64
- 	select ARCH_WANTS_THP_SWAP		if X86_64
-+	select ARCH_HAS_STATIC_PMD_ZERO_PAGE	if X86_64
- 	select ARCH_HAS_PARANOID_L1D_FLUSH
- 	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
- 	select BUILDTIME_TABLE_SORT
-
-
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 781be3240e21..fd1c51995029 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -826,6 +826,19 @@ config ARCH_WANTS_THP_SWAP
- config MM_ID
- 	def_bool n
-
-+config ARCH_HAS_STATIC_PMD_ZERO_PAGE
-+	def_bool n
-+
-+config STATIC_PMD_ZERO_PAGE
-+	bool "Allocate a PMD page for zeroing"
-+	depends on ARCH_HAS_STATIC_PMD_ZERO_PAGE
-<snip>
-
-Let me know your thoughts.
-
-[1] https://lore.kernel.org/linux-mm/20250612105100.59144-4-p.raghav@samsung.com/#Z31mm:Kconfig
---
-Pankaj
+I wasn't aware of that function. You are absolutely right, that works
+and behaves exactly how I would expect. I'll send a v2.
 
