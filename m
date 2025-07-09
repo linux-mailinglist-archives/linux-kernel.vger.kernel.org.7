@@ -1,108 +1,164 @@
-Return-Path: <linux-kernel+bounces-724368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A45EAFF1D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:28:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA600AFF1CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2340D167D58
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3579A17534E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B957242936;
-	Wed,  9 Jul 2025 19:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED872242D77;
+	Wed,  9 Jul 2025 19:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tPpKm1td"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tvibuhpg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58428241680;
-	Wed,  9 Jul 2025 19:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3368D23C4FA;
+	Wed,  9 Jul 2025 19:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752089255; cv=none; b=qD7VAHFdqfq5gLSYkKoBG50Nt3zTN3Su5kWZG6sbg3hs0ZZRu+PgVAJHEfeW+SUNB1YA3pfuQWCQfwN9VIbG7x3cRgUNdabl+0QrMLA8oWjJY9YpuHwnrjGFQXBlme8+P0O8rSg43KU/l7lGtaQtCsSXC8WtjKBPjwAbQ7nATGg=
+	t=1752089230; cv=none; b=CgJZpMl3tob0HVBLA+z6BcG+0sKNOV11cs2Q2viu4TB5ayyizEd4r0rslXfBty8LBLSxkANh+8IpyMyzoq1Y1bzhNBnhIERM82Pm/7hDhT5f2O61YRUChV3cokTxZjGiy+x31vjsVaL/V/wFgrkgDNkli7wyLWpOZzdOZFtLIeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752089255; c=relaxed/simple;
-	bh=Zm+FZCamXFOfYZVRCK0BZ5RTFEHBxsMTaWL62PvvIec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQj2v7nKNM7qI3gI5owYTb7RjPawhkQW5vEilOdBABWOa+UWNLAkmZIV3rLUGUVXTRHS6H50wii6ikv9r0jJZEElL4+6/nc4X+rdnMqMT7zrpdWTtyq1bJG2tlQ/TZNM6h8IcP7N2Qo45vISxhLitUJJsDymjpMcvDLda06P81c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tPpKm1td; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61672C4CEEF;
-	Wed,  9 Jul 2025 19:27:34 +0000 (UTC)
+	s=arc-20240116; t=1752089230; c=relaxed/simple;
+	bh=9xgq7Yye1wmMDCjeCn2l/VYFm3PkgPlGRaN6phVB+SY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Cn9ErL3YNlTDsB2fatBCvA2n7p+0YjSjG+UYooqxDq4b0HtlCfFHkX1HD/+ynJwwsptarft15IrODAoY+ailIq9iLy+uO6pzU2k43u59CqorQZNEtYuz6dvzf+EzaeHGCLgIkLr/pN7yvoBTEr3LM6fQINEGIOPFJp28B3+2ZmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tvibuhpg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B16AAC4CEEF;
+	Wed,  9 Jul 2025 19:27:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752089254;
-	bh=Zm+FZCamXFOfYZVRCK0BZ5RTFEHBxsMTaWL62PvvIec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tPpKm1tdvE3ARsw+TSv1uypiy1hysiratTvCWm6vUTCuPzCxYQG6Fxd+hiYAaZxTf
-	 10aHeuPAJyFJrwqjOLVTOh+uXYVA9Xka5uOBboT312UEjfa45Lop/Qwh4VNxv2B/6g
-	 i2nmJnQkX3guMBfi/dvMWsPpiQ5ac8ORB3lf4OcGGOq5VrY5LwkXdoKOCI1ejRerNK
-	 7q1dhRLxF4MvQmBBB/rBRDvcWjMagYnHI5DewDrgLechb1Axm60uYJ0KEM1BN5pY1Y
-	 nlhcbGe+TuqG/3l1hQN5ZLl3/fTnwJImeh7zL9ru3SGV6tVAxddg94N7Qd88KxndEs
-	 GgfY895mRO6iQ==
-Date: Wed, 9 Jul 2025 12:26:50 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: fsverity@lists.linux.dev
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-btrfs@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH 0/2] Convert fs/verity/ to use SHA-2 library API
-Message-ID: <20250709192650.GB28537@sol>
-References: <20250630172224.46909-1-ebiggers@kernel.org>
+	s=k20201202; t=1752089229;
+	bh=9xgq7Yye1wmMDCjeCn2l/VYFm3PkgPlGRaN6phVB+SY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=TvibuhpgRTWixWAAskCFCMt4bTEYK19t8ifvzudrZlhoqkqFww4EgQ6NubekSSV5M
+	 uBWa6g8J8sT8B4382S49lJuv8e7ZVdWZtM8YmR2o9T4sGY2b4il9Z/BESecgzw0Gst
+	 1gMCucXVTJ6ozM1E37NHvd6Np+YXiy2WpRBEdpR169BtsflyeiUaEnLioWGHdWoabZ
+	 Ybs+i7clgM4goo4kH107BkITCLJBXdj9Lz5EKNcyARsNj2pBx8zPfh1zw/hA82Psx9
+	 0hMEPliNcJHmHFQ6UWyU5FgWKkMn6BAXoeaB55g/SQsOOnSvUGnSI3Xu1th4S5437x
+	 vvmhKp6IrthiQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B45FC83F09;
+	Wed,  9 Jul 2025 19:27:09 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v6 0/3] arm64: dts: qcom: x1-hp-x14: Add support for
+ X1P42100 HP Omnibook X14
+Date: Wed, 09 Jul 2025 21:26:51 +0200
+Message-Id: <20250709-hp-x14-x1p-v6-0-f45cc186a62d@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630172224.46909-1-ebiggers@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIHCbmgC/33OTWrDMBAF4KsEraui0Z+lrnqPkoVljWqBiYyVm
+ qTBd+/EKxsaL2bxBt7He7CKU8bKPk4PNuGcay4XCvbtxLq+vXwjz5Eyk0Ia0QjJ+5HfQNONHIO
+ SSVtvo7eMCuOEKd9W7OtMuc/1Wqb7as/w/P7LzMAFl+CVseiUFM1nGWLt+lKGWoafKy2q7yH/s
+ qc5y9eOJKdNJhjnIvjGHzpq66ido1YnIQgVNK06dPTWMTtHkwOdMhADtgncoWO2jts5hhytOw8
+ WU+sb9dJZluUP5Fj5vdEBAAA=
+X-Change-ID: 20250702-hp-x14-x1p-eb32f4696d96
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752089228; l=3154;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=9xgq7Yye1wmMDCjeCn2l/VYFm3PkgPlGRaN6phVB+SY=;
+ b=G9GipB54aRQHawnqgL67IVL0d0u7HSYkPxlXnAxUFPMRHePz6LRumPKjql1MYb/5hy5clLfJR
+ 4Ducc3Lsu4IB1ydeildbOyJhhST+BLYAcXJhSI/1/731zhbBHvB7QII
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-On Mon, Jun 30, 2025 at 10:22:22AM -0700, Eric Biggers wrote:
-> This series, including all its prerequisites, is also available at:
-> 
->     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git fsverity-libcrypto-v1
-> 
-> This series makes fs/verity/ use the SHA-2 library API instead of the
-> old-school crypto API.  This is simpler and more efficient.
-> 
-> This depends on my SHA-2 library improvements for 6.17 (many patches),
-> so this patchset might need to wait until 6.18.  But I'm also thinking
-> about just basing the fsverity tree on libcrypto-next for 6.17.
-> 
-> Eric Biggers (2):
->   lib/crypto: hash_info: Move hash_info.c into lib/crypto/
->   fsverity: Switch from crypto_shash to SHA-2 library
+This patch series adds support for the HP Omnibook X Laptop 14-fe1xxx. [1]
 
-FYI, I've applied this series to
-https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=libcrypto-next
-so that it gets linux-next coverage.
+Since this is actually the same model as the 14-fe0xxx, but with an
+X1P-42-100 SoC (Purwa), it needs a slightly different device tree.
+To have as minimal duplicate definition as possible, the hp X14 gets 
+commonalized into a dtsi (and it stays compatible to the derived 
+device trees, like the Ultrabook G1q). 
 
-As mentioned, it depends on the SHA-256 and SHA-512 improvements in
-lib/crypto/.  But Linus has also expressed a preference to not put too
-much in one pull request.
+The supported features are the same as for the original Omnibook X14:
 
-My current plan is to do 3 pull requests:
+- Keyboard (no function keys though)
+- Display
+- PWM brightness control
+- Touchpad
+- Touchscreen
+- PCIe ports (pcie4, pcie6a)
+- USB type-c, type-a
+- WCN6855 Wifi-6E
+- WCN6855 Bluetooth
+- ADSP and CDSP
+- X1 GPU
+- GPIO Keys (Lid switch)
+- Audio definition (works via USB and with internal speakers)
 
-    1. "Crypto library updates" - most patches, mainly SHA-256 and
-       SHA-512 library improvements
+[1]: https://www.hp.com/us-en/shop/pdp/hp-omnibook-x-laptop-next-gen-ai-pc-14-fe100-14-a4nd1av-1#techSpecs
 
-    2. "Crypto library tests" - based on (1) but adds:
-        lib/crypto: tests: Add hash-test-template.h and gen-hash-testvecs.py
-        lib/crypto: tests: Add KUnit tests for SHA-224 and SHA-256
-        lib/crypto: tests: Add KUnit tests for SHA-384 and SHA-512
-        lib/crypto: tests: Add KUnit tests for Poly1305
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Changes in v6:
+- rebased to next-20250709.
+- picked up reviewed-by for patch #1 (thanks)
+- corrected typo in patch #1
+- removed model, compatible, chassis nodes from x1-hp-omnibook-x14.dtsi
+- amended copyright strings as discussed
+- Link to v5: https://lore.kernel.org/r/20250708-hp-x14-x1p-v5-0-44c916efa973@oldschoolsolutions.biz
 
-    3. "Crypto library conversions" - based on (1) but adds:
-        apparmor: use SHA-256 library API instead of crypto_shash API
-        fsverity: Explicitly include <linux/export.h>
-        fsverity: Switch from crypto_shash to SHA-2 library
+Changes in v5:
+- rebased to next-20250708.
+- changed commit message for patch #1 to reflect what happens
+- moved gpu node into the common dtsi part (always supported now)
+- switched over to gpu_zap_shader definition in the individual parts
+- Link to v4: https://lore.kernel.org/r/20250705-hp-x14-x1p-v4-0-1c351dbeaf18@oldschoolsolutions.biz
 
-I'll put all of these in libcrypto-next for linux-next coverage, but (3)
-will have a slightly different base commit in the final version.
+Changes in v4:
+- leave the qcom,jp-omnibook-x14 ABI unchanged, reuse it for the -fe0 variant
+- hacked b4 to create an easier reviewable patch: https://lore.kernel.org/all/20250705-format-harder-v1-1-55c5342be55c@oldschoolsolutions.biz
+- Link to v3: https://lore.kernel.org/r/20250703-hp-x14-x1p-v3-0-affe103b4356@oldschoolsolutions.biz
 
-- Eric
+Changes in v3:
+- removed copyright strings
+- amended changed commit message  
+- Link to v2: https://lore.kernel.org/r/20250702-hp-x14-x1p-v2-0-af5b588d1979@oldschoolsolutions.biz
+
+Changes in v2:
+- remove pm8010 handling
+- Link to v1: https://lore.kernel.org/r/20250702-hp-x14-x1p-v1-0-219356e83207@oldschoolsolutions.biz
+
+---
+Jens Glathe (3):
+      dt-bindings: arm: qcom: Add HP Omnibook X14 AI X1P4200 variant
+      arm64: dts: qcom: x1-hp-x14: Commonalize HP Omnibook X14 device tree
+      arm64: dts: qcom: x1-hp-x14: Add support for X1P42100 HP Omnibook X14
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi   | 1549 ++++++++++++++++++++
+ .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     | 1549 +-------------------
+ .../boot/dts/qcom/x1p42100-hp-omnibook-x14.dts     |   33 +
+ 5 files changed, 1589 insertions(+), 1545 deletions(-)
+---
+base-commit: 835244aba90de290b4b0b1fa92b6734f3ee7b3d9
+change-id: 20250702-hp-x14-x1p-eb32f4696d96
+
+Best regards,
+-- 
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
+
 
