@@ -1,88 +1,118 @@
-Return-Path: <linux-kernel+bounces-723875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD2DAFEBEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:28:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E932FAFEBBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2634E16F1A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:22:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9142A7A1671
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D352E3B0E;
-	Wed,  9 Jul 2025 14:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NamG7SQz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC9917A586;
+	Wed,  9 Jul 2025 14:23:42 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12CB292900;
-	Wed,  9 Jul 2025 14:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F364F2E0930
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752070952; cv=none; b=WU+Aua635kR6v4Jl7x3Gq3S5TooZvs9q9h5FimqyrgSFPFx4Qbl4svzHYsxVuf92ncf7iIERUWT4bjMqGsd1cPnIks1Ri995nq/MNF+MoiXtor/GkFPW2wxSfAvP3zC19SO39KjwEgbnQJzITgs0qvNWc9DGTF2e/ksmG0QlESA=
+	t=1752071022; cv=none; b=U8ij/O5oz94WFGrDS+IZrHbdUC+F++NRXxx4fFZvzPluLXZyds+MCUj652Zmckf38VAF/3hPei4Qq3dL1GX13ADyNAaK+VbDXkBeuMMnQLmoslsSVhHhQF25EHyngtm7agooZ9gRvkJty8sGrBv1qFwVO1E/1tC51+fCQU42d34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752070952; c=relaxed/simple;
-	bh=RuYtf+o/prZlkiX+R1ATPE24ug38zrQkLBU6YbtB9gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T9zk87HtSuVoPOsbDKzbBBm0qpzqHlTDVslQbbIm6ysmFpvaCsRBisc1oa4bx1xTXj2JCqVo6af1nQBgVlbAV9o9bHBmQ++/FjGZwqvCjhpGgNV/S5bonYofS0a9o6HhAEDB16uJVpvFNlxKg8dL8vqnIo56HX9ijPD0KRHNz4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NamG7SQz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6623FC4CEEF;
-	Wed,  9 Jul 2025 14:22:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752070952;
-	bh=RuYtf+o/prZlkiX+R1ATPE24ug38zrQkLBU6YbtB9gk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NamG7SQzyQWJ5KWdWWQHeVwsQhVqWV9f1070NVbepNAVaJWziLWvw4WxtupUVj5AY
-	 nuKJgYBWeMXoAm/HtGW1fkcZLHjaGk6CQsHImC0C5QwSHqsmT/sknOo5FNWalDWTl4
-	 RoIWCU5yClKHjTKMGDEfc4wzk6g+wccEpjZe4+bz0dsQeolEG7j3eZioyxg9MPKdZm
-	 9vAPQZ6b0De2Rp/z8XNoJe6moCn5k7qm+d72v7Zl3yIKew+sB6/nEvwPefnoC3jmBi
-	 xwwD6e2JbKdag1hgELjSnKJd6l/L+HPlswWndrbN71xXbznIqSyMhHFdlp5tRoZH/a
-	 wh0WrBv/dDi3Q==
-Date: Wed, 9 Jul 2025 16:22:27 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: =?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>
-Cc: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, M'boumba Cedric Madianga <cedric.madianga@gmail.com>, 
-	Wolfram Sang <wsa@kernel.org>, Pierre-Yves MORDRET <pierre-yves.mordret@st.com>, 
-	linux-i2c@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v4 0/3] Fix STM32 I2C dma operations
-Message-ID: <2o7ptcsi2akaphtofm57ok7te7qdxrchygpeqmdjaiushfjffs@5k47ncrcrgxk>
-References: <20250704-i2c-upstream-v4-0-84a095a2c728@foss.st.com>
+	s=arc-20240116; t=1752071022; c=relaxed/simple;
+	bh=sWl+IZYkVopB/RqvPQgbtjQC52n5C/xriMlbBb4g2W8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZkRyGhy9K8SuyWrh7D1xrMAVauBYuYeDzHjeHQSaA0A+y97zfdsdSiUQpxPOUyrcurFfi2vdx/JaEvbBaG21xJjydcFjxEmWrRz3BKpN5c5/W14dWED4xFMkw6+S4H4YQzSPR8M0WtIDLWkYtzMJeg++Q9D7wAIc+KQkbrgJClM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 8B795C0250;
+	Wed,  9 Jul 2025 14:23:31 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id EB7A930;
+	Wed,  9 Jul 2025 14:23:29 +0000 (UTC)
+Date: Wed, 9 Jul 2025 10:23:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Aditya Chillara <quic_achillar@quicinc.com>
+Cc: Ingo Molnar <mingo@redhat.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] tracing/perf: Prevent double unregister of perf
+ probes
+Message-ID: <20250709102329.7a5430fd@batman.local.home>
+In-Reply-To: <20250709-fix-double-perf-probe-unregister-v1-1-2b588b3c0140@quicinc.com>
+References: <20250709-fix-double-perf-probe-unregister-v1-0-2b588b3c0140@quicinc.com>
+	<20250709-fix-double-perf-probe-unregister-v1-1-2b588b3c0140@quicinc.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250704-i2c-upstream-v4-0-84a095a2c728@foss.st.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: EB7A930
+X-Stat-Signature: 8gdf5dbzu4gqbbu8a5stekf3kq1ruzqi
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18/ZMa5SLApCnYIBS39ZOWsQAE+WNF/dhI=
+X-HE-Tag: 1752071009-268585
+X-HE-Meta: U2FsdGVkX181aKLlrmoxpk3ILopkNoL6E3THn3wNQxhzgg1BKY7aQu5VkfjjUHxo1hblizKHburntqfIlVpLOfUtiTsJtFyvBKKeEmHIrIAqtjosHshTl51NMIbn8Q+ZsFW93S4tW02iBcRKMyrGyWc2hfwRjQadmM3H1QWF48FRwiHGfqKS4vN5h92I7c7KJDoiuPc8sibqr0aEK032dvMNyKP391i80iNxRZMzoX1qa4+kJedcpUwZo1cWrhy5JJ2T7JFrv+k5wfXqazPumnuTwJq8IBKeZoqeGo0pz0K9iiofsD1DCTzG34ts8OuazwPoBnsZOLZ46xsalMw35Ni7COg3YJuobW02DuDSMHSi20by1rOmphlI9jSeX4F0
 
-Hi Clement,
+On Wed, 9 Jul 2025 11:11:09 +0530
+Aditya Chillara <quic_achillar@quicinc.com> wrote:
 
-Thanks for following up on the reviews.
+> Double perf_trace_event_unreg is allowed causing perf_refcount to go
+> negative. total_ref_count also goes negative because the return value
+> of tracepoint_probe_unregister is ignored.
+> 
+> Once total_ref_count is negative, the next call to perf_trace_event_reg
+> will register perf_probe but will not allocate perf_trace_buf and sets
+> it to NULL instead.
+> 
+> The subsequent trace_##call() will mem abort in perf_trace_buf_alloc
+> because memset will be called on the NULL perf_trace_buf.
+> 
+> Gracefully handle the error in perf_trace_event_unreg to prevent
+> double unregister.
+> 
+> Signed-off-by: Aditya Chillara <quic_achillar@quicinc.com>
+> ---
+>  kernel/trace/trace_event_perf.c | 8 ++++++--
+>  kernel/trace/trace_events.c     | 3 +--
+>  2 files changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+> index 61e3a2620fa3c9417ac23cf5a18aeb86e7393dcc..247db88accd88eb0acf3692ea593d576519ce8b1 100644
+> --- a/kernel/trace/trace_event_perf.c
+> +++ b/kernel/trace/trace_event_perf.c
+> @@ -154,12 +154,16 @@ static int perf_trace_event_reg(struct trace_event_call *tp_event,
+>  static void perf_trace_event_unreg(struct perf_event *p_event)
+>  {
+>  	struct trace_event_call *tp_event = p_event->tp_event;
+> -	int i;
+> +	int i, ret;
+>  
+>  	if (--tp_event->perf_refcount > 0)
+>  		return;
+>  
+> -	tp_event->class->reg(tp_event, TRACE_REG_PERF_UNREGISTER, NULL);
+> +	ret = tp_event->class->reg(tp_event, TRACE_REG_PERF_UNREGISTER, NULL);
 
-> Clément Le Goffic (3):
->       i2c: stm32: fix the device used for the DMA map
->       i2c: stm32f7: unmap DMA mapped buffer
+The only time unreg() fails is when it doesn't find a tracepoint to
+unregister.
 
-I applied the two above in i2c/i2c-host-fixes. I'm not sure we
-need the "Fixes:" tag in the first patch, though, as we are not
-fixing a real bug. But I'm keeping it there for the time being.
+There should be no reason to check the return value of unregister if
+you have your accounting correct. Thus I think you are fixing a symptom
+of a bug elsewhere.
 
->       i2c: stm32f7: support i2c_*_dma_safe_msg_buf APIs
+-- Steve
 
-This one depends on the previous two to be appliex, so that for
-now I added it in i2c/i2c-host-next. I will place it in the
-proper branch after the weekly pull request.
 
-Thanks,
-Andi
+> +	if (ret) {
+> +		++tp_event->perf_refcount;
+> +		return;
+> +	}
+>  
 
