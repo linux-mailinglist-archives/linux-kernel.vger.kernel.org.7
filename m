@@ -1,110 +1,158 @@
-Return-Path: <linux-kernel+bounces-724211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91800AFF00D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:41:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D827AAFF011
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9F23167DDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:41:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 631B117C4F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF7D22FF2D;
-	Wed,  9 Jul 2025 17:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FB0231856;
+	Wed,  9 Jul 2025 17:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKVs8qem"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="tbhZoaNA"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160282E370B;
-	Wed,  9 Jul 2025 17:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7120822D9E3;
+	Wed,  9 Jul 2025 17:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752082874; cv=none; b=nT/0abUglDP1D1bEWq531m/INpFlQQTIsCKSediaax91RrZYmEiD/kH07oxFVhOlaU9T2eLJ5sfmJKo1XyjEpRRO7E8TDtaSk2MfhD6vBBh8Ax7Js/kBzizOe36JaZiRtS020/LMENxpnGwDgvE29jCp0Y3WDjVFcFLBeq82Qg0=
+	t=1752082947; cv=none; b=j6SK4UdnrWevHKsAH6VVXvif1zLatJp3gngXVvf8Y6r0/vY8GKr/VcpbF55iGouZN/KB8D5ZvhSJjRzI1Xzzqmgcpsyf1iGUVntfEgyu1u1fpgMIB5+Phls8iwvTtGPqmU5X328g9rE/4oXtEXWr8vkvy6kMW6ieDZQ9/up50eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752082874; c=relaxed/simple;
-	bh=ERI9xBq39mzDkL3fuk11Ct3eUM0V2AyCkctUtBuVPRY=;
+	s=arc-20240116; t=1752082947; c=relaxed/simple;
+	bh=L/bU3Vjvhst8h5Zlf/0Herx+Z0zUver5++nZF9RW5Yk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZvEuyJGi2hQ3GFMrY/tmVtMThRgrz11IEAPFX2ZlY6DUgcXQdA2+JZqF0BqBJxdhmfCz7z/xWfvJGqi/Lzexj6GUwYCAbHBuK1LC1pW2DLIbIe5vgENO5mU2l2vtK/OaOPWI1hK4A+VmX6vgpBpsu7gMj2nXsY1YA1MzFJutdec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKVs8qem; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4011BC4CEEF;
-	Wed,  9 Jul 2025 17:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752082873;
-	bh=ERI9xBq39mzDkL3fuk11Ct3eUM0V2AyCkctUtBuVPRY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CKVs8qemZvPtHE7dY03bvqpAdgVHcG9aa99xujt1xnsyF6b63ZZEK5AY2IeqDdnb8
-	 K2iaLtfA+qAJ8S8g+2m/Nm1h/vYz00ECHmI6KauteNgt4WMsyU8klEKicOpMrrMCXN
-	 3RNtpAb8xOD77Ygl1GVPEG477M8FSps8AHmhYc5I6G97PFQKcl5yBIxMu6SY2vactS
-	 QB8+9CcMApDGD5/6/tvlAwUemLYx9eqA1sZ9lJ/hPWDkz70tzGQlOVMX/dn4B/oNQY
-	 LCj9BYHAARgU0OrAq2ArKjZzmbW/EWkU+C+p3BozAMHN3eEDn2iqsOTxxPWZW9InbR
-	 NmP1iRXIuJDgA==
-Date: Wed, 9 Jul 2025 20:41:08 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: linux-next: boot failure after merge of the dma-mapping tree
-Message-ID: <20250709174108.GH592765@unreal>
-References: <20250709233953.7afb7a8a@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BT4Y5L34RpPzvviMbrVYBrURC1KEZAV7tmlKUbK61gXxbc1E8cxNC+1b+fp4Wi8MeU0iTdqMe1tpT29VGW0vEzhNSHpqCS73ADlA1RrvYhQopbX4ojhqZTOgRe3K8KKT85T/o9j6lsNfJHAEDjX09r9vub/ismKXmKIC9u3apMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=tbhZoaNA; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9JNMjRDCMIHa+Po0H1LYj8KqoI3Jfy0hutL9Xpr7pSU=; b=tbhZoaNAh9WyeIfezPzjBJKpAf
+	jyvVdnsDK+o+tp55I7V65vC8T5Cl8sjTg6iLu1L6Nu+zrJj5U80bQv9AwD4+7dY0PsPAOwIafbpOh
+	TIiGkLQFVw5dJwNeWWmUsj103sFDE2EN26yOUWNQmMzvprLx4/Lxxq2hn1IuCzcKLwxdhetx0QJ1X
+	djzSN/MMoqkGr8IPalFPJYpD7lGFfccg1bd+654QLcIVLFjZEwnSJWze1InOSEa8Z5925YX4TToUy
+	MhZQF6JqWQ+/jsQS/gN4G779mK07e4zaL5ZPDaWUHyqrvaCPgJRNmDNsoKBxm/g1wB1CmIShjP/M2
+	xKv4TjyA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56254)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uZYo3-0008JZ-0r;
+	Wed, 09 Jul 2025 18:42:07 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uZYnv-0002pD-1X;
+	Wed, 09 Jul 2025 18:41:59 +0100
+Date: Wed, 9 Jul 2025 18:41:59 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: lizhe <sensor1010@163.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, vladimir.oltean@nxp.com,
+	maxime.chevallier@bootlin.com, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: Re: Re: Re: Re: [PATCH] net: stmmac: Support gpio high-level
+ reset for devices requiring it
+Message-ID: <aG6p5_p9CmqxZcxM@shell.armlinux.org.uk>
+References: <20250708165044.3923-1-sensor1010@163.com>
+ <52b71fe7-d10a-4680-9549-ca55fd2e2864@lunn.ch>
+ <5c7adfef.1876.197ece74c25.Coremail.sensor1010@163.com>
+ <aG3vj1WYn3TjcBZe@shell.armlinux.org.uk>
+ <5bb49dc0.6933.197ee28444e.Coremail.sensor1010@163.com>
+ <aG5ORmbgMYd08eNR@shell.armlinux.org.uk>
+ <4cfb4aab.9588.197eefef55f.Coremail.sensor1010@163.com>
+ <aG582lPgpOr8oyyx@shell.armlinux.org.uk>
+ <2352b745.a454.197efeef829.Coremail.sensor1010@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250709233953.7afb7a8a@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2352b745.a454.197efeef829.Coremail.sensor1010@163.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Jul 09, 2025 at 11:39:53PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Jul 10, 2025 at 12:05:05AM +0800, lizhe wrote:
+> Hi，
 > 
-> After merging the dma-mapping tree, today's linux-next qemu boot test
-> (powerpc pseries_le_defconfig) failed like this:
+>      
 > 
-> [    0.219439][    T1] ibmvscsi 71000003: SRP_VERSION: 16.a
-> [    0.219472][    T1] ibmvscsi 71000003: Error -4 opening adapter
-> [    0.219507][    T1] ibmvscsi 71000003: couldn't initialize crq. rc=-1
-> [    0.221963][    T1] ibmvscsi 71000003: probe with driver ibmvscsi failed with error -1
+>   if i add the following code to this function, the gpio outputs a high level
 > 
-> The normal output is:
+>   without this code, it outputs a low level, 
+>   the function currently drivers the reset GPIO to a low state, failing to account 
 > 
-> [    0.221208][    T1] ibmvscsi 71000003: SRP_VERSION: 16.a
-> [    0.221272][    T1] ibmvscsi 71000003: Maximum ID: 64 Maximum LUN: 32 Maximum Channel: 3
-> [    0.221310][    T1] scsi host0: IBM POWER Virtual SCSI Adapter 1.5.9
-> [    0.221653][    C0] ibmvscsi 71000003: partner initialization complete
-> [    0.221696][    C0] ibmvscsi 71000003: host srp version: 16.a, host partition qemu (0), OS 2, max io 2097152
-> [    0.221752][    C0] ibmvscsi 71000003: sent SRP login
-> [    0.221778][    C0] ibmvscsi 71000003: SRP_LOGIN succeeded
-> [    0.223269][    T1] scsi 0:0:2:0: CD-ROM            QEMU     QEMU CD-ROM      2.5+ PQ: 0 ANSI: 5
-> [    0.239389][   T28] Freeing initrd memory: 1844K
-> [    0.302192][    C0] sr 0:0:2:0: Power-on or device reset occurred
-> [    0.302411][    T1] sr 0:0:2:0: [sr0] scsi3-mmc drive: 16x/50x cd/rw xa/form2 cdda tray
-> [    0.302450][    T1] cdrom: Uniform CD-ROM driver Revision: 3.20
-> [    0.302800][    T1] sr 0:0:2:0: Attached scsi generic sg0 type 5
+>   for devices requiring an active-high reset.
 > 
-> Bisectd to commit
 > 
->   ec7352735abf ("dma-mapping: export new dma_*map_phys() interface")
 > 
-> And reverting that commit, and the following one, in today's linux-next
-> release, fixes the problem.
+> 
+>   i invited our hardware engineer to  measure the voltage level on this GPIO pin,
+> 
+>   without  adding this code, the voltage at this GPIO pin remains at 0V
+> 
+> 
+> 
+> 
+>   +             int current_value;
+> 
+> 
+> 
+> 
+>   +             keep_high = device_property_read_bool(priv->device,
+> 
+>   +                                                             "snps,reset-keep-high");
+> 
+>   +              if (keep_high) {
+> 
+>   +                     gpiod_set_value_cansleep(reset_gpio, 1);
+> 
+>   +                      current_value = gpiod_get_value_cansleep(reset_gpio);
+> 
+>   +                      pr_info("current_value: %d\n", current_value);
+> 
+>   +              }
+> 
+>    in the RK3588 system, i am using ,there are many DTS node configured link this:
+> 
+>     snps, reset-gpio = <&gpioX RK_PXX GPIO_ACTIVE_HIGH>;   
+>     All of them correctly parse the GPIO pin's state are described in the DTS
+> 
 
-Stephen,
+I'm wondering at this point whether the problem here is one of
+mis-understanding the engineering terminology. Look at the below
+using a fixed-width font:
 
-Can you please provide the kernel command line to determine which DMA
-path is taken?
+Active-high reset: _____/^^^^^^^^\____
 
-Thanks
+Active-low reset:  ^^^^^\________/^^^^
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+                        | reset  |
+			|asserted|
 
+So, an active high reset needs to be logic low in order for the
+device to function. An active low reset needs to be logic high
+for the device to function.
 
+You seem to be wanting to tell the kernel that you have an
+active high reset, and expect it to be logic high when you
+want it to be active. That is *not* an active high reset.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
