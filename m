@@ -1,72 +1,96 @@
-Return-Path: <linux-kernel+bounces-723822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48BEAFEB5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:11:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B97FAFEB64
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F5618997A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:05:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14CA01707F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7CC2E6121;
-	Wed,  9 Jul 2025 14:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h28Xfv+T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABBE2E5420;
+	Wed,  9 Jul 2025 14:02:40 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A272E5B2E;
-	Wed,  9 Jul 2025 14:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A2628DB56;
+	Wed,  9 Jul 2025 14:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069716; cv=none; b=WGepje3mRIixd1LiGGVBVI+qgEVt9/pCfdE5x/wuS7vI9OvDSTFfM7JXETPali09OOWgA6U81smvBTpGlg2YmiXm95jd1uM4ubEULH+t+K83u6ldkt752sCaINUZh3pWzuFACJVdzF0KghKu1Q2xY8sW8eolp4+P+MdWKF30Qmo=
+	t=1752069759; cv=none; b=KriPufekq9PwfK1PhbOYTC7VeqsVjaVF2dwHaqhCcSsNka/JbaB2Kjy68gueut/mCCdobw56qKiexLoWrDshRdrCdxKNg8cNGFXfBSzBy3IYk6927NdELtT+Jre8KDCfVTvxPUeGigwmCaULQ7akj8U8Y0FCnaflK4h3VHbQ8sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069716; c=relaxed/simple;
-	bh=O3sM6IJo8yJB8JQhRCEpjnWcZn+zZ0AI1hBvV+VcGpw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=G1iC761Le9cJ9UkZwy63Unbo8/zjDtYy9MkdA9J/RuLJ6GYRXn+8sp/uM5PS4omfW+PiVz9oe5OSV5F2OzZXQNkiJRfMelFFH9iTQ2UBj5oFNglFbhkzzTTZ2nStChFHDj0P1JdIHySDJISmXdE7oZOfexJm5tA8eWFIcABcqtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h28Xfv+T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B930C4CEEF;
-	Wed,  9 Jul 2025 14:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752069715;
-	bh=O3sM6IJo8yJB8JQhRCEpjnWcZn+zZ0AI1hBvV+VcGpw=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=h28Xfv+TNy943jokk3CjHoSCxY3XE3cGNrUwSWGySQmUktF41+N9xc4oLtKnTOLZx
-	 ARGdroycI6g6HFlfb1gugaz4NoK+a1Njy07ZwN8/IYX+VHlTs5iw44usSOW98sQDIf
-	 hPoDv+EX5lk3JZHX8M9dRk4LalJEFr+PsFd9/VsM/KUT7hI/LLKt5Tnp7pqWGRy7WP
-	 1cdIuihlmsXuUjvoHP+bKX0Qk+UblIUr0nD7TXWttWgtNhLaYV0YrKBZbb7Ta5ncvy
-	 CvWNPTM30UqBjKm6/PwXqScMu0FWppeZh+hvBPzNx/xgq3ERhnBWDKNyZKn2DHA8b1
-	 wxDWX+1nsGkCg==
+	s=arc-20240116; t=1752069759; c=relaxed/simple;
+	bh=I5/PoNuLfVO9juQBCnDCklUrfDrK/8QWDvmSEc5YnEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VNZkWUtomi29hhZ5x3XgIXivx+BNqi0rvjhxaoiSQsxzqzOFtvKAKWqINnVK2adpWuTbBR42A07QNueZIptC9pFWNdua72js3QAUTgG44yANkTSh6VndjnbsNKTLUe/swKnFVDhOl/Vtxn/CxlMGloXYtRdmJtlKFUqaArMDb5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 569E2DPk060732;
+	Wed, 9 Jul 2025 23:02:13 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 569E2DaA060729
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 9 Jul 2025 23:02:13 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <dc0add8a-85fc-41dd-a4a6-6f7cb10e8350@I-love.SAKURA.ne.jp>
+Date: Wed, 9 Jul 2025 23:02:10 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hfsplus: don't use BUG_ON() in
+ hfsplus_create_attributes_file()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <54358ab7-4525-48ba-a1e5-595f6b107cc6@I-love.SAKURA.ne.jp>
+ <4ce5a57c7b00bbd77d7ad6c23f0dcc55f99c3d1a.camel@ibm.com>
+ <72c9d0c2-773c-4508-9d2d-e24703ff26e1@vivo.com>
+ <427a9432-95a5-47a8-ba42-1631c6238486@I-love.SAKURA.ne.jp>
+ <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 16:01:52 +0200
-Message-Id: <DB7KVMH221GD.2K2PJ8SNRZA8L@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: add mm folks as reviewers to rust alloc
-Cc: "Vlastimil Babka" <vbabka@suse.cz>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, "Uladzislau Rezki" <urezki@gmail.com>,
- <rust-for-linux@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250708183747.104286-1-lorenzo.stoakes@oracle.com>
-In-Reply-To: <20250708183747.104286-1-lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Tue Jul 8, 2025 at 8:37 PM CEST, Lorenzo Stoakes wrote:
-> The alloc implementation is a thin wrapper over slab/vmalloc, so to help
-> out on the mm side of things and to be cc'd on changes, add some mm peopl=
-e
-> as reviewers.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On 2025/07/08 4:03, Viacheslav Dubeyko wrote:
+>>> @@ -172,7 +172,11 @@ static int hfsplus_create_attributes_file(struct
+> super_block *sb)
+>>>   		return PTR_ERR(attr_file);
+>>>   	}
+>>>  
+>>> -	BUG_ON(i_size_read(attr_file) != 0);
+> 
+> But I still worry about i_size_read(attr_file). How this size could be not zero
+> during hfsplus_create_attributes_file() call?
 
-Applied to alloc-next, thanks!
+Because the filesystem image is intentionally crafted.
+
+syzkaller mounts this image which already contains inode for xattr file
+but vhdr->attr_file.total_blocks at
+https://elixir.bootlin.com/linux/v6.16-rc5/source/fs/hfsplus/super.c#L485
+is 0. This inconsistency is not detected during mount operation, and
+sbi->attr_tree_state remains HFSPLUS_EMPTY_ATTR_TREE, and
+this inconsistency is detected when setxattr operation is called.
+
+The correct fix might be to implement stricter consistency check during
+mount operation, but even userspace fsck.hfsplus is not doing such check.
+
 
