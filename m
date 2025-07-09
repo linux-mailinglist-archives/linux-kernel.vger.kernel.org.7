@@ -1,145 +1,99 @@
-Return-Path: <linux-kernel+bounces-722618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1AFAFDCEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:29:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D926CAFDCF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9FAF7A601E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:27:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 854A03BC0F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842DD17BB21;
-	Wed,  9 Jul 2025 01:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE5717C21C;
+	Wed,  9 Jul 2025 01:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="rEhNdc7s"
-Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aoRVF4lZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DBF35959;
-	Wed,  9 Jul 2025 01:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8711A153BD9;
+	Wed,  9 Jul 2025 01:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752024547; cv=none; b=eI8XWXG6f26quFRm+UAhIH0rmeIkXMdX8OSTIar4oSf4/XdQjFkn1nL8/4DmxbJyWEs4gjUI3DY8p/55WHlt2bVY8PDnmIEVstLW2mKswx67fzeDvbt6Mo00VdVZqaD+CHmyv4xpsBaiCexbpZ2Gw6R6E8Z0VD42AAWHjyWV4OE=
+	t=1752024589; cv=none; b=iX+Edyu4xOwEIbAe5QQYXiijxXKZG6h8da1vdcvErL4aV+H4cubiH/k7fKHUcVm7WhrN0DKOYdzmb2t2BtIZONgm3AoFeMUxYuHkAE6Saa50LUoiG/JD31MgCcnBKhjXnfmU+tO3dvjVjECMH5zyodYofO8GtBiYpYhlaogDjro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752024547; c=relaxed/simple;
-	bh=Zb9VEiAEI7OdRMeYg3SCbbNor7GuUp/cVLEZv3eETNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gql0/OLJzneUAUzGXtJxdhyN7WSCXWl7t15p8ksRhRnE5S1LSuiaTqq3Ss+XG1o5Ey/1p4WC0UAcf7kEsvvnMmX/cQiPxwV7p+8BEE2mz+k+tTiFKn+Ft5ka0oF84Cwcz4Yspv7qYjfVn9EVy21OZm1GDaUs+JMdCmE0v9zKXxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=rEhNdc7s; arc=none smtp.client-ip=91.232.154.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-	s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=H30So9AdIyWkMEDjX7oZ8/lNt3wPb9URPVhtN/UoCoY=; b=rEhNdc7sYP5QbjLhEpRTTFVnp0
-	ClbZhjfAN7rxmvfHdU7gK/TyLwxr0S4kyalUfl6O5lQVbmwXXj0GAm4y+D6eHK19w6rd00nl0NBD4
-	fhsuc8+x4XfWBA6rw4mEUfEnTtaQdM97t9U+z2s5w8yIQjP/8QMnayxU0WH9CyApz47kIFv/YFPA2
-	SO/Dvu2ZgUt6lOpKpAsS7uK0CjRMTS4bZ8lI7F0Y4ll1dm0R2X718scvBUGcN28ufbPYTYfZwSDrT
-	wnrScpmzaMiDupKZt2STDmWCcWNUU3sEIBfENoqZ3F+wu3VOc5Zw3TE4pj2qn5RhnrS79LcW+7FUo
-	4SwvH3bQ==;
-Received: from [2404:7a80:b960:1a00:5eaa:b33c:a197:a90f]
-	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <cyndis@kapsi.fi>)
-	id 1uZJcD-00Amxc-2j;
-	Wed, 09 Jul 2025 04:28:54 +0300
-Message-ID: <17629989-891c-4026-b9d6-3e1403adba6c@kapsi.fi>
-Date: Wed, 9 Jul 2025 10:28:46 +0900
+	s=arc-20240116; t=1752024589; c=relaxed/simple;
+	bh=eY8NWnVC7ALCgYzoeyG1zvtupOQiJPwW9JxtGjJHT5w=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=jwSfz3DG7rxwn4aAXEXWQd606dZv6mcB7QLHfg3bDASCISISeScRRa10y8H+y2EndC5TmXlf/0uIan9McEI4FTr0CMa+EEdp21uYc0F7Rvp06wJohzrz6WVWVxBuP2BtPrwLdooQbBsQVRMi5NICgY9a7srZNBEdexFHl2cqw3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aoRVF4lZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3AA2C4CEED;
+	Wed,  9 Jul 2025 01:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752024589;
+	bh=eY8NWnVC7ALCgYzoeyG1zvtupOQiJPwW9JxtGjJHT5w=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=aoRVF4lZn3d3KjcGZm1armU+SQRv1yzzb6wOO19uudZYyrDn/usLW1RTHfy4a2MXv
+	 mJucvUlht9vZAENOwHF0NjlTPDUXECPH01Mj2iXGh/4cqtUcgjWEEX6nxXTDofPThp
+	 Ui7oaU8rb5rGXn5Otg9+2W/O0sEfWcv6J09XX/8jqmsP667vXmEBVRFDNO7893j3SI
+	 o3VH3+bAiAhuDMapbnOmTVJ0NSt36COLibOgLSnN0yCPswoJqgGY8YhgBubKmrX0x4
+	 ZBqeU868eT8dm3guAbcZAh+rx06pJxANK8LppX6STjQ0UvRRFoZaH5sjrkT19lV7xl
+	 IaeP2/jTrED4w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF65380DBEE;
+	Wed,  9 Jul 2025 01:30:12 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma_buf/sync_file: Enable signaling for fences when
- querying status
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
- Mikko Perttunen <mperttunen@nvidia.com>
-References: <20250708-syncfile-enable-signaling-v1-1-9f6e6cd9fcda@nvidia.com>
- <1ebba600-31d2-48ed-b08b-46d667d38054@amd.com>
-Content-Language: en-US
-From: Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <1ebba600-31d2-48ed-b08b-46d667d38054@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:5eaa:b33c:a197:a90f
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Subject: Re: [PATCH net v2 0/4] net: phy: smsc: robustness fixes for
+ LAN87xx/LAN9500
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175202461176.186229.18254755075950170255.git-patchwork-notify@kernel.org>
+Date: Wed, 09 Jul 2025 01:30:11 +0000
+References: <20250703114941.3243890-1-o.rempel@pengutronix.de>
+In-Reply-To: <20250703114941.3243890-1-o.rempel@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+ netdev@vger.kernel.org, andre.edich@microchip.com, lukas@wunner.de
 
-On 7/8/25 11:20 PM, Christian König wrote:
-> On 08.07.25 14:03, Mikko Perttunen wrote:
->> From: Mikko Perttunen <mperttunen@nvidia.com>
->>
->> dma_fence_get_status is not guaranteed to return valid information
->> on if the fence has been signaled or not if SW signaling has not
->> been enabled for the fence. To ensure valid information is reported,
->> enable SW signaling for fences before getting their status.
-> 
-> I don't know how often I had to rejected that patch now, we really need to improve the documentation :(
+Hello:
 
-Sorry :(
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Improved documentation certainly would be good. I've thought of SW 
-signaling as a kernel-side 'optimization' and not something that would 
-be visible to the user space. Perhaps documentation could also mention 
-situations where calling this without enabling signaling is useful. 
-Anyway, I'll fix our issue in userspace by adding the zero-timeout poll 
-instead.
+On Thu,  3 Jul 2025 13:49:38 +0200 you wrote:
+> changes v2:
+> - drop IRQ patch.
+> - no other changes are made
+> 
+> Hi all,
+> 
+> The SMSC 10/100 PHYs (LAN87xx family) found in smsc95xx (lan95xx)
+> USB-Ethernet adapters show several quirks around the Auto-MDIX feature:
+> 
+> [...]
 
-Thanks!
-Mikko
+Here is the summary with links:
+  - [net,v2,1/3] net: phy: smsc: Fix Auto-MDIX configuration when disabled by strap
+    https://git.kernel.org/netdev/net/c/a141af8eb227
+  - [net,v2,2/3] net: phy: smsc: Force predictable MDI-X state on LAN87xx
+    https://git.kernel.org/netdev/net/c/0713e55533c8
+  - [net,v2,3/3] net: phy: smsc: Fix link failure in forced mode with Auto-MDIX
+    https://git.kernel.org/netdev/net/c/9dfe110cc0f6
 
-> 
-> The fence info query exists to query the status *without* enabling signaling, that is the whole purpose of the function!
-> 
-> If you want to enable signaling *and* query the status then just poll on the sync file file descriptor with a zero timeout.
-> 
-> If the signaling timestamp or error code is needed then that can be retrieved after signaling through the info IOCTL.
-> 
-> Regards,
-> Christian.
-> 
->>
->> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
->> ---
->>   drivers/dma-buf/sync_file.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/dma-buf/sync_file.c b/drivers/dma-buf/sync_file.c
->> index 747e377fb95417ddd506b528618a4288bea9d459..a6fd1d14dde155561b9fd2c07e6aa20dc9863a8d 100644
->> --- a/drivers/dma-buf/sync_file.c
->> +++ b/drivers/dma-buf/sync_file.c
->> @@ -271,6 +271,8 @@ static int sync_fill_fence_info(struct dma_fence *fence,
->>   	const char __rcu *timeline;
->>   	const char __rcu *driver;
->>   
->> +	dma_fence_enable_sw_signaling(fence);
->> +
->>   	rcu_read_lock();
->>   
->>   	driver = dma_fence_driver_name(fence);
->> @@ -320,6 +322,7 @@ static long sync_file_ioctl_fence_info(struct sync_file *sync_file,
->>   	 * info->num_fences.
->>   	 */
->>   	if (!info.num_fences) {
->> +		dma_fence_enable_sw_signaling(sync_file->fence);
->>   		info.status = dma_fence_get_status(sync_file->fence);
->>   		goto no_fences;
->>   	} else {
->>
->> ---
->> base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
->> change-id: 20250708-syncfile-enable-signaling-a993acff1860
->>
-> 
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
