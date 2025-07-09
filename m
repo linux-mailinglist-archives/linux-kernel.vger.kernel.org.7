@@ -1,172 +1,372 @@
-Return-Path: <linux-kernel+bounces-722582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE78AFDC96
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 441FDAFDC98
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 915B51AA644D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:56:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBBAD1C23122
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52034137750;
-	Wed,  9 Jul 2025 00:56:04 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43709130A54;
+	Wed,  9 Jul 2025 01:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ft9J2kjK"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B42D15A8
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 00:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3B7944F;
+	Wed,  9 Jul 2025 01:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752022563; cv=none; b=aCXLekYjbt4AEd/ylDLoKTrDxuO4Kh/vJdnZ3A6zkcVPREVxxjWdpTlIzSibE3e4mn9O6u7mncZNUt3iG+/UgsvfBFxdTvD+WKfOO9RtvQNDfCcaMrY1P7r66+ajvANR9MlBIX3NiD7gSjVyg3UrBaqnJ+liWCxjSNUml9kHB6s=
+	t=1752022817; cv=none; b=B9ZwYsbpjghOHFqHKNI7npklJQc9OCJ1k00yTFH8osSpugfTbxsbVJ0Aww1cvcj3I/4smyKvQ8XgRS5SzKctUfEcF1Z0CjNz4FDjJG3RG97XqN/iACKscj/sMF47CKvoUaF4zwMatGm6ZSBD2Xxt/hTg4MaaTOLPKumLN7oRceQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752022563; c=relaxed/simple;
-	bh=rDc4wNK9y/IXftWJP+66Kf/gK4h3EsDXkzGydn/ntL0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NFlb+oRy8niRZI9L1Rrpjc1G5VRd672w/OCdvtO12txmzVa+B3QkIz+fM6Sky3yT6CimKB8CA87d6C+t13kU1klrp9VqrqU9q3xne8bK/V5DwKHeAVYOvtxJlmewCQX2AKa1ZyPCFznaajY+vDM15KfjR1BrYnw9riNqlldeqnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-86a5def8869so1026088839f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 17:56:02 -0700 (PDT)
+	s=arc-20240116; t=1752022817; c=relaxed/simple;
+	bh=j76xYmAWTT1qGnQvlKN0JQqy1LBdl8D0GwbJttuJ/FQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X3DHSI81sPSfw4a0VFOjqVD/Znmf0gnIiXaiXFYZlENECcHLpVV9mnhiO+dakZE+yUqXTKsvd9yaYn0LU+G4ZtP6C3Hhzz3ywq37ywxs+HmtVsmmqAkMh4emt4cqKL5uphbsf8RTZzNmSWptuKY2zwE6rEKvKS6lhUke1Yg0tFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ft9J2kjK; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e8b67d2acfbso1050945276.2;
+        Tue, 08 Jul 2025 18:00:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752022814; x=1752627614; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rKyG/qY8Es7sRvXzl2PdKZi4+ObM/qHY4kExb6QA8vU=;
+        b=Ft9J2kjKTvz2V4R9KM8llDPsJuRg9j+bATYJPSYoIaCWzUBWF0Yuae3Kw9pX0VxsjX
+         p0QU6J5BZ6spZSMYuECrcJqE0YZ2+ubMWV4yhR2xjCeqZphYKTvXFl3MfHUMtK6NHwhB
+         kKfgrJdccrbrGSUD0EmC5893GwpONRpgtm4wqeA0ZQPBStzkznpyKpOq1ZCqUGI52qR2
+         uhEh6+T7F7Il6FtCpFo6aWJQrFW/J3v9j8Ynch+kRMdsezThF9OZ2UAv6MIc1+malHls
+         HppqtJRmuUe+n305uo2m1SjJCzRWtU1OZTr09TFWL6aJURL38RMBzbnhWBwbPuX23WzT
+         maKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752022561; x=1752627361;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Amb6igKVFd73vOnV9mAjb+W2sAOaohtMrJMtaPqhrMM=;
-        b=dsLaud+HkilFlEXGYPbYUal+nfvD3rvLD+zkv5jUBn/dLaJYYGfnW73iC4rvLqlOX8
-         8Awl4/yDLWBQ1HxNaW9dy77RvnB4DhOPu6OAOV6ONwIAoZADiftFsotUqNTXUBoO7BNj
-         zlYm6Jwz9bI1fkmL1AtZXoLhYvroAKjM5xL9MiQEY+0zJgnPF0FeKrVOKL/nMZ29g7nG
-         jl+CRrMQKSbv//gkrydbK7LL228grE8Fh2nppVHJD+Ugh6eSY1G9VdOwLOnTJfODWlte
-         1g48msgd6Ts9Exxt/3zNdX2yIZqqycrqxmeN6dVQsFa5rvZDC6lCr/EXmC1EYHpfRKQq
-         2VIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxe6ZBjwQwkxILvRvz70S/DpTnnGATcFvSHu3+YCKCsut5NMcuQC6QU3cCli3KxUVtnC8LHrm7rTLFBkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylfPz6Nd5qDhez82XRgIZnfwXgFuv3zOcP0xfUwCt5yXeHCtqk
-	fhpsFZPiWGTtXC0pm51EhCjaDOReExOGQGk+L/O/Rx2SXKKgMQHTzwL5cyudtM2Z11ncXWX9wEI
-	D9lajWz59UcuTHcMFpN//mYpM90GVMn3iHk+K/2MTdRe1EUR/SDRXj8IYdwY=
-X-Google-Smtp-Source: AGHT+IHab3/qQIL0MuHYGM774Bj3klN27JcVonGibhiGuc+LfRDD6pFbF7aVYz+wKiWwbQcz4uTQSuIvd94/o96I+hxw5QOBx1pk
+        d=1e100.net; s=20230601; t=1752022814; x=1752627614;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rKyG/qY8Es7sRvXzl2PdKZi4+ObM/qHY4kExb6QA8vU=;
+        b=eqjWJ1JTZYF56xn1PrWpxf4uM8iLNZbqrAZf+EjWuEybGLNT0doWOJL6DHxwefZHKh
+         LvjZ11CcAcmjJMy9V91+Hr6OfvJejuQkg44uPNri0OVokQ4N283xMp2BaPTqJdYXgRDx
+         rtClqjljT/KU8d3ABdPQv9rKA7k1ml2G4by5VwPGbFRgu+ErZ9LT8LzifYque7k0lPtZ
+         30im3H7plj7fsbfFqB4E1v9ashLv7BgvwMhxTaXJBtcw/e+zHnVEd95K1VWILVG2+pYW
+         0UnlHvB5WL3feJZKM6MEbR7rT/l5y2Iz8KHjo7nWEpkHZ0xLesL2JWP8Y411lXcXM644
+         0dxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVH/VFlXo6MWrNtvwqGC6qM8cef5LoMML+9GDpWuMMhdccqhZBEOY5AMaffB9Mse6FT8bHUQnsbt24=@vger.kernel.org, AJvYcCX0cZzX0kuUXFm900GKZTO3xhM6dN3u6ZPzH7rNP6Q2h6Hw3X/qqZnS1HtIXrPYRdpTgjSsrj+6DlKpFSYW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBfvqDC61n2rqDUAXRM5JDtav1NnxiK5S+4wTWLLdC0+b0wD6M
+	Y25MyEZKwcQf6cEqo3Toyy7U2eQCTEChbyve7YlR/blR7MjCkYnYgGX3
+X-Gm-Gg: ASbGncvrDQqGVRDJNsX0IqztPwhipfvabM6rAvrRoqeijfZJcFg5YeyZCfUWU22m4Hu
+	E3mEzTDOMlwoaZ5CNz4ncZm2eFZ1Jjtkd140lEIPM9IJ/oWy8HYvGuZuG+w3BBfOSY2z56xplE+
+	bHVd9zs77rmZr7I1CbZJJolJpp/3AZWDeheZNi3DAW0JU/Ubt97ehcT3IggfDe3VmceaPmBZ/CD
+	xlJUnmvthv+Dq4JRq73JeUkIQHqJKxily4OsfqTkeLAj5dNU/3TauwaDg6e95V/0sjDeddJAzxb
+	8Q40unjCKn3RIRCCDSVvOjZ/Fq1OoWFuR/e2BbIgNIIU4YHRQWRujPwYGJ3kCCIRXAZmo6Tuacp
+	VWgEH34c=
+X-Google-Smtp-Source: AGHT+IFOQeAa6UP5Ujqqk7FjPH4slYwLSjoHPvLBT+bmeNoKQEZGTEibzIBJmqMoA7vwkzCjzqzLyw==
+X-Received: by 2002:a05:6902:230f:b0:e7f:67b9:1161 with SMTP id 3f1490d57ef6-e8b6e0def6cmr969998276.1.1752022813623;
+        Tue, 08 Jul 2025 18:00:13 -0700 (PDT)
+Received: from bijan-laptop.attlocal.net ([2600:1700:680e:c000:235f:99bb:f36e:a060])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e899c43ed8asm3656043276.26.2025.07.08.18.00.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 18:00:13 -0700 (PDT)
+From: Bijan Tabatabai <bijan311@gmail.com>
+To: damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: sj@kernel.org,
+	akpm@linux-foundation.org,
+	corbet@lwn.net,
+	bijantabatab@micron.com,
+	venkataravis@micron.com,
+	emirakhur@micron.com,
+	vtavarespetr@micron.com,
+	ajayjoshi@micron.com,
+	bijan <bijan@node0.bijan-262664.superpages-pg0.wisc.cloudlab.us>
+Subject: [PATCH v4 00/13] mm/damon/vaddr: Allow interleaving in migrate_{hot,cold} actions
+Date: Tue,  8 Jul 2025 19:59:30 -0500
+Message-ID: <20250709005952.17776-1-bijan311@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2c10:b0:875:b998:7ff7 with SMTP id
- ca18e2360f4ac-8795b0cd387mr93713239f.3.1752022561426; Tue, 08 Jul 2025
- 17:56:01 -0700 (PDT)
-Date: Tue, 08 Jul 2025 17:56:01 -0700
-In-Reply-To: <20250709004125.3049-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686dbe21.050a0220.1ffab7.0029.GAE@google.com>
-Subject: Re: [syzbot] [usb?] WARNING in usbnet_status_start
-From: syzbot <syzbot+3f89ec3d1d0842e95d50@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: bijan <bijan@node0.bijan-262664.superpages-pg0.wisc.cloudlab.us>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-general protection fault in usbnet_probe
+A recent patch set automatically sets the interleave weight for each node
+according to the node's maximum bandwidth [1]. In another thread, the patch
+set's author, Joshua Hahn, wondered if/how thes weights should be changed
+if the bandwidth utilization of the system changes [2].
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 UID: 0 PID: 1117 Comm: kworker/1:2 Not tainted 6.16.0-rc4-syzkaller-00311-gd1b07cc0868f-dirty #0 PREEMPT(voluntary) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:init_status drivers/net/usb/usbnet.c:234 [inline]
-RIP: 0010:usbnet_probe+0xf4e/0x2810 drivers/net/usb/usbnet.c:1818
-Code: 48 c1 ea 03 80 3c 02 00 0f 85 a2 15 00 00 49 8b 87 20 0e 00 00 48 ba 00 00 00 00 00 fc ff df 48 8d 78 02 48 89 f9 48 c1 e9 03 <0f> b6 14 11 48 89 f9 83 e1 07 38 ca 7f 08 84 d2 0f 85 f4 11 00 00
-RSP: 0018:ffffc90001c2efa8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff888114c4b000 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: ffffffff8491bef0 RDI: 0000000000000002
-RBP: ffffffff87c293e0 R08: 0000000000000004 R09: 00000000000005dc
-R10: 00000000000005dc R11: 0000000000000001 R12: ffffffff8492f590
-R13: ffff888114c4a000 R14: ffff888107be40b4 R15: ffff888107be4000
-FS:  0000000000000000(0000) GS:ffff888269262000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b3205ffff CR3: 000000011fb4c000 CR4: 00000000003506f0
-Call Trace:
- <TASK>
- sierra_net_probe+0x1c/0xb0 drivers/net/usb/sierra_net.c:925
- usb_probe_interface+0x303/0x9c0 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:657
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
- bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1a70 drivers/base/core.c:3692
- usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
- usb_probe_device+0xef/0x3e0 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:657
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
- bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1a70 drivers/base/core.c:3692
- usb_new_device+0xd07/0x1a20 drivers/usb/core/hub.c:2694
- hub_port_connect drivers/usb/core/hub.c:5566 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
- port_event drivers/usb/core/hub.c:5866 [inline]
- hub_event+0x2f85/0x5030 drivers/usb/core/hub.c:5948
- process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3321 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x5b3/0x6c0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:init_status drivers/net/usb/usbnet.c:234 [inline]
-RIP: 0010:usbnet_probe+0xf4e/0x2810 drivers/net/usb/usbnet.c:1818
-Code: 48 c1 ea 03 80 3c 02 00 0f 85 a2 15 00 00 49 8b 87 20 0e 00 00 48 ba 00 00 00 00 00 fc ff df 48 8d 78 02 48 89 f9 48 c1 e9 03 <0f> b6 14 11 48 89 f9 83 e1 07 38 ca 7f 08 84 d2 0f 85 f4 11 00 00
-RSP: 0018:ffffc90001c2efa8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff888114c4b000 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: ffffffff8491bef0 RDI: 0000000000000002
-RBP: ffffffff87c293e0 R08: 0000000000000004 R09: 00000000000005dc
-R10: 00000000000005dc R11: 0000000000000001 R12: ffffffff8492f590
-R13: ffff888114c4a000 R14: ffff888107be40b4 R15: ffff888107be4000
-FS:  0000000000000000(0000) GS:ffff888269262000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b3205ffff CR3: 0000000008ea4000 CR4: 00000000003506f0
-----------------
-Code disassembly (best guess):
-   0:	48 c1 ea 03          	shr    $0x3,%rdx
-   4:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-   8:	0f 85 a2 15 00 00    	jne    0x15b0
-   e:	49 8b 87 20 0e 00 00 	mov    0xe20(%r15),%rax
-  15:	48 ba 00 00 00 00 00 	movabs $0xdffffc0000000000,%rdx
-  1c:	fc ff df
-  1f:	48 8d 78 02          	lea    0x2(%rax),%rdi
-  23:	48 89 f9             	mov    %rdi,%rcx
-  26:	48 c1 e9 03          	shr    $0x3,%rcx
-* 2a:	0f b6 14 11          	movzbl (%rcx,%rdx,1),%edx <-- trapping instruction
-  2e:	48 89 f9             	mov    %rdi,%rcx
-  31:	83 e1 07             	and    $0x7,%ecx
-  34:	38 ca                	cmp    %cl,%dl
-  36:	7f 08                	jg     0x40
-  38:	84 d2                	test   %dl,%dl
-  3a:	0f 85 f4 11 00 00    	jne    0x1234
+This patch set adds the mechanism for dynamically changing how application
+data is interleaved across nodes while leaving the policy of what the
+interleave weights should be to userspace. It does this by having the
+migrate_{hot,cold} operating schemes interleave application data according
+to the list of migration nodes and weights passed in via the DAMON sysfs
+interface. This functionality can be used to dynamically adjust how folios
+are interleaved by having a userspace process adjust those weights. If no
+specific destination nodes or weights are provided, the migrate_{hot,cold}
+actions will only migrate folios to damos->target_nid as before.
 
+The algorithm used to interleave the folios is similar to the one used for
+the weighted interleave mempolicy [3]. It uses the offset from which a
+folio is mapped into a VMA to determine the node the folio should be placed
+in. This method is convenient because for a given set of interleave
+weights, a folio has only one valid node it can be placed in, limitng the
+amount of unnecessary data movement. However, finding out how a folio is
+mapped inside of a VMA requires a costly rmap walk when using a paddr
+scheme. As such, we have decided that this functionality makes more sense
+as a vaddr scheme [4]. To this end, this patch set also adds vaddr versions
+of the migrate_{hot,cold}.
 
-Tested on:
+Motivation
+==========
+There have been prior discussions about how changing the interleave weights
+in response to the system's bandwidth utilization can be beneficial [2].
+However, currently the interleave weights only are applied when data is
+allocated. Migrating already allocated pages according to the dynamically
+changing weights will better help balance the bandwidth utilization across
+nodes.
 
-commit:         d1b07cc0 arm64: dts: s32g: Add USB device tree informa..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=101c3582580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
-dashboard link: https://syzkaller.appspot.com/bug?extid=3f89ec3d1d0842e95d50
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=141bca8c580000
+As a toy example, imagine some application that uses 75% of the local
+bandwidth. Assuming sufficient capacity, when running alone, we want to
+keep that application's data in local memory. However, if a second
+instance of that application begins, using the same amount of bandwidth,
+it would be best to interleave the data of both processes to alleviate the
+bandwidth pressure from the local node. Likewise, when one of the processes
+ends, the data should be moves back to local memory.
+
+We imagine there would be a userspace application that would monitor system
+performance characteristics, such as bandwidth utilization or memory access
+latency, and uses that information to tune the interleave weights. Others
+seem to have come to a similar conclusion in previous discussions [5].
+We are currently working on a userspace program that does this, but it is
+not quite ready to be published yet.
+
+After the userspace application tunes the interleave weights, there must be
+some mechanism that actually migrates pages to be consistent with those
+weights. This patchset is what provides this mechanism.
+
+We believe DAMON is the correct venue for the interleaving mechanism for a
+few reasons. First, we noticed that we don't have to migrate all of the
+application's pages to improve performance. we just need to migrate the
+frequently accessed pages. DAMON's existing hotness traching is very useful
+for this. Second, DAMON's quota system can be used to ensure we are not
+using too much bandwidth for migrations. Finally, as Ying pointed out [6],
+a complete solution must also handle when a memory node is at capacity. The
+existing migrate_cold action can be used in conjunction with the
+functionality added in this patch set to provide that complete solution.
+
+Functionality Test
+==================
+Below is an example of this new functionality in use to confirm that these
+patches behave as intended.
+In this example, the user starts an application, alloc_data, which
+allocates 1GB using the default memory policy (i.e. allocate to local
+memory) then sleeps. Afterwards, we start DAMON to interleave the data at a
+1:1 ratio. Using numastat, we show that DAMON has migrated the
+application's data to match the new interleave ratio.
+For this example, I modified the userspace damo tool [8] to write to the
+migration_dest sysfs files. I plan to upstream these changes when these
+patches are merged.
+  $ # Allocate the data initially
+  $ ./alloc_data 1G &
+  [1] 6587
+  $ numastat -c -p alloc_data
+
+  Per-node process memory usage (in MBs) for PID 6587 (alloc_data)
+           Node 0 Node 1 Total
+           ------ ------ -----
+  Huge          0      0     0
+  Heap          0      0     0
+  Stack         0      0     0
+  Private    1027      0  1027
+  -------  ------ ------ -----
+  Total      1027      0  1027
+  $ # Start DAMON to interleave data at a 1:1 ratio
+  $ cat ./interleave_vaddr.yaml
+  kdamonds:
+  - contexts:
+    - ops: vaddr
+      addr_unit: null
+      targets:
+      - pid: 6587
+        regions: []
+      intervals:
+        sample_us: 500 ms
+        aggr_us: 5 s
+        ops_update_us: 20 s
+        intervals_goal:
+          access_bp: 0 %
+          aggrs: '0'
+          min_sample_us: 0 ns
+          max_sample_us: 0 ns
+      nr_regions:
+        min: '20'
+        max: '50'
+      schemes:
+      - action: migrate_hot
+        dests:
+        - nid: 0
+          weight: 1
+        - nid: 1
+          weight: 1
+        access_pattern:
+          sz_bytes:
+            min: 0 B
+            max: max
+          nr_accesses:
+            min: 0 %
+            max: 100 %
+          age:
+            min: 0 ns
+            max: max
+  $ sudo ./damo/damo interleave_vaddr.yaml
+  $ # Verify that DAMON has migrated data to match the 1:1 ratio
+  $ numastat -c -p alloc_data
+
+  Per-node process memory usage (in MBs) for PID 6587 (alloc_data)
+           Node 0 Node 1 Total
+           ------ ------ -----
+  Huge          0      0     0
+  Heap          0      0     0
+  Stack         0      0     0
+  Private     514    514  1027
+  -------  ------ ------ -----
+  Total       514    514  1027
+
+Performance Test
+================
+Below is a simple example showing that interleaving application data using
+these patches can improve application performance.
+To do this, we run a bandwidth intensive embedding reduction application
+[7]. This workload is useful for this test because it reports the time it
+takes each iteration to run and each iteration reuses the same allocation,
+allowing us to see the benefits of the migration.
+
+We evaluate this on a 128 core/256 thread AMD CPU with 72GB/s of local DDR
+bandwidth and 26 GB/s of CXL bandwidth.
+
+Before we start the workload, the system bandwidth utilization is low, so
+we start with the interleave weights of 1:0, i.e. allocating all data to
+local memory. When the workload beings, it saturates the local bandwidth,
+making the page placement suboptimal. To alleviate this, we modify the
+interleave weights, triggering DAMON to migrate the workload's data.
+
+We use the same interleave_vaddr.yaml file to setup DAMON, except we
+configure it to begin with a 1:0 interleave ratio, and attach it to the
+shell and its children processes.
+
+  $ sudo ./damo/damo start interleave_vaddr.yaml --include_child_tasks &
+  $ <path>/eval_baseline -d amazon_All -c 255 -r 100
+  <clip startup output>
+  Eval Phase 3: Running Baseline...
+  
+  REPEAT # 0 Baseline Total time : 7323.54 ms
+  REPEAT # 1 Baseline Total time : 7624.56 ms
+  REPEAT # 2 Baseline Total time : 7619.61 ms
+  REPEAT # 3 Baseline Total time : 7617.12 ms
+  REPEAT # 4 Baseline Total time : 7638.64 ms
+  REPEAT # 5 Baseline Total time : 7611.27 ms
+  REPEAT # 6 Baseline Total time : 7629.32 ms
+  REPEAT # 7 Baseline Total time : 7695.63 ms
+  # Interleave weights set to 3:1
+  REPEAT # 8 Baseline Total time : 7077.5 ms
+  REPEAT # 9 Baseline Total time : 5633.23 ms
+  REPEAT # 10 Baseline Total time : 5644.6 ms
+  REPEAT # 11 Baseline Total time : 5627.66 ms
+  REPEAT # 12 Baseline Total time : 5629.76 ms
+  REPEAT # 13 Baseline Total time : 5633.05 ms
+  REPEAT # 14 Baseline Total time : 5641.24 ms
+  REPEAT # 15 Baseline Total time : 5631.18 ms
+  REPEAT # 16 Baseline Total time : 5631.33 ms
+
+Updating the interleave weights and having DAMON migrate the workload data
+according to the weights resulted in an approximarely 25% speedup.
+
+Patches Sequence
+================
+Patches 1-7 extend the DAMON API to specify multiple destination nodes and
+weights for the migrate_{hot,cold} actions. These patches are from SJ'S
+RFC [8].
+Patches 8-10 add a vaddr implementation of the migrate_{hot,cold} schemes.
+Patch 11 modifies the vaddr migrate_{hot,cold} schemes to interleave data
+according to the weights provided by damos->migrate_dest.
+Patches 12-13 allow the vaddr migrate_{hot,cold} implementation to filter
+out folios like the paddr version.
+
+Changes are applied on top of the mm-new tree and [9].
+
+Revision History
+================
+Changes from v3 [10]:
+- Fix bug where huge pages would be split
+- Fix code nits/issues SJ pointed out
+- Added SJ's Reviewed-by tag where appropriate
+
+Changes from v2 [11]:
+- Implement interleaving using vaddr instead of paddr
+- Add vaddr implementation of migrate_{hot,cold}
+- Use DAMON specific interleave weights instead of mempolicy weights
+
+Changes from v1 [12]:
+- Reuse migrate_{hot,cold} actions instead of creating a new action
+- Remove vaddr implementation
+- Remove most of the use of mempolicy, instead duplicate the interleave
+  logic and access interleave weights directly
+- Write more about the use case in the cover letter
+- Write about why DAMON was used for this in the cover letter
+- Add correctness test to the cover letter
+- Add performance test
+
+[1] https://lore.kernel.org/linux-mm/20250520141236.2987309-1-joshua.hahnjy@gmail.com/
+[2] https://lore.kernel.org/linux-mm/20250313155705.1943522-1-joshua.hahnjy@gmail.com/
+[3] https://elixir.bootlin.com/linux/v6.15.4/source/mm/mempolicy.c#L2015
+[4] https://lore.kernel.org/damon/20250624223310.55786-1-sj@kernel.org/
+[5] https://lore.kernel.org/linux-mm/20250314151137.892379-1-joshua.hahnjy@gmail.com/
+[6] https://lore.kernel.org/linux-mm/87frjfx6u4.fsf@DESKTOP-5N7EMDA/
+[7] https://github.com/SNU-ARC/MERCI
+[8] https://lore.kernel.org/damon/20250702051558.54138-1-sj@kernel.org/
+[9] https://lore.kernel.org/damon/20250709004729.17252-1-bijan311@gmail.com/
+[10] https://lore.kernel.org/damon/20250702201337.5780-1-bijan311@gmail.com/
+[11] https://lore.kernel.org/damon/20250620180458.5041-1-bijan311@gmail.com/
+[12] https://lore.kernel.org/linux-mm/20250612181330.31236-1-bijan311@gmail.com/
+
+Bijan Tabatabai (7):
+  mm/damon/core: Commit damos->migrate_dests
+  mm/damon: Move migration helpers from paddr to ops-common
+  mm/damon/vaddr: Add vaddr versions of migrate_{hot,cold}
+  Docs/mm/damon/design: Document vaddr support for migrate_{hot,cold}
+  mm/damon/vaddr: Use damos->migrate_dests in migrate_{hot,cold}
+  mm/damon: Move folio filtering from paddr to ops-common
+  mm/damon/vaddr: Apply filters in migrate_{hot/cold}
+
+SeongJae Park (6):
+  mm/damon: add struct damos_migrate_dests
+  mm/damon/core: add damos->migrate_dests field
+  mm/damon/sysfs-schemes: implement DAMOS action destinations directory
+  mm/damon/sysfs-schemes: set damos->migrate_dests
+  Docs/ABI/damon: document schemes dests directory
+  Docs/admin-guide/mm/damon/usage: document dests directory
+
+ .../ABI/testing/sysfs-kernel-mm-damon         |  22 ++
+ Documentation/admin-guide/mm/damon/usage.rst  |  33 ++-
+ Documentation/mm/damon/design.rst             |   4 +-
+ include/linux/damon.h                         |  29 +-
+ mm/damon/core.c                               |  43 +++
+ mm/damon/ops-common.c                         | 270 +++++++++++++++++
+ mm/damon/ops-common.h                         |   5 +
+ mm/damon/paddr.c                              | 275 +-----------------
+ mm/damon/sysfs-schemes.c                      | 253 +++++++++++++++-
+ mm/damon/vaddr.c                              | 235 +++++++++++++++
+ 10 files changed, 886 insertions(+), 283 deletions(-)
+
+-- 
+2.43.0
 
 
