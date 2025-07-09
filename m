@@ -1,164 +1,143 @@
-Return-Path: <linux-kernel+bounces-723226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0D8AFE4A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:55:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CFB1AFE467
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B94A71BC56F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB6D417ECA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24732877FD;
-	Wed,  9 Jul 2025 09:54:53 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEF92874ED;
+	Wed,  9 Jul 2025 09:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IOC7Xf5x"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6807239E9B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 09:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D53286D55;
+	Wed,  9 Jul 2025 09:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752054893; cv=none; b=LGW4tTKmoOkYGKiq0Ni7zyvb40lAtM7nFQdwkf2UyRo3LteQRLYGE5K1vFX2p9RgjUKwdEI+mF0M8ZYkc1puDQOGtW7cI/F1SgbUdls/6Ai3h5z5CtArRHl2TrPtTE/26FxKblNhUJc3F1To07XPTKwfy+SQS/gnh7/ufa83fyQ=
+	t=1752053934; cv=none; b=RC01uiIKrs4KL+jfYHy4WWomEYQ0pMycAWrkQZfHXv3bkdzeWyzwxt7LA+MnpziHQc35z2ddxr5gzXloaRu68UbAARWSyhwzNFw0ihymvCuwQAXHRCQJ1m9E0p4rzeNB7jaM3AENJ4fcKOD/dP9Z1p1ga1YD53ZtFYPu9ErOmL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752054893; c=relaxed/simple;
-	bh=xuPuYBZ+KRg7XrT2/jK4jMxIrNtVMPFzgki/el8xaOU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A6zWjv15Lu4ApZ7sFVpTjtc6dNpNbaoTFU4lmS9yZWLFsTefIntmPjvdY7ou/H2d8VT3VYcqrK6rlZCT9zJQOGvmKwZYmnf60B2ss0TefQ7R5OE4mTH5iBxAQm9RVw/yj039EXuNYyB+YWQ0PgMPxc5hhFI5fwkmebcZcwkQZxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bcYB45HHvzWg1h;
-	Wed,  9 Jul 2025 17:50:20 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 86842140203;
-	Wed,  9 Jul 2025 17:54:46 +0800 (CST)
-Received: from kwepemq100012.china.huawei.com (7.202.195.195) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 9 Jul 2025 17:54:46 +0800
-Received: from huawei.com (10.67.175.84) by kwepemq100012.china.huawei.com
- (7.202.195.195) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 9 Jul
- 2025 17:54:45 +0800
-From: Zicheng Qu <quzicheng@huawei.com>
-To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<vschneid@redhat.com>, <linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>, <quzicheng@huawei.com>
-Subject: [PATCH] sched/fair: Fix overflow in vruntime_eligible() causing NULL return
-Date: Wed, 9 Jul 2025 09:38:29 +0000
-Message-ID: <20250709093829.3213647-1-quzicheng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752053934; c=relaxed/simple;
+	bh=xYZjRqgkPOL2LqzqY+U3wd+rmN7x/AzvRlTH/XIY5I8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lOfmkCbBfrTNJH/CEaFL44If5hTrSqb8fv1lgCmtPc1lik16Dx/6to6RtmKkUVPeOaS1W9HQINzikO0H40H9eCh+TN/9CN8btAnqu7lmOW6NZIUiqW0BssOlAaSnd+CBctgCFA3H4hbRBjuA4lyZ06DUy21ymnw+RKJbS/TmrXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IOC7Xf5x; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752053932; x=1783589932;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xYZjRqgkPOL2LqzqY+U3wd+rmN7x/AzvRlTH/XIY5I8=;
+  b=IOC7Xf5xyeeefm9zHEl2YQCtWFXiAHrhsZAXyMzPu2ACTziIh5RAx8UT
+   +FN2m93yv0YJT0Em3N7M22V2b6cOw3NfeuE2ZCl/5WhpjDPTFm8wn4XVc
+   UoZ/ELYfdz4ygoGCByF6J5iRfr565KJfmZkhHmtcf9j125fBGaBD7a85V
+   YzQV2w56Weqtmbc3xekATzcPC4SnUCMPBFUjnBM8XZBvpBLHmn3VClbp8
+   HOCrX58qJRSzuVYKgRbrCYBvl2iD3jB7AVsoydhPH5qgrSqe84c21EBb7
+   fC9p8AMn2tUq8g6YI/1/1hQTak+ANrgFvm01hy5Fh1+aTh3Mjr+lDeFgT
+   A==;
+X-CSE-ConnectionGUID: EiNw8QaYSU6sihzdUCi+PQ==
+X-CSE-MsgGUID: 1PUAINd3Q3Oc9ZftSDQEfA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54452029"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="54452029"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 02:38:52 -0700
+X-CSE-ConnectionGUID: gXEO+CXSSgqC5YZ2O8fG+g==
+X-CSE-MsgGUID: 8CthuCcFTnOtmJIMMxE+9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="155366162"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 09 Jul 2025 02:38:41 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id D42A01B7; Wed, 09 Jul 2025 12:38:39 +0300 (EEST)
+Date: Wed, 9 Jul 2025 12:38:39 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon <daniel.sneddon@linux.intel.com>, 
+	Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Breno Leitao <leitao@debian.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCHv9 04/16] x86/cpu: Defer CR pinning setup until core
+ initcall
+Message-ID: <aa4sycdhtxlerad6a7xucf6icjyioydu7oefvsdvwnoozqd2kh@lhtkexpqjebn>
+References: <20250707080317.3791624-1-kirill.shutemov@linux.intel.com>
+ <20250707080317.3791624-5-kirill.shutemov@linux.intel.com>
+ <9340dc9e-bd4d-450e-aa9b-b6b6829eab32@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemq100012.china.huawei.com (7.202.195.195)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9340dc9e-bd4d-450e-aa9b-b6b6829eab32@intel.com>
 
-In the vruntime_eligible() function, the original comparison:
-	return avg >= (s64)(vruntime - cfs_rq->min_vruntime) * load;
-could produce incorrect results due to integer overflow in the 'avg' or
-s64 part.
+On Tue, Jul 08, 2025 at 06:19:03PM -0700, Sohil Mehta wrote:
+> On 7/7/2025 1:03 AM, Kirill A. Shutemov wrote:
+> > From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > 
+> > In order to map the EFI runtime services, set_virtual_address_map()
+> > needs to be called, which resides in the lower half of the address
+> > space. This means that LASS needs to be temporarily disabled around
+> > this call. This can only be done before the CR pinning is set up.
+> > 
+> > Instead of moving setup_cr_pinning() below efi_enter_virtual_mode() in
+> > arch_cpu_finalize_init(), defer it until core initcall.
+> > 
+> > Wrapping efi_enter_virtual_mode() into lass_stac()/clac() is not enough
+> > because AC flag gates data accesses, but not instruction fetch. Clearing
+> > the CR4 bit is required.
+> > 
+> 
+> I think the wording might need to be reordered. How about?
+> 
+> In order to map the EFI runtime services, set_virtual_address_map()
+> needs to be called, which resides in the lower half of the address
+> space. This means that LASS needs to be temporarily disabled around
+> this call.
+> 
+> Wrapping efi_enter_virtual_mode() into lass_stac()/clac() is not enough
+> because AC flag gates data accesses, but not instruction fetch. Clearing
+> the CR4 bit is required.
+> 
+> However, this must be done before the CR pinning is set up. Instead of
+> arbitrarily moving setup_cr_pinning() after efi_enter_virtual_mode() in
+> arch_cpu_finalize_init(), defer it until core initcall.
+> 
+> Other than that,
+> Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
 
-This overflow causes the comparison to return false even when the
-mathematical result should be true, leading all tasks to be falsely
-deemed ineligible. Consequently, pick_eevdf() returns NULL, triggering a
-kernel crash.
+Okay, looks good, thanks!
 
-The best approach should be to dig deep into why overflow occurs, which
-attributes lead to the overflow, whether it is normal, and how to avoid
-it. Not pretty sure if this part of the modification will introduce new
-issues, but it may be incorrect to simply spot a potentially
-overflowing integer type and directly use the >= sign for comparison.
-Therefore, drawing on the enqueue method in the rb tree, to avoid the
-impact of overflow, the method of first performing subtraction and then
-comparing with 0 is also adopted.
-
-The following are the relevant attributes that cause the return of NULL:
-crash> struct cfs_rq.avg_vruntime,avg_load,min_vruntime
-ffff9ea77ecb4280
-  avg_vruntime = -4392414779907141680,
-  avg_load = 28644,
-  min_vruntime = 239776551994501,
-
-sched_entity: curr
-crash> struct sched_entity.deadline,min_vruntime,vruntime,load,vlag
-0xffff9ea74510d800
-  deadline = 86432035728535,
-  min_vruntime = 86431486021988,
-  vruntime = 86431531134184,
-  load = {
-    weight = 6066,
-    inv_weight = 0
-  },
-  vlag = 86431823023195,
-
-the sched_entity mapping to the root node in the cfs_rq
-crash> struct sched_entity.deadline,min_vruntime,vruntime,load,vlag -l
-sched_entity.run_node 0xffff9ea849fbc350
-  deadline = 18446615868453340281,
-  min_vruntime = 18446615868452621390,
-  vruntime = 18446615868453018539,
-  load = {
-    weight = 9777152,
-    inv_weight = 449829
-  },
-  vlag = -5599,
-
-the sched_entity mapping to the leftmost node in the csf_rq, also the
-left child of root node.
-crash> struct sched_entity.deadline,min_vruntime,vruntime,load,vlag -l
-sched_entity.run_node 0xffff9ea78d0280d0
-  deadline = 18446615868452943132,
-  min_vruntime = 18446615868452621390,
-  vruntime = 18446615868452621390,
-  load = {
-    weight = 9777152,
-    inv_weight = 449829
-  },
-  vlag = 444143,
-
-the sched_entity mapping to the rightmost node in the csf_rq, also the
-right child of root node.
-crash> struct sched_entity.deadline,min_vruntime,vruntime,load,vlag -l
-sched_entity.run_node 0xffff9ea783144350
-  deadline = 515705106937888,
-  min_vruntime = 515705106616146,
-  vruntime = 515705106616146,
-  load = {
-    weight = 9777152,
-    inv_weight = 449829
-  },
-  vlag = -260493,
-
-Fixes: 147f3efaa241 ("sched/fair: Implement an EEVDF-like scheduling policy")
-Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
----
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7a14da5396fb..bfa4090cef93 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -734,7 +734,7 @@ static int vruntime_eligible(struct cfs_rq *cfs_rq, u64 vruntime)
- 		load += weight;
- 	}
- 
--	return avg >= (s64)(vruntime - cfs_rq->min_vruntime) * load;
-+	return avg - (s64)(vruntime - cfs_rq->min_vruntime) * load >= 0;
- }
- 
- int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se)
 -- 
-2.34.1
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
