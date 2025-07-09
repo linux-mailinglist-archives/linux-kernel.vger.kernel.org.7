@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-724528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1EEAFF402
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:40:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74EEEAFF403
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9B60170075
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:40:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63FD71C4454F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7B323E344;
-	Wed,  9 Jul 2025 21:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB0524467A;
+	Wed,  9 Jul 2025 21:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z5DZf2j8"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FScjL0Rs"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0523321FF39
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652E7241664
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752097235; cv=none; b=KEp3o2SJ0vhbQo4YgBN8rBHGtUeQBs9HEU/vMy+FRXlNx49SM+aXE7pJqQdlYOVZjs4A2h2grHxR7EkIEHcdmY+eKOIUor3ox/87tcy3pKdgjxeuMQl/ZmUHPB92bsxPixK+UR9e6+g/7lE8XeUSTbZNAxAvwSqSiBYY3TPs9WI=
+	t=1752097239; cv=none; b=DoIff9f16SYhsWkt+qefyDoJ4TYKms7mjyxBSkfq1m0fKHGXhzLe1K6lKL9jdji42fvfd+47vW1XhKo4squTR6kyECq1mSYS3m/48rKS5EfhTJDjiuGsjqi8uPTfb0/WXm/pDDWDPzpTHSw+Y8hd4IjeyJdHoYR5jf1dX1RnSPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752097235; c=relaxed/simple;
-	bh=dAx/9BHHk2gp6RbxbMCNF3YyX8iXzA6yqSrF1kGWbs0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=MV5+Rp3BP1dMalstZ14eHjFKU4kGNZNAxS9X2jYSOMY6N5jkTqb1cNmg9C+Z5brfTxwjLYbLISh5OE/jUPiH7LGOb2/DUPjoXeiu7wG8RL1joeCpZ/vgmH4/vq2X7cjAaaekVw2ZQ+6ncf2ns2Ppv0ZmM4yL2S87DUwUiXanwHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z5DZf2j8; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1752097239; c=relaxed/simple;
+	bh=1lk85E3pggo+4g2GknSYWSWNs6o0Mw8jBXtuFvYNkFU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=L56Y3uv+a/cXcIXAOG9CYo1hum+5RSch0B56GD27TizTRg9OxLejDyMfjFFXgjCv60yGl4pgxWrAsQXP4+6n33wHQE1YOd4ntg8x2NTqm8CuWB0T9Jz45xTDJiTyY3dDt9F0Th0YsjEwsdgq8dwCqmYDgUG869/i6yGTjlKOfvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FScjL0Rs; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-236725af87fso5126955ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 14:40:33 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-748efefedb5so258867b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 14:40:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752097233; x=1752702033; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xW/jUGxNTN0mrL6/OLpy7P8Qk2WaeRoeDZDx7KoSzjo=;
-        b=z5DZf2j8FjlgU/fBo6sL598Zv3bIoh9La682PPstn4VXGVADrevfvF+xtg992Y84Ng
-         M8+4tSar0FMkWWIhTNGewWm2lC+m79r2CiAM7+p5fjTGXo0tT+9a0lToHHuwEJkqBG7Q
-         WMBLSUDWr1wnwBGCT50jdo/1FDksp9tyufoNUWUOp2GheQ9+wMdEJLo637nLzOVUbtaT
-         za7kEPqF0nta6zP8BvPOrl9AKIQNLnoKRW3evbqzR7W3OjZI+RgY2lTVuxgPHoMExovI
-         +xjrsqaw9e0RXTMVMj9OuEm9WwRIy6+Wg3m4djpfXo4cYeChc2Pc5AmuQB6MiVa4+ml2
-         UJBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752097233; x=1752702033;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=google.com; s=20230601; t=1752097235; x=1752702035; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xW/jUGxNTN0mrL6/OLpy7P8Qk2WaeRoeDZDx7KoSzjo=;
-        b=rRJlVFaIjnLi8K5AjXNEKKi1KTz6KaVdU/rkoyV8cNqcGMu114RoACI2WS3qnhk2ds
-         MbizzsAo1Fudtt5RiZGHqycZA6LdKKSB0ZvIXZGdM18O4Zm05iUzeuHKQLhcmobY/Y5z
-         k9zdewGy8PwPhT+zP6Wic7317P8C7hSFE+nwWLOz3vVpMjf0oR+GkeMkJLdY8lsBmd7M
-         C0t34Pea/zDi5GFbEQPBip9JINZ+kpIc76laNODsClezcmqdDTv/tVmZQg0J8aeDNDxw
-         fRjV8UbUu7AwICClfyMS9zwXnK32UxfyZMClWh4kmHN9kF5Zi4NIua4FopeDdLYdfrBB
-         YfaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzGUS0vNnV64LLVkyy2vT1Wvm8JAotcs8CjngM6W29WYxDcyH1Wv/Op4NPZkzSgXYwwGMVDE0gZlXED5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyehDLhBdfEZkcScAgH1goWg4QcTBujUe7j9gFAJmQdDMrO/wVb
-	leQehlkhdRs++nPFp+2zEWulvcbJM/HML+nEdeXniegOKlJ4SMELRvzYYSiSIKwE7t5qU17BYs3
-	TlErDEdmD8Q==
-X-Google-Smtp-Source: AGHT+IEjv5yfrOnuSh9ELqkUNKnwmKE8U+2+0r4wrCq2uBQvE9VogBqclCPRDDIkeTGiNeskN9VwecG8hPYK
-X-Received: from plup7.prod.google.com ([2002:a17:903:4b27:b0:22e:4c89:97c7])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f707:b0:236:8df9:ab38
- with SMTP id d9443c01a7336-23ddb2fce7bmr60676095ad.34.1752097233391; Wed, 09
- Jul 2025 14:40:33 -0700 (PDT)
-Date: Wed,  9 Jul 2025 14:40:17 -0700
+        bh=1RNkMgAEj4/GnB7BeI8C0UUIpPaOTXLCNgb+45zsMxs=;
+        b=FScjL0RsBI9fOqixWgw+s3e0+ZVU6uRoglAfNGTOq4KMPjaGwfvlvsO3bneN9Sg+Rs
+         j6q+LX5Ds0EbGDcGfdcZqXXwQQo4/0Q+rBJqjt3hLjnFzpbWs0iE0E/6oCSqSQF/zAjm
+         6tl976wwpI83zeobotT8tN+5t91xiVigcPGyAt2wRxXHeJt04PhRaN5nKhFx+nOGh5MA
+         BYXDpDFt4cB1A9JTOCB2k3cGM6+9jmJmY/I3yyOIyJnpK59wsEAjnSW2CLGMf2TNtTga
+         +j0cEU7uyN34aMcuf4ErsRIv8ywSMD+FeTYrioFJaMHeTmyOjbhAFlhdHTWzOlF2QdI0
+         A/pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752097235; x=1752702035;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1RNkMgAEj4/GnB7BeI8C0UUIpPaOTXLCNgb+45zsMxs=;
+        b=rz4PcfAJiBO3PhPWyXVPTffVCHlcVukE/+FK/cHymt/uG6z4K8N6vVrrss3ZB5E18o
+         kwDUhebzj2CkUJNag4yoW0lqpELkZtdxYs5kXSqaUrW6DLWost7nKN0bXia4T56R0xqa
+         x70/lNcYvqHSPEUsVjX/3D6ZY8ETzLkkHudGbCekZeXfA853/JaVMmzJb7t3U2yVYzTu
+         kPM/ckxKTpSj/DWmyiieNuLXRhUlEQVC9Ukhiny8Y1LSwJ/vipsR9o31Bd217MtUBNrk
+         +kx1iPSZeUhsvPu2r4KhHjX4yZGFr10HNpXiQsME/lyZWCu7NUcLGMrmaZ3ZSaIhlx9l
+         XvHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBP3+N4uaU0qWevXXi6wiwlMuwbRPRluY4k6Og4uXxK/1YxtSahkmzLkXY7N7LPc4CRIxe3p0SoEPgoGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS+ekJNpnkVYRzzy+lzjhKRf9vfA+GToodFh2s5iEuy7LimFY2
+	nRnznA6faAcouhkKW46XV+14MqzMk10lOCw14PYkLA4hmcPWsT060mPfGveQlPGYmtY+Do8Fv3X
+	bPlhXtJQWOA==
+X-Google-Smtp-Source: AGHT+IH2bEm5D5vL0/SOlKgLMUnkYuyDxrvhEh8Sk1TmdRPm6c9OAhUY7JUi0TVyz5YNrku0Gkgejj3nrlBH
+X-Received: from pgr1.prod.google.com ([2002:a63:1141:0:b0:b2f:a31c:f7bc])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:6e91:b0:215:efed:acfc
+ with SMTP id adf61e73a8af0-22cd5a06069mr6978021637.7.1752097235636; Wed, 09
+ Jul 2025 14:40:35 -0700 (PDT)
+Date: Wed,  9 Jul 2025 14:40:18 -0700
+In-Reply-To: <20250709214029.1769089-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250709214029.1769089-1-irogers@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250709214029.1769089-1-irogers@google.com>
-Subject: [PATCH v1 00/12] Python motivated fixes and cleanup
+Message-ID: <20250709214029.1769089-2-irogers@google.com>
+Subject: [PATCH v1 01/12] perf hwmon_pmu: Avoid shortening hwmon PMU name
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -86,56 +89,30 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Various fixes and clean ups done as part of creating the ilist app,
-the v4 patch series of which is posted here:
-https://lore.kernel.org/lkml/20250628000929.230406-1-irogers@google.com/
+Long names like ucsi_source_psy_USBC000:001 when prefixed with hwmon_
+exceed the buffer size and the last digit is lost. This causes
+confusion with similar names like ucsi_source_psy_USBC000:002. Extend
+the buffer size to avoid this.
 
-These patches are separated out to give something smaller to review
-before adding features. As requested by Namhyung.
+Fixes: 53cc0b351ec9 ("perf hwmon_pmu: Add a tool PMU exposing events from hwmon in sysfs")
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/hwmon_pmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ian Rogers (12):
-  perf hwmon_pmu: Avoid shortening hwmon PMU name
-  perf parse-events: Minor tidy up of event_type helper
-  perf spark: Fix includes and add SPDX
-  perf pmu: Tolerate failure to read the type for wellknown PMUs
-  perf metricgroup: Factor out for-each function and move out printing
-  perf stat: Move metric list from config to evlist
-  perf expr: Accumulate rather than replace in the context counts
-  perf jevents: If the long_desc and desc are identical then drop the
-    long_desc
-  perf python: In str(evsel) use the evsel__pmu_name helper
-  perf python: Fix thread check in pyrf_evsel__read
-  perf python: Correct pyrf_evsel__read for tool PMUs
-  perf python: Improve leader copying from evlist
-
- tools/perf/builtin-script.c              |   3 +-
- tools/perf/builtin-stat.c                |  25 ++-
- tools/perf/pmu-events/empty-pmu-events.c | 128 +++++------
- tools/perf/pmu-events/jevents.py         |   3 +
- tools/perf/tests/expand-cgroup.c         |  24 +--
- tools/perf/tests/parse-metric.c          |  16 +-
- tools/perf/tests/pmu-events.c            |  30 +--
- tools/perf/util/cgroup.c                 |  23 +-
- tools/perf/util/cgroup.h                 |   3 +-
- tools/perf/util/evlist.c                 |   3 +
- tools/perf/util/evlist.h                 |   6 +
- tools/perf/util/expr.c                   |   6 +-
- tools/perf/util/hwmon_pmu.c              |   2 +-
- tools/perf/util/metricgroup.c            | 261 ++++-------------------
- tools/perf/util/metricgroup.h            |  10 +-
- tools/perf/util/parse-events.c           |  31 ++-
- tools/perf/util/parse-events.h           |   2 +-
- tools/perf/util/pmu.c                    |  37 +++-
- tools/perf/util/print-events.c           | 133 ++++++++++++
- tools/perf/util/print-events.h           |   2 +
- tools/perf/util/python.c                 |  91 +++++++-
- tools/perf/util/spark.c                  |   8 +-
- tools/perf/util/spark.h                  |   1 +
- tools/perf/util/stat-display.c           |  16 +-
- tools/perf/util/stat-shadow.c            |  13 +-
- tools/perf/util/stat.h                   |  12 +-
- 26 files changed, 443 insertions(+), 446 deletions(-)
-
+diff --git a/tools/perf/util/hwmon_pmu.c b/tools/perf/util/hwmon_pmu.c
+index 7edda010ba27..416dfea9ffff 100644
+--- a/tools/perf/util/hwmon_pmu.c
++++ b/tools/perf/util/hwmon_pmu.c
+@@ -345,7 +345,7 @@ static int hwmon_pmu__read_events(struct hwmon_pmu *pmu)
+ struct perf_pmu *hwmon_pmu__new(struct list_head *pmus, const char *hwmon_dir,
+ 				const char *sysfs_name, const char *name)
+ {
+-	char buf[32];
++	char buf[64];
+ 	struct hwmon_pmu *hwm;
+ 	__u32 type = PERF_PMU_TYPE_HWMON_START + strtoul(sysfs_name + 5, NULL, 10);
+ 
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
