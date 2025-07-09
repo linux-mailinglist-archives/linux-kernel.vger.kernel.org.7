@@ -1,111 +1,160 @@
-Return-Path: <linux-kernel+bounces-723819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B927AFEB4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:09:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AE0AFEB62
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBEC21C87420
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:04:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBD545484E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B9B2DEA82;
-	Wed,  9 Jul 2025 14:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A238B2DA779;
+	Wed,  9 Jul 2025 14:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6TttmSt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pGgkqWQH"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2085.outbound.protection.outlook.com [40.107.223.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA8C1EA84;
-	Wed,  9 Jul 2025 14:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069627; cv=none; b=i4oaEQOm04G1tFrjAnzz4mvVarNDzaX7DxyAldFvvX+K9fCvwViO1XaJxrosaNGfKn6enWJGpaOSRg+LwUgzorm1lgKnjVYGDSZq01cHJGdBgGbfnaNuHjhXaJ9sEeVRp/whfDOMEzkfNWCPDXCBtP+cq76LJKglsEPFfwtqGek=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069627; c=relaxed/simple;
-	bh=J5gFOJygzZbOqjQq3B0bcOtL5rvp4e6QlwCd4fMhZRA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=FkD+mszQdu0deaaKUldXRW0qUPcIAJbBdA8b1T5ETTC0rf3aVn+2+IAXWF58Q6V8jXey8n4LmmIQlZqvYQedxH+Dn2g6Z+NF63SEHOkt2okagmROW1cr18NMjhY8Ffc/bCbSWDE5riCVnm6SXBZJb2DGEcSk6MUHZBR6eCSQwWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6TttmSt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D8A6C4CEEF;
-	Wed,  9 Jul 2025 14:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752069626;
-	bh=J5gFOJygzZbOqjQq3B0bcOtL5rvp4e6QlwCd4fMhZRA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=l6TttmSthsVbAFS4ZMnLJxgMwQ5k+tvu1X346JYTBya/qber1UFbCrgVe0t8YkARn
-	 UGX/Azl/pePjEafUfbHiuwl2/mhdZYPAKc3l700E4hME664m2xgUurbPkxYmoB+G7G
-	 o2+H3AiYyu2mgBgQb2Nv2474x/CLsWZuqAaFhvd2m54YBlkXBnge6TOIcKXWwUNLob
-	 Xez7tDb1eok4lw1MpxyOFAgyV6r5efwfpJO0gYyZ/Ij26svJugrf3XGMUx2vCxrKKV
-	 dKxJof7qztNJCKxXlBcGPHJGnWEPrqzEkKnyBCG3xX+WkVB63RXfCsPNJXU7VS/X0x
-	 kdGbanfe0NiYw==
-Date: Wed, 09 Jul 2025 09:00:25 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75584272E7C;
+	Wed,  9 Jul 2025 14:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752069692; cv=fail; b=rGNKkFTLddP/FyzB/wnVmhZcSMWGoiOzKQkBJgUA01HjP6UsOMLbpDsEATPvqWSGAVnZ00Ji5qi3uZecgcLfdPufBi72kLnHbN+baMmb2vtqs1FxJ7yhv9ZiCFzkgIN46NcWW6blFmA7zbuJN01JE7mkMCYW56XuqaybEZajBz8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752069692; c=relaxed/simple;
+	bh=HWvWrk5LvvuJsUChA4fWZsrKMFulhYKVFOGDhGlrcR0=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oIxmTaTMo1KMKV4HS4M8IPIuG+2ByuYiS6gXvdoRWU/8iVmwQGQZ6Yy19r6DtbxwguvFv77D3UklcS+DrdiWC3jQRTGEgw6VcVbPET56qv157fHHxCrba6HmwBDLcgck4yxNJYwmhyDlqNzNEhuhGEESns/y7D5chS+AmuCsqLM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pGgkqWQH; arc=fail smtp.client-ip=40.107.223.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yyfcqogUTzd5mwyEaAaWUG6qLTOpR+jaqrUaKOlqymDfage0rNhIjf2a99Z2HFO6Nck1k8o84Y0uIPKqBYTdXYpJj0jZ+sBrMpprlEp3UfG97vA7fEB6M8zOkepn8lPfhzoXcuzOH/PJOYpBCqeONgOiI9k2iffkawM2DOGACD0I/UnlgdtwCAEpYjSwHxob0phS5QmrVb648uty1Xj6WDRVIUCoShKM21X03XC3c/k9HLwQomnMoPLuEgM4VwbaQlEt/Y+rCksom+XymbghWTYTysliXM9xm0sQinoL0XDg4vTtsgaS6Nu6UWG/rNDvJ/2cqskiIlPYhC3aHPpoSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HWvWrk5LvvuJsUChA4fWZsrKMFulhYKVFOGDhGlrcR0=;
+ b=vDFEqwu8r1hIf+t/O+lUflehx3iTPKpB/yz7JBNdAqyMzHkjp01lGwcFH0Pd8mudkCVzYKnAZzCPuAT2uWhBiB4xEDUnrud8rfjnHufNv7Zkf4sYXKpnxp+G+GYbXisEXcsO2NrsSxwEtIvuyf4EawMHv7LhBKldyYYb84OSucr/DDJXId6af15SIvG0xvyeW57uqAZNwnLP193Q2CMwwSLX242riBAV7usHLHxBPHf7Qy1tCYqCFHHMxK5tLFD5j6/RLYcZiHednAkiJmOJTOR6r4LJbnV8YGVfiwLLUGA1NdiBF5RvXfkvqfdYpiV4a+LmuxCdQ5Dp3AhPWejcHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HWvWrk5LvvuJsUChA4fWZsrKMFulhYKVFOGDhGlrcR0=;
+ b=pGgkqWQHG2xaRygJi0ev2ry6IC0nGfgn/NcHEADIn2M2GoLJ/BGmRXCyuggcp1jCC9z38s56YjKtGopME52HYsEbzhh4Rlc3F/czeGvA1V96IETXOKA1s7uk/0pHHhm1c/jcLdthTj8rglyR6exO5MydS+dsCt54ngiuuzGDbj8=
+Received: from BN9PR03CA0065.namprd03.prod.outlook.com (2603:10b6:408:fc::10)
+ by SA5PPF80B25317E.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8d2) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Wed, 9 Jul
+ 2025 14:01:25 +0000
+Received: from BN1PEPF0000468B.namprd05.prod.outlook.com
+ (2603:10b6:408:fc:cafe::d9) by BN9PR03CA0065.outlook.office365.com
+ (2603:10b6:408:fc::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.21 via Frontend Transport; Wed,
+ 9 Jul 2025 14:01:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF0000468B.mail.protection.outlook.com (10.167.243.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.22 via Frontend Transport; Wed, 9 Jul 2025 14:01:25 +0000
+Received: from BLR-L1-NDADHANI (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Jul
+ 2025 09:01:21 -0500
+From: Nikunj A Dadhania <nikunj@amd.com>
+To: Ard Biesheuvel <ardb+git@google.com>, <linux-kernel@vger.kernel.org>
+CC: <linux-efi@vger.kernel.org>, <x86@kernel.org>, Ard Biesheuvel
+	<ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, Ingo Molnar
+	<mingo@kernel.org>, Dionna Amalie Glaze <dionnaglaze@google.com>, "Kevin
+ Loughlin" <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v4 00/24] x86: strict separation of startup code
+In-Reply-To: <20250709080840.2233208-26-ardb+git@google.com>
+References: <20250709080840.2233208-26-ardb+git@google.com>
+Date: Wed, 9 Jul 2025 14:01:17 +0000
+Message-ID: <85v7o1v4ya.fsf@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, conor+dt@kernel.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- alim.akhtar@samsung.com
-To: ew kim <ew.kim@samsung.com>
-In-Reply-To: <20250709001210.379418-1-ew.kim@samsung.com>
-References: <CGME20250709002408epcas2p25248bf1a397fc308d91ffef3889c41d5@epcas2p2.samsung.com>
- <20250709001210.379418-1-ew.kim@samsung.com>
-Message-Id: <175206957118.3267462.9769889827847502379.robh@kernel.org>
-Subject: Re: [PATCH] arm64: dts: exynos: add abox generic for
- ExynosAutov920
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF0000468B:EE_|SA5PPF80B25317E:EE_
+X-MS-Office365-Filtering-Correlation-Id: 84b60e94-5414-4418-fb2f-08ddbef117d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JtrYLvyIVgCFZUiBjOLa2A+IKmNfpG6/4cUgelmJpTsrXtUIjoq0fF88vUAV?=
+ =?us-ascii?Q?ux8TU/mi7A1EMQnYKP2NEGTd1MfwU0TtiWEYvXlj4XOJpWjQHJFfJ/XRbojU?=
+ =?us-ascii?Q?A1+yt/4dwsx9pqbex9OpGVCKxoiiemlHxpmAxWDYucB+fqbW42XUlZr6kgjE?=
+ =?us-ascii?Q?SZjERmqgxTXTHEZZvzTsQBeU/sGu37uM0R6/GSMGmvO9RhrFxCvMXyhhE3EQ?=
+ =?us-ascii?Q?HsxaevK2VM4SJLD0uh20zq4/GSVw841yjQfrXJxjf22ErRpcneV0x82M34s4?=
+ =?us-ascii?Q?dmsAJ0gtcsLP3na+Z7GkSA4Azo3VIL4npWcPEfKZFkUl47glFGtLGHpG9YFL?=
+ =?us-ascii?Q?wHuwQaViCb9qBs8tdCTMD0sxXr9T6mVkCoAvxDeIuVQ2/EsO1HIzJC1jgT+3?=
+ =?us-ascii?Q?RuvXNo9juHXay3Ps/eDwTbSXXcvloLFZJDqu8M4iL4OswYWMSqYHNhifrS/Y?=
+ =?us-ascii?Q?CZkPDNbF0Y0dXOfsTNl87BWoXptaM7Ym06vRgoFQcz4yxfHKtH+sK2pbqzC9?=
+ =?us-ascii?Q?f8epSjkycnRkI5udOYGR0AfgDMw7FzahOjtfaOR5glmK5GUGgxk1OnYAgdNA?=
+ =?us-ascii?Q?lhhEnNI0NWrQcRQiA8GNwkZALIAvdIt1rdto6QiqxvnH34dKfGORULbAwiPC?=
+ =?us-ascii?Q?MLy83lQTCMQLjv4THxJi1gw/80RvFQIqL87CWor9U+InFoZd6Mrk4jr5w/aF?=
+ =?us-ascii?Q?kblMdXJsoToGJShA1uk5VpTWKlewRbNcZasslbaJDT3meZfarHjIZF7burQk?=
+ =?us-ascii?Q?UQFSOZt2h3TueGhPz1O0pRfwNACrRqh22U2HA1i2qyC3EUL1LRQbEzkgYDnV?=
+ =?us-ascii?Q?A9QqkeYDdCH7NTcJtHkPLXGcu7BR0nl7Ygfu1dBZKPGJrv5cYMf9ZkuJQVy3?=
+ =?us-ascii?Q?VM0tDDPLiRjePWIYBoglttSBotv/RIQlSoR+WDcht6zN4ej3BCDREc5wZvAj?=
+ =?us-ascii?Q?+J7OS8hK3FYOz2+82R6RzbY/xJYHinQAFSqMSLZOBufMeefs9gJKLQtHK78Z?=
+ =?us-ascii?Q?BoLrXWhs877+4lOFFebVDzRvkApyJ+RX7AZoWfU1A589DGJMBmql/VeB9g2L?=
+ =?us-ascii?Q?e5heJYqjZ4oU6e4OqmtDZQOncSEuNG67L5POniw0+kT3jxRCi90PVgGSYTFe?=
+ =?us-ascii?Q?PoAOJnGdVV3RV0IGGCdeU6qpjUzv1kHHBe6QtynvXQD4eTbpBAKshikUUEyi?=
+ =?us-ascii?Q?8rbFshkxYLnx4IDgqQ8v7uv1tUbuJmrOnCPazPzqKhZEU0bpigz/AuiAkacQ?=
+ =?us-ascii?Q?zYNkgo/EGq3ACEFvJq815ST8cYFZlYsxi8kOJ+JB6Sn6ISGSofIgppmrXuiK?=
+ =?us-ascii?Q?GjvHR8FOWs5RY6jDZg3sWUcbBJBGbqkr/rGnLLWnTVKXEoegNz5SwlOINvJa?=
+ =?us-ascii?Q?Z4xfRG8CWkn/OzR3TVzeBYg2SgVA1mHahxNYPoJq6kRGBHJuK5ROeagp1chf?=
+ =?us-ascii?Q?rqUuVmgu/Hcrn33RKjKhVxZaXhqyY1FsRv7pH9EXBP0GgLsT7x1EOcaql6Rl?=
+ =?us-ascii?Q?U32EWzey/GJ4Qbv4sX6afQSpuBL9SgH7QlXQ?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 14:01:25.2032
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84b60e94-5414-4418-fb2f-08ddbef117d1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF0000468B.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF80B25317E
 
+Ard Biesheuvel <ardb+git@google.com> writes:
 
-On Wed, 09 Jul 2025 09:12:10 +0900, ew kim wrote:
-> Add a node for Abox generic. This driver, exynosautov920, connects to
-> the SoC and allows you to configure a sound card.
-> 
-> Signed-off-by: ew kim <ew.kim@samsung.com>
-> ---
->  .../boot/dts/exynos/exynosautov920-audio.dtsi | 20 +++++++++++++++++++
->  .../arm64/boot/dts/exynos/exynosautov920.dtsi |  1 +
->  2 files changed, 21 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-audio.dtsi
-> 
+> From: Ard Biesheuvel <ardb@kernel.org>
+>
+> Build tested defconfig and allmodconfig
+>
+> !!! Boot tested on non-SEV guest ONLY !!!!
+>
+> Again, I will need to lean on Tom to determine whether this breaks
+> SEV-SNP guest boot. As I mentioned before, I am still waiting for
+> SEV-SNP capable hardware to be delivered.
 
+This series breaks SEV-SNP guest boot, bisect points to patch 12/24
+"x86/sev: Unify SEV-SNP hypervisor feature check". If I revert this
+patch SEV-SNP guest boot fine. I will continue debugging it further.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: failed to guess base
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250709001210.379418-1-ew.kim@samsung.com:
-
-arch/arm64/boot/dts/exynos/exynosautov920-audio.dtsi:18.3-10: Warning (ranges_format): /abox_generic@generic:ranges: empty "ranges" property but its #size-cells (1) differs from / (2)
-arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: / (samsung,exynosautov920-sadk): 'abox_generic@generic' does not match any of the regexes: '.*-names$', '.*-supply$', '^#.*-cells$', '^#[a-zA-Z0-9,+\-._]{0,63}$', '^[a-zA-Z0-9][a-zA-Z0-9#,+\-._]{0,63}$', '^[a-zA-Z0-9][a-zA-Z0-9,+\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$', '^__.*__$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
-arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: /abox_generic@generic: failed to match any schema with compatible: ['samsung,abox_generic']
-
-
-
-
-
+Regards,
+Nikunj
 
