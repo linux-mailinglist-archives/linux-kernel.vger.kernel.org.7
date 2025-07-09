@@ -1,351 +1,102 @@
-Return-Path: <linux-kernel+bounces-724644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748E4AFF551
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:22:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9B8AFF555
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161BC3B13E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36A11761694
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5D726B74C;
-	Wed,  9 Jul 2025 23:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09DD267F61;
+	Wed,  9 Jul 2025 23:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FmfiutwL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+zxMFKp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF2726B096;
-	Wed,  9 Jul 2025 23:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7F1E55B;
+	Wed,  9 Jul 2025 23:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752103295; cv=none; b=qqIWOc97cjKCc28N9a5CQsyy+b2xw0iAe4ns6wWuNlv7nmRtmHIISHLYm9kPuPbxLfsoy7yOtd+/11f0z6Y3hcdG3jWlxL6/qHjQRct+d5orYUSjvsoqukCWBsD61VnneSsQEVLtw9O31+fEUF1aUaYBoKXHPbY2Mvvn4LjcqZY=
+	t=1752103400; cv=none; b=g+6hvgPkdjQ5v4ZvUOIps1/sYBf4kQTdvmnitWQbXIDaeqIZ4jckFIGBs1/WhoSalU1FkKiULLTPAN85ERbjzwcF9EDc3acKaq9meuhmWZfahS4CODNAxEUSFIynxwqngyqad6nl3SQELl4554+jwuuDF1gwj6I6lgTJnKSL4Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752103295; c=relaxed/simple;
-	bh=7El6AbaWSf3lWIgK94CBspEKFvT/XKceyHt1K4VH6lA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bhbn4doaMfm/GIESgKGouRYa4MyB0AS0lPYqz+fOn8PJIx4XJLVd40Gmxq1+JyaGQtjcWK07DCE3EFgmyrUwXR3F5gZV9OpgtKneXEjUp8dAdEh6OvlGivTlVrXoh3whN19gzMcQySNluKr+5Hk1g1BQ5VA2Xx3UJWwIAUdzd4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FmfiutwL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B018C4CEF5;
-	Wed,  9 Jul 2025 23:21:35 +0000 (UTC)
+	s=arc-20240116; t=1752103400; c=relaxed/simple;
+	bh=bCV+LA15f6mlZ/QEVHI8ShEaF8U5+pTpFavarhgTyII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aJzT4m/finUse/JgGh2pcTdHnkliwgrX0SDRb8HNLZL0dIDgDPuTi/lPtj+ReKjKVlwOZi8wzQGPO3P8uLaqPOCoFNojk22tZYHrR41yBzR15HRT2WcqrSZUnF+dsadqAtoD3siRboa4DVcvF0//cfy5gYDzXm9SKVlLkEkKhvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+zxMFKp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9122CC4CEEF;
+	Wed,  9 Jul 2025 23:23:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752103295;
-	bh=7El6AbaWSf3lWIgK94CBspEKFvT/XKceyHt1K4VH6lA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FmfiutwLCMTmgSaN+6q0GgjsBjXQRbHq5HleIH6Q/G7ZpuWEvsIXGnWhhtz+eTCDA
-	 kXWYtnzbTDZH7yXc6bpR4UThCfW+Nmjt2LK0VMxLlTNc5f+fNwzFt74CsJ7DAndKPg
-	 +cfD+OxEXLoJ9K35i08ht2GXFPc49N/ue/Ki51fdgStDiRScigrMbgguE7PXdNfqIN
-	 +EujunyaK6nS8t3Y3k02ghVKsv2UbtcTz+NZA0/LlsFR1JYzTGT0UOQn8jbZ+Ap9iV
-	 BaBcF2vkJ7aaNTnK4FER7spbcCEF+vySmaNnpR7PkKfERS4d3JV0FqiGLDzJASsjFy
-	 ck3tAJzuSJDOw==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55511c3e203so321684e87.3;
-        Wed, 09 Jul 2025 16:21:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUq41e9Nx6wSyzq1dmjROiv+TCohdrJJMj1ocUTqFyTTQ1M1GjWE7826xyfh5XJduP6xT1P6VtDqwg=@vger.kernel.org, AJvYcCWZyJ3IVESXtaMnysQ6aUSTjhLfNzQMxgDGkrNUxueM49iyy/OoleMBEI3xF+tHlINnLae1c9h170s4E0ON@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLKJLo+tF1WYoG8YW93eCPd8F7a9WdTRdVZdlblnh+qkdYp+o/
-	E2rJ1f2WIQTEfZ+LeP2o2U/VF9CXu5oSButOekM3iBeEhhuLY+5tHd7U6fpbke5vyQ3nKJCpFil
-	Kwc4j3mph0RisXQGoeRMl4BF9TzwcAmA=
-X-Google-Smtp-Source: AGHT+IGorBubXSMAvtt0qBevxyHV9E2jDM8arG49vRSWjvpJ7PBry2pp56BMY+AsCCAZ7njkiAgOiUyw/z0CYl77hhk=
-X-Received: by 2002:a05:6512:10ca:b0:553:2480:2309 with SMTP id
- 2adb3069b0e04-5592e2ecd5dmr191732e87.3.1752103293549; Wed, 09 Jul 2025
- 16:21:33 -0700 (PDT)
+	s=k20201202; t=1752103398;
+	bh=bCV+LA15f6mlZ/QEVHI8ShEaF8U5+pTpFavarhgTyII=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c+zxMFKpkli/jgyFaThavQyBVDB/5UvbL7D242K2RWsPNEhL+oriRrD5Oo+PvWpdI
+	 ERuh4BY6lw+zGM8xtx8wpoLxcgPZudq5njNzWtryJQtgegUUnDf05RJ3JmYwhkWguW
+	 JHKZrbQ+tpAleOND4ozNXDBpQRbMdrgJDx0U4Ds9lgX/hUc228hnU9K1JEMFPBWWHo
+	 XunAc+qZloL292ny0zgbrMjOWNFZ0vHSFooyM+nyXy3juF7yT1qHQ9Vnqxqkx+/mHd
+	 PoL3zzXuFrSVJePfVeWGXvo03t7L/uMjtTuvQAre0zWGxsskVGE6rKHgUfo12BDyzR
+	 /dXAI84cHqO9w==
+Date: Wed, 9 Jul 2025 23:23:17 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, linux-hyperv@vger.kernel.org,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, niuxuewei97@gmail.com
+Subject: Re: [PATCH net-next v6 1/4] hv_sock: Return the readable bytes in
+ hvs_stream_has_data()
+Message-ID: <aG755Yx-FVKIkHzH@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <20250708-siocinq-v6-0-3775f9a9e359@antgroup.com>
+ <20250708-siocinq-v6-1-3775f9a9e359@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709080840.2233208-26-ardb+git@google.com>
- <20250709080840.2233208-27-ardb+git@google.com> <74889161-adfa-3547-d8a9-3ff154098c7a@amd.com>
-In-Reply-To: <74889161-adfa-3547-d8a9-3ff154098c7a@amd.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 10 Jul 2025 09:21:19 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXF-ufGkWRkEOwOLntPOuVS1skLJ8HA0FpfJCQbvoDeTJA@mail.gmail.com>
-X-Gm-Features: Ac12FXyAmKZpOquoXydURIE0y4KKJUBqL8540sEaEeMUcSbjhUvgHIP3LlMA4J8
-Message-ID: <CAMj1kXF-ufGkWRkEOwOLntPOuVS1skLJ8HA0FpfJCQbvoDeTJA@mail.gmail.com>
-Subject: Re: [PATCH v4 01/24] x86/sev: Separate MSR and GHCB based snp_cpuid()
- via a callback
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, x86@kernel.org, Borislav Petkov <bp@alien8.de>, 
-	Ingo Molnar <mingo@kernel.org>, Dionna Amalie Glaze <dionnaglaze@google.com>, 
-	Kevin Loughlin <kevinloughlin@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708-siocinq-v6-1-3775f9a9e359@antgroup.com>
 
-On Thu, 10 Jul 2025 at 01:12, Tom Lendacky <thomas.lendacky@amd.com> wrote:
->
-> On 7/9/25 03:08, Ard Biesheuvel wrote:
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > There are two distinct callers of snp_cpuid(): one where the MSR
-> > protocol is always used, and one where the GHCB page based interface is
-> > always used.
-> >
-> > The snp_cpuid() logic does not care about the distinction, which only
-> > matters at a lower level. But the fact that it supports both interfaces
-> > means that the GHCB page based logic is pulled into the early startup
-> > code where PA to VA conversions are problematic, given that it runs from
-> > the 1:1 mapping of memory.
-> >
-> > So keep snp_cpuid() itself in the startup code, but factor out the
-> > hypervisor calls via a callback, so that the GHCB page handling can be
-> > moved out.
-> >
-> > Code refactoring only - no functional change intended.
-> >
-> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > ---
-> >  arch/x86/boot/startup/sev-shared.c | 64 ++++----------------
-> >  arch/x86/coco/sev/vc-shared.c      | 49 ++++++++++++++-
-> >  arch/x86/include/asm/sev.h         |  3 +-
-> >  3 files changed, 63 insertions(+), 53 deletions(-)
-> >
-> > diff --git a/arch/x86/boot/startup/sev-shared.c b/arch/x86/boot/startup/sev-shared.c
-> > index 7a706db87b93..992abfa50508 100644
-> > --- a/arch/x86/boot/startup/sev-shared.c
-> > +++ b/arch/x86/boot/startup/sev-shared.c
-> > @@ -319,7 +319,7 @@ static int __sev_cpuid_hv(u32 fn, int reg_idx, u32 *reg)
-> >       return 0;
-> >  }
-> >
-> > -static int __sev_cpuid_hv_msr(struct cpuid_leaf *leaf)
-> > +static int __sev_cpuid_msr_prot(struct cpuid_leaf *leaf)
->
-> Not sure the renaming makes it read any easier or say anything more. It
-> does add extra changes to the diff that have to be read through, though,
-> so I don't think it is beneficial.
->
+On Tue, Jul 08, 2025 at 02:36:11PM +0800, Xuewei Niu wrote:
+> From: Dexuan Cui <decui@microsoft.com>
+> 
+> When hv_sock was originally added, __vsock_stream_recvmsg() and
+> vsock_stream_has_data() actually only needed to know whether there
+> is any readable data or not, so hvs_stream_has_data() was written to
+> return 1 or 0 for simplicity.
+> 
+> However, now hvs_stream_has_data() should return the readable bytes
+> because vsock_data_ready() -> vsock_stream_has_data() needs to know the
+> actual bytes rather than a boolean value of 1 or 0.
+> 
+> The SIOCINQ ioctl support also needs hvs_stream_has_data() to return
+> the readable bytes.
+> 
+> Let hvs_stream_has_data() return the readable bytes of the payload in
+> the next host-to-guest VMBus hv_sock packet.
+> 
+> Note: there may be multiple incoming hv_sock packets pending in the
+> VMBus channel's ringbuffer, but so far there is not a VMBus API that
+> allows us to know all the readable bytes in total without reading and
+> caching the payload of the multiple packets, so let's just return the
+> readable bytes of the next single packet. In the future, we'll either
+> add a VMBus API that allows us to know the total readable bytes without
+> touching the data in the ringbuffer, or the hv_sock driver needs to
+> understand the VMBus packet format and parse the packets directly.
+> 
+> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
 
-These additional changes were provided by Boris as a delta patch on
-top of my v3, so I will leave to him to respond to this.
-
-https://lore.kernel.org/all/20250512190834.332684-24-ardb+git@google.com/T/#u
-
-
-
-> >  {
-> >       int ret;
-> >
-> > @@ -342,44 +342,7 @@ static int __sev_cpuid_hv_msr(struct cpuid_leaf *leaf)
-> >       return ret;
-> >  }
-> >
-> > -static int __sev_cpuid_hv_ghcb(struct ghcb *ghcb, struct es_em_ctxt *ctxt, struct cpuid_leaf *leaf)
-> > -{
-> > -     u32 cr4 = native_read_cr4();
-> > -     int ret;
-> > -
-> > -     ghcb_set_rax(ghcb, leaf->fn);
-> > -     ghcb_set_rcx(ghcb, leaf->subfn);
-> > -
-> > -     if (cr4 & X86_CR4_OSXSAVE)
-> > -             /* Safe to read xcr0 */
-> > -             ghcb_set_xcr0(ghcb, xgetbv(XCR_XFEATURE_ENABLED_MASK));
-> > -     else
-> > -             /* xgetbv will cause #UD - use reset value for xcr0 */
-> > -             ghcb_set_xcr0(ghcb, 1);
-> > -
-> > -     ret = sev_es_ghcb_hv_call(ghcb, ctxt, SVM_EXIT_CPUID, 0, 0);
-> > -     if (ret != ES_OK)
-> > -             return ret;
-> > -
-> > -     if (!(ghcb_rax_is_valid(ghcb) &&
-> > -           ghcb_rbx_is_valid(ghcb) &&
-> > -           ghcb_rcx_is_valid(ghcb) &&
-> > -           ghcb_rdx_is_valid(ghcb)))
-> > -             return ES_VMM_ERROR;
-> >
-> > -     leaf->eax = ghcb->save.rax;
-> > -     leaf->ebx = ghcb->save.rbx;
-> > -     leaf->ecx = ghcb->save.rcx;
-> > -     leaf->edx = ghcb->save.rdx;
-> > -
-> > -     return ES_OK;
-> > -}
-> > -
-> > -static int sev_cpuid_hv(struct ghcb *ghcb, struct es_em_ctxt *ctxt, struct cpuid_leaf *leaf)
-> > -{
-> > -     return ghcb ? __sev_cpuid_hv_ghcb(ghcb, ctxt, leaf)
-> > -                 : __sev_cpuid_hv_msr(leaf);
-> > -}
-> >
-> >  /*
-> >   * This may be called early while still running on the initial identity
-> > @@ -484,21 +447,20 @@ snp_cpuid_get_validated_func(struct cpuid_leaf *leaf)
-> >       return false;
-> >  }
-> >
-> > -static void snp_cpuid_hv(struct ghcb *ghcb, struct es_em_ctxt *ctxt, struct cpuid_leaf *leaf)
-> > +static void snp_cpuid_msr_prot(void *ctx, struct cpuid_leaf *leaf)
-> >  {
-> > -     if (sev_cpuid_hv(ghcb, ctxt, leaf))
-> > +     if (__sev_cpuid_msr_prot(leaf))
-> >               sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_CPUID_HV);
-> >  }
-> >
-> > -static int __head
-> > -snp_cpuid_postprocess(struct ghcb *ghcb, struct es_em_ctxt *ctxt,
-> > -                   struct cpuid_leaf *leaf)
-> > +static int __head snp_cpuid_postprocess(void (*cpuid)(void *ctx, struct cpuid_leaf *),
-> > +                                     void *ctx, struct cpuid_leaf *leaf)
-> >  {
-> >       struct cpuid_leaf leaf_hv = *leaf;
-> >
-> >       switch (leaf->fn) {
-> >       case 0x1:
-> > -             snp_cpuid_hv(ghcb, ctxt, &leaf_hv);
-> > +             cpuid(ctx, &leaf_hv);
->
-> Maybe rename this parameter to snp_cpuid or snp_cpuid_fn or similar,
-> because it can be very confusing to see "cpuid" on its own like this.
->
-> >
-> >               /* initial APIC ID */
-> >               leaf->ebx = (leaf_hv.ebx & GENMASK(31, 24)) | (leaf->ebx & GENMASK(23, 0));
-> > @@ -517,7 +479,7 @@ snp_cpuid_postprocess(struct ghcb *ghcb, struct es_em_ctxt *ctxt,
-> >               break;
-> >       case 0xB:
-> >               leaf_hv.subfn = 0;
-> > -             snp_cpuid_hv(ghcb, ctxt, &leaf_hv);
-> > +             cpuid(ctx, &leaf_hv);
-> >
-> >               /* extended APIC ID */
-> >               leaf->edx = leaf_hv.edx;
-> > @@ -565,7 +527,7 @@ snp_cpuid_postprocess(struct ghcb *ghcb, struct es_em_ctxt *ctxt,
-> >               }
-> >               break;
-> >       case 0x8000001E:
-> > -             snp_cpuid_hv(ghcb, ctxt, &leaf_hv);
-> > +             cpuid(ctx, &leaf_hv);
-> >
-> >               /* extended APIC ID */
-> >               leaf->eax = leaf_hv.eax;
-> > @@ -586,8 +548,8 @@ snp_cpuid_postprocess(struct ghcb *ghcb, struct es_em_ctxt *ctxt,
-> >   * Returns -EOPNOTSUPP if feature not enabled. Any other non-zero return value
-> >   * should be treated as fatal by caller.
-> >   */
-> > -int __head
-> > -snp_cpuid(struct ghcb *ghcb, struct es_em_ctxt *ctxt, struct cpuid_leaf *leaf)
-> > +int __head snp_cpuid(void (*cpuid)(void *ctx, struct cpuid_leaf *), void *ctx,
-> > +                  struct cpuid_leaf *leaf)
-> >  {
-> >       const struct snp_cpuid_table *cpuid_table = snp_cpuid_get_table();
-> >
-> > @@ -621,7 +583,7 @@ snp_cpuid(struct ghcb *ghcb, struct es_em_ctxt *ctxt, struct cpuid_leaf *leaf)
-> >                       return 0;
-> >       }
-> >
-> > -     return snp_cpuid_postprocess(ghcb, ctxt, leaf);
-> > +     return snp_cpuid_postprocess(cpuid, ctx, leaf);
-> >  }
-> >
-> >  /*
-> > @@ -648,14 +610,14 @@ void __head do_vc_no_ghcb(struct pt_regs *regs, unsigned long exit_code)
-> >       leaf.fn = fn;
-> >       leaf.subfn = subfn;
-> >
-> > -     ret = snp_cpuid(NULL, NULL, &leaf);
-> > +     ret = snp_cpuid(snp_cpuid_msr_prot, NULL, &leaf);
-> >       if (!ret)
-> >               goto cpuid_done;
-> >
-> >       if (ret != -EOPNOTSUPP)
-> >               goto fail;
-> >
-> > -     if (__sev_cpuid_hv_msr(&leaf))
-> > +     if (__sev_cpuid_msr_prot(&leaf))
-> >               goto fail;
-> >
-> >  cpuid_done:
-> > diff --git a/arch/x86/coco/sev/vc-shared.c b/arch/x86/coco/sev/vc-shared.c
-> > index 2c0ab0fdc060..776cb90be530 100644
-> > --- a/arch/x86/coco/sev/vc-shared.c
-> > +++ b/arch/x86/coco/sev/vc-shared.c
-> > @@ -409,15 +409,62 @@ static enum es_result vc_handle_ioio(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
-> >       return ret;
-> >  }
-> >
-> > +static int __sev_cpuid_ghcb_prot(struct ghcb *ghcb, struct es_em_ctxt *ctxt, struct cpuid_leaf *leaf)
->
-> Ditto here and below, keeping the __sev_cpuid_hv_ghcb() /
-> sev_cpuid_hv_ghcb() name would be best.
->
-> Thanks,
-> Tom
->
-> > +{
-> > +     u32 cr4 = native_read_cr4();
-> > +     int ret;
-> > +
-> > +     ghcb_set_rax(ghcb, leaf->fn);
-> > +     ghcb_set_rcx(ghcb, leaf->subfn);
-> > +
-> > +     if (cr4 & X86_CR4_OSXSAVE)
-> > +             /* Safe to read xcr0 */
-> > +             ghcb_set_xcr0(ghcb, xgetbv(XCR_XFEATURE_ENABLED_MASK));
-> > +     else
-> > +             /* xgetbv will cause #UD - use reset value for xcr0 */
-> > +             ghcb_set_xcr0(ghcb, 1);
-> > +
-> > +     ret = sev_es_ghcb_hv_call(ghcb, ctxt, SVM_EXIT_CPUID, 0, 0);
-> > +     if (ret != ES_OK)
-> > +             return ret;
-> > +
-> > +     if (!(ghcb_rax_is_valid(ghcb) &&
-> > +           ghcb_rbx_is_valid(ghcb) &&
-> > +           ghcb_rcx_is_valid(ghcb) &&
-> > +           ghcb_rdx_is_valid(ghcb)))
-> > +             return ES_VMM_ERROR;
-> > +
-> > +     leaf->eax = ghcb->save.rax;
-> > +     leaf->ebx = ghcb->save.rbx;
-> > +     leaf->ecx = ghcb->save.rcx;
-> > +     leaf->edx = ghcb->save.rdx;
-> > +
-> > +     return ES_OK;
-> > +}
-> > +
-> > +struct cpuid_ctx {
-> > +     struct ghcb *ghcb;
-> > +     struct es_em_ctxt *ctxt;
-> > +};
-> > +
-> > +static void snp_cpuid_ghcb_prot(void *p, struct cpuid_leaf *leaf)
-> > +{
-> > +     struct cpuid_ctx *ctx = p;
-> > +
-> > +     if (__sev_cpuid_ghcb_prot(ctx->ghcb, ctx->ctxt, leaf))
-> > +             sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_CPUID_HV);
-> > +}
-> > +
-> >  static int vc_handle_cpuid_snp(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
-> >  {
-> > +     struct cpuid_ctx ctx = { ghcb, ctxt };
-> >       struct pt_regs *regs = ctxt->regs;
-> >       struct cpuid_leaf leaf;
-> >       int ret;
-> >
-> >       leaf.fn = regs->ax;
-> >       leaf.subfn = regs->cx;
-> > -     ret = snp_cpuid(ghcb, ctxt, &leaf);
-> > +     ret = snp_cpuid(snp_cpuid_ghcb_prot, &ctx, &leaf);
-> >       if (!ret) {
-> >               regs->ax = leaf.eax;
-> >               regs->bx = leaf.ebx;
-> > diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-> > index 89075ff19afa..2cabf617de3c 100644
-> > --- a/arch/x86/include/asm/sev.h
-> > +++ b/arch/x86/include/asm/sev.h
-> > @@ -552,7 +552,8 @@ struct cpuid_leaf {
-> >       u32 edx;
-> >  };
-> >
-> > -int snp_cpuid(struct ghcb *ghcb, struct es_em_ctxt *ctxt, struct cpuid_leaf *leaf);
-> > +int snp_cpuid(void (*cpuid_hv)(void *ctx, struct cpuid_leaf *),
-> > +           void *ctx, struct cpuid_leaf *leaf);
-> >
-> >  void __noreturn sev_es_terminate(unsigned int set, unsigned int reason);
-> >  enum es_result sev_es_ghcb_hv_call(struct ghcb *ghcb,
+Acked-by: Wei Liu <wei.liu@kernel.org>
 
