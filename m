@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-724387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC63EAFF1F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:42:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB739AFF1FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C6A617D708
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:42:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51AB35A6214
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E046C24467D;
-	Wed,  9 Jul 2025 19:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E070241695;
+	Wed,  9 Jul 2025 19:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+hsC1WS"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R8h/hiiW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0500D238D57
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 19:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB6123B63F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 19:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752090124; cv=none; b=moomnGNGMd9R5a8rAxpfqTpSeomHcpKjxzATGypes87HaHXoivsHk1EFbmmYjKdYGsSsogOUwHtjp6eymMTGMMU7Y2DjBkGnt8tA5iiaZsdC8/WAlwb0TlRTpLw1S9D9wCETIm1V54tCoFkjWqnNKF9AsFCAb31X2v5K3e9eKIw=
+	t=1752090173; cv=none; b=RoQo7i/FekpxoYYTv3D1c5H6TwYRRIT/YLybKYNgscFp2i0Dc331IbMaiPyGXEDig4u742GLAGLst25U/WJ0aO/+obLfzSzGvSzrQODc+77CXsxMZ8AWXDtmkMz0TSgYeF0Qg31k8q1RDxocqVhNt4ZP0C+MR+zVyahRXXUE5Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752090124; c=relaxed/simple;
-	bh=ylFQOjDJy2VIX2Et9x2ybTu139vD3iPRQgrZBCQDrpc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G5GD1+XZr5LAGjNpX0LiXMYFJzk7mLWat9navEOZssldehKK1UHOnqmmpeJrN4F4B9tT60CTNaMm/HgWGfwM9DAB5M8+sGlEXFXZi6sYd5BquKLme21UKwKT0DyC+tEGeItOKLOGaliCmzDYl2hThIJjb9+krBlty3riHK5LqdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+hsC1WS; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-748f5a4a423so188822b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 12:42:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752090122; x=1752694922; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xDsLE6E19Td298KPd6Qq63sYGmIzE53+0WIbG+4OKpc=;
-        b=O+hsC1WSUYfh/JQ5n05R+XGg2bHacocFoIXAcvAbGJHVHrLjdEXrxsSlfIPUR/mR4i
-         Ks3B/Cc4b6Nh8BIbRjjtShouSlRvBTLAIsT6/B31KzPV1Y7C601glda5QhpES0YW2p8+
-         j9nSSa1t1IAqenVGh09c6DWQ8770OZACUSsywPSv30RPifLHsa0BfajEl3t4omxZzH4v
-         nCFyHAZA7h90man6XoWMC5vKfxkkO9kWHMKstEA1advXWkA6uqjaUpVHqoivAPDvbKAn
-         E7r7LJWxMXviTvjviurUC69vsCwS2EFCETo+nKdit2fTj0fTI903beqlDd4CJElxyuQm
-         g0dg==
+	s=arc-20240116; t=1752090173; c=relaxed/simple;
+	bh=3U4WnPLcfs1wyyDmm0SAgoVPgx3FFU+dTf2XoWVK13U=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GLnff95O3BSkxW8eguMZUs2ureqYX71luS1Bv+V/w16XhtxElRrOCNbA3SgmabGVDcpBbGo2t+0pSIkb0lhRhKMIHkKMVq1z/c/f/spd/UbTZ8t1GWSnytuLcnqBQClsppIHgZRglDky6bxtcsnSu+XIBYsf0XSdNqE/ZggbuqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R8h/hiiW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752090170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vY/q1JNw0QqC4RlP87mu/UsMm3Cj4QXPlhHBZsNSTN0=;
+	b=R8h/hiiWr+sTog8fk+31BXfONL8VKxmXkcL/aAtaLJrv73mIS4n19UPzx25VNpumf3KB2R
+	Ig+rXEsO0u6TiLOmS69Jb9JT5uuL3AehdqrVTYpqRBZ677Ux2P/zzzILnKOlvOhzP6wKue
+	ymlBj4pji0AE2V5zzyKa7nW6VU8y7uc=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-9-HddCWAXHMwGdSbAewD-CJg-1; Wed, 09 Jul 2025 15:42:49 -0400
+X-MC-Unique: HddCWAXHMwGdSbAewD-CJg-1
+X-Mimecast-MFC-AGG-ID: HddCWAXHMwGdSbAewD-CJg_1752090169
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4a58cd9b142so5837151cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 12:42:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752090122; x=1752694922;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xDsLE6E19Td298KPd6Qq63sYGmIzE53+0WIbG+4OKpc=;
-        b=QSLlZ/KB6HO/126gUlJk5BRxR3K2TO3DzLujVr+A4Uc0FKciUPNFzUF8n1GyxmbFO5
-         Qxhd42G6WyQaeFyv4Hd+f9O3Zms/fOrvuIMKg+wrdMG8I7oKxrCqrKnERDnjqB8qadkd
-         s+1MSRlFd3BcEwwPKf20NjaBFwAXOIL79pQ6PWm6acwwCsCA+H7E5xHP78VYpPoJ+14q
-         mO5kmRQln4g1mmKnBmNGdosD5nkPE0iUYiOO8zgLkkfd5mxJH8gC/+NJGqntcgvhlAsD
-         trm9aM+dEGPXS6dtSwXM1ZcmxguQ0mYYwdr8F2gentvtVHkE8EBg5kUQcL6FmnQcfO8Z
-         x2qg==
-X-Gm-Message-State: AOJu0YxFtIt0i82J014I0Wm+QBDUrR9HPrWEi3xMynBf/oPv2USWcJT0
-	55SvME6B/5Eif5QvrjFaDrWYGjoeM/GyGvA3GCPlW+DneXCsS9ZlJ6qH
-X-Gm-Gg: ASbGncuemUQ5cQy9A3r38PJtwgpLq7NcgZwE6gvRp+kEvQR0Uc+3MP0vTkCOqZ4LDpZ
-	41cyTMRcLXgJvChLab3A3lOmlhnnI/1KvwJLg1CwcqoWK/FE3mEzQjnDN6TlxnN2uMoPmcoUUJw
-	H98rH1cNRc6GtFwP6M9BSnO9//Od6S4CEOEZ5/lEEtM/wICser0uWOG6JfYtIxsfj85L9EWzlzl
-	Olf/RPGpsEXa+wU9Iw6U2IGylM5on2ZvGTWGkbaOiq19fteZsqMD2E0vtZ+LJK12PXTk+ySNvLP
-	+hBCgjtOmW5P3A6oTf2hOAe2BnQ7Q+luC1AUYsbNnkhclSMm/0WULt+caygnQLAVZyJzO8AFjCj
-	Lwyp25/lXxx54mutChA==
-X-Google-Smtp-Source: AGHT+IEKkj8AUeRF1Jg/QfPh0coh0wIszbW+smznCaJ6WfXRLyL5Ttheut4QP3l44p5O3BDPR9+Tvg==
-X-Received: by 2002:a05:6a20:3945:b0:21a:de8e:44b4 with SMTP id adf61e73a8af0-22cd6cb0db7mr6036132637.16.1752090122184;
-        Wed, 09 Jul 2025 12:42:02 -0700 (PDT)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b38ee4794f4sm15169458a12.25.2025.07.09.12.42.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 12:42:01 -0700 (PDT)
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Jordan Rome <linux@jordanrome.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH 3/3] mm: Remove unmap_and_put_page()
-Date: Wed,  9 Jul 2025 12:40:18 -0700
-Message-ID: <20250709194017.927978-6-vishal.moola@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250709194017.927978-3-vishal.moola@gmail.com>
-References: <20250709194017.927978-3-vishal.moola@gmail.com>
+        d=1e100.net; s=20230601; t=1752090169; x=1752694969;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vY/q1JNw0QqC4RlP87mu/UsMm3Cj4QXPlhHBZsNSTN0=;
+        b=OZOV82d5oudIbeEh4M57zxtMw5ygp/IMKEBXILeyHODH3VwHwpQJrM5dE7qQUARLCm
+         otHgzCPiZMYNLW0OrmCunNNC0q+SU6shgmADEoo4ifQmYXMUrsDUd/vaXTBRuwduSi/v
+         TTlS1VYrAv7Gh1s4eGfHyiqKI3GlT6QABXK6RqcEqvHwhw2yZbitHMnc/fLH2tDkayrg
+         odyiivn50Wsxo7m1mu/fnPC27mUJNJiKdoVjAB5CjHhLzeBx1jU4/2iLVINVAE29ixRH
+         XNjX1PTIqjuCZwgdDiYCelRBBrGv4Fl/ryI93KZ8Y3pgMJFjV41IPMtzFFYoMpXo10ph
+         4Fpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX0j8K0BFdlHK3JPpL7DaZw4wGPZtdBQwGJlpPmhvoNaUWoY88jMQZIqfgXFoXHgoLgU2Cut9u4c5qt1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOEsuVqyzdDgOqQKW7Y9jp74UNxAQ/wRUIhKiWhIe6EOVPElM4
+	mxjdeWqvZCoEYnX/vwlaSV/cUr5WDL8ImYRjCV3XP3IOd/77Erb/sKCCeDq7oDhV9Hra4mN/Gcd
+	LoBdTaTo9rdD+2nog8IfP0Esn/+v2b5/t5RLW730FspBEWYLgDPcCin+7Iu2OBU7u7Q==
+X-Gm-Gg: ASbGnctr610VHhxcJAcUsv5Ztiv0ANxppQIYiZcBZNmIwcPcF6kRZ9FtbmQzVWdY7GL
+	+ptQ5mCSvfaTrAVIMR/Nc0yp551AVxmPyvJuh9dZ8l8TZ+QgePMs+EWGBZyhXDgKFzPyzml/mBO
+	7xjkgUoHhQppdHhFtZ0mRonSGmF/S9F0mT3AT3gh43rGtikZzasLbMc/1ox1i3gKyUnKk8pZuI5
+	f8owx5NeoTK1Ggchk5jXdn2LyoTa1NB1lDMia4HL4oxqdL0iPM90hzwo7AvvYx3Rhc4plxNuBYJ
+	Ash9CPAEHXvQBaCmW31Hz2PnDlAprVkxfwyZJzeqRkYVkN4u5U08cRDypdSDwau6auri
+X-Received: by 2002:ac8:5a8e:0:b0:4a9:ab9b:6603 with SMTP id d75a77b69052e-4a9ded45e9dmr52625641cf.38.1752090168854;
+        Wed, 09 Jul 2025 12:42:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5TBy0hinNa+OHbIcHtVv+guP6G1qZrwthZ/QVIZFR/lmLzDMo1Tot1Jiix54fZsB4b2YNOg==
+X-Received: by 2002:ac8:5a8e:0:b0:4a9:ab9b:6603 with SMTP id d75a77b69052e-4a9ded45e9dmr52625281cf.38.1752090168481;
+        Wed, 09 Jul 2025 12:42:48 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9949fb04asm103874321cf.20.2025.07.09.12.42.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Jul 2025 12:42:47 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <700c49da-1e30-4b99-ad41-3b052c80b64b@redhat.com>
+Date: Wed, 9 Jul 2025 15:42:46 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locking/mutex: Disable preemption in
+ __mutex_unlock_slowpath()
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ Jann Horn <jannh@google.com>
+References: <20250709180550.147205-1-longman@redhat.com>
+ <CAHk-=wimw8A1ReDPMyAVPrB3rEzenkk-u21RN123BGmnGBwjiQ@mail.gmail.com>
+ <CAHk-=whVBKwK83R_7+52qzZb3DpFWGG8L=V5bDG6VS44e3=1-A@mail.gmail.com>
+ <CAHk-=wjT5Y36Xs1zdE1OdM-AwxUMcC9fQC=8r1_GvawP1oqC3Q@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAHk-=wjT5Y36Xs1zdE1OdM-AwxUMcC9fQC=8r1_GvawP1oqC3Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There are no callers of unmap_and_put_page() left. Remove it.
 
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
----
- include/linux/highmem.h | 6 ------
- 1 file changed, 6 deletions(-)
+On 7/9/25 2:28 PM, Linus Torvalds wrote:
+> On Wed, 9 Jul 2025 at 11:21, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> And I suspect it would involve the exact *opposite* of your patch:
+>> make mutex_unlock() actively cause preemption after it has released
+>> the lock but before it has done the final accesses.
+> .. sadly, I suspect we have a ton of mutex_unlock() users in atomic
+> contexts, so we probably can't do that. It's not like you *should* do
+> it, but I don't think we've ever disallowed it.
+>
+> You can't use mutex_unlock from interrupts etc, but you can use it
+> while holding a spinlock.
 
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index a30526cc53a7..6234f316468c 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -682,10 +682,4 @@ static inline void folio_release_kmap(struct folio *folio, void *addr)
- 	kunmap_local(addr);
- 	folio_put(folio);
- }
--
--static inline void unmap_and_put_page(struct page *page, void *addr)
--{
--	folio_release_kmap(page_folio(page), addr);
--}
--
- #endif /* _LINUX_HIGHMEM_H */
--- 
-2.50.0
+I have just sent out another mutex patch to enforce a context switch in 
+__mutex_unlock_slowpath() under the right context.
+
+As for this one, you are right that hiding it may not be the best idea. 
+So I am going to drop it.
+
+Cheers,
+Longman
 
 
