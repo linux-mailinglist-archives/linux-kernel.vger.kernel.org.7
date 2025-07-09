@@ -1,938 +1,162 @@
-Return-Path: <linux-kernel+bounces-722970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE33AFE144
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:27:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61B5AFE143
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 740F43B4027
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:26:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA7E177928
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC152701CF;
-	Wed,  9 Jul 2025 07:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5A52701CC;
+	Wed,  9 Jul 2025 07:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="hzMzNH8O"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DmM/KA3x"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1950A26FA53;
-	Wed,  9 Jul 2025 07:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7C526FA4B
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752046012; cv=none; b=eLMbVKIkzZwHbszgmuxQdjiBRcbib6n7+PKYM3rfag+IdxcY0dpqtUsxDZ0njW4Zb8uyB5hWgTPMfi5CxmmzptheskISXurmt9Cm5GPgNpDRQPDp8Tq07ht8zYPhu3cbLqx6mzUr6BGZRO0X1e9Gm72pLiP3zQN0bj7ptai1mhA=
+	t=1752046013; cv=none; b=q5yIyE4lxYeSvL/7+e+3eTBFQd8SDaTjeQIZuIGQKJSmQmUQQwmLegZ1ATrzOcv5YYEjtTUkzErerN6sflL8/ozUBWmUvt/5UpLoGFvq0hFEPzlA6q+f0kJwZ6snqyN/m94Oe4ERSsrtUaJZWrvIhZUEWZsjBzgMfxEyhJ2f3H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752046012; c=relaxed/simple;
-	bh=Qg8BbHM82X01TFwv5qfRp9b+xFwPAL8sudVDQWcIgg8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=cmX1VQ+W8HLFjC8Jzs7AoTwTz+SFV/iSRzyIuNsckp4LUmzXzcVB0mmHg7rU/AjrohYuwQGhM4yqaNtBeXpLBsrQT18JF8RUsy+Oo8HbSGm0k7ekLvfLLjKYyu51wmrqHmhcxFYppNmydUQMfdRzkoJYOjbvnJ72BnsWzZcmlFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=hzMzNH8O; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 61C5FA09FF;
-	Wed,  9 Jul 2025 09:26:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=IHaV2BrRGxtRyHzgGIcRbtLSuDhywT1PwY7+3vPsdCM=; b=
-	hzMzNH8OSeoIYTzDHDe0gpFHQpnWlJa2//2KU+w93GFOqoPK8ynEhhhlcENUUD4n
-	anBmxiTf4tkTOmG+KQpNyFMX7oIPYqBj3tCOVSlTl2sX56F80fAAKy2tkaWa7c66
-	ldXv0oxEIg54DhyIBbgf93ShlzODWg5Ljy9iHbX8b81y6wyA+6BUsXNQDFW5gIo0
-	382onTBlzytxhL550D+VtBtuYLnrJYI2EjiX9AsPCU9om1ZV8SvIa1rCggFe+6vF
-	SCktE+xoiuAnTG4lQz0kMNMEG+aIgtLc9DdwsF3IsnNHDOTg8KCanAl/Ct0HOq5P
-	deJoLoGbS08OwEBRiNE/QZwXWHQHzUh9xfk+iMGs4kfdIc8T4//yOtU+UJl026zU
-	jEBkStrBP9kQnifh7bdwGGB0VEdqem6cGhNM5kcUpyoGgYWJBg9TY40YlbOjCq2f
-	4TSOzgRqGTLThyIBfTvKBas4brSdWDU15vnyAfjAMqlXmtA7LTgnUextW65uz+Ps
-	xtih59CXVeQ9DNiUDkQGnor9dgD1406cZs305YcvAJNnRBdmNZXB7U9kagMFTTNR
-	wPN1mqD7YadAgp6WW9vN0USVFS0QidS9kiFVVmz1kadc1JqFbEE85V/FfOsfcEJP
-	7I6DQgoRpdFU9WBGTxqyMDFY5zFAsraaAHHHweUpX+c=
-From: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-Date: Wed, 9 Jul 2025 09:26:41 +0200
-Subject: [PATCH v2] ARM: dts: imx6-gw: Replace license text comment with
- SPDX identifier
+	s=arc-20240116; t=1752046013; c=relaxed/simple;
+	bh=XUUln88n+vvb0xdyre8bwQBB4xlA9ax/lxsdgBJNE7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YIdwHxXi9SJLj9Co/9VevwP3zIcK0gZlcXCZ4cocacL+6aqeOT9LsCUD2PkIKmsGdBtDQWbVALkxQeBLHi+U+tWCkyOpwop0qa7jioA0zNDZiXrTjJYW3UU9u7am+Hw1nkf09xbJcE8BJ4HknvVcCW51zDtCQ6jFpOIssZGQpVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DmM/KA3x; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-450ddb35583so4200725e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 00:26:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752046010; x=1752650810; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=XUUln88n+vvb0xdyre8bwQBB4xlA9ax/lxsdgBJNE7Y=;
+        b=DmM/KA3xuBI0/OPfUVznu9NTCcvfap28gJo/ahoTSa7OkVVEDYilyY00dI739FqxyK
+         ZYeGvM4Ce+N0ym3cwhaq/35OIUHi0ZBaRbv7zJN5qQ9nhzjL2JokYIYxaZmw68ucmiMh
+         CdEgyZRNu7eKe5fOQTpJuD9uhf9Bw5oy5guhlD3elphGtM8N+8+U4H2dLcxDK6ghxwhD
+         VQ/8hMh5iZaMtr6G/vI84MFZo68zyXahceZYYFpdcrwl3n84IkaXE4Ine/CTXOnXF0oH
+         QJKPV1T+0OrfsMv86Mm6Ti2M486EEjY5W2N6PFPs8oZKqQa9ARt/a3KK7e//HaqYnsAO
+         fVnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752046010; x=1752650810;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XUUln88n+vvb0xdyre8bwQBB4xlA9ax/lxsdgBJNE7Y=;
+        b=pHyYZplDm10nG2Gxtep2bIsvrwzKyqdQ2qONwihFpPh2WkQKuAYRgiH1JY69KFA0/9
+         dRyxRKlrkFLpmMeEs0bP0/d2zTyq4YuHfItMLtb/S080uwV/GbrmVIh3IFZXWUe/lcFG
+         eqXw4E4g7XUbIfnx7Tga3I2xJ/+Vq6Ufiy4z4ouPP5J4T31sSHoCbtWamyFRj0qspLz1
+         zekgrZhS2ZiP263HTsDRUWdqrr0mxrqJ2taNztnoCuh9RImEZpOWH2rEJ3M4h2wSaKk+
+         eUUrdgUCgGf9nO0L7i8ONCmwVB/yMWR4fN7/1JBE903lQf/grJcWXacJUEI1xYw8IunU
+         +BeA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7LbZP0DFCUt/dcNn0wAiiKxs4ZMfZJTaKAoHkuZuqRqY6Df66klg0L8iH4oFZgkxn9Ny888OwYATz/Zg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+ZuwZGBjO2+sNphsar9eGUKdhFKyMS1i+BgJWQvZ/FojcivgW
+	ec67V2zTskpznsJv3WDlx6AMzF6r2Lm45Kj5d4QnUnWWaq67uf/41sYwaKWJONPZ4LE=
+X-Gm-Gg: ASbGncsM6WLDFqrrimPzo1H5L8iNSkZdUhexX4GQLFseYpbSireeU+nNEjR+xu2WShh
+	Wx12Fkd6DnZdFSTI2BjrhV/LvzoTrV9ptxTOfyjFCaCzAU1PMFMpklg0AvgEgcfQoGKV6qqLS26
+	KscPuRo7JRW4P1s/PqlhSu7c508bUeg6SqOdn9HQ60PAHZLi9drszD0LRnviAA7Z3Ice946Vs0I
+	WVAQ4plZXMDdHrNG7F04vySu6hdatFO/SYsBoUFCAxPgZMvjF7eVnQ8ly2Vg6cFp4ZC6Jold6eS
+	Y7m/47RQvy9fV91pUBbFF1oTF5mufZN2oW9Q5otjJGX5fWA3IlJKpPZUu2LLtJNq21xhXJYFjEV
+	Suf4nyw==
+X-Google-Smtp-Source: AGHT+IHZpo9yVzRnXdUKvTXY9ZQtWtBLdKSOZfU7YVv7hkzlMjlyi3VsozBWY+UWea6vDF42mm0qzQ==
+X-Received: by 2002:a05:600c:37c5:b0:451:dee4:cd07 with SMTP id 5b1f17b1804b1-454d52681e5mr4298385e9.0.1752046009717;
+        Wed, 09 Jul 2025 00:26:49 -0700 (PDT)
+Received: from [192.168.1.110] ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b470f871casm14962751f8f.45.2025.07.09.00.26.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Jul 2025 00:26:49 -0700 (PDT)
+Message-ID: <3f2938ce-8045-44dd-aee6-542779cd9916@linaro.org>
+Date: Wed, 9 Jul 2025 09:26:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250709-gw-dts-lic-v2-1-ac3b697f65d5@prolan.hu>
-X-B4-Tracking: v=1; b=H4sIALAZbmgC/02NwQ6CMBAFf4Xs2TVtFSme/A/DobSFboItaRE1h
- H+3kJh4nGTevAWSjWQTXIsFop0pUfAZxKEA7ZTvLZLJDIKJklWMY/9CMyUcSGN1klKbuuxqfoE
- 8GKPt6L3H7k3mViWLbVReuy3xUGmycRMdpSnEz346803/9cV/f+bIsVJKC8PYWcruNsYwKH90T
- 2jWdf0C4gC+rr0AAAA=
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, "Sascha
- Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Tim
- Harvey" <tharvey@gateworks.com>, =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?=
-	<csokas.bence@prolan.hu>
-X-Mailer: b4 0.13.0
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1752046003;VERSION=7994;MC=3736621438;ID=98227;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2998FD515E657160
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] clocksource: timer-cadence-ttc: Support TTC device
+ configured as PWM
+To: "Rao, Appana Durga Kedareswara" <appana.durga.kedareswara.rao@amd.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+ "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "Simek, Michal" <michal.simek@amd.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+ "git (AMD-Xilinx)" <git@amd.com>,
+ "Vanukuri, Meher Thanmaiee" <MeherThanmaiee.Vanukuri@amd.com>
+References: <20250115113556.2832282-1-mubin.sayyed@amd.com>
+ <20250115113556.2832282-3-mubin.sayyed@amd.com>
+ <hwnhz4yr6vzz3oav4gq7qptejjy3rdwff7iveawaxexf3tbngr@pnrxi6jkpw3k>
+ <DS7PR12MB824987018AAB745E38C638728F7CA@DS7PR12MB8249.namprd12.prod.outlook.com>
+ <DS7PR12MB82495FE4A65F266D0857EB408F49A@DS7PR12MB8249.namprd12.prod.outlook.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <DS7PR12MB82495FE4A65F266D0857EB408F49A@DS7PR12MB8249.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Replace verbatim license text with a `SPDX-License-Identifier`.
+On 09/07/2025 08:51, Rao, Appana Durga Kedareswara wrote:
+> Ping!
 
-The comment header mis-attributes this license to be "X11", but the
-license text does not include the last line "Except as contained in this
-notice, the name of the X Consortium shall not be used in advertising or
-otherwise to promote the sale, use or other dealings in this Software
-without prior written authorization from the X Consortium.". Therefore,
-this license is actually equivalent to the SPDX "MIT" license (confirmed
-by text diffing).
-
-Cc: Tim Harvey <tharvey@gateworks.com>
-Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
----
-Fix up Device Tree files by replacing the license text in comment blocks
-by a `SPDX-License-Identifier`.
----
-Changes in v2:
-- Fix msg
-- Link to v1: https://lore.kernel.org/r/20250702-gw-dts-lic-v1-1-7aac2d00488f@prolan.hu
----
- arch/arm/boot/dts/nxp/imx/imx6dl-gw551x.dts   | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6dl-gw553x.dts   | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6dl-gw560x.dts   | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6dl-gw5903.dts   | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6dl-gw5904.dts   | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6q-gw551x.dts    | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6q-gw553x.dts    | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6q-gw560x.dts    | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6q-gw5903.dts    | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6q-gw5904.dts    | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw551x.dtsi | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw553x.dtsi | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw560x.dtsi | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw5903.dtsi | 44 +--------------------------
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw5904.dtsi | 44 +--------------------------
- 15 files changed, 15 insertions(+), 645 deletions(-)
-
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-gw551x.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-gw551x.dts
-index 82d5f85722ea..50dd3df9dd04 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-gw551x.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-gw551x.dts
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2014 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-gw553x.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-gw553x.dts
-index 59b8afc36e66..8ca5b6b8da07 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-gw553x.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-gw553x.dts
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2016 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-gw560x.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-gw560x.dts
-index 21bdfaf8df53..b94455406a57 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-gw560x.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-gw560x.dts
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2017 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-gw5903.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-gw5903.dts
-index 103261ea9334..dd978105b42f 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-gw5903.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-gw5903.dts
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2017 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-gw5904.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-gw5904.dts
-index 9c6d3cd3d6a7..172dad423639 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-gw5904.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-gw5904.dts
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2017 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-gw551x.dts b/arch/arm/boot/dts/nxp/imx/imx6q-gw551x.dts
-index 2c7feeef1b0e..44d1871ac666 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-gw551x.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-gw551x.dts
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2014 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-gw553x.dts b/arch/arm/boot/dts/nxp/imx/imx6q-gw553x.dts
-index e9c224cea752..22842f2ef685 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-gw553x.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-gw553x.dts
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2016 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-gw560x.dts b/arch/arm/boot/dts/nxp/imx/imx6q-gw560x.dts
-index 735f2bbf1439..c69fdd064e2f 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-gw560x.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-gw560x.dts
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2017 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-gw5903.dts b/arch/arm/boot/dts/nxp/imx/imx6q-gw5903.dts
-index a182e4cb0e6e..a9a33eeb9712 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-gw5903.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-gw5903.dts
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2017 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-gw5904.dts b/arch/arm/boot/dts/nxp/imx/imx6q-gw5904.dts
-index ca1e2ae3341e..25a93cd4e5f5 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-gw5904.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-gw5904.dts
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2017 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw551x.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw551x.dtsi
-index 29960d1cf6a0..009a9d56757c 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw551x.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw551x.dtsi
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2014 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include <dt-bindings/gpio/gpio.h>
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw553x.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw553x.dtsi
-index c6e231de674a..e3b677384a22 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw553x.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw553x.dtsi
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2016 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include <dt-bindings/gpio/gpio.h>
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw560x.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw560x.dtsi
-index d0f648938cae..ce1d49a9e0cd 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw560x.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw560x.dtsi
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2017 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include <dt-bindings/gpio/gpio.h>
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5903.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5903.dtsi
-index 71911df881cc..50b484998c49 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5903.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5903.dtsi
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2017 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include <dt-bindings/gpio/gpio.h>
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5904.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5904.dtsi
-index 716c324a7458..3125cd04d4ea 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5904.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5904.dtsi
-@@ -1,48 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2017 Gateworks Corporation
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of
-- *     the License, or (at your option) any later version.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- *     You should have received a copy of the GNU General Public
-- *     License along with this file; if not, write to the Free
-- *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-- *     MA 02110-1301 USA
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include <dt-bindings/gpio/gpio.h>
-
----
-base-commit: 66701750d5565c574af42bef0b789ce0203e3071
-change-id: 20250701-gw-dts-lic-7388cd95f916
+You responded after three months and now you keep pinging on that? No,
+implement entire feedback and then start working on recent Linux kernel.
 
 Best regards,
--- 
-Bence Csókás <csokas.bence@prolan.hu>
-
-
+Krzysztof
 
