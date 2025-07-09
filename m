@@ -1,294 +1,102 @@
-Return-Path: <linux-kernel+bounces-722941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54862AFE0E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:08:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8C8AFE0EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F336B1AA352E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:08:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6291AA39B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5281D26E16F;
-	Wed,  9 Jul 2025 07:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/c+L04s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A7C26E6FB;
+	Wed,  9 Jul 2025 07:08:20 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB4E21ABAC;
-	Wed,  9 Jul 2025 07:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8145F26E152;
+	Wed,  9 Jul 2025 07:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752044867; cv=none; b=AP30JsZhooHax1GXvAY6+uQy83C4vcG5712Btjh4dhi9UBE7cBUpV3XFxA1OzC4gngzu7scfiWwabSxOj3lnUZhAjMEqDath2quPgpT9mKeZkQ5TTIPljCeLPX9kSuKj9sPEXeRQpTz23lSe2hDAVpyYUiTW+S1PmyguJc47Hyg=
+	t=1752044900; cv=none; b=BG46Q6sSfXtZHwXcrVlwf8uIyT9Qq1gdT6rS8ZFmFOxO353+pqSzhdsqZg5VEFji7Y/tusnQc8gI4F2m1rFJEMUJwklPIVCYDb5J3UGYOuh5ratKfejLN5xgo7ysTJcmx49ZpLL9qEe7jngYyKxO8sh/+J/8BYeesA9qymHuSJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752044867; c=relaxed/simple;
-	bh=2MdHLI/kc3/sXkRraTSCSWVM2Sn/FBlCke7KGOlkVj0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=slVnkLoUV0oW+EURWnf1f07IGTsqeBxbRWGUDlEVsb0u59rGenK7OldszzjcBWEbYWNwAVb7Mng3Ih7z4PJTwv2NOIFFuzL/eSPiys1azNw3fEqvHMOYKp+bLKL6Lz/QUISR8m1aaDOxueBKIarpt0soyj6btZpMwteVZdviLh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/c+L04s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E35FC4CEF6;
-	Wed,  9 Jul 2025 07:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752044867;
-	bh=2MdHLI/kc3/sXkRraTSCSWVM2Sn/FBlCke7KGOlkVj0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=k/c+L04sOc0MKjWtcSz7AvHMPOUcbH9BcbJy4JWwYwYXTxE3p1lzybhEhkJLX++af
-	 a+my1g9ygFOTa3xZR4GtPb8W8Nk4am6v5jRXVSU9AWBHT7KlKwWx9N1IoRKVhYrixp
-	 F3KnO14FwVXnzmuC1InCS9ronbphbrC/+Z4uA0AATnTbRqYGGfGFTAPyZSilI7gR/w
-	 geRdqj4W3Or+lYm1fSztBW1Q66zaI97BcziBljphYmv3vNiW2M31uxU/lDai9CbbGp
-	 XCYcr0Aj4cYC3brjB/JaSAvPNJeRR8k4blKr9O0E0cZL5/TNXT++ojjlrPGT54a7vd
-	 lZ+4m4KFctRmA==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-40b32b6af9eso2810045b6e.1;
-        Wed, 09 Jul 2025 00:07:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVSdoAiV9FpTzMP311jSXfADa8LpkQB1kdUHNm1FBzA4EP5QhS1aZUQ66K2lxo8oREUQ64lyCg99k8=@vger.kernel.org, AJvYcCVbgPqECYC7HmM0AbZmU3Jvf2FAiAE2wJGuadQDP6J2JxaYeXtgWnNkIgy1y0gOVY7tsU0noBr18QbqY6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjIM1MocRm41U0er/ZsY+KR98fcdN/3cvyLoCjPxeY0ZOnWYMl
-	7P0AR8o3DV6UOjE2/tBjesn1a2y/hncBAvWOg0WswrpEeikzuZWYbVUR6bHkzyT4S6RNfh/Jy8P
-	8Bw4yOZmIAjXhSLpK9o08wvlK2Oqn9/o=
-X-Google-Smtp-Source: AGHT+IGp/NayOtRsLLSmbAURDrhYR2FbBuu38inQDiqYLYIswlKJVK/j/UGfnBdtwASkd+Ow+dv4iXafQ/2s9EKa99M=
-X-Received: by 2002:a05:6808:309a:b0:408:fef8:9c95 with SMTP id
- 5614622812f47-412bc00a9aemr825692b6e.24.1752044866209; Wed, 09 Jul 2025
- 00:07:46 -0700 (PDT)
+	s=arc-20240116; t=1752044900; c=relaxed/simple;
+	bh=fJ4/PixeYGlPCd/DWRyXWkwVq2VpMj7eWmvJIGhyll0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W8uLyObGTKwiGKImOOfBdvMAJGw202Gmi+MfXzZ1mfFLukVyMm67jyE2PzsBAEADdekr0NQZqmdMDqgfHFtGrPCvXbidJVbWNP27HwVtAvPBXDsRzmaN0TQIa7S1guYVhqSMQrSUUyp5p6LHBrkOpH8MlIpRmlf5BngU7UwN1Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 9 Jul
+ 2025 15:08:09 +0800
+Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Wed, 9 Jul 2025 15:08:09 +0800
+From: Jacky Chou <jacky_chou@aspeedtech.com>
+To: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
+	<andrew@codeconstruct.com.au>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<p.zabel@pengutronix.de>, <horms@kernel.org>, <jacob.e.keller@intel.com>,
+	<u.kleine-koenig@baylibre.com>, <hkallweit1@gmail.com>
+CC: <BMC-SW@aspeedtech.com>
+Subject: [net-next v4 0/4] net: ftgmac100: Add SoC reset support for RMII mode
+Date: Wed, 9 Jul 2025 15:08:05 +0800
+Message-ID: <20250709070809.2560688-1-jacky_chou@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709064404.839975-1-guoqing.zhang@amd.com> <20250709064404.839975-5-guoqing.zhang@amd.com>
-In-Reply-To: <20250709064404.839975-5-guoqing.zhang@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 Jul 2025 09:07:34 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jPd1UPL8DvhWazmVod+_T7WnLNAqRDzFu_TgR0h01A+Q@mail.gmail.com>
-X-Gm-Features: Ac12FXxcTQFO_UUbF4MOdTNwbGiNb201TkYOBWF7Xek2l7rMQeNnDteBDVBMvDo
-Message-ID: <CAJZ5v0jPd1UPL8DvhWazmVod+_T7WnLNAqRDzFu_TgR0h01A+Q@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] PM: hibernate: add new api pm_transition_event()
-To: Samuel Zhang <guoqing.zhang@amd.com>, mario.limonciello@amd.com
-Cc: alexander.deucher@amd.com, christian.koenig@amd.com, len.brown@intel.com, 
-	pavel@kernel.org, gregkh@linuxfoundation.org, dakr@kernel.org, 
-	airlied@gmail.com, simona@ffwll.ch, ray.huang@amd.com, matthew.auld@intel.com, 
-	matthew.brost@intel.com, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, lijo.lazar@amd.com, 
-	victor.zhao@amd.com, haijun.chang@amd.com, Qing.Ma@amd.com, 
-	Owen.Zhang2@amd.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, Jul 9, 2025 at 8:44=E2=80=AFAM Samuel Zhang <guoqing.zhang@amd.com>=
- wrote:
->
-> dev_pm_ops.thaw() is called in following cases:
-> * normal case: after hibernation image has been created.
-> * error case 1: creation of a hibernation image has failed.
-> * error case 2: restoration from a hibernation image has failed.
->
-> For normal case, it is called mainly for resume storage devices for
-> saving the hibernation image. Other devices that are not involved
-> in the image saving do not need to resume the device. But since there's
-> no api to know which case thaw() is called, device drivers can't
-> conditionally resume device in thaw().
->
-> The new pm_transition_event() is such a api to query if thaw() is called
-> in normal case. The returned value in thaw() is:
-> * PM_EVENT_THAW: normal case, no need to resume non-storage devices.
-> * PM_EVENT_RECOVER: error case, need to resume devices.
->
-> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
-> ---
->  drivers/base/power/main.c |  5 +++
->  include/linux/pm.h        | 85 +++++++++++++++++++++++----------------
->  2 files changed, 56 insertions(+), 34 deletions(-)
->
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 40e1d8d8a589..7e0982caa4d4 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -62,6 +62,11 @@ static LIST_HEAD(dpm_noirq_list);
->
->  static DEFINE_MUTEX(dpm_list_mtx);
->  static pm_message_t pm_transition;
-> +int pm_transition_event(void)
-> +{
-> +       return pm_transition.event;
-> +}
-> +EXPORT_SYMBOL_GPL(pm_transition_event);
->
->  static int async_error;
->
-> diff --git a/include/linux/pm.h b/include/linux/pm.h
-> index 78855d794342..7e7b843ba823 100644
-> --- a/include/linux/pm.h
-> +++ b/include/linux/pm.h
-> @@ -471,58 +471,59 @@ const struct dev_pm_ops name =3D { \
->  #define pm_ptr(_ptr) PTR_IF(IS_ENABLED(CONFIG_PM), (_ptr))
->  #define pm_sleep_ptr(_ptr) PTR_IF(IS_ENABLED(CONFIG_PM_SLEEP), (_ptr))
->
-> -/*
-> - * PM_EVENT_ messages
-> +/**
-> + * pm_transition_event() - Query the current pm transition event value.
-> + *
-> + * One example is used to query the reason why thaw() is called.
-> + * It will return one of 2 values in this usage:
-> + * * %PM_EVENT_THAW: normal case.
-> + * * %PM_EVENT_RECOVER: error case.
-> + *
-> + * For other usage, it may return other values. See :ref:`PM_EVENT_ mess=
-ages`
-> + * for all possible values.
-> + *
-> + * Return: One of the %PM_EVENT_ messages
-> + */
-> +int pm_transition_event(void);
+This patch series adds support for an optional reset line to the
+ftgmac100 ethernet controller, as used on Aspeed SoCs. On these SoCs,
+the internal MAC reset is not sufficient to reset the RMII interface.
+By providing a SoC-level reset via the device tree "resets" property,
+the driver can properly reset both the MAC and RMII logic, ensuring
+correct operation in RMII mode.
 
-Please move the kerneldoc to where the function is defined (that is, main.c=
-).
+The series includes:
+- Device tree binding update to document the new "resets" property.
+- Addition of MAC1/2/3/4 reset definitions for AST2600.
+- Device tree changes for AST2600 to use the new reset properties.
+- Driver changes to assert/deassert the reset line as needed.
 
-Now, I've changed my mind regarding this wrapper, sorry.
+This improves reliability and initialization of the MAC in RMII mode
+on Aspeed platforms.
 
-I'm thinking now that "thaw" is exceptional and no other callback will
-ever need to check why it was called because it will always do the
-same thing.
+Jacky Chou (4):
+  dt-bindings: net: ftgmac100: Add resets property
+  dt-bindings: clock: ast2600: Add reset definitions for MAC1 and MAC2
+  ARM: dts: aspeed-g6: Add resets property for MAC controllers
+  net: ftgmac100: Add optional reset control for RMII mode on Aspeed
+    SoCs
 
-So this should be hibernation-specific and Mario was right.
+ .../bindings/net/faraday,ftgmac100.yaml       | 21 ++++++++++++---
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi       |  4 +++
+ drivers/net/ethernet/faraday/ftgmac100.c      | 26 +++++++++++++++++++
+ include/dt-bindings/clock/ast2600-clock.h     |  2 ++
+ 4 files changed, 50 insertions(+), 3 deletions(-)
 
-Please make it return bool, and in particular return "true" if
-pm_transition.event =3D=3D PM_EVENT_RECOVER and "false" otherwise.
+---
+v4:
+  - Added more useful commit messages to faraday,ftgmac100.yaml.
+v3:
+  - Fixed allOf in faraday,ftgmac100.yaml.
+v2:
+  - Added restriction on resets property in faraday,ftgmac100.yaml.
+---
 
-Specifically
+-- 
+2.34.1
 
-bool pm_hibernate_is_recovering(void)
-{
-        return pm_transition.event =3D=3D PM_EVENT_RECOVER;
-}
-
-And the changes below won't be necessary then.
-
-> +
-> +/**
-> + * DOC: PM_EVENT_ messages
->   *
-> - * The following PM_EVENT_ messages are defined for the internal use of =
-the PM
-> + * The possible return values of %pm_transition_event().
-> + *
-> + * The following PM_EVENT_ messages are defined for the use of drivers a=
-nd PM
->   * core, in order to provide a mechanism allowing the high level suspend=
- and
->   * hibernation code to convey the necessary information to the device PM=
- core
->   * code:
->   *
-> - * ON          No transition.
-> + * %PM_EVENT_ON:               No transition.
->   *
-> - * FREEZE      System is going to hibernate, call ->prepare() and ->free=
-ze()
-> - *             for all devices.
-> + * %PM_EVENT_FREEZE:   System is going to hibernate, call ->prepare() an=
-d
-> + *             ->freeze() for all devices.
->   *
-> - * SUSPEND     System is going to suspend, call ->prepare() and ->suspen=
-d()
-> - *             for all devices.
-> + * %PM_EVENT_SUSPEND:  System is going to suspend, call ->prepare() and
-> + *             ->suspend() for all devices.
->   *
-> - * HIBERNATE   Hibernation image has been saved, call ->prepare() and
-> + * %PM_EVENT_HIBERNATE:        Hibernation image has been saved, call ->=
-prepare() and
->   *             ->poweroff() for all devices.
->   *
-> - * QUIESCE     Contents of main memory are going to be restored from a (=
-loaded)
-> - *             hibernation image, call ->prepare() and ->freeze() for al=
-l
-> + * %PM_EVENT_QUIESCE:  Contents of main memory are going to be restored =
-from
-> + *             a (loaded) hibernation image, call ->prepare() and ->free=
-ze() for all
->   *             devices.
->   *
-> - * RESUME      System is resuming, call ->resume() and ->complete() for =
-all
-> - *             devices.
-> + * %PM_EVENT_RESUME:   System is resuming, call ->resume() and ->complet=
-e()
-> + *             for all devices.
->   *
-> - * THAW                Hibernation image has been created, call ->thaw()=
- and
-> + * %PM_EVENT_THAW:             Hibernation image has been created, call =
-->thaw() and
->   *             ->complete() for all devices.
->   *
-> - * RESTORE     Contents of main memory have been restored from a hiberna=
-tion
-> - *             image, call ->restore() and ->complete() for all devices.
-> + * %PM_EVENT_RESTORE:  Contents of main memory have been restored from a
-> + *             hibernation image, call ->restore() and ->complete() for =
-all devices.
->   *
-> - * RECOVER     Creation of a hibernation image or restoration of the mai=
-n
-> - *             memory contents from a hibernation image has failed, call
-> + * %PM_EVENT_RECOVER:  Creation of a hibernation image or restoration of=
- the
-> + *             main memory contents from a hibernation image has failed,=
- call
->   *             ->thaw() and ->complete() for all devices.
-> - *
-> - * The following PM_EVENT_ messages are defined for internal use by
-> - * kernel subsystems.  They are never issued by the PM core.
-> - *
-> - * USER_SUSPEND                Manual selective suspend was issued by us=
-erspace.
-> - *
-> - * USER_RESUME         Manual selective resume was issued by userspace.
-> - *
-> - * REMOTE_WAKEUP       Remote-wakeup request was received from the devic=
-e.
-> - *
-> - * AUTO_SUSPEND                Automatic (device idle) runtime suspend w=
-as
-> - *                     initiated by the subsystem.
-> - *
-> - * AUTO_RESUME         Automatic (device needed) runtime resume was
-> - *                     requested by a driver.
->   */
-> -
->  #define PM_EVENT_INVALID       (-1)
->  #define PM_EVENT_ON            0x0000
->  #define PM_EVENT_FREEZE                0x0001
-> @@ -537,6 +538,22 @@ const struct dev_pm_ops name =3D { \
->  #define PM_EVENT_REMOTE                0x0200
->  #define PM_EVENT_AUTO          0x0400
->
-> +/*
-> + * The following PM_EVENT_ messages are defined for internal use by
-> + * kernel subsystems.  They are never issued by the PM core.
-> + *
-> + * USER_SUSPEND        Manual selective suspend was issued by userspace.
-> + *
-> + * USER_RESUME Manual selective resume was issued by userspace.
-> + *
-> + * REMOTE_WAKEUP       Remote-wakeup request was received from the devic=
-e.
-> + *
-> + * AUTO_SUSPEND        Automatic (device idle) runtime suspend was
-> + *                     initiated by the subsystem.
-> + *
-> + * AUTO_RESUME Automatic (device needed) runtime resume was
-> + *                     requested by a driver.
-> + */
->  #define PM_EVENT_SLEEP         (PM_EVENT_SUSPEND | PM_EVENT_HIBERNATE)
->  #define PM_EVENT_USER_SUSPEND  (PM_EVENT_USER | PM_EVENT_SUSPEND)
->  #define PM_EVENT_USER_RESUME   (PM_EVENT_USER | PM_EVENT_RESUME)
-> --
-> 2.43.5
->
 
