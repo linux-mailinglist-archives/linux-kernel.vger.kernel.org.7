@@ -1,202 +1,195 @@
-Return-Path: <linux-kernel+bounces-722981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F4CAFE159
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:32:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 767C9AFE15B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 553D417CDBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:32:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6EF4E305C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18392701B4;
-	Wed,  9 Jul 2025 07:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFF72701CC;
+	Wed,  9 Jul 2025 07:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oeMyOBce"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="T6S0v3gl"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054C426CE18
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601F126CE18;
+	Wed,  9 Jul 2025 07:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752046351; cv=none; b=TslGJAtla3plhhVEIZXiynVIe1lznNmiNWtn4TLSZ4yq4hVoYLv6eSACjs17XcU628EHXqp98ruys5/l4skP5GBZxjzoWlNyz1rxm2vFLwWWHutciOTNUr0vn9x0/FvXkeivcgDWZ2XAa3WJNijW2ICdSu1T8X/7Bf+Od+dVUFc=
+	t=1752046381; cv=none; b=rg8NwJrMYDeR44d2uERtx9NXhedWMAEJT/zPsDXWP3tzwRCZtPSvZILJWDzYv0lNNFcexTkCdnM0MHq8+0lvgWxtNAg4bSFvg7VvZDB0YdyOCSU+2uPiivAGPHAbNIgbl1JJoXa+oCUPhXrIoMwi2X47Y9T7oY5O0B83uDtGfvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752046351; c=relaxed/simple;
-	bh=F/kiRIrGWQs4/5JBt8fnQyLeUlCY6ElHTRFaEDd9rpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P1R9++pLWKk3hylTnafv8nIMpZnJuBKHFN2wt06HIz3lO9j2xphxnfbK92hriqxX0UpM3rAOUSleL+bmHyUpXhQb6KTWlGdeFVo95c/Va0A6cTU4P/SbXDrEuBPo5010fnsSqoWe9rps4jo5ekSTCyqrV+yZK28UrWlVC3tvPHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oeMyOBce; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC79C4CEF0;
-	Wed,  9 Jul 2025 07:32:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752046350;
-	bh=F/kiRIrGWQs4/5JBt8fnQyLeUlCY6ElHTRFaEDd9rpM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oeMyOBce6S935WRVUIUM3aL0ZGhAF3LUUAeW/YO0nNBpYKJsqwqn1xFuFnQXZHBca
-	 bt+QYBu2odzlDgubNm40UccUaGPpTDiyvjRHbx7Qjf16lFQDcSR5EDIVqB9DabThk7
-	 FwvPMnpwCjW2M7iBeCBXK5xqnYeoDHsRkNPIeq/KAJUS8CPlkeRqmuLTxueDcgO1O2
-	 /MpCCxUQxbtiTwv6i/QIxZ9+s83qwYX2+b5TTmIexmKzhJSPkz9qP9kXAEcef5TAYT
-	 uEBiGNtNalXBQmPcMT89/Kna9u/nFR6dc4VumGsStccgC895qwDHhEEpi7I8pC8onN
-	 pxK9tsdNH97NQ==
-Date: Wed, 9 Jul 2025 09:32:28 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm/sti: hda: convert to devm_drm_bridge_alloc() API
-Message-ID: <20250709-foamy-neon-woodpecker-eea693@houat>
-References: <20250708-drm-bridge-convert-to-alloc-api-leftovers-v1-0-6285de8c3759@bootlin.com>
- <20250708-drm-bridge-convert-to-alloc-api-leftovers-v1-2-6285de8c3759@bootlin.com>
+	s=arc-20240116; t=1752046381; c=relaxed/simple;
+	bh=Sy8iu66InCx0Di41hZZkltZFq+PKF9yCkPlZT6+6dII=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=TC4M6hh0olfjxEMZuH+MwlTyB3zmAV2h32DGmM/dv/JDKN2XHSJfT4eEC9cK3YZk5FZ3/o3r1vZ1KxHnrNcxtUiq9v35bNY+QH7rqdmhtVmbYtn4sOOdmJkrBMDwd1niPASRVPgSlaVQUL8iU7rP9+Y4HMoH67ki1/Rcx+JFizs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=T6S0v3gl; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id D53D0A055C;
+	Wed,  9 Jul 2025 09:32:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=INofVc3vayZ17omOmsrTU0mCKgOXj0EdNGj9WOSzMF8=; b=
+	T6S0v3glKutswVxsbHf0SPuEAyb29Xy/bC++ria2PhKawxQ+2pFa50TFti1rUhzz
+	BeinmgQaZDSSk6EKw1KccI2xVZKHx2veUmqUlf/NcOc20tbJjh4x3s8U/3+2HZUP
+	hQcdjVaODvc+0mIBmRvwPPezbuCWS0g/cre0cYEC5QHPhMsEDABZreBRaD+ihHIe
+	ZlkDIxQeJX3IgBC3QQjG0N4Nov5pOZd+QJIPni55jo2YR6hA5GqwW8zfB6KYYmAg
+	OzfkDZjNFZQv9KGHaMYCxaQtmRKu9ZLakXsjDyoXVpBQX3VBkwkq6sKH9SYJwHRc
+	h8tyPYniW3YlQaSKHLzEdjqFWi2r63840SDwNpIKzxsNse2vPSVX3q/9npEfBuSA
+	KsfCy5quVTU/3yOTw7uRL3hsUjyMg/+TFWPge6OVlR7XfgQeW7TA1vRXv1Th3jZJ
+	dVUxzCVE9K/0iUjLc//hHYbNoyWrjZV1y4oeZnY0L8QOSsgxW5tObkYzVrIKOgsi
+	lLDT/s+aa2TZvkhw0bI+7au0Cx9DkQLPKgkrS8sJvU2ciZn848EV5w2OFt44GdA7
+	oGiclZZ5t5mC6pXxROfUomD3fZbRKsEWhnmxA6abyNc27QQdohpgv/RNlAdjBFMv
+	Vg/D0BBSaI0vot6+Q7h1XyjC8/YWmEj7HHiad0zcLTc=
+From: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+Date: Wed, 9 Jul 2025 09:32:44 +0200
+Subject: [PATCH] ARM: dts: imx6-display5: Replace license text comment with
+ SPDX identifier
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="fsxrs37u26bgqqst"
-Content-Disposition: inline
-In-Reply-To: <20250708-drm-bridge-convert-to-alloc-api-leftovers-v1-2-6285de8c3759@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20250709-display5-dts-lic-v1-1-81e46a650d3d@prolan.hu>
+X-B4-Tracking: v=1; b=H4sIABsbbmgC/x3MwQqDMAyA4VeRnBfolOq2VxkeYptqwHWSiDjEd
+ 1+343f4/wOMVdjgUR2gvInJOxdcLxWEifLIKLEYald717kbRrFlpo/HuBrOEjA1nt2d2hS6Bkq
+ 2KCfZ/8tnXzyQMQ5KOUy/0YtsZYXz/AK8LjR/ewAAAA==
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, "Sascha
+ Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Lukasz Majewski <lukma@denx.de>, =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?=
+	<csokas.bence@prolan.hu>
+X-Mailer: b4 0.13.0
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1752046376;VERSION=7994;MC=4240065730;ID=156625;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155E657160
+
+Replace verbatim license text with a `SPDX-License-Identifier`.
+
+The comment header mis-attributes this license to be "X11", but the
+license text does not include the last line "Except as contained in this
+notice, the name of the X Consortium shall not be used in advertising or
+otherwise to promote the sale, use or other dealings in this Software
+without prior written authorization from the X Consortium.". Therefore,
+this license is actually equivalent to the SPDX "MIT" license (confirmed
+by text diffing).
+
+Cc: Lukasz Majewski <lukma@denx.de>
+Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+---
+ .../imx/imx6q-display5-tianma-tm070-1280x768.dts   | 33 +---------------------
+ arch/arm/boot/dts/nxp/imx/imx6q-display5.dtsi      | 33 +---------------------
+ 2 files changed, 2 insertions(+), 64 deletions(-)
+
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-display5-tianma-tm070-1280x768.dts b/arch/arm/boot/dts/nxp/imx/imx6q-display5-tianma-tm070-1280x768.dts
+index 16658b76fc4e..059750270fc4 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6q-display5-tianma-tm070-1280x768.dts
++++ b/arch/arm/boot/dts/nxp/imx/imx6q-display5-tianma-tm070-1280x768.dts
+@@ -1,38 +1,7 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+ /*
+  * Copyright 2017
+  * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the X11 license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This file is licensed under the terms of the GNU General Public
+- *     License version 2.  This program is licensed "as is" without
+- *     any warranty of any kind, whether express or implied.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-display5.dtsi b/arch/arm/boot/dts/nxp/imx/imx6q-display5.dtsi
+index 4ab31f2217cd..4e448b4810f2 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6q-display5.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx6q-display5.dtsi
+@@ -1,38 +1,7 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+ /*
+  * Copyright 2017
+  * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+- *
+- * This file is dual-licensed: you can use it either under the terms
+- * of the GPL or the X11 license, at your option. Note that this dual
+- * licensing only applies to this file, and not this project as a
+- * whole.
+- *
+- *  a) This file is licensed under the terms of the GNU General Public
+- *     License version 2.  This program is licensed "as is" without
+- *     any warranty of any kind, whether express or implied.
+- *
+- * Or, alternatively,
+- *
+- *  b) Permission is hereby granted, free of charge, to any person
+- *     obtaining a copy of this software and associated documentation
+- *     files (the "Software"), to deal in the Software without
+- *     restriction, including without limitation the rights to use,
+- *     copy, modify, merge, publish, distribute, sublicense, and/or
+- *     sell copies of the Software, and to permit persons to whom the
+- *     Software is furnished to do so, subject to the following
+- *     conditions:
+- *
+- *     The above copyright notice and this permission notice shall be
+- *     included in all copies or substantial portions of the Software.
+- *
+- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+- *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+ /dts-v1/;
+
+---
+base-commit: c435a4f487e8c6a3b23dafbda87d971d4fd14e0b
+change-id: 20250708-display5-dts-lic-f35e09a6fc73
+
+Best regards,
+-- 
+Bence Csókás <csokas.bence@prolan.hu>
 
 
---fsxrs37u26bgqqst
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] drm/sti: hda: convert to devm_drm_bridge_alloc() API
-MIME-Version: 1.0
-
-Hi,
-
-On Tue, Jul 08, 2025 at 05:24:43PM +0200, Luca Ceresoli wrote:
-> devm_drm_bridge_alloc() is the new API to be used for allocating (and
-> partially initializing) a private driver struct embedding a struct
-> drm_bridge.
->=20
-> This driver was missed during the automated conversion in commit
-> 9c399719cfb9 ("drm: convert many bridge drivers from devm_kzalloc() to
-> devm_drm_bridge_alloc() API") and following commits.
->=20
-> The lack of conversion for this driver is a bug since commit a7748dd127ea
-> ("drm/bridge: get/put the bridge reference in drm_bridge_add/remove()")
-> which is the first commmit having added a drm_bridge_get/put() pair and
-> thus exposing the incorrect initial refcount issue.
->=20
-> Fix this by switching the driver to the new API.
->=20
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Closes: https://lore.kernel.org/all/ce9c6aa3-5372-468f-a4bf-5a261259e459@=
-samsung.com/
-> Fixes: a7748dd127ea ("drm/bridge: get/put the bridge reference in drm_bri=
-dge_add/remove()")
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
->  drivers/gpu/drm/sti/sti_hda.c | 27 +++++++++++++--------------
->  1 file changed, 13 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
-> index d202b6c1eb8f6032fef547c9f00ca9cd2a914520..2c015f563de96ae5895980149=
-3ead870c49f70e5 100644
-> --- a/drivers/gpu/drm/sti/sti_hda.c
-> +++ b/drivers/gpu/drm/sti/sti_hda.c
-> @@ -246,6 +246,7 @@ struct sti_hda {
->  	struct device dev;
->  	struct drm_device *drm_dev;
->  	struct drm_display_mode mode;
-> +	struct drm_bridge bridge;
->  	void __iomem *regs;
->  	void __iomem *video_dacs_ctrl;
->  	struct clk *clk_pix;
-> @@ -262,6 +263,11 @@ struct sti_hda_connector {
->  #define to_sti_hda_connector(x) \
->  	container_of(x, struct sti_hda_connector, drm_connector)
-> =20
-> +static struct sti_hda *drm_bridge_to_sti_hda(struct drm_bridge *bridge)
-> +{
-> +	return container_of(bridge, struct sti_hda, bridge);
-> +}
-> +
->  static u32 hda_read(struct sti_hda *hda, int offset)
->  {
->  	return readl(hda->regs + offset);
-> @@ -401,7 +407,7 @@ static void sti_hda_configure_awg(struct sti_hda *hda=
-, u32 *awg_instr, int nb)
-> =20
->  static void sti_hda_disable(struct drm_bridge *bridge)
->  {
-> -	struct sti_hda *hda =3D bridge->driver_private;
-> +	struct sti_hda *hda =3D drm_bridge_to_sti_hda(bridge);
->  	u32 val;
-> =20
->  	if (!hda->enabled)
-> @@ -426,7 +432,7 @@ static void sti_hda_disable(struct drm_bridge *bridge)
-> =20
->  static void sti_hda_pre_enable(struct drm_bridge *bridge)
->  {
-> -	struct sti_hda *hda =3D bridge->driver_private;
-> +	struct sti_hda *hda =3D drm_bridge_to_sti_hda(bridge);
->  	u32 val, i, mode_idx;
->  	u32 src_filter_y, src_filter_c;
->  	u32 *coef_y, *coef_c;
-> @@ -517,7 +523,7 @@ static void sti_hda_set_mode(struct drm_bridge *bridg=
-e,
->  			     const struct drm_display_mode *mode,
->  			     const struct drm_display_mode *adjusted_mode)
->  {
-> -	struct sti_hda *hda =3D bridge->driver_private;
-> +	struct sti_hda *hda =3D drm_bridge_to_sti_hda(bridge);
->  	u32 mode_idx;
->  	int hddac_rate;
->  	int ret;
-> @@ -677,7 +683,6 @@ static int sti_hda_bind(struct device *dev, struct de=
-vice *master, void *data)
->  	struct drm_encoder *encoder;
->  	struct sti_hda_connector *connector;
->  	struct drm_connector *drm_connector;
-> -	struct drm_bridge *bridge;
->  	int err;
-> =20
->  	/* Set the drm device handle */
-> @@ -693,13 +698,7 @@ static int sti_hda_bind(struct device *dev, struct d=
-evice *master, void *data)
-> =20
->  	connector->hda =3D hda;
-> =20
-> -	bridge =3D devm_kzalloc(dev, sizeof(*bridge), GFP_KERNEL);
-> -	if (!bridge)
-> -		return -ENOMEM;
-> -
-> -	bridge->driver_private =3D hda;
-> -	bridge->funcs =3D &sti_hda_bridge_funcs;
-> -	drm_bridge_attach(encoder, bridge, NULL, 0);
-> +	drm_bridge_attach(encoder, &hda->bridge, NULL, 0);
-
-It's not entirely related, but the connector is also allocated right
-before and could be moved into the structure instead of storing a
-pointer.
-
-Either way,
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-
-Maxime
-
---fsxrs37u26bgqqst
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaG4bDAAKCRAnX84Zoj2+
-dqrBAYDEyt9Y6J9ulC2nJmtIPZTjnV/XI5Cennr6erV/1J4jTOwHvFbo/20TSstb
-DrwXsFQBf0AwAAPHZVh6dTN5+nrVJlNadymA8MrUcHdizDI4WG2SJYLaqBZdqp4J
-GaUhxCkOTA==
-=R8zb
------END PGP SIGNATURE-----
-
---fsxrs37u26bgqqst--
 
