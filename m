@@ -1,183 +1,190 @@
-Return-Path: <linux-kernel+bounces-723627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D80FAFE93B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:45:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A69AFE941
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2AFF5630C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:44:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 573021897C74
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263C32DAFB4;
-	Wed,  9 Jul 2025 12:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596A12D97BF;
+	Wed,  9 Jul 2025 12:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g3i5HEK9"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SU8qJ591"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11152877E3
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 12:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF5D28DF42;
+	Wed,  9 Jul 2025 12:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752065068; cv=none; b=sqCpggpKNJvN6A1rlgzcf+e/IOM5Yl6da/YxRTwRKJ8zNrAIbwlOpIvjpZp2cMdH/dZL2n/wQXwmAoBSMveZpeYebXJxTvPGn/a6UsdnoCdNr0ePhFz/XIR0M8qkaQev1FA3lxs5WbP3Ll960btMmSbHYuRMCI7Ub6+75yovneM=
+	t=1752065104; cv=none; b=LjSHeIZ+ADZYovqubxVujM6KN6MGBWWmiXDoBU7x119dsxnJT9IhEfaGOGk+xcPK8P9wen7CT2ZtEsp4lqtleA12cOdMT87xyK/OUZ2mKrvRIMIIChiMb9FABWRvxoc+BDk6AYjsmWe3/nI6jluWAuoGUfVZ/582W0rB5Y0325M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752065068; c=relaxed/simple;
-	bh=IAdlkXmYJnbautpH45eYgye/PX0Z4HUwzD9R6awi71c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WjQVhEfUQX4GLrC1QbVo/EKmr8YXCyrOiRAhD+3Kqp7nEiNp8GR0gWyOhIG+haFXPaJHWk0xsLxrL4uuBbzNudaXBilYIUnQW12083SRRdQgjnPdIBcjiGgExghILUl91MseVuyt14RBE1E/KZLxtf8iJQd667fcBa7g3+cpTAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g3i5HEK9; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4a9bff7fc6dso8033281cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 05:44:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752065066; x=1752669866; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qQ2pFoBfWssWUMIkFLx9BPizPkUSvYsKoHWqJr87Tgg=;
-        b=g3i5HEK9YC4QjO+dLsQKwAT4baYDcXZZTZGsvydP6zdHHc2yRtJOWp8sN5aBN67VCg
-         gm/VU5953mC4hJ3tGJqmmH8IKtBJLskzuzDHMbyeBlLw+L9JrpLaw0sBTGnfE1A9RStm
-         jlaVrb626nihlkZdv470Twtz5V3Y+ZVNLakPu99uvadun456WnLt2e/ESmaQYIYULNt7
-         t3xM7W8o1yg9lMx8mJylH7yo2lbHoS5TtvJxEQokO/vkyU3SCt4vyDtUw9Ll8M2+hAwE
-         6t3B5K1nVaHHr0YqoetuSNFJcEZh/5NoGSudC0QGYUyMbnyLmiSvnSvevVUOsFqvgzj2
-         mTMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752065066; x=1752669866;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qQ2pFoBfWssWUMIkFLx9BPizPkUSvYsKoHWqJr87Tgg=;
-        b=JCpzYJFAjKdMA1Sv26lAFZIYclXeVJqmVoz54Q9yYYGqzFIpq0rphL59VK6q+dd0/f
-         Ahl7mi3zwMVBRFZWuGJapijpsrWQXDiP3IobsxrQE1QzkygS1K3jxYYPbYyXXpOC7y60
-         tP8WPK1dXK+NPj4ox0NoAKeetmVPQXJDSsjHP+iTy0f5tUg4wlerwSOxYB1TAkxtEvms
-         3tbAx15lzGD3u9ULBBAU0APZpSjTRzwmHUHamVM/H1Kwv9qtNKoe+tk7SlbW5fe1Kf44
-         LhKgy8L9Son/XQQfIuUl1dqeRnK8QyKwNPL8wUK0KXiqXnP0BuFzcndbgojCdbwSdhMJ
-         uoJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUc7vGt0rEJuNMWs03SoBOC/XbrcxKwKXNEz/b8UfWNnfdnTvtfsioDs2y3/fce2qPd+S+4K5AdIaLwnVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh9e6LNL7IibpaacB4ENkbr6rMVa40Pi0tD1jhd+IASw19W2H6
-	0E/4BPbE2Sj0zZEn042fymjCzIra/t/EsE+CMF2aU0uwKCOpF0dKb6I80b9D60SSkTw+zQvTwbY
-	Aefp4ch0DRjLUx/Nceuz+GHBGYltxgay39NFTvKSo
-X-Gm-Gg: ASbGncunGCO/vCSyR/7gRnv0/yeZ8kxPnS1DxIEGAvLAf7Y6IXCCk187knkWyjQPBET
-	JDkbZjhh4k9r9lbeChrL9i4ywcK0Uaxn5NRuZxOO9n7v9+sJT1uC5Hnm0K/TE38z1rzC01RENHu
-	hsB07suYGPyK5ZCmo30Q04ft5k1roYFz3B4TNxR8dbHl8ptMmIY//n
-X-Google-Smtp-Source: AGHT+IF6HV1hGzAbRKcrDqbmUhNZQ3JD6E5sUCFQXTonDPWmTLwmgflb3xbsoN8Vq+8aWGcXfWI1IoV06zTydysA4DY=
-X-Received: by 2002:a05:622a:5a0b:b0:4a7:7326:71be with SMTP id
- d75a77b69052e-4a9ce4c08a9mr100566731cf.5.1752065065445; Wed, 09 Jul 2025
- 05:44:25 -0700 (PDT)
+	s=arc-20240116; t=1752065104; c=relaxed/simple;
+	bh=5ig93j1gHmVqigZVEEovbc0sfYjFNVqIz+vVSrVJ/jo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YWxe1f4UpFQEXqrCnuBzPxILYsQejjRk+ha5DrkLaOr5+r1ZbYQj7vgTwn9G7XDTIkp5GW1rcw0Wc+HFX2s8VMLJCRut5Q8TNTquH8E+LkFEo/guW3EGk+I4OoNQwxsSnkvc9qtE2MimRUEO0Ryjknh4AMem3v9W6dWMo4TJy7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SU8qJ591; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE565C4CEEF;
+	Wed,  9 Jul 2025 12:45:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752065104;
+	bh=5ig93j1gHmVqigZVEEovbc0sfYjFNVqIz+vVSrVJ/jo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=SU8qJ591v3ZuHKWkIDNsGPC/TsUVy5S48YTk8I+wA/R98cRRp92a8dBLwXVe4UUQX
+	 h62V/N4GwCQnBqvMRN/dhOkcZT7Ssfa5mggfF34/0QPOqfEmWo15hH3XTHDCU3wiCv
+	 Y6nFOpZXhmwRDr5eeybDpTrDAlJ1IaiOkbNfKDKzdx+VyQnto48W5ciawaeUsIhJpU
+	 yDA6aEdBir32pT6DCYAmKoojkdWjZ811ES/KwYqd6iRccGhxFvUMJsmphaTBKEF8KY
+	 lEtAOdiJRJQu++19on2WBnLmlaE8lMvX0qRuyl7dlwb3WeSSmgMKEoXeNZiQeAFgpn
+	 y6+6c80EJRdVg==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v6 0/2] dma-buf: heaps: Create a CMA heap for each CMA
+ reserved region
+Date: Wed, 09 Jul 2025 14:44:50 +0200
+Message-Id: <20250709-dma-buf-ecc-heap-v6-0-dac9bf80f35d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709095653.62469-1-luyun_611@163.com> <20250709095653.62469-3-luyun_611@163.com>
-In-Reply-To: <20250709095653.62469-3-luyun_611@163.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 9 Jul 2025 05:44:14 -0700
-X-Gm-Features: Ac12FXxyCO7LIPlCP2Qe8xqhwgnGFOKidInr8A6Xi3bns36W4r2F_LC-4GXwjZU
-Message-ID: <CANn89iJZ=t6Fg4fjgPooyTAbD4Lxj9AKFQx_mnJty5nq9Ng9vw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] af_packet: fix soft lockup issue caused by tpacket_snd()
-To: Yun Lu <luyun_611@163.com>
-Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEJkbmgC/33RyU7DMBAG4FeJfMaRx1uaCqG+B+LgZdKYkqbYa
+ QSq+u44KaigRBzHkr9Z/gtJGAMmsi0uJOIYUuiPudAPBXGtOe6RBp9rwhmXTIGivjPUnhuKztE
+ WzYnyjREAnrtaIsnfThGb8DGTzy+5bkMa+vg5dxhhev0HG4EyqqSz1jNZK4DdAeMR38o+7smkj
+ fxHUEwyWBF4FpgUjWdMGzDNQhC/hWpFEFmoK+e90EY1vF4I8i4ozlYESYFazxEasFZytxDUXdC
+ wNoOatjDWO7XRwsi/W1xvZ474fs6BDbdbkw5TMnNg2+Lxm2YggAsooeJS8yqP9XrIqZq0i+hbM
+ 5Su756m1KxJSHPRhWFbjLoETaNTudX1C/BYCfAjAgAA
+X-Change-ID: 20240515-dma-buf-ecc-heap-28a311d2c94e
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+ "T.J. Mercier" <tjmercier@google.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Robin Murphy <robin.murphy@arm.com>
+Cc: Andrew Davis <afd@ti.com>, Jared Kangas <jkangas@redhat.com>, 
+ Mattijs Korpershoek <mkorpershoek@kernel.org>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+ iommu@lists.linux.dev, Maxime Ripard <mripard@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4178; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=5ig93j1gHmVqigZVEEovbc0sfYjFNVqIz+vVSrVJ/jo=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBl5KT5Hp6VN1J1s9/a/8haBzfaebxOsuz9PEsiwblQvt
+ vuxue5vx1QWBmFOBlkxRZYnMmGnl7cvrnKwX/kDZg4rE8gQBi5OAZhIrCtjfeD3N8X7VM9EHM05
+ Jl/BWOmovOeVced54b2zy+tUznS/jS9Jq17zR7H35r4cp4uS0/9mMzYsKAxinxtWNtO6+rW+/f/
+ mhETDhTI+Eidjj/zu2bnbeRrH02e/PVaunM4VG3bQ2s5odSwA
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-On Wed, Jul 9, 2025 at 2:57=E2=80=AFAM Yun Lu <luyun_611@163.com> wrote:
->
-> From: Yun Lu <luyun@kylinos.cn>
->
-> When MSG_DONTWAIT is not set, the tpacket_snd operation will wait for
-> pending_refcnt to decrement to zero before returning. The pending_refcnt
-> is decremented by 1 when the skb->destructor function is called,
-> indicating that the skb has been successfully sent and needs to be
-> destroyed.
->
-> If an error occurs during this process, the tpacket_snd() function will
-> exit and return error, but pending_refcnt may not yet have decremented to
-> zero. Assuming the next send operation is executed immediately, but there
-> are no available frames to be sent in tx_ring (i.e., packet_current_frame
-> returns NULL), and skb is also NULL, the function will not execute
-> wait_for_completion_interruptible_timeout() to yield the CPU. Instead, it
-> will enter a do-while loop, waiting for pending_refcnt to be zero. Even
-> if the previous skb has completed transmission, the skb->destructor
-> function can only be invoked in the ksoftirqd thread (assuming NAPI
-> threading is enabled). When both the ksoftirqd thread and the tpacket_snd
-> operation happen to run on the same CPU, and the CPU trapped in the
-> do-while loop without yielding, the ksoftirqd thread will not get
-> scheduled to run. As a result, pending_refcnt will never be reduced to
-> zero, and the do-while loop cannot exit, eventually leading to a CPU soft
-> lockup issue.
->
-> In fact, as long as pending_refcnt is not zero, even if skb is NULL,
-> wait_for_completion_interruptible_timeout() should be executed to yield
-> the CPU, allowing the ksoftirqd thread to be scheduled. Therefore, move
-> the penging_refcnt check to the start of the do-while loop, and reuse ph
-> to continue for the next iteration.
->
-> Fixes: 89ed5b519004 ("af_packet: Block execution of tasks waiting for tra=
-nsmit to complete in AF_PACKET")
-> Cc: stable@kernel.org
-> Suggested-by: LongJun Tang <tanglongjun@kylinos.cn>
-> Signed-off-by: Yun Lu <luyun@kylinos.cn>
->
-> ---
-> Changes in v3:
-> - Simplify the code and reuse ph to continue. Thanks: Eric Dumazet.
-> - Link to v2: https://lore.kernel.org/all/20250708020642.27838-1-luyun_61=
-1@163.com/
->
-> Changes in v2:
-> - Add a Fixes tag.
-> - Link to v1: https://lore.kernel.org/all/20250707081629.10344-1-luyun_61=
-1@163.com/
-> ---
->  net/packet/af_packet.c | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
->
-> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> index 7089b8c2a655..89a5d2a3a720 100644
-> --- a/net/packet/af_packet.c
-> +++ b/net/packet/af_packet.c
-> @@ -2846,11 +2846,21 @@ static int tpacket_snd(struct packet_sock *po, st=
-ruct msghdr *msg)
->                 ph =3D packet_current_frame(po, &po->tx_ring,
->                                           TP_STATUS_SEND_REQUEST);
->                 if (unlikely(ph =3D=3D NULL)) {
-> -                       if (need_wait && skb) {
-> +                       /* Note: packet_read_pending() might be slow if w=
-e
-> +                        * have to call it as it's per_cpu variable, but =
-in
-> +                        * fast-path we don't have to call it, only when =
-ph
-> +                        * is NULL, we need to check pending_refcnt.
-> +                        */
-> +                       if (need_wait && packet_read_pending(&po->tx_ring=
-)) {
->                                 timeo =3D wait_for_completion_interruptib=
-le_timeout(&po->skb_completion, timeo);
->                                 if (timeo <=3D 0) {
->                                         err =3D !timeo ? -ETIMEDOUT : -ER=
-ESTARTSYS;
->                                         goto out_put;
-> +                               } else {
+Hi,
 
-nit (in case a new version is sent) : No need for an else {} after a
-"goto XXXXX;"
+Here's another attempt at supporting user-space allocations from a
+specific carved-out reserved memory region.
 
-if (....) {
-     .....
-     goto out_put;
-}
-/* Just reuse ph to continue for the next iteration, and...
- * .....
- */
-ph =3D (void *)1;
+The initial problem we were discussing was that I'm currently working on
+a platform which has a memory layout with ECC enabled. However, enabling
+the ECC has a number of drawbacks on that platform: lower performance,
+increased memory usage, etc. So for things like framebuffers, the
+trade-off isn't great and thus there's a memory region with ECC disabled
+to allocate from for such use cases.
 
+After a suggestion from John, I chose to first start using heap
+allocations flags to allow for userspace to ask for a particular ECC
+setup. This is then backed by a new heap type that runs from reserved
+memory chunks flagged as such, and the existing DT properties to specify
+the ECC properties.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+After further discussion, it was considered that flags were not the
+right solution, and relying on the names of the heaps would be enough to
+let userspace know the kind of buffer it deals with.
+
+Thus, even though the uAPI part of it had been dropped in this second
+version, we still needed a driver to create heaps out of carved-out memory
+regions. In addition to the original usecase, a similar driver can be
+found in BSPs from most vendors, so I believe it would be a useful
+addition to the kernel.
+
+Some extra discussion with Rob Herring [1] came to the conclusion that
+some specific compatible for this is not great either, and as such an
+new driver probably isn't called for either.
+
+Some other discussions we had with John [2] also dropped some hints that
+multiple CMA heaps might be a good idea, and some vendors seem to do
+that too.
+
+So here's another attempt that doesn't affect the device tree at all and
+will just create a heap for every CMA reserved memory region.
+
+It also falls nicely into the current plan we have to support cgroups in
+DRM/KMS and v4l2, which is an additional benefit.
+
+Let me know what you think,
+Maxime
+
+1: https://lore.kernel.org/all/20250707-cobalt-dingo-of-serenity-dbf92c@houat/
+2: https://lore.kernel.org/all/CANDhNCroe6ZBtN_o=c71kzFFaWK-fF5rCdnr9P5h1sgPOWSGSw@mail.gmail.com/
+
+Let me know what you think,
+Maxime
+
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v6:
+- Drop the new driver and allocate a CMA heap for each region now
+- Dropped the binding
+- Rebased on 6.16-rc5
+- Link to v5: https://lore.kernel.org/r/20250617-dma-buf-ecc-heap-v5-0-0abdc5863a4f@kernel.org
+
+Changes in v5:
+- Rebased on 6.16-rc2
+- Switch from property to dedicated binding
+- Link to v4: https://lore.kernel.org/r/20250520-dma-buf-ecc-heap-v4-1-bd2e1f1bb42c@kernel.org
+
+Changes in v4:
+- Rebased on 6.15-rc7
+- Map buffers only when map is actually called, not at allocation time
+- Deal with restricted-dma-pool and shared-dma-pool
+- Reword Kconfig options
+- Properly report dma_map_sgtable failures
+- Link to v3: https://lore.kernel.org/r/20250407-dma-buf-ecc-heap-v3-0-97cdd36a5f29@kernel.org
+
+Changes in v3:
+- Reworked global variable patch
+- Link to v2: https://lore.kernel.org/r/20250401-dma-buf-ecc-heap-v2-0-043fd006a1af@kernel.org
+
+Changes in v2:
+- Add vmap/vunmap operations
+- Drop ECC flags uapi
+- Rebase on top of 6.14
+- Link to v1: https://lore.kernel.org/r/20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org
+
+---
+Maxime Ripard (2):
+      dma/contiguous: Add helper to test reserved memory type
+      dma-buf: heaps: cma: Create CMA heap for each CMA reserved region
+
+ drivers/dma-buf/heaps/cma_heap.c | 52 +++++++++++++++++++++++++++++++++++++++-
+ include/linux/dma-map-ops.h      | 13 ++++++++++
+ kernel/dma/contiguous.c          |  7 ++++++
+ 3 files changed, 71 insertions(+), 1 deletion(-)
+---
+base-commit: 47633099a672fc7bfe604ef454e4f116e2c954b1
+change-id: 20240515-dma-buf-ecc-heap-28a311d2c94e
+prerequisite-message-id: <20250610131231.1724627-1-jkangas@redhat.com>
+prerequisite-patch-id: bc44be5968feb187f2bc1b8074af7209462b18e7
+prerequisite-patch-id: f02a91b723e5ec01fbfedf3c3905218b43d432da
+prerequisite-patch-id: e944d0a3e22f2cdf4d3b3906e5603af934696deb
+
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
+
 
