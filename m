@@ -1,104 +1,129 @@
-Return-Path: <linux-kernel+bounces-723459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38EBCAFE717
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:10:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51731AFE714
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21EF33B2F18
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:09:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE270176B92
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAB128DF14;
-	Wed,  9 Jul 2025 11:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD9628DB7A;
+	Wed,  9 Jul 2025 11:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JXQCsxf/"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MpBQ2m7i"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA3228D8C2
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 11:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5472628C852
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 11:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752059345; cv=none; b=Lp/tSy3G6oLDG+54dyNNU2ktLsYWI59GqM86JB8tOTfUggEYHhQC7Msve9qVgax4k7P17sbUqIj75DqKDvXLge+XEHZc9/+VP9ZQOnbt4eu3fthLed3hNf8ygPblF5CLu3zwamr5hGDt7KTAP6Cjrmvf19ycjGztZauzkpzPWT8=
+	t=1752059400; cv=none; b=IGVJhUNtAskFVy4LkRw9l/tO0ZoA5ucS6xUe9rLypsAx7obcnq5q7IDXoVZ1VtOGop4NTJv/q73f0bnYn0hx5UU3DnFH6iWTfEJq3e2GabnQyB2B4ESMkXEzvRg420CXil/GQYrw/yuqOglaWms4z1CY4W0jhjoEcqihxkKjrXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752059345; c=relaxed/simple;
-	bh=B7deMPbFN2CYKI2YUT400xYx0Qqiqi3bB/h0pqy9rXs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Fvyfs4mjD3ACX61pVIIp2o944AWz+QXjoH45lDx6jlkh0SW/hdMlUiDR6Fsxtj97XLrmIbXmqW7/HC01biKHRnyNaqW4ZW4w8IeqKvKv7pfs1iV4JfgT+HMcA4WsAy6Gk8tl4li7kR039sMEPTLE5/yKzfeKgxECCunCBtuN1Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JXQCsxf/; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3af3c860ed7so2502702f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 04:09:03 -0700 (PDT)
+	s=arc-20240116; t=1752059400; c=relaxed/simple;
+	bh=e9Hitx/AaABUc9wSWNOxzRx5igfO7v0kpeqQjepU+tY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jY30kRRYMZY4DG/266UQAERRafvapi3zfO9+HJ/7tT5YYlK7sMDN8pLmeN2Sef8/NnBHNpAUiThev/7We2fRL70KELv55myyzln2ugRsqlTMqDU5LHCIUNpVqTXDxX6FCJ/x776HumCAZWt5P080NUqYEtZrj+7TaZT58S9D+/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MpBQ2m7i; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e8986a25cbfso4141010276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 04:09:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752059342; x=1752664142; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5bjYpJSDclGoTb/1hN2DNKLtiaNHhBK2pMEgZTCoG3M=;
-        b=JXQCsxf/J0PYGqtV8iMwRtkRy7oP4SeEcLXXE6IAjlNWmTNp1ReZFcw36w6yqBN7Ze
-         NrTZsQRRvyBEUvddu8fy4nky5slBWVUKjQdLSWyai28INjoQvEN+nk0nBVPvFSSVEtOR
-         wR07ICISVZ7SdCLrLqAKxwMxBcfeXghIhyER3BWUxmUNkFt5f6oMOf4Widp8Pjklh9oi
-         x04tkNdpJP6jebdi+LMsAK38KHwdFug8A5sR7dh7pVxOMuB77TgJCbEVFOpAVTTDxNpP
-         5eF3z09/9Vw3nNFR/I88R8U1tNE0BYBLXdKY7gItP5wItn6grS9wT0RmmtwN16TIpLCR
-         IgJA==
+        d=linaro.org; s=google; t=1752059397; x=1752664197; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JuabvlF+HEOtpGNRTV/JqdfGljf8eHAq+QOlPtUiPrY=;
+        b=MpBQ2m7iVPHdvkHCor7hGjPOf9l9yLdd90G7u3tOzv+p8jdFqNoUR0lH+tH7WrtT0H
+         HjIZV+kJY/ABxZ09vH4E1ZmIg4WUdMlTmzyTc7pTbwLvvV/eILF2GJbbOsYQIOzQFDKB
+         6SygfX+I0KXOExkbaO13XRl2yiwbP+NGoY7mPdFUNS5yYimrsl9ck9qePpZlnss4igP8
+         seCGjE5mgW4iJ572tBReLNhiq2tCaj29BY+OUuwXR6S6OBvR884mh1JHnnl97nT0+/UG
+         QYSYcbXDQjXwuo+GXvsFiqdKEXc6ofS9JemdN5WrfNg3gHk5689z5fhhR0VOU3PbEDRT
+         X7EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752059342; x=1752664142;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5bjYpJSDclGoTb/1hN2DNKLtiaNHhBK2pMEgZTCoG3M=;
-        b=ccGqJVeZH0+J2Du9OzoyvW9GvuYei8BqjGGw6HixtqsBbbfMbIh7DFySPVUOKnwehN
-         wAEMuyppKimdVVKWw9VRURwU2OTt0Ot7Bxx8Kuv3I5mVfWwIG44nKyWijokdMzo5RklU
-         75J9E8rZtHdKfjOVuXRbwhZdcxJzdCprmaCxTD3t+eGF/RS4xSXRZz8dKt4iXEyPp6iz
-         54D+Fa/n8NjZ81Xo9sHjL+tDlS5PSLItzhQlKvPdUEKE7mfWhj9i4tSuFkdbel15YX9x
-         voGIHUH+p4JAwUdQVwjN36wF3x2xSr29Db/bt3E0tpTYgAWn2EOZqItgnhSQiaNau7hZ
-         4fXw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2N8v9Fs29kLRCL5do17X3ohyYLXGV48SWYnFc0l+WghAYmZfnVCT9+qSxOCKk26+mF1+DpQTt0tqwubc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmizHf5EJfxlqdPxYzazkrOzchGE6lv/fClhp6H7BDGoG4LV9v
-	3Kfs1HTE6bWywBOlfADYU9nPzcg1lQAHCi2lH1x8auPrgHPp/gAzusGuGcNVFHOV8NtAkuN9A6+
-	6Vziel7J0h9Q3uupp2A==
-X-Google-Smtp-Source: AGHT+IHpIwEDwkwkHsmPKAoctj+/lLKs6GIuB+wtVk2MK/CSAVdldJRNgjT615TKHY3qGM+iPQEtTxicyM6LY3Y=
-X-Received: from wrtp9.prod.google.com ([2002:a5d:4e09:0:b0:3b3:b082:6e06])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2002:b0:3a4:ed1e:405b with SMTP id ffacd0b85a97d-3b5e4577c86mr1377851f8f.46.1752059341982;
- Wed, 09 Jul 2025 04:09:01 -0700 (PDT)
-Date: Wed, 9 Jul 2025 11:09:01 +0000
-In-Reply-To: <87wm8in3c0.fsf@kernel.org>
+        d=1e100.net; s=20230601; t=1752059397; x=1752664197;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JuabvlF+HEOtpGNRTV/JqdfGljf8eHAq+QOlPtUiPrY=;
+        b=u0NUGBN8O4s65wE214j/bwxkH9Z13mqwcz4Wud1LqxA+EjEx1Rs4aQPRfowYYxg6Uf
+         faX5rSdrSZKXlNAaNw/YG6VXiDSRoIaAmx1WbjsCkrHkGpt261POrKgJ7i1McbWFizgo
+         FKC5w/iSkfYYcEMo9KWhUvzSIMx8hXPFFM0KRBiHzhywu/i018jWNVevaoO2CLcWeTTN
+         D+4rwghk5qD5rG7knjtg+p0WLaSMZtmcFcjrf26NvaEfbBQZqeEgfzEvb9v1NBy1H3nb
+         YlVnWyiKF9R1lAiOI2q7dxX31yqZt8uVEUiEj2sxiosg/Tw5qtnVRyabXHPMdbSL+Exu
+         j1QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU54T3icevvKk3SgmvImLAitkuePvVAE9WgubX2pLLAMI0FR/ms8aR4SaUQMuDAT11sO71H7j76R/1oG+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6HCl8cfktinRZAMyJZy/Fa7fZTtfdRlaBGDY4Av32pmcJoLyG
+	td5sv3bYZ27D5bYNI2Kuu1g9zp1AsCV/HSvEnk43lB/YMRZDr2jo9CQOZvTt2CIBvH2I01I+zOV
+	pOfskhfUVGBC57xVdE21SB8cspwLmMrcSH5Dc4uc3Qyk1R3pInaACoJE=
+X-Gm-Gg: ASbGncsSoQZWEzqbmznu2CtJYN54slxHz/duKB7jGZoNdA1PKHuOmzsFssAZlVMAT7E
+	tYZ90Yxicd85lmz0uEA0xMuam0ejHNjkqod9QkDJm4pYP1qOp7O+mHuqloXXFq9uGeC2Ag2pa2V
+	huGs5upvapaOptQv/7HkFT2lyA4ZTGr1wjKZN9xMdPoQPJ
+X-Google-Smtp-Source: AGHT+IFsmTgSEvZesdYQYcydeG0/O1Hj58Hv2o9yJbhCercvOyzKlY94jJgNF6EOqwOuKT73wkIxTQ5VclXQ3n/n+tQ=
+X-Received: by 2002:a05:690c:6e02:b0:70c:d256:e7fc with SMTP id
+ 00721157ae682-717b1c37983mr29095877b3.21.1752059397067; Wed, 09 Jul 2025
+ 04:09:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250704-iov-iter-v2-0-e69aa7c1f40e@google.com>
- <A6L7hDRsDyJJvX_NuoUG_Zb-Jy_BMdGLhjsq5xUSRkl6hpItQD9ZvX5ChAr9QIFH4eeDBpW-Q-582Tt4Nef5SA==@protonmail.internalid>
- <20250704-iov-iter-v2-3-e69aa7c1f40e@google.com> <87wm8in3c0.fsf@kernel.org>
-Message-ID: <aG5NzRx7dIWzTwdf@google.com>
-Subject: Re: [PATCH v2 3/4] rust: miscdevice: Provide additional abstractions
- for iov_iter and kiocb structures
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, Lee Jones <lee@kernel.org>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Benno Lossin <lossin@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250704-depspmdomain-v1-1-ef2710556e62@baylibre.com>
+In-Reply-To: <20250704-depspmdomain-v1-1-ef2710556e62@baylibre.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 9 Jul 2025 13:09:21 +0200
+X-Gm-Features: Ac12FXy4yNHd8YRyFcLOsAx6a604HDoqyG-G_1hY2N2OnXQWEmVA7BZrsriQrbk
+Message-ID: <CAPDyKFpdZGa0nT1V7fkOv-RuNPDz_xNJk-+Ex+NzyMF4Lp=peQ@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: ti: Select PM_GENERIC_DOMAINS
+To: Guillaume La Roque <glaroque@baylibre.com>
+Cc: vigneshr@ti.com, nm@ti.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, vishalm@ti.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 08, 2025 at 04:51:11PM +0200, Andreas Hindborg wrote:
-> "Alice Ryhl" <aliceryhl@google.com> writes:
-> > +/// Wrapper for the kernel's `struct kiocb`.
-> > +///
-> > +/// The type `T` represents the private data of the file.
-> 
-> Could you give more context? Please describe the purpose for the type
-> and intended use. Perhaps give an example that can be compile tested.
+On Fri, 4 Jul 2025 at 11:08, Guillaume La Roque <glaroque@baylibre.com> wrote:
+>
+> Select PM_GENERIC_DOMAINS instead of depending on it to ensure
+> it is always enabled when TI_SCI_PM_DOMAINS is selected. This
+> simplifies the configuration process and prevents build errors
+> if PM_GENERIC_DOMAINS is not explicitly enabled.
+>
+> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+> ---
+>  drivers/pmdomain/ti/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pmdomain/ti/Kconfig b/drivers/pmdomain/ti/Kconfig
+> index 67c608bf7ed0..35a4c73da17a 100644
+> --- a/drivers/pmdomain/ti/Kconfig
+> +++ b/drivers/pmdomain/ti/Kconfig
+> @@ -10,7 +10,7 @@ if SOC_TI
+>  config TI_SCI_PM_DOMAINS
+>         tristate "TI SCI PM Domains Driver"
+>         depends on TI_SCI_PROTOCOL
+> -       depends on PM_GENERIC_DOMAINS
+> +       select PM_GENERIC_DOMAINS
 
-Right now, it's basically a `(&mut i64, &T)` tuple providing access to
-the file position and private data. That's it.
+You need an "if PM" too here. So:
 
-Alice
+select PM_GENERIC_DOMAINS if PM
+
+>         help
+>           Generic power domain implementation for TI device implementing
+>           the TI SCI protocol.
+>
+> ---
+> base-commit: 8d6c58332c7a8ba025fcfa76888b6c37dbce9633
+> change-id: 20250704-depspmdomain-2c584745dca8
+>
+> Best regards,
+> --
+> Guillaume La Roque <glaroque@baylibre.com>
+>
+
+Kind regards
+Uffe
 
