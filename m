@@ -1,137 +1,133 @@
-Return-Path: <linux-kernel+bounces-724043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D297AAFEDEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:41:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E9BAFEDEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 290D416CA09
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:41:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7F34E16A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FCA2E7163;
-	Wed,  9 Jul 2025 15:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5392E7BB6;
+	Wed,  9 Jul 2025 15:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="hOgMkyJ8"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KRpeezjt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9806A272E7C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCBB2E7653
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752075692; cv=none; b=I7BtuJCrJxNKTWeO35zcYgGWf9sbcVO8Cq35/mhcdTR8yZA0tEp6UTLgpccSZXSjDoT8nwYVlKii6xJOArUKcX1FyOYtyS/B0h/kUFHZ8AITmKGQFUCrpgx4AfFUdtKEo7ei1pIpyzZ3408XI3IR63ZWHmR8/PeSwymYSJFAV3g=
+	t=1752075720; cv=none; b=JSfTprCwKblbLudFoQdW3SXbqdi57cPMKuGT8GndVKPFE+vLkpORpL5ztJQTN4BptKToFthUnoN5vHqGikoirAcbqyLyDUsmdoXtB77FOq0R62/EpY/+dQTIEiF+thZAelDrBeeVxCjLrimb2LvKI++/AcPtECtiXyXHEY8F9yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752075692; c=relaxed/simple;
-	bh=l1IMqQamnOSUMauOz72BUd8fZaqfC+kM2xLZw+/ZgnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SFpZVykeCrirnwqGIuvAyHeeaTPYXY2fpJKkRyhDyvmNjUAhembTk0qe7lGAgCOQALXbB/dNQrXM1bN91UsCqnA0RQxWjQoS490NSqX5pH7lkl36bzgADV00SOqvTbiYhoymXmCrFwqOf0o6bo8nf7K/ZQnDEmTJclniWVVyXQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=hOgMkyJ8; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fa980d05a8so252226d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:41:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1752075689; x=1752680489; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7+8lINShdvup+8jB4CEo5zDF19kEcona9FuXtnWhTyA=;
-        b=hOgMkyJ8ZDRxXFyR1Al8/ogDzxRuxjEYlso9jmZIX7W7SLF+5gY+8Oef25Ah1cnYuG
-         ja6MumEPbmN5MRGfhz4GKAlRKn8zpCrG7EYxEvxzOQ/AUwycRdAN2N3XzEokCBDap+7e
-         w+LiX7zOb2+j0gqxNjMDLDf/FuKcrT8BQOoOdypjcPbwp6GSgfTZFQkqz7icgg0h09iF
-         fUkT/idtzpx5e4HS2sRyAvRxa8peJ+yAO7dY/u6n2RQP4bHqI5CyBfkw8fP5ZAo0/Lgi
-         tn9U+nHcuWOoh0vb7dkrcyqqf7qsObOd7HRshbGXaWLjj1bvf/h1rcW5SWul8RnFUDjf
-         TxKA==
+	s=arc-20240116; t=1752075720; c=relaxed/simple;
+	bh=XShysqjVfJShNze3cNJCjWk2VTczMmDbx321Os6iHCE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WG7pr4iN4EYQelyugrXX7DpcFfEQaeRxgoNaTOXT/WOJ+kxu5Omz8MEH7OyIj3c52Crzu908McqhBht7PCU0Z+SjpAmQthRcA5ySgGSmtKMfTUPLdRLlvF0jfUMT4jyOmN4QQULJCiTCIbxPeq2bK3VLaAm2yqyovmvfIntOxxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KRpeezjt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752075717;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XShysqjVfJShNze3cNJCjWk2VTczMmDbx321Os6iHCE=;
+	b=KRpeezjtUvoNzpLvAqZmpn5f54I6NILh9iAg9iYTduM9/jycSw30KKgcCg6AQ7VgXuH15g
+	1fSfgVS9vsc0uI2la3IXm5a52plppf+Zv77eHHiUCSjjoWmNr7YP11l9GausLNjdjc3cxb
+	rtXvQRj8fNATJaC58AH/rhY4UPvK0jg=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-271-HNItdP6oPsGcWMrovVCrQQ-1; Wed, 09 Jul 2025 11:41:56 -0400
+X-MC-Unique: HNItdP6oPsGcWMrovVCrQQ-1
+X-Mimecast-MFC-AGG-ID: HNItdP6oPsGcWMrovVCrQQ_1752075716
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-70e4e62caa7so14883337b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:41:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752075689; x=1752680489;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7+8lINShdvup+8jB4CEo5zDF19kEcona9FuXtnWhTyA=;
-        b=BK25mJW04ac63tJBaOez7ewEVGG3W+sX+XnsgQ2VNFX9CPISg/qthDGMUOpXDc5J7j
-         2idzH7qKlYBiTKt3WkbFjE4Irhu9x42l20r4FwvI4v+cboDv15QMAlUJueE4xndQJpou
-         aHrSqTbnAM2OaFZOGqAngvT5AUlh2GYjQyFMVDbhgwcm4Sq6BpwDqedHyJJuTO7C6JtQ
-         3SPJWSJPxI4+9KxuVUOr5KlxCU4gxnX0+nNPlsiOrpkczkpYOaMCwjZNDCyE9A7YvR9O
-         /ckTXddOZdx/9iCpHnVLHBRwa+h1CNnjC12Bcl60fSrm3ldq/H9CIDqn4xcA1BaB7qYk
-         XH3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUyTUM9+Ra8tjFE1EUYD6UwVK/YYFxTln7VtSSA53c+GSS3xd/QUpwPa2jNACNIfyfqR9ld/+BnTU6iqV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnoHHVUv1wPlpKmFfdNNcUGYiFbq9pZeC2LwsckaNGroOjKBBP
-	5C5WO5VEVbILUbQQdsz/ridXCiUNktJFkuxGz5QTU5oMqZ31kXqWf3VOlZBd3fNpKZsXkwtYuRZ
-	2jsI=
-X-Gm-Gg: ASbGnctJaoSc22zu5l5Hr0BE2UNrG6nCZPP5ePvt7SlbSnjmXmaiy5tJqeXKObbWEDk
-	U/xDm9YR2zzTnK89DJ1+r04scW4QM1+pScqCxPbRep/iscbTsqZwhr1EPjvtnrvZyVjMEh5VVMh
-	HbRAb80fZElc6Zj78Dy3SYjpwrZa5tL6/Xh5/FFDAYVx90zJZz6J/NLEcz6e/h6daO8RJ6u+QYC
-	/dJXOZdtHtz1ND06BVH4sb+3xcxxTctwJ7BNw/U0jI8h32I55vtDkPOc6QD8zKj672NlkEbZUKw
-	bN27HD7YFRG+PVIixhMN0qInXddCoFbyjSKahxtgUv9xKp/Q7wTsP0W++gbRWTBw2q3FEUojCtW
-	XuSYvskxrTaT5Odc=
-X-Google-Smtp-Source: AGHT+IFQ8reysvGiDHB9SlFWV74GS4KL17/ACFp3PeDv69dK0w4A50NNV0ufOCxkqgR1vs+8lKQAmg==
-X-Received: by 2002:a05:6214:3d01:b0:702:c150:46c2 with SMTP id 6a1803df08f44-7048b8d8da6mr44190726d6.10.1752075689343;
-        Wed, 09 Jul 2025 08:41:29 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-704831532b6sm23936286d6.101.2025.07.09.08.41.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 08:41:28 -0700 (PDT)
-Date: Wed, 9 Jul 2025 11:41:26 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: syzbot <syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	USB list <linux-usb@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [syzbot] [kernel?] INFO: task hung in uevent_show (2)
-Message-ID: <1d471e25-6671-4cb2-a2c9-af96c2b4e13d@rowland.harvard.edu>
-References: <686e7698.050a0220.c28f5.0006.GAE@google.com>
- <79f634db-c149-4220-b8d4-0fff2c6b6a01@I-love.SAKURA.ne.jp>
- <e064a3e4-ae70-4a24-ba5e-1bb8c7971f23@rowland.harvard.edu>
- <39f312fa-d461-4377-b809-50c8a7188f6b@I-love.SAKURA.ne.jp>
- <dd932df4-2a13-4a5c-a531-376065f87391@rowland.harvard.edu>
- <43189e93-2cad-429a-a604-15bf5cc95e43@I-love.SAKURA.ne.jp>
+        d=1e100.net; s=20230601; t=1752075716; x=1752680516;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XShysqjVfJShNze3cNJCjWk2VTczMmDbx321Os6iHCE=;
+        b=eFPSl9i3gLnCOgQ4rvr2FgZfq1kAhzHXYcCR28J9NLlwYkyOSwLs7KVaJVAWG5aZNP
+         oZ+0ZENPpXK0tX4tzo1XOJylKJxpB0+OB+S2CNkFMiFnkWOtLJjqUw+5OhxphuKYIet/
+         BovYoYnokgKIp5URBFoIbe6kjFduno90IdVXib87i6p7RizUFJkjm1gUQxp8AP/yq/x9
+         /Yu1NJVir5nJ9uXhaX4ZRhtO3Scn4Lv363ganUH+eflV4U3kCHpXBgIev7QCXV/bnFNc
+         EzBpQ9X9tfFOq1vMUUCVY7VbyFOJkXIuAjtY5lNkh3HduuAiAmauHZ0jqLpdh1armawL
+         /0UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5zSYi2x0SoGlu4QdpSsT4IJ7wzg7hh87DUGb51/s+EoFYrZtTFQ2Tdxg5LZBuPP4b4xXVHoyKEg23Ny4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFIHOatb1A63s+kFkSi3Tl8DPsr8rbabWXEG48nHerE3mqVZuP
+	YKq22ER2sOjcpJpivNDyy30k8W1H0mu/2lz1wPFodnxA2uXpmw5cKzF3j3iWsBdGb3IzfrtBMn2
+	FygIsVb7UdYfZ2ryne1ITOKf0Us3JzyV5nNrzhln598tyRN7xu9mLNiejL8pJViKQcSjPNPIQPB
+	AsKQ0IbqpB5fVjRncQlSElZulaq+aZdL9jfOEBD3yL
+X-Gm-Gg: ASbGncu+CxaJuGAyREDUmLhKzbBDMh0jmQeq6+whid1yl+IjjZ1i4r0IhRIs0pItRfS
+	23Y2F3DixOqwrgW129Cr39VlgJj29DfUCSu8mGxd2wS1BLDxNwDtdDl3E8P45bXN8PxjUOKoqIh
+	4SJyET
+X-Received: by 2002:a05:690c:6409:b0:713:fe84:6f96 with SMTP id 00721157ae682-717a044be8amr108447837b3.14.1752075715720;
+        Wed, 09 Jul 2025 08:41:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExFxKvhbTdzloCbFbyh1tiZpUMkvI+DBzINVmDyNWIx7ol4flKg78d/Go2l26/5A8S/OniJB3RHqWchsMadAI=
+X-Received: by 2002:a05:690c:6409:b0:713:fe84:6f96 with SMTP id
+ 00721157ae682-717a044be8amr108447057b3.14.1752075715039; Wed, 09 Jul 2025
+ 08:41:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <43189e93-2cad-429a-a604-15bf5cc95e43@I-love.SAKURA.ne.jp>
+References: <472a5d43-4905-4fa4-8750-733bb848410d@linux.ibm.com> <CAGxU2F7bV7feiZs6FmdWkA7v9nxojuDbeSHyWoASS36fr1pSgw@mail.gmail.com>
+In-Reply-To: <CAGxU2F7bV7feiZs6FmdWkA7v9nxojuDbeSHyWoASS36fr1pSgw@mail.gmail.com>
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Wed, 9 Jul 2025 17:41:43 +0200
+X-Gm-Features: Ac12FXyROMf2rt0OlirwLyo137Qn7MCpqP2NG-8va_x4r6nW2FeYLXGlppWreyI
+Message-ID: <CAGxU2F4GbeCJDYrs8Usd8JJcTrp99gyn3c_zXqpnz+UH2NNBGw@mail.gmail.com>
+Subject: Re: [PATCH net-next v4] vsock/test: Add test for null ptr deref when
+ transport changes
+To: Konstantin Shkolnyy <kshk@linux.ibm.com>
+Cc: mhal@rbox.co, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, v4bel@theori.io, leonardi@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 10, 2025 at 12:33:00AM +0900, Tetsuo Handa wrote:
-> On 2025/07/10 0:19, Alan Stern wrote:
-> > On Wed, Jul 09, 2025 at 11:44:46PM +0900, Tetsuo Handa wrote:
-> >> On 2025/07/09 23:27, Alan Stern wrote:
-> >>> Which of these three BUG_ON's did you hit, and where did you hit it?
-> >>
-> >> kernel BUG at ./include/linux/usb.h:1990!
-> >>
-> >> matches the BUG_ON(endpoint > 0xF) line. The location is shown below.
-> >>
-> >> Call Trace:
-> >>  <TASK>
-> >>  hub_configure drivers/usb/core/hub.c:1717 [inline]
-> >>  hub_probe+0x2300/0x3840 drivers/usb/core/hub.c:2005
-> > 
-> > Those line numbers are completely different from the code I have.  For 
-> > example, line 2005 in hub.c is part of the hub_ioctl() function, not 
-> > hub_probe().
-> > 
-> > Exactly what version of the kernel source are you using for your test?
-> 
-> It is current linux.git tree.
-> 
->   https://elixir.bootlin.com/linux/v6.16-rc5/source/drivers/usb/core/hub.c#L1717
->   https://elixir.bootlin.com/linux/v6.16-rc5/source/drivers/usb/core/hub.c#L2005
+On Wed, 9 Jul 2025 at 17:26, Stefano Garzarella <sgarzare@redhat.com> wrote:
+>
+> On Wed, 9 Jul 2025 at 16:54, Konstantin Shkolnyy <kshk@linux.ibm.com> wrote:
+> >
+> > I'm seeing a problem on s390 with the new "SOCK_STREAM transport change
+> > null-ptr-deref" test. Here is how it appears to happen:
+> >
+> > test_stream_transport_change_client() spins for 2s and sends 70K+
+> > CONTROL_CONTINUE messages to the "control" socket.
+> >
+> > test_stream_transport_change_server() spins calling accept() because it
+> > keeps receiving CONTROL_CONTINUE.
+> >
+> > When the client exits, the server has received just under 1K of those
+> > 70K CONTROL_CONTINUE, so it calls accept() again but the client has
+> > exited, so accept() never returns and the server never exits.
 
-Okay, I see what your problem is.
+Just to be clear, I was seeing something a bit different.
+The accept() in the server is no-blocking, since we set O_NONBLOCK on
+the socket, so I see the server looping around a failing accept()
+(errno == EAGAIN) while dequeueing the CONTROL_CONTINUE messages, so
+after 10/15 seconds the server ends on my case.
 
-The bEndpointAddress field of the endpoint descriptor is not just the 
-endpoint's number.  It also includes the endpoint's direction in bit 7 
-(0 for OUT, 1 for IN).
+It seems strange that in your case it blocks, since it should be a
+no-blocking call.
 
-__create_pipe() doesn't bother to mask out the direction bit because bit 
-22 of the pipe value (where the direction bit ends up after it has been  
-shifted left by 15) isn't used for anything.
+Stefano
 
-Alan Stern
+> >
+>
+> Yep, I saw exactly the same issue while testing a new test.
+> I already sent a fix:
+> https://lore.kernel.org/netdev/20250708111701.129585-1-sgarzare@redhat.com/
+>
+> Please, send a T-b/R-b on that if you can.
+>
+> Stefano
+
 
