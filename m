@@ -1,101 +1,119 @@
-Return-Path: <linux-kernel+bounces-724022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF091AFEDAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:26:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28950AFEDB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1CA64A3909
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:25:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A1A57B59F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B002E7F38;
-	Wed,  9 Jul 2025 15:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5812E7F18;
+	Wed,  9 Jul 2025 15:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikPxL0de"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e7S94nnE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C91AD21;
-	Wed,  9 Jul 2025 15:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E672E7F10
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752074723; cv=none; b=TTApBaZxS9uVTHwjLcfUM6ez9XCnUouaSVMi9/2Wrn2oRNNZV7nSRx22Ro/ZRChLjM6iulUA/CKLHkFdQAbNK3EVs4ywMws9CyEIDO3vd1830+3KlZeUxxOw3lIYf+5leZyPzXqsbyvDfjbKG5tSynAkOEKpjR8ZEx5q8RZntYA=
+	t=1752074811; cv=none; b=oShn9waoEzVUXiSUKh/DEUd4ubqXJnRjsf8FcQ9IzADsQOFbWgQZpptWFke1y6J9ix+4lZ+RcDYPshk86+hj0OvSiSK5UUYWncQFPk7JAZ5PXva7Sq4jeCf1zlviC9DAKD5LU3YnW5H8Mye3OTrupDiKZVq4Jc5MF0f4ruLWX6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752074723; c=relaxed/simple;
-	bh=vQvUTZYDPFvJtZWLT3bsD4zVtLOSn/hT6DJD+GszzQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ttQoATe+u4t1OHUkQS+bhvmGVoxCnb2+ClWGi7HC9I+O3eFzLIZQI+bvwLmKuAPubA7wZPdusAUNVSmTjXA0ey9WVIhO4JGZCm0WwY6WgIWm+bHaRjAsQvwRYFWJODpN0IfEfnAySZHxJlz6SVBXVi2oY9Qf7lZr3pZBSyA6TNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikPxL0de; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDD41C4CEEF;
-	Wed,  9 Jul 2025 15:25:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752074723;
-	bh=vQvUTZYDPFvJtZWLT3bsD4zVtLOSn/hT6DJD+GszzQ8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ikPxL0deZqTQhV1qx988jIg1WQwS7TiasZUN6jIIG1fVwUWqn2ZJVuNt/sgdArR9x
-	 UxkEzZlprVh+dmbrWTTQZzbw3lyjWYJhoJo90HwOFwZ3s7mbZVv3I7SOJDAF7EV5vB
-	 RvEHdDUJu9v3HTnQ1AFyv14d6EXfzt9uNAr0qCkQ0a4RlRD+iDRaSK1Xm50YFbM7Fu
-	 q+0hWU+fQjdb8P6+jnUjfIvznP8iSqjnTD31hZTq+Dfl90dlaQ5iS+8Wq0CGVc28bG
-	 V8XK+76nKHlXpmaiJYYEhwx2pAd8xnVtdIYRYkQm87d9xgvd8ZIBaOdvqyled90aqY
-	 wTfFf7ljiNuFw==
-Date: Wed, 9 Jul 2025 17:25:10 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Donald Hunter <donald.hunter@gmail.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, "Akira Yokosawa" <akiyks@gmail.com>, "Breno Leitao"
- <leitao@debian.org>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>, "Jan Stancek" <jstancek@redhat.com>, "Marco Elver"
- <elver@google.com>, "Paolo Abeni" <pabeni@redhat.com>, "Randy Dunlap"
- <rdunlap@infradead.org>, "Ruben Wauters" <rubenru09@aol.com>, "Shuah Khan"
- <skhan@linuxfoundation.org>, joel@joelfernandes.org,
- linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
- lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org,
- stern@rowland.harvard.edu
-Subject: Re: [PATCH v8 06/13] docs: use parser_yaml extension to handle
- Netlink specs
-Message-ID: <20250709172510.191c116e@sal.lan>
-In-Reply-To: <m2wm8x8omf.fsf@gmail.com>
-References: <cover.1750925410.git.mchehab+huawei@kernel.org>
-	<34e491393347ca1ba6fd65e73a468752b1436a80.1750925410.git.mchehab+huawei@kernel.org>
-	<m2wm8x8omf.fsf@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752074811; c=relaxed/simple;
+	bh=Lf7bJFk3uV9MKQuav7jQz6/MttJtMdGad9u+KUEboXU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xscyxqw/bNuJJlQ6i6OmcpCmLC7awuphBKlEbXFYWTLwCJDVbNLVxKFAylYbTj2jBOTr7D1w0Ke91dMV9krRQiHsJoUmMQUX/xQ/T/mPNrdnieiivk2q7vURl+mvmedlEMpAfa1IQmsppY+viIxjat8nrLHdRA39nDUaZRVrr6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e7S94nnE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752074809;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lf7bJFk3uV9MKQuav7jQz6/MttJtMdGad9u+KUEboXU=;
+	b=e7S94nnEGpSrKl0vjipYKF8SDOGfV4owufizDIvNlO0d3nq4F1+J3Q9rnuJfIZuz0PrlyQ
+	V22Dsxm68Y6EPeZ5O1wcwnFTSje6dmk/5Vfje/3vpvVLhnkqh4zvF2yIH797UUrsCxVbLQ
+	zd+vH/cbGBw0euLrC2d4pwUdrrRi4bE=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-343-KfTWJwmNNqC5Co2mcI4eJg-1; Wed, 09 Jul 2025 11:26:48 -0400
+X-MC-Unique: KfTWJwmNNqC5Co2mcI4eJg-1
+X-Mimecast-MFC-AGG-ID: KfTWJwmNNqC5Co2mcI4eJg_1752074807
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-714078014b8so737627b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:26:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752074807; x=1752679607;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lf7bJFk3uV9MKQuav7jQz6/MttJtMdGad9u+KUEboXU=;
+        b=C3+RDFjUrdJXiS3JlNbyF7dvEc+2HNyPrGLbABY1kYxwsUmmYClUPwt2i1C/eDtg8X
+         POeUh1xGfJQUV6lermwhWHjXKQxsywaWAAUMJ9QSohXLspcQZetlJSIHnYbmI7d9AN0k
+         Sb41i8bouDtvw4RvI613EfHefXbLP8tXFd+2sZsRpccTBmMupD2nZtI2RVr36rsr18Y8
+         CUKBbrO3WJ5TizKjXdKkbbSmMVY8U7oMK+FajXczcZLLH9XiIN1rVOTrqewU7Djm+O8c
+         gYGeBZ8QwiNgdkQc9XwPHhYurepuhNXr7aLIneOIPjuzPC39H3/gkRR+4iA50RaCGJDs
+         QEPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfQUEHhU45r//MrioRulQY+rE4lxuXu10ItRS1Xge/f5NMt/53xr+aw8Xqt8Y1EHTFglQFj/T49AzD8e4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYdujzrYzcDwY4zE6UUM1gQIvHcplQ+fY7O4KPenJPyFRs+9fR
+	c9/tZ/pk9otFbI96veRnOAGzmYU/P2ykDO6s5TYpgcA5sE1F9srAZPOOFLJe4BB7GhzimFRKRPe
+	hKBVcl0HLUx/fBVIsumXvYhnNdvMWiv5zesQce2M9QwIJEZPJ8VTZ0ySB8tk+0/UogjQgMBgqiR
+	hlQIseOCK31bqKrhaJnZnX/0Wh+jHf1HUQjjcviCcM
+X-Gm-Gg: ASbGncsXGmP9yf1GarcK+1MOHB0L/bpwVWD+7eTZ67dclAXv4E8vW8MxB3Q92e4htBn
+	bhGD7lhoflkAKkWtLJZKwnfHkSrbHS7+06jQjaF7y5FATktv8P3VzPZ8I4RljyAXveqUydscJgj
+	VX/P+5
+X-Received: by 2002:a05:690c:4d83:b0:70e:326:6aeb with SMTP id 00721157ae682-717b1696280mr41605347b3.10.1752074807345;
+        Wed, 09 Jul 2025 08:26:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9oyUbfKLC5sveWj0ptirc82cNeL70EgaNkak6GlzIurDedMJZY/972EbTHi8rpQ5YCU07IRWEQOOiaTHdLVE=
+X-Received: by 2002:a05:690c:4d83:b0:70e:326:6aeb with SMTP id
+ 00721157ae682-717b1696280mr41604877b3.10.1752074806659; Wed, 09 Jul 2025
+ 08:26:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <472a5d43-4905-4fa4-8750-733bb848410d@linux.ibm.com>
+In-Reply-To: <472a5d43-4905-4fa4-8750-733bb848410d@linux.ibm.com>
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Wed, 9 Jul 2025 17:26:35 +0200
+X-Gm-Features: Ac12FXyNj6u4xw4GpaDSraC2WH1PFh63NMAa2Sk2WZqN1f1LqOBvccFzhXYQrfM
+Message-ID: <CAGxU2F7bV7feiZs6FmdWkA7v9nxojuDbeSHyWoASS36fr1pSgw@mail.gmail.com>
+Subject: Re: [PATCH net-next v4] vsock/test: Add test for null ptr deref when
+ transport changes
+To: Konstantin Shkolnyy <kshk@linux.ibm.com>
+Cc: mhal@rbox.co, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, v4bel@theori.io, leonardi@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-Em Fri, 27 Jun 2025 11:28:40 +0100
-Donald Hunter <donald.hunter@gmail.com> escreveu:
+On Wed, 9 Jul 2025 at 16:54, Konstantin Shkolnyy <kshk@linux.ibm.com> wrote:
+>
+> I'm seeing a problem on s390 with the new "SOCK_STREAM transport change
+> null-ptr-deref" test. Here is how it appears to happen:
+>
+> test_stream_transport_change_client() spins for 2s and sends 70K+
+> CONTROL_CONTINUE messages to the "control" socket.
+>
+> test_stream_transport_change_server() spins calling accept() because it
+> keeps receiving CONTROL_CONTINUE.
+>
+> When the client exits, the server has received just under 1K of those
+> 70K CONTROL_CONTINUE, so it calls accept() again but the client has
+> exited, so accept() never returns and the server never exits.
+>
 
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
-> 
-> > Instead of manually calling ynl_gen_rst.py, use a Sphinx extension.
-> > This way, no .rst files would be written to the Kernel source
-> > directories.
-> >
-> > We are using here a toctree with :glob: property. This way, there
-> > is no need to touch the netlink/specs/index.rst file every time
-> > a new Netlink spec is added/renamed/removed.
-> >
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > Reviewed-by: Donald Hunter <donald.hunter@gmail.com>  
-> 
-> This patch doesn't currently merge in the net-next tree because it
-> depends on a series in docs-next.
+Yep, I saw exactly the same issue while testing a new test.
+I already sent a fix:
+https://lore.kernel.org/netdev/20250708111701.129585-1-sgarzare@redhat.com/
 
-True. It has to either be applied on docs-next or you need to merge
-from it if you want to apply on your tree.
+Please, send a T-b/R-b on that if you can.
 
-This patch depends at the changes there to properly address 
-include_pattern/exclude_pattern.
+Stefano
 
-Regards,
-Mauro
 
