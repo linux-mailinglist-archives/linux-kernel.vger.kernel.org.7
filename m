@@ -1,68 +1,66 @@
-Return-Path: <linux-kernel+bounces-723369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF10AFE632
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E29E8AFE648
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA2F1895DE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B77A18863C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C41128F93E;
-	Wed,  9 Jul 2025 10:42:33 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4177E28DB5E;
+	Wed,  9 Jul 2025 10:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAvzB56b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B9228DB4C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9684D21766A;
+	Wed,  9 Jul 2025 10:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057752; cv=none; b=R6OLLHfdPoHEgGcTK9UGQrnDHuFOhFtSXuz4J1IdHXbEpqsebE0Cv5SBxBw85KRxvYuXsCUH6wEq3nx2z0jsgr1lapih7LKrT6mtXiDPJLuyzTUNd3QRJqa1WWHWf+ntUNq7Q4pr8jjaCF5R8Gk4lDH3t5oEqgOWIKaf/1cmIRM=
+	t=1752057805; cv=none; b=A8DCSuvgfmFlcC7p6jaRqfbDDYyoOChUru5o2te1AYgs9p0qDTy3ZBf21e9/QxzKqiZprsSJrRm47OLSkBi0YjaFQ5/RlbhQKdX+9DftGiZmb9XrQMCjjob6wcQ5oQ1Dr7aDxAniT3k9UQO6aZ1vOXNYONACi1tIFJXJsRPqOBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057752; c=relaxed/simple;
-	bh=Ymcc70jHfquLfmlPG/hjhuCZuqkpzSAmOGGo08LoEl4=;
+	s=arc-20240116; t=1752057805; c=relaxed/simple;
+	bh=w0ultm8tcpppshfn+Iwj+Nx3B7+l8kg1Bdk2vOBcOKw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IP3SB4i2qstsEd9+qmVF523MQtHhyxop7GbFjsTzU1xyKlWa+WBChS+icXNct3FsseDNN50Z5eVqU/YXGDxC2fvg47AogY1cI42+Ub9n6uo/avUgN5D9MP2UEvWIOyVjJHJ/Z82/X6XYoBIan7t/GBtJoaeM6KJ2QjKbzUCrz0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uZSFh-0004mr-8w; Wed, 09 Jul 2025 12:42:13 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uZSFf-007ZJk-2X;
-	Wed, 09 Jul 2025 12:42:11 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uZSFf-00FyRe-2H;
-	Wed, 09 Jul 2025 12:42:11 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	netdev@vger.kernel.org,
-	Andre Edich <andre.edich@microchip.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: [PATCH net v2 2/3] net: phy: allow drivers to disable polling via get_next_update_time()
-Date: Wed,  9 Jul 2025 12:42:09 +0200
-Message-Id: <20250709104210.3807203-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250709104210.3807203-1-o.rempel@pengutronix.de>
-References: <20250709104210.3807203-1-o.rempel@pengutronix.de>
+	 MIME-Version; b=oSguC0OKGQ7sn6ctc3dREFQWKT4U+vVZ/JcffYtn60msNoowohTegRsv9ShENYDYPD4+l17Rugd+nhlcxk+oUxfo0N7DW4jFgxuPRAclXDCgufjbNfV6J5aBU/4/QYMokQ7t0TMF8cKQVA157bQNQf5muUlO3U96sPME2t72mGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cAvzB56b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF3ACC4CEEF;
+	Wed,  9 Jul 2025 10:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752057805;
+	bh=w0ultm8tcpppshfn+Iwj+Nx3B7+l8kg1Bdk2vOBcOKw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cAvzB56ba9+mAjp2vx8tfBU4/7w2/W3pVGv/jVH83Bp3MJLWWueYmAj6ycmxiMjwR
+	 UY1Z2gp6qUVNXKumWI5kh4osXnqp5XM42VgGbkM+khl3xVlVc9nPOocScUruh4Qz3z
+	 6j2u2BJvJdfw+Uz++2l8VnLG6NX0UGOOjpRg0vndkq8Fc0hBDIs8rdCeH0pDijwd0u
+	 TBN82VTQyGPGr15xrzIxFTZNYXbYs8WqcNlIMSpogrXMD0oToMjOw0RwQjjoRPG20Q
+	 lrqmWR1sH9FZbex3i9ydeRpKX0juQbRrwvxtDutrCur8t+wMU7JTZQROALOF1jH4yP
+	 06gBS6J1XAhtw==
+From: neeraj.upadhyay@kernel.org
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	paulmck@kernel.org,
+	joelagnelf@nvidia.com,
+	frederic@kernel.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com,
+	neeraj.iitr10@gmail.com,
+	neeraj.upadhyay@amd.com,
+	"Neeraj Upadhyay (AMD)" <neeraj.upadhyay@kernel.org>
+Subject: [PATCH rcu 09/15] rcutorture: Print number of RCU up/down readers and migrations
+Date: Wed,  9 Jul 2025 16:12:09 +0530
+Message-Id: <20250709104215.15562-10-neeraj.upadhyay@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20250709104215.15562-1-neeraj.upadhyay@kernel.org>
+References: <20250709104215.15562-1-neeraj.upadhyay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,104 +68,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Some PHY drivers can reliably report link-down events via IRQs,
-but may fail to generate reliable link-up IRQs. To support such
-cases, polling is often needed - but only selectively.
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
-Extend get_next_update_time() so drivers can return PHY_STATE_IRQ
-to indicate that polling is not needed and IRQs are sufficient.
-This allows finer control over PHY state machine behavior.
+This commit prints the number of RCU up/down readers and the number
+of such readers that migrated from one CPU to another, along
+with the rest of the periodic rcu_torture_stats_print() output.
+These statistics are currently used only by srcu_down_read{,_fast}()
+and srcu_up_read(,_fast)().
 
-Introduce PHY_STATE_IRQ (UINT_MAX) as a sentinel value, and move
-PHY_STATE_TIME to phy.h to allow consistent use across the codebase.
-
-This change complements the previous patch enabling polling when
-get_next_update_time() is present.
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
 ---
-changes v2:
-- this patch is added
----
- drivers/net/phy/phy.c | 18 +++++++++++-------
- include/linux/phy.h   | 10 +++++++++-
- 2 files changed, 20 insertions(+), 8 deletions(-)
+ kernel/rcu/rcutorture.c | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-index 13df28445f02..faf9a48d3b6f 100644
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -39,8 +39,6 @@
- #include "phylib-internal.h"
- #include "phy-caps.h"
- 
--#define PHY_STATE_TIME	HZ
--
- #define PHY_STATE_STR(_state)			\
- 	case PHY_##_state:			\
- 		return __stringify(_state);	\
-@@ -1575,16 +1573,22 @@ static enum phy_state_work _phy_state_machine(struct phy_device *phydev)
- 	phy_process_state_change(phydev, old_state);
- 
- 	/* Only re-schedule a PHY state machine change if we are polling the
--	 * PHY, if PHY_MAC_INTERRUPT is set, then we will be moving
--	 * between states from phy_mac_interrupt().
-+	 * PHY. If PHY_MAC_INTERRUPT is set or get_next_update_time() returns
-+	 * PHY_STATE_IRQ, then we rely on interrupts for state changes.
- 	 *
- 	 * In state PHY_HALTED the PHY gets suspended, so rescheduling the
- 	 * state machine would be pointless and possibly error prone when
- 	 * called from phy_disconnect() synchronously.
- 	 */
--	if (phy_polling_mode(phydev) && phy_is_started(phydev))
--		phy_queue_state_machine(phydev,
--					phy_get_next_update_time(phydev));
-+	if (phy_polling_mode(phydev) && phy_is_started(phydev)) {
-+		unsigned int next_time = phy_get_next_update_time(phydev);
-+
-+		/* Drivers returning PHY_STATE_IRQ opt out of polling.
-+		 * Use IRQ-only mode by not re-queuing the state machine.
-+		 */
-+		if (next_time != PHY_STATE_IRQ)
-+			phy_queue_state_machine(phydev, next_time);
-+	}
- 
- 	return state_work;
- }
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 3d4e5c41235e..d92258e3ac1a 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -66,6 +66,10 @@ extern const int phy_basic_ports_array[3];
- #define PHY_ALWAYS_CALL_SUSPEND	0x00000008
- #define MDIO_DEVICE_IS_PHY	0x80000000
- 
-+#define PHY_STATE_TIME		HZ
-+/* disable polling, rely on IRQs */
-+#define PHY_STATE_IRQ		UINT_MAX
-+
- /**
-  * enum phy_interface_t - Interface Mode definitions
-  *
-@@ -1257,7 +1261,11 @@ struct phy_driver {
- 	 * dynamically adjust polling intervals based on link state or other
- 	 * conditions.
- 	 *
--	 * Returns the time in jiffies until the next update event.
-+	 * Returning PHY_STATE_IRQ disables polling and indicates that the
-+	 * driver relies solely on IRQs for link state changes.
-+	 *
-+	 * Returns the time in jiffies until the next update event, or
-+	 * PHY_STATE_IRQ to disable polling.
- 	 */
- 	unsigned int (*get_next_update_time)(struct phy_device *dev);
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 10f3cc4861ee..3f644b1f5823 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -2450,9 +2450,11 @@ struct rcu_torture_one_read_state_updown {
+ 	struct hrtimer rtorsu_hrt;
+ 	bool rtorsu_inuse;
+ 	ktime_t rtorsu_kt;
++	int rtorsu_cpu;
+ 	unsigned long rtorsu_j;
+ 	unsigned long rtorsu_ndowns;
+ 	unsigned long rtorsu_nups;
++	unsigned long rtorsu_nmigrates;
+ 	struct torture_random_state rtorsu_trs;
+ 	struct rcu_torture_one_read_state rtorsu_rtors;
  };
+@@ -2463,12 +2465,15 @@ static int rcu_torture_updown(void *arg);
+ 
+ static enum hrtimer_restart rcu_torture_updown_hrt(struct hrtimer *hrtp)
+ {
++	int cpu = raw_smp_processor_id();
+ 	struct rcu_torture_one_read_state_updown *rtorsup;
+ 
+ 	rtorsup = container_of(hrtp, struct rcu_torture_one_read_state_updown, rtorsu_hrt);
+ 	rcu_torture_one_read_end(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs, -1);
+ 	WARN_ONCE(rtorsup->rtorsu_nups >= rtorsup->rtorsu_ndowns, "%s: Up without matching down #%zu.\n", __func__, rtorsup - updownreaders);
+-	rtorsup->rtorsu_nups++;
++	WRITE_ONCE(rtorsup->rtorsu_nups, rtorsup->rtorsu_nups + 1);
++	WRITE_ONCE(rtorsup->rtorsu_nmigrates,
++		   rtorsup->rtorsu_nmigrates + (cpu != rtorsup->rtorsu_cpu));
+ 	smp_store_release(&rtorsup->rtorsu_inuse, false);
+ 	return HRTIMER_NORESTART;
+ }
+@@ -2516,7 +2521,7 @@ static void rcu_torture_updown_cleanup(void)
+ 		if (hrtimer_cancel(&rtorsup->rtorsu_hrt) || WARN_ON_ONCE(rtorsup->rtorsu_inuse)) {
+ 			rcu_torture_one_read_end(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs, -1);
+ 			WARN_ONCE(rtorsup->rtorsu_nups >= rtorsup->rtorsu_ndowns, "%s: Up without matching down #%zu.\n", __func__, rtorsup - updownreaders);
+-			rtorsup->rtorsu_nups++;
++			WRITE_ONCE(rtorsup->rtorsu_nups, rtorsup->rtorsu_nups + 1);
+ 			smp_store_release(&rtorsup->rtorsu_inuse, false);
+ 		}
+ 
+@@ -2534,13 +2539,14 @@ static void rcu_torture_updown_one(struct rcu_torture_one_read_state_updown *rto
+ 
+ 	init_rcu_torture_one_read_state(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs);
+ 	rawidx = cur_ops->down_read();
+-	rtorsup->rtorsu_ndowns++;
++	WRITE_ONCE(rtorsup->rtorsu_ndowns, rtorsup->rtorsu_ndowns + 1);
+ 	idx = (rawidx << RCUTORTURE_RDR_SHIFT_1) & RCUTORTURE_RDR_MASK_1;
+ 	rtorsup->rtorsu_rtors.readstate = idx | RCUTORTURE_RDR_UPDOWN;
+ 	rtorsup->rtorsu_rtors.rtrsp++;
++	rtorsup->rtorsu_cpu = raw_smp_processor_id();
+ 	if (!rcu_torture_one_read_start(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs, -1)) {
+ 		WARN_ONCE(rtorsup->rtorsu_nups >= rtorsup->rtorsu_ndowns, "%s: Up without matching down #%zu.\n", __func__, rtorsup - updownreaders);
+-		rtorsup->rtorsu_nups++;
++		WRITE_ONCE(rtorsup->rtorsu_nups, rtorsup->rtorsu_nups + 1);
+ 		schedule_timeout_idle(HZ);
+ 		return;
+ 	}
+@@ -2649,6 +2655,10 @@ rcu_torture_stats_print(void)
+ 	long pipesummary[RCU_TORTURE_PIPE_LEN + 1] = { 0 };
+ 	long batchsummary[RCU_TORTURE_PIPE_LEN + 1] = { 0 };
+ 	long n_gpwraps = 0;
++	unsigned long ndowns = 0;
++	unsigned long nunexpired = 0;
++	unsigned long nmigrates = 0;
++	unsigned long nups = 0;
+ 	struct rcu_torture *rtcp;
+ 	static unsigned long rtcv_snap = ULONG_MAX;
+ 	static bool splatted;
+@@ -2662,10 +2672,18 @@ rcu_torture_stats_print(void)
+ 		if (cur_ops->get_gpwrap_count)
+ 			n_gpwraps += cur_ops->get_gpwrap_count(cpu);
+ 	}
++	if (updownreaders) {
++		for (i = 0; i < n_up_down; i++) {
++			ndowns += READ_ONCE(updownreaders[i].rtorsu_ndowns);
++			nups += READ_ONCE(updownreaders[i].rtorsu_nups);
++			nunexpired += READ_ONCE(updownreaders[i].rtorsu_inuse);
++			nmigrates += READ_ONCE(updownreaders[i].rtorsu_nmigrates);
++		}
++	}
+ 	for (i = RCU_TORTURE_PIPE_LEN; i >= 0; i--) {
+ 		if (pipesummary[i] != 0)
+ 			break;
+-	}
++	} // The value of variable "i" is used later, so don't clobber it!
+ 
+ 	pr_alert("%s%s ", torture_type, TORTURE_FLAG);
+ 	rtcp = rcu_access_pointer(rcu_torture_current);
+@@ -2686,6 +2704,8 @@ rcu_torture_stats_print(void)
+ 		n_rcu_torture_boost_failure,
+ 		n_rcu_torture_boosts,
+ 		atomic_long_read(&n_rcu_torture_timers));
++	if (updownreaders)
++		pr_cont("ndowns: %lu nups: %lu nhrt: %lu nmigrates: %lu ", ndowns, nups, nunexpired,  nmigrates);
+ 	torture_onoff_stats();
+ 	pr_cont("barrier: %ld/%ld:%ld ",
+ 		data_race(n_barrier_successes),
 -- 
-2.39.5
+2.40.1
 
 
