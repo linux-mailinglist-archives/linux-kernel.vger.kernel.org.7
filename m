@@ -1,174 +1,135 @@
-Return-Path: <linux-kernel+bounces-724056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6941CAFEE0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:50:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81FDDAFEE10
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45BAE7A6A7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:48:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C315356753F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22472E92C6;
-	Wed,  9 Jul 2025 15:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B562E8E10;
+	Wed,  9 Jul 2025 15:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khNqZ8xT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zJpgOccP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i9bmBFfJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307D31C861E;
-	Wed,  9 Jul 2025 15:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473CB2D2380;
+	Wed,  9 Jul 2025 15:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752076207; cv=none; b=Dgu3xGi6jh1Agb/5moqHVp8ZG4W3s0PLWR0IuIKFXUoFou2x8y1NIcmbXeTH+n1cO/yH6eaotJeqy2XKq/HYDpl2KV3EpfVLRPLyDUnoQ2LdNEwPcSjZCDKDAvt5R8SGsblonI3J9wrxvBwGboLc6MhB2OYbJubyYMUEsD4C9j0=
+	t=1752076235; cv=none; b=OXdflMrjnMtIcoEw0TZXRigcTL0GD/a4N2GEAJOmWKK2rOMYtIOd11+u5M7cGp/affEAMHqi1tqDwnyDJxb1maA8gIheBbvspS+uHcqDTCV5GpRmPj3JRSaaFkAlG8xMQnwAs6RXMPksD590BmZwdTE2aY/B3C0dE3EZDcdc6PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752076207; c=relaxed/simple;
-	bh=WjK6a/OHmJ6yvQ1O4hsR8AA2PzVHS34PUkaDU5m9YRc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=G2x116aflenbbqOB3hMPGHlpU8mCqfWgwx25RdLX8x2NYut8hcHCgIsO2zKRkkfKo9M9jxzZBuzuhbH6Z64nwxMOSNqUPKyNP448Ij4A4WqOYUn7pvbbJBPCsUSqBJ0Q328pJzzjGAUQ247+3x68TMB/F/HCvVcDcMOyR8VgSzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khNqZ8xT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E5FC4CEEF;
-	Wed,  9 Jul 2025 15:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752076206;
-	bh=WjK6a/OHmJ6yvQ1O4hsR8AA2PzVHS34PUkaDU5m9YRc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=khNqZ8xTtDNK0sxRh61VvDlqTs3CqsnmJe/+C2cxmrr1blGmdYKCPGGvPXeJHqtfk
-	 YvP7z7nOn5ExlCxbzpIM216W+riK+sWsMjnCGIbw26H7TgOTECQNwQymsIzKC900Ps
-	 NwoNQ4noSMGolzQvTB5QxucaV8vx6Bf83+S+/zu5bb96pmLf/Cr/qz7EKbPPRA2gew
-	 QoDHgxnqEY3iELWhBOfMJMhWcaAP401Y1XLszkFDIjC1Cua0G3KfrwaCv8rD6iheEG
-	 9vqUvgWLMa/Ga3ksiWqMuWB0VmO2Xe4ENm+Fz3tHdnYy8Hqh01uz/e6WkQ3VS2UAsZ
-	 HE5MKXAjvBCwQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>,  "Miguel Ojeda" <ojeda@kernel.org>,
-  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
- Lossin"
- <lossin@kernel.org>,  "Trevor Gross" <tmgross@umich.edu>,  "Danilo
- Krummrich" <dakr@kernel.org>,  "Jens Axboe" <axboe@kernel.dk>,
-  <linux-block@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 03/14] rust: str: introduce `NullBorrowFormatter`
-In-Reply-To: <aG5tObucycBg9dP1@google.com> (Alice Ryhl's message of "Wed, 09
-	Jul 2025 13:23:05 +0000")
-References: <20250708-rnull-up-v6-16-v2-0-ab93c0ff429b@kernel.org>
-	<20250708-rnull-up-v6-16-v2-3-ab93c0ff429b@kernel.org>
-	<kpVk60lBMPJ_b4glgS0w-BfbIjN1cMCDSKDoM0RAB4p1Bg1BNfIdA4YRuOu70BbSZjlserkd8EJDwy0vVmR7yQ==@protonmail.internalid>
-	<aG5tObucycBg9dP1@google.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Wed, 09 Jul 2025 17:49:57 +0200
-Message-ID: <87qzypjrdm.fsf@kernel.org>
+	s=arc-20240116; t=1752076235; c=relaxed/simple;
+	bh=Wa46wRSbe8eRRlNEV30UC5rIJFEzqZlhrpSHEe/imCY=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=qXSkCe8VEeBbTGloNfbZzj3ieg11wlgFUdFl0c5GaQx9a7aWMxypkfglyT1Rx40Q2QF4J/ztFCPLxwtQVnw25v4SeABHOCKicjhQ7DdTxjJ1IPgNtxF6Yuai7pDearZhhDJBdSqhy3A2jRAXCUNyxqf95KsOiJEvPMovTTU6syc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zJpgOccP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i9bmBFfJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 09 Jul 2025 15:50:30 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752076232;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=mBTpuXAjRCs1WKfYQc7SUYqpORihIvtnyJbuUa7SMV4=;
+	b=zJpgOccPPzhYfrOrQa+oX23PRGg5gLILIxOU3e9NKSnFuIzF8LDmMw8DWHFCPJaoo1v6Q9
+	eKAcO+oA8M3Dy7NVfxm5Ua3hSNt1JB5FH4Vi1Z9AeZNuZr2zTgp1qnfqrpFA6p8RKsNpE5
+	22uMNNtMQb64QLqJBorKMh3yS3yTCB9C7WSXxTSneEH8KP3vbYN5Ca+Rb7BNO6px7qeSMF
+	0UA1t69jWE/V6zW3P1pR37gk3sbKsp1o9xkT9ig7hjA9sHDXLsEccyEWA2oobDi9DN/RPZ
+	nQLIkVCaFW1yvjZnAwbDH2MWKlTTSx+BTT25PXHRhkWIOPDfa7RIYuFcy5UpZg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752076232;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=mBTpuXAjRCs1WKfYQc7SUYqpORihIvtnyJbuUa7SMV4=;
+	b=i9bmBFfJxezijEfWqywddNgkA6WcoSECawV24332Q7BASQtanfn5snLg/1jFQ8NKTiG7ar
+	0VaDFZyuaOm6aZAA==
+From: "tip-bot2 for Jann Horn" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/mm: Disable hugetlb page table sharing on 32-bit
+Cc: Vitaly Chikunov <vt@altlinux.org>, Dave Hansen <dave.hansen@intel.com>,
+ Jann Horn <jannh@google.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>,
+ stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <175207623080.406.17185038526436313265.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+The following commit has been merged into the x86/urgent branch of tip:
 
-> On Tue, Jul 08, 2025 at 09:44:58PM +0200, Andreas Hindborg wrote:
->> Add `NullBorrowFormatter`, a formatter that writes a null terminated string
->> to an array or slice buffer. Because this type needs to manage the trailing
->> null marker, the existing formatters cannot be used to implement this type.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> ---
->>  rust/kernel/str.rs | 59 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 59 insertions(+)
->>
->> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
->> index 78b2f95eb3171..05d79cf40c201 100644
->> --- a/rust/kernel/str.rs
->> +++ b/rust/kernel/str.rs
->> @@ -860,6 +860,65 @@ fn deref_mut(&mut self) -> &mut Self::Target {
->>      }
->>  }
->>
->> +/// A mutable reference to a byte buffer where a string can be written into.
->> +///
->> +/// The buffer will be automatically null terminated after the last written character.
->> +///
->> +/// # Invariants
->> +///
->> +/// `buffer` is always null terminated.
->> +pub(crate) struct NullBorrowFormatter<'a> {
->> +    buffer: &'a mut [u8],
->> +    pos: usize,
->> +}
->
-> Do you need `pos`? Often I see this kind of code subslice `buffer`
-> instead.
+Commit-ID:     76303ee8d54bff6d9a6d55997acd88a6c2ba63cf
+Gitweb:        https://git.kernel.org/tip/76303ee8d54bff6d9a6d55997acd88a6c2ba63cf
+Author:        Jann Horn <jannh@google.com>
+AuthorDate:    Wed, 02 Jul 2025 10:32:04 +02:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Wed, 09 Jul 2025 07:46:36 -07:00
 
-How would that work? Can I move the start index of `buffer` in some way
-without an unsafe block?
+x86/mm: Disable hugetlb page table sharing on 32-bit
 
->
->> +impl<'a> NullBorrowFormatter<'a> {
->> +    /// Create a new [`Self`] instance.
->> +    pub(crate) fn new(buffer: &'a mut [u8]) -> Result<NullBorrowFormatter<'a>> {
->> +        *(buffer.first_mut().ok_or(EINVAL)?) = 0;
->> +
->> +        // INVARIANT: We null terminated the buffer above.
->> +        Ok(Self { buffer, pos: 0 })
->> +    }
->
-> I would probably just use an Option for this constructor.
+Only select ARCH_WANT_HUGE_PMD_SHARE on 64-bit x86.
+Page table sharing requires at least three levels because it involves
+shared references to PMD tables; 32-bit x86 has either two-level paging
+(without PAE) or three-level paging (with PAE), but even with
+three-level paging, having a dedicated PGD entry for hugetlb is only
+barely possible (because the PGD only has four entries), and it seems
+unlikely anyone's actually using PMD sharing on 32-bit.
 
-OK.
+Having ARCH_WANT_HUGE_PMD_SHARE enabled on non-PAE 32-bit X86 (which
+has 2-level paging) became particularly problematic after commit
+59d9094df3d7 ("mm: hugetlb: independent PMD page table shared count"),
+since that changes `struct ptdesc` such that the `pt_mm` (for PGDs) and
+the `pt_share_count` (for PMDs) share the same union storage - and with
+2-level paging, PMDs are PGDs.
 
->
->> +    #[expect(dead_code)]
->> +    pub(crate) fn from_array<const N: usize>(
->> +        a: &'a mut [crate::ffi::c_char; N],
->> +    ) -> Result<NullBorrowFormatter<'a>> {
->> +        Self::new(
->> +            // SAFETY: the buffer of `a` is valid for read and write as `u8` for
->> +            // at least `N` bytes.
->> +            unsafe { core::slice::from_raw_parts_mut(a.as_mut_ptr().cast::<u8>(), N) },
->> +        )
->> +    }
->
-> Arrays automatically coerce to slices, so I don't think this is
-> necessary. You can just call `new`.
+(For comparison, arm64 also gates ARCH_WANT_HUGE_PMD_SHARE on the
+configuration of page tables such that it is never enabled with 2-level
+paging.)
 
-Nice!
+Closes: https://lore.kernel.org/r/srhpjxlqfna67blvma5frmy3aa@altlinux.org
+Fixes: cfe28c5d63d8 ("x86: mm: Remove x86 version of huge_pmd_share.")
+Reported-by: Vitaly Chikunov <vt@altlinux.org>
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Oscar Salvador <osalvador@suse.de>
+Acked-by: David Hildenbrand <david@redhat.com>
+Tested-by: Vitaly Chikunov <vt@altlinux.org>
+Cc:stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20250702-x86-2level-hugetlb-v2-1-1a98096edf92%40google.com
+---
+ arch/x86/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
->> +    /// Return the position of the write pointer in the underlying buffer.
->> +    #[expect(dead_code)]
->> +    pub(crate) fn pos(&self) -> usize {
->> +        self.pos
->> +    }
->
-> You delete this function in one of the later patches, so it makes more
-> sense not to add it.
-
-Oops.
-
->
->> +}
->> +
->> +impl Write for NullBorrowFormatter<'_> {
->> +    fn write_str(&mut self, s: &str) -> fmt::Result {
->> +        let bytes = s.as_bytes();
->> +        let len = bytes.len();
->> +
->> +        // We want space for a null terminator
->> +        if self.pos + len > self.buffer.len() - 1 {
->
-> Integer overflow?
-
-In the subtraction? `buffer.len()` is at least 1, because of the type invariant.
-
-Or do you mean I should do a checked add for `self.pos + len`?
-
-
-Best regards,
-Andreas Hindborg
-
-
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 71019b3..4e0fe68 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -147,7 +147,7 @@ config X86
+ 	select ARCH_WANTS_DYNAMIC_TASK_STRUCT
+ 	select ARCH_WANTS_NO_INSTR
+ 	select ARCH_WANT_GENERAL_HUGETLB
+-	select ARCH_WANT_HUGE_PMD_SHARE
++	select ARCH_WANT_HUGE_PMD_SHARE		if X86_64
+ 	select ARCH_WANT_LD_ORPHAN_WARN
+ 	select ARCH_WANT_OPTIMIZE_DAX_VMEMMAP	if X86_64
+ 	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
 
