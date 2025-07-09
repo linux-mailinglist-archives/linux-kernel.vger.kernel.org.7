@@ -1,124 +1,116 @@
-Return-Path: <linux-kernel+bounces-722580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A14C2AFDC8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:50:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB16AFDC90
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C899956773F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:50:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5D537AEA41
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C23135A53;
-	Wed,  9 Jul 2025 00:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A57613C8E8;
+	Wed,  9 Jul 2025 00:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlELURfn"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCAUoneN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DAC5479B;
-	Wed,  9 Jul 2025 00:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776BD1BC41;
+	Wed,  9 Jul 2025 00:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752022204; cv=none; b=ew32ANbpL3AtUE481DDzz9UhZCRXupJ3Gg1le6mcl4M4R7AQhXU5VY03M1yI9/Z78a9mPbWzFhObOgsrGmhzN9jFE285P3ZEd5VxC8bx9BzgPUO9XqzmElqDEM9NtdLsJOaquVBXC6kiXzIT/UmyXsB69vBSu/YfKzBOJphPxwo=
+	t=1752022384; cv=none; b=lL2sJ6X2YBFBqo50xgTnZzGAaeHMnMOgKi5XJvrHGaZq9nRd3fgPg1/nqYz+0kR9QDA2zDHE93JpY7Wh+f2d/x+LQy80tum4z7KUfFVmMDJ7Bj2D1+QqUqUHxVmzPZTxAcvjwOe6G8HB3HG58ifNlpLRI3sWVjg2S2z5izEDtQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752022204; c=relaxed/simple;
-	bh=NgldNzYwTkhlRxpEXq0DM09IquaTz8VFTwNZv++b108=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a1LokhPg5gEWMbyuRPep8hQVomawDpSBozYiFEjebHRGIl4A9d8Cygy6H01uIya7/6huUtMrQE0BXBQRV5o6Pfp7ToTmLEmrtDTy2CJeMlujisiTxFZe6y51LyWwKFWohNeYpqw87peAsd4dknB4DKSWXdNSw76XdmFVi+H/5Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlELURfn; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-7170344c100so31337707b3.0;
-        Tue, 08 Jul 2025 17:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752022202; x=1752627002; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=elsYwPw6zDrpvs+3bhsQ9YOjxpF7Z+Q+nAJ2MBwZBNc=;
-        b=dlELURfnQEtpPZyjjMThsG0DVOJ4zDadYV/iIKIXzIzsolVBz7Vi31C9XzBp9I1DlV
-         Iq8Y1Ym5+WbSqWqIxz9kCVinSraIWsVLXZlJKdPDLIa715yT/Nio04kMZGCLeWB4YS0M
-         5JdCDEYheAwlve6FeBW/6lzWc9oO1DVFxIHaFNmlbiKYndsI4HMom40BAoB2q/wHEVqk
-         vZFbAUNhkZ7kcRsXh9ZXMQxw6AwCB6aA7y2A31or5spfDR+Q72f9Y0t98Y8y+KFi7eqX
-         MSOXqp3jL0Y7xcagl453R7NlEqB+qTobb0nWidpaA7iG8xRAgMspc2va+LumBdBZtErs
-         pzMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752022202; x=1752627002;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=elsYwPw6zDrpvs+3bhsQ9YOjxpF7Z+Q+nAJ2MBwZBNc=;
-        b=xFSE+4eGQFljhInX6zrxDvF+WDBka7QDmdRn4MZpb0qVFgnb6OLcSA7DbNfBYUSuuw
-         nIT5RWM7s6+jzwaveKBNoVxdmlL3m9mkD/E2PSuhkwl1ck1NzWJIqilZlyET5v5zXWNz
-         jF6tSwf4tUS9E5qhRV3WAxNAnSKsZd/XRIfBumNCPzP8SK7OoAzkh1sG7OMC61+tADEg
-         zgZ5fHYHZQ0pT92/KLT7FA/JrdhT5XwtuwEUxW7yf7S6W7PxL5BNTxMoc953/fhHZcbo
-         EJTn1EZK7zJjIQNfR71AQOZ5CeVJJhAOSPSeVPcHyDOOjkIlyu7Je1wpVpG8gh6KufnF
-         D+8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVJZ0hnzHUdvIAKxNKGExvePzMfG/+3FFCgkdiHxhJalcDOP54hPLcjS27Qy2Kv5pTmxjrnz2+J@vger.kernel.org, AJvYcCXtIC4ihvISCDZO4aKGT24cLmYWlSOMo/g3aBOo2J1Vzv65b3ijz+3rJSskz9ZVNtnLCqzRUBnaNLs1ES4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPK5FHHPGBfbl+TuUB8iHNbZCgCgWvWyDasjmbWYB0hVEAnHgq
-	ztTQT3f0CXYHnTVBhx+nXCgW/itzzIr3UvAihuXxC1ZaCWoy2/D04Lhy
-X-Gm-Gg: ASbGncuwIK41eXozZurOemvDqPvNn797Pn5wj7kE1jh+BeeGIufGshztke7xQQ4LwOG
-	5NX4HkhGrJZDPzoR+7W3ewSwpj0JyQUPzoqXV+/2y9mCtdFt3i4enEIrkL5EChPrj0hjG/1Ocw1
-	XN3CoPBElwQY95fzmdeX7aQXJ+JnkZs1RH8dA1cjoaRPNuIM6ftKwi04T+ql5c9nQ+HBU+ceBHl
-	LiINbhoyA8ZhwCkjyUJSIqowwRtjvmqPu6Ym/cRFriWrynoiCrpsjS56Kgj9EZ982OVE9AkS4Ss
-	2/GGa/JAIWdcwrkD3DQ9CbM2bcv+QCQ+I5SCsehIAf62nV1QXkJqAPMS+KwZQmENuYvfwK/SARj
-	R17kcUkkF9uXDQ1RGcg==
-X-Google-Smtp-Source: AGHT+IFrSrxMMJNXhy4I6nDgKxzf2q+J9ki4um8/p2fAqdLKruaJOFqYiuZujRclanonBZPwLTRzeA==
-X-Received: by 2002:a05:690c:3587:b0:70d:f338:8333 with SMTP id 00721157ae682-717b19847b1mr11911327b3.22.1752022201951;
-        Tue, 08 Jul 2025 17:50:01 -0700 (PDT)
-Received: from bijan-laptop.attlocal.net ([2600:1700:680e:c000:235f:99bb:f36e:a060])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71665b40d99sm23563877b3.112.2025.07.08.17.49.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 17:50:01 -0700 (PDT)
-From: Bijan Tabatabai <bijan311@gmail.com>
-To: linux-mm@kvack.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: sj@kernel.org,
-	akpm@linux-foundation.org,
-	Bijan Tabatabai <bijantabatab@micron.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] mm/damon/core: Commit damos->target_nid
-Date: Tue,  8 Jul 2025 19:47:29 -0500
-Message-ID: <20250709004729.17252-1-bijan311@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752022384; c=relaxed/simple;
+	bh=hPz+8vn5trBDH79QuCKDMawOQmLVVBkPPcvkIwXcSN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YKD86zGAiuwjSCBgKBhbugt6mk8FocYmEVAymWLlrtmETemJbvzD0vBL1g+DDQGbPZhMKid54K14qZWG8+vGGe0woCCQMe0fmbrL3gnLi9/SMSWALeUrUtr4QWzSG0r53osmnePyZ0ViEC0wljJWeKPdQhKizbEU3MMTeK7qlV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCAUoneN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63786C4CEED;
+	Wed,  9 Jul 2025 00:53:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752022384;
+	bh=hPz+8vn5trBDH79QuCKDMawOQmLVVBkPPcvkIwXcSN8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jCAUoneNx+tGEXZ4FP7Y+2H9vCEBq3Fedx3TswkqfUWKU9gcRg/LajCdLwcvO+z5G
+	 5qs4hnqdhM8YmEJH0vXuZmm+hshQd1zqlNmhWdh2TknzIOzewNkuzHci5w5NqfJORN
+	 C8gnLfScdD1UOlqlalpk1+FbXpbori4X4kP07uDII4fgxv2K/XtGyJtkPirkufY+N4
+	 60T5F4QYYgBAlYZNsdc4IcdvjFBammd6+UWgTUTRkufo1urDhhq9e4+9obk1ghYrvf
+	 fw1mKEvbyo3NPG4BLYnajSFW19+ydnJrztgeCPmvdwjoCwZ76V3cL+1a6HzdxS2AB6
+	 2i+DS4XzhPcng==
+Date: Tue, 8 Jul 2025 17:53:01 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Parvathi Pudi <parvathi@couthit.com>
+Cc: danishanwar@ti.com, rogerq@kernel.org, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ ssantosh@kernel.org, richardcochran@gmail.com, s.hauer@pengutronix.de,
+ m-karicheri2@ti.com, glaroque@baylibre.com, afd@ti.com,
+ saikrishnag@marvell.com, m-malladi@ti.com, jacob.e.keller@intel.com,
+ diogo.ivo@siemens.com, javier.carrasco.cruz@gmail.com, horms@kernel.org,
+ s-anna@ti.com, basharath@couthit.com, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, vadim.fedorenko@linux.dev, pratheesh@ti.com,
+ prajith@ti.com, vigneshr@ti.com, praneeth@ti.com, srk@ti.com,
+ rogerq@ti.com, krishna@couthit.com, pmohan@couthit.com, mohan@couthit.com
+Subject: Re: [PATCH net-next v10 03/11] net: ti: prueth: Adds PRUETH HW and
+ SW configuration
+Message-ID: <20250708175301.599c82b8@kernel.org>
+In-Reply-To: <20250702140633.1612269-4-parvathi@couthit.com>
+References: <20250702140633.1612269-1-parvathi@couthit.com>
+	<20250702140633.1612269-4-parvathi@couthit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Bijan Tabatabai <bijantabatab@micron.com>
+On Wed,  2 Jul 2025 19:36:25 +0530 Parvathi Pudi wrote:
+> diff --git a/drivers/net/ethernet/ti/icssm/icssm_prueth.c b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
+> index aed5cdc402b5..f52858da89d4 100644
+> --- a/drivers/net/ethernet/ti/icssm/icssm_prueth.c
+> +++ b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
+> +	txcfg = PRUSS_MII_RT_TXCFG_TX_ENABLE |
+> +		PRUSS_MII_RT_TXCFG_TX_AUTO_PREAMBLE |
+> +		PRUSS_MII_RT_TXCFG_TX_32_MODE_EN |
+> +		(TX_START_DELAY << PRUSS_MII_RT_TXCFG_TX_START_DELAY_SHIFT) |
+> +		(TX_CLK_DELAY_100M << PRUSS_MII_RT_TXCFG_TX_CLK_DELAY_SHIFT);
 
-When committing new scheme parameters from the sysfs, the target_nid
-field of the damos struct would not be copied. This would result in the
-target_nid field to retain its original value, despite being updated in
-the sysfs interface.
+> +	/* Min frame length should be set to 64 to allow receive of standard
+> +	 * Ethernet frames such as PTP, LLDP that will not have the tag/rct.
+> +	 * Actual size written to register is size - 1 per TRM. This also
+> +	 * includes CRC/FCS.
+> +	 */
+> +	txcfg = (((PRUSS_MII_RT_RX_FRMS_MIN_FRM - 1) <<
+> +			PRUSS_MII_RT_RX_FRMS_MIN_FRM_SHIFT) &
+> +			PRUSS_MII_RT_RX_FRMS_MIN_FRM_MASK);
 
-This patch fixes this issue by copying target_nid in damos_commit().
+Please use FIELD_PREP() instead of defining separate _MASK and _SHIFT
+values.
 
-Cc: stable@vger.kernel.org
-Fixes: 83dc7bbaecae ("mm/damon/sysfs: use damon_commit_ctx()")
-Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
----
- mm/damon/core.c | 1 +
- 1 file changed, 1 insertion(+)
+> +	/* For EMAC, set Max frame size to 1528 i.e size with VLAN.
+> +	 * Actual size written to register is size - 1 as per TRM.
+> +	 * Since driver support run time change of protocol, driver
+> +	 * must overwrite the values based on Ethernet type.
+> +	 */
+> +	txcfg |= (((PRUSS_MII_RT_RX_FRMS_MAX_SUPPORT_EMAC - 1) <<
+> +			   PRUSS_MII_RT_RX_FRMS_MAX_FRM_SHIFT)	&
+> +			   PRUSS_MII_RT_RX_FRMS_MAX_FRM_MASK);
 
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 5357a18066b0..ab28ab5d08f6 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -978,6 +978,7 @@ static int damos_commit(struct damos *dst, struct damos *src)
- 		return err;
- 
- 	dst->wmarks = src->wmarks;
-+	dst->target_nid = src->target_nid;
- 
- 	err = damos_commit_filters(dst, src);
- 	return err;
--- 
-2.43.0
+> +struct prueth_queue_desc {
+> +	u16 rd_ptr;
+> +	u16 wr_ptr;
+> +	u8 busy_s;
+> +	u8 status;
+> +	u8 max_fill_level;
+> +	u8 overflow_cnt;
+> +} __packed;
 
+Please don't use __packed if the struct will be packed anyway based on
+C packing rules.
 
