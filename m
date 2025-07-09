@@ -1,123 +1,130 @@
-Return-Path: <linux-kernel+bounces-724639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C86AFF547
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:14:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80965AFF549
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE6815A3CCA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:14:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC141C4539A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D4626A0F8;
-	Wed,  9 Jul 2025 23:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6006126B2B3;
+	Wed,  9 Jul 2025 23:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2ptSw3Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbW+O/F5"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64DD25F97E;
-	Wed,  9 Jul 2025 23:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3320E262FF5;
+	Wed,  9 Jul 2025 23:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752102885; cv=none; b=C+zLC631L5++vJr2SvycLQJR93iveaAilN07gk+gR3fWIus3hTqGe5/f8aEPZT57sKKqx4BKGG3P9VLKOWywZtf8r6olBbnIJTxCCzV9KDVoOTeCwXVKaebnCqlwhMCnuFv3sbBOt70vRDP3LE9B9rYq8elJiToqDtr6y9A9dxQ=
+	t=1752102899; cv=none; b=XCgMcUgVNEOaEgOEUI9EWy2yLlTjm97f0N3bGCoxgs/lrP76daoK25ESvQi39lMvYZTD8I8/RXmjmEguwNo7985AnuKQdIHstx5CpgU4vfTVcWka93jEaL5EbLvsYsNTuOQSY6YL8GzDnVEK1ycunTnMGjSzlUCdJXY6nyV4sIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752102885; c=relaxed/simple;
-	bh=U6hkilTY+kcQBVwtX5w7FZM3TYBRLU4tcKO0rz3aQyE=;
+	s=arc-20240116; t=1752102899; c=relaxed/simple;
+	bh=AQ5yB1DbROpAxt+ad1yBffmzK/df+l/OZCggz4JyXwM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JyOdEitGbvKz/WcO5LG/g6B3gUa+RWInSQ5k9w85/3nIekJ9OS2auRWH+WohJXDTr7Eh5PiEMNq8btHhlpyOZBkR4xYharbrT+OO5n3Xik3nz8Xbm+mJajyTSYC9H07eycrEEOiz4qa/FgZQiDyhwA3FxNcEbbrCAEDsfudQW5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2ptSw3Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54E56C4CEEF;
-	Wed,  9 Jul 2025 23:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752102885;
-	bh=U6hkilTY+kcQBVwtX5w7FZM3TYBRLU4tcKO0rz3aQyE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=j2ptSw3QmEZyCPaGLmFnV1gLVCfwSVApFFyHgtzYe2JtR2QrMFTcUJgWFztqs3bhX
-	 rR0pRxEV8YVkHdJAZsE+gjKhsepi/k6hWLXBw7L+65NzmlwO32e0GlJKATdipDf2Zq
-	 Ket0iQCqaSxlGnTpjFWIhUCNY9llSDw0VeP6sF2aYWw1Ai+B/pJNTg9nR6hnl5NEv/
-	 uF/Y3awwwsM8IBi+sc2rxZrC//weymwbp65ARSzpamm+pxPITYffkFU5YCrP2lX0nL
-	 1+dnqm/L8ssXSqt9TSOBO7WcYHLCx/mWinGLuSwXqvT9ZLBywBlffkSl/k3SEsaVw5
-	 yIt1ahhGt5WDw==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5550dca1241so332915e87.0;
-        Wed, 09 Jul 2025 16:14:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUr60MZFL3cSP+hcJvkig3k4kR4//1W7hSqAUweJL/Gf0x5dkd+clN75w6zJoCp/RJWUXSbIiaqOYw=@vger.kernel.org, AJvYcCX7aybfbvZVU9zdWWPTANcDAbAdezDlrh2TD3ckzQQ2pVR4KDmOJqYqYpQLitb/w2KXUhkGl4uvfrbARc/z@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuypF+EXo85A4qe7Q5QmHFZBiOLCyBRVQ0A292dFV+r9ILHx4x
-	EdaJKazJ6yPwM6rdy8/1WRRWVRuTgYy99bvJYk7ZDP3/SKqhopfB7IdhT9N0YAR/pohVkbhVdl1
-	ClPqYUs8Otel9bBX4ST0gF9Pox8M8lWA=
-X-Google-Smtp-Source: AGHT+IHlpfZ2cTZvvxeO3QEicqir+rzdQ9BBQ+VgBN4VigkX2VElmupxy1ONvrrdAcLWXUxoqsNlWePBsqKjtdHhNF4=
-X-Received: by 2002:a05:6512:3a91:b0:553:653f:1b21 with SMTP id
- 2adb3069b0e04-559000c6cbamr534593e87.37.1752102883717; Wed, 09 Jul 2025
- 16:14:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=oRB6nCKVHIwPX7WIR59CY47JiFg1xdIzcY7ZqbdSUgk6eRxmjH7b31MAx++aN8Jy+AjoBNhCiI7Rh8NW+vqnbX3R0pGiXdnGL8acYuLzwcjHz1NDiuR/4JubpMm+LuTpNv9hwuFXLFSpbb6AVLzFzR9QHxcfrWXYDFTf32O0Ot8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WbW+O/F5; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4531e146a24so2018265e9.0;
+        Wed, 09 Jul 2025 16:14:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752102896; x=1752707696; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BYJOdamhFPgWOOLsL56Q4wei5GHMmw+MZHBvYTLYgYk=;
+        b=WbW+O/F5MEcjq74eFs8kQccJJqAsMYtmL1rDk1L/7way9aBJByd5WyaWkUWDS31Acq
+         7p+n7f17PCu1ADgKFiC04h/EPD925WplOdB5ayQ6u3RjfJmmoV5c6/3eqjl8bQhBp7lK
+         W57yaRfmTI+0j3i0uI8GLx1mD20BrhhB8mbGa7ymJWiOfdd426e0/RNwOsaQQkHe18+W
+         7jjVoHFWRaK74ZnPh0N/C5fOfV0b/eJTlRqhF+CIonQYeGktFr1lg8jG8hbPuSvV3rHR
+         HcHq9lFmwmZW0S4xCN0m4oTmRM43DxrIr40FByozwSxAw+P2fZ+LFNgWyckdtJlh/jtI
+         CxbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752102896; x=1752707696;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BYJOdamhFPgWOOLsL56Q4wei5GHMmw+MZHBvYTLYgYk=;
+        b=oLMPk9MmOUJKOvglL5jA19tCXy/189TW+58ULL8i8mOXv7bDZYCMuXlxYTzTr00Q0u
+         oqSygjLBbkTcNF64H2cal5O6LKui4wvCVTKupQ7urcWs7KkhWW1K6X2IWHsvQL7vpz9y
+         Pxu3vTL0EW9sCMHR3if7tDHvWtxqs7Q7O/vskm0pbastQZUcRC6uGK2Y0ECxrQSr+cJf
+         Y7B8KSh43k5FnZGGJSgTwvt04iYBKNMN1z8okcZ7/iIqsG1QiPPh2MLY5pOhfmxubDc1
+         XFdmI55DDsQGcczMqtbxeTxJQVfljUVorZyY5in0WH1EImynlMjOF2CylSF3O8lUKyPA
+         ri7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVG7bR8HS7iFtbsQoQijhmMGut/dd35v3S5Ix1Io/oX3loSbehsIVMppvJt64vS7N4L9EAePY8EW17V4Gxd@vger.kernel.org, AJvYcCVcclFaNYrUfIjh5tL0gRdFOJiaTDmFhd3P3MgrvajDMhTOXyx+IgO4Vs/8xMP/WBdV9B8=@vger.kernel.org, AJvYcCWP6DEIfjTFw/Pav9NCpmazZS7wVhL3M7aBgqe6Nphjv/ZvueCcKSFqTFyOlIgw36EgZRXYG1Zg8OXujjgSPWg=@vger.kernel.org, AJvYcCXlYN96jP37rGAZce6R1BC9WoGbkX0rgdzRicic25lFK5OZP5xZ5H3WShB+h5sRsqz8FrTfQLV/QcCwmYiJ++U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvdEp488QN9+sVPJZU0qEUX8kN7mdNLFmcd9xAAKAcG5C6TnQM
+	3Pn3P5jN8l+Fe3aOKJ1ezEOj9r38PP+/gG2jAuq0XZvqesOS7/j+G2rXONRPdHQxHMO/b+LZtWc
+	iSNmWvlCuRyvVeNTXwjrzf+AzE6n55jk=
+X-Gm-Gg: ASbGncu+Z8A3C4bOf8l527EmosQyOQq/z4HYlGie/qgckOab9ouPVk7kZsj5fw4WjEB
+	aGi6dFSbIFWVmyg7pZGGblvWiBHNbbd/KdDXA6ltPFCpxKp9khl7ZUPZZKfVaA97D1WIw0tP2J9
+	N5E6d3lJRR0ZW5EL/++EMPO6Wn0akFhF6zgvIYaT7KEGXJ2sxt6/ADgSmEVxDl7wKXKKh1tcCVp
+	y9CDqB+Hjs=
+X-Google-Smtp-Source: AGHT+IH2U4htcocDaxL/p00xb0f1oc0l7cDxqJ0pRS18MFAp8gYunrtlWXqenpefwu6fXfVI/uyDO3Sv/FaxpvA7yQo=
+X-Received: by 2002:a05:6000:24c1:b0:3b3:9ca4:ac8e with SMTP id
+ ffacd0b85a97d-3b5e4537ad2mr3933193f8f.44.1752102896415; Wed, 09 Jul 2025
+ 16:14:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708125624.734132-1-kraxel@redhat.com> <6edfa099-ab0c-41f6-89ea-0fd67666dd05@kernel.org>
- <2mn65slwkwmjpeilma2isw7zgabdmda4rhpqjiutwdwqno2wrh@zghymlce2fiy>
- <8621135e-445a-42dd-89e0-bf8fc3e2b6b7@kernel.org> <4cix3k4h32wozt3nxic5un7jyzfjrmqmzbzmtr3ivw5b2bz363@mw6bke7w4oaq>
- <5800c426-95fd-4a81-b979-c0bc2bc293dd@kernel.org>
-In-Reply-To: <5800c426-95fd-4a81-b979-c0bc2bc293dd@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 10 Jul 2025 09:14:30 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXFvMVmxesoqaW254z85ZMRO4U+S3Cr7oyu4K-m-jiKVTg@mail.gmail.com>
-X-Gm-Features: Ac12FXwpbrLehPhLTUsuXBLWMnoTdRML-ZAvyYBvg7-8VCnPBDcFaM8Uz_rPpoQ
-Message-ID: <CAMj1kXFvMVmxesoqaW254z85ZMRO4U+S3Cr7oyu4K-m-jiKVTg@mail.gmail.com>
-Subject: Re: [PATCH v2] efi: add ovmf debug log driver
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Gerd Hoffmann <kraxel@redhat.com>, linux-efi@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>
+References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
+ <20250709172416.1031970-1-vitaly.wool@konsulko.se> <CAADnVQ+bikqCO7D+5_rAtiJXv3F6xn=0_hgGH5CkoTPpdi8j6Q@mail.gmail.com>
+ <14b08e7c-c2e8-435c-a1dd-bd51cfb42060@kernel.org>
+In-Reply-To: <14b08e7c-c2e8-435c-a1dd-bd51cfb42060@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 9 Jul 2025 16:14:45 -0700
+X-Gm-Features: Ac12FXwMoZpB8rTLNPshgJLrHIXikIq47lGVql6Qo7vJk3Tj5z4cIDxTFaOoom4
+Message-ID: <CAADnVQ+qCNfm3aucBrkXRXrUjjYeYQb09Oobx+pgOXNDny4s8w@mail.gmail.com>
+Subject: Re: [PATCH v12 1/4] mm/vmalloc: allow to set node and align in vrealloc
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm <linux-mm@kvack.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, rust-for-linux <rust-for-linux@vger.kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, 
+	bpf <bpf@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 10 Jul 2025 at 00:39, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Wed, Jul 9, 2025 at 3:57=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
+rote:
 >
-> On 09/07/2025 16:31, Gerd Hoffmann wrote:
-> > On Wed, Jul 09, 2025 at 04:20:49PM +0200, Krzysztof Kozlowski wrote:
-> >> On 09/07/2025 16:17, Gerd Hoffmann wrote:
-> >>> On Wed, Jul 09, 2025 at 03:58:58PM +0200, Krzysztof Kozlowski wrote:
-> >>>> On 08/07/2025 14:56, Gerd Hoffmann wrote:
-> >>>>> +MODULE_DESCRIPTION("OVMF debug log");
-> >>>>> +MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
-> >>>>> +MODULE_LICENSE("GPL");
-> >>>>> +MODULE_ALIAS("platform:ovmf_debug_log");
-> >>>>> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-> >>>>> index db8c5c03d3a2..ac0a03ec3452 100644
-> >>>>> --- a/drivers/firmware/efi/Kconfig
-> >>>>> +++ b/drivers/firmware/efi/Kconfig
-> >>>>> @@ -263,6 +263,14 @@ config EFI_COCO_SECRET
-> >>>>>     virt/coco/efi_secret module to access the secrets, which in turn
-> >>>>>     allows userspace programs to access the injected secrets.
-> >>>>>
-> >>>>> +config OVMF_DEBUG_LOG
-> >>>>> + tristate "Expose OVMF firmware debug log via sysfs"
-> >>>>> + depends on EFI
-> >>>>> + help
-> >>>>> +   Recent OVMF versions (edk2-stable202508 + newer) can write
-> >>>>> +   their debug log to a memory buffer.  This driver exposes the
-> >>>>> +   log content via sysfs (/sys/firmware/efi/ovmf_debug_log).
-> >>>>
-> >>>> Where did you document new ABI?
-> >>>
-> >>> The log buffer header struct is documented in the header file for the
-> >>> edk2 code:
-> >>> https://github.com/tianocore/edk2/blob/master/OvmfPkg/Include/Library/MemDebugLogLib.h
+> On 7/10/25 12:53 AM, Alexei Starovoitov wrote:
+> > On Wed, Jul 9, 2025 at 10:25=E2=80=AFAM Vitaly Wool <vitaly.wool@konsul=
+ko.se> wrote:
 > >>
-> >> You added a new sysfs interface. I meant documentation for this.
+> >>
+> >> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> >> +void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned=
+ long align,
+> >> +                                gfp_t flags, int node)
+> >>   {
 > >
-> > The sysfs file contains the log and you can simply use
-> > 'cat /sys/firmware/efi/ovmf_debug_log' to read it.
+> > imo this is a silly pattern to rename functions because they
+> > got new arguments.
+> > The names of the args are clear enough "align" and "node".
+> > I see no point in adding the same suffixes to a function name.
+> > In the future this function will receive another argument and
+> > the function would be renamed again?!
+> > "_noprof" suffix makes sense, since it's there for alloc_hooks,
+> > but "_node_align_" is unnecessary.
 >
-> Don't explain how it works to me. I did not ask how it works. I asked
-> where is the new ABI documented?
->
+> Do you have an alternative proposal given that we also have vrealloc() an=
+d
+> vrealloc_node()?
 
-Please drop the condescending tone, and don't make people guess at
-what you are trying to say.
-
-If you meant to say that the patch lacks an ABI description in
-Documentation/ABI, then you are absolutely right, and you can just say
-so.
+vrealloc_node()?! There is no such thing in the tree.
+There are various k[zm]alloc_node() which are artifacts of the past
+when NUMA just appeared and people cared about CONFIG_NUMA vs not.
+Nowadays NUMA is everywhere and any new code must support NUMA
+from the start. Hence no point in carrying old baggage and obsolete names.
 
