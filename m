@@ -1,81 +1,161 @@
-Return-Path: <linux-kernel+bounces-723520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BD4AFE7EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:37:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F7CAFE7EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7343A938C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:37:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E3B163AE8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890CB2D0283;
-	Wed,  9 Jul 2025 11:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B208D2D6609;
+	Wed,  9 Jul 2025 11:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5ey3fUq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u8/9tHlz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yZ9XNvbi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18FD295525;
-	Wed,  9 Jul 2025 11:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7CD28F93E;
+	Wed,  9 Jul 2025 11:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752061045; cv=none; b=X8bY3aBGhcqaRaeBzLeKtNEzaTZZYnxhMVwjkFHd9JxCddIdglKQi3PWGNS4uuldIxHr5r44pQh9tGfY32KLB6qUeUU0l0dEM1VgXe60gyOBCbSG87SU7ZI53XqAMi5AqQ/an9gxdQbI+JyBNmA9/LibVffMSXxnN4x8np8IMPc=
+	t=1752061085; cv=none; b=ouwMBH2CLt80OMHN9uLVcemQ1rLda7RCXopCuhbJ8sBaQzF6/Kyn6lDv0w9/CC/+cY0MnAo0KrWmBy41yEUCwwt3/QytYO2pAtxpNzi4s4Pj1WNFKgCrP/7cSLXMwp/G6VspptYm0VUgE5IQK4VzrrH9PlGhYYY+U4vXG+P4ALA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752061045; c=relaxed/simple;
-	bh=Ncjiq8Ee5pSzyODn6YKaE9dcA+1GZhGeFCTm/glfm1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVNE424RUnF5aHhusFTcimc8TKo8Wrb8w32ZRTiKOWOFJ2HjmfSH1l1qGjRIbazJG7qegPAJEMhHPBvxTAWiPCipp06Y3C2cRXRmexfFtG0snUg3D1hxfftY+M1rL8INxdE0HLyIw/V6r1ioH/4use6GkGsR9t4yO19Gj4lqVto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5ey3fUq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4E1AC4CEEF;
-	Wed,  9 Jul 2025 11:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752061044;
-	bh=Ncjiq8Ee5pSzyODn6YKaE9dcA+1GZhGeFCTm/glfm1g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j5ey3fUqn5+TMmIhPtRVsGWaqhrA+LW+gu72rloHw91HHGPA21dqPQzy7EdIlUfg5
-	 yje1IQ0jdGNXmzOSLIvvG+Dov286ghIO5hl5gtDJuX9AQUjsH7kyaDDWbPE5B0WRJq
-	 5xisThFn7Lmfgp3XGQ0BNr9z1STATXAGZXZlwGYuNSxJHZP3nVSPBAmPVbwmzi06yz
-	 JlFFq631wHvubXM1DiUCxqQJh/E6sASLpUwSYK+TI5x1XMWFWGILKXZzBK0oJxwACy
-	 tIgT9dLGKHf94AYH2aNBZRexrTIS4mg25i93h3LvcPsP3l9sU6jKWfoeFjnIrnNlX2
-	 HkXivPI5MXxnw==
-Date: Wed, 9 Jul 2025 13:37:21 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: neeraj.upadhyay@kernel.org
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, paulmck@kernel.org,
-	joelagnelf@nvidia.com, boqun.feng@gmail.com, urezki@gmail.com,
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com,
-	neeraj.iitr10@gmail.com, neeraj.upadhyay@amd.com
-Subject: Re: [PATCH rcu 4/5] Documentation/kernel-parameters: Update
- rcu_normal_wake_from_gp doc
-Message-ID: <aG5UcXSbQf2RqZNk@localhost.localdomain>
-References: <20250709104118.15532-1-neeraj.upadhyay@kernel.org>
- <20250709104118.15532-5-neeraj.upadhyay@kernel.org>
+	s=arc-20240116; t=1752061085; c=relaxed/simple;
+	bh=0HXZTf2+zftvPNshPrkGK7w5FUdfDehbYy8eoBGWk1M=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=V+IMsxITsjLRIlFD3iE4VU0PY0YEFNspKAaQ5D62VCSogZ0SNmoGTFGlvM+jxgaSGPnxEaoO9b+R0f9kWrgiCxKKGHo8icFeHPPs8MhWmpMqhWCNOTbTV7bvSMlQOOCaIr5MFLj+lvghnJ3jb79Hd5QelenvzxcDM4Hkchh1/jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u8/9tHlz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yZ9XNvbi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 09 Jul 2025 11:37:59 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752061080;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pQ/FyDJSiGA6TA+ud5XGfY1EFfdC9QJcR+VoS1anZ9w=;
+	b=u8/9tHlzSTSYHOnnm3ctrZiJcR5rGOV0HH8MFY4xzXK2bEbuWBoFZLAh41mljQmxFOtz7v
+	pTwIpxsQaVFnyOSmNpeGG0B2kvMGVztJICO5wSiVWh03myroi7NLrA/0oVZuvS3D5cN1Dp
+	JxiNzVo7fx1SW/Fm8XfPjxSLSE9mZ4omSp0FEQv5G7aOMHjYOctxI/8i3GlLHI4677xEXB
+	741IaHTCLApKE6sYGdJAGov80H7V0l9AXTG2AM4GH8mS/gN9aDwUqKM9qYVAab8i4Ugb6I
+	Rj62aZYOPPuDkXIpu6RcrfNzCdijOZ6mm2RC8SWj9kp1L+9aAuV5KCwLK95ueA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752061080;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pQ/FyDJSiGA6TA+ud5XGfY1EFfdC9QJcR+VoS1anZ9w=;
+	b=yZ9XNvbi8KYt9yE9DhxJO5+2CT8TQRnJGUNfrY4xalJX1Z7bTi/1QUL/BMXpN88riLrgM8
+	RF66JFqeEh7Ys4Ag==
+From: "tip-bot2 for Greg Kroah-Hartman" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/microcode] x86/microcode: Move away from using a fake
+ platform device
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Sohil Mehta <sohil.mehta@intel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <2025070121-omission-small-9308@gregkh>
+References: <2025070121-omission-small-9308@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250709104118.15532-5-neeraj.upadhyay@kernel.org>
+Message-ID: <175206107968.406.11106963441390730546.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Le Wed, Jul 09, 2025 at 04:11:17PM +0530, neeraj.upadhyay@kernel.org a écrit :
-> From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-> 
-> Update the documentation about rcu_normal_wake_from_gp parameter.
-> 
-> Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
-> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
+The following commit has been merged into the x86/microcode branch of tip:
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Commit-ID:     9b355cdb63b1e43434d7ac57430d3e68de58338d
+Gitweb:        https://git.kernel.org/tip/9b355cdb63b1e43434d7ac57430d3e68de58338d
+Author:        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+AuthorDate:    Tue, 01 Jul 2025 12:54:22 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 09 Jul 2025 13:12:08 +02:00
 
--- 
-Frederic Weisbecker
-SUSE Labs
+x86/microcode: Move away from using a fake platform device
+
+Downloading firmware needs a device to hang off of, and so a platform device
+seemed like the simplest way to do this.  Now that we have a faux device
+interface, use that instead as this "microcode device" is not anything
+resembling a platform device at all.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
+Link: https://lore.kernel.org/2025070121-omission-small-9308@gregkh
+---
+ arch/x86/kernel/cpu/microcode/core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index fe50eb5..b92e09a 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -17,8 +17,8 @@
+ 
+ #define pr_fmt(fmt) "microcode: " fmt
+ 
+-#include <linux/platform_device.h>
+ #include <linux/stop_machine.h>
++#include <linux/device/faux.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/miscdevice.h>
+ #include <linux/capability.h>
+@@ -249,7 +249,7 @@ static void reload_early_microcode(unsigned int cpu)
+ }
+ 
+ /* fake device for request_firmware */
+-static struct platform_device	*microcode_pdev;
++static struct faux_device *microcode_fdev;
+ 
+ #ifdef CONFIG_MICROCODE_LATE_LOADING
+ /*
+@@ -690,7 +690,7 @@ static int load_late_locked(void)
+ 	if (!setup_cpus())
+ 		return -EBUSY;
+ 
+-	switch (microcode_ops->request_microcode_fw(0, &microcode_pdev->dev)) {
++	switch (microcode_ops->request_microcode_fw(0, &microcode_fdev->dev)) {
+ 	case UCODE_NEW:
+ 		return load_late_stop_cpus(false);
+ 	case UCODE_NEW_SAFE:
+@@ -841,9 +841,9 @@ static int __init microcode_init(void)
+ 	if (early_data.new_rev)
+ 		pr_info_once("Updated early from: 0x%08x\n", early_data.old_rev);
+ 
+-	microcode_pdev = platform_device_register_simple("microcode", -1, NULL, 0);
+-	if (IS_ERR(microcode_pdev))
+-		return PTR_ERR(microcode_pdev);
++	microcode_fdev = faux_device_create("microcode", NULL, NULL);
++	if (!microcode_fdev)
++		return -ENODEV;
+ 
+ 	dev_root = bus_get_dev_root(&cpu_subsys);
+ 	if (dev_root) {
+@@ -862,7 +862,7 @@ static int __init microcode_init(void)
+ 	return 0;
+ 
+  out_pdev:
+-	platform_device_unregister(microcode_pdev);
++	faux_device_destroy(microcode_fdev);
+ 	return error;
+ 
+ }
 
