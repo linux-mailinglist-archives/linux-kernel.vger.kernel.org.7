@@ -1,111 +1,79 @@
-Return-Path: <linux-kernel+bounces-723461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE213AFE71C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:11:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A264AFE71D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E7748018F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:11:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6672A169293
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE83028DB7A;
-	Wed,  9 Jul 2025 11:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="YvNUzQZE"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893442701CE;
-	Wed,  9 Jul 2025 11:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9AC28DB61;
+	Wed,  9 Jul 2025 11:12:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8312028D8E4;
+	Wed,  9 Jul 2025 11:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752059489; cv=none; b=DABH78rZ+obVP2y/nf0ruMNVipWmznJuijT8SFFcjFQKwu4rHpZ2Jeoxa48r253J0kjSfRVHcR9VgKPhNaZYbbLmiYfQuATTxZ4b8BGzXVjOu/ZHDTg8tLnohCwv3iryD58nM1jZJxFvsCJSsL2eYLj+AWwGHMosEQSBCZMeWM8=
+	t=1752059520; cv=none; b=ZlsqhO1wntr0O4zkm/UGnMci/EQWOlCzaRYrQcOK5RDlMa+9JZdYkldQYanIXPW6/QXPl6KjrOkcnbg95fp/w/d+3URFQ0s1VnJpdv+IKUKKxji1JDHnXK1DnYVjp2ezm2DN3SGlT+O00BudMsgBOCkhRjWdmoVwEeGEzEZ3PmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752059489; c=relaxed/simple;
-	bh=VYDWf/aAkJYjnnaRdav3Kgh7Iq+nP304+3f+U8BMrlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M71hcCqfx3EkgjidFyo0xoloJ0WCG2sFdoGaf0yCmkJjDWDtAo97T2qexAXc9K1g4qS0J3cSOEF9YEsUflPKZ6jp24OSF0Psrrjn5aH8xmWID7bDXLmcvc6ZddjMp2zp//jlX6NUXM0pLWiXvrT/fPguYd/h2k5/ynFLJmIOVnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=YvNUzQZE; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vvZq130tiT45bvyCEcIJ+K9zjA5skCS0X4i6X4l6Bi0=; b=YvNUzQZEcwdbrQV8j3ZTIqZJZa
-	4HP+dnk7X61abQxSvtPEiHSu67e/O70tubpndvJGshW1wE7Rw645Ghcv6TIyLcFBige9a9uYqop0I
-	R+OOU+roJBWbQIWazOyqgOYN03OH07FCTN1B+SCFOc+GyasPNYxKsT+rRiyl9Miig+bNXl/9jzseA
-	Ex/MpQ1pYFn0Z9pAdk4tUwreZdx4z7qxGTsudBKN75fGUIXOFkF8Ld2b3KcO2bX2CqnUyg7K2HQls
-	mQhCdO2KqiqrVlw89GJpy1CPr2OQLsJyqVOieoY5DpNj0+86Jd41OsT+AMSNe/oyayroPljcDFRWQ
-	S4S+1uCw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55728)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uZShg-0007qh-2n;
-	Wed, 09 Jul 2025 12:11:09 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uZSha-0002bB-1i;
-	Wed, 09 Jul 2025 12:11:02 +0100
-Date: Wed, 9 Jul 2025 12:11:02 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: lizhe <sensor1010@163.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, vladimir.oltean@nxp.com,
-	maxime.chevallier@bootlin.com, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: Re: Re: [PATCH] net: stmmac: Support gpio high-level reset for
- devices requiring it
-Message-ID: <aG5ORmbgMYd08eNR@shell.armlinux.org.uk>
-References: <20250708165044.3923-1-sensor1010@163.com>
- <52b71fe7-d10a-4680-9549-ca55fd2e2864@lunn.ch>
- <5c7adfef.1876.197ece74c25.Coremail.sensor1010@163.com>
- <aG3vj1WYn3TjcBZe@shell.armlinux.org.uk>
- <5bb49dc0.6933.197ee28444e.Coremail.sensor1010@163.com>
+	s=arc-20240116; t=1752059520; c=relaxed/simple;
+	bh=RwcN6riHDmceRJhECePZDt6wYgfeqs2x/dB73Rlhg7Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j6Q72hwJFY5zkIamT5isd867lQy5tkagDOZjtXLqrLbzmp2SRQdMG6CWOqGSxFurZzak6CfeO1MVAkstojLxhAzAiMCln92GtWMuRgthJJ/cjyyIQL0G2WWkcpV0fT/KPxPlO3vozppkySWg44N5A7QW35CDAZYCugSAYRPyOpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 655091516;
+	Wed,  9 Jul 2025 04:11:47 -0700 (PDT)
+Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 812AE3F738;
+	Wed,  9 Jul 2025 04:11:57 -0700 (PDT)
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@nxp.com>,
+	Arnd Bergmann <arnd@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firmware: arm_scmi: convert to SYSTEM_SLEEP_PM_OPS
+Date: Wed,  9 Jul 2025 12:11:53 +0100
+Message-Id: <175205948920.1157216.306966807698770237.b4-ty@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250709070107.1388512-1-arnd@kernel.org>
+References: <20250709070107.1388512-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5bb49dc0.6933.197ee28444e.Coremail.sensor1010@163.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 09, 2025 at 03:48:25PM +0800, lizhe wrote:
-> Hi, 
+On Wed, 09 Jul 2025 09:01:01 +0200, Arnd Bergmann wrote:
+> The old SET_SYSTEM_SLEEP_PM_OPS() macro leads to a warning about an
+> unused function:
 > 
-> after replacing with this function, the function returns 0, meaning the gpio is
-> still at a low voltage level.
+> drivers/firmware/arm_scmi/scmi_power_control.c:363:12: error: 'scmi_system_power_resume' defined but not used [-Werror=unused-function]
+>   363 | static int scmi_system_power_resume(struct device *dev)
 > 
-> +              int gpio_state = -1;
+> The proper way to do this these days is to use SYSTEM_SLEEP_PM_OPS()
+> and pm_sleep_ptr().
 > 
-> 
->                 if (delays[2])
->                         msleep(DIV_ROUND_UP(delays[2], 1000));
-> +
-> +               gpio_state = gpiod_get_raw_value_cansleep(reset_gpio);
-> +               pr_info("gpio_state: %d\n", gpio_state);
-> +               pr_info("gpio_state: %d\n", gpio_state);
-> 
->  gpio-111 (                    |snps,reset          ) out lo
-> 
-> 
-> [    3.899319] gpio_state: 0
-> [    3.899324] gpio_state: 0
+> [...]
 
-How have you declared the snps,reset-gpio property in DT?
+Applied to sudeep.holla/linux (for-next/scmi/updates), thanks!
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+[1/1] firmware: arm_scmi: convert to SYSTEM_SLEEP_PM_OPS
+      https://git.kernel.org/sudeep.holla/c/62d6b81e8bd2
+--
+Regards,
+Sudeep
+
 
