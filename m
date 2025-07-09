@@ -1,96 +1,162 @@
-Return-Path: <linux-kernel+bounces-724558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BB5AFF457
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:03:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93EDAAFF45C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4930717220E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:03:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC021C469F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92E023C8D3;
-	Wed,  9 Jul 2025 22:03:42 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20BA241695;
+	Wed,  9 Jul 2025 22:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qy9i49LT"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A02E13D2B2;
-	Wed,  9 Jul 2025 22:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8292367A3
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 22:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752098622; cv=none; b=L+mwFj4D59ORqY4FJKJsvWoLtdFjWSOxqOs1UoIIwTYZQIkL8vIHDKLZfehQuT7MaR38lbtkrfZB2LgkQwdMm782h0u0iW74btyz26pmkYpS813LsSbJ4iurHM9U6mNabtuK3YEqOHZ1uXocTp6kVSQfwPE351GZ21gR5VFqjqc=
+	t=1752098706; cv=none; b=I5a2IL8yts+7DafUPL8Ep7ckSn7OAU4yIioc65qCnhkb00A7f6Hq5gY04PLfghAVY/b5GgRd2AoEpwvVziJuD5exPdxgtT9/egfnxpgHkaPUAISQ9R8ifBpqV7tancnAlEhwNO1u482970DLWm2JoZZVFJg0ZoU1FA2qOkE0y54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752098622; c=relaxed/simple;
-	bh=OSlNipfL8acGfxBPuYcCjdhJaWK0Nj+mUkPNpzpq8h0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BJhcPXycDi5/1xJ2ofrPi6W4X4OxeF8BgfpCvOEKsyEZsY+sb2Ne8X5qfVz1vuqORInZ6DpEBiqdyIvR/tZnayBXUdA81e7rXcqX19uGIH3Cq5so+1oRLsPOaCYqnto4+QQ+YTvC8yJc35sDu3gnc3eM7IDySOzAuTmxn+C4E0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 569M3Kc1078763;
-	Thu, 10 Jul 2025 07:03:20 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 569M3KgL078760
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 10 Jul 2025 07:03:20 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <3efa3d2a-e98f-43ee-91dd-5aeefcff75e1@I-love.SAKURA.ne.jp>
-Date: Thu, 10 Jul 2025 07:03:18 +0900
+	s=arc-20240116; t=1752098706; c=relaxed/simple;
+	bh=vn7EJCVn7vkbl/99TMM91++Va4PiEu2rnwusD2cqc04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dZeFetoqOahhjrEWMfvprFqpnVqnxQeYvFbexIVGNAWg0Lopr0KDIbgLIodJBdShIHI3BpIQTlW/zOimnvfqegACbD+eZi15pArhuDYaCTFLjcgieV21bP3AfKXCHF6GDXlhiJV1MicbEw4QTbeQBStNd840koF3Zv1wA3hKNE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qy9i49LT; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-609b169834cso4265a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 15:05:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752098703; x=1752703503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vn7EJCVn7vkbl/99TMM91++Va4PiEu2rnwusD2cqc04=;
+        b=Qy9i49LTAIrfq2A0CZWH3j7JU8KK5FgEISRoaNJxBFR8IldWmlAKwm9wOP1rYgOpC1
+         T6Hn2E9VPv8V8L2QJnL/kDCN+8Wy5IEd3qGcGDNqLIWe0WZNqXFAdsdFDKBejLDb+ptH
+         S6bWm/0k1siZUxUzwhlvYkUnqSdP2kOVu2UQSRRWDuBBJEogDQfgg6sW9WmazknAh++Z
+         Uk/XxdWBGg1aYAaq1K5Kdyky4p9w0ijUPA1Acf3p6j14o9Ab6p8Ru4TLD3UMMH0bRtxI
+         sxsPfxynJJmWQsVC+yZ81idjLi7czckathpyXdPK0OfyK8RIwpgyr5nDDsrXDjT3OEWt
+         hP5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752098703; x=1752703503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vn7EJCVn7vkbl/99TMM91++Va4PiEu2rnwusD2cqc04=;
+        b=g+5ax5mbDDZ4DsjGaQ+DXk9jHt07J/iBe7gR35JEf1fK0L550vYpCzorwjdsQ9kbZ8
+         u8+CeRvsiZ9kX+JZvDYANFk82Wl68yMN4Zm76J56vkhm30HT1G3IXj4QQUd7PtYpzMmW
+         kds+judfAqotLiya39WLO/uHOCnAtPZAVYHpUVvFMzCi8siYg06sMYoo/q+1Pdk/buR3
+         ea5CzfYncmPMGJFXV8/AqQCOI7AeTH0nm4Tm7Pt4MvuIoIRDwt6QlPHFess57yhJ5UF8
+         LcBo6p5UGL3ugQ/psriOesLYnRweRqaKVu9wDOha0i7NGMKdsjsp+4A2ON8n10rFL0XQ
+         aayA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTxwx+OW/f9UwSoR+hWnnyBG81zQxglHy1HZTyQM7xZcuBlfSl0glLUU0Ip5hVr1Lp8jC/maWh18JRvSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBeuCoQnGvdiqW6keMXsZcic+z8YmeHJPNZ728xTFXmpUqMulG
+	CXmWFuaXU56W8ElHA3fQzYtzfxaluG+L2M8isEj9xXhpTdymsDbbLkoZSh8DCAvPt/L9R12OpT9
+	a6mLXJL9u2XplNfoVKq1b2WUPU536tDzmKjQawT/d
+X-Gm-Gg: ASbGncs9tDFcYweSGkLKPaxkV+sjVLjW9DwQhqcbivA/TWn6fR4wJ2iw8243YtV2gE3
+	Nimtb1paZjCk8Xu7H+EU/g3xtFcM4XE7YSI1lXySCldU88EZGkkigFxWqZMTAmsxMaE+D4se1a7
+	d88HR5AGEFBsp4Szl14AjEO/w8CjEAJVN3ZSi3IIpZ8fV+L64zGRC3LOx7+oo3obLG7gJosBPsM
+	g==
+X-Google-Smtp-Source: AGHT+IHMY2S2cOq4aj7R9JhuwZRVDDRnUaRyOd/9Y0XjkBE9lTZ7Q7zt7tkV73zfMNNQfimDA/LHV+q48SyKRNdcNnw=
+X-Received: by 2002:a05:6402:a41:b0:60e:3d45:c65a with SMTP id
+ 4fb4d7f45d1cf-611c79717abmr16007a12.5.1752098702766; Wed, 09 Jul 2025
+ 15:05:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hfsplus: don't use BUG_ON() in
- hfsplus_create_attributes_file()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <54358ab7-4525-48ba-a1e5-595f6b107cc6@I-love.SAKURA.ne.jp>
- <4ce5a57c7b00bbd77d7ad6c23f0dcc55f99c3d1a.camel@ibm.com>
- <72c9d0c2-773c-4508-9d2d-e24703ff26e1@vivo.com>
- <427a9432-95a5-47a8-ba42-1631c6238486@I-love.SAKURA.ne.jp>
- <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
- <dc0add8a-85fc-41dd-a4a6-6f7cb10e8350@I-love.SAKURA.ne.jp>
- <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav205.rs.sakura.ne.jp
+References: <20250709-debugfs-rust-v9-0-92b9eab5a951@google.com>
+ <DB7US8G7ISG0.20430M3P7I0K0@kernel.org> <CAGSQo01hORWAtrGaYp-_xxrAiN47JkJg=jiqnqdpw87QKzt9jg@mail.gmail.com>
+ <DB7V19QE6KFB.3MR0BAOWXT7M7@kernel.org>
+In-Reply-To: <DB7V19QE6KFB.3MR0BAOWXT7M7@kernel.org>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Wed, 9 Jul 2025 15:04:51 -0700
+X-Gm-Features: Ac12FXz-6atGuBPiC5MKmxYtYy_PzNi1g8QW4v6Xr2bH3tjr0kUa_yJ4Vji2mrw
+Message-ID: <CAGSQo01drZoy1-j-+Y-BHHOX5AzCG4A5KiUOu5TJ40JOdfcB0g@mail.gmail.com>
+Subject: Re: [PATCH v9 0/5] rust: DebugFS Bindings
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/07/10 3:33, Viacheslav Dubeyko wrote:
-> My worry that we could have a race condition here. Let's imagine that two
-> threads are trying to call __hfsplus_setxattr() and both will try to create the
-> Attributes File. Potentially, we could end in situation when inode could have
-> not zero size during hfsplus_create_attributes_file() in one thread because
-> another thread in the middle of Attributes File creation. Could we double check
-> that we don't have the race condition here? Otherwise, we need to make much
-> cleaner fix of this issue.
+On Wed, Jul 9, 2025 at 2:59=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
+rote:
+>
+> On Wed Jul 9, 2025 at 11:53 PM CEST, Matthew Maurer wrote:
+> > On Wed, Jul 9, 2025 at 2:47=E2=80=AFPM Danilo Krummrich <dakr@kernel.or=
+g> wrote:
+> >>
+> >> On Wed Jul 9, 2025 at 9:09 PM CEST, Matthew Maurer wrote:
+> >> > This series provides safe DebugFS bindings for Rust, with a sample
+> >> > module using them.
+> >> >
+> >> > Example interaction with the sample driver:
+> >>
+> >> I understand what you're trying to do here, i.e. showcase that values =
+exported
+> >> via debugfs can be altered.
+> >>
+> >> The problem is that the current abstractions only implement read(), bu=
+t not
+> >> write().
+> >
+> > I was trying to keep the initial bindings simple. Adding `write` is
+> > definitely something we could do, but I thought maybe that could be in
+> > a subsequent patch.
+>
+> Absolutely, yes! I didn't mean to ask to add it now. :)
+>
+> >> If you really want to showcase changing values, you can, for instance,=
+ create a
+> >> workqueue inside the sample driver and modify the counter periodically=
+.
+> >
+> > This is supposed to be sample code, so ideally it should be as narrow
+> > as is reasonable in what subsystems it touches, no? If people would
+> > really prefer the sample schedule a ticking counter I can do that, but
+> > it already felt weird to be registering a platform driver in a debugfs
+> > sample.
+>
+> I'm not asking to do that. If the values don't change for now, because
+> there's no write() yet, that's perfectly fine with me. :)
 
-I think that there is some sort of race window, for
-https://elixir.bootlin.com/linux/v6.15.5/source/fs/hfsplus/xattr.c#L145
-explains that if more than one thread concurrently reached
+Potentially I misinterpreted Greg[1], I thought he wanted to see how
+mutation would work.
+If we don't need mutation, I'm fine simplifying the driver to not have
+any mutation triggers and just export a few random things.
 
-	if (!HFSPLUS_SB(inode->i_sb)->attr_tree) {
-		err = hfsplus_create_attributes_file(inode->i_sb);
-		if (unlikely(err))
-			goto end_setxattr;
-	}
+[1]: https://lore.kernel.org/all/2025070349-tricky-arguable-5362@gregkh/
 
-path, all threads except one thread will fail with -EAGAIN.
-
+>
+> >>
+> >> We really should not teach people to modify values by read() instead o=
+f write().
+> >> Also, without this workaround there shouldn't be a reason to export th=
+e exact
+> >> same value twice, i.e. no need for File<File<AtomicUsize>>.
+> >>
+> >> - Danilo
+> >
+> > How do you feel about the `Wrapper` struct, intended to simulate the
+> > driver doing its actual job and show how that would look? Is that
+> > similarly verboten, even though there's a comment on it saying this
+> > isn't how one should do things?
+>
+> Yeah, let's not do that -- don't give people ideas. :)
 
