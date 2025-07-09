@@ -1,90 +1,101 @@
-Return-Path: <linux-kernel+bounces-723030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC99AFE1F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3BA0AFE290
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9815A1C40E03
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91F291C42ADC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A0E22B8C2;
-	Wed,  9 Jul 2025 08:08:13 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DD7274B22;
+	Wed,  9 Jul 2025 08:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9C1zRrn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D18627453;
-	Wed,  9 Jul 2025 08:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED640273D84;
+	Wed,  9 Jul 2025 08:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752048492; cv=none; b=eqYLAgxWF9ebQeMHVWtxCSt7uuESW8ngTGTLUa01QVPxAiozUCyBVeN5bnSks6kkBu0G419iUYafiXykA3v0F2l7CLn8UTeqTV7R2ValHJAHDCW5kZWP52LTViYLqxGZIpCrdD29oddt5q6H7KHHdT9WDknXXDQs+okCL5MziuQ=
+	t=1752049674; cv=none; b=XoNQ1yVLia6+SFKdbeHd4vPvs9g54rqrc3pBRBwW4Y+87lZIElTQoms2iTkWwkxGo4XZjM727FM/X4R0z0to3/Q77m3/USxdPjzkNAOQHRRVJJyVkb61sSBXM0twWodnhSyBot2fAkVOyCGkHPeTTcm9RuUBm6qKzQ2FLiso+JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752048492; c=relaxed/simple;
-	bh=8e5DJ6eb/9lk9z4u6yIhTJJ+olqISSeokcWp/4UTNAo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GumNQODnbSJOLGC4eOmSaLr6FIIlJry1/0nV3XKMFPl4sEGuV4q5kBOrrKx9FhFbmWWgsKnM15u3ezT2oBIjTH2hZR2qrDRR7C7cvBMkraLCSjO8yagHHbcjC8sHfCnHakvKhVXuuN41geZkglAKsv6bRifUXQoRlaEYPMey2y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bcVtt1fWRz6GCbc;
-	Wed,  9 Jul 2025 16:07:02 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
-	by mail.maildlp.com (Postfix) with ESMTPS id 63FA6140257;
-	Wed,  9 Jul 2025 16:08:07 +0800 (CST)
-Received: from china (10.220.118.114) by frapeml500005.china.huawei.com
- (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 9 Jul
- 2025 10:07:53 +0200
-From: Gur Stavi <gur.stavi@huawei.com>
-To: <vadim.fedorenko@linux.dev>
-CC: <andrew+netdev@lunn.ch>, <christophe.jaillet@wanadoo.fr>,
-	<corbet@lwn.net>, <davem@davemloft.net>, <edumazet@google.com>,
-	<gongfan1@huawei.com>, <guoxin09@huawei.com>, <gur.stavi@huawei.com>,
-	<helgaas@kernel.org>, <horms@kernel.org>, <jdamato@fastly.com>,
-	<kuba@kernel.org>, <lee@trager.us>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <luosifu@huawei.com>,
-	<meny.yossefi@huawei.com>, <mpe@ellerman.id.au>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <przemyslaw.kitszel@intel.com>,
-	<shenchenyang1@hisilicon.com>, <shijing34@huawei.com>, <sumang@marvell.com>,
-	<wulike1@huawei.com>, <zhoushuai28@huawei.com>, <zhuyikai1@h-partners.com>
-Subject: Re: [PATCH net-next v06 5/8] hinic3: TX & RX Queue coalesce interfaces
-Date: Wed, 9 Jul 2025 11:26:20 +0300
-Message-ID: <20250709082620.1015213-1-gur.stavi@huawei.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <ef88247b-e726-4f8b-9aec-b3601e44390f@linux.dev>
-References: <ef88247b-e726-4f8b-9aec-b3601e44390f@linux.dev>
+	s=arc-20240116; t=1752049674; c=relaxed/simple;
+	bh=JQ1+Vm+0K0y8h9HijNHayqn7WMa42BU+nZE0V6oZ0Xw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPeptb2QIjsyza+cszjmUVzIOJyRtIOtDs+5BHmjw7FKrbJTFET+8c4GmCHAY6i3IYxHTYfk9rQUzj9FQZxismpQlnS4Q/PX2++sYdBFHkZ1/EgeiMBGBthl7eP42F6D/RAXiMEWgt3g0LBgpS1CUtxMPqBraomZaMVTimLCffg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m9C1zRrn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3F19C4CEEF;
+	Wed,  9 Jul 2025 08:27:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752049673;
+	bh=JQ1+Vm+0K0y8h9HijNHayqn7WMa42BU+nZE0V6oZ0Xw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m9C1zRrngUo+zKh1qz9o/lGUIhk+lgLUAzXQ1p4p7yV42CMp2UU43uCVuuof5vfDM
+	 8UWVAh5dA0DKSUY1z8GCEf++dqYgg2kRO7zkXKOli2vGTngBMpk8RJQoNoAwDOXSft
+	 Fm6lPLk+svrUkXC2uBZOEZUUnj8VSpdgoxgmZmUHxkcI1ELJOHrI/zOFPUz+Fcyv7V
+	 YYJfeyB8msSWd43v4A7z3fRG7RbuuCwnaD1XcdOl5zzQIq1sBv8H7aPAx0vAS1DR8D
+	 Sk/Ox8R/6ALoIRhA8JygHl0O9vdAnAxSW/vKtm8hr2huo8222T5tAGx21WKx7n1coP
+	 2rOFj9FsmFR6A==
+Date: Wed, 9 Jul 2025 10:27:50 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, s.hauer@pengutronix.de, 
+	zhiyong.tao@mediatek.com, linux-pm@vger.kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: iio: adc: Add support for MT7981
+Message-ID: <20250709-industrious-marigold-snake-5a3eb5@krzk-bin>
+References: <20250708220405.1072393-1-olek2@wp.pl>
+ <20250708220405.1072393-2-olek2@wp.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- frapeml500005.china.huawei.com (7.182.85.13)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250708220405.1072393-2-olek2@wp.pl>
 
-> On 27/06/2025 07:12, Fan Gong wrote:
-> > Add TX RX queue coalesce interfaces initialization.
-> > It configures the parameters of tx & tx msix coalesce.
-> >
-> > Co-developed-by: Xin Guo <guoxin09@huawei.com>
-> > Signed-off-by: Xin Guo <guoxin09@huawei.com>
-> > Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> > Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> > Signed-off-by: Fan Gong <gongfan1@huawei.com>
-> > ---
-> >   .../net/ethernet/huawei/hinic3/hinic3_main.c  | 61 +++++++++++++++++--
-> >   .../ethernet/huawei/hinic3/hinic3_nic_dev.h   | 10 +++
-> >   2 files changed, 66 insertions(+), 5 deletions(-)
-> >
->
-> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+On Wed, Jul 09, 2025 at 12:04:03AM +0200, Aleksander Jan Bajkowski wrote:
+> The temperature sensor in the MT7981 is same as in the MT7986.
+> Add compatible string for mt7981.
+> 
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+> ---
+>  .../devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml   | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Procedural question about submissions:
-Are we allowed (or expected) to copy the "Reviewed-by" above to future
-submissions as long as we do not modify this specific patch?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+<form letter>
+This is an automated instruction, just in case, because many review
+tags are being ignored. If you know the process, just skip it entirely
+(please do not feel offended by me posting it here - no bad intentions
+intended, no patronizing, I just want to avoid wasted efforts). If you
+do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here ('b4 trailers -u ...').
+However, there's no need to repost patches *only* to add the tags. The
+upstream maintainer will do that for tags received on the version they
+apply.
+
+https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
+</form letter>
+
+Best regards,
+Krzysztof
+
 
