@@ -1,141 +1,146 @@
-Return-Path: <linux-kernel+bounces-723276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE1CAFE538
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:11:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ECC9AFE53A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE6921887587
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:09:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3944A188AB09
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82286289E26;
-	Wed,  9 Jul 2025 10:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3303728AB02;
+	Wed,  9 Jul 2025 10:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMDY2S9k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ZOFR5QYJ"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA054288CAA;
-	Wed,  9 Jul 2025 10:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D565628A701;
+	Wed,  9 Jul 2025 10:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752055693; cv=none; b=o55nZka9sqouBGyz/GT4j194qPivGZIQ/uhRk9+NFMwL3ovCrdOeb3A4te/M50Bjt/f/XhCxnyw45iLF8xZRIu2/YUvqV8QOIdBB3PAT92LvGIgesw2DpL61UZrBA1Sjo/cKpjvmdrIkR7fHIqd9HvLt4trEabChZRwt1uaULEM=
+	t=1752055706; cv=none; b=INjOdasfwC75uD5G37D+bWBmDl5xzHE3j6GP9HLdJPrZ+nR3rYerhOE0AoZKPAo+Ij7VBy1hrTF4/l8a1hGV6F+MREBN3M1CAs97FbSzj7olfYggDRGmFsWOlR6Px+zj6a9dBCfbw9OFF8xjR7CKtikH7gB/Y9P9yCXc+RDN4Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752055693; c=relaxed/simple;
-	bh=379ct7C+CteI4mrqc9lm3+XFP/V/7s8g7pUYj6VGV9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FbYL9+m+xYarY6qC+aRCrxCjaSaGsRg7lJhOcvAu7t8kV//3phIZSnNJQfPQZIAUeDczw+F0lzmlwGy1PPENFREk5NBbrDtgRus4yi5QKYQIrtb6SCb9dWirEqizzmIUEBfHTdd8zmHV5rBFGyqjeK8f4R+BZkoS7fjgrkVvNTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMDY2S9k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21AAAC4CEEF;
-	Wed,  9 Jul 2025 10:08:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752055693;
-	bh=379ct7C+CteI4mrqc9lm3+XFP/V/7s8g7pUYj6VGV9A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nMDY2S9kSJ+6pgFgO+c/IV4FKqnCzagNAkGoXube/tcVIXezwilBSdDMFXV+UAhXb
-	 J1U0qBNbQNjdNFFEviTLiCf2hu+SZc7Q8tyU7FX47MqreMBoDUxJeWRbGP1e0a6p11
-	 VIXaAZ/Q+ivNHqic38Updpn/Jx/iBn+E/YZZ4KsfcPPGNTSnSP+hOlhX6Q+ztUsGwC
-	 BYu7o+EB4Im4lEPQ2l9kzLoIlfjdb0QfNU+BGUK0hXXMw5Ygs8JhhITL+BRweTQ0Vo
-	 p/eivPq//3gVmUI0oGxA0fLfC3MejsE0knOJy5XgRoxqm9E4GBOnqhWrYnGwfe57Vn
-	 4O6laCmaomnLQ==
-Message-ID: <e3d93a4b-4009-47f7-909e-b58a33015858@kernel.org>
-Date: Wed, 9 Jul 2025 12:08:07 +0200
+	s=arc-20240116; t=1752055706; c=relaxed/simple;
+	bh=n4/DC3bhdUZoFTEoFep2p7ibhgZD9ZHc56z5gU/C1Bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CD/auQ331q0qnZKW6P8uwELIqeBP+L5wRpXYbCuRApBuRFm517YikDaSuQWGkgEcR63L4mUSSapMAYRbe7iS4mfv/tINts+ljx28cc/GRPOHQSDaUP1WNdUgkRnTKjz7Xmyi3JqU1Di/JkYQWoPqiFLOeB8z8apn87PMo8HoxnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ZOFR5QYJ; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 86578103972A7;
+	Wed,  9 Jul 2025 12:08:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1752055701; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=FsxQbQPIJsaYTNOu6ABUMe0d1muypWFSA2FGjsr9hv4=;
+	b=ZOFR5QYJmEImw0t8AqiKiZi5hRhUsSDtDlUVGIS/tUYksC4yoQ27YObM0jcDNKmO4vuUnH
+	pdj8Z7iZN+40EH8d9HeL2x7deLr2PBODbaRgerSiLocF5B6C8AnLAYlY6ZQXoFIXeNHmM4
+	PDk8LbWwrGlZmWNFtFU7x/BTVfF/ZHH/f8RuBrLOUkkoUbWZTP2Ew2nJki3o2zoRaQb86W
+	3YE44lWolkv7qhe8wPGRebTXD4bzsyYaTFmZsAx1vjvn46ZzK1g/vFBfoDSHbKiyd0cdLe
+	0EsKGZENUVrx6pJbJQ8lGmKaW6ruKtHDitD3pifYamAk7ljyesoF3NGy6pRD1w==
+Date: Wed, 9 Jul 2025 12:08:16 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
+Subject: Re: [net-next v14 06/12] net: mtip: Add net_device_ops functions to
+ the L2 switch driver
+Message-ID: <20250709120817.5b2f631a@wsk>
+In-Reply-To: <ea22a546-9381-48c3-8bb6-258fdd784ca3@redhat.com>
+References: <20250701114957.2492486-1-lukma@denx.de>
+	<20250701114957.2492486-7-lukma@denx.de>
+	<ea22a546-9381-48c3-8bb6-258fdd784ca3@redhat.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] dt-bindings: clock: qcom,lcc: Reference qcom,gcc.yaml
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
- Srinivas Kandagatla <srini@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250709-gcc-ref-fixes-v1-0-ceddde06775b@quicinc.com>
- <20250709-gcc-ref-fixes-v1-2-ceddde06775b@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250709-gcc-ref-fixes-v1-2-ceddde06775b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/kSh+3R=zs/0/CbqzphcKx.b";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 09/07/2025 11:37, Satya Priya Kakitapalli wrote:
-> Reference the common qcom,gcc.yaml schema to unify the common
-> parts of the binding.
-> 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,lcc.yaml | 17 +++--------------
->  1 file changed, 3 insertions(+), 14 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,lcc.yaml b/Documentation/devicetree/bindings/clock/qcom,lcc.yaml
-> index 55985e562a34f8b1f5d8cff88fd733cdbae7d37c..b4b500dea527269a9a282b3f99714d5703dd9215 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,lcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,lcc.yaml
-> @@ -23,24 +23,11 @@ properties:
->    clock-names:
->      maxItems: 8
->  
-> -  '#clock-cells':
-> -    const: 1
-> -
-For the same reasons as further patch, no. You do not understand what is
-happening here (and commit msg must explain such things)...
+--Sig_/kSh+3R=zs/0/CbqzphcKx.b
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Paolo,
+
+> On 7/1/25 1:49 PM, Lukasz Majewski wrote:
+> > +static netdev_tx_t mtip_start_xmit_port(struct sk_buff *skb,
+> > +					struct net_device *dev,
+> > int port) +{
+> > +	struct mtip_ndev_priv *priv =3D netdev_priv(dev);
+> > +	struct switch_enet_private *fep =3D priv->fep;
+> > +	unsigned short status;
+> > +	struct cbd_t *bdp;
+> > +	void *bufaddr;
+> > +
+> > +	spin_lock(&fep->hw_lock); =20
+>=20
+> mtip_start_xmit_port() runs with BH disabled. The above lock variant
+> is inconsistent with what you use in patch 4.
+
+I've looked into the fec_main.c driver. They use for TX path
+__netif_tx_lock(nq, cpu); which is a simple spin_lock(). I've followed
+the same approach (as _irqsave() seems to be an overkill).
+
+This function (mtip_start_xmit_port()) is call as a callback from:
+.ndo_start_xmit (member of struct net_device_ops).
+
+IIRC net core code provides locking on this call anyway.
+
+> Please be sure to run
+> tests vs the next iteration with CONFIG_PROVE_LOCKING enabled.
+
+This is already enabled. Locking in this driver is a bit special, as
+one uDMA is used for both ports... (unlikely as in fec_main.c).
+
+>=20
+> /P
+>=20
+
+
+
 
 Best regards,
-Krzysztof
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH, Managing Director: Johanna Denk,
+Tabea Lutz HRB 165235 Munich, Office: Kirchenstr.5, D-82194
+Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/kSh+3R=zs/0/CbqzphcKx.b
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmhuP5EACgkQAR8vZIA0
+zr2DCAgAxD7rrFXIyi+rHYv1bwydkkv0xAPwNNg4ilaG0hVeKYG1argzJUIBwp1E
+Oo/EvG2HUoBs/I83nrGq+Uk5SX6R4zqDIx/iYu+/V/9hll06UV6MmtdNW772+LRD
+slkfHgqjAAiVSfGvE1iUPZc8nkR7+0foXlv/dIeQWaYoROg2dQtK/p+X8SUMe914
+ojjlmPsxPPIbfIclJc+lIqQgrJbme2z4EYldIjK+aTfjiRtAFdnMdnCUjtqw5slO
+MpSrlAYs00wS4RS+KH+Zlp12ief5Zaw4h5H2vfX65p/2pV84RBAT9E6SL7ZC2rsh
+TYfU75uh2iv8ow1RM40r+MrWqaOCNg==
+=f3nq
+-----END PGP SIGNATURE-----
+
+--Sig_/kSh+3R=zs/0/CbqzphcKx.b--
 
