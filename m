@@ -1,124 +1,86 @@
-Return-Path: <linux-kernel+bounces-723318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E3FAFE5C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:32:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BA3AFE5C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1E3566D33
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:32:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 380A07AC6C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF902580F7;
-	Wed,  9 Jul 2025 10:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF6E2586CA;
+	Wed,  9 Jul 2025 10:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UPp6amXj"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5+zzGfS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D08226173;
-	Wed,  9 Jul 2025 10:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6631B226173;
+	Wed,  9 Jul 2025 10:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057161; cv=none; b=uNxEi0O6uEBy2rizyVAUh8+VlYJAneozQGXCesPkQUMzoCj8BflJz0HfMo4c/uYt4nl8e76UsgM7w9KzY//bzAaHiB18aDMYqDnwk/daSLxNlXkwbUHCDsCPwAw86D8zB5xzM5TbKdaQPXkaTwE0uSBDEjGUjeuLy6UYmnkNgTo=
+	t=1752057193; cv=none; b=dcuqqnyNKnfpwktxoNnobwX0lNDGCsNEOz+cZm9x3GZFkbKCBBJ3NpvZKoafEhpGhVYG86TkNb0s2+EANOenLRWXMhsEFJXVE7q7w9IprhPqyuNqle18mpsg33hIKsQqaOspZdVrNPUxgPbaHV0FHpeZ7XheVHrpwp64LiSZLo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057161; c=relaxed/simple;
-	bh=542knEL90v6i/7hz3XV0Vy60hlfpuP7J33yqdYGR1Cg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a2COrOKMora2c/cJk7fClYAW5+fOqO9MVbcZ76yWixPtDQFnXIbJqzeTKmaU2L2UEIYRx6y0jDNF2Qfbd8V7nhRmYEQqennx0Jrfulq68vT0xBMlTzKZXpGaGo36fus181+FgmN4QLyHUJo66S/u+/+pBeiDDeyPI2JuwYKWstY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UPp6amXj; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=F9RIeA1TZukOUNP6Woaqx12d+XEAnqxID4oNu82lBjM=; b=UPp6amXjeEQPh+k9tBqxn0YSJZ
-	u3BBbq8HShliOUHO3Qu1Suc/fYwj+RaBKkzydtQLXgFI8WC6mRENY+PtYmrpdCVRXnW5bWy/uANAR
-	xfDYxxfeJYXCODusAjcRqhIyjVgnwkj3SwgrU3kEVKXQGPAWXzVsPtpORB/1+6w57K3IxjiPjlYnJ
-	+ruMPgTVLfq/2TFO/B4XOQMFv+6I2eFjfjpCT+GByE8Fbg7d5GPMa/SFAoleKsPBcwdJKp/gNXlWq
-	crWa2D7DSGLFo6gfvmbjVE6/PLsRr/PWAL6ch1rbZhE3/feP/CtKS7Idweipu1/0UJLdi40Ei+ryC
-	2otWYNCQ==;
-Received: from [84.65.48.237] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uZS5y-00EQLN-Ey; Wed, 09 Jul 2025 12:32:10 +0200
-Message-ID: <6af2a9c2-b3ac-44e0-8bbb-026809a28a6c@igalia.com>
-Date: Wed, 9 Jul 2025 11:32:09 +0100
+	s=arc-20240116; t=1752057193; c=relaxed/simple;
+	bh=woTPn6/m3kkrUf0Kgr7Rngw1F2In5xe+sDP9nL7A5rs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ePaJC7wbmzueJ547RZSptDNmi6RFe9U/3ZKnLt938fGPS/G9OddbGV1QIXkiMz3a0HRp5dZlT3kXme5ADDDfJrWMLhCJs5Xhhk3dhro7tOpkME703XZOqb/uVejUs/kpHxPIi2wQH548Fpg1KXpcDjjva26X6Fd27jE3UlWrGro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5+zzGfS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB9B2C4CEF4;
+	Wed,  9 Jul 2025 10:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752057193;
+	bh=woTPn6/m3kkrUf0Kgr7Rngw1F2In5xe+sDP9nL7A5rs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=n5+zzGfS/SNey1nZVLtQ7oyQf5P8mW0sbb0QyyVSiCyxEzFGy9FdI1JoIwSOvxvgd
+	 eYlBNU8WxSTbIEOYNlfj4jLhte9FKDoCCYEx68y1dNKW+08stlhjtqq8qWUFODQ9HJ
+	 6ECYYRdykvZ74mR2jkgKYk6A8tRLOSswd0nk3RWKeTxM4Xbc4TG6mCkyctQz5PWLHs
+	 kvHdK+AyN9Yd+mAROnJbyX+EdfSB4zvKuAX6zkNIXG5eJX1ADE1+ERCHbzY+OBh6Y9
+	 KFJ8E+iVqEcr0AOkEKdUM1tLbaytnTN5nfrTy+cPJYa1UG69TZtdsEg87OIActslOr
+	 I59bjQtwRdlFQ==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54d98aa5981so7241194e87.0;
+        Wed, 09 Jul 2025 03:33:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBhd4c0EL05Nte4A32ofGuZLcXw7tIknh1aUKbj5fGDBpfDLguK3LEwDY78nlivKOLZD+qHOMeI/Y=@vger.kernel.org, AJvYcCVIwjKvnis7Ep4cOor94y5AE/DUFBr/sX1WpPMWVhWFiVEs0gvGHzBz6SVICCmgZf0u1LHttr9rprtn2Wab@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/g4JFc5ZwfbFTm9vJl68z/00hF1uR2yv5X2ftSxDD3p/dc7kv
+	SsgCjOpDybZz9H6sdgl2zV066dNNMRQxZCcUHZyavHGrClsYRYAnLZDUJy0+sWGZs7CfGGvOFIk
+	QXpaHaMhQwdK7GMC8rzJqSY/Wns35eEM=
+X-Google-Smtp-Source: AGHT+IGFV7H0vZmfTHlCjVXHIE89/4Mcx6O+z7ESZW4fW4/yihBmQaueis7nCeFt/e7kQ5H3nmZF0lvWWxyQZbHGKCM=
+X-Received: by 2002:a05:6512:32c6:b0:553:268e:5018 with SMTP id
+ 2adb3069b0e04-558fa8ffd2amr626136e87.31.1752057191347; Wed, 09 Jul 2025
+ 03:33:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panfrost: Fix scheduler workqueue bug
-To: Philipp Stanner <phasta@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Frank Binns <frank.binns@imgtec.com>, Danilo Krummrich <dakr@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250709102957.100849-2-phasta@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <20250709102957.100849-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250709080840.2233208-26-ardb+git@google.com> <og5rlraf4zar6s3pvtcxpsvqomcrkzt3gxeojwnfljvpweobn5@6ee3wmdl6egn>
+In-Reply-To: <og5rlraf4zar6s3pvtcxpsvqomcrkzt3gxeojwnfljvpweobn5@6ee3wmdl6egn>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 9 Jul 2025 20:32:58 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXGVm7uK6=YBDkcxLNsw7iLORREx5EZL-5aErS7zx71Y+g@mail.gmail.com>
+X-Gm-Features: Ac12FXxiax-fZOuJX1m2y722TrJg87LCBfQLSuoZh24t41CZ8TwH5qOaaPW3LKE
+Message-ID: <CAMj1kXGVm7uK6=YBDkcxLNsw7iLORREx5EZL-5aErS7zx71Y+g@mail.gmail.com>
+Subject: Re: [PATCH v4 00/24] x86: strict separation of startup code
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	linux-efi@vger.kernel.org, x86@kernel.org, Borislav Petkov <bp@alien8.de>, 
+	Ingo Molnar <mingo@kernel.org>, Dionna Amalie Glaze <dionnaglaze@google.com>, 
+	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 9 Jul 2025 at 20:23, Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>
+> On Wed, Jul 09, 2025 at 10:08:41AM +0200, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > !!! Boot tested on non-SEV guest ONLY !!!!
+>
+> TDX guest boots fine.
+>
 
-On 09/07/2025 11:29, Philipp Stanner wrote:
-> When the GPU scheduler was ported to using a struct for its
-> initialization parameters, it was overlooked that panfrost creates a
-> distinct workqueue for timeout handling.
-> 
-> The pointer to this new workqueue is not initialized to the struct,
-> resulting in NULL being passed to the scheduler, which then uses the
-> system_wq for timeout handling.
-> 
-> Set the correct workqueue to the init args struct.
-> 
-> Cc: stable@vger.kernel.org # 6.15+
-> Fixes: 796a9f55a8d1 ("drm/sched: Use struct for drm_sched_init() params")
-> Reported-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-> Closes: https://lore.kernel.org/dri-devel/b5d0921c-7cbf-4d55-aa47-c35cd7861c02@igalia.com/
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
->   drivers/gpu/drm/panfrost/panfrost_job.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
-> index 5657106c2f7d..15e2d505550f 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> @@ -841,7 +841,6 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->   		.num_rqs = DRM_SCHED_PRIORITY_COUNT,
->   		.credit_limit = 2,
->   		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
-> -		.timeout_wq = pfdev->reset.wq,
->   		.name = "pan_js",
->   		.dev = pfdev->dev,
->   	};
-> @@ -879,6 +878,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->   	pfdev->reset.wq = alloc_ordered_workqueue("panfrost-reset", 0);
->   	if (!pfdev->reset.wq)
->   		return -ENOMEM;
-> +	args.timeout_wq = pfdev->reset.wq;
->   
->   	for (j = 0; j < NUM_JOB_SLOTS; j++) {
->   		js->queue[j].fence_context = dma_fence_context_alloc(1);
-
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-
-Regards,
-
-Tvrtko
-
+Thanks!
 
