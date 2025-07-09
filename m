@@ -1,113 +1,153 @@
-Return-Path: <linux-kernel+bounces-724526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29023AFF3FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1902AFF3FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DADAD7A9707
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:35:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80BC01C24D3D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5497D23F40A;
-	Wed,  9 Jul 2025 21:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B6823D2B6;
+	Wed,  9 Jul 2025 21:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wtfc/Bdt"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xL4zJN4b"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D88A92E
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C87227B9F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752097013; cv=none; b=DWCeQJWQ5XpgCiqKOQErpBn2fFZlKps+KIxzQ8uCXTmSuD5ea0Rq2zwlGvMNHWBSZJQBArP17g6HNuPtPCFFL5k9P7cx6QrDVj/hJ7KAzUNaCJDEf/raq6gXGJF5boKI4iL0udCah0sObjMTcyKwdxBNx9BeVCVOP12XpVEk2v4=
+	t=1752097033; cv=none; b=MZubFpkaM/AQhalaE1HQHRvg9kFq4Gx9L6hw20Rh/wkIcd5jUhhW88K9otCQ5d5/xjVXztJnJYdC5y8YZKnofuhGVVU4dxg7hC0azmso5yKwvXgqZAT21Y9quojjGy9Qmp6Tya7yjOXySUpjO0h7uRSHQqASwx+65/3aQwes8P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752097013; c=relaxed/simple;
-	bh=qS8xCwqQJQNA2xukALQdC1zCv6E13NjHv21ApuVNiRQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=e15QTqWX7Mjoj4iRMxMgQM7g8AYyAnDfpdP8eZyI9SKQmqYBWYaEkn8ANhqWD0IxD/SSJzpxONdlGb4FE8KgrZcIeZ/QXmT+S629NtzSmKq20HhxuhdNRDhdkCKrFMVVFDy7KID5n+cLbw+BuAkZnOstBzys+afWEWyW7zc32mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wtfc/Bdt; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7425efba1a3so352711b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 14:36:52 -0700 (PDT)
+	s=arc-20240116; t=1752097033; c=relaxed/simple;
+	bh=+ClvygQ2RMEEPybf+Dhrb6/A2svFsACwgt2ByyISdvQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nP2b1hrb/RfF4IMFtbxfRfxzwuFW8nzExszX7fuRXdXWcIY8Pl9ojRgVmzPuPkxGNJRpnHiG+EXBO8IYFemB8GiW8/MPK/lJz+cHkjcLNtKamIb0zh8Ogjjn39kfTYzOqHxcYCquwrQwn7KBl4L1lrIWTTGUqLcZJ7RN8KSwfF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xL4zJN4b; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2da3c572a0bso315057fac.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 14:37:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752097011; x=1752701811; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w3d6tzfJc09QAN3tOMltMcwq5vs2xgKEQEBLpFxZA4Y=;
-        b=Wtfc/Bdt7gAiOMNUjKMvspuvunFJ23xGAXh7bfZf1orGgwme8Y8CSpsRpZjehWx4HY
-         M+T58xwN9nQXGFoEiN+ISAokLF2UPMETsvmWGlawt8DfIYO0gWC5v9lw/d/V70QA9bIK
-         ysRNAyvPkRtOk66ojRZ4G46QGCWuI7kAh0HIUa09bkC4QByUvaVVk2TUHs+82chqbbnl
-         edzmrvYiIbuesdeSDCVvjg8RrhiezRVnqvuJtriBGIw+tmykL/Wnjomqe3S4SdpvO4tp
-         qStjXdghUwvlQSgbMBHcENAGw/GIePjtTB3rDnBcTj9H7u6AayQ2YSdagVc/b/bLAZMy
-         /Lyg==
+        d=linaro.org; s=google; t=1752097031; x=1752701831; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ej56GZoDfiEB41ozBqeCG5Oh6gi5hM+KQ3liG4bvyEs=;
+        b=xL4zJN4b2P7p2blNBJz/pzTto63zeoi5g4aBFEsJwHKlLnjvcrbeRTyTRo3G02neRT
+         1hN66cxM3OBPC79oKueWWYPx1jNgU9XnmUb6zNvUOfH/pr9KuJhDa8fIreaUWm97yTTA
+         QEyocJUra8XbVSh+r5WX2EZDvRRaRp8yo21PLIY5ehEynNbDp9Q7SkaUemr4DSUUYo/a
+         BgI9evRSB+2+HcekUYtFxDJZwX3raYQLV+6b/Mz1cPHBdFqG98+F5RNNN5V63rI6Zhqm
+         LRtJug3uKNTFNgH5Q/IAPMnDCri+5DtBNN2wEwudi6R3vbh4J5I/eQaB4/ts5w8VkLBb
+         eYKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752097011; x=1752701811;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w3d6tzfJc09QAN3tOMltMcwq5vs2xgKEQEBLpFxZA4Y=;
-        b=iiybfMB9r03dndsnEim6gxDvDKX6WaGr8+3GD+fXUBW2tndLhkNPrJMxtyTbOTpN6y
-         I8kpmF1hlT7hRjBasX/qGEn1f7klN3Tq6196HqE5RAtrAn0ML4z90/nmVB2ba7fsScKv
-         lFtUJ1h1zTBOWmUccT1LjdupwF0LoBPEd2VMMw6lFNvstrdE9sgzqspV4UzPAU+xMczc
-         pbaKO+Ppvs1/CKq4xQqN8tbyhtnoT7RhSZJLyuiIYgM4UXjgObU/StB2K4n3yv7CccDK
-         6ROAsb72pBardnKsu3S+asQ2HmCYzvVa909ZVi0D2GDBHyAc4YvPbNOsdWpNKAldf1U6
-         eiOg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7fVRvrFmTvu2WJJ8Xifki3yPUHvciKL0QT9vAawS2wq83p2bwT54HkLxXpg8CDlMyhJckwWnIAzLggPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEbHb22jcMo7uDnuaRxxzM7NAWHeamyUI23yEx3j1LE8Lgcd8H
-	81wzbHGimvYhn8Ab0ckz4Dc6FEjKx04uzZAc0QvRfThS+Rb2+UxjrL7g1s3wGrKReZvYWJsF0sh
-	Odw4f+A==
-X-Google-Smtp-Source: AGHT+IFLEqNTh1QWENQoKcaGQJ6FjDiy9bAAhlEBb5QtB5Bh8MLqQr+R1uQHMdCvh3BdwLZPRf9uwMB9da4=
-X-Received: from pfbct18.prod.google.com ([2002:a05:6a00:f92:b0:749:2cc7:bd89])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d21:b0:220:2fe9:f07a
- with SMTP id adf61e73a8af0-22fc2b18849mr1713280637.6.1752097011498; Wed, 09
- Jul 2025 14:36:51 -0700 (PDT)
-Date: Wed, 9 Jul 2025 14:36:50 -0700
-In-Reply-To: <20250709185757.GDaG67tbGFYHUQxte2@fat_crate.local>
+        d=1e100.net; s=20230601; t=1752097031; x=1752701831;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ej56GZoDfiEB41ozBqeCG5Oh6gi5hM+KQ3liG4bvyEs=;
+        b=PXDCEqvdDvyeCjzoOCVcNvnbsNVS01bCwYO1K8OP73ZROAiVJXhdR5ygBlr8srPxlo
+         /mHaRRdXsePzGFZqvSC7CzUC2ZUzEqajQK8KlwE/2dDpdPKCgb1EsxowAVbNL2pA2IWD
+         SkTCfsL88bOASeapKWolQ01A/pXkIQOlMjLQQZgctf1zv6FxKbzobxzTluN80dDDZ82R
+         rN++5G9+i12uqGy3gqgrXkXSqnzApflYTwlBmbgm3KGX5Nq7awSt6B0oNvIISoZpetPs
+         3xEPci9sYpEi0YBxwrdS5VrvF/1i63+rGb4DbaGRxJ08Rpehj7UtTbasNbKL0srje9DG
+         ysQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcMWBFThNg2xk8S/HQ7DkJAllYmfRVSRKLGL5jNZx0wDWEL/NZGvWcwv2AACzoKm4t6ytuy+1CRgWY6sc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDeplw+Mq6IP6I0zJWJhHlbTPv0s9Vgtu5hsx/7YQbImnNa1+N
+	SapWq+JXF7/30gfAFL0Cak1WgFsYVRHUSCaLj/oh8Y6Q5MaoqHQ/ohGpo7iYrszNRZjL20AoWgL
+	Y/PhQkDLqf0YY96ncNJLc8NU/J8RGPnzKs/QaYuVYJg==
+X-Gm-Gg: ASbGnctnkNG2nMeqy0KTKC0NgNaOe03OUEwT058w24OVlAw9ApB3lifwHcgXhCMUhJj
+	azWUzUU7s5+WpjK4EE9lx25NJSvT0BtRi90UxvI1OLsBZ5fXGrZ3h+5aKPhltVYaTDSljSr8Adn
+	l4O/1cb1kaeYgIxR2tjMXCMDGbyUjjNGeTsDioZ9Lvmb0=
+X-Google-Smtp-Source: AGHT+IFkQC/A6ox6MY05MYUw+CxjeUHI6gwfGQcb8/ByhkzLHUkzh1cpvqJdYCStR9o2v2KnGFlHUHdMYMFFGD7SDdg=
+X-Received: by 2002:a05:6871:293:b0:2ea:841f:773c with SMTP id
+ 586e51a60fabf-2fef87e6153mr3338509fac.35.1752097030840; Wed, 09 Jul 2025
+ 14:37:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250522233733.3176144-1-seanjc@google.com> <aG6X__K8MvVYORkr@google.com>
- <20250709185757.GDaG67tbGFYHUQxte2@fat_crate.local>
-Message-ID: <aG7g8vNejmxfftA-@google.com>
-Subject: Re: [PATCH v3 0/8] x86, KVM: Optimize SEV cache flushing
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Kai Huang <kai.huang@intel.com>, Ingo Molnar <mingo@kernel.org>, 
-	Zheyun Shen <szy0127@sjtu.edu.cn>, Mingwei Zhang <mizhang@google.com>, 
-	Francesco Lavra <francescolavra.fl@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250709-gs101-cpuidle-v5-1-b34d3210286d@linaro.org> <20250709-chocolate-flamingo-of-nirvana-5de895@sudeepholla>
+In-Reply-To: <20250709-chocolate-flamingo-of-nirvana-5de895@sudeepholla>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 9 Jul 2025 22:36:59 +0100
+X-Gm-Features: Ac12FXwllShNhqvUQknysIBtFTk51NgLeP-HjV13-opUWbLkoeErzAnBiZILB3U
+Message-ID: <CADrjBPqYSVO20a0ox9un0fq7dBss9sMGK1Q3ivCjCGaFyqhZFA@mail.gmail.com>
+Subject: Re: [PATCH v5] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, William Mcvicker <willmcvicker@google.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 09, 2025, Borislav Petkov wrote:
-> On Wed, Jul 09, 2025 at 09:25:35AM -0700, Sean Christopherson wrote:
-> > On Thu, May 22, 2025, Sean Christopherson wrote:
-> > > This is the combination of Kevin's WBNOINVD series[1] with Zheyun's targeted
-> > > flushing series[2].  The combined goal is to use WBNOINVD instead of WBINVD
-> > > when doing cached maintenance to prevent data corruption due to C-bit aliasing,
-> > > and to reduce the number of cache invalidations by only performing flushes on
-> > > CPUs that have entered the relevant VM since the last cache flush.
-> > > 
-> > > All of the non-KVM patches are frontloaded and based on v6.15-rc7, so that
-> > > they can go through the tip tree (in a stable branch, please :-) ).
-> > 
-> > Tip tree folks, any feedback/thoughts on this series (patches 1-4 in particular)?
-> > It'd be nice to get this into 6.17, and I'd really like land it by 6.18 at the
-> > latest.
-> 
-> I'll take a look tomorrow.
-> 
-> If I queue 1-4, would you like an immutable branch to merge for the other 4?
+Hi Sudeep,
 
-Yes please, thanks!
+Thanks for your review feedback!
+
+On Wed, 9 Jul 2025 at 17:10, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> On Wed, Jul 09, 2025 at 02:26:27PM +0100, Peter Griffin wrote:
+> > Register cpu pm notifiers for gs101 which call the
+> > gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
+> > C2 hint. This hint is required to actually enter the C2 idle state.
+> >
+> > A couple of corner cases are handled, namely when the system is rebooting
+> > or suspending we ignore the request. Additionally the request is ignored if
+> > the CPU is in CPU hot plug. Some common code is refactored so that it can
+> > be called from both the CPU hot plug callbacks and CPU PM notifier taking
+> > into account that CPU PM notifiers are called with IRQs disabled whereas
+> > CPU hotplug callbacks are not.
+> >
+> > Additionally due to CPU PM notifiers using raw_spinlock the locking is
+> > updated to use raw_spinlock variants, this includes updating the pmu_regs
+> > regmap to use .use_raw_spinlock = true and additionally creating and
+> > registering a custom  pmu-intr-gen regmap instead of using the regmap
+> > provided by syscon.
+> >
+> > Note: this patch has a runtime dependency on adding 'local-timer-stop' dt
+> > property to the CPU nodes. This informs the time framework to switch to a
+> > broadcast timer as the local timer will be shutdown. Without that DT
+> > property specified the system hangs in early boot with this patch applied.
+> >
+>
+> Assuming this is arm64 platform and using PSCI for all the power management,
+> can you please briefly explain why all these dance is absolutely necessary
+> when PSCI calls can be the clue for the EL3 firmware. I am basing my question
+> on this information in the file:
+
+Yes, you're correct it is an arm64 platform using PSCI. Unfortunately
+I don't have access to the el3mon firmware code to speak super
+authoritatively about it, but you're correct that it is essentially
+working around a firmware limitation.
+
+What I initially observed whilst working on suspend to RAM, when
+hotplugging CPU's with just the PSCI calls the system hangs. Debugging
+this and tracing versus the downstream production drivers the missing
+piece was programming the "ACPM hint" to the CPU_INFORM registers.
+Further debugging and power measurements also showed that the ACPM
+hint is also required in addition to PSCI calls for the cpuidle states
+to function correctly.
+
+> /*
+>  * CPU_INFORM register hint values which are used by
+>  * EL3 firmware (el3mon).
+>  */
+>
+> This clearly sounds like workaround for the firmware limitations. That
+> needs to be clearly documented IMO.
+
+Sure I can add a more verbose comment, that this is required to work
+around firmware limitations in the PSCI implementation.
+
+Thanks,
+
+Peter
 
