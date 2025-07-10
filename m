@@ -1,139 +1,309 @@
-Return-Path: <linux-kernel+bounces-726089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92707B007EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A59E0B007EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6665048494E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:58:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 809C04E29F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1810827A131;
-	Thu, 10 Jul 2025 15:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A207527C14B;
+	Thu, 10 Jul 2025 15:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YbVO9sH1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SeqPI5ci"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F346F27A455
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE71A27B4E0;
+	Thu, 10 Jul 2025 15:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752163137; cv=none; b=brJ4uQ1BPXuwOF2RtgC7X2jg6XQUr8BrpGhxN99y9QZ3w9WtRAqNholPikI+o26P44qS35GvoQ69yYHR8nuwE24cW5lHMAxGNgkHGfLsSt6/Bx66s7VzDy+14s4Z2qNLv4tNNDWEyugJUVQ3UE5oPJQGEz1jfkKbNn65g76S9uQ=
+	t=1752163165; cv=none; b=V0SE2UEKbhlS2MwLUMap7+EoG9h/6A5eWdaGy+52xtiyMLmXiP88RjgKYUVJsM625ioAASz+BBPBvvSlDi2MIui3iMP7BMr2/zXBlGnGKioFE4wifNoU4/N2GtDb8L8CYSqzpv2Qvwc2qN6HzqwB9KmFpa8K1VRcBx/bt32Y8EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752163137; c=relaxed/simple;
-	bh=sGyW1kSOut5qnGoQXMuK5P6jRPc8V1H7nGlZRurAXYo=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=p1gHjBD8m6sejodZQDiNe/n8prbG96PVdXbz0jxL29/7xswe+mEBT55AriKrpuvwOw8yMqggztJToJj9M1EcdQi5vHkJbYv9MDK3I/ZyE9nbewh2XiQ6XzJx3c7nUfqU0n37C9KFH/6gWlHdb1FWKz2zND71vkt7d1r0lRxFR7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YbVO9sH1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752163134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ka4ByCtzYh7nc643rftFY6Eo0Hi9GztYYANcPpx7UHs=;
-	b=YbVO9sH1l+3LqJUykl4NZxrtF5BaODmSzuBbvW+jpVdtb2p66a39oeKFVSqPtDYnRbSYnH
-	rDDppYGcBTdKfXmVCsqMYLWaiTkbOGG5cJtQgOf0F4kg0jLMQ0LnYMQ1nhGS2ckzWB5LzT
-	OQQ9MhCYuISdZxR4RVrhCu03QQLEvSw=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-12-05PNQWgONkqDSO0N-3e-Lg-1; Thu, 10 Jul 2025 11:58:53 -0400
-X-MC-Unique: 05PNQWgONkqDSO0N-3e-Lg-1
-X-Mimecast-MFC-AGG-ID: 05PNQWgONkqDSO0N-3e-Lg_1752163133
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d3cbf784acso276519985a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:58:53 -0700 (PDT)
+	s=arc-20240116; t=1752163165; c=relaxed/simple;
+	bh=aMNXNTLgI8JeT7B0plMnVK9LNcSSEolGwKBFNEahtjQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kljb2SXsUOI4AcmKbI08XRJy0Z/rapXOPhJwfV+8cy0dcyZvESbn/sB4wy9lAxP3LsDojcUUIIjMOC1vhENIfMFC90x5X09baiQ89eBWJKfI3gOPh0TBCOZnEsf1plPGhfXAG+gxfwGhDcCEYIESssWQzgN6CoVLjYQNUN2wRqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SeqPI5ci; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4a5903bceffso13968861cf.3;
+        Thu, 10 Jul 2025 08:59:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752163163; x=1752767963; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kc5UYPl7f9X635NJ3Fg771yePRD2lZa815BaqxRGGKw=;
+        b=SeqPI5ciCTOXnqBPTwNy9FUqBzLzgP+R8grLsrcMOQZ1v91v7sei128OTZ+oQa0A7U
+         kLzRVz22EudlNEAJARMb0SveET9UQsB+diZ3c/MuklPwX0/foxY/W0gNagIGbZLxkDX/
+         ivSFmNZlP7+IywQVM/KwRnlV61ysHsmzWBCf4+8QfRXzG+wXD39c35uJyzvIu2wd0z+V
+         eMxGdQPQAHBD0Mk4DrfvALutkOlxxy0+sRyK443H6EEJAHZlSi42C27sucZW0BQVMB27
+         8w+wZ7wahzEZEb5nxZvu84epQ4NKzEj710RsZreCEC46HsKaX/spPX+wU1WKb07GwKHQ
+         dwUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752163133; x=1752767933;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ka4ByCtzYh7nc643rftFY6Eo0Hi9GztYYANcPpx7UHs=;
-        b=hx/x3d+cL2XYK5UCLiuCFGYGhUIpUwwptI/24xMVOBVMPzbqG9Lp80b6GMziKp9q27
-         HYEVR5pRjOW1FAkp6R3OV1cC9ZjDVF/uUFcfoWuKzIZStIXWFFBAuZqomAubb+nhSfbL
-         GbuU4pZpm954z11HVZcyWTcGZ7IZlW+G2xF+n/zhQRRGYIBLUgObKwtAjysrTQTlnrq/
-         ekx4ecT05ueRQnY7W/rUiUKr467EWZSOsCJVgPI/JyLjeRC+zOhXZAqJRdFC5PP4vvND
-         3LidfHeFoPZ1uU6QHgO+kWg289U3Ckjr9Tvms38VwqILALMpeyA+FpkUPAN+f5bcEFYa
-         TJ4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUynHEyubL5n7JuGPhgf8PQc30KFZFWy7jFD3vk+UKzSCmW2tO/x54UMHD4pYw5jpgNjYut7x7UXIecko4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7d8er/UAdvVdZhHRwoNXQsFbcuj7HBRDT8DLjb14idLUgaMBe
-	u2qFbp2/+s7sbFWXzvM11aIVOoaDg7aJq5h2pFTeHiIQE0Ocje5BwHIsLSt21C1RPRU1CCusVRQ
-	590c7aGfFX7pLaPd7J4pjAuwgzN5frLYWFNZx5P0QKFebqzVl619wyyAFnF03dad7zQ==
-X-Gm-Gg: ASbGncvjlgO9AM/EHf+gluL+Wm3wSAjqpOWRpH/cQ10Wn07KsfFGoauMzNi+9U/jWWH
-	weim69nlCIWfqUl4rV97KpOlg2aJSX6/ImMCMblwkSkPEnPIJVD4R9mg8PLzraIZzPtx88/Q6rf
-	50PZ5yeA0BWXzEGdxuJOcwv0NZI632SgwXMCgH/Ptai59oVc2W029hKU93lZKL1ctZdCu7G05K8
-	1k2GC1PuVJ9FuNG6pyqhotpOyi8XebgOyG6xpKdwnYie/G4O5Mw79qCnpLpVRbzVXN6tchn+OxE
-	uQCuzVBBxVRCrkooqP36NW+8zliNRczGmewIm+2O3FZHdmpw0l6oHTf7pJbEd/7PTAGt
-X-Received: by 2002:a05:620a:4514:b0:7d3:d8d6:1c89 with SMTP id af79cd13be357-7ddecb24767mr3989185a.43.1752163132733;
-        Thu, 10 Jul 2025 08:58:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF6ZEutdU/L1TXcRGdT1iCHfaOFeZ2TnV322Bgnpr39I8tzeW4PxYiQFJoGSxI5uPsE5bdvkQ==
-X-Received: by 2002:a05:620a:4514:b0:7d3:d8d6:1c89 with SMTP id af79cd13be357-7ddecb24767mr3983785a.43.1752163132216;
-        Thu, 10 Jul 2025 08:58:52 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcdc0f81easm110505685a.41.2025.07.10.08.58.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 08:58:51 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <103a68e9-9627-42ad-ae86-3b023c3230d7@redhat.com>
-Date: Thu, 10 Jul 2025 11:58:50 -0400
+        d=1e100.net; s=20230601; t=1752163163; x=1752767963;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kc5UYPl7f9X635NJ3Fg771yePRD2lZa815BaqxRGGKw=;
+        b=jlrZNdh65Z9sHI2SYb5vr+q/3uQoSMU+Khh+T9dER8Xm2YlHlaKpnJ57cveZp5EFRQ
+         iQsb7ImBgHOndTO1MLdeIq3+4nIv6PUATQkI2T/yGR0Aodr/Q4/ec4ND1z/OQP0+01gj
+         w3Pgit0xqoPJMC9tmYj/2NOnbd7IlWKgFVQtAm7Lax8dyOCia5BlS/ZxMRDUBuYLqB7o
+         94ZnrJzoxGx5G/x5ruQGJRMuXSNRES/obySC+7WWcSn00Fnt5rVoAnA3dLwv/ir3xGaF
+         VNOLrp9mLXfY11t4ABx56O87FwOwYuHRfSO2xU2ofpaSTMxUhHuk84hifZ0oJhfUXxqd
+         brjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjrLeXuTHeKLUqNHhct6ido9HMC/ybgdGb0ewHBGRMkvSur430YrNMnRbcDkN1HbGY7JRlsxJ3yBC9@vger.kernel.org, AJvYcCX/oWWxzKxf8IV8mWzo8VTd7ZigJiI2c4QQ4jbOh7Kh/4JgLtf9cpw3TROnQneT0zNNGFrEXQWO5bV/fKsW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjn2AUOl6HBFCPnVzI+xB3K1AFf7Ho+rJQKyp1sDs5D2BQxpmB
+	N2mUY98y28tN11w9pfSLyBB+DWd3ezTPYDsEtaKuoD4tNDt0lI6lS7wNRG5/MZ1yPHrF09Zf0Up
+	aVPIH8QZk8lKdoZdyFmhuntutG1bXnsQ=
+X-Gm-Gg: ASbGncvbVs/UamN7winEAq0fXU4RHjwQ1DJng7/YTp6YW6akXlhlxIpIeVy3W4gY0EN
+	XtzAM74thjFTwAwdl6dSzyuPQnKjoOCkvI92e55vj6yBJUyeV0QXBzf32o8dIMxpb/LFwE6m8Po
+	eAxEQ4DPo24cTbIKp4MT8lDxseA5fL6+P92fy/z1NxSOSD
+X-Google-Smtp-Source: AGHT+IEhI4AzpjBb+4MG95Co3MJ4O+5/UGoMQAVYVLzb+1MSK4cvxAy6aVFWEBdljfwhBMeShvoYgQRmoCBDnmBmDEU=
+X-Received: by 2002:a05:622a:4ac6:b0:4a4:40b7:9cc with SMTP id
+ d75a77b69052e-4a9dec54757mr100730111cf.12.1752163162448; Thu, 10 Jul 2025
+ 08:59:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] futex: Use RCU-based per-CPU reference counting
- instead of rcuref_t
-To: Peter Zijlstra <peterz@infradead.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Waiman Long <llong@redhat.com>, linux-kernel@vger.kernel.org,
- Andr?? Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Valentin Schneider <vschneid@redhat.com>
-References: <20250707143623.70325-1-bigeasy@linutronix.de>
- <20250707143623.70325-3-bigeasy@linutronix.de>
- <2f0fc991-0e70-4bb3-bdcc-f87293cb6471@redhat.com>
- <20250708134708.Rgh8nHcx@linutronix.de>
- <20250708190605.GF477119@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-In-Reply-To: <20250708190605.GF477119@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250620100010.1291658-1-amadeus@jmu.edu.cn> <20250620100010.1291658-2-amadeus@jmu.edu.cn>
+ <5025631.aeNJFYEL58@phil> <b6f8f705-f661-46cf-9dda-6f18f8658622@kwiboo.se>
+In-Reply-To: <b6f8f705-f661-46cf-9dda-6f18f8658622@kwiboo.se>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Thu, 10 Jul 2025 19:59:11 +0400
+X-Gm-Features: Ac12FXx1qPTjJO3HuLgi2Tlv0SZqUgMUIca5qO-LsnRBbRElxcE-W9k1gvJPLZ0
+Message-ID: <CABjd4YzCL3U9yf65FUBE6EMqFjZHosULU7fUcjVo9VJ_=Ov+Dw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] arm64: dts: rockchip: rk3528: Add CPU frequency
+ scaling support
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Chukun Pan <amadeus@jmu.edu.cn>, Yao Zi <ziyao@disroot.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/8/25 3:06 PM, Peter Zijlstra wrote:
-> On Tue, Jul 08, 2025 at 03:47:08PM +0200, Sebastian Andrzej Siewior wrote:
->> On 2025-07-08 09:43:44 [-0400], Waiman Long wrote:
->>> This looks somewhat like what the percpu refcount does (see
->>> lib/percpu-refcount.c). Could this be used instead of reinventing the wheel
->>> again?
->>  From the comment:
->>
->>    * futex-ref
->>    *
->>    * Heavily inspired by percpu-rwsem/percpu-refcount; not reusing any of that
->>    * code because it just doesn't fit right.
->>    *
->>    * Dual counter, per-cpu / atomic approach like percpu-refcount, except it
->>    * re-initializes the state automatically, such that the fph swizzle is also a
->>    * transition back to per-cpu.
->>
->> but I leave it up to Peter if he considers merging that.
-> Basically what the comment says. Trying to reuse things ended up in a
-> mess. It really isn't much code, most of it is comments.
+On Thu, Jul 10, 2025 at 7:09=E2=80=AFPM Jonas Karlman <jonas@kwiboo.se> wro=
+te:
 >
-I got it now. I am not against adding a variant specific to this code 
-giving that we want to fix the performance regression ASAP. Merging it 
-to any existing set of helpers may be something we want to do in the future.
+> Hi Heiko and Chukun,
+>
+> On 7/10/2025 1:45 PM, Heiko Stuebner wrote:
+> > Am Freitag, 20. Juni 2025, 12:00:10 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb Chukun Pan:
+> >> By default, the CPUs on RK3528 operates at 1.5GHz. Add CPU frequency a=
+nd
+> >> voltage mapping to the device tree to enable dynamic scaling via cpufr=
+eq.
+> >>
+> >> The OPP values come from downstream kernel[1]. Both 408MHz and 600MHz
+> >> frequencies use the normal PLL, so use the corresponding highest volta=
+ge.
+> >>
+> >> The voltage used for other frequencies can't be less than above (875mV=
+).
+> >> Therefore, 816MHz to 1200MHz also uses the corresponding highest volta=
+ge.
+> >
+> > There has often been the argument that selecting a frequency that has t=
+he
+> > same voltage as a faster frequency does not save any power.
+> >
+> > Hence I remember that we dropped slower frequencies on other socs
+> > that share the same voltage with a higher frequency.
+>
+> One possible difference here is that the actual CPU rate is controlled
+> by a PVTPLL where TF-A will configure a osc ring-length based on the
+> requested rate and Linux only configure the regulator voltage.
+>
+> I have no idea if the configuration made by TF-A will have any affect on
+> power usage, but I suggest we keep all opp here because both TF-A and
+> Linux is involved in configuring the CPU rate.
 
-Cheers,
-Longman
+It seems that PVTPLL usage shouldn't change the equation here. As long
+as the voltage stays the same, it should always be preferable to run
+the core faster (i.e. at a shorter osc-ring length) so that it can go
+to idle sooner, given that idle states are less power-hungry than any
+of the active states.
 
+What DOES change the equation is the different voltage that downstream
+DTs define for different OTP programmed leakage values, as they make
+different top frequencies correspond to a given voltage for cores with
+different leakage values.
+
+> The measured rate can typically be read from a PVTPLL status reg, it
+> will be different depending on the ring-length, voltage and silicon
+> quality for the rates >=3D 816 MHz.
+>
+> >
+> >>
+> >> The remaining 1416MHz to 2016MHz use a voltage close to actual frequen=
+cy.
+> >>
+> >> [1] https://github.com/rockchip-linux/kernel/blob/develop-5.10/arch/ar=
+m64/boot/dts/rockchip/rk3528.dtsi
+> >>
+> >> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> >> ---
+> >>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 64 +++++++++++++++++++++++=
++
+> >>  1 file changed, 64 insertions(+)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boo=
+t/dts/rockchip/rk3528.dtsi
+> >> index 829f980ea353..5cb7f10b79ed 100644
+> >> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> >> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> >> @@ -53,6 +53,7 @@ cpu0: cpu@0 {
+> >>                      device_type =3D "cpu";
+> >>                      enable-method =3D "psci";
+> >>                      clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+> >> +                    operating-points-v2 =3D <&cpu_opp_table>;
+> >>              };
+> >>
+> >>              cpu1: cpu@1 {
+> >> @@ -61,6 +62,7 @@ cpu1: cpu@1 {
+> >>                      device_type =3D "cpu";
+> >>                      enable-method =3D "psci";
+> >>                      clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+> >> +                    operating-points-v2 =3D <&cpu_opp_table>;
+> >>              };
+> >>
+> >>              cpu2: cpu@2 {
+> >> @@ -69,6 +71,7 @@ cpu2: cpu@2 {
+> >>                      device_type =3D "cpu";
+> >>                      enable-method =3D "psci";
+> >>                      clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+> >> +                    operating-points-v2 =3D <&cpu_opp_table>;
+> >>              };
+> >>
+> >>              cpu3: cpu@3 {
+> >> @@ -77,6 +80,67 @@ cpu3: cpu@3 {
+> >>                      device_type =3D "cpu";
+> >>                      enable-method =3D "psci";
+> >>                      clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+> >> +                    operating-points-v2 =3D <&cpu_opp_table>;
+> >> +            };
+> >> +    };
+> >> +
+> >> +    cpu_opp_table: opp-table-cpu {
+>
+> This node should be placed after the firmware node for the nodes to be
+> in alphabetical order.
+>
+> Regards,
+> Jonas
+>
+> >> +            compatible =3D "operating-points-v2";
+> >> +            opp-shared;
+> >> +
+> >> +            opp-408000000 {
+> >> +                    opp-hz =3D /bits/ 64 <408000000>;
+> >> +                    opp-microvolt =3D <875000 875000 1100000>;
+> >> +                    clock-latency-ns =3D <40000>;
+> >> +                    opp-suspend;
+> >> +            };
+> >> +
+> >> +            opp-600000000 {
+> >> +                    opp-hz =3D /bits/ 64 <600000000>;
+> >> +                    opp-microvolt =3D <875000 875000 1100000>;
+> >> +                    clock-latency-ns =3D <40000>;
+> >> +            };
+> >> +
+> >> +            opp-816000000 {
+> >> +                    opp-hz =3D /bits/ 64 <816000000>;
+> >> +                    opp-microvolt =3D <875000 875000 1100000>;
+> >> +                    clock-latency-ns =3D <40000>;
+> >> +            };
+> >> +
+> >> +            opp-1008000000 {
+> >> +                    opp-hz =3D /bits/ 64 <1008000000>;
+> >> +                    opp-microvolt =3D <875000 875000 1100000>;
+> >> +                    clock-latency-ns =3D <40000>;
+> >> +            };
+
+I.e. here the mainline kernel will always choose opp-1008000000 as
+long as the regulator voltage is 875000 uV, unless explicitly
+prevented from doing so by userspace. Whereas the BSP kernel [1] would
+request different frequencies for different silicon, e.g.
+opp-1200000000 for a silicon specimen with a leakage value of L4 and
+opp-1416000000 for a silicon specimen with a leakage value of L8 - all
+for the same regulator voltage of 875000 uV.
+
+So my 2 cents would be: no added benefit in having "lower frequency,
+same voltage" OPPs defined here until we implement an OPP driver
+reading the NVMEM programmed leakage values and selecting different
+*-L* voltages for each OPP depending on those. Once there is this
+support in the drivers, those OPPs can be added together with
+leakage-specific voltages (opp-microvolt-L0..11).
+
+Right now OPP values with frequencies lower than 1008000000 won't be
+selected by any of the energy-aware cpufreq governors anyway, because
+their voltages are the same. Exercise for the reader: try to convince
+e.g. the "schedutil" governor to select anything below 1008000000
+without touching
+/sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq :) This may
+change if OPP tuning logic is implemented such as in [2]: that will
+try and find the _voltage_ resulting in PVTPLL providing a frequency
+closest to what cpufreq requested, and use that for the in-memory OPP
+table instead of what was provided by the DTS.
+
+[1] https://github.com/rockchip-linux/kernel/blob/develop-5.10/arch/arm64/b=
+oot/dts/rockchip/rk3528.dtsi
+[2] https://github.com/rockchip-linux/kernel/blob/develop-6.1/drivers/soc/r=
+ockchip/rockchip_opp_select.c#L842-L994
+
+Best regards,
+Alexey
+
+> >> +            opp-1200000000 {
+> >> +                    opp-hz =3D /bits/ 64 <1200000000>;
+> >> +                    opp-microvolt =3D <900000 900000 1100000>;
+> >> +                    clock-latency-ns =3D <40000>;
+> >> +            };
+> >> +
+> >> +            opp-1416000000 {
+> >> +                    opp-hz =3D /bits/ 64 <1416000000>;
+> >> +                    opp-microvolt =3D <925000 925000 1100000>;
+> >> +                    clock-latency-ns =3D <40000>;
+> >> +            };
+> >> +
+> >> +            opp-1608000000 {
+> >> +                    opp-hz =3D /bits/ 64 <1608000000>;
+> >> +                    opp-microvolt =3D <975000 975000 1100000>;
+> >> +                    clock-latency-ns =3D <40000>;
+> >> +            };
+> >> +
+> >> +            opp-1800000000 {
+> >> +                    opp-hz =3D /bits/ 64 <1800000000>;
+> >> +                    opp-microvolt =3D <1037500 1037500 1100000>;
+> >> +                    clock-latency-ns =3D <40000>;
+> >> +            };
+> >> +
+> >> +            opp-2016000000 {
+> >> +                    opp-hz =3D /bits/ 64 <2016000000>;
+> >> +                    opp-microvolt =3D <1100000 1100000 1100000>;
+> >> +                    clock-latency-ns =3D <40000>;
+> >>              };
+> >>      };
+> >>
+> >>
+> >
+> >
+> >
+> >
+>
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
