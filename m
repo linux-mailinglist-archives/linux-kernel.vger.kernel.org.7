@@ -1,129 +1,89 @@
-Return-Path: <linux-kernel+bounces-725471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 589E2AFFF8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:47:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD67AFFF8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81F5A3B2AAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:46:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 025E65A1794
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE422DF3DA;
-	Thu, 10 Jul 2025 10:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E1E2DFA28;
+	Thu, 10 Jul 2025 10:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTiga/Ok"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="QjZIn98c"
+Received: from mail-24421.protonmail.ch (mail-24421.protonmail.ch [109.224.244.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D3F2D3ED2;
-	Thu, 10 Jul 2025 10:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700ED2DC34A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752144417; cv=none; b=fE+nvP075LYTPYGSoXaU46zj3oLoQyzCCaXCnYZz0GzbwYdZGBLQ8la8C1d4mtre2Vg/gHfNz4ipiQt65dKFb8T5R8B0uk3vWuyF3+0CcHLM2T6vCHEAeJqAqBT0jnQDR0AHL/eEsECmoX/5LLQcO4GArhWS4s47WCOgtXscOBE=
+	t=1752144437; cv=none; b=rR9bFQqGjLYrHVKDgq44abySET3T7w+Zq1SxpmN4K4bc4pC3ApQEXEC/vDUnt8vHNfdCbYYbBIRKkgSckFNZUoMgIeO+rX4QkLslD6i8RNaI/+YFAc4Lt23ajzdDbaWBeGl+F0L7WXQU1j5G1ZOESmNgzl4m4PgEA757qD/KTNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752144417; c=relaxed/simple;
-	bh=GpS7b82GwFBy7s6Gt1hdiRaB+YScMGCEmRwAh7y5fc8=;
-	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
-	 In-Reply-To; b=ogPPkBapFVThhRlJYgnf3cD2Rb7gawFR8WVxlkisevmgoVQHVbdCILg1exSHEK+ZLHorsKpivjnJoug1qqtN+J2SB+0ljjq7JLZyi7WUJvayMvpdGFPXy444oHYDEKLpes4A8aKSvpWhirJ3MZXkdsh/5UX7wF34QWvKh9Dr4PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTiga/Ok; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E660C4CEE3;
-	Thu, 10 Jul 2025 10:46:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752144417;
-	bh=GpS7b82GwFBy7s6Gt1hdiRaB+YScMGCEmRwAh7y5fc8=;
-	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
-	b=bTiga/Ok9S6zjGcprB4jTuGjWSz2kQxrwJAKhDC9LyDa61DxU+amsJxpRZHRmQFBZ
-	 5gxUPE4d39rO+hNiM3embVeVM7efWmdYcEw0x0pA3Cg9Q0xJbDeo1OH7IbStYVc4y/
-	 8YvChpRihJ8TzlSl4w/9qicre223sU56R1n0rcmfBX2Sa73jao5Fz/LJQXolE5UbhM
-	 PETxeWxqTd8N1c+WmUYtv8dFz2TjggKAAWPXKhKW0DsT1LzGfxB8QTAWnp7VOM814A
-	 8YkhW3nvkl0jTdxv6VrGaZcgj7J9RcQNa3ZEwMc9L2ng2QFn0QSkXuuG8hUPKI/9l/
-	 BrRAglN/p3BpQ==
-Content-Type: multipart/signed;
- boundary=457ac7dd634462d2cae9a082cc349cd648764669cbd75127613ee86b1b98;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Thu, 10 Jul 2025 12:46:52 +0200
-Message-Id: <DB8BCV6V36YE.20KJC5V0BJ1CN@kernel.org>
-Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Arnd Bergmann"
- <arnd@arndb.de>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Julien Panis" <jpanis@baylibre.com>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Mark Brown" <broonie@kernel.org>, "Lee Jones" <lee@kernel.org>
-Subject: Re: [GIT PULL] Immutable branch between MFD, Misc and Pinctrl due
- for the v6.17 merge window
-X-Mailer: aerc 0.16.0
-References: <20250613114518.1772109-1-mwalle@kernel.org>
- <20250710094906.GG1431498@google.com>
- <aG-OmSNn-oULfEuB@finisterre.sirena.org.uk>
-In-Reply-To: <aG-OmSNn-oULfEuB@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1752144437; c=relaxed/simple;
+	bh=Pxc2d27x3MrAeWmf0v1fLKK96sAJbVihdsCjp3qU1/I=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Yq64fWf8AbOrRlm1kjvdJduzK4xZEr4XjKNW5DCfvyw8e1aSCbfO+ZMkvhwEbnfBwxZnDVTbWndDdDC6dmOHrL+7gTMHldoT1vN5ZhsE40n/juYTh5Vxj00yMQki0IGWJ/SiA2smMFk9RU/1fM1ta/NxQ+yDjB+myARFhKSQuQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=QjZIn98c; arc=none smtp.client-ip=109.224.244.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1752144433; x=1752403633;
+	bh=Pxc2d27x3MrAeWmf0v1fLKK96sAJbVihdsCjp3qU1/I=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=QjZIn98cuY9RrJFocwdrJXQbY8zRdfNT0/PNv94xuuektyO8Xo8YPrmBeZ/S5RXUI
+	 ZkaaceE6OaUiu6p4fTWoTMoH4S1WiV3Ya+fYE8v1jHnFUyU8uelQuRowYocCPKpy6k
+	 VZBpN0hjrksGA0gsmNdJ8TE+i2AvrCfltHDn5awKJbCZHkn/frMDMiUO4rHFBDorPn
+	 4OyRJ8xT5SUf0S6kNWZQFNJKsOBczSJCSQvLJjLFYj9EcW9RYQUV/As3w4RcEPA3DL
+	 3f1UyH9GugmVP6xw5/Jv5a7FJuZt3Nma9uwEROnyUWn3pA71BfIwWgjApeJsLEA9GS
+	 1REhtlS4W/yow==
+Date: Thu, 10 Jul 2025 10:47:08 +0000
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+From: Sean Nyekjaer <sean@geanix.com>
+Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, =?utf-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] iio: imu: inv_icm42600: Remove redundant error msg on regulator_disable()
+Message-ID: <pt3qh3xaxvbaf7ojib474d7cpgpcehuhzfj6qfg6qv2ivcbb7z@iyen7qvzd7zo>
+In-Reply-To: <aG-B3uv6SsP1Ap0U@smile.fi.intel.com>
+References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com> <20250709-icm42pmreg-v1-3-3d0e793c99b2@geanix.com> <aG-B3uv6SsP1Ap0U@smile.fi.intel.com>
+Feedback-ID: 134068486:user:proton
+X-Pm-Message-ID: ec132c56582d17ae3dad5882a554ce4dbe05c18f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
---457ac7dd634462d2cae9a082cc349cd648764669cbd75127613ee86b1b98
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi,
+On Thu, Jul 10, 2025 at 12:03:26PM +0100, Andy Shevchenko wrote:
+> On Wed, Jul 09, 2025 at 02:35:11PM +0200, Sean Nyekjaer wrote:
+> > The regulator framework already emits an error message when
+> > regulator_disable() fails, making the local dev_err() redundant.
+> > Remove the duplicate message to avoid cluttering the kernel log
+> > with the same error twice.
+>=20
+> To me this sounds like a potential backporting material as it might full
+> the logs (in case the module probed-removed zillion of time. Hence,
+> I would put it to be the first patch in the series (yes, it will involve
+> to fix something that you are removing in the following change, but still=
+).
 
-On Thu Jul 10, 2025 at 11:57 AM CEST, Mark Brown wrote:
-> On Thu, Jul 10, 2025 at 10:49:06AM +0100, Lee Jones wrote:
-> > Enjoy!
-> >=20
-> > The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd135=
-4494:
-> >=20
-> >   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
-> >=20
-> > are available in the Git repository at:
-> >=20
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-misc=
--pinctrl-v6.17
-> >=20
-> > for you to fetch changes up to d90171bc2e5f69c038d1807e6f64fba3d1ad6bee=
-:
-> >=20
-> >   dt-bindings: mfd: ti,tps6594: Add TI TPS652G1 PMIC (2025-07-10 10:40:=
-21 +0100)
-> >=20
-> > ----------------------------------------------------------------
-> > Immutable branch between MFD, Misc and Pinctrl due for the v6.17 merge =
-window
->
-> Is there some reason you didn't also pick up the regulator patches?
+I have never seen this printed, so I don't think it's a huge issue.
+But it's quite easy to add a Fixes tag if prefered.
 
-The regulator patches don't apply on the MFD tree because there are
-two new patches [1, 2] in the regulator tree. Also my patches rely
-on them. Thus, the idea was that Lee will provide an immutable tag,
-that you can pull together with the remaining regulator patches.
+>=20
+> --
+> With Best Regards,
+> Andy Shevchenko
+>=20
+>=20
 
--michael
+/Sean
 
-https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git/commi=
-t/drivers/regulator/tps6594-regulator.c?id=3D9bb3c7df546aac38ea64c736a839ef=
-2c75297631
-https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git/commi=
-t/drivers/regulator/tps6594-regulator.c?id=3Dc266209eaef4fef863363557817f7d=
-6a68314321
-
---457ac7dd634462d2cae9a082cc349cd648764669cbd75127613ee86b1b98
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaG+aHRIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/iMgAGA6gTBKL7PxV268G4uPlzwRYuvRNw/pn3g
-WbaytL0Pw/U5x+FfbbffFCCRwIjxE/GJAYCL/iHDoXzXVKlPe9V3nN3o9gPf1IKx
-kokPEU+ryQ3X5iiYJsQXeBMMM2nQdCzAWcs=
-=Ihnt
------END PGP SIGNATURE-----
-
---457ac7dd634462d2cae9a082cc349cd648764669cbd75127613ee86b1b98--
 
