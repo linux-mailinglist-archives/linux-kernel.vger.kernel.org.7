@@ -1,84 +1,79 @@
-Return-Path: <linux-kernel+bounces-724781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D536AFF6D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:32:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4235AAFF6DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C782C584CD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:32:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7F31C822B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF23427F198;
-	Thu, 10 Jul 2025 02:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9A427FB29;
+	Thu, 10 Jul 2025 02:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="I5QwuZ6t"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023140.outbound.protection.outlook.com [40.107.44.140])
+	dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b="RunCpia7"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022143.outbound.protection.outlook.com [40.107.75.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D347F823DD;
-	Thu, 10 Jul 2025 02:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCB3221282;
+	Thu, 10 Jul 2025 02:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.143
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752114730; cv=fail; b=HFzdeM93HDvTewlbHkKVvgXABdTau+RVJKL4KsKw1LPaEQ1WoWInnsYK+laE6sxfBWMxwW2si9oMR1dqxOjqy+LRzFew9oQS10OlTqgHMFaqBoCOahL09QC0UGZks65+XtwptGTgzpmmtPR4tlBGeFGd1tsesM8m8lbira1bQcE=
+	t=1752114750; cv=fail; b=f+fKp4mFISAdU/blaQbFrgJ3cP/98C9YinA9eo4Bvk8Lj/s/9yFicWRZC2pT5otPviiSm37BfFYYt/5sajm3Al+Dp71Ipl3mMnFhO5ehT5TgiPMSdmkr6sLin+es7PYtsZf4D9makIk2KYOsjODsGuMArD7iMNaw1jqlFs+y+Dw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752114730; c=relaxed/simple;
-	bh=zBp4qSIFUP40weD8uEV1HK5RAlrKkxCwNlhebm1i1O8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RAV31pZvMbr/nR+Ba9KFPrCjSJanBUvz/0vHwA33At6eUHIexaHd56YnsDqS1Ke/ISX6GsD/ug6xzNGpUcbOvViwKAO3Xusu0lyBr/VW2rC249z5X1wMc0CyDmPhYgGwgw1oWPSfOc5CjY8R6dwLuuvg3pxCkZfAoMTrOxSFTOM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=I5QwuZ6t; arc=fail smtp.client-ip=40.107.44.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	s=arc-20240116; t=1752114750; c=relaxed/simple;
+	bh=Cwe8qO9pQ7/9izpUfuBKmJrKDgxeGIeNFjthKxxsQX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=oN7WIDJf09TPVmWXQhJafAI0sInmSPfUtQyKQDhMJcj+a8oWvvmQERCBfriKOcL9cnVMPWebEWInlq3gcmdg71fJ8pGWB6Bg3HrZxxSZjWZTQmwM/z3Zf8bnFucGh0aBcLcPT6yi+HPrAaasjDqzwul0qKA7ZPHPHaXkyh+4g6U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com; spf=pass smtp.mailfrom=jaguarmicro.com; dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b=RunCpia7; arc=fail smtp.client-ip=40.107.75.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaguarmicro.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Os7FPxehRt18hVHQP1Mve9J9Kx+Af7mrxbuUfuNuyEcPrMmHm2ucTIhVxxM7VPFQ4doGzaeVYZSPy4LRgwQ/bgpycPjv5pMHqrEotBflK4b/o3TPtXCrDxaBhGRKU0R+UTeCvKYrvuGpFmlHYB8OUbL22LxG2Ol6+5UB1Mb9dpkwSYhh2Z0wqhYm1vmG43fd+Jn+Hku/Y0d9LMx6bxC0xlydxVKUYo7HOz+87LOzWluV93/315lNSGahQtZ+aeeVBCwyvIKD3sl5nzMXScEw77GNUz/RQFGajPtfPvJCKBXXn80HXuSxiu82fKrWj44TTkUEwFw8VN+GOJCpXoFrHQ==
+ b=N4UhVOZsKjdspDszZVFrY32XtscHbgHl54ruz2ByJ9cRMJnCJC/G7m3E4CqRCU+5tp2+9+YwxiAj6xUX+bmxb7rjKo0Fhwri5kwIeHO41HOVTxaNo6rnhtNGrvwKMyDgFp7gFOYXqQBhQ3jamyri5OLRtgA4MzXTNphGFcINM2o5U1/EcTztHeIHTAQFRKwj3OTBYd/VOR4Ql7e1saI5UxnAzqmfZNhd9+4NTk3bizho5gzdnAdadvLRPeQdF1gtZzQBZiwD358QB2ZjDNtc3NQlx6oJ2TCbuioppOeo01aotvGZ4xvRhjllH3qom3mAjviP7Ti9jZkqOv1rOzkgyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VRo9/P3rrCqscEcGILzPVCYJvs/q/oCNYKjJEWPTFyw=;
- b=rwk3NRx5uAPSY+1L8itB5rcuz5HIXbJC70fGqmVvh+8Jx0JvFwdx4AWJ/V5DmDwn6bPcaHbTe7frwpA1OHIYaPP3n8eHlcyxBvaqJ1kqauByLdjC8jsTbf0EFpZuwfeN3tM70RaEOIhfrZSpn3elgdgrv3Fr1AZakIKKheP6ES26TXeyaDHarNGXX4t5x7PEq9+WW34vhmkoHYb1LjlYCzybih5HcoagFWYW23oEgpHPwjbXns9Qr4YZCRN2r0VhPfepNamSFoGnZA8X0R4ye90LxSALJeTEh/nqC+54PtBXJeLnSUVXuvES3shciRH+8nPYwA0qPPlYruNx57ch6w==
+ bh=hE9pSHcs7Y6xFe6weOpVLN7ANjV+NpyipiXOOydxLhk=;
+ b=WdFfhGVYroODbb7N535T/gWUyHvr/YckDk+2s0NAuPam4QEqbqtZ3rgvuEgnkJBm51IIo3ZfqMQTbGs5g0oTcreBCCFv7PnRN3dV+DQ4RxfLNP3nm+SLbVB//t+vP5TCOTneJCHRefwE/l0Clx6mPaQeTfkiFifFAOmKAuwps/dgkJFl+SuPThQikgZ6/MZ8UskaKW1XLzwA5pKXjdyzHA3msbTDZ2rbrvcxSt93QXOzbBe7f4tMggyps95WMuGA02dKu7NNSFwu530I1GLhjRwRg+Bqv3waTMBww2Shoape1InDFESxyLhILmwf8ow88ZsRjqJKmfxuxYwNR1v8+w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
+ smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
+ header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VRo9/P3rrCqscEcGILzPVCYJvs/q/oCNYKjJEWPTFyw=;
- b=I5QwuZ6tLFgrV5rueidZ+RF0EmAVdem1jJ1nM8oX1YLSHLIwGkHAsa07KjDbGTaZ0M0yxkgLoHe8SW607dJa3kWpITurovXInGvujmLUdj97Nj93aSWlKe9x2HwklyXpQiUESP+dy1bk5upU1rydfmcNzXMcmgFvy1NpbclbzpYKJd9olJyKaXQZn/WG6fE/7k1ocYNOXDdAN1fnjwLcEJORIfk2zJo5zBSIrjK+NMy4s3F+VuLydhotqT/4Hsx05zQjAFewnmJpCJA+6LojLCSpaC2prCbmjMnB/U/EUKWjl9XkSiMdMYMnzYlP+ocWsYl3v+D8Cf24X22FDT1oJg==
+ bh=hE9pSHcs7Y6xFe6weOpVLN7ANjV+NpyipiXOOydxLhk=;
+ b=RunCpia77+2UavmeRReOBuF07OAU3Ta7OAT1A8jeJoYY3iepdSu3r3j5Vl4pgYJjTg4iL2wH6bdVKkofx/kMQ1DgN5EK20gPWiskbbFb2wBsky8LMp0LwAa4Rm/5WsavACdqhZ9pVMtdrLl0UpX+rk0zM2o9HTeGT89KCobu+TMFpM3K9kHWdH8/Ml2aAMbCjbDcko5bo5Baj6oNuxnFQU7p9FHebbDsh4IkEt2/N0K/nJEgh1VAkp4DSy60j8AAS6SY+FMcwbOkFl6gJBBVgWYjA6eTpoGsEgM289sBPz74o9vxLyqSpdtjfgYxO85OTltVtstWU+z8C3X09H6Lbw==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TYSPR03MB8627.apcprd03.prod.outlook.com (2603:1096:405:8a::9)
- by TYSPR03MB7331.apcprd03.prod.outlook.com (2603:1096:400:412::6) with
+ header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
+Received: from PSAPR06MB3942.apcprd06.prod.outlook.com (2603:1096:301:2b::5)
+ by KL1PR06MB6446.apcprd06.prod.outlook.com (2603:1096:820:f0::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Thu, 10 Jul
- 2025 02:32:05 +0000
-Received: from TYSPR03MB8627.apcprd03.prod.outlook.com
- ([fe80::cf16:aa54:9bd5:26f]) by TYSPR03MB8627.apcprd03.prod.outlook.com
- ([fe80::cf16:aa54:9bd5:26f%7]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
- 02:32:05 +0000
-Message-ID: <968ffcce-9fef-4336-b83d-f9cd7ade6ea0@amlogic.com>
-Date: Thu, 10 Jul 2025 10:32:01 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] media: uapi: Convert Amlogic C3 to V4L2 extensible
- params
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Dafna Hirschfeld <dafna@fastmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com>
- <20250708-extensible-parameters-validation-v1-3-9fc27c9c728c@ideasonboard.com>
-Content-Language: en-US
-From: Keke Li <keke.li@amlogic.com>
-In-Reply-To: <20250708-extensible-parameters-validation-v1-3-9fc27c9c728c@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR04CA0203.apcprd04.prod.outlook.com
- (2603:1096:4:187::22) To TYSPR03MB8627.apcprd03.prod.outlook.com
- (2603:1096:405:8a::9)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Thu, 10 Jul
+ 2025 02:32:22 +0000
+Received: from PSAPR06MB3942.apcprd06.prod.outlook.com
+ ([fe80::9b95:32e5:8e63:7881]) by PSAPR06MB3942.apcprd06.prod.outlook.com
+ ([fe80::9b95:32e5:8e63:7881%4]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
+ 02:32:20 +0000
+From: liming.wu@jaguarmicro.com
+To: "Michael S . Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>
+Cc: kvm@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	angus.chen@jaguarmicro.com,
+	Liming Wu <liming.wu@jaguarmicro.com>,
+	Lei Yang <leiyang@redhat.com>
+Subject: [PATCH v2] virtio_net: simplify tx queue wake condition check
+Date: Thu, 10 Jul 2025 10:32:08 +0800
+Message-ID: <20250710023208.846-1-liming.wu@jaguarmicro.com>
+X-Mailer: git-send-email 2.49.0.windows.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0003.APCP153.PROD.OUTLOOK.COM (2603:1096::13) To
+ PSAPR06MB3942.apcprd06.prod.outlook.com (2603:1096:301:2b::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,212 +81,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYSPR03MB8627:EE_|TYSPR03MB7331:EE_
-X-MS-Office365-Filtering-Correlation-Id: 331eb91b-2966-4fba-fdc1-08ddbf59f5d2
+X-MS-TrafficTypeDiagnostic: PSAPR06MB3942:EE_|KL1PR06MB6446:EE_
+X-MS-Office365-Filtering-Correlation-Id: d0111ec9-fd78-4ff7-9503-08ddbf59fed6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
+	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UWFqZmNDc3RUd3NSWTRNQldHS0pPazhQR3A4MjZzbHd4UWNYR0JRS3lwdXlp?=
- =?utf-8?B?OG00alFVUml3bGwrWkViQmM1cWF4akhJblZaNTNic3ZadVhsRytwTkRuWkhF?=
- =?utf-8?B?bEd2YzZxWmRBdGZxQlpBLzhvWVJaYjBUai9NTE9BdDFQbzNxbWNYY0JNRzZW?=
- =?utf-8?B?K3YvN2hMTG8wMGljdmtqSzR5N2MveWYzY2JVcDlzdXdQRWNQOWhGTGRjZUpq?=
- =?utf-8?B?ZEFXRGlScXhPMW14djltWmdvWHdDL2thODBnb0VjV1cxR0NqZXdlZmZhVU9N?=
- =?utf-8?B?YTMwd25WUHpydDI5Vk5iamtHL2lBQkJ6VXBrSDI5Ui9tRnhzZ0xQVnJ2VEdM?=
- =?utf-8?B?Yk5VdlFpdUtaMlBKTnMvMnBqVGlNRjBXSHVydk9NOStBdWFIb1Ntc1pZcDc3?=
- =?utf-8?B?USsxR2VJVWZwcjJvUlgvSHRJaVJYUTdpU0NoOXdkamhvaFhJOHhkbS9EUE05?=
- =?utf-8?B?WjZrMjV5VlQ4NVBzWS9uNTZGOEtDRnNPa0lmbXFXNTB2KzBDejlaNjAxMXpM?=
- =?utf-8?B?cFlXeHhtamVBY0tHbVVRVHI0dUkvWkg3YmxjK01od0gzZ0FqZjJQb2dQaFZC?=
- =?utf-8?B?Vk1yRWhYb0U4Nk0xdm1yT0Z2NHdUZ2UwN3VaLzQrNlE1Z05DcmxiaXBBRVhE?=
- =?utf-8?B?bFEwcmNjTk1lV1JkdVU5TEkzbEhhaytOMUVIeWRBbnArTm1Jam1Yb0huRDFs?=
- =?utf-8?B?TWpKbmJTVlYyYnhJaHpXZFRMbFUzOVJUTTlBbjZ5S1dnVjhrS3g0TjJpV01X?=
- =?utf-8?B?VVpBLzJIbjVIRVZCRUFDalQrL256VE1QaTF4aHVMOWdIVXFpV3hRRHlKM1Jm?=
- =?utf-8?B?RlcwbXV2R3hkNnpwY2ROZWgvcVp2MVliMGJLQ1d5OXlyL0EvMUlHWkhSTTFh?=
- =?utf-8?B?NEFqUHQ0NUpYZUZ5QmRlYUhlZWtER2NvQkxMMXIzZVkxQlBlcndPZ3ZnY2Q0?=
- =?utf-8?B?MFpTSFY5emZORzdYMnFtNWpiYnhHWGlrcjZ3VE5SbjdTYjBDTkRBMkFBV0or?=
- =?utf-8?B?RHd0Q3J2RXdmNVdYWTdoSkVYaWNZdkZ3YVVORlVjcFdQNzJLUEtUZ0FjSjY3?=
- =?utf-8?B?UUpBN1hBSGQ4TlBpcWc1UXFwMk45ZEtQTDhYK2JpWUxDc1FpOFVCUnptaWxW?=
- =?utf-8?B?b2xHVTg3b1FKZ21DYUp3Nm4wTk9zVS9OZ3lVMkxSNGtjNThLOHRSU3NQV0xl?=
- =?utf-8?B?WGx1aXpNaEFoR01SVjVQT202ZjdCdWZQMTNqaG11TE04U3cvSEN6QkhzQU84?=
- =?utf-8?B?dWpydkVxelE4ODc0am0xWjJUWDl4UnVGRG5mMFJzblZaRUdBSmNQZEwycmVB?=
- =?utf-8?B?UEJrbWFMNVI4V0NyQ1JFemM2U1J5RFUydXVKVXAwWmRpdldWUWFZSWx3eFJ4?=
- =?utf-8?B?aVhZdlZOdzRLOUhJTkw1cVM1RUgzRGpUdk83RllRb2xIRGtsOFNNYVFHV0E0?=
- =?utf-8?B?Qm5odjFmNSsvdXgwN0VQWnIrOXR4dWhBdy9qdXZQVUVqK3JmLzArRDRmQXIz?=
- =?utf-8?B?Z3VaNklZVXRSR2ZhVFFTTXNhNHhBMzRIRDBxektVOFRmdjVQWWs0UXZqYVh2?=
- =?utf-8?B?TnN1UitMQ1ZQdm9XZ09Ib0trODRjNSt2S1VrOHk5T2c1dXRYY2JlNFNPZU9U?=
- =?utf-8?B?SEF5Zlk3T2Z4cWY4WHhSemxYNnZuWUxPTzN1QzdZVkJtSVFxZjk2SXFCcy8y?=
- =?utf-8?B?NHVSVWpWQTIrWldCUFUxd3lhWHBiR3Z2TFE2Z25rQVNWV0x5NUlvdzNiMytL?=
- =?utf-8?B?eEhwQVQ5aC96WGo4eFhyQ0N3R3NPWkVCU2pIbjZWQXVKaFdQS2ZiMWh1cWp2?=
- =?utf-8?B?T2IxdTduM3g0Zjdhb0Jwd1FDOFBmTUM0QnJZVmZEbDQrRWxkeVVENGhhZGlT?=
- =?utf-8?B?Ym55RU9nRDQwVldrSkhYTk5mNGdrMFlid1Z2M1dmbGZVSFc0Uk5KalpZTG9s?=
- =?utf-8?Q?AL8DXxem53M=3D?=
+	=?us-ascii?Q?nJ67+voyWGZZ+ajKG+bKWUz2XljiJsXjbtqZbCKT2lUnHewt+6al+EdLBUqy?=
+ =?us-ascii?Q?FSHQ7iDQhbfY/64Hmvka2wTp/5HVWzjXIeKRAVKm2buB3DSJ14lJfODEbrgx?=
+ =?us-ascii?Q?gwF0cPold1+35j4IOZA7BZkTp9ZKLdCS2ACHzAvZnIQN0IHvyod/VBM9j6fp?=
+ =?us-ascii?Q?l4xIu4v6Nmr+BYnK9rEJqciMblcH/4FbVJm7bUFliLWIeH6GaAfKCk0Wn2K7?=
+ =?us-ascii?Q?uMWvGCXlmk67xQ2rZSufDMfY068MZaxdyp89rc6+4lBD/NZjlXBrWgjfiuo1?=
+ =?us-ascii?Q?FatkwVfMxCk51RHO/RnOkM8pCAwGjJGDgTGSsjmmn8uBh9JzN00gWcan6Jpw?=
+ =?us-ascii?Q?SDibCx31eoZbBAHW8nNpwf1yb/LKPRk0noXkfzfDeSTAoJGWl6ks72kGMMEj?=
+ =?us-ascii?Q?qvERrwc58sLBZAx48Yv6d6MUbdjdWbkHTmdry0blkGY8/X/n9Hz2XIRHq8lp?=
+ =?us-ascii?Q?zC2JhaA7xHBb/TzQ7OuKy5E22VwsxHaXRyXSX4aEXc0yulDfdyWqYNjG3BpZ?=
+ =?us-ascii?Q?1xk/ZoVj9MC27AhJSZ030sjZAP4Mrb9ap6ckHrcHVNZhjYxo8yHatluW3GlI?=
+ =?us-ascii?Q?7NbO2EnCw3i73YTfIXXfmb1nY4J668hWgK5/soMMz1T7PZf43nmPUtGRNfnz?=
+ =?us-ascii?Q?rDQB51tdvI+rLcsODckwjiAG2++OknlIfYmyVWJDs4hAeDUXcSVUcvLmnWbB?=
+ =?us-ascii?Q?+oWsuZGlBkQhjzQVZZQPCYYYCD8ZlrhOFxYeGLn1vNOCNdrdpvLMDG/fokt8?=
+ =?us-ascii?Q?NliFr7bCL7Fi3zSsNdnZAgNQGAuX9WEZCg+wG/4gg8BmfyUQTl2imWLaeF0x?=
+ =?us-ascii?Q?sPb+Hw7MjxtpnCB4+ZNHzDg9bmJiZU4Pup3otcPlNIJ4vry/WMGkkEdkGSLR?=
+ =?us-ascii?Q?pUOE97BNzdkk4vMnieFRpkrIn9G79mmuJcABKDqkHNVD4+O42pwQ7FLrDIiM?=
+ =?us-ascii?Q?2Y2wJUKHUQyG2IQ8skm6sBmjJaVhj06/oRED6DM55e3AYKCUe3zDHP7pwkj+?=
+ =?us-ascii?Q?r8KEi7k9pFSl+YGgFBUPX0HyvWZTbHtwJPUoqdi+VfZTOEDR6YgKE+2CmNwY?=
+ =?us-ascii?Q?ZcuX3A6C+vMEfxyU0RgdepL4mZQHGpZqwOjrmy8Vf9gsZaV+wdNfH1TQ0mAU?=
+ =?us-ascii?Q?4gbanyRKPw8zdHbpQ/xDvlFM2KhvzcwCgNYqZNRP3DZGPcMGBQwISteuKEmP?=
+ =?us-ascii?Q?dt5xVkcIA0CTGbZd17zMgchVUej8gMm01/jlKqPTmYvUbIFMdBUEOccHpCaC?=
+ =?us-ascii?Q?SyMAkpiuPYyhFAP2vJYJLig/lzq2rHda5Am4QLLguut3z68JHfzLJJrzs6No?=
+ =?us-ascii?Q?ZFGIYBIeGaap3bZQVX+6yx7DyAF3/4+Vk9SrFma+GrVzVgdkDV13ptKVZ7tG?=
+ =?us-ascii?Q?/+h4ZCPNhlVFDVynA52Lj+XO9kXx4+xm3oiN2cp1ImBdgiAOVY18dMai3T+U?=
+ =?us-ascii?Q?iLJ+dlpDCUgik271k4cUKi4+JlKbqPybnH/KFdUZRwsYfaJr0YsiSQ=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR03MB8627.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB3942.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UExPN2hnWmdETUVldDh5TUU2Q25oVHpnT0lyRll5aTlzL1MzaE5QNDhoOUVr?=
- =?utf-8?B?MVVybS9LTng3cGxzaVRKMDJYQlM3WFAzMVJ2a2ppYXk4OVlnWkJVQmJIRFA5?=
- =?utf-8?B?MzRrV21WZm1DWjhJdlhIeFBFV29tVGNiMk9ESVF4WGd3MGdlam5JaDdyenhL?=
- =?utf-8?B?YjBiUjhaaUszUGh3ME9Kc2FNb3I2UE96a1pMN0tqRFJBUCtRNkNXU2lEY05O?=
- =?utf-8?B?ZXBOUjRiMmYwMUxBMDhlTDdNT1N4RXpjYmRsNzM5UHorclA1TlptQjR5SUNT?=
- =?utf-8?B?RUJ4TkU1WVNnTk9GaDMrTUpmT2V1alV6UzZuaDlEclBIeUxid0dmWDRReGhC?=
- =?utf-8?B?VVNaWDNETXUwL3VvcTc5M25kaFNnczBjRW5XOGM5QmZ5UEZhNzVvdnQ1aTUy?=
- =?utf-8?B?ZXlSZm1teDAyT3VOdC9qcDFBVVRGMmxBUU0vS1lHbXplT0xIY2d5eUFWeGg2?=
- =?utf-8?B?K2Q5NGRIak1zNWNFRmNMZkhKMnVnSk5qUUpCSUNsRG5xSkFZcFA5UEF3SWZV?=
- =?utf-8?B?RXM1eFlPaWNiU3RJUVBzbU1vUUJLLytCKzBFNkhTUDc3d3YwVkZhU0ZreW0z?=
- =?utf-8?B?MFErT2FRRHFEdVhDcVp5ckI4ZERxS3R0OVpYbmY5U0lBWVZSckRvd09nd0RJ?=
- =?utf-8?B?MjV3MHNNRFdlRGdIdzhZUWhCUVZqekkzRUl1ZHIyejZGeDNITCtGZktFVHhu?=
- =?utf-8?B?a2VVMHJwZjZiV1lEZTZoN3dHOUxQdjhML09ReFc0a1VGeDJiSGRScFowUnVJ?=
- =?utf-8?B?RExLVjZOdWhhRWNvNDlIdXNQRkhXV0dIaEhpSDQ3Ty85YlBCd2Z4aHA3UmJC?=
- =?utf-8?B?TER6bW5zQU5La1dENzl3eHdEOTNWTzAwYmczeCt3Q1VPMjFnLzZwNFZkeXpK?=
- =?utf-8?B?bWdiQlY2UDIycjZENVowejRSS2Njb0tDcGZnekorS3QzVnIyNllGa3lHV3pT?=
- =?utf-8?B?cmtHV2g5ZUU5QUZERUNxTkJZOVpZZEY3S3lhY0NOUmNFSVlOMjRXOHd3Zk5a?=
- =?utf-8?B?bGNwYW40M0tWS0RGTVNmMy9kR1FTMlhXdWhPNGlpOE4vMlRhNTI2STF5Ukg5?=
- =?utf-8?B?QS9zNTFnNU4wa3dGTVg1c0JDTUJmM2MxM1ZpOEJCOC9mcVhKRnpIbytKTEJ3?=
- =?utf-8?B?SDkzdStFTHRST2NsT2FoUVo3VUR6TmdpcnhVMUU5U05oUUNKZTRtTDV3ZE5y?=
- =?utf-8?B?SFZubmxiSDJCbjhnaXRuemVkVmEyOEhXOGVUZjFhYXVYcElEWnVobXFUeGtz?=
- =?utf-8?B?MUlrTXBmd2pjZG1HVUZra2xTRGtiRnFROHltZkNiMnlIN1VmTW1Td3psalA4?=
- =?utf-8?B?cFY5d2pEczhSMVB0dDFlS01zTmhLUVBYOGtBWjlTMUs2V3JGRFoyaVhqdTN0?=
- =?utf-8?B?OTJOelNQRkZNMjE5L3FWWE5kSURwVnpET3dzWW9mNVM1ZWdUb0NUbDBmR0hG?=
- =?utf-8?B?a1lvd1VyQjJmeVZCdFdZajdPUWVrZ2VSZmRHMEdMeDJ3QTV0YkYvZnVjQlhk?=
- =?utf-8?B?TDIzazMvN290Z0lnOU8xSzZMWGFvODZlRzhsVlVXRzBxY1RwRlJIK1VFOHcy?=
- =?utf-8?B?Z3lZZFFvN25CREdwQWd5UDkxK1lFcjVPaEo1dDR4WngrbmY4RXF1YlJCRU43?=
- =?utf-8?B?V3JvbE84Q3pXVzBJc0RZbmVmREpKU2ExTVNWRU5BZkxZa2Noa0R1ZjdlWmNs?=
- =?utf-8?B?eGpuVG1Kd3M5OGZYUS9kN3FsUGFiQVRUMG1DWnpNVVZWVStUWGZtOVJOdDhY?=
- =?utf-8?B?T2svVERhUDkxMjMvMjhXSG13T2tmeUI0TjJza0g0QUQwT1QwblQxek05a25i?=
- =?utf-8?B?bk12a3l1bk56djV4L0VsVEVTZXN6R01JVHJWRGk4RXhoeGN3VDNXOEdmam5N?=
- =?utf-8?B?ci80OU5kcWg0NkY5UWRTdU5iV0NxOXIrcFVxcVZCMVp1U29VU1pyaExRMWZV?=
- =?utf-8?B?QTVDaHJOOE1PZWhNblI3VGN5eWh3cm5wK1VheGpkdU1QUFJoTjFjUVJkcVU5?=
- =?utf-8?B?aFptUGo1RldkbGUyK0JMQUZpYThXc3JzVXUydUdaRFRjaXRUZitkL2lhbUo2?=
- =?utf-8?B?RHZVU2kxMnhNZXF4V0Q5dnBaTmp1QmdTd0gydHo4T3RRV2hBQWJ3ZW8zRHV2?=
- =?utf-8?Q?hobnpcCgzA/pkwkmzfjeo5Hcz?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 331eb91b-2966-4fba-fdc1-08ddbf59f5d2
-X-MS-Exchange-CrossTenant-AuthSource: TYSPR03MB8627.apcprd03.prod.outlook.com
+	=?us-ascii?Q?Cad7/yjBDb29qaIIh3rTQZ+kbEjqM8EdZySb7AHrEzgKGVk7zRQQODvZauWe?=
+ =?us-ascii?Q?H4pdZz9F/Us0+Z7ITTk6YEhQCcHRaZS0IxnkrGT7dt/Q1vqMDaUcBlJ5B+uf?=
+ =?us-ascii?Q?12Syj0UCz/Glygl2/C0ITymOOC5mR3prURJ3cSOrQrgtBTljkSQ0py8Lm9ye?=
+ =?us-ascii?Q?B0ImrimkwBtO5yAKZGLJWJuZKAkMFbn7qHM9emhvY5LpIWEgJrHgBFA8L5j4?=
+ =?us-ascii?Q?iLq6Hv4vlw9sIzVIzlYh8yLo1bDyEgOH7qseAXK6CGgRAopONA86t5kkXpt6?=
+ =?us-ascii?Q?3LtA0o9OssMoYNm5EWySam9hitBdEIPhlwNyE0RHYLVBuJ0yIKEatxJRqIZ9?=
+ =?us-ascii?Q?yAlsQzvrIS8z3I2vJgp8z5QoEILzbu0EP0XNvDn+3CyOrkTXbzLZcWzmmXDE?=
+ =?us-ascii?Q?+o9b7ADon5qAjQLJ1/08aatK3S77IVMUP3ONO17tydLTeUFkAx7jvO2him1Q?=
+ =?us-ascii?Q?X8HG173OpdAUryTeu6JicfFuUn6zDc1Tt0auoXdNImI9VjFc41m16jqT/aL6?=
+ =?us-ascii?Q?jUNGs9E7LHHami3nGS8Kdi5chvk5KZw4hDmZ8Zk7yNxQuSLNpDOpSuyEU6Ls?=
+ =?us-ascii?Q?OqZPQz24ObsJsFcd0S3wJSmBIwMeV+VwJ7IR31yJZg5e9pjiSlzO8QcW3bB+?=
+ =?us-ascii?Q?/NtOPLBM5EQrvan6oppc0TZQX60z+3D7U3ZTMLpYf0Ieu0sYF2EYXUQ69bby?=
+ =?us-ascii?Q?ArHOUX9JWtn13hRV9JK4o3l/+1PGImUnB7giCw1kHh0awXYj/JpenHhQIt5G?=
+ =?us-ascii?Q?jam0ziw64QBL7jaRBGiKu+xoe4DAUwVaTjmDdHDJgkKW+1IwHPf4bC2tyqfg?=
+ =?us-ascii?Q?ZslBEMsuZC4ww0DbeqpWIilRiRssTh6UvJUo5/Seoxa9J/8SJXQmz3aCB1ul?=
+ =?us-ascii?Q?t8zoFQpDdzc985zlgU9Xqi8194MRyVIhdLIj+17Ej6AR5S7Ndpn3nzciwTuh?=
+ =?us-ascii?Q?peFRzCz76Qt4yHj7eNg/+yQa5DytR94JjjfWeI1XtHy+Zdc3UEU96TtDG60T?=
+ =?us-ascii?Q?c57+1+GNutxoNa4X/hyLAtCqUSK280noEi/l28Q2dDECNRdu3OgtTPLbbtNu?=
+ =?us-ascii?Q?PtddMuvt0Ez/Zt0HyV+b+dLzc4EqJ3X59VF73G8OKagwbQWytgEsnbuT1CE0?=
+ =?us-ascii?Q?6WDJHpzUbQ5gtHdyLNtNGMohO6Dk7e7SzD4bMrurZ9vsKYhUCJ2oS2GHs+Nl?=
+ =?us-ascii?Q?QyZez5N1XcdtJmYDFaVgcRjRyMDOjgbXxxNaFP0HzgSlmBgRbLhNahv6apDJ?=
+ =?us-ascii?Q?eyeymWWYvZHO+CxB1lOJpoyt8MMWlnkujB2gjJZ8QZMjBJKaIbKBP+9knyHN?=
+ =?us-ascii?Q?PCMqHO5vcOGxKaPVqDBb/zyXbB6X+P9RDS9Dj1+7yfS+q5nuMW8SfpCAfaeL?=
+ =?us-ascii?Q?91jmhsOMsoD8ytyKnOSPls/y3wCMaDYIL7hjaWfTxkT7W7WW4OagR0TagSa1?=
+ =?us-ascii?Q?2AeYritz39nc+Y2U99tXkIo3MtNloal4FaNQagIkwT2yLRp8STlIwrKq3E65?=
+ =?us-ascii?Q?H4Lxx4qaPpOyqj+kMrYmj5p5L54EwDGMVo+GqO6SmTQ5qwagjwKn1Gb5ik/x?=
+ =?us-ascii?Q?DvJVLlHlDf2RrecQbjToiRspAts3KFk2bzWCEeuTUZOvs4v+gKQzriWxEu1r?=
+ =?us-ascii?Q?pg=3D=3D?=
+X-OriginatorOrg: jaguarmicro.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0111ec9-fd78-4ff7-9503-08ddbf59fed6
+X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB3942.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 02:32:05.5886
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 02:32:20.7022
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZTyRDwV+sqGlEH6FZzL/BXLAVPatCKe+UTZzKD04B/2N1ifUAKpELy6Pak6SDAdZQcKAAGJqKqimWq4beQYQ5Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR03MB7331
+X-MS-Exchange-CrossTenant-UserPrincipalName: urmxvM+SwKNRNizAOuhczeFg89sCW6OFioTB2S78JMcUXFzbqikeoS5fa+P10EgiqYH39atgEpu0Ci8360J23vybV1OXIarZywRqbc7VC1E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6446
 
-Hi Jacopo
+From: Liming Wu <liming.wu@jaguarmicro.com>
 
-On 2025/7/8 18:40, Jacopo Mondi wrote:
-> [ EXTERNAL EMAIL ]
->
-> With the introduction of common types for extensible parameters
-> format, convert the c3-isp-config.h header to use the new types.
->
-> Factor-out the documentation that is now part of the common header
-> and only keep the driver-specific on in place.
->
-> The conversion to use common types doesn't impact userspace as the
-> new types are either identical to the ones already existing in the
-> C3 ISP uAPI or are 1-to-1 type convertible.
->
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
->   include/uapi/linux/media/amlogic/c3-isp-config.h | 45 +++++++-----------------
->   1 file changed, 12 insertions(+), 33 deletions(-)
->
-> diff --git a/include/uapi/linux/media/amlogic/c3-isp-config.h b/include/uapi/linux/media/amlogic/c3-isp-config.h
-> index ed085ea62a574932c7ad8d59d34b2c5c74a597d8..203116cdfb89356301c16c98cb40e5b83efe71d6 100644
-> --- a/include/uapi/linux/media/amlogic/c3-isp-config.h
-> +++ b/include/uapi/linux/media/amlogic/c3-isp-config.h
-> @@ -6,8 +6,12 @@
->   #ifndef _UAPI_C3_ISP_CONFIG_H_
->   #define _UAPI_C3_ISP_CONFIG_H_
->
-> +#include <linux/build_bug.h>
->   #include <linux/types.h>
->
-> +#define _UAPI_V4L2_EXTENSIBLE_PARAMS_GUARD_
-> +#include <linux/media/v4l2-extensible-params.h>
-> +
->   /*
->    * Frames are split into zones of almost equal width and height - a zone is a
->    * rectangular tile of a frame. The metering blocks within the ISP collect
-> @@ -183,11 +187,6 @@ enum c3_isp_params_block_type {
->    * struct c3_isp_params_block_header - C3 ISP parameter block header
->    *
->    * This structure represents the common part of all the ISP configuration
-> - * blocks. Each parameters block shall embed an instance of this structure type
-> - * as its first member, followed by the block-specific configuration data. The
-> - * driver inspects this common header to discern the block type and its size and
-> - * properly handle the block content by casting it to the correct block-specific
-> - * type.
->    *
->    * The @type field is one of the values enumerated by
->    * :c:type:`c3_isp_params_block_type` and specifies how the data should be
-> @@ -223,15 +222,8 @@ enum c3_isp_params_block_type {
->    *                     gamma->pst_gamma_lut[i] = i;
->    *     }
->    *
-> - * @type: The parameters block type from :c:type:`c3_isp_params_block_type`
-> - * @flags: A bitmask of block flags
-> - * @size: Size (in bytes) of the parameters block, including this header
->    */
-> -struct c3_isp_params_block_header {
-> -       __u16 type;
-> -       __u16 flags;
-> -       __u32 size;
-> -};
-> +#define c3_isp_params_block_header v4l2_params_block
+Consolidate the two nested if conditions for checking tx queue wake
+conditions into a single combined condition. This improves code
+readability without changing functionality. And move netif_tx_wake_queue
+into if condition to reduce unnecessary checks for queue stops.
 
-Why not use v4l2_params_block directly?
+Signed-off-by: Liming Wu <liming.wu@jaguarmicro.com>
+Tested-by: Lei Yang <leiyang@redhat.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/net/virtio_net.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-Thanks
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 5d674eb9a0f2..07a378220643 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -3021,12 +3021,11 @@ static void virtnet_poll_cleantx(struct receive_queue *rq, int budget)
+ 			free_old_xmit(sq, txq, !!budget);
+ 		} while (unlikely(!virtqueue_enable_cb_delayed(sq->vq)));
+ 
+-		if (sq->vq->num_free >= MAX_SKB_FRAGS + 2) {
+-			if (netif_tx_queue_stopped(txq)) {
+-				u64_stats_update_begin(&sq->stats.syncp);
+-				u64_stats_inc(&sq->stats.wake);
+-				u64_stats_update_end(&sq->stats.syncp);
+-			}
++		if (sq->vq->num_free >= MAX_SKB_FRAGS + 2 &&
++		    netif_tx_queue_stopped(txq)) {
++			u64_stats_update_begin(&sq->stats.syncp);
++			u64_stats_inc(&sq->stats.wake);
++			u64_stats_update_end(&sq->stats.syncp);
+ 			netif_tx_wake_queue(txq);
+ 		}
+ 
+@@ -3218,12 +3217,11 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
+ 	else
+ 		free_old_xmit(sq, txq, !!budget);
+ 
+-	if (sq->vq->num_free >= MAX_SKB_FRAGS + 2) {
+-		if (netif_tx_queue_stopped(txq)) {
+-			u64_stats_update_begin(&sq->stats.syncp);
+-			u64_stats_inc(&sq->stats.wake);
+-			u64_stats_update_end(&sq->stats.syncp);
+-		}
++	if (sq->vq->num_free >= MAX_SKB_FRAGS + 2 &&
++	    netif_tx_queue_stopped(txq)) {
++		u64_stats_update_begin(&sq->stats.syncp);
++		u64_stats_inc(&sq->stats.wake);
++		u64_stats_update_end(&sq->stats.syncp);
+ 		netif_tx_wake_queue(txq);
+ 	}
+ 
+-- 
+2.34.1
 
-Keke
-
->
->   /**
->    * struct c3_isp_params_awb_gains - Gains for auto-white balance
-> @@ -498,26 +490,9 @@ struct c3_isp_params_blc {
->   /**
->    * struct c3_isp_params_cfg - C3 ISP configuration parameters
->    *
-> - * This struct contains the configuration parameters of the C3 ISP
-> - * algorithms, serialized by userspace into an opaque data buffer. Each
-> - * configuration parameter block is represented by a block-specific structure
-> - * which contains a :c:type:`c3_isp_param_block_header` entry as first
-> - * member. Userspace populates the @data buffer with configuration parameters
-> - * for the blocks that it intends to configure. As a consequence, the data
-> - * buffer effective size changes according to the number of ISP blocks that
-> - * userspace intends to configure.
-> - *
-> - * The parameters buffer is versioned by the @version field to allow modifying
-> - * and extending its definition. Userspace should populate the @version field to
-> - * inform the driver about the version it intends to use. The driver will parse
-> - * and handle the @data buffer according to the data layout specific to the
-> - * indicated revision and return an error if the desired revision is not
-> - * supported.
-> - *
-> - * For each ISP block that userspace wants to configure, a block-specific
-> - * structure is appended to the @data buffer, one after the other without gaps
-> - * in between nor overlaps. Userspace shall populate the @total_size field with
-> - * the effective size, in bytes, of the @data buffer.
-> + * This is the driver-specific implementation of :c:type:`v4l2_params_buffer`.
-> + *
-> + * Currently only C3_ISP_PARAM_BUFFER_V0 is supported.
->    *
->    * The expected memory layout of the parameters buffer is::
->    *
-> @@ -561,4 +536,8 @@ struct c3_isp_params_cfg {
->          __u8 data[C3_ISP_PARAMS_MAX_SIZE];
->   };
->
-> +/* Make sure the header is type-convertible to the generic v4l2 params one */
-> +static_assert((sizeof(struct c3_isp_params_cfg) - C3_ISP_PARAMS_MAX_SIZE) ==
-> +             sizeof(struct v4l2_params_buffer));
-> +
->   #endif
->
-> --
-> 2.49.0
->
 
