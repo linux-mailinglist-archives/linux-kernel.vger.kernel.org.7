@@ -1,191 +1,161 @@
-Return-Path: <linux-kernel+bounces-725920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A220DB00580
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:44:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD64B00583
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D2726464EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9660C646E20
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE301B78F3;
-	Thu, 10 Jul 2025 14:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B635226FD99;
+	Thu, 10 Jul 2025 14:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rFMYMjkf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SBiN1ceA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rFMYMjkf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SBiN1ceA"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oCIn/on9"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB54527056F
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EF427056A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752158672; cv=none; b=rCZNQMHRd3yDbgAify00cMBAwIl0IoebGEIBJlBFucJm90V81LboX6mXArMesQfCLQII2f04unJjUtmJ4FsPI1e4Oc/Q0Uwy3lCT8IUeGysiStRXKfMI00N4Fi7j2mvYQY0QGpSjAD9GtE2tx6R884YLlMbY0O916myja07f+wY=
+	t=1752158721; cv=none; b=rD797ajJvd9FsyqnQiXJ43CKqcQSdzHe+BgAWy2TiUaCe1Nzn6YigYbcNf6IZisy1h784U+6KVWcrPQGOdSozU8GvPBLde+/4GqP1RFNQXXRpk6HN/R1syE1np67B2JsueyJ97CC9BNbecCU7hyM3eAqxYLJyjr463gch7vMVlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752158672; c=relaxed/simple;
-	bh=7Xt6M6XaaJjLxvZthkC2P3G9ZL5PAdYy6MwLi1odJvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cekNvz1EmjRUemD2abaF5nW3c371wnZ6syEgNn3Q6YFPtmKSmloseJz5DosRbBgkMnngKcgVhCTb9Y+0Pj1AD+r21HUt19zTZT7Srayx6udsgYzSbmhR0CxieeCUxUJbmbFVi/lVoW0SFuR68E+UCVWHtRmHaiszW+jmL1lIWqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rFMYMjkf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SBiN1ceA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rFMYMjkf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SBiN1ceA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2223B216E8;
-	Thu, 10 Jul 2025 14:44:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752158668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=05ARCkrCzjFNtpWMZ0+Xd5lQOWVNwYspNJyA5AFQkwE=;
-	b=rFMYMjkfeOyTnB73yjoxES2ixb3qhjJlXKnp8N0QtXQTVc4yhvYA7UvT0M2lmKmzsxzi49
-	wRT6Ov/mBHyoz/L1FKTRsPVoEQXNSVcc7dARpeZpLNyd1O31VxQndoxf1gGG5qnG7fGcIF
-	6DUYJmy7rSOForx/kJsRF7b2Pv79u0k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752158668;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=05ARCkrCzjFNtpWMZ0+Xd5lQOWVNwYspNJyA5AFQkwE=;
-	b=SBiN1ceA/Ej/AyNPPn03j95S+cS3KkWLERttEO+2E6dSzbf04bINlu8e7gXD5FwAWNwGak
-	F4iLS7dT6gflvMAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752158668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=05ARCkrCzjFNtpWMZ0+Xd5lQOWVNwYspNJyA5AFQkwE=;
-	b=rFMYMjkfeOyTnB73yjoxES2ixb3qhjJlXKnp8N0QtXQTVc4yhvYA7UvT0M2lmKmzsxzi49
-	wRT6Ov/mBHyoz/L1FKTRsPVoEQXNSVcc7dARpeZpLNyd1O31VxQndoxf1gGG5qnG7fGcIF
-	6DUYJmy7rSOForx/kJsRF7b2Pv79u0k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752158668;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=05ARCkrCzjFNtpWMZ0+Xd5lQOWVNwYspNJyA5AFQkwE=;
-	b=SBiN1ceA/Ej/AyNPPn03j95S+cS3KkWLERttEO+2E6dSzbf04bINlu8e7gXD5FwAWNwGak
-	F4iLS7dT6gflvMAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 00E53136DC;
-	Thu, 10 Jul 2025 14:44:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eGjIOsvRb2hUOgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 10 Jul 2025 14:44:27 +0000
-Message-ID: <8f51f972-36f4-4d87-b20c-65a08011f82e@suse.cz>
-Date: Thu, 10 Jul 2025 16:44:27 +0200
+	s=arc-20240116; t=1752158721; c=relaxed/simple;
+	bh=GuuXNEIIHpc+OomKipbBSS2eHjtAi/KmN/JAHDNUxyc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=WCzqFfI/AkLdLLqecEZ0cmA8DiCbxV65E7ALJVHCLNORhPuee3h9/Ru/Kwm4lgHVxMco2xDoaVU+3z48N9HS72tQKqZNDlgDWwOAuWwnqFhIBoOAgNxCifp/oG6weH+bhE71fBzGK+yAansTL/gUSit68NTST6Zoows74GZRQIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oCIn/on9; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ab112dea41so668070f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:45:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752158717; x=1752763517; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uzpztVBg8Kr6uCTVYsLaqFYuf7mdKz1OXaJIFB3Ydtk=;
+        b=oCIn/on9utF4YPok+p2VGklKSBD403Ij+BG8HfSHqMNQJYLJD76XgMAToTA4bJPDj1
+         EfG4LoatNTE335CrCfp3k3IhIqD+jiVOdwmtrEOZojho6Q9KgfmE5Pk4wPQqg2xLmook
+         VkPK4zu82itBzZJxoP5ZH9ZUXewXdd+FFWSnOL2JpRI4BoXfdLsy/N5puNhZdZJ3XEPu
+         rYm/1dQv8k1CdJIBvnGYR5PSQFXvRSpFASIm3OQhw4Qq1W93RpXxq+O5hs//OWKtklhF
+         qYdwToupp8/a+/OS4XcZnzcLTtSlwoCW5Dlbx3LzIe+sZBtoygoNEgOSR/DQi1BXDr13
+         tPow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752158717; x=1752763517;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uzpztVBg8Kr6uCTVYsLaqFYuf7mdKz1OXaJIFB3Ydtk=;
+        b=j33ZmZ/OzRtFhgJ73acU5vbi2HzbCOWOAhuT4B9fGUIJ+/3zbFRa9XEM6nHRMulv7c
+         2mBykm0ELhccClTvQ+8ealTvcM0t+nIEmLEj7LAynhLfupnH1AEwwJL0KtEaA5BRfjx/
+         457ZtPfIGtN4l0+wOAwSISkbhx5v9oPSkyq2pbt64fYlxrzkuHWVRt9926UmfxKr0U6D
+         gAz/M/ZAv+zlHGd9h/RqbYMXvm5mmKf7PLLufUo8n3JufhublpmTCoQRTj/AREWhH/EI
+         AwAIEQ+Tlckgd7TZGfcTcq+UKjqGmtojRMtznYima2dpw07/S5f+B+SQ554ZpxiD76xL
+         2zvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxTOt/8NaPvVA/ffo5BjYj7HvvlbjomdEMSVu+FmMC9xhI1j0k1kbAI3NzZDwxYl3TQ9bYz/Cp/9nJGHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlqz0f5Cs+jzL7jttrastq15SUhsUHoMYN3vD2fzcgV6u/yWDb
+	ArQNLx6Ba/mHj1aDmjNfj2LQlVlm0dJ1mcxf9xW0eAP6E+VvcjBo8/DEqKSoV7qX0+8=
+X-Gm-Gg: ASbGncuWBsAaJOKNKNSGw9WoVgy7JGRCi3jtS6EtAkQRsoR9jyq7Os9yJubtgTmUA+B
+	m/ePS1aNM4BFOnbH3ok7sfK8W9Rzts4BHn/+9iev7NHN/KHcyDfHqlGu4mViR/ZADtfEda6pjDD
+	qSc1gy+v1lViVV+fDWmitM6J1u4pJCN6OpS8KuM3RUOtSca1w8UwAASUrDQvcjyHc3Icp938XsV
+	tZHfs1SLbElAACJ+JDF/SmMXga3PjL119dz5zKFLRSHs5w36jyvJ3nychB1Y4YilYnQ4Y937pFp
+	z6WB6HOlEH3Q8bBDL0uoI5cXpQlgbCIXuJeu7QcTlbU0ert7bmbO2Ye3xeVeWDFLxMM=
+X-Google-Smtp-Source: AGHT+IF9BLMRIl1cpwDsXcnH1f3gWfggPdcwbBjL9LEkWjPoKOu+RvwtjCs5eMcSNOOmyzdBY+cr/g==
+X-Received: by 2002:a05:6000:250d:b0:3a4:df80:7284 with SMTP id ffacd0b85a97d-3b5e44e1fefmr6408642f8f.1.1752158717358;
+        Thu, 10 Jul 2025 07:45:17 -0700 (PDT)
+Received: from localhost ([2a00:2381:fd67:101:6c39:59e6:b76d:825])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1e135sm2085810f8f.72.2025.07.10.07.45.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 07:45:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/10] mm/mremap: move remap_is_valid() into
- check_prep_vma()
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <cover.1751865330.git.lorenzo.stoakes@oracle.com>
- <a45b7705469cfd139c4727e8898fc3a7c50cb087.1751865330.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
- AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
- jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
- 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
- Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
- QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
- 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
- M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
- r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
- Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
- uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
- lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
- zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
- rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
- khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
- xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
- AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
- Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
- rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
- dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
- m6M14QORSWTLRg==
-In-Reply-To: <a45b7705469cfd139c4727e8898fc3a7c50cb087.1751865330.git.lorenzo.stoakes@oracle.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid,oracle.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Date: Thu, 10 Jul 2025 15:45:15 +0100
+Message-Id: <DB8GFDXKQ6V1.BXX5KGBJP6YS@linaro.org>
+Cc: "Srinivas Kandagatla" <srini@kernel.org>, "Liam Girdwood"
+ <lgirdwood@gmail.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Lee Jones" <lee@kernel.org>, "Jaroslav
+ Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
+ <linux-arm-msm@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dmitry
+ Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Srinivas Kandagatla"
+ <srinivas.kandagatla@oss.qualcomm.com>
+Subject: Re: [PATCH 3/3] ASoC: codecs: add new pm4125 audio codec driver
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Mark Brown" <broonie@kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20250626-pm4125_audio_codec_v1-v1-0-e52933c429a0@linaro.org>
+ <20250626-pm4125_audio_codec_v1-v1-3-e52933c429a0@linaro.org>
+ <aF01gRFjsKgy6j4V@finisterre.sirena.org.uk>
+ <DB0YYV10UD2Q.M36VAZJOVE7V@linaro.org>
+ <af605c12-74c1-418e-9fe8-c0aa893a62bd@sirena.org.uk>
+In-Reply-To: <af605c12-74c1-418e-9fe8-c0aa893a62bd@sirena.org.uk>
 
-On 7/7/25 07:27, Lorenzo Stoakes wrote:
-> Group parameter check logic together, moving check_mremap_params() next to
-> it.
-> 
-> This puts all such checks into a single place, and invokes them early so we
-> can simply bail out as soon as we are aware that a condition is not met.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Tue Jul 1, 2025 at 10:04 PM BST, Mark Brown wrote:
+> On Tue, Jul 01, 2025 at 08:35:42PM +0100, Alexey Klimov wrote:
+>> On Thu Jun 26, 2025 at 12:56 PM BST, Mark Brown wrote:
+>> > On Thu, Jun 26, 2025 at 12:50:31AM +0100, Alexey Klimov wrote:
+>
+>> >> +static int pm4125_micbias_control(struct snd_soc_component *componen=
+t,
+>> >> +				  int micb_num, int req, bool is_dapm)
+>> >> +{
+>> >> +	return 0;
+>> >> +}
+>
+>> > Why have this empty function which is only called from within the
+>> > driver?  At best it's making the callers look like they do something.
+>
+>> I tried to make a minimal working version that we're going to
+>> update with more patches during next submission.
+>
+> Add the callers when you need them, right now this is just noise.
+> Nobody can tell if the callers make sense since the function does
+> nothing.
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Ok, I cleaned it for the next version. Thanks.
 
+>> >> +#if defined(CONFIG_OF)
+>> >> +static const struct of_device_id pm4125_of_match[] =3D {
+>> >> +	{ .compatible =3D "qcom,pm4125-codec" },
+>> >> +	{ }
+>> >> +};
+>> >> +MODULE_DEVICE_TABLE(of, pm4125_of_match);
+>> >> +#endif
+>
+>> > Why does this compatible exist?  If the driver is instantiated from a
+>> > as a Linux software contruct it shouldn't appear in the DT.
+>
+>> Could you please elaborate a bit more? Should it be instantiated
+>> as an MFD device or platform device?
+>
+> Yes, if it's the child of a MFD then it shouldn't need to be described
+> separately in the DT.
+
+Currently, it is going to be described as child/slave device:
+
+spmi_bus {
+	pmic@0 {
+		pmic4125_codec: codec {
+			...
+		}
+and will go probably in pm4125.dtsi which lists all child nodes with
+compatibles. Not sure if it is because each PMIC is customazable or because
+of better maintainability.
+Also, might need specific description of regulators which may vary from
+board to board. Not sure how is that supposed to be done without device
+tree description at this point.
+
+Thanks,
+Alexey
 
