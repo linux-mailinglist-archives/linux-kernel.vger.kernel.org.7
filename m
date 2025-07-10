@@ -1,184 +1,141 @@
-Return-Path: <linux-kernel+bounces-725436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44D7AFFF1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:24:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F68AFFF33
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D4E5A1A38
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:24:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDF927B1626
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F35E2D663D;
-	Thu, 10 Jul 2025 10:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C352D8DC4;
+	Thu, 10 Jul 2025 10:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="jKqujF+X"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bHFOQQT8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CDB27FD5A;
-	Thu, 10 Jul 2025 10:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D91F2D8397
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752143044; cv=none; b=DNVGJfqJ6wiw8NpZKcfI3KluP4JAWuxlrB6/BgDTtTuLxpr+RL//jsEndhamk4W1ecjH4FCi0SnuRRZeItWjg3BBqoJwjhD/4A7r4Fz4QrKn6oTBuQKEVaYCdfAtV4BESTWlI+gUiT06aoscGpY51j5ZUICaKqF/g5FaursGuwY=
+	t=1752143152; cv=none; b=ASB8/u6MELm+1D467hwTKtGdslNIgsiRYBNCdaD1hnWaiCP1WpGtBVIYjzVEdSc62HnXjCKOC8DZvfGo+STtRqVg2iNRDGEHSTYOeXKGIrEnzsxuAbS4qR4pq0liNh/9DVcpbZykYwLRxpSPVE+vXG/ENls1uy9YjhIptAt/If8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752143044; c=relaxed/simple;
-	bh=AQ/J9THDUl9sKXMswle0non7KDNpXUkQiO4AwVVqe/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uzj8C2d/UjD7ycHfeQKe5J7guMWbSL7nOdT++PUiqyqRN/81V1ZDe80QE3C0+LJnMTzpVxVietHPzX+5FgVbenqtK/qoS7/GC8eVF2gevFr8Oe3VSeMoLcw64DnrxrWFbHiumUbFU64V5bEBO7SoL+u1ceNypnQCHrJekvl/tOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=jKqujF+X; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rqsAZLGhFuNxn7FEmeaLa9mYFTex/7gLFWe6hyGIPKg=; b=jKqujF+X2Dw/rtWVGBaKfu3a2c
-	0sZYm8fqmDUF6PRcNTVEg03N2Vx4GSBjyRPAWFsnXEDmJII6K3P74CTupU8W/43I2XYARDDOwW6es
-	0mOvatHxA/RNFPNe41Y/dN8ftUx+fYtI2bEoLljz/iDnQUURpNmpWxdxHFbbIl10Pg8zc4qpookFQ
-	pQZwrjo3P5+pXBiJsoRy0ezcVjkMMR1z+N0auJNcNh8iH7WkVSYkMfk0/BkP8eCQzYye2I1hd5h15
-	r+XU0k+eHVek857nvRAydXiEGHsPbYq6R8VlX+RL2KSGTRjneHabEVVlZa+Kzo9d4SkOesfbSATgH
-	PH0q47Yw==;
-Received: from [89.212.21.243] (port=48522 helo=[192.168.69.116])
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1uZoRc-006kdW-1b;
-	Thu, 10 Jul 2025 12:24:00 +0200
-Message-ID: <42dd658e-555a-43f7-a7bf-e5365d508f4a@norik.com>
-Date: Thu, 10 Jul 2025 12:23:58 +0200
+	s=arc-20240116; t=1752143152; c=relaxed/simple;
+	bh=YX5iIzBEC8wBhwRMB2EufE02wlzwKShJxxQ7NFiJwds=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ccOOU1osmAeAIYth+N10/pwFsaWsnyii3ESu8ED82aFXrrm77HF8/XHQxNXjMjpoy7qPP/Aa6dMLjeXKr71Vqd2EI051apx2lbV1kg9yEgDxAwnl2scbITsXPSn/OGrpXXVqP/0Ai+24mNyywyzCsvc4fROEnfl0MYkKu7SX9cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bHFOQQT8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752143150;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1ND1pGEOAughrkErjCqE+57XmE0dcte7108oeuugxKk=;
+	b=bHFOQQT8/0PxWGbNUTgBsNUNy+Vel6aa8a+ZFSpheFMdY+K8X+0cDI+t/9xAduzgpajY/Z
+	nu3a01hkK64RqicBRPj+ZQcnFjw5o8kAvi+BFVh2b4iX3B2s41kttn1kw1G969FJdb5wVP
+	tMwO/ubXM2u6hmzmFjuzliQ6G5PIeV0=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-467-DRLajjPCPaOqvjCb2xIczQ-1; Thu, 10 Jul 2025 06:25:48 -0400
+X-MC-Unique: DRLajjPCPaOqvjCb2xIczQ-1
+X-Mimecast-MFC-AGG-ID: DRLajjPCPaOqvjCb2xIczQ_1752143148
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a5780e8137so1125741f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 03:25:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752143147; x=1752747947;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1ND1pGEOAughrkErjCqE+57XmE0dcte7108oeuugxKk=;
+        b=XBn8JAzoSvdusIzW66qv4eEuUOAbHTBurL7nfEX4HUG6rZvk3Z/xt2UvYQSFAgkbm4
+         pBkC7mTzokB6R4TpqOaIpReaI2LWFVt+TyvvKRsF/5O5+TUvoMQjZ2lmcXL7c3UIhv6k
+         mmgC2ZRXJse8C0d2YSydvhVsvFny6+ihXc+U7/tDnw5WFrq+jNz6uCH+2+Q5YS+x+91a
+         Gk1Cem2gpxuSFL3RbW60YZJPpAAUTvNGAva9sX+X6qH7IGwrFlprk5H9Vel6bR+k4ybx
+         bU72HA3sXVsCl/CpaXXsIg3aJqwtSj/tT7nnkCJZOWVnYJtLN1v5dC9hAfuF/rFnoNlX
+         gorA==
+X-Gm-Message-State: AOJu0Yz7l71+47VolErpFMvkNXUrqSQYhgxYqvSmKyUESez0HBlswr0t
+	VduMq9YREFrWJiERdGvrfRhmuj9i0EPw4EYsN3DxsCgJttYhZq3aGwo1U+ja7VVVxjPd6kJUrp9
+	05gic0G1oAJ+ZRiErRSW+oSmd96iZIXwjLnYdp5f0Pp6Ms9D4AoXr4ZA7N2LEOEqi0+MmY8WSaN
+	ZOb3T883Bt78rdFwjQNE5orPEs8qmoSuVyVanVg9mIKy75U/ec
+X-Gm-Gg: ASbGnctCYfpK/OBS1y/z8rC17qwc/tvc8UgBqbROx4tlxJujaOdjE1qiZGU15zUwRrI
+	wnR6VF5UUAbCQYFBFqEG3DMKbp2LAL46MHmS1Brh7tnGa9X4T6i4QRroJcsm+PAGnZW/tVp5een
+	iT+hYXnZ9ha318m7ueJVeTzC2BQt6/d+V3UuLDmhICtOyrWhmQDyxQARp3G0j9E38cyi7ezZS6v
+	SbzU4kajSRZk+Av0FLqwbEd808Xxx6vx4yjX7uJ7BR8pxawQZpAyg6JQ1eynMYJuYuWPf6YBchE
+	UnCALiJFB26Fh6diboOun+Ku3zpVi32z9UyT3QKjHlzTtqM=
+X-Received: by 2002:a05:6000:230a:b0:3b5:e78f:f4b3 with SMTP id ffacd0b85a97d-3b5e7f142e5mr2661636f8f.11.1752143146984;
+        Thu, 10 Jul 2025 03:25:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGw0Fp3hGMQ2ioeBb7L40qD3wSKjLbm3xoYLDE8V5zfgO85zTk2YhsvuUsIz4ABFDvjQSMY4g==
+X-Received: by 2002:a05:6000:230a:b0:3b5:e78f:f4b3 with SMTP id ffacd0b85a97d-3b5e7f142e5mr2661593f8f.11.1752143146504;
+        Thu, 10 Jul 2025 03:25:46 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e26daasm1512820f8f.91.2025.07.10.03.25.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 03:25:45 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: ipedrosa@redhat.com,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH 0/3] drm/sitronix/st7571-i2c: Add support for the ST7567 Controller
+Date: Thu, 10 Jul 2025 12:24:32 +0200
+Message-ID: <20250710102453.101078-1-javierm@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: adc: imx93: Make calibration parameters
- configurable
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Haibo Chen <haibo.chen@nxp.com>, Jonathan Cameron <jic23@kernel.org>,
- David Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, linux-iio@vger.kernel.org,
- imx@lists.linux.dev, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- upstream@lists.phytec.de, andrej.picej@norik.com
-References: <20250710073905.1105417-1-primoz.fiser@norik.com>
- <20250710073905.1105417-3-primoz.fiser@norik.com>
- <aG-GZqhABwErcEyM@smile.fi.intel.com>
-Content-Language: en-US
-From: Primoz Fiser <primoz.fiser@norik.com>
-Autocrypt: addr=primoz.fiser@norik.com; keydata=
- xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
- JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
- ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
- gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
- jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
- 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
- TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
- AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
-Organization: Norik systems d.o.o.
-In-Reply-To: <aG-GZqhABwErcEyM@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 
-Hi Andy,
+This patch-series adds support for the Sitronix ST7567 Controller, which is is a
+monochrome Dot Matrix LCD Controller that has SPI, I2C and parallel interfaces.
 
-On 10. 07. 25 11:22, Andy Shevchenko wrote:
-> On Thu, Jul 10, 2025 at 09:39:04AM +0200, Primoz Fiser wrote:
->>
->> Make i.MX93 ADC calibration parameters:
->>  - AVGEN: Enable calibration averaging function,
->>  - NRSMPL: Select number of calibration samples,
->>  - TSAMP: Select sample time of calibration conversions,
->>
->> in the MCR register configurable with the corresponding device-tree
->> properties:
->>  - nxp,calib-avg-en,
->>  - nxp,calib-nr-samples and
->>  - nxp,calib-t-sample.
-> 
-> ...
-> 
->>  #include <linux/platform_device.h>
->>  #include <linux/pm_runtime.h>
->>  #include <linux/regulator/consumer.h>
->> +#include <linux/property.h>
-> 
-> Keep it in order.
+The st7571-i2c driver only has support for I2C so displays using other transport
+interfaces are currently not supported.
 
-OK. Will fix for v2.
+The DRM_FORMAT_R1 pixel format and data commands are the same than what is used
+by the ST7571 controller, so only is needed a different callback that implements
+the expected initialization sequence for the ST7567 chip.
 
-> 
-> ...
-> 
->> +	ret = device_property_read_u32(adc->dev, "nxp,calib-avg-en", &val);
->> +	if (!ret) {
->> +		if (val != 0 && val != 1) {
->> +			dev_err(adc->dev, "invalid nxp,calib-avg-en: %d\n", val);
->> +			return -EINVAL;
->> +		}
->> +		reg = val;
->> +		mcr &= ~IMX93_ADC_MCR_AVGEN_MASK;
->> +		mcr |= FIELD_PREP(IMX93_ADC_MCR_AVGEN_MASK, reg);
->> +	}
-> 
-> Please, since it's optional, do other way around.
-> 
-> 	val = $DEFAUTL;
-> 	device_property_read_u32(adc->dev, "nxp,calib-avg-en", &val);
-> 	FIELD_MODIFY(...)
-> 
-> Similar approach may be used for the other properties.
+Patch #1 adds a Device Tree binding schema for the ST7567 Controller.
 
-OK, I guess I could implement it like you suggested to explicitly set
-the default parameter values.
+Patch #2 makes the "reset-gpios" property in the driver to be optional since that
+isn't needed for the ST7567.
 
-But in current implementation MCR values are read at the beginning of
-imx93_adc_calibration(), meaning calibration parameters are register POR
-defaults. With you suggestion, we put defaults in software rather than
-reading them from the hw directly.
+Patch #3 finally extends the st7571-i2c driver to also support the ST7567 device.
 
-> 
-> ...
-> 
->> +	/* write calibration settings to MCR */
->> +	writel(mcr, adc->regs + IMX93_ADC_MCR);
-> 
-> Please, factor out this to the function, so we won't see the direct IO in the
-> ->probe().
 
-Sorry I don't understand this part.
+Javier Martinez Canillas (3):
+  dt-bindings: display: Add Sitronix ST7567 LCD Controller
+  drm/sitronix/st7571-i2c: Make the reset GPIO to be optional
+  drm/sitronix/st7571-i2c: Add support for the ST7567 Controller
 
-What do you mean by factoring out this writel()?
+ .../bindings/display/sitronix,st7567.yaml     | 63 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ drivers/gpu/drm/sitronix/st7571-i2c.c         | 55 +++++++++++++++-
+ 3 files changed, 117 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/sitronix,st7567.yaml
 
-Do you perhaps suggest to implement function
-imx93_adc_configure_calibration() and put all our changes into it?
+-- 
+2.49.0
 
-But we are already in imx93_adc_calibration() which is separate from
-probe().
-
-Please explain.
-
-BR,
-Primoz
+base-commit: 93eacfcdfbb590d9ed6889d381d5a586dd1ac860
+branch: drm-st7567
 
 
