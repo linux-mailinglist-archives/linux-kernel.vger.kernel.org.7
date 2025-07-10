@@ -1,104 +1,109 @@
-Return-Path: <linux-kernel+bounces-725166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F30AAFFB84
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FE37AFFB8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01A2E3BC6BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:00:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8BB643572
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C791428B7EB;
-	Thu, 10 Jul 2025 08:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9EF28B7EF;
+	Thu, 10 Jul 2025 08:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TXJ+rrsE"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uzxu+4NA"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E871228B7CD;
-	Thu, 10 Jul 2025 08:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6AF28853C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752134439; cv=none; b=ZoGV96xKSG4W84XgG6yiMjl+uIusXy8QC84k4TRxg4FcRfN1/U+So247g4P5RtGx0bnhC+esDDr18sIGXjqXqGsW8yPIWbQkz9kDM4zDxvtKD1hwQk7CMngD7MGnOdmmDzVvKUUWqYlaP0eqibSiW7J3Y/P3fwjfuAMjxFAEEVo=
+	t=1752134455; cv=none; b=cRU/akXXvM3rRWMLAzlLtQxTdxViFWStWzHSwqupfNwDNNaVxmWMOucZCNwzhrWd99xrWb/9QipNcfaq/AZFBCei1gx7m35KpCfb4uRwQ17gvYATJgsMAmDwy4aajBeVckRVf513wbpj7FEfKbl9VaexEcVxZ55P8fFYZBRA4xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752134439; c=relaxed/simple;
-	bh=2dHUB3IC3sdS0hLmMicGLp/gfznTyK+DCrvYFfDZR08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fVoSbyuZmS9JrFvvCEeBnWZpvRYzzsp7nlcW0KJsza/wFgvpzEaArdFoaLiDGJW+UpCWkg2A8IMzQU1/AGH3hr9a8w5PS7gLWeN5TZ2/06e2A/YnvqfULF0FJ2yk6BVmQtcz3rZscWah2Ume7LwHwLBO7sly/Khn+bmwy7esEiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TXJ+rrsE; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RQSU1VKtvPuYnwuvJ92PV+7wJlwWZ71mCrKkW3LvhAU=; b=TXJ+rrsEYXGPJ9bSByOzmW07nc
-	cKcy37r3QJf7/aNPaxKi1nDAZRtj4BaYkug2lbprVqsedOxkKbozjXGsE/LAUciexvVE1g/4J3G1B
-	3lSfTQxyDQ9usUbC+yDPNmxmWeaI/xC0Z1ofhSVfwEQOu8rJgBQg9awYYNTE1t0YUwONsIGkanWyl
-	6paB6og5j/Zn0S/vTTjDJ0Q6leXdrbrxYqHxkM3WofLPKwYVar5AXQMyqtVG4U/WaWnukncPfyqfC
-	/OgrkTSaAGrfuTRD/hd4d13Hr1Ul68A4cwlXCw4Mmf20Q6DgzqUYuCKUs4HStirAzOaxMUMKcjMYT
-	mR80URUw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZmCn-0000000B64a-2px3;
-	Thu, 10 Jul 2025 08:00:33 +0000
-Date: Thu, 10 Jul 2025 01:00:33 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: NeilBrown <neil@brown.name>, Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Mike Snitzer <snitzer@kernel.org>, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, axboe@kernel.dk,
-	kundanthebest@gmail.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/2] nfsd: issue POSIX_FADV_DONTNEED after
- READ/WRITE/COMMIT
-Message-ID: <aG9zIQTuMqmfauVE@infradead.org>
-References: <20250703-nfsd-testing-v1-0-cece54f36556@kernel.org>
- <175158460396.565058.1455251307012063937@noble.neil.brown.name>
- <fbe5d61013efe48d0cd89c16a933a9c925a8ea86.camel@kernel.org>
+	s=arc-20240116; t=1752134455; c=relaxed/simple;
+	bh=iK8IOTCXE2lrPjdoQaDJjyXlv03DESYVyObGJ/m44kA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dVBkMOYnMCYAc49dwUdNKfhyueKeQgR2nt2rd3YA5fD7Brjn87JSBMzqYLQxZVkcC5uDKjZ9ZLjl9molRVoolBUoUT6IfCY8kP8huftD5/7lrPh6mYwAA16PBkqM57dPoLlsIPkE4H4b7nTIHzkFrTWAE1UbqhTop6dZCKg16k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uzxu+4NA; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2ef8df09ce9so485084fac.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:00:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752134452; x=1752739252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ToFgcIrPsT47qophkUF6t9hEDKpaWGkYpzWGaT7NuQQ=;
+        b=Uzxu+4NAdve9XcUnFWFBHCBNjqpalyRMQQ+dFqV1zfDYJhEFqifdAH4w2/3/PznNHN
+         XhOp4QrvgzAdwA4nTwqwRv3bDciGdY2BmjM2WEMHx2K7mUyz2CObhpeBoWzP8DW5yiwT
+         8OcayffK6GHXAwRFRyLmVKqYZe+5Kee6r4gDAFSgvJ+s+zJF6B0NkPpWp96SSXfD5vp5
+         mqIGf9CDXFUMaXx6K+mBxx3TUpYuCFaIqaBsxC+Ega/uMAWv8OAo19E4wk8soxxEwFfz
+         OsOTWQ0kmKPljXHsr1sOZai40cJ9lwZvQqffsLv40q5wkipMXGNg+5fPIrjIVh+i9pvR
+         iCew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752134452; x=1752739252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ToFgcIrPsT47qophkUF6t9hEDKpaWGkYpzWGaT7NuQQ=;
+        b=IAUDS4U2sop3d1Bbgd8/VtLP1ZMRtNW65xj+RtRwoKh6pMZRPWscpufV3+Na8W5loT
+         bBGa8Ux8Kx7MqWDykT+YVK1Gvk6S/pjyA2K6QRmv0QuM7CKD5oZxifUh2lYg/J3ErD8Z
+         t2Yflvco79eMZmhwowY1BHio4/agFXVvS5X2qItXP0k9r6RcbW5Rwh9ojKPxWQ7mwAzz
+         3YagbBfYhKrmSXkZyCWMsfWL2Pb9JZjuQ/SN/fzNTRDzn+eBZAOcSPAI6XQ2iEVi1VJk
+         SEzl9BphbKCzylK84W/Us5f1AfL79qvdSt1JqZY8WPZtFooi7Do3gc8TgMGeMGLQjCHp
+         jp2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXyaJ44048lYk8XzjgTYJEGm7kSMdiHkYAYbSGwoOIuNuhiEQwYiuRE5Zpfrvr00nERqEU+iP4hFhvKeV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0V5w77Kdljpl0ut9jZaF6ehEF9Pikv72eDvOXQp+1krCrAQuP
+	Xdh/JfX55qEClpA9nOnOic3GpFbx5C4+TEPE9KWG3JPR+3dMRIRX/YuW6GZcqoysCkiMPJwt0kj
+	gJhRkB/Jk1UZjkBEWuEInh31RdKxsXZJ0E3d9U1FP/g==
+X-Gm-Gg: ASbGncvg3SDGeI3uYp7svQ079HECeunNVrdlvcCEZnY6uwVEgaHGGF9yBEvaEJdT/A6
+	eicnxPna4nW+9PUvLNRnmQTJSfX2RQ/6T0qOTmm8B3cTjQORHECRTYFwOqnF7UYtKrxXkXRdrRx
+	LA4dpJ2xI7vvWd6x/I3Xn9dP0jmunOlFpMbvnEXJAqCeY=
+X-Google-Smtp-Source: AGHT+IG42etH9AipEwoVy40wJMSye+NWVNGQGCdLQSYPBIHb3YYmVeD+/TNpEhAraHgVOha7QcC5U1cAMQ15bwl7bNY=
+X-Received: by 2002:a05:6870:a351:b0:2d4:ce45:6990 with SMTP id
+ 586e51a60fabf-2ff10820374mr954468fac.7.1752134451671; Thu, 10 Jul 2025
+ 01:00:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fbe5d61013efe48d0cd89c16a933a9c925a8ea86.camel@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20250710073443.13788-3-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250710073443.13788-3-krzysztof.kozlowski@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 10 Jul 2025 09:00:40 +0100
+X-Gm-Features: Ac12FXyPZ25VVFt9KdiEcMMJ5hhaX1smahS3sKtKfS3Bife6pmJ1SYWsA7BHfaM
+Message-ID: <CADrjBPpkZf2Hc_97e+-ZX5hpCw+DubEOUNiJ6fHLx0Kq2PZ7Uw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: tesla/google: MAINTAINERS: Reference "SoC
+ clean" maintainer profile
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 05, 2025 at 07:32:58AM -0400, Jeff Layton wrote:
-> That is the fundamental question: should we delay writeback or not? It
-> seems like delaying it is probably best, even in the modern era with
-> SSDs, but we do need more numbers here (ideally across a range of
-> workloads).
+On Thu, 10 Jul 2025 at 08:35, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Effectively all Tesla FSD and Google GS101 DTS patches go via Samsung
+> SoC maintainer, who applies the same rules as for Samsung SoC: DTS must
+> be fully DT bindings compliant (`dtbs_check W=3D1`).  Existing sources
+> already are compliant, so just document that implicit rule by mentioning
+> respective maintainer profile in their entries.
+>
+> Cc: Peter Griffin <peter.griffin@linaro.org>
+> Cc: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-If you have asynchronous writeback there's probably no good reason to
-delay it per-se.  But it does make sense to wait long enough to have
-a large I/O size, especially with some form of parity raid you'll want
-to fill up the chunk, but also storage devices themselves will perform
-much better with a larger size.  e.g. for HDD you'll want to write 1MB
-batches, and similar write sizes also help with for SSDs.  While the
-write performance itself might not be much worse with smaller I/O
-especially for high quality ones, large I/O helps to reduce the
-internal fragmentation and thus later reduces garbage collection
-overhead and thus increases life time.
-
-> > Ideally DONTCACHE should only affect cache usage and the latency of
-> > subsequence READs.  It shouldn't affect WRITE behaviour.
-> > 
-> 
-> It definitely does affect it today. The ideal thing IMO would be to
-> just add the dropbehind flag to the folios on writes but not call
-> filemap_fdatawrite_range_kick() on every write operation.
-
-Yes, a mode that sets drop behind but leaves writeback to the
-writeback threads can be interesting.  Right now it will still be
-bottlenecked by the single writeback thread, but work on this is
-underway.
-
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
