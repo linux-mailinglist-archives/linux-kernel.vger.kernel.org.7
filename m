@@ -1,179 +1,145 @@
-Return-Path: <linux-kernel+bounces-726627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B40B00F9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:25:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC48CB00FA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E070F5C4C52
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FF5B4837D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A2B2FCE3C;
-	Thu, 10 Jul 2025 23:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0602FCE1A;
+	Thu, 10 Jul 2025 23:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bw6XaIf0"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AHtOorpP"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53B62FC3D3;
-	Thu, 10 Jul 2025 23:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91E028C02A;
+	Thu, 10 Jul 2025 23:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752189916; cv=none; b=p/gZ3ifLPoOGxafS+jnWUanQm3ljCjOc1FpNSrFfCmQWwV9RmV8wDk4O4gTX+XQv69NDF/dAo/rB9OCPbPCM6tZqrAFSU/5NfOKds4SEvFIXvC3X5bXj94piqZy8wMu5ScCt3E3JZnDr+VxV3iv+05xZc3DO5X5Oi6a6qQs67Tw=
+	t=1752190026; cv=none; b=TKWdhSPpcR35muSugE+FN8NxwEfzHCJo41m6PyndIdblU/WppWaomszTExtYg8TxNz8/PiduQGGJrr2wRbeER9FwWdDiGbVYvsh1Q9ojgS/UV4ZIbUTK6umNG90iiJ/7qXxy+HmLsiudV0K8SwUf50vjP1BCloucXtEkYcwDSGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752189916; c=relaxed/simple;
-	bh=slRevD8LfbP4w5Q0AhfUiGS00fOZe4bb8PYJ4yt9CZM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tIEC7WB/fjL0BTo1CNNOAlZFseRGZylZt+Qc4YQxtCPdcSVGg0+phQ6STXAitW8pFIQjRFA8GNohtQr4cpeFb7y4VjNTioEQrW41bCf4fUAVgLLucGLcCDSbl94TCB10DigO/mT5Pb6ZB5S9TPmIrFrjchBumEGCyclnfqUeO04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bw6XaIf0; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-747e41d5469so1664343b3a.3;
-        Thu, 10 Jul 2025 16:25:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752189913; x=1752794713; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t9pse6W8keryYeEzjxOpW9abD7sxV45dg8IQWQ02T9I=;
-        b=bw6XaIf0nB3SfWfJqWQMs2RstuEePbpsEh00qPBOEEY2X+VYcv504O8t/tZlyZ7Tkp
-         qAxnAF46CRRD6P0AFHAs+LSba3Pgbj+h5BEMexJ3hv8Q0sEYPr7kkCpbz3Hrbb1aAxWu
-         nkqryhzOKeimSCjCnHhvumzFXY6K9HaBS8+/FIaMFvGN/P3sEuyP/OrQ32QKQuqs4Y+W
-         ssFA/31reNS6onVwC/VQFx43Ht0+jugnEGz0SpGiK3GJNO/gN2GwdpN35wooOq5ko+AC
-         D3RDDEqqmLMl4uxO72QI4jWPtXMyFiNZs7PA4JqaN0xlYCayNZDa22LUoqHBYgwyaa1O
-         SsIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752189913; x=1752794713;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t9pse6W8keryYeEzjxOpW9abD7sxV45dg8IQWQ02T9I=;
-        b=e1z7viUwJdIzuegGveIFvOWQNAo29IxLUTdWhGNwccE396T1SlyK2PfHChNqD1HKuC
-         6urTo7+tMdUVZPrlHLzpB6DXWxNXzN2LjDsjMwOXX3/YvWHe8h1MeuOiVIotYk9cfKb1
-         SuWs/G7JW9SaOqmNlD1igtqDsxuLsAT0TLg3In/hIjz+/Be+eWMWKpW224DoUz9mmQgA
-         YLQxrSGiB+x0k1LFLn5QkmcWQM8EaxrTonuc44Lo7b5WqLVgN2Q/GjSFdDXzAl/QZUu5
-         wr4zYgQ/SnsUmU7mVAG3TbGRxhhsMmyVVWIa76+vq6ib1Yzz+ZzoOo9pwXpGEM0PFj1H
-         Sg5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUYhnkPwTZOjVcHg8kjILP7BBcYaGYtPSLvMJc7C544mdL99zClSm+Hs3pkR7G7krJxgdIbzxXDgl/7J4EV@vger.kernel.org, AJvYcCXPctZ+XRSf8Zt6DqaLzqTMxbhg8Zwzi7afM6A2nBkKYW+nUZ3oeiczYzkwYXPyrQjF+BE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAQVZ7zS9aC6cT6JrPNBoi8K0er0fVScoR2uWyMfc0aQB2fE+e
-	h5SbGZh6Nz0RFAuD1alz8jeWced5Q0y6E2iKaDdSKrsJY7hZwXpMFuOCP35SqzgZrfL82rqywuz
-	DxbjqH8iOZvDCpFTGPOaTKnO4WT5ub9M=
-X-Gm-Gg: ASbGnctFm//PbopmNXC6trmhUQ0PcPcv9hMAJDYOLL08r+ujUopn7rU49pBQlYzuQ9V
-	PfDmge4T39JR8h7EDXeBdOW5ezueTDl/ppm5nDky6jECenCK3PAKBpmvXJZBGVpYa1CFOvDpoGW
-	+FAvsmogL5ZPhP1NWhh4/qP22tPQI6cJl4P8itFmDibr6an7Xb1ssq80a0d0zyEL4U3pqqPuksH
-	MoM6RYzoUJ8stw2DXQ8/40=
-X-Google-Smtp-Source: AGHT+IEoFipJTpc/Xo4Pu/qg7vkho8GyMuHg9/m+XmCHamqvbryQ6LC5kEsei8AQZs2+GirP3+ajKXpWMf3ii8P3r0Y=
-X-Received: by 2002:a05:6a20:d50a:b0:220:1af3:d98f with SMTP id
- adf61e73a8af0-23137e8e31emr1087286637.26.1752189912989; Thu, 10 Jul 2025
- 16:25:12 -0700 (PDT)
+	s=arc-20240116; t=1752190026; c=relaxed/simple;
+	bh=JLxwcqB6Hsk8DPZYoYpM9/I7F2/i2+Vdq/+h2E4Qitw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DHcigkTL8kydJNj11jj07GaQGlySYJ2Fp6f58wwdmeLFUjYV5Gwobz5q1Faj66oizGvs8pmvksvfK1CfljaiYSaNKdAUAAm1eGTsYetnl+B0sWdaBC8jp/Q4OzbOQDMEw+JKeVFyWbpWLD3kuJGM4Hyc5Sr+SZmfbJbqQGHaOb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AHtOorpP; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0CB8340E0218;
+	Thu, 10 Jul 2025 23:26:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IbI8tFEc_mPW; Thu, 10 Jul 2025 23:26:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752190010; bh=KwiUIakYJ6Mt6/DlTOES3FmAASt18hIJhtPvmUP6lW8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AHtOorpPJkOUcFcdqqh8a70ewq9koBecvbfEmDdO+iHeUqvMlTTpKqH1B44cushMr
+	 ENFTo/lxnIW4tn4gq26M2QYEDTAG0tN5HoHr9fbmrf5JjmwOF0v7Z0lvXceyP77iCT
+	 uXREp/enJ1Ka0grq8lWaRF5GcNoGPGJOuwaPPG4i420YgNXLSrKnyDmYMRvVMgjr89
+	 nHwDRGKKMkDj2rSmAbN4RyOVWXuNgiDUvL10MCO6EfcmVA5skh7CrBPRaTWOht1dq4
+	 4mDdyqAwRFH4ExX5VnW+1yPfLAAAtGxusoJZOqqWQGYswP4sw2nlhNPKYihGr0qBPu
+	 a8cYKXIA03zNDsrWdB7QBrAaDblX2bOGpTpUQfIX24ZW81Y6qWgu2nHjvsGQv0fqZL
+	 eMxAKM9fPd7uoGeUKbcVdeXcbQNep0Twm2pioUOAxmf5+nKP2CeaPuGRo0PdPxVyrE
+	 eBPynOylbsOdyM8WhBXzkH2xAB6Wk1tEkdzjZBuTkskl3F0BfAA8eJyW73XHp15oMr
+	 1HO22jIoozzgIWjICPWsf07ep3yakL7raulsq6A9deXYSO9zX0H+z45oZ0xt+32Eql
+	 SwuMOvU1odPkVp8Mlj7b4ePGMpJYrnXX8wJ7LqJ6t+R2SbZGWKzdFt7SzBnPK969UK
+	 mrEtHePK8fXbd+H4LUnvVP/Y=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8CF4940E0163;
+	Thu, 10 Jul 2025 23:26:12 +0000 (UTC)
+Date: Fri, 11 Jul 2025 01:26:07 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Babu Moger <babu.moger@amd.com>
+Cc: corbet@lwn.net, tony.luck@intel.com, reinette.chatre@intel.com,
+	Dave.Martin@arm.com, james.morse@arm.com, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, akpm@linux-foundation.org, paulmck@kernel.org,
+	rostedt@goodmis.org, Neeraj.Upadhyay@amd.com, david@redhat.com,
+	arnd@arndb.de, fvdl@google.com, seanjc@google.com,
+	thomas.lendacky@amd.com, pawan.kumar.gupta@linux.intel.com,
+	yosry.ahmed@linux.dev, sohil.mehta@intel.com, xin@zytor.com,
+	kai.huang@intel.com, xiaoyao.li@intel.com, peterz@infradead.org,
+	me@mixaill.net, mario.limonciello@amd.com, xin3.li@intel.com,
+	ebiggers@google.com, ak@linux.intel.com, chang.seok.bae@intel.com,
+	andrew.cooper3@citrix.com, perry.yuan@amd.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 01/10] x86/cpufeatures: Add support for L3 Smart Data
+ Cache Injection Allocation Enforcement
+Message-ID: <20250710232607.GEaHBMD54IXx3e8UpH@fat_crate.local>
+References: <cover.1752167718.git.babu.moger@amd.com>
+ <e1ea4ad34a7ca4bca7fd03b96c961bb59bd43f9f.1752167718.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710070835.260831-1-dongml2@chinatelecom.cn>
-In-Reply-To: <20250710070835.260831-1-dongml2@chinatelecom.cn>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 10 Jul 2025 16:24:58 -0700
-X-Gm-Features: Ac12FXwag-h-QSgVd1M5EQUYajFbo2b5LFCWENZjNkwoFpteCRBdZ04uJctmcgQ
-Message-ID: <CAEf4BzZZRk0Ko64wy5E34wAa3psk07UhGg9DENU-CQYfLwT1ig@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3] bpf: make the attach target more accurate
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e1ea4ad34a7ca4bca7fd03b96c961bb59bd43f9f.1752167718.git.babu.moger@amd.com>
 
-On Thu, Jul 10, 2025 at 12:10=E2=80=AFAM Menglong Dong <menglong8.dong@gmai=
-l.com> wrote:
->
-> For now, we lookup the address of the attach target in
-> bpf_check_attach_target() with find_kallsyms_symbol_value or
-> kallsyms_lookup_name, which is not accurate in some cases.
->
-> For example, we want to attach to the target "t_next", but there are
-> multiple symbols with the name "t_next" exist in the kallsyms, which make=
-s
-> the attach target ambiguous, and the attach should fail.
->
-> Introduce the function bpf_lookup_attach_addr() to do the address lookup,
-> which will return -EADDRNOTAVAIL when the symbol is not unique.
->
-> We can do the testing with following shell:
->
-> for s in $(cat /proc/kallsyms | awk '{print $3}' | sort | uniq -d)
-> do
->   if grep -q "^$s\$" /sys/kernel/debug/tracing/available_filter_functions
->   then
->     bpftrace -e "fentry:$s {printf(\"1\");}" -v
->   fi
-> done
->
-> The script will find all the duplicated symbols in /proc/kallsyms, which
-> is also in /sys/kernel/debug/tracing/available_filter_functions, and
-> attach them with bpftrace.
->
-> After this patch, all the attaching fail with the error:
->
-> The address of function xxx cannot be found
-> or
-> No BTF found for xxx
->
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+On Thu, Jul 10, 2025 at 12:16:15PM -0500, Babu Moger wrote:
+> Smart Data Cache Injection (SDCI) is a mechanism that enables direct
+> insertion of data from I/O devices into the L3 cache. By directly caching
+> data from I/O devices rather than first storing the I/O data in DRAM,
+> SDCI reduces demands on DRAM bandwidth and reduces latency to the processor
+> consuming the I/O data.
+> 
+> The SDCIAE (SDCI Allocation Enforcement) PQE feature allows system software
+> to control the portion of the L3 cache used for SDCI.
+> 
+> When enabled, SDCIAE forces all SDCI lines to be placed into the L3 cache
+> partitions identified by the highest-supported L3_MASK_n register, where n
+> is the maximum supported CLOSID.
+> 
+> Add CPUID feature bit that can be used to configure SDCIAE.
+> 
+> The feature details are documented in APM listed below [1].
+> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+> Publication # 24593 Revision 3.41 section 19.4.7 L3 Smart Data Cache
+> Injection Allocation Enforcement (SDCIAE)
+> 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
 > ---
-> v3:
-> - reject all the duplicated symbols
-> v2:
-> - Lookup both vmlinux and modules symbols when mod is NULL, just like
->   kallsyms_lookup_name().
->
->   If the btf is not a modules, shouldn't we lookup on the vmlinux only?
->   I'm not sure if we should keep the same logic with
->   kallsyms_lookup_name().
->
-> - Return the kernel symbol that don't have ftrace location if the symbols
->   with ftrace location are not available
+> v7: No changes. Fixed few conflicts in
+>    arch/x86/include/asm/cpufeatures.h
+>    arch/x86/kernel/cpu/scattered.c
+> 
+> v6: Resolved conflicts in cpufeatures.h.
+> 
+> v5: No changes.
+> 
+> v4: Resolved a minor conflict in cpufeatures.h.
+> 
+> v3: No changes.
+> 
+> v2: Added dependancy on X86_FEATURE_CAT_L3
+>     Removed the "" in CPU feature definition.
+>     Minor text changes.
 > ---
->  kernel/bpf/verifier.c | 71 ++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 66 insertions(+), 5 deletions(-)
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 53007182b46b..bf4951154605 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -23476,6 +23476,67 @@ static int check_non_sleepable_error_inject(u32 =
-btf_id)
->         return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_i=
-d);
->  }
->
-> +struct symbol_lookup_ctx {
-> +       const char *name;
-> +       unsigned long addr;
-> +};
-> +
-> +static int symbol_callback(void *data, unsigned long addr)
-> +{
-> +       struct symbol_lookup_ctx *ctx =3D data;
-> +
-> +       if (ctx->addr)
-> +               return -EADDRNOTAVAIL;
+>  arch/x86/include/asm/cpufeatures.h | 1 +
+>  arch/x86/kernel/cpu/cpuid-deps.c   | 1 +
+>  arch/x86/kernel/cpu/scattered.c    | 1 +
+>  3 files changed, 3 insertions(+)
 
-#define ENOTUNIQ        76     /* Name not unique on network */
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
 
-fits a bit better, no?
+-- 
+Regards/Gruss,
+    Boris.
 
-> +       ctx->addr =3D addr;
-> +
-> +       return 0;
-> +}
-> +
-
-[...]
+https://people.kernel.org/tglx/notes-about-netiquette
 
