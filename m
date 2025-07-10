@@ -1,129 +1,150 @@
-Return-Path: <linux-kernel+bounces-725277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF7DAFFCC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B32AFFCC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBFD24E1BFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0508D4E5AD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964EA28C87C;
-	Thu, 10 Jul 2025 08:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957CE28E5E6;
+	Thu, 10 Jul 2025 08:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Df4LBgL8"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="HPmozO2r"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25F31FAC48;
-	Thu, 10 Jul 2025 08:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E07C28C2B8;
+	Thu, 10 Jul 2025 08:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752137363; cv=none; b=Cd1vSvJnCkgILsJAn0YJR1N1dUPOW+/Em4RrD5ymvoaRJ2y0g9qk/aSwL91It5S/zq/UTP6VZOuX9oav2ULNOUE6s/3s3nSvLQ+fDwrmEm048E9RLTns3P726fGPa9n10eZId4H4V2tYq40dRKl9Y2lB38px4xNGtxG2cWUNT3w=
+	t=1752137365; cv=none; b=gc0Vn2IgF70O/tFeXsy9Z9Jh+anG9sunIPgDYz90wKuOBhs/PS5oyFzRuOcTbuY4o5fzvxdsPzegy1mWnUBuZAs9quZTDK5MoNi/8rUJLN9AKZ9F3mX8Mf9XMBi2umh8eZJFdyaLlVvUpURwQACfkmS9JdCipc4J6X/+7wun2iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752137363; c=relaxed/simple;
-	bh=3RHFIn5LzL5geguJnjASEbvN263YGxfFqRiUHFlsRjY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BjXD+mims0HAepEV+UL3xcX47KMfGf3xxuHl2TaAkmB+20IvPBzmQPfb2DdwS50bHixzQi39Qb3k0+k4dBAHrU+qBalZ1AZ39BmnXKKW45PMzmgTnm3LO1D5eqzidGFVYHEDZc3cUXWKO3KAcljKtb0csMmn8MrC6mLfL/1Nrms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Df4LBgL8; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-73972a54919so693996b3a.3;
-        Thu, 10 Jul 2025 01:49:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752137361; x=1752742161; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4St8wiEewtafjCLkv95/UHopApTTK01r7uNxNA3DcqM=;
-        b=Df4LBgL8odu6W1Xt4P8IZG93IvD0DUXg7RLxQ/0ksUr0k4dwryQKbQps4SouNr/x8x
-         GtnvTkZC7VFXKnTOBMDVTxxhM1TLL73xLI3s0KWFwufjDofq0sv4iGt2V0XSabQp/ZwT
-         ZXMfc6rqKOlcCZTOQtiustNdyxULDeuM4XdX5JuvYSudNiO0HL0GMr1qDiVOnrRgc8JR
-         QPKCJHYRMethRZ1cTbKHPYGNVBeAp1GxONL7d297yKoJ8Bf2d7ox9iKG7tsuLHTH69f6
-         Ly0Lnt2woYPdvPNm9XEFVdAVpFY1BmpjBcLSzCLFQRfGxOqxsmLOIg9W85h+7AlfDXqT
-         uUGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752137361; x=1752742161;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4St8wiEewtafjCLkv95/UHopApTTK01r7uNxNA3DcqM=;
-        b=ACzrP3XGOSxAnXYUED4oJrwOtk734fa0ELllFHEP1i7PacHqqnp1uyAJs5pmh9m0OF
-         oFu9qzChx8/e1W7IjZdBMuoApjFuE76zKrqFDglDIAKD1+dg9EDcl3wDabc6dxwOylRx
-         VI+Ymd7pGm6k/Dkw/urmNDyMjL/P3tLeoWV94qnK0/7vFgGsqT8eg5qvQT0xW0Hh+AfH
-         8twR3F09Y0Bshkec9FMkPJtneIVyd9tyrSdoYp8O1qQ5GxV6wj/dOqGig1ZZSwsF2GH5
-         4pCqGEra8tcOK/05Vre3UBnQk7xn9JiOlHlBTy4/ChHlDIFl3w6XYyw4RmR+r8QXX6eM
-         bzfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSyuRlTHiDrSHknrwRQNSisnpsg+JhRfZ7WTbcIEKte7MdIKoTe9SyirQSkP7KQ0oWH7MBtLtk0D51IL0n@vger.kernel.org, AJvYcCW8Wv0/NDaPoDrq4eJn1XFNk0FaUH0Cf4HcPBZMvVrAmb0BtcJBFqh1EzqiMs3p9vEBLB+AdrqFj8o2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhvPp49uuo9XZYOWLhXv6Z2nu30WrPKw9ssmOIlYb6PLpL0nmt
-	YccIO4apUK1ekmjLg3iDJmhYrom7/sU6oSMPlOUTU1/e/MPjy/pgyIgM5/76D/ay
-X-Gm-Gg: ASbGncsLa+sF6xWg/yz6texEteHMSBw96gHwLDiHnqUXVsMk0p2t3//R+nE62GQm2vI
-	aT+f8edFhXmZX6SYKQpFwkJOlMsllml+8gp2iXChe+X6ilTJTkPwI6exF+JnCqJCU8/FideGUAv
-	kQAOalcQP5XvtI0srtc7uXqZs9wbTp5kBD4dD7enIeldPF07kO/IhiBKeZYIzr82iW7fQ00kzxP
-	YTOuMxVlRVIPkSzzg+4ijfygOQ7AELf9omeiRalNat/+S8pJJQ2fUe/BmRY1oK76q+rNwwkBfQ/
-	7hnRfsn9L6uN9ogS2gcmXBSIMmLv24odCgPSj5vqULdC8otCHnCFkONnjX7CeVy03A==
-X-Google-Smtp-Source: AGHT+IELxBQvDmErAxf05p3FN8Jsp7n2KmWHwWb1Vm+hx7+9OCcdDHRpDaIZ2atC1291CnmVaO0fJw==
-X-Received: by 2002:a05:6a20:2584:b0:215:f6ab:cf77 with SMTP id adf61e73a8af0-23005ab1ee6mr3246701637.23.1752137360945;
-        Thu, 10 Jul 2025 01:49:20 -0700 (PDT)
-Received: from ubu24.. ([2400:2410:dfca:c200:b9a1:a95c:e866:f34b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe6c77basm1544702a12.40.2025.07.10.01.49.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 01:49:20 -0700 (PDT)
-From: Taishi Shimizu <s.taishi14142@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Taishi Shimizu <s.taishi14142@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	Rafal Milecki <zajec5@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 2/2] ARM: dts: BCM5301X: Add support for Buffalo WXR-1750DHP
-Date: Thu, 10 Jul 2025 17:49:08 +0900
-Message-ID: <20250710084910.2093426-1-s.taishi14142@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250708-elite-indigo-wombat-faa74f@krzk-bin>
-References: <20250625154315.114139-1-s.taishi14142@gmail.com> <20250625154315.114139-2-s.taishi14142@gmail.com> <20250708-elite-indigo-wombat-faa74f@krzk-bin>
+	s=arc-20240116; t=1752137365; c=relaxed/simple;
+	bh=xSn37TdrR5LnVjgiWRMs6jgfMqqUE2kD7Pf2HcJzTmM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NjiVuiG8m/SwKSAcKW7mX7leN2F+GGd8oogpxf5Ouhaa8jfkEAm8UojyqoRf0RVDZ7MZxtQYw324XhtyywYypfop4E4ehEW8AeJaDw/46ukfRXB3xHkubT0uBF5ZrO2BZz/Osq0oUPqhbQvwXsKgDIVao771WSTBXvRcTi2Y/Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=HPmozO2r; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 71F821C00A4; Thu, 10 Jul 2025 10:49:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1752137360;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JtsDBA795YfReYH/GF2nMaqLkXwFgaNAo981tm46dl4=;
+	b=HPmozO2rGjK2OOGdab1zyeJX8Mr6qIQ58OYfWhT3tFLnrIj/JkdrbYkxiQfSiSy42rqlae
+	1/T7eB6smwFKxs9Ap/c4DEzTrV+VgC7Z2KkqC1dNEF82gIlp+x/hMb62bq4MFydLgBiCM5
+	3hH4RQPYg7s3dZcicRfGpHdoLWGyvL8=
+Date: Thu, 10 Jul 2025 10:49:19 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: kraxel@redhat.com, vivek.kasireddy@intel.com,
+	dri-devel@lists.freedesktop.org, sumit.semwal@linaro.org,
+	benjamin.gaignard@collabora.com, Brian.Starkey@arm.com,
+	jstultz@google.com, tjmercier@google.com,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	kernel list <linux-kernel@vger.kernel.org>,
+	laurent.pinchart@ideasonboard.com, linux+etnaviv@armlinux.org.uk,
+	christian.gmeiner@gmail.com, etnaviv@lists.freedesktop.org,
+	phone-devel@vger.kernel.org
+Subject: Re: DMA-BUFs always uncached on arm64, causing poor camera
+ performance on Librem 5
+Message-ID: <aG9+j3p0+fdLQZwu@duo.ucw.cz>
+References: <aG94uNDrL1MdHJPM@duo.ucw.cz>
+ <aecd03f464f25d50f379be405a8596261f247897.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="uIo81BiHoorXdIb1"
+Content-Disposition: inline
+In-Reply-To: <aecd03f464f25d50f379be405a8596261f247897.camel@pengutronix.de>
 
-On Tue, Jul 8, 2025 at 10:34 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Thu, Jun 26, 2025 at 12:43:15AM +0900, Taishi Shimizu wrote:
-> > +	chosen {
-> > +		bootargs = "console=ttyS0,115200";
->
-> Please use stdout path property.
 
-Thanks for the review. Since `stdout-path` is already defined in
-`bcm4708.dtsi`, I removed the `chosen` node from the board DTS.
+--uIo81BiHoorXdIb1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +		leds {
-> +			compatible = "gpio-leds";
-> +
-> > +		led-power0 {
-> > +			label = "bcm53xx:white:power";
->
-> You should use rather color and function properties.
+Hi!
 
-I replaced all `label` properties in the LED definitions with `color` and
-`function` properties as appropriate.
+> > memcpy() from normal memory is about 2msec/1MB. Unfortunately, for
+> > DMA-BUFs it is 20msec/1MB, and that basically means I can't easily do
+> > 760p video recording. Plus, copying full-resolution photo buffer takes
+> > more than 200msec!
+> >=20
+> > There's possibility to do some processing on GPU, and its implemented h=
+ere:
+> >=20
+> > https://gitlab.com/tui/tui/-/tree/master/icam?ref_type=3Dheads
+> >=20
+> > but that hits the same problem in the end -- data is in DMA-BUF,
+> > uncached, and takes way too long to copy out.
+> >=20
+> > And that's ... wrong. DMA ended seconds ago, complete cache flush
+> > would be way cheaper than copying single frame out, and I still have
+> > to deal with uncached frames.
+> >=20
+> > So I have two questions:
+> >=20
+> > 1) Is my analysis correct that, no matter how I get frame from v4l and
+> > process it on GPU, I'll have to copy it from uncached memory in the
+> > end?
+>=20
+> If you need to touch the buffers using the CPU then you are either
+> stuck with uncached memory or you need to implement bracketed access to
+> do the necessary cache maintenance. Be aware that completely flushing
+> the cache is not really an option, as that would impact other
+> workloads, so you have to flush the cache by walking the virtual
+> address space of the buffer, which may take a significant amount of CPU
+> time.
 
-I'll send v2 accordingly. Thanks!
+What kind of "significant amount of CPU time" are we talking here?
+Millisecond?
 
-Best regards,  
-Taishi Shimizu
+Bracketed access is fine with me.
+
+Flushing a cache should be an option. I'm root, there's no other
+significant workload, and copying out the buffer takes 200msec+. There
+are lot of cache flushes that can be done in quarter a second!
+
+> However, if you are only going to use the buffer with the GPU I see no
+> reason to touch it from the CPU side. Why would you even need to copy
+> the content? After all dma-bufs are meant to enable zero-copy between
+> DMA capable accelerators. You can simply import the V4L2 buffer into a
+> GL texture using EGL_EXT_image_dma_buf_import. Using this path you
+> don't need to bother with the cache at all, as the GPU will directly
+> read the video buffers from RAM.
+
+Yes, so GPU will read video buffer from RAM, then debayer it, and then
+what? Then I need to store a data into raw file, or use CPU to turn it
+into JPEG file, or maybe run video encoder on it. That are all tasks
+that are done on CPU...
+
+Best regards,
+								Pavel
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, and Musk!
+
+--uIo81BiHoorXdIb1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaG9+jwAKCRAw5/Bqldv6
+8pFxAJ9w5Ne/+ev32mB6Cj5DYUglkB9gbwCgpjZ84DNpnW6H133GyLZrpyPjFjg=
+=8vV3
+-----END PGP SIGNATURE-----
+
+--uIo81BiHoorXdIb1--
 
