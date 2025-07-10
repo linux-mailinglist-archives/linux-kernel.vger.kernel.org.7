@@ -1,801 +1,440 @@
-Return-Path: <linux-kernel+bounces-724878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 957FEAFF7D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:14:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311A0AFF7DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 311D73B63F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:14:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A94F7B7C0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAA1283FD2;
-	Thu, 10 Jul 2025 04:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FA419E7D1;
+	Thu, 10 Jul 2025 04:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="TvVkASpd"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010029.outbound.protection.outlook.com [52.101.69.29])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mH7Pb3lI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EE61A285;
-	Thu, 10 Jul 2025 04:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752120881; cv=fail; b=Iuhml5FWDf1vrRuYxZVXMyosAUPVTgAJgLCibPmyi4PRcP9GvspegpdEfgH3bgwVxPns7oNuOK5iihaROTEqnnm+UVoUjVx/iWkeuj102b4v5OzF526wrC46wyK3ePxUmbor0FDkKoEVEGVc4l/9Cj0x3DUsnd1FdU/3sxsu0KU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752120881; c=relaxed/simple;
-	bh=k4rryNO1zhAVSmIDC1EL2NQvQDmVwrTM0Gb12HsrAIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hvhQkBDDCWoPPxNI9bzU5JxvPpOlp4P2ipuUCryoqVQgUTBa+H73UZVePhbccXwhilBdvVuyVhIqcXSiJlRXrzPHdrR8aON8H6KwrLqyGsvRQOuJY9rA33vaTaIlE3nzO+Es09IwqlaI65N1g+C955uT9TV0yb5LZ7qS/xZx1iY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=TvVkASpd reason="signature verification failed"; arc=fail smtp.client-ip=52.101.69.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W5KpozVucCf73e+cQqC1osXx+cscVcH97F46gzlzCc0zliOJrVQBt4R8i91X7cPDtrsuFB81s0lOjzK1Z2sXKldpRJjduxBxt5nRdV+K+xr/SzzjYs18DZtZ3aZY9dNy9ZD+ouG5NMyLqba8wpG9BkHIbEVkfqT8yS0v1CYy7CnYVied9f59xc74XiJDfHBLvqC2Lgn/Znv1qnYZQaDN6Mv+yUXm7svjbhC2BFVNszmRiM8C7ttfFvCCyoqPExGOB1yJ0yKETXfEyNhcwsa5V8LQIc/b9/EiTYublH/vJMn1cXLkJK+o8DjLo0O78z4OgmyJhPqScQD+QQmnehgg+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Oz9mAf6eBYyul8uXECwhOfzlVv/TrhH3qgbogNNVnx4=;
- b=duqKajOiwnWE2LyfMgodTdeK3SP9nPqXc12ksW9pO/7VPlCu02ThSswk1EFX+97aIkPaPJdM4f+guwbTUXSDHxzY8E403bd0Q2tyuE22SV9XKf5KxvolCiQfcT7GaL5QDgHSlXEy0PVz2MuPLtE4Ov+4m1iFe5+9gIoLJ3sLRJtjqKqS9I7Y/XiRhTAUJqAHvkZVUNQ708rOK2uFjZoaQvUsjWTmu2kUv6EyT+ZPIP+fCGWnxOJ+v+3sP+ZYG8MgE58W0bjv6EX7Hb09z9Ht1R0YLwEVnDyMn8eBTaUGHRiWnkPK6wzAscVcNRED0S6NsjYAEGUAEkSu8UCbIxDvTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Oz9mAf6eBYyul8uXECwhOfzlVv/TrhH3qgbogNNVnx4=;
- b=TvVkASpdZWNuTpyMApF0H/BKZpIs6ZUx//41QN64zXIwd+JIadPV++ot6qXTa8q+OTI4Zwy5V//PFzudKkP7AkIFURHygZIpI98v3ZHX6ROZr/KTikTrQ7WZe0WHzyi9NF6KK4ATvJ03Ctb4BzaBvJY9O44xGxUcsTpS+xDAjX3wVurmQpxFCx2FoyGto9rS16c0VSVJT+NX6ovEQCut1L/Ak1VKL0M2K+AHrnOvccJXr4H298NpyDUaFfETJFE9nIXEh7mRBLy2YwglSnYlIXuZmWIrg3cwlzKGncwR7WqC3Dsl3AhKyDTAcmUI+SRV6pyUvpv27Nn7oO3WckSkvA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI0PR04MB11000.eurprd04.prod.outlook.com (2603:10a6:800:268::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Thu, 10 Jul
- 2025 04:14:36 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8901.023; Thu, 10 Jul 2025
- 04:14:35 +0000
-Date: Thu, 10 Jul 2025 00:14:30 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Karthik Poduval <kpoduval@lab126.com>
-Cc: jyxiong@amazon.com, miguel.lopes@synopsys.com, anishkmr@amazon.com,
-	vkoul@kernel.org, kishon@kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] phy: dw-dphy-rx: Add Synopsys DesignWare D-PHY RX
-Message-ID: <aG8+JgU8Ej/Lgrlg@lizhi-Precision-Tower-5810>
-References: <cover.1752106239.git.kpoduval@lab126.com>
- <2383f8cf2a8f5e1b914d4cf9bd11674ed55876d2.1752106239.git.kpoduval@lab126.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2383f8cf2a8f5e1b914d4cf9bd11674ed55876d2.1752106239.git.kpoduval@lab126.com>
-X-ClientProxiedBy: AM8P189CA0029.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:218::34) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2191F8747;
+	Thu, 10 Jul 2025 04:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752120905; cv=none; b=nl4Pv9VE7BrowXphLA+Q4/NhGUH9enmBMoB5ESuNRLkI38cb4jVuxPbiVRXyvx1GdTI3lz7HeX8TMEorrg4dUzYQUzuf9K9YZL8cDVJYJoZANbkb6haRR6ijLzcZkYq83aouOXn7iHgD6EXuETXYdad+KZXKGX7Ce6/S/3rsU9I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752120905; c=relaxed/simple;
+	bh=ARTKtxmOir5rmmLBFRa3OmU/j2lHpRMgK/qhHHuOKko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=luFzv5tL4SIA4u/smGPJ7HqrP9Ob8+5Td2t2qw805wXNNuKY6L3UYnbsUIkCbiL/9f56tK4EUkyHN0YjykX4bhi45TWJYZYrAB5H+hxgvIXFpYsfbg7QAuJJ1tTwwU2hMPeZs0Cf8Z2IcFTH26Y9FWuQ3XeU15fr48x/kfDGVCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mH7Pb3lI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5DA6C4CEF7;
+	Thu, 10 Jul 2025 04:15:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752120904;
+	bh=ARTKtxmOir5rmmLBFRa3OmU/j2lHpRMgK/qhHHuOKko=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=mH7Pb3lIyHhd//Rhj4JWpHiUfwse2DP+b12ZR9i6aoBlAMBbeVa7sZ2E46n7Ru/fj
+	 CyhJ7h56V/0eIZB04avnU/YSZ/WGMmtJWNga/pHvuWCOPdV9/aKBuy3D8TW5PEgId3
+	 CjqSTs9gTHRhNbT1Hmo/rdTVO4lZYGoeMbPV9Ne+5mBcWWndzL/nsDVP86jhR2KSXv
+	 M8t+u3l6Xjj1UKI+PmQf/vItnDvctmNJRrEixn3+JEBkQxvDUepNKIhtS3gB05L/At
+	 VUrH/5jJIGy/xi7wTtNKBbqFPaqJRcorVQtYQn6ZunH755mf+pGSNVz66rgbX8g32P
+	 2lzKkJmERadLA==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32f1df58f21so4874771fa.3;
+        Wed, 09 Jul 2025 21:15:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV9TFwPMqfHf0bSs4c64W0nvrqik9nTqCiewv16oAvdw/OUE1YLJdddyDcQGgVnoyWjIxiTZDhTc0MNWOC1@vger.kernel.org, AJvYcCVn2qDbbju2PIftigKzwVSRm2wq1NSTKjyTyY5gIe2fONGHXJNJBtRZQ2nkIY2JBSANSm3+y/WS4+hR@vger.kernel.org, AJvYcCW9H4+kQ5fyo9DQuB10VxL+FmC7d82z8JdzaQr2OPGqHo1gv0jEeK8OTqePSFP9cophnL95Wpb0Yd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSmIPvfDPgF9VCfntA/sUyF+BcUA6UvEn9zMkKdpdd//jLp7Dx
+	IfpbVDHGoJd+4OWmhEmwEB5B8ALmWUJCo9JrP+rVvbz8GrGp8PlRzZmoMxEJwe4xQPhkF9V9rJF
+	012PxR96O9Yqiq4dpgRCXHupz1YXiMT4=
+X-Google-Smtp-Source: AGHT+IHd/yaX+Sqp/87RP8yhtv3wso+0gj3wtRChh7YZklI8P0YowqNGBnRN0oNMARoYZ86bfbf8+dq5Jpj7iubVQ4c=
+X-Received: by 2002:a05:651c:f0e:b0:32a:739d:fac with SMTP id
+ 38308e7fff4ca-32fb2e345d2mr2833601fa.36.1752120903028; Wed, 09 Jul 2025
+ 21:15:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB11000:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0081cd56-292a-4ae5-ef71-08ddbf68474b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|52116014|7416014|19092799006|1800799024|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?FCDK+SfcMOtPva9D8UV2kBWCgKP7EeALOkKAbGFz97LRacP77xR9/RBdP+?=
- =?iso-8859-1?Q?vrPdDQ5qSG1sb4lHZmIkqLEaaxfjusa3l/0xhiEjMGKvXrAhKzzavM4fF7?=
- =?iso-8859-1?Q?shnO9rLpsLaDrp+hyUzQKGjUAq+nMnog9uSoPFQdUTEUO1NRcFj7vnji7j?=
- =?iso-8859-1?Q?x2C0njCNAY8qi8j/neyVzqcZSh+OW3GTnH+W++HKxwiAwhgYeSOQGwqzx9?=
- =?iso-8859-1?Q?uSX69/Z6sf3exXaVy3qRac+OGYk3T7y/ReYRHLT5ryFv6oIqeCouUgxHVU?=
- =?iso-8859-1?Q?h8PkLB32iiDYY2kiPztjneBaIvGDXaGTXhRfJE02zXoLR+G4KxAABvrsl5?=
- =?iso-8859-1?Q?16nbvcaEbC2iIh4mY5uI7hEuh3spLC0III9EUus9Sr9HIIhqnsnP5LjfBV?=
- =?iso-8859-1?Q?/Z7071PN4YtAqTx7GghGQX25K+1SORjGWzwM2CQS2TAv8VeKZMa/tTwW80?=
- =?iso-8859-1?Q?5SWh6VVLARMue977VL5jIlcDD/X9F4jcDUbe6C0uD5xoaPtqHgWGqeEB15?=
- =?iso-8859-1?Q?iBhKrin+i+vcSqWEReN9Tclh2AAFGs7lXMZyWq1v81fawbdzxLDnGtSY8T?=
- =?iso-8859-1?Q?bLEfSyTSF5AwfNQCen6AHzdrDb4aJEYT9q59m7QcGxXeT323PxLLWljO2X?=
- =?iso-8859-1?Q?PYB0mmmBvlixQRD+92jISoUv8Jw6JhE++2ODr+r7COueN+loChlhrvRQ5h?=
- =?iso-8859-1?Q?rg2BTiPzNs1iIUkkolGiGS+j4B5VEHSl4WcVj6wx0vAwoZiYREaaIhyUT+?=
- =?iso-8859-1?Q?BTpwNM5WI5EO1IoE5c1B8J8Oe43wgTnwHXLZNtCAH8yw0W6djTYgXT3SJd?=
- =?iso-8859-1?Q?hfNqkCLbpQtSOoZMlOx3+nU3O2TdXIXcZA4f7qe7UsXyXPT4lZeQwRKj+E?=
- =?iso-8859-1?Q?lAQmX+kJ9xSPPjZ7OigFE3n+8yrQyzKdOwPE5z7aKseapLa2rOnVHqGG89?=
- =?iso-8859-1?Q?epCtdlqi+3DXEakPiXQgOwXnHZQWM6s4eO6sk5chea9clZCwHpkiiZlBiI?=
- =?iso-8859-1?Q?8Cl8A6zwaT79onuP6+bGHtNkOzzp3yEtWhU5eAFYoCMRI2DIsE1CJJBbkm?=
- =?iso-8859-1?Q?/M3ObxhCbM8Y90P0F631XLZZuV39GXkOs1g+0ToFJM1dQMzewpFaovtQZP?=
- =?iso-8859-1?Q?E12IQxl4f+6gHsJIKDiMbqk/FJwklnMLRYWsLl1YkUWMEIUjw/2+zEo3wn?=
- =?iso-8859-1?Q?sITDntk7bCBB8UVzcQnwwruZjRpg+w3+N3a6qhly/LS7YHtBKWZjY0P0lZ?=
- =?iso-8859-1?Q?jePiZ2WqUSCRJmhvgjCJg78iMSnaVIEKIREalUp/NnXlpgCHdnZFbJIPgp?=
- =?iso-8859-1?Q?O7artwIqJ/vTIfytaBLKn/1JRMhx0OajM4fgXUCLH0JbnhAJomOPmNSUZj?=
- =?iso-8859-1?Q?MoDd2zyeRu9Btamg9Z+p0GaQ2xWsgw8l5XuGTmASAp2Le7HJ9ILAUuEX/N?=
- =?iso-8859-1?Q?YkLFNrkcDz74lXj4v1fyVNpobC0Te6TCZBmZkww5L7dbu1/0EvXfyWV80q?=
- =?iso-8859-1?Q?s=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(7416014)(19092799006)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?XRF/TYTen2HqQtVOqc19FGr50sn4o9vtAUkIH6m5ShxvDkUeKGgd265hic?=
- =?iso-8859-1?Q?8ftz/Arlgj4ryPLoeLcm3olwN5ACSUFwDxH17oEUBKXzA7xAU9la7cSb9M?=
- =?iso-8859-1?Q?pKFma45QRHp7TcXtZO+UYOlMI6DgiNgpUe4pT28s5ZGukR5Z7schmp4BDR?=
- =?iso-8859-1?Q?zA7uF/uaX/yWGN1UQ7oY1AE6zyb34rttLZlaCXd/sjVnGv8lXO9ofjphBt?=
- =?iso-8859-1?Q?8qQEehhNj9A+AyLw8HNOTf9loBg2a1CJN2P8980PRmJWeeMWUizIzmo0XS?=
- =?iso-8859-1?Q?jW5qBL3BQqepurRVacn0w4fsJymQh3iRws4HTYq3F2cgbEoTDqgKmBnYjQ?=
- =?iso-8859-1?Q?OyEuTOs8+YTcrarlf90ZPHXJo6tskR0dVKDf+bAFKuFSzFN0upvItdeL+L?=
- =?iso-8859-1?Q?eyT/VDnERCoFq8hITNU3PWhpmEthn3VB7a+0poiHZr9MW1g+dMtx13AGRh?=
- =?iso-8859-1?Q?OBRlLxTteCWwdQhKY1A/BF2c4WWWsbW/d9T1sBOJozrRfBt20XYEoNozdv?=
- =?iso-8859-1?Q?PshKL/uR68CjlKbFOf0EMPz+zOE98NmzrASIa9bl6jasihENE2K2kJIsxt?=
- =?iso-8859-1?Q?b1gZ5XCOp3yZytRDKs8MMXJUPiKzRU9K68XsBRh5IST50rLLMqhBujw2V1?=
- =?iso-8859-1?Q?HCV2HR3RXKfvmAmAegz0eHmlI+5eSHTXC4dCp1EpOdhWA9UXYus6pQ0Hv+?=
- =?iso-8859-1?Q?b/K9WkPyzngBvEraEJqALP38GOSDKPGoLTfiZcC30qwrxpo59QHQhG2S7y?=
- =?iso-8859-1?Q?8SNgaBYiJZTQi5Jyu9yJhdG1t+4O4qIlxrGR8GVWtRy3yRgcUvq2RFzp7A?=
- =?iso-8859-1?Q?WSmx/Hx9pCcfzPjk5RQhq/mde8J0sSLSTk9uvjRZX2WBhg1cOegqZI9pUg?=
- =?iso-8859-1?Q?d8gptQhFAebldYka8a0Bk/sd/Ow108kNg+7RoPUQBvhFbjQQB+AEIPz68S?=
- =?iso-8859-1?Q?2y8pqe/pXz/ZZrtW4vE3Wq9ICkw8qTOQBNlI7ARzTImvQ9/PTVEzKer8gI?=
- =?iso-8859-1?Q?nIIMPBwKycd9f9Xb3NBacgNY3uOWdSg1RSKtHje2BLq749CAACLWVl05zr?=
- =?iso-8859-1?Q?E1hRgQGKCTTR4xYMXrw+zGEI3SwPpV91Q28RDEHon8w1iwoNH3Nx6V+M/7?=
- =?iso-8859-1?Q?f8Ef0jYKi+pbmLrLc8Y1R8SuEXvtSmSVdthOcwK/Ci1hH7spdv6W+vrj3y?=
- =?iso-8859-1?Q?W7Ec7fVEcNPKAnZWTSMx9TbWgSdgeb3QIM4fcC3XaAAvh52GqZ0oownRdU?=
- =?iso-8859-1?Q?xJnyE50xrrdrU064YOAj4RsFDuzGOcA2dUm19Iau5P8WRkV3hr3cloxYc3?=
- =?iso-8859-1?Q?sFYygRL2LZ9vIutiPsJU4QmHmcd1JGG6oum4EK1dvALGzMG+UQufCn+0wa?=
- =?iso-8859-1?Q?+/BVA6LFTOxCoksrUG73znURuxawkPzGPChVJjRk4fc+3b9Pw7nUkddAas?=
- =?iso-8859-1?Q?bhKV8kNdiHHNWnoF66ooRK9tIcyOF6qonMqI7Hfr72v90S3/pbE2VgOU5B?=
- =?iso-8859-1?Q?awrUJ6xvCbDKvGYrVlOkV9Hv6xAQXQKL9LyzV06bWz7Loy9OJCMVoLh2jz?=
- =?iso-8859-1?Q?fd/xH4TYzP4tZysNulk3hmlkYfzxNCgzyHLiBxpe+ubLRiooPfcGrt/WIt?=
- =?iso-8859-1?Q?rQO54nQwASSlfNtE2V54QklAfQJzxbdd4y?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0081cd56-292a-4ae5-ef71-08ddbf68474b
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 04:14:35.3390
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4J0KVTHYLyRjzLkfQSEA31NlmNqqIT7ArvreU9w2uq7LEOY2XnwglZ2iBOL2noMKysySGREHVzSS21KSaWlu1Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11000
+References: <20250709155343.3765227-1-wens@kernel.org> <20250709155343.3765227-4-wens@kernel.org>
+ <043e5826-b68a-4289-bf22-79587bcdad26@arm.com>
+In-Reply-To: <043e5826-b68a-4289-bf22-79587bcdad26@arm.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Thu, 10 Jul 2025 12:14:50 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65WsPmAtUZRbf5Cu3Pb6Oi+dGH1RH3HhnZLmpJgh5Nu1g@mail.gmail.com>
+X-Gm-Features: Ac12FXwfvlY2YWxEzkxFkJVP_9hOVgGw3zz-RJg-5O5SKFrgYbis0hTLsBZzYiU
+Message-ID: <CAGb2v65WsPmAtUZRbf5Cu3Pb6Oi+dGH1RH3HhnZLmpJgh5Nu1g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] pmdomain: sunxi: add driver for Allwinner A523's
+ PCK-600 power controller
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-sunxi@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 09, 2025 at 07:42:20PM -0700, Karthik Poduval wrote:
-> Add support for Synopsys DesignWare MIPI D-PHY RX v1.2. The driver
-> supports data rates from 80Mbps to 2500Mbps.
+On Thu, Jul 10, 2025 at 7:46=E2=80=AFAM Andre Przywara <andre.przywara@arm.=
+com> wrote:
 >
-
-where download spec?
-
-And I think you should cc: linux-media@vger.kernel.org
-
-In https://lore.kernel.org/imx/20250702093806.GF16835@pendragon.ideasonboard.com/
-
-drivers/media/platform/raspberrypi/rp1-cfe/dphy.c do similar work.
-
-Frank
-
-> Signed-off-by: Karthik Poduval <kpoduval@lab126.com>
-> ---
->  drivers/phy/Kconfig       |  11 +
->  drivers/phy/Makefile      |   1 +
->  drivers/phy/phy-dw-dphy.c | 575 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 587 insertions(+)
->  create mode 100644 drivers/phy/phy-dw-dphy.c
+> Hi Chen-Yu,
 >
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 58c911e1b2d2..34c245ca5d12 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -101,6 +101,17 @@ config PHY_NXP_PTN3222
->  	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
->  	  Speed and High Speed.
+> thanks for posting this! This is a quick first view, haven't compared
+> against the BSP bits yet....
 >
-> +config PHY_SYNOPSYS_DW_DPHY_RX
-> +	tristate "Synopsys DesignWare D-PHY Rx Support"
-> +	depends on HAS_IOMEM && REGMAP_MMIO
-> +	select GENERIC_PHY
-> +	select GENERIC_PHY_MIPI_DPHY
-> +	help
-> +	  This option enables support for Synopsys DW MIPI D-PHY RX IP. This driver
-> +	  provides D-PHY functionality using Generic PHY framework and is meant to
-> +	  be used by MIPI CSI2 receivers over the PPI hardware interface. MIPI CSI2
-> +	  receivers may find this driver and use it via Generic PHY Framework API.
-> +
->  source "drivers/phy/allwinner/Kconfig"
->  source "drivers/phy/amlogic/Kconfig"
->  source "drivers/phy/broadcom/Kconfig"
-> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> index c670a8dac468..ed0836adb835 100644
-> --- a/drivers/phy/Makefile
-> +++ b/drivers/phy/Makefile
-> @@ -13,6 +13,7 @@ obj-$(CONFIG_PHY_SNPS_EUSB2)		+= phy-snps-eusb2.o
->  obj-$(CONFIG_USB_LGM_PHY)		+= phy-lgm-usb.o
->  obj-$(CONFIG_PHY_AIROHA_PCIE)		+= phy-airoha-pcie.o
->  obj-$(CONFIG_PHY_NXP_PTN3222)		+= phy-nxp-ptn3222.o
-> +obj-$(CONFIG_PHY_SYNOPSYS_DW_DPHY_RX)	+= phy-dw-dphy.o
->  obj-y					+= allwinner/	\
->  					   amlogic/	\
->  					   broadcom/	\
-> diff --git a/drivers/phy/phy-dw-dphy.c b/drivers/phy/phy-dw-dphy.c
-> new file mode 100644
-> index 000000000000..2248f690b861
-> --- /dev/null
-> +++ b/drivers/phy/phy-dw-dphy.c
-> @@ -0,0 +1,575 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright © 2025 Amazon.com, Inc. or its affiliates.
-> + * Copyright © 2025 Synopsys, Inc. (www.synopsys.com)
-> + */
-> +#include <linux/bitops.h>
-> +#include <linux/clk.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <linux/phy/phy.h>
-> +#include <linux/phy/phy-mipi-dphy.h>
-> +
-> +#define KHZ (1000)
-> +#define MHZ (KHZ * KHZ)
-> +
-> +enum dw_dphy_reg_fields_cfg1 {
-> +	PHY_SHUTDOWNZ,
-> +	DPHY_RSTZ,
-> +	TEST_CLR,
-> +	TEST_CLK,
-> +	TEST_IN,
-> +	TEST_OUT,
-> +	TEST_EN,
-> +	DW_DPHY_RF_CFG1_MAX
-> +};
-> +
-> +enum dw_dphy_reg_fields_cfg2 {
-> +	EN_CONT_REG_UPDATE,
-> +	TURN_REQUEST_0,
-> +	TURN_DISABLE_0,
-> +	ENABLE_CLK,
-> +	FORCE_TX_STOP_MODE_0,
-> +	FORCE_RX_MODE,
-> +	BASE_DIR_0,
-> +	CFG_CLK_FREQ_RANGE,
-> +	HS_FREQ_RANGE,
-> +	CONT_EN,
-> +	DW_DPHY_RF_CFG2_MAX
-> +};
-> +
-> +static const struct reg_field dw_dphy_v1_2_cfg1[DW_DPHY_RF_CFG1_MAX] = {
-> +	[PHY_SHUTDOWNZ] = REG_FIELD(0x0, 0, 0),
-> +	[DPHY_RSTZ] = REG_FIELD(0x4, 0, 0),
-> +	[TEST_CLR] = REG_FIELD(0x10, 0, 0),
-> +	[TEST_CLK] = REG_FIELD(0x10, 1, 1),
-> +	[TEST_IN] = REG_FIELD(0x14, 0, 7),
-> +	[TEST_OUT] = REG_FIELD(0x14, 8, 15),
-> +	[TEST_EN] = REG_FIELD(0x14, 16, 16),
-> +};
-> +
-> +static const struct reg_field dw_dphy_v1_2_cfg2[DW_DPHY_RF_CFG2_MAX] = {
-> +	[EN_CONT_REG_UPDATE] = REG_FIELD(0x0, 23, 23),
-> +	[TURN_REQUEST_0] = REG_FIELD(0x0, 22, 22),
-> +	[TURN_DISABLE_0] = REG_FIELD(0x0, 21, 21),
-> +	[ENABLE_CLK] = REG_FIELD(0x0, 20, 20),
-> +	[FORCE_TX_STOP_MODE_0] = REG_FIELD(0x0, 19, 19),
-> +	[FORCE_RX_MODE] = REG_FIELD(0x0, 15, 18),
-> +	[BASE_DIR_0] = REG_FIELD(0x0, 14, 14),
-> +	[CFG_CLK_FREQ_RANGE] = REG_FIELD(0x0, 8, 13),
-> +	[HS_FREQ_RANGE] = REG_FIELD(0x0, 1, 7),
-> +	[CONT_EN] = REG_FIELD(0x0, 0, 0),
-> +};
-> +
-> +enum dphy_12bit_interface_addr {
-> +	RX_SYS_0 = 0x01,
-> +	RX_SYS_1 = 0x02,
-> +	RX_SYS_7 = 0x08,
-> +	RX_RX_STARTUP_OVR_0 = 0xe0,
-> +	RX_RX_STARTUP_OVR_1 = 0xe1,
-> +	RX_RX_STARTUP_OVR_2 = 0xe2,
-> +	RX_RX_STARTUP_OVR_3 = 0xe3,
-> +	RX_RX_STARTUP_OVR_4 = 0xe4,
-> +};
-> +
-> +/**
-> + * struct range_dphy_gen3 - frequency range calibration structure
-> + *
-> + * @freq: input freqency to calibration table
-> + * @hsfregrange: corresponding clock to configure DW D-PHY IP
-> + * @osc_freq_target: corresponding clock to configure DW D-PHY IP
-> + *
-> + **/
-> +struct range_dphy_gen3 {
-> +	u32 freq;
-> +	u8 hsfregrange;
-> +	u32 osc_freq_target;
-> +};
-> +
-> +/**
-> + * struct dt_data_dw_dphy - DPHY configuration data structure
-> + * @table: Pointer to array of DPHY Gen3 timing range configurations
-> + * @table_size: Number of entries in the timing range table
-> + * @phy_ops: Pointer to PHY operations structure containing callback functions
-> + *
-> + **/
-> +struct dt_data_dw_dphy {
-> +	struct range_dphy_gen3 *table;
-> +	int table_size;
-> +	const struct phy_ops *phy_ops;
-> +};
-> +
-> +/*
-> + * DW DPHY Gen3 calibration table
-> + *
-> + */
-> +struct range_dphy_gen3 range_gen3[] = {
-> +	{ 80, 0b0000000, 460 },	  { 90, 0b0010000, 460 },
-> +	{ 100, 0b0100000, 460 },  { 110, 0b0110000, 460 },
-> +	{ 120, 0b0000001, 460 },  { 130, 0b0010001, 460 },
-> +	{ 140, 0b0100001, 460 },  { 150, 0b0110001, 460 },
-> +	{ 160, 0b0000010, 460 },  { 170, 0b0010010, 460 },
-> +	{ 180, 0b0100010, 460 },  { 190, 0b0110010, 460 },
-> +	{ 205, 0b0000011, 460 },  { 220, 0b0010011, 460 },
-> +	{ 235, 0b0100011, 460 },  { 250, 0b0110011, 460 },
-> +	{ 275, 0b0000100, 460 },  { 300, 0b0010100, 460 },
-> +	{ 325, 0b0100101, 460 },  { 350, 0b0110101, 460 },
-> +	{ 400, 0b0000101, 460 },  { 450, 0b0010110, 460 },
-> +	{ 500, 0b0100110, 460 },  { 550, 0b0110111, 460 },
-> +	{ 600, 0b0000111, 460 },  { 650, 0b0011000, 460 },
-> +	{ 700, 0b0101000, 460 },  { 750, 0b0111001, 460 },
-> +	{ 800, 0b0001001, 460 },  { 850, 0b0011001, 460 },
-> +	{ 900, 0b0101001, 460 },  { 950, 0b0111010, 460 },
-> +	{ 1000, 0b0001010, 460 }, { 1050, 0b0011010, 460 },
-> +	{ 1110, 0b0101010, 460 }, { 1150, 0b0111011, 460 },
-> +	{ 1200, 0b0001011, 460 }, { 1250, 0b0011011, 460 },
-> +	{ 1300, 0b0101011, 460 }, { 1350, 0b0111100, 460 },
-> +	{ 1400, 0b0001100, 460 }, { 1450, 0b0011100, 460 },
-> +	{ 1500, 0b0101100, 460 }, { 1550, 0b0111101, 285 },
-> +	{ 1600, 0b0001101, 295 }, { 1650, 0b0011101, 304 },
-> +	{ 1700, 0b0101110, 313 }, { 1750, 0b0111110, 322 },
-> +	{ 1800, 0b0001110, 331 }, { 1850, 0b0011110, 341 },
-> +	{ 1900, 0b0101111, 350 }, { 1950, 0b0111111, 359 },
-> +	{ 2000, 0b0001111, 368 }, { 2050, 0b1000000, 377 },
-> +	{ 2100, 0b1000001, 387 }, { 2150, 0b1000010, 396 },
-> +	{ 2200, 0b1000011, 405 }, { 2250, 0b1000100, 414 },
-> +	{ 2300, 0b1000101, 423 }, { 2350, 0b1000110, 432 },
-> +	{ 2400, 0b1000111, 442 }, { 2450, 0b1001000, 451 },
-> +	{ 2500, 0b1001001, 460 }
-> +};
-> +
-> +/**
-> + * struct dw_dphy - DW D-PHY driver private structure
-> + *
-> + * @regmap: pointer to regmap
-> + * @regmap_cfg1: pointer to config1 regmap
-> + * @regmap_cfg2: pointer to config2 regmap
-> + * @rf_cfg1: array of regfields for config1
-> + * @rf_cfg2: array of regfields for config2
-> + * @iomem_cfg1: MMIO address for cfg1 section
-> + * @iomem_cfg2: MMIO address for cfg2 section
-> + * @phy: pointer to the phy data structure
-> + * @hs_clk_rate: high speed clock rate as per image sensor configuration
-> + * @dt_data_dw_dphy: device tree specific data
-> + *
-> + **/
-> +struct dw_dphy {
-> +	struct regmap *regmap_cfg1;
-> +	struct regmap *regmap_cfg2;
-> +	struct regmap_field *rf_cfg1[DW_DPHY_RF_CFG1_MAX];
-> +	struct regmap_field *rf_cfg2[DW_DPHY_RF_CFG2_MAX];
-> +	void __iomem *iomem_cfg1;
-> +	void __iomem *iomem_cfg2;
-> +	struct phy *phy;
-> +	struct device *dev;
-> +	unsigned long hs_clk_rate;
-> +	struct dt_data_dw_dphy *dt_data;
-> +};
-> +
-> +/**
-> + * dw_dphy_te_write - write register into test enable interface
-> + *
-> + * @dphy: pointer to the dw_dphy private data structure
-> + * @addr: 12 bit TE address register (16 bit container)
-> + * @data: 8 bit data to be written to TE register
-> + *
-> + **/
-> +static void dw_dphy_te_write(struct dw_dphy *dphy, u16 addr, u8 data)
-> +{
-> +	/* For writing the 4-bit testcode MSBs */
-> +
-> +	/* Ensure that testclk and testen is set to low */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
-> +	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
-> +
-> +	/* Set testen to high */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_EN], 1);
-> +
-> +	/* Set testclk to high */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
-> +
-> +	/* Place 0x00 in testdin */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_IN], 0);
-> +
-> +	/*
-> +	 * Set testclk to low (with the falling edge on testclk, the testdin signal
-> +	 * content is latched internally)
-> +	 */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
-> +
-> +	/* Set testen to low */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
-> +
-> +	/* Place the 8-bit word corresponding to the testcode MSBs in testdin */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_IN], (addr >> 8));
-> +
-> +	/* Set testclk to high */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
-> +
-> +	/* For writing the 8-bit testcode LSBs */
-> +
-> +	/* Set testclk to low */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
-> +
-> +	/* Set testen to high */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_EN], 1);
-> +
-> +	/* Set testclk to high */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
-> +
-> +	/* Place the 8-bit word test data in testdin */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_IN], (addr & 0xff));
-> +
-> +	/*
-> +	 * Set testclk to low (with the falling edge on testclk, the testdin signal
-> +	 * content is latched internally)
-> +	 */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
-> +
-> +	/* Set testen to low */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
-> +
-> +	/* For writing the data */
-> +
-> +	/* Place the 8-bit word corresponding to the page offset in testdin */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_IN], data);
-> +
-> +	/* Set testclk to high (test data is programmed internally) */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
-> +}
-> +
-> +/**
-> + * dw_dphy_te_read - read register from test enable interface
-> + *
-> + * @dphy: pointer to the dw_dphy private data structure
-> + * @addr: 12 bit TE address register (16 bit container)
-> + * @returns: 8 bit data from TE register
-> + **/
-> +static u8 dw_dphy_te_read(struct dw_dphy *dphy, u16 addr)
-> +{
-> +	u32 data;
-> +
-> +	/* For writing the 4-bit testcode MSBs */
-> +
-> +	/* Ensure that testclk and testen is set to low */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
-> +	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
-> +
-> +	/* Set testen to high */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_EN], 1);
-> +
-> +	/* Set testclk to high */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
-> +
-> +	/* Place 0x00 in testdin */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_IN], 0);
-> +
-> +	/*
-> +	 * Set testclk to low (with the falling edge on testclk, the testdin signal
-> +	 * content is latched internally)
-> +	 */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
-> +
-> +	/* Set testen to low */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
-> +
-> +	/* Place the 8-bit word corresponding to the testcode MSBs in testdin */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_IN], (addr >> 8));
-> +
-> +	/* Set testclk to high */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
-> +
-> +	/* For writing the 8-bit testcode LSBs */
-> +
-> +	/* Set testclk to low */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
-> +
-> +	/* Set testen to high */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_EN], 1);
-> +
-> +	/* Set testclk to high */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
-> +
-> +	/* Place the 8-bit word test data in testdin */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_IN], (addr & 0xff));
-> +
-> +	/*
-> +	 * Set testclk to low (with the falling edge on testclk, the testdin signal
-> +	 * content is latched internally)
-> +	 */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
-> +
-> +	/* Set testen to low */
-> +	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
-> +
-> +	regmap_field_read(dphy->rf_cfg1[TEST_OUT], &data);
-> +
-> +	return (u8)data;
-> +}
-> +
-> +/**
-> + * dw_dphy_configure - configure the D-PHY
-> + *
-> + * @phy: pointer to the phy data structure
-> + * @opts: pointer to the phy configuration options
-> + * @returns 0 if success else appropriate error code
-> + *
-> + **/
-> +static int dw_dphy_configure(struct phy *phy, union phy_configure_opts *opts)
-> +{
-> +	struct dw_dphy *dphy = phy_get_drvdata(phy);
-> +
-> +	dphy->hs_clk_rate = opts->mipi_dphy.hs_clk_rate;
-> +	dev_dbg(dphy->dev, "hs_clk_rate=%ld\n", dphy->hs_clk_rate);
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * dw_dphy_power_on_1p2 - power on the DPHY version 1.2
-> + *
-> + * @phy: pointer to the phy data structure
-> + * @returns 0 if success else appropriate error code
-> + *
-> + **/
-> +static int dw_dphy_power_on_1p2(struct phy *phy)
-> +{
-> +	struct dw_dphy *dphy = phy_get_drvdata(phy);
-> +
-> +	uint8_t counter_for_des_en_config_if_rw = 0x1;
-> +	u8 range = 0;
-> +
-> +	for (range = 0;
-> +	     (range < dphy->dt_data->table_size - 1) &&
-> +	     ((dphy->hs_clk_rate) > dphy->dt_data->table[range].freq);
-> +	     range++)
-> +		;
-> +
-> +	/* in case requested hs_clk_rate is out of range, return -EINVAL */
-> +	if (range >= dphy->dt_data->table_size)
-> +		return -EINVAL;
-> +
-> +	dev_dbg(dphy->dev, "12bit: PHY GEN 3: Freq: %ld %x\n", dphy->hs_clk_rate,
-> +		 range_gen3[range].hsfregrange);
-> +
-> +	regmap_field_write(dphy->rf_cfg1[DPHY_RSTZ], 0);
-> +	regmap_field_write(dphy->rf_cfg1[PHY_SHUTDOWNZ], 0);
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLR], 0);
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLR], 1);
-> +	regmap_field_write(dphy->rf_cfg1[TEST_CLR], 0);
-> +	regmap_field_write(dphy->rf_cfg2[CFG_CLK_FREQ_RANGE], 0x28);
-> +	dw_dphy_te_write(dphy, RX_SYS_1,
-> +			 dphy->dt_data->table[range].hsfregrange);
-> +	dw_dphy_te_write(dphy, RX_SYS_0, 0x20);
-> +	dw_dphy_te_write(dphy, RX_RX_STARTUP_OVR_2,
-> +			 (u8)dphy->dt_data->table[range].osc_freq_target);
-> +	dw_dphy_te_write(dphy, RX_RX_STARTUP_OVR_3,
-> +			 (u8)(dphy->dt_data->table[range].osc_freq_target >>
-> +			      8));
-> +	dw_dphy_te_write(dphy, 0xe4,
-> +			 (counter_for_des_en_config_if_rw << 4) | 0b1);
-> +
-> +	dw_dphy_te_write(dphy, RX_RX_STARTUP_OVR_1, 0x01);
-> +	dw_dphy_te_write(dphy, RX_RX_STARTUP_OVR_0, 0x80);
-> +
-> +	regmap_field_write(dphy->rf_cfg2[BASE_DIR_0], 1);
-> +	regmap_field_write(dphy->rf_cfg2[ENABLE_CLK], 1);
-> +	regmap_field_write(dphy->rf_cfg2[FORCE_RX_MODE], 0x0);
-> +
-> +	regmap_field_write(dphy->rf_cfg1[PHY_SHUTDOWNZ], 1);
-> +	regmap_field_write(dphy->rf_cfg1[DPHY_RSTZ], 1);
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * dw_dphy_power_off - power off the DPHY
-> + *
-> + * @phy: pointer to the phy data structure
-> + * @returns 0 if success else appropriate error code
-> + *
-> + **/
-> +static int dw_dphy_power_off(struct phy *phy)
-> +{
-> +	struct dw_dphy *dphy = phy_get_drvdata(phy);
-> +
-> +	regmap_field_write(dphy->rf_cfg1[DPHY_RSTZ], 0);
-> +	regmap_field_write(dphy->rf_cfg1[PHY_SHUTDOWNZ], 0);
-> +	return 0;
-> +}
-> +
-> +/**
-> + * dw_dphy_ops_1p2 - PHY operations for DWC DPHY v1.2
-> + * @configure: Configures DPHY timing and operation parameters
-> + * @power_on: Powers on the DPHY using v1.2 specific sequence
-> + * @power_off: Powers off the DPHY
-> + *
-> + **/
-> +static const struct phy_ops dw_dphy_ops_1p2 = {
-> +	.configure = dw_dphy_configure,
-> +	.power_on = dw_dphy_power_on_1p2,
-> +	.power_off = dw_dphy_power_off,
-> +};
-> +
-> +/**
-> + * dw_dphy_1p2 - DWC DPHY v1.2 configuration instance
-> + * @table: Points to range_gen3 timing parameters table
-> + * @table_size: Size of range_gen3 table calculated at compile time
-> + * @phy_ops: Points to v1.2 specific PHY operations structure
-> + *
-> + **/
-> +struct dt_data_dw_dphy dw_dphy_1p2 = {
-> +	.table = range_gen3,
-> +	.table_size = ARRAY_SIZE(range_gen3),
-> +	.phy_ops = &dw_dphy_ops_1p2,
-> +};
-> +
-> +/**
-> + * dw_dphy_regmap_cfg1 - Register map configuration for DW DPHY
-> + * @reg_bits: Width of register address in bits (32)
-> + * @val_bits: Width of register value in bits (32)
-> + * @reg_stride: Number of bytes between registers (4)
-> + * @name: Name identifier for this register map
-> + * @fast_io: Flag to indicate fast I/O operations are supported
-> + *
-> + **/
-> +static const struct regmap_config dw_dphy_regmap_cfg1 = {
-> +	.reg_bits = 32,
-> +	.val_bits = 32,
-> +	.reg_stride = 4,
-> +	.name = "dw-dhpy-cfg1",
-> +	.fast_io = true,
-> +};
-> +
-> +/**
-> + * dw_dphy_regmap_cfg2 - Register map configuration for DW DPHY
-> + * @reg_bits: Width of register address in bits (32)
-> + * @val_bits: Width of register value in bits (32)
-> + * @reg_stride: Number of bytes between registers (4)
-> + * @name: Name identifier for this register map
-> + * @fast_io: Flag to indicate fast I/O operations are supported
-> + *
-> + **/
-> +static const struct regmap_config dw_dphy_regmap_cfg2 = {
-> +	.reg_bits = 32,
-> +	.val_bits = 32,
-> +	.reg_stride = 4,
-> +	.name = "dw-dhpy-cfg2",
-> +	.fast_io = true,
-> +};
-> +
-> +/**
-> + * dw_dphy_probe - Probe and initialize DW DPHY device
-> + * @pdev: Platform device pointer
-> + * Return: 0 on success, negative error code on failure
-> + *
-> + **/
-> +static int dw_dphy_probe(struct platform_device *pdev)
-> +{
-> +	struct dw_dphy *dphy;
-> +	struct resource *res;
-> +	struct device *dev = &pdev->dev;
-> +	struct phy_provider *phy_provider;
-> +	int ret;
-> +
-> +	dphy = devm_kzalloc(&pdev->dev, sizeof(*dphy), GFP_KERNEL);
-> +	if (!dphy)
-> +		return -ENOMEM;
-> +
-> +	dphy->dt_data =
-> +		(struct dt_data_dw_dphy *)of_device_get_match_data(&pdev->dev);
-> +	dev_set_drvdata(&pdev->dev, dphy);
-> +	dphy->dev = &pdev->dev;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	dphy->iomem_cfg1 = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(dphy->iomem_cfg1))
-> +		return PTR_ERR(dphy->iomem_cfg1);
-> +
-> +	dphy->regmap_cfg1 =
-> +		devm_regmap_init_mmio(dev, dphy->iomem_cfg1, &dw_dphy_regmap_cfg1);
-> +	if (IS_ERR(dphy->regmap_cfg1))
-> +		return PTR_ERR(dphy->regmap_cfg1);
-> +
-> +	ret = devm_regmap_field_bulk_alloc(dev, dphy->regmap_cfg1, dphy->rf_cfg1,
-> +					   dw_dphy_v1_2_cfg1, DW_DPHY_RF_CFG1_MAX);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Could not alloc RF\n");
-> +		return ret;
-> +	}
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +	dphy->iomem_cfg2 = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(dphy->iomem_cfg2))
-> +		return PTR_ERR(dphy->iomem_cfg2);
-> +
-> +	dphy->regmap_cfg2 = devm_regmap_init_mmio(dev, dphy->iomem_cfg2,
-> +						 &dw_dphy_regmap_cfg2);
-> +	if (IS_ERR(dphy->regmap_cfg2))
-> +		return PTR_ERR(dphy->regmap_cfg2);
-> +
-> +	ret = devm_regmap_field_bulk_alloc(dev, dphy->regmap_cfg2, dphy->rf_cfg2,
-> +					   dw_dphy_v1_2_cfg2, DW_DPHY_RF_CFG2_MAX);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Could not alloc RF\n");
-> +		return ret;
-> +	}
-> +
-> +	dphy->phy = devm_phy_create(&pdev->dev, NULL, dphy->dt_data->phy_ops);
-> +	if (IS_ERR(dphy->phy)) {
-> +		dev_err(dev, "failed to create PHY\n");
-> +		return PTR_ERR(dphy->phy);
-> +	}
-> +
-> +	phy_set_drvdata(dphy->phy, dphy);
-> +	phy_provider =
-> +		devm_of_phy_provider_register(&pdev->dev, of_phy_simple_xlate);
-> +
-> +	return PTR_ERR_OR_ZERO(phy_provider);
-> +}
-> +
-> +/**
-> + * dw_dphy_of_match - Device tree match table for DW DPHY
-> + * @compatible: Compatible string to match device tree node
-> + * @data: Pointer to configuration data for matched device
-> + *
-> + * Table of compatible strings and associated configuration data
-> + * for supported DW DPHY variants.
-> + * Currently supports:
-> + * - DW DPHY v1.2 ("snps,dw-dphy-1p2")
-> + *
-> + **/
-> +static const struct of_device_id dw_dphy_of_match[] = {
-> +	{ .compatible = "snps,dw-dphy-1p2", .data = &dw_dphy_1p2 },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, dw_dphy_of_match);
-> +
-> +/**
-> + * dw_dphy_platform_driver - Platform driver structure for DW DPHY
-> + * @probe: Pointer to probe function called on device discovery
-> + * @driver: Core driver structure containing:
-> + *         - name: Driver name used for matching and debugging
-> + *         - of_match_table: Table of compatible device tree matches
-> + *
-> + **/
-> +static struct platform_driver dw_dphy_platform_driver = {
-> +	.probe		= dw_dphy_probe,
-> +	.driver		= {
-> +		.name		= "dw-dphy",
-> +		.of_match_table	= dw_dphy_of_match,
-> +	},
-> +};
-> +module_platform_driver(dw_dphy_platform_driver);
-> +
-> +MODULE_AUTHOR("Karthik Poduval <kpoduval@lab126.com>");
-> +MODULE_AUTHOR("Jason Xiong <jyxiong@amazon.com>");
-> +MODULE_AUTHOR("Miguel Lopes <miguel.lopes@synopsys.com>");
-> +MODULE_DESCRIPTION("DW D-PHY RX Driver");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.43.0
+> On 09/07/2025 16:53, Chen-Yu Tsai wrote:
+> > From: Chen-Yu Tsai <wens@csie.org>
+> >
+> > Allwinner A523 family has a second power controller, named PCK-600 in
+> > the datasheets and BSP. It is likely based on ARM's PCK-600 hardware
+> > block, with some additional delay controls. The only documentation for
+> > this hardware is the BSP driver. The standard registers defined in ARM'=
+s
+> > Power Policy Unit Architecture Specification line up. Some extra delay
+> > controls are found in the reserved range of registers.
+> >
+> > Add a driver for this power controller. Delay control register values
+> > and power domain names are from the BSP driver.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > ---
+> >   drivers/pmdomain/sunxi/Kconfig         |   8 +
+> >   drivers/pmdomain/sunxi/Makefile        |   1 +
+> >   drivers/pmdomain/sunxi/sun55i-pck600.c | 225 ++++++++++++++++++++++++=
++
+> >   3 files changed, 234 insertions(+)
+> >   create mode 100644 drivers/pmdomain/sunxi/sun55i-pck600.c
+> >
+> > diff --git a/drivers/pmdomain/sunxi/Kconfig b/drivers/pmdomain/sunxi/Kc=
+onfig
+> > index 43eecb3ea981..3e2b77cd9a2b 100644
+> > --- a/drivers/pmdomain/sunxi/Kconfig
+> > +++ b/drivers/pmdomain/sunxi/Kconfig
+> > @@ -18,3 +18,11 @@ config SUN50I_H6_PRCM_PPU
+> >         Say y to enable the Allwinner H6/H616 PRCM power domain driver.
+> >         This is required to enable the Mali GPU in the H616 SoC, it is
+> >         optional for the H6.
+> > +
+> > +config SUN55I_PCK600
+> > +     bool "Allwinner A523 PCK-600 power domain driver"
+>
+> Any particular reason this is not tristate? The driver advertises itself
+> as a platform driver module?
+
+Cargo-culted from the D1 PPU driver. So, no particular reason.
+
+> > +     depends on PM
+> > +     select PM_GENERIC_DOMAINS
+> > +     help
+> > +       Say y to enable the PCK-600 power domain driver. This saves pow=
+er
+> > +       when certain peripherals, such as the video engine, are idle.
+>
+> If I understand correctly, this driver is *required* to make use of
+> those peripherals, and the video engine is not even the most prominent
+> user. So regardless of the reset state of the power domain, I think the
+> wording should be changed, to make sure distributions activate this
+> option. At the moment it sounds highly optional. I wonder if we should
+> use "default y if ARCH_SUNXI" even.
+
+Makes sense. Though this was also cargo-culted from the D1 PPU. So I
+guess I should fix both.
+
+> > diff --git a/drivers/pmdomain/sunxi/Makefile b/drivers/pmdomain/sunxi/M=
+akefile
+> > index c1343e123759..e344b232fc9f 100644
+> > --- a/drivers/pmdomain/sunxi/Makefile
+> > +++ b/drivers/pmdomain/sunxi/Makefile
+> > @@ -1,3 +1,4 @@
+> >   # SPDX-License-Identifier: GPL-2.0-only
+> >   obj-$(CONFIG_SUN20I_PPU)            +=3D sun20i-ppu.o
+> >   obj-$(CONFIG_SUN50I_H6_PRCM_PPU)    +=3D sun50i-h6-prcm-ppu.o
+> > +obj-$(CONFIG_SUN55I_PCK600)          +=3D sun55i-pck600.o
+> > diff --git a/drivers/pmdomain/sunxi/sun55i-pck600.c b/drivers/pmdomain/=
+sunxi/sun55i-pck600.c
+> > new file mode 100644
+> > index 000000000000..7248f6113665
+> > --- /dev/null
+> > +++ b/drivers/pmdomain/sunxi/sun55i-pck600.c
+> > @@ -0,0 +1,225 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Allwinner PCK-600 power domain support
+>
+> Can you please mention here that this device is based on the Arm PCK-600
+> IP, as done in the commit message. And say that this is a minimal
+> implementaton, just supporting the off/on states.
+>
+> Maybe also mention the relevant documentation: the "ARM CoreLink PCK=E2=
+=80=91600
+> Power Control Kit" TRM and the "Arm Power Policy Unit" architecture
+> specification (DEN0051E).
+
+Will do.
+
+> > + *
+> > + * Copyright (c) 2025 Chen-Yu Tsai <wens@csie.org>
+> > + */
+> > +
+> > +#include <linux/bitfield.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/container_of.h>
+> > +#include <linux/device.h>
+> > +#include <linux/dev_printk.h>
+> > +#include <linux/err.h>
+> > +#include <linux/io.h>
+> > +#include <linux/iopoll.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pm_domain.h>
+> > +#include <linux/reset.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/string_choices.h>
+> > +
+> > +#define PPU_PWPR    0x0
+> > +#define PPU_PWSR    0x8
+> > +#define      PPU_DCDR0   0x170
+>
+> white space issue?
+>
+> > +#define PPU_DCDR1   0x174
+> > +
+> > +#define PPU_PWSR_PWR_STATUS  GENMASK(3, 0)
+>
+> Would just PPU_PWR_STATUS be a better name, since it's used by both the
+> PWPR and PWSR registers?
+>
+> > +#define PPU_POWER_MODE_ON    0x8
+> > +#define PPU_POWER_MODE_OFF   0x0
+> > +
+> > +#define PPU_REG_SIZE 0x1000
+> > +
+> > +struct sunxi_pck600_desc {
+> > +     const char * const *pd_names;
+> > +     unsigned int num_domains;
+> > +     u32 logic_power_switch0_delay_offset;
+> > +     u32 logic_power_switch1_delay_offset;
+> > +     u32 off2on_delay_offset;
+> > +     u32 device_ctrl0_delay;
+> > +     u32 device_ctrl1_delay;
+> > +     u32 logic_power_switch0_delay;
+> > +     u32 logic_power_switch1_delay;
+> > +     u32 off2on_delay;
+>
+> Is there any indication that those parameters are different between
+> different SoCs? I appreciate the idea of making this future-proof, but
+> this might be a bit premature, if all SoCs use the same values?
+
+It's hard to tell since the BSP driver only covers the A523. I'd just
+keep this the way it is, since it makes it easier to generalize this
+to cover PCK-600 in other platforms, if such a need ever presents itself.
+
+> > +};
+> > +
+> > +struct sunxi_pck600_pd {
+> > +     struct generic_pm_domain genpd;
+> > +     struct sunxi_pck600 *pck;
+> > +     void __iomem *base;
+> > +};
+> > +
+> > +struct sunxi_pck600 {
+> > +     struct device *dev;
+> > +     struct genpd_onecell_data genpd_data;
+> > +     struct sunxi_pck600_pd pds[];
+> > +};
+> > +
+> > +#define to_sunxi_pd(gpd) container_of(gpd, struct sunxi_pck600_pd, gen=
+pd)
+> > +
+> > +static int sunxi_pck600_pd_set_power(struct sunxi_pck600_pd *pd, bool =
+on)
+> > +{
+> > +     struct sunxi_pck600 *pck =3D pd->pck;
+> > +     struct generic_pm_domain *genpd =3D &pd->genpd;
+> > +     int ret;
+> > +     u32 val, reg;
+> > +
+> > +     val =3D on ? PPU_POWER_MODE_ON : PPU_POWER_MODE_OFF;
+> > +
+> > +     reg =3D readl(pd->base + PPU_PWPR);
+> > +     FIELD_MODIFY(PPU_PWSR_PWR_STATUS, &reg, val);
+> > +     writel(reg, pd->base + PPU_PWPR);
+>
+> Don't we need a lock here, or is this covered by the power domain framewo=
+rk?
+
+AFAICT genpd has a lock for each power domain. Since each power domain has
+its own set of registers, I think we're good here.
+
+
+Thanks
+ChenYu
+
+> Cheers,
+> Andre
+>
+> > +
+> > +     /* push write out to hardware */
+> > +     reg =3D readl(pd->base + PPU_PWPR);
+> > +
+> > +     ret =3D readl_poll_timeout_atomic(pd->base + PPU_PWSR, reg,
+> > +                                     FIELD_GET(PPU_PWSR_PWR_STATUS, re=
+g) =3D=3D val,
+> > +                                     0, 10000);
+> > +     if (ret)
+> > +             dev_err(pck->dev, "failed to turn domain \"%s\" %s: %d\n"=
+,
+> > +                     genpd->name, str_on_off(on), ret);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +static int sunxi_pck600_power_on(struct generic_pm_domain *domain)
+> > +{
+> > +     struct sunxi_pck600_pd *pd =3D to_sunxi_pd(domain);
+> > +
+> > +     return sunxi_pck600_pd_set_power(pd, true);
+> > +}
+> > +
+> > +static int sunxi_pck600_power_off(struct generic_pm_domain *domain)
+> > +{
+> > +     struct sunxi_pck600_pd *pd =3D to_sunxi_pd(domain);
+> > +
+> > +     return sunxi_pck600_pd_set_power(pd, false);
+> > +}
+> > +
+> > +static void sunxi_pck600_pd_setup(struct sunxi_pck600_pd *pd,
+> > +                               const struct sunxi_pck600_desc *desc)
+> > +{
+> > +     writel(desc->device_ctrl0_delay, pd->base + PPU_DCDR0);
+> > +     writel(desc->device_ctrl1_delay, pd->base + PPU_DCDR1);
+> > +     writel(desc->logic_power_switch0_delay,
+> > +            pd->base + desc->logic_power_switch0_delay_offset);
+> > +     writel(desc->logic_power_switch1_delay,
+> > +            pd->base + desc->logic_power_switch1_delay_offset);
+> > +     writel(desc->off2on_delay, pd->base + desc->off2on_delay_offset);
+> > +}
+> > +
+> > +static int sunxi_pck600_probe(struct platform_device *pdev)
+> > +{
+> > +     struct device *dev =3D &pdev->dev;
+> > +     const struct sunxi_pck600_desc *desc;
+> > +     struct genpd_onecell_data *genpds;
+> > +     struct sunxi_pck600 *pck;
+> > +     struct reset_control *rst;
+> > +     struct clk *clk;
+> > +     void __iomem *base;
+> > +     int i, ret;
+> > +
+> > +     desc =3D of_device_get_match_data(dev);
+> > +
+> > +     pck =3D devm_kzalloc(dev, struct_size(pck, pds, desc->num_domains=
+), GFP_KERNEL);
+> > +     if (!pck)
+> > +             return -ENOMEM;
+> > +
+> > +     pck->dev =3D &pdev->dev;
+> > +     platform_set_drvdata(pdev, pck);
+> > +
+> > +     genpds =3D &pck->genpd_data;
+> > +     genpds->num_domains =3D desc->num_domains;
+> > +     genpds->domains =3D devm_kcalloc(dev, desc->num_domains,
+> > +                                    sizeof(*genpds->domains), GFP_KERN=
+EL);
+> > +     if (!genpds->domains)
+> > +             return -ENOMEM;
+> > +
+> > +     base =3D devm_platform_ioremap_resource(pdev, 0);
+> > +     if (IS_ERR(base))
+> > +             return PTR_ERR(base);
+> > +
+> > +     rst =3D devm_reset_control_get_exclusive_released(dev, NULL);
+> > +     if (IS_ERR(rst))
+> > +             return dev_err_probe(dev, PTR_ERR(rst), "failed to get re=
+set control\n");
+> > +
+> > +     clk =3D devm_clk_get_enabled(dev, NULL);
+> > +     if (IS_ERR(clk))
+> > +             return dev_err_probe(dev, PTR_ERR(clk), "failed to get cl=
+ock\n");
+> > +
+> > +     for (i =3D 0; i < desc->num_domains; i++) {
+> > +             struct sunxi_pck600_pd *pd =3D &pck->pds[i];
+> > +
+> > +             pd->genpd.name =3D desc->pd_names[i];
+> > +             pd->genpd.power_off =3D sunxi_pck600_power_off;
+> > +             pd->genpd.power_on =3D sunxi_pck600_power_on;
+> > +             pd->base =3D base + PPU_REG_SIZE * i;
+> > +
+> > +             sunxi_pck600_pd_setup(pd, desc);
+> > +             ret =3D pm_genpd_init(&pd->genpd, NULL, false);
+> > +             if (ret) {
+> > +                     dev_err_probe(dev, ret, "failed to initialize pow=
+er domain\n");
+> > +                     goto err_remove_pds;
+> > +             }
+> > +
+> > +             genpds->domains[i] =3D &pd->genpd;
+> > +     }
+> > +
+> > +     ret =3D of_genpd_add_provider_onecell(dev_of_node(dev), genpds);
+> > +     if (ret) {
+> > +             dev_err_probe(dev, ret, "failed to add PD provider\n");
+> > +             goto err_remove_pds;
+> > +     }
+> > +
+> > +     return 0;
+> > +
+> > +err_remove_pds:
+> > +     for (i--; i >=3D 0; i--)
+> > +             pm_genpd_remove(genpds->domains[i]);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +static const char * const sun55i_a523_pck600_pd_names[] =3D {
+> > +     "VE", "GPU", "VI", "VO0", "VO1", "DE", "NAND", "PCIE"
+> > +};
+> > +
+> > +static const struct sunxi_pck600_desc sun55i_a523_pck600_desc =3D {
+> > +     .pd_names =3D sun55i_a523_pck600_pd_names,
+> > +     .num_domains =3D ARRAY_SIZE(sun55i_a523_pck600_pd_names),
+> > +     .logic_power_switch0_delay_offset =3D 0xc00,
+> > +     .logic_power_switch1_delay_offset =3D 0xc04,
+> > +     .off2on_delay_offset =3D 0xc10,
+> > +     .device_ctrl0_delay =3D 0xffffff,
+> > +     .device_ctrl1_delay =3D 0xffff,
+> > +     .logic_power_switch0_delay =3D 0x8080808,
+> > +     .logic_power_switch1_delay =3D 0x808,
+> > +     .off2on_delay =3D 0x8
+> > +};
+> > +
+> > +static const struct of_device_id sunxi_pck600_of_match[] =3D {
+> > +     {
+> > +             .compatible     =3D "allwinner,sun55i-a523-pck-600",
+> > +             .data           =3D &sun55i_a523_pck600_desc,
+> > +     },
+> > +     {}
+> > +};
+> > +MODULE_DEVICE_TABLE(of, sunxi_pck600_of_match);
+> > +
+> > +static struct platform_driver sunxi_pck600_driver =3D {
+> > +     .probe =3D sunxi_pck600_probe,
+> > +     .driver =3D {
+> > +             .name   =3D "sunxi-pck-600",
+> > +             .of_match_table =3D sunxi_pck600_of_match,
+> > +             /* Power domains cannot be removed if in use. */
+> > +             .suppress_bind_attrs =3D true,
+> > +     },
+> > +};
+> > +module_platform_driver(sunxi_pck600_driver);
+> > +
+> > +MODULE_DESCRIPTION("Allwinner PCK-600 power domain driver");
+> > +MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
+> > +MODULE_LICENSE("GPL");
+>
 >
 
