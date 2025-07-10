@@ -1,370 +1,214 @@
-Return-Path: <linux-kernel+bounces-726228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2EFB009C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:19:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A4EB009C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 145497610C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:18:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC634A31F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF4E2F19B8;
-	Thu, 10 Jul 2025 17:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76D82EFD81;
+	Thu, 10 Jul 2025 17:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AbClu1Kc"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2079.outbound.protection.outlook.com [40.107.244.79])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kftSpZ9Y"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045322F19B3;
-	Thu, 10 Jul 2025 17:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752167893; cv=fail; b=igv+cAJl5yl1Oo91v/RrxnXQCqDmGq4DJ1uSegkZgB8bk70WzCJG49i+8nWOMAwviykzvnXZsxkulEvcsHhNoZdpcb5Bl2q+Mi/6Fa9lawXxaeo7C0Ks1ME3f2zf9uLdJjfknDFiroUfAtC7FSWspm0OV/NjYm4XMxG09rzTAdM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752167893; c=relaxed/simple;
-	bh=dMsC3i6V0gWuV7YWdK9jAPL74ZChVb+p7niD5XsUrKM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ybgo5aSFDn3WqsTvEcWgMKx1cti21HXyp9IW5YDCncUqYLOYym7jZaKsG1n08w/McDS0SVgOgZVfv76RHkO8aCcWZVnhLsbCsmkIqXm8nEL+E4ZzcDzFLWhKzvt2z0nhptbZJBXqdDjqy/G+s3ATpSEZ0MDNUnXl4KV/u5mOIIY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AbClu1Kc; arc=fail smtp.client-ip=40.107.244.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J5NaWyUb5LSqUqKt4xkCggtwOUI/KGzSOVV0jU8vBlxhrJAf3uXINI2hQPTPsl9r7exg24c3P1RZ+Ye9P+XsUsUE7XxdZ+v7kAMGo2RHw4BMecT1YIsELgUyj7o/3gIZn5JFPpCmC02K0zwMPLYQymTf5QCJlPB+GvNMKbbf+Tw/PZQ2l8KoZUT32+pmBVnnbwEYQPnVN52MD7NDVz0w3++OHSZnQM+4MnwgG28uGjep06PvQ+5efFDxrOkpIOeLe47j1RwfmcR0vDJ5snWOzKi0SirEwPj4T42DfeXg1hHuXGKX6buJl2U0VtlMQH358JR6RWo/c/wkrn4nhNqRYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D1P99AnkPN8ifVdABFqhQegfd9GPMuB2TA74NLuutgI=;
- b=fnLOU0xabhvLqub/Kb1DMaLOXoHmWXjgEGneJoKFqbnW2mzNKZTfy63zrqMwvd5XG42Qnti3VYUHRqtGC+7BoAj41Ta1ro29s5jxEzhMSXzBT81mPYwKvJWSrNVeI5mowu1/YPbPrh3NZPfgIp5si7siIJA+eL8w/qSHma4Wt2ISNWkLPyZAjYuV+K3hE9CJgtaJ1unGK+aT3wX8NRJkhISDbNtU2IKu9/4S3fNvBzXECDo3n2SVVkEaUFuxUW7xxfLdepwyd5N0vB4E/m4F/v24TUJoYqa0JspuHyVAMNAisVxaZOOJ4ybQvSxBhBTKcUiofhNOguccVkrhMRcwFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D1P99AnkPN8ifVdABFqhQegfd9GPMuB2TA74NLuutgI=;
- b=AbClu1KcS/3fi8xJwuWP9ygbZ3MVaMSqtpjhpmuC5RNIsNzR+0yBeXde73vU7SUTSBJ7F3oNE6Cp3VWwPTMBB4PKoO4qdPv7g3D8qAENlSFefppNCBA+vpwaydzul9UQGIJnb5LDYPIVXfPb1W/HyJDMVPiKQTjqurg9yGbOtlI=
-Received: from BYAPR02CA0056.namprd02.prod.outlook.com (2603:10b6:a03:54::33)
- by MN2PR12MB4438.namprd12.prod.outlook.com (2603:10b6:208:267::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Thu, 10 Jul
- 2025 17:18:03 +0000
-Received: from SJ5PEPF000001CD.namprd05.prod.outlook.com
- (2603:10b6:a03:54:cafe::63) by BYAPR02CA0056.outlook.office365.com
- (2603:10b6:a03:54::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22 via Frontend Transport; Thu,
- 10 Jul 2025 17:18:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001CD.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Thu, 10 Jul 2025 17:18:01 +0000
-Received: from bmoger-ubuntu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Jul
- 2025 12:17:57 -0500
-From: Babu Moger <babu.moger@amd.com>
-To: <corbet@lwn.net>, <tony.luck@intel.com>, <reinette.chatre@intel.com>,
-	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
-CC: <x86@kernel.org>, <hpa@zytor.com>, <akpm@linux-foundation.org>,
-	<paulmck@kernel.org>, <rostedt@goodmis.org>, <Neeraj.Upadhyay@amd.com>,
-	<david@redhat.com>, <arnd@arndb.de>, <fvdl@google.com>, <seanjc@google.com>,
-	<thomas.lendacky@amd.com>, <pawan.kumar.gupta@linux.intel.com>,
-	<babu.moger@amd.com>, <yosry.ahmed@linux.dev>, <sohil.mehta@intel.com>,
-	<xin@zytor.com>, <kai.huang@intel.com>, <xiaoyao.li@intel.com>,
-	<peterz@infradead.org>, <me@mixaill.net>, <mario.limonciello@amd.com>,
-	<xin3.li@intel.com>, <ebiggers@google.com>, <ak@linux.intel.com>,
-	<chang.seok.bae@intel.com>, <andrew.cooper3@citrix.com>,
-	<perry.yuan@amd.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 10/10] fs/resctrl: Introduce interface to modify io_alloc Capacity Bit Masks
-Date: Thu, 10 Jul 2025 12:16:24 -0500
-Message-ID: <a6f4ae3a709185e2c0904d53267e99e395a492ed.1752167718.git.babu.moger@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1752167718.git.babu.moger@amd.com>
-References: <cover.1752167718.git.babu.moger@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759B022FDF2
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752167889; cv=none; b=g54SnRvUmDLNbveGOcCMwwWC93GSaP/tAOXgpVHJ1JnTkQqEJIE5KcHxtSCx/CJfODDuvv2R4QqbwQ3vXIIl2ISHq4drL2dJXIkt1zJPoHMYwvWXmn6rZicf2UywlMDwWgWUvy/aLiZWD5VK7LmlL1548ro0xgkkBmSwYy+AZNo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752167889; c=relaxed/simple;
+	bh=AMvH8CbgflCSwtZv4m6a1RA/Wg9jDTGoMyT6/VZgH/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eG8CjAKPS/lUAxtHGzfMGS2ArNt0xLHIyRwHva1uCG7OQvqFFZdbVTfXQmUnEAza+n5pjKaQqGbbLqpUFfCDuW60F6YbBbtWZsi/rhLUeSL6o5g3Ef/6wdhw0dIkugwLdbnakVKjkV/ADd8VRhVWOADxLb+m/GrrQTr9nWwIOG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kftSpZ9Y; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A9FxIs009948
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:18:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Ar7cVymq/jtUHBmvH1VZaUyciNOHi8uWBeFm9Lj+JaM=; b=kftSpZ9YXjb9tP8z
+	JAa7GP/C5N1nGxlH9A8arpDhrAqIcgd0Ga9o0P84DK05+Q7dKtyGNZt6b8HMn2tw
+	2ORX65/2UdoBSPG0ncP6NiYWtDVilajBiYoZ6j+5CahLCPbwt4t8lyz9oZ8rUkB5
+	tmZWZN+HNChoCB6+SRBUW4I1tS2X3FifvuGUeLC2qUMcNERFtPWQ27xtQePftVGY
+	H5SdSLyPMSLonbwuZYQFzVQHI43CrnNINhkcycur23ivtvSTguMNk/IHaQh8e8c+
+	x1KfD1I4AVZIIxD8PhiiccHeNDKBbgGNNU51RDnTtnRF11rxnwvnNfHsIZ5/Uw/3
+	o+Vzeg==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47sm9dwshe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:18:06 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-748e6457567so1829984b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:18:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752167885; x=1752772685;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ar7cVymq/jtUHBmvH1VZaUyciNOHi8uWBeFm9Lj+JaM=;
+        b=fIz5gjvPu2nSbgGnsyPVQoDWlaD/3yrpHAySOjvi/98Gf4HhhXN8DNb2b8SrJYZkso
+         f64pvSXwOd1xXgQIiAlFUX/YVyPU2XCzmclTAb4KF0OPxbZk3Jy1/EAIb3qh41AH1Xd2
+         Lel2AlEzwTj+e8vVuhpyixC1aCqE5C6kTuUchbDj6KPqI+MQrM/vGeS6VMCmLCZELc9v
+         E8f+dRsu+FbnETu6rqkTY42KVN+pavWd86nGOjPryBQO++oGBMVxGwFNQKcbKge0wwN+
+         eVCDsayfJmd1ETJDhumukSgoKcXknAIpd6ffTfj52wxecK5j4uKAlKCOez/kwI1BF4s3
+         OL8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWar+U3e0zRWvZE8CzQAnjo5GfZM/xFVe89ZxT0kY21owhRgKsMi8aJ35WsKC3QR+O7paxrZ/3Xrosjz+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzHqzMtkd4SvZ2+tUG7ossGXvCJmSM8n2RzbIlYrONqf0+JbfP
+	Hwa6knW019tv5szACel1f2W72LsZJjJeyjJOj5y650kPa/o+2LAfopfQku6RrbLkG44Msukk93K
+	Wjivjg3bAAv4hL9Q8TkktOeHfJmlFtghQBAE72oWCRlrFVkS7gWqpmczal8vXmN5SzlQ=
+X-Gm-Gg: ASbGncvQ86upMJ/P/AY6U1tqsFRdmNTuSbY7hVYEIHiNpb4GVAFVIqtRBEoS1LYllk9
+	yRrx0LF/3WhN4noR/vZJD9nU4tRE9ip1qJahszTV0hgN+Rn53rAPwbKID1844N7IoqxCVNMKtON
+	BUokyfPMPVl9xT1gTHO8EBmnPsc6EAyR0kQDgdXtB1Hn/I1oQGtDQbTiiAsrNYubMieohBG74Ek
+	mEmZ3QA0OjPwGsGJVz0for0BETSgt4txssUnBimyNnsNPgn+KKAdn5e6DxIigpRBDuW5GqcbsRI
+	bsdvAs9891JT5UclMuwBtcMBz3rltD3FZfmzBQ7yWuera7J3XAU=
+X-Received: by 2002:a05:6a20:729e:b0:21f:9b24:321b with SMTP id adf61e73a8af0-22fc57e7824mr8500611637.20.1752167884941;
+        Thu, 10 Jul 2025 10:18:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHffsp+s2THEsKwd99/2YsGeT6E/wKdQJkZlm+vr/bjKBhhIbOq/IXrxnXy0oU1VYAbUwh2SA==
+X-Received: by 2002:a05:6a20:729e:b0:21f:9b24:321b with SMTP id adf61e73a8af0-22fc57e7824mr8500573637.20.1752167884443;
+        Thu, 10 Jul 2025 10:18:04 -0700 (PDT)
+Received: from [192.168.29.92] ([49.43.227.1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe72ea8bsm2779997a12.76.2025.07.10.10.17.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 10:18:04 -0700 (PDT)
+Message-ID: <304d71ca-5773-4fa6-aece-50f92b70c77f@oss.qualcomm.com>
+Date: Thu, 10 Jul 2025 22:47:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] bus: mhi: keep device context through suspend cycles
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+        Youssef Samir <quic_yabdulra@quicinc.com>,
+        Matthew Leung <quic_mattleun@quicinc.com>, Yan Zhen <yanzhen@vivo.com>,
+        Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+        Alex Elder <elder@kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Siddartha Mohanadoss <smohanad@codeaurora.org>,
+        Sujeev Dias <sdias@codeaurora.org>,
+        Julia Lawall <julia.lawall@lip6.fr>, John Crispin <john@phrozen.org>,
+        Muna Sinada <quic_msinada@quicinc.com>,
+        Venkateswara Naralasetty <quic_vnaralas@quicinc.com>,
+        Maharaja Kennadyrajan <quic_mkenna@quicinc.com>, mhi@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
+Cc: kernel@collabora.com
+References: <20250630074330.253867-1-usama.anjum@collabora.com>
+ <20250630074330.253867-4-usama.anjum@collabora.com>
+ <b72b3635-1c09-444f-98f5-30fcc219b297@oss.qualcomm.com>
+ <c40f13e8-7420-4046-880d-7c72620fc021@collabora.com>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <c40f13e8-7420-4046-880d-7c72620fc021@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CD:EE_|MN2PR12MB4438:EE_
-X-MS-Office365-Filtering-Correlation-Id: 094daa52-fc69-4e56-a5db-08ddbfd5b9a4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FeL3GvqLfMzfhW85MnlyBttvAc3Z797krvsYi5hA//WmrYSwjJae82+9b9dg?=
- =?us-ascii?Q?6kbV8d1ldkU65Y6OIR+EjaSethfWTVedpQnEVOT6k/K/cHCbB7C4ymgIyzmJ?=
- =?us-ascii?Q?wUZkINbf/iya0nxdVMX2znyztij2cTlODN51zQm6cCQZIsdc/5M2RgA+Eqjn?=
- =?us-ascii?Q?eoCrw1D2LJsSHzpAQcFEWHmxE3B0KXEcbcWf8J4euV15bqJI/Jn953uQmOZo?=
- =?us-ascii?Q?v2jIj7WXZu9W/Z6hlRyUjnlvl7I4+6hnNp77VizG9hLkO53ir1czqOCrb54L?=
- =?us-ascii?Q?KJBbinE0UPQUKYSk58RpgQcQKDcXSy9skSAjTYAjXYrElIDQ1RCBuL7qIMTj?=
- =?us-ascii?Q?FOhnbdhgR3jy5v8zYEd8J9SlKB3BrtBoMwkKPgCGLA29XQEkFzdufKudW5C8?=
- =?us-ascii?Q?xyCcOujLdirB/c+sg9xc2FwD6yiTujr764ToYv+85jqL6dpilaseFbgRl6nT?=
- =?us-ascii?Q?OAiAxBYs/wxhsJcfJg6mmim+rdIs5H3Un0IsatCEXZoZfADogVKU5p8Spmta?=
- =?us-ascii?Q?wWq7V5jexZhzMwkqW0LjrkTaBOMKhe300VEB9i7YazGE9m+wJ64qqwpI/hjv?=
- =?us-ascii?Q?jSzRQuGOw3s8hNvHC5KaPj0+SLpAKZ7950fZdoPTZk/1mC6FK9/DgKi3VBUF?=
- =?us-ascii?Q?n9bWG/z6dCOP3OSWapGLFi3V1L4Pf2c+ABclAauiteHEl73crr2YXf9dSSPf?=
- =?us-ascii?Q?Su7hi93P13JmFMV1TCIILeIWUerW5d0IhupS4XD/T6RYsow7LRwgs4VuogbE?=
- =?us-ascii?Q?bMhP7OrxxwmtbG1wBtJlpfRV4Og/ysLDxBiDDdprIQvRazZ7+D4k9Dh5zMHv?=
- =?us-ascii?Q?KwPJL2LU3tyPeiYk5i5XaOoM1muFCnQytWQgQCn0p1kJcBV5eU2YJChq1NzE?=
- =?us-ascii?Q?tgaCGxRy9ZzAeGijpW3h7pvjm4VU0kYhjkq7MbBKOua0lgZyV4UqjCi0zKiJ?=
- =?us-ascii?Q?SPFnDU5YXW7A+zj6eMh950oKklANLjNuoNZ05Yf0bB4dTnsn0GcHxnvAvwpW?=
- =?us-ascii?Q?qfvjiTp1d62vPXsaBJxRy9Gajr/DHGWkHsDT3Ndfa7CugZ+t5v9ESZDKyXvT?=
- =?us-ascii?Q?PFyC7XAOx7Ipxs8KYnHlHxvz5cOZwGA7QcvO6kdYr5OlnlUCqYa0OXQkMzSQ?=
- =?us-ascii?Q?gGBlEIlfLUJdPf0tiqvuE93qkd9xZIeDflgQbg5jPTTCDSLBGcQTaK+ww/0b?=
- =?us-ascii?Q?LwcMZ/2F+o2rRPeKnia88KlrZB5du6MLj73fZ2QfYkfanOJ2KHpBfVUztRf8?=
- =?us-ascii?Q?/sAvzLKVApC8+VZQAA/2avbT4uh/RSbVHLAbxAJ7Xo7rDyxP7zqTQplF97Lu?=
- =?us-ascii?Q?WweYBQL2+Aw2+GTpNVojriKxny+r91LWOTWhvkWXlARefUe6f/uzLqqTAgIW?=
- =?us-ascii?Q?OlKD4KAbi6SA2DHkBcs2rcfFeTrzeeiQOso1cyHzO06rASmP0aw2dRTn4DPQ?=
- =?us-ascii?Q?NrqSkTIDlbpk/K0DRIfsmgLHdxXD1aQB3ebfKGaBQ21hSLeYeUgsZbT7883g?=
- =?us-ascii?Q?LlPK/zsHs8fxZ2aZbsS55iNqtKZas5SpXBNA?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 17:18:01.8710
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 094daa52-fc69-4e56-a5db-08ddbfd5b9a4
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4438
+X-Proofpoint-GUID: QNTylPatn27AnxSrTKfXbr1whHI3Z9_T
+X-Authority-Analysis: v=2.4 cv=W7k4VQWk c=1 sm=1 tr=0 ts=686ff5ce cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=4nqOr+EkFiuPl9GB/B4vcQ==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=QX4gbG5DAAAA:8 a=zOkQIraDPy1jB-BB_0EA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+ a=AbAUZ8qAyYyZVLSsDulk:22
+X-Proofpoint-ORIG-GUID: QNTylPatn27AnxSrTKfXbr1whHI3Z9_T
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDE0NyBTYWx0ZWRfX/UyKh3MogcaW
+ hvi4ap5jfp9+c0gk4FfD2KL38B07qpGTB2Gk4eh7Cm43jjBXHn5QYm7kCVEs2Vb3ONIbbAxD1ct
+ 0yrw4DbwAFuDVEDAvUt2R2iYaQDgcluI6HAdgZfd6CJ5QJ7LJsJMRjncBw2/bgv/uQS6WPIhr5u
+ wBeMSkVqh7786ftkLQEsGo/tNtpP4WDLb2E0Lfh/b5wrp2ZZhe4VAftFmZpIccJPlc/AE9ETfaA
+ nJqWOwJonxbq1Zh8orasTtZVvphBu0/+ySzM/HDifth5/F0YxT7t63Hy5pJOJ7PQExv8pUo3MW7
+ GjeYrudaLYUn3zP5Wdii9u6PP8kz/9/856DfFrywQ9f2jXUVNSkyi6mheDPhVLL3kmtUMpXl5/+
+ BL5eYzK9HJ0RvUw9i6vLQ43Am6m6+c8ImumoE6gns15asa56AzuVLccE9DLHaGVKeRSGFlBS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_04,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 phishscore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507100147
 
-"io_alloc" feature enables direct insertion of data from I/O devices into
-the cache. By directly caching data from I/O devices rather than first
-storing the I/O data in DRAM, it reduces the demands on DRAM bandwidth and
-reduces latency to the processor consuming the I/O data.
 
-Provide the interface to modify io_alloc CBMs (Capacity Bit Mask) when
-feature is enabled. Update the CBMs for both CDP_DATA and CDP_CODE when CDP
-is enabled.
 
-Signed-off-by: Babu Moger <babu.moger@amd.com>
----
-v7: Updated changelog.
-    Updated CBMs for both CDP_DATA and CDP_CODE when CDP is enabled.
+On 7/10/2025 8:37 PM, Muhammad Usama Anjum wrote:
+> On 7/8/25 3:15 PM, Krishna Chaitanya Chundru wrote:
+>>
+>>
+>> On 6/30/2025 1:13 PM, Muhammad Usama Anjum wrote:
+>>> Don't deinitialize the device context while going into suspend or
+>>> hibernation cycles. Otherwise the resume may fail if at resume time, the
+>>> memory pressure is high and no dma memory is available.
+>>>
+>>> Tested-on: WCN6855 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
+>>>
+>>> Fixes: 3000f85b8f47 ("bus: mhi: core: Add support for basic PM operations")
+>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>>> ---
+>>>    drivers/bus/mhi/host/init.c | 11 ++++++-----
+>>>    1 file changed, 6 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
+>>> index 2e0f18c939e68..8f56e73fdc42e 100644
+>>> --- a/drivers/bus/mhi/host/init.c
+>>> +++ b/drivers/bus/mhi/host/init.c
+>>> @@ -1133,9 +1133,11 @@ int mhi_prepare_for_power_up(struct mhi_controller *mhi_cntrl)
+>>>          mutex_lock(&mhi_cntrl->pm_mutex);
+>>>    -    ret = mhi_init_dev_ctxt(mhi_cntrl);
+>> mhi init dev ctxt also initializes the ring pointers to base value,
+>> I think we should take care of them also ?
+> Are you referring to mhi_rings? They are getting initialized inside
+> mhi_init_dev_ctxt() and de-initialized in __mhi_deinit_dev_ctxt(). That's
+> why I've not handled them separately.
+> 
+Maybe I was not clear in my previous comment/not a correct place to do
+the comment.
 
-v6: Updated the user doc restctr.doc for minor texts.
-    Changed the subject to fs/resctrl.
+My point you are not freeing __mhi_deinit_dev_ctxt as part of suspend,
+that means we are expecting device will continue to use the rp and wr 
+pointers of ring as the previous i.e before suspend pointers.
 
-v5: Changes due to FS/ARCH code restructure. The files monitor.c/rdtgroup.c
-    have been split between FS and ARCH directories.
-    Changed the code to access the CBMs via either L3CODE or L3DATA resources.
+What if PCIe keeps link in D3cold as part of system suspend, will the
+device able to handle the previous rp & wp of ring. I don't think
+device can handle this.
 
-v4: Removed resctrl_io_alloc_parse_cbm and called parse_cbm() directly.
-
-v3: Minor changes due to changes in resctrl_arch_get_io_alloc_enabled()
-    and resctrl_io_alloc_closid_get().
-    Taken care of handling the CBM update when CDP is enabled.
-    Updated the commit log to make it generic.
-
-v2: Added more generic text in documentation.
----
- Documentation/filesystems/resctrl.rst |   8 ++
- fs/resctrl/ctrlmondata.c              |   4 +-
- fs/resctrl/internal.h                 |   2 +
- fs/resctrl/rdtgroup.c                 | 112 +++++++++++++++++++++++++-
- 4 files changed, 123 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
-index c22a9dd667cd..b9c3ffdec27f 100644
---- a/Documentation/filesystems/resctrl.rst
-+++ b/Documentation/filesystems/resctrl.rst
-@@ -189,6 +189,14 @@ related to allocation:
- 			# cat /sys/fs/resctrl/info/L3/io_alloc_cbm
- 			0=ffff;1=ffff
- 
-+		CBMs can be configured by writing to the interface.
-+
-+		Example::
-+
-+			# echo 1=FF > /sys/fs/resctrl/info/L3/io_alloc_cbm
-+			# cat /sys/fs/resctrl/info/L3/io_alloc_cbm
-+			0=ffff;1=00ff
-+
- 		When CDP is enabled "io_alloc_cbm" associated with the DATA and CODE
- 		resources may reflect the same values. For example, values read from and
- 		written to /sys/fs/resctrl/info/L3DATA/io_alloc_cbm may be reflected by
-diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-index 5c16557fb7a8..23c72a5ac043 100644
---- a/fs/resctrl/ctrlmondata.c
-+++ b/fs/resctrl/ctrlmondata.c
-@@ -148,8 +148,8 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
-  * Read one cache bit mask (hex). Check that it is valid for the current
-  * resource type.
-  */
--static int parse_cbm(struct rdt_parse_data *data, struct resctrl_schema *s,
--		     struct rdt_ctrl_domain *d)
-+int parse_cbm(struct rdt_parse_data *data, struct resctrl_schema *s,
-+	      struct rdt_ctrl_domain *d)
- {
- 	enum rdtgrp_mode mode = data->mode;
- 	struct resctrl_staged_config *cfg;
-diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-index ab76a1e2e679..011564e69ed5 100644
---- a/fs/resctrl/internal.h
-+++ b/fs/resctrl/internal.h
-@@ -382,6 +382,8 @@ bool closid_allocated(unsigned int closid);
- int resctrl_find_cleanest_closid(void);
- void show_doms(struct seq_file *s, struct resctrl_schema *schema,
- 	       char *name, int closid);
-+int parse_cbm(struct rdt_parse_data *data, struct resctrl_schema *s,
-+	      struct rdt_ctrl_domain *d);
- 
- #ifdef CONFIG_RESCTRL_FS_PSEUDO_LOCK
- int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 008657e43656..1093ec5e385b 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -2036,6 +2036,115 @@ static int resctrl_io_alloc_cbm_show(struct kernfs_open_file *of,
- 	return ret;
- }
- 
-+static int resctrl_io_alloc_parse_line(char *line,  struct rdt_resource *r,
-+				       struct resctrl_schema *s, u32 closid)
-+{
-+	struct rdt_parse_data data;
-+	struct rdt_ctrl_domain *d;
-+	char *dom = NULL, *id;
-+	unsigned long dom_id;
-+
-+next:
-+	if (!line || line[0] == '\0')
-+		return 0;
-+
-+	dom = strsep(&line, ";");
-+	id = strsep(&dom, "=");
-+	if (!dom || kstrtoul(id, 10, &dom_id)) {
-+		rdt_last_cmd_puts("Missing '=' or non-numeric domain\n");
-+		return -EINVAL;
-+	}
-+
-+	dom = strim(dom);
-+	list_for_each_entry(d, &r->ctrl_domains, hdr.list) {
-+		if (d->hdr.id == dom_id) {
-+			data.buf = dom;
-+			data.mode = RDT_MODE_SHAREABLE;
-+			data.closid = closid;
-+			if (parse_cbm(&data, s, d))
-+				return -EINVAL;
-+			goto next;
-+		}
-+	}
-+	return -EINVAL;
-+}
-+
-+static ssize_t resctrl_io_alloc_cbm_write(struct kernfs_open_file *of,
-+					  char *buf, size_t nbytes, loff_t off)
-+{
-+	struct resctrl_schema *s = rdt_kn_parent_priv(of->kn);
-+	enum resctrl_conf_type peer_type;
-+	struct rdt_resource *r = s->res;
-+	struct resctrl_schema *peer_s;
-+	u32 io_alloc_closid;
-+	char *peer_buf;
-+	int ret = 0;
-+
-+	/* Valid input requires a trailing newline */
-+	if (nbytes == 0 || buf[nbytes - 1] != '\n')
-+		return -EINVAL;
-+
-+	buf[nbytes - 1] = '\0';
-+
-+	cpus_read_lock();
-+	mutex_lock(&rdtgroup_mutex);
-+
-+	if (!r->cache.io_alloc_capable) {
-+		rdt_last_cmd_printf("io_alloc is not supported on %s\n", s->name);
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
-+
-+	rdt_last_cmd_clear();
-+	rdt_staged_configs_clear();
-+
-+	if (!resctrl_arch_get_io_alloc_enabled(r)) {
-+		rdt_last_cmd_printf("io_alloc is not enabled on %s\n", s->name);
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
-+
-+	io_alloc_closid = resctrl_io_alloc_closid(r);
-+
-+	/*
-+	 * When CDP is enabled, update the schema for both CDP_DATA and CDP_CODE.
-+	 * Since the buffer is altered during parsing, create a copy to handle
-+	 * peer schemata separately.
-+	 */
-+	if (resctrl_arch_get_cdp_enabled(r->rid)) {
-+		peer_type = resctrl_peer_type(s->conf_type);
-+		peer_s = resctrl_get_schema(peer_type);
-+		peer_buf = kmalloc(nbytes, GFP_KERNEL);
-+		if (!peer_buf) {
-+			rdt_last_cmd_puts("Out of Memory - io_alloc update failed\n");
-+			ret = -ENOMEM;
-+			goto out_unlock;
-+		}
-+
-+		memcpy(peer_buf, buf, nbytes);
-+
-+		if (peer_s)
-+			ret = resctrl_io_alloc_parse_line(peer_buf, r, peer_s, io_alloc_closid);
-+
-+		kfree(peer_buf);
-+	}
-+
-+	if (!ret)
-+		ret = resctrl_io_alloc_parse_line(buf, r, s, io_alloc_closid);
-+
-+	if (ret)
-+		goto out_unlock;
-+
-+	ret = resctrl_arch_update_domains(r, io_alloc_closid);
-+
-+out_unlock:
-+	rdt_staged_configs_clear();
-+	mutex_unlock(&rdtgroup_mutex);
-+	cpus_read_unlock();
-+
-+	return ret ?: nbytes;
-+}
-+
- /* rdtgroup information files for one cache resource. */
- static struct rftype res_common_files[] = {
- 	{
-@@ -2135,9 +2244,10 @@ static struct rftype res_common_files[] = {
- 	},
- 	{
- 		.name		= "io_alloc_cbm",
--		.mode		= 0444,
-+		.mode		= 0644,
- 		.kf_ops		= &rdtgroup_kf_single_ops,
- 		.seq_show	= resctrl_io_alloc_cbm_show,
-+		.write		= resctrl_io_alloc_cbm_write,
- 	},
- 	{
- 		.name		= "max_threshold_occupancy",
--- 
-2.34.1
-
+- Krishna Chaitanya.
+>>
+>> - Krishna Chaitanya.
+>>> -    if (ret)
+>>> -        goto error_dev_ctxt;
+>>> +    if (!mhi_cntrl->mhi_ctxt) {
+>>> +        ret = mhi_init_dev_ctxt(mhi_cntrl);
+>>> +        if (ret)
+>>> +            goto error_dev_ctxt;
+>>> +    }
+>>>          ret = mhi_read_reg(mhi_cntrl, mhi_cntrl->regs, BHIOFF, &bhi_off);
+>>>        if (ret) {
+>>> @@ -1212,8 +1214,6 @@ void mhi_deinit_dev_ctxt(struct mhi_controller *mhi_cntrl)
+>>>    {
+>>>        mhi_cntrl->bhi = NULL;
+>>>        mhi_cntrl->bhie = NULL;
+>>> -
+>>> -    __mhi_deinit_dev_ctxt(mhi_cntrl);
+>>>    }
+>>>      void mhi_unprepare_after_power_down(struct mhi_controller *mhi_cntrl)
+>>> @@ -1234,6 +1234,7 @@ void mhi_unprepare_after_power_down(struct mhi_controller *mhi_cntrl)
+>>>        }
+>>>          mhi_deinit_dev_ctxt(mhi_cntrl);
+>>> +    __mhi_deinit_dev_ctxt(mhi_cntrl);
+>>>    }
+>>>    EXPORT_SYMBOL_GPL(mhi_unprepare_after_power_down);
+>>>    
+> 
 
