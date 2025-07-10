@@ -1,424 +1,124 @@
-Return-Path: <linux-kernel+bounces-726465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D36B00D47
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:40:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09A56B00D3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 070F85C4AB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:40:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F7641C46722
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295F02FD89C;
-	Thu, 10 Jul 2025 20:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6362FE396;
+	Thu, 10 Jul 2025 20:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ooTW/iU6"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TA6c2YcV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691AC303DE2
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 20:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAEE2FE370;
+	Thu, 10 Jul 2025 20:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752179855; cv=none; b=TFtefhO74XY/Lxuu7Kk/1C2aSf7sYFw3hoqfmPWDi3UBEsadF88uMULA3S5jYSw0l1x6i7rfgRbznnqMb2my8+8GZMhB/oNtp3SysojV2q3Dg/czyr6+pS9ZVoJVEqj4mboHgiOsPkjJDojs11hY14dJxwtuA55F6AfsihrRz4w=
+	t=1752179835; cv=none; b=nymM7plfb8NAfU5kuRjOuEbi3X8TEyATgLLWJGj1YYZpxW3Y0kjWP5x/ngFJyDc03XqSxJgDhHFOURNOv0LROiJVEZLBHn+P9YvpjIg/YngJtynOYII7ngUnnf4iV5E68kdX2aIAhgSBaBbu2TmMRwtmE8NhTmTHvanqra+rNQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752179855; c=relaxed/simple;
-	bh=4DBEBdTfWfkhLt8ag7FL9lGLt+srCnvLuSveHjPSawA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=AA/er6MBtAuvuX3letaUotuTH7xligdirUplzDPshzbavFVqZWXPdrMHL1farl+pUb1RgxTkMXdOhnVQA4xe3NwT/q6IncWYwpmOwyptB/42/GI/74bkye99vovx7af5rOAl1VfAbyFONggQpo0SA2+P9MSg3sdBpf6udBCzplw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ooTW/iU6; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-23827190886so16153025ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:37:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752179853; x=1752784653; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BsThzVLcGqNGlV+OXH+rg8cRsNmgOdp9nQeDnnzr9WU=;
-        b=ooTW/iU6MTTcgIxS6DYQtESPVJKMl7iI05LUSMgSgSDV25D46DN7C0m6O/wKCKCF+G
-         u/sG8PTTos5dhYlBe/nlVGPC+noKwCxD1tV8qd9wYWPvJ4RjX6HsKRu5fIzqf3FphuSb
-         OJKzoKmk7KKtaG/3OJxC+4npRdYJ5XODRI9ERUn28ivQ7nb4LMXcwA1c9Qy1lHhFr5OI
-         pELip4XDjbPJwJfo5n66WhJ9v5OsMuOr6E3PIdStSn2CCooDLE2kcJteEikiW04L1yt+
-         rxE7g4hrhv+0K6Wbr3XI2agVwYJAWbPoBD5ivb6iPpoevJfL9S62HX5gbtMT9fOWJ0yN
-         isTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752179853; x=1752784653;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BsThzVLcGqNGlV+OXH+rg8cRsNmgOdp9nQeDnnzr9WU=;
-        b=YO1RupDCMEuV4zzpwmIEsh6Yja8lDbXZTBM7Z+ZOHFBrt9gKuqHY4qEFSL6OCp27hJ
-         URE0KbXjGm5WrSr6h1TLbnVH2a69x6Mb6vWfz926ITVjYuM9p1PW94Dg7nV7/NRoKweJ
-         Fj3FJ3YWE/NSBcgnx/eIDrF8PnrLcIQ5G6EZcjIbQPth+RFMKBKaxO0YEach8Y7ZqnPB
-         whaLUKRdkC+x/x3FlqKKgpkkIqIIuAYLQ/PbczShVCMnuDFrmQ1lGLBrnxV9yEnhGCrs
-         05P9QDArh3paNjnwsRaTSfITrakfADrcZXmCOBK9DirxmEoWW9eb/IywLW/QMx8QCcB0
-         7+2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXCndit+wf+mi2tpXwnk2ds1W+t+xUw5bWIFC1SP+kB8KjdYLN+NHkkrd1WoBeQ0Geul6fZgmiitOSfMyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk27dyQrfse3HnkqfrEIqIW9tHkFqgpLVvU/FGqToArAwcFMpR
-	5VLB776JHnDBPi+6uicoPcz1dPEIkf85eIg6PXc7qjTwvgDBArw3OJrEdiBgOpZ9vPWppJZK+Ub
-	CEbP7V+CKqQ==
-X-Google-Smtp-Source: AGHT+IElFReJiSAD6q32c2TuGN2HUPGVWqMNVOzqBa4CLt+bhRWJgUqrRw9aB/uAMDiot07wGBrsLnu1QdwV
-X-Received: from plgk4.prod.google.com ([2002:a17:902:ce04:b0:235:160a:76e])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d552:b0:237:e3a0:9d63
- with SMTP id d9443c01a7336-23dede9225amr9008745ad.43.1752179852865; Thu, 10
- Jul 2025 13:37:32 -0700 (PDT)
-Date: Thu, 10 Jul 2025 13:36:56 -0700
-In-Reply-To: <20250710203656.1963075-1-irogers@google.com>
+	s=arc-20240116; t=1752179835; c=relaxed/simple;
+	bh=CgImUwkenH3liQ9C4iUaFmfKZb9tKRP5V6VjbmRzY7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XU9t/pgk5KUrjd/3UvxVCmIIOIlvtOhson3RzdZEHtyghaAYZeo0O1lc2AF6VfPBWJVq3AyeILoZJ3B2vcwqGU0Mk5R0pwkWaS0GqAhamb4FK1NfgukXNkGuLmRHLmex6XN5WpxLNe7CYnFhbJfGSiGxNFyOMT2HSe1iw9BWGAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TA6c2YcV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D23AC4CEF9;
+	Thu, 10 Jul 2025 20:37:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752179835;
+	bh=CgImUwkenH3liQ9C4iUaFmfKZb9tKRP5V6VjbmRzY7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TA6c2YcVTUWe8n7Xs2HiUhvJxDMcNT6SJjTUUXso5JEZKSsxFA3wb79FtxLbTTNwq
+	 i54iGisjtcG3VMssx1SIWXEDDadm7Gebx0O0Jy9w6gGBizquH2j8hKMQIg4CB7XcfR
+	 KXBMGANpwxlgjgpVQOBItGHx4qPCQg9TiZsw9ar/GKDsCsIfgwayem9liUNUvhWDfm
+	 ZHyZhl1j3qdcsWlCktLbIYkQ3k/Xv5radA5gtc6opgrh1zr6wXDuDPgHzGrN2S06Ii
+	 V2nJbm6F8gOqb8l3BkwdzdzAZdG7zIVa/0sGk1H70zDbsg5bwsP+rOXkSVC9CqdMqE
+	 glSd795lbkl6Q==
+Date: Thu, 10 Jul 2025 15:37:13 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Paul Cercueil <paul@crapouillou.net>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 01/12] pinctrl: pinmux: open-code
+ PINCTRL_FUNCTION_DESC()
+Message-ID: <z5hmnijgcowad5d7kksqockdltuggf2mszrsxhyv6yqwo3jwqr@n6hslkul4mbq>
+References: <20250709-pinctrl-gpio-pinfuncs-v2-0-b6135149c0d9@linaro.org>
+ <20250709-pinctrl-gpio-pinfuncs-v2-1-b6135149c0d9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250710203656.1963075-1-irogers@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250710203656.1963075-15-irogers@google.com>
-Subject: [PATCH v5 14/14] perf ilist: Add support for metrics
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Collin Funk <collin.funk1@gmail.com>, Howard Chu <howardchu95@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Gautam Menghani <gautam@linux.ibm.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709-pinctrl-gpio-pinfuncs-v2-1-b6135149c0d9@linaro.org>
 
-Change tree nodes to having a value of either Metric or PmuEvent,
-these values have the ability to match searches, be parsed to create
-evlists and to give a value per CPU and per thread to display.  Use
-perf.metrics to generate a tree of metrics. Most metrics are placed
-under their metric group, if the metric group name ends with '_group'
-then the metric group is placed next to the associated metric.
+On Wed, Jul 09, 2025 at 04:38:57PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> This macro is only used in one place and pin function descriptors should
+> only be created by pinmux core so there's no point in exposing it to
+> other pinctrl users. Remove the macro and hand-code its functionality.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/python/ilist.py | 207 +++++++++++++++++++++++++++----------
- 1 file changed, 153 insertions(+), 54 deletions(-)
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-diff --git a/tools/perf/python/ilist.py b/tools/perf/python/ilist.py
-index 3e2fae1db738..0d46b44d2961 100755
---- a/tools/perf/python/ilist.py
-+++ b/tools/perf/python/ilist.py
-@@ -2,8 +2,11 @@
- # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
- """Interactive perf list."""
- 
-+from abc import ABC, abstractmethod
- import argparse
--from typing import Any, Dict, Tuple
-+from dataclasses import dataclass
-+from typing import Any, Dict, Optional, Tuple
-+import math
- import perf
- from textual import on
- from textual.app import App, ComposeResult
-@@ -14,6 +17,103 @@ from textual.screen import ModalScreen
- from textual.widgets import Button, Footer, Header, Input, Label, Sparkline, Static, Tree
- from textual.widgets.tree import TreeNode
- 
-+def get_info(info: Dict[str, str], key: str):
-+    return (info[key] + "\n") if key in info else ""
-+
-+class TreeValue(ABC):
-+    """Abstraction for the data of value in the tree."""
-+
-+    @abstractmethod
-+    def name(self) -> str:
-+        pass
-+
-+    @abstractmethod
-+    def description(self) -> str:
-+        pass
-+
-+    @abstractmethod
-+    def matches(self, query: str) -> bool:
-+        pass
-+
-+    @abstractmethod
-+    def parse(self) -> perf.evlist:
-+        pass
-+
-+    @abstractmethod
-+    def value(self, evlist: perf.evlist, evsel: perf.evsel, cpu: int, thread: int) -> float:
-+        pass
-+
-+
-+@dataclass
-+class Metric(TreeValue):
-+    """A metric in the tree."""
-+    metric_name: str
-+
-+    def name(self) -> str:
-+        return self.metric_name
-+
-+    def description(self) -> str:
-+        """Find and format metric description."""
-+        for metric in perf.metrics():
-+            if metric["MetricName"] != self.metric_name:
-+                continue
-+            desc = get_info(metric, "BriefDescription")
-+            desc += get_info(metric, "PublicDescription")
-+            desc += get_info(metric, "MetricExpr")
-+            desc += get_info(metric, "MetricThreshold")
-+            return desc
-+        return "description"
-+
-+    def matches(self, query: str) -> bool:
-+        return query in self.metric_name
-+
-+    def parse(self) -> perf.evlist:
-+        return perf.parse_metrics(self.metric_name)
-+
-+    def value(self, evlist: perf.evlist, evsel: perf.evsel, cpu: int, thread: int) -> float:
-+        val = evlist.compute_metric(self.metric_name, cpu, thread)
-+        return 0 if math.isnan(val) else val
-+
-+
-+@dataclass
-+class PmuEvent(TreeValue):
-+    """A PMU and event within the tree."""
-+    pmu: str
-+    event: str
-+
-+    def name(self) -> str:
-+        if self.event.startswith(self.pmu) or ':' in self.event:
-+            return self.event
-+        else:
-+            return f"{self.pmu}/{self.event}/"
-+
-+    def description(self) -> str:
-+        """Find and format event description for {pmu}/{event}/."""
-+        for p in perf.pmus():
-+            if p.name() != self.pmu:
-+                continue
-+            for info in p.events():
-+                if "name" not in info or info["name"] != self.event:
-+                    continue
-+
-+                desc = get_info(info, "topic")
-+                desc += get_info(info, "event_type_desc")
-+                desc += get_info(info, "desc")
-+                desc += get_info(info, "long_desc")
-+                desc += get_info(info, "encoding_desc")
-+                return desc
-+        return "description"
-+
-+    def matches(self, query: str) -> bool:
-+        return query in self.pmu or query in self.event
-+
-+    def parse(self) -> perf.evlist:
-+        return perf.parse_events(self.name())
-+
-+    def value(self, evlist: perf.evlist, evsel: perf.evsel, cpu: int, thread: int) -> float:
-+        return evsel.read(cpu, thread).val
-+
-+
- class ErrorScreen(ModalScreen[bool]):
-     """Pop up dialog for errors."""
- 
-@@ -123,8 +223,9 @@ class IListApp(App):
-     def __init__(self, interval: float) -> None:
-         self.interval = interval
-         self.evlist = None
--        self.search_results: list[TreeNode[str]] = []
--        self.cur_search_result: TreeNode[str] | None = None
-+        self.selected: Optional[TreeValue] = None
-+        self.search_results: list[TreeNode[TreeValue]] = []
-+        self.cur_search_result: TreeNode[TreeValue] | None = None
-         super().__init__()
- 
- 
-@@ -180,15 +281,15 @@ class IListApp(App):
-             event = event.lower()
-             search_label.update(f'Searching for events matching "{event}"')
- 
--            tree: Tree[str] = self.query_one("#pmus", Tree)
--            def find_search_results(event: str, node: TreeNode[str], \
-+            tree: Tree[TreeValue] = self.query_one("#root", Tree)
-+            def find_search_results(event: str, node: TreeNode[TreeValue], \
-                                     cursor_seen: bool = False, \
--                                    match_after_cursor: TreeNode[str] | None = None) \
--                    -> Tuple[bool, TreeNode[str] | None]:
-+                                    match_after_cursor: TreeNode[TreeValue] | None = None) \
-+                    -> Tuple[bool, TreeNode[TreeValue] | None]:
-                 """Find nodes that match the search remembering the one after the cursor."""
-                 if not cursor_seen and node == tree.cursor_node:
-                     cursor_seen = True
--                if node.data and event in node.data:
-+                if node.data and node.data.matches(event):
-                     if cursor_seen and not match_after_cursor:
-                         match_after_cursor = node
-                     self.search_results.append(node)
-@@ -222,17 +323,17 @@ class IListApp(App):
- 
- 
-     def action_collapse(self) -> None:
--        """Collapse the potentially large number of events under a PMU."""
--        tree: Tree[str] = self.query_one("#pmus", Tree)
-+        """Collapse the part of the tree currently on."""
-+        tree: Tree[str] = self.query_one("#root", Tree)
-         node = tree.cursor_node
--        if node and node.parent and node.parent.parent:
-+        if node and node.parent:
-             node.parent.collapse_all()
-             node.tree.scroll_to_node(node.parent)
- 
- 
-     def update_counts(self) -> None:
-         """Called every interval to update counts."""
--        if not self.evlist:
-+        if not self.selected or not self.evlist:
-             return
- 
-         def update_count(cpu: int, count: int):
-@@ -261,8 +362,7 @@ class IListApp(App):
-             for cpu in evsel.cpus():
-                 aggr = 0
-                 for thread in evsel.threads():
--                    counts = evsel.read(cpu, thread)
--                    aggr += counts.val
-+                    aggr += self.selected.value(self.evlist, evsel, cpu, thread)
-                 update_count(cpu, aggr)
-                 total += aggr
-         update_count(-1, total)
-@@ -275,8 +375,10 @@ class IListApp(App):
-         self.set_interval(self.interval, self.update_counts)
- 
- 
--    def set_pmu_and_event(self, pmu: str, event: str) -> None:
-+    def set_selected(self, value: TreeValue) -> None:
-         """Updates the event/description and starts the counters."""
-+        self.selected = value
-+
-         # Remove previous event information.
-         if self.evlist:
-             self.evlist.disable()
-@@ -288,34 +390,13 @@ class IListApp(App):
-             for line in lines:
-                 line.remove()
- 
--        def pmu_event_description(pmu: str, event: str) -> str:
--            """Find and format event description for {pmu}/{event}/."""
--            def get_info(info: Dict[str, str], key: str):
--                return (info[key] + "\n") if key in info else ""
--
--            for p in perf.pmus():
--                if p.name() != pmu:
--                    continue
--                for info in p.events():
--                    if "name" not in info or info["name"] != event:
--                        continue
--
--                    desc = get_info(info, "topic")
--                    desc += get_info(info, "event_type_desc")
--                    desc += get_info(info, "desc")
--                    desc += get_info(info, "long_desc")
--                    desc += get_info(info, "encoding_desc")
--                    return desc
--            return "description"
--
--        # Parse event, update event text and description.
--        full_name = event if event.startswith(pmu) or ':' in event else f"{pmu}/{event}/"
--        self.query_one("#event_name", Label).update(full_name)
--        self.query_one("#event_description", Static).update(pmu_event_description(pmu, event))
-+        # Update event/metric text and description.
-+        self.query_one("#event_name", Label).update(value.name())
-+        self.query_one("#event_description", Static).update(value.description())
- 
-         # Open the event.
-         try:
--            self.evlist = perf.parse_events(full_name)
-+            self.evlist = value.parse()
-             if self.evlist:
-                 self.evlist.open()
-                 self.evlist.enable()
-@@ -323,7 +404,7 @@ class IListApp(App):
-             self.evlist = None
- 
-         if not self.evlist:
--            self.push_screen(ErrorScreen(f"Failed to open {full_name}"))
-+            self.push_screen(ErrorScreen(f"Failed to open {value.name()}"))
-             return
- 
-         # Add spark lines for all the CPUs. Note, must be done after
-@@ -344,24 +425,44 @@ class IListApp(App):
- 
-     def compose(self) -> ComposeResult:
-         """Draws the app."""
--        def pmu_event_tree() -> Tree:
--            """Create tree of PMUs with events under."""
--            tree: Tree[str] = Tree("PMUs", id="pmus")
--            tree.root.expand()
-+        def metric_event_tree() -> Tree:
-+            """Create tree of PMUs and metricgroups with events or metrics under."""
-+            tree: Tree[TreeValue] = Tree("Root", id="root")
-+            pmus = tree.root.add("PMUs")
-             for pmu in perf.pmus():
-                 pmu_name = pmu.name().lower()
--                pmu_node = tree.root.add(pmu_name, data=pmu_name)
-+                pmu_node = pmus.add(pmu_name)
-                 for event in sorted(pmu.events(), key=lambda x: x["name"]):
-                     if "name" in event:
-                         e = event["name"].lower()
-                         if "alias" in event:
--                            pmu_node.add_leaf(f'{e} ({event["alias"]})', data=e)
-+                            pmu_node.add_leaf(f'{e} ({event["alias"]})', data=PmuEvent(pmu_name, e))
-                         else:
--                            pmu_node.add_leaf(e, data=e)
-+                            pmu_node.add_leaf(e, data=PmuEvent(pmu_name, e))
-+            metrics = tree.root.add("Metrics")
-+            groups = set()
-+            for metric in perf.metrics():
-+                groups.update(metric["MetricGroup"])
-+
-+            def add_metrics_to_tree(node: TreeNode[TreeValue], parent: str):
-+                for metric in sorted(perf.metrics(), key=lambda x: x["MetricName"]):
-+                    if parent in metric["MetricGroup"]:
-+                        name = metric["MetricName"]
-+                        node.add_leaf(name, data=Metric(name))
-+                        child_group_name = f'{name}_group'
-+                        if child_group_name in groups:
-+                            add_metrics_to_tree(node.add(child_group_name), child_group_name)
-+
-+            for group in sorted(groups):
-+                if group.endswith('_group'):
-+                    continue
-+                add_metrics_to_tree(metrics.add(group), group)
-+
-+            tree.root.expand()
-             return tree
- 
-         yield Header(id="header")
--        yield Horizontal(Vertical(pmu_event_tree(), id="events"),
-+        yield Horizontal(Vertical(metric_event_tree(), id="events"),
-                          Vertical(Label("event name", id="event_name"),
-                                   Static("description", markup=False, id="event_description"),
-                                   ))
-@@ -371,12 +472,10 @@ class IListApp(App):
- 
- 
-     @on(Tree.NodeSelected)
--    def on_tree_node_selected(self, event: Tree.NodeSelected[str]) -> None:
-+    def on_tree_node_selected(self, event: Tree.NodeSelected[TreeValue]) -> None:
-         """Called when a tree node is selected, selecting the event."""
--        if event.node.parent and event.node.parent.parent:
--            assert event.node.parent.data is not None
--            assert event.node.data is not None
--            self.set_pmu_and_event(event.node.parent.data, event.node.data)
-+        if event.node.data:
-+            self.set_selected(event.node.data)
- 
- 
- if __name__ == "__main__":
--- 
-2.50.0.727.gbf7dc18ff4-goog
+Regards,
+Bjorn
 
+> ---
+>  drivers/pinctrl/pinmux.c | 3 ++-
+>  drivers/pinctrl/pinmux.h | 7 -------
+>  2 files changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+> index 0743190da59e819d1c72c1ed1ece72f206d60d65..daa7a11adabf672f802a8e9577c14e4da56b8678 100644
+> --- a/drivers/pinctrl/pinmux.c
+> +++ b/drivers/pinctrl/pinmux.c
+> @@ -893,7 +893,8 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
+>  	if (!function)
+>  		return -ENOMEM;
+>  
+> -	*function = PINCTRL_FUNCTION_DESC(name, groups, ngroups, data);
+> +	function->func = PINCTRL_PINFUNCTION(name, groups, ngroups);
+> +	function->data = data;
+>  
+>  	error = radix_tree_insert(&pctldev->pin_function_tree, selector, function);
+>  	if (error)
+> diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
+> index 2965ec20b77fb360ca244800e30f1eafa988a2b1..5c039fd09f7474b4c104d3c36e0e8b8dc73a2ddd 100644
+> --- a/drivers/pinctrl/pinmux.h
+> +++ b/drivers/pinctrl/pinmux.h
+> @@ -141,13 +141,6 @@ struct function_desc {
+>  	void *data;
+>  };
+>  
+> -/* Convenient macro to define a generic pin function descriptor */
+> -#define PINCTRL_FUNCTION_DESC(_name, _grps, _num_grps, _data)	\
+> -(struct function_desc) {					\
+> -	.func = PINCTRL_PINFUNCTION(_name, _grps, _num_grps),	\
+> -	.data = _data,						\
+> -}
+> -
+>  int pinmux_generic_get_function_count(struct pinctrl_dev *pctldev);
+>  
+>  const char *
+> 
+> -- 
+> 2.48.1
+> 
 
