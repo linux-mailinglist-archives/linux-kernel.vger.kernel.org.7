@@ -1,304 +1,164 @@
-Return-Path: <linux-kernel+bounces-726601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93620B00F22
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:55:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5FFB00F2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB9E83B4CC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:55:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F24783A197E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5212BEC4A;
-	Thu, 10 Jul 2025 22:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF553291C11;
+	Thu, 10 Jul 2025 23:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyUBK/XF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="od829Ylq"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F0128FFC6;
-	Thu, 10 Jul 2025 22:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89931235BE2
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752188141; cv=none; b=Lm+B3onlcPehAi6FdoqfiA8SK3i7RBhftWWgbfVPQohITrWfVRN2QVn+K193hycNcXkIwkzd4/tQ58Y4RNZ/vR8oWTlAEw/7DvW0JnqBowfq/117utnKZs+NzjUOSKMOzAGY+UeSdItgBpfEhjMfOJI90XS9AHstRvAovV5XD7Q=
+	t=1752188419; cv=none; b=FvLPxStejBDRnwKSHvmW39FdRJVK4XIB2/M0MnoCiFbs/MvIA4vhlotqidAqfVNZaoKxJFsdzS1VtSBIT0obr+iLWsnwWdc9GdKQwfjK+eFH1S29yr314uIRCuadalvPjeY7VrU2YiGebbuEqc0o8sNcoUfuW4zee6dcpwZWUWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752188141; c=relaxed/simple;
-	bh=ppem5ioqyvvNaJrxZ8a+k8hXOxE1osk+Jas8tjtD+SA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LnaHS/mSMmKJhNa1IRyBwFZqZ37pDxrPlv8ITN2gwQQxtbvdt7/8ReDMpm4jFmzPbEkOhWXOBppFdLjHFzMRuREMgksY/M1DBs9D16NH64yrozs+rmYkQk7Wi3nYNtVb+E6fjxwwfEHsM+LRY02tz/F/orAhUjXyD3JZvyEStHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyUBK/XF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 783CBC4CEE3;
-	Thu, 10 Jul 2025 22:55:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752188140;
-	bh=ppem5ioqyvvNaJrxZ8a+k8hXOxE1osk+Jas8tjtD+SA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TyUBK/XFn69FTeUCpolhOAcM1/eKSNtWfNsBiof5Re4WgKIBMc+ezRzYD/f1j88QQ
-	 QlNQNbH+y69lo3i5alT1C98xkkE0IPkrx8k1mdcPUzWWAaVAkWI6zFse05FksFE1EX
-	 FRGGrP9IHrQkrExSII5t3vYNMS4rgB/NsS943z9EDc26KZs1rW00Uf0H6ExYmBqPRy
-	 4XtDv01EiIRVaHyO/Yn7L/HjR4v+ytyU2Zhx1Vdp/Nulk5+Xs1pKETGpyk8yJ4/ZQn
-	 1li0U1hp1JEZsSTJ2uD60z4QlwZFZqKzK0xBpUtVej03CiMcj4vyigyqyjvLnHUe1H
-	 QSzLVTXZTS6rw==
-Date: Thu, 10 Jul 2025 17:55:39 -0500
-From: Rob Herring <robh@kernel.org>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Anusha Rao <quic_anusha@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
-	quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
-	quic_suruchia@quicinc.com
-Subject: Re: [PATCH v3 07/10] dt-bindings: clock: qcom: Add NSS clock
- controller for IPQ5424 SoC
-Message-ID: <20250710225539.GA29510-robh@kernel.org>
-References: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
- <20250710-qcom_ipq5424_nsscc-v3-7-f149dc461212@quicinc.com>
+	s=arc-20240116; t=1752188419; c=relaxed/simple;
+	bh=Ga360paPXSh6ueJRgO9R8YPVrNY0pUaCx9Cm7uh2lsk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PKOc5WXPGFd5XriRm6eQROQbH3lnThYAOVmJzjDedCGdbpRRzce+bBIjrRfEm+1aqObWEwUyf0BP9eVYpOjRpNNvuA9FpuqpgGZtWk0WyM6krZky++Cvnem+hx09qe4BikJLGdjemf9orJjJ9Tw9YfATsqJss8M47ha+Yw+srk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=od829Ylq; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-60d666804ebso1341341eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752188415; x=1752793215; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8uyKZwVLw2YawVW7YHnf1uYvsNPR1ElqQhqV5KaztNI=;
+        b=od829YlqzY5DArwaDYQ2nuCyjjD7D14KD3uthftnQAoSaMNPAWHGLABfp5zJua2Kd9
+         qCC5k3zN9Y31NilPIYQU25IpAdMiiA6V/g3wZVWgqPkzpzzWDoKbEg1mVev0rfRx8+q+
+         n3RlMqjMpbWkJJ9gO+9RfrXDOIpQGRMbOkmyLEHI1vcZauoTKjoRnE17VRnsO/+dpKXn
+         mDyBMuS0fw4DHn8qgv9kRvvgyvhaTqiObJTINk24m3OVDvVg6+dDfTvCGCs/Ueqd3J1J
+         AUAWb1jiF9qX47QBJsfOALsobLeqHd3hFHTiYo/xeJRqLwsdtvNbyACwwJbsHYSx2qRn
+         iveA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752188415; x=1752793215;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8uyKZwVLw2YawVW7YHnf1uYvsNPR1ElqQhqV5KaztNI=;
+        b=B9bTOJvITeV/9VV1WFevqryQGxKFK6az1w94dVCf3/t7uVpCwnG4mEv/tohbgXZqYO
+         GX/0hktXIxSp8rgeKL0k9pxGK/iDoQmnipnYRSWogwFkLeizdSAgkx2YAGHlE9C4WUXK
+         pgkMwnq3K9Ze0d8U1wlpAuWpioJpLLurbIGuoZLQGPb2q6kMpcW+ifBLH6AiXT69m5M2
+         fBOK0DkkBbM3L1Prc1PF1baPiE+Q2Ma1swgR/2298y/XBUIYBVpqJkCR90BUBk7ujOvy
+         8fgmrVbNidezCWHH6n+jVEfutuaTSmenegHnzIjAL0JutoqJ8PywwWFWeINh0oZrQSb+
+         RIIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWK1JoSJFnRqRmZeRBIYnjPKVZf3iPkeBTwiaPCphnyLlTylgXEpmbmZuWN6oPTqL6d5Krme9cPiI4TPXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypazIsGWG+hL2ff2ML8hZeOgQ+R/ZgLixiUwP/gsV5HjspF8qc
+	Brd8vsByulpdCpwPHPgx+1ZXAR3S2UWa1sufYS1WYQJJJOqlvH00FvyAkohiNyETHtI=
+X-Gm-Gg: ASbGncv7AooqQXE1qSrXqYb7qHocmDSe4EsP2VAae2GUf/ENICPWuo+b0uQstpXvn86
+	wfOkOjyKMu7WcFUiBS+/8difc17y3Zsni5j9SqgxO1My2yCk/WBW3vS/aDbxrp9+HKteCR3XFqN
+	wL4A8iiP8SK7OdLl0BY7lXyQaqa2IgUBrMJK2qaAqYh54Fj1zbN4IkUEcLX1FzyBy8MgoJBWzbn
+	73mUryomJ1Sd0kq/U+BN+oPWm4FeWMNWZ5u0nY7ZYbnC+QloiVh1/u0pUceCUbbvH5skJwVy3Zn
+	fZz4CA0+1jlxWXK69JWOMXtjUlcGDdI/bIwqhkw4J2Zmfzsvc+2H8T35rLuEqq8lkISEWe+DvAQ
+	iZT+/fa3j7E4XeMxtXQ5vQT6DrQ==
+X-Google-Smtp-Source: AGHT+IElSJTJahY2gj5/r6X0EORAGMmWE/sgZuNRZ0T9V6IP9W/0e9Hq5EMhpY8f2Hy+mJg4FZlvJQ==
+X-Received: by 2002:a05:6870:8a22:b0:2d5:2dfd:e11c with SMTP id 586e51a60fabf-2ff26455f7emr841617fac.7.1752188415561;
+        Thu, 10 Jul 2025 16:00:15 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:891b:7836:c92:869])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff116d22easm494104fac.33.2025.07.10.16.00.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 16:00:14 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Thu, 10 Jul 2025 18:00:05 -0500
+Subject: [PATCH] iio: accel: bma180: use stack allocated buffer for scan
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710-qcom_ipq5424_nsscc-v3-7-f149dc461212@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250710-iio-use-more-iio_declare_buffer_with_ts-v1-1-df6498f54095@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAPRFcGgC/x3NWw6CMBBG4a2QeXaSUrygWzGmwfavTKLUTEFIC
+ Hu3+vi9nLNShgoyXaqVFB/JkoaCeleR77vhAZZQTNbYgznVhkUSTxn8SoofXIB/dgp3n2KEuln
+ G3o2Zzdnum9aGpvVHKrW3IsryP11v2/YFaeTiX3kAAAA=
+X-Change-ID: 20250710-iio-use-more-iio_declare_buffer_with_ts-0924382d38c6
+To: Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1790; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=Ga360paPXSh6ueJRgO9R8YPVrNY0pUaCx9Cm7uh2lsk=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBocEX2Cp+CaOJ12mqg+Xq/3er3A81nbq4XuuPLl
+ dM0uBZ3WbeJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaHBF9gAKCRDCzCAB/wGP
+ wI0GB/0RzkFbDCbiaJRVyafu8x5tvAUHNDzhfqM/I8J1aQyElAWivffVZGLvyIEmtst4MFolnHp
+ B4PEHfha2qqfLialu5NZwQFTb0f9dHiIugS/pn05xf1iZf8ITVcIXcU1qppixw1/Hwglj2RinXS
+ xIPF49xYBbJ3W4y9r2QUhqESs+tufkPujAJbBqOUs8QfmykIeLsxuiqAmGvvVfeG4swjEgVuZc9
+ HQ4qeW9ZhfkJPr2yEMnqTElqku/SxiZWc7jh2p6tfg7M713AxKf2BqC57BDsLCmgewFCspuIcyl
+ 3zeOAiMuIn+tnHdKg08MDuy5w5T1F/82IXihg5+TfhSBXNHg
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Thu, Jul 10, 2025 at 08:28:15PM +0800, Luo Jie wrote:
-> NSS clock controller provides the clocks and resets to the networking
-> blocks such as PPE (Packet Process Engine) and UNIPHY (PCS) on IPQ5424
-> devices.
-> 
-> Add the compatible "qcom,ipq5424-nsscc" support based on the current
-> IPQ9574 NSS clock controller DT binding file. ICC clocks are always
-> provided by the NSS clock controller of IPQ9574 and IPQ5424, so add
-> interconnect-cells as required DT property.
-> 
-> Also add master/slave ids for IPQ5424 networking interfaces, which is
-> used by nss-ipq5424 driver for providing interconnect services using
-> icc-clk framework.
-> 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->  .../bindings/clock/qcom,ipq9574-nsscc.yaml         | 14 +++--
->  include/dt-bindings/clock/qcom,ipq5424-nsscc.h     | 65 ++++++++++++++++++++++
->  include/dt-bindings/interconnect/qcom,ipq5424.h    | 13 +++++
->  include/dt-bindings/reset/qcom,ipq5424-nsscc.h     | 46 +++++++++++++++
->  4 files changed, 134 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
-> index b9ca69172adc..86ee9ffb2eda 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
-> @@ -4,7 +4,7 @@
->  $id: http://devicetree.org/schemas/clock/qcom,ipq9574-nsscc.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ9574
-> +title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ9574 and IPQ5424
->  
->  maintainers:
->    - Bjorn Andersson <andersson@kernel.org>
-> @@ -12,15 +12,19 @@ maintainers:
->  
->  description: |
->    Qualcomm networking sub system clock control module provides the clocks,
-> -  resets on IPQ9574
-> +  resets on IPQ9574 and IPQ5424
->  
-> -  See also::
-> +  See also:
-> +    include/dt-bindings/clock/qcom,ipq5424-nsscc.h
->      include/dt-bindings/clock/qcom,ipq9574-nsscc.h
-> +    include/dt-bindings/reset/qcom,ipq5424-nsscc.h
->      include/dt-bindings/reset/qcom,ipq9574-nsscc.h
->  
->  properties:
->    compatible:
-> -    const: qcom,ipq9574-nsscc
-> +    enum:
-> +      - qcom,ipq5424-nsscc
-> +      - qcom,ipq9574-nsscc
->  
->    clocks:
->      items:
-> @@ -57,6 +61,7 @@ required:
->    - compatible
->    - clocks
->    - clock-names
-> +  - '#interconnect-cells'
+Use IIO_DECLARE_BUFFER_WITH_TS() to declare a stack allocated buffer
+in bma180_trigger_handler(). Since the scan buffer isn't used outside
+of this function, it doesn't need to be in struct bma180_data.
 
-You just made this required for everyone. Again, that's an ABI change.
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ drivers/iio/accel/bma180.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
->  
->  allOf:
->    - $ref: qcom,gcc.yaml#
-> @@ -94,5 +99,6 @@ examples:
->                      "bus";
->        #clock-cells = <1>;
->        #reset-cells = <1>;
-> +      #interconnect-cells = <1>;
->      };
->  ...
-> diff --git a/include/dt-bindings/clock/qcom,ipq5424-nsscc.h b/include/dt-bindings/clock/qcom,ipq5424-nsscc.h
-> new file mode 100644
-> index 000000000000..59ce056ead93
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,ipq5424-nsscc.h
-> @@ -0,0 +1,65 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2025, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLOCK_QCOM_IPQ5424_NSSCC_H
-> +#define _DT_BINDINGS_CLOCK_QCOM_IPQ5424_NSSCC_H
-> +
-> +/* NSS_CC clocks */
-> +#define NSS_CC_CE_APB_CLK					0
-> +#define NSS_CC_CE_AXI_CLK					1
-> +#define NSS_CC_CE_CLK_SRC					2
-> +#define NSS_CC_CFG_CLK_SRC					3
-> +#define NSS_CC_DEBUG_CLK					4
-> +#define NSS_CC_EIP_BFDCD_CLK_SRC				5
-> +#define NSS_CC_EIP_CLK						6
-> +#define NSS_CC_NSS_CSR_CLK					7
-> +#define NSS_CC_NSSNOC_CE_APB_CLK				8
-> +#define NSS_CC_NSSNOC_CE_AXI_CLK				9
-> +#define NSS_CC_NSSNOC_EIP_CLK					10
-> +#define NSS_CC_NSSNOC_NSS_CSR_CLK				11
-> +#define NSS_CC_NSSNOC_PPE_CFG_CLK				12
-> +#define NSS_CC_NSSNOC_PPE_CLK					13
-> +#define NSS_CC_PORT1_MAC_CLK					14
-> +#define NSS_CC_PORT1_RX_CLK					15
-> +#define NSS_CC_PORT1_RX_CLK_SRC					16
-> +#define NSS_CC_PORT1_RX_DIV_CLK_SRC				17
-> +#define NSS_CC_PORT1_TX_CLK					18
-> +#define NSS_CC_PORT1_TX_CLK_SRC					19
-> +#define NSS_CC_PORT1_TX_DIV_CLK_SRC				20
-> +#define NSS_CC_PORT2_MAC_CLK					21
-> +#define NSS_CC_PORT2_RX_CLK					22
-> +#define NSS_CC_PORT2_RX_CLK_SRC					23
-> +#define NSS_CC_PORT2_RX_DIV_CLK_SRC				24
-> +#define NSS_CC_PORT2_TX_CLK					25
-> +#define NSS_CC_PORT2_TX_CLK_SRC					26
-> +#define NSS_CC_PORT2_TX_DIV_CLK_SRC				27
-> +#define NSS_CC_PORT3_MAC_CLK					28
-> +#define NSS_CC_PORT3_RX_CLK					29
-> +#define NSS_CC_PORT3_RX_CLK_SRC					30
-> +#define NSS_CC_PORT3_RX_DIV_CLK_SRC				31
-> +#define NSS_CC_PORT3_TX_CLK					32
-> +#define NSS_CC_PORT3_TX_CLK_SRC					33
-> +#define NSS_CC_PORT3_TX_DIV_CLK_SRC				34
-> +#define NSS_CC_PPE_CLK_SRC					35
-> +#define NSS_CC_PPE_EDMA_CFG_CLK					36
-> +#define NSS_CC_PPE_EDMA_CLK					37
-> +#define NSS_CC_PPE_SWITCH_BTQ_CLK				38
-> +#define NSS_CC_PPE_SWITCH_CFG_CLK				39
-> +#define NSS_CC_PPE_SWITCH_CLK					40
-> +#define NSS_CC_PPE_SWITCH_IPE_CLK				41
-> +#define NSS_CC_UNIPHY_PORT1_RX_CLK				42
-> +#define NSS_CC_UNIPHY_PORT1_TX_CLK				43
-> +#define NSS_CC_UNIPHY_PORT2_RX_CLK				44
-> +#define NSS_CC_UNIPHY_PORT2_TX_CLK				45
-> +#define NSS_CC_UNIPHY_PORT3_RX_CLK				46
-> +#define NSS_CC_UNIPHY_PORT3_TX_CLK				47
-> +#define NSS_CC_XGMAC0_PTP_REF_CLK				48
-> +#define NSS_CC_XGMAC0_PTP_REF_DIV_CLK_SRC			49
-> +#define NSS_CC_XGMAC1_PTP_REF_CLK				50
-> +#define NSS_CC_XGMAC1_PTP_REF_DIV_CLK_SRC			51
-> +#define NSS_CC_XGMAC2_PTP_REF_CLK				52
-> +#define NSS_CC_XGMAC2_PTP_REF_DIV_CLK_SRC			53
-> +
-> +#endif
-> diff --git a/include/dt-bindings/interconnect/qcom,ipq5424.h b/include/dt-bindings/interconnect/qcom,ipq5424.h
-> index 66cd9a9ece03..a78604beff99 100644
-> --- a/include/dt-bindings/interconnect/qcom,ipq5424.h
-> +++ b/include/dt-bindings/interconnect/qcom,ipq5424.h
-> @@ -27,4 +27,17 @@
->  #define MASTER_NSSNOC_SNOC_1		22
->  #define SLAVE_NSSNOC_SNOC_1		23
->  
-> +#define MASTER_NSSNOC_PPE		0
-> +#define SLAVE_NSSNOC_PPE		1
-> +#define MASTER_NSSNOC_PPE_CFG		2
-> +#define SLAVE_NSSNOC_PPE_CFG		3
-> +#define MASTER_NSSNOC_NSS_CSR		4
-> +#define SLAVE_NSSNOC_NSS_CSR		5
-> +#define MASTER_NSSNOC_CE_AXI		6
-> +#define SLAVE_NSSNOC_CE_AXI		7
-> +#define MASTER_NSSNOC_CE_APB		8
-> +#define SLAVE_NSSNOC_CE_APB		9
-> +#define MASTER_NSSNOC_EIP		10
-> +#define SLAVE_NSSNOC_EIP		11
-> +
->  #endif /* INTERCONNECT_QCOM_IPQ5424_H */
-> diff --git a/include/dt-bindings/reset/qcom,ipq5424-nsscc.h b/include/dt-bindings/reset/qcom,ipq5424-nsscc.h
-> new file mode 100644
-> index 000000000000..f2f7eaa28b21
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/qcom,ipq5424-nsscc.h
-> @@ -0,0 +1,46 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2025, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_RESET_QCOM_IPQ5424_NSSCC_H
-> +#define _DT_BINDINGS_RESET_QCOM_IPQ5424_NSSCC_H
-> +
-> +#define NSS_CC_CE_APB_CLK_ARES					0
-> +#define NSS_CC_CE_AXI_CLK_ARES					1
-> +#define NSS_CC_DEBUG_CLK_ARES					2
-> +#define NSS_CC_EIP_CLK_ARES					3
-> +#define NSS_CC_NSS_CSR_CLK_ARES					4
-> +#define NSS_CC_NSSNOC_CE_APB_CLK_ARES				5
-> +#define NSS_CC_NSSNOC_CE_AXI_CLK_ARES				6
-> +#define NSS_CC_NSSNOC_EIP_CLK_ARES				7
-> +#define NSS_CC_NSSNOC_NSS_CSR_CLK_ARES				8
-> +#define NSS_CC_NSSNOC_PPE_CLK_ARES				9
-> +#define NSS_CC_NSSNOC_PPE_CFG_CLK_ARES				10
-> +#define NSS_CC_PORT1_MAC_CLK_ARES				11
-> +#define NSS_CC_PORT1_RX_CLK_ARES				12
-> +#define NSS_CC_PORT1_TX_CLK_ARES				13
-> +#define NSS_CC_PORT2_MAC_CLK_ARES				14
-> +#define NSS_CC_PORT2_RX_CLK_ARES				15
-> +#define NSS_CC_PORT2_TX_CLK_ARES				16
-> +#define NSS_CC_PORT3_MAC_CLK_ARES				17
-> +#define NSS_CC_PORT3_RX_CLK_ARES				18
-> +#define NSS_CC_PORT3_TX_CLK_ARES				19
-> +#define NSS_CC_PPE_BCR						20
-> +#define NSS_CC_PPE_EDMA_CLK_ARES				21
-> +#define NSS_CC_PPE_EDMA_CFG_CLK_ARES				22
-> +#define NSS_CC_PPE_SWITCH_BTQ_CLK_ARES				23
-> +#define NSS_CC_PPE_SWITCH_CLK_ARES				24
-> +#define NSS_CC_PPE_SWITCH_CFG_CLK_ARES				25
-> +#define NSS_CC_PPE_SWITCH_IPE_CLK_ARES				26
-> +#define NSS_CC_UNIPHY_PORT1_RX_CLK_ARES				27
-> +#define NSS_CC_UNIPHY_PORT1_TX_CLK_ARES				28
-> +#define NSS_CC_UNIPHY_PORT2_RX_CLK_ARES				29
-> +#define NSS_CC_UNIPHY_PORT2_TX_CLK_ARES				30
-> +#define NSS_CC_UNIPHY_PORT3_RX_CLK_ARES				31
-> +#define NSS_CC_UNIPHY_PORT3_TX_CLK_ARES				32
-> +#define NSS_CC_XGMAC0_PTP_REF_CLK_ARES				33
-> +#define NSS_CC_XGMAC1_PTP_REF_CLK_ARES				34
-> +#define NSS_CC_XGMAC2_PTP_REF_CLK_ARES				35
-> +
-> +#endif
-> 
-> -- 
-> 2.34.1
-> 
+diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
+index 4fccbcb76e0423bee37463a72c637af80e356a19..d83d5becca6fc72b855310a31c3de5443e4e2311 100644
+--- a/drivers/iio/accel/bma180.c
++++ b/drivers/iio/accel/bma180.c
+@@ -139,11 +139,6 @@ struct bma180_data {
+ 	int scale;
+ 	int bw;
+ 	bool pmode;
+-	/* Ensure timestamp is naturally aligned */
+-	struct {
+-		s16 chan[4];
+-		aligned_s64 timestamp;
+-	} scan;
+ };
+ 
+ enum bma180_chan {
+@@ -865,6 +860,7 @@ static const struct bma180_part_info bma180_part_info[] = {
+ 
+ static irqreturn_t bma180_trigger_handler(int irq, void *p)
+ {
++	IIO_DECLARE_BUFFER_WITH_TS(s16, scan, 4);
+ 	struct iio_poll_func *pf = p;
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+ 	struct bma180_data *data = iio_priv(indio_dev);
+@@ -879,12 +875,12 @@ static irqreturn_t bma180_trigger_handler(int irq, void *p)
+ 			mutex_unlock(&data->mutex);
+ 			goto err;
+ 		}
+-		data->scan.chan[i++] = ret;
++		scan[i++] = ret;
+ 	}
+ 
+ 	mutex_unlock(&data->mutex);
+ 
+-	iio_push_to_buffers_with_ts(indio_dev, &data->scan, sizeof(data->scan), time_ns);
++	iio_push_to_buffers_with_ts(indio_dev, scan, sizeof(scan), time_ns);
+ err:
+ 	iio_trigger_notify_done(indio_dev->trig);
+ 
+
+---
+base-commit: f8f559752d573a051a984adda8d2d1464f92f954
+change-id: 20250710-iio-use-more-iio_declare_buffer_with_ts-0924382d38c6
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
