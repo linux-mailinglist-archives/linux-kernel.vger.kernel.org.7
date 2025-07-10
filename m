@@ -1,108 +1,96 @@
-Return-Path: <linux-kernel+bounces-725848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CEAB0048F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:02:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE3DB004F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 601327B3138
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C16A84A30CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D892E406;
-	Thu, 10 Jul 2025 14:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D467272801;
+	Thu, 10 Jul 2025 14:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IYcut2lz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f0TLvDl8"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0155D271A9D;
-	Thu, 10 Jul 2025 14:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA8B271456;
+	Thu, 10 Jul 2025 14:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752156143; cv=none; b=gNpw2HgVBJEsQ35sRR9ZdGLaRgSfS+Gs7eDnE8XI7vrEG+WoaXdZbLURkaojhsC+lKjimlBesKSEIYtHgTMOWIyNO09uT1atGdoauNZlZL+j4oNsRkSEqhG3uMVlOFY3zPLks4VvcpX6JGnD3Y/f9PvkHSjL+XeyfV6G3TZJkhM=
+	t=1752157006; cv=none; b=nG+ujswrIOwGhuBxMypasVs0m1pXqmQNYUpWdaff0jPlOo/w10wvyijgoc1kTZ0mLMIkcRXk6Pu2d8lPseI6UeT9FocL6buao5pJFoxLS9FLnT7eXV2v7+XktbFvyLgmCaW1aiECaT/IpxY1lAhMKoh0Tfv59NcLrf19H5yYicY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752156143; c=relaxed/simple;
-	bh=Co8as0JEy3sYgEqTMquGxvLRQOzjREC6NPEM+EJDGaA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Zlfi/yewHugmNgSwBCAyMgqar8ZmgTBmqz6lSAGJr2Nf+UElOCb+c64plbFQ1y/16fNDQMUxKFw8uRWlRbNK0WpwSiBJGpTDEnfl8QQcWKUpPxY3zrMvDHb4l/4QF1caBAfDNp1r5wYr49HKtx1kXEl6AGkZvY6NDVIO42bJiz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IYcut2lz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02684C4CEED;
-	Thu, 10 Jul 2025 14:02:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752156142;
-	bh=Co8as0JEy3sYgEqTMquGxvLRQOzjREC6NPEM+EJDGaA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=IYcut2lz3QhniyOh45T7rE82xKzsV9T4PrOO2G9ZbSpCTsOqqbvGmijeO6W2V7EWY
-	 Ts8rp8KA4XZ4D3tC2jRDQvJNu6bl+EUfUMHOGGZH+ZOgAp7wKImOvUPTsCTr8FhNc2
-	 XdBSPgoizJP2ZbwXQ8/pStte9APz95iRRHC7L5uisuEpkQRW69zrLyikXOhzOAd3/I
-	 xF4ZVZouTvnIjbIol+vWKutwb4uzrMNtSOffQ/hBnnkhMALymPx6dnYZQUDdkINxWZ
-	 zbxfoctMPE05jIJbLn4/JK6QIqNDpe2xV+RTwQEQUdbAi5LShqgdTdt7mz3+5tA4p1
-	 ggQGnih5S82fw==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Thu, 10 Jul 2025 16:01:33 +0200
-Subject: [PATCH v2 1/4] HID: core: ensure the allocated report buffer can
- contain the reserved report ID
+	s=arc-20240116; t=1752157006; c=relaxed/simple;
+	bh=mPp5H/pNukYa5NUBq0aQh0anhclyiXfY7vE1nPk0VTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=irF5By5wlHwwy3WBnvuATZTwnldNgvcEW9wV4Bqj1cmyr33UEfsdX0eVLnC8aAOsm+GQnoG3v7bnsnEJ5awZ2vIIRDYywpg5h4aJlrfNRPobwY/bi7Hk2TJ75IzU/V2GIbdADhkMzubQhqJzIa8k2GS/AeX5SYmRhKfGdZ4Xwf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f0TLvDl8; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id B08B9583FAC;
+	Thu, 10 Jul 2025 13:53:37 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 52526442CD;
+	Thu, 10 Jul 2025 13:53:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752155610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q6oPPvEhp8Ik88bxmQPhOVUx66A2onWuiWPh0/keNbk=;
+	b=f0TLvDl8TkFp5jnGtNAUkwSy9+3bIfhFHYDZbLYKP1NfCaEZkNFScTJTgycSw/TwQpVGAu
+	mH98japgMA+4ClBT4sJqAHIMozhaI6Pf3cR8A8IIH/1RnQ3DqrvU5xudSGv6btyCfxhwbT
+	o49jZKx86u+dB5f7PSHzhCFTJVuIM++gpA8ULCZs6jfxTaWaa7i3CpBTGAjRkB5MLjlxXH
+	wvxSb4DipFL2b91Eov/r4dwM0mf7CBcxomhF7Pzzj5Rgo8hcqpTZAu9p4+qNmLDt4/tpQ8
+	8u3dwtK4M57NeMUI3IBH2pGWiuJYfWhcR1m39kuXsh4QY8G9yZ7ve/uWBXqZzQ==
+Date: Thu, 10 Jul 2025 15:53:28 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: shenwei.wang@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev
+Subject: Re: [PATCH net-next 2/3] net: fec: add more macros for bits of
+ FEC_ECR
+Message-ID: <20250710155328.5d5b54b4@fedora>
+In-Reply-To: <20250710090902.1171180-3-wei.fang@nxp.com>
+References: <20250710090902.1171180-1-wei.fang@nxp.com>
+	<20250710090902.1171180-3-wei.fang@nxp.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-report-size-null-v2-1-ccf922b7c4e5@kernel.org>
-References: <20250710-report-size-null-v2-0-ccf922b7c4e5@kernel.org>
-In-Reply-To: <20250710-report-size-null-v2-0-ccf922b7c4e5@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752156138; l=1423;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=Co8as0JEy3sYgEqTMquGxvLRQOzjREC6NPEM+EJDGaA=;
- b=gPC4tV0NRIY4GQ0pGBpc/9NTIFhSSe5QHrzI2IP5DHO6ZmQWtA4O77giACqp8cb96JJlGtrg3
- JSyhRg7/pzrDneito10Pd7p+CC6XdNF8sK3OYowYoaMCUyoLjqRtNid
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdeiudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddupdhrtghpthhtohepfigvihdrfhgrnhhgsehngihprdgtohhmpdhrtghpthhtohepshhhvghnfigvihdrfigrnhhgsehngihprdgtohhmpdhrtghpthhtohepgihirghonhhinhhgrdifrghnghesnhigphdrtghomhdprhgtphhtthhop
+ egrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhm
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-When the report ID is not used, the low level transport drivers expect
-the first byte to be 0. However, currently the allocated buffer not
-account for that extra byte, meaning that instead of having 8 guaranteed
-bytes for implement to be working, we only have 7.
+On Thu, 10 Jul 2025 17:09:01 +0800
+Wei Fang <wei.fang@nxp.com> wrote:
 
-Reported-by: Alan Stern <stern@rowland.harvard.edu>
-Closes: https://lore.kernel.org/linux-input/c75433e0-9b47-4072-bbe8-b1d14ea97b13@rowland.harvard.edu/
-Cc: stable@vger.kernel.org
-Suggested-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
----
- drivers/hid/hid-core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> There are also some RCR bits that are not defined but are used by the
+> driver, so add macro definitions for these bits to improve readability
+> and maintainability.
+> 
+> In addition, although FEC_RCR_HALFDPX has been defined, it is not used
+> in the driver. According to the description of FEC_RCR[1] in RM, it is
+> used to disable receive on transmit. Therefore, it is more appropriate
+> to redefine FEC_RCR[1] as FEC_RCR_DRT.
+> 
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index b348d0464314ca331da073128f0ec4e0a6a91ed1..1a231dd9e4bc83202f2cbcd8b3a21e8c82b9deec 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -1883,9 +1883,12 @@ u8 *hid_alloc_report_buf(struct hid_report *report, gfp_t flags)
- 	/*
- 	 * 7 extra bytes are necessary to achieve proper functionality
- 	 * of implement() working on 8 byte chunks
-+	 * 1 extra byte for the report ID if it is null (not used) so
-+	 * we can reserve that extra byte in the first position of the buffer
-+	 * when sending it to .raw_request()
- 	 */
- 
--	u32 len = hid_report_len(report) + 7;
-+	u32 len = hid_report_len(report) + 7 + (report->id == 0);
- 
- 	return kzalloc(len, flags);
- }
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
--- 
-2.49.0
-
+Maxime
 
