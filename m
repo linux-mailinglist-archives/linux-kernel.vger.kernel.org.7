@@ -1,110 +1,275 @@
-Return-Path: <linux-kernel+bounces-725510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA18B00010
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:04:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6EDB00011
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9B71C821EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:04:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC243761A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBFB246BB4;
-	Thu, 10 Jul 2025 11:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD202DAFD6;
+	Thu, 10 Jul 2025 11:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUOlv+1a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vbw/df0f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7766F13A3F7;
-	Thu, 10 Jul 2025 11:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654CB220F4B;
+	Thu, 10 Jul 2025 11:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145470; cv=none; b=Y8a1DzZEGDToQMWowInKmd7GTOwc7MoT3ZUv4vaEIv3op62FieqHiogbr5Tjc90Iiv9BYcPTvdfFfxdg4O6KLiLzNK1bkNxm3uHS9XECJztrk3GCLTuqrlaTLRgtSKnl6MEHub4bQP5KpsSVjD4t1Y2hqI71VMmIx01ar8TFrEw=
+	t=1752145485; cv=none; b=ZgTjUn1g/eooyAq9kv/hAdkHrmODYU3EKDCzk2P0Gq1coDfmTsIpNhBJD/dE9VfScGJ2E/ZtppZLgYjdzKt6jsH7ShPYYKrMwSS9XxiFwhpdHld1uRp5IzfOrhefF0h4VlZbkotJrJy+g+mtrNr6Kip9hdwA7DxUWVXxgdKDWYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145470; c=relaxed/simple;
-	bh=1x3NYBBTsupBB7WLvmPOB3tNBrIQbsz92bq+l+SFrL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=krEK/lLsM02YE9etkOSUXvg48laR37yYNyPM9gEHEfDm/wZinZeOV0EPqplRyA/AEMq2sWgim2WIyTmnvtEj2QowpHQkYVcfcj5rOcxS6VBCxzug+49s5e65Z1Z1SMGHAjEej9e26gS6tLOphs8eQd20s0YgJFz2sCVuDdFExkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUOlv+1a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F770C4CEE3;
-	Thu, 10 Jul 2025 11:04:29 +0000 (UTC)
+	s=arc-20240116; t=1752145485; c=relaxed/simple;
+	bh=EqMlGjw32PRSX4jyVN+RJ865K9fKrDXxyRtztbrs/Nk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=jERAm4xHGlC+iDOLa839s+cgJmYIqdi8VSXVKr3Zge0E7SCdFH7gtHoCXu2GHWwwZvvMF/cINqGDdVrSjedO5coSyJZW/FavueTXfdtB356uVl3ArEVZxRi13LPDTRbyAKfqqH6pLtKsXqMBRLnI4zqKsmiqqNC/4jno9NxgHq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vbw/df0f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC57C4CEF5;
+	Thu, 10 Jul 2025 11:04:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752145469;
-	bh=1x3NYBBTsupBB7WLvmPOB3tNBrIQbsz92bq+l+SFrL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VUOlv+1a+sww5010PMrNjc/k7iojHGRLHeYaRqO8WU1lcDzCXQXpZkTDA5b5AGVn4
-	 diyxy4Sr0vpsV4udWox6CzPSuUgF4ic6gcOmI8wdrRxUPGNf9WF72Ybu5WXLmuGAiI
-	 jSVk/YfaMmayjG1ybwebgnf5Ox0LMls+AuSmUu28cdMVAYw1UU/pBFUl3ZOJJvAoef
-	 VxgWxnlq9MbWZu5B0PF3sO5mC1OQ0d/lXq3/O1YNUJhu+8Llma15yG8DNShB7IKipT
-	 83miEkRDvCBtYC4eW6fPlmJ+mUosN8E6RebEPghNBFyVIXtxlIeMEQ3YAAHVMq5++i
-	 p49xgnF/z2WMg==
-Date: Thu, 10 Jul 2025 12:04:26 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Julien Panis <jpanis@baylibre.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [GIT PULL] Immutable branch between MFD, Misc and Pinctrl due
- for the v6.17 merge window
-Message-ID: <aG-eOvS6-XHvLOpb@finisterre.sirena.org.uk>
-References: <20250613114518.1772109-1-mwalle@kernel.org>
- <20250710094906.GG1431498@google.com>
- <aG-OmSNn-oULfEuB@finisterre.sirena.org.uk>
- <DB8BCV6V36YE.20KJC5V0BJ1CN@kernel.org>
+	s=k20201202; t=1752145484;
+	bh=EqMlGjw32PRSX4jyVN+RJ865K9fKrDXxyRtztbrs/Nk=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=Vbw/df0fiCOHSbUGzRRAagI6NG8tgY366UhhDQZQaqx0Bo+faCeqYeFWoyQer74ey
+	 20ducUxQAdYm2nrj3d6zoWxsACE9F0HU2ubJS6SW+lEYid2/AbVB31LUYCd/vK6DnB
+	 19UR5ZY+/QpwPl9ouLBtPSYhvBJ6odQZDgHDJstxlTbrDLX6h792oPwxZuv4LvmZcO
+	 zWg9YvjdE/IBlxAvTD4p/HGjXp+3Crxz6muJqkrJX3lcYuypFPlWD81vbLcY85Nkgv
+	 8J/zIG1athdCQ0aJEtm3qJGbtMmGJnw5tc9fnU5n24mOvQt2WiHVylGvejZWzqUosy
+	 p7mCJnih29X1g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NYRHwGxhMPkUjlsm"
-Content-Disposition: inline
-In-Reply-To: <DB8BCV6V36YE.20KJC5V0BJ1CN@kernel.org>
-X-Cookie: Do not cut switchbacks.
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Jul 2025 13:04:38 +0200
+Message-Id: <DB8BQGJNFDAY.BGQ8CZSFFOLH@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <lkmm@lists.linux.dev>,
+ <linux-arch@vger.kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Will Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Wedson Almeida Filho"
+ <wedsonaf@gmail.com>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude
+ Paul" <lyude@redhat.com>, "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Alan Stern" <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 2/9] rust: sync: Add basic atomic operation mapping
+ framework
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-3-boqun.feng@gmail.com>
+In-Reply-To: <20250710060052.11955-3-boqun.feng@gmail.com>
+
+On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
+> Preparation for generic atomic implementation. To unify the
+> implementation of a generic method over `i32` and `i64`, the C side
+> atomic methods need to be grouped so that in a generic method, they can
+> be referred as <type>::<method>, otherwise their parameters and return
+> value are different between `i32` and `i64`, which would require using
+> `transmute()` to unify the type into a `T`.
+>
+> Introduce `AtomicImpl` to represent a basic type in Rust that has the
+> direct mapping to an atomic implementation from C. This trait is sealed,
+> and currently only `i32` and `i64` impl this.
+>
+> Further, different methods are put into different `*Ops` trait groups,
+> and this is for the future when smaller types like `i8`/`i16` are
+> supported but only with a limited set of API (e.g. only set(), load(),
+> xchg() and cmpxchg(), no add() or sub() etc).
+>
+> While the atomic mod is introduced, documentation is also added for
+> memory models and data races.
+>
+> Also bump my role to the maintainer of ATOMIC INFRASTRUCTURE to reflect
+> my responsiblity on the Rust atomic mod.
+>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+
+Overall this looks good from a functionality view. I have some cosmetic
+comments for the macros below and a possibly bigger concern regarding
+safety comments. But I think this is good enough for now, so:
+
+Reviewed-by: Benno Lossin <lossin@kernel.org>
+
+> diff --git a/rust/kernel/sync/atomic/ops.rs b/rust/kernel/sync/atomic/ops=
+.rs
+> new file mode 100644
+> index 000000000000..da04dd383962
+> --- /dev/null
+> +++ b/rust/kernel/sync/atomic/ops.rs
+> @@ -0,0 +1,195 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Atomic implementations.
+> +//!
+> +//! Provides 1:1 mapping of atomic implementations.
+> +
+> +use crate::bindings::*;
+
+We shouldn't import all bindings, just use `bindings::` below.
+
+> +// This macro generates the function signature with given argument list =
+and return type.
+> +macro_rules! declare_atomic_method {
+> +    (
+> +        $func:ident($($arg:ident : $arg_type:ty),*) $(-> $ret:ty)?
+> +    ) =3D> {
+> +        paste!(
+> +            #[doc =3D concat!("Atomic ", stringify!($func))]
+> +            #[doc =3D "# Safety"]
+> +            #[doc =3D "- Any pointer passed to the function has to be a =
+valid pointer"]
+> +            #[doc =3D "- Accesses must not cause data races per LKMM:"]
+> +            #[doc =3D "  - Atomic read racing with normal read, normal w=
+rite or atomic write is not data race."]
+
+s/not/not a/
+
+> +            #[doc =3D "  - Atomic write racing with normal read or norma=
+l write is data-race, unless the"]
+
+s/data-race/a data race/
+
+> +            #[doc =3D "    normal accesses are done at C side and consid=
+ered as immune to data"]
+
+    #[doc =3D "    normal access is done from the C side and considered imm=
+une to data"]
+
+> +            #[doc =3D "    races, e.g. CONFIG_KCSAN_ASSUME_PLAIN_WRITES_=
+ATOMIC."]
+
+Missing '`'.
 
 
---NYRHwGxhMPkUjlsm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Also why aren't you using `///` instead of `#[doc =3D`? The only part
+where you need interpolation is the first one.
 
-On Thu, Jul 10, 2025 at 12:46:52PM +0200, Michael Walle wrote:
-> On Thu Jul 10, 2025 at 11:57 AM CEST, Mark Brown wrote:
+> +            unsafe fn [< atomic_ $func >]($($arg: $arg_type,)*) $(-> $re=
+t)?;
+> +        );
+> +    };
 
-> > Is there some reason you didn't also pick up the regulator patches?
+> +declare_and_impl_atomic_methods!(
+> +    AtomicHasBasicOps ("Basic atomic operations") {
+> +        read[acquire](ptr: *mut Self) -> Self {
+> +            call(ptr.cast())
+> +        }
+> +
+> +        set[release](ptr: *mut Self, v: Self) {
+> +            call(ptr.cast(), v)
+> +        }
+> +    }
 
-> The regulator patches don't apply on the MFD tree because there are
-> two new patches [1, 2] in the regulator tree. Also my patches rely
-> on them. Thus, the idea was that Lee will provide an immutable tag,
-> that you can pull together with the remaining regulator patches.
+I think this would look a bit better:
 
-OK, if there's a situation like this then please don't send the patches
-that can't be applied, that way maintainers for the other trees don't
-need to see all the resends for something they can't act on.  Instead
-ask for the teg, then send a pull request for the tag as part of the
-cover letter for the series with the additional patches.
+    /// Basic atomic operations.
+    pub trait AtomicHasBasicOps {
+        unsafe fn read[acquire](ptr: *mut Self) -> Self {
+            bindings::#call(ptr.cast())
+        }
 
---NYRHwGxhMPkUjlsm
-Content-Type: application/pgp-signature; name="signature.asc"
+        unsafe fn set[release](ptr: *mut Self, v: Self) {
+            bindings::#call(ptr.cast(), v)
+        }
+    }
 
------BEGIN PGP SIGNATURE-----
+And then we could also put the safety comments inline:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhvnjcACgkQJNaLcl1U
-h9AO9wf/SttqipGFRQzotfTzdhU/snwTMxhbXDQgZtK7MfQHkPVYDwC6j0GhR5Ng
-ouaLam6RhQkg1v2TI+w6GCzw9VxriH57LzDxe8fmp/GWVSgLkjFFHnND/cR+eC0x
-VaoHtUpj5wPjdWf4JdiVvobvDxhZeaaZ1HtuWmEHeh05qI7dN3y+cXnRwOAot+vn
-Sy/yKK1/rkpfHWbNuBBklEIBb00hkmvABQcimrCauBtOq7gpKNhUY5l4fBTo/TqS
-a0qWtCtZS22U4HaO4U7/l6YXxYUyUqPXg3BBE4VeuK/ME9jd+2G31KqTtCi+Y1eh
-+mmmW/MUuN+KLx9IZ+XWLiGZj4CFvw==
-=aSka
------END PGP SIGNATURE-----
+    /// Basic atomic operations.
+    pub trait AtomicHasBasicOps {
+        /// Atomic read
+        ///
+        /// # Safety
+        /// - Any pointer passed to the function has to be a valid pointer
+        /// - Accesses must not cause data races per LKMM:
+        ///   - Atomic read racing with normal read, normal write or atomic=
+ write is not a data race.
+        ///   - Atomic write racing with normal read or normal write is a d=
+ata race, unless the
+        ///     normal access is done from the C side and considered immune=
+ to data races, e.g.
+        ///     `CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC`.
+        unsafe fn read[acquire](ptr: *mut Self) -> Self {
+            // SAFETY: Per function safety requirement, all pointers are va=
+lid, and accesses won't
+            // cause data race per LKMM.
+            unsafe { bindings::#call(ptr.cast()) }
+        }
 
---NYRHwGxhMPkUjlsm--
+        /// Atomic read
+        ///
+        /// # Safety
+        /// - Any pointer passed to the function has to be a valid pointer
+        /// - Accesses must not cause data races per LKMM:
+        ///   - Atomic read racing with normal read, normal write or atomic=
+ write is not a data race.
+        ///   - Atomic write racing with normal read or normal write is a d=
+ata race, unless the
+        ///     normal access is done from the C side and considered immune=
+ to data races, e.g.
+        ///     `CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC`.
+        unsafe fn set[release](ptr: *mut Self, v: Self) {
+            // SAFETY: Per function safety requirement, all pointers are va=
+lid, and accesses won't
+            // cause data race per LKMM.
+            unsafe { bindings::#call(ptr.cast(), v) }
+        }
+    }
+
+I'm not sure if this is worth it, but for reading the definitions of
+these operations directly in the code this is going to be a lot more
+readable. I don't think it's too bad to duplicate it.
+
+I'm also not fully satisfied with the safety comment on
+`bindings::#call`...
+
+---
+Cheers,
+Benno
+
+> +);
+> +
+> +declare_and_impl_atomic_methods!(
+> +    AtomicHasXchgOps ("Exchange and compare-and-exchange atomic operatio=
+ns") {
+> +        xchg[acquire, release, relaxed](ptr: *mut Self, v: Self) -> Self=
+ {
+> +            call(ptr.cast(), v)
+> +        }
+> +
+> +        try_cmpxchg[acquire, release, relaxed](ptr: *mut Self, old: *mut=
+ Self, new: Self) -> bool {
+> +            call(ptr.cast(), old, new)
+> +        }
+> +    }
+> +);
+> +
+> +declare_and_impl_atomic_methods!(
+> +    AtomicHasArithmeticOps ("Atomic arithmetic operations") {
+> +        add[](ptr: *mut Self, v: Self) {
+> +            call(v, ptr.cast())
+> +        }
+> +
+> +        fetch_add[acquire, release, relaxed](ptr: *mut Self, v: Self) ->=
+ Self {
+> +            call(v, ptr.cast())
+> +        }
+> +    }
+> +);
 
