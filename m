@@ -1,114 +1,91 @@
-Return-Path: <linux-kernel+bounces-726538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD4DAB00E68
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:01:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DA9B00E69
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8471892100
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:01:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C09D53ADC70
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417FC293C46;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA08A2951B5;
 	Thu, 10 Jul 2025 22:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTOqF03s"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OICT/CVX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EBB16A94A;
-	Thu, 10 Jul 2025 22:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447AA293C57
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752184893; cv=none; b=PwE77jBYNUmU8idKOLwzo+ZNWRScyefXLpi7BaybVc9DSD3VxdkhW/hY2UU8JA+/7MOJDghJgHRKXDKGbg0SwsJuuXVe7mCpaV6q/9/FNg4+gJGj9IE7EdxQnPsmwljVHE5m4rCHZV+PdXAxbuIsIISh1fOSUl2ur8Ap8JyNY+4=
+	t=1752184894; cv=none; b=OFuKIYqElZm4/HNokhxf5NyRz7LuHZrWmS3t4yppoZsKQ5uauyKXME2P0QyvzwqLV9bjDUW/5hXIPdcM3TM7hB9iVCTqAMHGezG7Ks162SaZeQThBT6rZTs51kmQj1zvTFq2vtXK8KuPoZsrseLpbifxuE0pZTY0utp+t2YY450=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752184893; c=relaxed/simple;
-	bh=7aAzz1o5S+01R78QDUVFrJ+DlKfEpY+7TzVUQpp1E6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h/P9hzil+ScnYU42H2cPnnDJ13P0V67R3nk0VWVEPmeyaAjnV74Hzjz80VE6psDKeecbo5TnieMPKyK2cIcOYWvEPXDWTmAfayRRE3TXsLFwahE2+nOxSsmw7noNy7v0VhlHLVw0vL2hUqJiNNa9ovyYPiF9ugK9Er3eH7VvE6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTOqF03s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0E02C4CEE3;
-	Thu, 10 Jul 2025 22:01:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752184893;
-	bh=7aAzz1o5S+01R78QDUVFrJ+DlKfEpY+7TzVUQpp1E6I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WTOqF03sSwmZHeR156aYiCot5scR9c+CPH/640u/Iu3vF/A1U1a9FW0MQqOTs1LHD
-	 e4+qzT+l1k3CsdL30DbRG7rxrJhmmdW/h9725uOokiuut1H3s1lR2XG+pFi27cKKvI
-	 D65EEJx2RJC+cJuqDcgR+4UmhWdjQfqkjKGjC2ym0SSOLmoPGrDlXnyiV1MmgBvMZq
-	 sLzdWZ/EjVI+Yufy9dSr4pkKec1LgA/7cqJqlMoMCsgYnGR0+Cw/I/ApJo5G7s96Qp
-	 Ag1Q3zKCqN3Zr614m+Bj/05uy6PS3AqSiCXEC/wUGpbuBl5Yrx81XX6OH5TcpLmWRM
-	 S2yOTOGZnymIA==
-Date: Thu, 10 Jul 2025 17:01:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
-	Lee Jones <lee@kernel.org>, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 1/9] dt-bindings: gpio: add bindings for the QIXIS FPGA
- based GPIO controller
-Message-ID: <20250710220132.GA4038128-robh@kernel.org>
-References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
- <20250709112658.1987608-2-ioana.ciornei@nxp.com>
+	s=arc-20240116; t=1752184894; c=relaxed/simple;
+	bh=6MdF5i/RpZPtk45CWd9nolEmBp5s/RmeoUjMV5XhZwI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=UVi1uoBVOgMvhLy2zH/ShTYqMZCKI04rOM5ey9YuHO9Bpc4wihHt1badi7GhsVbRe/FMuFgRRajee81wNilg6yXdFQcqtAOV9aIDZw6x7XIR1CAqQmycVMW40b9LvXy0rg3/Rdus9rZqNarMbFVE59AdbtPcOAZRnUnIs320u3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OICT/CVX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B76BC4CEE3;
+	Thu, 10 Jul 2025 22:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752184894;
+	bh=6MdF5i/RpZPtk45CWd9nolEmBp5s/RmeoUjMV5XhZwI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OICT/CVXnbAYMC8+MvstH7ZXTfriVfQy+4pGsAzGSG/7v5COziVUEralpPz2ZfW6x
+	 yFtqmLgl8i59krSPPvw4nlIwrCMSj0LXWIm3jNO8UvAgSqUPb0XL7cxS0XMWKAY5j3
+	 j3y2kdYsBvSsWOhiooxBQrcq8eaXSAwdWfDNGoPo=
+Date: Thu, 10 Jul 2025 15:01:33 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Feng Tang <feng.tang@linux.alibaba.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] panic: Fix compilation error (`make W=1`)
+Message-Id: <20250710150133.680679cf8a0f6b2f0bf3369f@linux-foundation.org>
+In-Reply-To: <20250710094816.771656-1-andriy.shevchenko@linux.intel.com>
+References: <20250710094816.771656-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709112658.1987608-2-ioana.ciornei@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 02:26:50PM +0300, Ioana Ciornei wrote:
-> Add a device tree binding for the QIXIS FPGA based GPIO controller.
-> Depending on the board, the QIXIS FPGA exposes registers which act as a
-> GPIO controller, each with 8 GPIO lines of fixed direction.
+On Thu, 10 Jul 2025 12:48:16 +0300 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+> Compiler is not happy about the recently added code:
 > 
-> Since each QIXIS FPGA layout has its particularities, add a separate
-> compatible string for each board/GPIO register combination supported.
-
-This could be covered in my proposed trivial gpio schema[1].
-
-
+> lib/sys_info.c:52:19: error: variable 'sys_info_avail' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
+>    52 | static const char sys_info_avail[] = "tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks";
+>       |                   ^~~~~~~~~~~~~~
 > 
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> ---
->  .../bindings/gpio/fsl,fpga-gpio.yaml          | 44 +++++++++++++++++++
->  1 file changed, 44 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
+> Fix it in the same way how, for example, lib/vsprintf.c does in the similar
+> cases, i.e. by using string literal directly as sizeof() parameter.
 > 
-> diff --git a/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
-> new file mode 100644
-> index 000000000000..dc7b6c0d9b40
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
-> @@ -0,0 +1,44 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/fsl,fpga-gpio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: GPIO controller embedded in the NXP QIXIS FPGA
-> +
-> +maintainers:
-> +  - Ioana Ciornei <ioana.ciornei@nxp.com>
-> +
-> +description: |
-> +  This module is part of the QIXIS FPGA found on some Layerscape boards such as
-> +  LX2160ARDB and LS1046AQDS. For more details see
-> +  ../board/fsl,fpga-qixis-i2c.yaml.
+> ...
+>
 
-Or this is simple enough, just add this as a child node in that schema.
+> --- a/lib/sys_info.c
+> +++ b/lib/sys_info.c
+> @@ -49,13 +49,11 @@ unsigned long sys_info_parse_param(char *str)
+>  
+>  #ifdef CONFIG_SYSCTL
+>  
+> -static const char sys_info_avail[] = "tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks";
+> -
+>  int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
+>  					  void *buffer, size_t *lenp,
+>  					  loff_t *ppos)
+>  {
+> -	char names[sizeof(sys_info_avail) + 1];
+> +	char names[sizeof("tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks") + 1];
+>  	struct ctl_table table;
+>  	unsigned long *si_bits_global;
+>  
 
-Rob
-
-[1] https://lore.kernel.org/all/20250701225355.2977294-1-robh@kernel.org/
+Yes, that's neater than the fix we currently have.  I'll grab, thanks.
 
