@@ -1,79 +1,84 @@
-Return-Path: <linux-kernel+bounces-725127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D9BAFFB17
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:39:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23940AFFB18
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C4C1C43355
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:39:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73E015A4060
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642AE28A730;
-	Thu, 10 Jul 2025 07:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE88289E00;
+	Thu, 10 Jul 2025 07:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="p5XXN1fi"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7OzyPgE"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E35928936C;
-	Thu, 10 Jul 2025 07:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61D328982D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752133156; cv=none; b=Nt5NqvU0kY1xPCCJS5jGtEaXtk/aGkgA4lrGkSCpmVTOx46CoOZYPPQdZ48LOkwX6hqOTV9uW98df9prmkLQB/u4aB+WEGzeL4TE1q9GNwgXdMvRub8hHclDR+GW6crvlaSDcvb6rilPfE+L9/lcjsRICVLujOsd7pvYkTbvVno=
+	t=1752133166; cv=none; b=VkqMVp4NAI3ZfF+EpWU3kmdwRkJK6RBPtr9BasgVrjhVmmLMqsLvd+x3oBBj304riZmgCeO4HoF+MVHi1fS38yPx2Q0Bvh3n58xeq406ZBz8DsxFKZG7WthGeo+kpgDm/BdJ6oYNZCtPl1TupcoW6/v5lIiZVPKvB22jGjTDC5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752133156; c=relaxed/simple;
-	bh=ASbDXvYEpvpA3dhPyIfiJOtn/utMb4WWmHLLlbdNe7M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fc5Mtu96TwBH6zo8OHesShHqXkSp1znIEN4HWEeUoHntb8SV7l28tLRH5RdU7mSfAK8oAVXVXpTHZBJv7Am06zaKimvYajMAamHq6jVDAHDiOoM9mKvcEVwkNF0Qe0URf5YxkkPgvoyFw4o02HTATobM3yMnK4UOxKaPA79quaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=p5XXN1fi; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=7kVCapFGdG0gRHQhSRUGUM3fGitSOZCS1rMndaGOheE=; b=p5XXN1fiONAQE6w4z3DXP0epP3
-	W+0AnvD6kwo2+3JjLjBxGY2ZrvM47itZ94wu+zku2xmM+4D6/vm4TXUrKSb2vXZfCC++9LgTPxlu7
-	sdnw8HXmtXvnJg6IEjUkrfcrocttP/kyWabdAUk39VKA2jbvUkSQp+4JLp2bx8AuPNg+nmL7672Nq
-	BjxBJpWBc86PA5La/Vh9VTAIO3Rp5lq/YwnJLbJ6NM/p4ZmXyjBM4h2JokBH3C8qfFO1LcoBlnSPX
-	dWNPrFbMPwzQdVQDAddi2AScEMrk6sluM2CbzgTQleOJ1NpzapCXPyQUWdXCTuZPbTLy9T75I0kiG
-	nmfSMtug==;
-Received: from 89-212-21-243.static.t-2.net ([89.212.21.243]:48064 helo=localhost.localdomain)
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1uZls3-006IV5-1A;
-	Thu, 10 Jul 2025 09:39:06 +0200
-From: Primoz Fiser <primoz.fiser@norik.com>
-To: Haibo Chen <haibo.chen@nxp.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno Sa <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: linux-iio@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1752133166; c=relaxed/simple;
+	bh=VzVapxAgUsP9Oc16nhWc5ZFzXOlTUI7twwNtwjbYFSk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gXed/lQN8GelbUfP+kHuLxiWfLEk8J/vBC5PgWoJF8yKH4nAUuCCAwgUHxeKGS6VW3OiFImt5ezHvIqrJkh4NFV6YQqct/XAagc6rjotM2i5T6GIUliegF4V/pfiI4iFDs7bxORCrUg72Cgk5p0l+lTM+ViE8c0jsDzJPQj7xvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7OzyPgE; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so692063b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752133164; x=1752737964; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FF48xnSlp05o3+3IJgrJF7ZpVzLIoUH+8qE33ijB9IE=;
+        b=U7OzyPgEslayKlhxMnYCHqO06ZExCLTILT1b3QpQ4NgNLEcQ6DOVCSdEt1iqckzIs6
+         QlvEO6fhLP7mVS62AkBKt5OhOBP3H9cH9zseXliMZoou2vxrWaAFgdMevECq1gfojbfg
+         9f9EXqRQr+/x4FHRiOEx2BzyUiQyUWoAdWnhy2k3hnSOSU0OC++4KcrD/oBsABRbTdoZ
+         hKR9ZWHzpEGHKeeXb0APun5626bahHDNmL4kqZIfju0s+la8Z1iI3VpmdrFPDICkv9+Q
+         Rlij6ofwvLq+lAtho5riP9CRlqKqfJWdRGlApjvwVKz2i4Ti8Bk9YuDWfW0T8d9tx029
+         6eBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752133164; x=1752737964;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FF48xnSlp05o3+3IJgrJF7ZpVzLIoUH+8qE33ijB9IE=;
+        b=RtRxBaqRtaJSMNwtFUbvyqGWGRTqGNmtJM4/mg5NROEcA57co32qh0oZqnheUbd7sL
+         f8a2qRueHPl3u0j+07LmuBQU0F64yuC16Ux444KCIvl82wQRXEtUMGHlUrTqQN26jn38
+         NEe8RYwVN281Cu11mpZwaiBSheEixMEdCc9MqFpxAVYmeunZIT7QQR+WBRuZNJbZHkrZ
+         eHosp/7e1GtsGdP1i1suraSrgmjHeb0Ls+RKbW56+LCI7m2bFk4Xs8R6mbmkXdjukoda
+         IpQF3OJGGwJ1/JgO5XFK2WIYuf6HBmx/rzfCMOR/C94Mgw9MeZfZyvU7PYP1lvFDJNlf
+         0VCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs2Yza/CgFv1jWSqUtz/xNNdoVT4qm+16ixYCMFMXjIQLlDGfjOxX9XlnS1koMnJZ/4pYvGbD81Y62Trs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfwL6bJmHTeAsJ3rkPtNV0AI4VyHAiWt6nSlOpyYavJXRvwbGW
+	pyjEbRkzDbG2pWz2RUBx6IsV5UJBG9cz/EkyIhRr2TwK0JjOoTvpxKOVMWm9XXi7
+X-Gm-Gg: ASbGncsASEdqevsl7G99vSjG9aOfkFzVwrP0L2i8d39RbfTw3PNn3pQ8rV8GufNRZjC
+	jqSKxT3dDLVS3wtPYJjyGblw1nuRTitPdy5SlDb6+oXSaB+4F4ZsEoNnJyqbARRTwIGNDEbbOMm
+	E7a1xGdWw+L1aQoruE68OGPsJw0bsTdenLt/DXL2aZQsDPfjpoovXMvk5WLOy9y1eU89XgSlbZE
+	poHr2U7ceJE5VNHVlYBF6gWK3kPVlf2Mq9eQE8oFKshscn7buefyCeSN5XKuxY+FQ6prXfs4sxR
+	SP6akne1wiPA7D5fGq2cPY/ify8PcpO0NfzOhMzZAkIEAT8Dsdpw2yBUb9ewd8yhP5dtTwau+9O
+	edSvRCkz/zzt570wfZXzx
+X-Google-Smtp-Source: AGHT+IFn226hYce4EcLM+scYf2w40wvyFsgZYANp57JgE9FjnVoVSOG0p1ivDZ3U4Jj9dCbRPp8jkw==
+X-Received: by 2002:a05:6a00:3d4e:b0:74c:3547:7f0c with SMTP id d2e1a72fcca58-74ea6411284mr9667307b3a.3.1752133163769;
+        Thu, 10 Jul 2025 00:39:23 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:4081:199:dcfb:ded1:3f8f:36be:5438])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f8b990sm1347981b3a.153.2025.07.10.00.39.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 00:39:23 -0700 (PDT)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: o-takashi@sakamocchi.jp
+Cc: linux1394-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
-	upstream@lists.phytec.de,
-	andrej.picej@norik.com
-Subject: [PATCH 2/2] iio: adc: imx93: Make calibration parameters configurable
-Date: Thu, 10 Jul 2025 09:39:04 +0200
-Message-Id: <20250710073905.1105417-3-primoz.fiser@norik.com>
+	Purva Yeshi <purvayeshi550@gmail.com>
+Subject: [PATCH] firewire: ohci: Initialize payload_bus to avoid uninitialized use warning
+Date: Thu, 10 Jul 2025 13:09:06 +0530
+Message-Id: <20250710073906.24105-1-purvayeshi550@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250710073905.1105417-1-primoz.fiser@norik.com>
-References: <20250710073905.1105417-1-primoz.fiser@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,145 +86,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-From: Andrej Picej <andrej.picej@norik.com>
+Fix Smatch-detected error:
+drivers/firewire/ohci.c:1514 at_context_queue_packet()
+error: uninitialized symbol 'payload_bus'.
 
-Make i.MX93 ADC calibration parameters:
- - AVGEN: Enable calibration averaging function,
- - NRSMPL: Select number of calibration samples,
- - TSAMP: Select sample time of calibration conversions,
+Smatch reports a potential uninitialized use of 'payload_bus' in
+at_context_queue_packet(). If packet->payload_length is zero, the
+variable may not be set before reaching the dma_unmap_single() call,
+which could lead to undefined behavior.
 
-in the MCR register configurable with the corresponding device-tree
-properties:
- - nxp,calib-avg-en,
- - nxp,calib-nr-samples and
- - nxp,calib-t-sample.
+Initialize 'payload_bus' to 0 to ensure it has a defined value in all
+code paths, preventing any uninitialized access.
 
-Signed-off-by: Andrej Picej <andrej.picej@norik.com>
-Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
 ---
- drivers/iio/adc/imx93_adc.c | 75 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 70 insertions(+), 5 deletions(-)
+ drivers/firewire/ohci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/imx93_adc.c b/drivers/iio/adc/imx93_adc.c
-index 7feaafd2316f..da9b5c179240 100644
---- a/drivers/iio/adc/imx93_adc.c
-+++ b/drivers/iio/adc/imx93_adc.c
-@@ -18,6 +18,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/property.h>
- 
- #define IMX93_ADC_DRIVER_NAME	"imx93-adc"
- 
-@@ -43,6 +44,9 @@
- #define IMX93_ADC_MCR_MODE_MASK			BIT(29)
- #define IMX93_ADC_MCR_NSTART_MASK		BIT(24)
- #define IMX93_ADC_MCR_CALSTART_MASK		BIT(14)
-+#define IMX93_ADC_MCR_AVGEN_MASK		BIT(13)
-+#define IMX93_ADC_MCR_NRSMPL_MASK		GENMASK(12, 11)
-+#define IMX93_ADC_MCR_TSAMP_MASK		GENMASK(10, 9)
- #define IMX93_ADC_MCR_ADCLKSE_MASK		BIT(8)
- #define IMX93_ADC_MCR_PWDN_MASK			BIT(0)
- #define IMX93_ADC_MSR_CALFAIL_MASK		BIT(30)
-@@ -145,7 +149,7 @@ static void imx93_adc_config_ad_clk(struct imx93_adc *adc)
- 
- static int imx93_adc_calibration(struct imx93_adc *adc)
+diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
+index edaedd156a6d..c05d90511f2b 100644
+--- a/drivers/firewire/ohci.c
++++ b/drivers/firewire/ohci.c
+@@ -1392,7 +1392,7 @@ static int at_context_queue_packet(struct context *ctx,
+ 				   struct fw_packet *packet)
  {
--	u32 mcr, msr;
-+	u32 mcr, msr, val, reg;
- 	int ret;
- 
- 	/* make sure ADC in power down mode */
-@@ -156,12 +160,73 @@ static int imx93_adc_calibration(struct imx93_adc *adc)
- 	mcr &= ~FIELD_PREP(IMX93_ADC_MCR_ADCLKSE_MASK, 1);
- 	writel(mcr, adc->regs + IMX93_ADC_MCR);
- 
--	imx93_adc_power_up(adc);
--
- 	/*
--	 * TODO: we use the default TSAMP/NRSMPL/AVGEN in MCR,
--	 * can add the setting of these bit if need in future.
-+	 * Optionally configure desired ADC calibration settings in MCR
-+	 * - MCR[AVGEN]: Enable/disable calibration averaging function (default: on)
-+	 * - MCR[NRSMPL]: Select the number of calibration samples (default: 512)
-+	 * - MCR[TSAMP]: Select sample time of calibration conversions (default: 22)
- 	 */
-+	ret = device_property_read_u32(adc->dev, "nxp,calib-avg-en", &val);
-+	if (!ret) {
-+		if (val != 0 && val != 1) {
-+			dev_err(adc->dev, "invalid nxp,calib-avg-en: %d\n", val);
-+			return -EINVAL;
-+		}
-+		reg = val;
-+		mcr &= ~IMX93_ADC_MCR_AVGEN_MASK;
-+		mcr |= FIELD_PREP(IMX93_ADC_MCR_AVGEN_MASK, reg);
-+	}
-+
-+	ret = device_property_read_u32(adc->dev, "nxp,calib-nr-samples", &val);
-+	if (!ret) {
-+		switch (val) {
-+		case 16:
-+			reg = 0x0;
-+			break;
-+		case 32:
-+			reg = 0x1;
-+			break;
-+		case 128:
-+			reg = 0x2;
-+			break;
-+		case 512:
-+			reg = 0x3;
-+			break;
-+		default:
-+			dev_err(adc->dev, "invalid nxp,calib-nr-samples: %d\n", val);
-+			return -EINVAL;
-+		}
-+		mcr &= ~IMX93_ADC_MCR_NRSMPL_MASK;
-+		mcr |= FIELD_PREP(IMX93_ADC_MCR_NRSMPL_MASK, reg);
-+	}
-+
-+	ret = device_property_read_u32(adc->dev, "nxp,calib-t-sample", &val);
-+	if (!ret) {
-+		switch (val) {
-+		case 8:
-+			reg = 0x1;
-+			break;
-+		case 16:
-+			reg = 0x2;
-+			break;
-+		case 22:
-+			reg = 0x0;
-+			break;
-+		case 32:
-+			reg = 0x3;
-+			break;
-+		default:
-+			dev_err(adc->dev, "invalid nxp,calib-t-sample: %d\n", val);
-+			return -EINVAL;
-+		}
-+		mcr &= ~IMX93_ADC_MCR_TSAMP_MASK;
-+		mcr |= FIELD_PREP(IMX93_ADC_MCR_TSAMP_MASK, reg);
-+	}
-+
-+	/* write calibration settings to MCR */
-+	writel(mcr, adc->regs + IMX93_ADC_MCR);
-+
-+	imx93_adc_power_up(adc);
- 
- 	/* run calibration */
- 	mcr = readl(adc->regs + IMX93_ADC_MCR);
+ 	struct fw_ohci *ohci = ctx->ohci;
+-	dma_addr_t d_bus, payload_bus;
++	dma_addr_t d_bus, payload_bus = 0;
+ 	struct driver_data *driver_data;
+ 	struct descriptor *d, *last;
+ 	__le32 *header;
 -- 
 2.34.1
 
