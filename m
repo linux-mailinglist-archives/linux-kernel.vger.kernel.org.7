@@ -1,235 +1,357 @@
-Return-Path: <linux-kernel+bounces-724931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8838EAFF8AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:55:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07E8AFF8A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D17D6585D6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:55:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F135F7B22B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E054E286D74;
-	Thu, 10 Jul 2025 05:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hfrQuwvl"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420205383;
-	Thu, 10 Jul 2025 05:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29DD286891;
+	Thu, 10 Jul 2025 05:55:09 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BF15383;
+	Thu, 10 Jul 2025 05:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752126930; cv=none; b=RAXjFMJx8654T5wXIId4AX2jnj1puFQbkZyBheF1EGryp6rlm/31muQpdtr2nlijsuQaXYP/T8JaHNs7ZgqrPyl1fwEsw1LDwXEOyPjEqD+Z5VkKNe3ZJIjM3vCWmyO7YDozU2w85FYV1aaGKD6UmdGrUt2U5nnHE0HIS99l17c=
+	t=1752126909; cv=none; b=KhDHovSfCQ/elxNhK+pIIyNU/Yn89cM4duWJ3pfbn2XLZxvNlqMmNSJZk/p1IcyzCcKCeUnQwl1m/Gbqm2odOcvbrj2gZz8IqZfSr6O9rF58nLl7Tkqr39HBl28FK8VA+AR2DBwJPUd/2rFbWuFIIiY0XgQ6qfSNjKodu5djoQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752126930; c=relaxed/simple;
-	bh=GlRTsNWYMTrAcXnXTGWwFfiMFFeCUzzVnFeqbx0HAzs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lLruVrfmdSKcswuL2Dc/p3peSmouf9/JLsdOS2Q6ZkrWb3tcW7w+KnAZs8p7ybNYm0JpRl1BLlOZIvisfVNALgJ4aFHdAXFpPG5soq1YUdNLYIad2mcZHukIayCB0zR+anrPYhE3y4fkTlZ2hqQaA0dfUDv3zApk/oG6U/nMGyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hfrQuwvl; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ok
-	Omog+xA6ZskFrf7mJLxT2vs7YHH1y9jNOPVQ1DbRU=; b=hfrQuwvlfSGZevpZBB
-	M2b5RmvtGGFuO64H2DqqDVLLUBe4XlCOZgtADHgyYvQctTxuSMIAgALe2gogRy65
-	hxvwpOVDDxLTgZziu789UyTFNTG20xfRBGv7dBE2NuXwpFafhKe2BVlYFMrKZNVb
-	yRVRyckjLVamBdkIIHDmVBUzk=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wCnddKLVW9o_xi_Dw--.25287S2;
-	Thu, 10 Jul 2025 13:54:21 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mattbobrowski@google.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	olsajiri@gmail.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v2 bpf-next] bpf: Clean up individual BTF_ID code
-Date: Thu, 10 Jul 2025 13:54:19 +0800
-Message-Id: <20250710055419.70544-1-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1752126909; c=relaxed/simple;
+	bh=SI9KbhP6hIZ/8v4pGRoQDQgsPaxDH03U56iVsHXbOS8=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=WWmxAGHXASX/nlTQYn7H14sZyuI12lbAjpzfnZL+xCzjX+oy9fYpkzbhbxeLvoRAKxXZkjejN0PIkFwrNYV+C4kbKeXFetYvrXly2a9vAX6DNKZj2Jnag74MsUcbhzD/fq9l9a4KmSoQbxCaYHgRfymKKQrBqGFc3/Ew9s1+r6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bd3w81w7lz5F2lj;
+	Thu, 10 Jul 2025 13:55:04 +0800 (CST)
+Received: from njb2app06.zte.com.cn ([10.55.23.119])
+	by mse-fl1.zte.com.cn with SMTP id 56A5sn09052681;
+	Thu, 10 Jul 2025 13:54:49 +0800 (+08)
+	(envelope-from jiang.kun2@zte.com.cn)
+Received: from mapi (njb2app07[null])
+	by mapi (Zmail) with MAPI id mid204;
+	Thu, 10 Jul 2025 13:54:51 +0800 (CST)
+Date: Thu, 10 Jul 2025 13:54:51 +0800 (CST)
+X-Zmail-TransId: 2aff686f55abffffffff869-26c7b
+X-Mailer: Zmail v1.0
+Message-ID: <20250710135451340_5pOgpIFi0M5AE7H44W1D@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCnddKLVW9o_xi_Dw--.25287S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Ww15KFy5AF4UKw15ZrWDJwb_yoW7tr1fpF
-	W8Z3srCr48tw4YgF1DJF4Uuryag3Z5W3y7Cr4DC3ySkF1DXryDWF1jgw13ZF1a9ryqgr9a
-	qr109F1avw1fuFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnYFAUUUUU=
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbipRWGeGhvJOiDmgABsd
+Mime-Version: 1.0
+From: <jiang.kun2@zte.com.cn>
+To: <bsingharora@gmail.com>, <akpm@linux-foundation.org>, <david@redhat.com>,
+        <yang.yang29@zte.com.cn>
+Cc: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-doc@vger.kernel.org>, <wang.yong12@zte.com.cn>,
+        <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
+        <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>,
+        <zhang.yunkai@zte.com.cn>, <xu.xin16@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4IG5leHRdIGRlbGF5dG9wOiBhZGQgcHNpIGluZm8gdG8gc2hvdyBzeXN0ZW0gZGVsYXk=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 56A5sn09052681
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 686F55B8.000/4bd3w81w7lz5F2lj
 
-From: Feng Yang <yangfeng@kylinos.cn>
+From: Wang Yaxin <wang.yaxin@zte.com.cn>
 
-Use BTF_ID_LIST_SINGLE(a, b, c) instead of
-BTF_ID_LIST(a)
-BTF_ID(b, c)
+support showing whole delay of system by reading PSI,
+just like the first few lines of information output
+by the top command. the output of delaytop includes
+both system-wide delay and delay of individual tasks,
+providing a more comprehensive reflection of system
+latency status.
 
-Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+Use case
+========
+bash# ./delaytop
+System Pressure Information: (avg10/avg60/avg300/total)
+CPU:    full:    0.0%/   0.0%/   0.0%/0           some:    0.1%/   0.0%/   0.0%/14216596
+Memory: full:    0.0%/   0.0%/   0.0%/34010659    some:    0.0%/   0.0%/   0.0%/35406492
+IO:     full:    0.1%/   0.0%/   0.0%/51029453    some:    0.1%/   0.0%/   0.0%/55330465
+IRQ:    full:    0.0%/   0.0%/   0.0%/0
+
+Top 20 processes (sorted by CPU delay):
+
+  PID   TGID  COMMAND            CPU(ms)  IO(ms)        SWAP(ms) RCL(ms) THR(ms)  CMP(ms)  WP(ms)  IRQ(ms)
+---------------------------------------------------------------------------------------------
+   32     32  kworker/2:0H-sy   23.65     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+  497    497  kworker/R-scsi_    1.20     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+  495    495  kworker/R-scsi_    1.13     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+  494    494  scsi_eh_0          1.12     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+  485    485  kworker/R-ata_s    0.90     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+  574    574  kworker/R-kdmfl    0.36     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+   34     34  idle_inject/3      0.33     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+ 1123   1123  nde-netfilter      0.28     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+   60     60  ksoftirqd/7        0.25     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+  114    114  kworker/0:2-cgr    0.25     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+  496    496  scsi_eh_1          0.24     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+   51     51  cpuhp/6            0.24     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+ 1667   1667  atd                0.24     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+   45     45  cpuhp/5            0.23     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+ 1102   1102  nde-backupservi    0.22     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+ 1098   1098  systemsettings     0.21     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+ 1100   1100  audit-monitor      0.20     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+   53     53  migration/6        0.20     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+ 1482   1482  sshd               0.19     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+   39     39  cpuhp/4            0.19     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+
+Co-developed-by: Fan Yu <fan.yu9@zte.com.cn>
+Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
+Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
 ---
-Changes in v2:
-- Add the missing ones, thanks: jirka.
-- Link to v1: https://lore.kernel.org/all/20250709082038.103249-1-yangfeng59949@163.com/
----
- kernel/bpf/btf.c         | 3 +--
- kernel/bpf/link_iter.c   | 3 +--
- kernel/bpf/prog_iter.c   | 3 +--
- kernel/kallsyms.c        | 3 +--
- kernel/trace/bpf_trace.c | 3 +--
- net/ipv6/route.c         | 3 +--
- net/netlink/af_netlink.c | 3 +--
- net/sched/bpf_qdisc.c    | 9 +++------
- 8 files changed, 10 insertions(+), 20 deletions(-)
+ tools/accounting/delaytop.c | 163 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 149 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 2dd13eea7b0e..0aff814cb53a 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -6200,8 +6200,7 @@ int get_kern_ctx_btf_id(struct bpf_verifier_log *log, enum bpf_prog_type prog_ty
- 	return kctx_type_id;
- }
- 
--BTF_ID_LIST(bpf_ctx_convert_btf_id)
--BTF_ID(struct, bpf_ctx_convert)
-+BTF_ID_LIST_SINGLE(bpf_ctx_convert_btf_id, struct, bpf_ctx_convert)
- 
- static struct btf *btf_parse_base(struct btf_verifier_env *env, const char *name,
- 				  void *data, unsigned int data_size)
-diff --git a/kernel/bpf/link_iter.c b/kernel/bpf/link_iter.c
-index fec8005a121c..8158e9c1af7b 100644
---- a/kernel/bpf/link_iter.c
-+++ b/kernel/bpf/link_iter.c
-@@ -78,8 +78,7 @@ static const struct seq_operations bpf_link_seq_ops = {
- 	.show	= bpf_link_seq_show,
+diff --git a/tools/accounting/delaytop.c b/tools/accounting/delaytop.c
+index 23e38f39e97d..cd848af9a856 100644
+--- a/tools/accounting/delaytop.c
++++ b/tools/accounting/delaytop.c
+@@ -10,9 +10,9 @@
+  * individual tasks (PIDs).
+  *
+  * Key features:
+- *   - Collects per-task delay accounting statistics via taskstats.
+- *   - Supports sorting, filtering.
+- *   - Supports both interactive (screen refresh).
++ *	- Collects per-task delay accounting statistics via taskstats.
++ *	- Supports sorting, filtering.
++ *	- Supports both interactive (screen refresh).
+  *
+  * Copyright (C) Fan Yu, ZTE Corp. 2025
+  * Copyright (C) Wang Yaxin, ZTE Corp. 2025
+@@ -43,6 +43,14 @@
+ #include <linux/cgroupstats.h>
+ #include <ncurses.h>
+
++#define PSI_CPU_SOME "/proc/pressure/cpu"
++#define PSI_CPU_FULL	"/proc/pressure/cpu"
++#define PSI_MEMORY_SOME "/proc/pressure/memory"
++#define PSI_MEMORY_FULL "/proc/pressure/memory"
++#define PSI_IO_SOME "/proc/pressure/io"
++#define PSI_IO_FULL "/proc/pressure/io"
++#define PSI_IRQ_FULL	"/proc/pressure/irq"
++
+ #define NLA_NEXT(na)			((struct nlattr *)((char *)(na) + NLA_ALIGN((na)->nla_len)))
+ #define NLA_DATA(na)			((void *)((char *)(na) + NLA_HDRLEN))
+ #define NLA_PAYLOAD(len)		(len - NLA_HDRLEN)
+@@ -66,6 +74,24 @@ struct config {
+ 	char *container_path;	/* Path to container cgroup */
  };
- 
--BTF_ID_LIST(btf_bpf_link_id)
--BTF_ID(struct, bpf_link)
-+BTF_ID_LIST_SINGLE(btf_bpf_link_id, struct, bpf_link)
- 
- static const struct bpf_iter_seq_info bpf_link_seq_info = {
- 	.seq_ops		= &bpf_link_seq_ops,
-diff --git a/kernel/bpf/prog_iter.c b/kernel/bpf/prog_iter.c
-index 53a73c841c13..85d8fcb56fb7 100644
---- a/kernel/bpf/prog_iter.c
-+++ b/kernel/bpf/prog_iter.c
-@@ -78,8 +78,7 @@ static const struct seq_operations bpf_prog_seq_ops = {
- 	.show	= bpf_prog_seq_show,
- };
- 
--BTF_ID_LIST(btf_bpf_prog_id)
--BTF_ID(struct, bpf_prog)
-+BTF_ID_LIST_SINGLE(btf_bpf_prog_id, struct, bpf_prog)
- 
- static const struct bpf_iter_seq_info bpf_prog_seq_info = {
- 	.seq_ops		= &bpf_prog_seq_ops,
-diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-index 4198f30aac3c..1e7635864124 100644
---- a/kernel/kallsyms.c
-+++ b/kernel/kallsyms.c
-@@ -829,8 +829,7 @@ static struct bpf_iter_reg ksym_iter_reg_info = {
- 	.seq_info		= &ksym_iter_seq_info,
- };
- 
--BTF_ID_LIST(btf_ksym_iter_id)
--BTF_ID(struct, kallsym_iter)
-+BTF_ID_LIST_SINGLE(btf_ksym_iter_id, struct, kallsym_iter)
- 
- static int __init bpf_ksym_iter_register(void)
+
++/* PSI statistics structure */
++struct psi_stats {
++	double cpu_some_avg10, cpu_some_avg60, cpu_some_avg300;
++	unsigned long long cpu_some_total;
++	double cpu_full_avg10, cpu_full_avg60, cpu_full_avg300;
++	unsigned long long cpu_full_total;
++	double memory_some_avg10, memory_some_avg60, memory_some_avg300;
++	unsigned long long memory_some_total;
++	double memory_full_avg10, memory_full_avg60, memory_full_avg300;
++	unsigned long long memory_full_total;
++	double io_some_avg10, io_some_avg60, io_some_avg300;
++	unsigned long long io_some_total;
++	double io_full_avg10, io_full_avg60, io_full_avg300;
++	unsigned long long io_full_total;
++	double irq_full_avg10, irq_full_avg60, irq_full_avg300;
++	unsigned long long irq_full_total;
++};
++
+ /* Task delay information structure */
+ struct task_info {
+ 	int pid;
+@@ -100,6 +126,7 @@ struct container_stats {
+
+ /* Global variables */
+ static struct config cfg;
++static struct psi_stats psi;
+ static struct task_info tasks[MAX_TASKS];
+ static int task_count;
+ static int running = 1;
+@@ -130,13 +157,13 @@ static void usage(void)
  {
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index e7f97a9a8bbd..c8162dc89dc3 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -781,8 +781,7 @@ BPF_CALL_1(bpf_task_pt_regs, struct task_struct *, task)
- 	return (unsigned long) task_pt_regs(task);
+ 	printf("Usage: delaytop [Options]\n"
+ 	"Options:\n"
+-	"  -h, --help               Show this help message and exit\n"
+-	"  -d, --delay=SECONDS      Set refresh interval (default: 2 seconds, min: 1)\n"
+-	"  -n, --iterations=COUNT   Set number of updates (default: 0 = infinite)\n"
+-	"  -P, --processes=NUMBER   Set maximum number of processes to show (default: 20, max: 1000)\n"
+-	"  -o, --once               Display once and exit\n"
+-	"  -p, --pid=PID            Monitor only the specified PID\n"
+-	"  -C, --container=PATH     Monitor the container at specified cgroup path\n");
++	"  -h, --help				Show this help message and exit\n"
++	"  -d, --delay=SECONDS	  Set refresh interval (default: 2 seconds, min: 1)\n"
++	"  -n, --iterations=COUNT	Set number of updates (default: 0 = infinite)\n"
++	"  -P, --processes=NUMBER	Set maximum number of processes to show (default: 20, max: 1000)\n"
++	"  -o, --once				Display once and exit\n"
++	"  -p, --pid=PID			Monitor only the specified PID\n"
++	"  -C, --container=PATH	 Monitor the container at specified cgroup path\n");
+ 	exit(0);
  }
- 
--BTF_ID_LIST(bpf_task_pt_regs_ids)
--BTF_ID(struct, pt_regs)
-+BTF_ID_LIST_SINGLE(bpf_task_pt_regs_ids, struct, pt_regs)
- 
- const struct bpf_func_proto bpf_task_pt_regs_proto = {
- 	.func		= bpf_task_pt_regs,
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index 79c8f1acf8a3..0d5464c64965 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -6805,8 +6805,7 @@ void __init ip6_route_init_special_entries(void)
- #if defined(CONFIG_BPF_SYSCALL) && defined(CONFIG_PROC_FS)
- DEFINE_BPF_ITER_FUNC(ipv6_route, struct bpf_iter_meta *meta, struct fib6_info *rt)
- 
--BTF_ID_LIST(btf_fib6_info_id)
--BTF_ID(struct, fib6_info)
-+BTF_ID_LIST_SINGLE(btf_fib6_info_id, struct, fib6_info)
- 
- static const struct bpf_iter_seq_info ipv6_route_seq_info = {
- 	.seq_ops		= &ipv6_route_seq_ops,
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index e8972a857e51..bea064febf80 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -2869,8 +2869,7 @@ static const struct rhashtable_params netlink_rhashtable_params = {
- };
- 
- #if defined(CONFIG_BPF_SYSCALL) && defined(CONFIG_PROC_FS)
--BTF_ID_LIST(btf_netlink_sock_id)
--BTF_ID(struct, netlink_sock)
-+BTF_ID_LIST_SINGLE(btf_netlink_sock_id, struct, netlink_sock)
- 
- static const struct bpf_iter_seq_info netlink_seq_info = {
- 	.seq_ops		= &netlink_seq_ops,
-diff --git a/net/sched/bpf_qdisc.c b/net/sched/bpf_qdisc.c
-index 7ea8b54b2ab1..adcb618a2bfc 100644
---- a/net/sched/bpf_qdisc.c
-+++ b/net/sched/bpf_qdisc.c
-@@ -130,8 +130,7 @@ static int bpf_qdisc_btf_struct_access(struct bpf_verifier_log *log,
- 	return 0;
+
+@@ -276,7 +303,7 @@ static int send_cmd(int sd, __u16 nlmsg_type, __u32 nlmsg_pid,
+ 	memset(&nladdr, 0, sizeof(nladdr));
+ 	nladdr.nl_family = AF_NETLINK;
+ 	while ((r = sendto(sd, buf, buflen, 0, (struct sockaddr *) &nladdr,
+-				   sizeof(nladdr))) < buflen) {
++					sizeof(nladdr))) < buflen) {
+ 		if (r > 0) {
+ 			buf += r;
+ 			buflen -= r;
+@@ -320,6 +347,89 @@ static int get_family_id(int sd)
+ 	return id;
  }
- 
--BTF_ID_LIST(bpf_qdisc_init_prologue_ids)
--BTF_ID(func, bpf_qdisc_init_prologue)
-+BTF_ID_LIST_SINGLE(bpf_qdisc_init_prologue_ids, func, bpf_qdisc_init_prologue)
- 
- static int bpf_qdisc_gen_prologue(struct bpf_insn *insn_buf, bool direct_write,
- 				  const struct bpf_prog *prog)
-@@ -161,8 +160,7 @@ static int bpf_qdisc_gen_prologue(struct bpf_insn *insn_buf, bool direct_write,
- 	return insn - insn_buf;
- }
- 
--BTF_ID_LIST(bpf_qdisc_reset_destroy_epilogue_ids)
--BTF_ID(func, bpf_qdisc_reset_destroy_epilogue)
-+BTF_ID_LIST_SINGLE(bpf_qdisc_reset_destroy_epilogue_ids, func, bpf_qdisc_reset_destroy_epilogue)
- 
- static int bpf_qdisc_gen_epilogue(struct bpf_insn *insn_buf, const struct bpf_prog *prog,
- 				  s16 ctx_stack_off)
-@@ -451,8 +449,7 @@ static struct bpf_struct_ops bpf_Qdisc_ops = {
- 	.owner = THIS_MODULE,
- };
- 
--BTF_ID_LIST(bpf_sk_buff_dtor_ids)
--BTF_ID(func, bpf_kfree_skb)
-+BTF_ID_LIST_SINGLE(bpf_sk_buff_dtor_ids, func, bpf_kfree_skb)
- 
- static int __init bpf_qdisc_kfunc_init(void)
+
++static void read_psi_stats(void)
++{
++	FILE *fp;
++	char line[256];
++	int ret = 0;
++	/* Zero all fields */
++	memset(&psi, 0, sizeof(psi));
++	/* CPU pressure */
++	fp = fopen(PSI_CPU_SOME, "r");
++	if (fp) {
++		while (fgets(line, sizeof(line), fp)) {
++			if (strncmp(line, "some", 4) == 0) {
++				ret = sscanf(line, "some avg10=%lf avg60=%lf avg300=%lf total=%llu",
++							&psi.cpu_some_avg10, &psi.cpu_some_avg60,
++							&psi.cpu_some_avg300, &psi.cpu_some_total);
++				if (ret != 4)
++					fprintf(stderr, "Failed to parse CPU some PSI data\n");
++			} else if (strncmp(line, "full", 4) == 0) {
++				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
++						&psi.cpu_full_avg10, &psi.cpu_full_avg60,
++						&psi.cpu_full_avg300, &psi.cpu_full_total);
++				if (ret != 4)
++					fprintf(stderr, "Failed to parse CPU full PSI data\n");
++			}
++		}
++		fclose(fp);
++	}
++	/* Memory pressure */
++	fp = fopen(PSI_MEMORY_SOME, "r");
++	if (fp) {
++		while (fgets(line, sizeof(line), fp)) {
++			if (strncmp(line, "some", 4) == 0) {
++				ret = sscanf(line, "some avg10=%lf avg60=%lf avg300=%lf total=%llu",
++						&psi.memory_some_avg10, &psi.memory_some_avg60,
++						&psi.memory_some_avg300, &psi.memory_some_total);
++				if (ret != 4)
++					fprintf(stderr, "Failed to parse Memory some PSI data\n");
++			} else if (strncmp(line, "full", 4) == 0) {
++				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
++						&psi.memory_full_avg10, &psi.memory_full_avg60,
++						&psi.memory_full_avg300, &psi.memory_full_total);
++			}
++				if (ret != 4)
++					fprintf(stderr, "Failed to parse Memory full PSI data\n");
++		}
++		fclose(fp);
++	}
++	/* IO pressure */
++	fp = fopen(PSI_IO_SOME, "r");
++	if (fp) {
++		while (fgets(line, sizeof(line), fp)) {
++			if (strncmp(line, "some", 4) == 0) {
++				ret = sscanf(line, "some avg10=%lf avg60=%lf avg300=%lf total=%llu",
++						&psi.io_some_avg10, &psi.io_some_avg60,
++						&psi.io_some_avg300, &psi.io_some_total);
++				if (ret != 4)
++					fprintf(stderr, "Failed to parse IO some PSI data\n");
++			} else if (strncmp(line, "full", 4) == 0) {
++				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
++						&psi.io_full_avg10, &psi.io_full_avg60,
++						&psi.io_full_avg300, &psi.io_full_total);
++				if (ret != 4)
++					fprintf(stderr, "Failed to parse IO full PSI data\n");
++			}
++		}
++		fclose(fp);
++	}
++	/* IRQ pressure (only full) */
++	fp = fopen(PSI_IRQ_FULL, "r");
++	if (fp) {
++		while (fgets(line, sizeof(line), fp)) {
++			if (strncmp(line, "full", 4) == 0) {
++				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
++						&psi.irq_full_avg10, &psi.irq_full_avg60,
++						&psi.irq_full_avg300, &psi.irq_full_total);
++				if (ret != 4)
++					fprintf(stderr, "Failed to parse IRQ full PSI data\n");
++			}
++		}
++		fclose(fp);
++	}
++}
++
+ static int read_comm(int pid, char *comm_buf, size_t buf_size)
  {
+ 	char path[64];
+@@ -549,7 +659,29 @@ static void display_results(void)
+ 	FILE *out = stdout;
+
+ 	fprintf(out, "\033[H\033[J");
+-
++	/* PSI output (one-line, no cat style) */
++	fprintf(out, "System Pressure Information: ");
++	fprintf(out, "(avg10/avg60/avg300/total)\n");
++	fprintf(out, "CPU:");
++	fprintf(out, "	full: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu", psi.cpu_full_avg10,
++			psi.cpu_full_avg60, psi.cpu_full_avg300, psi.cpu_full_total);
++	fprintf(out, "  some: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu\n", psi.cpu_some_avg10,
++			psi.cpu_some_avg60, psi.cpu_some_avg300, psi.cpu_some_total);
++
++	fprintf(out, "Memory:");
++	fprintf(out, " full: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu", psi.memory_full_avg10,
++			psi.memory_full_avg60, psi.memory_full_avg300, psi.memory_full_total);
++	fprintf(out, "  some: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu\n", psi.memory_some_avg10,
++			psi.memory_some_avg60, psi.memory_some_avg300, psi.memory_some_total);
++
++	fprintf(out, "IO:");
++	fprintf(out, "	full: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu", psi.io_full_avg10,
++			psi.io_full_avg60, psi.io_full_avg300, psi.io_full_total);
++	fprintf(out, "  some: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu\n", psi.io_some_avg10,
++			psi.io_some_avg60, psi.io_some_avg300, psi.io_some_total);
++	fprintf(out, "IRQ:");
++	fprintf(out, "	full: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu\n\n", psi.irq_full_avg10,
++			psi.irq_full_avg60, psi.irq_full_avg300, psi.irq_full_total);
+ 	if (cfg.container_path) {
+ 		fprintf(out, "Container Information (%s):\n", cfg.container_path);
+ 		fprintf(out, "Processes: running=%d, sleeping=%d, ",
+@@ -559,8 +691,8 @@ static void display_results(void)
+ 			container_stats.nr_io_wait);
+ 	}
+ 	fprintf(out, "Top %d processes (sorted by CPU delay):\n\n",
+-		   cfg.max_processes);
+-	fprintf(out, "  PID	TGID  COMMAND		 CPU(ms)  IO(ms)   ");
++			cfg.max_processes);
++	fprintf(out, "  PID	TGID  COMMAND		 CPU(ms)  IO(ms)	");
+ 	fprintf(out, "SWAP(ms) RCL(ms) THR(ms)  CMP(ms)  WP(ms)  IRQ(ms)\n");
+ 	fprintf(out, "-----------------------------------------------");
+ 	fprintf(out, "----------------------------------------------\n");
+@@ -616,6 +748,9 @@ int main(int argc, char **argv)
+
+ 	/* Main loop */
+ 	while (running) {
++		/* Read PSI statistics */
++		read_psi_stats();
++
+ 		/* Get container stats if container path provided */
+ 		if (cfg.container_path)
+ 			get_container_stats();
 -- 
-2.43.0
-
+2.25.1
 
