@@ -1,113 +1,103 @@
-Return-Path: <linux-kernel+bounces-725147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E86AFFB51
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:49:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5610AFFB55
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5EA61C44230
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:50:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 015CF5A46A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3157028B4E0;
-	Thu, 10 Jul 2025 07:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323DF289E38;
+	Thu, 10 Jul 2025 07:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QAEWGaGd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="O5u+t2J3"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66711F1313;
-	Thu, 10 Jul 2025 07:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8056A8BF8;
+	Thu, 10 Jul 2025 07:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752133778; cv=none; b=VVhlCFA6ODP2UNVAX92P4IavT6kMQfR6QXPTwm4mgFXjy6M67JmSjwkOJEu09sYc3WTmObmFBiSdbT/tQZOWWwnsx0WqV0ATSO3Ea05LA9ag3y+nZA2O29OyUA4pyFisZ7TeQW0pzq9NS52LXVxivkCKl+yKultmvHMsWKs3TQc=
+	t=1752133829; cv=none; b=bYowxnZpTrcssZ2myOnxEYiF15TV0b0mh/e3G09uilqzxPT3/cE6qVsUE8eUtRI8CptE0y3dBNgh5Yqn36mKrLjhVtgEhRasSpSKKV5wjgwKucd6YS8/edQZp/NjAnQv4nlvUcIgIVFeX6fZ2b8XoBffAOz2hnx2OwPFy+CjEfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752133778; c=relaxed/simple;
-	bh=s1gPWPDHMHee3mZrHp5MkTm92bihm3mxBUZdy5mNbCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pVQe8KKhht7C08ZETSn22aN0N7/t1+k+xY3kH6F4pm9zruMa8k+ykvtzjyY4AgMNjSpGuQdmZK00rYfcBNmRfcAIQBgKcMkrBMdG9Y8boHzhyi2Ew1dxlAl5yYReiQfH3hXBfa4OEtt8IJxTRIWHnbADwj/sXbqRRiOMbv1zCE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QAEWGaGd; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752133776; x=1783669776;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=s1gPWPDHMHee3mZrHp5MkTm92bihm3mxBUZdy5mNbCw=;
-  b=QAEWGaGdLoj5SkO4UGwFMQuNyJzTLFzpy8JN6OvVbzT5q0NCY86UhFAU
-   XglmrMxtnQVa7/cT9SBWYtDllRGJhrjLeemu+8Vaj0gKprGxd9azpdpbf
-   z+GojMhSx0iN5+WI4GT4+IiKPSu9HMdk/mw011BcwhBN1Kcw95Zp0Kah/
-   iOco6y/tBMApR1tmndE5YKdITu/2t7P7UtxZ3SbU6BI+LTL97HWb2yUk4
-   hG7YI4ZP2nKb+Pk+JZzuvWcpAnUHgcl3x+80+3Xm9dNn6DszDtTNwINYC
-   wnwOIWYlBZhmUDUQ3w8i/MkZceiJli/G8KjqQqDLlx/fMJfaoQSb7sfc+
-   A==;
-X-CSE-ConnectionGUID: A2OyIgQrS3KbHuh5VXGxKg==
-X-CSE-MsgGUID: SWD6fMk/QACCm9OtJYMe4g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54535502"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="54535502"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 00:49:36 -0700
-X-CSE-ConnectionGUID: RS8IeWZ7S56KymhinSUNaQ==
-X-CSE-MsgGUID: ByqQhlgmR8qd9qcAJCFDsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="186973491"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa001.fm.intel.com with ESMTP; 10 Jul 2025 00:49:32 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 15DDA1B7; Thu, 10 Jul 2025 10:49:31 +0300 (EEST)
-Date: Thu, 10 Jul 2025 10:49:30 +0300
-From: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"seanjc@google.com" <seanjc@google.com>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
-	"Gao, Chao" <chao.gao@intel.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"Huang, Kai" <kai.huang@intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv2 07/12] KVM: TDX: Preallocate PAMT pages to be used in
- page fault path
-Message-ID: <prt55pslqia6m62m74lseca5xw4kcrxv7gthfnulnbousgxbg3@6zxi46s5rz5p>
-References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
- <20250609191340.2051741-8-kirill.shutemov@linux.intel.com>
- <f58bca0331f3ba0bcd55d68f86c2563e6aa70747.camel@intel.com>
+	s=arc-20240116; t=1752133829; c=relaxed/simple;
+	bh=HpZ+dfDSNkY49OjfSC+QS6crvB9YufmTeWdXa2A4my0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Osu1BiXYffM9XhWGlLTIqVsrXG9+EZD0o92XOHygVvhJjPAsHEpE3DYCfxYm0fQVgh2LH+oWN2GC+UI2iy9hezHW4oGTH3mll3O0NODJ68mc3DI4VeUKB1iFSnSHexa5flpgpQBunaVFRt2ju39vE8g9awszPzibmUMEyu5i78o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=O5u+t2J3; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752133748;
+	bh=w1AyeoVG+2z8V4xMI8xI1G0Y8bMnfcHFmHwou6xpDFA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=O5u+t2J3BKCT/G/IRnDu0u+8FOPXeSyW+XnoLHxJmBqgFgrgPWYQcj6DPD9eEtIRK
+	 o4fqnKUFmBYdVYh94IHv1/XETHm++svjI/XXbkf/987cdHuiQqGw+G/RjVCUqHrkqi
+	 uXKA5WyxALMs7dO8SqobF7i1X+mEDQ5BJIZ/PY4NkOZ1YyRwRZ1O2rDDPgRy3SjNRq
+	 2Pp8+T/qepTOJAb2LcfqQLxk8RPm7PvpgGhQYB4wWNASjHSGaQDmbPXT+rLK9JzxOv
+	 THOC0jK+EvI1Q9DLYd1j7TACQRPIva3cz/2hnBwlwH2cmylVfGIGurGVnx15DJOv+Y
+	 iYelC2+g34M5w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bd6Rm1cqZz4wbb;
+	Thu, 10 Jul 2025 17:49:08 +1000 (AEST)
+Date: Thu, 10 Jul 2025 17:50:20 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the mm-unstable tree
+Message-ID: <20250710175020.6efdcc8f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f58bca0331f3ba0bcd55d68f86c2563e6aa70747.camel@intel.com>
+Content-Type: multipart/signed; boundary="Sig_/2_yOVWzUoPUIsyLFEJ/26Tr";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Jul 10, 2025 at 01:34:19AM +0000, Edgecombe, Rick P wrote:
-> On Mon, 2025-06-09 at 22:13 +0300, Kirill A. Shutemov wrote:
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index cbc84c6abc2e..d99bb27b5b01 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -616,6 +616,12 @@ static int mmu_topup_memory_caches(struct kvm_vcpu *vcpu, bool maybe_indirect)
-> >  		if (r)
-> >  			return r;
-> >  	}
-> > +
-> > +	r = kvm_mmu_topup_memory_cache(&vcpu->arch.pamt_page_cache,
-> > +				       tdx_nr_pamt_pages() * PT64_ROOT_MAX_LEVEL);
-> > +	if (r)
-> > +		return r;
-> > +
-> 
-> Shouldn't this be only for TD vCPUs?
+--Sig_/2_yOVWzUoPUIsyLFEJ/26Tr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Ah. Good point. I didn't consider legacy VMs on TDX-enabled host.
+Hi all,
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+After merging the mm-unstable tree, today's linux-next build (htmldocs)
+produced this warning:
+
+include/linux/page-flags.h:1161: warning: Function parameter or struct memb=
+er 'page' not described in 'page_has_movable_ops'
+
+Introduced by commit
+
+  7a93faa2375d ("mm: convert "movable" flag in page->mapping to a page flag=
+")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2_yOVWzUoPUIsyLFEJ/26Tr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhvcLwACgkQAVBC80lX
+0GzELggAg0X6Hgv6apcVp2FcWBgMsxNQFSpDLJf0gtjdr8d/vylNxNj/GaZYgMJb
+O9tQrz+8m26Dh5uad9WEmCKSk8YPxZTtNSPVJfPHzRjEmc1FY8DudcPUk1nEdpis
+2SI9a9qgCn1+vFONpSYNsBidPmOIk3AEOEnjiclRWE7JOFE7wJfTDzhPbANcXwGf
+1t8c5G2qfYQTJ6AL3bcyQc+48B9I1AM1KP+0w2ojlJz96rSYcb1gS76yZ8wmq9kU
+UkRFrR59WUKXZCubDn4VL+8Dba4TNpkpSHidcR0TBs6ehKjQtZXvRmHnrQ3E+ZCW
+YFOGJEayEKP0o9jH9AiK9a6mvRUmOw==
+=bsAp
+-----END PGP SIGNATURE-----
+
+--Sig_/2_yOVWzUoPUIsyLFEJ/26Tr--
 
