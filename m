@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-726341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BF5B00C0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:16:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBCA0B00C12
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 296C6764D21
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 987BB764E71
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA53F301144;
-	Thu, 10 Jul 2025 19:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3DF2882DE;
+	Thu, 10 Jul 2025 19:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhZZ3o+B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="1gHgW9Wy";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="HQArWaY3"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDE92FE36D;
-	Thu, 10 Jul 2025 19:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F31738DD8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 19:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752174839; cv=none; b=NcbGZEODEM9gYceUwkvXzLFnPgbloI6wJqt1rWtehb57zlq9EAIwam7Uwm4Gw1oad76b8oAGkAP+J4l8hJ/fYhhziCCPEqRqLNQ6v6LAZ7ZXCyGuJUBXpEcpkGLntW78F0OxAizhEKSG7WFP4T9cWsV5L9CbkPRKqi0seaVY54s=
+	t=1752175112; cv=none; b=PYLY+IIQP04lTnOOtwfgOl17WXQR+yeTtxdN9qKdVdjyxFDdbyCj3eghJzUgoa+nnAlZb7Rg0anZtMyVvm7wDSGfVi6+7As7HGpPoqxEBz7FhLOWREDWLcb48n3masUIFOSrpEZV6/UJHv+xBPYgUEjn0lytorgY8EpNtPZsEhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752174839; c=relaxed/simple;
-	bh=UfZBgPNXsNVvIoKoizlLf9l//dyhqb8DPMRaq9LzZjs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RjQQzBVkZw93Cd8TN3Steza+S5dTDRkK2KLesJc3hSYqj/Xm8GoLyz+tdRmBXRGouUGOIZR0jRnY7Wj2Qzm+tPgN30zh4Sbk8OB6eCoi4Z1cyhJZ6bv5wC+3Sw2xDDpt0YP3IZaAfDOGTZFO7LtJD2VGRZN95TT/vKP7oD7Tkk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhZZ3o+B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 65B66C4CEF4;
-	Thu, 10 Jul 2025 19:13:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752174838;
-	bh=UfZBgPNXsNVvIoKoizlLf9l//dyhqb8DPMRaq9LzZjs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=fhZZ3o+B1YOtPqq/GZDBQRyKrQ3TA+FY7IoW3Vu6T9SZCiKzb77vnw8i9XEQipqI8
-	 WMqg8ezFZbAY1pc+/AIQxlfckXGS2K3ISIu+WtoFIWTrHQY1mZNvEzTXDGJXQh19vx
-	 6b8xfhJpsa/fCfIJbxjJm01axbc1fwN8gfUXhUdyVRY9qxvGS9/1dQEKwLKJQsEhNn
-	 e5ZN2V8W73yZkCLaWqGkx8DZlBF9jrDLv5P0EZk8CyE9O8UEsmxdSQh7KLT9Y8b/Ou
-	 U90yI9q9WncbdbxEoX5jPprj2N1ZEpuu0AD8iqg3Dgb9idLWQfhfuTEAZ2JuPxDVeV
-	 2a91VLn1XDq4A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B55AC83F22;
-	Thu, 10 Jul 2025 19:13:58 +0000 (UTC)
-From: Frank Li via B4 Relay <devnull+Frank.Li.nxp.com@kernel.org>
-Date: Thu, 10 Jul 2025 15:13:55 -0400
-Subject: [PATCH v21 9/9] arm64: dts: imx95: Add msi-map for pci-ep device
+	s=arc-20240116; t=1752175112; c=relaxed/simple;
+	bh=hYWCsiLaucrRCXLWTJZUAVyVH9wiplFqSsUs/v0qq5I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YKLtY3De44esbrGwFbOohI/1zogYFCw+zcwGyYZPS/neWOqQ2y7DmZ0Sawljyig3QUlNTcO3YQAgskC3e7XULpzziJr1z9rVQO8RVfmvpfq3YnSencsu0IJPrej6iSOxH7j47WfErpJngr5xwwtj9mrE1Hk6JrmSVU1CKC4u9bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=1gHgW9Wy; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=HQArWaY3; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752175107; x=1752779907;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=yIKje5wAXurxmtbQ0lnpzvJAveEfbYFc+nB4ATz4KQM=;
+	b=1gHgW9Wy1kLa3A2keL0jvqP6rnAv+NSNxIdwUQZduELYdUaBzW3GbfL0NeLnUrHTUmYm6TyE+tj5Q
+	 hMnixWlvApGzFsyw0XbDtObJJmwAOarFEsQTnR3V9lx1r9W8mtuZI6B+kpjAkeB1Bv9d8HfFY9H4m2
+	 5yMk+aOTr1eOnesJDQ6doUdyM65ysj6qcchRHkH7MEkbpeLG4LcJXrBQJFKBXDlsVagJXPAmQs7U3y
+	 cEH2thZ8JH9qtSkkXT10BU91qSZRwPLImqQlmEoMZjRd2uGH5OdOCESI8awIjY3scoC0iX+bObh2ph
+	 HgEVlPhrPkRcIkF1lPAj0mee+fLWnmQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752175107; x=1752779907;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=yIKje5wAXurxmtbQ0lnpzvJAveEfbYFc+nB4ATz4KQM=;
+	b=HQArWaY3WmpuxBewTZ4jna2D0DGoDICP3dHMkkJD8aWwXj7GQbgWocHLwmlsPxc3ZgFbWu+m6LF22
+	 9f4BGbSBA==
+X-HalOne-ID: a754a754-5dc2-11f0-9693-85eb291bc831
+Received: from slottsdator.home (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
+	by mailrelay5.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id a754a754-5dc2-11f0-9693-85eb291bc831;
+	Thu, 10 Jul 2025 19:18:27 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v2] mm: zswap: add myself back to MAINTAINERS
+Date: Thu, 10 Jul 2025 21:18:18 +0200
+Message-Id: <20250710191818.1429309-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-ep-msi-v21-9-57683fc7fb25@nxp.com>
-References: <20250710-ep-msi-v21-0-57683fc7fb25@nxp.com>
-In-Reply-To: <20250710-ep-msi-v21-0-57683fc7fb25@nxp.com>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Anup Patel <apatel@ventanamicro.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Marc Zyngier <maz@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, 
- Shuah Khan <shuah@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>, 
- Lucas Stach <l.stach@pengutronix.de>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Cc: Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org, jdmason@kudzu.us, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- imx@lists.linux.dev, devicetree@vger.kernel.org, 
- Niklas Cassel <cassel@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
- Manivannan Sadhasivam <mani@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752174836; l=973;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=wW9Nwm5vAKtBf5Pux9lo/+uSvITxDxxhF8J82uPpSQ8=;
- b=VtcLSyohMB2FbPRKwdeAd1gT+yHIS4yjiZLuRPs9oX0oesyANEabrauubaRWQWZI0Hoa9Tyqq
- pt88S7wZQTQB5u0CTEtvjMU/70Lk/gnk03eIJ59F7pIgZX/e5D2tHlw
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-Endpoint-Received: by B4 Relay for Frank.Li@nxp.com/20240130 with
- auth_id=121
-X-Original-From: Frank Li <Frank.Li@nxp.com>
-Reply-To: Frank.Li@nxp.com
+Content-Transfer-Encoding: 8bit
 
-From: Frank Li <Frank.Li@nxp.com>
+It's been a while since I was one of zswap mainainers but nevertheless
+I'd like to get back on board. There are some things in the pipeline
+related to zswap/zpool and Rust integration that I'd like to submit in
+close future and maintain thereafter.
 
-Add msi-map for pci-ep device.
-
-Acked-by: Manivannan Sadhasivam <mani@kernel.org>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
 ---
-change in v20
-- add Manivannan's ACK
-
-change from v14 to v16
-- none
-
-change from v13 to v14
-- new patch
----
- arch/arm64/boot/dts/freescale/imx95.dtsi | 1 +
+ MAINTAINERS | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
-index 632631a2911224cadc16a943cdb467e091e43384..c59d11eb7a581a500d381ef96f1e44533052c2a2 100644
---- a/arch/arm64/boot/dts/freescale/imx95.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
-@@ -1797,6 +1797,7 @@ pcie1_ep: pcie-ep@4c380000 {
- 			assigned-clock-rates = <3600000000>, <100000000>, <10000000>;
- 			assigned-clock-parents = <0>, <0>,
- 						 <&scmi_clk IMX95_CLK_SYSPLL1_PFD1_DIV2>;
-+			msi-map = <0x0 &its 0x98 0x1>;
- 			power-domains = <&scmi_devpd IMX95_PD_HSIO_TOP>;
- 			status = "disabled";
- 		};
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9dd4111d7d96..f3bfbfa27fce 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -27474,6 +27474,7 @@ ZSWAP COMPRESSED SWAP CACHING
+ M:	Johannes Weiner <hannes@cmpxchg.org>
+ M:	Yosry Ahmed <yosry.ahmed@linux.dev>
+ M:	Nhat Pham <nphamcs@gmail.com>
++M:	Vitaly Wool <vitaly.wool@konsulko.se>
+ R:	Chengming Zhou <chengming.zhou@linux.dev>
+ L:	linux-mm@kvack.org
+ S:	Maintained
 -- 
-2.34.1
-
+2.39.2
 
 
