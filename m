@@ -1,129 +1,124 @@
-Return-Path: <linux-kernel+bounces-725217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73EA5AFFC18
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:24:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E5FAFFC19
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C65F77A3DEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:22:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A483174291
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3213728C5AF;
-	Thu, 10 Jul 2025 08:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D99728C5CE;
+	Thu, 10 Jul 2025 08:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h9sv5aQh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="K0RiQHIW"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498E828C01E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59129286D55;
+	Thu, 10 Jul 2025 08:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752135851; cv=none; b=c5NEpt6WeqoUnW+g7JKilwdKQQMOY1sCsxN5WHEg6l3x5LCdssOCzy6mD3H/PxSA1R8N6vmO2adTuRm13vMl0bqiQzliHpSDwee0cmu489jpq1gAUZq2+WT1PA58ul/DPJQmRlWr+xYrbNWpglug2hs1Cn8LDHzFuiPM7ZpDP4Y=
+	t=1752135871; cv=none; b=Ua2iOuKLzQY3OTLFZtBG1Xw9Eq9xoDD1Xd2TuqUZNtaLDAOp5bm4bHwJ2MYIjIpO1VcJ/leykypiYgVa+B7kdtr9lDqhe5C58FiwYGqcj+XPAqUPxeCCrqkr2DxyaMUCjyoqlMSP+tSPWtwn/tPy//UnNjr/yxi0p+YrHb8nA88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752135851; c=relaxed/simple;
-	bh=vbUCxBltSJvT9sv+FCrhP8pAConw986gj+9WibSkHYw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mgj0KP3ep09kPKWnl6tXj93HsK+qvCzciIE03btAOzGC7eM9j6lqn1dwaNY6KOl7JBBnv32iy7jHwCYRNz5om5o0GeJc8+C/Rbc3vfiz2rXPO7nIuGUdJ/gGBDuf5axGJIIDL9S8yNjTf4Ds/R1QKDZbRzVq3Fm404bvVZJf88k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h9sv5aQh; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752135850; x=1783671850;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vbUCxBltSJvT9sv+FCrhP8pAConw986gj+9WibSkHYw=;
-  b=h9sv5aQhdIwzL6uoZJGR/r/1Oui6PJOx8zncSEjnfGGnshiuXYUmZ/yX
-   pl7uSEQ0yjS7PSRY/OveTZxLv7cTeJvuRwhacf12SwPuxxI4ak3F8W9qm
-   EmuRmrraI5H5G7sPTUnKYmu4mdNqMUaI96LwxfcxEAHkm4D6wrrYYpql/
-   j4swz3rQyf7XBlTj7lF55z/40X4VJIgKftxttoE9TMpNpK7PeJcum0wj+
-   ioRQWhH3RhEWMnVtSElzVaVN0hRyaNm/2qbE1WYY9sQHGrIP8p1TlYwdj
-   FUlReVBh8zBigABGI9iTI8Re/I4ZM0XY/MeKxC4287quWbpKizxhyriPY
-   g==;
-X-CSE-ConnectionGUID: 9J+Dzo9rQa6SwEFYPkgSig==
-X-CSE-MsgGUID: Ubg3Kh2PQkmor6X6U1nLHQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54338715"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="54338715"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 01:24:10 -0700
-X-CSE-ConnectionGUID: Pe+EUWy4R4Kgs/rea9H2bA==
-X-CSE-MsgGUID: bmmXkvNARoa4Da6ifslW4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="161568414"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP; 10 Jul 2025 01:24:07 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id B23A61B7; Thu, 10 Jul 2025 11:24:05 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Leon Romanovsky <leon@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/1] mm/hmm: Move pmd_to_hmm_pfn_flags() to the respective #ifdeffery
-Date: Thu, 10 Jul 2025 11:23:53 +0300
-Message-ID: <20250710082403.664093-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1752135871; c=relaxed/simple;
+	bh=HaTdolnUZbkwC5qeDXCjTRC1Si57s5ggTljhTLmb+mE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=n0gehJueAQdlHfx7esz2uRujFg873lW8yZHGJLaDv+LVcFFeUlJd0V8CLdiU9BBiD+3AbfafEPB3NJapu32ETSQqOfPWuuSeB0QJCRZegF+fk4Hkubg8QTMmdkrmP9X2tzrqAGE/FswuNp0HjyEK5UXUg08H47L8eVNPtROSRio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=K0RiQHIW; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 167861C00A4; Thu, 10 Jul 2025 10:24:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1752135865;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=pDDwx/8Xa9qxt/kIJD4o4HRI/VK/dHZbF4B5VrNxjo0=;
+	b=K0RiQHIWBElKO73p34htQt7Pb7ZxY3ubIf0tapH7e59Cr7bzz+sphMPbWuMEIACfLhBezv
+	erCQD4k2aJdKVkSu/sAeqar6JD9UYx8/gAgiamoD1G7l4lIFKaLobMcoU9oVlbFn1mGPKZ
+	gK73YxOMaDlRlDONVISXqFKjqJkMLvs=
+Date: Thu, 10 Jul 2025 10:24:24 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: kraxel@redhat.com, vivek.kasireddy@intel.com,
+	dri-devel@lists.freedesktop.org, sumit.semwal@linaro.org,
+	benjamin.gaignard@collabora.com, Brian.Starkey@arm.com,
+	jstultz@google.com, tjmercier@google.com,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	kernel list <linux-kernel@vger.kernel.org>,
+	laurent.pinchart@ideasonboard.com, l.stach@pengutronix.de,
+	linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
+	etnaviv@lists.freedesktop.org, phone-devel@vger.kernel.org
+Subject: DMA-BUFs always uncached on arm64, causing poor camera performance
+ on Librem 5
+Message-ID: <aG94uNDrL1MdHJPM@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Hy5IfTgkPzmMQMNi"
+Content-Disposition: inline
 
-When pmd_to_hmm_pfn_flags() is unused, it prevents kernel builds with clang,
-`make W=1` and CONFIG_TRANSPARENT_HUGEPAGE=n:
 
-  mm/hmm.c:186:29: warning: unused function 'pmd_to_hmm_pfn_flags' [-Wunused-function]
+--Hy5IfTgkPzmMQMNi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix this by moving the function to the respective existing ifdeffery
-for its the only user.
+Hi!
 
-See also:
+It seems that DMA-BUFs are always uncached on arm64... which is a
+problem.
 
-  6863f5643dd7 ("kbuild: allow Clang to find unused static inline functions for W=1 build")
+I'm trying to get useful camera support on Librem 5, and that includes
+recording vidos (and taking photos).
 
-Fixes: 9d3973d60f0a ("mm/hmm: cleanup the hmm_vma_handle_pmd stub")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
+memcpy() from normal memory is about 2msec/1MB. Unfortunately, for
+DMA-BUFs it is 20msec/1MB, and that basically means I can't easily do
+760p video recording. Plus, copying full-resolution photo buffer takes
+more than 200msec!
 
-v2: fixed Subject prefix
+There's possibility to do some processing on GPU, and its implemented here:
 
- mm/hmm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://gitlab.com/tui/tui/-/tree/master/icam?ref_type=3Dheads
 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index e8b26aa838b9..015ab243f081 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -183,6 +183,7 @@ static inline unsigned long hmm_pfn_flags_order(unsigned long order)
- 	return order << HMM_PFN_ORDER_SHIFT;
- }
- 
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- static inline unsigned long pmd_to_hmm_pfn_flags(struct hmm_range *range,
- 						 pmd_t pmd)
- {
-@@ -193,7 +194,6 @@ static inline unsigned long pmd_to_hmm_pfn_flags(struct hmm_range *range,
- 	       hmm_pfn_flags_order(PMD_SHIFT - PAGE_SHIFT);
- }
- 
--#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- static int hmm_vma_handle_pmd(struct mm_walk *walk, unsigned long addr,
- 			      unsigned long end, unsigned long hmm_pfns[],
- 			      pmd_t pmd)
--- 
-2.47.2
+but that hits the same problem in the end -- data is in DMA-BUF,
+uncached, and takes way too long to copy out.
 
+And that's ... wrong. DMA ended seconds ago, complete cache flush
+would be way cheaper than copying single frame out, and I still have
+to deal with uncached frames.
+
+So I have two questions:
+
+1) Is my analysis correct that, no matter how I get frame from v4l and
+process it on GPU, I'll have to copy it from uncached memory in the
+end?
+
+2) Does anyone have patches / ideas / roadmap how to solve that? It
+makes GPU unusable for computing, and camera basically unusable for
+video.
+
+Best regards,
+								Pavel
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, and Musk!
+
+--Hy5IfTgkPzmMQMNi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaG94uAAKCRAw5/Bqldv6
+8pgQAKCIzyOsWHWgCDHHRvv8N/YvGO3c0QCdFeWLgWJbGw7+2Zf5gSBmRo2Gf5U=
+=v0KO
+-----END PGP SIGNATURE-----
+
+--Hy5IfTgkPzmMQMNi--
 
