@@ -1,163 +1,216 @@
-Return-Path: <linux-kernel+bounces-725550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB952B000A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:36:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63982B000A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85A371C20A47
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D3383BA8F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EABB245029;
-	Thu, 10 Jul 2025 11:36:28 +0000 (UTC)
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A18224BBEC;
+	Thu, 10 Jul 2025 11:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VAg73U0X"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE20946F
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C581F242D64;
+	Thu, 10 Jul 2025 11:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752147388; cv=none; b=Wo7IWHi0myfgaJmF1Q/5pxeSkrLQ6OrNqYPWGlFDQ96le3gI17yB84z9N5Du3beApIFTCypw3WcCYIRl+7rnrGZP9lLZ0N+iAbPn9Dfts6wb4KoGzgWikeys0V5gI0LuHsEQI+xQ6Z3upDS2TqaXIWhNGh+Y/W1R9eh76mYTV5M=
+	t=1752147390; cv=none; b=ApWcsmRQedD1wNO0yrDigfFAkbpIYCVYfHLbUOd+aipsyatWPUlGVodRlfsVtGwtF22SKKp7tEDWqTn6Rkl4kqhM/sUn4lNPsme0nSTY6OtADNqU+MwA97vNt2srMDijgzaZn1o2zEO0yE4MX/vhvbOqLRhyYo7quWUkfreEgfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752147388; c=relaxed/simple;
-	bh=3Nf8bXnc6DKj7aB5sETR0IWPsNmAB1Ub/y1Mxt5t4rU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Disposition:MIME-Version; b=pTHHNtUGtAlr40kXJvtOy+Sg62l2ViR5DQSK3dcr8/24Gk+jKZy3tNTfWnr+6p+cJxskvFPD2yuMjAmiVKQbbpdAiaNsfhVMS6jDIRQQ5ax/15RUdCZUrdffs4GzMzStdQb+YYUGOOa6KQAOOGVxAdtTMGhXGcL2ebtIS7hO02s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201618.home.langchao.com
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202507101935080355;
-        Thu, 10 Jul 2025 19:35:08 +0800
-Received: from jtjnmail201626.home.langchao.com (10.100.2.36) by
- Jtjnmail201618.home.langchao.com (10.100.2.18) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.57; Thu, 10 Jul 2025 19:35:10 +0800
-Received: from jtjnmail201622.home.langchao.com (10.100.2.22) by
- jtjnmail201626.home.langchao.com (10.100.2.36) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.57; Thu, 10 Jul 2025 19:35:10 +0800
-Received: from jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6])
- by jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6%7]) with mapi
- id 15.01.2507.057; Thu, 10 Jul 2025 19:35:10 +0800
-From: =?gb2312?B?Qm8gTGl1ICjB9bKoKS3Ay7Ox0MXPog==?= <liubo03@inspur.com>
-To: "hsiangkao@linux.alibaba.com" <hsiangkao@linux.alibaba.com>,
-	"xiang@kernel.org" <xiang@kernel.org>, "chao@kernel.org" <chao@kernel.org>
-CC: "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] erofs: support metadata compression
-Thread-Topic: [PATCH] erofs: support metadata compression
-Thread-Index: AQHb8ACFaSvIuPujuUSWHlZrHEmfU7QqTfIAgADtq2A=
-Date: Thu, 10 Jul 2025 11:35:09 +0000
-Message-ID: <00fc488bbdd1489ca94f4d0bcd416403@inspur.com>
-References: <43e95e68b2a66605e9dad2f04a26410710-7-25linux.alibaba.com@g.corp-email.com>
- <c3ebea91-9a78-4ac8-8312-3d98008f7950@linux.alibaba.com>
-In-Reply-To: <c3ebea91-9a78-4ac8-8312-3d98008f7950@linux.alibaba.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-Content-Type: application/pkcs7-mime; smime-type=signed-data;
-	name="smime.p7m"
-Content-Disposition: attachment; filename="smime.p7m"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1752147390; c=relaxed/simple;
+	bh=0CSNf2gIm1jGUv9MUwvoiIckuiGdELEtnNe6oZ4hMPU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UDqbVAtsSD96G201AoPvBvTa/Kvn+pSA0UJJKhQ4u3usBBGWWdSxnTYm0/xrF0az2otSyT+J3O2HRyV33KU+hueyWVzWK2zEOLk8V7VlcO+GKacRv0omoYh1JKQ4LHm6C/nVcHfRoDrdIpAVNmPLExLafVD6fw+oIXSJTAqIuhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VAg73U0X; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56ABa26k1763929;
+	Thu, 10 Jul 2025 06:36:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752147363;
+	bh=rNTlqiHfvedDzNwAPVAxz8dEvxTfvjoNT8uo1s4H/iE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=VAg73U0XXr7mcqHWsQkfbro7OfWhpnHDkblpOi9YUGZZ/lGMqJDy2IAqRa2coe3JD
+	 UkiTG1P2uoJnibNBaa7YDYsj/koGRYHAE/1agTBKQDlkvRzezxIK4KrGIAK3YicgXm
+	 shWYhDRyQchy4unKZcctLOkczf6EhB4pEp5lrxxc=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56ABa2s83460955
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 10 Jul 2025 06:36:02 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 10
+ Jul 2025 06:36:02 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 10 Jul 2025 06:36:02 -0500
+Received: from [172.24.227.193] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.227.193])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56ABZvml1266887;
+	Thu, 10 Jul 2025 06:35:58 -0500
+Message-ID: <dc494a08-9e5c-4ce7-8d60-3680f1658328@ti.com>
+Date: Thu, 10 Jul 2025 17:05:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-tUid: 20257101935084bc478eff5f14da9811aba78548f6f5d
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] phy: cadence: cdns-dphy: Fix PLL lock and
+ O_CMN_READY polling
+To: kernel test robot <lkp@intel.com>, <vkoul@kernel.org>, <kishon@kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
+        <aradhya.bhatia@linux.dev>, <s-jain1@ti.com>, <r-donadkar@ti.com>,
+        <tomi.valkeinen@ideasonboard.com>, <j-choudhary@ti.com>,
+        <a0512644@ti.com>
+References: <20250704125915.1224738-2-devarsht@ti.com>
+ <202507051038.XCl5miJ7-lkp@intel.com>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <202507051038.XCl5miJ7-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAaCAJIAEggPXQ29u
-dGVudC1UeXBlOiB0ZXh0L3BsYWluOw0KCWNoYXJzZXQ9ImdiMjMxMiINCkNvbnRlbnQtVHJhbnNm
-ZXItRW5jb2Rpbmc6IDdiaXQNCg0KDQpPbiAyMDI1LzcvMTAgMTM6MTgsIEdhbyBYaWFuZyB3cm90
-ZToNCj5IaSBCbywNCj4NCj5PbiAyMDI1LzcvOCAyMDowMSwgQm8gTGl1IHdyb3RlOg0KPj4gRmls
-ZXN5c3RlbSBtZXRhZGF0YSBoYXMgYSBoaWdoIGRlZ3JlZSBvZiByZWR1bmRhbmN5LCBzbyBzaG91
-bGQNCj4+IGNvbXByZXNzIHdlbGwgaW4gdGhlIGdlbmVyYWwgY2FzZS4NCj4+IFRvIGltcGxlbWVu
-dCB0aGlzIGZlYXR1cmUsIHdlIG1ha2UgYSBzcGVjaWFsIG9uLWRpc2sgaW5vZGUgd2hpY2gga2Vl
-cHMNCj4+IGFsbCBtZXRhZGF0YSBhcyBpdHMgZGF0YSwgYW5kIHRoZW4gY29tcHJlc3MgdGhlIHNw
-ZWNpYWwgb24tZGlzayBpbm9kZQ0KPj4gd2l0aCB0aGUgZ2l2ZW4gYWxnb3JpdGhtLg0KPj4NCj4+
-IFNpZ25lZC1vZmYtYnk6IEJvIExpdSA8bGl1Ym8wM0BpbnNwdXIuY29tPg0KPg0KPkknbSB3b3Jr
-aW5nIG9uIGVyb2ZzLXV0aWxzIHN1cHBvcnQgZm9yIHRoaXMgZmVhdHVyZSwgYnV0IGJlZm9yZSB0
-aGF0IEkgdGVuZA0KdG8NCj5zdXBwb3J0IG9wdGlvbmFsIG1ldGFkYXRhIGNvbXByZXNzaW9uLCB3
-aGljaCBtZWFucw0KPg0KPmlmIHRoZSBiaXQgNjMgb2YgbmlkIGlzIHNldCwgdGhlIGlub2RlIGl0
-c2VsZiBtZXRhZGF0YSBjb21wcmVzc2VkLg0KPmlmIG5vdCwganVzdCB1c2VzIHRoZSBjdXJyZW50
-IHdheS4NCj4NCj5CZWNhdXNlIHRoYXQgd2UgY291bGQgZW5hYmxlIGltYWdlIGluY3JlbWVudGFs
-IGJ1aWxkcyBzbyB0aGF0IHdlIGRvbid0IGhhdmUNCj50byByZXdyaXRlIHRoZSBiYXNlIGlub2Rl
-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
-BgEFBQcDAgYIKwYBBQUHAwQGCisGAQQBgjcKAwQwCwYDVR0PBAQDAgWgMDUGCSsGAQQBgjcVCgQo
-MCYwCgYIKwYBBQUHAwIwCgYIKwYBBQUHAwQwDAYKKwYBBAGCNwoDBDBEBgkqhkiG9w0BCQ8ENzA1
-MA4GCCqGSIb3DQMCAgIAgDAOBggqhkiG9w0DBAICAIAwBwYFKw4DAgcwCgYIKoZIhvcNAwcwHQYD
-VR0OBBYEFOQd2n/Lf4O4MnXdDVjOBT2JXs13MB8GA1UdIwQYMBaAFF5ZA6a0TFhgkU72HrWlOaYy
-wTVqMIIBDwYDVR0fBIIBBjCCAQIwgf+ggfyggfmGgbpsZGFwOi8vL0NOPUlOU1BVUi1DQSxDTj1K
-VENBMjAxMixDTj1DRFAsQ049UHVibGljJTIwS2V5JTIwU2VydmljZXMsQ049U2VydmljZXMsQ049
-Q29uZmlndXJhdGlvbixEQz1ob21lLERDPWxhbmdjaGFvLERDPWNvbT9jZXJ0aWZpY2F0ZVJldm9j
-YXRpb25MaXN0P2Jhc2U/b2JqZWN0Q2xhc3M9Y1JMRGlzdHJpYnV0aW9uUG9pbnSGOmh0dHA6Ly9K
-VENBMjAxMi5ob21lLmxhbmdjaGFvLmNvbS9DZXJ0RW5yb2xsL0lOU1BVUi1DQS5jcmwwggEpBggr
-BgEFBQcBAQSCARswggEXMIGxBggrBgEFBQcwAoaBpGxkYXA6Ly8vQ049SU5TUFVSLUNBLENOPUFJ
-QSxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1TZXJ2aWNlcyxDTj1Db25maWd1cmF0aW9u
-LERDPWhvbWUsREM9bGFuZ2NoYW8sREM9Y29tP2NBQ2VydGlmaWNhdGU/YmFzZT9vYmplY3RDbGFz
-cz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5MGEGCCsGAQUFBzAChlVodHRwOi8vSlRDQTIwMTIuaG9t
-ZS5sYW5nY2hhby5jb20vQ2VydEVucm9sbC9KVENBMjAxMi5ob21lLmxhbmdjaGFvLmNvbV9JTlNQ
-VVItQ0EuY3J0MEEGA1UdEQQ6MDigIgYKKwYBBAGCNxQCA6AUDBJsaXVibzAzQGluc3B1ci5jb22B
-EmxpdWJvMDNAaW5zcHVyLmNvbTANBgkqhkiG9w0BAQsFAAOCAQEAD4FpjcHepea9mruDu1kvOrZV
-CNT/9cdObKXnwYsNZ1Uey5feWsAbAR8tWdSh2m+2GO1vtPvERTMmHgXrbMsVKbwc4E8fUH7pIVAo
-KEdl4zSlq69evWStG1W/zZGAuxTbpetcVQ8341w/C3u87DXMc6IOJzhqcvcD2Cy4OWMCLaX4IDlF
-jTnIv7yitqwQCE5gvr6Sz1oHxCILFtnNKGQNMySuHQ3UOOgEtqJu2eUj9/E5Rgzq+B2Ij4ULTYbj
-UHfrhkBzWZptIW8Yg/pwh2v+iWms9A6P1yrrMyLTmpQFSPbaEO+FxjROVPh8QlKu9uWn8sbqpO1U
-jeKVQDGF7yL1wjGCA5MwggOPAgEBMHAwWTETMBEGCgmSJomT8ixkARkWA2NvbTEYMBYGCgmSJomT
-8ixkARkWCGxhbmdjaGFvMRQwEgYKCZImiZPyLGQBGRYEaG9tZTESMBAGA1UEAxMJSU5TUFVSLUNB
-AhN+AADR0dVMbAhPX/CLAAAAANHRMAkGBSsOAwIaBQCgggH4MBgGCSqGSIb3DQEJAzELBgkqhkiG
-9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDcxMDExMzQ1MFowIwYJKoZIhvcNAQkEMRYEFB/ZHKYl
-EhgvkkRfPKuVQkUW8rsqMH8GCSsGAQQBgjcQBDFyMHAwWTETMBEGCgmSJomT8ixkARkWA2NvbTEY
-MBYGCgmSJomT8ixkARkWCGxhbmdjaGFvMRQwEgYKCZImiZPyLGQBGRYEaG9tZTESMBAGA1UEAxMJ
-SU5TUFVSLUNBAhN+AADR0dVMbAhPX/CLAAAAANHRMIGBBgsqhkiG9w0BCRACCzFyoHAwWTETMBEG
-CgmSJomT8ixkARkWA2NvbTEYMBYGCgmSJomT8ixkARkWCGxhbmdjaGFvMRQwEgYKCZImiZPyLGQB
-GRYEaG9tZTESMBAGA1UEAxMJSU5TUFVSLUNBAhN+AADR0dVMbAhPX/CLAAAAANHRMIGTBgkqhkiG
-9w0BCQ8xgYUwgYIwCgYIKoZIhvcNAwcwCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgB
-ZQMEAQIwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcGBSsOAwIaMAsGCWCGSAFlAwQC
-AzALBglghkgBZQMEAgIwCwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAO3Qz9x8KC6hXoRh
-HISMwqWwJOuZ/V3wLtFSBHhn6V/Lo1si8nb3nzeyz/zO1mg7heVXtTBdA55b71qFDsz/r0sP1jBH
-REWwNCGzjR/FXs6PhDvKXJAvlzSq4D5N3a6fGg/1Jm+EJjFWpG1QveNgq+Vz07ggtGgY1j2IEsoU
-T/uz821/Uy7XLuf7hJXBNUhNMMRBiWCYC3S1J/buMN7+A1ljZsrP3CV5nvwXpPlE52fSY/ujn42k
-4y7nOHsJTuNcUG/ezWP1IhVY1d65tS7vtGYsT5q0xfZzjHxhJn2FqyBRBF8j+FGYoMpS+pCsFrTy
-tGacxuaON/FYzLSfq17kQ6AAAAAAAAA=
+Hello,
+
+On 05/07/25 08:32, kernel test robot wrote:
+> Hi Devarsh,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v6.16-rc4 next-20250704]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Devarsh-Thakkar/phy-cadence-cdns-dphy-Fix-PLL-lock-and-O_CMN_READY-polling/20250704-210349
+> base:   linus/master
+> patch link:    https://lore.kernel.org/r/20250704125915.1224738-2-devarsht%40ti.com
+> patch subject: [PATCH v4 1/2] phy: cadence: cdns-dphy: Fix PLL lock and O_CMN_READY polling
+> config: x86_64-buildonly-randconfig-003-20250705 (https://download.01.org/0day-ci/archive/20250705/202507051038.XCl5miJ7-lkp@intel.com/config)
+> compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250705/202507051038.XCl5miJ7-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202507051038.XCl5miJ7-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>>> drivers/phy/cadence/cdns-dphy.c:408:45: error: no member named 'hs_clk_rate' in 'struct cdns_dphy_cfg'
+>       408 |         ret = cdns_dphy_tx_get_band_ctrl(dphy->cfg.hs_clk_rate);
+>           |                                          ~~~~~~~~~ ^
+>     1 error generated.
+> 
+
+This is expected, since as mentioned in cover-letter this patch needs to 
+be applied on top of [1] and [2] from the series [3] as suggested in the 
+review [4] for the previous revision.
+
+[1]: 
+https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-4-862c841dbe02@ideasonboard.com/ 
+
+[2]: 
+https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-5-862c841dbe02@ideasonboard.com/ 
+
+[3]: 
+https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com/
+[4]: 
+https://lore.kernel.org/all/218ba1a0-068d-4bb2-bba2-2739afa7f470@ideasonboard.com/
+
+Regards
+Devarsh
+
+> 
+> vim +408 drivers/phy/cadence/cdns-dphy.c
+> 
+>     370	
+>     371	static int cdns_dphy_power_on(struct phy *phy)
+>     372	{
+>     373		struct cdns_dphy *dphy = phy_get_drvdata(phy);
+>     374		int ret;
+>     375		u32 reg;
+>     376	
+>     377		if (!dphy->is_configured || dphy->is_powered)
+>     378			return -EINVAL;
+>     379	
+>     380		clk_prepare_enable(dphy->psm_clk);
+>     381		clk_prepare_enable(dphy->pll_ref_clk);
+>     382	
+>     383		/*
+>     384		 * Configure the internal PSM clk divider so that the DPHY has a
+>     385		 * 1MHz clk (or something close).
+>     386		 */
+>     387		ret = cdns_dphy_setup_psm(dphy);
+>     388		if (ret) {
+>     389			dev_err(&dphy->phy->dev, "Failed to setup PSM with error %d\n", ret);
+>     390			goto err_power_on;
+>     391		}
+>     392	
+>     393		/*
+>     394		 * Configure attach clk lanes to data lanes: the DPHY has 2 clk lanes
+>     395		 * and 8 data lanes, each clk lane can be attache different set of
+>     396		 * data lanes. The 2 groups are named 'left' and 'right', so here we
+>     397		 * just say that we want the 'left' clk lane to drive the 'left' data
+>     398		 * lanes.
+>     399		 */
+>     400		cdns_dphy_set_clk_lane_cfg(dphy, DPHY_CLK_CFG_LEFT_DRIVES_LEFT);
+>     401	
+>     402		/*
+>     403		 * Configure the DPHY PLL that will be used to generate the TX byte
+>     404		 * clk.
+>     405		 */
+>     406		cdns_dphy_set_pll_cfg(dphy, &dphy->cfg);
+>     407	
+>   > 408		ret = cdns_dphy_tx_get_band_ctrl(dphy->cfg.hs_clk_rate);
+>     409		if (ret < 0) {
+>     410			dev_err(&dphy->phy->dev, "Failed to get band control value with error %d\n", ret);
+>     411			goto err_power_on;
+>     412		}
+>     413	
+>     414		reg = FIELD_PREP(DPHY_BAND_CFG_LEFT_BAND, ret) |
+>     415		      FIELD_PREP(DPHY_BAND_CFG_RIGHT_BAND, ret);
+>     416		writel(reg, dphy->regs + DPHY_BAND_CFG);
+>     417	
+>     418		/* Start TX state machine. */
+>     419		writel(DPHY_CMN_SSM_EN | DPHY_CMN_TX_MODE_EN,
+>     420		       dphy->regs + DPHY_CMN_SSM);
+>     421	
+>     422		ret = cdns_dphy_wait_for_pll_lock(dphy);
+>     423		if (ret) {
+>     424			dev_err(&dphy->phy->dev, "Failed to lock PLL with error %d\n", ret);
+>     425			goto err_power_on;
+>     426		}
+>     427	
+>     428		ret = cdns_dphy_wait_for_cmn_ready(dphy);
+>     429		if (ret) {
+>     430			dev_err(&dphy->phy->dev, "O_CMN_READY signal failed to assert with error %d\n",
+>     431				ret);
+>     432			goto err_power_on;
+>     433		}
+>     434	
+>     435		dphy->is_powered = true;
+>     436	
+>     437		return 0;
+>     438	
+>     439	err_power_on:
+>     440		clk_disable_unprepare(dphy->pll_ref_clk);
+>     441		clk_disable_unprepare(dphy->psm_clk);
+>     442	
+>     443		return ret;
+>     444	}
+>     445	
+> 
 
