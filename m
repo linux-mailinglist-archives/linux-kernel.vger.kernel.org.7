@@ -1,103 +1,128 @@
-Return-Path: <linux-kernel+bounces-725784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BCCB003ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:43:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D86EEB003F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3433BD86A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:41:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3F80166F42
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3098268FE3;
-	Thu, 10 Jul 2025 13:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B347026AA82;
+	Thu, 10 Jul 2025 13:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f4Rpgmm/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i8csEbWs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27785267F5C;
-	Thu, 10 Jul 2025 13:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C9D26A1AC
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752154917; cv=none; b=NiMJf35DlW4KnJX3kjsm0SuM/kxddX4tX+d8qGqwaxOEHn3DCycEdvd9b+6RHu45RisQrq4jaHvj3jF79rZ1h8+M+0W03aRHnDvp0emysdbTAzBfCzy7qmzIcBADK9KjW36DNa22yJIDdxbu207+S7yE40sm/MJb9+3gMdyKCEo=
+	t=1752154956; cv=none; b=bzKBoXunvO8THjZmlGCcd39nc9yq9dhFg3yo0BIgcvBnFOFBzm+fa39Q/Hw8UOv0fLqjwVydLlrhbMqPN2HEEFc1PCw6Wj36A7Ep2HzvqqworN2V0bf9m+WInGq56QTdyzRshKDcAyeH39lCnM19EPJeFtBOZivEyzArtGOsbJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752154917; c=relaxed/simple;
-	bh=R3wYP0vZ7YSmBqpNoEZUZ3lDqGlCvdsW7hEuwVuKihQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fM4bdgvwZ3cdpQp9PCYwYTA5u6e39aF0hGDjstpGSnPyC2P7H7ydjmlcveIRrqUpL9tT7tVH6ZFvHmve+oF2BDXxJZRZUmTVW4FnEFkzmHi7cVj9CvQTmGbQdvhEIPxCfPneQnEPMZB3xpEMBJ+xI4tNSF2nZOFbbn4kTzZ52HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f4Rpgmm/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E9FBC4CEED;
-	Thu, 10 Jul 2025 13:41:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752154916;
-	bh=R3wYP0vZ7YSmBqpNoEZUZ3lDqGlCvdsW7hEuwVuKihQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f4Rpgmm/twVfUpYQGZNjRzqk2ZZbkdYqa9MVPVVC56OHPtCAtG2ANZPnmZXqvwDgB
-	 cWeWM7bGkQiqtr8ZDlXL8b8dHU55LwAWkrT826GrHv4J98NcCJXsfRFHkCfxSlN1WD
-	 CjCs/ppOK4le0TF+O0CHucdjPy5QrG8ty28wPa/U=
-Date: Thu, 10 Jul 2025 15:41:53 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Xinyu Zheng <zhengxinyu6@huawei.com>
-Cc: mst@redhat.com, jasowang@redhat.com, pbonzini@redhat.com,
-	stefanha@redhat.com, virtualization@lists.linux-foundation.org,
-	kvm@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v5.10] vhost-scsi: protect vq->log_used with vq->mutex
-Message-ID: <2025071002-festive-outcast-7edd@gregkh>
-References: <20250702082945.4164475-1-zhengxinyu6@huawei.com>
+	s=arc-20240116; t=1752154956; c=relaxed/simple;
+	bh=QrHjcBEPSqtyHnm7bqouFTQBugkf7uG4RIpVyX8EUx0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zb6vYodvEH0Z+wkQ30V+DcHvQ11n7MfSZ7JjgaqChzdyEoAe8mwbwkVet2MTyBBvIfN4u7KSD+OL+fyZ6Bd2+U1ez0QdktkPZZg5bO1PGTe23qrbSQbc/FqTdzUwZXSFhW2yRmI28wYoDGgusz0aH9HtODBvmXQR+sQuiZauesU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i8csEbWs; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752154954; x=1783690954;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QrHjcBEPSqtyHnm7bqouFTQBugkf7uG4RIpVyX8EUx0=;
+  b=i8csEbWscKgm1DXes0J/UEIu/tD1dmpjaHRpgDwrh7g/nu/nA4jL2y5Q
+   cIQppir27BMUPAEOg+v4ggcWt74hzYgvsQbkMwsX49khXCPIuGRxfsb1h
+   RrUXQpFtlL56UKJJDBj45IPiBHnl5u/sE/5KrNLgQLPsya4aUnPpCF5Ph
+   eraNJ001AFN2r61Ctv+i/n4zAKPSV0qzk39eJPInr4BvILMZrs+J7S2K8
+   v64jHZHArDfn9Y8lHAJAMPr1ViWYyUXRLIYfZpki96zFcsqY4xuMUy7tg
+   Jd15zjKarmevOfJjAuAqdDJ/kOdSh6uneVlO8kxcx43NaaGx/Z7eZwuBD
+   g==;
+X-CSE-ConnectionGUID: yHnO9tGWSeKBLu6/ib96fQ==
+X-CSE-MsgGUID: hxk/p4D8RESH4MlUF/NaHg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="65787666"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="65787666"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 06:42:33 -0700
+X-CSE-ConnectionGUID: reV4IG/xR6Gw2h6DzgzikQ==
+X-CSE-MsgGUID: KwwLF/aXTiyA0dqAe4ugMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="156809429"
+Received: from gnrd8.igk.intel.com ([10.123.232.137])
+  by fmviesa010.fm.intel.com with ESMTP; 10 Jul 2025 06:42:31 -0700
+From: Sergey Temerkhanov <sergey.temerkhanov@intel.com>
+To: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sergey Temerkhanov <sergey.temerkhanov@intel.com>
+Subject: [PATCH v1 0/4] Implement IOMMU SVA page fault processing error notifiers
+Date: Thu, 10 Jul 2025 13:42:11 +0000
+Message-ID: <20250710134215.97840-1-sergey.temerkhanov@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702082945.4164475-1-zhengxinyu6@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 02, 2025 at 08:29:45AM +0000, Xinyu Zheng wrote:
-> From: Dongli Zhang <dongli.zhang@oracle.com>
-> 
-> [ Upstream commit f591cf9fce724e5075cc67488c43c6e39e8cbe27 ]
-> 
-> The vhost-scsi completion path may access vq->log_base when vq->log_used is
-> already set to false.
-> 
->     vhost-thread                       QEMU-thread
-> 
-> vhost_scsi_complete_cmd_work()
-> -> vhost_add_used()
->    -> vhost_add_used_n()
->       if (unlikely(vq->log_used))
->                                       QEMU disables vq->log_used
->                                       via VHOST_SET_VRING_ADDR.
->                                       mutex_lock(&vq->mutex);
->                                       vq->log_used = false now!
->                                       mutex_unlock(&vq->mutex);
-> 
-> 				      QEMU gfree(vq->log_base)
->         log_used()
->         -> log_write(vq->log_base)
-> 
-> Assuming the VMM is QEMU. The vq->log_base is from QEMU userpace and can be
-> reclaimed via gfree(). As a result, this causes invalid memory writes to
-> QEMU userspace.
-> 
-> The control queue path has the same issue.
-> 
-> CVE-2025-38074
+This series introduces a facility of notifying endpoint device
+drivers of failing IOMMU page faults occurring for specific
+Requester IDs.
 
-This is not needed.
+According to the PCIe spec chapter "Page Request Group Response Message",
+in case of Page Request processing failure (e.g., detecting attempt to
+access pages with insufficient permissions, like writing to RO pages)
+the system responds to the requester with a message containing a non-zero
+response code. The requester device is then supposed to process that
+response in implementation dependent way.
 
-> Cc: stable@vger.kernel.org#5.10.x
+However, some endpoint hardware supporting SVA does not provide insight
+on failed IO page faults, being limited to generic error reporting
+(via interrupts and/or few register bits).
 
-What about 5.15.y and 6.1.y?  We can't take a patch just for 5.10 as
-that would cause regressions, right?
+These series contain changes that provide endpoint device drivers
+with the ability to retrieve information about page fault processing
+errors (the most relevant being PASID and IOVA PFN).
 
-Please provide all relevant backports and I will be glad to queue them
-up then.  I'll drop this from my queue for now, thanks.
+Endpoint device drivers are able to set a callback functions
+which will be called when a failing page fault (such as accessing pages
+with mismatching attributes - e.g. writing to RO pages) occurs.
 
-greg k-h
+Normal processing path (i.e., swapping in or allocating backing physical
+memory for non-present pages) is unaffected by these changes.
+
+The endpoint driver code can then take appropriate actions, such as
+fault reporting and recovery, sending signals to affected processes etc,
+using the fault context provided in the fault parameter structure.
+
+
+Sergey Temerkhanov (4):
+  iommu: Pass the Requester ID in the fault parameter structure
+  iommu: Add rid_notifier array to the dev_iommu structure
+  iommu: Implement iommu_set_rid_fault_notifier()
+  iommu: Notify requesters of IOMMU fault failures
+
+ drivers/iommu/intel/prq.c  |  1 +
+ drivers/iommu/io-pgfault.c | 53 ++++++++++++++++++++++++++++++++++++++
+ drivers/iommu/iommu-priv.h | 11 ++++++++
+ drivers/iommu/iommu-sva.c  | 19 +++++++++++++-
+ drivers/iommu/iommu.c      | 21 +++++++++++++++
+ include/linux/iommu.h      | 19 ++++++++++++++
+ 6 files changed, 123 insertions(+), 1 deletion(-)
+
+-- 
+2.43.0
+
 
