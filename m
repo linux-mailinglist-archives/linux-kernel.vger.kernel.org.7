@@ -1,238 +1,170 @@
-Return-Path: <linux-kernel+bounces-725415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B419AFFECB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:12:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0AA3AFFECE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E541B1C864B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:12:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123DF1C8654E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456FC2D6618;
-	Thu, 10 Jul 2025 10:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32752D877E;
+	Thu, 10 Jul 2025 10:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="U48+wTGE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aS7MD8ca"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="qSr2ByKq"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C42A2D6404;
-	Thu, 10 Jul 2025 10:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354BD2D839A;
+	Thu, 10 Jul 2025 10:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752142308; cv=none; b=u+3XvjIBdp67tFMH+aJmqpX0M7F7mJHyIDcDWGqAo/wPXSfenM5T2Cjc0GS2Ka5MVwZpX9Af6SBPPqypTflt4uJPOWF1BpQU7W8Ret8d04NAWPlJbd9WV8fEhIn2AlWfJ4viHodRzloEOHR/6Mqd3YuVQSiHe4y/9EiEG3KKwr4=
+	t=1752142321; cv=none; b=ia1AljT77O3WKZALo9CQ8JcaBLsJWXJbGg0PwCJNkvt7Q//RX6JyuoyNwvJrLAjnI4zmeEPp0kOCLZ5XUG+Y75OJJ97D23OvJUx+21wNAMCBrHGNeJsmdu+9rpsqHl3zMclOlnSy21httzMCJWRY7wYC59ehpiahvhKB3xaJ+Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752142308; c=relaxed/simple;
-	bh=IF+FueXXPhxbQmMzZ8TSJEEChMnwlObkIVgzWrxskaQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=NzoOPamOv8nJoWQb6vc+Z8quu+z8FWXP+MOf6SfgJgeM2FB3D2sSHJ/En80UwZun0HQrYRGeAsv2LIQuB7zInPO/QT3sCIMvjOUwCKaYWwvm/RPMKsRCB6O6w5J3AX9pgAxgWUOAPGWKFD6QAmJO0lvHdB2EJ7Gf94SFI8vf0kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=U48+wTGE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aS7MD8ca; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 748CE1D000CF;
-	Thu, 10 Jul 2025 06:11:44 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 10 Jul 2025 06:11:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	s=arc-20240116; t=1752142321; c=relaxed/simple;
+	bh=BTvr7xotmLF7fRPdmL8WTLdh9hY6CFn1R4FF0Cq2rAw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j9BdmR0JncPMidgFF+UACojYSG9oZ7LTlAvtTXBFuGMCytSXy8PmYH3T6V+tVoO+N6s/6HJcwC0AJVsip7cf4kfDTxlxBNard4AUqB3EmjIgduoavu+WRTAsOdzQEAlbAvKRkI1oLLfBPnoSJ9tJsMKM0wuJcBrKs+IJpHs73ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=qSr2ByKq; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 072FFA0576;
+	Thu, 10 Jul 2025 12:11:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752142304;
-	 x=1752228704; bh=ydaHlBV5gJlTgiENGrFYzr8bwPeWnPe7RkMn21aUeIM=; b=
-	U48+wTGEOnDa0rOSVjCylRWZ4mgOPikGmxnGn6zgNKihmazbvsr7U0+UFWyvvrcw
-	yW/7gfnf5XEPb7Z1stemw3LEdlE8jLr09LjTJLzm8tVuPjdgUDQP3BH5J6yuqQbz
-	/xLvSJvqW0HxlAcMByG7jEhQI5tRmDJlpHyydLePkvUbdGWumU6foJMxdJLn4dcG
-	5GLZT9hbAhvtoBhtBWuJq3Q2JdGjN/aUD1JFKy4fXr6xrJiVdlytoLHSAJQe+1xh
-	XVOUYlclE7eChY3XX44no8J+8n3g9E+kxAbAD+KkLRRVFgf8bdHnNgsTrEFphPrW
-	/WiNfXeGTgKIPcRwofBj2w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752142304; x=
-	1752228704; bh=ydaHlBV5gJlTgiENGrFYzr8bwPeWnPe7RkMn21aUeIM=; b=a
-	S7MD8ca4kgudog25pPsFOzlN0Cg5w82G+y2083q8RY7l+scyECuzWqa5rZX2SgvN
-	+J+jNYkaotWVW6wpJlkV2zVM59cGFKb2hQuMvl2kfbKS0p+pmBh5Zorhar1YzCP7
-	4m3E+AU84M/gt+2ki6Do9mJv/t36WkXm6cUPYXgbbWjghYAjiZankWtNY6NgcpRi
-	OZywdA9R6bnG/5NFqi+L9VYowuxINHEeCt2ZKpyNYY3tDCF2MeF2QFKUL2WRKQXy
-	ASLS+GZGDXiLQnOUZwWS/OXQV5KQWZKXSBRCtQDGXbiMKlK+4tjeGuWyDm+Wu2gP
-	5sGQavnvyltc3+9h9+pKg==
-X-ME-Sender: <xms:35FvaDJFn-2y4V7KEfI0Uh8UTKDqPcODQ7KU_jVgLuxQ4Giqyahk1g>
-    <xme:35FvaHJ-CbPByJZGY8DchBoPuZjBRroyUbdiS_0jLArK4dKAetXE4OjHTiMTF015H
-    W6eYJUyI7fF_h5LAsA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtddujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheprgguohgsrhhihigrnhesghhmrghilhdrtghomhdprhgtphhtthhope
-    grshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopegvsghighhg
-    vghrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrd
-    gukhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghr
-    rghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughjfihonhhgsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrnhguvghrshdrrhhogigvlhhlsehlihhnrghrohdr
-    ohhrghdprhgtphhtthhopegsvghnjhgrmhhinhdrtghophgvlhgrnhgusehlihhnrghroh
-    drohhrgh
-X-ME-Proxy: <xmx:35FvaCltc2zsvaaY_Md0KzCHB0PMLi4OisOpT4_ZCT0g2MVeVmWK7A>
-    <xmx:35FvaO9EYyuoJqzan-TGmKsPz1_3lEWLrdnwjEaKCin3aDeWsDmW6Q>
-    <xmx:35FvaDnrWPRhBYPyGervbtbFavwcCCIlGk8rYgBvqIqdtF_dqPvygg>
-    <xmx:35FvaMmlCWdmTnvRpMa84ndCLVe5M3Ljd_d_-19qvs8bYgax4FYmCg>
-    <xmx:4JFvaL6SHoLpYaV_TxPFRoEf_GlqruVC7gwsoNTvNnHh8X-YO7M_5h7V>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 27641700065; Thu, 10 Jul 2025 06:11:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=YXc+01zAlpnPDut2ScqW
+	80cTeCPMDR6CpI55Apj8pT0=; b=qSr2ByKqsxK04C/ckwx3vgPYOLzysYXHjOfR
+	hS+c3pIoT3mMIMzzoJsckucQLP4Sh7yUdw/uPQxQidSS9MheXuSXFz7KcvDiA//L
+	QVhrVMwx5PIx28sq4qfVU9bTVUnob/Xl3NO1AS3ZtKYdyR6s2kPA+9ezE3E11BGh
+	Qq+Z73yrn9iduRAqrjdbu8Qgg8CP8c4I8UvoAP9sIMvPYvs5D+YGRjt66PnbZdwn
+	fTorEClpADvSChQFLBm0GB9O+QjXI8N6rFg75RnqTNlRTQvllz+XHpYnT7dw5D5T
+	vLtP0b/hxtiuCTEpt2O/0G11grmMhlSW82IGGVNtywSVeM3qVtMxVW4aSc3eZuHO
+	Z8ROi+nR5YmzkJ/Z7uAf88A8/YmQOQtiIPksCbkmIyTb/Nsif3JtQCGMfzt4zYWC
+	xsRiaXTLVJldioG2NQF0zY6kf16zrLs7zoZOK7HH3OfL6zPVbWFV0qcNB5bYhm7V
+	DStniSTeo+VE5OWvmvZRjpFXvmMf72uwn9oGBVCrOP/F7un/DKquseT6cOqtnNhd
+	t4Ldf1lLCsIKLDXLW/IfCRcSNZbBTsunC1Npwlqb/XIv/7x4wrSDlYQVlAgVSfHL
+	yRdXJZgmllDte0BwKQj23Zleh/szoyXntSCkh3vV3qqoiqA09cfDzeIkTV8yMZUy
+	1+yzcCE=
+Date: Thu, 10 Jul 2025 12:11:46 +0200
+From: Buday Csaba <buday.csaba@prolan.hu>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	=?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>, Heiner Kallweit
+	<hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH 3/3] net: mdio: reset PHY before attempting to access
+ registers in fwnode_mdiobus_register_phy
+Message-ID: <aG-R4gWfI5QKRo5w@debianbuilder>
+References: <20250709133222.48802-1-buday.csaba@prolan.hu>
+ <20250709133222.48802-4-buday.csaba@prolan.hu>
+ <0d0d7e6f-3376-4939-a3f7-8cf5f52e4749@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tfdac8457399410f6
-Date: Thu, 10 Jul 2025 12:11:12 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christian Brauner" <brauner@kernel.org>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- "Anuj Gupta" <anuj20.g@samsung.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- "Kanchan Joshi" <joshi.k@samsung.com>, "LTP List" <ltp@lists.linux.it>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Benjamin Copeland" <benjamin.copeland@linaro.org>, rbm@suse.com,
- "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "Anders Roxell" <anders.roxell@linaro.org>, "Jens Axboe" <axboe@kernel.dk>,
- "Pavel Begunkov" <asml.silence@gmail.com>,
- "Alexey Dobriyan" <adobriyan@gmail.com>,
- "Darrick J. Wong" <djwong@kernel.org>, "Eric Biggers" <ebiggers@google.com>,
- linux-kernel@vger.kernel.org
-Message-Id: <d2e1d4a9-d475-43e3-824b-579e5084aaf3@app.fastmail.com>
-In-Reply-To: <20250710-passen-petersilie-32f6f1e9a1fc@brauner>
-References: <20250709181030.236190-1-arnd@kernel.org>
- <20250710-passen-petersilie-32f6f1e9a1fc@brauner>
-Subject: Re: [PATCH] block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0d0d7e6f-3376-4939-a3f7-8cf5f52e4749@lunn.ch>
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1752142309;VERSION=7994;MC=1631949861;ID=121719;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2998FD515E657066
 
-On Thu, Jul 10, 2025, at 10:00, Christian Brauner wrote:
-> On Wed, Jul 09, 2025 at 08:10:14PM +0200, Arnd Bergmann wrote:
-
->> +	if (_IOC_DIR(cmd)  == _IOC_DIR(FS_IOC_GETLBMD_CAP) &&
->> +	    _IOC_TYPE(cmd) == _IOC_TYPE(FS_IOC_GETLBMD_CAP) &&
->> +	    _IOC_NR(cmd)   == _IOC_NR(FS_IOC_GETLBMD_CAP) &&
->> +	    _IOC_SIZE(cmd) >= LBMD_SIZE_VER0 &&
->> +	    _IOC_SIZE(cmd) <= _IOC_SIZE(FS_IOC_GETLBMD_CAP))
+On Wed, Jul 09, 2025 at 03:41:45PM +0200, Andrew Lunn wrote:
+> On Wed, Jul 09, 2025 at 03:32:22PM +0200, Buday Csaba wrote:
+> > Some PHYs (e.g. LAN8710A) require a reset after power-on,even for
+> > MDIO register access.
+> > The current implementation of fwnode_mdiobus_register_phy() and
+> > get_phy_device() attempt to read the id registers without ensuring
+> > that the PHY had a reset before, which can fail on these devices.
+> >
+> > This patch addresses that shortcoming, by always resetting the PHY
+> > (when such property is given in the device tree). To keep the code
+> > impact minimal, a change was also needed in phy_device_remove() to
+> > prevent asserting the reset on device removal.
+> >
+> > According to the documentation of phy_device_remove(), it should
+> > reverse the effect of phy_device_register(). Since the reset GPIO
+> > is in undefined state before that, it should be acceptable to leave
+> > it unchanged during removal.
+> >
+> > Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
+> > Cc: Csókás Bence <csokas.bence@prolan.hu>
 >
-> This part is wrong as we handle larger sizes just fine via
-> copy_struct_{from,to}_user().
+> This appears to be a respost of the previous patch.
+>
+> https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html says:
+>
+> don’t repost your patches within one 24h period
 
-I feel that is still an open question. As I understand it,
-you want to make it slightly easier for userspace callers
-to use future versions of an ioctl command by allowing them in
-old kernels as well, by moving that complexity into the kernel.
+Sorry for that, this is my first kernel patch, and git send-email tricked me.
+I will paste your earlier reply below, and continue in this thread.
 
-Checking against _IOC_SIZE(FS_IOC_GETLBMD_CAP) would keep the
-behavior consistent with the traditional model where userspace
-needs to have a fallback to previous ABI versions.
+>
+> This is specific to this device, so the driver for this device should
+> take care of the reset.
 
-> Arnd, objections to writing it as follows?:
+I think it may affect every chip that has the `PHY_RST_AFTER_CLK_EN`
+flag set. That is still not a terribly lot of devices, but it is more than
+just this one. There are a lot of DT-s out there which use the (deprecated?)
+`phy-reset-gpios` property of the fec driver. When that property is
+present, that will reset the PHY chip before it gets to get_phy_device().
+Even with this chip, only about 10% of them fail to report their ID without
+reset (in our systems and startup configuration).
 
-> +       /* extensible ioctls */
-> +       switch (_IOC_NR(cmd)) {
-> +       case _IOC_NR(FS_IOC_GETLBMD_CAP):
-> +               if (_IOC_DIR(cmd) != _IOC_DIR(FS_IOC_GETLBMD_CAP))
-> +                       break;
-> +               if (_IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_GETLBMD_CAP))
-> +                       break;
-> +               if (_IOC_NR(cmd) != _IOC_NR(FS_IOC_GETLBMD_CAP))
-> +                       break;
-> +               if (_IOC_SIZE(cmd) < LBMD_SIZE_VER0)
-> +                       break;
-> +               if (_IOC_SIZE(cmd) > PAGE_SIZE)
-> +                       break;
-> +               return blk_get_meta_cap(bdev, cmd, argp);
+>
+> To solve the chicken/egg, you need to put a compatible in the PHY node
+> listing the ID of the PHY. That will cause the correct PHY driver to
+> load, and probe. The probe can then reset it.
 
-The 'PAGE_SIZE' seems arbitrary here, especially since that is often
-larger than the maximum size that can be encoded in an ioctl command
-number (8KB or 16KB depending on the architecture). If we do need
-an upper bound larger than _IOC_SIZE(FS_IOC_GETLBMD_CAP), I think it
-should be a fixed number rather than a configuration dependent
-one, and I would prefer a smaller one over a larger one. Anything
-over a few dozen bytes is certainly suspicious, and once it gets
-to thousands of bytes, you need a dynamic allocation to avoid stack
-overflow in the kernel.
+Yes, that approach does work — and I've tested it successfully with the
+other two patches I sent. However, when a PHY ID is specified in the DT, it
+is taken directly, not read from the hardware. This may lead to issues with
+revision-specific logic, since the revision bits won’t necessarily match
+the actual chip. For LAN8710A this isn’t currently a problem, but it may be
+for other PHYs.
 
-I had already updated my patch to move the checks into
-blk_get_meta_cap() itself and keep the caller simpler:
+>
+> We have to be careful about changing the reset behaviour, it is likely
+> to break PHYs which currently work, but stop working when they get an
+> unexpected reset.
 
-diff --git a/block/blk-integrity.c b/block/blk-integrity.c
-index 9d9dc9c32083..2909ebf27dc2 100644
---- a/block/blk-integrity.c
-+++ b/block/blk-integrity.c
-@@ -62,10 +62,13 @@ int blk_get_meta_cap(struct block_device *bdev, unsigned int cmd,
-        struct logical_block_metadata_cap meta_cap = {};
-        size_t usize = _IOC_SIZE(cmd);
- 
--       if (!argp)
--               return -EINVAL;
--       if (usize < LBMD_SIZE_VER0)
--               return -EINVAL;
-+       if (_IOC_DIR(cmd)  != _IOC_DIR(FS_IOC_GETLBMD_CAP) ||
-+           _IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_GETLBMD_CAP) ||
-+           _IOC_NR(cmd)   != _IOC_NR(FS_IOC_GETLBMD_CAP) ||
-+           _IOC_SIZE(cmd) < LBMD_SIZE_VER0 ||
-+           _IOC_SIZE(cmd) > _IOC_SIZE(FS_IOC_GETLBMD_CAP))
-+               return -ENOIOCTLCMD;
-+
-        if (!bi)
-                goto out;
- 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index 9ad403733e19..af2e22e5533c 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -566,9 +566,11 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
-                               void __user *argp)
- {
-        unsigned int max_sectors;
-+       int ret;
- 
--       if (_IOC_NR(cmd) == _IOC_NR(FS_IOC_GETLBMD_CAP))
--               return blk_get_meta_cap(bdev, cmd, argp);
-+       ret = blk_get_meta_cap(bdev, cmd, argp);
-+       if (ret != -ENOIOCTLCMD)
-+               return ret;
- 
-        switch (cmd) {
-        case BLKFLSBUF:
+I agree that changing the reset logic must be done with caution.
 
-Regardless of what upper bound we pick, that at least limits
-the complexity to the one function that actually wants it.
+But these lines of code are actually the first, when the kernel tries to 
+access the PHY. Is it not a good practice, to do that from a known,
+reproducible state? That is what the reset is for. Without the reset, the
+PHY may be in whatever state it was left previously. That could lead to 
+hard to reproduce effects, like failing after restart, failing because
+there was a change in the bootloader, etc.
 
-> And can I ask you to please take a look at fs/pidfs.c:pidfd_ioctl() and
+A few lines later fwnode_mdiobus_phy_device_register() is called
+anyway, that will also reset the PHY in the same conditions (DT based
+system, and either `reset-gpios` or `reset-ctrl` is defined).
 
-PIDFD_GET_INFO has part of the same problem, as it still fails to
-check the _IOC_DIR() bits. I see you added a check for _IOC_TYPE()
-in commit 091ee63e36e8 ("pidfs: improve ioctl handling"), but
-the comment you added describes an unrelated issue and the fix
-was incomplete.
+My intent was to ensure that if the system asks for a reset, it actually
+happens before the PHY is accessed, rather than mid-way through
+registration.
 
-> fs/nsfs.c:ns_ioctl()?
+Changing phy_device_remove() may be more concerning. I can create a patch,
+that leaves that intact, and only changes reset behaviour during reset, but
+that will be a bit longer.
 
-You tried to add a similar validation in commit 7fd511f8c911
-("nsfs: validate ioctls"), but it seems you got that wrong
-both by missing the _IOC_DIR check and by having a typo in the
-'_IOC_TYPE(cmd) == _IOC_TYPE(cmd)' line that means this is
-always true rather than comparing against 'NSIO'.
+>
+>     Andrew
+>
+> ---
+> pw-bot: cr
+>
 
-Overall my feeling is similar to Christoph's, that the added
-complexity in any of these three cases was a mistake, as it's
-too easy to mess it up.
+Csaba
 
-     Arnd
 
