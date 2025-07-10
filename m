@@ -1,129 +1,138 @@
-Return-Path: <linux-kernel+bounces-726299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1298B00B43
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:22:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA1CB00B4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D755C40DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:22:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 827255A7EFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152362E7173;
-	Thu, 10 Jul 2025 18:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4811F2FCE38;
+	Thu, 10 Jul 2025 18:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QfykkzUo"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qT+Gzrgf"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517FD2F2C6E;
-	Thu, 10 Jul 2025 18:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC85D2EF2BE
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752171759; cv=none; b=Kjb4fkgrAYJHOU4v0/Mz2mPFQ2uLORFdjWBP35pMFdz6lMgTYOjniXWf13TFQmZMZJpbFg5p7Bm7dTzfGB1oozTF8sz7yHDdcDBM/0EHX5QTc9y8jTOIlhTFFWMU5XttB+NotEndYc65V1sXuPY9zrV4YLbeKJIcrULAZe/+lFk=
+	t=1752171931; cv=none; b=ZN27nW0epTzQ93mo3sGk1cGltpafYs4VZJcVG3SnHG0HnPPdIeANwwPDEvF7cotXUqqHdJqgvYIjsQKwK9pCSj9HReyLFk+nZQ0Ckt7hy44n3fUkJAEdCXsxM8oo7sGROYzQ7C2h7BnJwNiB7tjV3veNB1iuQbJJJKERYKuoVaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752171759; c=relaxed/simple;
-	bh=h0qKLmDhXIaFsgvlOIN3susDzu/+PPSRV6kLudOs6sE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLlHw20pU5ZteOAY+OtxVIcbKl63qtaX0pcxmW290pD+b0rznFIwyvmwGi+b8Ll2nq3ZQUvXq632OhD15UYOcLgGS5hzWnSmZRvkIRRJsgwKNl5mupVa8uxoeM64Gjx2DZ9Szodmj5iiYzTHP/MFKZs6avLRseB8Cz4VaxRO1hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QfykkzUo; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=C2bN5FstwQ/sSqjlVirDz35vgjcAjpul7lMG1TygQe0=; b=QfykkzUoR8knNdGlhwRx6HeWW3
-	K0qL4smMy35ewHdsgN+4H+m4pEXkfVAzn7oBcKcmBIC1SoXqkTM3yR36unT5ar3y/bUlsMZ1/V7Vv
-	kTgKtdt8h8qEyT+4CPzK+iXG/p+hVrh/PXFm+muJ8iT7mBKKSiWQp7GISlgJTWNxoZNIRBF3BXpVk
-	mB2BfeSIBOolti5k/swn7TAZRtZWW6Ja9xuvOCjc9vdNGqBGjfrXMrRu9tpLK8c562oW3PRdN3LhB
-	FqcAHctqff5tMSlxSglat2AictAChrPYT1KPUo/HPW7BKQU/XP8t+iyasiBIC+YAbJ3iOenxwmOHX
-	LjMYvgig==;
-Received: from 179-125-86-110-dinamico.pombonet.net.br ([179.125.86.110] helo=quatroqueijos.cascardo.eti.br)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uZvuX-00F3Dn-L7; Thu, 10 Jul 2025 20:22:22 +0200
-Date: Thu, 10 Jul 2025 15:22:15 -0300
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org,
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
-	Zijun Hu <zijun.hu@oss.qualcomm.com>
-Subject: Re: [PATCH v5 6/8] char: misc: Does not request module for
- miscdevice with dynamic minor
-Message-ID: <aHAE103XZl8yqDuo@quatroqueijos.cascardo.eti.br>
-References: <20250710-rfc_miscdev-v5-0-b3940297db16@oss.qualcomm.com>
- <20250710-rfc_miscdev-v5-6-b3940297db16@oss.qualcomm.com>
+	s=arc-20240116; t=1752171931; c=relaxed/simple;
+	bh=lzOg863td9wmwIzdOW1a8mSXM5R7uBGHNR/Wq8C+XKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W3ilv6Ya6tsAcnVy7gnoe4o1ZtWnOpLY8nhKCokawZHIYkj1RrQryCb8CSOdolp189hZGkAZMRnpedejb73YwBhfIBF4/TDni+nrhyfoPUzKhfrKAYCpAKuFJpww/Bl9B9kdaqkOVuxWQxqBPspUIkqlZdGtuOtawZRFAxYaqRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qT+Gzrgf; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60b86fc4b47so1637a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752171927; x=1752776727; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MGttGecOUfnj2vDKboTFLlNArn06kYu+jY7WB+vGDSo=;
+        b=qT+GzrgfFbv7TNCyvI1nwQhemlew7h2QPaGYd69Kqi499zFAgpcsA9L6Ql8C2UR+2b
+         z67/WVydCFIO9AGIyO1OsXS/QNtLnHPNtzbW4xhg/W7vGQqQ0v819gJlOeguSiYqoazk
+         yMTfvUrnnPivCdLvSRZcCBY1l6MvszfzuWVhO4rcMWA7DWJFMF0dFW5zKB2ae7KxMgpZ
+         fQsioD+YvOSbxnDPApSnChHOEQ7WgMczdqaCs+9KmDuuYoiQI34SRzh8O3sJQLGt4fOc
+         +b1hMmPhnAM2GtRhbfsEDW1nlV0Dlnerr9J/1xLuLVglKv5j2qYJvI6pA9uC1oWpWxyH
+         6ceA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752171927; x=1752776727;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MGttGecOUfnj2vDKboTFLlNArn06kYu+jY7WB+vGDSo=;
+        b=KPUgx1J+ijD0VuJOzXrdPrMV7cA9R2S4ImnODf19WTtyJVgNMxR6jk/cvWN0yNVtNu
+         8+RjBaVZVqjJsyIT1pCNed5MMIq+xxIsIbMcmCInt5Fa5NXhn2v/Kf1oP46/aAChqPCG
+         HVWnpAZU4tSj+30SRXwzsWsGIHFteNWXzQ9cmvLnmJqAfQBFmCUOJgsMTLwpIUb7bxHd
+         E/dQZbMAc8iRAb3+MIjyY+/O1jvF9khmq+cr2WWsLqvOnRjKHEJGngwN8Xj/selqi5qA
+         BDE5JJEz7WOHFK8CcigmqmsagE1d7FS7UWIwCwUSGuK1EJxWj2QznVcMm+6ZaKAqkSTB
+         nsWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsrDIpQ2412yNwljRmlsHXX8vqXWLM/7jXFV689s505xUaUJ9xOM//RuTh/OXysunvBegbxQXZF4M2c3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6LEAC83kDhVc6CxGDdrE3UHlrfCaUIse/1cWOrmDX/yyzM4O3
+	WlkLwQjOCIzejsq+PX/VQzWH4bYanOu7VvbBqAXuAmM2P4hAQrjq8FbkV3+ykVuNKgN6iULYnFu
+	0NdibO+jGAEqHEZrdqFmKWi1StJ3NJbUWtYB1xXpz
+X-Gm-Gg: ASbGncvrlXZSQxazNmX2M8YuAtExgtQ6FJa7u0UChq5mLsUDgvY3bR6z03uFxr4Ps3W
+	5eeJUOA+U419BcJLhy4E9C7ScSMz6Lk4AkAlS02AjKC/4urhteAsOUvIhNNtCdZVstfg5XbONCu
+	4E7L5UJPuzfnUFZteGAB2/+UYYAKWFCRMOZjsGByObIqxoQdIJOBmwSteCdlgDJxT6hUk38Lc=
+X-Google-Smtp-Source: AGHT+IFYbu4F77iXBeAnMl5OLLUNqSyy6NKKa5nSrUrX3MSMLO1UBBwllp1ZZ2m2gbUJ8CJrAGBesZolk6+61YYGeCs=
+X-Received: by 2002:a05:6402:30a6:b0:606:b6da:5028 with SMTP id
+ 4fb4d7f45d1cf-611e66aa77bmr9269a12.0.1752171927040; Thu, 10 Jul 2025 11:25:27
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710-rfc_miscdev-v5-6-b3940297db16@oss.qualcomm.com>
+References: <20250710082807.27402-1-byungchul@sk.com> <20250710082807.27402-5-byungchul@sk.com>
+In-Reply-To: <20250710082807.27402-5-byungchul@sk.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 10 Jul 2025 11:25:12 -0700
+X-Gm-Features: Ac12FXxKh5TJZHgIcSqvUZXVnJGYFBLJKrIZOv19NnRAZsweNKYOtzi0atTHg_c
+Message-ID: <CAHS8izM8a-1k=q6bJAXuien1w6Zr+HAJ=XFo-3mbgM3=YBBtog@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 4/8] netmem: use netmem_desc instead of page
+ to access ->pp in __netmem_get_pp()
+To: Byungchul Park <byungchul@sk.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
+	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
+	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
+	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
+	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com, 
+	hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 10, 2025 at 07:56:49PM +0800, Zijun Hu wrote:
-> From: Zijun Hu <zijun.hu@oss.qualcomm.com>
-> 
-> misc_open() may request module for miscdevice with dynamic minor, which
-> is meaningless since:
-> 
-> - The dynamic minor allocated is unknown in advance without registering
->   miscdevice firstly.
-> - Macro MODULE_ALIAS_MISCDEV() is not applicable for dynamic minor.
-> 
-> Fix by only requesting module for miscdevice with fixed minor.
-> 
-> Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
+On Thu, Jul 10, 2025 at 1:28=E2=80=AFAM Byungchul Park <byungchul@sk.com> w=
+rote:
+>
+> To eliminate the use of the page pool fields in struct page, the page
+> pool code should use netmem descriptor and APIs instead.
+>
+> However, __netmem_get_pp() still accesses ->pp via struct page.  So
+> change it to use struct netmem_desc instead, since ->pp no longer will
+> be available in struct page.
+>
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
 > ---
->  drivers/char/misc.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/char/misc.c b/drivers/char/misc.c
-> index 96ed343cf5c8509a09855020049a9af82a3ede95..a0aae0fc792666a7bdc0ba00da9dc02ff9cead42 100644
-> --- a/drivers/char/misc.c
-> +++ b/drivers/char/misc.c
-> @@ -132,7 +132,8 @@ static int misc_open(struct inode *inode, struct file *file)
->  		break;
->  	}
->  
-> -	if (!new_fops) {
-> +	/* Only request module for fixed minor code */
-> +	if (!new_fops && minor < MISC_DYNAMIC_MINOR) {
->  		mutex_unlock(&misc_mtx);
->  		request_module("char-major-%d-%d", MISC_MAJOR, minor);
->  		mutex_lock(&misc_mtx);
-> @@ -144,10 +145,11 @@ static int misc_open(struct inode *inode, struct file *file)
->  			new_fops = fops_get(iter->fops);
->  			break;
->  		}
-> -		if (!new_fops)
-> -			goto fail;
->  	}
->  
-> +	if (!new_fops)
-> +		goto fail;
-> +
->  	/*
->  	 * Place the miscdevice in the file's
->  	 * private_data so it can be used by the
-> 
-> -- 
-> 2.34.1
-> 
+>  include/net/netmem.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/net/netmem.h b/include/net/netmem.h
+> index 11e9de45efcb..283b4a997fbc 100644
+> --- a/include/net/netmem.h
+> +++ b/include/net/netmem.h
+> @@ -306,7 +306,7 @@ static inline struct net_iov *__netmem_clear_lsb(netm=
+em_ref netmem)
+>   */
+>  static inline struct page_pool *__netmem_get_pp(netmem_ref netmem)
+>  {
+> -       return __netmem_to_page(netmem)->pp;
+> +       return __netmem_to_nmdesc(netmem)->pp;
+>  }
+>
 
-Given this should not break any code, as there should be no legit drivers
-requesting a minor >= 255,
+__netmem_to_nmdesc should introduced with this patch.
 
-Acked-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+But also, I wonder why not modify all the callsites of
+__netmem_to_page to the new __netmem_to_nmdesc and delete the
+__nemem_to_page helper?
+
+
+--=20
+Thanks,
+Mina
 
