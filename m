@@ -1,135 +1,164 @@
-Return-Path: <linux-kernel+bounces-725668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF2EB00242
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:44:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F13B00243
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6B581AA5A49
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:44:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060D3567251
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF853258CCB;
-	Thu, 10 Jul 2025 12:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6F1268FED;
+	Thu, 10 Jul 2025 12:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R1O9xHZP"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="scdYbRe1"
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D04257AFB
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FCB255F22;
+	Thu, 10 Jul 2025 12:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752151410; cv=none; b=B+cHqZTD2lxrYaAT+T9ZnyHNcISEybHJOxsS3oySN7tFQG/zaOMFs50ptvaS0+48Huzm4wC1ryYr/nR+dFEXXp2CiZT1sVvWH9qU+PJ7KdaheozCo9MP87X9m1ZVJdA/RdJREniH0hXGL+3ecfQbzdB6iCUH/SpPmCaP/gVC9EE=
+	t=1752151403; cv=none; b=XSkSnmsQrf0idz9IVQedSqYqktODNg86hrxCAASqlXuTr/+bw7y1/0uNm+3bVGrGqof6EkmWpQ9EySKZcK7SyGBQwJBgnoycWhlx3oCMYNnL3DPVqr7/kVhKG54ujBfg7plahQLXwFj+FktvrcdaTatGFPxoL1855TqReBIAsOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752151410; c=relaxed/simple;
-	bh=s6KFsIWe08m+NRGKyxGg6ZnduWNzBb00Sh/FpcugVHo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VBRXXe0BYvdkQR9U8IriK4NcU7sarPxBs9L/8JQt0qFDUds9HOslIKc7xb3uqLEGZuqFfv2wsaTKdKwY+XfmSns4h/aQJ76vcPmHe9zx4M2A1WU5+WvWArGYPfbHrPiJBXHBBGUR8O0kfIdVJY59N/RP1zDrzEUmosY9qtIWEk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R1O9xHZP; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4fd1ba177so678186f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:43:28 -0700 (PDT)
+	s=arc-20240116; t=1752151403; c=relaxed/simple;
+	bh=YAlRdTBtbltqIObG/wS2N/TUks/eUA85AP5/ETkC2Ao=;
+	h=From:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=fasMCNOBGAH/xkLhwdL4CHMXdWmS3HUMlzAWGFUKqrYt4y4wBJ8OcP7yPv+CXPED9H2SUiZ2VCHV4jF1Ux8hvxzco5iqte3tgntIpTP27axyZpAXuCYyJlcUZk/SQIZS+Eq4/BBjYKlcXi4KVhyhMUcZ7/eFtmllwezmeW2BdFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=scdYbRe1; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752151407; x=1752756207; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RLZ3wT/zIcTlhpVZ66G+GThU9XAAh1rTUV/NBZEfAJw=;
-        b=R1O9xHZPacRsBm/CTrjEThcQzEXUI11c5il5Wq0Symni4gDb+cmtt+GzfVGaPhcr9a
-         o195hezsnxgq/x3dG/8P5ynPdBJmfmG0BpNjUPp3ZZW1WecwscDdDLCH7ZHH+TC2dkmG
-         an9zjuVLjK1p4ynLBvNmowWSDWgpKtXbusO8Q+awMrW8j80cdXMIKoRriF5ni+i7oT6Z
-         eX8gq7+Wrv7VOGjZ7BjctVD2NXq7jwfbvxbGVhvHOSZs4iLjfMsEbNLqXikl3EggeIJ1
-         +l4VSQApzkw848twI1gzQPICy2xD1aXHOJfv7jE+yR3IpmmU0jMLUv1nl29elEyFP1xD
-         iRww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752151407; x=1752756207;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RLZ3wT/zIcTlhpVZ66G+GThU9XAAh1rTUV/NBZEfAJw=;
-        b=mcKjtpoa4YOlGOs7U5dFozPkmvbYlUBze9LF/zO/4cbBg8CTyFwAHtFzhU2uCHdwGf
-         cngCJUBLCm4Bl+GACE2m+9rCWvwb/QYDEPGQJ80DGOAkX/rsuXlsiLBMaVoopWLWrN9R
-         2wdp4e5K8EuH4+LiZ51nmWb8ZpaLG/Fr/8WBP+adjzlS/VBLgyVzoY6+DyJ0g8w9HQgg
-         tKNpX4bGdy8gnNyIFSBnbTh3+m/NWbej0Ngbeb21hXnQG5iQe9PMz9GgOEB6g3p+z7BH
-         qAosRyf4h4d5LBBjm0cB6rlfMt07QXfEuSU2JQV0wbueOpuTBuGygnokdQhxhOwotR6b
-         WEKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhJ0kSEissoZKT8BXuWGlAm7Vc5M02yF/TwM53o92BG1y8264T0pGLz7izR6WVwdQowFmyb+6foz56C4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN1lR4p8d37B1uXKaSbWEMH+5STTmQA19k1oqtZbxLmM5zD4tL
-	uBBvaZWhkKeQio5XGq2f72jB9NK/jlMmm0OkJaK0Xt70bJUrB3VgD8xs1r08uoh40QORV29uSvV
-	qGdTkuyo2TridHJTWproMHL5ukA+iz/I=
-X-Gm-Gg: ASbGncuRmACy+AuHzPUrihZGGGUU/6G0iOLHv+TsLqVx259x+XMZ74LJSFw6Y/c2YT8
-	jaCf/G7zyjiHZfflNBk37zj1PuyFCDKzvESZtsce5OeoKxqlpQ7oltGwuuiAQfAhVZSo8uuf2p/
-	iWXm52N0hb8BGLCYHCYjyUAvw3SvifE5EoE7KC93snY3/0rA==
-X-Google-Smtp-Source: AGHT+IEnLv+M1cm1e41yBczHzCqcGvBz2LxWly+f89XFFbMNN8WbM3UxVWoFEfEmHMVnnkn6nxf6P78yVudOGfXKEXQ=
-X-Received: by 2002:a05:6000:22c3:b0:3b5:e07f:9442 with SMTP id
- ffacd0b85a97d-3b5e7f34672mr2613771f8f.19.1752151406804; Thu, 10 Jul 2025
- 05:43:26 -0700 (PDT)
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1752151402; x=1783687402;
+  h=from:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TcL90y9yyUrQNV6wzTUzXovTLknFtEhr31RpPeHLwCo=;
+  b=scdYbRe1DBGGqZtpyHWStknKdtLzrB89Epdct++CuC3XyAJg3E+Dgtuq
+   mb19Nz9JwGm3scKMZbw1oTf8zbZafwNnCmKeigg2oP8cKtEVwk/kai5En
+   GUarli8zwiXurTbOkUzDR0/pDLAftgky8ZY0VqXT0CKBBoQQg+/WOpMLw
+   gXa1t72FEdVr0yL8LdnhEmFDLKypu2g2kLUh5Rla3a8AlAUL54p8iNVG5
+   oVGlo0swdXG6+ZfS1GePuTdPyC3S0xXcKdQ8S9Jf7zWq7YhP7q5Lm+m3T
+   hJC/o4v3thyypFw9ZoUyvTNKFrdskx4N53WLIfzdGYJY3lYvRWDoSDZPV
+   Q==;
+X-IronPort-AV: E=Sophos;i="6.16,300,1744070400"; 
+   d="scan'208";a="213811787"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 12:43:19 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.10.100:33526]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.44.180:2525] with esmtp (Farcaster)
+ id 8ccd098b-9821-4a92-b3a0-d3d116f3a7ae; Thu, 10 Jul 2025 12:43:18 +0000 (UTC)
+X-Farcaster-Flow-ID: 8ccd098b-9821-4a92-b3a0-d3d116f3a7ae
+Received: from EX19D008EUC002.ant.amazon.com (10.252.51.146) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 10 Jul 2025 12:43:18 +0000
+Received: from EX19D008EUC001.ant.amazon.com (10.252.51.165) by
+ EX19D008EUC002.ant.amazon.com (10.252.51.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 10 Jul 2025 12:43:18 +0000
+Received: from EX19D008EUC001.ant.amazon.com ([fe80::9611:c62b:a7ba:aee1]) by
+ EX19D008EUC001.ant.amazon.com ([fe80::9611:c62b:a7ba:aee1%3]) with mapi id
+ 15.02.1544.014; Thu, 10 Jul 2025 12:43:18 +0000
+From: "Heyne, Maximilian" <mheyne@amazon.de>
+CC: "Heyne, Maximilian" <mheyne@amazon.de>, Harshit Mogalapalli
+	<harshit.m.mogalapalli@oracle.com>, Oleg Nesterov <oleg@redhat.com>, "Eric W.
+ Biederman" <ebiederm@xmission.com>, Andrew Morton
+	<akpm@linux-foundation.org>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>, "Sauerwein, David" <dssauerw@amazon.de>, "Sasha
+ Levin" <sashal@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>
+Subject: [RESEND PATCH 5.15] fs/proc: do_task_stat: use __for_each_thread()
+Thread-Topic: [RESEND PATCH 5.15] fs/proc: do_task_stat: use
+ __for_each_thread()
+Thread-Index: AQHb8Zg2fZamDUZRE0iXs8i1qPy6QA==
+Date: Thu, 10 Jul 2025 12:43:18 +0000
+Message-ID: <20250710-yams-adolf-9eb7e4b2@mheyne-amazon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703181018.580833-1-yeoreum.yun@arm.com>
-In-Reply-To: <20250703181018.580833-1-yeoreum.yun@arm.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Thu, 10 Jul 2025 14:43:15 +0200
-X-Gm-Features: Ac12FXxkeNT4SbQnhPymL-kgefhQmsJ3o4VsRU7W2osYTS5GaGgeUo2hYTeE0yw
-Message-ID: <CA+fCnZcMpi6sUW2ksd_r1D78D8qnKag41HNYCHz=HM1-DL71jg@mail.gmail.com>
-Subject: Re: [PATCH v2] kasan: remove kasan_find_vm_area() to prevent possible deadlock
-To: Yeoreum Yun <yeoreum.yun@arm.com>, akpm@linux-foundation.org
-Cc: glider@google.com, dvyukov@google.com, vincenzo.frascino@arm.com, 
-	bigeasy@linutronix.de, clrkwllms@kernel.org, rostedt@goodmis.org, 
-	byungchul@sk.com, max.byungchul.park@gmail.com, ysk@kzalloc.com, 
-	kasan-dev@googlegroups.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-rt-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 3, 2025 at 8:10=E2=80=AFPM Yeoreum Yun <yeoreum.yun@arm.com> wr=
-ote:
->
-> find_vm_area() couldn't be called in atomic_context.
-> If find_vm_area() is called to reports vm area information,
-> kasan can trigger deadlock like:
->
-> CPU0                                CPU1
-> vmalloc();
->  alloc_vmap_area();
->   spin_lock(&vn->busy.lock)
->                                     spin_lock_bh(&some_lock);
->    <interrupt occurs>
->    <in softirq>
->    spin_lock(&some_lock);
->                                     <access invalid address>
->                                     kasan_report();
->                                      print_report();
->                                       print_address_description();
->                                        kasan_find_vm_area();
->                                         find_vm_area();
->                                          spin_lock(&vn->busy.lock) // dea=
-dlock!
->
-> To prevent possible deadlock while kasan reports, remove kasan_find_vm_ar=
-ea().
->
-> Fixes: c056a364e954 ("kasan: print virtual mapping info in reports")
-> Reported-by: Yunseong Kim <ysk@kzalloc.com>
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+From: Oleg Nesterov <oleg@redhat.com>
 
-As a fix:
+[ Upstream commit 7904e53ed5a20fc678c01d5d1b07ec486425bb6a ]
 
-Acked-by: Andrey Konovalov <andreyknvl@gmail.com>
+do/while_each_thread should be avoided when possible.
 
-But it would be great to figure out a way to eventually restore this
-functionality; I'll file a bug for this once this patch lands. The
-virtual mapping info helps with real issues: e.g. just recently it
-helped me to quickly see the issue that caused a false-positive report
-[1].
+Link: https://lkml.kernel.org/r/20230909164501.GA11581@redhat.com
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Stable-dep-of: 7601df8031fd ("fs/proc: do_task_stat: use sig->stats_lock to=
+ gather the threads/children stats")
+Cc: stable@vger.kernel.org
+[mheyne: adjusted context]
+Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+---
 
-[1] https://lore.kernel.org/all/CA+fCnZfzHOFjVo43UZK8H6h3j=3DOHjfF13oFJvT0P=
--SM84Oc4qQ@mail.gmail.com/
+Compile-tested only.
+We're seeing soft lock-ups with 5.10.237 because of the backport of
+commit 4fe85bdaabd6 ("fs/proc: do_task_stat: use sig->stats_lock to
+gather the threads/children stats"). I'm assuming this is broken on 5.15
+too.
+
+---
+ fs/proc/array.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 2cb01aaa6718..2ff568dc5838 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -530,18 +530,18 @@ static int do_task_stat(struct seq_file *m, struct pi=
+d_namespace *ns,
+ 		cgtime =3D sig->cgtime;
+ =
+
+ 		if (whole) {
+-			struct task_struct *t =3D task;
++			struct task_struct *t;
+ =
+
+ 			min_flt =3D sig->min_flt;
+ 			maj_flt =3D sig->maj_flt;
+ 			gtime =3D sig->gtime;
+ =
+
+ 			rcu_read_lock();
+-			do {
++			__for_each_thread(sig, t) {
+ 				min_flt +=3D t->min_flt;
+ 				maj_flt +=3D t->maj_flt;
+ 				gtime +=3D task_gtime(t);
+-			} while_each_thread(task, t);
++			}
+ 			rcu_read_unlock();
+ 		}
+ 	} while (need_seqretry(&sig->stats_lock, seq));
+-- =
+
+2.47.1
+
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
+
 
