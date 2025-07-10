@@ -1,150 +1,116 @@
-Return-Path: <linux-kernel+bounces-725278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B32AFFCC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:49:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63903AFFCF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0508D4E5AD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:49:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD5BC586E76
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957CE28E5E6;
-	Thu, 10 Jul 2025 08:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156E728FAA1;
+	Thu, 10 Jul 2025 08:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="HPmozO2r"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rduY9cQH"
+Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com [203.205.221.192])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E07C28C2B8;
-	Thu, 10 Jul 2025 08:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA58928FA91;
+	Thu, 10 Jul 2025 08:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.192
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752137365; cv=none; b=gc0Vn2IgF70O/tFeXsy9Z9Jh+anG9sunIPgDYz90wKuOBhs/PS5oyFzRuOcTbuY4o5fzvxdsPzegy1mWnUBuZAs9quZTDK5MoNi/8rUJLN9AKZ9F3mX8Mf9XMBi2umh8eZJFdyaLlVvUpURwQACfkmS9JdCipc4J6X/+7wun2iE=
+	t=1752137682; cv=none; b=Mu1ZtAJXZ/aLQRsfT3hX9E9tQHetMh02i4PqcFKgsyNrVTbEhTOptP+SRnrQmo/TasuQ+nvamVukOeCS7zaWErpbz5EjuQJaaceJHww5LwNFniYtxEruYxEDN1639NLwqKXiI565J3v2bQY5L3ihVrwl91xJzC74BNRDn8H96zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752137365; c=relaxed/simple;
-	bh=xSn37TdrR5LnVjgiWRMs6jgfMqqUE2kD7Pf2HcJzTmM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NjiVuiG8m/SwKSAcKW7mX7leN2F+GGd8oogpxf5Ouhaa8jfkEAm8UojyqoRf0RVDZ7MZxtQYw324XhtyywYypfop4E4ehEW8AeJaDw/46ukfRXB3xHkubT0uBF5ZrO2BZz/Osq0oUPqhbQvwXsKgDIVao771WSTBXvRcTi2Y/Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=HPmozO2r; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 71F821C00A4; Thu, 10 Jul 2025 10:49:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1752137360;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JtsDBA795YfReYH/GF2nMaqLkXwFgaNAo981tm46dl4=;
-	b=HPmozO2rGjK2OOGdab1zyeJX8Mr6qIQ58OYfWhT3tFLnrIj/JkdrbYkxiQfSiSy42rqlae
-	1/T7eB6smwFKxs9Ap/c4DEzTrV+VgC7Z2KkqC1dNEF82gIlp+x/hMb62bq4MFydLgBiCM5
-	3hH4RQPYg7s3dZcicRfGpHdoLWGyvL8=
-Date: Thu, 10 Jul 2025 10:49:19 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: kraxel@redhat.com, vivek.kasireddy@intel.com,
-	dri-devel@lists.freedesktop.org, sumit.semwal@linaro.org,
-	benjamin.gaignard@collabora.com, Brian.Starkey@arm.com,
-	jstultz@google.com, tjmercier@google.com,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	kernel list <linux-kernel@vger.kernel.org>,
-	laurent.pinchart@ideasonboard.com, linux+etnaviv@armlinux.org.uk,
-	christian.gmeiner@gmail.com, etnaviv@lists.freedesktop.org,
-	phone-devel@vger.kernel.org
-Subject: Re: DMA-BUFs always uncached on arm64, causing poor camera
- performance on Librem 5
-Message-ID: <aG9+j3p0+fdLQZwu@duo.ucw.cz>
-References: <aG94uNDrL1MdHJPM@duo.ucw.cz>
- <aecd03f464f25d50f379be405a8596261f247897.camel@pengutronix.de>
+	s=arc-20240116; t=1752137682; c=relaxed/simple;
+	bh=INz7KzEfoZWjv0Hj1dr3Xxd3M2v2qBOwSQrKcFMOUQE=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tossMvh7YiyIoubwXxQeTMlGjATNrOjoMeVCLxPqzdt+sOn4htEPVUCSljKMQ7HU1ti7SIN7Ph3ZXfFccn1tC5YipipTiFRMAXQovdYzxCZ29PYDMPA41H+Ex3Fe//I7RoTgvQWOPgsddbgoZWV49b5HaW33561uKad5vcAQX10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rduY9cQH; arc=none smtp.client-ip=203.205.221.192
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1752137371; bh=NQ79ido2IH/sPMyuVTJTLIo7AavKH2feMjmTGujZTlg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=rduY9cQHGBEEIWF+03K53/W/cVLMWesKK6I5GdGLXH/dJhtXxJTWf8was0rjUGgsG
+	 KPz0KFpjeKsKUqIhODkHlsCKQQmezlPgPRPyjrUoCluBLDijsVdQOktRDo4BpX6OUS
+	 eKv/Y4s6nerVUfts1VHJLARBjoq2pPADyrTYb/uI=
+Received: from VM-222-126-tencentos.localdomain ([14.22.11.161])
+	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
+	id C5DA7AA5; Thu, 10 Jul 2025 16:49:29 +0800
+X-QQ-mid: xmsmtpt1752137369tq09sdzyr
+Message-ID: <tencent_21B82DB792FE0049B6EF5ECD81285669C908@qq.com>
+X-QQ-XMAILINFO: MzNwb/pqyJTkAiA8k4Bk2x6p8F6TRHD/q18drB1bXeEMCfX8pwVkBrxc4+l83H
+	 wPh/SjDJjiSzV8yhAexhKm0iGoPcpwlAUojBo5n8LFD7xAziSGEPlwIUtc4gjVCsV1nFZ7JKPPhq
+	 X7pglVwUGeEArumcEm5I97fzxd2f1DTGnQ8EjKzbO65xACbrmXEs7r+mh2ltTy6y6J4Tw+Yhm1tE
+	 Lmfpj0e0zOp7WhwN1BUkZbOm0L4TgxFar/pWZ0cK0qE0ggp7kaK+cG15dU9XRyUcWKStOTw9VCIY
+	 VCixwuNE1Rq13oHyJZwLhH7xawTDBKTJlKwWsT+BFMn07GJA+VhpKFhf5lwAC4EQ2wTTw3c42XBE
+	 zybi3okldTn8mecrHjLJnHr3DABpDakyD/PvESvqc9qROJ8i4yA18X+gY/A+Puj/MqTk1l1h0UAU
+	 LGkKZTGTtU9f/dEr4ERkPfA66PGUc15oJ3GnkDKzTeupPs9WdOSYDOy4r5WcM77n/TXEfG8kbT4I
+	 J88r5XxwiX9AVyrKNJaD/Wes2203/p67q4FPKwvZ8Ya5p/y7ilIEdC0JT/cZcjn4+/HCrYpTjaUe
+	 +WP91ri4kxEcLyDCHKzzMIriRmUq7xGSO+9xZ6ghrTegfdHUglH5L6sp+wD/Pglqo6ewilPWOiLw
+	 hMHXAnVeykBOPEH7xuxZez0BWI+bNvc3RFUUhP+xp8x2vMPGLuihnI4Sta73eSEujkfaUc09yKRy
+	 fYO/UFyrXiYc/1FErUS+jAIhM/Ipu9Q50Iu2o88fDt8HtcUDhsV7TwAy8lI95oJ1jmqXR6q1wvRS
+	 INldyl5ESdYNkk2jXG6Y+QhGu70ch0KpIuohBYKb4BKQ8Z8eu0BWXZzWItPGHmTOW8mJv16X+Sdw
+	 6d3o62e8YhEUnh0KDXu/apathSnkQANx/GdsyCnibb5fXfVl75H/kGfggcesrAf9PUs7j2qN7bJK
+	 w68KoBANh7YI/st7hSsSvUrv4RWhx4qg/YPvPwX1g9a6HEX6TQe4eQ3g/FauzJLye8FDtfME+UsY
+	 DlzcIHZBk01TxvyfyK8T+y6CA1IpBzqnqZPgiFE/2L7aRiUONlT886eSmvqEM=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: jackysliu <1972843537@qq.com>
+To: gregkh@linuxfoundation.org
+Cc: 1972843537@qq.com,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH v2] usb: gadget: functioni: Fix a oob problem in rndis
+Date: Thu, 10 Jul 2025 16:49:22 +0800
+X-OQ-MSGID: <20250710084922.169557-1-1972843537@qq.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <2025071026-fanciness-size-1d5d@gregkh>
+References: <2025071026-fanciness-size-1d5d@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uIo81BiHoorXdIb1"
-Content-Disposition: inline
-In-Reply-To: <aecd03f464f25d50f379be405a8596261f247897.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+From: Siyang Liu <1972843537@qq.com>
 
---uIo81BiHoorXdIb1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+An out-of-bounds memory access vulnerability exists in the RNDIS
+(Remote Network Driver Interface Specification) implementation.
+The vulnerability stems from insufficient boundary validation when
+processing SET requests with user-controlled InformationBufferOffset
+and InformationBufferLength parameters.
 
-Hi!
+Fix on commit id:
+commit 5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
 
-> > memcpy() from normal memory is about 2msec/1MB. Unfortunately, for
-> > DMA-BUFs it is 20msec/1MB, and that basically means I can't easily do
-> > 760p video recording. Plus, copying full-resolution photo buffer takes
-> > more than 200msec!
-> >=20
-> > There's possibility to do some processing on GPU, and its implemented h=
-ere:
-> >=20
-> > https://gitlab.com/tui/tui/-/tree/master/icam?ref_type=3Dheads
-> >=20
-> > but that hits the same problem in the end -- data is in DMA-BUF,
-> > uncached, and takes way too long to copy out.
-> >=20
-> > And that's ... wrong. DMA ended seconds ago, complete cache flush
-> > would be way cheaper than copying single frame out, and I still have
-> > to deal with uncached frames.
-> >=20
-> > So I have two questions:
-> >=20
-> > 1) Is my analysis correct that, no matter how I get frame from v4l and
-> > process it on GPU, I'll have to copy it from uncached memory in the
-> > end?
->=20
-> If you need to touch the buffers using the CPU then you are either
-> stuck with uncached memory or you need to implement bracketed access to
-> do the necessary cache maintenance. Be aware that completely flushing
-> the cache is not really an option, as that would impact other
-> workloads, so you have to flush the cache by walking the virtual
-> address space of the buffer, which may take a significant amount of CPU
-> time.
+The vulnerability can be fixed by adding addtional boundary checks
 
-What kind of "significant amount of CPU time" are we talking here?
-Millisecond?
+Signed-off-by: Siyang Liu <1972843537@qq.com>
+---
+ drivers/usb/gadget/function/rndis.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Bracketed access is fine with me.
+diff --git a/drivers/usb/gadget/function/rndis.c b/drivers/usb/gadget/function/rndis.c
+index afd75d72412c..cc522fb4c06c 100644
+--- a/drivers/usb/gadget/function/rndis.c
++++ b/drivers/usb/gadget/function/rndis.c
+@@ -641,7 +641,8 @@ static int rndis_set_response(struct rndis_params *params,
+ 	BufOffset = le32_to_cpu(buf->InformationBufferOffset);
+ 	if ((BufLength > RNDIS_MAX_TOTAL_SIZE) ||
+ 	    (BufOffset > RNDIS_MAX_TOTAL_SIZE) ||
+-	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE))
++	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE) ||
++		(BufOffset + BufLength+8 > RNDIS_MAX_TOTAL_SIZE))
+ 		    return -EINVAL;
+ 
+ 	r = rndis_add_response(params, sizeof(rndis_set_cmplt_type));
+-- 
+2.43.5
 
-Flushing a cache should be an option. I'm root, there's no other
-significant workload, and copying out the buffer takes 200msec+. There
-are lot of cache flushes that can be done in quarter a second!
-
-> However, if you are only going to use the buffer with the GPU I see no
-> reason to touch it from the CPU side. Why would you even need to copy
-> the content? After all dma-bufs are meant to enable zero-copy between
-> DMA capable accelerators. You can simply import the V4L2 buffer into a
-> GL texture using EGL_EXT_image_dma_buf_import. Using this path you
-> don't need to bother with the cache at all, as the GPU will directly
-> read the video buffers from RAM.
-
-Yes, so GPU will read video buffer from RAM, then debayer it, and then
-what? Then I need to store a data into raw file, or use CPU to turn it
-into JPEG file, or maybe run video encoder on it. That are all tasks
-that are done on CPU...
-
-Best regards,
-								Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
-
---uIo81BiHoorXdIb1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaG9+jwAKCRAw5/Bqldv6
-8pFxAJ9w5Ne/+ev32mB6Cj5DYUglkB9gbwCgpjZ84DNpnW6H133GyLZrpyPjFjg=
-=8vV3
------END PGP SIGNATURE-----
-
---uIo81BiHoorXdIb1--
 
