@@ -1,148 +1,188 @@
-Return-Path: <linux-kernel+bounces-724716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47DE7AFF631
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D44AFF639
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71EDD4A2D45
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:58:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51CFD58832E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37F782899;
-	Thu, 10 Jul 2025 00:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXeD96cj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AB9757EA;
+	Thu, 10 Jul 2025 00:58:40 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE89539A;
-	Thu, 10 Jul 2025 00:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6EE539A;
+	Thu, 10 Jul 2025 00:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752109103; cv=none; b=UdOGcp/Cjswx+qJjZGBxzcOMtNCFNQVyrtzQKMuRxHpDMZmC3fRS1N/OCPMUSBzByctDdMsMc1EnMjWURrZzT/zLALpo5YaUKN/bQDUaRY4r2JvK7Agk0JYgl4Kn54C41zKH47ZCLGRalMnmPvXuuGO0/3O6kXKiaO9YpQv+fEM=
+	t=1752109119; cv=none; b=V+2y7BUZM+ovw3edwXi6cclYalse/XPcM3WYrokHeXyzxz7iPtVvSqxTFM9Vdds+fzQU8Hzeq68eBRhTH1Hti5vNk859g3hT2oeSQByBF0T1nNX5RLwLs0x3/+d5T/ByQbHgwaispW7Eympu8XxNGOeo4xizXFkmkkJCVCT0Jdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752109103; c=relaxed/simple;
-	bh=P1d0IshYGbaAr/Hr/+3PPdk883uiqvPufCBEpnmmtQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MjaEY4tXAPIeTxWxsqZO/Bt/D9KReClKxAUH70cy4ae5+p+5ngTmEMM08Bvq8nWdFL28KNPqnOlPllf3TwBWQa9KuRKwt6baR3rq5ZWYaW3Zl/E+/jLR/JpUHrBCqQaoqOhu5TmbEM2JW3NKIUzyNhidrzHdDiNrHgiAy79qjZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXeD96cj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48AB6C4CEEF;
-	Thu, 10 Jul 2025 00:58:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752109102;
-	bh=P1d0IshYGbaAr/Hr/+3PPdk883uiqvPufCBEpnmmtQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DXeD96cjQYgk7BBvsbsPthJVjBguygDmr58DkUqtClTt8EYDlOo2PO4EDaT8nBO4l
-	 1htaIsnjtbK2zziciZHnyyoagRCGsofviI36cLjmtD9e9fIpsOuA85YaUDMtq/+7eD
-	 eYymN8TttJ1F3gOdwf5maxP6ljB7eeD4/NphgE+w/tSEIrYTarNMwtI10URmBjDdSy
-	 AGqsXOcoiltthV0WfAIRQhEx/YHJyxYlDSHL175fZYxZUUbteBiccq6UzGgJePXyZf
-	 8XNB4PH7ApHiVscyApAwanNQw+aCFeEOQp3VHlpMAN49Rk9o8pJoJgcbRLqjEa+zzD
-	 vNcELqwyc9hlQ==
-Date: Wed, 9 Jul 2025 19:58:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Raymond Mao <raymond.mao@linaro.org>
-Cc: linux-doc@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree-spec@vger.kernel.org
-Subject: Re: [PATCH] docs: devicetree: overlay-notes: recommend top-level
- compatible in DTSO
-Message-ID: <20250710005821.GA94507-robh@kernel.org>
-References: <20250624181320.2810521-1-raymond.mao@linaro.org>
+	s=arc-20240116; t=1752109119; c=relaxed/simple;
+	bh=/p1RkTj9htAxF4YYBjVTaG3lZPrHnv1Y5eL0IXe/6cM=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=B4hYUK4VeVaR2yS31xpm1jcYJXtBrXfS/BYwrmq4A3kQ3Mp2khY2tIgu8ZWfDzaeHbKxW6a9f9ckaxXz9EsDv5MUDlRTwJHlazBTXo6Mx5i+tNbGkRUN3KOkyWlbS9LL4s4W2+XCriz+tKb8m6yo6h7+ZgJQ5PeR5+Agcou53gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uZfcK-001H9h-SZ;
+	Thu, 10 Jul 2025 00:58:30 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624181320.2810521-1-raymond.mao@linaro.org>
+From: "NeilBrown" <neil@brown.name>
+To: "Song Liu" <songliubraving@meta.com>
+Cc: "Christian Brauner" <brauner@kernel.org>, "Tingmao Wang" <m@maowtm.org>,
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ "Song Liu" <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, "Kernel Team" <kernel-team@meta.com>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ =?utf-8?q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
+In-reply-to: <A4F6961B-452E-4B0E-B7AC-866B27FA732A@meta.com>
+References: <>, <A4F6961B-452E-4B0E-B7AC-866B27FA732A@meta.com>
+Date: Thu, 10 Jul 2025 10:58:30 +1000
+Message-id: <175210911012.2234665.6265326943483194812@noble.neil.brown.name>
 
-+devicetree-spec (because linux-doc doesn't really care)
+On Thu, 10 Jul 2025, Song Liu wrote:
+>=20
+>=20
+> > On Jul 9, 2025, at 3:14=E2=80=AFPM, NeilBrown <neil@brown.name> wrote:
+> >=20
+> > On Tue, 08 Jul 2025, Song Liu wrote:
+> >> Hi Christian,=20
+> >>=20
+> >> Thanks for your comments!=20
+> >>=20
+> >>> On Jul 7, 2025, at 4:17=E2=80=AFAM, Christian Brauner <brauner@kernel.o=
+rg> wrote:
+> >>=20
+> >> [...]
+> >>=20
+> >>>>> 3/ Extend vfs_walk_ancestors() to pass a "may sleep" flag to the call=
+back.
+> >>>>=20
+> >>>> I think that's fine.
+> >>>=20
+> >>> Ok, sorry for the delay but there's a lot of different things going on
+> >>> right now and this one isn't exactly an easy thing to solve.
+> >>>=20
+> >>> I mentioned this before and so did Neil: the lookup implementation
+> >>> supports two modes sleeping and non-sleeping. That api is abstracted
+> >>> away as heavily as possible by the VFS so that non-core code will not be
+> >>> exposed to it other than in exceptional circumstances and doesn't have
+> >>> to care about it.
+> >>>=20
+> >>> It is a conceptual dead-end to expose these two modes via separate APIs
+> >>> and leak this implementation detail into non-core code. It will not
+> >>> happen as far as I'm concerned.
+> >>>=20
+> >>> I very much understand the urge to get the refcount step-by-step thing
+> >>> merged asap. Everyone wants their APIs merged fast. And if it's
+> >>> reasonable to move fast we will (see the kernfs xattr thing).
+> >>>=20
+> >>> But here are two use-cases that ask for the same thing with different
+> >>> constraints that closely mirror our unified approach. Merging one
+> >>> quickly just to have something and then later bolting the other one on
+> >>> top, augmenting, or replacing, possible having to deprecate the old API
+> >>> is just objectively nuts. That's how we end up with a spaghetthi helper
+> >>> collection. We want as little helper fragmentation as possible.
+> >>>=20
+> >>> We need a unified API that serves both use-cases. I dislike
+> >>> callback-based APIs generally but we have precedent in the VFS for this
+> >>> for cases where the internal state handling is delicate enough that it
+> >>> should not be exposed (see __iterate_supers() which does exactly work
+> >>> like Neil suggested down to the flag argument itself I added).
+> >>>=20
+> >>> So I'm open to the callback solution.
+> >>>=20
+> >>> (Note for really absurd perf requirements you could even make it work
+> >>> with static calls I'm pretty sure.)
+> >>=20
+> >> I guess we will go with Micka=C3=ABl=E2=80=99s idea:
+> >>=20
+> >>> int vfs_walk_ancestors(struct path *path,
+> >>>                      bool (*walk_cb)(const struct path *ancestor, void =
+*data),
+> >>>                      void *data, int flags)
+> >>>=20
+> >>> The walk continue while walk_cb() returns true.  walk_cb() can then
+> >>> check if @ancestor is equal to a @root, or other properties.  The
+> >>> walk_cb() return value (if not bool) should not be returned by
+> >>> vfs_walk_ancestors() because a walk stop doesn't mean an error.
+> >>=20
+> >> If necessary, we hide =E2=80=9Croot" inside @data. This is good.=20
+> >>=20
+> >>> @path would be updated with latest ancestor path (e.g. @root).
+> >>=20
+> >> Update @path to the last ancestor and hold proper references.=20
+> >> I missed this part earlier. With this feature, vfs_walk_ancestors=20
+> >> should work usable with open-codeed bpf path iterator.
+> >=20
+> > I don't think path should be updated.  That adds complexity which might
+> > not be needed.  The original (landlock) requirements were only to look
+> > at each ancestor, not to take a reference to any of them.
+>=20
+> I think this is the ideal case that landlock wants in the long term.=20
+> But we may need to take references when the attempt fails. Also,=20
+> current landlock code takes reference at each step.=20
 
-On Tue, Jun 24, 2025 at 11:13:20AM -0700, Raymond Mao wrote:
-> When managing multiple base device trees and overlays in a structured
-> way (e.g. bundled in firmware or tools), it is helpful to identify the
-> intended target base DT for each overlay, which can be done via a
-> top-level compatible string in the overlay.
+Why may be need to?
+Yes, current landlock code takes references, but I don't think that is
+because it needs references, only because the API requires it to take
+references.=20
 
-I think this should be more general and more specific at the same time. 
+>=20
+> > If the caller needs a reference to any of the ancestors I think that
+> > walk_cb() needs to take that reference and store it in data.
+> > Note that attempting to take the reference might fail.  See
+> > legitimize_path() in fs/namei.c.
+> >=20
+> > It isn't yet clear to me what would be a good API for requesting the
+> > reference.
+> > One option would be for vfs_walk_ancestors() to pass another void* to
+> > walk_cb(), and it passed it on to vfs_legitimize_path() which extracts
+> > the seq numbers from there.
+> > Another might be that the path passed to walk_cb is always
+> > nameidata.path, and so when that is passed to vfs_legitimize_path() path
+> > it can use container_of() to find the seq numbers.
+>=20
+> Letting walk_cb() call vfs_legitimize_path() seems suboptimal to me.=20
+> I think the original goal is to have vfs_walk_ancestors() to:
+>   1. Try to walk the ancestors without taking any references;
+>   2. Detect when the not-taking-reference walk is not reliable;
+>   3. Maybe, retry the walk from beginning, but takes references on=20
+>      each step.=20
+>=20
+> With walk_cb() calling vfs_legitimize_path(), we are moving #2 above=20
+> to walk_cb(). I think this is not what we want?=20
 
-You might not want to match on a top-level board/soc compatible, but 
-rather the compatible for a specific node. For example, you may have an 
-overlay for a cape, hat, etc. that applies to a connector node and that 
-connector node could be on any number of boards or even multiple 
-connectors on 1 board. That's all under development, but so far in those 
-cases we expect some sort of connector driver to apply the overlays. But 
-I think you could have the same issue of identifying which overlay files 
-are relevant. I don't think folks working on add-on boards have thought 
-that far ahead.
+I think you are looking at this the wrong way around.  Focus on the
+needs for the caller, not on how you think it might be implemented.
 
-And since we don't know the target-path up front, it is just left blank 
-so far. It would be better if we expressed *something*. Perhaps 
-'target-compatible'? Something like that would work in your case I 
-think.
+If the caller needs a reference, there should be a way for it to get a
+reference.  This is quite separate from the choices vfs_walk_ancestors()
+makes about how it is going to walk the list of dentries.
 
-You'd have to be somewhat crazy, but you can bundle a bunch of 
-mutually-exclusive or unrelated overlays within a single overlay file. I 
-don't know that we want to prevent doing that. Someone might come up 
-with some not crazy reason to do that...
-
-> 
-> This patch updates the document with a note and example for this
-> practice.
-> 
-> Signed-off-by: Raymond Mao <raymond.mao@linaro.org>
-> ---
->  Documentation/devicetree/overlay-notes.rst | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/overlay-notes.rst b/Documentation/devicetree/overlay-notes.rst
-> index 35e79242af9a..30b142d1b2ee 100644
-> --- a/Documentation/devicetree/overlay-notes.rst
-> +++ b/Documentation/devicetree/overlay-notes.rst
-> @@ -103,6 +103,34 @@ The above bar.dtso example modified to use target path syntax is::
->      ---- bar.dtso --------------------------------------------------------------
->  
->  
-> +Overlay identification
-> +----------------------
-> +
-> +When managing overlays dynamically or bundling multiple base device trees
-> +and overlays in a single system (e.g., in firmware, initramfs, or user-space
-> +tools), it becomes important to associate each overlay with its intended
-> +target base DT.
-> +
-> +To support this, overlays should include the top-level compatible string
-> +from its base DT.
-
-The base has multiple compatible strings, so which one? Has to match on 
-any one or all of them?
-
-> +This enables higher-level software or firmware to identify which base DT
-> +an overlay is compatible with and apply it accordingly.
-> +
-> +Example usage::
-> +
-> +    ---- bar.dtso - overlay with top-level compatible string -------------------
-> +	/dts-v1/;
-> +	/plugin/;
-> +	compatible = "corp,foo";
-> +
-> +	...
-> +    ---- bar.dtso --------------------------------------------------------------
-> +
-> +This top-level compatible string is not required by the kernel overlay
-> +mechanism itself, but it is strongly recommended for managing overlays in
-> +scalable systems.
-> +
-> +
->  Overlay in-kernel API
->  --------------------------------
->  
-> -- 
-> 2.25.1
-> 
+NeilBrown
 
