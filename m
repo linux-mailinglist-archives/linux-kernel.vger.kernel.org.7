@@ -1,100 +1,94 @@
-Return-Path: <linux-kernel+bounces-724766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9709FAFF6BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:21:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28377AFF6BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D80991C471B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10EB654763F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E889B27F18B;
-	Thu, 10 Jul 2025 02:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A052627F16F;
+	Thu, 10 Jul 2025 02:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gLjSDVh1"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B552A19D065;
-	Thu, 10 Jul 2025 02:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzRMNGN/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A1319D065;
+	Thu, 10 Jul 2025 02:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752114070; cv=none; b=RJHkcUh8mUEAgF/2riNgN1Dnz+R1DJEWSQ6tLofUKUWSwrMKbsSLsFCkAR5iNSDrruz05iNg3uVcv8lhq1/dH4BoMs1hL1hLDPBtzKttmWzTxsNefy93wJCSMLoQaMVc+78Vp1EI/jFzJrzoGG52HLVTlzcgKy6sEnqaY/ta3Bs=
+	t=1752114237; cv=none; b=Ag9/fyeTUkBSysuxjPCIsk0G7sqt41PTcnM8X4dVNPvzv3hdQ3C3Zgq07JP0mW8LcwTNxf4aGT7S6o8vErRXYAp/6PiSKJ+o3mLV35/L5QlnXuyfKkjCs4tgoOAwI38SsQ+SvNKEB3vlGO8bcSACMz3KzMlePTbv6K1S075lY5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752114070; c=relaxed/simple;
-	bh=Vw+H+l2VvCbkV5x6YVAlKZGJQW+cJGkX/aq5oij9AsY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FXo1DZLVvRxDaslNn09aDEj1kkX74oNGrLoDEoShQgQDb23h7Zm0Q0jaOaMeuynrSt7QYmjIshFAf6AUO+8cOy9wArKnjbR58nly16EGzfr1uw+QaNFsUUV553LKwFLHnFw9Uvmw3RbmYxJEwIWGoXXrvk8NuKsBnfxGC8CDI48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gLjSDVh1; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=0Ab0HC1lqiYJ7NrxbvY+EhcNWXngvgHGMfzBJl73UO8=;
-	b=gLjSDVh1CEBbTUJjwZcpiYlObvy0DRUe1TN6PUELf5piedDFkdrhPQzQB0B840
-	WalDINP0ZCkwB24OBawZQ3IklPS4M0bxhGAIbO4rN+/tau2YlDp5i0bpVAVHfxIs
-	0x8hPLSlAuKc1M5YDBgxCGRnQWoLh8ZlIfCcKHWR9DhUA=
-Received: from [172.21.20.151] (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wAn0Z93I29o3XTLDg--.384S2;
-	Thu, 10 Jul 2025 10:20:39 +0800 (CST)
-Message-ID: <9853d3f1-569f-4fde-846e-5c8d7f798725@163.com>
-Date: Thu, 10 Jul 2025 10:20:39 +0800
+	s=arc-20240116; t=1752114237; c=relaxed/simple;
+	bh=2/XagPuVFGN4kAm58mBH5chGZAYGODG9YlOGIFwxloE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gkJUO1zgV+A+02qxqj7O6dn16/LLjHefcojkmXboy/wG+tLA10jy4APFeoLD81TaEOHdCfp5TStEjyK6FmZQm1iz+I7GHWXYWxt5djcDlU8Hlo5XelF8s/pgiZEcWbMeo4Ql4rB3T+aDnqJH4orKfqAsr6S2j5FafHhFxe25BqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzRMNGN/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F14EC4CEEF;
+	Thu, 10 Jul 2025 02:23:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752114236;
+	bh=2/XagPuVFGN4kAm58mBH5chGZAYGODG9YlOGIFwxloE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bzRMNGN/jlmZV/q4nJoLT4TM6sEbyZ4TzQect42p4S2daUabT7cdj8z8qpqmlExV5
+	 7H6rpyZ2q+YURSICKob+shqYvXMcJ7BUyNodZxzzaerkLVsTaHYxUWRrbXLMocUkBN
+	 hZibc1+bqi/UBQEPsTVLkSsdgtrIAyB5GC34hDaEDg5soq79T9r3i9PgaY3ImOX8Da
+	 bzBkWspZWYH70RwKe1dCyTgHjPRzGYkaFVvAn7zxlNn7txGJGcLdcLiFTQtcMeIWDE
+	 MPPeXwf2rOCubCZM9fc7w+SGqJhjt7/ToEt1Lp0xQ+jU/ZsO5KiGbPKd8bsaJyT+Xd
+	 5ZJJxuujYtGuw==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH 0/3] tools/bootconfig: cleanups and portability updates
+Date: Thu, 10 Jul 2025 11:23:53 +0900
+Message-ID:  <175211423307.2591046.14863142130524442068.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] af_packet: fix soft lockup issue caused by
- tpacket_snd()
-To: Simon Horman <horms@kernel.org>
-Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250709095653.62469-1-luyun_611@163.com>
- <20250709095653.62469-3-luyun_611@163.com>
- <20250709181434.GH721198@horms.kernel.org>
-Content-Language: en-US
-From: luyun <luyun_611@163.com>
-In-Reply-To: <20250709181434.GH721198@horms.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAn0Z93I29o3XTLDg--.384S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZF45WFWDtw4ftFWfZry7Wrg_yoW3tFbEgr
-	45u397Kry5Ar1jg3Z7Cw48ArsIgrZruFWqqry3ta4Uta90qrZrtr4Dur93J3WfZ3Zxtrsr
-	K3ZrCrySyr1UujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjS1vDUUUUU==
-X-CM-SenderInfo: pox130jbwriqqrwthudrp/1tbiOgGGzmhvITdkvgAAs4
+
+Hi,
+
+This series provides several cleanups and updates to the bootconfig
+tool and its selftest script. The main goals are to enhance portability,
+improve robustness, and clean up the shell script implementation.
+
+[1/3] focuses on portability by replacing GNU-specific commands like
+stat, and truncate in the test-bootconfig.sh script with their
+POSIX-compliant alternatives (wc, and dd).
+
+[2/3] continues the portability effort by replacing most echo calls
+with the more reliable printf command to ensure consistent behavior
+across different shells.
+
+[3/3] cleans up the C code in main.c by introducing a macro for the
+bootconfig footer size, making the size calculations clearer and
+easier to maintain.
+
+Thanks,
+
+---
+
+Masami Hiramatsu (Google) (3):
+      tools/bootconfig: Improve portability
+      tools/bootconfig: Replace some echo with printf for more portability
+      tools/bootconfig: Cleanup bootconfig footer size calculations
 
 
-在 2025/7/10 02:14, Simon Horman 写道:
-> On Wed, Jul 09, 2025 at 05:56:53PM +0800, Yun Lu wrote:
->
-> ...
->
->> @@ -2943,14 +2953,7 @@ static int tpacket_snd(struct packet_sock *po, struct msghdr *msg)
->>   		}
->>   		packet_increment_head(&po->tx_ring);
->>   		len_sum += tp_len;
->> -	} while (likely((ph != NULL) ||
->> -		/* Note: packet_read_pending() might be slow if we have
->> -		 * to call it as it's per_cpu variable, but in fast-path
->> -		 * we already short-circuit the loop with the first
->> -		 * condition, and luckily don't have to go that path
->> -		 * anyway.
->> -		 */
->> -		 (need_wait && packet_read_pending(&po->tx_ring))));
->> +	} while (likely(ph != NULL))
-> A semicolon is needed at the end of the line above.
+ tools/bootconfig/main.c             |   19 +++++++++++--------
+ tools/bootconfig/test-bootconfig.sh |   33 +++++++++++++++++----------------
+ 2 files changed, 28 insertions(+), 24 deletions(-)
 
-Sorry, this was my mistake. I will fix it in the next version.
-
-Thank you for pointing it out.
-
->
->>   
->>   	err = len_sum;
->>   	goto out_put;
+--
 
 
