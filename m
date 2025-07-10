@@ -1,420 +1,386 @@
-Return-Path: <linux-kernel+bounces-726128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1089B0087C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:25:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0FF5B00879
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8981CA0EB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:25:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DAB51CA1135
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DB62F0022;
-	Thu, 10 Jul 2025 16:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1182EFD96;
+	Thu, 10 Jul 2025 16:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="a6CV6mon"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012044.outbound.protection.outlook.com [52.101.66.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bYL5dqkj"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01FA2F0025;
-	Thu, 10 Jul 2025 16:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752164662; cv=fail; b=ZWgYqxLyS+VYlRKZq50KkvfBTQ7IixolwQtNafzs9nk0W43fwTQMmeq4OXh1Ay/BY2jpCqhB6WNS7FYJA4PxtpM16G7MOkzomFz7Aactb9ufV2QUKb/3+lqr/qt9EFUGqmu1W1IaYyJA9fegteOT47T80jFqtGIOyR9c4DYpt5I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752164662; c=relaxed/simple;
-	bh=n5dDyM6NvF/pvDjhCPMTtp4xO7qjvNoyvhiTKh+6lKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=n1quO6EOeRq0sT1ZsuaX90z+7Ggmv1mxfSGVgoLuS6ol/gizdtKUb3nfcyV1fZUuLLv8KCQougLqeaIsCx8g/fu0jJxyoVB08t1T+/z4o6VtdC9xnJyyetahVOrcoLsP7JvpHQR4DZ0lu8ol8bE4YXhHt17glsvuIxn3uxABRlI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=a6CV6mon; arc=fail smtp.client-ip=52.101.66.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=azPa9ClgL8q63gTlr4aV10P5CqWAk6hgRy7t94TFkhSJNFSFCe2j/L3yHFliPozIsd8WXGaGVuR+5weTmoBFtMxjmpdR6ccWeBflINuMFUSC9yTFPIp7Vorwv7YZalFBqctoQ3eglFyu9erQqDxVHAxhYHhsY9meE4z0rJt5BcYwexQEZ1Up7zSuClpRF13Gq0hvvrF7I2DiJW0jY/6i3Uqq+mVmUEkj7pNqLmyf/BELwol3tHxGr72Cmpp7Rxqz8DMlY1jl4EOhqQerszhu7wx62h67/1AZX5IiP6I7J3nVKJSh3HN6i7gghlbAejr+NkYiwMYuYxxFGZBeViOo6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4aFCxT7/AoYzVDlSQ8Z2dYbCr+cSK8uA8CzVemgc8cA=;
- b=JYRGBTatCd8vmvnHT19EsKtIOFuHjiLI06Xj9lI9AF6tNsx61p0ICb6u9gNsEfmwHyarPPBqb5tjqGjtP2tFktwmH5HvmjywNiFYk9XnCI0QMLSJoA+SKcQGu1AmuadYmUgeGo/QBs5F6MdTGibO3Qedp1jytSn0e7ecEdU0NyPXpzXXjhwOAJGAGV+DL/Q7FSMVc1QLDHjAxtFJDb2lxE2nm6RxFnHXaDY/q/9KujeJgrUb0y6atZdZHNw9VEG8733WShCIop58RBjSh7DOeXVceMiJQ4oWu4PWWoMQRhGJIweZAwcdtHwTGI8zHIL0bptdkWO19xIvf///18Ta2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4aFCxT7/AoYzVDlSQ8Z2dYbCr+cSK8uA8CzVemgc8cA=;
- b=a6CV6moneO0yFcz2Gg4qsQ3cO5jsyffeJZitMrqxcwKE3YhmeGkjjaetPKA3b+lKQrRZil3GHoWdkMLmT7rRWEdSAObVnt2yTOx+JxBpuFtDezqdD/3+b3i/XDVQO1ju5qZELZflv1wCr8w3tAeCEk6zJd/A5889jEiVNYbx5Qbdti6umP/87ywFvk+lQaVYqr10DQCrH3V5iOS1nNiWe752JeRNsgiMnv0sV1tfyqofCdS8TVLpoeOATxpAqGSSenxq8nUFUeqyNJq/r17/PKO0ZWYhhsQFZ9e5kplhZsVKc/SyHsJVMusjCxkkAbt5c15nH6IneQNxta7KXJBkxA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAXPR04MB8389.eurprd04.prod.outlook.com (2603:10a6:102:1bf::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Thu, 10 Jul
- 2025 16:24:13 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8901.023; Thu, 10 Jul 2025
- 16:24:13 +0000
-Date: Thu, 10 Jul 2025 12:24:06 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, chester62515@gmail.com,
-	mbrugger@suse.com, Ghennadi.Procopciuc@nxp.com,
-	larisa.grigore@nxp.com, lee@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-	ping.bai@nxp.com, gregkh@linuxfoundation.org, rafael@kernel.org,
-	srini@kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, s32@nxp.com,
-	clizzi@redhat.com, aruizrui@redhat.com, eballetb@redhat.com,
-	echanude@redhat.com, kernel@pengutronix.de, imx@lists.linux.dev,
-	vincent.guittot@linaro.org
-Subject: Re: [PATCH v7 04/12] pinctrl: s32cc: small refactoring
-Message-ID: <aG/pJjkBCq28mzMb@lizhi-Precision-Tower-5810>
-References: <20250710142038.1986052-1-andrei.stefanescu@oss.nxp.com>
- <20250710142038.1986052-5-andrei.stefanescu@oss.nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710142038.1986052-5-andrei.stefanescu@oss.nxp.com>
-X-ClientProxiedBy: AS4P190CA0049.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:20b:656::20) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32EC267732
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752164658; cv=none; b=onRIXYfbx8mqblPLh/Lng0LDYWOsaxFI867CcEg6A5MZCloAkeetzQqtraZIDC7ziuxAzCrV4sQmnUagQ2t43IMC89oYwa8dY3+T0DkVsZ41c4AYR00VnA06VO0IKlI1qN5CcafMCyH/NTwKuA9pXH3MgTFEqemec/5vFaQRUnk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752164658; c=relaxed/simple;
+	bh=7htcxq6XrknTBPYYPhKsQq4U2qiSMnoMMfs6z75EYl4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Ka1odzdC1VEjMmDidmCFGM4YoMTHxUcMhD/R8ORJ0+f4+C8sY4VSjG+ixr0jSjaPQQ6qQXvo2oeGoWXAY5K/HhkrpewIY3nPB9YJ2fiK4IBbRK97wJzerU1oqEYjO2oOrI5wUyCTSiLJmA7laA7o8kkIo5qF50nKzjrjBMqZjuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bYL5dqkj; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31315427249so1134244a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:24:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752164655; x=1752769455; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZRYvrQrxBC58DxVhyHaBg+5Yt1iushnmgR45IacO10Y=;
+        b=bYL5dqkjYY+5Gl/gyGl44za10KIU7jb9Rb7U9PHSk5NnOaZIt8ZOlFyWmBCi/Jvh4s
+         ZJ8m3fk3mPdXltAL7q++eHYPgYIxx4vqmjxxqsou/yRXwsGNf3PqEkC0H96yAveHWGpO
+         ciToL5eRGZayN7nDbJLlMYx9uHuNMCoCrk4K4t9sQTAH7kkHVtWhgRV+xS/GGE8FQg7s
+         eN3X+8xzhE1hgV75gdb6trflKQQhZn+wyZA6Rh+hQRCu1zxQ768lz1yOnjvzhX2jB7v8
+         vyXaZe8VDzJvwiSmS1qzHPryktDPBMyuk2N3J4QzK0d2G+/4xCNMPyX29LC4i3svZgr1
+         EXHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752164655; x=1752769455;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZRYvrQrxBC58DxVhyHaBg+5Yt1iushnmgR45IacO10Y=;
+        b=MLCEzA0F5sUdWmzEvgewQm6gSrntmUhHDs88w6wpyh79JG5gSdXwzHfA7ASFOX+XLD
+         HrHlQuRZVSvQfhhSpbQHVsyvAoIcYJDWdEBnGUUil55b25x4syrsB+CGlHNnK2QLTJvo
+         YP5FNHWxhhQm/J6x1ANXyhfuZy2TTyclWX0gNZWy1UvRdzpIMyXsCcfkTFswYCI0yOMS
+         17t/IEhecUdV0EM3i7FY7emMfgl2KeOcHwk+Dj4S8K1pLCtMO2peDqrfEKVRNAyeT5Kz
+         jdJ3WwnoBrOw1Mb2xxpnX1fMn18DlfBMq8c46QVzQsJXkZQpWChB9sQvnJZmHxHao9B0
+         YLQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqyVDqIphka6cPmW+vIwT56rxHBV+Av44LJRW+YcxzqqZCwmo0SXjLxPhQDvXVMwCHSPN0uhxbZqdPmOQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfrbA3939ZBBToNjgPkpBGjjfUCcONP2ra/4d0hfJSWMSviQPi
+	y9FhkL+sR23+ZETX8GPl/1/zYf+zJ5c8tLPFa94vAq2s/YKXCWzkzdcllXz+3sxiZtoWkHCgv+O
+	FAggqPw==
+X-Google-Smtp-Source: AGHT+IFcsMbGxBy7c5ZOpbZMhNSeXz32OavcHTzFLmR2WdDBV0KMin9CgtVEhZoDpR8WM4B/hAs253kWdTg=
+X-Received: from pjuu13.prod.google.com ([2002:a17:90b:586d:b0:31c:2fe4:33b8])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:390f:b0:311:ed2:b758
+ with SMTP id 98e67ed59e1d1-31c4ca758a6mr211135a91.3.1752164655005; Thu, 10
+ Jul 2025 09:24:15 -0700 (PDT)
+Date: Thu, 10 Jul 2025 09:24:13 -0700
+In-Reply-To: <20250709232103.zwmufocd3l7sqk7y@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8389:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3552df5a-df59-4eb8-371e-08ddbfce3534
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|376014|1800799024|366016|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jKpvNXTKwRX02lrlraV2MSzwMv0K9/KSPmKagrZESa5d/K2PNNPQAu+HK6XM?=
- =?us-ascii?Q?C5yfz3Ba2ZqRyq7VsgLywaLV2qdrwVBt/f/FVkWRRRtOHOS1eVR6h5oO0Vth?=
- =?us-ascii?Q?vkx1sGerNszD12mVmiUDF+qAhG2RLvwd3xd9e3PgYJRqQ25NHCkFTnv/PkCp?=
- =?us-ascii?Q?HEKNZDuSIj+LH91b46+mpKskFvWLnWtt2BwA6wwQ8Jua/+FsV2ctfve4Bex1?=
- =?us-ascii?Q?iPqJt3lIkPcnLGcoaMVMYoOiH2EfpBPJ9eOjXeh23q6qm0Ivwk/Z4WSZd1N2?=
- =?us-ascii?Q?1mgVlDYEGg2CnApLN/ci9DdIg7WDj/fA/xFm4peBpQDsF4DzWU9UZR3hd8eM?=
- =?us-ascii?Q?WEBc6vA9peFRcy6oyxZ5+d9JKh5uz+RjdMwKucZbyuRze6dvTiOl2iwGgAMB?=
- =?us-ascii?Q?Pz0jyVhmgv7D5lIhY4LzYNyNYFZbzy5YZYfP0AQz9KHm3L+IWZA2y3pq+g9S?=
- =?us-ascii?Q?yK+QS66E1qR3ILnYJBubeOR2oBABNjGh+qWtQempJGcvOo/G/2C9elNp63kv?=
- =?us-ascii?Q?Feak22wwJ3zeaUsOiS6g2yIX2SQTwjLL+tnDIN4u/GSPtz5VSk1gc3q2fGyk?=
- =?us-ascii?Q?+whQ51Y+kK7so1BwY2zYbVfibKjfRpCkNj4Y3DEfSkvUmewT646xmwRXqlnt?=
- =?us-ascii?Q?LO6FhW06d0804Sa5xQZ7esMO4faI7cGrZDxMGNiZMHsQ8aCBeRQhiM1RXBGf?=
- =?us-ascii?Q?c/OKYD1upVVKzNmBI2VchWjLATDDLL5vl+6Akh1T30tzopvvNBennSwRz9Xy?=
- =?us-ascii?Q?FiRh8vu+zpkRIR1XYeOtDv39NFn0MK9BtCogH8aZPdwabO21Odb2ewKSq9g/?=
- =?us-ascii?Q?CDPIAJCNdaFqpcGYysvQpKhvCrLrQdBN6pZ/3ix4HWxtuzgo0w4vLa1pNvLb?=
- =?us-ascii?Q?5EnNG8XLptTYBSGcFXOmHBAiBUUZ4ie8Dv302aXmRAp6JkuEHceZfqnpEmUx?=
- =?us-ascii?Q?/Xu7VXszuJCdIDGawv05VGfljg1woUdIJyt4v1hp9utgvPAC+0tuRbCchxHM?=
- =?us-ascii?Q?Tc2Ul3l/JHonzUlWWzPugEKa1rSpqHDTlFstxy90DgWE7Q6eWvMTqHxc4usK?=
- =?us-ascii?Q?RGvxnw3l8YrDRH7tIk3vacRTYlVJMuqfMyd/uzS5kE1Unc3JXxo7+5QGwG2r?=
- =?us-ascii?Q?siQ/crrCJUjH/6aMekBahaRPdqFQR1X5LFK9q/oi3/7MDnLHB8zCZZVkLIFs?=
- =?us-ascii?Q?t4qJ7uQ68Ayts0t6aLpSCFGZe4eJPx+kqjclE+61o27Eb0QxjweSRilRrtcY?=
- =?us-ascii?Q?9l6koHxP4YaSgT5d17n429t2w0S032QFlfZb4GvCyQp67P7HQdEkzWFqxXEI?=
- =?us-ascii?Q?JGqciSqHobvb4AI9KAozMjwoOzneKyhE4tczK7bvTak6VjJ+xjYjH9xhhNax?=
- =?us-ascii?Q?MBzNgY5YCIVGOXis7byuCqYcgzy0qELyU26ZH/EfinKAZy8KFsW9YgprPrPA?=
- =?us-ascii?Q?dvtaA2cdpfqg7zHljGPUOXquwbBlFgYhMHyveBi8AL7gYXwaijrt4w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(1800799024)(366016)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4ajCcSAxbTCUFJ+hUEluCybF0z+yo26ewKsFRKyJ3DFEFyx/nneACP9zTFg3?=
- =?us-ascii?Q?KYDcW2wEveKuB9Zkrvv4h2mIDqmzUjjNUirlfTVYAB9J+vybZO3LDtmxaihT?=
- =?us-ascii?Q?04gXCMO0nGS5BezEixemGTtDOrpjNDHodK/ZQ7849kauhISHeJyIEStr5keR?=
- =?us-ascii?Q?BJTQJ5FIXqfzlAaEAE6uE/GkgvTsfxj0MmsTctm1bmdVrRNRC0kCQebpzdAL?=
- =?us-ascii?Q?rCLzUusrMjv9CkfJkIqgDiGpuYqJEwGIfC92w4yac1fYkbcfUmsoqqL2FSca?=
- =?us-ascii?Q?ssZzQ5MWX8HMPxdNvGfwHYG/4TgUsMbDCGsUJcFBZMOWTbI0uwEVGb+CkbpK?=
- =?us-ascii?Q?D31MI21ZbxSlmE3CuwsRUfY/+umm9sc4PE901dioYBDXXqZnw9qgCd9bx7yc?=
- =?us-ascii?Q?BQfnLmhTmpAXQDQ29R/wLz1DJ6ooitXFPCZAlqoTi51b6LKJI2fBnYHY3Gnn?=
- =?us-ascii?Q?ZvLi4hlVbUzXQtqL9t7YwlJbHsAdDswjK8JFtqcMMWvfp0wsD1kZnRsFR3Zp?=
- =?us-ascii?Q?6P2E20G3ig1hMGWdyynNImny2EhZluinNjwF4zZBZHY70F7io/2LsveKMuY/?=
- =?us-ascii?Q?VY3Xslz0ZOgxqjeb9iSKmzb42WKdmNB86kVwwP/c4+FfnQNFaYCqjU/10ik8?=
- =?us-ascii?Q?zn4ocvbc4eOK2lvGQ/cUzXJgJ+FE811oXp+/geBGWdWlc8hTh1NUe5C2xCK7?=
- =?us-ascii?Q?cKPmTVxAw/t5sBeeKsE3IPimg0jVdGywffjW+KMbk/6qTkdt2OMUVy9TvSIR?=
- =?us-ascii?Q?cuTjjrBsRYTQHVz949oHcOY19C4djEYtzhc4/i7q6/6HwrMdcAxNrsfvQw2p?=
- =?us-ascii?Q?8/VzCU55fx7I/SNhvFjo8fGO/KJcMBiAts6Q9+wHbs31D+xDUE35y10nGyIl?=
- =?us-ascii?Q?qoDj+EuSJmwfq4POkLxBRSYj6XTdOoQUGE2ggB+hT+eCzor0fPepD7zZEzGM?=
- =?us-ascii?Q?+u0Gl3Bcn3ive1EBIle0Yrq21ZOe2u41OWGuQ+9CJg4OUDHrlNm284QXxy+B?=
- =?us-ascii?Q?xxO9qAJqKDJrvDKqiu3erE+o50YXOMejmP61QZ5Ak/IZXuSCXv33yQXx3lC5?=
- =?us-ascii?Q?w447w7QBcUkaLPUY3da6YosniWcF4boYBvSa7GMvGWydYMUvoCjdDfuLjb7P?=
- =?us-ascii?Q?4x+86Qg35hdIS6Aq7HXhOfOQRyWxj2R/sDIIHc2vHZCFxFx5q0w6zYEJo0F6?=
- =?us-ascii?Q?G1iGQbl/d2l2nWxJ96+g4QgiKZdC/9thLyumDl2BX+75MEq8jz2IlP1dLqAE?=
- =?us-ascii?Q?Ase2aLG0YYpqme+8EDJEYTZqVSbUxcDnklKX7SKZqogDQgA1fMGYgMVJQ+Fp?=
- =?us-ascii?Q?CH5so5xcFNFil/cn2FbrMhH0jdhi7zcawObXt0DowpDjbdTE5mIsLkvpXpkh?=
- =?us-ascii?Q?nBP62RhvSL0wM27Gkiu7aCXLL5Cye1pSkuO9sNAQLkkBsRTdN/tGgny20Lla?=
- =?us-ascii?Q?1KKcPQN4AzvFaLjE1qysV0ybQrTWaAWjP+gMcMZPMS9J6s361xH2FjqdF6Sz?=
- =?us-ascii?Q?6gECbND7GW6HfcoUA/vuMyTXSSJAYQsjPwsfL6VcrUjAmYvcKMIjORYaacgH?=
- =?us-ascii?Q?Uc5qxJET2CXJgSUateNcbaDo2xE9d9VUF/GdIvxc?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3552df5a-df59-4eb8-371e-08ddbfce3534
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 16:24:13.4828
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rulmKn0qnA9S0jt7fDUHupTRBfdS1Qzno7AnxDpDbOXQM03mxmRBtRvnwGeSkBxYyYRgq/UHs5+fkHu+z4jPww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8389
+Mime-Version: 1.0
+References: <20250703062641.3247-1-yan.y.zhao@intel.com> <20250709232103.zwmufocd3l7sqk7y@amd.com>
+Message-ID: <aG_pLUlHdYIZ2luh@google.com>
+Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
+From: Sean Christopherson <seanjc@google.com>
+To: Michael Roth <michael.roth@amd.com>
+Cc: Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
+	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
+	isaku.yamahata@intel.com, ira.weiny@intel.com, vannapurve@google.com, 
+	david@redhat.com, ackerleytng@google.com, tabba@google.com, 
+	chao.p.peng@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Jul 10, 2025 at 05:20:27PM +0300, Andrei Stefanescu wrote:
+On Wed, Jul 09, 2025, Michael Roth wrote:
+> On Thu, Jul 03, 2025 at 02:26:41PM +0800, Yan Zhao wrote:
+> > Rather than invoking kvm_gmem_populate(), allow tdx_vcpu_init_mem_region()
+> > to use open code to populate the initial memory region into the mirror page
+> > table, and add the region to S-EPT.
+> > 
+> > Background
+> > ===
+> > Sean initially suggested TDX to populate initial memory region in a 4-step
+> > way [1]. Paolo refactored guest_memfd and introduced kvm_gmem_populate()
+> > interface [2] to help TDX populate init memory region.
 
-Subject need descript what actually you did. "small refactoring" means
-nothing.
+I wouldn't give my suggestion too much weight; I did qualify it with "Crazy idea."
+after all :-)
 
-Use dev_err_probe() simplify code and fix error message/comments.
+> > tdx_vcpu_init_mem_region
+> >     guard(mutex)(&kvm->slots_lock)
+> >     kvm_gmem_populate
+> >         filemap_invalidate_lock(file->f_mapping)
+> >             __kvm_gmem_get_pfn      //1. get private PFN
+> >             post_populate           //tdx_gmem_post_populate
+> >                 get_user_pages_fast //2. get source page
+> >                 kvm_tdp_map_page    //3. map private PFN to mirror root
+> >                 tdh_mem_page_add    //4. add private PFN to S-EPT and copy
+> >                                          source page to it.
+> > 
+> > kvm_gmem_populate() helps TDX to "get private PFN" in step 1. Its file
+> > invalidate lock also helps ensure the private PFN remains valid when
+> > tdh_mem_page_add() is invoked in TDX's post_populate hook.
+> > 
+> > Though TDX does not need the folio prepration code, kvm_gmem_populate()
+> > helps on sharing common code between SEV-SNP and TDX.
+> > 
+> > Problem
+> > ===
+> > (1)
+> > In Michael's series "KVM: gmem: 2MB THP support and preparedness tracking
+> > changes" [4], kvm_gmem_get_pfn() was modified to rely on the filemap
+> > invalidation lock for protecting its preparedness tracking. Similarly, the
+> > in-place conversion version of guest_memfd series by Ackerly also requires
+> > kvm_gmem_get_pfn() to acquire filemap invalidation lock [5].
+> > 
+> > kvm_gmem_get_pfn
+> >     filemap_invalidate_lock_shared(file_inode(file)->i_mapping);
+> > 
+> > However, since kvm_gmem_get_pfn() is called by kvm_tdp_map_page(), which is
+> > in turn invoked within kvm_gmem_populate() in TDX, a deadlock occurs on the
+> > filemap invalidation lock.
+> 
+> Bringing the prior discussion over to here: it seems wrong that
+> kvm_gmem_get_pfn() is getting called within the kvm_gmem_populate()
+> chain, because:
+> 
+> 1) kvm_gmem_populate() is specifically passing the gmem PFN down to
+>    tdx_gmem_post_populate(), but we are throwing it away to grab it
+>    again kvm_gmem_get_pfn(), which is then creating these locking issues
+>    that we are trying to work around. If we could simply pass that PFN down
+>    to kvm_tdp_map_page() (or some variant), then we would not trigger any
+>    deadlocks in the first place.
 
-> Change dev_err&return statements into dev_err_probe throughout the driver
-> on the probing path. Moreover, add/fix some comments and print
-> statements.
->
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-> ---
->  drivers/pinctrl/nxp/pinctrl-s32cc.c | 106 +++++++++++++++-------------
->  1 file changed, 55 insertions(+), 51 deletions(-)
->
-> diff --git a/drivers/pinctrl/nxp/pinctrl-s32cc.c b/drivers/pinctrl/nxp/pinctrl-s32cc.c
-> index 501eb296c760..c90cd96a9dc4 100644
-> --- a/drivers/pinctrl/nxp/pinctrl-s32cc.c
-> +++ b/drivers/pinctrl/nxp/pinctrl-s32cc.c
-> @@ -2,7 +2,7 @@
->  /*
->   * Core driver for the S32 CC (Common Chassis) pin controller
->   *
-> - * Copyright 2017-2022,2024 NXP
-> + * Copyright 2017-2022,2024-2025 NXP
->   * Copyright (C) 2022 SUSE LLC
->   * Copyright 2015-2016 Freescale Semiconductor, Inc.
->   */
-> @@ -60,14 +60,20 @@ static u32 get_pin_func(u32 pinmux)
->  	return pinmux & GENMASK(3, 0);
->  }
->
-> +/**
-> + * struct s32_pinctrl_mem_region - memory region for a set of SIUL2 registers
-> + * @map: regmap used for this range
-> + * @pin_range: the pins controlled by these registers
-> + * @name: name of the current range
-> + */
->  struct s32_pinctrl_mem_region {
->  	struct regmap *map;
->  	const struct s32_pin_range *pin_range;
->  	char name[8];
->  };
->
-> -/*
-> - * Holds pin configuration for GPIO's.
-> +/**
-> + * struct gpio_pin_config - holds pin configuration for GPIO's
->   * @pin_id: Pin ID for this GPIO
->   * @config: Pin settings
->   * @list: Linked list entry for each gpio pin
-> @@ -78,21 +84,23 @@ struct gpio_pin_config {
->  	struct list_head list;
->  };
->
-> -/*
-> - * Pad config save/restore for power suspend/resume.
-> +/**
-> + * struct s32_pinctrl_context - pad config save/restore for suspend/resume
-> + * @pads: saved values for the pards
->   */
->  struct s32_pinctrl_context {
->  	unsigned int *pads;
->  };
->
-> -/*
-> +/**
-> + * struct s32_pinctrl - private driver data
->   * @dev: a pointer back to containing device
->   * @pctl: a pointer to the pinctrl device structure
->   * @regions: reserved memory regions with start/end pin
->   * @info: structure containing information about the pin
-> - * @gpio_configs: Saved configurations for GPIO pins
-> - * @gpiop_configs_lock: lock for the `gpio_configs` list
-> - * @s32_pinctrl_context: Configuration saved over system sleep
-> + * @gpio_configs: saved configurations for GPIO pins
-> + * @gpio_configs_lock: lock for the `gpio_configs` list
-> + * @saved_context: configuration saved over system sleep
->   */
->  struct s32_pinctrl {
->  	struct device *dev;
-> @@ -123,13 +131,13 @@ s32_get_region(struct pinctrl_dev *pctldev, unsigned int pin)
->  	return NULL;
->  }
->
-> -static inline int s32_check_pin(struct pinctrl_dev *pctldev,
-> -				unsigned int pin)
-> +static int s32_check_pin(struct pinctrl_dev *pctldev,
-> +			 unsigned int pin)
->  {
->  	return s32_get_region(pctldev, pin) ? 0 : -EINVAL;
->  }
->
-> -static inline int s32_regmap_read(struct pinctrl_dev *pctldev,
-> +static int s32_regmap_read(struct pinctrl_dev *pctldev,
->  			   unsigned int pin, unsigned int *val)
->  {
->  	struct s32_pinctrl_mem_region *region;
-> @@ -145,7 +153,7 @@ static inline int s32_regmap_read(struct pinctrl_dev *pctldev,
->  	return regmap_read(region->map, offset, val);
->  }
->
-> -static inline int s32_regmap_write(struct pinctrl_dev *pctldev,
-> +static int s32_regmap_write(struct pinctrl_dev *pctldev,
->  			    unsigned int pin,
->  			    unsigned int val)
->  {
-> @@ -163,7 +171,7 @@ static inline int s32_regmap_write(struct pinctrl_dev *pctldev,
->
->  }
->
-> -static inline int s32_regmap_update(struct pinctrl_dev *pctldev, unsigned int pin,
-> +static int s32_regmap_update(struct pinctrl_dev *pctldev, unsigned int pin,
->  			     unsigned int mask, unsigned int val)
->  {
->  	struct s32_pinctrl_mem_region *region;
-> @@ -236,10 +244,10 @@ static int s32_dt_group_node_to_map(struct pinctrl_dev *pctldev,
->  	}
->
->  	ret = pinconf_generic_parse_dt_config(np, pctldev, &cfgs, &n_cfgs);
-> -	if (ret) {
-> -		dev_err(dev, "%pOF: could not parse node property\n", np);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "%pOF: could not parse node property\n",
-> +				     np);
->
->  	if (n_cfgs)
->  		reserve++;
-> @@ -321,7 +329,7 @@ static int s32_pmx_set(struct pinctrl_dev *pctldev, unsigned int selector,
->  	/* Check beforehand so we don't have a partial config. */
->  	for (i = 0; i < grp->data.npins; i++) {
->  		if (s32_check_pin(pctldev, grp->data.pins[i]) != 0) {
-> -			dev_err(info->dev, "invalid pin: %u in group: %u\n",
-> +			dev_err(info->dev, "Invalid pin: %u in group: %u\n",
->  				grp->data.pins[i], group);
->  			return -EINVAL;
->  		}
-> @@ -475,8 +483,8 @@ static int s32_get_slew_regval(int arg)
->  	return -EINVAL;
->  }
->
-> -static inline void s32_pin_set_pull(enum pin_config_param param,
-> -				   unsigned int *mask, unsigned int *config)
-> +static void s32_pin_set_pull(enum pin_config_param param,
-> +			     unsigned int *mask, unsigned int *config)
->  {
->  	switch (param) {
->  	case PIN_CONFIG_BIAS_DISABLE:
-> @@ -762,15 +770,15 @@ static int s32_pinctrl_parse_groups(struct device_node *np,
->  	grp->data.name = np->name;
->
->  	npins = of_property_count_elems_of_size(np, "pinmux", sizeof(u32));
-> -	if (npins < 0) {
-> -		dev_err(dev, "Failed to read 'pinmux' property in node %s.\n",
-> -			grp->data.name);
-> -		return -EINVAL;
-> -	}
-> -	if (!npins) {
-> -		dev_err(dev, "The group %s has no pins.\n", grp->data.name);
-> -		return -EINVAL;
-> -	}
-> +	if (npins < 0)
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "Failed to read 'pinmux' in node %s\n",
-> +				     grp->data.name);
-> +
-> +	if (!npins)
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "The group %s has no pins\n",
-> +				     grp->data.name);
->
->  	grp->data.npins = npins;
->
-> @@ -811,10 +819,9 @@ static int s32_pinctrl_parse_functions(struct device_node *np,
->  	/* Initialise function */
->  	func->name = np->name;
->  	func->ngroups = of_get_child_count(np);
-> -	if (func->ngroups == 0) {
-> -		dev_err(info->dev, "no groups defined in %pOF\n", np);
-> -		return -EINVAL;
-> -	}
-> +	if (func->ngroups == 0)
-> +		return dev_err_probe(info->dev, -EINVAL,
-> +				     "No groups defined in %pOF\n", np);
->
->  	groups = devm_kcalloc(info->dev, func->ngroups,
->  				    sizeof(*func->groups), GFP_KERNEL);
-> @@ -885,10 +892,9 @@ static int s32_pinctrl_probe_dt(struct platform_device *pdev,
->  	}
->
->  	nfuncs = of_get_child_count(np);
-> -	if (nfuncs <= 0) {
-> -		dev_err(&pdev->dev, "no functions defined\n");
-> -		return -EINVAL;
-> -	}
-> +	if (nfuncs <= 0)
-> +		return dev_err_probe(&pdev->dev, -EINVAL,
-> +				     "No functions defined\n");
->
->  	info->nfunctions = nfuncs;
->  	info->functions = devm_kcalloc(&pdev->dev, nfuncs,
-> @@ -918,18 +924,17 @@ static int s32_pinctrl_probe_dt(struct platform_device *pdev,
->  int s32_pinctrl_probe(struct platform_device *pdev,
->  		      const struct s32_pinctrl_soc_data *soc_data)
->  {
-> -	struct s32_pinctrl *ipctl;
-> -	int ret;
-> -	struct pinctrl_desc *s32_pinctrl_desc;
-> -	struct s32_pinctrl_soc_info *info;
->  #ifdef CONFIG_PM_SLEEP
->  	struct s32_pinctrl_context *saved_context;
->  #endif
-> +	struct pinctrl_desc *s32_pinctrl_desc;
-> +	struct s32_pinctrl_soc_info *info;
-> +	struct s32_pinctrl *ipctl;
-> +	int ret;
->
-> -	if (!soc_data || !soc_data->pins || !soc_data->npins) {
-> -		dev_err(&pdev->dev, "wrong pinctrl info\n");
-> -		return -EINVAL;
-> -	}
-> +	if (!soc_data || !soc_data->pins || !soc_data->npins)
-> +		return dev_err_probe(&pdev->dev, -EINVAL,
-> +				     "Wrong pinctrl info\n");
->
->  	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
->  	if (!info)
-> @@ -964,16 +969,15 @@ int s32_pinctrl_probe(struct platform_device *pdev,
->  	s32_pinctrl_desc->owner = THIS_MODULE;
->
->  	ret = s32_pinctrl_probe_dt(pdev, ipctl);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "fail to probe dt properties\n");
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "Fail to probe dt properties\n");
->
->  	ipctl->pctl = devm_pinctrl_register(&pdev->dev, s32_pinctrl_desc,
->  					    ipctl);
->  	if (IS_ERR(ipctl->pctl))
->  		return dev_err_probe(&pdev->dev, PTR_ERR(ipctl->pctl),
-> -				     "could not register s32 pinctrl driver\n");
-> +				     "Could not register s32 pinctrl driver\n");
->
->  #ifdef CONFIG_PM_SLEEP
->  	saved_context = &ipctl->saved_context;
-> --
-> 2.45.2
->
+Yes, doing kvm_mmu_faultin_pfn() in tdx_gmem_post_populate() is a major flaw.
+
+> 2) kvm_gmem_populate() is intended for pre-boot population of guest
+>    memory, and allows the post_populate callback to handle setting
+>    up the architecture-specific preparation, whereas kvm_gmem_get_pfn()
+>    calls kvm_arch_gmem_prepare(), which is intended to handle post-boot
+>    setup of private memory. Having kvm_gmem_get_pfn() called as part of
+>    kvm_gmem_populate() chain brings things 2 things in conflict with
+>    each other, and TDX seems to be relying on that fact that it doesn't
+>    implement a handler for kvm_arch_gmem_prepare(). 
+> 
+> I don't think this hurts anything in the current code, and I don't
+> personally see any issue with open-coding the population path if it doesn't
+> fit TDX very well, but there was some effort put into making
+> kvm_gmem_populate() usable for both TDX/SNP, and if the real issue isn't the
+> design of the interface itself, but instead just some inflexibility on the
+> KVM MMU mapping side, then it seems more robust to address the latter if
+> possible.
+> 
+> Would something like the below be reasonable? 
+
+No, polluting the page fault paths is a non-starter for me.  TDX really shouldn't
+be synthesizing a page fault when it has the PFN in hand.  And some of the behavior
+that's desirable for pre-faults looks flat out wrong for TDX.  E.g. returning '0'
+on RET_PF_WRITE_PROTECTED and RET_PF_SPURIOUS (though maybe spurious is fine?).
+
+I would much rather special case this path, because it absolutely is a special
+snowflake.  This even eliminates several exports of low level helpers that frankly
+have no business being used by TDX, e.g. kvm_mmu_reload().
+
+---
+ arch/x86/kvm/mmu.h         |  2 +-
+ arch/x86/kvm/mmu/mmu.c     | 78 ++++++++++++++++++++++++++++++++++++--
+ arch/x86/kvm/mmu/tdp_mmu.c |  1 -
+ arch/x86/kvm/vmx/tdx.c     | 24 ++----------
+ 4 files changed, 78 insertions(+), 27 deletions(-)
+
+diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
+index b4b6860ab971..9cd7a34333af 100644
+--- a/arch/x86/kvm/mmu.h
++++ b/arch/x86/kvm/mmu.h
+@@ -258,7 +258,7 @@ extern bool tdp_mmu_enabled;
+ #endif
+ 
+ bool kvm_tdp_mmu_gpa_is_mapped(struct kvm_vcpu *vcpu, u64 gpa);
+-int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level);
++int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn);
+ 
+ static inline bool kvm_memslots_have_rmaps(struct kvm *kvm)
+ {
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 6e838cb6c9e1..bc937f8ed5a0 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -4900,7 +4900,8 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+ 	return direct_page_fault(vcpu, fault);
+ }
+ 
+-int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level)
++static int kvm_tdp_prefault_page(struct kvm_vcpu *vcpu, gpa_t gpa,
++				 u64 error_code, u8 *level)
+ {
+ 	int r;
+ 
+@@ -4942,7 +4943,6 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level
+ 		return -EIO;
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(kvm_tdp_map_page);
+ 
+ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
+ 				    struct kvm_pre_fault_memory *range)
+@@ -4978,7 +4978,7 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
+ 	 * Shadow paging uses GVA for kvm page fault, so restrict to
+ 	 * two-dimensional paging.
+ 	 */
+-	r = kvm_tdp_map_page(vcpu, range->gpa | direct_bits, error_code, &level);
++	r = kvm_tdp_prefault_page(vcpu, range->gpa | direct_bits, error_code, &level);
+ 	if (r < 0)
+ 		return r;
+ 
+@@ -4990,6 +4990,77 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
+ 	return min(range->size, end - range->gpa);
+ }
+ 
++int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
++{
++	struct kvm_page_fault fault = {
++		.addr = gfn_to_gpa(gfn),
++		.error_code = PFERR_GUEST_FINAL_MASK | PFERR_PRIVATE_ACCESS,
++		.prefetch = true,
++		.is_tdp = true,
++		.nx_huge_page_workaround_enabled = is_nx_huge_page_enabled(vcpu->kvm),
++
++		.max_level = KVM_MAX_HUGEPAGE_LEVEL,
++		.req_level = PG_LEVEL_4K,
++		.goal_level = PG_LEVEL_4K,
++		.is_private = true,
++
++		.gfn = gfn,
++		.slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn),
++		.pfn = pfn,
++		.map_writable = true,
++	};
++	struct kvm *kvm = vcpu->kvm;
++	int r;
++
++	lockdep_assert_held(&kvm->slots_lock);
++
++	if (KVM_BUG_ON(!tdp_mmu_enabled, kvm))
++		return -EIO;
++
++	if (kvm_gfn_is_write_tracked(kvm, fault.slot, fault.gfn))
++		return -EPERM;
++
++	r = kvm_mmu_reload(vcpu);
++	if (r)
++		return r;
++
++	r = mmu_topup_memory_caches(vcpu, false);
++	if (r)
++		return r;
++
++	do {
++		if (signal_pending(current))
++			return -EINTR;
++
++		if (kvm_test_request(KVM_REQ_VM_DEAD, vcpu))
++			return -EIO;
++
++		cond_resched();
++
++		guard(read_lock)(&kvm->mmu_lock);
++
++		r = kvm_tdp_mmu_map(vcpu, &fault);
++	} while (r == RET_PF_RETRY);
++
++	if (r != RET_PF_FIXED)
++		return -EIO;
++
++	/*
++	 * The caller is responsible for ensuring that no MMU invalidations can
++	 * occur.  Sanity check that the mapping hasn't been zapped.
++	 */
++	if (IS_ENABLED(CONFIG_KVM_PROVE_MMU)) {
++		cond_resched();
++
++		scoped_guard(read_lock, &kvm->mmu_lock) {
++			if (KVM_BUG_ON(!kvm_tdp_mmu_gpa_is_mapped(vcpu, fault.addr), kvm))
++				return -EIO;
++		}
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(kvm_tdp_mmu_map_private_pfn);
++
+ static void nonpaging_init_context(struct kvm_mmu *context)
+ {
+ 	context->page_fault = nonpaging_page_fault;
+@@ -5973,7 +6044,6 @@ int kvm_mmu_load(struct kvm_vcpu *vcpu)
+ out:
+ 	return r;
+ }
+-EXPORT_SYMBOL_GPL(kvm_mmu_load);
+ 
+ void kvm_mmu_unload(struct kvm_vcpu *vcpu)
+ {
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index 7f3d7229b2c1..4f73d5341ebe 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -1953,7 +1953,6 @@ bool kvm_tdp_mmu_gpa_is_mapped(struct kvm_vcpu *vcpu, u64 gpa)
+ 	spte = sptes[leaf];
+ 	return is_shadow_present_pte(spte) && is_last_spte(spte, leaf);
+ }
+-EXPORT_SYMBOL_GPL(kvm_tdp_mmu_gpa_is_mapped);
+ 
+ /*
+  * Returns the last level spte pointer of the shadow page walk for the given
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index f4d4fd5cc6e8..02142496754f 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -3170,15 +3170,12 @@ struct tdx_gmem_post_populate_arg {
+ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
+ 				  void __user *src, int order, void *_arg)
+ {
+-	u64 error_code = PFERR_GUEST_FINAL_MASK | PFERR_PRIVATE_ACCESS;
+-	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+ 	struct tdx_gmem_post_populate_arg *arg = _arg;
+-	struct kvm_vcpu *vcpu = arg->vcpu;
++	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
++	u64 err, entry, level_state;
+ 	gpa_t gpa = gfn_to_gpa(gfn);
+-	u8 level = PG_LEVEL_4K;
+ 	struct page *src_page;
+ 	int ret, i;
+-	u64 err, entry, level_state;
+ 
+ 	/*
+ 	 * Get the source page if it has been faulted in. Return failure if the
+@@ -3190,24 +3187,10 @@ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
+ 	if (ret != 1)
+ 		return -ENOMEM;
+ 
+-	ret = kvm_tdp_map_page(vcpu, gpa, error_code, &level);
++	ret = kvm_tdp_mmu_map_private_pfn(arg->vcpu, gfn, pfn);
+ 	if (ret < 0)
+ 		goto out;
+ 
+-	/*
+-	 * The private mem cannot be zapped after kvm_tdp_map_page()
+-	 * because all paths are covered by slots_lock and the
+-	 * filemap invalidate lock.  Check that they are indeed enough.
+-	 */
+-	if (IS_ENABLED(CONFIG_KVM_PROVE_MMU)) {
+-		scoped_guard(read_lock, &kvm->mmu_lock) {
+-			if (KVM_BUG_ON(!kvm_tdp_mmu_gpa_is_mapped(vcpu, gpa), kvm)) {
+-				ret = -EIO;
+-				goto out;
+-			}
+-		}
+-	}
+-
+ 	ret = 0;
+ 	err = tdh_mem_page_add(&kvm_tdx->td, gpa, pfn_to_page(pfn),
+ 			       src_page, &entry, &level_state);
+@@ -3267,7 +3250,6 @@ static int tdx_vcpu_init_mem_region(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *c
+ 	    !vt_is_tdx_private_gpa(kvm, region.gpa + (region.nr_pages << PAGE_SHIFT) - 1))
+ 		return -EINVAL;
+ 
+-	kvm_mmu_reload(vcpu);
+ 	ret = 0;
+ 	while (region.nr_pages) {
+ 		if (signal_pending(current)) {
+
+base-commit: 6c7ecd725e503bf2ca69ff52c6cc48bb650b1f11
+--
 
