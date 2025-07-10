@@ -1,255 +1,229 @@
-Return-Path: <linux-kernel+bounces-726152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638CDB008DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D46AB008DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4127D7A7B68
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:31:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EE4AB41713
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2652F0058;
-	Thu, 10 Jul 2025 16:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EFC2EFDB9;
+	Thu, 10 Jul 2025 16:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LJjthCTq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mTLCVwba";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="hXbb6zMC"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA682AF1C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752165111; cv=none; b=ocrdjRqW1xRPi2XSwNfVopooxJwRGmbpMxFsA3mkKpJYStqbnFxLsejPxJ8sAgW0USkbstd4OR/S+MMAoKZsITjXfxq91Sb4VaACEpiKqdLu4dhzcIKhkoT5A3273hM1Zk4nmIHMP2Ac8EfVOCTp7UbsU8/Ng85MAj4evao3wz0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752165111; c=relaxed/simple;
-	bh=0/7e0fhDD+nhfhomUm5QCNroWeBizuBJN14rsfB0VjY=;
-	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID; b=oRySyu1AxdDDA+0CuTcZRZbVVkFGpASQN3UwRehEWbN/fZiu1BWYbcpc1dCgS5WUtmYEWWH+Wop2VtyBU8CaDTZoVerGZqXhEpj8lfFlO5TkCE3ikPSLZ5u0z22uoc8NINtABCiqtnaG9H151A+B2ygBwGPPwGzeprcIw7U/kUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LJjthCTq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752165108;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XbVgBYU1j7RlLF0+RFun00uhaSaH2KoCdahv4lEZ8ho=;
-	b=LJjthCTqLZGGYTopfGNiF1LBZRzU8KSHnfIXK//AfLpKmy0gefvFV/Fw9TVu5PAQ2kd7Jm
-	D2vdA1a1NvvXLRk7nLMiis2SX8RCPgBpn8Fjx9Vcp4BvXzHnwUTg1tSk3b7KNzh1y62KM8
-	X2RHkogL2qE5eurSqIoyH68Eu58YTIU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-416-77Io-M4CMMG3K5g-BpBdDw-1; Thu,
- 10 Jul 2025 12:31:46 -0400
-X-MC-Unique: 77Io-M4CMMG3K5g-BpBdDw-1
-X-Mimecast-MFC-AGG-ID: 77Io-M4CMMG3K5g-BpBdDw_1752165099
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F8AF18001D1;
-	Thu, 10 Jul 2025 16:31:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6CC423000221;
-	Thu, 10 Jul 2025 16:31:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <2904424.1752161530@warthog.procyon.org.uk>
-References: <2904424.1752161530@warthog.procyon.org.uk> <CAKPOu+9TN4hza48+uT_9W5wEYhZGLc2F57xxKDiyhy=pay5XAw@mail.gmail.com> <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com> <2724318.1752066097@warthog.procyon.org.uk> <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com> <2738562.1752092552@warthog.procyon.org.uk> <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com> <2807750.1752144428@warthog.procyon.org.uk>
-Cc: dhowells@redhat.com, Max Kellermann <max.kellermann@ionos.com>,
-    Christian Brauner <christian@brauner.io>,
-    Viacheslav Dubeyko <slava@dubeyko.com>,
-    Alex Markuze <amarkuze@redhat.com>, Steve French <sfrench@samba.org>,
-    Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6B42253A7
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752165163; cv=fail; b=CcPczTjhQ7vZO0TilRDr+3FGWwE7v6DH6/23TOYV7xZeM6l7setwkBAWxCjEwnJ0AvcF7eDJCrkB+1t+DMtu5N4KZULP3uwDJHWfIlPi0K9WfQbFUKO8+lspQE2Imu+cddE8fefNIfJBaEth2S1gxph2KJMtI3z1lj49uT5ykOM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752165163; c=relaxed/simple;
+	bh=M5bH2zHkhRRL/GC1zG7J6xBM6ont+Sp1LPZL+YQQKks=;
+	h=References:From:To:Cc:Subject:In-reply-to:Message-ID:Date:
+	 Content-Type:MIME-Version; b=mslTId7C8pEWFJawYgaZr9i+YU15spiJRIex4GtpoDjyIG6m4nINJlsXu5t5Lzpb70gFzo5ArT/GyNoKLILySYUyq09JaMY7RbgWyYbkeQw9FYnpDGClcjjzohcuy7Cx6Gle5pV07rAm4zNH6emrC+cJJR9I9B7Mj6GDA71aQqg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=mTLCVwba; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=hXbb6zMC; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56AF2xxI011999;
+	Thu, 10 Jul 2025 16:31:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=S8q7Wv6mFxVDUkKyye
+	pqtDNHf2mFUk/2xLDobPpUGJI=; b=mTLCVwbaf51D4aH00wfiC6w5JjWneTSgTQ
+	p77NOTSJ2xzlZa899BQq5MxXtEOcsR9DIHfvAFE1/Z94J2lU5cRA+HAe1I0oUdY6
+	Sp/ohj1MjyhVVvBwy11rDmv2ny8nmS5ueKS2eMuhc78FyM0y91j+jdHNPa+nH68I
+	f5Knch5G0mFVtlmzDdfuolHln5mwLYw6kRYTWD6apvVvl/V+I3ZP13YtAq+XJw3d
+	VUfCINA8olry2CNZ34Gj+vJ4PmnUY4tDLjeGMuN4ErgfD5kuaP4LWbIPXkJ77W9Q
+	4+zmfTvZeSS5yPtR5e5isOkkHhRoIWXEgDseo1OHKCPBwE0gCU9w==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47tft086rd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Jul 2025 16:31:58 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56AFMQtG024608;
+	Thu, 10 Jul 2025 16:31:57 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2065.outbound.protection.outlook.com [40.107.220.65])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ptgcrk1h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Jul 2025 16:31:57 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qONPFlsTBQydCrUtxfMsMFRPKqaAYx1SIkfdr9WTAKNMlMgooPxW9kkItMHQHEq85A1cKXdjWnQ25YQDonlludu7YY1masNOkgpIPp2OfQHd4HwtaD/GWFDpP/1cz8OiegdtbYFJkDXFp48u3nNKGj6xCsVaVIY8khOPLJ+gT4p0HfZKwPCb62bp8eFoCAWfM7Vd9K8a4KuFDvMtEZmgW/+Z8P73rxz6cFEV5eEnfrXE+rxRmDzp5rfTHRuPJSAmi6ougVQL1PzTFY5J0KBb7iZ5AFA5X0hwtkQWJcxrWsoEXMUgBq/lsWqrodOALQuiU4i3Kr8OWVVymCdjsaHoqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S8q7Wv6mFxVDUkKyyepqtDNHf2mFUk/2xLDobPpUGJI=;
+ b=c7/Ku/x7Qby2WgZCtAYt20SVkaEouj6M2B/ftIPbUT7veXgEuNQwMhnimaTMkVRjWNeuwexQxIEeDaBYDp+TZJXrs440qlm5GCyzTXwWktkpmWD8MFmL6QlIUSG/Qym5gpATrF7+/9OPE6m0qHFAqHJDX93Xn+UcG58Z/tFxygDnc7n0s5tBXJrO1bcmwo2e1wepTCByJOEudZe8VyCkC/HmY4g6IdNnsSK57sK8jTA2cCKYdiY1vyYP36YdGS8EVXbesLyVcIs1cRapVy+uzwnYpCqmyf+KneV+sK2jIQf4xlGlHLRfmqA6eETOxjzI+bi0zq0ZvVF5DoOvtWIiIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S8q7Wv6mFxVDUkKyyepqtDNHf2mFUk/2xLDobPpUGJI=;
+ b=hXbb6zMC6I9bhZtfRYljolT5/bJRgxQue9r4KE6afXHNr4J+EiFT++hbCjDI06tfT82CS10P4J0UqhhQo195ahLCpvQBVUUgdfO9rbzAZ1y4wb5lP8zyF6t5uD8eoNv3Mizvz+KuiDtGFx7V3eHxcFuhVS8Ujb0CL2tRy2ZsHWM=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by DS0PR10MB6750.namprd10.prod.outlook.com (2603:10b6:8:133::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Thu, 10 Jul
+ 2025 16:31:52 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574%4]) with mapi id 15.20.8901.028; Thu, 10 Jul 2025
+ 16:31:52 +0000
+References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
+ <20250710005926.1159009-13-ankur.a.arora@oracle.com>
+ <20250710005835.8819c30579e37b90d79f4c53@linux-foundation.org>
+User-agent: mu4e 1.4.10; emacs 27.2
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, x86@kernel.org, david@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
+        mjguzik@gmail.com, luto@kernel.org, peterz@infradead.org,
+        acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
+        willy@infradead.org, raghavendra.kt@amd.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Subject: Re: [PATCH v5 12/14] mm: add config option for clearing page-extents
+In-reply-to: <20250710005835.8819c30579e37b90d79f4c53@linux-foundation.org>
+Message-ID: <87ldowovm1.fsf@oracle.com>
+Date: Thu, 10 Jul 2025 09:31:50 -0700
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR03CA0221.namprd03.prod.outlook.com
+ (2603:10b6:303:b9::16) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2919958.1752165094.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 10 Jul 2025 17:31:34 +0100
-Message-ID: <2919959.1752165094@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|DS0PR10MB6750:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28f13745-4117-42d3-4813-08ddbfcf4680
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZtHicGE8cg7yDsw4LN4EyvkzQa7I7CErFcXaRQ6WtcjRzoKG6RnCNkDPkcBP?=
+ =?us-ascii?Q?RRahI7UxozsQYKxWbtFC1BvBcNY/g5selen8S4JdSJPv36bzV/xq4AcSNpia?=
+ =?us-ascii?Q?+iVuJqmbafPkG5tBXPyXhQQR0SGMW+fNH/6mKSIJHlV/O5/biphORqOEdz3K?=
+ =?us-ascii?Q?3UI2ALSPWmWVvbja/nNjY/aqLcirojzbtpYffwPgNhlUCw23Md/cvLhZSRrq?=
+ =?us-ascii?Q?JO8AXTfIuNa43tfjpD5JdZLMCNhSHn3EsbLVyRwteBFZKnNDkvOEIv/HaOzC?=
+ =?us-ascii?Q?KsKYUzYf7nMKYlTRfeSLH7x6X867mSJx1sspSfPmqym6UOSe3k1eVa8P1BF8?=
+ =?us-ascii?Q?XOKD399r/o/mRY7v9HElSRafgXQVDY6+EiSKEu1SZOyZk/bX2G9i76n4zVa/?=
+ =?us-ascii?Q?GpPxWVymiwl7F0cVE4qfUPEUF22Rxeivo5ANfW7j6CgVLQ9tLgawiPIlNoDl?=
+ =?us-ascii?Q?aQ6rooQornY2+G20qmYzGTOfWJ3cBu8RmyAy+BJJAorKC09HL7tR3a/HV4iU?=
+ =?us-ascii?Q?JPW8i93U357+/LfQS/vYWW/QIuc6f58O5C5ekXdTVHBWscq6RwbBPuqY097i?=
+ =?us-ascii?Q?nQectRcRAJZZlQIo3prQ7TmOTsljpYgBfa5++3i5fUtd2HwS00nAHwFfXTNS?=
+ =?us-ascii?Q?qKkexv+3CKSpco/XwFFTZE+Fn9XR6zjqDx9qWKNXoYdsq8KIkC/f6Stp992a?=
+ =?us-ascii?Q?V6LfErA41deHsWLMwgnGMW1xkGd77PdcFJlMwR8MnSiSgJ+DVQjcRnwd17HS?=
+ =?us-ascii?Q?OfxdpGU/1xZfa0JSclL0MVHP190IwQisNUdEWNMDah0emgrqZduEpuMb7oqS?=
+ =?us-ascii?Q?DbLNX1rewij1+yMfC5KSFolUT5niR0hMwQ3JuZL7ChBMhV8UsXKFY+Slu+Gc?=
+ =?us-ascii?Q?XfkkVAj6nKfIROsXbxIn9xf5IVfR+63PBY4l5TUVkxIb/xY0J4/ZCTDJ/ULO?=
+ =?us-ascii?Q?cZQefpwYZrffl1wIWVisStZos1/UXMkw+Q5T/f46kwYhhPqkTLRPRdeZK4sy?=
+ =?us-ascii?Q?3t7dSs6iPu1/lXQBPGFZu+jH7KDiR2zbbnS0PoKiUypes1G4RQV+M+YJWoxM?=
+ =?us-ascii?Q?XPwYRoWj625NPf1xAwdVmZqj0Q2xIBgNDktgOqM46TKq0Wokf8ungzMvASiW?=
+ =?us-ascii?Q?/pLPcA3pBI/5iAgFEEp81+Ff3eG7e1+IsMXTMA7UgPPiKWCnSxqitILtYfwB?=
+ =?us-ascii?Q?vkmJnKVgkjGyeNcIq+A776GycKUTTO0InxGYcyaKj6HKquz4MCygzi6jBGwq?=
+ =?us-ascii?Q?IuNA3s7u3Po7A82qKBetMyBnRqjCZot60js59aL6D7GSj6sHM8GnpKKyHJSO?=
+ =?us-ascii?Q?X+rtJiqLhH96kYbQu8Ko2c+pHAB4zU2YcgPgxejcj3k/y5Q8f5PHGrByEMzv?=
+ =?us-ascii?Q?h6UlY5bJ+sTdF+NktSDz0SyrL2DF2TEji/HEiySWCTzpN6EDg7pVnX8rw7Et?=
+ =?us-ascii?Q?xEc8BsX0zdw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?i5+Z91iQqoE6MQ77NxYc6n433to5jNXozpydAbpipuvSU1lQKEab52htS8MI?=
+ =?us-ascii?Q?jqlMImm8s4E+i0FGYfRbeegw/GBqBKd6CuccscgFDOSa201DKMCVSk5jHUlI?=
+ =?us-ascii?Q?SoFqHF10Nv3KAQUrgOWPRpLyUhVA0KYr21y5+2DI0IrvwtECo90T9C45SfMN?=
+ =?us-ascii?Q?i167TrROJgTQaeDhWAnlTKfjxoNHB1fLBW9vivdgPILooZS/6hM0VmETWuzS?=
+ =?us-ascii?Q?rma48fj9nA1MmePI5pr502zJCBDyyJQWh+Xmge2Pmm13+kMOzWpiZobEBRnw?=
+ =?us-ascii?Q?2NXhZyVArMEfjPEAZjDQYGee7OhMP49Tg+v6cBgO8G/Uqu19ILcVJTCKne/E?=
+ =?us-ascii?Q?GaAlEBvfNtGw7dHC6KzL7m3H94fL7vgtFn7QdYSaPb0Db8l86CLew0D9Nsze?=
+ =?us-ascii?Q?tV5I0LhGY5aJ1Ww/OeTaus8JMx4KeFRK2XXHPwzYxSGSCFl0GyAvgBEdkZoG?=
+ =?us-ascii?Q?y0xc7zhgnfeLi7b/EAeJVeWFr9scoGVP2cS/cIlZRyVB9eR0/x1IjS2qHP2a?=
+ =?us-ascii?Q?pdqRW6pCdjRjs5wsJGBCUoFJuvaJDzVvZBaDbjxtmx4ERDhKZ1l4240cBTeA?=
+ =?us-ascii?Q?4fTyFOujvVUCfTijLKvLEXDjs933KewZi5/OaPlwMg7O09NVag3e+PptVUw5?=
+ =?us-ascii?Q?GHpjlAwNsYVSYQC/wK5yPX3K/+kAvOyueli/T9Ofk1Sr/RNn10scZ6trZM6u?=
+ =?us-ascii?Q?8a6KERakOOSR1cdVBHa02MersIhj9PvUP7p8WdbhioEqCyBQ6fcYZoU/z7Jk?=
+ =?us-ascii?Q?eVIn1MLc1vWBZ9yvxQe9BUYHdEDp/R75KD5NiIkaOKL23Q6unnFvhVJhkCg0?=
+ =?us-ascii?Q?62lLxVZbiEyegk0Goxpdr7rIIuOFnPEqdvfi0vHN/hWIEVU/X5EteYwKdTX9?=
+ =?us-ascii?Q?31p0vmPu3Ocar6zV+Ae1LBpcBCMHQR8A90dRXDYoCV0vODP97WG03D2yu1wr?=
+ =?us-ascii?Q?keIdrsecVUOLWPyJ/HT2FdijjaKVcXrJy3O1Lx+D23fI21A4yOOTEwLPDjaB?=
+ =?us-ascii?Q?2RdMZd41Ix9AY7nCwdHXDcfBzK/SEWFEVBw8XGpgCnoxuoY48/sqXXEMJ2qh?=
+ =?us-ascii?Q?xTPShxfJSyTa71/p1di2f5Vhx82LxFNkZ0oWYFePWbOav+9lyuIsSHWkcTgZ?=
+ =?us-ascii?Q?ZQgG1X+bl16l6+mJ95v+bX/u0ESkClbgwGudEolTQ6gZmWWODuf1nb4JhlHB?=
+ =?us-ascii?Q?2On58Nka5N79rvBDBylKtzSNxzUOaLb8j6WJqHssmduuHPCQnN5v8MQqhrWB?=
+ =?us-ascii?Q?GJV8J4r4Ow+R63wLa2y6We2fCTjOmR7pkRYdrk91M+9DsnLGA1RHNZcazqtm?=
+ =?us-ascii?Q?kFK81nrGZv4+hSSApp1LspXCQCzY0CY5e+SqZvyl2keriXSGGwOlz7KvGhLu?=
+ =?us-ascii?Q?4AmBLRQ03cEwNSiTCryA5WRtowSwQYx3Q7ypDP0BIUNfckw1mTFfLJ4yW3Aw?=
+ =?us-ascii?Q?hlg2WRk/lObyal/JfLknDCAAFkUfDz1+WrpnQc0xPiyUzdya4R2HRZYczchO?=
+ =?us-ascii?Q?oYasn2i86AewMrgJ4dlDGutn0LDD13YnT/x1Oul6ZAEykEw7kbVKrdDCwQkS?=
+ =?us-ascii?Q?AGhFdUA0N8XwTp5aPRq9ZcXTtWZ3/FyZAI9UKc0KCpm41DH2NIz6LJ9XzVQo?=
+ =?us-ascii?Q?fg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	fjcsErUuV2NagAxOaQvEbFGEN7OfcmgxU3+Z1YBbkCeW+ZawI4fz7ykGBdLX00CivTV4jv1Tgo8Bkq15UKztYmzWPTjWNz+1y6FiIpYNB7uKlVgVp/cGAbhYwbc0OLiE/4Bfvi+EegNmnSPBxtUTzc3hMiS8zV7nDWYwpeUd7cCt+j2VPQtlwDbE0YOE83fSSg+T/a/MZ2tRGh/BkspnEkfVi9y3dSwj8EcApsPTdfuJ6Za7TvqxnzUIDtJfN0u1FHwFVU1gMy8T3fQYS0mHXJaFqbq9dHdOlUaQah+yVmADtb0WLV6kYR641NOlMK9qEmV4ZmFQSZzWnhtQ53R95cnqPGQ5h01ok5t9zSW3mNjlDM7c9F0RHcXrHsAg/VR6ho8+7eX6+kuP9cxi/bn9LOWSbytxsL2hEe+RwjxzSjerlbaGA2nvpXbqMI6ysrpQnYPwszH7d7PKLERTomgXaGXQ6SBEQKW7RqVZaGO+aQEzsp1xZzOMfQESM0PI7q5HufHnhR4wPbX4+F+ZNEeRbrWv+TIpdysI2G7BYjx3HofZWPlMNdk1xn6W1zNaK/P/dMVkw6K4HqGgCLv0fzSzJYgVwfHVc+JEHxhszEUfBjg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28f13745-4117-42d3-4813-08ddbfcf4680
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 16:31:52.0153
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7HlfneUuCVWeVl+qXqwbXIqK4JbSBJwIytkaW4wcl3GsmpPFWyMEyVSjBRodpYyWGsG8603DBrPze1VfcxKGe7DgQ/HYE0jtElkfhC/TIgo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6750
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_04,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=999 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507100140
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDE0MSBTYWx0ZWRfXyGdlC2W98f1u Bo2JFbMZUKrMMQvCJK7orYnQ3yWnbtVAgBdVGcNKxvDF+ZQ4Jkcyn6DaDjwuMlfE8TXPzW16hZV KEsX3sNNjWaUrUKkuLwKCN7EcquvXRHHxdOU+RpgKPUjOgwbV69R7sj+XttVUTxpHmugdUYccLA
+ K1rnR4Y+o0GHAht5DyHvyDE3LWgsQOLUbW4D/u2XdsJHQmf/eHpo3oHQY3lAYPDXZrfPXK+VVci TVFZn+qwgtOGmKKJ6tgMqGNv80tb3KilkR2BoqNcSy9+A7foheGw71g7eN8woXmQPhdM/kkoxIR wwOIBieH6PBvUqD2PWrxlIVlOAmNKI5HCdxxIKpOUH9bbiiV6edQoyoYwHOYMrf3fhz0HK741Aw
+ L0H1CWW3WIYh609rQ6j+qYnbKkfDNzJfugOCE4R0fG7UmkF62ZGzaBSaOOT4JCGyJxodFEWS
+X-Proofpoint-ORIG-GUID: z_IUMnT1r54pMTxv7Go7uGV4hjVVPXMf
+X-Authority-Analysis: v=2.4 cv=cvybk04i c=1 sm=1 tr=0 ts=686feafe b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=Z4Rwk6OoAAAA:8 a=yPCof4ZbAAAA:8 a=WGH4CLgoqCUWnWhGhc8A:9 a=HkZW87K1Qel5hWWM3VKY:22
+X-Proofpoint-GUID: z_IUMnT1r54pMTxv7Go7uGV4hjVVPXMf
 
-David Howells <dhowells@redhat.com> wrote:
 
-> Depending on what you're doing on ceph, you might need the attached patc=
-h as
-> well.  I managed to reproduce it by doing a git clone and kernel build o=
-n a
-> ceph mount with cachefiles active.
+Andrew Morton <akpm@linux-foundation.org> writes:
 
-Here's a version of the patch that conditionally does the needed wakeup.  =
-I
-don't want to force processing if there's no need.
+> On Wed,  9 Jul 2025 17:59:24 -0700 Ankur Arora <ankur.a.arora@oracle.com> wrote:
+>
+>> This is only available with !CONFIG_HIGHMEM because the intent is to
+>> use architecture support to clear contiguous extents in a single
+>> operation (ex. via FEAT_MOPS on arm64, string instructions on x86)
+>> which excludes any possibility of interspersing kmap()/kunmap().
+>
+> I'm feeling dumb.  What does the use of a string instruction have to do
+> with kmap/kunmap?
 
-David
----
-commit 1fe42a9a7f0b2f51107574f0b8e151d13dc766cc
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu Jul 10 15:02:57 2025 +0100
+Sorry, that might have been unnecessarily inscrutable. How about
+something like this:
 
-    netfs: Fix race between cache write completion and ALL_QUEUED being se=
-t
-    =
+ This is only enabled with !CONFIG_HIGHMEM because the intent is
+ to use architecture support to clear contiguous extents in a
+ single interruptible operation (ex. via FEAT_MOPS on arm64,
+ string instructions on x86).
 
-    When netfslib is issuing subrequests, the subrequests start processing
-    immediately and may complete before we reach the end of the issuing
-    function.  At the end of the issuing function we set NETFS_RREQ_ALL_QU=
-EUED
-    to indicate to the collector that we aren't going to issue any more su=
-breqs
-    and that it can do the final notifications and cleanup.
-    =
+ Given that we might be zeroing the whole extent with a single
+ instruction, this excludes any possibility of constructing
+ intermediate HIGHMEM maps.
 
-    Now, this isn't a problem if the request is synchronous
-    (NETFS_RREQ_OFFLOAD_COLLECTION is unset) as the result collection will=
- be
-    done in-thread and we're guaranteed an opportunity to run the collecto=
-r.
-    =
-
-    However, if the request is asynchronous, collection is primarily trigg=
-ered
-    by the termination of subrequests queuing it on a workqueue.  Now, a r=
-ace
-    can occur here if the app thread sets ALL_QUEUED after the last subreq=
-uest
-    terminates.
-    =
-
-    This can happen most easily with the copy2cache code (as used by Ceph)
-    where, in the collection routine of a read request, an asynchronous wr=
-ite
-    request is spawned to copy data to the cache.  Folios are added to the
-    write request as they're unlocked, but there may be a delay before
-    ALL_QUEUED is set as the write subrequests may complete before we get
-    there.
-    =
-
-    If all the write subreqs have finished by the ALL_QUEUED point, no fur=
-ther
-    events happen and the collection never happens, leaving the request
-    hanging.
-    =
-
-    Fix this by queuing the collector after setting ALL_QUEUED.  This is a=
- bit
-    heavy-handed and it may be sufficient to do it only if there are no ex=
-tant
-    subreqs.
-    =
-
-    Also add a tracepoint to cross-reference both requests in a copy-to-re=
-quest
-    operation and add a trace to the netfs_rreq tracepoint to indicate the
-    setting of ALL_QUEUED.
-    =
-
-    Fixes: e2d46f2ec332 ("netfs: Change the read result collector to only =
-use one work item")
-    Reported-by: Max Kellermann <max.kellermann@ionos.com>
-    Link: https://lore.kernel.org/r/CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=3DshxyGLw=
-fe-L7AV3DhebS3w@mail.gmail.com/
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    cc: Paulo Alcantara <pc@manguebit.org>
-    cc: Viacheslav Dubeyko <slava@dubeyko.com>
-    cc: Alex Markuze <amarkuze@redhat.com>
-    cc: Ilya Dryomov <idryomov@gmail.com>
-    cc: netfs@lists.linux.dev
-    cc: ceph-devel@vger.kernel.org
-    cc: linux-fsdevel@vger.kernel.org
-    cc: stable@vger.kernel.org
-
-diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
-index 080d2a6a51d9..8097bc069c1d 100644
---- a/fs/netfs/read_pgpriv2.c
-+++ b/fs/netfs/read_pgpriv2.c
-@@ -111,6 +111,7 @@ static struct netfs_io_request *netfs_pgpriv2_begin_co=
-py_to_cache(
- 		goto cancel_put;
- =
-
- 	__set_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &creq->flags);
-+	trace_netfs_copy2cache(rreq, creq);
- 	trace_netfs_write(creq, netfs_write_trace_copy_to_cache);
- 	netfs_stat(&netfs_n_wh_copy_to_cache);
- 	rreq->copy_to_cache =3D creq;
-@@ -155,6 +156,9 @@ void netfs_pgpriv2_end_copy_to_cache(struct netfs_io_r=
-equest *rreq)
- 	netfs_issue_write(creq, &creq->io_streams[1]);
- 	smp_wmb(); /* Write lists before ALL_QUEUED. */
- 	set_bit(NETFS_RREQ_ALL_QUEUED, &creq->flags);
-+	trace_netfs_rreq(rreq, netfs_rreq_trace_end_copy_to_cache);
-+	if (list_empty_careful(&creq->io_streams[1].subrequests))
-+		netfs_wake_collector(creq);
- =
-
- 	netfs_put_request(creq, netfs_rreq_trace_put_return);
- 	creq->copy_to_cache =3D NULL;
-diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-index 73e96ccbe830..64a382fbc31a 100644
---- a/include/trace/events/netfs.h
-+++ b/include/trace/events/netfs.h
-@@ -55,6 +55,7 @@
- 	EM(netfs_rreq_trace_copy,		"COPY   ")	\
- 	EM(netfs_rreq_trace_dirty,		"DIRTY  ")	\
- 	EM(netfs_rreq_trace_done,		"DONE   ")	\
-+	EM(netfs_rreq_trace_end_copy_to_cache,	"END-C2C")	\
- 	EM(netfs_rreq_trace_free,		"FREE   ")	\
- 	EM(netfs_rreq_trace_ki_complete,	"KI-CMPL")	\
- 	EM(netfs_rreq_trace_recollect,		"RECLLCT")	\
-@@ -559,6 +560,35 @@ TRACE_EVENT(netfs_write,
- 		      __entry->start, __entry->start + __entry->len - 1)
- 	    );
- =
-
-+TRACE_EVENT(netfs_copy2cache,
-+	    TP_PROTO(const struct netfs_io_request *rreq,
-+		     const struct netfs_io_request *creq),
-+
-+	    TP_ARGS(rreq, creq),
-+
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,		rreq)
-+		    __field(unsigned int,		creq)
-+		    __field(unsigned int,		cookie)
-+		    __field(unsigned int,		ino)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    struct netfs_inode *__ctx =3D netfs_inode(rreq->inode);
-+		    struct fscache_cookie *__cookie =3D netfs_i_cookie(__ctx);
-+		    __entry->rreq	=3D rreq->debug_id;
-+		    __entry->creq	=3D creq->debug_id;
-+		    __entry->cookie	=3D __cookie ? __cookie->debug_id : 0;
-+		    __entry->ino	=3D rreq->inode->i_ino;
-+			   ),
-+
-+	    TP_printk("R=3D%08x CR=3D%08x c=3D%08x i=3D%x ",
-+		      __entry->rreq,
-+		      __entry->creq,
-+		      __entry->cookie,
-+		      __entry->ino)
-+	    );
-+
- TRACE_EVENT(netfs_collect,
- 	    TP_PROTO(const struct netfs_io_request *wreq),
- =
-
+--
+ankur
 
