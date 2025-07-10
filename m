@@ -1,122 +1,167 @@
-Return-Path: <linux-kernel+bounces-725608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED45B00159
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:14:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA7A2B0015D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A491C86FAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:14:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70AD21893DD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1F1251792;
-	Thu, 10 Jul 2025 12:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E1D24C068;
+	Thu, 10 Jul 2025 12:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PACHBUQp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y/9sgvrp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F936248F5E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0595141C71;
+	Thu, 10 Jul 2025 12:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752149624; cv=none; b=JQjOhL7Vqn/EFEAVTjis/o+jEiZ6bC/r7v8DNUbjhQnCZS7MGRmFoSpknkIXkavy0n8xKBDYICX6L2FIToPkOEJfGPqtNW4u1d+QdUZy8ivtjcLbSBCjcBeS4k6uOHdZNNDtZtXQBnX/FUOIxVTqT58oPwJe9KihX4mawbaafXc=
+	t=1752149747; cv=none; b=AIYCRv/MCq195c7i+6+mWX53qMmwAzMIJ0TQblqzSfUSUWYxDQMdbS6+TINk28N9U0YAa6c8yosoIvp8HIky9U63GSQecxbklfKtS1VLNxb6yHumMdEaKgoMSTR0pN7TKadVxLI6ucrXegsDvw8VtbHicVSmtvopcC6gfzn9I6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752149624; c=relaxed/simple;
-	bh=9ZIBxh27q1fv0N3F1hVWP+kZxTqoA0uIH86G/WfESFU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oR3u1i0EIMDkNAoEOjhl0uqIFhOVyHPTGgy/jCmIb0h+yR69g8mQHUV9UAc5RWdQNhGNujFzjmRQJFIc2matK+0yJdz9scQEdI9mG5CSZoItXwHjnUQUstlTj8OfDYeMuh+kDjI+sGXtgSRjPObGIWO5G3NFV6sjdJxzuOsrHMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PACHBUQp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752149622;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V4lgpdxo1FVLUcK9VrQ20Ig1tFoA8+jWoGG13oO7pPY=;
-	b=PACHBUQpnKsL2PoHLzqkiLcVsvXBaK75U2OBaBIw/g1d6pP+G10lJpoX1jD2Y2A/9Gh5FW
-	b2W0Pcvf+5e9CphojYl4bf1XTfH2pmPq7us4G8+9xX86imm6YHKi/Ewoqmjc4wXw7ifa14
-	kpLpapeVItuUEIJF9S5OIHu/XcSLKAs=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-399-JHBMzdH0OPWHUgpIU4BbKw-1; Thu, 10 Jul 2025 08:13:41 -0400
-X-MC-Unique: JHBMzdH0OPWHUgpIU4BbKw-1
-X-Mimecast-MFC-AGG-ID: JHBMzdH0OPWHUgpIU4BbKw_1752149620
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-450db029f2aso4978665e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:13:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752149620; x=1752754420;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V4lgpdxo1FVLUcK9VrQ20Ig1tFoA8+jWoGG13oO7pPY=;
-        b=qw72hBnAZD0LDP+nBEKI/82K29/W8cDBs8fCw03lOoTv1pTYqqJLBf4SFFB7p+PRqS
-         N4/brOBB+is1sUiFyiDjGXsdcWXDRw7QwFBkeZ41ZE+LGFl8wC+86U4steofL6JsWLD4
-         9PBh/YCz0nJabiWNA97bJLwvlvMBPbmSywrlYXjU5Ue59JryOirBNijjVKHplgZMLTaH
-         IQvd5m7Db6n7PdJdedom7TDrcP7OuXN429IleVMNhUHLfXjI8aiU9VJTmnkEY4vIT7Ne
-         q3iwMpVHpLT7xyr6eIv/0qmHjRREToikgYzmCsnXLy4MMOH1sOjV0jeCycBWJOTJDpdQ
-         MWiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNf5NQx5tJf6SsqigKwTvk4um4yS+HQhd3ha32PrMDH1kLpbGiDTn3bGwquRRMDfW2MTocL9vwx6AubfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM02b/jgMbKuvpRKiVgVETJ/0THhijaIyYynoI+On3Jc86Tk/4
-	Yvs+NMFkQkOCLBh8247VMEIJtKscJJEJLd+0fZg9BNplPFQuzHF6Ri6H+XGWcdkIpz+DqkFZVhw
-	X8GwEUyjH5DRsAPZSwmLIl2dfIkmPyp8L2uqQ8AaxqLmHKwCNH2RNR2ZP3277Zblw0A==
-X-Gm-Gg: ASbGncsE2EZbaw9Ikiz73lrM3CTjq9lUHP79gJn96X96cXmNhCmvlamT0Pn308yMl8X
-	LQGQGymEJmWoMq658p2LIPLzmVtnJvvQDzYEOVKG4wqfqj0TrJxL2ZDIlmv8bbmpDfQqiRobhVL
-	xaXgg2y0Te+5jOP6Zi+iGFoE2s0k6xl9RHWwd38Tw2KAuM2lH7M40XdB/JhRzrEpvtwWcUAbotw
-	+z7hTkKFFbMMEcYUypEhewuRC5fh/EUZfQzasnhVKSbu+rSKYHGuBN842uOQmZHvpBlvYVOmrBE
-	pxhS4YMnAlKSEcOLeoxnAYBKlTru30w9gqqm0kmhifg8NDHt2CHZEZGfGdYi1EQ36aDnm6N1AUs
-	TriOB
-X-Received: by 2002:a05:600c:8717:b0:442:dc6f:7a21 with SMTP id 5b1f17b1804b1-454db7e87c2mr38423775e9.3.1752149619712;
-        Thu, 10 Jul 2025 05:13:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFp+CE4OHvWqIhCgoGjMUd0oVm2/xeAAOIhuzXqN72Z/OQpis058DRemX4zgz1jKZQSrDiQmg==
-X-Received: by 2002:a05:600c:8717:b0:442:dc6f:7a21 with SMTP id 5b1f17b1804b1-454db7e87c2mr38423525e9.3.1752149619307;
-        Thu, 10 Jul 2025 05:13:39 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd439051sm18518215e9.8.2025.07.10.05.13.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 05:13:38 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>
-Subject: Re: [PATCH 2/3] drm/tests: edid: Update CTA-861 HDMI Vendor
- Specific Data Block
-In-Reply-To: <20250625-drm-update-edid-v1-2-2d963743ab9e@kernel.org>
-References: <20250625-drm-update-edid-v1-0-2d963743ab9e@kernel.org>
- <20250625-drm-update-edid-v1-2-2d963743ab9e@kernel.org>
-Date: Thu, 10 Jul 2025 14:13:37 +0200
-Message-ID: <87bjpsfdla.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1752149747; c=relaxed/simple;
+	bh=eOwThlANCOdcD4JdvjuBEkZYTVcOWjZCsg6qjRDsT7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PABGIxorrLT2Z4AiDOY1xK9EbK+EviUcM9RK+EGbHNrXG5nHb9c/PIRDavfmUwJONrKXZjekC9da1Xs3GECNdPqRc8AZ0rKUPvcd50+7y5tLC0QTjezVdX8mkg3YXHNC/IQsAM8blg4OVabMITtckXg0X0BRXobb5ISRJd2wXk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y/9sgvrp; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752149746; x=1783685746;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=eOwThlANCOdcD4JdvjuBEkZYTVcOWjZCsg6qjRDsT7Q=;
+  b=Y/9sgvrppO0n9mPO07JJZSEZVz6H81i60WjTX8NVTQ1TYgN+9/dfJgN+
+   HoG96caYIYlh4/9N0p0JN30B6czxpjPceAsSROWuvwGnMhPZKUgSQN9sP
+   W65tT+Wb/iPNDYYZB3HOTN3Bf8usAJl/rydZP7yKtQHGuhesgyAOmUjUu
+   z2hwuGVExp4fdHYn3E/7C6CPKEMBxJtrMyixV4LexBCaPGC+jGdewgwcL
+   fL49wopMLOiN0igzDYy9HWeKCcpNY2XsKF/6tq3B9DVuHyfoa+3fOXhzh
+   n5Yp2NSzZP45U0pKhXDW2u6q1ZgB8j85NIMC3FMGoiGwB+NT7NrPsrmQN
+   w==;
+X-CSE-ConnectionGUID: Qd6PiemwSb2bO0GxWRkAqQ==
+X-CSE-MsgGUID: X118hQwMSsCTqR8GFg/PkA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="79863809"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="79863809"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 05:15:45 -0700
+X-CSE-ConnectionGUID: lMGZMBSDTzOGy5kt8u7kaw==
+X-CSE-MsgGUID: q+wQXCrxTPiICMssF2/A4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="156535086"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa008.jf.intel.com with ESMTP; 10 Jul 2025 05:15:40 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 0D2871C9; Thu, 10 Jul 2025 15:15:37 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Christian Brauner <brauner@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Maarten Lankhorst <dev@lankhorst.se>,
+	Natalie Vock <natalie.vock@gmx.de>,
+	linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang@linux.dev>,
+	Maxime Ripard <mripard@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+Subject: [PATCH v1 1/1] rculist: move list_for_each_rcu() to where it belongs
+Date: Thu, 10 Jul 2025 15:15:28 +0300
+Message-ID: <20250710121528.780875-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Maxime Ripard <mripard@kernel.org> writes:
+The list_for_each_rcu() relies on the rcu_dereference() API which is not
+provided by the list.h. At the same time list.h is a low-level basic header
+that must not have dependencies like RCU, besides the fact of the potential
+circular dependencies in some cases. With all that said, move RCU related
+API to the rculist.h where it belongs.
 
-> For some reason, the HDMI VSDBs in our kunit EDIDs had a length longer
-> than expected.
->
-> While this was harmless, we should get rid of it to make it somewhat
-> predictable.
->
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/list.h    | 10 ----------
+ include/linux/rculist.h | 10 ++++++++++
+ kernel/cgroup/dmem.c    |  1 +
+ 3 files changed, 11 insertions(+), 10 deletions(-)
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-
+diff --git a/include/linux/list.h b/include/linux/list.h
+index e7e28afd28f8..e7bdad9b8618 100644
+--- a/include/linux/list.h
++++ b/include/linux/list.h
+@@ -686,16 +686,6 @@ static inline void list_splice_tail_init(struct list_head *list,
+ #define list_for_each(pos, head) \
+ 	for (pos = (head)->next; !list_is_head(pos, (head)); pos = pos->next)
+ 
+-/**
+- * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
+- * @pos:	the &struct list_head to use as a loop cursor.
+- * @head:	the head for your list.
+- */
+-#define list_for_each_rcu(pos, head)		  \
+-	for (pos = rcu_dereference((head)->next); \
+-	     !list_is_head(pos, (head)); \
+-	     pos = rcu_dereference(pos->next))
+-
+ /**
+  * list_for_each_continue - continue iteration over a list
+  * @pos:	the &struct list_head to use as a loop cursor.
+diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+index 1b11926ddd47..2abba7552605 100644
+--- a/include/linux/rculist.h
++++ b/include/linux/rculist.h
+@@ -42,6 +42,16 @@ static inline void INIT_LIST_HEAD_RCU(struct list_head *list)
+  */
+ #define list_bidir_prev_rcu(list) (*((struct list_head __rcu **)(&(list)->prev)))
+ 
++/**
++ * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
++ * @pos:	the &struct list_head to use as a loop cursor.
++ * @head:	the head for your list.
++ */
++#define list_for_each_rcu(pos, head)		  \
++	for (pos = rcu_dereference((head)->next); \
++	     !list_is_head(pos, (head)); \
++	     pos = rcu_dereference(pos->next))
++
+ /**
+  * list_tail_rcu - returns the prev pointer of the head of the list
+  * @head: the head of the list
+diff --git a/kernel/cgroup/dmem.c b/kernel/cgroup/dmem.c
+index 10b63433f057..e12b946278b6 100644
+--- a/kernel/cgroup/dmem.c
++++ b/kernel/cgroup/dmem.c
+@@ -14,6 +14,7 @@
+ #include <linux/mutex.h>
+ #include <linux/page_counter.h>
+ #include <linux/parser.h>
++#include <linux/rculist.h>
+ #include <linux/slab.h>
+ 
+ struct dmem_cgroup_region {
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+2.47.2
 
 
