@@ -1,121 +1,139 @@
-Return-Path: <linux-kernel+bounces-726088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EF26B00801
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:02:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92707B007EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4618C1CA46C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6665048494E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF72727A93D;
-	Thu, 10 Jul 2025 15:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1810827A131;
+	Thu, 10 Jul 2025 15:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vN9Ev23k"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YbVO9sH1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9349D43169;
-	Thu, 10 Jul 2025 15:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F346F27A455
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752163121; cv=none; b=n+7o0kmJXLQijevxVj70m0Ro96pnxR6xAtlR3YAcfMg/bGx1T8jnL3BwqvVf3sHF0EEsV2z6OrSrOfSBJjwQ2EIduzIycHCU/cZ44q69SbYTGcOJUSjlV6gO+QODFrZH+xNKw3mepZ70YgpczqGBr+9qJucmYbe3/rEYQaFUq+E=
+	t=1752163137; cv=none; b=brJ4uQ1BPXuwOF2RtgC7X2jg6XQUr8BrpGhxN99y9QZ3w9WtRAqNholPikI+o26P44qS35GvoQ69yYHR8nuwE24cW5lHMAxGNgkHGfLsSt6/Bx66s7VzDy+14s4Z2qNLv4tNNDWEyugJUVQ3UE5oPJQGEz1jfkKbNn65g76S9uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752163121; c=relaxed/simple;
-	bh=Ug/xuZy4+C63jQXlPrpv32eUh4tPCngp8U/00/gVLGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SXVMiOCfUn9ACaP+Fq1LE4lgVcPQ2LSXqTTs1tjRmPh+ArJ1Qr99MRG7gPp6BHtBevqTbddFkzLjoH5EZJIPKR70Ex5O+XoERNO5h12pOiCteiQySAUvOA6Cw7ZCrBCtA3OJODplur2S5E7oH/lZb1ZmK4hNcn6BfFxUCnY+rpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vN9Ev23k; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VNSSl7zcfIOqJpK24zVMGGLJHAtlPxO/oNxdIpnF5F0=; b=vN9Ev23kcMljgdfRBvSifEtfjX
-	f+yn1QegKA1zMOQFhhMX05TBc/Cl1PbBQ+tBZaoJ3FgLBNrymKgKoIt+r9efxT13D1A3kRXDTlNOq
-	TGO/aR+sDKHjfuQpKOKWY29gtwL42lmfKR3p2dlBAtOFT1VrWeS9s/3P/iH6h+9ICouyx6XwzpAKW
-	dMSIH9DO/sazRV3YP1LlsKnU8hp2ofhoTsV8X8zFevifZbuNSvkxWKxV96Vs3g/4M0O1OQqvSik/e
-	LbOdXmQGoPnQP+pK7Nw/4HtFZmcWiE2U3+r3PmGpmguVQW6l1aprioMUd7XVvHkox9PfaX9cjFyWl
-	foduRo6w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZtfF-00000009VNm-28hO;
-	Thu, 10 Jul 2025 15:58:25 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2247D300158; Thu, 10 Jul 2025 17:58:25 +0200 (CEST)
-Date: Thu, 10 Jul 2025 17:58:24 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Kai Huang <kai.huang@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	Zheyun Shen <szy0127@sjtu.edu.cn>,
-	Mingwei Zhang <mizhang@google.com>,
-	Francesco Lavra <francescolavra.fl@gmail.com>
-Subject: Re: [PATCH v3 3/8] x86, lib: Add WBNOINVD helper functions
-Message-ID: <20250710155824.GA905792@noisy.programming.kicks-ass.net>
-References: <20250522233733.3176144-1-seanjc@google.com>
- <20250522233733.3176144-4-seanjc@google.com>
- <20250710112902.GCaG-j_l-K6LYRzZsb@fat_crate.local>
- <20250710143729.GL1613200@noisy.programming.kicks-ass.net>
- <20250710154704.GJ1613633@noisy.programming.kicks-ass.net>
- <aG_iVqMkeIUELiTX@google.com>
+	s=arc-20240116; t=1752163137; c=relaxed/simple;
+	bh=sGyW1kSOut5qnGoQXMuK5P6jRPc8V1H7nGlZRurAXYo=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=p1gHjBD8m6sejodZQDiNe/n8prbG96PVdXbz0jxL29/7xswe+mEBT55AriKrpuvwOw8yMqggztJToJj9M1EcdQi5vHkJbYv9MDK3I/ZyE9nbewh2XiQ6XzJx3c7nUfqU0n37C9KFH/6gWlHdb1FWKz2zND71vkt7d1r0lRxFR7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YbVO9sH1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752163134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ka4ByCtzYh7nc643rftFY6Eo0Hi9GztYYANcPpx7UHs=;
+	b=YbVO9sH1l+3LqJUykl4NZxrtF5BaODmSzuBbvW+jpVdtb2p66a39oeKFVSqPtDYnRbSYnH
+	rDDppYGcBTdKfXmVCsqMYLWaiTkbOGG5cJtQgOf0F4kg0jLMQ0LnYMQ1nhGS2ckzWB5LzT
+	OQQ9MhCYuISdZxR4RVrhCu03QQLEvSw=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-12-05PNQWgONkqDSO0N-3e-Lg-1; Thu, 10 Jul 2025 11:58:53 -0400
+X-MC-Unique: 05PNQWgONkqDSO0N-3e-Lg-1
+X-Mimecast-MFC-AGG-ID: 05PNQWgONkqDSO0N-3e-Lg_1752163133
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d3cbf784acso276519985a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:58:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752163133; x=1752767933;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ka4ByCtzYh7nc643rftFY6Eo0Hi9GztYYANcPpx7UHs=;
+        b=hx/x3d+cL2XYK5UCLiuCFGYGhUIpUwwptI/24xMVOBVMPzbqG9Lp80b6GMziKp9q27
+         HYEVR5pRjOW1FAkp6R3OV1cC9ZjDVF/uUFcfoWuKzIZStIXWFFBAuZqomAubb+nhSfbL
+         GbuU4pZpm954z11HVZcyWTcGZ7IZlW+G2xF+n/zhQRRGYIBLUgObKwtAjysrTQTlnrq/
+         ekx4ecT05ueRQnY7W/rUiUKr467EWZSOsCJVgPI/JyLjeRC+zOhXZAqJRdFC5PP4vvND
+         3LidfHeFoPZ1uU6QHgO+kWg289U3Ckjr9Tvms38VwqILALMpeyA+FpkUPAN+f5bcEFYa
+         TJ4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUynHEyubL5n7JuGPhgf8PQc30KFZFWy7jFD3vk+UKzSCmW2tO/x54UMHD4pYw5jpgNjYut7x7UXIecko4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7d8er/UAdvVdZhHRwoNXQsFbcuj7HBRDT8DLjb14idLUgaMBe
+	u2qFbp2/+s7sbFWXzvM11aIVOoaDg7aJq5h2pFTeHiIQE0Ocje5BwHIsLSt21C1RPRU1CCusVRQ
+	590c7aGfFX7pLaPd7J4pjAuwgzN5frLYWFNZx5P0QKFebqzVl619wyyAFnF03dad7zQ==
+X-Gm-Gg: ASbGncvjlgO9AM/EHf+gluL+Wm3wSAjqpOWRpH/cQ10Wn07KsfFGoauMzNi+9U/jWWH
+	weim69nlCIWfqUl4rV97KpOlg2aJSX6/ImMCMblwkSkPEnPIJVD4R9mg8PLzraIZzPtx88/Q6rf
+	50PZ5yeA0BWXzEGdxuJOcwv0NZI632SgwXMCgH/Ptai59oVc2W029hKU93lZKL1ctZdCu7G05K8
+	1k2GC1PuVJ9FuNG6pyqhotpOyi8XebgOyG6xpKdwnYie/G4O5Mw79qCnpLpVRbzVXN6tchn+OxE
+	uQCuzVBBxVRCrkooqP36NW+8zliNRczGmewIm+2O3FZHdmpw0l6oHTf7pJbEd/7PTAGt
+X-Received: by 2002:a05:620a:4514:b0:7d3:d8d6:1c89 with SMTP id af79cd13be357-7ddecb24767mr3989185a.43.1752163132733;
+        Thu, 10 Jul 2025 08:58:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6ZEutdU/L1TXcRGdT1iCHfaOFeZ2TnV322Bgnpr39I8tzeW4PxYiQFJoGSxI5uPsE5bdvkQ==
+X-Received: by 2002:a05:620a:4514:b0:7d3:d8d6:1c89 with SMTP id af79cd13be357-7ddecb24767mr3983785a.43.1752163132216;
+        Thu, 10 Jul 2025 08:58:52 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcdc0f81easm110505685a.41.2025.07.10.08.58.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 08:58:51 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <103a68e9-9627-42ad-ae86-3b023c3230d7@redhat.com>
+Date: Thu, 10 Jul 2025 11:58:50 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aG_iVqMkeIUELiTX@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] futex: Use RCU-based per-CPU reference counting
+ instead of rcuref_t
+To: Peter Zijlstra <peterz@infradead.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Waiman Long <llong@redhat.com>, linux-kernel@vger.kernel.org,
+ Andr?? Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Valentin Schneider <vschneid@redhat.com>
+References: <20250707143623.70325-1-bigeasy@linutronix.de>
+ <20250707143623.70325-3-bigeasy@linutronix.de>
+ <2f0fc991-0e70-4bb3-bdcc-f87293cb6471@redhat.com>
+ <20250708134708.Rgh8nHcx@linutronix.de>
+ <20250708190605.GF477119@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+In-Reply-To: <20250708190605.GF477119@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 08:55:02AM -0700, Sean Christopherson wrote:
+On 7/8/25 3:06 PM, Peter Zijlstra wrote:
+> On Tue, Jul 08, 2025 at 03:47:08PM +0200, Sebastian Andrzej Siewior wrote:
+>> On 2025-07-08 09:43:44 [-0400], Waiman Long wrote:
+>>> This looks somewhat like what the percpu refcount does (see
+>>> lib/percpu-refcount.c). Could this be used instead of reinventing the wheel
+>>> again?
+>>  From the comment:
+>>
+>>    * futex-ref
+>>    *
+>>    * Heavily inspired by percpu-rwsem/percpu-refcount; not reusing any of that
+>>    * code because it just doesn't fit right.
+>>    *
+>>    * Dual counter, per-cpu / atomic approach like percpu-refcount, except it
+>>    * re-initializes the state automatically, such that the fph swizzle is also a
+>>    * transition back to per-cpu.
+>>
+>> but I leave it up to Peter if he considers merging that.
+> Basically what the comment says. Trying to reuse things ended up in a
+> mess. It really isn't much code, most of it is comments.
+>
+I got it now. I am not against adding a variant specific to this code 
+giving that we want to fix the performance regression ASAP. Merging it 
+to any existing set of helpers may be something we want to do in the future.
 
-> > So kvm-amd is the SEV stuff, AGPGART is the ancient crap nobody cares
-> > about, CCP is more SEV stuff, DRM actually does CLFLUSH loops, but has a
-> > WBINVD fallback. i915 is rude and actually does WBINVD. Could they
-> > pretty please also do CLFLUSH loops?
-> 
-> FWIW, doing CLFLUSH in KVM isn't feasible.  In multiple flows, KVM doesn't have
-> a valid virtual mapping, and hardware *requires* a WBINVD for at least one of the
-> SEV paths.
-
-Yeah, I know. We should give the hardware folks more grief about this
-though. If we ever get into the situation of requiring WBINVD, they've
-messed up.
-
-> > Anyway, the below seems to survive an allmodconfig.
-> > 
-> > ---
-> > diff --git a/arch/x86/lib/cache-smp.c b/arch/x86/lib/cache-smp.c
-> > index c5c60d07308c..ac3cc32a4054 100644
-> > --- a/arch/x86/lib/cache-smp.c
-> > +++ b/arch/x86/lib/cache-smp.c
-> > @@ -12,19 +12,19 @@ void wbinvd_on_cpu(int cpu)
-> >  {
-> >  	smp_call_function_single(cpu, __wbinvd, NULL, 1);
-> >  }
-> > -EXPORT_SYMBOL(wbinvd_on_cpu);
-> > +EXPORT_SYMBOL_GPL_FOR_MODULES(wbinvd_on_cpu, "kvm-amd,agpgart,ccp,drm,i915");
-> 
-> Patch 5 of this series drops KVM's homebrewed version of WBINVD-on-CPU, so this
-> one at least would need to export the symbol for "kvm" as well.
-
-Ah, sure. At the same time, cpumask_of(cpu) is very cheap.
-
+Cheers,
+Longman
 
 
