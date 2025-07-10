@@ -1,140 +1,165 @@
-Return-Path: <linux-kernel+bounces-725778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1ACB003DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:41:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394F5B003D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA7E3B3D82
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:39:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 141EA1C80744
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D212A25B1D8;
-	Thu, 10 Jul 2025 13:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A3025A2BC;
+	Thu, 10 Jul 2025 13:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O27mFJl4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J6kWbWwh"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313A725A35F;
-	Thu, 10 Jul 2025 13:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA2D85C5E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752154757; cv=none; b=mcShnlSDuTRaAIZCLzamNZqDgktrgPLYMIucTTxQu6/fRrJW6cJK51dVcgtrZE3Qy4ns92fE2slZeItrgRK1WcRZjHRTlIEeIXsbGgjfgjihuaU8fF8I/Y7hVu0W0t1RBm75n0zYwPfo19b/iJWm2YenUyAxn+bIr/VsFlFU1C0=
+	t=1752154817; cv=none; b=WE/K3GQdvT0Tm7z0eHOK/eyvBAoIdJ+uoqTjLrbjNRXv5x94J6NE3FFbZ6JSrdUDD2zZiVM0nwAi83Ptla5HJOvREZGjfjQfd5z7qiPK2oiuAdFGG5738m6JFxMrcyXu5Cbqn1iFoQvYrYR43nvghjHgwYqFN4ABTWhWawD472E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752154757; c=relaxed/simple;
-	bh=YQdwk+nwrhWvKLulB1RJTKIbZBtmKge6faGHHd32MDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a7SOvcHgQ+fky/urrQPOLuJoAbYGDFIssLMJGasnKMe76Kb+oXu4I2ry8lfF2NZ4HVEz6B/u1fsirNgxjMku4n9XuVYi8f6WyQr5DFK8Bt9Y/bMk0fXmZ0mHgn1MFQVo8wAuVdmWUXb0UaYkrUWf14qchdJjbfuZ09FBrtEcXOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O27mFJl4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AC4FC4CEF5;
-	Thu, 10 Jul 2025 13:39:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752154754;
-	bh=YQdwk+nwrhWvKLulB1RJTKIbZBtmKge6faGHHd32MDA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O27mFJl4N/biYMr4XukfOgHtWuAJqWiwYbAWrGNsWEcu5rHq85gKAH2Z518h3yk5k
-	 7SbWdO4x/oLJXJB2tJrVYJv7DU+NT4WQfCb0bdLzvsizq4rQkoC5oZA8glMTF+tyKc
-	 /3aneAY7NTTjw2wtfWHHKL9TqnwnXx7exlGs2M6+v9oHAq8wGWK2aTESatzrmoC3oy
-	 7JZmoZMtA0kN9Xxrn5zL06XCQBppIXYE7tjr550PbG/bVj+PWMBBqXnk7C7AM0WW+o
-	 kHjTu1Mp6nyL6YUOyin/kSUdWME6k6INsWwiLN07AZB8WvWzENVE+9M8goVeNan5fg
-	 Qy8H+V5h0DVIw==
-Message-ID: <6656b2f0-5258-4f23-8988-567a7b598497@kernel.org>
-Date: Thu, 10 Jul 2025 15:39:10 +0200
+	s=arc-20240116; t=1752154817; c=relaxed/simple;
+	bh=L8NAxkisOrUvB5X45MszjRrn1WdpFGJZaTdDegwtsNA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d0PocL+3g1tLCNSAd3xVT+usHN+dg2ADDl/RAUC5wQFPSdXljGgfn4NT39yd1E0eKvq/uuZtmprqoSwgMhwD/AEp2KWpMBOAcGT92yZqKAR0nlLQe/H7JufSijWPQyp8yy4h3NLFLjLQ7t6FNCMbD+nYFGnhJAJRYZmXkd/cpwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J6kWbWwh; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4530921461aso6646015e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:40:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752154814; x=1752759614; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4gK8SxTWD7UWQltVg6xSQeiZZywuBSSmhBPrVCrZSpc=;
+        b=J6kWbWwhktu0zn0rmqPAT+d9t4PWigrqg4hIj2hrJUjrjk7ZqZXDXHaMBOg4y8hmUo
+         wn7n8hxlyD73imVFAO9m3vdk6TtMd766+zqCYYyPX5/t0TVsZLy3VQRzBD29pe/4Ibm/
+         M92I/QT+pw8NZhmIknNOn1u2rYAo+8Yz0GjyfGliuTeh4IFo6+LfVgWuRuH0/3nrGGFR
+         DR3bhpB52lFRSWRVUlLEd4AWzkdrvGXHaORqu0ucsX5caWKWvD2QH2w8OK5iUPZDNuK6
+         YQOOWjl72+gLSg2i5NW7WNqQZR/BMgJ3YTLdynYxGMVX85awrRbsK02ioAfDCj86lqCx
+         RkoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752154814; x=1752759614;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4gK8SxTWD7UWQltVg6xSQeiZZywuBSSmhBPrVCrZSpc=;
+        b=qZoG08URRv3eXz7ytTFR/Mw9DQQF6Hs623umUDfxRRmPwQj2XLinFlgfmGcOzLNHhL
+         GSLvtTgmzBqNFHPKuGixbbwau+D2seTuNzonY+5XZbMD1b9VKomI/fo3vJ4p0y6NuLdJ
+         q9qTD90LUbZit0RMtM5xZqyQi4en3CKdw0Zba+JpwYWWgVW9M8L4xtKeFizP4+k7B8hF
+         gaQe3ZIRd93YxYTS6MIG8LgpK+bIwleKSZsEiyp4J88yGUG3iPIyBYPCKIX/Q06HYgea
+         2+4aeRq4yqYtyaiYtcuWOr6bgdwIpRj8+0jlTGp56B0axnrPCH4NZy9zqkQqzmAsaDds
+         MA0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUrhm+si7Pd9GQy4Inv/pR9dncIBquskVGN7mc3iwK5w3RBr0miHtF5UpzUNaUHYvXJV28fOovrVxcQ8DM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnlP+u9MtzL1ciLPxhXfnpH/3oB1Ei5ryYjFh19MvAZ8+3LNeV
+	PgVNj0eecomZ28SmRahHMTUmH6xq33Cix2oTydUpa5ignsP/SxEmSw+E1pwXj9pQLmUzw4ITAtS
+	JpefYQaBgs8OlBIiwsaX4HOyenLD86a2bwpHJspTj
+X-Gm-Gg: ASbGncsTc7GzogTNoUZOhR1S5sSfvBflh/u++HP2qEyE8uViZTo0l58k4CJEgwm9PCI
+	PfKQGXIW3Vh02pwYMjSCVhu4czvNxOR42x7MXpSZuNlTxq68+bZfOWGFKU3vHI46HcL7mhe0zR7
+	SBK0QkrAiBtbnb96zSrlLF6jvBSqWss//ZptFs/0KaaRhKa983dFXwmQBLytz4NO/B4EUdkIlT7
+	A==
+X-Google-Smtp-Source: AGHT+IHWb1Xq0/Oarnazs9jnrq9g3D/RI7LYjXDzHlYykaJcgX83KF6n4sioYqT/vG6R3lN9oMhfwlrmUvLkIfVqi5w=
+X-Received: by 2002:a05:6000:220d:b0:3a4:ed10:c14 with SMTP id
+ ffacd0b85a97d-3b5e44e94damr5777078f8f.14.1752154813861; Thu, 10 Jul 2025
+ 06:40:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: ti: Add bindings for Variscite
- VAR-SOM-AM62P
-To: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
-References: <20250709220714.85697-1-stefano.radaelli21@gmail.com>
- <20250709220714.85697-2-stefano.radaelli21@gmail.com>
- <9b503f65-5c8c-4f04-a1b1-40d7a1202e8b@kernel.org>
- <CAK+owohgk3CkQRv_PBDWXh44X2uN3p8FWBU2t9VtmO-xzOKTow@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAK+owohgk3CkQRv_PBDWXh44X2uN3p8FWBU2t9VtmO-xzOKTow@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250704-topics-tyr-platform_iomem-v12-0-1d3d4bd8207d@collabora.com>
+ <20250704-topics-tyr-platform_iomem-v12-1-1d3d4bd8207d@collabora.com>
+ <aGt6CZAUeuK0XnmP@google.com> <D7735793-D99E-44D4-945C-2AC0B500E1F9@collabora.com>
+In-Reply-To: <D7735793-D99E-44D4-945C-2AC0B500E1F9@collabora.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 10 Jul 2025 15:40:01 +0200
+X-Gm-Features: Ac12FXx_E1R9f789vX3XKeepzt_E4gBqlYxHx9ZWW5DK1vZvG_UyCpsA_of1z9Y
+Message-ID: <CAH5fLghe0-s2SQ+_cwNmagw8depC+=6kUwUm_epLFz30k9gQJw@mail.gmail.com>
+Subject: Re: [PATCH v12 1/3] rust: io: add resource abstraction
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Ying Huang <huang.ying.caritas@gmail.com>, Benno Lossin <lossin@kernel.org>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Fiona Behrens <me@kloenk.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/07/2025 11:21, Stefano Radaelli wrote:
-> Hi Krzysztof,
-> 
-> Thank you for your suggestion. Actually, our compatible strings for
-> Variscite SOMs follow the format "som-factor"-"processor". Here are
-> some examples:
+On Thu, Jul 10, 2025 at 3:34=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+> [=E2=80=A6]
+>
+> >
+> >> +    }
+> >> +
+> >> +    /// Returns the name of the resource.
+> >> +    pub fn name(&self) -> &'static CStr {
+> >> +        let inner =3D self.0.get();
+> >> +        // SAFETY: safe as per the invariants of `Resource`
+> >> +        unsafe { CStr::from_char_ptr((*inner).name) }
+> >> +    }
+> >> +
+> >> +    /// Returns the flags associated with the resource.
+> >> +    pub fn flags(&self) -> Flags {
+> >> +        let inner =3D self.0.get();
+> >> +        // SAFETY: safe as per the invariants of `Resource`
+> >> +        let flags =3D unsafe { *inner }.flags;
+> >> +
+> >> +        Flags(flags)
+> >> +    }
+> >> +}
+> >> +
+> >> +// SAFETY: `Resource` only holds a pointer to a C `struct resource`, =
+which is
+> >> +// safe to be used from any thread.
+> >> +unsafe impl Send for Resource {}
+> >> +
+> >> +// SAFETY: `Resource` only holds a pointer to a C `struct resource`, =
+references
+> >> +// to which are safe to be used from any thread.
+> >> +unsafe impl Sync for Resource {}
+> >> +
+> >> +/// Resource flags as stored in the C `struct resource::flags` field.
+> >> +///
+> >> +/// They can be combined with the operators `|`, `&`, and `!`.
+> >> +///
+> >> +/// Values can be used from the [`flags`] module.
+> >> +#[derive(Clone, Copy, PartialEq)]
+> >> +pub struct Flags(usize);
+> >
+> > Based on usage it looks like the correct type is c_int?
+>
+> Shouldn=E2=80=99t this be c_ulong because of:
+>
+> #[repr(C)]
+> #[derive(Copy, Clone)]
+> pub struct resource {
+>     pub start: resource_size_t,
+>     pub end: resource_size_t,
+>     pub name: *const ffi::c_char,
+>     pub flags: ffi::c_ulong, <=E2=80=94=E2=80=94
+>
+> In any case, we will have to cast this because __request_region
+> expects c_int.
 
-Then why do you define it reversed here? How this som-factor-processor
-is an argument to my request to use som-factor-processor?
+I saw that you called a C function that expects an int, so that's why
+I suggested c_int. It sounds like the cast from int to long happens in
+C code.
 
-> 
-> https://github.com/varigit/linux-imx/blob/lf-6.6.y_6.6.52-2.2.0_var01/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi#L14
-> https://github.com/varigit/linux-imx/blob/lf-6.6.y_6.6.52-2.2.0_var01/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi#L15
-> https://github.com/varigit/linux-imx/blob/lf-6.6.y_6.6.52-2.2.0_var01/arch/arm64/boot/dts/freescale/imx91-var-som.dtsi#L14
-> 
-> These strings are used in our Yocto filesystem for WiFi management and
-> other applications. Changing them would require updating the entire
-
-I did not ask about these. We talk here about this compatible.
-
-I asked to reply with mailing list style already. Why are you still
-top-posting? It makes the discussion difficult.
-
-https://people.kernel.org/tglx/notes-about-netiquette
-
-Best regards,
-Krzysztof
+Alice
 
