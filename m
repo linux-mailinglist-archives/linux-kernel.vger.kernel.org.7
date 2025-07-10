@@ -1,148 +1,130 @@
-Return-Path: <linux-kernel+bounces-725388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643FCAFFE60
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:45:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1617AFFE67
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBD001C478B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:45:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C36F7AA9FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890502D3EFA;
-	Thu, 10 Jul 2025 09:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ilvw/Kq2"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A302D3EE6;
+	Thu, 10 Jul 2025 09:48:15 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90F32D3EF2
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F094A11
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752140732; cv=none; b=K7n2Uc0Fe+hAkZAvbHCV6OzYKyBOEbrGxBckDy162rkZb4ln1blh2SP1x0sfvUJMXFNEeHL5tLdrdJJTAMVejywmRwG/CH+blkudcB+kQe8AFiUXh8A0+Q+qYKT0E6LI1IbwNP7MgbXXdRa6G1w52wnErRoyURRJkNqxtUqbdPs=
+	t=1752140895; cv=none; b=eYl6ezAB/cHyLBrPTnwI2Xoy4h9AP0P70S7PRDJmVaJcpFDHPXBpwhOCuVrbBjxCP3zrIp+41shNbLZXBXi9NPfUA+nwYJ1NCgJpdAnkwBrL8uBiLKW2L95oFUYt4GBAWlddqc0c8Ts5IdFvBi7rbijWK4TzKzZcg5LjvxDtvmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752140732; c=relaxed/simple;
-	bh=jI0GefvLDgyok15RPtWD7r0VwqOF6uQ/z21DklGjcdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNklDbTy2pO6vtOoXQvaYBrjxOPddWEq2RInjuPmezacN/fl06V34i+afYG6HAuz3tP3foVHl5YkZbb6FmXzpRAn5/whmnLDun3AcEjN3wbrrWMhuKjr2FzNYQLnw6NxFHJjrXTGqwCXiz29ABEo0Sn9aDJCYEZtuC48qITPNYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ilvw/Kq2; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kbi8tLbzlnqoS7NfZB8+kIUzeUcyBTEOKDo96fgsRsU=; b=Ilvw/Kq2/J+qSdbnFsqx/FuIVz
-	Wpx7HWhpXgwgG9zYA7KHp0v/Qm/lSGiH5BCdFFyLScF2mi9SePrOudr/Kf08jRAkTEngMUhVgsMwW
-	0ypzQA1ciIo2oaPNmUOrECUVabgWQxKTnVRWjhR24liOH00Dld8oUMUtDbzCyYAs64nX01x+pbMfE
-	JHwRLlWh1pev2IHBiZB0xTr0QvedtpzNQaP6NMxG3RUIbOZk2D1KWAlsL8Lv4gg4z5H2c6kSYhfNn
-	KFYlWvIWN4MY41wC3kqZnE9BEi13Js4SK35zSbZ+q1jy/QBCCm160hre5QtwLostVS+Nd00JMNRPw
-	r//4YvaA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZnq0-00000008NFt-1CGm;
-	Thu, 10 Jul 2025 09:45:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A45B930023C; Thu, 10 Jul 2025 11:45:06 +0200 (CEST)
-Date: Thu, 10 Jul 2025 11:45:06 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	s=arc-20240116; t=1752140895; c=relaxed/simple;
+	bh=8phDT5YA/a738bEXBdlgsTC51YFW6lESbrOXS249ORo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qliUaJu1IUhFQp6Qq4lE3w2yQqcMJEfMb8frpRdAQ3udnB0BeLAuuSezHzo0OE+dJgch62obLsEwlUONQcHR4gqDK2Rx4+xl49euld9FsfbtX87Y5sfnNDiD+OVgItVdbjxIwQrtbyZEr6A3F+vI4awDM1/s3yJB3K0lxSdt0+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: f996335c5d7211f0b29709d653e92f7d-20250710
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:e7861746-8528-422b-82f7-0c3d84f5eabc,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:6493067,CLOUDID:4a2c22048aca1bf6e2d16bcdf8bfa9a8,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:1,IP:nil,URL
+	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
+	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: f996335c5d7211f0b29709d653e92f7d-20250710
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 817012073; Thu, 10 Jul 2025 17:48:04 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 1CD7FE008FA3;
+	Thu, 10 Jul 2025 17:48:04 +0800 (CST)
+X-ns-mid: postfix-686F8C53-892298845
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 19C17E008FA2;
+	Thu, 10 Jul 2025 17:47:52 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Juri Lelli <juri.lelli@redhat.com>,
 	Vincent Guittot <vincent.guittot@linaro.org>,
 	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
-	kernel-team@android.com
-Subject: Re: [RESEND][PATCH v18 5/8] sched: Fix runtime accounting w/ split
- exec & sched contexts
-Message-ID: <20250710094506.GH1613376@noisy.programming.kicks-ass.net>
-References: <20250707204409.1028494-1-jstultz@google.com>
- <20250707204409.1028494-6-jstultz@google.com>
+	Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Vitalii Bursov <vitaly@bursov.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>,
+	Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v1] sched/debug: Only print util_est when UTIL_EST feature is enabled
+Date: Thu, 10 Jul 2025 17:47:08 +0800
+Message-Id: <20250710094708.15443-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707204409.1028494-6-jstultz@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 07, 2025 at 08:43:52PM +0000, John Stultz wrote:
+The /proc/{PID}/sched interface currently prints the util_est field
+regardless of whether the UTIL_EST scheduling feature is enabled or not.
+This can lead to confusion, as the value may not be meaningful when
+UTIL_EST is disabled.
 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index edcc7d59ecc3b..c34e0891193a7 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -1143,30 +1143,40 @@ static void update_tg_load_avg(struct cfs_rq *cfs_rq)
->  }
->  #endif /* CONFIG_SMP */
->  
-> +static s64 update_se(struct rq *rq, struct sched_entity *se)
->  {
->  	u64 now = rq_clock_task(rq);
->  	s64 delta_exec;
->  
-> +	delta_exec = now - se->exec_start;
->  	if (unlikely(delta_exec <= 0))
->  		return delta_exec;
->  
-> +	se->exec_start = now;
-> +	if (entity_is_task(se)) {
-> +		struct task_struct *donor = task_of(se);
-> +		struct task_struct *running = rq->curr;
-> +		/*
-> +		 * If se is a task, we account the time against the running
-> +		 * task, as w/ proxy-exec they may not be the same.
-> +		 */
-> +		running->se.exec_start = now;
-> +		running->se.sum_exec_runtime += delta_exec;
->  
-> +		trace_sched_stat_runtime(running, delta_exec);
-> +		account_group_exec_runtime(running, delta_exec);
->  
-> +		/* cgroup time is always accounted against the donor */
-> +		cgroup_account_cputime(donor, delta_exec);
-> +	} else {
-> +		/* If not task, account the time against donor se  */
-> +		se->sum_exec_runtime += delta_exec;
->  	}
+This patch makes the util_est field only appear when the UTIL_EST feature
+is enabled via sched_feat. This avoids printing misleading or unused data=
+.
 
-Bah.. this is all terrible :-) But yeah, I suppose this wil do.
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+---
+ kernel/sched/debug.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
->  
->  	if (schedstat_enabled()) {
->  		struct sched_statistics *stats;
->  
-> +		stats = __schedstats_from_se(se);
->  		__schedstat_set(stats->exec_max,
->  				max(delta_exec, stats->exec_max));
->  	}
-> @@ -1213,7 +1223,7 @@ s64 update_curr_common(struct rq *rq)
->  {
->  	struct task_struct *donor = rq->donor;
->  
-> +	return update_se(rq, &donor->se);
->  }
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 9d71baf08075..a71ccb851e49 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -861,8 +861,9 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct=
+ cfs_rq *cfs_rq)
+ 			cfs_rq->avg.runnable_avg);
+ 	SEQ_printf(m, "  .%-30s: %lu\n", "util_avg",
+ 			cfs_rq->avg.util_avg);
+-	SEQ_printf(m, "  .%-30s: %u\n", "util_est",
+-			cfs_rq->avg.util_est);
++	if (sched_feat(UTIL_EST))
++		SEQ_printf(m, "  .%-30s: %u\n", "util_est",
++			   cfs_rq->avg.util_est);
+ 	SEQ_printf(m, "  .%-30s: %ld\n", "removed.load_avg",
+ 			cfs_rq->removed.load_avg);
+ 	SEQ_printf(m, "  .%-30s: %ld\n", "removed.util_avg",
+@@ -1259,7 +1260,8 @@ void proc_sched_show_task(struct task_struct *p, st=
+ruct pid_namespace *ns,
+ 	P(se.avg.runnable_avg);
+ 	P(se.avg.util_avg);
+ 	P(se.avg.last_update_time);
+-	PM(se.avg.util_est, ~UTIL_AVG_UNCHANGED);
++	if (sched_feat(UTIL_EST))
++		PM(se.avg.util_est, ~UTIL_AVG_UNCHANGED);
+ #endif
+ #ifdef CONFIG_UCLAMP_TASK
+ 	__PS("uclamp.min", p->uclamp_req[UCLAMP_MIN].value);
+--=20
+2.25.1
 
-At this point this might as well read:
-
-	return update_se(rq, &rq->donor->se);
 
