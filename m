@@ -1,199 +1,137 @@
-Return-Path: <linux-kernel+bounces-725705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C73AB002A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4384B002A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 081F81688E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:56:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2337A5C280C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C12B2E8DF4;
-	Thu, 10 Jul 2025 12:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211862E7BB8;
+	Thu, 10 Jul 2025 12:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oBA2Wetp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DfG/+dFi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B123A2D0C93;
-	Thu, 10 Jul 2025 12:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E342E7628;
+	Thu, 10 Jul 2025 12:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752152103; cv=none; b=FNivY7LS65pIPUvNJ2Yep2QlBoU7g0DyLLi/kz0O9dRLzRNQk6RbZo8ohGeVcNaoBMVw0uhwTuDlPOySdy1Hp3d6iVG+MlN6nSOV6TL8UFzaUQw49DfBMTRlkMJKdResiFMnFq0x76+cnUiOtbjgKToXIgSkNa7ffYOcQU+CRJU=
+	t=1752152096; cv=none; b=SbOdwf/6f7ygqXBuDngVUjRqYAD1w/n8aow4K4ioTN7+vBnh8zt2sp75fMXm3dzDV/tYBR6wZTpaVIcqZ3UwXaFm+UHpgGEPB82zeF2twuiX4dVXCcWnrSV3WEfbQ0N6ztF4gf9pMbaJduKM9z93E2jpWBkDONgYB16t4kT/zTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752152103; c=relaxed/simple;
-	bh=jwQeQF43fuuFdeU+odOP0p6i6/kacIOeRK9joESZCeg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=foc3FuN9gcNFGMV8UV10MFTXD6ZX+luxSLArP7Q3i+/Gox430oIc2IZM7ZMSznWHbyg8pTtVoaQSvEa2asjW2GZetiTFOJgoYK7rnMJVqMVTCcQyzbuO3Ln2pYQqHF3O7nVwj/0nC8e/BswJzqvZ/KeTD5d9sf/jXGq10ECfIDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oBA2Wetp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57207C4CEF5;
-	Thu, 10 Jul 2025 12:54:59 +0000 (UTC)
+	s=arc-20240116; t=1752152096; c=relaxed/simple;
+	bh=raFX8SlcSqJZTRjsPqPv+1TjVlveBcLkzcFU9rKCBM4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rc9Zo5lutEAJAXlG1ydgQ6mHRBTEy9sf2P7Q1KMPJ39Bjhabj3O0HJ4o712ZEC0NuX3/SIDHhcl0GQo7dDLDk3qU+DqDAFJB4M17eZzdb6IxoQ2e6v5EtsbTxSH8vo+2j1MScuvmfRZ2VE9+grZYhCN6FkTGT5ufcdoaZ9Yxcfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DfG/+dFi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 020C2C4CEF6;
+	Thu, 10 Jul 2025 12:54:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752152103;
-	bh=jwQeQF43fuuFdeU+odOP0p6i6/kacIOeRK9joESZCeg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oBA2Wetpr16+LDKFoLQXJiVDzLOAX/z0FAw5a/wuBXi8RuvUdkfII8EyQ0mwGc6Us
-	 APtUUBTrM+CX0DxLjMUP1ZTcgXWc6ToHsHPHTf8LMwbwJ5Rzpbc5JyhvTn96i+i91H
-	 Dknn19XfFYBlOr4z2GSXBQ6WcmjBZD61RMVXF8QH7YjkWOYFB4xdL7w4IAip5vQWjL
-	 X5vfpOMvuF9lBdJVZoAOdr5ejeLhg9DmYK9wbxhWYgLW1iGE2iC7dofq3JYNy4+5Xh
-	 2iqqOwsxWsBKJ4/cw34xpIQ6K84wiAxHx5r/nlSuj/IIEf3zA7WuoB7N2luy3ebnUl
-	 9vIpwoQHvKSYQ==
-From: Philipp Stanner <phasta@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
-	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH v4 8/8] drm/nouveau: Remove waitque for sched teardown
-Date: Thu, 10 Jul 2025 14:54:12 +0200
-Message-ID: <20250710125412.128476-10-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250710125412.128476-2-phasta@kernel.org>
-References: <20250710125412.128476-2-phasta@kernel.org>
+	s=k20201202; t=1752152096;
+	bh=raFX8SlcSqJZTRjsPqPv+1TjVlveBcLkzcFU9rKCBM4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DfG/+dFiHFR8TCZX/fUqCaGBsEmiM3IOLNdqScJQMyB5Di4ZXcPkePmxO/teXYTOg
+	 UMwXVDTkpgbBT9Gah4l9qBfN/r2NM3fzBWNvMCK9/RyhYfKdL0p69yc3LqIryvfARr
+	 G8FXMqsbMAHDvhIioNVk75Te7MXy+hvaXkq4JpV/rKg4MA5Jt8CJ49if56R3XijDp2
+	 npUKv4P10RBIdDJ59YV6jpBFHjNioGLzsCghqtMqZg7GgiBy9zsT6f7oYhqjRoAR+t
+	 aeUf3ZhqYT96ekMqWBfHlevXkyidjqxx8TVOLmHfQ1RnhJo8fcol+b1Vsgmx8p/9TB
+	 wdmyV4FyQOaJg==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-613b02e8017so492711eaf.2;
+        Thu, 10 Jul 2025 05:54:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW+WyVPDQXSPT84/Zqvlx62HtKen5za2CwjRTVDq5w8ufmKZEU67gqvbF4hFUoPKNmEE5q+E5ouV+VL7uA=@vger.kernel.org, AJvYcCXOPG0vHyyvaedUepTDCUOp/KbQCU3htdUC1n1L1M6KQSwJQsUzrIbAgVgwSquoCVP2VW7z3pQWn1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySzDoeWdDl6elojiW7z2/u00pHd9c0w5GFxU9/gPCvg0/UoTf2
+	eYoyYYNTnxFYxoGOmUNrIc/M4MSEr2p5gbBCtAI/e5aRRDKZGNQxmpSst4olNS559FW9p6m4dZI
+	V5DFD0+aybHRgzbdbdEknMXk211yEnbw=
+X-Google-Smtp-Source: AGHT+IHWq9HVJsqGwxm6z6/YwzBqk1k/gGTYfaUT4CJDelvnmMJf2itXGJk6GEJ1oHnpseG5Oydg8MCEDVr8M4uphvI=
+X-Received: by 2002:a05:687c:20d1:b0:2d5:2955:aa6b with SMTP id
+ 586e51a60fabf-2fef848781cmr5349398fac.5.1752152095256; Thu, 10 Jul 2025
+ 05:54:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250604213908.27819-1-yury.norov@gmail.com> <CAJZ5v0h7CeO+vG4BVcdc=XxcWMRY+OmhrWxtrAS59T-uK1KDOw@mail.gmail.com>
+ <aGvoMhLuX0-zIFVk@yury> <CAJZ5v0gUdm_e6wfLP1aS+L7fe-JNOAWVNvNHLSYqtSydzm5bQg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gUdm_e6wfLP1aS+L7fe-JNOAWVNvNHLSYqtSydzm5bQg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 10 Jul 2025 14:54:44 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iLewzEFBZPOc2bTRFjS7LZYdzPr7cmRnFt7h5p2gg4hg@mail.gmail.com>
+X-Gm-Features: Ac12FXzrgfWu03VKezMYsx28idOTmzNYFIIVVWAhOnnv7j1QsWByyygSbjUuhhQ
+Message-ID: <CAJZ5v0iLewzEFBZPOc2bTRFjS7LZYdzPr7cmRnFt7h5p2gg4hg@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: dt: fix opencoded for_each_cpu() in idle_state_valid()
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-struct nouveau_sched contains a waitque needed to prevent
-drm_sched_fini() from being called while there are still jobs pending.
-Doing so so far would have caused memory leaks.
+On Mon, Jul 7, 2025 at 6:11=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
+> wrote:
+>
+> On Mon, Jul 7, 2025 at 5:31=E2=80=AFPM Yury Norov <yury.norov@gmail.com> =
+wrote:
+> >
+> > On Wed, Jul 02, 2025 at 08:27:21PM +0200, Rafael J. Wysocki wrote:
+> > > On Wed, Jun 4, 2025 at 11:39=E2=80=AFPM Yury Norov <yury.norov@gmail.=
+com> wrote:
+> > > >
+> > > > From: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+> > > >
+> > > > The function opencodes the for_each_cpu_from() by using an open for=
+-loop.
+> > > > Fix that in sake of readability.
+> > > >
+> > > > While there, drop the 'valid' variable as it's pretty useless here.
+> > > >
+> > > > Signed-off-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+> > > > ---
+> > > >  drivers/cpuidle/dt_idle_states.c | 14 +++++---------
+> > > >  1 file changed, 5 insertions(+), 9 deletions(-)
+> > > >
+> > > > diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_=
+idle_states.c
+> > > > index 97feb7d8fb23..558d49838990 100644
+> > > > --- a/drivers/cpuidle/dt_idle_states.c
+> > > > +++ b/drivers/cpuidle/dt_idle_states.c
+> > > > @@ -98,7 +98,6 @@ static bool idle_state_valid(struct device_node *=
+state_node, unsigned int idx,
+> > > >  {
+> > > >         int cpu;
+> > > >         struct device_node *cpu_node, *curr_state_node;
+> > > > -       bool valid =3D true;
+> > > >
+> > > >         /*
+> > > >          * Compare idle state phandles for index idx on all CPUs in=
+ the
+> > > > @@ -107,20 +106,17 @@ static bool idle_state_valid(struct device_no=
+de *state_node, unsigned int idx,
+> > > >          * retrieved from. If a mismatch is found bail out straight
+> > > >          * away since we certainly hit a firmware misconfiguration.
+> > > >          */
+> > > > -       for (cpu =3D cpumask_next(cpumask_first(cpumask), cpumask);
+> > > > -            cpu < nr_cpu_ids; cpu =3D cpumask_next(cpu, cpumask)) =
+{
+> > > > +       cpu =3D cpumask_first(cpumask) + 1;
+> > >
+> > > Doing
+> > >
+> > > cpu =3D cpumask_next(cpumask_first(cpumask), cpumask);
+> > >
+> > > here might save a few iterations for sparse cpumasks.
+> >
+> > For that it's better to use cpumask_nth(1).
+> >
+> > I believe there will be no benefit in calling cpumask_next() before
+> > entering the loop because for_each_cpu_from() is based on it, and it
+> > will be called anyways.
+>
+> Fair enough.
 
-With the new memleak-free mode of operation switched on in
-drm_sched_fini() by providing the callback nouveau_sched_cancel_job()
-the waitque is not necessary anymore.
-
-Remove the waitque.
-
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
-Acked-by: Danilo Krummrich <dakr@kernel.org>
----
- drivers/gpu/drm/nouveau/nouveau_sched.c | 20 +++++++-------------
- drivers/gpu/drm/nouveau/nouveau_sched.h |  9 +++------
- drivers/gpu/drm/nouveau/nouveau_uvmm.c  |  8 ++++----
- 3 files changed, 14 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
-index 2ec62059c351..7d9c3418e76b 100644
---- a/drivers/gpu/drm/nouveau/nouveau_sched.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
-@@ -122,11 +122,9 @@ nouveau_job_done(struct nouveau_job *job)
- {
- 	struct nouveau_sched *sched = job->sched;
- 
--	spin_lock(&sched->job.list.lock);
-+	spin_lock(&sched->job_list.lock);
- 	list_del(&job->entry);
--	spin_unlock(&sched->job.list.lock);
--
--	wake_up(&sched->job.wq);
-+	spin_unlock(&sched->job_list.lock);
- }
- 
- void
-@@ -307,9 +305,9 @@ nouveau_job_submit(struct nouveau_job *job)
- 	}
- 
- 	/* Submit was successful; add the job to the schedulers job list. */
--	spin_lock(&sched->job.list.lock);
--	list_add(&job->entry, &sched->job.list.head);
--	spin_unlock(&sched->job.list.lock);
-+	spin_lock(&sched->job_list.lock);
-+	list_add(&job->entry, &sched->job_list.head);
-+	spin_unlock(&sched->job_list.lock);
- 
- 	drm_sched_job_arm(&job->base);
- 	job->done_fence = dma_fence_get(&job->base.s_fence->finished);
-@@ -460,9 +458,8 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
- 		goto fail_sched;
- 
- 	mutex_init(&sched->mutex);
--	spin_lock_init(&sched->job.list.lock);
--	INIT_LIST_HEAD(&sched->job.list.head);
--	init_waitqueue_head(&sched->job.wq);
-+	spin_lock_init(&sched->job_list.lock);
-+	INIT_LIST_HEAD(&sched->job_list.head);
- 
- 	return 0;
- 
-@@ -502,9 +499,6 @@ nouveau_sched_fini(struct nouveau_sched *sched)
- 	struct drm_gpu_scheduler *drm_sched = &sched->base;
- 	struct drm_sched_entity *entity = &sched->entity;
- 
--	rmb(); /* for list_empty to work without lock */
--	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
--
- 	drm_sched_entity_fini(entity);
- 	drm_sched_fini(drm_sched);
- 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/drm/nouveau/nouveau_sched.h
-index 20cd1da8db73..b98c3f0bef30 100644
---- a/drivers/gpu/drm/nouveau/nouveau_sched.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
-@@ -103,12 +103,9 @@ struct nouveau_sched {
- 	struct mutex mutex;
- 
- 	struct {
--		struct {
--			struct list_head head;
--			spinlock_t lock;
--		} list;
--		struct wait_queue_head wq;
--	} job;
-+		struct list_head head;
-+		spinlock_t lock;
-+	} job_list;
- };
- 
- int nouveau_sched_create(struct nouveau_sched **psched, struct nouveau_drm *drm,
-diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-index 48f105239f42..ddfc46bc1b3e 100644
---- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-@@ -1019,8 +1019,8 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 	u64 end = addr + range;
- 
- again:
--	spin_lock(&sched->job.list.lock);
--	list_for_each_entry(__job, &sched->job.list.head, entry) {
-+	spin_lock(&sched->job_list.lock);
-+	list_for_each_entry(__job, &sched->job_list.head, entry) {
- 		struct nouveau_uvmm_bind_job *bind_job = to_uvmm_bind_job(__job);
- 
- 		list_for_each_op(op, &bind_job->ops) {
-@@ -1030,7 +1030,7 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 
- 				if (!(end <= op_addr || addr >= op_end)) {
- 					nouveau_uvmm_bind_job_get(bind_job);
--					spin_unlock(&sched->job.list.lock);
-+					spin_unlock(&sched->job_list.lock);
- 					wait_for_completion(&bind_job->complete);
- 					nouveau_uvmm_bind_job_put(bind_job);
- 					goto again;
-@@ -1038,7 +1038,7 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 			}
- 		}
- 	}
--	spin_unlock(&sched->job.list.lock);
-+	spin_unlock(&sched->job_list.lock);
- }
- 
- static int
--- 
-2.49.0
-
+And so applied as 6.17 material, thanks!
 
