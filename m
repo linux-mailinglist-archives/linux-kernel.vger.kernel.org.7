@@ -1,126 +1,116 @@
-Return-Path: <linux-kernel+bounces-726362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C133B00C5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:53:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4823B00C57
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44CCB1CA69F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95F99543ED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362F62FD87F;
-	Thu, 10 Jul 2025 19:53:09 +0000 (UTC)
-Received: from maynard.decadent.org.uk (maynard.decadent.org.uk [65.21.191.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0476A2FD866;
+	Thu, 10 Jul 2025 19:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jC12DlPS"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A1C2367CB;
-	Thu, 10 Jul 2025 19:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.191.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358B4156C6A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 19:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752177188; cv=none; b=aOmiXDYf8IeC7H3jO7n7Xv2D5uPefA1uylibsDdBdmMjY19YaIG10RWCPbWRGD7Tri9hrlRFYfQe6KeHIo7vPJICerD5asHe3FJJOND17vOUPRadLBKZBhxNpPrGQD/Jf5JYVLzdkhrjeqf3D+qsN7der+qEWuJ9a95R1WX5e2c=
+	t=1752177174; cv=none; b=jQ8MxfSWSRv/BRwwwf+CtcotFnC39re8KBGfxno4lSsKU9s9Up1qIemFltct+ic4xKWDEXYa6IwQ4vzcAISMKJMuXARbw7+o9ESsNKcivU//ZTRf1QckS1rTdFd0MOh+q2s8zFNgpn9I3MsPYqFKSTzIQuCP2yBWMxn88Tk1M/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752177188; c=relaxed/simple;
-	bh=lmWhfEqKI2hQcwc3PkrLX3XptMWojeEklCPmU+OgZf8=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=YFbko8ZGRJwQ3SgEutBBYsuURGJYIb66Y1Ial1IC2oqJUhDS2kl4xeL5K8OeSR7RWhRYFvHjpZ9U3wO/xeBqTt+RWnx4kdrWSEhjJnCq1m9Uds4+Lp2EG76Cf4F2p2F2+u6/imbjXFCNhhIw5iCTud2UxzL8/ibfUSNdL49rYIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk; spf=pass smtp.mailfrom=decadent.org.uk; arc=none smtp.client-ip=65.21.191.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=decadent.org.uk
-Received: from [89.234.162.240] (helo=deadeye)
-	by maynard with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ben@decadent.org.uk>)
-	id 1uZxJv-004sfF-0I;
-	Thu, 10 Jul 2025 19:52:39 +0000
-Received: from ben by deadeye with local (Exim 4.98.2)
-	(envelope-from <ben@decadent.org.uk>)
-	id 1uZxJu-0000000D93M-09gH;
-	Thu, 10 Jul 2025 21:52:38 +0200
-Message-ID: <3cbd9533b091576a62f597691ced375850d7464a.camel@decadent.org.uk>
-Subject: User-space watchdog timers vs suspend-to-idle
-From: Ben Hutchings <ben@decadent.org.uk>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
- "Rafael J. Wysocki"	 <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@ucw.cz>,  John Stultz <jstultz@google.com>, Thomas
- Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, 
-	1107785@bugs.debian.org
-Date: Thu, 10 Jul 2025 21:52:30 +0200
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-MyYK5Gp6ctxLfjUkNktP"
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1752177174; c=relaxed/simple;
+	bh=/wLTwaYmpWEQf35r+muqvSaa90gTEkHS8i9x3bwOT4w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lNpPhM5X0/E8Dqswlzi3eGoLzGblR9QlrMwqXVnzOOkyUUUzdOJ/vz6qp9FUg7pIJITqPu/oXdyfx00W2vm6eC+ZyosMwkYnEY5cSkBYdO8+blnu/A2PAP0GMMFH7+SIMqiIg5n1zXr7eS6ilzrXLLNba2uyvj2ZbeUx1xNtANo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jC12DlPS; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752177169;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VAJIzs1k5PJmMiuNehnBSG5JTWt8fBOFOIeN9czotfU=;
+	b=jC12DlPSbf3Yn+pxBPgxnL+wyHILCUV+EE9TL3COxCqI1wUi2kaypgoHn9nRR3zuKvdEVR
+	nQgYdpont0t9I4DL1l/+dQuZiN7deun1Y84Vt5krcNFA0HoCpvqonvB/orsGMPqx0bm3VH
+	+OHSaAYm+IawQQdgubAVLA52MF56a5M=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jan Kara <jack@suse.cz>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Liu Shixin <liushixin2@huawei.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>
+Subject: [PATCH] mm: consider disabling readahead if there are signs of thrashing
+Date: Thu, 10 Jul 2025 12:52:32 -0700
+Message-ID: <20250710195232.124790-1-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 89.234.162.240
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on maynard); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+We've noticed in production that under a very heavy memory pressure
+the readahead behavior becomes unstable causing spikes in memory
+pressure and CPU contention on zone locks.
 
---=-MyYK5Gp6ctxLfjUkNktP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The current mmap_miss heuristics considers minor pagefaults as a
+good reason to decrease mmap_miss and conditionally start async
+readahead. This creates a vicious cycle: asynchronous readahead
+loads more pages, which in turn causes more minor pagefaults.
+This problem is especially pronounced when multiple threads of
+an application fault on consecutive pages of an evicted executable,
+aggressively lowering the mmap_miss counter and preventing readahead
+from being disabled.
 
-Hi all,
+To improve the logic let's check for !uptodate and workingset
+folios in do_async_mmap_readahead(). The presence of such pages
+is a strong indicator of thrashing, which is also used by the
+delay accounting code, e.g. in folio_wait_bit_common(). So instead
+of decreasing mmap_miss and lower chances to disable readahead,
+let's do the opposite and bump it by MMAP_LOTSAMISS / 2.
 
-There seems to be a longstanding issue with the combination of user-
-space watchdog timers (using CLOCK_MONOTONIC) and suspend-to-idle.  This
-was reported at <https://bugzilla.kernel.org/show_bug.cgi?id=3D200595> and
-more recently at <https://bugs.debian.org/1107785>.
+Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Liu Shixin <liushixin2@huawei.com>
+Cc: linux-mm@kvack.org
+---
+ mm/filemap.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-During suspend-to-idle the system may be woken by interrupts and the
-CLOCK_MONOTONIC clock may tick while that happens, but no user-space
-tasks are allowed to run.  So when the system finally exits suspend, a
-watchdog timer based on CLOCK_MONOTONIC may expire immediately without
-the task being supervised ever having an opportunity to pet the
-watchdog.
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 0d0369fb5fa1..ec3f611c3320 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3324,6 +3324,17 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
+ 		return fpin;
+ 
+ 	mmap_miss = READ_ONCE(ra->mmap_miss);
++	if (unlikely(!folio_test_uptodate(folio) &&
++		     folio_test_workingset(folio))) {
++		/*
++		 * If there are signs of thrashing, take a big step
++		 * towards disabling readahead.
++		 */
++		mmap_miss += MMAP_LOTSAMISS / 2;
++		mmap_miss = min(mmap_miss, MMAP_LOTSAMISS * 10);
++		WRITE_ONCE(ra->mmap_miss, mmap_miss);
++		return fpin;
++	}
+ 	if (mmap_miss)
+ 		WRITE_ONCE(ra->mmap_miss, --mmap_miss);
+ 
+-- 
+2.50.0
 
-This seems like a hard problem to solve!
-
-By definition we cannot allow CLOCK_MONOTONIC to run backward, and I
-assume we do not want it to stop while interrupts are being handled.=20
-But could CLOCK_MONOTONIC be split into a CLOCK_MONOTONIC_KERNEL (may
-tick during suspend-to-idle) and CLOCK_MONOTONIC_USER (only ticks while
-user tasks can run), with user-space CLOCK_MONOTONIC being the latter?=20
-(I'm aware that adding yet another clock type would be a rather large
-job even if this is possible.)
-
-Until and unless that happens, is it possible to detect that
-CLOCK_MONOTONIC advanced during suspend-to-idle by reading e.g.
-/proc/schedtat?  If not, could the necessary information be exposed
-through one of the pseudo-filesystems?
-
-Ben.
-
---=20
-Ben Hutchings
-Never attribute to conspiracy what can adequately be explained
-by stupidity.
-
---=-MyYK5Gp6ctxLfjUkNktP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAmhwGf8ACgkQ57/I7JWG
-EQnjZg/6AmnBmhkdS1JVPYSVhh4z6maqizuIHgdKYG9Yf3oCKCfPGpQsW4KkVidJ
-ep8yu59Z8mkKnR6wl7KtBXgfSqboFH1kSqq+Wjt7xyAQSft4eAglZivahSwqeUF1
-SqFzjJjGy7KakttI4d1dOk4KUcKOEv2qeU5LmbcYqKODqy3VWThnxllek+Tt59+j
-iSGl7hCaFF88hsAqWj7cSQQN9k1x+LFF5EmyXx0l5w5NrGcvt+VKWSRbemjYCWns
-0mKcJ/6panhiG26Anx1LQsENVuSyOe1yn9WuHo6/HW1ziDrmYq5Q3BgVNRN7ZIwA
-n/DMKyIb6dHXV4x8xXEfuND9Qs9DUTXv85ZGbFOrAxtl8Rzr4iZ83vgCCb7GRj6z
-Y5xcT8so4orULKDlr9kDRiwYuh1d+q0uqohLkFCGtUVKNegbdfUsiNoCkiz2TO4X
-QIqPEo+MviT7E93EMYPUMO5KOuHQu1CXl+m0RABr3IQsSz5s/Bh2y7z+Y3+a4PJS
-Fjg/2BUde77EDxMs4hoFWlasqeA8DJak6MOYEZwuNHar27Vb/vZjuv+zMmsYUBxl
-dSICWHHdpR/v7bY+wZFJqVpmUddQCRE6x6LPKgXRvuXrbsuAzHQb82A3bEWw5S7G
-UNp6wG8EN3q9RwedoopipS8HFRuhQjhg/wN9l2Kl8qHAzCT0XgA=
-=xEYp
------END PGP SIGNATURE-----
-
---=-MyYK5Gp6ctxLfjUkNktP--
 
