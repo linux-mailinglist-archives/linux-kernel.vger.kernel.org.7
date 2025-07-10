@@ -1,152 +1,84 @@
-Return-Path: <linux-kernel+bounces-725381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211B4AFFE4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:37:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9B31AFFE50
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A93F1487A79
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:37:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 143BB7B4245
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA1B2D3ED6;
-	Thu, 10 Jul 2025 09:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65CA2D3ED1;
+	Thu, 10 Jul 2025 09:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CH52Xy5y"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562D42D1309;
-	Thu, 10 Jul 2025 09:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcgQ97ug"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C642980D0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752140264; cv=none; b=Rr9StH4o9QkpKM8+aVUXQayiZ/gd7n7dGZl+6+n1kAWX5lGcyazNMkZkD5JsVDtWYwZZ4YsCJzscKhLR1f6OaQAQdQvR5xqeg65YbL5S/bn8jxr0Z7V8ls6M/fnh6/D5HAn7a1D2maieY5HsXDNBVnmjVG2Mcbvnms6MpyjN1ek=
+	t=1752140349; cv=none; b=gRkC5PQvfJvYxkfEC2Q9WVkgAovAnP8p5cfM5mWZe6eCBvD6zDg7M/PhX91VwZKNX7mNXUSrds4jH67KAOYaxu+mdgUdJUt0BL+oA554HOyNYf6eIYMkId6OU73xVlTbEpKtv5BTMk11anex/I0qJX6hC5m/F3zvS9IdKRey8lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752140264; c=relaxed/simple;
-	bh=GCE5k+YQR/5eNiQlBvdGbClo3ykHQFhNBsfvStwteV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oob8mXE9Qo7eZfCEyVuP3zDFCeqEvWB14L0utTq4SvSr1mMEK6VUWPH0lrqP9OUDiMNxEyZi8ZdROJ5H4dt4bhdELKExZT3Eu4br9dDSj/7Ycy5kgKTQ1b8skvb3QAI+rlO2UDQW1nBQCw9sr/INrv8VfO2ik6BBFIAO+FRwUT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CH52Xy5y; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from localhost (unknown [167.220.232.230])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 89CB52114272;
-	Thu, 10 Jul 2025 02:37:42 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 89CB52114272
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1752140262;
-	bh=JwvRKIYROeUTh8dX1wKUC6vvARW8AM+fGIcrRyqwLJ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CH52Xy5yQFHy/yBi7WPoM4H4/PyiCIduwnozeUzKw0fXxhwiN5vMMsgav6i3JiQYd
-	 IO+xAcdmq+W5q4tMOjflA67e8+PMLyfNINyAFgtFmRYhHsIhU5QfRuqT2yphcJSIDC
-	 X+QrnnPr4Wp93filDhdZ8USpUfZfL1sIoupi78pE=
-Date: Thu, 10 Jul 2025 17:37:40 +0800
-From: Yu Zhang <zhangyu1@linux.microsoft.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Jason Gunthorpe <jgg@nvidia.com>, Jann Horn <jannh@google.com>, 
-	Vasant Hegde <vasant.hegde@amd.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
-	Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Uladzislau Rezki <urezki@gmail.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, 
-	Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>, 
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "security@kernel.org" <security@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-Message-ID: <7zpxrs7wgnflfc6eypf5ngrncztvqzp4rriedahmzyehpkeikd@5mbhgvqctqmh>
-References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
- <BN9PR11MB52765F651EBE0988E35E15FF8C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <w3xhahute7xeci2swawsaaet5frxc3cacufsawok6hzkeklzo5@jzvkcpwp46lx>
- <BN9PR11MB5276F8759367004AD36F6DA88C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1752140349; c=relaxed/simple;
+	bh=s094nnHI8Ya6ISRwM2Ef/UymmN9TAegq8YURS8gtBO4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=P0xEDzPaS3bk2TZhRvezEnYLCOLDkDFDwoGBusKz7D2sRasAnYv7XhsUM05uqRJxL8zBOVwBod7/NlQ++LnIau38TEa0HG/kaijZ92ZifkCCNpC/ox1PCgio09ErRB2iRuNLQ4R4A9jwNpHJ6YAGF2cO3aMFDbDzLN8EY1fomko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcgQ97ug; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D04E4C4CEE3;
+	Thu, 10 Jul 2025 09:39:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752140348;
+	bh=s094nnHI8Ya6ISRwM2Ef/UymmN9TAegq8YURS8gtBO4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=pcgQ97ugxwFP4GGpXlZYc0BCPdVElEEfwL4Gi4zxpOZdrvMOvJpIdIq1UPgJAmzxk
+	 t2ENz4Bwq060F1gsSI63RbiDySPeTR91ay64ob8E0pcMRwUNe1s6+OQ2BPq0SyuhoN
+	 6scPGA9HD/GRq+NxfNDD9C+rckqTkG+3ff2PKZRSBpJdVU56I4tgULKLhQzKnMseZB
+	 i3cvJcGvWUSFDWiIjGo85plPlZnt2bEexAp/XK+wpvZmOLuFaydebIygrWC3X7135e
+	 efPBfCzbDHiLRNQb3XmyE3BrtH7iWMMUmuBkHRJz62ScOZBX3BCAx/WjRElMQ+Chz3
+	 cHaSQSLPAQrAw==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Yassine Oudjana <y.oudjana@protonmail.com>, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
+ Fabien Parent <fparent@baylibre.com>, 
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org
+In-Reply-To: <r4k3pgd3ew3ypne7ernxuzwgniiyvzosbce4cfajbcu7equblt@yato35tjb3lw>
+References: <r4k3pgd3ew3ypne7ernxuzwgniiyvzosbce4cfajbcu7equblt@yato35tjb3lw>
+Subject: Re: (subset) [PATCH] MFD: mt6397: do not use generic name for
+ keypad sub-devices
+Message-Id: <175214034660.1450853.10120775474738135399.b4-ty@kernel.org>
+Date: Thu, 10 Jul 2025 10:39:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB5276F8759367004AD36F6DA88C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-On Thu, Jul 10, 2025 at 08:15:27AM +0000, Tian, Kevin wrote:
-> > From: Yu Zhang <zhangyu1@linux.microsoft.com>
-> > Sent: Thursday, July 10, 2025 4:11 PM
-> > 
-> > On Thu, Jul 10, 2025 at 03:02:07AM +0000, Tian, Kevin wrote:
-> > > > From: Lu Baolu <baolu.lu@linux.intel.com>
-> > > > Sent: Wednesday, July 9, 2025 2:28 PM
-> > > >
-> > > > The vmalloc() and vfree() functions manage virtually contiguous, but not
-> > > > necessarily physically contiguous, kernel memory regions. When vfree()
-> > > > unmaps such a region, it tears down the associated kernel page table
-> > > > entries and frees the physical pages.
-> > > >
-> > > > In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU
-> > > > hardware
-> > > > shares and walks the CPU's page tables. Architectures like x86 share
-> > > > static kernel address mappings across all user page tables, allowing the
-> > >
-> > > I'd remove 'static'
-> > >
-> > > > IOMMU to access the kernel portion of these tables.
-> > > >
-> > > > Modern IOMMUs often cache page table entries to optimize walk
-> > > > performance,
-> > > > even for intermediate page table levels. If kernel page table mappings are
-> > > > changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
-> > > > entries, Use-After-Free (UAF) vulnerability condition arises. If these
-> > > > freed page table pages are reallocated for a different purpose, potentially
-> > > > by an attacker, the IOMMU could misinterpret the new data as valid page
-> > > > table entries. This allows the IOMMU to walk into attacker-controlled
-> > > > memory, leading to arbitrary physical memory DMA access or privilege
-> > > > escalation.
-> > >
-> > > this lacks of a background that currently the iommu driver is notified
-> > > only for changes of user VA mappings, so the IOMMU's internal caches
-> > > may retain stale entries for kernel VA.
-> > >
-> > > >
-> > > > To mitigate this, introduce a new iommu interface to flush IOMMU caches
-> > > > and fence pending page table walks when kernel page mappings are
-> > updated.
-> > > > This interface should be invoked from architecture-specific code that
-> > > > manages combined user and kernel page tables.
-> > >
-> > > this also needs some words about the fact that new flushes are triggered
-> > > not just for freeing page tables.
-> > >
-> > Thank you, Kevin. A question about the background of this issue:
-> > 
-> > My understanding of the attacking scenario is, a malicious user application
-> > could initiate DMAs to some vmalloced address, causing the paging structure
-> > cache being loaded and then possibly being used after that paging structure
-> > is freed(may be allocated to some other users later).
-> > 
-> > If that is the case, only when the paging structures are freed, do we need
-> > to do the flush. I mean, the IOTLB entries may not be loaded at all when the
-> > permission check failes. Did I miss anything? :)
-> > 
+On Mon, 30 Jun 2025 16:01:06 -0700, Dmitry Torokhov wrote:
+> Do not use "mtk-pmic-keys" when creating sub-device for the keypad to
+> make sure the keypad driver will only bind to the sub-device if it has
+> support for the variant/has matching compatible.
 > 
-> It's about the paging structure cache instead of IOTLB.
-> 
-> You may look at the discussion in v1 for more background, especially
-> the latest reply from Baolu about a detailed example:
-> 
-> https://lore.kernel.org/linux-iommu/2080aaea-0d6e-418e-8391-ddac9b39c109@linux.intel.com/
 > 
 
-Thank you, Kevin. This really helps.
+Applied, thanks!
 
-And by pointing out "this also needs some words about the fact that new
-flushes are triggered not just for freeing page tables". Do you mean this
-fix is not an optimal one, because iommu_sva_invalidate_kva_range() is
-triggered for each unmapping of the vmalloced address?
+[1/1] MFD: mt6397: do not use generic name for keypad sub-devices
+      commit: aea2ceab5917b72d37a2b2008e9e2489877737a9
 
-Do we have any choice, e.g., to not trigger the flush e.g., when the page
-table(or directory etc.) is not freed? 
-
-B.R.
-Yu
-
+--
+Lee Jones [李琼斯]
 
 
