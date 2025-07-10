@@ -1,221 +1,170 @@
-Return-Path: <linux-kernel+bounces-726293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B92B00B2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:12:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3DD5B00B31
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD15A1C20651
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D996D1C47AC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291E42FCE14;
-	Thu, 10 Jul 2025 18:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982BC28467A;
+	Thu, 10 Jul 2025 18:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4TOwDzQO"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="O9I09H/X"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB41B2EFD9D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031A11DDD1;
+	Thu, 10 Jul 2025 18:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752171126; cv=none; b=XAmvyjaEoFL0mHqmPxqu9w32yhOigsul+NTJKxzcfBZ4qzezC6hRmC39C3KyZssPaQ9S4+Rh/K3G8dX3NA/NMz8DPYhxw3U3Lm63DHtNedxGEUM7x08ZTj/8/EpE/nv7a7X5j+NEb6OHEE5Jf/R5/+/nBpXkkzErUy+gk0dF2bc=
+	t=1752171356; cv=none; b=YTog66vNrlAbTZIMdAH1liI8DlCwzdPlnEoaLJuWcuMRHNP+mPQUU7wGYoxqqPbDFjv+W1YXeHChNU0z3T0+6XM2fQqpcJFQofdEXZ+ffoMMd8H5z719wHaPKglVXuynV1rDAWI6x3w6HzXSoDZTiUGjjgOPzT7eJmju3o+S/LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752171126; c=relaxed/simple;
-	bh=NsIibMpgdUN/yNMbmmDbm0dvimOJR7mqvk074U7Gs8g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DMPdeFnUJVs2W7RvpDm2LfNMuy/RfJRMxqOJmJqPqJmjGYhd4nz/qychGZwooZFcCEtis12GNXs+oWqFt/hzsrfBu3Ud/XJSXzSt/m5jSeQOMJTd/ZKQhK5SAhW4bNbN7MF52+677lG84gKVzijVT1y205FiQSp8ZSsiECBQ6T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4TOwDzQO; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2357c61cda7so20905ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752171124; x=1752775924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V19aqiboGpdwFSVORlEjus6nArpZ/d5eCyXiiM9x078=;
-        b=4TOwDzQOq1VFdnRRMcAzz6wv6QmBIJ69gWAcJoEJXPx94BIcF5gLWHNAbxkxVhg6MI
-         4PDL/6srqbJJGP5zxVAsKiCzHbhtPmTrkECmVpcm6gddpQ2/6SKivbIAamiS9Gn3UYQG
-         j949T5OmuYoAD4ut4lkw8BgTWfTJHefaimbn3sE1QXDhULsGGCzVpgHAAc5HheIS/tYh
-         oRi4mqFnRycbx8/jzaOhX1N0M9OcSFDsexJB4eQAW9ZrCDLTD4sraEiZ+Yv3dYEuNXL0
-         IkPnbCh7fMyS2ZcNCUZ8th4x/lAuHJui0dGdikPaBKw0Rw7DI9tihBEM60UUGyJRPiAA
-         1TwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752171124; x=1752775924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V19aqiboGpdwFSVORlEjus6nArpZ/d5eCyXiiM9x078=;
-        b=EZN7KwB0jiHL2EIplcPCLAwcAciVQLOAfdsPidB4g6G41QbvnR/ne699FAYAeU4ATk
-         MxEFP8q5qO7t1bFv4L3wjVTZe1pEuejfLZlTczeChHgERDx803MZE7ObpEUkPgfGZJr2
-         2r5LXIQqjw4FgWx37jBjEQhZ/yEeAhuirmJoV29xgUidqmoE3jGf8Lvup1GQht0znUyn
-         WOv57TKzrrX0trijXLd2BM43dqvF3PkOnWLjsh296gfY/Hi7CPh0ttPiXu4yKUJKO+Gf
-         Jcn8+57cZAu+oOhwK678hsBB3+LyQV551lTrOPARd7Z16yO2D3pyf/9+h0VIcGlDD5vJ
-         zQRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgDAEhm65NGse/bLaSbcG4pUFS73xVWsHdEqT34M7QGWN0/glaI/PAngzfPFQXi3dlzD36fwJ1Qf2yahw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDYlV9o/yOQbyW46bpib1m0c+D2GzISjBfv0KkCwksYlnm/1eD
-	MLrTXm1lBqFX51GnlEYKIt8X0CGJzIhHV/xd8oITwCQjRX6/lPpMe08twIfhIHDqu3Cgo9FipIY
-	6saET1BkdrbD1Of2xIM6z/P944/80b+sNqHtwM4XH
-X-Gm-Gg: ASbGncu4ZLmRpmvKk/NApJb9+cziH1dr2LNhZyuP8J5IJTVJUKnRZ6SVUSJ48VBgf0T
-	XuHil+CvIdtcDv7O/hBySeJBztiySza6k3XqzOSYv8+sNs2ZxAKlCfdvcyt4gJTidwwjWBQm+Kg
-	ZvroKX4i+NNKJbka/pSup3E/+slLuKLV18Anu9Dd2VjkNFr/qS2Z5eC783Q0mExEWHG+8XuD8=
-X-Google-Smtp-Source: AGHT+IG5ZbAwY31DrTqPKHnuAy3Jprfz+D7kIoMw6GvkmY8szHlEwG6tCQR4HIE6AdRqx8Df7hZn3pf+KBbD+xSG9cQ=
-X-Received: by 2002:a17:902:ce84:b0:234:a469:62ef with SMTP id
- d9443c01a7336-23dee4c2b01mr119975ad.3.1752171123623; Thu, 10 Jul 2025
- 11:12:03 -0700 (PDT)
+	s=arc-20240116; t=1752171356; c=relaxed/simple;
+	bh=9inaX+3610y3kgvqwT80kU2cH9rsrTcWoX6dbe+5BTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lNyLoSd2SyfRV17m4ngQbQmyhgzJgGQ5HT/c85RsxRTInD5BXbObFS1ZifeEK0Jm7NrVqAhWZQzqorIIgauxhMeT1vvYLEurolnjWbDxsM8Km2hiZU2zQcwR4KQh4RO/93L+WtnYui4/RjoPSGeRBl0ukdyXZv2sagtwHiQv4hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=O9I09H/X; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=lLWXUQzhV/Fw+wxvfrB+u3B5fxF8uh6fzjF4UfnLCxs=; b=O9I09H/XBJz6uY2MCYzpAt/Ri0
+	23D770vfAO7fYlc2J6HBzHsKPsbNhoDZu/FW9uXXTQfmUKz6r6QGy/gLHwKEHb2SjntNTo6PzNC51
+	PqySP9LTj5NU3FgCJ/dduD+Jzyor5ClBoFfRbS9YPJOktqkKBEK4aKvA2CzuoHToEWMiUWlcu/ViW
+	MFxF73dIavMnoYU8vm6lZHusp9ojHdfuekRFTZMAQitA5ZaXpSy0VvCFYn9Rd2dHVU/982FGToP77
+	WtXcbnmkAfDpFJ6w4XJnpkerHf4pOc8xYicn4U2cAj9uKWoeE8+0X4/uxSRfUdmpgnnhQNUGgHnZH
+	SykyZgwA==;
+Received: from 179-125-86-110-dinamico.pombonet.net.br ([179.125.86.110] helo=quatroqueijos.cascardo.eti.br)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uZvo0-00F33z-QZ; Thu, 10 Jul 2025 20:15:37 +0200
+Date: Thu, 10 Jul 2025 15:15:29 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org,
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+	Zijun Hu <zijun.hu@oss.qualcomm.com>
+Subject: Re: [PATCH v5 5/8] char: misc: Fix kunit test case
+ miscdev_test_dynamic_reentry() failure
+Message-ID: <aHADQWaYsjK5EYsN@quatroqueijos.cascardo.eti.br>
+References: <20250710-rfc_miscdev-v5-0-b3940297db16@oss.qualcomm.com>
+ <20250710-rfc_miscdev-v5-5-b3940297db16@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710082807.27402-1-byungchul@sk.com> <20250710082807.27402-3-byungchul@sk.com>
-In-Reply-To: <20250710082807.27402-3-byungchul@sk.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 10 Jul 2025 11:11:51 -0700
-X-Gm-Features: Ac12FXwouZPPpjT9QSjhfrgvcsGvhkuRBlZmuIVXl9fEL0h9kvK2OFLOD8o7JwM
-Message-ID: <CAHS8izO0mgDBde57fxuN3ko38906F_C=pxxrSEnFA=_9ECO8oQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 2/8] netmem: introduce utility APIs to use
- struct netmem_desc
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
-	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com, 
-	hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710-rfc_miscdev-v5-5-b3940297db16@oss.qualcomm.com>
 
-On Thu, Jul 10, 2025 at 1:28=E2=80=AFAM Byungchul Park <byungchul@sk.com> w=
-rote:
->
-> To eliminate the use of the page pool fields in struct page, the page
-> pool code should use netmem descriptor and APIs instead.
->
-> However, some code e.g. __netmem_to_page() is still used to access the
-> page pool fields e.g. ->pp via struct page, which should be changed so
-> as to access them via netmem descriptor, struct netmem_desc instead,
-> since the fields no longer will be available in struct page.
->
-> Introduce utility APIs to make them easy to use struct netmem_desc as
-> descriptor.  The APIs are:
->
->    1. __netmem_to_nmdesc(), to convert netmem_ref to struct netmem_desc,
->       but unsafely without checking if it's net_iov or system memory.
->
->    2. netmem_to_nmdesc(), to convert netmem_ref to struct netmem_desc,
->       safely with checking if it's net_iov or system memory.
->
->    3. nmdesc_to_page(), to convert struct netmem_desc to struct page,
->       assuming struct netmem_desc overlays on struct page.
->
->    4. page_to_nmdesc(), to convert struct page to struct netmem_desc,
->       assuming struct netmem_desc overlays on struct page, allowing only
->       head page to be converted.
->
->    5. nmdesc_adress(), to get its virtual address corresponding to the
->       struct netmem_desc.
->
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
+On Thu, Jul 10, 2025 at 07:56:48PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <zijun.hu@oss.qualcomm.com>
+> 
+> misc_deregister() frees dynamic minor @misc->minor but does not
+> reset it to macro MISC_DYNAMIC_MINOR, so cause kunit test case
+> miscdev_test_dynamic_reentry() failure:
+> 
+> Invalid fixed minor 257 for miscdevice 'miscdyn_a'
+> \#miscdev_test_dynamic_reentry: ASSERTION FAILED at misc_minor_kunit.c:639
+> Expected ret == 0, but
+> ret == -22 (0xffffffffffffffea)
+> [FAILED] miscdev_test_dynamic_reentry
+> 
+> Fix by resetting @misc->minor to MISC_DYNAMIC_MINOR in misc_deregister()
+> as error handling of misc_register() does.
+> 
+
+Adding a failing test and then fixing the code does not seem the best way
+to justify this change. I would rather add the fix with a proper
+justification and then add the test.
+
+On the other hand, I have found real cases where this might happen, some by
+code inspection only, but I also managed to reproduce the issue here,
+where:
+
+1) wmi/dell-smbios registered minor 122, acpi_thermal_rel registered minor
+123.
+2) unbind "int3400 thermal" driver from its device, this will unregister
+acpi_thermal_rel
+3) remove dell_smbios module
+4) reinstall dell_smbios module, now wmi/dell-smbios is using misc 123
+5) bind the device to "int3400 thermal" driver again, acpi_thermal_rel
+fails to register
+
+I think we have a few options to fix these bugs:
+
+1) Apply your suggested fix.
+2) Fix all the buggy drivers.
+3) Change API and have the minor be a misc_register parameter.
+
+The advantage of your option is that it is simple and contained and easy to
+backport.
+
+Changing API would require changing a lot of code and hard to backport, but
+I find it less error-prone than requiring the minor member to be reset, if
+we end up deciding about fixing the drivers.
+
+As for fixing individual drivers, one helpful feature is applying your
+previous patch [1], but perhaps with stronger message, maybe a WARN_ON.
+
+[1] char: misc: Disallow registering miscdevice whose minor > MISC_DYNAMIC_MINOR
+
+I am leaning towards your suggested fix, but with different wording, and
+before adding the test case.
+
+Something like:
+
+Some drivers may reuse the miscdevice structure after they are
+deregistered. If the intention is to allocate a dynamic minor, if the minor
+number is not reset to MISC_DYNAMIC_MINOR before calling misc_register, it
+will try to register a previously dynamically allocated minor number, which
+may have been registered by a different driver.
+
+One such case is the acpi_thermal_rel misc device, registered by the
+int3400 thermal driver. If the device is unbound from the driver and later
+bound, if there was another dynamic misc device registered in between, it
+would fail to register the acpi_thermal_rel misc device. Other drivers
+behave similarly.
+
+Instead of fixing all the drivers, just reset the minor member to
+MISC_DYNAMIC_MINOR when calling misc_deregister in case it was a
+dynamically allocated minor number.
+
+> Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
 > ---
->  include/net/netmem.h | 41 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
->
-> diff --git a/include/net/netmem.h b/include/net/netmem.h
-> index 535cf17b9134..ad9444be229a 100644
-> --- a/include/net/netmem.h
-> +++ b/include/net/netmem.h
-> @@ -198,6 +198,32 @@ static inline struct page *netmem_to_page(netmem_ref=
- netmem)
->         return __netmem_to_page(netmem);
+>  drivers/char/misc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/char/misc.c b/drivers/char/misc.c
+> index b8e66466184fa21fb66d968db7950e0b5669ac43..96ed343cf5c8509a09855020049a9af82a3ede95 100644
+> --- a/drivers/char/misc.c
+> +++ b/drivers/char/misc.c
+> @@ -288,6 +288,8 @@ void misc_deregister(struct miscdevice *misc)
+>  	list_del(&misc->list);
+>  	device_destroy(&misc_class, MKDEV(MISC_MAJOR, misc->minor));
+>  	misc_minor_free(misc->minor);
+> +	if (misc->minor > MISC_DYNAMIC_MINOR)
+> +		misc->minor = MISC_DYNAMIC_MINOR;
+>  	mutex_unlock(&misc_mtx);
 >  }
->
-> +/**
-> + * __netmem_to_nmdesc - unsafely get pointer to the &netmem_desc backing
-> + * @netmem
-> + * @netmem: netmem reference to convert
-> + *
-> + * Unsafe version of netmem_to_nmdesc(). When @netmem is always backed
-> + * by system memory, performs faster and generates smaller object code
-> + * (no check for the LSB, no WARN). When @netmem points to IOV, provokes
-> + * undefined behaviour.
-> + *
-> + * Return: pointer to the &netmem_desc (garbage if @netmem is not backed
-> + * by system memory).
-> + */
-> +static inline struct netmem_desc *__netmem_to_nmdesc(netmem_ref netmem)
-> +{
-> +       return (__force struct netmem_desc *)netmem;
-> +}
-> +
-
-Does a netmem_desc represent the pp fields shared between struct page
-and struct net_iov, or does netmem_desc represent paged kernel memory?
-If the former, I don't think we need a safe and unsafe version of this
-helper, since netmem_ref always has netmem_desc fields underneath. If
-the latter, then this helper should not exist at all. We should not
-allow casting netmem_ref to a netmem_desc without first checking if
-it's a net_iov.
-
-To be honest the cover letter should come up with a detailed
-explanation of (a) what are the current types (b) what are the new
-types (c) what are the relationships between the types, so these
-questions stop coming up.
-
-> +static inline struct netmem_desc *netmem_to_nmdesc(netmem_ref netmem)
-> +{
-> +       if (WARN_ON_ONCE(netmem_is_net_iov(netmem)))
-> +               return NULL;
-> +
-> +       return __netmem_to_nmdesc(netmem);
-> +}
-> +
->  static inline struct net_iov *netmem_to_net_iov(netmem_ref netmem)
->  {
->         if (netmem_is_net_iov(netmem))
-> @@ -314,6 +340,21 @@ static inline netmem_ref netmem_compound_head(netmem=
-_ref netmem)
->         return page_to_netmem(compound_head(netmem_to_page(netmem)));
->  }
->
-> +#define nmdesc_to_page(nmdesc)         (_Generic((nmdesc),             \
-> +       const struct netmem_desc * :    (const struct page *)(nmdesc),  \
-> +       struct netmem_desc * :          (struct page *)(nmdesc)))
-> +
-> +static inline struct netmem_desc *page_to_nmdesc(struct page *page)
-> +{
-> +       VM_BUG_ON_PAGE(PageTail(page), page);
-> +       return (struct netmem_desc *)page;
-> +}
-> +
-
-It's not safe to cast a page to netmem_desc, without first checking if
-it's a pp page or not, otherwise you may be casting random non-pp
-pages to netmem_desc...
-
-> +static inline void *nmdesc_address(struct netmem_desc *nmdesc)
-> +{
-> +       return page_address(nmdesc_to_page(nmdesc));
-> +}
-> +
->  /**
-
-Introduce helpers in the same patch that uses them please. Having to
-cross reference your series to see if there are any callers to this
-(and the callers are correct) is an unnecessary burden to the
-reviewers.
-
---=20
-Thanks,
-Mina
+>  EXPORT_SYMBOL(misc_deregister);
+> 
+> -- 
+> 2.34.1
+> 
 
