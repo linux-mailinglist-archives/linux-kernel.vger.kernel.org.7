@@ -1,293 +1,221 @@
-Return-Path: <linux-kernel+bounces-726292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F8BB00B17
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:11:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B92B00B2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCAAD3B2245
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD15A1C20651
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774E52EFD9D;
-	Thu, 10 Jul 2025 18:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291E42FCE14;
+	Thu, 10 Jul 2025 18:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O5qXXsUV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4TOwDzQO"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBED2741BC
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB41B2EFD9D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752171065; cv=none; b=YZWSSlPOoPG94Ao9WNV/CPxg1YwLt1g5gshIOV0BXasCEvebeaMh6BF1/l8qobgoG+c1iVeXmn9bES0x+aEggafPnFcn46g9UQ6inQdiIpISc9A8TWV1dG5znB2I3cAs3PcYf9rGpmnpytmFvRXJoER2gT4NxYOOG3qy9FhctuI=
+	t=1752171126; cv=none; b=XAmvyjaEoFL0mHqmPxqu9w32yhOigsul+NTJKxzcfBZ4qzezC6hRmC39C3KyZssPaQ9S4+Rh/K3G8dX3NA/NMz8DPYhxw3U3Lm63DHtNedxGEUM7x08ZTj/8/EpE/nv7a7X5j+NEb6OHEE5Jf/R5/+/nBpXkkzErUy+gk0dF2bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752171065; c=relaxed/simple;
-	bh=kyRQoyVM2bzWbnGPxc1gi9+NEdvtsmR7MWvYL04wqOE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kBSWfnIQnawwQu7qJq5mETT0PInyEb4tem4nLBLtPvIBJHKiPJjMVe1o+0zDkyomQYdjtyWcncgrNZjiZLZvSckBVbOFnywP3B9BfkYM7c3zu/vvs0VUs6QFht3LEd6MpGMNV4BE4ylo9vQz8clzWt1DD80sdnnIimtamezgrpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O5qXXsUV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752171062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UDaamw5XinBR9QkXrVlCRaMipACe0i/+L3o+AWfTDMU=;
-	b=O5qXXsUVUkbDvCcgQ8XCTnPxjxwDLXY02cOupV6BO7eKFtCir+wQ3uXVTNwumgV2h6MzKb
-	jp9T6gIy+Ezy8tXofTTN8mr59gytg/DLPfYOZDqQDHTkidfzPtOfOuczREE0yvng2fMrcT
-	x3XjdSqepgsFHe3XkPefSuEio/QKk1k=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-159-U2ZcBvD7NFKz8ha2kzHlYQ-1; Thu, 10 Jul 2025 14:11:01 -0400
-X-MC-Unique: U2ZcBvD7NFKz8ha2kzHlYQ-1
-X-Mimecast-MFC-AGG-ID: U2ZcBvD7NFKz8ha2kzHlYQ_1752171061
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c955be751aso201363385a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:11:01 -0700 (PDT)
+	s=arc-20240116; t=1752171126; c=relaxed/simple;
+	bh=NsIibMpgdUN/yNMbmmDbm0dvimOJR7mqvk074U7Gs8g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DMPdeFnUJVs2W7RvpDm2LfNMuy/RfJRMxqOJmJqPqJmjGYhd4nz/qychGZwooZFcCEtis12GNXs+oWqFt/hzsrfBu3Ud/XJSXzSt/m5jSeQOMJTd/ZKQhK5SAhW4bNbN7MF52+677lG84gKVzijVT1y205FiQSp8ZSsiECBQ6T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4TOwDzQO; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2357c61cda7so20905ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:12:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752171124; x=1752775924; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V19aqiboGpdwFSVORlEjus6nArpZ/d5eCyXiiM9x078=;
+        b=4TOwDzQOq1VFdnRRMcAzz6wv6QmBIJ69gWAcJoEJXPx94BIcF5gLWHNAbxkxVhg6MI
+         4PDL/6srqbJJGP5zxVAsKiCzHbhtPmTrkECmVpcm6gddpQ2/6SKivbIAamiS9Gn3UYQG
+         j949T5OmuYoAD4ut4lkw8BgTWfTJHefaimbn3sE1QXDhULsGGCzVpgHAAc5HheIS/tYh
+         oRi4mqFnRycbx8/jzaOhX1N0M9OcSFDsexJB4eQAW9ZrCDLTD4sraEiZ+Yv3dYEuNXL0
+         IkPnbCh7fMyS2ZcNCUZ8th4x/lAuHJui0dGdikPaBKw0Rw7DI9tihBEM60UUGyJRPiAA
+         1TwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752171061; x=1752775861;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UDaamw5XinBR9QkXrVlCRaMipACe0i/+L3o+AWfTDMU=;
-        b=mGWRRaCuzuveHJTcTunmYveRL1D4gz5S1DQaf33LgB951YDDyqq2tOmxHq3bHWEr9t
-         FOi8td5mOfIf1kPcGHWR8Gbp12NWG4trxay056xNvbQVjujR3evM9mObjoN+5/pvPsap
-         xmNZKVRs7zfrbWbd4kUWBUy2L3LdFC7MqsXJsvaI8LDmHgYpQHaY/8jgoq80veXszXUM
-         uxAIFzYnYJsNhZjFG8z6DKJceWjlppJbOew8bvxrVyEeyeRN2qfb64zTn+ZotBpLn4ls
-         apq2x48gn1DQXW7G9Go13dr7KLKGxih+bcd/cDNe2f1yWGwghHzi+zp91gs73wM89ZI0
-         9fww==
-X-Forwarded-Encrypted: i=1; AJvYcCV9yNTWG+H9tNhv/6To241A3E+K0bVirUsAB/xl0XTnfQK+9/Ao/A7EWBh1B7QLN0Pyq0VAIVEk5BhGVLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRwAWmVyFD7nTIgnXI3WuEB43DaUKJbbZSQZ4W1xaUQXVVryx1
-	ktbG/jbFOMsuQWouIAT3D/MMlNMO8NNRTKRxwaY3QF2VgSXX3zfoZFxWtlcvmholIX0W2QNnDmz
-	K/NvB8UzUH2Fp5crdHp+j2hbpP1qHn+8m5t6mkkHlkcRH7k/WgwrU78eEbh0ml+Y2Xg==
-X-Gm-Gg: ASbGncv/XnJHD97nQ/h8rPUMTApP6BrVNKh1lacnkGuOlUob8krazqXQjgQNO/056bQ
-	Q84E2jm5hHsP4+C9Pd/pxaZC4O6BGr3EsBRsJi0ICaM1ZXSkLGqPdPaqg/oMrufP1Llw6WgWnjZ
-	JoJtYiVgNBfOzg5z7k5LFOYWPBQPVHC1QIeYcZv1zv/ILndPWz5w4HvbGgaCfmLIBgfIuN6DLRH
-	7CLPp8bWxmbkPAC+Mdi9C4TeSkwh5Wyt6nOS5lY7e30HHrSmwJXKyFuMrc2ZYEK4tf17t/A26LQ
-	5vvBd+6jIbjpqFKmwxmqNIieCW91pS8AlkDr1/DsXbAZ0xOxrbj/STJigIrb
-X-Received: by 2002:a05:620a:4726:b0:7d5:dcd9:57f4 with SMTP id af79cd13be357-7ddea818e2bmr78794985a.18.1752171061204;
-        Thu, 10 Jul 2025 11:11:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYWoqzrM13LlMP0WzQq6WZZk3qyqsWk5e4K0LKkki76ZGMrwuKyffsVmVRcU9EDW0/eLxBfw==
-X-Received: by 2002:a05:620a:4726:b0:7d5:dcd9:57f4 with SMTP id af79cd13be357-7ddea818e2bmr78788985a.18.1752171060677;
-        Thu, 10 Jul 2025 11:11:00 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcde806289sm124403285a.78.2025.07.10.11.10.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 11:11:00 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 10 Jul 2025 14:10:41 -0400
-Subject: [PATCH] hwmon: ltc4282: convert from round_rate() to
- determine_rate()
+        d=1e100.net; s=20230601; t=1752171124; x=1752775924;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V19aqiboGpdwFSVORlEjus6nArpZ/d5eCyXiiM9x078=;
+        b=EZN7KwB0jiHL2EIplcPCLAwcAciVQLOAfdsPidB4g6G41QbvnR/ne699FAYAeU4ATk
+         MxEFP8q5qO7t1bFv4L3wjVTZe1pEuejfLZlTczeChHgERDx803MZE7ObpEUkPgfGZJr2
+         2r5LXIQqjw4FgWx37jBjEQhZ/yEeAhuirmJoV29xgUidqmoE3jGf8Lvup1GQht0znUyn
+         WOv57TKzrrX0trijXLd2BM43dqvF3PkOnWLjsh296gfY/Hi7CPh0ttPiXu4yKUJKO+Gf
+         Jcn8+57cZAu+oOhwK678hsBB3+LyQV551lTrOPARd7Z16yO2D3pyf/9+h0VIcGlDD5vJ
+         zQRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgDAEhm65NGse/bLaSbcG4pUFS73xVWsHdEqT34M7QGWN0/glaI/PAngzfPFQXi3dlzD36fwJ1Qf2yahw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDYlV9o/yOQbyW46bpib1m0c+D2GzISjBfv0KkCwksYlnm/1eD
+	MLrTXm1lBqFX51GnlEYKIt8X0CGJzIhHV/xd8oITwCQjRX6/lPpMe08twIfhIHDqu3Cgo9FipIY
+	6saET1BkdrbD1Of2xIM6z/P944/80b+sNqHtwM4XH
+X-Gm-Gg: ASbGncu4ZLmRpmvKk/NApJb9+cziH1dr2LNhZyuP8J5IJTVJUKnRZ6SVUSJ48VBgf0T
+	XuHil+CvIdtcDv7O/hBySeJBztiySza6k3XqzOSYv8+sNs2ZxAKlCfdvcyt4gJTidwwjWBQm+Kg
+	ZvroKX4i+NNKJbka/pSup3E/+slLuKLV18Anu9Dd2VjkNFr/qS2Z5eC783Q0mExEWHG+8XuD8=
+X-Google-Smtp-Source: AGHT+IG5ZbAwY31DrTqPKHnuAy3Jprfz+D7kIoMw6GvkmY8szHlEwG6tCQR4HIE6AdRqx8Df7hZn3pf+KBbD+xSG9cQ=
+X-Received: by 2002:a17:902:ce84:b0:234:a469:62ef with SMTP id
+ d9443c01a7336-23dee4c2b01mr119975ad.3.1752171123623; Thu, 10 Jul 2025
+ 11:12:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-hwmon-round-rate-v1-1-64fbe4bf3d05@redhat.com>
-X-B4-Tracking: v=1; b=H4sIACACcGgC/x2MywqAIBAAfyX23IIaEvQr0cFqyz2ksfaC8N+TY
- C5zmHkhkTAl6KoXhC5OHEMRXVcweRdWQp6Lg1HGqlYr9PcWA0o8w4ziDkI9msK4WGcbKNkutPD
- zL/sh5w8hKVKwYgAAAA==
-X-Change-ID: 20250710-hwmon-round-rate-1b21b2bf5a53
-To: Nuno Sa <nuno.sa@analog.com>, Jean Delvare <jdelvare@suse.com>, 
- Guenter Roeck <linux@roeck-us.net>, Maxime Ripard <mripard@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752171059; l=5669;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=kyRQoyVM2bzWbnGPxc1gi9+NEdvtsmR7MWvYL04wqOE=;
- b=6eQpeXc1h08bv2MtiVCAFjsSZrIXlAVycUsMGd5pLQ4KsDXNvjBRCIiUC0L5D2hdf/GXf0G8Y
- 8Y30vGDGn/qB/i6oj2zQH7Ti/uRnt5rMGt6Znb6AwrL7fqIqUn6jpuy
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
+References: <20250710082807.27402-1-byungchul@sk.com> <20250710082807.27402-3-byungchul@sk.com>
+In-Reply-To: <20250710082807.27402-3-byungchul@sk.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 10 Jul 2025 11:11:51 -0700
+X-Gm-Features: Ac12FXwouZPPpjT9QSjhfrgvcsGvhkuRBlZmuIVXl9fEL0h9kvK2OFLOD8o7JwM
+Message-ID: <CAHS8izO0mgDBde57fxuN3ko38906F_C=pxxrSEnFA=_9ECO8oQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 2/8] netmem: introduce utility APIs to use
+ struct netmem_desc
+To: Byungchul Park <byungchul@sk.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
+	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
+	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
+	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
+	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com, 
+	hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-appended to the "under-the-cut" portion of the patch.
+On Thu, Jul 10, 2025 at 1:28=E2=80=AFAM Byungchul Park <byungchul@sk.com> w=
+rote:
+>
+> To eliminate the use of the page pool fields in struct page, the page
+> pool code should use netmem descriptor and APIs instead.
+>
+> However, some code e.g. __netmem_to_page() is still used to access the
+> page pool fields e.g. ->pp via struct page, which should be changed so
+> as to access them via netmem descriptor, struct netmem_desc instead,
+> since the fields no longer will be available in struct page.
+>
+> Introduce utility APIs to make them easy to use struct netmem_desc as
+> descriptor.  The APIs are:
+>
+>    1. __netmem_to_nmdesc(), to convert netmem_ref to struct netmem_desc,
+>       but unsafely without checking if it's net_iov or system memory.
+>
+>    2. netmem_to_nmdesc(), to convert netmem_ref to struct netmem_desc,
+>       safely with checking if it's net_iov or system memory.
+>
+>    3. nmdesc_to_page(), to convert struct netmem_desc to struct page,
+>       assuming struct netmem_desc overlays on struct page.
+>
+>    4. page_to_nmdesc(), to convert struct page to struct netmem_desc,
+>       assuming struct netmem_desc overlays on struct page, allowing only
+>       head page to be converted.
+>
+>    5. nmdesc_adress(), to get its virtual address corresponding to the
+>       struct netmem_desc.
+>
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> ---
+>  include/net/netmem.h | 41 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>
+> diff --git a/include/net/netmem.h b/include/net/netmem.h
+> index 535cf17b9134..ad9444be229a 100644
+> --- a/include/net/netmem.h
+> +++ b/include/net/netmem.h
+> @@ -198,6 +198,32 @@ static inline struct page *netmem_to_page(netmem_ref=
+ netmem)
+>         return __netmem_to_page(netmem);
+>  }
+>
+> +/**
+> + * __netmem_to_nmdesc - unsafely get pointer to the &netmem_desc backing
+> + * @netmem
+> + * @netmem: netmem reference to convert
+> + *
+> + * Unsafe version of netmem_to_nmdesc(). When @netmem is always backed
+> + * by system memory, performs faster and generates smaller object code
+> + * (no check for the LSB, no WARN). When @netmem points to IOV, provokes
+> + * undefined behaviour.
+> + *
+> + * Return: pointer to the &netmem_desc (garbage if @netmem is not backed
+> + * by system memory).
+> + */
+> +static inline struct netmem_desc *__netmem_to_nmdesc(netmem_ref netmem)
+> +{
+> +       return (__force struct netmem_desc *)netmem;
+> +}
+> +
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
-Coccinelle semantic patch is below. It's large and I don't want to
-pollute the kernel changelog with the same code hundreds of times,
-so that's why it's included under the cut. For subsystems with more
-than one patch, I've included it on the cover letter.
+Does a netmem_desc represent the pp fields shared between struct page
+and struct net_iov, or does netmem_desc represent paged kernel memory?
+If the former, I don't think we need a safe and unsafe version of this
+helper, since netmem_ref always has netmem_desc fields underneath. If
+the latter, then this helper should not exist at all. We should not
+allow casting netmem_ref to a netmem_desc without first checking if
+it's a net_iov.
 
-    virtual patch
+To be honest the cover letter should come up with a detailed
+explanation of (a) what are the current types (b) what are the new
+types (c) what are the relationships between the types, so these
+questions stop coming up.
 
-    // Look up the current name of the round_rate function
-    @ has_round_rate @
-    identifier round_rate_name =~ ".*_round_rate";
-    identifier hw_param, rate_param, parent_rate_param;
-    @@
+> +static inline struct netmem_desc *netmem_to_nmdesc(netmem_ref netmem)
+> +{
+> +       if (WARN_ON_ONCE(netmem_is_net_iov(netmem)))
+> +               return NULL;
+> +
+> +       return __netmem_to_nmdesc(netmem);
+> +}
+> +
+>  static inline struct net_iov *netmem_to_net_iov(netmem_ref netmem)
+>  {
+>         if (netmem_is_net_iov(netmem))
+> @@ -314,6 +340,21 @@ static inline netmem_ref netmem_compound_head(netmem=
+_ref netmem)
+>         return page_to_netmem(compound_head(netmem_to_page(netmem)));
+>  }
+>
+> +#define nmdesc_to_page(nmdesc)         (_Generic((nmdesc),             \
+> +       const struct netmem_desc * :    (const struct page *)(nmdesc),  \
+> +       struct netmem_desc * :          (struct page *)(nmdesc)))
+> +
+> +static inline struct netmem_desc *page_to_nmdesc(struct page *page)
+> +{
+> +       VM_BUG_ON_PAGE(PageTail(page), page);
+> +       return (struct netmem_desc *)page;
+> +}
+> +
 
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    	...
-    }
+It's not safe to cast a page to netmem_desc, without first checking if
+it's a pp page or not, otherwise you may be casting random non-pp
+pages to netmem_desc...
 
-    // Rename the route_rate function name to determine_rate()
-    @ script:python generate_name depends on has_round_rate @
-    round_rate_name << has_round_rate.round_rate_name;
-    new_name;
-    @@
+> +static inline void *nmdesc_address(struct netmem_desc *nmdesc)
+> +{
+> +       return page_address(nmdesc_to_page(nmdesc));
+> +}
+> +
+>  /**
 
-    coccinelle.new_name = round_rate_name.replace("_round_rate", "_determine_rate")
+Introduce helpers in the same patch that uses them please. Having to
+cross reference your series to see if there are any callers to this
+(and the callers are correct) is an unnecessary burden to the
+reviewers.
 
-    // Change rate to req->rate; also change occurrences of 'return XXX'.
-    @ chg_rate depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    identifier ERR =~ "E.*";
-    expression E;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    (
-    -return -ERR;
-    +return -ERR;
-    |
-    - return rate_param;
-    + return 0;
-    |
-    - return E;
-    + req->rate = E;
-    +
-    + return 0;
-    |
-    - rate_param
-    + req->rate
-    )
-    ...>
-    }
-
-    // Coccinelle only transforms the first occurrence of the rate parameter
-    // Run a second time. FIXME: Is there a better way to do this?
-    @ chg_rate2 depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    - rate_param
-    + req->rate
-    ...>
-    }
-
-    // Change parent_rate to req->best_parent_rate
-    @ chg_parent_rate depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    (
-    - *parent_rate_param
-    + req->best_parent_rate
-    |
-    - parent_rate_param
-    + &req->best_parent_rate
-    )
-    ...>
-    }
-
-    // Convert the function definition from round_rate() to determine_rate()
-    @ func_definition depends on chg_rate @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    identifier generate_name.new_name;
-    @@
-
-    - long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-    -               unsigned long *parent_rate_param)
-    + int new_name(struct clk_hw *hw, struct clk_rate_request *req)
-    {
-        ...
-    }
-
-    // Update the ops from round_rate() to determine_rate()
-    @ ops depends on func_definition @
-    identifier has_round_rate.round_rate_name;
-    identifier generate_name.new_name;
-    @@
-
-    {
-        ...,
-    -   .round_rate = round_rate_name,
-    +   .determine_rate = new_name,
-        ...,
-    }
-
-Note that I used coccinelle 1.2 instead of 1.3 since the newer version
-adds unnecessary braces as described in this post.
-https://lore.kernel.org/cocci/67642477-5f3e-4b2a-914d-579a54f48cbd@intel.com/
----
- drivers/hwmon/ltc4282.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/hwmon/ltc4282.c b/drivers/hwmon/ltc4282.c
-index 424fa9e3a0993f74d7bd1b2e3c98acd954217a98..dbb30abcd343f3dac46bd87cc52638b75eb5b275 100644
---- a/drivers/hwmon/ltc4282.c
-+++ b/drivers/hwmon/ltc4282.c
-@@ -177,13 +177,15 @@ static const unsigned int ltc4282_out_rates[] = {
- 	LTC4282_CLKOUT_CNV, LTC4282_CLKOUT_SYSTEM
- };
- 
--static long ltc4282_round_rate(struct clk_hw *hw, unsigned long rate,
--			       unsigned long *parent_rate)
-+static int ltc4282_determine_rate(struct clk_hw *hw,
-+				  struct clk_rate_request *req)
- {
--	int idx = find_closest(rate, ltc4282_out_rates,
-+	int idx = find_closest(req->rate, ltc4282_out_rates,
- 			       ARRAY_SIZE(ltc4282_out_rates));
- 
--	return ltc4282_out_rates[idx];
-+	req->rate = ltc4282_out_rates[idx];
-+
-+	return 0;
- }
- 
- static unsigned long ltc4282_recalc_rate(struct clk_hw *hw,
-@@ -1124,7 +1126,7 @@ static ssize_t ltc4282_energy_show(struct device *dev,
- 
- static const struct clk_ops ltc4282_ops = {
- 	.recalc_rate = ltc4282_recalc_rate,
--	.round_rate = ltc4282_round_rate,
-+	.determine_rate = ltc4282_determine_rate,
- 	.set_rate = ltc4282_set_rate,
- 	.disable = ltc4282_disable,
- };
-
----
-base-commit: b551c4e2a98a177a06148cf16505643cd2108386
-change-id: 20250710-hwmon-round-rate-1b21b2bf5a53
-
-Best regards,
--- 
-Brian Masney <bmasney@redhat.com>
-
+--=20
+Thanks,
+Mina
 
