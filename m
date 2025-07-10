@@ -1,139 +1,179 @@
-Return-Path: <linux-kernel+bounces-725591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE52B0011E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:03:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD75B00127
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8213A5C2B4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:02:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C881654CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DFE24A05D;
-	Thu, 10 Jul 2025 12:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211D523D29B;
+	Thu, 10 Jul 2025 12:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6nv30q1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rp0OuMT3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFDF1EA73;
-	Thu, 10 Jul 2025 12:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D777207E1D;
+	Thu, 10 Jul 2025 12:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752148868; cv=none; b=QPG5v3ytJ9NipvDZTl8gdXOfgUlKPHkhIR33spNGVG697elbjzT6dO4GqJVXqluy4B+ioh4DnIgsOVeG6sjmpwEzw2STUr/tKB9xdGuPAHmdGYCxobdfdi3u0Bik1q6tG2oXgbFjXKbkVtFwMD4tQXfrLYcBrn/U1UUs4tcfMsw=
+	t=1752148992; cv=none; b=cTmPaX/IOQ2IDzw8j0QA2HSCTVBCdhHM002SaoEfn33a8X/roi9fzttIN9ElCGamA3zWhTz5CvmIgBCWx4px0PZfQBwRgmmmcBln0Ex8+LRaUyAPH12uFQ8asv9BaaXhNbWDWrd98VO50U994fdf/bH0HvHb0qqmz3zAlzCl/UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752148868; c=relaxed/simple;
-	bh=xlOKUHxAG5+wDJb2IC+FgPeerBVxfJ6Ohz+JMX7/gpI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=o0uka/Oac72rZ+w8isqfg8Ske7cTdS5g4L2C2fqNhfKWawq1aCZea8NK8Lv4G3ZbZq6NXLA9lGmK2TbqYRYxYq0m9qHD0dGrzujrmTwtntgdQg8B2/mZ0H5VHlojaB32BsdWbwbrlSADVAiOdZPj4pKk5efFqBnYFGTLsuBtnUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W6nv30q1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E000C4CEE3;
-	Thu, 10 Jul 2025 12:01:03 +0000 (UTC)
+	s=arc-20240116; t=1752148992; c=relaxed/simple;
+	bh=nNuCjhsowYZ2SHuy8Ny1SbnsiGlGf5snyfLqhxn2Y70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O7XxI+Qzh+IGmFLhpqNCbvTLHnhtoFnc5XmhPPK0NJyj+NBROHzRYNguJNCg1dmhr8lzUNszuPUE7F2gCDGS4GZJMCnn6mhXAJewX5Fb+lOuyZpemCyxVIAwYlGhoLV2WK+b5pHqFTvf0SrnVjT04J8Nk1KVV9sgeCkvuTHcrD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rp0OuMT3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5C38C4CEE3;
+	Thu, 10 Jul 2025 12:03:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752148867;
-	bh=xlOKUHxAG5+wDJb2IC+FgPeerBVxfJ6Ohz+JMX7/gpI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=W6nv30q18H8QhIFXyBVNo5oXW0gI/m+DesNOelLmRsQkbSUQMuruGa9bvwZn1hblG
-	 olZk7orPdkztCj9aZy46xyY9ZOYIqwpHjrCpm7xGNnfqfYp+yFNuyFr5DOcENbVxSj
-	 AZJJ9tq0uh3A2taBqFaJWTC3cmTQxKa1XWm8525tRxQbSrX7LENZeF18+wTwywg49r
-	 pGMhGk9Siao5Pw4JOivaoF6B7rHRm4vmo0IhZ/1DUUSlaRlXpm77kQzuWnFmjpUYkv
-	 Z+IJ3Tu94t+POIiPdkl6CJXLtH2ibipoWm0zC/EyyeDxO46i99Hd4CGoVx2BG0dmsk
-	 smk2Tb9A6tQNw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>,  <linux-kernel@vger.kernel.org>,
-  <rust-for-linux@vger.kernel.org>,  <lkmm@lists.linux.dev>,
-  <linux-arch@vger.kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex
- Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron <bjorn3_gh@protonmail.com>,  "Alice Ryhl"
- <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,  "Danilo
- Krummrich" <dakr@kernel.org>,  "Will Deacon" <will@kernel.org>,  "Peter
- Zijlstra" <peterz@infradead.org>,  "Mark Rutland" <mark.rutland@arm.com>,
-  "Wedson Almeida Filho" <wedsonaf@gmail.com>,  "Viresh Kumar"
- <viresh.kumar@linaro.org>,  "Lyude Paul" <lyude@redhat.com>,  "Ingo
- Molnar" <mingo@kernel.org>,  "Mitchell Levy" <levymitchell0@gmail.com>,
-  "Paul E. McKenney" <paulmck@kernel.org>,  "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>,  "Linus Torvalds"
- <torvalds@linux-foundation.org>,  "Thomas Gleixner" <tglx@linutronix.de>,
-  "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v6 3/9] rust: sync: atomic: Add ordering annotation types
-In-Reply-To: <DB8BTA477Z2V.1J7XFLDXHMN2S@kernel.org> (Benno Lossin's message
-	of "Thu, 10 Jul 2025 13:08:19 +0200")
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
-	<20250710060052.11955-4-boqun.feng@gmail.com>
-	<4Ql5DIvfmXBHoUA428q2PelaaLNBI5Mi0jE3y3YPObJLRgY73zNZzQ8Pdl2qq25VWsMQFKUpYRHHQ1e7wFaGUw==@protonmail.internalid>
-	<DB8BTA477Z2V.1J7XFLDXHMN2S@kernel.org>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Thu, 10 Jul 2025 14:00:59 +0200
-Message-ID: <87v7o0i7b8.fsf@kernel.org>
+	s=k20201202; t=1752148991;
+	bh=nNuCjhsowYZ2SHuy8Ny1SbnsiGlGf5snyfLqhxn2Y70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rp0OuMT39W/H3+xYP3yeAlYFYNHp6/AF3JW+ePVoPW0RXpVi9ONwDZZgClcj3qcWf
+	 6fXkHh44kAF8RJhdwqGQIdcpr0gw2/7TSqXv/BaYQXipLJHK53wWl4IC9pHMnX135m
+	 9/hTN+1JwHm/ySfW16d6Olxdxk2P/JMaIEY5aQO6n03RE1ZTHd1A3lRR+VL87FJgo/
+	 Uqemk6OZPkG85s+nzJLZoF4hV0tTA+60bzEp/GyL3zvMKUVnTHfPsQHG9/94I3j8J2
+	 DZvToVcsvLBHhUtUqAGSL7Y/6fVciRGbZ0n6LERKZD1Rym2d3RyLjgPW1ulzrw40Pl
+	 hiu+vJG2zeQ3g==
+Date: Thu, 10 Jul 2025 14:03:05 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-block@vger.kernel.org, Anuj Gupta <anuj20.g@samsung.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Kanchan Joshi <joshi.k@samsung.com>, 
+	LTP List <ltp@lists.linux.it>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Benjamin Copeland <benjamin.copeland@linaro.org>, rbm@suse.com, Naresh Kamboju <naresh.kamboju@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Alexey Dobriyan <adobriyan@gmail.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Eric Biggers <ebiggers@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] block: fix FS_IOC_GETLBMD_CAP parsing in
+ blkdev_common_ioctl()
+Message-ID: <20250710-geber-keimen-40cdd4bf17f7@brauner>
+References: <20250709181030.236190-1-arnd@kernel.org>
+ <20250710-passen-petersilie-32f6f1e9a1fc@brauner>
+ <d2e1d4a9-d475-43e3-824b-579e5084aaf3@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d2e1d4a9-d475-43e3-824b-579e5084aaf3@app.fastmail.com>
 
-"Benno Lossin" <lossin@kernel.org> writes:
+On Thu, Jul 10, 2025 at 12:11:12PM +0200, Arnd Bergmann wrote:
+> On Thu, Jul 10, 2025, at 10:00, Christian Brauner wrote:
+> > On Wed, Jul 09, 2025 at 08:10:14PM +0200, Arnd Bergmann wrote:
+> 
+> >> +	if (_IOC_DIR(cmd)  == _IOC_DIR(FS_IOC_GETLBMD_CAP) &&
+> >> +	    _IOC_TYPE(cmd) == _IOC_TYPE(FS_IOC_GETLBMD_CAP) &&
+> >> +	    _IOC_NR(cmd)   == _IOC_NR(FS_IOC_GETLBMD_CAP) &&
+> >> +	    _IOC_SIZE(cmd) >= LBMD_SIZE_VER0 &&
+> >> +	    _IOC_SIZE(cmd) <= _IOC_SIZE(FS_IOC_GETLBMD_CAP))
+> >
+> > This part is wrong as we handle larger sizes just fine via
+> > copy_struct_{from,to}_user().
+> 
+> I feel that is still an open question. As I understand it,
+> you want to make it slightly easier for userspace callers
+> to use future versions of an ioctl command by allowing them in
+> old kernels as well, by moving that complexity into the kernel.
+> 
+> Checking against _IOC_SIZE(FS_IOC_GETLBMD_CAP) would keep the
+> behavior consistent with the traditional model where userspace
+> needs to have a fallback to previous ABI versions.
+> 
+> > Arnd, objections to writing it as follows?:
+> 
+> > +       /* extensible ioctls */
+> > +       switch (_IOC_NR(cmd)) {
+> > +       case _IOC_NR(FS_IOC_GETLBMD_CAP):
+> > +               if (_IOC_DIR(cmd) != _IOC_DIR(FS_IOC_GETLBMD_CAP))
+> > +                       break;
+> > +               if (_IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_GETLBMD_CAP))
+> > +                       break;
+> > +               if (_IOC_NR(cmd) != _IOC_NR(FS_IOC_GETLBMD_CAP))
+> > +                       break;
+> > +               if (_IOC_SIZE(cmd) < LBMD_SIZE_VER0)
+> > +                       break;
+> > +               if (_IOC_SIZE(cmd) > PAGE_SIZE)
+> > +                       break;
+> > +               return blk_get_meta_cap(bdev, cmd, argp);
+> 
+> The 'PAGE_SIZE' seems arbitrary here, especially since that is often
 
-> On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
->> Preparation for atomic primitives. Instead of a suffix like _acquire, a
->> method parameter along with the corresponding generic parameter will be
->> used to specify the ordering of an atomic operations. For example,
->> atomic load() can be defined as:
->>
->> 	impl<T: ...> Atomic<T> {
->> 	    pub fn load<O: AcquireOrRelaxed>(&self, _o: O) -> T { ... }
->> 	}
->>
->> and acquire users would do:
->>
->> 	let r = x.load(Acquire);
->>
->> relaxed users:
->>
->> 	let r = x.load(Relaxed);
->>
->> doing the following:
->>
->> 	let r = x.load(Release);
->>
->> will cause a compiler error.
->>
->> Compared to suffixes, it's easier to tell what ordering variants an
->> operation has, and it also make it easier to unify the implementation of
->> all ordering variants in one method via generic. The `TYPE` associate
->> const is for generic function to pick up the particular implementation
->> specified by an ordering annotation.
->>
->> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
->
-> One naming comment below, with that fixed:
->
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
->
->> ---
->>  rust/kernel/sync/atomic.rs          |  3 +
->>  rust/kernel/sync/atomic/ordering.rs | 97 +++++++++++++++++++++++++++++
->>  2 files changed, 100 insertions(+)
->>  create mode 100644 rust/kernel/sync/atomic/ordering.rs
->
->> +/// The trait bound for annotating operations that support any ordering.
->> +pub trait Any: internal::Sealed {
->
-> I don't like the name `Any`, how about `AnyOrdering`? Otherwise we
-> should require people to write `ordering::Any` because otherwise it's
-> pretty confusing.
+I used that as an illustration since we're capping nearly all (regular)
+uapi structures at that as a somewhat reasonable upper bound. If that's
+smaller that's fine.
 
-I agree with this observation.
+> larger than the maximum size that can be encoded in an ioctl command
+> number (8KB or 16KB depending on the architecture). If we do need
+> an upper bound larger than _IOC_SIZE(FS_IOC_GETLBMD_CAP), I think it
+> should be a fixed number rather than a configuration dependent
+> one, and I would prefer a smaller one over a larger one. Anything
 
+Sure, fine by me.
 
-Best regards,
-Andreas Hindborg
+> over a few dozen bytes is certainly suspicious, and once it gets
+> to thousands of bytes, you need a dynamic allocation to avoid stack
+> overflow in the kernel.
 
+Sure, we do that already in some cases because we have use-cases for
+that.
 
+> 
+> I had already updated my patch to move the checks into
+> blk_get_meta_cap() itself and keep the caller simpler:
 
+Ok.
+
+> Regardless of what upper bound we pick, that at least limits
+> the complexity to the one function that actually wants it.
+
+Ok.
+
+> 
+> > And can I ask you to please take a look at fs/pidfs.c:pidfd_ioctl() and
+> 
+> PIDFD_GET_INFO has part of the same problem, as it still fails to
+> check the _IOC_DIR() bits. I see you added a check for _IOC_TYPE()
+> in commit 091ee63e36e8 ("pidfs: improve ioctl handling"), but
+> the comment you added describes an unrelated issue and the fix
+> was incomplete.
+> 
+> > fs/nsfs.c:ns_ioctl()?
+> 
+> You tried to add a similar validation in commit 7fd511f8c911
+> ("nsfs: validate ioctls"), but it seems you got that wrong
+> both by missing the _IOC_DIR check and by having a typo in the
+> '_IOC_TYPE(cmd) == _IOC_TYPE(cmd)' line that means this is
+> always true rather than comparing against 'NSIO'.
+> 
+> Overall my feeling is similar to Christoph's, that the added
+> complexity in any of these three cases was a mistake, as it's
+> too easy to mess it up.
+
+For pidfs and nsfs it will definitely be the way we're doing it.
+Especially with structures we definitely want to grow. I have zero
+interest in spamming userspace with either a fragmented set of 100
+ioctls that never give consistent information because they need to be
+called in sequence nor constantly revised V2-100 ioctl commands that all
+use a new structure with a fixed layout.
+
+The fact that the ioctl api currently lacks validation is more testament
+to how unspecified the requirements for ioctls and their encoding are
+and we better fix that in general because like it or not we already have
+quite a few size-versioned ioctls anyway. This is nothing we cannot fix.
+
+Tell me what work you need and we'll do it.
+
+The alternative I see is that I will start being very liberal in adding
+extensible system calls for stuff such as pidfd_info() and ns_info()
+instead of making them ioctls on the file where they belong.
 
