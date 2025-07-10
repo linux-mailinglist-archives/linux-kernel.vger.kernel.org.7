@@ -1,306 +1,136 @@
-Return-Path: <linux-kernel+bounces-725233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2900AFFC47
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:30:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5F7AFFC35
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 673535A13B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:29:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4FE41C28102
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF76C28FA9F;
-	Thu, 10 Jul 2025 08:28:30 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CFC28C5BE;
-	Thu, 10 Jul 2025 08:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B927428C5B0;
+	Thu, 10 Jul 2025 08:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGyq4jl2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D98235079;
+	Thu, 10 Jul 2025 08:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752136110; cv=none; b=syM7LBmNTVSyIgKPePkqsytNjgPzGdgOwqV2RU97eIkGe+lp4Ffnq+9Sp8gqxI1Yd66Rb9TUVRprWozWcbS5O4EHpst4aayBOPLtfT+NE+YiSBT3584jDLK7zh8RJM9VAYxKPIFnBhOk4iTD0LEjSmNOkOIo0P5ZPuYUvM0ZwFE=
+	t=1752136086; cv=none; b=efhB8btq8XqBtB4FYF4QlDI7HujxW+6K+UKw2eBzC1VMK4Wu8MUHYYxUQyW3gJXSDbzv74T9qr6EhhkXUHhWSKTs7HZ+MqITbe5+8i9i5+x4cmNmpQ61CQKGLhR7lUsvC5zGuyo6VDkkmUtfxqHc8X8lnkYCTuDJ6ar3p/ZJUr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752136110; c=relaxed/simple;
-	bh=pKsc+X3ArB1fzhyo3sUlt4fKKGqJ/cai1NrR8gCWFA8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=EKIPSQoYCYnhQqH291Dyvp+DHgQTOhOF1J58ljWx6RkdJUnIYQiYXff4Tz2ZDoObIThRiuI37TbQVv4OIxVmiAbrkayyHaSVFhQk6vEUKZx1DFnA6t5IWWL8AetLV3zTuCRRlWAbHkmxIc63vLOOxJy0Jdb/YSpnCS0xEx4XxZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-ca-686f79a1a247
-From: Byungchul Park <byungchul@sk.com>
-To: willy@infradead.org,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel_team@skhynix.com,
-	kuba@kernel.org,
-	almasrymina@google.com,
-	ilias.apalodimas@linaro.org,
-	harry.yoo@oracle.com,
-	hawk@kernel.org,
-	akpm@linux-foundation.org,
-	davem@davemloft.net,
-	john.fastabend@gmail.com,
-	andrew+netdev@lunn.ch,
-	asml.silence@gmail.com,
-	toke@redhat.com,
-	tariqt@nvidia.com,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	saeedm@nvidia.com,
-	leon@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	horms@kernel.org,
-	linux-rdma@vger.kernel.org,
-	bpf@vger.kernel.org,
-	vishal.moola@gmail.com,
-	hannes@cmpxchg.org,
-	ziy@nvidia.com,
-	jackmanb@google.com
-Subject: [PATCH net-next v9 0/8] Split netmem from struct page
-Date: Thu, 10 Jul 2025 17:27:59 +0900
-Message-Id: <20250710082807.27402-1-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWRa0hTcRiH++/8z8Xl4DQvnQwSRmVGmYbF+yHMwuD4waykEoVq6MGt5rR5
-	ScPCclSONClL89ZUKu+LJTrtgk2ddoHUUleWyrpA5gUveZtgLunbw/vwe768DCFtxh6MUp0o
-	aNRylYwSY/GYc+nO0tQ4hW/tLy8oMtRQUD2fAo+HTSQUVTUgmFkYoGG6rYOC8tJZAoreazH8
-	MSwS8MNio6HaGAJDj35ieH69kQDbrU4KsrR2Al4sjNNw1VQhgq6GbBJyFx8S0Jg+TMOH5iIK
-	BmuWSfhpzsLwuqASw1B2IFj07jD7dhRBm6FRBLM3iym406On4Jt2CEFPqw1D4ZVsBIaXVhLs
-	8yuNwvZBOnAz3zo6QfD1lZ9EfFPBV5rXG5P4pxXbeZ21h+CNVZkUb5y6TfNf+p5TfGe+HfNN
-	pmkRn5UxTvGTPz5jfuJlL8Ub6nsx/07fRh9ZFyHeFy2olMmCZlfAGbHi2o3vKD4/IOXh2CiR
-	jrR+OuTEcKw/V5vdROoQ848zde6OM8V6cVbrAuFgV9aPm7Z1YB0SMwRbS3FtNQO0Q7iwAZyt
-	zIIdjNktnNlehxwdCbuHe1ZydDXvyVU/aSEcW46dpLnXGd3kqtjAvaqw4hy0Vo/WVCGpUp0c
-	K1eq/H0UqWplik9UXKwRrXz00aWlSBOa6gozI5ZBMmdJV4xaISXlyQmpsWbEMYTMVTIfrlJI
-	JdHy1IuCJu60JkklJJjRRgbL1kt2z16IlrIx8kThnCDEC5r/VsQ4eaSjCB+PsBZ7cJSlrjPz
-	yxu35RGLQnNcfTgvqCy039C+6R7ZVyIVsDk50F4eenJrWta2YjJk5v6BuQdVEu+5XDdq+nxe
-	jLa7J/zgnrzoQ8rikfcLH4P6f7d0uB3zbfXM2bt09tupKG9uueDEjeC04BCrq+Fujk+lKVIR
-	v8MlZfByzX4ZTlDI/bYTmgT5X0ihWDbNAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAAwGvAlD9CAMSnAQaCGludGVybmFsIgYKBApOO4MtoXlvaDDzmBU4nK+sBjir
-	+Hg4p+C4BTicqrYBOPT52wc488THBjijofYDOJzPhAQ49a/6AzjlxuIHOKuyTTjfpuYEOLyH
-	twM44o/IBjiNhPsDOL357gc4grioAjjDnckFONC2jgU4lPqlAzi3gOAHONO6nAY43qz/BTjm
-	wo0EOMmaqQQ4345AOMagFjj2y+wBOMSvtwI49oydBjiT0qAGOOOE3wE40sPiBDibgY4BOK++
-	2AU4+/icBjibxd4HQCVIw+zvA0i0qdkCSLma3QdIoLJ1SLOoKkiK2NIDSLKqiQZIsvKSB0jc
-	1rwGSMiY+wRIubjzAkiNg+4GSPHl2gRI777VBkij6PACSK+01QRQEloKPGRlbGl2ZXIvPmAK
-	aIaI5AFwmD54pe3sA4ABhDGKAQgIGBA0GImKFooBCQgGECcY2Nj5A4oBCQgUEDEY8+LHBIoB
-	CggDEK0GGMSs2weKAQkIExA+GOKixgSKAQkIBBAlGML7rgGKAQgIDRA1GLueUYoBCQgYEB8Y
-	q7DAA5ABCKABAKoBFGludm1haWw1LnNraHluaXguY29tsgEGCgSmffyRuAH000fCARAIASIM
-	DdBnbmgSBWF2c3ltwgEYCAMiFA34WGxoEg1kYXl6ZXJvX3J1bGVzwgEbCAQiFw1KV2VgEhBn
-	YXRla2VlcGVyX3J1bGVzwgECCAkagAFStUMQj1PjVdNoZT/OAPt2AocD97vLFII+h6s91m0S
-	mF7sKLoCf1VxcIeIcprXRwHV6mIkqOm1liZtnc8x0/RpYbEGNPseRI+eggTUBb90OjNmVkDC
-	24ml8nD574OJSsUKMQnwxFiTr62AkyD/0l+qqLwXM54ldy5MlpvIN5SFDSIEc2hhMSoDcnNh
-	GcRSGa8CAAA=
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1752136086; c=relaxed/simple;
+	bh=q9JgOH1O0KlRAwYeiuJJufNnecgIKfrIMdSnXh031kE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FPGH0hr+nvhLCaivSEhwOIsrV6LWEhKUEwCh5/D2BOaDF//qrBdwrN0VEj5SVEq9qCbkaF4Ap7zp09vQRRsGxtAJpgjm4cM8D2hNVCzagxdfbRRRbTi60U8HZHtch17gNOxCz4uu4ssNc/fT5k+F5Zq/VnqvHSBGD9Qi/NrWWlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGyq4jl2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D2EEC4CEE3;
+	Thu, 10 Jul 2025 08:28:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752136084;
+	bh=q9JgOH1O0KlRAwYeiuJJufNnecgIKfrIMdSnXh031kE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WGyq4jl2somegDlCAQYgT8+J0o1g30gAgn1r2/tUNxqmdIC+vPuqUTOhUUA8AKlt3
+	 YI3JUQ20RRy3upFSaVNQ9lRBEBXVmalf+4YEEoB62FH/04fozcFI0xHAk5QA8/0tbR
+	 kKKhhSKrwilES0Kx430PcBbYW5HgeF1UU0CtxAltIYQCewNGM2Lnx/qwhoxOCPvyfI
+	 uCTp+IgNkapRMFe/vuEpQPREhezPWMPGObpTycq4w4R66qwnzwUp36ie1X3weqQjkX
+	 u/Wj90BgRiQTU1Y+Hg5Fluy88sGTtuuuSI4xE6VTLSkpe/gMFyQS6KfZDgxH5esaO/
+	 CjgmBylbfoExw==
+Message-ID: <3bb34074-8ce0-4f0e-b7c7-1d77a8cd6ea3@kernel.org>
+Date: Thu, 10 Jul 2025 10:27:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] ASoC: dt-bindings: Add schema for FS2104/5S audio
+ amplifiers
+To: Nick Li <nick.li@foursemi.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com,
+ xiaoming.yang@foursemi.com, danyang.zheng@foursemi.com, like.xy@foxmail.com,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250703035639.7252-1-nick.li@foursemi.com>
+ <20250708112901.25228-1-nick.li@foursemi.com>
+ <20250708112901.25228-3-nick.li@foursemi.com>
+ <20250709-invisible-frigatebird-of-felicity-7e87c4@krzk-bin>
+ <BD2D8A14FDC941B8+aG91lowfru0KiWWW@foursemi.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <BD2D8A14FDC941B8+aG91lowfru0KiWWW@foursemi.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On 10/07/2025 10:11, Nick Li wrote:
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - reset-gpios
+>>> +  - firmware-name
+>>> +  - '#sound-dai-cells'
+>>
+>> Keep the same order as in list of properties. OTOH, missing supplies.
+> 
+> OK, we will fix the order, but the supplies may not be used as regulator,
 
-The MM subsystem is trying to reduce struct page to a single pointer.
-See the following link for your information:
+Hm? What does it mean in terms of hardware?
 
-   https://kernelnewbies.org/MatthewWilcox/Memdescs/Path
+> we mark them as required, is it OK?
 
-The first step towards that is splitting struct page by its individual
-users, as has already been done with folio and slab.  This patchset does
-that for page pool.
-
-Matthew Wilcox tried and stopped the same work, you can see in:
-
-   https://lore.kernel.org/linux-mm/20230111042214.907030-1-willy@infradead.org/
-
-I focused on removing the page pool members in struct page this time,
-not moving the allocation code of page pool from net to mm.  It can be
-done later if needed.
-
-The final patch removing the page pool fields will be posted once all
-the converting of page to netmem are done:
-
-   1. converting use of the pp fields in struct page in prueth_swdata.
-   2. converting use of the pp fields in struct page in freescale driver.
-
-For our discussion, I'm sharing what the final patch looks like, in this
-cover letter.
-
-	Byungchul
---8<--
-commit 1847d9890f798456b21ccb27aac7545303048492
-Author: Byungchul Park <byungchul@sk.com>
-Date:   Wed May 28 20:44:55 2025 +0900
-
-    mm, netmem: remove the page pool members in struct page
-    
-    Now that all the users of the page pool members in struct page have been
-    gone, the members can be removed from struct page.
-    
-    However, since struct netmem_desc still uses the space in struct page,
-    the important offsets should be checked properly, until struct
-    netmem_desc has its own instance from slab.
-    
-    Remove the page pool members in struct page and modify static checkers
-    for the offsets.
-    
-    Signed-off-by: Byungchul Park <byungchul@sk.com>
-
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 32ba5126e221..db2fe0d0ebbf 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -120,17 +120,6 @@ struct page {
- 			 */
- 			unsigned long private;
- 		};
--		struct {	/* page_pool used by netstack */
--			/**
--			 * @pp_magic: magic value to avoid recycling non
--			 * page_pool allocated pages.
--			 */
--			unsigned long pp_magic;
--			struct page_pool *pp;
--			unsigned long _pp_mapping_pad;
--			unsigned long dma_addr;
--			atomic_long_t pp_ref_count;
--		};
- 		struct {	/* Tail pages of compound page */
- 			unsigned long compound_head;	/* Bit zero is set */
- 		};
-diff --git a/include/net/netmem.h b/include/net/netmem.h
-index 8f354ae7d5c3..3414f184d018 100644
---- a/include/net/netmem.h
-+++ b/include/net/netmem.h
-@@ -42,11 +42,8 @@ struct netmem_desc {
- 	static_assert(offsetof(struct page, pg) == \
- 		      offsetof(struct netmem_desc, desc))
- NETMEM_DESC_ASSERT_OFFSET(flags, _flags);
--NETMEM_DESC_ASSERT_OFFSET(pp_magic, pp_magic);
--NETMEM_DESC_ASSERT_OFFSET(pp, pp);
--NETMEM_DESC_ASSERT_OFFSET(_pp_mapping_pad, _pp_mapping_pad);
--NETMEM_DESC_ASSERT_OFFSET(dma_addr, dma_addr);
--NETMEM_DESC_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
-+NETMEM_DESC_ASSERT_OFFSET(lru, pp_magic);
-+NETMEM_DESC_ASSERT_OFFSET(mapping, _pp_mapping_pad);
- #undef NETMEM_DESC_ASSERT_OFFSET
- 
- /*
----
-Changes from v8:
-	1. Rebase on net-next/main as of Jul 10.
-	2. Exclude non-controversial patches that have already been
-	   merged to net-next.
-	3. Re-add the patches that focus on removing accessing the page
-	   pool fields in struct page.
-	4. Add utility APIs e.g. casting, to use struct netmem_desc as
-	   descriptor, to support __netmem_get_pp() that has started to
-	   be used again e.g. by libeth.
-
-Changes from v7 (no actual updates):
-	1. Exclude "netmem: introduce struct netmem_desc mirroring
-	   struct page" that might be controversial.
-	2. Exclude "netmem: introduce a netmem API,
-	   virt_to_head_netmem()" since there are no users.
-
-Changes from v6 (no actual updates):
-	1. Rebase on net-next/main as of Jun 25.
-	2. Supplement a comment describing struct net_iov.
-	3. Exclude a controversial patch, "page_pool: access ->pp_magic
-	   through struct netmem_desc in page_pool_page_is_pp()".
-	4. Exclude "netmem: remove __netmem_get_pp()" since the API
-	   started to be used again by libeth.
-
-Changes from v5 (no actual updates):
-	1. Rebase on net-next/main as of Jun 20.
-	2. Add given 'Reviewed-by's and 'Acked-by's, thanks to all.
-	3. Add missing cc's.
-
-Changes from v4:
-	1. Add given 'Reviewed-by's, thanks to all.
-	2. Exclude potentially controversial patches.
-
-Changes from v3:
-	1. Relocates ->owner and ->type of net_iov out of netmem_desc
-	   and make them be net_iov specific.
-	2. Remove __force when casting struct page to struct netmem_desc.
-
-Changes from v2:
-	1. Introduce a netmem API, virt_to_head_netmem(), and use it
-	   when it's needed.
-	2. Introduce struct netmem_desc as a new struct and union'ed
-	   with the existing fields in struct net_iov.
-	3. Make page_pool_page_is_pp() access ->pp_magic through struct
-	   netmem_desc instead of struct page.
-	4. Move netmem alloc APIs from include/net/netmem.h to
-	   net/core/netmem_priv.h.
-	5. Apply trivial feedbacks, thanks to Mina, Pavel, and Toke.
-	6. Add given 'Reviewed-by's, thanks to Mina.
-
-Changes from v1:
-	1. Rebase on net-next's main as of May 26.
-	2. Check checkpatch.pl, feedbacked by SJ Park.
-	3. Add converting of page to netmem in mt76.
-	4. Revert 'mlx5: use netmem descriptor and APIs for page pool'
-	   since it's on-going by Tariq Toukan.  I will wait for his
-	   work to be done.
-	5. Revert 'page_pool: use netmem APIs to access page->pp_magic
-	   in page_pool_page_is_pp()' since we need more discussion.
-	6. Revert 'mm, netmem: remove the page pool members in struct
-	   page' since there are some prerequisite works to remove the
-	   page pool fields from struct page.  I can submit this patch
-	   separatedly later.
-	7. Cancel relocating a page pool member in struct page.
-	8. Modify static assert for offests and size of struct
-	   netmem_desc.
-
-Changes from rfc:
-	1. Rebase on net-next's main branch.
-	   https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/
-	2. Fix a build error reported by kernel test robot.
-	   https://lore.kernel.org/all/202505100932.uzAMBW1y-lkp@intel.com/
-	3. Add given 'Reviewed-by's, thanks to Mina and Ilias.
-	4. Do static_assert() on the size of struct netmem_desc instead
-	   of placing place-holder in struct page, feedbacked by
-	   Matthew.
-	5. Do struct_group_tagged(netmem_desc) on struct net_iov instead
-	   of wholly renaming it to strcut netmem_desc, feedbacked by
-	   Mina and Pavel.
-
-Byungchul Park (8):
-  netmem: introduce struct netmem_desc mirroring struct page
-  netmem: introduce utility APIs to use struct netmem_desc
-  page_pool: access ->pp_magic through struct netmem_desc in
-    page_pool_page_is_pp()
-  netmem: use netmem_desc instead of page to access ->pp in
-    __netmem_get_pp()
-  netmem: introduce a netmem API, virt_to_head_netmem()
-  mlx4: use netmem descriptor and APIs for page pool
-  netdevsim: use netmem descriptor and APIs for page pool
-  mt76: use netmem descriptor and APIs for page pool
-
- drivers/net/ethernet/mellanox/mlx4/en_rx.c    |  48 ++---
- drivers/net/ethernet/mellanox/mlx4/en_tx.c    |   8 +-
- drivers/net/ethernet/mellanox/mlx4/mlx4_en.h  |   4 +-
- drivers/net/netdevsim/netdev.c                |  19 +-
- drivers/net/netdevsim/netdevsim.h             |   2 +-
- drivers/net/wireless/mediatek/mt76/dma.c      |   6 +-
- drivers/net/wireless/mediatek/mt76/mt76.h     |  12 +-
- .../net/wireless/mediatek/mt76/sdio_txrx.c    |  24 +--
- drivers/net/wireless/mediatek/mt76/usb.c      |  10 +-
- include/linux/mm.h                            |  12 --
- include/net/netmem.h                          | 183 +++++++++++++++---
- mm/page_alloc.c                               |   1 +
- 12 files changed, 231 insertions(+), 98 deletions(-)
+How codec driver can work without power?
 
 
-base-commit: c65d34296b2252897e37835d6007bbd01b255742
--- 
-2.17.1
-
+Best regards,
+Krzysztof
 
