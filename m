@@ -1,214 +1,155 @@
-Return-Path: <linux-kernel+bounces-725991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4DBB00663
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:21:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A7E2B006BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95C453B2713
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:21:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87A191C4853A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF082749EA;
-	Thu, 10 Jul 2025 15:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="ejoiv/xF"
-Received: from mail-qv1-f66.google.com (mail-qv1-f66.google.com [209.85.219.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915B627510A;
+	Thu, 10 Jul 2025 15:30:59 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2ABB2749C9
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427B82749C3;
+	Thu, 10 Jul 2025 15:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752160867; cv=none; b=VKElYxFKhfQWc6Gq+FO39E+c689RMAdyDkjU2SdK/kRisbWsMR7LXh5NqnfJ99kZH4wUjN7td3PWLdPGNU1jt3799Z6ZYzU0fHWIgVN2ILFTraL6nv0KbIYPSq4k8q+5btDqFU0YaG3YM8pPNOVxksbvKGcImaMK3qZf7J926x8=
+	t=1752161459; cv=none; b=HwBxV9vVAbJo3qsVicmWE11ZlG/FW+CKYGzpjxuva346gXAuaJksJH1BMAIX2Ca28gnT0ChlR+XKsNyRoIz+lVK1bjsuHM/kvQLccY6dskvlcqEcympJabbrAFmj6jA+OIVObvEUmbPbnpq0GajZLFSVS1zT509n3sDhc0taEpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752160867; c=relaxed/simple;
-	bh=xKpf3SbAmWkt5VJofJn48qdY/118qeqD5HjzAhisH5k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LvOO2w3MOfF3eeq9SNa9HBxSTew2xlx6d2t9KTj6AA5FkW+6EvkGm4OXLJtqHPpsUTJvuQFZpbmO2MHSlPvMuBz5jlMoKcOAiPvONj5U12N78FEDzZRTRc2TPNfzSifJy/jiwfecXZHf4vprm2PRzG7g/GjkICKahFX+6E08TmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=ejoiv/xF; arc=none smtp.client-ip=209.85.219.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qv1-f66.google.com with SMTP id 6a1803df08f44-6fb0eb0f0fbso13170996d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:21:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1752160865; x=1752765665; darn=vger.kernel.org;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=xKpf3SbAmWkt5VJofJn48qdY/118qeqD5HjzAhisH5k=;
-        b=ejoiv/xF4795KY/I32aTsxdkxFhqS7S7mZG8Ihq2GAvpIiDNRStRgoH0q8orS46r5c
-         TLnj7YardrNIZVZfR+TJKDZ+ucYCHZRy4da1uQcYSRgWF0Xiu/+DEUvo51LibBtRT+BB
-         pTUDhfTIy933xRwH7vnZXmUvY1uf972w3GRFJVGllZ3U8ksJl677GoOPJ4DvcaLUL56m
-         pPJpDb7uxcK4EFJ6R3UMuSMhqp1vo6IBxKYxA9M5mkI+2/7/pMxMmvEvJyE3WD81JlEQ
-         thFL236GNPeF3DAjzJ92+CQVkkRmMrQqyS/Nb19Fk3GupTIT9QkhEIgXVk0B4+YmQWw9
-         ZlpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752160865; x=1752765665;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xKpf3SbAmWkt5VJofJn48qdY/118qeqD5HjzAhisH5k=;
-        b=bkQoKrRnyddb5QMSRi/zyyuDwhH8m92TNf0/5DL9SJLMrLBNT1lB0HMI6daOTcEm3z
-         Lm5eq3XFfcT0/sgtsN0CsAT6UOf1CLmUJk/PODL9g8sS+P+cxXO5IHrMRdZuJ998Gtmp
-         qbMf9rt5uP3CqJBnCYM/cufO11r+VqiFFCBmS/lbAjNIE/QSyI9oV+YFm6TKj2U7cIi0
-         kVm2D6neC4/C6VqjrEPxlFpuMkMZRLZ+z3hKNcMX6sj1RAChlk0b6qo/3CsHMUWQE4as
-         ZR30vauFdsUvUs+740tx4GzHMSzZ/+vmJN+PXWs9mSeYBcrRWr6gGbPggOOb4MtWRhdn
-         Q76w==
-X-Forwarded-Encrypted: i=1; AJvYcCXz1oEKXHHMcBBL8q2CcaM2tbcX6JU27IdUXyBbJPSDlOBS6qs8yU+k6PLLaeJ14L6drNazkGltqMaG+tY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvEcxKY9GxR64yQc6qlu8sKjo5hdiVkzB6Ma5u+i+9pGFRbKlL
-	5Uw1Qx/kmn6jajgCUvOyrRSLL5mPruUb89RTkO/+4RkE0kwMvZMzyonJJgoQbflij7U=
-X-Gm-Gg: ASbGncvDGv0NuuzRO0zNDrhEao9gdQATVHdXjXzvChIeuzOh8aAkz5B9DImWN72/jYQ
-	GzZI5w2Cssem4+fbkE5eNaX8/2i9Axq20LOJFaiULsZ4pphYciT1/xAIX8dp6u4mmS/Es09vwyR
-	0+r/PmgVHJBtONWk+f4W3IlKe92sQOvRv13r2aRKK/4Dw2q51r86PCsT7LU87qLyU4xUGN4sGKI
-	cDMPB3SXscAUsRi9ef5JZE4NITyuLnP9np5k+bXqlfk96P5SggN0EkGdsCJM+F9p47q8bYwGAYP
-	xYb98kvAivL1qpNIvL2RtKzlWz33YdunWIDKkDcyxolY/gimG4n39GZuUqF6Cem6Cg0=
-X-Google-Smtp-Source: AGHT+IH0uA7EbnPkACvyJEVJCpbYJKsf0sky4Js9sJlbaC40zioZfAIyIXsCJGWIghdll3hzxEsL/w==
-X-Received: by 2002:a05:6214:4e14:b0:6fa:a5c9:2ee7 with SMTP id 6a1803df08f44-70495a1fe12mr51088666d6.8.1752160864846;
-        Thu, 10 Jul 2025 08:21:04 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:17:b699::5ac? ([2606:6d00:17:b699::5ac])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7049799e407sm9536186d6.23.2025.07.10.08.21.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 08:21:04 -0700 (PDT)
-Message-ID: <78c981eb7fafe864bea60c662ba5b474fbd44669.camel@ndufresne.ca>
-Subject: Re: [PATCH v6 0/2] dma-buf: heaps: Create a CMA heap for each CMA
- reserved region
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Brian Starkey	 <Brian.Starkey@arm.com>,
- John Stultz <jstultz@google.com>, "T.J. Mercier"	 <tjmercier@google.com>,
- Christian =?ISO-8859-1?Q?K=F6nig?=	 <christian.koenig@amd.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek
- Szyprowski <m.szyprowski@samsung.com>, Robin Murphy	
- <robin.murphy@arm.com>, Andrew Davis <afd@ti.com>, Jared Kangas	
- <jkangas@redhat.com>, Mattijs Korpershoek <mkorpershoek@kernel.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, iommu@lists.linux.dev
-Date: Thu, 10 Jul 2025 11:21:02 -0400
-In-Reply-To: <20250709-spotted-ancient-oriole-c8bcd1@houat>
-References: <20250709-dma-buf-ecc-heap-v6-0-dac9bf80f35d@kernel.org>
-	 <49e3fa834aadb37452112bb704a1a1593c1fd0b8.camel@ndufresne.ca>
-	 <20250709-spotted-ancient-oriole-c8bcd1@houat>
-Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0MU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAY29sbGFib3JhLmNvbT6ImQQTFg
- oAQQIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBO8NUoEVxMPCGgRvEtlBlFEpYHL0BQJ
- oLLLGBQkJZfd1AAoJENlBlFEpYHL0BEkA/3qkWYt99myYFSmTJUF8UB/7OroEm3vr1HRqXeQe9Qp2
- AP0bsoAe6KjEPa/pJfuJ2khrOPPHxvyt/PBNbI5BYcIABLQnTmljb2xhcyBEdWZyZXNuZSA8bmljb
- 2xhc0BuZHVmcmVzbmUuY2E+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQ
- TvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyy+AUJCWX3dQAKCRDZQZRRKWBy9FJ5AQCNy8SX8DpHbLa
- cy58vgDwyIpB89mok9eWGGejY9mqpRwEAhHzs+/n5xlVlM3bqy1yHnAzJqVwqBE1D0jG0a9V6VQI=
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-0srW01EuwsYGDYpmIBS/"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1752161459; c=relaxed/simple;
+	bh=XiSsCFRTD5cMvXe2s6h4lB41KvWkOyNafNn/I1We6II=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OeTSKfLyn2Be/ov8QeNmk6XChcM7xdryWdZ9800mG7gDcLoxtxjxY5K9nfZxdFDOXG4mHzR6JjmGH5VGF7qHdEvaAR2tZ22IhJKcDCTrRsfYOY69hEqsSzkKRhtLlzGw/LmHdbIwlkwZLUNxDDJ3aEsu7HcvbC61sIpXJLCsBOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 1609F16031C;
+	Thu, 10 Jul 2025 15:21:54 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id C26DE17;
+	Thu, 10 Jul 2025 15:21:48 +0000 (UTC)
+Date: Thu, 10 Jul 2025 11:21:47 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
+ Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
+ James <sam@gentoo.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
+ <gor@linux.ibm.com>
+Subject: Re: [PATCH v13 02/14] unwind_user: Add frame pointer support
+Message-ID: <20250710112147.41585f6a@batman.local.home>
+In-Reply-To: <d3279556-9bb6-429d-a037-fe279c5e3c67@linux.ibm.com>
+References: <20250708012239.268642741@kernel.org>
+	<20250708012357.982692711@kernel.org>
+	<d3279556-9bb6-429d-a037-fe279c5e3c67@linux.ibm.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-0srW01EuwsYGDYpmIBS/
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: C26DE17
+X-Stat-Signature: 9a67qtwtzs3whei6qbk91ijegsrfjhby
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19s3JFU+AFOGAbq0yjNp84acB8tAlaKeEc=
+X-HE-Tag: 1752160908-914413
+X-HE-Meta: U2FsdGVkX1+mXnZuaaZaBfszAwdxFee1skDRxqvogXueGUBIv8TsRQqSv9byQILZgjsvvkaUymcAJ4XaGth3Hmnsni25KaBGMq6TUjRf9x63gQvm3NRJQfn7YdH6YrWou1imbDLBZGtWuJsLosIsoFZVk3NLH9GbcN7owtOGg7n38pMV7OUK8sfHZ5rU0kfeRsBxl01icuhpbhEhOm3c9v0Ah0eh5ivVUTLjMzyzrPvJYXOJR5SyvtBXbZKTMmNvboigFyKZmLb+AXQ9oaDv2dzIWzM91rtQI9Cj0qQov6mfSKrUO6GTSQZ08/ztAZ7kFuIaperrrFsM7BUWaziz6TjpVBtklDf1
 
-Hi,
-
-Le mercredi 09 juillet 2025 =C3=A0 15:38 +0200, Maxime Ripard a =C3=A9crit=
-=C2=A0:
-> > Will there be a generic way to find out which driver/device this carveo=
-ut
-> > belongs to ? In V4L2, only complex cameras have userspace drivers,
-> > everything
-> > else is generic code.
+On Wed, 9 Jul 2025 12:01:14 +0200
+Jens Remus <jremus@linux.ibm.com> wrote:
+> >  static int unwind_user_next(struct unwind_user_state *state)
+> >  {
+> > -	/* no implementation yet */
+> > +	struct unwind_user_frame *frame;
+> > +	unsigned long cfa =3D 0, fp, ra =3D 0;
+> > +	unsigned int shift;
+> > +
+> > +	if (state->done)
+> > +		return -EINVAL;
+> > +
+> > +	if (fp_state(state))
+> > +		frame =3D &fp_frame;
+> > +	else
+> > +		goto done;
+> > +
+> > +	if (frame->use_fp) {
+> > +		if (state->fp < state->sp) =20
 >=20
-> I believe it's a separate discussion, but the current stance is that the
-> heap name is enough to identify in a platform-specific way where you
-> allocate from. I've worked on documenting what a good name is so
-> userspace can pick it up more easily here:
+> 		if (state->fp <=3D state->sp)
 >=20
-> https://lore.kernel.org/r/20250616-dma-buf-heap-names-doc-v2-1-8ae43174cd=
-bf@kernel.org
+> I meanwhile came to the conclusion that for architectures, such as s390,
+> where SP at function entry =3D=3D SP at call site, the FP may be equal to
+> the SP.  At least for the brief period where the FP has been setup and
+> stack allocation did not yet take place.  For most architectures this
+> can probably only occur in the topmost frame.  For s390 the FP is setup
+> after static stack allocation, so --fno-omit-frame-pointer would enforce
+> FP=3D=3DSP in any frame that does not perform dynamic stack allocation.
+
+=46rom your latest email, I take it I can ignore the above?
+
 >=20
-> But it's not really what you expected
+> > +			goto done;
+> > +		cfa =3D state->fp;
+> > +	} else {
+> > +		cfa =3D state->sp;
+> > +	}
+> > +
+> > +	/* Get the Canonical Frame Address (CFA) */
+> > +	cfa +=3D frame->cfa_off;
+> > +
+> > +	/* stack going in wrong direction? */
+> > +	if (cfa <=3D state->sp)
+> > +		goto done;
+> > +
+> > +	/* Make sure that the address is word aligned */
+> > +	shift =3D sizeof(long) =3D=3D 4 ? 2 : 3;
+> > +	if ((cfa + frame->ra_off) & ((1 << shift) - 1))
+> > +		goto done; =20
+>=20
+> Do all architectures/ABI mandate register stack save slots to be aligned?
+> s390 does.
 
-=46rom a dma-heap API, the naming rules seems necessary, but suggesting gener=
-ic
-code to use "grep" style of search to match a heap is extremely fragile. Th=
-e
-documentation you propose is (intentionally?) vague. For me, the naming is =
-more
-like giving proper names to your function calls do devs can make sense out =
-of
-it.
+I believe so.
 
-Stepping back a little, we already opened the door for in-driver use of hea=
-ps.
-So perhaps the way forward is to have V4L2 drivers utilize heaps from insid=
-e the
-kernel. Once driver are fully ported, additional APIs could be added so tha=
-t
-userspace can read which heap(s) is going to be used for the active
-configuration, and which other heaps are known usable (enumerate them). The=
-re is
-no need to add properties in that context, since these will derives from th=
-e
-driver configuration you picked. If you told you driver you doing secure me=
-mory
-playback, the driver will filter-out what can't be used.
+>=20
+> > +
+> > +	/* Find the Return Address (RA) */
+> > +	if (get_user(ra, (unsigned long *)(cfa + frame->ra_off)))
+> > +		goto done;
+> > + =20
+>=20
+> Why not validate the FP stack save slot address as well?
 
-Examples out there often express simplified view of the problem. Your ECC v=
-ideo
-playback case is a good one. Let's say you have performance issue in both
-decoder and display due to ECC. You may think that you just allocate from a=
- non-
-ECC heap, import these into the decoder, and once filled, import these into=
- the
-display driver and you won.
+You mean to validate cfa + frame->fp_off?
 
-But in reality, your display buffer might not be the reference buffers, and=
- most
-of the memory bandwidth in a modern decoder goes into reading reference fra=
-mes
-and the attached metadata (the later which may or may not be in the same
-allocation block).
+Isn't cfa the only real variable here? That is, if cfa + frame->ra_off
+works, wouldn't the same go for frame->fp_off, as both frame->ra_off
+and frame->fp_off are constants set by the architecture, and should be
+word aligned.
 
-Even once the reference frames get exposed to userspace (which is a long te=
-rm
-goal), there will still be couple of buffers that just simply don't fit and=
- must
-be kept hidden inside the driver.
+-- Steve
 
-My general conclusion is that once these heap exists, and that we guarantee
-platform specific unique names, we should probably build on top. Both users=
-pace
-and driver become consumers of the heap. And for the case where the platfor=
-m-
-specific knowledge lives inside the kernel, then heaps are selected by the
-kernel. Also, very little per-driver duplication will be needed, since 90% =
-of
-the V4L2 driver share the allocator implementation.
+>=20
+> > +	if (frame->fp_off && get_user(fp, (unsigned long __user *)(cfa + fram=
+e->fp_off)))
+> > +		goto done;
+> > +
 
-Does that makes any sense to anyone ?
-
-Nicolas
-
-
---=-0srW01EuwsYGDYpmIBS/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaG/aXgAKCRDZQZRRKWBy
-9DlHAP9fTMIloahiN5XMBZnBB4aGkZUXdygAalNGlj6RFJZc3AD/RAhlPPmyBaVt
-ZDKBRjZVW40OnGDxhAYZePpjsIkSPw4=
-=uaX4
------END PGP SIGNATURE-----
-
---=-0srW01EuwsYGDYpmIBS/--
 
