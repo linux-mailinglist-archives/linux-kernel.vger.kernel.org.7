@@ -1,175 +1,199 @@
-Return-Path: <linux-kernel+bounces-725071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41851AFFA7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17822AFFA81
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB6B34E535F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:12:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 566B754827F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAE728850D;
-	Thu, 10 Jul 2025 07:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84227288C04;
+	Thu, 10 Jul 2025 07:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJd0K9f9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="y6mdwgVv"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022111.outbound.protection.outlook.com [40.107.75.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB016FC1D;
-	Thu, 10 Jul 2025 07:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752131572; cv=none; b=oDtDzTo87gwGd+noefdE7ll9LZQBOHQCIctAEhiK1Jw/BXf/IQatZKJQJkunv3+xtQ2qVwYoweuOEcDCaSu1emn5IvtuyBMBJBdSzpVKsPobA6WKYR3Latyfy6C2vATjDVMrJfLbJ0mYdZa2STNFBmamXaTzgUM7aXLf9I4Zp3E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752131572; c=relaxed/simple;
-	bh=ifYIHg5zJ607ENbj97kebFOOUjlK1jPRWMHY7Y4wlW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y3wqNxuoRhqizjcESbiYH5/aIi0jt+2F5pNKoETepUJO70HsZN6u3C6iRWp/hf2/VQvTZB3es1JMlrT/VHV/C+pIUM4J3yIy8oKjTyDS6KFHTkcveArTjVpiv1+phs5CRJbofW7y/4fe8xUoOdpWX8Mgw4adsrWsnN1L7tDff9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJd0K9f9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F350AC4CEF4;
-	Thu, 10 Jul 2025 07:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752131572;
-	bh=ifYIHg5zJ607ENbj97kebFOOUjlK1jPRWMHY7Y4wlW4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YJd0K9f9Ta/osGMRvXxjmSPbkZYH+3UTUdoLEB+RKOIxv7bQ9orex8Q3v+qy06/mz
-	 YgnzdX/ZlV3Flzi8K3MdHFQgnBVZMAm6vgdgULbEdqoy1fGLS5QyFpLMEy3Wkj32/6
-	 6wg2p2t4wTk09YvccZ0YkbhaxOuGb2yOqC1BVKVNSc4ExhKLoXSVQ86B2qocnX4GRo
-	 Tjs1HKMJBW3DAai3jb4Jo8bwpIZTQOYq38Fqos3+vIhgsrJF36u390+NocP6Q39buG
-	 Vplurk8XhM3harDeHSKJ1U6EiPnMVOroJE0JrgyLpK2j6C7wzeliapuTJ/oCdfbxZF
-	 ZTmSw1NhMXj2A==
-Message-ID: <48677b18-3936-464a-a581-26a44ef76c80@kernel.org>
-Date: Thu, 10 Jul 2025 09:12:40 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AE32882AB;
+	Thu, 10 Jul 2025 07:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.111
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752131598; cv=fail; b=FZrK2egTuO/P1bUD22BJVzPe1alDdZnMruf9wl00Lb87hICbxhVuv32z5ud7DuP/+XmednEZcdYtGPNfEEcU3Dl4Hxecmun0tqFpQcDkugBfYb4XYNgI8CNxKJJkj2ULbWQEaXBKpNIxOkxQlFUuhvby6PRx2wQVNddE3YgrPxg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752131598; c=relaxed/simple;
+	bh=5nlyMsONyIyICChwZJfd+URE1ADam0kSeT13jUoUI9s=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PxPQczsIevpeLxBzKGMu/ctXCKD8RUGPER48N66nUOUo1pB/58Evz5nBDyesCcyucLPiegpbnbcB6LG+JETlFpxRM6+GZctQlzwas9M8/vJ16aEOS9wjtSLIQka3xrb9Q/btPUS6L1MAXcCRKLC67oUK2XDEFWjvBOXsVRHuWRc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=y6mdwgVv; arc=fail smtp.client-ip=40.107.75.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TBOXBuV0IShlWabH/lvHzvAINhK1NJ8m245Y5apXkzI3mEH+TAV4aKbLBVYhyRCNTN0hcShRx66RnWj2d03pCJaU4R2r4amsrzXJwN6bYOMu2gQSn+nkniyCuOM7LmiAh94bMXqz2tbmfbkJfIOQSW80tsjnllpWPVimdKZhRlnaT/vyMSsCrf0bwqt80Y7aEqC5ZTicoWUt57cSr0iHyz4U+PmMC5oel35Z7FkWodZ9Tz4TQkBaKPn83WfuSlE+jLvBx9607hxLDOUUpMLiWX/Kci1J777Y8fyyMZ8Xb4P0mXqHaHn7BcLO0i7WGcj1+Q0wiIpBgzQU5HfHsIvFuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DikmKvJqrUQqovv3ikbr6+CyDlppVj9D7h5JMgNmfIw=;
+ b=NM79jxP8db3nMoxifSp8s0mhtBEZIcV1g5/rV6r6hEbZgyEvLFv00gNZ9gUX4plKEZKMvkyjzOWlJ6bTcIkAl6C4KMUQi2hD3L3gSXKD7w8jqGBxl7fNyH541kHTcf4idWRRRp+0IS6k1BqAzzZblTxQcb8owVIMcDstBaeeDg1inUrMnBRSxRwgsNlISO83rjriAc+WqWjSvCjmsb5zQ/bN85d7QR9NssXye30U+ijwgcuWY/e6mVxKW+2ocCS2rYv8A/5rbaCmQ99wviwg02hyYuYha7BbzJ+Gux9LVT++BZc5n8W+ijOHlaaIQG1xoGYb3FVZPxsyUw0Nihe9PQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DikmKvJqrUQqovv3ikbr6+CyDlppVj9D7h5JMgNmfIw=;
+ b=y6mdwgVvTumXBN47osHehbd6R8ll17yASDmO4sfRmGTN5gYZ1U67uxZFvB/UA2kIBvNZgZFr1tQLWAEwX1xH2HPaTe9QmDb6/h9uGmUxdD4tasLnoSyBewv2UNv70wXcFgFm8SSIWTk0dSJzmtYCX4WxxSPipD2TPMXJnfmPNyDV0taG7l5u5S3MerrizRfDSoU0DmXTsnfrIuLUfexYu8MkYVECT5sJ6LOofw94rAyY8ZsgpyHfADjuL4C37E1xSXELa0kZSaTgS3BJT8iMfa4UFSMTOTITwi4uahWP21T5JAaVv0s2O0hsV0ND5h+Qc4slzWzXLvUFU80GwH5Pgw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from TYSPR03MB8627.apcprd03.prod.outlook.com (2603:1096:405:8a::9)
+ by TYZPR03MB6817.apcprd03.prod.outlook.com (2603:1096:400:203::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.25; Thu, 10 Jul
+ 2025 07:13:14 +0000
+Received: from TYSPR03MB8627.apcprd03.prod.outlook.com
+ ([fe80::cf16:aa54:9bd5:26f]) by TYSPR03MB8627.apcprd03.prod.outlook.com
+ ([fe80::cf16:aa54:9bd5:26f%7]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
+ 07:13:14 +0000
+Message-ID: <c43294bf-cb50-4e85-97df-a0ef89c674f0@amlogic.com>
+Date: Thu, 10 Jul 2025 15:13:08 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] media: amlogic-c3: Use v4l2-params for validation
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Dafna Hirschfeld <dafna@fastmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com>
+ <20250708-extensible-parameters-validation-v1-7-9fc27c9c728c@ideasonboard.com>
+Content-Language: en-US
+From: Keke Li <keke.li@amlogic.com>
+In-Reply-To: <20250708-extensible-parameters-validation-v1-7-9fc27c9c728c@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR01CA0171.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::27) To TYSPR03MB8627.apcprd03.prod.outlook.com
+ (2603:1096:405:8a::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/16] clk: samsung: artpec-8: Add initial clock support
-To: ksk4725@coasia.com, Jesper Nilsson <jesper.nilsson@axis.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
- <tomasz.figa@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Ravi Patel <ravi.patel@samsung.com>, SungMin Park <smn1196@coasia.com>
-Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>,
- GunWoo Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>,
- GyoungBo Min <mingyoungbo@coasia.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Shradha Todi
- <shradha.t@samsung.com>, Inbaraj E <inbaraj.e@samsung.com>,
- Swathi K S <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>,
- Dongjin Yang <dj76.yang@samsung.com>, Sang Min Kim
- <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
- <20250710002047.1573841-5-ksk4725@coasia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250710002047.1573841-5-ksk4725@coasia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYSPR03MB8627:EE_|TYZPR03MB6817:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1cb4b0ef-1c9f-42ee-31be-08ddbf813c42
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WlR5Zk1Kb01mZG9iNnMzUjF5dFRPN2FjSEFHVmxkWTFRYzdEc0lSUFIyeW5k?=
+ =?utf-8?B?aTBtaElLOFh2eWVLamNrWGk2bHhrakZ6ZHhUdUg1dWc4b2JzODVNVXFzNERt?=
+ =?utf-8?B?eGgxdWQzQVpqZ0g0V0QvUXdaVVVmaFhSdkNWN0FrR1JDM0crWms0ZEFMR0Zz?=
+ =?utf-8?B?RHVVZnJaNFRaZUNoOVpPQ0xIMFFCeSthRlF2TThhdDlxVzNGSHZIRDdOTEtn?=
+ =?utf-8?B?OTUvTm1LYkcyRk9Id3kxeGIvMXRNajlDeHMvL0Zua0txdDVwT2dBckY3WkxN?=
+ =?utf-8?B?dkNobGtEM0Z6aGhMNEdKZU9WQlJqNXdxQWMxQ2JoUUNDMTY5dmd0RzVPbGJ1?=
+ =?utf-8?B?ZVFPbHNMSGM4aTYxdS9QSldKdzFmRFo1NndpcDRzZUFheDBEcjVnU25TbHlU?=
+ =?utf-8?B?QWJ3LytETTZIb0NKampiRExhUWpjYkI4VUpGYng2cjB5bXQ2U2FYYjh6cU9Y?=
+ =?utf-8?B?dEI4Qm5pOWcvSkZ2aXpyMEtYYVZRMEtZUFVaRkFxTEo5bHBxcnlsR3RBOWl0?=
+ =?utf-8?B?bENmckxWUjNUamZLYUVaUDBSSmx0bUp0MzVNNS9GMUJXT3VMMlB4c09FaXdM?=
+ =?utf-8?B?aTYxS053dmlhMlBHUndmWTk5b0VCejY4ZVphK1Y0NjAzQXkzYVpXOUVjeldy?=
+ =?utf-8?B?cktyYTNnaUNXa2l1TjRvYnh1UGdDZlQ2NEY3Yk1LUXg4RmNaTHlsQmtXeXNN?=
+ =?utf-8?B?WjAvUURpeDh1ZEo2QWRGbkpwSjVRRWZ1TTgweFVaYXJRTWhBNDVqa2Fibmc0?=
+ =?utf-8?B?cmJwT0VaNXV6OWxTN0IzRnQxcDVyMUxzeTJIZ2I1b0U4ekx2YjA1TEFoZGxi?=
+ =?utf-8?B?eXJqUmxzUEJ0NGVFdEJseGNwM0Rmc3F5c2hhNEluSXhwakFxU0hYcW8vaytF?=
+ =?utf-8?B?UmdBdm40bTlsOUZscGtTNW1TbEJBbU1rTWVpWXV5Q2M3d3pveHZlUTVkc0pM?=
+ =?utf-8?B?UzV1ekd4NDJ0QloxU0ZzQUxNdEo3eWxMK205dWJaMU4wTjB1eXBjSklxUEYw?=
+ =?utf-8?B?VmNqb3JSMk91YWVMZnI2dGhqOFJUSHZmU011UUk5VG5zNGk1WEErYTJNTDdU?=
+ =?utf-8?B?NHI4MmxRc3JTb1JWUncrNmtITVZVblU0cng1UkRGbjFwR1ZWWk9IYjlZNnVq?=
+ =?utf-8?B?TmVqSXdhOXRTcXVza2ZzYmtXMU1wQ2o5K1hTQjRXZVd6L012VURUWjZNRExy?=
+ =?utf-8?B?SzJhVEJQVkNDNi9BcmwrOW9WNTF5RDZlNFNGbVkzZkQycjhFQTR3R1J5RThX?=
+ =?utf-8?B?ejkrTFNKc3ZDREJJV1o5Nm0ySUpSL2dxUTVmQVZ2VDNYMGF3VnVKNlBuMThx?=
+ =?utf-8?B?L042VEdrL2dXZVp1bVVqY1lha1pyV2NmVk8wNytGYjJCcXpIQzMxMlkrNXFW?=
+ =?utf-8?B?OHViUmlzYVJNVlpqcUo1ekRjNmhkWGgvWmNZOWR2Z3RseTBrN0wrekR1Q0Ey?=
+ =?utf-8?B?UFN4dEJ0THNlbEl2Q1RmNWJLbHlGaVYzNFZycDA1MWlOdWZ5dDZmUjZBWFRN?=
+ =?utf-8?B?S3F4VjZ1NWpkZzQ0Q0tmWThwcFZUREZzYllvWEQ5ekY3TDhUWlNFUEp6NVZL?=
+ =?utf-8?B?QU5oNHZ4TVhJODZPK2JablJFRjhLNUlMZVpTaXBHVmdOc0FncDJnbmxqRXl0?=
+ =?utf-8?B?MnYvNW9tVXZaTUxpTXJ2ZEJBYzRvTitYUUtnUFo4Umh1QU1rSkpGOFBqc2Rq?=
+ =?utf-8?B?Z2plbExFRk9UbWhFVHcxeHZBMzhwTUFVbFQ5b3NnOWVUYThWeWdlbnAzWGd0?=
+ =?utf-8?B?ZzBvT2dsODFVZXBOYkxUajRGdlBucXAwaUI2REpBMnUrbzJMUmVtdVBkdTFj?=
+ =?utf-8?B?WDN1STA4MS9OWEordzgzU3k4TkNLTXpHR2QzMXJZczNieVYzVFNCbHpHT0JD?=
+ =?utf-8?B?UFhCcGpPQ2ZuWVlrME84eDZLQ3hPOVpyb1cyNVFpcXRLcUNEa0FtVFQ4cm1T?=
+ =?utf-8?Q?kGA1X1GZVV8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR03MB8627.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Tk1OME8wWnl4SjVZalFqMURyakhyRi80cFl2dDFEMzgwTU5ZT3l0OHJZcFF3?=
+ =?utf-8?B?am1jai92R01tRGthWTBVUEx6SkRiamJSZUNrb3BmajF1QnVhWlJadCtla1Nt?=
+ =?utf-8?B?OGtyM1UyM3JvU0lEcVpBY2EveGN1Y1JHR2JDbktkOFhteHpLTCt5dWtRd0FS?=
+ =?utf-8?B?WS9WREdIcHFOVWRNcVJSS0lpVVdsZEUzVnNCV3J2czhIb1FyN3Z3ZWg3cElI?=
+ =?utf-8?B?R3dRTlE1bE1ORGRGV2hSU3Nid0dHU0czZGdLbEVMTFcyaW9vUkdkcTR0SmlS?=
+ =?utf-8?B?Q21HRHkzNHJsTHRkYW1UZ0x2Zy9SMm1pOEIveDJvbFpoKzEzOGtNYzNFazhT?=
+ =?utf-8?B?cnU0WXBrMUZGcHZaTnJqRkZCSlU5eUEzT09Jd0EvcjdrcXRMVldpcEpoUHRF?=
+ =?utf-8?B?VmF3MDdEb29EK3gzekhBWE1vR0FQa1YrY1dwb0s0TENzZUlQT0xqbXFGSTlK?=
+ =?utf-8?B?U3RrQU1mSmllZFJ1NzE4V3dpd1A4aGxzQVJ3QzRtdVRPbm1YUUg5TUNRWERB?=
+ =?utf-8?B?cHlXYXl3V0NhL3VXamo1Vm95bCtKNlh5dVhCLytwY0VvSThjOGVFbkd3WFhK?=
+ =?utf-8?B?K1VZZ1hLbERuWjhsMFZCMDVCZEt3S2pDZHZ5Q2J0Mnk3NXlvV3hjYnQvQ1FD?=
+ =?utf-8?B?WlRMWU1DY0ZaTmFBK0lQQyswQUpGVlZqOFRYS1REKzUzalZsWVVrNnV0NEo1?=
+ =?utf-8?B?VG5Kb3phL0dvbkE0SEVNNS82RzN1cVY4WkEvSU5YUjg5Tk5paEw2YWNZNHRX?=
+ =?utf-8?B?TkhQcXduQWQxb3ptbGZ0ak1rb3dIbnNYLy83NkY3STVyeWQ5QW01V1RnMGEr?=
+ =?utf-8?B?MlAwSVBUWjExTE10eUpFcFBXWGtTTHBHZmJlZFVkaytxSHpZSXJydTg0ek81?=
+ =?utf-8?B?UGtJNWl5UXh5L3NvcDRvUXVrOThubnVWSUdRVS83NlN0U3ZDUDg1WmpRRlll?=
+ =?utf-8?B?SjF4ZGprQWQ2a1FXNjFvT1UvNUZralFsQ2VSSG1Sd0phVUxtSUVNenBXWHYx?=
+ =?utf-8?B?UnR3dWhDcS9zNit1ZU14UGtqVnhiTlhrd2FZSmNPZS83VDBEcmV3emc2NTZp?=
+ =?utf-8?B?a2RtYzFtN0VEWnBENlFKeS9DemRacWdyRXc4OEhjTDBWWDE2bFFCN015U0ZU?=
+ =?utf-8?B?a0drVWF4V0VGczF5V21pZVIwUWVJYmtrSlI4ME5hOXBtYW5oSkxyQ0ZHTnlB?=
+ =?utf-8?B?Mk9Nb2NQR3V4V2FNdW90aW9vUnRHZTVQUXdKZmNsaDFSUXI4NVdLL1VhUVJh?=
+ =?utf-8?B?dHRIMWNLWi84VzlwdlF6TXJtN2dWNEthb0t0QmhwSk9oMThRSk1ERVMvVFJh?=
+ =?utf-8?B?NkVQZmY5QkRzYTZYc0M4a08yUTdEOUhKMHlpQnFRWGQzbTFZSTJQa3RSRG14?=
+ =?utf-8?B?ZU1YTGlIaUZmODJSZlAwUW1ZQ3hUeEJDenBkbGcxZVpKM2MwOUVabSt2K1hp?=
+ =?utf-8?B?OEVrOHJBNjhQdW5vQWRaNUdXMzNubmpuQVZOYXNmT3J4eHkrVUJUN1NteU1t?=
+ =?utf-8?B?TmxqZHgrbDBCZmVQNFdEM3dCZjNKMndCREpMcGl0aFdBNFZ2QU16cUEwWWtk?=
+ =?utf-8?B?UHZYaHNYWnorUlcxRW9pbmtiSVNJRGhiUWQ2OXViNmhaNFBMRWVoaXJNNTIv?=
+ =?utf-8?B?WkYzTHNpK0R6NWErNVF3aU9iMXdCOW9aVGNIcStHUEFyaTNJKy9Ta2JEWmFD?=
+ =?utf-8?B?MTJVOVhoOGZKY0E3R290a3R0VmFZa2ZlVFBXbGNCREdLSzM1dFVGMWlFaEV1?=
+ =?utf-8?B?Ukh6SzVVVjVxVmx2UkdicnJVNnRxTERYbVVnTkJEMk91UGpJa2J6TjlFcFhJ?=
+ =?utf-8?B?c245ZlNrMWhZaExHSVdJT0FDaEJrdWhNQnM1Ykpualpyd1NFL3NkaUVGckVp?=
+ =?utf-8?B?OFlwaS9scmt3ZXYzYWFqRFc0N2hIZUVPY3lMa2lxeGEwNXVoT0xvM2FJYXlx?=
+ =?utf-8?B?OFFhZjNBdHRhUVdUaktXQXhaZzhlL2RyQUFOYldpYVR6a1Jpckl5SSthWldX?=
+ =?utf-8?B?UXB2dmtXWmtTdExDRTBqamFQNkZBdm12OWNua2R5dFhYNjBMc2ozYkdwTS90?=
+ =?utf-8?B?UUhHTFNnekRrTlB4R0NQbHdoN0Y4eHJ4c2x6WVQ5R2dncDFPbVBYMG5NSDB0?=
+ =?utf-8?Q?VPG1xEzhQRmQwSfW7fsulcSig?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cb4b0ef-1c9f-42ee-31be-08ddbf813c42
+X-MS-Exchange-CrossTenant-AuthSource: TYSPR03MB8627.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 07:13:14.5744
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SJYXssgd9dMYurErc2jOP8sbxecMQdR0IeLbYqrhK1EVksK1VRhffaA3ZRs7tDJ0RggCOexdE0VgIxZKJKApOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB6817
 
-On 10/07/2025 02:20, ksk4725@coasia.com wrote:
-> From: Hakyeong Kim <hgkim05@coasia.com>
-> 
-> Add initial clock support for ARTPEC-8 SoC which is required
-> for enabling basic clock management.
-> 
-> Add clock support for below CMU block in ARTPEC-8 SoC:
->  - CMU_IMEM
-> 
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-> Signed-off-by: Hakyeong Kim <hgkim05@coasia.com>
+
+On 2025/7/8 18:40, Jacopo Mondi wrote:
+> [ EXTERNAL EMAIL ]
+>
+> Convert c3-ispa-params.c to use the new types fro block handlers
+> defined in v4l2-params.h and use the new helpers from v4l2-params.c
+> to remove boilerplate code from the driver.
+>
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 > ---
->  drivers/clk/samsung/Kconfig       |  8 ++++
->  drivers/clk/samsung/Makefile      |  1 +
->  drivers/clk/samsung/clk-artpec8.c | 62 +++++++++++++++++++++++++++++++
->  3 files changed, 71 insertions(+)
->  create mode 100644 drivers/clk/samsung/clk-artpec8.c
-> 
-> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-> index 76a494e95027..289591b403ad 100644
-> --- a/drivers/clk/samsung/Kconfig
-> +++ b/drivers/clk/samsung/Kconfig
-> @@ -13,6 +13,7 @@ config COMMON_CLK_SAMSUNG
->  	select EXYNOS_5420_COMMON_CLK if ARM && SOC_EXYNOS5420
->  	select EXYNOS_ARM64_COMMON_CLK if ARM64 && ARCH_EXYNOS
->  	select TESLA_FSD_COMMON_CLK if ARM64 && ARCH_TESLA_FSD
-> +	select ARTPEC8_COMMON_CLK if ARM64 && ARCH_ARTPEC8
-
-Here and:
-
->  
->  config S3C64XX_COMMON_CLK
->  	bool "Samsung S3C64xx clock controller support" if COMPILE_TEST
-> @@ -102,3 +103,10 @@ config TESLA_FSD_COMMON_CLK
->  	help
->  	  Support for the clock controller present on the Tesla FSD SoC.
->  	  Choose Y here only if you build for this SoC.
-> +
-> +config ARTPEC8_COMMON_CLK
-
-here, place it before EXYNOS_3250_COMMON_CLK.
-
-> +	bool "Axis ARTPEC-8 clock controller support" if COMPILE_TEST
-> +	depends on COMMON_CLK_SAMSUNG
-> +	help
+>   .../media/platform/amlogic/c3/isp/c3-isp-params.c  | 272 ++++++++-------------
+>   1 file changed, 103 insertions(+), 169 deletions(-)
 
 
+Reviewed-by: Keke Li <keke.li@amlogic.com>
 
 Best regards,
-Krzysztof
+Keke
+
 
