@@ -1,85 +1,78 @@
-Return-Path: <linux-kernel+bounces-726242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56370B009F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90CF6B009FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E117F566392
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:30:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D803567117
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759572F0C6D;
-	Thu, 10 Jul 2025 17:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="l0joj5Ns"
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69282EFDA3;
+	Thu, 10 Jul 2025 17:30:51 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9205E2F0E29;
-	Thu, 10 Jul 2025 17:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1538274FE8;
+	Thu, 10 Jul 2025 17:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752168591; cv=none; b=qKCoo1cCed/sk7ermw9LSEKv68i+3pocTg8OLE6vq1MTXYRy2BHsxpJluK6doPR9QNhCOUtYlplHiXfF1hmuO5tYflhaJuDp38Py5YeYJkQ5JQv5UjLtVeDiHKfTqDotz6nbKcMgSUL3O8f+I6Lohrxko/bHRlP6GATlfZKKHho=
+	t=1752168651; cv=none; b=G2PFDtMDmHIGWgjyqpYnW8jSas+YvFJdq/QIKIlgXW6nQwmyNLL9K2Lgo1VqFXInGw0/rMZc90tdUjJJbma71Ia58s+8WNrDzvs9LTBQzHVyAea6gXZ2/0ZIlr/HN9uYTM6m+i5Os2hF+ypgxNrv412NtrrqtIVgzml1yg3GwoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752168591; c=relaxed/simple;
-	bh=Y2QU6dhIoCpkxMjvh48d0GgwnQJLBzZYTZ+dfijuhDA=;
+	s=arc-20240116; t=1752168651; c=relaxed/simple;
+	bh=aYGG3JC1rihltD2ay4sWRXTTZkljkpO+fxQvhPU8xek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YObu1UNzblpxzi/rNqx+68j4SyyiJjTUl6b9388eQTxpxE1wy1Sawn2QxnOV+LjoGRnLjjPDyB2d/kJXa0FVoqHFAfpuvGysFQOkGJZ7PIlPC+B6NQ1mX2BU8tqwNqDBoJWows4JJVG4bwhxupmLRmkpeF7NDVCF6L2F2KtABTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=l0joj5Ns; arc=none smtp.client-ip=208.88.110.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 228F13D8759F;
-	Thu, 10 Jul 2025 13:29:48 -0400 (EDT)
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
- with ESMTP id VJ1AFnWBo4HP; Thu, 10 Jul 2025 13:29:47 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 7C6603D87659;
-	Thu, 10 Jul 2025 13:29:47 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 7C6603D87659
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
-	t=1752168587; bh=AlTPeyZEbvVpCppEtdbUfk6jkGSiu5jkvaQOyebiU3E=;
-	h=Date:From:To:Message-ID:MIME-Version;
-	b=l0joj5NsGdhr4JzqNjXvyxIreXuCOJjtQYI2Bt4pPPUhjZ17z5+4hbo/irHByVcIe
-	 o7mESkkRCA+K4mSLqMSeRS+i24hWWYAE5lFGAyNvq5k+GIc1BOpnsRs3Y5xMMy0nri
-	 fg/4jzhW/adwz+L+BPOW0KBuwSIs6MkxEHH5qdJgm46F26mdZQ+wp+Rdz56JK5muwD
-	 AJXx33bQ7Txb24+9KsF+CZL3kqggz9+NPATcPNI9O88PZUD0jtNdK91Of1C4yzBP3l
-	 H3wJoFkb131aWPwl4JCYCLXln0qXsYGCwptbem4aI+7DMY/CrLu/8o2d886rqhuLad
-	 WvfTfvdfcjPbg==
-X-Virus-Scanned: amavis at mail.savoirfairelinux.com
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
- with ESMTP id 0VqTtdVW9Imo; Thu, 10 Jul 2025 13:29:47 -0400 (EDT)
-Received: from fedora (unknown [192.168.51.254])
-	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id 0DBA83D8759F;
-	Thu, 10 Jul 2025 13:29:47 -0400 (EDT)
-Date: Thu, 10 Jul 2025 13:29:45 -0400
-From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
-	Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>,
-	Robin Gong <yibin.gong@nxp.com>,
-	Enric Balletbo i Serra <eballetbo@gmail.com>
-Subject: Re: [PATCH v8 3/6] regulator: pf1550: add support for regulator
-Message-ID: <aG_4ic277eGBgQb0@fedora>
-References: <20250707-pf1550-v8-0-6b6eb67c03a0@savoirfairelinux.com>
- <20250707-pf1550-v8-3-6b6eb67c03a0@savoirfairelinux.com>
- <ni3bmj4ye3dp3opolk466r2ayx7iuk6hhyx4pdikydizqykfx7@nc5qdok32hsm>
- <aG_x8VELlUvLxezY@fedora>
- <ff3c3r336qgnlwfheelm6hjypnkjhw3txmeztv7mz2y6xdoxld@ecgifcvuihr3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wpzq7o/lCgH0efz1KzEfrNvQ8nfTkxboOxbJ188uFlUqyTw9FqcSfqGoJKxo039w/nT2hJFvizpeYbIaAnH+TTG346oWeCY8Sx8HpuHLao3vmA00QhlRGNDq4eAY4h5FCzKJuxOHqdB//6OdU062B2YN1bicX9MZxtolvfS49Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae3c5f666bfso210627566b.3;
+        Thu, 10 Jul 2025 10:30:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752168648; x=1752773448;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q5MFFBUYpLJN0PCMiBmsLfiSJha8AQz1cUcW2BMgMck=;
+        b=KeqTM4ryosNrFD9DrbomVn7sKl8zRM7ZgDdOu/q3CsElRg3xKThGzVOgx1nDdj172+
+         cwidr8ACYhl08nnqjeUrOIGiG5+VMGk95uQrYt2Akp0Q4tbsqVz9AiaOb8e+1WYEp2iG
+         yXGw3XU7zw2kQLs1KDhPxJ1a77Ddjs8rbrrHqPqvUinqKH90pcXUrxjPvZaJoC/jYrok
+         E5a1tlvQjkaLMLPjkUuqibztYrZSXdhaZkQXZMwcrypMNZcBCAQZPmSRJT6WseQeqOZc
+         PCkp1290c5592aAN25hAO33/kQ8+DaWC5Rf95j2CENRXbkwfUnNUs71kSsv8tKN+QwUv
+         IXVw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1RkIkzxL3qOwL+BZXCQKbOJTyqVaxw6rD6bOtsB022PjA9+7StyvNd1fNiVdhKLr0Lr+V4Mw0HxMKTmnN@vger.kernel.org, AJvYcCXLX+b5NXcDJMXjzfhpyH/JhCwTInkDENoAsuohrRkBgCDxH5q21SjB1kgk49IC0MpkXK4sresNBGz0Ysw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5ecibsfW9W83VmcAcrMbGudZHToZJMUFwkMZ6r58bBB631jbx
+	CEE7eJx/4Kb14yrUrQ9I1wE2Y6M7YzJxoEqfnVRuufiVcy1QzH3MJp8m
+X-Gm-Gg: ASbGnct/PJIP1cQrreXX2BML8kWPY75QnRa3adi0lpoovg8qtsgQMexOhGgNsPajL0O
+	CWb0IRRG4TRwtfmmLpAMQFOtNENh5b7mfstyfqz+ZKPp2MfpWGfXTZeXjTs16db0xfstYeWYsG6
+	gvrfsonGlk/mUrquFBSMyN1YXfPdaxDasM8cE+Lc0+Jtmrv+VtPnUL3K1MAAS0jQKaf4BNvyn7o
+	lpACmV6vv/8PHTXiUnT8z9MSx95k8YED4dVWWIiIlY7R36uTcXCqPrxw4SBFhw5NgLfN3jx6zhB
+	DUlyE6eAXxHkOVJpT3DH4FSDpQ9b+SK1OiiX5TZc/kvSTS94o4uL
+X-Google-Smtp-Source: AGHT+IE5r6DnY7Tz1x439NPiOFJH4b7xvN0OOgVA3uf34Ibu4HbS6dNTxi9HGTXJM+tj41v+FgbdjQ==
+X-Received: by 2002:a17:907:78c:b0:ae0:cae0:cb35 with SMTP id a640c23a62f3a-ae6fbf72e6amr9742666b.37.1752168647780;
+        Thu, 10 Jul 2025 10:30:47 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:3::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee47a2sm166404766b.58.2025.07.10.10.30.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 10:30:47 -0700 (PDT)
+Date: Thu, 10 Jul 2025 10:30:45 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, ankita@nvidia.com, 
+	bwicaksono@nvidia.com, rmk+kernel@armlinux.org.uk, catalin.marinas@arm.com, 
+	linux-serial@vger.kernel.org, rmikey@meta.com, linux-arm-kernel@lists.infradead.org, 
+	usamaarif642@gmail.com, linux-kernel@vger.kernel.org, paulmck@kernel.org
+Subject: Re: arm64: csdlock at early boot due to slow serial (?)
+Message-ID: <jlhgtwkeezoca34wbqipvsgr4muxov5wmgrswleo2k7zqitzfr@4ngriyb2udra>
+References: <aGVn/SnOvwWewkOW@gmail.com>
+ <aGZbYmV26kUKJwu_@J2N7QTR9R3>
+ <aGaQBghdAl8VGWmV@gmail.com>
+ <aGawTd8N2i8MDCmL@J2N7QTR9R3>
+ <aG0kYjl/sphGqd4r@gmail.com>
+ <juiog3337iozva23zpf4apdydegj4z7jibqykfvcgnkabemw4w@z5g5hhwrqr2w>
+ <20250710133557.GA1093654@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,42 +81,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ff3c3r336qgnlwfheelm6hjypnkjhw3txmeztv7mz2y6xdoxld@ecgifcvuihr3>
+In-Reply-To: <20250710133557.GA1093654@e132581.arm.com>
 
-On Thu, Jul 10, 2025 at 05:11:14PM +0000, Sean Nyekjaer wrote:
-> > > > +	for (i = 0; i < ARRAY_SIZE(pf1550_regulators); i++) {
-> > > > +		struct regulator_desc *desc;
-> > > > +
-> > > > +		desc = &info->regulator_descs[i].desc;
-> > > > +
-> > > > +		if (desc->id == PF1550_SW2 && pf1550->dvs_enb) {
-> > >
-> > > We should enter here if dvs_enb == false.
-> > > My A6 variant reported 0.625V instead of the correct 1.35V
-> > >
-> > Yeah, that would happen with the current if statement.
-> > 
-> > Since dvs_enb is true when DVS is enabled (OTP_SW2_DVS_ENB == 0), I should
-> > modify the if statment to:
-> > (desc->id == PF1550_SW2 && !pf1550->dvs_enb) /* OTP_SW2_DVS_ENB == 1 */
-> 
-> -		if (desc->id == PF1550_SW2 && pf1550->dvs_enb) {
-> +		if (desc->id == PF1550_SW2 && !pf1550->dvs_enb) {
-> 
-> Yes that's what I have been running my tests with :)
-> 
-> I will continue with testing the onkey and battery charger
->
-Thanks for testing!
-> > 
-> > I think that would be a more readable solution.
-> > > > +			/* OTP_SW2_DVS_ENB == 1? */
-> > > > +			desc->volt_table = pf1550_sw12_volts;
-> > > > +			desc->n_voltages = ARRAY_SIZE(pf1550_sw12_volts);
-> > > > +			desc->ops = &pf1550_sw1_ops;
-> > > > +		}
-> > > >
+Hello Leo,
 
-Thanks,
-Sam
+On Thu, Jul 10, 2025 at 02:35:57PM +0100, Leo Yan wrote:
+> >     serial: amba-pl011: Fix boot performance by switching to console_initcall()
+> > 
+> >     Replace arch_initcall() with console_initcall() for PL011 driver initialization
+> >     to resolve severe boot performance issues.
+> 
+> pl011_init() registers as an AMBA device, so the PL011 driver depends
+> on the AMBA bus initialization. The AMBA bus is initialized with:
+> 
+>     postcore_initcall(amba_init);
+> 
+> Therefore, the PL011 driver is initialized with arch_initcall(), which
+> occurs later than the postcore init.
+> 
+> My understanding is that console_initcall() is invoked much earlier
+> than other initcalls triggered by do_initcalls(). With your change, I
+> saw the PL011 driver fails to register on Juno-r2 board, due to AMBA bus
+> driver is not ready for a console init.
+
+You are absolutely correct. I confirm that the machine is fast because
+pl011 is not working, which is sad and embarassing.
+
+> The atomic path is introduced recently by the commit:
+> 
+>   2eb2608618ce ("serial: amba-pl011: Implement nbcon console")
+> 
+> My conclusion is that changing the initcall will not disable the atomic
+> path, changing to console_initcall() will cause AMBA device init
+> failure, and as a result, the clock operations will not be invoked.
+> Thus, I am curious if you have ruled out the issue is caused by the UART
+> clock (as I mentioned in another reply).
+> 
+> BTW, since the atomic path is enabled in the commit 2eb2608618ce, what
+> is the result after reverting the commit?
+
+I've reverted commit 2eb2608618ce ("serial: amba-pl011: Implement nbcon
+console"), and I don't see the CSD locks anymoer. The serial speed is
+the same and continue to be slow, but, the CSD lock is not there. Here
+is the time spent on the serial flush when reverting the commit above
+
+	[    0.309561] printk: legacy console [ttyAMA0] enabled
+	[    8.657938] ACPI: PCI Root Bridge [PCI2] (domain 0002 [bus 00-ff])
+
+Thanks
+--breno
 
