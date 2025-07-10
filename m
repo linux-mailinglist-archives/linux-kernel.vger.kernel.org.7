@@ -1,101 +1,190 @@
-Return-Path: <linux-kernel+bounces-726580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D62BB00EE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:44:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662F9B00EEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 219561CA7FA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00E0A3AA372
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EF62BE7A6;
-	Thu, 10 Jul 2025 22:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9860C2BEC52;
+	Thu, 10 Jul 2025 22:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cf9eYWS+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JQUg/9GR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908F02206B5;
-	Thu, 10 Jul 2025 22:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C5928F955
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752187460; cv=none; b=sSBPOzSQiCDHnSVVkmtXxiSZNV57cl6oBm48L9wuOf7oRKObTQpzxyGb1yG7dZ5lzWCB81E5DsZh2Lyw/OVY7dX+AX4DM0A1GgnYyXoT64PIblHMA/+FX+dA1MPNOlxpVvNagQeRkGWFaIhbw5thsA2K9dFpNWQqN3UjIBq5BC8=
+	t=1752187561; cv=none; b=PifbiUKSvLIHhNSCLdMsMs/iBTPkXqTfHugBxKy3L7p1tYeHYC1/q6ucJcMBW5xw4Cd1MKCsyjNogRWaX8NUsrAHWWnZCxozxvYBqBtb0w4Ldo95/XSLTRLZRMZsgw79doJHUu6cU5I6FGtheIBLZ040iU2Xzj5Ys704+eRGT3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752187460; c=relaxed/simple;
-	bh=7EopwvmySjxfKj3rSFZExXEG9T17wjD8V0Kers5MMHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4Xjwwrc1AvkvaHLVHax63lot41TL3g+Q/pM1KafLyYz8ZSk9qs47dvJ/ilI+MG5O8I2msZ8ZU/H0xBQz7iWkzBM83xeCVb9Z83RpAKDGZ0+iNfbE3wrpMWxbHjwg8h9HXVDpeTOAKTIulaE7zwvWAhXOdWUG0y0ddgPh164wVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cf9eYWS+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07201C4CEE3;
-	Thu, 10 Jul 2025 22:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752187460;
-	bh=7EopwvmySjxfKj3rSFZExXEG9T17wjD8V0Kers5MMHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cf9eYWS+mcbatZOPdiHF6ujMtwDg0M5I7L/R3FfHGA60YifNM5gcPb0uhJCavaa02
-	 DE0IVCVDnX/TmAs5M1W2ngdblvDfcib3IPe5MRc1QYqaDC1VVm5wZ6Oh2vavoV4B2G
-	 /eF5+J934uCQGR+N/kQoqu2xubVVp0oSwePoEbk9yI1y3SLdXeW4S3qOloDKmLd2f3
-	 HsexP6mOpeLwDUXOFW8beqBReAaWFRA1eABolM18qo85iyi2iI/8BosOCsKe1zlyne
-	 VwlorjIGut+V7tlGxRqRzSWZrcvZrWJDib76I5EvVR11iaij//oVwazZ9lTkhJ0QGX
-	 73RSVA5w7L8jA==
-Date: Thu, 10 Jul 2025 17:44:19 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: dt: submitting-patches: Avoid 'schema' in subject
- and add an example
-Message-ID: <20250710224419.GA10902-robh@kernel.org>
-References: <20250710085814.21810-2-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1752187561; c=relaxed/simple;
+	bh=mmbmraD0GVPdhgEJxQAseZnsrJCcvwfGHElQMcTQKT4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hQXGgZPXrDeFsWhE7qT5i8eUGdgrreNbZZv5/JcgOmPQ8yLRM906BIwdDfWEFS5MlW3qc/gV50HSdecyguPLDrCWgNqD41/jSZ4eNbNLAVAXghLgq/Vm0x9DrYXX45SZtC41t4x06ThrfKO8kFtFSN33UsqevMy1ZUMJkDUFCT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JQUg/9GR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56AJR5bF030655
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:45:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=fafKzIR+UT4s3pdmqSTYy0cRGU3UkuQ70ms
+	vu7PcnDU=; b=JQUg/9GRm07HG3V5q5P+htqWOQxUSo2ehvHJNua96cNsaQiYydB
+	XkLFUyYaO6kBKEOrxQN1N5t0WEeQOTV0BgOIDCKxE/ynNxqGHKL0WHQNtG8xGGbD
+	zAgwLWWtWYHZYUoVTr8YMWt/6kEIIhDSfUXQJ0wQa2r+xyYHsFqcDfIuOJGdpiFn
+	ImwodB57eH6CIDDkLxPDRR1wG4NFvjbN6/B9ej5UO/6z5Vkv4KTrq0G4pg6LDdha
+	esxEWcecFxSN36Ax1ghZ/9XsEbWbfAZ4e127PhFMIzfLP46OOrKt3Tx05+zxrzg2
+	ExSWbbKPeFiX55q7NqaiGWdDE4hQFJ4mlZg==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47tkf30fhr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:45:58 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-235dd77d11fso15034645ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:45:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752187557; x=1752792357;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fafKzIR+UT4s3pdmqSTYy0cRGU3UkuQ70msvu7PcnDU=;
+        b=qFnIfC7ZCDOrU7VKHxdBlEn6xlSShU53RzbVTnA+ZpN70g1rfnAi0uabpQa2YwVzwj
+         +Jd2d0YJkXlnTBbG67W6lkgJtkildZ0yp7w8bmOk1j1gWZlT09DvBvidH+6n4TlkZdPt
+         VA4MmaDu41Y6xZfY8Li1liIhnkhT2A2RSIBZ09h3e0IVZHBOugdn8MQ40MqOWdL/y2Qa
+         EjEqelbFMVn9LB9u8PV4Zmkc7yLiid3c6lADueUrClRMJxhWwFWc4q7e2dKnXOLMn5yj
+         3UOylgI364lYTXv6DPkWP5CVZ53VFRcgJdC3cBwxmi/gYrmNfr8NuRK71HnJVrio0XP3
+         p6ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUhl5KKGcAl5LDA5UhDXPOMxWO94L7ko5tIDNSRz5QExPXtYvvcp8awm08YuCvHYC6EHTCFrKMd4ZYERCU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI7rfkIslIMET/hF6egcMmOZ5RmIhdz904qNy2/OBz1ovUpEO5
+	Q6iT78vZGBnMZ0t5ZrAGQzDNzE7tC/fEFRDpMCqdmk8QggYp8z+2MrnEliON88rSTpumt7aekZA
+	vtbn46s3FaKZomALIqsuvSrnjLwqO7Kgezf7wVBN01sOGMxdeYWFGlD24dY8oIFxB+CQ=
+X-Gm-Gg: ASbGncvxHuN/Uc0ji2a3UrI3VXZLEP2T+PfsSnPP5LSO05IT7UIHNOMIPbA8K+CxQa4
+	E4CvuKVcv8Uv1xpqxPwirwSR2GTvQfac4Lk7q52rKMPwngInMwHU3ga5qij3cIJvIPf/ajmT/Tm
+	eE1v4/7Octxch8yqJc7EnVfG8FyEj5p3KIHTE2V4w+G3KHORFElgr5huBHOkIaOicKPiGLFrXC/
+	vt7xCMUpQqTbBdZDzICeRZmnl+mDT6kw6OJDZL7ny1BDK0y6OMNY2Ih0eLHvHa12cXh1gKI/pfh
+	AihwDqXPE0GZQhYeejH9XatEdTxusN0CvR9FnjdMkD9e5tTmEKzavWdVzLYsSb5v9Zu/QQ8Nplz
+	RMfkPGz7+rptf8u0x1dOD5+dbTRA=
+X-Received: by 2002:a17:902:cec8:b0:234:ef42:5d48 with SMTP id d9443c01a7336-23dee0c6e5dmr11945525ad.38.1752187557254;
+        Thu, 10 Jul 2025 15:45:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9Js2zgDvvFTjbOa9Smev8Tav2pVyi97CNSmAdgK0xJNfcRNqNo9js/40yj5slNO+Q0jYhRg==
+X-Received: by 2002:a17:902:cec8:b0:234:ef42:5d48 with SMTP id d9443c01a7336-23dee0c6e5dmr11945325ad.38.1752187556816;
+        Thu, 10 Jul 2025 15:45:56 -0700 (PDT)
+Received: from hu-amelende-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4341d51sm30479615ad.189.2025.07.10.15.45.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 15:45:56 -0700 (PDT)
+From: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+To: amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
+        daniel.lezcano@linaro.org
+Cc: rui.zhang@intel.com, lukasz.luba@arm.com, david.collins@oss.qualcomm.com,
+        stefan.schmidt@linaro.org, quic_tsoni@quicinc.com,
+        konrad.dybcio@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dmitry.baryshkov@linaro.org, dmitry.baryshkov@oss.qualcomm.com
+Subject: [PATCH v6 0/5] thermal: qcom-spmi-temp-alarm: Add support for new TEMP_ALARM subtypes
+Date: Thu, 10 Jul 2025 15:45:50 -0700
+Message-Id: <20250710224555.3047790-1-anjelique.melendez@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710085814.21810-2-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDE5MSBTYWx0ZWRfXyfAR1fQ7CrAy
+ ab7XO2rI04iFlekTk3XYbkidGMCaefIwjqgLOPeZcE/xEKi2iKjc98YTwMOoDQi2PKTzQJdYC4S
+ u77IOYwt+3zHqs+GOOBZO0OZubmb49p8MVoJe5TmVVZM2GtdsUTI71ZLHr5DyiYDfAbNbcZk3B7
+ A5kcX5eFDM0J77Qs5pu1vWvTCqm7i7fCP4zApK2v5c7tqD9Zgp4hH87CC2CgcHwrPGWWcSj/q/0
+ ux5uZhPtVMeRmTTSyygqco/m/1CMwkzjfFVz1evkueGhBNqRRF5zMSHXngd6dD1qR8VxW3hXH58
+ qSGQBTPMl+9djggkHE7aFm6NUNzuZjZTUyJnK6Tc3wBjNrZQtAAm+2f5UeIMjDsAP7mhHDsFMQP
+ nWTsNYQwo/jKJSz+BuwJJAj4SKsy/UhVUbJ7axNpexwOZ3mCE5SvQv1Ej2JY+LpYkwZ7PWYW
+X-Proofpoint-GUID: 0U_-sEXD9zGK-MG-DtynqFsAkACrxdif
+X-Authority-Analysis: v=2.4 cv=Xuf6OUF9 c=1 sm=1 tr=0 ts=687042a6 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=p-nOP-kxAAAA:8
+ a=EUspDBNiAAAA:8 a=NNaZUpVlUtzckGV9HeoA:9 a=324X-CrmTo6CU4MGRt3R:22
+ a=TjNXssC_j7lpFel5tvFf:22 a=XN2wCei03jY4uMu7D0Wg:22
+X-Proofpoint-ORIG-GUID: 0U_-sEXD9zGK-MG-DtynqFsAkACrxdif
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_05,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 adultscore=0 mlxscore=0
+ phishscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507100191
 
-On Thu, Jul 10, 2025 at 10:58:15AM +0200, Krzysztof Kozlowski wrote:
-> Subjects should avoid also 'schema' keyword, because all bindings are
-> supposed to be in DT schema format.  Effectively people get confused
-> that subject should not contain anything else than device name after the
-> prefix, so add a recommended example.
+Add support in the qcom-spmi-temp-alarm driver for the new PMIC
+TEMP_ALARM peripheral subtypes: GEN2 rev 2 and LITE. The GEN2 rev 2
+subtype provides greater flexibility in temperature threshold
+specification by using an independent register value to configure
+each of the three thresholds. The LITE subtype utilizes a simplified
+set of control registers to configure two thresholds: warning and
+shutdown. While at it refactor the qcom-spmi-temp-alarm driver to limit
+code reuse and if/else statements when deciphering between TEMP_ALARM 
+peripheral subtypes. 
 
-However, conversions should because if you say don't say schema, then 
-people will say YAML which I don't prefer. I prefer "convert foo to DT 
-schema" as lots of things are YAML and only 1 thing is "DT schema".
+Also add support to avoid a potential issue on certain versions of
+the TEMP_ALARM GEN2 subtype when automatic stage 2 partial shutdown
+is disabled.
 
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/submitting-patches.rst | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/submitting-patches.rst b/Documentation/devicetree/bindings/submitting-patches.rst
-> index f3e23e69a638..bf32b784cb82 100644
-> --- a/Documentation/devicetree/bindings/submitting-patches.rst
-> +++ b/Documentation/devicetree/bindings/submitting-patches.rst
-> @@ -21,8 +21,12 @@ I. For patch submitters
->         "<binding dir>: dt-bindings: ..."
->  
->       The 80 characters of the subject are precious. It is recommended to not
-> -     use "Documentation" or "doc" because that is implied. All bindings are
-> -     docs. Repeating "binding" again should also be avoided.
-> +     use "Documentation", "doc" or "schema" because that is implied. All
-> +     bindings are docs and all new bindings are supposed to be in Devicetree
-> +     schema format.  Repeating "binding" again should also be avoided, so for
-> +     a new device it is often enough for example::
-> +
-> +       "dt-bindings: iio: adc: Add ROHM BD79100G"
->  
->    2) DT binding files are written in DT schema format using json-schema
->       vocabulary and YAML file format. The DT binding files must pass validation
-> -- 
-> 2.43.0
-> 
+This patch series is a continuation of older series from 7/2024
+(https://lore.kernel.org/all/20240729231259.2122976-1-quic_amelende@quicinc.com/)
+but current series has been reworked to address the change in thermal framework to
+update .set_trip_temp() callback function variables
+(https://lore.kernel.org/all/8392906.T7Z3S40VBb@rjwysocki.net/)
+
+Changes since v5:
+  - Updated variable names to use stage2 instead of s2 in patch 1/5
+  - Added overtemp_stage enum for more clarity when reading back specific
+    temperature threshold in patch 2/5
+  - Updated temp alarm data subtype identification order in patch 4/5
+  - link: https://lore.kernel.org/all/20250620001918.4090853-1-anjelique.melendez@oss.qualcomm.com/
+Changes since v4:
+  - Removed the unnecessary thresh member of the qpnp_tm_chip struct in patch 2/5
+  - Updated order of logic to limit acquiring and releasing lock within
+    qpnp_tm_init() in patch 3/5
+  - Fixed misuse of signed vs unsigned integers in patches 4/5 and 5/5
+  - Added Dmitry's reviewed-by tag in patch 5/5
+  - link: https://lore.kernel.org/all/20250528235026.4171109-1-anjelique.melendez@oss.qualcomm.com/
+Changes since v3:
+  - Updated order of logic and made dig revision a local variable in patch 1/5
+  - Updated Locking Logic in patches 3/5, 4/5, 5/5
+  - link: https://lore.kernel.org/all/20250320202408.3940777-1-anjelique.melendez@oss.qualcomm.com/
+Changes since v2:
+  - Updated function name to include "gen1" in patch 2/5
+  - Added Dmitry's reviewed-by tag in patch 2/5
+  - link: https://lore.kernel.org/all/20250225192429.2328092-1-anjelique.melendez@oss.qualcomm.com/
+Changes since v1:
+  - Remove unnecessary moving of code
+  - Added new v2 patch 3/5 add a preparation patch to v1 patch 2/5
+  - Updated temp alarm data function names to be consistently named
+  - link: https://lore.kernel.org/all/20250213210403.3396392-1-anjelique.melendez@oss.qualcomm.com/
+
+
+Anjelique Melendez (4):
+  thermal: qcom-spmi-temp-alarm: Add temp alarm data struct based on HW
+    subtype
+  thermal: qcom-spmi-temp-alarm: Prepare to support additional Temp
+    Alarm subtypes
+  thermal: qcom-spmi-temp-alarm: add support for GEN2 rev 2 PMIC
+    peripherals
+  thermal: qcom-spmi-temp-alarm: add support for LITE PMIC peripherals
+
+David Collins (1):
+  thermal: qcom-spmi-temp-alarm: enable stage 2 shutdown when required
+
+ drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 596 +++++++++++++++++---
+ 1 file changed, 520 insertions(+), 76 deletions(-)
+
+-- 
+2.34.1
+
 
