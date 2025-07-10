@@ -1,109 +1,137 @@
-Return-Path: <linux-kernel+bounces-725707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853C8B002B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:58:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0414FB002B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EDD1166ACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:58:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B32F179BE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737E426A0E0;
-	Thu, 10 Jul 2025 12:58:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D2A1E8333;
-	Thu, 10 Jul 2025 12:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E224D206F27;
+	Thu, 10 Jul 2025 12:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="q3GiOvBz"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5B21E8333;
+	Thu, 10 Jul 2025 12:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752152281; cv=none; b=dSCz13zxv2ahe9Bp+1mmJ6ifJl/XehvNeGkHZ44EGXqesIKBaa2lWlE91ST1c/1H8UKkwyuGNwmvaZVoYF7qoZYOWBXrDfdaGSPxjpcX4AAUihWMb9X34kxkBLqQDxWxFEfmGXEZW8WrNe3LLWJ6M9/5CLhjfzcml+RU4gor+IM=
+	t=1752152303; cv=none; b=hJTZbL1c+O1WcustZCuxpT8JcpVRRtfBKClaDiXulysWkkLVKpIGmw33xW94GIpUiFuKZeIagFdEaXP+ZJT0178j9lD6rMfBeh+QMROXYdKz9avuWZEeIcUpqA15I2Lx49UadsRN+XMQtFRljTtjjdu3SsmRnb3UvEkleJOtgCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752152281; c=relaxed/simple;
-	bh=zwBtqkT25ZAX+sp1nl3oFbbZxZoeWwTF/wCZRk2t2ZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmGbt6Hgm4LYZ+PsygB5oAn9GTmDmqX2T3he7oUDdUDUtOi5IUdFoUZfQ+CkzHlb8aC+x281lFBvUzS+q0Yp7llbHSybwjjb57wdUf7+7mxw4tRUR4Tp4hScWQsXVodllyR4QtL+PYTacpe5F08znD9w1aFz3tSf3bZFStffVr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED9891EA6;
-	Thu, 10 Jul 2025 05:57:46 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B09F73F66E;
-	Thu, 10 Jul 2025 05:57:55 -0700 (PDT)
-Date: Thu, 10 Jul 2025 13:57:52 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, ulf.hansson@linaro.org,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org,
-	linux-rt-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Raghavendra Kakarla <quic_rkakarla@quicinc.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"open list:Real-time Linux (PREEMPT_RT)" <linux-rt-devel@lists.linux.dev>
-Subject: Re: [PATCH] cpuidle: psci: Fix cpuhotplug routine with PREEMPT_RT=y
-Message-ID: <aG-40INpi05v3-fQ@bogus>
-References: <20250709154728.733920-1-daniel.lezcano@linaro.org>
- <CAJZ5v0ixk5hZPPQc_1rDLMTzjh=KpMQF_A2U=HehMTuNSMQwtQ@mail.gmail.com>
+	s=arc-20240116; t=1752152303; c=relaxed/simple;
+	bh=QJ5+1lSHVPyBwnNaUmAFeueiaKEBeuJfDLfTIhMwJ5w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=doGJD1ZlWNfG82dKuteSP0xOkrt4+p8BAFgYtj65PqaJy1e8ksUGbx3c8wRjLt0abnPY8LLbpN7BqVhRMF0cG+2JFd8H4ActTKHyOYqtcYZpwpjzm5t/WpoerdLl7qEuydA1S+c4XilAF6rYRmeN2Y7IKaC24YCDIbMKyYJPpvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=q3GiOvBz; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bdFJM2n5Sz9sx4;
+	Thu, 10 Jul 2025 14:58:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1752152291; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XUdTgSu/zHvFvHHBAYxFI7WNZhlx1N0C5aZ+BZgA/hg=;
+	b=q3GiOvBzyHujBbSJyAfbiklhFM/WL6aD01vbIbLLVfn3xsMoDfFurOVoZidipbO6tdQSCm
+	+jp+NwxFcqSX0dn491UeCiC85OkRiX6DRkUGbRyykenUQnIOAm0ZXo3fOR+ll//rzXmAbh
+	7uZMY6GrfjZxxJ+E8dEhNHds3xsFBvNz1okgpTa9fVoO0TbEpLL6miqPva47X12iZiQ2d2
+	iH8wNIwu8RjH9obhhxlvnS8hZNHfJTweC3qsF01o52IugnS9sKwBK0Z7iTYc92c3dCHQ8/
+	t4IE0FtScpgYTbTcHgYBuJ8Pj9tAxDWccbazxeLl/GDe3PrX1hOpy5z8gQINEA==
+Message-ID: <bec98a82435d7f448dff219a2238b15b6b3eb754.camel@mailbox.org>
+Subject: Re: [PATCH v4 1/8] drm/panfrost: Fix scheduler workqueue bug
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Philipp Stanner <phasta@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Matthew
+ Brost <matthew.brost@intel.com>,  Christian =?ISO-8859-1?Q?K=F6nig?=
+ <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>,  Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	stable@vger.kernel.org
+Date: Thu, 10 Jul 2025 14:58:05 +0200
+In-Reply-To: <20250710125412.128476-3-phasta@kernel.org>
+References: <20250710125412.128476-2-phasta@kernel.org>
+	 <20250710125412.128476-3-phasta@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0ixk5hZPPQc_1rDLMTzjh=KpMQF_A2U=HehMTuNSMQwtQ@mail.gmail.com>
+X-MBO-RS-ID: 836fbb2b50af0e52d75
+X-MBO-RS-META: q7ni9ki5c4orx1jns8zppxa9ufa6zses
 
-On Thu, Jul 10, 2025 at 02:43:10PM +0200, Rafael J. Wysocki wrote:
-> On Wed, Jul 9, 2025 at 5:47 PM Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-> >
-> > Currently cpu hotplug with the PREEMPT_RT option set in the kernel is
-> > not supported because the underlying generic power domain functions
-> > used in the cpu hotplug callbacks are incompatible from a lock point
-> > of view. This situation prevents the suspend to idle to reach the
-> > deepest idle state for the "cluster" as identified in the
-> > undermentioned commit.
-> >
-> > Use the compatible ones when PREEMPT_RT is enabled and remove the
-> > boolean disabling the hotplug callbacks with this option.
-> >
-> > With this change the platform can reach the deepest idle state
-> > allowing at suspend time to consume less power.
-> >
-> > Tested-on Lenovo T14s with the following script:
-> >
-> > echo 0 > /sys/devices/system/cpu/cpu3/online
-> > BEFORE=$(cat /sys/kernel/debug/pm_genpd/power-domain-cpu-cluster0/idle_states | grep S0 | awk '{ print $3 }') ;
-> > rtcwake -s 1 -m mem;
-> > AFTER=$(cat /sys/kernel/debug/pm_genpd/power-domain-cpu-cluster0/idle_states | grep S0 | awk '{ print $3 }');
-> > if [ $BEFORE -lt $AFTER ]; then
-> >     echo "Test successful"
-> > else
-> >     echo "Test failed"
-> > fi
-> > echo 1 > /sys/devices/system/cpu/cpu3/online
-> >
-> > Fixes: 1c4b2932bd62 ("cpuidle: psci: Enable the hierarchical topology for s2idle on PREEMPT_RT")
-> > Cc: Raghavendra Kakarla <quic_rkakarla@quicinc.com>
-> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> 
-> As per MAINTAINERS, this is for Ulf/Sudeep.
-> 
+On Thu, 2025-07-10 at 14:54 +0200, Philipp Stanner wrote:
+> When the GPU scheduler was ported to using a struct for its
+> initialization parameters, it was overlooked that panfrost creates a
+> distinct workqueue for timeout handling.
+>=20
+> The pointer to this new workqueue is not initialized to the struct,
+> resulting in NULL being passed to the scheduler, which then uses the
+> system_wq for timeout handling.
+>=20
+> Set the correct workqueue to the init args struct.
+>=20
+> Cc: stable@vger.kernel.org=C2=A0# 6.15+
+> Fixes: 796a9f55a8d1 ("drm/sched: Use struct for drm_sched_init()
+> params")
+> Reported-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+> Closes:
+> https://lore.kernel.org/dri-devel/b5d0921c-7cbf-4d55-aa47-c35cd7861c02@ig=
+alia.com/
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
 
-LGTM, so
+aaaarrrgh, how did that one get here!
 
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Ignore that. Will not be merged through this series.
 
-I still prefer to hear from Ulf who has more knowledge and hands-on experience
-with s2idle + PREEMPT_RT in case I am missing something.
 
--- 
-Regards,
-Sudeep
+P.
+
+> =C2=A0drivers/gpu/drm/panfrost/panfrost_job.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c
+> b/drivers/gpu/drm/panfrost/panfrost_job.c
+> index 5657106c2f7d..15e2d505550f 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> @@ -841,7 +841,6 @@ int panfrost_job_init(struct panfrost_device
+> *pfdev)
+> =C2=A0		.num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
+> =C2=A0		.credit_limit =3D 2,
+> =C2=A0		.timeout =3D msecs_to_jiffies(JOB_TIMEOUT_MS),
+> -		.timeout_wq =3D pfdev->reset.wq,
+> =C2=A0		.name =3D "pan_js",
+> =C2=A0		.dev =3D pfdev->dev,
+> =C2=A0	};
+> @@ -879,6 +878,7 @@ int panfrost_job_init(struct panfrost_device
+> *pfdev)
+> =C2=A0	pfdev->reset.wq =3D alloc_ordered_workqueue("panfrost-reset",
+> 0);
+> =C2=A0	if (!pfdev->reset.wq)
+> =C2=A0		return -ENOMEM;
+> +	args.timeout_wq =3D pfdev->reset.wq;
+> =C2=A0
+> =C2=A0	for (j =3D 0; j < NUM_JOB_SLOTS; j++) {
+> =C2=A0		js->queue[j].fence_context =3D
+> dma_fence_context_alloc(1);
+
 
