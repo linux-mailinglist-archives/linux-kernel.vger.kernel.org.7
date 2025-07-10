@@ -1,78 +1,108 @@
-Return-Path: <linux-kernel+bounces-726205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1C9B00977
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:03:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA72FB0098B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7A6A17B5C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:02:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB4973A7F6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161562F0C6D;
-	Thu, 10 Jul 2025 17:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49DD2F0C4E;
+	Thu, 10 Jul 2025 17:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sEsMkVuI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="IesIWnOL"
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732DD2F0C4B;
-	Thu, 10 Jul 2025 17:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82FA2797A0;
+	Thu, 10 Jul 2025 17:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752166962; cv=none; b=dn5dhHkJ8y2GB1LjAVUmPk6VyGe2Nv0bjp3FxiCnBXvlduOO/IAYTJr6U5bs2H0sPr9cLLGn+kyvFZIUYGa+3aZuwtNkDGVX8cH0Pv319NZFPYayvxlZNORhfXSE9txSwny8wjnXGO2ZVYGjZ7KVsIXYOSpi7H4HHr/Kmqcee8k=
+	t=1752167206; cv=none; b=ghzAzAjiwTHNGxn5ARBLvOnlbZ6V+wZOSZQsQGFQrNyTVNs1k9lQM0tRac8fgK7pYmDABomJgDI2J1Rf5DX01zMhhKMQwbVeQd+6gHOyIIT6D73ONl3d5UEHWcKMq5S2M99Kkn6iYPYZie+nC0qZgi4Yn4sZfCVHP/vTi6gjtzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752166962; c=relaxed/simple;
-	bh=EdOYXz0e5KWWn92XPCoK3tblMuiCQ49no9UA9ssbaGU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=LLgBC9FdgiGYNQQRTDtb2YO36MsUYDUu0+nYyak9gSSl9nJ6freKzHpUrUPf9XX54zwAX9HJiqSKH8AdE4JqJTO/mtuMokS+ZfcYhN6Z24ZsUkEjudwqCJnXqrbBPnh3UEufB2q/2GejBiudCAWoRaPy9iO0+mLnfqWl8NXWgr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sEsMkVuI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9D42C4CEE3;
-	Thu, 10 Jul 2025 17:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752166962;
-	bh=EdOYXz0e5KWWn92XPCoK3tblMuiCQ49no9UA9ssbaGU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=sEsMkVuIIHmxqdb64W/qASE3K5rtUd8Edi+pajZiekqfCvAM0JitNdE9SzZZ7FZy0
-	 eb1VU/NxMW1fodiCgk9TWgwaEN6VsVIzCQBG3AUUrOx5B8qid/V/RPEVgqS3SDHI5D
-	 OypwPGJ1PjvBdnrzjIMXmTkZtlmraQ5T9lYMmw3+IuADWG+eEbQ7G12U0CWuvRw1FP
-	 61VOmvWViUk+/ObYbHTamXxQHpsjLtD1udaqGHuvAGpxeAhRJD8+WmbwHhvdmPPCX0
-	 aUlBTwtmsjYL4NCXVWYI85Hm9sDtILHXr3LJjM9A0rlv/50SYM+/bDx0ccecF8cU6K
-	 q86b3IuobCD9Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71392383B266;
-	Thu, 10 Jul 2025 17:03:05 +0000 (UTC)
-Subject: Re: [GIT PULL] Networking for v6.16-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250710124526.32220-1-pabeni@redhat.com>
-References: <20250710124526.32220-1-pabeni@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250710124526.32220-1-pabeni@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.16-rc6
-X-PR-Tracked-Commit-Id: dd831ac8221e691e9e918585b1003c7071df0379
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: bc9ff192a6c940d9a26e21a0a82f2667067aaf5f
-Message-Id: <175216698391.1599846.5663451077568586007.pr-tracker-bot@kernel.org>
-Date: Thu, 10 Jul 2025 17:03:03 +0000
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1752167206; c=relaxed/simple;
+	bh=Lnosr5H20Dn2haqHWGLlslKpaDH12nnxW/2AdVE7jYQ=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ubDU+ZB1Ejkm5IZfZGhW+c5T9WbK5Qf//rkAGs3Izrxg0KVwRAhO1rV19fbIHkASwZHH6TMZ1LRPRJeRHeFVxgpjF+XOu/U3VXC1s/QKOOrheu8VdXE+kwwmwXoygf2ztTG5wkec58x6agdDLWpGqT41uaGXN1/7uAsSLs+lxUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=IesIWnOL; arc=none smtp.client-ip=208.88.110.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 9DAE43D8E983;
+	Thu, 10 Jul 2025 13:06:42 -0400 (EDT)
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id VUC382jpjNLG; Thu, 10 Jul 2025 13:06:42 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id F1F8B3D8E98F;
+	Thu, 10 Jul 2025 13:06:41 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com F1F8B3D8E98F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
+	t=1752167202; bh=ksNBoRCkC4yIXct57/Q4A0AkLpVHCvL1iwd3fBezJl0=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=IesIWnOLIazWA7URFNaO/qbzZ3EbzgTrvJquBaGpLxLjTeHHByUEsEzK7IQXsxXCD
+	 AHLehurxrNQnjuzeHKH1HlNVKzb72JqPN7ZEiJPkrpJCtyx1B7UrvNv6G0mzNbBi7z
+	 jIsvlsNhlh7LRcqncuyl/LY4wBXkw+/6BJ40V83bfVqfO2t1rmgOROGEpkiXXGz9ls
+	 9EbRXcAR7rD+GgbdE2m6fccKtlUJsfdbXFl9KrurGCS9zemf7THxWInR+qhGVDiGQE
+	 x/ocJRBsraPwNekIXtIWEcGgwj6QkeMTxoeE1U97tFlDD0ncAHURTSQf0x1ymughkH
+	 oqHDV822Sd3Yg==
+X-Virus-Scanned: amavis at mail.savoirfairelinux.com
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id iTjmdMLDKw13; Thu, 10 Jul 2025 13:06:41 -0400 (EDT)
+Received: from fedora (unknown [192.168.51.254])
+	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id 953353D8E983;
+	Thu, 10 Jul 2025 13:06:41 -0400 (EDT)
+Date: Thu, 10 Jul 2025 13:06:40 -0400
+From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
+	Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>,
+	Robin Gong <yibin.gong@nxp.com>,
+	Enric Balletbo i Serra <eballetbo@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v8 6/6] MAINTAINERS: add an entry for pf1550 mfd driver
+Message-ID: <aG_zIFD6IFFhQmSw@fedora>
+References: <20250707-pf1550-v8-0-6b6eb67c03a0@savoirfairelinux.com>
+ <20250707-pf1550-v8-6-6b6eb67c03a0@savoirfairelinux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707-pf1550-v8-6-6b6eb67c03a0@savoirfairelinux.com>
 
-The pull request you sent on Thu, 10 Jul 2025 14:45:26 +0200:
+On Mon, Jul 07, 2025 at 05:37:25PM -0400, Samuel Kayode via B4 Relay wrote:
+> From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+> 
+> Add MAINTAINERS entry for pf1550 PMIC.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+> ---
+> v6:
+>  - Add imx mailing list
+> ---
+>  MAINTAINERS | 11 +++++++++++
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.16-rc6
+I forgot to add Frank's `Reviewed-by` tag in this and in the charger patch. Will
+ensure that all tags are added in the next patchset.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/bc9ff192a6c940d9a26e21a0a82f2667067aaf5f
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks,
+Sam
 
