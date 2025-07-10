@@ -1,125 +1,169 @@
-Return-Path: <linux-kernel+bounces-725973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F634B00627
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:14:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2E9B0061D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6816641FAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:11:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9FE85C30B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02E82749FE;
-	Thu, 10 Jul 2025 15:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D2D2750E8;
+	Thu, 10 Jul 2025 15:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NSqnnY+S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XTnL6dtH"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40634273D9C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B31A274FEE
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752160269; cv=none; b=FOr7j78PsuSKnBfSyZDX2PTc2KsiwgQ6TTVgYXxQNuhlAdUF8s0uV+YHynl1bIXngmHZU0QXtdAVD7oS1DbT6ZzjebPgv+2BePUZG+nNMsrW2Z7BVmzzsJTm+rqY/K4yrAxspBcmVvlP2N4WN1iOwdk1IO7wAsEQ3EuYRGdGetk=
+	t=1752160236; cv=none; b=SHoaFcmN9j0P02Z0SrMxENI0BATj78cdM1aRH3cfM67f4fIzwcfUiSNXdMDKigm1TsvGEvRcp0xwoLmR6fcgZgUdirkByWpGFxxa55vG5yXiwkzL+xxTEMJx62aqUqrx01MIhBxClXcYmq4f8vVP9ujnyyhZ+xE28Gs+U0wLxB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752160269; c=relaxed/simple;
-	bh=qp3b/VRh5y5h+VM7jR9g0Wg8Qz9Tf1YYfbp9OuB8m88=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cse+tSb18cEC67Jkgg0W/FksROv2FQd/MGTUpzbt3JgBRWJuowPtyZdkR0y72mMMlSlaTa059S4fJIewRjsw3omsVXU4mIfAgNdlO08DUUbUl+hL7XehX2GRBPJ2ohXVu89Wf6yOOurwkBm9nxPQlGGc/9WG7k4KuXv5txO8wrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NSqnnY+S; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752160266;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7d37F/DQnLa+T8Qo87AEGZXUgyBcAt+T8G+l0O12LuA=;
-	b=NSqnnY+SNQiKNAUykJZ29TE2swhrzNKQEWagg7S2ZgYvxZuEM/1viaHzG936/BeiIbvH/M
-	MQXKIzGTWk6bjHjhhhrZnTcKOrZr3Rk7kTxVfDz/yWo9st+0jVXBAAc7wJ4c6PzmjMcaoB
-	pRYN6KCDG01Qx+kLom+SWrrVeKuzkXw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-553-wCMbUuAYMN6VmGu1DbE5nw-1; Thu, 10 Jul 2025 11:11:04 -0400
-X-MC-Unique: wCMbUuAYMN6VmGu1DbE5nw-1
-X-Mimecast-MFC-AGG-ID: wCMbUuAYMN6VmGu1DbE5nw_1752160264
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451ac1b43c4so6278115e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:11:04 -0700 (PDT)
+	s=arc-20240116; t=1752160236; c=relaxed/simple;
+	bh=LmNAwWi94wP6PHMsyErnFFJsx0K547rxJJH8yH1wV+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cNKLWAs9HyGZ+EKGMU/L7Pj4TcE5Cyn0k8i14ESbCKOrGEuK+CwAP7xQT8Vx+3Vsb898b/wJJKpSZIfnZ94Venn7rQUfogIPv0xQowcc0K83rLXjqmhz5SmHBxs22nwoYpClXLYiaiXosMEc4e9fyYoYPL6tXgC2u7DG1Mv21iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XTnL6dtH; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23636167b30so10781965ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:10:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752160234; x=1752765034; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=dsrkO1JC49yMY6Xu9/9qVt3IZgKl70MxobLMW2IxqTQ=;
+        b=XTnL6dtHs25byi7BAou3EKRAcv+HJfyOXrPIC7vQxenEdB4Zdubqna8YHyJB1QYVGd
+         9vXKnO8A6QOAyFJZcQcxrpMoPT+4ZX8vljOrCM9N6Z8Rd0+VZ58LWTeG8AT4L259EkkL
+         n4RNKTK9hDbra4VFEUx0uy1RIFYyJRtfHrWhAN9O0Je6fVtcWXWf9ma6g9UylYw7yy2b
+         zyrkxSx2+lGU1y5n9GV9LZO/2hfpX7XvpyIjav01BnPapX4NHdoWoCexH5r03g55Ztk7
+         o0Gvd37M3Bp/Ul1pgJmoy4wI3MRPNqnnJbrm60QfvmN/DW+ZeCg4YSa6PNQ8q9y5DY1U
+         kiVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752160264; x=1752765064;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7d37F/DQnLa+T8Qo87AEGZXUgyBcAt+T8G+l0O12LuA=;
-        b=bLpGBPrMfBNBjF9Rc+8Z9YDNkrKOMny5tii1BYqiZep2DKlVjGYT9F/jIwVlOPl+IF
-         GdjLuKrxNn515P1DpJrzgWkmowRKcs48c3lWkuM0M1vxkqyuJr7emAT/xg18b/KBNtvR
-         KcqU7KwV8V42LBUZFBXSQmsahruTDlY3xE2BCcfkuJ9QQPViJI4Y9cXcRwOtHH+ax+x0
-         QHein+/qWMZHcoSo5uW1ZUmw0NzKApgW2aSjwNwXvHMfddE+xhO79zZDOC/i2uifWzvU
-         NIstlPmcr3+5eH6gvN6dbAMfEXZapQkuqAkZZy+kDya2vV0QF+DyyRlUP2QHf4VjkkH+
-         Fzrw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9E5FqBxE9leIDhM2QxaYBfFvkS+nSRjvpMWJlktwGAckMb3f73LDzFDHAZ6GUL1qXTt0SXcdvler/BV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDfK9VDpkfhwy5tmFINVq+oQkhkyn7Wt3UPOPFQFgHd48oCDkS
-	qEi+pbXr2vkHd70BSfdmlYF7hlg1vgt0qsCIhJE3o62sW+bekkQqK5vTiQBf3Ufabu+bPD1jAa6
-	V0aj0IUtDLQFsqfo/XWKr00An4id0Z4tmEzwSE3xuGxBGCj0AqmFWHlICLVOXftlPDw==
-X-Gm-Gg: ASbGnctCPcWNrhwJqCDrh6QU1tURPnlY2O/UPP2IJvtokIcdb8fll85DiJiEBqIYvMW
-	wTZu5KJesb3cqEwMU9qCOUpRnN7QDxLkhrfMaRsI8Smqg0ScnbD61JW5j4BuqfBjSZB31sPicda
-	v6rTLhfmywxTg07OI2KoHUePe+z/1ze/aNe1NiNTcF9bSG4qsgJVE5qZeD8chQ6QZUy4msYzcWj
-	CV9PQvx3KXf2HkUPcWK5uLOnISMVKrWdJU/kGeCNmNf4jH5hPoNmicwJZPU4kdbNms7RX4zn5Zu
-	W0+PQ49Dax6S4Ikn1KNcTzjdKTU3qsHh9KdSUSShZfHjzp0cYRe2HBib3bhHkCXPhSvb1SFSHp2
-	3Ufhg5hU=
-X-Received: by 2002:a05:600c:4e55:b0:453:5d8d:d1b8 with SMTP id 5b1f17b1804b1-454db8909a8mr45390565e9.30.1752160263631;
-        Thu, 10 Jul 2025 08:11:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHXTFZIaaI5njPILH2TO4vBwzWwKodiXFjTsfzS73Sgo/vNHwZ5/Uil+YNiuIyqJOfh1DvhQ==
-X-Received: by 2002:a05:600c:4e55:b0:453:5d8d:d1b8 with SMTP id 5b1f17b1804b1-454db8909a8mr45390025e9.30.1752160263126;
-        Thu, 10 Jul 2025 08:11:03 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd541167sm22279755e9.30.2025.07.10.08.11.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 08:11:02 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar
- <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Leon
- Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Steve Wahl <steve.wahl@hpe.com>, Borislav Petkov <bp@alien8.de>, Dietmar
- Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, K Prateek
- Nayak <kprateek.nayak@amd.com>
-Subject: Re: [PATCH v4] sched/fair: Use sched_domain_span() for
- topology_span_sane()
-In-Reply-To: <20250709161917.14298-1-kprateek.nayak@amd.com>
-References: <20250709161917.14298-1-kprateek.nayak@amd.com>
-Date: Thu, 10 Jul 2025 17:09:51 +0200
-Message-ID: <xhsmhwm8g13r4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1752160234; x=1752765034;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dsrkO1JC49yMY6Xu9/9qVt3IZgKl70MxobLMW2IxqTQ=;
+        b=h7djjNtwZCXpovwgIpq9TQ9QFeO74M7M0NcVPOgDng3j+p8Wim9Fi9PRTP4u3e2z73
+         gQoIPLiKnkBk2pzrRJX9SwczCbaW/yEmaYbQoLI7M3P86Ub6BJYO81zZ6orF66w0pl5y
+         0kTrJsleEVrMhS1lYhu39trsThrDBWjwNEfyvX2V22zMLVOSD2/L9DJcRr+I063fpsii
+         QU+im9umy4BaSYyPrzKkPegfnxVUio4ZFqVU5S0ZnPbN3t39gddMR5z1bC75e1naI6XZ
+         pHSkMfgsrjkfpL6bWO4gnAHoCWgEOWWbHfqmH/hrvhh1XjogNaJTrjiR8x48mGYE6b5Q
+         1j2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVUc3vLdcB+3l6iGp5+yoKqsCokju6ChycXYERr+7dV/C8m8MzI1bsv5NmTVS1bjp6R2CAWOxu+wTslzOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFPAwbN04T3Qzl56XG15THa6xYdv7h3Sb0sjp7pImMf9W2J+3n
+	igYWSnZnQDBBT1Tvlcbi/++Exg2MWRCJcIu8FQ0MBy2+mKd5wMdsv9AXwrO6LH83
+X-Gm-Gg: ASbGncuXSX3RYkM6aWnDJDQsU+wAbU+UcQdjwmnoAttqekfI9AEE3E0DfymRyXjVkQi
+	5KPLZY45LJHUHTx4jKkp2KednCBwKdTCrBvxPJ5wzUzsWVvsqBJyiANO3wpxFj9pSjvZN/77cZe
+	V+BRkD/KlLf4r6V/JYw44GeStgSo84mpS37wD8rAm7xPjo4oZtb0u9dYjPvv8iWTaS++/s1Zup+
+	224kW6ddIwVyJD2+4EqA3eQOHSWHF1KSdPLgGhJ6Bh2CrzwB8awIzFlkuEzF12FPHFcokjNAUsa
+	1cQEWogRKT3SITJ3qr24nUlxVLkuVNl6vdiBPH0zouR1N779HaSx+48VM2tW/SJToYoQbMO+5Kn
+	OZBiMkalpOjjs5tDu7MWtIvjerOQnGdo0TUDK5ag=
+X-Google-Smtp-Source: AGHT+IGUZhbP3pRxpi+Rblq9vAaGFn2rMI07JujZ1Prk8ojIW91mdoSUqIrBrc5vvS8yvqfwqBMtAQ==
+X-Received: by 2002:a17:902:ebcd:b0:237:cadf:9aac with SMTP id d9443c01a7336-23de24d9376mr72601785ad.29.1752160234341;
+        Thu, 10 Jul 2025 08:10:34 -0700 (PDT)
+Received: from ?IPV6:2409:4090:20a4:5c0c:c48f:19c:3b62:c592? ([2409:4090:20a4:5c0c:c48f:19c:3b62:c592])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4343e48sm22862495ad.190.2025.07.10.08.10.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 08:10:33 -0700 (PDT)
+Message-ID: <8af20362-2ec8-4d56-b5ea-fc226775c37a@gmail.com>
+Date: Thu, 10 Jul 2025 20:40:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firewire: ohci: Initialize payload_bus to avoid
+ uninitialized use warning
+To: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <20250710073906.24105-1-purvayeshi550@gmail.com>
+ <20250710125227.GA25686@workstation.local>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <20250710125227.GA25686@workstation.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 09/07/25 16:19, K Prateek Nayak wrote:
-> Suggested-by: Valentin Schneider <vschneid@redhat.com>
-> Reported-by: Leon Romanovsky <leon@kernel.org>
-> Closes: https://lore.kernel.org/lkml/20250610110701.GA256154@unreal/ [1]
-> Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap") # ce29a7da84cd, f55dac1dafb3
-> Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
-> Tested-by: Valentin Schneider <vschneid@redhat.com>
-> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> ---
-> Changes are based on tip:sched/urgent at commit fc975cfb3639
-> ("sched/deadline: Fix dl_server runtime calculation formula")
->
-> Changelog v3..v4:
->
-> o Use empty span to detect sd objects that haven't been initialized
->   instead of using "sd->private" (Valentin).
->
+On 10/07/25 18:22, Takashi Sakamoto wrote:
+> Hi,
+> 
+> On Thu, Jul 10, 2025 at 01:09:06PM +0530, Purva Yeshi wrote:
+>> Fix Smatch-detected error:
+>> drivers/firewire/ohci.c:1514 at_context_queue_packet()
+>> error: uninitialized symbol 'payload_bus'.
+>>
+>> Smatch reports a potential uninitialized use of 'payload_bus' in
+>> at_context_queue_packet(). If packet->payload_length is zero, the
+>> variable may not be set before reaching the dma_unmap_single() call,
+>> which could lead to undefined behavior.
+>>
+>> Initialize 'payload_bus' to 0 to ensure it has a defined value in all
+>> code paths, preventing any uninitialized access.
+>>
+>> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+> 
+> In my opinion, we should pay enough attention to the value of
+> 'packet->payload_mapped' variable when considering the issue.
 
-LGTM, thanks!
+Hi Takashi,
 
+Thank you for your review.
+
+The change was mainly to address the Smatch warning, which reports a 
+possible uninitialized use. While it might not be a real issue in practice.
+
+> 
+> ```
+> $ cat -n drivers/firewire/ohci.c
+>       ...
+> 1385 static int at_context_queue_packet(struct context *ctx,
+> 1386                                    struct fw_packet *packet)
+> 1387 {
+> 1388         struct fw_ohci *ohci = ctx->ohci;
+> 1389         dma_addr_t d_bus, payload_bus;
+>       ...
+> 1474         if (packet->payload_length > 0) {
+> 1475                 if (packet->payload_length > sizeof(driver_data->inline_data)) {
+> 1476                         payload_bus = dma_map_single(ohci->card.device,
+>                               ...
+> 1485                         packet->payload_mapped  = true;
+> 1486                 } else {
+>                               ...
+> 1489                         payload_bus = d_bus + 3 * sizeof(*d);
+> 1490                 }
+>                       ...
+> 1496         } else {
+>                      ...
+> 1499         }
+>               ...
+> 1506         if (ohci->generation != packet->generation) {
+> 1507                 if (packet->payload_mapped)
+> 1508                         dma_unmap_single(ohci->card.device, payload_bus,
+> 1509                                          packet->payload_length, DMA_TO_DEVICE);
+>                       ...
+> 1512         }
+> 
+> Unless the variable has true, the dma_unmap_single() is never called,
+> thus the issue does not occur.
+> 
+> 
+> Thanks
+> 
+> Takashi Sakamoto
+
+Let me know if you would prefer addressing this with a comment 
+explaining the assumption, or if you believe it's appropriate to silence 
+the Smatch warning in another way.
+Alternatively, would you recommend simply ignoring the warning in this case?
+
+Best regards,
+Purva Yeshi
 
