@@ -1,295 +1,179 @@
-Return-Path: <linux-kernel+bounces-726626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A82B00F9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:24:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B40B00F9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9114E2664
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:24:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E070F5C4C52
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570142FC3D7;
-	Thu, 10 Jul 2025 23:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A2B2FCE3C;
+	Thu, 10 Jul 2025 23:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEw4YreP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bw6XaIf0"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA0C2FCE14;
-	Thu, 10 Jul 2025 23:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53B62FC3D3;
+	Thu, 10 Jul 2025 23:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752189891; cv=none; b=MdecIqUJ3DHkxxfPmvd0QkWq24M8J8ykS8EuxH7wxcbh1AUJpztlgX9KiLS4sjMa/Du96y9gsxzf7h+iFTS2tCVAb/VZkgGAK/+s8FAxb180onRESXO6KnRZM87/Vmwk76xVbZFmrGyk6ZwLN5XunlJA83wsH9TOgqMVq7OMRjk=
+	t=1752189916; cv=none; b=p/gZ3ifLPoOGxafS+jnWUanQm3ljCjOc1FpNSrFfCmQWwV9RmV8wDk4O4gTX+XQv69NDF/dAo/rB9OCPbPCM6tZqrAFSU/5NfOKds4SEvFIXvC3X5bXj94piqZy8wMu5ScCt3E3JZnDr+VxV3iv+05xZc3DO5X5Oi6a6qQs67Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752189891; c=relaxed/simple;
-	bh=yBhJ7jmYA0boZs71t+Q02sJpnvcmoh4aCEatyyAlf5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dInwQfIzt9nXOgDStLI5WbK6pX41j8QPIHAr8K25In9RVTNXtjBy2JddLEZMxSspxmco572wLM1ZJLJPKhbOVw2sPM6Qwq5U7uqfsSmydIjSMujgRrN++1cdiWJFPvdcc/V3dTrZQZ/Ts3EygAUPhhuC1/EHAxoQ6z256CPh4sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oEw4YreP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD578C4CEE3;
-	Thu, 10 Jul 2025 23:24:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752189891;
-	bh=yBhJ7jmYA0boZs71t+Q02sJpnvcmoh4aCEatyyAlf5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oEw4YrePhrzELF6Pbe1r3IR3JZKbRp9kpd275ZM81ATAPD9FK+QPu7dzyUDcsmuth
-	 5vwMlR07emlBd5TJYUa+Qbcq7NyDE4PekGUH8kYVY6d2+WBHOPaN2/UfeD3LHfog4a
-	 SCYoXz9dMA7OxWpmGhqGfA2yhN2KX9kSRQ3JfvF7A1eVdqTcAX5bDPnk+LyiYzkglw
-	 xTZH6gClj3GarPQHaRdWBGS1Rk+lizFbpQekWzKSWRRs75nI4WwX5HNU39bLIBjGkr
-	 CA3ZyBlcvBjuIfdgLspir3NumhiMsjGHaG2g9fVP7lTSFwP/hRgZKwpH9tHNA6E2mz
-	 tjxN179EdSgiA==
-Date: Fri, 11 Jul 2025 01:24:44 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Martin Uecker <uecker@tugraz.at>, Sam James <sam@gentoo.org>, Andrew Pinski <pinskia@gmail.com>
-Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
-Message-ID: <vgqpplbhg6krsufibrhe4n5agnh7vcrdsmoqd225guiakr3ojs@2dltrftpb3p2>
-References: <cover.1751823326.git.alx@kernel.org>
- <cover.1752182685.git.alx@kernel.org>
- <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
- <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
- <krmt6a25gio6ing5mgahl72nvw36jc7u3zyyb5dzbk4nfjnuy4@fex2h7lqmfwt>
+	s=arc-20240116; t=1752189916; c=relaxed/simple;
+	bh=slRevD8LfbP4w5Q0AhfUiGS00fOZe4bb8PYJ4yt9CZM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tIEC7WB/fjL0BTo1CNNOAlZFseRGZylZt+Qc4YQxtCPdcSVGg0+phQ6STXAitW8pFIQjRFA8GNohtQr4cpeFb7y4VjNTioEQrW41bCf4fUAVgLLucGLcCDSbl94TCB10DigO/mT5Pb6ZB5S9TPmIrFrjchBumEGCyclnfqUeO04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bw6XaIf0; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-747e41d5469so1664343b3a.3;
+        Thu, 10 Jul 2025 16:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752189913; x=1752794713; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t9pse6W8keryYeEzjxOpW9abD7sxV45dg8IQWQ02T9I=;
+        b=bw6XaIf0nB3SfWfJqWQMs2RstuEePbpsEh00qPBOEEY2X+VYcv504O8t/tZlyZ7Tkp
+         qAxnAF46CRRD6P0AFHAs+LSba3Pgbj+h5BEMexJ3hv8Q0sEYPr7kkCpbz3Hrbb1aAxWu
+         nkqryhzOKeimSCjCnHhvumzFXY6K9HaBS8+/FIaMFvGN/P3sEuyP/OrQ32QKQuqs4Y+W
+         ssFA/31reNS6onVwC/VQFx43Ht0+jugnEGz0SpGiK3GJNO/gN2GwdpN35wooOq5ko+AC
+         D3RDDEqqmLMl4uxO72QI4jWPtXMyFiNZs7PA4JqaN0xlYCayNZDa22LUoqHBYgwyaa1O
+         SsIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752189913; x=1752794713;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t9pse6W8keryYeEzjxOpW9abD7sxV45dg8IQWQ02T9I=;
+        b=e1z7viUwJdIzuegGveIFvOWQNAo29IxLUTdWhGNwccE396T1SlyK2PfHChNqD1HKuC
+         6urTo7+tMdUVZPrlHLzpB6DXWxNXzN2LjDsjMwOXX3/YvWHe8h1MeuOiVIotYk9cfKb1
+         SuWs/G7JW9SaOqmNlD1igtqDsxuLsAT0TLg3In/hIjz+/Be+eWMWKpW224DoUz9mmQgA
+         YLQxrSGiB+x0k1LFLn5QkmcWQM8EaxrTonuc44Lo7b5WqLVgN2Q/GjSFdDXzAl/QZUu5
+         wr4zYgQ/SnsUmU7mVAG3TbGRxhhsMmyVVWIa76+vq6ib1Yzz+ZzoOo9pwXpGEM0PFj1H
+         Sg5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUYhnkPwTZOjVcHg8kjILP7BBcYaGYtPSLvMJc7C544mdL99zClSm+Hs3pkR7G7krJxgdIbzxXDgl/7J4EV@vger.kernel.org, AJvYcCXPctZ+XRSf8Zt6DqaLzqTMxbhg8Zwzi7afM6A2nBkKYW+nUZ3oeiczYzkwYXPyrQjF+BE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAQVZ7zS9aC6cT6JrPNBoi8K0er0fVScoR2uWyMfc0aQB2fE+e
+	h5SbGZh6Nz0RFAuD1alz8jeWced5Q0y6E2iKaDdSKrsJY7hZwXpMFuOCP35SqzgZrfL82rqywuz
+	DxbjqH8iOZvDCpFTGPOaTKnO4WT5ub9M=
+X-Gm-Gg: ASbGnctFm//PbopmNXC6trmhUQ0PcPcv9hMAJDYOLL08r+ujUopn7rU49pBQlYzuQ9V
+	PfDmge4T39JR8h7EDXeBdOW5ezueTDl/ppm5nDky6jECenCK3PAKBpmvXJZBGVpYa1CFOvDpoGW
+	+FAvsmogL5ZPhP1NWhh4/qP22tPQI6cJl4P8itFmDibr6an7Xb1ssq80a0d0zyEL4U3pqqPuksH
+	MoM6RYzoUJ8stw2DXQ8/40=
+X-Google-Smtp-Source: AGHT+IEoFipJTpc/Xo4Pu/qg7vkho8GyMuHg9/m+XmCHamqvbryQ6LC5kEsei8AQZs2+GirP3+ajKXpWMf3ii8P3r0Y=
+X-Received: by 2002:a05:6a20:d50a:b0:220:1af3:d98f with SMTP id
+ adf61e73a8af0-23137e8e31emr1087286637.26.1752189912989; Thu, 10 Jul 2025
+ 16:25:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6edp5zcpae764526"
-Content-Disposition: inline
-In-Reply-To: <krmt6a25gio6ing5mgahl72nvw36jc7u3zyyb5dzbk4nfjnuy4@fex2h7lqmfwt>
-
-
---6edp5zcpae764526
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250710070835.260831-1-dongml2@chinatelecom.cn>
+In-Reply-To: <20250710070835.260831-1-dongml2@chinatelecom.cn>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 10 Jul 2025 16:24:58 -0700
+X-Gm-Features: Ac12FXwag-h-QSgVd1M5EQUYajFbo2b5LFCWENZjNkwoFpteCRBdZ04uJctmcgQ
+Message-ID: <CAEf4BzZZRk0Ko64wy5E34wAa3psk07UhGg9DENU-CQYfLwT1ig@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3] bpf: make the attach target more accurate
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Martin Uecker <uecker@tugraz.at>, Sam James <sam@gentoo.org>, Andrew Pinski <pinskia@gmail.com>
-Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
-References: <cover.1751823326.git.alx@kernel.org>
- <cover.1752182685.git.alx@kernel.org>
- <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
- <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
- <krmt6a25gio6ing5mgahl72nvw36jc7u3zyyb5dzbk4nfjnuy4@fex2h7lqmfwt>
-MIME-Version: 1.0
-In-Reply-To: <krmt6a25gio6ing5mgahl72nvw36jc7u3zyyb5dzbk4nfjnuy4@fex2h7lqmfwt>
 
-On Fri, Jul 11, 2025 at 01:23:56AM +0200, Alejandro Colomar wrote:
-> Hi Linus,
->=20
-> [I'll reply to both of your emails at once]
->=20
-> On Thu, Jul 10, 2025 at 02:58:24PM -0700, Linus Torvalds wrote:
-> > You took my suggestion, and then you messed it up.
-> >=20
-> > Your version of sprintf_array() is broken. It evaluates 'a' twice.
-> > Because unlike ARRAY_SIZE(), your broken ENDOF() macro evaluates the
-> > argument.
->=20
-> An array has no issue being evaluated twice (unless it's a VLA).  On the
-> other hand, I agree it's better to not do that in the first place.
-> My bad for forgetting about it.  Sorry.
->=20
-> On Thu, Jul 10, 2025 at 03:08:29PM -0700, Linus Torvalds wrote:
-> > If you want to return an error on truncation, do it right.  Not by
-> > returning NULL, but by actually returning an error.
->=20
-> Okay.
->=20
-> > For example, in the kernel, we finally fixed 'strcpy()'. After about a
-> > million different versions of 'copy a string' where every single
-> > version was complete garbage, we ended up with 'strscpy()'. Yeah, the
-> > name isn't lovely, but the *use* of it is:
->=20
-> I have implemented the same thing in shadow, called strtcpy() (T for
-> truncation).  (With the difference that we read the string twice, since
-> we don't care about threads.)
->=20
-> I also plan to propose standardization of that one in ISO C.
->=20
-> >  - it returns the length of the result for people who want it - which
-> > is by far the most common thing people want
->=20
-> Agree.
->=20
-> >  - it returns an actual honest-to-goodness error code if something
-> > overflowed, instead of the absoilutely horrible "source length" of the
-> > string that strlcpy() does and which is fundamentally broken (because
-> > it requires that you walk *past* the end of the source,
-> > Christ-on-a-stick what a broken interface)
->=20
-> Agree.
->=20
-> >  - it can take an array as an argument (without the need for another
-> > name - see my earlier argument about not making up new names by just
-> > having generics)
->=20
-> We can't make the same thing with sprintf() variants because they're
-> variadic, so you can't count the number of arguments.  And since the
-> 'end' argument is of the same type as the formatted string, we can't
-> do it with _Generic reliably either.
->=20
-> > Now, it has nasty naming (exactly the kind of 'add random character'
-> > naming that I was arguing against), and that comes from so many
-> > different broken versions until we hit on something that works.
-> >=20
-> > strncpy is horrible garbage. strlcpy is even worse. strscpy actually
-> > works and so far hasn't caused issues (there's a 'pad' version for the
-> > very rare situation where you want 'strncpy-like' padding, but it
-> > still guarantees NUL-termination, and still has a good return value).
->=20
-> Agree.
->=20
-> > Let's agree to *not* make horrible garbage when making up new versions
-> > of sprintf.
->=20
-> Agree.  I indeed introduced the mistake accidentally in v4, after you
-> complained of having too many functions, as I was introducing not one
-> but two APIs: seprintf() and stprintf(), where seprintf() is what now
-> we're calling sprintf_end(), and stprintf() we could call it
-> sprintf_trunc().  So I did the mistake by trying to reduce the number of
-> functions to just one, which is wrong.
->=20
-> So, maybe I should go back to those functions, and just give them good
-> names.
->=20
-> What do you think of the following?
->=20
-> 	#define sprintf_array(a, ...)  sprintf_trunc(a, ARRAY_SIZE(a), __VA_ARGS=
-__)
-> 	#define vsprintf_array(a, ap)  vsprintf_trunc(a, ARRAY_SIZE(a), ap)
->=20
-> 	char *sprintf_end(char *p, const char end[0], const char *fmt, ...);
-> 	char *vsprintf_end(char *p, const char end[0], const char *fmt, va_list =
-args);
-> 	int sprintf_trunc(char *buf, size_t size, const char *fmt, ...);
-> 	int vsprintf_trunc(char *buf, size_t size, const char *fmt, va_list args=
-);
->=20
-> 	char *sprintf_end(char *p, const char end[0], const char *fmt, ...)
-> 	{
-> 		va_list args;
->=20
-> 		va_start(args, fmt);
-> 		p =3D vseprintf(p, end, fmt, args);
+On Thu, Jul 10, 2025 at 12:10=E2=80=AFAM Menglong Dong <menglong8.dong@gmai=
+l.com> wrote:
+>
+> For now, we lookup the address of the attach target in
+> bpf_check_attach_target() with find_kallsyms_symbol_value or
+> kallsyms_lookup_name, which is not accurate in some cases.
+>
+> For example, we want to attach to the target "t_next", but there are
+> multiple symbols with the name "t_next" exist in the kallsyms, which make=
+s
+> the attach target ambiguous, and the attach should fail.
+>
+> Introduce the function bpf_lookup_attach_addr() to do the address lookup,
+> which will return -EADDRNOTAVAIL when the symbol is not unique.
+>
+> We can do the testing with following shell:
+>
+> for s in $(cat /proc/kallsyms | awk '{print $3}' | sort | uniq -d)
+> do
+>   if grep -q "^$s\$" /sys/kernel/debug/tracing/available_filter_functions
+>   then
+>     bpftrace -e "fentry:$s {printf(\"1\");}" -v
+>   fi
+> done
+>
+> The script will find all the duplicated symbols in /proc/kallsyms, which
+> is also in /sys/kernel/debug/tracing/available_filter_functions, and
+> attach them with bpftrace.
+>
+> After this patch, all the attaching fail with the error:
+>
+> The address of function xxx cannot be found
+> or
+> No BTF found for xxx
+>
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> ---
+> v3:
+> - reject all the duplicated symbols
+> v2:
+> - Lookup both vmlinux and modules symbols when mod is NULL, just like
+>   kallsyms_lookup_name().
+>
+>   If the btf is not a modules, shouldn't we lookup on the vmlinux only?
+>   I'm not sure if we should keep the same logic with
+>   kallsyms_lookup_name().
+>
+> - Return the kernel symbol that don't have ftrace location if the symbols
+>   with ftrace location are not available
+> ---
+>  kernel/bpf/verifier.c | 71 ++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 66 insertions(+), 5 deletions(-)
+>
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 53007182b46b..bf4951154605 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -23476,6 +23476,67 @@ static int check_non_sleepable_error_inject(u32 =
+btf_id)
+>         return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_i=
+d);
+>  }
+>
+> +struct symbol_lookup_ctx {
+> +       const char *name;
+> +       unsigned long addr;
+> +};
+> +
+> +static int symbol_callback(void *data, unsigned long addr)
+> +{
+> +       struct symbol_lookup_ctx *ctx =3D data;
+> +
+> +       if (ctx->addr)
+> +               return -EADDRNOTAVAIL;
 
-Typo here.  It's vsprintf_end().
+#define ENOTUNIQ        76     /* Name not unique on network */
 
-> 		va_end(args);
->=20
-> 		return p;
-> 	}
->=20
-> 	char *vsprintf_end(char *p, const char end[0], const char *fmt, va_list =
-args)
-> 	{
-> 		int len;
->=20
-> 		if (unlikely(p =3D=3D NULL))
-> 			return NULL;
->=20
-> 		len =3D vsprintf_trunc(p, end - p, fmt, args);
-> 		if (unlikely(len < 0))
-> 			return NULL;
->=20
-> 		return p + len;
-> 	}
->=20
-> 	int sprintf_trunc(char *buf, size_t size, const char *fmt, ...)
-> 	{
-> 		va_list args;
-> 		int len;
->=20
-> 		va_start(args, fmt);
-> 		len =3D vstprintf(buf, size, fmt, args);
+fits a bit better, no?
 
-Typo here.  It's vsprintf_trunc().
+> +       ctx->addr =3D addr;
+> +
+> +       return 0;
+> +}
+> +
 
-> 		va_end(args);
->=20
-> 		return len;
-> 	}
->=20
-> 	int vsprintf_trunc(char *buf, size_t size, const char *fmt, va_list args)
-> 	{
-> 		int len;
->=20
-> 		if (WARN_ON_ONCE(size =3D=3D 0 || size > INT_MAX))
-> 			return -EOVERFLOW;
->=20
-> 		len =3D vsnprintf(buf, size, fmt, args);
-> 		if (unlikely(len >=3D size))
-> 			return -E2BIG;
->=20
-> 		return len;
-> 	}
->=20
-> sprintf_trunc() is like strscpy(), but with a formatted string.  It
-> could replace uses of s[c]nprintf() where there's a single call (no
-> chained calls).
->=20
-> sprintf_array() is like the 2-argument version of strscpy().  It could
-> replace s[c]nprintf() calls where there's no chained calls, where the
-> input is an array.
->=20
-> sprintf_end() would replace the chained calls.
->=20
-> Does this sound good to you?
->=20
->=20
-> Cheers,
-> Alex
->=20
-> --=20
-> <https://www.alejandro-colomar.es/>
-
-
-
---=20
-<https://www.alejandro-colomar.es/>
-
---6edp5zcpae764526
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhwS7wACgkQ64mZXMKQ
-wqlOQxAAqQqG5Z7+Xh1jkMiJqhKKnJ4dTK0nc7NVJNqdOHZBJCjt7CCvZulq+QO5
-TAKjjj5aaK3ZA+XB42UNR6cya6aL88fDOr4d6srebkLTkGoEXnjBN/VWardd8z2d
-Iq8z4UsaxfDDA8OQVz2lbcnFxA2KSszs9SwsP0mZZXjCZSdrIKqguPaexaJ1ZSkC
-IML9PzRqUqm9KbJn9qroGTx5DWRg2hf/q+T6PxCjzU+DDQL7mh1+XHgL3EXL1s4Y
-9+DnXRe+s9VJ8A/TcAwlbdZO99Cp4YpnNJP+m8y0wOJpOgIwlk51hbGGZ2U+jIU9
-nISZk+EZTERJLqU06PVPp3wVyWhxTqVIcbxhQTGKGumltTWaHu2i2yI/RkoMLL/c
-FRm8AnuO4X874TUc9JJTCq9ycz0BAv8YRmbNDmZoVcm8XhBzKVPo03h1LOm/kTnq
-+seYP9mJz6BiFwSXok60CZrsflPlaob3z3tFnMgwG/7qXwMnS6gW3FDRMFMuPVCf
-7vmiDiXMOf0sjwYzM0AYDqqWaGDloWBxU0KwUH0e9+Tp/mDxJbaCxr/1G7fyX3QL
-QtRd6yUURufITU56DsxEJYx9PkDdheYm9JI91ZFHEajSrR0FzQd+SwcNivSk6q8p
-fYtGfPwriq8GxHRzTxeYlCWcy2YKIhb63RLIRNuIgcDyDZ+EKhc=
-=icSd
------END PGP SIGNATURE-----
-
---6edp5zcpae764526--
+[...]
 
