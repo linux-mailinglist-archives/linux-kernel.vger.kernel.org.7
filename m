@@ -1,106 +1,118 @@
-Return-Path: <linux-kernel+bounces-725317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F837AFFD70
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:04:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B17AFFD7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F6317571E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:03:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923791888923
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7C324C68B;
-	Thu, 10 Jul 2025 09:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7AD28DB49;
+	Thu, 10 Jul 2025 09:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UaIf7yaE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="1/O+34at"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C722F3E;
-	Thu, 10 Jul 2025 09:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3AB28C842;
+	Thu, 10 Jul 2025 09:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752138214; cv=none; b=XQ6SyLGkQ8Tm+i87yre4rzkpYqPjrLDoC/R3wEe2W/CuTJsQMLoVkIE/KZDPzuhPA/y4DXR3BdMetOJE2vYkQbcPUKjs/ZQuY43cAhHZgJuMA6X+78OsUkdPMfUPgQcmO8mrR13jXQC4NMQ0/t8A81u8DxNML/Voe9kI24H4fMQ=
+	t=1752138236; cv=none; b=AW+yOZco2xfstQSL+VcAy1FTprbmDm6f1choYBPnwmCrMQNxT1zn49n89A2EVtnFaBwkUKpNp0p56gfcN2bdiS2air4v19+aXlPZBE+FOsjDdtR2PAtIDQIFcRlqNo/nef8XgTnNrfjZbU0fEvfgNqTIImZThxJCsX1n3cB1XAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752138214; c=relaxed/simple;
-	bh=j8Phv+9pRt6mRGClp582kQe91XOLKsvw5FUGQNmKXig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R6JJ6wrz7yNVKLDFmfDyFesWX1VJONO9vhFS0qPJs6pNImNt1kPqGD3KkPKyIBmcLvGOgwymnZLj+t5R9O9Bubn1wLO7YwNCSaNBBeNfG7sAXc5DmIht9v/gKBzf8d89SpKc7Qha0axjZzmSxqTce/UvZFJCYaqwX0nOp9Q+6uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UaIf7yaE; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752138213; x=1783674213;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=j8Phv+9pRt6mRGClp582kQe91XOLKsvw5FUGQNmKXig=;
-  b=UaIf7yaESZvioQl6EDfOb8dF0wxMAs8rdhfZNtBiLW9rkYTG7B/GIPc2
-   z1++TdzxNNzPu17y2Wva33pmLCRlEoOlzWSaB5kJBPJr//P7h7Z1I4Jho
-   CAVUoZ4pcuF54br0URtAZCPAaHD7hNXsfUQbFlSzNbvy54ZQvWl7hMior
-   jgSeAIG5U7HKtMJV9KH8K3BuJjN4SD3CfhuCyqmIrMlrS4mPo5HBRj41N
-   uxe85y532oBnEJg9Z+EzaOLPHUOUgkXONOY6ZJFEazzYoH23V4ZdnuUDb
-   SV1xrau//ZGTG0VAujX5UVWcC5T8WKGwqSSsK/05wRpk+R1a7tF0H4bLH
-   g==;
-X-CSE-ConnectionGUID: MF7Bw6e4QYGibwCLT7X6aw==
-X-CSE-MsgGUID: S7BU2K3TSsONVozTMRWLJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54541932"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="54541932"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:03:32 -0700
-X-CSE-ConnectionGUID: 34O0i2HBRF6xRFM2UmCbRw==
-X-CSE-MsgGUID: 1HQ9oNu/Q3iCKwLtTys6gQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="156142383"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:03:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uZnBe-0000000E9Os-3yNh;
-	Thu, 10 Jul 2025 12:03:26 +0300
-Date: Thu, 10 Jul 2025 12:03:26 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] iio: imu: inv_icm42600: Remove redundant error msg
- on regulator_disable()
-Message-ID: <aG-B3uv6SsP1Ap0U@smile.fi.intel.com>
-References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com>
- <20250709-icm42pmreg-v1-3-3d0e793c99b2@geanix.com>
+	s=arc-20240116; t=1752138236; c=relaxed/simple;
+	bh=qWYEOZljXam2naL1LEipU/Lx3OI25GT+L9hRpkPlQ4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aIQF0kLaz3aIuY1wAnv+GZLcfK9iOP61S7szQFETEzj5bvUYixBSXOtBsqkNhFrJcqg9Rn5e+VQkQdc6KM3Bt83vxHzjr+CLzlyVjrJ1EcphG31s7ilfS49TcuWpr08dEnPIZRp7Lz559P2T4QIMOgfGSe/8YZ29T1asDyxMVOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=1/O+34at; arc=none smtp.client-ip=212.227.126.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1752138217; x=1752743017;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=qWYEOZljXam2naL1LEipU/Lx3OI25GT+L9hRpkPlQ4Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=1/O+34atYcxkATbpfYC5hd1HLJtwpcOW7M1FmbZkVQTMh4lX7N8eC298t8zSrVY+
+	 xybyZXJNna8TrOGi0PnG8aZIfW3CPJE2luO0neJED3ZbgWw4SGCv/PaWLsNAHgNhg
+	 8ME0/BJ6GfRzbLtSVvMH5QlNTwLkYeTEBROG8LZ29ejFPPZ33DUx86C6wyEvW7EaT
+	 54Ui2449v/OPB4yvajpDONu9hJxk7pQYeZlq/P2gd3gL2L08VabDDVHOXMtI2Dayu
+	 uRYxVac3Y94Tkf/2E5VCdLU1udHoHgpO5XLdnkEvrNGgIsuejiTDORAcHMr4O1eHd
+	 2hLZ86aLUiUSmgt2Yg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.107] ([62.226.41.123]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1Myb4H-1usAxI1FyX-016gZl; Thu, 10 Jul 2025 11:03:37 +0200
+Message-ID: <58c901e9-3a66-4843-8301-2e962ac03c0e@oldschoolsolutions.biz>
+Date: Thu, 10 Jul 2025 11:03:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709-icm42pmreg-v1-3-3d0e793c99b2@geanix.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] arm64: dts: qcom: x1-hp-x14: Commonalize HP
+ Omnibook X14 device tree
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250709-hp-x14-x1p-v6-0-f45cc186a62d@oldschoolsolutions.biz>
+ <ikWa9Ih3mm9syAlXHTPoLiEwAKXm-3TOHfErQcGGx8GwtsYean4OqEnm_gHgnAJZyejUXUY8uxRamsl7EkeY4w==@protonmail.internalid>
+ <20250709-hp-x14-x1p-v6-2-f45cc186a62d@oldschoolsolutions.biz>
+ <102359db-8126-4379-aef0-86617d174110@linaro.org>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <102359db-8126-4379-aef0-86617d174110@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:hkk+bG0iZ7va4GuQTQKyS2fikmZNKMwBKVg0IaR3p1FB1jyCs7T
+ gG1vaEZu8xVRfzlo3gA+cFyT7ZIUGEp7lPW/HwfEcNe+u2nrYtnt8EO/g1IR2l8ovmU4wXG
+ GvmE7W89XH0ChbVzDg5UOeR7ChjZ0G6Z+bU7bRE+cVtKRVRHTtLDZ6CCOYGF0wly1oHWw40
+ G0Cx6lT5HWrkM/efHOi7A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:k3aQnpGOXj4=;dSIDURQPwfs5IyEi0ZHVEfDKzu6
+ UoLEya3noc6k88GmmUS7FSq9bnwqPtgp2hjI86RJC6ubI2zl7V4iiMs1wW1JzDqHk1eYrHzNG
+ w3+G0bP5Gx8MU3JhhjXttDNLZXyk1mDIeBxAxexykXEia0byl73HJKTBhHl6JLswdDyZ+JhcY
+ xSyEm+OCYz97u+TBRN83KjQ/lPv9J0/rCMmfMGAX0ZOOHDJkcOhHlQosZ3G5X+56t4vaPYqBE
+ L+ZDkThCaYJY0ME6SwDQTy/70tKJHCOGbkL3C/kiZQkyqznJ2m4ynq0gPj3Qt7jO51d7b7Y38
+ Es64rMEZ7F9QO6QND44PkwSnTtgDH8tVKQfCSgHj18evd/vdj80AUBH4JsdWUH9nYPAlq6ao+
+ XsZRC+6ISlvz+u1rfhq3HCYw1hLZxxs2Vtx4QKvjnR0vDgAMKy8iPqZqkzZEpgZFR3AM+IS2K
+ N66o4fuHzaHvSiX5VjtXZmNfGr4OapB3ZO+ZsOYK2pfYthBXq+vY6e0vOL/yOWtwPsg42g46u
+ xbbrEjPznxTbC7Dl9MP4FmK9HYzkVUYnAquGsA78I3RhENwj03S6FeNUZPYWv3z2EPAtnEXH0
+ 4hiL4cWqD48+iWJrC17RQu/CdbOSaOjKTt9OHOV9kbb9rJ7EYikjjqHKAVVtZWFavEKJ6ulVf
+ Uz+RQ/SG8KxeyDQkj8oFMrD0kph2JVvOHXqEqtNSH6ChhqD/eE06e+wSj50wwM+Zg41PYAFID
+ VjaEGHYvJc+4Lwnw5tcAgIvHBsaFkMIhg7U7t9cla6xjovFrptiOyCdnj7elJYLwUtmZc1JRQ
+ pFu/pkUOdiIdubuuf0Ycu9f7fkPAhSxp3HXdbidR/vm8SpyLLYdFf3yDUPB0HT8Tjh0PVki09
+ 3Z8vQYFzK9Pw4Hdxt5MyP8ccOWGUEe3f/FiTKmRyLSRbpJv5t5wHL173rRV9qN3bJ4vnKXki4
+ 1bxLhnL7q/ZHCve05zIxXXdE5bjDoXbut1fug5OzL+PVtZ/39JXr1Dh1YPLTVVlrQHlVyYgo0
+ wlY41xv532tLkP8h56PSnJpR2l4jiOA+dNOc1ABVvlJZZU11NmSrRRPmTol12URPSU0kKdS/q
+ vi15scNqM6kSD+AMyArtJCgfL+HX3NYBPE7wijbmR6alpjSSI3ycX3QslBmNzjw5Hy9ACpKIV
+ fs0pX0STvSmDc0mgl0p3VyTXdHHpGe8IBAWxUdx3kUdu8ambhlWzNkbJX5KmbQ4uHGjNCDssi
+ GZPkWLXMCiVurwZoAl6IhY8MXt3JIuKq07Iwo0388JMWM9w3gAUS4i/0l3eQyNMZAJNFiJCzk
+ R+RYgDn7AhXq5sjfsjdmtakaXMr4S0V5lf3qamMEAdoxz4cgdFkqnLvLX4cjnmc435XpUplwd
+ Rb2u76MrtsvgSIuy/w9h0KAczr4owQZ7kFsc9hlDbcP5RlGRput7dWATo7mC0wFU8jkRs5sv9
+ xSYaECKd52dwLmm9oZEWoqbdcVSi/yW16TDoK7uyMgRFAW8uPBrOyEm/rv1Pxhfk6mkDas9Ec
+ WLqIqdVM8UBrPKXIzcB5nTdJamnENwSkuoIUkSiBbp9rCaGKvDKkuJhRFA5NnA==
 
-On Wed, Jul 09, 2025 at 02:35:11PM +0200, Sean Nyekjaer wrote:
-> The regulator framework already emits an error message when
-> regulator_disable() fails, making the local dev_err() redundant.
-> Remove the duplicate message to avoid cluttering the kernel log
-> with the same error twice.
+On 10.07.25 10:31, Bryan O'Donoghue wrote:
+> Commonalize is not a word, "commonize" isn't really a word either.
+>
+> Any of -> "aggregate", "unify", "integrate" would do.
+>
+"Unify" sounds good.
 
-To me this sounds like a potential backporting material as it might full
-the logs (in case the module probed-removed zillion of time. Hence,
-I would put it to be the first patch in the series (yes, it will involve
-to fix something that you are removing in the following change, but still).
+with best regards
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+Jens
 
 
