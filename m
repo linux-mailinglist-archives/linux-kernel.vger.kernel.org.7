@@ -1,140 +1,123 @@
-Return-Path: <linux-kernel+bounces-724747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3390AFF67C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:45:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3885DAFF67E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 465865A59C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D21C1C42014
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC1B27EFE3;
-	Thu, 10 Jul 2025 01:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37B427E07F;
+	Thu, 10 Jul 2025 01:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VP5OM/ot"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="InfpT0wU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F15927E07F;
-	Thu, 10 Jul 2025 01:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FDA2D78A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752111902; cv=none; b=UtA70dXbxogsrjJNbBlO0FHFp7TvxMh1H/7qeGin9QaeX/hIdz3OdWhUEkMIJm/yshT7iDZ3lIXodoDBgf0VJfSoqZmgv87YJQL4o4wpHCLMTyA7jN/5y8pcpIJ2Sto8AkGuscnQtaSHEv1N8JJjYTA2ydlE3KDDt5BdiNtBLm8=
+	t=1752112072; cv=none; b=Q+f+LUA1+BERqUt+y4q/Covn6+v/qp3ZfwR3h2QTGiIWyc8QIh7Ie+LrjcfDUxlKUk3EuXZK71Goxnq4xbhiiF9T6/35KSTSoVYvLbuDN5y+M9L5MtFb3kpxHVCWSg+6W3Erz+vZWBoN/yjBu2xz8K6eW0rvso7WMTavjwaApCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752111902; c=relaxed/simple;
-	bh=ceq9ufKCZANtVe+Yu/j2KztjUjRWT8pQBYZw+EcF6gM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bRvOAoWC2MluZmgHxF5BS7Jksj4UesywKybppMNoxk42CLfKGkpWtQBG/kzm34giXEvKeIiyIHiyAVuxVS9w/vOpIJhJpyBWo4ilAKUw8n0TJpSiQBFZGFWUo39OE9FNCJuQlwni4OKmyqxHggjykl5/QIFZ47ZuWb1JOsapQfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VP5OM/ot; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-40af40aeef6so180066b6e.3;
-        Wed, 09 Jul 2025 18:45:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752111900; x=1752716700; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KpbUI1og+WbCg0ZLSD0ymybRvQZPRR2w3JRs6++rOrc=;
-        b=VP5OM/otCyZ5ZMDimDsWG/eLU9M16XeOpsM6EzTANqALsdKj5UHlizzAGdSxQLVd5b
-         sXpOC28TslxRGf0u3o0O7yQu3dGd2LgUUOy02SDS/0JZvftsXVRZJkkXE8x+6ZCSsQIm
-         vtu3sTqiXjKBdoDyAimHekGZSOKpaPSno4WSUPE2HDaYIbzwqrfULRj4xDw1dqIvi4dj
-         CzQDhP2jl2neyM8qOZSI/UNI2u8KQgXtRd2I/Xd+QWlzCN/sH0v11fnOTjzIQu91EtRO
-         V7CPlWM3BcO7lkbYNRHdAlfopeBRre9LBIYpiAxBmEm5thebPVTHSt8u+u8U+d2IabEp
-         g5Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752111900; x=1752716700;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KpbUI1og+WbCg0ZLSD0ymybRvQZPRR2w3JRs6++rOrc=;
-        b=XrKCElF3pWt6db1re5NohkuE1YQQBh1GWzv+JllX/QlohNYbrHV3NcvtKSfO2Jv/E/
-         W88ShblGl3D4zq+YJcfnZo1CC/4C36h4ioy2Njlt6lpjM1lwMP8OouAUFW9dRYBNxREN
-         6EF2jFBq+DUgc3mxTxDiqUIrITb1JBKEuvM2yBDPF/znC7/tQK2sUbKPaZEr7S5Uzo+V
-         QcrARGE6GSQTz0RGp1Rt+7sLMmPGZ7bPcIyMPVLFUqmW/SUZILXNQbRqkedYy0yXP0Wj
-         zRM5A0FOEnr0q9UZGSM22Az9yTm6vJcmk/YwAQsr+EK7K/8goP4BSZDATuviCmlwcxBa
-         90lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWt6mJuN8Xwm5l4vAHgWtHS9N25wCEPhtsfIl7jTFEkfBFIUiEJ38JwtLzYEm8/oXsonvq07f38Hpgoxw==@vger.kernel.org, AJvYcCXg8wnIKQNqOZdtyLZPoAehqphO6hApW6UHu3j7yB9fgvqVyiMBHGr0TMDASWLcg4Srb3XbpgypQLnbFVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsSpVwqRRF//zUJl8JWwSQrilqtTVqaLyxsgQPDHiRVdYN0mSR
-	9eQNpN0powEythp7N/svJL0BDWP5tShY3Ue2v39Xwtq7sysf0Fgs57fdgY3uj3Z0L3VfiKyBy/B
-	3dJkIPiuPuam+pUtR9dGIoyM50d5qK5Q=
-X-Gm-Gg: ASbGncuQrs7sBIPIKOV2Y1SdZMibITEc8B2amvOpqX/RM44liuqIylyS7Fow6jQChjm
-	EHthxQwqufrvWIOjpNKyENxBVuwC0FVOyGHhpLevDVfKIkwS/UKj78pmBkxNP4SlcgV/t2YZz9q
-	mwraw9jU+4h+A6/lfCH6tOfWJ6ShoVPfe7t9JqRCikZMeUgDOgl1JjmqozABY2Hp78aHL1S3Lqx
-	Xc=
-X-Google-Smtp-Source: AGHT+IHZnHuOYbgM4o20piIG+wjZN6Ae24TgWByOcCOSK6jsx/DzIizD83ptEp+E7b+w0L5u6UoTRCXAexH7DkA+j3E=
-X-Received: by 2002:a05:6808:319a:b0:401:ea7b:e535 with SMTP id
- 5614622812f47-413adec70b2mr1594888b6e.22.1752111899833; Wed, 09 Jul 2025
- 18:44:59 -0700 (PDT)
+	s=arc-20240116; t=1752112072; c=relaxed/simple;
+	bh=DQTD7y7cv7owoVXkdUip8vQLTuU6DMRTruw/sxIFpJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=djuZ/WGuv4zdAc9eGhUgtLVTDOly/5jX+twVu9ktqWf5sA4M6fSsEFQxV9hcdb7+WkDOmXHi1+dmnI4aZZo286bZ/jJZE1+MvHeb9hnLET1DxedDPrzkPZlhfBYlwqW/zqpftm74gIDqHM9a5qB7XeougVUCjxe2P/5mNIB4Cvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=InfpT0wU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752112069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Jh0rx+XXfIHWexmg7+WdmaTwcOzgWBvsa/tZ8r1I2KA=;
+	b=InfpT0wUM5vz3HpfrnxgJcwe7BJzjYe8Dr0jNu9EFgYPPkPm7MnVCz+NiI6za4OLfkVYSc
+	+uoL8Njp6OpqxKZmPIywW0V13uc4zXw220Zg/LQkntMem9Twu96X81pVOnuE21mR9fuW4/
+	8pTQb/HlWT5xzbj6lvC87vnP6lBpNKM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-590-IUdYY6naM1mIRWJqS1IxGQ-1; Wed,
+ 09 Jul 2025 21:47:47 -0400
+X-MC-Unique: IUdYY6naM1mIRWJqS1IxGQ-1
+X-Mimecast-MFC-AGG-ID: IUdYY6naM1mIRWJqS1IxGQ_1752112066
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 787051944A82;
+	Thu, 10 Jul 2025 01:47:46 +0000 (UTC)
+Received: from bcodding.csb.redhat.com (unknown [10.22.74.5])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E52F6195608F;
+	Thu, 10 Jul 2025 01:47:44 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Laurence Oberman <loberman@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v3] NFS: Fixup allocation flags for nfsiod's __GFP_NORETRY
+Date: Wed,  9 Jul 2025 21:47:43 -0400
+Message-ID: <f83ac1155a4bc670f2663959a7a068571e06afd9.1752111622.git.bcodding@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610101234.1100660-1-zhangchunyan@iscas.ac.cn> <8a1b1610-02b1-46a8-9a10-c19c1580c017@ghiti.fr>
-In-Reply-To: <8a1b1610-02b1-46a8-9a10-c19c1580c017@ghiti.fr>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Thu, 10 Jul 2025 09:44:24 +0800
-X-Gm-Features: Ac12FXy5RekAAJElSH1GjaYFg2lQc5TLrPYlv66sNpWZ556eU9tAfMub6Xg2bbU
-Message-ID: <CAAfSe-s1g8h+HpYz8FmW4n7h+hhi5W0_N-jpfAD5Ldai8NjwHw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Fix a segmentation fault also add raid6test for
- RISC-V support
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>, 
-	linux-riscv@lists.infradead.org, linux-raid@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi Alex,
+If the NFS client is doing writeback from a workqueue context, avoid using
+__GFP_NORETRY for allocations if the task has set PF_MEMALLOC_NOIO or
+PF_MEMALLOC_NOFS.  The combination of these flags makes memory allocation
+failures much more likely.
 
-On Wed, 9 Jul 2025 at 23:18, Alexandre Ghiti <alex@ghiti.fr> wrote:
->
-> Hi Chunyan,
->
-> Patch 2 was merged via fixes, do you plan on resending a new version for
-> 6.17 that takes into account Palmer's remarks?
+We've seen those allocation failures show up when the loopback driver is
+doing writeback from a workqueue to a file on NFS, where memory allocation
+failure results in errors or corruption within the loopback device's
+filesystem.
 
-Yes, I'm preparing the patches these days, just haven't figured out
-how to set NSIZE properly for user space.
+Suggested-by: Trond Myklebust <trondmy@kernel.org>
+Fixes: 0bae835b63c5 ("NFS: Avoid writeback threads getting stuck in mempool_alloc()")
+Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+Reviewed-by: Laurence Oberman <loberman@redhat.com>
+Tested-by: Laurence Oberman <loberman@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+---
 
-I probably should split the patchset, send out one today.
+	On V3: fix ugly return (Thanks Paulo), add Jeff's R-b
+	On V2: add missing 'Fixes' and Laurence's R-b T-b
 
-Thanks,
-Chunyan
+ fs/nfs/internal.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
->
-> Thanks,
->
-> Alex
->
-> On 6/10/25 12:12, Chunyan Zhang wrote:
-> > The first two patches are fixes.
-> > The last two are for userspace raid6test support on RISC-V.
-> >
-> > The issue fixed in patch 2/4 was probably the same which was spotted by
-> > Charlie [1], I couldn't reproduce it at that time.
-> >
-> > When running raid6test in userspace on RISC-V, I saw a segmentation fault,
-> > I used gdb command to print pointer p, it was an unaccessible address.
-> >
-> > With patch 2/4, the issue didn't appear anymore.
-> >
-> > [1] https://lore.kernel.org/lkml/Z5gJ35pXI2W41QDk@ghost/
-> >
-> > Chunyan Zhang (4):
-> >    raid6: riscv: clean up unused header file inclusion
-> >    raid6: riscv: Fix NULL pointer dereference issue
-> >    raid6: riscv: Allow code to be compiled in userspace
-> >    raid6: test: add support for RISC-V
-> >
-> >   lib/raid6/recov_rvv.c   |  9 +-----
-> >   lib/raid6/rvv.c         | 62 +++++++++++++++++++++--------------------
-> >   lib/raid6/rvv.h         | 15 ++++++++++
-> >   lib/raid6/test/Makefile |  8 ++++++
-> >   4 files changed, 56 insertions(+), 38 deletions(-)
-> >
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index 69c2c10ee658..d8f768254f16 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -671,9 +671,12 @@ nfs_write_match_verf(const struct nfs_writeverf *verf,
+ 
+ static inline gfp_t nfs_io_gfp_mask(void)
+ {
+-	if (current->flags & PF_WQ_WORKER)
+-		return GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN;
+-	return GFP_KERNEL;
++	gfp_t ret = current_gfp_context(GFP_KERNEL);
++
++	/* For workers __GFP_NORETRY only with __GFP_IO or __GFP_FS */
++	if ((current->flags & PF_WQ_WORKER) && ret == GFP_KERNEL)
++		ret |= __GFP_NORETRY | __GFP_NOWARN;
++	return ret;
+ }
+ 
+ /*
+-- 
+2.47.0
+
 
