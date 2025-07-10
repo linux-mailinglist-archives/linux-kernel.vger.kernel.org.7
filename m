@@ -1,348 +1,165 @@
-Return-Path: <linux-kernel+bounces-725082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2318CAFFAA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:16:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6367AAFFAAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD2A4E49E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:15:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADB23175E63
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CB1288C80;
-	Thu, 10 Jul 2025 07:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72FC288CA8;
+	Thu, 10 Jul 2025 07:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BUpvW6y0"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M6kZC78V"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2228728850D;
-	Thu, 10 Jul 2025 07:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79478F5E;
+	Thu, 10 Jul 2025 07:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752131765; cv=none; b=hdOOpWmlR26SiBuhkL9gHn9uSbfB67YbeW8nZaVsaqTvIlN76PzANbxL9vaZM0KFHSswIKsP1eE0gQ9vXCz0bSLAW+rUSKggDc9rHLVvFfAhcC67FmSnnCRlauZ+CAC/nDjzODz/b7KMK+OWG+JurZWO60tG25oINq2jcBIv4dU=
+	t=1752131981; cv=none; b=m6auedXwcjQQsy22rJ6dtDVWcepXhD/ilp++DzfQxLx1SmS/8SE05f41sF0gU01creQW600FVrl7CdkjGV0cBagKD+qX9N2uAA0R4jOQv6n+uYUUm/aLKIXLG318mXJ2E4KU+vFE6UG/2qtwY9aTrrLDn7zH9QoZICQJVePzNFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752131765; c=relaxed/simple;
-	bh=y9hF6EZ050Yv7spxWNq7VKXwB2SKwvLGZ5USQEX2/rM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kiLlfI2fm2cTLe8LcjVLUmzZzpbZZr/r1Wadljs5D+Kz1AgjSorckEsxGrYoZ9dbR1yMwWkCCNrsQLRwmu0ukq1hQk/aQhXEJShqN4jepkJEgWL9wv788+/Dr/5rJxViFA23cO9KMv80Ndk/++6+auH4/ltReJLQNqV9eNGOjt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BUpvW6y0; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-141-178.net.vodafone.it [5.90.141.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 45227465;
-	Thu, 10 Jul 2025 09:15:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752131731;
-	bh=y9hF6EZ050Yv7spxWNq7VKXwB2SKwvLGZ5USQEX2/rM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BUpvW6y0Fb2rHiacy8qjEcnsw4yNiL3dYBSo+RJoKrAGhlaWq4jduXJXzq6CNYIS+
-	 Lp7Yu5HoJjx04WkfUvZomIainwJT6Hv9K3sRa81jUoSM81Liix6BGU3+sJgrDE1GRr
-	 24Vzgxa8h8UPpzyWIq9R2d/zLz8X5gvKe3FUZb4E=
-Date: Thu, 10 Jul 2025 09:15:54 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Dan Scally <dan.scally@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Dafna Hirschfeld <dafna@fastmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/8] media: uapi: Introduce V4L2 extensible params
-Message-ID: <gemjiujyal7jf6gq7vd5wemriqkz7knxmkoe76fgmhhto6xzqu@zgy4r4ynaoe7>
-References: <20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com>
- <20250708-extensible-parameters-validation-v1-1-9fc27c9c728c@ideasonboard.com>
- <9b12b035-a80d-4d12-a039-daa94d13280e@ideasonboard.com>
- <yydzeg53koeawjc3vtzwfnq5x6avmv4ep53bcxff6kvzzu36jl@qp37ojw2drug>
- <78006c71-592b-4f54-93ed-5f4b21b5bc33@ideasonboard.com>
+	s=arc-20240116; t=1752131981; c=relaxed/simple;
+	bh=sTj8F07ltYz+pOqSRXp3fqHxLiNdJSBXIcxMIWwOzZQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G68pCgrkCwOtnKuQY15Jg/3lYzRGB2BulfP6Wyot8wNEQr+l8btCU13xscz9Q9vR63LzPZVl8wVRn2RcrRU75j3wF1feo8xbmglto1FvoULSnX0KTakQDqa3AQ5z58Co/KoMaoW/dLZzDL/AkeZhQvLI1yn+dWBfjPESwCROxCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M6kZC78V; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752131980; x=1783667980;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=sTj8F07ltYz+pOqSRXp3fqHxLiNdJSBXIcxMIWwOzZQ=;
+  b=M6kZC78V/HyW/ewuIpsr6Sb7fAblmwGku4hd0QpFxLTd/NGzXyqRRr2C
+   ZVsO1uXjjGu/NnPxpddl2ClbE3MT5+n0NS3I41n+BevYqPYr8QoGeX3Tb
+   Ie7DhLzav4czUtOkqoa60nJWhAh7UIPR5XIOv+d4waO3DDXEbU3ORqVvV
+   ckv2FEuBOwO6+SL9/T0RDXTuQWKVT9Dm9yll5AkOxXgZ13KM4gEXUxEBs
+   NLXFRVz66BrqC8swBm8SS8Ic+n3USbU4guaatF6/R/125JEAB11/oaS1Y
+   +1zL2CdkjD010ULB/0mLWx9+5yB9ewmNa87p2uw6VkuLa63495+xSh12n
+   A==;
+X-CSE-ConnectionGUID: 5ziamEVUQTKWcreo2QifkQ==
+X-CSE-MsgGUID: EaLviHqRTg6o9ieH0ueMwQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54256665"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="54256665"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 00:19:39 -0700
+X-CSE-ConnectionGUID: 680oKYe2TZiGAqUL3CWdPQ==
+X-CSE-MsgGUID: DfopCRj9Qj6QmkluSWyU2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="160323923"
+Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
+  by orviesa003.jf.intel.com with ESMTP; 10 Jul 2025 00:19:34 -0700
+From: Raag Jadav <raag.jadav@intel.com>
+To: lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com
+Cc: jarkko.nikula@linux.intel.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	andriy.shevchenko@linux.intel.com,
+	mika.westerberg@linux.intel.com,
+	jsd@semihalf.com,
+	andi.shyti@kernel.org,
+	raag.jadav@intel.com,
+	riana.tauro@intel.com,
+	srinivasa.adatrao@intel.com,
+	michael.j.ruhl@intel.com,
+	intel-xe@lists.freedesktop.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/5] drm/xe: i2c support
+Date: Thu, 10 Jul 2025 12:46:07 +0530
+Message-Id: <20250710071612.2714990-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <78006c71-592b-4f54-93ed-5f4b21b5bc33@ideasonboard.com>
 
-Hi Dan
+Hi,
 
-On Wed, Jul 09, 2025 at 02:18:07PM +0100, Dan Scally wrote:
-> Hi Jacopo
->
-> On 09/07/2025 12:53, Jacopo Mondi wrote:
-> > Hi Dan,
-> >     thanks for the comments
-> >
-> > On Wed, Jul 09, 2025 at 12:33:17PM +0100, Dan Scally wrote:
-> > > Hi Jacopo - thanks for the patches
-> > >
-> > > On 08/07/2025 11:40, Jacopo Mondi wrote:
-> > > > Introduce v4l2-extensible-params.h in the Linux kernel uAPI.
-> > > >
-> > > > The header defines two types that all drivers that use the extensible
-> > > > parameters format for ISP configuration shall use to build their own
-> > > > parameters format.
-> > > >
-> > > > The newly introduce type v4l2_params_block represent the
-> > > > header to be prepend to each ISP configuration block and the
-> > > > v4l2_params_buffer type represent the base type for the configuration
-> > > > parameters buffer.
-> > > >
-> > > > The newly introduced header is not meant to be used directly by
-> > > > applications which should instead use the platform-specific ones.
-> > > >
-> > > > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > > > ---
-> > > >    MAINTAINERS                                       |   6 ++
-> > > >    include/uapi/linux/media/v4l2-extensible-params.h | 106 ++++++++++++++++++++++
-> > > >    2 files changed, 112 insertions(+)
-> > > >
-> > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > index 658543062bba3b7e600699d7271ffc89250ba7e5..49a9329e5fe8874bdbaca13946ea28bd80134cb3 100644
-> > > > --- a/MAINTAINERS
-> > > > +++ b/MAINTAINERS
-> > > > @@ -25968,6 +25968,12 @@ F:	drivers/media/i2c/vd55g1.c
-> > > >    F:	drivers/media/i2c/vd56g3.c
-> > > >    F:	drivers/media/i2c/vgxy61.c
-> > > > +V4L2 EXTENSIBLE PARAMETERS FORMAT
-> > > > +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > > > +L:	linux-media@vger.kernel.org
-> > > > +S:	Maintained
-> > > > +F:	include/uapi/linux/media/v4l2-extensible-params.h
-> > > > +
-> > > >    VF610 NAND DRIVER
-> > > >    M:	Stefan Agner <stefan@agner.ch>
-> > > >    L:	linux-mtd@lists.infradead.org
-> > > > diff --git a/include/uapi/linux/media/v4l2-extensible-params.h b/include/uapi/linux/media/v4l2-extensible-params.h
-> > > > new file mode 100644
-> > > > index 0000000000000000000000000000000000000000..ed37da433c6b1a34523b6a9befde5c0dee601cfb
-> > > > --- /dev/null
-> > > > +++ b/include/uapi/linux/media/v4l2-extensible-params.h
-> > > > @@ -0,0 +1,106 @@
-> > > > +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR MIT) */
-> > > > +/*
-> > > > + * Video4Linux2 extensible configuration parameters base types
-> > > > + *
-> > > > + * Copyright (C) 2025 Ideas On Board Oy
-> > > > + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > > > + */
-> > > > +
-> > > > +#ifndef _UAPI_V4L2_PARAMS_H_
-> > > > +#define _UAPI_V4L2_PARAMS_H_
-> > > > +
-> > > > +#ifndef _UAPI_V4L2_EXTENSIBLE_PARAMS_GUARD_
-> > > > +/*
-> > > > + * Note: each ISP driver exposes a different uAPI, where the types layout
-> > > > + * match (more or less strictly) the hardware registers layout.
-> > > > + *
-> > > > + * This file defines the base types on which each ISP driver can implement its
-> > > > + * own types that define its uAPI.
-> > > > + *
-> > > > + * This file is not meant to be included directly by applications which shall
-> > > > + * instead only include the ISP-specific implementation.
-> > > > + */
-> > > > +#error "This file should not be included directly by applications"
-> > > > +#endif
-> > > > +
-> > > > +#include <linux/types.h>
-> > > > +
-> > > > +/**
-> > > > + * struct v4l2_params_block - V4L2 extensible parameters block header
-> > > struct v4l2_params_block_header would be nicer I think
-> > >
-> > That's what I had started with :)
-> >
-> > I'm debated between a longer but more explicative name, or a shorter
-> > one.
->
->
-> I vote for longer here but only because I think the phrase "block" applies
-> more properly to the likes of struct rkisp1_ext_params_bls_config for
-> example.
+On behalf of Heikki, since he's on vacation.
 
-Thanks, I've seen you made a patch to change this!
+Changed since v6:
+- Fix SPDX checkpatch warning.
 
->
-> >
-> > > > + *
-> > > > + * This structure represents the common part of all the ISP configuration
-> > > > + * blocks. Each parameters block shall embed an instance of this structure type
-> > > > + * as its first member, followed by the block-specific configuration data. The
-> > > > + * driver inspects this common header to discern the block type and its size and
-> > > > + * properly handle the block content by casting it to the correct block-specific
-> > > > + * type.
-> > > > + *
-> > > > + * The @type field is one of the values enumerated by each platform-specific ISP
-> > > > + * block types which specifies how the data should be interpreted by the driver.
-> > > > + * The @size field specifies the size of the parameters block and is used by the
-> > > > + * driver for validation purposes.
-> > > > + *
-> > > > + * The @flags field is a bitmask of platform-specific control flags.
-> > > Since we're including flags in this base struct rather than a platform
-> > > specific subclass I think perhaps we should centralise some flags (which I
-> > > think is supported by the fact that all three implementations share the same
-> > > flags so far). Perhaps we could reserve the bottom 8 bits for common flags
-> > > (like ENABLE / DISABLE) and validate them centrally, and leave the top 8 for
-> > > platform specific flags. I think we could then drop the platform specific
-> > > validation for rkisp1 and c3 and just pass null to the helpers, since they
-> > > do the same thing.
-> > Yes, that's one of the things I was not sure about... if we should
-> > centralize flags definition as well or not...
->
->
-> I think probably the ability to have both centralised and platform specific ones would be worthwhile
->
-> >
-> > Knowing that Mali will use the same flags that the two existing
-> > implementations already have is a good indication that we can probably
-> > centralize at least the ENABLE/DISABLE ones
->
->
-> Yeah
->
-> >
-> > > > + *
-> > > > + * Userspace shall never use this type directly but use the platform specific
-> > > > + * one with the associated data types.
-> > > Why wouldn't userspace just use these directly? I could see why it might be
-> > > difficult for the C3 and Rkisp1 which are merged, but for a new
-> > > implementation couldn't they just use these objects without bothering to
-> > > define their own?
-> > >
-> > mmm, my thinking was that each driver implementation shall define
-> > their own types because I would expect that they will have to define
-> > their own meta image format... For v4l2_params_buffer see below, for
-> > the blocks it might be totally possible to use these type most
-> > probably..
-> >
-> > > If we end up using these objects directly I think it would be nice to have
-> > > the example code block from the platform specific headers documentation here
-> > > too.
-> > >
-> > > > + *
-> > > > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_block_type`
-> > > > + * - Amlogic C3: :c:type:`c3_isp_params_block_type`
-> > > > + *
-> > > > + * @type: The parameters block type (platform-specific)
-> > > > + * @flags: A bitmask of block flags (platform-specific)
-> > > > + * @size: Size (in bytes) of the parameters block, including this header
-> > > > + */
-> > > > +struct v4l2_params_block {
-> > > > +	__u16 type;
-> > > > +	__u16 flags;
-> > > > +	__u32 size;
-> > > > +} __attribute__((aligned(8)));
-> > > > +
-> > > > +/**
-> > > > + * struct v4l2_params_buffer - V4L2 extensible parameters configuration
-> > > > + *
-> > > > + * This struct contains the configuration parameters of the ISP algorithms,
-> > > > + * serialized by userspace into a data buffer. Each configuration parameter
-> > > > + * block is represented by a block-specific structure which contains a
-> > > > + * :c:type:`v4l2_params_block` entry as first member. Userspace populates
-> > > > + * the @data buffer with configuration parameters for the blocks that it intends
-> > > > + * to configure. As a consequence, the data buffer effective size changes
-> > > > + * according to the number of ISP blocks that userspace intends to configure and
-> > > > + * is set by userspace in the @data_size field.
-> > > > + *
-> > > > + * The parameters buffer is versioned by the @version field to allow modifying
-> > > > + * and extending its definition. Userspace shall populate the @version field to
-> > > > + * inform the driver about the version it intends to use. The driver will parse
-> > > > + * and handle the @data buffer according to the data layout specific to the
-> > > > + * indicated version and return an error if the desired version is not
-> > > > + * supported.
-> > > > + *
-> > > > + * For each ISP block that userspace wants to configure, a block-specific
-> > > > + * structure is appended to the @data buffer, one after the other without gaps
-> > > > + * in between nor overlaps. Userspace shall populate the @data_size field with
-> > > > + * the effective size, in bytes, of the @data buffer.
-> > > > + *
-> > > > + * Each ISP driver using the extensible parameters format shall define a
-> > > > + * type which is type-convertible to this one, with the difference that the
-> > > > + * @data member shall actually a memory buffer of platform-specific size and
-> > > > + * not a pointer.
-> > > Why not just use this object directly? We could provide a helper in
-> > > v4l2-extensible-params.h that calculates the size of the buffer with a given
-> > > data array size for the driver's convenience
-> > The main reason I thought v4l2_params_buffer cannot be used is because
-> > of the flexible-array at the end of the type
-> >
-> > struct v4l2_params_buffer {
-> > 	__u32 version;
-> > 	__u32 data_size;
-> > 	__u8 data[];
-> > };
-> >
-> > vs
-> >
-> > struct rkisp1_ext_params_cfg {
-> > 	__u32 version;
-> > 	__u32 data_size;
-> > 	__u8 data[RKISP1_EXT_PARAMS_MAX_SIZE];
-> > };
-> >
-> > I might have missed what you're suggesting here with the helper in
-> > v4l2-extensible-params.h :)
->
-> So I think a known size is needed to accomodate operations like "memcpy(dst,
-> src, sizeof(rkisp1_ext_params_cfg))", but with something like...
->
->
-> #define v4l2_params_buffer_size(max_params_size) \
->
->         (offsetof(struct v4l2_params_buffer, data) + max_params_size)
->
->
-> then the above operation can be memcpy(dst,
-> src, v4l2_params_buffer_size(RKISP1_EXT_PARAMS_MAX_SIZE)) instead
+Changed since v5:
+- The modification to the dw_i2c_plat_probe() is split into its own
+  patch as proposed by Andi.
+- I removed completely the comment from the last patch in the series
+  ("drm/xe/xe_i2c: Add support for i2c in survivability mode").
 
-Fine for drivers indeed, my thinking was that we would need to reserve
-space for userspace to write configuration blocks in...
+Changed since v4:
+- Cleanups requested by Andy.
+- Casting the PCI power modes to make sparse happy - Raag.
+- Limiting the use of this thing to Battlemage again. But I'm not sure
+  if this is the correct thing to do.
 
-However, buffers are allocated by videobuf2 and We could certainly
-allocate the appropriate size using the vb2 queue 'buf_struct_size' member...
+Changed since v3:
+- Cleanups as requested by Rodrigo.
+- The licence is now changed, but still need confirmation for it!
 
-I can experiment with that indeed, in the meantime I wonder what
-maintainers think about this ;)
+Changed since v2:
+- Added dependency on regmap when i2c is enabled.
 
-Thanks
-  j
+Changed since v1:
+- Now rebased on top of drm-tip.
+- No longer ignoring errors from xe_i2c_probe().
+- Cleanups pointed out by Lucas.
 
->
->
-> Unless I'm missing something that should be enough to drop the driver
-> specific struct...it seems to work ok anyway
->
->
-> Dan
->
-> >
-> >
-> > >
-> > > Thanks
-> > >
-> > > Dan
-> > >
-> > > > + *
-> > > > + * Userspace shall never use this type directly but use the platform specific
-> > > > + * one with the associated data types.
-> > > > + *
-> > > > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_cfg`
-> > > > + * - Amlogic C3: :c:type:`c3_isp_params_cfg`
-> > > > + *
-> > > > + * @version: The parameters buffer version (platform-specific)
-> > > > + * @data_size: The configuration data effective size, excluding this header
-> > > > + * @data: The configuration data
-> > > > + */
-> > > > +struct v4l2_params_buffer {
-> > > > +	__u32 version;
-> > > > +	__u32 data_size;
-> > > > +	__u8 data[];
-> > > > +};
-> > > > +
-> > > > +#endif /* _UAPI_V4L2_PARAMS_H_ */
-> > > >
+I've also included followup patches from Raag and Riana to this
+series.
+
+Original cover letter:
+
+Some of the future GPUs will provide access to the on-board Synopsys
+DesignWare I2C host adapter. The i2c is used to connect various
+microcontrollers. The initially supported microcontroller unit is
+called Add-In Management Controller (AMC).
+
+Thanks,
+
+Heikki Krogerus (3):
+  i2c: designware: Use polling by default when there is no irq resource
+  i2c: designware: Add quirk for Intel Xe
+  drm/xe: Support for I2C attached MCUs
+
+Raag Jadav (1):
+  drm/xe/pm: Wire up suspend/resume for I2C controller
+
+Riana Tauro (1):
+  drm/xe/xe_i2c: Add support for i2c in survivability mode
+
+ drivers/gpu/drm/xe/Kconfig                  |   1 +
+ drivers/gpu/drm/xe/Makefile                 |   1 +
+ drivers/gpu/drm/xe/regs/xe_i2c_regs.h       |  20 ++
+ drivers/gpu/drm/xe/regs/xe_irq_regs.h       |   1 +
+ drivers/gpu/drm/xe/regs/xe_pmt.h            |   2 +-
+ drivers/gpu/drm/xe/regs/xe_regs.h           |   2 +
+ drivers/gpu/drm/xe/xe_device.c              |   5 +
+ drivers/gpu/drm/xe/xe_device_types.h        |   4 +
+ drivers/gpu/drm/xe/xe_i2c.c                 | 329 ++++++++++++++++++++
+ drivers/gpu/drm/xe/xe_i2c.h                 |  62 ++++
+ drivers/gpu/drm/xe/xe_irq.c                 |   2 +
+ drivers/gpu/drm/xe/xe_pm.c                  |   9 +
+ drivers/gpu/drm/xe/xe_survivability_mode.c  |  19 +-
+ drivers/i2c/busses/i2c-designware-platdrv.c |  18 +-
+ 14 files changed, 460 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/gpu/drm/xe/regs/xe_i2c_regs.h
+ create mode 100644 drivers/gpu/drm/xe/xe_i2c.c
+ create mode 100644 drivers/gpu/drm/xe/xe_i2c.h
+
+-- 
+2.34.1
+
 
