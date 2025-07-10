@@ -1,273 +1,454 @@
-Return-Path: <linux-kernel+bounces-724885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A886CAFF80F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:28:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E311FAFF81A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E3C04E673A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:28:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A28ED1BC7C04
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2436B27F19F;
-	Thu, 10 Jul 2025 04:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEEA2701B6;
+	Thu, 10 Jul 2025 04:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8biNUzJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CKyv74Zq"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647462F3E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 04:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634C87FD;
+	Thu, 10 Jul 2025 04:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752121708; cv=none; b=KI4smn6oFGfMp7DYljvOzDNN2U678CVhglTW5M1dflmklgFnYNkwVid9YgCzOensT9U8W52FNpfh3g1qIf0SCsGZYBQ1sI4jPOeG8kfZfysLCOQbSwPl4Du/hq7HHYmPstnujoI/AK2L0KpVFgUFlnhSPNXeAVFpQY90Cjmdpaw=
+	t=1752121862; cv=none; b=udOiP6tfUPV/hEqrheCg/qAt3WaWzE0qVj7GQ759cQhxFdTa4XYRya13QJsCxu4btnMdQTolKKHQVmmFvicXRZARSiVL6VeA1wXoNnU0CmgFqU4onBq0XcvfT5EzmDBJbiO4yIocAnp8lQjOEZ6nZDBqeATTc9PrOxsLCOlJIbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752121708; c=relaxed/simple;
-	bh=IQGVYlYJYQOjMZdgS87ps0oaa3pWH4qQKt7nLK4PZkc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FiIPyGgryeZNb+wZoxR96nVsuu0mqB0UAxnTI83fWw2H3+PKjecEq/BA96ADSJlbBWcVLMV/9Jc1K+5f1aduhF5AZUYADTbHhuPca/hebjbwi59A8nOurTX868KG1pwSwkftlqsoO1ZUYBaDAri+FIan/h32aaU96QCi1oIgwYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8biNUzJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF27DC4AF0B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 04:28:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752121707;
-	bh=IQGVYlYJYQOjMZdgS87ps0oaa3pWH4qQKt7nLK4PZkc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=f8biNUzJa4btOh+oHTXaS9Ksf7gZrA3WeZP37/6T/5tI6dx6c6Z+L2xCyGLu5VlVh
-	 y/c05DFgFpkrw9SOL5/pS52m2aSkgzFVUqMUUJr1KQhdnqO+WDzXbtOkIkyo9WcJJx
-	 kzQxsI67BgsWK3T1WNJ3zPQ52VhgzVkGsIwcXQ4q3yx/LjL1sDJqwYifqy/dZ27qnW
-	 M6eMRsWiNvDsp++jPn0gGzr/EbEJFuviXcVzbXORrWoSEIm2B3L/cfE9z8Mj72+M8Q
-	 lG3KCxOg7eemCNC+WE2zJGv2CiPqZLKdJ8DOGHD8CiSQbEgInY7wjN4DH31W/W4blb
-	 w6zAk5LsMBwkA==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60c3aafae23so3611727a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 21:28:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWZkzDH2sk1XuEekOEN6Oma+tVO0DMBfcj6M2hLiwlarONgv/B/H1MkqI8E8huF1TLMBsTfMyZBDoCebeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypBZYHCyaFdH0omJUcJg79HUvLMgb3CQaPNHhe1cMcTpmnPTqZ
-	IfHpWVNavljSPZ6y/iRS08pKQyQkG86PJIFjKNBjbmHcr/s1NGF3urNF9lu+yTiiiUztG30bsD7
-	rSO0BhlJKMBLaOfdDidS012MmMQwqZX4=
-X-Google-Smtp-Source: AGHT+IGrtabaa82rPnczwQFvKJkjAGG16UDRnoTRWYQNUvwzpw8MjTGuh90o3PxeLBe+xtnrJw3mUDIJr7OiDeggHtY=
-X-Received: by 2002:a05:6402:2816:b0:608:199e:df25 with SMTP id
- 4fb4d7f45d1cf-611c1cb6f1emr1442937a12.2.1752121706427; Wed, 09 Jul 2025
- 21:28:26 -0700 (PDT)
+	s=arc-20240116; t=1752121862; c=relaxed/simple;
+	bh=RpS5wcsGsPcjRlArI/EX8z6W3/rViz1ICZblUr1ZTrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AyST0I95y1zSiV5jTqPL/bUwSHuubsbZpfA4qHjj0v9iDsnL3Yom4Wbc2iG/wx7ixS4fTFuEfmqQyQ7DbPzZGZVp5hw0gYbnZO/XqSRkVeRjcZ5ng8GYXs8VH4N49NN36gDNu+cPkFtgHjWxsM/mlbCkRmd9Grt5FDmrhxBNxjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CKyv74Zq; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752121783;
+	bh=dueYn5GliUC2wNDPvWnk5dc1nofresIfr3/f2+TuQH4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=CKyv74ZqJg3TKJVQwztKwB54IMjHjhY3Pu44SplTE3dh6KxGjB3Tqo5XdR1VYlo8e
+	 KQ6xdhSW8iXI1p4IR7/500VU+NKz92ZAvO9LlyAAN6LXNEJ3QJ6I7JXs5CU5zCmYDj
+	 sm8/JzuVUtkQpnGc+seI/8RK4/rME0OTgmLht06+5r/n6Iwg1Qx7WHwogDTzYpdeSV
+	 y5C6Gq6SommtZNe31y11oaSR/4sZAubBW4IaNa2ScpOTTX7IzDzt8wJz4clF2TQ7ZY
+	 Q0tEbVMF32pMe6WuxkHTxx9fdxga42l0szsEQUTgAgwcz2cTE4nGS4Z+eWFWS5tg7f
+	 WDzXZTlxc8h2w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bd21f4cRHz4wbn;
+	Thu, 10 Jul 2025 14:29:42 +1000 (AEST)
+Date: Thu, 10 Jul 2025 14:30:52 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the tip tree with the mm-unstable tree
+Message-ID: <20250710143052.6d974c76@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701090449.2426151-1-wangming01@loongson.cn>
- <0561da2c-a4d7-49bb-8394-930f10880610@linux.dev> <e89f6ce6-d9f4-4744-b6a6-9a82412795a0@loongson.cn>
- <ac47ba40-0b5e-4273-af7a-a34086ae4a80@linux.dev> <d2097a44-bd1a-47b3-bf1a-d2b9d241fa5c@loongson.cn>
-In-Reply-To: <d2097a44-bd1a-47b3-bf1a-d2b9d241fa5c@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 10 Jul 2025 12:28:14 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4p4_HncS5jc29c1yEFG-zqmxZ_DLXwTxjsT-t7kh8WRQ@mail.gmail.com>
-X-Gm-Features: Ac12FXy7AgWh0z0EA3_gaEQoBl4gXufQug1w1PJfjCIA42XS4zw_VQSnSReRlfQ
-Message-ID: <CAAhV-H4p4_HncS5jc29c1yEFG-zqmxZ_DLXwTxjsT-t7kh8WRQ@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: Support mem=SIZE kernel parameter
-To: Ming Wang <wangming01@loongson.cn>
-Cc: Yanteng Si <si.yanteng@linux.dev>, WANG Xuerui <kernel@xen0n.name>, 
-	Andrew Morton <akpm@linux-foundation.org>, Bibo Mao <maobibo@loongson.cn>, 
-	Hari Bathini <hbathini@linux.ibm.com>, Guo Weikang <guoweikang.kernel@gmail.com>, 
-	Sourabh Jain <sourabhjain@linux.ibm.com>, Usama Arif <usamaarif642@gmail.com>, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	lixuefeng@loongson.cn, chenhuacai@loongson.cn, gaojuxin@loongson.cn
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/7Ex1Me9qxi.vRii0hZ.v2oJ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/7Ex1Me9qxi.vRii0hZ.v2oJ
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 7, 2025 at 6:03=E2=80=AFPM Ming Wang <wangming01@loongson.cn> w=
-rote:
->
-> Hi Yanteng, Huacai,
->
-> =E5=9C=A8 2025/7/7 10:33, Yanteng Si =E5=86=99=E9=81=93:
-> >
-> > =E5=9C=A8 7/3/25 9:36 AM, Ming Wang =E5=86=99=E9=81=93:
-> >> Hi Yanteng,
-> >>
-> >> Thanks for reviewing the patch and for your insightful question.
-> >>
-> >> On 7/2/25 10:11, Yanteng Si wrote:
-> >>> =E5=9C=A8 7/1/25 5:04 PM, Ming Wang =E5=86=99=E9=81=93:
-> >>>> The LoongArch mem=3D parameter parser was previously limited to the
-> >>>> mem=3DSIZE@START format. This was inconvenient for the common use ca=
-se
-> >>>> of simply capping the total system memory, as it forced users to
-> >>>> manually specify a start address. It was also inconsistent with the
-> >>>> behavior on other architectures.
-> >>>>
-> >>>> This patch enhances the parser in early_parse_mem() to also support =
-the
-> >>>> more user-friendly mem=3DSIZE format. The implementation now checks =
-for
-> >>>> the presence of the '@' symbol to determine the user's intent:
-> >>>>
-> >>>> - If mem=3DSIZE is provided (no '@'), the kernel now calls
-> >>>>    memblock_enforce_memory_limit(). This trims memory from the top d=
-own
-> >>>>    to the specified size.
-> >>>> - If mem=3DSIZE@START is used, the original behavior is retained for
-> >>>>    backward compatibility. This allows for defining specific memory
-> >>>>    banks.
-> >>>>
-> >>>> This change introduces an important usage rule reflected in the code=
-'s
-> >>>> comments: the mem=3DSIZE format should only be specified once on the
-> >>>> kernel command line. It acts as a single, global cap on total
-> >>>> memory. In
-> >>>> contrast, the mem=3DSIZE@START format can be used multiple times to
-> >>>> define several distinct memory regions.
-> >>>>
-> >>>> Signed-off-by: Ming Wang <wangming01@loongson.cn>
-> >>>> ---
-> >>>>   arch/loongarch/kernel/setup.c | 18 ++++++++++--------
-> >>>>   1 file changed, 10 insertions(+), 8 deletions(-)
-> >>>>
-> >>>> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/
-> >>>> setup.c
-> >>>> index b99fbb388fe0..af59ba180dc2 100644
-> >>>> --- a/arch/loongarch/kernel/setup.c
-> >>>> +++ b/arch/loongarch/kernel/setup.c
-> >>>> @@ -191,6 +191,16 @@ static int __init early_parse_mem(char *p)
-> >>>>           return -EINVAL;
-> >>>>       }
-> >>>> +    start =3D 0;
-> >>>> +    size =3D memparse(p, &p);
-> >>>> +    if (*p =3D=3D '@')    /* Every mem=3D... should contain '@' */
-> >>>> +        start =3D memparse(p + 1, &p);
-> >>>> +    else {            /* Only one mem=3D... is allowed if no '@' */
-> >>>> +        usermem =3D 1;
-> >>>> +        memblock_enforce_memory_limit(size);
-> >>>> +        return 0;
-> >>>> +    }
-> >>>> +
-> >>>>       /*
-> >>>>        * If a user specifies memory size, we
-> >>>>        * blow away any automatically generated
-> >>>> @@ -201,14 +211,6 @@ static int __init early_parse_mem(char *p)
-> >>>>           memblock_remove(memblock_start_of_DRAM(),
-> >>>>               memblock_end_of_DRAM() - memblock_start_of_DRAM());
-> >>>>       }
-> >>>> -    start =3D 0;
-> >>>> -    size =3D memparse(p, &p);
-> >>>> -    if (*p =3D=3D '@')
-> >>>> -        start =3D memparse(p + 1, &p);
-> >>>> -    else {
-> >>>> -        pr_err("Invalid format!\n");
-> >>>> -        return -EINVAL;
-> >>>> -    }
-> >>> I don't understand. Isn't it better to modify the else{} directly her=
-e?
-> >>>
-> >> You've raised a very good point. The reason for moving the parsing
-> >> logic to the top, rather than just modifying the original else block,
-> >> is to handle the fundamentally different behaviors required for
-> >> mem=3DSIZE versus mem=3DSIZE@START. The key lies in thisexisting block=
- of
-> >> code which handles the mem=3DSIZE@START case:
-> >>
-> >> ```
-> >> /*
-> >> * If a user specifies memory size, we
-> >> * blow away any automatically generated
-> >> * size.
-> >> */
-> >> if (usermem =3D=3D 0) {
-> >>     usermem =3D 1;
-> >>     memblock_remove(memblock_start_of_DRAM(),
-> >>             memblock_end_of_DRAM() - memblock_start_of_DRAM());
-> >> }
-> >> ```
-> >>
-> >> This code is destructive. As the comment says, it "blows away" the
-> >> entire memory map discovered from the firmware (UEFI/ACPI). After this
-> >> call, memblock is essentially empty, waiting for new regions to be
-> >> added via memblock_add(). This is the correct behavior for
-> >> mem=3DSIZE@START.
-> >>
-> >> However, the new mem=3DSIZE functionality is meant to be non-
-> >> destructive. It should take the existing firmware-provided memory map
-> >> and simply trim it down to the desired size. The function
-> >> memblock_enforce_memory_limit() is designed for this purpose=E2=80=94i=
-t
-> >> operates on the current state of memblock.
-> >>
-> >> If we were to keep the parsing logic at the end and only modify the
-> >> else block, the destructive memblock_remove() call would have already
-> >> executed for both cases. By that point, calling
-> >> memblock_enforce_memory_limit() would be meaningless, as there would
-> >> be no memory regions left in memblock to limit.
-> >>
-> >> Therefore, the patch moves the parsing logic to the very beginning to
-> >> create a clean separation:
-> >> 1. It first checks if the format is mem=3DSIZE (no '@').
-> >> 2. If it is, it performs the non-destructive limit on the intact
-> >> memory map and returns immediately, completely bypassing the
-> >> destructive memblock_remove() logic.
-> >> 3. If the format is mem=3DSIZE@START, it falls through to the original
-> >> destructive path as before.
-> >
-> > I have an idea: what if we move the destructive code into the if block?
->
-> @Yanteng,
-> That's an excellent suggestion. You are right. Moving the destructive
-> memblock_remove() logic inside the if (*p =3D=3D '@') block is indeed a m=
-uch
-> cleaner way to structure the code. It improves readability by making the
-> logic for each case self-contained within a direct if/else structure.
->
-> @Huacai,
-> Yanteng proposed a great improvement to the patch structure.
->
-> ```
-> static int __init early_parse_mem(char *p)
-> {
->      // ...
->      size =3D memparse(p, &p);
->      if (*p =3D=3D '@') {
->          // Handle 'mem=3DSIZE@START'
->          // The destructive memblock_remove() goes here.
->          // ...
->          // memblock_add_node()
->      } else {
->          // Handle 'mem=3DSIZE'
->          // The non-destructive memblock_enforce_memory_limit() goes here=
-.
->      }
->      return 0;
-> }
-> ```
->
-> Before I send out a v2, I'd like to ask for your opinion on this
-> proposed change as well. Do you agree that this revised structure is the
-> better approach?
-Nested if conditions make the logic unclear, so I prefer the current patch.
+Hi all,
 
-Huacai
+Today's linux-next merge of the tip tree got a conflict in:
 
->
-> Best regards,
-> Ming
->
-> >
-> >
-> > Thanks,
-> >
-> > Yanteng
-> >
-> >>
-> >> I hope this explanation clarifies why the code structure was changed
-> >> this way. It's crucial to ensure the non-destructive path is handled
-> >> before any memory map information is lost.
-> >>
-> >> Best regards,
-> >> Ming
-> >>
-> >>
-> >>> Thanks,
-> >>> Yanteng
-> >>>
-> >>
->
+  mm/vmstat.c
+
+between commit:
+
+  954386324a11 ("mm/vmstat: utilize designated initializers for the vmstat_=
+text array")
+
+from the mm-unstable tree and commit:
+
+  8662a3e5e9c4 ("Revert "sched/numa: add statistics of numa balance task"")
+
+from the tip tree.
+
+I fixed it up (see below - search for NUMA_BALANCING) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+I assume that this will go away when the Revert above goes into Linus'
+tree (or returns to the mm-hotfixes tre).
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc mm/vmstat.c
+index e0fcd9057f34,a78d70ddeacd..000000000000
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@@ -1196,195 -1192,178 +1196,193 @@@ int fragmentation_index(struct zone *=
+zo
+ =20
+  const char * const vmstat_text[] =3D {
+  	/* enum zone_stat_item counters */
+ -	"nr_free_pages",
+ -	"nr_free_pages_blocks",
+ -	"nr_zone_inactive_anon",
+ -	"nr_zone_active_anon",
+ -	"nr_zone_inactive_file",
+ -	"nr_zone_active_file",
+ -	"nr_zone_unevictable",
+ -	"nr_zone_write_pending",
+ -	"nr_mlock",
+ +#define I(x) (x)
+ +	[I(NR_FREE_PAGES)]			=3D "nr_free_pages",
+ +	[I(NR_FREE_PAGES_BLOCKS)]		=3D "nr_free_pages_blocks",
+ +	[I(NR_ZONE_INACTIVE_ANON)]		=3D "nr_zone_inactive_anon",
+ +	[I(NR_ZONE_ACTIVE_ANON)]		=3D "nr_zone_active_anon",
+ +	[I(NR_ZONE_INACTIVE_FILE)]		=3D "nr_zone_inactive_file",
+ +	[I(NR_ZONE_ACTIVE_FILE)]		=3D "nr_zone_active_file",
+ +	[I(NR_ZONE_UNEVICTABLE)]		=3D "nr_zone_unevictable",
+ +	[I(NR_ZONE_WRITE_PENDING)]		=3D "nr_zone_write_pending",
+ +	[I(NR_MLOCK)]				=3D "nr_mlock",
+  #if IS_ENABLED(CONFIG_ZSMALLOC)
+ -	"nr_zspages",
+ +	[I(NR_ZSPAGES)]				=3D "nr_zspages",
+  #endif
+ -	"nr_free_cma",
+ +	[I(NR_FREE_CMA_PAGES)]			=3D "nr_free_cma",
+  #ifdef CONFIG_UNACCEPTED_MEMORY
+ -	"nr_unaccepted",
+ +	[I(NR_UNACCEPTED)]			=3D "nr_unaccepted",
+  #endif
+ +#undef I
+ =20
+  	/* enum numa_stat_item counters */
+ +#define I(x) (NR_VM_ZONE_STAT_ITEMS + x)
+  #ifdef CONFIG_NUMA
+ -	"numa_hit",
+ -	"numa_miss",
+ -	"numa_foreign",
+ -	"numa_interleave",
+ -	"numa_local",
+ -	"numa_other",
+ +	[I(NUMA_HIT)]				=3D "numa_hit",
+ +	[I(NUMA_MISS)]				=3D "numa_miss",
+ +	[I(NUMA_FOREIGN)]			=3D "numa_foreign",
+ +	[I(NUMA_INTERLEAVE_HIT)]		=3D "numa_interleave",
+ +	[I(NUMA_LOCAL)]				=3D "numa_local",
+ +	[I(NUMA_OTHER)]				=3D "numa_other",
+  #endif
+ +#undef I
+ =20
+  	/* enum node_stat_item counters */
+ -	"nr_inactive_anon",
+ -	"nr_active_anon",
+ -	"nr_inactive_file",
+ -	"nr_active_file",
+ -	"nr_unevictable",
+ -	"nr_slab_reclaimable",
+ -	"nr_slab_unreclaimable",
+ -	"nr_isolated_anon",
+ -	"nr_isolated_file",
+ -	"workingset_nodes",
+ -	"workingset_refault_anon",
+ -	"workingset_refault_file",
+ -	"workingset_activate_anon",
+ -	"workingset_activate_file",
+ -	"workingset_restore_anon",
+ -	"workingset_restore_file",
+ -	"workingset_nodereclaim",
+ -	"nr_anon_pages",
+ -	"nr_mapped",
+ -	"nr_file_pages",
+ -	"nr_dirty",
+ -	"nr_writeback",
+ -	"nr_writeback_temp",
+ -	"nr_shmem",
+ -	"nr_shmem_hugepages",
+ -	"nr_shmem_pmdmapped",
+ -	"nr_file_hugepages",
+ -	"nr_file_pmdmapped",
+ -	"nr_anon_transparent_hugepages",
+ -	"nr_vmscan_write",
+ -	"nr_vmscan_immediate_reclaim",
+ -	"nr_dirtied",
+ -	"nr_written",
+ -	"nr_throttled_written",
+ -	"nr_kernel_misc_reclaimable",
+ -	"nr_foll_pin_acquired",
+ -	"nr_foll_pin_released",
+ -	"nr_kernel_stack",
+ +#define I(x) (NR_VM_ZONE_STAT_ITEMS + NR_VM_NUMA_EVENT_ITEMS + x)
+ +	[I(NR_INACTIVE_ANON)]			=3D "nr_inactive_anon",
+ +	[I(NR_ACTIVE_ANON)]			=3D "nr_active_anon",
+ +	[I(NR_INACTIVE_FILE)]			=3D "nr_inactive_file",
+ +	[I(NR_ACTIVE_FILE)]			=3D "nr_active_file",
+ +	[I(NR_UNEVICTABLE)]			=3D "nr_unevictable",
+ +	[I(NR_SLAB_RECLAIMABLE_B)]		=3D "nr_slab_reclaimable",
+ +	[I(NR_SLAB_UNRECLAIMABLE_B)]		=3D "nr_slab_unreclaimable",
+ +	[I(NR_ISOLATED_ANON)]			=3D "nr_isolated_anon",
+ +	[I(NR_ISOLATED_FILE)]			=3D "nr_isolated_file",
+ +	[I(WORKINGSET_NODES)]			=3D "workingset_nodes",
+ +	[I(WORKINGSET_REFAULT_ANON)]		=3D "workingset_refault_anon",
+ +	[I(WORKINGSET_REFAULT_FILE)]		=3D "workingset_refault_file",
+ +	[I(WORKINGSET_ACTIVATE_ANON)]		=3D "workingset_activate_anon",
+ +	[I(WORKINGSET_ACTIVATE_FILE)]		=3D "workingset_activate_file",
+ +	[I(WORKINGSET_RESTORE_ANON)]		=3D "workingset_restore_anon",
+ +	[I(WORKINGSET_RESTORE_FILE)]		=3D "workingset_restore_file",
+ +	[I(WORKINGSET_NODERECLAIM)]		=3D "workingset_nodereclaim",
+ +	[I(NR_ANON_MAPPED)]			=3D "nr_anon_pages",
+ +	[I(NR_FILE_MAPPED)]			=3D "nr_mapped",
+ +	[I(NR_FILE_PAGES)]			=3D "nr_file_pages",
+ +	[I(NR_FILE_DIRTY)]			=3D "nr_dirty",
+ +	[I(NR_WRITEBACK)]			=3D "nr_writeback",
+ +	[I(NR_SHMEM)]				=3D "nr_shmem",
+ +	[I(NR_SHMEM_THPS)]			=3D "nr_shmem_hugepages",
+ +	[I(NR_SHMEM_PMDMAPPED)]			=3D "nr_shmem_pmdmapped",
+ +	[I(NR_FILE_THPS)]			=3D "nr_file_hugepages",
+ +	[I(NR_FILE_PMDMAPPED)]			=3D "nr_file_pmdmapped",
+ +	[I(NR_ANON_THPS)]			=3D "nr_anon_transparent_hugepages",
+ +	[I(NR_VMSCAN_WRITE)]			=3D "nr_vmscan_write",
+ +	[I(NR_VMSCAN_IMMEDIATE)]		=3D "nr_vmscan_immediate_reclaim",
+ +	[I(NR_DIRTIED)]				=3D "nr_dirtied",
+ +	[I(NR_WRITTEN)]				=3D "nr_written",
+ +	[I(NR_THROTTLED_WRITTEN)]		=3D "nr_throttled_written",
+ +	[I(NR_KERNEL_MISC_RECLAIMABLE)]		=3D "nr_kernel_misc_reclaimable",
+ +	[I(NR_FOLL_PIN_ACQUIRED)]		=3D "nr_foll_pin_acquired",
+ +	[I(NR_FOLL_PIN_RELEASED)]		=3D "nr_foll_pin_released",
+ +	[I(NR_KERNEL_STACK_KB)]			=3D "nr_kernel_stack",
+  #if IS_ENABLED(CONFIG_SHADOW_CALL_STACK)
+ -	"nr_shadow_call_stack",
+ +	[I(NR_KERNEL_SCS_KB)]			=3D "nr_shadow_call_stack",
+  #endif
+ -	"nr_page_table_pages",
+ -	"nr_sec_page_table_pages",
+ +	[I(NR_PAGETABLE)]			=3D "nr_page_table_pages",
+ +	[I(NR_SECONDARY_PAGETABLE)]		=3D "nr_sec_page_table_pages",
+  #ifdef CONFIG_IOMMU_SUPPORT
+ -	"nr_iommu_pages",
+ +	[I(NR_IOMMU_PAGES)]			=3D "nr_iommu_pages",
+  #endif
+  #ifdef CONFIG_SWAP
+ -	"nr_swapcached",
+ +	[I(NR_SWAPCACHE)]			=3D "nr_swapcached",
+  #endif
+  #ifdef CONFIG_NUMA_BALANCING
+ -	"pgpromote_success",
+ -	"pgpromote_candidate",
+ +	[I(PGPROMOTE_SUCCESS)]			=3D "pgpromote_success",
+ +	[I(PGPROMOTE_CANDIDATE)]		=3D "pgpromote_candidate",
+  #endif
+ -	"pgdemote_kswapd",
+ -	"pgdemote_direct",
+ -	"pgdemote_khugepaged",
+ -	"pgdemote_proactive",
+ +	[I(PGDEMOTE_KSWAPD)]			=3D "pgdemote_kswapd",
+ +	[I(PGDEMOTE_DIRECT)]			=3D "pgdemote_direct",
+ +	[I(PGDEMOTE_KHUGEPAGED)]		=3D "pgdemote_khugepaged",
+ +	[I(PGDEMOTE_PROACTIVE)]			=3D "pgdemote_proactive",
+  #ifdef CONFIG_HUGETLB_PAGE
+ -	"nr_hugetlb",
+ +	[I(NR_HUGETLB)]				=3D "nr_hugetlb",
+  #endif
+ -	"nr_balloon_pages",
+ +	[I(NR_BALLOON_PAGES)]			=3D "nr_balloon_pages",
+ +#undef I
+ +
+  	/* system-wide enum vm_stat_item counters */
+ -	"nr_dirty_threshold",
+ -	"nr_dirty_background_threshold",
+ -	"nr_memmap_pages",
+ -	"nr_memmap_boot_pages",
+ +#define I(x) (NR_VM_ZONE_STAT_ITEMS + NR_VM_NUMA_EVENT_ITEMS + \
+ +	     NR_VM_NODE_STAT_ITEMS + x)
+ +	[I(NR_DIRTY_THRESHOLD)]			=3D "nr_dirty_threshold",
+ +	[I(NR_DIRTY_BG_THRESHOLD)]		=3D "nr_dirty_background_threshold",
+ +	[I(NR_MEMMAP_PAGES)]			=3D "nr_memmap_pages",
+ +	[I(NR_MEMMAP_BOOT_PAGES)]		=3D "nr_memmap_boot_pages",
+ +#undef I
+ =20
+ -#if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
+ +#if defined(CONFIG_VM_EVENT_COUNTERS)
+  	/* enum vm_event_item counters */
+ -	"pgpgin",
+ -	"pgpgout",
+ -	"pswpin",
+ -	"pswpout",
+ +#define I(x) (NR_VM_ZONE_STAT_ITEMS + NR_VM_NUMA_EVENT_ITEMS + \
+ +	     NR_VM_NODE_STAT_ITEMS + NR_VM_STAT_ITEMS + x)
+ =20
+ -	TEXTS_FOR_ZONES("pgalloc")
+ -	TEXTS_FOR_ZONES("allocstall")
+ -	TEXTS_FOR_ZONES("pgskip")
+ +	[I(PGPGIN)]				=3D "pgpgin",
+ +	[I(PGPGOUT)]				=3D "pgpgout",
+ +	[I(PSWPIN)]				=3D "pswpin",
+ +	[I(PSWPOUT)]				=3D "pswpout",
+ =20
+ -	"pgfree",
+ -	"pgactivate",
+ -	"pgdeactivate",
+ -	"pglazyfree",
+ +#define OFF (NR_VM_ZONE_STAT_ITEMS + NR_VM_NUMA_EVENT_ITEMS + \
+ +	     NR_VM_NODE_STAT_ITEMS + NR_VM_STAT_ITEMS)
+ +	TEXTS_FOR_ZONES(OFF+PGALLOC, "pgalloc")
+ +	TEXTS_FOR_ZONES(OFF+ALLOCSTALL, "allocstall")
+ +	TEXTS_FOR_ZONES(OFF+PGSCAN_SKIP, "pgskip")
+ +#undef OFF
+ =20
+ -	"pgfault",
+ -	"pgmajfault",
+ -	"pglazyfreed",
+ +	[I(PGFREE)]				=3D "pgfree",
+ +	[I(PGACTIVATE)]				=3D "pgactivate",
+ +	[I(PGDEACTIVATE)]			=3D "pgdeactivate",
+ +	[I(PGLAZYFREE)]				=3D "pglazyfree",
+ =20
+ -	"pgrefill",
+ -	"pgreuse",
+ -	"pgsteal_kswapd",
+ -	"pgsteal_direct",
+ -	"pgsteal_khugepaged",
+ -	"pgsteal_proactive",
+ -	"pgscan_kswapd",
+ -	"pgscan_direct",
+ -	"pgscan_khugepaged",
+ -	"pgscan_proactive",
+ -	"pgscan_direct_throttle",
+ -	"pgscan_anon",
+ -	"pgscan_file",
+ -	"pgsteal_anon",
+ -	"pgsteal_file",
+ +	[I(PGFAULT)]				=3D "pgfault",
+ +	[I(PGMAJFAULT)]				=3D "pgmajfault",
+ +	[I(PGLAZYFREED)]			=3D "pglazyfreed",
+ +
+ +	[I(PGREFILL)]				=3D "pgrefill",
+ +	[I(PGREUSE)]				=3D "pgreuse",
+ +	[I(PGSTEAL_KSWAPD)]			=3D "pgsteal_kswapd",
+ +	[I(PGSTEAL_DIRECT)]			=3D "pgsteal_direct",
+ +	[I(PGSTEAL_KHUGEPAGED)]			=3D "pgsteal_khugepaged",
+ +	[I(PGSTEAL_PROACTIVE)]			=3D "pgsteal_proactive",
+ +	[I(PGSCAN_KSWAPD)]			=3D "pgscan_kswapd",
+ +	[I(PGSCAN_DIRECT)]			=3D "pgscan_direct",
+ +	[I(PGSCAN_KHUGEPAGED)]			=3D "pgscan_khugepaged",
+ +	[I(PGSCAN_PROACTIVE)]			=3D "pgscan_proactive",
+ +	[I(PGSCAN_DIRECT_THROTTLE)]		=3D "pgscan_direct_throttle",
+ +	[I(PGSCAN_ANON)]			=3D "pgscan_anon",
+ +	[I(PGSCAN_FILE)]			=3D "pgscan_file",
+ +	[I(PGSTEAL_ANON)]			=3D "pgsteal_anon",
+ +	[I(PGSTEAL_FILE)]			=3D "pgsteal_file",
+ =20
+  #ifdef CONFIG_NUMA
+ -	"zone_reclaim_success",
+ -	"zone_reclaim_failed",
+ +	[I(PGSCAN_ZONE_RECLAIM_SUCCESS)]	=3D "zone_reclaim_success",
+ +	[I(PGSCAN_ZONE_RECLAIM_FAILED)]		=3D "zone_reclaim_failed",
+  #endif
+ -	"pginodesteal",
+ -	"slabs_scanned",
+ -	"kswapd_inodesteal",
+ -	"kswapd_low_wmark_hit_quickly",
+ -	"kswapd_high_wmark_hit_quickly",
+ -	"pageoutrun",
+ +	[I(PGINODESTEAL)]			=3D "pginodesteal",
+ +	[I(SLABS_SCANNED)]			=3D "slabs_scanned",
+ +	[I(KSWAPD_INODESTEAL)]			=3D "kswapd_inodesteal",
+ +	[I(KSWAPD_LOW_WMARK_HIT_QUICKLY)]	=3D "kswapd_low_wmark_hit_quickly",
+ +	[I(KSWAPD_HIGH_WMARK_HIT_QUICKLY)]	=3D "kswapd_high_wmark_hit_quickly",
+ +	[I(PAGEOUTRUN)]				=3D "pageoutrun",
+ =20
+ -	"pgrotated",
+ +	[I(PGROTATED)]				=3D "pgrotated",
+ =20
+ -	"drop_pagecache",
+ -	"drop_slab",
+ -	"oom_kill",
+ +	[I(DROP_PAGECACHE)]			=3D "drop_pagecache",
+ +	[I(DROP_SLAB)]				=3D "drop_slab",
+ +	[I(OOM_KILL)]				=3D "oom_kill",
+ =20
+  #ifdef CONFIG_NUMA_BALANCING
+ -	"numa_pte_updates",
+ -	"numa_huge_pte_updates",
+ -	"numa_hint_faults",
+ -	"numa_hint_faults_local",
+ -	"numa_pages_migrated",
+ +	[I(NUMA_PTE_UPDATES)]			=3D "numa_pte_updates",
+ +	[I(NUMA_HUGE_PTE_UPDATES)]		=3D "numa_huge_pte_updates",
+ +	[I(NUMA_HINT_FAULTS)]			=3D "numa_hint_faults",
+ +	[I(NUMA_HINT_FAULTS_LOCAL)]		=3D "numa_hint_faults_local",
+ +	[I(NUMA_PAGE_MIGRATE)]			=3D "numa_pages_migrated",
+- 	[I(NUMA_TASK_MIGRATE)]			=3D "numa_task_migrated",
+- 	[I(NUMA_TASK_SWAP)]			=3D "numa_task_swapped",
+  #endif
+  #ifdef CONFIG_MIGRATION
+ -	"pgmigrate_success",
+ -	"pgmigrate_fail",
+ -	"thp_migration_success",
+ -	"thp_migration_fail",
+ -	"thp_migration_split",
+ +	[I(PGMIGRATE_SUCCESS)]			=3D "pgmigrate_success",
+ +	[I(PGMIGRATE_FAIL)]			=3D "pgmigrate_fail",
+ +	[I(THP_MIGRATION_SUCCESS)]		=3D "thp_migration_success",
+ +	[I(THP_MIGRATION_FAIL)]			=3D "thp_migration_fail",
+ +	[I(THP_MIGRATION_SPLIT)]		=3D "thp_migration_split",
+  #endif
+  #ifdef CONFIG_COMPACTION
+ -	"compact_migrate_scanned",
+ -	"compact_free_scanned",
+ -	"compact_isolated",
+ -	"compact_stall",
+ -	"compact_fail",
+ -	"compact_success",
+ -	"compact_daemon_wake",
+ -	"compact_daemon_migrate_scanned",
+ -	"compact_daemon_free_scanned",
+ +	[I(COMPACTMIGRATE_SCANNED)]		=3D "compact_migrate_scanned",
+ +	[I(COMPACTFREE_SCANNED)]		=3D "compact_free_scanned",
+ +	[I(COMPACTISOLATED)]			=3D "compact_isolated",
+ +	[I(COMPACTSTALL)]			=3D "compact_stall",
+ +	[I(COMPACTFAIL)]			=3D "compact_fail",
+ +	[I(COMPACTSUCCESS)]			=3D "compact_success",
+ +	[I(KCOMPACTD_WAKE)]			=3D "compact_daemon_wake",
+ +	[I(KCOMPACTD_MIGRATE_SCANNED)]		=3D "compact_daemon_migrate_scanned",
+ +	[I(KCOMPACTD_FREE_SCANNED)]		=3D "compact_daemon_free_scanned",
+  #endif
+ =20
+  #ifdef CONFIG_HUGETLB_PAGE
+
+--Sig_/7Ex1Me9qxi.vRii0hZ.v2oJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhvQfwACgkQAVBC80lX
+0GyjGwgAlhLRHDKlwePGMJ+5kdblvzzfpOkH60MgUU0etKPeGoHS2DKAvMBgdZ6Q
+nFrAaUlJWYkzfRRFnGRsIY6rsJ8QyGLbF84N0XGGFLgdJSaMb8jGEOomxGpre/lB
+788o6gmlOJ3a0g7l66T16iZCFDBvvXxJ/T1MPfrQx/EeXBIh2xh/u5KcOf+PZT4o
+2ZQqzRAiG+gOuubed370JrvJkgVVd0PLtiTXP2NurH+p/IgVlXxAcV/MffmT0DYn
+E3ta+z1wEIYD8vUyg1fS+OzKxtFArVKaRUCwEDQhR8XNukUDxmCwc6WZz6RB4VRT
+mIhpTkg1/920yhc416ttBI+vnO4BaA==
+=6l8z
+-----END PGP SIGNATURE-----
+
+--Sig_/7Ex1Me9qxi.vRii0hZ.v2oJ--
 
