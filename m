@@ -1,178 +1,129 @@
-Return-Path: <linux-kernel+bounces-726298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ECA0B00B40
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:22:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1298B00B43
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B5411CA1315
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:22:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D755C40DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0182E2FCE13;
-	Thu, 10 Jul 2025 18:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152362E7173;
+	Thu, 10 Jul 2025 18:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="O/36DwfK"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2046.outbound.protection.outlook.com [40.107.237.46])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QfykkzUo"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32472F3C3C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752171741; cv=fail; b=jO6YMEo0GNOw8i178LdPbbytgYKX1Ticp0xfcLeuwJuCu/FC0qSQQJrfwswCiFuniBg/GHjUX2FLSpiBic08gbI/BddPD5IOcTwMAKKsusgceneCwrEIiQ7M3nSLJwoVaEmcC8pQn20o7iwxUUlH4BlfnKl5InQ9MVbXAgNlRwA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752171741; c=relaxed/simple;
-	bh=fYmzWogEM+VLti8zKa1QiDMI50xC7J/WwwNFyZX1394=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/882t61cvCeFoOf7I0Ehlw1gpVCp4dUfNlFec771kdbhE5g+FHRLx/fs/xf5Ruk2B9JhsiVa1yp3madZp0V+fov0KrlrKGTxiltXcdZyXVkedtZHMzMCbCWESJ4UNUNz4b6HKqCbCcIibOE28pWxvDzf7tsI5o5/LOCRAGXbJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=O/36DwfK; arc=fail smtp.client-ip=40.107.237.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RA/gXhpZj3BU3iiOnJDHy2H+LTfH/n0XSSkSrbIOAGcYCzL0l6pjyXTAOA+DVYZu3xMjlNEQYyAfocQzNTk+i3AE6wWdpEZrr7uXFDZm4MzK51f7uhky7MlBfdtl6XQWyuAmiBuSg7gVhv8SCOG/E3AjLXc1FQyRGwad5zGVnPdq5PKuepchTL8lvoQnQzUdjT0m0DorMu/VTYQfC/FoubNjW0qlv+iKnaoTxvLiwUwwIYOU2djIIK92HO5DH4F+VVMT+fAkWMQgu+3lHM5eCu2FSDn4Zr6LKUo9jjYcOG8cvaxFrYqXHbP6+ctT40l2lp5t376VLC/RX44Yrtn3fw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gakyte3kABT5zH9O9xxmnRysibDMsvl4FBVAP1uw5wk=;
- b=khyeHgwhu4oLel6OfVDN9I0VczTpgs8XsNyULGE4skwEpNdc9I2/EcwDAd1iYLnq4PiJMOsGpbAUiUf8rvGv8KENRQBg1W8hOOy3qeNR8D9cQ9E+9FQEgjqoIQpIA+24QmoDaHpQyTq1LtYN++avSCLyPIa/A2gqDoMqVj82vbLgBbLGvM4GeOKwSbviXxON3SfWGk5HQGFd3DHvcDBuQfq+fBUKyksSjbDUP8Nx9Kq+X9eeTxE2NDqMoYe/guIKl54mBxg2U0/ezL7BoXShxhKvL65GT/0xKTjW79yEnOAtHVpTD0V+s5sBB0W7grJGFTfRGK4vHtlwTxk5hnD7dw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gakyte3kABT5zH9O9xxmnRysibDMsvl4FBVAP1uw5wk=;
- b=O/36DwfK98tE3HTX16TZoehwR967KLQXEzRx8Nw3NzLuhKvOBItMR/LunyIsi9Gr6AZFbAKAcVCItXoKrgEumqVVc+Ope6PAFMQgARh+4bj+mOtGqJp/p+fEb6BnPL7W/K6srAm0nwbj2XtF4U3QJOEFkbIPP6QcFS5uANXC3PtmsfdJo58pJ4dgPggqfOPqzYfUVP7av0eJDUI8/n1E3dAGH3R0woWMzFqc0u+jXi6o0gLOzHt30ogqyR8XNpz2Qd6RiOvQ3qdCzOAjB0/XEiIEsyXmxbFnqP6E5w3xdURvQzBTlGCcwNX+P0I62+FWEdXRwngmGcJ39BvG85i4kg==
-Received: from MW3PR05CA0010.namprd05.prod.outlook.com (2603:10b6:303:2b::15)
- by DS2PR12MB9589.namprd12.prod.outlook.com (2603:10b6:8:279::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Thu, 10 Jul
- 2025 18:22:12 +0000
-Received: from CO1PEPF000075F4.namprd03.prod.outlook.com
- (2603:10b6:303:2b:cafe::18) by MW3PR05CA0010.outlook.office365.com
- (2603:10b6:303:2b::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.7 via Frontend Transport; Thu,
- 10 Jul 2025 18:22:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000075F4.mail.protection.outlook.com (10.167.249.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.22 via Frontend Transport; Thu, 10 Jul 2025 18:22:12 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 10 Jul
- 2025 11:22:02 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 10 Jul
- 2025 11:22:01 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Thu, 10 Jul 2025 11:22:00 -0700
-Date: Thu, 10 Jul 2025 11:21:59 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-CC: Xu Yilun <yilun.xu@linux.intel.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
-	"will@kernel.org" <will@kernel.org>, "robin.murphy@arm.com"
-	<robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>,
-	"praan@google.com" <praan@google.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"peterz@infradead.org" <peterz@infradead.org>, "jsnitsel@redhat.com"
-	<jsnitsel@redhat.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "patches@lists.linux.dev"
-	<patches@lists.linux.dev>, "baolu.lu@linux.intel.com"
-	<baolu.lu@linux.intel.com>
-Subject: Re: [PATCH v2 13/14] iommufd: Introduce iommufd_object_alloc_ucmd
- helper
-Message-ID: <aHAEx5fWopk2ndqX@Asurada-Nvidia>
-References: <cover.1749882255.git.nicolinc@nvidia.com>
- <e7206d4227844887cc8dbf0cc7b0242580fafd9d.1749882255.git.nicolinc@nvidia.com>
- <aG3+s8rzcjeKazG8@yilunxu-OptiPlex-7050>
- <BN9PR11MB52769CFD429C3E8E0918674A8C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517FD2F2C6E;
+	Thu, 10 Jul 2025 18:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752171759; cv=none; b=Kjb4fkgrAYJHOU4v0/Mz2mPFQ2uLORFdjWBP35pMFdz6lMgTYOjniXWf13TFQmZMZJpbFg5p7Bm7dTzfGB1oozTF8sz7yHDdcDBM/0EHX5QTc9y8jTOIlhTFFWMU5XttB+NotEndYc65V1sXuPY9zrV4YLbeKJIcrULAZe/+lFk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752171759; c=relaxed/simple;
+	bh=h0qKLmDhXIaFsgvlOIN3susDzu/+PPSRV6kLudOs6sE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aLlHw20pU5ZteOAY+OtxVIcbKl63qtaX0pcxmW290pD+b0rznFIwyvmwGi+b8Ll2nq3ZQUvXq632OhD15UYOcLgGS5hzWnSmZRvkIRRJsgwKNl5mupVa8uxoeM64Gjx2DZ9Szodmj5iiYzTHP/MFKZs6avLRseB8Cz4VaxRO1hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QfykkzUo; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=C2bN5FstwQ/sSqjlVirDz35vgjcAjpul7lMG1TygQe0=; b=QfykkzUoR8knNdGlhwRx6HeWW3
+	K0qL4smMy35ewHdsgN+4H+m4pEXkfVAzn7oBcKcmBIC1SoXqkTM3yR36unT5ar3y/bUlsMZ1/V7Vv
+	kTgKtdt8h8qEyT+4CPzK+iXG/p+hVrh/PXFm+muJ8iT7mBKKSiWQp7GISlgJTWNxoZNIRBF3BXpVk
+	mB2BfeSIBOolti5k/swn7TAZRtZWW6Ja9xuvOCjc9vdNGqBGjfrXMrRu9tpLK8c562oW3PRdN3LhB
+	FqcAHctqff5tMSlxSglat2AictAChrPYT1KPUo/HPW7BKQU/XP8t+iyasiBIC+YAbJ3iOenxwmOHX
+	LjMYvgig==;
+Received: from 179-125-86-110-dinamico.pombonet.net.br ([179.125.86.110] helo=quatroqueijos.cascardo.eti.br)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uZvuX-00F3Dn-L7; Thu, 10 Jul 2025 20:22:22 +0200
+Date: Thu, 10 Jul 2025 15:22:15 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org,
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+	Zijun Hu <zijun.hu@oss.qualcomm.com>
+Subject: Re: [PATCH v5 6/8] char: misc: Does not request module for
+ miscdevice with dynamic minor
+Message-ID: <aHAE103XZl8yqDuo@quatroqueijos.cascardo.eti.br>
+References: <20250710-rfc_miscdev-v5-0-b3940297db16@oss.qualcomm.com>
+ <20250710-rfc_miscdev-v5-6-b3940297db16@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BN9PR11MB52769CFD429C3E8E0918674A8C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075F4:EE_|DS2PR12MB9589:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5cd27d45-4e0d-4c67-8232-08ddbfdeb096
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2xWfeQNam20XmMv3OjbIljTUFEcwleYGpWSqsX9oTfYVle8gf1Y66wiFV0Pd?=
- =?us-ascii?Q?m9tx1q/dn1rfOLubCNu4hI09vE+4FalzaVVWi55yrCNXCbQ0jixwpLr347B/?=
- =?us-ascii?Q?jIU9LTgENwHKlNQ5uIbe9pES/mEjl61ks75LSEJtz2WVP2j+aSwMrLp94CWe?=
- =?us-ascii?Q?8fp0KZ6uZkOB2h6CdIPyHGEWlkTDzo8oKeFqZXRevKN2QL4GnQKI7OUAuBX9?=
- =?us-ascii?Q?AIFgopfC1vf7+mDKaaUgE4CK2SjJGmogTCSYyCNiUTHaq7DfS+sUd9Itg+2d?=
- =?us-ascii?Q?ANKo5aA8k6TNEO89iK58CIJvhubzXkfs1GAUYPoUeBoDJ72kj3nDokYdErdB?=
- =?us-ascii?Q?xtMfqIg4+j12TJmN7uWAoHliZsCnu5YOFEKw4jDE3ycTF0hkYl2tHVIccts6?=
- =?us-ascii?Q?Ao5/UmzZvBZlWkKm4yVGALlcXefp0QgJuabVUmdWQwLjfhB2Aoamf6LzrSFc?=
- =?us-ascii?Q?K1L9fM7BRAscLZtAdZjwXtymMouGMGDjmtdHarqM78YqQrFi72M6WdrizIhY?=
- =?us-ascii?Q?wqI92I7hlUh0P09s4vMt1Ra8vuPWj16UCslyHol4NWjEKI1opBXwPzpWzFew?=
- =?us-ascii?Q?rG0gLmPccxIBZYt1f8DjeOhex+7EZgm2ou7NUrxhdIGs9S/b/K/+96UjL0/T?=
- =?us-ascii?Q?NHLgUq5pzcVhNPJOnFisAa69WkWj4/M+fXVSov21GnvnnLAWdhOqQCWjCIDV?=
- =?us-ascii?Q?jZbLQ2zjsdCkGjbDhxvYOcXV9khmNB5HywBfpn47ZuLIew21eJFZv7bRKDpm?=
- =?us-ascii?Q?xF9XV+LuYbXL9Ce1nNu62PmQB0RVq8d1DBN990FUaluA+jQrNPRRdqqEtAOS?=
- =?us-ascii?Q?fo0EYvKQawSkHlRK+a7jprwCeoplKEIlFYvfsW1ZdBlacfWjfur2zxtRhevL?=
- =?us-ascii?Q?mrtXvMsdQWbm66SRu2obrZKW9eSI8h6asxY+ao7PcNJH6DBOX1kytb8olLJe?=
- =?us-ascii?Q?Zyq9CuCDdgKaAdGJyK97iGhuPI9TF1udO0rRCMT6QBUaaN4nV+/McDvBi5Cd?=
- =?us-ascii?Q?Add7cIo9ztujEhffCGkz3PetXTQgGV3iVexefQo228njAaK9Y+s0FR0dn+h5?=
- =?us-ascii?Q?c+7I/q5yatF7+XMlEJsLV7q6/Ult1uLJdVb6/A6sN+n0X83+eUknTRFGAAy/?=
- =?us-ascii?Q?CSEnMM+S9ozvkqy8eV16gSpnFhwqHIGUVv3tngE0qZq7dv8q6pGezvU2f6U+?=
- =?us-ascii?Q?R9pSFQELkECx4rWU3HXZr3VAH+fez6YGf7Gk5c1cg3qCUZ6YAP/rAzSVy3M4?=
- =?us-ascii?Q?biJ+Eo0yvMvhdj4fAVh83J9EYvmBAWuK5ztSz12hh9VVmiv8iB4CiKHG5Q/T?=
- =?us-ascii?Q?EqHy6mYVtfiUsZ8p+MTQHf9sXzLMV3O4w/lXIZe0qssrSSCbB8AozlD0POr0?=
- =?us-ascii?Q?trEamuvKzDYnQgI/lB9amCMI4pSVTJQUPC2BtihFtQ4UblqS2tyrfhixry6o?=
- =?us-ascii?Q?wa4ABZk/XcVFiSUeXat5OyXlP3fws1mXwB/+x99sM6XFEErTC1gqGuJNsW7n?=
- =?us-ascii?Q?dXobb8u83dKD0NceFDABcel/SiLq/qhJQ+MW?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 18:22:12.1986
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5cd27d45-4e0d-4c67-8232-08ddbfdeb096
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000075F4.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9589
+In-Reply-To: <20250710-rfc_miscdev-v5-6-b3940297db16@oss.qualcomm.com>
 
-On Thu, Jul 10, 2025 at 05:32:13AM +0000, Tian, Kevin wrote:
-> > From: Xu Yilun <yilun.xu@linux.intel.com>
-> > Also explicitely assert iommufd_object_alloc_ucmd() and abort can't be
-> > used at the same time.
-> > 
-> > in _iommufd_object_alloc_ucmd():
-> > 
-> > 	if (WARN_ON(iommufd_object_ops[type].abort))
-> > 		return ERR_PTR(-EFAULT);
-> > 
+On Thu, Jul 10, 2025 at 07:56:49PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <zijun.hu@oss.qualcomm.com>
 > 
-> but this check sounds necessary.
+> misc_open() may request module for miscdevice with dynamic minor, which
+> is meaningless since:
+> 
+> - The dynamic minor allocated is unknown in advance without registering
+>   miscdevice firstly.
+> - Macro MODULE_ALIAS_MISCDEV() is not applicable for dynamic minor.
+> 
+> Fix by only requesting module for miscdevice with fixed minor.
+> 
+> Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
+> ---
+>  drivers/char/misc.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/misc.c b/drivers/char/misc.c
+> index 96ed343cf5c8509a09855020049a9af82a3ede95..a0aae0fc792666a7bdc0ba00da9dc02ff9cead42 100644
+> --- a/drivers/char/misc.c
+> +++ b/drivers/char/misc.c
+> @@ -132,7 +132,8 @@ static int misc_open(struct inode *inode, struct file *file)
+>  		break;
+>  	}
+>  
+> -	if (!new_fops) {
+> +	/* Only request module for fixed minor code */
+> +	if (!new_fops && minor < MISC_DYNAMIC_MINOR) {
+>  		mutex_unlock(&misc_mtx);
+>  		request_module("char-major-%d-%d", MISC_MAJOR, minor);
+>  		mutex_lock(&misc_mtx);
+> @@ -144,10 +145,11 @@ static int misc_open(struct inode *inode, struct file *file)
+>  			new_fops = fops_get(iter->fops);
+>  			break;
+>  		}
+> -		if (!new_fops)
+> -			goto fail;
+>  	}
+>  
+> +	if (!new_fops)
+> +		goto fail;
+> +
+>  	/*
+>  	 * Place the miscdevice in the file's
+>  	 * private_data so it can be used by the
+> 
+> -- 
+> 2.34.1
+> 
 
-Let me send a patch for this.
+Given this should not break any code, as there should be no legit drivers
+requesting a minor >= 255,
 
-Thanks
-Nicolin
+Acked-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
 
