@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-725499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A6CAFFFFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:01:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5FCAFFFFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EC765C030F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8BF276121E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E352E718D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05AE2E763B;
 	Thu, 10 Jul 2025 11:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GCz3wxg6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fGMuwvcb"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2R43D/Sc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XonZpfzO"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B202E6122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C7C2E62C4
 	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145224; cv=none; b=bawQsOhnzylLNjwAOoq13bwWUtemDrN+2MpnJxadZ1NuBfgJpvFTzPMHW7cqywd059vr5c4ufu4GZoSzqykXABbTuGxCL8IhRCqKZjzHWulNpI8ulxE6yfxcygK99aH12h8Yv5vMfxki6XeakLtqlfmrNTmAHPu8n5r7l4IUiR4=
+	t=1752145225; cv=none; b=VkfteS3mF/m5OmrJ4dEXv3IWN+cUt99uf00AD9cIk/ftRqVdoU6zINbs3cA4nxP54/Vc0yQ0XSYuiCY8XAhIDeQW9h7RDdRaRq3hwR1EJpP5VwHJsd924IIdIcZFJ9lG2A8vDBxfKAnioFv2HtB0OwV2845sLAv/ZR/cr0HY+T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145224; c=relaxed/simple;
-	bh=2JB2xgvJ7VqhxKwXaxp9lQ9EPS6UzCrzIlxS0TeU8G0=;
+	s=arc-20240116; t=1752145225; c=relaxed/simple;
+	bh=e4ieNbDVNJ0oF2cnKbpogHX+yYl740cXCeM2pfaBda8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nQ5SfnM7ENPysSIJYLPTrzJo1tdQOJqviSuyqivGaq5zqm0FBn0qItM+fBXqD1t5GFtuLzXdyxA3vsJPMdeQmrfQPbRxxOaoaquqPMHrFyB8ZzDNMuxyNmwgIjAcc+8kumlUQJFXWKrTWjwP64Ofs9ICZZS5LMXbIRacaISx03w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GCz3wxg6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fGMuwvcb; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=PA8FOTxGLjjeCQtc71o/iOPHDZhIoCwwkxrFhvUR6zmIPheW3Pz2+wEOZM5aNPVy3aSQXg4b7l9t3JqN4psvAZQl8yufgoA8qaEIT/xVztpYEpksX0kN7R2fPijz0n9vQ3fC6e8SAjJU0wGKNU/KNlPbCrt9mEMdOMM2/TePFEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2R43D/Sc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XonZpfzO; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752145220;
+	s=2020; t=1752145221;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HdUl88rznqHl5m+a4vcX9da19I7kSaXVW1otRUuqpt8=;
-	b=GCz3wxg6as4JuZ6xk+nxH20PIl3ubKhUt6oBmHhD6cLzzB2yYK9iM5DIqUSAryrtsiouoj
-	9LNMilknizMA0VLfidGQjvjWy0T2HiipOIAS5mq/3+Xia+pdl0nSZj+TVQuICidVWTkhGH
-	Qf178sMuIMnwyZI2ouOAq7uiGUBVJK5yl6FxTVIJ5C2CFFlTzLa5Q0oGLTllOWGtR/BFcm
-	ytL/mvPKP1XE5wNa5CXhSE4xaQSgZxqwk1X0yw3eYsju8reLrd9yX0gEhy+2IqthIiibii
-	S5Ersf5FcbRxVOuth0C3GZUGIo6uhUQfa3Vq9sVTNy2n7M3koChKK+mnJyqmuA==
+	bh=Pfg2x8ebG/45Q4P97HTsPAZQeWvS2FnAOtMP+WryIsU=;
+	b=2R43D/ScYNzfDoNLCQwiLy3moy0z6yIU3CpZaoOfIfRIaSUvQBbKxOKlgC+xRSgXbzY++R
+	ubKrTvnII2ae0fSxxGt7c6CYGdYM4pxbtCoNwyHIP4m4ReJ4LofO4Lx94jEwWZOoD1cjOb
+	alI5+CYkhjG4QsVA8LIjpD4wT5lfbB8TOvOqi3W0TRwoqIkcD8e1ptDmvuSx1SAmTRglI/
+	a9rn5D0DTv41gmDSwcZmz0rKppQp9sSgTSoAXQ5WszTuMYMauV9RcxVuZKisbp3mU4lChB
+	fMxKK2Wnxi5z9L//D9U7tja3GZJl28yMxB3/UA0KgbmCcETACOs6TeMYOY1XSA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752145220;
+	s=2020e; t=1752145221;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HdUl88rznqHl5m+a4vcX9da19I7kSaXVW1otRUuqpt8=;
-	b=fGMuwvcbve0W9FE1TT8lvubAAzE41JnVcpIrXwnC1wE/5pBuZmuAHq5EnknzrWooyX7VA6
-	aSKPzUE0czI6SVAQ==
+	bh=Pfg2x8ebG/45Q4P97HTsPAZQeWvS2FnAOtMP+WryIsU=;
+	b=XonZpfzODvg33RjJXhMQlvxGCnmHjz5eoncmw1g7UnyyC9w24ApxEIqrM1sXf5dfiOu5tX
+	XnQqFEyL2yP4cWBw==
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Darren Hart <dvhart@infradead.org>,
@@ -64,9 +64,9 @@ Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Waiman Long <longman@redhat.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v2 4/6] futex: Remove support for IMMUTABLE
-Date: Thu, 10 Jul 2025 13:00:09 +0200
-Message-ID: <20250710110011.384614-5-bigeasy@linutronix.de>
+Subject: [PATCH v2 5/6] selftests/futex: Remove support for IMMUTABLE
+Date: Thu, 10 Jul 2025 13:00:10 +0200
+Message-ID: <20250710110011.384614-6-bigeasy@linutronix.de>
 In-Reply-To: <20250710110011.384614-1-bigeasy@linutronix.de>
 References: <20250710110011.384614-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -77,158 +77,182 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-The FH_FLAG_IMMUTABLE flag was meant to avoid the reference counting on
-the private hash and so to avoid the performance regression on big
-machines.
-With the switch to per-CPU counter this is no longer needed. That flag
-was never useable on any released kernel.
+Testing for the IMMUTABLE part of the futex interface is not needed
+after the removal of the interface.
 
-Remove any support for IMMUTABLE while preserve the flags argument and
-enforce it to be zero.
+Remove support for IMMUTABLE from the sefltest.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- include/uapi/linux/prctl.h |  2 --
- kernel/futex/core.c        | 36 +++---------------------------------
- 2 files changed, 3 insertions(+), 35 deletions(-)
+ .../futex/functional/futex_priv_hash.c        | 71 ++++++-------------
+ 1 file changed, 22 insertions(+), 49 deletions(-)
 
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 43dec6eed559a..3b93fb906e3c5 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -367,8 +367,6 @@ struct prctl_mm_map {
- /* FUTEX hash management */
+diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/t=
+ools/testing/selftests/futex/functional/futex_priv_hash.c
+index 625e3be4129c3..a9cedc365102e 100644
+--- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
++++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+@@ -26,14 +26,12 @@ static int counter;
+ #ifndef PR_FUTEX_HASH
  #define PR_FUTEX_HASH			78
  # define PR_FUTEX_HASH_SET_SLOTS	1
 -# define FH_FLAG_IMMUTABLE		(1ULL << 0)
  # define PR_FUTEX_HASH_GET_SLOTS	2
 -# define PR_FUTEX_HASH_GET_IMMUTABLE	3
-=20
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index 1981574a459d5..d9bb5567af0c5 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -69,7 +69,6 @@ struct futex_private_hash {
- 	struct rcu_head	rcu;
- 	void		*mm;
- 	bool		custom;
--	bool		immutable;
- 	struct futex_hash_bucket queues[];
- };
-=20
-@@ -145,15 +144,11 @@ static inline bool futex_key_is_private(union futex_k=
-ey *key)
-=20
- static bool futex_private_hash_get(struct futex_private_hash *fph)
- {
--	if (fph->immutable)
--		return true;
- 	return futex_ref_get(fph);
- }
-=20
- void futex_private_hash_put(struct futex_private_hash *fph)
- {
--	if (fph->immutable)
--		return;
- 	if (futex_ref_put(fph))
- 		wake_up_var(fph->mm);
- }
-@@ -1530,7 +1525,6 @@ static void futex_hash_bucket_init(struct futex_hash_=
-bucket *fhb,
- }
-=20
- #define FH_CUSTOM	0x01
--#define FH_IMMUTABLE	0x02
-=20
- #ifdef CONFIG_FUTEX_PRIVATE_HASH
-=20
-@@ -1800,7 +1794,7 @@ static int futex_hash_allocate(unsigned int hash_slot=
-s, unsigned int flags)
- 	 */
- 	scoped_guard(rcu) {
- 		fph =3D rcu_dereference(mm->futex_phash);
--		if (fph && (!fph->hash_mask || fph->immutable)) {
-+		if (fph && !fph->hash_mask) {
- 			if (custom)
- 				return -EBUSY;
- 			return 0;
-@@ -1814,7 +1808,6 @@ static int futex_hash_allocate(unsigned int hash_slot=
-s, unsigned int flags)
-=20
- 	fph->hash_mask =3D hash_slots ? hash_slots - 1 : 0;
- 	fph->custom =3D custom;
--	fph->immutable =3D !!(flags & FH_IMMUTABLE);
- 	fph->mm =3D mm;
-=20
- 	for (i =3D 0; i < hash_slots; i++)
-@@ -1838,7 +1831,7 @@ static int futex_hash_allocate(unsigned int hash_slot=
-s, unsigned int flags)
- 		mm->futex_phash_new =3D NULL;
-=20
- 		if (fph) {
--			if (cur && (!cur->hash_mask || cur->immutable)) {
-+			if (cur && !cur->hash_mask) {
- 				/*
- 				 * If two threads simultaneously request the global
- 				 * hash then the first one performs the switch,
-@@ -1931,19 +1924,6 @@ static int futex_hash_get_slots(void)
- 	return 0;
- }
-=20
--static int futex_hash_get_immutable(void)
--{
--	struct futex_private_hash *fph;
--
--	guard(rcu)();
--	fph =3D rcu_dereference(current->mm->futex_phash);
--	if (fph && fph->immutable)
--		return 1;
--	if (fph && !fph->hash_mask)
--		return 1;
--	return 0;
--}
--
- #else
-=20
- static int futex_hash_allocate(unsigned int hash_slots, unsigned int flags)
-@@ -1956,10 +1936,6 @@ static int futex_hash_get_slots(void)
- 	return 0;
- }
-=20
--static int futex_hash_get_immutable(void)
--{
--	return 0;
--}
  #endif
 =20
- int futex_hash_prctl(unsigned long arg2, unsigned long arg3, unsigned long=
- arg4)
-@@ -1969,10 +1945,8 @@ int futex_hash_prctl(unsigned long arg2, unsigned lo=
-ng arg3, unsigned long arg4)
+-static int futex_hash_slots_set(unsigned int slots, int flags)
++static int futex_hash_slots_set(unsigned int slots)
+ {
+-	return prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, slots, flags);
++	return prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, slots, 0);
+ }
 =20
- 	switch (arg2) {
- 	case PR_FUTEX_HASH_SET_SLOTS:
--		if (arg4 & ~FH_FLAG_IMMUTABLE)
-+		if (arg4)
- 			return -EINVAL;
--		if (arg4 & FH_FLAG_IMMUTABLE)
--			flags |=3D FH_IMMUTABLE;
- 		ret =3D futex_hash_allocate(arg3, flags);
- 		break;
+ static int futex_hash_slots_get(void)
+@@ -41,16 +39,11 @@ static int futex_hash_slots_get(void)
+ 	return prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_GET_SLOTS);
+ }
 =20
-@@ -1980,10 +1954,6 @@ int futex_hash_prctl(unsigned long arg2, unsigned lo=
-ng arg3, unsigned long arg4)
- 		ret =3D futex_hash_get_slots();
- 		break;
-=20
--	case PR_FUTEX_HASH_GET_IMMUTABLE:
--		ret =3D futex_hash_get_immutable();
--		break;
+-static int futex_hash_immutable_get(void)
+-{
+-	return prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_GET_IMMUTABLE);
+-}
 -
- 	default:
- 		ret =3D -EINVAL;
- 		break;
+ static void futex_hash_slots_set_verify(int slots)
+ {
+ 	int ret;
+=20
+-	ret =3D futex_hash_slots_set(slots, 0);
++	ret =3D futex_hash_slots_set(slots);
+ 	if (ret !=3D 0) {
+ 		ksft_test_result_fail("Failed to set slots to %d: %m\n", slots);
+ 		ksft_finished();
+@@ -64,13 +57,13 @@ static void futex_hash_slots_set_verify(int slots)
+ 	ksft_test_result_pass("SET and GET slots %d passed\n", slots);
+ }
+=20
+-static void futex_hash_slots_set_must_fail(int slots, int flags)
++static void futex_hash_slots_set_must_fail(int slots)
+ {
+ 	int ret;
+=20
+-	ret =3D futex_hash_slots_set(slots, flags);
+-	ksft_test_result(ret < 0, "futex_hash_slots_set(%d, %d)\n",
+-			 slots, flags);
++	ret =3D futex_hash_slots_set(slots);
++	ksft_test_result(ret < 0, "futex_hash_slots_set(%d)\n",
++			 slots);
+ }
+=20
+ static void *thread_return_fn(void *arg)
+@@ -152,18 +145,14 @@ int main(int argc, char *argv[])
+ {
+ 	int futex_slots1, futex_slotsn, online_cpus;
+ 	pthread_mutexattr_t mutex_attr_pi;
+-	int use_global_hash =3D 0;
+ 	int ret, retry =3D 20;
+ 	int c;
+=20
+-	while ((c =3D getopt(argc, argv, "cghv:")) !=3D -1) {
++	while ((c =3D getopt(argc, argv, "chv:")) !=3D -1) {
+ 		switch (c) {
+ 		case 'c':
+ 			log_color(1);
+ 			break;
+-		case 'g':
+-			use_global_hash =3D 1;
+-			break;
+ 		case 'h':
+ 			usage(basename(argv[0]));
+ 			exit(0);
+@@ -178,7 +167,7 @@ int main(int argc, char *argv[])
+ 	}
+=20
+ 	ksft_print_header();
+-	ksft_set_plan(22);
++	ksft_set_plan(21);
+=20
+ 	ret =3D pthread_mutexattr_init(&mutex_attr_pi);
+ 	ret |=3D pthread_mutexattr_setprotocol(&mutex_attr_pi, PTHREAD_PRIO_INHER=
+IT);
+@@ -191,10 +180,6 @@ int main(int argc, char *argv[])
+ 	if (ret !=3D 0)
+ 		ksft_exit_fail_msg("futex_hash_slots_get() failed: %d, %m\n", ret);
+=20
+-	ret =3D futex_hash_immutable_get();
+-	if (ret !=3D 0)
+-		ksft_exit_fail_msg("futex_hash_immutable_get() failed: %d, %m\n", ret);
+-
+ 	ksft_test_result_pass("Basic get slots and immutable status.\n");
+ 	ret =3D pthread_create(&threads[0], NULL, thread_return_fn, NULL);
+ 	if (ret !=3D 0)
+@@ -267,7 +252,7 @@ int main(int argc, char *argv[])
+ 	futex_hash_slots_set_verify(32);
+ 	futex_hash_slots_set_verify(16);
+=20
+-	ret =3D futex_hash_slots_set(15, 0);
++	ret =3D futex_hash_slots_set(15);
+ 	ksft_test_result(ret < 0, "Use 15 slots\n");
+=20
+ 	futex_hash_slots_set_verify(2);
+@@ -285,28 +270,23 @@ int main(int argc, char *argv[])
+ 	ksft_test_result(ret =3D=3D 2, "No more auto-resize after manaul setting,=
+ got %d\n",
+ 			 ret);
+=20
+-	futex_hash_slots_set_must_fail(1 << 29, 0);
++	futex_hash_slots_set_must_fail(1 << 29);
++	futex_hash_slots_set_verify(4);
+=20
+ 	/*
+-	 * Once the private hash has been made immutable or global hash has been =
+requested,
+-	 * then this requested can not be undone.
++	 * Once the global hash has been requested, then this requested can not
++	 * be undone.
+ 	 */
+-	if (use_global_hash) {
+-		ret =3D futex_hash_slots_set(0, 0);
+-		ksft_test_result(ret =3D=3D 0, "Global hash request\n");
+-	} else {
+-		ret =3D futex_hash_slots_set(4, FH_FLAG_IMMUTABLE);
+-		ksft_test_result(ret =3D=3D 0, "Immutable resize to 4\n");
+-	}
++	ret =3D futex_hash_slots_set(0);
++	ksft_test_result(ret =3D=3D 0, "Global hash request\n");
+ 	if (ret !=3D 0)
+ 		goto out;
+=20
+-	futex_hash_slots_set_must_fail(4, 0);
+-	futex_hash_slots_set_must_fail(4, FH_FLAG_IMMUTABLE);
+-	futex_hash_slots_set_must_fail(8, 0);
+-	futex_hash_slots_set_must_fail(8, FH_FLAG_IMMUTABLE);
+-	futex_hash_slots_set_must_fail(0, FH_FLAG_IMMUTABLE);
+-	futex_hash_slots_set_must_fail(6, FH_FLAG_IMMUTABLE);
++	futex_hash_slots_set_must_fail(4);
++	futex_hash_slots_set_must_fail(8);
++	futex_hash_slots_set_must_fail(8);
++	futex_hash_slots_set_must_fail(0);
++	futex_hash_slots_set_must_fail(6);
+=20
+ 	ret =3D pthread_barrier_init(&barrier_main, NULL, MAX_THREADS);
+ 	if (ret !=3D 0) {
+@@ -317,14 +297,7 @@ int main(int argc, char *argv[])
+ 	join_max_threads();
+=20
+ 	ret =3D futex_hash_slots_get();
+-	if (use_global_hash) {
+-		ksft_test_result(ret =3D=3D 0, "Continue to use global hash\n");
+-	} else {
+-		ksft_test_result(ret =3D=3D 4, "Continue to use the 4 hash buckets\n");
+-	}
+-
+-	ret =3D futex_hash_immutable_get();
+-	ksft_test_result(ret =3D=3D 1, "Hash reports to be immutable\n");
++	ksft_test_result(ret =3D=3D 0, "Continue to use global hash\n");
+=20
+ out:
+ 	ksft_finished();
 --=20
 2.50.0
 
