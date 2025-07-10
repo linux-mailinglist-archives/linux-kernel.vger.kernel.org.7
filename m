@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-725525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B701B0003B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:13:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDED7B00039
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624711C877BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:13:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AB5916A61B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E472E4252;
-	Thu, 10 Jul 2025 11:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67392D3EDD;
+	Thu, 10 Jul 2025 11:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i67cN5Zb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ejolLtlC"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2D4219E8D;
-	Thu, 10 Jul 2025 11:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1279219E8D;
+	Thu, 10 Jul 2025 11:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145997; cv=none; b=ujsGQshCQpj2R0jOJdgo7cbVcLjB5ssXaFI3LOFoo2ryj/ipB4qp9gXXjU5ne7D4wVQcW38cMdjBFeTvP2kJNaHnN3kBh+hHe7s1bxunmQVJ9lI/QNZexg51tzk3vgyFARFgY47IZH7swAtJRqL866tOXFIIS/B9Q6yjlDwNaIw=
+	t=1752145986; cv=none; b=IXNpeaWJGB08mSgRpuh6HPvxwI7TIKSkOhltBhNr6cDCpee4ZYjkPknFEbmIjDgdWc4uo4+o6AXsUBiiXplTNru1Eg9XEvUf0avh2r2CzKbT9NA5pON4hV0vLgs7g5eoyiQU7q+quIhJfI8eoPMR4/GYEi+sD0O4aV+JTDTx/xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145997; c=relaxed/simple;
-	bh=fCMFwl6Oa7Wwc2XvpmzD1mwe0tkqTEL6NM+Z25HU34w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fXcOXMoADYd9nDO4z3E/cEkvBRFw1GRh0dxyJwuU8SjTDorRzhgwxyqERtxLSgRl7j/m0d9TUZjNVnD++jtKCypBKPSjgEKgQq7DXgslTDKyvJNpiiJxF4HbLIm0YUpTTlh6z1KrJYa7wEomZKwEqZctOE/r3b5pyz4m8uNmCos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i67cN5Zb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2C53C4CEF5;
-	Thu, 10 Jul 2025 11:13:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752145997;
-	bh=fCMFwl6Oa7Wwc2XvpmzD1mwe0tkqTEL6NM+Z25HU34w=;
-	h=From:Date:Subject:To:Cc:From;
-	b=i67cN5ZbNoDe/jqjQnZYTWyFqQH50gksbF036qEU3JKLHZ2KAD2ErKmJgIjqev+VV
-	 29cbgSrYABAOXv42x+s+0GNKXLVw5lKu2kpTGSAohZZl7i4G3EtRjiEfMZHR/ofjH5
-	 vHO9g7cQ0pyryGPqD61AfRUNmoHTbbq8zoqjvmyf+oZxL/CSJaV6K51yic92/Qeh0m
-	 HS/VcYGMEeJYNXBE4GixHapnsaC/U3eFsMIpdwmcnBZ1yQLpGD/WHusFtpOh+Q8AgS
-	 5Fd2P9UGpRtHB5HOSOlfPyWTAFcZEdfHYOO9ygdArQ5lCBAbfGFn2jtRasxpHN1GIS
-	 DM68A1yvraTOA==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 10 Jul 2025 12:12:20 +0100
-Subject: [PATCH] KVM: selftests: Add CONFIG_EVENTFD for irqfd selftest
+	s=arc-20240116; t=1752145986; c=relaxed/simple;
+	bh=9/R3I2QTvmAT11keXIpb9oxTfzuCpNx6iVbeNs8GKZ4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eRmsJ2bTe2UOCjD/tjt90P76+Ufi3+6pSvB+4HFEpBRVVXXnhxhXNDTiCvNlOk68QNVTIq4sbn8B0D8ZtDmZwiXlsmwNpY2gRfoZ3ksbU9tsbke1e6Nfj+fH3FHy5bNs1iky4FlWaGvlTSbjQpX6W5ssJ+84tDVFposR7er9CfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ejolLtlC; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 9065120E4B;
+	Thu, 10 Jul 2025 13:13:01 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id GEsDnv1RYoAT; Thu, 10 Jul 2025 13:13:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1752145980; bh=9/R3I2QTvmAT11keXIpb9oxTfzuCpNx6iVbeNs8GKZ4=;
+	h=From:Date:Subject:To:Cc;
+	b=ejolLtlCHS97Q1CYEqWwE0gQlrPQw7JSZkvhf6n+/CrhWa1jkT9GMnZUj0FDP+hBp
+	 ihfPgVCgUYva5wryaflZjvltbfLC+O+kEkQqAhXXrNncS2MbWieZN2btBeGHNQFULT
+	 nPi04s7nlGAsO2B+LJoQHJTLC/+xnYmf6JrLIntfOr5RdSMV22LR4p9ZvLbGpy2V2J
+	 D4DmS+WgOyV0D1/igyKdVK3haZodOrgNH0gdNw1G0lDtOfvPdbslvVYgy5GVfPG297
+	 hXkTSALlq2r7GMrIO0rrmv78f6Qke4FOHuanwRpnACUreNx3QqWd5KaUzAP/MuKFlI
+	 oM2NSCdWX9ttg==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Date: Thu, 10 Jul 2025 16:42:48 +0530
+Subject: [PATCH v2] phy: exynos-mipi-video: correct cam0 sysreg property
+ name for exynos7870
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,57 +57,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-kvm-selftests-eventfd-config-v1-1-78c276e4b80f@kernel.org>
-X-B4-Tracking: v=1; b=H4sIABOgb2gC/x3MSwqDQAwA0KtI1g3EVJH2KqULP4kG27FMhkEQ7
- 97B5du8A1yiicOzOiBKNrctFNS3CsalD7OgTcXAxC119MA1f9Hlo0k8OUqWkHTCcQtqM9Z8HwZ
- i1p4aKMUvitp+9a/3ef4Bpycq6G4AAAA=
-X-Change-ID: 20250709-kvm-selftests-eventfd-config-123bb022fa04
-To: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-07fe9
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1001; i=broonie@kernel.org;
- h=from:subject:message-id; bh=fCMFwl6Oa7Wwc2XvpmzD1mwe0tkqTEL6NM+Z25HU34w=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBob6BLebvS2hzgRttjOHmgmDaPDjFiJuGaolRni
- SApdh0D+0uJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaG+gSwAKCRAk1otyXVSH
- 0JJEB/9/0Zr9vUk2isLoTJ42gYIKHIod1FJ9lnc334JElWb5/rhVM65dOb58xb1Tpf5UUdXh13I
- I1uWo5raNoM5QB5KMfYLgrHqbLih1w8B5T66ZDoncwUNFNRnYsdgyRhnQQeJzIU4J6Ce/LUKpZ+
- yjjosFgrjatnNNCRnAoq2Zlg5XbM2sCs+9bSAVn8xIArJfIEKa1g5ZHhYwSXQUOrsA0GH50WT/F
- 468nnOizUpRjwM1K+rq84Cgc2sPO+WdLLKsBPsWiWwULRzgYwoZQhNHfSx4bmxJMAkIWwc7ffeW
- PeV8+f51XaF6RdUfJbF2L9VyHtKu8T1qNJdx6pcsah+DpuSw
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Message-Id: <20250710-exynos7870-mipi-phy-fix-v2-1-5cf50d69c9d7@disroot.org>
+X-B4-Tracking: v=1; b=H4sIAC+gb2gC/3WNQQqDMBBFryKz7pQxJY3tynsUF2omOosaSSQo4
+ t2bCl12+R7893eIHIQjPIsdAieJ4qcM6lJAP7bTwCg2MyhSmu5KI6/b5KOpDOFbZsF53NDJiub
+ GpNlVD0s95PUcOOuz/GoyjxIXH7bzKJVf+2uav81UIqFidm1XdZqsq63E4P1y9WGA5jiODzI1u
+ PfAAAAA
+X-Change-ID: 20250625-exynos7870-mipi-phy-fix-73e05ef89d0c
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752145974; l=1740;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=9/R3I2QTvmAT11keXIpb9oxTfzuCpNx6iVbeNs8GKZ4=;
+ b=6zaZcpyBYmtLQRw2NAbiS13U61IX/RUnZZ3bzEL0nX80n8mv9RvaT2jnG/9yjwHrWTu90FXDx
+ uNwFk+7suv+B/95Y73oY1OLSWQhtOS0DQ2Pa/Kna1vnYtDKvCKO3YfA
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-In 7e9b231c402a ("KVM: selftests: Add a KVM_IRQFD test to verify
-uniqueness requirements") we added a test for the newly added irqfd
-support but since this feature works with eventfds it won't work unless
-the kernel has been built wth eventfd support.  Add CONFIG_EVENTFD to
-the list of required options for the KVM selftests.
+Fix the cam0 sysreg property name (samsung,cam0-sysreg), which has been
+erroneously declared as samsung,cam-sysreg. This follows the same name
+used in Exynos5433 PHY.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 543f5e314282 ("phy: exynos-mipi-video: introduce support for exynos7870")
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- tools/testing/selftests/kvm/config | 1 +
- 1 file changed, 1 insertion(+)
+A few issues have been realized after Exynos7870 MIPI PHY support got
+merged [1], this patch series aims to address them.
 
-diff --git a/tools/testing/selftests/kvm/config b/tools/testing/selftests/kvm/config
-index 8835fed09e9f..96d874b239eb 100644
---- a/tools/testing/selftests/kvm/config
-+++ b/tools/testing/selftests/kvm/config
-@@ -1,5 +1,6 @@
- CONFIG_KVM=y
- CONFIG_KVM_INTEL=y
- CONFIG_KVM_AMD=y
-+CONFIG_EVENTFD=y
- CONFIG_USERFAULTFD=y
- CONFIG_IDLE_PAGE_TRACKING=y
+More information about the fixes is provided in respective commit
+descriptions.
+
+[1] https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
+---
+Changes in v2:
+- tweaked commit message of [v1 1/2] (krzk)
+- dropped useless patch [v1 2/2]
+- Link to v1: https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
+---
+ drivers/phy/samsung/phy-exynos-mipi-video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/phy/samsung/phy-exynos-mipi-video.c b/drivers/phy/samsung/phy-exynos-mipi-video.c
+index b184923b9b400f0d536a913bdf32f3156c0a1854..be925508ed97a397239bd41f34b61ead20d04d27 100644
+--- a/drivers/phy/samsung/phy-exynos-mipi-video.c
++++ b/drivers/phy/samsung/phy-exynos-mipi-video.c
+@@ -218,7 +218,7 @@ static const struct mipi_phy_device_desc exynos7870_mipi_phy = {
+ 	.regmap_names = {
+ 		"samsung,pmu-syscon",
+ 		"samsung,disp-sysreg",
+-		"samsung,cam-sysreg"
++		"samsung,cam0-sysreg"
+ 	},
+ 	.num_phys = 4,
+ 	.phys = {
 
 ---
-base-commit: 7e9b231c402a297251b3e6e0f5cc16cef7dd3ce5
-change-id: 20250709-kvm-selftests-eventfd-config-123bb022fa04
+base-commit: 26ffb3d6f02cd0935fb9fa3db897767beee1cb2a
+change-id: 20250625-exynos7870-mipi-phy-fix-73e05ef89d0c
 
 Best regards,
---  
-Mark Brown <broonie@kernel.org>
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
 
