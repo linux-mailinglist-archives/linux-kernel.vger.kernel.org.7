@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-724919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05FF5AFF887
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:35:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179C0AFF889
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E22243B4E21
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:34:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597915A4120
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7357C28504F;
-	Thu, 10 Jul 2025 05:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B972905;
+	Thu, 10 Jul 2025 05:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nn1eqoyr"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YVGMJl0a"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19048238C20
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD27284B57
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752125684; cv=none; b=UjaXsddmCJbGe46C5Q3HsCRCCfQIz6r/xdezd3ENN+sEULLTvmWNDFyHsMI2NrcT54UMlMcnjUsNCgctP7OCNIMlPtINF/HLjYkxYFiWuWxnn96tBbhI2038sM8BTyJ8QSjCo/6IVnLKPIJsFHfWVMG6KEPwghwa0LNbQHbi0cU=
+	t=1752125687; cv=none; b=pfGWOmcg+bDPrARGt7TYz9xk/Hn3zfxwC7WMlpnt6cwBmfaBCcaza/CbdMUmwzYVwsf2NBSOF18cM/U1XdpyGbVbQsJ06ha1oNYEOSL/fUrAZREYxJ5EVUMawCCjdOhwb2iWOPvbo3OQsRR3fB5gMyR8/1jRf437FU8PXk42ofw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752125684; c=relaxed/simple;
-	bh=KdhOmcqZw17rfbyHNFm0oN3Z6N7aipfZaCObSJQDtFQ=;
+	s=arc-20240116; t=1752125687; c=relaxed/simple;
+	bh=TdkwTNIzAwUJoAPXjj02yqITZherri+LDBhfwYcnBn4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VhN3bc6pTQMR4EdoKpHcrgb2FVOXfkG7DtPZHdjbfqHmTdJ4eOpytzqveaI19iR/dGxFCHooc2rW20DtLkRAsLhMZkdLFkt2XUh5CT6GCrJgAy2jlHAHLhRiu0SsncB4H8qdaGK5FN1HCAbYlEVr5khmhD1DjwrD7pb9XuPjutk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nn1eqoyr; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=KCp/Y5DGQ+R+EMXaxZfV2qemPuiLjvBUtiez47NuMM6K7ng+gG4UNAAlQwHZTmGRdmKbUdUukzdrCqZHq9QXavuACkD4Z7AHSF9j2xjbY6QQb31Wb+tCXlwEBfAzyMPkhoW4d2YLjp/JyUUS4hNSuVAlq9Tbml87qkH+8gK8FKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YVGMJl0a; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A0nQTQ014506
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:34:42 GMT
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A13Z6R010019
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:34:44 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cG0txvja0S3tG5mbOE4vdGeMWc8J0yoXe8fr4obx5Qg=; b=nn1eqoyrdesHGWVk
-	l3BYuzfjV6l6WSsL3GwwQCHWfhq3MuINouIB/ncuBr63ZucNH+NjgmWglYjlUOGz
-	/JEVzRa59tqW18RZQ1UbE8fUVCHwqCCwMxpyPndekTY4ChE0Gm5nTsNf/0oQBhcF
-	xo/Z1KOwOzEV73AsLKKfTPutjCSqnfQeQYj3Bxe8znYl1JV/myxI4QUCT07y2IMV
-	40wYgBB1ZkFAitaU7xGLb9aqM+LTAZsUacnAkEC0YZ0XCQ7DJAtjEhFK/Qve9QIa
-	W8VCNqwb6KzapeFSUjLCLwLK37Te16GaUy1TwvmtAPxQcJd/GKC8cCvPjgGCTII9
-	pjdQkg==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47r9b14hcb-1
+	c/HxZsbEcLj6/NqQ7QRrp90LaiZ00WBbmS7LhVxRCbo=; b=YVGMJl0aYIazx205
+	TfnfO8Ym46e1okVefOv84OJvWQQA8baC4GICAU9TMiIbAdTeh8qhoAjSPqGv7Lcg
+	5LO7ZKLBMvPg0hPUVbQa8ama5A56+ZWh16PQbaTaKVTRu2rHPsSynpZCnRD96xVS
+	aDspfTGMAICzayWOxb/xS38ZjLiz1jUjGiVQBvr8H52QupYKjdsp7NFFYFblDLg7
+	xaP0NCKRb+ws2b4vcydBHhUgQ2TIbno77wyMSz05VcupTPWWwDkkFxLHltJoEaTR
+	RFhFaLeEa5nwh5q+gZoQu6/Dke6dStqweShwdzE6pHw2Qh/I9xw0lLcEmaZeMejv
+	bVqWWQ==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47sm9q3ks1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:34:42 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-747ddba7c90so540647b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 22:34:42 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:34:44 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b39280167fdso607578a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 22:34:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752125681; x=1752730481;
+        d=1e100.net; s=20230601; t=1752125683; x=1752730483;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cG0txvja0S3tG5mbOE4vdGeMWc8J0yoXe8fr4obx5Qg=;
-        b=DCTX0xZ7xr4orEr3j2NOTQ1hb2/X5ENPiEGj6fh6mXh2A7vTYMzpEfJa2z9f4JllTv
-         a3xShPlbKLi7L5UI243Jgl9LCAI8D0Ml4zvu7VOZi+QH3sPEPG9/5iwXBI07CcvN+04X
-         jiMEDjxcLJRUAUKq1aODghu6r3cvDbVuwrdaivPM6sUZsFPWQhIGZYC4x1nQxASp454T
-         0xdGKA4IWWPbhasivO0y7vuO5GmzUy0nsbevdJac52o8RCg9pVChNpd8NgLTFS0yQLJM
-         7vNd1QIEMgyvmLeOCTlQFsgFdB/PArhZbxFHwyJeJv/M+OsT1yk+gIv2RtSHyuW0aU2h
-         CcuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbPaDfitz4M7DAOHkkV0QPgiZSNwOZu5GY1Tmc0EJQseFxuGRo/NDyDiQs/zQe8/0KlOoSyFSh4Xky3H0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI9yjXYD/Y29NsXT7szaRzKYkLB8ryWgKw8hFMqW9ZmaSgqK1F
-	e4nIdEgcnVa/IsDJL3e6Z41cxGTlSSdeEmCOV63O01nwFDc+oQQg7ySrhEGpFa958tSYGzHLsOa
-	stvnIbMB55WhMV/Rb/y8eModv7BLm/q/9Nsag+Y3BUfy7Uy4m64WmNc02WbtAeKMQkXY=
-X-Gm-Gg: ASbGncviWtC/0CtxcMHPQivA26pxVwqmERVwNecA8EhAjsVqLNZjj3+Nopw7ahPRt47
-	GVEc7tepBX4KWFBZxase+9RNEXBvWeFsi6bJ/0LH0S+x9rz3c+q4qwm4SBi7vrGWT/LHSwRy7dw
-	IrVgFQoWjMOmrxE3Q8KIsZLg/sWNmoGOML2sTGnQqEkUe2yFmB1vMvTD69WeZWfYchUD02N0NDc
-	o7XmYmEaUw9wCmfuIdgybvg3BtsPTfhtM4NB/gtG3XLyVRNhOI1VtRWqIkAFYkzcN3r5QLWohHy
-	KAeuoh1oZYVEd4BslesS/cyP5GIuGQaMPLwWBg7WnTn2h4n/TOnzNGL/2Ci+DL+q79oeQO/Uu4n
-	4d8rSOUI+sdgCEumeT0g/xOg3GV1f1Bkf51fpyXI+A7EDxeM=
-X-Received: by 2002:a05:6a20:2451:b0:222:1802:2ddb with SMTP id adf61e73a8af0-22fb85cdbcfmr4752816637.8.1752125681288;
-        Wed, 09 Jul 2025 22:34:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/1Rcg4fjjKZRHzzSG/rGYx8KGtmURVnMVRfuCyePM1sTlj7t7mM3dkEPhKA9W247oKkPfYA==
-X-Received: by 2002:a05:6a20:2451:b0:222:1802:2ddb with SMTP id adf61e73a8af0-22fb85cdbcfmr4752771637.8.1752125680883;
-        Wed, 09 Jul 2025 22:34:40 -0700 (PDT)
+        bh=c/HxZsbEcLj6/NqQ7QRrp90LaiZ00WBbmS7LhVxRCbo=;
+        b=O0Mk/dHqccGoG42WTCJB+AJs76Jwi8Q8B2QUc34R3uGGcrTgxNccJy6sGXDw8pia+d
+         31tUntTkNQHm12fW0tG3ro1A+2Lzqta9IwzBafq0UVBVcyRNu/j8yjeHY+wlJC3sTK4z
+         /INZw7zr98pkKOwonSsV2J+wDOGijiyhFwrA+V+SQyH/4S7K348wqRhwWHgx94gWIYRk
+         EP3+RIdnm16yoQlk2olMjqJWNP3DDWfaGfTOit8nRK97rNbpWWZenaqRY24uDxif7DH9
+         84Wq4B8r11XxnsuV298VdwYzI04ZhDBYGVM2xaUlZdcsoJshxzcKyfJpOoS4NoAo/1kN
+         CSEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtjrVbJ2b1+vjqBgZ3tFmt4yKC7icqyhuQDLmvSHR6v6N1ACuLI9bXtJss6XZXD9MCgKGYAw4KeW6sbXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3Pd6ztLOLX9TNSVTBjE/+6dzX2Clx2JwtgW3RSDzB3a7aes3s
+	hhgvqv88iWs3XVGS2EYBEL893Uyl+JVLFUnoJKJFRZzB2SsV1TzEIdLuPRJ6Pd9v+F4x0O5Skmf
+	X0zDCQYQrNK9R84nPZH7ylPVcsfKSOzh9HOxhmsBU3PgsYWAyScrRjj6xeWGjVZHLlc4=
+X-Gm-Gg: ASbGnct5wjGlJlBVBtvam849UtmTuJU9F8zPnzXzS9yA0SES628JfyE0tW5HGNmOyqt
+	mSi6vlgH37JgcRFdgAPKKBhXR2xhRmPLIfJY6fRUTqukTCV3fKiejsMKMywO9p1twD7aTN5KNPQ
+	jSZVN1+pIjWyV4RkoyOESYiRIE//QggOY+awDglhUotUwDS681fHgnKKnPnZi7yDPHm+Q91AR/x
+	mI4AynCnVy8LsbtEVhGYmp/zibwcA3j3jYi3GP9WHEyR0i2pqz9qhFI2eUgll4Fau5g4P3cuqiQ
+	Q73MhTAgIy68jsT2KJ4/tYQRTzolYEIXBQtQCjoCtNFFTIquDyfjBSZfMjaLt7Srrb6HkB+0AIN
+	9Dp3h3tR4ryTwAPFR0EYiSuQFemyEzW9z7QT7rZ7NmljUlek=
+X-Received: by 2002:a05:6a21:33a1:b0:21c:faa4:9ab8 with SMTP id adf61e73a8af0-22cd5bff24emr8481488637.10.1752125683380;
+        Wed, 09 Jul 2025 22:34:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFg8seO7i6KNpDs6X6DiLrB9L4Yaf86lhSFTop+1D/GBVnAJAqrD2tlTFsRBoCy4upa5ILMxg==
+X-Received: by 2002:a05:6a21:33a1:b0:21c:faa4:9ab8 with SMTP id adf61e73a8af0-22cd5bff24emr8481453637.10.1752125682971;
+        Wed, 09 Jul 2025 22:34:42 -0700 (PDT)
 Received: from hu-adisi-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe5b0201sm1014043a12.31.2025.07.09.22.34.39
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe5b0201sm1014043a12.31.2025.07.09.22.34.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 22:34:40 -0700 (PDT)
+        Wed, 09 Jul 2025 22:34:42 -0700 (PDT)
 From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-Date: Thu, 10 Jul 2025 11:04:27 +0530
-Subject: [PATCH wireless-next v2 1/2] wifi: cfg80211: parse attribute to
- update unsolicited probe response template
+Date: Thu, 10 Jul 2025 11:04:28 +0530
+Subject: [PATCH wireless-next v2 2/2] wifi: mac80211: parse unsolicited
+ broadcast probe response data
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,7 +92,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-update_unsol_bcast_probe_resp-v2-1-31aca39d3b30@oss.qualcomm.com>
+Message-Id: <20250710-update_unsol_bcast_probe_resp-v2-2-31aca39d3b30@oss.qualcomm.com>
 References: <20250710-update_unsol_bcast_probe_resp-v2-0-31aca39d3b30@oss.qualcomm.com>
 In-Reply-To: <20250710-update_unsol_bcast_probe_resp-v2-0-31aca39d3b30@oss.qualcomm.com>
 To: Johannes Berg <johannes@sipsolutions.net>
@@ -100,121 +100,76 @@ Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
         Yuvarani V <quic_yuvarani@quicinc.com>,
         Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Authority-Analysis: v=2.4 cv=dYuA3WXe c=1 sm=1 tr=0 ts=686f50f2 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+X-Proofpoint-GUID: eOMgwUcooNSGYXhPP7cFspW1BpDXj2sX
+X-Proofpoint-ORIG-GUID: eOMgwUcooNSGYXhPP7cFspW1BpDXj2sX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDA0NSBTYWx0ZWRfX72vTruFdMiFn
+ OUQZ4yjfqmkACWWXYBoku462H6XGJLZopZgQCwcnB+lDrXFVELV8sGr9rmQt8u3kFDYI16OgxQs
+ 04z2DLberIYvFwYMc3oNQ6fattR/s9Uv8a4KjiL2098+R440goJ6l8NIyjoQwf1wmduEGjiUSsx
+ Mz4d+49OljNC4vLiG6EyPZ0J+N4kM8RedY7UWA/D7yDGUrTdmX0WvAiDMvFnfCVgJGUgigHDiYm
+ tF59M+MAdJqcWzZ/8wnp3I3eMdZcIHZyt1u+CN8YPWI5EPPcuoI2yqXBwbfQPcebtWfVybutGql
+ K5VGI9qjCXfcM3YV/oPAsH1BApqqYMdIb2aAE07LZ5XzDJZgNvNIlHYz4hqniYhXrMLQWUwkgPz
+ 4mjA5vy4S5k5Qat8+9s2Oic3SyyLYTuT7mOssfMeN/iyzaYKzVdfx+9uWcJuJHaamkUhmq4g
+X-Authority-Analysis: v=2.4 cv=BM+zrEQG c=1 sm=1 tr=0 ts=686f50f4 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
  a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=E4CoA09qZ1gvW9aZS_EA:9 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+ a=GDPEl8sVpxXbRvpnLXsA:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
  a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDA0NSBTYWx0ZWRfX6bbHEwpWDSVm
- /WQmdM2yuEYt+unYvhiydFoO7gR5C+E4FkAJR4S0g1YXmOcor5fJZT7OV9KLdf5YQWBkVHpb7++
- Dz7bw4JOceuJc72HBIRX4P4wrt0EaWrbryBUdwM9BjXXG7O98DstyHAAb9cfEPPy4EoTrQ+v3ft
- 4lRjn32gAG4K08eh9Xn8/rKHJVDv9yldWQNtn+nMOzfTS/85Saw4fIf9C4889/aExahQiaxz/QU
- ql3OL1JJyqfWoBK75gDBcxWg7C8R1zXTBBemlO585aAytGb2BVKbzKCIwnA1Y2II5Bbp/pT+LUJ
- 4ST27tKVIo2jZ7+8wqwxGFhM0iKQ56VuVRRpDOxrJCZuJZrkVllrNCzwlxYaExBzNUtuNrGl+eJ
- lbvz+xd91PizueNfckCEkBB/f2nY18adTXfTU+6zC6lOkgoD/s21s5SaX9gOs9gkVYtfM7+l
-X-Proofpoint-GUID: Sw1E3Hg_9O7dZlcvNqLNjeiN3wrxnl-N
-X-Proofpoint-ORIG-GUID: Sw1E3Hg_9O7dZlcvNqLNjeiN3wrxnl-N
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-09_05,2025-07-09_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0
- priorityscore=1501 spamscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
- mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ bulkscore=0 phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
+ suspectscore=0 mlxscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0
+ clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
  definitions=main-2507100045
 
 From: Yuvarani V <quic_yuvarani@quicinc.com>
 
-At present, the updated unsolicited broadcast probe response template is
-not processed during userspace commands such as channel switch or color
-change. This leads to an issue where older incorrect unsolicited probe
-response is still used during these events.
+During commands like channel switch and color change, the updated
+unsolicited broadcast probe response template may be provided. However,
+this data is not parsed or acted upon in mac80211.
 
-Add support to parse the netlink attribute and store it so that
-mac80211/drivers can use it to set the BSS_CHANGED_UNSOL_BCAST_PROBE_RESP
-flag in order to send the updated unsolicited broadcast probe response
-templates during these events.
+Add support to parse it and set the BSS changed flag
+BSS_CHANGED_UNSOL_BCAST_PROBE_RESP so that drivers could take further
+action.
 
 Signed-off-by: Yuvarani V <quic_yuvarani@quicinc.com>
 Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
 ---
- include/net/cfg80211.h |  4 ++++
- net/wireless/nl80211.c | 18 ++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ net/mac80211/cfg.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
-index 6ec9a8865b8b082e235493ca64adf0fc60ec0175..08eec6fc820aa50d09d9bb047ee7dc96e256bc70 100644
---- a/include/net/cfg80211.h
-+++ b/include/net/cfg80211.h
-@@ -1526,6 +1526,7 @@ struct cfg80211_ap_update {
-  * @n_counter_offsets_beacon: number of csa counters the beacon (tail)
-  * @n_counter_offsets_presp: number of csa counters in the probe response
-  * @beacon_after: beacon data to be used on the new channel
-+ * @unsol_bcast_probe_resp: Unsolicited broadcast probe response parameters
-  * @radar_required: whether radar detection is required on the new channel
-  * @block_tx: whether transmissions should be blocked while changing
-  * @count: number of beacons until switch
-@@ -1540,6 +1541,7 @@ struct cfg80211_csa_settings {
- 	unsigned int n_counter_offsets_beacon;
- 	unsigned int n_counter_offsets_presp;
- 	struct cfg80211_beacon_data beacon_after;
-+	struct cfg80211_unsol_bcast_probe_resp unsol_bcast_probe_resp;
- 	bool radar_required;
- 	bool block_tx;
- 	u8 count;
-@@ -1555,6 +1557,7 @@ struct cfg80211_csa_settings {
-  * @counter_offset_beacon: offsets of the counters within the beacon (tail)
-  * @counter_offset_presp: offsets of the counters within the probe response
-  * @beacon_next: beacon data to be used after the color change
-+ * @unsol_bcast_probe_resp: Unsolicited broadcast probe response parameters
-  * @count: number of beacons until the color change
-  * @color: the color used after the change
-  * @link_id: defines the link on which color change is expected during MLO.
-@@ -1565,6 +1568,7 @@ struct cfg80211_color_change_settings {
- 	u16 counter_offset_beacon;
- 	u16 counter_offset_presp;
- 	struct cfg80211_beacon_data beacon_next;
-+	struct cfg80211_unsol_bcast_probe_resp unsol_bcast_probe_resp;
- 	u8 count;
- 	u8 color;
- 	u8 link_id;
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index 05538312bdadc7545b771f22d8aee14cd1edf5a0..0468464fa49fcb73f88099f8c4f66b54e8adbe09 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -10992,6 +10992,16 @@ static int nl80211_channel_switch(struct sk_buff *skb, struct genl_info *info)
- 	if (info->attrs[NL80211_ATTR_CH_SWITCH_BLOCK_TX])
- 		params.block_tx = true;
- 
-+	if ((wdev->iftype == NL80211_IFTYPE_AP ||
-+	     wdev->iftype == NL80211_IFTYPE_P2P_GO) &&
-+	    info->attrs[NL80211_ATTR_UNSOL_BCAST_PROBE_RESP]) {
-+		err = nl80211_parse_unsol_bcast_probe_resp(
-+			rdev, info->attrs[NL80211_ATTR_UNSOL_BCAST_PROBE_RESP],
-+			&params.unsol_bcast_probe_resp);
-+		if (err)
-+			goto free;
-+	}
-+
- 	params.link_id = link_id;
- 	err = rdev_channel_switch(rdev, dev, &params);
- 
-@@ -16794,6 +16804,14 @@ static int nl80211_color_change(struct sk_buff *skb, struct genl_info *info)
- 		params.counter_offset_presp = offset;
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index 56540c3701ed786c37f946f9c4af820c15b5922d..cdecda1bd07b31cb7d8bd76eed074ecc2a828eb1 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -4173,6 +4173,12 @@ __ieee80211_channel_switch(struct wiphy *wiphy, struct net_device *dev,
+ 		goto out;
  	}
  
-+	if (info->attrs[NL80211_ATTR_UNSOL_BCAST_PROBE_RESP]) {
-+		err = nl80211_parse_unsol_bcast_probe_resp(
-+			rdev, info->attrs[NL80211_ATTR_UNSOL_BCAST_PROBE_RESP],
-+			&params.unsol_bcast_probe_resp);
-+		if (err)
-+			goto out;
-+	}
++	err = ieee80211_set_unsol_bcast_probe_resp(sdata,
++						   &params->unsol_bcast_probe_resp,
++						   link_data, link_conf, &changed);
++	if (err)
++		goto out;
 +
- 	params.link_id = nl80211_link_id(info->attrs);
- 	err = rdev_color_change(rdev, dev, &params);
+ 	chanctx = container_of(conf, struct ieee80211_chanctx, conf);
  
+ 	ch_switch.timestamp = 0;
+@@ -5114,6 +5120,12 @@ ieee80211_color_change(struct wiphy *wiphy, struct net_device *dev,
+ 		goto out;
+ 	}
+ 
++	err = ieee80211_set_unsol_bcast_probe_resp(sdata,
++						   &params->unsol_bcast_probe_resp,
++						   link, link_conf, &changed);
++	if (err)
++		goto out;
++
+ 	err = ieee80211_set_color_change_beacon(link, params, &changed);
+ 	if (err)
+ 		goto out;
 
 -- 
 2.34.1
