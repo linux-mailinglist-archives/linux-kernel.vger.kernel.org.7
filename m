@@ -1,222 +1,148 @@
-Return-Path: <linux-kernel+bounces-725856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB927B004B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:08:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C3DB004A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 696731887EAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:05:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 851D07B0126
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744EF270EC1;
-	Thu, 10 Jul 2025 14:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A982186359;
+	Thu, 10 Jul 2025 14:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RL3faLlP"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="b/7wNaxc"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E0E86359;
-	Thu, 10 Jul 2025 14:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E9B21CC56
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752156316; cv=none; b=sfcWuOH4ZfosZpTB60+owu3fhKMkS9siAXAYazvr4R/O4i06tbDPpr5lVpoA1sC5h7TnICjNb97tNDfNIjlUyDp36Sf1YwCu7ng9bP6NBOajrW5AoS3C4l/saY5o9eoUvDi/nDUpq7f9XipU1voVOQc8lNf5vrxKbhYFIJ/GWtY=
+	t=1752156370; cv=none; b=YtPe+sLujcRWEu90HS3Zn+7/PazHQXYCivGX1jI6SeKDd3Q1BhDV0SHyPrt1nbsFaKKitmhgT5kWSVpisoE5EiGKudjooCQvmc9TPcApqHQUHV4E6JNcUGL19KZC2x3oKwpg7R/L441GAbcKor4DmibOKTzb22xi8uUmYb6zluw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752156316; c=relaxed/simple;
-	bh=Zu0mClNS7+sxxgVa0p7ZYy72Q23B1pqGZfOdOe9mBM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PqZQ3hHdYVOyAGPJIjPdL+LH1MLljOuEUCHRK+CLN/Luz2h2/fEkASkRJl3RxUwaRfCIpyv9QBXMYGDhbj9kX14KfDeUt0rQY/bhrdmNiB+DDTDF6zkVikFaX4QS9hYU2W9sv6zsunBPbWRxnolyMELY7IcUPBbwU57cizdKlDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RL3faLlP; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E1529B2B;
-	Thu, 10 Jul 2025 16:04:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752156285;
-	bh=Zu0mClNS7+sxxgVa0p7ZYy72Q23B1pqGZfOdOe9mBM4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RL3faLlPvXX8dwvPDdbt+hKSUhVDPlkXoiKRnemZCwgSnwDkOXCdOSoca3RP94ZKZ
-	 9Qcmptm7HpbB8k9xI3X9hO//UnXK3VbEK1Qyq1/Dlj4Emb3VW1Kgg9jgbLW1Qfvwof
-	 EVu1oXqdIzq/q6L3F9qGApDwZ4EXTdAAkrPQYfqA=
-Message-ID: <97ae2619-52b9-4d83-9243-1274eef0c0d1@ideasonboard.com>
-Date: Thu, 10 Jul 2025 15:05:10 +0100
+	s=arc-20240116; t=1752156370; c=relaxed/simple;
+	bh=0lB7ayVfjS/ebQsXGCV7KD9ZOZmkw+YXG9IthbK3mqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FQ5MwXpAsmeOHrQqy3hoLhxZdvVaR1fvxHHKim01+lQSNlN0DHfdHFvYhuDFXiAUlL+N+VzTpsbCYEWmwKHCGj971TNCnZj3QVc1iLFWhC8E9uo9P2xbGv3gi+Ixr7fnJolp6kDsLSc+f0iMzEv2zbVYBvVZ3p2+BcZe39ffm4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=b/7wNaxc; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6fad8b4c927so9234526d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:06:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1752156367; x=1752761167; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/mUhG6nQixPiwkNwnGkxTsDVIWYYy2y/ruQ2RkH6WpE=;
+        b=b/7wNaxcPyNhd4Kto49bsbLScLz2Y1kGizYE+B4OeDwFnaQV4akl2bXPb/ne38U6ma
+         BKB+451TaBrijk5xXJuU8qhlSSyUpbjEWtXY7X+NS75bF9V/y40z00OTiZkePI1KMN6J
+         tR0segQbORWk+3KuzQoIdw6bF3c18nOadVJ+ALeNRwgdxOpF1TioeRac75AqXH6KV0WC
+         jVDdY61uKEvpubkRjXIXjuWMmm+f4MAttCfSmWcZyZ24XMcOp6tT41ZZyULzwILyLAj3
+         go3CAE28i3brAOfwcX7KqHfq260FZqLzXWJs5reVA0KyI06nSqYokwuGfoSX2Jyh/VPc
+         lMdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752156367; x=1752761167;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/mUhG6nQixPiwkNwnGkxTsDVIWYYy2y/ruQ2RkH6WpE=;
+        b=a2d/Q3DylQmF66apVPPcWXz3eleGRzUkLovFmHAfdgIPLF0LsxM5NIUFLtNQUFHfFT
+         dLyhcNxEqlzFx9YEWfLM1tIJQaNJXKOIdHao2G2OddsQBOeKLMKvNKiL0jQIrDZ2+3Ap
+         8OZtuqIBb01xeRtgy8qbirf/VNC5+b6ucZSelBgSb2iK9FtbN2IRbpXOz3ZizcAJmNR4
+         8uIYVubn03qdaO0p0ZiKgl8Pkex2VYvECMrPJ39SdrmuQ3T+lfNkamZmznN6fEQ3kz51
+         iDLkexY7PlGM5rhKZAXWbxKqgQjA4lWrBItnRhodbuIduKekV+H49L5Zs8DKFjaqrIeh
+         or6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXKyfnKQi2oASomYCgEm9R4qm3Ztu9aUQdKGvzFJCRdgROWYW2HBcPIJoiDWNOFGwY9W+Jt/tJR4a3R8tM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMdHy+nhw0ypvN1IPvlRpao6Mk2/5bVOTtbrymHCZN3Orc5jfG
+	kjusEEGk+hEKNKd/Ni28SAuhDm3Xe6WLBqoI1o1Z0jlfe5FTeHWVynipnmZZiyb/lQ==
+X-Gm-Gg: ASbGncuxeL94ajBaH+nfzmPuoC6OloTxyhPYF2sxIJlQEfmcDAKxVljavegzsUeI50A
+	C9L11LVRpLLQR262ExLWIdioxvjn5D0IG4hv4jPy4SpbKJch+r5yfczljIJCI0fL0N4g1tY4+4L
+	QnaeGNyTyL7w7McMWo1cc/dmuQw84hwEjg8MxGnx6UPNKcDvw5EptGn8sO4PrlO8r3aqpD/NncL
+	dhpGs/jadqRvk2G6rDxIFNrQb+ldodI65ChGHVdFa6XfEmvT9EEjfcdZ3bsatckd8E1k84LZ5/l
+	1f+41/IbmyphGzIjAGKKt20TbVRn4oKJkg7UK+ywFlYpeDSGc7x3pw2XFgVt5+cLniYkHUPxCWR
+	RGQ8j
+X-Google-Smtp-Source: AGHT+IHreITphoTLIChq2Z0zBSWyvB3a6PbQi/LJFxUQeY1LJUPn8RY17VoZ6RePs2Nhxk86mKEzFw==
+X-Received: by 2002:a05:6214:246f:b0:702:d6e7:18bf with SMTP id 6a1803df08f44-70494ee3ed9mr67061016d6.3.1752156367018;
+        Thu, 10 Jul 2025 07:06:07 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7049799e3f1sm8614036d6.14.2025.07.10.07.06.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 07:06:06 -0700 (PDT)
+Date: Thu, 10 Jul 2025 10:06:03 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Zongmin Zhou <min_halo@163.com>,
+	shuah@kernel.org, valentina.manea.m@gmail.com, i@zenithal.me,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	zhouzongmin@kylinos.cn
+Subject: Re: [PATCH v2] usbip: convert to use faux_device
+Message-ID: <a735f877-e13b-498f-9eee-53ebefa8ebc9@rowland.harvard.edu>
+References: <fac026d8-12c8-4c1f-96a7-264ced8391f1@linuxfoundation.org>
+ <a29703bd-08b7-489b-8fb0-15838a1245ab@163.com>
+ <1a13cf53-ffed-4521-917e-9c2856a5e348@linuxfoundation.org>
+ <4fc877f0-b55b-4fa3-8df4-2de4ba1ac51b@163.com>
+ <2a901b8a-9052-41d9-a70d-76508ebd819b@linuxfoundation.org>
+ <4759911b-8c35-4ca9-bc34-09dd41b14582@163.com>
+ <2025070949-activist-mammal-b806@gregkh>
+ <dd3659dd-7e45-479d-ab65-9f5c1bab26a0@rowland.harvard.edu>
+ <ce96291b-c0b2-41cf-a71c-c13bd8d0f139@linuxfoundation.org>
+ <4478924b-fbd7-4a5a-ad0d-4fe0569b4971@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] media: uapi: Convert Amlogic C3 to V4L2 extensible
- params
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Dafna Hirschfeld <dafna@fastmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250710-extensible-parameters-validation-v2-0-7ec8918ec443@ideasonboard.com>
- <20250710-extensible-parameters-validation-v2-3-7ec8918ec443@ideasonboard.com>
-Content-Language: en-US
-From: Dan Scally <dan.scally@ideasonboard.com>
-Autocrypt: addr=dan.scally@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250710-extensible-parameters-validation-v2-3-7ec8918ec443@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4478924b-fbd7-4a5a-ad0d-4fe0569b4971@linuxfoundation.org>
 
-Hi Jacopo
+On Wed, Jul 09, 2025 at 03:57:35PM -0600, Shuah Khan wrote:
+> On 7/9/25 15:49, Shuah Khan wrote:
+> > Right. We have a few too many moving pieces here:
+> > 
+> > usbipd (user-space)
+> > vhci_hcd and the usb devices it creates
+> > 
+> > usbip_host, stub driver that proxies between the device
+> > on the server and vhci_client.
+> > 
+> > PM can be complex and it has to do lot more than it currently
+> > does on both server and client end to support seamlessly.
+> > 
+> > The current suspend took the approach of refusing suspend
+> > which doesn't work since usb devices underneath hang in
+> > usb_dev_resume(). Looks like this usb device is treated like
+> > a real device bu usb core. Is there a way to have usb core
+> > PM (suspend and resume) handle them as virtual? Would it
+> > help to use "supports_autosuspend" to disable suspend and
+> > resume?
+> 
+> Would it work if usb_disable_autosuspend() on the devices
+> that hang off its vitual bus?
 
-On 10/07/2025 14:52, Jacopo Mondi wrote:
-> With the introduction of common types for extensible parameters
-> format, convert the c3-isp-config.h header to use the new types.
->
-> Factor-out the documentation that is now part of the common header
-> and only keep the driver-specific on in place.
->
-> The conversion to use common types doesn't impact userspace as the
-> new types are either identical to the ones already existing in the
-> C3 ISP uAPI or are 1-to-1 type convertible.
->
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+You have to consider PM on both the host and client.  And you have to 
+consider both runtime PM and system PM (that is, suspend to RAM, 
+hibernate, etc.).
 
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+On the server, any sort of suspend will interrupt the connection.  
+usb_disable_autosuspend() will prevent runtime suspends, but you 
+shouldn't try to prevent system suspends.  Instead, the usbip driver on 
+the server should have its suspend routine close the connection to the 
+client (rather as if the server's user had unplugged the device).
 
-> ---
->   include/uapi/linux/media/amlogic/c3-isp-config.h | 48 ++++++++----------------
->   1 file changed, 15 insertions(+), 33 deletions(-)
->
-> diff --git a/include/uapi/linux/media/amlogic/c3-isp-config.h b/include/uapi/linux/media/amlogic/c3-isp-config.h
-> index ed085ea62a574932c7ad8d59d34b2c5c74a597d8..15d3ac289ece610132e1d4b43ecd56b7ef527ef6 100644
-> --- a/include/uapi/linux/media/amlogic/c3-isp-config.h
-> +++ b/include/uapi/linux/media/amlogic/c3-isp-config.h
-> @@ -6,8 +6,13 @@
->   #ifndef _UAPI_C3_ISP_CONFIG_H_
->   #define _UAPI_C3_ISP_CONFIG_H_
->   
-> +#ifdef __KERNEL__
-> +#include <linux/build_bug.h>
-> +#endif /* __KERNEL__ */
->   #include <linux/types.h>
->   
-> +#include <linux/media/v4l2-extensible-params.h>
-> +
->   /*
->    * Frames are split into zones of almost equal width and height - a zone is a
->    * rectangular tile of a frame. The metering blocks within the ISP collect
-> @@ -183,11 +188,6 @@ enum c3_isp_params_block_type {
->    * struct c3_isp_params_block_header - C3 ISP parameter block header
->    *
->    * This structure represents the common part of all the ISP configuration
-> - * blocks. Each parameters block shall embed an instance of this structure type
-> - * as its first member, followed by the block-specific configuration data. The
-> - * driver inspects this common header to discern the block type and its size and
-> - * properly handle the block content by casting it to the correct block-specific
-> - * type.
->    *
->    * The @type field is one of the values enumerated by
->    * :c:type:`c3_isp_params_block_type` and specifies how the data should be
-> @@ -223,15 +223,8 @@ enum c3_isp_params_block_type {
->    *			gamma->pst_gamma_lut[i] = i;
->    *	}
->    *
-> - * @type: The parameters block type from :c:type:`c3_isp_params_block_type`
-> - * @flags: A bitmask of block flags
-> - * @size: Size (in bytes) of the parameters block, including this header
->    */
-> -struct c3_isp_params_block_header {
-> -	__u16 type;
-> -	__u16 flags;
-> -	__u32 size;
-> -};
-> +#define c3_isp_params_block_header v4l2_params_block_header
->   
->   /**
->    * struct c3_isp_params_awb_gains - Gains for auto-white balance
-> @@ -498,26 +491,9 @@ struct c3_isp_params_blc {
->   /**
->    * struct c3_isp_params_cfg - C3 ISP configuration parameters
->    *
-> - * This struct contains the configuration parameters of the C3 ISP
-> - * algorithms, serialized by userspace into an opaque data buffer. Each
-> - * configuration parameter block is represented by a block-specific structure
-> - * which contains a :c:type:`c3_isp_param_block_header` entry as first
-> - * member. Userspace populates the @data buffer with configuration parameters
-> - * for the blocks that it intends to configure. As a consequence, the data
-> - * buffer effective size changes according to the number of ISP blocks that
-> - * userspace intends to configure.
-> - *
-> - * The parameters buffer is versioned by the @version field to allow modifying
-> - * and extending its definition. Userspace should populate the @version field to
-> - * inform the driver about the version it intends to use. The driver will parse
-> - * and handle the @data buffer according to the data layout specific to the
-> - * indicated revision and return an error if the desired revision is not
-> - * supported.
-> - *
-> - * For each ISP block that userspace wants to configure, a block-specific
-> - * structure is appended to the @data buffer, one after the other without gaps
-> - * in between nor overlaps. Userspace shall populate the @total_size field with
-> - * the effective size, in bytes, of the @data buffer.
-> + * This is the driver-specific implementation of :c:type:`v4l2_params_buffer`.
-> + *
-> + * Currently only C3_ISP_PARAM_BUFFER_V0 is supported.
->    *
->    * The expected memory layout of the parameters buffer is::
->    *
-> @@ -561,4 +537,10 @@ struct c3_isp_params_cfg {
->   	__u8 data[C3_ISP_PARAMS_MAX_SIZE];
->   };
->   
-> +#ifdef __KERNEL__
-> +/* Make sure the header is type-convertible to the generic v4l2 params one */
-> +static_assert((sizeof(struct c3_isp_params_cfg) - C3_ISP_PARAMS_MAX_SIZE) ==
-> +	      sizeof(struct v4l2_params_buffer));
-> +#endif /* __KERNEL__ */
-> +
->   #endif
->
+On the client, you've got a choice for how to handle runtime PM.  You 
+can leave it enabled, and when the client decides to suspend the device, 
+tell the server's driver.  The server driver can then attempt to do a 
+runtime suspend on the physical device.  (You might need to add a new 
+type of message to the USBIP protocol to accomplish this; I don't know 
+the details.)  Alternatively, you can forbid runtime suspend on the 
+client entirely, although it would be nice if you could avoid this.
+
+System PM on the client can be handled more less the same as runtime PM.
+
+Alan Stern
 
