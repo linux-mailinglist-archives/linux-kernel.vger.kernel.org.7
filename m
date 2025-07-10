@@ -1,91 +1,241 @@
-Return-Path: <linux-kernel+bounces-725308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7226FAFFD60
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:01:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF4AAFFD84
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AF8F5A3B12
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:01:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D7B27BDAD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05EA293C49;
-	Thu, 10 Jul 2025 08:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WY9uea4B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F6328C86D;
-	Thu, 10 Jul 2025 08:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7A428DB50;
+	Thu, 10 Jul 2025 09:04:13 +0000 (UTC)
+Received: from mail.189.cn (189sx01-ptr.21cn.com [125.88.204.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CBA285050;
+	Thu, 10 Jul 2025 09:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=125.88.204.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752137936; cv=none; b=tdvutXYphvybbYvs95uKuiGtRXfbECqUxfp3a8nuvnxWN08mh27auNopFS6cWFNeAjy4ZmO+J9xI1dlEEKacyUL1qfS/p6daaAfqKNfPpE2bhXosmTB84E+GcSi3RRC97ekr7MVwYIHQFvn/Q3L+EVOkfQX46cDhAKrpSf/MfyM=
+	t=1752138252; cv=none; b=GkLbcFsC8P8yIzic7xgQ+rGdzQTyuSFo6WryYTAtzoF1c7g/8EVSeYYcdfxGHaz9o44qeQAKK776LQLP9Nh7Gk9mMZnYlY649MJsro84k7ahYi8mIYCG9mD6dI4VTsPdSioKRnZVmZqTd/ivcajRl1/v9WxoqgIx1/WjnfOH3/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752137936; c=relaxed/simple;
-	bh=UXD9GeP4baw6LpE0sxH7fdcWy6NpmrP6SBauhZSFCwI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jk2phoPhnXKv2hKiZ01Js8lQaV7InTyu2Ph1IEJKTfOaQzCfwOSnqqmbDuSAmnpB/CB4MH7iE4b3xvjfReX0o+hNEERNaW9mHLbJq3YiJpgNDSeSVO6fDfLjJtFWnQ6HVchjXEES8d6PFiBI2VLevstg1GDkZ3+juWMFxyNUKAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WY9uea4B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CB4EC4CEE3;
-	Thu, 10 Jul 2025 08:58:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752137935;
-	bh=UXD9GeP4baw6LpE0sxH7fdcWy6NpmrP6SBauhZSFCwI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=WY9uea4BBapdijQgutJGxA0KKLQUMSMX8ZusOd4aFjmIMprA/Y6jRnG3vWD4XzMue
-	 t0w6+/mITal5omfRZ2uyr3ijjY+5RcnR+Bh/2Ei8sXLHppyre9QZ4Be+EJQGuOuv9x
-	 gQoc+nz5ojAq3aXVi0ZsArCQd9PP2eVrvNqMb6NiPzxnWdjPPLK4X2+42B5OjWnJcN
-	 fB7vv+2fB3JLYqtwn2wNIb07hjL1eF14kDvMJ1ztxb+iW4CCNeqmaPzTf6kTZQ7Ije
-	 /+IBfTUvenBC8MZGa3mtMknlp5ED4tr9oY8fPCGiyeBDZHNFbsorb0FcEesbn/fPSa
-	 Lq2U4m0Zk8tfA==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Julien Panis <jpanis@baylibre.com>, Michael Walle <mwalle@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org
-In-Reply-To: <20250613114518.1772109-1-mwalle@kernel.org>
-References: <20250613114518.1772109-1-mwalle@kernel.org>
-Subject: Re: (subset) [PATCH v2 0/7] mfd: tps6594: Add TI TPS652G1 support
-Message-Id: <175213793326.1429296.9106240987537536987.b4-ty@kernel.org>
-Date: Thu, 10 Jul 2025 09:58:53 +0100
+	s=arc-20240116; t=1752138252; c=relaxed/simple;
+	bh=r22/WRVHPAfiyhwvVqnqplhAC1IL96v+HDVyPThKqh4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MgM9SVfH7gwB4ooraJ5BlaN24v9fqXmMxntIew3wQfzEeKiQT9s6T7676Se+ISfKw+/UXMXZPRRBwtg7Y2CqzAoZuM6sIrkxy9sZHYLAtYEG/W0KELwjZ67kwumEbn/8w37X94OuKLkLoFH+B5Tg25ZPsgGWl54kI6Gpg1Wzk7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=125.88.204.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.242.145:0.645490632
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-221.238.56.49 (unknown [10.158.242.145])
+	by mail.189.cn (HERMES) with SMTP id DA5C140029B;
+	Thu, 10 Jul 2025 16:59:12 +0800 (CST)
+Received: from  ([221.238.56.49])
+	by gateway-153622-dep-67b7b5d8b-hc52f with ESMTP id 8fdc9f5561464c378926d8d3ce4d65a8 for tytso@mit.edu;
+	Thu, 10 Jul 2025 16:59:12 CST
+X-Transaction-ID: 8fdc9f5561464c378926d8d3ce4d65a8
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 221.238.56.49
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+From: chensong_2000@189.cn
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Song Chen <chensong_2000@189.cn>
+Subject: [PATCH RFC] ext4: fallback unaligned part of dio to buffered IO
+Date: Thu, 10 Jul 2025 16:59:10 +0800
+Message-Id: <20250710085910.123168-1-chensong_2000@189.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
 
-On Fri, 13 Jun 2025 13:45:11 +0200, Michael Walle wrote:
-> Add support for the TI TPS652G1 PMIC which is a stripped down
-> version of the TPS65224. Support for the latter has already been
-> merged. Refactor the regulator driver to ease adding new devices.
-> After doing that adding the TPS652G1 variant is really straight
-> forward. Some care has to be taken by the interrupt handling (of the
-> regulator part) because there interrupts are used for voltage
-> monitoring which this variant doesn't have.
-> 
-> [...]
+From: Song Chen <chensong_2000@189.cn>
 
-Applied, thanks!
+When I was trying to read a big file in direct IO mode, if the
+file was not page aligned, ext4 rejected the request in
+iomap_dio_bio_iter which checks alignments of pos, addr and length
+before submitting bio.
 
-[1/7] mfd: tps6594: Add TI TPS652G1 support
-      commit: 626bb0a45584d544d84eab909795ccb355062bcc
-[2/7] misc: tps6594-pfsm: Add TI TPS652G1 PMIC PFSM
-      commit: 9cba6a7ebf65c603b80c0b3c7fa8c7c03f1b704c
-[3/7] pinctrl: pinctrl-tps6594: Add TPS652G1 PMIC pinctrl and GPIO
-      commit: f6420de1c810e282c34de65c70e6cc6177c12394
+As my understanding, pos and addr must be block size aligned, but length
+doesn't have to be. Instead of rejecting entire request which is so
+frastrating to upper layer, this patch splits length into aligned part
+and unaligned part. For the aligned part, still uses direct IO with
+no problem, for the rest unaligned part, falls back to buffered IO.
+This way looks more friendly to apps.
 
---
-Lee Jones [李琼斯]
+Please have a look at the patch in [1], it has to reopen the file
+to read the unaligned part in upper layer, which doen't look
+gracefully.
+
+I guess I'm not the first one who brings it up, there must be a reason
+to stop this porblem being addressed. unaligned write seems to be
+addressed in [2] and [3]. Side effects or complexity, I would like to know.
+
+This is just a draft of RFC, I haven't taken care of ubuf properly yet,
+please let me know if you like this idea or not, then I can drop it or
+go further, like introduce helpers to split iov_iter in lib/iov_iters.c
+
+[1]:https://lore.kernel.org/all/20240730075755.10941-4-link@vivo.com/
+[2]:https://lore.kernel.org/linux-ext4/20230314130759.642710-1-bfoster
+@redhat.com/
+[3]:https://lore.kernel.org/linux-ext4/20230810165559.946222-1-bfoster
+@redhat.com/
+
+Signed-off-by: Song Chen <chensong_2000@189.cn>
+---
+ fs/ext4/file.c | 90 ++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 83 insertions(+), 7 deletions(-)
+
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 21df81347147..a059985d0b16 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -36,6 +36,12 @@
+ #include "acl.h"
+ #include "truncate.h"
+ 
++enum {
++	SHOULD_NOT_DIO,
++	SHOULD_DIO,
++	SHOULD_PARTIAL_DIO,
++};
++
+ /*
+  * Returns %true if the given DIO request should be attempted with DIO, or
+  * %false if it should fall back to buffered I/O.
+@@ -52,23 +58,89 @@
+  *
+  * This function implements the traditional ext4 behavior in all these cases.
+  */
+-static bool ext4_should_use_dio(struct kiocb *iocb, struct iov_iter *iter)
++static int ext4_should_use_dio(struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	struct inode *inode = file_inode(iocb->ki_filp);
++	unsigned int len_mask = i_blocksize(inode) - 1;
++	unsigned int addr_mask = bdev_dma_alignment(inode->i_sb->s_bdev);
+ 	u32 dio_align = ext4_dio_alignment(inode);
+ 
++	/* inode doesn't support dio, fall back to buffered IO*/
+ 	if (dio_align == 0)
+-		return false;
++		return SHOULD_NOT_DIO;
++
++	/* addr is misaligned, fall back to buffered IO*/
++	if (!iov_iter_is_aligned(iter, addr_mask, 0))
++		return SHOULD_NOT_DIO;
++
++	/* pos is misaligned, fall back to buffered IO*/
++	if (!IS_ALIGNED(iocb->ki_pos, len_mask))
++		return SHOULD_NOT_DIO;
++
++	/* length is misaligned*/
++	if (!iov_iter_is_aligned(iter, 0, len_mask)) {
++		/* if length is less than a block, fall back to buffered IO*/
++		if (iov_iter_count(iter) < i_blocksize(inode))
++			return SHOULD_NOT_DIO;
++		/*direct IO for aligned part, buffered IO for misaligned part*/
++		return SHOULD_PARTIAL_DIO;
++	}
+ 
+-	if (dio_align == 1)
+-		return true;
++	return SHOULD_DIO;
++}
+ 
+-	return IS_ALIGNED(iocb->ki_pos | iov_iter_alignment(iter), dio_align);
++/*
++ * First of all, truncate the length to block size aligned and start
++ * a direct IO. If it goes well in iomap_dio_rw, fall back the rest
++ * unaligned part to buffered IO.
++ *
++ * At the end, return the sum bytes of direct IO and buffered IO.
++ */
++static ssize_t ext4_mixed_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	struct inode *inode = file_inode(iocb->ki_filp);
++	struct iov_iter to_misaligned = *to;
++	struct iovec iov;
++	ssize_t ret, ret_dio, ret_generic;
++
++	/* truncate iter->count to blocksize aligned and start direct IO */
++	iov_iter_truncate(to, ALIGN_DOWN(to->count, i_blocksize(inode)));
++	ret_dio = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL, 0, NULL, 0);
++
++	if (ret_dio <= 0) {
++		ret = ret_dio;
++		goto out;
++	}
++
++	/* set up iter to misaligned part and start buffered IO*/
++	iov.iov_base = to->__iov->iov_base +  ret_dio;
++	iov.iov_len	 = to->__iov->iov_len -  ret_dio;
++
++	to_misaligned.__iov = &iov;
++	iov_iter_truncate(&to_misaligned, iov.iov_len);
++
++	iocb->ki_flags &= ~IOCB_DIRECT;
++	ret_generic = generic_file_read_iter(iocb, &to_misaligned);
++
++	if (ret_generic <= 0) {
++		ret  = ret_generic;
++		goto out;
++	}
++
++	ret = ret_dio + ret_generic;
++
++out:
++	iocb->ki_flags |= IOCB_DIRECT;
++	inode_unlock_shared(inode);
++	file_accessed(iocb->ki_filp);
++
++	return ret;
+ }
+ 
+ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+ 	ssize_t ret;
++	int dio_supported;
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 
+ 	if (iocb->ki_flags & IOCB_NOWAIT) {
+@@ -78,7 +150,8 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		inode_lock_shared(inode);
+ 	}
+ 
+-	if (!ext4_should_use_dio(iocb, to)) {
++	dio_supported = ext4_should_use_dio(iocb, to);
++	if (dio_supported == SHOULD_NOT_DIO) {
+ 		inode_unlock_shared(inode);
+ 		/*
+ 		 * Fallback to buffered I/O if the operation being performed on
+@@ -91,6 +164,9 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		return generic_file_read_iter(iocb, to);
+ 	}
+ 
++	if (dio_supported == SHOULD_PARTIAL_DIO)
++		return ext4_mixed_read_iter(iocb, to);
++
+ 	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL, 0, NULL, 0);
+ 	inode_unlock_shared(inode);
+ 
+@@ -537,7 +613,7 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	}
+ 
+ 	/* Fallback to buffered I/O if the inode does not support direct I/O. */
+-	if (!ext4_should_use_dio(iocb, from)) {
++	if (ext4_should_use_dio(iocb, from) != SHOULD_DIO) {
+ 		if (ilock_shared)
+ 			inode_unlock_shared(inode);
+ 		else
+-- 
+2.25.1
 
 
