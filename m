@@ -1,95 +1,135 @@
-Return-Path: <linux-kernel+bounces-726525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9A7B00E2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:48:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F89B00E28
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91F84647C00
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:47:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 931A57B933F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22731293C75;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B596293C7E;
 	Thu, 10 Jul 2025 21:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HPIHPs38"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FDqVw1uR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a/4dXce0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744C8291142
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 21:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9E6292B3A;
+	Thu, 10 Jul 2025 21:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752184022; cv=none; b=hnwNF6T4Bb3Vv5DXvgBWg46f2CKVBwWIdCJJQn7gEUJEk6OLyxZwWvCd5ZvCifH0uPovJyGHpBZUft14crTKu/zySHg55MtIzofOeOyJ54DuxSEUbDV0xmddvHebhzOxccIMhwvw1nFZPu1rmqAKr4BzsA2ZgM0JzHJMhFQSZWs=
+	t=1752184022; cv=none; b=PoqZExaJq4rhZCWBAn+5JmNFHbvN6xQMWhfIoUQWflRSyTrUQk5B+Xc70qDWToMmCy88541G49paZx7f04trjVYa9DgcVbpXWu1al0UdHjfNtwkd2Gbjj+dDEMZuTiAeZojJNCrycKL/sv/VxwIBPBlwDu4hTfbVUkzEMnqVCmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752184022; c=relaxed/simple;
-	bh=yMqBrrpcJZvULg5UzIFJ4kHH3VhGJodv+B2HM3LjUns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jT58C+ZoVpjd3ZHIQ7Tbd/7dWPnpeW3bdhcUqL8HqalLxoMv2atL2TtFo0qEFHum8Qvr9sWUui4h/7s4Ru0lZDlV9OtFYyI+aFe4SKIzHATNGSM3TB3ZvhLX/QtiqgMauGhcUBqiBziEPuIApeMC8N3DkKXBRSV7C1IkVuCXYBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HPIHPs38; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5keT94UYo+lVgUpH7G2rj3sAusxDAQ2/pkCQOehvr3g=; b=HPIHPs38ujFuAw61nlEgH1XTDD
-	L9gB2acmqUVa8/5pX26zrrE7xVdNHuWnEpJTSbd3DlO4FwZNEnO8O1ZKmor/cEOTtz3S3lRTxxx1f
-	gFnGOVzE7euwxR3a0SvExYl6KUDT8PKZ+aBydltznrVwzfB/TAyhC8uOL7e3kZBvG/tzLkWG9cJm3
-	NhSnOSXVh3qGD6XyPeIhT5pfSSyAKoJ+4Nq0nyAlZjck3VgZ4ZpR79yO1nbu+kJnaw0+SQHVfMSM+
-	tOy1q/RDqhowsM/6iNtrq7qpj/0nlmw7lExjchv4tdjQbI1xG4+lz/CRL9LahO5zXN/7R54HtMLW9
-	hc5E7cgQ==;
-Received: from [179.118.186.174] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uZz6U-00F7G0-P7; Thu, 10 Jul 2025 23:46:54 +0200
-Message-ID: <ece437c6-52d2-4857-b9b9-cb73cbc091a0@igalia.com>
-Date: Thu, 10 Jul 2025 18:46:51 -0300
+	bh=nii83oEenuV5hCFIOdUmhieNFroqGqMTvzTflMSrpy4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=nWMbiEpGDvKt2lzoMDmGwhuMn0/fVAXCgrSR0CBYN+e7x+kvpqFLZZk9//CD+eT88YGtDrO7PH1j+wLrNyphzeQyZddw1OASnY4U0a7294z6g1xHeXcWX2Ak7UYy06VKNofR9LviYh88wKstyHPgLDJa2c2/Opmyo8HcZMYfjT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FDqVw1uR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a/4dXce0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 10 Jul 2025 21:46:57 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752184018;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hqn0AG1tmLyXf3znwjM+EaFm7a1IWTMJ9I4Aydck6Y8=;
+	b=FDqVw1uR8ARyGP+iTvel34i+z+VaYTP9PDNb5PZAnZd1F3rwa9clw5m6TePVSVH4qUkTHv
+	FHxJD+UnPK7ok+BKMcnRhZRHvW7bNyc/3Zvhhf3PVdWmBdWOhFegdkyhOBMLQ4BA9DFJkd
+	qL84VyThBFiNMHgkwFInT7YCGz50dVtYByc27LpAlofxFL9W85G4/s35SB3dXP+Pi9UivD
+	X034L8SnWKoWVY49IbLD20/8DdAIu+Fl8n1An33A2W7N1jvtEwF8/ntC0lvAFU2eG9O3eD
+	1IMYID942rpcjxW66YAvyM6b7iLd+7nAmBHAb7PpiE54+75ge41Jlphee8eq9g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752184018;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hqn0AG1tmLyXf3znwjM+EaFm7a1IWTMJ9I4Aydck6Y8=;
+	b=a/4dXce0WUYwGp193IXvD/D+/PmuV0nxJe9i+/aLHjBHKxA7J0MnGGft/eITVUS20XukH5
+	OLLU6MbGPHmPa+Bg==
+From: "tip-bot2 for Himanshu Madhani" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] PCI/MSI: Prevent recursive locking in
+ pci_msix_write_tph_tag()
+Cc: Jorge Lopez <jorge.jo.lopez@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Himanshu Madhani <himanshu.madhani@oracle.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20250708222530.1041477-1-himanshu.madhani@oracle.com>
+References: <20250708222530.1041477-1-himanshu.madhani@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amdgpu: Fix lifetime of struct amdgpu_task_info after
- ring reset
-To: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
- Dave Airlie <airlied@gmail.com>
-References: <20250704030629.1064397-1-andrealmeid@igalia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20250704030629.1064397-1-andrealmeid@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <175218401725.406.6167258058407425293.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Em 04/07/2025 00:06, André Almeida escreveu:
-> When a ring reset happens, amdgpu calls drm_dev_wedged_event() using
-> struct amdgpu_task_info *ti as one of the arguments. After using *ti, a
-> call to amdgpu_vm_put_task_info(ti) is required to correctly track its
-> lifetime.
-> 
-> However, it's called from a place that the ring reset path never reaches
-> due to a goto after drm_dev_wedged_event() is called. Move
-> amdgpu_vm_put_task_info() bellow the exit label to make sure that it's
-> called regardless of the code path.
-> 
-> amdgpu_vm_put_task_info() can only accept a valid address or NULL as
-> argument, so initialise *ti to make sure we can call this function if
-> *ti isn't used.
-> 
-> Fixes: a72002cb181f ("drm/amdgpu: Make use of drm_wedge_task_info")
-> Reported-by: Dave Airlie <airlied@gmail.com>
-> Closes: https://lore.kernel.org/dri-devel/CAPM=9tz0rQP8VZWKWyuF8kUMqRScxqoa6aVdwWw9=5yYxyYQ2Q@mail.gmail.com/
-> Signed-off-by: André Almeida <andrealmeid@igalia.com>
-> ---
+The following commit has been merged into the irq/urgent branch of tip:
 
-This patch is now merged at drm-misc-next, thanks!
+Commit-ID:     68ea85df15d111d82fc474cbe104174791169355
+Gitweb:        https://git.kernel.org/tip/68ea85df15d111d82fc474cbe104174791169355
+Author:        Himanshu Madhani <himanshu.madhani@oracle.com>
+AuthorDate:    Tue, 08 Jul 2025 22:25:30 
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 10 Jul 2025 23:41:08 +02:00
 
+PCI/MSI: Prevent recursive locking in pci_msix_write_tph_tag()
+
+pci_msix_write_tph_tag() takes the per device MSI descriptor mutex and then
+invokes msi_domain_get_virq(), which takes the same mutex again. That
+obviously results in a system hang which is exposed by a softlockup or
+lockdep warning.
+
+Move the lock guard after the invocation of msi_domain_get_virq() to fix
+this.
+
+[ tglx: Massage changelog by adding a proper explanation and removing the
+  	not really useful stacktrace ]
+
+Fixes: d5124a9957b2 ("PCI/MSI: Provide a sane mechanism for TPH")
+Reported-by: Jorge Lopez <jorge.jo.lopez@oracle.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Jorge Lopez <jorge.jo.lopez@oracle.com>
+Link: https://lore.kernel.org/all/20250708222530.1041477-1-himanshu.madhani@oracle.com
+---
+ drivers/pci/msi/msi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
+index 6ede55a..d686488 100644
+--- a/drivers/pci/msi/msi.c
++++ b/drivers/pci/msi/msi.c
+@@ -934,10 +934,12 @@ int pci_msix_write_tph_tag(struct pci_dev *pdev, unsigned int index, u16 tag)
+ 	if (!pdev->msix_enabled)
+ 		return -ENXIO;
+ 
+-	guard(msi_descs_lock)(&pdev->dev);
+ 	virq = msi_get_virq(&pdev->dev, index);
+ 	if (!virq)
+ 		return -ENXIO;
++
++	guard(msi_descs_lock)(&pdev->dev);
++
+ 	/*
+ 	 * This is a horrible hack, but short of implementing a PCI
+ 	 * specific interrupt chip callback and a huge pile of
 
