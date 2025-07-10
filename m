@@ -1,52 +1,56 @@
-Return-Path: <linux-kernel+bounces-724972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48191AFF93E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:11:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA25AFF972
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 129A07BF63D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:09:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FAF3162223
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0C828750D;
-	Thu, 10 Jul 2025 06:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4EA28DEE4;
+	Thu, 10 Jul 2025 06:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CbfmcoO8"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA004287274;
-	Thu, 10 Jul 2025 06:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9Zov/HU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB4428750F;
+	Thu, 10 Jul 2025 06:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752127574; cv=none; b=Y1em3OO5juUIcdJIIHOahXE0vNXqX4Fy0XYmeKvks3UNCA+brfXqGyBJALgJLUiimfRIlPyB6wdVqAAckfAMmUXLpsiRapK0IKkcdhJl/UIuvxE8AjcdG2qYUWWfA7x9NFwUK6lUrObioatIf5iVELbro6u1GwnHseIsAbGRb/w=
+	t=1752127804; cv=none; b=oNA3GbYkbBr4qcXR8f1MbV/ieqhXVCPqnAS4ILPhmWTyE5mM4MCImC4O2GpRiUY0Y9c5gG5uUJBD5VoXQv7jbjau7B0tWvTor7RUuip0X7P25CMbgrZm0r8ENTOxrm2BGowqZJp61bbHrvTQVpIU/4mKLo8kIA9XfPah9+bRTUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752127574; c=relaxed/simple;
-	bh=ivGeA2wXiSpFCTtX1rZotUWLlXU9zm0gSGx7++mcOjk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W7cSPg5wWauYUKuHyVO8pTqefpepGRRZEjWXCVvkY5emZNco0+Zdz/hCzGoV2hre15VbrlTM0o/tE6x+5/tGBxd93T4PBpSdKuOWYPbPA/UJieMlPSmsgnYpubro6ay5BKP5PBuhWYPBnoVrqHxtJNuXBrg5fOetGh8c4+Pgupg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CbfmcoO8; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=lr
-	MM3cDnKSKULOozBPNkIM/PzkKRLmxdEg7VouXUW9Y=; b=CbfmcoO8iJ7Bm9QZQi
-	0/8C7bpRBVIYfDq469vFWlCBndpI7NlewCmDJ5943h6GUmbANkwTVtWWCxxOLgTi
-	v9jElDU7xl3KVxT0lMdd0gQLsULiRAuM9saNKkj95fwqx7O5E1ux8axo4uKuUmvf
-	fEiYpI6A4sfQo0jd7Tf/MY9U0=
-Received: from chi-Redmi-Book.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDXH5khWG9oysB5Dw--.23816S2;
-	Thu, 10 Jul 2025 14:05:22 +0800 (CST)
-From: Chi Zhiling <chizhiling@163.com>
-To: willy@infradead.org,
-	akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1752127804; c=relaxed/simple;
+	bh=A3irvs3v7PeKCQdQ382HRWJhQhk42uJw8OaFzTK/jwY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nz5zKewoGzxqwZXzKaCuKTMUsdq1CMl0tymMdjzer4tcJOJU+FvuvZnVHcRVSQAd6+M1vJvTmFsrDeVjXomITj6TNn/eJsZqo3A6oYG1zQnfHNzlAhXKDzhwi5rm3DNcrespcWppY8w8aVRT9w0n91J/iUqvXRhpo3cQH1LZjok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9Zov/HU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8A90C4CEE3;
+	Thu, 10 Jul 2025 06:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752127804;
+	bh=A3irvs3v7PeKCQdQ382HRWJhQhk42uJw8OaFzTK/jwY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=s9Zov/HUucOp8tvLbXEgwce5AL6ve4tknQy4CUaMJSs32zOki/FDKYJ+T4ISkPv4f
+	 5OnIcVmzIBJsAguAGhqYWArSGIfvUG9cGL1pF4TPDA2vTb9dqivxAb1t6fxOsOljIW
+	 tC9CbGFllXrNC5+7hZ9ZnIaWCNHIc0iwBsbQhncDdFG0kmc5k5Hx/6Eh7iAy8eBv0V
+	 LeaVm9fr03M8tjFggiVDqe4/dUj8QIlekG7LjnG96rctZ/+qFDLvnNNH93t0L2lXcY
+	 gX+70CUs9eri1BkneIBwFfnCuixDGPWsWKJTrioINVNN82f24Yo/BpUaKYGhfItrQW
+	 rjxOGfkQ1MgFA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org,
+	Yuwen Chen <ywen.chen@foxmail.com>,
+	linux-mtd@lists.infradead.org,
+	ceph-devel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Chi Zhiling <chizhiling@kylinos.cn>
-Subject: [PATCH] readahead: Use folio_nr_pages() instead of shift operation
-Date: Thu, 10 Jul 2025 14:04:51 +0800
-Message-ID: <20250710060451.3535957-1-chizhiling@163.com>
-X-Mailer: git-send-email 2.43.0
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v2 0/6] fscrypt: Switch to sync_skcipher and on-stack requests
+Date: Wed,  9 Jul 2025 23:07:47 -0700
+Message-ID: <20250710060754.637098-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,37 +58,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXH5khWG9oysB5Dw--.23816S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWruF47ZrWUXFyUCw47Jry5Arb_yoW3Xwc_WF
-	W0kw4qgF18GF4Sga1Y9ayfGFW0g398CryUXF4DZF9rtay8Was7Xa4Yqr10vr1DXr1YkF43
-	JwsIqF98urn8GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8co7tUUUUU==
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/1tbiFBCGnWhvTwjKEgAAsH
 
-From: Chi Zhiling <chizhiling@kylinos.cn>
+Simplify the code and eliminate per-encryption-op dynamic memory
+allocations by switching from crypto_skcipher to crypto_sync_skcipher,
+and from dynamic request allocation to SYNC_SKCIPHER_REQUEST_ON_STACK.
 
-folio_nr_pages() is faster helper function to get the number of pages
-when NR_PAGES_IN_LARGE_FOLIO is enabled.
+Previously, this change would have made the x86 accelerated AES code no
+longer be used, which would have been very bad.  However, I fixed that
+in 6.16.  So we can make this simplification now.
 
-Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
----
- mm/readahead.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patchset applies to fscrypt/for-next.  The base-commit (listed
+below) can be found in next-20250708
 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 95a24f12d1e7..406756d34309 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -649,7 +649,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
- 	 * Ramp up sizes, and push forward the readahead window.
- 	 */
- 	expected = round_down(ra->start + ra->size - ra->async_size,
--			1UL << folio_order(folio));
-+			folio_nr_pages(folio));
- 	if (index == expected) {
- 		ra->start += ra->size;
- 		/*
+Changed in v2:
+- Added patches that remove the gfp_t argument from functions that no
+  longer need it.
+- Eliminated the goto in derive_key_aes().
+- Improved commit messages.
+
+Eric Biggers (6):
+  fscrypt: Don't use asynchronous CryptoAPI algorithms
+  fscrypt: Drop FORBID_WEAK_KEYS flag for AES-ECB
+  fscrypt: Switch to sync_skcipher and on-stack requests
+  fscrypt: Remove gfp_t argument from fscrypt_crypt_data_unit()
+  fscrypt: Remove gfp_t argument from fscrypt_encrypt_block_inplace()
+  ceph: Remove gfp_t argument from ceph_fscrypt_encrypt_*()
+
+ fs/ceph/crypto.c            | 13 +++-----
+ fs/ceph/crypto.h            | 10 +++---
+ fs/ceph/file.c              |  3 +-
+ fs/ceph/inode.c             |  3 +-
+ fs/crypto/bio.c             |  3 +-
+ fs/crypto/crypto.c          | 44 +++++++++-----------------
+ fs/crypto/fname.c           | 63 +++++++++++++------------------------
+ fs/crypto/fscrypt_private.h | 10 +++---
+ fs/crypto/keysetup.c        | 23 +++++++-------
+ fs/crypto/keysetup_v1.c     | 56 ++++++++++++++-------------------
+ fs/ubifs/crypto.c           |  2 +-
+ include/linux/fscrypt.h     |  5 ++-
+ 12 files changed, 91 insertions(+), 144 deletions(-)
+
+
+base-commit: b41c1d8d07906786c60893980d52688f31d114a6
 -- 
-2.43.0
+2.50.1
 
 
