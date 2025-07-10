@@ -1,79 +1,122 @@
-Return-Path: <linux-kernel+bounces-725954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A424B005EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:04:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF8DB005EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCBEB7AD7E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4408B188CEB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D058C2749C9;
-	Thu, 10 Jul 2025 15:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9FF2741CF;
+	Thu, 10 Jul 2025 15:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="tKwqQFSB"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owrdGSQ5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22262749C6;
-	Thu, 10 Jul 2025 15:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFD4154BF5;
+	Thu, 10 Jul 2025 15:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752159852; cv=none; b=VYd60YEpE1tMHoSN5qa5DstfzzSldSC+8oK8oiAyAZ92f14nf+ukSdCCr2z1NPCev1NR20MhCWEQuKbcDLnKs22pCPcn7NURjHEqqEudLIslzoXGrjwVGpGNxwzXtqNuI7f2OAoBhLPp7nhwmNun+y0oNYE2v5jvbJWM5ZhRTU4=
+	t=1752159932; cv=none; b=lhMVpMzSp6FoDUtWKS5e9N5gU/vnC4767PzYFm2gP4iqVk2+3sSunCYZYRAGRmDFczPmSjEwXOKjsMsx7pWZH6AbgPW9BMuwahZEL5Prc4m574GnL+hJR/ak2s+xaH0SN65FOET6mKLeiarPkP6HAxKzo0632W4BoATMCsjt0OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752159852; c=relaxed/simple;
-	bh=T0/vAK+rcjj6nMSP2hUPXvS0f96eutNXjj59x3eyc/w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FIzfOQTPq58/A5rHtRSKLZB+PSkU1uN+5Kys9XvZU+O1qxvp4iYUOWXqz/CqRX07yDJhg5BwGujGu4DKohOygMVtit1vOh7HD5PblaL1V4wdk2TSW8Ymqh0DIaNnzCrRZEMBDdDCNHgnzEQTHo5iCt/COmOQ0PXUMQ1PnVD+DVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=tKwqQFSB; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=T0/vAK+rcjj6nMSP2hUPXvS0f96eutNXjj59x3eyc/w=;
-	t=1752159850; x=1753369450; b=tKwqQFSBGInw9N00t2yWq6iuLiC5v6qbA2Qn4E3ICZ444T6
-	21f6iiKNcY0fxv8SPN4AYV7MflR7QO0S4Z6LH4k24TQoOVgynCmwB1v2clOM4iLd7/qHLmasxIVPK
-	wPn66JUNVN8k2v4DqM5ftZ7m/u7Olfzd8/XUxSkxmLrRfzgFspsNIFZAYKkbJHOGj8QaHhwE/DkE4
-	W26vhyyA5Dg2vlwSTyxwDnvN2WGhguEejOODRrWR7Oe1JiiagDPPpl14FLhv9rORdbOqXhPY1F4Ai
-	sSp59/EP1ysb+Egtyn7ylzLRJk8BIfxcU2rsq3S4FKFje1YnHZKbCbz28QFWkFJw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uZsoi-0000000EtXo-28nL;
-	Thu, 10 Jul 2025 17:04:08 +0200
-Message-ID: <3a2e91e108c2155137d7a89be296de70178c2614.camel@sipsolutions.net>
-Subject: Re: [PATCH] mac80211: fix unsigned int link_id format specifiers in
- trace.h
-From: Johannes Berg <johannes@sipsolutions.net>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	zhanjun@uniontech.com, niecheng1@uniontech.com, guanwentao@uniontech.com
-Date: Thu, 10 Jul 2025 17:04:07 +0200
-In-Reply-To: <2D6CF44B8B2BA412+20250710145043.331831-1-wangyuli@uniontech.com>
-References: 
-	<2D6CF44B8B2BA412+20250710145043.331831-1-wangyuli@uniontech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1752159932; c=relaxed/simple;
+	bh=o0tIfnXyZL6RSXxuYwIYRelHab7pZgA3+IwPqH/WlLU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=KTdgnnhX98JuMyVXT1v7LR54RUU+68Ibb/UkTlF3Q7k1rx7orH++VjpXdw/BdQHw1RTybthQK5Ulqr+IOxPj2IHAThrVB8/AmbGfiRkdHiNaTV/ynebKZNJbpRLWvrrTfrL4TUOmTsXffoOE6VG1DSlGy0/ZdhqYk9gHnfP3Hww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owrdGSQ5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CE6AC4CEF4;
+	Thu, 10 Jul 2025 15:05:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752159931;
+	bh=o0tIfnXyZL6RSXxuYwIYRelHab7pZgA3+IwPqH/WlLU=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=owrdGSQ58+poQzM6eqQfPuEnjKYhBgNnydk+GPYkzH4aGJ4+GiX5OKam8pVQrP5Ma
+	 oIMBX8SyQmYzV0PZKgBd18axGczzWeVrwJuiYj+DUewFAbJSARb307sEqQvCsP07Fl
+	 OHtIuXtd/7OOGvfrpwLWVnWvTLehnta6bMoF/wbJyAk0LNBc1MHkO71yvn7jfSNVbY
+	 TdTJbm4A8EJUM8ohlxdABvtcKGjEyVJp+It1hoHu1opwnJ9vJNvjfcFI8Q/M2oaRD9
+	 h5HAkjdAC3VrbwpQajwWq8memyVMJInyuQYDgQ9rIMVhKtaEfdTU/L8APdtapyDAA+
+	 R6dTSjA6Lj8iw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Jul 2025 17:05:25 +0200
+Message-Id: <DB8GUTJA9QU1.X112WTV7ABZN@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
+ Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>, "Will
+ Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>, "Mark
+ Rutland" <mark.rutland@arm.com>, "Wedson Almeida Filho"
+ <wedsonaf@gmail.com>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude
+ Paul" <lyude@redhat.com>, "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Alan Stern" <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 3/9] rust: sync: atomic: Add ordering annotation
+ types
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>, "Andreas Hindborg"
+ <a.hindborg@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-4-boqun.feng@gmail.com>
+ <4Ql5DIvfmXBHoUA428q2PelaaLNBI5Mi0jE3y3YPObJLRgY73zNZzQ8Pdl2qq25VWsMQFKUpYRHHQ1e7wFaGUw==@protonmail.internalid> <DB8BTA477Z2V.1J7XFLDXHMN2S@kernel.org> <87v7o0i7b8.fsf@kernel.org> <aG_RcB0tcdnkE_v4@Mac.home>
+In-Reply-To: <aG_RcB0tcdnkE_v4@Mac.home>
 
-On Thu, 2025-07-10 at 22:50 +0800, WangYuli wrote:
-> Fix format specifiers for link_id fields declared as 'unsigned int'
-> to use %u instead of %d. This affects several trace events where
-> link_id was incorrectly formatted as signed integer.
->=20
+On Thu Jul 10, 2025 at 4:42 PM CEST, Boqun Feng wrote:
+> On Thu, Jul 10, 2025 at 02:00:59PM +0200, Andreas Hindborg wrote:
+>> "Benno Lossin" <lossin@kernel.org> writes:
+>> > On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
+>> >> +/// The trait bound for annotating operations that support any order=
+ing.
+>> >> +pub trait Any: internal::Sealed {
+>> >
+>> > I don't like the name `Any`, how about `AnyOrdering`? Otherwise we
+>> > should require people to write `ordering::Any` because otherwise it's
+>> > pretty confusing.
+>>=20
+>> I agree with this observation.
+>>=20
+>
+> I'm OK to do the change, but let me show my arguments ;-)
+>
+> * First, we are using a language that supports namespaces,
+>   so I feel it's a bit unnecessary to use a different name just because
+>   it conflicts with `core::any::Any`. Doing so kinda undermines the
+>   namespace concepts. And we may have other `Any`s in the future, are we
+>   sure at the moment we should keyword `Any`?
 
-Why should we care?
+I don't think `Any` is a good name for something this specific anyways.
+If it were something private, then sure use `Any`, but since this is
+public, I don't think `Any` is a good name.
 
-johannes
+> * Another thing is that this trait won't be used very often outside
+>   definition of functions that having ordering variants, currently the
+>   only users are all inside atomic/generic.rs.
+
+I don't think this is a good argument to keep a bad name.
+
+> I probably choose the `ordering::Any` approach if you guys insist.
+
+I don't think we have a lint for that, so I'd prefer if we avoid that...
+
+Someone is going to just `use ...::ordering::Any` and then have a
+function `fn<T: Any>(_: T)` in their code and that will be very
+confusing.
+
+---
+Cheers,
+Benno
 
