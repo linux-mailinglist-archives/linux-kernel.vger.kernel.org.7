@@ -1,185 +1,142 @@
-Return-Path: <linux-kernel+bounces-725522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33300B00034
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:10:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782C7B00037
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33749167D3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:10:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81AD3A4B36
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5D828C2C5;
-	Thu, 10 Jul 2025 11:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB072D63E7;
+	Thu, 10 Jul 2025 11:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1KFF0a7"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLF1Vq9K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7B9219E8D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D95219E8D;
+	Thu, 10 Jul 2025 11:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145851; cv=none; b=WhwvxoTk0Easco4r9Sw9A5AsrzVTUoTKjKGrJpYMzz4+vJBYpCur1ReBKzlxUkaKndxYdsyQjBI7NEyHAgIXPGbuqZv6oszqwEp+3udZNfVnEBN+eRup3iZHwHwpQznYHckHxWIfkUlZIqaJJZFL6v+0y5LHq5+mSk8IeKt+HJ8=
+	t=1752145892; cv=none; b=FOgnCPHbobsmX678F9S/SIitlcCDGT6XvUZs32LxtFf1aHZi6pgpqW1GygnmKG/rpHpunseeGAOTWXC5Z7dTTQgoCIBi0X2zLrE4erAfIVjoRytE7uQsKfj3Y9TdEyKQrTmrCIAuRNqE59h8IBJeXf4EIrJQeuELaCpgKTlXLhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145851; c=relaxed/simple;
-	bh=yaWSYRxVNOpftVRILEYGdzN0BSHVgZsw0nzDbDADH8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M5bT8lQTTUfuF5W5y1z0I/W6VyOyKFL/QTCfCXJEEg7h/Jb2skHDjbqd6+Q41sT3vl1N/iiaZoojJOepRwEF9nrMjLYUs0QyVythpDd3HQWI7OXrqMRKJ2qJbuqB3h8uz8su+mbS9fZxfu5S1xMkB9qP3dRrrlHv2/hirR4H8Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g1KFF0a7; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-553b6a349ccso1056992e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 04:10:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752145848; x=1752750648; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s5c6mdpZ5N5FmfKJmH2vsM3IpF/Oago8XZttHkyE30c=;
-        b=g1KFF0a725CWfLaEVk17lTAsgn0CGnOiCXut/oS0gSBhCEtmhypUtGlA8RiygcPUeb
-         7gdLB+TCYSO57juVRX0R561ZUPm+/tmytZdVCS4TRZ6FInhJABWtr/pnTvJyg13IdfAK
-         JmKLuV5lplwNFVLTfYNcEszL2GU6jDcnEdonKQsMiWuhlGBMu38f8evDNOiR1QJdxODS
-         Tn5D/nFMz2ubSSr6LLi9YD8ot3T7qqkejBaC+gaFxI3/con44nrDT4MeYN01jzzZep/x
-         8jPwymQ0vuwfN3f+u5BviphBtvjV8NYOYaiHlL/czjOP8RMHWkXiUmimNY1X9j5L3xGu
-         TroA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752145848; x=1752750648;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s5c6mdpZ5N5FmfKJmH2vsM3IpF/Oago8XZttHkyE30c=;
-        b=tdIU06UV41gfDqBFTFSWGd8C0IAf/F1Szv/lphU7cNhIdP/lEUQwtp6evZ8QMVJ6E0
-         hHOcvgYlAzfgh6eF6NR9xW6L6BsNHgcCsLV/hlx3zWIQzfBPZvLZYWInKJ1UArm6CRBI
-         i+XaKe5rEuq4ZQISKkJC/ctl6srpNJtEfaRmg5t1t/bIJRA7ypfs668xEjETd9rjpj0l
-         0tnqeXKlSeb/DDMKNsTaanLlRezsmNZ8+mRvT0B/WXsybwkcHF2sVhwiujye4hTR4zgr
-         MY5UUfoZBzR+1PPif3/p6AZnoRBmaqgZCDq7GKhT7j6slKcwIYifYeIxNurqSPGisyPj
-         MnxA==
-X-Gm-Message-State: AOJu0Yza6mHRINAGURbP/81GeQq2fUcn/bOiELafd4govURRSsoDvkqj
-	5Mnjx3hfleHxzhoFtUVlGBtLgUyyo+1JCXAE3PsVKLPMyr0MmC6BCIo0
-X-Gm-Gg: ASbGnctjkaWbH5eCPsc+QsmuutA9hufUnSS+Hqno8L4EpcxaHJvMpdM8HhWJigxR8Ay
-	si2wMi0b5jFGfMrhA8JcygOPAKA+Q6kN9aPUmvSsTFbG/R8+QkD42BcW1ZCcPJrj3SC3jxViut+
-	A0+puCKQGN00PrT7Mnf9rZ0JVKEDDR3Y2efn3nbHpA6srFfcmulGU8X5YR/X37voJOEj/B3NyPG
-	cXHc7bIWjGIg5nf1rp3HKIDkkEGuQAchoHidJIKgq7P0JZPTOlZcP1aX/3mLmyN9DRGweWWLrYU
-	JY4AEJ6Qcvpwl+hY3iyNIgJrQ0dioMPQACRlyZpshhet69BSZNgC+eiclIuLNyMNGHvn2L9pu0k
-	JCrO5O+E4RRZs3m+6T4CoBIQ=
-X-Google-Smtp-Source: AGHT+IGAn8vcyrP1uTYa71RAZUTwdPJo5Eh/xm1IGiD6J5/7twt94HWi6Z71hsGH1I9HpbsakCg0Jg==
-X-Received: by 2002:a05:6512:3b23:b0:553:314e:81f7 with SMTP id 2adb3069b0e04-5592e34ff2dmr912102e87.17.1752145847792;
-        Thu, 10 Jul 2025 04:10:47 -0700 (PDT)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b808efsm331907e87.245.2025.07.10.04.10.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 04:10:47 -0700 (PDT)
-Date: Thu, 10 Jul 2025 13:10:45 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, ipedrosa@redhat.com,
-	David Airlie <airlied@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 2/3] drm/sitronix/st7571-i2c: Make the reset GPIO to be
- optional
-Message-ID: <aG-ftUl7l2zNm_eH@gmail.com>
-References: <20250710102453.101078-1-javierm@redhat.com>
- <20250710102453.101078-3-javierm@redhat.com>
- <aG-aXTgycE4JEJEZ@gmail.com>
- <87jz4gfgyu.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1752145892; c=relaxed/simple;
+	bh=TMZWOnSmjSdk9YHVst53o79sncIxUMvkU8tLCD3rYZc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=dwZ+Y5gQAxvyJhGruEUOkBAzF5JmHx9KgIJKMVbacth47hiZsstwgMrORKNmc1J4TiaDoqz+176yX1gPkft0Smppl6nsKPRniaelmDRPjh5IQ1rmhhPFyxXBLSEtWX9iwS7EYTpjN2PfZZtaLGckEpVzedVH1x+R3bhzJeuuTCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLF1Vq9K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B463C4CEE3;
+	Thu, 10 Jul 2025 11:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752145892;
+	bh=TMZWOnSmjSdk9YHVst53o79sncIxUMvkU8tLCD3rYZc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=oLF1Vq9KNmhaRndTqN690GtnqErDToecQacnKoLk7brnR9YyftnHBD3iiXOE1K7tO
+	 mVBEAmsPRtBWn+8TRpepDAMCfxgI12wEU0/iftKxkRUphKrMk96cUNP8tARwPjySGm
+	 DsjuhyQ5xd4XBEcif/2G2JFWxEoNuxoFqlXvy5O0DkAsaRD3RXHWyck2rW03oT0zHc
+	 zhlpUstnqoxrMG4SJmR9TdaACuJWDtxfSMc9cLN3ma3bamikE9dIspcR30CbnvGCYw
+	 R0/1Sj3m6GcNBl4zjVTTXrm61aP8vRQ9h9QlshbXHdzqQslcjdZr8KgSmmqb18e1uX
+	 +Y6QLk7+YVtVQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Fti6taVECEwEdkZW"
-Content-Disposition: inline
-In-Reply-To: <87jz4gfgyu.fsf@minerva.mail-host-address-is-not-set>
-
-
---Fti6taVECEwEdkZW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Jul 2025 13:11:27 +0200
+Message-Id: <DB8BVOLRNDQU.SMTSAMKQ6WVH@kernel.org>
+Cc: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v9 0/5] rust: DebugFS Bindings
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>
+X-Mailer: aerc 0.20.1
+References: <20250709-debugfs-rust-v9-0-92b9eab5a951@google.com>
+ <DB7US8G7ISG0.20430M3P7I0K0@kernel.org>
+ <CAGSQo01hORWAtrGaYp-_xxrAiN47JkJg=jiqnqdpw87QKzt9jg@mail.gmail.com>
+ <DB7V19QE6KFB.3MR0BAOWXT7M7@kernel.org>
+ <CAGSQo01drZoy1-j-+Y-BHHOX5AzCG4A5KiUOu5TJ40JOdfcB0g@mail.gmail.com>
+ <aG7pP1BTLQKInFrl@cassiopeiae> <2025071014-radiantly-dreamland-4017@gregkh>
+ <DB89V15HIG8C.2HL9JVKFNEDTK@kernel.org>
+ <DB8BUDZQJOM5.2WS6MCW6I0XES@kernel.org>
+In-Reply-To: <DB8BUDZQJOM5.2WS6MCW6I0XES@kernel.org>
 
-Hello Javier,
+On Thu Jul 10, 2025 at 1:09 PM CEST, Benno Lossin wrote:
+> On Thu Jul 10, 2025 at 11:36 AM CEST, Danilo Krummrich wrote:
+>> On Thu Jul 10, 2025 at 7:27 AM CEST, Greg Kroah-Hartman wrote:
+>>> Ugh.
+>>>
+>>> Yes we need write.  And read, and custom file-ops, and the like as
+>>> that's what debugfs is doing today for C code!  We need this to be as
+>>> simple as, or almost as simple as, what we have today in C or no one is
+>>> going to use this stuff and go off and attempt to write their own mess.
+>>
+>> I agree, we really want the helpers you're referring to below. I think w=
+e
+>> discussed this in previous iterations already.
+>>
+>>> While I would love to have something as simple as:
+>>> 	void debugfs_create_u8(const char *name, umode_t mode, struct dentry *=
+parent, u8 *value);
+>>> like we do today.  I understand that this makes all sorts of
+>>> "assumptions" that Rust really doesn't like (i.e. lifetime of *value an=
+d
+>>> the like), BUT we MUST have something like this for Rust users, as
+>>> that's going to ensure that people actually use this api.
+>>
+>> I think it can be as simple as
+>>
+>> 	void debugfs_create_u8(const char *name, umode_t mode, struct dentry *p=
+arent, u8 *value);
+>>
+>> in Rust as well. Declaring this in a structure looks like this.
+>>
+>> 	struct Data {
+>> 	   counter: File<u8>,
+>> 	}
+>>
+>> Given that we have some Dir instance, this can be as simple as:
+>>
+>> 	dir.create_file_u8(...);
+>>
+>> Which uses default callbacks for read(), write(), etc.
+>>
+>>> Look at an in-kernel function today, like ath9k_init_debug() that
+>>> creates a metric-ton of debugfs files and binds them to different
+>>> variables that are owned by a structure and more complex data structure=
+s
+>>> and memory dumps and other random file interactions.  We need, in Rust,
+>>> a way to do everything that that function can do today, in a SIMPLE
+>>> manner that reads just as easily as ath9k_init_debug() does.
+>>
+>> That's possible with the current design and code, it misses the helpers,=
+ such as
+>> create_file_u8() above, to reduce the boilerplate though. With that, it =
+should
+>> look pretty similar.
+>
+> Can't you just implement the traits directly on `u8` and then just call
+> `create_file`?
 
-On Thu, Jul 10, 2025 at 01:00:41PM +0200, Javier Martinez Canillas wrote:
-> >
-> > devm_gpiod_get_optional() returns -ENOENT when the GPIO is not found,
-> > and that is no error we want to propagage upwards.
-> >
-> > Maybe something like this instead:
-> > if (IS_ERR(st7571->reset) && IS_ERR(st7571->reset) !=3D -ENOENT)
-> >
->=20
-> Are you sure about that? As far as I know, that is exactly the
-> difference between gpiod_get() and gpiod_get_optional() variants.
->=20
-> From the gpiod_get_optional() function helper kernel-doc [0]:
->=20
-> /**
->  * gpiod_get_optional - obtain an optional GPIO for a given GPIO function
->  * @dev: GPIO consumer, can be NULL for system-global GPIOs
->  * @con_id: function within the GPIO consumer
->  * @flags: optional GPIO initialization flags
->  *
->  * This is equivalent to gpiod_get(), except that when no GPIO was assign=
-ed to
->  * the requested function it will return NULL. This is convenient for dri=
-vers
->  * that need to handle optional GPIOs.
->  *
->  * Returns:
->  * The GPIO descriptor corresponding to the function @con_id of device
->  * dev, NULL if no GPIO has been assigned to the requested function, or
->  * another IS_ERR() code if an error occurred while trying to acquire the=
- GPIO.
->  */
->=20
-> while the gpiod_get() kernel-doc says the following:
->=20
-> /**
->  * gpiod_get - obtain a GPIO for a given GPIO function
->  * @dev:	GPIO consumer, can be NULL for system-global GPIOs
->  * @con_id:	function within the GPIO consumer
->  * @flags:	optional GPIO initialization flags
->  *
->  * Returns:
->  * The GPIO descriptor corresponding to the function @con_id of device
->  * dev, -ENOENT if no GPIO has been assigned to the requested function, or
->  * another IS_ERR() code if an error occurred while trying to acquire the=
- GPIO.
->  */
->=20
+Ah I guess for write support you need `Atomic<u8>` and that doesn't
+implement `Display`...
 
-You are completely righ.
+Maybe `Display` is the wrong trait for this...
 
-Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-
-Best regards,
-Marcus Folkesson
-
---Fti6taVECEwEdkZW
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmhvn7AACgkQiIBOb1ld
-UjIffw//c3pLhZJ1bRWdSMjo7egI2nUhTlVDEXVGWlnY+fPOG4uQJzFvUV0PM2vx
-usQXvEGi1V2wJn4OF+937kfNUqoYyS/bkBj/QlBZN+/XRPlDitve0B83uUt4nQgJ
-4jxjoaUnsQI/RNX2YSepQJaRh5FGTceeSPyRpVIlW2sy7IcheAB9mCxfhNc6ACtp
-lUhrgsKiZKF3gjpNn5GctJbVyPPrFsdN90wIPXaD6vHdiVGk4gZfqUSxakb5Ifrb
-cx3scfJMYWNPefjYoSmHeCLhBT+nWUls1kXBIWejE45f6tyToHzrIXs737/UFk6Q
-qE7YYfyVsdWFEbzFALq1qY1AkPzVqwshEBNU8kDoL74DW4/pd+dlGctxGgZZYj/q
-UEw/qT5gaq2xyRjDPitUaliFG/40sl1F5MVkcMRux2B7uxOrobZu9iJEPzN5oiA+
-O5ywh6Ky6G4+lSJksgxv5fX4LoNgw6Xg1t5CiJREvhZzEpeqDaMndNfGZQsJg73i
-qaXy5LHd9ApoMkLtCUKgRUP33uUh9GUzXwE5CkY0YGi8lo8ehxz7vxSAhIqXXlUf
-JaLskasLS379gId/czLgtIrdC0DWLgaRILo/ccFspccgVf7UEcF9xxozEnoNfzIW
-bkcNeSkSbgFtSANueTT839c/Q1JgbFZ3mjchardAJ8APLtGq6do=
-=TOBA
------END PGP SIGNATURE-----
-
---Fti6taVECEwEdkZW--
+---
+Cheers,
+Benno
 
