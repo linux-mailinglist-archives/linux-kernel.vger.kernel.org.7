@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-725351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0A5AFFDF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:22:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97183AFFDF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFACA1886C87
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC274831CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748C92951B5;
-	Thu, 10 Jul 2025 09:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E572D2980CD;
+	Thu, 10 Jul 2025 09:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="cjcv1tv6"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ArHXbaU/"
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CA4293C66;
-	Thu, 10 Jul 2025 09:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB23294A06;
+	Thu, 10 Jul 2025 09:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752139321; cv=none; b=DY55UbX9LHte8MkxzXeg+PXGpJyKMqIGipvNCcD02OpZXcS2roui+WEqGUDYjI42OtXfTmGbEfKi93h+sErUr1kyV3bi5LCP5bAyA3/avStruSSa3o6nbsVaeaEd+K5V/zBjRSyAjsg0K0NEcEU+vSfjr72ywe9Gx/6ScgiJ320=
+	t=1752139324; cv=none; b=NFKWGjooQS3tR8LWkfyOszjA7w9Im6PmQLgN5e1jKL6MTVnQWu/r/rQKMkpfUlCu90iJ7U4b5E96SHKiVtGOaTnRysxlHXAStWUDb6rwVdUUzgqRmm3dYNhjnmBbDRkKTxAIvDjdPUox098Er8dABFKrvWe7n3h8+e7UBOT0Cjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752139321; c=relaxed/simple;
-	bh=uBESpV6VYmtMf5c0jfO84+kgeOgfAvmMmBPnGttkCe8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ajpnDo7AE1g4ESoYuJTGcWbUq7MKXfyoqyMKjcNgKHdLYBPe9yoOdhXCdbXl1FjsGzZJIB5tJZwMoUJlCCjGl+YFOmqgme0a8wOwDCP95X5VQBxeva6ILUmIbFJigf4//P8so3ragkRSO+YzQ+51N2fJoq/iyH16QXidN9lJiTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=cjcv1tv6; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1752139324; c=relaxed/simple;
+	bh=8jv9si5Dm29nc6cOMexjPtTBEsERysb0Yr5v4WL1nzo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XPNszIwOfDHE7dgxZ4u0hSraCPYXh2Hd2LGAwGwoEOJSXGeqI7cTZsZW1L190Iq6ucHI1MsdGeuXx3LY/OfHae2ExKIdHhGdJMiYHLCTWpr2etId8m4Wz/yj36uXCJB6qJeJ8x+plVx0qhpjGm8rdsZDVMJunfc7o8IJDNO44Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ArHXbaU/; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 2E8FF20A48;
-	Thu, 10 Jul 2025 11:21:51 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 9AC5620E4F;
+	Thu, 10 Jul 2025 11:21:55 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id LPJcxE4Y_BvH; Thu, 10 Jul 2025 11:21:50 +0200 (CEST)
+ id jVRQWH_OPQYW; Thu, 10 Jul 2025 11:21:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1752139310; bh=uBESpV6VYmtMf5c0jfO84+kgeOgfAvmMmBPnGttkCe8=;
-	h=From:To:Cc:Subject:Date;
-	b=cjcv1tv623srhANAPtOsUskYP/Y7EolbRFoS7GkiKFnEgzTCR+WIpuHeei/xmQMUK
-	 5/GP4XWiuCt/7cF7xasp8Lr2QM+9+gWhKmwOE6ZH5T/P92A541JMSkk+ThNb6LDCZs
-	 Q8bac9sasMULCQnalWf8u7ZMhBWT7kLqBCptYp5WJudHxSwjr3viuHh4uuwTwQyBcZ
-	 m92m382TfUt5CBnsPJi99jaFzfXtmhdokC7qLXMZpXpxibnE7ghrUTjPq9mbCeifXW
-	 C9D+TwvY//m63g56GEig6Tya0LnqNORknzdR8HKVvm0qnPShK5ntxKUIJP/DUFxB6C
-	 6xw13hUBYeeUA==
+	t=1752139314; bh=8jv9si5Dm29nc6cOMexjPtTBEsERysb0Yr5v4WL1nzo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ArHXbaU/7hmjWGqDFqA9UhVGwP8lArLw26t0gSveZ6cI7JqQd1CQ+apBUBAhlK3E9
+	 l1EHwYOI68jWpY2MtcJp93hAaKjp770fz9FxUz7VGLGhNwSZ7RTJQjK80DG0BET+jw
+	 dbpWJQg3oAJuG4FtiOI+GzqlnK3S9jB2hmM1DgdBnQZIsvWsRHkVlSb8F1MiKBV2Tq
+	 5iC7G7RMMv6y2Eqhx+KxzOFGrBrgxnj+fHXMPRKbeQFcZFFmRcKk8ixSCalaw5V5o3
+	 JJRoGz8BWaesCGy4GrFLsJYczK/Crme0E7QFHds06iifIIJs5014suMrYxc1eK9LIq
+	 Z3hGJHFT8YE1w==
 From: Yao Zi <ziyao@disroot.org>
 To: Drew Fustini <fustini@kernel.org>,
 	Guo Ren <guoren@kernel.org>,
@@ -57,9 +58,11 @@ Cc: linux-riscv@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v2 0/2] Fix orphan clocks in clk-th1520-ap driver
-Date: Thu, 10 Jul 2025 09:21:33 +0000
-Message-ID: <20250710092135.61049-1-ziyao@disroot.org>
+Subject: [PATCH v2 1/2] clk: thead: th1520-ap: Correctly refer the parent of osc_12m
+Date: Thu, 10 Jul 2025 09:21:34 +0000
+Message-ID: <20250710092135.61049-2-ziyao@disroot.org>
+In-Reply-To: <20250710092135.61049-1-ziyao@disroot.org>
+References: <20250710092135.61049-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,41 +71,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-clk_orphan_dump shows two suspicious orphan clocks on TH1520 when
-booting the kernel with mainline U-Boot,
+The "osc_12m" fixed factor clock refers the external oscillator by
+setting clk_parent_data.fw_name to osc_24m, which is obviously wrong
+since no clock-names property is allowed for compatible
+thead,th1520-clk-ap.
 
-        $ cat /sys/kernel/debug/clk/clk_orphan_dump | jq 'keys'
-        [
-          "c910",
-          "osc_12m"
-        ]
+Refer the oscillator as parent by index instead.
 
-where the correct parents should be c910-i0 for c910, and osc_24m for
-osc_12m.
+Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
+ drivers/clk/thead/clk-th1520-ap.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Note that the c910's case cannot be reproduced with vendor U-Boot,
-which always reparents c910 to its second parent, cpu-pll1. Another way
-to confirm the bug is to examine
-/sys/kernel/debug/clk/c910/clk_possible_parents, which obviously doesn't
-match c910's definition.
-
-This series corrects the parent description of these two clocks to
-eliminate the orphans.
-
-Changed from v1
-- Split the two fixes into separate patches
-- Add a static qualifier for the new definition of osc_12m
-- Link to v1: https://lore.kernel.org/all/20250705052028.24611-1-ziyao@disroot.org/
-
-Thanks for your time and review.
-
-Yao Zi (2):
-  clk: thead: th1520-ap: Correctly refer the parent of osc_12m
-  clk: thead: th1520-ap: Correctly refer the parent of c910-i0
-
- drivers/clk/thead/clk-th1520-ap.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+index ebfb1d59401d..42feb4bb6329 100644
+--- a/drivers/clk/thead/clk-th1520-ap.c
++++ b/drivers/clk/thead/clk-th1520-ap.c
+@@ -582,7 +582,14 @@ static const struct clk_parent_data peri2sys_apb_pclk_pd[] = {
+ 	{ .hw = &peri2sys_apb_pclk.common.hw }
+ };
+ 
+-static CLK_FIXED_FACTOR_FW_NAME(osc12m_clk, "osc_12m", "osc_24m", 2, 1, 0);
++static struct clk_fixed_factor osc12m_clk = {
++	.div		= 2,
++	.mult		= 1,
++	.hw.init	= CLK_HW_INIT_PARENTS_DATA("osc_12m",
++						   osc_24m_clk,
++						   &clk_fixed_factor_ops,
++						   0),
++};
+ 
+ static const char * const out_parents[] = { "osc_24m", "osc_12m" };
+ 
 -- 
 2.50.0
 
