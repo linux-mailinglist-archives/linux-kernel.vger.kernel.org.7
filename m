@@ -1,168 +1,105 @@
-Return-Path: <linux-kernel+bounces-725112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCF94AFFAEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2007EAFFAF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19404E34AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:32:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14A564281A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FAC288C30;
-	Thu, 10 Jul 2025 07:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C5828A3EC;
+	Thu, 10 Jul 2025 07:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnPUXsw7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="l3HtWAI9"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92361227EB9;
-	Thu, 10 Jul 2025 07:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAD6289E2E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752132763; cv=none; b=eMyqyM9c/UxBFfe7qmqZ//dzwZr5mdyAmqFkwOKgtXm8+V5ioYnt8FMfyYrpU+A5oNL7zUTvjLMfoXXsQfYJcUrR+7nPOzp5Gwm8PbTfHmFjrkTwFhOn7IB4uHQLkZtqyIKqeDZsqiRQXjz1ULl9bzqNDiexv2sTPZdZ1CNDMlY=
+	t=1752132823; cv=none; b=F2bxl6X88Kbo7HzeoX3t00RUX7I8SqqBeEc0k7KVHYe6BfR8S0xBYRo2TTklbxZsvYO82/6eR0844NbxeIJUpFV3M/rBW+BGwJ+GF/ktKyh7DXjBOzWdjSXguVn49LFbHRxUB/REolwNEvKrabMot/dB3KXtOiMiDRsShaq+iG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752132763; c=relaxed/simple;
-	bh=ESvz/aMQ45s+6/z/6QsQGCVI/B73/273Qyl466OeL1U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sOXHNeltXjipRJQfl6apDi6aocrC8cH2FmEvA+cR7arXEtbqi2K8jX8KahbhO8EToEo3xCPJwro+jJhL6izVXHMVp5cIglxFuRU5vdbNn1Zv0lgExOGrouCPbSx0bG9nn2GknSsY+Mfs8A8YvssR9qu9cTCUpDkjj4imGhmKmgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnPUXsw7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67CF5C4CEF5;
-	Thu, 10 Jul 2025 07:32:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752132763;
-	bh=ESvz/aMQ45s+6/z/6QsQGCVI/B73/273Qyl466OeL1U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GnPUXsw7OJQlyWo6uBqnUBdiNaLRn8lWrqFsE7r86UzusxTd3mRXl2poex8UUxJ3e
-	 R4dq1hp1aEeMDta4GqahpX6ycaGiT02CKjQECgOZOgEAanDUXpuM95rYL5kCgXUkx0
-	 XWB7CS3vnFLmUNR47RDjFJkRmo3/6uUHwQO7SmVZ08TPHECiDISUv1icdQpf3420OZ
-	 ZSCehca3ebFKSMMI5YDH5ivV1HzfxWAUIp8t5Gb85WOTiANqVV+0xIpO/Q9vc91nCK
-	 /HGsx1AwoI9rL+R4ArEj78OnBaFrHLgPqf+4UM9Qbu9iwf/5OlFgWfxR4msvFE+D2E
-	 Dii0CISHIyWSw==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-553c31542b1so620156e87.2;
-        Thu, 10 Jul 2025 00:32:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVBm+xczxuhobLQiX+YCegwbC/3WjtZCIfE1g/saVKew3ZtLT7IK5tfg9azT84TI2M37D1lFQljihjprLea@vger.kernel.org, AJvYcCXe3Afc4oOgBBGR7tUwoQhym0rVsdQA+wx0fA8c6I7YxjKTNLiVkY2+9uXoqFDfEmOoEQxa31Tmlj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwJARkW8aeGMoGRnRlb8gR2AtgfUAB32WDjabwsNQeyerN5zeO
-	kB8ISUiwqjgVRBXwUhJCO82ZaE6vJnma3vF8irCuH86vS/szzlTi8gN78Z6IWJLH+INnZBYPwGZ
-	tlJfSbyT2/mwIODiLFPbedei09QJdc1k=
-X-Google-Smtp-Source: AGHT+IEtVwAV9djQfFwoA1IBeLCVCay0CkhTeGJoYyUKB09pexaqDJ1lrfGjS0A4D8sMH88d3zURnxyLFVnl3sWz7E4=
-X-Received: by 2002:ac2:4e13:0:b0:553:3407:eee0 with SMTP id
- 2adb3069b0e04-5592e2ecd7fmr605344e87.4.1752132761717; Thu, 10 Jul 2025
- 00:32:41 -0700 (PDT)
+	s=arc-20240116; t=1752132823; c=relaxed/simple;
+	bh=+cjQnk++1bzGkpqMFN4wt4PyunkBLE0VE5bOPYI5+EY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=STcHHUmM4SPAb71c4065BWW8CbKbC8qzuXYj8eiX9E1rWOuI16UEmL1L6W/HnxSKSpieoNFbv4wCYQTPidg+nybdJja/t3nwpcFKHu3ggbv3ZEgxPcs4WQ3Wf6AE+10lDlqiwbazHQgQQNIEnHMU0Oej+39f4IhtGhSF5G0c8lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=l3HtWAI9; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60c3aafae23so3869928a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1752132820; x=1752737620; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Dc3P5Oeg2bmqCJNQbYoEMD7h352Kk7u8cbR4u9q01PQ=;
+        b=l3HtWAI907PF2MtzWugEjsOEFkLy9glYCb7hhMExDJseRo4UKTwHugeZ7m+eDnlYQ4
+         FuM0FhunTmEvUw1FOeMGryU14iVA4OxKe9JGc45q2tMeoMS9fIaHuQRxHyEeVWsQvGyr
+         saEDZidxexBF5yGCAFRIFzMhmMmqK0JwyNkpMhqsKh1eNP77YLYDeN5kR2Gxu2piYACg
+         ZiHAHoVPhiBcyaFPgyzNdbu36zQZChYS2JPbbFwZLXivWoro9X7HiUe7ecDs9oj+f2bx
+         bgagzzJrSxEkpvJUn2lE4yKV5e0fxZ0OKqqugu6vWb3OyBq+GT5INouMH4+n4Isx4jhs
+         dcnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752132820; x=1752737620;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dc3P5Oeg2bmqCJNQbYoEMD7h352Kk7u8cbR4u9q01PQ=;
+        b=NfivRyhHSeD7GzqD8zZLiFX5SvAqbOsoRx1aSG9VNZ6quoOP23N0PikWswSBo4bMdO
+         w2WDY61VzH+5o6F6Jl/MZqqje/9GG9IF/kZ6K8c9IYAFG/mXN+sMCoAkGMjs2urfHKOM
+         szListAuBin8iOkiHvwUpZnRT65jpzgyy/gETBcwP4VcJdo7xYSz/F4V3kUOFkiejeY0
+         ZfP5Zes/FlSUraA+jp7yQS95J4XgvR2YTDJwwIF4DuV8vIwbJia3v4PEoCCh+LfqVlJ9
+         ZfImT4d4ay1ScyfIFU0B72GPLPjkIBwIpTOaUNDImpL/bGQYxSLWKmzpnUjqDFqZ7oco
+         Da3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVaI/WrRosm942wwhj7vMJErUtFF/rsULZ3S7fDrQxlDRRBulU3y5dCajWMXcpqCz4tJK/N6lL+xBezIHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGvXHbnG1kT1R2rVzVE2rnLm1EimiaUx7a5IBi9qKVKfcUkzGp
+	K+d43V0Wqd5MVhy4iNgeysjfU89stMAkxEWS/NflVhKNxD8JEjmqvHHf7COCZTshPv8=
+X-Gm-Gg: ASbGncsVIlOCnzwmEH+6oMx+veE7w0BCLDg1oJfYZMVb7/Rg0GFYSYCfGSiLZNGPWAR
+	ZFZNwlQgetIJKW8o3TplHTT12qwBFA0bV6u7jre4fYm2iiYIPZR8SR00oBs9Oz2oxrCJfbWNgXA
+	1nAnRWlrLlHDLlgS/74TKBQArObAn3Kkq1YmBWfSqKWTivj9CsH6Kp4zg6cqCY2naLv16JDQjn+
+	avolqv9Xp05sfOXyMmvyjtxE0uiycRGRC1LQ2nGOMQwJxvcqpXYdOwkQkEpHH212kVypCaUszG8
+	sYsSldsgLzgH1sLxLDU5edkz4Ek8caJ6pr0SG0MEtB1PmCUosnOX9DgqPqYP1cadiTqDLA==
+X-Google-Smtp-Source: AGHT+IFP44qvVL01Qb6g5roOyXaKEqhnKPzl7FYoVy33V/zCBqQ1uZivmGf2cxu6nX3jQYwA8oqa8w==
+X-Received: by 2002:a17:907:c88a:b0:ad5:6174:f947 with SMTP id a640c23a62f3a-ae6e24bbf63mr210305366b.22.1752132819879;
+        Thu, 10 Jul 2025 00:33:39 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82df311sm80484166b.165.2025.07.10.00.33.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 00:33:39 -0700 (PDT)
+Message-ID: <47a9830f-e0cf-46d7-8f8d-344901bb6236@tuxon.dev>
+Date: Thu, 10 Jul 2025 10:33:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709103541.7268-1-feng.tang@linux.alibaba.com>
- <CAMj1kXEvxPjFsqoMzZnb2zxSf9uyLVzuzKEeKD4fLEux3NbUhw@mail.gmail.com>
- <aG5Lod-McOlBmt7_@U-2FWC9VHC-2323.local> <CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com>
- <aG9qmV-wzFr7I-Tb@U-2FWC9VHC-2323.local>
-In-Reply-To: <aG9qmV-wzFr7I-Tb@U-2FWC9VHC-2323.local>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 10 Jul 2025 17:32:30 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXG+0hjhNziKMnhKY-uX4V=OBFuS1mUCdZs7VW2DjAsjyg@mail.gmail.com>
-X-Gm-Features: Ac12FXzcrwS81h_2LOgE93cGgRkIBJTXEvdRPyKl1GdAjQZ-aeSlCrcwBahhZOg
-Message-ID: <CAMj1kXG+0hjhNziKMnhKY-uX4V=OBFuS1mUCdZs7VW2DjAsjyg@mail.gmail.com>
-Subject: Re: [PATCH] efi: remove the rtc-wakeup capability from default value
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Update the cache configuration for Microchip SAMA5D
+ MPUs
+To: Mihai Sain <mihai.sain@microchip.com>, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250625064934.4828-1-mihai.sain@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <20250625064934.4828-1-mihai.sain@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 10 Jul 2025 at 17:24, Feng Tang <feng.tang@linux.alibaba.com> wrote:
->
-> Add Alexandre Belloni for his view on rtc-efi driver
->
-> On Thu, Jul 10, 2025 at 09:33:19AM +1000, Ard Biesheuvel wrote:
-> > On Wed, 9 Jul 2025 at 21:00, Feng Tang <feng.tang@linux.alibaba.com> wrote:
-> > >
-> > > On Wed, Jul 09, 2025 at 08:42:24PM +1000, Ard Biesheuvel wrote:
-> > > > On Wed, 9 Jul 2025 at 20:35, Feng Tang <feng.tang@linux.alibaba.com> wrote:
-> > > > >
-> > > > > The kernel selftest of rtc reported a error on an ARM server:
-> > > > >
-> > > > >         RUN           rtc.alarm_alm_set ...
-> > > > >         rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
-> > > > >         rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
-> > > > >         alarm_alm_set: Test terminated by assertion
-> > > > >                  FAIL  rtc.alarm_alm_set
-> > > > >         not ok 5 rtc.alarm_alm_set
-> > > > >
-> > > > > The root cause is, the unerlying EFI firmware doesn't support wakeup
-> > > > > service (get/set alarm), while it doesn't have the efi 'RT_PROP'
-> > > > > table either. The current code logic will claim efi supports these
-> > > > > runtime service capability by default, and let following 'RT_PROP'
-> > > > > table parsing to correct it, if that table exists.
-> > > > >
-> > > > > This issue was reproduced on ARM server from another verndor, and not
-> > > > > reproudce on one x86 server (Icelake). All these 3 platforms don't have
-> > > > > 'RT_PROP' tables, so they are all claimed to support alarm service,
-> > > > > but x86 server uses real CMOS RTC device instead rtc-efi device, and
-> > > > > passes the test.
-> > > > >
-> > > > > So remove the wakeup/alarm capability from default value, and setup
-> > > > > the capability bits according to the 'RT_PROP' table parsing.
-> > > > >
-> > > >
-> > > > What does this achieve? The test result is accurate, as the platform
-> > > > violates the spec by not implementing the RTC wakeup services, and not
-> > > > setting the RT_PROP table bits accordingly.
-> > > >
-> > > > What do we gain by pretending that the platform is not broken, and
-> > > > lying about it?
-> > >
-> > > I don't have much experience with EFI, so I might be totally wrong. I
-> > > don't think not providing the RT_PROP table is 'broken', that's why I
-> > > tried to borrow platforms from different vendors to do the check, which
-> > > all have no this table.
-> > >
-> > > For platform which have no 'RT_PROP' tables (seems to be not a rare case),
-> > > claiming them support all efi runtime service may be kind of risky.
-> > >
-> >
-> > It is the other way around. The UEFI spec mandates that all runtime
-> > services are implemented, unless a RT_PROP table is provided.
->
-> Thanks for the explaination! Yes, it's fair to claim the uefi implementation
-> on the 2 ARM servers 'broken' :)
->
-> I talked with some firmware developers. They said the rtc-alarm service could
-> be implemented, while the difficult part is how to notify OS. I submitted a
-> request for a correct RT_PROP table.
->
-> Meanwhile, given there are quite some platforms (All ARM server I can access)
-> don't have the table and not support rtc wakeup service, I'm thinking of adding
-> some runtime check for the service in rtc-efi driver, something like:
->
-> ---
-> diff --git a/drivers/rtc/rtc-efi.c b/drivers/rtc/rtc-efi.c
-> index fa8bf82df948..7ae948aebd11 100644
-> --- a/drivers/rtc/rtc-efi.c
-> +++ b/drivers/rtc/rtc-efi.c
-> @@ -259,6 +259,7 @@ static int __init efi_rtc_probe(struct platform_device *dev)
->         struct rtc_device *rtc;
->         efi_time_t eft;
->         efi_time_cap_t cap;
-> +       efi_bool_t enabled, pending;
->
->         /* First check if the RTC is usable */
->         if (efi.get_time(&eft, &cap) != EFI_SUCCESS)
-> @@ -272,7 +273,8 @@ static int __init efi_rtc_probe(struct platform_device *dev)
->
->         rtc->ops = &efi_rtc_ops;
->         clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->features);
-> -       if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES))
-> +       if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES) &&
-> +               efi.get_wakeup_time(&enabled, &pending, &eft) == EFI_SUCCESS)
->                 set_bit(RTC_FEATURE_ALARM_WAKEUP_ONLY, rtc->features);
->         else
->                 clear_bit(RTC_FEATURE_ALARM, rtc->features);
->
-> This works on one ARM server I can test kernel with. Any suggestions?
->
 
-I think this is fine - please send it as a proper patch with commit log etc.
+
+On 25.06.2025 09:49, Mihai Sain wrote:
+> Mihai Sain (3):
+>   ARM: dts: microchip: sama5d2: Update the cache configuration for CPU
+>   ARM: dts: microchip: sama5d3: Update the cache configuration for CPU
+>   ARM: dts: microchip: sama5d4: Update the cache configuration for CPU
+
+Applied to at9-dt, thanks!
 
