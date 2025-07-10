@@ -1,56 +1,87 @@
-Return-Path: <linux-kernel+bounces-725627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EA3B001AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:27:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1FB3B001AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA201C8845A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:27:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 031D75A74E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0F82550D4;
-	Thu, 10 Jul 2025 12:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5A924DD0E;
+	Thu, 10 Jul 2025 12:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kuJjdzKF"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eFUKIqib"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F085246775
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8352571B6
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752150418; cv=none; b=afJmQvHWcjtlgNX5JtDOQE++MA1VnnxCr8ainHxJrRE32Ine/CKXgfzpoeScKd/kQR7ch7xey2pMPmFRzxKOdfhbHb59jzzj548Ov+NUysJ+hkFTHxu9RA/xRbExwWKu61cnTelAmnVqRVpq3fKYvKaJ6XfEUULcu38gtgAUl0Q=
+	t=1752150425; cv=none; b=BfTA8qvV8+cUf23r9cwhKMW+KQrPmqu81mx8UWOULHC6lwcmwZAh8PY4f7h0zPoHlCRAUZZAU4VlriopkTLDUT9OZyIlSysmC4BzNdoxQiq1EmDOOWGkGBSVVnpAbKiCNriufwnQUr78TtWGwd1xaNxco8G3ZqIDPq/qZUVA6jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752150418; c=relaxed/simple;
-	bh=Zjt6Z7VIw7JQUZVnhJKSv50IULygtlhHmMKIpQV5MnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=rCLNKK+3prqz6/NNet+QuO19qT5cHoa9RanH0+9NHIM0o9c6AGXanl+0ZGYdGJk7mrErGURlIQYC7UXyVpOIJ9z/CzbmPZ5AVfJXaryag1KPktIY8Qzj/zSZ9+Xd5SKNVmaYCJGTlCvxTFdksyun2h9j0Oh4qtQ6QlwZoWVivGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kuJjdzKF; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250710122654euoutp0117f81b0a4cffebc17fe26b6d9f37a005~Q44TGUAey1546115461euoutp01u
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:26:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250710122654euoutp0117f81b0a4cffebc17fe26b6d9f37a005~Q44TGUAey1546115461euoutp01u
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752150414;
-	bh=D/oWQEudpESa3h5p25FZ2E/peR9srzu3zLywQospGPM=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=kuJjdzKFrQrPl6guBdNHnmzta9I3S5ng7rIMZbSj6LmBH1ogtj39zUKoZvvREbeaN
-	 NmbHpEDc5PurEoaRLa3Iau9o2Fc+JVY/L+Ntad4xAfN7AtmK3UhYCEfOLjbJP2rykf
-	 BfkD5LetV4o3GLXom+6g/gBvnr4CIu/8exE01jCU=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250710122654eucas1p20f1179a9ff22d562d89252f924d34dae~Q44Stx9J21669716697eucas1p26;
-	Thu, 10 Jul 2025 12:26:54 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250710122652eusmtip1205fb97fbbf5070e4fbdb96b09b6fb55~Q44RtpbyU1085010850eusmtip1Z;
-	Thu, 10 Jul 2025 12:26:52 +0000 (GMT)
-Message-ID: <212a1a56-08a5-48a5-9e98-23de632168d0@samsung.com>
-Date: Thu, 10 Jul 2025 14:26:52 +0200
+	s=arc-20240116; t=1752150425; c=relaxed/simple;
+	bh=FGr+3z81ddvrH7/BffsfT9dYxkrFwM2vo7onaWUo//A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PjwMCPNaNVDoB0GJbM7rZmaXNwJfjr5zQpNq8CTmajt9SecfvcWDl/m+kew3e1qRjqa+5GaHgDc3A3OccQ7t7mFZ2N3BifmKMfnDbpGQw3U0r/G3IKCSYMRvtlLkrbgykuoY1xTmj3ye+Zu05oC1tob8A58l17Pw+PEOhT84IQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eFUKIqib; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A9MPXA002622
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:27:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/gsxZzuhHs1VQ8fIJ0Ja60LkQTuMCXNEcv0jiU2RnU4=; b=eFUKIqibmHQa/Oc3
+	mOZ2IxHO79ev8iFx0rwsLYPmj+8LOzK0repIcZlCB8QJgMk8vRmxkSSArFLaTJ06
+	gFk55narTCvPdmatYCLJ+/j3cL4LMUQymNWrmUaWcqAZaAekUMu7GjT7MTM6ZghI
+	O4eds/ndX6NGGFjFml5pD/q9v1MEjuDurRdcvVJpZuB97tWWsIhbkKQjwxN5ziai
+	bor7NTv/pwNpcug5Kmg3Spn/IU7ao8sZfAujPC2QRgrpeNB9h4MCB10FjNhWXNEh
+	JVac2Mkru0gpcPtzqa59/UCnxYd0LGWTwvX/30xqeNTEnJeqj1MXRMRr3g2RVW7h
+	/yrB5A==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pu2bg6ct-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:27:02 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d0976a24ceso25647485a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:27:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752150422; x=1752755222;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/gsxZzuhHs1VQ8fIJ0Ja60LkQTuMCXNEcv0jiU2RnU4=;
+        b=LOOmnnxBMB1szKnPgQubTfAhVFBBxNJq0wrOukTkIS6RJZ1sAMnxGsrJjWDP2x71Y7
+         kD8s9HK+BUJcwm10lm604zobQ7aVDRUrPRqflVn8nUKM5rK7yl/GuwXa4WKNOgebojh5
+         NrMDdRIRKoEUfFjGSfl9OS59VZlfJF7nDlNS8fGCZ2gQIO5jYzu9BmbZnVsw3YIdcEtF
+         1cXPZO2vsFMEgEMD/KuN1894I05YCDzHAaD6vjJnkNpuD4hnhDXyRsUu38ajwbhOqYG0
+         B6mDkqI/3qYZQy9gDMduImmc6gk9qokBCyD/RR8RgD3DIN6yqRlqESRQpqVBaTI6Pf0G
+         1Exg==
+X-Forwarded-Encrypted: i=1; AJvYcCWaOeZYruzv35y7BlHdVaJVc+du1BQNUTRta+hccmzInlL0r8AChFi/Yzqf/S6c894Kkphel+ExQj95l/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi29tsL98BwEihF24S1SxE/hwDv+KWenaTlcJ9ZgPdUC8XvGa8
+	Ka3eaqMblwCUX0VipGba8hOi20+ZqZ0w0nej1uHZhrJv7Tp3/k+bxomEnnDI1v7PkPA4QK0pd7e
+	4ftZJp14YgMKy/S15C7ygDLQw5lZZV0BsIc5jy0gPATS8CsSWvHP7cL6EDQFwQSBfi+0=
+X-Gm-Gg: ASbGncuDsofaZSV4PA4Hj2II+GctDmsOpqd230Ez20xjgu74NagGFkEjM7+sfzqEo76
+	KTBsRy8LeLv9SNFdaIHL11cbr7b2NXelmuwZE2o1eijaADNKbx9EyFom7d+URixAk92cRHUNGSk
+	TBrU5FyY6vAq/bDflmQt8XwwitDi7EJWFaw4RvLlsGMmxyw/enaBNNgg88exHvGWrO73TAEOd93
+	4dG2aKUZ/HAw7MBV9c8+hkyhBz2evvV4eSMK2ncRyYuaPJf4b7FXS0YFtuwuWa6kXp9Xf41hrbx
+	8heUUk+FyC0eQ4LS+OsT6PwEKBJTL5muv8FHqLRoO0eTMWo3uF5Rj3IZxi91J4EYHcd94tzeieV
+	2mrk=
+X-Received: by 2002:ac8:7f54:0:b0:472:1d00:1fc3 with SMTP id d75a77b69052e-4a9dec6ff93mr34751311cf.8.1752150422085;
+        Thu, 10 Jul 2025 05:27:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9Y+86PvXbITAApB2WEa/o9aQTNYOeca3v+/D1E7vOqMYvryP/+xVmZMto4EEa3ckQLg37Yg==
+X-Received: by 2002:ac8:7f54:0:b0:472:1d00:1fc3 with SMTP id d75a77b69052e-4a9dec6ff93mr34751011cf.8.1752150421567;
+        Thu, 10 Jul 2025 05:27:01 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e91b08sm124778866b.8.2025.07.10.05.26.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 05:27:01 -0700 (PDT)
+Message-ID: <cc6e8ae1-d63a-4f90-8752-07251b3bff04@oss.qualcomm.com>
+Date: Thu, 10 Jul 2025 14:26:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,134 +89,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 21/24] pmdomain: core: Leave powered-on genpds on
- until late_initcall_sync
-To: Ulf Hansson <ulf.hansson@linaro.org>, Saravana Kannan
-	<saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-pm@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Michael Grzeschik
-	<m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, Abel
-	Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, Tomi Valkeinen
-	<tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, Maulik
-	Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>,
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Hiago De
-	Franco <hiago.franco@toradex.com>, Geert Uytterhoeven
-	<geert@linux-m68k.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 2/3] scsi: ufs: core: Add ufshcd_dme_rmw to modify DME
+ attributes
+To: Nitin Rawat <quic_nitirawa@quicinc.com>, mani@kernel.org,
+        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+        bvanassche@acm.org, avri.altman@wdc.com, ebiggers@google.com,
+        neil.armstrong@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, kernel test robot <lkp@intel.com>
+References: <20250709205635.3395-1-quic_nitirawa@quicinc.com>
+ <20250709205635.3395-3-quic_nitirawa@quicinc.com>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250701114733.636510-22-ulf.hansson@linaro.org>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250709205635.3395-3-quic_nitirawa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250710122654eucas1p20f1179a9ff22d562d89252f924d34dae
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250710122654eucas1p20f1179a9ff22d562d89252f924d34dae
-X-EPHeader: CA
-X-CMS-RootMailID: 20250710122654eucas1p20f1179a9ff22d562d89252f924d34dae
-References: <20250701114733.636510-1-ulf.hansson@linaro.org>
-	<20250701114733.636510-22-ulf.hansson@linaro.org>
-	<CGME20250710122654eucas1p20f1179a9ff22d562d89252f924d34dae@eucas1p2.samsung.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDEwNiBTYWx0ZWRfX3GqFcME0KVWD
+ RFRD4zWA+Hyhkps6u3IQNukt6ukyXtYfQ1ya0RmaJjpGmDpag3AVe2U0e+eZjWWJI1HOVBisntl
+ O7FB9wAPU3f7iWIwBgn+aPM0vsU0/dqzTzHLsg6pfT5frnasFtOHStU468XrYLhOTqCy8qvigZ7
+ TppxLc9dj3l23iE0XdTYIj70U0FYNH1hTyE0elJJR3PHVckPAdfZCm/3swaUB2ZNBOXEWBoErOl
+ 74+hJpJM7xiLF88y/iZBNsDWdcSx1nfb8Y9XeSVwF45Vs0wQQqaWUhbTiunySCXgZtkw9VoGtzm
+ hD6M6FqlFNXm0tgKRdiMRoes4ve9vK/LXPkD1+GXw19xQVJ6WpwIQCeb/36U8f1iV6azGLbwUmM
+ st5JqO04yWhKzsq53MM8+puFAojf2QLtfTtces0/5hgb1xn91U2B2AQwGaFyas7WY/Vdx3dB
+X-Proofpoint-ORIG-GUID: auoBXNtiqd9N59k-dJ9qHZO56uz9RTxI
+X-Proofpoint-GUID: auoBXNtiqd9N59k-dJ9qHZO56uz9RTxI
+X-Authority-Analysis: v=2.4 cv=erTfzppX c=1 sm=1 tr=0 ts=686fb196 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=QyXUC8HyAAAA:8 a=B7Yj2uzDBv06dT-is-cA:9
+ a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_02,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 clxscore=1015 impostorscore=0 spamscore=0 priorityscore=1501
+ mlxlogscore=834 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
+ lowpriorityscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507100106
 
-On 01.07.2025 13:47, Ulf Hansson wrote:
-> Powering-off a genpd that was on during boot, before all of its consumer
-> devices have been probed, is certainly prone to problems.
->
-> As a step to improve this situation, let's prevent these genpds from being
-> powered-off until genpd_power_off_unused() gets called, which is a
-> late_initcall_sync().
->
-> Note that, this still doesn't guarantee that all the consumer devices has
-> been probed before we allow to power-off the genpds. Yet, this should be a
-> step in the right direction.
->
-> Suggested-by: Saravana Kannan <saravanak@google.com>
-> Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Colibri iMX8X
-> Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> # TI AM62A,Xilinx ZynqMP ZCU106
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+On 7/9/25 10:56 PM, Nitin Rawat wrote:
+> Introduce `ufshcd_dme_rmw` API to read, modify, and write DME
+> attributes in UFS host controllers using a mask and value.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
 
-This change has a side effect on some Exynos based boards, which have 
-display and bootloader is configured to setup a splash screen on it. 
-Since today's linux-next, those boards fails to boot, because of the 
-IOMMU page fault.
+This tag makes sense if your patch is merged into the tree
+but happens to contain a build warning/error. Using it here
+makes it look like the kernel test robot suggested
+introducing this wrapper
 
-This happens because the display controller is enabled and configured to 
-perform the scanout from the spash-screen buffer until the respective 
-driver will reset it in driver probe() function. This however doesn't 
-work with IOMMU, which is being probed earlier than the display 
-controller driver, what in turn causes IOMMU page fault once the IOMMU 
-driver gets attached. This worked before applying this patch, because 
-the power domain of display controller was simply turned off early 
-effectively reseting the display controller.
-
-This has been discussed a bit recently: 
-https://lore.kernel.org/all/544ad69cba52a9b87447e3ac1c7fa8c3@disroot.org/ 
-and I can add a workaround for this issue in the bootloaders of those 
-boards, but this is something that has to be somehow addressed in a 
-generic way.
-
-> ---
->   drivers/pmdomain/core.c   | 10 ++++++++--
->   include/linux/pm_domain.h |  1 +
->   2 files changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> index 5cef6de60c72..18951ed6295d 100644
-> --- a/drivers/pmdomain/core.c
-> +++ b/drivers/pmdomain/core.c
-> @@ -931,11 +931,12 @@ static void genpd_power_off(struct generic_pm_domain *genpd, bool one_dev_on,
->   	 * The domain is already in the "power off" state.
->   	 * System suspend is in progress.
->   	 * The domain is configured as always on.
-> +	 * The domain was on at boot and still need to stay on.
->   	 * The domain has a subdomain being powered on.
->   	 */
->   	if (!genpd_status_on(genpd) || genpd->prepared_count > 0 ||
->   	    genpd_is_always_on(genpd) || genpd_is_rpm_always_on(genpd) ||
-> -	    atomic_read(&genpd->sd_count) > 0)
-> +	    genpd->stay_on || atomic_read(&genpd->sd_count) > 0)
->   		return;
->   
->   	/*
-> @@ -1346,8 +1347,12 @@ static int __init genpd_power_off_unused(void)
->   	pr_info("genpd: Disabling unused power domains\n");
->   	mutex_lock(&gpd_list_lock);
->   
-> -	list_for_each_entry(genpd, &gpd_list, gpd_list_node)
-> +	list_for_each_entry(genpd, &gpd_list, gpd_list_node) {
-> +		genpd_lock(genpd);
-> +		genpd->stay_on = false;
-> +		genpd_unlock(genpd);
->   		genpd_queue_power_off_work(genpd);
-> +	}
->   
->   	mutex_unlock(&gpd_list_lock);
->   
-> @@ -2352,6 +2357,7 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
->   	INIT_WORK(&genpd->power_off_work, genpd_power_off_work_fn);
->   	atomic_set(&genpd->sd_count, 0);
->   	genpd->status = is_off ? GENPD_STATE_OFF : GENPD_STATE_ON;
-> +	genpd->stay_on = !is_off;
->   	genpd->sync_state = GENPD_SYNC_STATE_OFF;
->   	genpd->device_count = 0;
->   	genpd->provider = NULL;
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index d68e07dadc99..99556589f45e 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -199,6 +199,7 @@ struct generic_pm_domain {
->   	unsigned int performance_state;	/* Aggregated max performance state */
->   	cpumask_var_t cpus;		/* A cpumask of the attached CPUs */
->   	bool synced_poweroff;		/* A consumer needs a synced poweroff */
-> +	bool stay_on;			/* Stay powered-on during boot. */
->   	enum genpd_sync_state sync_state; /* How sync_state is managed. */
->   	int (*power_off)(struct generic_pm_domain *domain);
->   	int (*power_on)(struct generic_pm_domain *domain);
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Konrad
 
