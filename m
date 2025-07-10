@@ -1,204 +1,190 @@
-Return-Path: <linux-kernel+bounces-726305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDBCB00B6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:30:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F953B00B70
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85F1A18965A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:30:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86825C1D5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA8D2FCFF1;
-	Thu, 10 Jul 2025 18:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A3A2FCE13;
+	Thu, 10 Jul 2025 18:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h6TBkXCj"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMXbP2GH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA3A2FCE22
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C3521CA0A;
+	Thu, 10 Jul 2025 18:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752172190; cv=none; b=CB8LLTifAtYTTpAEFv5BycyO8hkNHzoUJX/bDvOJkgnSrtc2ygqMED+5dT1BUD21bxvIWlq8vKh3eqdBb1IcRGUZtTktKt+DjYX1PWVsju42tCfqKAuSEZLPEGK1Tm04Wh6FLZHU4YFPd266l3L048ydC1p4jTUT+YTTn8THs4E=
+	t=1752172259; cv=none; b=pDhaCvUfQsyHvvGjm7PYefX0WmnLJ44YsnBRaUpZIzxr5mJMt8nI7L+h5s8S/2oK5gnN3bnEmrmwwmAE+NgiNwesGkUZXTpS0/hJ+E7lIhWTcneXy6p2AXmcbonct0vdNC54fnGtzXR2X6t+BkG2GFZ9ujJ6jFbe6wKsZdKNKlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752172190; c=relaxed/simple;
-	bh=XhzeOVnGG90EuOKlpcIA49U19NvJeJfXJnX6bYAZwwY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DOmwRDKm/QkN/niKmyamXtdG31Jit+0bdpmXIE84AXNln50lScs14BE8cB6BtqEpe7tmtpf1azYPTDivuzyHjdEOgiDU/B2pYOWVBr4oZ9zdCgwSM04L4pe35XcIgUnvsGf1ucPMY8vnR690eSRNZqJDhf9cS8B0578U8RGnfKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h6TBkXCj; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-235e389599fso32285ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:29:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752172188; x=1752776988; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ro/pNusaSjsWEAeWpTTGWyr6dzux21WEDh0Yp0DuJJc=;
-        b=h6TBkXCjIsIV5dQNID5gQEOPO0lCDvYKZbhkTuLlDQx0Zooy3DR4x9Erf3DpUOV4MJ
-         K+uMuJOnrIQqVyfBpAQKzzuqYH70sJFs7znUg0ApjSN79Gw0vorG3ghvE6TBYl4I8pw+
-         goDouEajQBH1lBPeOqAdRpHlIJ9aKc120R1fmb2eWIoech8A8nes8DBBXWeh6TOA/cPb
-         i5CuA9oG27Rtd/dWQlCBopV9+XsigaDwScnP2oh08ia2/kSrQRA4Y7BZFS6b0YCGGObC
-         UsDtAh0nscLBEPwgD6E1/IoFfoE02Xu1k+TwpkkHDtD/4X7YQYWIxW+FpbfFsiIsRksA
-         4iDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752172188; x=1752776988;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ro/pNusaSjsWEAeWpTTGWyr6dzux21WEDh0Yp0DuJJc=;
-        b=HHqTy1TsIAtxTarblaIehTaGoXE/OWQw70oBMULkSQtKK3qWNAo7hJ1rZhoJmsokEW
-         Tz9qakzKYpaCruMs7J+BV4zeRrPob3OZ1AbjSLEp84d8sYoLrw7lXXeiTLHi5Ae4OaxM
-         N1Rq8f5vpXXAu9quadl330U+2DjAYXzbufKRf1uo4ufhgFBDFLI3f2akwTgeCcw4au+X
-         8I8tZ4H7NjVyprji+MzOq3Q5U791673Ka+ArXtmzZukMCyuVHLeGSPsSnx9dDA6Zm7CY
-         MolDCzU1P1WHw7c610Nar+FyYTqIc/78P/owdyVV7vK9EkkRkaLVjkc49VMaeXDB1LOj
-         8cCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnznUkEOeo4LHPQAYDJoabMFsJdqRcpDlKmeThvCUQthFJnJoOgHSiuRZnctRL9GhqwoZKwKXx02xwq7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBG/md9eo/TxW5D+iKaxoRDwOT0SAIS6saVsdl5larFREsd6aB
-	7V6FA04x6bk84cH53jtMTH5nG+dVG5brD+o2MvZJBuVoTV01O/OHF4ePvbMyT1E9JXE7G3UkCiJ
-	jbc6H6Yv5hh0M7AfLjB7zbAuCQsGzmzIvXFy6Dcq/
-X-Gm-Gg: ASbGncvMh1LyaEhEN0bD563/XiK9ENbG/6NphYkLFTExPyCSwVYr3DNJkv1NYBmqRi+
-	BqQZN66SDtMpDtmXDiFskOnsbam27rITMPkK+j+A7RaPeUyYOmeR174PvB2oZIjZ8wlQ5nv1A+a
-	YR61vY2AtQrE+p8BGbalYhPrY97yk72BJ61s+hCa6B437jHEIIjpThjz1k/6O7pdX7SaOAb6M=
-X-Google-Smtp-Source: AGHT+IGDUh9i2QR+OkMh4fD77Cn7MdjzQa4MMPj+bj7Pxco//T5atBLGYHjMI7EeJmWwYCLX+z0Vvq1jG9YvLKt6WQc=
-X-Received: by 2002:a17:902:e846:b0:235:e8da:8e1 with SMTP id
- d9443c01a7336-23dee27d5famr281145ad.18.1752172187759; Thu, 10 Jul 2025
- 11:29:47 -0700 (PDT)
+	s=arc-20240116; t=1752172259; c=relaxed/simple;
+	bh=YzVPXkrWcC89iLuTuFsldR1NCSylHyBNV4ySFkjnvaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=clhm0qICW0Ej10n2Y0GupE66Xi8bX0l7IDvUSfyzTbq17V3Jd1wcZBqTpxk/22MhePs6FSMyZZ+tIAwLnoTQktkwmi+ZVwvahJEloIXYa/p5WIBan3yJCy5WmtYrIiqvKWU5dJ14yVXGVxh0sV7p+AcM7943KGA0kf7FUUvLMa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMXbP2GH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C7FEC4CEE3;
+	Thu, 10 Jul 2025 18:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752172259;
+	bh=YzVPXkrWcC89iLuTuFsldR1NCSylHyBNV4ySFkjnvaE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pMXbP2GHCcgHhusslX+Beh7WW1fk8dvET/CVI07Rw63ApetuO/mFNyW+TmKYZOBL6
+	 /a8S2Wkh4a50yoc26Lt1L7qpGGrlVIuj0ywErcqj2hTOQb7WMjP6gv2hg9FZ/FRVV+
+	 0Vt2MHj+IRfV61UhugK3i41bhmURgs9T7noW87KEIqL4mACKIsSMtXGvRyCiPQnmuT
+	 Z4mDEv7uFarwzKT5WIWQc71igRgrv1ubQXGNH2nMIXg1d3N5d9mmRlwNxC1zMffckP
+	 ehqVGE7Z+Y1e0p2kg3a7Q+Ae7pRBJVF6R9BnEb3IdJ8UOgd/xb5ZeO0PWRLQ2d9cUh
+	 tiiZlIv++ExDA==
+Date: Thu, 10 Jul 2025 20:30:52 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC v4 6/7] sprintf: Add [V]SPRINTF_END()
+Message-ID: <svune35mcrnaiuoz4xtzegnghojmphxulpb2jdgczy3tcqaijb@dskdebhbhtrq>
+References: <cover.1751823326.git.alx@kernel.org>
+ <cover.1752113247.git.alx@kernel.org>
+ <0314948eb22524d8938fab645052840eb0c20cfa.1752113247.git.alx@kernel.org>
+ <CAHk-=wiYistgF+BBeHY_Q58-7-MZLHsvtKybrwtiF97w+aU-UQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710082807.27402-1-byungchul@sk.com> <20250710082807.27402-7-byungchul@sk.com>
-In-Reply-To: <20250710082807.27402-7-byungchul@sk.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 10 Jul 2025 11:29:35 -0700
-X-Gm-Features: Ac12FXzeYcyI9Q9DAscC8V1bkRMOGnCRm09FJHP9wMGxc_EiuS0WSo5wKouz6uY
-Message-ID: <CAHS8izM9FO01kTxFhM8VUOqDFdtA80BbY=5xpKDM=S9fMcd3YA@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 6/8] mlx4: use netmem descriptor and APIs for
- page pool
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
-	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com, 
-	hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fodiyed7jhvlrxi3"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiYistgF+BBeHY_Q58-7-MZLHsvtKybrwtiF97w+aU-UQ@mail.gmail.com>
+
+
+--fodiyed7jhvlrxi3
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC v4 6/7] sprintf: Add [V]SPRINTF_END()
+References: <cover.1751823326.git.alx@kernel.org>
+ <cover.1752113247.git.alx@kernel.org>
+ <0314948eb22524d8938fab645052840eb0c20cfa.1752113247.git.alx@kernel.org>
+ <CAHk-=wiYistgF+BBeHY_Q58-7-MZLHsvtKybrwtiF97w+aU-UQ@mail.gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=wiYistgF+BBeHY_Q58-7-MZLHsvtKybrwtiF97w+aU-UQ@mail.gmail.com>
 
-On Thu, Jul 10, 2025 at 1:28=E2=80=AFAM Byungchul Park <byungchul@sk.com> w=
-rote:
->
-> To simplify struct page, the effort to separate its own descriptor from
-> struct page is required and the work for page pool is on going.
->
-> Use netmem descriptor and APIs for page pool in mlx4 code.
->
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx4/en_rx.c   | 48 +++++++++++---------
->  drivers/net/ethernet/mellanox/mlx4/en_tx.c   |  8 ++--
->  drivers/net/ethernet/mellanox/mlx4/mlx4_en.h |  4 +-
->  3 files changed, 32 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/net/ethernet/mellanox/mlx4/en_rx.c b/drivers/net/eth=
-ernet/mellanox/mlx4/en_rx.c
-> index b33285d755b9..7cf0d2dc5011 100644
-> --- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> +++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> @@ -62,18 +62,18 @@ static int mlx4_en_alloc_frags(struct mlx4_en_priv *p=
-riv,
->         int i;
->
->         for (i =3D 0; i < priv->num_frags; i++, frags++) {
-> -               if (!frags->page) {
-> -                       frags->page =3D page_pool_alloc_pages(ring->pp, g=
-fp);
-> -                       if (!frags->page) {
-> +               if (!frags->netmem) {
-> +                       frags->netmem =3D page_pool_alloc_netmems(ring->p=
-p, gfp);
-> +                       if (!frags->netmem) {
->                                 ring->alloc_fail++;
->                                 return -ENOMEM;
->                         }
-> -                       page_pool_fragment_page(frags->page, 1);
-> +                       page_pool_fragment_netmem(frags->netmem, 1);
->                         frags->page_offset =3D priv->rx_headroom;
->
->                         ring->rx_alloc_pages++;
->                 }
-> -               dma =3D page_pool_get_dma_addr(frags->page);
-> +               dma =3D page_pool_get_dma_addr_netmem(frags->netmem);
->                 rx_desc->data[i].addr =3D cpu_to_be64(dma + frags->page_o=
-ffset);
->         }
->         return 0;
-> @@ -83,10 +83,10 @@ static void mlx4_en_free_frag(const struct mlx4_en_pr=
-iv *priv,
->                               struct mlx4_en_rx_ring *ring,
->                               struct mlx4_en_rx_alloc *frag)
->  {
-> -       if (frag->page)
-> -               page_pool_put_full_page(ring->pp, frag->page, false);
-> +       if (frag->netmem)
-> +               page_pool_put_full_netmem(ring->pp, frag->netmem, false);
->         /* We need to clear all fields, otherwise a change of priv->log_r=
-x_info
-> -        * could lead to see garbage later in frag->page.
-> +        * could lead to see garbage later in frag->netmem.
->          */
->         memset(frag, 0, sizeof(*frag));
->  }
-> @@ -440,29 +440,33 @@ static int mlx4_en_complete_rx_desc(struct mlx4_en_=
-priv *priv,
->         unsigned int truesize =3D 0;
->         bool release =3D true;
->         int nr, frag_size;
-> -       struct page *page;
-> +       netmem_ref netmem;
->         dma_addr_t dma;
->
->         /* Collect used fragments while replacing them in the HW descript=
-ors */
->         for (nr =3D 0;; frags++) {
->                 frag_size =3D min_t(int, length, frag_info->frag_size);
->
-> -               page =3D frags->page;
-> -               if (unlikely(!page))
-> +               netmem =3D frags->netmem;
-> +               if (unlikely(!netmem))
->                         goto fail;
->
-> -               dma =3D page_pool_get_dma_addr(page);
-> +               dma =3D page_pool_get_dma_addr_netmem(netmem);
->                 dma_sync_single_range_for_cpu(priv->ddev, dma, frags->pag=
-e_offset,
->                                               frag_size, priv->dma_dir);
->
-> -               __skb_fill_page_desc(skb, nr, page, frags->page_offset,
-> -                                    frag_size);
-> +               __skb_fill_netmem_desc(skb, nr, netmem, frags->page_offse=
-t,
-> +                                      frag_size);
->
->                 truesize +=3D frag_info->frag_stride;
->                 if (frag_info->frag_stride =3D=3D PAGE_SIZE / 2) {
-> +                       struct page *page =3D netmem_to_page(netmem);
+Hi Linus,
 
-This cast is not safe, try to use the netmem type directly.
+On Thu, Jul 10, 2025 at 08:52:13AM -0700, Linus Torvalds wrote:
+> On Wed, 9 Jul 2025 at 19:49, Alejandro Colomar <alx@kernel.org> wrote:
+> >
+> > +#define SPRINTF_END(a, fmt, ...)  sprintf_end(a, ENDOF(a), fmt, ##__VA=
+_ARGS__)
+> > +#define VSPRINTF_END(a, fmt, ap)  vsprintf_end(a, ENDOF(a), fmt, ap)
+>=20
+> So I like vsprintf_end() more as a name ("like more" not being "I love
+> it", but at least it makes me think it's a bit more self-explanatory).
+
+:-)
+
+> But I don't love screaming macros. They historically scream because
+> they are unsafe, but they shouldn't be unsafe in the first place.
+>=20
+> And I don't think those [V]SPRINTF_END() and ENDOF() macros are unsafe
+> - they use our ARRAY_SIZE() macro which does not evaluate the
+> argument, only the type, and is safe to use.
+
+Yup, it's safe to use.
+
+> So honestly, this interface looks easy to use, but the screaming must sto=
+p.
+>=20
+> And none of this has *anything* to do with "end" in this form anyway.
+
+That same thing happened through my head while doing it, but I didn't
+think of a better name.
+
+In shadow, we have many interfaces for which we have an uppercase macro
+version of many functions that gets array sizes and other extra safety
+measures where we can.  (So there, the uppercase versions are indeed
+extra safety, instead of the historical "there be dragons".  I use the
+uppercase to mean "this does some magic to be safer".)
+
+> IOW, why isn't this just
+>=20
+>   #define sprintf_array(a,...) snprintf(a, ARRAY_SIZE(a), __VA_ARGS__)
+
+Agree.  This is a better name for the kernel.
+
+> which is simpler and more direct, doesn't use the "end" version that
+> is pointless (it's _literally_ about the size of the array, so
+> 'snprintf' is the right thing to use),
+
+I disagree with snprintf(3), but not because of the input, but rather
+because of the output.  I think an API similar to strscpy() would be
+better, so it can return an error code for truncation.  In fact, up to
+v2, I had a stprintf() (T for truncation) that did exactly that.
+However, I found out I could do the same with sprintf_end(), which would
+mean one less function to grok, which is why I dropped that part.
+
+I'll use your suggested name, as I like it.  Expect v5 in a few minutes.
+
+> doesn't scream, and has a
+> rather self-explanatory name.
+>=20
+> Naming matters.
+
++1
+
+
+Have a lovely day!
+Alex
+
+>=20
+>                 Linus
 
 --=20
-Thanks,
-Mina
+<https://www.alejandro-colomar.es/>
+
+--fodiyed7jhvlrxi3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhwBtYACgkQ64mZXMKQ
+wqmOQA//bIEhEXLVgwS7mz/jBLQAGT4v53a5yhA1vSbBvckl7+P/z4tYOhS7drGu
+KipZBsVxwdBQhN097m1zOT1T1T9q4vbqFOVX1uNVL7Q2R/0WyYC5APIKDHO1ijNF
+uXc0HmMSM7Lm0CrY0nvPsI6ZGVagYdXm7QuQ9+GfBc2NAoiJU9fGRPBOjzllradR
+3ALXe1Y5c2lgE4sEPPHmAAQNK7LGIX17yx/+YlMDtbZ9/F8fYQrIyW6nkWLgoid9
+BmaQ1be4FK7NNbemif5QzHXxaLiwe3OgJrEsgEEAB7cmAvSc+bTloPpFv7UErAsq
+BRAv7ivc/Saq5S7779xS5e4GDq8MjdCG2qSMvMnUtfAuhNB90zarK5cXAdCPKvAB
+oD+7JptOjM1LHBvjK+Y7ZUIZ1JzP2/4NFtam9ioZUE+Drb5iLSGdwTYjOHzfF+Pi
+FLmGbNNQzBMl1b8kjXnOxvmMfYeYM39/eNWUxYXxrhfZGIiRnIdh3ezJreD8t5Rp
+AvqHuTbMKRbZmExHJ5sQFJ+MYH1/dOwkgpXvmhFnO78EgLJQSbW05CdDnGvlCNpj
+NvcOhy5N+fVmC64ytcS/ALIWJk6XG/Tadns1r2Dn44oDlm1po+tt5k5nT81+cL9t
+8gyc+6tp4He6Q4/zznnOCaQytRCja4eJcji3hvW3q2loFPWpzTw=
+=kDfd
+-----END PGP SIGNATURE-----
+
+--fodiyed7jhvlrxi3--
 
