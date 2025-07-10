@@ -1,124 +1,161 @@
-Return-Path: <linux-kernel+bounces-725035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBDE1AFFA12
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0C5AFFA16
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 215124A78FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:48:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B1084A7CF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F278C236451;
-	Thu, 10 Jul 2025 06:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AD8DDC1;
+	Thu, 10 Jul 2025 06:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnkB6qNS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1udXAMO"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FF6DDC1;
-	Thu, 10 Jul 2025 06:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC4522DFBA
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752130122; cv=none; b=ZTQOZYHigk7IJJZY4yo4Js3DRsDcZGA8EF3bIJkglQ0dMoSCmMUuxUSGPMY/diEjsRxpwG3LBF/z0HWha7Zu4ePhb+h8tMxak2qvh7QQUKwaMDV2SdBa3I3wQEa/OJS6fsdSEHs/+kgYobOOu31CnvTOkKCuuI5JFA2D3Hho4JU=
+	t=1752130182; cv=none; b=qKzfKEc8YBZY8ShzARQP8UdCU/bJVdVEjOY8D+7Mcr5cGTQkpSlECgAMw/xm+VD8T2mc96mXSsCcvNUZG4l1zOUGDw1KsphuQ7hTuDCNv+v5YFwgaqeToEyAtLjkt3BT0QidDhE3veZ4zx1K6rhAuav9550+mZg80ufgqVQd4Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752130122; c=relaxed/simple;
-	bh=9Fe/JMQR4NwZmzapju1AGuKy738zJhIvHcGQ33AR1wE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dNUwSo+GeQg7x8uFUHQoOi8ETuo8x6+zYXweFh38hhza187Dv3OmBG7NZhTAPCWx+XiBfhH6pADSqdkezrrPmweUEfS96Qjvj1azqqXDSyDcwf5HTjDVnb7F7FE2oFgMuW0CC5U7+99ewffEIyRofEWAjGknUl9odDJrvUqWwlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tnkB6qNS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E715C4CEE3;
-	Thu, 10 Jul 2025 06:48:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752130121;
-	bh=9Fe/JMQR4NwZmzapju1AGuKy738zJhIvHcGQ33AR1wE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tnkB6qNS/XKW0+1t5MTKPUbr5ef+/JIZl1V8wJpUg6J+ouON5QodXcAKia/+ihRha
-	 hhpLGOInOW5fHYA1pDNI1N2duyOiTPIcXjJxBQkkBlgzGXGay259la4xVy9ztN/2Ov
-	 Um1px8g9Ww9SoG20qKwqzwyK5joJvWbBOwvM9ikQjLdFwJGpf5aNXxZnyOwyNGKREb
-	 uKyWOZen49v7d999FhtQKCjxmkw3BoIrtxbVHZ/a24Tdlypjnh6gIqjwZvFReLq03C
-	 DTddLM8TWIAHyjMjlpfw1WNU3koiXB405ECOsMHi7cAHB+71ceN/KJ9JBhLXLY4zS7
-	 NIHUW/+sUg8KQ==
-Message-ID: <a5726a25-9df0-453c-9e4f-c26e223940dd@kernel.org>
-Date: Thu, 10 Jul 2025 08:48:36 +0200
+	s=arc-20240116; t=1752130182; c=relaxed/simple;
+	bh=ulx9d/DQxHSq8yBMGJGZdqGJWjD6S0fWVX3xk0ZLWtE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hq2dRD/HE2/knbqfAxuYTu/nqavtCW15WOmSVvlQnuMAJM0H+vl7XTE2R1W5t45PEy8vdUFvceWnNO22kBrIkOnPXQg0lCNOuaknOD+si5cN/sGaDY7ol6Jmtqwr5+mdCmKeN0buaZEMIKhd24pIKRaL4lUzqg9OAkY/b09rViQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1udXAMO; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-234f17910d8so6992825ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 23:49:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752130180; x=1752734980; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=htp01S+n+HVlXHdLt7skX8tLW/BOHq74J5Zg1sPnI7E=;
+        b=P1udXAMOnC5gL7XZV/mLSFu4XE3FjkbPfCF7ZRXOl6Pve3NtBnUFypGJXJNl2AH7mW
+         4iQb1WZdC2zEoJsgS/r8/hJ1QD5YVtOr6mTrp4cqGY0bQPX8siF1L4VZm9huZJ7AAXbO
+         AKy5m2hORElvBgUt4usFFi0TAodoUn8xdDFNanibjTjElra0rH3saonGU4xALgRFOJv5
+         WWUNzvGddCZnmGPsxAHpKG1LH2ThguV0TrB4t2AsAc0iGz33gUi2pGBodYQd15NtT/zI
+         gEL2JTzb7GTcNMJz4MxydFXDiGi7nQiiXCeaTei6YD005jRyaO1jTK64MLBf53CyzNQQ
+         UqZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752130180; x=1752734980;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=htp01S+n+HVlXHdLt7skX8tLW/BOHq74J5Zg1sPnI7E=;
+        b=Zgwx+QBBrNoMYgbW1cLo7Nx5oYEz4IfEJyQOjWSl94CbV7DXxw195miYuW17sC9J8j
+         l8wrKZLaLA0SgJEYY+47TBc+AztEScie9k5kBqNdSTrJ5xclRAsUWgtES/UfaJugvuRn
+         Xitnbr8kd40C2OmT9W0u3uSo1CQ+uoxnTpPpGRdSvQccTDGlvmiPGvuzfHkhBp16hmXc
+         2bmAVumFRT6/gCvoW++s/8C3Grl0pa39tf8txgA88CmPsMmaJAC5MSVmxjr64e3/QPgg
+         ejMSbtCAMXyd+/42uOTixrZ5UfspPUFyN5/UJQz32t3szbPbPSqUXg9nuBiOoYC5KPYm
+         +Klg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPivxWiGNher1jRIQTXIcBY4y7MIZ0CpIxfwsF8xGjvnzNhJidcK7NnKDIy+jv/Nog2qskm6caE4Nl35I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0kYcxYNPrWU8GiyHcCLUSa9dSMd/+onikmwwSzx8/wyHw0OOb
+	eTW3aifovJ6/TuLMFZRYXbuk1RzzP71UJ+BEsdPa8fFv6joPOfQ18av4
+X-Gm-Gg: ASbGncs7XF8m4NfpDH40iHePb3xEyUcXe1EpWPPxobwUEUMZD3nEukH2JzRKbKxc1zj
+	fdRcHm0ipr6wtTm7wPywczcKd/dwMP09kmftFIyxSKBipkZCsrfCWhxBSG/UNpS+74ezv/b4RPX
+	hnZjOqpOYyI79SPxsHM8NoQ/SjoVd6eyOID52v89qSpc7cmamQlfUKbNBYopd3tRIELEeus+MeL
+	+iXRCAyHUJfuPXSVSqyxYBSLhEGgMhes8/YE88JAFprCYl57R39+H7qeVRWkn48vLIvE7ZhMWgk
+	qzXaIWvTLHBhQkR+F4Kk54OEn9hNBNBKwGM9I97uKY3RC3J7N7pHjF6OcqNTTIJTonW9
+X-Google-Smtp-Source: AGHT+IG6FYSsMU+7D5SufVGwPjK3najFyZaIrgv4/68hzwkgjCm49UP5b+rx+iASgM46KJQUZtmzUg==
+X-Received: by 2002:a17:903:b50:b0:234:8c64:7878 with SMTP id d9443c01a7336-23de24331b6mr36245885ad.11.1752130180057;
+        Wed, 09 Jul 2025 23:49:40 -0700 (PDT)
+Received: from PC.mioffice.cn ([43.224.245.249])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4359ddcsm10809255ad.207.2025.07.09.23.49.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 23:49:39 -0700 (PDT)
+From: Sheng Yong <shengyong2021@gmail.com>
+X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
+To: agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com,
+	nhuck@google.com
+Cc: dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	shengyong2021@gmail.com,
+	Sheng Yong <shengyong1@xiaomi.com>,
+	Wang Shuai <wangshuai12@xiaomi.com>
+Subject: [PATCH] dm-bufio: fix sched in atomic context
+Date: Thu, 10 Jul 2025 14:48:55 +0800
+Message-ID: <20250710064855.239572-1-shengyong1@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] arm64: dts: ti: Add support for Variscite
- VAR-SOM-AM62P
-To: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
-References: <20250708184841.72933-1-stefano.radaelli21@gmail.com>
- <20250708184841.72933-3-stefano.radaelli21@gmail.com>
- <0454b830-b9bf-4d04-8e91-d5c514ac4aae@kernel.org>
- <CAK+owoiL8613hEqDso7cCbqw9vT-TV0eRLvJPq81ZwVDHT7rHA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAK+owoiL8613hEqDso7cCbqw9vT-TV0eRLvJPq81ZwVDHT7rHA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/07/2025 19:16, Stefano Radaelli wrote:
-> Hello Krzysztof,
-> 
-> thank you for your corrections, I completely forgot to compile with
-> the W=1 flag.
+From: Sheng Yong <shengyong1@xiaomi.com>
 
-Don't top post. I did not ask to compile with W=1, but check your dtbs.
-Please read carefully instructions.
+If "try_verify_in_tasklet" is set for dm-verity, DM_BUFIO_CLIENT_NO_SLEEP
+is enabled for dm-bufio. However, when bufio tries to evict buffers, there
+is a chance to trigger scheduling in spin_lock_bh, the following warning
+is hit:
 
-Best regards,
-Krzysztof
+BUG: sleeping function called from invalid context at drivers/md/dm-bufio.c:2745
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 123, name: kworker/2:2
+preempt_count: 201, expected: 0
+RCU nest depth: 0, expected: 0
+4 locks held by kworker/2:2/123:
+ #0: ffff88800a2d1548 ((wq_completion)dm_bufio_cache){....}-{0:0}, at: process_one_work+0xe46/0x1970
+ #1: ffffc90000d97d20 ((work_completion)(&dm_bufio_replacement_work)){....}-{0:0}, at: process_one_work+0x763/0x1970
+ #2: ffffffff8555b528 (dm_bufio_clients_lock){....}-{3:3}, at: do_global_cleanup+0x1ce/0x710
+ #3: ffff88801d5820b8 (&c->spinlock){....}-{2:2}, at: do_global_cleanup+0x2a5/0x710
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 2 UID: 0 PID: 123 Comm: kworker/2:2 Not tainted 6.16.0-rc3-g90548c634bd0 #305 PREEMPT(voluntary)
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+Workqueue: dm_bufio_cache do_global_cleanup
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x53/0x70
+ __might_resched+0x360/0x4e0
+ do_global_cleanup+0x2f5/0x710
+ process_one_work+0x7db/0x1970
+ worker_thread+0x518/0xea0
+ kthread+0x359/0x690
+ ret_from_fork+0xf3/0x1b0
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+
+That can be reproduced by:
+
+  veritysetup format --data-block-size=4096 --hash-block-size=4096 /dev/vda /dev/vdb
+  SIZE=$(blockdev --getsz /dev/vda)
+  dmsetup create myverity -r --table "0 $SIZE verity 1 /dev/vda /dev/vdb 4096 4096 <data_blocks> 1 sha256 <root_hash> <salt> 1 try_verify_in_tasklet"
+  mount /dev/dm-0 /mnt -o ro
+  echo 102400 > /sys/module/dm_bufio/parameters/max_cache_size_bytes
+  [read files in /mnt]
+
+Fixes: 5721d4e5a9cd ("dm verity: Add optional "try_verify_in_tasklet" feature")
+Signed-off-by: Wang Shuai <wangshuai12@xiaomi.com>
+Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
+---
+ drivers/md/dm-bufio.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
+index ec84ba5e93e5..caf6ae9a8b52 100644
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -2742,7 +2742,9 @@ static unsigned long __evict_a_few(unsigned long nr_buffers)
+ 		__make_buffer_clean(b);
+ 		__free_buffer_wake(b);
+ 
++		dm_bufio_unlock(c);
+ 		cond_resched();
++		dm_bufio_lock(c);
+ 	}
+ 
+ 	dm_bufio_unlock(c);
+-- 
+2.43.0
+
 
