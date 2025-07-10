@@ -1,229 +1,115 @@
-Return-Path: <linux-kernel+bounces-725293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7BBAFFD0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6B4AFFD56
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6A47588679
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:57:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56175A3C5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB07290BD5;
-	Thu, 10 Jul 2025 08:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5642C159F;
+	Thu, 10 Jul 2025 08:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="unmouviC"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndmpyqvk"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA82290080
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C4429993F;
+	Thu, 10 Jul 2025 08:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752137849; cv=none; b=PqasbGqzDAsGJXdM30utMQOKPmZLHISJ8qtCjG0m4xeIplbykuydN5NkPFbxsqsYIYIKUICexD7fGacD/Ed6NK1gZRJD4Rfex9Qb2bmWRIfni029RlCf3JCXOr11R0av7UsycWeDr4dIeQAWevtjFZ8ZItGKVOP+11xYzAfPgrE=
+	t=1752137888; cv=none; b=MLv/KRlaQ8p5Xfs9UtwG209EXYdWOfCPkDIeAZU1PTim8tJORiowKIoNui9JSSP/7zyWRrCCyMnBZVKrdY9okCyf40tAwL8zhoC0XMMI0Zg1mDqLj+fYC8NOYC8M2f+jY6CnBFQflpntLcyJ/3Zcu0uKLHd0D2sBdh0CVEfHh7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752137849; c=relaxed/simple;
-	bh=x2qnWy/jisF+XYZi200qSmXbNr7ZhNRXkIecCvKhBZ4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=t18Hv+TnHYga6a78z7sgfbciOW2n7qpdlj8rbD1z7NWTXpmKgZDfMfleZ3txSgcdaXsnFAwZlRZ3fYnCiKA2pGCY4RfJd4L2ubqxq1LOOKAvHlc1EFZO1Y/jP9dgKFOuDTUzcgQDEfhHvvuVPZ1Zy0Z0BIMekwN4BArXnLAB2/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=unmouviC; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-454ac069223so9823805e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:57:26 -0700 (PDT)
+	s=arc-20240116; t=1752137888; c=relaxed/simple;
+	bh=ovY0wUbO/pvaHRTJ3gBlcrmaRXqj/rYP5snoHOc1kdk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b6+w7k0sKsqFej6drZBSAS1e55I3l2YdKwB+1x/KGWSsLs+1IfOsRkrnqq81W254tK4/BFOCs1i45tHQbYYX7efpizmgBEh7NB/MOcKFIkcewc+P47+kWyBpkqc62vGXwq8xoEZRLs5Yi19L3hnPcawhfnDQccgsmOE+2BHcBJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ndmpyqvk; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ade76b8356cso132896766b.2;
+        Thu, 10 Jul 2025 01:58:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752137845; x=1752742645; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pEnfT6FkztCf1NEW9XiU9AdGyzA1VPDKN8Lo+OyIA2Q=;
-        b=unmouviCrWPBsjVSvaRbua7ABA6tZ2NpL8OP6R+LfShRvFLMYDV/HqDpf4V8JlrZJc
-         BmzhBcJz/CPbw4CXs1NH7ZQYFrhRX+8HfIxouKBewRBNcgzce6c+YTM4Gaixss8ODlPX
-         SHlBr+y3tnEiFB3lH2T38DaE8f2RTt5Facb7B2ZaADpGPnVqwPqfDAi/m2s/9jy18crm
-         6arRFDOGIB6YQ3dHnKnp9SMQuAI9SumyBPoMTaUJiNkiAETtuOaMoFms1tthrEA6FCsY
-         uM9yNn/pQilkulDIRMtPRi0uxnIvvV+J/xe/wiETgP7Rm2FhBuyiuN182RdtzrSIO6qM
-         TzRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752137845; x=1752742645;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752137885; x=1752742685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pEnfT6FkztCf1NEW9XiU9AdGyzA1VPDKN8Lo+OyIA2Q=;
-        b=aD3ctD6/KJUumw10RxxHgO6t3+5gIjA8i1MnMc4QeZDUyxqZChjhHnwZTnk/u8HXvx
-         8jrLcA7FL6APj8zrHDoJGm8DdJKIhQThAfVDDEdrZHgIOjK8RfrTDXBRSvEBkQEoz+q/
-         7vu1nPyvvJNmF/4pbMuYNijMM7Eunj2WyuHAIF/3L94JmCUCacgtXZVANoM6LqORBO5D
-         uXYSb1kz1ZpM3bcDr9D9b72LgHvtiyar+Mx/jQNN1TZOmGVtjRdSLbYmH7XxNAOS5pxW
-         NJUf40Ejz1DNkiYnNX2RazGuRMAwMPAyo86vyZ9bTVcTMsrXZuWLd7WjySLrZ6QoxXOt
-         k9Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCUouYPEMaFqbPeml0sL/H++sdkkglT/tBWt36lIWPqRP6uwf2s8g7b/mK0+K8OVDKtMr3hIFnlSel9yCC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLNTXY+Y+dmV0h7O2ABsLaD88+PaMkc3lWLdtThoIOvFNIcoY6
-	3hqRlNzWTWmV4p62w+unCNQ2jxoW0TYiU1yuTnobKivBLxenQih4zE4Z+QFPmnp9npw=
-X-Gm-Gg: ASbGncvjgG0bRIAg4JS483RiyIwqkOJePeT4tKQsvPOxqOhv7ERDB86rlCDAcXxJBle
-	MkHVnGjTI+Q4UX7aK9gBb1vmkNIhtQa5tM+AJN1FqaqvYt02MbB8VhJbxMhiPwbMHsiZjohe9v1
-	Katpijs5yTzufw9vEhjel4CgXsmsDOExP6ZSIu21no8/JyUqJEG5F/gyCoSehDlxOU4mnEeIa8N
-	ET74fhZafxcqw95Xs+e5RzsuaicY4Do87i/hK06M6WEmkujQByMbmHTSLiZS56XAqbsRv/Qxt7k
-	J+pg73i2KygeaUZExDH6rlSEHz7XCaLSYnZaWKfL+/KiiMIZtEeHKXIrugFPFg==
-X-Google-Smtp-Source: AGHT+IGWtPkM7wNN2WAZ9ZBqWQxhQQPFiCu8f4+86eF186o2AjTuMIqbAyWP77bRc2dyw5l64yP3Qg==
-X-Received: by 2002:a05:6000:2087:b0:3a4:f70e:bc25 with SMTP id ffacd0b85a97d-3b5e7f29674mr2434317f8f.27.1752137844837;
-        Thu, 10 Jul 2025 01:57:24 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:9fcc:5953:3d1a:6b41])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8e14cfcsm1284032f8f.67.2025.07.10.01.57.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 01:57:24 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>,
-  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>,  Jaroslav Kysela <perex@perex.cz>,
-  Takashi Iwai <tiwai@suse.com>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
-  jiebing.chen@amlogic.com,  linux-sound@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  jian.xu@amlogic.com,  shuai.li@amlogic.com,
-  zhe.wang@amlogic.com
-Subject: Re: [PATCH v5 1/6] dt-bindings: clock: meson: Add audio power
- domain for s4 soc
-In-Reply-To: <20250710-audio_drvier-v5-1-d4155f1e7464@amlogic.com> (jiebing
-	chen via's message of "Thu, 10 Jul 2025 11:35:37 +0800")
-References: <20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com>
-	<20250710-audio_drvier-v5-1-d4155f1e7464@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Thu, 10 Jul 2025 10:57:23 +0200
-Message-ID: <1jbjpsqv7w.fsf@starbuckisacylon.baylibre.com>
+        bh=ovY0wUbO/pvaHRTJ3gBlcrmaRXqj/rYP5snoHOc1kdk=;
+        b=ndmpyqvk9WuJqukKF3xa5SvB9wrpnj8d/yJt1LMTLO6PV6id0uShr9SxtluSt43eHt
+         O6+yjeSuiOkp6jrv0ZoYlH9Gcj/DyoYO9t1Kksd1LSu9CrAunSpU58CxLqYxFUmCuYAJ
+         H4+cEmG43rb4VKooGmvHAvzD83kqjgQXhwzTLuuZkSlerfhOjFhwXdy6uECPDl7l6J5N
+         U7p/3jJt1niHJd1kpqyIcWQUsJFRIXdu6JUJBIeMXGw1yKtHZ4Rz3mEhCVRU77pbd+qa
+         4JR2k0qZsuhIJ+PvRaw8P89wR6dLdxsBF+6QKvCPFrX+aDsfGUvbx4ahBS5aW111UhN8
+         CaWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752137885; x=1752742685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ovY0wUbO/pvaHRTJ3gBlcrmaRXqj/rYP5snoHOc1kdk=;
+        b=scWyzRQQABROgFdzJcP6PYlJcuAIXKWikJi61RAIBcoCcmp8/q31szYhTPCTwAkq4V
+         UmiyyfOzJo0Cw5pZi98+i/J2EsCRw6tRxl9kTbeY1FH5qFyAfLMFGPPrYprpT1fAH2RH
+         07UfYLMwPDGXig2kyNfPzDd2IUC8m5M5CzN60fklJm5Q1Yuy3Hf+MDl6uMSt1LpSAWJG
+         cxmcMQ3c4+C5rFTWEJ8l+Ud+0MYrAzFWvSyV8q0sh6Q+NnImHcVmt6iRF+6V0j3A4mVc
+         BEHBi/vA6mt6lZ0nUdU5U+EidfV9I5J3ObD+WMYuha/wHSoTcSbCL33CJcNim/EjTJJu
+         EONQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU42flkMPx36FRBrBhlsyrQrGGLgsJ8ge0lZO5eCPEYm9YhZTRGUVYjDQKie4d3k6S57tLy+qwgJ6LvPOmC@vger.kernel.org, AJvYcCUwgntsYln3YZ0l5+DqpdvWfqChbmR7OEOSmWN2gRiCc2ltWYGUdSSvnSREkxHbVrQP6OrebOXRJgc0Ur8k@vger.kernel.org, AJvYcCVBR1KDM/LoJh6pWZKsvtOFEGE2/R7F7586JKznMyhm/VRIZipT1aOi+XBcQW7I+FwAc94391tI6a+2Y8T6@vger.kernel.org, AJvYcCWUCJ2DCwBZNaeIftEj3wzo6FuRhsu1xBYn9+Vu8qoYwdMLXELBtlFsZrcknMG0lqVcPFmTCigV15ql@vger.kernel.org, AJvYcCWXOqgenQjF4+fTPJZO3YRs/i2HeuRvL2JJIrL+bwQbeszw1skoWwnBSEQ9d9fkKp8mJzcvF4zr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCH3woDXeuC4Eud5JgVyu3sDxT5OrQw3HydnmRt5Bzlz5u+iXC
+	OL3qOtuVvA5P/Tl5B6nuEdVkgbaWIzON9QpKzUm+IKB/JtMxCiSEaYiQdtJ4GJmOGfMnCDBYmoJ
+	OYqtQmx4RnKGRA8KvYV++UbU91Hoe8YE=
+X-Gm-Gg: ASbGncugAyc1O2je3NXsoTpzOSILa0ibfZ9BYia63XjNrREV9Zq3IqCTs1/bf7ekfKy
+	DcdPc9EjYwKtHQuRtV3/xtcOHVR0eNCFYDF4QpuY6+4XIGQP+70vfvRlFweBUnh+8DYPhzZ8mMd
+	laBfRlV3XEWSpDCtPXkgsZfgbTm3iAwddTC92QBzXrIheHrg==
+X-Google-Smtp-Source: AGHT+IF4vkQQS93GlTFcXA3IUZu+Ie6aWTqS+ryt/tNRDWHUfU7VoFm+JQoC4Q9KZJPIsOeBw8GwkZX2MWvIWqAsv48=
+X-Received: by 2002:a17:907:3f26:b0:ae3:60e5:ece3 with SMTP id
+ a640c23a62f3a-ae6e6e308aamr206701866b.6.1752137885114; Thu, 10 Jul 2025
+ 01:58:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250710-qcom-smgr-v2-0-f6e198b7aa8e@protonmail.com> <20250710-qcom-smgr-v2-4-f6e198b7aa8e@protonmail.com>
+In-Reply-To: <20250710-qcom-smgr-v2-4-f6e198b7aa8e@protonmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 10 Jul 2025 11:57:28 +0300
+X-Gm-Features: Ac12FXxFEAw7JJzM8ZextWSIZ2sUSr-CBvVZPV0WO2mg2RfGdJ-GJxGQGSEknhU
+Message-ID: <CAHp75Vf8NzYRMeM=+S4p9LGnOd4iXcdw93hBjd=Rn=LqBXgwgA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] iio: Add Qualcomm Sensor Manager driver
+To: y.oudjana@protonmail.com
+Cc: Manivannan Sadhasivam <mani@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Luca Weiss <luca@lucaweiss.eu>, linux-arm-msm@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 10 Jul 2025 at 11:35, jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org> wrote:
-
-> From: jiebing chen <jiebing.chen@amlogic.com>
+On Thu, Jul 10, 2025 at 11:06=E2=80=AFAM Yassine Oudjana via B4 Relay
+<devnull+y.oudjana.protonmail.com@kernel.org> wrote:
 >
-> The audio power domain has been detected on S4 device.
+> Add a driver for sensors exposed by the Qualcomm Sensor Manager service,
+> which is provided by SLPI or ADSP on Qualcomm SoCs. Supported sensors
+> include accelerometers, gyroscopes, pressure sensors, proximity sensors
+> and magnetometers.
 
-detected ?
+First of all it's almost 2kLoCs, it's on the edge of unreviewable
+code. Please, try to make 3+ patches out of this one.
+Second, take your time and check what your code is using from the
+kernel internal libraries and APIs and follow IWYU principle when
+including headers.
 
-> It must be enabled prior to audio operations.
->
-> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
-> ---
->  .../bindings/clock/amlogic,axg-audio-clkc.yaml     | 55 +++++++++++++++++++++-
->  1 file changed, 54 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-> index fd7982dd4ceab82389167079c2258a9acff51a76..c3f0bb9b2ff050394828ba339a7be0c9c48e9a76 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-> @@ -21,6 +21,8 @@ properties:
->        - amlogic,axg-audio-clkc
->        - amlogic,g12a-audio-clkc
->        - amlogic,sm1-audio-clkc
-> +      - amlogic,s4-audio-clkc
-> +      - amlogic,clock-pads-clkc
->  
->    '#clock-cells':
->      const: 1
-> @@ -100,13 +102,15 @@ properties:
->    resets:
->      description: internal reset line
->  
-> +  power-domains:
-> +    maxItems: 1
-> +
->  required:
->    - compatible
->    - '#clock-cells'
->    - reg
->    - clocks
->    - clock-names
-> -  - resets
 
-Not related to the decription ... and fishy ...
-
->  
->  allOf:
->    - if:
-> @@ -116,12 +120,37 @@ allOf:
->              enum:
->                - amlogic,g12a-audio-clkc
->                - amlogic,sm1-audio-clkc
-> +              - amlogic,s4-audio-clkc
->      then:
->        required:
->          - '#reset-cells'
->      else:
->        properties:
->          '#reset-cells': false
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - amlogic,s4-audio-clkc
-> +    then:
-> +      required:
-> +        - power-domains
-> +    else:
-> +      properties:
-> +        power-domains: false
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - amlogic,clock-pads-clkc
-> +    then:
-> +      properties:
-> +        resets: false
-> +    else:
-> +      required:
-> +        - resets
->  
->  additionalProperties: false
->  
-> @@ -129,6 +158,7 @@ examples:
->    - |
->      #include <dt-bindings/clock/axg-clkc.h>
->      #include <dt-bindings/reset/amlogic,meson-axg-reset.h>
-> +    #include <dt-bindings/power/meson-s4-power.h>
->      apb {
->          #address-cells = <2>;
->          #size-cells = <2>;
-> @@ -198,4 +228,27 @@ examples:
->                            "slv_lrclk9";
->              resets = <&reset RESET_AUDIO>;
->          };
-> +      clk_pad: clock-controller@330e80 {
-> +        compatible = "amlogic,clock-pads-clkc";
-> +        reg = <0x0 0x330e80 0x0 0x10>;
-> +        #clock-cells = <1>;
-> +        clocks = <&clkc_periphs CLKID_AUDIO>,
-> +                 <&clkc_pll CLKID_MPLL0>,
-> +                 <&clkc_pll CLKID_MPLL1>,
-> +                 <&clkc_pll CLKID_MPLL2>,
-> +                 <&clkc_pll CLKID_MPLL3>,
-> +                 <&clkc_pll CLKID_HIFI_PLL>,
-> +                 <&clkc_pll CLKID_FCLK_DIV3>,
-> +                 <&clkc_pll CLKID_FCLK_DIV4>,
-> +                 <&clkc_pll CLKID_FCLK_DIV5>;
-> +        clock-names = "pclk",
-> +                      "mst_in0",
-> +                      "mst_in1",
-> +                      "mst_in2",
-> +                      "mst_in3",
-> +                      "mst_in4",
-> +                      "mst_in5",
-> +                      "mst_in6",
-> +                      "mst_in7";
-> +      };
->      };
-
--- 
-Jerome
+--=20
+With Best Regards,
+Andy Shevchenko
 
