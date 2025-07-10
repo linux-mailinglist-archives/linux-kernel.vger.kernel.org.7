@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-726667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E24B00FF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FD9B00FED
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5773F7B8148
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:52:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F90E645002
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8ED306DD4;
-	Thu, 10 Jul 2025 23:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29418315500;
+	Thu, 10 Jul 2025 23:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MI8HuiFp"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dvbv/yun"
 Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43A0306DD5
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AAF30E833
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752191539; cv=none; b=EdFXLWSchxuIrCF9SDe2s2tLpS/iYIlrmmMu6x5R0xAZYSkzKD3vFiQ+sv2zzFAcGmZV7zQwqUbY4UETBGITVIDdmp+ZftKVsdbw781mF1xogszM/SDN0OZplWSpHmzP9GhYB9I7Imyo50Niw4wBkWvHJXOpICg0/ivNkZ2D4ts=
+	t=1752191541; cv=none; b=JPXPBe2yExVBuoqpbbXss0aSwKa4VHFLxlGFFAouGun+mWcK6r7s4bGZ+Lwz8YYSH6vCCiQ5W9yEDJ7l9Mrwj6gA/KLMNrmu7eMCQXqpzCJ20BieldpHlqOBIlfvUzrbAEyEtl7cWDcX05M002tnZ+ajwbH6FJ40NhtmUb+S1wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752191539; c=relaxed/simple;
-	bh=E5+kvYI2Rn6W9To+wrAcq/gxgLLQZbgSx4MLHJcahUI=;
+	s=arc-20240116; t=1752191541; c=relaxed/simple;
+	bh=5zleGua1Zw/ZaEwM7EA6L7ilWgpRL02HZYzo8k822ac=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=oKOnIIAz4mJs5NLO3HQoRKR4Qw+M4unaZAxWgJDHhMxDczwunGReF2kFDuUwsRumumti9OlYUYbEhO366JUTHJnqOWrDclf8rwcMv+zJ1fcPHeoAA8n+3/CkxytLA7uxncFiSqoUbF1SmeU2k0+n5Au0Yk4YQlhWJQ+BIQ2MDqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MI8HuiFp; arc=none smtp.client-ip=209.85.216.73
+	 To:Content-Type; b=jzmnse0/YAZ/YF0lbDs9MC+uJnXT9D7FChmIOJ7H05jwoglYiLUGzxXC01DvSQ3K7MsaxAONO0Df1+pKY9coib79d4y0ZyTuzcoLiKgSwZDGP8JH5CsSCOGcMXSvJWUdM80H7fmy9SNRyTbI8SsYndC57tB8+twEziFuRpBsyIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dvbv/yun; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-313c3915345so2272316a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:52:17 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3132c8437ffso2177754a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:52:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752191537; x=1752796337; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1752191539; x=1752796339; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wPzAwcY5wS+r0tfRkqlbV0oEuH3EOdPNkOfWet+RrhE=;
-        b=MI8HuiFpMNnvz+uJu1EE0LlmUtlr6RueSvA2Q4yywzwzoKVeGoWxj2+OjLer8c2FEz
-         gZ+FFcuVE/x6GBg68i5vuL5bBtfRiuvHjG/PYteyE1lOPzqgTIYOsdhIRnknXFazMpxw
-         seoBxHQX51lJN/ygg5pO+eqSYG+uaceWDzgVJKPcCMLYQu/SxgYiTlTreCR6CWpgIkDG
-         bHgDHatpy6J9CikbihKYKQuqxFHJFNa+D31PB6LFjMwFyTkrvb+Ca8zPfx+C8P6ULqCs
-         usvd05dlwcl7A/mFf4MdHvQJfSUTBUN4eLRfkvL98cauxjPLnqwc8P8F2TigPaW3zYjj
-         frpQ==
+        bh=wqFyL3Z59+3lc3ZxktOSwyrKwJmku2CJiAkRKO+qTP0=;
+        b=dvbv/yunjigfYqhzfmnCndg2YP3+son+gV+3tRWIxEIhhQD6rjVPDS2VI83qhx0wk+
+         pl+0o1dd8WPSQJ310wx6m/iuNAY8kUQAXEuOImTtloP5Jm0eFMpSeDPlklvXxHkdzVKs
+         lhbQbvJ80wYNF0nu0TgQPXwdR6Mp8YX6T2Ns1MLsEAiX6qv7SZR64aNpWkb2nXc3GqBo
+         DoG6gPMmpAotJ8CvKCc4SnINHN+x88oCzPJu0BexD2GOzJ/V1DtLpxDtmLh0HDLCQszH
+         FZLXE4KhXoBjHvbvdE/0UtsV5O/HGu+Tlko4iA9Nl+MshXoqCyV+9LZyTIek9hzJtF6Y
+         8cvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752191537; x=1752796337;
+        d=1e100.net; s=20230601; t=1752191539; x=1752796339;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wPzAwcY5wS+r0tfRkqlbV0oEuH3EOdPNkOfWet+RrhE=;
-        b=RhfsIDuQI3iZJM1HrYARHn15ELKgGkWRA1wQhLyGYwB2AsB4nv5nC3ciHRgCs082jH
-         RxTn/c6WP1Z4YSDiwDrKtfVestH+KlYbY/siy5v/KbG5iIp7UFPyCpf15OxpxAm5YEew
-         CUq6iJnkGUxlaOU9bLNBwbw2UMk2PI+beoTsifEEzIY+zbpuwnO93Fz5QNh2u9a4xI6C
-         R5nq7sAdZTCrSAuB/8ceKLTkphuY2W9cWmNnbsz37enPNhNoxdEB06JoYANrjy+FkUxU
-         1g6upX3KcVOWJhxoHSNsRS+5iRSvSEAeVr/BEL0lkZyTebKeRaT9O1kXe4QOiT58KOux
-         OuHg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3xscHymvijTyeXBJ+hPscBwxaWlXJsCM/24CW3hNro269Yi3Jz4xvWK53dyhBF9y9o40ofRjuam8mAFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnqMBQjip3hzxi58joRPt+zPAztYXNN+B/CpKt4Dg6MnVExm09
-	wLdyTCMuoq7J8swJ2gqelel8NPfztxG6neXvZ+KoGHu/guoqHChvrEE6qeIWLlfI4j85SXl64Fo
-	9fGKgP09qfw==
-X-Google-Smtp-Source: AGHT+IHJsuF2z6Bvn0PuYTCBRxnqhbfcAz/bXYQtjNJUh31jdC3iRUP0zoIA5a/Y12HFO1VhXy3RDUCXDmFq
-X-Received: from pjbqi10.prod.google.com ([2002:a17:90b:274a:b0:311:a4ee:7c3d])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d86:b0:313:d6ce:6c6e
- with SMTP id 98e67ed59e1d1-31c4ca845e2mr1867994a91.8.1752191537223; Thu, 10
- Jul 2025 16:52:17 -0700 (PDT)
-Date: Thu, 10 Jul 2025 16:51:24 -0700
+        bh=wqFyL3Z59+3lc3ZxktOSwyrKwJmku2CJiAkRKO+qTP0=;
+        b=kUc451qMuv8H4Q8Vn4pLgIBkJzFm9AoefOtzGJ+LMr6LCTYBpR20IapvUozm1NECcX
+         VPybi98QUhuKhUeBU6f8c/oJBIFbmiOCPzaAUPdjK3YlSa0rEa0a/sB9yhM5vercQ4AC
+         vs3dzoxksGMICiAPxLtvX7FwJUz23Bvg1I+cv0ffZ8JAJHGPp7FKOxEO+eRqj8g4YE0G
+         D/ffXdooWbWPxNo8KH1aiegXGK509QnBJAnLd41qWUyrcoLPz3CbS8zai8II0tCV4enI
+         PQ/v1X7V1RJuTK8PcaokjSheMw2v6+RFwPserUgZFYhKFJmxRG1JHkyPNfbPMWxzh7K4
+         qg6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXl6C5SGMEoSeuejXQ74REbIhYIASiGCS+wjEJ57rnAcvPanUfKxafk9r3dP7B7RowQ9GL1idP2B2kuooE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjwlfDC8fXlOssN+wosecwQ8ohtqK+2qvCFNsXrPinmy1a2pE2
+	PeX6taQj61YCXtVrkTrL0IYhjFXovwWWS0ig0lhalU/CDFG6iLGwCL5/NohmXQeIbKeKdiwtr56
+	Oe9CTNWnIQg==
+X-Google-Smtp-Source: AGHT+IGh/C/5InyJG63p8fKWBtjZwpODL6P7kzvpQrT88GcQmbobXyDzMu/1DHri/G4w4+OvP8s17U8z5mwx
+X-Received: from pjtu14.prod.google.com ([2002:a17:90a:c88e:b0:2fa:1803:2f9f])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5444:b0:311:fde5:c4b6
+ with SMTP id 98e67ed59e1d1-31c4ca64d1dmr1855436a91.6.1752191539105; Thu, 10
+ Jul 2025 16:52:19 -0700 (PDT)
+Date: Thu, 10 Jul 2025 16:51:25 -0700
 In-Reply-To: <20250710235126.1086011-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250710235126.1086011-1-irogers@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250710235126.1086011-12-irogers@google.com>
-Subject: [PATCH v2 11/13] perf python: Correct pyrf_evsel__read for tool PMUs
+Message-ID: <20250710235126.1086011-13-irogers@google.com>
+Subject: [PATCH v2 12/13] perf python: Improve leader copying from evlist
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,96 +90,99 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Tool PMUs assume that stat's process_counter_values is being used to
-read the counters. Specifically they hold onto old values in
-evsel->prev_raw_counts and give the cumulative count based off of this
-value. Update pyrf_evsel__read to allocate counts and prev_raw_counts,
-use evsel__read_counter rather than perf_evsel__read so tool PMUs are
-read from not just perf_event_open events, make the returned
-pyrf_counts_values contain the delta value rather than the cumulative
-value.
+The struct pyrf_evlist embeds the evlist requiring the copying from
+things like parsed events. The copying logic handles the leader being
+the event itself, but if the leader group event is a different in the
+list it will cause an evsel to point to the evsel in the list that was
+copied from which is bad. Fix this by adding another pass over the
+evlist rewriting leaders, simplified by the introductin of two evlist
+helpers.
 
-Fixes: 739621f65702 ("perf python: Add evsel read method")
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/python.c | 47 +++++++++++++++++++++++++++++++++++++---
- 1 file changed, 44 insertions(+), 3 deletions(-)
+ tools/perf/util/python.c | 57 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
 diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 4a3c2b4dd79f..f689560192f4 100644
+index f689560192f4..1d9fa33d377a 100644
 --- a/tools/perf/util/python.c
 +++ b/tools/perf/util/python.c
-@@ -10,6 +10,7 @@
- #endif
- #include <perf/mmap.h>
- #include "callchain.h"
-+#include "counts.h"
- #include "evlist.h"
- #include "evsel.h"
- #include "event.h"
-@@ -889,12 +890,38 @@ static PyObject *pyrf_evsel__threads(struct pyrf_evsel *pevsel)
- 	return (PyObject *)pthread_map;
+@@ -1568,10 +1568,37 @@ static PyObject *pyrf_evsel__from_evsel(struct evsel *evsel)
+ 	return (PyObject *)pevsel;
  }
  
-+/*
-+ * Ensure evsel's counts and prev_raw_counts are allocated, the latter
-+ * used by tool PMUs to compute the cumulative count as expected by
-+ * stat's process_counter_values.
-+ */
-+static int evsel__ensure_counts(struct evsel *evsel)
++static int evlist__pos(struct evlist *evlist, struct evsel *evsel)
 +{
-+	int nthreads, ncpus;
++	struct evsel *pos;
++	int idx = 0;
 +
-+	if (evsel->counts != NULL)
-+		return 0;
-+
-+	nthreads = perf_thread_map__nr(evsel->core.threads);
-+	ncpus = perf_cpu_map__nr(evsel->core.cpus);
-+
-+	evsel->counts = perf_counts__new(ncpus, nthreads);
-+	if (evsel->counts == NULL)
-+		return -ENOMEM;
-+
-+	evsel->prev_raw_counts = perf_counts__new(ncpus, nthreads);
-+	if (evsel->prev_raw_counts == NULL)
-+		return -ENOMEM;
-+
-+	return 0;
++	evlist__for_each_entry(evlist, pos) {
++		if (evsel == pos)
++			return idx;
++		idx++;
++	}
++	return -1;
 +}
 +
- static PyObject *pyrf_evsel__read(struct pyrf_evsel *pevsel,
- 				  PyObject *args, PyObject *kwargs)
++static struct evsel *evlist__at(struct evlist *evlist, int idx)
++{
++	struct evsel *pos;
++	int idx2 = 0;
++
++	evlist__for_each_entry(evlist, pos) {
++		if (idx == idx2)
++			return pos;
++		idx2++;
++	}
++	return NULL;
++}
++
+ static PyObject *pyrf_evlist__from_evlist(struct evlist *evlist)
  {
- 	struct evsel *evsel = &pevsel->evsel;
- 	int cpu = 0, cpu_idx, thread = 0, thread_idx;
--	struct perf_counts_values counts;
-+	struct perf_counts_values *old_count, *new_count;
- 	struct pyrf_counts_values *count_values = PyObject_New(struct pyrf_counts_values,
- 							       &pyrf_counts_values__type);
+ 	struct pyrf_evlist *pevlist = PyObject_New(struct pyrf_evlist, &pyrf_evlist__type);
+ 	struct evsel *pos;
++	struct rb_node *node;
  
-@@ -915,8 +942,22 @@ static PyObject *pyrf_evsel__read(struct pyrf_evsel *pevsel,
- 			     thread);
+ 	if (!pevlist)
  		return NULL;
+@@ -1583,9 +1610,39 @@ static PyObject *pyrf_evlist__from_evlist(struct evlist *evlist)
+ 
+ 		evlist__add(&pevlist->evlist, &pevsel->evsel);
  	}
--	perf_evsel__read(&(evsel->core), cpu_idx, thread_idx, &counts);
--	count_values->values = counts;
++	evlist__for_each_entry(&pevlist->evlist, pos) {
++		struct evsel *leader = evsel__leader(pos);
 +
-+	if (evsel__ensure_counts(evsel))
-+		return PyErr_NoMemory();
++		if (pos != leader) {
++			int idx = evlist__pos(evlist, leader);
 +
-+	/* Set up pointers to the old and newly read counter values. */
-+	old_count = perf_counts(evsel->prev_raw_counts, cpu_idx, thread_idx);
-+	new_count = perf_counts(evsel->counts, cpu_idx, thread_idx);
-+	/* Update the value in evsel->counts. */
-+	evsel__read_counter(evsel, cpu_idx, thread_idx);
-+	/* Copy the value and turn it into the delta from old_count. */
-+	count_values->values = *new_count;
-+	count_values->values.val -= old_count->val;
-+	count_values->values.ena -= old_count->ena;
-+	count_values->values.run -= old_count->run;
-+	/* Save the new count over the old_count for the next read. */
-+	*old_count = *new_count;
- 	return (PyObject *)count_values;
++			if (idx >= 0)
++				evsel__set_leader(pos, evlist__at(&pevlist->evlist, idx));
++			else if (leader == NULL)
++				evsel__set_leader(pos, pos);
++		}
++	}
+ 	metricgroup__copy_metric_events(&pevlist->evlist, /*cgrp=*/NULL,
+ 					&pevlist->evlist.metric_events,
+ 					&evlist->metric_events);
++	for (node = rb_first_cached(&pevlist->evlist.metric_events.entries); node;
++	     node = rb_next(node)) {
++		struct metric_event *me = container_of(node, struct metric_event, nd);
++		struct list_head *mpos;
++		int idx = evlist__pos(evlist, me->evsel);
++
++		if (idx >= 0)
++			me->evsel = evlist__at(&pevlist->evlist, idx);
++		list_for_each(mpos, &me->head) {
++			struct metric_expr *e = container_of(mpos, struct metric_expr, nd);
++
++			for (int j = 0; e->metric_events[j]; j++) {
++				idx = evlist__pos(evlist, e->metric_events[j]);
++				if (idx >= 0)
++					e->metric_events[j] = evlist__at(&pevlist->evlist, idx);
++			}
++		}
++	}
+ 	return (PyObject *)pevlist;
  }
  
 -- 
