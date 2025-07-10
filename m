@@ -1,322 +1,206 @@
-Return-Path: <linux-kernel+bounces-726085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB3BB007FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:01:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE18B007DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 152BF172985
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:57:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31F763B817F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AEC27A476;
-	Thu, 10 Jul 2025 15:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8CF27990C;
+	Thu, 10 Jul 2025 15:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cmn4w510"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXWJj5JR"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE6D279DA0;
-	Thu, 10 Jul 2025 15:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B58B274FDF;
+	Thu, 10 Jul 2025 15:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752163062; cv=none; b=KhLfAHnC297TGXQ2bN+OwcysNyWTtc5k4mMwhfn0l+1WOhglS20GtUK2Z+iZSAU5gpEr+qXLvzerGEJDjbYnNUt5zm5FHjQcdY3iWJNGz8zJE4EBsgK68B3+Cd+o+36M8oIeqXAsQlH/hh5e7mU07b0S3rbUntriSzDc0avTdnE=
+	t=1752163035; cv=none; b=V9tlQcBQ/jiXkubE5aFbi5kHW8v8QdN02amIwyy5Jo2ZJdtcKSd4p6G+OnOmWNBara01IUX+lQNupOXdK7a7wIY9esnbPtsGPtBlDSQ4gkv7hTQkmT47bYqHbO8rv9aa5Vz7pXRtd+dEe0hID+09ZoJq7HmkiMOZIsPN5Dem3uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752163062; c=relaxed/simple;
-	bh=lFZcBY3URVFrvN1SU2OnNL6+oWxyKK5PS2R0CTUJbu0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cl928np0ar0UnMJTwU9tgKHW4NqK9tZYT4TPpw13Yt3//W84IpRLeZ1gi1qGGS9wOa4iYS9+DfRNQM3xSeV8malJRdbiseTLgAN9I1yX287/Kq/TWMYmPRZlqijjp6FXbkhWHWWdLWtXVScZChM0FRDs4jHKzin8+mH5g1QLkiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cmn4w510; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1752163035; c=relaxed/simple;
+	bh=+mABmYXOeNV8mM9HnoSX6J6gUSDBDbFmr1UdHiOlW5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=THPzJniAWSRJg2BsVuJW5uhui9ZHz+gINbygGLQCrx6NJX0KvmlL7YEzJADYtef9QXY3Gnr7NgHYu6ITpssqw8qzmiCOez3/xc7w+cs21hUzMhMKHL00Wt6sbBPXeHzuHbgs9Rz4vqN8fOJosQOmQ7uph1z4cFvDCJCx/h6kRXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WXWJj5JR; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae3be3eabd8so244399966b.1;
-        Thu, 10 Jul 2025 08:57:38 -0700 (PDT)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7d7cf6efc2fso118072185a.3;
+        Thu, 10 Jul 2025 08:57:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752163057; x=1752767857; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752163033; x=1752767833; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gyFwto6duT8k2J6PKEM3Zq5e4wrdh9RzheYLqE65elg=;
-        b=Cmn4w510/dOnHMjGxqxzKEEENYUfboPRoS24tVcSSxXI2RwMWAHh7w8+Y/FWmCeYIV
-         yU/w8aw9enJkA2mQOtHGydLtNUe1+x+e1s4i4a4yo3jgzwu7Ngpawa5Es0v5NUS2RI0K
-         VgXxvdccW2yNkR8UCGphmadRdfXkLs4bb9NAiD1oawBO7BP6+bN1mh6azNXxcxOeaU9v
-         Mlmvw7lMWXsC7CisyMN/tWeEmYxIHUx9y4kKFMrQVL3UKKwipFp4hF+CCPTtsRNsHZCB
-         Ah/kNOBMTT1HdG/uanE9YY5YZxCTAUtBK5e/2n3LzX0dhDOLENS+65L8CJ93MNAjzrJA
-         3Mpg==
+        bh=0TrK7hCfWutY70p0zkUOMvAeOn+WmB0RO4OTHpoohBs=;
+        b=WXWJj5JR7X3l9mAXoLDjvw6N9IJWPiYi8KeuIUKYfVobcct7TsGwayxR1kvafzCJQq
+         1sTAZK9Fj1IwgXJp3EiHJxNs1/ekKjRkdQitlRul7+c+RHdZUXsEvSNIYowaoIVrxchE
+         LZgVsi8Kwa9op8YUOPFqFksAtNXiaTg2AV40AEFgPSpdiQCL2oPtgUWCWOuWejAOfBAQ
+         4tzdo9Y+Tirv7LGEWu+XmV+J4/w4Cb9l/C56B8BhPGvMg8ZuFeljylz/1S0XzEmJToEV
+         cPGsF44nz0+242R5zG+iEkczwHX2BTb5u0c9ZQAD7/ntKVfPx4Fei+HxLj4ULRz/K5b5
+         xhww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752163057; x=1752767857;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752163033; x=1752767833;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gyFwto6duT8k2J6PKEM3Zq5e4wrdh9RzheYLqE65elg=;
-        b=YQXZgQnj3H2CFwiAhhMHt4l5AWfrz7kYaRMSBjGOW/WDHmyXKZH357R+daLFCVhH5H
-         4XeUmfq/lBltdrxlD5GBG7ZfpTQLDDKbyzvc5RI2B3DXBuYrzHiUKBVqKNqAkTMeHRQl
-         DGlJ2lFXmcQWECldanJANW/QD805DSJy2UE3qu4zB7UfneVk2KToz2alGNsXQmMdW7Yl
-         XVLvM7KeWciKsq0JKAO7N0YicB9UvfbuTD3ITn0Kg8SmIiW4F/MKhyEWkgaAeTuqAwa5
-         UYnSWuB7c6dBWJRiZaHgsho2gpwP/glstFB8R5zwuf6xiah7/CPUhKJ5ZL/LFfAOxIOx
-         2uog==
-X-Forwarded-Encrypted: i=1; AJvYcCVnAjIMK0Bv11rWROXB45wO0o3y3iIGOhxjU2jqYfUsCdVRwQNtjvf5lBwXQuI04yPGmizYICkMKcYQ/R51MgwqUY4D@vger.kernel.org, AJvYcCXvCkcH/yEZA7R6KI4N5FiuGtV9/NYLDApfFBWN8Y5oSP0svm83+tLv6bAV2wfVk3QW827CX/AZgEw/sKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySqqlkHFMRkGfJO3mvvBC2EyhRcOiXr7BhXRoLT+fjrkdAcDAW
-	UuIl10JQ0e2nMNXidwYvuthux1VlNH3A62maK9dn4QBtIm/bg2Mw2DgoWGRF/SOMp13FnSplmLR
-	DoUyC8JTTtzvwkX8zGaUYrSveRreH62Q=
-X-Gm-Gg: ASbGncvtfBP8Hw/+Hw6iah79vqofR5fZz3dzJs8/aClFiE0ytTu3aBBsppnR/uT1QlS
-	ENTK1zHnxpS0aAyOKss2YumSWOM7ZJupWPSNXURvP3wUQnQZyVvKVMLaC03wr2F1HRAF68Q6/x/
-	2BtcKCPJ+OCMuFvlGWOx7Ij7MGDC/ViAR/lJoPJvZZ8UY=
-X-Google-Smtp-Source: AGHT+IFDjIdZXlAQN0o9gcQft8bdsUVAZWKdpbA0Umxqt7nH2dtNl+9/RBdEY1alElz7unAk1Y4PgfpvrjfUKZtYKls=
-X-Received: by 2002:a17:907:7f24:b0:ae3:bb0a:1ce9 with SMTP id
- a640c23a62f3a-ae6e23472c0mr495513166b.12.1752163056970; Thu, 10 Jul 2025
- 08:57:36 -0700 (PDT)
+        bh=0TrK7hCfWutY70p0zkUOMvAeOn+WmB0RO4OTHpoohBs=;
+        b=R7/VpBRzfyg3nP0u9rQ8dIwle+46nZm6yCJS33+UakDSIG4nCOiOU5TRq86qr3jTsD
+         XsxGx9isJQVQ/CVioH4hNc6qgKHgyu1yWaVHR3YaIAnY7NAdGg769uq3uubGhHQ1B7L/
+         qrGn5BHkdXFDEZoQ7513b1rwR/kQU0FojJddoufefyryiNSn4ZI1AWPURdP3X+Z82bjw
+         wHPH0i6frjEtUotj3Vv4wtVUogDoi4m0MPhSMfL0MKimGDIGzhI3oAL/FkLoWvQKHF0Q
+         wAw9bKSEI4TBVf/4OFynxpe5pGOaOugb015wZrk2tEfg/AQoPNNHVmbVmdVJqViXb69w
+         p1Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPtoVAisJ6FW78JQvB831YjaEs9DgIKPe9XQjT99u8rDA12HGF81GkpSHUA0clUh3y36lfNMf3wx9qbW8RydM=@vger.kernel.org, AJvYcCV/iubmkx51yKZdERk2HjwriP46iHwP3FlAdFztyMBO2tUBpBc0Wgv2aUxrmteITOX6FC9hzjJSru1r@vger.kernel.org, AJvYcCXjIbKKG6R+Ggkt/BblslYhHqxp+w3jXsj+45dasDf6s10jBns6cAM5+mioJ8rl56gj5ifBF2ZZBvEnrV4K@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpaVJJ4Whp//OrFg2jihzO4rODuUW6byVC49TwMWYMB2iPE8tw
+	BjfENnu/A+nSOex8GRPpbLlPdV/VTeSzO5wkFlt3h/vtAUEnw5WK0fcm
+X-Gm-Gg: ASbGnct6+Sf17xCcKCRpW7FUCcrYbDSVTmuSXOOVOSPdcCYNzqNylzAnIQa8YCSZLMW
+	bouYsJSF4qqmAQV62kCRTDyoPrJypl1mBZA8LPf5oHHZqGfAkITKqkguxRBwJSfK3zGctwGiz/M
+	B7v6pahNodsBJVjs482b1D5zmHt/CdCCdtr/hhkxUYotSlHoHXZE4SIISG+ouDuHGG+JCJ0mni+
+	OX5usfkmSek48dGX1Jd1OX9CBsEXUhOmEx8JPvlnPwPWqmLIkP9l9/DsRWjNs09dSfN4Qd/nYvW
+	tYnmGRUzt1LOk0VCFCrf8+91xbvA56rlr8rD3rqrfhrT8hmu0N2HZnkTjcUd3vVkPKsj5AD9GFH
+	InqjV0ASGrlN9MhpGNa04QRo1Y8qWkb64q+VeQ1MT9p2DE9YIM2MG
+X-Google-Smtp-Source: AGHT+IFo5HxxuRZ6u/J4mgSOUZlvRs5fgOEFkl8u0k1/U/qjbOqofWDsz0TnG4Ksq/SUnO8IHLWzvQ==
+X-Received: by 2002:a05:620a:2906:b0:7c5:962b:e87c with SMTP id af79cd13be357-7dded1f04ddmr2015685a.44.1752163032749;
+        Thu, 10 Jul 2025 08:57:12 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcdbb079eesm110174985a.17.2025.07.10.08.57.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 08:57:12 -0700 (PDT)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 9F1A0F40066;
+	Thu, 10 Jul 2025 11:57:11 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Thu, 10 Jul 2025 11:57:11 -0400
+X-ME-Sender: <xms:1-JvaG3YDd-0_A6g6b4Gbf8FEuPVgU0NxEniHcMQlz7zsEPsm7ra3g>
+    <xme:1-JvaKl9pL1Nt-udWykYtO-WFqG6oFZJY8soHK-j_LlIN93qssLYwKIE8Yct8WvR4
+    suxhyODHd3oI4GiIA>
+X-ME-Received: <xmr:1-JvaDe2yjEjJvvdykzVaF_sTJ9FldzzDXJBV3wq76wXTWIdxxPb57xgkg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdekiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrdhhihhnug
+    gsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlih
+    hnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhkmhhmsehlihhs
+    thhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrh
+    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtth
+    hopehgrghrhiesghgrrhihghhuohdrnhgvth
+X-ME-Proxy: <xmx:1-JvaHWpqqP39ns8iX2QesksUcEImbUsie36qAkqad4a0lYDViwfuw>
+    <xmx:1-JvaHGcvGlxRvDKt50S3P_H53q7ShTh3mE3Wh--AXWPGvGmAFmNBA>
+    <xmx:1-JvaJc4rDlhruJUoTeas9x1kPn1_quLXTUh3gKR5ND2XN6_36HqiA>
+    <xmx:1-JvaAbMELaLB8Vdfebc7b33lZ4OY60-7NtHJhYnbqEAG5w7V_vylg>
+    <xmx:1-JvaMojquPgJlEe8muVgwWgLwNU6uDTQeyFturzlSlCOv15QvNqedFR>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 10 Jul 2025 11:57:10 -0400 (EDT)
+Date: Thu, 10 Jul 2025 08:57:09 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, lkmm@lists.linux.dev,
+	linux-arch@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 3/9] rust: sync: atomic: Add ordering annotation types
+Message-ID: <aG_i1aQhkBa6k8JZ@Mac.home>
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-4-boqun.feng@gmail.com>
+ <4Ql5DIvfmXBHoUA428q2PelaaLNBI5Mi0jE3y3YPObJLRgY73zNZzQ8Pdl2qq25VWsMQFKUpYRHHQ1e7wFaGUw==@protonmail.internalid>
+ <DB8BTA477Z2V.1J7XFLDXHMN2S@kernel.org>
+ <87v7o0i7b8.fsf@kernel.org>
+ <aG_RcB0tcdnkE_v4@Mac.home>
+ <DB8GUTJA9QU1.X112WTV7ABZN@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aG3A8Jirg+TxNza/@rli9-mobl> <f5b1fc77-d180-4df7-b8f6-0cb0ca4a187a@ghiti.fr>
- <CAKxVwge4=cagaVDesKWe0BE88U0YmNn5LLDJvJG=F7EEP2=-LQ@mail.gmail.com> <7204f633-5b35-41ce-b847-7dfbaedbac47@ghiti.fr>
-In-Reply-To: <7204f633-5b35-41ce-b847-7dfbaedbac47@ghiti.fr>
-From: Miao Chen <chenmiao.ku@gmail.com>
-Date: Thu, 10 Jul 2025 23:56:59 +0800
-X-Gm-Features: Ac12FXwpHGHrqNJMYOCJrRAIJPU1S5sbSrf6kJb2PGDBA5iQ-Twvb8GXnLf4awU
-Message-ID: <CAKxVwgdoK6wSt-1LNZ8Tn3MPaETR58RThbcdydijrKPbfpE68g@mail.gmail.com>
-Subject: Re: [PATCH V2] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE selection
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: kernel test robot <lkp@intel.com>, Linux RISCV <linux-riscv@lists.infradead.org>, 
-	oe-kbuild-all@lists.linux.dev, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Pu Lehui <pulehui@huawei.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB8GUTJA9QU1.X112WTV7ABZN@kernel.org>
 
-Hello Alex,
-
-I found where the error is, but there's a problem here:
-
-config PORTABLE
-  bool
-  default !NONPORTABLE
-  select EFI
-  select MMU
-  select OF
-
-select HAVE_DYNAMIC_FTRACE if !XIP_KERNEL && MMU &&
-(CLANG_SUPPORTS_DYNAMIC_FTRACE || GCC_SUPPORTS_DYNAMIC_FTRACE)
-
-Because HAVE_DYNAMIC_FTRACE depends on the MMU=E2=80=94of course, it's
-reasonable for DYNAMIC_FTRACE to depend on the MMU=E2=80=94*but since
-NONPORTABLE is enabled by default, this causes PORTABLE to default to
-n, thereby preventing the MMU from being enabled*. So, should I change
-NONPORTABLE to default to n?
-
-Thanks,
-
-Alex
-
-Alexandre Ghiti <alex@ghiti.fr> =E4=BA=8E2025=E5=B9=B47=E6=9C=8810=E6=97=A5=
-=E5=91=A8=E5=9B=9B 22:33=E5=86=99=E9=81=93=EF=BC=9A
->
->
-> On 7/10/25 14:34, Miao Chen wrote:
-> > Hello Alex,
+On Thu, Jul 10, 2025 at 05:05:25PM +0200, Benno Lossin wrote:
+> On Thu Jul 10, 2025 at 4:42 PM CEST, Boqun Feng wrote:
+> > On Thu, Jul 10, 2025 at 02:00:59PM +0200, Andreas Hindborg wrote:
+> >> "Benno Lossin" <lossin@kernel.org> writes:
+> >> > On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
+> >> >> +/// The trait bound for annotating operations that support any ordering.
+> >> >> +pub trait Any: internal::Sealed {
+> >> >
+> >> > I don't like the name `Any`, how about `AnyOrdering`? Otherwise we
+> >> > should require people to write `ordering::Any` because otherwise it's
+> >> > pretty confusing.
+> >> 
+> >> I agree with this observation.
+> >> 
 > >
-> > Sure, I'll checkout it. Btw, this is my first commit, so can u tell
-> > how to reproduce failed case? Using the reproduce and .config.gz gived
-> > by build-bot?
->
->
-> Yes exactly!
->
->
+> > I'm OK to do the change, but let me show my arguments ;-)
 > >
-> > Thanks,
-> >
-> > Chen Miao
-> >
-> > Alexandre Ghiti <alex@ghiti.fr> =E4=BA=8E2025=E5=B9=B47=E6=9C=8810=E6=
-=97=A5=E5=91=A8=E5=9B=9B 19:53=E5=86=99=E9=81=93=EF=BC=9A
-> >> Hi ChenMiao,
-> >>
-> >> On 7/9/25 03:08, kernel test robot wrote:
-> >>> Hi ChenMiao,
-> >>>
-> >>> kernel test robot noticed the following build errors:
-> >>>
-> >>> [auto build test ERROR on fda589c286040d9ba2d72a0eaf0a13945fc48026]
-> >>>
-> >>> url:    https://github.com/intel-lab-lkp/linux/commits/ChenMiao/riscv=
--ftrace-Fix-the-logic-issue-in-DYNAMIC_FTRACE-selection/20250706-231907
-> >>> base:   fda589c286040d9ba2d72a0eaf0a13945fc48026
-> >>> patch link:    https://lore.kernel.org/r/20250706151830.25091-1-chenm=
-iao.ku%40gmail.com
-> >>> patch subject: [PATCH V2] riscv: ftrace: Fix the logic issue in DYNAM=
-IC_FTRACE selection
-> >>> :::::: branch date: 2 days ago
-> >>> :::::: commit date: 2 days ago
-> >>> config: riscv-randconfig-r112-20250708 (attached as .config)
-> >>> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project =
-cd708029e0b2869e80abe31ddb175f7c35361f90)
-> >>> reproduce: (attached as reproduce)
-> >>>
-> >>> If you fix the issue in a separate patch/commit (i.e. not just a new =
-version of
-> >>> the same patch/commit), kindly add following tags
-> >>> | Reported-by: kernel test robot <lkp@intel.com>
-> >>> | Closes: https://lore.kernel.org/oe-kbuild-all/202507090650.YGY56SIA=
--lkp@intel.com/
-> >>>
-> >>> All errors (new ones prefixed by >>):
-> >>>
-> >>>>> <instantiation>:1:14: error: operand must be a symbol with %lo/%pcr=
-el_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
-> >>>      addi sp, sp, -FREGS_SIZE_ON_STACK
-> >>>                   ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>>> <instantiation>:2:18: error: unexpected token
-> >>>       sw t0, FREGS_EPC(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:3:17: error: unexpected token
-> >>>       sw x1, FREGS_RA(sp)
-> >>>                      ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:7:17: error: unexpected token
-> >>>       sw x6, FREGS_T1(sp)
-> >>>                      ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:9:17: error: unexpected token
-> >>>       sw x7, FREGS_T2(sp)
-> >>>                      ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:10:18: error: unexpected token
-> >>>       sw x28, FREGS_T3(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:11:18: error: unexpected token
-> >>>       sw x29, FREGS_T4(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:12:18: error: unexpected token
-> >>>       sw x30, FREGS_T5(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:13:18: error: unexpected token
-> >>>       sw x31, FREGS_T6(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:16:18: error: unexpected token
-> >>>       sw x10, FREGS_A0(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:17:18: error: unexpected token
-> >>>       sw x11, FREGS_A1(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:18:18: error: unexpected token
-> >>>       sw x12, FREGS_A2(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:19:18: error: unexpected token
-> >>>       sw x13, FREGS_A3(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:20:18: error: unexpected token
-> >>>       sw x14, FREGS_A4(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:21:18: error: unexpected token
-> >>>       sw x15, FREGS_A5(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:22:18: error: unexpected token
-> >>>       sw x16, FREGS_A6(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:23:18: error: unexpected token
-> >>>       sw x17, FREGS_A7(sp)
-> >>>                       ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>       ^
-> >>>      <instantiation>:25:15: error: operand must be a symbol with %lo/=
-%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
-> >>>       addi a0, a0, FREGS_SIZE_ON_STACK
-> >>>                    ^
-> >>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro insta=
-ntiation
-> >>>       SAVE_ABI_REGS
-> >>>
-> >>> Kconfig warnings: (for reference only)
-> >>>      WARNING: unmet direct dependencies detected for DYNAMIC_FTRACE
-> >>>      Depends on [n]: FTRACE [=3Dy] && FUNCTION_TRACER [=3Dy] && HAVE_=
-DYNAMIC_FTRACE [=3Dn]
-> >>>      Selected by [y]:
-> >>>      - RISCV [=3Dy] && FUNCTION_TRACER [=3Dy]
-> >> To avoid that, we should check HAVE_DYNAMIC_FTRACE too:
-> >>
-> >> select DYNAMIC_FTRACE if FUNCTION_TRACER && HAVE_DYNAMIC_FTRACE
-> >>
-> >> That fixes the build error for me. Can you send a v3 with this change?
-> >>
-> >> Thanks,
-> >>
-> >> Alex
-> >>
-> >>
-> > _______________________________________________
-> > linux-riscv mailing list
-> > linux-riscv@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> > * First, we are using a language that supports namespaces,
+> >   so I feel it's a bit unnecessary to use a different name just because
+> >   it conflicts with `core::any::Any`. Doing so kinda undermines the
+> >   namespace concepts. And we may have other `Any`s in the future, are we
+> >   sure at the moment we should keyword `Any`?
+> 
+> I don't think `Any` is a good name for something this specific anyways.
+
+Well, that's the point of namespace: providing contexts for a name, and
+the contexts can be very specific. I'm sure we both have used "any" in
+English to refer something specific ;-)
+
+> If it were something private, then sure use `Any`, but since this is
+> public, I don't think `Any` is a good name.
+> 
+
+This essentially means we keyword `Any` as a public trait name, then we
+should document it somewhere, along with other names we want to keyword.
+
+Regards,
+Boqun
+
+> > * Another thing is that this trait won't be used very often outside
+> >   definition of functions that having ordering variants, currently the
+> >   only users are all inside atomic/generic.rs.
+> 
+> I don't think this is a good argument to keep a bad name.
+> 
+> > I probably choose the `ordering::Any` approach if you guys insist.
+> 
+> I don't think we have a lint for that, so I'd prefer if we avoid that...
+> 
+> Someone is going to just `use ...::ordering::Any` and then have a
+> function `fn<T: Any>(_: T)` in their code and that will be very
+> confusing.
+> 
+> ---
+> Cheers,
+> Benno
 
