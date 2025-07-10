@@ -1,183 +1,189 @@
-Return-Path: <linux-kernel+bounces-725900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B69D7B00539
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:28:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F24B00540
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCC267AC0A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:26:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74F6464644D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627DD273D8A;
-	Thu, 10 Jul 2025 14:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70C22741AB;
+	Thu, 10 Jul 2025 14:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0RYYk9i"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hg0/mGFV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="REXiblts";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hg0/mGFV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="REXiblts"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8676155393;
-	Thu, 10 Jul 2025 14:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D429021D3E8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752157682; cv=none; b=Lv3aZBWycrXA1Cne7w/pT30f7N8EwGJUFVyQvaxDIj9nD574VWOSj7cUY8YlcNyVEwef+9p5Bh6Njy60FXuqRenegDpCHJhmYYEVxWNmkCOd1Krahgl7hEimgS/GdqMHAPFArYcdrVSOnZV2OutjYE0Rq96aFCY6kacocT6wVU0=
+	t=1752157686; cv=none; b=tyTl1pPL/lo++6G+7Ogok4QtAAeSZpoTLQiRs+JQRP4n7wJ67y97I/I/VEogdSFAU0w3B0zbKfK/49RKkyiGHaENYyN74ht4ogAECbKKXOtfWKB7boKHXdBGISgaitT5dQ3bECfQPlRLktvG9vZmG7u6zVY0D+Al0RGVHWCac9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752157682; c=relaxed/simple;
-	bh=j2nbPASgvYLLYNCi4Etlcf80Fw6mKYASEA43fPe1Uiw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KXaRA0QuDJXpV/4oyKa8zeRQRysT0fCKXNF1GYnYIs4/iQDB9VHa+pF1Uh0GpKmjylQSZMQiMoblas/YoHZV1xRqIl7HnE7IadzlkW2PqnJ5YE4zRdtufVaE33J+FdR8glSERZh8Fy/+bOxolxpe2CD/LH9ckbnESgxcOE87jo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X0RYYk9i; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a575a988f9so754760f8f.0;
-        Thu, 10 Jul 2025 07:28:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752157679; x=1752762479; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6PZo8JJ1Wfz2lrXJvo02pOBuZpAeF+qVv1oHWeeIC4s=;
-        b=X0RYYk9iHKKsoGlOb+7ddT0MlKNc7HhChcAmc7zegLENO39RgYaDIkg/5GOuc8JfPO
-         MT3fLMTiavc2lDGMuzt0jcB+sXVaFK7RJOA4ujimWhxyl43Ddva76L7hW+mVuyG68tEI
-         xpJyyjH/fYN5qUAzCsAP8fwHVEh69GZIFOnMG28EsxBhFUnCUuAjMYh5dzZ9rMuqq0Hq
-         rcv562oyB1Fa/QfDyzAbLt+LSA5qWxRWik4LpjimCUl7FSMnqFWRHSWf7whCqPcF1tDI
-         aCPEq1yVheVTMU3Mliw+XEEGIQYtLETuy195xdez83Pn4hmXR9waV0L3oC8wGFwRY+C0
-         R9Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752157679; x=1752762479;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6PZo8JJ1Wfz2lrXJvo02pOBuZpAeF+qVv1oHWeeIC4s=;
-        b=tbNZQqDTlY6x9zFxNNianI/ACUXmDDAg0ILlqYbcIQZ5hbCw7rY1ZTI0WUWJqIM/ke
-         KsuQMmtq7rtsKqOKUjt/j1pDh2iKu+V20fpwouNeJM0HobmFRU2mV5JJRIaPmQLLddGy
-         if+KHvl8yD+cH6ORdBdJOtIbtSiIdGuv+fEV0CeGTCdSXTBIsUUa5OdD+I3heVE4QH5W
-         0bh4dcIwY2EMf5xwkDM8idqw5sTiU6xB+V5CoFike0AnRU4RvF8+S931DsyS2GtPFAGX
-         84iRG/Jr5Hzi0RbRgfJY6OJglbvPl+O12PbMLM2YBOw+7GshGPtUGji8layNSsF1+Whx
-         vS7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV2PoGZWtSMZbEbuQTRf/gtm2yLKa/o61dW1g60XjJs92BrlZWeR6wHaLuAU1UUjDjnJbw/XsEZ@vger.kernel.org, AJvYcCXHHp+N1XYtvB6uJhp5zSK01SrdYw+ArpcdbBZd9fodlwZUO32QRpaiZQsIqO6OcJk40gx1aGiCrkhJpdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyaf1+JdwpaKxsLAQaypG1VdnJCGxv1ztZ5dq4iF4WKQt+mDqXq
-	/b5TnlqsvUgBapmIummdT78F+FDuta0kyVZjXPqghde7ReRIovoG42k5Cc7wpBRj
-X-Gm-Gg: ASbGncsstaflBPupXQfNRBUo2QPOWWCICD2wv6HFsa79297bcILpDwwqfn6YLzMsWDT
-	3DVqGaZn4OmFzPABkI0ClQxPSxkvIQ0/tzp95nfBb2NZzl3tKzVOZ0Ca6ynzazLh+2jxIeMUeh+
-	tLzzjtqzDrn8qaA8xeGUn7WjSu3GPmxVbnjPjh7NbvK/H3/QfMduGs+WtWm0pFx7ndl91tDPKm5
-	6o29GzWYLtDHk9b+djGlEs2iQGoegng3Zx63CYCmW3vlz6EyiogHVtY4Qj5IwlmBC3GQ20fPwdW
-	BrhNT25+oJcPS/RDEGG2z+5fO1ZoK/sybPrPKnjtV/YQQMzzMQGRwMo6ivtDJFzmECbN+dUkwz0
-	=
-X-Google-Smtp-Source: AGHT+IERXmuDI3GoiPegJhpVc4M5/ShLvIXoN+HM9hwExW1oNRKiHyLGAJMD0WfwvtQKPkXVFPvNLA==
-X-Received: by 2002:a05:6000:4184:b0:3a4:d274:1d9b with SMTP id ffacd0b85a97d-3b5e7898ca5mr3092611f8f.25.1752157678945;
-        Thu, 10 Jul 2025 07:27:58 -0700 (PDT)
-Received: from localhost.localdomain ([45.128.133.228])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd55b0e4sm21237845e9.39.2025.07.10.07.27.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 07:27:58 -0700 (PDT)
-From: Oscar Maes <oscmaes92@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Oscar Maes <oscmaes92@gmail.com>
-Subject: [PATCH net-next v2 2/2] selftests: net: add test for variable PMTU in broadcast routes
-Date: Thu, 10 Jul 2025 16:27:14 +0200
-Message-Id: <20250710142714.12986-2-oscmaes92@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250710142714.12986-1-oscmaes92@gmail.com>
-References: <20250710142714.12986-1-oscmaes92@gmail.com>
+	s=arc-20240116; t=1752157686; c=relaxed/simple;
+	bh=kOGsh3fkrbz0BzYbYQ6lOODvQ0YEI7n6IjLBLsXp5xM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Phvn7ewtQqOG/w968uMR+OcFMWPMBuXnFSbZKuYW+j/CUeW8f4btQmNTVaM7u6PrK62kIVlWpEnOB5UJW9Y1Ws8Vg6Dj6+MgTmrDfDT2FK8DZ7ApGPI6vLxSWIer5XIwBQXr+D4xD41ZXOc2mFRhLUeYvW1XPOibVw/7RLbaojU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hg0/mGFV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=REXiblts; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hg0/mGFV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=REXiblts; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 218482174D;
+	Thu, 10 Jul 2025 14:28:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752157681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iu+1RY9GxNNi2MLgALISTgh4+czoUf0Xk8OUPLnLugw=;
+	b=hg0/mGFVfCvogWsJH3maUlB8YTstKR8oPjFnB+k3v2G3CgzKYw6PqB0JojsMrVE7yXUhDt
+	IH9d7FQ3rrMX8QukXDnClOzpPd5Qj+QmeUnhNftx6Sz/9ujrghJvrOqN+bOCoTC9laMA04
+	OdulQbuteOHL84DhAEQFMDOPTfGouWA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752157681;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iu+1RY9GxNNi2MLgALISTgh4+czoUf0Xk8OUPLnLugw=;
+	b=REXibltsevF5BeSDvJm5fBUm5s1BAJNQ74OmTX2hPP02PotyVJ9X0dLnQZqdgw+7IMGIPP
+	5RbavPW0QS9kFvDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="hg0/mGFV";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=REXiblts
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752157681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iu+1RY9GxNNi2MLgALISTgh4+czoUf0Xk8OUPLnLugw=;
+	b=hg0/mGFVfCvogWsJH3maUlB8YTstKR8oPjFnB+k3v2G3CgzKYw6PqB0JojsMrVE7yXUhDt
+	IH9d7FQ3rrMX8QukXDnClOzpPd5Qj+QmeUnhNftx6Sz/9ujrghJvrOqN+bOCoTC9laMA04
+	OdulQbuteOHL84DhAEQFMDOPTfGouWA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752157681;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iu+1RY9GxNNi2MLgALISTgh4+czoUf0Xk8OUPLnLugw=;
+	b=REXibltsevF5BeSDvJm5fBUm5s1BAJNQ74OmTX2hPP02PotyVJ9X0dLnQZqdgw+7IMGIPP
+	5RbavPW0QS9kFvDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ECE9A136DC;
+	Thu, 10 Jul 2025 14:28:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zESbOPDNb2i3NAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 10 Jul 2025 14:28:00 +0000
+Date: Thu, 10 Jul 2025 16:28:00 +0200
+Message-ID: <87tt3kw26n.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Ahelenia =?ISO-8859-2?Q?Ziemia=F1ska?=
+ <nabijaczleweli@nabijaczleweli.xyz>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ALSA: emu10k1: fix "for/take a while" typos
+In-Reply-To: <e4owjda3hf5vjc2237m3ctokey4qglfrciga6ho24bd4os5awk@tarta.nabijaczleweli.xyz>
+References: <e4owjda3hf5vjc2237m3ctokey4qglfrciga6ho24bd4os5awk@tarta.nabijaczleweli.xyz>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-2
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 218482174D
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-Added a test for variable PMTU in broadcast routes.
+On Thu, 03 Jul 2025 20:21:29 +0200,
+Ahelenia Ziemiañska wrote:
+> 
+> Signed-off-by: Ahelenia Ziemiañska <nabijaczleweli@nabijaczleweli.xyz>
+> ---
+> v1: https://lore.kernel.org/lkml/h2ieddqja5jfrnuh3mvlxt6njrvp352t5rfzp2cvnrufop6tch@tarta.nabijaczleweli.xyz/t/#u
 
-This test uses iputils' ping and attempts to send a ping between
-two peers, which should result in a regular echo reply.
+Well, "awhile" is a proper word, AFAIK.
 
-This test will fail when the receiving peer does not receive the echo
-request due to a lack of packet fragmentation.
 
-Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
----
- tools/testing/selftests/net/Makefile          |  1 +
- tools/testing/selftests/net/broadcast_pmtu.sh | 47 +++++++++++++++++++
- 2 files changed, 48 insertions(+)
- create mode 100755 tools/testing/selftests/net/broadcast_pmtu.sh
+thanks,
 
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index 543776596..fc308c68a 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -114,6 +114,7 @@ TEST_PROGS += skf_net_off.sh
- TEST_GEN_FILES += skf_net_off
- TEST_GEN_FILES += tfo
- TEST_PROGS += tfo_passive.sh
-+TEST_PROGS += broadcast_pmtu.sh
- 
- # YNL files, must be before "include ..lib.mk"
- YNL_GEN_FILES := busy_poller netlink-dumps
-diff --git a/tools/testing/selftests/net/broadcast_pmtu.sh b/tools/testing/selftests/net/broadcast_pmtu.sh
-new file mode 100755
-index 000000000..726eb5d25
---- /dev/null
-+++ b/tools/testing/selftests/net/broadcast_pmtu.sh
-@@ -0,0 +1,47 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Ensures broadcast route MTU is respected
-+
-+CLIENT_NS=$(mktemp -u client-XXXXXXXX)
-+CLIENT_IP4="192.168.0.1/24"
-+CLIENT_BROADCAST_ADDRESS="192.168.0.255"
-+
-+SERVER_NS=$(mktemp -u server-XXXXXXXX)
-+SERVER_IP4="192.168.0.2/24"
-+
-+setup() {
-+	ip netns add "${CLIENT_NS}"
-+	ip netns add "${SERVER_NS}"
-+
-+	ip -net "${SERVER_NS}" link add link1 type veth peer name link0 netns "${CLIENT_NS}"
-+
-+	ip -net "${CLIENT_NS}" link set link0 up
-+	ip -net "${CLIENT_NS}" link set link0 mtu 9000
-+	ip -net "${CLIENT_NS}" addr add "${CLIENT_IP4}" dev link0
-+
-+	ip -net "${SERVER_NS}" link set link1 up
-+	ip -net "${SERVER_NS}" link set link1 mtu 1500
-+	ip -net "${SERVER_NS}" addr add "${SERVER_IP4}" dev link1
-+
-+	read -r -a CLIENT_BROADCAST_ENTRY <<< "$(ip -net "${CLIENT_NS}" route show table local type broadcast)"
-+	ip -net "${CLIENT_NS}" route del "${CLIENT_BROADCAST_ENTRY[@]}"
-+	ip -net "${CLIENT_NS}" route add "${CLIENT_BROADCAST_ENTRY[@]}" mtu 1500
-+
-+	ip net exec "${SERVER_NS}" sysctl -wq net.ipv4.icmp_echo_ignore_broadcasts=0
-+}
-+
-+cleanup() {
-+	ip -net "${SERVER_NS}" link del link1
-+	ip netns del "${CLIENT_NS}"
-+	ip netns del "${SERVER_NS}"
-+}
-+
-+trap cleanup EXIT
-+
-+setup &&
-+	echo "Testing for broadcast route MTU" &&
-+	ip net exec "${CLIENT_NS}" ping -f -M want -q -c 1 -s 8000 -w 1 -b "${CLIENT_BROADCAST_ADDRESS}" > /dev/null 2>&1
-+
-+exit $?
-+
--- 
-2.39.5
+Takashi
 
+> 
+>  sound/pci/emu10k1/emu10k1_main.c | 2 +-
+>  sound/pci/emu10k1/emupcm.c       | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/pci/emu10k1/emu10k1_main.c b/sound/pci/emu10k1/emu10k1_main.c
+> index bbe252b8916c..6050201851b1 100644
+> --- a/sound/pci/emu10k1/emu10k1_main.c
+> +++ b/sound/pci/emu10k1/emu10k1_main.c
+> @@ -606,7 +606,7 @@ static int snd_emu10k1_ecard_init(struct snd_emu10k1 *emu)
+>  	/* Step 2: Calibrate the ADC and DAC */
+>  	snd_emu10k1_ecard_write(emu, EC_DACCAL | EC_LEDN | EC_TRIM_CSN);
+>  
+> -	/* Step 3: Wait for awhile;   XXX We can't get away with this
+> +	/* Step 3: Wait for a while;   XXX We can't get away with this
+>  	 * under a real operating system; we'll need to block and wait that
+>  	 * way. */
+>  	snd_emu10k1_wait(emu, 48000);
+> diff --git a/sound/pci/emu10k1/emupcm.c b/sound/pci/emu10k1/emupcm.c
+> index 1bf6e3d652f8..ca4b03317539 100644
+> --- a/sound/pci/emu10k1/emupcm.c
+> +++ b/sound/pci/emu10k1/emupcm.c
+> @@ -991,7 +991,7 @@ static snd_pcm_uframes_t snd_emu10k1_capture_pointer(struct snd_pcm_substream *s
+>  	if (!epcm->running)
+>  		return 0;
+>  	if (epcm->first_ptr) {
+> -		udelay(50);	/* hack, it takes awhile until capture is started */
+> +		udelay(50);	/* hack, it takes a while until capture is started */
+>  		epcm->first_ptr = 0;
+>  	}
+>  	ptr = snd_emu10k1_ptr_read(emu, epcm->capture_idx_reg, 0) & 0x0000ffff;
+> -- 
+> 2.39.5
+> Verifying...
 
