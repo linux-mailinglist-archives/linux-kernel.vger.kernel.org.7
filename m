@@ -1,74 +1,109 @@
-Return-Path: <linux-kernel+bounces-726352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC64B00C3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:43:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E7DB00C3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1788E3AFB19
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:43:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EA6A3B0D09
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12AE2FD59E;
-	Thu, 10 Jul 2025 19:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A18F2FD866;
+	Thu, 10 Jul 2025 19:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DyVdBLuS"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2SCsdvQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BB31DFE1
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 19:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96C2F510;
+	Thu, 10 Jul 2025 19:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752176610; cv=none; b=DpuGS4iHcgj7oswL0ROqaA5b5M+QsleVZGj8t4FNmlr9WnkkHmbV/wZ5/fPQOaz/ZjhXeifhi7FGuVBRHzKelUbReMgqfn/uB7GuGcLCvD/0mKvZdCUrtZMEvpaYs202M18Lx+XBWK0DW8ccwFco/h/bn45E//DCj1d1irZl7OQ=
+	t=1752176768; cv=none; b=qtXH2MxePpiYV/5xYpspAwT525paX7wjnGhycQX4z7y3XlV+xY6hE4VqXwdunmlo/PIV51C+ZycfWGDk7cWEaCase+GWIZWwzA6oKDVy7C9GZNSDZR18YT2WHSz9/DtNP4lRHT9a37QYWxE+YFG3EGXhSB7S6OWD4ytI0Tm9ec0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752176610; c=relaxed/simple;
-	bh=Qa/KdK8rXB0uARObJKtgyfABrvIYkDUUDlVIevyWCOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oFDg+c/BQORC4x8M8PAFQsvSz0dAtQZn7M7eornCkPBVVfG9Fgx4FyyQn2JEeQdo5LKRhl8//xWXbmgZkL1fpL60wck86+EpuahDVxPhnCyxar/c8fcVGx8cIwqWBWqc5won3TNfDPYtgZHKQIj3tWLjPRFsEKb7q2MyKqXXHvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DyVdBLuS; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AUh6rPaAYLbvye1HdwjcG/2teeW57yG0VBgHYsKR4cs=; b=DyVdBLuSr1b0TpTqTkKfMEicAb
-	gnJg0NdJTsgZGbDmv40/n2Tm+JppfrEFHeByErh3bN2/jZc3+n5wv3pnivFi4RBoiqLEJj59Jmtex
-	v0dakO7Ou8wu0fM+v8M363t311KtoXcUQSH+MltFg/bw+4dvsV24/wxAz48n1kZfcNKligm+0b4T5
-	BkVL02iBwlbIaM4G7V+62CU1Xm52rZ9FKTQzHqcdTfJOXZbyCiye8bb+Jk0c+LmJ0b8x7O+IZlvkW
-	q/NjS1vufnI9QHV73XvRro+yn5Pzps7Fp7bDxGlTbd+PD/2UpIwtQw99ak4htTkwflYYLWqNdosJe
-	VewM7sAQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZxAx-0000000A94d-35wv;
-	Thu, 10 Jul 2025 19:43:23 +0000
-Date: Thu, 10 Jul 2025 20:43:23 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-	Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosryahmed@google.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>
-Subject: Re: [PATCH v2] mm: zswap: add myself back to MAINTAINERS
-Message-ID: <aHAX25rbbwhziWc0@casper.infradead.org>
-References: <20250710191818.1429309-1-vitaly.wool@konsulko.se>
+	s=arc-20240116; t=1752176768; c=relaxed/simple;
+	bh=udnZyaEtWLgOBUXN73fOVVys/CmYGjjlytAIkU4TrSE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T4kg1I0F9bFSeDezSTmKiJ0QoWnUjUj3aSK2ydznGviNrTOYSJP9uYr6A2+LoWyoO8rZclY9ekE+jGeDdGj6vuu4NdF99yCfKzeQAcTB+Vy5RNxaY8zeC2yUXnSO4Ybc9746hkENyC4J3CbhmAYHiyEGHQYN43ALhCBacB52eLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2SCsdvQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80FBCC4CEE3;
+	Thu, 10 Jul 2025 19:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752176767;
+	bh=udnZyaEtWLgOBUXN73fOVVys/CmYGjjlytAIkU4TrSE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=W2SCsdvQmhCuLN6wl9JFWEZErI9Una618TMZrrX4SqAcQiTbLB4RcY/Y1qFAg0oIC
+	 C8WLh+d8GXPc/Qz8ad4rbNo4CXZcG1uMlKGYjGMcZwpANJgaGzXVBnn7A4zDM4drOp
+	 edKoHPtTQSwucVWmij7z3g/cW0uut+umnAHhf8NVgs0h8ACayackXttgoJpSl5R0Cg
+	 UVjgFq6fv7pNOHmHQ/IBSwj8b0Z0W/sHGkETjg82nPZFzA9rE0CztYSORyrps6+gul
+	 LSRtjMMdUjWgG4Gsmm3QO0Nx/8wr15TC4LWW5C+ZYHcnSNOH+JK0Qfc3u/EpiFjkpk
+	 KVc2iU4AXtjww==
+From: Danilo Krummrich <dakr@kernel.org>
+To: abdiel.janulgue@gmail.com,
+	daniel.almeida@collabora.com,
+	robin.murphy@arm.com,
+	a.hindborg@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	bhelgaas@google.com,
+	kwilczynski@kernel.org,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org
+Cc: rust-for-linux@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH 0/5] dma::Device trait and DMA mask
+Date: Thu, 10 Jul 2025 21:45:42 +0200
+Message-ID: <20250710194556.62605-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710191818.1429309-1-vitaly.wool@konsulko.se>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 10, 2025 at 09:18:18PM +0200, Vitaly Wool wrote:
-> It's been a while since I was one of zswap mainainers but nevertheless
-> I'd like to get back on board. There are some things in the pipeline
-> related to zswap/zpool and Rust integration that I'd like to submit in
-> close future and maintain thereafter.
+This patch series adds the dma::Device trait to be implemented by bus devices on
+DMA capable busses.
 
-We don't really need four maintainers for zswap.  You can contribute
-without being listed in MAINTAINERS!
+The dma::Device trait implements methods to set the DMA mask for for such
+devices.
+
+The first two bus devices implementing the trait are PCI and platform.
+
+Unfortunately, the DMA mask setters have to be unsafe for now, since, with
+reasonable effort, we can't prevent drivers from data races writing and reading
+the DMA mask fields concurrently (see also [1]).
+
+Link: https://lore.kernel.org/lkml/DB6YTN5P23X3.2S0NH4YECP1CP@kernel.org/ [1]
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/dma-mask
+
+Danilo Krummrich (5):
+  rust: dma: implement `dma::Device` trait
+  rust: dma: add DMA addressing capabilities
+  rust: pci: implement the `dma::Device` trait
+  rust: platform: implement the `dma::Device` trait
+  rust: samples: dma: set DMA mask
+
+ rust/helpers/dma.c       |  5 +++
+ rust/kernel/dma.rs       | 95 +++++++++++++++++++++++++++++++++++++---
+ rust/kernel/pci.rs       |  2 +
+ rust/kernel/platform.rs  |  2 +
+ samples/rust/rust_dma.rs | 12 ++++-
+ 5 files changed, 109 insertions(+), 7 deletions(-)
+
+
+base-commit: d49ac7744f578bcc8708a845cce24d3b91f86260
+-- 
+2.50.0
+
 
