@@ -1,78 +1,37 @@
-Return-Path: <linux-kernel+bounces-725902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2EBB00545
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:30:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F317B0054B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D39F41C408C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:30:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D671C413F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8693F2737E1;
-	Thu, 10 Jul 2025 14:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="NWBVZUWG"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F23D273809;
+	Thu, 10 Jul 2025 14:33:11 +0000 (UTC)
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A07270EB0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A138155389;
+	Thu, 10 Jul 2025 14:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752157797; cv=none; b=NJ8LE5wAhv/f5hjEn+eGBqXndVoADAvHB1OyH26oAoGHvA0PI7jkPToGeM8BLgdiX5AexaFZMZVtBvVoSQB37cSNOeO7DBzqUrYOpZUCeLAIfBEe8imGgHmi8Q2D7nQTnIQFAnQiLogmbnFUQAao4k0P8FX4WxONAqrrXhl+iXs=
+	t=1752157990; cv=none; b=LI7oN1cFDV0/5/1VWFLihTCTJ2V8aKWBNscdeQwipfe12zsDI6fYAivTtmkN1XBaW8BWsQN/yIJogKRbCOhJcY8ieUAoU3mV1J40vy5BbxOlrnkTls/2KWtNUJsmeXt7iSV8cqJa2RIw2xfWLhLFtdbnWhIzd+5ANbg6lAWMBgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752157797; c=relaxed/simple;
-	bh=oZ7OonWWPb3CLzQvpruAiAZiFnf3bbsaJiYraXkrTTc=;
+	s=arc-20240116; t=1752157990; c=relaxed/simple;
+	bh=d2PggKXh65C5wsYv+sAOWEiyIFudIEs6dBBQURke4Pg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VGuvf/lVaARJjVpcBMSbuTtkX6OgGre2B7M+J6FhM11UD8frECAXMHhxCxj177GCDDeJM5WkmECiMuf26h66hLfylS+JB74fUmR64bCEdBi8mquXKe8r9gYs3xBTlyUbkbgndfIxiuhyKPAgLWMff4t6wdJCMYmg0dlspP/xz/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=NWBVZUWG; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74b54cead6cso800403b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:29:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1752157794; x=1752762594; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=70T/mtOHoW67bNGMf99k1u6kIp6BUIzmEHFhVe6xe+4=;
-        b=NWBVZUWGh9uoxmAsbhwkX5ajR1Dgt+7wCMG+931urg350JwjgwF0rcZ38mkqF6KtJx
-         GEYG1ZA9cV7SrXWxr3HOESSdyEbIQ6VGVG8UouGNMIuSwoAYnahqrXPIR+4LkaIKgRc/
-         m/PU6vp4wdkAjrRsD3Qt970M7DB/EQuaivplZCXScf6O+teH2RL8zcBKunLVjdVnfG44
-         ckuD9p9KltPZpt2e9nB1IWQJ8KsNBSbrFWp8fkuNNpzMaN/JJXoXk/Mr8/zWza5DXOMN
-         LsfS3is+PpJqxvbrE7ZncJ8rEUv/87uRSpO6P8MMYGYIdPwthiPxoMldZPn1OMYPrKHi
-         /Y0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752157794; x=1752762594;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=70T/mtOHoW67bNGMf99k1u6kIp6BUIzmEHFhVe6xe+4=;
-        b=FoqUHksobi2UgWqyWvumsmjnw064g1BXpj1wZUpQFid0VEyikljWLVGCFyDPfb8DbM
-         h3B7L3FIdqNdHV/BIqU3ZXfdRkVbH6caKTPOOEUPmM6itz7y+YhkyLV+3Eo95wbdzQdP
-         I2K1EFApukS6u8+bivcbKWIRMiG3eYZ2gHavRQ4mv5SK/g2XW7ujP2Cen1I0xPsdqFyv
-         zhUTyJ4dUD+FCLc8TZBGQw4vZPZnZiLQkDTD4DiLsQFgLR8b9IZ53v2p3/EqHut5mWp1
-         u9rSZFKfKPpZt8FdBDx6zTLtAHhWg3v0DAfva/zJJoh+cAl8CldvoB5FUYxRYsF5F4+E
-         Ghug==
-X-Gm-Message-State: AOJu0YztY7ppyYyubLKeGmRDCdPo28MgmZJ80QxiEOrB2uimzopvdyFw
-	BZWlbVPhjzMgpnVjntrHUlnWEWu9wTq2cJRu2gNE2yoGW8/q40H6FoyQBWJ7PSz5E0U=
-X-Gm-Gg: ASbGncvOktIqtG5dePPYpo1xqZplRr+7yLBs0wODSWM4l017FVWgXo4xo9CiKNKng4o
-	aS1nlFMtfx4o2DBGYd5fL7E6unnYmJOdhjicty9xnHIkfnkPbhiyfo73DSMcec9EfG6ZQkIBnPT
-	YRJd2z29U/6N8lb3O+gPWk3wULEUb6/qBGRp3f8lb6j5l5EG+QGUyjRIoyDdn7VBNR9u6e74LKg
-	2fH75dVGgfQRvhCu0iSYhMdDy2mxsLCCD6+TaFWKJDttg1XZ/xsd4sHNA0JzjWgU0HLpir6DDBi
-	mL8Gy6IXZfejLnSEp6PyIXOlZWG69kmopYOaQEupGRuqUclrsQvp4e3F0gTHy17jh+hmNH0JWdW
-	YhLT5+NkR/Bgjuqz0W8Q1ZzGX7NQhGgZtmIie4aHYeQ==
-X-Google-Smtp-Source: AGHT+IE6cvc4FDu4lXrrdeGKWhRLkK/Uxe3lGtKWtoiWILObMjxluEPeqmm80yVTtrJwg3ohULnSwA==
-X-Received: by 2002:a05:6a00:a27:b0:736:54c9:df2c with SMTP id d2e1a72fcca58-74eb558edfcmr4844441b3a.15.1752157794423;
-        Thu, 10 Jul 2025 07:29:54 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe6c5660sm2390825a12.48.2025.07.10.07.29.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 07:29:53 -0700 (PDT)
-Message-ID: <c244c1d4-fef5-439e-8dfe-12c2f8910b18@rivosinc.com>
-Date: Thu, 10 Jul 2025 16:29:46 +0200
+	 In-Reply-To:Content-Type; b=agelgz66Zx5QHRBsiFW0XLyxWSC3nmjNLPLzkIoQgrM9SQXzmHIhy8cHam4/wiKPy2nWEv00aHn5obM3YxHWlDkvSq1zmvVqXeoVR2vyJcJxcRTjAXwvsaiTv/lo3n2b8o/0fr/GmQ6in5MdjkCAeRUGCjqjc+TZm2d0twbOHfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8123C44330;
+	Thu, 10 Jul 2025 14:32:58 +0000 (UTC)
+Message-ID: <7204f633-5b35-41ce-b847-7dfbaedbac47@ghiti.fr>
+Date: Thu, 10 Jul 2025 16:32:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,79 +39,202 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] selftests: riscv: add misaligned access testing
-To: Andreas Schwab <schwab@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-riscv@lists.infradead.org, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Shuah Khan <shuah@kernel.org>,
- Alexandre Ghiti <alex@ghiti.fr>
-References: <20250710133506.994476-1-cleger@rivosinc.com>
- <mvmecuognj7.fsf@suse.de> <5db9ec69-d0e4-4113-a989-ac75d0f1e5dd@rivosinc.com>
- <mvma55cgm63.fsf@suse.de>
+Subject: Re: [PATCH V2] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE
+ selection
+To: Miao Chen <chenmiao.ku@gmail.com>
+Cc: kernel test robot <lkp@intel.com>,
+ Linux RISCV <linux-riscv@lists.infradead.org>,
+ oe-kbuild-all@lists.linux.dev, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Pu Lehui <pulehui@huawei.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <aG3A8Jirg+TxNza/@rli9-mobl>
+ <f5b1fc77-d180-4df7-b8f6-0cb0ca4a187a@ghiti.fr>
+ <CAKxVwge4=cagaVDesKWe0BE88U0YmNn5LLDJvJG=F7EEP2=-LQ@mail.gmail.com>
 Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <mvma55cgm63.fsf@suse.de>
-Content-Type: text/plain; charset=UTF-8
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <CAKxVwge4=cagaVDesKWe0BE88U0YmNn5LLDJvJG=F7EEP2=-LQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdeilecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepfeeujedtgeekvdehhfduhfegfeeiveehueegheegvdfgjefhteejieduledvfeetnecuffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgpdhinhhfrhgruggvrggurdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemsgeffhdumeejtgeirgemsgehudelmegrfhgstdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemsgeffhdumeejtgeirgemsgehudelmegrfhgstddphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemsgeffhdumeejtgeirgemsgehudelmegrfhgstdgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudehpdhrtghpthhtoheptghhvghnmhhirghordhkuhesghhmrghilhdrtghomhdprhgtphhtthhopehlkhhpsehin
+ hhtvghlrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehovgdqkhgsuhhilhguqdgrlhhlsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
 
+On 7/10/25 14:34, Miao Chen wrote:
+> Hello Alex,
+>
+> Sure, I'll checkout it. Btw, this is my first commit, so can u tell
+> how to reproduce failed case? Using the reproduce and .config.gz gived
+> by build-bot?
 
-On 10/07/2025 16:23, Andreas Schwab wrote:
-> On Jul 10 2025, Clément Léger wrote:
-> 
->> On 10/07/2025 15:53, Andreas Schwab wrote:
->>> On Jul 10 2025, Clément Léger wrote:
->>>
->>>> This selftest tests all the currently emulated instructions (except for
->>>> the RV32 compressed ones which are left as a future exercise for a RV32
->>>> user). For the FPU instructions, all the FPU registers are tested.
->>>
->>> If that didn't catch the missing sign extension that I just fixed in
->>> <https://lore.kernel.org/linux-riscv/mvmikk0goil.fsf@suse.de>, you
->>> should consider extending the tests.
->>>
+
+Yes exactly!
+
+
+>
+> Thanks,
+>
+> Chen Miao
+>
+> Alexandre Ghiti <alex@ghiti.fr> 于2025年7月10日周四 19:53写道：
+>> Hi ChenMiao,
 >>
->> Hi Andreas, you link doesn't work and I didn't find anything about sign
->> extension except a patch you wrote for arch_cmpxg().
-> 
-> lore.k.o is currently down, here's the patch I have sent:
-> 
-> From 77c8255da24ee4fac54e2371594d7210d1ddee19 Mon Sep 17 00:00:00 2001
-> From: Andreas Schwab <schwab@suse.de>
-> Date: Thu, 10 Jul 2025 13:52:35 +0200
-> Subject: [PATCH] riscv: traps_misaligned: properly sign extend value in
->  misaligned load handler
-> 
-> Add missing cast to signed long.
-> 
-> Signed-off-by: Andreas Schwab <schwab@suse.de>
-> ---
->  arch/riscv/kernel/traps_misaligned.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
-> index 93043924fe6c..f760e4fcc052 100644
-> --- a/arch/riscv/kernel/traps_misaligned.c
-> +++ b/arch/riscv/kernel/traps_misaligned.c
-> @@ -461,7 +461,7 @@ static int handle_scalar_misaligned_load(struct pt_regs *regs)
->  	}
->  
->  	if (!fp)
-> -		SET_RD(insn, regs, val.data_ulong << shift >> shift);
-> +		SET_RD(insn, regs, (long)(val.data_ulong << shift) >> shift);
-
-Hi Andreas,
-
-Nice catch, it seems like it was fixed in OpenSBI but never backported
-in the kernel. As you suggested, I'll modify the test to test the sign
-extension.
-
-Thanks,
-
-Clément
-
->  	else if (len == 8)
->  		set_f64_rd(insn, regs, val.data_u64);
->  	else
-
+>> On 7/9/25 03:08, kernel test robot wrote:
+>>> Hi ChenMiao,
+>>>
+>>> kernel test robot noticed the following build errors:
+>>>
+>>> [auto build test ERROR on fda589c286040d9ba2d72a0eaf0a13945fc48026]
+>>>
+>>> url:    https://github.com/intel-lab-lkp/linux/commits/ChenMiao/riscv-ftrace-Fix-the-logic-issue-in-DYNAMIC_FTRACE-selection/20250706-231907
+>>> base:   fda589c286040d9ba2d72a0eaf0a13945fc48026
+>>> patch link:    https://lore.kernel.org/r/20250706151830.25091-1-chenmiao.ku%40gmail.com
+>>> patch subject: [PATCH V2] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE selection
+>>> :::::: branch date: 2 days ago
+>>> :::::: commit date: 2 days ago
+>>> config: riscv-randconfig-r112-20250708 (attached as .config)
+>>> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+>>> reproduce: (attached as reproduce)
+>>>
+>>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>>> the same patch/commit), kindly add following tags
+>>> | Reported-by: kernel test robot <lkp@intel.com>
+>>> | Closes: https://lore.kernel.org/oe-kbuild-all/202507090650.YGY56SIA-lkp@intel.com/
+>>>
+>>> All errors (new ones prefixed by >>):
+>>>
+>>>>> <instantiation>:1:14: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
+>>>      addi sp, sp, -FREGS_SIZE_ON_STACK
+>>>                   ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>>> <instantiation>:2:18: error: unexpected token
+>>>       sw t0, FREGS_EPC(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:3:17: error: unexpected token
+>>>       sw x1, FREGS_RA(sp)
+>>>                      ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:7:17: error: unexpected token
+>>>       sw x6, FREGS_T1(sp)
+>>>                      ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:9:17: error: unexpected token
+>>>       sw x7, FREGS_T2(sp)
+>>>                      ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:10:18: error: unexpected token
+>>>       sw x28, FREGS_T3(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:11:18: error: unexpected token
+>>>       sw x29, FREGS_T4(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:12:18: error: unexpected token
+>>>       sw x30, FREGS_T5(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:13:18: error: unexpected token
+>>>       sw x31, FREGS_T6(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:16:18: error: unexpected token
+>>>       sw x10, FREGS_A0(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:17:18: error: unexpected token
+>>>       sw x11, FREGS_A1(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:18:18: error: unexpected token
+>>>       sw x12, FREGS_A2(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:19:18: error: unexpected token
+>>>       sw x13, FREGS_A3(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:20:18: error: unexpected token
+>>>       sw x14, FREGS_A4(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:21:18: error: unexpected token
+>>>       sw x15, FREGS_A5(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:22:18: error: unexpected token
+>>>       sw x16, FREGS_A6(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:23:18: error: unexpected token
+>>>       sw x17, FREGS_A7(sp)
+>>>                       ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>       ^
+>>>      <instantiation>:25:15: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
+>>>       addi a0, a0, FREGS_SIZE_ON_STACK
+>>>                    ^
+>>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
+>>>       SAVE_ABI_REGS
+>>>
+>>> Kconfig warnings: (for reference only)
+>>>      WARNING: unmet direct dependencies detected for DYNAMIC_FTRACE
+>>>      Depends on [n]: FTRACE [=y] && FUNCTION_TRACER [=y] && HAVE_DYNAMIC_FTRACE [=n]
+>>>      Selected by [y]:
+>>>      - RISCV [=y] && FUNCTION_TRACER [=y]
+>> To avoid that, we should check HAVE_DYNAMIC_FTRACE too:
+>>
+>> select DYNAMIC_FTRACE if FUNCTION_TRACER && HAVE_DYNAMIC_FTRACE
+>>
+>> That fixes the build error for me. Can you send a v3 with this change?
+>>
+>> Thanks,
+>>
+>> Alex
+>>
+>>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
