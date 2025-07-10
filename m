@@ -1,315 +1,251 @@
-Return-Path: <linux-kernel+bounces-725907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7FAB0055A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0FBAB0055D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC723AB20F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B89A73B60D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74AC273816;
-	Thu, 10 Jul 2025 14:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C9C273815;
+	Thu, 10 Jul 2025 14:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kmXsNvqi"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RBt9DDfX"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A147B27056F;
-	Thu, 10 Jul 2025 14:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AFB17B421;
+	Thu, 10 Jul 2025 14:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752158129; cv=none; b=Qlx1xt7rUd6Xv3wUmkF4DZ87PNDObcvHjxshrLu3dHijJuZrhhyAE9SMaD0bfhqb+CdXRjlVH0TGkaMhe1WAJ0u5lxHUdhv6qkY5AkjpLfYLU4aVSIoyCdDBniwKf4BfUwcTBffuVNkMTRl357boXYjo+XI9S6SyxKCPavO+LKs=
+	t=1752158168; cv=none; b=B7eBx121f1Attk9nlpwkw+38pSa/gG9550Ei5vRrAvbsUQm4nJNzt22VWfwfYY6qPasj+9Y5Yx3H012fxqk8TXc9ndjQzp/uELrFbt5s2Z0cGt9hI137RqiJw9PxI3llBmcWNDmhLh/AaBd2paaqTZ6gXUd/KR8mYaUdIm6JSfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752158129; c=relaxed/simple;
-	bh=6zxzCuYF85h3tfkrzRPjOFJCd0GeTdtjDkdznuxiij0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=frLjHifFhM1JmB3VOC9dE1mgmlJwJKfAN00is7sMOWsV+2u4oTVpnMsry3H4KUjoY028yM7GMOqooV5AJhMATXBleK77SSY9aznT4BxU4oxHa6shXFp1oqxw8Ld0u6duB3wf3mA3xB41QvlxuTa6AFVI9q39dbNbwuavyVrUOOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kmXsNvqi; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=OC+GVuXMGCg8iJofu+TyPOnqjqH8djL9Du9c1ioZ59A=; b=kmXsNvqi5XjDWj1mcb5AQuyK2d
-	mWgTdTyorLNmbxFEHl53d2MvbGFfKtCDr2XbDo+PNYOva94ELnwGYteAc4Ll/PKiHkuPr6vuzkkfd
-	YYk8Z50kRFoljtuSakw8bdYP4B1kdjt5Fbn9RKxNTG8bOgYWPDqnHs8kdQhwP14Gx3AxGoGRSuSbT
-	qL2QHddDSQQ1Dskp0aZ0kkEm8nJI3n3EWsaARpkhmzhHJrsRjWVYNdFxKImB4tVua2Tei76b7mIgB
-	XDoihbSZhlsWgDA06RpeaNRpPAuHGLIzrsfHhGn57YvUs+7SGLJ+LE5gPOZDwJMp7c/sWBp+9PWb8
-	i8Yn3AcQ==;
-Received: from 179-125-86-110-dinamico.pombonet.net.br ([179.125.86.110] helo=quatroqueijos.cascardo.eti.br)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uZsMV-00Ey7U-P2; Thu, 10 Jul 2025 16:35:00 +0200
-Date: Thu, 10 Jul 2025 11:34:54 -0300
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org,
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
-	Zijun Hu <zijun.hu@oss.qualcomm.com>
-Subject: Re: [PATCH v5 2/8] char: misc: Adapt and add test cases for simple
- minor space division
-Message-ID: <aG_Pjl4Jl7QJxl8f@quatroqueijos.cascardo.eti.br>
-References: <20250710-rfc_miscdev-v5-0-b3940297db16@oss.qualcomm.com>
- <20250710-rfc_miscdev-v5-2-b3940297db16@oss.qualcomm.com>
+	s=arc-20240116; t=1752158168; c=relaxed/simple;
+	bh=1N4tkziDIAUaH31nEsb55mcNpfly+0L/hLWGifRmUkk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gc4KJKwnPTYu1NnX/aQ08JYn8d5mQKJkMalMjexeIZ9kpEO3khcu5Xs9D6mM1LRn+hBQbDY+ObYc1xU3LX7VYdSx0G/S+Hf6PB2ACLaOLmVqoecBTItSAZvhZRqWSlb0ty9z1wj9FFfAB0Nzayyo/g7kO9Q+d2PL7DDsPN10G9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RBt9DDfX; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fad8b4c927so9619316d6.0;
+        Thu, 10 Jul 2025 07:36:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752158165; x=1752762965; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4qJGxOWQ8Up5dWYJdXH7usil2iamd9hTDCPtvQ0awIQ=;
+        b=RBt9DDfX7OBpJP9zAv30TixS52lELUO4rG5zIomgnGGJSytHBxvPpV5Wjv3QNWSW/s
+         zfNh6OfwzgUWodPOaYrfgW/0Nb0hKiiDh8FspcUiG4bSc3MFcHPmjyiBoZrX4bof4nr8
+         Pide9GMbcsjvQgejxW2RffI4QFAqnVXmuuT3a/VBWukph7tEPi9nkT5u3tbTt2IFzZX0
+         7OlvWiIYOUO2Xlijl+eqkPjKBjfLUG+Bpz0xP4rYBFqpJMYugCF0ntj9CWZJ6JbJmOmf
+         ka9fb53uEDcI50dU5k6xcYtApd8zLO7qb9+aHo25ctRUHQpfzkaB9Dl+TnHJbJtAaapS
+         ldcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752158165; x=1752762965;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4qJGxOWQ8Up5dWYJdXH7usil2iamd9hTDCPtvQ0awIQ=;
+        b=dGWyhqCUfdvjUUDhLWFc24LIh3JksCVUNVlNR8gKrqLYsG8hy+SA74fKYdVmhhgC1w
+         NNiCdcQdAIXi7XI/BpnW3DDB6RmDmI0mDtiijwgjyMts9BVG3lDuD1LPjATmXoz+lcT6
+         eKXbjRloyCCr8/B1eXgAbilfr5L4uZutm1xatjeod8KbksnUUSye5XSZircGnfJHeiJa
+         nswftIwUcq9HvHBkEJutkNSHnohZCCjmDDMEkUFjpyn0nvRU9P3dSNxgagHCcIpBCs72
+         tdU5L4++DlWIubyRzI2DCb2LLsO+amBoKG4vjPnoYcwGlBxlYGntQN61o2xeokReBOGK
+         jI6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUaR/fr9DJGVv/+YDBQXqPCU5LoPbJQwlUlB3pkfI2bMDIMVyTV25iYoEEbipu1p+0vGQwarCFCbZLtjSS++6li@vger.kernel.org, AJvYcCWVAlu36FFWZqGhyBcuVM4tYajMF+edDK2yV7+QxH/0ZSzAW4FcTEIYNbc/RE59/jDfR2SFVodj/2R/ONE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8a6JfsH7/yUEc6fjbAjMRgWEoj2msAcpAQTp2grJw7KQqtPmu
+	RJ3pg+ANPH5lNvAs3YH2iRggtLHscrXJoIJf6+UHTANMl3DKl74IMkL9vNBnoN9dRHaKMMSxZGd
+	WTSYY/Rul6h0x2XRcy4sZZA44T93w/54=
+X-Gm-Gg: ASbGncug90UAy+Hj9z8ZoU64FJtbjzuOcBzD/CHchIGlWmQkA/5n6Ft67x0dB8lqDGB
+	2snACb/k3C6tYOH6fvLB3E6EmRUCYpbDSS0hoh2la+xVyTd9LJXpHY7xX/z3yPm3TlgA9QwXV1O
+	H+Y1G4whK+JtyDwBQv7Gzc1O5uF9zS/2TJP9LFG0OmYs8=
+X-Google-Smtp-Source: AGHT+IEKim1PUIFElOcNyHSqrLn01w9htemvtx7RLvrE5/uf9zQTKhdPq+4LhB5J8wrFv+2K0gTROANsR4kOkYJeXQU=
+X-Received: by 2002:ad4:5f0e:0:b0:701:775:70b8 with SMTP id
+ 6a1803df08f44-7049505d74emr63722756d6.38.1752158164505; Thu, 10 Jul 2025
+ 07:36:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710-rfc_miscdev-v5-2-b3940297db16@oss.qualcomm.com>
+References: <20250709174657.6916-1-suresh.k.chandrappa@gmail.com>
+In-Reply-To: <20250709174657.6916-1-suresh.k.chandrappa@gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Thu, 10 Jul 2025 07:35:53 -0700
+X-Gm-Features: Ac12FXyoLktlmX39quFWyEEFVsEtk0kX_j9HtNIamMLSlCQffuIUqfEi_lx_asM
+Message-ID: <CAKEwX=M6WOoE+A=6DVdAjR6J2tyULLGAqiZ6325Fn7R=Tn=igQ@mail.gmail.com>
+Subject: Re: [PATCH v3] selftests: cachestat: add tests for mmap Refactor and
+ enhance mmap test for cachestat validation
+To: Suresh K C <suresh.k.chandrappa@gmail.com>
+Cc: hannes@cmpxchg.org, joshua.hahnjy@gmail.com, shuah@kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 10, 2025 at 07:56:45PM +0800, Zijun Hu wrote:
-> From: Zijun Hu <zijun.hu@oss.qualcomm.com>
-> 
-> Adapt and add test cases for next change which regards minor whose
-> value > macro MISC_DYNAMIC_MINOR as invalid parameter when register
-> miscdevice, hence get a simple minor space division below:
-> 
-> <  MISC_DYNAMIC_MINOR: fixed minor code
-> == MISC_DYNAMIC_MINOR: indicator to request dynamic minor code
-> >  MISC_DYNAMIC_MINOR: dynamic minor code requested
-> 
-> Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
+On Wed, Jul 9, 2025 at 10:47=E2=80=AFAM Suresh K C
+<suresh.k.chandrappa@gmail.com> wrote:
+>
+> From: Suresh K C <suresh.k.chandrappa@gmail.com>
+>
+> This patch merges the previous two patches into a single,
+> cohesive test case that verifies cachestat behavior with memory-mapped fi=
+les using mmap().
+> It also refactors the test logic to reduce redundancy, improve error repo=
+rting, and clarify failure messages for both shmem and mmap file types.
+>
+> Changes since v2:
+>
+> - Merged the two patches into one as suggested
+> - Improved error messages for better clarity
+>
+> Tested on x86_64 with default kernel config.
+>
+> Signed-off-by: Suresh K C <suresh.k.chandrappa@gmail.com>
 > ---
->  drivers/char/misc_minor_kunit.c | 51 +++++++++++++++++------------------------
->  1 file changed, 21 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/char/misc_minor_kunit.c b/drivers/char/misc_minor_kunit.c
-> index 30eceac5f1b6402b0f918af6f56602ed1a6c14ec..3184f383bea8c77cbca69ff5e315ea5de2d5512e 100644
-> --- a/drivers/char/misc_minor_kunit.c
-> +++ b/drivers/char/misc_minor_kunit.c
-> @@ -7,12 +7,6 @@
->  #include <linux/file.h>
->  #include <linux/init_syscalls.h>
->  
-> -/* dynamic minor (2) */
-> -static struct miscdevice dev_dynamic_minor = {
-> -	.minor  = 2,
-> -	.name   = "dev_dynamic_minor",
-> -};
-> -
->  /* static minor (LCD_MINOR) */
->  static struct miscdevice dev_static_minor = {
->  	.minor  = LCD_MINOR,
-> @@ -25,16 +19,6 @@ static struct miscdevice dev_misc_dynamic_minor = {
->  	.name   = "dev_misc_dynamic_minor",
->  };
->  
-> -static void kunit_dynamic_minor(struct kunit *test)
-> -{
-> -	int ret;
-> -
-> -	ret = misc_register(&dev_dynamic_minor);
-> -	KUNIT_EXPECT_EQ(test, 0, ret);
-> -	KUNIT_EXPECT_EQ(test, 2, dev_dynamic_minor.minor);
-> -	misc_deregister(&dev_dynamic_minor);
-> -}
-> -
->  static void kunit_static_minor(struct kunit *test)
->  {
->  	int ret;
-> @@ -157,13 +141,7 @@ static bool is_valid_dynamic_minor(int minor)
->  {
->  	if (minor < 0)
->  		return false;
-> -	if (minor == MISC_DYNAMIC_MINOR)
-> -		return false;
-> -	if (minor >= 0 && minor <= 15)
-> -		return false;
-> -	if (minor >= 128 && minor < MISC_DYNAMIC_MINOR)
-> -		return false;
-> -	return true;
-> +	return minor > MISC_DYNAMIC_MINOR;
+>  .../selftests/cachestat/test_cachestat.c      | 66 +++++++++++++++----
+>  1 file changed, 55 insertions(+), 11 deletions(-)
+>
+> diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/t=
+esting/selftests/cachestat/test_cachestat.c
+> index 632ab44737ec..18188d7c639e 100644
+> --- a/tools/testing/selftests/cachestat/test_cachestat.c
+> +++ b/tools/testing/selftests/cachestat/test_cachestat.c
+> @@ -33,6 +33,11 @@ void print_cachestat(struct cachestat *cs)
+>         cs->nr_evicted, cs->nr_recently_evicted);
 >  }
->  
->  static int miscdev_test_open(struct inode *inode, struct file *file)
-> @@ -557,7 +535,7 @@ static void __init miscdev_test_conflict(struct kunit *test)
->  	 */
->  	miscstat.minor = miscdyn.minor;
->  	ret = misc_register(&miscstat);
-> -	KUNIT_EXPECT_EQ(test, ret, -EBUSY);
-> +	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
->  	if (ret == 0)
->  		misc_deregister(&miscstat);
->  
-> @@ -590,8 +568,9 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
->  	misc_deregister(&miscdyn);
->  
->  	ret = misc_register(&miscstat);
-> -	KUNIT_EXPECT_EQ(test, ret, 0);
-> -	KUNIT_EXPECT_EQ(test, miscstat.minor, miscdyn.minor);
-> +	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
-> +	if (ret == 0)
-> +		misc_deregister(&miscstat);
->  
->  	/*
->  	 * Try to register a dynamic minor after registering a static minor
-> @@ -601,20 +580,32 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
->  	miscdyn.minor = MISC_DYNAMIC_MINOR;
->  	ret = misc_register(&miscdyn);
->  	KUNIT_EXPECT_EQ(test, ret, 0);
-> -	KUNIT_EXPECT_NE(test, miscdyn.minor, miscstat.minor);
-> +	KUNIT_EXPECT_EQ(test, miscdyn.minor, miscstat.minor);
->  	KUNIT_EXPECT_TRUE(test, is_valid_dynamic_minor(miscdyn.minor));
->  	if (ret == 0)
->  		misc_deregister(&miscdyn);
+>
+> +enum file_type {
+> +       FILE_MMAP,
+> +       FILE_SHMEM
+> +};
+> +
+>  bool write_exactly(int fd, size_t filesize)
+>  {
+>         int random_fd =3D open("/dev/urandom", O_RDONLY);
+> @@ -201,8 +206,19 @@ static int test_cachestat(const char *filename, bool=
+ write_random, bool create,
+>  out:
+>         return ret;
+>  }
+> +const char* file_type_str(enum file_type type) {
+> +       switch (type) {
+> +               case FILE_SHMEM:
+> +                       return "shmem";
+> +               case FILE_MMAP:
+> +                       return "mmap";
+> +               default:
+> +                       return "unknown";
+> +       }
 > +}
->  
-> -	miscdev_test_can_open(test, &miscstat);
-> +/* Take minor(> MISC_DYNAMIC_MINOR) as invalid when register miscdevice */
-> +static void miscdev_test_invalid_input(struct kunit *test)
-> +{
-> +	struct miscdevice misc_test = {
-> +		.minor = MISC_DYNAMIC_MINOR + 1,
-> +		.name = "misc_test",
-> +		.fops = &miscdev_test_fops,
-> +	};
-> +	int ret;
->  
-> -	misc_deregister(&miscstat);
-> +	ret = misc_register(&misc_test);
-> +	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
-> +	if (ret == 0)
-> +		misc_deregister(&misc_test);
+>
+> -bool test_cachestat_shmem(void)
+> +
+> +bool run_cachestat_test(enum file_type type)
+>  {
+>         size_t PS =3D sysconf(_SC_PAGESIZE);
+>         size_t filesize =3D PS * 512 * 2; /* 2 2MB huge pages */
+> @@ -212,27 +228,49 @@ bool test_cachestat_shmem(void)
+>         char *filename =3D "tmpshmcstat";
+>         struct cachestat cs;
+>         bool ret =3D true;
+> +       int fd;
+>         unsigned long num_pages =3D compute_len / PS;
+> -       int fd =3D shm_open(filename, O_CREAT | O_RDWR, 0600);
+> +       if (type =3D=3D FILE_SHMEM)
+> +               fd =3D shm_open(filename, O_CREAT | O_RDWR, 0600);
+> +       else
+> +               fd =3D open(filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
+>
+>         if (fd < 0) {
+> -               ksft_print_msg("Unable to create shmem file.\n");
+> +               ksft_print_msg("Unable to create %s file.\n",file_type_st=
+r(type));
+>                 ret =3D false;
+>                 goto out;
+>         }
+>
+>         if (ftruncate(fd, filesize)) {
+> -               ksft_print_msg("Unable to truncate shmem file.\n");
+> +               ksft_print_msg("Unable to truncate %s file.\n",file_type_=
+str(type));
+>                 ret =3D false;
+>                 goto close_fd;
+>         }
+> -
+> -       if (!write_exactly(fd, filesize)) {
+> -               ksft_print_msg("Unable to write to shmem file.\n");
+> -               ret =3D false;
+> -               goto close_fd;
+> +       switch (type){
+> +               case FILE_SHMEM:
+> +                       if (!write_exactly(fd, filesize)) {
+> +                               ksft_print_msg("Unable to write to file.\=
+n");
+> +                               ret =3D false;
+> +                               goto close_fd;
+> +                       }
+> +                       break;
+> +               case FILE_MMAP:
+> +                       char *map =3D mmap(NULL, filesize, PROT_READ | PR=
+OT_WRITE, MAP_SHARED, fd, 0);
+> +                       if (map =3D=3D MAP_FAILED) {
+> +                               ksft_print_msg("mmap failed.\n");
+> +                               ret =3D false;
+> +                               goto close_fd;
+> +                       }
+> +                       for (int i =3D 0; i < filesize; i++) {
+> +                               map[i] =3D 'A';
+> +                       }
+> +                       break;
+> +               default:
+> +                       ksft_print_msg("Unsupported file type.\n");
+> +                       ret =3D false;
+> +                       goto close_fd;
+> +                       break;
+>         }
+> -
+>         syscall_ret =3D syscall(__NR_cachestat, fd, &cs_range, &cs, 0);
+>
+>         if (syscall_ret) {
+> @@ -308,12 +346,18 @@ int main(void)
+>                 break;
+>         }
+>
+> -       if (test_cachestat_shmem())
+> +       if (run_cachestat_test(FILE_SHMEM))
+>                 ksft_test_result_pass("cachestat works with a shmem file\=
+n");
+>         else {
+>                 ksft_test_result_fail("cachestat fails with a shmem file\=
+n");
+>                 ret =3D 1;
+>         }
+>
+> +       if (run_cachestat_test(FILE_MMAP))
+> +               ksft_test_result_pass("cachestat works with a mmap file\n=
+");
+> +       else {
+> +               ksft_test_result_fail("cachestat fails with a mmap file\n=
+");
+> +               ret =3D 1;
+> +       }
+>         return ret;
 >  }
->  
+> --
+> 2.43.0
+>
 
-These tests will fail if applied before patch 3 "char: misc: Disallow registering miscdevice whose minor > MISC_DYNAMIC_MINOR".
+Code LGTM, and the test passed on my system (x86-64 too though). FWIW:
 
-One option is just merge the two commits.
+Tested-by: Nhat Pham <nphamcs@gmail.com>
+Acked-by: Nhat Pham <nphamcs@gmail.com>
 
-I have worked on a different option, which would be the two patches above,
-before applying patch 3. Then, we can either support the two different
-behaviors in the test case, or remove the support for the old behavior
-after patch 3 is applied.
-
-
->  static struct kunit_case test_cases[] = {
-> -	KUNIT_CASE(kunit_dynamic_minor),
->  	KUNIT_CASE(kunit_static_minor),
->  	KUNIT_CASE(kunit_misc_dynamic_minor),
-> +	KUNIT_CASE(miscdev_test_invalid_input),
->  	KUNIT_CASE_PARAM(miscdev_test_twice, miscdev_gen_params),
->  	KUNIT_CASE_PARAM(miscdev_test_duplicate_minor, miscdev_gen_params),
->  	KUNIT_CASE(miscdev_test_duplicate_name),
-> 
-> -- 
-> 2.34.1
-> 
-
-
-From 12e05f189745ce38bf792a448ff8d7117f20a3c0 Mon Sep 17 00:00:00 2001
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Date: Thu, 26 Jun 2025 10:32:03 -0300
-Subject: [PATCH 1/3] allow static register to fail
-
----
- drivers/misc/misc_minor_kunit.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/misc/misc_minor_kunit.c b/drivers/misc/misc_minor_kunit.c
-index 30eceac5f1b6..2ef92ce3d053 100644
---- a/drivers/misc/misc_minor_kunit.c
-+++ b/drivers/misc/misc_minor_kunit.c
-@@ -569,6 +569,7 @@ static void __init miscdev_test_conflict(struct kunit *test)
- static void __init miscdev_test_conflict_reverse(struct kunit *test)
- {
- 	int ret;
-+	bool stat_registered = false;
- 	struct miscdevice miscdyn = {
- 		.name = "miscdyn",
- 		.minor = MISC_DYNAMIC_MINOR,
-@@ -592,6 +593,8 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
- 	ret = misc_register(&miscstat);
- 	KUNIT_EXPECT_EQ(test, ret, 0);
- 	KUNIT_EXPECT_EQ(test, miscstat.minor, miscdyn.minor);
-+	if (ret == 0)
-+		stat_registered = true;
- 
- 	/*
- 	 * Try to register a dynamic minor after registering a static minor
-@@ -606,9 +609,10 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
- 	if (ret == 0)
- 		misc_deregister(&miscdyn);
- 
--	miscdev_test_can_open(test, &miscstat);
--
--	misc_deregister(&miscstat);
-+	if (stat_registered) {
-+		miscdev_test_can_open(test, &miscstat);
-+		misc_deregister(&miscstat);
-+	}
- }
- 
- static struct kunit_case test_cases[] = {
--- 
-2.47.2
-
-
-From c9974a5b2cb59ad3ee5e371cb42c5969a46128b2 Mon Sep 17 00:00:00 2001
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Date: Thu, 26 Jun 2025 15:43:31 -0300
-Subject: [PATCH 2/3] support the case where registering on dynamic range is
- not valid
-
----
- drivers/misc/misc_minor_kunit.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/misc/misc_minor_kunit.c b/drivers/misc/misc_minor_kunit.c
-index 2ef92ce3d053..18f477b18562 100644
---- a/drivers/misc/misc_minor_kunit.c
-+++ b/drivers/misc/misc_minor_kunit.c
-@@ -557,7 +557,7 @@ static void __init miscdev_test_conflict(struct kunit *test)
- 	 */
- 	miscstat.minor = miscdyn.minor;
- 	ret = misc_register(&miscstat);
--	KUNIT_EXPECT_EQ(test, ret, -EBUSY);
-+	KUNIT_EXPECT_TRUE(test, ret == -EINVAL || ret == -EBUSY);
- 	if (ret == 0)
- 		misc_deregister(&miscstat);
- 
-@@ -591,10 +591,12 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
- 	misc_deregister(&miscdyn);
- 
- 	ret = misc_register(&miscstat);
--	KUNIT_EXPECT_EQ(test, ret, 0);
--	KUNIT_EXPECT_EQ(test, miscstat.minor, miscdyn.minor);
--	if (ret == 0)
-+	if (ret == 0) {
-+		KUNIT_EXPECT_EQ(test, miscstat.minor, miscdyn.minor);
- 		stat_registered = true;
-+	} else {
-+		KUNIT_EXPECT_EQ(test, ret, -EINVAL);
-+	}
- 
- 	/*
- 	 * Try to register a dynamic minor after registering a static minor
-@@ -604,7 +606,8 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
- 	miscdyn.minor = MISC_DYNAMIC_MINOR;
- 	ret = misc_register(&miscdyn);
- 	KUNIT_EXPECT_EQ(test, ret, 0);
--	KUNIT_EXPECT_NE(test, miscdyn.minor, miscstat.minor);
-+	if (stat_registered)
-+		KUNIT_EXPECT_NE(test, miscdyn.minor, miscstat.minor);
- 	KUNIT_EXPECT_TRUE(test, is_valid_dynamic_minor(miscdyn.minor));
- 	if (ret == 0)
- 		misc_deregister(&miscdyn);
--- 
-2.47.2
-
+Thanks for the test contribution, Suresh! And thanks for the review
+help, Joshua :)
 
