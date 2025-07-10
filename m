@@ -1,154 +1,186 @@
-Return-Path: <linux-kernel+bounces-724898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9FDFAFF843
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:58:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA84AFF84A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D8C2487146
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB06B3A7E2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B548F2192EF;
-	Thu, 10 Jul 2025 04:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ENcTZDlE"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEEE21C173;
+	Thu, 10 Jul 2025 05:01:41 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821D53B280
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 04:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C782721B9F4
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752123493; cv=none; b=CLBlec4f2pQRwYnM8Zq6OIxYtnyiurBn7kjj9h0uOtYB3tKpqIqNVQjPX1d0a3KtyA6ZKmgj3byDOI5HO8ew5Updeir9OEP6nFehD6Rkg7+t+p6Gb3JoZNimsVbuIrJktx9irL/Gau97t3pGdqIoGLKGm3UGNMoHWhJL2ez7jZc=
+	t=1752123701; cv=none; b=YMFPi9B9U4wrwIIr+qd9C8Eeg6JO5+ers03h/SwTdZwXKbiXvxgFR7X7NCOHvEn6Q0RyJFgCha73qrP2PJZ26KCkvGt7ZGXfE4nHwufkTaNXUJ60kaMDQh1ySIUF/mJY1xm5mY0RWiKOGScDVQNHmEMD75j2tB1WxeiZ5VT4+LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752123493; c=relaxed/simple;
-	bh=yO8H/Y98j2CWVFUe/hDF9GBVVNe4jMEqnXPweoW3ibI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GLPYv6G/IPLai1fAr0wDup6E8f1asP3ZkPPjI6lhKMe2N7UbmcQmcgHxAUabxoyOcDWg/msLq586dZ/ul5HTiyb4fAZzjxJdAxb4Bf5rmFAqxFd2JA1ufhYguaXCCk5yBpasraddU+d3JXcNf2gVLMH4IYSaePZmgWU/EC6fRyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=ENcTZDlE; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e82278e3889so383548276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 21:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1752123490; x=1752728290; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lEpA0IRuEna9Mxwq9qK3aS6tQm5TZpbjQfz5HQP3aX4=;
-        b=ENcTZDlEtLmEGtIuDnjD/X4aGnh6tWV0XhGY6ld0OpVwWxNQi/j2dOK5ujRcY+2kba
-         YkK3umA0RsljqZJ2InrwiLj5iNwjKl5xOnzgnJyGKxM4GCKYND+OG5Rhf5kICQ4n/4CB
-         dKtEwXJuM4E9MqWs0lBjdA8tA/DRpzSpavQwzP4Yqg8IpUSvpO32/jfNk80InwMt+tJ7
-         Gy3bJ+rMKZErcVC9gVbm6OWoK40TFNR2T4X++sSvvSFHvM97fRkhYO/AOOSRKe4Xhm5k
-         DkwENA3+oN1jTGLkKJrIgBdfHNDYvcaLpmfiKw+MLWP8NmK4jIpGleSw9m8KAAhzMOgH
-         rM/A==
+	s=arc-20240116; t=1752123701; c=relaxed/simple;
+	bh=xTWfKQIIZ41M6baz6IAELijnUUHkbU/vVFKVS7CR+3g=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QK299XTxW/l8gp5igXOEg7Ynl7+JlLq/tMnHKuTHJ/fYDpHCENg1oO5f+MzXxzuBhYECIrbYuO9euY0nt+j2nPmNRoQcSbQAUxXeBDriHyvICO2LkHKbEHHIW5eci0qWT/G0IMZfEkj7YZ2J61zG1ZEzMcLiECD879L3TDb8llM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e05997f731so12537885ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 22:01:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752123490; x=1752728290;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lEpA0IRuEna9Mxwq9qK3aS6tQm5TZpbjQfz5HQP3aX4=;
-        b=Ae/fB7N/gRFoc19FuJKJbF7S4x5dqYiLVAm5UyiOH36Quqyw4bcaSDUROb6wyl9+LG
-         z0w+9vQssqmzjdSVCNZXaZjOySwkHQwOgal7HpW9kRtVG5xcaAr2NpxiQyCerViIZ9to
-         endz9/vLsdBsFmsFmHvl+xeaDmJdH+6gIdNZSGTy0KjTQB7pU8ka1vhEzjHY4QtEXLPI
-         EUqwlVU/L5ENF6U3leYaxMjcJM+I1TSPrUdREeZiZF6A2PNs5c/UHNQ5YMOHD35buzMO
-         Ns0nRfppUePsascGu8f2LZaML0HU4jQrKYXueuFjgfoVEWYPwmm4YwP/xCe7dhyy4Q0m
-         VAGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnJrt89sLWU6BOLMF+p/sy0McC9juUNdkXwqe7CeJHtJSF+bai1nwqzZu5O/OF1E367wLQQENXNlvOSXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQNJJiT7wWekAeg+gv9Zdu8/l+pxj02+v0pgxOghG69kGtX6dq
-	TkYLnjAG/+3SW2HfLyRyCD13/AoimmdohO7jVxvir90Gg0t4rUSyVYLZeEF7KzXFuuDKDLAbG46
-	Zvjb87EuYLLVHEhWBl56w/ESxfwjH9xgONwdHHDArMg==
-X-Gm-Gg: ASbGncs5a28kXWEbIervgGV/mJnHwyiFFcBYb+UQC6s5xDS1tdQknsWyxdEimmAAbah
-	wK0KvFY2MVafLc6ijyjjEJY55voCnY44JXjzA1JhGImyNEXMLCPfU9xBKE/KkvD14beMqVFBTaw
-	6o68M96FYO29IsM2fpwxIx9/s/da2VxEoX5Tu58k7NNkxkiQ==
-X-Google-Smtp-Source: AGHT+IFBYcBC73q2IeV+mY8fvhVWFYle/lCmmpRL/KWBCNFpGZtXkk2v1VGFKH7y6dlMRGRRkw9pg5tbSYlMjv4lsDk=
-X-Received: by 2002:a05:6902:2843:b0:e85:fba9:30d0 with SMTP id
- 3f1490d57ef6-e8b6e1078d5mr6486297276.2.1752123490524; Wed, 09 Jul 2025
- 21:58:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752123699; x=1752728499;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bCEiVpSgRHQFuAGiv12yYI7VN2M+R1XWegrkUiNhdKY=;
+        b=DJPYFo9wed4q93tOJgOv0O7TBM9fnRmqbD0yKo9U3Sea89m0CxnUwe5AfEhw/rSgjN
+         mzY07AAZHnqqMfWq/mCa98uq85NiaQvgV2Bd7RHZvgm20DKai1x4eY6Ikutu1SNxUgYe
+         Vc9YhTsxqEqeDiWHs6a7jFlXCrKhnfshPGp/sLnyQkWNxb7QRItzXG8U0cEYXo5tpLl6
+         t1mhv33cCG3OJdwalVxI8yEYcOCrioo2sVCw/nM5SUdTzmcS59XauhLdvizQjG9YDG0O
+         y4D1fOWhSX2VwDb2svsNsak5p0LeNTo8iiP6O+c5TO5vH5YqQnmhfUUlbEgTZtHRLMfE
+         gyZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKd4dj538RFmHUwylK6QbagI0UN3l5UQzWBmePwisk9uKEaua+oBO++NRKNzgmnH0GpxS/4QCqKDG7HqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/h+H+z6R8trDoeHI1TGy2SDHzfMfhtzu0PAnN4LFscEfAJk/+
+	DnxjkWcpBTN2RjzYYQUBbg+fA1671b0mdQD0OdnDGXpmLcwJNepjIq/EHKyyYAdl8vKE8tixpUQ
+	Y0CzmtAmpnADeRyIl32DOPCUEfC1ICl9qPoQuYdDHyzv1DNqyfUn7eVDrya4=
+X-Google-Smtp-Source: AGHT+IGeXN3chGLEQ6sMdLWudq7HNgjIqHit9EEVXRxOszKa9RnsZDqAlN0IouUOMZd6MnYYZ+eCpkn3PFwljnhoKLDLhoBKX7Kf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708065242.26371-1-nick.hu@sifive.com> <20250709-startup-coasting-aa58a99c5585@spud>
-In-Reply-To: <20250709-startup-coasting-aa58a99c5585@spud>
-From: Nick Hu <nick.hu@sifive.com>
-Date: Thu, 10 Jul 2025 12:57:59 +0800
-X-Gm-Features: Ac12FXx9o-b6Tc_SNFG1ki4fAOGr8tZ3fgq0-I4XfIsnvROH-808KefUmWQHcuM
-Message-ID: <CAKddAkDM_-w-y9bcHj+5-afDBhd1rbV-x2JZorE8S9k0u3JSxw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: riscv: Add SiFive vendor extensions description
-To: Conor Dooley <conor@kernel.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@sifive.com>, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>
+X-Received: by 2002:a05:6e02:3992:b0:3dc:8b57:b750 with SMTP id
+ e9e14a558f8ab-3e2461e8093mr12244735ab.17.1752123698855; Wed, 09 Jul 2025
+ 22:01:38 -0700 (PDT)
+Date: Wed, 09 Jul 2025 22:01:38 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686f4932.050a0220.385921.0028.GAE@google.com>
+Subject: [syzbot] [input?] WARNING in cm109_submit_buzz_toggle/usb_submit_urb (2)
+From: syzbot <syzbot+4dc9622046108c10b6e6@syzkaller.appspotmail.com>
+To: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 10, 2025 at 12:00=E2=80=AFAM Conor Dooley <conor@kernel.org> wr=
-ote:
->
-> On Tue, Jul 08, 2025 at 02:52:42PM +0800, Nick Hu wrote:
-> > Add description for SiFive vendor extensions "xsfcflushdlone",
-> > "xsfpgflushdlone" and "xsfcease".
-> >
-> > Signed-off-by: Nick Hu <nick.hu@sifive.com>
->
-> You have this, but no user or anything along with it. What's actually
-> making use of this? If it's just for the SBI impl or w/e then say that.
->
-It's for the SBI implementation. I'll update it in the commit message.
-Thanks!
+Hello,
 
-Best Regard,
-Nick
+syzbot found the following issue on:
 
-> > ---
-> >  .../devicetree/bindings/riscv/extensions.yaml  | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/=
-Documentation/devicetree/bindings/riscv/extensions.yaml
-> > index 72c1b063fdfe..10c37c61243d 100644
-> > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > @@ -626,6 +626,24 @@ properties:
-> >              https://www.andestech.com/wp-content/uploads/AX45MP-1C-Rev=
-.-5.0.0-Datasheet.pdf
-> >
-> >          # SiFive
-> > +        - const: xsfcease
-> > +          description:
-> > +            SiFive CEASE Instruction Extensions Specification.
-> > +            See more details in
-> > +            https://www.sifive.com/document-file/freedom-u740-c000-man=
-ual
-> > +
-> > +        - const: xsfcflushdlone
-> > +          description:
-> > +            SiFive L1D Cache Flush Instruction Extensions Specificatio=
-n.
-> > +            See more details in
-> > +            https://www.sifive.com/document-file/freedom-u740-c000-man=
-ual
-> > +
-> > +        - const: xsfpgflushdlone
-> > +          description:
-> > +            SiFive PGFLUSH Instruction Extensions for the power manage=
-ment. The
-> > +            CPU will flush the L1D and enter the cease state after exe=
-cuting
-> > +            the instruction.
-> > +
-> >          - const: xsfqmaccdod
-> >            description:
-> >              SiFive Int8 Matrix Multiplication Extensions Specification=
-.
-> > --
-> > 2.17.1
-> >
+HEAD commit:    733923397fd9 Merge tag 'pwm/for-6.16-rc6-fixes' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13811a8c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=84eae426cbd8669c
+dashboard link: https://syzkaller.appspot.com/bug?extid=4dc9622046108c10b6e6
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-73392339.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/343415a883fb/vmlinux-73392339.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/46225910a4d1/bzImage-73392339.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4dc9622046108c10b6e6@syzkaller.appspotmail.com
+
+cm109 6-1:0.8: cm109_urb_ctl_callback: urb status -71
+------------[ cut here ]------------
+URB ffff8880232ba400 submitted while active
+WARNING: CPU: 0 PID: 15 at drivers/usb/core/urb.c:379 usb_submit_urb+0x152b/0x1790 drivers/usb/core/urb.c:379
+Modules linked in:
+CPU: 0 UID: 0 PID: 15 Comm: ksoftirqd/0 Not tainted 6.16.0-rc5-syzkaller-00038-g733923397fd9 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:usb_submit_urb+0x152b/0x1790 drivers/usb/core/urb.c:379
+Code: fd eb cb bb fe ff ff ff e9 70 f3 ff ff e8 9d 48 89 fa c6 05 e5 d9 5f 09 01 90 48 c7 c7 00 1c 73 8c 48 89 de e8 86 94 48 fa 90 <0f> 0b 90 90 e9 b6 fe ff ff bb f8 ff ff ff e9 40 f3 ff ff 48 89 ef
+RSP: 0018:ffffc90000007a68 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: ffff8880232ba400 RCX: ffffffff817ab108
+RDX: ffff88801daec880 RSI: ffffffff817ab115 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff88804dcaf058 R15: 0000000000000004
+FS:  0000000000000000(0000) GS:ffff888097521000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000013c28000 CR4: 0000000000352ef0
+Call Trace:
+ <IRQ>
+ cm109_submit_buzz_toggle+0xd9/0x180 drivers/input/misc/cm109.c:351
+ cm109_urb_ctl_callback+0x362/0x4c0 drivers/input/misc/cm109.c:463
+ __usb_hcd_giveback_urb+0x38a/0x6e0 drivers/usb/core/hcd.c:1650
+ usb_hcd_giveback_urb+0x39b/0x450 drivers/usb/core/hcd.c:1734
+ dummy_timer+0x180e/0x3a20 drivers/usb/gadget/udc/dummy_hcd.c:1995
+ __run_hrtimer kernel/time/hrtimer.c:1761 [inline]
+ __hrtimer_run_queues+0x202/0xad0 kernel/time/hrtimer.c:1825
+ hrtimer_run_softirq+0x17d/0x350 kernel/time/hrtimer.c:1842
+ handle_softirqs+0x219/0x8e0 kernel/softirq.c:579
+ __do_softirq kernel/softirq.c:613 [inline]
+ invoke_softirq kernel/softirq.c:453 [inline]
+ __irq_exit_rcu+0x109/0x170 kernel/softirq.c:680
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
+ sysvec_apic_timer_interrupt+0xa4/0xc0 arch/x86/kernel/apic/apic.c:1050
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:finish_task_switch.isra.0+0x22a/0xc10 kernel/sched/core.c:5269
+Code: fb 09 00 00 44 8b 05 a9 55 20 0f 45 85 c0 0f 85 be 01 00 00 4c 89 e7 e8 a4 f6 ff ff e8 6f bc 39 00 fb 65 48 8b 1d 7e 79 46 12 <48> 8d bb 18 16 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1
+RSP: 0018:ffffc9000041fbe8 EFLAGS: 00000202
+RAX: 0000000000164fb9 RBX: ffff88801daec880 RCX: ffffffff81c331ff
+RDX: 0000000000000000 RSI: ffffffff8de2be6b RDI: ffffffff8c1578e0
+RBP: ffffc9000041fc30 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff90a99a57 R11: 0000000000000001 R12: ffff88802b23a400
+R13: ffff8880262f2440 R14: ffff88801daec880 R15: ffff88802b23b270
+ context_switch kernel/sched/core.c:5404 [inline]
+ __schedule+0x1172/0x5de0 kernel/sched/core.c:6790
+ __schedule_loop kernel/sched/core.c:6868 [inline]
+ schedule+0xe7/0x3a0 kernel/sched/core.c:6883
+ smpboot_thread_fn+0x8e6/0xae0 kernel/smpboot.c:160
+ kthread+0x3c2/0x780 kernel/kthread.c:464
+ ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	fb                   	sti
+   1:	09 00                	or     %eax,(%rax)
+   3:	00 44 8b 05          	add    %al,0x5(%rbx,%rcx,4)
+   7:	a9 55 20 0f 45       	test   $0x450f2055,%eax
+   c:	85 c0                	test   %eax,%eax
+   e:	0f 85 be 01 00 00    	jne    0x1d2
+  14:	4c 89 e7             	mov    %r12,%rdi
+  17:	e8 a4 f6 ff ff       	call   0xfffff6c0
+  1c:	e8 6f bc 39 00       	call   0x39bc90
+  21:	fb                   	sti
+  22:	65 48 8b 1d 7e 79 46 	mov    %gs:0x1246797e(%rip),%rbx        # 0x124679a8
+  29:	12
+* 2a:	48 8d bb 18 16 00 00 	lea    0x1618(%rbx),%rdi <-- trapping instruction
+  31:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  38:	fc ff df
+  3b:	48 89 fa             	mov    %rdi,%rdx
+  3e:	48                   	rex.W
+  3f:	c1                   	.byte 0xc1
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
