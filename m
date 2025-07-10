@@ -1,75 +1,72 @@
-Return-Path: <linux-kernel+bounces-726374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC7AB00C81
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:09:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF67B00C9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A88777BA085
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:07:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F3F65C22B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A492FD890;
-	Thu, 10 Jul 2025 20:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A236C306DB1;
+	Thu, 10 Jul 2025 20:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="sWlnIoAp"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RGr+JEBP"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77702FE31A;
-	Thu, 10 Jul 2025 20:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A801F30207E;
+	Thu, 10 Jul 2025 20:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752178070; cv=none; b=KTuJZh9WZQC0R1zZnK68wSYiXcoI1H1dRahSy1NFYfxWUYOfZ1X4nHoGCd8EanDH/zydgxcXSW6Nt6hmFXFxqm+QU4ebdjeNpdjD3aKaqhB2+x/hFG2cZwJHxuYVs54f7vlmud/acsRMmP2CNo1Dout/BjVqoKdWQPtgEtJvG44=
+	t=1752178079; cv=none; b=BXqkdgQskD98f0T29ZJNc8UiTkcuhw3Pl72fA6of1iEqsmyLe8vFrGZbuIawHyJ/IdFs30bP4oMTTY/p7xw07pYwQGSkCjdaiw7AkU0EinfJPvvdZ50pKlalc98KYcSF9P7qKghAmQUD/Ogs3GVQKj8QTrSjZ/8GajmcUbw7KIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752178070; c=relaxed/simple;
-	bh=t0SSORaKE/2bjrqsbe5GGJ2HRf1IqwuYJphL8uhM3rc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PYlFHcOG1ok6YzK3LNb3UAYunt4PwBhC2Iwn+6wT6zt5QVtOwStOhGUHtrPGpUZgxWmKlRCspZlgy9OSGD8SMq73tVoWu1CXusNLRRTUogpcAB39u+ZTeKT50c9GvhZRJVneRxkI8I5rENluqC428/Bks1U/n3Z0tuSSTaKWXfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=sWlnIoAp; arc=none smtp.client-ip=68.232.153.233
+	s=arc-20240116; t=1752178079; c=relaxed/simple;
+	bh=ynLEXTV9etWCmaTp9hJxD+i62WVpqyZqxsuR5myYfmY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DS+1lWcrypECMubS0e8NO72PTlOpaJPhj/F/HeYM1AyRxwbfoSQp8v7LuIcEvDiQWyisSWQq5Ho6IKTrfI9EMML5Onbzj6WIG4QoNJWZJ26Lq5/omUaLz8Hf1bA8y6yf+k4v4uBlqoU+jq5worzKCel+u4m8o+G85vF0DIbeagk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RGr+JEBP; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1752178069; x=1783714069;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=t0SSORaKE/2bjrqsbe5GGJ2HRf1IqwuYJphL8uhM3rc=;
-  b=sWlnIoApqCni5hlQ1i7t8+CygRwRKTAvwIvOdDb+dfwk1y3IrSgb88ni
-   nAdhI7M4e5U8z4yL5FPxXa4RLh39Fg7fOyEwAq8mJWd3gyWmS+lWoM0bN
-   F27P5Qq3dV+190A1rMFztEOfewhZhA7FBFEbCgM9Qtyx7uunIyGEzuswE
-   xwXdBLTgeYoG6jeCd9d/DQVLkSI2thedQg+5UqbG2UIyhZYuMTJzSfh77
-   PZHytWwuoMFBv9u++pSo0cayfubOWGwJr8RIqthxhSxcyXSbpYs71qnXZ
-   NBViOypCVe7VREHH5ui1D6JJsaiRTwhe69qQuWv0zRbOUPkfPacEftP1f
-   Q==;
-X-CSE-ConnectionGUID: qOQSLemoQZOGUxBCHa7nXg==
-X-CSE-MsgGUID: ly4bFosgR5uyCKps6m4j7g==
+  t=1752178077; x=1783714077;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ynLEXTV9etWCmaTp9hJxD+i62WVpqyZqxsuR5myYfmY=;
+  b=RGr+JEBPoE+xKYy7ElANeYU5Bpwn70nUAV93Tedro6KIUIVMv5Cn5CDm
+   6bYZk7IHlhgKXohfwX+E7ajpQuRtkWnO0AJ4qvAVWxF8zDxEijd4OrsRQ
+   gBO8Y+U2JYkDSViqbQLudImgyHqwNaCHDE9AhO7/fqBgQpTG7iatBa5t4
+   7b9ekJl7VEaVQZ7lveAiIKLU1eAjSQcJOIrexw89nTlvX/Rel+qH2uzw2
+   oxWJ2+Vj2kEz8MMpbMapDWaDpzpqtKSYMwzSbw9Utp46wvuNIX+iLJjLq
+   p+NAGxw2kbGtbOMQ1kTKmFwMNhFZS4a9Wjl1aGaXq3GZUMYm3s00nRjsd
+   w==;
+X-CSE-ConnectionGUID: VcY24SkbRKSMnNSaLxS1vA==
+X-CSE-MsgGUID: VK/4oCWZTe2MmqdZJVcdvw==
 X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
-   d="scan'208";a="275215678"
+   d="scan'208";a="44448155"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jul 2025 13:07:38 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jul 2025 13:07:50 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 10 Jul 2025 13:07:33 -0700
+ 15.1.2507.44; Thu, 10 Jul 2025 13:07:30 -0700
 Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Thu, 10 Jul 2025 13:07:33 -0700
+ 15.1.2507.44 via Frontend Transport; Thu, 10 Jul 2025 13:07:30 -0700
 From: <Ryan.Wanner@microchip.com>
 To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
 	<claudiu.beznea@tuxon.dev>
 CC: <varshini.rajendran@microchip.com>, <linux-clk@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<robh@kernel.org>
-Subject: [PATCH v3 20/32] clk: at91: clk-slow: add support for parent_hw
-Date: Thu, 10 Jul 2025 13:07:13 -0700
-Message-ID: <1450fe7c64df3fb1b3123633c5edce6708a5a5d6.1752176711.git.Ryan.Wanner@microchip.com>
+	<robh@kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
+Subject: [PATCH v3 00/32] clk: at91: add support for parent_data and
+Date: Thu, 10 Jul 2025 13:06:53 -0700
+Message-ID: <cover.1752176711.git.Ryan.Wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1752176711.git.Ryan.Wanner@microchip.com>
-References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,93 +76,105 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-Add support for parent_hw in slow clock drivers. With this parent-child
-relation is described with pointers rather than strings making
-registration a bit faster.
+This series adds support for parent data and parent _hw on the at91
+clock drivers. This also updates all the SoC specific clock drivers to
+use this format as well.
 
-All the SoC based drivers that rely on clk-slow were adapted
-to the new API change. The switch itself for SoCs will be done
-in subsequent patches.
+This is a continuation of the V1 of this series here [1].
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
----
- drivers/clk/at91/at91sam9260.c | 2 +-
- drivers/clk/at91/clk-slow.c    | 8 ++++++--
- drivers/clk/at91/dt-compat.c   | 2 +-
- drivers/clk/at91/pmc.h         | 1 +
- 4 files changed, 9 insertions(+), 4 deletions(-)
+This has been tested on the SAMA5* SoCs, the sam9x* SoCs, and the SAMA7*
+SoCs.
 
-diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
-index f39deb3ec00a..55350331b07e 100644
---- a/drivers/clk/at91/at91sam9260.c
-+++ b/drivers/clk/at91/at91sam9260.c
-@@ -385,7 +385,7 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
- 		parent_names[0] = "slow_rc_osc";
- 		parent_names[1] = "slow_xtal";
- 		hw = at91_clk_register_sam9260_slow(regmap, "slck",
--						    parent_names, 2);
-+						    parent_names, NULL, 2);
- 		if (IS_ERR(hw))
- 			goto err_free;
- 
-diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
-index ac9f7a48b76e..5b7fc6210e09 100644
---- a/drivers/clk/at91/clk-slow.c
-+++ b/drivers/clk/at91/clk-slow.c
-@@ -39,11 +39,12 @@ struct clk_hw * __init
- at91_clk_register_sam9260_slow(struct regmap *regmap,
- 			       const char *name,
- 			       const char **parent_names,
-+			       struct clk_parent_data *parent_data,
- 			       int num_parents)
- {
- 	struct clk_sam9260_slow *slowck;
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	int ret;
- 
- 	if (!name)
-@@ -58,7 +59,10 @@ at91_clk_register_sam9260_slow(struct regmap *regmap,
- 
- 	init.name = name;
- 	init.ops = &sam9260_slow_ops;
--	init.parent_names = parent_names;
-+	if (parent_data)
-+		init.parent_data = (const struct clk_parent_data *)&parent_data;
-+	else
-+		init.parent_names = parent_names;
- 	init.num_parents = num_parents;
- 	init.flags = 0;
- 
-diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-index 5afd7c9f53fd..fa8658d3be7b 100644
---- a/drivers/clk/at91/dt-compat.c
-+++ b/drivers/clk/at91/dt-compat.c
-@@ -823,7 +823,7 @@ static void __init of_at91sam9260_clk_slow_setup(struct device_node *np)
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
--	hw = at91_clk_register_sam9260_slow(regmap, name, parent_names,
-+	hw = at91_clk_register_sam9260_slow(regmap, name, parent_names, NULL,
- 					    num_parents);
- 	if (IS_ERR(hw))
- 		return;
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index e5ab2fb3bc89..24c32e42f264 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -273,6 +273,7 @@ struct clk_hw * __init
- at91_clk_register_sam9260_slow(struct regmap *regmap,
- 			       const char *name,
- 			       const char **parent_names,
-+			       struct clk_parent_data *parent_data,
- 			       int num_parents);
- 
- struct clk_hw * __init
+Changes v1 -> V2:
+- Remove all the small sama7g54 SoC driver changes and put them in their
+  own patch.
+- Add the SAMA7D65 and the SAM9X75 to this update.
+- Add a patch to move all common used macros into the pmc.h file.
+- Update changes from v6.6 to v6.16.
+- Remove patches that where style fixes and include those in the update.
+
+Changes v2 -> v3:
+- Adjust each patch so they are fully atomic.
+- Add a patch to have the SAMA7D65 systemclocks use parent_data and
+  parent_hw.
+- Add a formatting cleanup patch for the SAM9X75.
+- Adjust commit messages that no longer show invalid information.
+
+
+1) https://lore.kernel.org/all/20230727053156.13587-1-claudiu.beznea@tuxon.dev/
+
+
+Claudiu Beznea (28):
+  clk: at91: pmc: add macros for clk_parent_data
+  clk: at91: clk-sam9x60-pll: use clk_parent_data
+  clk: at91: clk-peripheral: switch to clk_parent_data
+  clk: at91: clk-main: switch to clk parent data
+  clk: at91: clk-utmi: use clk_parent_data
+  clk: at91: clk-master: use clk_parent_data
+  clk: at91: clk-programmable: use clk_parent_data
+  clk: at91: clk-generated: use clk_parent_data
+  clk: at91: clk-usb: add support for clk_parent_data
+  clk: at91: clk-system: use clk_parent_data
+  clk: at91: clk-pll: add support for parent_hw
+  clk: at91: clk-audio-pll: add support for parent_hw
+  clk: at91: clk-plldiv: add support for parent_hw
+  clk: at91: clk-h32mx: add support for parent_hw
+  clk: at91: clk-i2s-mux: add support for parent_hw
+  clk: at91: clk-smd: add support for clk_parent_data
+  clk: at91: clk-slow: add support for parent_hw
+  clk: at91: dt-compat: switch to parent_hw and parent_data
+  clk: at91: sam9x60: switch to parent_hw and parent_data
+  clk: at91: sama5d2: switch to parent_hw and parent_data
+  clk: at91: sama5d3: switch to parent_hw and parent_data
+  clk: at91: sama5d4: switch to parent_hw and parent_data
+  clk: at91: at91sam9x5: switch to parent_hw and parent_data
+  clk: at91: at91rm9200: switch to parent_hw and parent_data
+  clk: at91: at91sam9260: switch to parent_hw and parent_data
+  clk: at91: at91sam9g45: switch to parent_hw and parent_data
+  clk: at91: at91sam9n12: switch to parent_hw and parent_data
+  clk: at91: at91sam9rl: switch to clk_parent_data
+
+Ryan Wanner (4):
+  clk: at91: pmc: Move macro to header file
+  clk: at91: sam9x75: switch to parent_hw and parent_data
+  clk: at91: sama7d65: switch to parent_hw and parent_data
+  clk: at91: sam9x7: Clean up formatting
+
+ drivers/clk/at91/at91rm9200.c       |  95 ++++----
+ drivers/clk/at91/at91sam9260.c      | 136 ++++++------
+ drivers/clk/at91/at91sam9g45.c      |  89 ++++----
+ drivers/clk/at91/at91sam9n12.c      | 106 ++++-----
+ drivers/clk/at91/at91sam9rl.c       |  63 +++---
+ drivers/clk/at91/at91sam9x5.c       | 125 ++++++-----
+ drivers/clk/at91/clk-audio-pll.c    |  28 ++-
+ drivers/clk/at91/clk-generated.c    |   8 +-
+ drivers/clk/at91/clk-h32mx.c        |  11 +-
+ drivers/clk/at91/clk-i2s-mux.c      |   6 +-
+ drivers/clk/at91/clk-main.c         |  16 +-
+ drivers/clk/at91/clk-master.c       |  24 +-
+ drivers/clk/at91/clk-peripheral.c   |  16 +-
+ drivers/clk/at91/clk-pll.c          |   9 +-
+ drivers/clk/at91/clk-plldiv.c       |  11 +-
+ drivers/clk/at91/clk-programmable.c |   8 +-
+ drivers/clk/at91/clk-sam9x60-pll.c  |  14 +-
+ drivers/clk/at91/clk-slow.c         |   8 +-
+ drivers/clk/at91/clk-smd.c          |  10 +-
+ drivers/clk/at91/clk-system.c       |   8 +-
+ drivers/clk/at91/clk-usb.c          |  41 ++--
+ drivers/clk/at91/clk-utmi.c         |  16 +-
+ drivers/clk/at91/dt-compat.c        |  80 +++++--
+ drivers/clk/at91/pmc.h              |  66 +++---
+ drivers/clk/at91/sam9x60.c          | 117 +++++-----
+ drivers/clk/at91/sam9x7.c           | 328 ++++++++++++++++------------
+ drivers/clk/at91/sama5d2.c          | 168 +++++++-------
+ drivers/clk/at91/sama5d3.c          | 122 ++++++-----
+ drivers/clk/at91/sama5d4.c          | 129 +++++------
+ drivers/clk/at91/sama7d65.c         | 156 ++++++-------
+ drivers/clk/at91/sama7g5.c          | 111 +++++-----
+ 31 files changed, 1134 insertions(+), 991 deletions(-)
+
 -- 
 2.43.0
 
