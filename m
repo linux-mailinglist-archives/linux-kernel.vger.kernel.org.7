@@ -1,101 +1,113 @@
-Return-Path: <linux-kernel+bounces-725512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7224BB00012
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:05:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D36B00028
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70AAA1C82A0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:06:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72EEDB41B94
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2423323DEAD;
-	Thu, 10 Jul 2025 11:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A6D28DB45;
+	Thu, 10 Jul 2025 11:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="DF/YWxUc"
-Received: from mail3-165.sinamail.sina.com.cn (mail3-165.sinamail.sina.com.cn [202.108.3.165])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LdlKtGkd"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7922513A3F7
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74E523DEAD;
+	Thu, 10 Jul 2025 11:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145537; cv=none; b=oD4ue7N7JaatEodhONV2adErJrELDbx0UApoOHoDJ3uadXKDoSKFfrN2Bk4n5hNsSwVcIUup/B8DMxJekqNMSTZpfVLKwfYiTKjgLgHFsQQ/TmzLAkuXwusMdsuBLBu9C7No5+wfWiNGP2TeYg8NU6xr3aB1Tl+nVIx4h/hp4mw=
+	t=1752145639; cv=none; b=Gtdr8tW2RIFiaZCUtNzy/APn5kAJLaW2IrfDHio8dFJDad/b/DFSK3dykzkyszefa4+dOY62X9dFcv0ovQ2qs7XsRsofdW8Hx83QCuUUAo62kZeOSeM4TvL2RRY2Ku5Yd6pPBXQDPPBn3FH4Zvr+BRDjjqP+RQUdNXGCDyrs5vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145537; c=relaxed/simple;
-	bh=Dn6jGQZ+6fmRepwPmxCUaGzr2gPQ8oVqlmG8UliK/+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XFjvfteBwHe5frTL0eE7z2rCcijGvqX9XoA2YqYTEsCufiE4ZI1y8xU/b2imlbyLfkQThW2UrC3N+GENEjpdurqlyC/3Qx+/WqKVHVO/v6ptCQtiJDpKGEq35QneqUVKkWNs1O1fAlaePcyM72TlU/VsZtnK3+J6mw/iICERC6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=DF/YWxUc; arc=none smtp.client-ip=202.108.3.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752145531;
-	bh=70cduV/gqhsIGEEMAWhR2gNKKTxWk8gksdMoFf3bews=;
-	h=From:Subject:Date:Message-ID;
-	b=DF/YWxUc7xvq/q1/C13L8QvsVm5iFL8EAz3a2835VRA3Kl41yWCn14M9o3b/U2Dn1
-	 cwLHOBrR7Xg1KEBkDuw3HDcwrlmRHn9l2eQOBZs+tqkCxxD9BVgo8hTeBeirPeX3a4
-	 lTmb1wzfyPBFRJHEgh/4WBMz3O7UcHTS/zDKOdWM=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 686F9E700000595A; Thu, 10 Jul 2025 19:05:22 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4812446685140
-X-SMAIL-UIID: 447099943A7C4B1BA75B2BABA772A6E8-20250710-190522-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: task hung in uevent_show (2)
-Date: Thu, 10 Jul 2025 19:05:07 +0800
-Message-ID: <20250710110510.3162-1-hdanton@sina.com>
-In-Reply-To: <6730056d.050a0220.320e73.031c.GAE@google.com>
-References: 
+	s=arc-20240116; t=1752145639; c=relaxed/simple;
+	bh=r6B/XVLZcf7RylzWNGBO2ESniGh9W1OISbM2kiqHX/A=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d/8RpU+K9rYjNUdxJ0J/bp7fHeZ2E+uWqyvZdnqVKGU+XQj8xify44/V9Li1sAhyf6D6tS1WIRBhMxuWHy1QRlPddTV6S7Y1s4jrt/vtVKqUA1OtvJDEo3eLrj1DCYR5uev5X9ez5h33lbt6plgPSx5/ranLHBuZb2j9tW7ogzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LdlKtGkd; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56AB75jO1487548;
+	Thu, 10 Jul 2025 06:07:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752145625;
+	bh=Uabhp1OFgeoc1G7fSq5ppr9KBFz81UoMCS0Yf9xgX3I=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=LdlKtGkdZBQzNhp553vr8DtO7DF04BD9gHnlF2o6wbMi9fZXPUTfAmDg9C2mQ81VX
+	 E0mbxa/N23YWYqc9PGGjb7LOCeoByE/8aRu0w1Wif8Ka9ASWZIUGJWuBqUOrOoYxiV
+	 wOfVEoWj+hBx8ckm7j4mKN0YOO71eLZcqPszXeeU=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56AB75Kx1163561
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 10 Jul 2025 06:07:05 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 10
+ Jul 2025 06:07:05 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 10 Jul 2025 06:07:05 -0500
+Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56AB75eb1530947;
+	Thu, 10 Jul 2025 06:07:05 -0500
+Date: Thu, 10 Jul 2025 06:07:05 -0500
+From: Bryan Brattlof <bb@ti.com>
+To: Vignesh Raghavendra <vigneshr@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62a7-sk: add boot phase tags
+Message-ID: <20250710110705.ah65r5nathlpqzhz@bryanbrattlof.com>
+X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
+References: <20250709-62a-uboot-cleanup-v1-1-70f8e6cde719@ti.com>
+ <4d531a8b-1d32-4618-a984-6f4435f6a676@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <4d531a8b-1d32-4618-a984-6f4435f6a676@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-> Date: Sat, 09 Nov 2024 16:59:25 -0800	[thread overview]
-> syzbot has found a reproducer for the following issue on:
+On July 10, 2025 thus sayeth Vignesh Raghavendra:
+> [...]
 > 
-> HEAD commit:    226ff2e681d0 usb: typec: ucsi: Convert connector specific ..
-> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> console output: https://syzkaller.appspot.com/x/log.txt?x=132b5e30580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=358c1689354aeef3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=592e2ab8775dbe0bf09a
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=144614e8580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=172b5e30580000
+> On 10/07/25 05:38, Bryan Brattlof wrote:
+> >  &main_gpio1 {
+> > @@ -693,6 +703,7 @@ &main_uart0 {
+> >  	status = "okay";
+> >  	pinctrl-names = "default";
+> >  	pinctrl-0 = <&main_uart0_pins_default>;
+> > +	bootph-all;
+> >  };
+> >  
+> >  /* Main UART1 is used for TIFS firmware logs */
+> > @@ -737,12 +748,21 @@ &cpsw3g {
+> >  	status = "okay";
+> >  	pinctrl-names = "default";
+> >  	pinctrl-0 = <&main_rgmii1_pins_default>;
+> > +
+> > +	ethernet-ports {
+> > +		bootph-all;
+> 
+> 
+> This is redundant as child node cpsw_port1 has the flag below?
+> 
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git  usb-testing
+Ah yeah you're right. I'll fix this up.
 
---- x/drivers/media/rc/imon.c
-+++ y/drivers/media/rc/imon.c
-@@ -1765,6 +1765,7 @@ static void usb_rx_callback_intf0(struct
- 		break;
- 
- 	default:
-+		return;
- 		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
- 			 __func__, urb->status);
- 		break;
-@@ -1806,6 +1807,7 @@ static void usb_rx_callback_intf1(struct
- 		break;
- 
- 	default:
-+		return;
- 		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
- 			 __func__, urb->status);
- 		break;
---
+~Bryan
 
