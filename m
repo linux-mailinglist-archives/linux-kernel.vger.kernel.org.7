@@ -1,241 +1,323 @@
-Return-Path: <linux-kernel+bounces-725319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF4AAFFD84
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:06:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36ED6AFFD6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D7B27BDAD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:03:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DC4587542
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7A428DB50;
-	Thu, 10 Jul 2025 09:04:13 +0000 (UTC)
-Received: from mail.189.cn (189sx01-ptr.21cn.com [125.88.204.37])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CBA285050;
-	Thu, 10 Jul 2025 09:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=125.88.204.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75B1202F8F;
+	Thu, 10 Jul 2025 09:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRWfF7Dg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82F121D59F;
+	Thu, 10 Jul 2025 09:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752138252; cv=none; b=GkLbcFsC8P8yIzic7xgQ+rGdzQTyuSFo6WryYTAtzoF1c7g/8EVSeYYcdfxGHaz9o44qeQAKK776LQLP9Nh7Gk9mMZnYlY649MJsro84k7ahYi8mIYCG9mD6dI4VTsPdSioKRnZVmZqTd/ivcajRl1/v9WxoqgIx1/WjnfOH3/w=
+	t=1752138030; cv=none; b=OxEa4A7mlbqqBf6ff8NCwCJJo8qeJYoeRrG9JlFGlXrjR4FvIOlRpaN932oMvj+W4WSSXZJ5lbyDmdGy0cOXtqrs+N23Yru1kiRwDL/hwVv/tNpnDTO8/zGC/YWsKhOf2aEHa4a+OySq5Gofn+JE8sa3acYAA6gUnp/Pk/Afx3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752138252; c=relaxed/simple;
-	bh=r22/WRVHPAfiyhwvVqnqplhAC1IL96v+HDVyPThKqh4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MgM9SVfH7gwB4ooraJ5BlaN24v9fqXmMxntIew3wQfzEeKiQT9s6T7676Se+ISfKw+/UXMXZPRRBwtg7Y2CqzAoZuM6sIrkxy9sZHYLAtYEG/W0KELwjZ67kwumEbn/8w37X94OuKLkLoFH+B5Tg25ZPsgGWl54kI6Gpg1Wzk7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=125.88.204.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
-HMM_SOURCE_IP:10.158.242.145:0.645490632
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-221.238.56.49 (unknown [10.158.242.145])
-	by mail.189.cn (HERMES) with SMTP id DA5C140029B;
-	Thu, 10 Jul 2025 16:59:12 +0800 (CST)
-Received: from  ([221.238.56.49])
-	by gateway-153622-dep-67b7b5d8b-hc52f with ESMTP id 8fdc9f5561464c378926d8d3ce4d65a8 for tytso@mit.edu;
-	Thu, 10 Jul 2025 16:59:12 CST
-X-Transaction-ID: 8fdc9f5561464c378926d8d3ce4d65a8
-X-Real-From: chensong_2000@189.cn
-X-Receive-IP: 221.238.56.49
-X-MEDUSA-Status: 0
-Sender: chensong_2000@189.cn
-From: chensong_2000@189.cn
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Song Chen <chensong_2000@189.cn>
-Subject: [PATCH RFC] ext4: fallback unaligned part of dio to buffered IO
-Date: Thu, 10 Jul 2025 16:59:10 +0800
-Message-Id: <20250710085910.123168-1-chensong_2000@189.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1752138030; c=relaxed/simple;
+	bh=hDAsEMXqZAWMuwf5EJEdxDuRoEz0z+V7iB7caWdJZSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FkX/UsmLkARSPtQRJHZlf6AhK75vYBmRuEoCs29tOgbR3XosU6agVgAwi/p0icapg6HPW1+lxsVVfcdpYfiCCyiDQjvAetP7ZuRF4/xEXD8wTNuWbvTby8pqirPMOuuVQxoWmepUGYYGiu+1fHJrCSE75tRdfSqnsCu7SG/+EYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRWfF7Dg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 470D5C4CEE3;
+	Thu, 10 Jul 2025 09:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752138030;
+	bh=hDAsEMXqZAWMuwf5EJEdxDuRoEz0z+V7iB7caWdJZSQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pRWfF7Dg0IjlPterlbZTdNLKqr0NyOM8iTKM1uJz7SzVC6Wlo1s1a2lghThYvrASR
+	 6xVO91+e1jrGkVm1DmfY88Hbwkxc+yI92CZgFEMZckM4v30yjuKvdB+2sRx83GXM3M
+	 GVr2gRbGqBoN9aSBLMzFZm9i5X6Jqvylp8XyvNNHP73E5UZnIuxXWl3fS5lKFXfHo5
+	 lE645U0ZmA372LCy+yoyD+G8QH5s5q5UADGkdAhjqjRSro2k/ibhAGazfgotYSFLFS
+	 8A1ONE52XERFWUcaIUI9KusLjLYtQwF0ZUPXuw72MOgRhK0yDV14k3l532oPrHK63D
+	 1iZmJnW2++SvQ==
+Date: Thu, 10 Jul 2025 10:00:25 +0100
+From: Lee Jones <lee@kernel.org>
+To: Michael Walle <mwalle@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Julien Panis <jpanis@baylibre.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] mfd: tps6594: Add TI TPS652G1 support
+Message-ID: <20250710090025.GD10134@google.com>
+References: <20250613114518.1772109-1-mwalle@kernel.org>
+ <20250613114518.1772109-2-mwalle@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250613114518.1772109-2-mwalle@kernel.org>
 
-From: Song Chen <chensong_2000@189.cn>
+On Fri, 13 Jun 2025, Michael Walle wrote:
 
-When I was trying to read a big file in direct IO mode, if the
-file was not page aligned, ext4 rejected the request in
-iomap_dio_bio_iter which checks alignments of pos, addr and length
-before submitting bio.
+> The TPS652G1 is a stripped down version of the TPS65224. From a software
+> point of view, it lacks any voltage monitoring, the watchdog, the ESM
+> and the ADC.
+> 
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> ---
+>  drivers/mfd/tps6594-core.c  | 88 ++++++++++++++++++++++++++++++++++---
+>  drivers/mfd/tps6594-i2c.c   | 10 ++++-
+>  drivers/mfd/tps6594-spi.c   | 10 ++++-
+>  include/linux/mfd/tps6594.h |  1 +
+>  4 files changed, 99 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/mfd/tps6594-core.c b/drivers/mfd/tps6594-core.c
+> index a7223e873cd1..c16c37e36617 100644
+> --- a/drivers/mfd/tps6594-core.c
+> +++ b/drivers/mfd/tps6594-core.c
+> @@ -1,6 +1,11 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * Core functions for TI TPS65224/TPS6594/TPS6593/LP8764 PMICs
+> + * Core functions for following TI PMICs:
+> + *  - LP8764
+> + *  - TPS65224
+> + *  - TPS652G1
+> + *  - TPS6593
+> + *  - TPS6594
+>   *
+>   * Copyright (C) 2023 BayLibre Incorporated - https://www.baylibre.com/
+>   */
+> @@ -414,6 +419,61 @@ static const unsigned int tps65224_irq_reg[] = {
+>  	TPS6594_REG_INT_FSM_ERR,
+>  };
+>  
+> +/* TPS652G1 Resources */
+> +
+> +static const struct mfd_cell tps652g1_common_cells[] = {
+> +	MFD_CELL_RES("tps6594-pfsm", tps65224_pfsm_resources),
+> +	MFD_CELL_RES("tps6594-pinctrl", tps65224_pinctrl_resources),
+> +	MFD_CELL_NAME("tps6594-regulator"),
+> +};
+> +
+> +static const struct regmap_irq tps652g1_irqs[] = {
+> +	/* INT_GPIO register */
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_GPIO1, 2, TPS65224_BIT_GPIO1_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_GPIO2, 2, TPS65224_BIT_GPIO2_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_GPIO3, 2, TPS65224_BIT_GPIO3_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_GPIO4, 2, TPS65224_BIT_GPIO4_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_GPIO5, 2, TPS65224_BIT_GPIO5_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_GPIO6, 2, TPS65224_BIT_GPIO6_INT),
+> +
+> +	/* INT_STARTUP register */
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_VSENSE, 3, TPS65224_BIT_VSENSE_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_ENABLE, 3, TPS6594_BIT_ENABLE_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_PB_SHORT, 3, TPS65224_BIT_PB_SHORT_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_FSD, 3, TPS6594_BIT_FSD_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_SOFT_REBOOT, 3, TPS6594_BIT_SOFT_REBOOT_INT),
+> +
+> +	/* INT_MISC register */
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_BIST_PASS, 4, TPS6594_BIT_BIST_PASS_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_EXT_CLK, 4, TPS6594_BIT_EXT_CLK_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_REG_UNLOCK, 4, TPS65224_BIT_REG_UNLOCK_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_TWARN, 4, TPS6594_BIT_TWARN_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_PB_LONG, 4, TPS65224_BIT_PB_LONG_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_PB_FALL, 4, TPS65224_BIT_PB_FALL_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_PB_RISE, 4, TPS65224_BIT_PB_RISE_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_ADC_CONV_READY, 4, TPS65224_BIT_ADC_CONV_READY_INT),
+> +
+> +	/* INT_MODERATE_ERR register */
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_TSD_ORD, 5, TPS6594_BIT_TSD_ORD_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_BIST_FAIL, 5, TPS6594_BIT_BIST_FAIL_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_REG_CRC_ERR, 5, TPS6594_BIT_REG_CRC_ERR_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_RECOV_CNT, 5, TPS6594_BIT_RECOV_CNT_INT),
+> +
+> +	/* INT_SEVERE_ERR register */
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_TSD_IMM, 6, TPS6594_BIT_TSD_IMM_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_VCCA_OVP, 6, TPS6594_BIT_VCCA_OVP_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_PFSM_ERR, 6, TPS6594_BIT_PFSM_ERR_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_BG_XMON, 6, TPS65224_BIT_BG_XMON_INT),
+> +
+> +	/* INT_FSM_ERR register */
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_IMM_SHUTDOWN, 7, TPS6594_BIT_IMM_SHUTDOWN_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_ORD_SHUTDOWN, 7, TPS6594_BIT_ORD_SHUTDOWN_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_MCU_PWR_ERR, 7, TPS6594_BIT_MCU_PWR_ERR_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_SOC_PWR_ERR, 7, TPS6594_BIT_SOC_PWR_ERR_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_COMM_ERR, 7, TPS6594_BIT_COMM_ERR_INT),
+> +	REGMAP_IRQ_REG(TPS65224_IRQ_I2C2_ERR, 7, TPS65224_BIT_I2C2_ERR_INT),
+> +};
+> +
+>  static inline unsigned int tps6594_get_irq_reg(struct regmap_irq_chip_data *data,
+>  					       unsigned int base, int index)
+>  {
+> @@ -443,7 +503,7 @@ static int tps6594_handle_post_irq(void *irq_drv_data)
+>  	 * a new interrupt.
+>  	 */
+>  	if (tps->use_crc) {
+> -		if (tps->chip_id == TPS65224) {
+> +		if (tps->chip_id == TPS65224 || tps->chip_id == TPS652G1) {
+>  			regmap_reg = TPS6594_REG_INT_FSM_ERR;
+>  			mask_val = TPS6594_BIT_COMM_ERR_INT;
+>  		} else {
+> @@ -481,6 +541,18 @@ static struct regmap_irq_chip tps65224_irq_chip = {
+>  	.handle_post_irq = tps6594_handle_post_irq,
+>  };
+>  
+> +static struct regmap_irq_chip tps652g1_irq_chip = {
+> +	.ack_base = TPS6594_REG_INT_BUCK,
+> +	.ack_invert = 1,
+> +	.clear_ack = 1,
+> +	.init_ack_masked = 1,
+> +	.num_regs = ARRAY_SIZE(tps65224_irq_reg),
+> +	.irqs = tps652g1_irqs,
+> +	.num_irqs = ARRAY_SIZE(tps652g1_irqs),
+> +	.get_irq_reg = tps65224_get_irq_reg,
+> +	.handle_post_irq = tps6594_handle_post_irq,
+> +};
+> +
+>  static const struct regmap_range tps6594_volatile_ranges[] = {
+>  	regmap_reg_range(TPS6594_REG_INT_TOP, TPS6594_REG_STAT_READBACK_ERR),
+>  	regmap_reg_range(TPS6594_REG_RTC_STATUS, TPS6594_REG_RTC_STATUS),
+> @@ -507,7 +579,7 @@ static int tps6594_check_crc_mode(struct tps6594 *tps, bool primary_pmic)
+>  	int ret;
+>  	unsigned int regmap_reg, mask_val;
+>  
+> -	if (tps->chip_id == TPS65224) {
+> +	if (tps->chip_id == TPS65224 || tps->chip_id == TPS652G1) {
+>  		regmap_reg = TPS6594_REG_CONFIG_2;
+>  		mask_val = TPS65224_BIT_I2C1_SPI_CRC_EN;
+>  	} else {
+> @@ -537,7 +609,7 @@ static int tps6594_set_crc_feature(struct tps6594 *tps)
+>  	int ret;
+>  	unsigned int regmap_reg, mask_val;
+>  
+> -	if (tps->chip_id == TPS65224) {
+> +	if (tps->chip_id == TPS65224 || tps->chip_id == TPS652G1) {
+>  		regmap_reg = TPS6594_REG_CONFIG_2;
+>  		mask_val = TPS65224_BIT_I2C1_SPI_CRC_EN;
+>  	} else {
+> @@ -628,6 +700,10 @@ int tps6594_device_init(struct tps6594 *tps, bool enable_crc)
+>  		irq_chip = &tps65224_irq_chip;
+>  		n_cells = ARRAY_SIZE(tps65224_common_cells);
+>  		cells = tps65224_common_cells;
+> +	} else if (tps->chip_id == TPS652G1) {
+> +		irq_chip = &tps652g1_irq_chip;
+> +		n_cells = ARRAY_SIZE(tps652g1_common_cells);
+> +		cells = tps652g1_common_cells;
+>  	} else {
+>  		irq_chip = &tps6594_irq_chip;
+>  		n_cells = ARRAY_SIZE(tps6594_common_cells);
+> @@ -651,8 +727,8 @@ int tps6594_device_init(struct tps6594 *tps, bool enable_crc)
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "Failed to add common child devices\n");
+>  
+> -	/* No RTC for LP8764 and TPS65224 */
+> -	if (tps->chip_id != LP8764 && tps->chip_id != TPS65224) {
+> +	/* No RTC for LP8764, TPS65224 and TPS652G1 */
+> +	if (tps->chip_id != LP8764 && tps->chip_id != TPS65224 && tps->chip_id != TPS652G1) {
+>  		ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO, tps6594_rtc_cells,
+>  					   ARRAY_SIZE(tps6594_rtc_cells), NULL, 0,
+>  					   regmap_irq_get_domain(tps->irq_data));
+> diff --git a/drivers/mfd/tps6594-i2c.c b/drivers/mfd/tps6594-i2c.c
+> index 4ab91c34d9fb..7ff7516286fd 100644
+> --- a/drivers/mfd/tps6594-i2c.c
+> +++ b/drivers/mfd/tps6594-i2c.c
+> @@ -1,6 +1,11 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * I2C access driver for TI TPS65224/TPS6594/TPS6593/LP8764 PMICs
+> + * I2C access driver for the following TI PMICs:
+> + *  - LP8764
+> + *  - TPS65224
+> + *  - TPS652G1
+> + *  - TPS6593
+> + *  - TPS6594
+>   *
+>   * Copyright (C) 2023 BayLibre Incorporated - https://www.baylibre.com/
+>   */
+> @@ -197,6 +202,7 @@ static const struct of_device_id tps6594_i2c_of_match_table[] = {
+>  	{ .compatible = "ti,tps6593-q1", .data = (void *)TPS6593, },
+>  	{ .compatible = "ti,lp8764-q1",  .data = (void *)LP8764,  },
+>  	{ .compatible = "ti,tps65224-q1", .data = (void *)TPS65224, },
+> +	{ .compatible = "ti,tps652g1", .data = (void *)TPS652G1, },
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, tps6594_i2c_of_match_table);
+> @@ -222,7 +228,7 @@ static int tps6594_i2c_probe(struct i2c_client *client)
+>  		return dev_err_probe(dev, -EINVAL, "Failed to find matching chip ID\n");
+>  	tps->chip_id = (unsigned long)match->data;
+>  
+> -	if (tps->chip_id == TPS65224)
+> +	if (tps->chip_id == TPS65224 || tps->chip_id == TPS652G1)
+>  		tps6594_i2c_regmap_config.volatile_table = &tps65224_volatile_table;
+>  
+>  	tps->regmap = devm_regmap_init(dev, NULL, client, &tps6594_i2c_regmap_config);
+> diff --git a/drivers/mfd/tps6594-spi.c b/drivers/mfd/tps6594-spi.c
+> index 6ebccb79f0cc..944b7313a1d9 100644
+> --- a/drivers/mfd/tps6594-spi.c
+> +++ b/drivers/mfd/tps6594-spi.c
+> @@ -1,6 +1,11 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * SPI access driver for TI TPS65224/TPS6594/TPS6593/LP8764 PMICs
+> + * SPI access driver for the following TI PMICs:
+> + *  - LP8764
+> + *  - TPS65224
+> + *  - TPS652G1
+> + *  - TPS6593
+> + *  - TPS6594
+>   *
+>   * Copyright (C) 2023 BayLibre Incorporated - https://www.baylibre.com/
+>   */
+> @@ -82,6 +87,7 @@ static const struct of_device_id tps6594_spi_of_match_table[] = {
+>  	{ .compatible = "ti,tps6593-q1", .data = (void *)TPS6593, },
+>  	{ .compatible = "ti,lp8764-q1",  .data = (void *)LP8764,  },
+>  	{ .compatible = "ti,tps65224-q1", .data = (void *)TPS65224, },
+> +	{ .compatible = "ti,tps652g1", .data = (void *)TPS652G1, },
 
-As my understanding, pos and addr must be block size aligned, but length
-doesn't have to be. Instead of rejecting entire request which is so
-frastrating to upper layer, this patch splits length into aligned part
-and unaligned part. For the aligned part, still uses direct IO with
-no problem, for the rest unaligned part, falls back to buffered IO.
-This way looks more friendly to apps.
+I get warnings about this being undocumented.
 
-Please have a look at the patch in [1], it has to reopen the file
-to read the unaligned part in upper layer, which doen't look
-gracefully.
+Should it be added to:
 
-I guess I'm not the first one who brings it up, there must be a reason
-to stop this porblem being addressed. unaligned write seems to be
-addressed in [2] and [3]. Side effects or complexity, I would like to know.
+  Documentation/devicetree/bindings/mfd/ti,tps6594.yaml
 
-This is just a draft of RFC, I haven't taken care of ubuf properly yet,
-please let me know if you like this idea or not, then I can drop it or
-go further, like introduce helpers to split iov_iter in lib/iov_iters.c
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, tps6594_spi_of_match_table);
+> @@ -107,7 +113,7 @@ static int tps6594_spi_probe(struct spi_device *spi)
+>  		return dev_err_probe(dev, -EINVAL, "Failed to find matching chip ID\n");
+>  	tps->chip_id = (unsigned long)match->data;
+>  
+> -	if (tps->chip_id == TPS65224)
+> +	if (tps->chip_id == TPS65224 || tps->chip_id == TPS652G1)
+>  		tps6594_spi_regmap_config.volatile_table = &tps65224_volatile_table;
+>  
+>  	tps->regmap = devm_regmap_init(dev, NULL, spi, &tps6594_spi_regmap_config);
+> diff --git a/include/linux/mfd/tps6594.h b/include/linux/mfd/tps6594.h
+> index 16543fd4d83e..021db8875963 100644
+> --- a/include/linux/mfd/tps6594.h
+> +++ b/include/linux/mfd/tps6594.h
+> @@ -19,6 +19,7 @@ enum pmic_id {
+>  	TPS6593,
+>  	LP8764,
+>  	TPS65224,
+> +	TPS652G1,
+>  };
+>  
+>  /* Macro to get page index from register address */
+> -- 
+> 2.39.5
+> 
 
-[1]:https://lore.kernel.org/all/20240730075755.10941-4-link@vivo.com/
-[2]:https://lore.kernel.org/linux-ext4/20230314130759.642710-1-bfoster
-@redhat.com/
-[3]:https://lore.kernel.org/linux-ext4/20230810165559.946222-1-bfoster
-@redhat.com/
-
-Signed-off-by: Song Chen <chensong_2000@189.cn>
----
- fs/ext4/file.c | 90 ++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 83 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 21df81347147..a059985d0b16 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -36,6 +36,12 @@
- #include "acl.h"
- #include "truncate.h"
- 
-+enum {
-+	SHOULD_NOT_DIO,
-+	SHOULD_DIO,
-+	SHOULD_PARTIAL_DIO,
-+};
-+
- /*
-  * Returns %true if the given DIO request should be attempted with DIO, or
-  * %false if it should fall back to buffered I/O.
-@@ -52,23 +58,89 @@
-  *
-  * This function implements the traditional ext4 behavior in all these cases.
-  */
--static bool ext4_should_use_dio(struct kiocb *iocb, struct iov_iter *iter)
-+static int ext4_should_use_dio(struct kiocb *iocb, struct iov_iter *iter)
- {
- 	struct inode *inode = file_inode(iocb->ki_filp);
-+	unsigned int len_mask = i_blocksize(inode) - 1;
-+	unsigned int addr_mask = bdev_dma_alignment(inode->i_sb->s_bdev);
- 	u32 dio_align = ext4_dio_alignment(inode);
- 
-+	/* inode doesn't support dio, fall back to buffered IO*/
- 	if (dio_align == 0)
--		return false;
-+		return SHOULD_NOT_DIO;
-+
-+	/* addr is misaligned, fall back to buffered IO*/
-+	if (!iov_iter_is_aligned(iter, addr_mask, 0))
-+		return SHOULD_NOT_DIO;
-+
-+	/* pos is misaligned, fall back to buffered IO*/
-+	if (!IS_ALIGNED(iocb->ki_pos, len_mask))
-+		return SHOULD_NOT_DIO;
-+
-+	/* length is misaligned*/
-+	if (!iov_iter_is_aligned(iter, 0, len_mask)) {
-+		/* if length is less than a block, fall back to buffered IO*/
-+		if (iov_iter_count(iter) < i_blocksize(inode))
-+			return SHOULD_NOT_DIO;
-+		/*direct IO for aligned part, buffered IO for misaligned part*/
-+		return SHOULD_PARTIAL_DIO;
-+	}
- 
--	if (dio_align == 1)
--		return true;
-+	return SHOULD_DIO;
-+}
- 
--	return IS_ALIGNED(iocb->ki_pos | iov_iter_alignment(iter), dio_align);
-+/*
-+ * First of all, truncate the length to block size aligned and start
-+ * a direct IO. If it goes well in iomap_dio_rw, fall back the rest
-+ * unaligned part to buffered IO.
-+ *
-+ * At the end, return the sum bytes of direct IO and buffered IO.
-+ */
-+static ssize_t ext4_mixed_read_iter(struct kiocb *iocb, struct iov_iter *to)
-+{
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+	struct iov_iter to_misaligned = *to;
-+	struct iovec iov;
-+	ssize_t ret, ret_dio, ret_generic;
-+
-+	/* truncate iter->count to blocksize aligned and start direct IO */
-+	iov_iter_truncate(to, ALIGN_DOWN(to->count, i_blocksize(inode)));
-+	ret_dio = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL, 0, NULL, 0);
-+
-+	if (ret_dio <= 0) {
-+		ret = ret_dio;
-+		goto out;
-+	}
-+
-+	/* set up iter to misaligned part and start buffered IO*/
-+	iov.iov_base = to->__iov->iov_base +  ret_dio;
-+	iov.iov_len	 = to->__iov->iov_len -  ret_dio;
-+
-+	to_misaligned.__iov = &iov;
-+	iov_iter_truncate(&to_misaligned, iov.iov_len);
-+
-+	iocb->ki_flags &= ~IOCB_DIRECT;
-+	ret_generic = generic_file_read_iter(iocb, &to_misaligned);
-+
-+	if (ret_generic <= 0) {
-+		ret  = ret_generic;
-+		goto out;
-+	}
-+
-+	ret = ret_dio + ret_generic;
-+
-+out:
-+	iocb->ki_flags |= IOCB_DIRECT;
-+	inode_unlock_shared(inode);
-+	file_accessed(iocb->ki_filp);
-+
-+	return ret;
- }
- 
- static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
- {
- 	ssize_t ret;
-+	int dio_supported;
- 	struct inode *inode = file_inode(iocb->ki_filp);
- 
- 	if (iocb->ki_flags & IOCB_NOWAIT) {
-@@ -78,7 +150,8 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		inode_lock_shared(inode);
- 	}
- 
--	if (!ext4_should_use_dio(iocb, to)) {
-+	dio_supported = ext4_should_use_dio(iocb, to);
-+	if (dio_supported == SHOULD_NOT_DIO) {
- 		inode_unlock_shared(inode);
- 		/*
- 		 * Fallback to buffered I/O if the operation being performed on
-@@ -91,6 +164,9 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		return generic_file_read_iter(iocb, to);
- 	}
- 
-+	if (dio_supported == SHOULD_PARTIAL_DIO)
-+		return ext4_mixed_read_iter(iocb, to);
-+
- 	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL, 0, NULL, 0);
- 	inode_unlock_shared(inode);
- 
-@@ -537,7 +613,7 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	}
- 
- 	/* Fallback to buffered I/O if the inode does not support direct I/O. */
--	if (!ext4_should_use_dio(iocb, from)) {
-+	if (ext4_should_use_dio(iocb, from) != SHOULD_DIO) {
- 		if (ilock_shared)
- 			inode_unlock_shared(inode);
- 		else
 -- 
-2.25.1
-
+Lee Jones [李琼斯]
 
