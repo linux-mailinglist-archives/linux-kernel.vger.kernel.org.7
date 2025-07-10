@@ -1,103 +1,114 @@
-Return-Path: <linux-kernel+bounces-726536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA899B00E4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:00:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD4DAB00E68
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0515428E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8471892100
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0763293C70;
-	Thu, 10 Jul 2025 22:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417FC293C46;
+	Thu, 10 Jul 2025 22:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kz8a95eX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTOqF03s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7CE293B46;
-	Thu, 10 Jul 2025 22:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EBB16A94A;
+	Thu, 10 Jul 2025 22:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752184807; cv=none; b=if8G5CYmNb+TuZVuauC9rSBjgL/J8zLN5ZK9T8tsYBhbD8xR/7F0B3roGL4wI6cMYRM5IASnp6zZoPWX18WVFVmRuvW/efQUONV+RDehW/LBtrhjANGLJBwT8sA+S8pYfPwf66FZ14aHNMZooMiA8eFoQJdU6WdMmvzPd355Ovs=
+	t=1752184893; cv=none; b=PwE77jBYNUmU8idKOLwzo+ZNWRScyefXLpi7BaybVc9DSD3VxdkhW/hY2UU8JA+/7MOJDghJgHRKXDKGbg0SwsJuuXVe7mCpaV6q/9/FNg4+gJGj9IE7EdxQnPsmwljVHE5m4rCHZV+PdXAxbuIsIISh1fOSUl2ur8Ap8JyNY+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752184807; c=relaxed/simple;
-	bh=Lc891ix4xvedwTi78TFh6r6//wDoNaZgeUBTsm8u/pI=;
+	s=arc-20240116; t=1752184893; c=relaxed/simple;
+	bh=7aAzz1o5S+01R78QDUVFrJ+DlKfEpY+7TzVUQpp1E6I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WkEF2bh1eXuIW83DZkZerdrT7v11nF3CMX+48j63OSe+1mKcikqFiGVn4Pyu1ct2KDD8IQrROIEbKw6erHnaf5ihYjnJFDg2uW5uebnibuhsKq7YCa1RMqJCYhp18km71uMn39LAvU4Y/DTS/2jR8Ktg+3xz6quUBsRDw9ZNv4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kz8a95eX; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752184805; x=1783720805;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Lc891ix4xvedwTi78TFh6r6//wDoNaZgeUBTsm8u/pI=;
-  b=Kz8a95eX81F4D+FfyQyucD1QV7q1vY3tNbrjBYIrsE5CuFthqwNkCT1t
-   uu1SqvA7PJh6waJSL436aavJjycNAflACQ0AP3gQWqqBSjsxbtsfIZBYa
-   mAw46wh+3RLlB1N61vj0ML5Hjt04sFJ2Hga4qHvPx5czFR5mZLRPKXnaW
-   x3wEhcaILtSbiXV1vwT8STm59PafB5dQnxsZTWVbnlIrYcAbFMXrLU+Bf
-   hpnZOg0FRIX+sM7OzD8tca13fqoIZ0JLS+vPCjN04eJB9MavFI1wMoPoz
-   4aOhun42MReNoIhzOnKWpoZUSHPW0+35rdtbQmz0FYEZQ5Z8vbLLJZSco
-   w==;
-X-CSE-ConnectionGUID: alBWpfOUQYq+T7t05GmvMA==
-X-CSE-MsgGUID: vs4NtLdOSYCSqcl5jtvhuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54633240"
-X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
-   d="scan'208";a="54633240"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 15:00:05 -0700
-X-CSE-ConnectionGUID: 4yL8EGaLQr2gZdTTaeGi7A==
-X-CSE-MsgGUID: gyvHSjQjTISkbx8Z7BDXvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
-   d="scan'208";a="156691429"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 15:00:02 -0700
-Date: Fri, 11 Jul 2025 00:59:58 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	airlied@gmail.com, simona@ffwll.ch,
-	Krzysztof Karas <krzysztof.karas@intel.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com
-Subject: Re: [PATCH v4 1/3] drm/doc: Fix title underline for "Task
- information"
-Message-ID: <aHA33ispT8V6GUhn@black.fi.intel.com>
-References: <20250704190724.1159416-1-andrealmeid@igalia.com>
- <08de556b-e63c-420e-8ab4-c03712be9709@igalia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h/P9hzil+ScnYU42H2cPnnDJ13P0V67R3nk0VWVEPmeyaAjnV74Hzjz80VE6psDKeecbo5TnieMPKyK2cIcOYWvEPXDWTmAfayRRE3TXsLFwahE2+nOxSsmw7noNy7v0VhlHLVw0vL2hUqJiNNa9ovyYPiF9ugK9Er3eH7VvE6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTOqF03s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0E02C4CEE3;
+	Thu, 10 Jul 2025 22:01:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752184893;
+	bh=7aAzz1o5S+01R78QDUVFrJ+DlKfEpY+7TzVUQpp1E6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WTOqF03sSwmZHeR156aYiCot5scR9c+CPH/640u/Iu3vF/A1U1a9FW0MQqOTs1LHD
+	 e4+qzT+l1k3CsdL30DbRG7rxrJhmmdW/h9725uOokiuut1H3s1lR2XG+pFi27cKKvI
+	 D65EEJx2RJC+cJuqDcgR+4UmhWdjQfqkjKGjC2ym0SSOLmoPGrDlXnyiV1MmgBvMZq
+	 sLzdWZ/EjVI+Yufy9dSr4pkKec1LgA/7cqJqlMoMCsgYnGR0+Cw/I/ApJo5G7s96Qp
+	 Ag1Q3zKCqN3Zr614m+Bj/05uy6PS3AqSiCXEC/wUGpbuBl5Yrx81XX6OH5TcpLmWRM
+	 S2yOTOGZnymIA==
+Date: Thu, 10 Jul 2025 17:01:32 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
+	Lee Jones <lee@kernel.org>, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 1/9] dt-bindings: gpio: add bindings for the QIXIS FPGA
+ based GPIO controller
+Message-ID: <20250710220132.GA4038128-robh@kernel.org>
+References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
+ <20250709112658.1987608-2-ioana.ciornei@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <08de556b-e63c-420e-8ab4-c03712be9709@igalia.com>
+In-Reply-To: <20250709112658.1987608-2-ioana.ciornei@nxp.com>
 
-On Thu, Jul 10, 2025 at 06:27:45PM -0300, André Almeida wrote:
-> Em 04/07/2025 16:07, André Almeida escreveu:
-> > Fix the following warning:
-> > 
-> > Documentation/gpu/drm-uapi.rst:450: WARNING: Title underline too short.
-> > 
-> > Task information
-> > --------------- [docutils]
-> > 
+On Wed, Jul 09, 2025 at 02:26:50PM +0300, Ioana Ciornei wrote:
+> Add a device tree binding for the QIXIS FPGA based GPIO controller.
+> Depending on the board, the QIXIS FPGA exposes registers which act as a
+> GPIO controller, each with 8 GPIO lines of fixed direction.
 > 
-> This series is now merged at drm-misc-next, thanks!
+> Since each QIXIS FPGA layout has its particularities, add a separate
+> compatible string for each board/GPIO register combination supported.
 
-Shouldn't this be drm-misc-fixes?
+This could be covered in my proposed trivial gpio schema[1].
 
-Also, this series continues to not land in my inbox. This is why I use raw
-emails in my sendmail automation.
 
-Raag
+> 
+> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> ---
+>  .../bindings/gpio/fsl,fpga-gpio.yaml          | 44 +++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
+> new file mode 100644
+> index 000000000000..dc7b6c0d9b40
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/fsl,fpga-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: GPIO controller embedded in the NXP QIXIS FPGA
+> +
+> +maintainers:
+> +  - Ioana Ciornei <ioana.ciornei@nxp.com>
+> +
+> +description: |
+> +  This module is part of the QIXIS FPGA found on some Layerscape boards such as
+> +  LX2160ARDB and LS1046AQDS. For more details see
+> +  ../board/fsl,fpga-qixis-i2c.yaml.
+
+Or this is simple enough, just add this as a child node in that schema.
+
+Rob
+
+[1] https://lore.kernel.org/all/20250701225355.2977294-1-robh@kernel.org/
 
