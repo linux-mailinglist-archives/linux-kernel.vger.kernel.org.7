@@ -1,113 +1,125 @@
-Return-Path: <linux-kernel+bounces-724753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C82AFF69D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:10:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A91AFF69E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:12:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 218324A5FEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014981BC30FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CB727E7FB;
-	Thu, 10 Jul 2025 02:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fD8YardS"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AF22737E6;
+	Thu, 10 Jul 2025 02:12:50 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66AD27147C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 02:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B75C2AE8D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 02:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752113437; cv=none; b=qo10grINSq63WSx0HY6+bz+ywj9oLCs+Rrq9EEQ9Iy6IeBlnHM8+c7CS0kcfHZ3NjeW47eSxWevc1L64A75tr4yWRnRSPKq6DPWQi79tAOnPl38xkcyeJDG2loXlV5qwcj4aQ0X37AMamWImajAONQ0BRsPZEQrZf85sS3kWmos=
+	t=1752113569; cv=none; b=aJBoXPxsZRuY3fIUjblmZs0hoGNGSQHUjenzAXWyMLBUKjsxvYmIho/nBll/DCUJZ4R9B5b0weEE93u3kXmSZC4nLrYpYKt5U5/s0UNMqDROjiJC2RTIAtdiCZ8w+tbw1C2SJIdp1r2n7srh2C9OHTc/ReErLfsSk6a3FfYM8Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752113437; c=relaxed/simple;
-	bh=Yr9GbybC/w2sH7/MIXF4I5fw9NjZp0rHNpJWYgnlE+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A+tTiEjQHIThMaNDQAsXKzWx1ioxqzgLBUZ9N5dvZnQFrzFir0aa3B6RC9PtnMEE669IbQhp1pp0tgGJgJJFOuw2ZfON2gekZKdgctbn1r/gXbGOS7i0J3gnelzBkQ0qWPaloNxBsoEvKejHMqHmrYElGUzzm9GAu4ssdTjy9ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fD8YardS; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54d98aa5981so609903e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 19:10:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752113434; x=1752718234; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yr9GbybC/w2sH7/MIXF4I5fw9NjZp0rHNpJWYgnlE+o=;
-        b=fD8YardSTYDjVtKZNh3hTIOOnFivQwAXxl/Agtnc3vOdT34MPKxoF7m2q1bVJq77ch
-         SZsLgiwtWfogI85r07egUZD0LKvqvgclCDMJRtnF8N29Ln8ArrArbf4IOTOWatYnx36m
-         L0iWoWaEvBUl462EI3a3IzWpQcVzprXImRfaHq2Zozep+CpgcMoc8PUGq2FcozNE7mfB
-         lsFaUBCIuYNVpj63agoAgEL0AeslIuMDPexVF6QuDPyGoqvb+5Mawsvh2GQxklDF4Z8R
-         NGfPz79ctqLf4Rdyt8mr0U3s8UiQSFKKwu7NK3LhSP//qCSTRQZTTxeUTW2dPQTSjz39
-         47Og==
+	s=arc-20240116; t=1752113569; c=relaxed/simple;
+	bh=7smrDYN2julP/UFa/xvGeDgJzeaMtx+gQxB4e16F4Y0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VSoFDB94SfX+2BvkITATviv3goDmfE4BffuC2QzumeTfdvlRzXFhoYjDEufRlUAriyap/a7S5lOXgeaWQ3qFjMfPqzl2HYw+aA6d8C31k/kwTdc71Ah+etYQ7ZYtxXczXMb4S+rmUYNEWVvuG+dLN1WlK+SzPvBe7dMPGAnyTxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86d07ccc9ecso44255439f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 19:12:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752113434; x=1752718234;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yr9GbybC/w2sH7/MIXF4I5fw9NjZp0rHNpJWYgnlE+o=;
-        b=h2+w5AvN7EjIoKbhJjN6IK/cnY0xwKcfrqnYC9SP0sYG3nskvuNcIMJgWGEHF9gMUU
-         IZFwItHFyqBpyNiegIhsVNe91Z+Dix5Ow3AW5lyfjpB7AfUdrUfOVHK1YdUh6n5BaQpI
-         xNAYTS5k6ikQIGofDA5mAvuQuk5FoZqdKaq7A8evSjvwvNXZGy1KDaatsMg94/JmVDBr
-         +St1bjUFLziKhbUqheNJ/lbFmNzQ0tABGPKlenzGPTfB0zsROUHjSAuaxhJPLEk2G8EM
-         isBZonrm4LLPDDXlQ02e8D1q5AH8c80kLtaKeDYJQcKWdv17d61o/XVqVSm64JsUpzO8
-         Pppw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPHuKBnYRwjwskcpke0H/6PsVTiRgcASji6cpo5GDPS38457DFfbI41qpvV+X7gsD79P/jWF8tt061WBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp+ojmW5kpfX7PMXZsMig7qkesEnNAS/0QWbSY9Ve3JxH2IC5F
-	lIRExwQFBIIXXkifKRtQE8lYz4M1sfUSNCgx1BVGneteviykJvh9a1hu2x1eIdRTUfA4YnXHZy0
-	HIrX6kxGuJ+PTaAP4+7kIUn5yCzFEbLrSVcxUjxQ=
-X-Gm-Gg: ASbGncsOPY2puEExcWtIQGsZwyWR87QhuL5PmCM+omnW3XosIS5uHOcCjS3MJCxcufK
-	vHWKIsN6YOhcAIkSovAAQ9qrdOGCaQ+JdCuI2wNx1KuLgFlbWWSeyHM4x5gPxR+t6MOqgQhbRd+
-	sSpl3ShC14RTmM75qXtqG5KnOz3WvhUtePJsdHV2Fe3Y0D4gIgUP0SaLB2+2t0D2AM523+qUlJ
-X-Google-Smtp-Source: AGHT+IF7CSRMfXUjWAwZfGydsjg8g4cFnxch3Xoi14AEJwAmrBxN3hebeIFO3GyVLoADPLLKkeaVoOM8ZqUO+Qdos3Y=
-X-Received: by 2002:a05:6512:74e:b0:553:263d:ab97 with SMTP id
- 2adb3069b0e04-5592e2ebbf9mr191604e87.1.1752113433736; Wed, 09 Jul 2025
- 19:10:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752113567; x=1752718367;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CPBCGiJyUWWFb06WLVxKfqVyBFCyW1GDdv+hBFqBj3k=;
+        b=Mlqagex4v3kXBAbUnHLM9aMFfW7P+Vm0hQ/9TiwUX+l5EDtDgivdXvZXzxdyvBlDyx
+         7cxPtj8HpbMcUfVciKa14oH4GM1Bgh2b4q2/hljJVSJVJkHgujtJkrLnLIqHb+X2w3+4
+         WAUyLMzfSNAd88KHTxOFfeHVkJvEXMAHenD0oSWxmA6fDFmH/fYDQDLlf7fDH+p7giFx
+         x4xCDVOj6gSwTfopaVgDzh4Y9AYU7CRbv59NEJ8wfAfwmNZd3LuEhs0Sxolg6qBeO2Ec
+         Th+5q/Rb4eKEzWZLD4r9nS9cUi+pL8xYOpI6vXBcI5nOD4sScPdAOktM4pUYmwZd3T2C
+         lq3g==
+X-Gm-Message-State: AOJu0YxakgmxHtBWLx5JXEn8ra0UtZnKZ2CkiraiAd2v6Ux2BhJpfdg7
+	NB1qLHIzrlN/7NFLd2fBXLp7jaILkFnZjc+VZQ/eRGBdBmILPS7iB7Gff7WsQWRauLHPOrfqXje
+	Z8WSOG95TfiA/k1cutaeZ5xrgi1tfV8Dw0e0WWQAyyRD/JzbLKUGI7Nvh8WE=
+X-Google-Smtp-Source: AGHT+IHyir9G6aghoQZomoX6PwSq6U/197j3fnDQaJLKdG3Neb7Zu7vBKKJvrnLoCc/iG/wv5+wh7Rg34dZeFRK4oYx8Vl9RekJg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709-e1000e_crossts-v1-1-f8a80c792e4f@blochl.de>
-In-Reply-To: <20250709-e1000e_crossts-v1-1-f8a80c792e4f@blochl.de>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 9 Jul 2025 19:10:21 -0700
-X-Gm-Features: Ac12FXyw_-ZFqOEmEG4gp9Vh5ErvO2eH8QSE_aH1c-f2EfnXicZgK4MYIbiWaVc
-Message-ID: <CANDhNCqQ0JgCN+5sThMT3nnNxVHR351LM75eUMqMaHucGyhneg@mail.gmail.com>
-Subject: Re: [PATCH] e1000e: Populate entire system_counterval_t in
- get_time_fn() callback
-To: =?UTF-8?Q?Markus_Bl=C3=B6chl?= <markus@blochl.de>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Richard Cochran <richardcochran@gmail.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, markus.bloechl@ipetronik.com, 
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6602:1406:b0:879:4b42:1f3a with SMTP id
+ ca18e2360f4ac-87968f74ac8mr107172839f.5.1752113567523; Wed, 09 Jul 2025
+ 19:12:47 -0700 (PDT)
+Date: Wed, 09 Jul 2025 19:12:47 -0700
+In-Reply-To: <686db3ea.050a0220.1ffab7.0028.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686f219f.050a0220.385921.0025.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] KASAN: slab-use-after-free Read in ucma_create_uevent
+From: syzbot <syzbot+a6ffe86390c8a6afc818@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 9, 2025 at 7:34=E2=80=AFAM Markus Bl=C3=B6chl <markus@blochl.de=
-> wrote:
->
-> get_time_fn() callback implementations are expected to fill out the
-> entire system_counterval_t struct as it may be initially uninitialized.
->
-> This broke with the removal of convert_art_to_tsc() helper functions
-> which left use_nsecs uninitialized.
->
-> Assign the entire struct again.
->
-> Fixes: bd48b50be50a ("e1000e: Replace convert_art_to_tsc()")
-> Cc: stable@vger.kernel.org
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Acked-by: John Stultz <jstultz@google.com>
+***
 
-thanks
--john
+Subject: Re: [syzbot] [rdma?] KASAN: slab-use-after-free Read in ucma_create_uevent
+Author: lizhi.xu@windriver.com
+
+#syz test
+
+diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
+index 9b471548e7ae..9b3051bf5225 100644
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -2030,6 +2030,7 @@ static void destroy_mc(struct rdma_id_private *id_priv,
+ 		}
+ 		dev_put(ndev);
+ 
++		printk("cma, mc: %p, %s\n", mc, __func__);
+ 		cancel_work_sync(&mc->iboe_join.work);
+ 	}
+ 	kfree(mc);
+@@ -5106,6 +5107,7 @@ void rdma_leave_multicast(struct rdma_cm_id *id, struct sockaddr *addr)
+ 		spin_unlock_irq(&id_priv->lock);
+ 
+ 		WARN_ON(id_priv->cma_dev->device != id->device);
++		printk("cma, mc: %p, id: %p, %s\n", mc, id, __func__);
+ 		destroy_mc(id_priv, mc);
+ 		return;
+ 	}
+diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
+index 6e700b974033..df3cc11b1ef9 100644
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -272,6 +272,7 @@ static struct ucma_event *ucma_create_uevent(struct ucma_context *ctx,
+ 	case RDMA_CM_EVENT_MULTICAST_ERROR:
+ 		uevent->mc = (struct ucma_multicast *)
+ 			     event->param.ud.private_data;
++		printk("mc: %p, evt: %d, %s\n", uevent->mc, event->event, __func__);
+ 		uevent->resp.uid = uevent->mc->uid;
+ 		uevent->resp.id = uevent->mc->id;
+ 		break;
+@@ -1486,6 +1487,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
+ 	mutex_lock(&ctx->mutex);
+ 	ret = rdma_join_multicast(ctx->cm_id, (struct sockaddr *)&mc->addr,
+ 				  join_state, mc);
++	printk("ret: %d, id: %p, mc: %p, %s\n", ret, ctx->cm_id, mc, __func__);
+ 	mutex_unlock(&ctx->mutex);
+ 	if (ret)
+ 		goto err_xa_erase;
+@@ -1504,6 +1506,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
+ 
+ err_leave_multicast:
+ 	mutex_lock(&ctx->mutex);
++	printk("id: %p, %s\n", ctx->cm_id, __func__);
+ 	rdma_leave_multicast(ctx->cm_id, (struct sockaddr *) &mc->addr);
+ 	mutex_unlock(&ctx->mutex);
+ 	ucma_cleanup_mc_events(mc);
 
