@@ -1,197 +1,179 @@
-Return-Path: <linux-kernel+bounces-725062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E78AFFA5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:05:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2EB2AFFA5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802BA54047A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:04:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E2B540637
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B202877DC;
-	Thu, 10 Jul 2025 07:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42222877D2;
+	Thu, 10 Jul 2025 07:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhm0/EVB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzOJBawL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ACDFC1D;
-	Thu, 10 Jul 2025 07:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01014FC1D;
+	Thu, 10 Jul 2025 07:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752131107; cv=none; b=coextYmJnvxFXJeKuu76Ce+Rr54oI5+qJJiFwYM+U3Xvl4wWa6qUPOdFbcxfo+m0hOjQjHsrx/nPK8Jw+bQSkD4EAN06k9GJPfR34WRX5/GF8adBSB8ecIBuRCYZMILit9er+swm+if7ZccOze2GKaBJnpgChk2r3VssQX8Al5w=
+	t=1752131169; cv=none; b=pv5g8RsN3JNLpK+d/sflKJhdbOHM7czeHJPli3ZjlnD1tjZ4FS5Wc79T/vmDi4B2wqZ11yi8qH/g2wc9ME/j3PsKBc5Px5iNeik0N85vnXTQ5kiFgf65nsnZU18DpN8XaBUDsjIQoRZCONcvEXxbXmgq+zDkvbCS3kdpIdhPu7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752131107; c=relaxed/simple;
-	bh=czf6X1CxihTK1hqGwGS3UzT3zM4lUajgZkl5Q90ncTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qtHmjlnHiPtUgVataXCuQKd/zspxx6T592fbVePLBnjP+aHF5IXevtZrg/bX+RC+19U8bPt73syGk1gf/P6ypdRK9igsjV6lbyVHR/boZyo7sItzWg2wr/ctoA1zwLsTkyT+rMYc7KrLb1Qh7M7SRVuGmTVoW1FyKbASbAVnMlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhm0/EVB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1667DC4CEE3;
-	Thu, 10 Jul 2025 07:04:56 +0000 (UTC)
+	s=arc-20240116; t=1752131169; c=relaxed/simple;
+	bh=2rsqAsMWywrwSTFuoWoPqSM41RgFfbsJD7gr5xyRK3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lu5Vj1Bzoaq+rlTYhVxMgysIa2mmnh25scYP4KPeyGftUcx2aBwyPygFt9Vy01jbw2Z2Gi7t1kq96HGH3B3lF7e+2M3hLfEScQAP6QDO2t8hyfL9OOMnU4E1XteiuzQvp2kE3F5Ot0I5CJd+4gwibxA7Lf/4nW/fvyf3pEogwuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzOJBawL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 367F6C4CEE3;
+	Thu, 10 Jul 2025 07:06:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752131106;
-	bh=czf6X1CxihTK1hqGwGS3UzT3zM4lUajgZkl5Q90ncTw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nhm0/EVBgw+2I1wBxv8nzhQKyhZQ5Aw/AovbreGefUzt9L/gjNnP0EZp3OA+n3dHX
-	 vBPRrtnCkYu3KGT5MHW2OHAXyeqgetrd7bRSJmmR+xhTDQ1Eb6BJ6YIOLWf5SUQZu+
-	 YDrEa43xpVj7hm2pnyjGPrggKySpxQLSjIykdwWXzfsJpn9md62+vYuCJQKNAmp1aw
-	 QDqYVeURz8sevbt5tDCaYyy9doJs0Px9+M7zZy4YDfRp2eGsjVrve6avDuZR7xKy/m
-	 nAMzpgVXWhYDKj2ZihbZ7tJRUg6geFSBKaJXVSdk2ik2FbRHmeuXkPuJEUrHOOz5WN
-	 /wtpTlRfaXtIA==
-Message-ID: <78d46ee0-d53f-4980-aa90-c9111043ae90@kernel.org>
-Date: Thu, 10 Jul 2025 09:04:54 +0200
+	s=k20201202; t=1752131168;
+	bh=2rsqAsMWywrwSTFuoWoPqSM41RgFfbsJD7gr5xyRK3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jzOJBawL72CNgNRoq/cF7tG9xR+kP+G1r42rtJIfrzLA3cVwiT6Akuvx3ey6skLIX
+	 zA9OU8MJrWX9d1kQVd8za2PbIfNVD8HPqD1xiTYzd3dtRSWq/KF7bb9eaX9ShEA7C0
+	 wQwpPsIMis0HMadUNtphlLV65t1XPiugfHmN//9t1XHDyn9c9agdy08wP8ah/Upz+y
+	 8hXPdaGeJR2mgJc9qET7S2JwY30EwC8d9Q5axarCUgPA/LExLrL++ujJMVJDRZhXxI
+	 IfHRw8G5+WT93u7pSTe7eieBsPmqydjiaCqc0XWa+dpCcudnhSiSRT5GHpr69RfrhW
+	 XB9fV4i0tEoTA==
+Date: Thu, 10 Jul 2025 09:06:05 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jared Kangas <jkangas@redhat.com>, Mattijs Korpershoek <mkorpershoek@kernel.org>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Re: [PATCH v2] Documentation: dma-buf: heaps: Add naming guidelines
+Message-ID: <20250710-knowing-premium-goldfish-0bfe6e@houat>
+References: <20250616-dma-buf-heap-names-doc-v2-1-8ae43174cdbf@kernel.org>
+ <9182c5cd-b3de-470b-bf84-3ebef309def6@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/16] arm64: dts: axis: Add initial pinctrl support
-To: ksk4725@coasia.com, Jesper Nilsson <jesper.nilsson@axis.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
- <tomasz.figa@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Ravi Patel <ravi.patel@samsung.com>, SungMin Park <smn1196@coasia.com>
-Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>,
- GunWoo Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>,
- GyoungBo Min <mingyoungbo@coasia.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Shradha Todi
- <shradha.t@samsung.com>, Inbaraj E <inbaraj.e@samsung.com>,
- Swathi K S <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>,
- Dongjin Yang <dj76.yang@samsung.com>, Sang Min Kim
- <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
- <20250710002047.1573841-16-ksk4725@coasia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250710002047.1573841-16-ksk4725@coasia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 10/07/2025 02:20, ksk4725@coasia.com wrote:
-> From: SeonGu Kang <ksk4725@coasia.com>
-> 
-> Add initial pin configuration nodes for the Axis ARTPEC-8 SoC.
-> 
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
-> ---
->  arch/arm64/boot/dts/axis/artpec-pinctrl.h     |  36 ++
->  arch/arm64/boot/dts/axis/artpec8-grizzly.dts  |   1 +
->  arch/arm64/boot/dts/axis/artpec8-pinctrl.dtsi | 373 ++++++++++++++++++
->  arch/arm64/boot/dts/axis/artpec8.dtsi         |  17 +
-
-This belongs to the previous patch rather. You can split board DTS, though.
-
->  4 files changed, 427 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/axis/artpec-pinctrl.h
->  create mode 100644 arch/arm64/boot/dts/axis/artpec8-pinctrl.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/axis/artpec-pinctrl.h b/arch/arm64/boot/dts/axis/artpec-pinctrl.h
-> new file mode 100644
-> index 000000000000..c2c1e25b7f6a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/axis/artpec-pinctrl.h
-> @@ -0,0 +1,36 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Axis ARTPEC-8 SoC device tree pinctrl constants
-> + *
-> + * Copyright (c) 2022-2025 Samsung Electronics Co., Ltd.
-
-First publish date was 2025, not 2022, so all these copyrights feel wrong.
-
-> + *             https://www.samsung.com
-> + * Copyright (c) 2022-2025  Axis Communications AB.
-> + *             https://www.axis.com
-> + */
-> +
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="3pv5hyaxempbdl7i"
+Content-Disposition: inline
+In-Reply-To: <9182c5cd-b3de-470b-bf84-3ebef309def6@ti.com>
 
 
-...
+--3pv5hyaxempbdl7i
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] Documentation: dma-buf: heaps: Add naming guidelines
+MIME-Version: 1.0
 
-> +	i2s0_idle: i2s0-idle-pins {
-> +		samsung,pins = "gpa1-4", "gpa1-5", "gpa1-6", "gpa1-7";
-> +		samsung,pin-function = <ARTPEC_PIN_FUNC_INPUT>;
-> +		samsung,pin-pud = <ARTPEC_PIN_PULL_UP>;
-> +		samsung,pin-drv = <ARTPEC_PIN_DRV_SR3>;
-> +	};
-> +
-> +	i2s1_bus: i2s1-bus-pins {
-> +		samsung,pins = "gpa1-0", "gpa1-1", "gpa1-2", "gpa1-3";
-> +		samsung,pin-function = <ARTPEC_PIN_FUNC_3>;
-> +		samsung,pin-pud = <ARTPEC_PIN_PULL_UP>;
-> +		samsung,pin-drv = <ARTPEC_PIN_DRV_SR3>;
-> +	};
-> +
-> +	i2s1_idle: i2s1-idle-pins {
-> +		samsung,pins = "gpa1-0", "gpa1-1", "gpa1-2", "gpa1-3";
-> +		samsung,pin-function = <ARTPEC_PIN_FUNC_INPUT>;
-> +		samsung,pin-pud = <ARTPEC_PIN_PULL_UP>;
-> +		samsung,pin-drv = <ARTPEC_PIN_DRV_SR3>;
-> +	};
-> +
-> +	hsi2c2_bus: hsi2c2-bus-pins {
-> +		samsung,pins = "gpa0-6", "gpa0-7";
+On Wed, Jul 09, 2025 at 12:39:15PM -0500, Andrew Davis wrote:
+> On 6/16/25 10:21 AM, Maxime Ripard wrote:
+> > We've discussed a number of times of how some heap names are bad, but
+> > not really what makes a good heap name.
+> >=20
+> > Let's document what we expect the heap names to look like.
+> >=20
+> > Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > ---
+> > Changes in v2:
+> > - Added justifications for each requirement / suggestions
+> > - Added a mention and example of buffer attributes
+> > - Link to v1: https://lore.kernel.org/r/20250520-dma-buf-heap-names-doc=
+-v1-1-ab31f74809ee@kernel.org
+> > ---
+> >   Documentation/userspace-api/dma-buf-heaps.rst | 38 ++++++++++++++++++=
++++++++++
+> >   1 file changed, 38 insertions(+)
+> >=20
+> > diff --git a/Documentation/userspace-api/dma-buf-heaps.rst b/Documentat=
+ion/userspace-api/dma-buf-heaps.rst
+> > index 535f49047ce6450796bf4380c989e109355efc05..835ad1c3a65bc07b6f41d38=
+7d85c57162909e859 100644
+> > --- a/Documentation/userspace-api/dma-buf-heaps.rst
+> > +++ b/Documentation/userspace-api/dma-buf-heaps.rst
+> > @@ -21,5 +21,43 @@ following heaps:
+> >      usually created either through the kernel commandline through the
+> >      `cma` parameter, a memory region Device-Tree node with the
+> >      `linux,cma-default` property set, or through the `CMA_SIZE_MBYTES`=
+ or
+> >      `CMA_SIZE_PERCENTAGE` Kconfig options. Depending on the platform, =
+it
+> >      might be called ``reserved``, ``linux,cma``, or ``default-pool``.
+> > +
+> > +Naming Convention
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +``dma-buf`` heaps name should meet a number of constraints:
+> > +
+> > +- That name must be stable, and must not change from one version to the
+> > +  other. Userspace identifies heaps by their name, so if the names ever
+> > +  changes, we would be likely to introduce regressions.
+> > +
+> > +- That name must describe the memory region the heap will allocate fro=
+m,
+> > +  and must uniquely identify it in a given platform. Since userspace
+> > +  applications use the heap name as the discriminant, it must be able =
+to
+> > +  tell which heap it wants to use reliably if there's multiple heaps.
+> > +
+> > +- That name must not mention implementation details, such as the
+> > +  allocator. The heap driver will change over time, and implementation
+> > +  details when it was introduced might not be relevant in the future.
+> > +
+> > +- The name should describe properties of the buffers that would be
+> > +  allocated. Doing so will make heap identification easier for
+> > +  userspace. Such properties are:
+> > +
+> > +  - ``cacheable`` / ``uncacheable`` for buffers with CPU caches enabled
+> > +    or disabled;
+> > +
+>=20
+> We should avoid exposing cacheability to userspace. What users care about
+> is if writes are readable by the other side (and vice versa) without SYNC
+> operations in-between. This property is "coherency". Being non-cached
+> is just one way to achieve coherency on some systems. For many systems
+> even cached buffers are still coherent and manually specifying "non-cache=
+d"
+> causes unneeded performance issues.
 
-We sort nodes by pin names, usually. What sorting rule you applied here?
+I disagree. If you want to do any kind of software rendering, the
+buffers being cached is absolutely critical to having decent
+performance.
 
+> DMA-BUFs are default assumed to be non-coherent and sync operations should
+> be always be performed (if the buffer is actually coherent these operatio=
+ns
+> are turned into NOPs and no harm done). If sync operations cannot be done
+> (for instance small multi-writer ring-buffers), then the property can
+> be simply:
+>=20
+> - ``coherent`` for buffers which do not require sync operations
 
+That would be a change in the uAPI which, so far, requires sync
+operations to be performed. I'm not necessarily agaisnt it, but handling
+coherency in general is not what this patch is about.
 
-Best regards,
-Krzysztof
+Maxime
+
+--3pv5hyaxempbdl7i
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaG9mVAAKCRAnX84Zoj2+
+dowXAYDGfPub9kqiHZxZAgjBCjYI1+bysy9zqYNVFPXKQit6jVElaE/b4h8UBIhu
+BqPeyRUBfR/oAiC05NHDJaX8Q2apzbT2BQsYyRs9RvJP+nErimerl3p2BOj1vya/
+KaclhnfZBQ==
+=wxVn
+-----END PGP SIGNATURE-----
+
+--3pv5hyaxempbdl7i--
 
