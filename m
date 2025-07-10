@@ -1,305 +1,254 @@
-Return-Path: <linux-kernel+bounces-725456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D45AFFF56
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC1DAFFF59
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 020381886B94
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F17151896275
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E72628B7C9;
-	Thu, 10 Jul 2025 10:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB9A2D8772;
+	Thu, 10 Jul 2025 10:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzH5hYqJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M8cT8zYd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F21119CC28;
-	Thu, 10 Jul 2025 10:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752143520; cv=none; b=JfvlPTICssVZBgB6XtZU6asgPmlZL1d4lRMpRfuinko161e7HD8jBco6NFImMA2FG19W4/D0hPKLJVqUMVUtZJ+UqJEj1b2NsmpS9iuYF0r0ch3LU0+LU3YFY4tQDU1LRcAziHQGreeFWeJUvmqVQp4NrGsJVVbyUWDRUhvtEdY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752143520; c=relaxed/simple;
-	bh=WMgjjmkjy+Mq6iqOOm4Jpqjda2TzLBHPu7Kt0XFUo4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SXT6AjScXgs8lW4NnSMaWAPc6hR4o0zEPGrNxKUQId7L2UQ6y+23ctwOFs8sKXmcGNODy3WMW/Th8TfMCn6v/iAb8w21TcFvvmF7bamR65K8GtGJKaaL1RK7PA7KwqxZIXrKYARS3O5RYmF7PU+xhapQw1fr0ijj5ZVNNH85ar0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzH5hYqJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD290C4CEE3;
-	Thu, 10 Jul 2025 10:31:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752143519;
-	bh=WMgjjmkjy+Mq6iqOOm4Jpqjda2TzLBHPu7Kt0XFUo4Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OzH5hYqJXQscepER85OG/O8fwFsd5j3sxkShS6mBktptBE73HVrRRk7sAdHz/O6dl
-	 hQ92DyMEkdTtuervypikSm6Kjhkppe3IaYJaH5/sd/RjcQ0Dpg3Uru478sUHusr3Mf
-	 9m0EC5b+xVGvp4hJEBlkCMticELI9LTo0PtgXUBl9XGfHyAEESXAPobGol57NzbYJF
-	 NKQO73UrW/mAZWR8ruoM2svOZjndP6wjQsJuwSI/KJ81HCuEHcz55MhEvTM5SEjhaD
-	 g8DvmHS+08hwn4H9twdwr1PKjP25n763EyRM+iI1GqBfKzBNbU2FqvbgmhzGiZRh/7
-	 VxelM/9YNMKiw==
-Date: Thu, 10 Jul 2025 12:31:55 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 12/12] docs: kdoc: Improve the output text accumulation
-Message-ID: <20250710123155.1045831d@foz.lan>
-In-Reply-To: <20250710121033.42db5ef3@foz.lan>
-References: <20250702223524.231794-1-corbet@lwn.net>
-	<20250702223524.231794-13-corbet@lwn.net>
-	<20250710084119.3e5c1ced@foz.lan>
-	<20250710091352.4ae01211@foz.lan>
-	<20250710101931.202953d1@foz.lan>
-	<20250710121033.42db5ef3@foz.lan>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF0819CC28;
+	Thu, 10 Jul 2025 10:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752143644; cv=fail; b=ANZ5bw2ENsM0K9mmql5jOOoQAHqLqioEU9tkgPq13tdH9SWZMd5EgvynBGv99uTL27V7zXLn7WCTBRf1XRs4UOhrb/QJ6hDXpeOHfVC/JipO4++Eean0hqknJGHYOYj0m/EJdOEWfwEVzjqV+RjmmSy9BPZIUJW+KHlFYLZ0abI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752143644; c=relaxed/simple;
+	bh=zpyHSPANBOSKrOKqYYjsEvWl7B/bWt/tVd/LlJLlVhc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nui8ywc/zaFgDcfWyhGjUCMDNZiW23LLQLJttFDU6FKo01gtSPq7dMz34HnrvneAVKv9vH44hsVn65QCunROfFuuG0QCkPpktNZnzbhCTKHF/9FTcRCgPdI6IAbthNzr7JcHRr1t5AVIad5UCmaTVKiyT9MDb4v++wEEmrr1dzg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M8cT8zYd; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752143642; x=1783679642;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=zpyHSPANBOSKrOKqYYjsEvWl7B/bWt/tVd/LlJLlVhc=;
+  b=M8cT8zYd62uhOHyTE/KwjgA61QqWfDfpIeV9UqHH8QQREWi7PQIRuzmL
+   9y3ElORa9XoDKrziXk+PRv9990WIpszKeQn67y7zXi8Gf9X0SQsnVSdL5
+   JO0hL6uh9JNbCR2L+TJyd9PJZzVCMHuDpbs1zXlloUFMhlQRfr5ZvOxvp
+   lqwb1a/GJm+EpFrSxWgPAjT4R36LH7T04bltujyPrLxp0BgNK9Q4DVNhu
+   tE5ZP+YlY4r2aROZJAr2Ts6wzi003pgcFYX2yJcRzlS6I90SICIxXMvdS
+   wxR0pPPJDu47iiHjIoDJGrcu1Oc5TddT1SnRfdxSl5CwrIMuaYX0iAWgG
+   w==;
+X-CSE-ConnectionGUID: ggHhXsrdTmi3y16+iYES7Q==
+X-CSE-MsgGUID: e/jL/56nSQGSUZjjSvv0tA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="76963485"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="76963485"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 03:34:02 -0700
+X-CSE-ConnectionGUID: vusuETHFRrKGljKYpumyWg==
+X-CSE-MsgGUID: 2fkn5W3LQmqt4YoP8a+d5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="187015031"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 03:34:01 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 10 Jul 2025 03:34:00 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 10 Jul 2025 03:34:00 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (40.107.212.59)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 10 Jul 2025 03:33:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ButJZ/nVvqgvYH6+bmpZ66qhRH2LCWOPIqBg8WAogJlK2s+KioIYqoT0olkyxleum/4YGE2/wWRVK9M8wZX+tAMux7zQOS8hB7truH7dynp9Kk6CujxiZDBsa9VBMnSBlqwJuOxrDtqW7Ft14+JBB/klBETXykMefOleyO3IB/b22x17kPWnSxC3HFuu5AyILoIReYwXFKgJxConeRPd1FTdCOyu7bDzqItgzfnvh2zA6RC4WlmZwFvGjq2bNdqiwNmoAEY+lZKUFxGy8IQrLwk4poa79VnHR8xfXv7NzlSNTr5u5RbI9eZM+O9KPyOez/ZTJSl/EWv6bme2WShsuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zpyHSPANBOSKrOKqYYjsEvWl7B/bWt/tVd/LlJLlVhc=;
+ b=rSFbk4VdTv3Fl6cpT4ucb0lKv5qUc+TCoVcHWOCdrbLjPdQ5mt39Jhu733B8dbuaKrYcfCjJPMKM2XTjVCG0awVSRrbI5S+uGBz6H0z83FqfI92nMEN/PiR3Xu57LErR46REasxsF3yGEB3dwNlz1V1WnLzA3NgXUasm5nML2KBCfOl5mFt8INqf/WDi9Cy+GVM4Ek8B77dCdFRjs1Xmud25Y2R6ZdKlfjw0oc3Uk3aP0lBE28OkmvYEL9tXd3u0mlpWtVX41B1A2XNBSg9TMEUhONDtk8FtlALmqaMc/4hv1IsyjsBGGPrQdokTU0V6s83qFz04R9z5uFRNtcDxHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
+ by SA3PR11MB7413.namprd11.prod.outlook.com (2603:10b6:806:31a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Thu, 10 Jul
+ 2025 10:33:56 +0000
+Received: from IA3PR11MB8986.namprd11.prod.outlook.com
+ ([fe80::395e:7a7f:e74c:5408]) by IA3PR11MB8986.namprd11.prod.outlook.com
+ ([fe80::395e:7a7f:e74c:5408%7]) with mapi id 15.20.8769.022; Thu, 10 Jul 2025
+ 10:33:56 +0000
+From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
+To: Simon Horman <horms@kernel.org>, =?utf-8?B?TWFya3VzIEJsw7ZjaGw=?=
+	<markus@blochl.de>
+CC: "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, Richard Cochran <richardcochran@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Lakshmi Sowjanya D
+	<lakshmi.sowjanya.d@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Bloechl,
+ Markus" <markus.bloechl@ipetronik.com>, John Stultz <jstultz@google.com>,
+	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [Intel-wired-lan] [PATCH v2] e1000e: Populate entire
+ system_counterval_t in get_time_fn() callback
+Thread-Topic: [Intel-wired-lan] [PATCH v2] e1000e: Populate entire
+ system_counterval_t in get_time_fn() callback
+Thread-Index: AQHb8Pb4oXPIc6UOLkmuH961Jd6n0rQrJ+0AgAACSqA=
+Date: Thu, 10 Jul 2025 10:33:56 +0000
+Message-ID: <IA3PR11MB8986B554A8E1383F3D94DD58E548A@IA3PR11MB8986.namprd11.prod.outlook.com>
+References: <20250709-e1000e_crossts-v2-1-2aae94384c59@blochl.de>
+ <20250710102516.GP721198@horms.kernel.org>
+In-Reply-To: <20250710102516.GP721198@horms.kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|SA3PR11MB7413:EE_
+x-ms-office365-filtering-correlation-id: 7621d398-eccc-4ebc-ed5f-08ddbf9d4661
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?SjdmdU9TdWJ0NWdjTzRaYUtOSlNFcmh5VTFTN1g4bU5rbDRjTVRVZFZpMmVZ?=
+ =?utf-8?B?QlVraDB0QUR1Szc3WndScEVYNEw0Q2RsMmErVEhpK2J5UlF4VXBDSHFueDhQ?=
+ =?utf-8?B?K0tSbjBNbnUvT0hnQzg0Y1pIOXozWmxYTWovM0JKbkZRUUZsanpMSDFFRHhj?=
+ =?utf-8?B?VzFja25adEUxRjkvKzFLVVFVTUZDREVETmJ4amJjYnNIcnpvdlBRVzIrWEFW?=
+ =?utf-8?B?cGRNSmlacENYVlVRb2VQV3JvSUpKR0MyKzBwZ1FYUm5yNFBJcFJnTGFYUmhz?=
+ =?utf-8?B?Z2oxSXFXdG5XemY4MFVGeFBqbEdHb2RVVEVJQWUwVG9vVndEcHNoWnhTckVm?=
+ =?utf-8?B?V3lRUFdRa2gvWkdoZzU0d2xxeW9ZZk9vanJhR2JGdUFWazdqMHljc05tUys4?=
+ =?utf-8?B?bDFyMHdNMWpVNFY4bDA4S2N1bGpwRHQ1SjVQRFhHSE1ZSFNjK1hVY2hiNTdP?=
+ =?utf-8?B?eUxzRmdSeGFkUDRwczVyOHlEVitWV0lWSmxkNEwxOW5NZDk4dWV4c3lZNVBO?=
+ =?utf-8?B?TjE5YkRkeXVTYWRXRUZDRk5ER3lhbFVIaERrRFRiZExGQ25ULzF3bUE1eFRD?=
+ =?utf-8?B?ZEhzVjI0Q1FyRFVDOU5XYm56YlVvazJVUngxNW1KK1JGMWlsazM4UmF3KzRX?=
+ =?utf-8?B?bE1zbTBQRXV0OWt0ajZBRTQ1dEx3VHdSV0psYklpYXlxL0JmcjhueHVVQlJZ?=
+ =?utf-8?B?Ums3VFgvaG54SnZhTmlrYnZiN1pZSjZwRVNDNnE5cGR3czJ1TWVJeDV1SlBh?=
+ =?utf-8?B?d3d5dmRqUFgwa1JkNlFZMENUZmpzZVFFRFZsSTh5TUJ4ZDBNK2ZvTFJyWnBS?=
+ =?utf-8?B?ZkszL2RhVjYySlRWWmhhMzlTcVJNTUlaR3A2VHBIRGZjUTRqRCtJTFRKaXhW?=
+ =?utf-8?B?L1BHOVR0V1N3Z2tTSDBtMVI3TE45VFhYZ29CSFJpSUthT09XNldrWmR0dkh2?=
+ =?utf-8?B?WlgzcG4yaHdBbTB2MTBXRnQ1Y0llOFJXMDRVMFpDZVFaZWRJNktXN1RwbnNI?=
+ =?utf-8?B?cmZWdkJzbFZGZHFnNXhjdkZSVnRpWkw4YktDei8xSXJwOVowUk1SdU8waW9T?=
+ =?utf-8?B?L2o5ZTBIMU4zVVU4ZVdTcVdJb2tkNCtLQS95OHBhYWxRSGZNcEJ2MFd6SDcw?=
+ =?utf-8?B?U2NsaVNzbW5yMlllTWFhb0ZLNlMvZ08zOFBaQW4zd0I3dnRvR1hzQkNHL2VY?=
+ =?utf-8?B?eUZYaWloWklzcDZibEJuemFqTGszcndOWkR5V05xWVlOd1d1N2VUbVNMMk1M?=
+ =?utf-8?B?TkRXUzcrTmNVUit5NWJKSnlZaEpQZ1hlWFA3TzF3ekJOOExLVWdjZzI0WHpG?=
+ =?utf-8?B?dHhhK1B5OWNGUURmVXdYZldIWEdyNmVuWDN4Nkk3V2tnVmJqSXl1QUdaMWdJ?=
+ =?utf-8?B?RVJ2K1c2L3BxRFE5bXpHd1dQQmZ6Vkg1QWh5SnpBdGxGZGl4bXZaWWp4OTcr?=
+ =?utf-8?B?d0duMTlXeXF4alpYdm9TZGxhbGZHZXlCQmNuN2MwaTZFOUNidWJ0UjB6QTFG?=
+ =?utf-8?B?ek9FOHI5cDRKeHQrbVBpYUU3L3R3Q2lGbUJ0VVErcHhoK0hpZTBTU3BxZnhR?=
+ =?utf-8?B?eUFNUFBySkJNZDNHbEhXYlVYWlhtOXhJL3Y5UnFCMkcxenpEWlUwcGE1VWVh?=
+ =?utf-8?B?dmdMRy9tOEFwellzNStXWTFnN21WemhxV1dwOHkvVlpOY09McWVPNWV1ZC8w?=
+ =?utf-8?B?N1ZjZzRySDlTbjFVTTQ5NzI0cUtKeWZtUWZmaTNWeXFTc05WUWlQSU84V3lF?=
+ =?utf-8?B?OGFWN1pZRzQyRFVJWkxKUWd3bExWQ3FsREt4by94RUczWUZuYUcrc0JtTVhr?=
+ =?utf-8?B?WVJVR3doRkswNS9HRVJIZXB4dWgrOExMTnlCdDBuM1ZFL3JMeG9MRXNvcDI1?=
+ =?utf-8?B?VzhGeUZ3aEl6MjdHMjNBOGVncW1rb1d6dTQ1TXYwWkZmMERiS0lLR2REcng0?=
+ =?utf-8?Q?DMJdJQmC3EVKOFN+Hn6EUb9cu0PHsRVJ?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MWx1OG0xdUFubEdpMHZGU0ZnN2ZzaGpIL21yYXM2MzNOdTJZVkNkcHFzbXVR?=
+ =?utf-8?B?OHo5aGRxUTlCc0RHdERBL3NEM1R6dEM0cklNbE1SdVFBY0lBcUEwN3pFWXlo?=
+ =?utf-8?B?WkpRWFcrVUhHaTJRRFl5M2ZxT1d0NTdDS2lDa1NQcXF5dmd6ekR0Q0pBdS9U?=
+ =?utf-8?B?bkR2RjhvZll3WXNuMTdkKzZWa3NmRHR3TG1rdTBxQVdyWDNTZC9WNDJpclN5?=
+ =?utf-8?B?NlQ0UzNXT0VXdzZ3emFLY3lTSjVKVnB0cGVtMUtaTlNQZlBkSG5VdzVSZEF6?=
+ =?utf-8?B?R3dPNXhWQ3NsK0hxd041UzZtMkJVUFNwemlTSWhTUGZEWURzVi9PQVdMNnNE?=
+ =?utf-8?B?MThGOFZKV2ZvcHRuZVBVSWdycUFFK0lEUWU5TEFVNE94Ny9obFFZSDd0RTZo?=
+ =?utf-8?B?UHJoS2xoSUUrVlBGaHZEa1VOTkxHZ3JLMmpMbGpkMGh4WiswRElkbFdIRFN4?=
+ =?utf-8?B?Y1R5M01GUVFhb2RnemU3OER1cWF3TlU4Zi80REZ0eVlBZDY2eVNSdVFBbUh0?=
+ =?utf-8?B?WGJoVUt1WXhlTVpvQmZIVStkdXhmY2tKWTdtTnFJZndoWFZIUVY1V3VlYXVr?=
+ =?utf-8?B?Z0JRWWVGWU56RHpKZmRTaHB5TDZLeFJ0Z3k5VTZlUUgzRFh5QVB6U2gvTVQx?=
+ =?utf-8?B?NHQvVkFseHYvK3IzNHJNRFNUUm9zMEtkU0RiUFkrQ3hrWE9MTjQ5dC93MWVj?=
+ =?utf-8?B?VGFCeUN3V1g2M3owaWVsdmU0eHZuRXdUL3dRbFBtT2xLcGc5dTBGV29Yc1c1?=
+ =?utf-8?B?aFVobTZRNVJhamVDajFwaCtmcEJLNmppekwwOU5HVkp1K040TWl6a0o5anZR?=
+ =?utf-8?B?MEN5V0xCOUREVmkrcUJqOWNPcWN4NU1RNlN3T0pBSFZFQTVSWk1XUU9ydUR3?=
+ =?utf-8?B?V3BDR3NtL20vNEhGTjN5Sk54VFZEaTRGZzg0S0RqdzNKVVhqbVNWWmNYN0RW?=
+ =?utf-8?B?V2RjWDYybXBOWmpIaC9vQWxweCtRdHpsTkRBeS9EbXU3VzRNaWlWRmlZWElt?=
+ =?utf-8?B?eGRLalFHRW91dFdTZkdYM2IxK3dSSml0Z0FUNkptK0ROL2wrdGg4OFB5SmRt?=
+ =?utf-8?B?aWRLdUxKdVdNcWU5Y2FkL3Q1K0hIOU5vZzRQRWlKaERvQkFLNVRibWV3K2xJ?=
+ =?utf-8?B?UWtwaGdKWjRacXNlNHVNbk12RkthNG5Fajl3OFBKSmJ4aDdMMjVMaTNndTZO?=
+ =?utf-8?B?OFZ0S3k4NWZOcmd1VzVrZVRFTUFmNmM1enRyZlQxT2lNUE9JdDN6NnFCSC81?=
+ =?utf-8?B?dWI3NHhyNldiZVdXUFRvWmtHNThKSm9aWTZjSXJXaGRTejJNSCtqcHk0KzZ4?=
+ =?utf-8?B?ZVU2MkUxS3RaOGFsRHQrOHhDYXlyaFI1eW1sMHpDM3hMZDQ2c3JOS3duVVRk?=
+ =?utf-8?B?bWhKT3dDVUY2TU9oeWRPWGg2VmlXenc2K2REYm1lMGM0MmtRd3NRemcxbXhF?=
+ =?utf-8?B?SEJRWU9DSzdRaE8wMFZsRWh0R21IellBQStCU3ZkK2t1TElSV1lqaUlsblBj?=
+ =?utf-8?B?OUNmQkdFZjVXNWcwMFlUZDh4eGNLSmIvR2xWb2x4bHFUUldqRGs5dlRuUFQx?=
+ =?utf-8?B?UlRlVGRHS2VMMVd6WldyTERTaDJXSmk3WWRtVmp5bGVKdmZnSkhoaUJ3QkQy?=
+ =?utf-8?B?V1plVUNEQzV4cmFFL3I5QXpSeFhyc2YrdWhyNkpGTFFHdklsZ3gvQ1FOY1Z4?=
+ =?utf-8?B?K2kzZno5WlBZZ1dvUmZnaUpod09TamRmQWtpOEJwaXVEVjJkZFVKdGVxbXpX?=
+ =?utf-8?B?UTRiRXp3NXJqK2oxOW5yeHJsV0w5Nit0d3lTdDd4QU0vQUFweHlXRzA2dGd1?=
+ =?utf-8?B?M3ZTdUVtbjBJNno3VnVyNnFacDlhZHpkYlJMSUtUdTJNT0FRUndlZ293MHBO?=
+ =?utf-8?B?VjhReTMzYXdTZi9ISHhaMXJLYjBTK2V2clZPL090eXQxYVQ3MnR6VjFlSG1E?=
+ =?utf-8?B?UkdxM01QNm5seGR4MHF2enN5MUJrZkxHRlN6MEtQUWhGaHQ0QnN4ZGxkVjZD?=
+ =?utf-8?B?WEoxN1BWcmU1YVpzNU1leC9ld04wZHdDZUZGZHFuK09LY3NONm1qa3htTy81?=
+ =?utf-8?B?RUVVRCtmQWMvcDBrRW1rMWZVdW9PRG54cVQwUHJlbHVsM0JGMFErL1VDQnhP?=
+ =?utf-8?B?VThZV29kSERqRFNyVlAwQWVZOGlqcHRZY3ZaY3BYNXZHRlZmSHk3aXRBcGhS?=
+ =?utf-8?B?Qnc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7621d398-eccc-4ebc-ed5f-08ddbf9d4661
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2025 10:33:56.8042
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LIZm2TwrV+qrbSPllURHfbASaAp9NtSSEsyp2B4Uqr7uKo9YSszsOiSRlPDe4fkBuQ5fye8advsI10eWI0RbveWbXuj0jAguTlPKpQYu0ME=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7413
+X-OriginatorOrg: intel.com
 
-Em Thu, 10 Jul 2025 12:10:33 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
-
-> From the above:
-> 
-> - It is not worth applying patch 12/12 as it makes the code slower;
-> - Python 3.13t (no-GIL version) had very bad results. It seems it
->   still requires optimization;
-> - Python 3.9 is a lot worse (140% to 190%) when using list append;
-> - when there are not many concats, Python 3.13 is about 15% slower
->   with lists than concat strings. It only approaches str concat
->   when the number of concats is high.
-> 
-> With the above, clearly str += is faster than list append.
-> 
-> So, except if I did something wrong on this benchmark script, please
-> don't apply patch 12/12.
-
-And I did: I forgot the final line at the concat code to get the
-result as strings.
-
-For explicit list:
-	result = obj.output()
-
-For implicit ones:
-	result = str(obj)
-
-Yet, the conclusion is similar. With Python 3.13:
-
-    $ for i in python3.13; do for j in 1 10 100 1000; do $i /tmp/bench.py $((1000000/$j)) $j 1; done; done
-    1 strings in a loop with 1000000 interactions, repeating 24 times
-        str +=       : time: 41.42
-        list join    : time: 127.33: 207.42% slower than str +=
-    10 strings in a loop with 100000 interactions, repeating 24 times
-        str +=       : time: 27.15
-        list join    : time: 39.19: 44.36% slower than str +=
-    100 strings in a loop with 10000 interactions, repeating 24 times
-        str +=       : time: 24.84
-        list join    : time: 30.70: 23.57% slower than str +=
-    1000 strings in a loop with 1000 interactions, repeating 24 times
-        str +=       : time: 21.84
-        list join    : time: 27.85: 27.50% slower than str +=
-
-Explict list concat was between ~30% to ~200% worse than str concat.
-
-
-Thanks,
-Mauro
-
----
-
-#!/usr/bin/env python3
-
-import argparse
-import time
-import sys
-
-def benchmark_str_concat(test_strings, n_ops):
-    start = time.time()
-    for _ in range(n_ops):
-        result = ""
-        for s in test_strings:
-            result += s
-    return (time.time() - start) * 1000
-
-def benchmark_explicit_list(test_strings, n_ops):
-    class ExplicitList:
-        def __init__(self):
-            self._output = []
-
-        def emit(self, text):
-            self._output.append(text)
-
-        def output(self):
-            return ''.join(self._output)
-
-    start = time.time()
-    for _ in range(n_ops):
-        obj = ExplicitList()
-        for s in test_strings:
-            obj.emit(s)
-
-        result = obj.output()
-
-    return (time.time() - start) * 1000
-
-def benchmark_add_overload(test_strings, n_ops):
-    class OutputStringAdd:
-        def __init__(self):
-            self._output = []
-
-        def __add__(self, text):
-            self._output.append(text)
-            return self
-
-        def __str__(self):
-            return ''.join(self._output)
-
-    start = time.time()
-    for _ in range(n_ops):
-        obj = OutputStringAdd()
-        for s in test_strings:
-            obj += s
-
-        result = str(obj)
-
-    return (time.time() - start) * 1000
-
-def benchmark_iadd_overload(test_strings, n_ops):
-    class OutputStringIAdd:
-        def __init__(self):
-            self._output = []
-
-        def __iadd__(self, text):
-            self._output.append(text)
-            return self
-
-        def __str__(self):
-            return ''.join(self._output)
-
-    start = time.time()
-    for _ in range(n_ops):
-        obj = OutputStringIAdd()
-        for s in test_strings:
-            obj += s
-        result = str(obj)
-
-    return (time.time() - start) * 1000
-
-def calculate_comparison(base_time, compare_time):
-    if compare_time < base_time:
-        return (True, (1 - compare_time/base_time)*100)
-    return (False, (compare_time/base_time - 1)*100)
-
-def benchmark(num_reps, strings_per_run, repeats, detail):
-    test_strings = [f"string_{i:03d}" for i in range(strings_per_run)]
-
-    # Create benchmark execution order list
-    benchmarks = [
-        ("str +=", benchmark_str_concat),
-        ("list join", benchmark_explicit_list),
-        ("__add__", benchmark_add_overload),
-        ("__iadd__", benchmark_iadd_overload)
-    ]
-
-    # Use all possible permutations of benchmark order to reduce any
-    # noise due to CPU caches
-    all_orders = [
-        (0, 1, 2, 3), (0, 1, 3, 2), (0, 2, 1, 3), (0, 2, 3, 1),
-        (0, 3, 1, 2), (0, 3, 2, 1), (1, 0, 2, 3), (1, 0, 3, 2),
-        (1, 2, 0, 3), (1, 2, 3, 0), (1, 3, 0, 2), (1, 3, 2, 0),
-        (2, 0, 1, 3), (2, 0, 3, 1), (2, 1, 0, 3), (2, 1, 3, 0),
-        (2, 3, 0, 1), (2, 3, 1, 0), (3, 0, 1, 2), (3, 0, 2, 1),
-        (3, 1, 0, 2), (3, 1, 2, 0), (3, 2, 0, 1), (3, 2, 1, 0)
-    ]
-
-    results = {}
-    for name, _ in benchmarks:
-        results[name] = 0
-
-    # Warm-up phase to reduce caching issues
-    for name, fn in benchmarks:
-        fn(test_strings, 1)
-
-    n_repeats = len(all_orders) * repeats
-    print(f"    {strings_per_run} strings in a loop with {num_reps} interactions, repeating {n_repeats} times")
-
-    # Actual benchmark starts here
-    i = 0
-    if detail:
-        headers = ['Run'] + [name for name, _ in benchmarks]
-        print()
-        print(f"\t{headers[0]:<6} {headers[1]:<12} {headers[2]:<12} {headers[3]:<12} {headers[4]:<12}")
-        print("\t" + "-" * 60)
-    for _ in range(repeats):
-        # Shuffle execution order each run
-        for order in all_orders:
-            run_results = {}
-            for idx in order:
-                name, func = benchmarks[idx]
-                run_results[name] = func(test_strings, num_reps)
-                results[name] += run_results[name]
-
-            if detail:
-                # Output results in consistent order
-                print(f"\t{i+1:<6}", end=" ")
-                for name, _ in benchmarks:
-                    print(f"{run_results[name]:<12.2f}", end=" ")
-                print()
-
-            i += 1
-
-    avg_results = {}
-    for name, _ in benchmarks:
-        avg_results[name] = results[name] / repeats / len(all_orders)
-
-    if detail:
-        print("\t" + "-" * 60)
-        print(f"\t      ", end=" ")
-        for name, _ in benchmarks:
-            print(f"{avg_results[name]:<12.2f}", end=" ")
-        print()
-        print()
-
-    ref = benchmarks.pop(0)
-
-    print(f"\t{ref[0]:<12} : time: {avg_results[ref[0]]:3.2f}")
-    for name, _ in benchmarks:
-        is_faster, percentage = calculate_comparison(avg_results[ref[0]], avg_results[name])
-        direction = "faster" if is_faster else "slower"
-        print(f"\t{name:<12} : time: {avg_results[name]:3.2f}: {percentage:3.2f}% {direction} than {ref[0]}")
-
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--detail', action='store_true',
-                       help='Enable detailed output')
-
-    args, remaining = parser.parse_known_args()
-
-    # Then handle the positional arguments manually
-    if len(remaining) != 3:
-        print(f"Usage: {sys.argv[0]} [-d] <num_repetitions> <strings_per_op> <repeats>")
-        sys.exit(1)
-
-    num_reps = int(remaining[0])
-    strings_per_op = int(remaining[1])
-    repeats = int(remaining[2])
-
-    num_reps = int(sys.argv[1])
-    strings_per_op = int(sys.argv[2])
-    repeats = int(sys.argv[3])
-
-    benchmark(num_reps, strings_per_op, repeats, args.detail)
-
-
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSW50ZWwtd2lyZWQtbGFu
+IDxpbnRlbC13aXJlZC1sYW4tYm91bmNlc0Bvc3Vvc2wub3JnPiBPbiBCZWhhbGYNCj4gT2YgU2lt
+b24gSG9ybWFuDQo+IFNlbnQ6IFRodXJzZGF5LCBKdWx5IDEwLCAyMDI1IDEyOjI1IFBNDQo+IFRv
+OiBNYXJrdXMgQmzDtmNobCA8bWFya3VzQGJsb2NobC5kZT4NCj4gQ2M6IE5ndXllbiwgQW50aG9u
+eSBMIDxhbnRob255Lmwubmd1eWVuQGludGVsLmNvbT47IEtpdHN6ZWwsDQo+IFByemVteXNsYXcg
+PHByemVteXNsYXcua2l0c3plbEBpbnRlbC5jb20+OyBSaWNoYXJkIENvY2hyYW4NCj4gPHJpY2hh
+cmRjb2NocmFuQGdtYWlsLmNvbT47IFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRl
+PjsNCj4gTGFrc2htaSBTb3dqYW55YSBEIDxsYWtzaG1pLnNvd2phbnlhLmRAaW50ZWwuY29tPjsg
+QW5kcmV3IEx1bm4NCj4gPGFuZHJldytuZXRkZXZAbHVubi5jaD47IERhdmlkIFMuIE1pbGxlciA8
+ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD47IEVyaWMNCj4gRHVtYXpldCA8ZWR1bWF6ZXRAZ29vZ2xlLmNv
+bT47IEpha3ViIEtpY2luc2tpIDxrdWJhQGtlcm5lbC5vcmc+OyBQYW9sbw0KPiBBYmVuaSA8cGFi
+ZW5pQHJlZGhhdC5jb20+OyBCbG9lY2hsLCBNYXJrdXMNCj4gPG1hcmt1cy5ibG9lY2hsQGlwZXRy
+b25pay5jb20+OyBKb2huIFN0dWx0eiA8anN0dWx0ekBnb29nbGUuY29tPjsNCj4gaW50ZWwtd2ly
+ZWQtbGFuQGxpc3RzLm9zdW9zbC5vcmc7IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0K
+PiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbSW50ZWwtd2lyZWQtbGFu
+XSBbUEFUQ0ggdjJdIGUxMDAwZTogUG9wdWxhdGUgZW50aXJlDQo+IHN5c3RlbV9jb3VudGVydmFs
+X3QgaW4gZ2V0X3RpbWVfZm4oKSBjYWxsYmFjaw0KPiANCj4gT24gV2VkLCBKdWwgMDksIDIwMjUg
+YXQgMDc6Mjg6MDdQTSArMDIwMCwgTWFya3VzIEJsw7ZjaGwgd3JvdGU6DQo+ID4gZ2V0X3RpbWVf
+Zm4oKSBjYWxsYmFjayBpbXBsZW1lbnRhdGlvbnMgYXJlIGV4cGVjdGVkIHRvIGZpbGwgb3V0IHRo
+ZQ0KPiA+IGVudGlyZSBzeXN0ZW1fY291bnRlcnZhbF90IHN0cnVjdCBhcyBpdCBtYXkgYmUgaW5p
+dGlhbGx5DQo+IHVuaW5pdGlhbGl6ZWQuDQo+ID4NCj4gPiBUaGlzIGJyb2tlIHdpdGggdGhlIHJl
+bW92YWwgb2YgY29udmVydF9hcnRfdG9fdHNjKCkgaGVscGVyIGZ1bmN0aW9ucw0KPiA+IHdoaWNo
+IGxlZnQgdXNlX25zZWNzIHVuaW5pdGlhbGl6ZWQuDQo+ID4NCj4gPiBBc3NpZ24gdGhlIGVudGly
+ZSBzdHJ1Y3QgYWdhaW4uDQo+ID4NCj4gPiBGaXhlczogYmQ0OGI1MGJlNTBhICgiZTEwMDBlOiBS
+ZXBsYWNlIGNvbnZlcnRfYXJ0X3RvX3RzYygpIikNCj4gPiBDYzogc3RhYmxlQHZnZXIua2VybmVs
+Lm9yZw0KPiA+IFNpZ25lZC1vZmYtYnk6IE1hcmt1cyBCbMO2Y2hsIDxtYXJrdXNAYmxvY2hsLmRl
+Pg0KPiA+IC0tLQ0KPiA+IE5vdGVzOg0KPiA+ICAgICBSZWxhdGVkLVRvOg0KPiA+DQo+IDxodHRw
+czovL2xvcmUua2VybmVsLm9yZy9sa21sL3R4eXJyMjZoeGUzeHBxM2VicWI1ZXdrZ3ZodnA3eGFs
+b3Rhb3V3bHUNCj4gPiBkanRqaWZuYWgyQDd0bWdjemxuNGFvby8+DQo+ID4NCj4gPiBDaGFuZ2Vz
+IGluIHYyOg0KPiA+IC0gQWRkIExha3NobWkgaW4gQ2M6DQo+ID4gLSBBZGQgU2lnbmVkLW9mZi1i
+eTogdHJhaWxlciB3aGljaCB3YXMgbG9zdCBpbiBiNCB3b3JrZmxvdw0KPiA+IC0gTGluayB0byB2
+MToNCj4gPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9yLzIwMjUwNzA5LWUxMDAwZV9jcm9zc3Rz
+LXYxLTEtDQo+IGY4YTgwYzc5MmU0ZkBibA0KPiA+IG9jaGwuZGUNCj4gDQo+IFJldmlld2VkLWJ5
+OiBTaW1vbiBIb3JtYW4gPGhvcm1zQGtlcm5lbC5vcmc+DQpSZXZpZXdlZC1ieTogQWxla3NhbmRy
+IExva3Rpb25vdiA8YWxla3NhbmRyLmxva3Rpb25vdkBpbnRlbC5jb20+DQo=
 
