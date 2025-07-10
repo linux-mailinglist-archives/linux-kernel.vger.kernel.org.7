@@ -1,107 +1,117 @@
-Return-Path: <linux-kernel+bounces-725333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2FBAFFDA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:12:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D25CAFFDA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 585A23A5BAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:12:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02F945A59EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D779628EA53;
-	Thu, 10 Jul 2025 09:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBEC291C1C;
+	Thu, 10 Jul 2025 09:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KZlG7WDh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KF7aiPDf"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94412220698;
-	Thu, 10 Jul 2025 09:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077ED28CF75
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752138771; cv=none; b=G4wGvxusZjUqtE6ij0P7CGXW2v7RJC/4oogVd9nwE3QM5krZ6TwJBqVeUKmjaCG2kOBfvf2XPPC/oiBsfQTS2VWQMywNUVasRPrJmTP4nE5uILu9QHbxuhlpBScXw+sNnSZG5BBAkWfMyyyU7mmjB5R/mkd8Mx6RLRvMbRJ+ZEY=
+	t=1752138927; cv=none; b=rRlGO1sa155/0/hBoNvAEuEzqYsoRI1opSeEWxyThrK6zE0DI1S1YrxLwxse6HvU4fwwPuNUNqDUyDLcrqBrDI+22312I/3ClqPPFm0wPJTKEgaAr+LFsiZa7trTbMoyTZPVRNwdzu72DRY+pwMuS2IG8eqGP+Tcwm7oyvQIL7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752138771; c=relaxed/simple;
-	bh=qyJAVh062G9WghC4ofr4Zk/CmZ0bxkKFBU+KRtZO3LI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ra3xglOtkaqj9C8tC64ep4FxjxueHl2VY7sMBydfI+Vj7dLJ5ajkZBq14KrhQlty6kANHcANev1uF3u39xKzdthO1eohQ+T+W4YSd/IO9b/VWq0Hf6WUUDR0yLtX8fvGUk53h2eaW6f57IsaQRsWR/OWeCYHKMMUEQiZY4daW6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KZlG7WDh; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752138770; x=1783674770;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qyJAVh062G9WghC4ofr4Zk/CmZ0bxkKFBU+KRtZO3LI=;
-  b=KZlG7WDhA78A9CO2VSgjN+sbUxnWVL47+dt06C4lOIdFUYrIAMyDFmIZ
-   /6xESRJyd2mbLAJOZowiGw9UiwCIp9E1OIWQ+GD7mekJVAtKFrdQe3jOF
-   WcXeN7bz1lb9ZC8AGIxjIFL6v9unZryGNuxDHqs69QfZCYMEaWOXdVYsd
-   tS17lm/+iQCIKTh1fvBp5lThw7MsfHM2/iGhcODGD+Hn3oCe9S6ZdfIa0
-   C1N8OqdDVSaVAMAojQK5FJ8X8PK0VnKTfxxE8ley31ZZ0zq4DuA70Y3VZ
-   9WONvSXdJIIIW0gWFGwwveNppvADRXT6eWTKU8+Yb+Ltb1IgXQUSwVawr
-   g==;
-X-CSE-ConnectionGUID: LwGpcpZPTESZU8T7p+0Sdw==
-X-CSE-MsgGUID: 0VOxBatSRQijAwA0KzSaBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="65863215"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="65863215"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:12:49 -0700
-X-CSE-ConnectionGUID: 7glJjij6R4iLa4hg1dON6g==
-X-CSE-MsgGUID: VHkWGpgbR1+iuNTht0xrPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="156355552"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:12:46 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uZnKd-0000000E9W9-0G4A;
-	Thu, 10 Jul 2025 12:12:43 +0300
-Date: Thu, 10 Jul 2025 12:12:42 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] iio: imu: inv_icm42600: pm_runtime fixes + various
- changes
-Message-ID: <aG-ECkVpn_fvBEpi@smile.fi.intel.com>
-References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com>
+	s=arc-20240116; t=1752138927; c=relaxed/simple;
+	bh=iiLjM+aUgsYzHC/WPwWLV5opBtyLVc4FDeCI5k5C/gg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SlVyma8fxiKgl8Qg1IpEg1SaUYl/sYKXRWlZeJiF/I/tNcuh2yXxbPXomcFVp7eyP+EYGSYfBdfLN2NKs28ogLxbl7GBrTYSKD2b/6E0Zf1AgFnKPFGOWH9Z5q4425KLLdE3lYbqQwMgjVV09N93fN9m7RS04HSNfWlpD0eBZRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KF7aiPDf; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso4903825e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 02:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752138924; x=1752743724; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U6q/9SW9W8dxQjuQZq+qCAODMrqQtpqZyWtMbjNSA18=;
+        b=KF7aiPDfpqpR3fe7cobvW5bhi7ALwgm5qkdHnV6P3P36cmPxo2zhBN/82RsXy+UtTB
+         TmgGry5fYF00eygna8l/Hs+UrJt/zb+jcr/CTc3w4eTZgvnpM1oei+Kf2MuJGQN2Sr+D
+         xpash2zB+Ddv4OfQd01+M6n0Ioah/mklYNc54VE/UXcvL3wN8EwC2UblHFzQC/AqUM9g
+         nfQ19T4ORPx52x4ndx4jYzFa7mOPxh+O8dJ+GTdRVDRW+cBlGu/tnjOjJPgFRHcYyMhB
+         p03VgBIy+fruZGWBZnoxeZNGsUvuc+FAQi4h5NFvQTW/yRQvJAkFPAK/jBWcx/iBiYTd
+         oYdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752138924; x=1752743724;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U6q/9SW9W8dxQjuQZq+qCAODMrqQtpqZyWtMbjNSA18=;
+        b=LWNki3OplrYIh9Sx6FMJtGPcifEoCyr35dUd98NjISTjCPPJYFncjIqZS1ON7dve5Z
+         jut8syTt0k5yr46bqtzPsN4AzMKuWtGE3IiCLfoiRPqzFIhJijAbBDON8Yauz8eztH/3
+         14oTPOnlcWPZXn974oX7mi71fRkT6uPSSgb+9E/LE86mkNsPNjKDuojcB+IzOHc+42Eh
+         om8BBAuu1T3Hunslu3r7Zj/e9k266jdKwIK3hoSrl2kXxVvBT94L8La5fh24DU5FqHD1
+         TeeqE52j15ZpN1U1yWUlpQtVhouNTXdBqErMYrWg0sjL+1zJeROE7349hJt91/bgl9G+
+         GjeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSh8DGG7oXd5G1+mRHMxmudM5xCq8rQwVLYZIgEKt6uit1k2Qd9Vnt7FBaI+xxe5j/7EdDmdDpI6185P8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yybzy7xXhA7BAQmbcO7aHrp10Rnm9DP/E8R8hR8uojQT6XOkv51
+	arLFbD/WurZbITvrtDCRCm4UE6s5f62PhN+TY652MLyPV4CIxizNFgRXlAAp8k2N6PQ=
+X-Gm-Gg: ASbGnctHF/NdLdg8SkRrj2xNOGheXzexsYGjP5ZTQZoJVxUSiBsOi9wQ9mddbek1+Pi
+	JZHgIOPhkLzyRocLGcDal4kjFEB04SqJVzLi8uzaaF6ltIBL4Jsb1q43gVNOpKhEFH9+5x2UaJX
+	Pl9Ielb9+n5BkP/aw4n8p6ZZQ+96oWvnZfgpCwpk8LcyeuPg7IgVGqGsUrU9ZNrcwQoCuPhaou9
+	s21+xhFXg+cKhE4/SISgw2D7P6mUiD3n4fG3zVFNXKhhDX54Q8qi0ScgaDiR0nFPeOloWYlaT4v
+	f8HgXoyoCB6P0xRQP83AdZm9eMICC8PoCXmH2PloorfeBxvKgvXz6fy7NbApUYRqBVH3RBD3nM3
+	SXwsf0W1B/lFtm8sENopN/KLQaz0=
+X-Google-Smtp-Source: AGHT+IFiUkvfNJiRLRUs8fa6XAAhAZRAnt+u186odn28Di4bfezkL7HU3hExac8w06CkJd8HzwOdhA==
+X-Received: by 2002:a05:600c:8717:b0:442:dc6f:7a21 with SMTP id 5b1f17b1804b1-454db7e87c2mr31122345e9.3.1752138924220;
+        Thu, 10 Jul 2025 02:15:24 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd4b32d8sm13751625e9.17.2025.07.10.02.15.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 02:15:23 -0700 (PDT)
+Message-ID: <c3803de2-56f3-4346-9490-67cd63abb287@linaro.org>
+Date: Thu, 10 Jul 2025 10:15:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 6/7] arm64: dts: qcom: qcm2290: Add Venus video node
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
+ quic_vgarodia@quicinc.com, krzk+dt@kernel.org, konradybcio@kernel.org,
+ mchehab@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, amit.kucheria@oss.qualcomm.com
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250708180530.1384330-1-jorge.ramirez@oss.qualcomm.com>
+ <20250708180530.1384330-7-jorge.ramirez@oss.qualcomm.com>
+ <8f30092c-0e17-6f4d-f3f1-769508d2f58e@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <8f30092c-0e17-6f4d-f3f1-769508d2f58e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 09, 2025 at 02:35:08PM +0200, Sean Nyekjaer wrote:
-> This series was triggered by "Runtime PM usage count underflow!" when
-> unloading the module(s).
-> By testing the driver in various use cases and reading code it was
-> obvious that it could need some tiding up.
+On 10/07/2025 09:57, Dikshita Agarwal wrote:
+>> +			iommus = <&apps_smmu 0x860 0x0>,
+>> +				 <&apps_smmu 0x880 0x0>,
+>> +				 <&apps_smmu 0x861 0x04>,
+>> +				 <&apps_smmu 0x863 0x0>,
+>> +				 <&apps_smmu 0x804 0xe0>;
+> What’s the rationale behind having five entries here?
+> could you share the use-cases that justify this configuration?
 
-> I'm still not 100% satisfied with suspend/resume is calling directly to
-> vddio_enable/disable. In my mind it should be managed by pm_runtime.
+Already getting in trouble with non-pixel/secure # of iommus.
 
-This patch series touches a quite sensitive area and needs a good,
-comprehensive tests (better done independently from the author).
-What have been done so far?
+Why not specify the maximum expected number hardware supports, 
+specifically so we don't end up buried under incomplete schema again ?
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+---
+bod
 
