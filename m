@@ -1,131 +1,87 @@
-Return-Path: <linux-kernel+bounces-725832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B961AB0047A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:59:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 154CFB0045A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B11D864389E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:56:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E41E188E075
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B829E2777F1;
-	Thu, 10 Jul 2025 13:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FC72727FF;
+	Thu, 10 Jul 2025 13:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LqZyDWIc"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QoRkk9ck"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B823276046;
-	Thu, 10 Jul 2025 13:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996F027056B;
+	Thu, 10 Jul 2025 13:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752155583; cv=none; b=AuaDUOHVCTuvyU0QatkoxG2iBXZitzU9w3PFitZZn67l1QtCjc7kiGkG9MwO8q5STheWczX0xCQJxQY4/L7PTZ1fXDFz2jauARKSXpBfecBpnbQgLHpyQm6VOl+k77DxCCf/Y65dZnh0HrM6Q0NCX9cTkdZnpLPdDew8y9EBqtQ=
+	t=1752155569; cv=none; b=KIP9O5Y2N7DHE1+5v21tvaAHHSwfS7DoRlN5SGA+O3COkXGbwhbrW4jjPvQA/kOpo5jaT57K/GmUHQPDsC5ysB16yBUPqTbxVoygsu4Rcc7weT9pg5uo02ovHrRXyCRw6km1AwOTG/9Hiead9YI1yCkvimFxmrSEEuZ3I0xXkKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752155583; c=relaxed/simple;
-	bh=BFyCUyrT0Ujus6OGYnAmCl/GqNuIEDJQSk8MQCzrzmo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jJfjoIi4fLAqAinQXKbcC0MDonlmCMjsMwlzdb3tNFLG213hnkCrua6wrfL335PplVj3ORhWKhQHFoK11hyzl3mfH4IG5oWOyXTg3YyWK0rYMmub0MZdwDD4/ap/yYmefTwfQJa37gi6gyGhHoCAdf5gQySKz1DnNxHNmoqcATQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LqZyDWIc; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.0.172] (mob-5-90-137-205.net.vodafone.it [5.90.137.205])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 37689F09;
-	Thu, 10 Jul 2025 15:52:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752155546;
-	bh=BFyCUyrT0Ujus6OGYnAmCl/GqNuIEDJQSk8MQCzrzmo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=LqZyDWIcNX9ZTUOAqZt5qLdSc6rAHXA0r/sXWI+UFLMcc1XyFQ0Nwb2SEUP1OTQyU
-	 Mku/vBgAukLGRW2RW737mST0vNwG67/mVw5wFnq4lqZs+I6Yk7IhbSZcMrkymjf8Yq
-	 Qe/SkN3x6Ad5c5T0MTKUVcMh+QSBT0Dm3z94WTMU=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Thu, 10 Jul 2025 15:52:17 +0200
-Subject: [PATCH v2 8/8] media: Documentation: kapi: Add v4l2 extensible
- parameters
+	s=arc-20240116; t=1752155569; c=relaxed/simple;
+	bh=IUOgLyE0XPCQkDQ5QcbdjweqeX7iT7gt/pUXhtCiq7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RzKulb3RC3DMPVFp8eMO49B7WOrX4TW1OBZjxiDaCOGduyxnQ1dceLMeUxDCeHlkRJEU5j0emNrdRGEKR7yvLTk2d+pToMAbRylOMMYyM9QbVDdZx6UJJqfra9GZdgRk30Ad3/VR5+W+NQ7nB3w7n7uRXW6gKEh813YCMPNzff0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QoRkk9ck; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B7AAB205B3;
+	Thu, 10 Jul 2025 13:52:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752155560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=stHEMGeNbz5JRq98cdiCOEgRTGMVYPBq1E2sda8J0wM=;
+	b=QoRkk9ckZddQXHpm4Pbx/E35t4hx1dgASlUABvMZyYL/m2GHgCZEIGqsG3pgFlv6wFRm/M
+	4BPtnjQV/sUokpUVF5VOsNsct6YyBj/ryQKtjHaVYMsMDCbbDgCQu4QakiF20Ea4PDhgJk
+	k+8+un8SMKRyeBjLeAh8oFllcRHLqVSgZtkw94NtE8Er6X7Fu2pyGzgIoifP7ZAys5RFC9
+	JUWTM6JcdVgzOX3DtVKuPR4f/O7A3CC7dUCGrnaWZS/ePOxx0RshfqzMWCS2IC9yYJvNlB
+	K9IvwYFYwLWhEf3i9DFYS6DLkMncCXZRyvwa9Wqi54/9UeJyfNy7iDgdaDXPPQ==
+Date: Thu, 10 Jul 2025 15:52:37 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: shenwei.wang@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev
+Subject: Re: [PATCH net-next 1/3] net: fec: use
+ phy_interface_mode_is_rgmii() to check RGMII mode
+Message-ID: <20250710155237.2975031f@fedora>
+In-Reply-To: <20250710090902.1171180-2-wei.fang@nxp.com>
+References: <20250710090902.1171180-1-wei.fang@nxp.com>
+	<20250710090902.1171180-2-wei.fang@nxp.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-extensible-parameters-validation-v2-8-7ec8918ec443@ideasonboard.com>
-References: <20250710-extensible-parameters-validation-v2-0-7ec8918ec443@ideasonboard.com>
-In-Reply-To: <20250710-extensible-parameters-validation-v2-0-7ec8918ec443@ideasonboard.com>
-To: Dafna Hirschfeld <dafna@fastmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1789;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=BFyCUyrT0Ujus6OGYnAmCl/GqNuIEDJQSk8MQCzrzmo=;
- b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBob8Wr/aGoNxfRR23l/5wD6G+4Ew6/K9t5x5Sg+
- B6olFD0u9iJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaG/FqwAKCRByNAaPFqFW
- POXRD/49NlvFZ6WTfiz+ALosMbcBtZbO6d5YqWv4nL2Qi8LyLr3DiZHDkp/5jcMXK0pHje+MLhA
- ysf7/JN8fPywWY1ohWQVBHu/fi+Tp2pxvyqwtWuBzMvlzhrNuWY4dvYNP7B6ky/x5ODC9KUBchK
- d9SbeHLZDmrjA9fYXc6LcsfL818nZLr0uKwXu88/MQcEpsd7LpS93bc7mQmFsOeoeKpcfxPEMvz
- 7AydmBMNNbLXAYkA2VaH08JnYRYItZkVAaV4l2CCmz0vGOOuzKxE4HCxD1fto6fpuUki1fUfEkd
- UIIZGF9rraSYDL5Wne2SLSqHU8Ua466saP20Ce8x6Ku1LSooHSaSQhvqrfyh+A32Z+9/93RSs2m
- 3qjhnbt+vWcwL2qDthAJgRlWPeEGXkZh5NLepB2h9fk+or2kzXjoxBg2uTylc7F0cYqxszEqC1X
- MeN4CwhirXktF/mPVGtuilS7nCX6shSwdkf8gizycuBmopC4JL0i7UEwNqzqreE5wdmh5b3t2lm
- B/FUL+jjRypcThyaWy4JBKtgq2LU5XeNKizk9gGjalZmNZCtdsXcrYSoyLYLeCvPoNM+ktEAhE6
- xC2/IdvtHLKV+smY4h60iT509i6nSJ6aKrxazY+fvSWZiaCVJxsy+phwljEz2eeoHwnbiSikz6D
- OjqYPjLOGjdCOBA==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdeitdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddupdhrtghpthhtohepfigvihdrfhgrnhhgsehngihprdgtohhmpdhrtghpthhtohepshhhvghnfigvihdrfigrnhhgsehngihprdgtohhmpdhrtghpthhtohepgihirghonhhinhhgrdifrghnghesnhigphdrtghomhdprhgtphhtthhop
+ egrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhm
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Add to the driver-api documentation the v4l2-params.h types and
-helpers documentation.
+On Thu, 10 Jul 2025 17:09:00 +0800
+Wei Fang <wei.fang@nxp.com> wrote:
 
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
----
- Documentation/driver-api/media/v4l2-core.rst   | 1 +
- Documentation/driver-api/media/v4l2-params.rst | 5 +++++
- MAINTAINERS                                    | 1 +
- 3 files changed, 7 insertions(+)
+> Use the generic helper function phy_interface_mode_is_rgmii() to check
+> RGMII mode.
+> 
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
 
-diff --git a/Documentation/driver-api/media/v4l2-core.rst b/Documentation/driver-api/media/v4l2-core.rst
-index ad987c34ad2a8460bb95e97adc4d850d624e0b81..2d7793298c6a2046bdd59b185a411e092b659d52 100644
---- a/Documentation/driver-api/media/v4l2-core.rst
-+++ b/Documentation/driver-api/media/v4l2-core.rst
-@@ -27,3 +27,4 @@ Video4Linux devices
-     v4l2-common
-     v4l2-tveeprom
-     v4l2-jpeg
-+    v4l2-params
-diff --git a/Documentation/driver-api/media/v4l2-params.rst b/Documentation/driver-api/media/v4l2-params.rst
-new file mode 100644
-index 0000000000000000000000000000000000000000..8d2a5f004d21dfc3a81255cabbc6b7cce588db71
---- /dev/null
-+++ b/Documentation/driver-api/media/v4l2-params.rst
-@@ -0,0 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+V4L2 extensible parameters kAPI
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+.. kernel-doc:: include/media/v4l2-params.h
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3d9a8e06c59eb08360d1e8eea85e450a15ee95af..f03c10092a891a06052484b691409f0c459de87d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25972,6 +25972,7 @@ V4L2 EXTENSIBLE PARAMETERS FORMAT
- M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
- L:	linux-media@vger.kernel.org
- S:	Maintained
-+F:	Documentation/driver-api/media/v4l2-params.rst
- F:	Documentation/userspace-api/media/v4l/extensible-parameters.rst
- F:	drivers/media/v4l2-core/v4l2-params.c
- F:	include/media/v4l2-params.h
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
--- 
-2.49.0
-
+Maxime
 
