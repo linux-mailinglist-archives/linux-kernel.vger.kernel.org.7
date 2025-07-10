@@ -1,171 +1,121 @@
-Return-Path: <linux-kernel+bounces-725681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64619B00261
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A31B00283
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC6554862C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F2BF485F1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C422233D64;
-	Thu, 10 Jul 2025 12:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4917025F976;
+	Thu, 10 Jul 2025 12:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gsOw+qXY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGF6/V4O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF43195FE8;
-	Thu, 10 Jul 2025 12:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4755233D64;
+	Thu, 10 Jul 2025 12:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752151743; cv=none; b=YsZkd0xwtOCN+Mw/PMRb8Q9IY0tGwCzPDTyvehLgrlvzsjyQJ7it4ogvZyCw8jIA7Y+sWYkmuXMSku6hYyu5qyt0zbT2gafTRdzc7F3WjQIjARddKIfv1fMllaz9EE9bwgt+WczIEf/qn+u3HG+bytyWaALDzdfV4d6bt5PgZLQ=
+	t=1752152063; cv=none; b=jvWJ4gKCV5g84g7syeB/l9iJJZe6HKBvYj19euRVu/ME7uPPVtz0P0BrggdhFKm/+HI6556sCz83mClxLJDRwG9mP3eylg/D3i1aj3Vd7n1xloFLQmI2riZNeWtouZy7pZtUyWHDt7Ed6qgAiD8eoRb9/socpmya5Ziwb+FI2Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752151743; c=relaxed/simple;
-	bh=szFzYO4/tDYFL1WEanCO3dKC89I5WVhjWrKcwyefP6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B+3MHMf2LMnHrMtdaulG9cUCsCKXOPRp5ZChaW/XyPc3bANDMmsSNeZXYP1IqsIhuuEfszpWrTMfLVqqM6npBVuuUSwdtuAN1KVFO+ZZ3WHTwsE3YpdXt21/ow7mpBHKKwlpDZT4BbU7j4VQz7NrWMpkZpEFBQuclzPVUjsveAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gsOw+qXY; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752151742; x=1783687742;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=szFzYO4/tDYFL1WEanCO3dKC89I5WVhjWrKcwyefP6k=;
-  b=gsOw+qXYSVtpiZO1Mv/e2wI/SoOJmMaEiOX+QnO2M4uqrBSnQZbPVsa4
-   rDqeX5swOt5b6wQOFplJB4movjPcz9/YPZ700LMnEK1jml41OsB4dE40g
-   iTxVrkbxTuo1Od7cTzZM93h5AtZeHfec7cBu9YhjQUPelzwxZsJ2cTTmO
-   N+w3aVHomP9dmznrf/C2UEu2gsMgFi6Vr0cTLKg5o6wPguPCXW4oBsL/W
-   8Ix9pf+kAPP2AbYErj2cI9kIGdRG09RXqWCSz+EWRW4M6AH+V5gDbLWNK
-   BfS2q0r+8PMJPSkxnq383MiVeDOYTBIt+S8lggfK5LUG+NDazNQhsXXOX
-   g==;
-X-CSE-ConnectionGUID: anyy4jz2Th+durvFZlJZkQ==
-X-CSE-MsgGUID: 8JxW+FNyTc6mnZ+L53ARZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="57041119"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="57041119"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 05:49:01 -0700
-X-CSE-ConnectionGUID: Ei5/NVc0QzW/IsWIuDAE3Q==
-X-CSE-MsgGUID: X5/6MNJ6QzmtMdGKLmh5LA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="156551553"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.110.230]) ([10.125.110.230])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 05:49:01 -0700
-Message-ID: <326c60aa-37f3-458d-a534-6e0106cc244b@intel.com>
-Date: Thu, 10 Jul 2025 05:53:16 -0700
+	s=arc-20240116; t=1752152063; c=relaxed/simple;
+	bh=u74M1EW5VU19MnDPuvCa6vHxBhmEOdY3hdgjpiY39AM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RFBGvQldYwFT6G62sGL9jHDG+4VY0Pvt1HmXf86OdbP/HLKSVpumDQEs8TYjWJrQKyLjkKfQCbWonx89qoo2yC1LwoD9vtuFv37KR0025SZeYc6eUwhKD7a29AMOh70NaFYMzWlu2Mh688/V8S2B1D846w8Eh1RjRZ3iF0O2uzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGF6/V4O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28B5C4CEE3;
+	Thu, 10 Jul 2025 12:54:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752152063;
+	bh=u74M1EW5VU19MnDPuvCa6vHxBhmEOdY3hdgjpiY39AM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bGF6/V4O+tpNGko7XNwOq2zFo/JXkKkGGlryqxq1f0VgJ5zXzfsnQMhuWJTiMqa8D
+	 8YfoE7NDTrdw6GRHlkYNZRYmUf5YVTnSw7II5pdJ3+INflsNlpHC+d72Sdkqb5P+up
+	 9AhKDzmkAruXHLTwcjimh02fp1AKgM8ZzUsOr2xIDSqzzem3H4z/OSl06lntEoWf8+
+	 kHgH8jKAwfzENzyAu6ICdLvYApGcFFZA/J1ATqSXp/cIF5K5+4fDFcvBY50mGgAyK9
+	 N9mzyGlxNbJchAWXU5LHdDqZF5E27MD1KY/hwllnkt00pVBsdCX+iQmEkeG7cjedb+
+	 puK2JwdKBRvpg==
+From: Philipp Stanner <phasta@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH v4 0/8] drm/sched: Fix memory leaks with cancel_job() callback
+Date: Thu, 10 Jul 2025 14:54:04 +0200
+Message-ID: <20250710125412.128476-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
- Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, "Tested-by : Yi Lai" <yi1.lai@intel.com>
-Cc: iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
- <ee7585bd-d87c-4f93-9c8e-b8c1d649cdfe@intel.com>
- <228cd2c9-b781-4505-8b54-42dab03f3650@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <228cd2c9-b781-4505-8b54-42dab03f3650@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/9/25 19:14, Baolu Lu wrote:
->> If the problem is truly limited to freeing page tables, it needs to be
->> commented appropriately.
-> 
-> Yeah, good comments. It should not be limited to freeing page tables;
-> freeing page tables is just a real case that we can see in the vmalloc/
-> vfree paths. Theoretically, whenever a kernel page table update is done
-> and the CPU TLB needs to be flushed, the secondary TLB (i.e., the caches
-> on the IOMMU) should be flushed accordingly. It's assumed that this
-> happens in flush_tlb_kernel_range().
+Changes in v4:
+  - Change dev_err() to dev_warn() in pending_list emptyness check.
 
-Could you elaborate on this a bit further?
+Changes in v3:
+  - Remove forgotten copy-past artifacts. (Tvrtko)
+  - Remove forgotten done_list struct member. (Tvrtko)
+  - Slightly adjust commit message of patch 7.
+  - Add RBs. (Maira, Danilo, Tvrtko)
 
-I thought that the IOMMU was only ever doing "user" permission walks and
-never "supervisor". That's why we had the whole discussion about whether
-the IOMMU would stop if it saw an upper-level entry with _PAGE_USER clear.
+Changes in v2:
+  - Add new unit test to test cancel_job()'s behavior. (Tvrtko)
+  - Add RB from Maíra
 
-The reason this matters is that leaf kernel page table entries always
-have _PAGE_USER clear. That means an IOMMU doing "user" permission walks
-should never be able to do anything with them. Even if an IOTLB entry
-was created* for a _PAGE_USER=0 PTE, the "user" permission walk will
-stop when it finds that entry.
+Changes since the RFC:
+  - Rename helper function for drm_sched_fini(). (Tvrtko)
+  - Add Link to Tvrtko's RFC patch to patch 1.
 
-It doesn't matter if the entry is stale or not. The "user" permission
-IOMMU walk can't do anything with the supervisor mapping.
 
-Why does this matter? We flush the CPU TLB in a bunch of different ways,
-_especially_ when it's being done for kernel mappings. For example,
-__flush_tlb_all() is a non-ranged kernel flush which has a completely
-parallel implementation with flush_tlb_kernel_range(). Call sites that
-use _it_ are unaffected by the patch here.
+Since a long time, drm_sched_fini() can leak jobs that are still in
+drm_sched.pending_list.
 
-Basically, if we're only worried about vmalloc/vfree freeing page
-tables, then this patch is OK. If the problem is bigger than that, then
-we need a more comprehensive patch.
+This series solves the leaks in a backwards-compatible manner by adding
+a new, optional callback. If that callback is implemented, the scheduler
+uses it to cancel all jobs from pending_list and then frees them.
 
- * I'm not sure if the IOMMU will even create an IOTLB entry for
-   a supervisor-permission mapping while doing a user-permission walk.
+Philipp Stanner (8):
+  drm/panfrost: Fix scheduler workqueue bug
+  drm/sched: Avoid memory leaks with cancel_job() callback
+  drm/sched/tests: Implement cancel_job() callback
+  drm/sched/tests: Add unit test for cancel_job()
+  drm/sched: Warn if pending_list is not empty
+  drm/nouveau: Make fence container helper usable driver-wide
+  drm/nouveau: Add new callback for scheduler teardown
+  drm/nouveau: Remove waitque for sched teardown
+
+ drivers/gpu/drm/nouveau/nouveau_fence.c       | 35 ++++++----
+ drivers/gpu/drm/nouveau/nouveau_fence.h       |  7 ++
+ drivers/gpu/drm/nouveau/nouveau_sched.c       | 35 ++++++----
+ drivers/gpu/drm/nouveau/nouveau_sched.h       |  9 +--
+ drivers/gpu/drm/nouveau/nouveau_uvmm.c        |  8 +--
+ drivers/gpu/drm/panfrost/panfrost_job.c       |  2 +-
+ drivers/gpu/drm/scheduler/sched_main.c        | 37 ++++++----
+ .../gpu/drm/scheduler/tests/mock_scheduler.c  | 68 +++++++------------
+ drivers/gpu/drm/scheduler/tests/sched_tests.h |  1 -
+ drivers/gpu/drm/scheduler/tests/tests_basic.c | 42 ++++++++++++
+ include/drm/gpu_scheduler.h                   | 18 +++++
+ 11 files changed, 167 insertions(+), 95 deletions(-)
+
+-- 
+2.49.0
+
 
