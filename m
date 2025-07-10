@@ -1,114 +1,161 @@
-Return-Path: <linux-kernel+bounces-724664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2586AFF595
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:16:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E28AFF58D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2031AA8A43
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:16:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A6CF4A6F62
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA8FAD23;
-	Thu, 10 Jul 2025 00:16:22 +0000 (UTC)
-Received: from audible.transient.net (audible.transient.net [24.143.126.66])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id A78073D69
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.143.126.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3395D15A8;
+	Thu, 10 Jul 2025 00:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORrp505S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902DA173;
+	Thu, 10 Jul 2025 00:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752106582; cv=none; b=on70icpS7hbfh/GvdkKMUMKaDgVvuWKKHYBiOFsw9UVl9Hq+ECkc1KLxDehuzg1XyuezKbDtkBRX8NQX7U8HlPiNZx1ifvhxFV3yZyOCxmU4FEH/BwWTdpGufWAJ5OJEy70wNckuVt9If3cb6NlAFAfG8mXMYozpV03rZFSxgTk=
+	t=1752105992; cv=none; b=YYO+JTO0ArxwCH23+YhXYlzIfeuNQ101Waz5WHcJ8SHFV9zicjnKF1+P/wmsXgmy7qRyefsxrcsriv88rodRtvNKp+tej8RpaDsmEnmy5ilDWYDsgm29Ag1WjKZ4eLv0ZFKEJ3zWZgeL0p667DMof1MitO0cNpYHjqWYGF2kOpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752106582; c=relaxed/simple;
-	bh=ZlDHScqJfWOWyzCL4r+gdpFIRQ61fogzaddKfDoU/qE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nlgbi9ysMzuBvyjy8CWkXDAR3RIC2ps5F3nc68/Oab8222wLrA9R5v+z0fLDRluRp3oGZ2KohRRvQcJoBZcjb4YegwaHh8kMg6tdCWTofRGPF+DPKb9JtKeVY9BAWIZk4aFmIbRSZLfpDg8PCYFdCgyvY5f7GpMDaRFKixiwV9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=audible.transient.net; spf=pass smtp.mailfrom=audible.transient.net; arc=none smtp.client-ip=24.143.126.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=audible.transient.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=audible.transient.net
-Received: (qmail 4019 invoked by uid 1000); 9 Jul 2025 12:04:22 -0000
-Date: Wed, 9 Jul 2025 12:04:22 +0000
-From: Jamie Heilman <jamie@audible.transient.net>
-To: Ben Skeggs <bskeggs@nvidia.com>
-Cc: Rui Salvaterra <rsalvaterra@gmail.com>, airlied@gmail.com,
-  nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION] NVIDIA ION graphics broken with Linux 6.16-rc*
-Message-ID: <aG5axlstlhnUYks2@audible.transient.net>
-Mail-Followup-To: Ben Skeggs <bskeggs@nvidia.com>,
-	Rui Salvaterra <rsalvaterra@gmail.com>, airlied@gmail.com,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-References: <CALjTZvZgH0N43rMTcZiDVSX93PFL680hsYPwtp8=Ja1OWPvZ1A@mail.gmail.com>
- <aG2mzB58k3tkxvK-@audible.transient.net>
- <25642e5b-25ee-49b2-b08d-4c64fa2e505a@nvidia.com>
+	s=arc-20240116; t=1752105992; c=relaxed/simple;
+	bh=6A1NBhselrYKFebK5UkZ4t+OQWLuowk2Z0FQ1uuVC64=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=F21V/yx/ktMk/+4K1ikuGzf2K/v+Psq8IbljOsPU/NsfuFsGl8MXQj8viF3mo5p0ZTb74R281BBdBRGmX2yCvoj1WXCzJPHNAbgKq5XCzXTocrKc15nA+bKSqtUmmtDoWk3RYJz92KbGRCtXhu9cCYhvAHcG08LwtZAtK9wYDsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ORrp505S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB65C4CEEF;
+	Thu, 10 Jul 2025 00:06:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752105991;
+	bh=6A1NBhselrYKFebK5UkZ4t+OQWLuowk2Z0FQ1uuVC64=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ORrp505S3OyLA/3F6Zb0Y0y8cn5Lu2zljTqBIaGRCRwYeqQtjUiF6wEtSc1mo08mX
+	 R01OKtsPlkmiarEki3GD16wHxliQRXlIyvcQDzdWSQSyYs3laLDnOTB5k+FvHsT40T
+	 M3sQyQweEj7VNaLd4zOYHV56RNTEjbe6T6W7z1v8qx7F656fzr6BqRNJCArOlXA8Dn
+	 hph5s1r8cuIp7XGNTG2W+g52NWg0PAwG56/pXF2VU7mGptLOx60UlWc6c+HiT3yQzo
+	 zypq3fds3IWGRNOI2rfI9EcNmwY48Yd4+34b/54rTC+yOO6Ma8HSb/o8fy8F3VkQvy
+	 0NhNpOFlPaECw==
+Date: Thu, 10 Jul 2025 09:06:27 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mark Rutland
+ <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
+ Ghiti <alex@ghiti.fr>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Han
+ Gao <rabenda.cn@gmail.com>, Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi
+ <ziyao@disroot.org>
+Subject: Re: [PATCH] riscv: ftrace: Properly acquire text_mutex to fix a
+ race condition
+Message-Id: <20250710090627.999979465d2c263ac2833048@kernel.org>
+In-Reply-To: <20250708-alex-fixes-v1-1-5b008d3f4d0c@rivosinc.com>
+References: <20250708-alex-fixes-v1-1-5b008d3f4d0c@rivosinc.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <25642e5b-25ee-49b2-b08d-4c64fa2e505a@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Ben Skeggs wrote:
-> On 7/9/25 09:16, Jamie Heilman wrote:
-> > Rui Salvaterra wrote:
-> > > Unfortunately, bisecting is not feasible for me.
-> > That looks pretty similar to the problem I posted
-> > (https://lore.kernel.org/lkml/aElJIo9_Se6tAR1a@audible.transient.net/)
-> > that I bisected to 862450a85b85 ("drm/nouveau/gf100-: track chan
-> > progress with non-WFI semaphore release").  It still reverts cleanly
-> > as of v6.16-rc5 so you might want to give that a shot.
-> 
-> Hi,
-> 
-> Thank you for bisecting!  Are you able to try the attached patch?
+On Tue, 08 Jul 2025 08:33:48 +0000
+Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
 
-Yeah that got graphics visible again for me, though there's something
-else horrible going on now (still? I'm not sure if its new behavior or
-not) and it blows out my dmesg ringbuffer with errors or warnings of
-some kind, that I was just about to start trying to debug that when
-some power event seems to have fried my PSU.  Combined with a bunch of
-filesystem corruption, its going to be a while a before I can get that
-system back up to that spot where I can troubleshoot it again, the
-root volume is fried and I'm going to have rebuild.  Anyway, I think
-whatever it is was probably an entirely separate issue.
-
-> From 6987c1c254285305fdc20270e21709a313632e0d Mon Sep 17 00:00:00 2001
-> From: Ben Skeggs <bskeggs@nvidia.com>
-> Date: Wed, 9 Jul 2025 10:54:15 +1000
-> Subject: [PATCH] drm/nouveau/nvif: fix null ptr deref on pre-fermi boards
+> As reported by lockdep, some patching was done without acquiring
+> text_mutex, so there could be a race when mapping the page to patch
+> since we use the same fixmap entry.
 > 
-> Check that gpfifo.post() exists before trying to call it.
-> 
-> Fixes: 862450a85b85 ("drm/nouveau/gf100-: track chan progress with non-WFI semaphore release")
-> Signed-off-by: Ben Skeggs <bskeggs@nvidia.com>
+> Reported-by: Han Gao <rabenda.cn@gmail.com>
+> Reported-by: Vivian Wang <wangruikang@iscas.ac.cn>
+> Reported-by: Yao Zi <ziyao@disroot.org>
+> Closes: https://lore.kernel.org/linux-riscv/aGODMpq7TGINddzM@pie.lan/
+> Tested-by: Yao Zi <ziyao@disroot.org>
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 > ---
->  drivers/gpu/drm/nouveau/nvif/chan.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  arch/riscv/kernel/ftrace.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/nouveau/nvif/chan.c b/drivers/gpu/drm/nouveau/nvif/chan.c
-> index baa10227d51a..80c01017d642 100644
-> --- a/drivers/gpu/drm/nouveau/nvif/chan.c
-> +++ b/drivers/gpu/drm/nouveau/nvif/chan.c
-> @@ -39,6 +39,9 @@ nvif_chan_gpfifo_post(struct nvif_chan *chan)
->  	const u32 pbptr = (chan->push.cur - map) + chan->func->gpfifo.post_size;
->  	const u32 gpptr = (chan->gpfifo.cur + 1) & chan->gpfifo.max;
+> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
+> index 4c6c24380cfd9d6c51f0e4340cd674160b83a610..22e7bdf8de2b6ca950cf2c8b734bc82ea46ba8bf 100644
+> --- a/arch/riscv/kernel/ftrace.c
+> +++ b/arch/riscv/kernel/ftrace.c
+> @@ -14,6 +14,16 @@
+>  #include <asm/text-patching.h>
 >  
-> +	if (!chan->func->gpfifo.post)
-> +		return 0;
+>  #ifdef CONFIG_DYNAMIC_FTRACE
+> +void ftrace_arch_code_modify_prepare(void)
+
+To be sure this is acquire the text_mutex, add __acquires(&text_mutex) here.
+
+> +{
+> +	mutex_lock(&text_mutex);
+> +}
 > +
->  	return chan->func->gpfifo.post(chan, gpptr, pbptr);
+> +void ftrace_arch_code_modify_post_process(void)
+
+Ditto, add __releases(&text_mutex) here.
+
+others looks good to me.
+
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks,
+
+> +{
+> +	mutex_unlock(&text_mutex);
+> +}
+> +
+>  unsigned long ftrace_call_adjust(unsigned long addr)
+>  {
+>  	if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_CALL_OPS))
+> @@ -29,10 +39,8 @@ unsigned long arch_ftrace_get_symaddr(unsigned long fentry_ip)
+>  
+>  void arch_ftrace_update_code(int command)
+>  {
+> -	mutex_lock(&text_mutex);
+>  	command |= FTRACE_MAY_SLEEP;
+>  	ftrace_modify_all_code(command);
+> -	mutex_unlock(&text_mutex);
+>  	flush_icache_all();
 >  }
 >  
+> @@ -149,6 +157,8 @@ int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
+>  	unsigned int nops[2], offset;
+>  	int ret;
+>  
+> +	guard(mutex)(&text_mutex);
+> +
+>  	ret = ftrace_rec_set_nop_ops(rec);
+>  	if (ret)
+>  		return ret;
+> @@ -157,9 +167,7 @@ int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
+>  	nops[0] = to_auipc_t0(offset);
+>  	nops[1] = RISCV_INSN_NOP4;
+>  
+> -	mutex_lock(&text_mutex);
+>  	ret = patch_insn_write((void *)pc, nops, 2 * MCOUNT_INSN_SIZE);
+> -	mutex_unlock(&text_mutex);
+>  
+>  	return ret;
+>  }
+> 
+> ---
+> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+> change-id: 20250708-alex-fixes-1e719b9899f3
+> 
+> Best regards,
 > -- 
-> 2.49.0
+> Alexandre Ghiti <alexghiti@rivosinc.com>
 > 
 
 
 -- 
-Jamie Heilman                     http://audible.transient.net/~jamie/
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
