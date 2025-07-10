@@ -1,130 +1,115 @@
-Return-Path: <linux-kernel+bounces-725543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2C5B00086
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:27:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D828AFFEBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC28D1C42F2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:28:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02E083BBAD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0855E2E541B;
-	Thu, 10 Jul 2025 11:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40C22D59EF;
+	Thu, 10 Jul 2025 10:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IeaBNTbq"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNdY50vl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05CD2C15B7;
-	Thu, 10 Jul 2025 11:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3978D28F508;
+	Thu, 10 Jul 2025 10:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752146861; cv=none; b=dTBI3XHZIOTcW6SQmIthZ5LBQbvxdwMYGwNpEoHOIWzhc2MHDnJkpZcWO2pDOiTc5PYLvxfV+JretAz29nefJ0DMK14APgCNk8MF8VZczYK+AGtegv+KKGSHi+NVYJlKz7O/Cmw3QMPyREUX3lomQ9maHzvM9NzR5+R04TCjGUk=
+	t=1752142033; cv=none; b=VkslMnQnLlfwc8douhgHxvltodX8OHB+tG+XKUWNfDgOzNjB7Kcx7hHm+TEnrxh2TDLvXmjy7cI271r+yljkOSaLaQ5lfyHmgmzDhv47ud1/RUrHu+BktYdmSKV+etz6TU7SalLbJlBeLrRusZuoYtQ1BvMeNexNLCG0Mnr9F1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752146861; c=relaxed/simple;
-	bh=YclzCq5dgl0eE5mdpw+qGsvA9kPcMfcy+INW0Pn6OCk=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=I+Wrs/dHE9RXybAewVMGP8GFHlFQ3RC71zyeXFNPAcXS4Y7BooYAMG6pMQkIn/k2vtd8Z6IjR0gFMRJ7nkyyNDKsARb8Nt3OwFyQrEdXcJfkkwGm/Rj7E8yM/vV/uIyjaVX+eyBd3aRL3tyWL+cy3Xeb15PZCc8X9wwOVbE23AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IeaBNTbq; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-453643020bdso6293235e9.1;
-        Thu, 10 Jul 2025 04:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752146858; x=1752751658; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aR5gXXhx3VKvItg1BxdxP0PttmLiDwY44F0xz6t0vkU=;
-        b=IeaBNTbqdhpaOEVBZy2z24GFg77a14/m5533IK2VXGO5oOSkCzl74Rr9/XgrXbQiOQ
-         QZh4sN9i1BpLOrlVbgB7SvZZcPtN5NH+u8hnQK1Y8xPY7qtWY9qWVGgFAIbaqS5ZbjUG
-         5QL+ZJvmu6EPNZx1uW9JYUmAmCVx2N4ArAtMbiAFRdO8W397/NAS/yGww5EULg8hyonp
-         z4sR7AcYNN40Jvc/HzFTHb+GoROLAY6xqI7dOxqRON1ZNqeev4j4drsui0Hyq6Xi+oY6
-         5gw+uvVVs4s0zowOBjV76aML7lwpuqOAx/AYVvb6xJ1WLgiFeXr501edeQKZkxlzw00L
-         YqqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752146858; x=1752751658;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aR5gXXhx3VKvItg1BxdxP0PttmLiDwY44F0xz6t0vkU=;
-        b=E12M3/J10xEngwn7KPbpipl0EXngR5Atp7fOrqUmN+Pb7m0rGY7vCsCU1vw/4JwtjD
-         HZLw0vAVsD0iBNNKfLrV99r5vto9U0SF0Ppfq/Vnuld+xQyLyhBBWPq7Cae9iyZPTr6X
-         h4iVsJkyPe6otJP/AEr7x/cMk99yXY3w2R/7jT+xmO9weWGsLxQ1d8PBVswbLzTSCiEK
-         G61FWdVw8oJznYbmz4SXlBSV7ohDoxUCl1qe59sMwm/QRYlBemKjIU2uiWY63gtbO/84
-         2MDmx+iDzYsfG4UBBoa7j2bsFlyhxYiR6TS2/PZPwzeNzbLaecmcS5HS7RABqlEeWF55
-         VAdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWISgNXOI0kWVIXH3ENB293MSHMinwy4uynh0v5NGph7/yhzpFJK+GgIhzJ5bI0bFZKi5c7BRp4oP3IPYI=@vger.kernel.org, AJvYcCX9Uu3eSX0Qm//OL+3COgqtvXd17A4wqFrnE4HHuOMO0zFJldH8QHvD2i84yBOWuEmMvEj6rCQB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2uoSCbYhOsAJv+NGeuP3Twj8rD24Hog9Kl10GNae7TM2GRfop
-	6uhHV61f8mMwgfMuyUCTWP7MS9w2QBJXOscjVC2zsINBJtXXLI4ht/0a
-X-Gm-Gg: ASbGncuNxB7wmrIizV6wr/RHU4YAnFK0qAlGJFY983tZoICtYkr/0XckrjgvcsGWeVD
-	JB3h8ZEVtShq6hLS5K6trdY1Va+VPC7prx9uVl49F/iPGOKkDUXxefrHF2+f268476usX9h5ee3
-	4gl7mFImzk8Ul5cQ3Mdq6lRJQ2DMBLzgCktzxsq84/PxgNIU7NC32LUp1kQuOS+/Fq3TuFQrXFP
-	qsDJM9a0sIlsHC2rWlgxr55k6YTskFnosbYAhjn7eHjCfPHKsCxxxuOXv8fCvBYJmJClrK/ylvQ
-	L9t/lve4NhZrIcSpZCtVM5+hHjfQnEM/QS8+3D5TvVd0DWiJ1JVvaqUeK0EzIZzzWZDPqxbgDJo
-	=
-X-Google-Smtp-Source: AGHT+IGeZUzCYmlnvQ1gNQzLgpBT+E7yRCR2OB33C3dIxv4RY59Cz2VgZaNawdxcr0x12uYPeJ5XMQ==
-X-Received: by 2002:a05:6000:310e:b0:3a5:85cb:e9f3 with SMTP id ffacd0b85a97d-3b5e44e3b34mr5080756f8f.12.1752146857827;
-        Thu, 10 Jul 2025 04:27:37 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:a8bc:3071:67a5:abea])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd1932sm1652558f8f.17.2025.07.10.04.27.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 04:27:37 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
- <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
- <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
- Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
- Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Randy
- Dunlap" <rdunlap@infradead.org>,  "Ruben Wauters" <rubenru09@aol.com>,
-  "Shuah Khan" <skhan@linuxfoundation.org>,  joel@joelfernandes.org,
-  linux-kernel-mentees@lists.linux.dev,  linux-kernel@vger.kernel.org,
-  lkmm@lists.linux.dev,  netdev@vger.kernel.org,  peterz@infradead.org,
-  stern@rowland.harvard.edu
-Subject: Re: [PATCH v9 05/13] docs: sphinx: add a parser for yaml files for
- Netlink specs
-In-Reply-To: <eab7fb6b3ab7a29a71c35452478619745e66b621.1752076293.git.mchehab+huawei@kernel.org>
-Date: Thu, 10 Jul 2025 09:27:31 +0100
-Message-ID: <m24ivk78ng.fsf@gmail.com>
-References: <cover.1752076293.git.mchehab+huawei@kernel.org>
-	<eab7fb6b3ab7a29a71c35452478619745e66b621.1752076293.git.mchehab+huawei@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1752142033; c=relaxed/simple;
+	bh=kTfBtHQVaqOAbu7HaUkw0dQpJOXNcnY0mNBZzC7M93g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XqBWp90K3TGhZRS3d/afEoQyw7FTLjwDqTR9XQuErwzygWPpvje8ek2ZHMkEEN0XWVMiwy7ZFxNai5CAfQEPXLrO5YNMM8KYHsDt3VDCfZlA3eSP1LUfNdRMpeE5fxNwdGjtXR9AnDTbtFxTuVe6zXe4JvKe5MVAbBsij8AwfZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNdY50vl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3E8FC4CEE3;
+	Thu, 10 Jul 2025 10:07:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752142032;
+	bh=kTfBtHQVaqOAbu7HaUkw0dQpJOXNcnY0mNBZzC7M93g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fNdY50vlmF0c3atPR0wpveOpaNYxBV09YlwyUysx8+WWxAzCTJ6C4H25qZHs6+vPz
+	 fQFnAPMh4qh9tsq8v4xcCdX7bkFwq+8QmtyQlczn71+bRGiZPS7D6SN/c+uW5JQbkq
+	 6U6PQz966SOHuYgvna7pN128BUKoWV26N3haXFPcvWNwPtnNcIfyv2euWSK64EK4/P
+	 suUv78F8cyyLf0JxlDmKu0+pUzOjMPKabsggu0IF0J8lmmaHECpLgOt4bZvnvxESgp
+	 nT1jiX+TFZ69Ct8gMbpXu+HI1eYaKUCnuvIdTS/AJ6IoDlKLOJTFVrHGW5WfrNbriR
+	 TtZxnGmteDWjw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uZoBE-0000000082t-3BZ0;
+	Thu, 10 Jul 2025 12:07:05 +0200
+Date: Thu, 10 Jul 2025 12:07:04 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Christopher Obbard <christopher.obbard@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Rui Miguel Silva <rui.silva@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 0/3] Add support for OLED panel used on Snapdragon
+ Lenovo T14s Gen6
+Message-ID: <aG-QyF12rGY55gcG@hovoldconsulting.com>
+References: <20250402-wip-obbardc-qcom-t14s-oled-panel-v5-0-ff33f4d0020f@linaro.org>
+ <aCw9pYehCdfXXeiR@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCw9pYehCdfXXeiR@hovoldconsulting.com>
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+Hi Chris (and Neil),
 
-> Add a simple sphinx.Parser to handle yaml files and add the
-> the code to handle Netlink specs. All other yaml files are
-> ignored.
->
-> The code was written in a way that parsing yaml for different
-> subsystems and even for different parts of Netlink are easy.
->
-> All it takes to have a different parser is to add an
-> import line similar to:
->
-> 	from doc_generator import YnlDocGenerator
->
-> adding the corresponding parser somewhere at the extension:
->
-> 	netlink_parser = YnlDocGenerator()
->
-> And then add a logic inside parse() to handle different
-> doc outputs, depending on the file location, similar to:
->
->         if "/netlink/specs/" in fname:
->             msg = self.netlink_parser.parse_yaml_file(fname)
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+On Tue, May 20, 2025 at 10:30:29AM +0200, Johan Hovold wrote:
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+> On Wed, Apr 02, 2025 at 03:36:31PM +0100, Christopher Obbard wrote:
+> > The Snapdragon Lenovo T14s Gen6 can be bought with a number of different
+> > panels. This patch series adds support for the OLED model which has a
+> > Samsung ATNA40YK20 panel.
+> > 
+> > With this patch series the backlight of the OLED eDP panel does not
+> > illuminate since the brightness is incorrectly read from the eDP panel
+> > as (to be clear this is not a regression). This is fixed in [0].
+> > 
+> > [0]: https://lore.kernel.org/all/20250330-wip-obbardc-qcom-t14s-oled-panel-brightness-v6-1-84ad1cd1078a@linaro.org/
+> 
+> It would be good to get OLED support for the T14s merged. Are you
+> planning on sending another revision of this series?
+
+No reply for over a month. Do you intend to respin these or should
+someone else take over?
+
+Neil, do you have the OLED version now?
+
+> > Christopher Obbard (3):
+> >       arm64: dts: qcom: x1e80100: add epd hpd pinctrl
+> >       arm64: dts: qcom: x1e78100-t14s: add hpd gpio to dp controller
+> 
+> >       arm64: dts: qcom: x1e78100-t14s-oled: add edp panel
+> 
+> Strictly speaking you could have posted this last patch on it's own as
+> it doesn't depend on adding the hpd pinctrl.
+
+Johan
 
