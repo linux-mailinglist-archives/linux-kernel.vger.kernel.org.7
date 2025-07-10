@@ -1,109 +1,220 @@
-Return-Path: <linux-kernel+bounces-726476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6557B00D75
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:00:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B1FB00D79
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C913567644
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:00:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B5D75679BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D8C2FD88B;
-	Thu, 10 Jul 2025 21:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD102FD895;
+	Thu, 10 Jul 2025 21:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cw0Po9jz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="NKoAhR2n"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24BB288C0A;
-	Thu, 10 Jul 2025 21:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE63271474;
+	Thu, 10 Jul 2025 21:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752181208; cv=none; b=LoFwcXZ+eF5T34wAlNop2Wek3hgZDzMuLHcdPB8x2kRzFKxA8JbmPcHMAay3R7CupbEF8VnSmCCQjYDhXooMhyhxMT8eZNHyWjqEYVSBMwXonwGdrU28BF6jZfA8BA2lojA9Ys3cE5TNLZ2Ogoi5a+n+N/sJ/uLEDDKu8lsEH6c=
+	t=1752181472; cv=none; b=EV6uFQ98JQ3oLyotAN4+GO5clqaZhTBjYFD9yx71Tw0l3wmC/nFMF4y/EXpJkN9rbrLyU6J4nYt7hlzk6rGmvufiyofi09umeBPuq5jnn9AFkAJdlPYCTHQUxU3P1T82Hu8huzE4mZpjolfyrINrBmnOnV5cC3FL3AUYVWV0cfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752181208; c=relaxed/simple;
-	bh=MewW7/+o8jjvZCCPAiXzkcATxmHODd29D85iDo4C6/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=esHzv+/lYcMIJkW9ET0JP/UHCGR+bHEBcXABLYMIY7cV/keqFMojHQLUq5Fdo7pq/oqqdRvYRKJ7OdJ4mXTRa+YnM2J1gYGDlBUoEVL4zfMycn3ygvtfcoc67lRlZg7mSmIja8eGSa3cVLayMJ21CK1N6myHTE9yR62rkvwu0gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cw0Po9jz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32A4CC4CEE3;
-	Thu, 10 Jul 2025 21:00:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752181208;
-	bh=MewW7/+o8jjvZCCPAiXzkcATxmHODd29D85iDo4C6/Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cw0Po9jzlMUjPqWpMGa3JmmBs8qRn4ccQxsczXqp7qgR6aRRsHF+DE2bSDEwQQBP4
-	 I0b0G/fSn3B7wsgm9pMdPjLO/IZc1SbO2D81ch1852sxjhGtQuUK5/+8r9JvFllG0s
-	 Z7OYhhl15781l/ITp0MO26j7ZK6Sc7q5bmjdkQPM6yegffImghltyi/rJg/57P542s
-	 ABRuHxHyoWse9e/GL2hh4AjgDy0mxvD0NAd2MBekD8PfWFupXjR7Z4NRsGWVh9uGL6
-	 QxY+PWYQXib4cQNtLPsI24Hdwb1dkhsXRIZaZcmb3x67rQLmcG8v8erktQz/1oP3vs
-	 baVNbw2mfKzrw==
-Date: Thu, 10 Jul 2025 14:00:06 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
-	Yangtao Li <frank.li@vivo.com>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: thead: th1520-ap: Correctly refer the parent
- of osc_12m
-Message-ID: <aHAp1q9tLy465gnO@x1>
-References: <20250710092135.61049-1-ziyao@disroot.org>
- <20250710092135.61049-2-ziyao@disroot.org>
+	s=arc-20240116; t=1752181472; c=relaxed/simple;
+	bh=X3w/Lmb4tCjm3BYfefbohBWkasM97PEphdqhUzf90po=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OJupyKXY5oIhPD3Ke9buEixHJByI/EQeIWIeccmHZmfI4RztKXqx4zC3P5JXdVwgzQ/P5Ip9LuPjHHjXcD76Ku2t5cofqWzNegPoRZ07YwIF5TjJEg6XBy9AI7oDUHdiBR8xVtZlVhfYrXqOezI3s2s5VF9rcj4LWCrNuWwrVao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=NKoAhR2n; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9D96210380104;
+	Thu, 10 Jul 2025 23:04:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1752181460; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=hEznsWOa6dCQ6qINcx3pqCiUfEhxMJkXZwCwsLHg0BI=;
+	b=NKoAhR2nPBFfkuYKVaXMV1hlVbbaBvMMsxgB4L8meNIyaawoWY+qb/m/YnbvrBbzZt/5qh
+	91ANS8GhzV4ryPkjFmdSUoLDd10tWu/XC1iVwBzeR+IotLoRDcKBMRQ7NtgJFCEsEs9zhr
+	rLmMFB08IS99ST23K3z4MmigurNJEcztPB6G1qGHRyCqzOT9zbE0RNTHMJyM7vB1LNgOPU
+	vZcOCZeJjMS7dGKtkETAJjL2gY0PmEOkTRblnC0N8UOm6CIXkNX4QyjRUbQS9cQqRw+iO8
+	EbuvR2DBv739MI8UDnsCOnlxMPfxSBIQ5gV9mVjVigKWICFeC8Mywd5TohJbKQ==
+Date: Thu, 10 Jul 2025 23:04:13 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>, Andrew Lunn
+ <andrew@lunn.ch>
+Subject: Re: [net-next v14 04/12] net: mtip: The L2 switch driver for imx287
+Message-ID: <20250710230413.3b6798f7@wsk>
+In-Reply-To: <20250709131651.391e11c5@wsk>
+References: <20250701114957.2492486-1-lukma@denx.de>
+	<20250701114957.2492486-5-lukma@denx.de>
+	<617d064e-99e4-491c-8fe7-d74d8174d9fb@redhat.com>
+	<20250709131651.391e11c5@wsk>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710092135.61049-2-ziyao@disroot.org>
+Content-Type: multipart/signed; boundary="Sig_/bvMryEMKXN67+shfLzzO8Cd";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Jul 10, 2025 at 09:21:34AM +0000, Yao Zi wrote:
-> The "osc_12m" fixed factor clock refers the external oscillator by
-> setting clk_parent_data.fw_name to osc_24m, which is obviously wrong
-> since no clock-names property is allowed for compatible
-> thead,th1520-clk-ap.
-> 
-> Refer the oscillator as parent by index instead.
-> 
-> Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> ---
->  drivers/clk/thead/clk-th1520-ap.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-> index ebfb1d59401d..42feb4bb6329 100644
-> --- a/drivers/clk/thead/clk-th1520-ap.c
-> +++ b/drivers/clk/thead/clk-th1520-ap.c
-> @@ -582,7 +582,14 @@ static const struct clk_parent_data peri2sys_apb_pclk_pd[] = {
->  	{ .hw = &peri2sys_apb_pclk.common.hw }
->  };
->  
-> -static CLK_FIXED_FACTOR_FW_NAME(osc12m_clk, "osc_12m", "osc_24m", 2, 1, 0);
-> +static struct clk_fixed_factor osc12m_clk = {
-> +	.div		= 2,
-> +	.mult		= 1,
-> +	.hw.init	= CLK_HW_INIT_PARENTS_DATA("osc_12m",
-> +						   osc_24m_clk,
-> +						   &clk_fixed_factor_ops,
-> +						   0),
-> +};
->  
->  static const char * const out_parents[] = { "osc_24m", "osc_12m" };
->  
-> -- 
-> 2.50.0
+--Sig_/bvMryEMKXN67+shfLzzO8Cd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>
+Hi Paolo,
 
-Thanks for fixing this. osc_12m now appears under osc_24m in
-clk_summary.
+> Hi Paolo,
+>=20
+> > On 7/1/25 1:49 PM, Lukasz Majewski wrote: =20
+> > > Changes for v14:
+> > > - Increase the maximal received frame size to 1536 (for VLAN)
+> > > - Use spin_{un}lock_irq{save|restore} when altering dynamic table
+> > > of the switch and mtip_adjust_link() as both cannot be done when
+> > > switch IRQ is potentially enabled   =20
+> >=20
+> > Why?
+> >=20
+> >  (the previous one alters entries in switching table =20
+> > >   the latter one may reset the whole IP block)   =20
+> >=20
+> > What really matters is the scope (process/atomic, bh, hardirq) of
+> > the relevant callers (the functions that do acquire the given
+> > locks).=20
+>=20
+> Maybe I will explain the problem here case (function) by case:
+> - mtip_adjust_link()
+>   This function is called when link change is detected (speed, duplex,
+>   up/down link).
+>=20
+>   The problem here is that:
+> 	1. It is called for both MTIP ports (as both are managed by
+> 	this driver)
+>=20
+> 	2. NXP's "legacy" driver advises reset of the whole IP block
+> 	when such change is detected.=20
+>=20
+> 	Considering the above - interrupts shall be disabled as we may
+> 	end up in undefined state of the IP block - especially that
+> 	re-configuration of switch requires interrupts initialization.
+>=20
+>=20
+> - mtip_atable_dynamicms_learn_migration() - update of the switching
+>   table
+>=20
+> 	Can be called from:
+> 	1. function triggered when timer fires (once per 100ms)
+>=20
+> 	2. mtip_switch_rx() which is called from mtip_rx_napi()
+> callback (which is protected by net core).
+>=20
+> 	It looks like the _irqsave/_irqrestore is an overkill here.
+> 	Both above contexts seems to not require IRQs disabled. I can
+> 	confirm that use of plain spin_{un}lock() functions works.
+>=20
+> >  =20
+> > > +/* dynamicms MAC address table learn and migration */
+> > > +static void
+> > > +mtip_atable_dynamicms_learn_migration(struct switch_enet_private
+> > > *fep,
+> > > +				      int curr_time, unsigned
+> > > char *mac,
+> > > +				      u8 *rx_port)
+> > > +{
+> > > +	u8 port =3D MTIP_PORT_FORWARDING_INIT;
+> > > +	struct mtip_port_info *port_info;
+> > > +	u32 rx_mac_lo =3D 0, rx_mac_hi =3D 0;
+> > > +	unsigned long flags;
+> > > +	int index;
+> > > +
+> > > +	spin_lock_irqsave(&fep->learn_lock, flags);   =20
+> >=20
+> > If the _irqsave() part is needed (and I don't see why??!) than all
+> > the other `learn_lock` users should also use such variant, unless
+> > already in hardirq scope.
+> >=20
+> > [...] =20
+> > > +static void mtip_adjust_link(struct net_device *dev)
+> > > +{
+> > > +	struct mtip_ndev_priv *priv =3D netdev_priv(dev);
+> > > +	struct switch_enet_private *fep =3D priv->fep;
+> > > +	struct phy_device *phy_dev;
+> > > +	int status_change =3D 0, idx;
+> > > +	unsigned long flags;
+> > > +
+> > > +	spin_lock_irqsave(&fep->hw_lock, flags);   =20
+> >=20
+> > Same here. =20
+>=20
+> Please see the explanation above.
+>=20
 
-Drew
+Is the explanation enough (and from other e-mails), so I can proceed
+with next version of this patch set?
+
+> >=20
+> > /P
+> >  =20
+>=20
+>=20
+>=20
+>=20
+> Best regards,
+>=20
+> Lukasz Majewski
+>=20
+> --
+>=20
+> DENX Software Engineering GmbH, Managing Director: Johanna Denk,
+> Tabea Lutz HRB 165235 Munich, Office: Kirchenstr.5, D-82194
+> Groebenzell, Germany
+> Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email:
+> lukma@denx.de
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH, Managing Director: Johanna Denk,
+Tabea Lutz HRB 165235 Munich, Office: Kirchenstr.5, D-82194
+Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/bvMryEMKXN67+shfLzzO8Cd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmhwKs0ACgkQAR8vZIA0
+zr2/Vgf8CAqpAWYmJVhTy2njCpyqUymWCFVNmNXK6Gllt/Zw6SkfkIq7Mi1felFl
+EJkW8NkrKNvDxmLEuj95mjwk8ICa449UxTacaOTIGSx7cf2NaHuHZ/C3uaPE7qXO
+JRczFT5e/V94lznm06bF+Msp5anCRiP51OB8T3CT5jPuA3lBe3rv9Kib9QmqF/9y
+8scAsy79+4aVtbsGcsghx7sxi/en9c2j2XkrJstKEJhpbYlRq3m/lUlKYzVLdkfq
+YynjGqmcQJMdO4uyORkyyk0D9IqRrVhLKvrWjs7FzcBA+yjjz9XL1GjznewUqfM4
+9GPDqpw9n7gaQxIB+WQj1EhhaJorrA==
+=okWF
+-----END PGP SIGNATURE-----
+
+--Sig_/bvMryEMKXN67+shfLzzO8Cd--
 
