@@ -1,113 +1,176 @@
-Return-Path: <linux-kernel+bounces-725138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECBDDAFFB2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:42:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C614AFFB48
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26E993B630A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:42:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EA107AA408
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAB4289E32;
-	Thu, 10 Jul 2025 07:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5780428B7D4;
+	Thu, 10 Jul 2025 07:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRavN8q+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBtK6QCz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A33928A1CC;
-	Thu, 10 Jul 2025 07:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A232328B400;
+	Thu, 10 Jul 2025 07:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752133339; cv=none; b=EAwbdVfQT6RobVR0hSqNdKBLYMNLhN1DGWLXRygG+vnN3oVdTKLFyr2Rq4/YcskDXcrK7S8s6bEE4Gwvsr4hk8tdXuXIs+SC9W9u4vWmwE8ahDHOMUo3C/+7blnZWrRXdiaF+8xLzyyyLKvFNgbdXx9PFoNkR69+kv1OTXHr6rY=
+	t=1752133489; cv=none; b=ROJD5j260LNsnY8DYdTrjv6dQkwz5NjMDBLSOgrb50Ih1vLUC8sq7MJnL/78ZAEKoYMD4KGmSgFKQ3m3NGCeKT3Lr/XdOeuwiP8A6Q45EfxRnkP9yNyEhKGnMEztRsu2I3Pz5SvRR6bVZPJ6Mtctaz/q6Cy1t6hWmHFo53SetIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752133339; c=relaxed/simple;
-	bh=5HRCIqpzoAh0WXlu0yZBnyBN2sSTIllnMwkUl+dRio4=;
+	s=arc-20240116; t=1752133489; c=relaxed/simple;
+	bh=b3Rdbdf5MNwNMAtyitEKPxtTnss96mJKH9ynZvJLS8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFGvqXbd0RIKNL2osxKK162ZZms1kqJs7D5vP+X7Dj82IdHKxSRqaf/HmuIg5+aDkrAJSGybQ7jFy/tF1XsOTjnCOdlHrSKDL2vvGd+LYSQT8u1M5YMz2eJsD10J8aABnkHZb72+uxuP9GWIaSqxJoGGjb522V7EOg5rVs8kCBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRavN8q+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49ABAC4CEE3;
-	Thu, 10 Jul 2025 07:42:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uk9zwyhv2tfgTf/SQdvWF5dbbUpUk5B8yTNiq+NzhFQd6wdlGuG+Ye7YXJFc5A2O1F/G0zCYUaIBloLqMqxrTt1acWWaUPDMa+XEPV+mYbQUv35TAYAKQbMvV3ZeoDvQXB3/v0MJa31H4EPUZ3X6Dj25WfRXG4Z4tuxkGufGp2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBtK6QCz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10819C4CEE3;
+	Thu, 10 Jul 2025 07:44:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752133339;
-	bh=5HRCIqpzoAh0WXlu0yZBnyBN2sSTIllnMwkUl+dRio4=;
+	s=k20201202; t=1752133489;
+	bh=b3Rdbdf5MNwNMAtyitEKPxtTnss96mJKH9ynZvJLS8Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JRavN8q+200eZihwvBuXy+p6Yd11P7b3U0n8eZwyaoiShn+t9JXXPAQ5Y253hDyqT
-	 GhaS7V//zKvEN8EGuh5P5FRlL6LlSV90ia7TbemMqDTZZ5MK3RQqxxn6mdPBr/2/MY
-	 +WdtKlYfkRPZpSKh7pOxF0yQ57i51p3EQnKDyVUFYwLgWjl8fdzKDWXGXhG2viBUxh
-	 U/VRFE9EbXmHupE4x1u+gtPN3gXYfi2tG/p8amSgfjdYcNTfUeOGPZh7pdOOvJdJFW
-	 ueoHDoApOKisedgJCmPmY/G7QWUTAwLLDvuQ5tr46xaUcVtUMXCQi3C6FOCXOIdoFz
-	 a28AcikNG37Mg==
-Date: Thu, 10 Jul 2025 09:42:13 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>, 
-	konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, mjguzik@gmail.com, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk, Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
-	ntfs3@lists.linux.dev, Dave Kleikamp <shaggy@kernel.org>, 
-	jfs-discussion@lists.sourceforge.net
-Subject: Re: [syzbot] [nilfs?] kernel BUG in may_open (2)
-Message-ID: <20250710-getrunken-fazit-74e068b05c16@brauner>
-References: <686d5a9f.050a0220.1ffab7.0015.GAE@google.com>
- <xrpmf6yj32iirfaumpbal6qxph7mkmgwtra7p4hpbvzozlp4zr@2bzl4p5ejgfj>
+	b=ZBtK6QCzjWH7FsS27j9XD+N0h2S++QDXv+gOAh9fbbGuLZKCgE6cMHt+pWvUjikG4
+	 JoAa5A4gHENBPMVSvo6swTHfUMuSGR3qrpu1p7W5sdEKrzL9n6WXjKc6QUTi2QI8WB
+	 A8uZJtm/ta5m1vxe2ePJGAQHKCpBcRsYC/lV8vRsIP12QJN8/Kb+jWFoUmH8pNZlfL
+	 aYi4ii3Bc0akOBPclJR6SARhg9e45GoJPZDGxRyTil1LCBiEPiEk2NkYDhQhIAKySB
+	 Y0+WhJ/0mVe52qQHC+gf36jU7UpiAPg8XpfVFzb8mwn+rO0hRmeCgSOezPYXhcj/bu
+	 dk69Jm3CIKCjQ==
+Date: Thu, 10 Jul 2025 09:44:47 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Jared Kangas <jkangas@redhat.com>, Mattijs Korpershoek <mkorpershoek@kernel.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, iommu@lists.linux.dev
+Subject: Re: [PATCH v6 2/2] dma-buf: heaps: cma: Create CMA heap for each CMA
+ reserved region
+Message-ID: <20250710-daft-secret-squid-fb3eee@houat>
+References: <20250709-dma-buf-ecc-heap-v6-0-dac9bf80f35d@kernel.org>
+ <20250709-dma-buf-ecc-heap-v6-2-dac9bf80f35d@kernel.org>
+ <6045bcfb-35ef-410b-bd7c-0ca7c5c589c4@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="2ftlwphj6gvo3egm"
 Content-Disposition: inline
-In-Reply-To: <xrpmf6yj32iirfaumpbal6qxph7mkmgwtra7p4hpbvzozlp4zr@2bzl4p5ejgfj>
+In-Reply-To: <6045bcfb-35ef-410b-bd7c-0ca7c5c589c4@ti.com>
 
-On Wed, Jul 09, 2025 at 10:30:12AM +0200, Jan Kara wrote:
-> Hi!
-> 
-> On Tue 08-07-25 10:51:27, syzbot wrote:
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    d7b8f8e20813 Linux 6.16-rc5
-> > git tree:       upstream
-> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=107e728c580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=72aa0474e3c3b9ac
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-> > compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11305582580000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10952bd4580000
-> > 
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/605b3edeb031/disk-d7b8f8e2.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/a3cb6f3ea4a9/vmlinux-d7b8f8e2.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/cd9e0c6a9926/bzImage-d7b8f8e2.xz
-> > mounted in repro: https://storage.googleapis.com/syzbot-assets/2a7ab270a8da/mount_0.gz
-> > 
-> > The issue was bisected to:
-> > 
-> > commit af153bb63a336a7ca0d9c8ef4ca98119c5020030
-> > Author: Mateusz Guzik <mjguzik@gmail.com>
-> > Date:   Sun Feb 9 18:55:21 2025 +0000
-> > 
-> >     vfs: catch invalid modes in may_open()
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17f94a8c580000
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=14054a8c580000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=10054a8c580000
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com
-> > Fixes: af153bb63a33 ("vfs: catch invalid modes in may_open()")
-> > 
-> > VFS_BUG_ON_INODE(!IS_ANON_FILE(inode)) encountered for inode ffff8880724735b8
-> 
-> FWIW the reproducer just mounts a filesystem image and opens a file there
-> which crashes because the inode type is invalid. Which suggests there's
-> insufficient validation of inode metadata (in particular the inode mode)
-> being loaded from the disk... There are reproducers in the syzbot dashboard
-> for nilfs2, ntfs3, isofs, jfs. I'll take care of isofs, added other
-> filesystem maintainers to CC.
 
-I'm certainly happy to have added that assert.
+--2ftlwphj6gvo3egm
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 2/2] dma-buf: heaps: cma: Create CMA heap for each CMA
+ reserved region
+MIME-Version: 1.0
+
+On Wed, Jul 09, 2025 at 11:14:37AM -0500, Andrew Davis wrote:
+> On 7/9/25 7:44 AM, Maxime Ripard wrote:
+> > Aside from the main CMA region, it can be useful to allow userspace to
+> > allocate from the other CMA reserved regions.
+> >=20
+> > Indeed, those regions can have specific properties that can be useful to
+> > a specific us-case.
+> >=20
+> > For example, one of them platform I've been with has ECC enabled on the
+> > entire memory but for a specific region. Using that region to allocate
+> > framebuffers can be particular beneficial because enabling the ECC has a
+> > performance and memory footprint cost.
+> >=20
+> > Thus, exposing these regions as heaps user-space can allocate from and
+> > import wherever needed allows to cover that use-case.
+> >=20
+> > For now, only shared-dma-pools regions with the reusable property (ie,
+> > backed by CMA) are supported, but eventually we'll want to support other
+> > DMA pools types.
+> >=20
+> > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > ---
+> >   drivers/dma-buf/heaps/cma_heap.c | 52 +++++++++++++++++++++++++++++++=
+++++++++-
+> >   1 file changed, 51 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/c=
+ma_heap.c
+> > index 0df007111975447d555714d61ead9699287fd65a..31a18683ee25788a800f3f8=
+78fd958718a930ff7 100644
+> > --- a/drivers/dma-buf/heaps/cma_heap.c
+> > +++ b/drivers/dma-buf/heaps/cma_heap.c
+> > @@ -19,10 +19,12 @@
+> >   #include <linux/err.h>
+> >   #include <linux/highmem.h>
+> >   #include <linux/io.h>
+> >   #include <linux/mm.h>
+> >   #include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_reserved_mem.h>
+> >   #include <linux/scatterlist.h>
+> >   #include <linux/slab.h>
+> >   #include <linux/vmalloc.h>
+> >   #define DEFAULT_CMA_NAME "default_cma_region"
+> > @@ -421,7 +423,55 @@ static int __init add_default_cma_heap(void)
+> >   				ERR_PTR(ret));
+> >   	}
+> >   	return 0;
+> >   }
+> > -module_init(add_default_cma_heap);
+> > +
+> > +static int __init add_cma_heaps(void)
+> > +{
+> > +	struct device_node *rmem_node;
+> > +	struct device_node *node;
+> > +	int ret;
+> > +
+> > +	ret =3D add_default_cma_heap();
+>=20
+> Will this double add the default CMA region if it was declared
+> using DT (reserved-memory) when all those nodes are again scanned
+> through below? Might need a check in that loop for linux,cma-default.
+
+Yeah, but we probably should anyway. Otherwise, if linux,cma-default
+ever change on a platform, we would get heaps appearing/disappearing as
+we reboot, which doesn't sound great from a regression perspective.
+
+Both would allocate from the same pool though, so we don't risk stepping
+into each others toes. Or am I missing something?
+
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	rmem_node =3D of_find_node_by_path("/reserved-memory");
+> > +	if (!rmem_node)
+> > +		goto out;
+>=20
+> Can just return here, "out" path doesn't need to put a NULL node.
+
+Oh, right. Thanks!
+Maxime
+
+--2ftlwphj6gvo3egm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaG9vbgAKCRAnX84Zoj2+
+dhE7AX4qkBWa5ZWiID3zn8WXSc0q1AtFAPMK56gTj7jnaDHxnE1SSQcTUZlRCu9C
+slsYIiEBfjo//pmNGOx7O0UkqHsO1eIaZGLtBbckuR5ZibGSaAiwWITXBzaZc85V
+4qMLp8n/JA==
+=Wof7
+-----END PGP SIGNATURE-----
+
+--2ftlwphj6gvo3egm--
 
