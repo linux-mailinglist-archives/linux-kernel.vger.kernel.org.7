@@ -1,71 +1,147 @@
-Return-Path: <linux-kernel+bounces-725975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B650EB00629
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:14:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BBD3B0062E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849C01CA3332
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:12:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3552F3A1B6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3395627466E;
-	Thu, 10 Jul 2025 15:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1B42749C8;
+	Thu, 10 Jul 2025 15:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="seWBBlm9"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=ndigital.com header.i=@ndigital.com header.b="ReOGKDmg"
+Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2096.outbound.protection.outlook.com [40.107.115.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EE214A60F;
-	Thu, 10 Jul 2025 15:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752160330; cv=none; b=nUMKPV+3yf8yehtFbpuX5g8QAGYnwSiN4NXwOwD6Zu4wSrVeYI6lTZ8NGc0iUgcjkgHkpd+7ErwQN3FTdZTov7xhJjNQD6GYSoB6vGJXVNyaMSzysktnWFviDGjK9cT0mGaNUiH8yVBgPuMtcehv2IBtTsxlI1DF5oKvdvc24DE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752160330; c=relaxed/simple;
-	bh=8a6CBOKhPIyH24xt7AaX6qplNBfoOrI4hf0FBujJDRw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lb3Msna42/k9qPvSk6XjQSKC5mKLZ7AUWQtsIZAUGxtfPOqxntA3oyRa5SmHxsC6UW9AMVTBV0s6VtBxK63ug5EGUfJ5WOYCOL28UFrEOVwIr03SNbjvtqZU/GT9dnOJ6OJCY8PCfcxSv4WCWB+OEhXgiQEmks1PxUEtCOK82PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=seWBBlm9; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bdJGr6fcCz9t3p;
-	Thu, 10 Jul 2025 17:12:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1752160325; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8a6CBOKhPIyH24xt7AaX6qplNBfoOrI4hf0FBujJDRw=;
-	b=seWBBlm9HM/1XHghbgmmDne+xfaEPW/l2j5x0R8cfMi8T57g7nxCyH4cqJhlEa/+Zlvcul
-	eCobsslJoDrTn200xlNSccbSrkB83lZFfh8IVc4Nckq5Sr4bErNGC3HA4887PPZTzWZYSe
-	SHlpLKwOneUezNU7NHmTv9qfBp45OBZclmfJ6/GpnSJ8c8YK4otGSGjJZRBK/Fcr5QiJN1
-	V4GIPXF16cq4n0d3l2EWqNv8QIawIRtc0j6av5hZAqwSw/15uW9Oe2atuKnFkDFakXfH4Z
-	Jjzpy+iikc0986YoinAoUMndgaQdG+6TbLtqWcFAgpYi1l0sh5pHB0SXpXoaiA==
-Message-ID: <18f514ef3a61c877bc80f403db67a2106f4bdd44.camel@mailbox.org>
-Subject: Re: [PATCH v4 0/8] drm/sched: Fix memory leaks with cancel_job()
- callback
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Philipp Stanner <phasta@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
-  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Matthew
- Brost <matthew.brost@intel.com>,  Christian =?ISO-8859-1?Q?K=F6nig?=
- <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>,  Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Date: Thu, 10 Jul 2025 17:11:58 +0200
-In-Reply-To: <20250710125412.128476-2-phasta@kernel.org>
-References: <20250710125412.128476-2-phasta@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8514274670;
+	Thu, 10 Jul 2025 15:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.115.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752160340; cv=fail; b=Fbff5LDg2n0hhQkcYqA2VBM7idmJnplXmbEPdzmWfJ27+YbQLlp533Y6VZV8Rn+6X/DY3dGBoZPVCP/yoz3qoT2Bfbxekm4nurjvU7j5M5J3nqvw1pN1d+D/CTvWGzGyUh2Pk76nD9SuxEyKQIsnGt6V39GzRRVTtrwfpsgZMbA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752160340; c=relaxed/simple;
+	bh=5DidqyAfCefXktjpPuWWC2L8FoE8i8x1RGTMngiq4fU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KlXzJxoK4i8KNxOe7j3Rum6jAcl5WN8eWSWFoCkujIeqpI6KTrGwzYfe9BW0i8LXKFsxtEWum1RzzXCR/Gm7roswPoITL1wCibsOvwk5voFZAUPAy8Xmtj3JQuenfeUlNCF8GhAMRr0TnqowpvFLB7O7tVf724juqtZ0n2I1YRs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ndigital.com; spf=pass smtp.mailfrom=ndigital.com; dkim=pass (2048-bit key) header.d=ndigital.com header.i=@ndigital.com header.b=ReOGKDmg; arc=fail smtp.client-ip=40.107.115.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ndigital.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndigital.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Fg05A+ehHT1czLt5quMemOHtjEfKqoN+Ge/gU/ASJl0/N1pgqSDriTUbVcXOujOn2kABnqn1OPuoxmN1TDTrAqvWDffJ2pvFKNi4BE5gsyXyYXUuTArmMxQE091v8dDK/sOR4bSxb1/XH+m2w5q7oCpkAlKnVOR2brt8HKnjTRm73A7OGw19D+h9tF90bPBr2A77DVmtnZYlV4eZIUoI2YAqbePUBW8AXtMgQRLmbYtPMacUt6fzVaBDDuejBy8RQVoVswasPXGL6GT1GQDq0wepJ4xRd9BnubykpZ+vJJgELXxjrz3N9MN1mM+kxqgeEFsyqBM+UO1VsDkHMf7X7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+Gbjmk56525fJbSU+vhO0FnHAKSemeY430GD+7OeQ+4=;
+ b=vLhenHEogSkT/9mvbt6Lbnsax5FW5v768bpTxwfpg1kpvNk0TshmENgE4IiLGhWFkzVdpv+ZlHU6/qPTp+sQsiIkJ+kvuPH6dgzZcgckCHbwcDMbLO6JQSWduDtOxmXXINRWzp/O1HA8sYXgA54S+8kXzJZt+8ubR0caIljPTxtGNnpzZFQaMY009Sqh/u1LmpPHHB6fBfEk/o1c7VZ5wXddd1BJewmTYJLkZWKM15qQqz/sAoa1G0gwfqyKnd2PW8zxXRnBAD16JCVTcg4V9hu3XX3sYv7cvftvDhyE2R5oEjPz01WAdooc/cyi81G9DQ0OSPcMSt2fLA2cOnE1PQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ndigital.com; dmarc=pass action=none header.from=ndigital.com;
+ dkim=pass header.d=ndigital.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ndigital.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+Gbjmk56525fJbSU+vhO0FnHAKSemeY430GD+7OeQ+4=;
+ b=ReOGKDmgET3wAwA73d9rZTy8NmoSU2BXk3GdJJWVsrFaTqJkI64wcoRJ6q+NxI5tD/HeHqBjfp2Cn3l+xThkpFzw8aTJLJSqu+B5ykbKz1AL7jKl7K1RdTGD45m9UquFeEzfShL4e5bhCywVSCxrrVyCujHsSaUAdPd787M7uvAaZqoBhqRsNdjEkjcHkXW9msI8K3RWN7omCTFOJYJgs+HZiuyuBikmmUldAmOU9PJt/ivANHzIs5N1hIQs3l7EuF31quENOy3K5AdtgEKKnqmoW59v1ojbFJy6bOoOgS2y+s7oL5v22CF8svP0M/Tjwr2GEIBPnjGfXO1qBiCQfw==
+Received: from YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:27::5)
+ by YT4PR01MB10550.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:107::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.30; Thu, 10 Jul
+ 2025 15:12:16 +0000
+Received: from YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::206e:a5af:7f5f:76a3]) by YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::206e:a5af:7f5f:76a3%4]) with mapi id 15.20.8901.028; Thu, 10 Jul 2025
+ 15:12:15 +0000
+From: Ryan Mann <rmann@ndigital.com>
+To: kernel test robot <lkp@intel.com>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "johan@kernel.org" <johan@kernel.org>
+CC: "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5] NDI FTDI USB driver support
+Thread-Topic: [PATCH v5] NDI FTDI USB driver support
+Thread-Index: Advw2GRSB9Yv2CEkQnuozIy7DI7+4gAzy7yAAAEwwKA=
+Date: Thu, 10 Jul 2025 15:12:15 +0000
+Message-ID:
+ <YQXPR01MB498771A8FA494019650FDBBFDF48A@YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM>
+References:
+ <YQXPR01MB498735732651163477C995B9DF49A@YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM>
+ <202507102257.nmqBkGkG-lkp@intel.com>
+In-Reply-To: <202507102257.nmqBkGkG-lkp@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ndigital.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: YQXPR01MB4987:EE_|YT4PR01MB10550:EE_
+x-ms-office365-filtering-correlation-id: 06aaa721-56d2-4b11-2c9b-08ddbfc4279c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|38070700018|7053199007;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?q5BNKC+oHT+pX6bFzGNTwFjq1L7oZIxCHNtDiN9CsA9bDmmlekeJXFc4XxdJ?=
+ =?us-ascii?Q?AkEsVIryDskexmxpma1vM1l40XRQHRFeaoqgypitYeR5fQw6/b3UVIB6YqUK?=
+ =?us-ascii?Q?JcORG6dyxf/ZBBsMnb2VYR6effW7oQPj4Gq8d6PywxRJ5LPkIZTXb5P4X256?=
+ =?us-ascii?Q?YSxSHIW2sbORNPT0hBuuZyDvBt38VdqGholUqEeAOZaWDR9B/9KwqF36sXb4?=
+ =?us-ascii?Q?o8iugRnhgduEJPWH1H1qQlvLUBKwO3Ah/uVYnCXHW/MtoiefAZ3HfApJe+bj?=
+ =?us-ascii?Q?Alv9ryGmST/v/D/b7n1/sR5OEYxMcd9lkOaEGoaZkxN9hVVbBiYvysPFHvJO?=
+ =?us-ascii?Q?mAg0qaEVtCyJOz7CDxPkLIWPNzNny9/4B5teNixFke0gQH1bdWfjSXUBeJQ/?=
+ =?us-ascii?Q?bIvPT/Btr7txtoL0hyADTuZa0QEsJIfdcuZcTUW2/pKy8lkGW6v1y+/WQdYI?=
+ =?us-ascii?Q?S+LshLNjIS5W9DtyuiiBUTrinldo0bFlKq1djY5qktQWD6jxijG9TgmINuWk?=
+ =?us-ascii?Q?RVM8vj8j20Y1i8WX/ydmnE5OVmhvfTKRz2rZZPKvIelBkDXFEhuleQ4av7mF?=
+ =?us-ascii?Q?sf0lx9Ucmzpw/P8iyELZuZePFoq5aL2K+wk0M5+yZv/VB1yjgKuto64RpX7L?=
+ =?us-ascii?Q?KdmX3FWS5FGPVALXQsmtgIw/QcPQiYJNDsRi+kXF1nCBiHIjKwOLX/UMsyG0?=
+ =?us-ascii?Q?Vibfi9ZHkwRu8zJ6z+Xh9NshE0R+47GK7CNQBG9bcAgFBgGQSa82EP3shIAt?=
+ =?us-ascii?Q?jZFCgU5QR0cQVTZTvDlq0EjS1CfKlVpLI5VXhYDm6dR2P5EL41qzFc+2nWd0?=
+ =?us-ascii?Q?kqBpwrlNGTUeSKPOt8kZC7VbE1lFpIAFrqNLmnIomZ61Qyk1XwEXw6fNF2FQ?=
+ =?us-ascii?Q?d68uZSgY86GZtWdFHwY6O2h1jDvzZKytsXhapF5bTGqh0Cq1NH6D/MsvTHkY?=
+ =?us-ascii?Q?o1UiIWDU2ojlbQFf370fYgUr7Et4oeIjYKYqZ2vinVMLq4ukoKkKzMXA8Ssr?=
+ =?us-ascii?Q?CxVWY/4kd9QyhuNwtvST+zcyrL1vVhuZsoC3Z9UhDzveuLFR38WHIY+Jn7fk?=
+ =?us-ascii?Q?+xNlNSGq0xDboJt/C3onxnxBRBUkiUDonzlWbB3VMy3QE0MaftBSVnAPkVlb?=
+ =?us-ascii?Q?bY9LajTSY87j/mBHDzzA/NCJiWOBnpPBjyxFjLAObgK0oHV4YAE4MKjcxeSj?=
+ =?us-ascii?Q?bEVAHFkEp9FkagHhIlnEP0RwfM02jgxxzU+1hXi3yAp2weiwdEeISMInKDlr?=
+ =?us-ascii?Q?+6Q/d37vGX8tDqcNHYpdDO+rzOCSwt2xB6WfiQzNn4a5a8l70yHEEOAtv6R7?=
+ =?us-ascii?Q?Ef0DP9Vm3T+ruRvRZc4thWlZt1EQ1Qb57MIqpnBy4eJlxeR6TeoXqAheIRQI?=
+ =?us-ascii?Q?08zYREzNl/LN60Dij6V34CkM/BNykaFQjHCFkiw8t+xUpSV1CPQSNpuAuLgH?=
+ =?us-ascii?Q?3QI7EI8AUZA=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018)(7053199007);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?nQhUNIDUXTcBBZHKGg15aubAC91JBYFiJJapgVBL0P2JHY6csO1GPMLHv9+E?=
+ =?us-ascii?Q?qOkfxjJLkl2mRQxRI43G0CvUyLzZAuDCZNxsWb/93hRJBvTGpY0h2vE1QCwo?=
+ =?us-ascii?Q?pcrIS5GEIT7eOEcJ2XuHGifwRT4pjRzLai3PY0oVWHgdNmhivWq8BVIGgM9d?=
+ =?us-ascii?Q?IMCwzuGjCKjmMJ9y9W/kVaYInhaz2+Hp/1p5ovPHxVEVbKjV2oXF5DQIIi1A?=
+ =?us-ascii?Q?bol9xDBkrwBEWC2hPMtvQk6F3SORD3KiYCUM9ehkLXF5IT01INq3CR9nbPIV?=
+ =?us-ascii?Q?sjw8OTXmQ+YUrhF70qtwRLnRIC3PkyXOlkt7GfGdA7e8A0x4NJWipua6CbwZ?=
+ =?us-ascii?Q?JojnU8qzNqi3gKDpctx0cJn/RBC/zZBSvwy0i+lyTpuYFAzyah/ED2LQQRFe?=
+ =?us-ascii?Q?wQ6b+SBMTu65LJQ3LTZz/e9DTeokv6ttdbrHoXXNQEc5I7MAxuU/jE9VyEGZ?=
+ =?us-ascii?Q?r4apVX84gSCHgy9ksc25BPA6LmBCVD0ufROMnqb2zuvxov9To9hfROUHzS9S?=
+ =?us-ascii?Q?TMVhc2tf+cRQDLjEKTGC6ul7IcbMBVLSyN1ppu8fzh7MIJ7gNOee7Fgvf9zo?=
+ =?us-ascii?Q?BIMAcfhhK3eRTfUbQLrQX+YScnj37ztO2a719IyzSaPJ/uAIykatJK1FKKeD?=
+ =?us-ascii?Q?yo2s/Je/gqtEvW+DRW3hOVJQMd6DocwMU5FWKVu9Dw3Gp4V1n4t4ZkFWQR6D?=
+ =?us-ascii?Q?8FV1Qak46GbrUCFQJQl8xRvXj71mKUSGVRyPc/0mk4iI8PaC1HaeIo4i3C94?=
+ =?us-ascii?Q?ozZiDF+qooUXHLu6lL9b+HxC1K2/2QFIn6KHh/fuXDqCsaCub43RWxBBEQyb?=
+ =?us-ascii?Q?fYtpwRoFIQT0wl0jU1Yci0+UtMcto7sxWrpLnlI3djvo2AVSRaYsLhjrDsqt?=
+ =?us-ascii?Q?oD9EG1mfFOoSELIn60KU7ut0PHHL2odnoswkAQebDbBunqdKc8mDey8MwP9J?=
+ =?us-ascii?Q?It7vo3YM7glrUf3c7uZCzOlFHoaVELBylWfYyEBVo2kgsVzkLzeayfN2so49?=
+ =?us-ascii?Q?vDDwohT+5n3C49AXaDZvDvwFRFiY06V3jg5LwlfCWBI63MyA4SvlbTtt22/F?=
+ =?us-ascii?Q?dKfqXUfWPgDhMUMlvdy8/40ooZkECyBW3XTLrFEhnom/WOsOSy480xox3sXc?=
+ =?us-ascii?Q?ai92T6esaCirtII4BhU5LMghurnK0CT5VwklnbKCb0Y1cLYZmpnIfZ30ksLz?=
+ =?us-ascii?Q?EBzhSk94oQy/3wgdbBtJhsS9e1vQ9yEwwT6ZB6Oi1szuwU+lG4MEv4LS8HSC?=
+ =?us-ascii?Q?JG9YHaUdvwDnTTi53ZINNUOzvzWYKtitfwzhPkEaTRpm0uYKk+uH6QBGtrr0?=
+ =?us-ascii?Q?LtptyAYLoFPeR98nEQZsQBHjdm8Sv/SxDKtnPyZgqwT0tzVLXOk2jSBeigIt?=
+ =?us-ascii?Q?eXNBlWLKJ+mT+Wy2AkQiGw0YnMSUC9xcvC/iD+htajzKDCoMGROw7LZ08cD7?=
+ =?us-ascii?Q?Ulkpdh8WcZOsM37fFQR/4W9Tf9Ot5R/RCy+bwqqHbVJQBpi8QMH+RbhoaorH?=
+ =?us-ascii?Q?gHpgAn4US3X2xhEGSsPvLGFcso3VLIFkQ+sNeItwbd3daI28wPo483TP7Ld9?=
+ =?us-ascii?Q?32bn9rOZ8wKdcG9kumxVNjNX2PNHEoJ7iUsHez3n?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,81 +149,81 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 5c40c1a7c2a9a3dbc09
-X-MBO-RS-META: 1nps9qp9r8sikmsso7bmcbxeyzd9bro1
+X-OriginatorOrg: ndigital.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06aaa721-56d2-4b11-2c9b-08ddbfc4279c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2025 15:12:15.5147
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fd6f7980-6d04-4a6f-86bf-8f6d0297dd2f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: G7hFD/74DdmzttRlWSHBYORLWsrhiJz9YtH17aKq/X4LNfHIDkoZOaFU/cEoTG8UFJ5i3yMPJdoVOM6fHIOw+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT4PR01MB10550
 
-On Thu, 2025-07-10 at 14:54 +0200, Philipp Stanner wrote:
-> Changes in v4:
-> =C2=A0 - Change dev_err() to dev_warn() in pending_list emptyness check.
+> From: kernel test robot <lkp@intel.com>=20
+> Sent: Thursday, July 10, 2025 10:33 AM
+> To: Ryan Mann <rmann@ndigital.com>; gregkh@linuxfoundation.org; johan@ker=
+nel.org
+> Cc: llvm@lists.linux.dev; oe-kbuild-all@lists.linux.dev; linux-usb@vger.k=
+ernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH v5] NDI FTDI USB driver support
 >=20
-> Changes in v3:
-> =C2=A0 - Remove forgotten copy-past artifacts. (Tvrtko)
-> =C2=A0 - Remove forgotten done_list struct member. (Tvrtko)
-> =C2=A0 - Slightly adjust commit message of patch 7.
-> =C2=A0 - Add RBs. (Maira, Danilo, Tvrtko)
+> Hi Ryan,
 >=20
-> Changes in v2:
-> =C2=A0 - Add new unit test to test cancel_job()'s behavior. (Tvrtko)
-> =C2=A0 - Add RB from Ma=C3=ADra
+> kernel test robot noticed the following build errors:
 >=20
-> Changes since the RFC:
-> =C2=A0 - Rename helper function for drm_sched_fini(). (Tvrtko)
-> =C2=A0 - Add Link to Tvrtko's RFC patch to patch 1.
+> [auto build test ERROR on johan-usb-serial/usb-next]
+> [also build test ERROR on linus/master v6.16-rc5 next-20250710]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 >=20
+> url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Mann/NDI-FTDI=
+-USB-driver-support/20250709-215335
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.=
+git usb-next
+> patch link:    https://lore.kernel.org/r/YQXPR01MB498735732651163477C995B=
+9DF49A%40YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM
+> patch subject: [PATCH v5] NDI FTDI USB driver support
+> config: um-randconfig-002-20250710 (https://download.01.org/0day-ci/archi=
+ve/20250710/202507102257.nmqBkGkG-lkp@intel.com/config)
+> compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf=
+1a2591520c2491aa35339f227775f4d3adf6)
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20250710/202507102257.nmqBkGkG-lkp@intel.com/reproduce)
 >=20
-> Since a long time, drm_sched_fini() can leak jobs that are still in
-> drm_sched.pending_list.
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202507102257.nmqBkGkG-lkp=
+@intel.com/
 >=20
-> This series solves the leaks in a backwards-compatible manner by
-> adding
-> a new, optional callback. If that callback is implemented, the
-> scheduler
-> uses it to cancel all jobs from pending_list and then frees them.
+> All errors (new ones prefixed by >>):
 >=20
-> Philipp Stanner (8):
-> =C2=A0 drm/panfrost: Fix scheduler workqueue bug
-> =C2=A0 drm/sched: Avoid memory leaks with cancel_job() callback
-> =C2=A0 drm/sched/tests: Implement cancel_job() callback
-> =C2=A0 drm/sched/tests: Add unit test for cancel_job()
-> =C2=A0 drm/sched: Warn if pending_list is not empty
-> =C2=A0 drm/nouveau: Make fence container helper usable driver-wide
-> =C2=A0 drm/nouveau: Add new callback for scheduler teardown
-> =C2=A0 drm/nouveau: Remove waitque for sched teardown
->=20
-> =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 35 ++++++----
-> =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 7 ++
-> =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 35 ++++++----
-> =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 9 +--
-> =C2=A0drivers/gpu/drm/nouveau/nouveau_uvmm.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 8 +--
-> =C2=A0drivers/gpu/drm/panfrost/panfrost_job.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 2 +-
-> =C2=A0drivers/gpu/drm/scheduler/sched_main.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 37 ++++++----
-> =C2=A0.../gpu/drm/scheduler/tests/mock_scheduler.c=C2=A0 | 68 +++++++----=
-------
-> --
-> =C2=A0drivers/gpu/drm/scheduler/tests/sched_tests.h |=C2=A0 1 -
-> =C2=A0drivers/gpu/drm/scheduler/tests/tests_basic.c | 42 ++++++++++++
-> =C2=A0include/drm/gpu_scheduler.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 18 =
-+++++
-> =C2=A011 files changed, 167 insertions(+), 95 deletions(-)
->=20
+>    In file included from drivers/usb/serial/ftdi_sio.c:40:
+>    In file included from include/linux/usb.h:16:
+>    In file included from include/linux/interrupt.h:11:
+>    In file included from include/linux/hardirq.h:11:
+>    In file included from arch/um/include/asm/hardirq.h:5:
+>    In file included from include/asm-generic/hardirq.h:17:
+>    In file included from include/linux/irq.h:20:
+>    In file included from include/linux/io.h:12:
+>    In file included from arch/um/include/asm/io.h:24:
+>    include/asm-generic/io.h:1175:55: warning: performing pointer arithmet=
+ic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+>            return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
+>                                                      ~~~~~~~~~~ ^
+> >> drivers/usb/serial/ftdi_sio.c:806:15: error: use of undeclared identif=
+ier 'NDI_VID'
+>            { USB_DEVICE(NDI_VID, FTDI_NDI_EMGUIDE_GEMINI_PID),
+>                         ^
+>    1 warning and 1 error generated.
 
-
-Pushed to drm-misc-next, with an RB from Tvrtko I had forgot, and
-without the misplaced panfrost patch.
-
-Thanks guys. Good to see that we finally solved this issue. Had been
-around for quite some time. We celebrate that with a beer or sth at XDC
-:)
-
-
-P.
-
+This typo was in version 5 of the patch. NDI_VID was replaced by FTDI_NDI_V=
+ID in [PATCH v6] of usb:serial: ftdi_sio: add support for NDI EMGUIDE GEMIN=
+I device
+Thanks,
+Ryan
 
