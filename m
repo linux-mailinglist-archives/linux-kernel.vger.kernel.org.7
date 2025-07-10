@@ -1,421 +1,137 @@
-Return-Path: <linux-kernel+bounces-725549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E67A2B000A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:36:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF19B000AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1FDF7A41E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:35:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58754177690
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88F3242D76;
-	Thu, 10 Jul 2025 11:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D9D24729D;
+	Thu, 10 Jul 2025 11:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MXQXzyye"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqyiOfG7"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1A723958C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88599242D83;
+	Thu, 10 Jul 2025 11:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752147387; cv=none; b=bOI3oItCSOyGGFNgHAzZUsXvqmR8y0jut6NVlZFMId6B00SNttWOpVgb2BK43JDHJN98831IXBI9B0Dm61cuRecBtnea/2OCRb9tG0hTm+CoFcbT2wpjLewMzK2dxZW8Gd3lK4QGlzAhnW7h5nA4ZTWQX+OsQE9PJvbcE/OpAW8=
+	t=1752147503; cv=none; b=AqhYoVE6FC3KkkoYJyyKiWFdkzxwf3kXACKxigaWktQvfPfHG5NphVFf0qqjALlodAs7Si7efv9G2tASSskEJcJG7GzNdkIm3VxJ8OS6UFvRZvPUo34HZaDidW+D8so118dBh02yb62Ebt/XPmLrjqUM9LEre+768QyUQBTeyxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752147387; c=relaxed/simple;
-	bh=UrVre70QQpxPX3cK8KkrQ8iIxZBZksB7bi1biJ1kzFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EZQFoQROTs5lRYUlaQp9ZEClLckFKpvdD+OlBLcJGnAE0/ddhoNW3Cjp3TLYIwYp6mCXRZ6B4hvXG1avkKMVe4WhE6Gf61R6yFl3+qBNrq9jXsg+/j8CEP5z0XDZA0kN3zgJCPo6Qw4W9Qu3zoL/NlEQ7F9N6YgCuGnp24g6m1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MXQXzyye; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-237f18108d2so171485ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 04:36:25 -0700 (PDT)
+	s=arc-20240116; t=1752147503; c=relaxed/simple;
+	bh=4eTmfHT1Y/c7D1lzNvMnDcIz+LGy3csSxNvFpjFeaVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lWPTFZ0cwWYl9po1+BoeY3apAEcTgaOn68iZBNLtP8gLCTP4iu9eL72lO8YGRT3brcSFgWyXBkczK4ZKJJL7KdXLzyL7BIlNK7hIkiuEbYZYsfpxJ9xBT6VkDBuXg9QzS10b1niGXdb62rpM9xRUXCEZ7YLPLZLLRRqSBw49aCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqyiOfG7; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a53359dea5so522129f8f.0;
+        Thu, 10 Jul 2025 04:38:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752147384; x=1752752184; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NllAQfNayY8cb5iLzosXwdI782jVJrwH9mu2C3D5sw0=;
-        b=MXQXzyyeK2p6nxafJR6G96gR8s0LrYk5yeGaon9BUTHndFXoKMdqwWgVy+To3VMcPX
-         sVIjl3cWB/3+T2GBaI82sVjv4+ujubjs2O7iouoK2l9YZAmhxBjwkthXP8xtk5WMmMs5
-         QLvpTzKoRPwQ89VFGCTvieDFSXnB0bloX1URP50LP+SdHlztDcdO3SKPjzUpUUqJ9WJp
-         YB5cBHvzvbZbGFG/RCFvmt0efXae9VuoD3eLRYnfZOwAkrNYrH5VDHY7DZhGXEN8iOpA
-         nJ23rEdaJemZeEIgDbL5albzukOlAKoaJ0LIOFV7Q/zx7c9RCX5B7jXoW07WZpLnBJ6q
-         pc9g==
+        d=gmail.com; s=20230601; t=1752147500; x=1752752300; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=87Ku6/NI0CKR1kwsY5In44nVhCCotoFUI8bUiBdls6M=;
+        b=nqyiOfG7aNXkomzKDMqudrIZGFbir+uhTIbCwONSBykX6vDS+yb1OPWgGYQCtTVOCF
+         3nbpQOeG7ze1xl2qJvHSpaZHrCjzCY+HImTpclxcnc/ld/2/5WuiG6595JMMFXDG4Suu
+         MK2/jODq0lR9WSKMLvqKE8I15Nx8tfu7+jwuDj5xv4Tc5QLFlnpMj386QOI4ljNeEohg
+         jP/VStyeJ+g+Ivbs0AOKoB5ME18AvX+VxkeC7gg0J+EU7iR6Zylf1NLXBylqrLuVEXSB
+         S4zPhZsAEC+7mL5wv0icf3LOWrmHE0aVJcwT3yGvcSud0XYNBlmwDsjrPSMqPIswSGvv
+         DXiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752147384; x=1752752184;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NllAQfNayY8cb5iLzosXwdI782jVJrwH9mu2C3D5sw0=;
-        b=fuM19A+SkUmjSYurz0YFYWywkhFdltQSAoGxmeXSYMw/Us8xwUlETP0N8oxcCkpSNq
-         Yeehck4nyFWafvCPFB5f+2/db2Hh7j/h2BNdSFlD3CQ7EWVkQ0iPAMMxGLX5f/LNIToV
-         dOi6DGfAgFRhqjxLrLypmDoBh3YLjZzD90fDSJBke5HtxGkwAE5DlpqSiPHjJmnh5uVA
-         R2Y4c6rwITXtHSloCv6TpJ9ODBN1qelEF92IfBxKJPIXZKgZEH9Ei2J0fBv74XL9yt9+
-         JgGG1Kap12ZeJ3qKxigWCKjzmZ7qFG10sIvHpr6X55Ae20ZMrD8iLQxCbsXASiKlt5sj
-         7OSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWR/n1uqzjFEqRPvlQdoNx4BnnlVGwCks+PZ3eK2iaWw0Ai+uSQqd+GVQ0nnm1UDFAN2Sn5Q2/iCrzTp8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9GGwm6o9GbkXysaoUsbyis2wfeHR+RJFCWMSUjUr+NZF/GLbp
-	yMdG9Tdv3CXaJpkOJs2Q2E5xIFja3/OxXuhyU7v/OqnZ1Em6h0qhtrKLpyUsMhSYdZmkv3V4hhY
-	K9UAOlmic
-X-Gm-Gg: ASbGnctyy2yL9wQ9tVWsPE3Enz0IffZ+6x1NPP6mgQeiqbtcVkuILfsfb7Y02OwfVbT
-	O42WgbH/phUnE/K72G1cAlavyR3mYWyf/kRhZaNblJF9S2T8PvlJhShDgg9Igz/vKRJPfxO1eWY
-	rj/zsCO2YX/pt/zqTNKGN1v3ayBc0AV4UhcC3q2vYY/tacP3kn/ns4+rPMHqlXRgvpKI+bA7mds
-	u/cYc6ztcpXxM2VxGVvxoZlkdQaejLqtHH+0GRa4ZcDtq5zjgjjjOYRpiLD8OHVR4Lt7rhn2ef/
-	7I3OOSGwNrUXkClNFFRfzqutiJ/1l0c5VwXT1kaYb5annBZFdsORu6OGJxrQnCeUTW3lt+WVhnX
-	uGSO//rFJM8gc90GxH1X+
-X-Google-Smtp-Source: AGHT+IFWWBrqFVRqrzk0Fwyab1Mld4BviLi8cbgIh+j6R1xSHmEyatBRaGWIq1+8HV4NnwrugSgVcw==
-X-Received: by 2002:a17:903:3ba5:b0:215:9ab0:402 with SMTP id d9443c01a7336-23de38137a5mr2696735ad.18.1752147384158;
-        Thu, 10 Jul 2025 04:36:24 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9e07793sm1937009b3a.69.2025.07.10.04.36.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 04:36:23 -0700 (PDT)
-Date: Thu, 10 Jul 2025 11:36:15 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net,
-	bagasdotme@gmail.com, will@kernel.org, robin.murphy@arm.com,
-	joro@8bytes.org, thierry.reding@gmail.com, vdumpa@nvidia.com,
-	jonathanh@nvidia.com, shuah@kernel.org, jsnitsel@redhat.com,
-	nathan@kernel.org, peterz@infradead.org, yi.l.liu@intel.com,
-	mshavit@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v9 16/29] iommufd/selftest: Add coverage for
- IOMMUFD_CMD_HW_QUEUE_ALLOC
-Message-ID: <aG-lr9nUhwff4GuJ@google.com>
-References: <cover.1752126748.git.nicolinc@nvidia.com>
- <e8a194d187d7ef445f43e4a3c04fb39472050afd.1752126748.git.nicolinc@nvidia.com>
+        d=1e100.net; s=20230601; t=1752147500; x=1752752300;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=87Ku6/NI0CKR1kwsY5In44nVhCCotoFUI8bUiBdls6M=;
+        b=jst9m3cO3TFfpG56D6Pw1LIlKVkrRiVsgw1Q2ZAMla+CTaJgUjDW2KQ23PDBVf5G+M
+         XfqKLrA1ZM4U6lOivEshWuBwup5ZLVc98YhlF37QMs7jTiZDdazNjNW7s0lkjtH5Bb7T
+         Ko/Z2iihthOY6iPvYnt131/rfFqZE+VAzfAYZE/qI8C7nTMnOww7SYplqKfYyT7Oh/di
+         5s8LTD0wlgxpACy7NL3f89UGU2bguIANj2TqvLm5V0izwTMiKA9KIBTRexbHNikN3XiN
+         UChbaA30SBnU9le9LjVhQ8opInea6CkcrN6QyW0/KC+3Jes9iMPsPaczu0Bok+oOUJzO
+         DL8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUcrCH1Whz2n6jknoc+TsfNIUORK3P993+5g4fCoJB4FHcNrsmjfMZNtBEmGebbv2oqVN9Wl6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm8rCHvXm1PW3RmojNfVqwdb8x0zSVBOqIzdpmOGwOFt5I62pW
+	DtcJlCUkRuvq7BOnmve8cZj7zg8fZbm8LzMnVuGAHRlS+NNynMC9scEE
+X-Gm-Gg: ASbGncucw0yWyoac7JRzxDQuIaZMDuoCU35yVgeOWa0AKqBnXJ6wApBol38U3/jDoyA
+	+/SEohPbFk19ukiMtpouCZnnN7xNdS2wefmrhXmE8T+Y85Oq3zcl9vh2vKh/rYcHKoERTZ8HwZT
+	p6PHsC2Bo63pC0BYkeQWogkA9avLIVLZc4++NKnBdoERY7lYZvbkXX8h68RRUiO+2avLQIbe3N3
+	g03YwYDnhlhgVdWyz8tivUmc99TqVoJYMJY4xt8o4Dv7aJFoBozsXF/82UkBH66up6UIOziTh4Z
+	ajGVK9W14R6U8pWEZXmzEDdU
+X-Google-Smtp-Source: AGHT+IH9FWpRNmwBnYK2H8C21+oP9DfLC9w0v8B5WIVIk/TsW4VnBty/UsYjrko0u8i0P/eY3kD/Rw==
+X-Received: by 2002:a05:6000:2c09:b0:3a5:2b1d:7889 with SMTP id ffacd0b85a97d-3b5e86c6306mr2104663f8f.43.1752147499601;
+        Thu, 10 Jul 2025 04:38:19 -0700 (PDT)
+Received: from debian ([45.84.137.103])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd541e9fsm17237185e9.34.2025.07.10.04.38.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 04:38:19 -0700 (PDT)
+Message-ID: <615bc4d6-3b10-bd7d-dbfe-2b79072af44e@gmail.com>
+Date: Thu, 10 Jul 2025 13:37:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8a194d187d7ef445f43e4a3c04fb39472050afd.1752126748.git.nicolinc@nvidia.com>
+Subject: Re: [PATCH net] net: fix segmentation after TCP/UDP fraglist GRO
+To: Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
+ Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>,
+ Kuniyuki Iwashima <kuniyu@google.com>, "David S. Miller"
+ <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Willem de Bruijn <willemb@google.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20250705150622.10699-1-nbd@nbd.name>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <20250705150622.10699-1-nbd@nbd.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 10:59:08PM -0700, Nicolin Chen wrote:
-> Some simple tests for IOMMUFD_CMD_HW_QUEUE_ALLOC infrastructure covering
-> the new iommufd_hw_queue_depend/undepend() helpers.
+Felix Fietkau wrote:
+> Since "net: gro: use cb instead of skb->network_header", the skb network
+> header is no longer set in the GRO path.
+> This breaks fraglist segmentation, which relies on ip_hdr()/tcp_hdr()
+> to check for address/port changes.
+> Fix this regression by selectively setting the network header for merged
+> segment skbs.
 > 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
-
+> Fixes: 186b1ea73ad8 ("net: gro: use cb instead of skb->network_header")
+> Signed-off-by: Felix Fietkau <nbd@nbd.name>
 > ---
->  drivers/iommu/iommufd/iommufd_test.h          |  3 +
->  tools/testing/selftests/iommu/iommufd_utils.h | 31 ++++++
->  drivers/iommu/iommufd/selftest.c              | 97 +++++++++++++++++++
->  tools/testing/selftests/iommu/iommufd.c       | 59 +++++++++++
->  .../selftests/iommu/iommufd_fail_nth.c        |  6 ++
->  5 files changed, 196 insertions(+)
+>  net/ipv4/tcp_offload.c | 1 +
+>  net/ipv4/udp_offload.c | 1 +
+>  2 files changed, 2 insertions(+)
 > 
-> diff --git a/drivers/iommu/iommufd/iommufd_test.h b/drivers/iommu/iommufd/iommufd_test.h
-> index fbf9ecb35a13..51cd744a354f 100644
-> --- a/drivers/iommu/iommufd/iommufd_test.h
-> +++ b/drivers/iommu/iommufd/iommufd_test.h
-> @@ -265,4 +265,7 @@ struct iommu_viommu_event_selftest {
->  	__u32 virt_id;
->  };
+> diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
+> index d293087b426d..be5c2294610e 100644
+> --- a/net/ipv4/tcp_offload.c
+> +++ b/net/ipv4/tcp_offload.c
+> @@ -359,6 +359,7 @@ struct sk_buff *tcp_gro_receive(struct list_head *head, struct sk_buff *skb,
+>  		flush |= skb->ip_summed != p->ip_summed;
+>  		flush |= skb->csum_level != p->csum_level;
+>  		flush |= NAPI_GRO_CB(p)->count >= 64;
+> +		skb_set_network_header(skb, skb_gro_receive_network_offset(skb));
 >  
-> +#define IOMMU_HW_QUEUE_TYPE_SELFTEST 0xdeadbeef
-> +#define IOMMU_TEST_HW_QUEUE_MAX 2
-> +
->  #endif
-> diff --git a/tools/testing/selftests/iommu/iommufd_utils.h b/tools/testing/selftests/iommu/iommufd_utils.h
-> index a5d4cbd089ba..9a556f99d992 100644
-> --- a/tools/testing/selftests/iommu/iommufd_utils.h
-> +++ b/tools/testing/selftests/iommu/iommufd_utils.h
-> @@ -956,6 +956,37 @@ static int _test_cmd_vdevice_alloc(int fd, __u32 viommu_id, __u32 idev_id,
->  		     _test_cmd_vdevice_alloc(self->fd, viommu_id, idev_id,   \
->  					     virt_id, vdev_id))
->  
-> +static int _test_cmd_hw_queue_alloc(int fd, __u32 viommu_id, __u32 type,
-> +				    __u32 idx, __u64 base_addr, __u64 length,
-> +				    __u32 *hw_queue_id)
-> +{
-> +	struct iommu_hw_queue_alloc cmd = {
-> +		.size = sizeof(cmd),
-> +		.viommu_id = viommu_id,
-> +		.type = type,
-> +		.index = idx,
-> +		.nesting_parent_iova = base_addr,
-> +		.length = length,
-> +	};
-> +	int ret;
-> +
-> +	ret = ioctl(fd, IOMMU_HW_QUEUE_ALLOC, &cmd);
-> +	if (ret)
-> +		return ret;
-> +	if (hw_queue_id)
-> +		*hw_queue_id = cmd.out_hw_queue_id;
-> +	return 0;
-> +}
-> +
-> +#define test_cmd_hw_queue_alloc(viommu_id, type, idx, base_addr, len, out_qid) \
-> +	ASSERT_EQ(0, _test_cmd_hw_queue_alloc(self->fd, viommu_id, type, idx,  \
-> +					      base_addr, len, out_qid))
-> +#define test_err_hw_queue_alloc(_errno, viommu_id, type, idx, base_addr, len, \
-> +				out_qid)                                      \
-> +	EXPECT_ERRNO(_errno,                                                  \
-> +		     _test_cmd_hw_queue_alloc(self->fd, viommu_id, type, idx, \
-> +					      base_addr, len, out_qid))
-> +
->  static int _test_cmd_veventq_alloc(int fd, __u32 viommu_id, __u32 type,
->  				   __u32 *veventq_id, __u32 *veventq_fd)
->  {
-> diff --git a/drivers/iommu/iommufd/selftest.c b/drivers/iommu/iommufd/selftest.c
-> index 38066dfeb2e7..2189e9b119ee 100644
-> --- a/drivers/iommu/iommufd/selftest.c
-> +++ b/drivers/iommu/iommufd/selftest.c
-> @@ -150,6 +150,8 @@ to_mock_nested(struct iommu_domain *domain)
->  struct mock_viommu {
->  	struct iommufd_viommu core;
->  	struct mock_iommu_domain *s2_parent;
-> +	struct mock_hw_queue *hw_queue[IOMMU_TEST_HW_QUEUE_MAX];
-> +	struct mutex queue_mutex;
->  };
->  
->  static inline struct mock_viommu *to_mock_viommu(struct iommufd_viommu *viommu)
-> @@ -157,6 +159,19 @@ static inline struct mock_viommu *to_mock_viommu(struct iommufd_viommu *viommu)
->  	return container_of(viommu, struct mock_viommu, core);
->  }
->  
-> +struct mock_hw_queue {
-> +	struct iommufd_hw_queue core;
-> +	struct mock_viommu *mock_viommu;
-> +	struct mock_hw_queue *prev;
-> +	u16 index;
-> +};
-> +
-> +static inline struct mock_hw_queue *
-> +to_mock_hw_queue(struct iommufd_hw_queue *hw_queue)
-> +{
-> +	return container_of(hw_queue, struct mock_hw_queue, core);
-> +}
-> +
->  enum selftest_obj_type {
->  	TYPE_IDEV,
->  };
-> @@ -670,9 +685,11 @@ static void mock_viommu_destroy(struct iommufd_viommu *viommu)
->  {
->  	struct mock_iommu_device *mock_iommu = container_of(
->  		viommu->iommu_dev, struct mock_iommu_device, iommu_dev);
-> +	struct mock_viommu *mock_viommu = to_mock_viommu(viommu);
->  
->  	if (refcount_dec_and_test(&mock_iommu->users))
->  		complete(&mock_iommu->complete);
-> +	mutex_destroy(&mock_viommu->queue_mutex);
->  
->  	/* iommufd core frees mock_viommu and viommu */
->  }
-> @@ -764,10 +781,86 @@ static int mock_viommu_cache_invalidate(struct iommufd_viommu *viommu,
->  	return rc;
->  }
->  
-> +static size_t mock_viommu_get_hw_queue_size(struct iommufd_viommu *viommu,
-> +					    enum iommu_hw_queue_type queue_type)
-> +{
-> +	if (queue_type != IOMMU_HW_QUEUE_TYPE_SELFTEST)
-> +		return 0;
-> +	return HW_QUEUE_STRUCT_SIZE(struct mock_hw_queue, core);
-> +}
-> +
-> +static void mock_hw_queue_destroy(struct iommufd_hw_queue *hw_queue)
-> +{
-> +	struct mock_hw_queue *mock_hw_queue = to_mock_hw_queue(hw_queue);
-> +	struct mock_viommu *mock_viommu = mock_hw_queue->mock_viommu;
-> +
-> +	mutex_lock(&mock_viommu->queue_mutex);
-> +	mock_viommu->hw_queue[mock_hw_queue->index] = NULL;
-> +	if (mock_hw_queue->prev)
-> +		iommufd_hw_queue_undepend(mock_hw_queue, mock_hw_queue->prev,
-> +					  core);
-> +	mutex_unlock(&mock_viommu->queue_mutex);
-> +}
-> +
-> +/* Test iommufd_hw_queue_depend/undepend() */
-> +static int mock_hw_queue_init_phys(struct iommufd_hw_queue *hw_queue, u32 index,
-> +				   phys_addr_t base_addr_pa)
-> +{
-> +	struct mock_viommu *mock_viommu = to_mock_viommu(hw_queue->viommu);
-> +	struct mock_hw_queue *mock_hw_queue = to_mock_hw_queue(hw_queue);
-> +	struct mock_hw_queue *prev = NULL;
-> +	int rc = 0;
-> +
-> +	if (index >= IOMMU_TEST_HW_QUEUE_MAX)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&mock_viommu->queue_mutex);
-> +
-> +	if (mock_viommu->hw_queue[index]) {
-> +		rc = -EEXIST;
-> +		goto unlock;
-> +	}
-> +
-> +	if (index) {
-> +		prev = mock_viommu->hw_queue[index - 1];
-> +		if (!prev) {
-> +			rc = -EIO;
-> +			goto unlock;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Test to catch a kernel bug if the core converted the physical address
-> +	 * incorrectly. Let mock_domain_iova_to_phys() WARN_ON if it fails.
-> +	 */
-> +	if (base_addr_pa != iommu_iova_to_phys(&mock_viommu->s2_parent->domain,
-> +					       hw_queue->base_addr)) {
-> +		rc = -EFAULT;
-> +		goto unlock;
-> +	}
-> +
-> +	if (prev) {
-> +		rc = iommufd_hw_queue_depend(mock_hw_queue, prev, core);
-> +		if (rc)
-> +			goto unlock;
-> +	}
-> +
-> +	mock_hw_queue->prev = prev;
-> +	mock_hw_queue->mock_viommu = mock_viommu;
-> +	mock_viommu->hw_queue[index] = mock_hw_queue;
-> +
-> +	hw_queue->destroy = &mock_hw_queue_destroy;
-> +unlock:
-> +	mutex_unlock(&mock_viommu->queue_mutex);
-> +	return rc;
-> +}
-> +
->  static struct iommufd_viommu_ops mock_viommu_ops = {
->  	.destroy = mock_viommu_destroy,
->  	.alloc_domain_nested = mock_viommu_alloc_domain_nested,
->  	.cache_invalidate = mock_viommu_cache_invalidate,
-> +	.get_hw_queue_size = mock_viommu_get_hw_queue_size,
-> +	.hw_queue_init_phys = mock_hw_queue_init_phys,
->  };
->  
->  static size_t mock_get_viommu_size(struct device *dev,
-> @@ -784,6 +877,7 @@ static int mock_viommu_init(struct iommufd_viommu *viommu,
->  {
->  	struct mock_iommu_device *mock_iommu = container_of(
->  		viommu->iommu_dev, struct mock_iommu_device, iommu_dev);
-> +	struct mock_viommu *mock_viommu = to_mock_viommu(viommu);
->  	struct iommu_viommu_selftest data;
->  	int rc;
->  
-> @@ -801,6 +895,9 @@ static int mock_viommu_init(struct iommufd_viommu *viommu,
->  	}
->  
->  	refcount_inc(&mock_iommu->users);
-> +	mutex_init(&mock_viommu->queue_mutex);
-> +	mock_viommu->s2_parent = to_mock_domain(parent_domain);
-> +
->  	viommu->ops = &mock_viommu_ops;
->  	return 0;
->  }
-> diff --git a/tools/testing/selftests/iommu/iommufd.c b/tools/testing/selftests/iommu/iommufd.c
-> index a9dfcce5e1b2..73426de77675 100644
-> --- a/tools/testing/selftests/iommu/iommufd.c
-> +++ b/tools/testing/selftests/iommu/iommufd.c
-> @@ -3032,6 +3032,65 @@ TEST_F(iommufd_viommu, vdevice_cache)
->  	}
->  }
->  
-> +TEST_F(iommufd_viommu, hw_queue)
-> +{
-> +	__u64 iova = MOCK_APERTURE_START, iova2;
-> +	uint32_t viommu_id = self->viommu_id;
-> +	uint32_t hw_queue_id[2];
-> +
-> +	if (!viommu_id)
-> +		SKIP(return, "Skipping test for variant no_viommu");
-> +
-> +	/* Fail IOMMU_HW_QUEUE_TYPE_DEFAULT */
-> +	test_err_hw_queue_alloc(EOPNOTSUPP, viommu_id,
-> +				IOMMU_HW_QUEUE_TYPE_DEFAULT, 0, iova, PAGE_SIZE,
-> +				&hw_queue_id[0]);
-> +	/* Fail queue addr and length */
-> +	test_err_hw_queue_alloc(EINVAL, viommu_id, IOMMU_HW_QUEUE_TYPE_SELFTEST,
-> +				0, iova, 0, &hw_queue_id[0]);
-> +	test_err_hw_queue_alloc(EOVERFLOW, viommu_id,
-> +				IOMMU_HW_QUEUE_TYPE_SELFTEST, 0, ~(uint64_t)0,
-> +				PAGE_SIZE, &hw_queue_id[0]);
-> +	/* Fail missing iova */
-> +	test_err_hw_queue_alloc(ENOENT, viommu_id, IOMMU_HW_QUEUE_TYPE_SELFTEST,
-> +				0, iova, PAGE_SIZE, &hw_queue_id[0]);
-> +
-> +	/* Map iova */
-> +	test_ioctl_ioas_map(buffer, PAGE_SIZE, &iova);
-> +	test_ioctl_ioas_map(buffer + PAGE_SIZE, PAGE_SIZE, &iova2);
-> +
-> +	/* Fail index=1 and =MAX; must start from index=0 */
-> +	test_err_hw_queue_alloc(EIO, viommu_id, IOMMU_HW_QUEUE_TYPE_SELFTEST, 1,
-> +				iova, PAGE_SIZE, &hw_queue_id[0]);
-> +	test_err_hw_queue_alloc(EINVAL, viommu_id, IOMMU_HW_QUEUE_TYPE_SELFTEST,
-> +				IOMMU_TEST_HW_QUEUE_MAX, iova, PAGE_SIZE,
-> +				&hw_queue_id[0]);
-> +
-> +	/* Allocate index=0, declare ownership of the iova */
-> +	test_cmd_hw_queue_alloc(viommu_id, IOMMU_HW_QUEUE_TYPE_SELFTEST, 0,
-> +				iova, PAGE_SIZE, &hw_queue_id[0]);
-> +	/* Fail duplicated index */
-> +	test_err_hw_queue_alloc(EEXIST, viommu_id, IOMMU_HW_QUEUE_TYPE_SELFTEST,
-> +				0, iova, PAGE_SIZE, &hw_queue_id[0]);
-> +	/* Fail unmap, due to iova ownership */
-> +	test_err_ioctl_ioas_unmap(EBUSY, iova, PAGE_SIZE);
-> +	/* The 2nd page is not pinned, so it can be unmmap */
-> +	test_ioctl_ioas_unmap(iova2, PAGE_SIZE);
-> +
-> +	/* Allocate index=1, with an unaligned case */
-> +	test_cmd_hw_queue_alloc(viommu_id, IOMMU_HW_QUEUE_TYPE_SELFTEST, 1,
-> +				iova + PAGE_SIZE / 2, PAGE_SIZE / 2,
-> +				&hw_queue_id[1]);
-> +	/* Fail to destroy, due to dependency */
-> +	EXPECT_ERRNO(EBUSY, _test_ioctl_destroy(self->fd, hw_queue_id[0]));
-> +
-> +	/* Destroy in descending order */
-> +	test_ioctl_destroy(hw_queue_id[1]);
-> +	test_ioctl_destroy(hw_queue_id[0]);
-> +	/* Now it can unmap the first page */
-> +	test_ioctl_ioas_unmap(iova, PAGE_SIZE);
-> +}
-> +
->  FIXTURE(iommufd_device_pasid)
->  {
->  	int fd;
-> diff --git a/tools/testing/selftests/iommu/iommufd_fail_nth.c b/tools/testing/selftests/iommu/iommufd_fail_nth.c
-> index f7ccf1822108..41c685bbd252 100644
-> --- a/tools/testing/selftests/iommu/iommufd_fail_nth.c
-> +++ b/tools/testing/selftests/iommu/iommufd_fail_nth.c
-> @@ -634,6 +634,7 @@ TEST_FAIL_NTH(basic_fail_nth, device)
->  	uint32_t idev_id;
->  	uint32_t hwpt_id;
->  	uint32_t viommu_id;
-> +	uint32_t hw_queue_id;
->  	uint32_t vdev_id;
->  	__u64 iova;
->  
-> @@ -696,6 +697,11 @@ TEST_FAIL_NTH(basic_fail_nth, device)
->  	if (_test_cmd_vdevice_alloc(self->fd, viommu_id, idev_id, 0, &vdev_id))
->  		return -1;
->  
-> +	if (_test_cmd_hw_queue_alloc(self->fd, viommu_id,
-> +				     IOMMU_HW_QUEUE_TYPE_SELFTEST, 0, iova,
-> +				     PAGE_SIZE, &hw_queue_id))
-> +		return -1;
-> +
->  	if (_test_ioctl_fault_alloc(self->fd, &fault_id, &fault_fd))
->  		return -1;
->  	close(fault_fd);
-> -- 
-> 2.43.0
-> 
+>  		if (flush || skb_gro_receive_list(p, skb))
+>  			mss = 1;
+> diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
+> index 85b5aa82d7d7..e0a6bfa95118 100644
+> --- a/net/ipv4/udp_offload.c
+> +++ b/net/ipv4/udp_offload.c
+> @@ -767,6 +767,7 @@ static struct sk_buff *udp_gro_receive_segment(struct list_head *head,
+>  					NAPI_GRO_CB(skb)->flush = 1;
+>  					return NULL;
+>  				}
+> +				skb_set_network_header(skb, skb_gro_receive_network_offset(skb));
+>  				ret = skb_gro_receive_list(p, skb);
+>  			} else {
+>  				skb_gro_postpull_rcsum(skb, uh,
+
+Were you able to reproduce this regression? If so, can you share how?
 
