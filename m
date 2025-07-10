@@ -1,253 +1,117 @@
-Return-Path: <linux-kernel+bounces-726510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36BC2B00DE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:32:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E423B00DE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8156F5C4DD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:32:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A64B916BA87
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71CA2206B5;
-	Thu, 10 Jul 2025 21:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeSK1sDO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E47D23FC74;
+	Thu, 10 Jul 2025 21:33:06 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3293B1E520B;
-	Thu, 10 Jul 2025 21:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E241E520B
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 21:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752183091; cv=none; b=kKGnu6ZjTEudMpwSkM7ac3cM03O2+5rHoqJUZuoHZWqyLPKttNMmcFrFbnlwEZsIKONUj8CompVm5qdZLD22sWEfalUkx9kkYgWn10+OFmqDtDGiDTCoYMqmMbCiVMP4TBpfDZ7uS4RMpEVqxV0WAQ7cEMg0/9CcbqXPAZEo1yY=
+	t=1752183186; cv=none; b=snoAuxMserDRLc3XzwaguprOxgNdc4KNCDcOuiZNhFCB2w10XEctszExpbE/+bT4oOrWwMi8JLmzDdWjmQ4i6GW5Df9wHNbEY0Rjxud0+qgeTH70geq8hKUgF0Ab4RvgxHsO+bUg6deD+BJXTFX/nD+dvuzQ+QnyIklkxOqRzjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752183091; c=relaxed/simple;
-	bh=VJYVfYb5aKbK4eQQkUA5lmVUT/3A2ehIMDd21vB14NU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qm2b5W1lZgnuDwQwoOFmF9i+ClC1oBLRqLmXFUpI9ir0R93nGqTSi0YxwXV3lLm93t3GYrqzklD2Ck8fp+7FKj8fqJAad5ZmveDL8GiPdEeincZuhHN9fLcwi2FcsGGLlmO5bANu+Yj5wBzgPIp6QQtGA/NSX17Fv13OnuvcCaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeSK1sDO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DFACC4CEF4;
-	Thu, 10 Jul 2025 21:31:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752183091;
-	bh=VJYVfYb5aKbK4eQQkUA5lmVUT/3A2ehIMDd21vB14NU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CeSK1sDOqEclROIugmqbQobZxBiZYdf79kQefbcHMOIrfLbYKgKXDx74hfzKBA1vG
-	 BtdznHoti6CyrMOuAXA+R4jLegAAXftBL79z8VC8CJHmBXRzZGWMaG3ycxud3fzQm3
-	 j9WYcAqeN6MIpkDiSzrd8s73a+/yJZh6fHmOFGZvQRCfpGlDTNetJyIPotmjAEnPRS
-	 mKP5Sqn74tj7b6ae+9hYkVBLg5C0C4SF0uiNnJUFKqdWh/aZMWfEaQJOlVQ/V94nUs
-	 6Hlowmrz2W7Tx3VmqxJZeBRhnBLI4ZGtM5oF0OhPejveemcixwGk1PycR5fRTkMOgb
-	 t8nVu0In2zF2g==
-Date: Thu, 10 Jul 2025 23:31:24 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-mm@kvack.org, linux-hardening@vger.kernel.org
-Cc: Alejandro Colomar <alx@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Michal Hocko <mhocko@suse.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Martin Uecker <uecker@tugraz.at>, Sam James <sam@gentoo.org>, 
-	Andrew Pinski <pinskia@gmail.com>
-Subject: [RFC v5 7/7] mm: Use [v]sprintf_array() to avoid specifying the
- array size
-Message-ID: <e53d87e684ef4aa940e71e679b6e75fd7cedac36.1752182685.git.alx@kernel.org>
-X-Mailer: git-send-email 2.50.0
-References: <cover.1751823326.git.alx@kernel.org>
- <cover.1752182685.git.alx@kernel.org>
+	s=arc-20240116; t=1752183186; c=relaxed/simple;
+	bh=Kd88K6YoKyeXCu6B+S/I6pzQ80lwQj+X54U2LAoOhlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DzZl9DDQrmhvW9x16GC9i7vNV40iyHXuRq0Tj7osyIueTE+D3PZgGbPQhahdPuYs6JgEI5wf5NOYSWcvqESeVLd0PJsIZBu2VMFLF13Yca0OHPZk7fpkAaBGpEo1Ka/hqrwv1hERhKRHPr7q09SLA1+/I0H6y7PLaFRZz4poh8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf11.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 8B18AB6FF1;
+	Thu, 10 Jul 2025 21:33:01 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf11.hostedemail.com (Postfix) with ESMTPA id 0E0D82002D;
+	Thu, 10 Jul 2025 21:32:57 +0000 (UTC)
+Date: Thu, 10 Jul 2025 17:32:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
+ <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH 4/5] unwind: Rename unwind_stacktrace to
+ unwind_user_stacktrace
+Message-ID: <20250710173257.794d466d@batman.local.home>
+In-Reply-To: <20250709174139.4aa32d2c@gandalf.local.home>
+References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
+	<20250709212556.32777-5-mathieu.desnoyers@efficios.com>
+	<20250709174139.4aa32d2c@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1752182685.git.alx@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: ezzuri46uqerrnhrqx4tozce16dq16sp
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 0E0D82002D
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19aNrPKpqUKulxO/L4vTre5XltVbYz04Xk=
+X-HE-Tag: 1752183177-998424
+X-HE-Meta: U2FsdGVkX1/JKrOy+vWO9tVCXTsEtNmuG97HVlMI/dhxOL3oHpa2rQaGkypyJaruxrBpH0oPoRs99tHx+qNcGg0GWgLEmHKXkw1FPD7cTYu4xOuYrt+3hWFd6F7JB/NRJm9yfpWF2s735cJtH+JhpTq6UfcPXie/hbgRFUTfTCJ5Q62Gge100jNukQOLDX/++JOaXM5x2rDUiLChfhPNGPoMm9+p0xppQqgY8j2q/KDGLPXV0m/t2FdTcZPcF1C5UWkCjhPKahbgipDQsTRGUdSoTcnTKq11YfxqNp6JbVg6lfqCbFhgherv49XGXPTXfYiY4XedPmmNPJqJl4W99un1Iycx1NRIaNYTFa/6LIY82nq7DNwC11odBWnRwsQxDFDCn+FPmyqqKGr5Tt+ZJToxBStA4HDytiNbj8XqEZSiDCShSmXTHKz0EoMUZrWB
 
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Marco Elver <elver@google.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Alejandro Colomar <alx@kernel.org>
----
- mm/backing-dev.c    | 2 +-
- mm/cma.c            | 4 ++--
- mm/cma_debug.c      | 2 +-
- mm/hugetlb.c        | 3 +--
- mm/hugetlb_cgroup.c | 2 +-
- mm/hugetlb_cma.c    | 2 +-
- mm/kasan/report.c   | 3 +--
- mm/memblock.c       | 4 ++--
- mm/percpu.c         | 2 +-
- mm/shrinker_debug.c | 2 +-
- mm/zswap.c          | 2 +-
- 11 files changed, 13 insertions(+), 15 deletions(-)
+On Wed, 9 Jul 2025 17:41:39 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 783904d8c5ef..c4e588135aea 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -1090,7 +1090,7 @@ int bdi_register_va(struct backing_dev_info *bdi, const char *fmt, va_list args)
- 	if (bdi->dev)	/* The driver needs to use separate queues per device */
- 		return 0;
- 
--	vsnprintf(bdi->dev_name, sizeof(bdi->dev_name), fmt, args);
-+	vsprintf_array(bdi->dev_name, fmt, args);
- 	dev = device_create(&bdi_class, NULL, MKDEV(0, 0), bdi, bdi->dev_name);
- 	if (IS_ERR(dev))
- 		return PTR_ERR(dev);
-diff --git a/mm/cma.c b/mm/cma.c
-index c04be488b099..61d97a387670 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -237,9 +237,9 @@ static int __init cma_new_area(const char *name, phys_addr_t size,
- 	cma_area_count++;
- 
- 	if (name)
--		snprintf(cma->name, CMA_MAX_NAME, "%s", name);
-+		sprintf_array(cma->name, "%s", name);
- 	else
--		snprintf(cma->name, CMA_MAX_NAME,  "cma%d\n", cma_area_count);
-+		sprintf_array(cma->name, "cma%d\n", cma_area_count);
- 
- 	cma->available_count = cma->count = size >> PAGE_SHIFT;
- 	cma->order_per_bit = order_per_bit;
-diff --git a/mm/cma_debug.c b/mm/cma_debug.c
-index fdf899532ca0..751eae9f6364 100644
---- a/mm/cma_debug.c
-+++ b/mm/cma_debug.c
-@@ -186,7 +186,7 @@ static void cma_debugfs_add_one(struct cma *cma, struct dentry *root_dentry)
- 	rangedir = debugfs_create_dir("ranges", tmp);
- 	for (r = 0; r < cma->nranges; r++) {
- 		cmr = &cma->ranges[r];
--		snprintf(rdirname, sizeof(rdirname), "%d", r);
-+		sprintf_array(rdirname, "%d", r);
- 		dir = debugfs_create_dir(rdirname, rangedir);
- 		debugfs_create_file("base_pfn", 0444, dir,
- 			    &cmr->base_pfn, &cma_debugfs_fops);
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6a3cf7935c14..70acc8b3cbb8 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4780,8 +4780,7 @@ void __init hugetlb_add_hstate(unsigned int order)
- 	for (i = 0; i < MAX_NUMNODES; ++i)
- 		INIT_LIST_HEAD(&h->hugepage_freelists[i]);
- 	INIT_LIST_HEAD(&h->hugepage_activelist);
--	snprintf(h->name, HSTATE_NAME_LEN, "hugepages-%lukB",
--					huge_page_size(h)/SZ_1K);
-+	sprintf_array(h->name, "hugepages-%lukB", huge_page_size(h)/SZ_1K);
- 
- 	parsed_hstate = h;
- }
-diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
-index 58e895f3899a..0953cea93759 100644
---- a/mm/hugetlb_cgroup.c
-+++ b/mm/hugetlb_cgroup.c
-@@ -822,7 +822,7 @@ hugetlb_cgroup_cfttypes_init(struct hstate *h, struct cftype *cft,
- 	for (i = 0; i < tmpl_size; cft++, tmpl++, i++) {
- 		*cft = *tmpl;
- 		/* rebuild the name */
--		snprintf(cft->name, MAX_CFTYPE_NAME, "%s.%s", buf, tmpl->name);
-+		sprintf_array(cft->name, "%s.%s", buf, tmpl->name);
- 		/* rebuild the private */
- 		cft->private = MEMFILE_PRIVATE(idx, tmpl->private);
- 		/* rebuild the file_offset */
-diff --git a/mm/hugetlb_cma.c b/mm/hugetlb_cma.c
-index e0f2d5c3a84c..bae82a97a43c 100644
---- a/mm/hugetlb_cma.c
-+++ b/mm/hugetlb_cma.c
-@@ -211,7 +211,7 @@ void __init hugetlb_cma_reserve(int order)
- 
- 		size = round_up(size, PAGE_SIZE << order);
- 
--		snprintf(name, sizeof(name), "hugetlb%d", nid);
-+		sprintf_array(name, "hugetlb%d", nid);
- 		/*
- 		 * Note that 'order per bit' is based on smallest size that
- 		 * may be returned to CMA allocator in the case of
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index 8357e1a33699..3b40225e7873 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -486,8 +486,7 @@ static void print_memory_metadata(const void *addr)
- 		char buffer[4 + (BITS_PER_LONG / 8) * 2];
- 		char metadata[META_BYTES_PER_ROW];
- 
--		snprintf(buffer, sizeof(buffer),
--				(i == 0) ? ">%px: " : " %px: ", row);
-+		sprintf_array(buffer, (i == 0) ? ">%px: " : " %px: ", row);
- 
- 		/*
- 		 * We should not pass a shadow pointer to generic
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 0e9ebb8aa7fe..3eea7a177330 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -2021,7 +2021,7 @@ static void __init_memblock memblock_dump(struct memblock_type *type)
- 		flags = rgn->flags;
- #ifdef CONFIG_NUMA
- 		if (numa_valid_node(memblock_get_region_node(rgn)))
--			snprintf(nid_buf, sizeof(nid_buf), " on node %d",
-+			sprintf_array(nid_buf, " on node %d",
- 				 memblock_get_region_node(rgn));
- #endif
- 		pr_info(" %s[%#x]\t[%pa-%pa], %pa bytes%s flags: %#x\n",
-@@ -2379,7 +2379,7 @@ int reserve_mem_release_by_name(const char *name)
- 
- 	start = phys_to_virt(map->start);
- 	end = start + map->size - 1;
--	snprintf(buf, sizeof(buf), "reserve_mem:%s", name);
-+	sprintf_array(buf, "reserve_mem:%s", name);
- 	free_reserved_area(start, end, 0, buf);
- 	map->size = 0;
- 
-diff --git a/mm/percpu.c b/mm/percpu.c
-index b35494c8ede2..a467102c2405 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -3186,7 +3186,7 @@ int __init pcpu_page_first_chunk(size_t reserved_size, pcpu_fc_cpu_to_node_fn_t
- 	int upa;
- 	int nr_g0_units;
- 
--	snprintf(psize_str, sizeof(psize_str), "%luK", PAGE_SIZE >> 10);
-+	sprintf_array(psize_str, "%luK", PAGE_SIZE >> 10);
- 
- 	ai = pcpu_build_alloc_info(reserved_size, 0, PAGE_SIZE, NULL);
- 	if (IS_ERR(ai))
-diff --git a/mm/shrinker_debug.c b/mm/shrinker_debug.c
-index 20eaee3e97f7..f529ac29557c 100644
---- a/mm/shrinker_debug.c
-+++ b/mm/shrinker_debug.c
-@@ -176,7 +176,7 @@ int shrinker_debugfs_add(struct shrinker *shrinker)
- 		return id;
- 	shrinker->debugfs_id = id;
- 
--	snprintf(buf, sizeof(buf), "%s-%d", shrinker->name, id);
-+	sprintf_array(buf, "%s-%d", shrinker->name, id);
- 
- 	/* create debugfs entry */
- 	entry = debugfs_create_dir(buf, shrinker_debugfs_root);
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 204fb59da33c..e66b5c5b1ecf 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -271,7 +271,7 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
- 		return NULL;
- 
- 	/* unique name for each pool specifically required by zsmalloc */
--	snprintf(name, 38, "zswap%x", atomic_inc_return(&zswap_pools_count));
-+	sprintf_array(name, "zswap%x", atomic_inc_return(&zswap_pools_count));
- 	pool->zpool = zpool_create_pool(type, name, gfp);
- 	if (!pool->zpool) {
- 		pr_err("%s zpool not available\n", type);
--- 
-2.50.0
+> On Wed,  9 Jul 2025 17:25:51 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+> > Rename the unwind_stacktrace structure to unwind_user_stacktrace to make
+> > it consistent with the rest of the API.  
+> 
+> We originally had that name, but decided it was too long. As only the
+> deferred unwind uses "unwind_" and it is currently only for user space, do
+> we really need to have a 22 character structure name? 17 is already big
+> enough.
+> 
+> And say we make an unwind_kernel_stacktrace()? I doubt we ever would, but
+> if we did, it would still use the same structure. There's nothing
+> inherently user space here (with maybe the exception of the compat type,
+> but still).
+> 
+> And how is this unique to user space? The kernel can have sframes too.
+> 
+> Actually, I think we should rename "enum unwind_user_type" to
+> "enum unwind_type".
+> 
+> struct unwind_entry {
+> 	enum unwind_type	type;
+> 	unsigned long		ip;
+> };
+> 
+> As it is only being used for user space now, but it doesn't mean it can't
+> be used for the kernel.
+> 
+> Heck, there's already work to use sframes in kernel code to replace ORC so
+> that architectures like ARM64 can have live kernel patching.
 
+Actually, I'm going to leave everything as is. The "struct unwind_user_*"
+is only used internally in the user code and is not part of the API of
+the infrastructure. The "struct unwind_stackframe" is used in the API
+as a parameter. To me, it makes more sense to keep it short than adding
+"user" to it and making all the callbacks have a longer name.
+
+I know your patch 5 exposes more, but we'll deal with that when the
+time comes.
+
+-- Steve
 
