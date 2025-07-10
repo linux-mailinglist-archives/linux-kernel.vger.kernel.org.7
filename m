@@ -1,106 +1,109 @@
-Return-Path: <linux-kernel+bounces-725249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F28AFFC72
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:35:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888E9AFFC78
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07F1641C0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:34:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833AD1C26FDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6734D28B504;
-	Thu, 10 Jul 2025 08:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF54728DF41;
+	Thu, 10 Jul 2025 08:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AcihvwXk"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dDUGZEUV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F59235079;
-	Thu, 10 Jul 2025 08:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7AE28C2B7;
+	Thu, 10 Jul 2025 08:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752136496; cv=none; b=lYbQsdZPGTYgzKC1y1lO5PfjaAjFKc4+BDDP8FwoH72hWyRxOdiwq7xKBxa3Cp87ZASVaTLScJBuE0KZXvqNhk+lyP3RhQtX4B/uRg0nMwGPyaKz689rirBU7O9MnIpnV0U/EtiwikJ2ogxGpiE5Ldjaoik/32MnXMicBXRVj2M=
+	t=1752136536; cv=none; b=bH6VrEGiXt44tmlNVgw8KOe625mCWKA1D6CcKOrbbzTpneqXiY8xGpBU92JyvkcZPG+HILk4PHZlJgYxvy5MDzV/LxJ0Txz1hsl4ez4DtsvUZ/aBptNzLNZLnNeBXzFW8OQVf08ERuQqjBJ7EbYfh9nEih8yF0pCS2R/aCGg9ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752136496; c=relaxed/simple;
-	bh=4w9bAD7kRVzLGrlMK5wZBQXa2LlBBSXRgGR9avgSRgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YanPEoob8SlCF8V5k/nqM7BliK0u5uW457YXiLPBBYDuVbMLTo7RjtEbSwbus5mbX038skQfe5KgjjFRQ5O9C3tRJWB4TKroJYGroTT03bXJ9nH45cKok5XtdVDpysWGjw3LHfvjyIo7mfqZOdBW4HUGaHvbvTU1sFp7QAiY2n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=AcihvwXk; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752136418;
-	bh=EeWxg/nvKySYKwpqe2eAMVbkXBtKKgH6rXSG4Nx0n8I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=AcihvwXkdtOWdTSg+d/efhwAGG0PLv5VSwha3xsHUi5SZp2Nx5C9Omle5yxLhTR4d
-	 PN0kTTPIFvDdBxa048cZWF0+xCIE0zWxqJGtS3LZK+9RschKZoKrZtRNgJTKUtFJ8d
-	 vujp9ItQ7edgNhC7ZsXgydl1rsQcvRGFouAFP9P89YwiNlkYngTaEWG8pUtj06owZh
-	 Kkmvvm7WtFcV3rFSwb8p3wWZuEmD3YfelKhAUNbT995ysWia5negoLfU3VpbX5uHVu
-	 CKOMBOU/b9oHUCm49qsO2xJCRejhEBxErDlXD/ghVoHwcspwngDTzxI6IP8P+3pCv+
-	 bGlxP0ZLK1R6Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bd7R60PCbz4wbb;
-	Thu, 10 Jul 2025 18:33:38 +1000 (AEST)
-Date: Thu, 10 Jul 2025 18:34:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Ben Horgan <ben.horgan@arm.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the bitmap tree
-Message-ID: <20250710183449.20e255b4@canb.auug.org.au>
+	s=arc-20240116; t=1752136536; c=relaxed/simple;
+	bh=9Mr4H+yZyicLXoOzHEwu/rCOzSJ9nDgRI3VeAYk3jYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uZwM8J7W+qEyepqdMxslEYSUQuxN01H71tNjJSZ4pxx560AEBM2snLmg1t3fI7gCZWEOIi0I7/4wVuaIGj+gyp+60WuOpVNIhFsMEpE6vLvctHVsH9j3apHFOfe8DG6vfDZjrmj2RkeCKGZiJwgxFIueI/3tqa6OEqXDq8EAhCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dDUGZEUV; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752136534; x=1783672534;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9Mr4H+yZyicLXoOzHEwu/rCOzSJ9nDgRI3VeAYk3jYY=;
+  b=dDUGZEUVafJ+tManylooDsM9yzzaZHMedbrXstXi9dZZ5tDW0uVgLXt3
+   RHfTCwEPmHgSgcxFuqF3a9eF1C8AwbE8N79A2lJ12RqGyhPjXMQcg0cAm
+   1f2kFPxCGgJoiGU1zVO2Llv721r2rAnrvbUO/Y1MknVtdB7oDWOFEtPd7
+   i3ZMkQM1H2D/ZcbH+FeWD11AkLZzq0ekVL0RPY5FMbCdBQSE32ckwXm4K
+   qZtFewqrzS86elT9R2EEcCS9gY+3khmfNsUChlMIRoMcWiy46B0FW7smC
+   2aNnFjesnLidyF9Ay29+gIC37Iea0Cbls+5SgVrwl0zVoyNKxHWrn8Pak
+   Q==;
+X-CSE-ConnectionGUID: 7wkGPI/vRGCel4ARZpMK3g==
+X-CSE-MsgGUID: VY1/6bADR9yefqrVhut96Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="64989723"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="64989723"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 01:35:03 -0700
+X-CSE-ConnectionGUID: FOmTGoUPTre9EZ25E1PikQ==
+X-CSE-MsgGUID: yIOqUdOsQvi/xlgoivGu3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="160551353"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 01:35:01 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uZmk5-0000000E90T-1yqI;
+	Thu, 10 Jul 2025 11:34:57 +0300
+Date: Thu, 10 Jul 2025 11:34:57 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Philipp Stanner <phasta@kernel.org>,
+	Andres Urian Florez <andres.emb.sys@gmail.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: echoaudio: Replace deprecated strcpy() with
+ strscpy()
+Message-ID: <aG97MbrEKqqZbsYe@smile.fi.intel.com>
+References: <20250709124655.1195-1-thorsten.blum@linux.dev>
+ <87bjptzch3.wl-tiwai@suse.de>
+ <7F3BCAEF-67D2-4907-9392-CAEFD3EF58C7@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8Yw2brhMS_2l5m0CB6I13d3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7F3BCAEF-67D2-4907-9392-CAEFD3EF58C7@linux.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
---Sig_/8Yw2brhMS_2l5m0CB6I13d3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 09, 2025 at 10:55:02PM +0200, Thorsten Blum wrote:
+> On 9. Jul 2025, at 16:05, Takashi Iwai wrote:
+> > Thanks, applied now.
 
-Hi all,
+> > And now I'm going to convert all the rest of such trivial stuff
+> > (strcpy() with card->driver, shortname, mixername, longname, as well
+> > as pcm->name, and else) in sound/* for 6.17.
+> 
+> Yes, please :) I thought about submitting a patch series for all of
+> sound/*, but didn't find the time yet.
 
-After merging the bitmap tree, today's linux-next build (arm64 defconfig)
-produced this warning:
+Note that strscpy() supports 3rd argument optionally, it means it's better
+to use 2-arg variant when the destination is supposed to be an array of
+characters.
 
-arch/arm64/kvm/sys_regs.c: In function 'access_mdcr':
-arch/arm64/kvm/sys_regs.c:2654:17: warning: ignoring return value of 'u64_r=
-eplace_bits' declared with attribute 'warn_unused_result' [-Wunused-result]
- 2654 |                 u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
-      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Introduced by commit
 
-  f66f9c3d09c1 ("bitfield: Ensure the return values of helper functions are=
- checked")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8Yw2brhMS_2l5m0CB6I13d3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhveykACgkQAVBC80lX
-0GwS+wf+K33WVuzBsMv+/ZcwiS9Nr9vy0vWZnZ71aJ2nw/gyivMq+KyS9lZT4//V
-opIygndGhrp7LVXhxopTj0peOVAbCUmHFF0g2wVCFuUjR53zIMlBTmubvmoZQD3u
-B+SR9JIz0HcKodGTTHRiX0+YdgX3I8wt6Jil5KVZ7zMAn+wuPsMaKuP8qutU+0JO
-x8aUyG6LSzODJm3XELH7Wj/YVpVmw+IAgonINCB+3W9kWXmr8/wldXlCn7y46J/v
-jbS/gOabQHzJbAhuund/fkUqfkn20RmR2UzMx24jsDKr8Syh/0ocEPbV2dbUhuxs
-QCl5CSb/pMabyExZA90996Fkxw+Cow==
-=KxUw
------END PGP SIGNATURE-----
-
---Sig_/8Yw2brhMS_2l5m0CB6I13d3--
 
