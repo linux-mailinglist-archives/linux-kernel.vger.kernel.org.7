@@ -1,105 +1,143 @@
-Return-Path: <linux-kernel+bounces-725352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38B5AFFDF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:22:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C61AFFDF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23303B726E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2BDF3ABF14
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7485F294A0D;
-	Thu, 10 Jul 2025 09:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5316429291F;
+	Thu, 10 Jul 2025 09:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="B1jj4Udr"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y7TMRbkY"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BB7214210;
-	Thu, 10 Jul 2025 09:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2BF214210;
+	Thu, 10 Jul 2025 09:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752139321; cv=none; b=DJuniKjfVQAX76/Xc48iB8pkl8ulofb/o33NCYZalWKcitdpp7hlFoV0/OeK/F6Ma2Ei4HSiwSnfFqgC/4i4aOeU+Y2kodrAR7zGxV/RawQ/moHkHS029qbQP077poJIPPM4+9aGqcoJi5Rt2j28A2OfPUZNf6NklNf0SauZiVc=
+	t=1752139315; cv=none; b=AiyL4jJpjo3DYq2OS95d6+wIEzChazGbIhwP3pzbKkrbSfWo8+8qgjd946l7JGBUFgQ8tCG+yTRvWwjXHqlCcdoAtCSVbw/sgglrSKSujHLDHKfonH+p1JpY/txZF70VmpvqS8au2O8YF3jGo4LFthH5xkZ1SqdGSicyCG/kciY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752139321; c=relaxed/simple;
-	bh=YWiKfFUpvY0CTSU08o1Vxmml9LYBSTSxuK4Xhb+tbVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Az/1VMJyEoKjaPnMFw5YYdBsWSiaFyxJwSYatu6yeZC0aHUR/54mVYpaJzVjTWbCFUFCEmlgLWtjGWcapXsBy7RruPiwJd5WVeWa3NH5KLm0lX1xRDUTiI9T8nXa6C60LW+FPEYxxebf+VamyW+evJswqo8kxZy4HCqIZYcly9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=B1jj4Udr; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id A3EF120D9B;
-	Thu, 10 Jul 2025 11:21:58 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id jWSHtPzeUuRu; Thu, 10 Jul 2025 11:21:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1752139318; bh=YWiKfFUpvY0CTSU08o1Vxmml9LYBSTSxuK4Xhb+tbVU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=B1jj4Udrnr8mHo8CZcvxkAtHXrp4J7GrDWUcMyH722pC+J30FTb3M3XcKkRlzQ9ga
-	 KgICluIXnabEbGFRD7awmtE/6kUJpMHopz5JCkc9CsPn4JTMa+/RMv/t67KQnUp+7I
-	 JCVmXnqZMWQe2u/p9IOqblLIivktz//obRGVKbAnNkhcv4CHHF32YKTvpmVJiM1KMD
-	 vpHoKOPLFGCTumAVXOM3OUMqSaL40H96vtAo+ck57jAjWBxRArT7/C6docPRKv4nwH
-	 r5Ae8gLNXIXo5nM85BBr8+aFmIklItqZBCBfyjMVH3sThyau48MlOAHtsWSTqHdSPn
-	 DZznr9sQRHHCA==
-From: Yao Zi <ziyao@disroot.org>
-To: Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Yangtao Li <frank.li@vivo.com>
-Cc: linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v2 2/2] clk: thead: th1520-ap: Correctly refer the parent of c910-i0
-Date: Thu, 10 Jul 2025 09:21:35 +0000
-Message-ID: <20250710092135.61049-3-ziyao@disroot.org>
-In-Reply-To: <20250710092135.61049-1-ziyao@disroot.org>
-References: <20250710092135.61049-1-ziyao@disroot.org>
+	s=arc-20240116; t=1752139315; c=relaxed/simple;
+	bh=y21nPgHIHQE0X3oc5JkFHd1rukiAka8zDn3Vv7fequ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t/0lmT7RIt/zGJNVr848gD2PA49M7rYaWscfiQJbSHcyUbJI2sEaJIT5ikW9M1aBxOWNNgJK4RehZ8XHT7K3Mn2b3OV6p+RNsqBwxM6t+VKcaYRjlMcs9G+7uzY3M7LuB7YrJ3sHmATHPW0/Fz5cte0qmhf/z/dy9Ktr9zD9jKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y7TMRbkY; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-70e77831d68so8276467b3.2;
+        Thu, 10 Jul 2025 02:21:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752139313; x=1752744113; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CIb23wfO7R7H8MNklKKsDP+RsX87PaDNS4GSIFnlxoY=;
+        b=Y7TMRbkY0gCLtiFlzVPIw480b5wwH6vIYMMcsQc668Is+PRF2bfl9ceVlScg2OE3ZO
+         IMetBHK3MTYSFHv5Q3dJ1e/e0f72A8MKtFk+TYeYdhDe1FNlZetfXzn0xEGUTUijD/WB
+         /zR97fiEwMnilUCizU+fjjiYR9jVvrEowm4j3lh05v3AToFhvJ1KEUUawbFZFH+HWnn8
+         VUfCvVX9Vj0jYAozZLjwkI0KDNNNyRXCvMBHnAaroRUHcl0OM3DymFg5kmxKn/pMHmuc
+         sFCzBjfFDLT0+MO+sZE+10kyWmsg3PhtD/Hy8v1B5iPSAnTa0gchYErINcb1kwEiEWf0
+         vgbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752139313; x=1752744113;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CIb23wfO7R7H8MNklKKsDP+RsX87PaDNS4GSIFnlxoY=;
+        b=mXxPgEcBCnk/K8p1RTFXCvzLTgJcgvgenvbF6cQCGYF0iW5omkceik4BDFk/mKzPlt
+         Fd01mU92P7Bu4MePeLEox2MIxXNoBaKtuh69wkURrPrmxgbzeA6ZOc/FzyWjgZ+Xke2F
+         txNjedGyySZ3AIAnh02NL1tteMJo6x3ibKoUhq+tb1utx2sM4LI1ggqCK/Q9WEsbYf07
+         QpfcIQtX/v4+XAQQj7XAL5ldWi6wQe3rg/1VO+atVN4M53bgSkY2ROTlEE7+sVVhxMYd
+         TJtvScBCSDpoElDgjiIOjM2/2L7tatV+dOI1L+L9+U1bn+xYL2Ndy+Zxl421OCv4/QpU
+         2GQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNzmqN6IblYR5brdGRYtF40uK/PPoyXshH2NIeQHJokSZRM5G5MM2T+9qzrIxmACAYSYRkJ+/1epJpLD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0VRXt6ztLkeNu04K3ATiFz/P6VB7n0mhYQJGvajwhiYrweJyN
+	lCb3XR4OsQOELQh1QtyQ/D53rkUmbuIDv6rbyA05/oqKhnqCAtCQaXIAkgZjXMYuJZXeUXqBZ5a
+	81GYPO7QJFyPz7LVIKqF3rLSOoE/PsB0=
+X-Gm-Gg: ASbGncuSUj+izLz3gnmgG9/Igg3Nt8GhgAi09rfoaSYvbbtyRW59rQP29JOQfLhIhFA
+	KAcFm3atdgej4myeSpa7t82cVTUQ7X2yUFKKr2auuV3Uya61CS8rJ0CxEgVxMcSUaRy8QuqN5FR
+	PHudz9AxiMCA+rcXnqv3fLELdLN8gdt2StO395ezMzKQ==
+X-Google-Smtp-Source: AGHT+IEyihmR4k6j+d3nRg7Al2UjBfOwUKJgCp3uoe4n9JUTn8NhsBjL7wuXahr5HIPQlLPnZdlvYqaWnH6iYhxgRdY=
+X-Received: by 2002:a05:690c:6908:b0:70c:a0c9:c648 with SMTP id
+ 00721157ae682-717c1774a36mr45258857b3.19.1752139313148; Thu, 10 Jul 2025
+ 02:21:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250709220714.85697-1-stefano.radaelli21@gmail.com>
+ <20250709220714.85697-2-stefano.radaelli21@gmail.com> <9b503f65-5c8c-4f04-a1b1-40d7a1202e8b@kernel.org>
+In-Reply-To: <9b503f65-5c8c-4f04-a1b1-40d7a1202e8b@kernel.org>
+From: Stefano Radaelli <stefano.radaelli21@gmail.com>
+Date: Thu, 10 Jul 2025 11:21:37 +0200
+X-Gm-Features: Ac12FXxMoCORza1qjA8bpnm1jhAVYXGS6gK3JmG0IlhKcdilmwXZ2lWiCDsGXZI
+Message-ID: <CAK+owohgk3CkQRv_PBDWXh44X2uN3p8FWBU2t9VtmO-xzOKTow@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: arm: ti: Add bindings for Variscite VAR-SOM-AM62P
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-The correct parent of c910, c910-i0, is registered with
-devm_clk_hw_register_mux_parent_data_table(), which creates a clk_hw
-structure from scratch. But it's assigned as c910's parent by
-referring &c910_i0_clk.common.hw, confusing the CCF since this clk_hw
-structure is never registered.
+Hi Krzysztof,
 
-Refer c910-i0 by its name instead to avoid turning c910 into an orphan
-clock.
+Thank you for your suggestion. Actually, our compatible strings for
+Variscite SOMs follow the format "som-factor"-"processor". Here are
+some examples:
 
-Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- drivers/clk/thead/clk-th1520-ap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://github.com/varigit/linux-imx/blob/lf-6.6.y_6.6.52-2.2.0_var01/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi#L14
+https://github.com/varigit/linux-imx/blob/lf-6.6.y_6.6.52-2.2.0_var01/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi#L15
+https://github.com/varigit/linux-imx/blob/lf-6.6.y_6.6.52-2.2.0_var01/arch/arm64/boot/dts/freescale/imx91-var-som.dtsi#L14
 
-diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-index 42feb4bb6329..41ed72b1a915 100644
---- a/drivers/clk/thead/clk-th1520-ap.c
-+++ b/drivers/clk/thead/clk-th1520-ap.c
-@@ -427,7 +427,7 @@ static struct ccu_mux c910_i0_clk = {
- };
- 
- static const struct clk_parent_data c910_parents[] = {
--	{ .hw = &c910_i0_clk.common.hw },
-+	{ .index = -1, .name = "c910-i0" },
- 	{ .hw = &cpu_pll1_clk.common.hw }
- };
- 
--- 
-2.50.0
+These strings are used in our Yocto filesystem for WiFi management and
+other applications. Changing them would require updating the entire
+Yocto configuration.
 
+Best regards,
+Stefano
+
+Il giorno gio 10 lug 2025 alle ore 08:50 Krzysztof Kozlowski
+<krzk@kernel.org> ha scritto:
+>
+> On 10/07/2025 00:07, Stefano Radaelli wrote:
+> > Add devicetree bindings for Variscite VAR-SOM-AM62P System on Module
+> > and its carrier boards.
+> >
+> > Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
+> > ---
+> > v2:
+> >  - Add symphony carrier board compatible
+> >
+> >  Documentation/devicetree/bindings/arm/ti/k3.yaml | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/ti/k3.yaml b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> > index bf6003d8fb76..780fbb5970a5 100644
+> > --- a/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> > @@ -100,6 +100,12 @@ properties:
+> >            - const: toradex,verdin-am62p          # Verdin AM62P Module
+> >            - const: ti,am62p5
+> >
+> > +      - description: K3 AM62P5 SoC Variscite SOM and Carrier Boards
+> > +        items:
+> > +          - const: variscite,am62p-var-som-symphony
+>
+> This is named reversed. Usually Variscite names are var-som-foo and:
+> https://www.variscite.com/product/system-on-module-som/cortex-a53-krait/var-som-am62p-ti-sitara-am62px/
+>
+> confirms this, so the compatibles should be var-som-am62p.
+>
+>
+>
+> Best regards,
+> Krzysztof
 
