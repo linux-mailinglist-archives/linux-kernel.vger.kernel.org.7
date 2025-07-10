@@ -1,165 +1,163 @@
-Return-Path: <linux-kernel+bounces-724708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE24AFF610
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:40:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E66DBAFF611
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 892031C42444
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:40:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C28E560E02
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D27072605;
-	Thu, 10 Jul 2025 00:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I6eke5UL"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747172BCFB;
+	Thu, 10 Jul 2025 00:42:58 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B088F54;
-	Thu, 10 Jul 2025 00:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BACA32
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752108002; cv=none; b=VFkgZornRT9xh9AeajeeqBaMzxI//xDEOCYaFXF47qgGZCIdl9BZtTb+kyLOmE8WTfnrBeZfvfvXprKHLtz4X64K5FoPoF27A0yib/Mb1MWY7TXqKuieeITFLS2iRSz+7tbAXCIyYSO6kit3wzEHvnLtZlncIbT652ffMCft1Cg=
+	t=1752108178; cv=none; b=JcyEkleiYDAXR1L3KVtTy59ZFGOEs0LFuyo1TSKdcpDHZI5OIKrNx9XR+MvBR5/Ry1dll1W9m9vHBI+UkFsOoiGCLN1TeNax6HgOVaeziUtWGI6Tu84KOWABda69cqoReKXWgJC+S1BlAskGyslEXpq31QEq6RGcoFO3IWuixsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752108002; c=relaxed/simple;
-	bh=5xrWVx1C9s45tbIV36ojtnaAGXS4aJVjxBP/Z8QyPxE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dXoU83nDfAHgeSlWcYnZ0c3RbOJBG4jWIEpBnTOLGXHZ3i12e6jpo5C94NjnPCcdwA9NU0qLhxRzQcBsRayHFHiX840p2CuEhv6Tc3sZDqWTSBMaVVmlctMISzsdUm3FCTU2jHjJrAZdxATebTYpA41HySDOClSQ2DqTZ5feUB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I6eke5UL; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a4fb9c2436so300015f8f.1;
-        Wed, 09 Jul 2025 17:40:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752107999; x=1752712799; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8+EH9We4Q8uZNtUfBicIKlMK3P33lcOOMogm1wF7Hgw=;
-        b=I6eke5ULShzQt77sqJZ5FK65QkG9AkFy2SFVQUDDoU+5875HLhiVnlkRfjbJYq25eH
-         O3feeB7uDUniT0tYu3xrpTkB8hkDDupEx59mT+K8Swn607apk/ncj65Fo8YaaHbf6wTc
-         FL9t4lxBcGei+mufz7K/yk98LrsLo4bsH7YfZhJPVu9LdxXG6xpWK0AF6X4704bnb6Ar
-         5zBosYqJ3gPof1K28sTIAEN302ZP3pCXp0nr0eMF1AJgRcucXQ89CEqI1JK9Uht93+/p
-         /Ga4bV+L//dP1j2BUYvJYPf4MDMKcgL8h6BGAb9vwI2bnYwjrRd4GQzr0hUA9WW0PzgM
-         g+oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752107999; x=1752712799;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8+EH9We4Q8uZNtUfBicIKlMK3P33lcOOMogm1wF7Hgw=;
-        b=jrbAJxmyVR58tI5SOk3P9KwezecqjNz+tVYZC0yx/oLOCB3Sz5EXXp3fVmUgw55Y33
-         Kpi/glcngPPHCSxGjapdcC6JtLTV/9bzzjuEDFis2wF4iFhDHO3IF1bDpuEBBH2eGoBV
-         r2HgS1tN7KvJmHyMfI/OG9pUh4wm8BKHgYJdtbMknAZjaujYl+4xQRhyGXyTWI4nDDfh
-         +5z73wQ/wr1QEvHSkqEiCcB9Xhh5MiSKdG3j96cLC2BOauvF+MMA3HPYJGZDlC/MnqcC
-         lrABx9/mz2zPyJm1MJAL279/zCN4m1OHI7mq6Z/OjanlkW5TNF9muS1vpqA6rtX1Bj2g
-         SIsA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9BZoZ3k2amguNw31gkIY+G2dVgk1wnejNEYMPxp2Czo5tSvjuHbc505SZXkCEqitpMe0=@vger.kernel.org, AJvYcCW4mI0EQ8MgIrhHUkKcHkHrWNhWCnp2TKSTsZO8nZbcOD70Ve7PpIXp7w5kJEqsV+jt4kDmd7cj6whjmUtD@vger.kernel.org, AJvYcCWHQJ1c2Gq+iBYHtMWTPAUend3Tg+LAoW2r+BryMLnltYhYddQC3z3Q2n/fokupnPSgtjrbF10PW7nkL2Nexyk=@vger.kernel.org, AJvYcCWi6VSvNfHAF7rW23noc3xLfXC+9IMqKm/or/QukRIhIo12F7W5ComVlFEOwE+r+gSFi04jtGtywqdvinr+lH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqLL80JkVQ09XRkM/FUSletnBIrfYlmi2E9GCIsWT9J0e5GRn7
-	Y0e+Ejory48jyV3ZiYGEBw3aLDg7Ibz9T0QsagplRTNx0caD4qvWBm9drHMNi6EK45khhknxnGx
-	EC8UvA6azQak7LjDtblSe8pE3sb24O2I=
-X-Gm-Gg: ASbGnct4IgfPbofnYGrenc0Bq9PTqQMa5vrG/qmqOyB2i6BVVdWsXDqv2M22Bew4oxV
-	niIwG4en2kYrRgEtY+vP2l5MvVq92GcL1WiLgKqLet8Pl+zMHRGqZ8pU9SN8Ks3yz+hUPsnvmJz
-	eroZlf+FAwIE1MBV3vGm8PlMYpjmqVDTcvRNVlcoi3FxQtaKLNpUZBenOEkwgUsmFoKUFk/fLE
-X-Google-Smtp-Source: AGHT+IGl307g/Cb4M8ys7xRkMqsB4P7qgaJ2qzazbro0cQv4i2hb8605y1TULKlRw0ArBOPaqrTdi/ue/nQVGUiy4P4=
-X-Received: by 2002:a5d:64ef:0:b0:3a4:f7e6:284b with SMTP id
- ffacd0b85a97d-3b5e788110cmr2130070f8f.10.1752107998781; Wed, 09 Jul 2025
- 17:39:58 -0700 (PDT)
+	s=arc-20240116; t=1752108178; c=relaxed/simple;
+	bh=M5AOlc7nfLPWfqNeTKRwsNvqOCCyehvOZHBTgEX4iEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KqSVP1lEN4HGtzderO3tzTjn+5+2Xd+Ttz84q+OV4Ib6oMsk/Mhla9D/I3HpxDrCNRd2kzLfkvv00CLqTTo3x34pQzUFEJz1wxgRKvr+8dgyS82hi88K60n3aS/EMuk9nq3HeSeS/cZqEEx1pB150wSBxFSXDD8Ez9mlgFp8xho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: ccfe583e5d2611f0b29709d653e92f7d-20250710
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:367d6493-e81b-47d2-9243-07b2acedfef1,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:ff4927b9883cc6a27eb834208d54dd16,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ccfe583e5d2611f0b29709d653e92f7d-20250710
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 183848906; Thu, 10 Jul 2025 08:42:47 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 84F1BE008FA2;
+	Thu, 10 Jul 2025 08:42:47 +0800 (CST)
+X-ns-mid: postfix-686F0C87-3821944
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 6C903E008FA1;
+	Thu, 10 Jul 2025 08:42:43 +0800 (CST)
+Message-ID: <adef8551-2739-4817-af3a-29357b2aab19@kylinos.cn>
+Date: Thu, 10 Jul 2025 08:42:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
- <20250709172416.1031970-1-vitaly.wool@konsulko.se> <CAADnVQ+bikqCO7D+5_rAtiJXv3F6xn=0_hgGH5CkoTPpdi8j6Q@mail.gmail.com>
- <14b08e7c-c2e8-435c-a1dd-bd51cfb42060@kernel.org> <CAADnVQ+qCNfm3aucBrkXRXrUjjYeYQb09Oobx+pgOXNDny4s8w@mail.gmail.com>
- <DB7WW886UVAJ.I58517CYL8G7@kernel.org>
-In-Reply-To: <DB7WW886UVAJ.I58517CYL8G7@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 9 Jul 2025 17:39:47 -0700
-X-Gm-Features: Ac12FXyQfyO3szxMDVVNHvlOhNb_Gbvf_td5xMFONVF3fAKwKJRT2QZYiRmaY0s
-Message-ID: <CAADnVQ+iZbKzx8bje=CLO=OnpmGHmQHpDNC=UjWYfN59bWoN3A@mail.gmail.com>
-Subject: Re: [PATCH v12 1/4] mm/vmalloc: allow to set node and align in vrealloc
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm <linux-mm@kvack.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Uladzislau Rezki <urezki@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, rust-for-linux <rust-for-linux@vger.kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, 
-	bpf <bpf@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] sched/uclamp: Initialize uclamp_rq alongside rq setup
+ in sched_init()
+To: Christian Loehle <christian.loehle@arm.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, patrick.bellasi@arm.com,
+ qyousef@layalina.io, xuewen.yan@unisoc.com
+Cc: linux-kernel@vger.kernel.org
+References: <20250627074535.14064-1-zhangzihuan@kylinos.cn>
+ <d8a805d0-74ba-44dd-b5f7-8d2373c9538f@arm.com>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <d8a805d0-74ba-44dd-b5f7-8d2373c9538f@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 9, 2025 at 4:26=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
-rote:
+Hi Christian,
+Thanks for the feedback!
+
+=E5=9C=A8 2025/7/9 18:25, Christian Loehle =E5=86=99=E9=81=93:
+> On 6/27/25 08:45, Zihuan Zhang wrote:
+>> uclamp_rq is currently initialized for all possible CPUs in a separate
+>> loop within init_uclamp(). This creates a dependency on the ordering o=
+f
+>> sched_init() and init_uclamp(), and duplicates the per-CPU iteration.
+>>
+>> This patch simplifies the logic by moving uclamp_rq initialization int=
+o
+>> sched_init(), immediately after each cpu_rq is initialized. This ensur=
+es
+>> uclamprq setup is tightly coupled with rq setup and removes the need f=
+or
+>> a redundant loop.
+>>
+>> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+>> ---
+>>   kernel/sched/core.c | 8 +++-----
+>>   1 file changed, 3 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index 8988d38d46a3..a160ec8645b2 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -1998,7 +1998,7 @@ static void uclamp_post_fork(struct task_struct =
+*p)
+>>   	uclamp_update_util_min_rt_default(p);
+>>   }
+>>  =20
+>> -static void __init init_uclamp_rq(struct rq *rq)
+>> +static void init_uclamp_rq(struct rq *rq)
+>>   {
+>>   	enum uclamp_id clamp_id;
+>>   	struct uclamp_rq *uc_rq =3D rq->uclamp;
+>> @@ -2016,10 +2016,6 @@ static void __init init_uclamp(void)
+>>   {
+>>   	struct uclamp_se uc_max =3D {};
+>>   	enum uclamp_id clamp_id;
+>> -	int cpu;
+>> -
+>> -	for_each_possible_cpu(cpu)
+>> -		init_uclamp_rq(cpu_rq(cpu));
+>>  =20
+>>   	for_each_clamp_id(clamp_id) {
+>>   		uclamp_se_set(&init_task.uclamp_req[clamp_id],
+>> @@ -2043,6 +2039,7 @@ static inline void uclamp_rq_dec(struct rq *rq, =
+struct task_struct *p) { }
+>>   static inline void uclamp_fork(struct task_struct *p) { }
+>>   static inline void uclamp_post_fork(struct task_struct *p) { }
+>>   static inline void init_uclamp(void) { }
+>> +static inline void init_uclamp_rq(struct rq *rq) {}
+>>   #endif /* CONFIG_UCLAMP_TASK */
+>>  =20
+>>   bool sched_task_on_rq(struct task_struct *p)
+>> @@ -8586,6 +8583,7 @@ void __init sched_init(void)
+>>   		init_cfs_rq(&rq->cfs);
+>>   		init_rt_rq(&rq->rt);
+>>   		init_dl_rq(&rq->dl);
+>> +		init_uclamp_rq(rq);
+>>   #ifdef CONFIG_FAIR_GROUP_SCHED
+>>   		INIT_LIST_HEAD(&rq->leaf_cfs_rq_list);
+>>   		rq->tmp_alone_branch =3D &rq->leaf_cfs_rq_list;
 >
-> On Thu Jul 10, 2025 at 1:14 AM CEST, Alexei Starovoitov wrote:
-> > On Wed, Jul 9, 2025 at 3:57=E2=80=AFPM Danilo Krummrich <dakr@kernel.or=
-g> wrote:
-> >>
-> >> On 7/10/25 12:53 AM, Alexei Starovoitov wrote:
-> >> > On Wed, Jul 9, 2025 at 10:25=E2=80=AFAM Vitaly Wool <vitaly.wool@kon=
-sulko.se> wrote:
-> >> >>
-> >> >>
-> >> >> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
-> >> >> +void *vrealloc_node_align_noprof(const void *p, size_t size, unsig=
-ned long align,
-> >> >> +                                gfp_t flags, int node)
-> >> >>   {
-> >> >
-> >> > imo this is a silly pattern to rename functions because they
-> >> > got new arguments.
-> >> > The names of the args are clear enough "align" and "node".
-> >> > I see no point in adding the same suffixes to a function name.
-> >> > In the future this function will receive another argument and
-> >> > the function would be renamed again?!
-> >> > "_noprof" suffix makes sense, since it's there for alloc_hooks,
-> >> > but "_node_align_" is unnecessary.
-> >>
-> >> Do you have an alternative proposal given that we also have vrealloc()=
- and
-> >> vrealloc_node()?
-> >
-> > vrealloc_node()?! There is no such thing in the tree.
-> > There are various k[zm]alloc_node() which are artifacts of the past
-> > when NUMA just appeared and people cared about CONFIG_NUMA vs not.
-> > Nowadays NUMA is everywhere and any new code must support NUMA
-> > from the start. Hence no point in carrying old baggage and obsolete nam=
-es.
->
-> This patch adds it; do you suggest to redefine vrealloc_noprof() to take =
-align
-> and nid? If we don't mind being inconsistent with krealloc_noprof() and
-> kvrealloc_noprof() that's fine I guess.
->
-> FWIW, I prefer consistency.
+> I don't necessarily prefer one over the other, both look fine to me FWI=
+W.
 
-What inconsistency are you talking about? That
-krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
-and
-vrealloc_noprof(const void *p, size_t size, unsigned long align,
-                gfp_t flags, int node)
-have different number of arguments?!
+Just to add one more point in favor of this change: by initializing=20
+uclamp_rq directly during the per-CPU rq setup in sched_init(), we avoid=20
+a separate for_each_possible_cpu() loop in init_uclamp().
 
-See:
-alloc_pages_noprof(gfp_t gfp, unsigned int order);
-__alloc_pages_noprof(gfp_t gfp, unsigned int order, int preferred_nid,
-                nodemask_t *nodemask);
+This can reduce initialization overhead, especially on systems with=20
+hundreds or even thousands of CPUs.
 
-Adding double underscore to keep all existing callers of
-vrealloc_noprof() without changes and do:
+The logic also becomes easier to maintain since each rq and its=20
+associated structures are initialized in one place.
 
-vrealloc_noprof(const void *p, size_t size, gfp_t flags);
-__vrealloc_noprof(const void *p, size_t size, unsigned long align,
-gfp_t flags, int node);
+Let me know if there's anything else I should address.
 
-is fine and consistent with how things were done in the past,
-but adding "_node_align_" to the function name and code churn to all
-callsites is a cargo cult.
+
+Best regards,
+Zihuan Zhang
 
