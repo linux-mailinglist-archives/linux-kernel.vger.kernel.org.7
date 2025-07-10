@@ -1,342 +1,138 @@
-Return-Path: <linux-kernel+bounces-724922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B559DAFF894
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:45:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2366AFF897
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B28B189D3DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:46:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D7093A56B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBA4286410;
-	Thu, 10 Jul 2025 05:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C554F286417;
+	Thu, 10 Jul 2025 05:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NoKPThNQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sMKgOZQw"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5C522154B;
-	Thu, 10 Jul 2025 05:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94429285062
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752126348; cv=none; b=k8b0MsMDTarbnBBVrpVsSwQIAKf1A+OcfdCl+6NsLiPEu7YTXAIUqWpBeG2+1xXtTVF8UJSWS9GHAKv/doXz5HGhEMwenylHtKWK/kMoqrpYmVczHDIj0/QQ8dmFqkpt5Pr9lxGbPFh8cldfMHzqdmdk2d3IXhCz7KXn4qEVYaY=
+	t=1752126410; cv=none; b=VVyZT1fG70B1eml8hsLRvgEdvAeG87HDPkFcpx5h63SitjzHkH9NoYcjCPfVaRlZNq4Rbc/Poe3k6fm4qZR5GId5VQiHTSGbEIwCQJCZFW9sX9VHpC75u+XwX4nKN1lk0xdAeL1VwoSFKwSjolsa80+9aLkbcof+gne7f6bAZps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752126348; c=relaxed/simple;
-	bh=LqYPBrbfE8Cba8IPSNY5pWNkJYaTs7Jun0idPVbdbOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UhKEpB2TRZUvBthmJ85xzQyfdrQQD5fZX6lB+jXEaWppfUL9AZMqXI3jjXxcXohqhxvROh+rXldH9NQYKsr7wX939ild2cSKyDgOlCTt9tog/tbmNEjuL6khO6S2qWq0QFVaANP9gyFDb2Qbf8VBA1vmdmR0E04tuK+jMJ5G4EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NoKPThNQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAF1BC4CEE3;
-	Thu, 10 Jul 2025 05:45:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752126347;
-	bh=LqYPBrbfE8Cba8IPSNY5pWNkJYaTs7Jun0idPVbdbOI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NoKPThNQn4rofB3yBRmnXcsbUmOK4gNDIyM9L6zfTQkepaVl17XL0idPqqQwYCZ5Z
-	 i+PItJjSA1GcVQjbMjoDLWp8xRi071cYg14Lbe0wsTlsj2cPeX6jiQF+xzMH0e7uTb
-	 4zp+qeqXZtpBZm7ZtaKj89rZ9fx7apGnVFUFFG4+IaH0zt1dzlF1TjGVbTrcRRBpqg
-	 0AZ0NT0g99q/ir26vUUytQzFIvkdDvpgzuhXNzdTWMQLl7j7P7VH0LQ2bX/Dv39K5V
-	 AD2IhH744OGikmFGRdlfXtDFhiHJ//TH4JWLj6gIvLSsmk09u7FEzZKHjjKdL38z0J
-	 8t2RAD16JCXmA==
-Date: Thu, 10 Jul 2025 07:45:43 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 04/12] docs: kdoc: Centralize handling of the item
- section list
-Message-ID: <20250710074543.31b909d8@foz.lan>
-In-Reply-To: <20250702223524.231794-5-corbet@lwn.net>
-References: <20250702223524.231794-1-corbet@lwn.net>
-	<20250702223524.231794-5-corbet@lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752126410; c=relaxed/simple;
+	bh=J2qm8gW2W9VTgWcNwObVC75+MPIFXyBSDm+GbHXBcPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9ZxERCTGz46s3Z5O78KVRtkkXHmDQd4yIuX/EBr2PXOuh9C+6vYxlaaCS8BPnSzfD8nV5fdJugVjzEEKvvU5aPnwcz+HRaOhd+NP4Wg9A4wIN01bUHBwKhhiw2DLvP8GACjoyaDi19nue4V3WtPPuqaZ3HUcsOEyJQOCYNGdZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sMKgOZQw; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 569M1EiV023525;
+	Thu, 10 Jul 2025 05:46:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=LnZR9xz1XRA7Tkfee5q4RNrlkU1xyR
+	gkS7m1fJPmQ60=; b=sMKgOZQwN+J7WIljk7xGTaa6c32QPThTUQ90i2Oj4T1Bn5
+	2Vo6NYYqM0tio84qHz55PdI6h/veKyb8yjEDIxBdw3wwLtv+Aw0ZIDGnmX/M3Jt1
+	jRYMdt0A1il8IsmwbKcRubSOrj9S6k2kM8muMysPt2uqza/PJ7psScpeI4kf4pVt
+	s3k0Mewvg8lW2BfbYuTI0dDs3BTYlvLGHx5of7P1e75MnIz+Hl1bT1mYiGg1hzZz
+	FibzyvG4UR/w2Cr3kKAxRJzqcLpPubsZyqV4nBFkA0lSALUyN8ngKK2c8+iKzuG2
+	LAtqv9xdSddt+Y0IWG1RjFf/94jA1CsfHZ1XM7zQ==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puqnhupw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 05:46:43 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56A5BIa6021515;
+	Thu, 10 Jul 2025 05:46:42 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qectv9vw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 05:46:42 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56A5kcs150397580
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Jul 2025 05:46:38 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7D09C2004E;
+	Thu, 10 Jul 2025 05:46:38 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C7D9D2004B;
+	Thu, 10 Jul 2025 05:46:37 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.87.141.64])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 10 Jul 2025 05:46:37 +0000 (GMT)
+Date: Thu, 10 Jul 2025 07:46:36 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham <kbingham@kernel.org>,
+        linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH 0/2] scripts/gdb/symbols: make lx-symbols skip the s390
+ decompressor
+Message-ID: <3e05be39-6b79-4ab2-af6d-2492515b86ab-agordeev@linux.ibm.com>
+References: <20250625154220.75300-1-iii@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625154220.75300-1-iii@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=FZ43xI+6 c=1 sm=1 tr=0 ts=686f53c3 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=pcLcdM1_4t_Ntr76G24A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: cLvXQ5QrEbRsbRGZCm0eL7PLCFQCdJI1
+X-Proofpoint-ORIG-GUID: cLvXQ5QrEbRsbRGZCm0eL7PLCFQCdJI1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDA0OCBTYWx0ZWRfX8AUW3A2PT5dg nhrhq9LcquIIU+gZj1b5kiTke5x4EssEKgiHlkm4Rcw947/Ya2XNhAtLSsochvOKF2HBc1gh8NK 1MAapbD6X1G6s8XEDMtXV8GKQe62EdFbmIC/Iyj5W6wI8gaVtask4AygRIjul+FsL9g1sDRL316
+ 1vpt5nV/guoa12lpc+hnIZxc6z2SeZfpRAbyRU7HaIp4rjUy6dcaLUAkD9k+nOSa1J2uYiajvCm TJWk9PIVP0zS+JJoyySwRi0D9ZrBu1MzBdWc+wOB3d2lbFtMwIF7S0sRZoQa8PrhNPweVwHX5QF VHA/u6ftJ6YsAugV1D36+a0I5D6qq2xXqxifecP9LXnUAkvVwMrvHUotmwmpDSD2WnZyFHnV89Z
+ GNdSy00o2uLq7cFUhj8KUyqcMz6TRSiipMUNkhUlY0xctInBg9qDCzyHWcjMd3AW2GwK9DVI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_05,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ priorityscore=1501 malwarescore=0 mlxlogscore=495 clxscore=1015
+ spamscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507100048
 
-Em Wed,  2 Jul 2025 16:35:16 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
-
-> The section list always comes directly from the under-construction entry
-> and is used uniformly.  Formalize section handling in the KdocItem class,
-> and have output_declaration() load the sections directly from the entry,
-> eliminating a lot of duplicated, verbose parameters.
+On Wed, Jun 25, 2025 at 05:36:50PM +0200, Ilya Leoshkevich wrote:
+> Hi,
 > 
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-> ---
->  scripts/lib/kdoc/kdoc_item.py   |  8 ++++++++
->  scripts/lib/kdoc/kdoc_output.py | 36 ++++++++++++---------------------
->  scripts/lib/kdoc/kdoc_parser.py | 20 +++---------------
->  3 files changed, 24 insertions(+), 40 deletions(-)
+> In order to debug the early s390 kernel boot, one has to skip the
+> decompressor code, which requires some private scripts or memorized
+> commands. This series makes it work out of the box with the lx-symbols
+> command.
 > 
-> diff --git a/scripts/lib/kdoc/kdoc_item.py b/scripts/lib/kdoc/kdoc_item.py
-> index add2cc772fec..c8329019a219 100644
-> --- a/scripts/lib/kdoc/kdoc_item.py
-> +++ b/scripts/lib/kdoc/kdoc_item.py
-> @@ -9,6 +9,7 @@ class KdocItem:
->          self.name = name
->          self.type = type
->          self.declaration_start_line = start_line
-> +        self.sections = self.sections_start_lines = { }
+> Patch 1 adds helper infrastructure to the s390 decompressor code; it is
+> already acked by Heiko.
+> 
+> Patch 2 is the implementation; it would be great to have an Ack from
+> one of the GDB scripts maintainers.
+> 
+> We would like to get this series via the s390 tree, if possible.
+> 
+> Best regards,
+> Ilya
+> 
+> Ilya Leoshkevich (2):
+>   s390/boot: Introduce jump_to_kernel() function
+>   scripts/gdb/symbols: make lx-symbols skip the s390 decompressor
+> 
+>  arch/s390/boot/Makefile      |  2 +-
+>  arch/s390/boot/boot.h        |  1 +
+>  arch/s390/boot/ipl_data.c    |  9 ++++++++-
+>  arch/s390/boot/startup.c     |  2 +-
+>  arch/s390/boot/trampoline.S  |  9 +++++++++
+>  scripts/gdb/linux/symbols.py | 26 ++++++++++++++++++++++++++
+>  6 files changed, 46 insertions(+), 3 deletions(-)
+>  create mode 100644 arch/s390/boot/trampoline.S
 
-Nitpicks:
-- to make coding-style uniform, please use "{}" without spaces;
-- Please place one statement per line, just like we (usually) do in Kernel. 
-
-  In this specific case, I strongly suspect that what you coded is not
-  implementing the semantics you want. See:
-
-	1. are you creating a single dict and placing the same dict on two
-	   variables?
-  or:
-	2. are you initializing two different vars with their own empty
-	   dict?
-
-The subsequent code assumes (2), but a quick check with python3 command
-line:
-
-	>>> a = b = {}
-	>>> a["foo"] = "bar"
-	>>> print(b)
-	{'foo': 'bar'}
-
-Shows that Python is doing (1) here: it basically creates a single
-dict and assign pointers to it for both self.declaration_start_line
-and self.sections. Clearly, this is not what we want. 
-
-This is not a problem in practice with the current code, as 
-set_sections will replace both at the same time, but if we ever
-handle them using different functions, this will become a problem.
-
-The rest of the code looks sane to me.
-
->          #
->          # Just save everything else into our own dict so that the output
->          # side can grab it directly as before.  As we move things into more
-> @@ -24,3 +25,10 @@ class KdocItem:
->  
->      def __getitem__(self, key):
->          return self.get(key)
-> +
-> +    #
-> +    # Tracking of section information.
-> +    #
-> +    def set_sections(self, sections, start_lines):
-> +        self.sections = sections
-> +        self.section_start_lines = start_lines
-> diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-> index 4895c80e4b81..15cb89f91987 100644
-> --- a/scripts/lib/kdoc/kdoc_output.py
-> +++ b/scripts/lib/kdoc/kdoc_output.py
-> @@ -338,11 +338,7 @@ class RestFormat(OutputFormat):
->          starts by putting out the name of the doc section itself, but that
->          tends to duplicate a header already in the template file.
->          """
-> -
-> -        sections = args.get('sections', {})
-> -        section_start_lines = args.get('section_start_lines', {})
-> -
-> -        for section in sections:
-> +        for section, text in args.sections.items():
->              # Skip sections that are in the nosymbol_table
->              if section in self.nosymbol:
->                  continue
-> @@ -354,8 +350,8 @@ class RestFormat(OutputFormat):
->              else:
->                  self.data += f'{self.lineprefix}**{section}**\n\n'
->  
-> -            self.print_lineno(section_start_lines.get(section, 0))
-> -            self.output_highlight(sections[section])
-> +            self.print_lineno(args.section_start_lines.get(section, 0))
-> +            self.output_highlight(text)
->              self.data += "\n"
->          self.data += "\n"
->  
-> @@ -635,23 +631,20 @@ class ManFormat(OutputFormat):
->                  self.data += line + "\n"
->  
->      def out_doc(self, fname, name, args):
-> -        sections = args.get('sections', {})
-> -
->          if not self.check_doc(name, args):
->              return
->  
->          self.data += f'.TH "{self.modulename}" 9 "{self.modulename}" "{self.man_date}" "API Manual" LINUX' + "\n"
->  
-> -        for section in sections:
-> +        for section, text in args.sections.items():
->              self.data += f'.SH "{section}"' + "\n"
-> -            self.output_highlight(sections.get(section))
-> +            self.output_highlight(text)
->  
->      def out_function(self, fname, name, args):
->          """output function in man"""
->  
->          parameterlist = args.get('parameterlist', [])
->          parameterdescs = args.get('parameterdescs', {})
-> -        sections = args.get('sections', {})
->  
->          self.data += f'.TH "{args["function"]}" 9 "{args["function"]}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
->  
-> @@ -692,15 +685,14 @@ class ManFormat(OutputFormat):
->              self.data += f'.IP "{parameter}" 12' + "\n"
->              self.output_highlight(parameterdescs.get(parameter_name, ""))
->  
-> -        for section in sections:
-> +        for section, text in args.sections.items():
->              self.data += f'.SH "{section.upper()}"' + "\n"
-> -            self.output_highlight(sections[section])
-> +            self.output_highlight(text)
->  
->      def out_enum(self, fname, name, args):
->  
->          name = args.get('enum', '')
->          parameterlist = args.get('parameterlist', [])
-> -        sections = args.get('sections', {})
->  
->          self.data += f'.TH "{self.modulename}" 9 "enum {args["enum"]}" "{self.man_date}" "API Manual" LINUX' + "\n"
->  
-> @@ -727,24 +719,23 @@ class ManFormat(OutputFormat):
->              self.data += f'.IP "{parameter}" 12' + "\n"
->              self.output_highlight(args['parameterdescs'].get(parameter_name, ""))
->  
-> -        for section in sections:
-> +        for section, text in args.sections.items():
->              self.data += f'.SH "{section}"' + "\n"
-> -            self.output_highlight(sections[section])
-> +            self.output_highlight(text)
->  
->      def out_typedef(self, fname, name, args):
->          module = self.modulename
->          typedef = args.get('typedef')
->          purpose = args.get('purpose')
-> -        sections = args.get('sections', {})
->  
->          self.data += f'.TH "{module}" 9 "{typedef}" "{self.man_date}" "API Manual" LINUX' + "\n"
->  
->          self.data += ".SH NAME\n"
->          self.data += f"typedef {typedef} \\- {purpose}\n"
->  
-> -        for section in sections:
-> +        for section, text in args.sections.items():
->              self.data += f'.SH "{section}"' + "\n"
-> -            self.output_highlight(sections.get(section))
-> +            self.output_highlight(text)
->  
->      def out_struct(self, fname, name, args):
->          module = self.modulename
-> @@ -753,7 +744,6 @@ class ManFormat(OutputFormat):
->          purpose = args.get('purpose')
->          definition = args.get('definition')
->          parameterlist = args.get('parameterlist', [])
-> -        sections = args.get('sections', {})
->          parameterdescs = args.get('parameterdescs', {})
->  
->          self.data += f'.TH "{module}" 9 "{struct_type} {struct_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
-> @@ -782,6 +772,6 @@ class ManFormat(OutputFormat):
->              self.data += f'.IP "{parameter}" 12' + "\n"
->              self.output_highlight(parameterdescs.get(parameter_name))
->  
-> -        for section in sections:
-> +        for section, text in args.sections.items():
->              self.data += f'.SH "{section}"' + "\n"
-> -            self.output_highlight(sections.get(section))
-> +            self.output_highlight(text)
-> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-> index 2e00c8b3a5f2..608f3a1045dc 100644
-> --- a/scripts/lib/kdoc/kdoc_parser.py
-> +++ b/scripts/lib/kdoc/kdoc_parser.py
-> @@ -272,13 +272,13 @@ class KernelDoc:
->          item = KdocItem(name, dtype, self.entry.declaration_start_line, **args)
->          item.warnings = self.entry.warnings
->  
-> -        sections = item.get('sections', {})
-> -
->          # Drop empty sections
->          # TODO: improve empty sections logic to emit warnings
-> +        sections = self.entry.sections
->          for section in ["Description", "Return"]:
->              if section in sections and not sections[section].rstrip():
->                  del sections[section]
-> +        item.set_sections(sections, self.entry.section_start_lines)
->  
->          self.entries.append(item)
->  
-> @@ -824,8 +824,6 @@ class KernelDoc:
->                                  parameterdescs=self.entry.parameterdescs,
->                                  parametertypes=self.entry.parametertypes,
->                                  parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
-> -                                sections=self.entry.sections,
-> -                                section_start_lines=self.entry.section_start_lines,
->                                  purpose=self.entry.declaration_purpose)
->  
->      def dump_enum(self, ln, proto):
-> @@ -908,8 +906,6 @@ class KernelDoc:
->                                  parameterlist=self.entry.parameterlist,
->                                  parameterdescs=self.entry.parameterdescs,
->                                  parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
-> -                                sections=self.entry.sections,
-> -                                section_start_lines=self.entry.section_start_lines,
->                                  purpose=self.entry.declaration_purpose)
->  
->      def dump_declaration(self, ln, prototype):
-> @@ -1079,8 +1075,6 @@ class KernelDoc:
->                                      parameterdescs=self.entry.parameterdescs,
->                                      parametertypes=self.entry.parametertypes,
->                                      parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
-> -                                    sections=self.entry.sections,
-> -                                    section_start_lines=self.entry.section_start_lines,
->                                      purpose=self.entry.declaration_purpose,
->                                      func_macro=func_macro)
->          else:
-> @@ -1092,8 +1086,6 @@ class KernelDoc:
->                                      parameterdescs=self.entry.parameterdescs,
->                                      parametertypes=self.entry.parametertypes,
->                                      parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
-> -                                    sections=self.entry.sections,
-> -                                    section_start_lines=self.entry.section_start_lines,
->                                      purpose=self.entry.declaration_purpose,
->                                      func_macro=func_macro)
->  
-> @@ -1137,8 +1129,6 @@ class KernelDoc:
->                                      parameterdescs=self.entry.parameterdescs,
->                                      parametertypes=self.entry.parametertypes,
->                                      parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
-> -                                    sections=self.entry.sections,
-> -                                    section_start_lines=self.entry.section_start_lines,
->                                      purpose=self.entry.declaration_purpose)
->              return
->  
-> @@ -1159,8 +1149,6 @@ class KernelDoc:
->  
->              self.output_declaration('typedef', declaration_name,
->                                      typedef=declaration_name,
-> -                                    sections=self.entry.sections,
-> -                                    section_start_lines=self.entry.section_start_lines,
->                                      purpose=self.entry.declaration_purpose)
->              return
->  
-> @@ -1642,9 +1630,7 @@ class KernelDoc:
->  
->          if doc_end.search(line):
->              self.dump_section()
-> -            self.output_declaration("doc", self.entry.identifier,
-> -                                    sections=self.entry.sections,
-> -                                    section_start_lines=self.entry.section_start_lines)
-> +            self.output_declaration("doc", self.entry.identifier)
->              self.reset_state(ln)
->  
->          elif doc_content.search(line):
-
-
-
-Thanks,
-Mauro
+Applied, thanks!
 
