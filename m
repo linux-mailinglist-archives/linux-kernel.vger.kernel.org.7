@@ -1,149 +1,190 @@
-Return-Path: <linux-kernel+bounces-725860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A70B004C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:12:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02711B004C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1FC44A3026
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:07:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4580554245B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B164B27147E;
-	Thu, 10 Jul 2025 14:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569AE270EC1;
+	Thu, 10 Jul 2025 14:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="bD0dek8k"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="VHpubo+O";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="71llo6v6"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D687258CD7
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03B727057C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752156421; cv=none; b=VqycRizpZQobv50AdmofwhEUL7TqCuXpC7O+z9pChoor9vBsyY0V16omkBZftDLGuXik3+tJ7KTGRaSlBeFaGyJGH5+2MIp3urrFl0FRKuzoYLhbHGv3gRBrAfYn6tMThMJJCw2hK/5zhtMUQnb1iPGGjxokP5LNSprb9QpURhU=
+	t=1752156460; cv=none; b=nONFWuf2K/Uv2mbrHgwCvUqt/nMV0H+520FJ42vOzIKplLOS2R0sDmLYGq2skotNLZRbXdo3//IQguFiuuCjdnJ3zpHn2e1dR6paATInRFYQX6j3rYxsmzTzJ93pzSyumEMUluke/QH26VUW5CKu9MBSK6jqIfrKBeRUZAIJstw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752156421; c=relaxed/simple;
-	bh=IZGXzFJaVfJR/vczPBT0kteEqHv0Jbw4nJMYEV8Redo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=FoiYUoLp2NT4w1/F1BbFSnF5lsVJGg7fBfteWHoALS3NqZYyuLvQHgsiTn2HR/qwnpVPtUlw0862Wia6bgWRFpCqJtsaQ+ie2reR/gAbL5fAPi0BipDtmhc52OT3i+F1G/v+52IN+b+ytPMW5847OJ2gEAEkFvHwAukD/p14L68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=bD0dek8k; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae3ec622d2fso169356466b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:06:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752156417; x=1752761217; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IZGXzFJaVfJR/vczPBT0kteEqHv0Jbw4nJMYEV8Redo=;
-        b=bD0dek8kywxcRelmsez9ougT6VjaHJCXNjIjcasasHHihoxT+irXC5mFlzsKUZCvub
-         oLuwInQ6gz/elJVaVeGH2pP34rcM/7TW/OzKguV1M9PpajP/BkXIWo+4SDHCEBDSgBLm
-         t5JMcBFh5ZU1kuXIVBeXbJZ508eCKPAp/EPXGXtzltnRkWGEP/XsQZ4FNeb8BIqkhVfI
-         KzrXduu3jQQLAsVODg8p0bSndsHPzMt2pU3JRbPphQoWwjM0s89RL5ncTJMsSs1OdUi7
-         VxRXp6YON6aXaU9oD2pP5EP3W8L0AWl7hP7x+I/xW0BxKa0UjS6WLAsS9VTzgT9JzUEL
-         kP0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752156417; x=1752761217;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IZGXzFJaVfJR/vczPBT0kteEqHv0Jbw4nJMYEV8Redo=;
-        b=UErDa8kGFAj5Fx/90Fq7IgFPuol7FvEQX3MHGAYdFRMdeKwCaVSK7CECszJfEfdZno
-         SAMtllmYoKkRCz+w/CsJa90xnLO3sfrnm4IovIwIn+ZC6WKX1NhCzK9FpLFBEzpZDAMZ
-         GJ7DCjjQUoFAyuMKRxPY3pVLAA3CivgvR5MrYH5gODySZS0XLn7W+nuihdqEplkeBEzR
-         DfdqzpEvWf5AmJPrtbFNUdyrHufbALMJeqIbDuNWS2jbUSjmtvdxUkqqe3h4g8OwHS3Q
-         f7tZxywRLC7unoDxMtWY2GhzFYyjgbVwRB3nzsejknHdGDrKOeSJ2V4aViPQfvBMPkwY
-         b4mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMroXoNuSz0i9whvIE4V4RZe1m3AXk9HE0+z6gg3tGaAn+33knSIq9OOO2NDGPvnRS72HJXuPAn5A015U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzodX9IFCZvUj8+bux7CUrAgP3PXFiyqxMWaM04WiGr2XnW3tz
-	qCD6cOyTrP9jUHBiliqwV6kW+g8yIeUxR6XP7woBVmOXSPNC7qBm4RhvsDAZg3DZuAg=
-X-Gm-Gg: ASbGncugRo0RGJWDbzHBoS4dvgDmySFRtWTzj9J/Ru8aZSyDnqEOeOr0ysTeJ3spPFs
-	dK5pnjOWZdp+rIZ78D2ru+A68BIxEo3bwlHJgYpD/PhPsvIs5kG/8zwf5MC0NZeV9LhVAAD2b5G
-	tF4BVJqB+l502TUD4Z9J59a0jenQvEEGKzjsUaqGtFCAlONQSeIhGIgj46zh2E160FqgcxXtTt+
-	urQ3okXqNT5Td/fRsAbsPGwgn1RB/x8J/Zlzz2IeK4cpeK8iwHRXu2Jm6YokZArClrEi1XMe3FU
-	CRA4drjJZBhj3Rv9jN9xxj0cTQT1M0iaj3zkgVWH5fdV5lSF9anq4WcBp5ORJOIGIMxPa9dsuL8
-	Vo5EtkGoSjdiReh04pAGRBs9jOaV5zc2SQQj5r3PIUw==
-X-Google-Smtp-Source: AGHT+IHKeoz2isCeKmIGCw2CDCJFP7TDvu8Z7c8Wf56Df9oBng3/2fa7dXzek5kSvq5pDH1kTeDYXA==
-X-Received: by 2002:a17:906:f596:b0:ad8:87ae:3f66 with SMTP id a640c23a62f3a-ae6e7104093mr286278366b.60.1752156415964;
-        Thu, 10 Jul 2025 07:06:55 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82635aasm135489666b.84.2025.07.10.07.06.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 07:06:55 -0700 (PDT)
+	s=arc-20240116; t=1752156460; c=relaxed/simple;
+	bh=fEk+AE6/WEqc/2Z+GVzvG2frW2My/PwWPejaD2SJCKQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=WkCigqSc1H2s94lNahXeq8fQqPK6BqrlBE4fKwS3sQNnxMDqJGyZ2c70IAIrIMLnh718CnqXaGRaBCrhAPPx027N9FMtmSdY9bicg0el+Gqod2x9zAIQLBttq1Bna6ZoZAkMiG0UlmO6pevDay7syc6Nh3RNU2wj8O20tnEBBDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=VHpubo+O; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=71llo6v6; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752156450; x=1752761250;
+	d=konsulko.se; s=rsa1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=z6CYkY/mnHsPc1zlAI1YQ9WMPDSlzYrFWMeZlYj4cpw=;
+	b=VHpubo+OBZhzjd4PXBL2vtOFLMM2bRHh5EeEz+IBCjXyVL4Ukh6jyp1csiboGxXQ1tLHFoINMJ5C4
+	 1ctcoTuCpgQyNoAT2oGWAp0T0NmCmxu63oSdgyLLwlpIjYGksuqtkH5l39quLXxeJSQOPmZ8U4wiAE
+	 /hNmU9nqubJ0lOMKO6+bRyz+c9m0eXYUBliSymIBdoTt4jyKXhqNh75iley3u6crCOjr+Sxk4ex/4c
+	 g97BlnCT9qmhal31kJyh9KRJvuigslwTrELthNmRmAmMLWHIAWkJPj69oMzx/eRYQJJ65LtLzrGnrY
+	 r+ABRS9dN1OjMes5PM4HJ3WcgJdb/Mw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752156450; x=1752761250;
+	d=konsulko.se; s=ed1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=z6CYkY/mnHsPc1zlAI1YQ9WMPDSlzYrFWMeZlYj4cpw=;
+	b=71llo6v6/l7OTXw3SNLSRYkfbg1Wmiisu+BttGsr8RLc6NHuwz5OHPiG6WSlNgNzzVcW0wzjID+ca
+	 FxpPsbOAg==
+X-HalOne-ID: 363fb403-5d97-11f0-9d28-c9fa7b04d629
+Received: from smtpclient.apple (c188-150-224-8.bredband.tele2.se [188.150.224.8])
+	by mailrelay1.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id 363fb403-5d97-11f0-9d28-c9fa7b04d629;
+	Thu, 10 Jul 2025 14:07:30 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH v12 1/4] mm/vmalloc: allow to set node and align in
+ vrealloc
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <nsacpwgldqdidsqkqalxdhwptikk7srnhjncmjaulnzcf6nsmu@fisb5w4aamhl>
+Date: Thu, 10 Jul 2025 16:07:19 +0200
+Cc: linux-mm@kvack.org,
+ akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ rust-for-linux@vger.kernel.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org,
+ bpf@vger.kernel.org,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 16:06:55 +0200
-Message-Id: <DB8FM0YYS9UL.JP6OVNZAXWBP@fairphone.com>
-To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Liam Girdwood"
- <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Bjorn Andersson" <andersson@kernel.org>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 4/4] regulator: qcom-rpmh: add support for pm7550
- regulators
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250625-pm7550-pmr735b-rpmh-regs-v1-0-cab8ef2e5c92@fairphone.com> <20250625-pm7550-pmr735b-rpmh-regs-v1-4-cab8ef2e5c92@fairphone.com> <bc27209a-e0f8-40bf-979f-3d747c501ae8@oss.qualcomm.com> <23ae6ddb-682a-4c4a-bd63-f0a1adb6f4f8@oss.qualcomm.com> <DB7I7D3P01FF.3T5WRSTJIWLVK@fairphone.com> <c1a48230-c4f5-4c04-a53a-449bd90b1fd8@oss.qualcomm.com>
-In-Reply-To: <c1a48230-c4f5-4c04-a53a-449bd90b1fd8@oss.qualcomm.com>
+Message-Id: <C240E394-C3F6-4A46-A9F3-E6D95A3F4DF3@konsulko.se>
+References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
+ <20250709172416.1031970-1-vitaly.wool@konsulko.se>
+ <nsacpwgldqdidsqkqalxdhwptikk7srnhjncmjaulnzcf6nsmu@fisb5w4aamhl>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+X-Mailer: Apple Mail (2.3826.200.121)
 
-On Thu Jul 10, 2025 at 3:03 PM CEST, Konrad Dybcio wrote:
-> On 7/9/25 1:56 PM, Luca Weiss wrote:
->> On Wed Jun 25, 2025 at 4:20 PM CEST, Konrad Dybcio wrote:
->>> On 6/25/25 4:10 PM, Konrad Dybcio wrote:
->>>> On 6/25/25 11:18 AM, Luca Weiss wrote:
->>>>> Add RPMH regulators exposed by Qualcomm Technologies, Inc. PM7550 PMI=
-C.
->>>>> It has 6 FTS525 (FT-SMPS) and 23 LDOs with 3 different types.
->>>>> L1-L11 are LDO515 LV NMOS, L12-L13 are LDO515 MV PMOS, L14-L23 are
->>>>> LDO512 MV PMOS.
->>>>>
->>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>>>> ---
->>>>
->>>> FWIW everything you said in the commit message is correct, but I'm not
->>>> 100% sure how to map these LDO types to the existing definitions
->>>
->>> OK so found another page (also made sure that the supply maps are
->>> indeed OK)
->>>
->>> SMPS is OK
->>> L1-L11 is OK
->>> L14-23 is OK
->>>
->>> L12/13 -> pmic5_pldo515_mv
->>=20
->> Based on what are you saying that?
->>=20
->> Based on 80-62408-1 Rev. AG for the LDO515, the Output voltage range for
->> MV PMOS is "programmable range 1.504-3.544" which matches "pmic5_pldo".
->>=20
->> But yes, in the table next to it, it's saying 1.8-3.3V, which matches
->> "pmic5_pldo515_mv".
->>=20
->> If you're sure, I can update it but the datasheet is a bit confusing.
->> Let me know!
->
-> I was looking at the same datasheet as you and took into account both
-> the LDO type from e.g. Table 3-12 and the output ranges from Table 3-24
 
-But why, looking at table 3-24, is there a mismatch between that text
-"programmable range 1.504-3.544" and the table on the right saying
-min 1.8 and max 3.3V?
 
-Programmable range sounds more like what we'd want? No clue...
+> On Jul 9, 2025, at 9:01=E2=80=AFPM, Liam R. Howlett =
+<Liam.Howlett@oracle.com> wrote:
+>=20
+> * Vitaly Wool <vitaly.wool@konsulko.se> [250709 13:24]:
+>> Reimplement vrealloc() to be able to set node and alignment should
+>> a user need to do so. Rename the function to vrealloc_node_align()
+>> to better match what it actually does now and introduce macros for
+>> vrealloc() and friends for backward compatibility.
+>>=20
+>> With that change we also provide the ability for the Rust part of
+>> the kernel to set node and alignment in its allocations.
+>>=20
+>> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+>> Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+>> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
+>> include/linux/vmalloc.h | 12 +++++++++---
+>> mm/nommu.c              |  3 ++-
+>> mm/vmalloc.c            | 31 ++++++++++++++++++++++++++-----
+>> 3 files changed, 37 insertions(+), 9 deletions(-)
+>>=20
+> ...
+>=20
+>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+>> index 6dbcdceecae1..03dd06097b25 100644
+>> --- a/mm/vmalloc.c
+>> +++ b/mm/vmalloc.c
+>> @@ -4089,19 +4089,31 @@ void *vzalloc_node_noprof(unsigned long size, =
+int node)
+>> EXPORT_SYMBOL(vzalloc_node_noprof);
+>>=20
+>> /**
+>> - * vrealloc - reallocate virtually contiguous memory; contents =
+remain unchanged
+>> + * vrealloc_node_align_noprof - reallocate virtually contiguous =
+memory; contents
+>> + * remain unchanged
+>>  * @p: object to reallocate memory for
+>>  * @size: the size to reallocate
+>> + * @align: requested alignment
+>>  * @flags: the flags for the page level allocator
+>> + * @nid: node number of the target node
+>> + *
+>> + * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc(). If =
+@size is
+>> + * 0 and @p is not a %NULL pointer, the object pointed to is freed.
+>>  *
+>> - * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If =
+@size is 0 and
+>> - * @p is not a %NULL pointer, the object pointed to is freed.
+>> + * if @nid is not NUMA_NO_NODE, this function will try to allocate =
+memory on
+>> + * the given node. If reallocation is not necessary (e. g. the new =
+size is less
+>> + * than the current allocated size), the current allocation will be =
+preserved
+>> + * unless __GFP_THISNODE is set. In the latter case a new allocation =
+on the
+>> + * requested node will be attempted.
+>=20
+> I am having a very hard time understanding what you mean here.  What =
+is
+> the latter case?
+>=20
+> If @nis is !NUMA_NO_NODE, the allocation will be attempted on the =
+given
+> node.  Then things sort of get confusing.  What is the latter case?
 
->
-> Konrad
+The latter case is __GFP_THISNODE present in flags. That=E2=80=99s the =
+latest if-clause in this paragraph.
+
+>=20
+>>  *
+>>  * If __GFP_ZERO logic is requested, callers must ensure that, =
+starting with the
+>>  * initial memory allocation, every subsequent call to this API for =
+the same
+>>  * memory allocation is flagged with __GFP_ZERO. Otherwise, it is =
+possible that
+>>  * __GFP_ZERO is not fully honored by this API.
+>>  *
+>> + * If the requested alignment is bigger than the one the *existing* =
+allocation
+>> + * has, this function will fail.
+>> + *
+>=20
+> It might be better to say something like:
+> Requesting an alignment that is bigger than the alignment of the
+> *existing* allocation will fail.
+>=20
+The whole function description in fact consists of several if-clauses =
+(some of which are nested) so I am just following the pattern here.
+
+~Vitaly
+
 
 
