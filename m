@@ -1,165 +1,195 @@
-Return-Path: <linux-kernel+bounces-725359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64777AFFE0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F34AFFE20
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0DFB563765
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:27:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCF715650D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC59729ACEE;
-	Thu, 10 Jul 2025 09:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DEE29AB0F;
+	Thu, 10 Jul 2025 09:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="osqQgYgJ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hCMgj5oo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFA2295520;
-	Thu, 10 Jul 2025 09:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B2829A336
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752139618; cv=none; b=ezmz+Ts2bi/M2lGxooliHstodaRLs1THeL2hCK/LCtYe/i00val53iKUL8qyrUn+2AeJ6oUqN3uZ9w5H2UjGyabu2u0CoQh95gTzS9vPbQQol0kL8lhcXAA84+WxFOpj1K50T9ZtTLDAtM4MF2BWi/v6o/82rBLp5fqYRk3L3A0=
+	t=1752139671; cv=none; b=s/BzqltGRC3ztaa+vbj6Uju/loKed+bs9d4SG5J0znQzaEBykOyqiKnid5O+u48GR7CuH9TBwBVj/zOQ3VAh4vlyraLQMJtxe/XcOUNAZmQ7ptMasbQJzrf00rDCnWSUu4LSdVxzOHdwOCL2UZowhBcdVkiu/j94Oeui5RGzFCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752139618; c=relaxed/simple;
-	bh=aEhaFtRvxOuaYJN/RNQWC5uaPS5w6n4iOpvzkiTvJRs=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=bdN0i9pUuk5Qbt5x4lfntHlLlMEKNXAFDEpymMIaQYoJRvUxvQdNBJ6VNSrrMpib0y1nnClDfwrBqwnH75LM/ENixm8DhpLNex07QAL+IJbJEAJ9Ra+6dWlEXOIGrzP9JGL9+pY3mpQxvW9pw9lb4JOLx94FymuXuC010Lj88sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=osqQgYgJ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A2HDn1017342;
-	Thu, 10 Jul 2025 09:26:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=s3u6yvQkY9bYGVi7oknr9+I7sVm5
-	Oet6jhO0Uh4W4oI=; b=osqQgYgJ3tToDC5AJj0OLXtHc7svnedtWhrd3oLf9NV+
-	u755lK2il3MJO+f0kAHScSUxhLH+YcFZi1g9pVzXwIelrw1EmY+hw/w734/xGQsd
-	d8AYH/Tq4wvI70aXI5CCNcChsb0ohDSab13FxvI+9FkNxQhdbW67Jvqk5NxvrmHV
-	Qq7UfO77WW4ciPyDdpZujex2Cxir244t+2Zw6SkWbGun5BQMiBY1JfCgzcWtWJ5L
-	QlZHAGCNHrE2CazIB/uSaVlwD5064/s3TXJUmRm/6Al7lQBtWt+ytLGT+55YFgT6
-	uya4vxWVx6M8gLvYc06Q/3X+/Q8alAIQiCsDmVdl/Q==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puqnjubv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 09:26:43 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56A9DY7E021531;
-	Thu, 10 Jul 2025 09:26:42 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qectw48r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 09:26:42 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56A9QgR81901724
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Jul 2025 09:26:42 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 18BD458054;
-	Thu, 10 Jul 2025 09:26:42 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3A44B58050;
-	Thu, 10 Jul 2025 09:26:40 +0000 (GMT)
-Received: from [9.61.242.136] (unknown [9.61.242.136])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 10 Jul 2025 09:26:39 +0000 (GMT)
-Message-ID: <fe13e9e2-8ac5-46c7-b925-b61d35104ed1@linux.ibm.com>
-Date: Thu, 10 Jul 2025 14:56:38 +0530
+	s=arc-20240116; t=1752139671; c=relaxed/simple;
+	bh=+gpivNaW8rmE/cnhGBUONduU8KGLHMD42W69Gm7+QqU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=pU8pj72tsD9UsYCgRflwk8oMEzXZziHkxPMqKHsfrZ1JcUVSEvkUBrBgoEbQT/hThIv3W7Qs2xarYC67weUl8D9VmFuL0zlfl42XBaAxXK4Kaf3nrODFgjFlCtK9+jl8cHCCYjOgMfrN7fqt8PvTcWSceRRIfkZYCbggw89mFU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hCMgj5oo; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752139670; x=1783675670;
+  h=date:from:to:cc:subject:message-id;
+  bh=+gpivNaW8rmE/cnhGBUONduU8KGLHMD42W69Gm7+QqU=;
+  b=hCMgj5ooE7hX5lKc2VS6VeJIRnInYp3j2J8i9d6md7x1OUgcc4duSMbr
+   /zwLu8HCBCOypCKqEH5y8GhojSFx/EmwKS7E9HPjAnuos3NivHcn4Akd1
+   GoHN4Rq+GL1r8FvrFozVxAjvh5omNsuWL+TNnWcYT1XGm1SIEQonGTtg+
+   0telYEzhBL9IEm1o2luKQMW5DiVkyAxjkiR2QZ0iJgFoZKgh/rhZmcoz9
+   nQLYod29WUAp2ppaupttrxkHTZ8Uteg6iro29u0TWCL50dteg5zXoIpwz
+   r0G7WxW13zYTp3zURqVZEQbWoabIFuOZZxZYxe7WzTexe2LKKE6o9P83K
+   Q==;
+X-CSE-ConnectionGUID: umQaq/xHTAq2D6+r5zVIcA==
+X-CSE-MsgGUID: 4cfXsKWjS0+iR94U7khixQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54386142"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="54386142"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:27:50 -0700
+X-CSE-ConnectionGUID: FAUA+U+STFSEL2s+8VF+SQ==
+X-CSE-MsgGUID: KZk1CoRfTPWS8S/HQWZG6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="155789281"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 10 Jul 2025 02:27:48 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uZnZB-0004s0-2U;
+	Thu, 10 Jul 2025 09:27:45 +0000
+Date: Thu, 10 Jul 2025 17:26:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:core/merge] BUILD SUCCESS
+ 8662a3e5e9c46e7dcaa569b1b0ccb7ecdb74d816
+Message-ID: <202507101745.HHHAXk1O-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Subject: [next-20250709] Fails to boot on IBM Power Server
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FZ43xI+6 c=1 sm=1 tr=0 ts=686f8753 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=JL_kxwBaEviHOjYOxfAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: RlLNcGwiqwLPGgoOr1YZcK6qLIPBnunh
-X-Proofpoint-ORIG-GUID: RlLNcGwiqwLPGgoOr1YZcK6qLIPBnunh
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDA3OSBTYWx0ZWRfXxI6nqg3f/71w 6+LhI+FSnZK6QcFOxISSSdWU9rHqre+HOyrg6jak3TJtgd48cWgE+VfUR33PNZZCqZvWMZIvluD 5h24r1dfW+tv/GdDygU4IGxzPEQsZ0cAuNXV/9XXyV87ABtT+N6p80K3ZkV1nA1F4Yxlt3AA7aG
- uH3hFVs3TXCkQH5q6nJN3htUp/D0aYnaVJCgaKRpQJ76HmANnv5ksIt2AK8HdygvrPcIeiVC66N o9S8oZSvxvOuZseo/OqRKW4Qr3PJid0E4XNQBZ2NowUSdTigycsm/Jk9UH7O7tMA/oHfnmU5Hk0 ay/OKcGWP7hopQcgwnRcQPe8vO/EX3y+d3cHu0nlt/IkUxgPOJje9nvKHjxki3k0EdFsbbpJDF8
- GlGpq9mvZPHQNQUKGNFyoxUj/1F6dgUR3UP2AH+lLy6Ad/LBVXFUkUSthwuFJXSq3cPcV2zU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_01,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- priorityscore=1501 malwarescore=0 mlxlogscore=745 clxscore=1015
- spamscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507100079
 
-Greetings!!!
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core/merge
+branch HEAD: 8662a3e5e9c46e7dcaa569b1b0ccb7ecdb74d816  Revert "sched/numa: add statistics of numa balance task"
 
+elapsed time: 1449m
 
-IBM CI has reported a boot issue on the latest linux-next(20250709) 
-kernel fails on IBM Power servers.
+configs tested: 103
+configs skipped: 3
 
-System entering to emergency mode.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                   randconfig-001-20250709    gcc-8.5.0
+arc                   randconfig-002-20250709    gcc-11.5.0
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-21
+arm                   randconfig-001-20250709    gcc-12.4.0
+arm                   randconfig-002-20250709    gcc-10.5.0
+arm                   randconfig-003-20250709    clang-21
+arm                   randconfig-004-20250709    clang-21
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250709    clang-21
+arm64                 randconfig-002-20250709    gcc-15.1.0
+arm64                 randconfig-003-20250709    clang-21
+arm64                 randconfig-004-20250709    gcc-10.5.0
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250709    gcc-15.1.0
+csky                  randconfig-002-20250709    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+hexagon               randconfig-001-20250709    clang-19
+hexagon               randconfig-002-20250709    clang-21
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250709    gcc-12
+i386        buildonly-randconfig-002-20250709    clang-20
+i386        buildonly-randconfig-003-20250709    clang-20
+i386        buildonly-randconfig-004-20250709    clang-20
+i386        buildonly-randconfig-005-20250709    gcc-12
+i386        buildonly-randconfig-006-20250709    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-21
+loongarch             randconfig-001-20250709    gcc-15.1.0
+loongarch             randconfig-002-20250709    gcc-12.4.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                               defconfig    gcc-14.2.0
+nios2                 randconfig-001-20250709    gcc-14.2.0
+nios2                 randconfig-002-20250709    gcc-14.2.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250709    gcc-15.1.0
+parisc                randconfig-002-20250709    gcc-14.3.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc               randconfig-001-20250709    gcc-8.5.0
+powerpc               randconfig-002-20250709    clang-21
+powerpc               randconfig-003-20250709    clang-21
+powerpc64             randconfig-001-20250709    gcc-10.5.0
+powerpc64             randconfig-002-20250709    gcc-10.5.0
+powerpc64             randconfig-003-20250709    clang-21
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20250709    gcc-10.5.0
+riscv                 randconfig-002-20250709    clang-21
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-001-20250709    clang-17
+s390                  randconfig-002-20250709    clang-21
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                    randconfig-001-20250709    gcc-10.5.0
+sh                    randconfig-002-20250709    gcc-14.3.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250709    gcc-15.1.0
+sparc                 randconfig-002-20250709    gcc-10.3.0
+sparc64               randconfig-001-20250709    clang-21
+sparc64               randconfig-002-20250709    clang-21
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250709    clang-17
+um                    randconfig-002-20250709    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250709    gcc-12
+x86_64      buildonly-randconfig-002-20250709    clang-20
+x86_64      buildonly-randconfig-003-20250709    gcc-12
+x86_64      buildonly-randconfig-004-20250709    gcc-12
+x86_64      buildonly-randconfig-005-20250709    clang-20
+x86_64      buildonly-randconfig-006-20250709    gcc-12
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250709    gcc-8.5.0
+xtensa                randconfig-002-20250709    gcc-11.5.0
 
-Error:
-
-
-[    1.071678] ibmveth 30000002 net0: renamed from eth0
-[    1.074227] ibmvscsi 30000069: SRP_VERSION: 16.a
-[    1.074238] ibmvscsi 30000069: Error -4 opening adapter
-[    1.074255] ibmvscsi 30000069: couldn't initialize crq. rc=-1
-[    1.181132] ibmvscsi 30000069: probe with driver ibmvscsi failed with 
-error -1
-[  146.631585] dracut-initqueue[320]: Warning: dracut-initqueue: 
-timeout, still waiting for following initqueue hooks:
-[  146.632266] dracut-initqueue[320]: Warning: 
-/lib/dracut/hooks/initqueue/finished/devexists-\x2fdev\x2fdisk\x2fby-uuid\x2fc034bf95-13cb-46a0-b66e-78faa57bc520.sh: 
-"if ! grep -q After=remote-fs-pre.target 
-/run/systemd/generator/systemd-cryptsetup@*.service 2>/dev/null; then
-[  146.632493] dracut-initqueue[320]:     [ -e 
-"/dev/disk/by-uuid/c034bf95-13cb-46a0-b66e-78faa57bc520" ]
-[  146.632628] dracut-initqueue[320]: fi"
-[  146.633622] dracut-initqueue[320]: Warning: dracut-initqueue: 
-starting timeout scripts
-[  147.203267] dracut-initqueue[320]: Warning: dracut-initqueue: 
-timeout, still waiting for following initqueue hooks:
-[  147.204238] dracut-initqueue[320]: Warning: 
-/lib/dracut/hooks/initqueue/finished/devexists-\x2fdev\x2fdisk\x2fby-uuid\x2fc034bf95-13cb-46a0-b66e-78faa57bc520.sh: 
-"if ! grep -q After=remote-fs-pre.target 
-/run/systemd/generator/systemd-cryptsetup@*.service 2>/dev/null; then
-[  147.204460] dracut-initqueue[320]:     [ -e 
-"/dev/disk/by-uuid/c034bf95-13cb-46a0-b66e-78faa57bc520" ]
-[  147.204603] dracut-initqueue[320]: fi"
-[  147.205561] dracut-initqueue[320]: Warning: dracut-initqueue: 
-starting timeout scripts
-[  147.767680] dracut-initqueue[320]: Warning: dracut-initqueue: 
-timeout, still waiting for following initqueue hooks:
-[  147.768382] dracut-initqueue[320]: Warning: 
-/lib/dracut/hooks/initqueue/finished/devexists-\x2fdev\x2fdisk\x2fby-uuid\x2fc034bf95-13cb-46a0-b66e-78faa57bc520.sh: 
-"if ! grep -q After=remote-fs-pre.target 
-/run/systemd/generator/systemd-cryptsetup@*.service 2>/dev/null; then
-[  147.768649] dracut-initqueue[320]:     [ -e 
-"/dev/disk/by-uuid/c034bf95-13cb-46a0-b66e-78faa57bc520" ]
-[  147.768788] dracut-initqueue[320]: fi"
-
-
-If you happen to fix this, please add below tag.
-
-
-Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-
-
-Regards,
-
-Venkat.
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
