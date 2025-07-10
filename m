@@ -1,240 +1,84 @@
-Return-Path: <linux-kernel+bounces-725903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F317B0054B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:33:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1360B0054D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D671C413F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:33:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C91486421
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F23D273809;
-	Thu, 10 Jul 2025 14:33:11 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FDD27380E;
+	Thu, 10 Jul 2025 14:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRzvPLgF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A138155389;
-	Thu, 10 Jul 2025 14:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514BA155389;
+	Thu, 10 Jul 2025 14:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752157990; cv=none; b=LI7oN1cFDV0/5/1VWFLihTCTJ2V8aKWBNscdeQwipfe12zsDI6fYAivTtmkN1XBaW8BWsQN/yIJogKRbCOhJcY8ieUAoU3mV1J40vy5BbxOlrnkTls/2KWtNUJsmeXt7iSV8cqJa2RIw2xfWLhLFtdbnWhIzd+5ANbg6lAWMBgg=
+	t=1752157998; cv=none; b=OxFO0MaYdydVmICOH2ZEOAj73C5LTd90lT3dQ/0FNORM4zqd8tUKmwWZjZAPuJbNQ+ILxGCPCUJxfyKzxlkjAQ130WowPRpCeqD98FdJqwMSJ2WGix5baliDaToGXHW+fe7Z9M8THezuQsEu2YwyhM9DnLWVNZQLOynthBmPi8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752157990; c=relaxed/simple;
-	bh=d2PggKXh65C5wsYv+sAOWEiyIFudIEs6dBBQURke4Pg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=agelgz66Zx5QHRBsiFW0XLyxWSC3nmjNLPLzkIoQgrM9SQXzmHIhy8cHam4/wiKPy2nWEv00aHn5obM3YxHWlDkvSq1zmvVqXeoVR2vyJcJxcRTjAXwvsaiTv/lo3n2b8o/0fr/GmQ6in5MdjkCAeRUGCjqjc+TZm2d0twbOHfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8123C44330;
-	Thu, 10 Jul 2025 14:32:58 +0000 (UTC)
-Message-ID: <7204f633-5b35-41ce-b847-7dfbaedbac47@ghiti.fr>
-Date: Thu, 10 Jul 2025 16:32:57 +0200
+	s=arc-20240116; t=1752157998; c=relaxed/simple;
+	bh=ELRQc3uwkKFItDCmx75wbbSO3KRM0Y8LMvnQDThCfK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMVu0oC7DOaHxfhByPBeSm43X9x3h+xjXXiB3eOXIDnnaRryTg/Ey9lfPIxBydUaIxFI4Ar87Qaur7TVEdbMp9lzOaU+c+hurcg0U+YPp0RQD6D93Y7hVla/Umu84pKBjAqdlWOwJE3T5G1SZWeRi8WEcDF0stYZyJKxi7whUN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QRzvPLgF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2253C4CEE3;
+	Thu, 10 Jul 2025 14:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752157996;
+	bh=ELRQc3uwkKFItDCmx75wbbSO3KRM0Y8LMvnQDThCfK4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QRzvPLgFU0NXysFH/E2aHj3HTfCCb9P3xZP0sfcx7EPgn4Hz/B0eeFZ7jn6JcmDBq
+	 5GglNdwLqZ4k6kP0dYlj0gjMzW/Za6DQF2S6o9fwIs1XlSiz+i+yzYsZ7rdVXsbPv8
+	 CV+TjSLUy3IO459fh5QL3FYqG4DQ6RfjROMk5l0f6+OHKVPRpmQs57uNHdnwUkj8MY
+	 4UlIcr9oGr4fBazdJcKl3JAswwk7x5uvrWu1PVFjoxYr1IVqK5cfuiADBoJb+KS0RW
+	 Jcrj6NkF0ULgxCjKHsN5xn+SEyAey/cPDI85pFBcTAAqwkd6FHQZHDhcyVEEQlCcEW
+	 Id3IwzxsJf5ew==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uZsKj-000000005IY-1wLn;
+	Thu, 10 Jul 2025 16:33:10 +0200
+Date: Thu, 10 Jul 2025 16:33:09 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+	kw@linux.com, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	qiang.yu@oss.qualcomm.com, quic_krichai@quicinc.com,
+	quic_vbadigan@quicinc.com
+Subject: Re: [PATCH v8 1/3] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Update pcie phy bindings for QCS615
+Message-ID: <aG_PJbA4t0wgz9b2@hovoldconsulting.com>
+References: <20250703095630.669044-1-ziyue.zhang@oss.qualcomm.com>
+ <20250703095630.669044-2-ziyue.zhang@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE
- selection
-To: Miao Chen <chenmiao.ku@gmail.com>
-Cc: kernel test robot <lkp@intel.com>,
- Linux RISCV <linux-riscv@lists.infradead.org>,
- oe-kbuild-all@lists.linux.dev, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Heiko Carstens <hca@linux.ibm.com>, Pu Lehui <pulehui@huawei.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <aG3A8Jirg+TxNza/@rli9-mobl>
- <f5b1fc77-d180-4df7-b8f6-0cb0ca4a187a@ghiti.fr>
- <CAKxVwge4=cagaVDesKWe0BE88U0YmNn5LLDJvJG=F7EEP2=-LQ@mail.gmail.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <CAKxVwge4=cagaVDesKWe0BE88U0YmNn5LLDJvJG=F7EEP2=-LQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdeilecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepfeeujedtgeekvdehhfduhfegfeeiveehueegheegvdfgjefhteejieduledvfeetnecuffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgpdhinhhfrhgruggvrggurdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemsgeffhdumeejtgeirgemsgehudelmegrfhgstdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemsgeffhdumeejtgeirgemsgehudelmegrfhgstddphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemsgeffhdumeejtgeirgemsgehudelmegrfhgstdgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudehpdhrtghpthhtoheptghhvghnmhhirghordhkuhesghhmrghilhdrtghomhdprhgtphhtthhopehlkhhpsehin
- hhtvghlrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehovgdqkhgsuhhilhguqdgrlhhlsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhg
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250703095630.669044-2-ziyue.zhang@oss.qualcomm.com>
 
+On Thu, Jul 03, 2025 at 02:56:28AM -0700, Ziyue Zhang wrote:
+> QCS615 pcie phy only use 5 clocks, which are aux, cfg_ahb, ref,
+> ref_gen, pipe. So move "qcom,qcs615-qmp-gen3x1-pcie-phy" compatible
+> from 6 clocks' list to 5 clocks' list.
+> 
+> Fixes: 1e889f2bd837 ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the QCS615 QMP PCIe PHY Gen3 x1")
+> Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
 
-On 7/10/25 14:34, Miao Chen wrote:
-> Hello Alex,
->
-> Sure, I'll checkout it. Btw, this is my first commit, so can u tell
-> how to reproduce failed case? Using the reproduce and .config.gz gived
-> by build-bot?
-
-
-Yes exactly!
-
-
->
-> Thanks,
->
-> Chen Miao
->
-> Alexandre Ghiti <alex@ghiti.fr> 于2025年7月10日周四 19:53写道：
->> Hi ChenMiao,
->>
->> On 7/9/25 03:08, kernel test robot wrote:
->>> Hi ChenMiao,
->>>
->>> kernel test robot noticed the following build errors:
->>>
->>> [auto build test ERROR on fda589c286040d9ba2d72a0eaf0a13945fc48026]
->>>
->>> url:    https://github.com/intel-lab-lkp/linux/commits/ChenMiao/riscv-ftrace-Fix-the-logic-issue-in-DYNAMIC_FTRACE-selection/20250706-231907
->>> base:   fda589c286040d9ba2d72a0eaf0a13945fc48026
->>> patch link:    https://lore.kernel.org/r/20250706151830.25091-1-chenmiao.ku%40gmail.com
->>> patch subject: [PATCH V2] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE selection
->>> :::::: branch date: 2 days ago
->>> :::::: commit date: 2 days ago
->>> config: riscv-randconfig-r112-20250708 (attached as .config)
->>> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
->>> reproduce: (attached as reproduce)
->>>
->>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>> the same patch/commit), kindly add following tags
->>> | Reported-by: kernel test robot <lkp@intel.com>
->>> | Closes: https://lore.kernel.org/oe-kbuild-all/202507090650.YGY56SIA-lkp@intel.com/
->>>
->>> All errors (new ones prefixed by >>):
->>>
->>>>> <instantiation>:1:14: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
->>>      addi sp, sp, -FREGS_SIZE_ON_STACK
->>>                   ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>>> <instantiation>:2:18: error: unexpected token
->>>       sw t0, FREGS_EPC(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:3:17: error: unexpected token
->>>       sw x1, FREGS_RA(sp)
->>>                      ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:7:17: error: unexpected token
->>>       sw x6, FREGS_T1(sp)
->>>                      ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:9:17: error: unexpected token
->>>       sw x7, FREGS_T2(sp)
->>>                      ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:10:18: error: unexpected token
->>>       sw x28, FREGS_T3(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:11:18: error: unexpected token
->>>       sw x29, FREGS_T4(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:12:18: error: unexpected token
->>>       sw x30, FREGS_T5(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:13:18: error: unexpected token
->>>       sw x31, FREGS_T6(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:16:18: error: unexpected token
->>>       sw x10, FREGS_A0(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:17:18: error: unexpected token
->>>       sw x11, FREGS_A1(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:18:18: error: unexpected token
->>>       sw x12, FREGS_A2(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:19:18: error: unexpected token
->>>       sw x13, FREGS_A3(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:20:18: error: unexpected token
->>>       sw x14, FREGS_A4(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:21:18: error: unexpected token
->>>       sw x15, FREGS_A5(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:22:18: error: unexpected token
->>>       sw x16, FREGS_A6(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:23:18: error: unexpected token
->>>       sw x17, FREGS_A7(sp)
->>>                       ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>       ^
->>>      <instantiation>:25:15: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
->>>       addi a0, a0, FREGS_SIZE_ON_STACK
->>>                    ^
->>>      arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->>>       SAVE_ABI_REGS
->>>
->>> Kconfig warnings: (for reference only)
->>>      WARNING: unmet direct dependencies detected for DYNAMIC_FTRACE
->>>      Depends on [n]: FTRACE [=y] && FUNCTION_TRACER [=y] && HAVE_DYNAMIC_FTRACE [=n]
->>>      Selected by [y]:
->>>      - RISCV [=y] && FUNCTION_TRACER [=y]
->> To avoid that, we should check HAVE_DYNAMIC_FTRACE too:
->>
->> select DYNAMIC_FTRACE if FUNCTION_TRACER && HAVE_DYNAMIC_FTRACE
->>
->> That fixes the build error for me. Can you send a v3 with this change?
->>
->> Thanks,
->>
->> Alex
->>
->>
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
 
