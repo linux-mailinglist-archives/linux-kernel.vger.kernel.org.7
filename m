@@ -1,235 +1,96 @@
-Return-Path: <linux-kernel+bounces-725560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DACAB000C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:47:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E13AB000C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5857B1C224A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59DC61C251FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB782248F76;
-	Thu, 10 Jul 2025 11:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB75248865;
+	Thu, 10 Jul 2025 11:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="WuGEBxxM"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Dl3zp982"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28ECE246795
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EFB2222AB
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752148063; cv=none; b=KuGGLYvXO/xZtPIPeoT3+kI+s5R+ZYRevKM496r3+W+/ZQ04pfjp1iH0f+vzmjuhqPSoWpewvmjoB3ubotVyCFlHR5dwuQGN2+jtKtDrtranmxgzKnT/EKcENhXZ4NqZ2X5rppAUs5rylua7pc49CAf7OlQsH0u7stuMmkic2q0=
+	t=1752148098; cv=none; b=dqDoswm3EsQewVW3owq/rpNsM1nrfxxKqxIoXdvkbvsUQBZkYb8a243r5FzWGNue/yosmqgUy3hqmcERVT1aXsoMep+TV7zM4EXrdQYFqtfYXNTzsy7oTYTxy0v45RKAgf/gwQAKBsR2DEplAV16KDJ1cWmwTgdtePGYLyH70bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752148063; c=relaxed/simple;
-	bh=g2RoJuXZSV857NxtooyLQq1JF2tbnE4bL6emm2q91cw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T6x0uHWMYhRsbuizVmLkZkn7/Nj/OgjM+WcQRPh81ojRrMwZAjXXh6OhTEeZB8ZPlnvK16oxZKoDzRh4PNSuJDW/SJGrxj63uqPbn3dkGns5rhV9kDGSMvVVYJv4X2Pcx9OPqW4a0F/2aEgBvM9lL+JwCaSVYYlISUQhuUl/BOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=WuGEBxxM; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-6116d9bb6ecso477973eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 04:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1752148059; x=1752752859; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WRJ7N+W5JU0EuTuULowXAGtXu+e/abUVNu+nA6+YkOg=;
-        b=WuGEBxxMGLqm+PU2I1zxWijobObpvzmQ74gEMlso0abKd4NI+i+GnTdRpkwW2BwPvD
-         yZB4Yd2tGcEkHK4F9zjOaLCWaMWM1FEdHDo4jgHlhh3q+Ing+btgQOJbV0m6zTnOgE9o
-         B5686i7vi3gFvH4NBYEm8ixJv/fkx+HZx1nwX9GKvhW+rpV1wqh+J/erkDdjeELseIHH
-         nKZmpQkI9LaGHH6q+1c5LNN7LPljUlEFQglqStiEWziORUBZs9RCtaXW9e0DTXFTXTj7
-         8/IWMpC6dNfDlAsTSrcrb15w2XBpl41NDaiFzzfYo2sn+gGJowAhf1xBxHy4mAZFF4Fb
-         wiNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752148059; x=1752752859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WRJ7N+W5JU0EuTuULowXAGtXu+e/abUVNu+nA6+YkOg=;
-        b=NeVL8fm+k++qaGKCycPpCXgR13XR6CFRCJUdDHveGn1HJxuGeOXhqN2lQhE9ThTZva
-         Ap+tW1DKABKodaHQKhEYDmU3BU7TOdBKOfppkqQ/leP8OI8IgI7cypI4+rICXt9Q9OvB
-         HX8KjyyM2GuveNUOLwZGi5Bf7w9dSCbcEgCnWgDtJo/9fiEyVjuUK90qdjKz+JNHIdgB
-         +AYH0fy+/A1tPhyGb+fZYvepDcPdyGqQ3f74FhPlx2d3rFeq3loKKVS/rRcsLi8L0JlX
-         LI1KkO+aPLsOCVBDjIZhGKvja+CxyXY1VItqsAuHsSvE19QueMUXKhqXQfNoSlUm4M70
-         G0fw==
-X-Forwarded-Encrypted: i=1; AJvYcCXl2pYQUOIFFXHsDj1JwvgB4gm1DNz0HaoXCMQCilJ7/PYTPjqVE7no5JDNQvL/YM1qh3F6qpgeBUv0m2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZxdJTAOkT91oMyi+yzg4+HxomubcLzZzouQF0LwOMh9Qdg71s
-	OBoDcP1pkmvkWINRM9dmFuF35sUD6hbGrVV/lkITLOlzl3xSkO4JWX4CEwSZzVNV/POTcqFAzsh
-	PL//T59UxbXVpMRusIYPlABL1nViVLLBDSxmJnGdYIw==
-X-Gm-Gg: ASbGncuNgLELgQxIoaT7PoTDmP7Qkqaoe3ZFx3CqE7NK0VhCsRuZ20xCGOMZaRmX7uK
-	cUS1IfXumrGHnKW+ljDldwn3hI7c/hMnEJUcJo0iaXspzVt5dFWN6H27nbv/JjvKwdOYFdkeLhu
-	pDVthdwElFPJg4b/xztRrcU6FR0Bsm46t4scwqamoFiBgtSg==
-X-Google-Smtp-Source: AGHT+IGkL47B+0utyAnO83uLx6JcDnDsO1PT+QZvP0dfZWDUEj9DS92oh6uIPmw6PeMPCn8E2rQmnD+e+3ahsKoanmI=
-X-Received: by 2002:a05:6820:4c12:b0:613:d09e:7531 with SMTP id
- 006d021491bc7-613d9de7a84mr1441606eaf.1.1752148059063; Thu, 10 Jul 2025
- 04:47:39 -0700 (PDT)
+	s=arc-20240116; t=1752148098; c=relaxed/simple;
+	bh=zDHPXgfBdkzz4e62ZgSaLbipREdClGNoNA/+oT2RoyU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=n40WqHB5IF7MVnF4bYBj/2joeNZ2hOS4e120Brn760US7FfXHiq/1NlR/y9IijdItzyvIje2uzeDyKPRkQA5hO6uriyZUpWISGXNED/Cd1qTit3KZLxSTV1iwzkx2clI1TgzvJZczE4UhtQ3/ZR5vXd3jGGZpHG/EADd+Fqt17c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Dl3zp982; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bdClV313Mz9svm
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:48:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1752148086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0i2jRmH7FTcG+To7IWwCAeWfCFZ5GENB6jELYE5N9yo=;
+	b=Dl3zp982joycPFqUOBcngzreu9M+X3vwrsROLm59j7OoAVrlIGTAwqZ1Q767onbo59Ak8o
+	TQzA6MDMhZgU9cBWARoICozNQSAFeDpvnMRhCT2hdGObyT/pK1WNK5xxSAdQS0Oz84VCSl
+	xTAkyGo7n7YFcmuHzRtfhKrczkBWVlL9m20wJGBFNQ8XTaLtTutCBz8fAhRzkq0WNMM2gf
+	CJqjDYe3fmPKaUGJIc6Hc1B9SZM9WSs20tEzcXuFd/61LS9GMwA3M4z2n5iTqlwN+xHbER
+	c92kEGqkgR0NSD6lcX1PmvrMXh7Wl7V27zwMHNtYuCFiz3+J4SE8tFlAZTrFBA==
+From: Stefan Roese <stefan.roese@mailbox.org>
+To: linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Update Stefan Roese's email address
+Date: Thu, 10 Jul 2025 13:48:05 +0200
+Message-ID: <20250710114805.3680341-1-stefan.roese@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704084500.62688-1-cuiyunhui@bytedance.com>
- <DB5U402ARSEO.4H4PE19LGCR7@ventanamicro.com> <CAEEQ3w=V6-d+YSWP=0WMt6UAZexrazq0UQjdyUmS3AnMtkdoKQ@mail.gmail.com>
- <DB6MLPA3BJ75.2U5FP5JSJD2LO@ventanamicro.com> <CAEEQ3wkoy3Jr0vZk=X4U56KYPq3=5t7Wr4RE6uNby3MS5qzh-g@mail.gmail.com>
- <DB7L9ZHZI3AI.36SXWX2SO9OS7@ventanamicro.com> <CAEEQ3wnaL5X_jXEmbbWFp3jx1Aq=02Gf7kDNBS=wcPyfEq7yBw@mail.gmail.com>
- <DB8607ITP9UR.2LOW61O3OVJ2F@ventanamicro.com>
-In-Reply-To: <DB8607ITP9UR.2LOW61O3OVJ2F@ventanamicro.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Thu, 10 Jul 2025 19:47:27 +0800
-X-Gm-Features: Ac12FXw9bF0Hi8EPNeiS01K8ULVFbmrHmgwK8R27PwbH4rDW7ZMa3s2RNd6nfSc
-Message-ID: <CAEEQ3wmxJ50PZHVpdexeyy1ELqKw+5mrb+8gRCA4KNj9zsrykA@mail.gmail.com>
-Subject: Re: [External] [PATCH] RISC-V: store percpu offset in CSR_SCRATCH
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Cc: masahiroy@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev, 
-	dennis@kernel.org, tj@kernel.org, cl@gentwo.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, andybnac@gmail.com, 
-	bjorn@rivosinc.com, cyrilbur@tenstorrent.com, rostedt@goodmis.org, 
-	puranjay@kernel.org, ben.dooks@codethink.co.uk, zhangchunyan@iscas.ac.cn, 
-	ruanjinjie@huawei.com, jszhang@kernel.org, charlie@rivosinc.com, 
-	cleger@rivosinc.com, antonb@tenstorrent.com, ajones@ventanamicro.com, 
-	debug@rivosinc.com, haibo1.xu@intel.com, samuel.holland@sifive.com, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
-	linux-riscv <linux-riscv-bounces@lists.infradead.org>, wangziang.ok@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 2b7397161207a87e441
+X-MBO-RS-META: sksh7yft93owjk4abosxzudpiwq79xxg
 
-Hi Radim,
+Update my email address in MAINTAINERS file.
 
-On Thu, Jul 10, 2025 at 2:35=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcma=
-r@ventanamicro.com> wrote:
->
-> 2025-07-10T11:45:06+08:00, yunhui cui <cuiyunhui@bytedance.com>:
-> > On Wed, Jul 9, 2025 at 10:20=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rk=
-rcmar@ventanamicro.com> wrote:
-> >> Is the overhead above with this patch?  And when we then use the
-> >> CSR_SCRATCH for percpu, does it degrade even further?
-> >
-> > We can see that the percpu optimization is around 2.5% through the
-> > method of fixing registers, and we can consider that the percpu
-> > optimization can bring a 2.5% gain. Is there no need to add the percpu
-> > optimization logic on the basis of the scratch patch for testing?
-> >
-> > Reference: https://lists.riscv.org/g/tech-privileged/message/2485
->
-> That is when the value is in a GPR, though, and we don't know the
-> performance of a CSR_SCRATCH access.
-> We can hope that it's not much worse than a GPR, but an implementation
-> might choose to be very slow with CSR_SCRATCH.
->
-> I have in mind another method where we can use the current CSR_SCRATCH
-> without changing CSR_TVAL, but I don't really want to spend time on it
-> if reading the CSR doesn't give any benefit.
->
-> It would be to store the percpu offset in CSR_SCRATCH permanently, do
-> the early exception register shuffling with a percpu area storage, and
-> load the thread pointer from there as well.
-> That method would also eliminate writing CSR_SCRATCH on every exception
-> entry+exit, so maybe it makes sense to try it even if CSRs are slow...
->
-> Thanks.
-
-
-Based on the patch, optimizations for percpu offset have been added,
-with the following data:
-6.989 7.046 6.976 6.986 7.001 7.017 7.007 7.064 7.008 7.039
-Geometric mean: 7.013248303
-Compared to reusing the scratch register, the performance has improved
-by approximately 0.7%.
-
-If more optimizations can be made to the scratch register, there
-should be further performance improvements.
-
-Patch:
+Signed-off-by: Stefan Roese <stefan.roese@mailbox.org>
 ---
- arch/riscv/include/asm/percpu.h | 14 ++++++++++++++
- arch/riscv/kernel/asm-offsets.c |  1 +
- arch/riscv/kernel/entry.S       |  7 +++++++
- arch/riscv/kernel/smpboot.c     |  3 +++
- 4 files changed, 25 insertions(+)
- create mode 100644 arch/riscv/include/asm/percpu.h
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/include/asm/percpu.h b/arch/riscv/include/asm/percp=
-u.h
-new file mode 100644
-index 000000000000..1fbfcb108f84
---- /dev/null
-+++ b/arch/riscv/include/asm/percpu.h
-@@ -0,0 +1,14 @@
-+#ifndef __ASM_PERCPU_H
-+#define __ASM_PERCPU_H
-+
-+static inline void set_my_cpu_offset(unsigned long off)
-+{
-+        csr_write(CSR_SCRATCH, off);
-+}
-+
-+#define __my_cpu_offset csr_read(CSR_SCRATCH)
-+
-+#include <asm-generic/percpu.h>
-+
-+#endif
-+
-diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offset=
-s.c
-index a03129f40c46..0ce96f30bf32 100644
---- a/arch/riscv/kernel/asm-offsets.c
-+++ b/arch/riscv/kernel/asm-offsets.c
-@@ -35,6 +35,7 @@ void asm_offsets(void)
-  OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
-  OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
-  OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
-+ OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
-  OFFSET(TASK_TI_FLAGS, task_struct, thread_info.flags);
-  OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preempt_count);
-  OFFSET(TASK_TI_KERNEL_SP, task_struct, thread_info.kernel_sp);
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index cc2fd4cd54a0..82caeee91c15 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -75,6 +75,13 @@ SYM_CODE_START_NOALIGN(handle_exception)
-  REG_S s4, PT_CAUSE(sp)
-  REG_S s5, PT_TP(sp)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index eb7616d241b9..ecadf36f4b47 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -921,7 +921,7 @@ F:	drivers/mailbox/mailbox-altera.c
+ 
+ ALTERA MSGDMA IP CORE DRIVER
+ M:	Olivier Dautricourt <olivierdautricourt@gmail.com>
+-R:	Stefan Roese <sr@denx.de>
++R:	Stefan Roese <stefan.roese@mailbox.org>
+ L:	dmaengine@vger.kernel.org
+ S:	Odd Fixes
+ F:	Documentation/devicetree/bindings/dma/altr,msgdma.yaml
+@@ -15414,7 +15414,7 @@ F:	Documentation/devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml
+ F:	drivers/phy/ralink/phy-mt7621-pci.c
+ 
+ MEDIATEK MT7621/28/88 I2C DRIVER
+-M:	Stefan Roese <sr@denx.de>
++R:	Stefan Roese <stefan.roese@mailbox.org>
+ L:	linux-i2c@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/i2c/mediatek,mt7621-i2c.yaml
+-- 
+2.50.1
 
-+ REG_L s0, TASK_TI_CPU(tp)
-+ slli s0, s0, 3
-+ la s1, __per_cpu_offset
-+ add s1, s1, s0
-+ REG_L s1, 0(s1)
-+ csrw CSR_SCRATCH, s1
-+
-  la s1, handle_kernel_exception
-  csrw CSR_TVEC, s1
-
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index fb6ab7f8bfbd..6fa12cc84523 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -43,6 +43,7 @@ static DECLARE_COMPLETION(cpu_running);
-
- void __init smp_prepare_boot_cpu(void)
- {
-+ set_my_cpu_offset(per_cpu_offset(smp_processor_id()));
- }
-
- void __init smp_prepare_cpus(unsigned int max_cpus)
-@@ -240,6 +241,8 @@ asmlinkage __visible void smp_callin(void)
-  mmgrab(mm);
-  current->active_mm =3D mm;
-
-+ set_my_cpu_offset(per_cpu_offset(curr_cpuid));
-+
-  store_cpu_topology(curr_cpuid);
-  notify_cpu_starting(curr_cpuid);
-
---
-2.43.0
-
-Thanks,
-Yunhui
 
