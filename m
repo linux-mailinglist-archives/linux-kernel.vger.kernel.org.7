@@ -1,145 +1,123 @@
-Return-Path: <linux-kernel+bounces-725487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06AE8AFFFD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:55:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E665AFFFDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C20A61C454C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:55:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A58B7B334A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8695E2E11B6;
-	Thu, 10 Jul 2025 10:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89A82E0939;
+	Thu, 10 Jul 2025 10:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+NqNTBT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="Y2amTz0t"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B5A24501E;
-	Thu, 10 Jul 2025 10:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752144906; cv=none; b=r+VFoWfGi+1bD2yHvAgq9vEZH5GQDCpJOWv/6W9sDwLS0UO2mGkRlZ4BzH6BADW6l5HzE3BSeYsQ9efu/F4chm/05CJYHgcvZ5qBHwU16dSRsqmHpfNBFUsdcPufaPVQwdZu2VEp2IqYEihNhCY78GloqxKxSJHB64HXtrFqiJ4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752144906; c=relaxed/simple;
-	bh=OOr8yxV8EcvANJT9Qa+ogkgghedjEk5bH9TN1Xwqf7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fw5QMNN3pvSvLFxGaCV/uEAvrwbPPaeNu2z5EcTVBMLf/XGLCqx5/EOWDIGd+NI6R8i5oBoOtG43bC7vyiVNmDQt/BtNpCg1QKuImTEtdI/VPGZyjjhOrjE7ccqWwPl3Lg/LlhBGqKA2o+BR+1K9sXa6xdEzdawpX5efgWSbv0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+NqNTBT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5201FC4CEE3;
-	Thu, 10 Jul 2025 10:55:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752144905;
-	bh=OOr8yxV8EcvANJT9Qa+ogkgghedjEk5bH9TN1Xwqf7k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T+NqNTBTqUNUBtJM3ACnXP2meUWSPsxcuU/K6ekqDxcivhmxF+QZDfr1jK5MEqVJe
-	 Y+OAWX2XclexjBBhx6i7HSWGOcL6sOAVu/xHHrlclAwXInENWUbnH95RzKUbWWXQYY
-	 rfH6057NWPmCGJ612boqB6S6rNnyH6GnuzMUBAezNIitnCZAQB/sz6AYEyjs89pmue
-	 WVS2ge1/rZ1WVj7Up3sxZOOVlYKXqZ3WkUg8OYf6ZnFiRnBQ5EzIRfqBFy6Tm91u21
-	 2GvST+ChXbUDKtx96SBuLVAWy4wsgMVEru6fTh0enChmi38uPdFPHETlos7dIyV9CM
-	 nPMuSxzyWq3zA==
-Message-ID: <aac2a4fb-c9e8-4e1d-b0cd-d6481dc27252@kernel.org>
-Date: Thu, 10 Jul 2025 12:55:01 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F8624501E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752145087; cv=pass; b=jONXU0F0agq34/Zca6/9NW0KFxup6gpzv7TN/oz8qCGDe6BhDWZXNpGZhcm0Co35PiK5i1BhElXXrFJNOsSluh+kyyyyaUwItG5O4Mw2bdIOF1oG5TkTG3uEmzjzjyxoDTnIs7/ui5DLxGS1ZLhK7qSC0wfT+cndZ30Sl6CtRow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752145087; c=relaxed/simple;
+	bh=JzOEzQ4u4rtw2NIBLOcRDtDefM3sgL3nRVZ/m4mk2yc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ulyX8Kje7imuyQ3tgCEFg4kPScU6pg2Q5NmzpXW1GJtcDo63rdOyMjplQGy5hQoK2f03vZRn1yQHPDnvLUxJVz7l/Vxh+VHXDQ4k/DTCxZFRjREGtzYOO+R2Y55ModKzyigYABHW9AKQZrXVgSXjHBRu26IaTsaZ6xo79LBPMdQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=Y2amTz0t; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
+ARC-Seal: i=1; a=rsa-sha256; t=1752145042; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=C7R/uEgzS8DBaItptc8pmQ/N4XdTC9BtVmSrxUSFnurBo3Sx8VY9jI3eQstJ4XxE4V63oX6AzD1BnsnQCZItvMBIICSVHmEbj3iyX3uxsGQvs4mDQKegxr+qND0yKObhqQXpSBgUtR89uhUsVK9hhd5HkTKVHVWe7LZAfMMHBrM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752145042; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
+	bh=yiEYKiYWi9lfEelzgS689BygDZKCSEUDoT6dG+OBGmU=; 
+	b=U/bnAvbtIfwE1blvERtTfUL+ZMXe36eRgIzSyTGqCbcT8R1lbhqZtIWFQ7uXDXvAa4x3/l+VWGt/aHal7XlneKHg7d1LityuLX3oFGdg7aXAzT4JcEaNbL0hZunTkmJSOoBwzA5P3lYM/VpnO0FrZ8QS5HQtQTPpn/DfxBUiwH4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=linux.beauty;
+	spf=pass  smtp.mailfrom=me@linux.beauty;
+	dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752145042;
+	s=zmail; d=linux.beauty; i=me@linux.beauty;
+	h=From:From:To:To:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
+	bh=yiEYKiYWi9lfEelzgS689BygDZKCSEUDoT6dG+OBGmU=;
+	b=Y2amTz0tziV140SrHvT24YTRFZsci/hGRpokwl7qkJ3dGbwNKqkEmjfgKaoiQ9mG
+	nt1IOua+FpOfW0XDBNB3cbXLCJPjjIye8RgZ+VfIxK6HaPDrSPRoRRQdVXVtEHXOoMM
+	Phxf8//u3GA64BoPaBrnyaCr2P5e1oNUhuP6Kxy0=
+Received: by mx.zohomail.com with SMTPS id 1752145040240481.87790057866744;
+	Thu, 10 Jul 2025 03:57:20 -0700 (PDT)
+From: Li Chen <me@linux.beauty>
+To: "Thomas Gleixner" <tglx@linutronix.de>,
+	"Ingo Molnar" <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>,
+	"Dave Hansen" <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	"Peter Zijlstra" <peterz@infradead.org>,
+	"Sohil Mehta" <sohil.mehta@intel.com>,
+	"Brian Gerst" <brgerst@gmail.com>,
+	"Patryk Wlazlyn" <patryk.wlazlyn@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/4] x86/smpboot: tidy sched-topology and drop useless SMT level
+Date: Thu, 10 Jul 2025 18:57:06 +0800
+Message-ID: <20250710105715.66594-1-me@linux.beauty>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/3] arm64: dts: qcom: x1-hp-x14: Unify HP Omnibook X14
- device tree structure
-To: jens.glathe@oldschoolsolutions.biz, Bjorn Andersson
- <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250710-hp-x14-x1p-v7-0-19c10c81713a@oldschoolsolutions.biz>
- <20250710-hp-x14-x1p-v7-2-19c10c81713a@oldschoolsolutions.biz>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250710-hp-x14-x1p-v7-2-19c10c81713a@oldschoolsolutions.biz>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On 10/07/2025 12:50, Jens Glathe via B4 Relay wrote:
-> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> 
-> Extract common elements into a shared .dtsi file for HP Omnibook X14 to
-> support both Hamoa (x1e*/x1p6*) and Purwa (x1p4*/x1*) variants.
-> Required because the device trees are not compatible.
-> 
-> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+From: Li Chen <chenl311@chinatelecom.cn>
 
-Why am I bothering to review if you keep changing and eventually
-dropping the tag.
+This series cleans up sched-domain topology handling and
+eliminates hundreds of pointless attach/destroy cycles for large
+machines when SMT is not available.
 
-<form letter>
-This is a friendly reminder during the review process.
+Patch 1, 2, and 3 do some cleanup and refactor.
 
-It looks like you received a tag and forgot to add it.
+Patch 4 is a follow-up that simply skip SMT domain when
+cpu_smt_num_threads <= 1, so the SMT level never gets created.
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
+Tested on Qemu.
 
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+changelog:
+v2: fix wording issue as suggested by Thomas [1]
+v3: remove pointless memset and adjust PKG index accordingly, as
+    suggested by Thomas [2], and refine some other wording issues.
+v4: v4: Split refactor patche into three parts (as suggested by Peter [3])
+    and refined patch 4 logic (as done by K. [4]).
+v5: fix some style issues and do some improvements as pointed out by K. [5][6]
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+[1]: https://lore.kernel.org/all/87msa2r018.ffs@tglx/
+[2]: https://lore.kernel.org/all/875xglntx1.ffs@tglx/
+[3]: https://lkml.org/lkml/2025/6/25/584
+[4]: https://lore.kernel.org/lkml/1b706790-2fec-4582-a425-55eeff36c32e@amd.com/
+[5]: https://lore.kernel.org/all/f391491d-f886-4579-9b40-78a57f2ed1b5@amd.com/
+[6]: https://lore.kernel.org/all/7e7f686b-1f5a-46dc-8b16-c6d491160d1c@amd.com/
 
-Best regards,
-Krzysztof
+Li Chen (4):
+  smpboot: introduce SDTL() helper to tidy sched topology setup
+  x86/smpboot: remove redundant CONFIG_SCHED_SMT
+  x86/smpboot: moves x86_topology to static initialize and truncate
+  x86/smpboot: avoid SMT domain attach/destroy if SMT is not enabled
+
+ arch/powerpc/kernel/smp.c      | 34 +++++++++--------------
+ arch/s390/kernel/topology.c    | 10 +++----
+ arch/x86/kernel/smpboot.c      | 51 ++++++++++++++++------------------
+ include/linux/sched/topology.h |  4 +--
+ kernel/sched/topology.c        | 24 ++++++----------
+ 5 files changed, 52 insertions(+), 71 deletions(-)
+
+-- 
+2.50.0
+
 
