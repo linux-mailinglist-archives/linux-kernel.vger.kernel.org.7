@@ -1,108 +1,119 @@
-Return-Path: <linux-kernel+bounces-724825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C6CAFF74D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:06:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06780AFF755
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98781C44388
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA44482D10
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B7827FD68;
-	Thu, 10 Jul 2025 03:06:06 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CDE280A3B;
+	Thu, 10 Jul 2025 03:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="SvChjIa7"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA8A2236F4
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 03:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C3E2236F4;
+	Thu, 10 Jul 2025 03:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752116766; cv=none; b=Q2I2LY+O0GIWAvVfj71JmtVWL3g4yPtFHeOMoHHvJYTBZXt3Ou/hmTze8qqXgtrsd7EIas9PyFwOJVQN8CT9acHLZhatqKi4fypgZCSc0FhO/UIhli/zMqiQaUyzCQl2jnuJ5T5Y9WurGtIoM7b8yBJFf/Xz9yWKyZDsJrL8Wac=
+	t=1752116929; cv=none; b=ntPx8hCnRY4eqMXzeMu4D2kzn3+syhllDuY3Jl2zabNNCg1y4GETjAtZIId2m/k2tLsAbrttCw8kM9zfTMR8CMFpKs6xuhItd+0DQ2D4fNZ7HKHr5lX1l1OUQsIzkZvsjy6AJmg98WsmvMPMaxJAZI4Bde0f4utBniY8tEPc6mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752116766; c=relaxed/simple;
-	bh=lo3MqqF3M7w1CyAce5AiwGGnPxEhGES/StfeFjAZlTM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sDXKgYXdWCoCoCHZ9PTVqVec7Grg2HSyOmI7jBtPu6AVGH6rrWf7l/kvgePtb4NPyHuAnutRbYKkUCbhaknAC/t1on1KjQeOT1IIAzP2WI4gfaAdLg5fnf5zcQovpKVSRx7O26M62fbpiSgF3b4fKLJCVtMQuuLF5np0r2GIxBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: cb34ea685d3a11f0b29709d653e92f7d-20250710
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR
-	SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
-	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
-	ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:69531f57-c1ce-4aaa-b9a5-ee61f1d6e198,IP:15,
-	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:35
-X-CID-INFO: VERSION:1.1.45,REQID:69531f57-c1ce-4aaa-b9a5-ee61f1d6e198,IP:15,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:35
-X-CID-META: VersionHash:6493067,CLOUDID:00147462416a962fe54cbe135c4aee57,BulkI
-	D:2507101034486T1R7010,BulkQuantity:1,Recheck:0,SF:19|24|44|66|72|78|102,T
-	C:nil,Content:0|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:ni
-	l,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: cb34ea685d3a11f0b29709d653e92f7d-20250710
-X-User: lihongtao@kylinos.cn
-Received: from localhost.localdomain [(116.128.244.171)] by mailgw.kylinos.cn
-	(envelope-from <lihongtao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 3746967; Thu, 10 Jul 2025 11:05:54 +0800
-From: lihongtao <lihongtao@kylinos.cn>
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	lihongtao <lihongtao@kylinos.cn>
-Subject: [PATCH] drm/panfrost: Fix leak when free gem object
-Date: Thu, 10 Jul 2025 11:05:27 +0800
-Message-Id: <20250710030527.167710-1-lihongtao@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1752116929; c=relaxed/simple;
+	bh=F6VR5nKGe13Ow2g6gzB5e4obS87Lei+0BennH96UY8A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WuL7TJei1gJD79+dRllz4bAg+PHUtAvV986OhA7hxPfvrYydeaq/iGmKjeWE8yWaxVvtv/zgdOmzZRzMhnviBH771DjjMJbU/xz4P3eU+v0b7MDpOI67tJOxJGM5iD/4urpG/wRBTHyWAm+vGWYSZS11FPetD65lPu7g0Un/hhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=SvChjIa7; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1752116919;
+	bh=VoLYoa/kgM+7MBKFJTPf56TyoyMCg93r0/6R25VCQ3I=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=SvChjIa7a2JcuhNzepxuLaNu7vmlhIJEZEY11axUpZMZWwl0zZuS0YtSmOf3hnV5r
+	 BqapAhbH3iDMfrUxkZxe5fpfuZlA6OE/tZPfJ/y5pD6yR1fiJsUb75LbXbH0sDrTp/
+	 JkB399jTUDuGuqB6/daQa4XJzGYUjAlkdpxc0/NA=
+Received: from [IPv6:110::1f] (unknown [IPv6:2409:874d:200:3037::3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 2A41A65F62;
+	Wed,  9 Jul 2025 23:08:30 -0400 (EDT)
+Message-ID: <cda3b07998b39b7d46f10394c232b01a778d07a9.camel@xry111.site>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+From: Xi Ruoyao <xry111@xry111.site>
+To: Christian Brauner <brauner@kernel.org>, Nam Cao <namcao@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Valentin Schneider	
+ <vschneid@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara	
+ <jack@suse.cz>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, John
+ Ogness	 <john.ogness@linutronix.de>, Clark Williams <clrkwllms@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-rt-devel@lists.linux.dev,
+ linux-rt-users@vger.kernel.org, Joe Damato	 <jdamato@fastly.com>, Martin
+ Karsten <mkarsten@uwaterloo.ca>, Jens Axboe	 <axboe@kernel.dk>
+Date: Thu, 10 Jul 2025 11:08:18 +0800
+In-Reply-To: <20250701-wochen-bespannt-33e745d23ff6@brauner>
+References: <20250527090836.1290532-1-namcao@linutronix.de>
+	 <20250701-wochen-bespannt-33e745d23ff6@brauner>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-obj->mappings.lock should be destroyed when free
-panfrost gem object in panfrost_gem_free_object.
+On Tue, 2025-07-01 at 14:03 +0200, Christian Brauner wrote:
+> On Tue, 27 May 2025 11:08:36 +0200, Nam Cao wrote:
+> > The ready event list of an epoll object is protected by read-write
+> > semaphore:
+> >=20
+> > =C2=A0 - The consumer (waiter) acquires the write lock and takes items.
+> > =C2=A0 - the producer (waker) takes the read lock and adds items.
+> >=20
+> > The point of this design is enabling epoll to scale well with large num=
+ber
+> > of producers, as multiple producers can hold the read lock at the same
+> > time.
+> >=20
+> > [...]
+>=20
+> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+> Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Signed-off-by: lihongtao <lihongtao@kylinos.cn>
----
- drivers/gpu/drm/panfrost/panfrost_gem.c | 1 +
- 1 file changed, 1 insertion(+)
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/panfrost/panfrost_gem.c
-index 963f04ba2de6..00549f482eec 100644
---- a/drivers/gpu/drm/panfrost/panfrost_gem.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
-@@ -49,6 +49,7 @@ static void panfrost_gem_free_object(struct drm_gem_object *obj)
- 		kvfree(bo->sgts);
- 	}
- 
-+	mutex_destroy(&bo->mappings.lock);
- 	drm_gem_shmem_free(&bo->base);
- }
- 
--- 
-2.25.1
+Hi,
 
+After upgrading my kernel to the recent mainline I've encountered some
+stability issue, like:
+
+- When GDM started gnome-shell, the screen often froze and the only
+thing I could do was to switch into a VT and reboot.
+- Sometimes gnome-shell started "fine" but then starting an application
+(like gnome-console) needed to wait for about a minute.
+- Sometimes the system shutdown process hangs waiting for a service to
+stop.
+- Rarely the system boot process hangs for no obvious reason.
+
+Most strangely in all the cases there are nothing alarming in dmesg or
+system journal.
+
+I'm unsure if this is the culprit but I'm almost sure it's the trigger.
+Maybe there's some race condition in my userspace that the priority
+inversion had happened to hide...  but anyway reverting this patch
+seemed to "fix" the issue.
+
+Any thoughts or pointers to diagnose further?
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
 
