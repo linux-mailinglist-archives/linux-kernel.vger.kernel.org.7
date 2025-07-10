@@ -1,98 +1,208 @@
-Return-Path: <linux-kernel+bounces-725033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF175AFFA0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:46:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FB1AFFA10
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 024C87A69F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:44:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9689C3A7016
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9EF231A21;
-	Thu, 10 Jul 2025 06:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDCD230BE1;
+	Thu, 10 Jul 2025 06:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="utTOpPZ3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EqPrZSVD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bnvAWsei"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872152E36F1;
-	Thu, 10 Jul 2025 06:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC86522338;
+	Thu, 10 Jul 2025 06:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752129941; cv=none; b=M4q7r7shTEzwJdaujjSKzWp67EHx0rEJ0KFxR8sbRHGr4++kLqEmHfpEH2Wn5g1od1Q3NIVqahQ7+bgkD5OQ33Msh4sCUgw9F4vgeJi5Z+2sady5hL71TVUeEKtRW8WxiXRzPn4AeE9PGTGkVnNanuw4ImP6spzdaOlrQT1Z0lk=
+	t=1752129978; cv=none; b=uXr8PHdh3lTMCwKESNSHDkOqcbn5OfHjEMuV9QhbG7qrF7IdoTC01xRbzEKZuBby8auNnTXzEptpSnTrvfug4zVLzCVAP6W90zJn40RElJn8FVPCrklLxd9coUnnkJIk3F2rnsSuU0Ogr+XQJli3quHp2pRZvApWDlcNt7vdZHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752129941; c=relaxed/simple;
-	bh=vEraTyZu/cB91N9OhUSTcFV7TlgH8A/Vl0OqqTepf84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ldzt0llaw9iaSBbnHMZwpMvixSTnENm2wMRvJjORWaQwMjLLcUNTCj0zVRrD7MYFlShbhkoXLEuOqv+qo11q/FosYwuHToGGM/X2P+HBnPCC+G7WSClRHLFu50oEqJozaImk6t65f0VBprCIdh+ygYawGj0Dwn16PQsrVElZlFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=utTOpPZ3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EqPrZSVD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 10 Jul 2025 08:45:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752129937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vEraTyZu/cB91N9OhUSTcFV7TlgH8A/Vl0OqqTepf84=;
-	b=utTOpPZ3Rr5l8NMuhIPetHGpxhd0tKFMuY8koLXmylBNlhA7a0i1FT/HadVhURS0cRk2oO
-	REfhl6TCj7DSAOutwu6sLPVx7DShHlD4wH+eoX9P6ohPAzByRVW6jIa+HgrRGfTxudwRdD
-	ErfXmeGddfJmXFgb6tWG5Jnkwe6nyT0ivfJcZZlz9YeDXomdyY66TzNwD8yIPK/GzwAS9A
-	7JSonn3edG/vCd7yaW/2uQf05TmoO3bMnaHTZtQ80Iy7d3DDt9RcLdHBGTQpP7O4WqMqrU
-	0F0YrQPqWwRQAzA9arYgNKBdgQD3Hxb5El6MV4XYme1+m3UzfZWNlV5cMawuug==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752129937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vEraTyZu/cB91N9OhUSTcFV7TlgH8A/Vl0OqqTepf84=;
-	b=EqPrZSVDHE9txmU3vmPhXr4VBExvS+/rQq0MWOrBauSTx+GCSEz837og4V9ziUynF1Txij
-	qLWXkPt+pBMbTlDg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org, 
-	Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Shuah Khan <shuah@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, John Stultz <jstultz@google.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Richard Cochran <richardcochran@gmail.com>, Christopher Hall <christopher.s.hall@intel.com>, 
-	Miroslav Lichvar <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Kurt Kanzenbach <kurt@linutronix.de>, 
-	Nam Cao <namcao@linutronix.de>, Antoine Tenart <atenart@kernel.org>
-Subject: Re: [PATCH] vdso/gettimeofday: Fix code refactoring
-Message-ID: <20250710084337-0c82b93c-85f2-4305-95ba-8cb14042aed2@linutronix.de>
-References: <CGME20250710062301eucas1p1b61431dc31a5933087b45c246866fb17@eucas1p1.samsung.com>
- <20250710062249.3533485-1-m.szyprowski@samsung.com>
+	s=arc-20240116; t=1752129978; c=relaxed/simple;
+	bh=SaWBkZcHZ4aKxg3FkTHQpx1YP6uSo8+yenkvJCAFQCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hMsqdp0OecExo1XM50hsWKQlI9MIT3EuGtlLpugIuUVqdGxSitkB6xNAT5fyG6JZnX1KBdrWO9sd95+pKi7O86gOSIjKhXzpj1U9mjaTU4IXwvLgwK4OZRt4a6sdeOMWtA/EOUSvrCcSAO9IJQGhyPZzgDRehlHaxOA+GwzkBGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bnvAWsei; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-555024588a8so517635e87.0;
+        Wed, 09 Jul 2025 23:46:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752129975; x=1752734775; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LBFok7NYlB5OyToL0/XSTt/GomMYeSZX2t1V5vo0a+Q=;
+        b=bnvAWseiT7ldDile1aB7kwlnlhc/dlckfjTyNua3QFE31AgbgnCfzy4/iKjOTMcsRZ
+         wUa+3NLGsG7/7Uq0hEBPpaXrN1eXGOh7v0Z5MJ5lcEDstCNynH+hPUl3OC1nUMoToBq0
+         H/DZoIL0TwuG5xGtb6G20Nj8OHoL0z6QZNVkF0vqVneqKLvxmvCJkLwY3n45ek8cLzy4
+         aBWpwv7iekLx7ARej70SDDL8fmsBiYuuu7rGkhebnYHpS9AB1ZSldwo+xdlKb2fknhSV
+         umI8KTvn39gGtHNWG4+gqg/UjK3caZBrJjyGn18jI/rkgIUWQumuoEkgzGktznYbT5ko
+         g1bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752129975; x=1752734775;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LBFok7NYlB5OyToL0/XSTt/GomMYeSZX2t1V5vo0a+Q=;
+        b=c929To0ZTrXEi+sbxfp20IWgoq35mq1jNUESGQ8eN+Ww0RXzRaUzFTLC5Gezl4ImZo
+         6VFZGugHyzQuVBfVrtI1slP5gtEq0yJDY438QU9FuShlQxkfvPjWS8+ju1I4QzdVAMBf
+         Z0lEnhEkTOpngXdQZKXOGsbP652Gnqhlv4c/sFvrtiUbov2VS6CbP5iCAlvVPrnIe1/Q
+         Se1ZdMC0eQLdN4TVQzOSNIOHtSPVMmF/+4IC1oYdC4WdilpLZs1G7BpTFhZbP4YG2IH5
+         bVk0JCVqbjhFwEURxDP3ijxdR5/kjcfmces72EIQeeJIz5gpwpAWsvl+pOxchfTtPsJI
+         7Cbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsxncTP1xz+/acWxJ26FrI1YEyXmMdshWw7BQZNApdHGSJxMxWlPiRUfc1He+UV3geoRlWRM1YbhF5PMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy33bdIV3YuM+Bvk/IyWjg/iBW8h8VZ79T9DmA7sVtYsIQeHNru
+	xlIG/iZkc831ObG8ENgSgs408UM1elkV87MeiCd9u4u3X75UpAgysvMh
+X-Gm-Gg: ASbGncv0ilNoeY+S684Attlerty7pr6ZuveXH3zPXf3+ylbZNYZQ+RE1Xj5dTBKAjZW
+	kezqms1GIVzWofMZ1g5p04FAacH03L0mldHz+wYLYH1UVgvjg3avYjWk51QFDZpHLac328L+BlW
+	BUVp3Vnwgf1kJL+tIze+GUcJiRGgKOaULfa+XXC7wyjh68rgFOqYpYRAAjM0HZZV6kh0/nNX0Mc
+	BTscaR3ux9U2Qot2nutbc7pRmzKsSovs5rO0zfNQteOxQfGX2qEyPI7qPXXVn2PZwORoYBtCyNb
+	oJQ7Fwvs9Zs9XlyKW2b7SpBqF0nV8srrOtaQ9s5wJfZMIW8dPUvHH3DLa0klxzEkGP91Frh9FJc
+	7kBXSpCfdAluK/s0pR0QLabjpzlB808taviSY768eXuM=
+X-Google-Smtp-Source: AGHT+IE+mINE/wii0xEgdb9J5tybiK7jCpBxHMWvI9VPEHL4zjMQcjhCWxPOVh3uPNn/j1WMmMb/vg==
+X-Received: by 2002:a05:6512:4019:b0:553:35ad:2f33 with SMTP id 2adb3069b0e04-5592e3e0fbamr545945e87.37.1752129974453;
+        Wed, 09 Jul 2025 23:46:14 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b7ebf3sm233094e87.243.2025.07.09.23.46.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Jul 2025 23:46:13 -0700 (PDT)
+Message-ID: <090c1c98-0f68-47d5-9e57-bd764b2856de@gmail.com>
+Date: Thu, 10 Jul 2025 09:46:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710062249.3533485-1-m.szyprowski@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 27/80] iio: accel: Remove redundant
+ pm_runtime_mark_last_busy() calls
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Waqar Hameed <waqar.hameed@axis.com>,
+ Julien Stephan <jstephan@baylibre.com>, Peter Zijlstra
+ <peterz@infradead.org>, Bo Liu <liubo03@inspur.com>,
+ Greg KH <gregkh@linuxfoundation.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Sean Nyekjaer <sean@geanix.com>, Marcelo Schmitt
+ <marcelo.schmitt1@gmail.com>, Rayyan Ansari <rayyan@ansari.sh>,
+ Francisco Henriques <franciscolealhenriques@usp.br>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+ <20250704075418.3218938-1-sakari.ailus@linux.intel.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250704075418.3218938-1-sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Marek,
+On 04/07/2025 10:54, Sakari Ailus wrote:
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
+> 
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
 
-On Thu, Jul 10, 2025 at 08:22:49AM +0200, Marek Szyprowski wrote:
-> Commit fcc8e46f768f ("vdso/gettimeofday: Return bool from clock_gettime()
-> helpers") changed the return value from clock_gettime() helpers, but it
-> missed updating the one call to the do_hres() function, what breaks VDSO
-> operation on some of my ARM 32bit based test boards. Fix this.
+Looks good to me. Just one comment (to 4 drivers) - but I'm not 
+insisting it to be addressed :)
 
-Thanks again for the report and fix.
-This change has already been folded into the original commit by tglx.
-It should show up in todays -next tree.
+> The cover letter of the set can be found here
+> <URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
+> 
+> In brief, this patch depends on PM runtime patches adding marking the last
+> busy timestamp in autosuspend related functions. The patches are here, on
+> rc2:
+> 
+>          git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+>                  pm-runtime-6.17-rc1
+> 
+>   drivers/iio/accel/bmc150-accel-core.c | 1 -
+>   drivers/iio/accel/bmi088-accel-core.c | 3 ---
+>   drivers/iio/accel/fxls8962af-core.c   | 1 -
+>   drivers/iio/accel/kxcjk-1013.c        | 1 -
+>   drivers/iio/accel/kxsd9.c             | 3 ---
+>   drivers/iio/accel/mma8452.c           | 1 -
+>   drivers/iio/accel/mma9551_core.c      | 1 -
+>   drivers/iio/accel/msa311.c            | 6 ------
+>   8 files changed, 17 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
+> index be5fbb0c5d29..f45beae83f8b 100644
+> --- a/drivers/iio/accel/bmc150-accel-core.c
+> +++ b/drivers/iio/accel/bmc150-accel-core.c
+> @@ -335,7 +335,6 @@ static int bmc150_accel_set_power_state(struct bmc150_accel_data *data, bool on)
+>   	if (on) {
+>   		ret = pm_runtime_resume_and_get(dev);
+>   	} else {
+> -		pm_runtime_mark_last_busy(dev);
+>   		ret = pm_runtime_put_autosuspend(dev);
+>   	}
+>   
 
-> Fixes: fcc8e46f768f ("vdso/gettimeofday: Return bool from clock_gettime() helpers")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+// snip
+
+> diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
+> index 6aefe8221296..44d770729186 100644
+> --- a/drivers/iio/accel/kxcjk-1013.c
+> +++ b/drivers/iio/accel/kxcjk-1013.c
+> @@ -637,7 +637,6 @@ static int kxcjk1013_set_power_state(struct kxcjk1013_data *data, bool on)
+>   	if (on)
+>   		ret = pm_runtime_resume_and_get(&data->client->dev);
+>   	else {
+> -		pm_runtime_mark_last_busy(&data->client->dev);
+>   		ret = pm_runtime_put_autosuspend(&data->client->dev);
+>   	}
+>   	if (ret < 0) {
+
+//snip
+
+> diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
+> index aba444a980d9..5863478bab62 100644
+> --- a/drivers/iio/accel/mma8452.c
+> +++ b/drivers/iio/accel/mma8452.c
+> @@ -227,7 +227,6 @@ static int mma8452_set_runtime_pm_state(struct i2c_client *client, bool on)
+>   	if (on) {
+>   		ret = pm_runtime_resume_and_get(&client->dev);
+>   	} else {
+> -		pm_runtime_mark_last_busy(&client->dev);
+>   		ret = pm_runtime_put_autosuspend(&client->dev);
+>   	}
+
+//snip
+
+>   
+> diff --git a/drivers/iio/accel/mma9551_core.c b/drivers/iio/accel/mma9551_core.c
+> index 3e7d9b79ed0e..22768f43fd24 100644
+> --- a/drivers/iio/accel/mma9551_core.c
+> +++ b/drivers/iio/accel/mma9551_core.c
+> @@ -672,7 +672,6 @@ int mma9551_set_power_state(struct i2c_client *client, bool on)
+>   	if (on)
+>   		ret = pm_runtime_resume_and_get(&client->dev);
+>   	else {
+> -		pm_runtime_mark_last_busy(&client->dev);
+>   		ret = pm_runtime_put_autosuspend(&client->dev);
+>   	}
+>   
+
+Do these really warrant a function? (Especially for the mma9551 where 
+the function is exported). I think it'd be fine to have the 
+pm_runtime_resume_and_get() and the pm_runtime_put_autosuspend() called 
+directly without these wrappers.
+
+Anyways, this looks good to me - thanks!
+
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+Yours
+	-- Matti
 
 
-Thomas
 
