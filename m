@@ -1,155 +1,141 @@
-Return-Path: <linux-kernel+bounces-725624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F63B001A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:25:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B855B001A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98A1E5A08A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:25:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D4BD3A87FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458A02566E2;
-	Thu, 10 Jul 2025 12:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672ED253F03;
+	Thu, 10 Jul 2025 12:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="h4y9XAzU"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="dsZfvv9D"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A038B25523C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D55624DD0E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752150334; cv=none; b=FK2owCbup6UwW1YIYwmvSszFSgEN+uhUGhHzBbBEKUowhLvI+G+8HzmZZrnCGoslGXXNsc1Qs50OXTXHQOghGZ4hHIUmmznzMO0Xb0AG/2dqK8+JtLgo6C8U80j+neQMTojPI/6LFaPvTDCrCD9l8zEYoa2veoJRi+L6NDcf/XM=
+	t=1752150362; cv=none; b=ah1+uiFRQRhtkk70yGp27JC88UTkixBFYblIGGUCkyjMYIYvwvRYB312ZT2UO7yavzKCtVk8+8GpCykv1i3vl/5XYwIf8MLwAaSqrOy0N1JjF0ds7lGdDHNAR0YDcyaYgPx+ksyf44Vg38Xg2qkHbaH0ZBbTSkzVwvlI8Pm0WlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752150334; c=relaxed/simple;
-	bh=tXi+3udgGBPcB1usSt++Ta3sqSt9dsDiajyFn9u+th8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=AWbpzBpgC9e2odJ8EeVD6chd0L+FRbPv1BhA2eez9j/ahCYW5+JoY/yA5CAMCicEDjEGXKv4Yb/U1m+85B/ly39iCcz41bzEmAZgF+LagdwJOZKa5TXEaP9JkucBHIUr7k8jkEjRfqcIVmEyhtGG2xt9xz5jcBoabQA+UcZlZzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=h4y9XAzU; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ae0bc7aa21bso181962066b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:25:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752150331; x=1752755131; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xwbim7kMT0dZOrtg1YvEDqv9pTaWeBwXvEocCP4T4Us=;
-        b=h4y9XAzUlMrVAxtYT67ddWP9ZrYnX8dph0zK5U2Yx9j6OsvLjVr2eRqZyWB+zZhqNf
-         LL27iWm7JNub+X5pS97wxAeuphaFpX3+3tPRfSJIsLx5DGb79jIMmuI1utZPF+dnAu3K
-         BHSWABLsIe6idQWsdyzMKXJO5x6yuwsOILuE03MZb7SsExndYfmw6y31hE2ceSh44o8C
-         htBuOGOdYC4CAwAXpG+4zC3FucpD+hegDYDFxrMsjYaWpFdhnpwLNd6zDeOgoOzL5ZKV
-         ZOHIIkEhdUg8rjfkj769g/ddK4huRso/+0N+KUfDhNLlkFR9Q7QLoGSFjt4xhcgRDFhP
-         06tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752150331; x=1752755131;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Xwbim7kMT0dZOrtg1YvEDqv9pTaWeBwXvEocCP4T4Us=;
-        b=ub1I+dn+GN/BOafz6WjjD8IqtGVL8iQULFDfyC1NhpHW5Fb4UxhkK5vWJcshk8fDLK
-         zSu5aHY/j7ga4U5ADSr4jAEg1/S/ZoP4e/5o/1OpO0zFfDSRm32g7lusR0J7upq2QSLK
-         CLHK0OaXdMag/cgHf/7dTOZycgZ8LdDzBRB5/srRzwioCmvVGyghYWB+TNEhnW88rpV6
-         HBTtxPxHxZf28V0K8daE+5yChW+FwEcXUUqs+dfXnlnwHD97PR7+WoW4gEMzYuTk00lv
-         +OnghAgdtEiZUlyRPPxBngAi9XvwkelyyHhaKMg4r7TIqAegxtCOonVnOq/OCkO3T/zj
-         5Xdw==
-X-Forwarded-Encrypted: i=1; AJvYcCU24q/S5DWSkAl4BWi0DqJD3eryGl/HG7DpfdSibN9Z08Uje+zbasu05ypULF23ZWhluL19KTJZUWC+kZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEronSsO6ou2FFYMPLYOdAe3ClcwtrkcJj7LD8JWf/1Tp/zgQK
-	A8gPcqaOGrp19jeM+cdGziAzO5o7ZImqR53B/C79MuEZxcpK03jltFilZa24UpB42F0=
-X-Gm-Gg: ASbGncun5pKwl+2BdbD70tnAi9LdLwZ7LVha1VY7ypKm7rNpO4ikGMomGyfl1sLmLeu
-	H32KTyWdBXDIzqs6koxm9k4OeXX8P4fcK5Lq7Qu/JVkF8aKos9eDdeLpbqtlE1NnDrdW9Begwgz
-	W9xVcEtPenrhTiGHTJd2VTVLSrG7TKzuoMZISj/lrqMa9qKbJyreNjr4///cYP5cd6vVHzDxFe/
-	ZX/iIj8q1czplYsuxK68ZTiiDmu0RGefs7L1LPdGoVEIKccKy4/lkNgxqi9EX+0lclYsVasnqfu
-	Uj6X+8UgR81MIw53OGQXmEgcS582uLyE4MqS1tp0GRlCUGiCLHXuXU8BECRRdOGE+5LYdOeuUDk
-	kDIo5nNwlBA+n9mzZY3+rI01jzPer9SA=
-X-Google-Smtp-Source: AGHT+IHgPoXaBYMtzbuGf92TYy9uG1SRxa3TcJ8k4yFuiO+mhGC+1G7Z5mU03G7kTXV1yim8ZigM1Q==
-X-Received: by 2002:a17:907:ea6:b0:ae4:85d:76fc with SMTP id a640c23a62f3a-ae6e70372a6mr247071066b.30.1752150330835;
-        Thu, 10 Jul 2025 05:25:30 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e826461esm122729266b.100.2025.07.10.05.25.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 05:25:30 -0700 (PDT)
+	s=arc-20240116; t=1752150362; c=relaxed/simple;
+	bh=xVdCdYf47JX/2Jed0gnOSC1jseqtlzZ9S+TrhW2IHcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=detHPO+0PLDE0X1LUO1mYreE5KpUadr31+jl+hLEbkkueQMCqYvmWQLFmRmqKwGoBk6st5ifE7P2gW/B3rcz2Vsv7vCYiFNUWFIwnjHd0ISXpROsGaqtvC3iAdqiiBRvwxR1VfwzhZVyp97SriRWrWe2ls9w7OWmWF0k4UpZCRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=dsZfvv9D; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6006a.ext.cloudfilter.net ([10.0.30.182])
+	by cmsmtp with ESMTPS
+	id ZcJiuRQV8f1UXZqLYuHuVV; Thu, 10 Jul 2025 12:25:52 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id ZqLXu24gHIj58ZqLYuD2sh; Thu, 10 Jul 2025 12:25:52 +0000
+X-Authority-Analysis: v=2.4 cv=SZzxdORu c=1 sm=1 tr=0 ts=686fb150
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=7vwVE5O1G3EA:10 a=h0uksLzaAAAA:8
+ a=HaFmDPmJAAAA:8 a=GF-RUcCtsk5XG7IKrCkA:9 a=QEXdDO2ut3YA:10
+ a=MSi_79tMYmZZG2gvAgS0:22 a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/EmhaQofK3G5RuwmtT2ZTkTGiMdxnAebPcNinPkshuc=; b=dsZfvv9DsCZ0cLphiEKGotRIgO
+	knyc3vtz0X6m8X8wA2lV5seag92PCqibQstlF8kYw5RjtY3PvYaFiTRSmDJrkCONQbxTW+nhL5G8l
+	qnPDIxqn6/34uUF0VAnbuGeQ6huII/XZPlrSTPTP5Mxl4EXMD5817ABLODnW5Jh3t1ekapevxDKwJ
+	dlVhyaiRHNLK9PzHwTxYOl8va0MUhJ3QLzJ5mBZPNmY790Wn1rkwtrzeQyDPlrr8Wf5KY/5dRkMRJ
+	BzDUrC0JEAEQbmnKoS9YTBEfokAuz5ARRCDAaPQYPESUWob9a7ce7lIP+TwBHgYHDj7XOUzfL5mS2
+	dMWMeN3A==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:39722 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uZqLV-00000001iV4-2pER;
+	Thu, 10 Jul 2025 06:25:49 -0600
+Message-ID: <5cc4fdb6-9a4c-4937-9878-7fcd3d3f0a05@w6rz.net>
+Date: Thu, 10 Jul 2025 05:25:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 14:25:29 +0200
-Message-Id: <DB8DGDEN23D2.1GFB8XI0P3YLR@fairphone.com>
-Subject: Re: [PATCH v2 4/4] phy: qcom: phy-qcom-snps-eusb2: Add extra
- register write for Milos
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Wesley Cheng" <quic_wcheng@quicinc.com>, "Vinod Koul" <vkoul@kernel.org>,
- "Kishon Vijay Abraham I" <kishon@kernel.org>, "Abel Vesa"
- <abel.vesa@linaro.org>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-usb@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-phy@lists.infradead.org>, "Neil Armstrong"
- <neil.armstrong@linaro.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250709-sm7635-eusb-phy-v2-0-4790eeee7ae0@fairphone.com>
- <20250709-sm7635-eusb-phy-v2-4-4790eeee7ae0@fairphone.com>
- <7d073433-f254-4d75-a68b-d184f900294a@oss.qualcomm.com>
-In-Reply-To: <7d073433-f254-4d75-a68b-d184f900294a@oss.qualcomm.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: Stop considering R_RISCV_NONE as bad relocations
+To: Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250710-dev-alex-riscv_none_bad_relocs_v1-v1-1-758f2fcc6e75@rivosinc.com>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250710-dev-alex-riscv_none_bad_relocs_v1-v1-1-758f2fcc6e75@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uZqLV-00000001iV4-2pER
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:39722
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 1
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfIqC2F9mDySzp4MgGKDZvtXFSD2K6v1FIA33FrwnVXZr9Gi6j5BwaU8LWaxdVl54Z+KGlMqcAc9pKCyCQazJ3wk+meU+ORs6Ji8Y30cIZwc/8Af4pKmW
+ IQB5Zm0AkClXja08pJrzcs8Vz1nhCS9+yg3i3oXHC3KqkZ9ooUg9CGxGoKiUpgbL0vTWQlaDXjuxeXBNXxNsIKOVkkLtzGsV5rU=
 
-On Thu Jul 10, 2025 at 2:10 PM CEST, Konrad Dybcio wrote:
-> On 7/9/25 11:18 AM, Luca Weiss wrote:
->> As per the downstream devicetree for Milos, add a register write for
->> QCOM_USB_PHY_CFG_CTRL_1 as per the "eUSB2 HPG version 1.0.2 update".
->>=20
->> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
->> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->> ---
->> The downstream driver supports an arbitrary extra init sequence via
->> qcom,param-override-seq.
->>=20
->> volcano-usb.dtsi has the following which is implemented in this patch:
->>=20
->>     /* eUSB2 HPG version 1.0.2 update */
->>     qcom,param-override-seq =3D
->>             <0x00 0x58>;
->> ---
->>  drivers/phy/phy-snps-eusb2.c | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>=20
->> diff --git a/drivers/phy/phy-snps-eusb2.c b/drivers/phy/phy-snps-eusb2.c
->> index e232b8b4d29100b8fee9e913e2124788af09f2aa..87fc086424ba4d9fb3ce870a=
-a7f7971a51d4a567 100644
->> --- a/drivers/phy/phy-snps-eusb2.c
->> +++ b/drivers/phy/phy-snps-eusb2.c
->> @@ -420,6 +420,12 @@ static int qcom_snps_eusb2_hsphy_init(struct phy *p=
-)
->>  	/* set default parameters */
->>  	qcom_eusb2_default_parameters(phy);
->> =20
->> +	if (of_device_is_compatible(p->dev.of_node, "qcom,milos-snps-eusb2-phy=
-")) {
->> +		/* eUSB2 HPG version 1.0.2 update */
->> +		writel_relaxed(0x0, phy->base + QCOM_USB_PHY_CFG_CTRL_1);
->> +		readl_relaxed(phy->base + QCOM_USB_PHY_CFG_CTRL_1);
+On 7/10/25 01:34, Alexandre Ghiti wrote:
+> Even though those relocations should not be present in the final
+> vmlinux, there are a lot of them. And since those relocations are
+> considered "bad", they flood the compilation output which may hide some
+> legitimate bad relocations.
 >
-> Said HPG asks to clear bits [7:1] on all targets
-
-Okay, so make this unconditional and only update those bits instead of
-writing the full register?
-
-Keep the write at this location, or move the code somewhere else in the
-function?
-
-Regards
-Luca
-
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>   arch/riscv/tools/relocs_check.sh | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 >
-> Konrad
+> diff --git a/arch/riscv/tools/relocs_check.sh b/arch/riscv/tools/relocs_check.sh
+> index baeb2e7b2290558d696afbc5429d6a3c69ae49e1..742993e6a8cba72c657dd2f8f5dabc4c415e84bd 100755
+> --- a/arch/riscv/tools/relocs_check.sh
+> +++ b/arch/riscv/tools/relocs_check.sh
+> @@ -14,7 +14,9 @@ bad_relocs=$(
+>   ${srctree}/scripts/relocs_check.sh "$@" |
+>   	# These relocations are okay
+>   	#	R_RISCV_RELATIVE
+> -	grep -F -w -v 'R_RISCV_RELATIVE'
+> +	#	R_RISCV_NONE
+> +	grep -F -w -v 'R_RISCV_RELATIVE
+> +R_RISCV_NONE'
+>   )
+>   
+>   if [ -z "$bad_relocs" ]; then
+>
+> ---
+> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+> change-id: 20250710-dev-alex-riscv_none_bad_relocs_v1-ba6048681836
+>
+> Best regards,
+
+Works good.
+
+Tested-by: Ron Economos <re@w6rz.net>
 
 
