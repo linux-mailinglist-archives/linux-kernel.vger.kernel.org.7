@@ -1,177 +1,322 @@
-Return-Path: <linux-kernel+bounces-724920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179C0AFF889
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:35:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1712AAFF88F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597915A4120
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:35:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6BF55444B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B972905;
-	Thu, 10 Jul 2025 05:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D3F285070;
+	Thu, 10 Jul 2025 05:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YVGMJl0a"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GU829TTF"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD27284B57
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD145284B2E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752125687; cv=none; b=pfGWOmcg+bDPrARGt7TYz9xk/Hn3zfxwC7WMlpnt6cwBmfaBCcaza/CbdMUmwzYVwsf2NBSOF18cM/U1XdpyGbVbQsJ06ha1oNYEOSL/fUrAZREYxJ5EVUMawCCjdOhwb2iWOPvbo3OQsRR3fB5gMyR8/1jRf437FU8PXk42ofw=
+	t=1752126266; cv=none; b=H+hWwuq3yYQU4Jv5GiSyYS/aOuw5DcgCpB/vo/zxL7+QjtKaFX+3mj9FoFCAw7vMECmk33yg91Ry3cxllmWqWwLC+atJKdA7igqXuxwOR45TqxnnXQ6Zn6ecOjR82SIm9KMwSzgx48+rm9vwwSkrf733bsGazTD40qQ22w/b2zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752125687; c=relaxed/simple;
-	bh=TdkwTNIzAwUJoAPXjj02yqITZherri+LDBhfwYcnBn4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KCp/Y5DGQ+R+EMXaxZfV2qemPuiLjvBUtiez47NuMM6K7ng+gG4UNAAlQwHZTmGRdmKbUdUukzdrCqZHq9QXavuACkD4Z7AHSF9j2xjbY6QQb31Wb+tCXlwEBfAzyMPkhoW4d2YLjp/JyUUS4hNSuVAlq9Tbml87qkH+8gK8FKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YVGMJl0a; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A13Z6R010019
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:34:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	c/HxZsbEcLj6/NqQ7QRrp90LaiZ00WBbmS7LhVxRCbo=; b=YVGMJl0aYIazx205
-	TfnfO8Ym46e1okVefOv84OJvWQQA8baC4GICAU9TMiIbAdTeh8qhoAjSPqGv7Lcg
-	5LO7ZKLBMvPg0hPUVbQa8ama5A56+ZWh16PQbaTaKVTRu2rHPsSynpZCnRD96xVS
-	aDspfTGMAICzayWOxb/xS38ZjLiz1jUjGiVQBvr8H52QupYKjdsp7NFFYFblDLg7
-	xaP0NCKRb+ws2b4vcydBHhUgQ2TIbno77wyMSz05VcupTPWWwDkkFxLHltJoEaTR
-	RFhFaLeEa5nwh5q+gZoQu6/Dke6dStqweShwdzE6pHw2Qh/I9xw0lLcEmaZeMejv
-	bVqWWQ==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47sm9q3ks1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:34:44 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b39280167fdso607578a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 22:34:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752125683; x=1752730483;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c/HxZsbEcLj6/NqQ7QRrp90LaiZ00WBbmS7LhVxRCbo=;
-        b=O0Mk/dHqccGoG42WTCJB+AJs76Jwi8Q8B2QUc34R3uGGcrTgxNccJy6sGXDw8pia+d
-         31tUntTkNQHm12fW0tG3ro1A+2Lzqta9IwzBafq0UVBVcyRNu/j8yjeHY+wlJC3sTK4z
-         /INZw7zr98pkKOwonSsV2J+wDOGijiyhFwrA+V+SQyH/4S7K348wqRhwWHgx94gWIYRk
-         EP3+RIdnm16yoQlk2olMjqJWNP3DDWfaGfTOit8nRK97rNbpWWZenaqRY24uDxif7DH9
-         84Wq4B8r11XxnsuV298VdwYzI04ZhDBYGVM2xaUlZdcsoJshxzcKyfJpOoS4NoAo/1kN
-         CSEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtjrVbJ2b1+vjqBgZ3tFmt4yKC7icqyhuQDLmvSHR6v6N1ACuLI9bXtJss6XZXD9MCgKGYAw4KeW6sbXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3Pd6ztLOLX9TNSVTBjE/+6dzX2Clx2JwtgW3RSDzB3a7aes3s
-	hhgvqv88iWs3XVGS2EYBEL893Uyl+JVLFUnoJKJFRZzB2SsV1TzEIdLuPRJ6Pd9v+F4x0O5Skmf
-	X0zDCQYQrNK9R84nPZH7ylPVcsfKSOzh9HOxhmsBU3PgsYWAyScrRjj6xeWGjVZHLlc4=
-X-Gm-Gg: ASbGnct5wjGlJlBVBtvam849UtmTuJU9F8zPnzXzS9yA0SES628JfyE0tW5HGNmOyqt
-	mSi6vlgH37JgcRFdgAPKKBhXR2xhRmPLIfJY6fRUTqukTCV3fKiejsMKMywO9p1twD7aTN5KNPQ
-	jSZVN1+pIjWyV4RkoyOESYiRIE//QggOY+awDglhUotUwDS681fHgnKKnPnZi7yDPHm+Q91AR/x
-	mI4AynCnVy8LsbtEVhGYmp/zibwcA3j3jYi3GP9WHEyR0i2pqz9qhFI2eUgll4Fau5g4P3cuqiQ
-	Q73MhTAgIy68jsT2KJ4/tYQRTzolYEIXBQtQCjoCtNFFTIquDyfjBSZfMjaLt7Srrb6HkB+0AIN
-	9Dp3h3tR4ryTwAPFR0EYiSuQFemyEzW9z7QT7rZ7NmljUlek=
-X-Received: by 2002:a05:6a21:33a1:b0:21c:faa4:9ab8 with SMTP id adf61e73a8af0-22cd5bff24emr8481488637.10.1752125683380;
-        Wed, 09 Jul 2025 22:34:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFg8seO7i6KNpDs6X6DiLrB9L4Yaf86lhSFTop+1D/GBVnAJAqrD2tlTFsRBoCy4upa5ILMxg==
-X-Received: by 2002:a05:6a21:33a1:b0:21c:faa4:9ab8 with SMTP id adf61e73a8af0-22cd5bff24emr8481453637.10.1752125682971;
-        Wed, 09 Jul 2025 22:34:42 -0700 (PDT)
-Received: from hu-adisi-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe5b0201sm1014043a12.31.2025.07.09.22.34.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 22:34:42 -0700 (PDT)
-From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-Date: Thu, 10 Jul 2025 11:04:28 +0530
-Subject: [PATCH wireless-next v2 2/2] wifi: mac80211: parse unsolicited
- broadcast probe response data
+	s=arc-20240116; t=1752126266; c=relaxed/simple;
+	bh=46LloVDgaoS2juEa/tcyInD2tqJViXfYNaNmPDyiT0k=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0IvwZNkw/hgl2RVUvlrX0b3oLSnjgg92EmWZ3jXiSp1ZrQfD9LWnSx3vK/PGq6jHSo/SNsWlXtE9BKvCzTOsGx6NQLEKHiU6WEe7lgYahvds7mR5be63M5cCYG2e7Fa+qjQkAc6rLRhUr5Wk56LQdnyFKn46wyg1HK44Zq0M2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GU829TTF; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56A5i1l11651610;
+	Thu, 10 Jul 2025 00:44:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752126241;
+	bh=ZND/XwNOzpB2vjuxP78ruQThC40Mj/qaWgPyvlaTMNk=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=GU829TTF6bCdk9Vkzvtxgva2r59+A3bqkvkAC5Hpw9mmAbzotz3lVOg76DLPckJT0
+	 pm5xNj4ZQqTHQfKZIHGG6qyh12bu1hR6FFZwO8DDCseeHi0qb4rrMNgmilJ06jq8P9
+	 T6LJE++mbLwbA63LFo0+xnB6vHgG0bjmcE6+b/Kk=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56A5i1jp3202317
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 10 Jul 2025 00:44:01 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 10
+ Jul 2025 00:44:01 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 10 Jul 2025 00:44:01 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56A5i1iF1110717;
+	Thu, 10 Jul 2025 00:44:01 -0500
+Date: Thu, 10 Jul 2025 00:44:01 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Kendall Willis <k-willis@ti.com>
+CC: <kristo@kernel.org>, <ssantosh@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <ulf.hansson@linaro.org>, <vigneshr@ti.com>, <d-gole@ti.com>,
+        <vishalm@ti.com>, <sebin.francis@ti.com>, <msp@baylibre.com>,
+        <khilman@baylibre.com>
+Subject: Re: [PATCH v3] firmware: ti_sci: Enable abort handling of entry to
+ LPM
+Message-ID: <20250710054401.5hmhsdtyulcskwug@zodiac>
+References: <20250709221619.2237699-1-k-willis@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-update_unsol_bcast_probe_resp-v2-2-31aca39d3b30@oss.qualcomm.com>
-References: <20250710-update_unsol_bcast_probe_resp-v2-0-31aca39d3b30@oss.qualcomm.com>
-In-Reply-To: <20250710-update_unsol_bcast_probe_resp-v2-0-31aca39d3b30@oss.qualcomm.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yuvarani V <quic_yuvarani@quicinc.com>,
-        Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-GUID: eOMgwUcooNSGYXhPP7cFspW1BpDXj2sX
-X-Proofpoint-ORIG-GUID: eOMgwUcooNSGYXhPP7cFspW1BpDXj2sX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDA0NSBTYWx0ZWRfX72vTruFdMiFn
- OUQZ4yjfqmkACWWXYBoku462H6XGJLZopZgQCwcnB+lDrXFVELV8sGr9rmQt8u3kFDYI16OgxQs
- 04z2DLberIYvFwYMc3oNQ6fattR/s9Uv8a4KjiL2098+R440goJ6l8NIyjoQwf1wmduEGjiUSsx
- Mz4d+49OljNC4vLiG6EyPZ0J+N4kM8RedY7UWA/D7yDGUrTdmX0WvAiDMvFnfCVgJGUgigHDiYm
- tF59M+MAdJqcWzZ/8wnp3I3eMdZcIHZyt1u+CN8YPWI5EPPcuoI2yqXBwbfQPcebtWfVybutGql
- K5VGI9qjCXfcM3YV/oPAsH1BApqqYMdIb2aAE07LZ5XzDJZgNvNIlHYz4hqniYhXrMLQWUwkgPz
- 4mjA5vy4S5k5Qat8+9s2Oic3SyyLYTuT7mOssfMeN/iyzaYKzVdfx+9uWcJuJHaamkUhmq4g
-X-Authority-Analysis: v=2.4 cv=BM+zrEQG c=1 sm=1 tr=0 ts=686f50f4 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=GDPEl8sVpxXbRvpnLXsA:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-09_05,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
- suspectscore=0 mlxscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0
- clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507100045
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250709221619.2237699-1-k-willis@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Yuvarani V <quic_yuvarani@quicinc.com>
+On 17:16-20250709, Kendall Willis wrote:
+> The PM co-processor (device manager or DM) adds the ability to abort
+> entry to a low power mode by clearing the mode selection in the
+> latest version of its firmware (11.x). The following power management
+> operation defined in the TISCI Low Power Mode API [1] is implemented to
+> enable aborting entry to LPM:
+> 
+> TISCI_MSG_LPM_ABORT
+> Abort the current low power mode entry by clearing the current mode
+> selection.
+> 
+> Introduce LPM abort call that enables the ti_sci driver to support abort
+> by clearing the low power mode selection of the DM. This fixes behavior
+> from the DM where if system suspend failed, the next time system suspend
+> is entered, it will fail because DM did not have the low power mode
+> selection cleared. Instead of this behavior, the low power mode selection
+> will be cleared after Linux resume which will allow subsequent system
+> suspends to work correctly.
+> 
+> When Linux suspends, the TI SCI ->suspend() call will send a prepare_sleep
+> message to the DM. The DM will choose what low power mode to enter once
+> Linux is suspended based on constraints given by devices in the TI SCI PM
+> domain. After system suspend completes, regardless of if system suspend
+> succeeds or fails, the ->complete() hook in TI SCI will be called. In the
+> ->complete() hook, a message will be sent to the DM to clear the current
+> low power mode selection. This is necessary because if suspend fails, the
+> low power mode selection in the DM is not cleared and the next system
+> suspend will fail due to the low power mode not having been cleared from
+> the previous failed system suspend.
+> 
+> Clearing the mode selection unconditionally acts as a cleanup from sending
+> the prepare_sleep message in ->suspend(). The DM already clears the low
+> power selection automatically when resuming from system suspend. If
+> suspend/resume executed without failure, clearing the low power mode
+> selection will not cause an error in the DM.
+> 
+> The flow for the abort sequence is the following:
+>    1. User sends a command to enter sleep
+>    2. Linux starts to suspend drivers
+>    3. TI SCI suspends and sends prepare_sleep message to DM
+>    4. A driver fails to suspend
+>    5. Linux resumes the drivers that have already suspended
+>    6. Linux sends DM to clear the current low power mode selection from
+>       TI SCI ->complete() hook
+>    7. DM aborts LPM entry by clearing the current mode selection
+>    8. Linux works as normal
 
-During commands like channel switch and color change, the updated
-unsolicited broadcast probe response template may be provided. However,
-this data is not parsed or acted upon in mac80211.
+Could we trim the message a bit down? it is informative, thanks.. but I
+think a bit repetitive.
 
-Add support to parse it and set the BSS changed flag
-BSS_CHANGED_UNSOL_BCAST_PROBE_RESP so that drivers could take further
-action.
+> 
+> [1] https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/pm/lpm.html
+> 
+> Signed-off-by: Kendall Willis <k-willis@ti.com>
+> ---
+> Series has been tested on an SK-AM62B-P1 board. Normal suspend/resume
+> has been verified. Abort was tested by adding an error into the TI SCI
+> suspend hook.
 
-Signed-off-by: Yuvarani V <quic_yuvarani@quicinc.com>
-Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
----
- net/mac80211/cfg.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+btw, does this handle the noirq case as well? I have'nt looked closely
+at the sequence to be sure.
 
-diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
-index 56540c3701ed786c37f946f9c4af820c15b5922d..cdecda1bd07b31cb7d8bd76eed074ecc2a828eb1 100644
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -4173,6 +4173,12 @@ __ieee80211_channel_switch(struct wiphy *wiphy, struct net_device *dev,
- 		goto out;
- 	}
- 
-+	err = ieee80211_set_unsol_bcast_probe_resp(sdata,
-+						   &params->unsol_bcast_probe_resp,
-+						   link_data, link_conf, &changed);
-+	if (err)
-+		goto out;
-+
- 	chanctx = container_of(conf, struct ieee80211_chanctx, conf);
- 
- 	ch_switch.timestamp = 0;
-@@ -5114,6 +5120,12 @@ ieee80211_color_change(struct wiphy *wiphy, struct net_device *dev,
- 		goto out;
- 	}
- 
-+	err = ieee80211_set_unsol_bcast_probe_resp(sdata,
-+						   &params->unsol_bcast_probe_resp,
-+						   link, link_conf, &changed);
-+	if (err)
-+		goto out;
-+
- 	err = ieee80211_set_color_change_beacon(link, params, &changed);
- 	if (err)
- 		goto out;
+> 
+> Link to v2:
+> https://lore.kernel.org/all/20250709205332.2235072-1-k-willis@ti.com/
+> Link to v1:
+> https://lore.kernel.org/all/20250627204821.1150459-1-k-willis@ti.com/
+> 
+> Changes from v2 to v3:
+>   - added links to previous series and the changes between them
+
+Thanks, but in the future, I'd rather not want a v3, but just reply
+with the missing info and better still, add to your pre-send checklist
+to ensure you don't miss it in the future ;).
+
+
+> 
+> Changes from v1 to v2:
+>    - rebase on linux-next
+>    - drop the following patch:
+>      pmdomain: ti_sci: Add LPM abort sequence to suspend path
+>    - remove lpm_abort from ti_sci_pm_ops
+>    - add ->complete() hook with ti_sci_cmd_lpm_abort to be called
+>      unconditionally within it
+>    - remove ti_sci_cmd_lpm_abort from the ->suspend() and
+>      ->suspend_noirq() hooks
+>    - reword commit message
+> ---
+>  drivers/firmware/ti_sci.c | 61 +++++++++++++++++++++++++++++++++++++++
+>  drivers/firmware/ti_sci.h |  3 +-
+>  2 files changed, 63 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+> index ae5fd1936ad32..63c405f7037f0 100644
+> --- a/drivers/firmware/ti_sci.c
+> +++ b/drivers/firmware/ti_sci.c
+> @@ -2015,6 +2015,58 @@ static int ti_sci_cmd_set_latency_constraint(const struct ti_sci_handle *handle,
+>  	return ret;
+>  }
+>  
+> +/**
+> + * ti_sci_cmd_lpm_abort() - Abort entry to LPM by clearing selection of LPM to enter
+> + * @handle:     pointer to TI SCI handle
+> + *
+> + * Return: 0 if all went well, else returns appropriate error value.
+> + */
+> +static int ti_sci_cmd_lpm_abort(const struct ti_sci_handle *handle)
+> +{
+> +	struct ti_sci_info *info;
+> +	struct ti_sci_msg_hdr *req;
+> +	struct ti_sci_msg_hdr *resp;
+> +	struct ti_sci_xfer *xfer;
+> +	struct device *dev;
+> +	int ret = 0;
+> +
+> +	if (IS_ERR(handle))
+> +		return PTR_ERR(handle);
+> +	if (!handle)
+> +		return -EINVAL;
+> +
+> +	info = handle_to_ti_sci_info(handle);
+> +	dev = info->dev;
+
+-ECONFUSED. ti_sci_complete already gets dev and info and this API is
+not exposed to other users. So why do we need to flip back and forth
+with info->handle and then get info from handle and dev again??
+> +
+> +	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_LPM_ABORT,
+> +				   TI_SCI_FLAG_REQ_ACK_ON_PROCESSED,
+> +				   sizeof(*req), sizeof(*resp));
+> +	if (IS_ERR(xfer)) {
+> +		ret = PTR_ERR(xfer);
+> +		dev_err(dev, "Message alloc failed(%d)\n", ret);
+> +		return ret;
+> +	}
+> +	req = (struct ti_sci_msg_hdr *)xfer->xfer_buf;
+> +
+> +	ret = ti_sci_do_xfer(info, xfer);
+> +	if (ret) {
+> +		dev_err(dev, "Mbox send fail %d\n", ret);
+> +		goto fail;
+> +	}
+> +
+> +	resp = (struct ti_sci_msg_hdr *)xfer->xfer_buf;
+> +
+> +	if (!ti_sci_is_response_ack(resp))
+> +		ret = -ENODEV;
+> +	else
+> +		ret = 0;
+is'nt ret already 0?
+
+OR you could go with ? like rest of code.. ;)
+
+> +
+> +fail:
+> +	ti_sci_put_one_xfer(&info->minfo, xfer);
+> +
+> +	return ret;
+> +}
+> +
+>  static int ti_sci_cmd_core_reboot(const struct ti_sci_handle *handle)
+>  {
+>  	struct ti_sci_info *info;
+> @@ -3739,11 +3791,20 @@ static int __maybe_unused ti_sci_resume_noirq(struct device *dev)
+>  	return 0;
+>  }
+>  
+> +static void __maybe_unused ti_sci_complete(struct device *dev)
+
+ti_sci_pm_complete or something like that?
+
+> +{
+> +	struct ti_sci_info *info = dev_get_drvdata(dev);
+> +
+> +	if (ti_sci_cmd_lpm_abort(&info->handle))
+
+I see from the documentation of .complete that it is invoked in
+multitude of scenarios, including resume as well. While I think it is
+probably fine to clear the state, have you had a chance to look at
+possible side effects in other flows (thaw etc..?)
+
+Additionally, do we want to check info->fw_caps &
+MSG_FLAG_CAPS_LPM_DM_MANAGED before sending it over to DM?
+
+> +		dev_err(dev, "LPM clear selection failed.\n");
+> +}
+> +
+>  static const struct dev_pm_ops ti_sci_pm_ops = {
+>  #ifdef CONFIG_PM_SLEEP
+>  	.suspend = ti_sci_suspend,
+>  	.suspend_noirq = ti_sci_suspend_noirq,
+>  	.resume_noirq = ti_sci_resume_noirq,
+> +	.complete = ti_sci_complete,
+
+Another question - when is .complete called as part of rewind? does DM
+behave sane while other drivers are resuming back up before .complete is
+invoked?
+
+>  #endif
+>  };
+>  
+> diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
+> index 053387d7baa06..51d77f90a32cc 100644
+> --- a/drivers/firmware/ti_sci.h
+> +++ b/drivers/firmware/ti_sci.h
+> @@ -6,7 +6,7 @@
+>   * The system works in a message response protocol
+>   * See: https://software-dl.ti.com/tisci/esd/latest/index.html for details
+>   *
+> - * Copyright (C)  2015-2024 Texas Instruments Incorporated - https://www.ti.com/
+> + * Copyright (C)  2015-2025 Texas Instruments Incorporated - https://www.ti.com/
+
+please dont keep shifting license year for trivial changes :)
+>   */
+>  
+>  #ifndef __TI_SCI_H
+> @@ -42,6 +42,7 @@
+>  #define TI_SCI_MSG_SET_IO_ISOLATION	0x0307
+>  #define TI_SCI_MSG_LPM_SET_DEVICE_CONSTRAINT	0x0309
+>  #define TI_SCI_MSG_LPM_SET_LATENCY_CONSTRAINT	0x030A
+> +#define TI_SCI_MSG_LPM_ABORT	0x0311
+
+NOTE: all the LPM stuff is enabled with MSG_FLAG_CAPS_LPM_DM_MANAGED.
+Is this supported from the very beginning version of firmware that
+has this? else will we see issues in the field with a mix of firmware
+versions.. some just crashing out when the message is not supported?
+
+>  
+>  /* Resource Management Requests */
+>  #define TI_SCI_MSG_GET_RESOURCE_RANGE	0x1500
+> 
+> base-commit: 835244aba90de290b4b0b1fa92b6734f3ee7b3d9
+> -- 
+> 2.34.1
+> 
 
 -- 
-2.34.1
-
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
