@@ -1,185 +1,240 @@
-Return-Path: <linux-kernel+bounces-725632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B67ADB001B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1FAB001C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA84F1C88480
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:29:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495F41CA0204
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5FA2566F2;
-	Thu, 10 Jul 2025 12:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B652580DE;
+	Thu, 10 Jul 2025 12:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SUKrbUkr"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GzTf6/3h"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A922512D5;
-	Thu, 10 Jul 2025 12:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCE22550D4;
+	Thu, 10 Jul 2025 12:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752150518; cv=none; b=gjn563bye2mgQv6BDRoSPsWg57GFdukp3KIEoeRiUT9TdFq3EIZnXuySm7Z3aMje6HiNpB2gDvphI39zBnPEp2Ao0ZAX22DlegqA+VgVAVvrpXcbv5WScHqUTJEWPc82erfRReZuYUaBOyMADlrXOWJifHdt6QrYegHCwfrY1Lc=
+	t=1752150552; cv=none; b=altKuJvHd+RK63Oj2FqFF3pOEF6x15C6MhqoRYB2h2vx1jArOqBO//q0DUwZh+mks9UD8sGooXREXSsFba3g5x7in3g2SGNUv4GjqG37tDfmVwuHrpHgqYtJOPNQBepf24TlbxZD0Df6btlrdTaECoIpPlb2kSd9LbSRVI0lHZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752150518; c=relaxed/simple;
-	bh=uVwWozQdm8dl9zMzLnAU4GJ3N1SGHAS9efDRdRXlv60=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZYsOel3JOB4L3VIJQXYPxaTweN780kHVp/M6FyGK0I9VmcM2wAud77hRkf7eCExe4xin39pEZ3lN1qw/KfSe4660oy+c7WHh5Kn//lcgbwbPwCDdbSjemCzVmqxPyZB+qnfScP7UYZ1Eox+qMk0rbvJUW8sr9HYazC3lW3Mxxw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SUKrbUkr; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A61rJS010735;
-	Thu, 10 Jul 2025 12:28:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=W7y3iB
-	FzU3kHVk3xzJUXtgMnwiA/4a2QpmH4yjepWvY=; b=SUKrbUkrRBEJAY2i7SeKnV
-	OAVGrjYoMGG/+NvnESJ2V87mm3+R9BgR6ih/nKy5wJAn6Tj3n6T0k1jrbYYOmt8r
-	NBvYt2qHBM/POWlJigBknGW+SkWCvln5UpSe1MtPCBGl/zgTqbcl/F2qFifH1LVn
-	5y0h5uEnztMPiiPZccSUj4HWPjRVwY0jD1wrorOtOB+sKrVfFq8yaTcIjt053XvX
-	mhKfO+Hm4J5Uiqn2b6WkqL2ImTWBlEfsuKMUQ7H+3Pm0ARuIlp9TAu+dLNDVHxfT
-	dy4t7+IeLsB4e7QmDo74nTNYBUNeY1vQhg1pmX4+NVDY7P/Mq3F9rOAsqtGZjWDw
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puqnkqdq-1
+	s=arc-20240116; t=1752150552; c=relaxed/simple;
+	bh=pWaO5geNSreV600Rx0hjBu7mGN87uYUH+24U8VHcJM0=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=ZSpQ6HCVnXpodkDnb7VNjXHIaPkfvLNkXFQeH9EM0Tkl4Y1eBhxxviehOaUHrjzO3z2iDQS0DqgZftmttCPG9nGbP/dq06qycv5Q12ZlNjIK5S/zNonOGrFzkz4fIbVyRUg1NxHDGOFZjyvmTZ1rSmB1jL+GdgX6JFCszRLoMAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GzTf6/3h; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A9BGOQ016188;
+	Thu, 10 Jul 2025 12:28:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=qa1D7gPrbr0C8OGyX6yK+C
+	w8/NyA02M+BLg/teZhpGQ=; b=GzTf6/3heO09vYFttUaXv1FXroFpvvrEbp9d75
+	/5kx/B27LLgZYfY50spFbR9Ri5NJI0h52SU6fWF1ngoSYRCJOo792UPK3wrPB4Mg
+	2tZ8zTUP9WdFvU5EdLPy80YrJrpREgZUWAc/7h7PXknTzSBzeI6vBfZ31Fl5vnDe
+	LFVomQqKQdyeDzJsKBs4K3S0CxR04ypoHyTdfVLC634fwb1bQ4gLwUFh5lVyPhi+
+	1kQOJ6YhBXZ5q6nE2TQQxxyLUyWZNmHwZIVG87d4Kx5FPKLtiG1U2dezIh4TOVwG
+	AhhRjLMWYyUY8mtV+MlaeqqzlA/50qFcUlIyxmA20K3Tlajg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pvefrcre-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 12:28:12 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56ABpQSE024311;
-	Thu, 10 Jul 2025 12:28:10 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qh32nabn-1
+	Thu, 10 Jul 2025 12:28:56 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56ACStfD019536
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 12:28:10 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56ACS76l56492344
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Jul 2025 12:28:07 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3E47220043;
-	Thu, 10 Jul 2025 12:28:07 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B969520040;
-	Thu, 10 Jul 2025 12:28:06 +0000 (GMT)
-Received: from [9.152.222.235] (unknown [9.152.222.235])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 10 Jul 2025 12:28:06 +0000 (GMT)
-Message-ID: <70803af5-369c-4de2-af30-70d74f1e6256@linux.ibm.com>
-Date: Thu, 10 Jul 2025 14:28:06 +0200
+	Thu, 10 Jul 2025 12:28:55 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 10 Jul 2025 05:28:49 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: [PATCH v3 00/10] Add Network Subsystem (NSS) clock controller
+ support for IPQ5424 SoC
+Date: Thu, 10 Jul 2025 20:28:08 +0800
+Message-ID: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 02/14] unwind_user: Add frame pointer support
-From: Jens Remus <jremus@linux.ibm.com>
-To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        x86@kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-        Sam James <sam@gentoo.org>, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-References: <20250708012239.268642741@kernel.org>
- <20250708012357.982692711@kernel.org>
- <d3279556-9bb6-429d-a037-fe279c5e3c67@linux.ibm.com>
-Content-Language: en-US
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <d3279556-9bb6-429d-a037-fe279c5e3c67@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FZ43xI+6 c=1 sm=1 tr=0 ts=686fb1dc cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=xGKi6vjhqkjxjNt39fsA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: sJrvX2rJR0n-3zeimi9EkXiwKcJZV73C
-X-Proofpoint-ORIG-GUID: sJrvX2rJR0n-3zeimi9EkXiwKcJZV73C
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDEwNSBTYWx0ZWRfX9WHaz58xiiaQ iRbl9JwMZP3iJc8BmTDuvRm/P5xYrBk6TpSmXbjn9US8P1z7yL11slNTW400otCXgES/8sVRC0A uX5PG7sYhxMazuFbu39xr2ua+aSvmCmPEzvDlU4zfRnDo0x7JjPdSuWgI3ecdC3c6RMhwM6/ry1
- ZPaZqY9ZQH1Q6C5ry4QRBgTr6IJ8ZkxKlVMjAtiCUeSCiFKlWtop7N4cvJoztRQxkjKNRnOKTVh 7dCDjgVGhaUAQbICdmuIeMPhvhFe73bwR4cMvaZ8qXdVWy+FnsIrFgmYsilWB0xpVaSU3KTQdp6 YrGjwdWQzvs8uLmwzIFwFQYfZW3aFMRvLinXFQV8LMcLOKx3D6cP3UzVL1jbAudVCBa78VG4Lv+
- UwDwsPDsi0DDdACXzQlg21M4yCvhA6lio85mkq4tR6r3dhEC6u11yhUcYZAG2HwDjRY3hGKd
+X-B4-Tracking: v=1; b=H4sIANuxb2gC/22OzWrDMBCEX8XoXBVpFVmWT32PEoJ+1s1CLNuSa
+ xpC3j1KfCiFHmeY+WZurGAmLKxvbizjRoWmVIV6a1g4u/SFnGLVDARoYYTlS5jGE82LPsDhlEo
+ JgavORiWsMV56VotzxoF+XtDPY9VnKuuUr6+NDZ7ujmvB/IfbgAveRWVhaLUU4D6WbwqUwnvNs
+ uN9X8hY3ULrPvN7tm92thR/2WFM8+XCATwo8F52Q+w39bzrXUFeoyOtfePBhNCCQiE92ohSdwK
+ ds1Jp0dWqccbZ1qj64/4AwcJ3oz0BAAA=
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Anusha Rao
+	<quic_anusha@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Philipp
+ Zabel" <p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <quic_pavir@quicinc.com>, <quic_suruchia@quicinc.com>,
+        Luo Jie
+	<quic_luoj@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752150527; l=4745;
+ i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
+ bh=pWaO5geNSreV600Rx0hjBu7mGN87uYUH+24U8VHcJM0=;
+ b=U73YlciETJ4Wm51C3w25MNXcv+FI+KBfZHDjJSzBPjK5MFGEJViq4p9DM1mKyfQ4/nxDxi/8P
+ 9WVaSybuJ5ACaYU5LbrnAq2iAMwEz9tQIo/1RspJOG6fqDXbxtTl4P5
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDEwNiBTYWx0ZWRfX2RVBxV7SAulN
+ 9PM9qKYKKspfd7rhasVMbsFS9on+7iVhanwdCgzQWEAi5H+RQs90DhKLscd2ACXxVZZ3WkSDsbX
+ 4TGc0lqSvOQGcr/XeuZa543naxleFJCfgpsgiRYBcOS+2VnP4wL8PaOJCSP0DyNWbu3pKiOp3ou
+ FljAAkp6dLjmWreEOev8HEWLBWCUnqCA6/YPPzSCiSEQDHJmupVUlspaElXbUIzzz+KZxzPoPDe
+ iD9bAM4WGFgkKq/UOrouIAnkpTeBhyTtf6Egl08HpNSCdKiGjzjORaJRT7kWoJU5QddTZ64JRdl
+ 4tQCUfRoMPKIbzJ/9VL1NE6F8FbTfPfHwmYXwa+eGiVD2QHvub8u1pmLMmYdhGF0XTi0LZ1DyCd
+ hHsW7F5wpa3UPZo5Kaetl92ZqVFpy61w2Ym3fPTTnCANbq+pZdqLdqRTTuhlDXMJBNx1jPRs
+X-Authority-Analysis: v=2.4 cv=dciA3WXe c=1 sm=1 tr=0 ts=686fb208 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=IpJZQVW2AAAA:8 a=pGLkceISAAAA:8 a=7CQSdrXTAAAA:8
+ a=JfrnYn6hAAAA:8 a=7tda8KZc5G6-a3B2-a8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22 a=IawgGOuG5U0WyFbmm1f5:22 a=a-qgeE7W1pNrGK8U0ZQC:22
+ a=1CNFftbPRP8L7MoqJWF3:22
+X-Proofpoint-GUID: bZ1Sv2IkGXKCUo3ESIsYbqcGGYEIrnAR
+X-Proofpoint-ORIG-GUID: bZ1Sv2IkGXKCUo3ESIsYbqcGGYEIrnAR
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-10_02,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- priorityscore=1501 malwarescore=0 mlxlogscore=999 clxscore=1015
- spamscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507100105
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 suspectscore=0 impostorscore=0 phishscore=0
+ mlxscore=0 mlxlogscore=999 bulkscore=0 lowpriorityscore=0 adultscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507100106
 
-On 09.07.2025 12:01, Jens Remus wrote:
-> On 08.07.2025 03:22, Steven Rostedt wrote:
->> From: Josh Poimboeuf <jpoimboe@kernel.org>
+The NSS clock controller on the IPQ5424 SoC provides clocks and resets
+to the networking related hardware blocks such as the Packet Processing
+Engine (PPE) and UNIPHY (PCS). Its parent clocks are sourced from the
+GCC, CMN PLL, and UNIPHY blocks.
 
->> diff --git a/kernel/unwind/user.c b/kernel/unwind/user.c
+Additionally, register the gpll0_out_aux GCC clock, which serves as one
+of the parent clocks for some of the NSS clocks.
 
->>  static int unwind_user_next(struct unwind_user_state *state)
->>  {
->> -	/* no implementation yet */
->> +	struct unwind_user_frame *frame;
->> +	unsigned long cfa = 0, fp, ra = 0;
->> +	unsigned int shift;
->> +
->> +	if (state->done)
->> +		return -EINVAL;
->> +
->> +	if (fp_state(state))
->> +		frame = &fp_frame;
->> +	else
->> +		goto done;
->> +
->> +	if (frame->use_fp) {
->> +		if (state->fp < state->sp)
+The NSS NoC clocks are also enabled to use the icc-clk framework, enabling
+the creation of interconnect paths for the network subsystem’s connections
+with these NoCs.
 
-The initial check above is correct.  I got the logic wrong.  Sorry for
-the fuss!  Do not change the check to what I came up with yesterday:
+The NSS clock controller receives its input clocks from the CMN PLL outputs.
+The related patch series which adds support for IPQ5424 SoC in the CMN PLL
+driver is listed below.
+https://lore.kernel.org/all/20250610-qcom_ipq5424_cmnpll-v3-0-ceada8165645@quicinc.com/
 
-> 		if (state->fp <= state->sp)
-> 
+To: Georgi Djakov <djakov@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Anusha Rao <quic_anusha@quicinc.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+To: Richard Cochran <richardcochran@gmail.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: quic_kkumarcs@quicinc.com
+Cc: quic_linchen@quicinc.com
+Cc: quic_leiwei@quicinc.com
+Cc: quic_pavir@quicinc.com
+Cc: quic_suruchia@quicinc.com
 
-Below s390 particularity, that FP may be equal to FP in any frame,
-is only allowed with the initial check.
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+Changes in v3:
+- Remove frequency suffix from clock names for PPE and NSS clocks in
+  IPQ9574 DT binding and DTS.
+- Update IPQ5424 DT bindings and DTS to as per new PPE and NSS clock names.
+- Expand the register region of IPQ5424 NSSCC to utilize the entire 0x100_000
+  address range, ensuring inclusion of the wrapper region.
+- Collect the reviewed-by tags.
+- Link to v2: https://lore.kernel.org/r/20250627-qcom_ipq5424_nsscc-v2-0-8d392f65102a@quicinc.com
 
-> I meanwhile came to the conclusion that for architectures, such as s390,
-> where SP at function entry == SP at call site, the FP may be equal to
-> the SP.  At least for the brief period where the FP has been setup and
-> stack allocation did not yet take place.  For most architectures this
-> can probably only occur in the topmost frame.  For s390 the FP is setup
-> after static stack allocation, so --fno-omit-frame-pointer would enforce
-> FP==SP in any frame that does not perform dynamic stack allocation.
-> 
->> +			goto done;
->> +		cfa = state->fp;
->> +	} else {
->> +		cfa = state->sp;
->> +	}
+Changes in v2:
+- Add new, separate clock names "nss" and "ppe" in dtbindings to support
+  the IPQ5424 SoC.
+- Wrap the commit message body at 75 columns.
+- Fix the indentation issue in the `IPQ_NSSCC_5424` Kconfig entry.
+- Enhance the commit message for the defconfig patch to clarify the requirement
+  for enabling `IPQ_NSSCC_5424`.
+- Link to v1: https://lore.kernel.org/r/20250617-qcom_ipq5424_nsscc-v1-0-4dc2d6b3cdfc@quicinc.com
 
-Regards,
-Jens
+---
+Luo Jie (10):
+      dt-bindings: interconnect: Add Qualcomm IPQ5424 NSSNOC IDs
+      clk: qcom: ipq5424: Enable NSS NoC clocks to use icc-clk
+      dt-bindings: clock: gcc-ipq5424: Add definition for GPLL0_OUT_AUX
+      clock: qcom: gcc-ipq5424: Add gpll0_out_aux clock
+      dt-bindings: clock: ipq9574: Rename NSS CC source clocks to drop rate
+      arm64: dts: qcom: ipq9574: Rename NSSCC source clock names to drop rate
+      dt-bindings: clock: qcom: Add NSS clock controller for IPQ5424 SoC
+      clk: qcom: Add NSS clock controller driver for IPQ5424
+      arm64: dts: qcom: ipq5424: Add NSS clock controller node
+      arm64: defconfig: Build NSS clock controller driver for IPQ5424
+
+ .../bindings/clock/qcom,ipq9574-nsscc.yaml         |   26 +-
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi              |   30 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi              |    4 +-
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/clk/qcom/Kconfig                           |   11 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/gcc-ipq5424.c                     |   21 +-
+ drivers/clk/qcom/nsscc-ipq5424.c                   | 1340 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq5424-gcc.h       |    3 +-
+ include/dt-bindings/clock/qcom,ipq5424-nsscc.h     |   65 +
+ include/dt-bindings/interconnect/qcom,ipq5424.h    |   19 +
+ include/dt-bindings/reset/qcom,ipq5424-nsscc.h     |   46 +
+ 12 files changed, 1553 insertions(+), 14 deletions(-)
+---
+base-commit: b27cc623e01be9de1580eaa913508b237a7a9673
+change-id: 20250709-qcom_ipq5424_nsscc-389d30977b1b
+prerequisite-change-id: 20250610-qcom_ipq5424_cmnpll-22b232bb18fd:v3
+prerequisite-patch-id: dc3949e10baf58f8c28d24bb3ffd347a78a1a2ee
+prerequisite-patch-id: da645619780de3186a3cccf25beedd4fefab36df
+prerequisite-patch-id: c7fbe69bfd80fc41c3f76104e36535ee547583db
+prerequisite-patch-id: 541f835fb279f83e6eb2405c531bd7da9aacf4bd
+
+Best regards,
 -- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+Luo Jie <quic_luoj@quicinc.com>
 
 
