@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-725952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8BFB005DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:58:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC10B005E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF663B1281
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:57:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7549D188D7A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744132741B7;
-	Thu, 10 Jul 2025 14:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E93C2741D3;
+	Thu, 10 Jul 2025 15:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFh5d3or"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gkLGx1ds"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F60270568;
-	Thu, 10 Jul 2025 14:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FD222E3FA
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752159491; cv=none; b=O8E74AvR42lRoKCzeKLMwBh60rl5UwkWKSscIkQpr/AG5YHhXnCvonZ2d82I8OuD2auLcYjNTEOwjVZiPB08TA64yJ5WaW5xFcH0DiUZBTKsxlkN5V+hCD2rYe/i9zhaQpCgmkFzA6BM9LmYmV8301pzn6Ss6yqxMD90aGCmxx8=
+	t=1752159846; cv=none; b=SJ7eIg7NeMiEtlWaeeo7qCXJhoDDZ2Xf0l8gN38m0cejytLy+Q72/mg4ISzO3rvjLUTw0g1hCF5MvL5oSAfCHOm6DnOfn06CsRgdQimZbf5bqRC2oKHxNi7XnCRUbvZITgsxPh9wtshDhFAmu/i85SEB5Sgpzi86+Gcp6fPsWXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752159491; c=relaxed/simple;
-	bh=TH5llxzcucM0N4iq2/3TbPkFRzGjdAKzo1pDD9WbW/w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=amsD0bPrSB6iV+kftpGOY4hQ1xEWCwg+mw+KFjWg+HOSPynECJWlgQLTv9KerfZJSxprA2EUxsOFuW6gUFKLyd7KwcI64mQCXPtFIEMHCS/AhIoY9jNY8n+qSZTZ6DDhsagpIgDuMVQsmG75FSMzkO2tNQB3iHqfwuZ/R+soL2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jFh5d3or; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e733e25bfc7so887907276.3;
-        Thu, 10 Jul 2025 07:58:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752159488; x=1752764288; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TH5llxzcucM0N4iq2/3TbPkFRzGjdAKzo1pDD9WbW/w=;
-        b=jFh5d3orhtf3CbVTKF//ixq1Ci/wbUn/2GBAiOyXeAhoqrRbsCAFCf/40LUKWddfRZ
-         XKNWdqJYAnlFCE9DH3fvJ162HY7A5J+7VAys8QBBgPbEuuJmUs69nhBOIC1b7CbiCFVV
-         rfHVMWOTGdtYY/SNvlb2ReRY2HyiBFIws7VunbuwHI+sIk9Az26A/nzk4R43G2AoHhU5
-         7Uv8wxUH9doh9U5WY4VZGQmRSNSYge4eGRRx+yNjEuV9wqB+WK8KEcMmM9nrbqjyeLWf
-         UHeLQymqGMDJOugIQIAS0ImAi1X79jsreVEqeynHLc68TrvA8GCi8IMIB1T2xdEZYYlQ
-         aGyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752159488; x=1752764288;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TH5llxzcucM0N4iq2/3TbPkFRzGjdAKzo1pDD9WbW/w=;
-        b=d2c9tXYA3WDTBMJC6loPiu/bNtlQksNcPuRS3zTeZnr3wfcQQiXe450CgABGONt8Bq
-         MHAGAx+n60J3Y/disIqt1q3quyWTDBXllJ1dzj5Wk4bSB7Lvi6YR1pHB9z4jmUEF+6jl
-         FpL9xSZCN2mC5K6nhFY2N7qMiZ/CUbq+TH9VumByO8U0aE1SlsVKtcJ9EMMFUGSbMjq4
-         1a2NqUG4ygiTjhv6vWqVWToJMLk1y28fXbyU96NgkF6MbwcDkuKJFScCH32kLuiPStVF
-         v2G+sGCJkVm6KwfEcWqSfi4PfbUJsz6VocPIoOwDBQ9uIzY6wxbdjo+96uyYsQo7AbYm
-         iXAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUAGKnl4fPwtDcf8nzEO1vFs5NX9ieYeVBQ2ZuZ4VaSz6FJF2H8NUm41QjVTtlz5qW/EF7FimCCBSkGUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB3XgjheKxJsRfNuUZLK+Uf1E04kWyJ1lnWONWWIUZxc8BY2yc
-	CyxewKJ44Bv+R7ypMADBNDigztNaNN+MosZIW/xCZAvuBMRFJdJtnTDF2UeC08+cpM+d225Wycd
-	eF0SS7Rskf4f22DXzYXhtlkZUthHjbjoe1jhB0f8=
-X-Gm-Gg: ASbGncvgImzGVw56e4p3/l6XS8azCsH0HsfMrWimymMzXZT0pjorkLi8n8zUNISt28u
-	jLK6cvsXUfHz9tzbJrvJrz6qNc0x275VaW4xi8adVow0Sa9G2r7iwoyL9+J2+AciXSE37Lly2G8
-	yc84edjYqlRjZUqPuh9qgWspKwS8oZ8CG9jEYbD4OQGA==
-X-Google-Smtp-Source: AGHT+IGj0vOjTNls2xWvYdpalcELUUnBFKyAUZgPNeSj8dAPkHAuNVZE1EZsB1saeRuYvsZT8KRFOZRjwuNTc4TRYPQ=
-X-Received: by 2002:a05:690c:81:b0:70a:2675:70b3 with SMTP id
- 00721157ae682-717c47441b7mr41656637b3.17.1752159488337; Thu, 10 Jul 2025
- 07:58:08 -0700 (PDT)
+	s=arc-20240116; t=1752159846; c=relaxed/simple;
+	bh=kttiDqozO+WQNGP1tvbnqpD9ilF2IK07GUI4Ye+djuA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kG4uV48hQT6N1/r08E+cTXF0DIsvquo3xyQszzwMAB6mrYmCWbdKMsYDWaSFcaV60mX5qKblFK8/lI58OSw02IyPO62jLV+OuFBqKUU8qJ5R4JgasPZrZWcdJJ0mBCBYza3GFbi6MO8EolFW0SBtG165UVF3/nlOs0rl406bank=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gkLGx1ds; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752159844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TQGHAobwwa27OfNzUbQzcEFwWIUKV1Qc4DtxoIyeEUQ=;
+	b=gkLGx1ds+/wLPKfbkdBifzhapaBYvF28y0mkdkIWOzFZgdjd4MjhDVtmHWZp9TcY1b7jvu
+	n9hIU82gfcqCbP9yzAmBkp7oQCJBUThEbeBWZWJi+wWOnYLDXCAaRyRD8Hsk0HDg7Y+WRE
+	41RzScrDt/PjHe1kvHxCPaiIUFGBQjI=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-692-vU9GuSbkM7K9mnx_sH6I4Q-1; Thu,
+ 10 Jul 2025 11:04:00 -0400
+X-MC-Unique: vU9GuSbkM7K9mnx_sH6I4Q-1
+X-Mimecast-MFC-AGG-ID: vU9GuSbkM7K9mnx_sH6I4Q_1752159836
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D62511956075;
+	Thu, 10 Jul 2025 15:03:55 +0000 (UTC)
+Received: from [10.22.80.10] (unknown [10.22.80.10])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6330F19560A3;
+	Thu, 10 Jul 2025 15:03:50 +0000 (UTC)
+Date: Thu, 10 Jul 2025 17:03:43 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: John Garry <john.g.garry@oracle.com>
+cc: agk@redhat.com, snitzer@kernel.org, song@kernel.org, yukuai3@huawei.com, 
+    hch@lst.de, nilay@linux.ibm.com, axboe@kernel.dk, cem@kernel.org, 
+    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+    linux-raid@vger.kernel.org, linux-block@vger.kernel.org, 
+    ojaswin@linux.ibm.com, martin.petersen@oracle.com, 
+    akpm@linux-foundation.org, linux-xfs@vger.kernel.org, djwong@kernel.org
+Subject: Re: [PATCH v5 5/6] dm-stripe: limit chunk_sectors to the stripe
+ size
+In-Reply-To: <20250709100238.2295112-6-john.g.garry@oracle.com>
+Message-ID: <5e2bbd34-e112-c15a-37ea-f97cbede910c@redhat.com>
+References: <20250709100238.2295112-1-john.g.garry@oracle.com> <20250709100238.2295112-6-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709220714.85697-1-stefano.radaelli21@gmail.com>
- <20250709220714.85697-2-stefano.radaelli21@gmail.com> <9b503f65-5c8c-4f04-a1b1-40d7a1202e8b@kernel.org>
- <CAK+owohgk3CkQRv_PBDWXh44X2uN3p8FWBU2t9VtmO-xzOKTow@mail.gmail.com>
- <6656b2f0-5258-4f23-8988-567a7b598497@kernel.org> <CAK+owogfXDNpjT5Ywcvjaegf0H8-pS109039WadhxHXHbe3GSA@mail.gmail.com>
- <bb6bc232-cc3e-4689-952f-88cf580604fb@kernel.org>
-In-Reply-To: <bb6bc232-cc3e-4689-952f-88cf580604fb@kernel.org>
-From: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Date: Thu, 10 Jul 2025 16:57:52 +0200
-X-Gm-Features: Ac12FXyzWjUawsZvzzzJnFrsRzKzTAlycLishUEj96n_UCE4I6vdCqmNJMuAVbE
-Message-ID: <CAK+owojEmcW7S8oFFjmmeT1uHn2Hyb9=16GDP2QLQ+DAEwtoPg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: ti: Add bindings for Variscite VAR-SOM-AM62P
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 10/07/2025 16:42, Krzysztof Kozlowski wrote:
-> There are no such compatibles. There are:
->
-> variscite,var-som-mx93
-> variscite,var-som-mx8mn
->
-> and others with exact format how I asked - var-som-<processor>.
->
 
-You are absolutely correct, and I apologize for the confusion.
-I was incorrectly referring to our internal kernel tree instead of
-checking the mainline kernel compatibles.
 
-Thank you for your patience in correcting me.
-I will follow your advice and use the proper mainline format
-"var-som-<processor>" for consistency with the existing Variscite compatibles
-already present in mainline, rather than our internal naming convention.
+On Wed, 9 Jul 2025, John Garry wrote:
 
-I will update the patch accordingly.
+> Same as done for raid0, set chunk_sectors limit to appropriately set the
+> atomic write size limit.
+> 
+> Setting chunk_sectors limit in this way overrides the stacked limit
+> already calculated based on the bottom device limits. This is ok, as
+> when any bios are sent to the bottom devices, the block layer will still
+> respect the bottom device chunk_sectors.
+> 
+> Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
+> Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  drivers/md/dm-stripe.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
+> index a7dc04bd55e5..5bbbdf8fc1bd 100644
+> --- a/drivers/md/dm-stripe.c
+> +++ b/drivers/md/dm-stripe.c
+> @@ -458,6 +458,7 @@ static void stripe_io_hints(struct dm_target *ti,
+>  	struct stripe_c *sc = ti->private;
+>  	unsigned int chunk_size = sc->chunk_size << SECTOR_SHIFT;
+>  
+> +	limits->chunk_sectors = sc->chunk_size;
+>  	limits->io_min = chunk_size;
+>  	limits->io_opt = chunk_size * sc->stripes;
+>  }
+> -- 
+> 2.43.5
 
-Best regards,
-Stefano
+Hi
+
+This will conflict with the current dm code in linux-dm.git. Should I fix 
+up the conflict and commit it through the linux-dm git?
+
+Mikulas
+
 
