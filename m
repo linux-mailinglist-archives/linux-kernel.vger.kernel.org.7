@@ -1,229 +1,256 @@
-Return-Path: <linux-kernel+bounces-726168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F01B6B008F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:39:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B263B00907
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9F1A1CA24EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:38:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC2F174DB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F4E2F3647;
-	Thu, 10 Jul 2025 16:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FA12F0042;
+	Thu, 10 Jul 2025 16:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S6cm0X1A"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CEBLDZTe"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EC82EFDB5;
-	Thu, 10 Jul 2025 16:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568052EF9DE
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752165375; cv=none; b=TjhGhhdrZqN5C2Qm3FkNNT6pq89hIrvpFRrn+S0Huy5rIhI09fMiC/BIfhbfg5K8ppTUFi9kh5lMYgd2ginv55zfPpd11uhAKUYi4SB+NMWIxKFzPZqt3y+yLrNrTFSo+IWdcGy81yRv8hGG3rBJYE1Z1kuHxiDIBViP5UGMnuM=
+	t=1752165607; cv=none; b=uc35dorR4EpbMTsNZzB8cexFFYnu4HzPUTuFgqaALH5JG+mV4nXnlXYKINvUEqt6jwZW57Ye8moDltZQl4D/xVdwYQxMrhEzNQ40eMRnA7ruKVQSzcCYrBDUDsyylFwzvzaO9ifKfIL1CX9WP98FI7+wth3io5JX7hSI6AIJ0Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752165375; c=relaxed/simple;
-	bh=HDpOlHn07MCMCz6ZR8ox5wRqbGV6hjvdNacy386wcRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P2Eo7eWfHADqvb9Mjs/s6tgcy3j5n55hh3GXlgHNxHgzZVfF5k4GY1RqSag03AcPv5Vy+GP6XJzppZWbPMC2pxelFxzoy26mznt6MZtQVEuNexZoxNV2ajkbK9Muj1bYvZ9VYtS9kXONkr0j70iRZwPXQ8xEV7n0TiURYdj4szM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S6cm0X1A; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A9r57e021381;
-	Thu, 10 Jul 2025 16:35:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=WH8heYNKI41hEAvvl
-	+y/eA+1PA5Xi2h4EcmcEcVNNBk=; b=S6cm0X1A1xlkSX9Sw/09DI4AO1VkyFBGZ
-	LognVdNkerM9R7wjnuYMFSDRbEHq/N/letCBjalJtx9WYeQ+SxS8I2KErbuW1V2B
-	CBRoSJ7w8gHltOM6R8nQb2rUSTWSVSVkcBvJOuu5vSiWuCsoj38rOCiDnCnqXEPL
-	TZXR8duE+VNGSUFI0qiYBoEc1je20tyiO+6IM3LMYCVffcluhudTfVgy5A6N00mq
-	PEncxHdQdeqedYhn6putCQYu8iaAi7Ht6yp+xYVobKMkL77mrUeFJbNHDzIgkR+F
-	4vdsERtStkILwE4+l7slrNqJAyyhZoM693+ONqBbg1GzLPddnkazw==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47pusse6aa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 16:35:33 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56ADFbx4021531;
-	Thu, 10 Jul 2025 16:35:32 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qectxrn6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 16:35:32 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56AGZSsD12714316
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Jul 2025 16:35:28 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A696520063;
-	Thu, 10 Jul 2025 16:35:28 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6B7442004D;
-	Thu, 10 Jul 2025 16:35:28 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 10 Jul 2025 16:35:28 +0000 (GMT)
-From: Jens Remus <jremus@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, x86@kernel.org,
-        Steven Rostedt <rostedt@kernel.org>
-Cc: Jens Remus <jremus@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-        Sam James <sam@gentoo.org>
-Subject: [RFC PATCH v1 16/16] WIP: fixup! s390/unwind_user/sframe: Enable HAVE_UNWIND_USER_SFRAME
-Date: Thu, 10 Jul 2025 18:35:22 +0200
-Message-ID: <20250710163522.3195293-17-jremus@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250710163522.3195293-1-jremus@linux.ibm.com>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
+	s=arc-20240116; t=1752165607; c=relaxed/simple;
+	bh=2mVD105ELfyiZ3Icw9b4TIbfswMnLBIA2fWIJ6fXAOk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=CqX6gg0WM0/QFdvQsLIM56068Caa4D6XIJWcMktJ/G0KU8kR36LdL4/hsyqNskMxirhTMjrInH6aqFxkJN1TVQZN+9vag1avW4x8V8hgoMva9c1uNq2FpLtCKLE1dfdAY6wnYpaAifSb4w/C9xbMXPqPJEkJlM0UkWnr+Z4jSfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CEBLDZTe; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a577f164c8so88063f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:40:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1752165603; x=1752770403; darn=vger.kernel.org;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nrn4nfiPG+tAqCMVAZ7jqIn9oEnuj7dwUbTTAq45dGg=;
+        b=CEBLDZTefSIlRkHYo3bdsW6wdcMdx619Afz7sRIf4y2ZCXnsbYH6I1NarAFx0+zeqS
+         8esCPDIIIsy50VTfHEUXIS++tKMxf1xr6J11iugYAStpyBQGqky7FS0H/dF0Es/KHAqr
+         6fw9MZaaEWHlALqZWz+yJjPU2B+UGOiarQGLz6tv13/dhUZTS2zRHc8rAkN8h2r53RWm
+         qU10FfZVpGuHsilPTW+fzSDXUwtxKkeuHiJT2DX77syBRoKutkuqcF+XT1JIIfTXQvF4
+         t33d9C5p2lQc1ADF/likb7iZhuTwZrLf5Px2XLy/J4dtm0Dg7S4JOpo66yINDrluYKDa
+         lWAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752165603; x=1752770403;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Nrn4nfiPG+tAqCMVAZ7jqIn9oEnuj7dwUbTTAq45dGg=;
+        b=KQejV72swMCNkq7Z16ezVvnnO9hD7S1BGqvzfgkyWSj3maEhpv9+fgDFMb9U89lGfO
+         Rwy3fMlzobixPj9jTpl73JRieSr0585BdQKebLEG6Fxf6deBdGZv3dUQUbcP7CVEVq+k
+         3q+KkSsmt7TGsg+fXMhjFsGJUclXSFeckFhjFkAh9oFMAnGLPjW7laf3TYU/4ex5OHIm
+         dcY/h9a8tA1U5G+ATGGVBbpR5KI5mpiFbFMSiTxyfiqexP4U0NYYksGiwYa4bznzfFw0
+         uSxoZVmuYgDxiHlOsdqaiiAC8NFY/gS7ryknra/8H/oKuOSJ77CNMbfsAVkyL97R8Nw3
+         tLiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUm55uTSWJcVlVliNlHm6AdoizIxDEKp1eyhF+D7M7FPAAKZ8ksmj4TnqdltLNrZaxKwFsPXjQoD3cZB8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjILgi402KiskryJ2MeIyupeP73zIIqh2AvuimxPRGKV5pVzwW
+	nCFCdMhP1UgPiHFs8iAUt00OIetgfD1uUAljrhc6MByHU+Dxd77+fpPR0jdX2MSVTQw=
+X-Gm-Gg: ASbGncu1HEodzGMX0IRwf973SY9/PWFQVUotCNFfr4K4CFQhJkWBIzYXZwROfqUDecQ
+	IoeLY/kcEVo4iH6cd2vP0CgXg34sE0zNR4aohC6ltjj77qmB61qbo3b6hmsByCBZV7qGIga0fCI
+	iy18qGKcDTz9e85x38t6tB8ewAtYrJiYxNcqjVS6wnMVOCJpX6q0inMzazJkUS7MXedPuEx15T/
+	q5x10H7AxuQ18RXk+fMgu9dCUIqruZuk6Dk01GZKQcsZdbV3NusgIp+Z8bzO8x8L2LJyB7Xlwg5
+	bXcw/Dv7Lc+HWLH5kGIdO6C5VdfXdKPS04f89l77a5VRl1yG3fErvBd7XW2UHxgOHFV6dA==
+X-Google-Smtp-Source: AGHT+IFz1D8/12XwlMH9nD/1jWSY5+ZD+bTmwmjROaWHbn7m2/jSD8nUPromTyulLxho5aGATXbK1g==
+X-Received: by 2002:a05:6000:18a3:b0:3a3:584b:f5d7 with SMTP id ffacd0b85a97d-3b5f186afb6mr95564f8f.5.1752165603110;
+        Thu, 10 Jul 2025 09:40:03 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:bf57:83e8:7a62:80b7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d511b43csm60588395e9.37.2025.07.10.09.40.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 09:40:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Vaj3PEp9 c=1 sm=1 tr=0 ts=686febd5 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=91u_FrifZQu3ZdA2h5kA:9
-X-Proofpoint-GUID: 0aJBZvD1035smR9ojazV5kefpBfgylH6
-X-Proofpoint-ORIG-GUID: 0aJBZvD1035smR9ojazV5kefpBfgylH6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDEzOSBTYWx0ZWRfX/XBsHHfW/+nP ZOVtoweC1xqyeGxov+zkxVoXXuotXBggIBdkrhTgduybXumWwEDy4mK1f6WgqySQtWHHHWatxR3 gcwOx/dCN0sFN2ck+51Ci2fRWIIxfBjdMx0Lev0JHU9Dw8AFkvGzu7lz9cCYGvrnyEze5kkOY0/
- wQ6wq+YoOerWfieplJP/LXXcoB+PDxuppnI10zBFd4rqNEB3Hid3ej3ucmldwyo72m3NcTQc05e yzcrL9u2/eTlK5xcgSASgRQZY/AEaZFEJQTz8bUw7BQz/bfEJo2tAOYlXiCjZFSBZB+zthi5yey BfdxqIAm/7/M2up39CrwGYtG288/Ymed9OsmOetjw2y2d0WjXsWfpioIHWy8QyUMtN4+EryV3MR
- lYzJVvjfBQKLnO9TWLmI8nvSYeG4JXYRaUHU4yNgnEjyvXYn02z7jey3IV35b+ACmcpcFmux
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_04,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=713 suspectscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 impostorscore=0 malwarescore=0 bulkscore=0 mlxscore=0
- spamscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507100139
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Jul 2025 18:40:02 +0200
+Message-Id: <DB8IV9GMLI6X.25TJF0WMVHZEM@ventanamicro.com>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: [PATCH] RISC-V: store precomputed percpu_offset in the task struct
+Cc: <masahiroy@kernel.org>, <nathan@kernel.org>, <nicolas.schier@linux.dev>,
+ <dennis@kernel.org>, <tj@kernel.org>, <cl@gentwo.org>,
+ <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+ <alex@ghiti.fr>, <andybnac@gmail.com>, <bjorn@rivosinc.com>,
+ <cyrilbur@tenstorrent.com>, <rostedt@goodmis.org>, <puranjay@kernel.org>,
+ <ben.dooks@codethink.co.uk>, <zhangchunyan@iscas.ac.cn>,
+ <ruanjinjie@huawei.com>, <jszhang@kernel.org>, <charlie@rivosinc.com>,
+ <cleger@rivosinc.com>, <antonb@tenstorrent.com>, <ajones@ventanamicro.com>,
+ <debug@rivosinc.com>, <haibo1.xu@intel.com>, <samuel.holland@sifive.com>,
+ <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>, <wangziang.ok@bytedance.com>
+To: "yunhui cui" <cuiyunhui@bytedance.com>
+References: <20250704084500.62688-1-cuiyunhui@bytedance.com>
+ <DB5U402ARSEO.4H4PE19LGCR7@ventanamicro.com>
+ <CAEEQ3w=V6-d+YSWP=0WMt6UAZexrazq0UQjdyUmS3AnMtkdoKQ@mail.gmail.com>
+ <DB6MLPA3BJ75.2U5FP5JSJD2LO@ventanamicro.com>
+ <CAEEQ3wkoy3Jr0vZk=X4U56KYPq3=5t7Wr4RE6uNby3MS5qzh-g@mail.gmail.com>
+ <DB7L9ZHZI3AI.36SXWX2SO9OS7@ventanamicro.com>
+ <CAEEQ3wnaL5X_jXEmbbWFp3jx1Aq=02Gf7kDNBS=wcPyfEq7yBw@mail.gmail.com>
+ <DB8607ITP9UR.2LOW61O3OVJ2F@ventanamicro.com>
+ <CAEEQ3wmxJ50PZHVpdexeyy1ELqKw+5mrb+8gRCA4KNj9zsrykA@mail.gmail.com>
+In-Reply-To: <CAEEQ3wmxJ50PZHVpdexeyy1ELqKw+5mrb+8gRCA4KNj9zsrykA@mail.gmail.com>
 
-Add s390-specific SFrame format definitions.  Note that SFRAME_ABI_*
-(and thus SFRAME_ABI_S390_ENDIAN_BIG) is currently unused.
+2025-07-10T19:47:27+08:00, yunhui cui <cuiyunhui@bytedance.com>:
+> On Thu, Jul 10, 2025 at 2:35=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrc=
+mar@ventanamicro.com> wrote:
+>> It would be to store the percpu offset in CSR_SCRATCH permanently, do
+>> the early exception register shuffling with a percpu area storage, and
+>> load the thread pointer from there as well.
+>> That method would also eliminate writing CSR_SCRATCH on every exception
+>> entry+exit, so maybe it makes sense to try it even if CSRs are slow...
+>
+> Based on the patch, optimizations for percpu offset have been added,
+> with the following data:
+> 6.989 7.046 6.976 6.986 7.001 7.017 7.007 7.064 7.008 7.039
+> Geometric mean: 7.013248303
+> Compared to reusing the scratch register, the performance has improved
+> by approximately 0.7%.
 
-Include <asm/unwind_user_sframe.h> after "sframe.h" to make those
-s390-specific definitions available to architecture-specific unwind
-user sframe code, particularly the s390-specific one.
+Nice, thanks.  The CSR_SCRATCH accesses seem much slower than GPRs, and
+possibly even slower than L1 hit -- we might gain more by storing the
+precomputed offset in the task struct.
 
-Use the s390-specific definitions in the s390-specific unwind user
-sframe code to get rid of all the magic numbers.
+Can you check this patch as well?
 
-Signed-off-by: Jens Remus <jremus@linux.ibm.com>
+(It should be compared against a variant of CSR_SCRATCH that uses the
+ TASK_TI_PERCPU_OFFSET optimizations, but we can try to interpolate. :])
+
+---8<---
+RISC-V: store precomputed percpu_offset in the task struct
+
+Exploring the memoization trade-off... hoping that __set_task_cpu covers
+everything. :)
+
+I didn't put any though into where the percpu_offset should live, and
+the naive approach is to put it next to cpu.
+This needs more work to not break build on other arches, because I
+directly added RISC-V specific code to __set_task_cpu, to save time
+figuring out where else it could be.
 ---
+ arch/riscv/include/asm/asm.h         | 6 +-----
+ arch/riscv/include/asm/percpu.h      | 8 ++++++++
+ arch/riscv/include/asm/thread_info.h | 3 ++-
+ arch/riscv/kernel/asm-offsets.c      | 1 +
+ arch/riscv/kernel/smpboot.c          | 6 ++++++
+ kernel/sched/sched.h                 | 1 +
+ 6 files changed, 19 insertions(+), 6 deletions(-)
+ create mode 100644 arch/riscv/include/asm/percpu.h
 
-Notes (jremus):
-    Alternatively the s390-specific definitions could also be added to the
-    s390-specific unwind user sframe header.  The current implementation
-    follows Binutils approach to have all SFrame format definitions in one
-    central header file.
-
- arch/s390/include/asm/unwind_user_sframe.h |  8 ++++----
- kernel/unwind/sframe.c                     |  2 +-
- kernel/unwind/sframe.h                     | 16 ++++++++++++++++
- 3 files changed, 21 insertions(+), 5 deletions(-)
-
-diff --git a/arch/s390/include/asm/unwind_user_sframe.h b/arch/s390/include/asm/unwind_user_sframe.h
-index 2216e6921fd8..e5139cc2ba5a 100644
---- a/arch/s390/include/asm/unwind_user_sframe.h
-+++ b/arch/s390/include/asm/unwind_user_sframe.h
-@@ -7,16 +7,16 @@
- 
- static inline s32 arch_sframe_cfa_offset_decode(s32 offset)
+diff --git a/arch/riscv/include/asm/asm.h b/arch/riscv/include/asm/asm.h
+index a8a2af6dfe9d..2a6b831d9cdf 100644
+--- a/arch/riscv/include/asm/asm.h
++++ b/arch/riscv/include/asm/asm.h
+@@ -91,11 +91,7 @@
+ #endif
+=20
+ .macro asm_per_cpu dst sym tmp
+-	REG_L \tmp, TASK_TI_CPU_NUM(tp)
+-	slli  \tmp, \tmp, PER_CPU_OFFSET_SHIFT
+-	la    \dst, __per_cpu_offset
+-	add   \dst, \dst, \tmp
+-	REG_L \tmp, 0(\dst)
++	REG_L \tmp, TASK_TI_PERCPU_OFFSET(tp)
+ 	la    \dst, \sym
+ 	add   \dst, \dst, \tmp
+ .endm
+diff --git a/arch/riscv/include/asm/percpu.h b/arch/riscv/include/asm/percp=
+u.h
+new file mode 100644
+index 000000000000..c37a0fce6ebc
+--- /dev/null
++++ b/arch/riscv/include/asm/percpu.h
+@@ -0,0 +1,8 @@
++#ifndef __ASM_PERCPU_H
++#define __ASM_PERCPU_H
++
++#define __my_cpu_offset (current_thread_info()->percpu_offset)
++
++#include <asm-generic/percpu.h>
++
++#endif
+diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/=
+thread_info.h
+index f5916a70879a..da776b7a1d02 100644
+--- a/arch/riscv/include/asm/thread_info.h
++++ b/arch/riscv/include/asm/thread_info.h
+@@ -60,8 +60,9 @@ struct thread_info {
+ 	 */
+ 	long			kernel_sp;	/* Kernel stack pointer */
+ 	long			user_sp;	/* User stack pointer */
+-	int			cpu;
++	int			cpu;		// TODO: could be packed better
+ 	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
++	unsigned long		percpu_offset;	// XXX: randomly placed here
+ #ifdef CONFIG_SHADOW_CALL_STACK
+ 	void			*scs_base;
+ 	void			*scs_sp;
+diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offset=
+s.c
+index 6e8c0d6feae9..9c7bb4d7e3b3 100644
+--- a/arch/riscv/kernel/asm-offsets.c
++++ b/arch/riscv/kernel/asm-offsets.c
+@@ -50,6 +50,7 @@ void asm_offsets(void)
+ #endif
+=20
+ 	OFFSET(TASK_TI_CPU_NUM, task_struct, thread_info.cpu);
++	OFFSET(TASK_TI_PERCPU_OFFSET, task_struct, thread_info.percpu_offset);
+ 	OFFSET(TASK_THREAD_F0,  task_struct, thread.fstate.f[0]);
+ 	OFFSET(TASK_THREAD_F1,  task_struct, thread.fstate.f[1]);
+ 	OFFSET(TASK_THREAD_F2,  task_struct, thread.fstate.f[2]);
+diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+index 601a321e0f17..3c09c8f3e30c 100644
+--- a/arch/riscv/kernel/smpboot.c
++++ b/arch/riscv/kernel/smpboot.c
+@@ -41,6 +41,11 @@
+=20
+ static DECLARE_COMPLETION(cpu_running);
+=20
++void __init smp_prepare_boot_cpu(void)
++{
++	current_thread_info()->percpu_offset =3D per_cpu_offset(smp_processor_id(=
+));
++}
++
+ void __init smp_prepare_cpus(unsigned int max_cpus)
  {
--	return (offset << 3) + 160;
-+	return SFRAME_V2_S390X_CFA_OFFSET_DECODE(offset);
+ 	int cpuid;
+@@ -183,6 +188,7 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidl=
+e)
+ {
+ 	int ret =3D 0;
+ 	tidle->thread_info.cpu =3D cpu;
++	tidle->thread_info.percpu_offset =3D per_cpu_offset(cpu);
+=20
+ 	ret =3D start_secondary_cpu(cpu, tidle);
+ 	if (!ret) {
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 475bb5998295..2180a85b1403 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2199,6 +2199,7 @@ static inline void __set_task_cpu(struct task_struct =
+*p, unsigned int cpu)
+ 	 */
+ 	smp_wmb();
+ 	WRITE_ONCE(task_thread_info(p)->cpu, cpu);
++	WRITE_ONCE(task_thread_info(p)->percpu_offset, per_cpu_offset(cpu));
+ 	p->wake_cpu =3D cpu;
+ #endif
  }
- 
- static inline void arch_sframe_set_frame_reginfo(
- 	struct unwind_user_reginfo *reginfo,
- 	s32 offset)
- {
--	if (offset & 1) {
-+	if (SFRAME_V2_S390X_OFFSET_IS_REGNUM(offset)) {
- 		reginfo->loc = UNWIND_USER_LOC_REG;
--		reginfo->regnum = offset >> 1;
-+		reginfo->regnum = SFRAME_V2_S390X_OFFSET_DECODE_REGNUM(offset);
- 	} else if (offset) {
- 		reginfo->loc = UNWIND_USER_LOC_STACK;
- 		reginfo->frame_off = offset;
-@@ -27,7 +27,7 @@ static inline void arch_sframe_set_frame_reginfo(
- 
- static inline s32 arch_sframe_sp_val_off(void)
- {
--	return -160;
-+	return SFRAME_S390X_SP_VAL_OFFSET;
- }
- 
- #define sframe_cfa_offset_decode arch_sframe_cfa_offset_decode
-diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
-index e8658401a286..cd82de310c58 100644
---- a/kernel/unwind/sframe.c
-+++ b/kernel/unwind/sframe.c
-@@ -12,11 +12,11 @@
- #include <linux/mm.h>
- #include <linux/string_helpers.h>
- #include <linux/sframe.h>
--#include <asm/unwind_user_sframe.h>
- #include <linux/unwind_user_types.h>
- 
- #include "sframe.h"
- #include "sframe_debug.h"
-+#include <asm/unwind_user_sframe.h>
- 
- struct sframe_fre {
- 	unsigned int	size;
-diff --git a/kernel/unwind/sframe.h b/kernel/unwind/sframe.h
-index e9bfccfaf5b4..3e60b6e30b51 100644
---- a/kernel/unwind/sframe.h
-+++ b/kernel/unwind/sframe.h
-@@ -17,6 +17,7 @@
- #define SFRAME_ABI_AARCH64_ENDIAN_BIG		1
- #define SFRAME_ABI_AARCH64_ENDIAN_LITTLE	2
- #define SFRAME_ABI_AMD64_ENDIAN_LITTLE		3
-+#define SFRAME_ABI_S390X_ENDIAN_BIG		4	/* s390 64-bit (s390x) */
- 
- #define SFRAME_FDE_TYPE_PCINC			0
- #define SFRAME_FDE_TYPE_PCMASK			1
-@@ -68,4 +69,19 @@ struct sframe_fde {
- #define SFRAME_FRE_OFFSET_SIZE(data)		((data >> 5) & 0x3)
- #define SFRAME_FRE_MANGLED_RA_P(data)		((data >> 7) & 0x1)
- 
-+/* s390 64-bit (s390x) */
-+
-+#define SFRAME_S390X_SP_VAL_OFFSET			(-160)
-+
-+#define SFRAME_S390X_CFA_OFFSET_ADJUSTMENT		SFRAME_S390X_SP_VAL_OFFSET
-+#define SFRAME_S390X_CFA_OFFSET_ALIGNMENT_FACTOR	8
-+#define SFRAME_V2_S390X_CFA_OFFSET_DECODE(offset) \
-+  (((offset) * SFRAME_S390X_CFA_OFFSET_ALIGNMENT_FACTOR) \
-+   - SFRAME_S390X_CFA_OFFSET_ADJUSTMENT)
-+
-+#define SFRAME_V2_S390X_OFFSET_IS_REGNUM(offset) \
-+  ((offset) & 1)
-+#define SFRAME_V2_S390X_OFFSET_DECODE_REGNUM(offset) \
-+  ((offset) >> 1)
-+
- #endif /* _SFRAME_H */
--- 
-2.48.1
-
 
