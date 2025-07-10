@@ -1,219 +1,169 @@
-Return-Path: <linux-kernel+bounces-726279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26121B00AEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA6FAB00AF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0A835631C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:58:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E4A717E599
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121B02F49EA;
-	Thu, 10 Jul 2025 17:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C333E2F4A16;
+	Thu, 10 Jul 2025 17:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ONQ/FdIu"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="XHBQaFvP"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03F82F1FD6;
-	Thu, 10 Jul 2025 17:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65211DDC11
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752170330; cv=none; b=t0g9E8SbpnbyPCalqTCmXPt9uKIYnRQ+6AwpeCvvy/PUfDsJBMOict6gxPyyn35EouBFt1hwEPYxW/g6hbvXJjQilu3G1Az7juMz2yYmTj64VCCCyVXL+AjYaX8RMDQt5gVwAr6ib3B43vXfRwDHEZ9heIY8PMdg8RnZ0jeHC7k=
+	t=1752170342; cv=none; b=HZLIs9RSVAr1N72+NcsguYxNMh57OVL6j7F7d+Xvh5LuUseCSCsHQR0AHChYq1bpcro4SMZE9J1bvuLbOv2vJ0zPgF0LCzQ10X1u0OSLYPaPKCbUVI5kv6R8TaKVRIoi9gzK0ChXC/4h5ys03CWT2qVA+wcqftKXqX8RXGIt3MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752170330; c=relaxed/simple;
-	bh=RMiBxXMIExHjrQ5CjfuwngCONhN8pR/mYQ7OvvLxwQw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H1dNAXJl4SiSgJ+7uMGaoJCD/fp/UTNWF1J9LdZqL2kmK0/N38OkSTCaW3rE8v19/vJkVWdiG6fHx7sqwNeGii7LkK1ucP9GQtqX21vatik/RlYItugCkhBsLqKjNyxGMdt3YCiwJN0pPgTc5FG1YbKNLYHFke6LHu6Zyt38HVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ONQ/FdIu; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-747c2cc3419so1311241b3a.2;
-        Thu, 10 Jul 2025 10:58:48 -0700 (PDT)
+	s=arc-20240116; t=1752170342; c=relaxed/simple;
+	bh=gLPvs5+RdTSlZIaCs47AFBkItVYL7SyZ9thIkYN5Zw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkup011v7NvUa7DLKdEvgXvxUrcvj9P0PvZcrVStj6QGtR9WAHfj2U2/aqghtP2nIiuZb0nA/vOMEXxapCxOFD8vhpfPnObrKw0s5rvKiq5df8sf7uib3JFxhy30Re8IMKBK69R7+/bvgM6TN0B6hkoB2mEsLe1LP8O1ax+U1uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=XHBQaFvP; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-234b9dfb842so12712175ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:59:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752170328; x=1752775128; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7j+JCMiDb4JtXc3MOQmFv9GxAMqAiPIPGtSjr7S+qIk=;
-        b=ONQ/FdIupgst0JEg98aDLJthCirSeXVrMyGZazJrwSnBOn4shCKYmZ77UMeGudwwtr
-         URkL/ROpIOW4a85/tMG99TAIYd99T93ZnKhqBQmoou1lFK+sh8x7wAd6nar7yl0yn4nP
-         Yb55hUyesgf3lKZi5Eezpds2ukWYPaJuTK0cR5b3xBz781y+C03KpEmslY3/FuZ6Jz9f
-         QdpRwLbJ8wTnaQCACxEcH7fATttpcj5D65KaUF98HHYT9Lvrn3h+HSx9n+cLZgaF07jw
-         cTA3aZfMPIgSH5gLPZo+00EcqNTB5ZMtOa27ZQBt39avombZ9tXV+qCsxRO5M6VB078K
-         Dfcg==
+        d=ziepe.ca; s=google; t=1752170340; x=1752775140; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gLPvs5+RdTSlZIaCs47AFBkItVYL7SyZ9thIkYN5Zw4=;
+        b=XHBQaFvPWERoQNfUPE+zxG7PgAD5HW3hss1V6nZjJt0bzQA92vJEQ/ZMRDorl++IhT
+         V2OziG+V7hGucwRj+W5gFxEfaTFE7cODtwJJeFe0f7SEf2G7000yhXnsPdS2O8fWUdJ5
+         8U/RhKqGk0AytqKMCenGYM6weZR5p5NLINSjlHHltuBe91skLJBceuMkOh7C2U0XjIdk
+         jh43jvpb03KqG4hxugNurUxsA5FguOZ4L7sCHaUKWfljiEuCJ40bpDkyuqUSK3IopeGc
+         H4+9nGmqHnTlIpcLH9K2LP8pSpiqTMfYihmNuQDF/y5f4pLeOMi5L5VLFmBfkDi/7KRJ
+         tiwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752170328; x=1752775128;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7j+JCMiDb4JtXc3MOQmFv9GxAMqAiPIPGtSjr7S+qIk=;
-        b=jWpBgIa550nu1ggh0Mw/Hq64WFGhPqTtIHM8c7iJEZbLXuYBkZsBK0ZHm+u9hI2yKm
-         tY+6hP0K7ASiazmmzn58uUfeav46Ibza+oaHzwz1aAYI7f/PEbEEArrgRam5bnRKF+no
-         itNRNmqf2GufmrXMFqttmue3+KjGTc3ozXTtPo9VajuNbCPY4uwb7AxJshpcN+gtKoYB
-         4QhiId08t8Iq0Ev9O0ull6dBfriWJrF26LYneKs6hBphSB8U0wGUE/dpJEez13DdoY22
-         EA5NxJwYTJsWxpQQ+VJ7myqGdKkD/JqZlgAHZkdOOcCaEd1IFuKVvs2ySobFxRXEnMKc
-         V5Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwVqb39NggY7ISab7X2vFETJcD9xR5nvwfaPP417aGtrKBt1NbmmVpr46dbIac+9tGdu+pypVf6h5Kw18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkzNus7ee3XvJLIRPgymuvN72AQohYgfARRPjWlHwYZIkHz8oY
-	WUkX0uZA4AYzko3fPeFKvCI+VLwnatfi0ZEyiSqY2az7VBUtaxoLQenUxA0qvP8v
-X-Gm-Gg: ASbGncv73M9TPA6mpOwUsjfsKiCbFKNsRF7+gX+1nkFFsd0WgHb+9Lq3m504b2TdXxN
-	I5AKyrO4KPNiDZlc/eVlBxUduVE81MUA6Xeog6SOnI6A5ABoSpTiUWeTOO4sLUmh7E462u7bh0G
-	jlDuoCni1jqiKalQimfPouvsY27heF+4QztXXicmDQ52lhhtPYybNwEr16UmwJ9Fd5AOTcu5yrK
-	HmCmfBk/yXm7a+F7QnBdaDr/hEtv97LS6i3IWAsZlRavvRMSah45txNxz5Yx2iu8WnTo14epmDd
-	0kRfJEnLPy9AF1PIlVJpWD78gGOKv0r5OE6PxAixymIl7Gv9rCXC8vhuLwGrwu8l
-X-Google-Smtp-Source: AGHT+IGkkMII08ZOc6L7grJj22CXwVJWqsSmTzC56usdWEm9xdDsvdEpw1UTLx/jxrKjhfu26FYdcQ==
-X-Received: by 2002:a05:6a00:2e15:b0:748:f80c:b398 with SMTP id d2e1a72fcca58-74eb55b90bbmr5515241b3a.15.1752170328089;
-        Thu, 10 Jul 2025 10:58:48 -0700 (PDT)
-Received: from p920.. ([2001:569:799a:1600:36ac:5579:b731:a4fe])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ebfd2d26asm1621499b3a.76.2025.07.10.10.58.47
+        d=1e100.net; s=20230601; t=1752170340; x=1752775140;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gLPvs5+RdTSlZIaCs47AFBkItVYL7SyZ9thIkYN5Zw4=;
+        b=UYgWivnAovQZ1xu5v2l8nmHR0DeiAz/d27UKlwJJ3JmkHlt517guxFvCu67h7rKbBX
+         f84zmPRDTl4+nfg3DSWsWSkTUe4p2bx09BNT55N5SMIvF9fUu8jBtI0ldUAeg+6UKOkr
+         zfg4H8CHV1JMetufZz4VXKb7Q61DZJKzFGCzb63O4c7BUy82ViMNY/q+S//0y37pkqib
+         7usZ4xv7EyCQRvv6aNkxdBAn2Rkw7DjcKnNZJhepv9vRRqrtskfKuVDm6muH/47ZbERG
+         5CXFZ8tFjvG3E/rJpU34kkPOkrLXtpj0QCOqpFGnQu+cReyA+asRQrHd5RiWUdxQldU9
+         x4gA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Z1LHHXtY3xxacJUOze09jvSdXTP057wotUFks2wk7JwFZJaY/iF2dCKSKZY5lJeZw9cD6xbBDhclulg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5Xr5hXS44spVcR6MNfWYOAliGmsyZfJ78CYYsel22qOjDACFv
+	DEeCZocJK9BK+hg2XL9GLY6V6F7PpZhI3vZuBSQqHQHBrbjWm55EgQxXnLti9wyABLs=
+X-Gm-Gg: ASbGncu3ggCtRg04OwkuWvIuGIpryeQ7n1tgDQUVM5T+2Qwv5+xt382o3TvWUhe8OJJ
+	Ciy3DfdsN7a0bP12OmVUK1IxOPKog9GwBZX8hc/tph7xlixl4OEwFLLjM24d8uGkww2B3XEjSVG
+	xR1WI/ylYx5YE5BfTtga/BxwfalrHJAfqJlZyU+I1PU7LgexvBm8CFrhQvNTlLIDcdAZW08JxDn
+	hP4UQj5WguAyVd9yxu67Bn5oHc09Ir9pyQaIqrGHEepD3s8ix3zzFiHoL15s25vuQBnzJxxoqDb
+	Yp5dRzqwQWvMPj5bplfXcaNZLrgSklJFjqPL
+X-Google-Smtp-Source: AGHT+IGsdYCi7RfWhcH25FuRFcSoC6JS2JrRDFNCNj7y5398JhpEwT92bbA8QjM5IB5UpkxovQPYtQ==
+X-Received: by 2002:a17:902:e78d:b0:234:a139:1215 with SMTP id d9443c01a7336-23dee28fa46mr823515ad.35.1752170340041;
+        Thu, 10 Jul 2025 10:59:00 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42aef8fsm29025605ad.76.2025.07.10.10.58.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 10:58:47 -0700 (PDT)
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+544248a761451c0df72f@syzkaller.appspotmail.com,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Subject: [PATCH] ext4: bail out when EXT4_INLINE_DATA_FL lacks system.data xattr
-Date: Thu, 10 Jul 2025 10:58:38 -0700
-Message-ID: <20250710175837.29822-2-moonhee.lee.ca@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 10 Jul 2025 10:58:59 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uZvXu-00000007x6B-22YZ;
+	Thu, 10 Jul 2025 14:58:58 -0300
+Date: Thu, 10 Jul 2025 14:58:58 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Alexey Kardashevskiy <aik@amd.com>
+Cc: Vishal Annapurve <vannapurve@google.com>, Fuad Tabba <tabba@google.com>,
+	Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com,
+	akpm@linux-foundation.org, amoorthy@google.com,
+	anthony.yznaga@oracle.com, anup@brainfault.org,
+	aou@eecs.berkeley.edu, bfoster@redhat.com,
+	binbin.wu@linux.intel.com, brauner@kernel.org,
+	catalin.marinas@arm.com, chao.p.peng@intel.com,
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
+	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
+	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com,
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
+	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
+	rick.p.edgecombe@intel.com, rientjes@google.com,
+	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
+	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
+	suzuki.poulose@arm.com, thomas.lendacky@amd.com,
+	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+	willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
+	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
+ KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
+Message-ID: <20250710175858.GB1870174@ziepe.ca>
+References: <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
+ <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
+ <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
+ <20250624130811.GB72557@ziepe.ca>
+ <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
+ <31beeed3-b1be-439b-8a5b-db8c06dadc30@amd.com>
+ <CAGtprH9gojp6hit2SZ0jJBJnzuRvpfRhSa334UhAMFYPZzp4PA@mail.gmail.com>
+ <8f04f1df-d68d-4ef8-b176-595bbf00a9d1@amd.com>
+ <CAGtprH-KhEM6=zegq-36yomZ8PX22EmaZpMPkLnkyzn51EF25w@mail.gmail.com>
+ <09db374e-fa7d-4c1d-bf03-aaaafd93bd01@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <09db374e-fa7d-4c1d-bf03-aaaafd93bd01@amd.com>
 
-A syzbot-generated disk image triggered a BUG_ON in
-ext4_update_inline_data() when an inode had the EXT4_INLINE_DATA_FL flag
-set but lacked the required system.data extended attribute.
+On Thu, Jul 10, 2025 at 04:57:25PM +1000, Alexey Kardashevskiy wrote:
 
-ext4_prepare_inline_data() now checks for the presence of this xattr and
-returns -EFSCORRUPTED if it is missing. This prevents corrupted inodes
-from reaching the update path and causing a crash.
+> Currently I handle this from the KVM with a hack to get IOPDE from
+> AMD IOMMU so both 2MB RMP entry and IOPDE entries are smashed in one
+> go in one of many firmwares running on EPYC, and atm this is too
+> hacky to be posted even as an RFC. This likely needs to move to
+> IOMMUFD then (via some callbacks) which could call AMD IOMMU which
+> then would call that firmware (called "TMPM" and it is not the PSP
+> which is "TSM), probably. Thanks,
 
-[1] Syzbot crash log:
+Wasn't the issue with the iommu that it needed to have a PTE break
+whenever the shared/private changed in the RMP? Because the HW can't
+handle an IOPTE that crosses more than one RMP entry? Or do I
+misunderstand the problem?
 
-  EXT4-fs (loop0): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: writeback.
-  fscrypt: AES-256-XTS using implementation "xts-aes-aesni-avx"
-  loop0: detected capacity change from 512 to 64
-  ------------[ cut here ]------------
-  kernel BUG at fs/ext4/inline.c:357!
-  Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-  CPU: 0 UID: 0 PID: 5499 Comm: syz.0.16 Not tainted 6.16.0-rc4-syzkaller-00348-g772b78c2abd8 #0 PREEMPT(full)
-  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-  RIP: 0010:ext4_update_inline_data+0x4e8/0x4f0 fs/ext4/inline.c:357
-  Code: ...
-  Call Trace:
-   <TASK>
-   ext4_prepare_inline_data+0x141/0x1d0 fs/ext4/inline.c:415
-   ext4_generic_write_inline_data+0x207/0xc90 fs/ext4/inline.c:692
-   ext4_try_to_write_inline_data+0x80/0xa0 fs/ext4/inline.c:763
-   ext4_write_begin+0x2d8/0x1680 fs/ext4/inode.c:1281
-   generic_perform_write+0x2c7/0x910 mm/filemap.c:4112
-   ext4_buffered_write_iter+0xce/0x3a0 fs/ext4/file.c:299
-   ext4_file_write_iter+0x298/0x1bc0 fs/ext4/file.c:-1
-   new_sync_write fs/read_write.c:593 [inline]
-   vfs_write+0x548/0xa90 fs/read_write.c:686
-   ksys_write+0x145/0x250 fs/read_write.c:738
-   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-  RIP: ...
-   </TASK>
+If this is the problem I was expecting the page table code that
+translates the guest memfd into the iommu PTEs would respect the
+shared/private conversion boundaries and break up the PTEs
+automatically.
 
-[2] Reproducer image:
-  https://storage.googleapis.com/syzbot-assets/f97118969515/mount_0.gz
+I had thought there were three versions of of how to copy from guest
+memfd into the IOPTEs:
+ - HW must never have a private physaddr in an IOPTE
+ - HW must have IOPTEs entirely private or shared
+ - HW handles everything and IOPTEs should be maximally sized
 
-[3] e2fsck output on the provided image:
+Is this right? Is AMD #2?
 
-  $ e2fsck -fn mount_0
-    e2fsck 1.47.0 (5-Feb-2023)
-    One or more block group descriptor checksums are invalid.  Fix? no
-
-    Group descriptor 0 checksum is 0x8245, should be 0x353a.  IGNORED.
-    Pass 1: Checking inodes, blocks, and sizes
-    Inode 12 has INLINE_DATA_FL flag but extended attribute not found.  Truncate? no
-    Inode 16, i_blocks is 3298534883346, should be 18.  Fix? no
-    Inode 17, i_blocks is 17592186044416, should be 0.  Fix? no
-
-    Pass 2: Checking directory structure
-    Symlink /file0/file1 (inode #14) is invalid.
-    Clear? no
-
-    Entry 'file1' in /file0 (12) has an incorrect filetype (was 7, should be 0).
-    Fix? no
-
-    Directory inode 11, block #5, offset 0: directory corrupted
-    Salvage? no
-
-    e2fsck: aborted
-    syzkaller: ********** WARNING: Filesystem still has errors **********
-
-Reported-by: syzbot+544248a761451c0df72f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=544248a761451c0df72f
-Fixes: 67cf5b09a46f ("ext4: add the basic function for inline data support")
-Tested-by: syzbot+544248a761451c0df72f@syzkaller.appspotmail.com
-Signed-off-by: Moon Hee Lee <moonhee.lee.ca@gmail.com>
----
- fs/ext4/inline.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index a1bbcdf40824..d9dcb0b09e5c 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -399,6 +399,13 @@ static int ext4_update_inline_data(handle_t *handle, struct inode *inode,
- static int ext4_prepare_inline_data(handle_t *handle, struct inode *inode,
- 				    loff_t len)
- {
-+	struct ext4_xattr_ibody_find is = {
-+		.s = { .not_found = -ENODATA, },
-+	};
-+	struct ext4_xattr_info i = {
-+		.name_index = EXT4_XATTR_INDEX_SYSTEM,
-+		.name = EXT4_XATTR_SYSTEM_DATA,
-+	};
- 	int ret, size, no_expand;
- 	struct ext4_inode_info *ei = EXT4_I(inode);
- 
-@@ -409,6 +416,19 @@ static int ext4_prepare_inline_data(handle_t *handle, struct inode *inode,
- 	if (size < len)
- 		return -ENOSPC;
- 
-+	ret = ext4_get_inode_loc(inode, &is.iloc);
-+	if (ret)
-+		goto out;
-+
-+	ret = ext4_xattr_ibody_find(inode, &i, &is);
-+	if (ret)
-+		goto out;
-+
-+	if (is.s.not_found) {
-+		ret = -EFSCORRUPTED;
-+		goto out;
-+	}
-+
- 	ext4_write_lock_xattr(inode, &no_expand);
- 
- 	if (ei->i_inline_off)
-@@ -417,6 +437,8 @@ static int ext4_prepare_inline_data(handle_t *handle, struct inode *inode,
- 		ret = ext4_create_inline_data(handle, inode, len);
- 
- 	ext4_write_unlock_xattr(inode, &no_expand);
-+out:
-+	brelse(is.iloc.bh);
- 	return ret;
- }
- 
--- 
-2.43.0
-
+Jason
 
