@@ -1,172 +1,124 @@
-Return-Path: <linux-kernel+bounces-725434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9F6AFFF18
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:22:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7357AFFF1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A49A1C27962
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:22:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6F70480EE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDB32D6638;
-	Thu, 10 Jul 2025 10:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3792D6618;
+	Thu, 10 Jul 2025 10:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ngO6uyn/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AAcNKBuW"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B8928B7C6;
-	Thu, 10 Jul 2025 10:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5EC27FD5A;
+	Thu, 10 Jul 2025 10:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752142911; cv=none; b=Su2pfogCcjirXEe2hWiko7qMG56d+zQr4Gz8JyAanhRVBdLRhpl6X/jvYsEGYN2dih5A6PYUyK28Ovs6/+NBSL+QjNo4+KmgXu+yETtlrs1En2+dKVdNTEbQ/fasJxZ7//qRHzVATVKUe95U6SqTseISedU+iIO8t+uDhiz7+qQ=
+	t=1752142972; cv=none; b=JQv/KbwTWjy/NnTwIjaxhv6FlPmGFKJ8h2SZQcMsUeCqZ/tVZgLX/Q4VBrBQa0V0fG/d8ukFVyuGlRmbeCC4ZyheyQdv9YKvEfwmTL2IMFt8HPw2d0taOIFMZ+9bfusRzH5s8E5GGaxuDEYif1xGGk9Xqu63jg+yGDjr29XwZRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752142911; c=relaxed/simple;
-	bh=A+9Sz68hzFxOWXlYTrr0jLnxA/21fIK4aonpJxZXUMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fHBoHvMdiG47SYQ/jrfpq7wxoYQVUo6sZvmUqze7IjoPeFQUQqGRNvJFdcMvT9HR5XaSebxtSKo+ktMY5bbJqkBbI/xEYSsFcp4iq8+DnoIivDmv2+El513/muvc+vQh5JWThocgqiF1f4vtf3BMYI08OMWIRHdEFa4Cy26hibQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ngO6uyn/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A97I30016625;
-	Thu, 10 Jul 2025 10:21:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tf3urf9uVqztqSfyUPaLE7aNRQmb9rU20q9mQcpzNms=; b=ngO6uyn/9GojR7e6
-	qs0WAwVOe6Tma28F8jn0r2Z7jr2kFNgSTwAp5g9vwTd566AXh6yRJ6Snq9GlU41d
-	xHlrsifdsyrIO6XEPTNpTbwXGkyz6tfqWHGV4/eXHsme9xx2128z/CkzhX189j4c
-	qwagUC+a8FJCEcPcXEt5hpHw7CJ4DsCslpGfhcprNEhvOgLFmT3i7suCOsjc5es/
-	TXxzg2RxWwbcr5teoHh6D6kQdtHPTdK8TD28WyCHw1pJ+RdXgRlV2oPIQmoFtjQE
-	FWMMWkbUqc1IHJ2BRdVDNW3KhT6zR1XmWV8SJXW001BFcKJtTFwqFJ8RlvTwSfSZ
-	mGuIbA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smap4k1k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 10:21:45 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56AALiff026017
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 10:21:44 GMT
-Received: from [10.218.23.250] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 10 Jul
- 2025 03:21:38 -0700
-Message-ID: <80848e86-1c0d-4edf-ac25-006a5cd1779f@quicinc.com>
-Date: Thu, 10 Jul 2025 15:50:57 +0530
+	s=arc-20240116; t=1752142972; c=relaxed/simple;
+	bh=aIIZQ1CXQ1yODxoyueZTb2QQqz00XYiPBjdu2QjjfpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kO6m+NBBiYzyb+Leo1j5ms5TA+w3V51QKes7V5qPHL2Jj/JJyoJoxl9tczjNW4KXw/2XdXZohRaVQkLQg1G7ZnyH03BcYkKzXAnFMcEdEV7RK9hl7V0Ayxla4oNpFWLD03m9m3+EqSO9xUIG+mTTkqJ0GnOtmamVmvIEYpwSksM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=AAcNKBuW; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752142891;
+	bh=aIIZQ1CXQ1yODxoyueZTb2QQqz00XYiPBjdu2QjjfpU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AAcNKBuW5cQWLR7QggFxaLjOYLfOaVs7uXdReVQ5S/qpEDsi9EPVFS41cJ/WJahJ/
+	 QKTd0aYlbnIT/TbgNgQTuQ7j2QtjB8Nb0othu0t+r+e4GBmEnjhFJqEmckKEcY4+AV
+	 lMojff8uOBqzDKRuOWmay6KppqGaBj5WtNza9s5GJzizls81F8OrSZLZxK0tkdiAgU
+	 KJx5cPr9HTObaQToTUql+clG2DAMyJ34Apx04/pyI5MqDmtpxQ/KY/JcHjb5NnrS0R
+	 zhRTS+61kOm/dvxlnS3qjtMbg6CODERmfkEmumPopZSZlB71fEqkjs6Lq38azXS4sB
+	 fgQG6MRFZHjUQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bd9qb65zRz4wcd;
+	Thu, 10 Jul 2025 20:21:31 +1000 (AEST)
+Date: Thu, 10 Jul 2025 20:22:34 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>, LKML
+ <linux-kernel@vger.kernel.org>, linuxppc-dev
+ <linuxppc-dev@lists.ozlabs.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: [next-20250709] Fails to boot on IBM Power Server
+Message-ID: <20250710202234.7fd45cd1@canb.auug.org.au>
+In-Reply-To: <fe13e9e2-8ac5-46c7-b925-b61d35104ed1@linux.ibm.com>
+References: <fe13e9e2-8ac5-46c7-b925-b61d35104ed1@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] dt-bindings: clock: qcom,qcs404-turingcc: Reference
- qcom,gcc.yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jeff Hugo
-	<jeff.hugo@oss.qualcomm.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh
- Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250709-gcc-ref-fixes-v1-0-ceddde06775b@quicinc.com>
- <20250709-gcc-ref-fixes-v1-4-ceddde06775b@quicinc.com>
- <74785dcd-6436-40a6-b747-a4890edc2113@kernel.org>
-Content-Language: en-US
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-In-Reply-To: <74785dcd-6436-40a6-b747-a4890edc2113@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Ar7u3P9P c=1 sm=1 tr=0 ts=686f9439 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=OnOfrgqvBbQOueBi47sA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 7oMePWCFDFo_bjfu_8GD2J1b09EWO55c
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDA4OCBTYWx0ZWRfX771G0X3zTjn+
- izOg0Pd3JysxSLbyKmHiWovPpi1N+tMWga8ySHyl7pipoIrw0aM+rssH12sqvi5mP7ns1F+D1UE
- I61OlqrdeH8Sz8bB4j3PYObFWW0wh0jehJ/mLdYUQNJyisO2ee+uhE8lZYff7ub+SFrrK+wMJ4u
- y4JLX5hE3vGXnBxKF+t2YI2362aA1SgfsW2GXuSQ/G4LX/IJO7mkN27DhGHEI7eZhxFPETi2Cp7
- gQ9e9vA/yNmos5WtTKHTYgc6vcaBUcP7QFH2WGBks+nVAcNFtC2U/VK3KoBLxRFgc6o8d08Bcjo
- Q18izkAc36HHUb5F/4a6PBHBbwepSkeK+v9EkuO36W0HzJQLQWLessVNVbFlyVzhawPHrj3rc02
- EqlKyylTf/VhYNH8WP0wGhJxltXDDW1NCqGyHntOmV54BKmGQ0RlO+89WMY/JuoTW36/rRUC
-X-Proofpoint-GUID: 7oMePWCFDFo_bjfu_8GD2J1b09EWO55c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_01,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015 adultscore=0
- phishscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507100088
+Content-Type: multipart/signed; boundary="Sig_/l8d0fWJRapxz1o6JFJg5qXT";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/l8d0fWJRapxz1o6JFJg5qXT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 7/9/2025 3:37 PM, Krzysztof Kozlowski wrote:
-> On 09/07/2025 11:37, Satya Priya Kakitapalli wrote:
->> Reference the common qcom,gcc.yaml schema to unify the common
->> parts of the binding.
->>
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
->>   .../devicetree/bindings/clock/qcom,qcs404-turingcc.yaml | 17 ++++-------------
->>   1 file changed, 4 insertions(+), 13 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
->> index 033e010754a26bd03e02a364b0a6f36d87a3af62..794984f563fe3eb253aaf7524205097cf0c62711 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
->> @@ -13,26 +13,17 @@ properties:
->>     compatible:
->>       const: qcom,qcs404-turingcc
->>   
->> -  reg:
->> -    maxItems: 1
->> -
->>     clocks:
->>       maxItems: 1
->>   
->> -  '#clock-cells':
->> -    const: 1
->> -
->> -  '#reset-cells':
->> -    const: 1
->> -
->>   required:
->>     - compatible
->> -  - reg
->>     - clocks
->> -  - '#clock-cells'
->> -  - '#reset-cells'
-> No, this becomes now power domain provider without explanation.
+Hi Venkat,
 
-
-My bad, I will drop the files which do not have the power domain cells 
-in my next post.
-
-
-> Don't just blindly copy other people's commits without understanding them.
+On Thu, 10 Jul 2025 14:56:38 +0530 Venkat Rao Bagalkote <venkat88@linux.ibm=
+.com> wrote:
 >
-> Best regards,
-> Krzysztof
+> Greetings!!!
+>=20
+>=20
+> IBM CI has reported a boot issue on the latest linux-next(20250709) kerne=
+l fails on IBM Power servers.
+>=20
+> System entering to emergency mode.
+>=20
+>=20
+> Error:
+>=20
+>=20
+> [=C2=A0=C2=A0=C2=A0 1.071678] ibmveth 30000002 net0: renamed from eth0
+> [=C2=A0=C2=A0=C2=A0 1.074227] ibmvscsi 30000069: SRP_VERSION: 16.a
+> [=C2=A0=C2=A0=C2=A0 1.074238] ibmvscsi 30000069: Error -4 opening adapter
+> [=C2=A0=C2=A0=C2=A0 1.074255] ibmvscsi 30000069: couldn't initialize crq.=
+ rc=3D-1
+> [=C2=A0=C2=A0=C2=A0 1.181132] ibmvscsi 30000069: probe with driver ibmvsc=
+si failed with error -1
+
+This has been fixed in next-20250710, just released.
+
+See: https://lore.kernel.org/linux-next/20250709233953.7afb7a8a@canb.auug.o=
+rg.au/
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/l8d0fWJRapxz1o6JFJg5qXT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhvlGoACgkQAVBC80lX
+0Gw2QAf/eDZwYL+6yOtKX23a7y+ngUbVR35WAHoP6wLSCXCEywvQbBkier9Fdewy
+DguGV05OBY145Ea/tEz+j7iY2TfM+qaM2MRAmJWMh9uBRQ4TfMyuGFiHZwcms5RF
+gJezTBZtdDXsZQdMH9xiEIPmjptwY2Ki1WV5YdmFKvz8h7fwvbV50kYSF0/RqdTW
+f8RziQafqx0fhlHoHyRFyHcESAFxklZukyIsLHcE49xanAVXtLSCdqDB7Xr5cCSk
+l7LmN4/b7N/KERk1IwdKT8nfdrOYgsavAQWFUES/wwT1uzSBBtx1BLEAf0j8O4rr
+DLF4iZ/JxhPZ6laIhpQvlJ8SSxfWog==
+=d49c
+-----END PGP SIGNATURE-----
+
+--Sig_/l8d0fWJRapxz1o6JFJg5qXT--
 
