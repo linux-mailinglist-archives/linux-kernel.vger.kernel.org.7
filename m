@@ -1,164 +1,262 @@
-Return-Path: <linux-kernel+bounces-725667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F13B00243
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:44:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC69B00248
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060D3567251
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:43:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B605F17BF89
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6F1268FED;
-	Thu, 10 Jul 2025 12:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1453811CA0;
+	Thu, 10 Jul 2025 12:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="scdYbRe1"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K5ZnZxQV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FCB255F22;
-	Thu, 10 Jul 2025 12:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7488944F
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752151403; cv=none; b=XSkSnmsQrf0idz9IVQedSqYqktODNg86hrxCAASqlXuTr/+bw7y1/0uNm+3bVGrGqof6EkmWpQ9EySKZcK7SyGBQwJBgnoycWhlx3oCMYNnL3DPVqr7/kVhKG54ujBfg7plahQLXwFj+FktvrcdaTatGFPxoL1855TqReBIAsOo=
+	t=1752151542; cv=none; b=moNr9giSNe+4GyV9m9stI2FfsbUVpc2FuCve/Ab12X53N+6gW7U/trQFGchkEZOPYblhLUquR/7XP1ZsiMDIB/x+4Wo2xmBpg8wv4xEJIokBTqz6lJPeEj7rmdKtAp6GOlRZyPSzaICSM4RnbGdHan0SVv4qI/kEvKK0cD5s2xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752151403; c=relaxed/simple;
-	bh=YAlRdTBtbltqIObG/wS2N/TUks/eUA85AP5/ETkC2Ao=;
-	h=From:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=fasMCNOBGAH/xkLhwdL4CHMXdWmS3HUMlzAWGFUKqrYt4y4wBJ8OcP7yPv+CXPED9H2SUiZ2VCHV4jF1Ux8hvxzco5iqte3tgntIpTP27axyZpAXuCYyJlcUZk/SQIZS+Eq4/BBjYKlcXi4KVhyhMUcZ7/eFtmllwezmeW2BdFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=scdYbRe1; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1752151402; x=1783687402;
-  h=from:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TcL90y9yyUrQNV6wzTUzXovTLknFtEhr31RpPeHLwCo=;
-  b=scdYbRe1DBGGqZtpyHWStknKdtLzrB89Epdct++CuC3XyAJg3E+Dgtuq
-   mb19Nz9JwGm3scKMZbw1oTf8zbZafwNnCmKeigg2oP8cKtEVwk/kai5En
-   GUarli8zwiXurTbOkUzDR0/pDLAftgky8ZY0VqXT0CKBBoQQg+/WOpMLw
-   gXa1t72FEdVr0yL8LdnhEmFDLKypu2g2kLUh5Rla3a8AlAUL54p8iNVG5
-   oVGlo0swdXG6+ZfS1GePuTdPyC3S0xXcKdQ8S9Jf7zWq7YhP7q5Lm+m3T
-   hJC/o4v3thyypFw9ZoUyvTNKFrdskx4N53WLIfzdGYJY3lYvRWDoSDZPV
-   Q==;
-X-IronPort-AV: E=Sophos;i="6.16,300,1744070400"; 
-   d="scan'208";a="213811787"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 12:43:19 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.10.100:33526]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.44.180:2525] with esmtp (Farcaster)
- id 8ccd098b-9821-4a92-b3a0-d3d116f3a7ae; Thu, 10 Jul 2025 12:43:18 +0000 (UTC)
-X-Farcaster-Flow-ID: 8ccd098b-9821-4a92-b3a0-d3d116f3a7ae
-Received: from EX19D008EUC002.ant.amazon.com (10.252.51.146) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 10 Jul 2025 12:43:18 +0000
-Received: from EX19D008EUC001.ant.amazon.com (10.252.51.165) by
- EX19D008EUC002.ant.amazon.com (10.252.51.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 10 Jul 2025 12:43:18 +0000
-Received: from EX19D008EUC001.ant.amazon.com ([fe80::9611:c62b:a7ba:aee1]) by
- EX19D008EUC001.ant.amazon.com ([fe80::9611:c62b:a7ba:aee1%3]) with mapi id
- 15.02.1544.014; Thu, 10 Jul 2025 12:43:18 +0000
-From: "Heyne, Maximilian" <mheyne@amazon.de>
-CC: "Heyne, Maximilian" <mheyne@amazon.de>, Harshit Mogalapalli
-	<harshit.m.mogalapalli@oracle.com>, Oleg Nesterov <oleg@redhat.com>, "Eric W.
- Biederman" <ebiederm@xmission.com>, Andrew Morton
-	<akpm@linux-foundation.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>, "Sauerwein, David" <dssauerw@amazon.de>, "Sasha
- Levin" <sashal@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>
-Subject: [RESEND PATCH 5.15] fs/proc: do_task_stat: use __for_each_thread()
-Thread-Topic: [RESEND PATCH 5.15] fs/proc: do_task_stat: use
- __for_each_thread()
-Thread-Index: AQHb8Zg2fZamDUZRE0iXs8i1qPy6QA==
-Date: Thu, 10 Jul 2025 12:43:18 +0000
-Message-ID: <20250710-yams-adolf-9eb7e4b2@mheyne-amazon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="iso-8859-1"
+	s=arc-20240116; t=1752151542; c=relaxed/simple;
+	bh=qzM1J0IyqdNKe7xLcZao/gywxjKq1jYq0uST8bF7sn4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u6ECCYo3jV8cThmBm2HM8AxKZBa24n7/umHVwYnUz42G04fL/s2H+ltQa8hpgBIgD3mZDyC52wCA6k2k0fFQER+9wf7xd9coZMrX1Vb42uDWbg7zcKTgP1MLTtKdWioi7r5CcWTDltmI//ijwF6Ayov/bQw9O0+t9FSUn2V9tgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K5ZnZxQV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752151538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2BqWVLy/q6rFPIIJjYRdyMkSRIe24b5r477c8HimWtw=;
+	b=K5ZnZxQV/xbGlkjKjJjkyI97LZf1wlv65k5gH0PbeWA23usoG6vOIVXsfKxMRlvCPIwxaz
+	n4OR0MIb/CbqO9lA3BXQGR5ZXY6rTvDjt+4+cX2vMseo7UxPdMVz6/Snhq4ijPOpto+CC7
+	HTNCOh+8dn/nLNgN8IGyej6/CX3lV5Y=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-651-PQ5puK5KN1aNduoGAIufKA-1; Thu,
+ 10 Jul 2025 08:45:35 -0400
+X-MC-Unique: PQ5puK5KN1aNduoGAIufKA-1
+X-Mimecast-MFC-AGG-ID: PQ5puK5KN1aNduoGAIufKA_1752151534
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EB91C18089B5;
+	Thu, 10 Jul 2025 12:45:33 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.45.224.173])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D2D0419560AD;
+	Thu, 10 Jul 2025 12:45:31 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.16-rc6
+Date: Thu, 10 Jul 2025 14:45:26 +0200
+Message-ID: <20250710124526.32220-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Oleg Nesterov <oleg@redhat.com>
+Hi Linus!
 
-[ Upstream commit 7904e53ed5a20fc678c01d5d1b07ec486425bb6a ]
+A slightly larger number of regressions than usual, but I'm not aware of
+any other pending ones.
 
-do/while_each_thread should be avoided when possible.
+The following changes since commit 17bbde2e1716e2ee4b997d476b48ae85c5a47671:
 
-Link: https://lkml.kernel.org/r/20230909164501.GA11581@redhat.com
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Stable-dep-of: 7601df8031fd ("fs/proc: do_task_stat: use sig->stats_lock to=
- gather the threads/children stats")
-Cc: stable@vger.kernel.org
-[mheyne: adjusted context]
-Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
----
+  Merge tag 'net-6.16-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-07-03 09:18:55 -0700)
 
-Compile-tested only.
-We're seeing soft lock-ups with 5.10.237 because of the backport of
-commit 4fe85bdaabd6 ("fs/proc: do_task_stat: use sig->stats_lock to
-gather the threads/children stats"). I'm assuming this is broken on 5.15
-too.
+are available in the Git repository at:
 
----
- fs/proc/array.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.16-rc6
 
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 2cb01aaa6718..2ff568dc5838 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -530,18 +530,18 @@ static int do_task_stat(struct seq_file *m, struct pi=
-d_namespace *ns,
- 		cgtime =3D sig->cgtime;
- =
+for you to fetch changes up to dd831ac8221e691e9e918585b1003c7071df0379:
 
- 		if (whole) {
--			struct task_struct *t =3D task;
-+			struct task_struct *t;
- =
+  net/sched: sch_qfq: Fix null-deref in agg_dequeue (2025-07-10 11:08:35 +0200)
 
- 			min_flt =3D sig->min_flt;
- 			maj_flt =3D sig->maj_flt;
- 			gtime =3D sig->gtime;
- =
+----------------------------------------------------------------
+Including fixes from Bluetooth.
 
- 			rcu_read_lock();
--			do {
-+			__for_each_thread(sig, t) {
- 				min_flt +=3D t->min_flt;
- 				maj_flt +=3D t->maj_flt;
- 				gtime +=3D task_gtime(t);
--			} while_each_thread(task, t);
-+			}
- 			rcu_read_unlock();
- 		}
- 	} while (need_seqretry(&sig->stats_lock, seq));
--- =
+Current release - regressions:
 
-2.47.1
+  - tcp: refine sk_rcvbuf increase for ooo packets
 
+  - bluetooth: fix attempting to send HCI_Disconnect to BIS handle
 
+  - rxrpc: fix over large frame size warning
 
+  - eth: bcmgenet: initialize u64 stats seq counter
 
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+Previous releases - regressions:
+
+  - tcp: correct signedness in skb remaining space calculation
+
+  - sched: abort __tc_modify_qdisc if parent class does not exist
+
+  - vsock: fix transport_{g2h,h2g} TOCTOU
+
+  - rxrpc: fix bug due to prealloc collision
+
+  - tipc: fix use-after-free in tipc_conn_close().
+
+  - bluetooth: fix not marking Broadcast Sink BIS as connected
+
+  - phy: qca808x: fix WoL issue by utilizing at8031_set_wol()
+
+  - eth: am65-cpsw-nuss: fix skb size by accounting for skb_shared_info
+
+Previous releases - always broken:
+
+  - netlink: fix wraparounds of sk->sk_rmem_alloc.
+
+  - atm: fix infinite recursive call of clip_push().
+
+  - eth: stmmac: fix interrupt handling for level-triggered mode in DWC_XGMAC2
+
+  - eth: rtsn: fix a null pointer dereference in rtsn_probe()
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Alok Tiwari (1):
+      net: thunderx: avoid direct MTU assignment after WRITE_ONCE()
+
+Chen-Yu Tsai (1):
+      dt-bindings: net: sun8i-emac: Rename A523 EMAC0 to GMAC0
+
+Chintan Vankar (1):
+      net: ethernet: ti: am65-cpsw-nuss: Fix skb size by accounting for skb_shared_info
+
+Christophe JAILLET (1):
+      net: airoha: Fix an error handling path in airoha_probe()
+
+David Howells (3):
+      rxrpc: Fix over large frame size warning
+      rxrpc: Fix bug due to prealloc collision
+      rxrpc: Fix oops due to non-existence of prealloc backlog struct
+
+Eric Dumazet (2):
+      tcp: refine sk_rcvbuf increase for ooo packets
+      selftests/net: packetdrill: add tcp_ooo-before-and-after-accept.pkt
+
+EricChan (1):
+      net: stmmac: Fix interrupt handling for level-triggered mode in DWC_XGMAC2
+
+Haoxiang Li (1):
+      net: ethernet: rtsn: Fix a null pointer dereference in rtsn_probe()
+
+Jakub Kicinski (8):
+      Merge branch 'fix-qca808x-wol-issue'
+      Merge tag 'for-net-2025-07-03' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
+      Merge branch 'allwinner-a523-rename-emac0-to-gmac0'
+      Merge branch 'vsock-fix-transport_-h2g-g2h-dgram-local-toctou-issues'
+      Merge branch 'net-phy-smsc-robustness-fixes-for-lan87xx-lan9500'
+      Merge branch 'atm-clip-fix-infinite-recursion-potential-null-ptr-deref-and-memleak'
+      Merge branch 'tcp-better-memory-control-for-not-yet-accepted-sockets'
+      Merge branch 'rxrpc-miscellaneous-fixes'
+
+Jason Xing (1):
+      bnxt_en: eliminate the compile warning in bnxt_request_irq due to CONFIG_RFS_ACCEL
+
+Jiayuan Chen (1):
+      tcp: Correct signedness in skb remaining space calculation
+
+Kuniyuki Iwashima (5):
+      netlink: Fix wraparounds of sk->sk_rmem_alloc.
+      tipc: Fix use-after-free in tipc_conn_close().
+      atm: clip: Fix potential null-ptr-deref in to_atmarpd().
+      atm: clip: Fix memory leak of struct clip_vcc.
+      atm: clip: Fix infinite recursive call of clip_push().
+
+Louis Peens (1):
+      MAINTAINERS: remove myself as netronome maintainer
+
+Luiz Augusto von Dentz (4):
+      Bluetooth: hci_sync: Fix not disabling advertising instance
+      Bluetooth: hci_core: Remove check of BDADDR_ANY in hci_conn_hash_lookup_big_state
+      Bluetooth: hci_sync: Fix attempting to send HCI_Disconnect to BIS handle
+      Bluetooth: hci_event: Fix not marking Broadcast Sink BIS as connected
+
+Luo Jie (2):
+      net: phy: qcom: move the WoL function to shared library
+      net: phy: qcom: qca808x: Fix WoL issue by utilizing at8031_set_wol()
+
+Michal Luczaj (3):
+      vsock: Fix transport_{g2h,h2g} TOCTOU
+      vsock: Fix transport_* TOCTOU
+      vsock: Fix IOCTL_VM_SOCKETS_GET_LOCAL_CID to check also `transport_local`
+
+Oleksij Rempel (3):
+      net: phy: smsc: Fix Auto-MDIX configuration when disabled by strap
+      net: phy: smsc: Force predictable MDI-X state on LAN87xx
+      net: phy: smsc: Fix link failure in forced mode with Auto-MDIX
+
+Ryo Takakura (1):
+      net: bcmgenet: Initialize u64 stats seq counter
+
+Stefano Garzarella (1):
+      vsock: fix `vsock_proto` declaration
+
+Victor Nogueira (2):
+      selftests/tc-testing: Create test case for UAF scenario with DRR/NETEM/BLACKHOLE chain
+      net/sched: Abort __tc_modify_qdisc if parent class does not exist
+
+Xiang Mei (1):
+      net/sched: sch_qfq: Fix null-deref in agg_dequeue
+
+Yue Haibing (1):
+      atm: clip: Fix NULL pointer dereference in vcc_sendmsg()
+
+ .../bindings/net/allwinner,sun8i-a83t-emac.yaml    |  2 +-
+ MAINTAINERS                                        |  4 +-
+ drivers/net/ethernet/airoha/airoha_eth.c           |  1 +
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c          | 10 ++-
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c     |  6 ++
+ drivers/net/ethernet/cavium/thunder/nicvf_main.c   | 12 +---
+ drivers/net/ethernet/renesas/rtsn.c                |  5 ++
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 24 +++----
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c           |  4 +-
+ drivers/net/phy/qcom/at803x.c                      | 27 --------
+ drivers/net/phy/qcom/qca808x.c                     |  2 +-
+ drivers/net/phy/qcom/qcom-phy-lib.c                | 25 +++++++
+ drivers/net/phy/qcom/qcom.h                        |  5 ++
+ drivers/net/phy/smsc.c                             | 57 +++++++++++++--
+ include/net/af_vsock.h                             |  2 +-
+ include/net/bluetooth/hci_core.h                   |  3 +-
+ include/net/pkt_sched.h                            | 25 ++++++-
+ net/atm/clip.c                                     | 64 ++++++++++++-----
+ net/bluetooth/hci_event.c                          |  3 +
+ net/bluetooth/hci_sync.c                           |  4 +-
+ net/ipv4/tcp.c                                     |  2 +-
+ net/ipv4/tcp_input.c                               |  4 +-
+ net/netlink/af_netlink.c                           | 81 +++++++++++++---------
+ net/rxrpc/ar-internal.h                            | 15 ++--
+ net/rxrpc/call_accept.c                            |  4 ++
+ net/rxrpc/output.c                                 |  5 +-
+ net/sched/sch_api.c                                | 33 +++++----
+ net/sched/sch_hfsc.c                               | 16 -----
+ net/sched/sch_qfq.c                                |  2 +-
+ net/tipc/topsrv.c                                  |  2 +
+ net/vmw_vsock/af_vsock.c                           | 57 ++++++++++++---
+ .../tcp_ooo-before-and-after-accept.pkt            | 53 ++++++++++++++
+ .../tc-testing/tc-tests/infra/qdiscs.json          | 37 ++++++++++
+ 33 files changed, 421 insertions(+), 175 deletions(-)
+ create mode 100644 tools/testing/selftests/net/packetdrill/tcp_ooo-before-and-after-accept.pkt
 
 
