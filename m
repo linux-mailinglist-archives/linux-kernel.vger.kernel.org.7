@@ -1,258 +1,151 @@
-Return-Path: <linux-kernel+bounces-725916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3AB2B00575
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13382B00579
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66A11C869BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:39:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4BE1189663B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442872749C0;
-	Thu, 10 Jul 2025 14:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3B32741A6;
+	Thu, 10 Jul 2025 14:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rcmj3u8e"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rwUGKSUV"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD84271474;
-	Thu, 10 Jul 2025 14:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D3427056F
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752158355; cv=none; b=YZEdbMZFHe+fq20fv5B27eC/2288VgtaT7mY3z2QAa/7o5Zd9npNfi8+RmYGniJYMfmQLelQSx8nkN7OQQSaHwImzIDenDf2WY7TXv/ttx5DCZYp2JyHq+Y/o8oL/Sf7pREL1PsDQOGyoPNl9DA2re1WbgWLjw2UB4B8sntevkI=
+	t=1752158499; cv=none; b=Gly+Y+DXI3ZYAvcd0Pu8RDpc4ACZqxYNei6FPgnFpn3OuI4JsGlBL7W7x3uD3moSbrOgKQFkduDmWSgriQy7cvUboP3P0wezNsIdqnEdMj7lAQjebW7ibKfpvPhIkVJ8irWprdeHXaMf67zdeVTDd+2U2BZ7D/hS9mDbZg9mk0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752158355; c=relaxed/simple;
-	bh=bt4X9r72r6rI1ELQrvh8+CGDgf398vlVmIs10sdnrrM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=W8M+njCef6D9YZg3sU3BMk0PMsaFP/L3wzCOgX5uJ9hx88/cM6fh0TeCzAaamxwxzsEetDvgjUGDSg7l5eM4Kh1kgbf8n3/EfqM6RIM6w03GNQsvkcyiLe7njlTvnorOdVQzUJku/uHGd0FHJWt0kcmJzOgmuXN4EpiIBrx6dAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rcmj3u8e; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56AEd5Yx1799654;
-	Thu, 10 Jul 2025 09:39:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752158345;
-	bh=Olm4mSIpu4FebWepzFV2T6KFHpND3n+3YfGovDjUUVU=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=rcmj3u8eaZurXOW/s+Uu77TG3lAzY9iB5kczFo+kRsohHrCj1vWE191HHp5mdx8WU
-	 A850VfgOkWrUA+d575Uez3ylsx7338kv8FMrX0jyow2mrvfD9MlrxwrI26/DuL0Qox
-	 2mRVZeeZJOnpxNRSquYYv+0GCd9GolMnN6D5nN6E=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56AEd5SQ256407
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 10 Jul 2025 09:39:05 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 10
- Jul 2025 09:39:05 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 10 Jul 2025 09:39:05 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56AEd4u51816956;
-	Thu, 10 Jul 2025 09:39:04 -0500
-From: Bryan Brattlof <bb@ti.com>
-Date: Thu, 10 Jul 2025 09:39:00 -0500
-Subject: [PATCH v2 2/2] arm64: dts: ti: k3-am654-base-board: add boot phase
- tags
+	s=arc-20240116; t=1752158499; c=relaxed/simple;
+	bh=rTCP0eFlUYf1cAy9AjZjkIhxqdiUY75FHK6S4X4wtU0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Di/SSuXlniRQXL/NOlUWk6PWmR5G74/sWMgu54aSuehvCiZtkHN/yNYYa2uRqjXnitl94EXIpUrhsYFoBwDEOo3SdZEQTCZ6csLZxFKv1wM12E79i7gF2x+xM7RQunNZHllU8M/6nEsljiThJtclfSkGkopx3W56xwl244LtgY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rwUGKSUV; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-70e302191a3so10076367b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:41:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752158496; x=1752763296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IlZgkHsxN8ZXtcGrfVzgc7A5zah0HXAJABQ2cFxyfyc=;
+        b=rwUGKSUV8Slq1pMf/VqILsmsYbgr2+yuMHjomTPOb6GmpP4oXw1oQwnqaG+8Sw+XuP
+         npNEi9gXsKSMYsgdSQxuyjiAqwvdnf/bSsTt13RapO8FKyBRo9SgHHp+TXJdrHPXDHkj
+         O5OuAWQWwkg+iNFCUOiBXJLIPJH8/hhxAIOQ1wAOK7XPoEwFoKV/bS/3C7S7uk5rrUZ3
+         x+bohO63snsJ7AEuMqKscfSaZFdTuFGiYxZsD9FscpFISuJ/q6T6U5YP2EOkpyUYWsQG
+         nvSHGiXfTiMc/cQ/Dd8dfL16nL2AkuuOF4SKAM9WrQUpIjDXPRRgVtTk9IpEDMQ9bvdf
+         EvkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752158496; x=1752763296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IlZgkHsxN8ZXtcGrfVzgc7A5zah0HXAJABQ2cFxyfyc=;
+        b=pFyVxSKT+qmrj7u7croc+vki9TKz6Nnm1SiXyfQTWYVdecQp7pm1Go31Hq96nSWuDV
+         JXQRs2cr4lz2ysi336mNjO2MXxCS8rQiDezTBL9n0DeffLEssKIfP4jBAxaKVbZInivH
+         jEjOwv41SmiBgrAxAg+J99flwJHvBrjARbX7FdCWGAkvjsXb2a81a0hbQFJ61/WaqsvG
+         7MxWD0DguQu3KlTnvoolL34I9qLqIx60NX71uNfeoqsUOB+zyz6aDjc8LDv163+aEZYt
+         J8o4G+fJXwSUBSzMq+Rm+W9kika8IjUvBwQjpxtmZtVXTMJW10L3pLF2+hHqnGaCso0b
+         iysA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKVD7ZiXorH871zlV6AjlqIga2YfAA0fGrSWCjiCYnsTdBZFAbWw/5FKiHB+hcdfuzfIHdu75XCmPyz4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBSrr7XURxcidqEx/rFajurNN2uEk/aV+yl96dcSUpMCgswlIz
+	42vKDEhxujCpIz/Cv7jZ8kfEtbV1IcT/9Z2CXvEZAU8tN4xz0St7Q+hHimi/UoE0u6BPhr8Phpp
+	bHXExP6GwjVsL71hldGNW0Bwdw6aLJR9ZTGsqy8ZFhA==
+X-Gm-Gg: ASbGncvy7lX4z0UjQ3sOyAGAxvku7mlrk8DMu0CToVuCGkcrYm0h3sSrTfvXuvAXMZh
+	oAsrmj6JftdA+ZJ70CXb8xgVjGDArbMQLb5gmFr0mw+3dtmB4IZQ4+CiDLOWDcelzz1srUoC4Gb
+	YdvAwgesc4sraa8N/4+KnFQIrmzVPKPtprFKmuXXgm95Q=
+X-Google-Smtp-Source: AGHT+IHVD6gPsHq+Dexvu9tOsagl+k20PpDSEAg/CCtZ6R9oh9y4FIYINC4cgMj3d0zJYPGC/y7DQa6nR8qkXx9Q06g=
+X-Received: by 2002:a05:690c:d90:b0:6fb:b8a1:d3bb with SMTP id
+ 00721157ae682-717b19cb233mr100039137b3.17.1752158495634; Thu, 10 Jul 2025
+ 07:41:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250710-65-boot-phases-v2-2-d431deb88783@ti.com>
-References: <20250710-65-boot-phases-v2-0-d431deb88783@ti.com>
-In-Reply-To: <20250710-65-boot-phases-v2-0-d431deb88783@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Bryan Brattlof <bb@ti.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5322; i=bb@ti.com;
- h=from:subject:message-id; bh=bt4X9r72r6rI1ELQrvh8+CGDgf398vlVmIs10sdnrrM=;
- b=owNCWmg5MUFZJlNZ41Wj+wAAZ/////7dX3s7fvy168f//dXfbbr/++1/vGZ9yPv/zp77+NWwA
- RsYjtQAAAAAMgAGmgGjQGgA9QAZDQyANBoA0Gh6gAGgaaGg0NDE8pvSYkDk0A9TQNAeoAABo0Gm
- QaAA9RpoD1AAaaaDIaGjRkaHqBoaaGmjaj1DI0GhpoyaAeoOQyBkAGTINABo0xBiGg0aaMgANAw
- BADIDEaaBppiaNNADEyA0wjQADAQLDCWYPEgIiFiVmReDBiXJgaSakQsXW9bj1OU7GOEhwFZv0B
- AKBVaLionFiqwckWJNLxrFR82oXp5AFn5UBcAJeNOvwRgVHaFmssACnyUaBC2LGeyTU/AqTvHOW
- SxadLqoz36A0V+gKK9Tn4H3LYfOQ6oYpmyN641rnkio8JrE1ZrVaiJMQI4Ie31NGKir2zot0jGA
- AQeEpkpjWx1QJeNOawYfpVwZGlxYMarbj3E0Iei5if7Uyr2AtHHJpeWLVxS1Qg2bdMnWOOd7lvy
- W7l3kaR+hWogM3A5L00hUahuTO4eweg4HHVKVaSpGhz9WIIny0p/wXyY5Qd02sBYwX4kDwxZYIK
- 59RiCCn+2OAA59Baxyo437AvH+yMDEhPCWt/qReUXBqsXRSkMvYd6QjYAiC5qEIY4pDJr4f1l5k
- R/4EOmJAf4u5IpwoSHGq0f2
-X-Developer-Key: i=bb@ti.com; a=openpgp;
- fpr=D3D177E40A38DF4D1853FEEF41B90D5D71D56CE0
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250709154728.733920-1-daniel.lezcano@linaro.org>
+ <CAJZ5v0ixk5hZPPQc_1rDLMTzjh=KpMQF_A2U=HehMTuNSMQwtQ@mail.gmail.com> <aG-40INpi05v3-fQ@bogus>
+In-Reply-To: <aG-40INpi05v3-fQ@bogus>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 10 Jul 2025 16:40:59 +0200
+X-Gm-Features: Ac12FXw291rGaeQnkKGBJOE99wWaDDVeGF-LGyRZrV90PjOPwqUc_kzJDb-fgDQ
+Message-ID: <CAPDyKFqS9fawvgxEhk9W=o3oUpA_HGc71-5siw8AGqenQegrLA@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: psci: Fix cpuhotplug routine with PREEMPT_RT=y
+To: Sudeep Holla <sudeep.holla@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-rt-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Raghavendra Kakarla <quic_rkakarla@quicinc.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	"open list:Real-time Linux (PREEMPT_RT)" <linux-rt-devel@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The 'bootph-all' tag was added to the dt-schema to describe the various
-nodes used during the different phases of bootup with DT. Add the
-bootph-all tag to all nodes that are used in the bootloader for the
-AM654 reference board.
+On Thu, 10 Jul 2025 at 14:57, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> On Thu, Jul 10, 2025 at 02:43:10PM +0200, Rafael J. Wysocki wrote:
+> > On Wed, Jul 9, 2025 at 5:47=E2=80=AFPM Daniel Lezcano <daniel.lezcano@l=
+inaro.org> wrote:
+> > >
+> > > Currently cpu hotplug with the PREEMPT_RT option set in the kernel is
+> > > not supported because the underlying generic power domain functions
+> > > used in the cpu hotplug callbacks are incompatible from a lock point
+> > > of view. This situation prevents the suspend to idle to reach the
+> > > deepest idle state for the "cluster" as identified in the
+> > > undermentioned commit.
+> > >
+> > > Use the compatible ones when PREEMPT_RT is enabled and remove the
+> > > boolean disabling the hotplug callbacks with this option.
+> > >
+> > > With this change the platform can reach the deepest idle state
+> > > allowing at suspend time to consume less power.
+> > >
+> > > Tested-on Lenovo T14s with the following script:
+> > >
+> > > echo 0 > /sys/devices/system/cpu/cpu3/online
+> > > BEFORE=3D$(cat /sys/kernel/debug/pm_genpd/power-domain-cpu-cluster0/i=
+dle_states | grep S0 | awk '{ print $3 }') ;
+> > > rtcwake -s 1 -m mem;
+> > > AFTER=3D$(cat /sys/kernel/debug/pm_genpd/power-domain-cpu-cluster0/id=
+le_states | grep S0 | awk '{ print $3 }');
+> > > if [ $BEFORE -lt $AFTER ]; then
+> > >     echo "Test successful"
+> > > else
+> > >     echo "Test failed"
+> > > fi
+> > > echo 1 > /sys/devices/system/cpu/cpu3/online
+> > >
+> > > Fixes: 1c4b2932bd62 ("cpuidle: psci: Enable the hierarchical topology=
+ for s2idle on PREEMPT_RT")
+> > > Cc: Raghavendra Kakarla <quic_rkakarla@quicinc.com>
+> > > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> >
+> > As per MAINTAINERS, this is for Ulf/Sudeep.
+> >
+>
+> LGTM, so
+>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+>
+> I still prefer to hear from Ulf who has more knowledge and hands-on exper=
+ience
+> with s2idle + PREEMPT_RT in case I am missing something.
 
-UARTs used as a console, the SD and eMMC nodes along with the needed
-regulators for UHS modes, and the needed nodes for OSPI boot are all
-marked with 'bootph-all' to handle the various boot modes the board is
-capable of
+Rafael, Sudeep,
 
-Signed-off-by: Bryan Brattlof <bb@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am654-base-board.dts | 17 +++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am654-pcie-usb2.dtso |  1 +
- arch/arm64/boot/dts/ti/k3-am654-pcie-usb3.dtso |  1 +
- 3 files changed, 19 insertions(+)
+I will pick this patch via my pmdomain tree, but will run some tests
+of it first to be sure.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-index c30425960398ebb75ebda44726ed90cd78947d58..e589690c7c8213d5e4989942735fa53825e610f5 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-@@ -144,6 +144,7 @@ vtt_supply: regulator-3 {
- 		regulator-boot-on;
- 		vin-supply = <&vcc3v3_io>;
- 		gpio = <&wkup_gpio0 28 GPIO_ACTIVE_HIGH>;
-+		bootph-all;
- 	};
- };
- 
-@@ -155,12 +156,14 @@ AM65X_WKUP_IOPAD(0x00a4, PIN_OUTPUT, 0)	/* (AB5) WKUP_UART0_TXD */
- 			AM65X_WKUP_IOPAD(0x00c8, PIN_INPUT, 1)	/* (AC2) WKUP_GPIO0_6.WKUP_UART0_CTSn */
- 			AM65X_WKUP_IOPAD(0x00cc, PIN_OUTPUT, 1)	/* (AC1) WKUP_GPIO0_7.WKUP_UART0_RTSn */
- 		>;
-+		bootph-all;
- 	};
- 
- 	ddr_vtt_pins_default: ddr-vtt-default-pins {
- 		pinctrl-single,pins = <
- 			AM65X_WKUP_IOPAD(0x0040, PIN_OUTPUT_PULLUP, 7)	/* WKUP_GPIO0_28 */
- 		>;
-+		bootph-all;
- 	};
- 
- 	wkup_i2c0_pins_default: wkup-i2c0-default-pins {
-@@ -168,6 +171,7 @@ wkup_i2c0_pins_default: wkup-i2c0-default-pins {
- 			AM65X_WKUP_IOPAD(0x00e0, PIN_INPUT, 0) /* (AC7) WKUP_I2C0_SCL */
- 			AM65X_WKUP_IOPAD(0x00e4, PIN_INPUT, 0) /* (AD6) WKUP_I2C0_SDA */
- 		>;
-+		bootph-all;
- 	};
- 
- 	push_button_pins_default: push-button-default-pins {
-@@ -191,6 +195,7 @@ AM65X_WKUP_IOPAD(0x0024, PIN_INPUT, 0)  /* (R2) MCU_OSPI0_D6 */
- 			AM65X_WKUP_IOPAD(0x0028, PIN_INPUT, 0)  /* (R3) MCU_OSPI0_D7 */
- 			AM65X_WKUP_IOPAD(0x002c, PIN_OUTPUT, 0) /* (R4) MCU_OSPI0_CSn0 */
- 		>;
-+		bootph-all;
- 	};
- 
- 	wkup_pca554_default: wkup-pca554-default-pins {
-@@ -206,6 +211,7 @@ AM65X_WKUP_IOPAD(0x0048, PIN_OUTPUT, 4)	/* (P5) MCU_OSPI1_D2.MCU_UART0_TXD */
- 			AM65X_WKUP_IOPAD(0x004C, PIN_INPUT, 4)	/* (P1) MCU_OSPI1_D3.MCU_UART0_CTSn */
- 			AM65X_WKUP_IOPAD(0x0054, PIN_OUTPUT, 4)	/* (N3) MCU_OSPI1_CSn1.MCU_UART0_RTSn */
- 		>;
-+		bootph-all;
- 	};
- 
- 	mcu_cpsw_pins_default: mcu-cpsw-default-pins {
-@@ -248,6 +254,7 @@ AM65X_IOPAD(0x01e8, PIN_OUTPUT, 0)	/* (AE11) UART0_TXD */
- 			AM65X_IOPAD(0x01ec, PIN_INPUT, 0)	/* (AG11) UART0_CTSn */
- 			AM65X_IOPAD(0x01f0, PIN_OUTPUT, 0)	/* (AD11) UART0_RTSn */
- 		>;
-+		bootph-all;
- 	};
- 
- 	main_i2c2_pins_default: main-i2c2-default-pins {
-@@ -281,6 +288,7 @@ AM65X_IOPAD(0x0188, PIN_INPUT_PULLUP, 0) /* (D25) MMC0_DAT7 */
- 			AM65X_IOPAD(0x01b4, PIN_INPUT_PULLUP, 0) /* (A23) MMC0_SDCD */
- 			AM65X_IOPAD(0x01b0, PIN_INPUT, 0) /* (C25) MMC0_DS */
- 		>;
-+		bootph-all;
- 	};
- 
- 	main_mmc1_pins_default: main-mmc1-default-pins {
-@@ -294,6 +302,7 @@ AM65X_IOPAD(0x02c4, PIN_INPUT_PULLUP, 0) /* (D27) MMC1_DAT3 */
- 			AM65X_IOPAD(0x02dc, PIN_INPUT_PULLUP, 0) /* (B24) MMC1_SDCD */
- 			AM65X_IOPAD(0x02e0, PIN_INPUT, 0) /* (C24) MMC1_SDWP */
- 		>;
-+		bootph-all;
- 	};
- 
- 	usb1_pins_default: usb1-default-pins {
-@@ -343,6 +352,7 @@ &main_uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_uart0_pins_default>;
- 	power-domains = <&k3_pds 146 TI_SCI_PD_SHARED>;
-+	bootph-all;
- };
- 
- &wkup_i2c0 {
-@@ -368,6 +378,7 @@ vdd_mpu: regulator@60 {
- 		ti,vsel0-state-high;
- 		ti,vsel1-state-high;
- 		ti,enable-vout-discharge;
-+		bootph-all;
- 	};
- 
- 	gpio@38 {
-@@ -456,6 +467,7 @@ &sdhci0 {
- 	bus-width = <8>;
- 	non-removable;
- 	ti,driver-strength-ohm = <50>;
-+	bootph-all;
- };
- 
- /*
-@@ -470,6 +482,7 @@ &sdhci1 {
- 	pinctrl-0 = <&main_mmc1_pins_default>;
- 	ti,driver-strength-ohm = <50>;
- 	disable-wp;
-+	bootph-all;
- };
- 
- &usb1 {
-@@ -630,3 +643,7 @@ &cpsw_port1 {
- &dss {
- 	status = "disabled";
- };
-+
-+&wkup_gpio0 {
-+	bootph-all;
-+};
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-pcie-usb2.dtso b/arch/arm64/boot/dts/ti/k3-am654-pcie-usb2.dtso
-index c3cb752f8cd79459d6d321dfdf0644748514a48d..d04dd7a44008205301ea3fb3d0a883b6a6a2562b 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-pcie-usb2.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-am654-pcie-usb2.dtso
-@@ -46,6 +46,7 @@ AM65X_IOPAD(0x02bc, PIN_OUTPUT, 0) /* (AD9) USB0_DRVVBUS */
- 
- &dwc3_0 {
- 	status = "okay";
-+	bootph-all;
- };
- 
- &usb0_phy {
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-pcie-usb3.dtso b/arch/arm64/boot/dts/ti/k3-am654-pcie-usb3.dtso
-index 333e423e8bb6b033f5f45c782ef0095d29983158..04393f21d712ebd95ce1a411e2ac13a56e63e57b 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-pcie-usb3.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-am654-pcie-usb3.dtso
-@@ -45,6 +45,7 @@ &dwc3_0 {
- 	<&k3_clks 151 8>;      /* set PIPE3_TXB_CLK to WIZ8B2M4VSB */
- 	phys = <&serdes0 PHY_TYPE_USB3 0>;
- 	phy-names = "usb3-phy";
-+	bootph-all;
- };
- 
- &usb0 {
-
--- 
-2.49.0
-
+Kind regards
+Uffe
 
