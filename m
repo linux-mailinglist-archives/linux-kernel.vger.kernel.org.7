@@ -1,137 +1,88 @@
-Return-Path: <linux-kernel+bounces-725432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14724AFFF0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:17:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB4CAFFF12
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD511C86DF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:17:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558AB1C86F4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74CB2BF3D3;
-	Thu, 10 Jul 2025 10:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHOptsQX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5162D1309;
+	Thu, 10 Jul 2025 10:17:40 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068C72AEF1;
-	Thu, 10 Jul 2025 10:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A690D2AEF1;
+	Thu, 10 Jul 2025 10:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752142631; cv=none; b=okiIWVyyGg3mWIG3qc4SfcmJp86fbWQBUDaTtca/d2pozphLEaez8Fr3mBCZJwN9UwglRnN2l1Rv5c/QrFZ/WD0iBBlxI8bj0aLEbPD1ki5UCjI5dN5sp4884HmZaqUS90vV4Uig1Uqk4xkBex5poPPLL7XFjZ7ThtNxFB4B4oc=
+	t=1752142660; cv=none; b=qevfmPOuyIaMPCb6cqWfLfCVzfIV4SGcq98xslfNAqLMKWJCe+vl/cB2dUQFYe+EkgI2TDE1OqTPtDwvBLpet4qjKUzBMMsMa4WZ826NGQBCNrCGUejbu2xAMDy80FzK5doNQ99eDigt+52V0w9+15pp1O7PdptrnqH4Z3D4bbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752142631; c=relaxed/simple;
-	bh=fiadbZJTOVijBGDI4SQbxUWDNXsmiOttH+ylENKymGE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=OyAy3DbRf19jAg9u2JqPCeSvpxESBi118AErInttl+4x8Oi7SzMfZBtQ4vG1pGqZjpTjEdcL4nPTVKCHiorVhhYpBJDnk+5TCfSXn/gQHJA3ax8e9Xe6rTIMihNksO+m7UL6a76sifFpXHntzTRueG70OmHYYEq+ksaeUxFpOB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHOptsQX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 911DFC4CEE3;
-	Thu, 10 Jul 2025 10:17:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752142630;
-	bh=fiadbZJTOVijBGDI4SQbxUWDNXsmiOttH+ylENKymGE=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=VHOptsQXxjGrjx+Epibq7qQYdIn3VPDfFMd20JJPXeMITVuNGQLN+hXAugz3/Z+AB
-	 zguJuAGrZw/QlDKd3R8XJjLNVBzyeGURC46uQ6hM8/p06xwFSufr2tP9CPbU3LAgk1
-	 WbiyR0+PqAEhA8KTFN6BerhC6lA5bpl7SBWWCV+VtbOkl4PZKlMMSAY3JF+svS+T2l
-	 cT7lCpYgKs4itMuClsaNV3yn4vyQjJG7UCd6al4wQ9/anCtDxwsA5KtZR0iuADWlCg
-	 n5HypetI6XoXSaTtFO2bK7AG4pGTvpX7eX3Vr22Vviw/fUoJCX5kVhzVSL9AB6hzt+
-	 s0uEPLD0pCj9g==
+	s=arc-20240116; t=1752142660; c=relaxed/simple;
+	bh=0kuM5VXy8y+tTqVrYFr4WFguC9X1xGj+r/Gma6OEsrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oilKZd00Q1M0iPdAG3dzvJduJDwyDIcsvWvhNRptye9taIpu3TU7FHEjV5fXAvtslUevLjtWTyzqTX+q8bPM2QPZN4NvL9HuS8w7CuF6Beib1GooajWYj3P8Ka8dP/E1VSgFE4VpRc2b6TmrCWueWXZi1GJKLzH9lAqtwInR22E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56AAHIZf025376;
+	Thu, 10 Jul 2025 19:17:18 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56AAHI2e025372
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 10 Jul 2025 19:17:18 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <a8bed564-3eec-472d-8e57-aaf5274c13b1@I-love.SAKURA.ne.jp>
+Date: Thu, 10 Jul 2025 19:17:19 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [kernel?] INFO: task hung in uevent_show (2)
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: syzbot <syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        USB list <linux-usb@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <686e7698.050a0220.c28f5.0006.GAE@google.com>
+ <79f634db-c149-4220-b8d4-0fff2c6b6a01@I-love.SAKURA.ne.jp>
+ <e064a3e4-ae70-4a24-ba5e-1bb8c7971f23@rowland.harvard.edu>
+ <39f312fa-d461-4377-b809-50c8a7188f6b@I-love.SAKURA.ne.jp>
+ <dd932df4-2a13-4a5c-a531-376065f87391@rowland.harvard.edu>
+ <43189e93-2cad-429a-a604-15bf5cc95e43@I-love.SAKURA.ne.jp>
+ <1d471e25-6671-4cb2-a2c9-af96c2b4e13d@rowland.harvard.edu>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <1d471e25-6671-4cb2-a2c9-af96c2b4e13d@rowland.harvard.edu>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 12:17:03 +0200
-Message-Id: <DB8AQ15RTAJ2.3QXX8Q2FTFGCP@kernel.org>
-Subject: Re: [PATCH v10 0/7] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Guo Ren" <guoren@kernel.org>, "Fu Wei"
- <wefu@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Paul Walmsley"
- <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
- Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, "Marek
- Szyprowski" <m.szyprowski@samsung.com>, "Benno Lossin" <lossin@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Drew Fustini"
- <fustini@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>
-To: "Michal Wilczynski" <m.wilczynski@samsung.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <CGME20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6@eucas1p1.samsung.com> <20250707-rust-next-pwm-working-fan-for-sending-v10-0-d0c5cf342004@samsung.com> <e8a4a821-e7e4-4bcd-a2ac-f6b684b6ceea@samsung.com>
-In-Reply-To: <e8a4a821-e7e4-4bcd-a2ac-f6b684b6ceea@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav201.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Thu Jul 10, 2025 at 10:42 AM CEST, Michal Wilczynski wrote:
-> I was hoping you could clarify the intended merge path for this series,
-> as it introduces changes to both the Rust and PWM subsystems.
->
-> Is the expectation that the Rust maintainers will take the abstraction
-> patches into the Rust tree first? Or would Uwe, as the PWM maintainer,
-> pull the entire series? Any guidance on the coordination would be very
-> helpful.
+On 2025/07/10 0:41, Alan Stern wrote:
+> Okay, I see what your problem is.
+> 
+> The bEndpointAddress field of the endpoint descriptor is not just the 
+> endpoint's number.  It also includes the endpoint's direction in bit 7 
+> (0 for OUT, 1 for IN).
 
-Except for the helpers I only see PWM code, so this is fully on Uwe's purvi=
-ew I
-think.
+I see, but I couldn't figure out whether BUG_ON(endpoint > 0xF) is bad.
 
-I see that there is a new MAINTAINERS entry:
+I came up to try these BUG_ON() lines in case some of hung task reports (e.g.
+https://lkml.kernel.org/r/686e8032.050a0220.385921.0006.GAE@google.com ) are
+caused by use of unintended pipes created by out-of-range values being passed
+to __create_pipe().
 
-	PWM SUBSYSTEM BINDINGS [RUST]
-	M:	Michal Wilczynski <m.wilczynski@samsung.com>
-	S:	Maintained
-	F:	rust/helpers/pwm.c
-	F:	rust/kernel/pwm.rs
-
-I assume this is agreed with Uwe?
-
-In case there's no agreement yet, the typical options are:
-
-  1) Maintain the Rust abstractions as part of the existing MAINTAINERS ent=
-ry.
-     Optionally, the author can be added as another maintainer or reviewer.
-
-  2) Add a separate MAINTAINERS entry; patches / PRs still go through the s=
-ame
-     subsystem tree.
-
-  3) Add a separate MAINTAINERS entry; patches don't go through the subsyst=
-em
-     tree (e.g. because the subsystem maintainers don't want to deal with i=
-t).
-
-I don't recommend (3), since it's really just a fallback.
-
-The above looks like (2). In this case I recommend to also add the C mainta=
-iners
-as reviewers, such that they can easily follow along and specifiy the tree =
-(T:).
-
-But, of course, that's up to you and Uwe.
-
-> I understand that it may be too late in the development cycle to merge
-> the full series. If that's the case, perhaps patch 2 could be considered
-> on its own, as it hasn't received comments in the last couple of
-> revisions. As another possibility, patch 1 and patch 3 are dependent on
-> each other and could be applied as a pair, depending on your assessment.
->
-> The RISC-V driver itself would need to wait for the IoMem series merge [1=
-].
->
-> [1] - https://lore.kernel.org/rust-for-linux/20250704-topics-tyr-platform=
-_iomem-v12-0-1d3d4bd8207d@collabora.com/
->
-> Best regards,
+Should I give up BUG_ON(endpoint > 0xF) line?
+Or should I try to update callers which trigger BUG_ON(endpoint > 0xF) line?
 
 
