@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-725990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B010B00661
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60778B00665
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74A1F189C5E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:21:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 161BF1C85E3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B882750E2;
-	Thu, 10 Jul 2025 15:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF37275AE4;
+	Thu, 10 Jul 2025 15:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CcCZZjRz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FcWTmnFA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09982274FFD
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDD22749D1
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752160867; cv=none; b=Db3ae1DNKR0K8WvcDFe8Uzx8CIThp6oFpAjNtv9wtOmpVmL3kb/Br5REwxJ3+qltRkeY3nEhIEpUP/3V5PzNsM+XPfbHyYR5dZPLX7UKF5bywytnwbh+PDO58x6NqxL/OzCQ2rAkmxBDzCMCXPSSbaYDjcCOV/f4MfU7OhBcVjY=
+	t=1752160868; cv=none; b=O0kx0i5JwUbCQf9+yWBQRP0wBFBybVHMSpkMM7D6BEc7wl3INdyZes/Itsk9lxhMSP7B+OWSjaVC1mYIJo2YzQdSJcwOOWNcJJS2gBlL5fJiVQ72Jdv2b0MDcZojhCKP8fMWEj+d1Kn0XyWUibYt81uAD2H1CPPc7jttvYeJXfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752160867; c=relaxed/simple;
-	bh=5dhSXbabSOIot1EwSUx0tN+/kwz+r3qTKvgei/0M1C0=;
+	s=arc-20240116; t=1752160868; c=relaxed/simple;
+	bh=nWaA+HGMB/hr+CPDhX2qLiaYTUyyKgsFz2YzXzkX8VM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lKBIIGhPL8Wq0Kh2fr5Xvuw/6tb0yglh++LfNjCDR1rhgSu1AEyht84XsvtsAphJNZxAA+2AX3A4O/gA+IKx8fougeiQA6oqymS+80QRXsHxrShbTsnKbvmhCg7jCjmMKQNUmF2dw4UD6Kj6PSbFtHiAz1xYksM4BPXyvqG41Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CcCZZjRz; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=Lqcu7CUqI2FuNyN/fQx7kcX4nH2vHQ9w6p009AC2n55q/tSc8brTFlQX3oJ24us00QSu3+eToVJh2agpIIwjqdVg/Lr5T/pv5a8y+u+OjITvLFSjGItzdYBdT3GNL3UD1eIyqpkuiR9etw8bzpUTKBPcibYxL5lkxRI8EqNnc5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FcWTmnFA; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752160863;
+	s=mimecast20190719; t=1752160865;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wfAZifEVmiDYokEi8qaAJcFUVRfsukjdAyRsQDueIBE=;
-	b=CcCZZjRzCK7jZi7XZgF79U8+E1b779OfqFWbx+wQtbYGgQkMo4BmeSjZOD+Db/UdvUwWUA
-	J6ohY+pD/xZmHoEAHRR7Eq7mXaEisE4SgzqtEXiEUji+ybFrlDGTZXzNF11z+VUCmgTFx3
-	6bO94LQ+D+aVJiVNE9gpf9y56v6vq34=
+	bh=yG5bkOzZUY+xOdQihr3txHpC6oZgJ7hI28ABbFz0yUw=;
+	b=FcWTmnFAJ8STy39JdiQE1NSGSvY8kEyRWGjubB/ywxnOL6UWeyVw13SgcF95GCrwxi/425
+	/CaJJahgsasALKrmfR2/BPz5M/YGlt6qjfrkQi80Nc5P9KKvYBi2UOG0EMAFNi91wfl0+w
+	luHDPx1MbAkBQXb0MoBhx+WPIsxejtY=
 Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
  [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-269-ixN1GAG_MJCgLi_Z5UNURw-1; Thu, 10 Jul 2025 11:21:01 -0400
-X-MC-Unique: ixN1GAG_MJCgLi_Z5UNURw-1
-X-Mimecast-MFC-AGG-ID: ixN1GAG_MJCgLi_Z5UNURw_1752160861
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a9cce09a9aso23565231cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:21:01 -0700 (PDT)
+ us-mta-64-KLJ21hcqNkaadSg_y6yQWA-1; Thu, 10 Jul 2025 11:21:04 -0400
+X-MC-Unique: KLJ21hcqNkaadSg_y6yQWA-1
+X-Mimecast-MFC-AGG-ID: KLJ21hcqNkaadSg_y6yQWA_1752160864
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a587c85a60so23108111cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:21:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752160861; x=1752765661;
+        d=1e100.net; s=20230601; t=1752160864; x=1752765664;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wfAZifEVmiDYokEi8qaAJcFUVRfsukjdAyRsQDueIBE=;
-        b=l6IdtDReA4XOudTpjRpIM1o2CBP8ksinS4qwoOvo+wzF5kOADy217XBpokLR7o4AKE
-         8rXx7w+k0HViyp/dSbd5gZyq4MKXWiZk9c9DeCAuQAPKJb8T4twANXdoEvBmSbdLEvKt
-         UF53QnSunckGqGiujsfe2qfmMDZlta569YzpJD76OTJabqU6uI/52A104yQsDKBEOZob
-         7kK+p/5OsFe1Iscn3QkymaULYJ2Q9IrbPhUDhr+tYxCRxIMap4EGiG1B7dJUBlybWj1I
-         5JW28c1eTJWRcofZaWqODLvH1aNH/32EjjMwFYXgQL+rsFO6SBPsdnPOfWK3ZmDut6fW
-         7FAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrQBoAV0r5ES1IESDEO5vBvwKPSeAAVOfJQ4Hi/ZjD+pyj4KLGCW7R5aj59oB+7dW+3VoQTHo9nEMqIlo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaHRPj2JQ3+xFf3JFEBv9lyZOGQJSr5K4ADDWSnTy/oBB2vtfX
-	WYPtRdO7QDrkCeCrsOH98FltIRbWnfDBE75io+vvWKGexMpmDgwyo6dZgh85bWGzsGAW+zHweH/
-	22OBygs5J0V9XtpbzTMsBbuK8YRUeMA01AAu1C0awPJ62TR+XfG4v4c5XJXUWI7OQDA==
-X-Gm-Gg: ASbGncttEYE5ekeimvebNB+Z9DrzAH5HM1V6kihJzPG4NWWbTyghsckqE/OwiOX8gB8
-	NFjJyjPE0q6H5YngiGy14DEfRbTyDWGy90RY1Xhd01JCMf5QsSEff+e7lEWTdhVxkfKVB7wyf/A
-	lZI89cQo+laoqtmWGITBkffhtNy5b8iv0MyJnXp6TQG4+PNayx2SmcXhu+PcfOjhEFy/O1a3awU
-	MEE4AQWYeRjkHeJppH1hthSORcynfd37PuoWLKmxh+pnQl6SCreFVl6WMA7WRZWhrH5mVfsTKvV
-	UuAWdUfFBR7sBEvCPDsOGaQakyb8HA8dgEu5fArd3o1swxjmBlihltOwr8Ig
-X-Received: by 2002:a05:622a:2a0f:b0:4a8:2d24:72b3 with SMTP id d75a77b69052e-4a9ec8152c0mr54126751cf.39.1752160860868;
-        Thu, 10 Jul 2025 08:21:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZg7tT2TKkLa812dOO0cuVbNuTqTsuTm9YCrDOkt67pP9zNi/06aVHc55G542WY91jCJtYaQ==
-X-Received: by 2002:a05:622a:2a0f:b0:4a8:2d24:72b3 with SMTP id d75a77b69052e-4a9ec8152c0mr54125881cf.39.1752160860286;
-        Thu, 10 Jul 2025 08:21:00 -0700 (PDT)
+        bh=yG5bkOzZUY+xOdQihr3txHpC6oZgJ7hI28ABbFz0yUw=;
+        b=YbGsRPhZ+moBUl2bg5XmbLLIKBPYjhMny+PiFodAyky9eVTa6SUoJ24SgT/60UkwIn
+         P4eflVhO2r4c9byYAqD8xLv94JaQaNG6SDIfw0uzRdPfS+4xusfnEo4KTS/wJdmCULt+
+         sJXq3VK8CS0rsVH7T5AaIIQp0ND1o9veBZu5fXOcIVjCJfdhvmav4xenBpxKSgY8+B2G
+         MtYKY0G31fd280Xk8wK8Gezi+nyWZVsgiSL43jRr8tqE2aQbz3THP1Yk/HO8OM7Atd+T
+         EHuhP39mT83P4CMLKg7rdClitq6va4tVEZUL9zkL9IXnt6NCRrsUQ7CJwDJAAYtgwP5j
+         dYUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZVKWa1Qq2QE+TL1mCmkbo3UNpnM3lLFdMPmIH7lUFUXiywKVdoAJJXTjnybf/0h4uy2DMhsDcByjfSrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy762ShzTDoZ03O6je5YiAlmyCdHmUBWhkhMLpcLkj7Khh39I05
+	YG0EDiNs0HHQFTMZTJIi0fsJz1rs9xLG5sXHiy8GbXGcbInan1nQ4Qvz5ZxwXzVfAa6gF6n4t9C
+	Jm57UdY2gz59LZfcfVrDuiVWy0tewoUadZA5nEHNtbwY0DsvVho32PEJsNyXCh1P3Jw==
+X-Gm-Gg: ASbGncutVNm50c98i5fyCnE0c3nVysUppobe4pOKn5X8p44zWAZKcxDshgyja42n89O
+	77HBJOAWcR/NiLVsSqLVJ+CycUYTqxQNkJhWV1Vw66qFjqhZbUMFwJo7svOIXgIH+tfQB2xSsIq
+	C4zzBUOd99ruVq1b1tBFcY+HxLE10OLM9J6G2GZZihuYhJoJFvXM81soquv+2fgnvorySF0CD59
+	eiQnCsJE4d34FTMARGSFRgauY5kbCx39jbeFEHZcrN2WPspnF2pvvMetiSAOsgaVlYil5KI76Gt
+	GitXhdT6tNJQQ96iGctmPzjxNYBNV7cYSVb6Zvumwm5x0il6IHeoBzGdMhFo
+X-Received: by 2002:ac8:5fc4:0:b0:48d:8053:d8ee with SMTP id d75a77b69052e-4a9f80b01e5mr13972261cf.36.1752160863627;
+        Thu, 10 Jul 2025 08:21:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbBjxTN72GrQJfmGHmh5GutnlL3Jy0awPkDx/UBr/xC/UFSavAHZjx8i1a7+m6MXPSWw2yHQ==
+X-Received: by 2002:ac8:5fc4:0:b0:48d:8053:d8ee with SMTP id d75a77b69052e-4a9f80b01e5mr13971891cf.36.1752160863202;
+        Thu, 10 Jul 2025 08:21:03 -0700 (PDT)
 Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9edeee2c2sm9654471cf.74.2025.07.10.08.20.57
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9edeee2c2sm9654471cf.74.2025.07.10.08.21.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 08:20:59 -0700 (PDT)
+        Thu, 10 Jul 2025 08:21:02 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 10 Jul 2025 11:20:23 -0400
-Subject: [PATCH 03/15] rtc: nct3018y: fix incorrect maximum clock rate
+Date: Thu, 10 Jul 2025 11:20:24 -0400
+Subject: [PATCH 04/15] rtc: pcf85063: fix incorrect maximum clock rate
  handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,7 +90,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-rtc-clk-round-rate-v1-3-33140bb2278e@redhat.com>
+Message-Id: <20250710-rtc-clk-round-rate-v1-4-33140bb2278e@redhat.com>
 References: <20250710-rtc-clk-round-rate-v1-0-33140bb2278e@redhat.com>
 In-Reply-To: <20250710-rtc-clk-round-rate-v1-0-33140bb2278e@redhat.com>
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
@@ -109,31 +109,31 @@ Cc: linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
  linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752160847; l=1069;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752160847; l=1097;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=5dhSXbabSOIot1EwSUx0tN+/kwz+r3qTKvgei/0M1C0=;
- b=Z+eHnE3yFv9Mc/2pw97GUAxK2h0eRAwimIQZHOw0PqyzYENQDmyX8/9qqzMvrvfVYCneaOqS6
- wbDceofTElTBQ1umKhp9Jwiwd5C7UTuyCYdg3bAtiY4LJ8MkwhDIFRV
+ bh=nWaA+HGMB/hr+CPDhX2qLiaYTUyyKgsFz2YzXzkX8VM=;
+ b=Lc/rH1BiGcSbq2l1trnogE3RK5bqbOllXcvhH/uU8m1h7QmCtOaFdEaqj+3itCdqF+FJ+ZtvD
+ IuHO8XuPF2bBnY19Dh4DVmMOl8w+cCTosu7fjfV3J5ukBMCZo79gcY0
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
-When nct3018y_clkout_round_rate() is called with a requested rate higher
+When pcf85063_clkout_round_rate() is called with a requested rate higher
 than the highest supported rate, it currently returns 0, which disables
 the clock. According to the clk API, round_rate() should instead return
 the highest supported rate. Update the function to return the maximum
 supported rate in this case.
 
-Fixes: 5adbaed16cc63 ("rtc: Add NCT3018Y real time clock driver")
+Fixes: 8c229ab6048b7 ("rtc: pcf85063: Add pcf85063 clkout control to common clock framework")
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/rtc/rtc-nct3018y.c | 2 +-
+ drivers/rtc/rtc-pcf85063.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-nct3018y.c b/drivers/rtc/rtc-nct3018y.c
-index 76c5f464b2daeb59fa8367bff3ad261ed75dd937..cea05fca0bccddc6384c462cf1ebdc59b377a24d 100644
---- a/drivers/rtc/rtc-nct3018y.c
-+++ b/drivers/rtc/rtc-nct3018y.c
-@@ -376,7 +376,7 @@ static long nct3018y_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
+diff --git a/drivers/rtc/rtc-pcf85063.c b/drivers/rtc/rtc-pcf85063.c
+index 4fa5c4ecdd5a340e6048b0d7d1d9590cff41e8fb..b26c9bfad5d9296ca8d2be3b5ecb04c19ac97191 100644
+--- a/drivers/rtc/rtc-pcf85063.c
++++ b/drivers/rtc/rtc-pcf85063.c
+@@ -410,7 +410,7 @@ static long pcf85063_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
  		if (clkout_rates[i] <= rate)
  			return clkout_rates[i];
  
@@ -141,7 +141,7 @@ index 76c5f464b2daeb59fa8367bff3ad261ed75dd937..cea05fca0bccddc6384c462cf1ebdc59
 +	return clkout_rates[0];
  }
  
- static int nct3018y_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
+ static int pcf85063_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
 
 -- 
 2.50.0
