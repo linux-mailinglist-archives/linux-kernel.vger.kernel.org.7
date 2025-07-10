@@ -1,138 +1,183 @@
-Return-Path: <linux-kernel+bounces-726670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECAEB00FF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:55:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88D9B00FF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 106E316EAFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:56:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B46A646B6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96CF295DAA;
-	Thu, 10 Jul 2025 23:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3FC2DAFD7;
+	Thu, 10 Jul 2025 23:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="Am9DF6jt"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w2j/ZaWD"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC483187554
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5D4295DAA
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752191752; cv=none; b=hnQOuWXdbJT3gPoZ8j1SQs+NMTgooU5gmyJPj0bTEgIRSJ0aYHGq9Gnwubuc7UoWfAlmzXAlgvPf+YwkUYwXq/S4YMoh18NQ/3dkhCdPvCIDNvO1JV2IzGEedim8E2x/rN+QpIyN94l7cl993IwmV0kG3z+G1MLLZZUnlLaXP/w=
+	t=1752191867; cv=none; b=exuYD02yWrPunOXL0/gG9jjIu3FYKRMhTSPGZclS+ZsqrRFuMRZ4/6U31JSQczUmykwEW8uT2oCX3sB3wPgOkr2VEg4cSHU2RYNZEoDr/OeSirG+bTpAdE+M/JpM6ljhFSVDm2KYEQDSv1xzJeQEzhW5t4A8aURRZ8tjKUTmu0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752191752; c=relaxed/simple;
-	bh=XAiCmdF7RkApsrZzspm68HM57eB+JOIvtiEXT38QR50=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=GipmlyhwtvzXmwCIYP58dhfU9uGcCOZLZR9ZMfJ3d+ajN89poGCeGEJjDAY1db5H/AWL5sBjXXwdQC+EejtDlBQ6qL1++xnb3gonDykekK5OfAuRSG3Frjt8pZiVMGL02UwScFySeKtMGldmnTzI0ct4uXobMEfYDuht0Lbs2Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=Am9DF6jt; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-235d6de331fso19405945ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:55:50 -0700 (PDT)
+	s=arc-20240116; t=1752191867; c=relaxed/simple;
+	bh=95+AUuyoYEuhtL3fuf6WVONPyYA4Z7sb4lObaArXfc0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=il8RytBy2FEkVN+AxORthQ+9ykqDByyFk8IWK/Dna/4Q9o4KeqZPK3Z2UAtnb5IWLrvRefpaNXcj9fpenBuNn7wxXBfvUMD0GYNdmPFMpx9cdrqXooKScTbHD3LNUGuhYK9Kyx2bHDMCTt8drDnchqTo5iQjWXGplMdfc+Y/kjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w2j/ZaWD; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b321087b1cdso1754356a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:57:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1752191750; x=1752796550; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XAiCmdF7RkApsrZzspm68HM57eB+JOIvtiEXT38QR50=;
-        b=Am9DF6jtw/yWWBzwGKYWrg4FN0x/dS2+LRyOIdOKXIEnCM3qUMkOl560yhFAtLdXYj
-         PGhR5hu7+dW06McMVyvAwsrZFYDkkthJfS98vHV67m06krxreryFOlc8gcDPPByp7MT7
-         wOQYQPTBG3Fu1yzWjVkGdCD7BWy4mMEFmuHOsId6G6hGSmz4bUoLImBnz3oHOpTsMugz
-         LlfhYJQ3x0KdAvUw/TN8BI4tSVMijUdBi0Lv55gJzk8pDnY6xwXW48htzhaU/CML1kq3
-         60yBpmWBDOv8eAdk2Ytsv9t81eX4QLmNsI9wgAtylgdosOOMfNO9rGkPCE8R+V2kQfh7
-         Wmvg==
+        d=google.com; s=20230601; t=1752191865; x=1752796665; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dN2TK04HBhD29nOWl6/VfFNctXN6qs0Tn4WpjxjIjMQ=;
+        b=w2j/ZaWDz8os8qIghsRKhz5rmNFJ+RNjQ01X/CWae5Rx1Cymr1tmjuoFwhhXIyFIPB
+         w1RVIBs8nzcSuBeYdnW2WTgRGkepOnRTJCseR4H0R9+f9IHV3xY+WDW1VdXIz3cvIUNc
+         h3y/MYHcAePV5rOGjqVNdA1J9KNTSxAjagjihu3864mVmBkWxLTxEqjoC3bhNnscwOaD
+         PoW77QUsU6C5bm23sWZ58rwoFUFqN5WqirRQ7PkGP/2KDpVjY+kM4I3V2ASOS3bgG00d
+         sbUEsrlNaGt2GNRO24pgxzYCl7mPvPI/qxl7AqlCbQkbTAen5ZjJ8ApzaVqCYZD5Mz5p
+         prBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752191750; x=1752796550;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XAiCmdF7RkApsrZzspm68HM57eB+JOIvtiEXT38QR50=;
-        b=uld2IPniey28tZfHASkAjRQ1/8ccrAbiyMJX/V4OKn6xN39JWrh8DhuGHZoAHnHIrg
-         DbSrt5TaKMo+ltAT1n4FHKhst8yVdonDbtuUAD36eTGRomA67Ig5vl1ZJlIu771HfC1f
-         SnnbP6ApI8I3pfaMuBqjTxxAGRTHUYUqI6o11RkYEAF02vEdvx/uCIeIaoA00PMr3fMV
-         l82R+XKq+ujwo3Wr2+LG5xbArjmPj4qT0cOJmQPJY49Nm9s0ZaAM79STW13iMkRGzAu7
-         aM0Fp7WivPrD8gNJqp0F8OMqAKglqCNX89dmPiCldN2OODQiw3IjZfyWqUZgKk1YH1tH
-         dJzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVza9VBj89sNAWNaS0G3z3gkxc8iTiI3LSMbi3+MzT6RZTuY6zJnGW6mrdJB7AidaSE//Azr+VN5sVRQbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlpI3ZZayqxG4/jFw0xLK1qrJm0U68gO0IseIMiyGV63/pwWnt
-	9ay8D2xQ3BxoWd6Yfv8zyFp+e570n9WwaTZ7FLbNzDPCKon7Lxr3fgUYzUGJMiz8XEc=
-X-Gm-Gg: ASbGncvvwyXv5M5fhhJVJ6TsVDngdhhFGSvKPSLNhCchjpPpIBH3xtcg7D4+BJXSBrc
-	XM4Wy/bsezn4rsO1bLRBWtxJcqCHcgfBVy7H5obYLzj/NvmTMXJJWiZ2iRb33qRohcdptP1Q5tf
-	vCIzwlwFtFvjWFfDp+NbFeMGwG2/8VkQzrNw1a85mdcuYt8Fruq84ZJklSyiL5cNIvbZzbHhSMQ
-	ujiNS739SmBGRDoPBEckB7ChRSOWtYRTSGS3+curZrxMGHjNBTmgCnh8UnjknAJmEcLA0oTxxls
-	8kCOwmCR6Pmr1IBAmevHRNTU4G/A+X8juQjk8O6DQODtkiOKtjRFOjjGPg+BlNsmHwzusd1Y1zT
-	K/7Oxcjp7D4Rcdlt4Bso=
-X-Google-Smtp-Source: AGHT+IGFOD84u48rdMoEXoU5fk8FMmvZ6/jUey0yaBE6/wbev3/1XX3T9b4F6Rm6Kh49JQ9zptu2AQ==
-X-Received: by 2002:a17:903:3df1:b0:235:be0:db53 with SMTP id d9443c01a7336-23dede98446mr11872605ad.51.1752191750126;
-        Thu, 10 Jul 2025 16:55:50 -0700 (PDT)
-Received: from localhost ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4365b10sm31581145ad.240.2025.07.10.16.55.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 16:55:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752191865; x=1752796665;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dN2TK04HBhD29nOWl6/VfFNctXN6qs0Tn4WpjxjIjMQ=;
+        b=C0W/gvfLe6rf95Q3+47zEesiycClnO1UkTg0k0c6mzWfXSv971DgzZPf/wXnbcTmCi
+         0pEWwsiqQ0x2q3804TnNhmTB9hkm5lqB0mFRLF6Ysucp+nYjyg5Ak/o6vLOnPkdS3Qo8
+         A1NtgLZskug+RdDK18lgLUhdvogjuuLXCasDzVg7feQ++7es04bWq66iGmTUu/jjfS/b
+         xZFKYeQ19c++BwmEVBHZYgHB2RKC5Q4GNpg/6oFfTGIH0jOZl/BZgp0vQn5XwErTg1jU
+         3jlwhJWOqFeQ8xcAb41Y5W949N32wfxVQGcwbkIxyLexF102AfaCskDyOzuc7klm67oc
+         VKcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsXZueISkeiTcdYpCJSAGR80XRLg8Jb0/U8m0OEtZJ5yWS0AULUeHnnIAjKIywy07bi0EXh3bkKcE5XZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm7zNNpMEUL0qqXzeJLX8Am6UcguzBe1XTI/sM32dOVAxJFrWp
+	+HnHSLRznWVF6jufa6qLxIACCMa0AowliodP18mSQTHpmpXUid1PQJheAlOgttjslqfsCSpt2LD
+	NhE+PXz/WEw==
+X-Google-Smtp-Source: AGHT+IE4CQ8/t6vW7E9YA7ZWHL6Xvc0yIKbgJ22MQ9g+SUAwscsjH90ZIIAaI+ibEq5p4BNwquiYEsR5MUXe
+X-Received: from plbki3.prod.google.com ([2002:a17:903:683:b0:234:c2e4:1df6])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce08:b0:234:bfcb:5c1d
+ with SMTP id d9443c01a7336-23dede873eamr12523075ad.40.1752191865130; Thu, 10
+ Jul 2025 16:57:45 -0700 (PDT)
+Date: Thu, 10 Jul 2025 16:57:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 17:55:47 -0600
-Message-Id: <DB8S4WLTG1SS.NVODTL6KNFXF@brighamcampbell.com>
-From: "Brigham Campbell" <me@brighamcampbell.com>
-To: "David Hunter" <david.hunter.linux@gmail.com>,
- =?utf-8?q?Hanne-Lotta_M=C3=A4enp=C3=A4=C3=A4?= <hannelotta@gmail.com>,
- <mchehab@kernel.org>
-Cc: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-kernel-mentees@lists.linux.dev>, <skhan@linuxfoundation.org>
-Subject: Re: [PATCH v4] media: Documentation: Improve grammar in DVB API
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250708155206.91281-1-hannelotta@gmail.com>
- <680b91c0-0fae-4230-9fa1-da988cb82e65@gmail.com>
-In-Reply-To: <680b91c0-0fae-4230-9fa1-da988cb82e65@gmail.com>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250710235735.1089240-1-irogers@google.com>
+Subject: [PATCH v6 00/14] New perf ilist app
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Xu Yang <xu.yang_2@nxp.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Collin Funk <collin.funk1@gmail.com>, Howard Chu <howardchu95@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Gautam Menghani <gautam@linux.ibm.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed Jul 9, 2025 at 10:22 PM MDT, David Hunter wrote:
-> On 7/8/25 11:52, Hanne-Lotta M=C3=A4enp=C3=A4=C3=A4 wrote:
->> Fix typos and punctuation and improve grammar in documentation.
->>=20
->> Signed-off-by: Hanne-Lotta M=C3=A4enp=C3=A4=C3=A4 <hannelotta@gmail.com>
->
-> Overall, good work. Here is a suggestion for future patch series:
->
-> Subsequent versions of patch series should be posted as replies in the sa=
-me thread. Currently, each version is its own independent thread, which mak=
-es it hard to track changes. This link has the documentation for the proper=
- way to handle subsequent patches:
->
-> https://www.kernel.org/pub/software/scm/git/docs/SubmittingPatches.html
->
-> The relevant part starts at "To that end, send them as replies to either.=
-.."
+This patch series builds up to the addition of a new ilist app written
+in python using textual [1] for the UI. The app presents perf PMUs and
+events, displays the event information as in `perf list` while at the
+bottom of the console showing recent activity of the event in total
+and across all CPUs. It also displays metrics, placed in a tree
+through their metric group, again with counts being displayed in the
+bottom panel.
 
-This documentation you've linked is specific to git, not the linux
-kernel.
+The first ground work patches of fixes, cleanup and refactoring were
+separated into their own series here:
+https://lore.kernel.org/lkml/20250709214029.1769089-1-irogers@google.com/
 
-The kernel documentation argues against doing what you suggest [1]: "for
-a multi-patch series, it is generally best to avoid using In-Reply-To:
-to link to older versions of the series. This way multiple versions of
-the patch don=E2=80=99t become an unmanageable forest of references in emai=
-l
-clients."
+The second part of the patches adds event json for the software PMU
+and makes the tracepoint PMU support iteration of events and the
+like. Without these improvements the tracepoint and software PMUs will
+appear to have no events in the ilist app. As the software PMU moves
+parsing to json, the legacy hard coded parsing is removed. This has
+proven controversial for hardware events and so that cleanup isn't
+done here.
 
-[1]: https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+The final patches expand the perf python APIs and add the ilist
+command. To run it you need the updated perf.cpython.so in your
+PYTHONPATH and then execute the script. Expanding PMUs and then
+selecting events will cause event informatin to be displayed in the
+top-right and the counters values to be displayed as sparklines and
+counts in the bottom half of the screen.
+ 
+[1] https://textual.textualize.io/
 
->
-> Another good practice is to have the previous versions' links from "lore.=
-kernel.org" directly in the change log.=20
->
-> Thanks,=20
-> David Hunter
+v6: For metrics on hybrid systems don't purely match by name, also
+    match the CPU and thread so that if the same metric exists for
+    different PMUs the appropriate one is selected and counters may be
+    read. Likewise use evsel maps and not the evlists.
 
-Nice work, as usual, Hanne-Lotta.
+v5: Split the series in two. Add metric support. Various clean ups and
+    tweaks to the app in particular around the handling of searches.
 
-Brigham
+v4: No conflict rebase. Picks up perf-tools-next DRM PMU which
+    displays as expected.
+
+v3: Add a search dialog to the ilist app with 'n'ext and 'p'revious
+    keys. No changes in the ground work first 14 patches.
+
+v2: In the jevents event description duplication, some minor changes
+    accidentally missed from v1 meaning that in v1 the descriptions
+    were still duplicated. Expand the cover letter with some thoughts
+    on the series.
+
+Ian Rogers (14):
+  perf jevents: Add common software event json
+  perf parse-events: Remove non-json software events
+  perf tp_pmu: Factor existing tracepoint logic to new file
+  perf tp_pmu: Add event APIs
+  perf list: Remove tracepoint printing code
+  perf list: Skip ABI PMUs when printing pmu values
+  perf python: Add basic PMU abstraction and pmus sequence
+  perf python: Add function returning dictionary of all events on a PMU
+  perf ilist: Add new python ilist command
+  perf python: Add parse_metrics function
+  perf python: Add evlist metrics function
+  perf python: Add evlist compute_metric
+  perf python: Add metrics function
+  perf ilist: Add support for metrics
+
+ tools/perf/builtin-list.c                     |  65 ++-
+ .../arch/common/common/software.json          |  92 ++++
+ tools/perf/pmu-events/empty-pmu-events.c      | 266 ++++++----
+ tools/perf/pmu-events/jevents.py              |  15 +-
+ tools/perf/python/ilist.py                    | 486 ++++++++++++++++++
+ tools/perf/util/Build                         |   1 +
+ tools/perf/util/evsel.c                       |  21 +-
+ tools/perf/util/parse-events.c                | 198 +++----
+ tools/perf/util/parse-events.h                |   1 -
+ tools/perf/util/parse-events.l                |  38 +-
+ tools/perf/util/parse-events.y                |  29 +-
+ tools/perf/util/pfm.c                         |   2 +
+ tools/perf/util/pmu.c                         |   7 +
+ tools/perf/util/pmus.c                        |   2 +
+ tools/perf/util/print-events.c                | 100 +---
+ tools/perf/util/print-events.h                |   4 +-
+ tools/perf/util/python.c                      | 485 +++++++++++++++++
+ tools/perf/util/tp_pmu.c                      | 209 ++++++++
+ tools/perf/util/tp_pmu.h                      |  19 +
+ 19 files changed, 1612 insertions(+), 428 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/common/common/software.json
+ create mode 100755 tools/perf/python/ilist.py
+ create mode 100644 tools/perf/util/tp_pmu.c
+ create mode 100644 tools/perf/util/tp_pmu.h
+
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
 
