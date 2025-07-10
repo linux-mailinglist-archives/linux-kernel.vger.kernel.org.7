@@ -1,146 +1,143 @@
-Return-Path: <linux-kernel+bounces-725556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67DB4B000B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:41:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D755B000BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 885517AA27A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E0C541456
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F53D242D83;
-	Thu, 10 Jul 2025 11:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36EA244684;
+	Thu, 10 Jul 2025 11:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OVKHIlIb"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="OLD+qYWa"
+Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480841A841A;
-	Thu, 10 Jul 2025 11:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269691A841A;
+	Thu, 10 Jul 2025 11:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752147641; cv=none; b=p65UvWhEg09W5tE+27Q1vGdhtbwi/ws4e41IuUThTFvO18Nuqs3KPxMgWKjORIk5gEN+FY71KrP23/AXRwWyL5EDRnmCKaPsuAL0S6xSPk+cv+eqCL2F2JejHY2fyOj86QlOlXJB7xTZZdsD8tBYRHfZP9NMYz04Edux9NQohE4=
+	t=1752147853; cv=none; b=SBWwtZ3L7DekhBDVR20T/la15eEtfnrrBsxZ/Hofq0d9Gfxf1YN9LEquJyPlOdmxc4k7VjQIJlcWr6Fe75b2FQp9HZbnNgN1zPzKEpn69aZnBjGNiC4oIt/JV5EJsWuG5NkZM0YTfiYE1TzkwCxZyp0UAqrW+q6Jmb5E2sk8YyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752147641; c=relaxed/simple;
-	bh=0iRUdl962OfD5WdAy2WaNPadKxxM8rE6jjoKazsAV20=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f0AevxyB+H0PHmjQFYOZJJR1O+R/F4yZaZiNiiY+E4rOLHJwdPGv8qgbf5Px7ErF2FIFUYZzvzEdehUcBW9l0iVa11YBVsP8b6CC9GITu+9xltW1k++CNp2W5R7ErK3AJySs3a/QCuSyxksLPgMOjMQfz4yZbGcw5MjIq3ZMURM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OVKHIlIb; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74ad4533ac5so1716774b3a.0;
-        Thu, 10 Jul 2025 04:40:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752147639; x=1752752439; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0iRUdl962OfD5WdAy2WaNPadKxxM8rE6jjoKazsAV20=;
-        b=OVKHIlIbuC7aWrhU4fNKV8+h/imMXidIMjcj5AuYlnmFCuhv24uPw4Lszkq/707czA
-         +imO9iO6ZUKdPY+P9BmJV1vr9I9llPpUWrJ5t/h7VAz0Ok4y4ggC2rWkq7RZrA3VXr8L
-         to6qurSPF/Nw1ZAUFwdsRtnX4Fu0tEgmfRjo2QJGkJlYWI7mB86VQ2Vtr0wmjBdgyPJD
-         a2vPbJM6wFJ5J8fwzIK0NQN6+cN3io5X5o07qtpWwajYzK5ypPVRP74UtBTTT7k6UXIy
-         dAREz0eX35CxPiLycw0vHZMVRHhSfiDTQrMakOt08eAM+7Q/3rTbdHfraYkm4zyIj44B
-         aJ9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752147639; x=1752752439;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0iRUdl962OfD5WdAy2WaNPadKxxM8rE6jjoKazsAV20=;
-        b=PPTuoThNo7SrjvwY+0vKnd3f2InlyQ9PlWkhYpBMl+s/yDYQFCJrYXMGluAkPMh7Jv
-         gX4n2XpXYxo728Ds6oVaz1H2o6jAI///kiBUXhE+U7+svKtf7GauDh3qEXIfR7x3HeYl
-         ASZ2cPHhbLjKQ+4kt1v2AhmaDPNzplngi6insJE9gtXrxoAyHNUovQuzQkUvMQjbLHqS
-         5WqpgFFyOFA/z+Js3L0ZrrNHgfKzmmSVFo6ydPRFrfKu6k8Xp3f7Me+MAsHs6bdkl+TV
-         eAYdrt0455MAgmaUaYgCXh8piVroV1phEKgT66cl6mC6oNlgCPPgDzr72sGEDLM1VBrJ
-         U+gA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqbEmCLGIUXy+mDjceGkE+QI8RgqX+Go+xhgaZyrVhBA0g/HWvV5FrlwJU8kqJg5yssGlXuQwKZE/JfM4=@vger.kernel.org, AJvYcCXoIeH8/umPEUwMP/ECBBhAqLG2kLm2eFOkSMQbIWgJ3WAX7Nj5UMVbqeXkKaST9fVHiCCz1tromQI+M4UKrFQU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5lbOtt0j7gatgZsjIGflcTIBcgKZGU+Gs5Ob4WcyHksCsYHPY
-	ghyuoi5T7jmAPZBjhO/xkrEfemmT1s8d5IbXMtSus1vNXwXXObAkDiuC
-X-Gm-Gg: ASbGncsmGbLylz4aNe75+9UQM9fXLfW44MEq28Wllu7fzk+EyxCIn9ltjqpCYyGO7r1
-	jUwNvFfwKahN9vHfAu9QeBmGdAMdb7KiZqMdc4LoQccaZkF86Kjsvk5RGcuQenvGyOLTmZKGVyv
-	5rU+lpE5IuR5JfWRmGjip86EwB/kr3r4PUXhCy6DsR4+buiv7cbffpYjd0SjK1i0HrujS33HSXO
-	eoevX3hxJqNtaU8wwMDdWfa2r2VUyF3PrCJwigIw05ZGdQOF7x9GR5lub7T0IAmUz3VL4zCCBxS
-	d/M9XD2D68qBL3rGv7ndCZjmW3A8S6Z1pbHJ1fstyEJCRKKUo518opl93894pFzN5makLhYr4/Y
-	3AuWgrHUbsT4H
-X-Google-Smtp-Source: AGHT+IG4jOvVrFVHKIwUQ3SJ4F00MMttTRUh8ul+FH0UmJKgEUH8VTKbVF2uEvCcsLoGiniMkUBLQg==
-X-Received: by 2002:a05:6a20:158b:b0:224:46a0:25ef with SMTP id adf61e73a8af0-22fc38bc880mr5213931637.16.1752147639233;
-        Thu, 10 Jul 2025 04:40:39 -0700 (PDT)
-Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f1d34dsm2136736b3a.104.2025.07.10.04.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 04:40:38 -0700 (PDT)
-From: wang lian <lianux.mm@gmail.com>
-To: ziy@nvidia.com
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	brauner@kernel.org,
-	david@redhat.com,
-	gkwang@linx-info.com,
-	jannh@google.com,
-	lianux.mm@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	p1ucky0923@gmail.com,
-	ryncsn@gmail.com,
-	shuah@kernel.org,
-	sj@kernel.org,
-	vbabka@suse.cz,
-	zijing.zhang@proton.me
-Subject: Re: [PATCH v3] selftests/mm: add process_madvise() tests
-Date: Thu, 10 Jul 2025 19:40:32 +0800
-Message-ID: <20250710114032.63278-1-lianux.mm@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <A1603D53-03B1-412F-8FE8-851A37E4C08C@nvidia.com>
-References: <A1603D53-03B1-412F-8FE8-851A37E4C08C@nvidia.com>
+	s=arc-20240116; t=1752147853; c=relaxed/simple;
+	bh=87TGGmsveT7B1RYMNX+9uM/k958PjRkYA6zqMmJObt4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ouFLhlMEQMopWnODJvNOp4r5/gwOiPTv3Mx/cZIc5l6hArb8Ny7+l2jn4IyYn6AbXUP840Zxh0BS17Wwm+Yg9tARLCddYWZ+DITZKguxL7lZop7iA/r+qw9OSRbQaT8Srx06od2DsHHMJxnm5pN9Rcq7xsFIR5iAF1VQrhYBncM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=OLD+qYWa; arc=none smtp.client-ip=173.249.15.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
+dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
+	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:MIME-Version:Content-Type;
+	bh=7+05M/IC9yw3ENVoiQK7kXBOotT7lwC0HHuno/gcwMM=;
+	b=OLD+qYWaIK+dTpdDyr6qbz+3Qo6ZgmgCJ1KCdDn/MhWatazQi6UmTIz1zPsLNuLFjqRUw+A3JNOzAYSCAf4+i1dOgDrDXovGHrzAOPg7ojTCgQkanBvyNHkWdgwwon3M425d4Ixu7dlLXqze45tWEOKvT3HVIrtkqMfUP/elH28=
+Received: from lukas-hpz440workstation.localnet (cm70-231.liwest.at [212.241.70.231])
+	by mail.netcube.li with ESMTPSA
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256)
+	; Thu, 10 Jul 2025 13:44:02 +0200
+From: Lukas Schmid <lukas.schmid@netcube.li>
+To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ BUG: "scheduling while atomic" with MCP23008 + matrix_keypad IRQ mode on
+ Linux 6.15.5
+Date: Thu, 10 Jul 2025 13:44:01 +0200
+Message-ID: <15509576.tv2OnDr8pf@lukas-hpz440workstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart4308874.1IzOArtZ34";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-Hi Zi,
+--nextPart4308874.1IzOArtZ34
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Lukas Schmid <lukas.schmid@netcube.li>
+To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 10 Jul 2025 13:44:01 +0200
+Message-ID: <15509576.tv2OnDr8pf@lukas-hpz440workstation>
+MIME-Version: 1.0
 
-On <Date of Zi's email>, Zi Yan wrote:
-> On 9 Jul 2025, at 8:32, wang lian wrote:
->
->> Hi Zi Yan,
->> Thanks for testing the patch and reporting this build failure.
->> I don't have an arm64 environment readily available for testing, so I
->> appreciate you catching this. I suspect this is caused by missing or
->> older userspace headers in the cross-compilation toolchain.
->
-> Right. My /usr/include/sys does not have pidfd.h. IMHO selftests
-> should not rely on userspace headers, otherwise we cannot test
-> latest kernel changes.
->
->> I will try to fix this in the next version. If the problem persists, a
->> good solution would be to manually define the syscall wrapper to avoid
->> the dependency on <sys/pidfd.h>.
->
-> Based on what I see in other mm tests, the following patch fixes my
-> compilation issue.
->
-> [ ... patch snippet ... ]
+Hi all,
 
-Thank you very much for not only identifying the root cause but also
-providing a concrete patch to fix the compilation issue. Your analysis
-that selftests should be independent of userspace headers is spot on,
-and this approach aligns perfectly with the feedback I've received.
+I'm encountering a "BUG: scheduling while atomic" when using the MCP23008 GPIO 
+expander with the `matrix_keypad` driver in IRQ mode on Linux v6.15.5
 
-I have integrated your suggested changes into my local tree and will
-include them in the next version of the patch. I will also be sure
-to add your "Suggested-by" tag in the commit message to properly
-credit your contribution.
+Hardware setup:
+- MCP23008 connected via I2C
+- 4x4 matrix keypad hooked to MCP23008 GPIOs
+- SoC: Allwinner T113-s3 SoC
+- Using devicetree configuration for `microchip,mcp23008` and `gpio-
+matrix-keypad`
 
-Your help has been invaluable.
+When I press buttons on the keypad, after some amount of presses I get the 
+following error from the Kernel:
 
-Best regards,
-Wang Lian
+[   81.921114] BUG: scheduling while atomic: kworker/1:4/383/0x00000002
+[   81.921155] Modules linked in: esp32_sdio(O) bluetooth ecdh_generic ecc 
+cfg80211 rfkill ipv6 af_packet evdev matrix_keypad matrix_keymap 
+pinctrl_mcp23s08_i2c pinctrl_mcp23s08 sun8i_ce crypto_engine uio_pdrv_genirq 
+uio
+[   81.921287] CPU: 1 UID: 0 PID: 383 Comm: kworker/1:4 Tainted: G           O        
+6.15.4 #1 PREEMPT 
+[   81.921305] Tainted: [O]=OOT_MODULE
+[   81.921310] Hardware name: Generic DT based system
+[   81.921317] Workqueue: events matrix_keypad_scan [matrix_keypad]
+[   81.921343] Call trace: 
+[   81.921353]  unwind_backtrace from show_stack+0x18/0x1c
+[   81.921381]  show_stack from dump_stack_lvl+0x68/0x74
+[   81.921398]  dump_stack_lvl from __schedule_bug+0x5c/0x70
+[   81.921423]  __schedule_bug from __schedule+0xb48/0xd24
+[   81.921451]  __schedule from schedule+0x34/0x144
+[   81.921472]  schedule from schedule_preempt_disabled+0x24/0x34
+[   81.921494]  schedule_preempt_disabled from __mutex_lock.constprop.
+0+0x308/0xaa4
+[   81.921519]  __mutex_lock.constprop.0 from mcp23s08_irq_bus_lock+0x20/0x30 
+[pinctrl_mcp23s08]
+[   81.921553]  mcp23s08_irq_bus_lock [pinctrl_mcp23s08] from 
+__irq_get_desc_lock+0x84/0xac
+[   81.921584]  __irq_get_desc_lock from enable_irq+0x38/0xa8
+[   81.921605]  enable_irq from matrix_keypad_scan+0x2b8/0x3ac [matrix_keypad]
+[   81.921626]  matrix_keypad_scan [matrix_keypad] from 
+process_one_work+0x160/0x410
+[   81.921649]  process_one_work from worker_thread+0x25c/0x408
+[   81.921668]  worker_thread from kthread+0x144/0x264
+[   81.921685]  kthread from ret_from_fork+0x14/0x38
+[   81.921699] Exception stack(0xc896dfb0 to 0xc896dff8)
+[   81.921709] dfa0:                                     00000000 00000000 
+00000000 00000000
+[   81.921720] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 
+00000000 00000000
+[   81.921730] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+
+Happy to test patches or provide further debugging info.
+
+Best regards,  
+Lukas Schmid
+--nextPart4308874.1IzOArtZ34
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEPv6dcBmn59ssZMkSJnN+drMVRtgFAmhvp4EACgkQJnN+drMV
+Rtjt9Af/ZLO0pvV2QXisvWVdmeigrwh8pxhgc9HUlHHlSPzRo4KO/OHWMZ8RyIzg
+0rho3uB+9vNwySANstD3uyzFVv/Wr5qrsbKmmTR3vAolpexJzVSnz/udmjXTOwdU
+uWd7eMo44Q172/gCcvhzpJ0rLOP6Lz+cpyNnt2KqWsRMW+C6/HPZ1PTRoMIQx4pP
+30cCYdavudi/KJuYCF4MVSqGGmUMxbDI487Y4BGIvi89GrZfFQD+fH+n0AsbKi1+
+7Otlj0SuyppWZaQdY3o6GuM+sBWh4v8RoOuzMDWGD888IMZufVk97yFky5NWUNW5
+OjGbAWbPltGVHiMVM+12N8SgJdHjbA==
+=6sqo
+-----END PGP SIGNATURE-----
+
+--nextPart4308874.1IzOArtZ34--
+
+
+
+
 
