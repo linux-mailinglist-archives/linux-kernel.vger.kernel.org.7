@@ -1,104 +1,104 @@
-Return-Path: <linux-kernel+bounces-726687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6917B01007
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:02:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36BB4B0100A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC6523A9F3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:01:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A0CAB410E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA4C2F3C11;
-	Thu, 10 Jul 2025 23:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F9C2376E0;
+	Fri, 11 Jul 2025 00:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AjiF6Bp9"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cjhJu9uv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EC7307AFB
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800E472604
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 00:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752191942; cv=none; b=okd4KiNnsg0TDpVfYPoJBU0uQ1l/ojMQEuSRK+bNdTEYgOe5mMyBM3hI/hGcgDWS18J0ftB66ujDYf0CSZdQBD19MX1fyfJEMo+rR1f/erPgquiQWvd2AUxQFGy65bZ/epwYB/6Q/dcvXx7i3itjo+4b0Nhfj+j8q+Lu2v1ioh4=
+	t=1752192017; cv=none; b=HDfj3JFQhD+h8Pvo1ZZ/La/7eMt9yv+9noWjp1T3tb3W6sgxKmHrJmkVMw4X7d9auR3r/n1BNRZdyAlgFGVoWqI4O0SHvtmOejJ1i/k83IK/ySdKCaGis6xheBmCeT2HJK5bJVGa2Ulr1zi1CVE9mtMAvJv1T/cFFTFIsiSnCyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752191942; c=relaxed/simple;
-	bh=NzBvjzZSlnSlEwD5PPYSMqLvkxiVg7UhqXlmM5Ui+i0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tSgb7Gf9+3vshwF0ONk7C3BO5bINVWdpogUrPRn0Ka5LbD4YKHywPzkLxkQPrXepGZY7cJZ+J+/nwqXY5b4FKjIfgLfqJvX0/uiuH79fUQ4j3TNnFJ7S2NlBlcGKHSG7ubrEQDHcoRGh8WtQnCBa3LqbVYtSdb2vOaXcoCPSoQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AjiF6Bp9; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2ce3b809-28c4-487a-85d2-c62bce7260b0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752191937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5iXgdYm+l921dPhsin9euYhz1uRo0hm5DDdzuaPKGqE=;
-	b=AjiF6Bp9mwnViaXvmTFOYjWNgIxn2AVg35FSMpIdAFk6rkBv+dapf1s0mPZmEk5RqaXNsK
-	y8co69kxpKHE163QzjWR9WPW5vJTZyGEQzx1cSHv4Q4IZZKqaSHyGlIYDQAI2i5Dh6a8xO
-	W4OfIEfixTaZ4iPsAuUxNYIE++LVwcI=
-Date: Thu, 10 Jul 2025 19:58:52 -0400
+	s=arc-20240116; t=1752192017; c=relaxed/simple;
+	bh=b2b4cWg2djSkVTYjQ5f4Rk/HVmCESLdHPX2koHFh13M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ODZKiLAH4EMHiMZ2KY59Cqc1ghMf/vyVPETYZhogF+TRUrRyBjCcKiIS2JLaIxPhBK2+pupTdD0Tz1DWwZR+Z/NNk2Gnyyk/JCCJNtzlxo/Lo5HIhhrgiAk8coz5OofW/PhKYh9LJckUPiwE5EUNb+QtnOIdPgNzBizRv0HYFcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cjhJu9uv; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752192015; x=1783728015;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=b2b4cWg2djSkVTYjQ5f4Rk/HVmCESLdHPX2koHFh13M=;
+  b=cjhJu9uvXL/8Kug4cv0fnRP7EQC2luKHSraeWieb+lXpujX3KW3UPuHE
+   8hhCC4jTRQXT9J5C/iMeaGYUocbIO95ZMPYhO2GlYCk2MEHMYvzbg+a6R
+   FN17VZnQosuyRS5tylWn5GP5Umq2yRmyI4upXc8quxYzetCZN12giavjg
+   vRJ4F7TPEYJ7sY9IpM4XNX/MgReqG5PxiDLJgEdC3cZN06xQDC4VTBRmF
+   S+ANtU8rXeHAspnJoVrYv+Qeo9iqeDz8dce44mRKe8E0qpS5Y4jwC9u/G
+   VYsmNRBulSVZ6xHCk6Q9TX6Pivqi64GvV6+IOP1Tl3eIW1B/jBZw6LKRZ
+   Q==;
+X-CSE-ConnectionGUID: LckrRNf+R/OGGrb6A/Y8cA==
+X-CSE-MsgGUID: /e5upKnUS1qxj1vIhNiq9A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="65186190"
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="65186190"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 17:00:14 -0700
+X-CSE-ConnectionGUID: 7zMcqflwQvSe3hZZzeC0sA==
+X-CSE-MsgGUID: 1MtURMLPR1ypAcLH3oCXrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="156784220"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 10 Jul 2025 17:00:12 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ua1BS-0005bo-1t;
+	Fri, 11 Jul 2025 00:00:10 +0000
+Date: Fri, 11 Jul 2025 07:59:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tor Vic <torvic9@mailbox.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+Subject: vmlinux.o: warning: objtool: fat_ioctl_filldir+0x72c: stack state
+ mismatch: cfa1=4+168 cfa2=4+160
+Message-ID: <202507110734.nbN9j4St-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC] comparing the propesed implementation for standalone PCS
- drivers
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Simon Horman <horms@kernel.org>
-Cc: Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Russell King <linux@armlinux.org.uk>,
- Vineeth Karumanchi <vineeth.karumanchi@amd.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, linux-kernel@vger.kernel.org,
- Kory Maincent <kory.maincent@bootlin.com>,
- Christian Marangi <ansuelsmth@gmail.com>, Lei Wei <quic_leiwei@quicinc.com>,
- Michal Simek <michal.simek@amd.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Robert Hancock <robert.hancock@calian.com>, John Crispin <john@phrozen.org>,
- Felix Fietkau <nbd@nbd.name>, Robert Marko <robimarko@gmail.com>
-References: <aEwfME3dYisQtdCj@pidgin.makrotopia.org>
- <24c4dfe9-ae3a-4126-b4ec-baac7754a669@linux.dev>
- <20250709135216.GA721198@horms.kernel.org>
- <c84518eb-15da-4356-ac6a-b2fcb807d92f@linux.dev>
-Content-Language: en-US
-In-Reply-To: <c84518eb-15da-4356-ac6a-b2fcb807d92f@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 7/10/25 18:50, Sean Anderson wrote:
-> /* In mac_probe() or whatever */
-> scoped_guard(mutex)(&pcs_remove_lock) {
-> 	/* Just imagine some terrible contortions for compatibility here */
-> 	struct phylink_pcs *pcs = pcs_get(dev, "my_pcs");
-> 	if (IS_ERR(pcs))
-> 		return PTR_ERR(pcs);
-> 
-> 	list_add(pcs->list, &config.pcs_list);
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   bc9ff192a6c940d9a26e21a0a82f2667067aaf5f
+commit: ea1dcca1de129dfdf145338a868648bc0e24717c x86/kbuild/64: Add the CONFIG_X86_NATIVE_CPU option to locally optimize the kernel with '-march=native'
+date:   4 months ago
+config: x86_64-buildonly-randconfig-003-20250711 (https://download.01.org/0day-ci/archive/20250711/202507110734.nbN9j4St-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250711/202507110734.nbN9j4St-lkp@intel.com/reproduce)
 
-One thing we could do would be to add a mac_priv field to the PCS that the
-MAC could stick some kind of identifier in. I could live with that.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507110734.nbN9j4St-lkp@intel.com/
 
-But I still don't like how you'd need to hold a lock across pcs_get/
-phylink_create. It feels like an unwieldy API.
+All warnings (new ones prefixed by >>):
 
-> 	ret = phylink_create(config, dev->fwnode, interface,
-> 			     &mac_phylink_ops);
-> 	if (ret)
-> 		return ret;
-> }
-> /* At this point the PCS could have already been removed */
+   vmlinux.o: warning: objtool: ___bpf_prog_run+0x1e8: sibling call from callable instruction with modified stack frame
+>> vmlinux.o: warning: objtool: fat_ioctl_filldir+0x72c: stack state mismatch: cfa1=4+168 cfa2=4+160
+   vmlinux.o: warning: objtool: __ubsan_handle_type_mismatch+0xde: call to __msan_memset() with UACCESS enabled
+   vmlinux.o: warning: objtool: __ubsan_handle_type_mismatch_v1+0xf3: call to __msan_memset() with UACCESS enabled
+   vmlinux.o: warning: objtool: .text.aw_dev_dsp_update_cfg: unexpected end of section
 
---Sean
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
