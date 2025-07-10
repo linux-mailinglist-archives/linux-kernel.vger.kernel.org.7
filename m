@@ -1,190 +1,368 @@
-Return-Path: <linux-kernel+bounces-725977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C255B00633
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:15:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 066AEB0062B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F11C6644396
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:12:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1B3F167E59
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AFF274671;
-	Thu, 10 Jul 2025 15:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B25F274FDA;
+	Thu, 10 Jul 2025 15:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fKGFbWnD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMqIBdWd"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE352741D4;
-	Thu, 10 Jul 2025 15:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5817E2749D5;
+	Thu, 10 Jul 2025 15:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752160360; cv=none; b=CQ56PbpSDHEUTBvz9/PWXmMXkDA0CwYkvgTvsR7lubMFQa1RbS4Nd3EOvEIzd75fMNLmDWPCSkxzVuuIdLWuchHX919XGVl5A5E+4eTOXNTyheuKc4N431O/IyB1r1EkZek7/XDXc2LpDZMtMjqcmy63xPGVJZWvUGk7vpvVJ4k=
+	t=1752160369; cv=none; b=gVLINE4SsnFOcAMtnOtNyRTaOfRsrKtE+w8jPCx5UBL2VItiFz9mxwLRaA1R/okCPFUezcuxO7jG+GyAXKUYLouA8EUkrCTo+MTtEtWYWWjNBcAcWSh2c8FRZb99a2kp5qLGcjfF2OKzAXJJQwlqLnWUzopqZkZ2+F+z1jIAwI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752160360; c=relaxed/simple;
-	bh=rr1ZOgK5bdD1tFwBjDDJKdPyetUVMM+BVFhZ5QRc0VI=;
+	s=arc-20240116; t=1752160369; c=relaxed/simple;
+	bh=GgOjJjNhfxbdPscR6Rcl+Lm5A623RErZUMr28VV/AD8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KTdb2bajT5K6QCI+INmsXcL3y8GZNc51kHVDhI5HzFQee1ZnchyBlq7MkJ4PlgSC5ULQcga58pIVWFKF56z87pBW6a5DpYP25Dy8Na8onnTuxBVFWmmpSbn4/AZ00ZlSFiuAhKvwtXqS4sw4x3gfagFdw2RDk/rAja6yfgxt7Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fKGFbWnD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07ACCC4CEE3;
-	Thu, 10 Jul 2025 15:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752160360;
-	bh=rr1ZOgK5bdD1tFwBjDDJKdPyetUVMM+BVFhZ5QRc0VI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fKGFbWnDK8kCSkU8sFpiEVIwq8ZNUZPxQc55642H12EDSFcudb6rQnI3D26os1GqI
-	 ng3LaI8lpe0NE8OhZHwefBgW9AldAbbECUmihW2DWkPkbKLCYCnOVi7CoZ1HL0VWmL
-	 ZT8EHc76cpvcOIJJMf1pIrC+9DeLaQdZNOoRhyiaFirLCexeRVNU+SFM6TUnRrajnf
-	 6gC4b1KCH9XLIjG3swAF72ipfXE9YNdpG/7npfYZeF4jDVtkRSM7rZXMYfsKnA/T0f
-	 G65Q25cu4pLleQZHO88Jp3LgxqMOpuEJDfST3MugeQ2ohZ+pLK1U6b9tCCXJnHPYj+
-	 MWtDSRabaXJRg==
-Date: Thu, 10 Jul 2025 17:12:37 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Andrew Davis <afd@ti.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jared Kangas <jkangas@redhat.com>, Mattijs Korpershoek <mkorpershoek@kernel.org>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: Re: [PATCH v2] Documentation: dma-buf: heaps: Add naming guidelines
-Message-ID: <20250710-emerald-kingfisher-of-karma-effacb@houat>
-References: <20250616-dma-buf-heap-names-doc-v2-1-8ae43174cdbf@kernel.org>
- <9182c5cd-b3de-470b-bf84-3ebef309def6@ti.com>
- <20250710-knowing-premium-goldfish-0bfe6e@houat>
- <aba6defc-817f-477c-8569-c5e01ca734b6@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xj0uk0cLueH0Irh5NG1tVSFyvNJKfDQYXdx0HKjAEoVNPV3RycMHw3AyylvvMu7P5LAOFUuG+8eC3Ho4j14jEQpKoizfPSFdNYzlm5OeZIFvxkotfcLyN6sr5vuoXqdtfoVaZpLCh6MbgDLfWnDUi9vdaRTsQNrrmrxXRVItNoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMqIBdWd; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7d38ddc198eso125017685a.1;
+        Thu, 10 Jul 2025 08:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752160365; x=1752765165; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t7A/GLY3skkEqUm5DsmGuTgpMULWmEN8ea1a9wjie1g=;
+        b=fMqIBdWdyoi6ajfn8lXi1G0pf3qZkT9CCC+afhvNYixaIBGwR7GDy8lQ/1JwCGn15H
+         O1CNfHJkc8oMVat/s5toPkiuz/EEIf5h/uva+05hKjdXLoUD0z9cptvjVQm+l3Yolrxn
+         MlWL8SLObT3zZMA6JatFkZ746utMsf674vKI3xyUJiD3gpKrP+RlqW2ix/0dif07OgYT
+         4mR0TaVdP/aR7YMD+2mqi+G5XpEmA2LH5UGnAGNLSekV+hWa8NQvmONRUiSfcbYLIvC4
+         dB9xskeNoJqUvJjY0NMkioI6uLYNt4HSLmdimXwhWe00fwwjCOK1jZv8BwxvW1CZDKCY
+         CCBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752160365; x=1752765165;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t7A/GLY3skkEqUm5DsmGuTgpMULWmEN8ea1a9wjie1g=;
+        b=UXFhkrzEiZz2Lw6yLwQtmP2wDCMyGK+EgJTqKi32P3I6bkQVUbF9iv/DC/VVGr084V
+         d6RkqDINH8WL560yTsEVZnzLjkGNg2uyBXJV8WRdQgVmTS9pI7Wk5utiIue8HtJZFYed
+         Mta7cuqe9eiFyFale9ilk59EPbvroM9jEGzL7C8QYErfcoQzKt8PDvtdRr1sTgXv0BUw
+         0kgM8zMf1ZN50kZ6c8NCjzDRx5AH9UZA6QTJurHTeF/n1XmpcVo+YBOk+9oV7+b8N0Jf
+         qsvG4fj0eqGN2/WdCD5ckj82AyVyByF44NmPf00/Y8BqFQz46ga2cOue9EyO2DFrbS6/
+         Mv4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVha8eFEIE9zFCwSCvKx1YDDJrxjVUb/xBzyYt5MVpm6jl6YeTbDlqiiT3oOaSfvVSkEOra7XkmqY5+@vger.kernel.org, AJvYcCVo7Bl6A8Ep5d+F9eP2DFL9nWc5BWyYcSM26SvjYBD/nC33mesEideF9DgwG2ydqOVN8UcCVAOvEzP/z8glCb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtm6XdpcCTPjnCEGM6z5TSiR8N9Dy82Eb9+9Kv50j8lGqyr6yp
+	cH+E7NsJfRI609X2/+oYt1gTHJEGK9exoHtIiZfYYlUvurBXMJLamntp
+X-Gm-Gg: ASbGncsEbjvW9gYKa8cRJgNXm+kGGaUWtB7SMMd1RD+O4V9SXhcDW0YxvlH5MhHAP8U
+	0faAZmOAKUaEWLj9jTewo+5P8ulme3yZMsk/UG0ivGD1yTI5zTxiZOU/eOE/C305xe390RnUvV5
+	Owifq8mlmN44LAQvwrP7HdNCmD/1WeAgtLepF8ZI2UDvKWPj0esTM7ziwxu/s9Aid2GSFZ1fbdF
+	jfhSTwwGAOrh5uDmNXjWUzvqTbbO3nAlrsiAsiivlWurDvDorXITCX5MZRRAsOaE85/8aEHKzz3
+	k+MHfDwpnMu35IMcfbZ/SJ6Fk3k4aBwtycmqbAOX+WvIseFtkezr2KHPs4F4IYNpFAMsRz4KXFR
+	JIUGHyVg35mKaFKTJvZmCnDsMwNq46sMuRmPb+x2LAVaUj/ZszgTK
+X-Google-Smtp-Source: AGHT+IGZRT3Ek+k6ptGou00R1ZtWCEc1SgeI24oeuNzsyYq0PSGK5DVt2zsoYjwPFBI7QMY7TQ3imA==
+X-Received: by 2002:a05:620a:2b9b:b0:7d5:dc2a:c5f8 with SMTP id af79cd13be357-7dcc9f15c86mr356156685a.12.1752160364903;
+        Thu, 10 Jul 2025 08:12:44 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcdc0fa32asm107520885a.48.2025.07.10.08.12.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 08:12:44 -0700 (PDT)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfauth.phl.internal (Postfix) with ESMTP id CF2F4F4006B;
+	Thu, 10 Jul 2025 11:12:43 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Thu, 10 Jul 2025 11:12:43 -0400
+X-ME-Sender: <xms:a9hvaH97HvLX8EF-t8Gr7m-MFe7jAcliP0B9jHTp9RTu75KLZ0nIVg>
+    <xme:a9hvaFMY1L6RdI2StmMWCv4_jwtS5ihI1NF5G6QIdj8J1Rq931Am_0WkLl0qpY5oL
+    5VRbADRuOkIDn1IJA>
+X-ME-Received: <xmr:a9hvaJlMvHgL-iqokBkxLipM3ib9zH5kh-RFzNdkAaIrM6tNxCGCmCtKkg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdejjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdq
+    fhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkh
+    hmmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgt
+    hhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjoh
+    hrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:a9hvaC-9-4PxyYxvoHig2CGDJSpUDZSOM_ySAyvwgLwkGZT9N_nDsQ>
+    <xmx:a9hvaKMecz-Pv9KwMAHeZvLL2fO61dtnI7qiAk9oClfjqigX3wjg_A>
+    <xmx:a9hvaOGTcpOMAbwt4U5DFfIAap85eck5zIsSxKP94U_SdHqchBQ6pg>
+    <xmx:a9hvaIgmwnlbxCaM4k1yxqFyzOHUDVGaezVE5lYXFNR56_e1aUmnsQ>
+    <xmx:a9hvaCR5VrluecWU5tUCEDOvzd5Sa7hik4lQByisKubHy-7FvPilLY92>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 10 Jul 2025 11:12:43 -0400 (EDT)
+Date: Thu, 10 Jul 2025 08:12:42 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 2/9] rust: sync: Add basic atomic operation mapping
+ framework
+Message-ID: <aG_Yah5FFHcA3IZy@Mac.home>
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-3-boqun.feng@gmail.com>
+ <DB8BQGJNFDAY.BGQ8CZSFFOLH@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="l7lidkg7iogd6klm"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aba6defc-817f-477c-8569-c5e01ca734b6@ti.com>
+In-Reply-To: <DB8BQGJNFDAY.BGQ8CZSFFOLH@kernel.org>
 
+On Thu, Jul 10, 2025 at 01:04:38PM +0200, Benno Lossin wrote:
+> On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
+> > Preparation for generic atomic implementation. To unify the
+> > implementation of a generic method over `i32` and `i64`, the C side
+> > atomic methods need to be grouped so that in a generic method, they can
+> > be referred as <type>::<method>, otherwise their parameters and return
+> > value are different between `i32` and `i64`, which would require using
+> > `transmute()` to unify the type into a `T`.
+> >
+> > Introduce `AtomicImpl` to represent a basic type in Rust that has the
+> > direct mapping to an atomic implementation from C. This trait is sealed,
+> > and currently only `i32` and `i64` impl this.
+> >
+> > Further, different methods are put into different `*Ops` trait groups,
+> > and this is for the future when smaller types like `i8`/`i16` are
+> > supported but only with a limited set of API (e.g. only set(), load(),
+> > xchg() and cmpxchg(), no add() or sub() etc).
+> >
+> > While the atomic mod is introduced, documentation is also added for
+> > memory models and data races.
+> >
+> > Also bump my role to the maintainer of ATOMIC INFRASTRUCTURE to reflect
+> > my responsiblity on the Rust atomic mod.
+> >
+> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> 
+> Overall this looks good from a functionality view. I have some cosmetic
+> comments for the macros below and a possibly bigger concern regarding
+> safety comments. But I think this is good enough for now, so:
+> 
+> Reviewed-by: Benno Lossin <lossin@kernel.org>
+> 
 
---l7lidkg7iogd6klm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] Documentation: dma-buf: heaps: Add naming guidelines
-MIME-Version: 1.0
+Thanks!
 
-On Thu, Jul 10, 2025 at 09:34:12AM -0500, Andrew Davis wrote:
-> On 7/10/25 2:06 AM, Maxime Ripard wrote:
-> > On Wed, Jul 09, 2025 at 12:39:15PM -0500, Andrew Davis wrote:
-> > > On 6/16/25 10:21 AM, Maxime Ripard wrote:
-> > > > We've discussed a number of times of how some heap names are bad, b=
-ut
-> > > > not really what makes a good heap name.
-> > > >=20
-> > > > Let's document what we expect the heap names to look like.
-> > > >=20
-> > > > Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> > > > Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > > > ---
-> > > > Changes in v2:
-> > > > - Added justifications for each requirement / suggestions
-> > > > - Added a mention and example of buffer attributes
-> > > > - Link to v1: https://lore.kernel.org/r/20250520-dma-buf-heap-names=
--doc-v1-1-ab31f74809ee@kernel.org
-> > > > ---
-> > > >    Documentation/userspace-api/dma-buf-heaps.rst | 38 +++++++++++++=
-++++++++++++++
-> > > >    1 file changed, 38 insertions(+)
-> > > >=20
-> > > > diff --git a/Documentation/userspace-api/dma-buf-heaps.rst b/Docume=
-ntation/userspace-api/dma-buf-heaps.rst
-> > > > index 535f49047ce6450796bf4380c989e109355efc05..835ad1c3a65bc07b6f4=
-1d387d85c57162909e859 100644
-> > > > --- a/Documentation/userspace-api/dma-buf-heaps.rst
-> > > > +++ b/Documentation/userspace-api/dma-buf-heaps.rst
-> > > > @@ -21,5 +21,43 @@ following heaps:
-> > > >       usually created either through the kernel commandline through=
- the
-> > > >       `cma` parameter, a memory region Device-Tree node with the
-> > > >       `linux,cma-default` property set, or through the `CMA_SIZE_MB=
-YTES` or
-> > > >       `CMA_SIZE_PERCENTAGE` Kconfig options. Depending on the platf=
-orm, it
-> > > >       might be called ``reserved``, ``linux,cma``, or ``default-poo=
-l``.
-> > > > +
-> > > > +Naming Convention
-> > > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > +
-> > > > +``dma-buf`` heaps name should meet a number of constraints:
-> > > > +
-> > > > +- That name must be stable, and must not change from one version t=
-o the
-> > > > +  other. Userspace identifies heaps by their name, so if the names=
- ever
-> > > > +  changes, we would be likely to introduce regressions.
-> > > > +
-> > > > +- That name must describe the memory region the heap will allocate=
- from,
-> > > > +  and must uniquely identify it in a given platform. Since userspa=
-ce
-> > > > +  applications use the heap name as the discriminant, it must be a=
-ble to
-> > > > +  tell which heap it wants to use reliably if there's multiple hea=
-ps.
-> > > > +
-> > > > +- That name must not mention implementation details, such as the
-> > > > +  allocator. The heap driver will change over time, and implementa=
-tion
-> > > > +  details when it was introduced might not be relevant in the futu=
-re.
-> > > > +
-> > > > +- The name should describe properties of the buffers that would be
-> > > > +  allocated. Doing so will make heap identification easier for
-> > > > +  userspace. Such properties are:
-> > > > +
-> > > > +  - ``cacheable`` / ``uncacheable`` for buffers with CPU caches en=
-abled
-> > > > +    or disabled;
-> > > > +
-> > >=20
-> > > We should avoid exposing cacheability to userspace. What users care a=
-bout
-> > > is if writes are readable by the other side (and vice versa) without =
-SYNC
-> > > operations in-between. This property is "coherency". Being non-cached
-> > > is just one way to achieve coherency on some systems. For many systems
-> > > even cached buffers are still coherent and manually specifying "non-c=
-ached"
-> > > causes unneeded performance issues.
-> >=20
-> > I disagree. If you want to do any kind of software rendering, the
-> > buffers being cached is absolutely critical to having decent
-> > performance.
-> >=20
->=20
-> I think we are saying the same thing, the default should be cached.
-> If the user doesn't have an option for specifying "non-cached" then
-> they will always get the better performing cached buffers.
+> > diff --git a/rust/kernel/sync/atomic/ops.rs b/rust/kernel/sync/atomic/ops.rs
+> > new file mode 100644
+> > index 000000000000..da04dd383962
+> > --- /dev/null
+> > +++ b/rust/kernel/sync/atomic/ops.rs
+> > @@ -0,0 +1,195 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +//! Atomic implementations.
+> > +//!
+> > +//! Provides 1:1 mapping of atomic implementations.
+> > +
+> > +use crate::bindings::*;
+> 
+> We shouldn't import all bindings, just use `bindings::` below.
+> 
 
-Oh, I see what you mean now. Yeah, I agree. I'll drop that part from the
-doc then.
+Make sense!
 
-Maxime
+> > +// This macro generates the function signature with given argument list and return type.
+> > +macro_rules! declare_atomic_method {
+> > +    (
+> > +        $func:ident($($arg:ident : $arg_type:ty),*) $(-> $ret:ty)?
+> > +    ) => {
+> > +        paste!(
+> > +            #[doc = concat!("Atomic ", stringify!($func))]
+> > +            #[doc = "# Safety"]
+> > +            #[doc = "- Any pointer passed to the function has to be a valid pointer"]
+> > +            #[doc = "- Accesses must not cause data races per LKMM:"]
+> > +            #[doc = "  - Atomic read racing with normal read, normal write or atomic write is not data race."]
+> 
+> s/not/not a/
+> 
+> > +            #[doc = "  - Atomic write racing with normal read or normal write is data-race, unless the"]
+> 
+> s/data-race/a data race/
+> 
+> > +            #[doc = "    normal accesses are done at C side and considered as immune to data"]
+> 
+>     #[doc = "    normal access is done from the C side and considered immune to data"]
+> 
+> > +            #[doc = "    races, e.g. CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC."]
+> 
+> Missing '`'.
+> 
 
---l7lidkg7iogd6klm
-Content-Type: application/pgp-signature; name="signature.asc"
+Fixed.
 
------BEGIN PGP SIGNATURE-----
+> 
+> Also why aren't you using `///` instead of `#[doc =`? The only part
+> where you need interpolation is the first one.
+> 
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaG/YZQAKCRAnX84Zoj2+
-djgAAYD5vuwKaflHNUxDHAmxUpq3W7TZa0Tw2oB5cFigPBhRUNISKlNKKbYkuStg
-s6DTCOMBf3BLdNw7/uxAEnWEZ2tN6mEyK/Ikatabx/xgOAMDBUL/I83BPSypgJTe
-SotOCaOI/w==
-=5fV/
------END PGP SIGNATURE-----
+I think at a certain point I was not using `paste!()` and then using
+`///` wouldn't generate them into rustdoc, but with `paste!()` your
+suggestion makes sense, thanks!
 
---l7lidkg7iogd6klm--
+> > +            unsafe fn [< atomic_ $func >]($($arg: $arg_type,)*) $(-> $ret)?;
+> > +        );
+> > +    };
+> 
+> > +declare_and_impl_atomic_methods!(
+> > +    AtomicHasBasicOps ("Basic atomic operations") {
+> > +        read[acquire](ptr: *mut Self) -> Self {
+> > +            call(ptr.cast())
+> > +        }
+> > +
+> > +        set[release](ptr: *mut Self, v: Self) {
+> > +            call(ptr.cast(), v)
+> > +        }
+> > +    }
+> 
+> I think this would look a bit better:
+> 
+>     /// Basic atomic operations.
+>     pub trait AtomicHasBasicOps {
+>         unsafe fn read[acquire](ptr: *mut Self) -> Self {
+>             bindings::#call(ptr.cast())
+>         }
+> 
+>         unsafe fn set[release](ptr: *mut Self, v: Self) {
+>             bindings::#call(ptr.cast(), v)
+>         }
+>     }
+> 
+
+Make sense, I've made `pub trait`, `bindings::#` and `unsafe fn`
+hard-coded:
+
+macro_rules! declare_and_impl_atomic_methods {
+    (#[doc = $doc:expr] pub trait $ops:ident {
+        $(
+            unsafe fn $func:ident [$($variant:ident),*]($($arg_sig:tt)*) $( -> $ret:ty)? {
+                bindings::#call($($arg:tt)*)
+            }
+        )*
+    }) => {
+
+It shouldn't be very hard to make use of the actual visibility or
+unsafe, but we currently don't have other visibility or safe function,
+so it's simple to keep it as it is.
+
+> And then we could also put the safety comments inline:
+> 
+>     /// Basic atomic operations.
+>     pub trait AtomicHasBasicOps {
+>         /// Atomic read
+>         ///
+>         /// # Safety
+>         /// - Any pointer passed to the function has to be a valid pointer
+>         /// - Accesses must not cause data races per LKMM:
+>         ///   - Atomic read racing with normal read, normal write or atomic write is not a data race.
+>         ///   - Atomic write racing with normal read or normal write is a data race, unless the
+>         ///     normal access is done from the C side and considered immune to data races, e.g.
+>         ///     `CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC`.
+>         unsafe fn read[acquire](ptr: *mut Self) -> Self {
+>             // SAFETY: Per function safety requirement, all pointers are valid, and accesses won't
+>             // cause data race per LKMM.
+>             unsafe { bindings::#call(ptr.cast()) }
+>         }
+> 
+>         /// Atomic read
+
+Copy-pasta ;-)
+
+>         ///
+>         /// # Safety
+>         /// - Any pointer passed to the function has to be a valid pointer
+>         /// - Accesses must not cause data races per LKMM:
+>         ///   - Atomic read racing with normal read, normal write or atomic write is not a data race.
+>         ///   - Atomic write racing with normal read or normal write is a data race, unless the
+>         ///     normal access is done from the C side and considered immune to data races, e.g.
+>         ///     `CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC`.
+>         unsafe fn set[release](ptr: *mut Self, v: Self) {
+>             // SAFETY: Per function safety requirement, all pointers are valid, and accesses won't
+>             // cause data race per LKMM.
+>             unsafe { bindings::#call(ptr.cast(), v) }
+>         }
+>     }
+> 
+> I'm not sure if this is worth it, but for reading the definitions of
+> these operations directly in the code this is going to be a lot more
+> readable. I don't think it's too bad to duplicate it.
+> 
+> I'm also not fully satisfied with the safety comment on
+> `bindings::#call`...
+> 
+
+Based on the above, I'm not going to do the change (i.e. duplicating
+the safe comments and improve them), and I would make an issue tracking
+it, and we can revisit it when we have time. Sounds good?
+
+Regards,
+Boqun
+
+> ---
+> Cheers,
+> Benno
+> 
+> > +);
+> > +
+> > +declare_and_impl_atomic_methods!(
+> > +    AtomicHasXchgOps ("Exchange and compare-and-exchange atomic operations") {
+> > +        xchg[acquire, release, relaxed](ptr: *mut Self, v: Self) -> Self {
+> > +            call(ptr.cast(), v)
+> > +        }
+> > +
+> > +        try_cmpxchg[acquire, release, relaxed](ptr: *mut Self, old: *mut Self, new: Self) -> bool {
+> > +            call(ptr.cast(), old, new)
+> > +        }
+> > +    }
+> > +);
+> > +
+> > +declare_and_impl_atomic_methods!(
+> > +    AtomicHasArithmeticOps ("Atomic arithmetic operations") {
+> > +        add[](ptr: *mut Self, v: Self) {
+> > +            call(v, ptr.cast())
+> > +        }
+> > +
+> > +        fetch_add[acquire, release, relaxed](ptr: *mut Self, v: Self) -> Self {
+> > +            call(v, ptr.cast())
+> > +        }
+> > +    }
+> > +);
 
