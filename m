@@ -1,147 +1,101 @@
-Return-Path: <linux-kernel+bounces-725369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B29C7AFFE1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:29:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B958AFFE22
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E0B1C2745C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:29:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42D6B1C456AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CB529ACDE;
-	Thu, 10 Jul 2025 09:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2317329ACED;
+	Thu, 10 Jul 2025 09:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IgvOxpii"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8niUqxk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1770829615C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DA8292B4E;
+	Thu, 10 Jul 2025 09:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752139761; cv=none; b=VcUQWs40TxmjDKhsew7nfwRVGVNq/+4s/Bco/mJ3wRqful1wF8yRkQoCVRV5Jb1u9H8fzAKDFSRhXX9dS5tk9W8vquggwOC24mNsyJ9pzkPq0d3djSEYR9yHgh+Y71Q9rX/uS194WNDr01W/1mdOic7xABTcV42f57xVsX22Ln8=
+	t=1752139784; cv=none; b=b6JVv48sc/450aYTNf4lLj1bxH68fadEVoTtRe4qgh1pgBxTclRJbd1Ka/GiZOA4DJdbguo4IiaHMHF5QJEc0TO+C5g3ocOJTLpTwc/MjQgTxRhfZXEeCDsJIJ97vVOdlTswcBAi1l135REXRBT4YlV+2rprSlBaopvyw5iRgIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752139761; c=relaxed/simple;
-	bh=Mj99t2+T5CZ3bj3evKUWmV1TWs6ZU+OLZkjlOnmUkbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SsZVUKaX21Zcgmb0hGKkzBvXKvjMGS3sMOFKeROhG+A79R5uIRDxNhxZwYHBnRaznP6tuDi7R8AnwSL251RXwoS40rxkW1vDatrU/q1eskQQxVZccitDwTDHo+rkR5HuXNx72WdW0HO6wD5VIK3ITNshIFxKPGet8qvFAlVaS7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IgvOxpii; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752139757;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z4m236VTKUqnXMtDNLsgzoIjZNCKdFD8CALQosO/eFs=;
-	b=IgvOxpiiV0Gt6jPSSWrpJzFayddHxntx4g1wF2YRyOpSUxCkDpbXtVzsOLS2ddiDYqI4hd
-	0xlOZgvsztI94TfgDuc1E4mKcGJtQKcpFB5tBpvjPXrP/o8YPn5ur26+9xUYM4XyIQX53E
-	GAQXBsyvCJm4dBDx82Iti2StmyTcNNQ=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-132-NoYoMvbYMfKq8E2dq-Pw6Q-1; Thu, 10 Jul 2025 05:29:16 -0400
-X-MC-Unique: NoYoMvbYMfKq8E2dq-Pw6Q-1
-X-Mimecast-MFC-AGG-ID: NoYoMvbYMfKq8E2dq-Pw6Q_1752139755
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45311704d1fso4829425e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 02:29:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752139755; x=1752744555;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z4m236VTKUqnXMtDNLsgzoIjZNCKdFD8CALQosO/eFs=;
-        b=ZyTlCAKSWQN7orpvCRfxhi54m/ATMvpXBTsqFvuQu4VSmMV5NwLJsTVOpG26cqmNKE
-         /NeoAyxa6uK+Cz+9kT57CPzp/LZ/hm+3zfE0ICxoUMX4LQFyo0M8eBSYaE7WOS2m2zsM
-         xOh4mpqNFEV04uznIyoKBqVo4ggk1ag0OblXAA0Icajwdx6vRbAHAoFO5iycpNHtRbEA
-         Wm2r/epSTHEGNdcBunFfm2bjOe2wAcylTBNkB8ay/y4gaUhVvIuY8JJ3T226FJlVP8O/
-         GICB5kK+2EnGpcjdFlLCbiEnEchUMcS5lWpJCLPZHtAbP88wty4NVg44Ok13epkQi2j1
-         MWAw==
-X-Forwarded-Encrypted: i=1; AJvYcCW++E391un4Ew3OIbwUEeSgIxZuEls1aSp5DbWuf5EmRkQLnTzXi02rBR1pBHgSf0gIX1aq/NFeZVCuNHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN5F00WJZW4JXFp7VjtrDcgCaQ+Qb893twpyZ5hME0zcW8T+LP
-	Nu09sFNs1r/LwWyT9XBgHcc6nfc71E/RXPsLpxvJr1ag0vfL36JZzM4wxmeZGyIq0BeEp0nqFAi
-	XPoQcxs4Z5z8yK9/lRZae/xdW/Vvo7ucOHDIVXm53lR7TWqxuK3l7iSb1YALsZvOWBw==
-X-Gm-Gg: ASbGncsfWLa+i3yerXUZzj+0sHEryFaPHErOwr8BepmSCuIpEZqWYDJQ+j+KXCvn+ya
-	HPN3dEl7NCtgf724YAaXhAT6hqBpGlfo4mcT7Spcdzx4eO/Gr7KoqQ4PKwfS47hqWrYb7xMR+Yc
-	Ej37n16riMnguXtotp0spkYAA6dqDfI3KXFbTq5mx/UTj3QIlM1pw7GjN0lYigWE3yy5GhGYe72
-	JcIZf1N9OAfO8M5wKJ4JAw9hterDrA+57HvRKGxpC8/L85mtN3uosPjp/fpg8YqfTNb/+ut2slT
-	PdA7MA27wTjN4b7/4b7wkNbcJSF043nIQD41CKcRHM/96lBVk+/VlaTx5/xsUdqPkVbFtA==
-X-Received: by 2002:a05:600c:3b0f:b0:450:d4a6:79ad with SMTP id 5b1f17b1804b1-454dd2f1fffmr16819895e9.23.1752139755352;
-        Thu, 10 Jul 2025 02:29:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEeNP7uDlPMS6NgOJ1XCVdaAcNbvsnjWShUEJ83Ozrbbnu/dt4Dbj65YDVdrx36XLOJWleHxA==
-X-Received: by 2002:a05:600c:3b0f:b0:450:d4a6:79ad with SMTP id 5b1f17b1804b1-454dd2f1fffmr16819595e9.23.1752139754868;
-        Thu, 10 Jul 2025 02:29:14 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:271f:bc10:144e:d87a:be22:d005? ([2a0d:3344:271f:bc10:144e:d87a:be22:d005])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50dcc84sm55548135e9.24.2025.07.10.02.29.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 02:29:14 -0700 (PDT)
-Message-ID: <fe811639-7775-4666-b678-58f8a47b65ed@redhat.com>
-Date: Thu, 10 Jul 2025 11:29:12 +0200
+	s=arc-20240116; t=1752139784; c=relaxed/simple;
+	bh=b7coBjKHXlBo1gRKTkQSuUICRQqoXBqojlzbdY8ZYok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XtHGusGG+2/YrgKDJgK3fMM+DcKO1/G8C+ayT1hPxqTQSiHGNoQL4OKZx1aZ0m2dCWJF8FtPf0ocYDvY5Fx1ydPNE8tTkLj2BrxHWf/iBbOkPAK9Z/wK1BPkghWgZl3GcPSsmnWUZalKK0jNrya5ml3JpKam2aWBb+WZS2B268w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8niUqxk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48526C4CEE3;
+	Thu, 10 Jul 2025 09:29:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752139783;
+	bh=b7coBjKHXlBo1gRKTkQSuUICRQqoXBqojlzbdY8ZYok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d8niUqxkhkse07uWcriW2vMAJ55Q1uUGsPgOsxdiliGT+Bl/BA0Xoba0o8Hed71hK
+	 XmJyT3e4rAjo52BwnTWJVpBZ1+GKWNIxw034iCXsu4OWW4B+CmtBHUHMMeXwJ2t3g0
+	 wTWFvxGbO1/qSO4xnEr6mpNKZNYKjKXlbCSjEsEgwbyNXC6Ib20OA3/74Kn0ccbmpw
+	 FvtQ7Su50C2qJYjbPQOg7aUUYQKhhTtM6Ke/VZLEPltUt0LvrdvaOHFwtKfjAP6JUF
+	 R6ghUXL2xYkNASNU768sib7yyWAdXGI8VHUkVX4/+3TMmih+Vp57qfDxH7XWE9kj/J
+	 8K1lDwrIlgshQ==
+Date: Thu, 10 Jul 2025 10:29:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nick Li <nick.li@foursemi.com>
+Cc: lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com,
+	xiaoming.yang@foursemi.com, danyang.zheng@foursemi.com,
+	like.xy@foxmail.com, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] ASoC: codecs: Add FourSemi FS2104/5S audio
+ amplifier driver
+Message-ID: <aG-IBT5tjMS7RiXe@finisterre.sirena.org.uk>
+References: <20250703035639.7252-1-nick.li@foursemi.com>
+ <20250708112901.25228-1-nick.li@foursemi.com>
+ <20250708112901.25228-5-nick.li@foursemi.com>
+ <aG5Smt_DErSq5WjE@finisterre.sirena.org.uk>
+ <61B23934F28A9F2C+aG-AXznikkHb2_jR@foursemi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] af_key: Add check for the return value of
- pfkey_sadb2xfrm_user_sec_ctx()
-To: Haoxiang Li <haoxiang_li2024@163.com>, steffen.klassert@secunet.com,
- herbert@gondor.apana.org.au, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, horms@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250707160503.2834390-1-haoxiang_li2024@163.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250707160503.2834390-1-haoxiang_li2024@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8XwfVoiK14qFQFUv"
+Content-Disposition: inline
+In-Reply-To: <61B23934F28A9F2C+aG-AXznikkHb2_jR@foursemi.com>
+X-Cookie: Do not cut switchbacks.
 
-On 7/7/25 6:05 PM, Haoxiang Li wrote:
-> Add check for the return value of pfkey_sadb2xfrm_user_sec_ctx()
-> in pfkey_compile_policy(), and set proper error flag.
-> 
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> ---
-> Changes in v2:
-> - Set error flag '*dir' properly.
-> - Hi, Steffen! I know that inside pfkey_sadb2xfrm_user_sec_ctx(), null
-> value check has been done. This patch does the null value check after
-> pfkey_sadb2xfrm_user_sec_ctx() being called in pfkey_compile_policy().
-> Also, set proper error flag if pfkey_sadb2xfrm_user_sec_ctx() returns
-> null. This patch code is similar to [1]. Thanks, Steffen!
-> 
-> [1]https://github.com/torvalds/linux/blob/master/net/key/af_key.c#L2404
-> ---
->  net/key/af_key.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/net/key/af_key.c b/net/key/af_key.c
-> index efc2a91f4c48..9cd14a31a427 100644
-> --- a/net/key/af_key.c
-> +++ b/net/key/af_key.c
-> @@ -3335,6 +3335,11 @@ static struct xfrm_policy *pfkey_compile_policy(struct sock *sk, int opt,
->  		if ((*dir = verify_sec_ctx_len(p)))
->  			goto out;
->  		uctx = pfkey_sadb2xfrm_user_sec_ctx(sec_ctx, GFP_ATOMIC);
-> +		if (!uctx) {
-> +			*dir = -ENOMEM;
-> +			goto out;
-> +		}
-> +
->  		*dir = security_xfrm_policy_alloc(&xp->security, uctx, GFP_ATOMIC);
 
-AFAICS security_xfrm_policy_alloc() handle safely 'uctx' arguments ...
+--8XwfVoiK14qFQFUv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->  		kfree(uctx);
+On Thu, Jul 10, 2025 at 04:57:03PM +0800, Nick Li wrote:
+> On Wed, Jul 09, 2025 at 12:29:30PM +0100, Mark Brown wrote:
 
-... and kfree, too.
+> > The mixer-test test will spot this for you.
 
-This patch looks not needed.
+> BTW, what's the mixer-test? We tested it by using alsamixer and amixer.
 
-/P
+tools/testing/selftests/alsa/mixer-test.c
 
+--8XwfVoiK14qFQFUv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhviAIACgkQJNaLcl1U
+h9BlqQgAheK3u5Y8L+HQ21Fs/chPR36vlv9ZGV/1K+38He9hzrEHrC67Hn0N+aQI
+pCgknrhX0137zmvmydG75Efq7GLkGBVEWE7E8h61BZyr07JVYarzNfiMQ7aPsPGp
+zIOnopDIe4XvSP4We7pHKZuWp2eX6iGRIslPTCPglPw6FArqH5sBNvmcbPCsp3b1
+jjbhCF1PoVv36jzOs2mQPRQlyqH+PRdQI3stv3Hs/fB3qhyWrT+qHLH1pWplNGEK
+zdLEWMjCcfEF1/AFEYjauPQagoX8aouSMEI+gvvkqCkHjkV8O6EfGzHp6GslRKAZ
+rRwgXQ55kWuCgDlUYkVZNSRAwt5HbA==
+=GtFY
+-----END PGP SIGNATURE-----
+
+--8XwfVoiK14qFQFUv--
 
