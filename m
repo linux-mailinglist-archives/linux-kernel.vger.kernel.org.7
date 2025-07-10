@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-726194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72211B0093B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:52:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC5AB0093D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDFA7565B4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E37C4E6C92
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEEA2F005D;
-	Thu, 10 Jul 2025 16:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEA72F0C60;
+	Thu, 10 Jul 2025 16:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tbvLjpfQ"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uRczlfol"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659462F0C50
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD0C2F0C48
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752166309; cv=none; b=tvsHxGh37OaoOBMNveC36gqGFTr9PCX/9oeTXNDinQuVA/h6Q9a9IPXRSJOV2Rx5O0VyFtretiHB1gm5mX5sY6WyGsGT2DDfFhraAm069frP2A1Q+pBbsANqJ5UJNMTzLWHQk3CzGcCA3s01lYWsWSXdVnYZin1bZkfXVZw1lqo=
+	t=1752166319; cv=none; b=URhA8zQ/UNwAVjTq/deNrFYXk9nnAsK4h0vopTPyNGY1C+q9/7z2figMqH+U69wH18ZEH8U/36u8BUptHQx/gR5pb1L57TH6MUEPUhOeQHUh9kkZ6wc1D11Z+/OLrOXZLrPKlKrv3tKIs4cZ8G+YoyBQ43LO1Q04aGDsWN18wS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752166309; c=relaxed/simple;
-	bh=Poy+8cnHGuPVR17PPWLi7uFNCQJVr2Mhw7UcdTU8/OA=;
+	s=arc-20240116; t=1752166319; c=relaxed/simple;
+	bh=DsQ+jstixBFAuQaz054VcKZdaBP0fDVkYL84D0KF5X8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fkqAwawokQOTnt9mAs080vapODf2NHT15PoC9ehR4Ij5mDNJfAk/6VoR5O1efh0k/OPPqAAel3LM6KuZesnmvPd/oOWvFfMREAbLWC/kV6nHO10MEJfplZ+VSJclJMR66q9psfDwf5wKwVIoHPDotWRKRlc85p35QXTR2WWzB7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tbvLjpfQ; arc=none smtp.client-ip=209.85.218.49
+	 To:Cc:Content-Type; b=l2jFtpkou3WqE4ju4zfjWJnQ96EHRWx248snnmV64UIuYbRaJx5puKICT37ni7MIav8TyXHH2OR3r2zPRyP/GQtbnqErBRFLFnAwKFeYr0s5NOIg1UYxMneH/L4WmgXWGCoWXCl4pFWhkn2YgnGhYppv/xwPMIALxaHKog8o1OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uRczlfol; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-acb5ec407b1so213729866b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:51:47 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae6f8d3bcd4so37668566b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:51:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752166306; x=1752771106; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752166316; x=1752771116; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rg7W3ayUlyQb5JFJl5mEXAZmxkN3IEghiswwsXYU9CQ=;
-        b=tbvLjpfQpSUNj4DhY7xxdjAu6taS9CUS6+TJb83I0F+cfcAZwrrNrjMSz9FsxVRA0i
-         Z4UfJDIgqMk0rPRTHxppGFSjjhYjP5uZ8oyoLhXfG271feNc93KYfkPCfiJs91msbdYd
-         5ShLwPbYWCruQPNru7Au2MLgyc6WnLDTH37KkjF7g5Coi75vtxUfIXWB46W+2MUqTiWd
-         zgscJiqfXYBDUDfYjiqu0MpPmHw58AsQZ/B5kD+3aDlRmTTSEke69R3iLF040JHwWM0d
-         WgdyygrYLGHdRMPLcqB2act17bawAHzh6ph8pv2iZA+mJK1yboD0khUohHBI8DS+dLYV
-         D/Eg==
+        bh=mouzB1wCH7DM1yDvT3RlcGONddhN7EoRR+9ZTjW/haE=;
+        b=uRczlfolOeRgv5jRErV6RhbGoDdoRYWJegjgbftQdfITRMe6ECuBCFf8Y3L2JACClw
+         aMqUNC7FCRsLRGvqWt3vbWTFvBOMpGMwu0AxuVYpufAIAUV3KJyFR71NzRbdaoVkH4tF
+         jSMW90xfr4sq1ofDW2k7ZwVLP5nL5MzkGDOQIcnNVWHjEhTWzFIMRGjie0Ld/mJzQB9A
+         wEjUqnROZoe1VG3UOEcGYebaPBTv+4wDnen2Z8XEke1qutccK1n0li/BYkE2T3gOKLpn
+         teBQ5gnYZXQqYe812ZDyIkFfoafm9FEKHVtlIChm/QLkANggtdd7I3LYhbKk2pJ5JD4I
+         dVRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752166306; x=1752771106;
+        d=1e100.net; s=20230601; t=1752166316; x=1752771116;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rg7W3ayUlyQb5JFJl5mEXAZmxkN3IEghiswwsXYU9CQ=;
-        b=Hg+LMKzwBaIqwZlaCxGf8VZCYyV6s8v9ojhRFamNx1kIA2X8vJsuX8H01rIJK4oOhD
-         KrURLhiD2w6eyonqMKonEacqgNP8+BWl34FZB64172W3acQyUfoRmye/IhgHpKx13GHZ
-         zLX6XrKRbpMAjkSFTKNp4VuDejchiL3X5q2UMxB03d6bnYECzPnFMSNNBPNLNXxUQjg8
-         ib9VCi4VF1d+7f9L17dcccCZuQY5imAUHvZGOXv0cJLVPR+/riW9/a/pIirQxFS6Pd/x
-         B6x7K91WZvQclJoJOaf1aDLaDA0JIo0EPaD9Bb6sGqNQAqkjf5lvFZBsuN7NAeJP/Cjz
-         fdPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeeeFgP9Ii/9u/DNcYqpmQfMkYE9M6oW0twMsDRvTfEsntUxmyYVA2EhEkIDG/7Sz+gevNU7iwKdw0MH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypoYs8wwUkElO0voVa1Z+LxjX46ydnx9juyS0KLxwsTmJiCy3I
-	HapWCTAf2fV0XJC3knFF4g3cHfGsJnV0ibtiZDkAivxkLGlFxTfxUsdiggvdkYtQvMQeMbJbsqV
-	2sJNj9o5hg4LFUtDu5XRcRre0l6qIp3ygiChxQ/oowA==
-X-Gm-Gg: ASbGncuuwSdDjBWaHUtin+MvO5As9zCD/m/LsN52Rcxd9RXI1kT5MDD059SKGuMfeOv
-	WHYiyJvOlcr5ZBF5AKv8Ht4k+ZlZ3KHfkbNsCT7qQUolYbwfGMIDGWNDZhVr1211nMBb9S+Hxqq
-	w13JcPdD3RgyvKRno0wO6jBJTwmEBE9uKRSKSWiyYn53qXy6dK8zPwIyre28ZE4hPX5MFDon9I
-X-Google-Smtp-Source: AGHT+IFfJtIHNBZ6smaTawvTed2QjaILq3BHfb1Vrxj6H6JFA8ISi2ODSS+iye9EggrB5gEB2g9NJinGyg5ngkFHIlI=
-X-Received: by 2002:a17:906:f5a8:b0:ae0:c943:785c with SMTP id
- a640c23a62f3a-ae6e1250017mr482030066b.35.1752166305605; Thu, 10 Jul 2025
- 09:51:45 -0700 (PDT)
+        bh=mouzB1wCH7DM1yDvT3RlcGONddhN7EoRR+9ZTjW/haE=;
+        b=XWgX1PzMkWnUowOmv1Ps2Y76zWkcr4fPWXseaTu0atZVLb2f2yh9T7L78mgAB2Fhwd
+         BoXakp7y/jyaGdwkqHbDfHbdDCvL0udYjgSEGoxGsInfq74hDXluvrjqoJ6DvNpPM1Nj
+         EpW05KmA4YYAxfM6KXC/h0zTueCBd38RfaJfHuiANCEhi5nS7y/38KaAv5iq8s18P73U
+         I8oV06CfDMT02/xDNuVyrXj6KJoLoqhURC21gckF+GRTA6VRUcyCdm4fuIxFztp7j1Cp
+         X8Dj3Wg7iyVe22PtHTpC/v9St483duJFaFIDXoJg/2daFsB077eEh/eAENhKuc3RGMjR
+         eegg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5iMKydjtsyB8/KSCxO7Ss6qKKkJlA8SDESwZYrzyBHNIbEYY+KC/btWujynybEACiC4kjVThIdW5qJhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTuQ8SgbhNUpJaWzZPWcvCoxlgQuO3aALJWpWJhQGDsZhqMkmD
+	wbV+8GS4487a8QfQrsUQ7wASD+CaHQUbT6C4Mug1IyUYacfrsH3KVrMvgNCiqF+njVlzWOhAb7U
+	i1PpKATsJIcS+VCsSowk+3arPfwVYe4riz51Y65zy0w==
+X-Gm-Gg: ASbGncu6dQpDtdJXlqy5OKXhXW/FRzm7OXjeon3moieqbd6L5gxc4ufc2HdpTTPFQng
+	Oa9b+I4vT4bY1cBquKSoGFjHeO9KcnjU5xC2yUaUR7wfl5O6wlidOA+sR32BcQAvEKCLM+OJmdm
+	MT3vgB0RQdeJ5bT8XVfOX+rUFuZ+T053XYPb4eVQUszOvkPEM2gcNUvzEQNjMh+qVjb+B+bizs
+X-Google-Smtp-Source: AGHT+IG6w9gpNb7HU42CGtW+BjgUxQKdeemDnKwk6tAsrfncWys/ap9QfMo+y4MahYys+c+7GcqGnN12hEapiDjYwek=
+X-Received: by 2002:a17:907:971c:b0:ae0:ad5c:4185 with SMTP id
+ a640c23a62f3a-ae6cfbc6e4fmr769026266b.57.1752166314958; Thu, 10 Jul 2025
+ 09:51:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702114924.091581796@infradead.org> <20250702121158.817814031@infradead.org>
-In-Reply-To: <20250702121158.817814031@infradead.org>
+References: <20250702114924.091581796@infradead.org> <20250702121158.932926181@infradead.org>
+In-Reply-To: <20250702121158.932926181@infradead.org>
 From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 10 Jul 2025 18:51:34 +0200
-X-Gm-Features: Ac12FXxh3eeLKXMdnGOZfEfWIcxdu9DyzkOE_5vDXCXi1bt6P0QUv6R91-UNl70
-Message-ID: <CAKfTPtCKJi_H1MYhfiaAkeNnAyP8p6pTaJurQ5ZM7Q-mUi3wZA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] sched: Add ttwu_queue controls
+Date: Thu, 10 Jul 2025 18:51:42 +0200
+X-Gm-Features: Ac12FXwcGGlcW8-iy1t2eqFys-uUv3VzKKimNBvU65BXCdLZHC33RI-eEcJmUfk
+Message-ID: <CAKfTPtDtjovwscum-DRD9OJbS1mo-NAmfe7h6iU3cTNJi=fQrw@mail.gmail.com>
+Subject: Re: [PATCH v2 06/12] sched: Introduce ttwu_do_migrate()
 To: Peter Zijlstra <peterz@infradead.org>
 Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
 	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
@@ -87,103 +87,61 @@ Content-Type: text/plain; charset="UTF-8"
 
 On Wed, 2 Jul 2025 at 14:12, Peter Zijlstra <peterz@infradead.org> wrote:
 >
-> There are two (soon three) callers of ttwu_queue_wakelist(),
-> distinguish them with their own WF_ and add some knobs on.
+> Split out the migration related bits into their own function for later
+> re-use.
 >
 > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Link: https://lkml.kernel.org/r/20250520101727.874587738@infradead.org
+
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+
+
 > ---
->  kernel/sched/core.c     |   22 ++++++++++++----------
->  kernel/sched/features.h |    2 ++
->  kernel/sched/sched.h    |    2 ++
->  3 files changed, 16 insertions(+), 10 deletions(-)
+>  kernel/sched/core.c |   26 ++++++++++++++++----------
+>  1 file changed, 16 insertions(+), 10 deletions(-)
 >
 > --- a/kernel/sched/core.c
 > +++ b/kernel/sched/core.c
-> @@ -3888,7 +3888,7 @@ bool cpus_share_resources(int this_cpu,
->         return per_cpu(sd_share_id, this_cpu) == per_cpu(sd_share_id, that_cpu);
+> @@ -3774,6 +3774,21 @@ static int ttwu_runnable(struct task_str
+>         return 1;
 >  }
 >
-> -static inline bool ttwu_queue_cond(struct task_struct *p, int cpu)
-> +static inline bool ttwu_queue_cond(struct task_struct *p, int cpu, bool def)
->  {
->         /* See SCX_OPS_ALLOW_QUEUED_WAKEUP. */
->         if (!scx_allow_ttwu_queue(p))
-> @@ -3929,18 +3929,19 @@ static inline bool ttwu_queue_cond(struc
->         if (!cpu_rq(cpu)->nr_running)
->                 return true;
->
-> -       return false;
-> +       return def;
->  }
->
->  static bool ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags)
->  {
-> -       if (sched_feat(TTWU_QUEUE) && ttwu_queue_cond(p, cpu)) {
-> -               sched_clock_cpu(cpu); /* Sync clocks across CPUs */
-> -               __ttwu_queue_wakelist(p, cpu, wake_flags);
-> -               return true;
-> -       }
-> +       bool def = sched_feat(TTWU_QUEUE_DEFAULT);
-
-I'm always confused by this sched feature name because
-sched_feat(TTWU_QUEUE_DEFAULT) must be false in order to have the
-current (default ?) behaviour
-Or you mean queue by default in the wakelist which is disable to keep
-current behavior
-
-> +
-> +       if (!ttwu_queue_cond(p, cpu, def))
+> +static inline bool ttwu_do_migrate(struct task_struct *p, int cpu)
+> +{
+> +       if (task_cpu(p) == cpu)
 > +               return false;
->
-> -       return false;
-> +       sched_clock_cpu(cpu); /* Sync clocks across CPUs */
-> +       __ttwu_queue_wakelist(p, cpu, wake_flags);
-> +       return true;
->  }
->
->  static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
-> @@ -3948,7 +3949,7 @@ static void ttwu_queue(struct task_struc
->         struct rq *rq = cpu_rq(cpu);
->         struct rq_flags rf;
->
-> -       if (ttwu_queue_wakelist(p, cpu, wake_flags))
-> +       if (sched_feat(TTWU_QUEUE) && ttwu_queue_wakelist(p, cpu, wake_flags))
->                 return;
->
->         rq_lock(rq, &rf);
-> @@ -4251,7 +4252,8 @@ int try_to_wake_up(struct task_struct *p
->                  * scheduling.
->                  */
->                 if (smp_load_acquire(&p->on_cpu) &&
-> -                   ttwu_queue_wakelist(p, task_cpu(p), wake_flags))
-> +                   sched_feat(TTWU_QUEUE_ON_CPU) &&
-> +                   ttwu_queue_wakelist(p, task_cpu(p), wake_flags | WF_ON_CPU))
->                         break;
->
->                 cpu = select_task_rq(p, p->wake_cpu, &wake_flags);
-> --- a/kernel/sched/features.h
-> +++ b/kernel/sched/features.h
-> @@ -81,6 +81,8 @@ SCHED_FEAT(TTWU_QUEUE, false)
->   */
->  SCHED_FEAT(TTWU_QUEUE, true)
->  #endif
-> +SCHED_FEAT(TTWU_QUEUE_ON_CPU, true)
-> +SCHED_FEAT(TTWU_QUEUE_DEFAULT, false)
->
->  /*
->   * When doing wakeups, attempt to limit superfluous scans of the LLC domain.
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -2279,6 +2279,8 @@ static inline int task_on_rq_migrating(s
->  #define WF_CURRENT_CPU         0x40 /* Prefer to move the wakee to the current CPU. */
->  #define WF_RQ_SELECTED         0x80 /* ->select_task_rq() was called */
->
-> +#define WF_ON_CPU              0x0100
 > +
->  static_assert(WF_EXEC == SD_BALANCE_EXEC);
->  static_assert(WF_FORK == SD_BALANCE_FORK);
->  static_assert(WF_TTWU == SD_BALANCE_WAKE);
+> +       if (p->in_iowait) {
+> +               delayacct_blkio_end(p);
+> +               atomic_dec(&task_rq(p)->nr_iowait);
+> +       }
+> +
+> +       psi_ttwu_dequeue(p);
+> +       set_task_cpu(p, cpu);
+> +       return true;
+> +}
+> +
+>  void sched_ttwu_pending(void *arg)
+>  {
+>         struct llist_node *llist = arg;
+> @@ -4268,17 +4283,8 @@ int try_to_wake_up(struct task_struct *p
+>                  * their previous state and preserve Program Order.
+>                  */
+>                 smp_cond_load_acquire(&p->on_cpu, !VAL);
+> -
+> -               if (task_cpu(p) != cpu) {
+> -                       if (p->in_iowait) {
+> -                               delayacct_blkio_end(p);
+> -                               atomic_dec(&task_rq(p)->nr_iowait);
+> -                       }
+> -
+> +               if (ttwu_do_migrate(p, cpu))
+>                         wake_flags |= WF_MIGRATED;
+> -                       psi_ttwu_dequeue(p);
+> -                       set_task_cpu(p, cpu);
+> -               }
+>
+>                 ttwu_queue(p, cpu, wake_flags);
+>         }
 >
 >
 
