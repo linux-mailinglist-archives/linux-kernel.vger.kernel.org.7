@@ -1,127 +1,100 @@
-Return-Path: <linux-kernel+bounces-724736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1942AFF659
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:08:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34C2AFF65D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBB281C22471
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:09:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A335E3B77E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E83D846C;
-	Thu, 10 Jul 2025 01:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rZB4rIyk"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6402526E14C;
+	Thu, 10 Jul 2025 01:10:55 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38CF3BB48
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999E825C810;
+	Thu, 10 Jul 2025 01:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752109728; cv=none; b=D89CLDGmH+0W+HA501pE8iPhxrf9kohNVx9XIphikUkFBj99HHL/4pfZUDRQQTfoMOGXVSD6IxpbSkyAgYRtLAASYEMYP+JoLLlTSeTwhSuGHeffbhxYupstH0LazVNOIYfX4ObFILM0tliqoPpVnkchJBaejRSeeKAKs03lcJk=
+	t=1752109855; cv=none; b=RzwMJuqx/PS/VtLwaOfBNAqOag2sT1GSjTXxX0au3v1JgFojcjT50TpJTcZcrOjEwsjl0dWv5cV0LFaidDbgq5DpaVeuXH5LDCnsh08XJJ4bsrXEu61ixGdkBgu3dWnLkA2dG5Hyk3+P9tjmZ8dbc79lv76jkqa9mXFvVq6X14c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752109728; c=relaxed/simple;
-	bh=FbD+dyWJQw9d7fJye3J0/MZOz530Binm7qw42BlBT/c=;
+	s=arc-20240116; t=1752109855; c=relaxed/simple;
+	bh=polTNEeOS/4T+OqPkd+JBjFkgMdpjkKbeSJ8JtsidBA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bdEn+g0otlF2oEwqZxRrYSnKGJFd9a/YlJn4rPjjfC2wU1s2pbpvt2uPZehCeyh6CWkhyjkhkFuoTaEZyCNE5YYZaj0IVHA0FUht+ubaXAr7XofWykK2QbhrkjEgP/PByh4Bpam8uqdOpuas+GF++TCzrCFkN18Fp4CtDMv8Ymk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rZB4rIyk; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b34eff8d-0c14-4085-bff1-f01ff3349637@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752109723;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IQ7oeQnXsRQ8nWk5JQ1NTJSWCTeX2lGsMRWJSN26Cvc=;
-	b=rZB4rIykMxvqdSZtMQlQY3CQFNA0HMZFuaNpe4+91cvARvipziOB4FXevzVvBR86afLYxq
-	tO0FhRvu1IulcmV36xdzkka0lDnvJAq9ES1hOJTztXlOENh1XNpHXtRNtOq1tKMpFP6BFW
-	DFGJq4ZS9vG5maTIrOWhfSMWi0XIsoA=
-Date: Thu, 10 Jul 2025 02:08:39 +0100
+	 In-Reply-To:Content-Type; b=K9xnDmMsUCiBiqDaVykVlQy6xMB2fvsc84LJBVkz9h7BImLn75sDF6pNwY1paM1BNXHCm3LsvqvnpIvc7nWipIMUYE70/w5tEOYjm/LWu9C+WkjQYhwEEUrCbToiVPx+HzTmaO0G4IfFVgWVG6JXqNWRvlBqzhgMjsxWevgvB7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bcxcC2fzqzYQvLP;
+	Thu, 10 Jul 2025 09:10:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 3074E1A1546;
+	Thu, 10 Jul 2025 09:10:50 +0800 (CST)
+Received: from [10.174.176.88] (unknown [10.174.176.88])
+	by APP3 (Coremail) with SMTP id _Ch0CgBXBCIYE29ovh7bBA--.17693S3;
+	Thu, 10 Jul 2025 09:10:49 +0800 (CST)
+Message-ID: <886b55b4-162f-4acd-a5ec-6114e6239a89@huaweicloud.com>
+Date: Thu, 10 Jul 2025 09:10:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v3 7/7] net: dsa: microchip: Disable PTP function
- of KSZ8463
-To: Tristram.Ha@microchip.com, olteanv@gmail.com
-Cc: Woojung.Huh@microchip.com, andrew@lunn.ch, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, maxime.chevallier@bootlin.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, marex@denx.de, UNGLinuxDriver@microchip.com,
- devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250709003234.50088-1-Tristram.Ha@microchip.com>
- <20250709003234.50088-8-Tristram.Ha@microchip.com>
- <20250709073503.kffxy4jlezoobqpf@skbuf>
- <LV3PR11MB874269079536CDB53183760DEC49A@LV3PR11MB8742.namprd11.prod.outlook.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <LV3PR11MB874269079536CDB53183760DEC49A@LV3PR11MB8742.namprd11.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cachefiles: Fix the incorrect return value in
+ __cachefiles_write()
+To: David Howells <dhowells@redhat.com>, Zizhi Wo <wozizhi@huaweicloud.com>
+Cc: netfs@lists.linux.dev, jlayton@kernel.org, brauner@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ libaokun1@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com
+References: <20250703024418.2809353-1-wozizhi@huaweicloud.com>
+ <2731907.1752077037@warthog.procyon.org.uk>
+From: Zizhi Wo <wozizhi@huaweicloud.com>
+In-Reply-To: <2731907.1752077037@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgBXBCIYE29ovh7bBA--.17693S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYv7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
+	rI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r
+	1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
 
-On 09/07/2025 23:59, Tristram.Ha@microchip.com wrote:
->> On Tue, Jul 08, 2025 at 05:32:33PM -0700, Tristram.Ha@microchip.com wrote:
->>> From: Tristram Ha <tristram.ha@microchip.com>
->>>
->>> The PTP function of KSZ8463 is on by default.  However, its proprietary
->>> way of storing timestamp directly in a reserved field inside the PTP
->>> message header is not suitable for use with the current Linux PTP stack
->>> implementation.  It is necessary to disable the PTP function to not
->>> interfere the normal operation of the MAC.
->>>
->>> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
->>> ---
->>>   drivers/net/dsa/microchip/ksz8.c | 11 +++++++++++
->>>   1 file changed, 11 insertions(+)
->>>
->>> diff --git a/drivers/net/dsa/microchip/ksz8.c b/drivers/net/dsa/microchip/ksz8.c
->>> index ddbd05c44ce5..fd4a000487d6 100644
->>> --- a/drivers/net/dsa/microchip/ksz8.c
->>> +++ b/drivers/net/dsa/microchip/ksz8.c
->>> @@ -1761,6 +1761,17 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
->>>                                           reg16(dev, KSZ8463_REG_DSP_CTRL_6),
->>>                                           COPPER_RECEIVE_ADJUSTMENT, 0);
->>>                }
->>> +
->>> +             /* Turn off PTP function as the switch's proprietary way of
->>> +              * handling timestamp is not supported in current Linux PTP
->>> +              * stack implementation.
->>> +              */
->>> +             regmap_update_bits(ksz_regmap_16(dev),
->>> +                                reg16(dev, KSZ8463_PTP_MSG_CONF1),
->>> +                                PTP_ENABLE, 0);
->>> +             regmap_update_bits(ksz_regmap_16(dev),
->>> +                                reg16(dev, KSZ8463_PTP_CLK_CTRL),
->>> +                                PTP_CLK_ENABLE, 0);
->>>        }
->>>   }
->>>
->>> --
->>> 2.34.1
->>>
->>
->> What prevents the user from later enabling this through
->> ksz_set_hwtstamp_config(HWTSTAMP_TX_ONESTEP_P2P)?
-> 
-> The PTP engine in KSZ8463 is first generation.  The DSA PTP driver used
-> by KSZ9477 and LAN937X is for second generation, which uses tail tag to
-> pass along receive/transmit timestamp and port information.
-> 
-> It is not likely the PTP driver will be updated to support KSZ8463.
-> Currently that driver code is not activated except for KSZ9477 and
-> LAN937X.
 
-I believe Vladimir was asking about software options and the answer is
-that this switch is added with .ptp_capable = false in the patch 2.
+
+在 2025/7/10 0:03, David Howells 写道:
+> I think this should only affect erofs, right?
+> 
+> David
+> 
+> 
+
+Yes, currently other callers don't rely on the return value of
+__cachefiles_write(); instead, they determine success or failure through
+cachefiles_write_complete().
+
+Therefore, resetting "ret" to 0 in __cachefiles_write() might be
+unnecessary? When this step is removed, the outer
+cachefiles_ondemand_fd_write_iter() can also correctly update the offset
+based on ret.
+
+Thanks,
+Zizhi Wo
 
 
