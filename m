@@ -1,326 +1,185 @@
-Return-Path: <linux-kernel+bounces-725631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF42B001B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B67ADB001B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8FE81C88525
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:28:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA84F1C88480
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDE02566E2;
-	Thu, 10 Jul 2025 12:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5FA2566F2;
+	Thu, 10 Jul 2025 12:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBZZ/5G2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SUKrbUkr"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1CD24C068;
-	Thu, 10 Jul 2025 12:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A922512D5;
+	Thu, 10 Jul 2025 12:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752150475; cv=none; b=jkPUA9vUKODHF0ySHQr0AiKFn7p3nCsiG/oeQT67Wx8lx48WIadnmlMdEcBvH9AmQJuh/zYyBssNHSdyVICe6m5kIfGG7HjVr9hbFi+HxWfCD8iF/9IKaBr0nydbiNDlkOrEv1ShgVkDXk7C+hdJw5hBzVHI3xBN6uxKN53WRYw=
+	t=1752150518; cv=none; b=gjn563bye2mgQv6BDRoSPsWg57GFdukp3KIEoeRiUT9TdFq3EIZnXuySm7Z3aMje6HiNpB2gDvphI39zBnPEp2Ao0ZAX22DlegqA+VgVAVvrpXcbv5WScHqUTJEWPc82erfRReZuYUaBOyMADlrXOWJifHdt6QrYegHCwfrY1Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752150475; c=relaxed/simple;
-	bh=cFB/EhdezCpnpkMXdJFVEGoonbjQEG6w7wqWiZXZcyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLFffDxkqfgi7Bv0XvQ5+LgTt8Wxw9Mp4MID9BAfwbDm60sanf8miGE7zu8JeYnKimobvSgtrWmHFuHCurk08AUMLBXpZ85imVMrk1iXYAAC4WX0qp/Cj+uv7x4/czY3tBEj+dNhp9VV4W62B2hhntziRr/cqSOl5uZqaVP+aJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBZZ/5G2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C0BC4CEE3;
-	Thu, 10 Jul 2025 12:27:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752150474;
-	bh=cFB/EhdezCpnpkMXdJFVEGoonbjQEG6w7wqWiZXZcyI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BBZZ/5G2NnuDX8Glsh7TEY33ApFcHma+adNsE2fxlWCIoisPvpEO5TlEH/6gKiijp
-	 ewJYvlUGepHnrWmDaLdCzTKVHhXnHKk0hn4WBKX+/UVMRPDS8QhhbplbVCVYDOMCgu
-	 ROD/E0xrjzlyN3zBOoBFFz72Kk+yaBDM+ME8Z90aRC42MxKbMU2dOKKVxff0NvBFCh
-	 JQ+43mxwjp7uMHk0ChS4WoSeI4HurbnWXlnWx5t8KIOhpGkZuBW9SdWLGQOOUpCryK
-	 3565DUOd+W+Sg/JfQAaTQTbOVqZ0oTowXQU7lZorqo/hH1Krf6PJtp2yE2/NSaY7Nz
-	 gl0xBvvRZhtyw==
-Date: Thu, 10 Jul 2025 14:27:51 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/9] MIPS: dts: loongson: Add LS1B-DEMO board
-Message-ID: <20250710-ancient-ibex-of-adventure-30030a@krzk-bin>
-References: <20250709-loongson1-arch-v2-0-bcff6e518c09@gmail.com>
- <20250709-loongson1-arch-v2-3-bcff6e518c09@gmail.com>
+	s=arc-20240116; t=1752150518; c=relaxed/simple;
+	bh=uVwWozQdm8dl9zMzLnAU4GJ3N1SGHAS9efDRdRXlv60=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZYsOel3JOB4L3VIJQXYPxaTweN780kHVp/M6FyGK0I9VmcM2wAud77hRkf7eCExe4xin39pEZ3lN1qw/KfSe4660oy+c7WHh5Kn//lcgbwbPwCDdbSjemCzVmqxPyZB+qnfScP7UYZ1Eox+qMk0rbvJUW8sr9HYazC3lW3Mxxw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SUKrbUkr; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A61rJS010735;
+	Thu, 10 Jul 2025 12:28:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=W7y3iB
+	FzU3kHVk3xzJUXtgMnwiA/4a2QpmH4yjepWvY=; b=SUKrbUkrRBEJAY2i7SeKnV
+	OAVGrjYoMGG/+NvnESJ2V87mm3+R9BgR6ih/nKy5wJAn6Tj3n6T0k1jrbYYOmt8r
+	NBvYt2qHBM/POWlJigBknGW+SkWCvln5UpSe1MtPCBGl/zgTqbcl/F2qFifH1LVn
+	5y0h5uEnztMPiiPZccSUj4HWPjRVwY0jD1wrorOtOB+sKrVfFq8yaTcIjt053XvX
+	mhKfO+Hm4J5Uiqn2b6WkqL2ImTWBlEfsuKMUQ7H+3Pm0ARuIlp9TAu+dLNDVHxfT
+	dy4t7+IeLsB4e7QmDo74nTNYBUNeY1vQhg1pmX4+NVDY7P/Mq3F9rOAsqtGZjWDw
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puqnkqdq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 12:28:12 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56ABpQSE024311;
+	Thu, 10 Jul 2025 12:28:10 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qh32nabn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 12:28:10 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56ACS76l56492344
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Jul 2025 12:28:07 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3E47220043;
+	Thu, 10 Jul 2025 12:28:07 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B969520040;
+	Thu, 10 Jul 2025 12:28:06 +0000 (GMT)
+Received: from [9.152.222.235] (unknown [9.152.222.235])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 10 Jul 2025 12:28:06 +0000 (GMT)
+Message-ID: <70803af5-369c-4de2-af30-70d74f1e6256@linux.ibm.com>
+Date: Thu, 10 Jul 2025 14:28:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250709-loongson1-arch-v2-3-bcff6e518c09@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 02/14] unwind_user: Add frame pointer support
+From: Jens Remus <jremus@linux.ibm.com>
+To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+        Sam James <sam@gentoo.org>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+References: <20250708012239.268642741@kernel.org>
+ <20250708012357.982692711@kernel.org>
+ <d3279556-9bb6-429d-a037-fe279c5e3c67@linux.ibm.com>
+Content-Language: en-US
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <d3279556-9bb6-429d-a037-fe279c5e3c67@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=FZ43xI+6 c=1 sm=1 tr=0 ts=686fb1dc cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=xGKi6vjhqkjxjNt39fsA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: sJrvX2rJR0n-3zeimi9EkXiwKcJZV73C
+X-Proofpoint-ORIG-GUID: sJrvX2rJR0n-3zeimi9EkXiwKcJZV73C
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDEwNSBTYWx0ZWRfX9WHaz58xiiaQ iRbl9JwMZP3iJc8BmTDuvRm/P5xYrBk6TpSmXbjn9US8P1z7yL11slNTW400otCXgES/8sVRC0A uX5PG7sYhxMazuFbu39xr2ua+aSvmCmPEzvDlU4zfRnDo0x7JjPdSuWgI3ecdC3c6RMhwM6/ry1
+ ZPaZqY9ZQH1Q6C5ry4QRBgTr6IJ8ZkxKlVMjAtiCUeSCiFKlWtop7N4cvJoztRQxkjKNRnOKTVh 7dCDjgVGhaUAQbICdmuIeMPhvhFe73bwR4cMvaZ8qXdVWy+FnsIrFgmYsilWB0xpVaSU3KTQdp6 YrGjwdWQzvs8uLmwzIFwFQYfZW3aFMRvLinXFQV8LMcLOKx3D6cP3UzVL1jbAudVCBa78VG4Lv+
+ UwDwsPDsi0DDdACXzQlg21M4yCvhA6lio85mkq4tR6r3dhEC6u11yhUcYZAG2HwDjRY3hGKd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_02,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ priorityscore=1501 malwarescore=0 mlxlogscore=999 clxscore=1015
+ spamscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507100105
 
-On Wed, Jul 09, 2025 at 07:05:54PM +0800, Keguang Zhang wrote:
-> Add a device tree for LS1B-DEMO board, supporting CPU, clock, INTC,
-> UART, Ethernet, GPIO, USB host, RTC, watchdog, DMA, NAND, and AC97.
+On 09.07.2025 12:01, Jens Remus wrote:
+> On 08.07.2025 03:22, Steven Rostedt wrote:
+>> From: Josh Poimboeuf <jpoimboe@kernel.org>
+
+>> diff --git a/kernel/unwind/user.c b/kernel/unwind/user.c
+
+>>  static int unwind_user_next(struct unwind_user_state *state)
+>>  {
+>> -	/* no implementation yet */
+>> +	struct unwind_user_frame *frame;
+>> +	unsigned long cfa = 0, fp, ra = 0;
+>> +	unsigned int shift;
+>> +
+>> +	if (state->done)
+>> +		return -EINVAL;
+>> +
+>> +	if (fp_state(state))
+>> +		frame = &fp_frame;
+>> +	else
+>> +		goto done;
+>> +
+>> +	if (frame->use_fp) {
+>> +		if (state->fp < state->sp)
+
+The initial check above is correct.  I got the logic wrong.  Sorry for
+the fuss!  Do not change the check to what I came up with yesterday:
+
+> 		if (state->fp <= state->sp)
 > 
-> Additionally, since the current bootloader for Loongson1 does not support
-> FDT, introduce CONFIG_BUILTIN_DTB_NAME to enable a built-in DTB.
+
+Below s390 particularity, that FP may be equal to FP in any frame,
+is only allowed with the initial check.
+
+> I meanwhile came to the conclusion that for architectures, such as s390,
+> where SP at function entry == SP at call site, the FP may be equal to
+> the SP.  At least for the brief period where the FP has been setup and
+> stack allocation did not yet take place.  For most architectures this
+> can probably only occur in the topmost frame.  For s390 the FP is setup
+> after static stack allocation, so --fno-omit-frame-pointer would enforce
+> FP==SP in any frame that does not perform dynamic stack allocation.
 > 
-> Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
-> ---
->  MAINTAINERS                                 |   1 +
->  arch/mips/boot/dts/Makefile                 |   1 +
->  arch/mips/boot/dts/loongson/Makefile        |   6 +
->  arch/mips/boot/dts/loongson/loongson1.dtsi  | 136 +++++++++++++++++++
->  arch/mips/boot/dts/loongson/loongson1b.dtsi | 198 ++++++++++++++++++++++++++++
->  arch/mips/boot/dts/loongson/ls1b-demo.dts   | 108 +++++++++++++++
->  6 files changed, 450 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c3f7fbd0d67a..0089ebca31cf 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16683,6 +16683,7 @@ M:	Keguang Zhang <keguang.zhang@gmail.com>
->  L:	linux-mips@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/*/loongson,ls1*.yaml
-> +F:	arch/mips/boot/dts/loongson/loongson1*
->  F:	arch/mips/include/asm/mach-loongson32/
->  F:	arch/mips/loongson32/
->  F:	drivers/*/*loongson1*
-> diff --git a/arch/mips/boot/dts/Makefile b/arch/mips/boot/dts/Makefile
-> index 7375c6ced82b..6d9dbe945541 100644
-> --- a/arch/mips/boot/dts/Makefile
-> +++ b/arch/mips/boot/dts/Makefile
-> @@ -8,6 +8,7 @@ subdir-$(CONFIG_FIT_IMAGE_FDT_BOSTON)	+= img
->  subdir-$(CONFIG_MACH_INGENIC)		+= ingenic
->  subdir-$(CONFIG_LANTIQ)			+= lantiq
->  subdir-$(CONFIG_MACH_LOONGSON64)	+= loongson
-> +subdir-$(CONFIG_MACH_LOONGSON32)	+= loongson
->  subdir-$(CONFIG_SOC_VCOREIII)		+= mscc
->  subdir-$(CONFIG_MIPS_MALTA)		+= mti
->  subdir-$(CONFIG_LEGACY_BOARD_SEAD3)	+= mti
-> diff --git a/arch/mips/boot/dts/loongson/Makefile b/arch/mips/boot/dts/loongson/Makefile
-> index 5e3ab984d70f..2facf251fb6a 100644
-> --- a/arch/mips/boot/dts/loongson/Makefile
-> +++ b/arch/mips/boot/dts/loongson/Makefile
-> @@ -5,3 +5,9 @@ dtb-$(CONFIG_MACH_LOONGSON64)	+= loongson64c_4core_rs780e.dtb
->  dtb-$(CONFIG_MACH_LOONGSON64)	+= loongson64c_8core_rs780e.dtb
->  dtb-$(CONFIG_MACH_LOONGSON64)	+= loongson64g_4core_ls7a.dtb
->  dtb-$(CONFIG_MACH_LOONGSON64)	+= loongson64v_4core_virtio.dtb
-> +
-> +ifneq ($(CONFIG_BUILTIN_DTB_NAME),)
-> +dtb-y	:= $(addsuffix .dtb, $(CONFIG_BUILTIN_DTB_NAME))
-> +else
+>> +			goto done;
+>> +		cfa = state->fp;
+>> +	} else {
+>> +		cfa = state->sp;
+>> +	}
 
-This does not really look related to new board.
+Regards,
+Jens
+-- 
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
 
-> +dtb-$(CONFIG_MACH_LOONGSON32)	+= ls1b-demo.dtb
-> +endif
-> diff --git a/arch/mips/boot/dts/loongson/loongson1.dtsi b/arch/mips/boot/dts/loongson/loongson1.dtsi
-> new file mode 100644
-> index 000000000000..5ba5a5d131ba
+IBM
 
-...
-
-> +		opp-220000000 {
-> +			opp-hz = /bits/ 64 <220000000>;
-> +		};
-> +	};
-> +
-> +	clocksource: timer@1fe5c030 {
-
-This should be in the SoC (see writing bindings, maintainer soc, DTS
-coding style).
-
-> +		compatible = "loongson,ls1b-pwmtimer";
-> +		reg = <0x1fe5c030 0x10>;
-> +		clocks = <&clkc LS1X_CLKID_APB>;
-> +		interrupt-parent = <&intc0>;
-> +		interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> +
-> +	clkc: clock-controller@1fe78030 {
-> +		compatible = "loongson,ls1b-clk";
-> +		reg = <0x1fe78030 0x8>;
-> +		clocks = <&xtal>;
-> +		#clock-cells = <1>;
-> +	};
-> +};
-> +
-> +&soc {
-> +	syscon: syscon@420 {
-> +		compatible = "loongson,ls1b-syscon", "syscon";
-> +		reg = <0x420 0x8>;
-> +	};
-> +
-> +	dma: dma-controller@1160 {
-> +		compatible = "loongson,ls1b-apbdma";
-> +		reg = <0x1160 0x4>;
-> +		interrupt-parent = <&intc0>;
-> +		interrupts = <13 IRQ_TYPE_EDGE_RISING>,
-> +			     <14 IRQ_TYPE_EDGE_RISING>,
-> +			     <15 IRQ_TYPE_EDGE_RISING>;
-> +		interrupt-names = "ch0", "ch1", "ch2";
-> +		#dma-cells = <1>;
-> +	};
-> +
-> +	ehci: usb@100000 {
-> +		compatible = "generic-ehci";
-> +		reg = <0x100000 0x100>;
-> +		interrupt-parent = <&intc1>;
-> +		interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
-> +		status = "disabled";
-> +	};
-> +
-> +	ohci: usb@108000 {
-> +		compatible = "generic-ohci";
-> +		reg = <0x108000 0x100>;
-> +		interrupt-parent = <&intc1>;
-> +		interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
-> +		status = "disabled";
-> +	};
-> +
-> +	gmac0: ethernet@110000 {
-> +		compatible = "loongson,ls1b-gmac", "snps,dwmac-3.50a";
-> +		reg = <0x110000 0x10000>;
-> +		clocks = <&clkc LS1X_CLKID_AHB>;
-> +		clock-names = "stmmaceth";
-> +		interrupt-parent = <&intc1>;
-> +		interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-names = "macirq";
-> +		loongson,ls1-syscon = <&syscon>;
-> +		snps,pbl = <1>;
-> +		status = "disabled";
-> +	};
-> +
-> +	gmac1: ethernet@120000 {
-> +		compatible = "loongson,ls1b-gmac", "snps,dwmac-3.50a";
-> +		reg = <0x120000 0x10000>;
-> +		clocks = <&clkc LS1X_CLKID_AHB>;
-> +		clock-names = "stmmaceth";
-> +		interrupt-parent = <&intc1>;
-> +		interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-names = "macirq";
-> +		loongson,ls1-syscon = <&syscon>;
-> +		snps,pbl = <1>;
-> +		status = "disabled";
-> +	};
-> +};
-> +
-> +&apb {
-> +	watchdog: watchdog@1c060 {
-> +		compatible = "loongson,ls1b-wdt";
-> +		reg = <0x1c060 0xc>;
-> +		clocks = <&clkc LS1X_CLKID_APB>;
-> +		status = "disabled";
-> +	};
-> +
-> +	rtc: rtc@24000 {
-> +		compatible = "loongson,ls1b-rtc";
-> +		reg = <0x24000 0x78>;
-> +		interrupt-parent = <&intc0>;
-> +		interrupts = <24 IRQ_TYPE_LEVEL_HIGH>;
-> +		status = "disabled";
-> +	};
-> +
-> +	ac97: audio-controller@34000 {
-> +		compatible = "loongson,ls1b-ac97";
-> +		reg = <0x34000 0x60>, <0x32420 0x4>, <0x34c4c 0x4>;
-> +		reg-names = "ac97", "audio-tx", "audio-rx";
-> +		dmas = <&dma 1>, <&dma 2>;
-> +		dma-names = "tx", "rx";
-> +		#sound-dai-cells = <0>;
-> +		status = "disabled";
-> +	};
-> +
-> +	nand: nand-controller@38000 {
-> +		compatible = "loongson,ls1b-nand-controller";
-> +		reg = <0x38000 0x24>, <0x38040 0x4>;
-> +		reg-names = "nand", "nand-dma";
-> +		dmas = <&dma 0>;
-> +		dma-names = "rxtx";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "disabled";
-> +
-> +		nand@0 {
-> +			reg = <0>;
-> +			label = "ls1x-nand";
-> +			nand-use-soft-ecc-engine;
-> +			nand-ecc-algo = "hamming";
-> +		};
-> +	};
-> +};
-> +
-> +&cpu0 {
-> +	operating-points-v2 = <&cpu_opp_table>;
-> +};
-> +
-> +&gpio0 {
-> +	ngpios = <31>;
-> +};
-> +
-> +&gpio1 {
-> +	ngpios = <30>;
-> +};
-> +
-> +&uart1 {
-> +	interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
-> +};
-> +
-> +&uart2 {
-> +	interrupts = <4 IRQ_TYPE_LEVEL_HIGH>;
-> +};
-> +
-> +&uart3 {
-> +	interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
-> +};
-> diff --git a/arch/mips/boot/dts/loongson/ls1b-demo.dts b/arch/mips/boot/dts/loongson/ls1b-demo.dts
-> new file mode 100644
-> index 000000000000..19ea772e6649
-> --- /dev/null
-> +++ b/arch/mips/boot/dts/loongson/ls1b-demo.dts
-> @@ -0,0 +1,108 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2023-2025 Keguang Zhang <keguang.zhang@gmail.com>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +
-> +#include "loongson1b.dtsi"
-> +
-> +/ {
-> +	compatible = "loongson,ls1b-demo", "loongson,ls1b";
-> +	model = "LS1B-DEMO Board";
-> +
-> +	memory@0 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x10000000>;
-> +	};
-> +
-> +	aliases {
-> +		ethernet0 = &gmac0;
-> +		ethernet1 = &gmac1;
-> +		gpio0 = &gpio0;
-> +		gpio1 = &gpio1;
-> +		serial0 = &uart0;
-> +	};
-> +
-> +	chosen {
-> +		bootargs = "console=ttyS0,38400";
-
-Drop bootargs. You duplicate stdout path.
-
-> +		stdout-path = "serial0:38400n8";
-> +	};
-
-Best regards,
-Krzysztof
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
 
 
