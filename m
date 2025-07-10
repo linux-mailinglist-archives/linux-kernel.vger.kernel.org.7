@@ -1,210 +1,132 @@
-Return-Path: <linux-kernel+bounces-725519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA772B0002F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:09:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3164B00031
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C60644665
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:09:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 553B4165E3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166012E2F18;
-	Thu, 10 Jul 2025 11:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9852E0B64;
+	Thu, 10 Jul 2025 11:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qbMUvSgs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r4o7jqbF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qbMUvSgs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r4o7jqbF"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GR8jxhjS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EC52877F6
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A262877C1;
+	Thu, 10 Jul 2025 11:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145780; cv=none; b=BF/Uluyhu0adh7u3tJ7afm8vWPZ/iJiGMsaPKajG1iac2uf/wsKjftBf6WqlW9Pd62hsnTj0k3udXRW7tUCIw4IBHi4JYYf5+GCgdkxnM0rn7TeSheJi1vFImHFx0i2Rme+tSGbuK2YQL0b9sIzFtTNhK0/4JNM9Cis8hk+k16g=
+	t=1752145791; cv=none; b=kbDw3HZMJHXnieXYrgMDbNgCxuUFTeaFKb/qhwIa9RSxPFfzCcfjQ4bgy5QkGLwKYGEUHNfnkrB1ayB92f/fwgXoDQd/PgDVRbe4IAFdrEwKmxjiAflOfVvUpSZlhKOwYTfBAV0UyB8bD4BTotKgR1Nuwl4+eyRkpJWaX6ctex8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145780; c=relaxed/simple;
-	bh=mIKFhKn+f8f1xORib6ReZ6/5HFdEmfLEn0HEiTGEmIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O6ohQmwQHUIyjR8kMHF1mAP3fHbZ/GM83L4QqCcLEieg+xrspZpo7mPOvqXv16dxSy5DEQGgyAEEkYIUz441n1/pZ480KELDnClLWTQHH5Rzj0WoXQzrEuROtoeBKeNBeWQztrdVrvLa9V9P24K9VACe4hBjrjVV106YuG9wdJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qbMUvSgs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r4o7jqbF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qbMUvSgs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r4o7jqbF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CF95C2116F;
-	Thu, 10 Jul 2025 11:09:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752145774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Vq8snJem4FdTPNZqvgPeOR6MQ4HAjTX+Ct0Ola0GFU4=;
-	b=qbMUvSgscCThFkvUsLweEZXjK0xJ4RM91+plpjYgnSLGGUHkHulYitIBbTcZHd6VxSCW0p
-	Iy8dFmo6pSRfbVajpLhjT/UEdMwAcCzITo9if5KFnBvMVbMnVUqvqUDXZ/iPMhaQyx6uvd
-	pL9ENit65VMKPtvlNAHz7LA4XVx5J8E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752145774;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Vq8snJem4FdTPNZqvgPeOR6MQ4HAjTX+Ct0Ola0GFU4=;
-	b=r4o7jqbFqmcMACQc4Qv/dLgnenWkU/H3xAaPrZRPtfP4bw6p0DDVCAF7fe9tDtVfPJh2Ts
-	pvLVf2QxuD6DDgAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qbMUvSgs;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=r4o7jqbF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752145774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Vq8snJem4FdTPNZqvgPeOR6MQ4HAjTX+Ct0Ola0GFU4=;
-	b=qbMUvSgscCThFkvUsLweEZXjK0xJ4RM91+plpjYgnSLGGUHkHulYitIBbTcZHd6VxSCW0p
-	Iy8dFmo6pSRfbVajpLhjT/UEdMwAcCzITo9if5KFnBvMVbMnVUqvqUDXZ/iPMhaQyx6uvd
-	pL9ENit65VMKPtvlNAHz7LA4XVx5J8E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752145774;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Vq8snJem4FdTPNZqvgPeOR6MQ4HAjTX+Ct0Ola0GFU4=;
-	b=r4o7jqbFqmcMACQc4Qv/dLgnenWkU/H3xAaPrZRPtfP4bw6p0DDVCAF7fe9tDtVfPJh2Ts
-	pvLVf2QxuD6DDgAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AE884136CB;
-	Thu, 10 Jul 2025 11:09:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WbXiKG6fb2gsbgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 10 Jul 2025 11:09:34 +0000
-Message-ID: <841160e5-4ae2-4e8d-b2dc-aa93f17a5c00@suse.cz>
-Date: Thu, 10 Jul 2025 13:09:34 +0200
+	s=arc-20240116; t=1752145791; c=relaxed/simple;
+	bh=cyo8TvLqzhnMM+YzZI++zzXnIEvpHErhbOfzHNNWuRc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=i0mQSqPT0gSjJoAFq/bEIRtdaELI9F10YQDcQe5t38/sExOL3Er6UF1nMnAjJKdH/HNFCgi6VQk8g+mb8ptrMqxaNJAaOh9Bj4u83AK56lMHnDul36+v1RAvaRtNp68iz8iFva8wmi4LU71+avLD7VdVTJoH73IMJmFx3U5+ap4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GR8jxhjS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF7E7C4CEE3;
+	Thu, 10 Jul 2025 11:09:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752145790;
+	bh=cyo8TvLqzhnMM+YzZI++zzXnIEvpHErhbOfzHNNWuRc=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=GR8jxhjS+77T7Tw/3+VKZHxuDGUV9TM886m7kNNd7K+2Ot77ZwLIIVGc4QZCI4ywl
+	 qNGJqqqNA6PQl7NEz51DdY/czTLQvp89C2Wxi++dHqDslKhlhSzXhLBLXG9o4b0MpQ
+	 5vt2pbzTvtAeAuJspiUfzO9VlSoxpRF17Fh90wKdFvA5QVPUCk3uoqisBqqmo2HIzu
+	 oCOxwjupcCSlTBtRKh9BBkiAq9Z0i/Nqqd2CLG8XCzeZzIrlrplyCKz1/rWEUap4Z1
+	 OZqLTF5y6LXajm94MYNdCve/NCPA7qluSgRUQ6GuPiNfaNt2DEXYmUYkpI6mcbzplJ
+	 RbQGk4M9z3G7Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] mm/mremap: perform some simple cleanups
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <cover.1751865330.git.lorenzo.stoakes@oracle.com>
- <067bd59f92c552fa4ed5bc22b051ec086bbc0235.1751865330.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <067bd59f92c552fa4ed5bc22b051ec086bbc0235.1751865330.git.lorenzo.stoakes@oracle.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: CF95C2116F
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email,oracle.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.51
+Date: Thu, 10 Jul 2025 13:09:46 +0200
+Message-Id: <DB8BUDZQJOM5.2WS6MCW6I0XES@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>
+Cc: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v9 0/5] rust: DebugFS Bindings
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250709-debugfs-rust-v9-0-92b9eab5a951@google.com>
+ <DB7US8G7ISG0.20430M3P7I0K0@kernel.org>
+ <CAGSQo01hORWAtrGaYp-_xxrAiN47JkJg=jiqnqdpw87QKzt9jg@mail.gmail.com>
+ <DB7V19QE6KFB.3MR0BAOWXT7M7@kernel.org>
+ <CAGSQo01drZoy1-j-+Y-BHHOX5AzCG4A5KiUOu5TJ40JOdfcB0g@mail.gmail.com>
+ <aG7pP1BTLQKInFrl@cassiopeiae> <2025071014-radiantly-dreamland-4017@gregkh>
+ <DB89V15HIG8C.2HL9JVKFNEDTK@kernel.org>
+In-Reply-To: <DB89V15HIG8C.2HL9JVKFNEDTK@kernel.org>
 
-On 7/7/25 07:27, Lorenzo Stoakes wrote:
-> We const-ify the vrm flags parameter to indicate this will never change.
-> 
-> We rename resize_is_valid() to remap_is_valid(), as this function does not
-> only apply to cases where we resize, so it's simply confusing to refer to
-> that here.
-> 
-> We remove the BUG() from mremap_at(), as we should not BUG() unless we are
-> certain it'll result in system instability.
-> 
-> We rename vrm_charge() to vrm_calc_charge() to make it clear this simply
-> calculates the charged number of pages rather than actually adjusting any
-> state.
-> 
-> We update the comment for vrm_implies_new_addr() to explain that
-> MREMAP_DONTUNMAP does not require a set address, but will always be moved.
-> 
-> Additionally consistently use 'res' rather than 'ret' for result values.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Thu Jul 10, 2025 at 11:36 AM CEST, Danilo Krummrich wrote:
+> On Thu Jul 10, 2025 at 7:27 AM CEST, Greg Kroah-Hartman wrote:
+>> Ugh.
+>>
+>> Yes we need write.  And read, and custom file-ops, and the like as
+>> that's what debugfs is doing today for C code!  We need this to be as
+>> simple as, or almost as simple as, what we have today in C or no one is
+>> going to use this stuff and go off and attempt to write their own mess.
+>
+> I agree, we really want the helpers you're referring to below. I think we
+> discussed this in previous iterations already.
+>
+>> While I would love to have something as simple as:
+>> 	void debugfs_create_u8(const char *name, umode_t mode, struct dentry *p=
+arent, u8 *value);
+>> like we do today.  I understand that this makes all sorts of
+>> "assumptions" that Rust really doesn't like (i.e. lifetime of *value and
+>> the like), BUT we MUST have something like this for Rust users, as
+>> that's going to ensure that people actually use this api.
+>
+> I think it can be as simple as
+>
+> 	void debugfs_create_u8(const char *name, umode_t mode, struct dentry *pa=
+rent, u8 *value);
+>
+> in Rust as well. Declaring this in a structure looks like this.
+>
+> 	struct Data {
+> 	   counter: File<u8>,
+> 	}
+>
+> Given that we have some Dir instance, this can be as simple as:
+>
+> 	dir.create_file_u8(...);
+>
+> Which uses default callbacks for read(), write(), etc.
+>
+>> Look at an in-kernel function today, like ath9k_init_debug() that
+>> creates a metric-ton of debugfs files and binds them to different
+>> variables that are owned by a structure and more complex data structures
+>> and memory dumps and other random file interactions.  We need, in Rust,
+>> a way to do everything that that function can do today, in a SIMPLE
+>> manner that reads just as easily as ath9k_init_debug() does.
+>
+> That's possible with the current design and code, it misses the helpers, =
+such as
+> create_file_u8() above, to reduce the boilerplate though. With that, it s=
+hould
+> look pretty similar.
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Can't you just implement the traits directly on `u8` and then just call
+`create_file`?
 
+---
+Cheers,
+Benno
 
