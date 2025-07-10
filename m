@@ -1,114 +1,93 @@
-Return-Path: <linux-kernel+bounces-725385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A824AFFE59
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:41:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BB8AFFE5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D73437B4FF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:40:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AD293A8AD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBD92D3EE1;
-	Thu, 10 Jul 2025 09:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CAE2D3EEE;
+	Thu, 10 Jul 2025 09:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lUMI9+Xl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvzNd9W7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B04528D82F;
-	Thu, 10 Jul 2025 09:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7572F2D0298;
+	Thu, 10 Jul 2025 09:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752140487; cv=none; b=gE7siteNQzHtMavRxwGNFgKChTjoPQR1odHTyEHBN6l8z3jRIXpkYtn7etX8bKECaO1pHkwRvXYHjAwO1VFguNMQAMWHVjoRVxEWJ8NY6EV+R1PllSC5+fb+IYQolGifDfLs6tCRQUqnu0mMGviP1w6dbdpRgzERNtAuR4pK2go=
+	t=1752140643; cv=none; b=gPzQlNvneb6FxcK2Maq1QMjaLr/PiiJ7Jkb8eQS7rzUrdUrZdc98KcjhSgcJEvJ2uSwJOnv1PRIX/WpjgM2FYKN/DaU9AT3xCuz0woHf44VUPdmPbBL13LpyhawCqUzKsA7n1gN0APFa8ElshzzTa/5Vng7lwNHpL1rY7cjTB98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752140487; c=relaxed/simple;
-	bh=mf03gxBlC/Zw61BCMyp61Hz6+tRCPctQqthHewgkQiM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KtK7lD5rsF5fRBRzmvQxqF67EJW9bbXXG8UJfBfmoqVtwj034xttGn4ksM+pn3jmNzCMVF4m2zlzx8mrY6rQLsg8OMNhrbRaw6VsfIA83iJj2uqCVeBKDEIxBzWudtUfrOopNVYHF0gCGWAu6VfcwyI76ij1H7c+IVPItM72Fy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lUMI9+Xl; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752140486; x=1783676486;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=mf03gxBlC/Zw61BCMyp61Hz6+tRCPctQqthHewgkQiM=;
-  b=lUMI9+XlBXVCQ+k8bbWtiO7MFe1htOkjNELFsUgezcBSbPFG2cN9GYJd
-   R09MCGRovCEQ/NQ03p4FB+6YOGZdPNxFGBr0CC5hDf217Z0GCH2nvN4uA
-   eGmwbionSZOEaaw5qTQmpbJWRj9HldP4Bp0j5EInZjDwWRCRjKqI7Ug5u
-   2Pgi78h2kVtOsLb/jbCU04zmygsfrJOm2REMtp3Th0PCS1p9l1QIKT29r
-   IftGM2Be4dTKtxJawU3QWWYQhvX4xva9Mv1AIve5l9BtKMtshCaEPPRp7
-   +wDc9dKGqrCyKWs09/XiTEyFw6Iy+ixmMwjWSVd9uZq2LkQ725PTtritt
-   A==;
-X-CSE-ConnectionGUID: G5PhqOV4TlSeO6L7lgx/Ww==
-X-CSE-MsgGUID: gEb5AeRxQLaQhL3APdaCew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="72000641"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="72000641"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:41:25 -0700
-X-CSE-ConnectionGUID: B90kZ3SfSYGfgOROOy5IUA==
-X-CSE-MsgGUID: /E8+s/hWRIGTYL1KGiNEGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="156758009"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 10 Jul 2025 02:41:23 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 55A7A1B7; Thu, 10 Jul 2025 12:41:21 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Benjamin Tissoires <bentiss@kernel.org>,
-	Vicki Pfau <vi@endrift.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] HID: debug: Remove duplicate entry (BTN_WHEEL)
-Date: Thu, 10 Jul 2025 12:41:20 +0300
-Message-ID: <20250710094120.753358-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1752140643; c=relaxed/simple;
+	bh=OU/QsfAeucBR7oxpGsODCpofrzQWdr3cYK9kvHOY4ZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VPppLUjJr+E7rm7Z74ur2pbxzrL/INX12YUQcDtR96BcBtr6yjd4DbKHmZpjPAg4EYuFF66sUAm4K3UGopBYh9V7EwJEfkTgSin1eb3hZ4gQrTUCAKu0i/k1tQpYSi530hrNKz3fxo5VesTyeRN7mKPDYK5YJneqDJOoy1lUXr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvzNd9W7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01BF7C4CEE3;
+	Thu, 10 Jul 2025 09:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752140643;
+	bh=OU/QsfAeucBR7oxpGsODCpofrzQWdr3cYK9kvHOY4ZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pvzNd9W7F14LZ3NMVuHlyMTdYHIrwMlvFjwNtGXVr4y167/5oI1u7CcdXC/sjHx71
+	 hUQtWyFvsO9ZuR2nf10JExVRH+94fBSNGCHWwJ+42/sl9pTzeEnvcGMoFQY2k2JRu0
+	 z4SqFNbCK1nBpztddMsK1cV97KkcJz/xxpxctuMFxXGDMP00Oe3P+r5z7Z7QSBMuiH
+	 BmPTJaERj5540O+cAS0L8YzdbfBiwglRH+jR470UksWJGPCZApPAwTlygv0mdGphjj
+	 kcDiEe0VAJsfOx42rnaiIei/vb6JzitZnmxk5ceHRQ/S+cfYqqpZnF9U2/gGTecjCb
+	 tUdHzPBAIN1yA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uZnop-000000007hu-3HaY;
+	Thu, 10 Jul 2025 11:43:55 +0200
+Date: Thu, 10 Jul 2025 11:43:55 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+	kw@linux.com, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	qiang.yu@oss.qualcomm.com, quic_krichai@quicinc.com,
+	quic_vbadigan@quicinc.com
+Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: sa8775p: remove aux clock from
+ pcie phy
+Message-ID: <aG-LWxKE11Ah_GS0@hovoldconsulting.com>
+References: <20250625090048.624399-1-quic_ziyuzhan@quicinc.com>
+ <20250625090048.624399-4-quic_ziyuzhan@quicinc.com>
+ <25ddb70a-7442-4d63-9eff-d4c3ac509bbb@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <25ddb70a-7442-4d63-9eff-d4c3ac509bbb@oss.qualcomm.com>
 
-BTN_WHEEL is duplicated (by value) and compiler is not happy about that:
+On Fri, Jun 27, 2025 at 04:50:57PM +0200, Konrad Dybcio wrote:
+> On 6/25/25 11:00 AM, Ziyue Zhang wrote:
+> > gcc_aux_clk is used in PCIe RC and it is not required in pcie phy, in
+> > pcie phy it should be gcc_phy_aux_clk, so remove gcc_aux_clk and
+> > replace it with gcc_phy_aux_clk.
+> 
+> GCC_PCIE_n_PHY_AUX_CLK is a downstream of the PHY's output..
+> are you sure the PHY should be **consuming** it too?
 
-drivers/hid/hid-debug.c:3302:16: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
- 3302 |         [BTN_WHEEL] = "BtnWheel",               [KEY_OK] = "Ok",
-      |                       ^~~~~~~~~~
-drivers/hid/hid-debug.c:3301:20: note: previous initialization is here
- 3301 |         [BTN_GEAR_DOWN] = "BtnGearDown",        [BTN_GEAR_UP] = "BtnGearUp",
-      |                           ^~~~~~~~~~~~~
+Could we get a reply here, please? 
 
-Remove it again, as the commit 7b2daa648eb7 ("HID: debug: Remove duplicates
-from 'keys'") already did this once in the past.
+A bunch of Qualcomm SoCs in mainline do exactly this currently even
+though it may not be correct (and some downstream dts do not use these
+clocks).
 
-Fixes: 194808a1ea39 ("HID: Fix debug name for BTN_GEAR_DOWN, BTN_GEAR_UP, BTN_WHEEL")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/hid/hid-debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index 62f31e95bd36..e86bda0dab9b 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -3299,7 +3299,7 @@ static const char *keys[KEY_MAX + 1] = {
- 	[BTN_STYLUS2] = "Stylus2",		[BTN_TOOL_DOUBLETAP] = "ToolDoubleTap",
- 	[BTN_TOOL_TRIPLETAP] = "ToolTripleTap",	[BTN_TOOL_QUADTAP] = "ToolQuadrupleTap",
- 	[BTN_GEAR_DOWN] = "BtnGearDown",	[BTN_GEAR_UP] = "BtnGearUp",
--	[BTN_WHEEL] = "BtnWheel",		[KEY_OK] = "Ok",
-+						[KEY_OK] = "Ok",
- 	[KEY_SELECT] = "Select",		[KEY_GOTO] = "Goto",
- 	[KEY_CLEAR] = "Clear",			[KEY_POWER2] = "Power2",
- 	[KEY_OPTION] = "Option",		[KEY_INFO] = "Info",
--- 
-2.47.2
-
+Johan
 
