@@ -1,49 +1,74 @@
-Return-Path: <linux-kernel+bounces-726246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4CAB00A00
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:32:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A33B00A09
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12AAE5A0D0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EB1B64041A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D05C2F19A5;
-	Thu, 10 Jul 2025 17:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752432F0C6C;
+	Thu, 10 Jul 2025 17:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jb0KhvYU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MVBf/IEN"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6D62F1999;
-	Thu, 10 Jul 2025 17:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5373112B71;
+	Thu, 10 Jul 2025 17:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752168747; cv=none; b=YWVVU3Oe2s5ghXfMtdeCdhcyarefvj9ne1IrR+ZpPQf4Vc3Cydpu+3jpxWN/NMoa5KrbWjqMG4lYU85m4081gnUKfPi7ALTDGUAusCPIAUnLR9qJ5EnUxPgeOTEX9UCw/hn24C2fath78euY8DeRxEQ0t9c78s1VXsKGMp/3Yjw=
+	t=1752169175; cv=none; b=jyHefC7LBNLDTQD6GB9sQLxhjuDvQWA9xR+c5Ho0YULSOm3VDQUlWAEuFZ8DXIk9NLnWJVIQ7gtO70nEtVtgEZkUmcuaqIfYEHO6M49Dz3Ul54wYcA4fv3ZI9DIac2BfVv164ZfxnxUc6sI+wS7xkroiWSsweJL7ymckxnYfl90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752168747; c=relaxed/simple;
-	bh=D91ad0Eo/iUUOJaTQYy56RP8Urj/5YuWyfsNxyzFk0w=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=beNz5i5t9lQp+xUPVfd4DvAaavB5t2KmPHxON8JrRAsWBnoBr859zPSegFn37SS9YS5cNBxzh6+kb6xAycyepWELwDjCd1+vUnsvAZfZn5+QgG2D/wQAOcPk4aw00ymKFxfO2ZSAqkifOM5zyeaeD16frw0kq/LNBquu5O855S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jb0KhvYU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41788C4CEF1;
-	Thu, 10 Jul 2025 17:32:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752168747;
-	bh=D91ad0Eo/iUUOJaTQYy56RP8Urj/5YuWyfsNxyzFk0w=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jb0KhvYUV88wI3iKgZyvUzYTrdXWZksrcT6XpCfc4MUQ9CvHNbXwYO9sEub3R3RvK
-	 Y0tjfNxJjrnlFDpwxrsxAHnghdEoi4rSfGMU/5roNiUteQuBZxHBB4pPMNjzDQNS/w
-	 DaIHpGWQfzevt0zGfSpp6kHTjzbBinGOHK21bEQAvZHJGL+CxEayns0KG+ckc360MV
-	 +T7ryvp/5N6Qq4i0xM9F6b/KO50uAJA1VfdPNjyRZHHPKx3JcznXMPQYWIiiOirADG
-	 hc5Xg7FvRv/3+r7WftasV6SOVS2jImI4TaWDLknAtRugmWZBWwMGcHuCSagXwSF1c2
-	 psXRU7ZkrUY2w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF39383B266;
-	Thu, 10 Jul 2025 17:32:50 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1752169175; c=relaxed/simple;
+	bh=zLub8N//C+GGcogUcLGBKxJjGKX4CYLw9ra/Jl4VpzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=px61i3I47abYS/B3fUXEyLu9l4SCitfZ34nuo+tY9pHziD5A1Z5mmxKkZuDgZn8t4LAd1EqYgA24LcfFq/w5b/x0vaZw3bu1aqmsFfLky0nb5I0cj6BruAJXGDnkg/ygd+3wBve1HCDdnPR/IUb79dn+x2kSf6epNXBFeSdCudg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MVBf/IEN; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56AHYxFm008594;
+	Thu, 10 Jul 2025 17:39:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=c8FeSJ9m13CyoarXH4iTrYZVBXZu3
+	gJ4ofG/36xGTbU=; b=MVBf/IENqHqT0eCGYLzf+aow/dkLl2x/0UpAjSFMQEayf
+	5b3fs6tzYjgxR7bRuqfenEz0/zcqc+0ZD18BcbuIF6bHOjMJNK0GwMG9uWqgQy9L
+	y1+73aeW8Gogih3GExXJ5JmnDYXoSQYudXxWnG5aQjMwHybGx71preSq4gmRMH8x
+	AZY8VhjE0QW+7XNW3+uFxsRUcrNtSetkaMsoKdC6oKCa4YcZjD3/7rsy4u8sTnQ0
+	xzuIiVBCEVhRodVtDpyt0wxzdCLcN54TmQTDm4OVhm1R8ud2flXdwcfa3T6IT9qK
+	FjH104KFKeS4KW0e0J5YSigJIqHuu8pB2zCRXnv0Q==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47thb884gt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Jul 2025 17:39:21 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56AG02XZ024219;
+	Thu, 10 Jul 2025 17:39:20 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ptgctvwa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Jul 2025 17:39:20 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56AHbwtn003025;
+	Thu, 10 Jul 2025 17:39:19 GMT
+Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 47ptgctvv7-1;
+	Thu, 10 Jul 2025 17:39:19 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: abin.joseph@amd.com, radhey.shyam.pandey@amd.com, michal.simek@amd.com,
+        andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+        netdev@vger.kernel.org
+Cc: alok.a.tiwari@oracle.com, darren.kenny@oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net] net: emaclite: Fix missing pointer increment in aligned_read()
+Date: Thu, 10 Jul 2025 10:38:46 -0700
+Message-ID: <20250710173849.2381003-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,70 +76,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: btusb: Add RTL8852BE device 0x13d3:0x3618
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <175216876934.1607762.3724196588807141344.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Jul 2025 17:32:49 +0000
-References: <43D87E237D082F39+20250710080548.180268-1-wangyuli@uniontech.com>
-In-Reply-To: <43D87E237D082F39+20250710080548.180268-1-wangyuli@uniontech.com>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhanjun@uniontech.com, niecheng1@uniontech.com, guanwentao@uniontech.com,
- lihao1@uniontech.com
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_04,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=999 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507100150
+X-Proofpoint-GUID: 5k9rPI_JtGZ6kdUU9BmPnape8Ja8n8aB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDE1MCBTYWx0ZWRfX7DTJhPPI5/tw W9W/UlUKHqCUvjRlBAla9Rqn6sZLYF1V0GdLUrr5VFTyDeO5bxrJyTE+Bsz7ksoLmgR/ox5HEQr +N6Kmd0LStUwtYQAZNUVB+0VXS8oLgcSiWDCAVsyCzDVuMYqDSc6Gbv2BraXruovJVrXa1sGclu
+ TKUS2Tuc6YZbh7q2DTeN1kiXjPY17IjFtZwiY69FSkAEuAX3pSro8o0oAe3tWzjPfBvH3eLZbRr besFlLznpphU//ar+/7vQBxXexHW4GTADoEkf5aJVz6uT4WIJeXuFJb/hQ09HG6JdNyVPEKBFm/ QmH/+ifoQLHjzIIQqiyA96Ndz4c3cSDyAjQriPaCa7137cSgKPY7900uGD/8zWE0UbZhjuSj/tT
+ Vsy5aDLlfST2Rvk+zcTSI/KSefqHOAb2Ff63Pv9wJuhSggwKx/JuEIP8Caa1nfVppEMYle7+
+X-Authority-Analysis: v=2.4 cv=U9iSDfru c=1 sm=1 tr=0 ts=686ffac9 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=GbX1-k0q0cNaDmerjHAA:9
+X-Proofpoint-ORIG-GUID: 5k9rPI_JtGZ6kdUU9BmPnape8Ja8n8aB
 
-Hello:
+Add missing post-increment operators for byte pointers in the
+loop that copies remaining bytes in xemaclite_aligned_read().
+Without the increment, the same byte was written repeatedly
+to the destination.
+This update aligns with xemaclite_aligned_write()
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+Fixes: bb81b2ddfa19 ("net: add Xilinx emac lite device driver")
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+ drivers/net/ethernet/xilinx/xilinx_emaclite.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, 10 Jul 2025 16:05:48 +0800 you wrote:
-> From: Hao Li <lihao1@uniontech.com>
-> 
-> The information in /sys/kernel/debug/usb/devices about the Bluetooth
-> device is listed as the below:
-> 
-> T:  Bus=01 Lev=01 Prnt=01 Port=01 Cnt=01 Dev#=  2 Spd=12   MxCh= 0
-> D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-> P:  Vendor=13d3 ProdID=3618 Rev= 0.00
-> S:  Manufacturer=Realtek
-> S:  Product=Bluetooth Radio
-> S:  SerialNumber=00e04c000001
-> C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-> E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-> E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> 
-> [...]
-
-Here is the summary with links:
-  - Bluetooth: btusb: Add RTL8852BE device 0x13d3:0x3618
-    https://git.kernel.org/bluetooth/bluetooth-next/c/4e8c8afb1eef
-
-You are awesome, thank you!
+diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+index ecf47107146dc..4719d40a63ba3 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
++++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+@@ -286,7 +286,7 @@ static void xemaclite_aligned_read(u32 *src_ptr, u8 *dest_ptr,
+ 
+ 		/* Read the remaining data */
+ 		for (; length > 0; length--)
+-			*to_u8_ptr = *from_u8_ptr;
++			*to_u8_ptr++ = *from_u8_ptr++;
+ 	}
+ }
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.46.0
 
 
