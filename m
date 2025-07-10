@@ -1,151 +1,186 @@
-Return-Path: <linux-kernel+bounces-724994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE75AFF988
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:17:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AF0AFF994
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 910091898CB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:17:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D7416CD45
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A7D286D55;
-	Thu, 10 Jul 2025 06:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B8D287500;
+	Thu, 10 Jul 2025 06:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OGdoka2c";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QydVL9wM"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="j38hk03L";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="25EqmBEl"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD38E21FF45;
-	Thu, 10 Jul 2025 06:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81B522425E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752128198; cv=none; b=SSIuuhpvQBpQmsRyvXjuIuRDVlgejgQU6GpC3CbBb0LYXRr/Dbp1tk+koRJrf3lAyxeprZlt202Sr5xiKXL8YCnKkSeZstNBkq4M/i1b7grkVUynfUfeEjpcDQh4akmWsaoY80I3UL+DLQ6lP/FvOGI6aIJyygbCilGLg8It9GE=
+	t=1752128199; cv=none; b=gJ+aGqQm3qh0vNWVVyu49+ywIgGKoBM/XsQpblDRSVkgXMseiup8c7j4Xq7l/uKTY8WsC1yEkkUPmgU8Ac96uoqyh350WlsSy19Ih3KCuMBONQd0u1rkw7JhgAEvblyM6SqC76Zcl1BGzA48mhDew4Az3VFjVE9t2ueTu1Sr+M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752128198; c=relaxed/simple;
-	bh=g7U9DQUpX2mTrWw0DrMHYSptf6YynulruwIa4rGj4Yk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=WcIG4xwR6ObGIWamN3bvCT+5YP2LYXhfWJ6l6nOKmNVsFIqVHara39oaVuGzjC4+lrCImTJORwQO4q5J8Uykp0t+oqJh6/z0H0B1BasmLIZTapN03EtFjJkRi43pZh7IyincKZo2oqq8uGaYtLM0qTwrtXEwsXbukwh/6nGty1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OGdoka2c; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QydVL9wM; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 95F537A00E2;
-	Thu, 10 Jul 2025 02:16:34 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 10 Jul 2025 02:16:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752128194;
-	 x=1752214594; bh=K+JG5xDYa961fGznRteNJLs7eTAxyDHTJWg/TjjZO/8=; b=
-	OGdoka2c+JcGBI28jj2IQHk2WR1yL0fw5tJS0gNyBVMIlTqHSnW+QeXBdjuGdw6j
-	E+TLkgg0wLsHbko1uiY2EFw21pgq5LdMN2GxJiffzB7T6ulQaVdM6oN3GCH+FJVC
-	i1Qc8n6HNa1oW4uZRtzGZukziQ0yl+E5K3CCue9anE9zdEQgLVgp2ZANc2EUQBNG
-	o2PMqQ84emHJlxtaRTbVR4/dxC/kMsXM8L9qWcejBA09IuQYwxI2oII79WKQADfo
-	89nTMIFae2fDHlOMBywxms+MRwV0MYfeUHBI+BOZ9Fk0r6hiiXhH9acUw3tFd/1Z
-	2nQQFxjon0sAiGromjcn2g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752128194; x=
-	1752214594; bh=K+JG5xDYa961fGznRteNJLs7eTAxyDHTJWg/TjjZO/8=; b=Q
-	ydVL9wMs79+urG/WQaJ84af7uZ7HPqtYnxAbJwlBGIXOUu/vwigh2Y2gYRZGxV59
-	Jl0cvcgphrdWNQPun3WZxXCMsuXtKtM9erlfqWIATjY1J/0X2rP8hnbRVjUXuiVO
-	wM5YuTXpB2Ks80G3KmJSB4Sgf+1ZG4SDoQsmKpfnjWkWWTLBRnhUsIwu0mUpVSY5
-	A1gDfqSBBoHQc7CiKaYQaTxun0J9+fZd05+cNVQMAMKYzt23+jvNjxdZbTDn8nwi
-	Pcsr7WJjLwoiY+SnfRj/d0mlIs4PEaLqDnS2JeQLl8PWiiqhb+ocb6kKrpRJzUhJ
-	DmuVl51257NpHLo68epFQ==
-X-ME-Sender: <xms:wVpvaFdKUkMtuBSdUJqcyjI_DhEob4o3zMM-40N6PFLg1Xuth4Bpiw>
-    <xme:wVpvaDPt_dqQovU4HjOJLKBQxj-slHn1mf8TBqurc7Qhj7XaqLZdQSGNUctH-Yam-
-    A7gY2kqAjKsmjnq3Ls>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefleejtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepjhgrtghophhordhmohhnughisehiuggvrghsohhnsghorghrugdrtg
-    homhdprhgtphhtthhopehkihgvrhgrnhdrsghinhhghhgrmhesihguvggrshhonhgsohgr
-    rhgurdgtohhmpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrg
-    hsohhnsghorghrugdrtghomhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehmvghhughirdgujhgrihhtsehlihhnuhigrdhinhhtvghlrd
-    gtohhmpdhrtghpthhtohepshgrkhgrrhhirdgrihhluhhssehlihhnuhigrdhinhhtvghl
-    rdgtohhmpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtph
-    htthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:wlpvaNWFyfdW8FZsWNqOYlT98RrV_UY8WiVDiX_Y3C5cNd2b4y9g8Q>
-    <xmx:wlpvaGOdtZzoHZhPU-lz07q_llIl4Uf93f2EpydeRtUqKFVK30bhpw>
-    <xmx:wlpvaA3I48zJ54Lo57JHIomzMk06QigekCnIlAxHA59P4wuj_XGkUg>
-    <xmx:wlpvaKT2fmQPaL0Q9aM1kLb31LnLPybIMY4qSqPcNDoN8NIzpo1eng>
-    <xmx:wlpvaJfF23x_8d5bijzEs8AhcN7PzJ_i9uHMSWvEf5k_kmuZqQA-qds7>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id DEE8B700068; Thu, 10 Jul 2025 02:16:33 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752128199; c=relaxed/simple;
+	bh=H8ClmTjjEb9bsVONNg4zE004ClDGd+aXBH4tHScxEms=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=YFF88L8yYb7R25fNdFlzN96thWZVEUvPAE2paXArfyI+Flj9d3HMyUDU5mnjLkGeaF3UQzysjGwN90k9uU6jr2LhWqTvYYsTPQPqISoYwX6nHXdO870bVzPIEtoSRf2wnCXtDVCaaRWuQibmiOLQsh8Op444dolqBvHnrjMhHd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=j38hk03L; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=25EqmBEl; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752128194; x=1752732994;
+	d=konsulko.se; s=rsa1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=bbG2eOYm0nVPoiyoh0kqZFxhcAwfAfhJmOsqqTLYURg=;
+	b=j38hk03LBQ49WWec0sDiZUsKSxLsQrfrEaZMs1r573dhGXIx+sVrsXxu/HgQlR7k0yJSRB4ON1Ice
+	 tG0FJEY2wjQbCIUE4gv4IohxNaKPGMHh+F/2lzjaBJKHS0mg4Kn7Mj9HQ53w3Zur6DelJBbQXiTI+U
+	 BQRIvFJEnohGKdB5mrpRP6EgiC+LMzfOgLUlEaNlBkCAd9cujAPvnz8yjNg7+0Zn2g1JxNxWqyfIW3
+	 oN0jo/sjn6fZjtmkBaLvQOZTBqheYe/wI4NN2w2BLVGqj74qypbRrmwR54e0wlcpIZqoKdxrm8c+5x
+	 zJfPhXRb//Kze4IWNZpY7y7Rr1hujUQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752128194; x=1752732994;
+	d=konsulko.se; s=ed1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=bbG2eOYm0nVPoiyoh0kqZFxhcAwfAfhJmOsqqTLYURg=;
+	b=25EqmBEl3UcQ3f9/U1QLHscuEdIF/PGEea91SZXE194mrLPt5Tl4+oxQwNJYCjyaqeBF95E9WOm64
+	 lcFHs7eAg==
+X-HalOne-ID: 6c6be782-5d55-11f0-8215-f7376af24660
+Received: from smtpclient.apple (c188-150-224-8.bredband.tele2.se [188.150.224.8])
+	by mailrelay6.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id 6c6be782-5d55-11f0-8215-f7376af24660;
+	Thu, 10 Jul 2025 06:16:34 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ThreadId: Tc8565d759ea2a34a
-Date: Thu, 10 Jul 2025 08:16:03 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "Mehdi Djait" <mehdi.djait@linux.intel.com>
-Cc: "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
- "Jacopo Mondi" <jacopo.mondi@ideasonboard.com>,
- "Hans Verkuil" <hverkuil@xs4all.nl>,
- "Kieran Bingham" <kieran.bingham@ideasonboard.com>,
- "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Hans de Goede" <hdegoede@redhat.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <7bd357f9-9964-431b-a3b2-932cf159cd25@app.fastmail.com>
-In-Reply-To: <aG7UWg8kYMNX32MS@kekkonen.localdomain>
-References: <20250709101114.22185-1-mehdi.djait@linux.intel.com>
- <aG7UWg8kYMNX32MS@kekkonen.localdomain>
-Subject: Re: [PATCH V2] media: i2c: Kconfig: Ensure a dependency on COMMON_CLK for
- VIDEO_CAMERA_SENSOR
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH v12 1/4] mm/vmalloc: allow to set node and align in
+ vrealloc
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <CAADnVQ+iZbKzx8bje=CLO=OnpmGHmQHpDNC=UjWYfN59bWoN3A@mail.gmail.com>
+Date: Thu, 10 Jul 2025 08:16:23 +0200
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ linux-mm <linux-mm@kvack.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ rust-for-linux <rust-for-linux@vger.kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org,
+ bpf <bpf@vger.kernel.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9F14B44F-6073-4F12-875A-9E07EFC16E20@konsulko.se>
+References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
+ <20250709172416.1031970-1-vitaly.wool@konsulko.se>
+ <CAADnVQ+bikqCO7D+5_rAtiJXv3F6xn=0_hgGH5CkoTPpdi8j6Q@mail.gmail.com>
+ <14b08e7c-c2e8-435c-a1dd-bd51cfb42060@kernel.org>
+ <CAADnVQ+qCNfm3aucBrkXRXrUjjYeYQb09Oobx+pgOXNDny4s8w@mail.gmail.com>
+ <DB7WW886UVAJ.I58517CYL8G7@kernel.org>
+ <CAADnVQ+iZbKzx8bje=CLO=OnpmGHmQHpDNC=UjWYfN59bWoN3A@mail.gmail.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+X-Mailer: Apple Mail (2.3826.200.121)
 
-On Wed, Jul 9, 2025, at 22:43, Sakari Ailus wrote:
-> On Wed, Jul 09, 2025 at 12:11:14PM +0200, Mehdi Djait wrote:
 
->> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
->> index e68202954a8f..98750fa5a7b6 100644
->> --- a/drivers/media/i2c/Kconfig
->> +++ b/drivers/media/i2c/Kconfig
->> @@ -27,7 +27,7 @@ config VIDEO_IR_I2C
->>  
->>  menuconfig VIDEO_CAMERA_SENSOR
->>  	bool "Camera sensor devices"
->> -	depends on MEDIA_CAMERA_SUPPORT && I2C
->> +	depends on MEDIA_CAMERA_SUPPORT && I2C && COMMON_CLK
->
-> As of now, this patch makes COMMON_CLK a requirement to use camera sensors.
-> I think you should depend on COMMON_CLK only on ACPI-based platforms as
-> non-CCF clock implementations are still in use and these platforms do not
-> use ACPI.
 
-You are right, I mistakenly assumed that none of the HAVE_LEGACY_CLK
-users supported any camera sensors, but after double-checking I see
-that there are three camera sensor drivers (mt9t112, ov772x, rj54n1cb0c)
-that are used on four SH772x (SH-4A) boards.
+> On Jul 10, 2025, at 2:39=E2=80=AFAM, Alexei Starovoitov =
+<alexei.starovoitov@gmail.com> wrote:
+>=20
+> On Wed, Jul 9, 2025 at 4:26=E2=80=AFPM Danilo Krummrich =
+<dakr@kernel.org> wrote:
+>>=20
+>> On Thu Jul 10, 2025 at 1:14 AM CEST, Alexei Starovoitov wrote:
+>>> On Wed, Jul 9, 2025 at 3:57=E2=80=AFPM Danilo Krummrich =
+<dakr@kernel.org> wrote:
+>>>>=20
+>>>> On 7/10/25 12:53 AM, Alexei Starovoitov wrote:
+>>>>> On Wed, Jul 9, 2025 at 10:25=E2=80=AFAM Vitaly Wool =
+<vitaly.wool@konsulko.se> wrote:
+>>>>>>=20
+>>>>>>=20
+>>>>>> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+>>>>>> +void *vrealloc_node_align_noprof(const void *p, size_t size, =
+unsigned long align,
+>>>>>> +                                gfp_t flags, int node)
+>>>>>>  {
+>>>>>=20
+>>>>> imo this is a silly pattern to rename functions because they
+>>>>> got new arguments.
+>>>>> The names of the args are clear enough "align" and "node".
+>>>>> I see no point in adding the same suffixes to a function name.
+>>>>> In the future this function will receive another argument and
+>>>>> the function would be renamed again?!
+>>>>> "_noprof" suffix makes sense, since it's there for alloc_hooks,
+>>>>> but "_node_align_" is unnecessary.
+>>>>=20
+>>>> Do you have an alternative proposal given that we also have =
+vrealloc() and
+>>>> vrealloc_node()?
+>>>=20
+>>> vrealloc_node()?! There is no such thing in the tree.
+>>> There are various k[zm]alloc_node() which are artifacts of the past
+>>> when NUMA just appeared and people cared about CONFIG_NUMA vs not.
+>>> Nowadays NUMA is everywhere and any new code must support NUMA
+>>> from the start. Hence no point in carrying old baggage and obsolete =
+names.
+>>=20
+>> This patch adds it; do you suggest to redefine vrealloc_noprof() to =
+take align
+>> and nid? If we don't mind being inconsistent with krealloc_noprof() =
+and
+>> kvrealloc_noprof() that's fine I guess.
+>>=20
+>> FWIW, I prefer consistency.
+>=20
+> What inconsistency are you talking about? That
+> krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
+> and
+> vrealloc_noprof(const void *p, size_t size, unsigned long align,
+>                gfp_t flags, int node)
+> have different number of arguments?!
+>=20
+> See:
+> alloc_pages_noprof(gfp_t gfp, unsigned int order);
+> __alloc_pages_noprof(gfp_t gfp, unsigned int order, int preferred_nid,
+>                nodemask_t *nodemask);
+>=20
+> Adding double underscore to keep all existing callers of
+> vrealloc_noprof() without changes and do:
+>=20
+> vrealloc_noprof(const void *p, size_t size, gfp_t flags);
+> __vrealloc_noprof(const void *p, size_t size, unsigned long align,
+> gfp_t flags, int node);
+>=20
+> is fine and consistent with how things were done in the past,
+> but adding "_node_align_" to the function name and code churn to all
+> callsites is a cargo cult.
+>=20
 
-I could not find any possible use of VIDEO_CAMERA_SENSOR on
-architectures that don't already mandate COMMON_CLK. There
-is also no way you'd have the combination of ACPI and HAVE_LEGACY_CLK,
-so it would be sufficient to check for 'depends on HAVE_CLK',
-or we could limit it further using 'depends on COMMON_CLK ||
-(SH && ARCH_SHMOBILE)'.
+I see your point but your approach is currently only applicable to =
+vmalloc and it will not work for slub because the latter already has =
+__kmalloc_node, __kvmalloc_node etc. and we want to keep at least some =
+naming consistency between k[v]* and v* functions.
 
-     Arnd
+This whole patchset is only intended to add the capability to set node =
+and properly handle alignment requests in Rust allocators, and is thus =
+well aligned with your idea that the new code must support NUMA (which I =
+do share). I would suggest that we get this in as it is, and then I can =
+take the burden of straightening out the naming which will inevitably =
+lead to many modifications in other parts of the kernel. The latter I am =
+fine with, too, but not in this series.
+
+~Vitaly=
 
