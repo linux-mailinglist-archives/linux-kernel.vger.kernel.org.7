@@ -1,132 +1,175 @@
-Return-Path: <linux-kernel+bounces-725075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9E3AFFA8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:13:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26704AFFA8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6653A1C475BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:14:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06103585C40
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0F22882B9;
-	Thu, 10 Jul 2025 07:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA312882A6;
+	Thu, 10 Jul 2025 07:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f7liWRLK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fc7C7KAk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB5E2877FB;
-	Thu, 10 Jul 2025 07:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F442882B4;
+	Thu, 10 Jul 2025 07:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752131630; cv=none; b=bacArZdS+2uR2ATtdROWTOV+Gc7YD+j0Xbktt+bykTY+hC9oy7XTO8NJvhxm8KpcNKEHIgwn9mMSkbLIPWZUbWam14mWMllTC4Eiz6LSisl8vpPK0WUtvOW0IqFGNca8GYQKHKGLoX92SeAQECwj6h6K0ogLXlp4hNbeUiNy64o=
+	t=1752131636; cv=none; b=rxbTZQQTWgzLoRKXfvXuUziJwnvZZAAUhXdvU5VmG2QgaJBQBa5JSKHIxS/belsrho6uCARktZlhBdaQFCzeZR4/9tuv23VjzlpJYZpR5lbFPHTuLVpSpGUqLCpbW5TFUaeo1hYEmrItjCF592cK6DrGh7H2ump84wJ5/i4STIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752131630; c=relaxed/simple;
-	bh=1PZ5SYT8dRkcymT3/gj366sIXjNSe/oKNBKj+FH3zao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sWyi41tkjdPIHHDrOELfvF0rp4Dr8e6wfp4ZdrDdoRhfRAGzlsh4bAgwSoQvo482quCYRppqmZIbyhsamk5oEyRDHzk4JmlBInZ3jQ6Hb5nGzLvTttLUowdhZMe3kcILGeNelDhd/EEMx2lwmvERn3Xm04uGBrKJVK7/Ip3okcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f7liWRLK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D023C4CEE3;
-	Thu, 10 Jul 2025 07:13:48 +0000 (UTC)
+	s=arc-20240116; t=1752131636; c=relaxed/simple;
+	bh=hdRfm4Bc1vo7jizqAwjuIhPIxmBfBrVaGeZdSTTpIE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=otWxAMVSoPpfHYw/qjHtu48VWBpnyopRcqS2yOngJPiyi0r7VgKo0ACCFamWJUPjSNC/4C6oA3DAx0UFEn9RUiYzLNXNDf5Fm7A57s/6RBvaGEdKdYQyhRL7yABXEjox9SKltxczx7wx+hyLokx8uY/1UzIxHdPfBE+Dy+AuKJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fc7C7KAk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A7FCC4CEF4;
+	Thu, 10 Jul 2025 07:13:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752131629;
-	bh=1PZ5SYT8dRkcymT3/gj366sIXjNSe/oKNBKj+FH3zao=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f7liWRLKF+YRv9KHpnqXc8KJJfHiKxyOMTbrf4C4eZLOzV18t8Z8ofdOCIkIpSfjd
-	 QjwwFAS/CPeAASRC1DoCC2k8C9ZEtSRB60GCwhZk9OQJFhR8W3CglMyxGmmESsoRIL
-	 UzSxbYpbOICcCujzD1mfSJKvQ++TcK5Ena+0BrPt/h/6JOuLAhzGIDeL+vjhYOWgXI
-	 2xjCaIuea75KvEb/UOKsQrKc3AA4OlEehzaF5nmVyEB6hX7XZGil98DEUJPffpX4Rb
-	 D32VrK3JfP3LBa27Efxq5OpODdxs0hx27s31b6i7QJcLxVSy5yXr2KZHuc/5iZlIZi
-	 yJAKt7lEuWJVA==
-Date: Thu, 10 Jul 2025 09:13:46 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/9] drm/omapdrm: use drm_bridge_chain_get_last_bridge()
-Message-ID: <20250710-daffy-mini-booby-574fca@houat>
-References: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-0-48920b9cf369@bootlin.com>
- <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-4-48920b9cf369@bootlin.com>
+	s=k20201202; t=1752131636;
+	bh=hdRfm4Bc1vo7jizqAwjuIhPIxmBfBrVaGeZdSTTpIE8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fc7C7KAkt5khRYDnQJRF9/sU7prycldCaPx23orPVkvSvZvxhm3BHLmMaBiMXSUh2
+	 eBsJHM9xyUaCFmAU/waTqF4HD7KoCCyg36KDbgvNFJiHWgMs7/xwYCjvLz9+UeAdlU
+	 EJgLjrZ/Ld6gF1SK5ntCOeTagF4dKQMzFPgeKGWXG3G1fAQFrTje5vV9uXG1wzaMQn
+	 RGCgfipRjPo8dfzBEBxZdmPUOXwKg/BSdC0X48w0ot4TmwmvnK/lRxr0+iVIRBuv45
+	 v0yBeAazIFyYCYy+2Dzp7kj3tAzV2xsbSgnjVczLraeOri3lZqMIWpWdXo3fZWuCu4
+	 kWngY0pupAw+g==
+Date: Thu, 10 Jul 2025 09:13:52 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 12/12] docs: kdoc: Improve the output text accumulation
+Message-ID: <20250710091352.4ae01211@foz.lan>
+In-Reply-To: <20250710084119.3e5c1ced@foz.lan>
+References: <20250702223524.231794-1-corbet@lwn.net>
+	<20250702223524.231794-13-corbet@lwn.net>
+	<20250710084119.3e5c1ced@foz.lan>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ksuiit4bl62avew6"
-Content-Disposition: inline
-In-Reply-To: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-4-48920b9cf369@bootlin.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+Em Thu, 10 Jul 2025 08:41:19 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+
+> Em Wed,  2 Jul 2025 16:35:24 -0600
+> Jonathan Corbet <corbet@lwn.net> escreveu:
+> 
+> > Building strings with repeated concatenation is somewhat inefficient in
+> > Python; it is better to make a list and glom them all together at the end.
+> > Add a small set of methods to the OutputFormat superclass to manage the
+> > output string, and use them throughout.
+> > 
+> > Signed-off-by: Jonathan Corbet <corbet@lwn.net>  
+> 
+> The patch looks good to me. Just a minor nit below.
+> 
+> > ---
+> >  scripts/lib/kdoc/kdoc_output.py | 185 +++++++++++++++++---------------
+> >  1 file changed, 98 insertions(+), 87 deletions(-)
+> > 
+> > diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
+> > index ea8914537ba0..d4aabdaa9c51 100644
+> > --- a/scripts/lib/kdoc/kdoc_output.py
+> > +++ b/scripts/lib/kdoc/kdoc_output.py
+> > @@ -73,7 +73,19 @@ class OutputFormat:
+> >          self.config = None
+> >          self.no_doc_sections = False
+> >  
+> > -        self.data = ""
+> > +    #
+> > +    # Accumulation and management of the output text.
+> > +    #
+> > +    def reset_output(self):
+> > +        self._output = []
+> > +
+> > +    def emit(self, text):
+> > +        """Add a string to out output text"""
+> > +        self._output.append(text)
+> > +
+> > +    def output(self):
+> > +        """Obtain the accumulated output text"""
+> > +        return ''.join(self._output)  
+> 
+> I would prefer to use a more Pythonic name for this function:
+> 
+> 	def __str__(self)
+> 
+> This way, all it takes to get the final string is to use str():
+> 
+> 	out_str = str(out)
+> 
+> With that:
+> 
+> Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
 
---ksuiit4bl62avew6
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 4/9] drm/omapdrm: use drm_bridge_chain_get_last_bridge()
-MIME-Version: 1.0
+Hmm... actually, I would code it on a different way, using something like:
 
-On Wed, Jul 09, 2025 at 06:48:03PM +0200, Luca Ceresoli wrote:
-> Use drm_bridge_chain_get_last_bridge() instead of open coding a loop with
-> two invocations of drm_bridge_get_next_bridge() per iteration.
->=20
-> Besides being cleaner and more efficient, this change is necessary in
-> preparation for drm_bridge_get_next_bridge() to get a reference to the
-> returned bridge.
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
->  drivers/gpu/drm/omapdrm/omap_drv.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm=
-/omap_drv.c
-> index 054b71dba6a75b8c42198c4b102a093f43a675a2..3bbcec01428a6f290afdfa40e=
-f6f79629539a584 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_drv.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
-> @@ -378,12 +378,12 @@ static int omap_display_id(struct omap_dss_device *=
-output)
->  	struct device_node *node =3D NULL;
-> =20
->  	if (output->bridge) {
-> -		struct drm_bridge *bridge =3D output->bridge;
-> -
-> -		while (drm_bridge_get_next_bridge(bridge))
-> -			bridge =3D drm_bridge_get_next_bridge(bridge);
-> +		struct drm_bridge *bridge =3D
-> +			drm_bridge_chain_get_last_bridge(output->bridge->encoder);
-> =20
->  		node =3D bridge->of_node;
-> +
-> +		drm_bridge_put(bridge);
+class OutputString:
+    def __init__(self):
+	"""Initialize internal list"""
+        self._output = []
+    
+    # Probably not needed - The code can simply do, instead:
+    # a = OutputString() to create a new string.
+    def reset(self):
+        """Reset the output text"""
+        self._output = []
+    
+    def __add__(self, text):
+	"""Add a string to out output text"""
+        if not isinstance(text, str):
+            raise TypeError("Can only append strings")
+        self._output.append(text)
+        return self
 
-Any reason you're not using __free(drm_bridge_put) here?
+    def __str__(self):
+        return ''.join(self._output)
+    
+    # and, if needed, add a getter/setter:
 
-Maxime
+    @property
+    def data(self):
+        """Getter for the current output"""
+        return ''.join(self._output)
 
---ksuiit4bl62avew6
-Content-Type: application/pgp-signature; name="signature.asc"
+    @data.setter
+    def data(self, new_value):
+        if isinstance(new_value, str):
+	    self._output = [new_value]
+	elif isinstance(new_value, list):
+            self._output = new_value
+        else:
+            raise TypeError("Value should be either list or string")
 
------BEGIN PGP SIGNATURE-----
+That would allow things like:
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaG9oKgAKCRAnX84Zoj2+
-dv+SAYD8WXoxdQImd1WsoY8Qa7eR03ok/mPvEvPAbyHoymKSL55M0Dxyg3aTw6DJ
-SBzQpokBgJjlL8l44Tp0J8chUUsawNg8WYvr0GQO++AMrH0GWH7vZttF78pb1xGe
-YlVI2cDkew==
-=+6FN
------END PGP SIGNATURE-----
+	out = OutputString()
+	out = out + "Foo" + " " + "Bar"
+	print(out)
 
---ksuiit4bl62avew6--
+	out = OutputString()
+	out += "Foo"
+	out += " "
+	out += "Bar"
+	return(str(out))
+
+and won't require much changes at the output logic, and IMO will
+provide a cleaner code.
+
+Thanks,
+Mauro
 
