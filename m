@@ -1,293 +1,355 @@
-Return-Path: <linux-kernel+bounces-725044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D4AAFFA2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:52:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5EEAFFA22
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D28BF7B0A28
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:50:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A9A4A82CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F732877E0;
-	Thu, 10 Jul 2025 06:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9028B287265;
+	Thu, 10 Jul 2025 06:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a+McIPKx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fOvRouwJ"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEE1280A29
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FFE230BE1
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752130288; cv=none; b=g2HEz3saewP/K5cEw7hnGGPQhc4saoIyrC6Q1urCHUH3J8jfvM/weDJcLtBo4rsSoN5uKHrv3y9WS0HVBbKaCw2WTnmTsWsJBPSU+0uKklgQyplIgLQjWc8acVmWQlazC5Mx7w4GeboUAjp79+kKNEzTTMaGZyjiQvsHNgj+QE0=
+	t=1752130285; cv=none; b=jkoB5Qq9ds/jx9ld/JVWoZ9qZRFigcZJaW8lxrKgWOMYOBHMFF1pNT/ebeq7l7WHtoRshfzuYHXmUfUd3C+kyU1waLc70M+VMFWFR/q9pjNKPUyEMsauFos2kXndcf5/j7VAnLnMBAqD8PxeuZF5dCpwxvq98tFyxtUEGwzT7I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752130288; c=relaxed/simple;
-	bh=AMa7lwkXMN2Ako2tIZIroNSipdngCsnbMYhwETe8I9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=N1ceBS7g9yxCB+b+BSb4QEWg5DLCVTgF3+wBLZV6m4Dx8NsGw4R2TXvkpAKEu6fss2BrDAjNo9SPrHdFqxdZ20lAVyJNXX3AN73cR1SCTTzpDmQbhZboSeAf+/cwdfZSYvhuo4RHeepb0LDzg4px28aFb6MOeG6di+FF88VevXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a+McIPKx; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752130286; x=1783666286;
-  h=date:from:to:cc:subject:message-id;
-  bh=AMa7lwkXMN2Ako2tIZIroNSipdngCsnbMYhwETe8I9Y=;
-  b=a+McIPKxnitw04XK0cnasyvfh/SdodzU6jFTxujnGTWWwvitdx+i3xr2
-   Apq5F7upqEr5YB5ub4HmnbolSu/PqGONl0UNUl5lfWJY9DEABHTtmFcCc
-   xFv2yLgUtE/8W+eMIjTNR1oIY20H2XYMO3B4FoGOG1h9ZlAboZsQJuNe6
-   hwmaSoS/xaEoNMOJNB2hkd4tAysGXCbmpRN3VsH6Gf6UPqfXvUBNcyRqs
-   yzjaPI+7EzuLp/JUjDIhnTp7JBvtZZPl80xfUquj3RXsSJPjWstNF2c69
-   +8VPtMfA3evnrzCxTlYpjP1+4tOJtx7EZHu1trxd4l+wowPjZXgqt+Ykl
-   A==;
-X-CSE-ConnectionGUID: y1+LNILkRi6Dt5tzyFL78Q==
-X-CSE-MsgGUID: dJv7v+51Tw2drdGLDmFyRQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="57009671"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="57009671"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 23:51:25 -0700
-X-CSE-ConnectionGUID: zaMH/uHoTQqazIJ1wIhwwA==
-X-CSE-MsgGUID: LGrhkrLZQMmeTiA3HGpIqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="193192305"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 09 Jul 2025 23:51:24 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uZl7p-0004bb-1s;
-	Thu, 10 Jul 2025 06:51:21 +0000
-Date: Thu, 10 Jul 2025 14:51:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:non-rcu/next] BUILD SUCCESS
- 125b9ae972197fa6ecc789b847427f6ad1156e52
-Message-ID: <202507101454.4cCfBA3L-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1752130285; c=relaxed/simple;
+	bh=ywQ0NJXMilsYJwI3bmhXom6mcoqPdnzSy0iMQDhlMiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NStdGEtVUuffGyPBEh3JiR39hLgJKKGbgiu09kSHguzvVkEKkc2Fsnb/xZw0gwnFlbS+nuxegX8aNFrYmxNw2eequWhquluJjy8FHZ9HidlDILxGL/sNuCW9VlI4GDQCYDGercqPq0uuV6zuDnnNTbdNpY2LQlWGBcvhHeuvccw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fOvRouwJ; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-451d54214adso3796535e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 23:51:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752130282; x=1752735082; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xpVqT/0ziCiQWbhFEKbAX/q6iQaKzlbqaJjN/YymYjI=;
+        b=fOvRouwJfSAMFSXSzM1mOtKrfbjLIQP4v+o1Ow9CWhbJPM9ZL/W8ii7vVZq8bgA6Q3
+         Aj05jiHcR54tmeC/pGphxn2W0J6g3TfBkXjxZvHZt8XErriCoU6sFwVf1NXxBCaSGUm4
+         rvd7FQRp7t9S9bNtk27KI8xwTPsTQYW79Y27+uitNbDJDDhnTprlusBOBxUfuBcQ9Xg2
+         nCKgbgYDFAibc1zPEVtDvUKqgmJPlaf+npUnQc9fl1+OCODcNLTT1JgX0SCWGOLnDJ2x
+         teAQnqi85DgZ6luBUbW/rS/j8/6dIllz/MspTNIFs11AJ2CyrscKyKT5NtDSR+791hH+
+         KwNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752130282; x=1752735082;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xpVqT/0ziCiQWbhFEKbAX/q6iQaKzlbqaJjN/YymYjI=;
+        b=bdoZSRPW3vrJIHnJu2/Dwig4UHZxdweMglGrzwjXOFesmWu8j5hYX66VLaKztVpaI2
+         iLpCUPv/w4ono9pwkH6j0pLzL/BCRf6JwKGHzgvHENsLwCfylRK4ePJJ855Q2qhX/A59
+         LjHtwrZHFlQIgDwVflG1D4DIwOPiI761PmSS2ZBdczjwWs5/raSYyutdvCVZz6uhv7vy
+         Cbx3jWPwJOiREzmNXiYxVKPwEF/x21qDhF86I2u7Gpb5xm2hUgFWbk+3LhVxZ23vlfyn
+         7Brsk8uMxlaEyV74rZFpR2NAebF2s7DvUvSyw4cr4dAKs9eFuB6x1Z6mrpEOelAM5OqH
+         Yefg==
+X-Forwarded-Encrypted: i=1; AJvYcCXUNb5ldgvX/yvE22Kcgu5ojONS4SQia5FUWSj3oReOmAOZ0RT0jd9kJJx7vxu9aUMwKK/nn3LsIn3UmMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLd9eukbZCV+MQta09Kg8+FOZfSBhDimEAZGvWmGknuY1yDzLO
+	V4PnUF3W++uRfw9H7yXYlPOj23v0qnMm47kHPq5Y34P9L7AVshU4rgt5aSB98z0ysw==
+X-Gm-Gg: ASbGncvzyh4LMFSvS5biJGD+Lz0WpQ/yPApfYsw31JmbrTYDcmThrhB9GDlybDmnzcb
+	eUo10JW8HCxbPAK0oE0gRycshFnmc9E+sBdKlHb+umzdlUEtUgYFURRgFf23OxZPRo9KtjnL5X3
+	TN09iIJthfWkv8qq94fFlG82nvB99zhvYZuN0R1+sNg47B9pj4Y7InnnaqL2fpBJHbhk7Y7VykV
+	Z+Een6cgx40SEAERvUo2ytu0uGx77cvpAE6R5pUkr6hNrF6DQpDEC5mohqmsoxSfT9pdvo6V/x3
+	q4xbnNDzSfM4wDjVgurW6bIvac21fFtRRZSNlx9UanXsNt4/iiJxyXF3wcV4W16utseThOZxCAM
+	oAYdsgkQUI7eG0q9gP0XUPDo=
+X-Google-Smtp-Source: AGHT+IFZP/UMNnhVWneOpJDGvjArQoTmSoQxfALO8N9dgC9g7qQ/GhXWcBfsOhwQL5ABm6JTjSKyuQ==
+X-Received: by 2002:a05:600c:1546:b0:442:ccf9:e6f2 with SMTP id 5b1f17b1804b1-454d53a608dmr55979805e9.16.1752130281641;
+        Wed, 09 Jul 2025 23:51:21 -0700 (PDT)
+Received: from google.com (120.142.205.35.bc.googleusercontent.com. [35.205.142.120])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd439326sm9964525e9.1.2025.07.09.23.51.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 23:51:20 -0700 (PDT)
+Date: Thu, 10 Jul 2025 06:51:16 +0000
+From: Keir Fraser <keirf@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Li RongQing <lirongqing@baidu.com>
+Subject: Re: [PATCH 3/3] KVM: Avoid synchronize_srcu() in
+ kvm_io_bus_register_dev()
+Message-ID: <aG9i5BHDHRlFRFnb@google.com>
+References: <20250624092256.1105524-1-keirf@google.com>
+ <20250624092256.1105524-4-keirf@google.com>
+ <aFrANSe6fJOfMpOC@google.com>
+ <aGJf7v9EQoEZiQUk@google.com>
+ <aGwWvp_JeWe9tIJx@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGwWvp_JeWe9tIJx@google.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git non-rcu/next
-branch HEAD: 125b9ae972197fa6ecc789b847427f6ad1156e52  Merge branches 'lkmm.2025.07.09a' and 'ratelimit.2025.06.24a' into HEAD
+On Mon, Jul 07, 2025 at 11:49:34AM -0700, Sean Christopherson wrote:
+> On Mon, Jun 30, 2025, Keir Fraser wrote:
+> > On Tue, Jun 24, 2025 at 08:11:49AM -0700, Sean Christopherson wrote:
+> > > +Li
+> > > 
+> > > On Tue, Jun 24, 2025, Keir Fraser wrote:
+> > > > Device MMIO registration may happen quite frequently during VM boot,
+> > > > and the SRCU synchronization each time has a measurable effect
+> > > > on VM startup time. In our experiments it can account for around 25%
+> > > > of a VM's startup time.
+> > > > 
+> > > > Replace the synchronization with a deferred free of the old kvm_io_bus
+> > > > structure.
+> > > > 
+> > > > Signed-off-by: Keir Fraser <keirf@google.com>
+> > > > ---
+> > > >  include/linux/kvm_host.h |  1 +
+> > > >  virt/kvm/kvm_main.c      | 10 ++++++++--
+> > > >  2 files changed, 9 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > > > index 3bde4fb5c6aa..28a63f1ad314 100644
+> > > > --- a/include/linux/kvm_host.h
+> > > > +++ b/include/linux/kvm_host.h
+> > > > @@ -205,6 +205,7 @@ struct kvm_io_range {
+> > > >  struct kvm_io_bus {
+> > > >  	int dev_count;
+> > > >  	int ioeventfd_count;
+> > > > +	struct rcu_head rcu;
+> > > >  	struct kvm_io_range range[];
+> > > >  };
+> > > >  
+> > > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > > > index eec82775c5bf..b7d4da8ba0b2 100644
+> > > > --- a/virt/kvm/kvm_main.c
+> > > > +++ b/virt/kvm/kvm_main.c
+> > > > @@ -5924,6 +5924,13 @@ int kvm_io_bus_read(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(kvm_io_bus_read);
+> > > >  
+> > > > +static void __free_bus(struct rcu_head *rcu)
+> > > > +{
+> > > > +	struct kvm_io_bus *bus = container_of(rcu, struct kvm_io_bus, rcu);
+> > > > +
+> > > > +	kfree(bus);
+> > > > +}
+> > > > +
+> > > >  int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
+> > > >  			    int len, struct kvm_io_device *dev)
+> > > >  {
+> > > > @@ -5962,8 +5969,7 @@ int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
+> > > >  	memcpy(new_bus->range + i + 1, bus->range + i,
+> > > >  		(bus->dev_count - i) * sizeof(struct kvm_io_range));
+> > > >  	rcu_assign_pointer(kvm->buses[bus_idx], new_bus);
+> > > > -	synchronize_srcu_expedited(&kvm->srcu);
+> > > > -	kfree(bus);
+> > > > +	call_srcu(&kvm->srcu, &bus->rcu, __free_bus);
+> > > 
+> > > I'm 99% certain this will break ABI.  KVM needs to ensure all readers are
+> > > guaranteed to see the new device prior to returning to userspace.
+> > 
+> > I'm not sure I understand this. How can userspace (or a guest VCPU) know that
+> > it is executing *after* the MMIO registration, except via some form of
+> > synchronization or other ordering of its own? For example, that PCI BAR setup
+> > happens as part of PCI probing happening early in device registration in the
+> > guest OS, strictly before the MMIO region will be accessed. Otherwise the
+> > access is inherently racy against the registration?
+> 
+> Yes, guest software needs its own synchronization.  What I am pointing out is that,
+> very strictly speaking, KVM relies on synchronize_srcu_expedited() to ensure that
+> KVM's emulation of MMIO accesses are correctly ordered with respect to the guest's
+> synchronization.
+> 
+> It's legal, though *extremely* uncommon, for KVM to emulate large swaths of guest
+> code, including emulated MMIO accesses.  If KVM grabs kvm->buses at the start of
+> an emulation block, and then uses that reference to resolve MMIO, it's theoretically
+> possible for KVM to mishandle an access due to using a stale bus.
 
-elapsed time: 780m
+But it doesn't do that? I think I understand now though that you are
+concerned about the buses API exposed to the kernel at large. And yes
+I see this would be a problem for example if a kvm_get_bus() return
+value was cached.
 
-configs tested: 201
-configs skipped: 4
+Will and I also had a brainstorm in the office and theorised that a
+really "smart" compiler might somehow unroll
+handle_invalid_guest_state() 130 times and hoist all the READ_ONCE()s
+of the bus to the start. It's impractical, even likely impossible, but
+we couldn't outright say it's disallowed by the current enforcements
+in the KVM subsystem itself.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> Today, such scenarios are effectively prevented by synchronize_srcu_expedited().
+> Using kvm->buses outside of SRCU protection would be a bug (per KVM's locking
+> rules), i.e. a large emulation block must take and hold SRCU for its entire
+> duration.  And so waiting for all SRCU readers to go away ensures that the new
+> kvm->buses will be observed if KVM starts a new emulation block.
 
-tested configs:
-alpha                             allnoconfig    clang-21
-alpha                            allyesconfig    clang-19
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    clang-19
-arc                              allmodconfig    clang-19
-arc                               allnoconfig    clang-21
-arc                              allyesconfig    clang-19
-arc                                 defconfig    clang-19
-arc                   randconfig-001-20250710    clang-21
-arc                   randconfig-001-20250710    gcc-15.1.0
-arc                   randconfig-002-20250710    clang-21
-arc                   randconfig-002-20250710    gcc-12.4.0
-arm                              allmodconfig    clang-19
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    clang-19
-arm                                 defconfig    clang-19
-arm                   randconfig-001-20250710    clang-21
-arm                   randconfig-001-20250710    gcc-8.5.0
-arm                   randconfig-002-20250710    clang-21
-arm                   randconfig-003-20250710    clang-21
-arm                   randconfig-004-20250710    clang-21
-arm                   randconfig-004-20250710    gcc-8.5.0
-arm                           spitz_defconfig    gcc-15.1.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    clang-21
-arm64                               defconfig    clang-19
-arm64                 randconfig-001-20250710    clang-21
-arm64                 randconfig-002-20250710    clang-21
-arm64                 randconfig-003-20250710    clang-21
-arm64                 randconfig-003-20250710    gcc-8.5.0
-arm64                 randconfig-004-20250710    clang-21
-csky                              allnoconfig    clang-21
-csky                                defconfig    clang-19
-csky                  randconfig-001-20250710    gcc-15.1.0
-csky                  randconfig-002-20250710    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                          allmodconfig    clang-19
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-19
-hexagon                          allyesconfig    clang-21
-hexagon                             defconfig    clang-19
-hexagon               randconfig-001-20250710    clang-21
-hexagon               randconfig-001-20250710    gcc-15.1.0
-hexagon               randconfig-002-20250710    clang-21
-hexagon               randconfig-002-20250710    gcc-15.1.0
-i386                             allmodconfig    clang-20
-i386                              allnoconfig    clang-20
-i386                             allyesconfig    clang-20
-i386        buildonly-randconfig-001-20250710    clang-20
-i386        buildonly-randconfig-001-20250710    gcc-12
-i386        buildonly-randconfig-002-20250710    clang-20
-i386        buildonly-randconfig-002-20250710    gcc-12
-i386        buildonly-randconfig-003-20250710    clang-20
-i386        buildonly-randconfig-004-20250710    clang-20
-i386        buildonly-randconfig-004-20250710    gcc-11
-i386        buildonly-randconfig-005-20250710    clang-20
-i386        buildonly-randconfig-006-20250710    clang-20
-i386                                defconfig    clang-20
-i386                  randconfig-001-20250710    gcc-12
-i386                  randconfig-002-20250710    gcc-12
-i386                  randconfig-003-20250710    gcc-12
-i386                  randconfig-004-20250710    gcc-12
-i386                  randconfig-005-20250710    gcc-12
-i386                  randconfig-006-20250710    gcc-12
-i386                  randconfig-007-20250710    gcc-12
-i386                  randconfig-011-20250710    clang-20
-i386                  randconfig-012-20250710    clang-20
-i386                  randconfig-013-20250710    clang-20
-i386                  randconfig-014-20250710    clang-20
-i386                  randconfig-015-20250710    clang-20
-i386                  randconfig-016-20250710    clang-20
-i386                  randconfig-017-20250710    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-21
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20250710    gcc-14.3.0
-loongarch             randconfig-001-20250710    gcc-15.1.0
-loongarch             randconfig-002-20250710    gcc-15.1.0
-m68k                             allmodconfig    clang-19
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    clang-19
-m68k                         apollo_defconfig    gcc-15.1.0
-m68k                                defconfig    clang-19
-m68k                       m5249evb_defconfig    gcc-15.1.0
-microblaze                       allmodconfig    clang-19
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    clang-19
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                      bmips_stb_defconfig    gcc-15.1.0
-mips                 decstation_r4k_defconfig    gcc-15.1.0
-mips                           rs90_defconfig    gcc-15.1.0
-mips                   sb1250_swarm_defconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                               defconfig    gcc-15.1.0
-nios2                 randconfig-001-20250710    gcc-15.1.0
-nios2                 randconfig-001-20250710    gcc-9.3.0
-nios2                 randconfig-002-20250710    gcc-12.4.0
-nios2                 randconfig-002-20250710    gcc-15.1.0
-openrisc                          allnoconfig    clang-21
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    clang-21
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250710    gcc-15.1.0
-parisc                randconfig-001-20250710    gcc-8.5.0
-parisc                randconfig-002-20250710    gcc-15.1.0
-parisc                randconfig-002-20250710    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    clang-21
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    gcc-15.1.0
-powerpc               randconfig-001-20250710    gcc-12.4.0
-powerpc               randconfig-001-20250710    gcc-15.1.0
-powerpc               randconfig-002-20250710    gcc-15.1.0
-powerpc               randconfig-002-20250710    gcc-9.3.0
-powerpc               randconfig-003-20250710    gcc-15.1.0
-powerpc               randconfig-003-20250710    gcc-8.5.0
-powerpc64             randconfig-001-20250710    gcc-11.5.0
-powerpc64             randconfig-001-20250710    gcc-15.1.0
-powerpc64             randconfig-002-20250710    clang-17
-powerpc64             randconfig-002-20250710    gcc-15.1.0
-powerpc64             randconfig-003-20250710    gcc-14.3.0
-powerpc64             randconfig-003-20250710    gcc-15.1.0
-riscv                            allmodconfig    gcc-15.1.0
-riscv                             allnoconfig    clang-21
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    gcc-15.1.0
-riscv                 randconfig-001-20250710    gcc-12.4.0
-riscv                 randconfig-001-20250710    gcc-15.1.0
-riscv                 randconfig-002-20250710    gcc-10.5.0
-riscv                 randconfig-002-20250710    gcc-12.4.0
-s390                             allmodconfig    clang-18
-s390                             allmodconfig    gcc-15.1.0
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250710    gcc-12.4.0
-s390                  randconfig-001-20250710    gcc-14.3.0
-s390                  randconfig-002-20250710    clang-17
-s390                  randconfig-002-20250710    gcc-12.4.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                    randconfig-001-20250710    gcc-12.4.0
-sh                    randconfig-001-20250710    gcc-15.1.0
-sh                    randconfig-002-20250710    gcc-12.4.0
-sh                    randconfig-002-20250710    gcc-13.4.0
-sh                           se7780_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250710    gcc-12.4.0
-sparc                 randconfig-001-20250710    gcc-13.4.0
-sparc                 randconfig-002-20250710    gcc-12.4.0
-sparc                 randconfig-002-20250710    gcc-14.3.0
-sparc64               randconfig-001-20250710    gcc-12.4.0
-sparc64               randconfig-001-20250710    gcc-8.5.0
-sparc64               randconfig-002-20250710    gcc-12.4.0
-sparc64               randconfig-002-20250710    gcc-15.1.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    clang-19
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250710    gcc-11
-um                    randconfig-001-20250710    gcc-12.4.0
-um                    randconfig-002-20250710    clang-16
-um                    randconfig-002-20250710    gcc-12.4.0
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250710    clang-20
-x86_64      buildonly-randconfig-001-20250710    gcc-12
-x86_64      buildonly-randconfig-002-20250710    clang-20
-x86_64      buildonly-randconfig-002-20250710    gcc-12
-x86_64      buildonly-randconfig-003-20250710    clang-20
-x86_64      buildonly-randconfig-003-20250710    gcc-12
-x86_64      buildonly-randconfig-004-20250710    clang-20
-x86_64      buildonly-randconfig-005-20250710    clang-20
-x86_64      buildonly-randconfig-006-20250710    clang-20
-x86_64                              defconfig    clang-20
-x86_64                                  kexec    clang-20
-x86_64                randconfig-001-20250710    gcc-12
-x86_64                randconfig-002-20250710    gcc-12
-x86_64                randconfig-003-20250710    gcc-12
-x86_64                randconfig-004-20250710    gcc-12
-x86_64                randconfig-005-20250710    gcc-12
-x86_64                randconfig-006-20250710    gcc-12
-x86_64                randconfig-007-20250710    gcc-12
-x86_64                randconfig-008-20250710    gcc-12
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-12
-x86_64                         rhel-9.4-kunit    gcc-12
-x86_64                           rhel-9.4-ltp    gcc-12
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250710    gcc-12.4.0
-xtensa                randconfig-002-20250710    gcc-12.4.0
-xtensa                randconfig-002-20250710    gcc-14.3.0
+Understood. Yes that does make the current code definitely safe in
+this regard, just slow!
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> AFAIK, the only example of such emulation is x86's handle_invalid_guest_state().
+> And in practice, it's probably impossible for the compiler to keep a reference to
+> kvm->buses across multiple invocations of kvm_emulate_instruction() while still
+> honoring the READ_ONCE() in __rcu_dereference_check().
+
+That certainly stops compiler reordering. But I think I now agree with
+your concern about needing an actual memory barrier. I am worried for
+example if the guest is relying on an address dependency to
+synchronise an MMIO access. For example:
+     data = READ_ONCE(*READ_ONCE(mmio_base_addr));
+
+Two loads, ordered by address dependency. But that dependency would
+not prevent the access to kvm->buses[idx] from being
+hoisted/speculated by the CPU, since it's not data-dependent on the
+preceding load...
+
+That said, on x86, loads are ordered anyway.
+
+> But I don't want to simply drop KVM's synchronization, because we need a rule of
+> some kind to ensure correct ordering, even if it's only for documentation purposes
+> for 99% of cases.  And because the existence of kvm_get_bus() means that it would
+> be possible for KVM to grab a long-term reference to kvm->buses and use it across
+> emulation of multiple instructions (though actually doing that would be all kinds
+> of crazy).
+
+That seems reasonable, in terms of maintaining a fool-proof API to kvm->buses.
+
+> 
+> > > I'm quite confident there are other flows that rely on the synchronization,
+> > > the vGIC case is simply the one that's documented.
+> > 
+> > If they're in the kernel they can be fixed? If necessary I'll go audit the callers.
+> 
+> Yes, I'm sure there's a solution.  Thinking more about this, you make a good
+> point that KVM needs to order access with respect to instruction execution, not
+> with respect to the start of KVM_RUN.
+> 
+> For all intents and purposes, holding kvm->srcu across VM-Enter/VM-Exit is
+> disallowed (though I don't think this is formally documented), i.e. every
+> architecture is guaranteed to do srcu_read_lock() after a VM-Exit, prior to
+> reading kvm->buses.  And srcu_read_lock() contains a full smp_mb(), which ensures
+> KVM will get a fresh kvm->buses relative to the instruction that triggered the
+> exit.
+> 
+> So for the common case of one-off accesses after a VM-Exit, I think we can simply
+> add calls to smp_mb__after_srcu_read_lock() (which is a nop on all architectures)
+> to formalize the dependency on reacquiring SRCU.  AFAICT, that would also suffice
+> for arm64's use of kvm_io_bus_get_dev().  And then add an explicit barrier of some
+> kind in handle_invalid_guest_state()?
+> 
+> Then to prevent grabbing long-term references to a bus, require kvm->slots_lock
+> in kvm_get_bus() (and special case the kfree() in VM destruction).
+> 
+> So something like this?  I think the barriers would pair with the smp_store_release()
+> in rcu_assign_pointer()?
+
+It would certainly mean that kvm->buses would be accessed *after* any
+preceding vCPU memory access. Including any that "observed" the
+newly-registered IO region, somehow (lock acquisition, read of a flag
+or base address, or whatever).
+
+Would it be satisfactory to put a patch along the lines of your
+suggestions below into a v2 of this patch series? I have made some
+comments below.
+
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 4953846cb30d..057fb4ce66b0 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -5861,6 +5861,9 @@ static int handle_invalid_guest_state(struct kvm_vcpu *vcpu)
+>                 if (kvm_test_request(KVM_REQ_EVENT, vcpu))
+>                         return 1;
+>  
+> +               /* Or maybe smp_mb()?  Not sure what this needs to be. */
+> +               barrier();
+> +
+
+Looks weak but maybe strong enough for x86? Maybe smp_rmb() would be better statement of intention?
+
+>                 if (!kvm_emulate_instruction(vcpu, 0))
+>                         return 0;
+>  
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 3bde4fb5c6aa..066438b6571a 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -967,9 +967,8 @@ static inline bool kvm_dirty_log_manual_protect_and_init_set(struct kvm *kvm)
+>  
+>  static inline struct kvm_io_bus *kvm_get_bus(struct kvm *kvm, enum kvm_bus idx)
+>  {
+> -       return srcu_dereference_check(kvm->buses[idx], &kvm->srcu,
+> -                                     lockdep_is_held(&kvm->slots_lock) ||
+> -                                     !refcount_read(&kvm->users_count));
+> +       return rcu_dereference_protected(kvm->buses[idx],
+> +                                        lockdep_is_held(&kvm->slots_lock));
+>  }
+>  
+>  static inline struct kvm_vcpu *kvm_get_vcpu(struct kvm *kvm, int i)
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index eec82775c5bf..7b0e881351f7 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1228,7 +1228,8 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+>  out_err_no_arch_destroy_vm:
+>         WARN_ON_ONCE(!refcount_dec_and_test(&kvm->users_count));
+>         for (i = 0; i < KVM_NR_BUSES; i++)
+> -               kfree(kvm_get_bus(kvm, i));
+> +               kfree(rcu_dereference_check(kvm->buses[i], &kvm->srcu,
+> +                                           !refcount_read(&kvm->users_count));
+
+srcu_dereference_check()
+
+>         kvm_free_irq_routing(kvm);
+>  out_err_no_irq_routing:
+>         cleanup_srcu_struct(&kvm->irq_srcu);
+> @@ -5847,6 +5848,9 @@ int kvm_io_bus_write(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
+>                 .len = len,
+>         };
+>  
+> +       /* comment goes here */
+> +       smp_mb__after_srcu_read_lock();
+> +
+>         bus = srcu_dereference(vcpu->kvm->buses[bus_idx], &vcpu->kvm->srcu);
+>         if (!bus)
+>                 return -ENOMEM;
+> @@ -5866,6 +5870,9 @@ int kvm_io_bus_write_cookie(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx,
+>                 .len = len,
+>         };
+>  
+> +       /* comment goes here */
+> +       smp_mb__after_srcu_read_lock();
+> +
+>         bus = srcu_dereference(vcpu->kvm->buses[bus_idx], &vcpu->kvm->srcu);
+>         if (!bus)
+>                 return -ENOMEM;
+> @@ -6025,6 +6032,9 @@ struct kvm_io_device *kvm_io_bus_get_dev(struct kvm *kvm, enum kvm_bus bus_idx,
+>  
+>         srcu_idx = srcu_read_lock(&kvm->srcu);
+>  
+> +       /* comment goes here */
+> +       smp_mb__after_srcu_read_lock();
+> +
+>         bus = srcu_dereference(kvm->buses[bus_idx], &kvm->srcu);
+>         if (!bus)
+>                 goto out_unlock;
+> 
+> 
+
+I guess kvm_io_bus_read() is to be done as well? Perhaps the barrier
+and dereference should be pulled into a helper with the comment, just
+in one place?
+
+ -- Keir (with thanks to Will for brainstorming!)
+ 
 
