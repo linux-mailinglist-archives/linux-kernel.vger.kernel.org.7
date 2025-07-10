@@ -1,215 +1,171 @@
-Return-Path: <linux-kernel+bounces-725489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C20AFFFDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:59:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F97AFFFB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED82760532
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 979E91C46574
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6E02E2F16;
-	Thu, 10 Jul 2025 10:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32C72E5432;
+	Thu, 10 Jul 2025 10:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UvbkjF96"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5J+BDKm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD03D24501E;
-	Thu, 10 Jul 2025 10:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BC12DFF3F;
+	Thu, 10 Jul 2025 10:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145135; cv=none; b=ZTxeKxkVs9OGoOTAOdYrvHJQZU+PRQX9wKgurO06O4AH9IxQ7wLXhAleHuDKByvSaSfbsxlrUAOFGg8vLLAUl/S4S156SlEV6DLJPVO3CgJha63mL9eDNB/WOmjOoTX9N0vbCDa7g5f0Km1LvZI1zb23oMm7ztW9u3MaMbNFpWI=
+	t=1752144654; cv=none; b=glCd2Ga4gr2HkRqsem8QIjqHeeJV+Eo9MBpYxbJ7XazyChgm5FCxNCAG59Wd7tKPVsjUj50OxrUwnpDXY/CSPBi6DptbxDo1Gr/VZcUjlA2ChzNiKolOWLiXKFXKkfFQ37macVst88LoGoZSndCpnm+SWDzmZX+LkKrklg7tkwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145135; c=relaxed/simple;
-	bh=9k5W5ZlQ8WnZ+a92Zh9oGjnC5+4ALfoaYoiYSen1FNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RbRAwpcoK9JRwHZE+cH6CNt/Ri6OMIDlVkV36IgrOBDgWvfWq+fqUKra/T9/JLAgAlfT0CbfEqRlNhGPPLrD6mIs7u5hAJic1rfokvsXyXlAsROypkhdGrtguko6FdSkQMtknK+3tlvRMwVOj8GmGbW0WCEajyBY6u3SsKosdjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UvbkjF96; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752145131; x=1783681131;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=9k5W5ZlQ8WnZ+a92Zh9oGjnC5+4ALfoaYoiYSen1FNs=;
-  b=UvbkjF96XtNCBWEkx8tmMtFy1FD1Gni/QuKFP8tJTv4whyx6LCqe0fZB
-   pgqt0ZtUNKjFAgCF5Qod4Z9lF8VeBnKDchK6E+24SuWMnPoj7odY5ztoE
-   ZVo3splVxcIRI0Yngm5EFKX2CQgZVe7jDEV2VUrrVEmqTbxBnA1GZaHu4
-   +1Fg5nEsVcqYQq36nWS9elJ/DtxHEdpIcqxEoC+8aGU0v/z/qCIZR5Z2b
-   IyirNTkzkGzAAydT6QZ4IlVFMh4vukh5aaw3+8gziI3odsU8LwQwnLk/w
-   XZ84pFnASOi8uTeYCS3NsQIQATR8kN+8kLv1MNrFVh/KuTsHrBVAEc50/
-   w==;
-X-CSE-ConnectionGUID: 1dhaDUGwSDaugtSKuZcFNw==
-X-CSE-MsgGUID: 9gABBNkvRtqhTxqQ/ETOVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54273831"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="54273831"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 03:58:49 -0700
-X-CSE-ConnectionGUID: GVMNZSOxTjSy6hBum/1yyA==
-X-CSE-MsgGUID: TMRuTq9TRJ2zPj9tdZWeaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="187047312"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa002.jf.intel.com with ESMTP; 10 Jul 2025 03:58:29 -0700
-Date: Thu, 10 Jul 2025 18:50:09 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Yan Zhao <yan.y.zhao@intel.com>,
-	Alexey Kardashevskiy <aik@amd.com>, Fuad Tabba <tabba@google.com>,
-	Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com,
-	akpm@linux-foundation.org, amoorthy@google.com,
-	anthony.yznaga@oracle.com, anup@brainfault.org,
-	aou@eecs.berkeley.edu, bfoster@redhat.com,
-	binbin.wu@linux.intel.com, brauner@kernel.org,
-	catalin.marinas@arm.com, chao.p.peng@intel.com,
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
-	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com,
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
-	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
-	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
-	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
-	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
-	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
-	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
-	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
-	suzuki.poulose@arm.com, thomas.lendacky@amd.com,
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
-	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com,
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-Message-ID: <aG+a4XRRc2fMrEZc@yilunxu-OptiPlex-7050>
-References: <CAGtprH8eR_S50xDnnMLHNCuXrN2Lv_0mBRzA_pcTtNbnVvdv2A@mail.gmail.com>
- <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
- <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
- <20250624130811.GB72557@ziepe.ca>
- <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
- <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
- <CAGtprH9-njcgQjGZvGbbVX+i8D-qPUOkKFHbOWA20962niLTcw@mail.gmail.com>
- <20250702141321.GC904431@ziepe.ca>
- <CAGtprH948W=5fHSB1UnE_DbB0L=C7LTC+a7P=g-uP0nZwY6fxg@mail.gmail.com>
+	s=arc-20240116; t=1752144654; c=relaxed/simple;
+	bh=TyjR6U3fmebUUtdkdddQWsqftQQOEHluzjIlcrlBipU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Woz9997MpxnUjvoW58I7EuADDnCWc43hPru/2IF6HzDKjTbPW8MslXogJuaAQJ8yrh4A+ZWM29xYlRTPa956W57cZN6iK9On99bkL97WZF9o8vhk4b65GaVQtR83d6AoV9JBjzA9Gid03Hriy6Z/rGyK2G9Rv9mFOI8LAdPm4ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R5J+BDKm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AD50AC4CEE3;
+	Thu, 10 Jul 2025 10:50:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752144653;
+	bh=TyjR6U3fmebUUtdkdddQWsqftQQOEHluzjIlcrlBipU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=R5J+BDKm704vgum+GIL9osTIowFBhwTlMCxiS7xO5UM/IEDsiCOSiYKvqP1lQvCrF
+	 sYbts9g0olO2s4563RXR9Uln2gGQ9ZPoW946z8s7C7yx2U88WDvwqJWIzJPQs4Tyd1
+	 yXxk1Z6Jd1d03LeILlfGha66ePzjuANIULa3HiGiFc3fk2XUehfVqiyYa6Hcg08XE2
+	 cQDVQo5ZEhRkzkHcbo1i3OBbWgjJs41GhCzs4tCEIN3TdjqbIbRiysI3YfUa5Y9xar
+	 UIbdGO7VyTypXGhmO6XQynOpc0DsS2xImlGHpuRGjHj6WOSUR/aZjlFSI4N7JVlq4x
+	 S/uXJU8oyqXIg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0A3C83F1A;
+	Thu, 10 Jul 2025 10:50:53 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v7 0/3] arm64: dts: qcom: x1-hp-x14: Add support for
+ X1P42100 HP Omnibook X14
+Date: Thu, 10 Jul 2025 12:50:32 +0200
+Message-Id: <20250710-hp-x14-x1p-v7-0-19c10c81713a@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGtprH948W=5fHSB1UnE_DbB0L=C7LTC+a7P=g-uP0nZwY6fxg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP2ab2gC/33Oy2rDMBAF0F8JWldFo5elrvofJQs9a4GJjJWap
+ MH/3olXNjRezOIO3MN9kJamkhr5OD3IlObSSr1g6N5OJPTu8p1oiZgJZ1yxjnHaj/QGEm+kyQu
+ epbY6Wk2wME4pl9uKfZ0x96Vd63Rf7Rme33+ZGSijHKxQOhnBWfdZh9hCX+vQ6vBzxUXt3Zdf8
+ jRn/trh6LisvDImgu3soSO2jtg5YnVyAia8xFWHjtw6audIdCAIBdEnl8EcOmrrmJ2j0JEyWNA
+ pO9uJQ0dvHbtzNDpZqhDAaKd5fOksy/IHCjC65hkCAAA=
+X-Change-ID: 20250702-hp-x14-x1p-eb32f4696d96
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752144651; l=3424;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=TyjR6U3fmebUUtdkdddQWsqftQQOEHluzjIlcrlBipU=;
+ b=ciB6pgXf4LYS/hl1zPnTKQa61Hjor8BEWflr2M+WDVQnOb1wRTPrBxRkYpTnVHikDbP/Vc47I
+ SvaOgeyEY7GDlA3Ok724j94jjgbXvt/JeebMuZr2K9FUXfPs11E+2ZH
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-On Wed, Jul 02, 2025 at 07:32:36AM -0700, Vishal Annapurve wrote:
-> On Wed, Jul 2, 2025 at 7:13 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Wed, Jul 02, 2025 at 06:54:10AM -0700, Vishal Annapurve wrote:
-> > > On Wed, Jul 2, 2025 at 1:38 AM Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > >
-> > > > On Tue, Jun 24, 2025 at 07:10:38AM -0700, Vishal Annapurve wrote:
-> > > > > On Tue, Jun 24, 2025 at 6:08 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > > > >
-> > > > > > On Tue, Jun 24, 2025 at 06:23:54PM +1000, Alexey Kardashevskiy wrote:
-> > > > > >
-> > > > > > > Now, I am rebasing my RFC on top of this patchset and it fails in
-> > > > > > > kvm_gmem_has_safe_refcount() as IOMMU holds references to all these
-> > > > > > > folios in my RFC.
-> > > > > > >
-> > > > > > > So what is the expected sequence here? The userspace unmaps a DMA
-> > > > > > > page and maps it back right away, all from the userspace? The end
-> > > > > > > result will be the exactly same which seems useless. And IOMMU TLB
-> > > > >
-> > > > >  As Jason described, ideally IOMMU just like KVM, should just:
-> > > > > 1) Directly rely on guest_memfd for pinning -> no page refcounts taken
-> > > > > by IOMMU stack
-> > > > In TDX connect, TDX module and TDs do not trust VMM. So, it's the TDs to inform
-> > > > TDX module about which pages are used by it for DMAs purposes.
-> > > > So, if a page is regarded as pinned by TDs for DMA, the TDX module will fail the
-> > > > unmap of the pages from S-EPT.
-> >
-> > I don't see this as having much to do with iommufd.
-> >
-> > iommufd will somehow support the T=1 iommu inside the TDX module but
-> > it won't have an IOAS for it since the VMM does not control the
-> > translation.
+This patch series adds support for the HP Omnibook X Laptop 14-fe1xxx. [1]
 
-I partially agree with this.
+Since this is actually the same model as the 14-fe0xxx, but with an
+X1P-42-100 SoC (Purwa), it needs a slightly different device tree.
+To have as minimal duplicate definition as possible, the hp X14 gets 
+commonalized into a dtsi (and it stays compatible to the derived 
+device trees, like the Ultrabook G1q). 
 
-This is still the DMA Silent drop issue for security.  The HW (Also
-applicable to AMD/ARM) screams out if the trusted DMA path (IOMMU
-mapping, or access control table like RMP) is changed out of TD's
-expectation. So from HW POV, it is the iommu problem.
+The supported features are the same as for the original Omnibook X14:
 
-For SW, if we don't blame iommu, maybe we rephrase as gmemfd can't
-invalidate private pages unless TD agrees.
+- Keyboard (no function keys though)
+- Display
+- PWM brightness control
+- Touchpad
+- Touchscreen
+- PCIe ports (pcie4, pcie6a)
+- USB type-c, type-a
+- WCN6855 Wifi-6E
+- WCN6855 Bluetooth
+- ADSP and CDSP
+- X1 GPU
+- GPIO Keys (Lid switch)
+- Audio definition (works via USB and with internal speakers)
 
-> >
-> > The discussion here is for the T=0 iommu which is controlled by
-> > iommufd and does have an IOAS. It should be popoulated with all the
-> > shared pages from the guestmemfd.
-> >
-> > > > If IOMMU side does not increase refcount, IMHO, some way to indicate that
-> > > > certain PFNs are used by TDs for DMA is still required, so guest_memfd can
-> > > > reject the request before attempting the actual unmap.
-> >
-> > This has to be delt with between the TDX module and KVM. When KVM
-> > gives pages to become secure it may not be able to get them back..
+[1]: https://www.hp.com/us-en/shop/pdp/hp-omnibook-x-laptop-next-gen-ai-pc-14-fe100-14-a4nd1av-1#techSpecs
 
-Just to be clear. With In-place conversion, it is not KVM gives pages
-to become secure, it is gmemfd. Or maybe you mean gmemfd is part of KVM.
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Changes in v7:
+- rebased to next-20250710.
+- reworded commit message for patch #2
+- picked up reviewed-by for patch #3 (thanks)
+- fixed link ref in patch #3
+- Link to v6: https://lore.kernel.org/r/20250709-hp-x14-x1p-v6-0-f45cc186a62d@oldschoolsolutions.biz
 
-https://lore.kernel.org/all/aC86OsU2HSFZkJP6@google.com/
+Changes in v6:
+- rebased to next-20250709.
+- picked up reviewed-by for patch #1 (thanks)
+- corrected typo in patch #1
+- removed model, compatible, chassis nodes from x1-hp-omnibook-x14.dtsi
+- amended copyright strings as discussed
+- Link to v5: https://lore.kernel.org/r/20250708-hp-x14-x1p-v5-0-44c916efa973@oldschoolsolutions.biz
 
-> >
-> > This problem has nothing to do with iommufd.
-> >
-> > But generally I expect that the T=1 iommu follows the S-EPT entirely
-> > and there is no notion of pages "locked for dma". If DMA is ongoing
-> > and a page is made non-secure then the DMA fails.
-> >
-> > Obviously in a mode where there is a vPCI device we will need all the
-> > pages to be pinned in the guestmemfd to prevent any kind of
-> > migrations. Only shared/private conversions should change the page
-> > around.
+Changes in v5:
+- rebased to next-20250708.
+- changed commit message for patch #1 to reflect what happens
+- moved gpu node into the common dtsi part (always supported now)
+- switched over to gpu_zap_shader definition in the individual parts
+- Link to v4: https://lore.kernel.org/r/20250705-hp-x14-x1p-v4-0-1c351dbeaf18@oldschoolsolutions.biz
 
-Only *guest permitted* conversion should change the page. I.e only when
-VMM is dealing with the KVM_HC_MAP_GPA_RANGE hypercall. Not sure if we
-could just let QEMU ensure this or KVM/guestmemfd should ensure this.
+Changes in v4:
+- leave the qcom,jp-omnibook-x14 ABI unchanged, reuse it for the -fe0 variant
+- hacked b4 to create an easier reviewable patch: https://lore.kernel.org/all/20250705-format-harder-v1-1-55c5342be55c@oldschoolsolutions.biz
+- Link to v3: https://lore.kernel.org/r/20250703-hp-x14-x1p-v3-0-affe103b4356@oldschoolsolutions.biz
 
-Thanks,
-Yilun
+Changes in v3:
+- removed copyright strings
+- amended changed commit message  
+- Link to v2: https://lore.kernel.org/r/20250702-hp-x14-x1p-v2-0-af5b588d1979@oldschoolsolutions.biz
 
-> 
-> Yes, guest_memfd ensures that all the faulted-in pages (irrespective
-> of shared or private ranges) are not migratable. We already have a
-> similar restriction with CPU accesses to encrypted memory ranges that
-> need arch specific protocols to migrate memory contents.
-> 
-> >
-> > Maybe this needs to be an integral functionality in guestmemfd?
-> >
-> > Jason
-> 
+Changes in v2:
+- remove pm8010 handling
+- Link to v1: https://lore.kernel.org/r/20250702-hp-x14-x1p-v1-0-219356e83207@oldschoolsolutions.biz
+
+---
+Jens Glathe (3):
+      dt-bindings: arm: qcom: Add HP Omnibook X14 AI X1P4200 variant
+      arm64: dts: qcom: x1-hp-x14: Unify HP Omnibook X14 device tree structure
+      arm64: dts: qcom: x1-hp-x14: Add support for X1P42100 HP Omnibook X14
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi   | 1549 ++++++++++++++++++++
+ .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     | 1549 +-------------------
+ .../boot/dts/qcom/x1p42100-hp-omnibook-x14.dts     |   33 +
+ 5 files changed, 1589 insertions(+), 1545 deletions(-)
+---
+base-commit: b551c4e2a98a177a06148cf16505643cd2108386
+change-id: 20250702-hp-x14-x1p-eb32f4696d96
+
+Best regards,
+-- 
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
+
 
