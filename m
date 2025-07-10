@@ -1,173 +1,132 @@
-Return-Path: <linux-kernel+bounces-725021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560CCAFF9DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:29:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E10DAFF9DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90C62542616
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 985D35471AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999CC287258;
-	Thu, 10 Jul 2025 06:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF578286D55;
+	Thu, 10 Jul 2025 06:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uA93EhAp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KtblvU/f"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C6243AA1;
-	Thu, 10 Jul 2025 06:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A14E287271;
+	Thu, 10 Jul 2025 06:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752128973; cv=none; b=MbSkYVtIfaOzTRnZjEPxp7jOtkMgE52moYHpFXnQPTNMuZkvee0IhdB03rx4eyRRJf1mrkECv+VPCFMJ/2AJCxZGlD7SXHW4u6S6WgONzT647f6AzRXX/YlBmC+GYEj2CaDwRmu9lCDurfq2Lz+90TRQcQ1dfmJ6T5Y5F8Jb3yY=
+	t=1752128997; cv=none; b=g2vsjPQx3lNsDImNwSIlK93DOYHC02KiZbs28agITLBRFnA83+gCuwEZE6SjW1v6sYzDufDdq13xCohCSI883oAizJE7k64+zRWJ2rn5bGY0A7+Bxx4AZ8FdyabLzS8nKzoTEL81GCbTy21LQnqHVOMZ9McfRvfvOEu3cfUtEek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752128973; c=relaxed/simple;
-	bh=ffM5skOHJyuqemBuXSUWFaQh2Zi0Kcb5KVfxZLvWKoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ejTyTXiUaGMdkl4t4VVC09f/OKs4WC7FuWpdVyd4SCZfIwRB7OEUPfzCynwhSpupAAQWeko8e6TduNBhTAoblcUpFdNdUEz1CBh1d0SyL5pdOX/muhNXAAN4E8SiZIn1i171WBsMGrQUbSEnSefIwor7GO9mBo6mmdC6aLgeIRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uA93EhAp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6B6C4CEF5;
-	Thu, 10 Jul 2025 06:29:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752128972;
-	bh=ffM5skOHJyuqemBuXSUWFaQh2Zi0Kcb5KVfxZLvWKoY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uA93EhApmzRMr3l2azxesncXsGYG3NlPfIJ0FIGkOK31aTyKEW9a8yzrtauCxNvjv
-	 qsbXk2WTnUygbpQ6/ezpaTyzBo0vMCxqMRtHrOcd/0nRUwEKepfngcl7QmPQn502qu
-	 m22Bb1JvMogCpVrHXoX51tWyHR3qcN3Qt0JoaEmduhrzytUEyVTl4z8T1AzXRjfjWV
-	 0VN0hx2xEPHCSZLYjz5wt/sFNAAGhpGAOkXFfpoms3+7SuSrWrTJzLOutudN6Hye7E
-	 ozYt+rIqfsiLzwmXgUDhjtcZFw9CkWcPf7ce0U6SmwcaPkc3XDqjUYu+fPaOif//V/
-	 Ceo9qFVshi9xA==
-Date: Thu, 10 Jul 2025 08:29:27 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 11/12] docs: kdoc: clean up check_sections()
-Message-ID: <20250710082927.10b13862@foz.lan>
-In-Reply-To: <20250702223524.231794-12-corbet@lwn.net>
-References: <20250702223524.231794-1-corbet@lwn.net>
-	<20250702223524.231794-12-corbet@lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752128997; c=relaxed/simple;
+	bh=bjra+rYTxgYoPHsBKl2EMn9nutDtdt8hoHWFG53oE7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fGiH7MzpTSu0whi8ulWLCMuxQ6+DNXdiKxBMLs/O2RrF0JpU/a1l5QSOa9ieZ74fBgV0hM1wdCkySxU+2KAPMOjI0p5F6a1xUaB1yUuBoZUerv9Kb4CSDFbFGZL+j0douoMQbCS23PMN4VnwvenkYjzmyRZg4LMP6j5EP021+vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KtblvU/f; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56A6TouM1414345;
+	Thu, 10 Jul 2025 01:29:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752128990;
+	bh=6CuW4XhQKZb8IjoxJvFGlJFEMyWtcoqQnz4Is5XWIhk=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=KtblvU/fpv2GmZUY/zvs0Q+i+9qAEVpjvWl5gOhpwXy1uaLrN706DnjNcQ8/TemM5
+	 gTcjYTy7orGwVK4vsHySy0YpfVEeLT9lSjxHhlhEvE8jLi6WgDUXOE/b/y4xVvU77q
+	 MR5VPjViM29uDyy4htqbY2zRGnGZfPKBPBkSZ22Q=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56A6ToM1949606
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 10 Jul 2025 01:29:50 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 10
+ Jul 2025 01:29:50 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 10 Jul 2025 01:29:50 -0500
+Received: from [172.24.227.245] (uda0132425.dhcp.ti.com [172.24.227.245])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56A6TlbN872775;
+	Thu, 10 Jul 2025 01:29:47 -0500
+Message-ID: <83c5d0b8-add8-4db7-bcde-5b17c796b53a@ti.com>
+Date: Thu, 10 Jul 2025 11:59:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am65: add boot phase tags
+To: Bryan Brattlof <bb@ti.com>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250709-65-boot-phases-v1-0-e1f89d97a931@ti.com>
+ <20250709-65-boot-phases-v1-1-e1f89d97a931@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20250709-65-boot-phases-v1-1-e1f89d97a931@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-
-Em Wed,  2 Jul 2025 16:35:23 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
-
-> entry.sectcheck is just a duplicate of our list of sections that is only
-> passed to check_sections(); its main purpose seems to be to avoid checking
-> the special named sections.  Rework check_sections() to not use that field
-> (which is then deleted), tocheck for the known sections directly, and
-> tighten up the logic in general.
-> 
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-
-LGTM.
-Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
-> ---
->  scripts/lib/kdoc/kdoc_parser.py | 31 +++++++++++--------------------
->  1 file changed, 11 insertions(+), 20 deletions(-)
-> 
-> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-> index 7191fa94e17a..fdde14b045fe 100644
-> --- a/scripts/lib/kdoc/kdoc_parser.py
-> +++ b/scripts/lib/kdoc/kdoc_parser.py
-> @@ -42,9 +42,11 @@ doc_decl = doc_com + KernRe(r'(\w+)', cache=False)
->  #         @{section-name}:
->  # while trying to not match literal block starts like "example::"
->  #
-> +known_section_names = 'description|context|returns?|notes?|examples?'
-> +known_sections = KernRe(known_section_names, flags = re.I)
->  doc_sect = doc_com + \
-> -            KernRe(r'\s*(\@[.\w]+|\@\.\.\.|description|context|returns?|notes?|examples?)\s*:([^:].*)?$',
-> -                flags=re.I, cache=False)
-> +    KernRe(r'\s*(\@[.\w]+|\@\.\.\.|' + known_section_names + r')\s*:([^:].*)?$',
-> +           flags=re.I, cache=False)
->  
->  doc_content = doc_com_body + KernRe(r'(.*)', cache=False)
->  doc_inline_start = KernRe(r'^\s*/\*\*\s*$', cache=False)
-> @@ -115,7 +117,6 @@ class KernelEntry:
->          self.config = config
->  
->          self._contents = []
-> -        self.sectcheck = ""
->          self.prototype = ""
->  
->          self.warnings = []
-> @@ -187,7 +188,6 @@ class KernelEntry:
->              self.parameterdescs[name] = contents
->              self.parameterdesc_start_lines[name] = self.new_start_line
->  
-> -            self.sectcheck += name + " "
->              self.new_start_line = 0
->  
->          else:
-> @@ -478,29 +478,20 @@ class KernelDoc:
->                          self.push_parameter(ln, decl_type, param, dtype,
->                                              arg, declaration_name)
->  
-> -    def check_sections(self, ln, decl_name, decl_type, sectcheck):
-> +    def check_sections(self, ln, decl_name, decl_type):
->          """
->          Check for errors inside sections, emitting warnings if not found
->          parameters are described.
->          """
-> -
-> -        sects = sectcheck.split()
-> -
-> -        for sx in range(len(sects)):                  # pylint: disable=C0200
-> -            err = True
-> -            for param in self.entry.parameterlist:
-> -                if param == sects[sx]:
-> -                    err = False
-> -                    break
-> -
-> -            if err:
-> +        for section in self.entry.sections:
-> +            if section not in self.entry.parameterlist and \
-> +               not known_sections.search(section):
->                  if decl_type == 'function':
->                      dname = f"{decl_type} parameter"
->                  else:
->                      dname = f"{decl_type} member"
-> -
->                  self.emit_msg(ln,
-> -                              f"Excess {dname} '{sects[sx]}' description in '{decl_name}'")
-> +                              f"Excess {dname} '{section}' description in '{decl_name}'")
->  
->      def check_return_section(self, ln, declaration_name, return_type):
->          """
-> @@ -754,7 +745,7 @@ class KernelDoc:
->  
->          self.create_parameter_list(ln, decl_type, members, ';',
->                                     declaration_name)
-> -        self.check_sections(ln, declaration_name, decl_type, self.entry.sectcheck)
-> +        self.check_sections(ln, declaration_name, decl_type)
->  
->          # Adjust declaration for better display
->          declaration = KernRe(r'([\{;])').sub(r'\1\n', declaration)
-> @@ -1018,7 +1009,7 @@ class KernelDoc:
->                            f"expecting prototype for {self.entry.identifier}(). Prototype was for {declaration_name}() instead")
->              return
->  
-> -        self.check_sections(ln, declaration_name, "function", self.entry.sectcheck)
-> +        self.check_sections(ln, declaration_name, "function")
->  
->          self.check_return_section(ln, declaration_name, return_type)
->  
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
 
-Thanks,
-Mauro
+On 10/07/25 04:05, Bryan Brattlof wrote:
+
+[...]
+
+> diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> index 7cf1f646500a16c1d1bac6dfb37fb285218063b3..5bbd817bc51464f6605c5b2dc9cb544a109a695d 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> @@ -211,6 +211,7 @@ mcu_ringacc: ringacc@2b800000 {
+>  			ti,sci = <&dmsc>;
+>  			ti,sci-dev-id = <195>;
+>  			msi-parent = <&inta_main_udmass>;
+> +			bootph-all;
+>  		};
+>  
+>  		mcu_udmap: dma-controller@285c0000 {
+> @@ -235,6 +236,7 @@ mcu_udmap: dma-controller@285c0000 {
+>  			ti,sci-rm-range-rchan = <0xb>, /* RX_HCHAN */
+>  						<0xa>; /* RX_CHAN */
+>  			ti,sci-rm-range-rflow = <0x0>; /* GP RFLOW */
+> +			bootph-all;
+>  		};
+>  	};
+
+Should this be board specific property? Does every user of AM65x need
+DMA at boot stage?
+
+[...]
+
+> @@ -107,5 +111,6 @@ wkup_vtm0: temperature-sensor@42050000 {
+>  		reg = <0x42050000 0x25c>;
+>  		power-domains = <&k3_pds 80 TI_SCI_PD_EXCLUSIVE>;
+>  		#thermal-sensor-cells = <1>;
+> +		bootph-all;
+
+Same here..
+
+>  	};
+>  };
+
+-- 
+Regards
+Vignesh
+https://ti.com/opensource
+
 
