@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-726064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BBDB007C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:55:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8E1B007A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8407B17AA4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A0814E2911
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417F4279DD9;
-	Thu, 10 Jul 2025 15:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AD927A47A;
+	Thu, 10 Jul 2025 15:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dYwEQCMp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YHh8AYwA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB44A2797B7
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3882797BF
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752162710; cv=none; b=TSpMCMDNEk632SENDKn6QLmi1TQbir0Zj9MZFobo6ByUU49YwCTXa2WEGlkWP/2JvCLMGtTZhWp+b6FkyEe1HKrfMllKeIwbrxNpuyMdlxEV+NeAe0YTHoB7MIJPg6GUaCX4NVNf+q1EqGvFk3MABvvG1QvrKWy89jnM3g+6Rco=
+	t=1752162713; cv=none; b=LtMu+rbg3HnKX4GaJkZt392gzz9zeSyvUTbvn6x/sbUxi7cCinEEAfAzLcOTccvwm+mETuNOcpwir23Z9t2r/d9q28pOYqXwLJ0hdY2lq1MZgGyKTu8c6hEEZhuv6rN7r87wNeHAAqJ/hR9TZ1j1GYFmB4QOn8PcIh6N4SkTDKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752162710; c=relaxed/simple;
-	bh=vLmJmRC+9bzkFJmLST4jSrv6MV1rviG/pwzLdY7NBcI=;
+	s=arc-20240116; t=1752162713; c=relaxed/simple;
+	bh=t2hjGCARaRQgI0Ustel3aF+sNP5ba1R6WUsBnvpS8Gw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P/BmCIe6xyf+cIrgfj5E24ffqEgWcYD+iJMWGkXSx2lPRVvQPZk3Ujmn3jwwYR73xFBrJG5QB0DJzLKN2S03rSkr9x+AFa7PWfHusZ2896rAEDloOVAcSLiWbnmgfAGGJL5T4dbcUX8eSCE2WyvP98nD+kbXv8KnjTyu8l5hReM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dYwEQCMp; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=EFaQUJu4TSCJ1rMUqmxzsapUu0E9YJ4W2Nz8jZuYxUhGDdIriWGxc8vWLA00GWugSFvbvfiOYvT1hmA92L0Wg8ORwckBD6xdh4+slggl/59sGDY48w3vQ5e6HvUnSn+y4YuZYjIbu2mrbPGfMpam/1Pmka4ZoU3CO8kl8N3SOk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YHh8AYwA; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752162707;
+	s=mimecast20190719; t=1752162709;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uPmO2oQ+ynlDeJxb9Am/uG3bA7syL2BNHimRk7a6rO0=;
-	b=dYwEQCMpfXwNW9vLWd1yWihGkTaSJyNZj32XUsYvyw62RnJCbGM39jWZ6ilmAPmgnR6Jyb
-	3ZS5X07WZ//Ma4HWjZa05QukTmg03NWZk7DfpjSvkWVYkigL1QEesWvmZEB3rl1xPO8EjC
-	tkECYYcMzM6BBAcSPD8IfDZBke2G+m4=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=cGKF6eOX7Jk+EpeggU8l+LOb8l3CYbEDXRYR6gPHE9Q=;
+	b=YHh8AYwAyzK+jB93+mepqjpUaCxV5Gj4iuWVYrT02PfUgxof500PayGGdPBMZ3tfp81cak
+	m6N9PbBkrJ98z7ci0UtYGr471vuT1YNmvLIjqGKkbwBNE0L9QbX1eoLI+bI045OO+WXEw5
+	R7ThANAzVRM9dfKs2ajN4oUDvDOfk+0=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-373-YOt8fFY9OOeZ0LvRg7CMig-1; Thu, 10 Jul 2025 11:51:46 -0400
-X-MC-Unique: YOt8fFY9OOeZ0LvRg7CMig-1
-X-Mimecast-MFC-AGG-ID: YOt8fFY9OOeZ0LvRg7CMig_1752162706
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d0aa9cdecdso91953285a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:51:46 -0700 (PDT)
+ us-mta-302-2qK4abB3PH-pugQNitO5kg-1; Thu, 10 Jul 2025 11:51:48 -0400
+X-MC-Unique: 2qK4abB3PH-pugQNitO5kg-1
+X-Mimecast-MFC-AGG-ID: 2qK4abB3PH-pugQNitO5kg_1752162708
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-704817522b9so16603306d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:51:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752162706; x=1752767506;
+        d=1e100.net; s=20230601; t=1752162708; x=1752767508;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uPmO2oQ+ynlDeJxb9Am/uG3bA7syL2BNHimRk7a6rO0=;
-        b=MNgvCDjoKIW4I7HydyFdro2xlfymEaNSzTc8jZnsrjDwtmb0QRHdOsai9GvQT8PSD+
-         KMfgsgC/HsUB9Mpea1eEKymrbEf9L6/BHRKc3WFsIqjbBTycCPuw5H0w55JYhI93LMr1
-         pWTQzv7Jn9hlulDtILqZRlHsbZXnN3Uq+TpHehEZvfKAVVLapEMWk4kWVYtrmcN9JKDA
-         Mu8++PZWiBIRp+7N2OU0rTEHkriJS+XHBXzxxKgTPy28MtdsMnw76wm+lvPLI5zTCLeJ
-         I0t6PGaLd6+KOBrFlNc8tsux04+qybXkb0hoQKL3KRa3SthjC6IOT+0Muub294zuxUBL
-         xXPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDpNIOu6a9ibv1PLxRzkWuY30p+EiRlBrJ6v7UGDDF5xQRYl/kE6d8Jdh8QIEIYLJq4P4cjSBJIvnCxCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfxWmY6GQqZ6+0iA2QtvX4mcxHJIhAldxBxM6GSVxPG56UZbu1
-	lIMZMqsNzLTlbo2IMQ9G2XD0CLdz+c0coz/53dPMsuWFUe7FIVUVVydGaDQnojreiSTDRKN4wxM
-	f9MNlm6Ch7ej2557Fk7WypXTwTTtnl7HYotghTxa0g3yu2YuJHXfLcE5FoLdkZ/otHA==
-X-Gm-Gg: ASbGncu16G2GxL6TcxednKaQ1ns4KaldXm/ne93hzxQ+FdEKIwnl1eS1KfJocPBBlMf
-	v1aqIZT431ihkkg/CFISU+akZtRGMyM+FaNnmvT7icc9z21S1yuYDpENnuThIT8e0z0rwxWYkwQ
-	aL/kNwVomHVBtB0HTlblOatkZZB+bt115lct1r36iXafA8suZFrerYo5+iK94PmBEx4nLeI8G/b
-	2GSi5cGH677myKO02FLvasoQfwwJsDJHpfCJZAJtrS2XI55F9j1hsLVwmzHVIvuLXuuZBZBlqLG
-	a51vQOWPqaXz7hKN7yUfbDjQ3DZ2ttA/6eJCR/YTTG/xOoej9bb6lce1G7GE
-X-Received: by 2002:a05:6214:27cc:b0:702:ce4a:849b with SMTP id 6a1803df08f44-704982360b5mr39084276d6.43.1752162705546;
-        Thu, 10 Jul 2025 08:51:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEkuqPel6v0c9oLWEAy3uC+hrgIsFPdla2ArZn2bXT5IJXXP8ZdH6ZBnGUgw1dx0j1MhfYDcw==
-X-Received: by 2002:a05:6214:27cc:b0:702:ce4a:849b with SMTP id 6a1803df08f44-704982360b5mr39083756d6.43.1752162704970;
-        Thu, 10 Jul 2025 08:51:44 -0700 (PDT)
+        bh=cGKF6eOX7Jk+EpeggU8l+LOb8l3CYbEDXRYR6gPHE9Q=;
+        b=DkG0VjQcdJf0+y7YZA8qQnzADJKegtHg/55/3N8ANqo0IPNWZfljtKsQWkz5A/ohMj
+         ne400hjU9PzDOGoS64z6FrWd+fB8jlehTPBYsOLCqS5hgJXDUIlz7h3OLzA32wxNxYAD
+         6p2Jr5icav8k3wFIWHij4ke1+2As/NRWhvTGEcLLFzKehlHA/QA7LgGBCWMK/GZrKWGf
+         IPIly5BizTHwglB0D4Ovxdte0HQ7jeFYgert2oMa6e5/HZHAnkP6weVcmBJFJNQd0y7a
+         twu7AN8xoo3vKAy8pFAjdD4LIHXSuKH8e3BAv1GHHYERPSY1XX4ElSrkz7+JEafCDnle
+         ndPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRBQ4gx7b8F0DrMqcHyG8zWdJAJiaxkvYKFeeDwog9pIvuC/h8jBNjRyY+/4o5Tc4BRAiFnsLRFSKnkNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsNPCIeBndXiGjXzPSHk7ZdF3junGXu0AfdwinrpUAmG3GHT3d
+	cpJBPNhKDbQqx9Dzhp5zvnX7jSAwJbucGkZphijYYyX/Ux9chR9wBJ8+oUM3xR+jTiH4BpD0Z3r
+	EnKNe0UDsXDDvI2DdI8cnDXYsxsBqL9LagVwslJLmXF3I7JJnklGvG7sJWASQFB9f2A==
+X-Gm-Gg: ASbGnct+pa50c5S2LuQ3DVJKH8fh3Zxo62svON/ezwRb5xWmV+fZXLTE5vT7HurcMv1
+	ZpPAYIOUUKgd6XKDoo3ajR3i0T1ZfINPoDc7g2LicJfQwRmN05k7ylhUiF6E+EAwx4/Z+5+Z+3U
+	kqDAzyxGxDn3iFzo/yb6pg6CPAJXgu2L5zZffygzcETO6ma002hLBMsri17FWcYqzUtnMCo6RBR
+	8//dMOQkpRZJZNjzXD2eZpOOj4BHBTOZidsdOQuQMxvUzfpeFCI1BreYv+QcIT+ZS8bCwcCmDAP
+	QXshv90D8jZEEt1sPZZ/rVrRiQr4tjywp7JEQHER4tn8Ev2AZibv0CY/KRJK
+X-Received: by 2002:a05:6214:246f:b0:702:d6e7:18bf with SMTP id 6a1803df08f44-70494ee3ed9mr73517886d6.3.1752162707911;
+        Thu, 10 Jul 2025 08:51:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHiBnQKyOU9ItMPJPrgQVPScQNEJSbolGEYy2qaZnVPuAr8zwJYLa8LtkWFTwl7pjIeSY0WKw==
+X-Received: by 2002:a05:6214:246f:b0:702:d6e7:18bf with SMTP id 6a1803df08f44-70494ee3ed9mr73517366d6.3.1752162707432;
+        Thu, 10 Jul 2025 08:51:47 -0700 (PDT)
 Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497d3940asm9475456d6.73.2025.07.10.08.51.41
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497d3940asm9475456d6.73.2025.07.10.08.51.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 08:51:43 -0700 (PDT)
+        Thu, 10 Jul 2025 08:51:46 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 10 Jul 2025 11:51:07 -0400
-Subject: [PATCH 1/6] sound: soc: codecs: da7219: convert from round_rate()
+Date: Thu, 10 Jul 2025 11:51:08 -0400
+Subject: [PATCH 2/6] sound: soc: codecs: rt5682: convert from round_rate()
  to determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,7 +90,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-sound-clk-round-rate-v1-1-4a9c3bb6ff3a@redhat.com>
+Message-Id: <20250710-sound-clk-round-rate-v1-2-4a9c3bb6ff3a@redhat.com>
 References: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
 In-Reply-To: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
 To: Support Opensource <support.opensource@diasemi.com>, 
@@ -107,11 +107,11 @@ Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752162699; l=3957;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752162699; l=3278;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=vLmJmRC+9bzkFJmLST4jSrv6MV1rviG/pwzLdY7NBcI=;
- b=Whbfgc0vqEfbD1+TqJhMdUQrpnzHP0K9B9S+FRtvZgCJnqYxlve3+jWZvpTSIWePANUgtkvX7
- faBzXT5+lP7DDmWOWcvnzTKOy6haiXPgyE+uiaAkDiRx/3YzQGQaLXs
+ bh=t2hjGCARaRQgI0Ustel3aF+sNP5ba1R6WUsBnvpS8Gw=;
+ b=aqGq6Wwv3mN+qouYIGF3pJ+rhEvmpUrlcSVA+xDWGeOk1pwtlMf/NqlX0M/HemN2IEuG5nCBi
+ JURzf2JUU/1A51p4xURtCdQ1xTp4/K/hH/dOMIbhw6NBEwmj4I/5xek
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
@@ -121,101 +121,66 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- sound/soc/codecs/da7219.c | 64 +++++++++++++++++++++++++----------------------
- 1 file changed, 34 insertions(+), 30 deletions(-)
+ sound/soc/codecs/rt5682.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
-index 221577574525a5fd60180a4441331d7db88f50e2..1742f91c788c62a34f35aae44fcfd1d7fbea007c 100644
---- a/sound/soc/codecs/da7219.c
-+++ b/sound/soc/codecs/da7219.c
-@@ -1982,8 +1982,8 @@ static unsigned long da7219_wclk_recalc_rate(struct clk_hw *hw,
- 	}
+diff --git a/sound/soc/codecs/rt5682.c b/sound/soc/codecs/rt5682.c
+index 7c88370e2dee6a4c2332f1e3db885c980f5e8079..a0abd2ce0c1e1f6cf59fecdd426db16136befe66 100644
+--- a/sound/soc/codecs/rt5682.c
++++ b/sound/soc/codecs/rt5682.c
+@@ -2675,8 +2675,8 @@ static unsigned long rt5682_wclk_recalc_rate(struct clk_hw *hw,
+ 	return rt5682->lrck[RT5682_AIF1];
  }
  
--static long da7219_wclk_round_rate(struct clk_hw *hw, unsigned long rate,
+-static long rt5682_wclk_round_rate(struct clk_hw *hw, unsigned long rate,
 -				   unsigned long *parent_rate)
-+static int da7219_wclk_determine_rate(struct clk_hw *hw,
++static int rt5682_wclk_determine_rate(struct clk_hw *hw,
 +				      struct clk_rate_request *req)
  {
- 	struct da7219_priv *da7219 =
- 		container_of(hw, struct da7219_priv,
-@@ -1992,28 +1992,30 @@ static long da7219_wclk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!da7219->master)
- 		return -EINVAL;
+ 	struct rt5682_priv *rt5682 =
+ 		container_of(hw, struct rt5682_priv,
+@@ -2689,13 +2689,13 @@ static long rt5682_wclk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	 * Only accept to set wclk rate to 44.1k or 48kHz.
+ 	 * It will force to 48kHz if not both.
+ 	 */
+-	if (rate != CLK_48 && rate != CLK_44) {
++	if (req->rate != CLK_48 && req->rate != CLK_44) {
+ 		dev_warn(rt5682->i2c_dev, "%s: clk %s only support %d or %d Hz output\n",
+ 			__func__, clk_name, CLK_44, CLK_48);
+-		rate = CLK_48;
++		req->rate = CLK_48;
+ 	}
  
--	if (rate < 11025)
--		return 8000;
--	else if (rate < 12000)
--		return 11025;
--	else if (rate < 16000)
--		return 12000;
--	else if (rate < 22050)
--		return 16000;
--	else if (rate < 24000)
--		return 22050;
--	else if (rate < 32000)
--		return 24000;
--	else if (rate < 44100)
--		return 32000;
--	else if (rate < 48000)
--		return 44100;
--	else if (rate < 88200)
--		return 48000;
--	else if (rate < 96000)
--		return 88200;
-+	if (req->rate < 11025)
-+		req->rate = 8000;
-+	else if (req->rate < 12000)
-+		req->rate = 11025;
-+	else if (req->rate < 16000)
-+		req->rate = 12000;
-+	else if (req->rate < 22050)
-+		req->rate = 16000;
-+	else if (req->rate < 24000)
-+		req->rate = 22050;
-+	else if (req->rate < 32000)
-+		req->rate = 24000;
-+	else if (req->rate < 44100)
-+		req->rate = 32000;
-+	else if (req->rate < 48000)
-+		req->rate = 44100;
-+	else if (req->rate < 88200)
-+		req->rate = 48000;
-+	else if (req->rate < 96000)
-+		req->rate = 88200;
- 	else
--		return 96000;
-+		req->rate = 96000;
-+
+-	return rate;
 +	return 0;
  }
  
- static int da7219_wclk_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -2070,15 +2072,15 @@ static unsigned long da7219_bclk_get_factor(unsigned long rate,
+ static int rt5682_wclk_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -2795,15 +2795,15 @@ static unsigned long rt5682_bclk_get_factor(unsigned long rate,
  		return 256;
  }
  
--static long da7219_bclk_round_rate(struct clk_hw *hw, unsigned long rate,
+-static long rt5682_bclk_round_rate(struct clk_hw *hw, unsigned long rate,
 -				   unsigned long *parent_rate)
-+static int da7219_bclk_determine_rate(struct clk_hw *hw,
++static int rt5682_bclk_determine_rate(struct clk_hw *hw,
 +				      struct clk_rate_request *req)
  {
- 	struct da7219_priv *da7219 =
- 		container_of(hw, struct da7219_priv,
- 			     dai_clks_hw[DA7219_DAI_BCLK_IDX]);
+ 	struct rt5682_priv *rt5682 =
+ 		container_of(hw, struct rt5682_priv,
+ 			     dai_clks_hw[RT5682_DAI_BCLK_IDX]);
  	unsigned long factor;
  
--	if (!*parent_rate || !da7219->master)
-+	if (!req->best_parent_rate || !da7219->master)
+-	if (!*parent_rate || !rt5682_clk_check(rt5682))
++	if (!req->best_parent_rate || !rt5682_clk_check(rt5682))
  		return -EINVAL;
  
  	/*
-@@ -2088,9 +2090,11 @@ static long da7219_bclk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	 * parent WCLK rate set and find the appropriate multiplier of BCLK to
+@@ -2813,9 +2813,11 @@ static long rt5682_bclk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	 * and find the appropriate multiplier of BCLK to
  	 * get the rounded down BCLK value.
  	 */
--	factor = da7219_bclk_get_factor(rate, *parent_rate);
-+	factor = da7219_bclk_get_factor(req->rate, req->best_parent_rate);
+-	factor = rt5682_bclk_get_factor(rate, *parent_rate);
++	factor = rt5682_bclk_get_factor(req->rate, req->best_parent_rate);
 +
 +	req->rate = req->best_parent_rate * factor;
  
@@ -223,20 +188,20 @@ index 221577574525a5fd60180a4441331d7db88f50e2..1742f91c788c62a34f35aae44fcfd1d7
 +	return 0;
  }
  
- static int da7219_bclk_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -2116,12 +2120,12 @@ static const struct clk_ops da7219_dai_clk_ops[DA7219_DAI_NUM_CLKS] = {
- 		.unprepare = da7219_wclk_unprepare,
- 		.is_prepared = da7219_wclk_is_prepared,
- 		.recalc_rate = da7219_wclk_recalc_rate,
--		.round_rate = da7219_wclk_round_rate,
-+		.determine_rate = da7219_wclk_determine_rate,
- 		.set_rate = da7219_wclk_set_rate,
+ static int rt5682_bclk_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -2849,12 +2851,12 @@ static const struct clk_ops rt5682_dai_clk_ops[RT5682_DAI_NUM_CLKS] = {
+ 		.prepare = rt5682_wclk_prepare,
+ 		.unprepare = rt5682_wclk_unprepare,
+ 		.recalc_rate = rt5682_wclk_recalc_rate,
+-		.round_rate = rt5682_wclk_round_rate,
++		.determine_rate = rt5682_wclk_determine_rate,
+ 		.set_rate = rt5682_wclk_set_rate,
  	},
- 	[DA7219_DAI_BCLK_IDX] = {
- 		.recalc_rate = da7219_bclk_recalc_rate,
--		.round_rate = da7219_bclk_round_rate,
-+		.determine_rate = da7219_bclk_determine_rate,
- 		.set_rate = da7219_bclk_set_rate,
+ 	[RT5682_DAI_BCLK_IDX] = {
+ 		.recalc_rate = rt5682_bclk_recalc_rate,
+-		.round_rate = rt5682_bclk_round_rate,
++		.determine_rate = rt5682_bclk_determine_rate,
+ 		.set_rate = rt5682_bclk_set_rate,
  	},
  };
 
