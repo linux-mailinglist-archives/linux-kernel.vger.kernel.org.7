@@ -1,216 +1,244 @@
-Return-Path: <linux-kernel+bounces-725175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46A57AFFBA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:04:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31F2AFFBA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086FC544F65
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:02:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2638582ED7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE3728B7E7;
-	Thu, 10 Jul 2025 08:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF1F28B7D0;
+	Thu, 10 Jul 2025 08:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dqdyDDeU"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="byhN8Dn9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65D528853C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752134593; cv=none; b=HzmY8Ry6h0oZuNOCOYaetifMlbOozEANhB0wRG/SdZz66rZN2lxXr8TWwF+f6uFIbw/xT60B9HlJjPeQ8hYCVsv7LOy3oqkJI5tELFo4N6e1kqu5TbgwHhJTpMbMYa4AE8ktTC/yLKK/sTI8F3Bq5lnFZPNsf7nES0VMBDM6uac=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752134593; c=relaxed/simple;
-	bh=qRPX/qw+WJ0whT+SwzWvSJX2ZqFsQ3pwUONrGceLs6w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B/WoacP4i4mz203qd93vMDIrcZzAG2SY2SO9XZkeJVAQYrhY35hnaEb9bFhLjL44AAgNw1YF7c596zMWSobpINtn9UubmeVipkUAbaHeitN6EQFeyUhMKD+RkII1kZuOdzDFmj7zUgJaTlRKdreoYpLEsa88T4LEWqkK/x0rmDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dqdyDDeU; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b34a78bb6e7so631284a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:03:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752134591; x=1752739391; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dn1s1OnqM766ROLY29Wi7jVidC52A92cp1/CyP/E9uk=;
-        b=dqdyDDeUiy83QERXfqBxijU0G53PXC1mT6/Y/+6/J7VYUAyNUbAWcPGwKYTSQJGiQl
-         cRZ6Bo7tj1Zi0z7IYRZzArC94swW32xGbieMRrzVjkNhavNNTHJqxLA6wnEXz7BQT8F8
-         9jPjGJelnlcG0RuUmBUIuAQA/s0+jTg1QyoT6YnTCcFqoQBm7iB/2K4LtNRdWX53U6/M
-         u+ictIpGJZM+4j74vgAkDPJ6xOniCW7TyHi3D1f1mH5C782QsiTe0S80ru0mMD20HOhW
-         6nQDJXMO9Qoj8ytK+kkWqOWoXh1FCYL25zmniYpEfZRZMAsXjczO0nScvd2ixcgFakQ2
-         AvWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752134591; x=1752739391;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dn1s1OnqM766ROLY29Wi7jVidC52A92cp1/CyP/E9uk=;
-        b=Mf8qQ/2TWGJuFkGGvttN0DD1cfsEEvNMN06c5+xat13cYmAW3+ewWt2+xc42ilgQ9o
-         0SjP27hOpmjW980bYU8VyunkmgBeHafev4ymY4AcmvTu3kMbpeNh5q0ngzkhC8nxi+Zx
-         Q8g185cyqEEGwjeOa38iOYaVc097KJ0YxPHV+vFOeaZHSesiQql8+GN4he8A8Q9Gt/ij
-         gpV7AQmr1YNEWwKbZAfMMytNS12JGAuEK2fVpIZj06Zlo7u89bp5rBK9FAXoGZv8LngB
-         LgteKC/gnr644Kp69RE5AjWfXBHKVHZxZWeokKczRdyEBeewS6JjHfM6Fi96sq57xC5W
-         T9Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCWySZShZqJk4JyuYLS5jjdvYUuO+Sa1iKKs8OsHLA7lXkE7o3qKvRDHpM9KsvEqtjysBC+hBn8CySgAH04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCUhaVSxDHYp2zztWtRC+c/n4XcYSw10bzBNvObbByd+yHNv3J
-	9T/MDWcw1pC5qbrJW4lcT9D1BAxlO1MJ6/S9uXuHYL8k70LgwGamp8Ll/tUOOTXnyTIAqs55hVp
-	zbboXfK5v8gKU6L94pqkpjG11MPc/3YxXL2iXnqyF
-X-Gm-Gg: ASbGncv5/AXyFfLmUmChLf3UqqDkSkQLOap9JOBfjxUh1gBsWv+E77tj8b0jGyI6vq+
-	vcp25QKJlMXxD6XtyTogySQ2VUL83p+jmDKWEgbZ3DTLv97NSqawZdmvJjXOI9K9odkOZZ2AAG8
-	/BpkDgbXolT+69OXkv72hfqQNc2AqjaDgX5ZY1F4DZt6Tu76yDMBlWjmB+5JbYkqYMl5ui5XbT0
-	k5lJsAly0vU
-X-Google-Smtp-Source: AGHT+IHDV9FQvB8A+v7zknLaNUWrdiR+PMz6YJqcz8cQw8kfvU/R4MwkGH7Xv6dLOAwoevuEEtmJFcSk1nrYxDUqsxY=
-X-Received: by 2002:a17:90b:5345:b0:31a:bc78:7fe1 with SMTP id
- 98e67ed59e1d1-31c3c2d4748mr4761227a91.18.1752134590559; Thu, 10 Jul 2025
- 01:03:10 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F8228B4E0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752134606; cv=fail; b=pTK+CMa14luUPa8oc51tbmSY6rCOAtR1v6B9muLKsUBegYk1o3Ju9ux7w6nXJQg+M4EmHYs4ELRj654rqlV1a7G+CrKEv4s9JJiVLtap/iUB14aO+5wneMH7n5sgFdLrOjIw8Tdqv8v28BR6jS0PSQgNsxMPXrIDNXYmPV2bhJM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752134606; c=relaxed/simple;
+	bh=08JzK0L066K4/A2bfD1bfmatVlsMIkWHN/DBqKXc0MQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lg+PUGCZYDcZQkjIlAR+7IDoFTSkQfZj2Y+fnMlYcnx6AL7PTxaZQrU9rtG6y53xBHXYygI4gnqXowl6h5586AEjifmM4fMo2P2vRP57kt+ZkijO4LBcqNKg5yMgThc52vT4Vh0h/M8b/r/TQpJfWoabH6xl5TP+BHoKE+SA+hE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=byhN8Dn9; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752134604; x=1783670604;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=08JzK0L066K4/A2bfD1bfmatVlsMIkWHN/DBqKXc0MQ=;
+  b=byhN8Dn9j79Y/R0T9WgjaOtqC2ZkVzlaAQ346a+hOpvstM/8PUeGrTZ9
+   U6+dtcUClP4ER21Z0kPCtSDawGyqcauceGAtiQKGOoqsUiRtPWPXksNa+
+   kI0jEO041qBEcY4AGmMbry4EiycYz7Y+cIxXirn9QWCyuoR31fBIQu72m
+   YqbZGcilZFCyMz5TDZHElcdE8f1NT12hEfeZqzIip2YfqV1Z4hFBp+EaD
+   SF7ReS31h78h+BjdD2VGAjAXvt1hNFrL9sT+vOxQ7l+J4tS16NNPCAQRX
+   aYIhYIpvzgOV/uwdq7nUrM6NE3Z3LzlOHAQwoiSAiOrLLobG71I4IzB1Z
+   w==;
+X-CSE-ConnectionGUID: el9/+/r/Q7GvDHn489PTyg==
+X-CSE-MsgGUID: /bTEGjQJS+Ox6s2oumPmwg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54536760"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="54536760"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 01:03:23 -0700
+X-CSE-ConnectionGUID: YB55u9M5TSatzHG4zTf3Og==
+X-CSE-MsgGUID: 1pQIplR5SFW1eM6P/dUzhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="186977651"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 01:03:22 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 10 Jul 2025 01:03:22 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 10 Jul 2025 01:03:22 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.84)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 10 Jul 2025 01:03:19 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hlkZtO6RO8LjTPpTvcV2fJrEOVZ2784sde4Y33WStqG3jUvlPXkTQyXv7cREkJzOEkbpW7w++XVfyeCkjWTngJDtCzxZYAyBg74k7xwPlB3mUAmMpSdHewrk8m0u2cnFx1hgbNFiNnKW0bFmkPDCsA6ysTxsLX+6RZGjTOoXPbKJmlFXnxErxidVdYj5XZaKGfs3KnpTx1e/spKdDfgrXKHl5DYD9/aFTouBIIbyi1KiEv2KFqyfAksy48F/8Ck3+sdeWLEwFhkRVaQ+u9mfovA2mbu7Qon7mlZ1c3ueCszIP4wtqokskzDddl1PklJ8oZ0PVT2cJZGxS4RYwZe2xA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JxB867zbu/ge43OGcJvWgNYEk4TPyVdV14sbiYt4/U0=;
+ b=MpIDDTdEPxSoKkoE3Iyeu7x1Jf01d1GgcWWXTnVTaQ1iRmpVZMhBLdzOuCjkcMQbDcfenDdVH4GXTDpQSsYsK6oahAfHiAmnJ7SYctWxWb7dlPt07NPcQHbkLLw7nRXKkuy2zKdTZuxJ/rxJ7yi0BbedHkk1hpOiasxdL9mKqt1hb3uOXBQgPcXq1DLJhH7kJ9REq96v/k+9b/BAcbVmGWaNbo3bhjuFdZG3bvXNpzko/NG6nzxpbJdOjm2tbC7KO9yHioe1zZ9SnmHOt9z/CQ8eSo8SQ1Is1TDskLNSzaMNtu64xHKo8diedpdvy7541B48+WM1TGZIolYTtekjKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by PH0PR11MB5141.namprd11.prod.outlook.com (2603:10b6:510:3c::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Thu, 10 Jul
+ 2025 08:03:17 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
+ 08:03:17 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+	"jgg@ziepe.ca" <jgg@ziepe.ca>, "will@kernel.org" <will@kernel.org>,
+	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>
+CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "shuah@kernel.org" <shuah@kernel.org>,
+	"nicolinc@nvidia.com" <nicolinc@nvidia.com>, "aik@amd.com" <aik@amd.com>,
+	"Williams, Dan J" <dan.j.williams@intel.com>, "baolu.lu@linux.intel.com"
+	<baolu.lu@linux.intel.com>, "Xu, Yilun" <yilun.xu@intel.com>
+Subject: RE: [PATCH v4 4/7] iommufd: Destroy vdevice on idevice destroy
+Thread-Topic: [PATCH v4 4/7] iommufd: Destroy vdevice on idevice destroy
+Thread-Index: AQHb8IeMtU9G5ISiQk2UwMXWxlxOaLQrACKg
+Date: Thu, 10 Jul 2025 08:03:17 +0000
+Message-ID: <BN9PR11MB527626C3064AE35AE93505CA8C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20250709040234.1773573-1-yilun.xu@linux.intel.com>
+ <20250709040234.1773573-5-yilun.xu@linux.intel.com>
+In-Reply-To: <20250709040234.1773573-5-yilun.xu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|PH0PR11MB5141:EE_
+x-ms-office365-filtering-correlation-id: 1dea65b3-e391-4345-a1c6-08ddbf883aad
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?hdE/5XyLB/j/YDDEnfBI4AtLfGT1D2MxRBOuQcuRnsxcxYNyXjKzkVuUbzKB?=
+ =?us-ascii?Q?/fUnMBdFwksIedlWWhtf4GrcVgvr/+5c5yr+wRjABHO1pngrOKAavrg08YPu?=
+ =?us-ascii?Q?CrFyupWLEA3dcFFHdTU7jf5lTYYuwvaziu3kzBQIscxD7S4hGq0H4jQQHwaS?=
+ =?us-ascii?Q?yBTacY9wq288vdiaeScaihBuXzOn88EUoDOmAPLJpA3J/6LuZfkvMqtOdjrJ?=
+ =?us-ascii?Q?CHelsqldAu28fymWVN4O4MUme1hUoGjvDh3QCgd5K2jV6QvNS3j4+KY+pLlS?=
+ =?us-ascii?Q?7HPzjt0L1hXJLaQ7Hpc0BWdM6Ydb0iPB/ELVm+5T7gbnRufk5emsFUOMUOou?=
+ =?us-ascii?Q?67G9DYCT4GaOcq5TjpzPpXvcN3IvsloxzA+hWIek/Q7NrJJ7EF5HXw9CO6Xw?=
+ =?us-ascii?Q?3RUC8b91zT9waoPVnOT53IqTbLI84sAWPoBlhTSYgyiU9CwcMMMvxthHS48w?=
+ =?us-ascii?Q?suJoReSINTgF/mWbz5a/5QiU0Bejc+ByBwyE+KjMHJvzkIdzzyo4RbmlBCO7?=
+ =?us-ascii?Q?FTY2i3SAN+e34yqjZcg1+vSZNo9rjp66NRIsbOK6BkbeBLvcrGFrZDmqQeNb?=
+ =?us-ascii?Q?6UTfNHda5yfNZHCZDgE9HrPR19E9M1sxNTH/eElmdXSXKswycNH+LZAEPu4F?=
+ =?us-ascii?Q?XER1UQz3/7F4S1R7YEgwVUUcSomAFbtABDTyhvrqGJb2uVDD8FU9K7MtwUZS?=
+ =?us-ascii?Q?qztYbbAZi+dL8SA5K5zWLl9LBm5j4rxKjTwelHgBiODn5x+bzXOP8Lp6XcNd?=
+ =?us-ascii?Q?0XQXFlbfRbUHq5HrMXwdyzz9TvWhymSdwUYf5wfx/ZByLnBZGSmldiV8o9o0?=
+ =?us-ascii?Q?qbKGSzyXdKr/H3SICPaqv53cJLT7yxm+RGOknK8yiYGJMe1HZ1qL2PO1O0ky?=
+ =?us-ascii?Q?h3v8NKufWnbjf4rVx+EcUQKgZo7UrFT5YD+fqfcxNuL8UiA/G3dusKRc0lsV?=
+ =?us-ascii?Q?/FhsgJUB/wzI/em2G1qHzBTxdK6Gv8m9N+/djD43ULMnQAkgJaoBgCr2dGrs?=
+ =?us-ascii?Q?w9Bg0CLU03iMz+Yy1uo5wjew8qplVNiOpZyYtyxqF8mQYwUxIq9c9+o/l4lK?=
+ =?us-ascii?Q?CtG+7h1LVOAZCiRoSHZF7U2eGQQZXNPClBX8dz2C4dRL6/pkcBLKTsihGOJY?=
+ =?us-ascii?Q?kZCrx7DZHjPeYNQ7wqANTp95JLPXi5xVRddHYQTg0uwwCfBviUMNHXO2ircZ?=
+ =?us-ascii?Q?ynJvVGK0rY/vBQLjTnlW2dkwrQXZEJWldXsopFuykVTg0/qavx6z00OoXcJ7?=
+ =?us-ascii?Q?W0W4LvaIy4jM7U5OUAPKKoJzZkOFsq9f28A8i+ZecbnSG4BPWzP056wsy9qe?=
+ =?us-ascii?Q?X4did7rQrNcxuN9YauzlzGEIj9tn75c3f/+UadFEU2gYF22lnm1/hGrJuAaw?=
+ =?us-ascii?Q?yj/mG63XxpXcOe448Ll8Wp7TxvliAlLW9hYKHrdrCI7uMqd7XY5AOFFccFVp?=
+ =?us-ascii?Q?KymRD8VIEUBiKwivX+YoVKOaLRecjBDQSNNi2iSltnQaVsSJmTipb6XEEhLp?=
+ =?us-ascii?Q?STY30LagLBBFdVQ=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?rAiaGUiZV3x23U4bibwZh4GiVD2fckpsN6A4IaQabi5U4AlVqacBv7T5Viu4?=
+ =?us-ascii?Q?hRbGQnHBTeyaWVqvyoAuoUDMlzKxsxrOHeQDtYfNRJqDOn1sZMVmSV1W7UJr?=
+ =?us-ascii?Q?RunErsGhDAAI3qPKwS/bcGwKAiGQFpPTGPWjmX8DBMhf0/8PLk+0UKhOBIfk?=
+ =?us-ascii?Q?oEKnw7bhktJunZy1H+2eLS3NkkjUt+6UkDYVzCwCB6cN16oQALCDtHBPeEu/?=
+ =?us-ascii?Q?3AmVv2V9JiGxmMXQ23cyFTxUv7YmprmtP8Va9Vbqc+gzpZ9yWVWrZ86/mBmm?=
+ =?us-ascii?Q?ljsMEZ97xPn1WCmoRskHnak/5sSQSw2Lfyi0tZx8QdFYawyPAp4R1zGMlLGX?=
+ =?us-ascii?Q?tKt82eOOdzvp5LEJZkDa8qGCOsinjfM4Bm/cm17VSU/LLONHJPJ0MZeU8bv5?=
+ =?us-ascii?Q?DrMFILCySVdmfX9yi8smkrn2rxm5ENfmqiXvDLZMEWZRhI/J4637oNB7llW7?=
+ =?us-ascii?Q?fGFicfudSvmbgs/nBCJAXxodqJ4jl+f0ytmz1Nqqr8Ldch5kbrTFZvKzIVcx?=
+ =?us-ascii?Q?6xx8Jrqzpd+tP4LNdbczIbQmNzjV4C2NGigZEQF1SknlpDy16S+VhqsksfGg?=
+ =?us-ascii?Q?f3qfN+BohyTDAYdkQfFDCuHnyxijYGWoIuIXsK1s23f66SI9V7EO2cs3YdoU?=
+ =?us-ascii?Q?0xbEQEv2JlZRMQEZSZ/6M25Pe5jdawcsTkj1COQQ5gBO0vaeQo9k1qN156R0?=
+ =?us-ascii?Q?76JcVDe40KUMoqDGFOTamBKdEMB7iqXuKuZsqCB3a/qhc+DuCXCeYlknVVRS?=
+ =?us-ascii?Q?ubizH1wNwt9RvnVKyBjyBimNVTmCxeEO61PuOc9G1+hW6sh15LZhT0ndX/fP?=
+ =?us-ascii?Q?vsFQiD9vv2NhefvIh3pf/foXzsn5KiV44EDrW0FNa3uj4YwNLrBebPCoogpS?=
+ =?us-ascii?Q?XbbkPIvK4vRYZN1CI+YQSfsh0gAQz/4pHfFhbmPGVx70UdLWdZ8SQhzcW3sO?=
+ =?us-ascii?Q?nxZeZn3/2qMngExzU+o51XRVHqqPMoAB1uubUXaZvGhgGA3BkquyDPOORm1K?=
+ =?us-ascii?Q?ZfO99AoyIcSy4M8IgvlowgdfBUZeLgpA0TVbBjSQwOUhV8d4Oo5H8Ksgr5rO?=
+ =?us-ascii?Q?CGXS3VEEoUTfw1ieyUWr4oFxhQ6Difi9GE2qQUBgk900kBC0iy+/NxW/8R4I?=
+ =?us-ascii?Q?UKGJAeEwP9wde6fweItw1XJIs1EwYoVR3zhix3tv5akzXEF3aS7bG4V+tPGu?=
+ =?us-ascii?Q?PS9RMGGKrdODbJbpnrSJzr5xnHUWiKxDRjLeTZ4BZHIE/QTW1h4YVVxedldf?=
+ =?us-ascii?Q?GTzvMBS2+R5GozyepsPCQdlyUcgP4xC4vCgUVIq833qQ+LWidS8eVUfykpdY?=
+ =?us-ascii?Q?wXVx5X8wfw9iktS0nA515OkVE31bJ9NKijaanFFA2wyNA7mUMWtafBpRLu5z?=
+ =?us-ascii?Q?myLz4HVAyuFhBezyj6WPtN5auL26tSUb5WyueOHdmoUhgVlwBJ83SKtWKC+w?=
+ =?us-ascii?Q?X1l4UZ9JCQm0Wc/PTMPQ38pBvTVQ8DzsnWFVmHoHo6wB+PRWgEHYfoh36iSD?=
+ =?us-ascii?Q?GXNJ4Pi9EiF4Z5vGajuSZqia0ZNhT5MeJmL/YkK13Yln1eOJc1pRHyxpaiiq?=
+ =?us-ascii?Q?JPngRYR0WzRYw6sblCCW2GMF8LeO0jLPNU02/YPr?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <686ea951.050a0220.385921.0016.GAE@google.com> <aG7pfqqhk47YXFNz@dread.disaster.area>
-In-Reply-To: <aG7pfqqhk47YXFNz@dread.disaster.area>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Thu, 10 Jul 2025 10:02:59 +0200
-X-Gm-Features: Ac12FXy6k_Uf27DJHMFvYT-oDiqLCYYE_boXGcb3Fh1zipBMh0T2QL10IhXu33M
-Message-ID: <CANp29Y700diEaeHd6bHksAL_60D+vJD-95EqcveqMME0smNJnw@mail.gmail.com>
-Subject: Re: [syzbot] [xfs?] possible deadlock in xfs_ilock_attr_map_shared (2)
-To: Dave Chinner <david@fromorbit.com>
-Cc: syzbot <syzbot+3470c9ffee63e4abafeb@syzkaller.appspotmail.com>, cem@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dea65b3-e391-4345-a1c6-08ddbf883aad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2025 08:03:17.6841
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VqQ6UvXznKcAeQSzRp3mTxYTAjhyaJ2kmMsd/Tavg1VK3j9ASFAuZql0VkDaR5oJ+2bK1p1KiebnXiqKPoXyqA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5141
+X-OriginatorOrg: intel.com
 
-Hi Dave,
+> From: Xu Yilun <yilun.xu@linux.intel.com>
+> Sent: Wednesday, July 9, 2025 12:03 PM
+>=20
+> Destroy iommufd_vdevice (vdev) on iommufd_idevice (idev) destruction so
+> that vdev can't outlive idev.
+>=20
+> idev represents the physical device bound to iommufd, while the vdev
+> represents the virtual instance of the physical device in the VM. The
+> lifecycle of the vdev should not be longer than idev. This doesn't
+> cause real problem on existing use cases cause vdev doesn't impact the
+> physical device, only provides virtualization information. But to
+> extend vdev for Confidential Computing (CC), there are needs to do
+> secure configuration for the vdev, e.g. TSM Bind/Unbind. These
+> configurations should be rolled back on idev destroy, or the external
+> driver (VFIO) functionality may be impact.
+>=20
+> The idev is created by external driver so its destruction can't fail.
+> The idev implements pre_destroy() op to actively remove its associated
+> vdev before destroying itself. There are 3 cases on idev pre_destroy():
+>=20
+>   1. vdev is already destroyed by userspace. No extra handling needed.
+>   2. vdev is still alive. Use iommufd_object_tombstone_user() to
+>      destroy vdev and tombstone the vdev ID.
+>   3. vdev is being destroyed by userspace. The vdev ID is already
+>      freed, but vdev destroy handler is not completed. This requires
+>      multi-threads syncing - vdev holds idev's short term users
+>      reference until vdev destruction completes, idev leverages
+>      existing wait_shortterm mechanism for syncing.
 
-On Thu, Jul 10, 2025 at 12:13=E2=80=AFAM 'Dave Chinner' via syzkaller-bugs
-<syzkaller-bugs@googlegroups.com> wrote:
->
-> On Wed, Jul 09, 2025 at 10:39:29AM -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    733923397fd9 Merge tag 'pwm/for-6.16-rc6-fixes' of git:=
-//g..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D13f53582580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db309c907eaa=
-b29da
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D3470c9ffee63e=
-4abafeb
-> > compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6=
-049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets=
-/d900f083ada3/non_bootable_disk-73392339.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/be7feaa77b8c/vmli=
-nux-73392339.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/a663b3e31463=
-/bzImage-73392339.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+3470c9ffee63e4abafeb@syzkaller.appspotmail.com
-> >
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> > WARNING: possible circular locking dependency detected
-> > 6.16.0-rc5-syzkaller-00038-g733923397fd9 #0 Not tainted
-> > ------------------------------------------------------
-> > syz.0.0/5339 is trying to acquire lock:
-> > ffffffff8e247500 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linu=
-x/sched/mm.h:318 [inline]
-> > ffffffff8e247500 (fs_reclaim){+.+.}-{0:0}, at: prepare_alloc_pages+0x15=
-3/0x610 mm/page_alloc.c:4727
-> >
-> > but task is already holding lock:
-> > ffff888053415098 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_ilock_a=
-ttr_map_shared+0x92/0xd0 fs/xfs/xfs_inode.c:85
-> >
-> > which lock already depends on the new lock.
-> >
-> >
-> > the existing dependency chain (in reverse order) is:
-> >
-> > -> #1 (&xfs_nondir_ilock_class){++++}-{4:4}:
-> >        lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-> >        down_write_nested+0x9d/0x200 kernel/locking/rwsem.c:1693
-> >        xfs_reclaim_inode fs/xfs/xfs_icache.c:1045 [inline]
-> >        xfs_icwalk_process_inode fs/xfs/xfs_icache.c:1737 [inline]
-> >        xfs_icwalk_ag+0x12c5/0x1ab0 fs/xfs/xfs_icache.c:1819
-> >        xfs_icwalk fs/xfs/xfs_icache.c:1867 [inline]
-> >        xfs_reclaim_inodes_nr+0x1e3/0x260 fs/xfs/xfs_icache.c:1111
-> >        super_cache_scan+0x41b/0x4b0 fs/super.c:228
-> >        do_shrink_slab+0x6ec/0x1110 mm/shrinker.c:437
-> >        shrink_slab+0xd74/0x10d0 mm/shrinker.c:664
-> >        shrink_one+0x28a/0x7c0 mm/vmscan.c:4939
-> >        shrink_many mm/vmscan.c:5000 [inline]
-> >        lru_gen_shrink_node mm/vmscan.c:5078 [inline]
-> >        shrink_node+0x314e/0x3760 mm/vmscan.c:6060
-> >        kswapd_shrink_node mm/vmscan.c:6911 [inline]
-> >        balance_pgdat mm/vmscan.c:7094 [inline]
-> >        kswapd+0x147c/0x2830 mm/vmscan.c:7359
-> >        kthread+0x70e/0x8a0 kernel/kthread.c:464
-> >        ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
-> >        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> >
-> > -> #0 (fs_reclaim){+.+.}-{0:0}:
-> >        check_prev_add kernel/locking/lockdep.c:3168 [inline]
-> >        check_prevs_add kernel/locking/lockdep.c:3287 [inline]
-> >        validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
-> >        __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
-> >        lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-> >        __fs_reclaim_acquire mm/page_alloc.c:4045 [inline]
-> >        fs_reclaim_acquire+0x72/0x100 mm/page_alloc.c:4059
-> >        might_alloc include/linux/sched/mm.h:318 [inline]
-> >        prepare_alloc_pages+0x153/0x610 mm/page_alloc.c:4727
-> >        __alloc_frozen_pages_noprof+0x123/0x370 mm/page_alloc.c:4948
-> >        alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
-> >        alloc_frozen_pages_noprof mm/mempolicy.c:2490 [inline]
-> >        alloc_pages_noprof+0xa9/0x190 mm/mempolicy.c:2510
-> >        get_free_pages_noprof+0xf/0x80 mm/page_alloc.c:5018
-> >        __kasan_populate_vmalloc mm/kasan/shadow.c:362 [inline]
-> >        kasan_populate_vmalloc+0x33/0x1a0 mm/kasan/shadow.c:417
-> >        alloc_vmap_area+0xd51/0x1490 mm/vmalloc.c:2084
-> >        __get_vm_area_node+0x1f8/0x300 mm/vmalloc.c:3179
-> >        __vmalloc_node_range_noprof+0x301/0x12f0 mm/vmalloc.c:3845
-> >        __vmalloc_node_noprof mm/vmalloc.c:3948 [inline]
-> >        __vmalloc_noprof+0xb1/0xf0 mm/vmalloc.c:3962
-> >        xfs_buf_alloc_backing_mem fs/xfs/xfs_buf.c:239 [inline]
->
-> KASAN is still failing to pass through __GFP_NOLOCKDEP allocation
-> context flags. It's also failing to pass through other important
-> context restrictions like GFP_NOFS, GFP_NOIO, __GFP_NOFAIL, etc.
->
-> Fundamentally, it's a bug to be doing nested GFP_KERNEL allocations
-> inside an allocation context that has a more restricted allocation
-> context...
->
-> #syz set subsystems: kasan
+could also mention the introduction of 'idev->destroying'
 
-Thanks for the analysis!
+>=20
+> Originally-by: Nicolin Chen <nicolinc@nvidia.com>
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-I've added the kasan-dev list to Cc.
+I'd remove this tag as this version has substantial change compared to
+last version.
 
---=20
-Aleksandr
+> Co-developed-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
 
->
-> --
-> Dave Chinner
-> david@fromorbit.com
->
+please also update the description about IOMMUFD_CMD_VDEVICE_ALLOC=20
+in include/uapi/linux/iommufd.h, so the user is aware of the implication.
+
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
