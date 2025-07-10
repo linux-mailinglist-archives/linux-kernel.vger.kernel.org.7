@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-725283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C779BAFFCE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:55:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7677AFFCED
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F17586322
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:55:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44A01C2751F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A2428DF44;
-	Thu, 10 Jul 2025 08:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47655292B48;
+	Thu, 10 Jul 2025 08:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="RBbP7lt5"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="LENEC6da"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB852900A0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7FC292B5B
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752137662; cv=none; b=TEcBRuXx3P7ccWi0DQQXq/PVbR1p9LL9gxUPeTDEU2mtLzHferLE+LsjfMaBFHtClc6SQW7QegNFXB5PolvylNvrcQGKb8iBbH6p4sR3D+DzEbcF7W6Tva3i2Oc5jLEbtoIklLpWmff5LOFaibGEbQnxxZ2INGCyMP33TblAqKA=
+	t=1752137667; cv=none; b=A/qrFmIyNAg1RfHiVyey5n6EMvHwSs36C8FJ7O1eHITXjDN41CJTY/mKmzPp+v2uGGUo+o+avDQEHaA1cTNP0bcWinLrETIrATAiEAqYA6KNaJgZRp9jSRWNTm4l8E7Mtrbt1CyW8DBlaBlHs7LNbI4bpsvi2+s/doDJTJ2GEU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752137662; c=relaxed/simple;
-	bh=4N5I2w5e2jHfjeqUUs8UP8e7d+l4qfu2b+4DBY6K2Qc=;
+	s=arc-20240116; t=1752137667; c=relaxed/simple;
+	bh=kuMO4alh4taqq6qqK8Ezmq1eFdMQaf8rRvbNnP7x1ZQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hiLAbUjotb49Jh87Mt2dYJBlRy6MNwCp2Ya3MHsg8C6tcUNs6K94FOkVfhBdRLiX+f3d8c/jUTLdyvg+e7nSgQJHU/3v5vOhHS6F815YcszQ4GtpM891qwlJeFqe46LkMmY2iei25EE3tMwvv9eRVNwTNVEs1LsuTq85Xvv7kVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=RBbP7lt5; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version; b=ewaXxvDcA08GdKd5CkLUFVZsK0eqRuS2DlgxFOZRg6uXOsEfKh/xgw6A3XZe1LaRihrHgGXzm2dDVRsHO4nSvhA/dJ9yaX2DmixquUYiOvim5pLVHTGYgr/FuxDrDW2zWsUFxVRmJqyNJCgzz2iGD7kyzI3fhem6QlIXbqk4BAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=LENEC6da; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-234f17910d8so7865155ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:54:20 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-237311f5a54so6588755ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:54:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1752137660; x=1752742460; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1752137666; x=1752742466; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Nx6tn515BmvVRbPQz9Ke+EyJMh4nGWIC6oD4cxq1tFQ=;
-        b=RBbP7lt5E2/ic+C0dUkuLmZYndw7LSu9MUGrM5BB8v1z+2l8K8zJMnWsjYN+7ilOiH
-         TQGinApXthUPYA4B0dLDGJDpsa5qn25lcRzzqg7QMaVqyk3wdyIG7DCorP6eVjTqfHip
-         i2ZDWrtt7ZnIi/35+nMXuKmO8z00lXQ3giisi3oYU8Kf5cw4W5ayCgGRXL8CPB5hdZgc
-         1TyEmDzLuDGTddmhcxggefBzBd6ZEd+YFi+ciiDwsAejhb1Q8i4YC3JIumT11l4A7zmZ
-         x66Tl+o7OlQu7SDZcAAv9sVnzsleTr5SPHqcajHML6KvDiZ21Q2N1ElwMFYkd571G0GY
-         kDFQ==
+        bh=euNz/l/CHGPv/Gat71a8nUVi70h05zHrvuBm3oNz29E=;
+        b=LENEC6dajcKktGlvKMstisUT7+YxOsw6i+54mmKubHTWy8oH2js8w+1etQkArkfdPd
+         Z5BO9cwZc7LFDTpSt7kwHcQzOUEnB1YTVUpYfrP5nbq7aa92r9sKiscMtsgyuPZgcr6N
+         /dW78f71s/1bf9ZO+eEqyiLT+9cx+0W+uMy4m5FyzjnwUrT6OnfPyS9mscJzp5nNv2JC
+         ARkEtXIEeOSWNL3kLpmLoTULpVELNluih7qd6turjp0UEbtDPYTJu3FMm1wyI1zJkeIT
+         OvAItdgXmNSCXrQuAcg8Y/xg9affIgB33aLOHHlzGgHZF+opOtuXP1pui/lPMrF8AYhd
+         hS5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752137660; x=1752742460;
+        d=1e100.net; s=20230601; t=1752137666; x=1752742466;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Nx6tn515BmvVRbPQz9Ke+EyJMh4nGWIC6oD4cxq1tFQ=;
-        b=oDWwe/6k3rlNW/uz617nsfm9qWPdfLwn1hwwA8pQ8xFrFunh/MD86LXeQ0hvOwwXYE
-         bpGzhvST+fLbpd7y9J0Mxv3z3psTzuaGEa3/wR/1DaQhhSTCbCPWQ1FjDST7rMLidFVs
-         FhE64k2YdkH+/0Ib7/CYlyfn0J+p4I8oEz49JW0xoN95r64J+nqgw+OSoHc6Cz2oPjvv
-         ZZMUhbtCalk+WMheN4Bztjw2XJPdhN4+q46Lup2jN2+ErbubfaoONLpOKlF7UdbK7H2a
-         jNn4fS+GHcYiqDtGakPkhtxBNuQOr/3WvqYjKLDHCvUgPWfErPnUCQdBBUa2Sp9R3Wuz
-         0g1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXcmDFq2IfkQgQh4X/fQzryIxiSBpUXzOqK/uxfqYPRz4xzuWWDCvZg2jy8aw4SMetGG4gvi0zH75zQuqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsqUrDf8wvCmUkSRXCl2Kvx0z7jghmCidP58b9lQBzx6Cmg1ae
-	XZhbEo0oCGhs1JnwTLNoZgb8YT/5rwRJBfF4f5iZaOnCUuYMIfc0HmsRiJ8WYWL1TJ8=
-X-Gm-Gg: ASbGncub8TfDyIekTRRCMHX/3vVVwaAYe1SzvEecWa182Pijx81CpbLNrdlpaETrl47
-	R4CmtWlVadcvb4r1Q+xq08XpIKkNLC7N7Qb7gIcSL4dhBEp6nL1kTwtS7QmPuLAd4eU5p/K4gWm
-	ZOPIsghUpMbmhY4Vh/D9oKE0uVHDRNnaEn+LNnafhG75rYy+XpjrbiwuJZBdLR9SCCxdXm17Xpa
-	JBrqs3qRS0CQ3gR39sizQZAaRreG6xl4WW1H5/Z6Hl3HiAbniuOCKE8y2JvOhmufB9W7xa/KpSL
-	+UAmFEhWle17cUx4U1/SD6VodDySnB5qMh4P+C3A7xJ6racbad1X+m9fi1lFcw71KXDI6JON8l0
-	06o2AJDRZVf/5lQW64Xuyr8Od
-X-Google-Smtp-Source: AGHT+IHinmUo1Q8JyIR8mVroxGH87B3iRX98m8gWf3ZeXBpz/jGd0mYLjHRrHOq8wekDWW+AqoXtuQ==
-X-Received: by 2002:a17:902:db0b:b0:235:225d:3087 with SMTP id d9443c01a7336-23de24d9865mr39979545ad.30.1752137660449;
-        Thu, 10 Jul 2025 01:54:20 -0700 (PDT)
+        bh=euNz/l/CHGPv/Gat71a8nUVi70h05zHrvuBm3oNz29E=;
+        b=iHe2qqX6jqTu/EAoUG6flOMv3qLG4n/mJs7QTvbguBQ30b+cOga1VYO01d10oQak7O
+         qxsKCdUQwGdW3fJfQS3qgNjRHLMHZgAwnVRVNisW7ngAulPUgsyOXqNpwFbwhvLJ+YeZ
+         IZXy1TyUqj/D8Uzl5G7t4YJPqA/kMifBqqdX1ypnPdKWlekTL462gPOq/DS0BOKWJEIN
+         RGEPOoRExQIw8+3NFm5oco/r5jkSDcW3wlOX7O9I3tgEEEwCN89xl9Kvkf6OCXfHQ8wp
+         YapHHPjXXWPqqko6BQd4r/xmPUumCQ0rsoh5XTXdYiWrk3EgXRxgHoN0sWaqQqaPzSB1
+         SdwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzIiJFNLNEx3m4zO9Vln8mH/BsXhmaCY9uS7Q/sN4vHWc0K39OPONAiZJWEKoDLgManamUhagIjo7E94Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxI4A6SpX1gTrlehfiUTpODp/B2G+XYuJQh8kwBG9K7IBu81zn
+	qlPZ3HZBrumpQ5/1DkvED+/Y57uLYRhLMBzlWA9K6Fq8mbn3dGbMLflaxqeaPnsPNehygjGemAj
+	mf2Xx
+X-Gm-Gg: ASbGncsyHSRyI+V6sn6ivcb6WmGDjanig70+RADi+MBuywr8ZZelru3fWO1LTfil8jp
+	ftvv5qpIy48C9mBnWH52QghQ6WR+aHNJBpgIQpjyMvjs3dH7zT1SXYD80bfmh9U9bV/0oe+loMY
+	kLo7aaIwRh/EoznCKbFcXl+uTYFLUDdYlZB9i02+h38ZHaxrN9aqmPNJzKG3FJh1SVbD39nCazg
+	6VQFHwOh7Ji23+IKmnO8HYLkc5Lb6LYqjV6wlulSb0AbEMIkCYcyg5rr+5UzoRy2na+dvQvIE3T
+	5994XEuRc8jLI5Ml7F+Q/6wwSXzygKEqjXodyHic1VfnyhA2yKUcaGqh9sf1IpNjcTiwkcNYuKz
+	+54FpuvFJiQAe7Q==
+X-Google-Smtp-Source: AGHT+IEt7OZwGubuhbBz8Z/1KB4UN6EU83aIIreg1b4VW2wSiqDfLzbhNwjVrNvPGleM5LD1QDFIHw==
+X-Received: by 2002:a17:903:a8f:b0:235:1962:1bf4 with SMTP id d9443c01a7336-23de4803965mr31979305ad.14.1752137665596;
+        Thu, 10 Jul 2025 01:54:25 -0700 (PDT)
 Received: from localhost.localdomain ([203.208.189.12])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3e975d41sm1650228a91.13.2025.07.10.01.54.16
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3e975d41sm1650228a91.13.2025.07.10.01.54.21
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 10 Jul 2025 01:54:20 -0700 (PDT)
+        Thu, 10 Jul 2025 01:54:25 -0700 (PDT)
 From: lizhe.67@bytedance.com
 To: alex.williamson@redhat.com,
 	akpm@linux-foundation.org,
@@ -82,9 +83,9 @@ Cc: kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	lizhe.67@bytedance.com
-Subject: [PATCH v4 3/5] vfio/type1: batch vfio_find_vpfn() in function vfio_unpin_pages_remote()
-Date: Thu, 10 Jul 2025 16:53:53 +0800
-Message-ID: <20250710085355.54208-4-lizhe.67@bytedance.com>
+Subject: [PATCH v4 4/5] vfio/type1: introduce a new member has_rsvd for struct vfio_dma
+Date: Thu, 10 Jul 2025 16:53:54 +0800
+Message-ID: <20250710085355.54208-5-lizhe.67@bytedance.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250710085355.54208-1-lizhe.67@bytedance.com>
 References: <20250710085355.54208-1-lizhe.67@bytedance.com>
@@ -98,41 +99,38 @@ Content-Transfer-Encoding: 8bit
 
 From: Li Zhe <lizhe.67@bytedance.com>
 
-The function vpfn_pages() can help us determine the number of vpfn
-nodes on the vpfn rb tree within a specified range. This allows us
-to avoid searching for each vpfn individually in the function
-vfio_unpin_pages_remote(). This patch batches the vfio_find_vpfn()
-calls in function vfio_unpin_pages_remote().
+Introduce a new member has_rsvd for struct vfio_dma. This member is
+used to indicate whether there are any reserved or invalid pfns in
+the region represented by this vfio_dma. If it is true, it indicates
+that there is at least one pfn in this region that is either reserved
+or invalid.
 
 Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/vfio/vfio_iommu_type1.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 6909275e46c2..cade7ac25eea 100644
+index cade7ac25eea..61455d725412 100644
 --- a/drivers/vfio/vfio_iommu_type1.c
 +++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -794,16 +794,12 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
- 				    unsigned long pfn, unsigned long npage,
- 				    bool do_accounting)
- {
--	long unlocked = 0, locked = 0;
-+	long unlocked = 0, locked = vpfn_pages(dma, iova, npage);
- 	long i;
+@@ -92,6 +92,7 @@ struct vfio_dma {
+ 	bool			iommu_mapped;
+ 	bool			lock_cap;	/* capable(CAP_IPC_LOCK) */
+ 	bool			vaddr_invalid;
++	bool			has_rsvd;	/* has 1 or more rsvd pfns */
+ 	struct task_struct	*task;
+ 	struct rb_root		pfn_list;	/* Ex-user pinned pfn list */
+ 	unsigned long		*bitmap;
+@@ -774,6 +775,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 	}
  
--	for (i = 0; i < npage; i++, iova += PAGE_SIZE) {
--		if (put_pfn(pfn++, dma->prot)) {
-+	for (i = 0; i < npage; i++)
-+		if (put_pfn(pfn++, dma->prot))
- 			unlocked++;
--			if (vfio_find_vpfn(dma, iova))
--				locked++;
--		}
--	}
+ out:
++	dma->has_rsvd |= rsvd;
+ 	ret = vfio_lock_acct(dma, lock_acct, false);
  
- 	if (do_accounting)
- 		vfio_lock_acct(dma, locked - unlocked, true);
+ unpin_out:
 -- 
 2.20.1
 
