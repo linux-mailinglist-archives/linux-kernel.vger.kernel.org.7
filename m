@@ -1,175 +1,163 @@
-Return-Path: <linux-kernel+bounces-724999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57772AFF99B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:21:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBC3AFF99C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E462166268
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:21:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 516E8B41968
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE3B281375;
-	Thu, 10 Jul 2025 06:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A980428750A;
+	Thu, 10 Jul 2025 06:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBVgd9jn"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u0VcIind";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WNlullci"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385A51F948;
-	Thu, 10 Jul 2025 06:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775871F948;
+	Thu, 10 Jul 2025 06:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752128487; cv=none; b=mc77uowgtMU5YMZhDUhGpIrYr8brCeReEO8Go2rXLkPnGUGicojnfDzkuap3niI8JkQ6TATnAn604vbJUzWV/GURToeJirbwVjePzLlGS7SUd+QN7lo7VAvTfQZOnBKDh81qm1EwwJp1zSiSNEM6nig9dNzXDcfj+sBZ4mhf8ZU=
+	t=1752128493; cv=none; b=Z3WBAK64J2OmiJmJbrK+yaWmEuTuFgJ5if6DTvzcQFlwcWni/cCJ80FDklv1sGrtEzWzSe6XPaPox3U55BAYCLcHzF2IPZ5un7Jbg9y/gMGLpCHCRGVHpvwW9qRddztqBwW1PA+bQuAJPHIhn/KbigKXSJwGpQfKZLgDquueos8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752128487; c=relaxed/simple;
-	bh=3VK0g5yX+5MXamCiciw8gTT2Y0ypYsIyeBfFgXcL4+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E3vJtREl0oa9cQA+QEdEKy9N9enq/+2ELfh39ORG/kIt98movshNaRopFWDKMvTGoTAM87qzqEWa+pfNQqQBP2k5/5lHT8jf29vhXbcuSquY+zzPDqQswOQtTyb+yQkxYgs2D1j9s1/PaU8nEmNMNUoWQm0mgtIpGwayHGYJz88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dBVgd9jn; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-53159d11cecso538732e0c.2;
-        Wed, 09 Jul 2025 23:21:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752128484; x=1752733284; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BG4giksOjxTPwU+J2iWDHmet2nmN8VvPq1vMXwURQq4=;
-        b=dBVgd9jnxIsr2vfB7yzynSkEEl+5P9/gP1WPdwXEcWwbIBrrr+XdHW7/rp4xoRwhCR
-         CcwkvjAcNGLgMgC3lO7/8GgN8FolTkxLCJ79rp83FXMjw1cQUvs5xDvs5D49ITxuU0yJ
-         YE59xKmgugTkLRLAQUkDQAFHRyqK067RnPENkRAVsQXNgrNQ/ccCIZn5Fa+4vpsy/yF2
-         kMKFozomfOVXU9SOLQrHKAKyrGyUNNT3CP9YscolDjlOXiSOzA0Ylo9oiMYa62AzFmzV
-         RfWilxrkQCuYy6btRqDAFkdpTw9DREGUwx/BtJJE91EKWiqjMEucGYBh6PHEPJXZ8a4n
-         mAnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752128484; x=1752733284;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BG4giksOjxTPwU+J2iWDHmet2nmN8VvPq1vMXwURQq4=;
-        b=huAzDBJ8eKQAAHBsma+GsOyzqnKjLOEP1KTarMUkbLic/rIOWWDJUMFyV/3Luwgyff
-         rGYnqHv/IIYY1ivMzWxV8PFrubV8S9NfXG/1AAkUSoa/XKlT1B8OAPZ1+dvCLwQro+17
-         p1tAzITYzaO6jh61/beaUkzKVIIaCwcGd3T+HtBMyIBMk7tT6U+JhSUqwP++X3xqevXR
-         6QBTI8bW5J/+NwXW7iwfNZzBKheZ4RAIzKP/JSjhXYyRNwQJHb6XxU6riOStr3FYKKsh
-         JR9Gngw7TQ3wg+8FiLNI5GNfdnHrpNSLIG9RTSgXCUFrR+xPjOT/6W/uOtpnPFzqZXmB
-         gw3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVrOCHa+ItIOGxNbnQPiCjzhxMQksoOsOlGj1SFZOYBrRtuTKtUo3wRlQ6g8GVmZT5daIQSlGot9DGJyFw=@vger.kernel.org, AJvYcCXYBfbM5CoRe6VHFJZatIoyTXDs6iNr8V+5BH7IhWdfe1UzBhqn454GBThTEmUrDmTq7ATUSBQot6trmg2Tw6+YgC0C@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx00ZBFqK6/FlUa+UOKOSNfTff62oeaqHIsc2qWaGdE8V6a3/Jk
-	Vw5a3c44CQ4PwM+hlpNa+hrFNBiAIhuB02IG0UT1+w7rXhxuDJpnQnYIdeSHH2nN7iNcyfi/6fA
-	VIBSmxNEIe5IHL3X7PAcMZS0A/W7caKc=
-X-Gm-Gg: ASbGncugGcC7nL3WGObEY1KBP3/nZ2dp17Gk3a6Cck6jtqfsnuvSykNYj/4YNBW8gUX
-	JnDzNWNNUYiuhTHXl45x0ty3c7LRhPAOVPTnfRg6iNqzDLj9yToQNum1iLIEtQd8SGEi9SgZs0h
-	dNyGddCLxIb/Cfid3XeRHgk60uIhWwVXV0FLJIfgU=
-X-Google-Smtp-Source: AGHT+IEgfvNN9FUwR3ZzrltKi9tZrr8t/tLqZDsrlrxTUcs2wTebLZttNZHuq1wo9nJSxTMEW3FjE5Desh6wAFxUVFQ=
-X-Received: by 2002:a05:6122:1ad0:b0:531:2906:752d with SMTP id
- 71dfb90a1353d-535d73ce217mr4038139e0c.11.1752128483540; Wed, 09 Jul 2025
- 23:21:23 -0700 (PDT)
+	s=arc-20240116; t=1752128493; c=relaxed/simple;
+	bh=HKk1TXT/elCUckABOi7nQjnbhFAoy0ksCF6kdatm9S0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FJZvcv1upWMXnT50VA03UVSdsc7dlqaktZb+g2044E04X22SX8loUGlmg5tbYCbOspJcIyRP/gKWC/e8s0t3pCLJe4uE1eBAPjQybFSYqm7eTl8709NYdVdHZXVNqIjYTMCZ54Dn1dvVLYWe5uNwRJ2L0/wfJfv9ZRAsIIg4w04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u0VcIind; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WNlullci; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 10 Jul 2025 08:21:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752128489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hoVDFEhzdw4xLmQyVO2AhjEgBOLroUBOpc+jt0DrQQ8=;
+	b=u0VcIindh9wkQ4btLIM4EIkuqFd0y7fVkxQh87q1QAgVkogt8WP1FvOcpUDRX8nyvVbYuM
+	Ahpj1z77RZdNV9YzINUwBC65H4HR3vsuDzEhgo84W02v7dAD7mspETwNAGgfQ2tEwktDZJ
+	gS8AFDhR0cmg667iEkIa9tZvtPgi4Z2jCCX0KZq2Of7whG+XOx4Rnm/0QxUVWguBnR0YUe
+	c09SRiG0SuYtoeTB5eyfRdx05ix+qKcFpJe4pEQ/Y1qFbFwlNmvt2KL34RUb2rR9H2HUie
+	huxiBXnokVyV7Ejx0YBBGKO7irHaTCTdjc+yKNNZW9YCvJeptKrKFh+P3R6xdg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752128489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hoVDFEhzdw4xLmQyVO2AhjEgBOLroUBOpc+jt0DrQQ8=;
+	b=WNlullciP7Aizocv9Sd+z3qURZ/QTbs22xiC17wMCXtGTg/UQs3RUx9CUeUepqFiglONEg
+	g3obNyvyIra+FZAg==
+From: Nam Cao <namcao@linutronix.de>
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+Message-ID: <20250710062127.QnaeZ8c7@linutronix.de>
+References: <20250527090836.1290532-1-namcao@linutronix.de>
+ <20250701-wochen-bespannt-33e745d23ff6@brauner>
+ <cda3b07998b39b7d46f10394c232b01a778d07a9.camel@xry111.site>
+ <20250710034805.4FtG7AHC@linutronix.de>
+ <20250710040607.GdzUE7A0@linutronix.de>
+ <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708-alex-fixes-v1-1-5b008d3f4d0c@rivosinc.com>
-In-Reply-To: <20250708-alex-fixes-v1-1-5b008d3f4d0c@rivosinc.com>
-From: Han Gao <rabenda.cn@gmail.com>
-Date: Thu, 10 Jul 2025 14:21:11 +0800
-X-Gm-Features: Ac12FXztJeD7IrDDbYBNj91A-BzmMZeUwgymejmbAOGChNwao1zJg6R95vGMKZc
-Message-ID: <CAAT7Ki-+xk-NDixFhSKNQ_zcfzkQMHfBODVuw_Q52ocJQAHaSQ@mail.gmail.com>
-Subject: Re: [PATCH] riscv: ftrace: Properly acquire text_mutex to fix a race condition
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <ziyao@disroot.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
 
-On Tue, Jul 8, 2025 at 4:34=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc.=
-com> wrote:
->
-> As reported by lockdep, some patching was done without acquiring
-> text_mutex, so there could be a race when mapping the page to patch
-> since we use the same fixmap entry.
->
-> Reported-by: Han Gao <rabenda.cn@gmail.com>
-> Reported-by: Vivian Wang <wangruikang@iscas.ac.cn>
-> Reported-by: Yao Zi <ziyao@disroot.org>
-> Closes: https://lore.kernel.org/linux-riscv/aGODMpq7TGINddzM@pie.lan/
-> Tested-by: Yao Zi <ziyao@disroot.org>
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Tested-by: Han Gao <rabenda.cn@gmail.com>
-> ---
->  arch/riscv/kernel/ftrace.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
-> index 4c6c24380cfd9d6c51f0e4340cd674160b83a610..22e7bdf8de2b6ca950cf2c8b7=
-34bc82ea46ba8bf 100644
-> --- a/arch/riscv/kernel/ftrace.c
-> +++ b/arch/riscv/kernel/ftrace.c
-> @@ -14,6 +14,16 @@
->  #include <asm/text-patching.h>
->
->  #ifdef CONFIG_DYNAMIC_FTRACE
-> +void ftrace_arch_code_modify_prepare(void)
-> +{
-> +       mutex_lock(&text_mutex);
-> +}
-> +
-> +void ftrace_arch_code_modify_post_process(void)
-> +{
-> +       mutex_unlock(&text_mutex);
-> +}
-> +
->  unsigned long ftrace_call_adjust(unsigned long addr)
->  {
->         if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_CALL_OPS))
-> @@ -29,10 +39,8 @@ unsigned long arch_ftrace_get_symaddr(unsigned long fe=
-ntry_ip)
->
->  void arch_ftrace_update_code(int command)
->  {
-> -       mutex_lock(&text_mutex);
->         command |=3D FTRACE_MAY_SLEEP;
->         ftrace_modify_all_code(command);
-> -       mutex_unlock(&text_mutex);
->         flush_icache_all();
->  }
->
-> @@ -149,6 +157,8 @@ int ftrace_init_nop(struct module *mod, struct dyn_ft=
-race *rec)
->         unsigned int nops[2], offset;
->         int ret;
->
-> +       guard(mutex)(&text_mutex);
-> +
->         ret =3D ftrace_rec_set_nop_ops(rec);
->         if (ret)
->                 return ret;
-> @@ -157,9 +167,7 @@ int ftrace_init_nop(struct module *mod, struct dyn_ft=
-race *rec)
->         nops[0] =3D to_auipc_t0(offset);
->         nops[1] =3D RISCV_INSN_NOP4;
->
-> -       mutex_lock(&text_mutex);
->         ret =3D patch_insn_write((void *)pc, nops, 2 * MCOUNT_INSN_SIZE);
-> -       mutex_unlock(&text_mutex);
->
->         return ret;
->  }
->
-> ---
-> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> change-id: 20250708-alex-fixes-1e719b9899f3
->
-> Best regards,
-> --
-> Alexandre Ghiti <alexghiti@rivosinc.com>
->
+On Thu, Jul 10, 2025 at 11:08:18AM +0800, Xi Ruoyao wrote:
+> After upgrading my kernel to the recent mainline I've encountered some
+> stability issue, like:
+> 
+> - When GDM started gnome-shell, the screen often froze and the only
+> thing I could do was to switch into a VT and reboot.
+> - Sometimes gnome-shell started "fine" but then starting an application
+> (like gnome-console) needed to wait for about a minute.
+> - Sometimes the system shutdown process hangs waiting for a service to
+> stop.
+> - Rarely the system boot process hangs for no obvious reason.
+> 
+> Most strangely in all the cases there are nothing alarming in dmesg or
+> system journal.
+> 
+> I'm unsure if this is the culprit but I'm almost sure it's the trigger.
+> Maybe there's some race condition in my userspace that the priority
+> inversion had happened to hide...  but anyway reverting this patch
+> seemed to "fix" the issue.
+> 
+> Any thoughts or pointers to diagnose further?
+
+I have been running this new epoll on my work machine for weeks by now
+without issue, while you seem to reproduce it reliably. I'm guessing that
+the problem is on some code path which is dead on my system, but executed
+on yours.
+
+I am curious if Gnome is using some epoll options which are unused on my
+system.
+
+I presume you can still access dmesg despite the freeze. Do you mind
+running the below patch, let me know what's in your dmesg? It may help
+identifying that code path.
+
+Best regards,
+Nam
+
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 895256cd2786..e3dafc48a59a 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -532,6 +532,9 @@ static long ep_eventpoll_bp_ioctl(struct file *file, unsigned int cmd,
+ 		WRITE_ONCE(ep->busy_poll_usecs, epoll_params.busy_poll_usecs);
+ 		WRITE_ONCE(ep->busy_poll_budget, epoll_params.busy_poll_budget);
+ 		WRITE_ONCE(ep->prefer_busy_poll, epoll_params.prefer_busy_poll);
++		printk("%s busy_poll_usecs=%d busy_poll_budget=%d prefer_busy_poll=%d\n",
++			__func__, epoll_params.busy_poll_usecs, epoll_params.busy_poll_budget,
++			epoll_params.prefer_busy_poll);
+ 		return 0;
+ 	case EPIOCGPARAMS:
+ 		memset(&epoll_params, 0, sizeof(epoll_params));
+@@ -2120,6 +2123,9 @@ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
+ 	struct epitem *epi;
+ 	struct eventpoll *tep = NULL;
+ 
++	printk("%s: epfd=%d op=%d fd=%d events=0x%x data=0x%llx nonblock=%d\n",
++		__func__, epfd, op, fd, epds->events, epds->data, nonblock);
++
+ 	CLASS(fd, f)(epfd);
+ 	if (fd_empty(f))
+ 		return -EBADF;
+diff --git a/io_uring/epoll.c b/io_uring/epoll.c
+index 8d4610246ba0..e9c33c0c8cc5 100644
+--- a/io_uring/epoll.c
++++ b/io_uring/epoll.c
+@@ -54,6 +54,8 @@ int io_epoll_ctl(struct io_kiocb *req, unsigned int issue_flags)
+ 	int ret;
+ 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
+ 
++	printk("%s flags=0x%x\n", __func__, issue_flags);
++
+ 	ret = do_epoll_ctl(ie->epfd, ie->op, ie->fd, &ie->event, force_nonblock);
+ 	if (force_nonblock && ret == -EAGAIN)
+ 		return -EAGAIN;
 
