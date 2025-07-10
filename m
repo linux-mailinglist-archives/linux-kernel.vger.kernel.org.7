@@ -1,117 +1,92 @@
-Return-Path: <linux-kernel+bounces-725141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892E5AFFB3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:45:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D856BAFFB40
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C561A3A4D97
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:45:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6113A8782
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C816B28A719;
-	Thu, 10 Jul 2025 07:45:36 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288DC28B4E2;
+	Thu, 10 Jul 2025 07:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gBHM3Wxy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD402248BE;
-	Thu, 10 Jul 2025 07:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795AF4A23;
+	Thu, 10 Jul 2025 07:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752133536; cv=none; b=a9EH2cFrVFkfvLeiVAkBrmIIAks5gcPG25rHQH6yKQ7FcR+aioZZpnGUfvTzrxvNUdGJ1s9He8XHvDASDJKa6b+2xPdelHWrWyWefFvd1GPcq7xoKk+aCjgbj1pP5GuJ55wzBdjmoWOEde42Zx2H2gduyM1DXY0rOiyBl3o4ZL0=
+	t=1752133555; cv=none; b=UNUahmZeNtAX6FGxAyCOReXJIb/yTdKkqMD9PtA9u19wWSYMTg+HX9y0lisCCNOezLiM0U8mtugjEqXP1uYeoapEW2wVPm+bil3JnfpcHvGKjgihFJ6HcnuD1A+U4aqUmseveYrJ5v2diU3Cc0ovYOAw7saa+coWYL9/1O0F8bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752133536; c=relaxed/simple;
-	bh=NV5y/BofAISyGUlHGlIjCJ0LG0tZLilDuSDy+VR3zag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ShBGPGvzSyA8Zb5FJRxd9w1/KwwmTulvrAGVK+djuT8BTgc8XRwNkcoO45s540uakJCDv8yGONXUaQHkryzJH13FOo6CeqFUkPpJtkF4bJJS9uQlET6xu1mB5Cp61g6srT036SZvwS3qx14cN0zFNCAJBgLt3GPcLn53qtVk0jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 41E0C44362;
-	Thu, 10 Jul 2025 07:45:26 +0000 (UTC)
-Message-ID: <6d7dad19-bf05-4109-93ac-7d688b390e1c@ghiti.fr>
-Date: Thu, 10 Jul 2025 09:45:25 +0200
+	s=arc-20240116; t=1752133555; c=relaxed/simple;
+	bh=YByCcDpGBTUYHamBUKc3M6t0s4XO0wxpUY0SsNzyjMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F6nOnda482mRhKYrFAy6qv3PuuUH0tWvXnaZLVNlusYjYJzJzo88hLvnpsqeBalbSJXivmiLJDeqP0etb7sv6BmBkb+TYqyt/0bh9XnFv8bkUEA+WIV9ZSrdMq20d9CisBGvoQY4KNXcWvsiaAtVKHsW7mjoC5bNADBEp4jJOHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gBHM3Wxy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE81C4CEE3;
+	Thu, 10 Jul 2025 07:45:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752133555;
+	bh=YByCcDpGBTUYHamBUKc3M6t0s4XO0wxpUY0SsNzyjMI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gBHM3WxyGhIzbjSE1mVJBP0gy2s+B2OjBP/C8qXPff7gpG69oSJ+J6X6zPFOX1Xbx
+	 4f6kjZu78sxO7Smh/TZxp6HX0+kGo6xMXQdnxLRvy2efDQzSlmHXgEqXI4xk0gYFar
+	 O482hQdu1CsJc8y+nhxlHmfqdrpOdehNumAg9o3qnmmTtKb0I5CbhG2R9ArQ4lkgk0
+	 8IinYrhbpgO2X9QmxRIXbeHYkRAKAhm+T7XVHVCPtN6fxiGERuPT56Ek6E2s+Ar5UJ
+	 bs7NWK2TfEKI8BuQUSXUx7EjvzGlZjcgqh9CQqNwqqrJXLa/cXFHuTofNBh7dmv91N
+	 TRMXs2BTpcW4A==
+Date: Thu, 10 Jul 2025 13:15:50 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Yu Jiaoliang <yujiaoliang@vivo.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: compress_offload: tighten ioctl command number
+ checks
+Message-ID: <aG9vrq8kRqfigzgm@vaman>
+References: <20250710063059.2683476-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Fix a segmentation fault also add raid6test for
- RISC-V support
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Charlie Jenkins <charlie@rivosinc.com>, Song Liu <song@kernel.org>,
- Yu Kuai <yukuai3@huawei.com>, linux-riscv@lists.infradead.org,
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250610101234.1100660-1-zhangchunyan@iscas.ac.cn>
- <8a1b1610-02b1-46a8-9a10-c19c1580c017@ghiti.fr>
- <CAAfSe-s1g8h+HpYz8FmW4n7h+hhi5W0_N-jpfAD5Ldai8NjwHw@mail.gmail.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <CAAfSe-s1g8h+HpYz8FmW4n7h+hhi5W0_N-jpfAD5Ldai8NjwHw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefleekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhephffhuddtveegleeggeefledtudfhudelvdetudfhgeffffeigffgkeethfejudejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmegsfehfudemjegtiegrmegsheduleemrghfsgdtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmegsfehfudemjegtiegrmegsheduleemrghfsgdtpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmegsfehfudemjegtiegrmegsheduleemrghfsgdtngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopeiihhgrnhhgrdhlhihrrgesghhmrghilhdrtghomhdprhgtphhtthhopeiihhgrnhhgtghhuhhnhigrnhesihhstggrshdrrggtrdgtnhdprhgtphhtthhop
- ehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheptghhrghrlhhivgesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeihuhhkuhgrihefsehhuhgrfigvihdrtghomh
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710063059.2683476-1-arnd@kernel.org>
 
-On 7/10/25 03:44, Chunyan Zhang wrote:
-> Hi Alex,
->
-> On Wed, 9 Jul 2025 at 23:18, Alexandre Ghiti <alex@ghiti.fr> wrote:
->> Hi Chunyan,
->>
->> Patch 2 was merged via fixes, do you plan on resending a new version for
->> 6.17 that takes into account Palmer's remarks?
-> Yes, I'm preparing the patches these days, just haven't figured out
-> how to set NSIZE properly for user space.
+On 10-07-25, 08:30, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The snd_compr_ioctl() ignores the upper 24 bits of the ioctl command
+> number and only compares the number of the ioctl command, which can
+> cause unintended behavior if an application tries to use an unsupprted
+> command that happens to have the same _IOC_NR() value.
+> 
+> Remove the truncation to the low bits and compare the entire ioctl
+> command code like every other driver does.
+> 
+> Fixes: b21c60a4edd2 ("ALSA: core: add support for compress_offload")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> I could not find any indication on why this driver did this in
+> the first place, it already was this way in the original commit
+> back in 2011.
 
+I guess I would have started from a bad template back then!
+Thanks for fixing this
 
-Just use hwprobe() to make sure V is supported and then csr_read(VLENB) 
-to retrieve this value, no?
-
-
->
-> I probably should split the patchset, send out one today.
->
-> Thanks,
-> Chunyan
->
->> Thanks,
->>
->> Alex
->>
->> On 6/10/25 12:12, Chunyan Zhang wrote:
->>> The first two patches are fixes.
->>> The last two are for userspace raid6test support on RISC-V.
->>>
->>> The issue fixed in patch 2/4 was probably the same which was spotted by
->>> Charlie [1], I couldn't reproduce it at that time.
->>>
->>> When running raid6test in userspace on RISC-V, I saw a segmentation fault,
->>> I used gdb command to print pointer p, it was an unaccessible address.
->>>
->>> With patch 2/4, the issue didn't appear anymore.
->>>
->>> [1] https://lore.kernel.org/lkml/Z5gJ35pXI2W41QDk@ghost/
->>>
->>> Chunyan Zhang (4):
->>>     raid6: riscv: clean up unused header file inclusion
->>>     raid6: riscv: Fix NULL pointer dereference issue
->>>     raid6: riscv: Allow code to be compiled in userspace
->>>     raid6: test: add support for RISC-V
->>>
->>>    lib/raid6/recov_rvv.c   |  9 +-----
->>>    lib/raid6/rvv.c         | 62 +++++++++++++++++++++--------------------
->>>    lib/raid6/rvv.h         | 15 ++++++++++
->>>    lib/raid6/test/Makefile |  8 ++++++
->>>    4 files changed, 56 insertions(+), 38 deletions(-)
->>>
+Acked-by: Vinod Koul <vkoul@kernel.org>
+-- 
+~Vinod
 
