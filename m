@@ -1,171 +1,144 @@
-Return-Path: <linux-kernel+bounces-725679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FFFFB0025D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:48:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F93B0025F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A8C2485765
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:47:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C44FC162E3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCE325F986;
-	Thu, 10 Jul 2025 12:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF40E25F96D;
+	Thu, 10 Jul 2025 12:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ps47QiwD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="008I4d/q"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hFU94fcN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE9B2D8DD3;
-	Thu, 10 Jul 2025 12:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9689A25DB0B
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752151602; cv=none; b=P3ZteSjPUbrqonnvJVdRnsAyqE9SVruhLoDXcLZtmvL8nZ0lncDrt6ZJLQ72D1fS5cEfwyfccd3/0u1+WHb4jvhhOl63MvnOJkx0sADyxbC08P8keuUtKV+TCg1Lrvk2hay56Db9Ye54u37PAGdWU1Qhst1NXFSGkFNAKxzQYpU=
+	t=1752151618; cv=none; b=WLONOiZqqqSOkJj1+ps2+PlNQN+Jye60KgoN/4tzJ47GHEemlxvejSTpo9apnmKfvA3Q7wqnImggLSGFoUPzKI+mojPQ9zAC9vGLtPiOuKwRwHsonQuWypHVRjbqLTvPN67km4T1aWPm9E/m7Gv0UUoEceTqIACTPjgmDmvwR+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752151602; c=relaxed/simple;
-	bh=KJ95/ixoEKTrEpTwpnM4EkqKGxqOUiVxAlMITtEOlxs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=KcLdiJpdAE9217fNgCIDQeJN1hvHK91ykmdErahD4+dMf4VbsjIqaPj9mfwc6A+CLlgn19ZG9Gch2WksHLZBz1An2saOSN6DkBjC9644XHlAnESCTcHUwmHaDSyWDDOo1UMes2XDkk8beelMvm4vngV9MpknEpoT2olzbCZfZrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ps47QiwD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=008I4d/q; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 10 Jul 2025 12:46:38 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752151599;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wJwWRCXTDhc7xXPU6R1E5m1q5hO7WXHDIlwWSaqWGGQ=;
-	b=ps47QiwDwO+kghQ9fsVuYHhCLkd4wdELsPuTwhpH6DuALoVoN2u+2BkCTw75tGojTNEZW2
-	JI+VHzZeN8j0s4bGD4Z94+KN41b/mGmHv7Hqb/L/LpYnOlgg7WSa9F+2VQoR4J0vCEYleT
-	KP7CINywWEUOCI0ObWo6Oy5nnCJwG764eE8fHnReJNQaQS/q5mft1xIQamp60tWujrrV4i
-	notOXPwTDt5P/+wbdAYPxxvUse9dsBlRcVDYBBCG5mfRVRmPQfeCsmXt2jdpf79M7aiVo+
-	AjJA/JZAJux1kl6HqInvaMHV+rKidUXYTXeT4GC8vFI3bAWwpiCHn+6WccEjgw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752151599;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wJwWRCXTDhc7xXPU6R1E5m1q5hO7WXHDIlwWSaqWGGQ=;
-	b=008I4d/q8Nboy6swIbFbVPFWQwxVcdkZoXBqBV7Qwerg6fvcgFLTQPvKnXtdiQUztHsI4y
-	bqP4RAC7Gjlm/oBg==
-From: "tip-bot2 for Chris Mason" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Bump sd->max_newidle_lb_cost when
- newidle balance fails
-Cc: Chris Mason <clm@fb.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250626144017.1510594-2-clm@fb.com>
-References: <20250626144017.1510594-2-clm@fb.com>
+	s=arc-20240116; t=1752151618; c=relaxed/simple;
+	bh=na+u8g59eooGkQR29QZfM0thwy/I+CVeSWbBhPqsdd8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ea/hNZ5P4M7125da1+PmQMYENrJ2dau9kyDtGD9Galvz3P5GqU9UT7emBNEuwMQsBGPOz5FTVJvLKeMSnSyRHzZ2j4C6+TZM3szJ96kbw4QuhWqwsI1vd7rGywLqvmV6ePkWJe44nEs3q0Njy1Nhd+V5mTun2Rz3RpDXzvinHnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hFU94fcN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A9YAvd002616
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:46:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JtA4kuwweCCzbSwKPwc94SCzNcShIngig3W8sfl7IDU=; b=hFU94fcNH0RxHwCg
+	HFGHrz6MPMYYMndzbGlACDmvwsDGTYSijgIVdSvK1+4Q6rm4k7EAh02keip5wKfv
+	oJ27WAMVSi+ZeYZSjdGXHj5aH9XnBsptU438zEAHuzr1O9J8drCeEJ3muG1qXSh3
+	/MlAPX9kqou7Aj6Q6kWFQ+mXImW4jQnmweZIKVzUC5KYA/0bMPm8qPWeczWlf/6U
+	DYKCMmowZznvWV89fjL7N8a9rgDK/e3L7n4iB5pVv5ccRCtFMUGkaBrR5VfgiGrB
+	YQG892Xi12iv70HKn/uPZn2RS8hwxz0vhG/Hxe6nmQms38szSwQStWYvqsKkx7Fh
+	/6Bfow==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pu2bg8j2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:46:55 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d097083cc3so24418285a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:46:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752151614; x=1752756414;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JtA4kuwweCCzbSwKPwc94SCzNcShIngig3W8sfl7IDU=;
+        b=sth/yogzl6gVExafca9U5Hl5HAg1YA0AvesxIFpZuakMTRSJtzbZ/1GjqOqm1xgt/n
+         zLLBrsVSU3nX4LccWzh6apcVH0ZAuvDIrGFF91L8vink1Yig8iWyQYwjfLQxHMMcsmyC
+         LSrINyqDVE96xvDesVIsJR4Ti+Mpgci9+usuNmkyfcFpmWuX9dAnLxNQ1t395EDjq6nQ
+         aiS08YtOl2NgVozXrGKvqMeqYjCb0cItTRN1CGeSVpQXHRIlSbhVIb/txXksFrmA+Xu3
+         6MZ0QbjVspfU9TOJpxNe7e5dH7xhkM94MBFO7xurqKx2olVQI7vytJAP+kUib0gpjQGg
+         74qA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4rr3v5AF3l1AH13rahKooMp0prnMMF2l8fGsWG6Kl9fDfNZxRP9MieXRgq42T/IVHsjZflSYxzuXa9wc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo6s56eezga6lV4/HmnR17loXkpvD7GE/eIo/p6fpOyxRZNwvp
+	UN3Rl9MX4U/3e1vTGXoI2yqb9I9NYJ3ZEgkBt4A4IEuhxoRfxdHQehjC6s13zqjGFkRseqwQm39
+	U2UiDjgGoXNPqzSPF8wAECFBmFYMH8dwLFSIJdvKacVLxQ1u4oZVW+o1NgW8H2/jpEr8=
+X-Gm-Gg: ASbGncuisDXeOgIjFNkA6NJ6FJe1eAjVBGfzioPTByQqgxNCwYYcaM5ubDZsUw3YhxQ
+	EcjPBHSZe6aDmW5lbZ9ljP3w5BmohUvQRperSl/Ehk3HAWaWl9u8jOs7dquybXpIcSBvZng9xDm
+	TCZNuBgOwJkIR1iXgRpntCSMcUfgBQBMrryywI1DQoQSR4g5w7lym9INxz97stO74olyL03ee55
+	ETgGctTUkHNmgdEyp2z1OuMrP4D3qJPQjoGyY9kDnYDV4E7xnx5FFImdrjqR2AbgUvxypCMArHf
+	Ci9/46UvewOpGdT/kty2FyyiwRHkjKwyRPXge8sFOCPS2iCMQhb2InyE24eOmgM3AjdNy45XlfV
+	21O8=
+X-Received: by 2002:a05:620a:488e:b0:7d4:4aac:33cd with SMTP id af79cd13be357-7db90552afbmr345643285a.13.1752151614540;
+        Thu, 10 Jul 2025 05:46:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2fKFA127cNTfsAIaYwVMHS86Ycrn1vr4U6fqBaR9/PrG8hz7GzSfVNTjRbbEfFWJGJLsDug==
+X-Received: by 2002:a05:620a:488e:b0:7d4:4aac:33cd with SMTP id af79cd13be357-7db90552afbmr345640985a.13.1752151613874;
+        Thu, 10 Jul 2025 05:46:53 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7f15803sm127935166b.70.2025.07.10.05.46.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 05:46:53 -0700 (PDT)
+Message-ID: <f80d4e32-0f28-4a90-9db4-05c95e260658@oss.qualcomm.com>
+Date: Thu, 10 Jul 2025 14:46:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175215159821.406.2234522247248219338.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] bus: host: mhi: Need to honor sys_err at power_up
+ state
+To: Vivek.Pernamitta@quicinc.com, Manivannan Sadhasivam <mani@kernel.org>
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vivek Pernamitta <quic_vpernami@quicinc.com>
+References: <20250710-sriov_vdev_next-20250630-v2-0-4bd862b822e8@quicinc.com>
+ <20250710-sriov_vdev_next-20250630-v2-5-4bd862b822e8@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250710-sriov_vdev_next-20250630-v2-5-4bd862b822e8@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDEwOSBTYWx0ZWRfX9zWuZ3/Xyin1
+ DUpJlKFaLjIb9GsSN30L4B+vB7a79Pp6h9Ir6m8cxpJilbZZaxT8a3VGbuNKZdRu8+OChFn52Tb
+ dN908bZAZOq3YJlJBYQ+CljVDSNxZPskcTwYsjHN+yQMwuObMGQweYvfOjYX0+o51nj273bhy0K
+ R73e73icqrHh6ubYNo1hgGjbvV5M8BeUnDLiUtq97FDhEe5fTNzV79n41RWBzKWqi0y127f5wY5
+ hDVJmLiE5WLTRfMfPBYg9JeMr84Li5HvXsTRGeSEC2Os3gHLiLpuGkzfSlhcAIwtTZ9yODVJE9f
+ +XHnUoHe4SZLITTilcYn4y+V08DA2wTWVWu4O+kmGaA6MGrxL+XWkYMu94eLCkY5KQOVL2NyRe/
+ DU/zXdmfre685D8RiRUmfyXrezyKAjqA2excu/XpewAW6pBBqqP9LKhTSvXmVyZA0BUcrm0r
+X-Proofpoint-ORIG-GUID: lHFIIVZyCxh1Y318Hbn1avqvvQ85qMss
+X-Proofpoint-GUID: lHFIIVZyCxh1Y318Hbn1avqvvQ85qMss
+X-Authority-Analysis: v=2.4 cv=erTfzppX c=1 sm=1 tr=0 ts=686fb63f cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=oYOKNLqQD3L5wEaBywQA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_02,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 clxscore=1015 impostorscore=0 spamscore=0 priorityscore=1501
+ mlxlogscore=999 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
+ lowpriorityscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507100109
 
-The following commit has been merged into the sched/core branch of tip:
+On 7/10/25 10:58 AM, Vivek.Pernamitta@quicinc.com wrote:
+> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> 
+> In mhi_sync_power_up() host waits for device to enter in to mission mode
+> but SYS_ERR is an valid state, If device sends an SYS_ERR host will bail
+> out for wait_event_timeout() as MHI is in error state and if MHI is tear
+> downed sys err cant't be serviced and mhi can't be recovered.
+> 
+> If there is any SYS_ERR, sys_err handler needs to process SYS_ERR state
+> and queues the next state transition for device to bring in to Mission
+> mode, so mhi_sync_power_up() needs to wait for device to enter in to
+> mission mode.
 
-Commit-ID:     155213a2aed42c85361bf4f5c817f5cb68951c3b
-Gitweb:        https://git.kernel.org/tip/155213a2aed42c85361bf4f5c817f5cb68951c3b
-Author:        Chris Mason <clm@fb.com>
-AuthorDate:    Thu, 26 Jun 2025 07:39:10 -07:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 09 Jul 2025 13:40:21 +02:00
+This is very difficult to read, please rephrase the commit message
 
-sched/fair: Bump sd->max_newidle_lb_cost when newidle balance fails
-
-schbench (https://github.com/masoncl/schbench.git) is showing a
-regression from previous production kernels that bisected down to:
-
-sched/fair: Remove sysctl_sched_migration_cost condition (c5b0a7eefc)
-
-The schbench command line was:
-
-schbench -L -m 4 -M auto -t 256 -n 0 -r 0 -s 0
-
-This creates 4 message threads pinned to CPUs 0-3, and 256x4 worker
-threads spread across the rest of the CPUs.  Neither the worker threads
-or the message threads do any work, they just wake each other up and go
-back to sleep as soon as possible.
-
-The end result is the first 4 CPUs are pegged waking up those 1024
-workers, and the rest of the CPUs are constantly banging in and out of
-idle.  If I take a v6.9 Linus kernel and revert that one commit,
-performance goes from 3.4M RPS to 5.4M RPS.
-
-schedstat shows there are ~100x  more new idle balance operations, and
-profiling shows the worker threads are spending ~20% of their CPU time
-on new idle balance.  schedstats also shows that almost all of these new
-idle balance attemps are failing to find busy groups.
-
-The fix used here is to crank up the cost of the newidle balance whenever it
-fails.  Since we don't want sd->max_newidle_lb_cost to grow out of
-control, this also changes update_newidle_cost() to use
-sysctl_sched_migration_cost as the upper limit on max_newidle_lb_cost.
-
-Signed-off-by: Chris Mason <clm@fb.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-Link: https://lkml.kernel.org/r/20250626144017.1510594-2-clm@fb.com
----
- kernel/sched/fair.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7e2963e..ab0822c 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -12064,8 +12064,14 @@ static inline bool update_newidle_cost(struct sched_domain *sd, u64 cost)
- 		/*
- 		 * Track max cost of a domain to make sure to not delay the
- 		 * next wakeup on the CPU.
-+		 *
-+		 * sched_balance_newidle() bumps the cost whenever newidle
-+		 * balance fails, and we don't want things to grow out of
-+		 * control.  Use the sysctl_sched_migration_cost as the upper
-+		 * limit, plus a litle extra to avoid off by ones.
- 		 */
--		sd->max_newidle_lb_cost = cost;
-+		sd->max_newidle_lb_cost =
-+			min(cost, sysctl_sched_migration_cost + 200);
- 		sd->last_decay_max_lb_cost = jiffies;
- 	} else if (time_after(jiffies, sd->last_decay_max_lb_cost + HZ)) {
- 		/*
-@@ -12757,10 +12763,17 @@ static int sched_balance_newidle(struct rq *this_rq, struct rq_flags *rf)
- 
- 			t1 = sched_clock_cpu(this_cpu);
- 			domain_cost = t1 - t0;
--			update_newidle_cost(sd, domain_cost);
--
- 			curr_cost += domain_cost;
- 			t0 = t1;
-+
-+			/*
-+			 * Failing newidle means it is not effective;
-+			 * bump the cost so we end up doing less of it.
-+			 */
-+			if (!pulled_task)
-+				domain_cost = (3 * sd->max_newidle_lb_cost) / 2;
-+
-+			update_newidle_cost(sd, domain_cost);
- 		}
- 
- 		/*
+Konrad
 
