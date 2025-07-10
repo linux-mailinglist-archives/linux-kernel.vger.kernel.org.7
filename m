@@ -1,80 +1,105 @@
-Return-Path: <linux-kernel+bounces-726235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6ECB009E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:27:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560F8B009E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E935A4AB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:27:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B98F7B82EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00962F0C67;
-	Thu, 10 Jul 2025 17:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5CE2F0C7A;
+	Thu, 10 Jul 2025 17:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2+bfG1V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DLZQuBOV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504D9199BC;
-	Thu, 10 Jul 2025 17:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368E4199BC;
+	Thu, 10 Jul 2025 17:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752168458; cv=none; b=F9as3LXMKT4SOBBEgNgjiDFKD2RVmcnmU/16i0rhMUDLCsm7B1M28dXwfCVu/xCJw97D7DFLxc9/mVs5jIVJHATWvkmqy6rF0QduOYe9xIAWDruZexFbLITU8J+38tMgOIUq0+QFdr2cNg6Sofnmwvnj+q24fEdIj2U+J4n1M+U=
+	t=1752168508; cv=none; b=EAhy1XEIZqdRMyD+HLNQO/sQ5+4jXiTHzC/R1Cc7ugSid/v7ZxJ2DCf/+3sboVNvlVPT6HEThK7YOSWg7fBN05Va73YTUAHY+OIGBAI4x3JoO9MlxKOWLrDHWju8hOVpQfwANf7auQ4pVRWGXfIx8ce9+lk9BmtnAz1ruVeHbZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752168458; c=relaxed/simple;
-	bh=Ki0dO+ZHrOXQSdg82yLFgWjl+hbvkKi5tN2LS0Hq8Kg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UNmZjypx6q+tw97Go9N92KN1KLBVGXNdw0vPP8bTAZqXA/XJGYIyB5InQ7OLX9V/1CBWhJJr6k6oUkWI5p3QDE5u4wJ+HHhxhfYZAVWsDDW9BUzYnv5/1Ur84r2RGZFaM9y4A5LK2TMru/pG8XhAKCCIPXXy4757LyN/bYDDhoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2+bfG1V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E98C4CEE3;
-	Thu, 10 Jul 2025 17:27:35 +0000 (UTC)
+	s=arc-20240116; t=1752168508; c=relaxed/simple;
+	bh=AwA55W9+gm6iz71BET86U2X3eLl34NRDjvbJ7Mlg8hY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QQIORf400a6HoAQIGMAk7Si7NjL+HZsCBYOSpeyith9Rspt9KPIo56Wrod/0co5XAq0Kb0emDw2TTc1qdOkh76GdDGCdaIHVreWJDpoB3zvozc0AfjaYHm+HiqO18PGfugiyJIplhNiS3YLhvNshTZ9kvO0JzwfpN4ckXE60b8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DLZQuBOV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B8EAC4CEE3;
+	Thu, 10 Jul 2025 17:28:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752168455;
-	bh=Ki0dO+ZHrOXQSdg82yLFgWjl+hbvkKi5tN2LS0Hq8Kg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=n2+bfG1VM+GeESruDToH2rAPXmg7nFFxVy9aJ0ozCYIz3lpCzDE378ZAb/e2KIQES
-	 u+r+nVu7J+KW9NNBOP35dVowYn1xS0fmvKjTc3I/1pNoJY80ha9mQDLtJowksRC5hX
-	 Ej+h5hj8YDvXoAPIpul3KwKiFaITY80hHqgtpJN7s3kq62l7seFTbyZp++rJoZOyeY
-	 lOCcXzp6aOn0glElgxtVW6xYSPqZqxf4EssP6TpU3o5b30DceqotT2Rdsircoq1d04
-	 zCRfq5FJhRLS7LhOyUnlG347YWKPeICiWO6/Mr8nAVvqUVLTxXDwa0MscfucKU/EEd
-	 7fREVy7eBB1Cg==
-From: Namhyung Kim <namhyung@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, acme@kernel.org, 
- Thomas Richter <tmricht@linux.ibm.com>
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com, 
- hca@linux.ibm.com, japo@linux.ibm.com, 
- Ingo Franzki <ifranzki@linux.ibm.com>
-In-Reply-To: <20250709072452.1595257-1-tmricht@linux.ibm.com>
-References: <20250709072452.1595257-1-tmricht@linux.ibm.com>
-Subject: Re: [PATCH] perf list: Remove trailing A in PAI crypto event 4210
-Message-Id: <175216845541.481342.17562031483386057762.b4-ty@kernel.org>
-Date: Thu, 10 Jul 2025 10:27:35 -0700
+	s=k20201202; t=1752168507;
+	bh=AwA55W9+gm6iz71BET86U2X3eLl34NRDjvbJ7Mlg8hY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DLZQuBOVM7z1ub2QZgn2BpMj8Mw6rEWAZRIgkLTzSnC0YzSoJ+l/RaD7QSlPNWO0a
+	 1hEqUU40KmqWac29DAzk0nhlUvSZkE1UuLq0YU3wih+nQbfV7TqPeVqNaDcAiq3JqK
+	 HUwz+pbBLYyAhQYfonu1/mrcxno2mCwQ3s79NuvfAykZxbZw4+jx3EmQ5tQ5MY9y9h
+	 DgRXW2Mg4Pj9oZhCwbX6Pw2odh8+K+B7xfhLItEaadqoLxh80uQVCi3O7KpMzd1e2Z
+	 KMnbGjDT022efxgRxdHJrXVPytF7XUnK6ZsWl5FzC1ZWkXhZ2O/EbvLTRyzgjS+5JK
+	 sfRNwXFE17f3Q==
+Date: Thu, 10 Jul 2025 10:28:25 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Song, Yoong Siang" <yoong.siang.song@intel.com>
+Cc: Stanislav Fomichev <stfomichev@gmail.com>, Daniel Borkmann
+ <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, "David S
+ . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, "Stanislav Fomichev" <sdf@fomichev.me>, Andrii
+ Nakryiko <andrii@kernel.org>, "Martin KaFai Lau" <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Hao
+ Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko
+ <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, Magnus Karlsson
+ <magnus.karlsson@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>, "Fijalkowski, Maciej" <maciej.fijalkowski@intel.com>,
+ Jonathan Lemon <jonathan.lemon@gmail.com>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>, "linux-doc@vger.kernel.org"
+ <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "bpf@vger.kernel.org"
+ <bpf@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+ <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH bpf-next,v3 2/2] selftests/bpf: Enhance XDP Rx metadata
+ handling
+Message-ID: <20250710102825.744f2653@kernel.org>
+In-Reply-To: <IA3PR11MB92540CF6DB5BCFD34384A280D848A@IA3PR11MB9254.namprd11.prod.outlook.com>
+References: <20250702165757.3278625-1-yoong.siang.song@intel.com>
+	<20250702165757.3278625-3-yoong.siang.song@intel.com>
+	<77463344-1b1a-443a-97be-a7ef8a88b8af@kernel.org>
+	<IA3PR11MB92546301B67FB3A9FDCD716DD842A@IA3PR11MB9254.namprd11.prod.outlook.com>
+	<88a64a65-bd8c-4b73-af19-6764054d4572@kernel.org>
+	<f5d724ab-0eb6-41a1-b694-8aea566e99ab@iogearbox.net>
+	<aGvhzDLSuOolCCWW@mini-arch>
+	<27edae8a-f1a8-4000-ac1e-fd4d5b01e807@iogearbox.net>
+	<aG6Y1J9Li2DdjqWv@mini-arch>
+	<IA3PR11MB92540CF6DB5BCFD34384A280D848A@IA3PR11MB9254.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c04d2
 
-On Wed, 09 Jul 2025 09:24:52 +0200, Thomas Richter wrote:
-> According to the z16 and z17 Principle of Operation documents
-> SA22-7832-13 and SA22-7832-14 the event 4210 is named
->    PCC_COMPUTE_LAST_BLOCK_CMAC_USING_ENCRYPTED_AES_256
-> without a trailing 'A'. Adjust the json definition files
-> for this event and remove the trailing 'A' character.
->    PCC_COMPUTE_LAST_BLOCK_CMAC_USING_ENCRYPTED_AES_256A
-> 
-> [...]
-Applied to perf-tools-next, thanks!
+On Thu, 10 Jul 2025 15:35:32 +0000 Song, Yoong Siang wrote:
+> Would it be advisable to update the documentation to indicate that
+> drivers are expected to copy any device-reserved metadata from the
+> metadata area? This would ensure that xdp_buff->data_meta is equal
+> to xdp_buff->data before a BPF program is executed. This approach
+> would allow BPF programs to freely manipulate the metadata area
+> in XDP_REDIRECT scenarios.
 
-Best regards,
-Namhyung
+Documenting sounds good.
 
+> Additionally, I am uncertain about the need to overriding metadata in
+> XDP_PASS scenarios. Should BPF programs refrain from overriding the
+> metadata in this case?
 
+IIRC XDP_PASS was the initial use case for the metadata area.
+The driver needs to evacuate any HW metadata before handing over
+to the XDP program.
 
