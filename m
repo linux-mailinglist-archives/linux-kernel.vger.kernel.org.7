@@ -1,143 +1,217 @@
-Return-Path: <linux-kernel+bounces-725771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E685B003CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:39:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AFCB003B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 086345A825C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:37:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7511D1C809AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B55925C6EE;
-	Thu, 10 Jul 2025 13:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nt+Z+pcL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AB225A35A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D84425EF81;
+	Thu, 10 Jul 2025 13:36:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E756025B2FD;
 	Thu, 10 Jul 2025 13:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752154560; cv=none; b=jpYL0s4Lq+Q9V9rsUDYPWL2hFdFY/9smu1gsI7muI8ADSn0VurByiMpq+MkRip1kc1IrpcxJ37fsBm3LUiRR3TV9uDD3SM/T3Z1zHR3YP6FKWloyekeUO4vObn/ZYrR4SfmLFAZfU9jwWSw0MDh5KV33yqYC3eVpTYYrU3YZt2A=
+	t=1752154563; cv=none; b=DYis5aJwCvMRbJu/ZzeeB1vv6XOjQRBq8X8VhKkwHsCc5HNZ70KUFQiHDKEE86ANZXT51ovwQq6aI+r3OMzBF5wmJM8lY1rlXiiLAI31KiTNKdftAkOOQt1b14A/hqE7e8w8+y0lf9a8KmEx7LOrxDCiEM18cO+wivsk82qHEpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752154560; c=relaxed/simple;
-	bh=+AU3DxQgY2nRlVbz8KuRJNuN6I9N6zihEdEp8cRzFz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aPnEpTwRb1ejU2dOtJR3Xwa6AHq/8xEj55FWZiTCYZ3eyBbadSv6PiyUu8UrCi2JInhodaUzPPN8Wqrhd8Ifup2eSYHKbKb/2qy0KO88SFFlDwENzkA6SpXFNZkkKBjS02zzBbc3biO7EqKUwoNi+Par/uPKYObhWrMod6o9cCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nt+Z+pcL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB17C4CEE3;
-	Thu, 10 Jul 2025 13:35:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752154560;
-	bh=+AU3DxQgY2nRlVbz8KuRJNuN6I9N6zihEdEp8cRzFz8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Nt+Z+pcLaUbN5oDFGl0O/48DR3CK1AogfcvHMn/FPWnjEbS6TrQBslOe2Xgvuvfsh
-	 4oFh/VNzRlzC/GScMjqQNHjm5XUooVFzcF1PLHcFVPCydS89o1tLWuT+4S7iaYajuc
-	 P0cBogKWvOBLNC+Nlwoffyfc7edKgS1OWhUERQeKTdkdyNR6ZXUts+lw4u77P8pFqG
-	 Es0Zp044K40dnQ4EputGF0tIKHyR/nZYJ59iZmVaqXtgNqvDyRzvtPEOuQnZfTQ/ue
-	 RD/TQ0ag1iq/vF16TFUxtBrZLvuwTW70IbHQRFrs3RTSyoh8J4LzULloOAtd0CO6IC
-	 jzkdAEmdgjXTg==
-Message-ID: <43023f6f-2a02-4c5c-8f45-66ff7df1e8ad@kernel.org>
-Date: Thu, 10 Jul 2025 15:35:51 +0200
+	s=arc-20240116; t=1752154563; c=relaxed/simple;
+	bh=n8LT2zdLHtYhseIIoECgxMHsDjpoPMt0hJx24y56p3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I1cJ0lzPbS3oUayZIy0bh0qfS6CbJg+QOSCWIHTw4vs+GkMhwYLjGfoeLcedHx+qnA4PI6kizEy1i7winrTp1ZZ5j348SJwgJEXpkvNOQXEevqZXLJkd77vc6bahz4aHf3GrUGr1NYn4AZFqqatWHqaXNFZEjiCsPDDdOs7G2BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13EDB1EA6;
+	Thu, 10 Jul 2025 06:35:49 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7AE63F6A8;
+	Thu, 10 Jul 2025 06:35:59 -0700 (PDT)
+Date: Thu, 10 Jul 2025 14:35:57 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, ankita@nvidia.com,
+	bwicaksono@nvidia.com, rmk+kernel@armlinux.org.uk,
+	catalin.marinas@arm.com, linux-serial@vger.kernel.org,
+	rmikey@meta.com, linux-arm-kernel@lists.infradead.org,
+	usamaarif642@gmail.com, linux-kernel@vger.kernel.org,
+	paulmck@kernel.org
+Subject: Re: arm64: csdlock at early boot due to slow serial (?)
+Message-ID: <20250710133557.GA1093654@e132581.arm.com>
+References: <aGVn/SnOvwWewkOW@gmail.com>
+ <aGZbYmV26kUKJwu_@J2N7QTR9R3>
+ <aGaQBghdAl8VGWmV@gmail.com>
+ <aGawTd8N2i8MDCmL@J2N7QTR9R3>
+ <aG0kYjl/sphGqd4r@gmail.com>
+ <juiog3337iozva23zpf4apdydegj4z7jibqykfvcgnkabemw4w@z5g5hhwrqr2w>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: media: i2c: Add ov2735 sensor
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
- sakari.ailus@linux.intel.com, krzk+dt@kernel.org,
- kieran.bingham@ideasonboard.com
-Cc: dave.stevenson@raspberrypi.com, pratap.nirujogi@amd.com,
- laurent.pinchart@ideasonboard.com, tarang.raval@siliconsignals.io,
- Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Ricardo Ribalda <ribalda@chromium.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?=
- <git@apitzsch.eu>, Arnd Bergmann <arnd@arndb.de>,
- Dongcheng Yan <dongcheng.yan@intel.com>,
- Jingjing Xiong <jingjing.xiong@intel.com>,
- Matthias Fend <matthias.fend@emfend.at>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hans de Goede <hansg@kernel.org>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250710131107.69017-1-hardevsinh.palaniya@siliconsignals.io>
- <20250710131107.69017-2-hardevsinh.palaniya@siliconsignals.io>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250710131107.69017-2-hardevsinh.palaniya@siliconsignals.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <juiog3337iozva23zpf4apdydegj4z7jibqykfvcgnkabemw4w@z5g5hhwrqr2w>
 
-On 10/07/2025 15:10, Hardevsinh Palaniya wrote:
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - avdd-supply
-> +  - dovdd-supply
-> +  - dvdd-supply
-> +  - port
+Hi Breno,
 
-Now  I looked at your driver and the code clearly says that GPIOs are
-not optional.
+On Wed, Jul 09, 2025 at 07:23:44AM -0700, Breno Leitao wrote:
+> On Tue, Jul 08, 2025 at 07:00:45AM -0700, Breno Leitao wrote:
+> > On Thu, Jul 03, 2025 at 05:31:09PM +0100, Mark Rutland wrote:
+> > 
+> > Here is more information I got about this problem. TL;DR: While the
+> > machine is booting, it is throttled by the UART speed, while having IRQ
+> > disabled.
+> 
+> quick update: I've identified a solution that significantly improves the
+> situation. I've found that the serial issue was heavily affecting boot
+> time, which is unleashed now.
+> 
+> After applying the following fix, the boot speed has improved
+> dramatically. It's the fastest I've seen, and the CSD lockups are gone.
 
-You really need to sync the binding in the driver. They cannot define
-completely different ABI.
+Thanks for trying to fix the issue.
 
-Best regards,
-Krzysztof
+> If no concerns raise in the next days, I will send it officially to the
+> serial maintainers.
+
+I am not an expert on the PL011 driver, however, I do have concerns
+after review the change. Please see my comments below.
+
+> Author: Breno Leitao <leitao@debian.org>
+> Date:   Wed Jul 9 05:57:06 2025 -0700
+> 
+>     serial: amba-pl011: Fix boot performance by switching to console_initcall()
+> 
+>     Replace arch_initcall() with console_initcall() for PL011 driver initialization
+>     to resolve severe boot performance issues.
+
+pl011_init() registers as an AMBA device, so the PL011 driver depends
+on the AMBA bus initialization. The AMBA bus is initialized with:
+
+    postcore_initcall(amba_init);
+
+Therefore, the PL011 driver is initialized with arch_initcall(), which
+occurs later than the postcore init.
+
+My understanding is that console_initcall() is invoked much earlier
+than other initcalls triggered by do_initcalls(). With your change, I
+saw the PL011 driver fails to register on Juno-r2 board, due to AMBA bus
+driver is not ready for a console init.
+
+  Driver 'uart-pl011' was unable to register with bus_type 'amba'
+  because the bus was not initialized.
+
+>     The current arch_initcall() registration causes the console to initialize
+>     before the printk subsystem is ready, forcing the driver into atomic mode
+>     during early boot. This results in:
+> 
+>     - 5-8 second boot delay while ~700 boot messages are processed
+>     - System freeze with IRQs disabled during message output
+>     - Each character transmitted synchronously with cpu_relax() polling
+> 
+>     This is what is driving the driver to atomic mode in the early boot:
+> 
+>       static inline void printk_get_console_flush_type(struct console_flush_type *ft)
+>       {
+>             ....
+>             if (printk_kthreads_running)
+>                     ft->nbcon_offload = true;
+> 
+>     The atomic path processes each character individually through
+>     pl011_console_putchar(), waiting for UART transmission completion
+>     before proceeding. With only one CPU online during early boot,
+>     this creates a bottleneck where the system spends excessive time
+>     in interrupt-disabled state.
+
+The atomic path is introduced recently by the commit:
+
+  2eb2608618ce ("serial: amba-pl011: Implement nbcon console")
+
+My conclusion is that changing the initcall will not disable the atomic
+path, changing to console_initcall() will cause AMBA device init
+failure, and as a result, the clock operations will not be invoked.
+Thus, I am curious if you have ruled out the issue is caused by the UART
+clock (as I mentioned in another reply).
+
+BTW, since the atomic path is enabled in the commit 2eb2608618ce, what
+is the result after reverting the commit?
+
+Thanks,
+Leo
+
+>     Here is how the code looks like:
+> 
+>       1) disable interrupt
+>       2) for each of these 700 messages, call pl011_console_write_atomic()
+>       3) for each character in the message, calls pl011_console_putchar(),
+>          which waits for the character to be transmitted
+>       4) once all the line is transmitted, wait for the UART to be idle
+>       5) re-enable interrupt
+> 
+>     Here is the code representation of the above:
+> 
+>             pl011_console_write_atomic() {
+>                     ...
+>                     // For each char in the message
+>                     pl011_console_putchar() {
+>                             while (pl011_read(uap, REG_FR) & UART01x_FR_TXFF)
+>                                     cpu_relax();
+>                     }
+>                     while ((pl011_read(uap, REG_FR) ^ uap->vendor->inv_fr) & uap->vendor->fr_busy)
+>                             cpu_relax();
+> 
+>     Using console_initcall() ensures proper initialization order,
+>     allowing the printk subsystem to use threaded output instead
+>     of atomic mode, eliminating the performance bottleneck.
+> 
+>     Performance improvement: 16x faster kernel boot time at my GRACE SoC
+>     machine.
+> 
+>       - Before: 10.08s to reach init process
+>       - After: 0.62s to reach init process
+> 
+>     Here are more timing details, collected from Linus' upstream, where the
+>     only different is this patch:
+> 
+>     Linus upstream:
+>       [    0.616203] printk: legacy console [netcon_ext0] enabled
+>       [    0.627469] Run /init as init process
+>       [    0.837477] loop: module loaded
+>       [    8.354803] Adding 134199360k swap on /swapvol/swapfile.
+> 
+>     With this patch:
+>       [    0.305109] ARMH0011:00: ttyAMA0 at MMIO 0xc280000 (irq = 66, base_baud = 0) is a SBSA
+>       [   10.081742] Run /init as init process
+>       [   13.288717] loop: module loaded
+>       [   22.919934] Adding 134199168k swap on /swapvol/swapfile.
+> 
+>     Link: https://lore.kernel.org/all/aGVn%2FSnOvwWewkOW@gmail.com/ [1]
+> 
+>     Signed-off-by: Breno Leitao <leitao@debian.org>
+> 
+> diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+> index 22939841b1de..0cf251365825 100644
+> --- a/drivers/tty/serial/amba-pl011.c
+> +++ b/drivers/tty/serial/amba-pl011.c
+> @@ -3116,7 +3116,7 @@ static void __exit pl011_exit(void)
+>   * While this can be a module, if builtin it's most likely the console
+>   * So let's leave module_exit but move module_init to an earlier place
+>   */
+> -arch_initcall(pl011_init);
+> +console_initcall(pl011_init);
+>  module_exit(pl011_exit);
+> 
+>  MODULE_AUTHOR("ARM Ltd/Deep Blue Solutions Ltd");
+> 
+> 
+> 
+> 
+> 
 
