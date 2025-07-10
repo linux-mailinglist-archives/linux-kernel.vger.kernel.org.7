@@ -1,117 +1,161 @@
-Return-Path: <linux-kernel+bounces-725259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C67DAFFC82
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:37:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D467AFFC86
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C53E3B481D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:37:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25ECAB418E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9EC1293B7D;
-	Thu, 10 Jul 2025 08:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0D328B519;
+	Thu, 10 Jul 2025 08:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYrq2t8g"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JqbaVEmS"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E4F28853C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556B6224B14
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752136557; cv=none; b=kno2vafawWN2oxsIswfOhHl20L40j7NyAiNSOEE1/fJOnCHbzNHe/6QhIVA2dIsEZAWq6EVLsxi68ehRgLyXl1uF1JylcTJc0nIdjR9gZ/DjF5Kcsg4A3nt17fKleU3okvbEcPpkCxsJPFenXaU2DRP2Kc6+WorzN2+ZS77V494=
+	t=1752136721; cv=none; b=m0SES5cSVIkhPdiX4Cor8/woC3o8C3Z+px82YP4uXP+yhSIcXs7/bikmJObodZ13HWj7HnevE94HlPeBaHde51xSHE4qFPCiLwaYE+32QMHTPu2SRCSQFdOfdNR9VkRAZX1Ga/Ej1sZhsDd0EI4oHVNidbK2XNn0Ma95SVmSlkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752136557; c=relaxed/simple;
-	bh=A3lDlBL8vvfve4ZfHy4C+bAJ99ewnNr46OUdhSZLiMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U++qURqwc76OGJhkgj4t61DQVro7Z9DvgYMMjOjjKzTwLV/rs13yts+vlOR4RwzJbeCQ3dvsKDhP/W2rRERuYHfbbZylc7tc65oNOlwKLSj+UhHzWMk7hOsh/rM69ExRmIfVoxYiO4KPkvfCQNtBubMerJpa0eEiVX8dq0ZUi3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYrq2t8g; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23dc5bcf49eso9393205ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:35:55 -0700 (PDT)
+	s=arc-20240116; t=1752136721; c=relaxed/simple;
+	bh=iPTSG8rWX5/aMDwwlMBzG13CC+5ujaQ3LSalqG4mVLk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YrfLmlmfs0NjrBqQ3z9g6m8CE6HCQ5ssAuJr9U/wOtSQip+dqRhdhv0FEfKQvIoDsDnQhZLDBtMgsimB5GllVXOWchm+X6eN6smFLW2SY4HqxiM0UJesu3hOlJhqvpAHCPDMIGa3VOASnyp7SKCQf/RWdc2HMCPjvsPC+fX4+e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JqbaVEmS; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a4e62619afso39271f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:38:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752136555; x=1752741355; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xh1mmOkigieJ55IHaZfa8Zg2NGfpNAm2HJHID8wzV98=;
-        b=BYrq2t8g8NSy8vlfH1ewDJC6hlnme1qgY2UxBHseETB8B3z7bcLKbUzCaA+cYDu/9k
-         qElse9V6uJg4ZHS85HC7HmNYyqtMlOmfRZFLN7ctP+LmaI7Y9PqqUgn8Hy31/EUx/qbw
-         NIiLuYEePLChQiVGzaj080MBMtp1m09xgubwWQjdSAdzulfBFM1VAzfUUpPKZW7lS7db
-         Nf5kvShg/UL/4Y/klPX/fPyZVWux3jMSQKy5I06Y2sdGxHtk1Zf/o+p/3ujZB/wEJxW4
-         izlBbFVUKGngl4jbFcfKPxUSDn85V5lPb/SY5zxUJKVqFm5Hmb4t3uT9htoSWeIZSJ0H
-         nQlw==
+        d=suse.com; s=google; t=1752136716; x=1752741516; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AsOzu/Shb8U/5A8M6vSewxAHPdIcygl1ZysXscFwvaU=;
+        b=JqbaVEmSS7Y3UXpAlxqwopo/eQKoCtHQYFUXalnyKyihntyXS+xTYG6iKYNOFF/xOY
+         iO5hRhbwwmcIMuMl0XXNxsi8czJ9fjEEtxfVbgGpovdQ6habQLvqwHjV9RkWIgAXYsZD
+         voOPLQToiFiq2cC8bxHTGU6h/gjWeCERUIyNoGacPH0z6h2QuF4ipfUmwZOkxYvOnfv+
+         mJsuj8IH6gZ0JE8RizAwWy8DgZQGJU6zWYnBMZQB64OLOC7uBJQJsa9Qz98gdVOYErX5
+         K1fv4ii0WSnAg8HHu4usXF39B+NJ+RqXWnhwEm0wyPCqkN1RDA2sKsJud0SxrDn26nFz
+         bLxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752136555; x=1752741355;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xh1mmOkigieJ55IHaZfa8Zg2NGfpNAm2HJHID8wzV98=;
-        b=DuQXgXCL4Q8baKFFgtXHCZTtqLudOpSCA5gHuwKoaQfNhpt+frwdNL4n91N6vckc0D
-         EXvrwh9S8NQT1+Is8kTKBwYeYjzI0LkTeDZH5ebM4+YVABS5O1IYlS1R66zleUwY9NSe
-         dQarpGtUuNFaIqriE4FHud24sEZyIs6IyMtiTNbAP/uhUoR5Qk2eZ55gdvKFmEVq1L79
-         mh9wQkcnXxaHBaTqn62LGxoiwevTzff0TjONAptdm5Ti5vfH58Al4ZtuLPVaSwWNnxYR
-         QhXMullSiC7kalgalmGifltq2iyn40eLu2t5lhv7+/tT16EJpX2CWRomTzyxVkeVT/dU
-         K7lg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcJdTxrjXwBX3p0UoYRnc6lp7HxRGcZEPjgJ1fYh9AtJ+ZiPuFfH6E50i2fFqo8+hEeZPjQInzHBrXABg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxZViA8D/w+qWX4xKo8vLKnyJJctFg1XYy6RvZ1hkZUyj/IvYV
-	wBAX/FTCnpYlOUXbKfb0bw6bPNEaVBKOwcM9d43QHl0Q8Xl5WKGoC2hB
-X-Gm-Gg: ASbGncuam2Goid8QA1hI9AbSq8devB4PYhgfbiVyFNdMZNP/sH10ysOPis+OAUrCMzu
-	0p2Gk6MuDzvoBzKFJst95FRGjfYnPtocLbLjZ5Jx2AfKutROBzHl8F8jHV58iAVFJHFfmR611gO
-	b06zTewiI082ZmeMtkeihLiIR23HZ9PTZqSircj3tLQsRkZhkWJHbKMsl5NRhgG68mz2RYZLxgK
-	hKmtiB5i7SgcThcFOViFQCU6NlQK69Kx5/nsDMVSOdCGVzJqpJXVt3s81BXsdQdud1nsJFRRFXT
-	8UyppfEnMT6JHiG0Zi2DZ94bnxev366m18FYFr83L5ddpvGlvrYzo8kAuaqn2ZcndU/v
-X-Google-Smtp-Source: AGHT+IG4B7XXAIAZPOLzQw/263sQj8eeyyiKa3sBlRTmcBCPIqhxXPTBdSpDGcnC8CyHrt0iEV3FXw==
-X-Received: by 2002:a17:902:e742:b0:23d:ce98:6110 with SMTP id d9443c01a7336-23ddb199090mr86875705ad.10.1752136555100;
-        Thu, 10 Jul 2025 01:35:55 -0700 (PDT)
-Received: from gmail.com ([115.137.3.141])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4289274sm13556225ad.43.2025.07.10.01.35.52
+        d=1e100.net; s=20230601; t=1752136716; x=1752741516;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AsOzu/Shb8U/5A8M6vSewxAHPdIcygl1ZysXscFwvaU=;
+        b=QThdRFlRYO2oF98y1V7298He4fd/iXPSyEP2EksA5jgNmJZCs/bV2fTUtrdhkoAlkL
+         O8ueIAAGPtgMzG6ZJMPkXE8WlKCkoqYPG++t7GCzWppxLOki/jU58WZII6M0zAnsglxu
+         qrg6qgPCDkplfjuxtiPpPzbZkYteu5pTEY24aCyGYbMU6KPF9r1qIG1fU3ortzq77VDq
+         tvckiysAqog8jtdHk8srfKnNhOflgYe76Yq5Ug1TNEceX9XnjvvcAmiJAlAYisHAFDIv
+         AuxCk6j/2x3+GlzxFEFj9/WHrzX7fkQs5lZYPf2oQSWfZuhx25OeL3Fra8P7ZxGIyBy4
+         bMvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNKCtOv/DyMxjskxrIRcGdkr4C+mc2EfaUdd6fagey49BmRpXyCQYjzUzdpWJbXltY0MIPGMCOgUfQgW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2APguayNmxds7uqk2iTxrjEwl8Ezrw0tsQ1oi/QKU2X5TTIGT
+	VfiCOdvSCxrQ2Fa1M9ll80q8ALQ18LUX9Gieibj6SMwZD8ECADl824C50QbuDSUwsIw=
+X-Gm-Gg: ASbGncuW3NuPwIq1fFKCIlsLF/7gcSOPTcn7GCa5uE4cIY9NAqtq57dOTwD+5sP+yxW
+	CNzmd0MR7GG8zKNlZTG4BwXqABtlQ1yKHVgQIekAjCpV3P3CH4xEZh0fi5LGzB/Ilnj4zLKQqpP
+	C49iIkyvxPNzvvTKvJtozZs/LXkHECgiyytuXEVavVwLrzhvWdn/tlnwtRDS2dbIpc4INxuMc6T
+	NpUQ47p3ktLpCh8JVvm4LZreFvI19IHF13mctu6miLINgnhrfXF0Ty/9fDCafF22xqdCEoiDdnQ
+	7NTHSrTC1NaxVY1842YmR9yzeM/YcLzA4AtX2BHX0KHptrIjJiI6bqmluLARyDQMQe+Ew5AZwDu
+	gZE3a9rM/YzyNS1itVM+cr79XuNjpmmooiH8fMR1ajDle9aaVm3CF
+X-Google-Smtp-Source: AGHT+IHjCyeYWj52MzibDcNe6h6uxoz7typzxZX5pbdy/ikZ9QMY/8GfHCHLtrwQvn8P5u6F0KuPsw==
+X-Received: by 2002:a5d:584e:0:b0:3a3:584b:f5d7 with SMTP id ffacd0b85a97d-3b5e45114b1mr1462475f8f.5.1752136716324;
+        Thu, 10 Jul 2025 01:38:36 -0700 (PDT)
+Received: from localhost (dynamic-2a00-1028-83b8-1e7a-b223-ac12-b926-9872.ipv6.o2.cz. [2a00:1028:83b8:1e7a:b223:ac12:b926:9872])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454d50df5a1sm51191525e9.22.2025.07.10.01.38.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 01:35:54 -0700 (PDT)
-Date: Thu, 10 Jul 2025 17:35:49 +0900
-From: Ryan Chung <seokwoo.chung130@gmail.com>
-To: Andrew Donnellan <ajd@linux.ibm.com>
-Cc: fbarrat@linux.ibm.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ocxl: sysfs.c: Replace scnprintf() with sysfs_emit()
-Message-ID: <aG97Zdc9YU7QFE-j@gmail.com>
-References: <20250710071815.351069-1-seokwoo.chung130@gmail.com>
- <8bda71d7c25900616beb706c73a04bd54830252b.camel@linux.ibm.com>
+        Thu, 10 Jul 2025 01:38:35 -0700 (PDT)
+From: Petr Tesarik <ptesarik@suse.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux.dev (open list:DMA MAPPING HELPERS),
+	linux-kernel@vger.kernel.org,
+	Petr Tesarik <ptesarik@suse.com>
+Subject: [PATCH] dma-direct: clean up the logic in __dma_direct_alloc_pages()
+Date: Thu, 10 Jul 2025 10:38:29 +0200
+Message-ID: <20250710083829.1853466-1-ptesarik@suse.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8bda71d7c25900616beb706c73a04bd54830252b.camel@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 10, 2025 at 05:23:12PM +1000, Andrew Donnellan wrote:
-> On Thu, 2025-07-10 at 16:18 +0900, Ryan Chung wrote:
-> > This change uses sysfs_emit() API usage for sysfs 'show'
-> > functions as recommended from Documentation/filesystems/sysfs.rst.
-> > Intended for safety and consistency.
-> > 
-> > No functional change intended.
-> > 
-> > Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
-> 
-> An identical patch has already been merged in char-misc-next:
-> 
-> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20250620024705.11321-1-ankitchauhan2065@gmail.com/
-> 
-> 
-> Andrew
-> 
-> -- 
-> Andrew Donnellan    OzLabs, ADL Canberra
-> ajd@linux.ibm.com   IBM Australia Limited
+Convert a goto-based loop to a while() loop. To allow the simplification,
+return early when allocation from CMA is successful. As a bonus, this early
+return avoids a repeated dma_coherent_ok() check.
 
-Thank you. I did not see this.
+No functional change.
 
-Best, 
-Ryan
+Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+---
+ kernel/dma/direct.c | 31 +++++++++++++------------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
+
+diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+index 24c359d9c879..302e89580972 100644
+--- a/kernel/dma/direct.c
++++ b/kernel/dma/direct.c
+@@ -120,7 +120,7 @@ static struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
+ 		gfp_t gfp, bool allow_highmem)
+ {
+ 	int node = dev_to_node(dev);
+-	struct page *page = NULL;
++	struct page *page;
+ 	u64 phys_limit;
+ 
+ 	WARN_ON_ONCE(!PAGE_ALIGNED(size));
+@@ -131,30 +131,25 @@ static struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
+ 	gfp |= dma_direct_optimal_gfp_mask(dev, &phys_limit);
+ 	page = dma_alloc_contiguous(dev, size, gfp);
+ 	if (page) {
+-		if (!dma_coherent_ok(dev, page_to_phys(page), size) ||
+-		    (!allow_highmem && PageHighMem(page))) {
+-			dma_free_contiguous(dev, page, size);
+-			page = NULL;
+-		}
++		if (dma_coherent_ok(dev, page_to_phys(page), size) &&
++		    (allow_highmem || !PageHighMem(page)))
++			return page;
++
++		dma_free_contiguous(dev, page, size);
+ 	}
+-again:
+-	if (!page)
+-		page = alloc_pages_node(node, gfp, get_order(size));
+-	if (page && !dma_coherent_ok(dev, page_to_phys(page), size)) {
++
++	while ((page = alloc_pages_node(node, gfp, get_order(size)))
++	       && !dma_coherent_ok(dev, page_to_phys(page), size)) {
+ 		__free_pages(page, get_order(size));
+-		page = NULL;
+ 
+ 		if (IS_ENABLED(CONFIG_ZONE_DMA32) &&
+ 		    phys_limit < DMA_BIT_MASK(64) &&
+-		    !(gfp & (GFP_DMA32 | GFP_DMA))) {
++		    !(gfp & (GFP_DMA32 | GFP_DMA)))
+ 			gfp |= GFP_DMA32;
+-			goto again;
+-		}
+-
+-		if (IS_ENABLED(CONFIG_ZONE_DMA) && !(gfp & GFP_DMA)) {
++		else if (IS_ENABLED(CONFIG_ZONE_DMA) && !(gfp & GFP_DMA))
+ 			gfp = (gfp & ~GFP_DMA32) | GFP_DMA;
+-			goto again;
+-		}
++		else
++			return NULL;
+ 	}
+ 
+ 	return page;
+-- 
+2.49.0
+
 
