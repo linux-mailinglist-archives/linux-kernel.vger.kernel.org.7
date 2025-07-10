@@ -1,249 +1,304 @@
-Return-Path: <linux-kernel+bounces-725982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859C2B00638
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:16:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC851B00640
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97A815C2C26
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:15:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45887641EB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6466274B3F;
-	Thu, 10 Jul 2025 15:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC3227466E;
+	Thu, 10 Jul 2025 15:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="UhgQUTS1"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013053.outbound.protection.outlook.com [40.107.159.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaW19AsV"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4806D2749E8;
-	Thu, 10 Jul 2025 15:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752160526; cv=fail; b=aHNi9bOedPexCCSde8oX88iXf3ac3hY82gbdZTZz4wwaZO+EB1Ozjq+PYgjVan7pg+FaWWrh4kEuIUp2SW8WL1tVy5LXg5GWK0DjqvwgbFJyY0sBfB/da1mMlDRDFg1ET3jkcu5toh3go4x7PuIjUFAv2RdE0vi7imKkyLNT/Kw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752160526; c=relaxed/simple;
-	bh=xdjgSFAZw0jyy8wgRVYcjUBaU83EWOjH+uNk32xPQW0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EPiGR/uftBaWDDJkdmF/Xu7bOGOF999UcPQEZJxsma3W9fffc8T07rUUKl/TN3uyK8Ls6BnpHI9Ei5V8KpBgF3MXDizx49WlhmcNyiVKhQXuw4vwLx72hjxy4xCsi14h++DubIoKqwehIBdZNN6z+B4cdCWxUV09tlACywJGWtA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mt.com; spf=fail smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=UhgQUTS1; arc=fail smtp.client-ip=40.107.159.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mt.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jS/SYO0QHMgxXhjYVEn3TyoEXXug/lnYP/KI9QsuonTCEdsxNQiNX7FC9uyhpi5uik/o6SOnKcOHwO02Jw5KU2XWCEtW/fzUcVEhC7JKwfSd3cAKVtLo1O3ZXRRa2HD0MzfZcoUhqMVbJt770AflQqL3+fQIn/baLwSP4u4dkfEGEaTjqU/l8H4OUzS/rrndtmV+nZIb1Jvt3sGmyKDgBljc5aGCmDPaeTFDeXK+m+Hm7UzLHbJ9Vflq5zx8P7eCAoCxDWKR7BlzonArKnPI5EKCIPAGtxqVzJXPho4Bsl9fkComWSI1knyA+Z/8dM55gm+DmpBvKoERiajWDp6KSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h27sH7L1AG5D40ippuVZKsCp3Kb4/NRAC78B+xmXu3o=;
- b=RogsTUEIs4AYT2E/dvI5cB/u7hgn3WZcoVJI45lMtNmIRwWPhpoQiQ6N0Scm2lvtZh+pip9zkGaeqNNbyxzdnQ8hrY6ZmYTMEXaxtyiUkEkMC8c2wVfHUJrOrhGZGur26C0NoUnHH/jBGveLeH0HqK3SlMcLHgfo9NyQO2/xnjUYH90zSYuzXE3Msn4oBpT5+rQJrMnlTxrq6BzwO+Oppu8zALVGMdvDWboteasmNESwTaeYzqM8xlL+n1J9ybvfxtNwrZ13iOcQ1D+LI9+wqv4mTjlfW3yaJp8z7Qtm6NEHoBmA8L8K0H+6c30MeDldzPqfCK0mUPTc1etJ1G1/aA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
- header.d=mt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h27sH7L1AG5D40ippuVZKsCp3Kb4/NRAC78B+xmXu3o=;
- b=UhgQUTS1+MroLNgAOtG76cV03LzSCRksM44176qB3n2RyQCvS8IjSGosslgvnHEJ8v5M6New0liYmtAQ56bBJlRkPDFbtB/p9SILFRQnQxsTwfTtYQy/R4LuEdJj7syYCjnC3S+rshQJZLkSybPqMXnyEUUmcpXjXzvYOgmVOjJWgXU1ngRC12gRlvI7PMR15h2y8gjvGBfWqRJaiX+0aYy89OSx8VlxHJsISK4dnWO8h7pAJbNIsINuj6b59pXby+W3qN/bsNk0e8AE1BcHoDkgzICEecv73ePyonj8MD3TTiTFZSnndpCarJbpDPknOWC8lMqE0DygxiUpijHpcw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mt.com;
-Received: from DB9PR03MB7755.eurprd03.prod.outlook.com (2603:10a6:10:2cc::22)
- by GVXPR03MB11034.eurprd03.prod.outlook.com (2603:10a6:150:287::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.21; Thu, 10 Jul
- 2025 15:15:21 +0000
-Received: from DB9PR03MB7755.eurprd03.prod.outlook.com
- ([fe80::2ef6:ec79:4089:ce54]) by DB9PR03MB7755.eurprd03.prod.outlook.com
- ([fe80::2ef6:ec79:4089:ce54%3]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
- 15:15:21 +0000
-From: Mathis Foerst <mathis.foerst@mt.com>
-To: linux-kernel@vger.kernel.org
-Cc: Mathis Foerst <mathis.foerst@mt.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org,
-	manuel.traut@mt.com,
-	mathis.foerst@zuehlke.com
-Subject: [PATCH v7 2/2] media: mt9m114: Set pad-slew-rate
-Date: Thu, 10 Jul 2025 17:13:40 +0200
-Message-Id: <20250710151340.496218-3-mathis.foerst@mt.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250710151340.496218-1-mathis.foerst@mt.com>
-References: <20250710151340.496218-1-mathis.foerst@mt.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZR0P278CA0092.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:23::7) To DB9PR03MB7755.eurprd03.prod.outlook.com
- (2603:10a6:10:2cc::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961F922425E;
+	Thu, 10 Jul 2025 15:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752160554; cv=none; b=fnW+Xfh3c0MJBaMYmBlFtDKK4y4aMWcQgp9fyxWdn/TXL7TqeWco6c73KcTbTgnNJ4qHyCSUXuZojqZaJRSUrTREDhtNt3f1XFpUzDBfqmMCPO5YU63Iw6XlUpgN/Pxd7PMIsdVbM6usXqnDabWjCzz+REjZWo5cR8FEaYLy1Y0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752160554; c=relaxed/simple;
+	bh=cP2XdFEmvXS0OKxHIMqQZXRB1hVTr99YjAXWGN4d8uI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=ZpqjbioVo403nfllDpHhLdBP0+8nWeVErpbsShFdMxsjvvGXKvtAtq05QREqe66HEe1PoNPqLAfzdocTushRrYB3XlhuozLiyCcE0f4cYUYL/Kp2FpL8ULDQf82SB4RcmCOOtQw/i2/8szMqemqivvaJlX32fXF+qR0//JMXReY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eaW19AsV; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-313cde344d4so1326077a91.0;
+        Thu, 10 Jul 2025 08:15:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752160552; x=1752765352; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=k2Ut5zqrT/gFfDOz4SYZ4KaqF0Yng+eUvKdctMowZis=;
+        b=eaW19AsV/bBm/VHvFuY+3nX7zQ38DqMxLSwIsn38KzqO0kjelNfobyOkhey3JxJ8Uv
+         Cj7B4+5sQZtUsLe2uOXRE1GquEWpbSBQQa7bohHD+Ws1r8n/3fLFgZ2rlwVSoPastA00
+         Bvbr+kjecbIk3RQgwfJKLofVWK+6zi4rqOYIIzZBK60vHXiEgqxvzMX/bLEUuTqAZsZn
+         8lpATbaXHXjpaA/o/rKDC0s8eXQFBo33FH5Gp4dUMRKudb8Ud1vlND2UrHLIjpOJMSYy
+         bk+gau338z7FASJH1TtUzRF8geSKADc1lgR3ITMPXoQPk0Mk7FsRJcuoG27tEBpeuXFr
+         DVoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752160552; x=1752765352;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=k2Ut5zqrT/gFfDOz4SYZ4KaqF0Yng+eUvKdctMowZis=;
+        b=d+qOQhMvEUo4IJOOes42iaPC5CKE6gSBEK0GShUD5QIdE1Oo+ffvML1X0bzmAH5W7U
+         ybpIUWx9gn/YpuKFriACTwV+zYHHKuE6oFvyosMlro1vA9TpkZ/y8oqeJbrZlV+zUaWd
+         dEcpMEPVv8aiSBA/LBfqfwqtkYE+sRyCDIglRChNkwg2dfGAPzGWoDcuaIjwjRY+AjGI
+         JVr7gB5BJUlccuza5xkmW6nl/171nsbZ8lDEeN7J3xxlhQDm2Vn5yqFt8KGyAM1cMJMl
+         Xjo9ZecyB6xQkWJvZO2qojr3HHipQmpL7xPhBxHEsTbU0bWshYsaK0a28R1I1RItVWcn
+         O9Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmBQLmRaCBG8yIPmfiXZbjBB8C2Jjhvb+C/26iHePRebVLndReZ62wYCFjwX5AzIBcZ81BDWQ6IU4=@vger.kernel.org, AJvYcCWIwuwTlz+dPjaHGgfCKXBNAQYUstCnbdUONlLBPKf4hNudiYJ9Id0YiPP4zRTtYvjf3q4XFILogng7LkdJ@vger.kernel.org, AJvYcCWNfstO1qoXUrFrgE1gbhM/k6Q/GC4Eua5k47AUHPsBMriVyamhCi1PYvzJ/DQzDsEEz6JHi75hk/K5L8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSTLNENLeOhfiVTasddbB4pWguBJHWw5JPr+vr8NMQwz1povk6
+	p6XXHRNdxMh+AAhJjF/5qfaZOmxS2qq72BqHkfDfZLOaFj85Vv9rJBVSaJLg2A==
+X-Gm-Gg: ASbGncu7dF8K4VEneCp+h6ZTlY8drb23t9NzYppgeJQmXxxIy4vDPWyRpqk3ggdDaTi
+	YBTu4EooAhoGOFqROxxWHinxfn9Nhf6OXGB0klvLFT2Dyii+/o0Lzp7CbpmR7i6zBLZnb8xBGkv
+	Pun5+0YsUxlTaYmZ9EQaxjsOgieIuO+RvhBhHXVTPnV2h5FqSnBS6QTPh6qkn/cyzv8+LH4/AdL
+	/GCtA3cIaM43mXTr+ws45m24eztSR+RrNTGQDtq9DwB0uoCDVpVQ2FUSpo0s1VbFx0V+IdYpJea
+	waNbFLHnTJAofdA1YgHGcvcp6z1KEGiD625wJ6t/8l5lzZ3fpeEezsCeNhy8imrduLvtRYvn+iD
+	LgzXIFx2B
+X-Google-Smtp-Source: AGHT+IFpSknIX5oQ3t+hSQemLFiY5TGbNbhPCpiXc0cVzMXY7k38QDCJh161Fl99D1arZbVAY4cPnA==
+X-Received: by 2002:a17:90b:1a91:b0:313:28f1:fc33 with SMTP id 98e67ed59e1d1-31c3ef23af9mr4987342a91.10.1752160551522;
+        Thu, 10 Jul 2025 08:15:51 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([2607:fb91:1be0:77b7:ac39:c338:9a9b:5f99])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3e973e75sm2656739a91.16.2025.07.10.08.15.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 08:15:51 -0700 (PDT)
+Date: Thu, 10 Jul 2025 08:15:49 -0700
+From: "Derek J. Clark" <derekjohn.clark@gmail.com>
+To: Benjamin Tissoires <bentiss@kernel.org>
+CC: Jiri Kosina <jikos@kernel.org>, Mario Limonciello <superm1@kernel.org>,
+ Xino Ni <nijs1@lenovo.com>, Zhixin Zhang <zhangzx36@lenovo.com>,
+ Mia Shao <shaohz1@lenovo.com>, Mark Pearson <mpearson-lenovo@squebb.ca>,
+ "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
+ linux-input@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] HID: Add Legion Go S Driver
+User-Agent: Thunderbird for Android
+In-Reply-To: <j3isljjyd6rlddlhpp7knxgss2mpr4ft3pcx5lc7r5r4bnnzpw@wjr6brfv2hsf>
+References: <20250703004943.515919-1-derekjohn.clark@gmail.com> <j3isljjyd6rlddlhpp7knxgss2mpr4ft3pcx5lc7r5r4bnnzpw@wjr6brfv2hsf>
+Message-ID: <3690C9ED-FC73-4783-8EB4-2CFA148E8573@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR03MB7755:EE_|GVXPR03MB11034:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0743a2e2-2ada-444b-2201-08ddbfc49660
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|19092799006|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PleSpM29MOqyaNV1MLGpsdTk4aSm7a9DcotOKVxFzLhtVEItV8goY7Cv66ps?=
- =?us-ascii?Q?8Rgn+PyGeq1mbpST24s4YtKU/t+Qc7qJowt4FvUUMat+2mXB/lUxkJnmlt5+?=
- =?us-ascii?Q?QaXuwb4bKjxIWsaqU7WZiyixqBxQFyx/eMfJzbd8MtGLtuVKdvAfbvEwIDrg?=
- =?us-ascii?Q?CrAv0osXHGz+jv15/+Ghroffd5wG+H+Z/i8kguFMHm2Oj2oyK1lKIS78pv/R?=
- =?us-ascii?Q?/jYfksL1WcuudAn3yvnzR47vlHVnB4qhHE2XdpbDbU1Td+VR/emNDrc3y6rq?=
- =?us-ascii?Q?XBVcZsCjcj2ryF2MmsJNBDXCzl4QYr1dw1rNYZiaVlhxKF4uaPrD4YrM2dEk?=
- =?us-ascii?Q?mFZRMto6ADP9qsGErhELCB6cSjwXcKG7yvG/qubfdxM3ShnHbHyIWtNtXeP0?=
- =?us-ascii?Q?3t535cA+kN6uUOZXcC39kGEgVOhHoFTOMvwFox3dptedEVD9ay3zlZMkMxla?=
- =?us-ascii?Q?JvygeCEvOpS7beuuJ4ETg0Ohzr0w8MNHCN842J8lCSReArpgzW+pbogpWmRD?=
- =?us-ascii?Q?ZKF8jIG/+lG1BHw/F7U7ZZyie2PyKdFupEuhWa1rTr6/1dhA4b5/NdhXfiIH?=
- =?us-ascii?Q?hW+Ngu5GUMdxC70iolABByr7lz6Z065VJZAaEiLzYAHz/ZBj7eCa9HB13r3P?=
- =?us-ascii?Q?VINTA0EDly22TwGUnAVCLsIEgVVGB46jc2apgBpFHO7s9xUmwkEiRjELjoxg?=
- =?us-ascii?Q?h78MqFHCjivRbdOmddisnyk2/b8cim7ltVp5pSu4XND8DItsNf3433Ryo477?=
- =?us-ascii?Q?aBWZBFI9gI08qETUMSsLbEt8pbVEE6A9Q/VULsYKqj1YFtEaIiPd3TIG56FT?=
- =?us-ascii?Q?ksrJkBoi4CyuMGI4j+W//Cr7j1PuSV3rc7UF1ITFdj+c2kjRZFwwkeLVeZKQ?=
- =?us-ascii?Q?FT8+Zzmo97WQojLgcy7En2GMeOgXeXyF5GO9NKn90ELqP6hcmyGkhQoiW21L?=
- =?us-ascii?Q?g6/L0eQNv7jhjJ9EGx0bluzTRCye/UM24Wk1h4HQmRPb+HogTtEiTJmMYAkY?=
- =?us-ascii?Q?CxopN7LAWg+O1DB5/+MSg5B7e/aafuDJGSXZGfrBfmEK0hfJtYnvArGFValQ?=
- =?us-ascii?Q?7M3OC37Fu9Q7se1ZN+MF+RIvBcflFKYOll5GJk7A+J/S7E5SM0vbyyxgVCuG?=
- =?us-ascii?Q?MZEI7pZ4ehK4A4H7c6wG0UysR6aXTiWt1qQMMaFkz82g3h5mkUCL37Z3BVbf?=
- =?us-ascii?Q?kJT/jn2iiicqEEuR4Pa0yFIYcpwBIqVLSgftVKuu/M3HV3bK1jqNHn+wz5/l?=
- =?us-ascii?Q?x+GaV4qA/GLGt4ZMvPgEcBpe+H6bSNFWmeZoxsngCoSDfVlsPzr2FNfHa0rk?=
- =?us-ascii?Q?JzWQR4UX1uut3RXXAUVqX0DOAnHrs0cTYA0SxSNDW9wl7aWTgjXLxmG1rQJo?=
- =?us-ascii?Q?Qf52UC86ngZDwAL5O9FXwUC+XopOp6rIqqb23jYBTSVuRLZsjJ+LSjaDL2eq?=
- =?us-ascii?Q?25+bwx4sjvUM835HOucAGz6484ALnMMJBu1x8h0wuGIcf+FL0sX06w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB7755.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(19092799006)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CvKz9/0S++BxlsBI5/zC5eO5aghavLzK4n3AeVBBj38on9xfzLVyRxOSfUBr?=
- =?us-ascii?Q?LmqqHIKq+czfAzyRLWSY6Y6yPqam2muctrNFJCPeVizT7lldXSVZ+TZPGq6e?=
- =?us-ascii?Q?8vLwbenn8BwhzCv0YUKzHNCng4CAUTGjlYIyWaK/u6Ju6hZ7Hf+JTSRsnxQ7?=
- =?us-ascii?Q?mpqYvSDArA6ns4qOablgF3dbE8PH9YE9OT+r6Zdl84ZaPrs06KTpfulM5FyR?=
- =?us-ascii?Q?fn+tweV+4AH9Lg691xSp9K2uUmCOmd767p7tF3rqab5/klLk40S0mYqtAiOU?=
- =?us-ascii?Q?ZSdUe4h9qgAeoUhp7pbMm4Z149I/E30cPwUOTMLgXwMlkbPuCfL47vImcyqf?=
- =?us-ascii?Q?yy5fJARSw69iT+wir8YV/o0GU9q7e+cYz4zzAQOFsmhcOWhpf4210iQxny2K?=
- =?us-ascii?Q?+sDeLcPV0s+mjTopsG+Tytl9mno57bClOTHkKmuAc6Hvcp31gzvBn/jn44SL?=
- =?us-ascii?Q?85D+F9ccXcTkcUDHTji4JAT9JTdwK+ZD+ZHRAwczq9j3FNXk/NAcDpXRe6S8?=
- =?us-ascii?Q?sX/0l9GkXjTr5b19dtkLvPF8lB7FJYby4RaK9MvD0wHtqxAqzvpLOG2B84Tl?=
- =?us-ascii?Q?CPSNdHHg/nCXolWxp87bd0dXMKjVMA/2fQvQFxgMdXVRaRr63OS5u6i+EAaa?=
- =?us-ascii?Q?QJQT3T0BFGabzEk9StFmoIH/5o7aSFnFg7BJiait0dy//VP5Wfqzn+Dhtjse?=
- =?us-ascii?Q?Wsu9CYUjslPXHrCek/6GFBrh9Qw4EZI0pnVAaNrNvp+a9/O4jmcG7UAunCfC?=
- =?us-ascii?Q?todt8eSCFVfiqQVT5luObiVdR53qCCBU815de0Zs3j2LOyg9CIbuiSNd2Qkl?=
- =?us-ascii?Q?3Lv4x64tkcJ4D2h99ei0fqkvkQF1f9USaqpW/sbaC58yW47+kW5BM1A6TEz+?=
- =?us-ascii?Q?0Y9vVDC+I4iE+u0IhaBGSppckqDGI17Rt0XRwuNcqzcpgatzs9IDehcRE9rR?=
- =?us-ascii?Q?L8eGA/YkcMqdlGuMaEQE4rfqnUF9oqtLgpa2eS91AKO0+/i+gvYbzi+sg4s7?=
- =?us-ascii?Q?Tv7nxai1n+9FG0xZR9vPmrZ9AFDHy+iYVpr6226POILXnpTJ1qk6YLOwV1cC?=
- =?us-ascii?Q?4s2qHxGxXiazkWOmpIBRo630tx9F046wxwnCSFSjLsWIABBTUwWxxCH8qJV7?=
- =?us-ascii?Q?z7sCTD2Dmz24E8u8mJuEtwQPSpa2xHrdkDIL1PBLsP8kBft8E80iSw3JXU+D?=
- =?us-ascii?Q?k/CS3d4cJfiCIoIa84/is3kKJdqsCO2f7K/XPR5oVlWl+VdNFL8tXeAlkOAq?=
- =?us-ascii?Q?zlB+LOJAqJ/1M10hpSPsl00iQowcn+LP/djCDB2vUMEsYAOBhL42G6TUj2U8?=
- =?us-ascii?Q?cIsHndzyZVNDka2b64xMv2W5dvl94tPEBgR4DpZIyWWTwa/PmGrbNJjjxQgF?=
- =?us-ascii?Q?obdXFSk2v9ma5tZZ0wZhacnxy1yy1lQqqsEh+QKymPYpd5ZLR06vZOL974xO?=
- =?us-ascii?Q?89bdRZdTzpduUwsAHA0M+L8l9CBoIp2n6c292nBTUonJuvLCtj/7j1iqwjam?=
- =?us-ascii?Q?U6UOGGQxKUcpYTH6/5N3yV65mALCmfLIZ6TGW32noAMVgMtqY5SPtnJ8pVbh?=
- =?us-ascii?Q?k3U56nMfvyis0Ja3/bBVosZJeLmmGu8YwXXglEnA?=
-X-OriginatorOrg: mt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0743a2e2-2ada-444b-2201-08ddbfc49660
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR03MB7755.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 15:15:21.4943
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PmzTlPQcUsNNGDbdZuG0F1LY9dS/SQG5MbgT/v4u2GV+NLUJeL0MWYkE5hr+/klM9z24C7Gzc4DunDWrR/6xFw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR03MB11034
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The MT9M114 supports the different slew rates (0 to 7) on the output pads.
-At the moment, this is hardcoded to 7 (the fastest rate).
-The user might want to change this values due to EMC requirements.
 
-Read the 'slew-rate' from the DT and configure the pad slew rates of
-the output pads accordingly in mt9m114_initialize().
-Remove the hardcoded slew rate setting from the mt9m114_init table.
 
-Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/i2c/mt9m114.c | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+On July 3, 2025 6:48:00 AM PDT, Benjamin Tissoires <bentiss@kernel=2Eorg> =
+wrote:
+>Hi Derek,
+>
+>[I'll answer to this email with a very high level overview of it, as I'm
+>not sure I'll have time to dig much deeper in 6/6 today=2E]
+>
+>On Jul 02 2025, Derek J=2E Clark wrote:
+>> This series adds initial support for the Legion Go S's built-in
+>> controller HID configuration interface=2E In the first patch a new HID
+>> uevent property is added, HID_FIRMWARE_VERSION, so as to permit fwupd
+>> to read the firmware version of the HID interface without detaching the
+>> kernel driver=2E
+>
+>That immediately raise red flags on my side=2E HID_FIRMWARE_VERSION will
+>likely be used only for this new driver, and that means a special case
+>in each and every client=2E
+>
+>We had to deal with firmware versions in the past in the HID drivers,
+>and we ended up relying on the uniq field of the hid_device (because the
+>serial+firmware version uniquely identify the device)=2E
+>
 
-diff --git a/drivers/media/i2c/mt9m114.c b/drivers/media/i2c/mt9m114.c
-index 5f4474d36653..5b84010a2118 100644
---- a/drivers/media/i2c/mt9m114.c
-+++ b/drivers/media/i2c/mt9m114.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/pm_runtime.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/types.h>
-@@ -42,6 +43,9 @@
- #define MT9M114_RESET_AND_MISC_CONTROL			CCI_REG16(0x001a)
- #define MT9M114_RESET_SOC					BIT(0)
- #define MT9M114_PAD_SLEW				CCI_REG16(0x001e)
-+#define MT9M114_PAD_SLEW_MIN					0
-+#define MT9M114_PAD_SLEW_MAX					7
-+#define MT9M114_PAD_SLEW_DEFAULT				7
- #define MT9M114_PAD_CONTROL				CCI_REG16(0x0032)
- 
- /* XDMA registers */
-@@ -388,6 +392,7 @@ struct mt9m114 {
- 
- 	unsigned int pixrate;
- 	bool streaming;
-+	u32 pad_slew_rate;
- 
- 	/* Pixel Array */
- 	struct {
-@@ -645,9 +650,6 @@ static const struct cci_reg_sequence mt9m114_init[] = {
- 	{ MT9M114_CAM_SENSOR_CFG_FINE_INTEG_TIME_MAX,	1459 },
- 	{ MT9M114_CAM_SENSOR_CFG_FINE_CORRECTION,	96 },
- 	{ MT9M114_CAM_SENSOR_CFG_REG_0_DATA,		32 },
--
--	/* Miscellaneous settings */
--	{ MT9M114_PAD_SLEW,				0x0777 },
- };
- 
- /* -----------------------------------------------------------------------------
-@@ -779,6 +781,13 @@ static int mt9m114_initialize(struct mt9m114 *sensor)
- 	if (ret < 0)
- 		return ret;
- 
-+	value = sensor->pad_slew_rate
-+	      | sensor->pad_slew_rate << 4
-+	      |	sensor->pad_slew_rate << 8;
-+	cci_write(sensor->regmap, MT9M114_PAD_SLEW, value, &ret);
-+	if (ret < 0)
-+		return ret;
-+
- 	ret = mt9m114_set_state(sensor, MT9M114_SYS_STATE_ENTER_CONFIG_CHANGE);
- 	if (ret < 0)
- 		return ret;
-@@ -2381,6 +2390,17 @@ static int mt9m114_parse_dt(struct mt9m114 *sensor)
- 		goto error;
- 	}
- 
-+	sensor->pad_slew_rate = MT9M114_PAD_SLEW_DEFAULT;
-+	device_property_read_u32(&sensor->client->dev, "slew-rate",
-+				 &sensor->pad_slew_rate);
-+
-+	if (sensor->pad_slew_rate < MT9M114_PAD_SLEW_MIN ||
-+	    sensor->pad_slew_rate > MT9M114_PAD_SLEW_MAX) {
-+		dev_err(&sensor->client->dev, "Invalid slew-rate %u\n",
-+			sensor->pad_slew_rate);
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- 
- error:
--- 
-2.34.1
+>> The second patch adds the ability for an hid_driver to
+>> assign new/arbitrary uevent properties for static data that doesn't
+>> benefit from having a sysfs entry=2E
+>
+>That, in my mind, is even worse (for the reasons above)=2E
+>
+Hi Benjamin,
 
+Sorry abtthe late reply=2E Travel & holidays have me a bit behind=2E
+
+I'll let Mario and Richard hash out the specifics on these points=2E I'll =
+just add a bit of context to why they're in this series=2E Prior to this, t=
+he fwupd plugin would disconnect this driver to query this information to s=
+ee if there was an available update=2E As this can be triggered by a system=
+ daemon during gameplay that's not a reasonable expectation=2E Originally w=
+e had these as sysfs entries, and returning to them, would be simple enough=
+, but we felt like this is a fairly standard piece of information that shou=
+ld be available=2E I wasn't aware of the uniq property being used for this =
+historically, but from an outside looking in perspective this seems a bit c=
+onvoluted=2E Apart from just being unintuitive if you're not familiar, user=
+space is going to need bespoke ways to interpret this anyway as serial numb=
+ers and firmware formatting are not consistent between manufacturers=2E
+
+I'll wait to adjust this until a more thorough discussion has taken place=
+=2E
+
+>> The third patch adds the VID and PID
+>> for the Lenovo Legion Go S MCU=2E=20
+>
+>Which shouldn't be in its own patch, but part of the driver initial
+>patch=2E
+
+I can do that=2E My reasoning was simply that if another patch becomes rel=
+iant on the VID and you needed to revert the other patches for any reason t=
+here would be a conflict=2E
+
+>> The fourth patch adds ABI documentation
+>> for the config interface introduced in the final patch=2E The fifth pat=
+ch
+>> introduces the core lenovo-legos-hid driver which acts as a routing
+>> interface for the different endpoints=2E=20
+>
+>That "core" patch is IMO useless=2E All it does is:
+>- check for the USB endpoint (but in the wrong way, because if you
+>	insert a device through uhid with the same PID/VID it will crash)
+>- replace the HID-core core functions with the same code
+
+Can you point me to a better way?
+
+This series only implements the config endpoint=2E ATM the gamepad, touchp=
+ad, and IMU are combined into a single Steam Deck like interface in root le=
+vel userspace as a uhid device=2E I do have some plans for how to do this i=
+n the kernel instead, but the proposal isn't ready yet so I need to keep th=
+e hidraw devices available to userspace that aren't implemented yet for bac=
+kwards compatibility=2E
+
+>Really, this should be squashed into the next patch (with 3/6 then)=2E
+>
+>Also, why adding a new subdirectory? All the hid drivers are flat in the
+>drivers/hid/ directory, and the subdirs are for transport layers=2E There
+>is one exception for the surface driver but I don't see why you need
+>such an exception (yeah, the code is big, but what's the difference in
+>having a 1500 lines of code source in its own subdir vs at the root?)
+
+Sure, I can change it to a single file if that's preferable in this subsys=
+tem=2E This is my first foray into kernel HID drivers so I'm not super fami=
+liar with the style preferences yet=2E Breaking everything up by logical su=
+bset made sense to me but I'm not married to it=2E There
+
+>> The sixth path introduces the=20
+>> config lenovo-legos-hid driver wich uses both the HID_FIRMWARE_VERSION
+>> as well as arbitrary uevent properties=2E Additional interfaces and con=
+fig
+>> properties are planned to be added in a future series=2E
+>
+>That one is too big for my liking=2E Generally speaking, a commit
+>descrition which says "this does this and that" can be split into 2
+>patches at least :)
+
+I figured, but I wasn't sure how you'd prefer I break it up=2E I was think=
+ing that one patch per attribute group would make sense but wanted some fee=
+dback before I did that to avoid going down the wrong path with them=2E
+
+>What kind of future interfaces and config properties are you planning?
+
+The MCU has a gamepad interface that is more complete than what the xpad d=
+river uses, which includes some back paddles as well as native gyro data wh=
+ich is passed through from the IMU=2E There's also a separate IMU endpoint =
+so there are a couple options how this can be used=2E My thoughts are that =
+a sysfs attribute could toggle if gyro is added to one of the joysticks usi=
+ng the IMU data included in the gamepad report, and the external one could =
+be exposed as a motion sensor with the same uniq=2E Then userspace can dete=
+rmine how to use it=2E
+
+The touchpad works in both abs and rel modes with the default kernel imple=
+mentations but additional functionality can be gained through Steam Input i=
+f this is integrated into the gamepad=2E
+
+As far as additional attributes for the config interface, there is hardwar=
+e level button remapping and calibration for all axes that need to be added=
+ but weren't considered critical for initial support from Lenovo=2E
+
+>>=20
+>> Patch 6 introduces a checkpatch WARNING that I'm unable to resolve:
+>> WARNING: ENOSYS means 'invalid syscall nr' and nothing else
+>> 1292: FILE: drivers/hid/lenovo-legos-hid/lenovo-legos-hid-config=2Ec:10=
+85:
+>> +       case -ENOSYS: /* during rmmod -ENOSYS is expected */
+>
+>We can losely waive those while merging=2E We do it quite often actually=
+=2E
+>
+>But trying to minimize checkpatch warnings is a good thing, so thanks
+>for that=2E
+
+Cool, I'll keep a brief note for posterity=2E=20
+
+Thanks,
+Derek
+
+>>=20
+>> This error handling case was added as it is experienced in the real wor=
+ld
+>> when the driver is rmmod=2E The LED subsystem produces this error code =
+in
+>> its legacy code and this is not a new novel use of -ENOSYS, we are simp=
+ly
+>> catching the case to avoid spurious errors in dmesg when the driver is
+>> removed=2E If there is a way to prevent this error from being triggered=
+ by
+>> checkpatch in the first place, that would be an ideal remedy, but I'm n=
+ot
+>> aware how that can be done at this time=2E
+>
+>Again, nothing to worry about=2E
+>
+>Cheers,
+>Benjamin
+>
+>>=20
+>> Signed-off-by: Derek J=2E Clark <derekjohn=2Eclark@gmail=2Ecom>
+>>=20
+>>=20
+>> Derek J=2E Clark (4):
+>>   HID: Add Legion Go S ID's
+>>   HID: Add documentation for lenovo-legos-hid driver
+>>   HID: Add lenovo-legos-hid core
+>>   HID: Add lenovo-legos-hid configuration endpoint interface
+>>=20
+>> Mario Limonciello (2):
+>>   HID: Include firmware version in the uevent
+>>   HID: Allow HID drivers to add more uevent variables
+>>=20
+>>  =2E=2E=2E/ABI/testing/sysfs-driver-lenovo-legos-hid |  269 +++
+>>  MAINTAINERS                                   |    7 +
+>>  drivers/hid/Kconfig                           |    2 +
+>>  drivers/hid/Makefile                          |    2 +
+>>  drivers/hid/hid-core=2Ec                        |   11 +
+>>  drivers/hid/hid-ids=2Eh                         |    4 +
+>>  drivers/hid/lenovo-legos-hid/Kconfig          |   11 +
+>>  drivers/hid/lenovo-legos-hid/Makefile         |    6 +
+>>  drivers/hid/lenovo-legos-hid/config=2Ec         | 1518 +++++++++++++++=
+++
+>>  drivers/hid/lenovo-legos-hid/config=2Eh         |   19 +
+>>  drivers/hid/lenovo-legos-hid/core=2Ec           |  122 ++
+>>  drivers/hid/lenovo-legos-hid/core=2Eh           |   25 +
+>>  include/linux/hid=2Eh                           |    2 +
+>>  13 files changed, 1998 insertions(+)
+>>  create mode 100644 Documentation/ABI/testing/sysfs-driver-lenovo-legos=
+-hid
+>>  create mode 100644 drivers/hid/lenovo-legos-hid/Kconfig
+>>  create mode 100644 drivers/hid/lenovo-legos-hid/Makefile
+>>  create mode 100644 drivers/hid/lenovo-legos-hid/config=2Ec
+>>  create mode 100644 drivers/hid/lenovo-legos-hid/config=2Eh
+>>  create mode 100644 drivers/hid/lenovo-legos-hid/core=2Ec
+>>  create mode 100644 drivers/hid/lenovo-legos-hid/core=2Eh
+>>=20
+>> --=20
+>> 2=2E50=2E0
+>>=20
 
