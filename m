@@ -1,76 +1,57 @@
-Return-Path: <linux-kernel+bounces-724874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80535AFF7C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:06:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCB0AFF7C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F0654E30AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:06:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E749D5A2828
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9263D283FC5;
-	Thu, 10 Jul 2025 04:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E153D283680;
+	Thu, 10 Jul 2025 04:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SnApjbS1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Skd/vG4r"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z06xMXiP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80729DDC1;
-	Thu, 10 Jul 2025 04:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE3420458A;
+	Thu, 10 Jul 2025 04:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752120372; cv=none; b=qB743XDFdINmjqGcDnTlh30ePsNh0OildweMLeBO3B7Arhq2WdvXSgzECNfsEZXWfB0UYWtVtyJZECljmf/AJcn/VMPG/cH44Mp/ZBGjd4Q+nh4JuXEdcuuJd/3B/faf3cc2YFNuNVRFj/5jfRh4ulMg5B6fTJ2XSLT8w4WuYGc=
+	t=1752120400; cv=none; b=ZhEaIWemFX/uGFkuKISSqbTx1ec5SRKNIJuPEzv7o4pI8MnXTAlv+baWOIugKASzsNUQ1hZtOe7CPgwbfq9xM7WIPyQ4IrVu6O9wdBIzgiA1GL6JC4iEeINQa3S3LNxm+yELlcY9iKgYyoMEQZ+nSIyrgi0UEYPi9T7kyWi2aUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752120372; c=relaxed/simple;
-	bh=EOJvIJKcp1uaEI3Nv8Nu8Gfe2d92xfES/f4sTFodMkg=;
+	s=arc-20240116; t=1752120400; c=relaxed/simple;
+	bh=L4KNzQ/jTQT+ToNu6S5D9d2wnT5UUWfZbYwv35F07z0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mh++im0UDf0VKi/BqGtfvXJJGhBO0TP0yYf1zl7onrM9hEoseqP9by6pF2AhMBa7rHkfY/L5HXcq+5LY+wn4N7XZKERGKrRAr1Hx2u7Acq5l7WdyCrpLEfBZgY+4jm3Zk8LhcOSjsMV/AtknJ7H+bK/1i+yms0ZQwSZBAIzkQts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SnApjbS1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Skd/vG4r; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 10 Jul 2025 06:06:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752120368;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MiGQOhHJzmi7Jd1WWo/0Ygq0kCc1gl9yVILzeL51PFE=;
-	b=SnApjbS1/YX+oS4g8XRJfjTFWGsZzia5xtIieth5I6yuu71sa/sPkekyaJZ31hdAdHq7pO
-	YR12N4ow+utaaLruRTVSmVvh1GdUrgF5iVXwA/1flcA05wORZlvh2/8LY4jzXAZJRMsrxe
-	Nu6UlC2C8npaL0rsNhAWrFy9Vc60JZr58lygcUB0AJd/BTV6qiTnTks4OQQ29fq/oIZe+U
-	Z2EQ/+WhYj0Vu+9AX82tWHcRm27bcBuRnsM1NdgOWaMUVlw2SeHsDRl+fF7wls7kBCpo2J
-	SM+Ab9Wbzmw3kmvuy3iqOrQc2ISBsMrZ7Gm9BGiJwoBacLXWelPzHO/b1QVMJA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752120368;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MiGQOhHJzmi7Jd1WWo/0Ygq0kCc1gl9yVILzeL51PFE=;
-	b=Skd/vG4rUwqi/EJmaHNXAMTkFbV8KycrfhGyvTXe9yudxnR9XOtzreimY4sbrkeOv7BIyX
-	w9M/yazjnol1FlCQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
-Message-ID: <20250710040607.GdzUE7A0@linutronix.de>
-References: <20250527090836.1290532-1-namcao@linutronix.de>
- <20250701-wochen-bespannt-33e745d23ff6@brauner>
- <cda3b07998b39b7d46f10394c232b01a778d07a9.camel@xry111.site>
- <20250710034805.4FtG7AHC@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ux5LDTMMfSH5Ln99sh7MKkeGKnssm/g5jlUmnqTldMc5rEIc7xiyxdj6Lv+7WQhg9f2BCZUQ+9+Z3ag3Xt1ugSWU5Pl6gXjNHolMtP5yxpchfagMnPPA3ejFjndevUexE3B9HB+TraiLFIjL1sbJC2lm1DQaKqo8rIMTT/j6Qb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z06xMXiP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE70C4CEE3;
+	Thu, 10 Jul 2025 04:06:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752120399;
+	bh=L4KNzQ/jTQT+ToNu6S5D9d2wnT5UUWfZbYwv35F07z0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z06xMXiPUEH/RrjsCrUy2bRVVPC2U4stPb9XzLxomiwAgOAO9x8uVEal0rB0yujjW
+	 eAexI0uyYC58kOLnyuMKzeYlFYDf5HeP4yRPTVAX0ts5nOH5yVAYcKYwgxPZwclqPE
+	 7KWtqH/jkYhw1lOttA9/DfzFCRACBG8P7YBVkDGEWqy4qRHWkf6z6UZPjvYSTK3+4k
+	 YTj/2et2KO00kALaZqrtwa1pkUW9sRIQOHERxRbSmG0vqIPHAzhONaeoQ2yGfGFeky
+	 d1NFd6VuJ0lFFtVH8bRJ3AT7lIELxF0jTp6il3l77N4xC/IgV2FXf9Yn2EdzqpTMzh
+	 4Hj43zqWACbtw==
+Date: Thu, 10 Jul 2025 04:06:35 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Radu Vele <raduvele@google.com>
+Cc: Benson Leung <bleung@chromium.org>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Andrei Kuchynski <akuchynski@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] platform/chrome: cros_ec_typec: Add lock per-port
+Message-ID: <aG88SyVAdO0txGMi@google.com>
+References: <20250709132232.2475172-1-raduvele@google.com>
+ <20250709132232.2475172-2-raduvele@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,36 +60,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250710034805.4FtG7AHC@linutronix.de>
+In-Reply-To: <20250709132232.2475172-2-raduvele@google.com>
 
-On Thu, Jul 10, 2025 at 05:48:08AM +0200, Nam Cao wrote:
-> On Thu, Jul 10, 2025 at 11:08:18AM +0800, Xi Ruoyao wrote:
-> > After upgrading my kernel to the recent mainline I've encountered some
-> > stability issue, like:
-> > 
-> > - When GDM started gnome-shell, the screen often froze and the only
-> > thing I could do was to switch into a VT and reboot.
-> > - Sometimes gnome-shell started "fine" but then starting an application
-> > (like gnome-console) needed to wait for about a minute.
-> > - Sometimes the system shutdown process hangs waiting for a service to
-> > stop.
-> > - Rarely the system boot process hangs for no obvious reason.
-> > 
-> > Most strangely in all the cases there are nothing alarming in dmesg or
-> > system journal.
-> > 
-> > I'm unsure if this is the culprit but I'm almost sure it's the trigger.
-> > Maybe there's some race condition in my userspace that the priority
-> > inversion had happened to hide...  but anyway reverting this patch
-> > seemed to "fix" the issue.
-> > 
-> > Any thoughts or pointers to diagnose further?
+On Wed, Jul 09, 2025 at 01:22:32PM +0000, Radu Vele wrote:
+> @@ -8,6 +8,7 @@
+>  
+>  #include <linux/acpi.h>
+>  #include <linux/module.h>
+> +#include <linux/mutex.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_data/cros_ec_commands.h>
+>  #include <linux/platform_data/cros_usbpd_notify.h>
 
-I fetched Linus's tree, and noticed that the latest commit in Linus tree
-fixes an use-after-free issue in eventpoll:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8c2e52ebbe885c7eeaabd3b7ddcdc1246fc400d2
+Please consider to include linux/cleanup.h and use guard() to simplify the
+patch.
 
-Any chance it resolves your issue?
+> @@ -54,8 +55,11 @@ static int cros_typec_enter_usb_mode(struct typec_port *tc_port, enum usb_mode m
+>  		.mode_to_enter = CROS_EC_ALTMODE_USB4
+>  	};
+>  
+> -	return cros_ec_cmd(port->typec_data->ec, 0, EC_CMD_TYPEC_CONTROL,
+> +	mutex_lock(&port->lock);
+> +	int ret = cros_ec_cmd(port->typec_data->ec, 0, EC_CMD_TYPEC_CONTROL,
+>  			  &req, sizeof(req), NULL, 0);
+> +	mutex_unlock(&port->lock);
+> +	return ret;
 
-Nam
+E.g.:
+        guard(mutex)(&port->lock);
+        return cros_ec_cmd(...);
+
+>  static int cros_typec_perform_role_swap(struct typec_port *tc_port, int target_role, u8 swap_type)
+> @@ -70,6 +74,8 @@ static int cros_typec_perform_role_swap(struct typec_port *tc_port, int target_r
+>  	if (!data->pd_ctrl_ver)
+>  		return -EOPNOTSUPP;
+>  
+> +	mutex_lock(&port->lock);
+
+It can drop all the following diff hunks in the function if using:
+        guard(mutex)(&port->lock);
+
+> @@ -1232,6 +1248,7 @@ static int cros_typec_port_update(struct cros_typec_data *typec, int port_num)
+>  		return -EINVAL;
+>  	}
+>  
+> +	mutex_lock(&typec->ports[port_num]->lock);
+
+It can drop all the following diff hunks in the function if using:
+        guard(mutex)(&typec->ports[port_num]->lock);
 
