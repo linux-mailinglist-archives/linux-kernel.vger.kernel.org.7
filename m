@@ -1,83 +1,140 @@
-Return-Path: <linux-kernel+bounces-725943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394ACB005C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:53:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A2AB005C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE241482AAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:52:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40CB81C88086
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2042749F2;
-	Thu, 10 Jul 2025 14:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCD62749E9;
+	Thu, 10 Jul 2025 14:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oA07TTmn"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="EA4XzKyM"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B802273D9D;
-	Thu, 10 Jul 2025 14:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABBD2741A2;
+	Thu, 10 Jul 2025 14:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752159024; cv=none; b=HlwboZYAPRBC8XyFOxqpg6zaqk9LbtIG/L3v2BxtDAvhP41UJl7UjNUThpuHYC9RGewrw5KW47BH2tnimZ5BmXpMl3LAFeaGWGKzFH34hmGo0WgDJIpyme00w1KYm/nKsqFfgI8Lr50NR5rDdAGXaqq5N0L5UTwQj7RoQRj5nYg=
+	t=1752159082; cv=none; b=GZ5WBa++ScmNAR59qr1nBB8p1XisrZFx4XluGpo+EQYDVuqlFluWuWdDJaMoMXR3gvgVoERO3CFjVc+KSVmJ5x0qp6QXuSZggqjYjlhngjb40dD0flpLiiCIe39w1YlYVUqi929ItbgfCQlm8O8FE12oiIJVqD77sBj3b4qoyks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752159024; c=relaxed/simple;
-	bh=2kQjfdPQxPBtEb3KeI6AnatP76yOBKS+FnpqYuABIHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sBNzDgjZxEZ2AQU5nWwfCzYjwM4PzP38oat0QIKLoioZHKFOAJNG3J0WqtP2uhW87nLwwy6lX/xn8OsM4xnsXBikLMh9Thc1uPyxM6btY8qn/DM3LU+Pv+a3pSFqFH4VgLvMulaVWEJSXWiI49bjaDG5663sdVRqlxGIxHVOW8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=oA07TTmn; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=7Ww2cOwuDGEIS/M+c7Fma28U5zkeof425wzCnG+SO8E=; b=oA07TTmnmPvb1XkbrWu1962aKZ
-	ypVuiaK8o5am4BXurMcczrSNY7FUgDuUyQ4PfiVJpw4Zy08EQr4Diga8aMhcY+x7X/pVBciNDj5KN
-	sUBZa5/KEWfi+XDkp43NdzAchonbKlYdY90D2yPHGKMO7JhRYgahPn1UQ6QaJgsIjGJE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZsbE-00180w-KA; Thu, 10 Jul 2025 16:50:12 +0200
-Date: Thu, 10 Jul 2025 16:50:12 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Wei Fang <wei.fang@nxp.com>, shenwei.wang@nxp.com,
-	xiaoning.wang@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH net-next 3/3] net: fec: add fec_set_hw_mac_addr() helper
- function
-Message-ID: <c7c297de-d19c-4861-af85-b43b15f43d1a@lunn.ch>
-References: <20250710090902.1171180-1-wei.fang@nxp.com>
- <20250710090902.1171180-4-wei.fang@nxp.com>
- <20250710155728.363bcfd6@fedora>
+	s=arc-20240116; t=1752159082; c=relaxed/simple;
+	bh=TGQhJa4lx/cHTe/LhorFNJ6YsvdTYs1ocPu0WiZ/mqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T7tx0JJB1LFkEgZPFtufsDzkZDCeiC25h9gMyATL97ja7aI1OZxWtCXRrq25AoQZc/vgZmj6fHPQeAqhQTG2odWRulUmBUk9U26Gl/MbHhDdpyY/10qYsatbDMJwfDaQfd907RxigD96X//X+GXBXKt2eZmKflHmcdI0wEiUsFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=EA4XzKyM; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1752159060;
+	bh=1+Kx79UUMTR+HBWcwOxCrMocpYqceV3PK2nUmMA9qKk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=EA4XzKyMy+oCLzXdqkxN3+h6VsacYMEIIPKY/T6eXvofUXrtjX1EwSuiG9Ust4138
+	 ENtVeV+OFGWP3YTz7zhDhQhIKbFEF19jexIPglyPRaPrhePGNoYSR7ph/8MkzhZjOs
+	 Spj67zc97LlWlkSSK5a82EVtfY4a4lkwqKUfifNE=
+X-QQ-mid: zesmtpip3t1752159047t675b042c
+X-QQ-Originating-IP: 7KCsD7aX+T8LGM4sbXWAQTDPEH/RCcAWQIorEStaNr8=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 10 Jul 2025 22:50:45 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 17183148968099377952
+EX-QQ-RecipientCnt: 7
+From: WangYuli <wangyuli@uniontech.com>
+To: johannes@sipsolutions.net
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] mac80211: fix unsigned int link_id format specifiers in trace.h
+Date: Thu, 10 Jul 2025 22:50:43 +0800
+Message-ID: <2D6CF44B8B2BA412+20250710145043.331831-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710155728.363bcfd6@fedora>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: M/ESU50hZOEXtAvbZgXwKigzfcc5LBLnkc1EV1Tp3P/7QWcuWZ8sGy8a
+	/yudt5aYznFHl6NAfeC7iyc68pzy0mRQj5AOokFvpg8rbMnFZnCJqRpMFibgnh6YbB2dHLu
+	XXa7baQg/Ip9ihUU1uVkmKqygcONIRZQiSp+921U/XvcOh7+qR3HzdpsmAKhgdBWuxhoKrT
+	HK462cbuLri5zFL1VXxnljemAkatWn8uS/2/Zw7yNYmi0sEer+7ZPznloW5Bt8yAPDLWNOs
+	pOfbKclrmZErgjJyNgjeBoKkKlgZBsAUTLIPBLcbASz/MCw6wJEVmSo/lYFfS5ER3bULJYV
+	9cuRB6NkQ4aVb91LMRRJJjGRJsBPUxAuXQzYfBS/v1dqKKntrs0zdWyXyGO4MvF1nb5SJKI
+	eJJDgtAslgdQMNY442i2MUFrFEhR0JOV5XCX+onaCU4ByPXnxrHrXfqd8TskAkOs+u0K1aI
+	EVuHxA1Y3uMWRIC24w6j12bwk6NghyGYvM/phwXITtU1ABxby4kmJDw0D4TUbjNscZT+Gdh
+	uHFYgiugO79cMmPYs6wUGa7tHoBj0eFRDD2JSFROH+vuumRh7sMLlMdFl23UoCRkl9SYRvZ
+	dwos7+V7Vx6sWIcU6atDSn6hqnZ+J4/jUHOqzuLjjsVnshNY4+Fgd4gpYpAz1lI9kX9MB/E
+	gxG0QAT3qgXIOE90IYTFSTHklRYv7az4R5OCxRxzjZKEu5NKBJjm1yysvjMbBihaizGILsU
+	8S3mHMYi375PdHXmOaRebyITDIIV2EqzDhMyxgFMmBaz5gzAUHiEWW43QBbfJ1goTy4p9g0
+	VEHrftkenMpMwn/LTSjLHjZvlQnLRKT1vHm6xJJXgcEi9n/MIgOfLUin2YMaSBfi0Inr7ed
+	OfjQwQbtW66gKPt5skKHB395vesfqLktykYYDuL9prUCe9wx1y0oVkEL6SQJTkTd7bDVgqa
+	jNIj5WiQ4+nbdilOgCviSDMlyDW2EwsjUwxquFkJXWxRrgdTq+Pk5x9iJ3rSCdbIdHUHKfE
+	P7rvQcjkZzMChf1fGNXkPznJ8ktbwe7BqlUVHM+1gjWRUHaK8h
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-> > -	writel(ndev->dev_addr[3] | (ndev->dev_addr[2] << 8) |
-> > -		(ndev->dev_addr[1] << 16) | (ndev->dev_addr[0] << 24),
-> > -		fep->hwp + FEC_ADDR_LOW);
-> > -	writel((ndev->dev_addr[5] << 16) | (ndev->dev_addr[4] << 24),
-> > -		fep->hwp + FEC_ADDR_HIGH);
-> > +	fec_set_hw_mac_addr(ndev);
-> 
-> It's more of a personal preference, but I find this implementation to
-> be much more readable than the one based on
-> 
->   writel((__force u32)cpu_to_be32(temp_mac[...]), ...);
+Fix format specifiers for link_id fields declared as 'unsigned int'
+to use %u instead of %d. This affects several trace events where
+link_id was incorrectly formatted as signed integer.
 
-It also avoids the __force, which is good.
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ net/mac80211/trace.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-	Andrew
+diff --git a/net/mac80211/trace.h b/net/mac80211/trace.h
+index 72fad8ea8bb9..cd1e0c4dfe2f 100644
+--- a/net/mac80211/trace.h
++++ b/net/mac80211/trace.h
+@@ -1070,7 +1070,7 @@ TRACE_EVENT(drv_conf_tx,
+ 	),
+ 
+ 	TP_printk(
+-		LOCAL_PR_FMT  VIF_PR_FMT  " link_id: %d, AC:%d",
++		LOCAL_PR_FMT  VIF_PR_FMT  " link_id: %u, AC:%d",
+ 		LOCAL_PR_ARG, VIF_PR_ARG, __entry->link_id, __entry->ac
+ 	)
+ );
+@@ -1785,7 +1785,7 @@ DECLARE_EVENT_CLASS(local_sdata_chanctx,
+ 	),
+ 
+ 	TP_printk(
+-		LOCAL_PR_FMT VIF_PR_FMT " link_id:%d" CHANCTX_PR_FMT,
++		LOCAL_PR_FMT VIF_PR_FMT " link_id:%u" CHANCTX_PR_FMT,
+ 		LOCAL_PR_ARG, VIF_PR_ARG, __entry->link_id, CHANCTX_PR_ARG
+ 	)
+ );
+@@ -2194,7 +2194,7 @@ TRACE_EVENT(drv_get_txpower,
+ 	),
+ 
+ 	TP_printk(
+-		LOCAL_PR_FMT VIF_PR_FMT " link_id:%d dbm:%d ret:%d",
++		LOCAL_PR_FMT VIF_PR_FMT " link_id:%u dbm:%d ret:%d",
+ 		LOCAL_PR_ARG, VIF_PR_ARG, __entry->link_id, __entry->dbm, __entry->ret
+ 	)
+ );
+@@ -2912,7 +2912,7 @@ TRACE_EVENT(api_chswitch_done,
+ 	),
+ 
+ 	TP_printk(
+-		VIF_PR_FMT " success=%d link_id=%d",
++		VIF_PR_FMT " success=%d link_id=%u",
+ 		VIF_PR_ARG, __entry->success, __entry->link_id
+ 	)
+ );
+-- 
+2.50.0
+
 
