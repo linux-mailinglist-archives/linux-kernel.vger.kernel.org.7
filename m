@@ -1,545 +1,169 @@
-Return-Path: <linux-kernel+bounces-725028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68961AFF9FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:41:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F2EAFF9FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A48D3A0F8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:41:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8521C825AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B544A28725D;
-	Thu, 10 Jul 2025 06:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136B1280A29;
+	Thu, 10 Jul 2025 06:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mRzIQZyN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HO9HyGOv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CA1206F27;
-	Thu, 10 Jul 2025 06:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4B3287248;
+	Thu, 10 Jul 2025 06:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752129683; cv=none; b=FJP/xV1p9sY8qnKdfHfSLPobINmuwgjKj0tEDcc6Q8CG+/FlJ8JpiyukfEUTGP73pJ8WRF9VHXMrz6ggJXu1B92R48GeUT1845YcwHrh+UE8S7PpLxa+Z6GzwrKkSLdNrN5PHD9LN98HuT71AotxjQrfntvSoQYKLaEXD4ov9xI=
+	t=1752129698; cv=none; b=B0LDSLUTyYkTVLCdmTa5BUNMWPvqLS9Jym2v9XXTVjBEMxqaw0yUtWcSxdZiMrGB/Kzq2x+byY06h3+At4yjghWde2MP/87cOc+4QovPzrBcHeD9DF1dKGmuknjX4FNu1MmgpW4stzhXaSdrpqYf+yzLJp5gAkPmi3eZjxXUrtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752129683; c=relaxed/simple;
-	bh=FYejiqw8iKfAj9Dn1vIoShSI1tpC8OMjMJ44REKgjUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H1WQI2m1khwsdZ6hLFWYUeW/PeLNE+4ExOaczO2V+0l4xhd9DHlWU7naQjcBXHZEK76j3CuvP4jfwPrHTRgg19waW4CPSBxtjL63UNAt5UwSwI1/Fovbw+Cd8ju0AoMInHG1AlcslDGtGxzUuUeaK7y64yBaMDHRtcKfdnactUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mRzIQZyN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DBD4C4CEE3;
-	Thu, 10 Jul 2025 06:41:21 +0000 (UTC)
+	s=arc-20240116; t=1752129698; c=relaxed/simple;
+	bh=we/ipfwmIbO428HHSc8m/3FIlkhp1xYcQZObCY7CDiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lDy6JIYN5d0ll3MSb9lDT3lnF3z36ozSMYyktXFbzyMmu1sNLEkHwqZLvhSEj0d6XlBAhoJ6grdX5fa+2Z1CvpkumqLZQM2zTy3nGTtHdg/Mx1kNm1sHyEfekGzdE1NxJkDAuxJKsXWERRhk2mEGfJDdc/kJmc9Q1khEf+sVIWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HO9HyGOv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5E17C4CEF5;
+	Thu, 10 Jul 2025 06:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752129683;
-	bh=FYejiqw8iKfAj9Dn1vIoShSI1tpC8OMjMJ44REKgjUo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mRzIQZyNi2682ceXUD6M42/9EIi/5J7ySNLIUjMHdsjx4Rc6jKUVnsR37El4de9eL
-	 N1LQgbX7BEx7Tur0iuoxn/ntBjJphd2vA6C/ZxHa2/alZeOEbekBwHATemimSSh/CD
-	 w0YtAx6RTRehfm6zw4uymyVDuck/x1rBBXMfJqQpl8yYcCWKfNp6I74KyC40LVN8zQ
-	 uFEKtq6o0Qqc5YlVKb1LAZ0Nqmhc2f6s1hqtIVOb+8fhK0V+8b/YJ63qUwtBy25MZz
-	 hXMxmfFG4+jEvVCeoaagLTN4LHxprl9anXglOoV+PKri30CTjuhOaZ6KV4IygVAcjt
-	 xvOOiCUMOhzfg==
-Date: Thu, 10 Jul 2025 08:41:19 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 12/12] docs: kdoc: Improve the output text accumulation
-Message-ID: <20250710084119.3e5c1ced@foz.lan>
-In-Reply-To: <20250702223524.231794-13-corbet@lwn.net>
-References: <20250702223524.231794-1-corbet@lwn.net>
-	<20250702223524.231794-13-corbet@lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1752129697;
+	bh=we/ipfwmIbO428HHSc8m/3FIlkhp1xYcQZObCY7CDiA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HO9HyGOvh2mfGdR/wLBBPJGQ51LC0H6mL+gC8J1TWcOspG1wYxTPXCzYiNMePrQmy
+	 NcbrXJS4I7UPc3tgT6/FPbiBqvhSmabLABbhSqSbpFeYpIQeK0g12r1IUooUmb++w/
+	 tGYllWtnfj3ZUynq5L2zVlR1aCs7JOjXcZ8dpvkgY+NuTw3Ej7HVe4/tXi+qI/X3m/
+	 i0Irl7+6b5dtscboPwG6+Qt/SXKQ5tEYsjoScIlXxbequCLTXy1n21fUpfknXJhXyd
+	 s+hnBvbTwImHC2LGrjO4n/MazQImT6uaeFium4X3bUJ7P3VGTpQeMedDo4cuy8FGzm
+	 nhSmCy8a4bsmA==
+Message-ID: <d2b283f9-18bf-4fc9-b888-997dbe9d9390@kernel.org>
+Date: Thu, 10 Jul 2025 08:41:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] efi: add ovmf debug log driver
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Gerd Hoffmann <kraxel@redhat.com>, linux-efi@vger.kernel.org,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250708125624.734132-1-kraxel@redhat.com>
+ <6edfa099-ab0c-41f6-89ea-0fd67666dd05@kernel.org>
+ <2mn65slwkwmjpeilma2isw7zgabdmda4rhpqjiutwdwqno2wrh@zghymlce2fiy>
+ <8621135e-445a-42dd-89e0-bf8fc3e2b6b7@kernel.org>
+ <4cix3k4h32wozt3nxic5un7jyzfjrmqmzbzmtr3ivw5b2bz363@mw6bke7w4oaq>
+ <5800c426-95fd-4a81-b979-c0bc2bc293dd@kernel.org>
+ <CAMj1kXFvMVmxesoqaW254z85ZMRO4U+S3Cr7oyu4K-m-jiKVTg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAMj1kXFvMVmxesoqaW254z85ZMRO4U+S3Cr7oyu4K-m-jiKVTg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Em Wed,  2 Jul 2025 16:35:24 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
-
-> Building strings with repeated concatenation is somewhat inefficient in
-> Python; it is better to make a list and glom them all together at the end.
-> Add a small set of methods to the OutputFormat superclass to manage the
-> output string, and use them throughout.
+On 10/07/2025 01:14, Ard Biesheuvel wrote:
+> On Thu, 10 Jul 2025 at 00:39, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 09/07/2025 16:31, Gerd Hoffmann wrote:
+>>> On Wed, Jul 09, 2025 at 04:20:49PM +0200, Krzysztof Kozlowski wrote:
+>>>> On 09/07/2025 16:17, Gerd Hoffmann wrote:
+>>>>> On Wed, Jul 09, 2025 at 03:58:58PM +0200, Krzysztof Kozlowski wrote:
+>>>>>> On 08/07/2025 14:56, Gerd Hoffmann wrote:
+>>>>>>> +MODULE_DESCRIPTION("OVMF debug log");
+>>>>>>> +MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
+>>>>>>> +MODULE_LICENSE("GPL");
+>>>>>>> +MODULE_ALIAS("platform:ovmf_debug_log");
+>>>>>>> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+>>>>>>> index db8c5c03d3a2..ac0a03ec3452 100644
+>>>>>>> --- a/drivers/firmware/efi/Kconfig
+>>>>>>> +++ b/drivers/firmware/efi/Kconfig
+>>>>>>> @@ -263,6 +263,14 @@ config EFI_COCO_SECRET
+>>>>>>>     virt/coco/efi_secret module to access the secrets, which in turn
+>>>>>>>     allows userspace programs to access the injected secrets.
+>>>>>>>
+>>>>>>> +config OVMF_DEBUG_LOG
+>>>>>>> + tristate "Expose OVMF firmware debug log via sysfs"
+>>>>>>> + depends on EFI
+>>>>>>> + help
+>>>>>>> +   Recent OVMF versions (edk2-stable202508 + newer) can write
+>>>>>>> +   their debug log to a memory buffer.  This driver exposes the
+>>>>>>> +   log content via sysfs (/sys/firmware/efi/ovmf_debug_log).
+>>>>>>
+>>>>>> Where did you document new ABI?
+>>>>>
+>>>>> The log buffer header struct is documented in the header file for the
+>>>>> edk2 code:
+>>>>> https://github.com/tianocore/edk2/blob/master/OvmfPkg/Include/Library/MemDebugLogLib.h
+>>>>
+>>>> You added a new sysfs interface. I meant documentation for this.
+>>>
+>>> The sysfs file contains the log and you can simply use
+>>> 'cat /sys/firmware/efi/ovmf_debug_log' to read it.
+>>
+>> Don't explain how it works to me. I did not ask how it works. I asked
+>> where is the new ABI documented?
+>>
 > 
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-
-The patch looks good to me. Just a minor nit below.
-
-> ---
->  scripts/lib/kdoc/kdoc_output.py | 185 +++++++++++++++++---------------
->  1 file changed, 98 insertions(+), 87 deletions(-)
+> Please drop the condescending tone, and don't make people guess at
+> what you are trying to say.
 > 
-> diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-> index ea8914537ba0..d4aabdaa9c51 100644
-> --- a/scripts/lib/kdoc/kdoc_output.py
-> +++ b/scripts/lib/kdoc/kdoc_output.py
-> @@ -73,7 +73,19 @@ class OutputFormat:
->          self.config = None
->          self.no_doc_sections = False
->  
-> -        self.data = ""
-> +    #
-> +    # Accumulation and management of the output text.
-> +    #
-> +    def reset_output(self):
-> +        self._output = []
-> +
-> +    def emit(self, text):
-> +        """Add a string to out output text"""
-> +        self._output.append(text)
-> +
-> +    def output(self):
-> +        """Obtain the accumulated output text"""
-> +        return ''.join(self._output)
+> If you meant to say that the patch lacks an ABI description in
+> Documentation/ABI, then you are absolutely right, and you can just say
+> so.
 
-I would prefer to use a more Pythonic name for this function:
+Maybe it was documented already, so I asked where ABI is documented. I
+think this was exactly what you said here - Documentation/ABI:
 
-	def __str__(self)
+"Where did you document new ABI?"
 
-This way, all it takes to get the final string is to use str():
-
-	out_str = str(out)
-
-With that:
-
-Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
->  
->      def set_config(self, config):
->          """
-> @@ -180,32 +192,31 @@ class OutputFormat:
->          Handles a single entry from kernel-doc parser
->          """
->  
-> -        self.data = ""
-> -
-> +        self.reset_output()
->          dtype = args.type
->  
->          if dtype == "doc":
->              self.out_doc(fname, name, args)
-> -            return self.data
-> +            return self.output()
->  
->          if not self.check_declaration(dtype, name, args):
-> -            return self.data
-> +            return self.output()
->  
->          if dtype == "function":
->              self.out_function(fname, name, args)
-> -            return self.data
-> +            return self.output()
->  
->          if dtype == "enum":
->              self.out_enum(fname, name, args)
-> -            return self.data
-> +            return self.output()
->  
->          if dtype == "typedef":
->              self.out_typedef(fname, name, args)
-> -            return self.data
-> +            return self.output()
->  
->          if dtype in ["struct", "union"]:
->              self.out_struct(fname, name, args)
-> -            return self.data
-> +            return self.output()
->  
->          # Warn if some type requires an output logic
->          self.config.log.warning("doesn't now how to output '%s' block",
-> @@ -274,7 +285,7 @@ class RestFormat(OutputFormat):
->  
->          if self.enable_lineno and ln is not None:
->              ln += 1
-> -            self.data += f".. LINENO {ln}\n"
-> +            self.emit(f".. LINENO {ln}\n")
->  
->      def output_highlight(self, args):
->          """
-> @@ -326,7 +337,7 @@ class RestFormat(OutputFormat):
->  
->          # Print the output with the line prefix
->          for line in output.strip("\n").split("\n"):
-> -            self.data += self.lineprefix + line + "\n"
-> +            self.emit(self.lineprefix + line + "\n")
->  
->      def out_section(self, args, out_docblock=False):
->          """
-> @@ -343,15 +354,15 @@ class RestFormat(OutputFormat):
->  
->              if out_docblock:
->                  if not self.out_mode == self.OUTPUT_INCLUDE:
-> -                    self.data += f".. _{section}:\n\n"
-> -                    self.data += f'{self.lineprefix}**{section}**\n\n'
-> +                    self.emit(f".. _{section}:\n\n")
-> +                    self.emit(f'{self.lineprefix}**{section}**\n\n')
->              else:
-> -                self.data += f'{self.lineprefix}**{section}**\n\n'
-> +                self.emit(f'{self.lineprefix}**{section}**\n\n')
->  
->              self.print_lineno(args.section_start_lines.get(section, 0))
->              self.output_highlight(text)
-> -            self.data += "\n"
-> -        self.data += "\n"
-> +            self.emit("\n")
-> +        self.emit("\n")
->  
->      def out_doc(self, fname, name, args):
->          if not self.check_doc(name, args):
-> @@ -389,41 +400,41 @@ class RestFormat(OutputFormat):
->  
->          self.print_lineno(ln)
->          if args.get('typedef') or not args.get('functiontype'):
-> -            self.data += f".. c:macro:: {name}\n\n"
-> +            self.emit(f".. c:macro:: {name}\n\n")
->  
->              if args.get('typedef'):
-> -                self.data += "   **Typedef**: "
-> +                self.emit("   **Typedef**: ")
->                  self.lineprefix = ""
->                  self.output_highlight(args.get('purpose', ""))
-> -                self.data += "\n\n**Syntax**\n\n"
-> -                self.data += f"  ``{signature}``\n\n"
-> +                self.emit("\n\n**Syntax**\n\n")
-> +                self.emit(f"  ``{signature}``\n\n")
->              else:
-> -                self.data += f"``{signature}``\n\n"
-> +                self.emit(f"``{signature}``\n\n")
->          else:
-> -            self.data += f".. c:function:: {signature}\n\n"
-> +            self.emit(f".. c:function:: {signature}\n\n")
->  
->          if not args.get('typedef'):
->              self.print_lineno(ln)
->              self.lineprefix = "   "
->              self.output_highlight(args.get('purpose', ""))
-> -            self.data += "\n"
-> +            self.emit("\n")
->  
->          # Put descriptive text into a container (HTML <div>) to help set
->          # function prototypes apart
->          self.lineprefix = "  "
->  
->          if args.parameterlist:
-> -            self.data += ".. container:: kernelindent\n\n"
-> -            self.data += f"{self.lineprefix}**Parameters**\n\n"
-> +            self.emit(".. container:: kernelindent\n\n")
-> +            self.emit(f"{self.lineprefix}**Parameters**\n\n")
->  
->          for parameter in args.parameterlist:
->              parameter_name = KernRe(r'\[.*').sub('', parameter)
->              dtype = args.parametertypes.get(parameter, "")
->  
->              if dtype:
-> -                self.data += f"{self.lineprefix}``{dtype}``\n"
-> +                self.emit(f"{self.lineprefix}``{dtype}``\n")
->              else:
-> -                self.data += f"{self.lineprefix}``{parameter}``\n"
-> +                self.emit(f"{self.lineprefix}``{parameter}``\n")
->  
->              self.print_lineno(args.parameterdesc_start_lines.get(parameter_name, 0))
->  
-> @@ -432,9 +443,9 @@ class RestFormat(OutputFormat):
->                 args.parameterdescs[parameter_name] != KernelDoc.undescribed:
->  
->                  self.output_highlight(args.parameterdescs[parameter_name])
-> -                self.data += "\n"
-> +                self.emit("\n")
->              else:
-> -                self.data += f"{self.lineprefix}*undescribed*\n\n"
-> +                self.emit(f"{self.lineprefix}*undescribed*\n\n")
->              self.lineprefix = "  "
->  
->          self.out_section(args)
-> @@ -445,26 +456,26 @@ class RestFormat(OutputFormat):
->          oldprefix = self.lineprefix
->          ln = args.declaration_start_line
->  
-> -        self.data += f"\n\n.. c:enum:: {name}\n\n"
-> +        self.emit(f"\n\n.. c:enum:: {name}\n\n")
->  
->          self.print_lineno(ln)
->          self.lineprefix = "  "
->          self.output_highlight(args.get('purpose', ''))
-> -        self.data += "\n"
-> +        self.emit("\n")
->  
-> -        self.data += ".. container:: kernelindent\n\n"
-> +        self.emit(".. container:: kernelindent\n\n")
->          outer = self.lineprefix + "  "
->          self.lineprefix = outer + "  "
-> -        self.data += f"{outer}**Constants**\n\n"
-> +        self.emit(f"{outer}**Constants**\n\n")
->  
->          for parameter in args.parameterlist:
-> -            self.data += f"{outer}``{parameter}``\n"
-> +            self.emit(f"{outer}``{parameter}``\n")
->  
->              if args.parameterdescs.get(parameter, '') != KernelDoc.undescribed:
->                  self.output_highlight(args.parameterdescs[parameter])
->              else:
-> -                self.data += f"{self.lineprefix}*undescribed*\n\n"
-> -            self.data += "\n"
-> +                self.emit(f"{self.lineprefix}*undescribed*\n\n")
-> +            self.emit("\n")
->  
->          self.lineprefix = oldprefix
->          self.out_section(args)
-> @@ -474,14 +485,14 @@ class RestFormat(OutputFormat):
->          oldprefix = self.lineprefix
->          ln = args.declaration_start_line
->  
-> -        self.data += f"\n\n.. c:type:: {name}\n\n"
-> +        self.emit(f"\n\n.. c:type:: {name}\n\n")
->  
->          self.print_lineno(ln)
->          self.lineprefix = "   "
->  
->          self.output_highlight(args.get('purpose', ''))
->  
-> -        self.data += "\n"
-> +        self.emit("\n")
->  
->          self.lineprefix = oldprefix
->          self.out_section(args)
-> @@ -493,7 +504,7 @@ class RestFormat(OutputFormat):
->          dtype = args.type
->          ln = args.declaration_start_line
->  
-> -        self.data += f"\n\n.. c:{dtype}:: {name}\n\n"
-> +        self.emit(f"\n\n.. c:{dtype}:: {name}\n\n")
->  
->          self.print_lineno(ln)
->  
-> @@ -501,20 +512,20 @@ class RestFormat(OutputFormat):
->          self.lineprefix += "  "
->  
->          self.output_highlight(purpose)
-> -        self.data += "\n"
-> +        self.emit("\n")
->  
-> -        self.data += ".. container:: kernelindent\n\n"
-> -        self.data += f"{self.lineprefix}**Definition**::\n\n"
-> +        self.emit(".. container:: kernelindent\n\n")
-> +        self.emit(f"{self.lineprefix}**Definition**::\n\n")
->  
->          self.lineprefix = self.lineprefix + "  "
->  
->          declaration = declaration.replace("\t", self.lineprefix)
->  
-> -        self.data += f"{self.lineprefix}{dtype} {name}" + ' {' + "\n"
-> -        self.data += f"{declaration}{self.lineprefix}" + "};\n\n"
-> +        self.emit(f"{self.lineprefix}{dtype} {name}" + ' {' + "\n")
-> +        self.emit(f"{declaration}{self.lineprefix}" + "};\n\n")
->  
->          self.lineprefix = "  "
-> -        self.data += f"{self.lineprefix}**Members**\n\n"
-> +        self.emit(f"{self.lineprefix}**Members**\n\n")
->          for parameter in args.parameterlist:
->              if not parameter or parameter.startswith("#"):
->                  continue
-> @@ -526,15 +537,15 @@ class RestFormat(OutputFormat):
->  
->              self.print_lineno(args.parameterdesc_start_lines.get(parameter_name, 0))
->  
-> -            self.data += f"{self.lineprefix}``{parameter}``\n"
-> +            self.emit(f"{self.lineprefix}``{parameter}``\n")
->  
->              self.lineprefix = "    "
->              self.output_highlight(args.parameterdescs[parameter_name])
->              self.lineprefix = "  "
->  
-> -            self.data += "\n"
-> +            self.emit("\n")
->  
-> -        self.data += "\n"
-> +        self.emit("\n")
->  
->          self.lineprefix = oldprefix
->          self.out_section(args)
-> @@ -610,33 +621,33 @@ class ManFormat(OutputFormat):
->                  continue
->  
->              if line[0] == ".":
-> -                self.data += "\\&" + line + "\n"
-> +                self.emit("\\&" + line + "\n")
->              else:
-> -                self.data += line + "\n"
-> +                self.emit(line + "\n")
->  
->      def out_doc(self, fname, name, args):
->          if not self.check_doc(name, args):
->              return
->  
-> -        self.data += f'.TH "{self.modulename}" 9 "{self.modulename}" "{self.man_date}" "API Manual" LINUX' + "\n"
-> +        self.emit(f'.TH "{self.modulename}" 9 "{self.modulename}" "{self.man_date}" "API Manual" LINUX' + "\n")
->  
->          for section, text in args.sections.items():
-> -            self.data += f'.SH "{section}"' + "\n"
-> +            self.emit(f'.SH "{section}"' + "\n")
->              self.output_highlight(text)
->  
->      def out_function(self, fname, name, args):
->          """output function in man"""
->  
-> -        self.data += f'.TH "{name}" 9 "{name}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
-> +        self.emit(f'.TH "{name}" 9 "{name}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n")
->  
-> -        self.data += ".SH NAME\n"
-> -        self.data += f"{name} \\- {args['purpose']}\n"
-> +        self.emit(".SH NAME\n")
-> +        self.emit(f"{name} \\- {args['purpose']}\n")
->  
-> -        self.data += ".SH SYNOPSIS\n"
-> +        self.emit(".SH SYNOPSIS\n")
->          if args.get('functiontype', ''):
-> -            self.data += f'.B "{args["functiontype"]}" {name}' + "\n"
-> +            self.emit(f'.B "{args["functiontype"]}" {name}' + "\n")
->          else:
-> -            self.data += f'.B "{name}' + "\n"
-> +            self.emit(f'.B "{name}' + "\n")
->  
->          count = 0
->          parenth = "("
-> @@ -649,68 +660,68 @@ class ManFormat(OutputFormat):
->              dtype = args.parametertypes.get(parameter, "")
->              if function_pointer.match(dtype):
->                  # Pointer-to-function
-> -                self.data += f'".BI "{parenth}{function_pointer.group(1)}" " ") ({function_pointer.group(2)}){post}"' + "\n"
-> +                self.emit(f'".BI "{parenth}{function_pointer.group(1)}" " ") ({function_pointer.group(2)}){post}"' + "\n")
->              else:
->                  dtype = KernRe(r'([^\*])$').sub(r'\1 ', dtype)
->  
-> -                self.data += f'.BI "{parenth}{dtype}"  "{post}"' + "\n"
-> +                self.emit(f'.BI "{parenth}{dtype}"  "{post}"' + "\n")
->              count += 1
->              parenth = ""
->  
->          if args.parameterlist:
-> -            self.data += ".SH ARGUMENTS\n"
-> +            self.emit(".SH ARGUMENTS\n")
->  
->          for parameter in args.parameterlist:
->              parameter_name = re.sub(r'\[.*', '', parameter)
->  
-> -            self.data += f'.IP "{parameter}" 12' + "\n"
-> +            self.emit(f'.IP "{parameter}" 12' + "\n")
->              self.output_highlight(args.parameterdescs.get(parameter_name, ""))
->  
->          for section, text in args.sections.items():
-> -            self.data += f'.SH "{section.upper()}"' + "\n"
-> +            self.emit(f'.SH "{section.upper()}"' + "\n")
->              self.output_highlight(text)
->  
->      def out_enum(self, fname, name, args):
-> -        self.data += f'.TH "{self.modulename}" 9 "enum {name}" "{self.man_date}" "API Manual" LINUX' + "\n"
-> +        self.emit(f'.TH "{self.modulename}" 9 "enum {name}" "{self.man_date}" "API Manual" LINUX' + "\n")
->  
-> -        self.data += ".SH NAME\n"
-> -        self.data += f"enum {name} \\- {args['purpose']}\n"
-> +        self.emit(".SH NAME\n")
-> +        self.emit(f"enum {name} \\- {args['purpose']}\n")
->  
-> -        self.data += ".SH SYNOPSIS\n"
-> -        self.data += f"enum {name}" + " {\n"
-> +        self.emit(".SH SYNOPSIS\n")
-> +        self.emit(f"enum {name}" + " {\n")
->  
->          count = 0
->          for parameter in args.parameterlist:
-> -            self.data += f'.br\n.BI "    {parameter}"' + "\n"
-> +            self.emit(f'.br\n.BI "    {parameter}"' + "\n")
->              if count == len(args.parameterlist) - 1:
-> -                self.data += "\n};\n"
-> +                self.emit("\n};\n")
->              else:
-> -                self.data += ", \n.br\n"
-> +                self.emit(", \n.br\n")
->  
->              count += 1
->  
-> -        self.data += ".SH Constants\n"
-> +        self.emit(".SH Constants\n")
->  
->          for parameter in args.parameterlist:
->              parameter_name = KernRe(r'\[.*').sub('', parameter)
-> -            self.data += f'.IP "{parameter}" 12' + "\n"
-> +            self.emit(f'.IP "{parameter}" 12' + "\n")
->              self.output_highlight(args.parameterdescs.get(parameter_name, ""))
->  
->          for section, text in args.sections.items():
-> -            self.data += f'.SH "{section}"' + "\n"
-> +            self.emit(f'.SH "{section}"' + "\n")
->              self.output_highlight(text)
->  
->      def out_typedef(self, fname, name, args):
->          module = self.modulename
->          purpose = args.get('purpose')
->  
-> -        self.data += f'.TH "{module}" 9 "{name}" "{self.man_date}" "API Manual" LINUX' + "\n"
-> +        self.emit(f'.TH "{module}" 9 "{name}" "{self.man_date}" "API Manual" LINUX' + "\n")
->  
-> -        self.data += ".SH NAME\n"
-> -        self.data += f"typedef {name} \\- {purpose}\n"
-> +        self.emit(".SH NAME\n")
-> +        self.emit(f"typedef {name} \\- {purpose}\n")
->  
->          for section, text in args.sections.items():
-> -            self.data += f'.SH "{section}"' + "\n"
-> +            self.emit(f'.SH "{section}"' + "\n")
->              self.output_highlight(text)
->  
->      def out_struct(self, fname, name, args):
-> @@ -718,20 +729,20 @@ class ManFormat(OutputFormat):
->          purpose = args.get('purpose')
->          definition = args.get('definition')
->  
-> -        self.data += f'.TH "{module}" 9 "{args.type} {name}" "{self.man_date}" "API Manual" LINUX' + "\n"
-> +        self.emit(f'.TH "{module}" 9 "{args.type} {name}" "{self.man_date}" "API Manual" LINUX' + "\n")
->  
-> -        self.data += ".SH NAME\n"
-> -        self.data += f"{args.type} {name} \\- {purpose}\n"
-> +        self.emit(".SH NAME\n")
-> +        self.emit(f"{args.type} {name} \\- {purpose}\n")
->  
->          # Replace tabs with two spaces and handle newlines
->          declaration = definition.replace("\t", "  ")
->          declaration = KernRe(r"\n").sub('"\n.br\n.BI "', declaration)
->  
-> -        self.data += ".SH SYNOPSIS\n"
-> -        self.data += f"{args.type} {name} " + "{" + "\n.br\n"
-> -        self.data += f'.BI "{declaration}\n' + "};\n.br\n\n"
-> +        self.emit(".SH SYNOPSIS\n")
-> +        self.emit(f"{args.type} {name} " + "{" + "\n.br\n")
-> +        self.emit(f'.BI "{declaration}\n' + "};\n.br\n\n")
->  
-> -        self.data += ".SH Members\n"
-> +        self.emit(".SH Members\n")
->          for parameter in args.parameterlist:
->              if parameter.startswith("#"):
->                  continue
-> @@ -741,9 +752,9 @@ class ManFormat(OutputFormat):
->              if args.parameterdescs.get(parameter_name) == KernelDoc.undescribed:
->                  continue
->  
-> -            self.data += f'.IP "{parameter}" 12' + "\n"
-> +            self.emit(f'.IP "{parameter}" 12' + "\n")
->              self.output_highlight(args.parameterdescs.get(parameter_name))
->  
->          for section, text in args.sections.items():
-> -            self.data += f'.SH "{section}"' + "\n"
-> +            self.emit(f'.SH "{section}"' + "\n")
->              self.output_highlight(text)
-
-
-
-Thanks,
-Mauro
+Best regards,
+Krzysztof
 
