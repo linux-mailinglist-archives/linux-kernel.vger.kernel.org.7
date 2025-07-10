@@ -1,146 +1,190 @@
-Return-Path: <linux-kernel+bounces-725064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851BDAFFA65
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:07:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34271AFFA66
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 292124E03F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:07:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E44174E4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCBC2877FB;
-	Thu, 10 Jul 2025 07:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0922877DB;
+	Thu, 10 Jul 2025 07:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pf77d1d6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="m6uLqEfr"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1458FC1D;
-	Thu, 10 Jul 2025 07:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B88FC1D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752131249; cv=none; b=YfA+ehx64ZJx8srJGJeOtRLfiqCHAREe/FTxn7o34Ngi+AEW/1X9+t/iKzwvA479EMV/CD9qRlFfTsuvqcmi7KZRnsrACtXQ5atQys5hnMcRKnMjoI6FyxSBbJXBZ5sZ0FTHeTaqRfW7R2l8ptsA15MFwtX5nY6DwEFFttXBmHM=
+	t=1752131265; cv=none; b=Ix2vmEdffOqrP/6q47mVXQJljIfcU05L7Z2Fjd8hd48lvzwjh6j/mjrI5AbJUP142urRJHuxUEx/nIKxyY5JiujfaBTKNcqkHDl7PTn+mXbitTb53/0sXt5NkfYhgxFnzkk3PURKDeUqgK/mIFbJb07gxYrkgOFaNycXSNvkj/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752131249; c=relaxed/simple;
-	bh=ZzNAA9sH17UI+HRVDX98khY63iwVj0cOf9soT9XDgKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uQYdI/Wd+BnDkEx59ihWkwYgphadcDA/dvMNdlQP9zOC7uiEmRv9bW5khLzv+v4RXdF0T+nzjIcOJ+nOZxGjZRXxutONnzB/8jeKfrruFXAJL4ENcvhYK0H9rPJVoTwf3yS5Edn3jiPKi7m89151f7adjaShh3sgZtr0KemqeoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pf77d1d6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFEA4C4CEE3;
-	Thu, 10 Jul 2025 07:07:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752131248;
-	bh=ZzNAA9sH17UI+HRVDX98khY63iwVj0cOf9soT9XDgKI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Pf77d1d6UPeTGNKIXHOaUJDPJXb6Vx4q81oSBwGrmRSmlyXd+pNMOmB4zmytV7Rta
-	 MnmQ8yK2aiTBQlICLy6TsriSywYRT81EyD1QBcWbuIXzyq2DJyR37cv6lBe5B8jLge
-	 MDNMscSLpcaNvvvBmq9ZyoiGfRWwx8g+aX9+nFjPzLtxjY7d3lLl1Fh8lQGqCL9ckc
-	 hjdBL9wqdQh22h9Qw2NmFGFQVTpHGuUgpY0Nnqro6CgkwiCxh0fGEcEUUIL6jGUmZE
-	 vt7Bs7MDfllIrfoF1X+pPHeIT8jbmrKDwsxEnzejMGWz/SE69RQ+LRQ/taLLQiZR8R
-	 isfwuqX/2CXaQ==
-Message-ID: <847e908b-1073-46ea-93f3-1f36cc93d8b8@kernel.org>
-Date: Thu, 10 Jul 2025 09:07:16 +0200
+	s=arc-20240116; t=1752131265; c=relaxed/simple;
+	bh=Fa8cNJqXyqhTY+lay0tanZOJxMosTm8d38KlOTsaTVM=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=NuPQfcHIuV5N/WceNF6JI4r7SmBAIGPPsqv4JNcxHeSdUvW4Cf5hfnchEPvk6b/Ro9U3iADO43Omidy/b1cffyCuoE0nXb2QHV1dR4ih0P4Nz2zJNcDV20OEMv3asVKzwsDUZP/bPc5tM6ER+qHtHRlwVs+19rz7wurh3PUNXDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=m6uLqEfr; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250710070735epoutp03f2688a7d4e4c4c6dcddbf47bac6d08e6~Q0hf45Gn_3233932339epoutp03z
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:07:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250710070735epoutp03f2688a7d4e4c4c6dcddbf47bac6d08e6~Q0hf45Gn_3233932339epoutp03z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752131255;
+	bh=ocJtS6jXeU938kHSDICEvHMlpPd1ymK+OTM7LO9g54I=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=m6uLqEfr/gRB3eWvwZ7i7m721EbN+D/FA5rp8N0lfd1Ya2jYLn/Eh5ck7zzPmu2g0
+	 DWsGYQ5FKMCTeqMlciF0ro8Q5rGaTPfCSoei8jp4iPGvziYcEqL8AKLSVx88LhV9jA
+	 as8DmFfLHcSM0XgCqiwPIQF6lU4bSMGa/Gs77jUk=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250710070734epcas2p403d8929c9d056f22eb961ef63e1d3703~Q0hfCFwFu1887718877epcas2p40;
+	Thu, 10 Jul 2025 07:07:34 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.36.98]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bd5Wn4TQBz6B9mL; Thu, 10 Jul
+	2025 07:07:33 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250710070732epcas2p4e181084f4733cc0514c2257e468cccf2~Q0hdkQnfD1887318873epcas2p4P;
+	Thu, 10 Jul 2025 07:07:32 +0000 (GMT)
+Received: from KORCO193562 (unknown [12.36.160.57]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250710070732epsmtip185e7fbac963c7ffe1a1942119a27b49c~Q0hdhicsW2331023310epsmtip1R;
+	Thu, 10 Jul 2025 07:07:32 +0000 (GMT)
+From: =?ks_c_5601-1987?B?sejAur/s?= <ew.kim@samsung.com>
+To: "'Mark Brown'" <broonie@kernel.org>
+Cc: <s.nawrocki@samsung.com>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+	<tiwai@suse.com>, <linux-sound@vger.kernel.org>,
+	<alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <aG4sb7UcqvHz_Z5r@finisterre.sirena.org.uk>
+Subject: RE: [PATCH] ASoC: samsung: Implement abox generic structure
+Date: Thu, 10 Jul 2025 16:07:32 +0900
+Message-ID: <01a301dbf169$4e7656c0$eb630440$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Add support for the Axis ARTPEC-8 SoC
-To: ksk4725@coasia.com, Jesper Nilsson <jesper.nilsson@axis.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
- <tomasz.figa@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>,
- GunWoo Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>,
- GyoungBo Min <mingyoungbo@coasia.com>, SungMin Park <smn1196@coasia.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Shradha Todi
- <shradha.t@samsung.com>, Ravi Patel <ravi.patel@samsung.com>,
- Inbaraj E <inbaraj.e@samsung.com>, Swathi K S <swathi.ks@samsung.com>,
- Hrishikesh <hrishikesh.d@samsung.com>, Dongjin Yang <dj76.yang@samsung.com>,
- Sang Min Kim <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250710002047.1573841-1-ksk4725@coasia.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ks_c_5601-1987"
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGD3td0XDcdc/GKkWKGNfQw8ZJQZQD9NwnZAhfWmTW0wmquUA==
+Content-Language: ko
+X-CMS-MailID: 20250710070732epcas2p4e181084f4733cc0514c2257e468cccf2
+X-Msg-Generator: CA
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250709002150epcas2p467416bdbc16754726599a0cacb1feecc
+References: <CGME20250709002150epcas2p467416bdbc16754726599a0cacb1feecc@epcas2p4.samsung.com>
+	<20250709001002.378246-1-ew.kim@samsung.com>
+	<aG4sb7UcqvHz_Z5r@finisterre.sirena.org.uk>
 
-On 10/07/2025 02:20, ksk4725@coasia.com wrote:
-> From: SeonGu Kang <ksk4725@coasia.com>
+Thank you for your detailed review.
+We will proceed to remove unnecessary logs and code, as well as make
+changes to some APIs accordingly.
+
+Based on the feedback provided during your review, we will revise our work
+and submit it again upon completion.
+
+> -----Original Message-----
+> From: Mark Brown <broonie@kernel.org>
+> Sent: Wednesday, July 9, 2025 5:47 PM
+> To: ew.kim@samsung.com
+> Cc: s.nawrocki@samsung.com; lgirdwood@gmail.com; perex@perex.cz;
+> tiwai@suse.com; linux-sound@vger.kernel.org; alsa-devel@alsa-project.org;
+> linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] ASoC: samsung: Implement abox generic structure
 > 
-> Add basic support for the Axis ARTPEC-8 SoC.
-> This SoC contains four Cortex-A53 CPUs and other several IPs.
+> On Wed, Jul 09, 2025 at 09:10:02AM +0900, ew.kim@samsung.com wrote:
+> > From: ew kim <ew.kim@samsung.com>
+> >
+> > Implemet basic abox generic drivers.
+> > This driver is a management driver for the generic drivers used in
+> > Automotive Abox, connecting them to SOC drivers.
+> > It supports various Exynos Automotive SOCs.
 > 
-> Patches 1 to 10 provide the support for the clock controller,
-> which is similar to other Samsung SoCs.
+> I can't really tell what the driver is supposed to do from this - what is
+> abox?  Looking at the code I'm not really much clearer, to a large extent
+> because it doesn't seem to integrate with the subsystem (or other kernel
+> subsystems) at all.  It looks like this might be intended to control a DSP
+> offload system, but it's not 100% clear, and it seems like there's an
+> ioctl() interface which it looks like it's exposing internal abstractions
+> to userspace.  This needs to be some combination of much more clearly
+> explained and better integrated with the existing kernel subsystems, right
+> now I can't really review it effectively because it's hard for me to tell
+> what the code is trying to do.
 > 
-You should explain here (and in DTS patches or the bindings) the
-hardware, that this is Samsung SoC.
+> I've got a few very supreficial comments below but really there's a
+> structural problem that needs to be addressed first.
+> 
+> > +++ b/sound/soc/samsung/auto_abox/generic/abox_generic.c
+> > @@ -0,0 +1,568 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2020 Samsung Electronics Co., Ltd.
+> > + *        http://www.samsung.com/
+> 
+> It's now 2025...
+> 
+> Please also make the entire comment a C++ one so things look more
+> intentional.
+> 
+> > +//#define DEBUG
+> 
+> Just delete this, it can be added if needed.
+> 
+> > +#include <linux/clk.h>
+> > +#include <linux/io.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/of_platform.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/suspend.h>
+> > +#include <sound/soc.h>
+> > +#include <sound/soc-dapm.h>
+> > +#include <sound/pcm_params.h>
+> > +#include <linux/of_reserved_mem.h>
+> > +#include <linux/types.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/init.h>
+> > +#include <linux/sched/clock.h>
+> > +#include <linux/ktime.h>
+> > +#include <linux/iommu.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/kmod.h>
+> > +#include <linux/umh.h>
+> > +#include <linux/string.h>
+> 
+> Do you really need all these headers?
+> 
+> > +static struct abox_generic_data *g_abox_generic_data;
+> 
+> This isn't really the kernel style - neither the g_ naming, nor the
+> concept of having a global for a driver.
+> 
+> > +/**
+> > + * @cnotice
+> > + * @prdcode
+> > + * @Sub_SW_Component{abox_generic}
+> > + * @ALM_Link {work item url}
+> > + * @purpose "get value from virtual address"
+> > + * @logic "return global abox_generic_data"
+> > + * \image html
+> > + * @params
+> > + * @param{in, -, -, -}
+> > + * @endparam
+> > + * @retval {-, struct *abox_generic_data, !NULL, NULL}  */
+> 
+> This is not the style for kernel comments, and doesn't seem to make
+> terribly much sense.
 
-You could also explain the differences from Exynos and proposed handling
-of patches (because this is odd)
-
-Also, entire patchset has wrong and incomplete SoBs. Your SoB is missing
-everywhere, others have wrong order.
-
-Please read submitting patches first.
-
-
-Best regards,
-Krzysztof
 
