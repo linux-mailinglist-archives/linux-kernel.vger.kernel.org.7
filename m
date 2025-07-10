@@ -1,189 +1,165 @@
-Return-Path: <linux-kernel+bounces-725763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED14B00364
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:33:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F83AB00367
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:34:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D494A04C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:33:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A166C5A0FD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76F125A631;
-	Thu, 10 Jul 2025 13:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19C325B2FC;
+	Thu, 10 Jul 2025 13:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzVTmlyD"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUJzm+YK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1EA259C83;
-	Thu, 10 Jul 2025 13:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414D482899;
+	Thu, 10 Jul 2025 13:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752154403; cv=none; b=qhj6PTH37mZR+q63UFE1b7iiH9eFlYVdWCrBURzXd7crqv591d7lF9JrYG+fTrEd2Z337WY3BgLzL9FI8781bYu0CSR60CVhd61f2NOzO0V7A1gUPtwSnfaXBtnh7i3iJ0Fz8NIPuQHbn5fPnlsjNCDcCgNKqFCwv1PR3f7Wm4w=
+	t=1752154410; cv=none; b=gXncGpGTLeSpC4pkHNq4E3mZXZclfHwibuHY5u9eVmo0/ChihNLenTelCd32NPmhSriFXGV8VNY5XBJ8GRuIDyCBfOryriYSMcLvVLv6W0g5snHJ0rUGYgo41hSg4w+sEdr5yio9avr3BXL7O0IFL044uvPYxFbN3WIrRctfPp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752154403; c=relaxed/simple;
-	bh=nfK/s+MDeAYPnclkJutwa89fLOtQFfFfkJwoIm0MldU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iu90PMNmwzWsxbXT0d/ND1yI8O6+SIGg8S6ZVGiDiXgA8kheuAH6ELdQmJF3IOCKQ/rAwcBDxfYEWPU8Qktb4Tcg1QAdLYQPUoxiKdVxzpruI10yTdJ/XCnEtRfJdCld+SN4vswGHZVbVS0oatt7yFcAZ6bqsIhR48GYvsrsZAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzVTmlyD; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-881114808e4so524248241.3;
-        Thu, 10 Jul 2025 06:33:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752154400; x=1752759200; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=okRj10ybyFEKvbIUZoyobNaWGhdkXbHXR79UDV6Xmac=;
-        b=XzVTmlyDmQeFk6xhe8lX0Xq0pDvjzxb0TO6KGrIHxFHvbP+AH7SmB6X1Mq/5/Sp7m7
-         j6jVDp8QyTyEUwZczaTN65etHwIAjEaLRgSvwRS/1LWnSlxdY8r+bm1AsvYGjEQEPnLh
-         ac+QluyQK9g8nw0Far0QAdZORQ1IEFPZIos3aGg+bCPNK8AmY86x09+lwlKpz5xyVNzp
-         0jAuAy+tNP/xaKaj4c2UdltpvKISd84K8wJRhvaRoApDRbdvT0b5tuwNTLOgsYsHMbqE
-         3UFISX9H3dZrTxlx6NOxNmfkvA9BmOD2L3YR+8XHRvLCnTjbiR9s5iP2LTJh38fKDoE3
-         G1Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752154400; x=1752759200;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=okRj10ybyFEKvbIUZoyobNaWGhdkXbHXR79UDV6Xmac=;
-        b=PHEMkSZOPJupUUb9yCJv8+mwomieQTVes/AQRkwGcOHB3aQgRFWM5omAv2+qmjVDTY
-         AKYJMotHNrPtcPRmtXUyc1F9beQ6TkhhqY27XgVh5zAHBa2Aym3q1e5QkCRbEoBGsOs4
-         xZb75ZMQW2jMU1M3XvPwXg7HnZPx748AfXSZppNQwCfL6vtSuKIAHfjnfWOLwa2h4Tm7
-         0RgyKhTW7DXcK2+8Zn5BI9Kmtlazjhm59OAj4V4nvmUw0a5azMXsHatEl2K+H9jOPJpA
-         v1noG+F3Ix8dvdkf4mh0Gp8c6IHyTsIufgqwIRTbMTStuKHgzj7mSu8HkC2gltAFwe5q
-         WGrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEDP0WYJ7ZwFWWAIarQZnKhk9bCOFKMUcvbGqFzR916Z4DPzvTz5AcLLuF52Xi4DvO9sIz83IgCcQ8mZo=@vger.kernel.org, AJvYcCXbuiYm0aHcGD8kAEUQdvjcGdeUA1cpo1AjY0Y2AsGsrsaqLd2Ia5ETV1rMKsSxxK8qhYpdT13OpcEitfDat5nldg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL/IfVgQBgMmyA633wRa+eaYKMpTeUtQG5w2QJe7tO9CZXd4Jf
-	vZAQCONrkpgMlZsIH+CE6fFHuZCgGMNFUcEkJImB/kfUeDrOLCYUgmZ/tftA7TwTf+1OEhL9xQe
-	ptYnFAAtmixV2qSkrBnVhk1iFOK8eEBw=
-X-Gm-Gg: ASbGncsHDJQFaVOlJdBrc5ExXF2ogQhWKAuJ56TxPNhAp2UHOhTXNaIlDGaeNnuD8MT
-	YY37ocvTd6LBeWvzwvvnY2RgCAFXI/JFQ5qpA9ljMes7JoHqzFJF2fmZ3939VdGFKd+tFnZb2uj
-	c1l4tfVic3QDPhDj3ZZ5BDXWgtsLXeb7wFapsI5eb/Tvc=
-X-Google-Smtp-Source: AGHT+IEUhipK8BpFIh0L4sG9itYETsTSsy89yM5cpmb8XEFU3fZM3fuGJBmhOPNVBh8q308LdjUHfnWtxkKgT25ywgY=
-X-Received: by 2002:a05:6122:2187:b0:531:2f51:7676 with SMTP id
- 71dfb90a1353d-535d73c920bmr5063528e0c.9.1752154398939; Thu, 10 Jul 2025
- 06:33:18 -0700 (PDT)
+	s=arc-20240116; t=1752154410; c=relaxed/simple;
+	bh=Q2kO4Y/oycTTePk3TM8auo1jZ3hHY5DEkbW5MUZk+PE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FJ1270e7TRwuI4e0w4VYN7a9TAkf+fjUzoAAIzUzqtUdkkvMIwksrNRaAWF9+p+QjiwMvrgIwchHc4p9YVZ6FhbkUJz/vp4+lgHeObbg0EPNZIxUauRN6Na1p6/JwJSTI4vU9fCwtJKe+JGQPEI3JJ0MegvAVJHolXEqKiOxQ+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUJzm+YK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06E65C4CEE3;
+	Thu, 10 Jul 2025 13:33:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752154409;
+	bh=Q2kO4Y/oycTTePk3TM8auo1jZ3hHY5DEkbW5MUZk+PE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jUJzm+YK4pt3e9elf4IPjgblfVRSj06kM9RizsWmebVfvV5XHQAZiahP6Prxk6OJn
+	 OFScmXKJHArvfzTIdCKy2/8+eNXhcd3IRNA4OFC0M6t/h+kwsnPY9si3GAAIyNIylm
+	 d+VpP9uVdUOKntn2XDnubPOi3yuvqRPOKRCPqxwuubGheFTELssUQ1Utth5xQWZQrV
+	 73XIh6fUBw3JlnlT0IW1Ffa6kz1huwxFVEHruFPPcKHZJhHTFp/mm1+AcnZkInXf2M
+	 wN7adrX9JxQJv9WI7YR+58HQRvxa4CRowv0HWxIqqMaLKXDDSje43HUDrhXp96f2ED
+	 CvcpDpgNlfxOA==
+Message-ID: <d870b11c-39e2-4b7a-a368-13b1c4b5a7c8@kernel.org>
+Date: Thu, 10 Jul 2025 15:33:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618215843.109941-1-usmanakinyemi202@gmail.com>
- <20250704102007.6354ce9f@pumpkin> <9c59d1b1-a483-49d9-b57a-c86e3e020234@linaro.org>
- <CAPSxiM9AHNrAhRjJKe9fHZ9s7VAQBF9c4S2_HWj2qu1A48hh+g@mail.gmail.com>
-In-Reply-To: <CAPSxiM9AHNrAhRjJKe9fHZ9s7VAQBF9c4S2_HWj2qu1A48hh+g@mail.gmail.com>
-From: Usman Akinyemi <usmanakinyemi202@gmail.com>
-Date: Thu, 10 Jul 2025 19:03:07 +0530
-X-Gm-Features: Ac12FXxTfmie9LGNZsXqRlfH_jKYoN7Yl1MYSUGdY_NjH8KL2bq5qU-PsDRLaX0
-Message-ID: <CAPSxiM9-tZjnssZMA_59ib8Ur+4VNWk4RYOsoFiWHC_Eq+drXA@mail.gmail.com>
-Subject: Re: [PATCH] perf/x86: Replace strncpy() with memcpy() for vendor string
-To: James Clark <james.clark@linaro.org>
-Cc: David Laight <david.laight.linux@gmail.com>, peterz@infradead.org, mingo@redhat.com, 
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
-	adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: media: i2c: Add ov2735 sensor
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+ sakari.ailus@linux.intel.com, krzk+dt@kernel.org,
+ kieran.bingham@ideasonboard.com
+Cc: dave.stevenson@raspberrypi.com, pratap.nirujogi@amd.com,
+ laurent.pinchart@ideasonboard.com, tarang.raval@siliconsignals.io,
+ Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Ricardo Ribalda <ribalda@chromium.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?=
+ <git@apitzsch.eu>, Arnd Bergmann <arnd@arndb.de>,
+ Dongcheng Yan <dongcheng.yan@intel.com>,
+ Jingjing Xiong <jingjing.xiong@intel.com>,
+ Matthias Fend <matthias.fend@emfend.at>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Sylvain Petinot <sylvain.petinot@foss.st.com>,
+ Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hans de Goede <hansg@kernel.org>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250710131107.69017-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250710131107.69017-2-hardevsinh.palaniya@siliconsignals.io>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250710131107.69017-2-hardevsinh.palaniya@siliconsignals.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 4, 2025 at 6:17=E2=80=AFPM Usman Akinyemi
-<usmanakinyemi202@gmail.com> wrote:
->
-> On Fri, Jul 4, 2025 at 4:40=E2=80=AFPM James Clark <james.clark@linaro.or=
-g> wrote:
-> >
-> >
-> >
-> > On 04/07/2025 10:20 am, David Laight wrote:
-> > > On Thu, 19 Jun 2025 03:28:43 +0530
-> > > Usman Akinyemi <usmanakinyemi202@gmail.com> wrote:
-> > >
-> > >> strncpy() is unsafe for fixed-size binary data as
-> > >> it may not NUL-terminate and is deprecated for such
-> >
-> > But memcpy doesn't null terminate after the 4 chars either so I don't
-> > think that's a good justification. Surely you don't want null
-> > termination, because char *vendor is supposed to be a single string
-> > without extra nulls in the middle. It specifically adds a null at the
-> > end of the function.
-> >
-> > >> usage. Since we're copying raw CPUID register values,
-> > >> memcpy() is the correct and safe choice.
-> > >>
-> >
-> > There should be a fixes: tag here if it actually fixes something. But i=
-n
-> > this use case strncpy seems to behave identically to memcpy so I don't
-> > think we should change it. Except maybe if b,c,d have NULLs in them the=
-n
-> > strncpy will give you uninitialized parts where memcpy won't. But that'=
-s
-> > not mentioned in the commit message and presumably it doesn't happen?
->
-> Hi James,
->
-> Thanks for the review.
->
-> What you said is true, strncpy and memcpy seem to behave identically.
->
-> I should have rephrased the commit message in a different way.
-> While strncpy seems to work here, firstly, it is an interface that has
-> been deprecated.
-> See -> https://github.com/KSPP/linux/issues/90.
-> Also, memcpy is semantically correct for copying raw data compared to
-> strncpy which is for string.
->
-> I am not sure if the b, c, d can have a null byte, I think using the
-> semantically correct function (memcpy) improves the robustness even in
-> cases where b, c, d have null byte.
->
-> What do you think?
-Hello,
+On 10/07/2025 15:10, Hardevsinh Palaniya wrote:
+> +
+> +  clocks:
+> +    items:
+> +      - description: XVCLK clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xvclk
 
-This is a gentle follow-up on this patch.
+You don't use clock names here and example, so just drop the property.
 
-I would like to know if I can send the updated patch series with the
-correct commit message.
+With this fixed:
 
-Thanks and Regards
->
-> Thank you.
-> >
-> > >> Signed-off-by: Usman Akinyemi <usmanakinyemi202@gmail.com>
-> > >> ---
-> > >>   tools/perf/arch/x86/util/header.c | 6 +++---
-> > >>   1 file changed, 3 insertions(+), 3 deletions(-)
-> > >>
-> > >> diff --git a/tools/perf/arch/x86/util/header.c b/tools/perf/arch/x86=
-/util/header.c
-> > >> index 412977f8aa83..43ba55627817 100644
-> > >> --- a/tools/perf/arch/x86/util/header.c
-> > >> +++ b/tools/perf/arch/x86/util/header.c
-> > >> @@ -16,9 +16,9 @@ void get_cpuid_0(char *vendor, unsigned int *lvl)
-> > >>      unsigned int b, c, d;
-> > >>
-> > >>      cpuid(0, 0, lvl, &b, &c, &d);
-> > >> -    strncpy(&vendor[0], (char *)(&b), 4);
-> > >> -    strncpy(&vendor[4], (char *)(&d), 4);
-> > >> -    strncpy(&vendor[8], (char *)(&c), 4);
-> > >> +    memcpy(&vendor[0], (char *)(&b), 4);
-> > >> +    memcpy(&vendor[4], (char *)(&d), 4);
-> > >> +    memcpy(&vendor[8], (char *)(&c), 4);
-> > >
-> > > Why not:
-> > >       cpuid(0, 0, lvl, (void *)vendor, (void *)(vendor + 8), (void *)=
-(vendor + 4));
-> > >
-> > >
-> > >>      vendor[12] =3D '\0';
-> > >>   }
-> > >>
-> > >
-> >
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+---
+
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here. However, there's no need to repost
+patches *only* to add the tags. The upstream maintainer will do that for
+tags received on the version they apply.
+
+Full context and explanation:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
+
+
+Best regards,
+Krzysztof
 
