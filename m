@@ -1,285 +1,309 @@
-Return-Path: <linux-kernel+bounces-726155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0ACB008DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:35:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BFFBB008D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21F31188EE7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:34:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252473BDDE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785692F0C78;
-	Thu, 10 Jul 2025 16:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2261E521A;
+	Thu, 10 Jul 2025 16:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wg2XYe1f"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TiuGIBY+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AE72F0C5C;
-	Thu, 10 Jul 2025 16:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752165173; cv=fail; b=b3Q2G1b0tpy5K7lbJFf9VRZyRKBCyyMMLNcotip6/dypFr3+BPwKmKhzvODo9OqyTAxQQ0RctABqEoQiNhrhlQRlzeU22PRzUAyBiugJI1FvAqY/+VCWSsSHMaldxU+gI2++noi5f3jASozTAoX3oXhwm6WkkaHklJHtC1SiOuY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752165173; c=relaxed/simple;
-	bh=NeydbvkfKfUMqp4xi29Vv+xGfUwS5EDvN47m9vOYELk=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Vpi6gXVFtexsIk5kRE0gZejX8YCmdFXRD5mCzX8sh6xvavy6pCUAEjfUCATqlTewDfEh9yxbmL+gC8alQBPqMDG19FzwvQqKpjY9YoTcFdlQ4cvJPqe8gLFNy9vOFJ4KkdF9ZI6jY5Wz9EMxcB/JdXw7jJlJ9pusv60bqOIMghw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wg2XYe1f; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752165173; x=1783701173;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:mime-version;
-  bh=NeydbvkfKfUMqp4xi29Vv+xGfUwS5EDvN47m9vOYELk=;
-  b=Wg2XYe1flWRKVgoYxyK+WPvvkKvhLxq/DtJnKFRWa7I96GKY2DJc9hOC
-   JdYrxDHEO1/oZUgxZz+9W0vsovq5g5RaeJJc9AQUriqvPiAqbMp0GNT2W
-   BeGOUK5C8gdj/5BPPES+Jc2ANRWuesJGRQZOWkoQNywJAWBRWqDr70gLl
-   UmKTVFvxVEx6mHn7mZc598bFOtxGlSPUCQBVEBUD3BqCSmGTLXKLT7Bqm
-   4N4FZuyZI3H/0DlCcnxBZuw4Y1hVtAdJbid9AfIX9M40p4Y0xA9HC1y77
-   OANSogMXUpQz2n4EFW0nnB8AgHZMpgG0/QlHeTPvT9hv0RmFc1+YLZiCK
-   A==;
-X-CSE-ConnectionGUID: WfkhMTC8Sr6IuVQrbBeh7g==
-X-CSE-MsgGUID: v4xJv9UkTC6uJuyNnjkp1A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54581305"
-X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
-   d="asc'?scan'208";a="54581305"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 09:32:52 -0700
-X-CSE-ConnectionGUID: gvxsel4xTTSLDjoMp1ANnw==
-X-CSE-MsgGUID: 1cXCs1yDSGaduXVDZQE2BA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
-   d="asc'?scan'208";a="155771167"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 09:32:51 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 10 Jul 2025 09:32:50 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 10 Jul 2025 09:32:50 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.73)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 10 Jul 2025 09:32:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EH/9ijHxgJIg9uWST6yJk1V8IDJH3dsrwSYI5xToiRVO1SWe3pX7CLKILWwVNuqN5fTD938M8TsO0cUMv5cOzB7ysBOvd+poc3DZIkvexOz/NtoqX2/7FXi++E6jIEdLv9grQuEayxPJUxp8wRSzF8R201ieLxT7/S+tmJ+09H3CFTgnqSYSIMRnnsExLz95oXuBCCLp3ZHmBlRVhAJ70Hh9T3Y+RmoXfSyzd27mI1hqdqp2YHup9sRANq929+GG4kCkbEze/zwROIWw2gbB5AlQXeHpUPT8odaa0ixxlV3WS36zqbVrajI7AsIXxPeRxYfCSNHrkho9GHUxIEaenw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NeydbvkfKfUMqp4xi29Vv+xGfUwS5EDvN47m9vOYELk=;
- b=hwRHpXi/2w0Ytl2zZ3Uy14dM1Mgtrc+peuprZAm03jn0q5a4X61e9driAfEEsL2s3jj6H8pzhI0XvuhRhzgmOK0g3oNe1cLsmwQG7tXgQ4ryiGPWYVi3nm5AXFXlrLL3bTAN6YbFcdPIzwBvQubwscpRxQ67YsGAndL/t8tRi+gmpcMDe/lfrcPvloe4nEmBrRRnxv2UxkmT31fD6bcy/LsNuAxbmfITKfCMEWWbzUHwCRq9xbgpbOVjuxvxqBJpryp6fyFKwmc0fjbQ/y4QlIt18h8VT25GQ8kKLMdQEtyrz4eCT5hF08j0j8O5CXtOQIGebgDahAHPzfILUXmmRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by PH8PR11MB6731.namprd11.prod.outlook.com (2603:10b6:510:1c7::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Thu, 10 Jul
- 2025 16:32:47 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::81f7:c6c0:ca43:11c3]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::81f7:c6c0:ca43:11c3%5]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
- 16:32:41 +0000
-Message-ID: <4756f803-6794-4f62-9694-779ab3b97992@intel.com>
-Date: Thu, 10 Jul 2025 09:32:40 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 3/3] net/mlx5e: Add new prio for promiscuous mode
-To: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Andrew
- Lunn" <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>
-CC: Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>, "Leon
- Romanovsky" <leon@kernel.org>, Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch
-	<mbloch@nvidia.com>, <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Jianbo Liu <jianbol@nvidia.com>
-References: <1752155624-24095-1-git-send-email-tariqt@nvidia.com>
- <1752155624-24095-4-git-send-email-tariqt@nvidia.com>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-Autocrypt: addr=jacob.e.keller@intel.com; keydata=
- xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
- J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
- qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
- CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
- UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
- MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
- apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
- cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
-In-Reply-To: <1752155624-24095-4-git-send-email-tariqt@nvidia.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="------------7khk9Hn6ScvdIqFJ29EL2k9Y"
-X-ClientProxiedBy: MW4PR04CA0211.namprd04.prod.outlook.com
- (2603:10b6:303:87::6) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AA822DFA3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752165260; cv=none; b=RemcWDBEd8H3wvLUwkrGBTbZpzlJzPopacYrU4KV1AZF6QYzhahwIT6v3fJUhJzG6XwEShHirdx59I8nIWpr4AAD7YKZgAEWv2i+kfR2dA8Ff67YgOUcjWPkC2R8TYhJEIOQx8AKFzgAfsF3PO0bWW0OEozrxRB4iu19VqWOUGc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752165260; c=relaxed/simple;
+	bh=qoxdD0u7F6Vm7IosY+IvImJNAwzJZkJIJRozDDanEIw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PLNVN/ARH74+pZIDSRpJkdN1NnQeApzKCNpRhMeI5jI7LOjv6VYPe/aMiYT9v4S77W8PBgm8zDY0vr24O7TwV7RIm+b8Afqa4zRQTGq4l3XQLXvg1INCXLC/B6gHzb/1Ee+KUwQgB8zrUitJyTLWVuD6LzhBrVCE4mCMdE1SI2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TiuGIBY+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A90NLZ023144
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:34:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7v+KOlxVQQuHrXP2BzwGqdrb5703hR1R+qZ3XSvsTjw=; b=TiuGIBY+SnjWlHzr
+	SpwydSFznLuBhG8LBEgO1Ue0EtJ5+OYdCJkHMLN7KKjO64vG2Wx3zbblqK3noMpe
+	JuDBJwojNhChgZKqIAh9XHREznOLHrFR3uBoX/3evqqAbfQqIB04NyJ/UDz8y7N7
+	I33HJaPPCrLugdSyTnjHY7HgafayqwwgytzWaksUwV/TtnszfXmhFyAk2RJqfXiB
+	/FQ80qAZJXSaz31ewu3sPKRQ2Uf6O9JEakaaJMVu3z/vDErDw85jYG7qmDn/MXuv
+	xUepfDi9U4e4Xuw5gBxlYnuEjy+vXCRY7Amsf8KDJJRMUadsUY6uVGbFFKGzncro
+	C8Ls3Q==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smbenpdn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:34:17 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2369dd58602so12506265ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:34:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752165257; x=1752770057;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7v+KOlxVQQuHrXP2BzwGqdrb5703hR1R+qZ3XSvsTjw=;
+        b=k8CKQLYPWo+JaDIVMU1TyiBlJhAc+LHtgFkc10XussAFj6oIDReauRw8buaG9JCnhU
+         q8NtrP+xXiKYhuiqY2MqdgqiZ9RgW3Ixpd0+fkbovEyA+nPZ5ol8z0qfB3xf+fEL9kTC
+         TGoL6ctve8rwwXGeG6YluIGyYjsq2q/ajCJCHcpYq+MexMdkp2d0tmlkqHHUdjgIdf1t
+         S4BYOu4bA5faWOI5VydS9xittHenGWgUJkNXp7nTFXB45D0Dj/jtyA3ECdpxpEPh/zW1
+         mJojxxVSmyRDaOcJx5D1O/eb6iFSevMjsnJXgYsXKOPcojX+ITpyblQMkEMO0SHSZJbn
+         FalQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnK0cknS1tJoye6Ob0+125IxlWAPHYB74pYfWNCwqooIZ2wf+TL4K1SN2AniDAxeeUBE26sWjvyPMSMpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7TMtU0C0cdjppy5K1K+hAi/0jTpcDhHQ2JKE1sbOiHM65RMe5
+	o6xyeE9SbqpaBXjj8xUr1pdcyBCfx/Hygwu2/xgdGwFsLpYHICfG2VpPIFd0tzumOBIL+zl5emv
+	68ROMhWfVuTubGgiS54K5TNvVkneySEVCOmZ18yx8kx2b3ljwZCMcXn+A1Ejclu6IBwA=
+X-Gm-Gg: ASbGncvH5W9zekS+FWlB2hDv6qdOvvJOWvq4kPsgEZOpfTzQPLEIifRA1H9PWi7rHyL
+	et9KDnsDTstrEMDpJg3q/4nJfZdOkVAIKBFl2HIDHriyQa2jylfCjL7bwHTyBquwzx+TJBQ0MzJ
+	6pX5e933zcJdzhjepJqvV3yVR598tBfnS0MrpTZ/BgEmbiDwKHUwQGGr7yZmIFW7Ipwvsx8VqKS
+	BaSkYECjz+SXDo7daXDDg5S1Rhrs8fGC324yP9CaQRQWKxt8sKaHzP7YbOeoI1gX1dRzp+Fa2/d
+	BZb4uSAfIM85Xh5XgPyCu5f8N73lerDMPSqmPc3I2+VukLshiFp88XTJ
+X-Received: by 2002:a17:903:240a:b0:23c:8f21:ac59 with SMTP id d9443c01a7336-23de4870255mr58912425ad.29.1752165256680;
+        Thu, 10 Jul 2025 09:34:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHB4rnPjqJKSrNHIQvF405YfcZfT/Y4T9Mez0G2+iXfOjNPRdQpTDwA1RKIVvdQzWG4WI0fXg==
+X-Received: by 2002:a17:903:240a:b0:23c:8f21:ac59 with SMTP id d9443c01a7336-23de4870255mr58912015ad.29.1752165256183;
+        Thu, 10 Jul 2025 09:34:16 -0700 (PDT)
+Received: from [192.168.29.115] ([49.43.229.152])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4365b10sm24645205ad.240.2025.07.10.09.34.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 09:34:14 -0700 (PDT)
+Message-ID: <62cd2efe-2a82-72b0-c4e0-df8a0d8fcfe4@oss.qualcomm.com>
+Date: Thu, 10 Jul 2025 22:04:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|PH8PR11MB6731:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f6cc972-b102-49cb-72c4-08ddbfcf644a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?UlZpb0hiWnlMZTFDYWh1S0p1UW1uWTllQyt0RjB4RlZhRElzdkV3dzhoZ2ZJ?=
- =?utf-8?B?MG41QUU5OXNTdTgrWDhwM2lHdjFrOStBNUJNandwQ0k5UmFJUWpaY0JjcThB?=
- =?utf-8?B?bkExakQ1Ym9lUk5uWndmOGkzeThXc25oVEcvdGNNczlqVGZ0cjVOSFcxOVFC?=
- =?utf-8?B?SVdhT0cxQW9zT0U2SGtyVXgxdU81MW96SVhMZUNTVy9BRElUektWa1ZSYTdY?=
- =?utf-8?B?b3VqaHdFcjFmbVowWDV1WElxbGxTUGNkQmRWbS8yQ0h5YURpa2ZkVEpKSTI4?=
- =?utf-8?B?YisyZVRqekc2bDBrRHh3dVVvL2RYaHRSTE1tZVJFUjgwbnJpM0MzNmNuejhv?=
- =?utf-8?B?cFpDMlNiaG1WQkJkQUYvcnRSNlNBdmRsSUQ1VUpwcmtMMFd0dGFzR3g4M1Yx?=
- =?utf-8?B?UUR6RTZjRjVGbFpDNlhpVlpWbGp1YjBKRE9mRXVkVUx4V2FSdVhyRldlRTNE?=
- =?utf-8?B?NlBrWXBLb0N5cWFtUFNVYUtZRDhIaFNxT09SQUxFSmJZeDlYWFdjWWJ3enZG?=
- =?utf-8?B?cUJTcjYzaE44aURraytSZ01WT0doS1luQWRHVG5VdE9USlA3TGhXdllpWnVQ?=
- =?utf-8?B?a3pSNVZRaU4za09xOE5YSmI2bzFnamgrVTFlQ3F4MFVhMWlVanVaS2xaWTlX?=
- =?utf-8?B?UEFmdE02UGFvQ01NM1VtL1dvVkJIYkNPQi9GSURnakFLdzVUVjZydkhBeS9H?=
- =?utf-8?B?ang1d2RIVVYvZVVVdFdiR2hnbUEyWjJ0TytQaE9wa1gzSi84WTRlZCt2cUNK?=
- =?utf-8?B?eTZGdUkzSHdsOEhXcTVZdE1DNUYzcFpGM0s4NVo3Zkt5Nm1TK2JpU1ZuWEhk?=
- =?utf-8?B?RU9NZitRaVZ1MkUwdE0xaXJkKzcrNk9YN29DQURobmVENHBWQmozR0gxSnZj?=
- =?utf-8?B?dTJvMzhPMkZxYXN0OGtaWmFEUGowS1hkUGFMbGN2MStHNGtvaFcvVjl3T3BS?=
- =?utf-8?B?dWFHdk1mTlJhWHl3emxyWGh1cURqWSsxU2pTUGdpdzVzcDBYbkdnRUYzYThy?=
- =?utf-8?B?TFR6ZmN4cXhkMTNiREYyWlJSYUM0eTROZU9yNnl2RUptYTNTSHRORWtsRWdY?=
- =?utf-8?B?bGVDRUJwcFRFSlppU3RkcXc0Q1E2RzJCeXNoVUNRMXIvRkU5UWxZdjh2cmoz?=
- =?utf-8?B?VHd1QU1Ea3JJOGl0K3lGYnQxNVA5VXg4cFExT01MSUhXeW9LUEl5cjEwN0hE?=
- =?utf-8?B?bDdOMG03OXVTQVp3OTIrZTUyaHlsWUdVcTh2WlF4QWJiMFpzSnRpZnhtRGZz?=
- =?utf-8?B?VjUvclRDdFB2NldPSFczejVFTzR5d3RoU29lYWRzMDREOEdjZ2VkeERCenVD?=
- =?utf-8?B?SllJTFJzc0tCajRGVE40QXhxSmxidmo2c21EYmpHVHpvNHl5UUF0UGFQK0lk?=
- =?utf-8?B?bkkvcVUzdm96a3g3ZW1TOWRMa0pKNXJrYWNRQ0w1YVoxRGYyTmFlM1BLTnlC?=
- =?utf-8?B?TUh4aVVZelpQN0wrNDNUbTJoZktuQzBHS21yQ0NyWERYMHloTXhxbm9IQlkx?=
- =?utf-8?B?Qy9sa1F3L1BEMFE4ZTVwMVpnaWxFUXBWN0IrVTlEVG1rWWtMWU00MVZ4N2pW?=
- =?utf-8?B?ZitUQ3ZIaUlmdjdyK3BCZDlkaXd1cldJbDkyakZxcTc0NWZSVE5ERjFQS3M5?=
- =?utf-8?B?dVYwWHJudW9YTEp3N2svK1R1Yk9NOFE5NTQ0b2FpcTl4dTFhUGt4dUk1NG1m?=
- =?utf-8?B?ZDQ2YWEvYlBkSGw2eWliWTBXbWcrWDI1MjlRUWVPNzdVZTVvSFBQVXZ1Vmhz?=
- =?utf-8?B?QlFMZDVsQm9HTVh5TUJFalV6T3lQVWw0RjRmc1FyTzF0QmpTWm1Yb2k2NjlG?=
- =?utf-8?B?TSszWUxuTURKRFByTVVMdUM4MHRyaHlIRml5MXgwZDNoVms4eE9pTUlWaGNU?=
- =?utf-8?B?dmExYUNYYUlaYjZaOWJoT1Z6allFNnFNQmlHVy9QVTdtcTlJdlpLNVJxQ1JW?=
- =?utf-8?Q?DNCijmZFhDo=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UXdTSExPVSthWmtzblc3WFhDcm1XbTBIVnB0WFFPeElPTFdvbm43UmZHcTNw?=
- =?utf-8?B?bytqQUNkN3BWck5RdFpaWVZSYmJkZDBDcVdwQ3p4NEdyUXd0eEF4R3NFYWkz?=
- =?utf-8?B?YUdKSTZ2dk1SN1F2bWkxQmt0dlZRcmpXeHJsYm5WbVV5VGlUYXRpNDZia3Jh?=
- =?utf-8?B?K1R2NE1OT21LSWVITWE3aXdXRHZ4eGlDY0RPODdvWlFEY2pSUVE4enlOR3lY?=
- =?utf-8?B?b2VpVGEwbHAzM0UwaWdFbTMwUjRkQzdMOVB4R1llNnU0WURsNnVIbFVyUkFS?=
- =?utf-8?B?MHA2VnFFWUJpNlZUSWM4cVZNS2wxeUx0WVFsRUFRajJyb0c4dW1CVEVJYTRn?=
- =?utf-8?B?UzkrTUVGRHNSd2EzU2FIbU1HZ0NrRG00TlpNRzdLNEIzbXlqZXVEVjJmRzlo?=
- =?utf-8?B?eXQxdENIdGx6MVQ4YWJVOUk2a2Nwa1F4bUtGSUY5NlRnVWZpUEFWcmFscC90?=
- =?utf-8?B?VGNDTWxucmFtc0tQcjNNeHBYU0dKdUc4V1RNVTVmNTBzMWxsY2o2UnNzdFF5?=
- =?utf-8?B?bmNtYjF6dmdoYmw4dHcrWHUyQ3o4bUp6QnRVZEJQVFYvQkRwNXE3QXVWeWxC?=
- =?utf-8?B?eFFyV1N0WERyZThtRk1pL21wMkhWOXI3emptUjcyWnRHcERGRCs0akRlZHE5?=
- =?utf-8?B?eXJEb2luVVFrTUkwOFJIZlRlMDF5STlML29jMzZVVExSVDZTd0NrdGI3SjF2?=
- =?utf-8?B?K1V2cE5weWZHSXFSRzF3UHlnckMwOTlZUkNrZDhnN2VBMzQzd1JCRWwzOEgw?=
- =?utf-8?B?Z3ZHZXlvUndnWkJkNkVBU0ZPV2FZeHpEL1RIdFRrNFAzSkl3bXF4UmlYeTlZ?=
- =?utf-8?B?dE5nM3pqbUY4cjk2TWVqVXpVdnQ4bTlsajRmK3lDeWc0bEhzTThtWXBrVHNS?=
- =?utf-8?B?eVhPQXJUY3N6R3JQd3c2S21QdWdvaktLMDd1V2JURDZWWFEveXVKbFVVS25s?=
- =?utf-8?B?Q2xielVoYkt2SWNiOW13dXJualJ3ZGN1U244Wmk0UkhPUU03MXF5b2E0N09X?=
- =?utf-8?B?QzlSWnpvU2luOFJBUHZUZ2E5RlNyOWE0cHdOOUhmelpSc2N2cThIMGY1OWtE?=
- =?utf-8?B?RnNLSFQxMUdLc2sxVkVXdGhrSzRxWGhrUVZhT2V3WGZHMUt6VnowUlhsK3px?=
- =?utf-8?B?VkR4dHJ0ODdqWHFzOExrWFZSSDJlWFBSUGVGQ21RS2RDYXNPSWFIWEZJNU03?=
- =?utf-8?B?eHJacXgxd0xiM3JCOFN3MW81cnFBTy8zWm14T0lWY1hxL05EcE83b2QwT1pS?=
- =?utf-8?B?clFJRlNWbnI4MWhHVkM1NEZFbHNCSWpTWHhCRlZraG5hbkdyZng0QVVFZ2hL?=
- =?utf-8?B?QXN4U3FoWEhxWlUzMUZ6Rlc1TWhka2xFbzQxUHNMTVhBd1J6QncwSFkzZmRH?=
- =?utf-8?B?dGN1ZzFERE8xa1J4dS9POGtWLzVUNlhET054eEFMY244WkNRMGpjbWZwdjUx?=
- =?utf-8?B?dkpBOFVSa1FjN25TVzBqc0d6T0NuNklkdEl2ZE9hdzJHZWFYVldGQzJuMzJO?=
- =?utf-8?B?T3NycE52WUozM0M3NUhMa0l3Z0dJM0hqU0R0Nm9lMmRXZEcvdm1aWUk5aUNY?=
- =?utf-8?B?U1VXeXR5ejgrTTlZdnFnYjY5V1lPZEw1QTJyYzhYWE1sbmtVVWdDSHR3OFBn?=
- =?utf-8?B?MlhQVTlpWlM4WXdFNW5DZ29zdXI0emdJRkJDRGhaSHdxY3h6YXRtMnZRL0p4?=
- =?utf-8?B?eEp5TXJFaUdQVVo2aXRFSE5iNmFxaCtZZGh1bjdTWTR3UVc0K0FTalFLVWRu?=
- =?utf-8?B?TTdxdExJSjF1ZXFUNGJiVGNnZ2t4VGNDV3lXYUdVVzNiUFhzZ0RkdWsyd3ZU?=
- =?utf-8?B?TzJHakRPMTdJZm1TcTZKZWtQT2Zvd1dXMFpLRTI0OC8wSitsTTd5WkZqdkhu?=
- =?utf-8?B?OHN6NWdHc2psb2M2Z1NldmoxL0hPeWZYS2Nzb3AyWVplZ2JVRE96N3Z1OVgy?=
- =?utf-8?B?S0VWb1pvODVlSjd0Zzl6SW1oeTlPN1ZValA4S3QvR09GVlN3NDVSNElkOWk2?=
- =?utf-8?B?Sk1MYm1TV0NRZnkrdkR0NE5KSWIzNExxdG1JbE5GbmxXVlFZdUFEZHNhK1VS?=
- =?utf-8?B?NklmcDdGclN0NzV6V3RSUVRTemdoejUrRzMrOS9iamlHWnFEc2pwT2JJTnYz?=
- =?utf-8?B?Lzdkc2w1bUErQWc0NHgzRlpxeW50ZGJJTzg4QjB4K2dvMExKV0JXa3doeTlk?=
- =?utf-8?B?ZlE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f6cc972-b102-49cb-72c4-08ddbfcf644a
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 16:32:41.9425
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZCvVtcrIAxeK4ZC7rmTUMjOLeJ3V+5yOc3s1WcJUMvfA/DQ6dGXS7BXmqdqZEVXlo9QBjjOQ60uC0GF4JShQNtuqISQw4NQ4SOIRM4Z7IoI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6731
-X-OriginatorOrg: intel.com
-
---------------7khk9Hn6ScvdIqFJ29EL2k9Y
-Content-Type: multipart/mixed; boundary="------------H2JRCHIsEhfNcLnixvnhBAUg";
- protected-headers="v1"
-From: Jacob Keller <jacob.e.keller@intel.com>
-To: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>
-Cc: Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, Saeed Mahameed <saeedm@nvidia.com>,
- Mark Bloch <mbloch@nvidia.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jianbo Liu <jianbol@nvidia.com>
-Message-ID: <4756f803-6794-4f62-9694-779ab3b97992@intel.com>
-Subject: Re: [PATCH net 3/3] net/mlx5e: Add new prio for promiscuous mode
-References: <1752155624-24095-1-git-send-email-tariqt@nvidia.com>
- <1752155624-24095-4-git-send-email-tariqt@nvidia.com>
-In-Reply-To: <1752155624-24095-4-git-send-email-tariqt@nvidia.com>
-
---------------H2JRCHIsEhfNcLnixvnhBAUg
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v10 05/10] firmware: psci: Implement vendor-specific
+ reset-types as reboot-mode
+Content-Language: en-US
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Elliot Berman <elliotb317@gmail.com>
+Cc: Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        Andre Draszik <andre.draszik@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
+        linux-rockchip@lists.infradead.org,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+        Macpaul Lin <macpaul.lin@mediatek.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Srinivas Kandagatla <srini@kernel.org>
+References: <20250710-arm-psci-system_reset2-vendor-reboots-v10-0-b2d3b882be85@oss.qualcomm.com>
+ <20250710-arm-psci-system_reset2-vendor-reboots-v10-5-b2d3b882be85@oss.qualcomm.com>
+ <4ca0df4e-7697-4cfe-ada4-6eee8224938f@oss.qualcomm.com>
+From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+In-Reply-To: <4ca0df4e-7697-4cfe-ada4-6eee8224938f@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDE0MSBTYWx0ZWRfX2U1BjyxSaaOM
+ BgyVeFDTkNeO/XYm/AwrXmSYRhkjcBdaA+Me2pJlO+CqtgyhgCIHMmbiFQPItfdiqxCzTkYTVE3
+ 1Af9l7d633DafsmRKU62iElvZWCJ1ycFJtc5SVIEoPeEKYDu7sZPTQH8JrVvuQLcIvbn5UEiHPq
+ KRqz/TKQFTH8Pr75b4YxJOUz54xMJYPHaADIeLDoo9EotHG7ShDw1233f1yVLTz/M1eR+3twf3J
+ 0d7Li6opU+hzlWeu+vF973jLnyW/loVXHfNIyU17Cn/89VO+QQqSqQSbZRThpGMOrZUZ4fH0Zdn
+ wcB4Rml5+JSlYeukerZ3cn0bk6u63ULYsUlcvNFGMYr2u0oEYv6vJN6RMN7QO7JwLZXRQlPLAV3
+ cGEPnJ/yI8vg3eFZXUl4tgb0x5qAIcfT689d7nw6G8NxY+kaD++cr8L7RNB+a/S/znx0qZAh
+X-Proofpoint-GUID: 3vzXFtC4CEAtZ7_fhFJ1mkTP15YgPyi3
+X-Proofpoint-ORIG-GUID: 3vzXFtC4CEAtZ7_fhFJ1mkTP15YgPyi3
+X-Authority-Analysis: v=2.4 cv=VpQjA/2n c=1 sm=1 tr=0 ts=686feb89 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=8g6h00HoWaIZ3EdQG8aEvw==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=IRR_k5T4b-fJqLONmWgA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_04,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 mlxlogscore=999 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507100141
 
 
 
-On 7/10/2025 6:53 AM, Tariq Toukan wrote:
-> From: Jianbo Liu <jianbol@nvidia.com>
->=20
-> An optimization for promiscuous mode adds a high-priority steering
-> table with a single catch-all rule to steer all traffic directly to
-> the TTC table.
->=20
-> However, a gap exists between the creation of this table and the
-> insertion of the catch-all rule. Packets arriving in this brief window
-> would miss as no rule was inserted yet, unnecessarily incrementing the
-> 'rx_steer_missed_packets' counter and dropped.
->=20
-> This patch resolves the issue by introducing a new prio for this
-> table, placing it between MLX5E_TC_PRIO and MLX5E_NIC_PRIO. By doing
-> so, packets arriving during the window now fall through to the next
-> prio (at MLX5E_NIC_PRIO) instead of being dropped.
->=20
-> Fixes: 1c46d7409f30 ("net/mlx5e: Optimize promiscuous mode")
-> Signed-off-by: Jianbo Liu <jianbol@nvidia.com>
-> Reviewed-by: Mark Bloch <mbloch@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
-> ---
-
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-
---------------H2JRCHIsEhfNcLnixvnhBAUg--
-
---------------7khk9Hn6ScvdIqFJ29EL2k9Y
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaG/rKAUDAAAAAAAKCRBqll0+bw8o6GjG
-AQCh9JmbuQ25I6vv/PvukweVe1pMPMuYQEGIp/bBeHMFpQD/Xq1WqoniZx36OSk92tTpWreojZqR
-lxIgT0I2B5qrjwQ=
-=u6WU
------END PGP SIGNATURE-----
-
---------------7khk9Hn6ScvdIqFJ29EL2k9Y--
+On 7/10/2025 9:15 PM, Konrad Dybcio wrote:
+> On 7/10/25 11:15 AM, Shivendra Pratap wrote:
+>> SoC vendors have different types of resets which are controlled
+>> through various hardware registers. For instance, Qualcomm SoC
+>> may have a requirement that reboot with “bootloader” command
+>> should reboot the device to bootloader flashing mode and reboot
+>> with “edl” should reboot the device into Emergency flashing mode.
+>> Setting up such reboots on Qualcomm devices can be inconsistent
+>> across SoC platforms and may require setting different HW
+>> registers, where some of these registers may not be accessible to
+>> HLOS. These knobs evolve over product generations and require
+>> more drivers. PSCI spec defines, SYSTEM_RESET2, vendor-specific
+>> reset which can help align this requirement. Add support for PSCI
+>> SYSTEM_RESET2, vendor-specific resets and align the implementation
+>> to allow user-space initiated reboots to trigger these resets.
+>>
+>> Introduce a late_initcall to register PSCI vendor-specific resets
+>> as reboot-mode arguments like reset_type and cookie. For a SoC
+>> where, PSCI vendor-specific system_reset2 is supported, the
+>> appropriate value gets filled to reset_type and cookie during
+>> this reboot-mode hook registration. If the secure firmware
+>> supports PSCI system_reset2, restart notifier will make secure
+>> call to trigger appropriate requested reset type.
+>>
+>> By using the above implementation, usespace will be able to issue
+>> such resets using the reboot() system call with the "*arg"
+>> parameter as a string based command. The commands can be defined
+>> in PSCI device tree node as “reset-types” and are based on the
+>> reboot-mode based commands.
+>>
+>> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+>> ---
+>>  drivers/firmware/psci/Kconfig |  1 +
+>>  drivers/firmware/psci/psci.c  | 53 ++++++++++++++++++++++++++++++++++++++++++-
+>>  2 files changed, 53 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/firmware/psci/Kconfig b/drivers/firmware/psci/Kconfig
+>> index 97944168b5e66aea1e38a7eb2d4ced8348fce64b..9d65fe7b06a6429de8a26d06f9384e5c93f36e5f 100644
+>> --- a/drivers/firmware/psci/Kconfig
+>> +++ b/drivers/firmware/psci/Kconfig
+>> @@ -1,6 +1,7 @@
+>>  # SPDX-License-Identifier: GPL-2.0-only
+>>  config ARM_PSCI_FW
+>>  	bool
+>> +	select REBOOT_MODE
+>>  
+>>  config ARM_PSCI_CHECKER
+>>  	bool "ARM PSCI checker"
+>> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+>> index 38ca190d4a22d6e7e0f06420e8478a2b0ec2fe6f..87293f78ed83eb33ba67ded73728729811693ea3 100644
+>> --- a/drivers/firmware/psci/psci.c
+>> +++ b/drivers/firmware/psci/psci.c
+>> @@ -13,10 +13,13 @@
+>>  #include <linux/errno.h>
+>>  #include <linux/linkage.h>
+>>  #include <linux/of.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>>  #include <linux/pm.h>
+>>  #include <linux/printk.h>
+>>  #include <linux/psci.h>
+>>  #include <linux/reboot.h>
+>> +#include <linux/reboot-mode.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/suspend.h>
+>>  
+>> @@ -51,6 +54,14 @@ static int resident_cpu = -1;
+>>  struct psci_operations psci_ops;
+>>  static enum arm_smccc_conduit psci_conduit = SMCCC_CONDUIT_NONE;
+>>  
+>> +struct psci_vendor_sysreset2 {
+>> +	u32 reset_type;
+>> +	u32 cookie;
+>> +	bool valid;
+>> +};
+>> +
+>> +static struct psci_vendor_sysreset2 vendor_reset;
+>> +
+>>  bool psci_tos_resident_on(int cpu)
+>>  {
+>>  	return cpu == resident_cpu;
+>> @@ -309,7 +320,14 @@ static int get_set_conduit_method(const struct device_node *np)
+>>  static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
+>>  			  void *data)
+>>  {
+>> -	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
+>> +	if (vendor_reset.valid && psci_system_reset2_supported) {
+>> +		/*
+>> +		 * if vendor_reset.valid is true call sys reset2 with
+>> +		 * the vendor_reset(reset_type and cookie).
+>> +		 */
+> 
+> This comment repeats the line above and below it without
+> bringing additional value
+Ack. will remove or modify the comment to make more sense.
+thanks.
+> 
+> Konrad
+> 
+>> +		invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2), vendor_reset.reset_type,
+>> +			       vendor_reset.cookie, 0);
+>> +	} else if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
+>>  	    psci_system_reset2_supported) {
+>>  		/*
+>>  		 * reset_type[31] = 0 (architectural)
+>> @@ -547,6 +565,39 @@ static const struct platform_suspend_ops psci_suspend_ops = {
+>>  	.enter          = psci_system_suspend_enter,
+>>  };
+>>  
+>> +static int psci_set_vendor_sys_reset2(struct reboot_mode_driver *reboot,
+>> +				      u32 reset_type, u32 cookie)
+>> +{
+>> +	if (psci_system_reset2_supported) {
+>> +		vendor_reset.reset_type = PSCI_1_1_RESET_TYPE_VENDOR_START | reset_type;
+>> +		vendor_reset.cookie = cookie;
+>> +		vendor_reset.valid = true;
+>> +	}
+>> +
+>> +	return NOTIFY_DONE;
+>> +}
+>> +
+>> +static int __init psci_init_vendor_reset(void)
+>> +{
+>> +	struct reboot_mode_driver *reboot;
+>> +	struct device_node *np;
+>> +
+>> +	np = of_find_node_by_name(NULL, "reset-types");
+>> +	if (!np)
+>> +		return -ENODEV;
+>> +
+>> +	reboot = kzalloc(sizeof(*reboot), GFP_KERNEL);
+>> +	if (!reboot) {
+>> +		of_node_put(np);
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	reboot->write_with_cookie = psci_set_vendor_sys_reset2;
+>> +
+>> +	return reboot_mode_register(reboot, np);
+>> +}
+>> +late_initcall(psci_init_vendor_reset)
+>> +
+>>  static void __init psci_init_system_reset2(void)
+>>  {
+>>  	int ret;
+>>
 
