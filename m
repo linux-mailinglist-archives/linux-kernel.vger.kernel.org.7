@@ -1,126 +1,152 @@
-Return-Path: <linux-kernel+bounces-725123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8978CAFFB0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:36:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298CFAFFB0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF9725679E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:36:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D47281C43F6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B85A28A1D3;
-	Thu, 10 Jul 2025 07:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A612289809;
+	Thu, 10 Jul 2025 07:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="igEJIall"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bs0vwaX+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B485289E26
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DC623E34D;
+	Thu, 10 Jul 2025 07:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752132994; cv=none; b=fPSANL7ynQyAqg7+0qFJjgwsuzphXjcCZGcVg2r+IM+lqX8QrxJ+S3I2UVjS65rVQErV0oL7gYGs0tT0hePd8ed0cepogNrVMmR+Mx0+nJIO/ossArkKYTz2Ve/mnecVKdecgd5S+0WPzqpb9/X4JSw4gdVmbe7MrVVGt6jA6ho=
+	t=1752133008; cv=none; b=h9osqbRUnYl46Y6HRLqSKAsEjNzx7c8BxI5xb2+9P62JuKCaOMbSIPMu+YKNc6E491N3tUPGwJtERyGXZvadbElbgdespEL0ziy3zIh6nWU1OlNI0NhG+eIEwJqRTfJW4kegEOk3cC6qBSvBhRhmP6yxp1Um3BkmGY09fJ++E5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752132994; c=relaxed/simple;
-	bh=EyfNAvh03CoAn/icz+i7RWD8ZeXI4bLQ/a7yMcGGBy8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m5q+NX0ohGx6qOP1h27zUO62y4n7ZQ0Np9yNIaEIDaJddTltOAY2P7OxpnZlq7cOqpYSStmNbzXAroo52c36hmoPS/EK3xddUA6R077mcW62mXnrVj+2AmFTRs3HuEYap4cM2EmTc1A6Qo3369KKvR8xzw/Jg8t1STcr5d9/DTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=igEJIall; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABCE9C4CEF5;
-	Thu, 10 Jul 2025 07:36:31 +0000 (UTC)
+	s=arc-20240116; t=1752133008; c=relaxed/simple;
+	bh=RF1x5/owSgmOCJxvymPU0CBUm8h4dhDswHjybXlbWDA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HA7+KIsejh67n0ntXdoW2oq11HOBMwCEvbuS/rafmXITWiKG9FbvIkC39WqqCDV1+TsP1kbKEIwqvDnQ/mKJtlJViD+lamuYGcIb6HFrspVJK3hKvdrMA1fitcwrnS/VDbV8Xsu15+tekcz+RSGPkrNBlO8wyBHGjLCLwOmf0i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bs0vwaX+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 084F0C4CEE3;
+	Thu, 10 Jul 2025 07:36:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752132993;
-	bh=EyfNAvh03CoAn/icz+i7RWD8ZeXI4bLQ/a7yMcGGBy8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=igEJIallJCrdIn96SU3cVYajFQXJCQuXtKrVSyO2h5y6VvcUn/vg41J7bdrQX4FAD
-	 8Acf0wMNYtwxilaLBlrNYyOEydp9u2nl3UbSF3eqCJFuQPkvj5UUHZhuKn1GJ8Z26u
-	 zkUH+/9OpqRENbtE1bgdLEEQLHSgZ0Kp8bcuUlhM9i0AZF8tour+G/qvMZTriRKTWb
-	 mny/0Knc4KawiHib5ND0ee8tBPu97Yw77WQujh9FkwGNq7EltHrmKN1DZapmiL97Xv
-	 rO1lx6jlslt6EOleeN05QGSi+LuUpjIPy6PRVkcBftGRHkzJHL5Z4jCoZ6RSM8zkWd
-	 f4s/RaQYyboNA==
-From: Chao Yu <chao@kernel.org>
-To: xiang@kernel.org
-Cc: linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Yue Hu <zbestahu@gmail.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH 2/2] erofs: support to readahead dirent blocks in erofs_readdir()
-Date: Thu, 10 Jul 2025 15:36:19 +0800
-Message-ID: <20250710073619.4083422-2-chao@kernel.org>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-In-Reply-To: <20250710073619.4083422-1-chao@kernel.org>
-References: <20250710073619.4083422-1-chao@kernel.org>
+	s=k20201202; t=1752133008;
+	bh=RF1x5/owSgmOCJxvymPU0CBUm8h4dhDswHjybXlbWDA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Bs0vwaX+BCBCyPXraB14F7mBIiDBh4mhGBPhp59qOHj9EdPJMbgyTsogipHgtMO1k
+	 W3XUiXIjiAdOvlWg0dWhu8n22jF6Sw9GQaAywCSwPzCRIrIdJqRee0fM5frpTQ1jUu
+	 pgDKI4GPDTVpkbSCDb0TKhElrBqAYheu32vdO82N/PhNIpoFsy3//v7D7/JRuT7WJ2
+	 E8C5XACCtY17hdKOf1xF9pGzIaHBOrOd3cTKrNKsq8fe7sqGFq36ClaQQi0ie4Kuh+
+	 j5m/xTPoUplMnT/HZ43yKdrXlhoWevGKUy/jjipo8PAgb5HB/Ke9vx5Px85zm4dtVD
+	 BN2x1T8L5i54A==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54d98aa5981so891146e87.0;
+        Thu, 10 Jul 2025 00:36:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhHaZLpCrxlbVbi5cb3IxBaLEf9MSh08qEhf3/sdfcG5Y8ZBFXff/NJMwVPi7pIBOSYdN1FBCSEu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoD61jw0ki3IW3oPsm0HxfRyEbzA7Lc770Jv85NN+ghFSQb7Mp
+	eUv5s0b75UL+tB9nNoygJA5+uUjynL2zMkUkT2Kgj7m+kcy4VEb9QjliOJMVji/YBD9tK4ehqWY
+	bHWqfSnvjkV/5RdjPdblpozhzruvTbcw=
+X-Google-Smtp-Source: AGHT+IFLHwy2Bade+36c8nH9tNsAsCkF1R5BLwLqjIUip2XsheHUIQoV5nrl9b+gl/URo/SZsR6MilnqWKnMpZI3fK8=
+X-Received: by 2002:a05:6512:3b96:b0:553:cdd7:368b with SMTP id
+ 2adb3069b0e04-55935b34e0dmr597330e87.43.1752133006444; Thu, 10 Jul 2025
+ 00:36:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250709080840.2233208-26-ardb+git@google.com>
+ <20250709080840.2233208-38-ardb+git@google.com> <85qzyovfov.fsf@amd.com>
+ <CAMj1kXF73myE9sKos5j9ErZi14ExDQBDZvp8PEhG3K4PELQrSw@mail.gmail.com> <85o6tsv8m2.fsf@amd.com>
+In-Reply-To: <85o6tsv8m2.fsf@amd.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 10 Jul 2025 17:36:33 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXHZhFQ0DQWGDXtX4+-RWUFgyfL1qJh4hCONdi29NeBzhQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzf2WEwzpKobjG_NxajN4OUqTnYX4Std_aOl_mIrO7S0mFHoDU-B9CUQXI
+Message-ID: <CAMj1kXHZhFQ0DQWGDXtX4+-RWUFgyfL1qJh4hCONdi29NeBzhQ@mail.gmail.com>
+Subject: Re: [PATCH v4 12/24] x86/sev: Unify SEV-SNP hypervisor feature check
+To: Nikunj A Dadhania <nikunj@amd.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-efi <linux-efi@vger.kernel.org>, 
+	X86 ML <x86@kernel.org>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>, 
+	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-This patch supports to readahead more blocks in erofs_readdir(),
-it can enhance performance in large direcotry.
+(please keep the CCs)
 
-readdir test in a large directory which contains 12000 sub-files.
+On Thu, 10 Jul 2025 at 16:54, Nikunj A Dadhania <nikunj@amd.com> wrote:
+>
+> Ard Biesheuvel <ardb@kernel.org> writes:
+>
+> > On Thu, 10 Jul 2025 at 14:21, Nikunj A Dadhania <nikunj@amd.com> wrote:
+> >>
+> >> Ard Biesheuvel <ardb+git@google.com> writes:
+> >>
+> >> > From: Ard Biesheuvel <ardb@kernel.org>
+> >>
+> >> ...
+> >>
+> >> > So move the HV feature check into a helper function and call that
+> >> > instead. For the core kernel, move the check to an earlier boot stage,
+> >> > right after the point where it is established that the guest is
+> >> > executing in SEV-SNP mode.
+> >>
+> >> This change is causing the SNP guest to fail ...
+> >>
+> >> >
+> >> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> >> > ---
+> >>
+> >> >  arch/x86/boot/startup/sme.c         |  2 ++
+> >> >  arch/x86/coco/sev/core.c            | 11 -------
+> >>
+> >> > diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.c
+> >> > index 70ea1748c0a7..529090e20d2a 100644
+> >> > --- a/arch/x86/boot/startup/sme.c
+> >> > +++ b/arch/x86/boot/startup/sme.c
+> >> > @@ -533,6 +533,8 @@ void __head sme_enable(struct boot_params *bp)
+> >> >       if (snp_en ^ !!(msr & MSR_AMD64_SEV_SNP_ENABLED))
+> >> >               snp_abort();
+> >> >
+> >> > +     sev_hv_features = snp_check _hv_features();
+> >> > +
+> >>
+> >> ...
+> >> snp_check_hv_features()
+> >>  -> get_hv_features() fails as ghcb_version is not yet initalized
+> >>
+> >> ghcb_version is initialized as part of sev_es_negotiate_protocol(),
+> >> atleast this function needs to be called before get_hv_features() is
+> >> called.
+> >>
+> >
+> > Thanks for the diagnosis.
+> >
+> > I added back the ghcb_version check,
+>
+> Not sure if I understand, this check is there since:
+>
+> cbd3d4f7c4e5 x86/sev: Check SEV-SNP features support
+>
+> > even though it is redundant,
+> > given that SNP support implies ghcb version >= 2
+> >
+> > Would the below change be sufficient too?
+>
+> KVM_SEV_INIT2 allows the user space to provide ghcb_version, setting
+> ghcb_version=1 in QEMU;
+>
+> with my changes: SNP guest does not boot, as the ghcb_version < 2
+> with the below change: SNP guest boots, which is not correct
+>
+> This needs to be fixed in KVM as well to not allow creating SNP guest if
+> ghcb_version < 2.
+>
 
-		files_per_second
-Before:		926385.54
-After:		2380435.562
+OK, thanks for clariyfing this - it means that checking the GHCB
+version remains necessary, even though it is only done for SNP guests,
+where GHCB version >=2 is mandated.
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/erofs/dir.c      | 8 ++++++++
- fs/erofs/internal.h | 3 +++
- 2 files changed, 11 insertions(+)
-
-diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
-index cff61c5a172b..04113851fc0f 100644
---- a/fs/erofs/dir.c
-+++ b/fs/erofs/dir.c
-@@ -47,8 +47,10 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
- 	struct inode *dir = file_inode(f);
- 	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
- 	struct super_block *sb = dir->i_sb;
-+	struct file_ra_state *ra = &f->f_ra;
- 	unsigned long bsz = sb->s_blocksize;
- 	unsigned int ofs = erofs_blkoff(sb, ctx->pos);
-+	unsigned long nr_pages = DIV_ROUND_UP_POW2(dir->i_size, PAGE_SIZE);
- 	int err = 0;
- 	bool initial = true;
- 
-@@ -65,6 +67,12 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
- 		}
- 		cond_resched();
- 
-+		/* readahead blocks to enhance performance in large directory */
-+		if (nr_pages - dbstart > 1 && !ra_has_index(ra, dbstart))
-+			page_cache_sync_readahead(dir->i_mapping, ra, f,
-+				dbstart, min(nr_pages - dbstart,
-+				(pgoff_t)MAX_DIR_RA_PAGES));
-+
- 		de = erofs_bread(&buf, dbstart, true);
- 		if (IS_ERR(de)) {
- 			erofs_err(sb, "failed to readdir of logical block %llu of nid %llu",
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index a32c03a80c70..ef9d1ee8c688 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -238,6 +238,9 @@ EROFS_FEATURE_FUNCS(xattr_filter, compat, COMPAT_XATTR_FILTER)
- #define EROFS_I_BL_XATTR_BIT	(BITS_PER_LONG - 1)
- #define EROFS_I_BL_Z_BIT	(BITS_PER_LONG - 2)
- 
-+/* maximum readahead pages of directory */
-+#define MAX_DIR_RA_PAGES	4
-+
- struct erofs_inode {
- 	erofs_nid_t nid;
- 
--- 
-2.49.0
-
+I'll take this into account in the next revision.
 
