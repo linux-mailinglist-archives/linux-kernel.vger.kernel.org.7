@@ -1,536 +1,211 @@
-Return-Path: <linux-kernel+bounces-725183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93477AFFBC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:07:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2847DAFFBCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C72189A6A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:07:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9729164A88
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4399E28C5BC;
-	Thu, 10 Jul 2025 08:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD0A28BAB0;
+	Thu, 10 Jul 2025 08:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uj4gC0/N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GlJTVKSM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E0828B50E;
-	Thu, 10 Jul 2025 08:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752134791; cv=none; b=LBhcv8kjV1n4k/W6qdBTbWTLRKqAILmSgfKxBZAjQb2YLP4UqCmUGA1OgzunteOJCScqVtTjR9IpL62SHPyPRAc9cn71RJHr2gKU3AtM94ByL+tS/sdzgGYMmw9KniktslN7RczwUxKDR4z6EHewkcVBqXAxzjttufBGgvQMBB4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752134791; c=relaxed/simple;
-	bh=HEhZOrDen9GDQYkFTc80pO2Gobam8W9J62fqtXHgtNo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Hfy0l10zDZcp/odD1f7ioSPjIEMbLb+CWOfaqjnBAOyvnrhHobfDkcUaK7O5PzOD+f9fT9EOe93uWAnGoT53KTJNBx2ea1MWVuGjYg9wt1gna7kYOBiR+PVRDmjWAjs8khz8sQUbM+J7zpipS3txfNfNd9d6B1mnmFg/vGt5Zv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uj4gC0/N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BC778C4CEFA;
-	Thu, 10 Jul 2025 08:06:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752134790;
-	bh=HEhZOrDen9GDQYkFTc80pO2Gobam8W9J62fqtXHgtNo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Uj4gC0/NYXW7pDdZdsIqYwAt5c6p3O7F2CK7ODWTjn90g1Lm5fA15BDumOBoDg6Ds
-	 OS3FuHXVTbQfIam/TdiFbUxcVoGaDm1E4qFK6lp++UO8zsKWHlLypzT6ZB3rWfqSz+
-	 4jZh4tej13iyxGtdcEduI1aUADXTz8VvFWY89JjM/XLo6I/NZ6Qet9YTI1AzUQ3ZD0
-	 pNa6Kyjjg3zx8VdT7xLQFZQ53UK/nDBAJuWyUMTQ6guaF1Y6JAzhMfIqDHCBj8XN/x
-	 e4+mv2Zc4qwmUiJGiK15hF8ncNA2/2Kcju9tyIvX4k7Iuz4Npz+Qo2TWECNott0M4S
-	 Y8YSJiubhSuig==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0874C83F1D;
-	Thu, 10 Jul 2025 08:06:30 +0000 (UTC)
-From: Yassine Oudjana via B4 Relay <devnull+y.oudjana.protonmail.com@kernel.org>
-Date: Thu, 10 Jul 2025 09:06:28 +0100
-Subject: [PATCH v2 2/4] net: qrtr: Turn QRTR into a bus
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49A822D9E3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752134814; cv=fail; b=EA2He4Eg1tX6652EM5CTI+hni+haLWnt8l7KFl6mqWssASY38DTUP0jNuNK/FTkolrnoHdSfChRyxvKroSa8l25lNzLb7G+dhkqWZqCh1aGJr6lGW6si6fydChEeWEuQMX1Q0pXK/BRREHxfrvVV2COWf/D5hnHu4nCMzoNL6pQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752134814; c=relaxed/simple;
+	bh=vNF57rzU8LMLNX2nhOYdt8EUNz64aUAtsj841NvY+CQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=bTdF3jvMoijcd/7bT/wlZRmwEC32tJ+GeFa2+GiPuesQk72v955kBBtqcGtFjoaoyLk1+xi1mVWVlQ8syjilxLYY5yDs0PEw3Ik54N74OYzhf/BRFqRCJ5O7Oa1IjWW8OsZB2ScIe/8tOUrTinDIx7qZuklgWQ+dSGWO47cppmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GlJTVKSM; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752134813; x=1783670813;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=vNF57rzU8LMLNX2nhOYdt8EUNz64aUAtsj841NvY+CQ=;
+  b=GlJTVKSMnKkBiCfnMU7MTRM7t1n/JOqmo528G39PU6KpUvSu0SCR7g14
+   +g2h5+sJv8Qe0MaO0vBqCo6on8+LsLQCkKraS9xqox+v4zpAKQd418XrO
+   y9cYsvH9FYIWmmFDboJOT5gFFeSEwDPliRMBi3bMk0mPXUcZpWhaAI/q1
+   MdvLrP+x8wsxZjKfV/WWYksi/QZ+PWz09Ud1UnMewMUPDJ6zdxmVYoeZz
+   W+4rxgnmvu2CPZD4xXPNjT6SIn5d0jUSRYm4m16JzeM50JomiVmYQTyPG
+   JKoxts7lbFs26NYfaWSTI36416oszoBTkJSr/N+xPVAYfPCflDmUXk9QK
+   g==;
+X-CSE-ConnectionGUID: hH7CQiKASKKvf4ia6EBBVg==
+X-CSE-MsgGUID: FV6cG99VT9Cfta02kHmhMA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54537434"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="54537434"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 01:06:53 -0700
+X-CSE-ConnectionGUID: 8aD5pNwxSr6ryxcF5HOaYQ==
+X-CSE-MsgGUID: Fue776r3S+6elGoI0Ylh0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="186979919"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 01:06:52 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 10 Jul 2025 01:06:51 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 10 Jul 2025 01:06:51 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.43)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 10 Jul 2025 01:06:50 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NKuYoqOGB59Q6oTpMDkFfbZ+KTrPUcb7FR+bTvwB8y2p1Qe/tP9nQ2er4CYruXwSE8W/AsppzQUIL62dFcc6uWzP2HiVkq7vSWuVVo7R+ajTdwW5qWNncypoctzY4GndGgtZUuwc1/1tV/VhWNlyeKuZ6O1O13485vsHWETPfPJW2rnWDTJ8aIwTYEoRAEpyIMecfMr2HWuuMlIS0b02MRcnfduGZDeZmaVUpgXHQDXAO1aO2JO1TPqh0XFxGKpHXQOz+oxIUQQX+72UDlET1LPkAs9em2QC7xTTIUg6BRIIhsm7VeVN5+p+tkUSczmu4E3uYaqZ24/bu2bRhWFT4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vNF57rzU8LMLNX2nhOYdt8EUNz64aUAtsj841NvY+CQ=;
+ b=mCouVTOY96Zz1rh94I5CgN6BVSCFfoY+VfmEY86Hi9MhVzfkycy6X4ctfpR9qf40wHvDtX/XyYsddj2OUReSSxTl43OJXDlIO3oScilcd3gTWfHdvJb6/t1iTPfMEZ5VMvccA8thDEllx3f0TZpDIm9VHVYk0V/rfbklEvD9ggpm01QCbw+RV9tAh0mAeD8NsBYzoyqclXRNG6uEJM//0JyndqUuAqbO1NCI8TKT33f5/kqQkYg9BX1W6ZHLE5HLI2wKge5kGOaFgyGtYxR1REgLgdjyiuDnJ6ShlaxeHbsLp3zZcYyZe4Wn4242T9tZwpRqlZpShaHZ22flcRq+3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by PH0PR11MB5141.namprd11.prod.outlook.com (2603:10b6:510:3c::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Thu, 10 Jul
+ 2025 08:06:29 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
+ 08:06:29 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+	"jgg@ziepe.ca" <jgg@ziepe.ca>, "will@kernel.org" <will@kernel.org>,
+	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>
+CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "shuah@kernel.org" <shuah@kernel.org>,
+	"nicolinc@nvidia.com" <nicolinc@nvidia.com>, "aik@amd.com" <aik@amd.com>,
+	"Williams, Dan J" <dan.j.williams@intel.com>, "baolu.lu@linux.intel.com"
+	<baolu.lu@linux.intel.com>, "Xu, Yilun" <yilun.xu@intel.com>
+Subject: RE: [PATCH v4 6/7] iommufd/selftest: Explicitly skip tests for
+ inapplicable variant
+Thread-Topic: [PATCH v4 6/7] iommufd/selftest: Explicitly skip tests for
+ inapplicable variant
+Thread-Index: AQHb8IeL0+ctCDtddE2afSmLF1yBM7QrAe4Q
+Date: Thu, 10 Jul 2025 08:06:29 +0000
+Message-ID: <BN9PR11MB52762DEF039904D153C5C9558C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20250709040234.1773573-1-yilun.xu@linux.intel.com>
+ <20250709040234.1773573-7-yilun.xu@linux.intel.com>
+In-Reply-To: <20250709040234.1773573-7-yilun.xu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|PH0PR11MB5141:EE_
+x-ms-office365-filtering-correlation-id: 3dc8a568-b2cf-421d-97dd-08ddbf88ace4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?DAbtbn+n/xcvUVUFUF2ulZTDMbfeIihQk07AjcRiGwl3d+IJ0ViMPSzFi2j5?=
+ =?us-ascii?Q?8RU0ISzl7PJ3Zsf+R+FlcuY4Uwbeeydw+QgfDhpXVZpW/DBQ4H95R1dyE2tI?=
+ =?us-ascii?Q?HaWbiMerI2ccNq55UdOOFMZ7AcTd2/r5pWTtY7A1MoaYQ3EgGSeY1bZB2iFM?=
+ =?us-ascii?Q?v3NItOOoA92lrcPR/NKRZhQ5LX3/vq6gEYEbqZL+2RuZ5OWwRffPFEEflP8O?=
+ =?us-ascii?Q?N3izlROGRbohWbc/T9OJSjGRDhOm3qkp6gC5jzILRG+qg2I2sxeRNq4vmZeL?=
+ =?us-ascii?Q?A9Lie4GFMK4/AusVjpGcSVyqVHiriTvwUDn67Z1qrM9Rqz2ZfvchPqtpXB4R?=
+ =?us-ascii?Q?an/6d2Qd4kbjlyuGtFl1QvtzMb3bc2F5a1qIiOQs8AMb5t+jiwQZc6k7739V?=
+ =?us-ascii?Q?ZZdplZHyQdO1NMIePkhYDf+wjI4dPU/RGbf/7mXiGdGHr0Xc+PGX2PCfRGtw?=
+ =?us-ascii?Q?848Q3jHIrUi63YK9Ajzppb3Ml9gqkOubXMz9qmq1swYub09xBN9/vwbv/lcJ?=
+ =?us-ascii?Q?aN2NN4XakFdqyluxs9Wc/Nwl6a/0MzwsQQnW69j1gG3D8CL9yIpvgbZlpdJH?=
+ =?us-ascii?Q?/EAH3/1IYyAUwOKVdvIFqiCFPgxDABzlZOlPotKp20METdGv8R6nNcpzIdg6?=
+ =?us-ascii?Q?xxeammGmEPLBg4GvQee5XUsiN5NzzdiPg+rk+0/FRKxo7z72x2j+LTduxaBT?=
+ =?us-ascii?Q?cEv7w+JkLeVNY1sCwlR6MBwX38PeIwtpHi3rEJW7aiLuGKn+8QL6Pq6acUoy?=
+ =?us-ascii?Q?zybMiTqUcXwR3UXd09VNWuQtGyms1iH3EcjeJXMVr/ekPsvqja9j3KEEIqrL?=
+ =?us-ascii?Q?OkcJTsjDfi2B9BaOw+mEDINCVu6WyKgsksuRUoD1hG0yVVi0gE/jOoEt98j/?=
+ =?us-ascii?Q?nquASHixUfRQUKSEIM8r4KCFQhiKZaOntnyh55xVkurEtKGTdRumL5UkIxcY?=
+ =?us-ascii?Q?WU52dN+LaOFv9iNboOrs/SADWuyq/EzBAE2QgxG2SZlZrZXRJ+pYX3xHnzST?=
+ =?us-ascii?Q?AjuWGFve6hH8w6XWdIkuisnTbB+RiwogHj7QwOp+R2nQCbrIoQOR2f4p/VnN?=
+ =?us-ascii?Q?8YN9NYz8VeJBMfNPz+r3c3kEIZVdV0Akku2bPjvgaONHUatPWYizaiM8K9xo?=
+ =?us-ascii?Q?/xmjXIMSuED7VmJYrtHCS4ivrMXKIhLe06D6IkU+jYXaGfjeMjfeieFBGyYB?=
+ =?us-ascii?Q?3gNsobJnCQCn0DJPWakBlQHG1RRKa/GMNRaIbEBli/maVhprtXt703W9ikEc?=
+ =?us-ascii?Q?zD5GbtNYPLTihg35whHkpRtlAyAHccjjheD/LC1OiuN1nrMD4a6lqQA2yKOU?=
+ =?us-ascii?Q?TBfvzsbJ8iTqaV5Y88StqVYbFP78qsxz+W1gLtvVHgkn5ZV+11+k72pvFLoq?=
+ =?us-ascii?Q?wfgpAVZtFu6kQaFX0G8IfTu3ZsqCAUTznv7jG8zjNpZj86ZixxSa1HssrLKs?=
+ =?us-ascii?Q?yNaCeMZ+Blg4wJs2XN9N9JcGWy4DOtqohnt5cT5s3rmt/Z6WKgf0vY0WXHxp?=
+ =?us-ascii?Q?x3qbXE4vj9v0Eqo=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?SjgIcM9pkcD34WX+l1t9L8ATbWdOTo6yeYRner/vrZNyjqVh6h+GkEEcx9WL?=
+ =?us-ascii?Q?EcLzi0hP1RTQNbDB2JCBiiIlZfY8Mq4EBlSoTJey/+SJNkmW09bsBcKK085D?=
+ =?us-ascii?Q?wPEtKLP/geFrouiKLYr7p2lnHp4JeaWp/iFkDmtxShoPRyRuQjb3FrYdl/IY?=
+ =?us-ascii?Q?Afh7Bww2BjxQly8yLI6q/xtITiEKUJWzdl6D8hR3Nz/JCFpgHlZo3ihj5Svu?=
+ =?us-ascii?Q?06mxRICyStANpO1JqyuxKlJw+sXzARyjm01KQRvcmWNJl1W05mTxNSPfccPj?=
+ =?us-ascii?Q?FZG9GCGkuaQ4gQzmg76bIZu5MyBZNgm0niv85S4+2SDWFgY171V5+E09Zdkk?=
+ =?us-ascii?Q?A7lrbTzfAQ4JAp/O36xbhAP2/nhVJ7Tlvfsxx5hQLrQweSEGNxiJkt/gsalm?=
+ =?us-ascii?Q?BtNkprD3h04cj1NZjFvGEHUnu42m2GmIMuK0nG8vik8DdNB/5IKJAgUdFFwI?=
+ =?us-ascii?Q?hRxgcOFDXaVrTiKTSLWevLthC8eNIPgf/rWi+df94rNrsAiO+PjkV9rFyjBk?=
+ =?us-ascii?Q?4AnQomidOoBAViFyewPoT/qJ5WdwtXmcQJJI0XCQGm7z/2v15B/+O/M0zJup?=
+ =?us-ascii?Q?lCpEj1zjtxapsL6NRwm0KkbiRggoS5PbfzIb6Ea6FtxmcKlAJOITX+TTwYxz?=
+ =?us-ascii?Q?uZxsPBXj851zmgWPbpY/8Sfrk/wHsAomcbeovgT2lh7i80IkBKqWwDdiUw7L?=
+ =?us-ascii?Q?yZdjYJewZ1WInSY8ynqMhlGAKbYS3CBLiMP3LcbWxYv0iRKYyTe8QKEQQLmT?=
+ =?us-ascii?Q?bvS3iFS4gM+upPM1BnpFGvcfL7tf2CVYJpwnYtuncHajP3KWkto7aHb4dIfb?=
+ =?us-ascii?Q?hRP8LDSd1oueM/gzkLsO1CrvmZW7Lk1VXK8/0g+yRbLCTrrnZ+R8GMLiKE3D?=
+ =?us-ascii?Q?iArPZqtTRzT1bpQCPdQNlYQoFC3XEcqOouhgvIoJaN8/dkmDobcLyPoS7onr?=
+ =?us-ascii?Q?EetdDytr+nLa+uFDab12jlg1X3cAl5++u3fqjETJbkb8p/s80EJ3cFMkK2MN?=
+ =?us-ascii?Q?b/UpJn0T9vGgn2NYJ7xEE2f7CfdkRYkOY+dGTZZW8PqgKrYORguaw2zWE/us?=
+ =?us-ascii?Q?spohUJhQ6kFaBgpI2wmqrKYiJzvVouj0bka0ywedxIOW5UlLwl0iO/+k1leT?=
+ =?us-ascii?Q?qsF8VCpO07AEbVd+50IeMmA3HfuKQWGghV6wJQXEgArrLk9FEkU+b1aYnXw1?=
+ =?us-ascii?Q?vEIcly3MMkPqrKDQCUsRs76NoOWHMoexdnjMl5jyaTvpF0BSqVcEhxC8p4vH?=
+ =?us-ascii?Q?j8kSo+PyH/rcQ0keHVGIG6ElD6UMFZVFbvru1cYU6aXACPEuonsXMHxF/n6H?=
+ =?us-ascii?Q?zzY94vcsjjEbkf1d7k6oqUsJ95UlDxF0gPb+8ga0ptybz1S2cuB3KfTLri07?=
+ =?us-ascii?Q?MgVqcdGHCQFKmRW2DlHK6yzEOo565e9wjWkPots7U3UBv25puuorNMRxdYuK?=
+ =?us-ascii?Q?wnyHqS00ucbSwCKg9cHWAbYWJaRffxEcblna8fOQ2RyVPyaJ4RpCf448H2SA?=
+ =?us-ascii?Q?172D5U6oht8EMJNRvOTj/DpmzWhWo/wrC6LXm1L0XI8Q8g1WzS0n7abdakxc?=
+ =?us-ascii?Q?ThYPW5a5qAw2c5ZwR8Nx05TLnwlGcHbJijYEBOLO?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-qcom-smgr-v2-2-f6e198b7aa8e@protonmail.com>
-References: <20250710-qcom-smgr-v2-0-f6e198b7aa8e@protonmail.com>
-In-Reply-To: <20250710-qcom-smgr-v2-0-f6e198b7aa8e@protonmail.com>
-To: Manivannan Sadhasivam <mani@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nicolas Schier <nicolas.schier@linux.dev>, 
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Luca Weiss <luca@lucaweiss.eu>
-Cc: linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- linux-iio@vger.kernel.org, Yassine Oudjana <y.oudjana@protonmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752134788; l=13409;
- i=y.oudjana@protonmail.com; s=20250710; h=from:subject:message-id;
- bh=BEz6+mix/8Ro0NQY01YjtawBe2jefM7XH43H8tm5Dq0=;
- b=ZDD7byeRJ8P7n1x5fcHYw0FIO6mXnZSRcIFKOXREqnDhvllF1YWmSobf1UgfrvgPVyLND0lZi
- bmtBMlnztH3AhJIiiI618QFd6ecKVy7Y4L+QzqeFTU1eqPRyEJcTMJD
-X-Developer-Key: i=y.oudjana@protonmail.com; a=ed25519;
- pk=kZKEHR1e5QKCbhElU9LF/T1SbfTr8xzy2cO8fN70QgY=
-X-Endpoint-Received: by B4 Relay for y.oudjana@protonmail.com/20250710 with
- auth_id=455
-X-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
-Reply-To: y.oudjana@protonmail.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3dc8a568-b2cf-421d-97dd-08ddbf88ace4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2025 08:06:29.3219
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: s9GNPX6frhL97I6zyQ0AeR0wOPcoU6nubElIuxLplQiSJBjJYZpGLryfsrp5Cg7FGTxcUJs4Khc1KSzXd0seLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5141
+X-OriginatorOrg: intel.com
 
-From: Yassine Oudjana <y.oudjana@protonmail.com>
+> From: Xu Yilun <yilun.xu@linux.intel.com>
+> Sent: Wednesday, July 9, 2025 12:03 PM
+>=20
+> no_viommu is not applicable for some viommu/vdevice tests. Explicitly
+> report the skipping, don't do it silently.
+>=20
+> Only add the prints. No functional change intended.
+>=20
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
 
-Implement a QRTR bus to allow for creating drivers for individual QRTR
-services. With this in place, devices are dynamically registered for QRTR
-services as they become available, and drivers for these devices are
-matched using service and instance IDs.
-
-Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
----
- include/linux/mod_devicetable.h   |   9 ++
- include/linux/soc/qcom/qrtr.h     |  36 +++++++
- net/qrtr/af_qrtr.c                |  23 +++-
- net/qrtr/qrtr.h                   |   3 +
- net/qrtr/smd.c                    | 218 +++++++++++++++++++++++++++++++++++++-
- scripts/mod/devicetable-offsets.c |   4 +
- scripts/mod/file2alias.c          |  10 ++
- 7 files changed, 297 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
-index 6077972e8b45de3d07881c0226459d815dd1f83d..23c6a1a4bca54f871c78765f8d5401cca5c1e6eb 100644
---- a/include/linux/mod_devicetable.h
-+++ b/include/linux/mod_devicetable.h
-@@ -549,6 +549,15 @@ struct spmi_device_id {
- 	kernel_ulong_t driver_data;	/* Data private to the driver */
- };
- 
-+#define QRTR_NAME_SIZE	32
-+#define QRTR_MODULE_PREFIX "qrtr:"
-+
-+struct qrtr_device_id {
-+	__u16 service;
-+	__u16 instance;
-+	kernel_ulong_t driver_data;	/* Data private to the driver */
-+};
-+
- /* dmi */
- enum dmi_field {
- 	DMI_NONE,
-diff --git a/include/linux/soc/qcom/qrtr.h b/include/linux/soc/qcom/qrtr.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..e9249d9422b8ca96baa43073cf07c4a75c163219
---- /dev/null
-+++ b/include/linux/soc/qcom/qrtr.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef __QCOM_QRTR_H__
-+#define __QCOM_QRTR_H__
-+
-+#include <linux/mod_devicetable.h>
-+
-+struct qrtr_device {
-+	struct device dev;
-+	unsigned int node;
-+	unsigned int port;
-+	u16 service;
-+	u16 instance;
-+};
-+
-+#define to_qrtr_device(d) container_of(d, struct qrtr_device, dev)
-+
-+struct qrtr_driver {
-+	int (*probe)(struct qrtr_device *qdev);
-+	void (*remove)(struct qrtr_device *qdev);
-+	const struct qrtr_device_id *id_table;
-+	struct device_driver driver;
-+};
-+
-+#define to_qrtr_driver(d) container_of(d, struct qrtr_driver, driver)
-+
-+#define qrtr_driver_register(drv) __qrtr_driver_register(drv, THIS_MODULE)
-+
-+int __qrtr_driver_register(struct qrtr_driver *drv, struct module *owner);
-+void qrtr_driver_unregister(struct qrtr_driver *drv);
-+
-+#define module_qrtr_driver(__qrtr_driver) \
-+	module_driver(__qrtr_driver, qrtr_driver_register, \
-+			qrtr_driver_unregister)
-+
-+#endif /* __QCOM_QRTR_H__ */
-diff --git a/net/qrtr/af_qrtr.c b/net/qrtr/af_qrtr.c
-index 00c51cf693f3d054f1771de5246498bf013775d0..e11682fd796083a9866527824faf428affba19bc 100644
---- a/net/qrtr/af_qrtr.c
-+++ b/net/qrtr/af_qrtr.c
-@@ -435,6 +435,7 @@ static void qrtr_node_assign(struct qrtr_node *node, unsigned int nid)
- int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
- {
- 	struct qrtr_node *node = ep->node;
-+	const struct qrtr_ctrl_pkt *pkt;
- 	const struct qrtr_hdr_v1 *v1;
- 	const struct qrtr_hdr_v2 *v2;
- 	struct qrtr_sock *ipc;
-@@ -443,6 +444,7 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
- 	size_t size;
- 	unsigned int ver;
- 	size_t hdrlen;
-+	int ret = 0;
- 
- 	if (len == 0 || len & 3)
- 		return -EINVAL;
-@@ -516,12 +518,24 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
- 
- 	qrtr_node_assign(node, cb->src_node);
- 
-+	pkt = data + hdrlen;
-+
- 	if (cb->type == QRTR_TYPE_NEW_SERVER) {
- 		/* Remote node endpoint can bridge other distant nodes */
--		const struct qrtr_ctrl_pkt *pkt;
--
--		pkt = data + hdrlen;
- 		qrtr_node_assign(node, le32_to_cpu(pkt->server.node));
-+
-+		/* Create a QRTR device */
-+		ret = ep->add_device(ep, le32_to_cpu(pkt->server.node),
-+					       le32_to_cpu(pkt->server.port),
-+					       le32_to_cpu(pkt->server.service),
-+					       le32_to_cpu(pkt->server.instance));
-+		if (ret)
-+			goto err;
-+	} else if (cb->type == QRTR_TYPE_DEL_SERVER) {
-+		/* Remove QRTR device corresponding to service */
-+		ret = ep->del_device(ep, le32_to_cpu(pkt->server.port));
-+		if (ret)
-+			goto err;
- 	}
- 
- 	if (cb->type == QRTR_TYPE_RESUME_TX) {
-@@ -543,8 +557,7 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
- 
- err:
- 	kfree_skb(skb);
--	return -EINVAL;
--
-+	return ret ? ret : -EINVAL;
- }
- EXPORT_SYMBOL_GPL(qrtr_endpoint_post);
- 
-diff --git a/net/qrtr/qrtr.h b/net/qrtr/qrtr.h
-index 3f2d28696062a56201f8774ee50fd1c3daa50708..6590483367304b97239de939d4f0206aac52c527 100644
---- a/net/qrtr/qrtr.h
-+++ b/net/qrtr/qrtr.h
-@@ -19,6 +19,9 @@ struct sk_buff;
-  */
- struct qrtr_endpoint {
- 	int (*xmit)(struct qrtr_endpoint *ep, struct sk_buff *skb);
-+	int (*add_device)(struct qrtr_endpoint *parent, unsigned int node, unsigned int port,
-+			  u16 service, u16 instance);
-+	int (*del_device)(struct qrtr_endpoint *parent, unsigned int port);
- 	/* private: not for endpoint use */
- 	struct qrtr_node *node;
- };
-diff --git a/net/qrtr/smd.c b/net/qrtr/smd.c
-index 940ee9349a9ce7438a01dd193c5c1d61c7b82ffd..40fd32fa0890799a88b947b2b7bc00c2249dea0d 100644
---- a/net/qrtr/smd.c
-+++ b/net/qrtr/smd.c
-@@ -7,6 +7,7 @@
- #include <linux/module.h>
- #include <linux/skbuff.h>
- #include <linux/rpmsg.h>
-+#include <linux/soc/qcom/qrtr.h>
- 
- #include "qrtr.h"
- 
-@@ -16,6 +17,197 @@ struct qrtr_smd_dev {
- 	struct device *dev;
- };
- 
-+struct qrtr_new_server {
-+	struct qrtr_smd_dev *parent;
-+	unsigned int node;
-+	unsigned int port;
-+	u16 service;
-+	u16 instance;
-+
-+	struct work_struct work;
-+};
-+
-+struct qrtr_del_server {
-+	struct qrtr_smd_dev *parent;
-+	unsigned int port;
-+
-+	struct work_struct work;
-+};
-+
-+static int qcom_smd_qrtr_device_match(struct device *dev, const struct device_driver *drv)
-+{
-+	struct qrtr_device *qdev = to_qrtr_device(dev);
-+	struct qrtr_driver *qdrv = to_qrtr_driver(drv);
-+	const struct qrtr_device_id *id = qdrv->id_table;
-+
-+	if (!id)
-+		return 0;
-+
-+	while (id->service != 0) {
-+		if (id->service == qdev->service && id->instance == qdev->instance)
-+			return 1;
-+		id++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int qcom_smd_qrtr_uevent(const struct device *dev, struct kobj_uevent_env *env)
-+{
-+	const struct qrtr_device *qdev = to_qrtr_device(dev);
-+
-+	return add_uevent_var(env, "MODALIAS=%s%x:%x", QRTR_MODULE_PREFIX, qdev->service,
-+			      qdev->instance);
-+}
-+
-+static int qcom_smd_qrtr_device_probe(struct device *dev)
-+{
-+	struct qrtr_device *qdev = to_qrtr_device(dev);
-+	struct qrtr_driver *qdrv = to_qrtr_driver(dev->driver);
-+
-+	return qdrv->probe(qdev);
-+}
-+
-+static void qcom_smd_qrtr_device_remove(struct device *dev)
-+{
-+	struct qrtr_device *qdev = to_qrtr_device(dev);
-+	struct qrtr_driver *qdrv = to_qrtr_driver(dev->driver);
-+
-+	if (qdrv->remove)
-+		qdrv->remove(qdev);
-+}
-+
-+const struct bus_type qrtr_bus = {
-+	.name		= "qrtr",
-+	.match		= qcom_smd_qrtr_device_match,
-+	.uevent		= qcom_smd_qrtr_uevent,
-+	.probe		= qcom_smd_qrtr_device_probe,
-+	.remove		= qcom_smd_qrtr_device_remove,
-+};
-+EXPORT_SYMBOL_NS_GPL(qrtr_bus, "QRTR");
-+
-+int __qrtr_driver_register(struct qrtr_driver *drv, struct module *owner)
-+{
-+	drv->driver.bus = &qrtr_bus;
-+	drv->driver.owner = owner;
-+
-+	return driver_register(&drv->driver);
-+}
-+EXPORT_SYMBOL_NS_GPL(__qrtr_driver_register, "QRTR");
-+
-+void qrtr_driver_unregister(struct qrtr_driver *drv)
-+{
-+	driver_unregister(&drv->driver);
-+}
-+EXPORT_SYMBOL_NS_GPL(qrtr_driver_unregister, "QRTR");
-+
-+static void qcom_smd_qrtr_dev_release(struct device *dev)
-+{
-+	struct qrtr_device *qdev = to_qrtr_device(dev);
-+
-+	kfree(qdev);
-+}
-+
-+static int qcom_smd_qrtr_match_device_by_port(struct device *dev, const void *data)
-+{
-+	struct qrtr_device *qdev = to_qrtr_device(dev);
-+	unsigned const int *port = data;
-+
-+	return qdev->port == *port;
-+}
-+
-+static void qcom_smd_qrtr_add_device_worker(struct work_struct *work)
-+{
-+	struct qrtr_new_server *new_server = container_of(work, struct qrtr_new_server, work);
-+	struct qrtr_smd_dev *qsdev = new_server->parent;
-+	struct qrtr_device *qdev;
-+	int ret;
-+
-+	qdev = kzalloc(sizeof(*qdev), GFP_KERNEL);
-+	if (!qdev)
-+		return;
-+
-+	*qdev = (struct qrtr_device) {
-+		.node = new_server->node,
-+		.port = new_server->port,
-+		.service = new_server->service,
-+		.instance = new_server->instance
-+	};
-+
-+	devm_kfree(qsdev->dev, new_server);
-+
-+	dev_set_name(&qdev->dev, "%d-%d", qdev->node, qdev->port);
-+
-+	qdev->dev.bus = &qrtr_bus;
-+	qdev->dev.parent = qsdev->dev;
-+	qdev->dev.release = qcom_smd_qrtr_dev_release;
-+
-+	ret = device_register(&qdev->dev);
-+	if (ret) {
-+		dev_err(qsdev->dev, "Failed to register QRTR device: %pe\n", ERR_PTR(ret));
-+		put_device(&qdev->dev);
-+	}
-+}
-+
-+static void qcom_smd_qrtr_del_device_worker(struct work_struct *work)
-+{
-+	struct qrtr_del_server *del_server = container_of(work, struct qrtr_del_server, work);
-+	struct qrtr_smd_dev *qsdev = del_server->parent;
-+	struct device *dev = device_find_child(qsdev->dev, &del_server->port,
-+					       qcom_smd_qrtr_match_device_by_port);
-+
-+	device_unregister(dev);
-+}
-+
-+static int qcom_smd_qrtr_add_device(struct qrtr_endpoint *parent, unsigned int node,
-+				    unsigned int port, u16 service, u16 instance)
-+{
-+	struct qrtr_smd_dev *qsdev = container_of(parent, struct qrtr_smd_dev, ep);
-+	struct qrtr_new_server *new_server;
-+
-+	new_server = devm_kzalloc(qsdev->dev, sizeof(*new_server), GFP_KERNEL);
-+	if (!new_server)
-+		return -ENOMEM;
-+
-+	*new_server = (struct qrtr_new_server) {
-+		.parent = qsdev,
-+		.node = node,
-+		.port = port,
-+		.service = service,
-+		.instance = instance
-+	};
-+
-+	INIT_WORK(&new_server->work, qcom_smd_qrtr_add_device_worker);
-+	schedule_work(&new_server->work);
-+
-+	return 0;
-+}
-+
-+static int qcom_smd_qrtr_del_device(struct qrtr_endpoint *parent, unsigned int port)
-+{
-+	struct qrtr_smd_dev *qsdev = container_of(parent, struct qrtr_smd_dev, ep);
-+	struct qrtr_del_server *del_server;
-+
-+	del_server = devm_kzalloc(qsdev->dev, sizeof(*del_server), GFP_KERNEL);
-+	if (!del_server)
-+		return -ENOMEM;
-+
-+	del_server->parent = qsdev;
-+	del_server->port = port;
-+
-+	INIT_WORK(&del_server->work, qcom_smd_qrtr_del_device_worker);
-+	schedule_work(&del_server->work);
-+
-+	return 0;
-+}
-+
-+static int qcom_smd_qrtr_device_unregister(struct device *dev, void *data)
-+{
-+	device_unregister(dev);
-+
-+	return 0;
-+}
-+
- /* from smd to qrtr */
- static int qcom_smd_qrtr_callback(struct rpmsg_device *rpdev,
- 				  void *data, int len, void *priv, u32 addr)
-@@ -86,6 +278,8 @@ static void qcom_smd_qrtr_remove(struct rpmsg_device *rpdev)
- {
- 	struct qrtr_smd_dev *qsdev = dev_get_drvdata(&rpdev->dev);
- 
-+	device_for_each_child(qsdev->dev, NULL, qcom_smd_qrtr_device_unregister);
-+
- 	qrtr_endpoint_unregister(&qsdev->ep);
- 
- 	dev_set_drvdata(&rpdev->dev, NULL);
-@@ -106,7 +300,29 @@ static struct rpmsg_driver qcom_smd_qrtr_driver = {
- 	},
- };
- 
--module_rpmsg_driver(qcom_smd_qrtr_driver);
-+static int __init qcom_smd_qrtr_init(void)
-+{
-+	int ret;
-+
-+	ret = bus_register(&qrtr_bus);
-+	if (ret)
-+		return ret;
-+
-+	ret = register_rpmsg_driver(&qcom_smd_qrtr_driver);
-+	if (ret)
-+		bus_unregister(&qrtr_bus);
-+
-+	return ret;
-+}
-+
-+static void __exit qcom_smd_qrtr_exit(void)
-+{
-+	unregister_rpmsg_driver(&qcom_smd_qrtr_driver);
-+	bus_unregister(&qrtr_bus);
-+}
-+
-+subsys_initcall(qcom_smd_qrtr_init);
-+module_exit(qcom_smd_qrtr_exit);
- 
- MODULE_ALIAS("rpmsg:IPCRTR");
- MODULE_DESCRIPTION("Qualcomm IPC-Router SMD interface driver");
-diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
-index d3d00e85edf73553ba3d9b5f9fccf1ff61c99026..0a90323c35d330f13a151948467d72b927f474f3 100644
---- a/scripts/mod/devicetable-offsets.c
-+++ b/scripts/mod/devicetable-offsets.c
-@@ -280,5 +280,9 @@ int main(void)
- 	DEVID(coreboot_device_id);
- 	DEVID_FIELD(coreboot_device_id, tag);
- 
-+	DEVID(qrtr_device_id);
-+	DEVID_FIELD(qrtr_device_id, service);
-+	DEVID_FIELD(qrtr_device_id, instance);
-+
- 	return 0;
- }
-diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-index 00586119a25b7fd399eeeef3760a26467ffbb50c..fef69db4d7023305f03fd8bf85ac60c47ae7d0ca 100644
---- a/scripts/mod/file2alias.c
-+++ b/scripts/mod/file2alias.c
-@@ -1370,6 +1370,15 @@ static void do_coreboot_entry(struct module *mod, void *symval)
- 	module_alias_printf(mod, false, "coreboot:t%08X", tag);
- }
- 
-+/* Looks like: qrtr:N:N */
-+static void do_qrtr_entry(struct module *mod, void *symval)
-+{
-+	DEF_FIELD(symval, qrtr_device_id, service);
-+	DEF_FIELD(symval, qrtr_device_id, instance);
-+
-+	module_alias_printf(mod, false, "qrtr:%x:%x", service, instance);
-+}
-+
- /* Does namelen bytes of name exactly match the symbol? */
- static bool sym_is(const char *name, unsigned namelen, const char *symbol)
- {
-@@ -1466,6 +1475,7 @@ static const struct devtable devtable[] = {
- 	{"usb", SIZE_usb_device_id, do_usb_entry_multi},
- 	{"pnp", SIZE_pnp_device_id, do_pnp_device_entry},
- 	{"pnp_card", SIZE_pnp_card_device_id, do_pnp_card_entry},
-+	{"qrtr", SIZE_qrtr_device_id, do_qrtr_entry},
- };
- 
- /* Create MODULE_ALIAS() statements.
-
--- 
-2.50.0
-
-
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
