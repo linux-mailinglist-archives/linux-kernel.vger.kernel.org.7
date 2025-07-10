@@ -1,432 +1,313 @@
-Return-Path: <linux-kernel+bounces-726587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9646FB00EFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:47:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84ADDB00F05
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 779311CA80D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:47:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D87F7B7B73
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B3C2D320E;
-	Thu, 10 Jul 2025 22:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAFE293C69;
+	Thu, 10 Jul 2025 22:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gmTp5H4p"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lZ9OPMyI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0690C2D12E2
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752187568; cv=none; b=Uq0Ts5PN/ruV1+W3yAaAKmDB8BDvmFKzL0d20XPAZX0ura/ACDDp20+4wohbBxK9Sc/pJziWGg12WeEUbYOMnUvYG6Os+3bKCUiW1JqaLHCgHnwthLvzTkWM2feosjJkUZHTmkyY00ns2QHEJ7ORBDxE5+z6A/WnyZaEaJdi1Go=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752187568; c=relaxed/simple;
-	bh=1I6+4fLFYxIRchnimpbcx/xAezT0weK9I3m33+3twO8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Wz1BP3KKs9jFJfm9l1sRJl2vwycQPaHifc0/o6BPjJ9sHNwvhddL3hzPOk+dyJHGc7ECtKcB2IF8glbmlMrVpdTIik7kXVhoC8kPhTn9QrEDNqTULfdgGSYasPlGVDd7nSgyIaSbcIZ7Qy9r81yvQTygRpA1P7r/S4dwQGJv/CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gmTp5H4p; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56AJR2vA023696
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:46:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=qTV57CQ8ymJ
-	mYXnc5Iu4DmQhuHr9c68sQy8sTbtSQKA=; b=gmTp5H4pyJl2bQGN0MmDSdMwfn3
-	yX7cXfISaAD49TwkCNf+Q+1wd+/j+OpmwWykqo10Fv3CncvoT09CanLZ0XhGMgRO
-	Fg2Ya3CZIJwdD94lJkzFd/viSjUyQb+Xe0eNoDqyUfgyvCBQGOSatWXK8x0IPm51
-	qSB1Y6LYpdgfxS2f7aWY5wO7gbQtmmTkr3Qlq9WcYUQp88o70NNmDoNIkFPFnGAF
-	WvbCy/rckNCsAsI9den2DW9CXWqg8G/l9PLnbKv7B/YTDrrPBYGLf1cQiMvnz2+c
-	UNxonW/1TMo66gKNsePCIGBQp52EaeS1Z06pkGKMD6t5/hy2tGwrWdgItsA==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smafpgej-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:46:05 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2382607509fso8413365ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:46:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752187564; x=1752792364;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qTV57CQ8ymJmYXnc5Iu4DmQhuHr9c68sQy8sTbtSQKA=;
-        b=quhIjHbMxHGW+NXgi+GeGzt1f9x0pmoiKThwYq594Po61CyP7L1LKkFXEuGKrEVPFR
-         EVb0sleAcRPP7gjNs3cXoo6EYFC29B8mP5JNNgWSsjtzLxDEacDPs5K57wQLtwP+3U+8
-         jnvdxUMkRn4jivnyGRhWAvIVKXrjbx7D3cAfs1B/sUdkXhXynn2w8D0uVwxNgWDRA0JO
-         HGt69iVI+wtQnIJ3lDraH2MRvnwlxO4XeGtpvkSioIgchGLEFcHpObOwOGyjhym+0/qx
-         qnYZAtEyN9btrqUQG+THFjV4V88orxKIBDWfZkzvM+oq2TlBDvS9nS9jlqjpU88B6Cku
-         KS9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKiZwZviCUDuW2wNMa+Hm8iuv8i9f1qDdiNegVjhwjbg7HzOnTFcuaPWaV8LrY/yW6n7D0xVATg4rtOJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk8z5auyoI0YayRSOt31du6XUF/8v7vtWA67BvlzXym6hbdLzT
-	CpsFrVLs8siOrmUpCyby+PF6qf4u4yrIKZnqOrjjMwL5aG/g2VkaKhcGjFiPVxtz5uAmJsQm1Ow
-	h7bfA3bXquTefRCpYXYdgygzgrKINzyqnyWtrOqUV48e1KCrKYFNU0i97s+TPtgJcaFE=
-X-Gm-Gg: ASbGnctrp+7dzIuoOQ7cZvFjyIP8gYx1P1957FBk4S0Ww+NedK2NNw+ynKyg6W7FYVm
-	OLTZBNIpBqvGnMsGUobtec+kvFgctXPMoXxeDYEFf5b9VKKHsau6ZHxfvIByF2+nPfZbfXTrazc
-	Idtv816yWUgifGLzVXTCZI4dvcytNqP7hGph9cnmMI8mzUsva+8ClQu2mxjkneqJZi6OBMda3+F
-	7k1rKIfqVzdmVSKnVetX2bX8xc9+dyQdf2iXfz+ihrIJQJop2FDHA+iPSpJFqzzk2ljJ4/+bUcY
-	f7tmCAFD3JrbpOoZAyvsa43cIiveYJso3NTX7ewf28LCZbYL2bid4TkOH6SpVEpo5CzoYVAZH2W
-	Cn8MbIa1MY7kN+Y1CiKvLF7FAbX0=
-X-Received: by 2002:a17:903:98c:b0:22e:421b:49b1 with SMTP id d9443c01a7336-23dede94a67mr12179095ad.48.1752187564129;
-        Thu, 10 Jul 2025 15:46:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGkdL3WJ6xRqtGtImhgF2AwOwFBRgfjiJyMt52F5VPsKm3YbKQk5xFMvR1NzIW+jCLp+JXxFQ==
-X-Received: by 2002:a17:903:98c:b0:22e:421b:49b1 with SMTP id d9443c01a7336-23dede94a67mr12178805ad.48.1752187563716;
-        Thu, 10 Jul 2025 15:46:03 -0700 (PDT)
-Received: from hu-amelende-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4341d51sm30479615ad.189.2025.07.10.15.46.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 15:46:03 -0700 (PDT)
-From: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-To: amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
-        daniel.lezcano@linaro.org
-Cc: rui.zhang@intel.com, lukasz.luba@arm.com, david.collins@oss.qualcomm.com,
-        stefan.schmidt@linaro.org, quic_tsoni@quicinc.com,
-        konrad.dybcio@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dmitry.baryshkov@linaro.org, dmitry.baryshkov@oss.qualcomm.com
-Subject: [PATCH v6 5/5] thermal: qcom-spmi-temp-alarm: add support for LITE PMIC peripherals
-Date: Thu, 10 Jul 2025 15:45:55 -0700
-Message-Id: <20250710224555.3047790-6-anjelique.melendez@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250710224555.3047790-1-anjelique.melendez@oss.qualcomm.com>
-References: <20250710224555.3047790-1-anjelique.melendez@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84EB242D77;
+	Thu, 10 Jul 2025 22:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752187662; cv=fail; b=dMQWc1T9yVUQ1TJAXjnoiQO6xMEikdTcur/Lmi968rWXAaMUJSegkBFB7eHvfxlrgYU0knpVXwKX2xaG5Deqc/soIUTrKYi0iUaqQwicUlAAVEc9oFxTPmcXq8W+zOUaVyKangAXVuDZMYj1JjQTQb/ZIQikc4oIXAIktoC/0jE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752187662; c=relaxed/simple;
+	bh=KM6MjOKERVqgEQH1ccqVWF+CanryIMw2TZ9r4Q2jQsA=;
+	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
+	 Content-Type:MIME-Version; b=GJS6OVEukvOlQ+h1ymT8ZLLpyHvfPvzD0g4qufxw/1nNZPhEEQa1ZrvjLf1WWlwKrmzhuL+ftVxfIAxeFLTRW1QKJipz0ca6o3MbTmLVWNy3vIwRAXY+0F0hkKdluJpTwlpmaKVCeuh5sWEprXPPD/jTQdzSRArf5XlSM7s1CWc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lZ9OPMyI; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752187660; x=1783723660;
+  h=from:date:to:cc:message-id:in-reply-to:references:
+   subject:content-transfer-encoding:mime-version;
+  bh=KM6MjOKERVqgEQH1ccqVWF+CanryIMw2TZ9r4Q2jQsA=;
+  b=lZ9OPMyIHb0fALKjG4oa3KyAA2Jg4P+P11ZgKFkx0ee3yn902nwBLUkA
+   swu2MOX5kf47r+DZdhGEopvKiEoVxl+w46S9nC7ik9RM+RWbhAzFOLktV
+   Kp99dpG6LJBcgbLq4r6dva3RS09Vt9JXJsiRUYbTJxJg06jXDZR1NKRTy
+   GnbZWXhfv4dZajxqw/qWCtSr/QVveRNaCwax0f5tFm/MoteZHGsoTW//l
+   VdLJ8SHZ/9eZuhJAiygCdUNkAUUy0uqcLeoKjVHbB3kFM5mPOM/lMZzXp
+   Lp+nJRQyaToVJ8LNT+OEvfhenDPcXr2+wnxLwtRaHyxthiwL87SFH1Bk1
+   Q==;
+X-CSE-ConnectionGUID: QWNllRxUTcSMSjqI9VNrGw==
+X-CSE-MsgGUID: h0tdVhr9R/+3i2tvVugIhA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="77025663"
+X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
+   d="scan'208";a="77025663"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 15:47:40 -0700
+X-CSE-ConnectionGUID: vfPqamSsQPCtO12noOFd/g==
+X-CSE-MsgGUID: H87S3/+PRIaga2WNX+ixOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
+   d="scan'208";a="156310495"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 15:47:38 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 10 Jul 2025 15:47:37 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 10 Jul 2025 15:47:37 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.70)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 10 Jul 2025 15:47:37 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dGbfRieXJGVPp3+QeuAHZi0Sw7NVRYdDfrYzgb7P9oknAn5monJ7WMSPswnLxe/93gz9uQ7mNwzYkcDDmIyBUdMGbW39JG8QWFpwXK7sSaI0XJpJ3EuFFNe/0c6Ei4nuysKcYY7EEEk5AcoePBFVU5f9pjTWlb9618ZIkqKczyUCfgR4IVXxNRNFhN6mguZeWSbXV3iqLyamJIkti0pI6O3xBe1YIi7mx1hMDaCvArr4+OL2rwJhoBQNux56TcrLggQgRTgOkIh8M3PLRVEN8y7IfV9BSOWsXYLGOPTtNVaQTN7mSg8QHzhAa8FwrLAE1ottKf3PYbLsKnghWeSbOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qaj2hSzDgP445NGbXB/6POOjo6FULHbuUMaikb3/QVI=;
+ b=MA91b+1mYWhRA+aotRMElWlf/MHVwSl9RnKZSmHqWPGYRYZE7o+wg3gVPCCbd5J774i7L+XuJiUao9aVDmm/qPK81S42cIOuF8V5uDB2FeyZ9w8OCs81MWngfn8VVUGpKsoWe2m62XLoEsgHAr+jS0Y4tBvgWXVrdBTyBS22N9AK351tRSLbTuRnfjGJ1ab6NGnKrnOk2izHUCvyE4z6a8WjNxtXktItU2BSXZ01g8XeTGciaBMZdTtxyMQhB7A5mM4Xz9HNWXjdg7lWrS0QF7r2iJ3SiY+cG9jRyO9mL3K9o2lWqdGXaTMFjmHbw3CKyYgR49rCA3WXl5ghV9K11Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by CO1PR11MB5169.namprd11.prod.outlook.com (2603:10b6:303:95::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Thu, 10 Jul
+ 2025 22:46:17 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
+ 22:46:17 +0000
+From: <dan.j.williams@intel.com>
+Date: Thu, 10 Jul 2025 15:46:15 -0700
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Dan Williams
+	<dan.j.williams@intel.com>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Peter
+ Zijlstra" <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, "Linus
+ Torvalds" <torvalds@linux-foundation.org>, David Lechner
+	<dlechner@baylibre.com>, "Fabio M. De Francesco"
+	<fabio.m.de.francesco@linux.intel.com>
+Message-ID: <687042b7ef13f_588c10013@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <20250623110544.0000753d@huawei.com>
+References: <20250619050416.782871-1-dan.j.williams@intel.com>
+ <20250619050416.782871-2-dan.j.williams@intel.com>
+ <20250623110544.0000753d@huawei.com>
+Subject: Re: [PATCH v2 1/8] cleanup: Introduce ACQUIRE() and ACQUIRE_ERR() for
+ conditional locks
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR11CA0078.namprd11.prod.outlook.com
+ (2603:10b6:a03:f4::19) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=ZJ/XmW7b c=1 sm=1 tr=0 ts=687042ad cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=mWY56GqtIC0XaCpv56YA:9
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: Ra832_FG8Z34i4GN2X6ecsJgNq4ug7D-
-X-Proofpoint-GUID: Ra832_FG8Z34i4GN2X6ecsJgNq4ug7D-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDE5MSBTYWx0ZWRfX4xKOn2PXFWKO
- OFyFnmpLnSony2l6isX1DrPT7wzYjBJygfbbjwPWZHCCA6GOmZxNYKYOR/NGnllnZ1DBTg+bgXs
- Ad/HbNNCXP6RejuWV+OfN/+nrv199P4lvxvAYFuyoSeAMRKBvGDinvNvMgeNdi1H4FAoIeG2jj+
- ezNVB8bEKZ+D4+z18xfGEQJc1/1AJktYu05Wl2B9BrFULy82uo9DioL1tPVnRpnqgceTuNgoFDb
- BnfW+6B46SXQCpYX1z9txokvMkOkoXw++PIW/OKNXSxUk0VRRGrv9jTK243CABJmaVg20h3joOk
- aJbPxWufpbnM3PIw6YtHIqH5geHHH6vN+d4UDr9y+Pxhj9J8C572Ny8+zVq83Eb8uE7AWGh7mAb
- aPQu9x4j8IKNsiAHkB2nm6WjJhHFpD5Cdzsfm8DGDdek0wNVEDQO/Dhd/B4NjvC6SKvIhqJr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_05,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 impostorscore=0 spamscore=0 adultscore=0 clxscore=1015
- bulkscore=0 phishscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507100191
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CO1PR11MB5169:EE_
+X-MS-Office365-Filtering-Correlation-Id: 98b8b3c9-c8ae-49cd-900e-08ddc0039508
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RHZyYkYzbmt5MnhKb2xjYVJnbWR0aGNVOHF6S1A2Zkdyc0hIQmpJaWphNUh4?=
+ =?utf-8?B?ZmhDcklRdWtaSHdoVDRoRUF4d2N2MFpsdzRkNUR5Q0tvbWJRTFJ1QmhQZ1lv?=
+ =?utf-8?B?aXc2KzNXY3Q4K2IxNDFqOEw0Q2ZEdTMxU2Fzd2pRRkhyc1RKbmRvZDEzdDZO?=
+ =?utf-8?B?WlZoeGkwY2dZZFRJemZXeEhxaDRmZExMaXRGdWoraWtLc2RhSzYxMjRJUEd4?=
+ =?utf-8?B?RlFZczlDYU8xWEowL2RjTENGK2VWdmppeTNLUVp6QVhiRG52Sng0NGpJbHFz?=
+ =?utf-8?B?SVBwVDRVM2Vsam1qNkRkdk1uZVNLR2NRWFF4RFplam0vd1dOZEFrWnF3VWNt?=
+ =?utf-8?B?UlRrTjRrRXB6bVBtaFdMc0RQeDArRVZ3Zm94emcyY0VPQ0lId0wzTnJHUkpM?=
+ =?utf-8?B?TXRHdG9UWDYvOWJ4SlBOVExEY3N3SWo5RU1VZDdMeXNKc1puWFJOemJTYW5S?=
+ =?utf-8?B?SHMwY2xCSkNjMDFJRjNOSmdLNDlFNkZnSlVOU1RaM0JCdmExQVN5R0c3cS9J?=
+ =?utf-8?B?YW5GTXdCZWN5LzFXWERkY2t2MVhSRkVlKzkvZ1RVbWlZTGJsQjZ5R05MRXRL?=
+ =?utf-8?B?ajFHaFZQUEk1cVFrYTdXb2FqSHpUMVBFL0VxRnVmZFFlYmpSckZyNE1sME1T?=
+ =?utf-8?B?Q0RFN1V2aUdKaXZ2NnBOcFJld0FFVjNPUS93NkQzQnhqMGQ3OUFrRWM3NVdW?=
+ =?utf-8?B?dDBpYW1WR0RMdG9WTXpjV09ycmw3S0orcGhKbEdUTzFRdVpKb0djS01KNzVB?=
+ =?utf-8?B?M3hPMmxaQS9pL1NGbXE0dVgwQ012SlhlaHNKcUoyaXhTdkp2K3VPU0FwZVhH?=
+ =?utf-8?B?TS94d1Z4RTdoa0wwZmx5UndpS1lKcmRqamU0Ly83UnNaWFJnN1RhaUN3K2l1?=
+ =?utf-8?B?NW5GN2NMOUVnQ1NKR0NQbE5YWGhoNzl6VTMyQWI0R3FiUm0xSWhleXVBN2NB?=
+ =?utf-8?B?VWMxVDU0UFN3VHZLalpRM2ZCRS9nNTU5SjdlSVI3RDRBUnFNKzAwZEhmSGM4?=
+ =?utf-8?B?Z3BIOXBKZTFwdVJlQ2J0WEdOcVpQZzViSDVuV1lRSzBXR2l4ZXRETGNnczZD?=
+ =?utf-8?B?b1J0N2pVOGpsaDdUZDZ0S1ErY2YwNVFQb1dwZ2FTcnh2eVVxVEhhQVpGRVRN?=
+ =?utf-8?B?RXNlSXZNZDFtVis3RGVVQ3MvdmF3cGNRSjBFckFrYUVyY0xmcFRKZFYyVVFH?=
+ =?utf-8?B?NzhqM2M4azFxSVpZQ1V2eHpzL2ZEbEtqS3ZDV0JGMHpzZmFTYWlLS1NMSjIr?=
+ =?utf-8?B?UkRsMzR3T2VwZ2pIUnE4SGVpUUpEczBSR0p3V1pmYXByZDZ1bzZDejUvcWxV?=
+ =?utf-8?B?V1ZqbWM0WldITHR3K29mYWtvR01sM2dBMm5ad3BUMWxSMGpWY1Rid2pTTytY?=
+ =?utf-8?B?cTNSMC9ZVC9iOWVrdFBhK0MyY0p6d3VXNlQ4a08yZDU2YkpGOFc3Q2tFdWZv?=
+ =?utf-8?B?QzcrZXNWL1VJSXd1TFhrRUN3eTRUSkY5QTBtcXYwQUJ0eDZjR3FBZlc4bklB?=
+ =?utf-8?B?c1h0ZjVMRkNJajNXT3E4OUo5NEYzZFVsdHg5dUw0d2pLLytKbFMvK2t4SEtW?=
+ =?utf-8?B?OXBJS0trQTl5YzNlc0NEVFI4WVZKOCtBcFFqQTQ5V0dOSEJGcnp4MUU4UG9Y?=
+ =?utf-8?B?M0NmQWhGRVRiVDQ4VTd5U2hYcnVzWlpOcm5JOHJodUp0OEZLOW40bTZiUlBR?=
+ =?utf-8?B?N1pKRlVYMW9RK2ZZbmtSV0dkdDU5VGZPbnU5M25lbFMyMUtpdXlMRS9MVmpJ?=
+ =?utf-8?B?OU1wSDcyeW5TQThqTXNHZjRHem5yMWNYSHl3M0pBKzRuRXpOU1BySjNQaHpu?=
+ =?utf-8?B?eWdDbnVwY0ZZVkRzTzQrV0pnUzN3TFFlSmZzMUV4dUlFSDl5dTMwbHJFeHg5?=
+ =?utf-8?Q?5hcK1nkArtt02?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bExTRElQZ0tLZUtaaGtCMy9EUHlBbE56d1BMa0YyeithRENrWktCT05HZUZa?=
+ =?utf-8?B?UzJuWU5xNlFHc1BzQXdNRXRIZllwa2ZZdmpEMTRWVldpeHp4aUFDeU5zdFFY?=
+ =?utf-8?B?ZWZiRS8vb1NVM1kyNmwyVlhHYzRjTUZsS0hreDVKU1pZZm9aY2U0ZG5xd0Jo?=
+ =?utf-8?B?R2hqMUZKUWhSU1hXMHk2bDRnc1EvRnVIZ0lycytLWEdqUndQZjRzWnhvQUor?=
+ =?utf-8?B?Mm1WTk9NbVVjQmluQS9BU21EMjlGczhpdms4bi8rRlZuRUN6MHZMblg3aWlK?=
+ =?utf-8?B?a0hjVjNBbHhDYzJpVlFvN1NONlZtTzNGaTU4ejhYTVhVcjhyTnRlSFFqOFM3?=
+ =?utf-8?B?ZGdGM1N5c0RTeXJWVEVoYlBPQW1GK21BeVBLKzYycThQcWErZnFPMG05c2R6?=
+ =?utf-8?B?bDdaSXpEejRETy9neUtSMktHUm5tNUFoZVBIcFhMZGl5UE5lLysybGRWSnJB?=
+ =?utf-8?B?a0tZOElsaUdnL1BoVWNPTjM2ZElFYmFtbHRIa2phVWFLUHdCaStnSXNiaHoz?=
+ =?utf-8?B?UkpXbEJmMkdBb3ovSnBBd3QxRWhXUkpmY0p2WGtlZ0k3bUoyaU1Wd0FQMkZa?=
+ =?utf-8?B?SFhDd1IwMDg4OWltcmpObzJzc0xOaHFybU1SeXlsc2lSTlFCTFYwLzBWMC9K?=
+ =?utf-8?B?bmJnMkh6TmtIaVFnZkJLaXd3S2ovUmw0Ym9xRUtJR0RxZytab3htenZJRFFq?=
+ =?utf-8?B?QWpLaFpzWFVKVnVMMUtUM1VSdkJhVFVLN0d3VmFoelNmYkNxVVJNenZ5d1I2?=
+ =?utf-8?B?M1BqTTZ0RE5sTHA5OEpQRnhwS1Q5ZmthcGozY3k2NnQzNEZmM0k5ZTBQYUdr?=
+ =?utf-8?B?Y3ZRZzYvRnJOTE5Fa0ljaTltSGVveHp6aHJpc2s4Y2h3MU5xbGFKR1V6Si9i?=
+ =?utf-8?B?Y0xpRHNHa2ozNTUrZkROUDFQQTlZd0wxU3R2NlJFdWxGVTM4M1dGYnp1b0xN?=
+ =?utf-8?B?ZTBGU3I5bzlmTDBVRjBEempzNHdGY0xkR2VrbE1OM1RIajBldHpoVFNDR05I?=
+ =?utf-8?B?Ni9BblRMQXN1NlpnVVgxajJmcTlMM2p5TGlDVFQ1c2tXbHVxaGl5VW5VOXNH?=
+ =?utf-8?B?UFQ2dktEYVVFa3NHNmsyM1ovQ3RhaHRlMTY3VVFudE5xRUxaYzZkL1Z5SU0z?=
+ =?utf-8?B?VW1LQWZVdzB3Mnd5cFNKTHlrandXbzVuMGNtWGQxejFRdXJEN04yQlphak5X?=
+ =?utf-8?B?S0pPMUl0TGlLQ0pZbGJzN2pyWWRPVmVPcUJ4UWdaWkkrRHI0WTlnMTFSS20x?=
+ =?utf-8?B?eUpVOEdWaVhBTnhNZytqc1lrRTE2bE5pRFBneFEyS2ZucFlCV3pLTVM0U1Fi?=
+ =?utf-8?B?VUl2RmU5QXNnWW9zcXlnUTYydnJKeW9ieThkZFcyTEp4SStRMW5tMGxmQ2Yv?=
+ =?utf-8?B?M3loOVpjdmpTanMrM2FSb1psbU01Z3VYblJweGdWdXRZQ1hYUEpNQXMrWnQr?=
+ =?utf-8?B?RmRDcTFxZkJHM1ZBSURJdmZNSi91NzE1WkJlR29GKzhLT0U5RHJQTXhNbjZY?=
+ =?utf-8?B?VWhUZzFHdmFKemZBWWdTVzhCYkRpUHA5ZTYxQmJnTVJDWUtnY2JSQ0plcGtl?=
+ =?utf-8?B?QjJpZWhFa1RCSmtLdkl5NDdDTmlyVVBLajBLTU03bHV0eHNIWWptakw4ZjdS?=
+ =?utf-8?B?OXpPNEJzbWd2RlYvaEhyTG9VR25KdG9LSVJQRXM4b1FTdUpURDlKODVWeDdC?=
+ =?utf-8?B?RmdMQUlWb0pHMDJwZ3VwUmVQUkNVWjJwRkF5MmRNOG1wLzNrR0x4OVc5TXNR?=
+ =?utf-8?B?WG45a1BKY0ZHTGJ5dnluOXB5S09xZExRSHZUcXN4NU5tVEhlVzlZckNtaER5?=
+ =?utf-8?B?VWh2N25vblcrQnZqcklSdkJrZjl3bTN4SERjYU9iVzJTV3poRjd2aVNoTjYx?=
+ =?utf-8?B?alV4Tzd5eU5ONStxdEw0bklLVVVjcnhpRjRWSVZEZEtsVUdrbDNUdnZacGNV?=
+ =?utf-8?B?WXpuZ1AxSXB5T3MyNDlMWEVBejJaelFPRy9qbzBCckxMeVlnTzlmcFhYODNy?=
+ =?utf-8?B?NDV0NE9kSG1DcmoxRmhFR29LKzIrdG93N1BKWmtTWWRXeThOSGNIRjNUd1pY?=
+ =?utf-8?B?OUlsMFZYck5LUUZnT2c0SmhwUHRxQldDaVhIS0hPVTFVc2I3N2p0THhkcFBN?=
+ =?utf-8?B?VmEzbFpmcjlVVHdMYmYzbDZocSsvWWwvYy94WDdqMk9yZXQ0NTNwWUpocXRv?=
+ =?utf-8?B?SkE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98b8b3c9-c8ae-49cd-900e-08ddc0039508
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 22:46:17.6112
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EJ6anKfX08+8bygOx8YElC1Q2bicPsK4eCpzuKxrLCSTAmENL/2DdkZVwR9BDVFtckWlOhIwsROecwJ8jeVUImeCjFNMjEj5q6Z3jVbdIa0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5169
+X-OriginatorOrg: intel.com
 
-Add support for TEMP_ALARM LITE PMIC peripherals. This subtype
-utilizes a pair of registers to configure a warning interrupt
-threshold temperature and an automatic hardware shutdown
-threshold temperature.
+Jonathan Cameron wrote:
+> On Wed, 18 Jun 2025 22:04:09 -0700
+> Dan Williams <dan.j.williams@intel.com> wrote:
+> 
+> > From: Peter Zijlstra <peterz@infradead.org>
+> > 
+> > scoped_cond_guard(), automatic cleanup for conditional locks, has a couple
+> > pain points:
+> > 
+> > * It causes existing straight-line code to be re-indented into a new
+> >   bracketed scope. While this can be mitigated by a new helper function
+> >   to contain the scope, that is not always a comfortable conversion.
+> > 
+> > * The return code from the conditional lock is tossed in favor of a scheme
+> >   to pass a 'return err;' statement to the macro.
+> > 
+> > Other attempts to clean this up, to behave more like guard() [1], got hung
+> > up trying to both establish and evaluate the conditional lock in one
+> > statement.
+> > 
+> > ACQUIRE() solves this by reflecting the result of the condition in the
+> > automatic variable established by the lock CLASS(). The result is
+> > separately retrieved with the ACQUIRE_ERR() helper, effectively a PTR_ERR()
+> > operation.
+> > 
+> > Link: http://lore.kernel.org/all/Z1LBnX9TpZLR5Dkf@gmail.com [1]
+> > Link: http://patch.msgid.link/20250512105026.GP4439@noisy.programming.kicks-ass.net
+> > Link: http://patch.msgid.link/20250512185817.GA1808@noisy.programming.kicks-ass.net
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: David Lechner <dlechner@baylibre.com>
+> > Cc: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+> > Not-yet-signed-off-by: Peter Zijlstra <peterz@infradead.org>
+> > [djbw: wrap Peter's proposal with changelog and comments]
+> > Co-developed-by: Dan Williams <dan.j.williams@intel.com>
+> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> This looks like a nice solution.  One trivial style thing inline.
+> 
+> > ---
+> >  include/linux/cleanup.h | 77 ++++++++++++++++++++++++++++++++++-------
+> >  include/linux/mutex.h   |  2 +-
+> >  include/linux/rwsem.h   |  2 +-
+> >  3 files changed, 67 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+> > index 7093e1d08af0..1e1eb35cc225 100644
+> > --- a/include/linux/cleanup.h
+> > +++ b/include/linux/cleanup.h
+> > +#define __GUARD_IS_ERR(_ptr) \
+> > +	({ unsigned long _rc = (__force unsigned long)(_ptr); \
+> > +	   unlikely((_rc-1) >= -MAX_ERRNO-1); })
+> 
+> Trivial but I'd have added spaces to make this
+> 	   unlikely((_rc - 1) >= -MAX_ERRNO - 1); })
 
-Co-developed-by: David Collins <david.collins@oss.qualcomm.com>
-Signed-off-by: David Collins <david.collins@oss.qualcomm.com>
-Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 208 +++++++++++++++++++-
- 1 file changed, 207 insertions(+), 1 deletion(-)
+Looks like even though I pushed out a stable commit with this nobody has
+pulled this into linux-next so I can fold in this fixup and send out a
+new version.
 
-diff --git a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-index 9fbfd192017d..f39ca0ddd17b 100644
---- a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-+++ b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-@@ -23,6 +23,7 @@
- #define QPNP_TM_REG_TYPE		0x04
- #define QPNP_TM_REG_SUBTYPE		0x05
- #define QPNP_TM_REG_STATUS		0x08
-+#define QPNP_TM_REG_IRQ_STATUS		0x10
- #define QPNP_TM_REG_SHUTDOWN_CTRL1	0x40
- #define QPNP_TM_REG_ALARM_CTRL		0x46
- 
-@@ -30,14 +31,20 @@
- #define QPNP_TM_REG_TEMP_DAC_STG1	0x47
- #define QPNP_TM_REG_TEMP_DAC_STG2	0x48
- #define QPNP_TM_REG_TEMP_DAC_STG3	0x49
-+#define QPNP_TM_REG_LITE_TEMP_CFG1	0x50
-+#define QPNP_TM_REG_LITE_TEMP_CFG2	0x51
- 
- #define QPNP_TM_TYPE			0x09
- #define QPNP_TM_SUBTYPE_GEN1		0x08
- #define QPNP_TM_SUBTYPE_GEN2		0x09
-+#define QPNP_TM_SUBTYPE_LITE		0xC0
- 
- #define STATUS_GEN1_STAGE_MASK		GENMASK(1, 0)
- #define STATUS_GEN2_STATE_MASK		GENMASK(6, 4)
- 
-+/* IRQ status only needed for TEMP_ALARM_LITE */
-+#define IRQ_STATUS_MASK			BIT(0)
-+
- #define SHUTDOWN_CTRL1_OVERRIDE_STAGE2	BIT(6)
- #define SHUTDOWN_CTRL1_THRESHOLD_MASK	GENMASK(1, 0)
- 
-@@ -45,6 +52,8 @@
- 
- #define ALARM_CTRL_FORCE_ENABLE		BIT(7)
- 
-+#define LITE_TEMP_CFG_THRESHOLD_MASK	GENMASK(3, 2)
-+
- #define THRESH_COUNT			4
- #define STAGE_COUNT			3
- 
-@@ -95,6 +104,19 @@ static const long temp_dac_max[STAGE_COUNT] = {
- 	119375, 159375, 159375
- };
- 
-+/*
-+ * TEMP_ALARM_LITE has two stages: warning and shutdown with independently
-+ * configured threshold temperatures.
-+ */
-+
-+static const long temp_lite_warning_map[THRESH_COUNT] = {
-+	115000, 125000, 135000, 145000
-+};
-+
-+static const long temp_lite_shutdown_map[THRESH_COUNT] = {
-+	135000, 145000, 160000, 175000
-+};
-+
- /* Temperature in Milli Celsius reported during stage 0 if no ADC is present */
- #define DEFAULT_TEMP			37000
- 
-@@ -202,6 +224,24 @@ static int qpnp_tm_gen2_get_temp_stage(struct qpnp_tm_chip *chip)
- 	return alarm_state_map[ret];
- }
- 
-+/**
-+ * qpnp_tm_lite_get_temp_stage() - return over-temperature stage
-+ * @chip:		Pointer to the qpnp_tm chip
-+ *
-+ * Return: alarm interrupt state on success, or errno on failure.
-+ */
-+static int qpnp_tm_lite_get_temp_stage(struct qpnp_tm_chip *chip)
-+{
-+	u8 reg = 0;
-+	int ret;
-+
-+	ret = qpnp_tm_read(chip, QPNP_TM_REG_IRQ_STATUS, &reg);
-+	if (ret < 0)
-+		return ret;
-+
-+	return FIELD_GET(IRQ_STATUS_MASK, reg);
-+}
-+
- /*
-  * This function updates the internal temp value based on the
-  * current thermal stage and threshold as well as the previous stage
-@@ -383,6 +423,98 @@ static const struct thermal_zone_device_ops qpnp_tm_gen2_rev2_sensor_ops = {
- 	.set_trip_temp = qpnp_tm_gen2_rev2_set_trip_temp,
- };
- 
-+static int qpnp_tm_lite_set_temp_thresh(struct qpnp_tm_chip *chip, unsigned int trip, int temp)
-+{
-+	int ret, temp_cfg, i;
-+	const long *temp_map;
-+	u8 reg, thresh;
-+	u16 addr;
-+
-+	WARN_ON(!mutex_is_locked(&chip->lock));
-+
-+	if (trip >= STAGE_COUNT) {
-+		dev_err(chip->dev, "invalid TEMP_LITE trip = %d\n", trip);
-+		return -EINVAL;
-+	}
-+
-+	switch (trip) {
-+	case 0:
-+		temp_map = temp_lite_warning_map;
-+		addr = QPNP_TM_REG_LITE_TEMP_CFG1;
-+		break;
-+	case 1:
-+		/*
-+		 * The second trip point is purely in software to facilitate
-+		 * a controlled shutdown after the warning threshold is crossed
-+		 * but before the automatic hardware shutdown threshold is
-+		 * crossed.
-+		 */
-+		return 0;
-+	case 2:
-+		temp_map = temp_lite_shutdown_map;
-+		addr = QPNP_TM_REG_LITE_TEMP_CFG2;
-+		break;
-+	default:
-+		return 0;
-+	}
-+
-+	if (temp < temp_map[THRESH_MIN] || temp > temp_map[THRESH_MAX]) {
-+		dev_err(chip->dev, "invalid TEMP_LITE temp = %d\n", temp);
-+		return -EINVAL;
-+	}
-+
-+	thresh = 0;
-+	temp_cfg = temp_map[thresh];
-+	for (i = THRESH_MAX; i >= THRESH_MIN; i--) {
-+		if (temp >= temp_map[i]) {
-+			thresh = i;
-+			temp_cfg = temp_map[i];
-+			break;
-+		}
-+	}
-+
-+	if (temp_cfg == chip->temp_thresh_map[trip])
-+		return 0;
-+
-+	ret = qpnp_tm_read(chip, addr, &reg);
-+	if (ret < 0) {
-+		dev_err(chip->dev, "LITE_TEMP_CFG read failed, ret=%d\n", ret);
-+		return ret;
-+	}
-+
-+	reg &= ~LITE_TEMP_CFG_THRESHOLD_MASK;
-+	reg |= FIELD_PREP(LITE_TEMP_CFG_THRESHOLD_MASK, thresh);
-+
-+	ret = qpnp_tm_write(chip, addr, reg);
-+	if (ret < 0) {
-+		dev_err(chip->dev, "LITE_TEMP_CFG write failed, ret=%d\n", ret);
-+		return ret;
-+	}
-+
-+	chip->temp_thresh_map[trip] = temp_cfg;
-+
-+	return 0;
-+}
-+
-+static int qpnp_tm_lite_set_trip_temp(struct thermal_zone_device *tz,
-+				      const struct thermal_trip *trip, int temp)
-+{
-+	unsigned int trip_index = THERMAL_TRIP_PRIV_TO_INT(trip->priv);
-+	struct qpnp_tm_chip *chip = thermal_zone_device_priv(tz);
-+	int ret;
-+
-+	mutex_lock(&chip->lock);
-+	ret = qpnp_tm_lite_set_temp_thresh(chip, trip_index, temp);
-+	mutex_unlock(&chip->lock);
-+
-+	return ret;
-+}
-+
-+static const struct thermal_zone_device_ops qpnp_tm_lite_sensor_ops = {
-+	.get_temp = qpnp_tm_get_temp,
-+	.set_trip_temp = qpnp_tm_lite_set_trip_temp,
-+};
-+
- static irqreturn_t qpnp_tm_isr(int irq, void *data)
- {
- 	struct qpnp_tm_chip *chip = data;
-@@ -478,6 +610,70 @@ static int qpnp_tm_gen2_rev2_sync_thresholds(struct qpnp_tm_chip *chip)
- 	return 0;
- }
- 
-+/* Configure TEMP_LITE registers based on DT thermal_zone trips */
-+static int qpnp_tm_lite_configure_trip_temps_cb(struct thermal_trip *trip, void *data)
-+{
-+	struct qpnp_tm_chip *chip = data;
-+	int ret;
-+
-+	mutex_lock(&chip->lock);
-+	trip->priv = THERMAL_INT_TO_TRIP_PRIV(chip->ntrips);
-+	ret = qpnp_tm_lite_set_temp_thresh(chip, chip->ntrips, trip->temperature);
-+	chip->ntrips++;
-+	mutex_unlock(&chip->lock);
-+
-+	return ret;
-+}
-+
-+static int qpnp_tm_lite_configure_trip_temps(struct qpnp_tm_chip *chip)
-+{
-+	int ret;
-+
-+	ret = thermal_zone_for_each_trip(chip->tz_dev, qpnp_tm_lite_configure_trip_temps_cb, chip);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Verify that trips are strictly increasing. */
-+	if (chip->temp_thresh_map[2] <= chip->temp_thresh_map[0]) {
-+		dev_err(chip->dev, "Threshold 2=%ld <= threshold 0=%ld\n",
-+			chip->temp_thresh_map[2], chip->temp_thresh_map[0]);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+/* Read the hardware default TEMP_LITE stage threshold temperatures */
-+static int qpnp_tm_lite_sync_thresholds(struct qpnp_tm_chip *chip)
-+{
-+	int ret, thresh;
-+	u8 reg = 0;
-+
-+	/*
-+	 * Store the warning trip temp in temp_thresh_map[0] and the shutdown trip
-+	 * temp in temp_thresh_map[2].  The second trip point is purely in software
-+	 * to facilitate a controlled shutdown after the warning threshold is
-+	 * crossed but before the automatic hardware shutdown threshold is
-+	 * crossed.  Thus, there is no register to read for the second trip
-+	 * point.
-+	 */
-+	ret = qpnp_tm_read(chip, QPNP_TM_REG_LITE_TEMP_CFG1, &reg);
-+	if (ret < 0)
-+		return ret;
-+
-+	thresh = FIELD_GET(LITE_TEMP_CFG_THRESHOLD_MASK, reg);
-+	chip->temp_thresh_map[0] = temp_lite_warning_map[thresh];
-+
-+	ret = qpnp_tm_read(chip, QPNP_TM_REG_LITE_TEMP_CFG2, &reg);
-+	if (ret < 0)
-+		return ret;
-+
-+	thresh = FIELD_GET(LITE_TEMP_CFG_THRESHOLD_MASK, reg);
-+	chip->temp_thresh_map[2] = temp_lite_shutdown_map[thresh];
-+
-+	return 0;
-+}
-+
- static const struct spmi_temp_alarm_data spmi_temp_alarm_data = {
- 	.ops = &qpnp_tm_sensor_ops,
- 	.temp_map = &temp_map_gen1,
-@@ -509,6 +705,13 @@ static const struct spmi_temp_alarm_data spmi_temp_alarm_gen2_rev2_data = {
- 	.get_temp_stage = qpnp_tm_gen2_get_temp_stage,
- };
- 
-+static const struct spmi_temp_alarm_data spmi_temp_alarm_lite_data = {
-+	.ops = &qpnp_tm_lite_sensor_ops,
-+	.sync_thresholds = qpnp_tm_lite_sync_thresholds,
-+	.configure_trip_temps = qpnp_tm_lite_configure_trip_temps,
-+	.get_temp_stage = qpnp_tm_lite_get_temp_stage,
-+};
-+
- /*
-  * This function initializes the internal temp value based on only the
-  * current thermal stage and threshold.
-@@ -614,7 +817,8 @@ static int qpnp_tm_probe(struct platform_device *pdev)
- 				     "could not read dig_minor\n");
- 
- 	if (type != QPNP_TM_TYPE || (subtype != QPNP_TM_SUBTYPE_GEN1
--				     && subtype != QPNP_TM_SUBTYPE_GEN2)) {
-+				     && subtype != QPNP_TM_SUBTYPE_GEN2
-+				     && subtype != QPNP_TM_SUBTYPE_LITE)) {
- 		dev_err(&pdev->dev, "invalid type 0x%02x or subtype 0x%02x\n",
- 			type, subtype);
- 		return -ENODEV;
-@@ -629,6 +833,8 @@ static int qpnp_tm_probe(struct platform_device *pdev)
- 		chip->data = &spmi_temp_alarm_gen2_rev1_data;
- 	else if (subtype == QPNP_TM_SUBTYPE_GEN2 && dig_major >= 2)
- 		chip->data = &spmi_temp_alarm_gen2_rev2_data;
-+	else if (subtype == QPNP_TM_SUBTYPE_LITE)
-+		chip->data = &spmi_temp_alarm_lite_data;
- 	else
- 		return -ENODEV;
- 
--- 
-2.34.1
+> 
+> > +
+> >  #define __DEFINE_GUARD_LOCK_PTR(_name, _exp) \
+> >  	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
+> > -	{ return (void *)(__force unsigned long)*(_exp); }
+> > +	{ void *_ptr = (void *)(__force unsigned long)*(_exp); \
+> > +	  if (IS_ERR(_ptr)) { _ptr = NULL; } return _ptr; } \
+> > +	static inline int class_##_name##_lock_err(class_##_name##_t *_T) \
+> > +	{ long _rc = (__force unsigned long)*(_exp); \
+> > +	  if (!_rc) { _rc = -EBUSY; } if (!IS_ERR_VALUE(_rc)) { _rc = 0; } \
+> > +	  return _rc; }
 
+I will also take the opportunity to let clang-format add more whitespace
+to this to make it more readable:
+
+-#define __DEFINE_GUARD_LOCK_PTR(_name, _exp) \
+-       static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
+-       { return (void *)(__force unsigned long)*(_exp); }
++#define __GUARD_IS_ERR(_ptr)                                       \
++       ({                                                         \
++               unsigned long _rc = (__force unsigned long)(_ptr); \
++               unlikely((_rc - 1) >= -MAX_ERRNO - 1);             \
++       })
++
++#define __DEFINE_GUARD_LOCK_PTR(_name, _exp)                                \
++       static inline void *class_##_name##_lock_ptr(class_##_name##_t *_T) \
++       {                                                                   \
++               void *_ptr = (void *)(__force unsigned long)*(_exp);        \
++               if (IS_ERR(_ptr)) {                                         \
++                       _ptr = NULL;                                        \
++               }                                                           \
++               return _ptr;                                                \
++       }                                                                   \
++       static inline int class_##_name##_lock_err(class_##_name##_t *_T)   \
++       {                                                                   \
++               long _rc = (__force unsigned long)*(_exp);                  \
++               if (!_rc) {                                                 \
++                       _rc = -EBUSY;                                       \
++               }                                                           \
++               if (!IS_ERR_VALUE(_rc)) {                                   \
++                       _rc = 0;                                            \
++               }                                                           \
++               return _rc;                                                 \
++       }
 
