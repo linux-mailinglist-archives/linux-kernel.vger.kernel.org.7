@@ -1,219 +1,177 @@
-Return-Path: <linux-kernel+bounces-726414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB17B00CFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:24:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706B2B00D00
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CF2C3B7B52
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:24:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 422403B856E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D7B2FD89F;
-	Thu, 10 Jul 2025 20:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4492FD87C;
+	Thu, 10 Jul 2025 20:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="DtmNnVqW"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020092.outbound.protection.outlook.com [52.101.61.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b+LopDd8"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC68521CC63;
-	Thu, 10 Jul 2025 20:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752179071; cv=fail; b=B2Ar0l5rkjuRD0+Ez+LSATZ3lhKg4uyzzsu94yVmNskRmQIPq0j2FDDMWUr7PBazJ9Hk0mKHeju/0KxHs8hB0ri9rHWG1oEpMg0LL/jrk2RGid5YPioTBxUu2AjhfXeNlcF8d1RlB2hR6/5JutkOvGBLXnp87RBhC48QvcxEsHU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752179071; c=relaxed/simple;
-	bh=1SNu9U5qJZEBgNrv0husWSnv3Deu4DwnNX7OBwm6p9I=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PDKsj+9kJCWx6+k1U2eVq840BrWwP4qfpuLAcCRxj2joaHYuDZy8Gc6xjL8WppsH7nEXI3yMqwnxnOG+FnfBHnlDs50ISQK7Br/bqVjDuUyxcQWHxiMO+MY3/Ows3htDBSx5jtrQZP2gYCeAwnnXpB/OV/gDdEUdDgvGJMrnbAg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=DtmNnVqW; arc=fail smtp.client-ip=52.101.61.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S1lka7rK41ClEJzZ380J/+LPf47NbY99RMHy9vTWrnNLjPv5tEBo1oxjpXhkkDrTuKumKYlDprSLDtWavYVvn74rvegmBiqP37HPvVuM6GVA6LlBhIvt0eIENaaTJ+EDlCNoeqz+btzHnHASLfk/eCrqQXtjfvwfKM8mzIQpWoFy6HY9PHmAZ2PYxXtRWkXAWB0AAr68b9S01u5uvEyBDDjSHcJ+R+BBj4QQ8K5Hpt9GBszFRmmq2ro6szWIStkQlYd4WRIBsbvFHD7wxJbLupdljOzM9l98k8Yvb+XkV6bpXI5c9s1Rb3Zt8rAsxfRg79OryleyKLinAMRpdC0nbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J0q+Tiivc/wWRqdgBib7VacU4UG4WktdT2uzudtbPW0=;
- b=NF7TKXahU9aC7prgIFQ8k9acHUUEmPQi9Gsa4WpUzzb9k+AwdA7lJDK6fwuNUg/yysTFEcDlceBFXGCR1IilkiYewIQWQlSmkRih/3ofKg94dLCZ7KO4sTgGVb+84WkPW2hdHPhArILJNegoB9udhnOjLCUVP4fjStZq9xgWxFsKsY4trrMhcwmSlRr0PmEsyMHv/EtQl9lI8/UXr1smXUn8lXSbxSznRquhZXbBggEXsWb8++pqEqhtVTUjJyWLJH1b7H/65y5NvAF1TevBdJMFIW0RipLvKCZpx7wkEOGfY+F5R063ow0hu1OmWwzMaWllAOxJAXRj5WVSEk4qtA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J0q+Tiivc/wWRqdgBib7VacU4UG4WktdT2uzudtbPW0=;
- b=DtmNnVqWK/N3pX1VvRYLg7ptUKumaEJKM/1vCiztMWmDOJWdJlMI8/MRp4DJ7Q2u8jSZG1AoGH5u0diCYdevyK+UB0aOYZrAYkZg1LnGVLfP98ebG+Ez9r3GsJ0ZEayoV65Y1UhLQwoUjXy8wnJ1fn1Hw7pBwQuZo6OGUi7Pp7U=
-Received: from SN6PR2101MB0943.namprd21.prod.outlook.com (2603:10b6:805:f::12)
- by LV8PR21MB4109.namprd21.prod.outlook.com (2603:10b6:408:243::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.6; Thu, 10 Jul
- 2025 20:24:26 +0000
-Received: from SN6PR2101MB0943.namprd21.prod.outlook.com
- ([fe80::c112:335:8240:6ecf]) by SN6PR2101MB0943.namprd21.prod.outlook.com
- ([fe80::c112:335:8240:6ecf%6]) with mapi id 15.20.8922.017; Thu, 10 Jul 2025
- 20:24:26 +0000
-From: Haiyang Zhang <haiyangz@microsoft.com>
-To: Li Tian <litian@redhat.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>, Long Li <longli@microsoft.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dexuan Cui
-	<decui@microsoft.com>
-Subject: RE: [EXTERNAL] [PATCH] hv_netvsc: Set VF priv_flags to
- IFF_NO_ADDRCONF before open  to prevent IPv6 addrconf
-Thread-Topic: [EXTERNAL] [PATCH] hv_netvsc: Set VF priv_flags to
- IFF_NO_ADDRCONF before open  to prevent IPv6 addrconf
-Thread-Index: AQHb8UTQKz28xLpGTUyYQJQOnUq/tbQrzMdg
-Date: Thu, 10 Jul 2025 20:24:26 +0000
-Message-ID:
- <SN6PR2101MB09432681A39CCFACE2689BEBCA48A@SN6PR2101MB0943.namprd21.prod.outlook.com>
-References: <20250710024603.10162-1-litian@redhat.com>
-In-Reply-To: <20250710024603.10162-1-litian@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-Mentions: longli@microsoft.com
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=f05b6ecc-ec16-4fac-a54a-05d73bdcf483;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-07-10T20:17:28Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR2101MB0943:EE_|LV8PR21MB4109:EE_
-x-ms-office365-filtering-correlation-id: f09bef2f-d9bb-4861-b723-08ddbfefc438
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?c0ihhmFf03qOhSxzrIP88zKstTzKY21+FAA2t/L0puvC7kUro6GAnd//KmgJ?=
- =?us-ascii?Q?nsQ74q1wUYxODZirEJcApmwH9J8xqP0AUMynOqnNa7lGaOMKKrtzIjefhp9f?=
- =?us-ascii?Q?lwpV2egB7+0vuDkivAXX6Rcgw0GgEG44fQqOCvNVUz/HwinsJuXJAc0dw8eh?=
- =?us-ascii?Q?dyEL2FLsGwSutNlcpUP6aOJ/9BHmyqDNcglklshVDj3KQ3g3/Ah2vv9GZC0Z?=
- =?us-ascii?Q?Si8eigUfJitocPO+Xc/byAS6ARvU4IF9vsdplUZyu1xzGSj74yyt4VrLrRwL?=
- =?us-ascii?Q?KhmQkbphcH6xiuRmnZVmIEdua3KXXSB6NeFDlkc1EUUDyWFKK41O2at1gBc7?=
- =?us-ascii?Q?e9nJa2/2R77mq8DPlfaBvLx/Oaed+7hSNZdYptDCWTQakeJpsRa8aU2aLNse?=
- =?us-ascii?Q?1gOvS55c+dfhj7yfS7etrXZJqyjdwDBQzBHJhZRRjOSDW4eXkzHMgmLUdrhQ?=
- =?us-ascii?Q?MMEzNFI4Se6iM0VBVwuOyKf2oJ7iVkZ8y+sFzPXbRwKHrIUwtPF41X53tiHW?=
- =?us-ascii?Q?MVhlZWVAd9wyoMya1AiGXgjq9j7MQM6xNV1uBatbDXz/Vc4dhTPT5aQXtmc0?=
- =?us-ascii?Q?vef2DkTH5O849oCOWNEmfFGjdI7v6cIfkiWm6HIM/GKuFjqTRyceACK3cly6?=
- =?us-ascii?Q?sOZWGRn0engtWjxuNCIlpNTPozRVKTa2cw4a5WSrR4E7TOC4/ReZZUgn5spR?=
- =?us-ascii?Q?OwqnvVj+RGaJfcIpufe3gDVhoTwL8hyDJp+jb9z4zjctQmD+O28cCX92Phog?=
- =?us-ascii?Q?37zpzg2nY3XJ6XYum0e6d4FU3fZIVeUfAo8dnaaDDaYb6uJGs7Muq/vfOBCw?=
- =?us-ascii?Q?Qh4MrfwoEcFo+wm3/xxhiizNSdivOJESO0yKJ5/N4ytT4X5EXAf4b9c6MUTq?=
- =?us-ascii?Q?6ALAIC3EBUmin13eAI00EKFUCfkTqvHOd6fezvNJPW4VxZTQezvDbPzLOs3Z?=
- =?us-ascii?Q?UZ6l1IiHjcskEqHSmopT1R3Hk5oT4fZaHJxuiCU6d6TYhnfnwWoMBXeTXoJ6?=
- =?us-ascii?Q?59+lEcApar/mHHnVD/hxsnmLXl3f2Z7OHZFOjm1gckkkdkJXZbw8ZoKdYAUi?=
- =?us-ascii?Q?j6n8UFEQNrBVxxNi8ztjartiiPH41jfajZoVkOwfW8n0dfc814CUO9vMUo+E?=
- =?us-ascii?Q?oQJekpFG9jcngkmVFwyiTvfi6XvXpWwECTBea1/nRhaSueetwwU9Ft516Fno?=
- =?us-ascii?Q?xgEEDLpzrzJcBfolqGkKFcj9hj3J7rqGQSSP6NGCyiX0+D3rtoxpvgI/E/Le?=
- =?us-ascii?Q?xUzzJ4HILY5cDe87KsvwjcR7Ut7vFAM06jBdiD87/o4Sic5tZbdLIvoa1AIX?=
- =?us-ascii?Q?Vu5kq2W9NUwzxIZO3MKPjge3sAWgkkpVycEGhBLoONNKLIZdYltqzr1+GPsT?=
- =?us-ascii?Q?FEdF2W/ZG1+CAucERz/+hV1IcdK/PEUrmP4b9jlP8W2fjA0udmx0FCp6KHeW?=
- =?us-ascii?Q?kI2oAH0U2S1Jh8TCXx/DrfybxtHpoHxNnTxF0+12rkBKY1nWjSTHFw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR2101MB0943.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?8ECtz5BLKoU/Ph5KxQxMKA/j/3BbxYB9faz96DPh/NSwIq71IO3jj3WSAJJd?=
- =?us-ascii?Q?91B+s/f2DhhNezfGuRNyFGNmwBtD8yfZzmQGZUexwASH0Df9zmGpSlePij1M?=
- =?us-ascii?Q?IuzILqOspgNwqmOn4lz9ebhCwYR0+6f04PHApETuKC8HjVaWlpTBceo0JL0p?=
- =?us-ascii?Q?z+/nJ5NDW5ZPb27nNMbfARl2EbXO8RwtiJCGsNOdBYzb01l+KfDRrp/rdPDp?=
- =?us-ascii?Q?UMp2c8JLfM5qFKGvMQbOKpSCIjfRYP9QkbKHwFkAg1HychZ7zbsSBIWzCvDH?=
- =?us-ascii?Q?jgDbk6R1kiWloi+RNKR6fybzJrcYvQgz27TDOQlL8puLVGMcb878JV3UBgb1?=
- =?us-ascii?Q?kIg3qBz5AxWO5EbBYibWfcRuwkOZQUyyRo0Wu7ODdnP1W4qPgexOzW9s8UeV?=
- =?us-ascii?Q?FiiyF9fOpUF0xvFCHJ67bk1hyBnRnp8FPqNVsP2fEhkBLJUrn46oScRrwLk1?=
- =?us-ascii?Q?gAeeXENHsxhvme2Tc41FSV4AEv49AzZKy79+L7037ShSJk55rF2Eutk75QrW?=
- =?us-ascii?Q?s/RQGGmOEqhvc4kTmFEWY1lAZOfo7nv4NpspaLVsjSsJR/6fWggdxNHMZD7o?=
- =?us-ascii?Q?M2Wh8sWjDXV8kNEUjVOWtkGbV+Q+YSCEp3REfcf3uEekaBUVO3K/hjrud6mT?=
- =?us-ascii?Q?ctom4BF8UIbNeaHXrn5EZFyD7KiCuMKHrz22oO2Yrn69Zz9ja2FULslW1e3q?=
- =?us-ascii?Q?a4tjC0G0dj33ylyI946xYe6rQC0US9g//yfUodp7dNjN5evT6I9He12PliOK?=
- =?us-ascii?Q?b8ZjlxCwm4BqVucrPBlRq0acJePEahOOifo03TdHFYMblTzh/yAEog4CQNFw?=
- =?us-ascii?Q?K8RCX0o78/mbMhG3D3H+dau9EoT6zJAhavWkK8FXpOp4vIhn5hYwaIMgkTHT?=
- =?us-ascii?Q?YD7ndvywXD6JOgvK5CHmzv3b9S+hM2SP/6c3BA78euxV9QBPyqFjojoD16FQ?=
- =?us-ascii?Q?reUjZb4F04C73SXBdvyBnKhc8rfv0GtTV4y64HQUn8k+zh19APt2kGP5iWAM?=
- =?us-ascii?Q?/qZjsG6eU77WLMVvaTxrW49L1iG9/f+bIv8yYKVu+q3s0jb35axeWsNr/ozz?=
- =?us-ascii?Q?VwGE7j6KIlIXsOmpEYXtBngdzr0Akc0243H6rN/wIcElyRZLhFiNyZnwjZot?=
- =?us-ascii?Q?Md04JQonahWbbjvfv6EjDOkmWByg8Bnw4dekYPZIusjQxD3oZWCMlm4WHTLT?=
- =?us-ascii?Q?dPCIkYiqmGdwQnybzv451Ibx/tsWUVgNfHg1T6mtkpONw92qK+3ck0iM+8dz?=
- =?us-ascii?Q?0c3cpn3DXks7tJiI9JioTtLWybZmndvWOjCDaiKC4xGJnqfnmh9gJXsEbSM6?=
- =?us-ascii?Q?gr8jXqJGZvwOMQjlKasgwEbeGGgHUtT8WCS+bt2VavCq/Iipu801uSmuWQ1p?=
- =?us-ascii?Q?1qHrHcLTg4XIyCABtj2ffnY6MASTATL68uYAm2Lp56MVjJlYVRgJJgSncZQ0?=
- =?us-ascii?Q?pliYKvml/SXK7bid8rw9b2Nb1Cp7QpDFTQkb+gMww/KzM8fD867LZbdCCUXQ?=
- =?us-ascii?Q?3hIYazJsTtUvtnjkBhTF1atnHjKoGF1tyJI5QMSH+7D1GFEEAB8MnbHn4mDS?=
- =?us-ascii?Q?RZZdZhSEiGxXkGnyRgUOiqdTqkOJ/dtY1r4Nz0TV?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A05286435
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 20:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752179108; cv=none; b=HHD9vxV+JjTctog7tdtT3+IcxZyKVKqBzPW28IqKDz00wtcBl5hxB+App2EAVk/fU790N3GEm35v4ANv5bzyyAcd0BLaSpUdCxWBQ7Va+8pSQEUqDiV0FYf7/zfaNwJeBcJKWG29wdNlftiPAPr2zQavjXx25qRqWo8hnX9QsTs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752179108; c=relaxed/simple;
+	bh=zOaQyoxnE+xDhPXR1x4blu88UkOV6rraBslIiq6+tFI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=PZ2rEr7Ru2XxhW6nFwnjAVnD/FYq2esLM2g5pEI+I91v2Qq+Nhkf8BUjOFcDL74hQwMhmu1zRMcLuBKYDqZuAtbKi5zRXze0czhIacg2ZUWUqQ5zF+dXVWhe6dtliJZv48Sr40DoLMJcQpKH5p8LPiX/N7/BXH+RjnEPLfLK1lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b+LopDd8; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-23827190886so16052655ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:25:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752179106; x=1752783906; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YTddIZXbrNDbU24UlcjqgIm+Nfj26hRfAfDhm3Dwurc=;
+        b=b+LopDd8aKbOtEuMKPqwY/QgN4ShpwjrMTkYQUoxX6vKnmJoUqJLiPQIVpKIp650+M
+         IWydjBJi/A7eP+RLS9DWXJNkl5J3LMR1NHxJZYQ0wVF9p7SoGHZWeXuJC3CWKwEHJGB6
+         cRDlY2UVsw1rGlOrNuR6iqyTuWW40wWWJGMeCGqTxui+LW9O5ywc7wUTmvpTqcjgTana
+         bsSt3WWB8gu1FAMlbKQfaisvuQxQkkNtXYqD08g43r0/fQ30EoBKVCKhailrgJikPZYa
+         fHcQZXexSCZux6NCvmDGnmhM07189YxhWouWaE/xBPa/m2XIw29oo3J7pUFcSRYBr/DR
+         eOFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752179106; x=1752783906;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YTddIZXbrNDbU24UlcjqgIm+Nfj26hRfAfDhm3Dwurc=;
+        b=PZL3s6ZKef9H0ZNNfGBd3PqGY/Or3lbBpEPgdMf6QBT6M3ZYg4VCv05Ur5OQI1tZxC
+         P8Px0gJzJ+s55B9jkmKzFAw0IdvwwQxHlfOuIjoLy2d2qZ7rfF9lWnI8JCu563WMa5cl
+         GlyWpdPQMSdQgPtG9OEL7HcDHUo1YIWqGVG4jmblo7of9X/c06spXjuQFrYi5LinvfJd
+         sOsjQnry8KUFupSROkeT6ljS9zpPkr+adwTgG3ktEz7dlKcqYxVqzgH7NWZkPcAslggt
+         oNWBFlLns59LmwRlxi1v+3anslzGy6eLQiI2CLP83lWgwhh5zuJdVcjkGBgpsl5mHAUg
+         kseQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjHJeHq+9Sdu3JOMKd20sXNAwa9cjlfMoTkW7/X7SaCSwfiNahzNmzkHVjREXTsWv7ysmv3LdSGbWO1XE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDNJVPTSDbS5G2rM1Mv7u8Q4vYaFNcCXO+ny1Fu/Axw2jrG0XL
+	IOyaonsU0C+BbB3Vlv5e4EgwduOmQfIP/X2RsoVby0P6louQww1w7FS9vA0kV8dfVip+C5Gf33g
+	UyBT/+67LNg==
+X-Google-Smtp-Source: AGHT+IEWFKPnmD46VKI+lhUUDWCXtdwaJMheYFCgsG5e880rpkm/PxWQiBEE/l1y0BIG2ua/3mfmk7qpWv7Q
+X-Received: from plbkp15.prod.google.com ([2002:a17:903:280f:b0:234:b3fc:8229])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3df1:b0:235:be0:db53
+ with SMTP id d9443c01a7336-23dede98446mr6329845ad.51.1752179106260; Thu, 10
+ Jul 2025 13:25:06 -0700 (PDT)
+Date: Thu, 10 Jul 2025 13:24:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR2101MB0943.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f09bef2f-d9bb-4861-b723-08ddbfefc438
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2025 20:24:26.6406
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fqwoO9KOY14yv0eYlDd0UoIlXisk8hKbj64jIURvgWDDZ6FEv1rSr/JnxivNKfxZdDxHcwzJ1xux7cYy8+ySlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR21MB4109
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250710202500.1959672-1-irogers@google.com>
+Subject: [PATCH v5 00/14] New perf ilist app
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Xu Yang <xu.yang_2@nxp.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Collin Funk <collin.funk1@gmail.com>, Howard Chu <howardchu95@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Gautam Menghani <gautam@linux.ibm.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+This patch series builds up to the addition of a new ilist app written
+in python using textual [1] for the UI. The app presents perf PMUs and
+events, displays the event information as in `perf list` while at the
+bottom of the console showing recent activity of the event in total
+and across all CPUs. It also displays metrics, placed in a tree
+through their metric group, again with counts being displayed in the
+bottom panel.
 
+The first ground work patches of fixes, cleanup and refactoring were
+separated into their own series here:
+https://lore.kernel.org/lkml/20250709214029.1769089-1-irogers@google.com/
 
-> -----Original Message-----
-> From: Li Tian <litian@redhat.com>
-> Sent: Wednesday, July 9, 2025 10:46 PM
-> To: netdev@vger.kernel.org; linux-hyperv@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org; Haiyang Zhang <haiyangz@microsoft.com>;
-> Dexuan Cui <decui@microsoft.com>
-> Subject: [EXTERNAL] [PATCH] hv_netvsc: Set VF priv_flags to
-> IFF_NO_ADDRCONF before open to prevent IPv6 addrconf
->=20
-> The use of the IFF_SLAVE flag was replaced by IFF_NO_ADDRCONF to
-> prevent ipv6 addrconf.
->=20
-> Commit 8a321cf7becc6c065ae595b837b826a2a81036b9
-> ("net: add IFF_NO_ADDRCONF and use it in bonding to prevent ipv6
-> addrconf")
->=20
-> This new flag change was not made to hv_netvsc resulting in the VF being
-> assinged an IPv6.
->=20
-> Suggested-by: Cathy Avery <cavery@redhat.com>
->=20
-> Signed-off-by: Li Tian <litian@redhat.com>
-> ---
->  drivers/net/hyperv/netvsc_drv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/hyperv/netvsc_drv.c
-> b/drivers/net/hyperv/netvsc_drv.c
-> index c41a025c66f0..a31521f00681 100644
-> --- a/drivers/net/hyperv/netvsc_drv.c
-> +++ b/drivers/net/hyperv/netvsc_drv.c
-> @@ -2317,8 +2317,8 @@ static int netvsc_prepare_bonding(struct net_device
-> *vf_netdev)
->  	if (!ndev)
->  		return NOTIFY_DONE;
->=20
-> -	/* set slave flag before open to prevent IPv6 addrconf */
-> -	vf_netdev->flags |=3D IFF_SLAVE;
-> +	/* Set no addrconf flag before open to prevent IPv6 addrconf */
-> +	vf_netdev->priv_flags |=3D IFF_NO_ADDRCONF;
+The second part of the patches adds event json for the software PMU
+and makes the tracepoint PMU support iteration of events and the
+like. Without these improvements the tracepoint and software PMUs will
+appear to have no events in the ilist app. As the software PMU moves
+parsing to json, the legacy hard coded parsing is removed. This has
+proven controversial for hardware events and so that cleanup isn't
+done here.
 
-The IFF_SLAVE flag is still needed for our user mode, and udev rules to wor=
-k.=20
-So please keep it. (you may update the comment though).
+The final patches expand the perf python APIs and add the ilist
+command. To run it you need the updated perf.cpython.so in your
+PYTHONPATH and then execute the script. Expanding PMUs and then
+selecting events will cause event informatin to be displayed in the
+top-right and the counters values to be displayed as sparklines and
+counts in the bottom half of the screen.
+ 
+[1] https://textual.textualize.io/
 
-cc: Long Li <longli@microsoft.com>
-@Long Li
+v5: Split the series in two. Add metric support. Various clean ups and
+    tweaks to the app in particular around the handling of searches.
 
-Thanks,
-- Haiyang
+v4: No conflict rebase. Picks up perf-tools-next DRM PMU which
+    displays as expected.
+
+v3: Add a search dialog to the ilist app with 'n'ext and 'p'revious
+    keys. No changes in the ground work first 14 patches.
+
+v2: In the jevents event description duplication, some minor changes
+    accidentally missed from v1 meaning that in v1 the descriptions
+    were still duplicated. Expand the cover letter with some thoughts
+    on the series.
+
+Ian Rogers (14):
+  perf jevents: Add common software event json
+  perf parse-events: Remove non-json software events
+  perf tp_pmu: Factor existing tracepoint logic to new file
+  perf tp_pmu: Add event APIs
+  perf list: Remove tracepoint printing code
+  perf list: Skip ABI PMUs when printing pmu values
+  perf python: Add basic PMU abstraction and pmus sequence
+  perf python: Add function returning dictionary of all events on a PMU
+  perf ilist: Add new python ilist command
+  perf python: Add parse_metrics function
+  perf python: Add evlist metrics function
+  perf python: Add evlist compute_metric
+  perf python: Add metrics function
+  perf ilist: Add support for metrics
+
+ tools/perf/builtin-list.c                     |  65 ++-
+ .../arch/common/common/software.json          |  92 ++++
+ tools/perf/pmu-events/empty-pmu-events.c      | 266 ++++++----
+ tools/perf/pmu-events/jevents.py              |  15 +-
+ tools/perf/python/ilist.py                    | 486 ++++++++++++++++++
+ tools/perf/util/Build                         |   1 +
+ tools/perf/util/evsel.c                       |  21 +-
+ tools/perf/util/parse-events.c                | 198 +++----
+ tools/perf/util/parse-events.h                |   1 -
+ tools/perf/util/parse-events.l                |  38 +-
+ tools/perf/util/parse-events.y                |  29 +-
+ tools/perf/util/pmu.c                         |   7 +
+ tools/perf/util/pmus.c                        |   2 +
+ tools/perf/util/print-events.c                | 100 +---
+ tools/perf/util/print-events.h                |   4 +-
+ tools/perf/util/python.c                      | 484 +++++++++++++++++
+ tools/perf/util/tp_pmu.c                      | 209 ++++++++
+ tools/perf/util/tp_pmu.h                      |  19 +
+ 18 files changed, 1609 insertions(+), 428 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/common/common/software.json
+ create mode 100755 tools/perf/python/ilist.py
+ create mode 100644 tools/perf/util/tp_pmu.c
+ create mode 100644 tools/perf/util/tp_pmu.h
+
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
 
