@@ -1,122 +1,126 @@
-Return-Path: <linux-kernel+bounces-725264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4120FAFFC9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3D8AFFCA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 006D13A6D04
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:41:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58A873A8E64
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B2228C840;
-	Thu, 10 Jul 2025 08:42:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C71285C89
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBCA28C86E;
+	Thu, 10 Jul 2025 08:42:25 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD0528C5CE
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752136932; cv=none; b=SbuazwvVyaUbyvBR88ApnrKimhyXT/63FqXGfVAbEI01qVYhjlCnNUQPW21nQWGFPKfShEsMYadQk32Iem8TUxjsszuZD6ZrAqJ0KpR96Zy1x8GuGJ5oKhARds9IVKldLlqnPFshax2ZCfMOkca/Ixbda111dEtx/MB8oUD/qg0=
+	t=1752136945; cv=none; b=QV+/Ok2vbhg8BQtAWGvv8c1yq+L7EvJcXTYcHpLgZmrDV19AOTOSGJQRPaoI+Qyaca2dr6RAKlqF81mmMnd5SXPESGmQ/yjC5t3JR2ezb0ICpfdH0rkMURgRqMCKfabxdGfXHmwJNs825Aw/S2LJ1zflylk3Z0aTItuRZOmVL00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752136932; c=relaxed/simple;
-	bh=jlaQKK2eUFw82DLpzWcK3zH7m/um69ZY8vEnM3PCR+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tHzmMA9+ab5NhKrJ/Juqf6udjXZdPD6tRj0EWpnyg0YjCRQTt9EndRaZUU+7yzcBw7UBZrFIzAPNgiA7Ii9EfGKqL6c4SLH5vpVkSfs/4wMAnk8YZ6NNIl4FSU9JRZiRjYeT0OI+t++qXP6OsccshzSxFMmcRRzCKla/vMCxnVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A969B1EA6;
-	Thu, 10 Jul 2025 01:41:57 -0700 (PDT)
-Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CF243F738;
-	Thu, 10 Jul 2025 01:42:04 -0700 (PDT)
-Message-ID: <21236218-b1a3-4333-aaef-cace303288b3@arm.com>
-Date: Thu, 10 Jul 2025 09:41:55 +0100
+	s=arc-20240116; t=1752136945; c=relaxed/simple;
+	bh=RI9FrspsJfJyqvXCTvGoeP+w/5mr3In3wIh1jeD0bJg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EMW7WLfebOd3dpQgyvdGEYEZQdmzaJ2RHDeOyUcfiudkIqN4Jz6lh/2paXViISi39lS1ojUzCq/fhpcrFz29NtcX0i/BIFC2056ii8skiptk2+PLd5yAjsTmnriAINAlzAtQZYK3JRL+gTDHCdp40x+P0DjNswXyAVJNk0/QiUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1uZmqy-0007le-Dq; Thu, 10 Jul 2025 10:42:04 +0200
+Message-ID: <aecd03f464f25d50f379be405a8596261f247897.camel@pengutronix.de>
+Subject: Re: DMA-BUFs always uncached on arm64, causing poor camera
+ performance on Librem 5
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Pavel Machek <pavel@ucw.cz>, kraxel@redhat.com,
+ vivek.kasireddy@intel.com,  dri-devel@lists.freedesktop.org,
+ sumit.semwal@linaro.org,  benjamin.gaignard@collabora.com,
+ Brian.Starkey@arm.com, jstultz@google.com,  tjmercier@google.com,
+ linux-media@vger.kernel.org,  linaro-mm-sig@lists.linaro.org, kernel list
+ <linux-kernel@vger.kernel.org>,  laurent.pinchart@ideasonboard.com,
+ linux+etnaviv@armlinux.org.uk,  christian.gmeiner@gmail.com,
+ etnaviv@lists.freedesktop.org,  phone-devel@vger.kernel.org
+Date: Thu, 10 Jul 2025 10:42:02 +0200
+In-Reply-To: <aG94uNDrL1MdHJPM@duo.ucw.cz>
+References: <aG94uNDrL1MdHJPM@duo.ucw.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] sched/uclamp: Exclude kernel threads from uclamp logic
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>, xuewen.yan@unisoc.com,
- vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
- juri.lelli@redhat.com
-Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, hongyan.xia2@arm.com, linux-kernel@vger.kernel.org,
- ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com,
- kprateek.nayak@amd.com, kuyo.chang@mediatek.com, juju.sung@mediatek.com,
- qyousef@layalina.io
-References: <20250703091437.79861-1-zhangzihuan@kylinos.cn>
- <675563a5-8f1d-4249-9828-9fb353dd7dd1@arm.com>
- <6414cb05-11d3-4b2a-ae97-7bb0ca0ea898@kylinos.cn>
- <8a64cb22-24f7-4ca7-8e4e-22e1612124d9@arm.com>
- <386d99d3-aa97-4069-8d63-d197262832bf@kylinos.cn>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <386d99d3-aa97-4069-8d63-d197262832bf@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 7/10/25 01:47, Zihuan Zhang wrote:
-> Hi Christian,
-> Apologies for the late reply, and thanks for raising the concerns.
-> 
-> 在 2025/7/3 18:17, Christian Loehle 写道:
->> On 7/3/25 11:07, Zihuan Zhang wrote:
->>> Hi Christian,
->>>
->>> Thanks for the question!
->>>
->>> 在 2025/7/3 17:22, Christian Loehle 写道:
->>>> On 7/3/25 10:14, Zihuan Zhang wrote:
->>>>> Kernel threads (PF_KTHREAD) are not subject to user-defined utilization
->>>>> clamping. They do not represent user workloads and should not participate
->>>>> in any uclamp logic, including:
->>>> Why not?
->>>>
->>> As Xuewen mentioned, some kernel threads may intentionally set scheduling attributes for performance. So instead of unconditionally excluding all kernel threads, I’m now considering a more conservative approach:
->>> skip only those kthreads that haven’t explicitly set any clamp values.
->>>
->>> This should help avoid unintended clamp aggregation while still supporting performance-tuned kthreads.
->> I'm skeptical, fundamentally you cannot exclude some fair tasks from uclamp logic.
->> At least the cpufreq part they will be affected by, so if you 'exclude' some
->> kthread that doesn't have clamps set (i.e. has min=0, max=1024) its
->> utilization may not contribute to sugov frequency selection by being
->> clamped by other task(s) (let's say you only have one other task with
->> max=0, excluding the unclamped kthread now leads to sugov requesting
->> the lowest OPP? Is that always correct/desired?)
->>
->> Is there a specific issue you're trying to solve?
->> FYI there has been discussion around reworking the uclamp mechanism to solve
->> some issues you may have been facing, but so far they haven't lead anywhere:
->> https://lore.kernel.org/lkml/cover.1741091349.git.hongyan.xia2@arm.com/
-> Our original motivation stems from the observation that uclamp is primarily designed to manage frequency selection based on user-space task behavior. Kernel threads typically do not represent user workloads and are often not considered meaningful participants in uclamp-driven decisions.
+Hi Pavel,
 
-Two comments to that:
-- It's also used to drive task placement, not just frequency selection.
-- There can be cases where a kthread is fundamentally part of a user workload,
-thinking about io_uring here, but others exist too.
+Am Donnerstag, dem 10.07.2025 um 10:24 +0200 schrieb Pavel Machek:
+> Hi!
+>=20
+> It seems that DMA-BUFs are always uncached on arm64... which is a
+> problem.
+>=20
+> I'm trying to get useful camera support on Librem 5, and that includes
+> recording vidos (and taking photos).
+>=20
+> memcpy() from normal memory is about 2msec/1MB. Unfortunately, for
+> DMA-BUFs it is 20msec/1MB, and that basically means I can't easily do
+> 760p video recording. Plus, copying full-resolution photo buffer takes
+> more than 200msec!
+>=20
+> There's possibility to do some processing on GPU, and its implemented her=
+e:
+>=20
+> https://gitlab.com/tui/tui/-/tree/master/icam?ref_type=3Dheads
+>=20
+> but that hits the same problem in the end -- data is in DMA-BUF,
+> uncached, and takes way too long to copy out.
+>=20
+> And that's ... wrong. DMA ended seconds ago, complete cache flush
+> would be way cheaper than copying single frame out, and I still have
+> to deal with uncached frames.
+>=20
+> So I have two questions:
+>=20
+> 1) Is my analysis correct that, no matter how I get frame from v4l and
+> process it on GPU, I'll have to copy it from uncached memory in the
+> end?
 
-> To be clear, we are not aiming to exclude all kthreads from affecting frequency, but rather to explore ways to avoid unnecessary uclamp aggregation overhead from kernel threads that have no explicit clamp values set (i.e. uclamp.min=0, max=1024).
-> As you pointed out, fully excluding these tasks might interfere with sugov behavior in certain edge cases. So a more balanced approach might be:
-> 
-> - For kernel threads that do not set any clamp values, skip the clamp aggregation step
-> 
-> - If a kernel thread explicitly sets clamp attributes, it should of course remain fully visible to uclamp logic.
-> 
-> This would preserve correctness while reducing unnecessary overhead in the hot path, especially on systems with many runnable tasks.
+If you need to touch the buffers using the CPU then you are either
+stuck with uncached memory or you need to implement bracketed access to
+do the necessary cache maintenance. Be aware that completely flushing
+the cache is not really an option, as that would impact other
+workloads, so you have to flush the cache by walking the virtual
+address space of the buffer, which may take a significant amount of CPU
+time.
 
-So an unclamped task not being part of uclamp will definitely affect the UCLAMP_MAX
-result, as I've mentioned above, you'll apply (other tasks) UCLAMP_MAX restrictions
-even if the kthread has UCLAMP_MAX==1024. That is not always desirable.
-Or would you let it take part in uclamp if the user explicitly set UCLAMP_MAX==1024
-instead of relying on the default? That wouldn't be consistent IMO.
+However, if you are only going to use the buffer with the GPU I see no
+reason to touch it from the CPU side. Why would you even need to copy
+the content? After all dma-bufs are meant to enable zero-copy between
+DMA capable accelerators. You can simply import the V4L2 buffer into a
+GL texture using EGL_EXT_image_dma_buf_import. Using this path you
+don't need to bother with the cache at all, as the GPU will directly
+read the video buffers from RAM.
 
-Regarding the optimization part:
-Is there a specific workload where the overhead is an issue? It should
-be rather small. Some numbers should help.
+Regards,
+Lucas
+
+>=20
+> 2) Does anyone have patches / ideas / roadmap how to solve that? It
+> makes GPU unusable for computing, and camera basically unusable for
+> video.
+>=20
+> Best regards,
+> 								Pavel
+
 
