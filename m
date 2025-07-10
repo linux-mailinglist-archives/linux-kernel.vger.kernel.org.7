@@ -1,125 +1,128 @@
-Return-Path: <linux-kernel+bounces-725586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A2AB0010F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:01:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CDDB0011C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF9901C86FB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:01:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7E016E9BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF1E2571A5;
-	Thu, 10 Jul 2025 11:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5496923AE84;
+	Thu, 10 Jul 2025 12:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IivcJTmX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bVQHOOV5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF292566F2
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE45C207E1D;
+	Thu, 10 Jul 2025 12:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752148775; cv=none; b=kXItk7ddiDML1J83QYKM7BcNjuE6PMADUnWdUBMqT5JPJAc+Xrb9m9C+K1iVdKGGI8VmBxCLGQuyAgHpjUFfeN5DF5qc6+znxBJvUFVnRy3nqolIn7DFwNcCINn9SwcC+gBjS/0OTSBhUbxMhiGzDrcDsQmmfe4w1kbyrrHVj9g=
+	t=1752148852; cv=none; b=OURnTV/HWPp8qRYXY8ZEV9H46TVhk3wrapHcf8/ASU2CXqqZBilSoV1fmmaBN+c/kcucPwdm9zP3l9VrbCsIejtTWvbatGe7jmEIPtYCokRrzcdSxQwvl0nO0VGtBy+0NROkhn52YjeKJPDUIr3P3y9E+zkKe7K1SQAIyevBhZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752148775; c=relaxed/simple;
-	bh=65BBVRM+9o3xT9ml4F7bQ9jYjsDq1MfQI5WmoXfTQ1Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=R2j+AMjqQvXv37QuqxwGTQOIP37wvfYNbVTpWf366+OhFWhhOa0OTMxAsd894t20ig8WKZcmZ3HjU8HsW2YpVLKjvtmXAGCIMhdHb1itYRhKoskAmvEYBVpYSWbqhR4XqLpmKwHldaWNgMAZta4eTxzNL1FU/bHQDlUfuV7hbw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IivcJTmX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752148772;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ahoQBElSBkoxClyth9k7MWOdW5mJ9+hvXOXZAB99bGE=;
-	b=IivcJTmXqfFnh0HtmJ1HffwvAwNkAKGNyT6BDFH4K8nM05efNyNYaJDg1El3KM3zjHJlyq
-	JL2HeqKVimvGgK4vrCk/ZRPnmOUYlQe7+2Ep4pri2qkN8I0Lfziy6qzD1djq9OnMn99NW0
-	VBkZhqw5r9SVvfJfHqYcZW3FD9FgeVs=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-628-hmcllAUTMXG4HLKEUP7Ozw-1; Thu, 10 Jul 2025 07:59:28 -0400
-X-MC-Unique: hmcllAUTMXG4HLKEUP7Ozw-1
-X-Mimecast-MFC-AGG-ID: hmcllAUTMXG4HLKEUP7Ozw_1752148768
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3af3c860ed7so472931f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 04:59:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752148767; x=1752753567;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ahoQBElSBkoxClyth9k7MWOdW5mJ9+hvXOXZAB99bGE=;
-        b=cmUxKytqQJe7V2DYhTu3AvXvOcG1jiMR9bVoG49Otx2UdX9KLBJPvmkiY+N2WOATE0
-         uxqtOYL/VTaJ0Tjrq5U/7T879RopwaZSMkiYB8f7cWrnSqJVTj/jgU+udYJLzuLl1ppK
-         WOTnGiiKj1PB9ARRjQSyLeYfIS8FBXChHZSAL3fvjbNy5XuMoOjy23OXFZpnZ1fDGYt3
-         XvI61fh0lbSMM4ZsABwsNdNpSn4EQBOz8+vKeCmsBenF5p9ZX8EJ18nd+4K4uY3MVHrp
-         iAnN0bw8No/Ur9agL6MHJHiO5tSLssJ+vEn1sugy5Ka5832M3ZAuhVW5scnK9riT/JgO
-         wi1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWXpOJKiG9y5TR6MpBcWqnrqabrPG6HyjgNoucsSCUsYk7eoq0LFfPsw5l37oIMdUJD2zobWH7SSOD2ZSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFfwhDqvtCryBusk9FyHrhGvM5g/7zbNZgfkB3KukVqH6RY81W
-	I+3V7RzUotELe3WmXgkv1idCONwIY5Gm43Nq8Wygpr16rqUHCtvPK8bnapXZzfCobY+DbAA33Cd
-	3VY67dErfw3MyuDFxEIhMD9MCHs6D//znCtPE1sNh7IwT5Gt6+zEgbk2v4vb5msXQyA==
-X-Gm-Gg: ASbGncuwrt5UzlKGpm1O2aqdo9/zpIepZil8VX7yDePVcLoOWhC9f6YPeq0P28/H09a
-	kgCanuttRsq5RvLeU5NRziT06B1niyTjXny/cZwMFNWEddlOgc24VgLE/ExEavS5EQV+feu5frf
-	jjaB/LiQsgJqUCtFS1ZEY0r66KIOE1N3D9K3vDKYGQJEPy5SUI+tIL4haQG0yraE5ezlY6lpfI/
-	3B+b6yjsI8biLUqGgZjExlEbKgxnlofv7QJU7lJFa9hurIlVSrlBRLKY7CDeKENYKFbvglAVvVl
-	+MY4ASZbD6BLQK6oLpNR9sqcriI1ZT4YQRm02K+a0+dnP9n1pkdvm62YfEbLvCV4fRBCPYeXSve
-	o8yNi
-X-Received: by 2002:a05:6000:2311:b0:3a5:2257:17b4 with SMTP id ffacd0b85a97d-3b5e86f332dmr2114979f8f.55.1752148767608;
-        Thu, 10 Jul 2025 04:59:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHWZ9E40Bru2XiSfuU6A5MGnXozhH325B6msi4rRi6AGGZE+oN2kmV9ZQ56Dv1ZEuAPjzICVw==
-X-Received: by 2002:a05:6000:2311:b0:3a5:2257:17b4 with SMTP id ffacd0b85a97d-3b5e86f332dmr2114963f8f.55.1752148767186;
-        Thu, 10 Jul 2025 04:59:27 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd1924sm1737197f8f.16.2025.07.10.04.59.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 04:59:26 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Jyri Sarha
- <jyri.sarha@iki.fi>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, Devarsh
- Thakkar <devarsht@ti.com>, Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>
-Subject: Re: [PATCH 2/2] drm/tidss: Remove early fb
-In-Reply-To: <20250416-tidss-splash-v1-2-4ff396eb5008@ideasonboard.com>
-References: <20250416-tidss-splash-v1-0-4ff396eb5008@ideasonboard.com>
- <20250416-tidss-splash-v1-2-4ff396eb5008@ideasonboard.com>
-Date: Thu, 10 Jul 2025 13:59:25 +0200
-Message-ID: <87h5zkfe8y.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1752148852; c=relaxed/simple;
+	bh=8aZ3wu4pDULEMT0o5wlrnZ+pfuBbJBRYNcs/POYChtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q5GGABmwSniSXvob37xws1spmvJ7f1BC02W60AdGjXwfsbL2bUF8LoCt23ul21F8UN3b075V6ZRdoE7UkJDpzeNZpkSoSioOdetRqDjaFRy40NeoQ3Pc/Qy2Dyor5/0LfzJ795V/ZNcvsR6wU8VRU386cjseqrBIAQ5oelyPamA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bVQHOOV5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752148772;
+	bh=sDi+ye7XIdRE/URF5MMZhFUiHVlg/sUPJJBg408tn5s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bVQHOOV5cjU0jHyr6Ummr9vv5a72IM/swtVDvYeELo+Owgl1FB57NoJ9AiFQ9T1K9
+	 AnmvLSBvAeXTX0cKSB7tPp0YPGiakLro6DdTAqEbERG0+KxIBg76BSVY5sojlnUUrf
+	 lt5+CjtdpyOROXyZbyHJ+Jj8E059iMragavVv1lgwJwaShK70TMLaJkQ7vwABBca3c
+	 EnKAkrLjwd3036WcpqLyzjggXSCmEbUiYRGQ0jrqpQa2Zivg8mXMmNf+ES6XCJ8lQO
+	 SAdESheh5S3ocT/9BBlzSf7BtdiwB9ovxmk880zZKZqMqYkyLHGoc7qi53N1NLaV04
+	 s31jFWkrLzNPg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bdD0h0YL9z4wbn;
+	Thu, 10 Jul 2025 21:59:31 +1000 (AEST)
+Date: Thu, 10 Jul 2025 22:00:43 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ben Horgan <ben.horgan@arm.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the bitmap tree
+Message-ID: <20250710220043.22d05555@canb.auug.org.au>
+In-Reply-To: <c8c94357-8367-42b9-a817-f4ae3feacdf2@arm.com>
+References: <20250710183449.20e255b4@canb.auug.org.au>
+	<c8c94357-8367-42b9-a817-f4ae3feacdf2@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/gcQuB3S9FVQr52l.G.T=lgg";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> writes:
+--Sig_/gcQuB3S9FVQr52l.G.T=lgg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hello Tomi,
+Hi Ben,
 
-> Add a call to drm_aperture_remove_framebuffers() to drop the possible
-> early fb (simplefb).
+On Thu, 10 Jul 2025 09:44:09 +0100 Ben Horgan <ben.horgan@arm.com> wrote:
 >
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
+> On 7/10/25 09:34, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > After merging the bitmap tree, today's linux-next build (arm64 defconfi=
+g)
+> > produced this warning:
+> >=20
+> > arch/arm64/kvm/sys_regs.c: In function 'access_mdcr':
+> > arch/arm64/kvm/sys_regs.c:2654:17: warning: ignoring return value of 'u=
+64_replace_bits' declared with attribute 'warn_unused_result' [-Wunused-res=
+ult]
+> >   2654 |                 u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
+> >        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >=20
+> > Introduced by commit
+> >=20
+> >    f66f9c3d09c1 ("bitfield: Ensure the return values of helper function=
+s are checked")
+> >  =20
+>=20
+> Sorry to have broken your tree. However, this is a valid warning and this=
+ misuse of u64_replace_bits() was the motivation for the commit.
+>=20
+> The fix can be found here https://lore.kernel.org/kvmarm/20250709093808.9=
+20284-1-ben.horgan@arm.com/T/#mc9e47859302654d84b4f2b3d9032d2b595d5df49
 
-This patch can be picked and is independant of how the other one.
+Well, normally that fix would have been applied (with appropriate ACKs)
+in the same tree and before f66f9c3d09c1 (or in a shared branch merged
+into this tree and some other tree).
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+--=20
+Cheers,
+Stephen Rothwell
 
--- 
-Best regards,
+--Sig_/gcQuB3S9FVQr52l.G.T=lgg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhvq2sACgkQAVBC80lX
+0GwdgQf9Eulh9zZi+hRNOCgp5ICGR5ayTDftgJ7BGEbMiKW+bhVab3WGDITu1Mb/
+QMZUEa/jIiLRw0dgo0Qn52rVDvctLVgWuwfWnLAgL82JYByNq8KewFIlrUuSjuGt
+IgXlAF4HgJqLC6hUdgocvsx26ElFWoEy2kBjzkPxqwkIq8SmMkbjJewpMtxtwYS1
+IIh3dZvVbKvo7IK3UEDcyeiUVUUeHqvXaua0Qwkb2xq1fRHGLm5Ya9uf0CZmPXwF
+36ExVhdRrJKmtxKrzaMyUjDqRQuCxaTZ/H1Zri1fhO9TtZhTccVixsqNroZficWo
+az4itYxf7CwKaAyyOn+cUR0te2f6BA==
+=mMym
+-----END PGP SIGNATURE-----
+
+--Sig_/gcQuB3S9FVQr52l.G.T=lgg--
 
