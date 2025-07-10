@@ -1,185 +1,315 @@
-Return-Path: <linux-kernel+bounces-725906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AF1B00557
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7FAB0055A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 531944877C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:34:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC723AB20F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3ADB27380E;
-	Thu, 10 Jul 2025 14:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74AC273816;
+	Thu, 10 Jul 2025 14:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ebuZC6cz"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kmXsNvqi"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53C9273D91;
-	Thu, 10 Jul 2025 14:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A147B27056F;
+	Thu, 10 Jul 2025 14:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752158072; cv=none; b=Uwup7ZmUp6M8k8hJnOPluzAcHKJF5H9bp7zs1Y5cFNo3sDU0PIzIYbt8N06hyJ0zS0AeDloDz0jQfKpM4otO/kKmpqx/vQnPR6cC4R3VJkxuL4bLPEB96sUtT8zoUaRm0hh2DwAUb9xtYFM9ccTBQ9EXxZJSmdQiYnAIvtHawhg=
+	t=1752158129; cv=none; b=Qlx1xt7rUd6Xv3wUmkF4DZ87PNDObcvHjxshrLu3dHijJuZrhhyAE9SMaD0bfhqb+CdXRjlVH0TGkaMhe1WAJ0u5lxHUdhv6qkY5AkjpLfYLU4aVSIoyCdDBniwKf4BfUwcTBffuVNkMTRl357boXYjo+XI9S6SyxKCPavO+LKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752158072; c=relaxed/simple;
-	bh=d/+7zNb++O8aoQO5Kj0aoXzkWoI4vw+2fKMv2PQtNGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=a7k9JijiQN6v7gOaVq9dLfAEj/ooVZGBlfJLDtEorIHpNH8vzTynu6n5ps/Ms+HL6hlUCxGO+ze97B9gaVQfKE2hJdTgjRgRsd75WocOOHIHfGnPbhJfBwGsyY2zolqkpuRBcvoSe/pb55ac7UrcgsHCIH8tbupjdRseEMzF2to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ebuZC6cz; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56AEYD8O1757269;
-	Thu, 10 Jul 2025 09:34:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752158053;
-	bh=BVL6wME1yGZ7fV9BQGxihbfGblWI8yXM9/Z8B5NCWK8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ebuZC6cziSuduAq4B/3p4+AftJaE8Zh00qI5y8wbuEXgRqHOVvZfzM2CJUyezlSe3
-	 kFdst2ABoAzSeksNw01pBBVZ8erPNpsGGxthlGf9A1riGvEBfAIrkXsZR21AapJuF6
-	 N1nt4BfD33xxYYYMUAypl3hcyeCnrzwk8bXxMiOc=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56AEYDip253174
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 10 Jul 2025 09:34:13 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 10
- Jul 2025 09:34:13 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 10 Jul 2025 09:34:13 -0500
-Received: from [10.250.35.60] ([10.250.35.60])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56AEYCen1513328;
-	Thu, 10 Jul 2025 09:34:12 -0500
-Message-ID: <aba6defc-817f-477c-8569-c5e01ca734b6@ti.com>
-Date: Thu, 10 Jul 2025 09:34:12 -0500
+	s=arc-20240116; t=1752158129; c=relaxed/simple;
+	bh=6zxzCuYF85h3tfkrzRPjOFJCd0GeTdtjDkdznuxiij0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=frLjHifFhM1JmB3VOC9dE1mgmlJwJKfAN00is7sMOWsV+2u4oTVpnMsry3H4KUjoY028yM7GMOqooV5AJhMATXBleK77SSY9aznT4BxU4oxHa6shXFp1oqxw8Ld0u6duB3wf3mA3xB41QvlxuTa6AFVI9q39dbNbwuavyVrUOOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kmXsNvqi; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=OC+GVuXMGCg8iJofu+TyPOnqjqH8djL9Du9c1ioZ59A=; b=kmXsNvqi5XjDWj1mcb5AQuyK2d
+	mWgTdTyorLNmbxFEHl53d2MvbGFfKtCDr2XbDo+PNYOva94ELnwGYteAc4Ll/PKiHkuPr6vuzkkfd
+	YYk8Z50kRFoljtuSakw8bdYP4B1kdjt5Fbn9RKxNTG8bOgYWPDqnHs8kdQhwP14Gx3AxGoGRSuSbT
+	qL2QHddDSQQ1Dskp0aZ0kkEm8nJI3n3EWsaARpkhmzhHJrsRjWVYNdFxKImB4tVua2Tei76b7mIgB
+	XDoihbSZhlsWgDA06RpeaNRpPAuHGLIzrsfHhGn57YvUs+7SGLJ+LE5gPOZDwJMp7c/sWBp+9PWb8
+	i8Yn3AcQ==;
+Received: from 179-125-86-110-dinamico.pombonet.net.br ([179.125.86.110] helo=quatroqueijos.cascardo.eti.br)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uZsMV-00Ey7U-P2; Thu, 10 Jul 2025 16:35:00 +0200
+Date: Thu, 10 Jul 2025 11:34:54 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org,
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+	Zijun Hu <zijun.hu@oss.qualcomm.com>
+Subject: Re: [PATCH v5 2/8] char: misc: Adapt and add test cases for simple
+ minor space division
+Message-ID: <aG_Pjl4Jl7QJxl8f@quatroqueijos.cascardo.eti.br>
+References: <20250710-rfc_miscdev-v5-0-b3940297db16@oss.qualcomm.com>
+ <20250710-rfc_miscdev-v5-2-b3940297db16@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Documentation: dma-buf: heaps: Add naming guidelines
-To: Maxime Ripard <mripard@kernel.org>
-CC: Sumit Semwal <sumit.semwal@linaro.org>,
-        Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        "T.J. Mercier" <tjmercier@google.com>,
-        Jonathan Corbet <corbet@lwn.net>, <linux-media@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jared Kangas
-	<jkangas@redhat.com>,
-        Mattijs Korpershoek <mkorpershoek@kernel.org>,
-        Bagas
- Sanjaya <bagasdotme@gmail.com>
-References: <20250616-dma-buf-heap-names-doc-v2-1-8ae43174cdbf@kernel.org>
- <9182c5cd-b3de-470b-bf84-3ebef309def6@ti.com>
- <20250710-knowing-premium-goldfish-0bfe6e@houat>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250710-knowing-premium-goldfish-0bfe6e@houat>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710-rfc_miscdev-v5-2-b3940297db16@oss.qualcomm.com>
 
-On 7/10/25 2:06 AM, Maxime Ripard wrote:
-> On Wed, Jul 09, 2025 at 12:39:15PM -0500, Andrew Davis wrote:
->> On 6/16/25 10:21 AM, Maxime Ripard wrote:
->>> We've discussed a number of times of how some heap names are bad, but
->>> not really what makes a good heap name.
->>>
->>> Let's document what we expect the heap names to look like.
->>>
->>> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
->>> Signed-off-by: Maxime Ripard <mripard@kernel.org>
->>> ---
->>> Changes in v2:
->>> - Added justifications for each requirement / suggestions
->>> - Added a mention and example of buffer attributes
->>> - Link to v1: https://lore.kernel.org/r/20250520-dma-buf-heap-names-doc-v1-1-ab31f74809ee@kernel.org
->>> ---
->>>    Documentation/userspace-api/dma-buf-heaps.rst | 38 +++++++++++++++++++++++++++
->>>    1 file changed, 38 insertions(+)
->>>
->>> diff --git a/Documentation/userspace-api/dma-buf-heaps.rst b/Documentation/userspace-api/dma-buf-heaps.rst
->>> index 535f49047ce6450796bf4380c989e109355efc05..835ad1c3a65bc07b6f41d387d85c57162909e859 100644
->>> --- a/Documentation/userspace-api/dma-buf-heaps.rst
->>> +++ b/Documentation/userspace-api/dma-buf-heaps.rst
->>> @@ -21,5 +21,43 @@ following heaps:
->>>       usually created either through the kernel commandline through the
->>>       `cma` parameter, a memory region Device-Tree node with the
->>>       `linux,cma-default` property set, or through the `CMA_SIZE_MBYTES` or
->>>       `CMA_SIZE_PERCENTAGE` Kconfig options. Depending on the platform, it
->>>       might be called ``reserved``, ``linux,cma``, or ``default-pool``.
->>> +
->>> +Naming Convention
->>> +=================
->>> +
->>> +``dma-buf`` heaps name should meet a number of constraints:
->>> +
->>> +- That name must be stable, and must not change from one version to the
->>> +  other. Userspace identifies heaps by their name, so if the names ever
->>> +  changes, we would be likely to introduce regressions.
->>> +
->>> +- That name must describe the memory region the heap will allocate from,
->>> +  and must uniquely identify it in a given platform. Since userspace
->>> +  applications use the heap name as the discriminant, it must be able to
->>> +  tell which heap it wants to use reliably if there's multiple heaps.
->>> +
->>> +- That name must not mention implementation details, such as the
->>> +  allocator. The heap driver will change over time, and implementation
->>> +  details when it was introduced might not be relevant in the future.
->>> +
->>> +- The name should describe properties of the buffers that would be
->>> +  allocated. Doing so will make heap identification easier for
->>> +  userspace. Such properties are:
->>> +
->>> +  - ``cacheable`` / ``uncacheable`` for buffers with CPU caches enabled
->>> +    or disabled;
->>> +
->>
->> We should avoid exposing cacheability to userspace. What users care about
->> is if writes are readable by the other side (and vice versa) without SYNC
->> operations in-between. This property is "coherency". Being non-cached
->> is just one way to achieve coherency on some systems. For many systems
->> even cached buffers are still coherent and manually specifying "non-cached"
->> causes unneeded performance issues.
+On Thu, Jul 10, 2025 at 07:56:45PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <zijun.hu@oss.qualcomm.com>
 > 
-> I disagree. If you want to do any kind of software rendering, the
-> buffers being cached is absolutely critical to having decent
-> performance.
+> Adapt and add test cases for next change which regards minor whose
+> value > macro MISC_DYNAMIC_MINOR as invalid parameter when register
+> miscdevice, hence get a simple minor space division below:
+> 
+> <  MISC_DYNAMIC_MINOR: fixed minor code
+> == MISC_DYNAMIC_MINOR: indicator to request dynamic minor code
+> >  MISC_DYNAMIC_MINOR: dynamic minor code requested
+> 
+> Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
+> ---
+>  drivers/char/misc_minor_kunit.c | 51 +++++++++++++++++------------------------
+>  1 file changed, 21 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/char/misc_minor_kunit.c b/drivers/char/misc_minor_kunit.c
+> index 30eceac5f1b6402b0f918af6f56602ed1a6c14ec..3184f383bea8c77cbca69ff5e315ea5de2d5512e 100644
+> --- a/drivers/char/misc_minor_kunit.c
+> +++ b/drivers/char/misc_minor_kunit.c
+> @@ -7,12 +7,6 @@
+>  #include <linux/file.h>
+>  #include <linux/init_syscalls.h>
+>  
+> -/* dynamic minor (2) */
+> -static struct miscdevice dev_dynamic_minor = {
+> -	.minor  = 2,
+> -	.name   = "dev_dynamic_minor",
+> -};
+> -
+>  /* static minor (LCD_MINOR) */
+>  static struct miscdevice dev_static_minor = {
+>  	.minor  = LCD_MINOR,
+> @@ -25,16 +19,6 @@ static struct miscdevice dev_misc_dynamic_minor = {
+>  	.name   = "dev_misc_dynamic_minor",
+>  };
+>  
+> -static void kunit_dynamic_minor(struct kunit *test)
+> -{
+> -	int ret;
+> -
+> -	ret = misc_register(&dev_dynamic_minor);
+> -	KUNIT_EXPECT_EQ(test, 0, ret);
+> -	KUNIT_EXPECT_EQ(test, 2, dev_dynamic_minor.minor);
+> -	misc_deregister(&dev_dynamic_minor);
+> -}
+> -
+>  static void kunit_static_minor(struct kunit *test)
+>  {
+>  	int ret;
+> @@ -157,13 +141,7 @@ static bool is_valid_dynamic_minor(int minor)
+>  {
+>  	if (minor < 0)
+>  		return false;
+> -	if (minor == MISC_DYNAMIC_MINOR)
+> -		return false;
+> -	if (minor >= 0 && minor <= 15)
+> -		return false;
+> -	if (minor >= 128 && minor < MISC_DYNAMIC_MINOR)
+> -		return false;
+> -	return true;
+> +	return minor > MISC_DYNAMIC_MINOR;
+>  }
+>  
+>  static int miscdev_test_open(struct inode *inode, struct file *file)
+> @@ -557,7 +535,7 @@ static void __init miscdev_test_conflict(struct kunit *test)
+>  	 */
+>  	miscstat.minor = miscdyn.minor;
+>  	ret = misc_register(&miscstat);
+> -	KUNIT_EXPECT_EQ(test, ret, -EBUSY);
+> +	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
+>  	if (ret == 0)
+>  		misc_deregister(&miscstat);
+>  
+> @@ -590,8 +568,9 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
+>  	misc_deregister(&miscdyn);
+>  
+>  	ret = misc_register(&miscstat);
+> -	KUNIT_EXPECT_EQ(test, ret, 0);
+> -	KUNIT_EXPECT_EQ(test, miscstat.minor, miscdyn.minor);
+> +	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
+> +	if (ret == 0)
+> +		misc_deregister(&miscstat);
+>  
+>  	/*
+>  	 * Try to register a dynamic minor after registering a static minor
+> @@ -601,20 +580,32 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
+>  	miscdyn.minor = MISC_DYNAMIC_MINOR;
+>  	ret = misc_register(&miscdyn);
+>  	KUNIT_EXPECT_EQ(test, ret, 0);
+> -	KUNIT_EXPECT_NE(test, miscdyn.minor, miscstat.minor);
+> +	KUNIT_EXPECT_EQ(test, miscdyn.minor, miscstat.minor);
+>  	KUNIT_EXPECT_TRUE(test, is_valid_dynamic_minor(miscdyn.minor));
+>  	if (ret == 0)
+>  		misc_deregister(&miscdyn);
+> +}
+>  
+> -	miscdev_test_can_open(test, &miscstat);
+> +/* Take minor(> MISC_DYNAMIC_MINOR) as invalid when register miscdevice */
+> +static void miscdev_test_invalid_input(struct kunit *test)
+> +{
+> +	struct miscdevice misc_test = {
+> +		.minor = MISC_DYNAMIC_MINOR + 1,
+> +		.name = "misc_test",
+> +		.fops = &miscdev_test_fops,
+> +	};
+> +	int ret;
+>  
+> -	misc_deregister(&miscstat);
+> +	ret = misc_register(&misc_test);
+> +	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
+> +	if (ret == 0)
+> +		misc_deregister(&misc_test);
+>  }
+>  
+
+These tests will fail if applied before patch 3 "char: misc: Disallow registering miscdevice whose minor > MISC_DYNAMIC_MINOR".
+
+One option is just merge the two commits.
+
+I have worked on a different option, which would be the two patches above,
+before applying patch 3. Then, we can either support the two different
+behaviors in the test case, or remove the support for the old behavior
+after patch 3 is applied.
+
+
+>  static struct kunit_case test_cases[] = {
+> -	KUNIT_CASE(kunit_dynamic_minor),
+>  	KUNIT_CASE(kunit_static_minor),
+>  	KUNIT_CASE(kunit_misc_dynamic_minor),
+> +	KUNIT_CASE(miscdev_test_invalid_input),
+>  	KUNIT_CASE_PARAM(miscdev_test_twice, miscdev_gen_params),
+>  	KUNIT_CASE_PARAM(miscdev_test_duplicate_minor, miscdev_gen_params),
+>  	KUNIT_CASE(miscdev_test_duplicate_name),
+> 
+> -- 
+> 2.34.1
 > 
 
-I think we are saying the same thing, the default should be cached.
-If the user doesn't have an option for specifying "non-cached" then
-they will always get the better performing cached buffers.
 
->> DMA-BUFs are default assumed to be non-coherent and sync operations should
->> be always be performed (if the buffer is actually coherent these operations
->> are turned into NOPs and no harm done). If sync operations cannot be done
->> (for instance small multi-writer ring-buffers), then the property can
->> be simply:
->>
->> - ``coherent`` for buffers which do not require sync operations
-> 
-> That would be a change in the uAPI which, so far, requires sync
-> operations to be performed. I'm not necessarily agaisnt it, but handling
-> coherency in general is not what this patch is about.
+From 12e05f189745ce38bf792a448ff8d7117f20a3c0 Mon Sep 17 00:00:00 2001
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Date: Thu, 26 Jun 2025 10:32:03 -0300
+Subject: [PATCH 1/3] allow static register to fail
 
-Agree, so then let's just drop the line about cacheable/coherent from
-this doc, we can deal with those properties and document them when/if
-they are ever needed.
+---
+ drivers/misc/misc_minor_kunit.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Andrew
+diff --git a/drivers/misc/misc_minor_kunit.c b/drivers/misc/misc_minor_kunit.c
+index 30eceac5f1b6..2ef92ce3d053 100644
+--- a/drivers/misc/misc_minor_kunit.c
++++ b/drivers/misc/misc_minor_kunit.c
+@@ -569,6 +569,7 @@ static void __init miscdev_test_conflict(struct kunit *test)
+ static void __init miscdev_test_conflict_reverse(struct kunit *test)
+ {
+ 	int ret;
++	bool stat_registered = false;
+ 	struct miscdevice miscdyn = {
+ 		.name = "miscdyn",
+ 		.minor = MISC_DYNAMIC_MINOR,
+@@ -592,6 +593,8 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
+ 	ret = misc_register(&miscstat);
+ 	KUNIT_EXPECT_EQ(test, ret, 0);
+ 	KUNIT_EXPECT_EQ(test, miscstat.minor, miscdyn.minor);
++	if (ret == 0)
++		stat_registered = true;
+ 
+ 	/*
+ 	 * Try to register a dynamic minor after registering a static minor
+@@ -606,9 +609,10 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
+ 	if (ret == 0)
+ 		misc_deregister(&miscdyn);
+ 
+-	miscdev_test_can_open(test, &miscstat);
+-
+-	misc_deregister(&miscstat);
++	if (stat_registered) {
++		miscdev_test_can_open(test, &miscstat);
++		misc_deregister(&miscstat);
++	}
+ }
+ 
+ static struct kunit_case test_cases[] = {
+-- 
+2.47.2
 
-> 
-> Maxime
+
+From c9974a5b2cb59ad3ee5e371cb42c5969a46128b2 Mon Sep 17 00:00:00 2001
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Date: Thu, 26 Jun 2025 15:43:31 -0300
+Subject: [PATCH 2/3] support the case where registering on dynamic range is
+ not valid
+
+---
+ drivers/misc/misc_minor_kunit.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/misc/misc_minor_kunit.c b/drivers/misc/misc_minor_kunit.c
+index 2ef92ce3d053..18f477b18562 100644
+--- a/drivers/misc/misc_minor_kunit.c
++++ b/drivers/misc/misc_minor_kunit.c
+@@ -557,7 +557,7 @@ static void __init miscdev_test_conflict(struct kunit *test)
+ 	 */
+ 	miscstat.minor = miscdyn.minor;
+ 	ret = misc_register(&miscstat);
+-	KUNIT_EXPECT_EQ(test, ret, -EBUSY);
++	KUNIT_EXPECT_TRUE(test, ret == -EINVAL || ret == -EBUSY);
+ 	if (ret == 0)
+ 		misc_deregister(&miscstat);
+ 
+@@ -591,10 +591,12 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
+ 	misc_deregister(&miscdyn);
+ 
+ 	ret = misc_register(&miscstat);
+-	KUNIT_EXPECT_EQ(test, ret, 0);
+-	KUNIT_EXPECT_EQ(test, miscstat.minor, miscdyn.minor);
+-	if (ret == 0)
++	if (ret == 0) {
++		KUNIT_EXPECT_EQ(test, miscstat.minor, miscdyn.minor);
+ 		stat_registered = true;
++	} else {
++		KUNIT_EXPECT_EQ(test, ret, -EINVAL);
++	}
+ 
+ 	/*
+ 	 * Try to register a dynamic minor after registering a static minor
+@@ -604,7 +606,8 @@ static void __init miscdev_test_conflict_reverse(struct kunit *test)
+ 	miscdyn.minor = MISC_DYNAMIC_MINOR;
+ 	ret = misc_register(&miscdyn);
+ 	KUNIT_EXPECT_EQ(test, ret, 0);
+-	KUNIT_EXPECT_NE(test, miscdyn.minor, miscstat.minor);
++	if (stat_registered)
++		KUNIT_EXPECT_NE(test, miscdyn.minor, miscstat.minor);
+ 	KUNIT_EXPECT_TRUE(test, is_valid_dynamic_minor(miscdyn.minor));
+ 	if (ret == 0)
+ 		misc_deregister(&miscdyn);
+-- 
+2.47.2
+
 
