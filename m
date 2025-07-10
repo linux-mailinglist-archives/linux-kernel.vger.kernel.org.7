@@ -1,141 +1,200 @@
-Return-Path: <linux-kernel+bounces-725557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D755B000BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:44:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968D6B000BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E0C541456
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:43:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E0FF7AD6B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36EA244684;
-	Thu, 10 Jul 2025 11:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCBC24729D;
+	Thu, 10 Jul 2025 11:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="OLD+qYWa"
-Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Swqb+u8N"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269691A841A;
-	Thu, 10 Jul 2025 11:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29D4193079;
+	Thu, 10 Jul 2025 11:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752147853; cv=none; b=SBWwtZ3L7DekhBDVR20T/la15eEtfnrrBsxZ/Hofq0d9Gfxf1YN9LEquJyPlOdmxc4k7VjQIJlcWr6Fe75b2FQp9HZbnNgN1zPzKEpn69aZnBjGNiC4oIt/JV5EJsWuG5NkZM0YTfiYE1TzkwCxZyp0UAqrW+q6Jmb5E2sk8YyY=
+	t=1752147953; cv=none; b=nnZbyqvMgkyLqVRdAe7nlwrTTLPRZ03I0cUlDvPh47pHqslWqagsHFWUrCDfReCV4Q8htiPhiD2yj3a5gYAa8Y0kE6fab+FJSGlT/wBCFRNxBp9nn5bQfiAS2IYjxbUKvygBNhCGsVh7paVOORpFVIXQoewG2brf0k1538YqJJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752147853; c=relaxed/simple;
-	bh=87TGGmsveT7B1RYMNX+9uM/k958PjRkYA6zqMmJObt4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ouFLhlMEQMopWnODJvNOp4r5/gwOiPTv3Mx/cZIc5l6hArb8Ny7+l2jn4IyYn6AbXUP840Zxh0BS17Wwm+Yg9tARLCddYWZ+DITZKguxL7lZop7iA/r+qw9OSRbQaT8Srx06od2DsHHMJxnm5pN9Rcq7xsFIR5iAF1VQrhYBncM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=OLD+qYWa; arc=none smtp.client-ip=173.249.15.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
-dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
-	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:MIME-Version:Content-Type;
-	bh=7+05M/IC9yw3ENVoiQK7kXBOotT7lwC0HHuno/gcwMM=;
-	b=OLD+qYWaIK+dTpdDyr6qbz+3Qo6ZgmgCJ1KCdDn/MhWatazQi6UmTIz1zPsLNuLFjqRUw+A3JNOzAYSCAf4+i1dOgDrDXovGHrzAOPg7ojTCgQkanBvyNHkWdgwwon3M425d4Ixu7dlLXqze45tWEOKvT3HVIrtkqMfUP/elH28=
-Received: from lukas-hpz440workstation.localnet (cm70-231.liwest.at [212.241.70.231])
-	by mail.netcube.li with ESMTPSA
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256)
-	; Thu, 10 Jul 2025 13:44:02 +0200
-From: Lukas Schmid <lukas.schmid@netcube.li>
-To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1752147953; c=relaxed/simple;
+	bh=VzSbGFZbiAdg2Q2CosizHpRCWO4uJCXbAFHqKYELZ6w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U3eTT0iIZo2wFWH6z09ljp4WlqWV3y+H3nrdsxbixX31bZCa80B/KIUjZPmIRpxbVDBQ8y8FbZtOCNKe1+GnhgQWJM6MLrgDCV5f13p7EpDr02xO2cU58qGWmPc66pugyIZ7VHw3nfIfqRvUeoKS2tahhKpuhYBUl+N7wexieRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Swqb+u8N; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=reD0Z/OzeLLuQebkmfVULjQ6q5KpdwV263NNwktOYOs=; b=Swqb+u8NjwNq2ygF9l+WvV62ey
+	Pkv9pnKzNdO83sVwKtwjQVXeOV6gSh8xMmgNz7fZfu1UJpupxMuQbVMWIYXUtAxjPi/8pAg2sMWbl
+	PHOyY/G+UNhh/+ZUKngi4IC1BpfMnn+7VIttbB0C0UjFVDZzXbn25A/LRkYwvKFf6hDjFMBYgG+9g
+	qkm3alOdWNgnzVVecL+xxKz7QbxfnPhsbidddS3TdgttvQxvr2KlGhsUcV/pVr31IGsOcfrF9DOW+
+	no8FwUJHfq4Bj/eOSWV+0bCYbd3IOyUPozMYEA04UbE83UlTbsnID5V+mVr0woRc6WqWulZ3AfF+9
+	cDS5fPSg==;
+Received: from [194.95.143.137] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uZpih-0004ca-Op; Thu, 10 Jul 2025 13:45:43 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
+ Chukun Pan <amadeus@jmu.edu.cn>, Jonas Karlman <jonas@kwiboo.se>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Subject:
- BUG: "scheduling while atomic" with MCP23008 + matrix_keypad IRQ mode on
- Linux 6.15.5
-Date: Thu, 10 Jul 2025 13:44:01 +0200
-Message-ID: <15509576.tv2OnDr8pf@lukas-hpz440workstation>
+ Re: [PATCH v2 1/1] arm64: dts: rockchip: rk3528: Add CPU frequency scaling
+ support
+Date: Thu, 10 Jul 2025 13:45:43 +0200
+Message-ID: <5025631.aeNJFYEL58@phil>
+In-Reply-To: <20250620100010.1291658-2-amadeus@jmu.edu.cn>
+References:
+ <20250620100010.1291658-1-amadeus@jmu.edu.cn>
+ <20250620100010.1291658-2-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4308874.1IzOArtZ34";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
---nextPart4308874.1IzOArtZ34
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Lukas Schmid <lukas.schmid@netcube.li>
-To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 10 Jul 2025 13:44:01 +0200
-Message-ID: <15509576.tv2OnDr8pf@lukas-hpz440workstation>
-MIME-Version: 1.0
+Am Freitag, 20. Juni 2025, 12:00:10 Mitteleurop=C3=A4ische Sommerzeit schri=
+eb Chukun Pan:
+> By default, the CPUs on RK3528 operates at 1.5GHz. Add CPU frequency and
+> voltage mapping to the device tree to enable dynamic scaling via cpufreq.
+>=20
+> The OPP values come from downstream kernel[1]. Both 408MHz and 600MHz
+> frequencies use the normal PLL, so use the corresponding highest voltage.
+>=20
+> The voltage used for other frequencies can't be less than above (875mV).
+> Therefore, 816MHz to 1200MHz also uses the corresponding highest voltage.
 
-Hi all,
+There has often been the argument that selecting a frequency that has the
+same voltage as a faster frequency does not save any power.
 
-I'm encountering a "BUG: scheduling while atomic" when using the MCP23008 GPIO 
-expander with the `matrix_keypad` driver in IRQ mode on Linux v6.15.5
+Hence I remember that we dropped slower frequencies on other socs
+that share the same voltage with a higher frequency.
 
-Hardware setup:
-- MCP23008 connected via I2C
-- 4x4 matrix keypad hooked to MCP23008 GPIOs
-- SoC: Allwinner T113-s3 SoC
-- Using devicetree configuration for `microchip,mcp23008` and `gpio-
-matrix-keypad`
-
-When I press buttons on the keypad, after some amount of presses I get the 
-following error from the Kernel:
-
-[   81.921114] BUG: scheduling while atomic: kworker/1:4/383/0x00000002
-[   81.921155] Modules linked in: esp32_sdio(O) bluetooth ecdh_generic ecc 
-cfg80211 rfkill ipv6 af_packet evdev matrix_keypad matrix_keymap 
-pinctrl_mcp23s08_i2c pinctrl_mcp23s08 sun8i_ce crypto_engine uio_pdrv_genirq 
-uio
-[   81.921287] CPU: 1 UID: 0 PID: 383 Comm: kworker/1:4 Tainted: G           O        
-6.15.4 #1 PREEMPT 
-[   81.921305] Tainted: [O]=OOT_MODULE
-[   81.921310] Hardware name: Generic DT based system
-[   81.921317] Workqueue: events matrix_keypad_scan [matrix_keypad]
-[   81.921343] Call trace: 
-[   81.921353]  unwind_backtrace from show_stack+0x18/0x1c
-[   81.921381]  show_stack from dump_stack_lvl+0x68/0x74
-[   81.921398]  dump_stack_lvl from __schedule_bug+0x5c/0x70
-[   81.921423]  __schedule_bug from __schedule+0xb48/0xd24
-[   81.921451]  __schedule from schedule+0x34/0x144
-[   81.921472]  schedule from schedule_preempt_disabled+0x24/0x34
-[   81.921494]  schedule_preempt_disabled from __mutex_lock.constprop.
-0+0x308/0xaa4
-[   81.921519]  __mutex_lock.constprop.0 from mcp23s08_irq_bus_lock+0x20/0x30 
-[pinctrl_mcp23s08]
-[   81.921553]  mcp23s08_irq_bus_lock [pinctrl_mcp23s08] from 
-__irq_get_desc_lock+0x84/0xac
-[   81.921584]  __irq_get_desc_lock from enable_irq+0x38/0xa8
-[   81.921605]  enable_irq from matrix_keypad_scan+0x2b8/0x3ac [matrix_keypad]
-[   81.921626]  matrix_keypad_scan [matrix_keypad] from 
-process_one_work+0x160/0x410
-[   81.921649]  process_one_work from worker_thread+0x25c/0x408
-[   81.921668]  worker_thread from kthread+0x144/0x264
-[   81.921685]  kthread from ret_from_fork+0x14/0x38
-[   81.921699] Exception stack(0xc896dfb0 to 0xc896dff8)
-[   81.921709] dfa0:                                     00000000 00000000 
-00000000 00000000
-[   81.921720] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 
-00000000 00000000
-[   81.921730] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-
-Happy to test patches or provide further debugging info.
-
-Best regards,  
-Lukas Schmid
---nextPart4308874.1IzOArtZ34
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEPv6dcBmn59ssZMkSJnN+drMVRtgFAmhvp4EACgkQJnN+drMV
-Rtjt9Af/ZLO0pvV2QXisvWVdmeigrwh8pxhgc9HUlHHlSPzRo4KO/OHWMZ8RyIzg
-0rho3uB+9vNwySANstD3uyzFVv/Wr5qrsbKmmTR3vAolpexJzVSnz/udmjXTOwdU
-uWd7eMo44Q172/gCcvhzpJ0rLOP6Lz+cpyNnt2KqWsRMW+C6/HPZ1PTRoMIQx4pP
-30cCYdavudi/KJuYCF4MVSqGGmUMxbDI487Y4BGIvi89GrZfFQD+fH+n0AsbKi1+
-7Otlj0SuyppWZaQdY3o6GuM+sBWh4v8RoOuzMDWGD888IMZufVk97yFky5NWUNW5
-OjGbAWbPltGVHiMVM+12N8SgJdHjbA==
-=6sqo
------END PGP SIGNATURE-----
-
---nextPart4308874.1IzOArtZ34--
+>=20
+> The remaining 1416MHz to 2016MHz use a voltage close to actual frequency.
+>=20
+> [1] https://github.com/rockchip-linux/kernel/blob/develop-5.10/arch/arm64=
+/boot/dts/rockchip/rk3528.dtsi
+>=20
+> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 64 ++++++++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/d=
+ts/rockchip/rk3528.dtsi
+> index 829f980ea353..5cb7f10b79ed 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> @@ -53,6 +53,7 @@ cpu0: cpu@0 {
+>  			device_type =3D "cpu";
+>  			enable-method =3D "psci";
+>  			clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+> +			operating-points-v2 =3D <&cpu_opp_table>;
+>  		};
+> =20
+>  		cpu1: cpu@1 {
+> @@ -61,6 +62,7 @@ cpu1: cpu@1 {
+>  			device_type =3D "cpu";
+>  			enable-method =3D "psci";
+>  			clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+> +			operating-points-v2 =3D <&cpu_opp_table>;
+>  		};
+> =20
+>  		cpu2: cpu@2 {
+> @@ -69,6 +71,7 @@ cpu2: cpu@2 {
+>  			device_type =3D "cpu";
+>  			enable-method =3D "psci";
+>  			clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+> +			operating-points-v2 =3D <&cpu_opp_table>;
+>  		};
+> =20
+>  		cpu3: cpu@3 {
+> @@ -77,6 +80,67 @@ cpu3: cpu@3 {
+>  			device_type =3D "cpu";
+>  			enable-method =3D "psci";
+>  			clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+> +			operating-points-v2 =3D <&cpu_opp_table>;
+> +		};
+> +	};
+> +
+> +	cpu_opp_table: opp-table-cpu {
+> +		compatible =3D "operating-points-v2";
+> +		opp-shared;
+> +
+> +		opp-408000000 {
+> +			opp-hz =3D /bits/ 64 <408000000>;
+> +			opp-microvolt =3D <875000 875000 1100000>;
+> +			clock-latency-ns =3D <40000>;
+> +			opp-suspend;
+> +		};
+> +
+> +		opp-600000000 {
+> +			opp-hz =3D /bits/ 64 <600000000>;
+> +			opp-microvolt =3D <875000 875000 1100000>;
+> +			clock-latency-ns =3D <40000>;
+> +		};
+> +
+> +		opp-816000000 {
+> +			opp-hz =3D /bits/ 64 <816000000>;
+> +			opp-microvolt =3D <875000 875000 1100000>;
+> +			clock-latency-ns =3D <40000>;
+> +		};
+> +
+> +		opp-1008000000 {
+> +			opp-hz =3D /bits/ 64 <1008000000>;
+> +			opp-microvolt =3D <875000 875000 1100000>;
+> +			clock-latency-ns =3D <40000>;
+> +		};
+> +
+> +		opp-1200000000 {
+> +			opp-hz =3D /bits/ 64 <1200000000>;
+> +			opp-microvolt =3D <900000 900000 1100000>;
+> +			clock-latency-ns =3D <40000>;
+> +		};
+> +
+> +		opp-1416000000 {
+> +			opp-hz =3D /bits/ 64 <1416000000>;
+> +			opp-microvolt =3D <925000 925000 1100000>;
+> +			clock-latency-ns =3D <40000>;
+> +		};
+> +
+> +		opp-1608000000 {
+> +			opp-hz =3D /bits/ 64 <1608000000>;
+> +			opp-microvolt =3D <975000 975000 1100000>;
+> +			clock-latency-ns =3D <40000>;
+> +		};
+> +
+> +		opp-1800000000 {
+> +			opp-hz =3D /bits/ 64 <1800000000>;
+> +			opp-microvolt =3D <1037500 1037500 1100000>;
+> +			clock-latency-ns =3D <40000>;
+> +		};
+> +
+> +		opp-2016000000 {
+> +			opp-hz =3D /bits/ 64 <2016000000>;
+> +			opp-microvolt =3D <1100000 1100000 1100000>;
+> +			clock-latency-ns =3D <40000>;
+>  		};
+>  	};
+> =20
+>=20
 
 
 
