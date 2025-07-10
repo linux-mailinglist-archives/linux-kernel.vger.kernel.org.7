@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-725191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7749FAFFBCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:10:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488B2AFFBD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9C41883CF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:10:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78E7F3AE5B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC03728BA87;
-	Thu, 10 Jul 2025 08:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332D428B7E5;
+	Thu, 10 Jul 2025 08:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2RDgZdz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcJULciX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D4422D9E3;
-	Thu, 10 Jul 2025 08:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9456B289340
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752135008; cv=none; b=I1Kg8uKvXnPimF7Yos1VYT0qTbE7KWXjgYKcnqSQFWkYKCY4dklLCfZhUkOjCssPUs/tABN3E/3Tf3AyBidu6E1C/4MvLTAmzTbjByMIbS0sNiM7SGYWFhR8fMAWizg4cPuJTa4b/Ozale8O5q2zlet/idR49QY4hHatfwGDT5M=
+	t=1752135018; cv=none; b=M+MZzRM2iGemmUkqkSRRN4wgmwnWlHDBUHGfOwn1OMBw56VUouNgPuMQ78LKbxr2/Z3EP/YGkPCT0lXfYnCSIi6W+s4ih8KJ1dF9a/n2tpiP16+wOpoOlIK2qTMSL+1xQ56Gi4bExX4U15PpU+2csW2pbUh7vLaFxgiqORHxEkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752135008; c=relaxed/simple;
-	bh=l6o0QvUlgEpaATSaxinq/vq2+N9a6aWAXKed88dkYeY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ib27eedIaVLrOpk7IYpzTCu25PQ8z/2F7rGCPkj3kR2dT4ORDVvo8WU2qfVv9911UzfiVQNB/MyMsdoB38tJ0ZPL+PPpGj/Vu6sRnXtUCAO432hnRhG/shfG19GQeDlx7yfJtkePLSOeDpFEwNXDgMUCmznfYk83CduTL7di1fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2RDgZdz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E68BC4CEE3;
-	Thu, 10 Jul 2025 08:10:01 +0000 (UTC)
+	s=arc-20240116; t=1752135018; c=relaxed/simple;
+	bh=hNiCLR/9Bi1BlmUfdE7rYZFbDwUrR2MgeU/x77j9E/E=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aFmKVkopu+8J4kZCduibPavBVkMeyq3GK6xTJLI+bag7SNgefORktnjy8WTy65mOUl9ru4WsM/b3Q/AVwh+nmtgT/U5OhYMjG2tVqv0lpQ/7a2E0FX8EOeR46LygQfWrePmAAZxvsMZZzWwtEoJzFA+aFT1MT0NYA7D/R1TFMtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcJULciX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17AA3C4CEE3;
+	Thu, 10 Jul 2025 08:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752135007;
-	bh=l6o0QvUlgEpaATSaxinq/vq2+N9a6aWAXKed88dkYeY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=B2RDgZdz6y5eo785kiiLdGQ7ZfXpmkkqNLWvXXTTbZfwt+p1+BYPdFJS7jwvuGGTP
-	 R/wdGSALGpkotkbCD50pc7fBUVd3hwsDfChr60r0tPqutUVNLg98QjKNcoSIPZ5UDq
-	 /K4dXe/7sc2GpqgNTppv2tnKLxxphPkNKYKrnBj7E5rxBwhEibbiqlZAUhU6MKlq4V
-	 T2od39wWnVU35ltYHnUo+STRYll6wv2ngmq7rAlU8WxEb09aypipf1JeM1SP15phiD
-	 cEiMIhXVAecYD2QqMDPGxKEvSN9+R2U/D23KBwh85icWr9UO7vkgyKtOqqA4FNoEs/
-	 sEtfzco15416A==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Parav Pandit <parav@nvidia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Mark Bloch <mbloch@nvidia.com>,
-	Patrisious Haddad <phaddad@nvidia.com>,
-	Moshe Shemesh <moshe@nvidia.com>,
-	linux-rdma@vger.kernel.org,
+	s=k20201202; t=1752135018;
+	bh=hNiCLR/9Bi1BlmUfdE7rYZFbDwUrR2MgeU/x77j9E/E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fcJULciXT3toou1HazHEtjMCYG5kGpdICpbwfRVJ9RTvJ3LaiEXQcqHXZ/bJDJ4hO
+	 qy6dULTVKv8ef0amzGbybb0BAdxFgqk3CB5NaAZyf1UWmzlRg9FsIYNocTUc9rJafS
+	 3P4ZrJpQK7DiGdb35vm3dETYjOL2WBCzhgNbySqLtrxfjnj5xYv5aDS4/wrdFbfDcv
+	 wol2OYGmtXiT4PVwR+tNYTRLT8GxxeJ5944EMbm9CNc6Ehue6hjhCfllNZJRhSYzQl
+	 FOYMnRV+cZttKIzul0ghx0J2VVYGoTCpRwXGu0rWblRMWJvyltEfngyxDdyr/hARp7
+	 82gap/iOJb2cw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uZmMB-00EQed-MP;
+	Thu, 10 Jul 2025 09:10:15 +0100
+Date: Thu, 10 Jul 2025 09:10:15 +0100
+Message-ID: <86ikk0a2l4.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] RDMA/mlx5: fix linking with CONFIG_INFINIBAND_USER_ACCESS=n
-Date: Thu, 10 Jul 2025 10:09:50 +0200
-Message-Id: <20250710080955.2517331-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+Subject: Re: [PATCH] irqchip: irq-msi-lib: fix build with PCI disabled
+In-Reply-To: <20250710080021.2303640-1-arnd@kernel.org>
+References: <20250710080021.2303640-1-arnd@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: arnd@kernel.org, tglx@linutronix.de, arnd@arndb.de, anna-maria@linutronix.de, shivamurthy.shastri@linutronix.de, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Thu, 10 Jul 2025 09:00:12 +0100,
+Arnd Bergmann <arnd@kernel.org> wrote:
+> 
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The armada-370-xp irqchip fails in some randconfig builds because
+> of a missing declaration:
+> 
+> In file included from drivers/irqchip/irq-armada-370-xp.c:23:
+> include/linux/irqchip/irq-msi-lib.h:25:39: error: 'struct msi_domain_info' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+> 
+> Add a forward declaration for the msi_domain_info structure.
+> 
+> Fixes: e51b27438a10 ("irqchip: Make irq-msi-lib.h globally available")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  include/linux/irqchip/irq-msi-lib.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/irqchip/irq-msi-lib.h b/include/linux/irqchip/irq-msi-lib.h
+> index dd8d1d138544..224ac28e88d7 100644
+> --- a/include/linux/irqchip/irq-msi-lib.h
+> +++ b/include/linux/irqchip/irq-msi-lib.h
+> @@ -17,6 +17,7 @@
+>  
+>  #define MATCH_PLATFORM_MSI	BIT(DOMAIN_BUS_PLATFORM_MSI)
+>  
+> +struct msi_domain_info;
+>  int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
+>  			      enum irq_domain_bus_token bus_token);
+>  
 
-The check for rdma_uattrs_has_raw_cap() is not possible if user
-access is disabled:
+Acked-by: Marc Zyngier <maz@kernel.org>
 
-ERROR: modpost: "rdma_uattrs_has_raw_cap" [drivers/infiniband/hw/mlx5/mlx5_ib.ko] undefined!
+	M.
 
-Limit the check to configurations that have the option enabled
-and instead assume the capability is not there otherwise.
-
-From what I can tell, the UVERBS code in fs.c is not actually called
-when INFINIBAND_USER_ACCESS is turned off, so this haz no effect
-other than fixing the link error. A better change might be to not
-build the code at all in that configuration, but I did not see
-an obvious way to do that.
-
-Fixes: 95a89ec304c3 ("RDMA/mlx5: Check CAP_NET_RAW in user namespace for flow create")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-If there is a better way of addressing the link failure, please just
-treat this as a bug report
----
- drivers/infiniband/hw/mlx5/fs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/mlx5/fs.c b/drivers/infiniband/hw/mlx5/fs.c
-index bab2f58240c9..c1ec9aa1dfd3 100644
---- a/drivers/infiniband/hw/mlx5/fs.c
-+++ b/drivers/infiniband/hw/mlx5/fs.c
-@@ -2459,7 +2459,8 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_CREATE_FLOW)(
- 	struct mlx5_ib_dev *dev;
- 	u32 flags;
- 
--	if (!rdma_uattrs_has_raw_cap(attrs))
-+	if (!IS_ENABLED(CONFIG_INFINIBAND_USER_ACCESS) ||
-+	    !rdma_uattrs_has_raw_cap(attrs))
- 		return -EPERM;
- 
- 	fs_matcher = uverbs_attr_get_obj(attrs,
 -- 
-2.39.5
-
+Without deviation from the norm, progress is not possible.
 
