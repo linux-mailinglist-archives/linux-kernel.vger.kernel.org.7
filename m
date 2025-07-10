@@ -1,302 +1,427 @@
-Return-Path: <linux-kernel+bounces-724997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704A2AFF999
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:20:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADED3AFF99A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B1FB404A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:17:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65154B414F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E4E21FF21;
-	Thu, 10 Jul 2025 06:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5223F220F29;
+	Thu, 10 Jul 2025 06:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aChu0yMn"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2063.outbound.protection.outlook.com [40.107.220.63])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVing695"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B262F21D3E8;
-	Thu, 10 Jul 2025 06:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752128314; cv=fail; b=Mo1WYkg1chm88LHQsZqD5JZ2jkECHqL1cG9+xI2DbZfPiyKNLz9cyTMEn9/aNVNHlSg1uleYvlU6yZgNTXrX8t/xqPah3iGLc6i9PMPJunk0PB4uLun1KbzsTvMiitybFwqhoWB2et5F5Yf57D97WuGoZ5Fc2zk785aXYiTAbEI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752128314; c=relaxed/simple;
-	bh=QP5wvw3UStJkyA59jz3i7P0EnJH9dxuDhUNYi1Ej/wM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YY1DUrjhkdare8waPKbAVkcdsc8Q/1bgkXJbHangTdAgqN/QeXSDOrDVtm+aEbJYCB5YTQLBVcLXR0NaXkGstvQbv6r3TGE2jQvE87dxoQFS0tnHYeTAChibHkkbhvTzpjYJ76un1N6HU017pQYJ5WQn/Di6V+MKaXwLx/T8+MQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aChu0yMn; arc=fail smtp.client-ip=40.107.220.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LeC2CRTvbwzFZWoEAB3Gtx1/0Ff+suSEKrFKyumyZeD9ZneIT6zMu5dv5CSXbSC/8ZvnN2H/DdZTwEYvBwfjxEI6d/NgsRboDakN5/WfHzkrV95Epf8Lt2QpjAuOCeYVmhxxySCDvpqo8n90ppqrUSwwR1JL8gHUBe6gx/IuEgwsizZAY00H0n0O6am/SmsIiJyxBU8qcsm6Q3n5P/ktutwjkpZTjc5Bfh4amzu25LCC8yv5kGm5jRBArdbmUViUx4RBxUtR+Q0LldnUdekNwkgx+vrCHlv2zBMb5YzKx9D/ZUYz8EoX1XTl4Tr3n/zhN9uvwjplEun7QNog98syYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TQb3PHt9ippX5DCsX6K+yECyu0K6pm2ehSlPYbN+w3k=;
- b=exvMgZKC8TUWbWJFkZ5imdc0JFgYQ6Bk5EQr8V8rA+Llb6zVpbooOL46pykL2/R7oquObOAvBorRKq+hZ3ZntqOzK6b07o1KI0jlkuEtWROwSRPcdjEhhGxegASTtgTrqC43rBmAdIzgOEQGURYAmWo1GQcIQuhetxJ3GZ5FFKB/CAQvP1CTcglt46jg3ac6qRCIPNynnZjoCtef//gyf563md0Ww1a25FZGwMv1TwXpy2lMR8XDRGu796BYCpz2hq44PQJn0uKHqgT+9GiIm0QE+/UeSCiQdn+A22V0pf6T18ptG7yAU+gzK9tMJ6/JCp5R9fix3YXD2CJ/PtQ7cw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TQb3PHt9ippX5DCsX6K+yECyu0K6pm2ehSlPYbN+w3k=;
- b=aChu0yMnR32t/Lmt7QU3mFnLwXsJcDifGfw6gzKqBf+7XrWe7Hz9LfEzpq/Z09d+ceByIi86ortB8BGXcKRMOzwBWYi94VKRBV1GvFCVufZV0jB854SF9UTGxkxP6aztO1FVYSvZz6pTWK8L0Ar/A+jsKrYLkOkBnFMAQw9wmYQ=
-Received: from MW4P221CA0013.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::18)
- by CY3PR12MB9577.namprd12.prod.outlook.com (2603:10b6:930:109::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Thu, 10 Jul
- 2025 06:18:29 +0000
-Received: from MWH0EPF000971E3.namprd02.prod.outlook.com
- (2603:10b6:303:8b:cafe::12) by MW4P221CA0013.outlook.office365.com
- (2603:10b6:303:8b::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22 via Frontend Transport; Thu,
- 10 Jul 2025 06:18:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- MWH0EPF000971E3.mail.protection.outlook.com (10.167.243.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Thu, 10 Jul 2025 06:18:28 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Jul
- 2025 01:18:27 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Jul
- 2025 01:18:27 -0500
-Received: from [10.65.159.153] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Thu, 10 Jul 2025 01:18:21 -0500
-Message-ID: <b8f0339d-0221-4f35-8db1-399471db5330@amd.com>
-Date: Thu, 10 Jul 2025 14:18:21 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE772367B2;
+	Thu, 10 Jul 2025 06:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752128420; cv=none; b=YOGSa1YAdm7sOwYLxZYJYZjYbpyJiPS7V36GKoQ3U/aJ3Hmj6ZBJ1ZjnCpQJ4r3Y2TJwE7VxAr+nWYKi382dCk0RSoMceed43LdJqX6tHrDlmMTe+KFdDUlAXMLA5ATuPR3qTz64jKYBG/DrbSNCxIBJv1624GKSErjo29IxCMQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752128420; c=relaxed/simple;
+	bh=m9xAVFhwDPE+SyQyIXksEJsex+1AZ81fkHbVFf2hIbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hir0oDzPUeZ8sqdqnj4yQ/Zqe60414z7FowFcPIg7VeoMTRJFZUIvhBnkfNcPdsgsrOrvtnMgMVr+NX2eCao4aNw+Z/1gcmBBJHFlLC+asmWhWp3fWZCf8V4L2tN5qjRXWjRLJ/V/F/1ce5o59as9dxJO5igU7ts6tOYAr5fyXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVing695; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEE3FC4CEE3;
+	Thu, 10 Jul 2025 06:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752128419;
+	bh=m9xAVFhwDPE+SyQyIXksEJsex+1AZ81fkHbVFf2hIbk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pVing695EHb2gnav8ABwwJUJf0JKF+W31M+ET77/nrd3suZ5/NYlWR2yEb4Axmg3+
+	 qshreJZuc7dutKyiV7C4cRKWEFI8aWBymv//gaiUWDbAhlyFaRj6JuU+vnvb3svUnr
+	 PQmj5QSuWb5i7kF2frrcS9ZKPA84aFuE+dvzHMgN1mJIyhh/jDw7fFy09TqW/DAznm
+	 Uot0JO9yien4hKm3Z6mgs4KNlTdirxtxlzSEvBleOdoyh2yJ4oDrMYBfEq3kLvNror
+	 HENvDUa+YhrDKtnl9IF8agFn14NBhyGHsb6FbMuRKhjEKf7zfeeV/t40opogI/F6Y+
+	 o6szRc1LOyvbA==
+Date: Thu, 10 Jul 2025 08:20:15 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 07/12] docs: kdoc: Coalesce parameter-list handling
+Message-ID: <20250710082015.3b37024e@foz.lan>
+In-Reply-To: <20250702223524.231794-8-corbet@lwn.net>
+References: <20250702223524.231794-1-corbet@lwn.net>
+	<20250702223524.231794-8-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/5] drm/amdgpu: do not resume device in thaw for
- normal hibernation
-To: "Lazar, Lijo" <lijo.lazar@amd.com>, Mario Limonciello
-	<mario.limonciello@amd.com>, Samuel Zhang <guoqing.zhang@amd.com>,
-	<alexander.deucher@amd.com>, <christian.koenig@amd.com>, <rafael@kernel.org>,
-	<len.brown@intel.com>, <pavel@kernel.org>, <gregkh@linuxfoundation.org>,
-	<dakr@kernel.org>, <airlied@gmail.com>, <simona@ffwll.ch>,
-	<ray.huang@amd.com>, <matthew.auld@intel.com>, <matthew.brost@intel.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>
-CC: <victor.zhao@amd.com>, <haijun.chang@amd.com>, <Qing.Ma@amd.com>,
-	<Owen.Zhang2@amd.com>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>
-References: <20250709100512.3762063-1-guoqing.zhang@amd.com>
- <20250709100512.3762063-6-guoqing.zhang@amd.com>
- <6963322b-d4e2-4d4d-b4b6-e2c44d49a94b@amd.com>
- <202dae4c-6280-4f35-9c16-fdf6398ba856@amd.com>
-Content-Language: en-US
-From: "Zhang, GuoQing (Sam)" <guoqzhan@amd.com>
-In-Reply-To: <202dae4c-6280-4f35-9c16-fdf6398ba856@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E3:EE_|CY3PR12MB9577:EE_
-X-MS-Office365-Filtering-Correlation-Id: c479a432-692d-4bbb-7b96-08ddbf799621
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aVNNMGJJZ05XUzZvdzZ6OEhwWnFIRDF5VDJPR1JhVUg3ZmQxVmkzdmk1WlNW?=
- =?utf-8?B?Uy9XQVROamwwV0dHME52ZWhRQjZ4dTh0RkFIWUdBVVVSOS83RHNzajlWS0Jq?=
- =?utf-8?B?NFJ5bmhxeEhZYU9DbTJXKzRabk8yUThtOUQwaUNRK3ZIQnIreXdaSThOYlpk?=
- =?utf-8?B?TmR0ZkFyV2lDN3FtR09JS3RkU0IxcTY0aEtvZU40SzRUTEo4cCsxRkZOM2Z3?=
- =?utf-8?B?TnBnVTBvVS9reEtDYU1vclZqaFl4bVV3dE5lSGcyeEVaOEQ1VG4wUVVQUks1?=
- =?utf-8?B?NFh1STZHZlhGWlhPc0Y4cEVFTElVUmY1TTlBT2s5QUlDZXkvZ1B5OGVyZzdS?=
- =?utf-8?B?WjZ6Q0VKSTl0cjhIWDh5amNYSEVqcDd3a2pWY2ZzN01BSEluMS9XVGFqUVVn?=
- =?utf-8?B?RUxwU1FvSHNUYlZVdzhHb01JbXA2RzRnRzJIZ3pIOWZ5U2MvL2t3NnVHMXA5?=
- =?utf-8?B?T01INEJ5cmtYdi9oSHRFTlBhK1ViUS9mUE9mNWdLU202SjZ4S1lYQjlodUN2?=
- =?utf-8?B?WXg3d1V2NGdQeUx2dmd6TjlhOCtvK2szTDRNVHJ4Y0kxQmdFelpYU1ZPaFJU?=
- =?utf-8?B?MzlkTWxWM2V6ZUc2NzM4YmJXVnlIVmNaOWFqbUh4RFFxM1poZ1RkcnZ2bXdV?=
- =?utf-8?B?L2RXemtKN21QVWRxZ0hVQmxDM05rN0hNSWwwd1pHeU5sTXhpYi8wZTNoV3pP?=
- =?utf-8?B?ZW9pSWdySzJRMDk3UTdzc0kxYnJBdVQwWkNqUG9hVGRvTE1YYUtxL0pSSGxi?=
- =?utf-8?B?NENEb04ySTE3VHpSbHpxN2VHSDhUbi82cGNjQktTNk1kd1FmaTJ5S0RoM3hz?=
- =?utf-8?B?aFRoeWg3QW1uSEEvdGdIeVl6SGU0WndiZ0laZEo0TCtSUkZKNVZ5eW05aXor?=
- =?utf-8?B?R21IUjJxejYxNEU0OHRtbFZMTzcrZ293T3VDZVJUN1pXZGNXYzU1WW5yYTR2?=
- =?utf-8?B?L05LOUd3am5lRDIvUVdtUTlzVnpLTDNtcVhqcHBiL2VEL0tzdmR1V0Q3eHdt?=
- =?utf-8?B?ZFhNMEhNVUtDdEFSL3gxeHhsUVpURTZrbm5RclhiR0d5QnVUcklTVGNGcWlK?=
- =?utf-8?B?a2F2UEtiUzNHMklVNTdXVjltSndiUGEwODMwSWc5ZlJRclFteFc2Y3BEV0d5?=
- =?utf-8?B?ZjZuQWpCY3A2SVVBdGtDVklaczZPYlV0aTIyUDBvakZ0TjgxZjJENVduSHdO?=
- =?utf-8?B?bE9Dazh0Qzc0OFd2WHgxeW5palY0ZVZ0dDZlVTJFM0pMWEw1VWxMbnIrSUV3?=
- =?utf-8?B?ZGNLU3d1VGpkMUZOemNhcEhhZ3VubzBmTDYrbHYxRVM5alVFbC9WbFNOZlFv?=
- =?utf-8?B?elZGK1FSTXBQVzZubUx6RlJHd0xjb3lEcEdHVmNPZGo5eng5bDhiYy9IOEpD?=
- =?utf-8?B?c3RoSjRCNHlVdnU4K3h4dE9idTUzVlRTNmNNS24za2RsbGxVcnNIOWdTUThv?=
- =?utf-8?B?MGpGVXNnSHBBWElEQ1VOcXp4ZVhxQjRPc0FwTjVBb0xERDhCOGsrOUhQTkY2?=
- =?utf-8?B?b3FoU3JwNlh6aFUyNkx5eEJpOC9BTkt5SmFxN2JMdllIKzFnVG5VMHphWno3?=
- =?utf-8?B?dTV1dFZxU2J3eDZJUTVUUW1tbFFMY1RleVg1ejZpWHVVVnViOGtQQlF6VEcw?=
- =?utf-8?B?eHRaaWJrVitSek9JWHkwSEU5bDJjeGw5em5kQTR0TjBqaEY3WFl3cEIzVE5k?=
- =?utf-8?B?azRTVHdtNjVSdkE1NER2bXgzaXQ4NnNZcFVOU2JsQ0ZUeVVFcnN1c0RISG9T?=
- =?utf-8?B?a28vVjM4TnF5a3pFL0RTcVhCTkNsWDVUeVU2eVpmWU9oaTgvVXl3M21nWkk2?=
- =?utf-8?B?Yk1iZklZUmY4SUQxSWVpeUJncTlFSUdiOEM3b0VZamMvZVZ2SkJoRlowelRk?=
- =?utf-8?B?R2xTNXRnNzYvWmhRVzYzMUxNVWVIODN0SXk2WmJ0dFdBYm5iOUFpRFhKZlFZ?=
- =?utf-8?B?b3dHRnBQM0NKTUN4WHNIeVlkbGlpMFhtRk5RRmpUTnZPN0Y1VmVqQi9ubUJT?=
- =?utf-8?B?V1JLYTZySmo5SXBuRXZ5OGVxbnBwWUJMTVFxN0F2VFViVnlvL1NVdWI3YlB1?=
- =?utf-8?B?NHI0Tk91ZmpDbCtwNmtkMnUreGxRam55YkNWUT09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 06:18:28.5502
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c479a432-692d-4bbb-7b96-08ddbf799621
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E3.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9577
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+Em Wed,  2 Jul 2025 16:35:19 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
+
+> Callers to output_declaration() always pass the parameter information from
+> self.entry; remove all of the boilerplate arguments and just get at that
+> information directly.  Formalize its placement in the KdocItem class.
+> 
+> It would be nice to get rid of parameterlist as well, but that has the
+> effect of reordering the output of function parameters and struct fields to
+> match the order in the kerneldoc comment rather than in the declaration.
+> One could argue about which is more correct, but the ordering has been left
+> unchanged for now.
+> 
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  scripts/lib/kdoc/kdoc_item.py   | 10 ++++-
+>  scripts/lib/kdoc/kdoc_output.py | 75 +++++++++++++--------------------
+>  scripts/lib/kdoc/kdoc_parser.py | 23 ++--------
+>  3 files changed, 41 insertions(+), 67 deletions(-)
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_item.py b/scripts/lib/kdoc/kdoc_item.py
+> index c8329019a219..51e8669b9a6e 100644
+> --- a/scripts/lib/kdoc/kdoc_item.py
+> +++ b/scripts/lib/kdoc/kdoc_item.py
+> @@ -10,6 +10,8 @@ class KdocItem:
+>          self.type = type
+>          self.declaration_start_line = start_line
+>          self.sections = self.sections_start_lines = { }
+> +        self.parameterlist = self.parameterdesc_start_lines = []
+> +        self.parameterdescs = self.parametertypes = { }
+
+See my comments on a previous e-mail:
+
+- place "{}" without spaces;
+- don't assign the same pointer to multiple variables (*)
+
+(*) On Python, dict and list type assignments are always handled
+    as pointers - except if you call copy() or deepcopy().
+
+>          #
+>          # Just save everything else into our own dict so that the output
+>          # side can grab it directly as before.  As we move things into more
+> @@ -27,8 +29,14 @@ class KdocItem:
+>          return self.get(key)
+>  
+>      #
+> -    # Tracking of section information.
+> +    # Tracking of section and parameter information.
+>      #
+>      def set_sections(self, sections, start_lines):
+>          self.sections = sections
+>          self.section_start_lines = start_lines
+> +
+> +    def set_params(self, names, descs, types, starts):
+> +        self.parameterlist = names
+> +        self.parameterdescs = descs
+> +        self.parametertypes = types
+> +        self.parameterdesc_start_lines = starts
+
+Your output was unchanged just because you're replacing all four
+lists at the same time here. If we ever modify the code to store them
+one by one, or to update previous set values, then we'll have
+troubles.
+
+> diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
+> index 15cb89f91987..d6f4d9e7173b 100644
+> --- a/scripts/lib/kdoc/kdoc_output.py
+> +++ b/scripts/lib/kdoc/kdoc_output.py
+> @@ -373,18 +373,13 @@ class RestFormat(OutputFormat):
+>                  signature = args['functiontype'] + " "
+>              signature += args['function'] + " ("
+>  
+> -        parameterlist = args.get('parameterlist', [])
+> -        parameterdescs = args.get('parameterdescs', {})
+> -        parameterdesc_start_lines = args.get('parameterdesc_start_lines', {})
+> -
+>          ln = args.get('declaration_start_line', 0)
+> -
+>          count = 0
+> -        for parameter in parameterlist:
+> +        for parameter in args.parameterlist:
+>              if count != 0:
+>                  signature += ", "
+>              count += 1
+> -            dtype = args['parametertypes'].get(parameter, "")
+> +            dtype = args.parametertypes.get(parameter, "")
+>  
+>              if function_pointer.search(dtype):
+>                  signature += function_pointer.group(1) + parameter + function_pointer.group(3)
+> @@ -419,26 +414,26 @@ class RestFormat(OutputFormat):
+>          # function prototypes apart
+>          self.lineprefix = "  "
+>  
+> -        if parameterlist:
+> +        if args.parameterlist:
+>              self.data += ".. container:: kernelindent\n\n"
+>              self.data += f"{self.lineprefix}**Parameters**\n\n"
+>  
+> -        for parameter in parameterlist:
+> +        for parameter in args.parameterlist:
+>              parameter_name = KernRe(r'\[.*').sub('', parameter)
+> -            dtype = args['parametertypes'].get(parameter, "")
+> +            dtype = args.parametertypes.get(parameter, "")
+>  
+>              if dtype:
+>                  self.data += f"{self.lineprefix}``{dtype}``\n"
+>              else:
+>                  self.data += f"{self.lineprefix}``{parameter}``\n"
+>  
+> -            self.print_lineno(parameterdesc_start_lines.get(parameter_name, 0))
+> +            self.print_lineno(args.parameterdesc_start_lines.get(parameter_name, 0))
+>  
+>              self.lineprefix = "    "
+> -            if parameter_name in parameterdescs and \
+> -               parameterdescs[parameter_name] != KernelDoc.undescribed:
+> +            if parameter_name in args.parameterdescs and \
+> +               args.parameterdescs[parameter_name] != KernelDoc.undescribed:
+>  
+> -                self.output_highlight(parameterdescs[parameter_name])
+> +                self.output_highlight(args.parameterdescs[parameter_name])
+>                  self.data += "\n"
+>              else:
+>                  self.data += f"{self.lineprefix}*undescribed*\n\n"
+> @@ -451,8 +446,6 @@ class RestFormat(OutputFormat):
+>  
+>          oldprefix = self.lineprefix
+>          name = args.get('enum', '')
+> -        parameterlist = args.get('parameterlist', [])
+> -        parameterdescs = args.get('parameterdescs', {})
+>          ln = args.get('declaration_start_line', 0)
+>  
+>          self.data += f"\n\n.. c:enum:: {name}\n\n"
+> @@ -467,11 +460,11 @@ class RestFormat(OutputFormat):
+>          self.lineprefix = outer + "  "
+>          self.data += f"{outer}**Constants**\n\n"
+>  
+> -        for parameter in parameterlist:
+> +        for parameter in args.parameterlist:
+>              self.data += f"{outer}``{parameter}``\n"
+>  
+> -            if parameterdescs.get(parameter, '') != KernelDoc.undescribed:
+> -                self.output_highlight(parameterdescs[parameter])
+> +            if args.parameterdescs.get(parameter, '') != KernelDoc.undescribed:
+> +                self.output_highlight(args.parameterdescs[parameter])
+>              else:
+>                  self.data += f"{self.lineprefix}*undescribed*\n\n"
+>              self.data += "\n"
+> @@ -505,10 +498,6 @@ class RestFormat(OutputFormat):
+>          dtype = args.get('type', "struct")
+>          ln = args.get('declaration_start_line', 0)
+>  
+> -        parameterlist = args.get('parameterlist', [])
+> -        parameterdescs = args.get('parameterdescs', {})
+> -        parameterdesc_start_lines = args.get('parameterdesc_start_lines', {})
+> -
+>          self.data += f"\n\n.. c:{dtype}:: {name}\n\n"
+>  
+>          self.print_lineno(ln)
+> @@ -531,21 +520,21 @@ class RestFormat(OutputFormat):
+>  
+>          self.lineprefix = "  "
+>          self.data += f"{self.lineprefix}**Members**\n\n"
+> -        for parameter in parameterlist:
+> +        for parameter in args.parameterlist:
+>              if not parameter or parameter.startswith("#"):
+>                  continue
+>  
+>              parameter_name = parameter.split("[", maxsplit=1)[0]
+>  
+> -            if parameterdescs.get(parameter_name) == KernelDoc.undescribed:
+> +            if args.parameterdescs.get(parameter_name) == KernelDoc.undescribed:
+>                  continue
+>  
+> -            self.print_lineno(parameterdesc_start_lines.get(parameter_name, 0))
+> +            self.print_lineno(args.parameterdesc_start_lines.get(parameter_name, 0))
+>  
+>              self.data += f"{self.lineprefix}``{parameter}``\n"
+>  
+>              self.lineprefix = "    "
+> -            self.output_highlight(parameterdescs[parameter_name])
+> +            self.output_highlight(args.parameterdescs[parameter_name])
+>              self.lineprefix = "  "
+>  
+>              self.data += "\n"
+> @@ -643,9 +632,6 @@ class ManFormat(OutputFormat):
+>      def out_function(self, fname, name, args):
+>          """output function in man"""
+>  
+> -        parameterlist = args.get('parameterlist', [])
+> -        parameterdescs = args.get('parameterdescs', {})
+> -
+>          self.data += f'.TH "{args["function"]}" 9 "{args["function"]}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
+>  
+>          self.data += ".SH NAME\n"
+> @@ -661,11 +647,11 @@ class ManFormat(OutputFormat):
+>          parenth = "("
+>          post = ","
+>  
+> -        for parameter in parameterlist:
+> -            if count == len(parameterlist) - 1:
+> +        for parameter in args.parameterlist:
+> +            if count == len(args.parameterlist) - 1:
+>                  post = ");"
+>  
+> -            dtype = args['parametertypes'].get(parameter, "")
+> +            dtype = args.parametertypes.get(parameter, "")
+>              if function_pointer.match(dtype):
+>                  # Pointer-to-function
+>                  self.data += f'".BI "{parenth}{function_pointer.group(1)}" " ") ({function_pointer.group(2)}){post}"' + "\n"
+> @@ -676,14 +662,14 @@ class ManFormat(OutputFormat):
+>              count += 1
+>              parenth = ""
+>  
+> -        if parameterlist:
+> +        if args.parameterlist:
+>              self.data += ".SH ARGUMENTS\n"
+>  
+> -        for parameter in parameterlist:
+> +        for parameter in args.parameterlist:
+>              parameter_name = re.sub(r'\[.*', '', parameter)
+>  
+>              self.data += f'.IP "{parameter}" 12' + "\n"
+> -            self.output_highlight(parameterdescs.get(parameter_name, ""))
+> +            self.output_highlight(args.parameterdescs.get(parameter_name, ""))
+>  
+>          for section, text in args.sections.items():
+>              self.data += f'.SH "{section.upper()}"' + "\n"
+> @@ -692,7 +678,6 @@ class ManFormat(OutputFormat):
+>      def out_enum(self, fname, name, args):
+>  
+>          name = args.get('enum', '')
+> -        parameterlist = args.get('parameterlist', [])
+>  
+>          self.data += f'.TH "{self.modulename}" 9 "enum {args["enum"]}" "{self.man_date}" "API Manual" LINUX' + "\n"
+>  
+> @@ -703,9 +688,9 @@ class ManFormat(OutputFormat):
+>          self.data += f"enum {args['enum']}" + " {\n"
+>  
+>          count = 0
+> -        for parameter in parameterlist:
+> +        for parameter in args.parameterlist:
+>              self.data += f'.br\n.BI "    {parameter}"' + "\n"
+> -            if count == len(parameterlist) - 1:
+> +            if count == len(args.parameterlist) - 1:
+>                  self.data += "\n};\n"
+>              else:
+>                  self.data += ", \n.br\n"
+> @@ -714,10 +699,10 @@ class ManFormat(OutputFormat):
+>  
+>          self.data += ".SH Constants\n"
+>  
+> -        for parameter in parameterlist:
+> +        for parameter in args.parameterlist:
+>              parameter_name = KernRe(r'\[.*').sub('', parameter)
+>              self.data += f'.IP "{parameter}" 12' + "\n"
+> -            self.output_highlight(args['parameterdescs'].get(parameter_name, ""))
+> +            self.output_highlight(args.parameterdescs.get(parameter_name, ""))
+>  
+>          for section, text in args.sections.items():
+>              self.data += f'.SH "{section}"' + "\n"
+> @@ -743,8 +728,6 @@ class ManFormat(OutputFormat):
+>          struct_name = args.get('struct')
+>          purpose = args.get('purpose')
+>          definition = args.get('definition')
+> -        parameterlist = args.get('parameterlist', [])
+> -        parameterdescs = args.get('parameterdescs', {})
+>  
+>          self.data += f'.TH "{module}" 9 "{struct_type} {struct_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
+>  
+> @@ -760,17 +743,17 @@ class ManFormat(OutputFormat):
+>          self.data += f'.BI "{declaration}\n' + "};\n.br\n\n"
+>  
+>          self.data += ".SH Members\n"
+> -        for parameter in parameterlist:
+> +        for parameter in args.parameterlist:
+>              if parameter.startswith("#"):
+>                  continue
+>  
+>              parameter_name = re.sub(r"\[.*", "", parameter)
+>  
+> -            if parameterdescs.get(parameter_name) == KernelDoc.undescribed:
+> +            if args.parameterdescs.get(parameter_name) == KernelDoc.undescribed:
+>                  continue
+>  
+>              self.data += f'.IP "{parameter}" 12' + "\n"
+> -            self.output_highlight(parameterdescs.get(parameter_name))
+> +            self.output_highlight(args.parameterdescs.get(parameter_name))
+>  
+>          for section, text in args.sections.items():
+>              self.data += f'.SH "{section}"' + "\n"
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index ffd49f9395ae..298abd260264 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -278,7 +278,9 @@ class KernelDoc:
+>              if section in sections and not sections[section].rstrip():
+>                  del sections[section]
+>          item.set_sections(sections, self.entry.section_start_lines)
+> -
+> +        item.set_params(self.entry.parameterlist, self.entry.parameterdescs,
+> +                        self.entry.parametertypes,
+> +                        self.entry.parameterdesc_start_lines)
+>          self.entries.append(item)
+>  
+>          self.config.log.debug("Output: %s:%s = %s", dtype, name, pformat(args))
+> @@ -790,10 +792,6 @@ class KernelDoc:
+>          self.output_declaration(decl_type, declaration_name,
+>                                  struct=declaration_name,
+>                                  definition=declaration,
+> -                                parameterlist=self.entry.parameterlist,
+> -                                parameterdescs=self.entry.parameterdescs,
+> -                                parametertypes=self.entry.parametertypes,
+> -                                parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
+>                                  purpose=self.entry.declaration_purpose)
+>  
+>      def dump_enum(self, ln, proto):
+> @@ -873,9 +871,6 @@ class KernelDoc:
+>  
+>          self.output_declaration('enum', declaration_name,
+>                                  enum=declaration_name,
+> -                                parameterlist=self.entry.parameterlist,
+> -                                parameterdescs=self.entry.parameterdescs,
+> -                                parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
+>                                  purpose=self.entry.declaration_purpose)
+>  
+>      def dump_declaration(self, ln, prototype):
+> @@ -1039,10 +1034,6 @@ class KernelDoc:
+>                                      function=declaration_name,
+>                                      typedef=True,
+>                                      functiontype=return_type,
+> -                                    parameterlist=self.entry.parameterlist,
+> -                                    parameterdescs=self.entry.parameterdescs,
+> -                                    parametertypes=self.entry.parametertypes,
+> -                                    parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
+>                                      purpose=self.entry.declaration_purpose,
+>                                      func_macro=func_macro)
+>          else:
+> @@ -1050,10 +1041,6 @@ class KernelDoc:
+>                                      function=declaration_name,
+>                                      typedef=False,
+>                                      functiontype=return_type,
+> -                                    parameterlist=self.entry.parameterlist,
+> -                                    parameterdescs=self.entry.parameterdescs,
+> -                                    parametertypes=self.entry.parametertypes,
+> -                                    parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
+>                                      purpose=self.entry.declaration_purpose,
+>                                      func_macro=func_macro)
+>  
+> @@ -1093,10 +1080,6 @@ class KernelDoc:
+>                                      function=declaration_name,
+>                                      typedef=True,
+>                                      functiontype=return_type,
+> -                                    parameterlist=self.entry.parameterlist,
+> -                                    parameterdescs=self.entry.parameterdescs,
+> -                                    parametertypes=self.entry.parametertypes,
+> -                                    parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
+>                                      purpose=self.entry.declaration_purpose)
+>              return
+>  
 
 
-On 2025/7/10 12:18, Lazar, Lijo wrote:
->
-> On 7/10/2025 1:20 AM, Mario Limonciello wrote:
->> On 7/9/2025 6:05 AM, Samuel Zhang wrote:
->>> For normal hibernation, GPU do not need to be resumed in thaw since it is
->>> not involved in writing the hibernation image. Skip resume in this case
->>> can reduce the hibernation time.
->>>
->>> On VM with 8 * 192GB VRAM dGPUs, 98% VRAM usage and 1.7TB system memory,
->>> this can save 50 minutes.
->>>
->>> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
->> I hand modified the patches for other changes missing from linux-next in
->> your base.
->>
->> I checked on an APU with an eDP display connected and from a VT
->> hibernate does keep the display off now so this is definitely an
->> improvement there too.
->>
->> Tested-by: Mario Limonciello <mario.limonciello@amd.com>
 
-
-Thank you, Mario!
-
-
->>
->>> ---
->>>    drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 17 +++++++++++++++++
->>>    1 file changed, 17 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/
->>> drm/amd/amdgpu/amdgpu_drv.c
->>> index 4f8632737574..b24c420983ef 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
->>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
->>> @@ -2541,6 +2541,10 @@ amdgpu_pci_shutdown(struct pci_dev *pdev)
->>>        if (amdgpu_ras_intr_triggered())
->>>            return;
->>>    +    /* device maybe not resumed here, return immediately in this
->>> case */
->>> +    if (adev->in_s4 && adev->in_suspend)
->>> +        return;
->>> +
->>>        /* if we are running in a VM, make sure the device
->>>         * torn down properly on reboot/shutdown.
->>>         * unfortunately we can't detect certain
->>> @@ -2557,6 +2561,10 @@ static int amdgpu_pmops_prepare(struct device
->>> *dev)
->>>        struct drm_device *drm_dev = dev_get_drvdata(dev);
->>>        struct amdgpu_device *adev = drm_to_adev(drm_dev);
->>>    +    /* device maybe not resumed here, return immediately in this
->>> case */
->>> +    if (adev->in_s4 && adev->in_suspend)
->>> +        return 0;
->>> +
->> Is this one right?  Don't we still want to call prepare() for all the HW
->> IP blocks?  The eviction call that happens in prepare() is a no-op but
->> there are other IP blocks with an prepare_suspend() callback like DCN.
->>
->> That is I think you're destroying the optimization from commit
->> 50e0bae34fa6b ("drm/amd/display: Add and use new dm_prepare_suspend()
->> callback") by adding this code here.
->>
-> I guess this takes care of the prepare() before a power_off(). For the
-> hibernate prepare() call, in_suspend flag will remain false and it
-> should get executed. If the device is runtime-suspended already, then
-> the path won't be taken. Assuming that's fine.
->
-> Thanks,
-> Lijo
-
-
-That's right. Thank you for the clarification, Lijo.
-
-Rafael reminded me yesterday that there are 2 hibernation mode, controlled by `/sys/power/disk`.
-The 2 mode will call different callbacks after saving the image:
-
-shutdown mode, hibernate will go through following steps:
-1. amdgpu_pmops_prepare
-2. amdgpu_pmops_freeze
-3. create image
-4. amdgpu_pmops_thaw
-5. amdgpu_pmops_complete
-6. save image
-
-7. amdgpu_pci_shutdown
-
-
-platform mode, hibernate will go through following steps:
-1. amdgpu_pmops_prepare
-2. amdgpu_pmops_freeze
-3. create image
-4. amdgpu_pmops_thaw
-5. amdgpu_pmops_complete
-6. save image
-
-7. amdgpu_pmops_prepare
-8. amdgpu_pmops_poweroff
-
-This code is just to skip the step 7 of platform mode hibernation, 
-prepare to power off.
-
-adev->in_suspend is false in step 2, so it will not return in new the check.
-adev->in_suspend is true in step 7, it will return in new the check.
-
-Regards
-Sam
-
-
->
->>>        /* Return a positive number here so
->>>         * DPM_FLAG_SMART_SUSPEND works properly
->>>         */
->>> @@ -2655,12 +2663,21 @@ static int amdgpu_pmops_thaw(struct device *dev)
->>>    {
->>>        struct drm_device *drm_dev = dev_get_drvdata(dev);
->>>    +    /* do not resume device if it's normal hibernation */
->>> +    if (!pm_hibernate_is_recovering())
->>> +        return 0;
->>> +
->>>        return amdgpu_device_resume(drm_dev, true);
->>>    }
->>>      static int amdgpu_pmops_poweroff(struct device *dev)
->>>    {
->>>        struct drm_device *drm_dev = dev_get_drvdata(dev);
->>> +    struct amdgpu_device *adev = drm_to_adev(drm_dev);
->>> +
->>> +    /* device maybe not resumed here, return immediately in this case */
->>> +    if (adev->in_s4 && adev->in_suspend)
->>> +        return 0;
->>>          return amdgpu_device_suspend(drm_dev, true);
->>>    }
+Thanks,
+Mauro
 
