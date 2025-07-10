@@ -1,103 +1,106 @@
-Return-Path: <linux-kernel+bounces-725316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591D6AFFD78
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:04:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F837AFFD70
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80E401C42C38
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:04:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F6317571E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B36328DB7E;
-	Thu, 10 Jul 2025 09:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7C324C68B;
+	Thu, 10 Jul 2025 09:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qOGDr0C/"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C7D28C2B8;
-	Thu, 10 Jul 2025 09:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UaIf7yaE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C722F3E;
+	Thu, 10 Jul 2025 09:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752138077; cv=none; b=PV4j1UZobSHc4+842VeyAVcFWKBFTKuuWNz8UVc/9SOtuJQzNN030ePio55sp7ZOxji9m+tTD9ndKLVmA561q0hY017RKGZUxJ30ZQSH2oVRl7i/o27f72DIWGABpH6BSthcWFrmKVHcWDp7pBDg3EMhXYVLCNFruDTHv7v81GM=
+	t=1752138214; cv=none; b=XQ6SyLGkQ8Tm+i87yre4rzkpYqPjrLDoC/R3wEe2W/CuTJsQMLoVkIE/KZDPzuhPA/y4DXR3BdMetOJE2vYkQbcPUKjs/ZQuY43cAhHZgJuMA6X+78OsUkdPMfUPgQcmO8mrR13jXQC4NMQ0/t8A81u8DxNML/Voe9kI24H4fMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752138077; c=relaxed/simple;
-	bh=1ZgjcPt9CkUrby8Vad2FszjM+h8Ujoln/ehX/EZ4vA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M3bWNmT2IuX7CtYbNThD8Jh/62Cxu4B2GsrxdG67AtpsIxfGyqo7gupCMxpA+z76S3VLhYJ/bw6r6PeatuJQLZD5Bn787461YudlCMJSzyZ8ajDy9ECAQ1GYc+UsgafHEJRfZroXUsmEGgXVBMDexVTO8Ve7m9a5zA3eaVW0XvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qOGDr0C/; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.160.22] (unknown [4.194.122.136])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C54BA2116DB2;
-	Thu, 10 Jul 2025 02:01:11 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C54BA2116DB2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1752138075;
-	bh=HL7ROpKz+NyMfjU8c9SiXfT1Nmhu0bdk21Sb4PNKtro=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qOGDr0C/RQuFWOMsayOvarWWZB4ieNgyq6s5bTKooxJMQvXQh3lRIjupZyQLWBe5C
-	 a1eHJ7afyGm6i9mbrY5wTHnmfCE3B7PTB8lR833ut/D4jNnPwDLcHRDPE2bbN21Gj7
-	 7YcodfDxLYji9kl7SWSo/tURzMw8JUi9vtmELi7I=
-Message-ID: <45958272-1127-465d-a56e-65d7f0bff1bf@linux.microsoft.com>
-Date: Thu, 10 Jul 2025 14:31:08 +0530
+	s=arc-20240116; t=1752138214; c=relaxed/simple;
+	bh=j8Phv+9pRt6mRGClp582kQe91XOLKsvw5FUGQNmKXig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R6JJ6wrz7yNVKLDFmfDyFesWX1VJONO9vhFS0qPJs6pNImNt1kPqGD3KkPKyIBmcLvGOgwymnZLj+t5R9O9Bubn1wLO7YwNCSaNBBeNfG7sAXc5DmIht9v/gKBzf8d89SpKc7Qha0axjZzmSxqTce/UvZFJCYaqwX0nOp9Q+6uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UaIf7yaE; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752138213; x=1783674213;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j8Phv+9pRt6mRGClp582kQe91XOLKsvw5FUGQNmKXig=;
+  b=UaIf7yaESZvioQl6EDfOb8dF0wxMAs8rdhfZNtBiLW9rkYTG7B/GIPc2
+   z1++TdzxNNzPu17y2Wva33pmLCRlEoOlzWSaB5kJBPJr//P7h7Z1I4Jho
+   CAVUoZ4pcuF54br0URtAZCPAaHD7hNXsfUQbFlSzNbvy54ZQvWl7hMior
+   jgSeAIG5U7HKtMJV9KH8K3BuJjN4SD3CfhuCyqmIrMlrS4mPo5HBRj41N
+   uxe85y532oBnEJg9Z+EzaOLPHUOUgkXONOY6ZJFEazzYoH23V4ZdnuUDb
+   SV1xrau//ZGTG0VAujX5UVWcC5T8WKGwqSSsK/05wRpk+R1a7tF0H4bLH
+   g==;
+X-CSE-ConnectionGUID: MF7Bw6e4QYGibwCLT7X6aw==
+X-CSE-MsgGUID: S7BU2K3TSsONVozTMRWLJA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54541932"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="54541932"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:03:32 -0700
+X-CSE-ConnectionGUID: 34O0i2HBRF6xRFM2UmCbRw==
+X-CSE-MsgGUID: 1HQ9oNu/Q3iCKwLtTys6gQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="156142383"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:03:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uZnBe-0000000E9Os-3yNh;
+	Thu, 10 Jul 2025 12:03:26 +0300
+Date: Thu, 10 Jul 2025 12:03:26 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] iio: imu: inv_icm42600: Remove redundant error msg
+ on regulator_disable()
+Message-ID: <aG-B3uv6SsP1Ap0U@smile.fi.intel.com>
+References: <20250709-icm42pmreg-v1-0-3d0e793c99b2@geanix.com>
+ <20250709-icm42pmreg-v1-3-3d0e793c99b2@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] Drivers: hv: Introduce mshv_vtl driver
-To: Michael Kelley <mhklinux@outlook.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>
-Cc: Roman Kisel <romank@linux.microsoft.com>,
- Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- ALOK TIWARI <alok.a.tiwari@oracle.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-References: <20250611072704.83199-1-namjain@linux.microsoft.com>
- <20250611072704.83199-3-namjain@linux.microsoft.com>
- <SN6PR02MB4157F9F1F8493C74C9FCC6E4D449A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157F9F1F8493C74C9FCC6E4D449A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709-icm42pmreg-v1-3-3d0e793c99b2@geanix.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
+
+On Wed, Jul 09, 2025 at 02:35:11PM +0200, Sean Nyekjaer wrote:
+> The regulator framework already emits an error message when
+> regulator_disable() fails, making the local dev_err() redundant.
+> Remove the duplicate message to avoid cluttering the kernel log
+> with the same error twice.
+
+To me this sounds like a potential backporting material as it might full
+the logs (in case the module probed-removed zillion of time. Hence,
+I would put it to be the first patch in the series (yes, it will involve
+to fix something that you are removing in the following change, but still).
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-On 7/9/2025 10:49 PM, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Wednesday, June 11, 2025 12:27 AM
->>
->> Provide an interface for Virtual Machine Monitor like OpenVMM and its
->> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
->> Expose devices and support IOCTLs for features like VTL creation,
->> VTL0 memory management, context switch, making hypercalls,
->> mapping VTL0 address space to VTL2 userspace, getting new VMBus
->> messages and channel events in VTL2 etc.
->>
-> 
-> I know it has been 4 weeks since you posted this patch, but I'm just
-> now getting around to reviewing it. :-(
-> 
-> I've reviewed most of it reasonably carefully, but there are some
-> parts, such as entering/exiting VTLs that I don't know the details of,
-> and so just glossed over.
-> 
-
-Thanks Michael for your review comments. ARM64, sev-SNP support, along
-with other features are in pipeline, and will be taken up once we have a
-working driver in, for x86. I'll address your comments and make the
-required changes in coming days.
-
-Regards,
-Naman
-
-<snip>
 
