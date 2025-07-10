@@ -1,186 +1,99 @@
-Return-Path: <linux-kernel+bounces-726249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E7BB00A0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:40:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0E9B00A0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14C511C4770C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6A6B5A7129
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFF92F0C76;
-	Thu, 10 Jul 2025 17:39:58 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9BD12B71;
-	Thu, 10 Jul 2025 17:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDC62EFDAA;
+	Thu, 10 Jul 2025 17:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JeSzlV3b"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F06264FB3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752169198; cv=none; b=gywaG/irCr++GVtMe5wdQ/MefCmPpC3WytXwc0y5E1/tDW7UVEGqNMyE1oNhkCAMhbWYwIMmGO0VK130s8TGrQJ+yh1TCLp3YFN/e6IkKcDw/ISPjR/9NgjbkRcXaAxRJ3y9znNl6QcsrWnq7CNrUIoAyvwXRJae1kicpirRC8A=
+	t=1752169253; cv=none; b=Ihkn1/QK+W2e8EKVqq8HpkTLX03mrhNeR6cGexDPiwcMjcKqTLxuR109u7wZ7PY5qX4LkJtbaqGjDfHgILncaBLlidIHK78OkMZEAAGIANEOiMpbnHPsSpUFhK+UqPcWmHPEqI1kppu0BMSOQe3GyLQVUkQsTnCqUQUuON+OC8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752169198; c=relaxed/simple;
-	bh=RSxWcKNTwFXrVX5CebJk5177Z4CdLNW1KEpXWN+IGhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pcO4krrsC81kNFSn+K13OQRLKuNojyYh+ZCcX5hIAk2hnA6PH0382jLbUEOAFHvSgcQpxI23O4rt1+JFwLQWkmuSxfL9eFY86HhBpEh40OuBeWbngJ1q33vb5XU3oydKjYvLleXkpqXs06FTjvpi7doadX+4izapa2Ed3PROWR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost [127.0.0.1])
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 56AHdJKS508082;
-	Thu, 10 Jul 2025 12:39:19 -0500
-Received: (from segher@localhost)
-	by gate.crashing.org (8.18.1/8.18.1/Submit) id 56AHdDIB508074;
-	Thu, 10 Jul 2025 12:39:13 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Thu, 10 Jul 2025 12:39:13 -0500
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Thomas Huth <thuth@redhat.com>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Replace the obsolete address of the FSF
-Message-ID: <aG_6wcivy5-0oiyB@gate>
-References: <20250710121657.169969-1-thuth@redhat.com>
+	s=arc-20240116; t=1752169253; c=relaxed/simple;
+	bh=L857CHlhsuSTW0TQ7rB6RRCcVIwDIbTqeg3ypLKG03U=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=n2MShsWJpsvaV5JB5CddD2w1v8XGgb85CvUmaIxKmwKh1tuF4dGJohybHk3Ndl/DI+AAkbmb4Z8UzksLXWaGT9zSLfLBWMxbmO2Q8PvGPoljBc36e3yD/Q/7Cs09DoR1R763ajIZEwNwDrSkkQnQ5TsEUZlkSv9NCJEO8YUp6U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JeSzlV3b; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <1019ee40-e7df-43a9-ae3f-ad3172e5bf3e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752169249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n+ATdybQuRHQN8pHe9yiY9p1Aahzgdi9W0V+GBopZ7g=;
+	b=JeSzlV3bGL7GVxrL5W/GIoU8aHFdnOtC0RpkYg+LYzCk+cSKcIzUJ7Ym3K9jqEkO1gsxrK
+	8j0Z3HBn4MAWYgTYOquf/JPtD8lWZSveIs3YbtA7HtJ065fl77er4AJlZv1f7YFR30sGpZ
+	VzZ+w3FRt1ZZZrodbUuJiIp0RL530VY=
+Date: Thu, 10 Jul 2025 13:40:33 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710121657.169969-1-thuth@redhat.com>
+Subject: Re: [PATCH net] net: phy: Don't register LEDs for genphy
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+ Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+ "David S . Miller" <davem@davemloft.net>,
+ Florian Fainelli <f.fainelli@gmail.com>, Eric Dumazet <edumazet@google.com>,
+ Christian Marangi <ansuelsmth@gmail.com>
+References: <20250707195803.666097-1-sean.anderson@linux.dev>
+ <20250707163219.64c99f4d@kernel.org>
+ <3aae1c17-2ce8-4229-a397-a8a25cc58fe9@linux.dev>
+Content-Language: en-US
+In-Reply-To: <3aae1c17-2ce8-4229-a397-a8a25cc58fe9@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jul 10, 2025 at 02:16:57PM +0200, Thomas Huth wrote:
-> From: Thomas Huth <thuth@redhat.com>
+Hi Jakub,
+
+On 7/8/25 11:52, Sean Anderson wrote:
+> On 7/7/25 19:32, Jakub Kicinski wrote:
+>> On Mon,  7 Jul 2025 15:58:03 -0400 Sean Anderson wrote:
+>>> -	if (IS_ENABLED(CONFIG_PHYLIB_LEDS))
+>>> +	if (IS_ENABLED(CONFIG_PHYLIB_LEDS) && !phy_driver_is_genphy(phydev) &&
+>>> +	    !phy_driver_is_genphy_10g(phydev))
+>> 
+>> Breaks build for smaller configs:
+>> 
+>> drivers/net/phy/phy_device.c: In function ‘phy_probe’:
+>> drivers/net/phy/phy_device.c:3506:14: error: implicit declaration of function ‘phy_driver_is_genphy_10g’; did you mean ‘phy_driver_is_genphy’? [-Werror=implicit-function-declaration]
+>>  3506 |             !phy_driver_is_genphy_10g(phydev))
+>>       |              ^~~~~~~~~~~~~~~~~~~~~~~~
+>>       |              phy_driver_is_genphy
 > 
-> The FSF does not reside in the Franklin street anymore. Let's update
-> the address with the link to their website, as suggested in the latest
-> revision of the GPL-2.0 license.
-> (See https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt for example)
-
-That looks good, this is indeed the newer GPLv2 text.
-
-Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
-
-> diff --git a/arch/powerpc/boot/crtsavres.S b/arch/powerpc/boot/crtsavres.S
-Segher
-
-
-> index 085fb2b9a8b89..a710a49a5dbca 100644
-> --- a/arch/powerpc/boot/crtsavres.S
-> +++ b/arch/powerpc/boot/crtsavres.S
-> @@ -26,9 +26,8 @@
->   * General Public License for more details.
->   *
->   * You should have received a copy of the GNU General Public License
-> - * along with this program; see the file COPYING.  If not, write to
-> - * the Free Software Foundation, 51 Franklin Street, Fifth Floor,
-> - * Boston, MA 02110-1301, USA.
-> + * along with this program; see the file COPYING.  If not, see
-> + * <https://www.gnu.org/licenses/>.
->   *
->   *    As a special exception, if you link this library with files
->   *    compiled with GCC to produce an executable, this does not cause
-> diff --git a/arch/powerpc/include/uapi/asm/eeh.h b/arch/powerpc/include/uapi/asm/eeh.h
-> index 28186071fafc4..4a117cc475299 100644
-> --- a/arch/powerpc/include/uapi/asm/eeh.h
-> +++ b/arch/powerpc/include/uapi/asm/eeh.h
-> @@ -9,9 +9,8 @@
->   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->   * GNU General Public License for more details.
->   *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-> + * You should have received a copy of the GNU General Public License along
-> + * with this program; if not, see <https://www.gnu.org/licenses/>.
->   *
->   * Copyright IBM Corp. 2015
->   *
-> diff --git a/arch/powerpc/include/uapi/asm/kvm.h b/arch/powerpc/include/uapi/asm/kvm.h
-> index eaeda001784eb..75c1d7a48ad52 100644
-> --- a/arch/powerpc/include/uapi/asm/kvm.h
-> +++ b/arch/powerpc/include/uapi/asm/kvm.h
-> @@ -9,9 +9,8 @@
->   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->   * GNU General Public License for more details.
->   *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-> + * You should have received a copy of the GNU General Public License along
-> + * with this program; if not, see <https://www.gnu.org/licenses/>.
->   *
->   * Copyright IBM Corp. 2007
->   *
-> diff --git a/arch/powerpc/include/uapi/asm/kvm_para.h b/arch/powerpc/include/uapi/asm/kvm_para.h
-> index a809b1b44ddfe..66d1e17e427a6 100644
-> --- a/arch/powerpc/include/uapi/asm/kvm_para.h
-> +++ b/arch/powerpc/include/uapi/asm/kvm_para.h
-> @@ -9,9 +9,8 @@
->   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->   * GNU General Public License for more details.
->   *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-> + * You should have received a copy of the GNU General Public License along
-> + * with this program; if not, see <https://www.gnu.org/licenses/>.
->   *
->   * Copyright IBM Corp. 2008
->   *
-> diff --git a/arch/powerpc/include/uapi/asm/ps3fb.h b/arch/powerpc/include/uapi/asm/ps3fb.h
-> index fd7e3a0d35d57..af6322042b3b0 100644
-> --- a/arch/powerpc/include/uapi/asm/ps3fb.h
-> +++ b/arch/powerpc/include/uapi/asm/ps3fb.h
-> @@ -13,8 +13,7 @@
->   * General Public License for more details.
->   *
->   * You should have received a copy of the GNU General Public License along
-> - * with this program; if not, write to the Free Software Foundation, Inc.,
-> - * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-> + * with this program; if not, see <https://www.gnu.org/licenses/>.
->   */
->  
->  #ifndef _ASM_POWERPC_PS3FB_H_
-> diff --git a/arch/powerpc/lib/crtsavres.S b/arch/powerpc/lib/crtsavres.S
-> index 8967903c15e99..c7e58b6614169 100644
-> --- a/arch/powerpc/lib/crtsavres.S
-> +++ b/arch/powerpc/lib/crtsavres.S
-> @@ -27,9 +27,8 @@
->   * General Public License for more details.
->   *
->   * You should have received a copy of the GNU General Public License
-> - * along with this program; see the file COPYING.  If not, write to
-> - * the Free Software Foundation, 51 Franklin Street, Fifth Floor,
-> - * Boston, MA 02110-1301, USA.
-> + * along with this program; see the file COPYING.  If not, see
-> + * <https://www.gnu.org/licenses/>.
->   *
->   *    As a special exception, if you link this library with files
->   *    compiled with GCC to produce an executable, this does not cause
-> diff --git a/arch/powerpc/xmon/ppc.h b/arch/powerpc/xmon/ppc.h
-> index 1d98b8dd134ef..270097f6e905b 100644
-> --- a/arch/powerpc/xmon/ppc.h
-> +++ b/arch/powerpc/xmon/ppc.h
-> @@ -15,8 +15,9 @@ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
->  the GNU General Public License for more details.
->  
->  You should have received a copy of the GNU General Public License
-> -along with this file; see the file COPYING.  If not, write to the Free
-> -Software Foundation, 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.  */
-> +along with this file; see the file COPYING.  If not, see
-> +<https://www.gnu.org/licenses/>.
-> +*/
->  
->  #ifndef PPC_H
->  #define PPC_H
-> -- 
-> 2.50.0
+> This is due to
+> https://github.com/linux-netdev/testing/commit/42ed7f7e94da01391d3519ffb5747698d2be0a67
+> which is not in net/main yet.
 > 
+> --Sean
+
+I see this is marked "Changes Requested" in patchwork. However, I don't
+believe that I need to change anything until the above commit is merged
+into net/main. Will you be merging that commit? Or should I just resend
+without changes?
+
+--Sean
 
