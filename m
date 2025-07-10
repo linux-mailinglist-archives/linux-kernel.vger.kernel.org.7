@@ -1,257 +1,200 @@
-Return-Path: <linux-kernel+bounces-725616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD62B00187
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:21:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A9DFB0018A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EA981C860FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:21:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E85F7A706B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A1C2505A9;
-	Thu, 10 Jul 2025 12:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DEA251792;
+	Thu, 10 Jul 2025 12:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ODhVC2ek"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="TVZm5gQx"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436691EA73;
-	Thu, 10 Jul 2025 12:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752150057; cv=fail; b=AUD8i1lNZS0pnn4kP7RCoPNep0iUNMhjtit0y2nSRdlmSU0NWCjKc0SWWbGyLI8VcHl2hSqmHZXNrxInH8PaTjMLOtaJBOA8By4kRYW6NMpl8Rob5mX7lVvvFF1isMbmnxFaVEpHFgutOK8XwYSqmyn8miOrMKb9yKKxBH6++sw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752150057; c=relaxed/simple;
-	bh=Y4P1o06zBF07gw2drmXtGfqjh7Pd/8Z2iyarVC3p2Os=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=h4tnEn9cnSbJpsq9cy99b7EEtRZYGW1zxEdoaFUcJtKNCG0R5+PlTC7QXVsNuOGqL6leyfGILs8TB0H+JJ4c80aH6KCfJ2VIIH1VogyUU08joG9AmZHBchwToIErC2wMZk8FB+vmDdHlrnMH+iFA3B96He47mchPxCsEPFdqIFY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ODhVC2ek; arc=fail smtp.client-ip=40.107.93.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j7rcXXe7vLeCagdXEA8U6MCx/xKIKQIZzXZsQzrTSvlKNMem5SiwM/hQDRLrCiN5rex0emtsIgaPUiz/+9u3EUjsjo7eJbVmQhbRL0mqSkXhaFDzqIP0YIynvt9f0DOoCh0ChFl8Q6MXhNsNH9m+MIEsT2LG9YzW897LNisMHCS7p7yVJHQvwgPk7cG3PaxSNua6aAcbuCCOpsjOIHgHSXDa1duCGY4TT8Xj5sNnd+t3xeSWdWINN7frQggb/iPKsN2Ftfe66NGrH7+vftXgOoms1amHoKTPl4ar7/ddF/R9Dg0lfwfx5uH0CnOT5zvWRjaS9nFDFJNFd0KZSE3cFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LnqPJB+CS3vJz4lfh1I/OEL8Ub7CdaAjueemAsyt0Gw=;
- b=t/hyTY4DBKFCOs00T6a+pr7MeYf/3TvDcBoCDgnkW8/18H+nYYqK+FMdKKhrPsc7j51Q/Ns4MweLaF0FnM0u52YcE0RZajFykyJaf/GLyvPJn/DmQ0GwokEmyirMy2jf3MGVRLUQSj23qYfvwQVvqXtasSPJBFZ7ezE02STnMXWkCAp4Ju3TB9P466b+Y8m2HiuFXTeJXyYv7zGb1sVrnD/tWDvCP28qRA5DrZpjGxMp2NZPv918zTTD67Ms5OJd2EvjFkXb5SQ152zFVos9vcSg4wRxTBdIBIm6ipf96OVv8aZZGiPy9psMtd28IbrYL8tp2hx4NXKN1NIffoNv1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LnqPJB+CS3vJz4lfh1I/OEL8Ub7CdaAjueemAsyt0Gw=;
- b=ODhVC2ek0DaDAG5m8iIQCpqA059z0dgW0h3mj7Rcsgoz8/46fe94joydMeBdCau1UnCvK1l7673jSWhcu0f40Wu19Rwqk+yA2gfMj7KpgpepPE+nd4UkyKddV19x9dQzCGZWuD+qZG4HpwdBmf3ElA0U3cpneHBUQbCxfc4vsCw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by MN0PR12MB6149.namprd12.prod.outlook.com (2603:10b6:208:3c7::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Thu, 10 Jul
- 2025 12:20:49 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
- 12:20:49 +0000
-Message-ID: <da71b812-6ac8-4abd-82d6-4cfc6a168146@amd.com>
-Date: Thu, 10 Jul 2025 14:20:41 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] drm/amdgpu: do not resume device in thaw for
- normal hibernation
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Samuel Zhang <guoqing.zhang@amd.com>, alexander.deucher@amd.com,
- rafael@kernel.org, len.brown@intel.com, pavel@kernel.org,
- gregkh@linuxfoundation.org, dakr@kernel.org, airlied@gmail.com,
- simona@ffwll.ch, ray.huang@amd.com, matthew.auld@intel.com,
- matthew.brost@intel.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de
-Cc: lijo.lazar@amd.com, victor.zhao@amd.com, haijun.chang@amd.com,
- Qing.Ma@amd.com, Owen.Zhang2@amd.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-References: <20250710062313.3226149-1-guoqing.zhang@amd.com>
- <20250710062313.3226149-6-guoqing.zhang@amd.com>
- <b9bb9865-8bf4-4d9a-9bfd-945d38a7698a@amd.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <b9bb9865-8bf4-4d9a-9bfd-945d38a7698a@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BL0PR0102CA0071.prod.exchangelabs.com
- (2603:10b6:208:25::48) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFE3238C10
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752150094; cv=none; b=eqTAzylPmXflXDu2qjG/sehCEi6FhgpSWscQRcEm+lz2vC/ZkkM2vbe8U+PQ7BL/531fW1CA5gi0SipXGeSALpccyCkWoT71dR02LTzU5uiqdZWlbV9AiF5E7Gn/XsJlpCUAb/Y9wEX5tSIMCVBJZawgDSojsEa1qgub48GW+dc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752150094; c=relaxed/simple;
+	bh=k0sNT1J2hfShDmZMd5oQVwbeYhLtHhM5ZG7gUd/6Xi8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mGfPAUpKqcF8ocRxDJFrxGbQrREzLHmJQiL4mbFVM1LDeekfdtoh7hlj0OfaEQdof+tF9BLaWqUmG+J1oW/aG+h3NNyOgJwjQGbwczj5pVC1DYtXlkNbxmNObfwijCaxfhrmvJcPpKUMTwwK32UxIbJLpwHQ65wBMG2EXS6Z+Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=TVZm5gQx; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7d098f7bd77so100241285a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:21:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1752150090; x=1752754890; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ykmA4VtBEf4m3I9yh9SrcV1DzXur6jCxtcYH7LJI2a0=;
+        b=TVZm5gQxrpO8ojdSj9b2qpj/96miCnlP5hdzKOIlCrEmtIVUDCrg6pOFfWr10rkN/7
+         u1/FAYp58ehb8jpY1Ox9ZzORmWcUuUeLut7Zurrn22kfVTFxuGLWWtPC/jCaaYNodJU1
+         yk15VfY/vUMajOUj7sSP6Khql5FVD/+oQmRdILunMMAH8qPQlWTOGQ1XY5MG/QMc+LyU
+         JwIDzq/SYo+4pZ4xiGyBB7+7/24M3t1uR82qqZjAS3PdymLBqXtJsofQmoEs19T3HjIG
+         3bjg0rdl4vRnVyv80/UFhWtagPqGSd9Zuimg3PRvlyIS8wkNrGFnSnOmo6PSQ/GjQtq8
+         zjGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752150090; x=1752754890;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ykmA4VtBEf4m3I9yh9SrcV1DzXur6jCxtcYH7LJI2a0=;
+        b=pUKYr0F/SjSK/M3J0Z5T8Lqx/MNZqo8ByVqT2SMmWT/uwhGT5cgG+9LL17MqN8urCU
+         q19PSndGoK/y0Es17lRH3auSYeUyPdECBvMB3oYS4LFCOMR4jvTi31ksxZ0jBj+fWmlH
+         DAqT+mDqgFRq3MxI7D7Brylygs70Mj2jBJ4HcTr2sEpSorQh4S6IMiDtbdRwveXygTEN
+         hoc727FAtgbOQlyDFBDZee6pot58i9G9KeY8cxYOx9KR0DYxra9IXh8vhYxTC0THeZfT
+         jTtkUjH1OUHRBA8myngXjtBQCNyGtmTeDhouKG6bcWoxBonDJ2gHR0P0RqpfCDVBScbD
+         4PmA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4llXg4sK42hVm4nklMv1uzsxPqhvkSOOOZAXPSN4EAXiS7Udl+5AaHFTw8+uGolTydyXh/4OAbwDrRsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB8F4TZc1tK12mhBkk+XiQ26Gz3YniEPWXQvRhCzpGwbn7pBWO
+	WvnwKXD/Iupua9b7EBTx4G2x8hwQpkIyOpYppHLHYwbj0sOLc+ybfOzlBiwmBQ1xiOw=
+X-Gm-Gg: ASbGnctCnnE8hMnkT2tQqYm1pAyCVes9e5H6guqBwCNvy8WGIR/H7FVyJuqOI88jGFj
+	DbPMff6jb5Cjxb4ZmL0/q/OI8xzmEIYe+ShnIG8LCbR12XC48VuJ8YSJl/QqItBo+r2uxVxuunA
+	hbalu1tFtoso4B+zhEjRaAug67TLwPMeQZ7Yd4n52hYnijyW5RAb2fIJbuEOSRXAMFCXQ53kh7y
+	FzuqdYJ0fYwUVhgfKO7I/WXbAk+T9ls9uZll+ZfnTUkVssvL4kkMSRK7GBLZ+HescopUbS9sSlU
+	G5flNclMLqj41055RkOb02cwUYHMfcyjz9CLDsqeXhcHFaZ7c0ZZyyBoneXYxduXkM6Truy2yRU
+	NkPY8f6/TEhrI+J4DG/Qgj14wDg==
+X-Google-Smtp-Source: AGHT+IHAaGLj0dorD8TmmT+oXd6EpUTGrwAVYRSrLza6IYfI1rY0XCuwxUpREHQ/PIg/XOc23Vol9Q==
+X-Received: by 2002:a05:620a:4408:b0:7d3:d8c8:1e32 with SMTP id af79cd13be357-7dc977d8fe3mr492098085a.3.1752150089600;
+        Thu, 10 Jul 2025 05:21:29 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcde8fd479sm90171685a.99.2025.07.10.05.21.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 05:21:29 -0700 (PDT)
+Message-ID: <f68067fd-328d-496a-8b39-9d0cc6cd05d7@riscstar.com>
+Date: Thu, 10 Jul 2025 07:21:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MN0PR12MB6149:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4700a2d-53c9-449e-8f72-08ddbfac348b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ekZSaUlVTkYwbzZua1F6UXdlWXNZWXpJVTE3OEJrMzJ5aHo5OUtLS29zci9v?=
- =?utf-8?B?TVJSNjEzMktBT050VzlUaDRhQU5hUDJxVHIwMktVbmhKMGZubzdlclBqcHgw?=
- =?utf-8?B?dmducVplMlNQWmdTbGRrZ0VnMHlYVFIrM3MwczVESStUdzdXTHVkSy9sQ0Mv?=
- =?utf-8?B?bkNjSFVWeWpTUklqMUUvck4xZTc0V1UzeGVqTk9vZzRRREhGV0IzNmN3UG5X?=
- =?utf-8?B?VUJCNlNXMWJjdTVPck1MNmRDd1pPUDBlSU1yRS9iVFdUd0E1b3FEZkx5L2Rq?=
- =?utf-8?B?N05qVVFwd3gwQVdGWE9HWWhhK25MaVA4bTBvR2tiWXlmaTNiWnFYSHBPWUt6?=
- =?utf-8?B?K29jRmZDaE8rcTRDZk9aT1lJUFA3MGhWQ0l0RHhFS1BxdjlWOVRxejlCV2VH?=
- =?utf-8?B?RGVMc0lvY0ZSMWhmME1BSkhtZytPejBwcGRwL0NwVVpNSmhsbHJXTlYweHZS?=
- =?utf-8?B?RmtPaVpaRnhjWStvU2V4YXNBSG9BTjZ2VFdxNWVudDhlRlhObXEwWmNDc2ty?=
- =?utf-8?B?MWk2NmZ3Y1JuOVR0VlE0eTdvL29WT2VVdEJZMnlQdjVUUWRPOFJiUzUrQjIv?=
- =?utf-8?B?MXlqQUwrYWsxUHlVTTNxREtWQjhFaFFmTVMrbjQyL2t1UUJKQTVaTGIwQUNa?=
- =?utf-8?B?LzBSTnliaU5vMGJ5UnRzUjQvOStySkZnSHFiTHJaWmpaaytOdjB3anpBTjdX?=
- =?utf-8?B?UERQN1AyRDR4T0YyUjh6bE1xWkUyU25DbWlaZ3lmQWFDQ0IzNU9mZGdMOFVN?=
- =?utf-8?B?dE1oNjkvRmgyV2hLS0JiSElVc1hlaTJqcEpWK1MzTmVHa015dW5IRjhqdGlp?=
- =?utf-8?B?MlBoZFQ4Zy9DUE9Meno1UnhZKzZhWUlmZ2NXK3hSWVkyblpYSHFMMzZlU081?=
- =?utf-8?B?a0ZpYVFJK0FnRWdQclQ5bkNVQUY1YkRmSGM4YWRBS253NzNuZDZJOEJQYVl4?=
- =?utf-8?B?OUFDSjZ0ZWlzRkFlNGdBTDQ4SDVpbWx4K2Q2WUExZ2Jpb2NGQlZRQnljdFI3?=
- =?utf-8?B?STJYQkRmMkthTlVwYTdqbGZOTGtFbDhlcVU0cWl4a0x4WlBvalZ5UDE2U3ZR?=
- =?utf-8?B?NDNvZVBKVUh2WFFnNURSTHg1QmdtK2t3WXB1RGJBOFBDRlhGL09RWlpZc0lD?=
- =?utf-8?B?aVhwTFpMc0hiZ2JoWldnc0RxNlA3cENmc2kweGNJd2N3U0hwK1pqSWZMV0Zi?=
- =?utf-8?B?alkyYS9wNTNZcVQxclVyM1JwdUFNY3VMdXkwTWFsYkthNHJZdnRtUXQ4aVhY?=
- =?utf-8?B?aFBvVGVpQjJya3B2SnZZaDZnSksrZ1J3NHRkTTBCeUJaQnFIWjFubTFUSHFK?=
- =?utf-8?B?bkxqVlpHQkltOVhGbXRVUlg4TEYxVFNJekpJam1CRjJVelNKVmQ4ODRFK2FP?=
- =?utf-8?B?M1NGb2pDQUJ0aUhMWHFBbFZKZkZnUmJ0b082NkNoRkFZK0IxeFlMRW9UblNy?=
- =?utf-8?B?bnY2WC9JajltdHp2d244RFQ4ZnRRQ0t2VVJwV2lZeFp3NWVDVmZlOGNMcE11?=
- =?utf-8?B?akxCK1BKYmJrK0tpYWM1Y2VkVm9FdVRNT2hudkwwSzBmVmdKdXFnVkVXbHJo?=
- =?utf-8?B?b0dieHp4RGlBMElMMmhydnhiRS9uZldEdlh0Y2xwK0NjT1FCVEQ0Y3c2QmJG?=
- =?utf-8?B?cnRHeVhPeHM5TGUxQ1NnQkxBaTk0U1NvTDlkRVRqT0tsbWhlZ00rUjNQeDkv?=
- =?utf-8?B?OTdhZW1FN0ZRWkI5K0FvOXdQQ2doYk1vS3F3eW9rdnhEZE42TEZYUlg2MmFa?=
- =?utf-8?B?NmJXcTJZcXl2eVVRQTVoZFRDbis2T0R1eDROTHFvNDBiVUxMamRvMUt1dlJn?=
- =?utf-8?B?MjhkT1Njak9TSUFXRURNMTg0TWFRQmt0L3llbU1pcENUOXlPeGNMV0h2K25E?=
- =?utf-8?B?NXM1TmxKNEwwV0dTKzNZUnBTNzRMVXhDcVAwUTBmSEZJc29Wei9yWmM2c2ov?=
- =?utf-8?B?alJjRW1wYStraU9SSk5ya3Ztb0R4akxqQS9CYVJlelRpdHY2UW0wNFBmK0Rm?=
- =?utf-8?B?WmNwbVJTMVJRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RlNBZ0owNUovOHhGbVFneWZHSm1Ec05tbDdLQnM5V2kyQVpGMElScm1welp4?=
- =?utf-8?B?YTZ3MHNaeFVHSE5SakM1UjFzSDJOVWg2bTYwdnRwYVRSc0JyZk5vUzZKaGR4?=
- =?utf-8?B?QktqL0VWd1dQck5WTXpJRjZSUHlCTkl6bmpLQXRSZDV2dWg3OGZkQ29TbVht?=
- =?utf-8?B?UjRaUFJEbFkxR25XaE1Mb3ZEVWRJdG5DQmhCeXEzQ1dDTnZvZVV3ZEtMSklS?=
- =?utf-8?B?UXhYdzNaQlhIM2FjNExMNVc3aGJ4Y1NKSzZFMVhjZ1Y1VytkMVUweW9wSGdx?=
- =?utf-8?B?OUd5WkJDQlZqNWpSeUNGSU5qM00yeUZlcXNLOFRFOGNpaXJEQytGemcxaGNo?=
- =?utf-8?B?U3lVQlVIQkJoMzBGM3BWOHlabjRKbVlTUTRrYlRxelJOUXBLRGhnWm1mcmNp?=
- =?utf-8?B?Y1NFSm1wYUlMV2FsODFpeldaZXlxUkZybU8xUUt6MFZCcm9aV2NJa0ttclNy?=
- =?utf-8?B?WUlWa1h1MHg1WEhyWkVjNnN6UllIRGZtSXZEcEQyMEgwcEovZjZPSS9qU0o0?=
- =?utf-8?B?NDRSS1k5T2p2MUlyeVF2cWwyK3pLcUorbTZ2dWIzZlQzUlVDV1VHTjlUa3hW?=
- =?utf-8?B?ZS9aYVJvY3NTZU1xbTRUK29aSEZxaGRDRWoybXZtZ2VRNS81Nk8yb1ZHT3NW?=
- =?utf-8?B?Z1J4RU9BTFd6dm1iSWZPVGlSK25HRGRwZ2liSUJNK0JqTE5tMEFlcXgydlp0?=
- =?utf-8?B?R0EwYkZMUmZrUHdsUWwyQTZWUnFwM3ZHVkd3blNidnBVTHAwMUVLdVdDYW96?=
- =?utf-8?B?aUt0YVJuU05vNkl4ZFNDOHpCVTl1bXhzc0pxWjVmTVk1WkNpSTBjQTBoN0FJ?=
- =?utf-8?B?cVB2WnBkdVpBMXFYQmVUUXRLZEVKaHNTTnlsL3dpcFRrMWFacWxPbUIzaHlP?=
- =?utf-8?B?NUJlQWNIbEpsUEJoSGlZa0JDREs0alI1bXhucFBtU01teS9RUGViNXNsUlc2?=
- =?utf-8?B?UkNzeWw3cjIxbjdnNXJtRTlwcmIrOGtaYTN6R2lIeW1tOGpHNVhsWXhEYTBi?=
- =?utf-8?B?TUQxWFcvQXFFbkhlWk4vbno4TmVZQ0lqcVNUNXF4SVNWc01odlZIK0JVZkor?=
- =?utf-8?B?RHJoSVhKV1E0Ym4rc1EveHZlRy9UaGttQUxnbG94VFBQNy9jZlVuSnQ3Ti9Z?=
- =?utf-8?B?US90RXBDRGFWNlNLTkpxUXljZ0k2S25Jc2x2c2tnRkkwaGduSHBzcVlNYUls?=
- =?utf-8?B?MVlHY0pxdnA5M3J1NnBqZXYzMWFyRDhoUTNzemZ2RlNCbkJzUThhZTJ1dUo5?=
- =?utf-8?B?c1BLWnZMV3BFakVoR2xOTTdTaWN5ZS9hZXZRZ245OGVseDJTeGVVazBQK3VN?=
- =?utf-8?B?dDJlWmdmNFBSYkpTaUMrOHJVSDBiZm80NHhwelJYWS8xNmYvbUU3ZzdSWnYv?=
- =?utf-8?B?aVBSa3l5bkVZeHd5ZVJJUVozclBQKyt2NkY2THpEUkF1VmNwNmNDcjkwR25l?=
- =?utf-8?B?UE83ZVRDQU5CbDhNWVdYdysyRGNnaFk2OXgyRDVVYWlUMDJ5b1hOemc2U0FI?=
- =?utf-8?B?cGhRcEVmc0hISWZpSnliejFWMzhmME9pODYzUFZyY2F6MTl1d1h6RG1tRVNx?=
- =?utf-8?B?L1loelVoNzZDcUtsUmlJak04bkc1VVhQaVpqMVZWVXFSeDhqM3R5QktxQ21r?=
- =?utf-8?B?U09nZzhMVmcrbWQxR05QeWFBQmFkdXhSR0tjTmRzZ2dNR0gyMm01V3VFd0hR?=
- =?utf-8?B?YTBpZG9iRG9EWTFiM1hER3daaVBEakVNWXUrY0Z6d3RYZ3NNNC80eTlWNlA0?=
- =?utf-8?B?bXltd3F1NTU5enNuc3FMaGo1eVNCL3IybDNub2lTWTZiN2MxVXBXa2Izd3Rp?=
- =?utf-8?B?bkc3aUNKZ1c0T1psU0JnNVR1ZGRuR1cyZzZWU2RhVGRMZXBEZ3Z6enB2ZkM3?=
- =?utf-8?B?THBVV1pRSDJiUUh4Wm9idTFmRG1Oazl0bThETlVvY2N4WTVYdVlqdGFRS2l3?=
- =?utf-8?B?dUp1SFg1L3NEOWR6R3NlZFdGcXIrd3VyZEkzcFBUSTg4d0s3dWZNMjdvczVV?=
- =?utf-8?B?VitFbUxkQWFVMWQvalkraWxzOWxZcCtSMFlzWXg4SlRnbHlvZk1kbDNHZFMw?=
- =?utf-8?B?SjF0bzY4SzY1QWI5d1VENUVNbWZyQk9BSHFRUFQ1Ylc2NGFBeEhFOWltTW5Y?=
- =?utf-8?Q?V7yY=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4700a2d-53c9-449e-8f72-08ddbfac348b
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 12:20:49.4785
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XpW/quKmJRuDzHxFO5YE6eX2mOMsXGDYn8GaI5owdk0zOm96S4VKlmlQQKAfejGr
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6149
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/8] mfd: simple-mfd-i2c: specify max_register
+To: Lee Jones <lee@kernel.org>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, alexandre.belloni@bootlin.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mat.jonczyk@o2.pl,
+ dlan@gentoo.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, troymitchell988@gmail.com,
+ guodong@riscstar.com, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250702213658.545163-1-elder@riscstar.com>
+ <20250702213658.545163-3-elder@riscstar.com>
+ <20250710092448.GA1431498@google.com>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20250710092448.GA1431498@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10.07.25 14:13, Mario Limonciello wrote:
-> On 7/10/2025 2:23 AM, Samuel Zhang wrote:
->> For normal hibernation, GPU do not need to be resumed in thaw since it is
->> not involved in writing the hibernation image. Skip resume in this case
->> can reduce the hibernation time.
->>
->> On VM with 8 * 192GB VRAM dGPUs, 98% VRAM usage and 1.7TB system memory,
->> this can save 50 minutes.
->>
->> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
->> Tested-by: Mario Limonciello <mario.limonciello@amd.com>
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-
-I think we now have reviews and acks for all patches, don't we?
-
-What was the conclusion on how this should go upstream? Through drm-misc-next?
-
-I've seen that you asked Mario, but I think I missed the response.
-
-Regards,
-Christian.
-
+On 7/10/25 4:24 AM, Lee Jones wrote:
+> On Wed, 02 Jul 2025, Alex Elder wrote:
 > 
->> ---
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 17 +++++++++++++++++
->>   1 file changed, 17 insertions(+)
+>> All devices supported by simple MFD use the same 8-bit register
+>> 8-bit value regmap configuration.  There is an option available
+>> for a device to specify a custom configuration, but no existing
+>> device uses it.
 >>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
->> index 1c54b2e5a225..021defca9b61 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
->> @@ -2541,6 +2541,10 @@ amdgpu_pci_shutdown(struct pci_dev *pdev)
->>       if (amdgpu_ras_intr_triggered())
->>           return;
->>   +    /* device maybe not resumed here, return immediately in this case */
->> +    if (adev->in_s4 && adev->in_suspend)
->> +        return;
+>> Rather than specify a "full" regmap configuration to use this
+>> option, Lee Jones suggested allowing just the max_register value
+>> to be specified in the simple_mfd_data structure.
+>>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> Suggested-by: Lee Jones <lee@kernel.org>
+>> ---
+>> v2: - Allow max_register *and* regmap_config to be supplied
+>>
+>>   drivers/mfd/simple-mfd-i2c.c | 15 ++++++++++++---
+>>   drivers/mfd/simple-mfd-i2c.h |  1 +
+>>   2 files changed, 13 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
+>> index 22159913bea03..3f959f4f98261 100644
+>> --- a/drivers/mfd/simple-mfd-i2c.c
+>> +++ b/drivers/mfd/simple-mfd-i2c.c
+>> @@ -33,16 +33,25 @@ static int simple_mfd_i2c_probe(struct i2c_client *i2c)
+>>   {
+>>   	const struct simple_mfd_data *simple_mfd_data;
+>>   	const struct regmap_config *regmap_config;
+> 
+>> +	struct regmap_config config;
+> 
+> Why do we need another regmap_config?
+> 
+> Can't we just remove the const and make use of the one above?
+
+If we change the global one, it changes for all users.
+
+In my next version I will modify the global one temporarily and
+zero the max_register field again after the devm_regmap_init_i2c()
+call.  That doesn't protect against concurrent probes but I don't
+think that's a problem.
+
+>>   	struct regmap *regmap;
+>>   	int ret;
+>>   
+>>   	simple_mfd_data = device_get_match_data(&i2c->dev);
+>>   
+>>   	/* If no regmap_config is specified, use the default 8reg and 8val bits */
+>> -	if (!simple_mfd_data || !simple_mfd_data->regmap_config)
+>> +	if (simple_mfd_data) {
+>> +		if (simple_mfd_data->regmap_config)
+>> +			config = *simple_mfd_data->regmap_config;
+> 
+> 			regmap_config = simple_mfd_data->regmap_config;
+> 
+>> +		else
+>> +			config = regmap_config_8r_8v;
+> 
+> 			regmap_config = &regmap_config_8r_8v;
 >> +
->>       /* if we are running in a VM, make sure the device
->>        * torn down properly on reboot/shutdown.
->>        * unfortunately we can't detect certain
->> @@ -2557,6 +2561,10 @@ static int amdgpu_pmops_prepare(struct device *dev)
->>       struct drm_device *drm_dev = dev_get_drvdata(dev);
->>       struct amdgpu_device *adev = drm_to_adev(drm_dev);
->>   +    /* device maybe not resumed here, return immediately in this case */
->> +    if (adev->in_s4 && adev->in_suspend)
->> +        return 0;
->> +
->>       /* Return a positive number here so
->>        * DPM_FLAG_SMART_SUSPEND works properly
->>        */
->> @@ -2655,12 +2663,21 @@ static int amdgpu_pmops_thaw(struct device *dev)
->>   {
->>       struct drm_device *drm_dev = dev_get_drvdata(dev);
->>   +    /* do not resume device if it's normal hibernation */
->> +    if (!pm_hibernate_is_recovering())
->> +        return 0;
->> +
->>       return amdgpu_device_resume(drm_dev, true);
->>   }
->>     static int amdgpu_pmops_poweroff(struct device *dev)
->>   {
->>       struct drm_device *drm_dev = dev_get_drvdata(dev);
->> +    struct amdgpu_device *adev = drm_to_adev(drm_dev);
->> +
->> +    /* device maybe not resumed here, return immediately in this case */
->> +    if (adev->in_s4 && adev->in_suspend)
->> +        return 0;
->>         return amdgpu_device_suspend(drm_dev, true);
->>   }
+>> +		if (simple_mfd_data->max_register)
+>> +			config.max_register = simple_mfd_data->max_register;
+>> +		regmap_config = &config;
+>> +	} else {
+>>   		regmap_config = &regmap_config_8r_8v;
+> 
+> I suspect we don't need to have this line twice.
+> 
+> Either re-jig the if () above (I suspect this explains the existing
+> complexity [multiple conditions]) or pre-set regmap_config to
+> regmap_config_8r_8v and only over-write it if the conditions are met.
+
+Sure, that would work, but it won't be needed if I just use
+the (non-const) global config.
+
+Thanks for the review.
+
+					-Alex
+		
+> 
+>> -	else -		regmap_config = simple_mfd_data->regmap_config;
+>> +	}
+>>   
+>>   	regmap = devm_regmap_init_i2c(i2c, regmap_config); if
+>>   	(IS_ERR(regmap)) diff --git a/drivers/mfd/simple-mfd-i2c.h
+>>   	b/drivers/mfd/simple-mfd-i2c.h index
+>>   	7cb2bdd347d97..706b6f53155ff 100644 ---
+>>   	a/drivers/mfd/simple-mfd-i2c.h +++
+>>   	b/drivers/mfd/simple-mfd-i2c.h @@ -27,6 +27,7 @@ struct
+>>   	simple_mfd_data { const struct regmap_config *regmap_config;
+>>   	const struct mfd_cell *mfd_cell; size_t mfd_cell_size; +
+>>   	unsigned int max_register; };
+>>   
+>>   #endif /* __MFD_SIMPLE_MFD_I2C_H */ -- 2.45.2
+>>
 > 
 
 
