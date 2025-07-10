@@ -1,126 +1,139 @@
-Return-Path: <linux-kernel+bounces-725545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82DC0B00091
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:29:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62158B00094
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C61A43B43D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155573BD6FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B212D97A6;
-	Thu, 10 Jul 2025 11:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBF72E719E;
+	Thu, 10 Jul 2025 11:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Gxx2HqAt"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P08AaATd"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BAA944F;
-	Thu, 10 Jul 2025 11:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8042E54DC;
+	Thu, 10 Jul 2025 11:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752146980; cv=none; b=pdA38mMZvsNzvBDamEzXL1wivcbywY3xy3aBLCGBugPhgvml825oN5U4UhlNSfBIz60ZTdcG2nmCk0Vo7JLbvhtqZUiGqAjRHq15CcycpEpLVM6TLMW2IXogWRgru8740OaSmeIzEuk8cFRsb6uGAzRTJPXd74VDmlVoXU7z4Nc=
+	t=1752146982; cv=none; b=QYNk7mKq21zZ8kz+FOaLMZY2Sm5VayX3GOPsF2/8/Se84+auBsxmdkErs13VA/R6CPUfYy1XesySQs+7rB4rm2FwLRXc4DhDAl+imHKPTsIcPITi0HpD4PwuUX5IDnwKujLGw7dUINJ6DD7MrGAhCyR8bKvz0RTCEP9hyXjcALo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752146980; c=relaxed/simple;
-	bh=sDvvwgksakgq1MqUj25WTBeUoKn2iNnomLd7Pz5rxXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bjiNxanqA5WPz3gf2Z7zaUFJe9r6vilsQpPJYBRSEWJQYmDoSu6/9qGuiKIPiMH1rBCNesshekBRvic9E5meaVLq3P28a3YsA7CFgSL1JUjLQpabt+lJgSQcgvKyzlZOpV4btaH49Ud+zn6RnfmTmOYajvg9a3x21zWqjHPL544=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Gxx2HqAt; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6369D40E020E;
-	Thu, 10 Jul 2025 11:29:33 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id A2zW3RKcDLpp; Thu, 10 Jul 2025 11:29:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752146969; bh=rz8G5mq5LEqN6TYjqrNYUDOCAUTijX5k1pmbJpMz6Wo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gxx2HqAt2d7wKhrw8qlXYmeSAXd4/gkw6ItvVB03Muzq83pesnZBOdnMprWCPwYjG
-	 k1qNqreeCMZPLMvlku5bg0vHS6JPw1K/RcsAv6r7QV+LVYH/banXQ1/Y16aluIvtM6
-	 Z4ptd4CYVBDSX0l5TNYKaZUAD3RqKb98oW8ydzRLCujZhjLiDDlQgnI38UO5cYzih2
-	 qQEc9XoPyXo877fkwmIehL3nQLAVmYrBqpfILk8KAtNtUPSATeKmK53rwi4kGjOkQb
-	 YizHosSyl5WrCqmzxO2wk5FUU64gctO1lGcJXaAX5zU25vANQiM/hTdii11QBdKu8u
-	 enBHAoJF4MqUS26CNU5lKoZVNLRC2wmssH+KSS1frBS5a6GhTnpGblW4n2RR/VwhnN
-	 8WL+5MacS2wpFxXg0Y0OkAT9nCydML3orMjTV5rxmJYoT7zgDlZ14VSByU/E2YwvVe
-	 bWb/GlHW2r7Go8gU2Y5N4VJcumPFXCbOKyLJp++e9m5lyE+UjAR2IiTMmS/tJWWfLT
-	 xD5Zez9BWA5eQNUOfwgeC2o7rjnUoxEcTC+WKiynpeHRpLkFxDv74wiS7HuoKUA7O2
-	 OYXszMq9ZMg1t/sCUDsTzf+VddiNxtHp3NorcXff1rsF3je1SBOCsqgeirdXDeJ4tW
-	 heQxpPz7qMMsD8sr7S4nGtHM=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 79A2D40E0169;
-	Thu, 10 Jul 2025 11:29:08 +0000 (UTC)
-Date: Thu, 10 Jul 2025 13:29:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Kai Huang <kai.huang@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	Zheyun Shen <szy0127@sjtu.edu.cn>,
-	Mingwei Zhang <mizhang@google.com>,
-	Francesco Lavra <francescolavra.fl@gmail.com>
-Subject: Re: [PATCH v3 3/8] x86, lib: Add WBNOINVD helper functions
-Message-ID: <20250710112902.GCaG-j_l-K6LYRzZsb@fat_crate.local>
-References: <20250522233733.3176144-1-seanjc@google.com>
- <20250522233733.3176144-4-seanjc@google.com>
+	s=arc-20240116; t=1752146982; c=relaxed/simple;
+	bh=1wRUfKLHMLJ/xThNbPZABu1cA92Qh9NzVsJ/HIX/17w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nUljW3tpowNiQnLeMnIlsphj2q9dT15z6BgSTmkuVGmOp5PuUXV0Zljgr4TXN+gjJe+umYiBBwmnojrvsmIkkgUz1W9pAMCxSJzsBD+vmBCjHD5pLNc9UME+AM9QqmAu03guGez4ViKaxgBIQyk33IIimBYT7+vYXVPZVCze62I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P08AaATd; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-74b56b1d301so547608b3a.1;
+        Thu, 10 Jul 2025 04:29:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752146980; x=1752751780; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1wRUfKLHMLJ/xThNbPZABu1cA92Qh9NzVsJ/HIX/17w=;
+        b=P08AaATdMjsAqrLAyX8VRw5Pamj3/z9qdsKa/kkgXscM5ryYBtxgspYpAW9CYGWo21
+         VfqPdBbSXM94OpO/qaKAAFUa7U8UFxRWjPwx5M8Zr/zMOJGMjFOx8JYN/WMqdqbVMueR
+         ONf+ZnYyCunsqJ3yru2lJbmr23lUBNq3uvdCALjAlRWvrBZBeXvnOxLNP3Uz3cjMgVWq
+         C/RKvcNVxn+TMK9wSFCxqKi7D9bkmqMsA+TpiJ0UdLPb7OCrQZ6Go6Xz1yYaMedFDeqt
+         aT9FxFUqUKXDpSV406twHGG+NuraaW9rZZ6lj9410yuJ//xlBY/leG6yy1sljGAJOKXi
+         86pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752146980; x=1752751780;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1wRUfKLHMLJ/xThNbPZABu1cA92Qh9NzVsJ/HIX/17w=;
+        b=OSrTP9+JeAisMV1wVUuXOI2elxdSYEOz1/5A7+LwMH7Q5q/oSvlD6kjKjd44IdjAHs
+         3XHHJnmnQ94CsKWonAwHdzz803cdBVg81TWMUQNZajtzBqt/T+54JR42T+ahpXDghtA9
+         kP8Rit6VcLvh/h+oZPbJ3HsDopMtjjvYneRzvdPqTeh+ujCOXwuRl1HeLS4zzFQ6t/0t
+         X7XunePki30SXP9yN79yqgrFi1GbhxrvvvIjd/m+Yp57OV1WL9uksNo+RXftCh1FlHC/
+         8RzWo3rdOeh43MlcavbiJA+BZnwfMdDH4rTcfa+9RCvVwJJQRN5hGX6hCmwPI30fTUY0
+         zE4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXKaaP3R7S4aEfR6fCrnzkO/m+5Q6kDFFSq5Dfc1pmlPf/JXJZLkqryVbBzExFF2PiLP/NqeCgY2PkcsQ=@vger.kernel.org, AJvYcCVlbxDcgm1dilfDvVOLvJSy83Nr1ipltUIcx5dyGPrCjAK1DW7NRp/A2gYmlZkx9QU8aMdt4I7smbHy7EzBKpqd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOulsvO6V5IKch00gznJDwDcjclxWRwjl4V6NJivxVCSfyu/oY
+	OqOcmcYfUZCvV4qNdxZlm70nmfbBVcUnxoygt7V3XKfqQoSEcfqh4Rpz
+X-Gm-Gg: ASbGncuQCzYDcgpwu7sh0xMLFHmhNk+NGOHBzmukGBvaTcLem8b7aJfS+gfaI+/+iYG
+	39PrsCDn+cAMxZqWrXhye5a7pofbloEzybuQ1scAMZW6Hg5jD7xemmRvGvYQKQniC4x6kGL/b7O
+	4H8Af26ULkxMAFRUp2GOMweNZYfkwEXcytC9PsCF3AL3SYc8Zu3QhFoeN/QfckLZWYef0zna+h4
+	GsMpfskhQoSeez68vsWkJmjY3dvXEWFhmOkc5jBOKJNil7clunPld7QzHcqsKAvkitoC6W5JT/H
+	MQIkP1k5PxPKwNtoHnahZrRhlqmH1YPRAaPHq1YwCuYAfqpSy5jbO563ornOX8KtbvB2mwDdx37
+	y+m4fnEwfa0qj
+X-Google-Smtp-Source: AGHT+IFxV6gpgXR4PTTjJdDViWyN/3ClUAf7M7XUCAc2HAa7pFkG9CEcToebbqq8Fzny54N1yfBPEQ==
+X-Received: by 2002:a05:6a00:2e9e:b0:742:aecc:c472 with SMTP id d2e1a72fcca58-74eb8e854bamr3513500b3a.2.1752146980485;
+        Thu, 10 Jul 2025 04:29:40 -0700 (PDT)
+Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f99d37sm1901629b3a.178.2025.07.10.04.29.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 04:29:40 -0700 (PDT)
+From: wang lian <lianux.mm@gmail.com>
+To: lorenzo.stoakes@oracle.com
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	brauner@kernel.org,
+	david@redhat.com,
+	gkwang@linx-info.com,
+	jannh@google.com,
+	lianux.mm@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	p1ucky0923@gmail.com,
+	ryncsn@gmail.com,
+	sj@kernel.org,
+	vbabka@suse.cz,
+	zijing.zhang@proton.me,
+	ziy@nvidia.com
+Subject: Re: [PATCH v3] selftests/mm: add process_madvise() tests
+Date: Thu, 10 Jul 2025 19:29:25 +0800
+Message-ID: <20250710112925.60437-1-lianux.mm@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <9aa51324-10b7-4bd0-9d83-5722d1ea0628@lucifer.local>
+References: <9aa51324-10b7-4bd0-9d83-5722d1ea0628@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250522233733.3176144-4-seanjc@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 22, 2025 at 04:37:27PM -0700, Sean Christopherson wrote:
-> diff --git a/arch/x86/lib/cache-smp.c b/arch/x86/lib/cache-smp.c
-> index 079c3f3cd32c..1789db5d8825 100644
-> --- a/arch/x86/lib/cache-smp.c
-> +++ b/arch/x86/lib/cache-smp.c
-> @@ -19,3 +19,14 @@ void wbinvd_on_all_cpus(void)
->  	on_each_cpu(__wbinvd, NULL, 1);
->  }
->  EXPORT_SYMBOL(wbinvd_on_all_cpus);
-> +
-> +static void __wbnoinvd(void *dummy)
-> +{
-> +	wbnoinvd();
-> +}
-> +
-> +void wbnoinvd_on_all_cpus(void)
-> +{
-> +	on_each_cpu(__wbnoinvd, NULL, 1);
-> +}
-> +EXPORT_SYMBOL(wbnoinvd_on_all_cpus);
+Hi Lorenzo,
 
-If there's no particular reason for the non-GPL export besides being
-consistent with the rest - yes, I did the change for wbinvd_on_all_cpus() but
-that was loooong time ago - I'd simply make this export _GPL.
+On <Date of Lorenzo's email>, Lorenzo Stoakes wrote:
+> Hi Wang,
+>
+> Please try to include the context of what you're replying to in your
+> messages, reading the above I have to _just remember_ what Zi said, and I'm
+> old so that's hard now ;)
+>
+> Please note that mm tests _must_ work without make headers_install being
+> run.
+>
+> Your test must not rely upon those.
 
-Thx.
+Thank you for the clear feedback and for pointing out these important rules.
 
--- 
-Regards/Gruss,
-    Boris.
+You're absolutely right about including the context in my replies. My
+apologies for the inconvenience this caused. SeongJae Park recently
+recommended `hackmail` to me, and I am learning to use it to format
+my emails correctly for the mailing list. I will be sure to get this
+right going forward.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
+As this is one of my first contributions, your patience and clear
+guidance, along with the help from everyone on the list, have been
+incredibly encouraging. I have learned a great deal through this
+process, and it has genuinely deepened my passion for this work.
+
+Thanks again for all your help.
+
+Best regards,
+Wang Lian
 
