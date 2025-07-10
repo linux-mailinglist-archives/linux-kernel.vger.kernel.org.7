@@ -1,238 +1,191 @@
-Return-Path: <linux-kernel+bounces-724797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190D2AFF708
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:48:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E90AFF70B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D9FF4A74D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88F3B5423DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DFE27FB37;
-	Thu, 10 Jul 2025 02:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BFE280339;
+	Thu, 10 Jul 2025 02:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YFJYK5XA"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010047.outbound.protection.outlook.com [52.101.84.47])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZnmLeDy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C813D1FDD;
-	Thu, 10 Jul 2025 02:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752115707; cv=fail; b=Yns1JhMBe4aNV7DOcoudqpe0l9Dd2gg08esPzdZg3n9Cs/uNli6u/hYXEJtKLx80+qUiu1C07yMB56VUGPocJ0bHT/Gbx2I0s7DWFHNHl6YzzksnjMiwxUvAJqdioVuAMgX4B6dMOD1pI4kyDi0r6vua5RtvyHD7PqTU4O2tkKU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752115707; c=relaxed/simple;
-	bh=6SeoQGvVnVHD4+ahJ6FznSX+E10d7bRyJeEdu66Iudo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Q/UAH4rtB0qCkIu8vs5pJDunz00HGXK5qlcnpUqe93rIt7ryD+ptLGUE/WkeF5NoJHHl5YEK9K45XELczlcfKB/42MFC0rimi41CdN2SoLIXeEhGgVenjZ7qcBLvoUDBavXWgeG3pXxmdnD+nQQccJILwqcRRq/+ySpN5yMGZgw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YFJYK5XA; arc=fail smtp.client-ip=52.101.84.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pnIdvCN0A2mw6MuNWQIPW7xR9oIWvaeh/EUQJ6/sWMAhSiYaBBsnZtvPiAMt2zMo8WQuD62XZ1fhexgFTDXufqP4FoGmxNFvViVNXMBsDHMaSEXrHl/4E1mwwWuM9CRSiHAraP/dzhSv8qWkYiiwj3QbXRfJuWVqgBWAYJSL3cq6YYQIkpVVRGNOqRtprWv6WzpcsGMwA9rpUliksaHCho0aYhATu+m+SBW3UH/n2olGHi8wPFvksrVkY8iPtNHllWBTIsUGTVwXNE1pIVQWH8ua3I3rbRfd+uRIeRqPIt55OLoGylSBUHSdsPKYe3z1/X/VTXZgPQWXiOjwLksn8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B2IEFx7lb3L0njPu7B1u7iI7YrMg8UIeTKMQ7itbG6s=;
- b=cen0pa0ZiVCN07nECFsqGrkpiMqhgyG1BrI+zdXt1nbgBG1vZh86LldDvfO4IhprgcOtG0HHxDNGo4AZiQHJhgLj7EKK1xs9khskRrcmqHC+4/l62SUeafR3z+zkeFFuY8H2uPf8ZRH0ynIIVEoiA328pqK8P2BC5xrpU84oMRQto0yM+Nt/Ig5O5UmN9v0/l5+pCiRVvm+WKVNagKPr3L+zIeQZdAoDMvLiq1wQKvtZEl2NCiFQnHt3aQewYZroOesV0hb2LFf16bnsgGJyrnOyjtR4UPZr0m/J2pzuI1wmWmqN5ryZlUjzUi5VRwWjYPRMmdG9b906/+dHKANWQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B2IEFx7lb3L0njPu7B1u7iI7YrMg8UIeTKMQ7itbG6s=;
- b=YFJYK5XAx7TKVAVfM+R4fBWsKyQEhDSUZl3wyjJ2kQnLBhN5WqZuCChoYtr/GzTGhd0n10PjQe0cmQBZKia+e3GmHXy2GPEW6fep8uN2Id0v/5OjIsHeISSlGVJRUUcnJn/vnjfSOAH21i51qYWXdDg6xXcYEU2zJvcDhgKzKz+CHvfwCcRyuq+0Jlhtq+IzmY4fepLYbYw1wXkqpfXmCaxYrOj0s8tShiFxHVUhOoKfYd9u05XvfYRspIazJi9qardcTJ/g3H6NgAYcd5cfOiyZ/+1+pmQe7Q5OIkEVOIXl0yR8C5v4KUgc9K53CnsKLi/5NBksALPiupjnvVHuww==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS4PR04MB9713.eurprd04.prod.outlook.com (2603:10a6:20b:4f7::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Thu, 10 Jul
- 2025 02:48:21 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8901.023; Thu, 10 Jul 2025
- 02:48:20 +0000
-Date: Wed, 9 Jul 2025 22:48:15 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: mirela.rabulea@nxp.com, mchehab@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
-Cc: imx@lists.linux.dev, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, ming.qian@nxp.com
-Subject: Re: [PATCH RESEND 2/2] arm64: dts: imx95: add jpeg encode and decode
- nodes
-Message-ID: <aG8p71A4/ntuOde+@lizhi-Precision-Tower-5810>
-References: <20250521-95_jpeg-v1-0-392de5d29672@nxp.com>
- <20250521173444.310641-2-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250521173444.310641-2-Frank.Li@nxp.com>
-X-ClientProxiedBy: AS4P189CA0045.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:5dd::17) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CFA3208;
+	Thu, 10 Jul 2025 02:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752115713; cv=none; b=thB5VsVsyTmJAu1WikZdhl1D9MSctsVolKcGtb26t9N+oz7qMXoRxphoW8zv2X6GKCHg1lkg2qXUGIxuLIAW3xzn/dJi3Dpayb+VKUYPxHvfXTTB/dLWXUDo6F0uwUriXnxVemUZX3QSwgTYqIh/fDwLO31TWwHklO+hUUTzmLU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752115713; c=relaxed/simple;
+	bh=KFeH759S2pXUEgcinWQTZzWHu8P8w4ivkJjMDXMeyRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tFP1pZQpJ9AJzI1Zgvqc/Ygwq1ZDQkH3qRvh+8Az3xfwK3EWeW8Jk+bZ4Q6azI/mvFAf8iJxYZtd43SjaWAfqJgd+rOC4PsFyi0HSWEW6Zk42rIHpp+YuuX1/HswzotuGxkKtYG7MWR6dGTv0pm2xwqGFldFFyyn5MyEmDPt3dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZnmLeDy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ED4FC4CEEF;
+	Thu, 10 Jul 2025 02:48:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752115713;
+	bh=KFeH759S2pXUEgcinWQTZzWHu8P8w4ivkJjMDXMeyRQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eZnmLeDy6ISGhj7UxlzL16OXqtnL01sGVlHeOdJlX0OUfb3Vl8JDoi+of/VZywuuh
+	 eA4l+ydES65zs59icoEwIzPa0icurtsUfqRKSm2KuAQf2xF50qR1eN/ev+xt8F9ahJ
+	 9Tsdl+GS29Mv8zVA5i3qb+rp8NWC/cIrbyTvxNs4kJrgFOQYHyYlV4SOxwj8fJV6JA
+	 1kWMJWb04PLyDr7aXahB9NBtLgwR/0ZATlmtNEeG4wc8ntomD0LFS0HspaM9qWAbIJ
+	 9LG7P2Yc+Kp9urBgAuRLebi8OzTHKhyzcYGQ0sHY6uyue/LSIDpH95D6k3zmsTx0we
+	 opt3OmQtc3uZg==
+Date: Thu, 10 Jul 2025 04:48:23 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-mm@kvack.org, linux-hardening@vger.kernel.org
+Cc: Alejandro Colomar <alx@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Michal Hocko <mhocko@suse.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [RFC v4 2/7] stacktrace, stackdepot: Add sprintf_end()-like variants
+ of functions
+Message-ID: <894d02b08056c59b5acb79af73a1a698d56016f5.1752113247.git.alx@kernel.org>
+X-Mailer: git-send-email 2.50.0
+References: <cover.1751823326.git.alx@kernel.org>
+ <cover.1752113247.git.alx@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS4PR04MB9713:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4a155aa-6989-4eeb-97b9-08ddbf5c3b1e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|19092799006|7416014|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hJHFFX+qR1/nFFTOnKs8cA360Wdr1foGgRqjPkJI6dXLT+IiGzOcGA0WvhDV?=
- =?us-ascii?Q?keWlsyurDtkXaHaelR4gYDgGtHhF2oaXVtmi6wPGEFh+wZM0jx+3NF9CzPIw?=
- =?us-ascii?Q?AXNNmCxr8Y3y8ntghNae2LxzJK5YeGknow0htU2ukAsW65QwiU2EmlF4kUEP?=
- =?us-ascii?Q?WpyZuk5yN6146pWyyLvjEj+bosZddYhk3n/F6GV3jDXdSv4Le7x6xQipuX4s?=
- =?us-ascii?Q?y9S7ZmMJMS6MBl8ixH97/MTTtIB36plynK4+FnbQs/JDpSdLtVjLqo2ZQ45E?=
- =?us-ascii?Q?UFAMXY9sPkboZL5F4nV+Ri7h04CkLOp7jg0lY7e0p/KXezUSXCPTxx8cbhL4?=
- =?us-ascii?Q?4vUoyb2stZJ3TWwDPDmzL6t9RcZHOlVrSlfrz9OmCG2Z/tKFcE/0IR33I7mC?=
- =?us-ascii?Q?ed1KgO/gku0+IlqrtVlvD2oTiAF7MJeeQjXnfZicdMabA9hXPvoVRpO7ThJS?=
- =?us-ascii?Q?M/aPRFyAd4YTX4jjxxHnJPDvNwg6BKn09n0HtDY8qZDslM9fyF9PnYiiIfUj?=
- =?us-ascii?Q?/c8lvqXy+ZKBewx2LPZLhalQGfuwgfYqhtof724d+su/kZiDUdMkztazzc8n?=
- =?us-ascii?Q?/Kmqw3rc8BEq+L9pqJwjPKeWKzYr/sKuFSmhvnIJCX1c95RqFMpv0Hvv/oIj?=
- =?us-ascii?Q?qkIKxpZHYs2MADz0QB1ZG/UljqLGj25GUdA+c6vLN1+wAtXxKRWuU1zRyQML?=
- =?us-ascii?Q?03B2i+usin2uHC3RQcgdj2A1wl3/AO3Iu3ZY8zWbxQjCq8JeZ7kv8Jyo0wrB?=
- =?us-ascii?Q?cJeMr4nZmeWeSq+DdinDdS+eowXa+RfY0mPkEE2SM9cYSB7r1NPxcx9k8lho?=
- =?us-ascii?Q?MahysJHbpNCKoNiyFvtSg139d4l8HndH+QzsVtwhSmRz6uZwB0x7bn5UwCnS?=
- =?us-ascii?Q?SJHocBl6pw8zvtFPSm+F7/R0hdaUe4tqodu8eVH7y6oOGUfmvkxDpOstmvGd?=
- =?us-ascii?Q?6uPbjOC4II3pcKoEgEVdMBKtnHj5/TevWTVNkxnZfyYm59F22AE1l2znDVXZ?=
- =?us-ascii?Q?KAPByXVU/9Q86VhBfVXqeSVEv4DUzLHEn9fwllJlHIhg/nPC5j8etuLzUoZr?=
- =?us-ascii?Q?VnBLwztAf7wHFBAf9l0WAUcfqOPzZUguu3EvBF88lQpeR8IxaJPAxaQkQFq8?=
- =?us-ascii?Q?hMufG7Rwxi9rjfrTaFP58cxKJVHnolYQ1dOWfsgHwfR1IdOpE5ce3gep0SWg?=
- =?us-ascii?Q?uZE79i+2j7aOwMcmzWxcCEoKbeNcX1XmIWKndLZRGeRKfua6PmkWVO8RNrAt?=
- =?us-ascii?Q?3wrabUmCjkELfxt7m2Av+dGG84GbjfgZPLL+D4aykwmZFZ0MQmQfZjzkcrRL?=
- =?us-ascii?Q?Sy8WPBBra5/mXCcgJVnbudcL82gwaihICKmFMllcyYQFB3SwM7CkpEbZLfTE?=
- =?us-ascii?Q?3jJUwNWryvPsMA99ss2g171hmjjIBkr7NZ+jL+m/Q2rxN7p/welae/uf73n3?=
- =?us-ascii?Q?E6GqxMhVL3Q3NeGT+5NPlHxlAnhypgQXGbszB3TRUzeD6rZRyLedeQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ErjEYqja3w3nuqLiGCtK6nBAIfhnxQBNtE3xkDnvBPhmZe3qsYgLUm9FRQQ/?=
- =?us-ascii?Q?H/v88spq2fIMMEd6kFG/zhax1JWNNAJmk6Ha88LGEe5l8FRIL/TSwS0GxQOq?=
- =?us-ascii?Q?vVGJV9w5tSpoMMdRjskV6bm3+AuPm4k6X0DNrXhiyeoqigQlm6dKaTRlJLuh?=
- =?us-ascii?Q?H8pZKynRI63JZ3XOJRE6jL3Jq/E+vX8vuCDUSnZ06HCUT+WeioFtz6J/Ru7p?=
- =?us-ascii?Q?Jw6toru3fq0H0G50z+7jJuw0OI8RPYKd+jak23HNRSNWuNDpKq9c2mR2+3eq?=
- =?us-ascii?Q?moad/jyL/UgsYR2WoI1KhANyi8IPUdxHIBpORDgC4wiH583pIpxWjqRTLXyA?=
- =?us-ascii?Q?rMTRywmkXFcy5oBytgYppKWT1RqCMoABSqwo1FxqAK9XOuPFXkerWv/J5uBJ?=
- =?us-ascii?Q?LzbAdc9KHqhSugOXLR0jh5+eW1bUcwUOhLsJ9UNcT/Son6Le9qM/XbAhWpHn?=
- =?us-ascii?Q?iq2vb8gVHlGIbJ7WW9o5cOcHzQyoYxPnjeP/PALtx0Atjahp7WdwdvNdroId?=
- =?us-ascii?Q?TGum8hwK72XmZ1oVJXPnRDCg/46s7/KU5gP9dDcYYF5d0wXZKje5XicYLQZZ?=
- =?us-ascii?Q?yHHWVe9TpaSVVCAHnqAosj6iQp5m/nfDCv/8chxxIOU2wQj4khVaxt9zBEff?=
- =?us-ascii?Q?mIHe9uEhZJWiWpPyvZKuAN6hJk6+x2pRiKzNC0ED58CQrpNkiF3CqcYgBqzL?=
- =?us-ascii?Q?uDcORQW/U1dxDkUCdQUl7Cp3up/udHvc5OYbS+/bCiRsDKEqWx78O6eZ2Pbf?=
- =?us-ascii?Q?YfFVcYyOxVog2j5xNfgHf3vRMqGXm66voUfo9TOriofdiZTxj2w/azALuSCy?=
- =?us-ascii?Q?WZiCPsM+kElOLO9n3fnteew2kK7DvzB0p1uqxVUE0JWbtZBXcuUHp2liQ0VW?=
- =?us-ascii?Q?xwdukR5W0bjdMRlu63zjFgQ8w2vbqv/Br8+hubOQRetr0ts9fCRCurlHMfh5?=
- =?us-ascii?Q?v0Qj0v45g+09rPv7GWL2XkETYxyQYGlosIi70Ad+ERvHhZjgrwKEhsZEwXBI?=
- =?us-ascii?Q?XyLPHGQD6ZmoMzr+TidYkOBLEjNffxQN8cgWsQ7J+tovYtC6KHRMALX0jrIm?=
- =?us-ascii?Q?DHuHniKrpvRgFFO3CMbYAn7SUtdMcp4wPBIhv4xeebRMnW86wpI0uecgLu7P?=
- =?us-ascii?Q?8L0BK7e8gIUxb83vIfv3lpu3+w1Msc8UM5A7ixves4B4TaanERmmqUWt5Pjg?=
- =?us-ascii?Q?RSRlu1KNSGIwQ60uzY2SZxM2Ov+D6OCglTBR7e1dFxBZqxkCPrY9f5bp1kU3?=
- =?us-ascii?Q?IkMGU3OUmIF6aiJlVR/ocYgG7o2jsMUTsVh47D7p6wWWHYt1ABRbtp2vtBvt?=
- =?us-ascii?Q?dHEHYxVF5HDugZyHjvROQA7Ik9BmimReMmvxyfTLIZjBboiHeO0wu5SQzJNP?=
- =?us-ascii?Q?qsXAhDZQA7VWLgTVXd5tRdMzwMk57/I5VbwT4vioR1HbCss223JGcTsQ4c3L?=
- =?us-ascii?Q?mDPHvhn8tGd+7F2VU/0CqDf9iTCD/xH90lFmUkld071pul06oNMfa4FD0pPE?=
- =?us-ascii?Q?Kl7Lh6EkBL2He85vv51p+OMF0KWl10D4rNIIp+evsP+Avix225BK0mqX52R1?=
- =?us-ascii?Q?CeUh7gNFFDWvhJXse1o=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4a155aa-6989-4eeb-97b9-08ddbf5c3b1e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 02:48:20.8814
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: czaNB6iD1GG7vEVYC++O2gVp5UA89GqLlicQ/3U30F9b5GlJC38AXudsEEminv/xWQkvVI7TWyB8O2ZObZqFfQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9713
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cover.1752113247.git.alx@kernel.org>
 
-On Wed, May 21, 2025 at 01:34:04PM -0400, Frank Li wrote:
-> Add jpeg encode\decode and related nodes for i.MX95.
+Cc: Kees Cook <kees@kernel.org>
+Cc: Christopher Bazley <chris.bazley.wg14@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Marco Elver <elver@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Alejandro Colomar <alx@kernel.org>
+---
+ include/linux/stackdepot.h | 13 +++++++++++++
+ include/linux/stacktrace.h |  3 +++
+ kernel/stacktrace.c        | 28 ++++++++++++++++++++++++++++
+ lib/stackdepot.c           | 13 +++++++++++++
+ 4 files changed, 57 insertions(+)
 
-shawn:
-	can you help check this?
+diff --git a/include/linux/stackdepot.h b/include/linux/stackdepot.h
+index 2cc21ffcdaf9..76182e874f67 100644
+--- a/include/linux/stackdepot.h
++++ b/include/linux/stackdepot.h
+@@ -219,6 +219,19 @@ void stack_depot_print(depot_stack_handle_t stack);
+ int stack_depot_snprint(depot_stack_handle_t handle, char *buf, size_t size,
+ 		       int spaces);
+ 
++/**
++ * stack_depot_sprint_end - Print a stack trace from stack depot into a buffer
++ *
++ * @handle:	Stack depot handle returned from stack_depot_save()
++ * @p:		Pointer to the print buffer
++ * @end:	Pointer to one past the last element in the buffer
++ * @spaces:	Number of leading spaces to print
++ *
++ * Return:	Pointer to trailing '\0'; or NULL on truncation
++ */
++char *stack_depot_sprint_end(depot_stack_handle_t handle, char *p,
++                             const char end[0], int spaces);
++
+ /**
+  * stack_depot_put - Drop a reference to a stack trace from stack depot
+  *
+diff --git a/include/linux/stacktrace.h b/include/linux/stacktrace.h
+index 97455880ac41..79ada795d479 100644
+--- a/include/linux/stacktrace.h
++++ b/include/linux/stacktrace.h
+@@ -67,6 +67,9 @@ void stack_trace_print(const unsigned long *trace, unsigned int nr_entries,
+ 		       int spaces);
+ int stack_trace_snprint(char *buf, size_t size, const unsigned long *entries,
+ 			unsigned int nr_entries, int spaces);
++char *stack_trace_sprint_end(char *p, const char end[0],
++			     const unsigned long *entries,
++			     unsigned int nr_entries, int spaces);
+ unsigned int stack_trace_save(unsigned long *store, unsigned int size,
+ 			      unsigned int skipnr);
+ unsigned int stack_trace_save_tsk(struct task_struct *task,
+diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
+index afb3c116da91..f389647d8e44 100644
+--- a/kernel/stacktrace.c
++++ b/kernel/stacktrace.c
+@@ -70,6 +70,34 @@ int stack_trace_snprint(char *buf, size_t size, const unsigned long *entries,
+ }
+ EXPORT_SYMBOL_GPL(stack_trace_snprint);
+ 
++/**
++ * stack_trace_sprint_end - Print the entries in the stack trace into a buffer
++ * @p:		Pointer to the print buffer
++ * @end:	Pointer to one past the last element in the buffer
++ * @entries:	Pointer to storage array
++ * @nr_entries:	Number of entries in the storage array
++ * @spaces:	Number of leading spaces to print
++ *
++ * Return: Pointer to the trailing '\0'; or NULL on truncation.
++ */
++char *stack_trace_sprint_end(char *p, const char end[0],
++			  const unsigned long *entries, unsigned int nr_entries,
++			  int spaces)
++{
++	unsigned int i;
++
++	if (WARN_ON(!entries))
++		return 0;
++
++	for (i = 0; i < nr_entries; i++) {
++		p = sprintf_end(p, end, "%*c%pS\n", 1 + spaces, ' ',
++			     (void *)entries[i]);
++	}
++
++	return p;
++}
++EXPORT_SYMBOL_GPL(stack_trace_sprint_end);
++
+ #ifdef CONFIG_ARCH_STACKWALK
+ 
+ struct stacktrace_cookie {
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index 73d7b50924ef..48e5c0ff37e8 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -771,6 +771,19 @@ int stack_depot_snprint(depot_stack_handle_t handle, char *buf, size_t size,
+ }
+ EXPORT_SYMBOL_GPL(stack_depot_snprint);
+ 
++char *stack_depot_sprint_end(depot_stack_handle_t handle, char *p,
++			     const char end[0], int spaces)
++{
++	unsigned long *entries;
++	unsigned int nr_entries;
++
++	nr_entries = stack_depot_fetch(handle, &entries);
++	return nr_entries ?
++		stack_trace_sprint_end(p, end, entries, nr_entries, spaces)
++		: sprintf_end(p, end, "");
++}
++EXPORT_SYMBOL_GPL(stack_depot_sprint_end);
++
+ depot_stack_handle_t __must_check stack_depot_set_extra_bits(
+ 			depot_stack_handle_t handle, unsigned int extra_bits)
+ {
+-- 
+2.50.0
 
-Frank
-
->
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/imx95.dtsi | 44 ++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
-> index 632631a291122..d38bbe8b16d7e 100644
-> --- a/arch/arm64/boot/dts/freescale/imx95.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
-> @@ -3,6 +3,7 @@
->   * Copyright 2024 NXP
->   */
->
-> +#include <dt-bindings/clock/nxp,imx95-clock.h>
->  #include <dt-bindings/dma/fsl-edma.h>
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/input/input.h>
-> @@ -1801,6 +1802,49 @@ pcie1_ep: pcie-ep@4c380000 {
->  			status = "disabled";
->  		};
->
-> +		vpu_blk_ctrl: clock-controller@4c410000 {
-> +			compatible = "nxp,imx95-vpu-csr", "syscon";
-> +			reg = <0x0 0x4c410000 0x0 0x10000>;
-> +			#clock-cells = <1>;
-> +			clocks = <&scmi_clk IMX95_CLK_VPUAPB>;
-> +			power-domains = <&scmi_devpd IMX95_PD_VPU>;
-> +			assigned-clocks = <&scmi_clk IMX95_CLK_VPUAPB>,
-> +					  <&scmi_clk IMX95_CLK_VPU>,
-> +					  <&scmi_clk IMX95_CLK_VPUJPEG>;
-> +			assigned-clock-parents = <&scmi_clk IMX95_CLK_SYSPLL1_PFD1_DIV2>,
-> +						 <&scmi_clk IMX95_CLK_SYSPLL1_PFD2>,
-> +						 <&scmi_clk IMX95_CLK_SYSPLL1_PFD0>;
-> +			assigned-clock-rates = <133333333>, <667000000>, <500000000>;
-> +		};
-> +
-> +		jpegdec: jpegdec@4c500000 {
-> +			compatible = "nxp,imx95-jpgdec", "nxp,imx8qxp-jpgdec";
-> +			reg = <0x0 0x4C500000 0x0 0x00050000>;
-> +			interrupts = <GIC_SPI 295 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 296 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 298 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&scmi_clk IMX95_CLK_VPU>,
-> +				 <&vpu_blk_ctrl IMX95_CLK_VPUBLK_JPEG_DEC>;
-> +			assigned-clocks = <&vpu_blk_ctrl IMX95_CLK_VPUBLK_JPEG_DEC>;
-> +			assigned-clock-parents = <&scmi_clk IMX95_CLK_VPUJPEG>;
-> +			power-domains = <&scmi_devpd IMX95_PD_VPU>;
-> +		};
-> +
-> +		jpegenc: jpegenc@4c550000 {
-> +			compatible = "nxp,imx95-jpgenc", "nxp,imx8qxp-jpgenc";
-> +			reg = <0x0 0x4C550000 0x0 0x00050000>;
-> +			interrupts = <GIC_SPI 291 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 294 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&scmi_clk IMX95_CLK_VPU>,
-> +				 <&vpu_blk_ctrl IMX95_CLK_VPUBLK_JPEG_ENC>;
-> +			assigned-clocks = <&vpu_blk_ctrl IMX95_CLK_VPUBLK_JPEG_DEC>;
-> +			assigned-clock-parents = <&scmi_clk IMX95_CLK_VPUJPEG>;
-> +			power-domains = <&scmi_devpd IMX95_PD_VPU>;
-> +		};
-> +
->  		netcmix_blk_ctrl: syscon@4c810000 {
->  			compatible = "nxp,imx95-netcmix-blk-ctrl", "syscon";
->  			reg = <0x0 0x4c810000 0x0 0x8>;
-> --
-> 2.34.1
->
 
