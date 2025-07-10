@@ -1,158 +1,163 @@
-Return-Path: <linux-kernel+bounces-724749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49057AFF68F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:57:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94413AFF690
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 939D25A5E13
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:57:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB17482D32
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E0A27EFF8;
-	Thu, 10 Jul 2025 01:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2FF27E7FD;
+	Thu, 10 Jul 2025 01:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s36gQ67r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iKlp836K"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C5A846C;
-	Thu, 10 Jul 2025 01:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7569C25C711
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752112622; cv=none; b=TIeD5c50jmuF0uKXJ+D63N4yxfI//3XthxMTfEb+oMEqPR5pdOKTf7EONnMPIXLBh3uywfypaWPiDpDZbW9YO9DnSgU+re4gNwirWirDP5nR3xa2f4vtkxh7rfH3uUoNp2GTJ6pf6F5sDjMtDHADk1DTRe81eiuSZXQhVHemxlw=
+	t=1752112695; cv=none; b=MHCjHN9zmD2mHa6lEE5Yg9bvbKIBd8M7TXnyNuNFDHG+8s5gundGWp5SwDi0kL7R8ccbzJeMNzlHQgni7u2gV09K5sOtbjCaXMB3XCkO+dhI8oILrWhcBI7bunaNv1Ki5FvUSrQFJSIdZXeMEwkNAtPHuXS29FqW77/ByNw2/9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752112622; c=relaxed/simple;
-	bh=V5+0JeybGuGj3hNbNrffhOaKN4FNKIUQicNKhhV6M9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=omIPSsBs5r7iLg7+sjAVJY9UtCGN9PHUC5gc9uws4aUuGSXXfoAJLKaBa0+DZBMjISWhj0ClhBa3rQ44AlTN0nVkGfO1mDLqwg84gQUwhgcGc70ICfVkH4V0nJYGRKLvvUzm5DX8zGe9+bIYfwvt1qNDMRnY+Hq6beGvjC/DtSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s36gQ67r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B5A6C4CEEF;
-	Thu, 10 Jul 2025 01:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752112621;
-	bh=V5+0JeybGuGj3hNbNrffhOaKN4FNKIUQicNKhhV6M9M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s36gQ67r+HzmWOakvqjLN2Bi+cxAqgCf9b1jm8CeVANKXagOyi4qRCxno997vOt7I
-	 npTW9Sqm4fAIHoISBPWcX7vjQIgal5suR6GEB+4EiYf2hwAgwibu53TlZdekzLZBEQ
-	 9ABBQhGaRUZwnPIix2Qtgh30B7PYqrpPimSO1KfrR0HfIEongwbMYk/1onz4hpDV26
-	 GuIsiO8b8UJiiZ9KWrmQ80LhTJRWiOT9thCwXfahXz+KypMzoUnp19aAp8cABbtMDx
-	 gSq60cIssEQ+9AYdxjTLFvnKp8xU42OaucaV/Fz2aUcFFHry0HoCkWdrBfNWJs8YVU
-	 kLmHPK8kS1RBw==
-Date: Wed, 9 Jul 2025 18:57:00 -0700
-From: Kees Cook <kees@kernel.org>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linuxppc-dev@lists.ozlabs.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, kasan-dev@googlegroups.com,
-	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2 08/14] powerpc: Handle KCOV __init vs inline mismatches
-Message-ID: <202507091856.C6510D809A@keescook>
-References: <20250523043251.it.550-kees@kernel.org>
- <20250523043935.2009972-8-kees@kernel.org>
- <87jz662ssp.fsf@gmail.com>
+	s=arc-20240116; t=1752112695; c=relaxed/simple;
+	bh=ZcaLLyOB3tqdrpaoeuobLjo7b3y+N7vwVh9wdduZieM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rX030gGN1J4ft9heJ9K2RzFCVlOL5/GD1ioL4EVsyD4TQAXJ1Rxm1nwvpeCzNWwQ8HvKqdY1qux+SyN5psnP27Qa0CsQ0v9lq1hPiEZiPMNF11Q1SaGf2EAlwgKiP/YkPCgBeWT3qTlNRN+jJpTKDV+p+N0Je+TH2uol4uo2iL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iKlp836K; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752112683; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=MyRObTRkklQz6NQ2WdLXWBBkOrBh2ZjGUjiRtUdCUHc=;
+	b=iKlp836KEwetgOdcVFnIGUTjj5QhDBywSvjlrOAztZFOIl2Rm45t+FG8PKFp+DAAuPHnvn27JEmfKsNL+9wtiQmpBSRAarCAEQWQU0iVDNW3d6Voanx16L6/jlMgzWOkHQS6K2E9GVzPYEUUQzEloPh1woMU0EdCLiDU/OTzs84=
+Received: from 30.74.144.111(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WiaZUIW_1752112681 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 10 Jul 2025 09:58:02 +0800
+Message-ID: <ccce870e-3117-4044-96e6-4d0e15bef913@linux.alibaba.com>
+Date: Thu, 10 Jul 2025 09:58:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87jz662ssp.fsf@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] fix MADV_COLLAPSE issue if THP settings are
+ disabled
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
+ ziy@nvidia.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Pedro Falcato <pfalcato@suse.de>
+References: <cover.1750815384.git.baolin.wang@linux.alibaba.com>
+ <573eb43a-8536-4206-a7c6-d0daa1fd7e70@lucifer.local>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <573eb43a-8536-4206-a7c6-d0daa1fd7e70@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 24, 2025 at 04:13:02PM +0530, Ritesh Harjani wrote:
-> Kees Cook <kees@kernel.org> writes:
-> 
-> > When KCOV is enabled all functions get instrumented, unless
-> > the __no_sanitize_coverage attribute is used. To prepare for
-> > __no_sanitize_coverage being applied to __init functions, we have to
-> > handle differences in how GCC's inline optimizations get resolved. For
-> > s390 this requires forcing a couple functions to be inline with
-> > __always_inline.
-> >
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> > Cc: Michael Ellerman <mpe@ellerman.id.au>
-> > Cc: Nicholas Piggin <npiggin@gmail.com>
-> > Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > Cc: Naveen N Rao <naveen@kernel.org>
-> > Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-> > Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: <linuxppc-dev@lists.ozlabs.org>
-> > ---
-> >  arch/powerpc/mm/book3s64/hash_utils.c    | 2 +-
-> >  arch/powerpc/mm/book3s64/radix_pgtable.c | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
-> > index 5158aefe4873..93f1e1eb5ea6 100644
-> > --- a/arch/powerpc/mm/book3s64/hash_utils.c
-> > +++ b/arch/powerpc/mm/book3s64/hash_utils.c
-> > @@ -409,7 +409,7 @@ static DEFINE_RAW_SPINLOCK(linear_map_kf_hash_lock);
-> >  
-> >  static phys_addr_t kfence_pool;
-> >  
-> > -static inline void hash_kfence_alloc_pool(void)
-> > +static __always_inline void hash_kfence_alloc_pool(void)
-> >  {
-> >  	if (!kfence_early_init_enabled())
-> >  		goto err;
-> > diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
-> > index 9f764bc42b8c..3238e9ed46b5 100644
-> > --- a/arch/powerpc/mm/book3s64/radix_pgtable.c
-> > +++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
-> > @@ -363,7 +363,7 @@ static int __meminit create_physical_mapping(unsigned long start,
-> >  }
-> >  
-> >  #ifdef CONFIG_KFENCE
-> > -static inline phys_addr_t alloc_kfence_pool(void)
-> > +static __always_inline phys_addr_t alloc_kfence_pool(void)
-> >  {
-> >  	phys_addr_t kfence_pool;
-> >  
-> 
-> I remember seeing a warning msg around .init.text section. Let me dig
-> that...
-> 
-> ... Here it is: https://lore.kernel.org/oe-kbuild-all/202504190552.mnFGs5sj-lkp@intel.com/
-> 
-> I am not sure why it only complains for hash_debug_pagealloc_alloc_slots().
-> I believe there should me more functions to mark with __init here.
-> Anyways, here is the patch of what I had in mind.. I am not a compiler expert,
-> so please let me know your thoughts on this.
 
-Yeah, this looks good. I'll snag your patch and drop mine. :)
 
--Kees
+On 2025/7/9 20:36, Lorenzo Stoakes wrote:
+> +cc Pedro as he'd raised concerns here also.
+> 
+> Hi Baolin,
+> 
+> Just for some clarification on this - thank you very much for this series,
+> but based on discussion with David and concerns raised by Hugh + others,
+> overall it feels as if, while the documentation is no doubt vague in ways
+> it ought not to be, this behaviour is something we have put out into the
+> world and we should continue to support it.
+> 
+> So overall I feel that this series should not be applied.
 
--- 
-Kees Cook
+Fair enough.
+
+> 
+> Your work here is great, and really massive apologies for this after all
+> the work you've put in (and of course the review work here also), but on
+> reflection I think it's a risk we shouldn't take.
+
+Consensus is the key. Thank you and David for the discussion and 
+suggestions.
+
+> I understand this means that MADV_COLLAPSE can't be used to collapse at a
+> mTHP granularity - we definitely need to have a think about how we might
+> provide this sensibly.
+> 
+> As for how to move forward - I will go ahead and update documentation to
+> make the situation absolutely crystal clear, both in the man page and the
+> rst.
+
+OK. Great. Thanks.
+
+> Thanks, Lorenzo
+> 
+> On Wed, Jun 25, 2025 at 09:40:08AM +0800, Baolin Wang wrote:
+>> When invoking thp_vma_allowable_orders(), if the TVA_ENFORCE_SYSFS flag is not
+>> specified, we will ignore the THP sysfs settings. Whilst it makes sense for the
+>> callers who do not specify this flag, it creates a odd and surprising situation
+>> where a sysadmin specifying 'never' for all THP sizes still observing THP pages
+>> being allocated and used on the system. And the MADV_COLLAPSE is an example of
+>> such a case, that means it will not set TVA_ENFORCE_SYSFS when calling
+>> thp_vma_allowable_orders().
+>>
+>> As we discussed in the previous thread [1], the MADV_COLLAPSE will ignore
+>> the system-wide anon/shmem THP sysfs settings, which means that even though
+>> we have disabled the anon/shmem THP configuration, MADV_COLLAPSE will still
+>> attempt to collapse into a anon/shmem THP. This violates the rule we have
+>> agreed upon: never means never.
+>>
+>> For example, system administrators who disabled THP everywhere must indeed very
+>> much not want THP to be used for whatever reason - having individual programs
+>> being able to quietly override this is very surprising and likely to cause headaches
+>> for those who desire this not to happen on their systems.
+>>
+>> This patch set will address the MADV_COLLAPSE issue.
+>>
+>> Test
+>> ====
+>> 1. Tested the mm selftests and found no regressions.
+>> 2. With toggling different Anon mTHP settings, the allocation and madvise collapse for
+>> anonymous pages work well.
+>> 3. With toggling different shmem mTHP settings, the allocation and madvise collapse for
+>> shmem work well.
+>> 4. Tested the large order allocation for tmpfs, and works as expected.
+>>
+>> [1] https://lore.kernel.org/all/1f00fdc3-a3a3-464b-8565-4c1b23d34f8d@linux.alibaba.com/
+>>
+>> Changes from v3:
+>>   - Collect reviewed tags. Thanks.
+>>   - Update the commit message, per David.
+>>
+>> Changes from v2:
+>>   - Update the commit message and cover letter, per Lorenzo. Thanks.
+>>   - Simplify the logic in thp_vma_allowable_orders(), per Lorenzo and David. Thanks.
+>>
+>> Changes from v1:
+>>   - Update the commit message, per Zi.
+>>   - Add Zi's reviewed tag. Thanks.
+>>   - Update the shmem logic.
+>>
+>> Baolin Wang (2):
+>>    mm: huge_memory: disallow hugepages if the system-wide THP sysfs
+>>      settings are disabled
+>>    mm: shmem: disallow hugepages if the system-wide shmem THP sysfs
+>>      settings are disabled
+>>
+>>   include/linux/huge_mm.h                 | 51 ++++++++++++++++++-------
+>>   mm/shmem.c                              |  6 +--
+>>   tools/testing/selftests/mm/khugepaged.c |  8 +---
+>>   3 files changed, 43 insertions(+), 22 deletions(-)
+>>
+>> --
+>> 2.43.5
+>>
+
 
