@@ -1,138 +1,189 @@
-Return-Path: <linux-kernel+bounces-725025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F53BAFF9E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:35:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65202AFF9EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8E36580EDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:35:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E37F77A239C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EC6286D55;
-	Thu, 10 Jul 2025 06:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="X+0uBzm3"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A21C28724F;
+	Thu, 10 Jul 2025 06:39:02 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B68F22CBC0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB59206F27;
+	Thu, 10 Jul 2025 06:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752129320; cv=none; b=DF6gUOUBCuuzDa0LSBuBe0qYKeF6mtuhhjQDtWQJtL5k2m0a9ifzfEFkP4m/58p7wTmZPOtqSOaQjnZRZ2hrbytRUSEu7LA4qCuMMoev1swdYj5eDKLL24aqBWqe3rxQu3Te8JML8qc3mhwvK+otQOidKHOPyeZYsQMD+FgDots=
+	t=1752129541; cv=none; b=dA7WltNjwMa2yyJHtY5xux/tBLqaNMfCqTPN9QiUnG6KVck9E1Irx7tnWJWbNro3T8AfYBYBHlIpQ7Ac33ZvZZeudwWz/31SyZg5+sv4alqnVWP5dCe3jZaJiAnK8tTa9YTdIQJPtqtnS9l41Ts1LEyi2JLD7LOUYc3FOMW1Xuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752129320; c=relaxed/simple;
-	bh=ElqAfZh2BVgxfhGm74ckQk9GyfGSk4GuN3P5xEeR6vI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=Q8stPDNsdgCyeZDSa8pVQp/bIpdmpbVvV3CaKcMU4yyGUk58JueFjs+wR0wn8eY5KLb5nqMso5GIqgz+9Ofjf8LRu79i1YtN/+kPduC6bxb3wMIk721NE2FzsAxc/l3RWtcdnOUEuBvmC0apgi5fNlubrp4l3acisjgbwPfYgQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=X+0uBzm3; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4f64cdc2dso86264f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 23:35:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1752129317; x=1752734117; darn=vger.kernel.org;
-        h=in-reply-to:references:to:cc:subject:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kyhfcIGHykgvkrP2e/H7VmjAsjt0CsIijqEuhYmyjZA=;
-        b=X+0uBzm3bi+AK1j8teGJm62HTgg3xswH/ObRCwbigjCBub6q31LIs/ErO+9bVytq0L
-         V9UCRLl79uiw7COf3DiGJBbUvfGByyNGZPUGiaicMVFsFQ5eXV1EyTpfXUwH9WmKbSeM
-         nh703dBsvxKH3lTYadSAcWn0ASS+7t3ObCUB71PlKHVTsaDw+49Syah/59cHUfUfcl2D
-         uR40EpftrwRos70HsLyOA+iTOdWsNfoDmnLPzSbYLRSrNVr5j9RzeoW3OUbMVFK0u4t8
-         oRq/mzhJtHedOdhZYlWanarZid56shttN2rcHTjcmfu62l9w1JzPl1B2aV4KgNRznX2m
-         HUAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752129317; x=1752734117;
-        h=in-reply-to:references:to:cc:subject:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kyhfcIGHykgvkrP2e/H7VmjAsjt0CsIijqEuhYmyjZA=;
-        b=a19PKSD60LzN7PoxNH7wuRQ2EYY8t8mdwwXT4ez2bNh/6AlpvZgVuRkta0bcPj7Wcy
-         HKyp+N82czgWWMMsT2gddQAoRGeg91e9XISYoP9m4kGlEjj8uyYKu671j36Kkjbsath7
-         3BEfT4OjcfZVPOqEvbY3R4OTecneui7BGroot2IWaFVDbMyJCzuZR5rZMfK1z3cQ1LxA
-         UmaYDCj4HDd8agFqXceR3uKP6e/E0GuhNMdv1fYaVYyolPg8rKJ94tzsAdg/F5fNmnw9
-         Pfmn1nPNZrajmZZHqawESJVxJqhKuA5q2fimRm5UBXLcVxc71yliotAs7gAl5Vhm/Zj2
-         YBMA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6MB4z9lsTdFUkwFQAsWRPd8Z0V/jRu6klnOA3GjWSjbcZZmG1q0cN1gvVAtcEzALsRsNjPPOj/mkal4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNYoLbpKD8jkaqmYcAD8T+9vHFJtrQQqNZ+j+e8L3Cmp1AaFJh
-	CxUn7MYIya1WtSj9Au440SZnu2QrnY11vufVgBLgtUnvl5I9lqvmqC7TMYmPERhCorU=
-X-Gm-Gg: ASbGncsY9dpdJCyvYBn9A/0tQOJYzzPWgjqcZa/61RL2ISOzq007g5bWd3SvWxNFjT/
-	Z4p0N//l06Eg86+UhqOaE1XHzM2H79048VLMDobhcGzFUXQo5m2E89zf8pQn03M3w7qAW5A9FOB
-	GJ8BhTme8NpoNFTW4cifWF2S0NoRBeg5+o/17VgT03zzEA1iFLCGmTtQYBS47g/n8GH36KlXp3e
-	Md+fgoy69MVAZsMDOmVLfYb/Nb9jsORFGacLCN3SWvRviBufSe37m+nmLMUxoZBXD9cccLs2QE0
-	qMFFqKt65mfw9UvdrnrejI1YWO7uPS2FGJbjPYJbrtFpya3K0mGHfEWxIYtxZzDo7aOR9fU9+H4
-	JQKbuJX7yBlkbp0Rb1VMYUA==
-X-Google-Smtp-Source: AGHT+IEqEitaMgB8tObGyqBHxc/XW6tkIZ1LssQgO+WUWZXRaXyhTeRPn6KcRlFtzKo7i/2kYbIvaw==
-X-Received: by 2002:a05:600c:3584:b0:453:76e2:5b16 with SMTP id 5b1f17b1804b1-454db9090c3mr7110435e9.0.1752129316466;
-        Wed, 09 Jul 2025 23:35:16 -0700 (PDT)
-Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cdb381a6sm57354855e9.1.2025.07.09.23.35.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 23:35:16 -0700 (PDT)
+	s=arc-20240116; t=1752129541; c=relaxed/simple;
+	bh=9DrD3TQUZUVRcwoftxiQHYIDTbmuX6gVJtH7RUeAR8k=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=TcHJLSmgN+RdwhOf/EGVcEXJL/Zd5ocbQ8bqGgX2R9q9X9k2jv+abg8yGpMbNUI26vSYAqUc2NZILa/cmSia8YvZj3vM2Fxi7MRSZrMk/0EFZkex4Iv1huSHenfSOWq+Rd5dmQW+ce6D0UqgzuDsV97DlIT5z1+4R3Xj9FdZavA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bd4tl11MYz5F2lw;
+	Thu, 10 Jul 2025 14:38:55 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 56A6chkX070854;
+	Thu, 10 Jul 2025 14:38:43 +0800 (+08)
+	(envelope-from liu.xuemei1@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Thu, 10 Jul 2025 14:38:45 +0800 (CST)
+Date: Thu, 10 Jul 2025 14:38:45 +0800 (CST)
+X-Zmail-TransId: 2afc686f5ff5ffffffffcaa-1a4c5
+X-Mailer: Zmail v1.0
+Message-ID: <20250710143845409gLM6JdlwPhlHG9iX3F6jK@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 08:35:15 +0200
-Message-Id: <DB8607ITP9UR.2LOW61O3OVJ2F@ventanamicro.com>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-Subject: Re: [External] [PATCH] RISC-V: store percpu offset in CSR_SCRATCH
-Cc: <masahiroy@kernel.org>, <nathan@kernel.org>, <nicolas.schier@linux.dev>,
- <dennis@kernel.org>, <tj@kernel.org>, <cl@gentwo.org>,
- <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
- <alex@ghiti.fr>, <andybnac@gmail.com>, <bjorn@rivosinc.com>,
- <cyrilbur@tenstorrent.com>, <rostedt@goodmis.org>, <puranjay@kernel.org>,
- <ben.dooks@codethink.co.uk>, <zhangchunyan@iscas.ac.cn>,
- <ruanjinjie@huawei.com>, <jszhang@kernel.org>, <charlie@rivosinc.com>,
- <cleger@rivosinc.com>, <antonb@tenstorrent.com>, <ajones@ventanamicro.com>,
- <debug@rivosinc.com>, <haibo1.xu@intel.com>, <samuel.holland@sifive.com>,
- <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>, "linux-riscv"
- <linux-riscv-bounces@lists.infradead.org>, <wangziang.ok@bytedance.com>
-To: "yunhui cui" <cuiyunhui@bytedance.com>
-References: <20250704084500.62688-1-cuiyunhui@bytedance.com>
- <DB5U402ARSEO.4H4PE19LGCR7@ventanamicro.com>
- <CAEEQ3w=V6-d+YSWP=0WMt6UAZexrazq0UQjdyUmS3AnMtkdoKQ@mail.gmail.com>
- <DB6MLPA3BJ75.2U5FP5JSJD2LO@ventanamicro.com>
- <CAEEQ3wkoy3Jr0vZk=X4U56KYPq3=5t7Wr4RE6uNby3MS5qzh-g@mail.gmail.com>
- <DB7L9ZHZI3AI.36SXWX2SO9OS7@ventanamicro.com>
- <CAEEQ3wnaL5X_jXEmbbWFp3jx1Aq=02Gf7kDNBS=wcPyfEq7yBw@mail.gmail.com>
-In-Reply-To: <CAEEQ3wnaL5X_jXEmbbWFp3jx1Aq=02Gf7kDNBS=wcPyfEq7yBw@mail.gmail.com>
+From: <liu.xuemei1@zte.com.cn>
+To: <kishon@kernel.org>
+Cc: <liu.song13@zte.com.cn>, <linux-pci@vger.kernel.org>, <mani@kernel.org>,
+        <kwilczynski@kernel.org>, <bhelgaas@google.com>,
+        <lpieralisi@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIIFJFU0VORF0gUENJOiBlbmRwb2ludDogQXZvaWQgY3JlYXRpbmcgc3ViLWdyb3VwcyBhc3luY2hyb25vdXNseQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 56A6chkX070854
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 686F5FFF.000/4bd4tl11MYz5F2lw
 
-2025-07-10T11:45:06+08:00, yunhui cui <cuiyunhui@bytedance.com>:
-> On Wed, Jul 9, 2025 at 10:20=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrc=
-mar@ventanamicro.com> wrote:
->> Is the overhead above with this patch?  And when we then use the
->> CSR_SCRATCH for percpu, does it degrade even further?
->
-> We can see that the percpu optimization is around 2.5% through the
-> method of fixing registers, and we can consider that the percpu
-> optimization can bring a 2.5% gain. Is there no need to add the percpu
-> optimization logic on the basis of the scratch patch for testing?
->
-> Reference: https://lists.riscv.org/g/tech-privileged/message/2485
+From: Liu Song <liu.song13@zte.com.cn>
 
-That is when the value is in a GPR, though, and we don't know the
-performance of a CSR_SCRATCH access.
-We can hope that it's not much worse than a GPR, but an implementation
-might choose to be very slow with CSR_SCRATCH.
+The asynchronous creation of sub-groups by a delayed work could lead to an
+null-pointer-dereference exception when the driver directory gets
+removed before the work completes.
 
-I have in mind another method where we can use the current CSR_SCRATCH
-without changing CSR_TVAL, but I don't really want to spend time on it
-if reading the CSR doesn't give any benefit.
+The crash can be easily reproduced with the following commands.
 
-It would be to store the percpu offset in CSR_SCRATCH permanently, do
-the early exception register shuffling with a percpu area storage, and
-load the thread pointer from there as well.
-That method would also eliminate writing CSR_SCRATCH on every exception
-entry+exit, so maybe it makes sense to try it even if CSRs are slow...
+ # mkdir test && rmdir test
 
-Thanks.
+Fixes this by using configfs_add_default_group() which does not have the
+deadlock problem as configfs_register_group().
+
+Backtraces of the crash:
+ BUG: kernel NULL pointer dereference, address: 0000000000000088
+ #PF: supervisor write access in kernel mode
+ #PF: error_code(0x0002) - not-present page
+ PGD 0
+ Oops: Oops: 0002 [#1] SMP NOPTI
+ CPU: 4 UID: 0 PID: 371 Comm: kworker/4:1 Kdump: loaded Tainted: G            E       6.16.0-rc3 #2 PREEMPT(lazy)
+ Tainted: [E]=UNSIGNED_MODULE
+ Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+ Workqueue: events pci_epf_cfs_work
+ RIP: 0010:mutex_lock+0x1c/0x30
+ Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 53 48 89 fb 2e 2e 2e 31 c0 65 48 8b 15 5e 4c 29 02 31 c0 <f0> 48 0f b1 13 75 06 5b e9 97 8a 00 00 48 89 df 5b eb b1 90 90 90
+ RSP: 0018:ff64babb4111fdf0 EFLAGS: 00010246
+ RAX: 0000000000000000 RBX: 0000000000000088 RCX: 0000000000000000
+ RDX: ff2de9c80f5d3080 RSI: ffffffffb9e58559 RDI: 0000000000000088
+ RBP: ff2de9c8269df9c0 R08: 0000000000000040 R09: 0000000000000000
+ R10: ff64babb4111fdf0 R11: 00000000ffffffff R12: ff2de9c80f753e88
+ R13: ff2de9c80f753e00 R14: 0000000000000000 R15: ff2de9c80f753f98
+ FS:  0000000000000000(0000) GS:ff2de9d78069f000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 0000000000000088 CR3: 0000000ac782c003 CR4: 0000000000773ef0
+ DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ PKRU: 55555554
+ Call Trace:
+  <TASK>
+  configfs_register_group+0x3d/0x190
+  pci_epf_cfs_work+0x41/0x110
+  process_one_work+0x18f/0x350
+  worker_thread+0x25a/0x3a0
+  ? __pfx_worker_thread+0x10/0x10
+  kthread+0xfc/0x240
+  ? __pfx_kthread+0x10/0x10
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork+0x14f/0x180
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
+ Modules linked in: pci_epf_test(E) nft_fib_inet(E) nft_fib_ipv4(E) nft_fib_ipv6(E) nft_fib(E) nft_reject_inet(E) nf_reject_ipv4(E) nf_reject_ipv6(E) nft_reject(E) nft_ct(E) nft_chain_nat(E) nf_nat(E) nf_conntrack(E) nf_defrag_ipv6(E) nf_defrag_ipv4(E) rfkill(E) ip_set(E) nf_tables(E) intel_rapl_msr(E) intel_rapl_common(E) intel_uncore_frequency_common(E) qrtr(E) isst_if_common(E) skx_edac_common(E) nfit(E) libnvdimm(E) sunrpc(E) kvm_intel(E) vfat(E) fat(E) kvm(E) irqbypass(E) rapl(E) iTCO_wdt(E) 8139too(E) intel_pmc_bxt(E) iTCO_vendor_support(E) 8139cp(E) virtio_gpu(E) mii(E) virtio_input(E) virtio_dma_buf(E) i2c_i801(E) pcspkr(E) lpc_ich(E) i2c_smbus(E) virtio_balloon(E) joydev(E) loop(E) dm_multipath(E) nfnetlink(E) vsock_loopback(E) vmw_vsock_virtio_transport_common(E) vmw_vsock_vmci_transport(E) vsock(E) zram(E) lz4hc_compress(E) vmw_vmci(E) lz4_compress(E) xfs(E) polyval_clmulni(E) ghash_clmulni_intel(E) sha512_ssse3(E) sha1_ssse3(E) serio_raw(E) scsi_dh_rdac(E) scsi_dh_emc(E) 
+ scsi_dh_alua(E) fuse(E)
+  qemu_fw_cfg(E)
+ Unloaded tainted modules: intel_uncore_frequency(E):1 i10nm_edac(E):1 intel_cstate(E):1 intel_uncore(E):1 hv_vmbus(E):1
+ CR2: 0000000000000088
+ ---[ end trace 0000000000000000 ]---
+
+Fixes: e85a2d783762 ("PCI: endpoint: Add support in configfs to associate two EPCs with EPF")
+Signed-off-by: Liu Song <liu.song13@zte.com.cn>
+---
+ drivers/pci/endpoint/pci-ep-cfs.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
+index ef50c82e647f..43feb6139fa3 100644
+--- a/drivers/pci/endpoint/pci-ep-cfs.c
++++ b/drivers/pci/endpoint/pci-ep-cfs.c
+@@ -23,7 +23,6 @@ struct pci_epf_group {
+ 	struct config_group group;
+ 	struct config_group primary_epc_group;
+ 	struct config_group secondary_epc_group;
+-	struct delayed_work cfs_work;
+ 	struct pci_epf *epf;
+ 	int index;
+ };
+@@ -103,7 +102,7 @@ static struct config_group
+ 	secondary_epc_group = &epf_group->secondary_epc_group;
+ 	config_group_init_type_name(secondary_epc_group, "secondary",
+ 				    &pci_secondary_epc_type);
+-	configfs_register_group(&epf_group->group, secondary_epc_group);
++	configfs_add_default_group(secondary_epc_group, &epf_group->group);
+
+ 	return secondary_epc_group;
+ }
+@@ -166,7 +165,7 @@ static struct config_group
+
+ 	config_group_init_type_name(primary_epc_group, "primary",
+ 				    &pci_primary_epc_type);
+-	configfs_register_group(&epf_group->group, primary_epc_group);
++	configfs_add_default_group(primary_epc_group, &epf_group->group);
+
+ 	return primary_epc_group;
+ }
+@@ -570,15 +569,13 @@ static void pci_ep_cfs_add_type_group(struct pci_epf_group *epf_group)
+ 		return;
+ 	}
+
+-	configfs_register_group(&epf_group->group, group);
++	configfs_add_default_group(group, &epf_group->group);
+ }
+
+-static void pci_epf_cfs_work(struct work_struct *work)
++static void pci_epf_cfs_add_sub_groups(struct pci_epf_group *epf_group)
+ {
+-	struct pci_epf_group *epf_group;
+ 	struct config_group *group;
+
+-	epf_group = container_of(work, struct pci_epf_group, cfs_work.work);
+ 	group = pci_ep_cfs_add_primary_group(epf_group);
+ 	if (IS_ERR(group)) {
+ 		pr_err("failed to create 'primary' EPC interface\n");
+@@ -637,9 +634,7 @@ static struct config_group *pci_epf_make(struct config_group *group,
+
+ 	kfree(epf_name);
+
+-	INIT_DELAYED_WORK(&epf_group->cfs_work, pci_epf_cfs_work);
+-	queue_delayed_work(system_wq, &epf_group->cfs_work,
+-			   msecs_to_jiffies(1));
++	pci_epf_cfs_add_sub_groups(epf_group);
+
+ 	return &epf_group->group;
+
+-- 
+2.27.0
 
