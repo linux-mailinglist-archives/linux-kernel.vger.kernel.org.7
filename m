@@ -1,427 +1,175 @@
-Return-Path: <linux-kernel+bounces-724998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADED3AFF99A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:21:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57772AFF99B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65154B414F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:19:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E462166268
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5223F220F29;
-	Thu, 10 Jul 2025 06:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE3B281375;
+	Thu, 10 Jul 2025 06:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVing695"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBVgd9jn"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE772367B2;
-	Thu, 10 Jul 2025 06:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385A51F948;
+	Thu, 10 Jul 2025 06:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752128420; cv=none; b=YOGSa1YAdm7sOwYLxZYJYZjYbpyJiPS7V36GKoQ3U/aJ3Hmj6ZBJ1ZjnCpQJ4r3Y2TJwE7VxAr+nWYKi382dCk0RSoMceed43LdJqX6tHrDlmMTe+KFdDUlAXMLA5ATuPR3qTz64jKYBG/DrbSNCxIBJv1624GKSErjo29IxCMQ=
+	t=1752128487; cv=none; b=mc77uowgtMU5YMZhDUhGpIrYr8brCeReEO8Go2rXLkPnGUGicojnfDzkuap3niI8JkQ6TATnAn604vbJUzWV/GURToeJirbwVjePzLlGS7SUd+QN7lo7VAvTfQZOnBKDh81qm1EwwJp1zSiSNEM6nig9dNzXDcfj+sBZ4mhf8ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752128420; c=relaxed/simple;
-	bh=m9xAVFhwDPE+SyQyIXksEJsex+1AZ81fkHbVFf2hIbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hir0oDzPUeZ8sqdqnj4yQ/Zqe60414z7FowFcPIg7VeoMTRJFZUIvhBnkfNcPdsgsrOrvtnMgMVr+NX2eCao4aNw+Z/1gcmBBJHFlLC+asmWhWp3fWZCf8V4L2tN5qjRXWjRLJ/V/F/1ce5o59as9dxJO5igU7ts6tOYAr5fyXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVing695; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEE3FC4CEE3;
-	Thu, 10 Jul 2025 06:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752128419;
-	bh=m9xAVFhwDPE+SyQyIXksEJsex+1AZ81fkHbVFf2hIbk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pVing695EHb2gnav8ABwwJUJf0JKF+W31M+ET77/nrd3suZ5/NYlWR2yEb4Axmg3+
-	 qshreJZuc7dutKyiV7C4cRKWEFI8aWBymv//gaiUWDbAhlyFaRj6JuU+vnvb3svUnr
-	 PQmj5QSuWb5i7kF2frrcS9ZKPA84aFuE+dvzHMgN1mJIyhh/jDw7fFy09TqW/DAznm
-	 Uot0JO9yien4hKm3Z6mgs4KNlTdirxtxlzSEvBleOdoyh2yJ4oDrMYBfEq3kLvNror
-	 HENvDUa+YhrDKtnl9IF8agFn14NBhyGHsb6FbMuRKhjEKf7zfeeV/t40opogI/F6Y+
-	 o6szRc1LOyvbA==
-Date: Thu, 10 Jul 2025 08:20:15 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 07/12] docs: kdoc: Coalesce parameter-list handling
-Message-ID: <20250710082015.3b37024e@foz.lan>
-In-Reply-To: <20250702223524.231794-8-corbet@lwn.net>
-References: <20250702223524.231794-1-corbet@lwn.net>
-	<20250702223524.231794-8-corbet@lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752128487; c=relaxed/simple;
+	bh=3VK0g5yX+5MXamCiciw8gTT2Y0ypYsIyeBfFgXcL4+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E3vJtREl0oa9cQA+QEdEKy9N9enq/+2ELfh39ORG/kIt98movshNaRopFWDKMvTGoTAM87qzqEWa+pfNQqQBP2k5/5lHT8jf29vhXbcuSquY+zzPDqQswOQtTyb+yQkxYgs2D1j9s1/PaU8nEmNMNUoWQm0mgtIpGwayHGYJz88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dBVgd9jn; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-53159d11cecso538732e0c.2;
+        Wed, 09 Jul 2025 23:21:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752128484; x=1752733284; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BG4giksOjxTPwU+J2iWDHmet2nmN8VvPq1vMXwURQq4=;
+        b=dBVgd9jnxIsr2vfB7yzynSkEEl+5P9/gP1WPdwXEcWwbIBrrr+XdHW7/rp4xoRwhCR
+         CcwkvjAcNGLgMgC3lO7/8GgN8FolTkxLCJ79rp83FXMjw1cQUvs5xDvs5D49ITxuU0yJ
+         YE59xKmgugTkLRLAQUkDQAFHRyqK067RnPENkRAVsQXNgrNQ/ccCIZn5Fa+4vpsy/yF2
+         kMKFozomfOVXU9SOLQrHKAKyrGyUNNT3CP9YscolDjlOXiSOzA0Ylo9oiMYa62AzFmzV
+         RfWilxrkQCuYy6btRqDAFkdpTw9DREGUwx/BtJJE91EKWiqjMEucGYBh6PHEPJXZ8a4n
+         mAnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752128484; x=1752733284;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BG4giksOjxTPwU+J2iWDHmet2nmN8VvPq1vMXwURQq4=;
+        b=huAzDBJ8eKQAAHBsma+GsOyzqnKjLOEP1KTarMUkbLic/rIOWWDJUMFyV/3Luwgyff
+         rGYnqHv/IIYY1ivMzWxV8PFrubV8S9NfXG/1AAkUSoa/XKlT1B8OAPZ1+dvCLwQro+17
+         p1tAzITYzaO6jh61/beaUkzKVIIaCwcGd3T+HtBMyIBMk7tT6U+JhSUqwP++X3xqevXR
+         6QBTI8bW5J/+NwXW7iwfNZzBKheZ4RAIzKP/JSjhXYyRNwQJHb6XxU6riOStr3FYKKsh
+         JR9Gngw7TQ3wg+8FiLNI5GNfdnHrpNSLIG9RTSgXCUFrR+xPjOT/6W/uOtpnPFzqZXmB
+         gw3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVrOCHa+ItIOGxNbnQPiCjzhxMQksoOsOlGj1SFZOYBrRtuTKtUo3wRlQ6g8GVmZT5daIQSlGot9DGJyFw=@vger.kernel.org, AJvYcCXYBfbM5CoRe6VHFJZatIoyTXDs6iNr8V+5BH7IhWdfe1UzBhqn454GBThTEmUrDmTq7ATUSBQot6trmg2Tw6+YgC0C@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx00ZBFqK6/FlUa+UOKOSNfTff62oeaqHIsc2qWaGdE8V6a3/Jk
+	Vw5a3c44CQ4PwM+hlpNa+hrFNBiAIhuB02IG0UT1+w7rXhxuDJpnQnYIdeSHH2nN7iNcyfi/6fA
+	VIBSmxNEIe5IHL3X7PAcMZS0A/W7caKc=
+X-Gm-Gg: ASbGncugGcC7nL3WGObEY1KBP3/nZ2dp17Gk3a6Cck6jtqfsnuvSykNYj/4YNBW8gUX
+	JnDzNWNNUYiuhTHXl45x0ty3c7LRhPAOVPTnfRg6iNqzDLj9yToQNum1iLIEtQd8SGEi9SgZs0h
+	dNyGddCLxIb/Cfid3XeRHgk60uIhWwVXV0FLJIfgU=
+X-Google-Smtp-Source: AGHT+IEgfvNN9FUwR3ZzrltKi9tZrr8t/tLqZDsrlrxTUcs2wTebLZttNZHuq1wo9nJSxTMEW3FjE5Desh6wAFxUVFQ=
+X-Received: by 2002:a05:6122:1ad0:b0:531:2906:752d with SMTP id
+ 71dfb90a1353d-535d73ce217mr4038139e0c.11.1752128483540; Wed, 09 Jul 2025
+ 23:21:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250708-alex-fixes-v1-1-5b008d3f4d0c@rivosinc.com>
+In-Reply-To: <20250708-alex-fixes-v1-1-5b008d3f4d0c@rivosinc.com>
+From: Han Gao <rabenda.cn@gmail.com>
+Date: Thu, 10 Jul 2025 14:21:11 +0800
+X-Gm-Features: Ac12FXztJeD7IrDDbYBNj91A-BzmMZeUwgymejmbAOGChNwao1zJg6R95vGMKZc
+Message-ID: <CAAT7Ki-+xk-NDixFhSKNQ_zcfzkQMHfBODVuw_Q52ocJQAHaSQ@mail.gmail.com>
+Subject: Re: [PATCH] riscv: ftrace: Properly acquire text_mutex to fix a race condition
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <ziyao@disroot.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Em Wed,  2 Jul 2025 16:35:19 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
-
-> Callers to output_declaration() always pass the parameter information from
-> self.entry; remove all of the boilerplate arguments and just get at that
-> information directly.  Formalize its placement in the KdocItem class.
-> 
-> It would be nice to get rid of parameterlist as well, but that has the
-> effect of reordering the output of function parameters and struct fields to
-> match the order in the kerneldoc comment rather than in the declaration.
-> One could argue about which is more correct, but the ordering has been left
-> unchanged for now.
-> 
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+On Tue, Jul 8, 2025 at 4:34=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc.=
+com> wrote:
+>
+> As reported by lockdep, some patching was done without acquiring
+> text_mutex, so there could be a race when mapping the page to patch
+> since we use the same fixmap entry.
+>
+> Reported-by: Han Gao <rabenda.cn@gmail.com>
+> Reported-by: Vivian Wang <wangruikang@iscas.ac.cn>
+> Reported-by: Yao Zi <ziyao@disroot.org>
+> Closes: https://lore.kernel.org/linux-riscv/aGODMpq7TGINddzM@pie.lan/
+> Tested-by: Yao Zi <ziyao@disroot.org>
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Tested-by: Han Gao <rabenda.cn@gmail.com>
 > ---
->  scripts/lib/kdoc/kdoc_item.py   | 10 ++++-
->  scripts/lib/kdoc/kdoc_output.py | 75 +++++++++++++--------------------
->  scripts/lib/kdoc/kdoc_parser.py | 23 ++--------
->  3 files changed, 41 insertions(+), 67 deletions(-)
-> 
-> diff --git a/scripts/lib/kdoc/kdoc_item.py b/scripts/lib/kdoc/kdoc_item.py
-> index c8329019a219..51e8669b9a6e 100644
-> --- a/scripts/lib/kdoc/kdoc_item.py
-> +++ b/scripts/lib/kdoc/kdoc_item.py
-> @@ -10,6 +10,8 @@ class KdocItem:
->          self.type = type
->          self.declaration_start_line = start_line
->          self.sections = self.sections_start_lines = { }
-> +        self.parameterlist = self.parameterdesc_start_lines = []
-> +        self.parameterdescs = self.parametertypes = { }
-
-See my comments on a previous e-mail:
-
-- place "{}" without spaces;
-- don't assign the same pointer to multiple variables (*)
-
-(*) On Python, dict and list type assignments are always handled
-    as pointers - except if you call copy() or deepcopy().
-
->          #
->          # Just save everything else into our own dict so that the output
->          # side can grab it directly as before.  As we move things into more
-> @@ -27,8 +29,14 @@ class KdocItem:
->          return self.get(key)
->  
->      #
-> -    # Tracking of section information.
-> +    # Tracking of section and parameter information.
->      #
->      def set_sections(self, sections, start_lines):
->          self.sections = sections
->          self.section_start_lines = start_lines
+>  arch/riscv/kernel/ftrace.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
+> index 4c6c24380cfd9d6c51f0e4340cd674160b83a610..22e7bdf8de2b6ca950cf2c8b7=
+34bc82ea46ba8bf 100644
+> --- a/arch/riscv/kernel/ftrace.c
+> +++ b/arch/riscv/kernel/ftrace.c
+> @@ -14,6 +14,16 @@
+>  #include <asm/text-patching.h>
+>
+>  #ifdef CONFIG_DYNAMIC_FTRACE
+> +void ftrace_arch_code_modify_prepare(void)
+> +{
+> +       mutex_lock(&text_mutex);
+> +}
 > +
-> +    def set_params(self, names, descs, types, starts):
-> +        self.parameterlist = names
-> +        self.parameterdescs = descs
-> +        self.parametertypes = types
-> +        self.parameterdesc_start_lines = starts
-
-Your output was unchanged just because you're replacing all four
-lists at the same time here. If we ever modify the code to store them
-one by one, or to update previous set values, then we'll have
-troubles.
-
-> diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-> index 15cb89f91987..d6f4d9e7173b 100644
-> --- a/scripts/lib/kdoc/kdoc_output.py
-> +++ b/scripts/lib/kdoc/kdoc_output.py
-> @@ -373,18 +373,13 @@ class RestFormat(OutputFormat):
->                  signature = args['functiontype'] + " "
->              signature += args['function'] + " ("
->  
-> -        parameterlist = args.get('parameterlist', [])
-> -        parameterdescs = args.get('parameterdescs', {})
-> -        parameterdesc_start_lines = args.get('parameterdesc_start_lines', {})
-> -
->          ln = args.get('declaration_start_line', 0)
-> -
->          count = 0
-> -        for parameter in parameterlist:
-> +        for parameter in args.parameterlist:
->              if count != 0:
->                  signature += ", "
->              count += 1
-> -            dtype = args['parametertypes'].get(parameter, "")
-> +            dtype = args.parametertypes.get(parameter, "")
->  
->              if function_pointer.search(dtype):
->                  signature += function_pointer.group(1) + parameter + function_pointer.group(3)
-> @@ -419,26 +414,26 @@ class RestFormat(OutputFormat):
->          # function prototypes apart
->          self.lineprefix = "  "
->  
-> -        if parameterlist:
-> +        if args.parameterlist:
->              self.data += ".. container:: kernelindent\n\n"
->              self.data += f"{self.lineprefix}**Parameters**\n\n"
->  
-> -        for parameter in parameterlist:
-> +        for parameter in args.parameterlist:
->              parameter_name = KernRe(r'\[.*').sub('', parameter)
-> -            dtype = args['parametertypes'].get(parameter, "")
-> +            dtype = args.parametertypes.get(parameter, "")
->  
->              if dtype:
->                  self.data += f"{self.lineprefix}``{dtype}``\n"
->              else:
->                  self.data += f"{self.lineprefix}``{parameter}``\n"
->  
-> -            self.print_lineno(parameterdesc_start_lines.get(parameter_name, 0))
-> +            self.print_lineno(args.parameterdesc_start_lines.get(parameter_name, 0))
->  
->              self.lineprefix = "    "
-> -            if parameter_name in parameterdescs and \
-> -               parameterdescs[parameter_name] != KernelDoc.undescribed:
-> +            if parameter_name in args.parameterdescs and \
-> +               args.parameterdescs[parameter_name] != KernelDoc.undescribed:
->  
-> -                self.output_highlight(parameterdescs[parameter_name])
-> +                self.output_highlight(args.parameterdescs[parameter_name])
->                  self.data += "\n"
->              else:
->                  self.data += f"{self.lineprefix}*undescribed*\n\n"
-> @@ -451,8 +446,6 @@ class RestFormat(OutputFormat):
->  
->          oldprefix = self.lineprefix
->          name = args.get('enum', '')
-> -        parameterlist = args.get('parameterlist', [])
-> -        parameterdescs = args.get('parameterdescs', {})
->          ln = args.get('declaration_start_line', 0)
->  
->          self.data += f"\n\n.. c:enum:: {name}\n\n"
-> @@ -467,11 +460,11 @@ class RestFormat(OutputFormat):
->          self.lineprefix = outer + "  "
->          self.data += f"{outer}**Constants**\n\n"
->  
-> -        for parameter in parameterlist:
-> +        for parameter in args.parameterlist:
->              self.data += f"{outer}``{parameter}``\n"
->  
-> -            if parameterdescs.get(parameter, '') != KernelDoc.undescribed:
-> -                self.output_highlight(parameterdescs[parameter])
-> +            if args.parameterdescs.get(parameter, '') != KernelDoc.undescribed:
-> +                self.output_highlight(args.parameterdescs[parameter])
->              else:
->                  self.data += f"{self.lineprefix}*undescribed*\n\n"
->              self.data += "\n"
-> @@ -505,10 +498,6 @@ class RestFormat(OutputFormat):
->          dtype = args.get('type', "struct")
->          ln = args.get('declaration_start_line', 0)
->  
-> -        parameterlist = args.get('parameterlist', [])
-> -        parameterdescs = args.get('parameterdescs', {})
-> -        parameterdesc_start_lines = args.get('parameterdesc_start_lines', {})
-> -
->          self.data += f"\n\n.. c:{dtype}:: {name}\n\n"
->  
->          self.print_lineno(ln)
-> @@ -531,21 +520,21 @@ class RestFormat(OutputFormat):
->  
->          self.lineprefix = "  "
->          self.data += f"{self.lineprefix}**Members**\n\n"
-> -        for parameter in parameterlist:
-> +        for parameter in args.parameterlist:
->              if not parameter or parameter.startswith("#"):
->                  continue
->  
->              parameter_name = parameter.split("[", maxsplit=1)[0]
->  
-> -            if parameterdescs.get(parameter_name) == KernelDoc.undescribed:
-> +            if args.parameterdescs.get(parameter_name) == KernelDoc.undescribed:
->                  continue
->  
-> -            self.print_lineno(parameterdesc_start_lines.get(parameter_name, 0))
-> +            self.print_lineno(args.parameterdesc_start_lines.get(parameter_name, 0))
->  
->              self.data += f"{self.lineprefix}``{parameter}``\n"
->  
->              self.lineprefix = "    "
-> -            self.output_highlight(parameterdescs[parameter_name])
-> +            self.output_highlight(args.parameterdescs[parameter_name])
->              self.lineprefix = "  "
->  
->              self.data += "\n"
-> @@ -643,9 +632,6 @@ class ManFormat(OutputFormat):
->      def out_function(self, fname, name, args):
->          """output function in man"""
->  
-> -        parameterlist = args.get('parameterlist', [])
-> -        parameterdescs = args.get('parameterdescs', {})
-> -
->          self.data += f'.TH "{args["function"]}" 9 "{args["function"]}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
->  
->          self.data += ".SH NAME\n"
-> @@ -661,11 +647,11 @@ class ManFormat(OutputFormat):
->          parenth = "("
->          post = ","
->  
-> -        for parameter in parameterlist:
-> -            if count == len(parameterlist) - 1:
-> +        for parameter in args.parameterlist:
-> +            if count == len(args.parameterlist) - 1:
->                  post = ");"
->  
-> -            dtype = args['parametertypes'].get(parameter, "")
-> +            dtype = args.parametertypes.get(parameter, "")
->              if function_pointer.match(dtype):
->                  # Pointer-to-function
->                  self.data += f'".BI "{parenth}{function_pointer.group(1)}" " ") ({function_pointer.group(2)}){post}"' + "\n"
-> @@ -676,14 +662,14 @@ class ManFormat(OutputFormat):
->              count += 1
->              parenth = ""
->  
-> -        if parameterlist:
-> +        if args.parameterlist:
->              self.data += ".SH ARGUMENTS\n"
->  
-> -        for parameter in parameterlist:
-> +        for parameter in args.parameterlist:
->              parameter_name = re.sub(r'\[.*', '', parameter)
->  
->              self.data += f'.IP "{parameter}" 12' + "\n"
-> -            self.output_highlight(parameterdescs.get(parameter_name, ""))
-> +            self.output_highlight(args.parameterdescs.get(parameter_name, ""))
->  
->          for section, text in args.sections.items():
->              self.data += f'.SH "{section.upper()}"' + "\n"
-> @@ -692,7 +678,6 @@ class ManFormat(OutputFormat):
->      def out_enum(self, fname, name, args):
->  
->          name = args.get('enum', '')
-> -        parameterlist = args.get('parameterlist', [])
->  
->          self.data += f'.TH "{self.modulename}" 9 "enum {args["enum"]}" "{self.man_date}" "API Manual" LINUX' + "\n"
->  
-> @@ -703,9 +688,9 @@ class ManFormat(OutputFormat):
->          self.data += f"enum {args['enum']}" + " {\n"
->  
->          count = 0
-> -        for parameter in parameterlist:
-> +        for parameter in args.parameterlist:
->              self.data += f'.br\n.BI "    {parameter}"' + "\n"
-> -            if count == len(parameterlist) - 1:
-> +            if count == len(args.parameterlist) - 1:
->                  self.data += "\n};\n"
->              else:
->                  self.data += ", \n.br\n"
-> @@ -714,10 +699,10 @@ class ManFormat(OutputFormat):
->  
->          self.data += ".SH Constants\n"
->  
-> -        for parameter in parameterlist:
-> +        for parameter in args.parameterlist:
->              parameter_name = KernRe(r'\[.*').sub('', parameter)
->              self.data += f'.IP "{parameter}" 12' + "\n"
-> -            self.output_highlight(args['parameterdescs'].get(parameter_name, ""))
-> +            self.output_highlight(args.parameterdescs.get(parameter_name, ""))
->  
->          for section, text in args.sections.items():
->              self.data += f'.SH "{section}"' + "\n"
-> @@ -743,8 +728,6 @@ class ManFormat(OutputFormat):
->          struct_name = args.get('struct')
->          purpose = args.get('purpose')
->          definition = args.get('definition')
-> -        parameterlist = args.get('parameterlist', [])
-> -        parameterdescs = args.get('parameterdescs', {})
->  
->          self.data += f'.TH "{module}" 9 "{struct_type} {struct_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
->  
-> @@ -760,17 +743,17 @@ class ManFormat(OutputFormat):
->          self.data += f'.BI "{declaration}\n' + "};\n.br\n\n"
->  
->          self.data += ".SH Members\n"
-> -        for parameter in parameterlist:
-> +        for parameter in args.parameterlist:
->              if parameter.startswith("#"):
->                  continue
->  
->              parameter_name = re.sub(r"\[.*", "", parameter)
->  
-> -            if parameterdescs.get(parameter_name) == KernelDoc.undescribed:
-> +            if args.parameterdescs.get(parameter_name) == KernelDoc.undescribed:
->                  continue
->  
->              self.data += f'.IP "{parameter}" 12' + "\n"
-> -            self.output_highlight(parameterdescs.get(parameter_name))
-> +            self.output_highlight(args.parameterdescs.get(parameter_name))
->  
->          for section, text in args.sections.items():
->              self.data += f'.SH "{section}"' + "\n"
-> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-> index ffd49f9395ae..298abd260264 100644
-> --- a/scripts/lib/kdoc/kdoc_parser.py
-> +++ b/scripts/lib/kdoc/kdoc_parser.py
-> @@ -278,7 +278,9 @@ class KernelDoc:
->              if section in sections and not sections[section].rstrip():
->                  del sections[section]
->          item.set_sections(sections, self.entry.section_start_lines)
-> -
-> +        item.set_params(self.entry.parameterlist, self.entry.parameterdescs,
-> +                        self.entry.parametertypes,
-> +                        self.entry.parameterdesc_start_lines)
->          self.entries.append(item)
->  
->          self.config.log.debug("Output: %s:%s = %s", dtype, name, pformat(args))
-> @@ -790,10 +792,6 @@ class KernelDoc:
->          self.output_declaration(decl_type, declaration_name,
->                                  struct=declaration_name,
->                                  definition=declaration,
-> -                                parameterlist=self.entry.parameterlist,
-> -                                parameterdescs=self.entry.parameterdescs,
-> -                                parametertypes=self.entry.parametertypes,
-> -                                parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
->                                  purpose=self.entry.declaration_purpose)
->  
->      def dump_enum(self, ln, proto):
-> @@ -873,9 +871,6 @@ class KernelDoc:
->  
->          self.output_declaration('enum', declaration_name,
->                                  enum=declaration_name,
-> -                                parameterlist=self.entry.parameterlist,
-> -                                parameterdescs=self.entry.parameterdescs,
-> -                                parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
->                                  purpose=self.entry.declaration_purpose)
->  
->      def dump_declaration(self, ln, prototype):
-> @@ -1039,10 +1034,6 @@ class KernelDoc:
->                                      function=declaration_name,
->                                      typedef=True,
->                                      functiontype=return_type,
-> -                                    parameterlist=self.entry.parameterlist,
-> -                                    parameterdescs=self.entry.parameterdescs,
-> -                                    parametertypes=self.entry.parametertypes,
-> -                                    parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
->                                      purpose=self.entry.declaration_purpose,
->                                      func_macro=func_macro)
->          else:
-> @@ -1050,10 +1041,6 @@ class KernelDoc:
->                                      function=declaration_name,
->                                      typedef=False,
->                                      functiontype=return_type,
-> -                                    parameterlist=self.entry.parameterlist,
-> -                                    parameterdescs=self.entry.parameterdescs,
-> -                                    parametertypes=self.entry.parametertypes,
-> -                                    parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
->                                      purpose=self.entry.declaration_purpose,
->                                      func_macro=func_macro)
->  
-> @@ -1093,10 +1080,6 @@ class KernelDoc:
->                                      function=declaration_name,
->                                      typedef=True,
->                                      functiontype=return_type,
-> -                                    parameterlist=self.entry.parameterlist,
-> -                                    parameterdescs=self.entry.parameterdescs,
-> -                                    parametertypes=self.entry.parametertypes,
-> -                                    parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
->                                      purpose=self.entry.declaration_purpose)
->              return
->  
-
-
-
-Thanks,
-Mauro
+> +void ftrace_arch_code_modify_post_process(void)
+> +{
+> +       mutex_unlock(&text_mutex);
+> +}
+> +
+>  unsigned long ftrace_call_adjust(unsigned long addr)
+>  {
+>         if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_CALL_OPS))
+> @@ -29,10 +39,8 @@ unsigned long arch_ftrace_get_symaddr(unsigned long fe=
+ntry_ip)
+>
+>  void arch_ftrace_update_code(int command)
+>  {
+> -       mutex_lock(&text_mutex);
+>         command |=3D FTRACE_MAY_SLEEP;
+>         ftrace_modify_all_code(command);
+> -       mutex_unlock(&text_mutex);
+>         flush_icache_all();
+>  }
+>
+> @@ -149,6 +157,8 @@ int ftrace_init_nop(struct module *mod, struct dyn_ft=
+race *rec)
+>         unsigned int nops[2], offset;
+>         int ret;
+>
+> +       guard(mutex)(&text_mutex);
+> +
+>         ret =3D ftrace_rec_set_nop_ops(rec);
+>         if (ret)
+>                 return ret;
+> @@ -157,9 +167,7 @@ int ftrace_init_nop(struct module *mod, struct dyn_ft=
+race *rec)
+>         nops[0] =3D to_auipc_t0(offset);
+>         nops[1] =3D RISCV_INSN_NOP4;
+>
+> -       mutex_lock(&text_mutex);
+>         ret =3D patch_insn_write((void *)pc, nops, 2 * MCOUNT_INSN_SIZE);
+> -       mutex_unlock(&text_mutex);
+>
+>         return ret;
+>  }
+>
+> ---
+> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+> change-id: 20250708-alex-fixes-1e719b9899f3
+>
+> Best regards,
+> --
+> Alexandre Ghiti <alexghiti@rivosinc.com>
+>
 
