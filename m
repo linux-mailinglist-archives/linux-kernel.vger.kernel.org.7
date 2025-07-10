@@ -1,83 +1,138 @@
-Return-Path: <linux-kernel+bounces-725271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37797AFFCAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:44:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29523AFFCB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 193E54E54B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:43:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A8D169ED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2029926B2D5;
-	Thu, 10 Jul 2025 08:44:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94D86FC3;
-	Thu, 10 Jul 2025 08:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DAA28C840;
+	Thu, 10 Jul 2025 08:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i9tcv87J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5651212B28;
+	Thu, 10 Jul 2025 08:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752137054; cv=none; b=h4fsQJaPIlFxzKHYCUHqQHUNbNjE8VEMIrDvWcJTCF7Y8TzqajPoEzwWXIDXbWNtXJYW9GmXUsDTC3EBIzShawDCgZUDNjbPSTJlsExkYjfY2eXQR/fW8N/Lql8ujqk70+kaZlZgUh7neabmd7VVlDz7r0GzEo4Eno+1KMq88zE=
+	t=1752137135; cv=none; b=QEZiTu/ioE4p/OrIKMRBG7VmG+k33Re3+gWjiUy9jCmuudDC0IjN8kfJLGX34scCEmdmZVnuoIyFqZhTjht+Yq+Mp7IuJJDBSjrv1jJlAUa7n3fxB18V5lsMweMYa6C5oBk/qOYnTGgwt6tFjetNlL7BBk76AYIYHgQ4Agmtzvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752137054; c=relaxed/simple;
-	bh=YhSRhuxKLROI2NTRCx6TpQscIMdYxuJr5ktJPi+O3pI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d1CxnZyj/ThflBtmhXdLq0PfPpqbLh3U7JvfmWJVCz3wYM8LTPwi/0V1U4wvxNHg3xYJstuV1rV/4slYRQud2Q46P9lmnYUBQ7TGcQ+YQilV5g1V+RPnONq+t30HwxayYV7h3BdDYv1pFP/9ekb+Qop7TRytKxTitd/66orFVDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A24511EA6;
-	Thu, 10 Jul 2025 01:44:00 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2159A3F738;
-	Thu, 10 Jul 2025 01:44:10 -0700 (PDT)
-Message-ID: <c8c94357-8367-42b9-a817-f4ae3feacdf2@arm.com>
-Date: Thu, 10 Jul 2025 09:44:09 +0100
+	s=arc-20240116; t=1752137135; c=relaxed/simple;
+	bh=uzTHlkiMqVttpURo60tiyRON8rgNyiEWMXPl9W1Ix6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nFBoS638w/kHKGbWaux8srrPO2MOKtq5yLDAFkA1vI/aHmFFxRRnVWo4MoO0uBEdHOMtrPREq9qyE0HkPWaBjLBMdSMVqmgPcyxAiX0czlM5UIsjfxDo2PqdBd5aHUMl0L6ddTbyAIifVyhKKzacRzOJUfFV0pWBweE1ot3CY7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i9tcv87J; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752137134; x=1783673134;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=uzTHlkiMqVttpURo60tiyRON8rgNyiEWMXPl9W1Ix6w=;
+  b=i9tcv87JBNxlWHpvZuVJP/veY5wCSMj5ghsTNmgX3wfAPcHAKRR+8Lc4
+   kGwvxbZIBeTyV8YdjSJVMKKMHiCiKtvZDbwBJ3CDhxg6HJvQSRcUmfNkA
+   JP4Voe5LVsrCXxdyVPuYJQzenqR4HgGPzDdWVT8Yi155hhXqKW5OUuZxt
+   hijy5T1muTazgMm0uo4GkNjY7qJjnM9mDIOIY5NybXIHDgFDbgppujX4n
+   +hX10VIeiApEwMeSFBFWDVO+YmmZWPB0+y5qkJOWYF4AjyTxh/6t6qlqu
+   pCw6JaIvRjxwh3t+gvRR9/+vmPTCI33sMwk4hXVPoqajHo4ztE/EzFqq+
+   g==;
+X-CSE-ConnectionGUID: 9aLoP/4WSySSfGmSrcpKNw==
+X-CSE-MsgGUID: MWu0MsAnRv63tq+L7iQtVQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="71857203"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="71857203"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 01:45:32 -0700
+X-CSE-ConnectionGUID: jKzJ0e0ZTDuIMxVti1Bh6w==
+X-CSE-MsgGUID: 60fiJbQISPC03apMVho8eA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="156123394"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 10 Jul 2025 01:45:27 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id E00651B7; Thu, 10 Jul 2025 11:45:26 +0300 (EEST)
+Date: Thu, 10 Jul 2025 11:45:26 +0300
+From: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"seanjc@google.com" <seanjc@google.com>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
+	"Gao, Chao" <chao.gao@intel.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"Huang, Kai" <kai.huang@intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2 08/12] KVM: TDX: Handle PAMT allocation in fault path
+Message-ID: <ypsnjhvy2odzedxtujzaumvz4mxe3dcci7biepsjrate7pzw7d@6h7qwy3xcqld>
+References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
+ <20250609191340.2051741-9-kirill.shutemov@linux.intel.com>
+ <5c0b2e7acbfe59e8919cadfec1ab2503eec1a022.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the bitmap tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Yury Norov <yury.norov@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250710183449.20e255b4@canb.auug.org.au>
-Content-Language: en-US
-From: Ben Horgan <ben.horgan@arm.com>
-In-Reply-To: <20250710183449.20e255b4@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5c0b2e7acbfe59e8919cadfec1ab2503eec1a022.camel@intel.com>
 
-Hi Stephen,
-
-On 7/10/25 09:34, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Jul 10, 2025 at 01:33:41AM +0000, Edgecombe, Rick P wrote:
+> On Mon, 2025-06-09 at 22:13 +0300, Kirill A. Shutemov wrote:
+> >  int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
+> >  			      enum pg_level level, kvm_pfn_t pfn)
+> >  {
+> > +	struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
 > 
-> After merging the bitmap tree, today's linux-next build (arm64 defconfig)
-> produced this warning:
+> This is unfortunate. In practice, all of the callers will be in a vCPU context,
+> but __tdp_mmu_set_spte_atomic() can be called for zap's which is why there is no
+> vCPU.
+
+IIUC, __tdp_mmu_set_spte_atomic() to zap, only for shared case which is
+!is_mirror_sptep() and will not get us here. !shared case get to
+tdx_sept_remove_private_spte().
+
+> We don't want to split the tdp mmu calling code to introduce a variant that has
+> a vCPU. 
 > 
-> arch/arm64/kvm/sys_regs.c: In function 'access_mdcr':
-> arch/arm64/kvm/sys_regs.c:2654:17: warning: ignoring return value of 'u64_replace_bits' declared with attribute 'warn_unused_result' [-Wunused-result]
->   2654 |                 u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
->        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> What about a big comment? Or checking for NULL and returning -EINVAL like
+> PG_LEVEL_4K below? I guess in this case a NULL pointer will be plenty loud. So
+> probably a comment is enough.
+
+Yes, comment is helpful here
+
+> Hmm, the only reason we need the vCPU here is to get at the the per-vCPU pamt
+> page cache. This is also the reason for the strange callback scheme I was
+> complaining about in the other patch. It kind of seems like there are two
+> friction points in this series:
+> 1. How to allocate dpamt pages
+> 2. How to serialize the global DPAMT resource inside a read lock
 > 
-> Introduced by commit
+> I'd like to try to figure out a better solution for (1). (2) seems good. But I'm
+> still processing.
+
+I tried few different approached to address the problem. See phys_prepare
+and phys_cleanup in v1.
+
 > 
->    f66f9c3d09c1 ("bitfield: Ensure the return values of helper functions are checked")
+> >  	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> >  	struct page *page = pfn_to_page(pfn);
+> > +	int ret;
+> > +
+> > +	ret = tdx_pamt_get(page, level, tdx_alloc_pamt_page_atomic, vcpu);
+> > +	if (ret)
+> > +		return ret;
 > 
 
-Sorry to have broken your tree. However, this is a valid warning and 
-this misuse of u64_replace_bits() was the motivation for the commit.
-
-The fix can be found here 
-https://lore.kernel.org/kvmarm/20250709093808.920284-1-ben.horgan@arm.com/T/#mc9e47859302654d84b4f2b3d9032d2b595d5df49
-
-Thanks,
-
-Ben
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
