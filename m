@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-726563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20DDDB00EB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:30:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2D2B00EBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB6E4A4A0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:30:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435461CA7BF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7367429ACD4;
-	Thu, 10 Jul 2025 22:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95392BE052;
+	Thu, 10 Jul 2025 22:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PxU9dePC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIAuBUeI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC3D1DDD1;
-	Thu, 10 Jul 2025 22:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C60928C011;
+	Thu, 10 Jul 2025 22:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752186618; cv=none; b=DStGQymUtG0OZufX+6V669cXHMAfDyjrRFKxS537JO2wembpapRre0+2BJZe+gKQAzFI0/zIOHTqfqqraZsvn6oN8Z7TPCEw6MsbHrdB80BBTZrzNvbS+sCG3lrFK+JpsT2SYzms/GZcapuwF1JLoLWFQaFbp73ZWTC4My8lCxk=
+	t=1752186636; cv=none; b=n50MPqpiHiJIIYXpkr4NYergpDaSIefvazKAm3MoTp2hNKzpnvZe5FS5/v4Ne5SmttrcFfQno80Mu369+9X2+pWz/ZNTuZRsh52DanEG0xISRv/APobu2FvFdab3JgCWa3L2v7R8FHwg8nGQ7t8ggd9vf016tU28vYloNg1mVmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752186618; c=relaxed/simple;
-	bh=ek1erb7vbUdIvcJ4C1KbPFVIhrxIXNfZkgblEP1rQA8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Dv83hV7cppXK8w0p5oQ4atO7uZWZSTDPyqfHoTLuMQzgFHVhrjWJeXLnxYMkA7iqHy/y/BwwhdWNb+yw7jbKUFRPAIaS1kpO8752OdjYtPlS8rhFQkFLfxQRDCgW8oRQBzUOoG6jOA1155cq6WbC0BPIetAx3u1jqnnxMbG5SgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PxU9dePC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34ED6C4CEE3;
-	Thu, 10 Jul 2025 22:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752186618;
-	bh=ek1erb7vbUdIvcJ4C1KbPFVIhrxIXNfZkgblEP1rQA8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PxU9dePCH2+oMhfn5JzBdoQNSjP5dTcVDR2zI//5hgRPktM/qLRrdaFUB31zlATYo
-	 00va+CC66PTAJPyCjL+URv19GsoBZZyHfpst4g68tNJXHaThFBe90t2v1lDZpPFQpY
-	 m3KWmewx3BmvYqcE6TA+G8g16e1T3Xa4oW6aK2Rk=
-Date: Thu, 10 Jul 2025 15:30:17 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Hildenbrand <david@redhat.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the mm-unstable tree
-Message-Id: <20250710153017.c17ca59f1df36eec90db8b54@linux-foundation.org>
-In-Reply-To: <20250710175446.128c7def@canb.auug.org.au>
-References: <20250710175446.128c7def@canb.auug.org.au>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752186636; c=relaxed/simple;
+	bh=XwqwZqp7HuX7RcyuJ6RcS3EZOjo+k033TS6NfqYifjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TYqt3b4z4Tese7LZjT3+zDAG525fSkB8xpVcpOcoiGKCh45EToKSpXMNIPU7SI0U6AlHiSPO22hd7lUe9jvvguseIbOW5R5Val+gi5rYjIgSBeqBO2AScu5A+pBFi2Ysac4mWYalMSVthu21nIDcXJhgifX38EK7CVoNKxzGaDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIAuBUeI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1B1C4CEE3;
+	Thu, 10 Jul 2025 22:30:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752186635;
+	bh=XwqwZqp7HuX7RcyuJ6RcS3EZOjo+k033TS6NfqYifjg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pIAuBUeI9kHse8pIF8gKTTgBrcwPa8tqm5mzxwbYiDTvgLLWdD5NlFqYEVmqzFRyP
+	 dHbWbVnJfaHd0bRxy8lEj+WD/L+bs8W222PdgKISqaI8kY3H3LhHgyvjjEQ4TEokV9
+	 l8p3FaOQYPuzSGj4Y445VRFrLHoUZMX3y/rwCPnkllrfM22ku9JfMR5VzHYO7KFHZD
+	 OKD5xWTLw2ImE4jv1nG7x+FS0xLpHHQ6m3IRzyfKPO5zR+MyubayiHjO1/7i35E0ou
+	 +Q52D4SrwrqD8L29YB1u6QtjZrREfLx8jeVSvcj1V9CZ1RrYG20rHD11pN+XRPljMH
+	 vFCDCTlCAMGJA==
+Date: Thu, 10 Jul 2025 17:30:34 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Jernej Skrabec <jernej@kernel.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-sunxi@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: power: Add A523 PPU and PCK600 power
+ controllers
+Message-ID: <175218663372.4188922.16230112848863911974.robh@kernel.org>
+References: <20250709155343.3765227-1-wens@kernel.org>
+ <20250709155343.3765227-2-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709155343.3765227-2-wens@kernel.org>
 
-On Thu, 10 Jul 2025 17:54:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> Hi all,
+On Wed, 09 Jul 2025 23:53:40 +0800, Chen-Yu Tsai wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
 > 
-> After merging the mm-unstable tree, today's linux-next build (htmldocs)
-> produced this warning:
+> The A523 PPU is likely the same kind of hardware seen on previous SoCs.
 > 
-> mm/migrate.c:215: warning: Function parameter or struct member 'dst' not described in 'migrate_movable_ops_page'
-> mm/migrate.c:215: warning: Function parameter or struct member 'src' not described in 'migrate_movable_ops_page'
-> mm/migrate.c:215: warning: Function parameter or struct member 'mode' not described in 'migrate_movable_ops_page'
-> mm/migrate.c:215: warning: Excess function parameter 'page' description in 'migrate_movable_ops_page'
+> The A523 PCK600, as the name suggests, is likely a customized version
+> of ARM's PCK-600 power controller. Comparing the BSP driver against
+> ARM's PPU datasheet shows that the basic registers line up, but
+> Allwinner's hardware has some additional delay controls in the reserved
+> register range. As such it is likely not fully compatible with the
+> standard ARM version.
 > 
-> Introduced by commit
+> Document A523 PPU and PCK600 compatibles.
 > 
->   d5967fb0bf8e ("mm/migrate: factor out movable_ops page handling into migrate_movable_ops_page()")
+> Also reorder the compatible string entries so they are grouped and
+> ordered by family first, then by SoC model.
+> 
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> 
+> ---
+> Changes since v1:
+> - Re-order compatible string entries
+> - Fix name of header file to match compatible string
+> ---
+>  .../bindings/power/allwinner,sun20i-d1-ppu.yaml   |  4 +++-
+>  .../power/allwinner,sun55i-a523-pck-600.h         | 15 +++++++++++++++
+>  .../dt-bindings/power/allwinner,sun55i-a523-ppu.h | 12 ++++++++++++
+>  3 files changed, 30 insertions(+), 1 deletion(-)
+>  create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-pck-600.h
+>  create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-ppu.h
+> 
 
-How about this?
-
---- a/mm/migrate.c~mm-migrate-factor-out-movable_ops-page-handling-into-migrate_movable_ops_page-fix
-+++ a/mm/migrate.c
-@@ -161,7 +161,9 @@ static void putback_movable_ops_page(str
- 
- /**
-  * migrate_movable_ops_page - migrate an isolated movable_ops page
-- * @page: The isolated page.
-+ * @dst: The destination page.
-+ * @src: The source page.
-+ * @mode: The migration mode.
-  *
-  * Migrate an isolated movable_ops page.
-  *
-_
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
