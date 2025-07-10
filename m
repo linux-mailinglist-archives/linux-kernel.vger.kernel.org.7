@@ -1,194 +1,227 @@
-Return-Path: <linux-kernel+bounces-725371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786A5AFFE28
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:30:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C3EAFFE29
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A90234A4EAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:30:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D8856483E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066772BEC4A;
-	Thu, 10 Jul 2025 09:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627782C15B2;
+	Thu, 10 Jul 2025 09:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pk5TCklL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="TCra7FBm"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26CC292B37;
-	Thu, 10 Jul 2025 09:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D42729ACED
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752139799; cv=none; b=tdT2U7SBtQwfgCVC2gCXR1E7ccEx8LUCUI/0e92k/Kxm2w/nn5xMDYej96NSjdRWVukQknbR012Ut/aaNiHM7RRe6J1m+LFWTK2CAgF52SW3jHdJf5BfxRRNfAmZ1h+TvTA8ZmOPK1Ty1qV1VTA7frqQ8BTUTvyWyFYEyrsHNTM=
+	t=1752139801; cv=none; b=XkkFxkQ7pc/RH8+Scc7iK+4NeH/aIWb0NDAKhcIyXLFuIvzOqqDxVx4zi2jd9T93EyGOWxL93W20v6AegWR7UF3p6dVdRU0Z1XhcJhPKLcpY2C17zFoMIeAaYUh3UiaKt3XW1+VszK4NoanvWQhN9YbodFl1SHU9NOn+KztExMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752139799; c=relaxed/simple;
-	bh=FfyeP/NDyN7nfFZ6wzcvSd4IG6KdqSyCylHKZr3tP1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+fZ7CcjDNyo3eoXUCaOMgITabVELur15Ho49ACJyNjdqXKz+1DNEUKyp4lFP5FBpCiBPYgNbNwLoHpfRM9Am7QyVidotksZiFNcUyy2Pp9OyeYa20HATF3CQkmHjQ2E3QoTi44u2Yoz+XkdEhkx4yUckUMxudCZjnDY5wurWLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pk5TCklL; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752139798; x=1783675798;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FfyeP/NDyN7nfFZ6wzcvSd4IG6KdqSyCylHKZr3tP1Y=;
-  b=Pk5TCklLp/5vP7aGDUqz3G/p6GY0BAlhhjBek8bHHsywkGvM+JDrRLcs
-   bqIbYCP4mWmq96z/t+Q+vaBdXDGTtYyvqY3virPkrZ27kVAJiHMosu9JB
-   3VNkuBa84x+OEMkEh5rhH2PetlC9qmyM7ZBf5Y32eBSITUpXCA6sjblCg
-   7cV6AHCNkqRfOxD4uVllWSmpaLvYxewubVyraxXouALhzq5CvjsvFxnPB
-   pznJZ+LoAPSxMpKwoHQMl9BKnBd2mkOkCWeTI8etBGBCdFfUOk7lKNsyW
-   XkEV1XzphIunZBX21RHQSd01zGfeFxnUglJLmGdiN087Io+FOO3KUcfLy
-   Q==;
-X-CSE-ConnectionGUID: aVs7HyjNTAG21ZkErQw7CQ==
-X-CSE-MsgGUID: xNvCV9aRTxeLzOwu0DtOgA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54130745"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="54130745"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:29:57 -0700
-X-CSE-ConnectionGUID: +Qa7pN1SRby0WTK7MhNp3w==
-X-CSE-MsgGUID: t8ai8+ECQD2mAtDj4NnN9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="186995337"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:29:54 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uZnbD-0000000E9ji-3joE;
-	Thu, 10 Jul 2025 12:29:51 +0300
-Date: Thu, 10 Jul 2025 12:29:51 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: remi.buisson@tdk.com
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] iio: imu: inv_icm45600: add new inv_icm45600
- driver
-Message-ID: <aG-ID7O3HgVc1EOX@smile.fi.intel.com>
-References: <20250710-add_newport_driver-v2-0-bf76d8142ef2@tdk.com>
- <20250710-add_newport_driver-v2-2-bf76d8142ef2@tdk.com>
+	s=arc-20240116; t=1752139801; c=relaxed/simple;
+	bh=RvWx0THnhd8C6rcGaqHmSfjP4lgZODoB638I2q/pN6A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RznilIcJf5kDkVUXIdondcLq5OgfwNi5zJ/QDqyR4QMuzAIuJo6INM7kVa33/asoU62UkP1CRWWYFt2ceAZqnw6KYJY0DQTSziDKWMgXMCedddbSd9BADlUWbhzQmnYXc1erVNj0FZ0PqL36vHtHxG2s1gREqjzPECUvZGLM9I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=TCra7FBm; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-451d6ade159so5625945e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 02:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752139797; x=1752744597; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BbeTP4cE9kq271i0CBkzPGTfY9QH/lS2BgWUwRgbv0s=;
+        b=TCra7FBmZWwHjp7N7BfVC+eqnb+yFwDPelAru6KrO3TMneAZcXbn+wch7up2lU7yeV
+         X5AzvrqiQltXfqxpUxL0uLIVJdif0bH78+2g4KB8QU78IbyoLrHtSTrYYnK1OBfU7B6w
+         ax4Ecm2uVHPE/9dH5tw56b34/NA2b93t7Eg6yGzFcgUae+QpAdrcLUkQ1LC/YMeQ0lRE
+         dzQSdQWzmJlVcIiRYtFJpXkZhmPm55n2QtPRK5PD7l2Lpj4WTnZbvMP1k+UvFyr5rM13
+         8vli35rD6+cV04V0yMs1G3TqJS1MGgHl/5eJZPPCptDCWkTwHyzWZy3U0aICOEQHQrfj
+         bolQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752139797; x=1752744597;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BbeTP4cE9kq271i0CBkzPGTfY9QH/lS2BgWUwRgbv0s=;
+        b=Qm9VKol1YO2vhs00CLZ6TqL2sa1YINaByUxi9/nvocKINQs2HuBdlXnE0XFNix0Rc3
+         iFGWSVGlkpIWeAAsH/zYPQgXwh+v8wRypxsglEm6YLpIRAHPXGwDGr1XJT+gE68xwixp
+         HDSSN9bjb2KyVdOQ17xkKU9XSz2Gf2RPgiLLV3vKs7nJCQbb0CfepY/tyIDL1Z84ECp2
+         D4vqkeM1sWW13vRBXaPHJlOdPsv3iH4A4wFgVFIAdM26nzSNi/oAUntvzxEycfuYGFKJ
+         S/kVpN2OXCfPQ2RElmw5D6jDj68w0NHNNjluSjRmMvR8oslEls4TmO9+wz8KeU6p+5h6
+         /nIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNKMeMdrm8W9gGG8F4JRRLl5JGNdUqGCe44jPbTwLy2vzIB4gWSi5/bJeKgfJdtBOIKLdrCazSnZ+u5YA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiCvxCKgC43cutebiu24oPVMysg4ROs//4JLvchBFpPXQ/CyTb
+	PVU40seNjD/PhOZyfAsHPxiGnRvNl8PWulh4DIxk1aUdhrscOuN0eGrGRRi90YJqU6w=
+X-Gm-Gg: ASbGnctdCEfR5APrkfBtn+WOJDS0DgCvDf6qZvTREXH95pvZ6y8D7k2F9SvON+MohT9
+	4UzswyHwY1HoZjMs0X5ftMBGjBpJWJI5uO5EjjCObY0kEsNkZqkScpUtzemzrCdrgZLZNxy0ADH
+	+E/nzskUO5Pg1fHH5KPJMLGQAdtxA/0P20Mnqgfv929QEiJPW/oG/ivkYnMb3ci0x0kL1qfCX+i
+	ABsyIDMTYyoWXkjiO8dOjL6q12k/DxmWpHoobnsgAmd0n/wgEGJPy6vf2JQd/HS6+nfZxLFWCWK
+	m5QCFPFjcL2wgJv6v3x+EWn0UkSSsZ0PSp0mpW+0AZaLLgDsTBNryjO/7Qea2w==
+X-Google-Smtp-Source: AGHT+IHX7lTl/HTMcGBrX14bHfh/MeZzub6RiU4ihi3NXd1nTuCUfqXfnAxJUw+FMOS9g116fFGL/g==
+X-Received: by 2002:a05:600c:8b02:b0:44a:775d:b5e8 with SMTP id 5b1f17b1804b1-454dd1c8c8dmr16546785e9.1.1752139797358;
+        Thu, 10 Jul 2025 02:29:57 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:9fcc:5953:3d1a:6b41])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454d5050d34sm54258595e9.9.2025.07.10.02.29.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 02:29:56 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>,
+  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>,  Jaroslav Kysela <perex@perex.cz>,
+  Takashi Iwai <tiwai@suse.com>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+  jiebing.chen@amlogic.com,  linux-sound@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  jian.xu@amlogic.com,  shuai.li@amlogic.com,
+  zhe.wang@amlogic.com
+Subject: Re: [PATCH v5 4/6] ASoC: meson: g12a-toacodec: Add s4 tocodec driver
+In-Reply-To: <20250710-audio_drvier-v5-4-d4155f1e7464@amlogic.com> (jiebing
+	chen via's message of "Thu, 10 Jul 2025 11:35:40 +0800")
+References: <20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com>
+	<20250710-audio_drvier-v5-4-d4155f1e7464@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 10 Jul 2025 11:29:56 +0200
+Message-ID: <1jtt3kpf57.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710-add_newport_driver-v2-2-bf76d8142ef2@tdk.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain
 
-On Thu, Jul 10, 2025 at 08:57:57AM +0000, Remi Buisson via B4 Relay wrote:
-> From: Remi Buisson <remi.buisson@tdk.com>
-> 
-> Core component of a new driver for InvenSense ICM-45600 devices.
-> It includes registers definition, main probe/setup, and device
-> utility functions.
-> 
-> ICM-456xx devices are latest generation of 6-axis IMU,
-> gyroscope+accelerometer and temperature sensor. This device
-> includes a 8K FIFO, supports I2C/I3C/SPI, and provides
-> intelligent motion features like pedometer, tilt detection,
-> and tap detection.
+On Thu 10 Jul 2025 at 11:35, jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org> wrote:
 
-...
+> From: jiebing chen <jiebing.chen@amlogic.com>
+>
+> The S4 tocodec supports 8-lane input configuration, requiring BCLK
+> and MCLK control bits to be enabled during operation.
 
-> +	INV_ICM45600_SENSOR_MODE_NB
+This is oddly formulated, like there is some form of causality between 8
+lane support and the new clock bits of this SoC.
 
-What does the _NB stand for? Number of Bullets?
+If it is not the case then simply
 
-...
+"""
+Add s4 support to the toacodec driver.
 
-> +struct inv_icm45600_sensor_conf {
-> +	int mode;
-> +	int fs;
-> +	int odr;
-> +	int filter;
+The s4 requires additional clock control bits to be turn on  while enabled.
+The s4 has 8 TDM lanes, instead of 4 on previous SoC. Update the widget accordingly.
 
-Any of them can hold negative value?
+"""
 
+>
+> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+> ---
+>  sound/soc/meson/g12a-toacodec.c | 42 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>
+> diff --git a/sound/soc/meson/g12a-toacodec.c b/sound/soc/meson/g12a-toacodec.c
+> index 531bb8707a3ec4c47814d6a0676d5c62c705da75..cb2169293f0e800bd9c0893087ffc4813f3360e2 100644
+> --- a/sound/soc/meson/g12a-toacodec.c
+> +++ b/sound/soc/meson/g12a-toacodec.c
+> @@ -41,6 +41,9 @@
+>  #define  CTRL0_BCLK_SEL_LSB		4
+>  #define  CTRL0_MCLK_SEL			GENMASK(2, 0)
+>  
+> +#define CTRL0_BCLK_ENABLE_SHIFT		30
+> +#define CTRL0_MCLK_ENABLE_SHIFT		29
+> +
+>  #define TOACODEC_OUT_CHMAX		2
+>  
+>  struct g12a_toacodec {
+> @@ -143,6 +146,19 @@ static const struct snd_soc_dapm_widget sm1_toacodec_widgets[] = {
+>  			    &g12a_toacodec_out_enable),
+>  };
+>  
+> +/*
+> + * FIXME:
+> + * On this soc, tocodec need enable mclk and bclk control
+> + * just enable it when dapm power widget power on.
+
+If those are needed only when the widget is enabled, then I think it is
+fine and the FIXME is not necessary
+
+If not, more explanation are needed because I don't get what the
+limitation is.
+
+> + */
+> +
+> +static const struct snd_soc_dapm_widget s4_toacodec_widgets[] = {
+> +	SND_SOC_DAPM_MUX("SRC", TOACODEC_CTRL0, CTRL0_BCLK_ENABLE_SHIFT, 0,
+> +			 &sm1_toacodec_mux),
+> +	SND_SOC_DAPM_SWITCH("OUT EN", TOACODEC_CTRL0, CTRL0_MCLK_ENABLE_SHIFT, 0,
+> +			    &g12a_toacodec_out_enable),
 > +};
-
-...
-
-> +#define INV_ICM45600_SENSOR_CONF_INIT		{-1, -1, -1, -1}
-
-Unused.
-
-
-> +#include <linux/bitfield.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/property.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/types.h>
-
-...
-
-> +static int inv_icm45600_ireg_read(struct regmap *map, unsigned int reg,
-> +				   u8 *data, size_t count)
-> +{
-> +	int ret;
-> +	u8 addr[2];
-> +	ssize_t i;
-> +	unsigned int d;
 > +
-> +	addr[0] = FIELD_GET(INV_ICM45600_REG_BANK_MASK, reg);
-> +	addr[1] = FIELD_GET(INV_ICM45600_REG_ADDR_MASK, reg);
+>  static int g12a_toacodec_input_hw_params(struct snd_pcm_substream *substream,
+>  					 struct snd_pcm_hw_params *params,
+>  					 struct snd_soc_dai *dai)
+> @@ -236,6 +252,10 @@ static const struct snd_kcontrol_new sm1_toacodec_controls[] = {
+>  	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 3, 0),
+>  };
+>  
+> +static const struct snd_kcontrol_new s4_toacodec_controls[] = {
+> +	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 7, 0),
+> +};
 > +
-> +	/* Burst write address. */
-> +	ret = regmap_bulk_write(map, INV_ICM45600_REG_IREG_ADDR, addr, 2);
-
-sizeof()?
-
-> +	udelay(INV_ICM45600_IREG_DELAY_US);
-
-See below. This is also weird.
-
-> +	if (ret)
-> +		return ret;
+>  static const struct snd_soc_component_driver g12a_toacodec_component_drv = {
+>  	.probe			= g12a_toacodec_component_probe,
+>  	.controls		= g12a_toacodec_controls,
+> @@ -258,6 +278,17 @@ static const struct snd_soc_component_driver sm1_toacodec_component_drv = {
+>  	.endianness		= 1,
+>  };
+>  
+> +static const struct snd_soc_component_driver s4_toacodec_component_drv = {
+> +	.probe			= sm1_toacodec_component_probe,
+> +	.controls		= s4_toacodec_controls,
+> +	.num_controls		= ARRAY_SIZE(s4_toacodec_controls),
+> +	.dapm_widgets		= s4_toacodec_widgets,
+> +	.num_dapm_widgets	= ARRAY_SIZE(s4_toacodec_widgets),
+> +	.dapm_routes		= g12a_toacodec_routes,
+> +	.num_dapm_routes	= ARRAY_SIZE(g12a_toacodec_routes),
+> +	.endianness		= 1,
+> +};
 > +
-> +	/* Read the data. */
-> +	for (i = 0; i < count; i++) {
-> +		ret = regmap_read(map, INV_ICM45600_REG_IREG_DATA, &d);
-> +		data[i] = d;
-> +		udelay(INV_ICM45600_IREG_DELAY_US);
-
-Can fsleep() be used here?
-
-> +		if (ret)
-> +			return ret;
-
-This is weird. First you assign a garbage to the output, delay and return
-an error. It seems entire code is broken...
-Please, fix all these and try again, I stop my review here.
-
-> +	}
+>  static const struct regmap_config g12a_toacodec_regmap_cfg = {
+>  	.reg_bits	= 32,
+>  	.val_bits	= 32,
+> @@ -278,6 +309,13 @@ static const struct g12a_toacodec_match_data sm1_toacodec_match_data = {
+>  	.field_bclk_sel	= REG_FIELD(TOACODEC_CTRL0, 4, 6),
+>  };
+>  
+> +static const struct g12a_toacodec_match_data s4_toacodec_match_data = {
+> +	.component_drv	= &s4_toacodec_component_drv,
+> +	.field_dat_sel	= REG_FIELD(TOACODEC_CTRL0, 19, 20),
+> +	.field_lrclk_sel = REG_FIELD(TOACODEC_CTRL0, 12, 14),
+> +	.field_bclk_sel	= REG_FIELD(TOACODEC_CTRL0, 4, 6),
+> +};
 > +
-> +	return 0;
-> +}
+>  static const struct of_device_id g12a_toacodec_of_match[] = {
+>  	{
+>  		.compatible = "amlogic,g12a-toacodec",
+> @@ -287,6 +325,10 @@ static const struct of_device_id g12a_toacodec_of_match[] = {
+>  		.compatible = "amlogic,sm1-toacodec",
+>  		.data = &sm1_toacodec_match_data,
+>  	},
+> +	{
+> +		.compatible = "amlogic,s4-toacodec",
+> +		.data = &s4_toacodec_match_data,
+> +	},
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, g12a_toacodec_of_match);
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Jerome
 
