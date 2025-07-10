@@ -1,142 +1,110 @@
-Return-Path: <linux-kernel+bounces-725509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ACB7B00020
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:07:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA18B00010
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB068B40ECA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:02:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9B71C821EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6FC1E285A;
-	Thu, 10 Jul 2025 11:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBFB246BB4;
+	Thu, 10 Jul 2025 11:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G4km2LB+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUOlv+1a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41D61E8333;
-	Thu, 10 Jul 2025 11:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7766F13A3F7;
+	Thu, 10 Jul 2025 11:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145426; cv=none; b=pSMaXm9KOkKuONSpKXNSpXwAVxbi1YvxpUIrtm67pROiqyGPx0oytQ15RuNYUj8gtJRc/2x8Dfz3qKLF7F7qUAaH+HRP5MFLMNQbt2pPKv9pG95riEoYyr486TYCQe1GEj5pWn31hImkeM1pxxrZ3d1rwwfV28HsgBU0fh/pSm0=
+	t=1752145470; cv=none; b=Y8a1DzZEGDToQMWowInKmd7GTOwc7MoT3ZUv4vaEIv3op62FieqHiogbr5Tjc90Iiv9BYcPTvdfFfxdg4O6KLiLzNK1bkNxm3uHS9XECJztrk3GCLTuqrlaTLRgtSKnl6MEHub4bQP5KpsSVjD4t1Y2hqI71VMmIx01ar8TFrEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145426; c=relaxed/simple;
-	bh=20ZP8OdhAyD+gpnm8qdeCwBF2oSi37pL+zMNWOxJcyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GfhdSSg0cvvnKe0KOpkb8fthZWvN/gPSXr3YrSvhnjgG3hLLTl2tcBKQRHdp5vuOx+4hSLnFAGcseSqnCIfbCLx4HTQPK0pmSsvqZ+LntDqr/Q1EnudwE7xNeMa7z8o6j+qkZkyKoGpUQZHPb7twFwfnokLrlCv9eKHBzKNsf4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G4km2LB+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A8FGRs002166;
-	Thu, 10 Jul 2025 11:03:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wnL5YbMxSPSCfxzFYvbsE5MYDIzNe44c0R0LoWDUaW4=; b=G4km2LB+jPUaqiSb
-	ZdyBxreb9JXvCUx7+hh0FKR1a5wX7TYvTW7srRsfVCxTA3pVBatB2ABtnYE3n43W
-	LlB+LFY9hzxRVbBjHwJAeBgg0zzbXmuAb90JmYO2EtErnwbNJML4w6isLX7kuGCG
-	MOwkOWVb64Cnvd2aM/94H9q5XUVvzSKMg3UGaq73tMcggv8BWa0T9N8Ia4VlYntT
-	z7+c06yctqQI4xlmKEpV4hSi+lMRh8NZQmQhZJ+2ZJzVZXnj5VE8FaJxuHw5IGng
-	ZVbGlaZpW4WZK55oIS76ldWKYGhOqUv3HruJzL3P2Was/RHVD0JYh40ugJfyYUgp
-	fGuNRg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smap4pyb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 11:03:31 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56AB3UIv010622
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 11:03:30 GMT
-Received: from [10.239.133.49] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 10 Jul
- 2025 04:03:26 -0700
-Message-ID: <aae21139-a4cd-4c5d-8147-56c2352ae195@quicinc.com>
-Date: Thu, 10 Jul 2025 19:03:21 +0800
+	s=arc-20240116; t=1752145470; c=relaxed/simple;
+	bh=1x3NYBBTsupBB7WLvmPOB3tNBrIQbsz92bq+l+SFrL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=krEK/lLsM02YE9etkOSUXvg48laR37yYNyPM9gEHEfDm/wZinZeOV0EPqplRyA/AEMq2sWgim2WIyTmnvtEj2QowpHQkYVcfcj5rOcxS6VBCxzug+49s5e65Z1Z1SMGHAjEej9e26gS6tLOphs8eQd20s0YgJFz2sCVuDdFExkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUOlv+1a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F770C4CEE3;
+	Thu, 10 Jul 2025 11:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752145469;
+	bh=1x3NYBBTsupBB7WLvmPOB3tNBrIQbsz92bq+l+SFrL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VUOlv+1a+sww5010PMrNjc/k7iojHGRLHeYaRqO8WU1lcDzCXQXpZkTDA5b5AGVn4
+	 diyxy4Sr0vpsV4udWox6CzPSuUgF4ic6gcOmI8wdrRxUPGNf9WF72Ybu5WXLmuGAiI
+	 jSVk/YfaMmayjG1ybwebgnf5Ox0LMls+AuSmUu28cdMVAYw1UU/pBFUl3ZOJJvAoef
+	 VxgWxnlq9MbWZu5B0PF3sO5mC1OQ0d/lXq3/O1YNUJhu+8Llma15yG8DNShB7IKipT
+	 83miEkRDvCBtYC4eW6fPlmJ+mUosN8E6RebEPghNBFyVIXtxlIeMEQ3YAAHVMq5++i
+	 p49xgnF/z2WMg==
+Date: Thu, 10 Jul 2025 12:04:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Michael Walle <mwalle@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Julien Panis <jpanis@baylibre.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [GIT PULL] Immutable branch between MFD, Misc and Pinctrl due
+ for the v6.17 merge window
+Message-ID: <aG-eOvS6-XHvLOpb@finisterre.sirena.org.uk>
+References: <20250613114518.1772109-1-mwalle@kernel.org>
+ <20250710094906.GG1431498@google.com>
+ <aG-OmSNn-oULfEuB@finisterre.sirena.org.uk>
+ <DB8BCV6V36YE.20KJC5V0BJ1CN@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] dt-bindings: arm: Add CoreSight QMI component
- description
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Suzuki K Poulose
-	<suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        James Clark
-	<james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250424115854.2328190-1-quic_jinlmao@quicinc.com>
- <20250424115854.2328190-2-quic_jinlmao@quicinc.com>
- <6b286132-1c56-43c1-a61e-0e067a73b615@oss.qualcomm.com>
-Content-Language: en-US
-From: Jinlong Mao <quic_jinlmao@quicinc.com>
-In-Reply-To: <6b286132-1c56-43c1-a61e-0e067a73b615@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Ar7u3P9P c=1 sm=1 tr=0 ts=686f9e03 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=AF4Fs5PTzvYx14FSdpIA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: CB1oC-9VWWKmjzPlSedjzmHG81GMqJcW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDA5NCBTYWx0ZWRfX52zLSLsHsSBY
- OJaAhhYeS3iaYRfC5uvTaxajjcZCyGguADkYMi0IHKzRn9/3nem6dAz29lauf+RRUF6RSxpCWDw
- PDdGzrMm96xvioMAmkpK0cCDiZQ1ZxhieIuMuBdSxBLGju59UNg0QkHvvH41hEUG+XV6s1w7bG8
- 8v6vFKGov5+zDjHCvkzMiG9YGyhk4q8MWKrWBxM9x+1IQTjoj2j9dsc5z5SFhHIpag3izDDru/+
- MPobh6jLsM5Hr4BvGLumEqprPxjF06vg46xSgw+aP4nz4oSGFqTmPg5RbtnsTuqPA5hyMNfZUve
- vSKaqYG1ghuRTjKv1YZIbhvcmRlCZSeJCV5MI2JG/JJD5Tpd/Bo+cNcDY+NGp98BbgjGQyiO8sa
- QnZ0hOaq+tmSDOy3YI1Uy/LLgHCWSQEeZZP8brEPsNi7/tN7OPrnXcbpNJ7PzjuOaP0djw9h
-X-Proofpoint-GUID: CB1oC-9VWWKmjzPlSedjzmHG81GMqJcW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_02,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 suspectscore=0 mlxlogscore=878 clxscore=1015 adultscore=0
- phishscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507100094
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NYRHwGxhMPkUjlsm"
+Content-Disposition: inline
+In-Reply-To: <DB8BCV6V36YE.20KJC5V0BJ1CN@kernel.org>
+X-Cookie: Do not cut switchbacks.
 
 
+--NYRHwGxhMPkUjlsm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2025/4/25 4:30, Konrad Dybcio wrote:
-> On 4/24/25 1:58 PM, Mao Jinlong wrote:
->> Add new coresight-qmi.yaml file describing the bindings required
->> to define qmi node in the device trees.
->>
->> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
->> ---
-> 
-> Is the service-id hardcoded/well-known? If so, we can drop
-> this devicetree node and create a new platform device (& probe the
-> related driver) based on the presence of qcom,qmi-id that you add
-> in patch 3
-> 
-> Konrad
+On Thu, Jul 10, 2025 at 12:46:52PM +0200, Michael Walle wrote:
+> On Thu Jul 10, 2025 at 11:57 AM CEST, Mark Brown wrote:
 
-service-id is not hardcoded. Different qmi connections will have
-different service ids.
+> > Is there some reason you didn't also pick up the regulator patches?
 
-> 
+> The regulator patches don't apply on the MFD tree because there are
+> two new patches [1, 2] in the regulator tree. Also my patches rely
+> on them. Thus, the idea was that Lee will provide an immutable tag,
+> that you can pull together with the remaining regulator patches.
 
+OK, if there's a situation like this then please don't send the patches
+that can't be applied, that way maintainers for the other trees don't
+need to see all the resends for something they can't act on.  Instead
+ask for the teg, then send a pull request for the tag as part of the
+cover letter for the series with the additional patches.
+
+--NYRHwGxhMPkUjlsm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhvnjcACgkQJNaLcl1U
+h9AO9wf/SttqipGFRQzotfTzdhU/snwTMxhbXDQgZtK7MfQHkPVYDwC6j0GhR5Ng
+ouaLam6RhQkg1v2TI+w6GCzw9VxriH57LzDxe8fmp/GWVSgLkjFFHnND/cR+eC0x
+VaoHtUpj5wPjdWf4JdiVvobvDxhZeaaZ1HtuWmEHeh05qI7dN3y+cXnRwOAot+vn
+Sy/yKK1/rkpfHWbNuBBklEIBb00hkmvABQcimrCauBtOq7gpKNhUY5l4fBTo/TqS
+a0qWtCtZS22U4HaO4U7/l6YXxYUyUqPXg3BBE4VeuK/ME9jd+2G31KqTtCi+Y1eh
++mmmW/MUuN+KLx9IZ+XWLiGZj4CFvw==
+=aSka
+-----END PGP SIGNATURE-----
+
+--NYRHwGxhMPkUjlsm--
 
