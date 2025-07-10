@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-725376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EA7AFFE33
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:33:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE6DAFFE0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1AC41893B39
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:33:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D94A93BF192
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82CC2D3ECF;
-	Thu, 10 Jul 2025 09:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DAsJpFCh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5BD2980DF;
+	Thu, 10 Jul 2025 09:27:24 +0000 (UTC)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923412D3A6E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B334A0C;
+	Thu, 10 Jul 2025 09:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752140009; cv=none; b=RZKW2YsIDtd29PzGeeVcZZ+8OIjajsG3WdNnwxNOmf4ox0yExgqGdF4XX3GCkrThhxB5aqQ3uZqbKNs9sN+UrneI/4hQM9gaO8Q7q1e9Hz+D8AaLrrPNI3HCmr3sKcIBHGM5ifX6c2MOn6SghADpUA8PcLhnlDEa83PlrTmAzRk=
+	t=1752139644; cv=none; b=ugJgzogKjnyU5WaoihbYacZlrk3/KN0Nvmgnys8JlodPQmLrWMKz4e4lM5yv0W1kuHj6tGZK8GBiKZMf4LGJqNlKDZ1Rcm0kjtb6wiP1oeAeS8SzAmCVWKesxEsx7JMDwKB+mCAzWVnpPw1ll6QQNpmcVtPRkz5kso/C42VCuxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752140009; c=relaxed/simple;
-	bh=qN2NgiaMtYTDQdQ63YwlRaKz+BMmN3huiEzb/c3as38=;
+	s=arc-20240116; t=1752139644; c=relaxed/simple;
+	bh=h+I4PESBExTwFLSyj1x6avtCbIxfti7hBaT17gq0P4c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f5sAjNwmExE0H4Lxnl2UhJNgXSrP9tRIRK0JcS1r8WLO2MdHVMpPMv/Jc8uuc4FHiW6jZ4vnyzSpHRBWw9DH5I7yR6cOabKNCADcvYum7kM3Gwe2h8ZyWhvs/muUoPN/PRziAtaOLj6pS2Cn5YxlGCNzEet8QEUEWokMxHJedqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DAsJpFCh; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752140008; x=1783676008;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qN2NgiaMtYTDQdQ63YwlRaKz+BMmN3huiEzb/c3as38=;
-  b=DAsJpFChAXF3df4i4+UMnGU9+4gFvmTueyxOAbCmRh/wDA0o6+0OiEw1
-   RAAy380GFdlr7GUGRlkbSTd8WXU6rYA/4qtodOlhjmzHys/EU4wPxBuLl
-   4Ki9JRY1YD2oKkmTl99oXvcFoA7sC1sdxEZ97cpzb1DmOKE6bPYtV7n06
-   yxCPpgE90GuUSrOlo7CW51k7ipYJBljM71fJ8hwUBPKhp2NvEerU9JElq
-   1p3uiYjLZo9er4i/5SkOIZvxyekJHTBb4JmD991y2jyX8C70zlbCtfr7e
-   DjQDigNrQclGzGURkONbkWZeWT8+rIkeA8ZfHfG+MUqt10wI9R1IXGDaf
-   Q==;
-X-CSE-ConnectionGUID: v04TnOwXQCGWDyW5Emv/Wg==
-X-CSE-MsgGUID: TRc571V1RRiIU2TECr8MNQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54267876"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="54267876"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:33:27 -0700
-X-CSE-ConnectionGUID: Zgv6SSV1TjmmtcQcGxHc3A==
-X-CSE-MsgGUID: kHQgVXvTQcmfaQuZE134ng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="193226660"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa001.jf.intel.com with ESMTP; 10 Jul 2025 02:33:23 -0700
-Date: Thu, 10 Jul 2025 17:25:03 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: "jgg@nvidia.com" <jgg@nvidia.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"will@kernel.org" <will@kernel.org>,
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"nicolinc@nvidia.com" <nicolinc@nvidia.com>,
-	"aik@amd.com" <aik@amd.com>,
-	"Williams, Dan J" <dan.j.williams@intel.com>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"Xu, Yilun" <yilun.xu@intel.com>
-Subject: Re: [PATCH v4 7/7] iommufd/selftest: Add coverage for vdevice
- tombstone
-Message-ID: <aG+G76s3gw5/U8iw@yilunxu-OptiPlex-7050>
-References: <20250709040234.1773573-1-yilun.xu@linux.intel.com>
- <20250709040234.1773573-8-yilun.xu@linux.intel.com>
- <BN9PR11MB52764B86489423F69AF617B88C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uET4vsm5dWRRlZQgqYfvdoaus/pdVcPaIlMr8Y68eeDWlZhRYhBZrAlybcYbUr6ilg41UQD1R2PEHgQL0oqHAP4aITvOzTv+C5dQaeqga5w3Sisfmq7v6uYTB2qy8DhvJ5LLwcTLCsbo3KhoszmnmlftqsS4AUiaO4RoWzh1/pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com; spf=pass smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foursemi.com
+X-QQ-mid: esmtpsz10t1752139574t2e477d4c
+X-QQ-Originating-IP: fVANaU33qzx/j+OxAgI6zbPV9xjAYtm3YAX+hwq3ekA=
+Received: from localhost ( [183.17.231.23])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 10 Jul 2025 17:26:13 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13541076069648255284
+EX-QQ-RecipientCnt: 14
+Date: Thu, 10 Jul 2025 17:26:12 +0800
+From: Nick Li <nick.li@foursemi.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz,
+	tiwai@suse.com, xiaoming.yang@foursemi.com,
+	danyang.zheng@foursemi.com, like.xy@foxmail.com,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] ASoC: dt-bindings: Add schema for FS2104/5S audio
+ amplifiers
+Message-ID: <BCEA350532C6759B+aG-HNOXmswyEHs2v@foursemi.com>
+References: <20250703035639.7252-1-nick.li@foursemi.com>
+ <20250708112901.25228-1-nick.li@foursemi.com>
+ <20250708112901.25228-3-nick.li@foursemi.com>
+ <20250709-invisible-frigatebird-of-felicity-7e87c4@krzk-bin>
+ <BD2D8A14FDC941B8+aG91lowfru0KiWWW@foursemi.com>
+ <3bb34074-8ce0-4f0e-b7c7-1d77a8cd6ea3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <BN9PR11MB52764B86489423F69AF617B88C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
+In-Reply-To: <3bb34074-8ce0-4f0e-b7c7-1d77a8cd6ea3@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:foursemi.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NkGXhzp6HyG+sxMnQkNrON5aauU0WL52mGuy5/1yrfmyfuULqTUUMOXR
+	nf5IghGFk9cLQ28EQWn8/uInMKn7yv+x5T5o4/U6cLnn6Lo7XpGCzTljrdWslCSXX9RTgRk
+	DhNCFKVoFq+pFMLg4MR0Oz6x7JqIpMe1azXkO77CPcqdZIXg4VHFBbyhMXf528YFtX1TYwh
+	taQdlpzz4p92tR+nwPwIJ8gJu7zg3veQ1+NC+ruOuAdVmZvLle00LtVM627UAN+lv5sfXpI
+	0rkV5vo/gVtEOEeFUBm7TttejWCsXBaIfax3fDWyNanorNz5SMiwNTTD4NrOafisZ+tiwER
+	E+u+7U16hv2cBpqj85wL1+/dAumCYQzgA+s/gibwH8bdKjaBYduXnL1ErCX0FSuwcwwwEKJ
+	ai37S/pUhrcoaGHEAP2cNO9bNWTSyJFUJNu1Fj19lTF4uedJQTCt+sjb3VUOQYhNDAtCf3R
+	3b7J2tW7IuXbqsoky5Gf+20uF/LCBMx/7QsxL1XBwgNUxqtasbIP3UdUYk7BCw1ELsDsvLB
+	c12XkHLoDLY1WN7wQzogvvBjialf5zV8ZWt3rnSSjaMRmJX7TVdcjNUNC8Gvk5XGW4HBL/z
+	ISJE/fccVBk0kToGZzlK3rC8Lye+XSIzamOUEeg8T1D6k5XcvaHXIwrS9lXzcVxhW6tvIRJ
+	Dze2am5XczG7zVDjFkTOKKWQsQdLxO32ZLHsnlr1CUOu0JzuavK7Ascnpf/NjAy2s895lJV
+	8XLKtPrimXJLduqJzJVDtuO3wu+dA7km4wGtHDPDpsTqOTBywuvTjwE97cVrKlT4tAMhtQp
+	XqKzPowl3tH6elm/5CU3Vvouk4Qr0B/4rgIHDKqaaVX1QXmw7nIdZSip/e9RNxgi0jIPBPY
+	WujG0gG62hp62USi98PN1mXN5aiLPgBOS6PYop9NWN9Pf7MOOEICFyq1LSq44b6sPC2ZVJJ
+	097VRwWGGCMKijFh5VK/Dlp7MaKUMVOVBrbhgFnSjFfN1HDo+BtU7NFwnQ9H1HgnCFi7KUI
+	mCONhcOgF3m3RKdzRvo9fXhgJ2HyycVPbHFmKskV6Nd1N9fYyOHtnP9ip0XjSuWn1sWKBa6
+	32NDplcEqRC
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Thu, Jul 10, 2025 at 08:10:34AM +0000, Tian, Kevin wrote:
-> > From: Xu Yilun <yilun.xu@linux.intel.com>
-> > Sent: Wednesday, July 9, 2025 12:03 PM
+On Thu, Jul 10, 2025 at 10:27:59AM +0200, Krzysztof Kozlowski wrote:
+> On 10/07/2025 10:11, Nick Li wrote:
+> >>> +
+> >>> +required:
+> >>> +  - compatible
+> >>> +  - reg
+> >>> +  - reset-gpios
+> >>> +  - firmware-name
+> >>> +  - '#sound-dai-cells'
+> >>
+> >> Keep the same order as in list of properties. OTOH, missing supplies.
 > > 
-> > This tests the flow to tombstone vdevice when idevice is to be unbound
-> > before vdevice destruction. The expected result is:
-> > 
-> >  - idevice unbinding tombstones vdevice ID, the ID can't be repurposed
-> >    anymore.
-> >  - Even ioctl(IOMMU_DESTROY) can't free the tombstoned ID.
-> >  - iommufd_fops_release() can still free everything.
+> > OK, we will fix the order, but the supplies may not be used as regulator,
 > 
-> but the test only checks 2) instead of all?
+> Hm? What does it mean in terms of hardware?
+> 
+> > we mark them as required, is it OK?
+> 
+> How codec driver can work without power?
 
-It tests 2) & 3), 3) will be executed on FIXTURE_TEARDOWN(iommufd_viommu)
+The power may be connected to the baterry/adapter directly,
+it may not be under the control of the software,
+in this case, the supplies are use as dummy regulators?
 
-For 1) "the ID can't be repurposed anymore", I don't have a good idea how to
-verify it. Allocate 2^32 objects and verify no tombstoned ID is
-reused? That's too crazy...   Maybe just mark it untested in the commit
-message?
+Best regards,
+Nick
 
-Thanks,
-Yilun
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
