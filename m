@@ -1,124 +1,192 @@
-Return-Path: <linux-kernel+bounces-725144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654B7AFFB46
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:46:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA03AFFB53
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 645841C835E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:47:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60C597BF637
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EC8289832;
-	Thu, 10 Jul 2025 07:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD0328B4FA;
+	Thu, 10 Jul 2025 07:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ej0CbxEL"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Vk43m7rp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NQl9a9qS"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9891DFFC
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C8A1F1313;
+	Thu, 10 Jul 2025 07:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752133610; cv=none; b=mdYVIELTL/vfkhbF2omPw8Ftq2wXadoIBSj94K/VF4iRuCkIHpSeXcKir+QHx5r7dwEsE+C3nOA4M5iZV2ZSR6cLNK9Tiig7VJO2/5QAuIFcApnvtJa/UAn2LiGtqBLEscYcLXN4HujeAu6jduazKXBbpt20mL1tiW4J3B8Tz2w=
+	t=1752133717; cv=none; b=ZK+OWyM04ay5+DUHfrcJ5yjETjBcKvsdWOEBlHT+gKM6Ft91mduJvmXDLFmjOKb8XARI6k8RrXpyWlA7BqjUhbKyEL6DDsn6lqMlHMwtBaCSJvttrIWNsGxPSypflp0rEhSQusswmTq4A9u3odb+cj4zmDrbm/WlI296T58R5Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752133610; c=relaxed/simple;
-	bh=dDuHzuuilF1rfXmappGHHnIFPLV2cINkcTgow+/K3XY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gU3SNf4OIRXec6f8WqxVtRzuD2g3Fg3zzptdmimlDhFSW6vqZsyBbXTN5HREg5hQmLTKFlN1Mt6NAq2ZVPDPZXCNkT0HtlqklNkVp0piU0OrbB/DgLxQatn1zGhshmdlC93QdJNkAeKGhl/eqk5sc+sicrlG6o6NSOJ1RC3qOAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ej0CbxEL; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752133605; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=0s3D/I0IgWK1k4rhAjUlxCvBQXJhoNVSk7AvaiTRwC0=;
-	b=ej0CbxEL+PlaodYlniH6SBVETJw85XWJt3b7Lpph2yuMs3/SK7T77A2nBozI45VSK3KiCVcBIr+ZNdFtwvxQ3s8F3wLEy+leYIMUxQKpPq14SoyNVJu6uTSK3ljCf9+TGLhccma2qzfZEMt5pkmCR1eRkcfa3Whm6/f46j3pRuI=
-Received: from 30.221.128.137(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WibzTBy_1752133604 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 10 Jul 2025 15:46:44 +0800
-Message-ID: <8cbaa76b-f6de-4242-bd6c-629980311f4a@linux.alibaba.com>
-Date: Thu, 10 Jul 2025 15:46:44 +0800
+	s=arc-20240116; t=1752133717; c=relaxed/simple;
+	bh=NrxJi9mtfyDGqO728dsGOwO3Lk8FmcnbL6fsms/datc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=sydzqFuovseNy5nDIZZtBzDyJQ/qcBgipZ15x6YXdjuoXMBe3bePqEaaks/9BaZM2k7wtt47CXKzVWGjEzcPyfYZKsoupAGFQqqYjcywKAI3vF1x6iCStgA///Weo4zJtyNvtQ7ysPgGIDWu5fDgPLV1nHPq+ACO/C3KLkcrKJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Vk43m7rp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NQl9a9qS; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 89DD01D001AA;
+	Thu, 10 Jul 2025 03:48:32 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 10 Jul 2025 03:48:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752133712;
+	 x=1752220112; bh=VFGB/39PUQRNUuopd0MS0kGVSVfgQHVyMjplY4VKnOg=; b=
+	Vk43m7rpatUNVCIm/eUsqs4Ivfk2UAWEuI+3QdpF6tq/2p2Lh+ghW7sXZwf7ePRP
+	lp1BH169XV5kIeDOARAgRA1RkWeVcUsv5pGboRcW25/sB+En4ZlTAFgBwWAqCEBZ
+	N9xOxBE2ykDt0nVZlO/n22T/8p5uvUXSFGRb9RaHZfatZP18GgfRuciyDsrhcmbm
+	T5izMMofJ6sb6QNuY6GAVceWyMpZNCLpIMpkhU9qE5hSwxNe2bS34pCqadzKGk3V
+	B3aEQ378TjhU+DW3V7s5SRStGQvK8NOuqvkX5LHnL2qTCskFnh+RZWKx+s7ySJDf
+	A4UYNGq8sf1naJ1hGcTAmA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752133712; x=
+	1752220112; bh=VFGB/39PUQRNUuopd0MS0kGVSVfgQHVyMjplY4VKnOg=; b=N
+	Ql9a9qSupN5QGTE+AgKygTP9In0dw1wIlfecsFJ11CmzNeXW44dST/zm5C5AUR2b
+	iSSmoJ0E6wL/POomU+JF0IfWJEsWhwtmfvVq1Pxt6gUz4jHWE49Zepy0+KHEfR88
+	698DKrgkzF5BR+Y5zvGYmiaSORLqleZ/IzjJJqF3iJ2YA/QHfap8g84DpKZjMYPi
+	JOnnhgsF8Kilim/YzjuZGNPt43Ds0VSBrXOBLPhDwJ3x7baR0v3jfUTZ9Qg99LKL
+	DcAC30i6Ohxdg1j9FLowUyK3DEhVPGivjApMA+aYkfmgGmkd7fO1EXEqbAa2b5Pj
+	/rp61DMIPZWEGWMnrRsjA==
+X-ME-Sender: <xms:TnBvaFCPUNXTh3IvTOxOLzdDHNHZNRbcvlNXqh5rRJbrXGkNso61Bg>
+    <xme:TnBvaDgBxfku5Iv_jnwEfXQWOxZj7ezk_uh2m_oMLc8idRJhArJNus_I6hZ3EKQqv
+    G8LwwXBAqKoRUK_sRc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefleekkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefjedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtph
+    htthhopehjvghsphgvrhdrnhhilhhsshhonhesrgigihhsrdgtohhmpdhrtghpthhtohep
+    lhhinhhugidqrghrmhdqkhgvrhhnvghlsegrgihishdrtghomhdprhgtphhtthhopehmth
+    hurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepghifkhdutddu
+    feestghorghsihgrrdgtohhmpdhrtghpthhtohephhhgkhhimhdtheestghorghsihgrrd
+    gtohhmpdhrtghpthhtohepkhgvnhhkihhmsegtohgrshhirgdrtghomhdprhgtphhtthho
+    pehkshhkgeejvdehsegtohgrshhirgdrtghomhdprhgtphhtthhopehmihhnghihohhunh
+    hgsghosegtohgrshhirgdrtghomh
+X-ME-Proxy: <xmx:TnBvaGptIpdFPbsUo13BNf8hpBhqyqysy3fq_yWLHl13xPdF6tSqxA>
+    <xmx:TnBvaGe9Vhef7xcrOIfQrP9rdJviWHKY6trwBHqDzDAQFB2ePiR0gA>
+    <xmx:TnBvaM9YcmmE4mbvyo2Gkxwpd7nYsDvTmU_J2YlrV-Dqs2KmNiNmLw>
+    <xmx:TnBvaHGUb8p777hi5CV08Iy0wnhXfH-l5giCPKNtmAy72YNH5WICTw>
+    <xmx:UHBvaOxDqHidI8CwbxD1Qo4ftx7FkbIJU0nBSF2y3Yd3Sf3_svEj6zLU>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 8E75D700065; Thu, 10 Jul 2025 03:48:30 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] erofs: support to readahead dirent blocks in
- erofs_readdir()
-To: Chao Yu <chao@kernel.org>, xiang@kernel.org
-Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
- Sandeep Dhavale <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>
-References: <20250710073619.4083422-1-chao@kernel.org>
- <20250710073619.4083422-2-chao@kernel.org>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250710073619.4083422-2-chao@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ThreadId: T040df5ea49d69849
+Date: Thu, 10 Jul 2025 09:48:10 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: ksk4725@coasia.com, "Jesper Nilsson" <jesper.nilsson@axis.com>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Chanwoo Choi" <cw00.choi@samsung.com>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Tomasz Figa" <tomasz.figa@gmail.com>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ "Ravi Patel" <ravi.patel@samsung.com>, "SungMin Park" <smn1196@coasia.com>
+Cc: kenkim <kenkim@coasia.com>, "Jongshin Park" <pjsin865@coasia.com>,
+ "GunWoo Kim" <gwk1013@coasia.com>, "HaGyeong Kim" <hgkim05@coasia.com>,
+ "GyoungBo Min" <mingyoungbo@coasia.com>,
+ "Pankaj Dubey" <pankaj.dubey@samsung.com>,
+ "Shradha Todi" <shradha.t@samsung.com>, "Inbaraj E" <inbaraj.e@samsung.com>,
+ "Swathi K S" <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>,
+ "Dongjin Yang" <dj76.yang@samsung.com>,
+ "Sang Min Kim" <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, soc@lists.linux.dev
+Message-Id: <5494bedb-6907-43dc-8580-04ef1e47c8d0@app.fastmail.com>
+In-Reply-To: <20250710002047.1573841-15-ksk4725@coasia.com>
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+ <20250710002047.1573841-15-ksk4725@coasia.com>
+Subject: Re: [PATCH 14/16] arm64: dts: axis: Add initial device tree support
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Hi Chao,
+On Thu, Jul 10, 2025, at 02:20, ksk4725@coasia.com wrote:
+> From: sungminpark <smn1196@coasia.com>
+>
+> Add initial device tree support for Axis ARTPEC-8 SoC and Grizzly board.
+> This SoC contains four cores of cortex-a53 CPUs and other various
+> peripheral IPs.
 
-On 2025/7/10 15:36, Chao Yu wrote:
-> This patch supports to readahead more blocks in erofs_readdir(),
-> it can enhance performance in large direcotry.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fa1e04e87d1d..371005f3f41a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2320,6 +2320,20 @@ F:	drivers/crypto/axis
+>  F:	drivers/mmc/host/usdhi6rol0.c
+>  F:	drivers/pinctrl/pinctrl-artpec*
 > 
-> readdir test in a large directory which contains 12000 sub-files.
+> +ARM/ARTPEC ARM64 MACHINE SUPPORT
+> +M:	Jesper Nilsson <jesper.nilsson@axis.com>
+> +M:	Ravi Patel <ravi.patel@samsung.com>
+> +M:	SeonGu Kang <ksk4725@coasia.com>
+> +M:	SungMin Park <smn1196@coasia.com>
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +L:	linux-samsung-soc@vger.kernel.org
+> +L:	linux-arm-kernel@axis.com
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/clock/axis,artpec*-clock.yaml
+> +F:	arch/arm64/boot/dts/axis/
+> +F:	drivers/clk/samsung/clk-artpec*.c
+> +F:	include/dt-bindings/clock/axis,artpec*-clk.h
+
+I'm trying to understand the SoC family tree here. I see that
+you have an entry for ARTPEC SoCs above it, which currently
+covers artpec6 (Cortex-A9, apparently not Samsung based).
+
+Is the reason for having two entries here that artpec6/7 and
+artpec8/9 are two separate SoC families, or is this just because
+they are using 32-bit and 64-bit cores, respectively?
+
 > 
-> 		files_per_second
-> Before:		926385.54
-> After:		2380435.562
-> 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->   fs/erofs/dir.c      | 8 ++++++++
->   fs/erofs/internal.h | 3 +++
->   2 files changed, 11 insertions(+)
-> 
-> diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
-> index cff61c5a172b..04113851fc0f 100644
-> --- a/fs/erofs/dir.c
-> +++ b/fs/erofs/dir.c
-> @@ -47,8 +47,10 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
->   	struct inode *dir = file_inode(f);
->   	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
->   	struct super_block *sb = dir->i_sb;
-> +	struct file_ra_state *ra = &f->f_ra;
->   	unsigned long bsz = sb->s_blocksize;
->   	unsigned int ofs = erofs_blkoff(sb, ctx->pos);
-> +	unsigned long nr_pages = DIV_ROUND_UP_POW2(dir->i_size, PAGE_SIZE);
->   	int err = 0;
->   	bool initial = true;
->   
-> @@ -65,6 +67,12 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
->   		}
->   		cond_resched();
->   
-> +		/* readahead blocks to enhance performance in large directory */
-> +		if (nr_pages - dbstart > 1 && !ra_has_index(ra, dbstart))
-> +			page_cache_sync_readahead(dir->i_mapping, ra, f,
-> +				dbstart, min(nr_pages - dbstart,
-> +				(pgoff_t)MAX_DIR_RA_PAGES));
+> +config ARCH_ARTPEC
+> +	bool "Axis Communications ARTPEC SoC Family"
+> +	help
+> +	   This enables support for the ARMv8 based ARTPEC SoC Family.
 > +
->   		de = erofs_bread(&buf, dbstart, true);
->   		if (IS_ERR(de)) {
->   			erofs_err(sb, "failed to readdir of logical block %llu of nid %llu",
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index a32c03a80c70..ef9d1ee8c688 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -238,6 +238,9 @@ EROFS_FEATURE_FUNCS(xattr_filter, compat, COMPAT_XATTR_FILTER)
->   #define EROFS_I_BL_XATTR_BIT	(BITS_PER_LONG - 1)
->   #define EROFS_I_BL_Z_BIT	(BITS_PER_LONG - 2)
->   
-> +/* maximum readahead pages of directory */
-> +#define MAX_DIR_RA_PAGES	4
+> +config ARCH_ARTPEC8
+> +	bool "Axis ARTPEC-8 SoC Platform"
+> +	depends on ARCH_ARTPEC
+> +	depends on ARCH_EXYNOS
+> +	select ARM_GIC
+> +	help
+> +	  This enables support for the Axis ARTPEC-8 SoC.
+> +
 
-Could we set it as a per-sb sysfs configuration for users to config?
+I would prefer to be less fine-grained here, especially as
+it seems that ARTPEC9 is again quite similar to ARTPEC8, as
+far as I can guess from public information.
 
-Thanks,
-Gao Xiang
+Could you fold both entries into a single ARCH_ARTPEC?
+
+     Arnd
 
