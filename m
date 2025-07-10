@@ -1,110 +1,140 @@
-Return-Path: <linux-kernel+bounces-724746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD00AFF67A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:44:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3390AFF67C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C77735A59BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 465865A59C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2850327E7E2;
-	Thu, 10 Jul 2025 01:44:09 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC1B27EFE3;
+	Thu, 10 Jul 2025 01:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VP5OM/ot"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FEF2F56;
-	Thu, 10 Jul 2025 01:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F15927E07F;
+	Thu, 10 Jul 2025 01:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752111848; cv=none; b=rfqDwyDlQ5Fd1wWXZMeevUO7s7aJ+5dg0ZmGeTNuLAV40uSeETZopdss3YTs7uBbDCwBMKGVi9+Kjf6+SjNO09PIGv+2FBd6/IUXy3IKLqHvk+F12yY3DSL0BC2qp0uDJ4j5c5NsS7D9pzuP3ufIJH6FjuP2rg9wg31C78J7TL0=
+	t=1752111902; cv=none; b=UtA70dXbxogsrjJNbBlO0FHFp7TvxMh1H/7qeGin9QaeX/hIdz3OdWhUEkMIJm/yshT7iDZ3lIXodoDBgf0VJfSoqZmgv87YJQL4o4wpHCLMTyA7jN/5y8pcpIJ2Sto8AkGuscnQtaSHEv1N8JJjYTA2ydlE3KDDt5BdiNtBLm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752111848; c=relaxed/simple;
-	bh=byz0azJOgW439ACGcjcTmUzu3/BFNdZBqINAfcgzgjo=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=OiUBPxch5AdneL0NCpQ6D4amYxDOijBR0Jxe1zKvEuWExXmKjBNy7fZC2g3vCV77OUjKybB5PCFpNzp7WEgW0p/1rqRe8m0k04Pd+vpYvlGMLFeN0ri6aVKY1Ge7e8njxXkdu0beXAuLc/bl/s23/4ahiy1DOj89iCVO5zEPB3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56A1huNm053105;
-	Thu, 10 Jul 2025 10:43:56 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56A1hu42053101
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 10 Jul 2025 10:43:56 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <56c16d80-57d0-4873-98c8-03e37edbbbdf@I-love.SAKURA.ne.jp>
-Date: Thu, 10 Jul 2025 10:43:56 +0900
+	s=arc-20240116; t=1752111902; c=relaxed/simple;
+	bh=ceq9ufKCZANtVe+Yu/j2KztjUjRWT8pQBYZw+EcF6gM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bRvOAoWC2MluZmgHxF5BS7Jksj4UesywKybppMNoxk42CLfKGkpWtQBG/kzm34giXEvKeIiyIHiyAVuxVS9w/vOpIJhJpyBWo4ilAKUw8n0TJpSiQBFZGFWUo39OE9FNCJuQlwni4OKmyqxHggjykl5/QIFZ47ZuWb1JOsapQfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VP5OM/ot; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-40af40aeef6so180066b6e.3;
+        Wed, 09 Jul 2025 18:45:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752111900; x=1752716700; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KpbUI1og+WbCg0ZLSD0ymybRvQZPRR2w3JRs6++rOrc=;
+        b=VP5OM/otCyZ5ZMDimDsWG/eLU9M16XeOpsM6EzTANqALsdKj5UHlizzAGdSxQLVd5b
+         sXpOC28TslxRGf0u3o0O7yQu3dGd2LgUUOy02SDS/0JZvftsXVRZJkkXE8x+6ZCSsQIm
+         vtu3sTqiXjKBdoDyAimHekGZSOKpaPSno4WSUPE2HDaYIbzwqrfULRj4xDw1dqIvi4dj
+         CzQDhP2jl2neyM8qOZSI/UNI2u8KQgXtRd2I/Xd+QWlzCN/sH0v11fnOTjzIQu91EtRO
+         V7CPlWM3BcO7lkbYNRHdAlfopeBRre9LBIYpiAxBmEm5thebPVTHSt8u+u8U+d2IabEp
+         g5Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752111900; x=1752716700;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KpbUI1og+WbCg0ZLSD0ymybRvQZPRR2w3JRs6++rOrc=;
+        b=XrKCElF3pWt6db1re5NohkuE1YQQBh1GWzv+JllX/QlohNYbrHV3NcvtKSfO2Jv/E/
+         W88ShblGl3D4zq+YJcfnZo1CC/4C36h4ioy2Njlt6lpjM1lwMP8OouAUFW9dRYBNxREN
+         6EF2jFBq+DUgc3mxTxDiqUIrITb1JBKEuvM2yBDPF/znC7/tQK2sUbKPaZEr7S5Uzo+V
+         QcrARGE6GSQTz0RGp1Rt+7sLMmPGZ7bPcIyMPVLFUqmW/SUZILXNQbRqkedYy0yXP0Wj
+         zRM5A0FOEnr0q9UZGSM22Az9yTm6vJcmk/YwAQsr+EK7K/8goP4BSZDATuviCmlwcxBa
+         90lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWt6mJuN8Xwm5l4vAHgWtHS9N25wCEPhtsfIl7jTFEkfBFIUiEJ38JwtLzYEm8/oXsonvq07f38Hpgoxw==@vger.kernel.org, AJvYcCXg8wnIKQNqOZdtyLZPoAehqphO6hApW6UHu3j7yB9fgvqVyiMBHGr0TMDASWLcg4Srb3XbpgypQLnbFVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsSpVwqRRF//zUJl8JWwSQrilqtTVqaLyxsgQPDHiRVdYN0mSR
+	9eQNpN0powEythp7N/svJL0BDWP5tShY3Ue2v39Xwtq7sysf0Fgs57fdgY3uj3Z0L3VfiKyBy/B
+	3dJkIPiuPuam+pUtR9dGIoyM50d5qK5Q=
+X-Gm-Gg: ASbGncuQrs7sBIPIKOV2Y1SdZMibITEc8B2amvOpqX/RM44liuqIylyS7Fow6jQChjm
+	EHthxQwqufrvWIOjpNKyENxBVuwC0FVOyGHhpLevDVfKIkwS/UKj78pmBkxNP4SlcgV/t2YZz9q
+	mwraw9jU+4h+A6/lfCH6tOfWJ6ShoVPfe7t9JqRCikZMeUgDOgl1JjmqozABY2Hp78aHL1S3Lqx
+	Xc=
+X-Google-Smtp-Source: AGHT+IHZnHuOYbgM4o20piIG+wjZN6Ae24TgWByOcCOSK6jsx/DzIizD83ptEp+E7b+w0L5u6UoTRCXAexH7DkA+j3E=
+X-Received: by 2002:a05:6808:319a:b0:401:ea7b:e535 with SMTP id
+ 5614622812f47-413adec70b2mr1594888b6e.22.1752111899833; Wed, 09 Jul 2025
+ 18:44:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Sean Young <sean@mess.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] media: imon: ratelimit usb_rx_callback_intf{0,1} error
- messages
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
-X-Virus-Status: clean
+References: <20250610101234.1100660-1-zhangchunyan@iscas.ac.cn> <8a1b1610-02b1-46a8-9a10-c19c1580c017@ghiti.fr>
+In-Reply-To: <8a1b1610-02b1-46a8-9a10-c19c1580c017@ghiti.fr>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Thu, 10 Jul 2025 09:44:24 +0800
+X-Gm-Features: Ac12FXy5RekAAJElSH1GjaYFg2lQc5TLrPYlv66sNpWZ556eU9tAfMub6Xg2bbU
+Message-ID: <CAAfSe-s1g8h+HpYz8FmW4n7h+hhi5W0_N-jpfAD5Ldai8NjwHw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Fix a segmentation fault also add raid6test for
+ RISC-V support
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>, 
+	linux-riscv@lists.infradead.org, linux-raid@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Ratelimiting flood of
+Hi Alex,
 
-  imon 1-1:0.0: imon usb_rx_callback_intf0: status(-71): ignored
+On Wed, 9 Jul 2025 at 23:18, Alexandre Ghiti <alex@ghiti.fr> wrote:
+>
+> Hi Chunyan,
+>
+> Patch 2 was merged via fixes, do you plan on resending a new version for
+> 6.17 that takes into account Palmer's remarks?
 
-message helps reducing possibility of hitting
+Yes, I'm preparing the patches these days, just haven't figured out
+how to set NSIZE properly for user space.
 
-  rcu: INFO: rcu_preempt self-detected stall on CPU
-  rcu: 	0-....: (10485 ticks this GP) idle=ff54/1/0x4000000000000000 softirq=53201/53201 fqs=5246
-  rcu: 	         hardirqs   softirqs   csw/system
-  rcu: 	 number:     6548       7856            0
-  rcu: 	cputime:        0        739        51598   ==> 52490(ms)
-  rcu: 	(t=10500 jiffies g=34137 q=35661 ncpus=2)
-  CPU: 0 UID: 0 PID: 6858 Comm: kworker/0:4 Not tainted 6.16.0-rc4-syzkaller-00300-g81c3b7256f9e #0 PREEMPT(voluntary)
-  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-  Workqueue: usb_hub_wq hub_event
-  RIP: 0010:console_flush_all+0x9a2/0xc60 kernel/printk/printk.c:3227
+I probably should split the patchset, send out one today.
 
-messages.
+Thanks,
+Chunyan
 
-Link: https://syzkaller.appspot.com/bug?extid=592e2ab8775dbe0bf09a
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- drivers/media/rc/imon.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
-index f5221b018808..10124a26ffde 100644
---- a/drivers/media/rc/imon.c
-+++ b/drivers/media/rc/imon.c
-@@ -1765,7 +1765,7 @@ static void usb_rx_callback_intf0(struct urb *urb)
- 		break;
- 
- 	default:
--		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
-+		dev_warn_ratelimited(ictx->dev, "imon %s: status(%d): ignored\n",
- 			 __func__, urb->status);
- 		break;
- 	}
-@@ -1806,7 +1806,7 @@ static void usb_rx_callback_intf1(struct urb *urb)
- 		break;
- 
- 	default:
--		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
-+		dev_warn_ratelimited(ictx->dev, "imon %s: status(%d): ignored\n",
- 			 __func__, urb->status);
- 		break;
- 	}
--- 
-2.47.1
-
+>
+> Thanks,
+>
+> Alex
+>
+> On 6/10/25 12:12, Chunyan Zhang wrote:
+> > The first two patches are fixes.
+> > The last two are for userspace raid6test support on RISC-V.
+> >
+> > The issue fixed in patch 2/4 was probably the same which was spotted by
+> > Charlie [1], I couldn't reproduce it at that time.
+> >
+> > When running raid6test in userspace on RISC-V, I saw a segmentation fault,
+> > I used gdb command to print pointer p, it was an unaccessible address.
+> >
+> > With patch 2/4, the issue didn't appear anymore.
+> >
+> > [1] https://lore.kernel.org/lkml/Z5gJ35pXI2W41QDk@ghost/
+> >
+> > Chunyan Zhang (4):
+> >    raid6: riscv: clean up unused header file inclusion
+> >    raid6: riscv: Fix NULL pointer dereference issue
+> >    raid6: riscv: Allow code to be compiled in userspace
+> >    raid6: test: add support for RISC-V
+> >
+> >   lib/raid6/recov_rvv.c   |  9 +-----
+> >   lib/raid6/rvv.c         | 62 +++++++++++++++++++++--------------------
+> >   lib/raid6/rvv.h         | 15 ++++++++++
+> >   lib/raid6/test/Makefile |  8 ++++++
+> >   4 files changed, 56 insertions(+), 38 deletions(-)
+> >
 
