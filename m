@@ -1,151 +1,107 @@
-Return-Path: <linux-kernel+bounces-725213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F08AFFC0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:21:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C465AFFC11
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAFD67ABB91
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:20:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D4C179047
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F5228C5BA;
-	Thu, 10 Jul 2025 08:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99E428C5BE;
+	Thu, 10 Jul 2025 08:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwZ1eXoI"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zrAHWqK0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F2F28BAA4;
-	Thu, 10 Jul 2025 08:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC1A28BAA4;
+	Thu, 10 Jul 2025 08:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752135688; cv=none; b=RjGybQCmxpuBKy/CgT3ENV4m83SlNyOeKGXlgoE0J5CG3C/7/r9B8fZ8Sj/efahc1kT3mBmhNd06e6cgQyJ6/sXb3Jx1cmx2aUf31SlB64xlYAjceMcjODUtwK4sCuCPZBrueqMP2O2ll4RxACjf8sNiMwTa1RzpmD/vSiRwUzA=
+	t=1752135709; cv=none; b=I/KFGAbiUzRVfuqmTnz7tho3QjSY+gOvqYAnh5lyjmVlwuNnrdh+7zBawSJYIKbppXiKVQmZJ8wPU783Tz1tveZimUA6uok03WmTDyxREn4nf0gmENhMajgUwMPQkA86iEaA705ujMVjR48PgIFIBx0oSn0ALpzHxrX3jr82FD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752135688; c=relaxed/simple;
-	bh=vZGC4utAN8Jf9kgiQ1OU9eVoRR/s/LZegXdZdbaWUUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gpemt1gPrqjrx+OS6YOkgeaagR8MPHdX7oVhSNvkcVnpiEEutiuAG38OY3udxa4hMx6pwxHYCtbKvSu9rFO8ZLjKoBf4nEYblgV6XdObJ4mZ+DTmpkqaHPKgL20yphTqZ6hJW2w1y5Bke+u/Y4S2v67NnGqpoV4Ur8+BMOQvvGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwZ1eXoI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85C12C4CEFA;
-	Thu, 10 Jul 2025 08:21:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752135688;
-	bh=vZGC4utAN8Jf9kgiQ1OU9eVoRR/s/LZegXdZdbaWUUs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nwZ1eXoI7fqtm/S4j0EXI6RuCDnSvh6y8W27PzYPT7pPx9Qdi3E36ZGsKPNpdntyg
-	 djzLoS4vZN8K/v6B8ZUWumFZE4nS+j9+q0EVcbVSFmL37Mm+PaSJbIjC4kxsPFCCLY
-	 fiC15jL7Tf18sJfuTr9+J2fsHHs8OqAumYuKkcQ/TeJOCvCcfbjuoXkSBUJw9bzwjg
-	 PyW4kl9PC0dPH1vKNW4jkWkmfr91LekmtCulC6ufEcykXlX0tWzTfYaKOa/ppQiURL
-	 hhD66bQ2tXAORgA3G10GiNu8AE2hRGODEaDRrxD94SQhhC8EKtnTRtG5vApcZ3ObCh
-	 Z3LjDs2O1A3Jw==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-611e20dd2ffso259428eaf.2;
-        Thu, 10 Jul 2025 01:21:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVhi10tDZUW8UD6Ee+ZUB8YwcXks6vr51gY5bGjC+tuSmcHYyK/9hSPuIw4EYyeXDLfz8LUswIhAZc=@vger.kernel.org, AJvYcCVvgWC4wcdoX+dZjlqcU7OHum3pScd68vOi3ZagJpKpwdBduD9BFvoK7KbzFbpWywno61f0zkivtlg3RVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVqJvSiBs6m0BgEK682RTbLXzc3+tktoCUcnd37UGswmHa2cLJ
-	LgiNPwbNRrR0HbpZo3dMlCG4UXQ+Mg4Hx5uDJ1Al8/cOcu6g+AP+n23pzEYTpYOEkzTXukB1r4v
-	h4bw48yMwaoWxTLQvA5fNX2u62gEf77k=
-X-Google-Smtp-Source: AGHT+IF/jRMTIGOY1PdngLNu1usC8M99C638yCwVzM6VG3sXyFaNfyL7DMzkpuc1Vd31N6pmaGxsai2kNCIVGCP0+oc=
-X-Received: by 2002:a05:6870:40d5:b0:2e8:7953:ece7 with SMTP id
- 586e51a60fabf-2ff10991555mr1234020fac.24.1752135687725; Thu, 10 Jul 2025
- 01:21:27 -0700 (PDT)
+	s=arc-20240116; t=1752135709; c=relaxed/simple;
+	bh=H/Hd8HddUy8afmkqUiQOVW3MfJzPIzVt1rLSzQxpsog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3PkXW08fGLv/8GehXgkMXDY6QVodx+5qRD4xZTyWzciYrHBVBegSu2KOa4HALAU+Ww2uiR9k+SXP5xsXajlEZzDnunznI1S1l4vv7NJjWOe8OOrtjESDHOuBdwqB9ABzrD6CPC+wLFmiK/3Pf8e8HEktODorE6wXHFIx8tj8TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zrAHWqK0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41112C4CEE3;
+	Thu, 10 Jul 2025 08:21:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752135708;
+	bh=H/Hd8HddUy8afmkqUiQOVW3MfJzPIzVt1rLSzQxpsog=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zrAHWqK0LwR5i/BQORBn9fRVMu/CZKPfauqUx1D/j7GyHBP+PJXIiVzrn2qimtrOa
+	 TSkUFYQ7+Q+uU8rAClj/Iv2uVu+4RnffLZEJqemmvJX8C9lkKIo3Cqmvw+E08LptMs
+	 c+jcWEvecLNxfKqkMixelqre+ps4FuqFG2FPpvfg=
+Date: Thu, 10 Jul 2025 10:21:46 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: jackysliu <1972843537@qq.com>
+Cc: viro@zeniv.linux.org.uk, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: functioni: Fix a oob problem in rndis
+Message-ID: <2025071026-fanciness-size-1d5d@gregkh>
+References: <tencent_8E3F0D0AD7E5F6DC1F3009EA1DB7391A8505@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710062313.3226149-1-guoqing.zhang@amd.com> <20250710062313.3226149-5-guoqing.zhang@amd.com>
-In-Reply-To: <20250710062313.3226149-5-guoqing.zhang@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 10 Jul 2025 10:21:15 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ha_XUJ4OK0G5RT1a1KFDTAz82jVDdCFRtKTCv8aoDdxA@mail.gmail.com>
-X-Gm-Features: Ac12FXyuUHPZGj-fRagl7o7kPz3guIlAxJWSaIJW8PovsrLvRAObEgMY_8LU2pg
-Message-ID: <CAJZ5v0ha_XUJ4OK0G5RT1a1KFDTAz82jVDdCFRtKTCv8aoDdxA@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] PM: hibernate: add new api pm_hibernate_is_recovering()
-To: Samuel Zhang <guoqing.zhang@amd.com>
-Cc: alexander.deucher@amd.com, christian.koenig@amd.com, rafael@kernel.org, 
-	len.brown@intel.com, pavel@kernel.org, gregkh@linuxfoundation.org, 
-	dakr@kernel.org, airlied@gmail.com, simona@ffwll.ch, ray.huang@amd.com, 
-	matthew.auld@intel.com, matthew.brost@intel.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	mario.limonciello@amd.com, lijo.lazar@amd.com, victor.zhao@amd.com, 
-	haijun.chang@amd.com, Qing.Ma@amd.com, Owen.Zhang2@amd.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <tencent_8E3F0D0AD7E5F6DC1F3009EA1DB7391A8505@qq.com>
 
-On Thu, Jul 10, 2025 at 8:23=E2=80=AFAM Samuel Zhang <guoqing.zhang@amd.com=
-> wrote:
->
-> dev_pm_ops.thaw() is called in following cases:
-> * normal case: after hibernation image has been created.
-> * error case 1: creation of a hibernation image has failed.
-> * error case 2: restoration from a hibernation image has failed.
->
-> For normal case, it is called mainly for resume storage devices for
-> saving the hibernation image. Other devices that are not involved
-> in the image saving do not need to resume the device. But since there's
-> no api to know which case thaw() is called, device drivers can't
-> conditionally resume device in thaw().
->
-> The new pm_hibernate_is_recovering() is such a api to query if thaw() is
-> called in normal case.
->
-> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
+On Thu, Jul 10, 2025 at 04:14:18PM +0800, jackysliu wrote:
+> A critical out-of-bounds memory access vulnerability exists in the RNDIS
+> (Remote Network Driver Interface Specification) implementation.
 
-LGTM now, so
+It's not really "critical" as the specification never claims to be
+secure at all, and we have said for years that you should never run this
+on system that you do not fully trust (host and client.)
 
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+> The vulnerability stems from insufficient boundary validation when
+> processing SET requests with user-controlled InformationBufferOffset
+> and InformationBufferLength parameters.
+> 
+> The vulnerability can be fixed by adding addtional boundary checks
+> 
+> Signed-off-by: jackysliu <1972843537@qq.com>
+
+Please use a full name, not just a one word alias.
+
+And what commit id does this fix?
 
 > ---
->  drivers/base/power/main.c | 14 ++++++++++++++
->  include/linux/suspend.h   |  2 ++
->  2 files changed, 16 insertions(+)
->
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 24ebe7a635a7..c4817b379230 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -66,6 +66,20 @@ static pm_message_t pm_transition;
->  static DEFINE_MUTEX(async_wip_mtx);
->  static int async_error;
->
-> +/**
-> + * pm_hibernate_is_recovering - if recovering from hibernate due to erro=
-r.
-> + *
-> + * Used to query if dev_pm_ops.thaw() is called for normal hibernation c=
-ase or
-> + * recovering from some error.
-> + *
-> + * Return: true for error case, false for normal case.
-> + */
-> +bool pm_hibernate_is_recovering(void)
-> +{
-> +       return pm_transition.event =3D=3D PM_EVENT_RECOVER;
-> +}
-> +EXPORT_SYMBOL_GPL(pm_hibernate_is_recovering);
-> +
->  static const char *pm_verb(int event)
->  {
->         switch (event) {
-> diff --git a/include/linux/suspend.h b/include/linux/suspend.h
-> index 6a3f92098872..d11a124b7a91 100644
-> --- a/include/linux/suspend.h
-> +++ b/include/linux/suspend.h
-> @@ -426,6 +426,8 @@ int is_hibernate_resume_dev(dev_t dev);
->  static inline int is_hibernate_resume_dev(dev_t dev) { return 0; }
->  #endif
->
-> +bool pm_hibernate_is_recovering(void);
-> +
->  /* Hibernation and suspend events */
->  #define PM_HIBERNATION_PREPARE 0x0001 /* Going to hibernate */
->  #define PM_POST_HIBERNATION    0x0002 /* Hibernation finished */
-> --
+>  drivers/usb/gadget/function/rndis.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/gadget/function/rndis.c b/drivers/usb/gadget/function/rndis.c
+> index afd75d72412c..cc522fb4c06c 100644
+> --- a/drivers/usb/gadget/function/rndis.c
+> +++ b/drivers/usb/gadget/function/rndis.c
+> @@ -641,7 +641,8 @@ static int rndis_set_response(struct rndis_params *params,
+>  	BufOffset = le32_to_cpu(buf->InformationBufferOffset);
+>  	if ((BufLength > RNDIS_MAX_TOTAL_SIZE) ||
+>  	    (BufOffset > RNDIS_MAX_TOTAL_SIZE) ||
+> -	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE))
+> +	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE) ||
+> +		(BufOffset + BufLength+8 > RNDIS_MAX_TOTAL_SIZE))
+>  		    return -EINVAL;
+>  
+>  	r = rndis_add_response(params, sizeof(rndis_set_cmplt_type));
+> -- 
 > 2.43.5
->
+> 
+
+As I asked before, please run scripts/checkpatch.pl on your patch and
+fix the issue it found.  Can you do all of this and send a v2 patch?
+
+thanks,
+
+greg k-h
 
