@@ -1,101 +1,143 @@
-Return-Path: <linux-kernel+bounces-724959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7A4AFF922
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:07:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C3B9AFF920
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0CAB3A0343
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:06:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED4945A5A1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6FF29B764;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48AA29B224;
 	Thu, 10 Jul 2025 06:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rMYjerqI"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2068.outbound.protection.outlook.com [40.107.220.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NdGuH5pO"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B5B2980DB;
-	Thu, 10 Jul 2025 06:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752127262; cv=fail; b=kJyE6KDih1nEJ6DekIEaMS7EYyCOicU5w/QdTS6MbguNODotC9mXh1lyI7hpoEKpqMX0TTkoi5gQ0dQCJa6OxZz1DCti1mCB34tmz1MKPuqwhbTwMlqvsysM9AkZqb8nkAFadMGA0dRNi9QRdxw4AOG7jLEjw1brB4cHJ/Wjry8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DA0292B37;
+	Thu, 10 Jul 2025 06:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752127262; cv=none; b=AN9Nk0fodNvKLlTKDHaNTZSSD/PHXoOK3yLk6y1H1I7HltqbqSbqr2OgT0BcXAn7XG3TguldHnE3MlyFxSfQEt4fjObQwXNpBU1tmjSQps8RZFON995/lkOkvIVhNLT7vVd35lOlwTCpUnBx9eOcBE1qH/XvFFlPBdNWnjqrtY0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752127262; c=relaxed/simple;
-	bh=SNuR/syJ6d94pWeRNgVQvkZpx4Ugaa0sfqGC6UsZS5A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=htEZzUJ5wqco1AzFvoPJt2WGw/+104mI7FIq06Y+QDh/4Z8Zps7sgV/4zj64M+gnoUfdeRKBdfcrhnSBT5UPaIq3aDojgCfmqTzOWZKD/K399hZrmox8xAvuIfmv2K7ZDVQXiVOz2wUXYZDhkvymWHG5uPiQEmFeJJxMwFvt7ek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rMYjerqI; arc=fail smtp.client-ip=40.107.220.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jKDZnFOwZ7m9SSjACkDlRA6UEubfB+AtmuX1MTozaloykYNNVeQ6WsuMeD0QvO1BpvUATBqlHrerLT/7rAc8ySoUbb6WtdFKQtCwfbpSmji8U3BDEejH8sRtKkJJd/PJ+l8a1vKqnMUf3LkxDPj7sDflfLfgNm+ALbB7zPkFW9PoOM+eWUtMZ8E5WVL35C/9M7V8P+odo+/SF1Wl53JW0c4vFuKDo0yG1i/eiGoiErgODQ7PHDyr0aAQcqIIJFeQPfMlRV3zoMIPU1uoVrXa1n5iuUUY6Fb03FIhHob6+8G1yjrMDu3Mysv+BfCb8MYvn4XzBIFhoqkAv1ocIKSBbQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5yG4YicJuyOLO3kZqwyH0YHYzughxDEpZvc3rLH9H90=;
- b=nrJ4oVrFfGchQeg148HBZczltF7CKpEI8xZCDqWSbiZNWeznKN0wUXeLkZZh3BJO3IsKbhTy4Xsln3hoqD0kcYQYs4VSt872p0XNcYNLJ3Wx6s9o4A3tcAmLpIUXzoDKHQVAvR6K5yb+1bbg7lhaqqiySS3wWkTjJ0nnDzT3F0lEh40U5FbCtpGPv5C9TbFf50llRZFVrje/Abmo8ahOzLq/fxmVYLIIG8+pkvHKQcaOt0dcvI8Px/eOTtXT7W3COhc7kPeubQxN/K0yGC4htOv7CpdHYKQfKRBNIxWnys1O0A86xzDaRYN8klpp5rZdjkQxHSX0SWsCq0HYYzoP1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5yG4YicJuyOLO3kZqwyH0YHYzughxDEpZvc3rLH9H90=;
- b=rMYjerqI+kNw2exmz+SugPwJOTGuUqdlq3PrA3ZAqLK9sTb4DxjTntYTA8PdUVULUidD2dS5bEukVMh8GTyPFaAmaYaI/113O9k12K+c9MhJDvqEsSO1ZwvZYg1SdoV0Ly75qpvljEZLvkupMjvv2e0NAYufqv1yeMdGa8Oy/a0bTTmVA/gNev4hqvw98noH3D2zhgbhnHXwHzfJb0kgKCFcUP4xU43un99f5fZBbDBvDYYhnrNUR0VhJVqei3MgFUFnPCFDj+UG4ZMs5gZxeoqYKOkAAX8VEthsgXqVOSgCvaiY0qYm9jQrR/5usQSyn8Ioe2wvPhylc44UpKDl4A==
-Received: from CH2PR17CA0012.namprd17.prod.outlook.com (2603:10b6:610:53::22)
- by IA0PR12MB8423.namprd12.prod.outlook.com (2603:10b6:208:3dc::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Thu, 10 Jul
- 2025 06:00:57 +0000
-Received: from CH2PEPF00000146.namprd02.prod.outlook.com
- (2603:10b6:610:53:cafe::10) by CH2PR17CA0012.outlook.office365.com
- (2603:10b6:610:53::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22 via Frontend Transport; Thu,
- 10 Jul 2025 06:00:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH2PEPF00000146.mail.protection.outlook.com (10.167.244.103) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.22 via Frontend Transport; Thu, 10 Jul 2025 06:00:56 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 9 Jul 2025
- 23:00:39 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 9 Jul
- 2025 23:00:39 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Wed, 9 Jul 2025 23:00:37 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <jgg@nvidia.com>
-CC: <kevin.tian@intel.com>, <corbet@lwn.net>, <bagasdotme@gmail.com>,
-	<will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<shuah@kernel.org>, <jsnitsel@redhat.com>, <nathan@kernel.org>,
-	<peterz@infradead.org>, <yi.l.liu@intel.com>, <mshavit@google.com>,
-	<praan@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
-	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>
-Subject: [PATCH v9 29/29] iommu/tegra241-cmdqv: Add IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV support
-Date: Wed, 9 Jul 2025 22:59:21 -0700
-Message-ID: <68161a980da41fa5022841209638aeff258557b5.1752126748.git.nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1752126748.git.nicolinc@nvidia.com>
-References: <cover.1752126748.git.nicolinc@nvidia.com>
+	bh=clBkOKdOt3OPliSRUnnc9ikSUOgMniGHVGWMvtSIp5w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W4wiJhUFgqEbLR6uonNey3kebd0YcyUnpiQQ6+UILzo2+KcM6VTcXTePmwYkX1PArRuZzf/QDlcBHxkQjF12J3TtUFSZvLdhMPEL7A29p1UyzZdnfxntv6ns69oob+HAyZFX/pIZuU8tktb9IolD4JfsHG9RPd8b/JvScsz+MCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NdGuH5pO; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4a7a8c2b7b9so9484621cf.1;
+        Wed, 09 Jul 2025 23:00:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752127258; x=1752732058; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4dkxON11nGIA5NYLSI97c5y67hFYtsqVKB22BPIBIMA=;
+        b=NdGuH5pOorQhHEUHfnvKhBpwrVchuKIRNQosSq0S5aRhm7KMkmpQBd5ODVy50fW7dV
+         qA0BHpf4iD4DIwg9rCzQFAZIMjHSTfggQ5nEVOkeHitQckpeUbnnKec3bj1RjQLAZgjx
+         tKo6nucfL+E/i5jVty6shOXc2sOfA3pHnx5tapQLDY+G1DBUqiXog0Ii5he7QBbdqhW9
+         jUv4yxgZ8S3ZMru2E3ybNuwnpfFOt2PJbmUcfZUMJjNCP+1XHC5kUWx4zABtYA2Xk77p
+         jhDPFrTkPZzX9L4Dd84YSZAG4yibN16/cIsCybxFzPgqgXGtSwERsPVu6C7d2D159mTY
+         pvCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752127258; x=1752732058;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4dkxON11nGIA5NYLSI97c5y67hFYtsqVKB22BPIBIMA=;
+        b=THbQKTIEfNUYidiuuUUQ9NMCkS0tK8uAce/Hjw63efmvN/I/VGT4+SvZswfjRRQ+Ib
+         8tAxQdUz5AEbxuTEYvAstsWlUH2kQGAod27fwzipSZ5TrzZBuEJGwwjDzhFO2XspVtm/
+         0Hcx6GYaFoHpOY1lrj/2f4vJMeNeItv5VMIhF5TGLAjCofytVDu46J87twVzFm8/BpdF
+         9hC4uXif3bX+RdvCiCnMc9utqw4w7wQQJIA+X6In6kb8q/HuNdxQOXQzpJSbXbUXk/sO
+         kE0scZkJKdK1AUjRBNHRviGF1RZ1xkZMYxfxzcmqiFtB1gN1V6BXdvtqGKdkXNlckEjs
+         wPYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbSkdRqXkJ1B223eSTewJFHk0sMb3I+xFsBd5xgvboJQI1YzTF0Y5ABLd2yHCHp/t0a3hgW1RRS+ydPDk0ziw=@vger.kernel.org, AJvYcCXCCi7bnC5ROfvnqx9MhLtw86e8zMCwG3lB/1TWRbkdIo751uo7RB96/zdL67+uNraxWYvmxXv7fSo/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfecMXhupyfkINiXWOGNNSlvqEBO+mMVU0fYJiY7KnhDVC3gZQ
+	FpqH8yqudMrms+N/CpNO/AMdk9HBHzWf6AT2gBZRV8lkT/ysQgRVs35j
+X-Gm-Gg: ASbGncuw02xCK/GmAx1CZCuDupf6l8/CqhLFU4e92I5e+XdXdFno5egihW7kpSErd8P
+	1bVOCuAry4WZK7/SsO7BytkBzCTWXtYEE+vrlHCMLwVsvwEOZHRSxNfhq1K/Ey71NDrxxGyitoy
+	srDdDo4FWQwgqzzk7gyc5t7ARB7Utufs73aTU+VHGbBv9pZoBNJhmwACs8GCH29pQ6yhXOczkKB
+	DSkNu6GA5KAUxJfQk/Yo5A5LT8ZI66j9BUF4K3dVJmMjR61a3eX8Z3Dc4rdC7BfQ1mhlZ5B+Xhy
+	sccS0vDI9ZSAjX7sv8A40sJH9idlB071e6y2EnRaCviJ41yMY0V7E0f4TPUBqMDKnmbWTa/u4zb
+	BheSOhP6BLhfh15n3Y7b/4klJGMOeiEpFn2G4b8jLSawGi6YaWtrK
+X-Google-Smtp-Source: AGHT+IEk0zas89MOBG4S4eZCmPaCtlBUN7QCZh+Pr6ROSTJbtHRJobeIQcYI59LjAeJh/0WNTD+zIA==
+X-Received: by 2002:ac8:7c55:0:b0:494:7e91:eb4d with SMTP id d75a77b69052e-4a9ec85346cmr14881931cf.51.1752127257573;
+        Wed, 09 Jul 2025 23:00:57 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9edc201b0sm5611561cf.14.2025.07.09.23.00.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 23:00:57 -0700 (PDT)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 58A87F4006C;
+	Thu, 10 Jul 2025 02:00:56 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Thu, 10 Jul 2025 02:00:56 -0400
+X-ME-Sender: <xms:GFdvaKj-HoCkhDVpCKIv6t4kDdrR23Y7gUz1c9P5NYxFZ_CudURyCQ>
+    <xme:GFdvaMjGriLVVArgyY8EpZlqguxdESxVQmFoBDvlLWtUI-vUXKUog-dkswr5MuWIC
+    yNlU3BhDtFSk_Pd0A>
+X-ME-Received: <xmr:GFdvaGqycb-fBnUpoQUQJ-tw48iKp-zYzbX7HlOS2CDlhSNwE0i7YP119Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefleeijecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeeuohhquhhnucfhvghn
+    ghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvghrnh
+    epgeegueekgefhvedukedtveejhefhkeffveeufeduiedvleetledtkeehjefgieevnecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshho
+    nhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngh
+    eppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvh
+    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhu
+    giesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkhhmmheslhhishhtsh
+    drlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    sghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrg
+    hrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgr
+    ihhlrdgtohhm
+X-ME-Proxy: <xmx:GFdvaCzdXbM5uJkcGYM_EKoUBhcK6m64V49ohJLpKWMOqk3Pz_gUFQ>
+    <xmx:GFdvaFwLNHjqZCG7vTNDMSqoUIRr7ChOC_hKUNu5MiJSQFO5lpKmVw>
+    <xmx:GFdvaKaU0bpodEj2bR4fbWfGGWxzl5OuZHEsZK4rloOAqJcMl4UXjA>
+    <xmx:GFdvaGl4giPw6wG-au7OmvlEsY4FCHK8rkX5o9fwiawnG3WJK6W80w>
+    <xmx:GFdvaPF7NWMB1mFzoW8RmnJxkJIzetKaOSGFWzFHKVaXrKLcVN1mOjFr>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 10 Jul 2025 02:00:55 -0400 (EDT)
+From: Boqun Feng <boqun.feng@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	lkmm@lists.linux.dev,
+	linux-arch@vger.kernel.org
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,
+	"Alex Gaynor" <alex.gaynor@gmail.com>,
+	"Boqun Feng" <boqun.feng@gmail.com>,
+	"Gary Guo" <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	"Benno Lossin" <lossin@kernel.org>,
+	"Andreas Hindborg" <a.hindborg@kernel.org>,
+	"Alice Ryhl" <aliceryhl@google.com>,
+	"Trevor Gross" <tmgross@umich.edu>,
+	"Danilo Krummrich" <dakr@kernel.org>,
+	"Will Deacon" <will@kernel.org>,
+	"Peter Zijlstra" <peterz@infradead.org>,
+	"Mark Rutland" <mark.rutland@arm.com>,
+	"Wedson Almeida Filho" <wedsonaf@gmail.com>,
+	"Viresh Kumar" <viresh.kumar@linaro.org>,
+	"Lyude Paul" <lyude@redhat.com>,
+	"Ingo Molnar" <mingo@kernel.org>,
+	"Mitchell Levy" <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	"Linus Torvalds" <torvalds@linux-foundation.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH v6 0/9] LKMM generic atomics in Rust
+Date: Wed,  9 Jul 2025 23:00:43 -0700
+Message-Id: <20250710060052.11955-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,147 +145,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000146:EE_|IA0PR12MB8423:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6e9762d-fc4d-4ce6-4af8-08ddbf772300
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xvfLv8+4q+qFcugrt96eCbPQ2U9MdfMoJQVPZc5iafSsGMag52He9aLAEZww?=
- =?us-ascii?Q?NJpKxF69DaJCNgX7dFotNP3bpDbrqdRUOWRwCvfDLnBHUsgo79WshnwN3B+X?=
- =?us-ascii?Q?1pY5Ljg7Ih3l/4U0k6xHNdhKu46gROSBSXWgX/OTuXH85SKsYqf1CyzOQw1y?=
- =?us-ascii?Q?JRIIsgrqI3GXryI2BBO0QYefEAkre30wpeeeCqtGRtulzDVVnwmbVftQ0fdx?=
- =?us-ascii?Q?JXwzk+ULg6ngdwV8OecQPKmzCaTTSKI103F6TmYPQ9+95mPUjNUIhaS/y9WO?=
- =?us-ascii?Q?nsKByhZwyTDfJEoC2ED7d1OpgCWRfPIgoroHzGxYgd4SKKUOEI7AIu8ynUeF?=
- =?us-ascii?Q?PR2u+47alwVVyXbCOi0TsozGTpJQ9Z6Gu6m61tFD2cf6mNVI4/V99KkNphpo?=
- =?us-ascii?Q?MSHqsiHF8EmcVjJI+HkWL8xanBBt2vOiDYGKieszChfpDGa8p7EmM0mxefKE?=
- =?us-ascii?Q?JEiEbHvCpnPLShemWPe58jpHUMtjvfofM2MCAVDXhdtU4fyGL0RwdQaqY8Jq?=
- =?us-ascii?Q?rzh80rO+SZRmothB1cVeCHu9YGcOUddh+JrBXB36hZkM9pjkAv+EHsJen4lO?=
- =?us-ascii?Q?kkChQJuH4VfMV0nsD6clZ9runUCsNeDT2y7Ty0oNx0nBinZc10G9iHKKVQF/?=
- =?us-ascii?Q?B7Nu7pmID31q4ePqexG5nPinq4J281g3pxaROkgWfuE8jYSBWkraZBfnc85t?=
- =?us-ascii?Q?X2M7hHOP3Pqay5BZqL3PA0X+qpmfqu11oeWcu486dVymFkWDQMYS97N+yolP?=
- =?us-ascii?Q?sNfeOyeuPmXfph1xB++k9FCAIV8c0sA64XUoLazRpnTpfh8S6HWe+heJPaiU?=
- =?us-ascii?Q?Uzn/7/wJseUHMc4fKqnBcIV8LfbxVCCcfWPylWIdPNnOWc9b+8uBHgPr1ebn?=
- =?us-ascii?Q?BnfmGftTarRTLmTEGGalxyghZxF3wQ5FjJ091Dz2QYqIQMprvqwcKnQMGTjp?=
- =?us-ascii?Q?RkQ0xAl/JqBNFdFtxquoLWS1+gD6aGZliBDxP7QzJYt9LqSiQzTZ7Ij0430/?=
- =?us-ascii?Q?xm/v/atma2mgtjaSGnEcVoRjDSgQpB0ccjjwQ48gVuzZsOVRifi5xF9rTsW9?=
- =?us-ascii?Q?vAshZPWSvkqsJsYA/ue4JiZU258tVm8gRGh5gKJ2onXQW9YCxiH/U9IJ4P9a?=
- =?us-ascii?Q?FgtCxcOOTL7oLD2q974Scc4fF7rVm2EC0BoyVrgravNJXM+zRSTzv8RZXI7I?=
- =?us-ascii?Q?+den1vIT1IbGIT+Nk7pS4RoBLIX4xdBIn5fsfJVEGxzxhgP7uw98v4feXRkw?=
- =?us-ascii?Q?p5LL5Hx5VaUIDmdAgaXwuO35tHNUf1qxiCMxRDQTUP5z45SGOykKt4Ip+dVn?=
- =?us-ascii?Q?3VVb9bkV7UUq3v2haHHh8zNGcis2YKgxnS6Z9O1tZT163QZsLZIMVcs7JpCe?=
- =?us-ascii?Q?7MmIkwNJu1NK2Rm/ebiOoSQ28uj+TGl47mIDLq44m7g7crZgj5+8DEI/uzbW?=
- =?us-ascii?Q?AHGnt48C80jDYX2iw1EmVJDWcAqPGvVRgbabnbNBC8CInfXpZuca8avczvhS?=
- =?us-ascii?Q?0M7Bz0YDiOAbz7bXhTAVF5OMR6Zdwt7gCUQL?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 06:00:56.4136
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6e9762d-fc4d-4ce6-4af8-08ddbf772300
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000146.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8423
 
-Add a new vEVENTQ type for VINTFs that are assigned to the user space.
-Simply report the two 64-bit LVCMDQ_ERR_MAPs register values.
+Hi all,
 
-Reviewed-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- include/uapi/linux/iommufd.h                  | 15 +++++++++++++
- .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 22 +++++++++++++++++++
- 2 files changed, 37 insertions(+)
+This is the v6 of LKMM atomics in Rust, you can find the previous
+versions at:
 
-diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-index 4e81610390c7..111ea81f91a2 100644
---- a/include/uapi/linux/iommufd.h
-+++ b/include/uapi/linux/iommufd.h
-@@ -1145,10 +1145,12 @@ struct iommufd_vevent_header {
-  * enum iommu_veventq_type - Virtual Event Queue Type
-  * @IOMMU_VEVENTQ_TYPE_DEFAULT: Reserved for future use
-  * @IOMMU_VEVENTQ_TYPE_ARM_SMMUV3: ARM SMMUv3 Virtual Event Queue
-+ * @IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV: NVIDIA Tegra241 CMDQV Extension IRQ
-  */
- enum iommu_veventq_type {
- 	IOMMU_VEVENTQ_TYPE_DEFAULT = 0,
- 	IOMMU_VEVENTQ_TYPE_ARM_SMMUV3 = 1,
-+	IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV = 2,
- };
- 
- /**
-@@ -1172,6 +1174,19 @@ struct iommu_vevent_arm_smmuv3 {
- 	__aligned_le64 evt[4];
- };
- 
-+/**
-+ * struct iommu_vevent_tegra241_cmdqv - Tegra241 CMDQV IRQ
-+ *                                      (IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV)
-+ * @lvcmdq_err_map: 128-bit logical vcmdq error map, little-endian.
-+ *                  (Refer to register LVCMDQ_ERR_MAPs per VINTF )
-+ *
-+ * The 128-bit register value from HW exclusively reflect the error bits for a
-+ * Virtual Interface represented by a vIOMMU object. Read and report directly.
-+ */
-+struct iommu_vevent_tegra241_cmdqv {
-+	__aligned_le64 lvcmdq_err_map[2];
-+};
-+
- /**
-  * struct iommu_veventq_alloc - ioctl(IOMMU_VEVENTQ_ALLOC)
-  * @size: sizeof(struct iommu_veventq_alloc)
-diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-index 3eeb8444fadf..d5d43a1c7708 100644
---- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-@@ -295,6 +295,20 @@ static inline int vcmdq_write_config(struct tegra241_vcmdq *vcmdq, u32 regval)
- 
- /* ISR Functions */
- 
-+static void tegra241_vintf_user_handle_error(struct tegra241_vintf *vintf)
-+{
-+	struct iommufd_viommu *viommu = &vintf->vsmmu.core;
-+	struct iommu_vevent_tegra241_cmdqv vevent_data;
-+	int i;
-+
-+	for (i = 0; i < LVCMDQ_ERR_MAP_NUM_64; i++)
-+		vevent_data.lvcmdq_err_map[i] =
-+			readq_relaxed(REG_VINTF(vintf, LVCMDQ_ERR_MAP_64(i)));
-+
-+	iommufd_viommu_report_event(viommu, IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV,
-+				    &vevent_data, sizeof(vevent_data));
-+}
-+
- static void tegra241_vintf0_handle_error(struct tegra241_vintf *vintf)
- {
- 	int i;
-@@ -340,6 +354,14 @@ static irqreturn_t tegra241_cmdqv_isr(int irq, void *devid)
- 		vintf_map &= ~BIT_ULL(0);
- 	}
- 
-+	/* Handle other user VINTFs and their LVCMDQs */
-+	while (vintf_map) {
-+		unsigned long idx = __ffs64(vintf_map);
-+
-+		tegra241_vintf_user_handle_error(cmdqv->vintfs[idx]);
-+		vintf_map &= ~BIT_ULL(idx);
-+	}
-+
- 	return IRQ_HANDLED;
- }
- 
+v5: https://lore.kernel.org/rust-for-linux/20250618164934.19817-1-boqun.feng@gmail.com/
+v4: https://lore.kernel.org/rust-for-linux/20250609224615.27061-1-boqun.feng@gmail.com/
+v3: https://lore.kernel.org/rust-for-linux/20250421164221.1121805-1-boqun.feng@gmail.com/
+v2: https://lore.kernel.org/rust-for-linux/20241101060237.1185533-1-boqun.feng@gmail.com/
+v1: https://lore.kernel.org/rust-for-linux/20240612223025.1158537-1-boqun.feng@gmail.com/
+wip: https://lore.kernel.org/rust-for-linux/20240322233838.868874-1-boqun.feng@gmail.com/
+
+I dropped the support for atomic pointers for now
+(Atomic<{isize,usize}> still exists), because further more work is
+needed to ensure the implementation could preserve provenance [1]. And
+we already other series depending on atomics [2], so it makes sense to
+get some basic support in-tree.
+
+Peter & Ingo, I take it that it's OK for me to send a PR to tip later
+this week or early next week if things went well? Of course, any
+feedback is welcome!
+
+Changes since v5:
+
+* Replace `as` cast with `ptr.cast()` in atomic/ops.rs per the
+  suggestion of Andreas.
+* Explicitly document `Acquire` and `Release` ordering definition per
+  the suggestion of Peter.
+* Rename `All` to `Any` for ordering accept traits per the suggestion of
+  Andreas.
+* Remove unnecessary fields in `AcquireOrRelaxed` and `ReleaseOrRelaxed`
+  per the suggestion of Gary.
+* Add round-trip transmutability (thanks Benno) as the safety
+  requirement of `AllowAtomic` per discussion with Gary and Benno.
+* Add doc alias for xchg() and cmpxchg() per the suggestion of Benno.
+* Examples and documentation improvement.
+* Applied Reviewed-by tags from Alice and Andreas.
+
+[1]: https://lore.kernel.org/rust-for-linux/aGg4sIORQiG02IoD@Mac.home/
+[2]: https://lore.kernel.org/rust-for-linux/20250709-module-params-v3-v16-1-4f926bcccb50@kernel.org/
+
+Regards,
+Boqun
+
+Boqun Feng (9):
+  rust: Introduce atomic API helpers
+  rust: sync: Add basic atomic operation mapping framework
+  rust: sync: atomic: Add ordering annotation types
+  rust: sync: atomic: Add generic atomics
+  rust: sync: atomic: Add atomic {cmp,}xchg operations
+  rust: sync: atomic: Add the framework of arithmetic operations
+  rust: sync: atomic: Add Atomic<u{32,64}>
+  rust: sync: Add memory barriers
+  rust: sync: atomic: Add Atomic<{usize,isize}>
+
+ MAINTAINERS                               |    4 +-
+ rust/helpers/atomic.c                     | 1040 +++++++++++++++++++++
+ rust/helpers/barrier.c                    |   18 +
+ rust/helpers/helpers.c                    |    2 +
+ rust/kernel/sync.rs                       |    2 +
+ rust/kernel/sync/atomic.rs                |  193 ++++
+ rust/kernel/sync/atomic/generic.rs        |  567 +++++++++++
+ rust/kernel/sync/atomic/ops.rs            |  195 ++++
+ rust/kernel/sync/atomic/ordering.rs       |   97 ++
+ rust/kernel/sync/barrier.rs               |   65 ++
+ scripts/atomic/gen-atomics.sh             |    1 +
+ scripts/atomic/gen-rust-atomic-helpers.sh |   67 ++
+ 12 files changed, 2250 insertions(+), 1 deletion(-)
+ create mode 100644 rust/helpers/atomic.c
+ create mode 100644 rust/helpers/barrier.c
+ create mode 100644 rust/kernel/sync/atomic.rs
+ create mode 100644 rust/kernel/sync/atomic/generic.rs
+ create mode 100644 rust/kernel/sync/atomic/ops.rs
+ create mode 100644 rust/kernel/sync/atomic/ordering.rs
+ create mode 100644 rust/kernel/sync/barrier.rs
+ create mode 100755 scripts/atomic/gen-rust-atomic-helpers.sh
+
 -- 
-2.43.0
+2.39.5 (Apple Git-154)
 
 
