@@ -1,207 +1,139 @@
-Return-Path: <linux-kernel+bounces-725912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00DCB0056B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:38:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B812B00573
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E1F4847D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:38:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2D81C443A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBF0273D60;
-	Thu, 10 Jul 2025 14:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFE82741D4;
+	Thu, 10 Jul 2025 14:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jJpIA8pu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EObSc+5f";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jJpIA8pu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EObSc+5f"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xgVLx7/E"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DBE23ABA6
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDBA23ABA6;
+	Thu, 10 Jul 2025 14:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752158321; cv=none; b=os1KWOhaLanQr3UfkJoC1sjm7JVm2yJLqMqUhSqHcY+D+jC/v4neeijbcnHk0hL6JTcoEiS5r1l4dEg1U3pWKUOxbslk91KrUFCnrxHcNEIrYC+T+dpOwjjDymflIAp+4IWkvixalm2o8vx1xJQMFEjoiG1qiaXVgeQSJHjiFQ8=
+	t=1752158354; cv=none; b=RgNgYhv5D7y1Hk8dfOzlmfc3rPty3i9r/lP/I2r0ExpHeagBpFwpRdVl4BkJ7aWjrgMZNYlgUm4jjqx8X8v4xoYfYKTZCBkw61zDNpg/9cnkJCX7iiUyGK/o1n9SHnFLwGvb/L6wVOHHDCYHcxel/550yzGOaCzSPwSxKh+HLiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752158321; c=relaxed/simple;
-	bh=cRt7UGQZN8+4O01IcOIY28tD3US5zQZgWXkz8/KUoOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JPrUVXtfNwHtdrFV68Bc0VM16ZcVN1NxfKETRDTX+XLP5HoWJ9uvSGh1aXy4WpdqN0fcdDaYdhAI9PAyvUW2DTaNuX8FBThQSg9mptfbHQRHGnueV6Z2fhPNugicObv7q5tLxIrsR1i5m01e6bEc7lFUp36rSqsc7iPtCGaieGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jJpIA8pu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EObSc+5f; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jJpIA8pu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EObSc+5f; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D2C6E21755;
-	Thu, 10 Jul 2025 14:38:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752158317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=01QWlgVhoMPFwf4Far4BayktnHTsyOPbnHlHamwLxCI=;
-	b=jJpIA8puKLamy/AoL1QJZOfLEdcVCRHXXrI2R6oAvI+7Cr+PCPCwT4KFgGqn7N6gKWvfz8
-	8drkH2l5H+oViAh1aVEVSTxpvcSyXfJbkfLUJXr7ZeBEs5Pzq31oDRk2cydN76xs2jEG8u
-	cDLcjYklsg+qiapVc0s4J+WOoJMx2Lk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752158317;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=01QWlgVhoMPFwf4Far4BayktnHTsyOPbnHlHamwLxCI=;
-	b=EObSc+5f0a5OfEmheNKT0mCuNe+AiZnXl/5+8DZiDpHZcODnwSa56VzsQeANgD+b9jEeaI
-	4qXdO3W5nCVzJ2CA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752158317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=01QWlgVhoMPFwf4Far4BayktnHTsyOPbnHlHamwLxCI=;
-	b=jJpIA8puKLamy/AoL1QJZOfLEdcVCRHXXrI2R6oAvI+7Cr+PCPCwT4KFgGqn7N6gKWvfz8
-	8drkH2l5H+oViAh1aVEVSTxpvcSyXfJbkfLUJXr7ZeBEs5Pzq31oDRk2cydN76xs2jEG8u
-	cDLcjYklsg+qiapVc0s4J+WOoJMx2Lk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752158317;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=01QWlgVhoMPFwf4Far4BayktnHTsyOPbnHlHamwLxCI=;
-	b=EObSc+5f0a5OfEmheNKT0mCuNe+AiZnXl/5+8DZiDpHZcODnwSa56VzsQeANgD+b9jEeaI
-	4qXdO3W5nCVzJ2CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C0F30136DC;
-	Thu, 10 Jul 2025 14:38:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id b1/TLm3Qb2h4OAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 10 Jul 2025 14:38:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 516B9A098F; Thu, 10 Jul 2025 16:38:33 +0200 (CEST)
-Date: Thu, 10 Jul 2025 16:38:33 +0200
-From: Jan Kara <jack@suse.cz>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, tytso@mit.edu, 
-	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, linux-kernel@vger.kernel.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 03/16] ext4: remove unnecessary s_md_lock on update
- s_mb_last_group
-Message-ID: <6bf7irhdjrsvuodga344g2ulha52z65f2qf2l3tuldvwbb5pf6@cz7m2gypd4su>
-References: <20250623073304.3275702-1-libaokun1@huawei.com>
- <20250623073304.3275702-4-libaokun1@huawei.com>
- <xlzlyqudvp7a6ufdvc4rgsoe7ty425rrexuxgfbgwxoazfjd25@6eqbh66w7ayr>
- <1c2d7881-94bb-46ff-9cf6-ef1fbffc13e5@huawei.com>
- <mfybwoygcycblgaln2j4et4zmyzli2zibcgvixysanugjjhhh5@xyzoc4juy4wv>
- <db4b9d71-c34d-4315-a87d-2edf3bbaff2d@huawei.com>
- <e2dgjtqvqjapir5xizb5ixkilhzr7fm7m7ymxzk6ixzdbwxjjs@24n4nzolye77>
- <272e8673-36a9-4fef-a9f1-5be29a57c2dc@huawei.com>
- <kvgztznp6z2gwuujrw5vtklfbmq3arjg54bpiufmxdwmuwjliw@og7qkacbdtax>
- <9ecfe98f-b9d5-478a-b2a5-437b452dbd58@huawei.com>
+	s=arc-20240116; t=1752158354; c=relaxed/simple;
+	bh=UCUKULXFCqD7Htou+pcidQL298jdGLI2+TJQvNLKUXk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=lJonlmoak30ComizjPkKgWy6qcVnHVSpSEa4W01OGm3IGd0+pkuRg52ZAay5dYseLVRYhjBU51WFfsXEqKs+sWldl8/hJ7uR3gvGs5fD6AtfsH/EyNC6O74Ybu2JdZE+7wWVbrSK4E/oVDtX9rVU/IevZn+veM0PNQi7Zyu8QuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xgVLx7/E; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56AEd5ce1532758;
+	Thu, 10 Jul 2025 09:39:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752158345;
+	bh=oSJCoY6FjmJJjlUf6QZ/7RHreKY48dRarT/BjAI0j2Y=;
+	h=From:Subject:Date:To:CC;
+	b=xgVLx7/E7IiqH4siAjyn8GUnxr7yeKI/AAWY/voph7hzmFaFCD2fy6VUlZ8vSSmPF
+	 Y1AI3Sbxc/o+K971vTFTURSeo0jEl58UCvhbcSmGZUupQKJW2GmeWI8TbWI28jtvwZ
+	 ddgBMsIgZXFpj0QnmeKpv3E8nOF2Aed1LGcIiyVI=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56AEd5sS256406
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 10 Jul 2025 09:39:05 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 10
+ Jul 2025 09:39:05 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 10 Jul 2025 09:39:04 -0500
+Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56AEd4Ij1518683;
+	Thu, 10 Jul 2025 09:39:04 -0500
+From: Bryan Brattlof <bb@ti.com>
+Subject: [PATCH v2 0/2] arm64: dts: ti: k3-am65: add boot phases to
+ critical nodes
+Date: Thu, 10 Jul 2025 09:38:58 -0500
+Message-ID: <20250710-65-boot-phases-v2-0-d431deb88783@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9ecfe98f-b9d5-478a-b2a5-437b452dbd58@huawei.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAILQb2gC/3XMyw6CMBCF4Vchs3ZMW8KlrnwPw2KgU5mFlLSk0
+ RDe3cre5X+S8+2QOAonuFU7RM6SJCwlzKWCaablySiuNBhlGtUpi22DYwgbrjMlTkjka6LWjV1
+ voJzWyF7eJ/gYSs+SthA/p5/1b/1LZY0KWfveOtuRrfV9k+sUXjAcx/EFOaUt1akAAAA=
+X-Change-ID: 20250709-65-boot-phases-aaf3aa6db782
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Bryan Brattlof <bb@ti.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1357; i=bb@ti.com;
+ h=from:subject:message-id; bh=UCUKULXFCqD7Htou+pcidQL298jdGLI2+TJQvNLKUXk=;
+ b=owNCWmg5MUFZJlNZbp/wCAAAZH///vfr6vP/63z1V/5/U/mbSh/mVX73/n/75Q7bj/re5l6wA
+ RmxoxRpo00PUAAHqaAAAAAA0A9IAG1AGI0AD1AAAyDIaB6jMoek9Rmp6mh6aiANNGgZNMjTQZNA
+ MhowIDRpkNBk0DQNBkGmENBkyNGhowjEBkYmmCaaNDJkDFD0npDIaA9QyGj1AANB6mEA0DRoANB
+ ppoNBoyNPUGgANAAAaND1NAaPTUYagQV++6acSNM4ScM4UxgYTQnBQyawUQ1vCHAErQDreN9f3M
+ lfTg5KqS++Nn7gnYDXTJokptaqIXSQqwzztsK1GUd9K9/mWQQ0oxb2Wr2ZK3OLVWYWq3AGkxz2L
+ TAlIzGFenDVr0wcmy46jaOsP3urdHH59/TGO9yXjQvO/E6tVvc05X+6fLRQupcKp+iR85vLziBJ
+ J8Y7MNfyrwEYYViOpYGjw6uJQJbxcIsFAG9xQiilpPDoPrZddEoSBt7fO58xjbmpv5eQiYGd6FU
+ WR8q0Sq4GT7u5fNwfG16lHc8nG/CNOVklnrNRnN6zgWkEjkqRsSGI19sd09BDC2pgV205gGKj7B
+ sjrYO9w+QGFy6tqEU+ObQqpjsX9dAjXZc3n/A5mfzHFgTcOHVtQcz0i6CIudP2RuocjmHYPgWet
+ ZHpmmEy/f8XckU4UJBun/AI
+X-Developer-Key: i=bb@ti.com; a=openpgp;
+ fpr=D3D177E40A38DF4D1853FEEF41B90D5D71D56CE0
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue 08-07-25 21:08:00, Baokun Li wrote:
-> Sorry for getting to this so late – I've been totally overloaded
-> with stuff recently.
-> 
-> Anyway, back to what we were discussing. I managed to test
-> the performance difference between READ_ONCE / WRITE_ONCE and
-> smp_load_acquire / smp_store_release on an ARM64 server.
-> Here's the results:
-> 
-> CPU: Kunpeng 920
-> Memory: 512GB
-> Disk: 960GB SSD (~500M/s)
-> 
->         | mb_optimize_scan  |       0        |       1        |
->         |-------------------|----------------|----------------|
->         | Num. containers   |  P80  |   P1   |  P80  |   P1   |
-> --------|-------------------|-------|--------|-------|--------|
->         | acquire/release   | 9899  | 290260 | 5005  | 307361 |
->  single | [READ|WRITE]_ONCE | 9636  | 337597 | 4834  | 341440 |
->  goal   |-------------------|-------|--------|-------|--------|
->         |                   | -2.6% | +16.3% | -3.4% | +11.0% |
-> --------|-------------------|-------|--------|-------|--------|
->         | acquire/release   | 19931 | 290348 | 7365  | 311717 |
->  muti   | [READ|WRITE]_ONCE | 19628 | 320885 | 7129  | 321275 |
->  goal   |-------------------|-------|--------|-------|--------|
->         |                   | -1.5% | +10.5% | -3.2% | +3.0%  |
-> 
-> So, my tests show that READ_ONCE / WRITE_ONCE gives us better
-> single-threaded performance. That's because it skips the mandatory
-> CPU-to-CPU syncing. This also helps explain why x86 has double the
-> disk bandwidth (~1000MB/s) of Arm64, but surprisingly, single
-> containers run much worse on x86.
+Hello everyone!
 
-Interesting! Thanks for measuring the data!
+To save precious on chip RAM space during bootup 'bootph-*' flags was 
+added to the dt-schema to describe which nodes need to be present during 
+each phase of the bootup process and which can be pruned to recover RAM 
+space that would otherwise be wasted.
 
-> However, in multi-threaded scenarios, not consistently reading
-> the latest goal has these implications:
-> 
->  * ext4_get_group_info() calls increase, as ext4_mb_good_group_nolock()
->    is invoked more often on incorrect groups.
-> 
->  * ext4_mb_load_buddy() calls increase due to repeated group accesses
->    leading to more folio_mark_accessed calls.
-> 
->  * ext4_mb_prefetch() calls increase with more frequent prefetch_grp
->    access. (I suspect the current mb_prefetch mechanism has some inherent
->    issues we could optimize later.)
-> 
-> At this point, I believe either approach is acceptable.
-> 
-> What are your thoughts?
+This small series adds the bootph-all flags to all the boot critical 
+nodes for all boards that utilize the AM65x as well as to the AM65's 
+reference board.
 
-Yes, apparently both approaches have their pros and cons. I'm actually
-surprised the impact of additional barriers on ARM is so big for the
-single container case. 10% gain for single container cases look nice OTOH
-realistical workloads will have more container so maybe that's not worth
-optimizing for. Ted, do you have any opinion?
+Happy Hacking
+~Bryan
 
-								Honza
+Signed-off-by: Bryan Brattlof <bb@ti.com>
+---
+Changes in v2:
+- removed tag from &mcu_udmap{} node
+- Link to v1: https://lore.kernel.org/r/20250709-65-boot-phases-v1-0-e1f89d97a931@ti.com
+
+---
+Bryan Brattlof (2):
+      arm64: dts: ti: k3-am65: add boot phase tags
+      arm64: dts: ti: k3-am654-base-board: add boot phase tags
+
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi       |  1 +
+ arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi        |  1 +
+ arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi     |  5 +++++
+ arch/arm64/boot/dts/ti/k3-am654-base-board.dts | 17 +++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am654-pcie-usb2.dtso |  1 +
+ arch/arm64/boot/dts/ti/k3-am654-pcie-usb3.dtso |  1 +
+ 6 files changed, 26 insertions(+)
+---
+base-commit: 3b08f8a34a2061d89a2411d04a675b3860d4f9cc
+change-id: 20250709-65-boot-phases-aaf3aa6db782
+
+Best regards,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Bryan Brattlof <bb@ti.com>
+
 
