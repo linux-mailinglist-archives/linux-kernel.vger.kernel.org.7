@@ -1,190 +1,264 @@
-Return-Path: <linux-kernel+bounces-725862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02711B004C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:12:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4838B004D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4580554245B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:07:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A05F0169336
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569AE270EC1;
-	Thu, 10 Jul 2025 14:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91922271451;
+	Thu, 10 Jul 2025 14:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="VHpubo+O";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="71llo6v6"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="eiI5L9tx"
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03B727057C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C461242D62;
+	Thu, 10 Jul 2025 14:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752156460; cv=none; b=nONFWuf2K/Uv2mbrHgwCvUqt/nMV0H+520FJ42vOzIKplLOS2R0sDmLYGq2skotNLZRbXdo3//IQguFiuuCjdnJ3zpHn2e1dR6paATInRFYQX6j3rYxsmzTzJ93pzSyumEMUluke/QH26VUW5CKu9MBSK6jqIfrKBeRUZAIJstw=
+	t=1752156509; cv=none; b=Ux2gxVpGAw0taA9L2QjNmLSH+NXaMQzd/4442sxi05motFi6dNqB1Cf5WSyRfzXzpLOF1b3+YXgME9W0Rj7zwAokn0SkV0heRh3r5UZxE951bSYUA8DbnXXWJQ/ft0COmwpanL3l4USR2Hc4egegsK5vqHVbURdREcVdZir45vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752156460; c=relaxed/simple;
-	bh=fEk+AE6/WEqc/2Z+GVzvG2frW2My/PwWPejaD2SJCKQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=WkCigqSc1H2s94lNahXeq8fQqPK6BqrlBE4fKwS3sQNnxMDqJGyZ2c70IAIrIMLnh718CnqXaGRaBCrhAPPx027N9FMtmSdY9bicg0el+Gqod2x9zAIQLBttq1Bna6ZoZAkMiG0UlmO6pevDay7syc6Nh3RNU2wj8O20tnEBBDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=VHpubo+O; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=71llo6v6; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752156450; x=1752761250;
-	d=konsulko.se; s=rsa1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=z6CYkY/mnHsPc1zlAI1YQ9WMPDSlzYrFWMeZlYj4cpw=;
-	b=VHpubo+OBZhzjd4PXBL2vtOFLMM2bRHh5EeEz+IBCjXyVL4Ukh6jyp1csiboGxXQ1tLHFoINMJ5C4
-	 1ctcoTuCpgQyNoAT2oGWAp0T0NmCmxu63oSdgyLLwlpIjYGksuqtkH5l39quLXxeJSQOPmZ8U4wiAE
-	 /hNmU9nqubJ0lOMKO6+bRyz+c9m0eXYUBliSymIBdoTt4jyKXhqNh75iley3u6crCOjr+Sxk4ex/4c
-	 g97BlnCT9qmhal31kJyh9KRJvuigslwTrELthNmRmAmMLWHIAWkJPj69oMzx/eRYQJJ65LtLzrGnrY
-	 r+ABRS9dN1OjMes5PM4HJ3WcgJdb/Mw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752156450; x=1752761250;
-	d=konsulko.se; s=ed1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=z6CYkY/mnHsPc1zlAI1YQ9WMPDSlzYrFWMeZlYj4cpw=;
-	b=71llo6v6/l7OTXw3SNLSRYkfbg1Wmiisu+BttGsr8RLc6NHuwz5OHPiG6WSlNgNzzVcW0wzjID+ca
-	 FxpPsbOAg==
-X-HalOne-ID: 363fb403-5d97-11f0-9d28-c9fa7b04d629
-Received: from smtpclient.apple (c188-150-224-8.bredband.tele2.se [188.150.224.8])
-	by mailrelay1.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 363fb403-5d97-11f0-9d28-c9fa7b04d629;
-	Thu, 10 Jul 2025 14:07:30 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1752156509; c=relaxed/simple;
+	bh=6+V6b48EzWgWG8MSnsUjJWAfwO4HcQ599pAv9PMWIe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X0fna1ZBCsiqel5mvDg9x+/Mvz+M5KpviulD9o3H1qP3u0yMx/e6W0abnlbkEz0Lz6baqp/+ET+3+eku0gxXBEzx/BL/6mpij9KzJccRF9p9/eTFx09T4EY2Prfo3DPEIIUUX6Quc77uVpN+dpKSIdZ9ORfRXHNTpCaEPe0hy/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=eiI5L9tx; arc=none smtp.client-ip=208.88.110.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 807163D8570F;
+	Thu, 10 Jul 2025 10:08:20 -0400 (EDT)
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id O8O26kgwxypV; Thu, 10 Jul 2025 10:08:19 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id A7AE33D875E7;
+	Thu, 10 Jul 2025 10:08:19 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com A7AE33D875E7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
+	t=1752156499; bh=EhdCuuk3MsnvKWneuePEB9v7psFEpBgaIrswFJsCaTM=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=eiI5L9txRHCopE2fnkP0oI2iR09ru1hhSxhD72AiJph9EmOfBFWozobaGPW96AJCg
+	 y20ij65cW9KEn2XjyNQOPE65m6uIniR/s4iYaKCdfJmx+WkBXOV0mJHBnMZNmXNFqn
+	 epC8zeVa3dGaPk/5jGzdzupceRde0cG3neSQFZD44FYUdaxnZL97VZMQyaDZ+xJgyq
+	 +ywApD4UlTpFGG9/xevR+agtU/kSNGNvivGQ4lmfljx85CsIKXQb37kR2gM8JKOJGk
+	 JrfZVByyinDxo4geIA6o8I951StEPiElJvF6PUPXhR2EPrUYt3jTwEE/8Sk3pRe0mJ
+	 3ZzcN5cTuFweQ==
+X-Virus-Scanned: amavis at mail.savoirfairelinux.com
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id 8J66NYaKQAMU; Thu, 10 Jul 2025 10:08:19 -0400 (EDT)
+Received: from fedora (unknown [192.168.51.254])
+	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id 595523D8570F;
+	Thu, 10 Jul 2025 10:08:19 -0400 (EDT)
+Date: Thu, 10 Jul 2025 10:08:18 -0400
+From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: devnull+samuel.kayode.savoirfairelinux.com@kernel.org, Frank.li@nxp.com,
+	abelvesa@kernel.org, abelvesa@linux.com, b38343@freescale.com,
+	broonie@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+	dmitry.torokhov@gmail.com, eballetbo@gmail.com, imx@lists.linux.dev,
+	krzk+dt@kernel.org, lee@kernel.org, lgirdwood@gmail.com,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, robh@kernel.org, sre@kernel.org,
+	yibin.gong@nxp.com
+Subject: Re: [PATCH v8 2/6] mfd: pf1550: add core driver
+Message-ID: <aG_JUhEQaiYQfJmz@fedora>
+References: <20250707-pf1550-v8-0-6b6eb67c03a0@savoirfairelinux.com>
+ <20250707-pf1550-v8-2-6b6eb67c03a0@savoirfairelinux.com>
+ <0406698c-6534-4aca-8994-e8a69ecee2b2@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v12 1/4] mm/vmalloc: allow to set node and align in
- vrealloc
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <nsacpwgldqdidsqkqalxdhwptikk7srnhjncmjaulnzcf6nsmu@fisb5w4aamhl>
-Date: Thu, 10 Jul 2025 16:07:19 +0200
-Cc: linux-mm@kvack.org,
- akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org,
- Uladzislau Rezki <urezki@gmail.com>,
- Danilo Krummrich <dakr@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- rust-for-linux@vger.kernel.org,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- linux-bcachefs@vger.kernel.org,
- bpf@vger.kernel.org,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <0406698c-6534-4aca-8994-e8a69ecee2b2@wanadoo.fr>
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <C240E394-C3F6-4A46-A9F3-E6D95A3F4DF3@konsulko.se>
-References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
- <20250709172416.1031970-1-vitaly.wool@konsulko.se>
- <nsacpwgldqdidsqkqalxdhwptikk7srnhjncmjaulnzcf6nsmu@fisb5w4aamhl>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-X-Mailer: Apple Mail (2.3826.200.121)
 
-
-
-> On Jul 9, 2025, at 9:01=E2=80=AFPM, Liam R. Howlett =
-<Liam.Howlett@oracle.com> wrote:
+On Tue, Jul 08, 2025 at 08:46:48PM +0200, Christophe JAILLET wrote:
+> Le 07/07/2025 =E0 23:37, Samuel Kayode via B4 Relay a =E9crit=A0:
+> > From: Samuel Kayode <samuel.kayode-4ysUXcep3aM1wj+D4I0NRVaTQe2KTcn/@p=
+ublic.gmane.org>
+> >=20
+> > Add the core driver for pf1550 PMIC. There are 3 subdevices for which=
+ the
+> > drivers will be added in subsequent patches.
+> >=20
+> > Reviewed-by: Frank Li <Frank.Li-3arQi8VN3Tc@public.gmane.org>
+> > Signed-off-by: Samuel Kayode <samuel.kayode-4ysUXcep3aM1wj+D4I0NRVaTQ=
+e2KTcn/@public.gmane.org>
 >=20
-> * Vitaly Wool <vitaly.wool@konsulko.se> [250709 13:24]:
->> Reimplement vrealloc() to be able to set node and alignment should
->> a user need to do so. Rename the function to vrealloc_node_align()
->> to better match what it actually does now and introduce macros for
->> vrealloc() and friends for backward compatibility.
->>=20
->> With that change we also provide the ability for the Rust part of
->> the kernel to set node and alignment in its allocations.
->>=20
->> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
->> Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
->> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
->> ---
->> include/linux/vmalloc.h | 12 +++++++++---
->> mm/nommu.c              |  3 ++-
->> mm/vmalloc.c            | 31 ++++++++++++++++++++++++++-----
->> 3 files changed, 37 insertions(+), 9 deletions(-)
->>=20
+> Hi,
+>=20
+> some nitpicks and a few real questions.
+>=20
+> CJ
+>=20
 > ...
 >=20
->> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
->> index 6dbcdceecae1..03dd06097b25 100644
->> --- a/mm/vmalloc.c
->> +++ b/mm/vmalloc.c
->> @@ -4089,19 +4089,31 @@ void *vzalloc_node_noprof(unsigned long size, =
-int node)
->> EXPORT_SYMBOL(vzalloc_node_noprof);
->>=20
->> /**
->> - * vrealloc - reallocate virtually contiguous memory; contents =
-remain unchanged
->> + * vrealloc_node_align_noprof - reallocate virtually contiguous =
-memory; contents
->> + * remain unchanged
->>  * @p: object to reallocate memory for
->>  * @size: the size to reallocate
->> + * @align: requested alignment
->>  * @flags: the flags for the page level allocator
->> + * @nid: node number of the target node
->> + *
->> + * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc(). If =
-@size is
->> + * 0 and @p is not a %NULL pointer, the object pointed to is freed.
->>  *
->> - * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If =
-@size is 0 and
->> - * @p is not a %NULL pointer, the object pointed to is freed.
->> + * if @nid is not NUMA_NO_NODE, this function will try to allocate =
-memory on
->> + * the given node. If reallocation is not necessary (e. g. the new =
-size is less
->> + * than the current allocated size), the current allocation will be =
-preserved
->> + * unless __GFP_THISNODE is set. In the latter case a new allocation =
-on the
->> + * requested node will be attempted.
+> > +	/* Add top level interrupts */
+> > +	ret =3D devm_regmap_add_irq_chip(pf1550->dev, pf1550->regmap, pf155=
+0->irq,
+> > +				       IRQF_ONESHOT | IRQF_SHARED |
+> > +				       IRQF_TRIGGER_FALLING,
+> > +				       0, &pf1550_irq_chip,
+> > +				       &pf1550->irq_data);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Add regulator */
+> > +	irq =3D regmap_irq_get_virq(pf1550->irq_data, PF1550_IRQ_REGULATOR)=
+;
 >=20
-> I am having a very hard time understanding what you mean here.  What =
-is
-> the latter case?
+> Same as above.
 >=20
-> If @nis is !NUMA_NO_NODE, the allocation will be attempted on the =
-given
-> node.  Then things sort of get confusing.  What is the latter case?
-
-The latter case is __GFP_THISNODE present in flags. That=E2=80=99s the =
-latest if-clause in this paragraph.
-
+> > +	if (irq < 0)
+> > +		return dev_err_probe(pf1550->dev, irq,
+> > +				     "Failed to get parent vIRQ(%d) for chip %s\n",
+> > +				     PF1550_IRQ_REGULATOR, pf1550_irq_chip.name);
+> > +
+> > +	ret =3D devm_regmap_add_irq_chip(pf1550->dev, pf1550->regmap, irq,
+> > +				       IRQF_ONESHOT | IRQF_SHARED |
+> > +				       IRQF_TRIGGER_FALLING, 0,
+> > +				       &pf1550_regulator_irq_chip,
+> > +				       &pf1550->irq_data_regulator);
+> > +	if (ret)
+> > +		return dev_err_probe(pf1550->dev, ret,
+> > +				     "Failed to add %s IRQ chip\n",
+> > +				     pf1550_regulator_irq_chip.name);
+> > +
+> > +	domain =3D regmap_irq_get_domain(pf1550->irq_data_regulator);
+> > +
+> > +	ret =3D  devm_mfd_add_devices(pf1550->dev, PLATFORM_DEVID_NONE, reg=
+ulator,
 >=20
->>  *
->>  * If __GFP_ZERO logic is requested, callers must ensure that, =
-starting with the
->>  * initial memory allocation, every subsequent call to this API for =
-the same
->>  * memory allocation is flagged with __GFP_ZERO. Otherwise, it is =
-possible that
->>  * __GFP_ZERO is not fully honored by this API.
->>  *
->> + * If the requested alignment is bigger than the one the *existing* =
-allocation
->> + * has, this function will fail.
->> + *
+> 2 spaces after =3D
+>
+Will drop.
+> > +				    1, NULL, 0, domain);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Add onkey */
+> > +	irq =3D regmap_irq_get_virq(pf1550->irq_data, PF1550_IRQ_ONKEY);
 >=20
-> It might be better to say something like:
-> Requesting an alignment that is bigger than the alignment of the
-> *existing* allocation will fail.
+> Same
 >=20
-The whole function description in fact consists of several if-clauses =
-(some of which are nested) so I am just following the pattern here.
+> > +	if (irq < 0)
+> > +		return dev_err_probe(pf1550->dev, irq,
+> > +				     "Failed to get parent vIRQ(%d) for chip %s\n",
+> > +				     PF1550_IRQ_ONKEY, pf1550_irq_chip.name);
+> > +
+> > +	ret =3D devm_regmap_add_irq_chip(pf1550->dev, pf1550->regmap, irq,
+> > +				       IRQF_ONESHOT | IRQF_SHARED |
+> > +				       IRQF_TRIGGER_FALLING, 0,
+> > +				       &pf1550_onkey_irq_chip,
+> > +				       &pf1550->irq_data_onkey);
+> > +	if (ret)
+> > +		return dev_err_probe(pf1550->dev, ret,
+> > +				     "Failed to add %s IRQ chip\n",
+> > +				     pf1550_onkey_irq_chip.name);
+> > +
+> > +	domain =3D regmap_irq_get_domain(pf1550->irq_data_onkey);
+> > +
+> > +	ret =3D  devm_mfd_add_devices(pf1550->dev, PLATFORM_DEVID_NONE, onk=
+ey, 1,
+>=20
+> 2 spaces after =3D
+>=20
+Will drop.
+> > +				    NULL, 0, domain);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Add battery charger */
+> > +	irq =3D regmap_irq_get_virq(pf1550->irq_data, PF1550_IRQ_CHG);
+>=20
+> This calls irq_create_mapping().
+> Should irq_dispose_mapping() or another helper be called in the error
+> handling path and in the remove function, or is it already handled by a
+> devm_ function?
+>=20
+This creates a mapping for the allocated `irq_data` runtime controller by
+devm_regmap_add_irq. The `irq_data` is for the top level interrupts. Sinc=
+e it
+was allocated with a devm_, I think irq_dispose_mapping is called during =
+a
+remove.
+> > +	if (irq < 0)
+> > +		return dev_err_probe(pf1550->dev, irq,
+> > +				     "Failed to get parent vIRQ(%d) for chip %s\n",
+> > +				     PF1550_IRQ_CHG, pf1550_irq_chip.name);
+> > +
+> > +	ret =3D devm_regmap_add_irq_chip(pf1550->dev, pf1550->regmap, irq,
+> > +				       IRQF_ONESHOT | IRQF_SHARED |
+> > +				       IRQF_TRIGGER_FALLING, 0,
+> > +				       &pf1550_charger_irq_chip,
+> > +				       &pf1550->irq_data_charger);
+> > +	if (ret)
+> > +		return dev_err_probe(pf1550->dev, ret,
+> > +				     "Failed to add %s IRQ chip\n",
+> > +				     pf1550_charger_irq_chip.name);
+> > +
+> > +	domain =3D regmap_irq_get_domain(pf1550->irq_data_charger);
+> > +
+> > +	return devm_mfd_add_devices(pf1550->dev, PLATFORM_DEVID_NONE, charg=
+er,
+> > +				    1, NULL, 0, domain);
+> > +}
+> > +
+> > +static int pf1550_suspend(struct device *dev)
+> > +{
+> > +	struct pf1550_ddata *pf1550 =3D dev_get_drvdata(dev);
+> > +
+> > +	if (device_may_wakeup(dev)) {
+> > +		enable_irq_wake(pf1550->irq);
+> > +		disable_irq(pf1550->irq);
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int pf1550_resume(struct device *dev)
+> > +{
+> > +	struct pf1550_ddata *pf1550 =3D dev_get_drvdata(dev);
+> > +
+> > +	if (device_may_wakeup(dev)) {
+> > +		disable_irq_wake(pf1550->irq);
+> > +		enable_irq(pf1550->irq);
+>=20
+> Should this 2 lines be inverted?
+>=20
+I don't think it matters. disable_irq_wake is 'completely orthogonal' to =
+the
+enable/disable(irq). See function irq_set_irq_wake.
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+>=20
+> ...
+>=20
+> > +#define PF1550_CHG_LINEAR_ONLY		12
+> > +#define PF1550_CHG_SNS_MASK		0xf
+> > +#define PF1550_CHG_INT_MASK             0x51
+>=20
+> Space vs tab
+>=20
+Will make changes.
+> > +
+> > +#define PF1550_BAT_NO_VBUS		0
+> > +#define PF1550_BAT_LOW_THAN_PRECHARG	1
 
-~Vitaly
-
-
+Thanks,
+Sam
 
