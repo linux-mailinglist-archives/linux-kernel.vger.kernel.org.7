@@ -1,149 +1,104 @@
-Return-Path: <linux-kernel+bounces-725172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7290EAFFB9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:03:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F30AAFFB84
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAAFE3B828B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:01:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01A2E3BC6BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA43228B7C2;
-	Thu, 10 Jul 2025 08:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C791428B7EB;
+	Thu, 10 Jul 2025 08:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="CikTtMdx"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TXJ+rrsE"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DCE234963;
-	Thu, 10 Jul 2025 08:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E871228B7CD;
+	Thu, 10 Jul 2025 08:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752134498; cv=none; b=bIEdKcb8TP+5NzRNoRKtQjEy/z2cvi/XCQ3hF5PnPO+oF87RcnTfKCrlsCfVsh/iDb1fEgbClKD55/zrOYLJ2BWdni6mU+1mzx07WwlXGYhzg2b9x61T1cvpIRfs/lSeQHE6j/rW61oJkt8M6xbJQfP0PHvNzDO8tBy5A1eaxgs=
+	t=1752134439; cv=none; b=ZoGV96xKSG4W84XgG6yiMjl+uIusXy8QC84k4TRxg4FcRfN1/U+So247g4P5RtGx0bnhC+esDDr18sIGXjqXqGsW8yPIWbQkz9kDM4zDxvtKD1hwQk7CMngD7MGnOdmmDzVvKUUWqYlaP0eqibSiW7J3Y/P3fwjfuAMjxFAEEVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752134498; c=relaxed/simple;
-	bh=DRXqcTGpVxb73VPyz4tMHlw6YPMLyxqlM+wBlmGLGLs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MtOaXcoWVUCyLFLJTlFCLwZkmctoARsBtvo2uZO5AqSgTXf8xWI+SmC51L3PMpavJhB65w1ZUrTdunef+xsOClgMRl27WjJZLwFiOUrPFjuXQjPMhv8RTUUAO9qt0PoDKUGu7bdFCWwOKJhF2JLdn9PRWbkOIoBRB6otLNpkuuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=CikTtMdx; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1752134448;
-	bh=6lKlIi5ajAbS9uOFEmqwayvdHQUIcQAf/tUMGqLl7Hg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=CikTtMdxIppDqbxA03RcR/6sDOO3PwTSv3X/Aze88mbnHIEimuzL79R4L+IY7KCuU
-	 xziFaVENe5Q/9UIwvg/eg7AqQzzAoq4nxkv/vQKAGcNcLSO4XUXpSKkM3HTlRz5Vmd
-	 3DOJuNoieRNwbTSOh4jmYGqcuU6bs7IAk+kMjZLA=
-X-QQ-mid: zesmtpip3t1752134435ta4efbe0e
-X-QQ-Originating-IP: oH408aLbArq/IBbIuc8rHcUhm8RTX0w0pHU25K5nhuc=
-Received: from avenger-e500 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 10 Jul 2025 16:00:33 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 6375983909695600124
-EX-QQ-RecipientCnt: 9
-From: WangYuli <wangyuli@uniontech.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>,
-	Hao Li <lihao1@uniontech.com>
-Subject: [PATCH] Bluetooth: btusb: Add RTL8851BE device 0x13d3:0x3601
-Date: Thu, 10 Jul 2025 16:00:28 +0800
-Message-ID: <5D4383E66D4177F3+20250710080028.177664-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1752134439; c=relaxed/simple;
+	bh=2dHUB3IC3sdS0hLmMicGLp/gfznTyK+DCrvYFfDZR08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fVoSbyuZmS9JrFvvCEeBnWZpvRYzzsp7nlcW0KJsza/wFgvpzEaArdFoaLiDGJW+UpCWkg2A8IMzQU1/AGH3hr9a8w5PS7gLWeN5TZ2/06e2A/YnvqfULF0FJ2yk6BVmQtcz3rZscWah2Ume7LwHwLBO7sly/Khn+bmwy7esEiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TXJ+rrsE; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RQSU1VKtvPuYnwuvJ92PV+7wJlwWZ71mCrKkW3LvhAU=; b=TXJ+rrsEYXGPJ9bSByOzmW07nc
+	cKcy37r3QJf7/aNPaxKi1nDAZRtj4BaYkug2lbprVqsedOxkKbozjXGsE/LAUciexvVE1g/4J3G1B
+	3lSfTQxyDQ9usUbC+yDPNmxmWeaI/xC0Z1ofhSVfwEQOu8rJgBQg9awYYNTE1t0YUwONsIGkanWyl
+	6paB6og5j/Zn0S/vTTjDJ0Q6leXdrbrxYqHxkM3WofLPKwYVar5AXQMyqtVG4U/WaWnukncPfyqfC
+	/OgrkTSaAGrfuTRD/hd4d13Hr1Ul68A4cwlXCw4Mmf20Q6DgzqUYuCKUs4HStirAzOaxMUMKcjMYT
+	mR80URUw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZmCn-0000000B64a-2px3;
+	Thu, 10 Jul 2025 08:00:33 +0000
+Date: Thu, 10 Jul 2025 01:00:33 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: NeilBrown <neil@brown.name>, Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	Mike Snitzer <snitzer@kernel.org>, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, axboe@kernel.dk,
+	kundanthebest@gmail.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/2] nfsd: issue POSIX_FADV_DONTNEED after
+ READ/WRITE/COMMIT
+Message-ID: <aG9zIQTuMqmfauVE@infradead.org>
+References: <20250703-nfsd-testing-v1-0-cece54f36556@kernel.org>
+ <175158460396.565058.1455251307012063937@noble.neil.brown.name>
+ <fbe5d61013efe48d0cd89c16a933a9c925a8ea86.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: M4lPCacZ9YleRM+4rCi0M/hltC8h5TJkLO938qEo/u6FvgkAOpIDsLGr
-	cdgheiiiznNUfk9U92WkEngKYyND2P2swkmJNoxsE0r/1zkHZ5BeK7iDglhS+IhIRmhIC/9
-	LuhO3qjfa2vB01wlM39J+AigMfOClU44rwyOHYidCVoenb7KjMtcvhlFFWg/SgNp4hNoJDZ
-	byvwK8xbctJ/fO2LiVR3cCagQd3qMq0JpwF+BC11oM8BlTdFGRXap0fM4Y/g/5fFo2gJICH
-	fDdxBJQiMRHHBPeN6ysWcGcMQI1QxBgtN5JekMTluTew6QlK4R0cFKSLaRJr+WaY1rPue3r
-	gStddsB2Vh4KUpzQ/YTAheyK1MvDEmOVIFtX6AEizM91U8euWpTc68yyd2Nea9fByPzptW9
-	uwceM9bSOL9swWQpKaG1JK8+sXRAsiMqCc7+Fc2QYE29215DJzN6h0c02GDc5+1hpsE8sQD
-	/Uk6LjxFfkd1QiHsn49rrWoUv32pzI3YWUog70czXtaI+FwyDgfVUoI9UXhwOlpMVAReQqC
-	qIMqsjaZ6SavJoE3ptzBl4eqgBwkxcU43v7XNVkSyaSDxZQ2dwzFMq+aRs/ME4KcGW9ZlBR
-	F4Et7qSs3YnZlr/pST/JBO9umGDEGmr0RWHJI9SfSycV6BLL+zeJDg6MDTktyF5OaHtZB4/
-	eu+eOkCpaIHF2n2E5hnmwuvwKhLjPHt7qTt4dkdzrD8ctzNMGlkGF2SErB0StZFswQNRWTK
-	HjBCqLJiIXhbxvSE+RCvU9P+2Q1ijtgJSOjaNgAHJNYz2gd2HnISMBEyPKjIM3Uahv2c3Or
-	EGUB6U6x5OcTyWwUi330Nqvzyt/J88XboiiokggTRPIj84JT55tCGKsZZzcqUJC+1pVRfDe
-	DTfuR4vzTQopKGh/bJk3UeN4GpK3BupKxaOyoUaXtK8Ouc8fhnjBZ38tCwYP0J0wfhLEReZ
-	MKz5lEJFr5XbBIng0Okxuw6nIEqut2KoLTaCuJ3JxuSMmv86r82ba96Rcz7IbAI3dh80kWc
-	vohP+jvnEKKDneUWb4ATlp8VJshD2198Dgp+KIi/4l8zEwK6rjKf0b4q9aXoz9vmU2gF+dl
-	f7DU/MYW3ic
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbe5d61013efe48d0cd89c16a933a9c925a8ea86.camel@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below:
+On Sat, Jul 05, 2025 at 07:32:58AM -0400, Jeff Layton wrote:
+> That is the fundamental question: should we delay writeback or not? It
+> seems like delaying it is probably best, even in the modern era with
+> SSDs, but we do need more numbers here (ideally across a range of
+> workloads).
 
-T:  Bus=01 Lev=01 Prnt=01 Port=04 Cnt=01 Dev#=  2 Spd=12   MxCh= 0
-D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=13d3 ProdID=3601 Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+If you have asynchronous writeback there's probably no good reason to
+delay it per-se.  But it does make sense to wait long enough to have
+a large I/O size, especially with some form of parity raid you'll want
+to fill up the chunk, but also storage devices themselves will perform
+much better with a larger size.  e.g. for HDD you'll want to write 1MB
+batches, and similar write sizes also help with for SSDs.  While the
+write performance itself might not be much worse with smaller I/O
+especially for high quality ones, large I/O helps to reduce the
+internal fragmentation and thus later reduces garbage collection
+overhead and thus increases life time.
 
-Co-developed-by: Hao Li <lihao1@uniontech.com>
-Signed-off-by: Hao Li <lihao1@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/bluetooth/btusb.c | 1 +
- 1 file changed, 1 insertion(+)
+> > Ideally DONTCACHE should only affect cache usage and the latency of
+> > subsequence READs.  It shouldn't affect WRITE behaviour.
+> > 
+> 
+> It definitely does affect it today. The ideal thing IMO would be to
+> just add the dropbehind flag to the folios on writes but not call
+> filemap_fdatawrite_range_kick() on every write operation.
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 9ab661d2d1e6..aa7ade6a1866 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -515,6 +515,7 @@ static const struct usb_device_id quirks_table[] = {
- 	/* Realtek 8851BE Bluetooth devices */
- 	{ USB_DEVICE(0x0bda, 0xb850), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x13d3, 0x3600), .driver_info = BTUSB_REALTEK },
-+	{ USB_DEVICE(0x13d3, 0x3601), .driver_info = BTUSB_REALTEK },
- 
- 	/* Realtek 8852AE Bluetooth devices */
- 	{ USB_DEVICE(0x0bda, 0x2852), .driver_info = BTUSB_REALTEK |
--- 
-2.50.0
+Yes, a mode that sets drop behind but leaves writeback to the
+writeback threads can be interesting.  Right now it will still be
+bottlenecked by the single writeback thread, but work on this is
+underway.
 
 
