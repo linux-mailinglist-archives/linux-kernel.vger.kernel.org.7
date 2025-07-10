@@ -1,135 +1,83 @@
-Return-Path: <linux-kernel+bounces-725833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A366B00478
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:59:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CC5B00473
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7493F5A3110
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:57:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23F0D1BC38BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34892741A4;
-	Thu, 10 Jul 2025 13:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dprSP3bJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A898274676;
+	Thu, 10 Jul 2025 13:53:33 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B32E2741D5;
-	Thu, 10 Jul 2025 13:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A931274665;
+	Thu, 10 Jul 2025 13:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752155592; cv=none; b=Bt2+BgxjBD98gWWiEfsDYmp/UDlItrqCi5V3NXTasMSuW2zNAfIs/jumSHXzIJ266WpQ47Ta4BWic1fpmyabWzVw7DVvkBS2VncvyEy5LTWMzsLKQ82z3u9FZ+quh4J6mDMiNaRumUJ4hYXSzt/kreMSuzBFBnl1Ksjo2AQUKZ8=
+	t=1752155612; cv=none; b=uXlqkffWILXYKzQAYCWBVyJYPauVubpdapCzhEvdyueTvfZmm0BSvFmtpNQHLzyLichCaZL1XTZv93/oFVUPa2Zub6a3oTxunWIEWrIXw75UtZktBnOmvmkuYepf72bUo/g2/8d6QGJeuZtCN5hsGGMrTPIiwQ2uq0PvG559YRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752155592; c=relaxed/simple;
-	bh=U9guwqJci8NP6a0yfqpBMd5Vn2SbFy+CrvHcPob9HAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DUXwoGto4RO1q0V5ylBgF3OiE7UUe1YQqjIFhLMVWvpZ9k3J8MhCcnTjvIitZulRQkwpCSyjXyz6YQfgZ1bcrhEfawomwBG8t/+cNeGIKBeah8YufnvvBVJ7COMEjFcq4ygVV2hDIEeXJ4dF2HC1de07ITeGXgGAm0C/LLvnFcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dprSP3bJ; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752155591; x=1783691591;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=U9guwqJci8NP6a0yfqpBMd5Vn2SbFy+CrvHcPob9HAg=;
-  b=dprSP3bJgcHsWfIGPLN4PT5bKRxJpkg3oA5SOOk5p4CoTcwJXxK1HSWI
-   Xi+NrZOxlDifx/8khontUX2O08g9z9fnRRdjxVvvFnPamiT3gYzA8dmDb
-   GhWHtdBGnCyZC0BuZk64M1j9bSeaTqCxeRA/iylzaXKRJ1va6rZSeSDWh
-   s0e60r/h12LXxK9Em3EaM+PQHJdBE+Vv+j6+dvugTOHsZxrYiqTHRcRrw
-   pVV1R9ZVmZVjAKdQUET1t5UBiXfIZQcxs4prC+Dl+hZwHzot7P7tC26FU
-   p6pWvwmOWzMlIGqOpV2PcO8o8WUbiy2kVSR8u7yTvza7X2bKdSlpjYZ1G
-   g==;
-X-CSE-ConnectionGUID: 4/qqkiL0QyKdPr7R48KKcg==
-X-CSE-MsgGUID: DSFARMWqRCm2YpKoFT5jLw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="58243504"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="58243504"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 06:53:09 -0700
-X-CSE-ConnectionGUID: 3G5UpA1+RWGAI3qLJGBvRw==
-X-CSE-MsgGUID: 5LPmWD7vQ06paQ6dFGhjXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="193300156"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 06:53:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uZrhu-0000000EDXo-0n5v;
-	Thu, 10 Jul 2025 16:53:02 +0300
-Date: Thu, 10 Jul 2025 16:53:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: andi.shyti@kernel.org, digetx@gmail.com, jonathanh@nvidia.com,
-	ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	p.zabel@pengutronix.de, thierry.reding@gmail.com,
-	conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
-	robh@kernel.org
-Subject: Re: [PATCH v6 2/3] i2c: tegra: Use internal reset when reset
- property is not available
-Message-ID: <aG_FvfN6xXuULolK@smile.fi.intel.com>
-References: <20250710131206.2316-1-akhilrajeev@nvidia.com>
- <20250710131206.2316-3-akhilrajeev@nvidia.com>
+	s=arc-20240116; t=1752155612; c=relaxed/simple;
+	bh=8tgmd27PZJO+f1MkLCVnDaaj/lGU7A5SeFzrYU6FRDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lAa6Dyzdxlo6Qob3m5ePkhIa6htuK3SAU1uE9rCMWDSEXccqkKkWRg9bI7npVhbLMgx2FT/E45g0gjK5jj6k3YmiU6+qH3ciaF6ikRw7M5tvVPuqDdNpA2N9w96LWT1I7+yBcnCZIIvgj1rN5r/u74YaQeN3zIh2aeF9yA0axSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 0DCE01401B6;
+	Thu, 10 Jul 2025 13:53:29 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 52B9A1D;
+	Thu, 10 Jul 2025 13:53:27 +0000 (UTC)
+Date: Thu, 10 Jul 2025 09:53:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] tracing: Remove "__attribute__()" from the type
+ field of event format
+Message-ID: <20250710095327.69144489@batman.local.home>
+In-Reply-To: <20250710224520.4eaf514db761ecaaee9bc1e1@kernel.org>
+References: <175197567999.977073.8989204607899013923.stgit@mhiramat.tok.corp.google.com>
+	<175197568917.977073.2201559708302320631.stgit@mhiramat.tok.corp.google.com>
+	<20250709131107.397a3278@batman.local.home>
+	<20250710224520.4eaf514db761ecaaee9bc1e1@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710131206.2316-3-akhilrajeev@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 52B9A1D
+X-Stat-Signature: 19tnw31sz843bq1nxpccj6tyzqa9gtd1
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+IJW9/QRzN9RaMvgA2YJBEQbpPpiLISkg=
+X-HE-Tag: 1752155607-777588
+X-HE-Meta: U2FsdGVkX1/utthPu7SJsfJznStU8xu1t7c1F0+n0Qc/Sv43I2mLOqApnVtRsNU9P9I00h1nwTh9j1lkFQD4aWnvy1GHvXDv+dlz7H5am82nlUnmvxnI+bBppuwEMQstbIsTQLmHcr29Ugw+LqynCSU9rRLpdh6/zbi+5LN46c9NG+K00gsIDKcfximup5oOVwkFQVRdfBpJfUKgyK+tZOulovsO+8OhbgiLnExZxsRbRCxH81y2ewcCu1gLSMd3sKt58hr/WvCdjcUDXwQsGVSWGSwWwxbCjroDPFNnSgbW8auL7wL43OySw5hMlfofXgqqFsjFQlLys/RMiMP6Zp96noa/GyI7
 
-On Thu, Jul 10, 2025 at 06:42:05PM +0530, Akhil R wrote:
-> For controllers that has an internal software reset, make the reset
-> property optional. This provides and option to use I2C in systems
-> that choose to restrict reset control from Linux or not to implement
-> the ACPI _RST method.
+On Thu, 10 Jul 2025 22:45:20 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+
+> > And it doesn't free after allocation because it only does the
+> > allocation for events that will never be freed. For modules, it
+> > registers the allocated string so it will be freed on unload.  
 > 
-> Internal reset was not required when the reset control was mandatory.
-> But on platforms where the resets are outside the control of Linux,
-> this had to be implemented by just returning success from BPMP or with
-> an empty _RST method in the ACPI table, basically ignoring the reset.
-> 
-> While the internal reset is not identical to the hard reset of the
-> controller, this will reset all the internal state of the controller
-> including FIFOs. This may slightly alter the behaviour in systems
-> which were ignoring the reset but it should not cause any functional
-> difference since all the required I2C registers are configured after
-> this reset, just as in boot. Considering that this sequence is hit
-> during the boot or during the I2C recovery path from an error, the
-> internal reset provides a better alternative than just ignoring the
-> reset.
+> What happen if the tracepoint in module has the __attribute__?
+> (or enum etc?)
 
-...
+It adds the string to a linked list via add_str_to_module(). When the
+module is unloaded, it searches the link list "module_strings" for all
+the strings registered under that module and frees it.
 
-I would perhaps expand the comment here to explain ENOENT check and what do we
-do in this case. (Note, no rewriting of the existing, just adding a paragraph)
+See trace_module_remove_events().
 
-	*
-	* In case ... we compare with -ENOENT ...
-	* ...
-	*/
-
->  	err = device_reset(i2c_dev->dev);
-> +	if (err == -ENOENT)
-> +		err = tegra_i2c_master_reset(i2c_dev);
-
->  	WARN_ON_ONCE(err);
-
-Other that that, LGTM,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+-- Steve
 
