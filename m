@@ -1,104 +1,103 @@
-Return-Path: <linux-kernel+bounces-725338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42554AFFDB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:17:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98068AFFDB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C49F7B06A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:15:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680FE3B229F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433DB2957DE;
-	Thu, 10 Jul 2025 09:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E60293C48;
+	Thu, 10 Jul 2025 09:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M0j5eKH+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oQ3iGFVX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007522949ED;
-	Thu, 10 Jul 2025 09:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E5C22330F;
+	Thu, 10 Jul 2025 09:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752139008; cv=none; b=DrhUwwWc05N5gCV+8LJiy+xjPGoCcZapOY3duBZJased/z3mdj8SdkgjQ/auF4ueW0dSazGi4ST8TFD/eA/cKMKCnIokhDRiJ22nNBRzapuFuhf5F00lBuwGRRPz8KDaKNfxCcV+2QJcq7bhLXOM/E+67ITZ1+UrIHULiOZqOVg=
+	t=1752139005; cv=none; b=El23tOK//xOWNoihDSt0X3JxebJYAe5tM2y2CVrt+6uebuS5UNBjNW2bqaXLnXMROZkEuEU3uKbQmzU2ugW2cD5FT3wYKSeGzhbqKgeVbBtE1W+KBNBmPHgT7iLDMcnYLwqeRiQeCxQIbv06UPhV45p0psu7B+Rr+y0K5D16Slg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752139008; c=relaxed/simple;
-	bh=t+b3LzD3BtJWEEtg/wMiNAbd2/L39v/nsGL6ZPI+0ks=;
+	s=arc-20240116; t=1752139005; c=relaxed/simple;
+	bh=Q6xoz6BRpXmau0JSY+OTKhGgoAKtAtx8upIvPbVWZ44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AwDMuuibfrNBOyXZsEApcNKSMO5sYa/cdKn+3MzW+0a35dWYyPWrzNbiWzaUKkc/lt0gj7mhP5LAR/YYMiHE0yzpbiPIit239mpKrJrWrwg0kvEX40AGW9IshSHMB2nh1QvH0UW/M2Q1rUieA5DSw2MectzDXyF2WwB7xVuwSyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M0j5eKH+; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752139008; x=1783675008;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=t+b3LzD3BtJWEEtg/wMiNAbd2/L39v/nsGL6ZPI+0ks=;
-  b=M0j5eKH+LiSGjmsVfERAXA8Eq/3/oMTvWLsK3/SopgPSzM+eWwdQeg9b
-   TFUyNkFEEsPafFvy7F218+m/j7ycuRg/FMTv88gXH4W1nxTFMRBnC6i/q
-   H9gSkZKYWTpTWQ0cpb7/OzhrMI1o94DPh+Z4FiLtqDC7afgNA6v/9Omzf
-   oD86Nhyx3ZWvTIfOdllbtg1xOwO8xbNVkJnS85SleMZOuGWlZUqETX4ln
-   7BTFuHY7gUHAlvHX1FjwdjiIT+/sZxGtYadDLEywo+4NP2iud0OLV0FkY
-   /x/8GLGLFSxX+u6AbRU1PtdhnOumK/ulzj/Fu1OP8pB0KueFvQ58yma8V
-   A==;
-X-CSE-ConnectionGUID: 0tmqLDuDSS6IBCB4VusTzQ==
-X-CSE-MsgGUID: CaV+HBsGQt+nUfUvwS7O4A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="65863516"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="65863516"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:16:47 -0700
-X-CSE-ConnectionGUID: H97EeAYqSTyuTVqo+amh6w==
-X-CSE-MsgGUID: bZcTMtHQRTWEpbBizvH6Lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="156751530"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:16:43 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uZnOS-0000000E9ZR-2wf1;
-	Thu, 10 Jul 2025 12:16:40 +0300
-Date: Thu, 10 Jul 2025 12:16:40 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Li Ming <ming.li@zohomail.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com,
-	shiju.jose@huawei.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] cxl/core: Introduce a new helper
- cxl_resource_contains_addr()
-Message-ID: <aG-E-FgezviXdq3t@smile.fi.intel.com>
-References: <20250710065647.98094-1-ming.li@zohomail.com>
- <20250710065647.98094-2-ming.li@zohomail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jt/L+Z6AYMsL9ncH4wTriWgf1ywPEJly6Uzw0XMn1/7hNJwl1BuH7zSfCukrPq6U+jNVNyClYsSOTLa+Imrg2fiAeSk3ccozr3YD6LMKwQ4F54xdTApR3Xfl/+/H14MTriyFq6wnZhERCibzOV36eujN2VWZo5zy4CPn9SXqm5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oQ3iGFVX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15AABC4CEE3;
+	Thu, 10 Jul 2025 09:16:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752139004;
+	bh=Q6xoz6BRpXmau0JSY+OTKhGgoAKtAtx8upIvPbVWZ44=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oQ3iGFVXa8tRICFQuHy8lOHHRwkYf7mKWU/kaiCWK9y0HRkO2oIYXTgU77ewxRYE7
+	 O0AH9NwsGfPD9lmqyScmFQWsIHfcuvgsAra+BTdv0MQAiDy2HlLKE5qZFRBekUuKPT
+	 fNIy5x9seU60pUNoizmFWkfsvprPWqq3kCzfjfNU=
+Date: Thu, 10 Jul 2025 11:16:41 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: jackysliu <1972843537@qq.com>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v2] usb: gadget: functioni: Fix a oob problem in rndis
+Message-ID: <2025071045-irritable-unsure-4543@gregkh>
+References: <2025071026-fanciness-size-1d5d@gregkh>
+ <tencent_21B82DB792FE0049B6EF5ECD81285669C908@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250710065647.98094-2-ming.li@zohomail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <tencent_21B82DB792FE0049B6EF5ECD81285669C908@qq.com>
 
-On Thu, Jul 10, 2025 at 02:56:45PM +0800, Li Ming wrote:
-> In CXL subsystem, many functions need to check an address availability
-> by checking if the resource range contains the address. Providing a new
-> helper function cxl_resource_contains_addr() to check if the resource
-> range contains the input address.
+On Thu, Jul 10, 2025 at 04:49:22PM +0800, jackysliu wrote:
+> From: Siyang Liu <1972843537@qq.com>
+> 
+> An out-of-bounds memory access vulnerability exists in the RNDIS
+> (Remote Network Driver Interface Specification) implementation.
+> The vulnerability stems from insufficient boundary validation when
+> processing SET requests with user-controlled InformationBufferOffset
+> and InformationBufferLength parameters.
+> 
+> Fix on commit id:
+> commit 5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
+> 
+> The vulnerability can be fixed by adding addtional boundary checks
+> 
+> Signed-off-by: Siyang Liu <1972843537@qq.com>
+> ---
+>  drivers/usb/gadget/function/rndis.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/gadget/function/rndis.c b/drivers/usb/gadget/function/rndis.c
+> index afd75d72412c..cc522fb4c06c 100644
+> --- a/drivers/usb/gadget/function/rndis.c
+> +++ b/drivers/usb/gadget/function/rndis.c
+> @@ -641,7 +641,8 @@ static int rndis_set_response(struct rndis_params *params,
+>  	BufOffset = le32_to_cpu(buf->InformationBufferOffset);
+>  	if ((BufLength > RNDIS_MAX_TOTAL_SIZE) ||
+>  	    (BufOffset > RNDIS_MAX_TOTAL_SIZE) ||
+> -	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE))
+> +	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE) ||
+> +		(BufOffset + BufLength+8 > RNDIS_MAX_TOTAL_SIZE))
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Odd, this should be "BufLength + 8" as checkpatch says:
 
-Thanks for following my review comments!
+CHECK: spaces preferred around that '+' (ctx:VxV)
+#121: FILE: drivers/usb/gadget/function/rndis.c:645:
++		(BufOffset + BufLength+8 > RNDIS_MAX_TOTAL_SIZE))
+ 		                     ^
 
--- 
-With Best Regards,
-Andy Shevchenko
+I'll go fix this up by hand, but be more careful in the future...
 
+thanks,
 
+greg k-h
 
