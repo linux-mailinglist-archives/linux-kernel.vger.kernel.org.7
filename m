@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-725955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF8DB005EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:05:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64497B005F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4408B188CEB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61AF8189001B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9FF2741CF;
-	Thu, 10 Jul 2025 15:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3D12741A2;
+	Thu, 10 Jul 2025 15:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owrdGSQ5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="SegZ+jEG"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFD4154BF5;
-	Thu, 10 Jul 2025 15:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752159932; cv=none; b=lhMVpMzSp6FoDUtWKS5e9N5gU/vnC4767PzYFm2gP4iqVk2+3sSunCYZYRAGRmDFczPmSjEwXOKjsMsx7pWZH6AbgPW9BMuwahZEL5Prc4m574GnL+hJR/ak2s+xaH0SN65FOET6mKLeiarPkP6HAxKzo0632W4BoATMCsjt0OM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752159932; c=relaxed/simple;
-	bh=o0tIfnXyZL6RSXxuYwIYRelHab7pZgA3+IwPqH/WlLU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=KTdgnnhX98JuMyVXT1v7LR54RUU+68Ibb/UkTlF3Q7k1rx7orH++VjpXdw/BdQHw1RTybthQK5Ulqr+IOxPj2IHAThrVB8/AmbGfiRkdHiNaTV/ynebKZNJbpRLWvrrTfrL4TUOmTsXffoOE6VG1DSlGy0/ZdhqYk9gHnfP3Hww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owrdGSQ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CE6AC4CEF4;
-	Thu, 10 Jul 2025 15:05:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752159931;
-	bh=o0tIfnXyZL6RSXxuYwIYRelHab7pZgA3+IwPqH/WlLU=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=owrdGSQ58+poQzM6eqQfPuEnjKYhBgNnydk+GPYkzH4aGJ4+GiX5OKam8pVQrP5Ma
-	 oIMBX8SyQmYzV0PZKgBd18axGczzWeVrwJuiYj+DUewFAbJSARb307sEqQvCsP07Fl
-	 OHtIuXtd/7OOGvfrpwLWVnWvTLehnta6bMoF/wbJyAk0LNBc1MHkO71yvn7jfSNVbY
-	 TdTJbm4A8EJUM8ohlxdABvtcKGjEyVJp+It1hoHu1opwnJ9vJNvjfcFI8Q/M2oaRD9
-	 h5HAkjdAC3VrbwpQajwWq8memyVMJInyuQYDgQ9rIMVhKtaEfdTU/L8APdtapyDAA+
-	 R6dTSjA6Lj8iw==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4D9154BF5;
+	Thu, 10 Jul 2025 15:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752160050; cv=pass; b=EP1B4NqLph3N6u/vdDKG+SqQyvCfSP4KXYwpoaKRNr2FwNqHLGeVzLix8VRcbJf44WQiGMtE3vgvvy9Jx1+ZI0s4XDl35euBbZH6q5c0dc0QBLjAIdLWNeHZvUU/G8luoBW7e+RWaddWmBhc3MUVtqbP6EHCUXZ95Sb+t7j+k4g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752160050; c=relaxed/simple;
+	bh=te+QesjkfZV1lnlFSbAdZUz3r0Wrt/PT7jvFYDjXsLY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nIXKKIyPYnINmPYmwInfxalN2g5OJEJD8qx1R/Ui0uuEwd/+xtENLLJ15/CAoCyhQx+R/TCAlkcMgdn/y+XRR+GfRQqojQv8xoloJ51PEUnMuEwo6RiGb7wvPxx4L5sdxw2mX1VqLPt48VPtkdi8+09lkvNzhH14u2Y3TLCn6bg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=SegZ+jEG; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752160019; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=S/0iPgFLijaC9J1SwO3PwYiSYcnmJnoh7LyfCLclhEGFat2r5o5h6hkRZ00xs9jvgJaBzrx/wfGKwW7Tsid1TQkup170oc4FkoFvrgOa913I1ISVb7Y4m/6lHeXsmnixUXzcnKYpE4XGGKevJHW3rIdFaSZcy0lobv5wNKiRDU8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752160019; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=te+QesjkfZV1lnlFSbAdZUz3r0Wrt/PT7jvFYDjXsLY=; 
+	b=SvUMtILhxfUcBl3kHOzXxrAxM7XL90wIGK2L8XhjrBPGOR+6xDkO++k3BOj7Erh+D/RX0eE7XaLIjwNAweN1NmukV9Vq61B5zKYRYSSkhYff7w9DTuvCh0Gj1hfQMRTIzzEucpU5eFN0OLAG8Agj0S1POaBKNUQUjE4htGp89so=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
+	dmarc=pass header.from=<nfraprado@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752160019;
+	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=te+QesjkfZV1lnlFSbAdZUz3r0Wrt/PT7jvFYDjXsLY=;
+	b=SegZ+jEGaeYh2x8qxxp/zI4F2eiDdyq2us7x+BjvoH2y6Dz0plBcsy3m+2cIxu9j
+	EEA7n7Rz5+CxCensMoTLJ0kSBbXrNetIJMIx9pUrOA4Kmc5x6KpVFWqV2Lze3cDwqDu
+	sqNKoqNAM21T8ewgtKmqzfgfusFVA6+fdOVsStRg=
+Received: by mx.zohomail.com with SMTPS id 1752160017391654.4434834354436;
+	Thu, 10 Jul 2025 08:06:57 -0700 (PDT)
+Message-ID: <6c132018714402d0a46fb8b59c862fb7f96a77f8.camel@collabora.com>
+Subject: Re: [PATCH] PCI: mediatek-gen3: Assert MAC Reset only for a delay
+ during PM suspend sequence
+From: =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado" <nfraprado@collabora.com>
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, Ryder Lee	
+ <ryder.lee@mediatek.com>, Jianjun Wang <jianjun.wang@mediatek.com>, Lorenzo
+ Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>,  Manivannan Sadhasivam	 <mani@kernel.org>, Rob
+ Herring <robh@kernel.org>, Bjorn Helgaas	 <bhelgaas@google.com>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Matthias Brugger	 <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno	 <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, linux-pci@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Date: Thu, 10 Jul 2025 11:06:54 -0400
+In-Reply-To: <20250709-mtk8395-fix-pcie-suspend-v1-1-0c7d6416f1a3@collabora.com>
+References: 
+	<20250709-mtk8395-fix-pcie-suspend-v1-1-0c7d6416f1a3@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 17:05:25 +0200
-Message-Id: <DB8GUTJA9QU1.X112WTV7ABZN@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
- Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>, "Will
- Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>, "Mark
- Rutland" <mark.rutland@arm.com>, "Wedson Almeida Filho"
- <wedsonaf@gmail.com>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude
- Paul" <lyude@redhat.com>, "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v6 3/9] rust: sync: atomic: Add ordering annotation
- types
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>, "Andreas Hindborg"
- <a.hindborg@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-4-boqun.feng@gmail.com>
- <4Ql5DIvfmXBHoUA428q2PelaaLNBI5Mi0jE3y3YPObJLRgY73zNZzQ8Pdl2qq25VWsMQFKUpYRHHQ1e7wFaGUw==@protonmail.internalid> <DB8BTA477Z2V.1J7XFLDXHMN2S@kernel.org> <87v7o0i7b8.fsf@kernel.org> <aG_RcB0tcdnkE_v4@Mac.home>
-In-Reply-To: <aG_RcB0tcdnkE_v4@Mac.home>
+MIME-Version: 1.0
+X-ZohoMailClient: External
 
-On Thu Jul 10, 2025 at 4:42 PM CEST, Boqun Feng wrote:
-> On Thu, Jul 10, 2025 at 02:00:59PM +0200, Andreas Hindborg wrote:
->> "Benno Lossin" <lossin@kernel.org> writes:
->> > On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
->> >> +/// The trait bound for annotating operations that support any order=
-ing.
->> >> +pub trait Any: internal::Sealed {
->> >
->> > I don't like the name `Any`, how about `AnyOrdering`? Otherwise we
->> > should require people to write `ordering::Any` because otherwise it's
->> > pretty confusing.
->>=20
->> I agree with this observation.
->>=20
->
-> I'm OK to do the change, but let me show my arguments ;-)
->
-> * First, we are using a language that supports namespaces,
->   so I feel it's a bit unnecessary to use a different name just because
->   it conflicts with `core::any::Any`. Doing so kinda undermines the
->   namespace concepts. And we may have other `Any`s in the future, are we
->   sure at the moment we should keyword `Any`?
+On Wed, 2025-07-09 at 17:42 +0200, Louis-Alexis Eyraud wrote:
+> In the pcie-mediatek-gen3 driver, the PM suspend callback function
+> powers down the PCIE link to stop the clocks and PHY and also assert
+> the MAC and PHY resets.
+>=20
+> On MT8195 SoC, asserting the MAC reset for PCIe port 0 during suspend
+> sequence and letting it asserted leads the system to hang during
+> resume
+> sequence because the PCIE link remains down after powering it up:
+> ```
+> mtk-pcie-gen3 112f0000.pcie: PCIe link down, current LTSSM state:
+> =C2=A0 detect.quiet (0x0)
+> mtk-pcie-gen3 112f0000.pcie: PM: dpm_run_callback():
+> genpd_resume_noirq
+> =C2=A0 returns -110
+> mtk-pcie-gen3 112f0000.pcie: PM: failed to resume noirq: error -110
+> ```
+> Deasserting it before suspend sequence is completed, allows the
+> system
+> to resume properly.
+>=20
+> So, add in the mtk_pcie_power_down function a flag parameter to say
+> if the
+> device is being suspended and in this case, make the MAC reset be
+> deasserted after PCIE_MTK_RESET_TIME_US (=3D10us) delay.
+>=20
+> Fixes: d537dc125f07 ("PCI: mediatek-gen3: Add system PM support")
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
-I don't think `Any` is a good name for something this specific anyways.
-If it were something private, then sure use `Any`, but since this is
-public, I don't think `Any` is a good name.
+Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
 
-> * Another thing is that this trait won't be used very often outside
->   definition of functions that having ordering variants, currently the
->   only users are all inside atomic/generic.rs.
+--=20
+Thanks,
 
-I don't think this is a good argument to keep a bad name.
-
-> I probably choose the `ordering::Any` approach if you guys insist.
-
-I don't think we have a lint for that, so I'd prefer if we avoid that...
-
-Someone is going to just `use ...::ordering::Any` and then have a
-function `fn<T: Any>(_: T)` in their code and that will be very
-confusing.
-
----
-Cheers,
-Benno
+N=C3=ADcolas
 
