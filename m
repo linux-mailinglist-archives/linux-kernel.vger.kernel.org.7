@@ -1,145 +1,120 @@
-Return-Path: <linux-kernel+bounces-726590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C30B00F04
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:47:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D542B00F07
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97B815C484E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:47:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DB9D7B67FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67CD202F7B;
-	Thu, 10 Jul 2025 22:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B89290BD5;
+	Thu, 10 Jul 2025 22:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KP+sVKUD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sX8GaYid"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28A72397A4;
-	Thu, 10 Jul 2025 22:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223B01D432D;
+	Thu, 10 Jul 2025 22:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752187663; cv=none; b=k5Cc16xxN1NuWj8biSQmTS82W2enpwjZpHyNuUWkSGXewrStadgGADO5+q1EGrNGHY4Xolkf6P9MD0ZUbUH8KKShSwQRPuBG80vyB/EVl04IsfS9W9sqiHQXNXiWWCSt52rpXqPmKhVvv+L9tuaAe3DqIpSDLckZ8Y1/oyTMdog=
+	t=1752187760; cv=none; b=jpVtpJ/QA1hHOg0j6R3CmhpUuiy6nAlUlJu9iqROxT0mMmUBbESs3fW738EInKdge6MLpxLSZurQhoQ7Ta5VHluNf09bgNUzDCMCxzOmXrKM/f/3RjEqsLO8y9VME3ge/hLuhalSBtnDg6NHzoqmUWHi0GASIst0Fvw9VHS6DYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752187663; c=relaxed/simple;
-	bh=4o95IkNEz5qpXJwUn+JNDIWRtNDnZj8MA7Si8Zwy1S8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZC+1cvMJ5ethpFEAdmsMLP2seGWNTz9W3w2vGVEPX/8nsbKWsk4NX+Ur2iVrsZl/DVTfDExCGLiCLZW8IUNGMVnKcpJnwtt9+E4NtqyoePFawEG33iznAV4c2DlYtUBgxGWsV2IypoQUw5vAijHuwaYzp122wH7tKFSVkHNPjyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KP+sVKUD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47B54C4CEE3;
-	Thu, 10 Jul 2025 22:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752187662;
-	bh=4o95IkNEz5qpXJwUn+JNDIWRtNDnZj8MA7Si8Zwy1S8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KP+sVKUDFDP9NafAD/jq4V4vwbBR9xx9KDdzk/xN015ABez2x6loPMO18npmrWcQJ
-	 kfZBpXkdQ078YNC6gA/UabJEBdtDYAgsHAzHYjSUxy2/zjRGYyZ7xIVZxxHcN4j7U5
-	 JVPAOAu/7uMLrPR2SFSPlPNBTbWgb8/ZTUrw62PROOVUMFpc3GK9oj16D47lbNQAJ7
-	 JjsUmLGSqQgz2LhdN2IF6/FSjFt1AncRUXBvNZjzL45KHCwrf0WNf1RqfQUtO+L3a4
-	 jA8x2i1SRVmSSNmjTi/SdJaS8+HJzJUu0Q4AdbMRuJXthu4J3Q7nMx+NLHXQ4qHZho
-	 RWHPOFGlqqaiA==
-Date: Thu, 10 Jul 2025 17:47:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Elliot Berman <elliotb317@gmail.com>,
-	Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	Andre Draszik <andre.draszik@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
-	linux-rockchip@lists.infradead.org,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	Srinivas Kandagatla <srini@kernel.org>
-Subject: Re: [PATCH v10 02/10] dt-bindings: power: reset: Document
- reboot-mode cookie
-Message-ID: <20250710224740.GA15385-robh@kernel.org>
-References: <20250710-arm-psci-system_reset2-vendor-reboots-v10-0-b2d3b882be85@oss.qualcomm.com>
- <20250710-arm-psci-system_reset2-vendor-reboots-v10-2-b2d3b882be85@oss.qualcomm.com>
+	s=arc-20240116; t=1752187760; c=relaxed/simple;
+	bh=cRBo3kGQapkGoR+8bsRxAAR+ujiJ/BvrFspvXRNlZIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l8P6qtmSPWXSGRZbl1qJ4Z6glf6jLRxLhjx4TPhO7N4mKq2/oKSAH2sx1CLzRN35/VwxYaD8qo8avZruRigZNK2Xs4ESAZKU/Kw7+Ptwn0d8lscrIR8vEylI3Jo00CDmAQhOx0rDSJAS2KxXUEg6f+nPZ63fVoPpE/PfKYNZ7X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sX8GaYid; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752187677;
+	bh=DXxondijW1e8MsBqPbwPlbMkxosHe8r9/EBlGE/iGt4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sX8GaYid3MKPW99coTCOZkR00Lc8fe/XGByPShmKhNmOI3e66Ic7mN9hGGKsIunvZ
+	 m4zkdp/D7F5UbHPtesmYtXbPe2ziT2UgIlfADiAoPHDK/1gwopxsHd7L5jxriGitor
+	 Cm5HP2UZ5QDDH7xtbfoUXUVS3EvIAJDJyWVMhLKKKK6lqG5Bs0ufI8ttOlGmdT/cch
+	 HLsF4SFkKjnm8bEJOUMTF32hFSgGnbm/ODa2gnWakL9jZduh6TL7SMsslug6vJW6qn
+	 5evs2F9c8LzV6B99ACw14CxUvBosQuCZdC+WzQBkYFmzZQM6D61Wv5LkzWI5fhoNTa
+	 qXRyDCUq9aJ/A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bdVNr5r01z4wcd;
+	Fri, 11 Jul 2025 08:47:56 +1000 (AEST)
+Date: Fri, 11 Jul 2025 08:49:12 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the mm-unstable tree
+Message-ID: <20250711084912.22886e3d@canb.auug.org.au>
+In-Reply-To: <20250710153017.c17ca59f1df36eec90db8b54@linux-foundation.org>
+References: <20250710175446.128c7def@canb.auug.org.au>
+	<20250710153017.c17ca59f1df36eec90db8b54@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710-arm-psci-system_reset2-vendor-reboots-v10-2-b2d3b882be85@oss.qualcomm.com>
+Content-Type: multipart/signed; boundary="Sig_/s2wB2/2tQWD7PCemrqsn=oG";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Jul 10, 2025 at 02:45:44PM +0530, Shivendra Pratap wrote:
-> Update the reboot-mode binding to support an optional cookie
-> value in mode-<cmd> properties. The cookie is used to supply
-> additional data for reboot modes that accept two arguments.
-> 
-> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/power/reset/reboot-mode.yaml         | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml b/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
-> index 3ddac06cec7277789b066d8426ea77d293298fac..a4d2fe1db51e0c1f34ebefddaad82b8cc0b1b34a 100644
-> --- a/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
-> +++ b/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
-> @@ -10,14 +10,15 @@ maintainers:
->    - Andy Yan <andy.yan@rock-chips.com>
->  
->  description: |
-> -  This driver get reboot mode arguments and call the write
-> -  interface to store the magic value in special register
-> -  or ram. Then the bootloader can read it and take different
-> -  action according to the argument stored.
-> +  This driver gets reboot mode arguments and calls the write
-> +  interface to store the magic and an optional cookie value
-> +  in special register or ram. Then the bootloader can read it
-> +  and take different action according to the argument stored.
->  
->    All mode properties are vendor specific, it is a indication to tell
->    the bootloader what to do when the system reboots, and should be named
-> -  as mode-xxx = <magic> (xxx is mode name, magic should be a non-zero value).
-> +  as mode-xxx = <magic cookie> (xxx is mode name, magic should be a
-> +  non-zero value, cookie is optional).
+--Sig_/s2wB2/2tQWD7PCemrqsn=oG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I don't understand the distinction between magic and cookie... Isn't all 
-just magic values and some platform needs more than 32-bits of it?
+Hi Andrew,
 
->  
->    For example, modes common Android platform are:
->      - normal: Normal reboot mode, system reboot with command "reboot".
-> @@ -45,5 +46,6 @@ examples:
->        mode-recovery = <1>;
->        mode-bootloader = <2>;
->        mode-loader = <3>;
-> +      mode-edl = <1 2>;
->      };
->  ...
-> 
-> -- 
-> 2.34.1
-> 
+On Thu, 10 Jul 2025 15:30:17 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>
+> How about this?
+>=20
+> --- a/mm/migrate.c~mm-migrate-factor-out-movable_ops-page-handling-into-m=
+igrate_movable_ops_page-fix
+> +++ a/mm/migrate.c
+> @@ -161,7 +161,9 @@ static void putback_movable_ops_page(str
+> =20
+>  /**
+>   * migrate_movable_ops_page - migrate an isolated movable_ops page
+> - * @page: The isolated page.
+> + * @dst: The destination page.
+> + * @src: The source page.
+> + * @mode: The migration mode.
+>   *
+>   * Migrate an isolated movable_ops page.
+>   *
+> _
+>=20
+
+Looks good to me (but I haven't actually tested it).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/s2wB2/2tQWD7PCemrqsn=oG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhwQ2gACgkQAVBC80lX
+0GxaBAf+M3hzgrWNpILBqFmkYVw88o8yBFqEltyYCYJlMSgNqHVwhwLSY4QSAZAM
+hJ7NHYj0xi+ujm59X2AZx/MVpuDB2xZysZzdun7bK3O7X2DyqTn6XHx22EniDn9f
+d7bvjX37hVR9svHvtoIly6SpXocX3kldoly43DbGF/K49obFdfaMrJGNXTAce1t7
+ANtoxiiHkncN5ZSb64+zE5fapBmhQqLSg2nNEskjr+Ie4jN3bi3Ewmg8MZY4VdHZ
+YIEuZSk1Q0izEZBCiZv+FN7Hiv9HXRTrDs7XzYXzepfXWFEpsSvXdCBx+fmCQXQQ
+STIBqBfb2xBNbXI95QpQLMGVms9N/w==
+=PQcW
+-----END PGP SIGNATURE-----
+
+--Sig_/s2wB2/2tQWD7PCemrqsn=oG--
 
