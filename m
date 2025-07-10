@@ -1,135 +1,278 @@
-Return-Path: <linux-kernel+bounces-726142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 637C5B008B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:30:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9811CB008A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36167544A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:30:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431FA1CA0E8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8D12F235C;
-	Thu, 10 Jul 2025 16:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB462F0E31;
+	Thu, 10 Jul 2025 16:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMgIUdOg"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i6gAcOrG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5538E2F1FEE;
-	Thu, 10 Jul 2025 16:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C11E2EFDB0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752164887; cv=none; b=pcBJrND6MTE03vz3Kl+iB620Q/D4UdDgxKo0a7gyqVjM2JDshW28UvBxq0MslC/E/bQha8sI06LM0ra2GMfw/I+/OZDUkbmRwZWcQquSzoFHtJFxZ3wWY1d6Hun++tdpU83qhdDIFkDjao9NE6+XMLnGcj3J5TVeAxPy/7u/7gE=
+	t=1752164873; cv=none; b=muDwdg9U2M4HvmS8ZfpgoQjEyKOcg2ickf4d0f3HKz49ym3am+NLwFgwBRzWKJcaqyfdxM+GZ9RN4Ftg3bbydb1UuTheKIZNybp3Kcey7BCWjnmvm12S4Mrdik1KtI1qRiNqpoRHE2FrWv+hYZ6FfvmI8wvzDDwx1Ky/sbjw+28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752164887; c=relaxed/simple;
-	bh=r2RRpFlqlX/IDtA8e5dURu4lBt4Y4olJ+/XKCPLkUPo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ORISIOutwKVzLEyE+e/dbkihG2G07XtZxInCzQI25W7Z3eP8TWDmb7aaVwXPH6EyO4xTszqwCAM1Y78/1sLvzHsc6z62V1V0+LsEiibzdZcWQJ8Q1IuvL0dj8M3t383bN0yFfz8vqjJg1TEiH0BO5heiK5MEJB/HtfMXkxySOl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZMgIUdOg; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b45edf2303so1167788f8f.2;
-        Thu, 10 Jul 2025 09:28:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752164884; x=1752769684; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QqgJo74r0WlqLYuhJtnv7gtY0TWn0mA5ZdqgU3JWC3s=;
-        b=ZMgIUdOg/y5qb9qMIC9xdkGu3WkYzCOKd8KANXcZSw2t3TN59yaCr3P163lt3A/UMO
-         q5XknPU8fqema96JIbAD1spJANA4iUxc6pIAzDaOihFOK14m5k7Shxb5qYfmRDEjmQ8m
-         +bbi0mnBmMHmlJMtTAeD4EBCpgxyZ62VfEYOElniM0tCF8sPv/YoIz/A2j06KC5t9Olk
-         ogwhKRIMZXF/TzQ7xiGTajOOz13QP5mPELQgjIDBwrvZA38H3QC4za2Xv3fQ3dAsG24X
-         MEJoio+gBxRtErqoge41+dbadG73ft122DEF/jZX7BEzkp1nMj5qN2KfN8HK94rBZxpd
-         O3Vg==
+	s=arc-20240116; t=1752164873; c=relaxed/simple;
+	bh=uByNPn2hW31VVNIAVITQmiBwDw9ZQzuzCS+fE0hn1Ds=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VpvGT9y72CPwOEoAFQLig23YW2HE2Ki9lw36i4lJ1Z/wQfsuqPOkCjFGqNadavdH3fwR5JrI8jxY4I1CsfKwsgSQhki5RzIqwkvniZPIiHqevaTpX1Hk6k6zqDSoUKqK5ouEzSjIPaOsd6Qe0j38M3GYF6ssUFlPmpZWrdfE75Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i6gAcOrG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752164869;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3sO2/JwLoOB0WH2WCnvOSV6HSLemFLUS8qLx2PjBI2A=;
+	b=i6gAcOrGJPGc3MIOSZhyCLlH0bUc8pdQkmxjN1aGKOvLTV+jP6qerNFoYimpA5LmU6xqll
+	JBweLErIIliKhD94OjIEOfdrlnyk6gwQvid2gEvwKHbFYndY1fvNZritbWIXw7i/nh/5P9
+	JZvo538GqL8GfDmCMpGGK1ixXR4/hhI=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-43-VlUtdI_5P-6qPFIzeQZXBw-1; Thu, 10 Jul 2025 12:27:48 -0400
+X-MC-Unique: VlUtdI_5P-6qPFIzeQZXBw-1
+X-Mimecast-MFC-AGG-ID: VlUtdI_5P-6qPFIzeQZXBw_1752164867
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d15c975968so179280785a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:27:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752164884; x=1752769684;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1752164866; x=1752769666;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QqgJo74r0WlqLYuhJtnv7gtY0TWn0mA5ZdqgU3JWC3s=;
-        b=v62rFgN4meTl0vEdtL/wNOacGmSIVFWtbCPHHVYBJdOTBdv0FurYLQRgy4gRHqT06p
-         Wd1fvQ1Ou8Qijuvk3w86yc6X3Pw08rKsVdTQPMvulxkHmsEuLiryM+ZhTzVLcUHQR+bw
-         7jelZb2X+OU5RDmyPmcKhMoRiGR45wPAH40+3r9WT/a1l7gv5D6yioe1ZwOthwwZM6lK
-         Y4iW3HW+aa5QoV1FUKumDa0u3qyW/co3n1UqdZZcpkHZrp4iqabHLtQOZXogHaqIBJ1H
-         CMgmOODREypedgxb/HhNC/2I/mNhPdWQmEsgGfDn8N9LxzUPgiywFAv/DHwuAF3iax18
-         KGRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXe2vfIJ5d+Gub3xn08gAIMM80gN446SHfe+w9z89ZpV8ccqa2+fQ5EsSCaodGFJEPENfrWEyALL8YK4/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLxZ6v87cTzm5zHGX6qNoHYkpBE3tC8rrt9fnUEt8txgLPG+sT
-	RoeSW2QmtaFdUO4SAgWQbhpVVEV/wAE8Eobb361VHFlqUJ3beYp9CxD5x5ZsSJSJ
-X-Gm-Gg: ASbGncsaX3sSZZfn9LWevC9gepfijtoHFVH7ppcIkneK42kEcJ+xtXmMrJ3EQVMbuBG
-	asPX8OCA4146LOFAtlzV+SyBAlYEv6MNGA0/egl9rlN9PPyb1HGWJp4MA8qiX9tAP9hlyxg2N1n
-	1Bb2HFCynyi0g0ya2PvJIrq6Ise1bQ/FQVmKi3N3U4E3VA6dSQKdylvrUgjDuDjbvK9u3coEmEs
-	4H++QnO0+YcrOGeXZezh7Lr0Jerl2yIWddrSaCLZdJRGpTtZAAlsDLd677OO7GrHm1UahD+Cgb6
-	0nJ+15UV7eeprbE9BLGhDTlU5iVBEkXkAW/C7iTXRenxRlxh0Ox2HbP6SY5Jtga6xIbs7FwR/Df
-	Udbi5Q3X5nnSKVfmRS8lz1yyZ5yhV+Ads27K+mvikrvTAG5GdMFrqZIgN
-X-Google-Smtp-Source: AGHT+IHrtN2JJU7KZ/wvcGRYLftLYCliwG5hu54F4E+Tiy0PBPMifAGYKDrE8/6gfN/VqdB9UfZ4sA==
-X-Received: by 2002:a5d:648c:0:b0:3a6:ec41:b9df with SMTP id ffacd0b85a97d-3b5f18a8282mr144662f8f.49.1752164883400;
-        Thu, 10 Jul 2025 09:28:03 -0700 (PDT)
-Received: from Lord-Beerus.station (net-93-70-53-177.cust.vodafonedsl.it. [93.70.53.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50df125sm60871005e9.19.2025.07.10.09.28.02
+        bh=3sO2/JwLoOB0WH2WCnvOSV6HSLemFLUS8qLx2PjBI2A=;
+        b=lnPQaFNQk/lnDRN8S188fkantbB5+75lp8qzwCFzWiVvjpjfp6hvmNueAZJhRhBm98
+         /X4HmOqQInFRRS8V/dz2SdHY2rqN3KKKa0Qt9fZSCeWPz/DOw9AUsuxE058iEPX6H0cN
+         Eb5HoJL7cWD5Jaj1yR5p9KnRKcB+eg22lj/P70uufVrQj1b6DN5wW6XyefYqotCfDwCZ
+         HidqmJOkPehXs0QE9w3mtjT0QCW7Q24VyLOuNFg67BMoo+N9D1QhSUeQoswK6hIoCTzk
+         4KoJjUNEUoXNywiQmpUiYclbPFeahcQcLmI9+KkYy+OYOaSgcW3JFBmsP+fm/d3DGeDW
+         yEJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGkAANmDHcOhzuYeIUE7thURdV+aeSFKo0YCt2UfLz+zTiozdfPgFvhb4MaeKxVyt2fIlLfbPET96tOcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSylOQ9KEG7kUcMOLX+QJnrqP4NdqWD3YFruqU4XXr6z4kJ2Mt
+	o2iBHHb3g25N5vAyxYCrmZAK5p34pxyFWoTTS+BmrWJpO9NYgKi9I4lPTYseK+zO4ZIJWPfmFEU
+	T4DJ5QKRAutvFgrzaN10HlJCZXUwoVCULWKDxjExocoBjkPFBz1G9xOug9+1TG7Fqo5h0qPO9gA
+	==
+X-Gm-Gg: ASbGncvhQReIcfGED60uAv1crbCcLwe2uTpW5Ghm4Fi7H4RznB09XrtCtHgGfeRnvVY
+	PWsvje1s8ylaFZmr16MlRvmwcRAtqhVoNXYyTVpqRLShAJp9cMFa8R05e+Rd/x5YYeJsWu9/jrC
+	tmogxt+E611vVSUivhdWV6/RZymBR6g7G64i8peT31Kii5ZNw5szRL0DcS9C3njbL8OKV569STo
+	xyTiGEFxd74f9FpALzLUAe4JBlJIKxupuXTjBIzCTM9OIZTDDmaJtupvUVoT8YmzDNwr7xZeDAt
+	halXJwMF8qAaWKn79bE1aqFuy38qlr7eY/gX8MhX6JaTmcF4VJmvz8YYvyBo
+X-Received: by 2002:a05:620a:24d6:b0:7d3:dbed:869b with SMTP id af79cd13be357-7ddecc1d5a2mr17536285a.42.1752164866489;
+        Thu, 10 Jul 2025 09:27:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE27LfFDrGnMnfhyfHCbnzrSuLJo3IShFntK9oUyUSQ7N0TE7WAmGfbfKdAyUi+8fKCbP099g==
+X-Received: by 2002:a05:620a:24d6:b0:7d3:dbed:869b with SMTP id af79cd13be357-7ddecc1d5a2mr17531485a.42.1752164866037;
+        Thu, 10 Jul 2025 09:27:46 -0700 (PDT)
+Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcdc5df99asm113487685a.49.2025.07.10.09.27.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 09:28:03 -0700 (PDT)
-From: Stefano Radaelli <stefano.radaelli21@gmail.com>
-To: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Stefano Radaelli <stefano.radaelli21@gmail.com>,
-	Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 0/3] Add support for Variscite VAR-SOM-AM62P5 and Symphony board
-Date: Thu, 10 Jul 2025 18:27:25 +0200
-Message-ID: <20250710162737.49679-1-stefano.radaelli21@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 10 Jul 2025 09:27:45 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+Subject: [PATCH 0/7] drm/msm/dsi/phy: convert from clk round_rate() to
+ determine_rate()
+Date: Thu, 10 Jul 2025 12:27:26 -0400
+Message-Id: <20250710-drm-msm-phy-clk-round-rate-v1-0-364b1d9ee3f8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO7pb2gC/x3MwQqDMAwA0F8pOS+QiuLwV8YOtc00zFZJVRTx3
+ 1d2fJd3QWYVztCZC5R3yTKnAvsw4EeXBkYJxVBR1VBrCYNGjDniMp7opy/qvKWA6lZG73tLoan
+ 5STWUYFH+yPHPX+/7/gEq7Uv9bAAAAA==
+X-Change-ID: 20250710-drm-msm-phy-clk-round-rate-ccb10d54e804
+To: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752164864; l=5373;
+ i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
+ bh=uByNPn2hW31VVNIAVITQmiBwDw9ZQzuzCS+fE0hn1Ds=;
+ b=IyDjRecZ8lmUveDSl1A/ekKcgnVDZWOm0cbVtunJ0Yg60K87JgqJbB99cAFDWIE1Ws5cFuS4G
+ SGQmD+wl6KeCcggSryEiIu7SICeBclsasH4oDapkP9eAZ8fGGn/ww3M
+X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
+ pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
-This patch series adds support for the Variscite VAR-SOM-AM62P system on module
-and the Symphony carrier board.
+The round_rate() clk ops is deprecated in the clk framework in favor
+of the determine_rate() clk ops, so let's go ahead and convert the
+drivers in the drm/msm/dsi/phy subsystem using the Coccinelle semantic
+patch posted below. I did a few minor cosmetic cleanups of the code in a
+few cases.
 
-The VAR-SOM-AM62P is a compact SOM based on the TI AM62P Sitara processor,
-featuring up to 8GB DDR4 memory, eMMC storage, Gigabit Ethernet, and various
-peripheral interfaces. The Symphony board is a feature-rich carrier board that
-showcases the SOM capabilities.
+Coccinelle semantic patch:
 
-The series includes:
-- Device tree bindings documentation
-- SOM device tree with common peripherals
-- Symphony carrier board device tree with board-specific features
+    virtual patch
 
-The implementation follows the standard SOM + carrier board pattern where the
-SOM dtsi contains only peripherals mounted on the module, while carrier-specific
-interfaces are enabled in the board dts.
+    // Look up the current name of the round_rate function
+    @ has_round_rate @
+    identifier round_rate_name =~ ".*_round_rate";
+    identifier hw_param, rate_param, parent_rate_param;
+    @@
 
-Tested on VAR-SOM-AM62P with Symphony carrier board.
+    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+                  unsigned long *parent_rate_param)
+    {
+    	...
+    }
 
-Stefano Radaelli (3):
-  dt-bindings: arm: ti: Add bindings for Variscite VAR-SOM-AM62P
-  arm64: dts: ti: Add support for Variscite VAR-SOM-AM62P
-  arm64: dts: ti: var-som-am62p: Add support for Variscite Symphony
-    Board
+    // Rename the route_rate function name to determine_rate()
+    @ script:python generate_name depends on has_round_rate @
+    round_rate_name << has_round_rate.round_rate_name;
+    new_name;
+    @@
 
- .../devicetree/bindings/arm/ti/k3.yaml        |   6 +
- arch/arm64/boot/dts/ti/Makefile               |   1 +
- .../dts/ti/k3-am62p5-var-som-symphony.dts     | 562 ++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi | 370 ++++++++++++
- 4 files changed, 939 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
- create mode 100644 arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi
+    coccinelle.new_name = round_rate_name.replace("_round_rate", "_determine_rate")
 
+    // Change rate to req->rate; also change occurrences of 'return XXX'.
+    @ chg_rate depends on generate_name @
+    identifier has_round_rate.round_rate_name;
+    identifier has_round_rate.hw_param;
+    identifier has_round_rate.rate_param;
+    identifier has_round_rate.parent_rate_param;
+    identifier ERR =~ "E.*";
+    expression E;
+    @@
 
-base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-prerequisite-patch-id: 7e8493f8ed01ee319f827119ffdac7531afbbc4d
+    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+                  unsigned long *parent_rate_param)
+    {
+    <...
+    (
+    -return -ERR;
+    +return -ERR;
+    |
+    - return rate_param;
+    + return 0;
+    |
+    - return E;
+    + req->rate = E;
+    +
+    + return 0;
+    |
+    - rate_param
+    + req->rate
+    )
+    ...>
+    }
+
+    // Coccinelle only transforms the first occurrence of the rate parameter
+    // Run a second time. FIXME: Is there a better way to do this?
+    @ chg_rate2 depends on generate_name @
+    identifier has_round_rate.round_rate_name;
+    identifier has_round_rate.hw_param;
+    identifier has_round_rate.rate_param;
+    identifier has_round_rate.parent_rate_param;
+    @@
+
+    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+                  unsigned long *parent_rate_param)
+    {
+    <...
+    - rate_param
+    + req->rate
+    ...>
+    }
+
+    // Change parent_rate to req->best_parent_rate
+    @ chg_parent_rate depends on generate_name @
+    identifier has_round_rate.round_rate_name;
+    identifier has_round_rate.hw_param;
+    identifier has_round_rate.rate_param;
+    identifier has_round_rate.parent_rate_param;
+    @@
+
+    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+                  unsigned long *parent_rate_param)
+    {
+    <...
+    (
+    - *parent_rate_param
+    + req->best_parent_rate
+    |
+    - parent_rate_param
+    + &req->best_parent_rate
+    )
+    ...>
+    }
+
+    // Convert the function definition from round_rate() to determine_rate()
+    @ func_definition depends on chg_rate @
+    identifier has_round_rate.round_rate_name;
+    identifier has_round_rate.hw_param;
+    identifier has_round_rate.rate_param;
+    identifier has_round_rate.parent_rate_param;
+    identifier generate_name.new_name;
+    @@
+
+    - long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+    -               unsigned long *parent_rate_param)
+    + int new_name(struct clk_hw *hw, struct clk_rate_request *req)
+    {
+        ...
+    }
+
+    // Update the ops from round_rate() to determine_rate()
+    @ ops depends on func_definition @
+    identifier has_round_rate.round_rate_name;
+    identifier generate_name.new_name;
+    @@
+
+    {
+        ...,
+    -   .round_rate = round_rate_name,
+    +   .determine_rate = new_name,
+        ...,
+    }
+
+Note that I used coccinelle 1.2 instead of 1.3 since the newer version
+adds unnecessary braces as described in this post.
+https://lore.kernel.org/cocci/67642477-5f3e-4b2a-914d-579a54f48cbd@intel.com/
+
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+Brian Masney (7):
+      drm/msm/dsi_phy_10nm: convert from round_rate() to determine_rate()
+      drm/msm/dsi_phy_14nm: convert from round_rate() to determine_rate()
+      drm/msm/dsi_phy_28nm_8960: convert from round_rate() to determine_rate()
+      drm/msm/dsi_phy_28nm: convert from round_rate() to determine_rate()
+      drm/msm/dsi_phy_7nm: convert from round_rate() to determine_rate()
+      drm/msm/hdmi_phy_8996: convert from round_rate() to determine_rate()
+      drm/msm/hdmi_phy_8998: convert from round_rate() to determine_rate()
+
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      | 18 ++++++-------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      | 36 +++++++++++++------------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      | 22 +++++++--------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c | 34 ++++++++++++-----------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       | 18 ++++++-------
+ drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c        | 19 +++++++------
+ drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c        | 19 +++++++------
+ 7 files changed, 84 insertions(+), 82 deletions(-)
+---
+base-commit: b551c4e2a98a177a06148cf16505643cd2108386
+change-id: 20250710-drm-msm-phy-clk-round-rate-ccb10d54e804
+
+Best regards,
 -- 
-2.43.0
+Brian Masney <bmasney@redhat.com>
 
 
