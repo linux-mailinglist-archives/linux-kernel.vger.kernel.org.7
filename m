@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-726681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA34B00FFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:00:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AA0B00FFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68C881887E3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:00:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67581646646
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4855C30B9A9;
-	Thu, 10 Jul 2025 23:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6F430E858;
+	Thu, 10 Jul 2025 23:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y55IGV17"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BN0WxVU2"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495EF306DCF
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C501930E84A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752191899; cv=none; b=rGpJ35uoxwMD/xGpMa0pvksYSppClFuAYVWajzJOjS43axMuAePe3pwGBqT5a/8yGrWDhjk48lJ2o73ADZnSOLOLY8bhER0Gtf18vIvAnCUUSjchiALH4vpMlup5xZUk1mEpy85rl6+BS9lsStBd523EoLwWYmtfRsnasWpR/7I=
+	t=1752191905; cv=none; b=BIwWeV9RqgsNveMvWdvRScBRm6c/RboBGhQQL5STPO3k5FW/FwwK6h7BYg3WvpoRNmUIBCf9Tu/IG0E6I44bDRG2GdMsuT6N9Z97Wm/BLAqtDcz7s/Og/15Z+p3MCLnISrjOvitskqqN+VlvNl3uTPdy9stspgRS1Xo8jjEob/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752191899; c=relaxed/simple;
-	bh=RB31l5rvv7bXNl751djYesBa+aOb9K+m93D0BvwGHmg=;
+	s=arc-20240116; t=1752191905; c=relaxed/simple;
+	bh=NjiPKEhGsaGQKWHpMCxwB+vZyBflV//0IhIH1k44DCU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=RGxOT52vKOR+tYLA4Ull6neh7/ZZRM2uuKuACPARx+PVMfMCdrh2mP9Yw4PvGVKrfC3IS35W3dS+Ar7laKO7MhAyOI4e7LT36bxXQ/uLowQyILE8c8HZ1uBSRDCIZ8yGpCm3C2bDPXCNf8ldnSsvDKX/wpuxckaEFoiboFTc3q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y55IGV17; arc=none smtp.client-ip=209.85.214.201
+	 To:Content-Type; b=TFk40aSzcLI8mPrmc3B1ct6PyOWiZC4B1ZixCpe7UNK/sKqf3mcbynE7JZEZYSTB/Hf4T/NaaIouHUYgayT3J0dWaCOxLgDSf0dloxJQeHww2g9OiXgo2mcBW4IOClL5bYcUwxEpF2wVLA+bLJxpFenb/GVNM3iWzEgQ+1xjFKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BN0WxVU2; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-235e7550f7bso13718395ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:58:18 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b31df10dfadso1112155a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:58:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752191898; x=1752796698; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1752191903; x=1752796703; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NEm6BmU3nejut5IA8hvIiLbgDct6ibXEQqve0f3fFRM=;
-        b=Y55IGV17GR7ezK0EBNSENfE2dRxQKP8Y7cjrOOqwE0FPRBDkOpIGZgA4t151WUHObi
-         CbXAjelPbQDLtEM/hFI+fvvVIkryXBA8vKpByiu9ICTMDf1ssQJvW6aea/KXksmmBDxg
-         d4dMsstv1dgOqongeFlpPyRwvBxg7WwuBlGNftUwrvpqe964H2xh/WNtjfrSVKN1XyUy
-         dij1l3rkXHn6PBhkgIA/44aZz6hmDZPk6VQV84ongI5oyhf2hVM3kKDu5BnNK+ZcG/nF
-         1aLObs5zaKXvHO0SIIBTfnsrDDUeCRtlWSyOT6wHwTFp/Hi+4MeOjvloWF3vAIWfhWLN
-         SdwQ==
+        bh=PXVdoW2iKYWFt7nsZ7G8iow+2PvHzjoaWJaeDzliFE8=;
+        b=BN0WxVU2U0At8hXue9cc7fBIEEz/JL7xp/rCYLYn7ASaWfyMu/1je7QHd6s7o2nTlB
+         saN0I4uTRpBA6zI37n5tsKn6eyAVQq0KgLPS1AuiYOxNtpZUfZif/22o/PsrwtRO2gBM
+         +NLZsGsLwlXWyYRH2bdYqPO1vGglJvA2F089yztsjgaLnalUd7If8jVZ+5KMjaRs8RD9
+         CD/MVDv48iMrQdqYhV6GSWBAfWXzx91gyQquKnasTLdj4wNw50dW2MWxKfny6u7w0WO6
+         28YZyI3h7Gh8asq+Qa1qtMRXNEBHzk5Rr74yYD4vnRwNb3HDuEFmSmiq8YXpA81ZoHLI
+         BpjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752191898; x=1752796698;
+        d=1e100.net; s=20230601; t=1752191903; x=1752796703;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NEm6BmU3nejut5IA8hvIiLbgDct6ibXEQqve0f3fFRM=;
-        b=lTnd/4z4Y1VkcI6+oYJ5u60hsZVrAm9WRrGY9WgdzAv38a4y/R9xk84C/F/gvuaYVS
-         wbQ0djaxcn6NiuyxJFdyvmVHACnJjkaFpeFIqT1C4j0Naw9DvTuWKdH+28BUFDfXB2Zi
-         6oK1sgFvxQ8aq54GwNQwqoY9RyxjmS7UnoMamR8VD7+geXxP1OOVdPb/0BhMzlvUIohx
-         pCUIP8ARNQVNJTADk42VINbMquMvLTLqF7Ko33HAzO6sL3VJUUJyFyt6OA6KEI3B0wZZ
-         c+BXbryYVjCGiBA7qeZxFnw7vDebg3CMQ9Jp7DAKYKSLS41bLF3u93Ffv7+8Pb79ITP2
-         /kNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTzv1R8CJXqDt/uUX7VW+fRVi/oeA9IDbgVjA19Nupj9UgLMELi4vTmHz5x4kgqQ0PN2QpSVQzPQPCbgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwutTvyDcWvwqlBSWqSZrMazi7nw6wFeLZosd1X2kpOcMwnmewc
-	GOHv9qxmzPDlBkj00pTbSGHu5fkIn5vAm1j5Lgz6WH4KYraMKX0h2kILu6G+CQLoDGHTRsjwTm1
-	nhZHvZ4sp9g==
-X-Google-Smtp-Source: AGHT+IGfWOoAN8B6DF6uTCCRlm7nDnsNkzPD0PDOFWef/wSPXpUWs0n7d3KCRyajMm75YCnlkNO0t/uiCvsR
-X-Received: from plil11.prod.google.com ([2002:a17:903:17cb:b0:23d:dd69:dd11])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:c951:b0:237:ec18:eab9
- with SMTP id d9443c01a7336-23dede856d2mr20908525ad.32.1752191897699; Thu, 10
- Jul 2025 16:58:17 -0700 (PDT)
-Date: Thu, 10 Jul 2025 16:57:31 -0700
+        bh=PXVdoW2iKYWFt7nsZ7G8iow+2PvHzjoaWJaeDzliFE8=;
+        b=YI2gSfX6KBtqG0I6VK8yDtnsXwxo1TZ+tiQ/yXEmu/aXzi/LftChKud8SC5bmwRaxW
+         jVKcUpStGzBHuMYrQE0COnaDtcLH5WpCwHkfIuhJ18bBQxsiV1HgnEzgNC21qMCLGOAb
+         7beOwH7YSxTLF4x4D2/ck7WnAJziwA1i1IgSmvamJnOGTosYPSr2Y1I4IIKt9yPVxjZv
+         XLM+ryyovfMjUxDF5k5Ctam6M2ZdCLS0eGujZGOqMMjhBCat2qHA7c/UipgrdBNbJYEf
+         niT6JoUC67+Jjd1utR+R4KqPxdDLrMPpFvNJmyEvtjALAJOA4zGbflXcFcs7t/YFJVid
+         OWVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVu/Kb+m9fQzp1wJ3348x4aIT0WksV+hWwKIUG/Xra0kjxd5oxftAllz8rt4db8eR2NQzGir76gzpzbryc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztAay1yuiMVRjryYH5esvu/Ni3bevsTgedLeMIKFFqB2PVwOQW
+	60eMlLQTuV6PPV/XR1T4+rC0eousKfKBBZfS9hSnxrLmA7e6s3zGk3t/ISDGTox+ka9Tk5KkQhK
+	Urm9DR3sF1Q==
+X-Google-Smtp-Source: AGHT+IHmmeUMgoc2xT8pfTYxOPwbhal9gu0xs63KQrJ0KJFxBkWDGR2NhKDZ9lNuerb6P/ZuaJ5q73HJ/xSf
+X-Received: from pgbo3.prod.google.com ([2002:a63:5a03:0:b0:b2f:56fa:ef1d])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:6f8b:b0:222:d98:e2d4
+ with SMTP id adf61e73a8af0-2311fd0203emr1610544637.26.1752191903027; Thu, 10
+ Jul 2025 16:58:23 -0700 (PDT)
+Date: Thu, 10 Jul 2025 16:57:32 -0700
 In-Reply-To: <20250710235735.1089240-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250710235735.1089240-1-irogers@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250710235735.1089240-11-irogers@google.com>
-Subject: [PATCH v6 10/14] perf python: Add parse_metrics function
+Message-ID: <20250710235735.1089240-12-irogers@google.com>
+Subject: [PATCH v6 11/14] perf python: Add evlist metrics function
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,82 +91,70 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Add parse_metrics function that takes a string of metrics and/or
-metric groups and returns the evlist containing the events and
-metrics.
-
-For example:
+The function returns a list of the names of metrics within the
+evlist. For example:
 ```
 >>> import perf
->>> perf.parse_metrics("TopdownL1")
-evlist([cpu/TOPDOWN.SLOTS/,cpu/topdown-retiring/,cpu/topdown-fe-bound/,
-cpu/topdown-be-bound/,cpu/topdown-bad-spec/,cpu/INT_MISC.CLEARS_COUNT/,
-cpu/INT_MISC.UOP_DROPPING/])
+>>> perf.parse_metrics("TopdownL1").metrics()
+['tma_bad_speculation', 'tma_frontend_bound', 'tma_backend_bound', 'tma_retiring']
 ```
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/python.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ tools/perf/util/python.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
 diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index b0bd4dc27409..46153a031dc5 100644
+index 46153a031dc5..639c1587d629 100644
 --- a/tools/perf/util/python.c
 +++ b/tools/perf/util/python.c
-@@ -1877,6 +1877,40 @@ static PyObject *pyrf__parse_events(PyObject *self, PyObject *args)
- 	return result;
+@@ -1282,6 +1282,33 @@ static PyObject *pyrf_evlist__all_cpus(struct pyrf_evlist *pevlist)
+ 	return (PyObject *)pcpu_map;
  }
  
-+static PyObject *pyrf__parse_metrics(PyObject *self, PyObject *args)
++static PyObject *pyrf_evlist__metrics(struct pyrf_evlist *pevlist)
 +{
-+	const char *input;
-+	struct evlist evlist = {};
-+	PyObject *result;
-+	PyObject *pcpus = NULL, *pthreads = NULL;
-+	struct perf_cpu_map *cpus;
-+	struct perf_thread_map *threads;
-+	int ret;
++	PyObject *list = PyList_New(/*len=*/0);
++	struct rb_node *node;
 +
-+	if (!PyArg_ParseTuple(args, "s|OO", &input, &pcpus, &pthreads))
++	if (!list)
 +		return NULL;
 +
-+	threads = pthreads ? ((struct pyrf_thread_map *)pthreads)->threads : NULL;
-+	cpus = pcpus ? ((struct pyrf_cpu_map *)pcpus)->cpus : NULL;
++	for (node = rb_first_cached(&pevlist->evlist.metric_events.entries); node;
++	     node = rb_next(node)) {
++		struct metric_event *me = container_of(node, struct metric_event, nd);
++		struct list_head *pos;
 +
-+	evlist__init(&evlist, cpus, threads);
-+	ret = metricgroup__parse_groups(&evlist, /*pmu=*/"all", input,
-+					/*metric_no_group=*/ false,
-+					/*metric_no_merge=*/ false,
-+					/*metric_no_threshold=*/ true,
-+					/*user_requested_cpu_list=*/ NULL,
-+					/*system_wide=*/true,
-+					/*hardware_aware_grouping=*/ false);
-+	if (ret) {
-+		errno = -ret;
-+		PyErr_SetFromErrno(PyExc_OSError);
-+		return NULL;
++		list_for_each(pos, &me->head) {
++			struct metric_expr *expr = container_of(pos, struct metric_expr, nd);
++			PyObject *str = PyUnicode_FromString(expr->metric_name);
++
++			if (!str || PyList_Append(list, str) != 0) {
++				Py_DECREF(list);
++				return NULL;
++			}
++			Py_DECREF(str);
++		}
 +	}
-+	result = pyrf_evlist__from_evlist(&evlist);
-+	evlist__exit(&evlist);
-+	return result;
++	return list;
 +}
 +
- static PyMethodDef perf__methods[] = {
- 	{
- 		.ml_name  = "tracepoint",
-@@ -1890,6 +1924,12 @@ static PyMethodDef perf__methods[] = {
- 		.ml_flags = METH_VARARGS,
- 		.ml_doc	  = PyDoc_STR("Parse a string of events and return an evlist.")
+ static PyObject *pyrf_evlist__mmap(struct pyrf_evlist *pevlist,
+ 				   PyObject *args, PyObject *kwargs)
+ {
+@@ -1508,6 +1535,12 @@ static PyMethodDef pyrf_evlist__methods[] = {
+ 		.ml_flags = METH_NOARGS,
+ 		.ml_doc	  = PyDoc_STR("CPU map union of all evsel CPU maps.")
  	},
 +	{
-+		.ml_name  = "parse_metrics",
-+		.ml_meth  = (PyCFunction) pyrf__parse_metrics,
-+		.ml_flags = METH_VARARGS,
-+		.ml_doc	  = PyDoc_STR("Parse a string of metics or metric groups and return an evlist.")
++		.ml_name  = "metrics",
++		.ml_meth  = (PyCFunction)pyrf_evlist__metrics,
++		.ml_flags = METH_NOARGS,
++		.ml_doc	  = PyDoc_STR("List of metric names within the evlist.")
 +	},
  	{
- 		.ml_name  = "pmus",
- 		.ml_meth  = (PyCFunction) pyrf__pmus,
+ 		.ml_name  = "mmap",
+ 		.ml_meth  = (PyCFunction)pyrf_evlist__mmap,
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
