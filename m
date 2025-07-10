@@ -1,143 +1,151 @@
-Return-Path: <linux-kernel+bounces-725350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C61AFFDF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:22:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF42FAFFDFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2BDF3ABF14
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:21:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDFE8164A6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5316429291F;
-	Thu, 10 Jul 2025 09:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A9D220F32;
+	Thu, 10 Jul 2025 09:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y7TMRbkY"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BmzIcBKJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2BF214210;
-	Thu, 10 Jul 2025 09:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD7928C5D5;
+	Thu, 10 Jul 2025 09:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752139315; cv=none; b=AiyL4jJpjo3DYq2OS95d6+wIEzChazGbIhwP3pzbKkrbSfWo8+8qgjd946l7JGBUFgQ8tCG+yTRvWwjXHqlCcdoAtCSVbw/sgglrSKSujHLDHKfonH+p1JpY/txZF70VmpvqS8au2O8YF3jGo4LFthH5xkZ1SqdGSicyCG/kciY=
+	t=1752139377; cv=none; b=JT9WZTnR/mjDpm9csPzoNdjIND00v2By6iNIlKeXz7Plo3JHs57b+1XZnnGNhcxTr1K35zYkJQ8WXmZJJBs9mVv54cdq0MivwLUPCY2KD2iag8kenc7j+fkKcsnUbGVQ7TWgAk49iBYEFP02ckdbQhWrjV698c76zFW1GyA0OQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752139315; c=relaxed/simple;
-	bh=y21nPgHIHQE0X3oc5JkFHd1rukiAka8zDn3Vv7fequ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t/0lmT7RIt/zGJNVr848gD2PA49M7rYaWscfiQJbSHcyUbJI2sEaJIT5ikW9M1aBxOWNNgJK4RehZ8XHT7K3Mn2b3OV6p+RNsqBwxM6t+VKcaYRjlMcs9G+7uzY3M7LuB7YrJ3sHmATHPW0/Fz5cte0qmhf/z/dy9Ktr9zD9jKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y7TMRbkY; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-70e77831d68so8276467b3.2;
-        Thu, 10 Jul 2025 02:21:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752139313; x=1752744113; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CIb23wfO7R7H8MNklKKsDP+RsX87PaDNS4GSIFnlxoY=;
-        b=Y7TMRbkY0gCLtiFlzVPIw480b5wwH6vIYMMcsQc668Is+PRF2bfl9ceVlScg2OE3ZO
-         IMetBHK3MTYSFHv5Q3dJ1e/e0f72A8MKtFk+TYeYdhDe1FNlZetfXzn0xEGUTUijD/WB
-         /zR97fiEwMnilUCizU+fjjiYR9jVvrEowm4j3lh05v3AToFhvJ1KEUUawbFZFH+HWnn8
-         VUfCvVX9Vj0jYAozZLjwkI0KDNNNyRXCvMBHnAaroRUHcl0OM3DymFg5kmxKn/pMHmuc
-         sFCzBjfFDLT0+MO+sZE+10kyWmsg3PhtD/Hy8v1B5iPSAnTa0gchYErINcb1kwEiEWf0
-         vgbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752139313; x=1752744113;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CIb23wfO7R7H8MNklKKsDP+RsX87PaDNS4GSIFnlxoY=;
-        b=mXxPgEcBCnk/K8p1RTFXCvzLTgJcgvgenvbF6cQCGYF0iW5omkceik4BDFk/mKzPlt
-         Fd01mU92P7Bu4MePeLEox2MIxXNoBaKtuh69wkURrPrmxgbzeA6ZOc/FzyWjgZ+Xke2F
-         txNjedGyySZ3AIAnh02NL1tteMJo6x3ibKoUhq+tb1utx2sM4LI1ggqCK/Q9WEsbYf07
-         QpfcIQtX/v4+XAQQj7XAL5ldWi6wQe3rg/1VO+atVN4M53bgSkY2ROTlEE7+sVVhxMYd
-         TJtvScBCSDpoElDgjiIOjM2/2L7tatV+dOI1L+L9+U1bn+xYL2Ndy+Zxl421OCv4/QpU
-         2GQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNzmqN6IblYR5brdGRYtF40uK/PPoyXshH2NIeQHJokSZRM5G5MM2T+9qzrIxmACAYSYRkJ+/1epJpLD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0VRXt6ztLkeNu04K3ATiFz/P6VB7n0mhYQJGvajwhiYrweJyN
-	lCb3XR4OsQOELQh1QtyQ/D53rkUmbuIDv6rbyA05/oqKhnqCAtCQaXIAkgZjXMYuJZXeUXqBZ5a
-	81GYPO7QJFyPz7LVIKqF3rLSOoE/PsB0=
-X-Gm-Gg: ASbGncuSUj+izLz3gnmgG9/Igg3Nt8GhgAi09rfoaSYvbbtyRW59rQP29JOQfLhIhFA
-	KAcFm3atdgej4myeSpa7t82cVTUQ7X2yUFKKr2auuV3Uya61CS8rJ0CxEgVxMcSUaRy8QuqN5FR
-	PHudz9AxiMCA+rcXnqv3fLELdLN8gdt2StO395ezMzKQ==
-X-Google-Smtp-Source: AGHT+IEyihmR4k6j+d3nRg7Al2UjBfOwUKJgCp3uoe4n9JUTn8NhsBjL7wuXahr5HIPQlLPnZdlvYqaWnH6iYhxgRdY=
-X-Received: by 2002:a05:690c:6908:b0:70c:a0c9:c648 with SMTP id
- 00721157ae682-717c1774a36mr45258857b3.19.1752139313148; Thu, 10 Jul 2025
- 02:21:53 -0700 (PDT)
+	s=arc-20240116; t=1752139377; c=relaxed/simple;
+	bh=oMuEnzSiV/0zGJRZTSJdmYqP9+3hpJC5wE7fsmK9ILg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P/4qsTkJJJJIiJtNOSOyJmiPolmDdH7BcIBQUiE5qkCGNvBuzQaFXe/rqY6B0NOkjUdjmtlwFQvg31zh4AT99sK3MAdfd5LTWmOTtNmiUH8rQ9wfzDxYf5m8z4z1sDOoVANWZydHHpZ6LgyHqmxH0K96/SgpbxCJXw4kKM/egHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BmzIcBKJ; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752139376; x=1783675376;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oMuEnzSiV/0zGJRZTSJdmYqP9+3hpJC5wE7fsmK9ILg=;
+  b=BmzIcBKJSPDWUEkbTuIvHCW2odvvx5Wu0HF8fPcfTwm0SUsuMIEtFU+t
+   1YeMVnSkoU6+jV1IPe2roXLwDD/y3Z9nlrmiJD/RmimhR+igG5UijrxdN
+   sQn9jJkSYlphb49pu7WsZewwuG8GxWsR0clSXwIFhHil2WymTxtlaRHtj
+   i1etWdnFyDOEapCkpTf2T5MMormHL0zkgQc7+9kkb+z8/TXDIozaiZqoc
+   p7XcLIWEPf41yoKpGi9DpndJJGWNphYQnZwOFQarZwPUxq003ve6Om3jv
+   NVedamKmIg+y4yp4Em3JtbmVpBQkeEPO1DdzwTOfcmZpgdV80ZC5y/sOs
+   A==;
+X-CSE-ConnectionGUID: jGzCO2JTSTyJryShWwXfnQ==
+X-CSE-MsgGUID: aiTRnKNHS3WWeRhNiwsZcQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54130105"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="54130105"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:22:56 -0700
+X-CSE-ConnectionGUID: p0j4cVbgRGuYdUOREp4FBQ==
+X-CSE-MsgGUID: hsWdMsaBR2aaOXEUBxOdGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="186994717"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:22:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uZnUN-0000000E9eg-1XWN;
+	Thu, 10 Jul 2025 12:22:47 +0300
+Date: Thu, 10 Jul 2025 12:22:46 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Primoz Fiser <primoz.fiser@norik.com>
+Cc: Haibo Chen <haibo.chen@nxp.com>, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-iio@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	upstream@lists.phytec.de, andrej.picej@norik.com
+Subject: Re: [PATCH 2/2] iio: adc: imx93: Make calibration parameters
+ configurable
+Message-ID: <aG-GZqhABwErcEyM@smile.fi.intel.com>
+References: <20250710073905.1105417-1-primoz.fiser@norik.com>
+ <20250710073905.1105417-3-primoz.fiser@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709220714.85697-1-stefano.radaelli21@gmail.com>
- <20250709220714.85697-2-stefano.radaelli21@gmail.com> <9b503f65-5c8c-4f04-a1b1-40d7a1202e8b@kernel.org>
-In-Reply-To: <9b503f65-5c8c-4f04-a1b1-40d7a1202e8b@kernel.org>
-From: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Date: Thu, 10 Jul 2025 11:21:37 +0200
-X-Gm-Features: Ac12FXxMoCORza1qjA8bpnm1jhAVYXGS6gK3JmG0IlhKcdilmwXZ2lWiCDsGXZI
-Message-ID: <CAK+owohgk3CkQRv_PBDWXh44X2uN3p8FWBU2t9VtmO-xzOKTow@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: ti: Add bindings for Variscite VAR-SOM-AM62P
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710073905.1105417-3-primoz.fiser@norik.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Krzysztof,
+On Thu, Jul 10, 2025 at 09:39:04AM +0200, Primoz Fiser wrote:
+> 
+> Make i.MX93 ADC calibration parameters:
+>  - AVGEN: Enable calibration averaging function,
+>  - NRSMPL: Select number of calibration samples,
+>  - TSAMP: Select sample time of calibration conversions,
+> 
+> in the MCR register configurable with the corresponding device-tree
+> properties:
+>  - nxp,calib-avg-en,
+>  - nxp,calib-nr-samples and
+>  - nxp,calib-t-sample.
 
-Thank you for your suggestion. Actually, our compatible strings for
-Variscite SOMs follow the format "som-factor"-"processor". Here are
-some examples:
+...
 
-https://github.com/varigit/linux-imx/blob/lf-6.6.y_6.6.52-2.2.0_var01/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi#L14
-https://github.com/varigit/linux-imx/blob/lf-6.6.y_6.6.52-2.2.0_var01/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi#L15
-https://github.com/varigit/linux-imx/blob/lf-6.6.y_6.6.52-2.2.0_var01/arch/arm64/boot/dts/freescale/imx91-var-som.dtsi#L14
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/property.h>
 
-These strings are used in our Yocto filesystem for WiFi management and
-other applications. Changing them would require updating the entire
-Yocto configuration.
+Keep it in order.
 
-Best regards,
-Stefano
+...
 
-Il giorno gio 10 lug 2025 alle ore 08:50 Krzysztof Kozlowski
-<krzk@kernel.org> ha scritto:
->
-> On 10/07/2025 00:07, Stefano Radaelli wrote:
-> > Add devicetree bindings for Variscite VAR-SOM-AM62P System on Module
-> > and its carrier boards.
-> >
-> > Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
-> > ---
-> > v2:
-> >  - Add symphony carrier board compatible
-> >
-> >  Documentation/devicetree/bindings/arm/ti/k3.yaml | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/ti/k3.yaml b/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> > index bf6003d8fb76..780fbb5970a5 100644
-> > --- a/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> > @@ -100,6 +100,12 @@ properties:
-> >            - const: toradex,verdin-am62p          # Verdin AM62P Module
-> >            - const: ti,am62p5
-> >
-> > +      - description: K3 AM62P5 SoC Variscite SOM and Carrier Boards
-> > +        items:
-> > +          - const: variscite,am62p-var-som-symphony
->
-> This is named reversed. Usually Variscite names are var-som-foo and:
-> https://www.variscite.com/product/system-on-module-som/cortex-a53-krait/var-som-am62p-ti-sitara-am62px/
->
-> confirms this, so the compatibles should be var-som-am62p.
->
->
->
-> Best regards,
-> Krzysztof
+> +	ret = device_property_read_u32(adc->dev, "nxp,calib-avg-en", &val);
+> +	if (!ret) {
+> +		if (val != 0 && val != 1) {
+> +			dev_err(adc->dev, "invalid nxp,calib-avg-en: %d\n", val);
+> +			return -EINVAL;
+> +		}
+> +		reg = val;
+> +		mcr &= ~IMX93_ADC_MCR_AVGEN_MASK;
+> +		mcr |= FIELD_PREP(IMX93_ADC_MCR_AVGEN_MASK, reg);
+> +	}
+
+Please, since it's optional, do other way around.
+
+	val = $DEFAUTL;
+	device_property_read_u32(adc->dev, "nxp,calib-avg-en", &val);
+	FIELD_MODIFY(...)
+
+Similar approach may be used for the other properties.
+
+...
+
+> +	/* write calibration settings to MCR */
+> +	writel(mcr, adc->regs + IMX93_ADC_MCR);
+
+Please, factor out this to the function, so we won't see the direct IO in the
+->probe().
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
