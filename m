@@ -1,220 +1,165 @@
-Return-Path: <linux-kernel+bounces-726057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656DEB00783
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:49:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428D1B007A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B023B27F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:47:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5850177325
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E3E276036;
-	Thu, 10 Jul 2025 15:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC22A273D7B;
+	Thu, 10 Jul 2025 15:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tiOxgfCx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Smmq2eq8"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE6F26FD91;
-	Thu, 10 Jul 2025 15:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDC3273D91;
+	Thu, 10 Jul 2025 15:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752162423; cv=none; b=Qg0jcQIndxjrmKGl0nWYH1d825h+ACIcRRYGpf+5XW/A80GmdHZDPT0tR9wVqwx/HGR2dgvfYyKunyHd0pd593G+4NWs2sV/qe2Qer6yNEP1wvhXEPIQ4p8/v7Uf8dnmBtA9tk+kejsjWUxzWniWjWG9Ida084bjERgk65QSJqs=
+	t=1752162447; cv=none; b=NNLBrd54ohbEF6MY088slpn/qAU+PheTcGR7mzqKrmbD0Os2PXweJK+7umafLdCctl6moMxIdMOKpctIIwr4vF/mpFnOGCfhnCxAqofW6deQlzePdz7SIJzMjF5a5q1mfjUH2b8znq6XbFUKHK63wg+2RhNknuwboTQLHFmeRak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752162423; c=relaxed/simple;
-	bh=dj/zefq/c/lty1/gzqNGCChSOInPa4AmaihOcg4LMic=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=svhrapVWFKqRMWdqx9U/5G8ML8is4ngRNrHdfYsGoM1n5E4kK65HAr/du68Isx1/nOgcbDjyUsUFQ//fHFy/b0ECKo7oX+OHAuLJi3iqcVr2JeNUeXkkHdhPvulIebGfMd+3Nm+iVBz/CJLH3vVM1Hh+9aFK4dIt2lyODY4vOTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tiOxgfCx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10F11C4CEE3;
-	Thu, 10 Jul 2025 15:46:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752162422;
-	bh=dj/zefq/c/lty1/gzqNGCChSOInPa4AmaihOcg4LMic=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=tiOxgfCxr2rALjGlJZ0lnUQamjwLinJkFLMVpq/P5AgYYAXWFPc6AfqEBrmtuRJus
-	 AFEOKQwmYCz3X9VjcIPJaYF+Q71WMi9zLmtXPTDgeI4abQPFyooFJVYf13BykHHkvZ
-	 TjUhB9qlxy6Q92ZthME7pzMBWcYBNtQo1Gqhm0MfIiP5Yah/1b6fxP2GgIy3D/WEs3
-	 FgYl5TMCbmUIHxIassSBpygpCtAnN+BaAjZjzPXYP01E8kdrmEWU5axr4A39UYx7qc
-	 zcNl5cekAtdnfB3DNPVOaa8yQ4dx4H1/v0vaDWsSHKFXI5oWrgvCWVOEm7ubT+DK2e
-	 RBRpXPYSONXxQ==
+	s=arc-20240116; t=1752162447; c=relaxed/simple;
+	bh=CG10AydbLDKiz7iLm8kpbdO5TAZItghs/0FO7lh9rLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g9pN9hpSgFZY67Bxmjj7kHkk8w1uqZei50vZhyKspu/m6Zoe1uhbL4NSlEMckSopWco4iCV/hnewoU3uGdyIvU7EWoR6+q3PT+nmyCqCeCg7kvtiBXyeOsxTSP56YbchjaGmryF1Udx2/s9UnR8pYKxumTkHbFX0FwfHYMdDHHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Smmq2eq8; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=bZxu+DQfctNogwYpaOLz3JI+YiDCl8GgvQ6csZ2gybM=; b=Smmq2eq8bLmDm8uRIhrsL1Iz+i
+	KDfeleHWzqJbwBBqrzQw8bqxlDE3NNE+UH5P9hCLxdYEkm2uenfLix3GBBM5cJAi4xifIlZb5RGX4
+	qp/6ggvpcg+pspjWyCcGZm9BFrgKIEc1rNSckMye0oibhVr8SyHjv2YuMS8Tur+gMoiVE/zGFR7ae
+	OmutweWxlh7yvdVHcv16t6DNs7rWFQQTL2qoPAuTix1NsYkTQyXDetxhVA/kuXT3e2k5N/zKNFT1G
+	ngUJqDsD5rORXZxA1Nwsl6POiRzriZcdONDtiC4Xv1vKvdr2+QDSwvw6B5vtbl+/DDdkOSSf8zx6I
+	iSkVuDDg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZtUI-00000009438-0aQX;
+	Thu, 10 Jul 2025 15:47:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 05E1B30023C; Thu, 10 Jul 2025 17:47:05 +0200 (CEST)
+Date: Thu, 10 Jul 2025 17:47:04 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Kai Huang <kai.huang@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	Zheyun Shen <szy0127@sjtu.edu.cn>,
+	Mingwei Zhang <mizhang@google.com>,
+	Francesco Lavra <francescolavra.fl@gmail.com>
+Subject: Re: [PATCH v3 3/8] x86, lib: Add WBNOINVD helper functions
+Message-ID: <20250710154704.GJ1613633@noisy.programming.kicks-ass.net>
+References: <20250522233733.3176144-1-seanjc@google.com>
+ <20250522233733.3176144-4-seanjc@google.com>
+ <20250710112902.GCaG-j_l-K6LYRzZsb@fat_crate.local>
+ <20250710143729.GL1613200@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 17:46:56 +0200
-Message-Id: <DB8HQLY48DFX.3PBBUTQLV14PC@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
- <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
- "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v6 2/9] rust: sync: Add basic atomic operation mapping
- framework
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-3-boqun.feng@gmail.com>
- <DB8BQGJNFDAY.BGQ8CZSFFOLH@kernel.org> <aG_Yah5FFHcA3IZy@Mac.home>
-In-Reply-To: <aG_Yah5FFHcA3IZy@Mac.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710143729.GL1613200@noisy.programming.kicks-ass.net>
 
-On Thu Jul 10, 2025 at 5:12 PM CEST, Boqun Feng wrote:
-> On Thu, Jul 10, 2025 at 01:04:38PM +0200, Benno Lossin wrote:
->> On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
->> > +declare_and_impl_atomic_methods!(
->> > +    AtomicHasBasicOps ("Basic atomic operations") {
->> > +        read[acquire](ptr: *mut Self) -> Self {
->> > +            call(ptr.cast())
->> > +        }
->> > +
->> > +        set[release](ptr: *mut Self, v: Self) {
->> > +            call(ptr.cast(), v)
->> > +        }
->> > +    }
->>=20
->> I think this would look a bit better:
->>=20
->>     /// Basic atomic operations.
->>     pub trait AtomicHasBasicOps {
->>         unsafe fn read[acquire](ptr: *mut Self) -> Self {
->>             bindings::#call(ptr.cast())
->>         }
->>=20
->>         unsafe fn set[release](ptr: *mut Self, v: Self) {
->>             bindings::#call(ptr.cast(), v)
->>         }
->>     }
->>=20
->
-> Make sense, I've made `pub trait`, `bindings::#` and `unsafe fn`
-> hard-coded:
->
-> macro_rules! declare_and_impl_atomic_methods {
->     (#[doc =3D $doc:expr] pub trait $ops:ident {
+On Thu, Jul 10, 2025 at 04:37:29PM +0200, Peter Zijlstra wrote:
+> On Thu, Jul 10, 2025 at 01:29:02PM +0200, Borislav Petkov wrote:
+> > On Thu, May 22, 2025 at 04:37:27PM -0700, Sean Christopherson wrote:
+> > > diff --git a/arch/x86/lib/cache-smp.c b/arch/x86/lib/cache-smp.c
+> > > index 079c3f3cd32c..1789db5d8825 100644
+> > > --- a/arch/x86/lib/cache-smp.c
+> > > +++ b/arch/x86/lib/cache-smp.c
+> > > @@ -19,3 +19,14 @@ void wbinvd_on_all_cpus(void)
+> > >  	on_each_cpu(__wbinvd, NULL, 1);
+> > >  }
+> > >  EXPORT_SYMBOL(wbinvd_on_all_cpus);
+> > > +
+> > > +static void __wbnoinvd(void *dummy)
+> > > +{
+> > > +	wbnoinvd();
+> > > +}
+> > > +
+> > > +void wbnoinvd_on_all_cpus(void)
+> > > +{
+> > > +	on_each_cpu(__wbnoinvd, NULL, 1);
+> > > +}
+> > > +EXPORT_SYMBOL(wbnoinvd_on_all_cpus);
+> > 
+> > If there's no particular reason for the non-GPL export besides being
+> > consistent with the rest - yes, I did the change for wbinvd_on_all_cpus() but
+> > that was loooong time ago - I'd simply make this export _GPL.
+> 
+> Uhhhh, how about we use this fancy export to known modules only thing
+> for this?
+> 
+> These are typical things we do *NOT* want people to actually use.
 
-You should allow any kind of attribute (and multiple), that makes it
-much simpler.
+So kvm-amd is the SEV stuff, AGPGART is the ancient crap nobody cares
+about, CCP is more SEV stuff, DRM actually does CLFLUSH loops, but has a
+WBINVD fallback. i915 is rude and actually does WBINVD. Could they
+pretty please also do CLFLUSH loops?
 
->         $(
->             unsafe fn $func:ident [$($variant:ident),*]($($arg_sig:tt)*) =
-$( -> $ret:ty)? {
->                 bindings::#call($($arg:tt)*)
->             }
->         )*
->     }) =3D> {
->
-> It shouldn't be very hard to make use of the actual visibility or
-> unsafe, but we currently don't have other visibility or safe function,
-> so it's simple to keep it as it is.
-
-Yeah I also meant hardcoding them.
-
->> And then we could also put the safety comments inline:
->>=20
->>     /// Basic atomic operations.
->>     pub trait AtomicHasBasicOps {
->>         /// Atomic read
->>         ///
->>         /// # Safety
->>         /// - Any pointer passed to the function has to be a valid point=
-er
->>         /// - Accesses must not cause data races per LKMM:
->>         ///   - Atomic read racing with normal read, normal write or ato=
-mic write is not a data race.
->>         ///   - Atomic write racing with normal read or normal write is =
-a data race, unless the
->>         ///     normal access is done from the C side and considered imm=
-une to data races, e.g.
->>         ///     `CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC`.
->>         unsafe fn read[acquire](ptr: *mut Self) -> Self {
->>             // SAFETY: Per function safety requirement, all pointers are=
- valid, and accesses won't
->>             // cause data race per LKMM.
->>             unsafe { bindings::#call(ptr.cast()) }
->>         }
->>=20
->>         /// Atomic read
->
-> Copy-pasta ;-)
->
->>         ///
->>         /// # Safety
->>         /// - Any pointer passed to the function has to be a valid point=
-er
->>         /// - Accesses must not cause data races per LKMM:
->>         ///   - Atomic read racing with normal read, normal write or ato=
-mic write is not a data race.
->>         ///   - Atomic write racing with normal read or normal write is =
-a data race, unless the
->>         ///     normal access is done from the C side and considered imm=
-une to data races, e.g.
->>         ///     `CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC`.
->>         unsafe fn set[release](ptr: *mut Self, v: Self) {
->>             // SAFETY: Per function safety requirement, all pointers are=
- valid, and accesses won't
->>             // cause data race per LKMM.
->>             unsafe { bindings::#call(ptr.cast(), v) }
->>         }
->>     }
->>=20
->> I'm not sure if this is worth it, but for reading the definitions of
->> these operations directly in the code this is going to be a lot more
->> readable. I don't think it's too bad to duplicate it.
->>=20
->> I'm also not fully satisfied with the safety comment on
->> `bindings::#call`...
->>=20
->
-> Based on the above, I'm not going to do the change (i.e. duplicating
-> the safe comments and improve them), and I would make an issue tracking
-> it, and we can revisit it when we have time. Sounds good?
-
-Sure, I feel like some kind of method duplication macro might be much
-better here, like:
-
-    multi_functions! {
-        pub trait AtomicHasBasicOps {
-            /// Atomic read
-            ///
-            /// # Safety
-            /// - Any pointer passed to the function has to be a valid poin=
-ter
-            /// - Accesses must not cause data races per LKMM:
-            ///   - Atomic read racing with normal read, normal write or at=
-omic write is not a data race.
-            ///   - Atomic write racing with normal read or normal write is=
- a data race, unless the
-            ///     normal access is done from the C side and considered im=
-mune to data races, e.g.
-            ///     `CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC`.
-            unsafe fn [<read, read_acquire>](ptr: *mut Self) -> Self;
-
-            // ...
-        }
-    }
-
-And then also allow it on impls. I don't really like the idea of
-duplicating and thus hiding the safety docs... But I also see that just
-copy pasting them everywhere isn't really a good solution either...
+Anyway, the below seems to survive an allmodconfig.
 
 ---
-Cheers,
-Benno
+diff --git a/arch/x86/lib/cache-smp.c b/arch/x86/lib/cache-smp.c
+index c5c60d07308c..ac3cc32a4054 100644
+--- a/arch/x86/lib/cache-smp.c
++++ b/arch/x86/lib/cache-smp.c
+@@ -12,19 +12,19 @@ void wbinvd_on_cpu(int cpu)
+ {
+ 	smp_call_function_single(cpu, __wbinvd, NULL, 1);
+ }
+-EXPORT_SYMBOL(wbinvd_on_cpu);
++EXPORT_SYMBOL_GPL_FOR_MODULES(wbinvd_on_cpu, "kvm-amd,agpgart,ccp,drm,i915");
+ 
+ void wbinvd_on_all_cpus(void)
+ {
+ 	on_each_cpu(__wbinvd, NULL, 1);
+ }
+-EXPORT_SYMBOL(wbinvd_on_all_cpus);
++EXPORT_SYMBOL_GPL_FOR_MODULES(wbinvd_on_all_cpus, "kvm-amd,agpgart,ccp,drm,i915,intel-gtt");
+ 
+ void wbinvd_on_cpus_mask(struct cpumask *cpus)
+ {
+ 	on_each_cpu_mask(cpus, __wbinvd, NULL, 1);
+ }
+-EXPORT_SYMBOL_GPL(wbinvd_on_cpus_mask);
++EXPORT_SYMBOL_GPL_FOR_MODULES(wbinvd_on_cpus_mask, "kvm,kvm-amd,agpgart,ccp,drm,i915");
+ 
+ static void __wbnoinvd(void *dummy)
+ {
+@@ -35,10 +35,10 @@ void wbnoinvd_on_all_cpus(void)
+ {
+ 	on_each_cpu(__wbnoinvd, NULL, 1);
+ }
+-EXPORT_SYMBOL_GPL(wbnoinvd_on_all_cpus);
++EXPORT_SYMBOL_GPL_FOR_MODULES(wbnoinvd_on_all_cpus, "kvm-amd,agpgart,ccp,drm,i915");
+ 
+ void wbnoinvd_on_cpus_mask(struct cpumask *cpus)
+ {
+ 	on_each_cpu_mask(cpus, __wbnoinvd, NULL, 1);
+ }
+-EXPORT_SYMBOL_GPL(wbnoinvd_on_cpus_mask);
++EXPORT_SYMBOL_GPL_FOR_MODULES(wbnoinvd_on_cpus_mask, "kvm-amd,agpgart,ccp,drm,i915");
 
