@@ -1,117 +1,123 @@
-Return-Path: <linux-kernel+bounces-726428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37BF6B00D0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:28:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E0EB00D14
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083DD647957
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:27:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B40FA189B872
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143382FE327;
-	Thu, 10 Jul 2025 20:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286DF3074A4;
+	Thu, 10 Jul 2025 20:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MAZHJaQE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="I4VXMUj0"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D75302CBE;
-	Thu, 10 Jul 2025 20:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADD8306DBB
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 20:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752179136; cv=none; b=CMaB9KIxVfbZtvXczeMNnMLfE8KAuX6Q9wteQv3YfT6lpdDslj5cp1ntUymZiN87WIIuSYWhthYzbckP8Ocypl9vuuJuEM6XUzcy+9hQ3y2R2izbkBJByPrZ1pCm6kjnS3PqB/m6NRyHQU+MoMBGBvLRYHg/G+86btX58JGjBhA=
+	t=1752179143; cv=none; b=tfnpz3c7T2emQ9XQw2ZzF9MLPmV+NjjPKnnf/FqzIimzJQz6ktSv1Y9aWULQzlw5KtEH0pXfP2ddS8ESmAjwU2rGNsAy0FDOfXBR3J5lK0lkQ8uvmrvgqxpZgJbzogjUpvdL6HxWcqXrkqiZtaNML/vEyDb1V2OEE65x+IYZpQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752179136; c=relaxed/simple;
-	bh=P7zxnegUb85mA+6We1f5qwe9gxYERpxjlx3DtZfguCA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tzn784DNiBzSooEy7Mv4alCGmoLeMDrEGIUAE6LYrR102v5T8JNe2i431TT8lsijfPvr5Oi1AofzjDLycrgkNANTbkNsnf6lPVEGPT5lbaxcCM6GL6MKPWhWXoP6LDWh8GsGrLEDE/NXrDStfnYjKESPmoXu70HHkSPpdDQL1lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MAZHJaQE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3119DC4CEE3;
-	Thu, 10 Jul 2025 20:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752179135;
-	bh=P7zxnegUb85mA+6We1f5qwe9gxYERpxjlx3DtZfguCA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=MAZHJaQEl4RJFiWhzI3upsOYplIPkUFIXG+52Z7Vn9eyuEbdwP9bNFfV2xivWTVzr
-	 qVJZwBHTtqwWiJo7G+LSHGQLJYDnpzXx6tq0AgokWVmFdm9o25DeuDvREcmijzCUaG
-	 C800Ch4D0aC58qxnP60bRmCL+9euDH1tZn7dW8BgqVo6gilYGnHtfGrdSFzzZF+w3T
-	 YoCxACJHdqSjeJ4uyWsy38HG8b2yROMCk3Wk/44rOnd+DKeNgXf69VDuDv1Mw41Qm3
-	 ydBZbFVHDKmQQdtuod0CVXVRQZgfDBVceHKgIvfxtpGor0S/vS0C6oK8apDSkj/Q07
-	 W6KHh5QCtpOYA==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Thu, 10 Jul 2025 13:25:26 -0700
-Subject: [PATCH] riscv: Only allow LTO with CMODEL_MEDANY
+	s=arc-20240116; t=1752179143; c=relaxed/simple;
+	bh=dpAvXXm8l9op444PryNU84jOrFviRRWTvceQmBQJj7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CHdvMVObzMP/DXWK/wXGTnD6wAG8vi1qCBm4VWsMP4xJZ8zeFJLaOQeFreRzu1jemmxjdd/00GBKosEfHJJaC5+mxRcUt8/kr1HqpJSZ8Fxg7XvAHFWExacRZzP97GZxljFFKjG0eG2Qy9RkZ0mg6qr9iYKyCXREhd8tSQqmi68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=I4VXMUj0; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-875f57e0cb9so114092539f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:25:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1752179140; x=1752783940; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UOW545cnbFCjCw58sZPhZTZK+ICYR+NAj71Tm0cVR1c=;
+        b=I4VXMUj0R8NIbRQnVuwJWK8PrblaXKN9R9z4QUznOgnc9i+bwH6CMwDUdwG7IbHyEA
+         ypo2N4NNJnoAupyWhU8JGZqXBbteLu5tvU1oP4fi8mBvnzOThtn40JV7RhWPmF58mRuo
+         /0RDmIlkII/7J3DqCyMR36zkYIy6jWIjs8gWs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752179140; x=1752783940;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UOW545cnbFCjCw58sZPhZTZK+ICYR+NAj71Tm0cVR1c=;
+        b=tldqvH6Ao/goKQMXJoxO0vyA4v9/mtU5OU8KEU0yqIgqs1Cdsx9/wVOMMffY4vfU7X
+         fPNzrQoYWV23TMCEnG4HU5y4KpkZZPYF0UfonZMNFdPkv0l/XpCWeoEucm8Lsgs6fJ4v
+         PABrYgKlZx4xb4OXcRg271xE7NRUbrXO28qQDK3Wh1Qvf5Sxts/jjbFzhC3/LzEL6vWt
+         gY15MTfbJwavzDMOGQmjcZxKq1BOlXzyQcP1OZy/Ou68FHIOZhyjTLw2KcaqjfOBatJv
+         eXjtKfJpKWdR5qa2bBv1pHshbU0OSNy/RVgMPUObAWQV1YXey7+pkySLpDm0m+2Byenj
+         sZiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsArO/lnBoCuXiU+QfZSqZZ2nClU/LYgPeMuDWoHMs1MkuKxX/eZFnhD6Qhwp7cRiZF/N8p3bIaL0Cqe4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOUtU5n1UEhBsq6fTE71suExqMKcOmZptB9oDPH+5C90pMmGSi
+	gajJGKClcBmj/WXjXTQEFchVhfVrSMMnfLJnpRG4631QxuwljH10HaahVDP2t6KJiFY=
+X-Gm-Gg: ASbGncvYjUuqWyT92g/LYaAKSEBG35eeXtLa6Kh0U43Ae+ROPYXZieIiK9xB3WAj1YW
+	b2zflH6CZgU1MRRuvVDr48c/KWEHAyHoKmk53bq2HTa8tLh0Lm0t8wPnYgewPhRNl4LryFjr8/Y
+	6vKEajPnTN/+nODbh/HH0IcGHRf4zwNbRsGInRqOOPWNHi+S21K17QA9Zals1c8gqD7/VH1MH1p
+	iMbaWtyIfKchtm8ZZiM1poiJNYdmE0xIAb8/qiCXmMFRlQrwsAq/p94C9c4SDGTluJArPoMgaFO
+	mUldgO8o/WTHWyfTPg2wOxzyT06EYkiB78Z0w2iIXGvKvmu0VChxSbi7I1T5JtiCK+ii3Jirtg=
+	=
+X-Google-Smtp-Source: AGHT+IHzlWsf/jsE9z63MA8RnwflOpfP+qTaGsCEOAMrn0ovuDzhRAv3fYk2H2SczvZO524QmmMh8g==
+X-Received: by 2002:a05:6e02:3420:b0:3df:3b77:1ed8 with SMTP id e9e14a558f8ab-3e25329bb7dmr10180025ab.7.1752179139748;
+        Thu, 10 Jul 2025 13:25:39 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e2462422bfsm7371645ab.60.2025.07.10.13.25.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 13:25:39 -0700 (PDT)
+Message-ID: <78cd5960-ea18-4e18-9f13-fb3c513014f2@linuxfoundation.org>
+Date: Thu, 10 Jul 2025 14:25:38 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: breakpoints: use suspend_stats to reliably
+ check suspend success
+To: Moon Hee Lee <moonhee.lee.ca@gmail.com>, shuah@kernel.org
+Cc: yifei.l.liu@oracle.com, zhujun2@cmss.chinamobile.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linux.dev, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250626191626.36794-1-moonhee.lee.ca@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250626191626.36794-1-moonhee.lee.ca@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-riscv-restrict-lto-to-medany-v1-1-b1dac9871ecf@kernel.org>
-X-B4-Tracking: v=1; b=H4sIALUhcGgC/x3MTQqEMAxA4atI1gZaoYheRVz0J84EtEpSRBHvP
- mXgbb7Ne0BJmBTG5gGhk5X3XGHbBuLX5w8hp2roTOdMbw0KazxRSItwLLiWHWsbJZ9vXGzoU3J
- xCMFDXRxCC1///TS/7w8UBY/6bgAAAA==
-X-Change-ID: 20250710-riscv-restrict-lto-to-medany-f1b7dd5c9bba
-To: Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org, 
- llvm@lists.linux.dev, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- kernel test robot <lkp@intel.com>, Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2038; i=nathan@kernel.org;
- h=from:subject:message-id; bh=P7zxnegUb85mA+6We1f5qwe9gxYERpxjlx3DtZfguCA=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBkFinvFdQXcOyVYGBbwrDGPu3pHf842lsbawhssml7F1
- uX/70V1lLIwiHExyIopslQ/Vj1uaDjnLOONU5Ng5rAygQxh4OIUgIm8Fmb4H5O99uTxLbNfv1xd
- 9LcnXNImkOfzJ2HrGDflFT2v88NduBkZmv9M5f5x74Jot33wwuXb8h55fn3NLnFWMjtOb1bCr3m
- JzAA=
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-When building with CONFIG_CMODEL_MEDLOW and CONFIG_LTO_CLANG, there is a
-series of errors due to some files being unconditionally compiled with
-'-mcmodel=medany', mismatching with the rest of the kernel built with
-'-mcmodel=medlow':
+On 6/26/25 13:16, Moon Hee Lee wrote:
+> The step_after_suspend_test verifies that the system successfully
+> suspended and resumed by setting a timerfd and checking whether the
+> timer fully expired. However, this method is unreliable due to timing
+> races.
+> 
+> In practice, the system may take time to enter suspend, during which the
+> timer may expire just before or during the transition. As a result,
+> the remaining time after resume may show non-zero nanoseconds, even if
+> suspend/resume completed successfully. This leads to false test failures.
+> 
+> Replace the timer-based check with a read from
+> /sys/power/suspend_stats/success. This counter is incremented only
+> after a full suspend/resume cycle, providing a reliable and race-free
+> indicator.
+> 
+> Also remove the unused file descriptor for /sys/power/state, which
+> remained after switching to a system() call to trigger suspend [1].
+> 
+> [1] https://lore.kernel.org/all/20240930224025.2858767-1-yifei.l.liu@oracle.com/
+> 
+> Fixes: c66be905cda2 ("selftests: breakpoints: use remaining time to check if suspend succeed")
+> Signed-off-by: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+> ---
 
-  ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 899908), and 'i32 1' from vmlinux.a(net-traces.o at 1014628)
+Applied to linux-kselftest next branch for Linux 6.17-rc1
 
-Only allow LTO to be performed when CONFIG_CMODEL_MEDANY is enabled to
-ensure there will be no code model mismatch errors. An alternative
-solution would be disabling LTO for the files with a different code
-model than the main kernel like some specialized areas of the kernel do
-but doing that for individual files is not as sustainable than
-forbidding the combination altogether.
-
-Cc: stable@vger.kernel.org
-Fixes: 021d23428bdb ("RISC-V: build: Allow LTO to be selected")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202506290255.KBVM83vZ-lkp@intel.com/
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- arch/riscv/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 36061f4732b7..4eee737a050f 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -68,7 +68,7 @@ config RISCV
- 	select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
- 	select ARCH_SUPPORTS_HUGETLBFS if MMU
- 	# LLD >= 14: https://github.com/llvm/llvm-project/issues/50505
--	select ARCH_SUPPORTS_LTO_CLANG if LLD_VERSION >= 140000
-+	select ARCH_SUPPORTS_LTO_CLANG if LLD_VERSION >= 140000 && CMODEL_MEDANY
- 	select ARCH_SUPPORTS_LTO_CLANG_THIN if LLD_VERSION >= 140000
- 	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS if 64BIT && MMU
- 	select ARCH_SUPPORTS_PAGE_TABLE_CHECK if MMU
-
----
-base-commit: fda589c286040d9ba2d72a0eaf0a13945fc48026
-change-id: 20250710-riscv-restrict-lto-to-medany-f1b7dd5c9bba
-
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
-
+thanks,
+-- Shuah
 
