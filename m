@@ -1,163 +1,271 @@
-Return-Path: <linux-kernel+bounces-725000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBC3AFF99C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:21:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88758AFF99F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 516E8B41968
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:20:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66EA23B4873
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A980428750A;
-	Thu, 10 Jul 2025 06:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0E62857FF;
+	Thu, 10 Jul 2025 06:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u0VcIind";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WNlullci"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7H2EAJG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775871F948;
-	Thu, 10 Jul 2025 06:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D3827FD4A;
+	Thu, 10 Jul 2025 06:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752128493; cv=none; b=Z3WBAK64J2OmiJmJbrK+yaWmEuTuFgJ5if6DTvzcQFlwcWni/cCJ80FDklv1sGrtEzWzSe6XPaPox3U55BAYCLcHzF2IPZ5un7Jbg9y/gMGLpCHCRGVHpvwW9qRddztqBwW1PA+bQuAJPHIhn/KbigKXSJwGpQfKZLgDquueos8=
+	t=1752128526; cv=none; b=O1QwbekeGjtP8FVuxmOK3sS4wiHE7FNy2OupRhbyVd+7TeQmfUtp/i5uI2xqv/+qRrUMRz6IwK0eYYu1W34I38D0V9w/ERByPX/doFXKseMEYJNIF74NPUF0X7FbeFWDi7H/ZPWUDhuO5yQOfKxahgpp5se3PACONtR8yuLtH/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752128493; c=relaxed/simple;
-	bh=HKk1TXT/elCUckABOi7nQjnbhFAoy0ksCF6kdatm9S0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJZvcv1upWMXnT50VA03UVSdsc7dlqaktZb+g2044E04X22SX8loUGlmg5tbYCbOspJcIyRP/gKWC/e8s0t3pCLJe4uE1eBAPjQybFSYqm7eTl8709NYdVdHZXVNqIjYTMCZ54Dn1dvVLYWe5uNwRJ2L0/wfJfv9ZRAsIIg4w04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u0VcIind; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WNlullci; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 10 Jul 2025 08:21:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752128489;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hoVDFEhzdw4xLmQyVO2AhjEgBOLroUBOpc+jt0DrQQ8=;
-	b=u0VcIindh9wkQ4btLIM4EIkuqFd0y7fVkxQh87q1QAgVkogt8WP1FvOcpUDRX8nyvVbYuM
-	Ahpj1z77RZdNV9YzINUwBC65H4HR3vsuDzEhgo84W02v7dAD7mspETwNAGgfQ2tEwktDZJ
-	gS8AFDhR0cmg667iEkIa9tZvtPgi4Z2jCCX0KZq2Of7whG+XOx4Rnm/0QxUVWguBnR0YUe
-	c09SRiG0SuYtoeTB5eyfRdx05ix+qKcFpJe4pEQ/Y1qFbFwlNmvt2KL34RUb2rR9H2HUie
-	huxiBXnokVyV7Ejx0YBBGKO7irHaTCTdjc+yKNNZW9YCvJeptKrKFh+P3R6xdg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752128489;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hoVDFEhzdw4xLmQyVO2AhjEgBOLroUBOpc+jt0DrQQ8=;
-	b=WNlullciP7Aizocv9Sd+z3qURZ/QTbs22xiC17wMCXtGTg/UQs3RUx9CUeUepqFiglONEg
-	g3obNyvyIra+FZAg==
-From: Nam Cao <namcao@linutronix.de>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
-Message-ID: <20250710062127.QnaeZ8c7@linutronix.de>
-References: <20250527090836.1290532-1-namcao@linutronix.de>
- <20250701-wochen-bespannt-33e745d23ff6@brauner>
- <cda3b07998b39b7d46f10394c232b01a778d07a9.camel@xry111.site>
- <20250710034805.4FtG7AHC@linutronix.de>
- <20250710040607.GdzUE7A0@linutronix.de>
- <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
+	s=arc-20240116; t=1752128526; c=relaxed/simple;
+	bh=F7IPP3+v5+yxFwd4x9NFi1Xh15+8h2Kg9anbcfSMzko=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KzGIDaSHf5d7qynAyyP+osPJDbDeSuzguHKHxea1oo+lIIwy70ZMTxUuMWh1UUv1HZaYWw3BNcb5WuKqZeNP561/gsFsAtsJx9phntBmCHlxmypl7ShvCbRmnb30NvLk396AVvnGlpRHy2KCc2+6MaIIZJEQcINRx6Pls702kP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C7H2EAJG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7019C4CEE3;
+	Thu, 10 Jul 2025 06:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752128525;
+	bh=F7IPP3+v5+yxFwd4x9NFi1Xh15+8h2Kg9anbcfSMzko=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=C7H2EAJGY/Dzmahul98jnr0SJGHUEfAM7mJs40hQIxn9I/bYnwYDYRcs2GJ0bQa8d
+	 RHZL3OsKwE5+ESDQAi2CfDin/7dlIfAUiH2uDif9abqp0+UKvMHmVoljnEc9YSwziS
+	 ykEJBA5/Su3jYmwNizPcenaFp+HxvqIKzO8ZCsECSY484osXiUQDwjWXmrllozKfX0
+	 4x6A/hUWL2BQ1t1iNfvmQmQHFJBv3HcEPmRbJkEBviR4zNMJUlrNpfvXHna2EVmyzo
+	 al6P4xfq3knjtnThkdmJZtHiGbhRkysyNvbnxHMV+zrk5Zf2lfiYMKq7hM6aL/17T9
+	 adEBNd0xbxSxw==
+Date: Thu, 10 Jul 2025 08:22:01 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 08/12] docs: kdoc: Regularize the use of the declaration
+ name
+Message-ID: <20250710082201.3a4aa762@foz.lan>
+In-Reply-To: <20250702223524.231794-9-corbet@lwn.net>
+References: <20250702223524.231794-1-corbet@lwn.net>
+	<20250702223524.231794-9-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 11:08:18AM +0800, Xi Ruoyao wrote:
-> After upgrading my kernel to the recent mainline I've encountered some
-> stability issue, like:
+Em Wed,  2 Jul 2025 16:35:20 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
+
+> Each declaration type passes through the name in a unique field of the
+> "args" blob - even though we have always just passed the name separately.
+> Get rid of all the weird names and just use the common version.
 > 
-> - When GDM started gnome-shell, the screen often froze and the only
-> thing I could do was to switch into a VT and reboot.
-> - Sometimes gnome-shell started "fine" but then starting an application
-> (like gnome-console) needed to wait for about a minute.
-> - Sometimes the system shutdown process hangs waiting for a service to
-> stop.
-> - Rarely the system boot process hangs for no obvious reason.
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+
+LGTM.
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+> ---
+>  scripts/lib/kdoc/kdoc_output.py | 39 +++++++++++++--------------------
+>  scripts/lib/kdoc/kdoc_parser.py |  6 -----
+>  2 files changed, 15 insertions(+), 30 deletions(-)
 > 
-> Most strangely in all the cases there are nothing alarming in dmesg or
-> system journal.
-> 
-> I'm unsure if this is the culprit but I'm almost sure it's the trigger.
-> Maybe there's some race condition in my userspace that the priority
-> inversion had happened to hide...  but anyway reverting this patch
-> seemed to "fix" the issue.
-> 
-> Any thoughts or pointers to diagnose further?
+> diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
+> index d6f4d9e7173b..8a31b637ffd2 100644
+> --- a/scripts/lib/kdoc/kdoc_output.py
+> +++ b/scripts/lib/kdoc/kdoc_output.py
+> @@ -367,11 +367,11 @@ class RestFormat(OutputFormat):
+>  
+>          func_macro = args.get('func_macro', False)
+>          if func_macro:
+> -            signature = args['function']
+> +            signature = name
+>          else:
+>              if args.get('functiontype'):
+>                  signature = args['functiontype'] + " "
+> -            signature += args['function'] + " ("
+> +            signature += name + " ("
+>  
+>          ln = args.get('declaration_start_line', 0)
+>          count = 0
+> @@ -391,7 +391,7 @@ class RestFormat(OutputFormat):
+>  
+>          self.print_lineno(ln)
+>          if args.get('typedef') or not args.get('functiontype'):
+> -            self.data += f".. c:macro:: {args['function']}\n\n"
+> +            self.data += f".. c:macro:: {name}\n\n"
+>  
+>              if args.get('typedef'):
+>                  self.data += "   **Typedef**: "
+> @@ -445,7 +445,6 @@ class RestFormat(OutputFormat):
+>      def out_enum(self, fname, name, args):
+>  
+>          oldprefix = self.lineprefix
+> -        name = args.get('enum', '')
+>          ln = args.get('declaration_start_line', 0)
+>  
+>          self.data += f"\n\n.. c:enum:: {name}\n\n"
+> @@ -475,7 +474,6 @@ class RestFormat(OutputFormat):
+>      def out_typedef(self, fname, name, args):
+>  
+>          oldprefix = self.lineprefix
+> -        name = args.get('typedef', '')
+>          ln = args.get('declaration_start_line', 0)
+>  
+>          self.data += f"\n\n.. c:type:: {name}\n\n"
+> @@ -492,7 +490,6 @@ class RestFormat(OutputFormat):
+>  
+>      def out_struct(self, fname, name, args):
+>  
+> -        name = args.get('struct', "")
+>          purpose = args.get('purpose', "")
+>          declaration = args.get('definition', "")
+>          dtype = args.get('type', "struct")
+> @@ -632,16 +629,16 @@ class ManFormat(OutputFormat):
+>      def out_function(self, fname, name, args):
+>          """output function in man"""
+>  
+> -        self.data += f'.TH "{args["function"]}" 9 "{args["function"]}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
+> +        self.data += f'.TH "{name}" 9 "{name}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
+>  
+>          self.data += ".SH NAME\n"
+> -        self.data += f"{args['function']} \\- {args['purpose']}\n"
+> +        self.data += f"{name} \\- {args['purpose']}\n"
+>  
+>          self.data += ".SH SYNOPSIS\n"
+>          if args.get('functiontype', ''):
+> -            self.data += f'.B "{args["functiontype"]}" {args["function"]}' + "\n"
+> +            self.data += f'.B "{args["functiontype"]}" {name}' + "\n"
+>          else:
+> -            self.data += f'.B "{args["function"]}' + "\n"
+> +            self.data += f'.B "{name}' + "\n"
+>  
+>          count = 0
+>          parenth = "("
+> @@ -676,16 +673,13 @@ class ManFormat(OutputFormat):
+>              self.output_highlight(text)
+>  
+>      def out_enum(self, fname, name, args):
+> -
+> -        name = args.get('enum', '')
+> -
+> -        self.data += f'.TH "{self.modulename}" 9 "enum {args["enum"]}" "{self.man_date}" "API Manual" LINUX' + "\n"
+> +        self.data += f'.TH "{self.modulename}" 9 "enum {name}" "{self.man_date}" "API Manual" LINUX' + "\n"
+>  
+>          self.data += ".SH NAME\n"
+> -        self.data += f"enum {args['enum']} \\- {args['purpose']}\n"
+> +        self.data += f"enum {name} \\- {args['purpose']}\n"
+>  
+>          self.data += ".SH SYNOPSIS\n"
+> -        self.data += f"enum {args['enum']}" + " {\n"
+> +        self.data += f"enum {name}" + " {\n"
+>  
+>          count = 0
+>          for parameter in args.parameterlist:
+> @@ -710,13 +704,12 @@ class ManFormat(OutputFormat):
+>  
+>      def out_typedef(self, fname, name, args):
+>          module = self.modulename
+> -        typedef = args.get('typedef')
+>          purpose = args.get('purpose')
+>  
+> -        self.data += f'.TH "{module}" 9 "{typedef}" "{self.man_date}" "API Manual" LINUX' + "\n"
+> +        self.data += f'.TH "{module}" 9 "{name}" "{self.man_date}" "API Manual" LINUX' + "\n"
+>  
+>          self.data += ".SH NAME\n"
+> -        self.data += f"typedef {typedef} \\- {purpose}\n"
+> +        self.data += f"typedef {name} \\- {purpose}\n"
+>  
+>          for section, text in args.sections.items():
+>              self.data += f'.SH "{section}"' + "\n"
+> @@ -724,22 +717,20 @@ class ManFormat(OutputFormat):
+>  
+>      def out_struct(self, fname, name, args):
+>          module = self.modulename
+> -        struct_type = args.get('type')
+> -        struct_name = args.get('struct')
+>          purpose = args.get('purpose')
+>          definition = args.get('definition')
+>  
+> -        self.data += f'.TH "{module}" 9 "{struct_type} {struct_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
+> +        self.data += f'.TH "{module}" 9 "{args.type} {name}" "{self.man_date}" "API Manual" LINUX' + "\n"
+>  
+>          self.data += ".SH NAME\n"
+> -        self.data += f"{struct_type} {struct_name} \\- {purpose}\n"
+> +        self.data += f"{args.type} {name} \\- {purpose}\n"
+>  
+>          # Replace tabs with two spaces and handle newlines
+>          declaration = definition.replace("\t", "  ")
+>          declaration = KernRe(r"\n").sub('"\n.br\n.BI "', declaration)
+>  
+>          self.data += ".SH SYNOPSIS\n"
+> -        self.data += f"{struct_type} {struct_name} " + "{" + "\n.br\n"
+> +        self.data += f"{args.type} {name} " + "{" + "\n.br\n"
+>          self.data += f'.BI "{declaration}\n' + "};\n.br\n\n"
+>  
+>          self.data += ".SH Members\n"
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index 298abd260264..6e35e508608b 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -790,7 +790,6 @@ class KernelDoc:
+>                  level += 1
+>  
+>          self.output_declaration(decl_type, declaration_name,
+> -                                struct=declaration_name,
+>                                  definition=declaration,
+>                                  purpose=self.entry.declaration_purpose)
+>  
+> @@ -870,7 +869,6 @@ class KernelDoc:
+>                                f"Excess enum value '%{k}' description in '{declaration_name}'")
+>  
+>          self.output_declaration('enum', declaration_name,
+> -                                enum=declaration_name,
+>                                  purpose=self.entry.declaration_purpose)
+>  
+>      def dump_declaration(self, ln, prototype):
+> @@ -1031,14 +1029,12 @@ class KernelDoc:
+>  
+>          if 'typedef' in return_type:
+>              self.output_declaration(decl_type, declaration_name,
+> -                                    function=declaration_name,
+>                                      typedef=True,
+>                                      functiontype=return_type,
+>                                      purpose=self.entry.declaration_purpose,
+>                                      func_macro=func_macro)
+>          else:
+>              self.output_declaration(decl_type, declaration_name,
+> -                                    function=declaration_name,
+>                                      typedef=False,
+>                                      functiontype=return_type,
+>                                      purpose=self.entry.declaration_purpose,
+> @@ -1077,7 +1073,6 @@ class KernelDoc:
+>              self.create_parameter_list(ln, decl_type, args, ',', declaration_name)
+>  
+>              self.output_declaration(decl_type, declaration_name,
+> -                                    function=declaration_name,
+>                                      typedef=True,
+>                                      functiontype=return_type,
+>                                      purpose=self.entry.declaration_purpose)
+> @@ -1099,7 +1094,6 @@ class KernelDoc:
+>                  return
+>  
+>              self.output_declaration('typedef', declaration_name,
+> -                                    typedef=declaration_name,
+>                                      purpose=self.entry.declaration_purpose)
+>              return
+>  
 
-I have been running this new epoll on my work machine for weeks by now
-without issue, while you seem to reproduce it reliably. I'm guessing that
-the problem is on some code path which is dead on my system, but executed
-on yours.
 
-I am curious if Gnome is using some epoll options which are unused on my
-system.
 
-I presume you can still access dmesg despite the freeze. Do you mind
-running the below patch, let me know what's in your dmesg? It may help
-identifying that code path.
-
-Best regards,
-Nam
-
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 895256cd2786..e3dafc48a59a 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -532,6 +532,9 @@ static long ep_eventpoll_bp_ioctl(struct file *file, unsigned int cmd,
- 		WRITE_ONCE(ep->busy_poll_usecs, epoll_params.busy_poll_usecs);
- 		WRITE_ONCE(ep->busy_poll_budget, epoll_params.busy_poll_budget);
- 		WRITE_ONCE(ep->prefer_busy_poll, epoll_params.prefer_busy_poll);
-+		printk("%s busy_poll_usecs=%d busy_poll_budget=%d prefer_busy_poll=%d\n",
-+			__func__, epoll_params.busy_poll_usecs, epoll_params.busy_poll_budget,
-+			epoll_params.prefer_busy_poll);
- 		return 0;
- 	case EPIOCGPARAMS:
- 		memset(&epoll_params, 0, sizeof(epoll_params));
-@@ -2120,6 +2123,9 @@ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
- 	struct epitem *epi;
- 	struct eventpoll *tep = NULL;
- 
-+	printk("%s: epfd=%d op=%d fd=%d events=0x%x data=0x%llx nonblock=%d\n",
-+		__func__, epfd, op, fd, epds->events, epds->data, nonblock);
-+
- 	CLASS(fd, f)(epfd);
- 	if (fd_empty(f))
- 		return -EBADF;
-diff --git a/io_uring/epoll.c b/io_uring/epoll.c
-index 8d4610246ba0..e9c33c0c8cc5 100644
---- a/io_uring/epoll.c
-+++ b/io_uring/epoll.c
-@@ -54,6 +54,8 @@ int io_epoll_ctl(struct io_kiocb *req, unsigned int issue_flags)
- 	int ret;
- 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
- 
-+	printk("%s flags=0x%x\n", __func__, issue_flags);
-+
- 	ret = do_epoll_ctl(ie->epfd, ie->op, ie->fd, &ie->event, force_nonblock);
- 	if (force_nonblock && ret == -EAGAIN)
- 		return -EAGAIN;
+Thanks,
+Mauro
 
