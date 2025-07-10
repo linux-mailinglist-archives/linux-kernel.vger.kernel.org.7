@@ -1,153 +1,175 @@
-Return-Path: <linux-kernel+bounces-725759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA50B0035A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:29:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA220B0035B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340D654301F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C005A07C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A802822E402;
-	Thu, 10 Jul 2025 13:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C651725A2AB;
+	Thu, 10 Jul 2025 13:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WdhoEKcF"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="YXS1MaOk"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688D6226CFF;
-	Thu, 10 Jul 2025 13:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2896D2586EC
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752154164; cv=none; b=LmYBRWAkelloN9Is6J/pvzeBWKCYY2eef5ViIe5EOnkK/xKu6aiG0KY+MKt0jdVZew/WfMof1XKiszxEUnSqnZWSgDuKkYorerP5TO9f5aGBkZ8qCO6dmRatsIPK2AP2ztZLh6P43OUpGNM01Vfn4sfDi+xb3z9DVPEjn0OLK+I=
+	t=1752154245; cv=none; b=Iv8tJeYWoXhwLTtczatiMaxatUaZ7mdF7KsLgwUCzY/z2lCJr+uV5vVf8O2xcWpC5YBxw8pNO29cIKLj5Sd+Dggou84ksqZUGAdBj4rOTmGwIUOY0pCK//d0NZcApZOJkd9n/96swm2qD/swkfyq520jwg9EJpL690Akmh97IPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752154164; c=relaxed/simple;
-	bh=QT4uJs+tWZcw1TbR3zjG7l7Y/uCgIXWvWRNm9KUxxkw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SctvtNQx0lrBd17udV71OXvMPXhDzZcfc9tk7ZNCyV0R6cwilkf+XXPHvsBTKNemw8tfQPapy8SNLp5nrwia2YLSwD8AvFz3eTwwT+U1H8j6KrrcioajZ40b5Jh29BbwxAoCPjJ4GvmzgzKAk/li+ofhL+huAljAQ3HVNFXW7K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WdhoEKcF; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5561d41fc96so1092813e87.1;
-        Thu, 10 Jul 2025 06:29:20 -0700 (PDT)
+	s=arc-20240116; t=1752154245; c=relaxed/simple;
+	bh=6cJe+9YLwNrTwWDQYUOtkNfP4N7/9YXpdhwaVt+OH4o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VXe4SuHXYS3vq/YeorSCJjJOUhRTS3tHPDs5D1T4NV5dwIao3tWrKwVjTf96eIo/yHnXWNobZcQB+o5kzlEBgM+g15OskteDz4x9PWIPeSQhDlIrEV+JjzKV18DDOwIfRIQOdRpQ3K7CvRQ3IcmMXR6FGRPORVSwNAnh49gIwFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=YXS1MaOk; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-74ce477af25so622770b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:30:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752154158; x=1752758958; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=piqCxXsuVfG+cbp1axCZg3t9wi+Ugx0SKEh/NShY52o=;
-        b=WdhoEKcF6cEWqdNBB7ML5nwhwjg2uHZ/sUg59aa7exE6jxHrTA4F3aOcjvbxuwfHeH
-         gN8AnyfTfipIhXGXapbD5Rb5cYYKlHUCJsZ1KaEuBssdeLHdlIW6VNoR4FGeGfsbWRPH
-         kJyghXJmzvvSqVLaX1knH/E3VkEr9CMiuSFohQI1D8AAlTSYCmPRfcWkvYB5BkMZr98R
-         XOfxrJ8AOfQkmCRUYQbZ0ZlfXM2TdPmwjnft3kUETDaMUUaddmBQMXfxqagDGvBy/7eT
-         tiVrp5wSNBNAGKcPu4GKuu2sBFumWA+MG4rXoJcMIbPLPt6N0wsPYYHwibFOy/cG+F5w
-         fpvg==
+        d=bytedance.com; s=google; t=1752154242; x=1752759042; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gSBRru92EdCdQV6HwNa+ZCQ/jNa0Vw05HCx0FcTUBpY=;
+        b=YXS1MaOk5QDe7t3fFDXsU0qT6IuOTEF1vqOPcnL/XL5XO1EEntwCGz6SqUyeMoPQhl
+         /5qvHXY6XTRgh+WiXIXPNR/PQcqJdwfc6pj7w+1/cMlkujBlHXmXEsxTTvo+Pf116AR6
+         kujTydwQFVsn1sMW6m6rDjas4RWUJSuilEWzJPEH3iJcGayuSgIw4rOBjRyPZ223Zj1f
+         5GRYryE/I4hqQXfDU2Yzu7yaFBGZ3U2D5jHzL2IDk7DK+p71NoDAV3Re5YBEVpl6GV5H
+         +CHUxtKaYBC67q5UOJiq+bi5sqWgUUtXIDeinvV9qwcQnc4ja5VmCo8dsMb/m265DpCv
+         8n8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752154158; x=1752758958;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=piqCxXsuVfG+cbp1axCZg3t9wi+Ugx0SKEh/NShY52o=;
-        b=AVtPktUheeqOAFL6Cwxo/bqsUQho8aNUF/ubiVYCulQB4P9IiU8oVvnXEoCydR0WfO
-         T5M7kzj6/JlnV5b0xvtsgyAcBBVkLcP8RL9cCMq0kUAwlxZafSwBeNCPUWSrmF96yx7V
-         FO5nBkYCuxc/tsbtQy1Pwlg9TRkILLxJgWh1XbqbFd2Wy8ONno0NeSgwxC6coIHeKg2S
-         HvUJwretPhQGfi9H9S8ESmtbiBwtOqnfqIIp+4CcxMOj58SEJvfu7WVNXts09CVZpox1
-         0WTMwgl1GvSCwSx3b8C+0Qe9puDsnFNRRT2tZB0cadUj5R+ysx9ZR0UfbZp9jExbY3Ax
-         zZJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBd6KjKU+hyK96zfFamVA8H1ILANABQSdA4tdPXDs6klOiqKNrMUYLaRPO3MFphGzN130HHcmUJWpDFw==@vger.kernel.org, AJvYcCWatKavrGfcaCop5SrKXhkLtxOLpWfDKm9FXs7MPAUT1OXmVeE4zrUwaz9bZG4YAe6SwK7yuLjWlDFNuNot@vger.kernel.org, AJvYcCWf6FFMCYzUZ2nxgYyNeJQX+rB/RBtKuCwEyDBkysobN5KMOllCeFSgOtvRAh/Q8wh9sSCPJ4IaxczUDyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb6CKNLLoa98RWhfdJfSITf/16mjb5sv7Q6uap1QlGbKTadOLh
-	O4v2TNruPfaEnAFNsi7/9ASkDDdIxI1FtesnABLuVUE9ArFdOxspmgdJxYHUio7sXN9dqfShMN+
-	BJZcb2jngo0/1BMnDOI5lSOiV1ZVEMM7iw7wzk/Y=
-X-Gm-Gg: ASbGncsRN6BMu6ZM5aaXRft0wQBI6k9kzeaeT+/K5hsMEyYVfyXyK/+p2ulboNQbWQG
-	MBj3/8NbJ+YXbSPogNuUevquoKUwHuj/S3HD0GdY7rWvp5vTlwN5OBurRi/9Zh9ytvlOxufxQrz
-	Nb8sqMYi6eujKlt2HZSMViNQg+d4daJyPV4ruFFfhnP/WBqibVxFhKeuA2w+bYXzLHZpa60WNqO
-	aZR
-X-Google-Smtp-Source: AGHT+IGjNgUJ/H9riNAilbUH8PcKjpUwWpLd+w7gGSVY7R1BBXUiEdy2K06vfMxch2Md2cDv6Xa8DdeQP24hUJnC9hU=
-X-Received: by 2002:a05:6512:3055:b0:553:2e42:fffb with SMTP id
- 2adb3069b0e04-5592e3e10c9mr968505e87.33.1752154158148; Thu, 10 Jul 2025
- 06:29:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752154242; x=1752759042;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gSBRru92EdCdQV6HwNa+ZCQ/jNa0Vw05HCx0FcTUBpY=;
+        b=K+zsDsLVIGNlj+QnyLeG7PItAXaNgbDNQvDI3TYkJ5fEdtC0Ik3zdhjSj/fpjxwEFE
+         AXJOEqgDVigA1Xk8+bIc5C+lnz9FSE+PikMoXZXZrKec5qChPRhNx0rTDxIwrN+DBpjf
+         Qo5kvqMciXERUf4LuRWC1aVU2ppspGYDY2f5NvkuNCR9pNSVm0nGK5C2uG4q5jGzAC77
+         TszBeNT0qn5p4Czd+J4BAfpLRMxeJjD9+62L8DRwt4JPHUc4gua8P4nzmuGEPUYC5zsT
+         R6t7ttmAsfHWIO5pANayz65V1Ue2AjoUDZjh5EHAcHV7wkiGilepRjXUBT6DxYggE8TZ
+         Ww6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVBVwqB+q8iubwBR9G1/0HW1ietW/C+5HyNO98LHjaNVP9wXnXw3mzCUZgxsSEYACV0clGCqnQXGa2Or1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZGnMI3fX3dMt0Vj8xXXCzdHTRPNK3t+gMpWPj1qj0BjGri1b0
+	kA0I4+8nbW42KR0tBTpu8O+/D6+lGTe/AMrIgK6xh8KBLA979cAZcnd99TSk+kS7ar0=
+X-Gm-Gg: ASbGncsrUZDUZzHaSJo9j8DO5L9Yzu89n5n/vYDxUms1lsfbk0zCoWUM0jgEH0qlMRY
+	EpQ1iG9HJkW87+9ngclDcNSAQremflmJ4c6zXhhDC852TUGsODhwR17BzK1g2fJ7UpiX3IZ1DPI
+	qx0vlE0YTvUOJ8Fj1dh2gu5owy4jpSroCCUIB+KzEa3u+2NC5iQAkIjfxThTQFKJrvnN9SlpBv8
+	J8r0ZGLFIcrbGMzGsPpPPnLw6tlNMpKO/aojfgLCJq4OvwIPtsvLFX7YRwgZx46xEoAhpho26cS
+	ji4TrtKXi3S736t1iWdunA+n/WvKIDbC9ySz+RrhPRleWfREag8Q3niN9KiZto+Gvi/sPgWtA7U
+	V3foRVl3LMRQXW3TYOEmoXKDWrzKb11FNxsjXRwzlnS6BxKSVfA==
+X-Google-Smtp-Source: AGHT+IHzdljx762BgYLfxVy1uhiO6LuhOaahxzDQYVaWG7z0trKJ290Cb4AzI3z+szgHVgerISzuBA==
+X-Received: by 2002:a05:6a00:4f8e:b0:749:b9c:1ea7 with SMTP id d2e1a72fcca58-74eb55f4f43mr4292361b3a.17.1752154242363;
+        Thu, 10 Jul 2025 06:30:42 -0700 (PDT)
+Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f4c9c4sm2334373b3a.126.2025.07.10.06.30.38
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 10 Jul 2025 06:30:41 -0700 (PDT)
+From: Xu Lu <luxu.kernel@bytedance.com>
+To: rkrcmar@ventanamicro.com,
+	cleger@rivosinc.com,
+	anup@brainfault.org,
+	atish.patra@linux.dev,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr
+Cc: kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Xu Lu <luxu.kernel@bytedance.com>
+Subject: [PATCH v2] RISC-V: KVM: Delegate kvm unhandled faults to VS mode
+Date: Thu, 10 Jul 2025 21:30:30 +0800
+Message-Id: <20250710133030.88940-1-luxu.kernel@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250706092522.9298-1-pranav.tyagi03@gmail.com>
-In-Reply-To: <20250706092522.9298-1-pranav.tyagi03@gmail.com>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Thu, 10 Jul 2025 18:59:05 +0530
-X-Gm-Features: Ac12FXwmXCqGKG1PpHjcwsfz2aUtwCdpqzLfV1sJRe4M5S2L69rvhq9nulNa-ME
-Message-ID: <CAH4c4j+XskhzM-Kuv+gTAaBL8o+63kbOPGS6xqQYQ3_Fd0UMCA@mail.gmail.com>
-Subject: Re: [PATCH] target/core: replace strncpy with strscpy
-To: martin.petersen@oracle.com, linux-scsi@vger.kernel.org, 
-	target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 6, 2025 at 2:55=E2=80=AFPM Pranav Tyagi <pranav.tyagi03@gmail.c=
-om> wrote:
->
-> strncpy() is deprecated and its use is discouraged. Replace strncpy()
-> with safer strscpy() as the p_buf buffer should be NUL-terminated, since
-> it holds human readable debug output strings.
->
-> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> ---
->  drivers/target/target_core_transport.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/target/target_core_transport.c b/drivers/target/targ=
-et_core_transport.c
-> index 0a76bdfe5528..9c255ed21789 100644
-> --- a/drivers/target/target_core_transport.c
-> +++ b/drivers/target/target_core_transport.c
-> @@ -1112,7 +1112,7 @@ void transport_dump_vpd_proto_id(
->         }
->
->         if (p_buf)
-> -               strncpy(p_buf, buf, p_buf_len);
-> +               strscpy(p_buf, buf, p_buf_len);
->         else
->                 pr_debug("%s", buf);
->  }
-> @@ -1162,7 +1162,7 @@ int transport_dump_vpd_assoc(
->         }
->
->         if (p_buf)
-> -               strncpy(p_buf, buf, p_buf_len);
-> +               strscpy(p_buf, buf, p_buf_len);
->         else
->                 pr_debug("%s", buf);
->
-> @@ -1222,7 +1222,7 @@ int transport_dump_vpd_ident_type(
->         if (p_buf) {
->                 if (p_buf_len < strlen(buf)+1)
->                         return -EINVAL;
-> -               strncpy(p_buf, buf, p_buf_len);
-> +               strscpy(p_buf, buf, p_buf_len);
->         } else {
->                 pr_debug("%s", buf);
->         }
-> @@ -1276,7 +1276,7 @@ int transport_dump_vpd_ident(
->         }
->
->         if (p_buf)
-> -               strncpy(p_buf, buf, p_buf_len);
-> +               strscpy(p_buf, buf, p_buf_len);
->         else
->                 pr_debug("%s", buf);
->
-> --
-> 2.49.0
->
-Hi,
+Delegate faults which are not handled by kvm to VS mode to avoid
+unnecessary traps to HS mode. These faults include illegal instruction
+fault, instruction access fault, load access fault and store access
+fault.
 
-This is a gentle follow-up on this patch. I would like to
-know if there is any update on its state.
+The delegation of illegal instruction fault is particularly important
+to guest applications that use vector instructions frequently. In such
+cases, an illegal instruction fault will be raised when guest user thread
+uses vector instruction the first time and then guest kernel will enable
+user thread to execute following vector instructions.
 
-Regards
-Pranav Tyagi
+The fw pmu event counters remain undeleted so that guest can still get
+these events via sbi call. Guest will only see zero count on these
+events and know 'firmware' has delegated these faults.
+
+Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+---
+ arch/riscv/include/asm/kvm_host.h |  4 ++++
+ arch/riscv/kvm/vcpu_exit.c        | 18 ------------------
+ 2 files changed, 4 insertions(+), 18 deletions(-)
+
+diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
+index 85cfebc32e4cf..e04851cf0115c 100644
+--- a/arch/riscv/include/asm/kvm_host.h
++++ b/arch/riscv/include/asm/kvm_host.h
+@@ -44,7 +44,11 @@
+ #define KVM_REQ_STEAL_UPDATE		KVM_ARCH_REQ(6)
+ 
+ #define KVM_HEDELEG_DEFAULT		(BIT(EXC_INST_MISALIGNED) | \
++					 BIT(EXC_INST_ACCESS)     | \
++					 BIT(EXC_INST_ILLEGAL)    | \
+ 					 BIT(EXC_BREAKPOINT)      | \
++					 BIT(EXC_LOAD_ACCESS)     | \
++					 BIT(EXC_STORE_ACCESS)    | \
+ 					 BIT(EXC_SYSCALL)         | \
+ 					 BIT(EXC_INST_PAGE_FAULT) | \
+ 					 BIT(EXC_LOAD_PAGE_FAULT) | \
+diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
+index 6e0c184127956..6e2302c65e193 100644
+--- a/arch/riscv/kvm/vcpu_exit.c
++++ b/arch/riscv/kvm/vcpu_exit.c
+@@ -193,11 +193,6 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 	ret = -EFAULT;
+ 	run->exit_reason = KVM_EXIT_UNKNOWN;
+ 	switch (trap->scause) {
+-	case EXC_INST_ILLEGAL:
+-		kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_ILLEGAL_INSN);
+-		vcpu->stat.instr_illegal_exits++;
+-		ret = vcpu_redirect(vcpu, trap);
+-		break;
+ 	case EXC_LOAD_MISALIGNED:
+ 		kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_MISALIGNED_LOAD);
+ 		vcpu->stat.load_misaligned_exits++;
+@@ -208,19 +203,6 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 		vcpu->stat.store_misaligned_exits++;
+ 		ret = vcpu_redirect(vcpu, trap);
+ 		break;
+-	case EXC_LOAD_ACCESS:
+-		kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_ACCESS_LOAD);
+-		vcpu->stat.load_access_exits++;
+-		ret = vcpu_redirect(vcpu, trap);
+-		break;
+-	case EXC_STORE_ACCESS:
+-		kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_ACCESS_STORE);
+-		vcpu->stat.store_access_exits++;
+-		ret = vcpu_redirect(vcpu, trap);
+-		break;
+-	case EXC_INST_ACCESS:
+-		ret = vcpu_redirect(vcpu, trap);
+-		break;
+ 	case EXC_VIRTUAL_INST_FAULT:
+ 		if (vcpu->arch.guest_context.hstatus & HSTATUS_SPV)
+ 			ret = kvm_riscv_vcpu_virtual_insn(vcpu, run, trap);
+-- 
+2.20.1
+
 
