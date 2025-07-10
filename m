@@ -1,180 +1,178 @@
-Return-Path: <linux-kernel+bounces-726297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337F5B00B3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:20:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ECA0B00B40
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 754374A0ADC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B5411CA1315
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBD72F0C4A;
-	Thu, 10 Jul 2025 18:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0182E2FCE13;
+	Thu, 10 Jul 2025 18:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aVTsrauV"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="O/36DwfK"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2046.outbound.protection.outlook.com [40.107.237.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA9B2F2C4E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752171611; cv=none; b=FBW/f8t9A+OoHE9xU/0YCmi4KRjmQPk7SRAr+mmqqW2Gzq4vJq6h7CSTH7UC2zxdUKgrE5xgoEv29tTTTKgF6gxt4T14THcBaXVsOXdgP6e4aOao9jSOqDkql0tAMNbHslDRiMwl63W46U7SL5eOI/lXMkhQNLYG8G/r7hLmP3w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752171611; c=relaxed/simple;
-	bh=EPb99Ej9S7eTJEfY1Nzk/x3khOnYOd7XdYVqfG7FoJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=usRpsTI8dJSPZIaFqPWRaQdij0oSPXBO1f+jc/BpjGfZ1YYpFrilx8vGi7wNrM8lyVO5BlYYkq1UkMDlhvrvR3bl1dAXNHxJYv/Bgo5N2mO9l73ble00rEjXYqpTtZANJC5Ah4JvzQog4aVeEpbvFQyKJ1lFg4LA0Lg8n6DVyLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aVTsrauV; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-235e389599fso29845ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:20:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752171606; x=1752776406; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vj46vkefhs4SRIRS/QU5g/lyrMXzFbGQlucGo0/msd8=;
-        b=aVTsrauVNuKpK9aafet69r3jPNTQoC2Xc0YUgkx/B35Jxv8F0Fy4jS1RiJp9dK/3j6
-         CbfDww2dCKMRktYkMSRpLfVDUTJbQu0BKAfK+PPbsHD74oERvK6ZG2gtOmgga5bm6T8H
-         ruoSDy1aV6Q34ohrHP1GOD0H/8NChnHJOC1bCIhchiRT4Dg5TkSnYU/DM7nf4CMuQZ9i
-         vrNPoFwc/6+EkdcycRocjHzQIQ0rK2fzm6bz4ymjllZWaxyDP6EDImQIoHQV/5yaMxvS
-         KBK2n8chtEhCKJidQpPIQazll1I6andpOc9PZkZlS3EUgag365LQjV57tPqdjGarFE0/
-         Jy5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752171606; x=1752776406;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vj46vkefhs4SRIRS/QU5g/lyrMXzFbGQlucGo0/msd8=;
-        b=vpGq9W9Vh9siTZZGefDVsvnRDuPW5UXriQAiiB6i/sSzW+m3gPbEPu5bonwhORi+UX
-         lpa6X+JUqUyd6Xgv9uUtGppHrCsLUFQpF0VK0JOa99wMB+NuXS/mcq2xXlgIdNOTotY8
-         nU91eB3Je+7gHUsnSRWM0RzEPYSmG9KUHoeO8i0hYjWqBmsJSiM6SzvU6he16l/sxvE3
-         ULUGNMZAJIvt6CiqgZiUkteEYcXMD66Kl4t8jxjiwRKu3x5H5O0NLOPL0zZdJBooQq63
-         xZuM6dRgIfkrjgUv5/SxTOg0WY3QbR5p64YAhmcISsja6/Vf0RYTN7Bot/QN2dLfsBF/
-         kd9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWXkD0HjWvUnj3ztvVvIC88SMk/asqb4Ie/LZmIy5vs8afwOsFmguUj6G7aIWJG/d7/nmZpizdbq7A9Hp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjRTUCxY4a4K/gD6HYp3/pekKpVf9v/OqHyyhEqtD129P1od98
-	xsxa1yXEJGCYtc7VD4f112swHXRPT6Q+Zs9rKxKdfxkinwPPrSFFp71SwMNMOAYlpG7Khnn0u80
-	NgSWixorCddWP+9dUF+3o5BHn7HCZXWSuKSc+r7gE
-X-Gm-Gg: ASbGncvQwwCylUQjnus28E0j4aywvF9voGWdXRyT8/N1jBfdWl/BCdiwbvMyJSO0CBa
-	xsahRktkkzrvzif37msxJ3AaMqjRVDNltchYjj9QZtCjF5wyEAhAK6H1Rp3Ww9H2jhEr6EbF8LR
-	f739Ku8KXH0TfQlBCYSKyalyQoy0kTO3928lvXmZ6RgicXsp65iAvdKa8/OHSZOZViudWYbo8=
-X-Google-Smtp-Source: AGHT+IEnsQr2vt1xRK9+Gg05s9Ioj58hP/Frug0vVmNYyI/waR29AKDxjbFsuLIHKriJNaWLDKD8Qv90dKQTUZAuhEc=
-X-Received: by 2002:a17:902:d4c1:b0:234:bfa1:da3e with SMTP id
- d9443c01a7336-23dee4c480fmr119455ad.5.1752171605810; Thu, 10 Jul 2025
- 11:20:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32472F3C3C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752171741; cv=fail; b=jO6YMEo0GNOw8i178LdPbbytgYKX1Ticp0xfcLeuwJuCu/FC0qSQQJrfwswCiFuniBg/GHjUX2FLSpiBic08gbI/BddPD5IOcTwMAKKsusgceneCwrEIiQ7M3nSLJwoVaEmcC8pQn20o7iwxUUlH4BlfnKl5InQ9MVbXAgNlRwA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752171741; c=relaxed/simple;
+	bh=fYmzWogEM+VLti8zKa1QiDMI50xC7J/WwwNFyZX1394=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/882t61cvCeFoOf7I0Ehlw1gpVCp4dUfNlFec771kdbhE5g+FHRLx/fs/xf5Ruk2B9JhsiVa1yp3madZp0V+fov0KrlrKGTxiltXcdZyXVkedtZHMzMCbCWESJ4UNUNz4b6HKqCbCcIibOE28pWxvDzf7tsI5o5/LOCRAGXbJo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=O/36DwfK; arc=fail smtp.client-ip=40.107.237.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RA/gXhpZj3BU3iiOnJDHy2H+LTfH/n0XSSkSrbIOAGcYCzL0l6pjyXTAOA+DVYZu3xMjlNEQYyAfocQzNTk+i3AE6wWdpEZrr7uXFDZm4MzK51f7uhky7MlBfdtl6XQWyuAmiBuSg7gVhv8SCOG/E3AjLXc1FQyRGwad5zGVnPdq5PKuepchTL8lvoQnQzUdjT0m0DorMu/VTYQfC/FoubNjW0qlv+iKnaoTxvLiwUwwIYOU2djIIK92HO5DH4F+VVMT+fAkWMQgu+3lHM5eCu2FSDn4Zr6LKUo9jjYcOG8cvaxFrYqXHbP6+ctT40l2lp5t376VLC/RX44Yrtn3fw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Gakyte3kABT5zH9O9xxmnRysibDMsvl4FBVAP1uw5wk=;
+ b=khyeHgwhu4oLel6OfVDN9I0VczTpgs8XsNyULGE4skwEpNdc9I2/EcwDAd1iYLnq4PiJMOsGpbAUiUf8rvGv8KENRQBg1W8hOOy3qeNR8D9cQ9E+9FQEgjqoIQpIA+24QmoDaHpQyTq1LtYN++avSCLyPIa/A2gqDoMqVj82vbLgBbLGvM4GeOKwSbviXxON3SfWGk5HQGFd3DHvcDBuQfq+fBUKyksSjbDUP8Nx9Kq+X9eeTxE2NDqMoYe/guIKl54mBxg2U0/ezL7BoXShxhKvL65GT/0xKTjW79yEnOAtHVpTD0V+s5sBB0W7grJGFTfRGK4vHtlwTxk5hnD7dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gakyte3kABT5zH9O9xxmnRysibDMsvl4FBVAP1uw5wk=;
+ b=O/36DwfK98tE3HTX16TZoehwR967KLQXEzRx8Nw3NzLuhKvOBItMR/LunyIsi9Gr6AZFbAKAcVCItXoKrgEumqVVc+Ope6PAFMQgARh+4bj+mOtGqJp/p+fEb6BnPL7W/K6srAm0nwbj2XtF4U3QJOEFkbIPP6QcFS5uANXC3PtmsfdJo58pJ4dgPggqfOPqzYfUVP7av0eJDUI8/n1E3dAGH3R0woWMzFqc0u+jXi6o0gLOzHt30ogqyR8XNpz2Qd6RiOvQ3qdCzOAjB0/XEiIEsyXmxbFnqP6E5w3xdURvQzBTlGCcwNX+P0I62+FWEdXRwngmGcJ39BvG85i4kg==
+Received: from MW3PR05CA0010.namprd05.prod.outlook.com (2603:10b6:303:2b::15)
+ by DS2PR12MB9589.namprd12.prod.outlook.com (2603:10b6:8:279::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Thu, 10 Jul
+ 2025 18:22:12 +0000
+Received: from CO1PEPF000075F4.namprd03.prod.outlook.com
+ (2603:10b6:303:2b:cafe::18) by MW3PR05CA0010.outlook.office365.com
+ (2603:10b6:303:2b::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.7 via Frontend Transport; Thu,
+ 10 Jul 2025 18:22:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1PEPF000075F4.mail.protection.outlook.com (10.167.249.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.22 via Frontend Transport; Thu, 10 Jul 2025 18:22:12 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 10 Jul
+ 2025 11:22:02 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 10 Jul
+ 2025 11:22:01 -0700
+Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Thu, 10 Jul 2025 11:22:00 -0700
+Date: Thu, 10 Jul 2025 11:21:59 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: Xu Yilun <yilun.xu@linux.intel.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+	"will@kernel.org" <will@kernel.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>,
+	"praan@google.com" <praan@google.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"peterz@infradead.org" <peterz@infradead.org>, "jsnitsel@redhat.com"
+	<jsnitsel@redhat.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "patches@lists.linux.dev"
+	<patches@lists.linux.dev>, "baolu.lu@linux.intel.com"
+	<baolu.lu@linux.intel.com>
+Subject: Re: [PATCH v2 13/14] iommufd: Introduce iommufd_object_alloc_ucmd
+ helper
+Message-ID: <aHAEx5fWopk2ndqX@Asurada-Nvidia>
+References: <cover.1749882255.git.nicolinc@nvidia.com>
+ <e7206d4227844887cc8dbf0cc7b0242580fafd9d.1749882255.git.nicolinc@nvidia.com>
+ <aG3+s8rzcjeKazG8@yilunxu-OptiPlex-7050>
+ <BN9PR11MB52769CFD429C3E8E0918674A8C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710082807.27402-1-byungchul@sk.com> <20250710082807.27402-4-byungchul@sk.com>
-In-Reply-To: <20250710082807.27402-4-byungchul@sk.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 10 Jul 2025 11:19:53 -0700
-X-Gm-Features: Ac12FXw53iJ9LLYfmK6k3qWagqoxpTOfsxU_34s2pmiydSWa2zOUfuaE-4Qlaes
-Message-ID: <CAHS8izMXkyGvYmf1u6r_kMY_QGSOoSCECkF0QJC4pdKx+DOq0A@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 3/8] page_pool: access ->pp_magic through
- struct netmem_desc in page_pool_page_is_pp()
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
-	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com, 
-	hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB52769CFD429C3E8E0918674A8C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075F4:EE_|DS2PR12MB9589:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5cd27d45-4e0d-4c67-8232-08ddbfdeb096
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2xWfeQNam20XmMv3OjbIljTUFEcwleYGpWSqsX9oTfYVle8gf1Y66wiFV0Pd?=
+ =?us-ascii?Q?m9tx1q/dn1rfOLubCNu4hI09vE+4FalzaVVWi55yrCNXCbQ0jixwpLr347B/?=
+ =?us-ascii?Q?jIU9LTgENwHKlNQ5uIbe9pES/mEjl61ks75LSEJtz2WVP2j+aSwMrLp94CWe?=
+ =?us-ascii?Q?8fp0KZ6uZkOB2h6CdIPyHGEWlkTDzo8oKeFqZXRevKN2QL4GnQKI7OUAuBX9?=
+ =?us-ascii?Q?AIFgopfC1vf7+mDKaaUgE4CK2SjJGmogTCSYyCNiUTHaq7DfS+sUd9Itg+2d?=
+ =?us-ascii?Q?ANKo5aA8k6TNEO89iK58CIJvhubzXkfs1GAUYPoUeBoDJ72kj3nDokYdErdB?=
+ =?us-ascii?Q?xtMfqIg4+j12TJmN7uWAoHliZsCnu5YOFEKw4jDE3ycTF0hkYl2tHVIccts6?=
+ =?us-ascii?Q?Ao5/UmzZvBZlWkKm4yVGALlcXefp0QgJuabVUmdWQwLjfhB2Aoamf6LzrSFc?=
+ =?us-ascii?Q?K1L9fM7BRAscLZtAdZjwXtymMouGMGDjmtdHarqM78YqQrFi72M6WdrizIhY?=
+ =?us-ascii?Q?wqI92I7hlUh0P09s4vMt1Ra8vuPWj16UCslyHol4NWjEKI1opBXwPzpWzFew?=
+ =?us-ascii?Q?rG0gLmPccxIBZYt1f8DjeOhex+7EZgm2ou7NUrxhdIGs9S/b/K/+96UjL0/T?=
+ =?us-ascii?Q?NHLgUq5pzcVhNPJOnFisAa69WkWj4/M+fXVSov21GnvnnLAWdhOqQCWjCIDV?=
+ =?us-ascii?Q?jZbLQ2zjsdCkGjbDhxvYOcXV9khmNB5HywBfpn47ZuLIew21eJFZv7bRKDpm?=
+ =?us-ascii?Q?xF9XV+LuYbXL9Ce1nNu62PmQB0RVq8d1DBN990FUaluA+jQrNPRRdqqEtAOS?=
+ =?us-ascii?Q?fo0EYvKQawSkHlRK+a7jprwCeoplKEIlFYvfsW1ZdBlacfWjfur2zxtRhevL?=
+ =?us-ascii?Q?mrtXvMsdQWbm66SRu2obrZKW9eSI8h6asxY+ao7PcNJH6DBOX1kytb8olLJe?=
+ =?us-ascii?Q?Zyq9CuCDdgKaAdGJyK97iGhuPI9TF1udO0rRCMT6QBUaaN4nV+/McDvBi5Cd?=
+ =?us-ascii?Q?Add7cIo9ztujEhffCGkz3PetXTQgGV3iVexefQo228njAaK9Y+s0FR0dn+h5?=
+ =?us-ascii?Q?c+7I/q5yatF7+XMlEJsLV7q6/Ult1uLJdVb6/A6sN+n0X83+eUknTRFGAAy/?=
+ =?us-ascii?Q?CSEnMM+S9ozvkqy8eV16gSpnFhwqHIGUVv3tngE0qZq7dv8q6pGezvU2f6U+?=
+ =?us-ascii?Q?R9pSFQELkECx4rWU3HXZr3VAH+fez6YGf7Gk5c1cg3qCUZ6YAP/rAzSVy3M4?=
+ =?us-ascii?Q?biJ+Eo0yvMvhdj4fAVh83J9EYvmBAWuK5ztSz12hh9VVmiv8iB4CiKHG5Q/T?=
+ =?us-ascii?Q?EqHy6mYVtfiUsZ8p+MTQHf9sXzLMV3O4w/lXIZe0qssrSSCbB8AozlD0POr0?=
+ =?us-ascii?Q?trEamuvKzDYnQgI/lB9amCMI4pSVTJQUPC2BtihFtQ4UblqS2tyrfhixry6o?=
+ =?us-ascii?Q?wa4ABZk/XcVFiSUeXat5OyXlP3fws1mXwB/+x99sM6XFEErTC1gqGuJNsW7n?=
+ =?us-ascii?Q?dXobb8u83dKD0NceFDABcel/SiLq/qhJQ+MW?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 18:22:12.1986
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cd27d45-4e0d-4c67-8232-08ddbfdeb096
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075F4.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9589
 
-On Thu, Jul 10, 2025 at 1:28=E2=80=AFAM Byungchul Park <byungchul@sk.com> w=
-rote:
->
-> To simplify struct page, the effort to separate its own descriptor from
-> struct page is required and the work for page pool is on going.
->
-> To achieve that, all the code should avoid directly accessing page pool
-> members of struct page.
->
-> Access ->pp_magic through struct netmem_desc instead of directly
-> accessing it through struct page in page_pool_page_is_pp().  Plus, move
-> page_pool_page_is_pp() from mm.h to netmem.h to use struct netmem_desc
-> without header dependency issue.
->
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
-> Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
-> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> Acked-by: Harry Yoo <harry.yoo@oracle.com>
-> ---
->  include/linux/mm.h   | 12 ------------
->  include/net/netmem.h | 17 +++++++++++++++++
->  mm/page_alloc.c      |  1 +
->  3 files changed, 18 insertions(+), 12 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 0ef2ba0c667a..0b7f7f998085 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4172,16 +4172,4 @@ int arch_lock_shadow_stack_status(struct task_stru=
-ct *t, unsigned long status);
->   */
->  #define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
->
-> -#ifdef CONFIG_PAGE_POOL
-> -static inline bool page_pool_page_is_pp(struct page *page)
-> -{
-> -       return (page->pp_magic & PP_MAGIC_MASK) =3D=3D PP_SIGNATURE;
-> -}
-> -#else
-> -static inline bool page_pool_page_is_pp(struct page *page)
-> -{
-> -       return false;
-> -}
-> -#endif
-> -
->  #endif /* _LINUX_MM_H */
-> diff --git a/include/net/netmem.h b/include/net/netmem.h
-> index ad9444be229a..11e9de45efcb 100644
-> --- a/include/net/netmem.h
-> +++ b/include/net/netmem.h
-> @@ -355,6 +355,23 @@ static inline void *nmdesc_address(struct netmem_des=
-c *nmdesc)
->         return page_address(nmdesc_to_page(nmdesc));
->  }
->
-> +#ifdef CONFIG_PAGE_POOL
-> +/* XXX: This would better be moved to mm, once mm gets its way to
-> + * identify the type of page for page pool.
-> + */
-> +static inline bool page_pool_page_is_pp(struct page *page)
-> +{
-> +       struct netmem_desc *desc =3D page_to_nmdesc(page);
-> +
-> +       return (desc->pp_magic & PP_MAGIC_MASK) =3D=3D PP_SIGNATURE;
-> +}
+On Thu, Jul 10, 2025 at 05:32:13AM +0000, Tian, Kevin wrote:
+> > From: Xu Yilun <yilun.xu@linux.intel.com>
+> > Also explicitely assert iommufd_object_alloc_ucmd() and abort can't be
+> > used at the same time.
+> > 
+> > in _iommufd_object_alloc_ucmd():
+> > 
+> > 	if (WARN_ON(iommufd_object_ops[type].abort))
+> > 		return ERR_PTR(-EFAULT);
+> > 
+> 
+> but this check sounds necessary.
 
-pages can be pp pages (where they have pp fields inside of them) or
-non-pp pages (where they don't have pp fields inside them, because
-they were never allocated from the page_pool).
+Let me send a patch for this.
 
-Casting a page to a netmem_desc, and then checking if the page was a
-pp page doesn't makes sense to me on a fundamental level. The
-netmem_desc is only valid if the page was a pp page in the first
-place. Maybe page_to_nmdesc should reject the cast if the page is not
-a pp page or something.
-
---=20
-Thanks,
-Mina
+Thanks
+Nicolin
 
