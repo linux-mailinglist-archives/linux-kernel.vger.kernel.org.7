@@ -1,120 +1,100 @@
-Return-Path: <linux-kernel+bounces-724787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7728AFF6ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:41:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891BFAFF6EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BACB1C84239
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:41:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E09ED5852E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D9A27FB28;
-	Thu, 10 Jul 2025 02:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE97527FB15;
+	Thu, 10 Jul 2025 02:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnIcmjWa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lab126.com header.i=@lab126.com header.b="n+Njsxc6"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D33325BF14;
-	Thu, 10 Jul 2025 02:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717C3824A3;
+	Thu, 10 Jul 2025 02:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752115241; cv=none; b=UOX210H6CqJubMINaF3lJaW6hqIK2lqGZR6CcaNpye1Zdq4Lg+8JpXZ+jIMeHGaRiacF2Iltd/0XiuoR3Y02YmmfHhCtwE8v2T554s1nvrYn7evchhfr9rIOwEUFCHE3W1fxQoF/h43FPX9aMITxOrI4IO9uvkRVfpqFQ6bOC00=
+	t=1752115360; cv=none; b=KYW9ZoBvcJ7+ChppUEY901sHfFZPoDCb7rT3G7pyvUXKY2Brmkk+iPhgZO9BqPnCZuQm1dHxWNkm7+/tyjxH4d9FOzZ2kp/Lelac7clb0jDHLJia+8oyzoyTGTTozrkAj7634K83dKsmqs6pQ7gj4CeHBZBr5xsZrih4lNqJHGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752115241; c=relaxed/simple;
-	bh=SbXUiYCtMWlpHCV2pzP17uIzAf874pHFFFrd6zNJLHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LXt/i44F/Z55xE+nW1TZWbps0fE11ltXlyvVC8oARJ3PoZBqxIReOneflXjF4RM+YyRISkxszsuUq8UyUQcfDNqXHJCVHhTJGVpqGCph9UR6S1I9IX+ndX5fgPSN7cHYd55/y1rSw2wwLjVKJ8XAQ5k0jJ/blRS8HbQ22oBDvIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CnIcmjWa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CE1EC4CEEF;
-	Thu, 10 Jul 2025 02:40:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752115240;
-	bh=SbXUiYCtMWlpHCV2pzP17uIzAf874pHFFFrd6zNJLHc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CnIcmjWawEkECd7KPbCiN3OQ+p6HKq5Wuwb9+DVcJimaUCswv5Z+DOMJZljVYEMAY
-	 OkdDIKp0YK7Rpomq40HYzMOEJkzAyjtrrzbhxARSN0wP4Qi2JlnvRpL8W8KmZThEBb
-	 PVS402BTTrfkypwv+71HT7rk1OWsMSqvmt8erBGhaqvARDyh6tkvU8zyp+D5/l08z0
-	 YdRInM7ZjgaYIXP4p4ielp1yFTSi2b7K7nWeX2tO2xugvr01AHLcY37MT18ItbJwEW
-	 U5K/1R2+dnpICaSC0oDy1pRqvSD9rpTq2YsXH7+WWI+7HZ6kpXby4ewHKjf5ekercL
-	 /G3zNYAvYG7HA==
-Date: Wed, 9 Jul 2025 19:40:39 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH net-next v1 1/1] net: selftests: add PHY-loopback test
- for bad TCP checksums
-Message-ID: <20250709194039.72202043@kernel.org>
-In-Reply-To: <20250708122823.2435505-1-o.rempel@pengutronix.de>
-References: <20250708122823.2435505-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1752115360; c=relaxed/simple;
+	bh=decLF4ryDzjQb5GPqB3kXj+yiJyVIn9WhIbk/QEXMt0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P5wXNo+ZUskfoGdk4jpGvG1djQ5NZClGOv+JlWnj8IfWDRnP4kH1DaN/AgDnOd8o3gF+/oi5TpMW1XHxddL46XnGVayd9nRpSvtyEQzWr5ykHnWimkVsiZco9Gd4WNDIEgxsJjGPNwiSjpXGUqQPvzXIwo/sT8ivKKvWAzlzBNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lab126.com; spf=pass smtp.mailfrom=lab126.com; dkim=pass (2048-bit key) header.d=lab126.com header.i=@lab126.com header.b=n+Njsxc6; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lab126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lab126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=lab126.com; i=@lab126.com; q=dns/txt; s=amazoncorp2;
+  t=1752115358; x=1783651358;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=k/JkFDUEEvCJB0Q7R+nhA1YH1qvEqWEUh6x5/D78kGM=;
+  b=n+Njsxc6ziRpQVjkRMvHB3/P0pQStBBIbvqRA9/X+GfXxqCgqedlg4NQ
+   ckyBufS9fxvCOIriDWjvcLULmeobcs/TR73hpOGwxnULzNHLMCdrDc/aI
+   eIn90qfwBU15P7Fcjh3ZZd6SqY1VXzuw2OEOOr5tRaGPj8i5TBUYkCHet
+   xMmmLhHGCj7bkw5IIb9FJ8XfvU/gMF1qy1UlSH1Bg9XYvXISZug/fTzO+
+   Vvc0O8X0TK6GV48rdLi5LPq/0NWrdZLO6MjgWT9d4SmUWE37ZUrHQ88d0
+   BsKEnUasQ241I7o0TzzL8Q5z+AEchmPVJ7rMDz1wcWUaKo5WVz6MewS/t
+   Q==;
+X-IronPort-AV: E=Sophos;i="6.16,299,1744070400"; 
+   d="scan'208";a="217757191"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:42:38 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.38.20:2059]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.26.102:2525] with esmtp (Farcaster)
+ id 0ba25972-6b97-43c7-be3f-b83544113701; Thu, 10 Jul 2025 02:42:37 +0000 (UTC)
+X-Farcaster-Flow-ID: 0ba25972-6b97-43c7-be3f-b83544113701
+Received: from EX19D007UWB001.ant.amazon.com (10.13.138.75) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 10 Jul 2025 02:42:37 +0000
+Received: from u1cb251c9c70150.ant.amazon.com (10.68.99.17) by
+ EX19D007UWB001.ant.amazon.com (10.13.138.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 10 Jul 2025 02:42:37 +0000
+From: Karthik Poduval <kpoduval@lab126.com>
+To: <jyxiong@amazon.com>, <miguel.lopes@synopsys.com>, <anishkmr@amazon.com>,
+	<vkoul@kernel.org>, <kishon@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-phy@lists.infradead.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>
+CC: Karthik Poduval <kpoduval@lab126.com>
+Subject: [PATCH v2 0/2] Synopsys DW DPHY Driver
+Date: Wed, 9 Jul 2025 19:42:19 -0700
+Message-ID: <cover.1752106239.git.kpoduval@lab126.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D042UWA003.ant.amazon.com (10.13.139.44) To
+ EX19D007UWB001.ant.amazon.com (10.13.138.75)
 
-On Tue,  8 Jul 2025 14:28:23 +0200 Oleksij Rempel wrote:
->  	if (attr->tcp) {
->  		int l4len = skb->len - skb_transport_offset(skb);
->  
-> -		thdr->check = ~tcp_v4_check(l4len, ihdr->saddr, ihdr->daddr, 0);
-> -		skb->csum_start = skb_transport_header(skb) - skb->head;
-> -		skb->csum_offset = offsetof(struct tcphdr, check);
-> +		if (attr->bad_csum) {
-> +			__sum16 good_csum;
-> +			u16 bad_csum;
-> +
-> +			skb->ip_summed = CHECKSUM_NONE;
-> +			thdr->check = 0;
-> +			skb->csum = skb_checksum(skb, skb_transport_offset(skb),
-> +						 l4len, 0);
-> +			good_csum = csum_tcpudp_magic(ihdr->saddr, ihdr->daddr,
-> +						      l4len, IPPROTO_TCP,
-> +						      skb->csum);
-> +
-> +			/* Flip the least-significant bit.  This is fast,
-> +			 * deterministic, and cannot accidentally turn the
-> +			 * checksum back into a value the stack treats as valid
-> +			 * (0 or 0xFFFF).
-> +			 */
-> +			bad_csum = (__force u16)good_csum ^ 0x0001;
-> +			if (bad_csum == 0 || bad_csum == 0xFFFF) {
-> +				/* If the checksum is 0 or 0xFFFF, flip another
-> +				 * bit to ensure it is not valid.
-> +				 */
-> +				bad_csum ^= 0x0002;
-> +			}
-> +
-> +			thdr->check = (__force __sum16)bad_csum;
-> +		} else {
-> +			skb->csum = 0;
-> +			skb->ip_summed = CHECKSUM_PARTIAL;
-> +			thdr->check = ~tcp_v4_check(l4len, ihdr->saddr,
-> +						    ihdr->daddr, 0);
-> +			skb->csum_start = skb_transport_header(skb) - skb->head;
-> +			skb->csum_offset = offsetof(struct tcphdr, check);
-> +		}
->  	} else {
-> +		skb->csum = 0;
-> +		skb->ip_summed = CHECKSUM_PARTIAL;
->  		udp4_hwcsum(skb, ihdr->saddr, ihdr->daddr);
->  	}
+v2: fix dt_binding_check errors
 
-I think it'd be simpler if - after setting up CHECKSUM_PARTIAL
-we called skb_checksum_help() to get the correct checksum filled in
-and then did the bad checksum mangling.
+Karthik Poduval (2):
+  phy: dw-dphy-rx: Add Synopsys DesignWare D-PHY RX
+  phy: dw-dphy-rx: Add dt bindings for Synopsys MIPI D-PHY RX
 
-BTW mangling like this should be idiomatic enough to avoid the comment:
+ .../bindings/phy/snps,dw-dphy-rx.yaml         |  44 ++
+ MAINTAINERS                                   |   7 +
+ drivers/phy/Kconfig                           |  11 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/phy-dw-dphy.c                     | 575 ++++++++++++++++++
+ 5 files changed, 638 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml
+ create mode 100644 drivers/phy/phy-dw-dphy.c
 
-	thdr->check = thdr->check ^ 1 ?: CSUM_MANGLED_0;
 -- 
-pw-bot: cr
+2.43.0
+
 
