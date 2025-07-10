@@ -1,57 +1,54 @@
-Return-Path: <linux-kernel+bounces-725098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A4EAFFAC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:24:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4C5AFFAC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9D11C82BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:24:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7391A641DA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67179289344;
-	Thu, 10 Jul 2025 07:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42742289344;
+	Thu, 10 Jul 2025 07:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVQKw8Vz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Z0fm0Heh"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE764288C18;
-	Thu, 10 Jul 2025 07:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9F6288C27;
+	Thu, 10 Jul 2025 07:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752132245; cv=none; b=GiFE90fRSO58eVAowPV8yotOsqUalE6oOgKkYK+j8zLinF430Np89OfSis0jarQRnfOrwQk5by8DQUoOhfIIvA3ckLLJe4JN53VNymF3xhUtDYmNNVB5e+RPkr2i2WPvwix66JFGUStmJdKVcZ/fsvidaRoRRypyrFqw755MIQg=
+	t=1752132262; cv=none; b=dYmAXnp1e6FkUoKaFFEMU8IvjTpD8KJ46w0P4aEYDPdqgBFKnwMyVNbJHiQAN5Q86wznL0V4QPgC7sySRnx5r4vjpWIEv79i5LdyhEA/rBf62DXyEWtKXhY2nJ/PrIyRzi0DMRxAejzQQG9Z/JZfcSdqyZLxnUYJ4Ax75VeUMpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752132245; c=relaxed/simple;
-	bh=SFkkw4ctGLrTmBRlu2RlFZWVe6en+oY/fO9F/Li48Z0=;
+	s=arc-20240116; t=1752132262; c=relaxed/simple;
+	bh=hj1wHBXsOXAzb0/74g63WRGpCXf33Xc+zY0S+GiRtF0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nU46Ws4pFX2fwC0smOafcZqHhcT8S50oBo4fyXIOqeecm4P7JNne9ZhYRm2/onvkvt7h0GtSPZLES6YzgPHalzb4pSmc0OdSn+uMgmQiBs/+OR3HFp74sc2WfgTFDbhMrmWNvtGBGNHEZFW8TgscpSshI3+6fyvufCYZhtrE444=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVQKw8Vz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7134C4CEE3;
-	Thu, 10 Jul 2025 07:24:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752132245;
-	bh=SFkkw4ctGLrTmBRlu2RlFZWVe6en+oY/fO9F/Li48Z0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HVQKw8Vz982DsUsU73OrlqR9Y55+VP38DzfT2XJLoeZG00lmFYo3E39zm+suCvIKY
-	 MvGr4NkqAfQ/nqr5cy4f9Ih6aKjQhz41zdwZNFU5Mxmn7cyp6OLy/BUwh5HuCuR53+
-	 WPoe1HX25Lqs2ZuRVvTIEgyuSr1mDZci6QCMIFIOXd4d54YDlENJ3U8Mu+2xmFJ2ZE
-	 fd6v1guQRQAru2rySgrmf5dpjXHscCtVX+2Y/XuISEF0/2W3xgBgzvoOzb06kzjmx8
-	 mgth7ClVPnUpkbtuFLbMqi9+rKhtHnwTTz8Quv3S1l6j894c5fz9hlkO3JMBC3ECuy
-	 zUkLk4k+PR8xQ==
-Date: Thu, 10 Jul 2025 09:24:02 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Karthik Poduval <kpoduval@lab126.com>
-Cc: jyxiong@amazon.com, miguel.lopes@synopsys.com, anishkmr@amazon.com, 
-	vkoul@kernel.org, kishon@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] phy: dw-dphy-rx: Add dt bindings for Synopsys
- MIPI D-PHY RX
-Message-ID: <20250710-dainty-tarsier-from-hyperborea-ecf9d3@krzk-bin>
-References: <cover.1752106239.git.kpoduval@lab126.com>
- <7f4b676678b27ea91314c834a297c1e057959b09.1752106239.git.kpoduval@lab126.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r6CQzfvZ6n1R5/Q5YUwc8a+Uq8Ym4PErQugbBXp1yWrJ48DZuGjfQJdNFiGLUqJybhDxJgW/0I2vmfwV5sdRqWEmDIhHEjJriBgFU64dRCQJn5i4Vy3Fa+wllX1CSynVFRkgWpwCN/ex0y6qcpiiOkYh35tS7bAA1ZG+p7exHZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Z0fm0Heh; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752132250; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=jzNpYOFOnap/qF7qFC2NV9w8EFH37E1K9D31EdWc9Yk=;
+	b=Z0fm0HehE9gbr02XGj17KU/Jh/mvcu1K9a5Tse50GMEp2qUXiY4GHuXQBWlVxETC9Q+8bFjtzzI0IK62GKYvAeNgKlJzhHlK4E0J7SSg9Mc2JxxqIQqjw2GeuIxUOtT1KalZgRjrYJOBNj6OBaIzy4E6RhxOdDbKkyGW32E/+eo=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0Wic.8WA_1752132249 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 10 Jul 2025 15:24:09 +0800
+Date: Thu, 10 Jul 2025 15:24:09 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Ard Biesheuvel <ardb@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] efi: remove the rtc-wakeup capability from default value
+Message-ID: <aG9qmV-wzFr7I-Tb@U-2FWC9VHC-2323.local>
+References: <20250709103541.7268-1-feng.tang@linux.alibaba.com>
+ <CAMj1kXEvxPjFsqoMzZnb2zxSf9uyLVzuzKEeKD4fLEux3NbUhw@mail.gmail.com>
+ <aG5Lod-McOlBmt7_@U-2FWC9VHC-2323.local>
+ <CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,72 +57,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7f4b676678b27ea91314c834a297c1e057959b09.1752106239.git.kpoduval@lab126.com>
+In-Reply-To: <CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com>
 
-On Wed, Jul 09, 2025 at 07:42:21PM -0700, Karthik Poduval wrote:
-> +---
-> +$id: http://devicetree.org/schemas/phy/snps,dw-dphy-rx.yaml#
+Add Alexandre Belloni for his view on rtc-efi driver
 
-Filename and id should match compatible.
+On Thu, Jul 10, 2025 at 09:33:19AM +1000, Ard Biesheuvel wrote:
+> On Wed, 9 Jul 2025 at 21:00, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+> >
+> > On Wed, Jul 09, 2025 at 08:42:24PM +1000, Ard Biesheuvel wrote:
+> > > On Wed, 9 Jul 2025 at 20:35, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+> > > >
+> > > > The kernel selftest of rtc reported a error on an ARM server:
+> > > >
+> > > >         RUN           rtc.alarm_alm_set ...
+> > > >         rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
+> > > >         rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
+> > > >         alarm_alm_set: Test terminated by assertion
+> > > >                  FAIL  rtc.alarm_alm_set
+> > > >         not ok 5 rtc.alarm_alm_set
+> > > >
+> > > > The root cause is, the unerlying EFI firmware doesn't support wakeup
+> > > > service (get/set alarm), while it doesn't have the efi 'RT_PROP'
+> > > > table either. The current code logic will claim efi supports these
+> > > > runtime service capability by default, and let following 'RT_PROP'
+> > > > table parsing to correct it, if that table exists.
+> > > >
+> > > > This issue was reproduced on ARM server from another verndor, and not
+> > > > reproudce on one x86 server (Icelake). All these 3 platforms don't have
+> > > > 'RT_PROP' tables, so they are all claimed to support alarm service,
+> > > > but x86 server uses real CMOS RTC device instead rtc-efi device, and
+> > > > passes the test.
+> > > >
+> > > > So remove the wakeup/alarm capability from default value, and setup
+> > > > the capability bits according to the 'RT_PROP' table parsing.
+> > > >
+> > >
+> > > What does this achieve? The test result is accurate, as the platform
+> > > violates the spec by not implementing the RTC wakeup services, and not
+> > > setting the RT_PROP table bits accordingly.
+> > >
+> > > What do we gain by pretending that the platform is not broken, and
+> > > lying about it?
+> >
+> > I don't have much experience with EFI, so I might be totally wrong. I
+> > don't think not providing the RT_PROP table is 'broken', that's why I
+> > tried to borrow platforms from different vendors to do the check, which
+> > all have no this table.
+> >
+> > For platform which have no 'RT_PROP' tables (seems to be not a rare case),
+> > claiming them support all efi runtime service may be kind of risky.
+> >
+> 
+> It is the other way around. The UEFI spec mandates that all runtime
+> services are implemented, unless a RT_PROP table is provided.
 
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Synopsys Designware MIPI D-PHY RX
-> +
-> +maintainers:
-> +  - Karthik Poduval <kpoduval@lab126.com>
-> +  - Jason Xiong <jyxiong@amazon.com>
-> +  - Miguel Lopes <miguel.lopes@synopsys.com
-> +
-> +description: |
-> +  These are the bindings for Synopsys Designware MIPI DPHY RX phy driver.
-> +  Currently only supported phy version is v1.2.
-> +
-> +properties:
-> +  compatible:
-> +    const: snps,dw-dphy-1p2
+Thanks for the explaination! Yes, it's fair to claim the uefi implementation
+on the 2 ARM servers 'broken' :)
 
-You should rather use SoC compatibles.
+I talked with some firmware developers. They said the rtc-alarm service could
+be implemented, while the difficult part is how to notify OS. I submitted a 
+request for a correct RT_PROP table.
 
-> +
-> +  '#phy-cells':
-> +    const: 0
-> +
-> +  reg:
-> +    minItems: 2
-> +    maxItems: 2
+Meanwhile, given there are quite some platforms (All ARM server I can access)
+don't have the table and not support rtc wakeup service, I'm thinking of adding
+some runtime check for the service in rtc-efi driver, something like:
 
-List the items instead
+---
+diff --git a/drivers/rtc/rtc-efi.c b/drivers/rtc/rtc-efi.c
+index fa8bf82df948..7ae948aebd11 100644
+--- a/drivers/rtc/rtc-efi.c
++++ b/drivers/rtc/rtc-efi.c
+@@ -259,6 +259,7 @@ static int __init efi_rtc_probe(struct platform_device *dev)
+ 	struct rtc_device *rtc;
+ 	efi_time_t eft;
+ 	efi_time_cap_t cap;
++	efi_bool_t enabled, pending;
+ 
+ 	/* First check if the RTC is usable */
+ 	if (efi.get_time(&eft, &cap) != EFI_SUCCESS)
+@@ -272,7 +273,8 @@ static int __init efi_rtc_probe(struct platform_device *dev)
+ 
+ 	rtc->ops = &efi_rtc_ops;
+ 	clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->features);
+-	if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES))
++	if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES) &&
++		efi.get_wakeup_time(&enabled, &pending, &eft) == EFI_SUCCESS)
+ 		set_bit(RTC_FEATURE_ALARM_WAKEUP_ONLY, rtc->features);
+ 	else
+ 		clear_bit(RTC_FEATURE_ALARM, rtc->features);
 
-And fix the order, reg goes second.
+This works on one ARM server I can test kernel with. Any suggestions?
 
-> +
-> +required:
-> +  - compatible
-> +  - '#phy-cells'
-> +  - reg
-
-Here as well
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    dw_dphy_rx: dw-dphy@900000040 {
-
-phy@
-
-> +        compatible = "snps,dw-dphy-1p2";
-> +        #phy-cells = <0>;
-> +        reg = <0x0 0x90000040 0x0 0x20>, <0x0 0x90001000 0x0 0x8>;
-> +        status = "disabled";
-
-No, drop. And fix the order of properties, see DTS coding style.
-
-> +    };
-
-Best regards,
-Krzysztof
-
+Thanks,
+Feng
 
