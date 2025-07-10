@@ -1,155 +1,123 @@
-Return-Path: <linux-kernel+bounces-726947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164AAB01347
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:04:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7689B0139F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC1E61CA0A82
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:04:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C419174FEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383981CEAA3;
-	Fri, 11 Jul 2025 06:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AC41DE3BE;
+	Fri, 11 Jul 2025 06:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f32cnsqH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="O0iOs1dV"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACED1A2632
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5E11C5F2C
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752213876; cv=none; b=RlJxHwnFzjVff/BZw/uf4wNfZ8m1hotzwDsBqODb2NJSErJF7ZommUbXcQK3HdaOC1vyfajBzLQyBopR4dn321W5AJxy59IqgXvN6Ng5NJUPt205fmacikeI6LJ7KHGiTZyBigmbZVUkidXsZVWw38mx1p8miWTxGx3rT36gI3Q=
+	t=1752215745; cv=none; b=c5y9zop3yadf5Vrzl2Jvp0086z7SmtkoBdJRuRRzhoTdTx7xvBVV4jujEl6j8EpASFChceK+mtJBgLHFdQyvMt+I2jzIADJ/JTuMFsTp1kQRx2OMRSvp9xDuZY7W1tqRAvUFZnaURYgJ75UWZcEY7JGAZJm2X23qtiZzRUBJ3b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752213876; c=relaxed/simple;
-	bh=J3Glk/xNSeEiaL0rKhHSpm7c2uPTqO9KADW0OZgNWFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZX+M/B+VPyWHLperw1hVRzLPgt4gYtSo4ol/rxS1fRXgFZXvYHl+z9OlpLhqr6XuAFUgwQ9tPdJGuePMb7yh+3Z4vdOZxvDorHeWNp1FK9BiHzwTvra866iFV0JnKGbAIUytxKvgLMNNZFAqRHWg20RH5pinqKPXh2SVDT05n10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f32cnsqH; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752213875; x=1783749875;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J3Glk/xNSeEiaL0rKhHSpm7c2uPTqO9KADW0OZgNWFQ=;
-  b=f32cnsqH/xWZWII0mfWM+GVGJ4R2jd59x2botjQnrU4Cfp/C9Mj4fofF
-   156YdElXAzqFSTB6WfC9dwcJBzbddqv/30oTk8mcYPb1xLhleSBnZpSXX
-   my41h9GSNGyyQFIrTevLSMElE9RPdi9S5g3UyCa/RlLaXauTP/2ReWZX5
-   s0DxbCoH80DuxEizXpdreFhUPmVtjZy9hKHlf0mez+vcdwfmkkKfBoqkt
-   dVAFBuNPvZmlsZPBKPlcuzPOI3+zLNuxsVeqtgnVmQC84DiZqpwJsT6b3
-   ZhBDF/pN7SezAkpWuDukjjae7CzjyxwZomqA92eQjGEXxbgG/ml0VO1oB
-   g==;
-X-CSE-ConnectionGUID: K3bYQHM0Rp6kVkqnhz0GSA==
-X-CSE-MsgGUID: bx4mWrReSECWSvGzo3LGtw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="53725819"
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="53725819"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 23:04:34 -0700
-X-CSE-ConnectionGUID: pJJ2eCVOS/mww1vFOCpruQ==
-X-CSE-MsgGUID: iVVUBv9sRN27wyV0LiY7dQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="160620009"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 23:04:32 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ua6s1-0000000EQrj-0vZ4;
-	Fri, 11 Jul 2025 09:04:29 +0300
-Date: Fri, 11 Jul 2025 09:04:28 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Petr Mladek <pmladek@suse.com>
-Subject: Re: [PATCH v1 1/1] panic: Fix compilation error (`make W=1`)
-Message-ID: <aHCpbB7cfwfdFBzl@smile.fi.intel.com>
-References: <20250710094816.771656-1-andriy.shevchenko@linux.intel.com>
- <20250710150133.680679cf8a0f6b2f0bf3369f@linux-foundation.org>
- <aHBgwRrFfmEWcp-T@U-2FWC9VHC-2323.local>
- <20250711014947.GA863150@ax162>
- <aHB7fV7QgNp8Fre4@U-2FWC9VHC-2323.local>
+	s=arc-20240116; t=1752215745; c=relaxed/simple;
+	bh=AEXqVE0etQh37WXsg6HkMKCvaPGPubgogFWsxy/xjCk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=BchdVrGa5W+So86eHhMm8dNSlJrNw9sCii7MtO/3WsnbXBGMRS37oRVIOxpAGcR31Lw1Ws3LamicpRop4MLeP03l7lqHLpA9dsuTtBV12L8/AVbl9prhsMs4IsoRGKU3RCQRLnn5kPdvpvaK9UEO0RCDAcW32JdpsTlAPz31QU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=O0iOs1dV; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250711063539epoutp012b04b45344f4b4313abc53f5bd801b49~RHu6FHnU00099900999epoutp01X
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:35:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250711063539epoutp012b04b45344f4b4313abc53f5bd801b49~RHu6FHnU00099900999epoutp01X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752215739;
+	bh=ArMuUjUjfuaCEhQVg7xbi9LyS0T9hCbQPYjtmfTWZJs=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=O0iOs1dVDNI1zMe79WFeXMG2qN92E08vjdqSAZY4d6BLGCGfxBTBS4BJKHg1OkH3+
+	 /YBdSKK4Lg6uPK9ajYl6vIc4WWLXfYVAVv7y8NUXq/5K517ZKjY9T6p5jCZyqHsezi
+	 fWtty6C0vG6J5mCe0lDF5NeAeVKI8udZKCWxoxQE=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250711063539epcas5p26f35b218af46423626481ec75f82db1e~RHu5nraKp3228232282epcas5p23;
+	Fri, 11 Jul 2025 06:35:39 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4bdhmR4vCgz2SSKw; Fri, 11 Jul
+	2025 06:35:35 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf~Q1lkNxKgj2321423214epcas5p1T;
+	Thu, 10 Jul 2025 08:25:33 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250710082531epsmtip157b0106af49bac387934c44e814c6078~Q1litj7Re0693006930epsmtip1w;
+	Thu, 10 Jul 2025 08:25:31 +0000 (GMT)
+From: Devang Tailor <dev.tailor@samsung.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	alim.akhtar@samsung.com, alexandre.belloni@bootlin.com,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, faraz.ata@samsung.com
+Cc: Devang Tailor <dev.tailor@samsung.com>
+Subject: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
+Date: Thu, 10 Jul 2025 14:04:31 +0530
+Message-Id: <20250710083434.1821671-1-dev.tailor@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHB7fV7QgNp8Fre4@U-2FWC9VHC-2323.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf
+References: <CGME20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf@epcas5p1.samsung.com>
 
-On Fri, Jul 11, 2025 at 10:48:29AM +0800, Feng Tang wrote:
-> On Thu, Jul 10, 2025 at 06:49:47PM -0700, Nathan Chancellor wrote:
-> > On Fri, Jul 11, 2025 at 08:54:25AM +0800, Feng Tang wrote:
-> > > On Thu, Jul 10, 2025 at 03:01:33PM -0700, Andrew Morton wrote:
-> > > > On Thu, 10 Jul 2025 12:48:16 +0300 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+Enable on-chip RTC support. The on-chip RTC of this SoC is similar
+to the previous versions of Samsung SoC. So re-use the existing
+RTC driver with applicable call-backs for initialization and IRQ handling.
+Add a separate call-back for disabling RTC since existing '.disable'
+call-backs updates additional bit not valid for RTC of ExynosAutov9.
 
-...
+Setting and getting hardware clock has been tested using 'hwclock'
+and 'date' utilities.
 
-> > > sys_info_avail[] has another purpose for being a counterpart of si_names[],
-> > > which could be extended in future, so we make it obviously stand-alone. As
-> > > for definition of si_names[], we explicitly added comment:  
-> > > 
-> > > 	/*
-> > > 	 * When 'si_names' gets updated,  please make sure the 'sys_info_avail'
-> > > 	 * below is updated accordingly.
-> > > 	 */
-> > > 	static const struct sys_info_name  si_names[] = {
-> > > 		{ SYS_INFO_TASKS,		"tasks" },
-> > > 		{ SYS_INFO_MEM,			"mem" },
-> > > 		
-> > > which has also been discussed in another thread:
-> > > https://lore.kernel.org/lkml/aG3o2RFHc5iXnJef@U-2FWC9VHC-2323.local/
-> > > 
-> > > And I suggest to keep sys_info_avail[], and either Nathan or Sergey's patch
-> > > works for me.
-> > 
-> > We could do something like this to keep the sizeof() obvious and
-> > separate, while still eliminating the variable? Happy to bike shed
-> > aspects of it like the macro name and such.
+Alarm interrupt has been checked with incrementing interrupt
+count via "cat /proc/interrupts | grep rtc" for 10sec
+wakeup time via "echo +10 > /sys/class/rtc/rtc0/wakealarm"
 
-...
+changelog
+---
+Changes in v2:
+- Fixed the review comment of v1 for mis-aligmnent & asymmetry bit logic.
+- link for v1 : https://lore.kernel.org/linux-rtc/20250702052426.2404256-1-dev.tailor@samsung.com/
 
-> > +#define SYS_INFO_MAX_LEN (sizeof("tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks") + 1)
 
-The ' + 1' is batter to leave for the names below.
-Or at bare minimum it needs a semantic explanation.
-If it's for NUL, definitely shouldn't be part of the
-definition.
+Devang Tailor (3):
+  dt-bindings: rtc: s3c-rtc: add compatible for exynosautov9
+  rtc: s3c: support for exynosautov9 on-chip RTC
+  arm64: dts: exynosautov9: add RTC DT node
 
-> >  int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
-> >  					  void *buffer, size_t *lenp,
-> >  					  loff_t *ppos)
-> >  {
-> > -	char names[sizeof(sys_info_avail) + 1];
-> > +	char names[SYS_INFO_MAX_LEN];
-> >  	struct ctl_table table;
-> >  	unsigned long *si_bits_global;
->   
-> Looks great to me, thanks!
-> 
-> We can even move the SYS_INFO_MAX_LEN definition close to si_names[],
+ .../devicetree/bindings/rtc/s3c-rtc.yaml       |  1 +
+ .../boot/dts/exynos/exynosautov9-sadk.dts      |  4 ++++
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi   | 10 ++++++++++
+ drivers/rtc/rtc-s3c.c                          | 18 ++++++++++++++++++
+ 4 files changed, 33 insertions(+)
 
-Agree.
 
-> initially sys_info_avail[] was next to si_names[], and was moved inside 
-> "#ifdef CONFIG_SYSCTL" region for compiling CONFIG_SYSCTL=n case.
-
-But let me think a bit, perhaps we can come up with something even better.
-
+base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
