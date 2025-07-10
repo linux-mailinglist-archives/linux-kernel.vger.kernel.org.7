@@ -1,119 +1,147 @@
-Return-Path: <linux-kernel+bounces-724663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A03AFF592
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:10:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 897F2AFF59A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0217B563F53
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:10:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBE204A4A03
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F46F2905;
-	Thu, 10 Jul 2025 00:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11F8B661;
+	Thu, 10 Jul 2025 00:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Vdlk2SkC"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSt5x58k"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB4EA29;
-	Thu, 10 Jul 2025 00:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC582576;
+	Thu, 10 Jul 2025 00:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752106223; cv=none; b=XAWJ2znaCKPJPMQBI50sFFonmiu0N1PcGfDsDx0JsEHYGoZEfW0leRvF4h41zxRkpWJVrgmIsuncY9OvtMg18vBdd31kFlbfdNuuH9SJRSRhX5WTOw6/EYg452oFQJgXVt/oqXt55kIBZjoj2TSwOq/FKRFEvqEML+O0l1CyUKM=
+	t=1752106775; cv=none; b=VQy6Txlv1Lm//jVXbKHXH7rlfti5xlFlGQ/dkbh6/pC9uAJzTZlKm0d0iy/zqIEJuG/I+ZTqhFv4cBDbUpoX8DYX32LYwoLXuW6RAlFxLWmpwpzM5QxF7hHwp3VQVn/f9U7MpPQGVHeBo2W1zHmGelTFIV2GYXpxmYSXqyXjuA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752106223; c=relaxed/simple;
-	bh=7E+xxRyUjaqAzFFKfK8eHYk+TjV6i7kblWPRj0/L+IY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ADcIPF+xadAugGTJ2TPjz+VaLdMPKq0HW5XbzSCnX9iPgF/HIQ8Bwf5c8LoWkvtsiwOCsoS/7sYoDYrIMFxmosk6L4j+2pPmJ0EjLy+2niOUaFyxhu1YKP4xYtQmT3izA1b7U9yN8lXhK9SCdBqDEP3w9nUM/g7Jwk7fflVVHBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Vdlk2SkC; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752106145;
-	bh=5qEaJY+f97ZoD4Fmfw8fXzfpeAB9b4jFxigSeJES+mI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Vdlk2SkC5VUotzykhzjx2EEJxVz3xqfAlRmDoV995QxssvyPoQyRCpUwB3XXSQQOS
-	 cZegMwOdCurApgzx3a/1z75gkN0rBJ6zg9+8SHDLCgy7rxeEgAYnLFbn6DfnlIgtu6
-	 H/LMpXTxlpE6uxCOABZIu5J2yB/aGkKQuXOL/KqUZdPLdQR59uqbKJky9/ry59z7++
-	 2ZKptqhpEnn68m8jSxuer2mQDXotR9rX6fkn+A7gmbK2/ielbnOQrfilT5x7Ixg/dW
-	 eMqRXLa6/pn17kZYNK2rgfc92dqqnerTLT59vZDyaqJK15XZQHyqkCp/Pnb+NqjO5Z
-	 RThNf9Nf3aZ8Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bcwDx4115z4x47;
-	Thu, 10 Jul 2025 10:09:05 +1000 (AEST)
-Date: Thu, 10 Jul 2025 10:10:15 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: boot failure after merge of the dma-mapping tree
-Message-ID: <20250710101015.3033ca44@canb.auug.org.au>
-In-Reply-To: <20250709181631.GI592765@unreal>
-References: <20250709233953.7afb7a8a@canb.auug.org.au>
-	<20250709181631.GI592765@unreal>
+	s=arc-20240116; t=1752106775; c=relaxed/simple;
+	bh=JmOsx5cBItV32FNWImzlQTBoy6p+tMlQ3/JbFRpfLZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TbQz30DC6M9W97ST5VQNbBaZvxvTguosrnSbCWGculzfDVVwFobGqFwTOgNMzGdP3SAdSQ4X3lIXLIuO/i0EaklL2Uqg1oBdXo27WgjskU47QHo5sTHvEIkUMr2n9ITvmBZe87p3LkaGWWWUtnZKiWNqMtKIMKeF041wtWgIJbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSt5x58k; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a531fcaa05so233172f8f.3;
+        Wed, 09 Jul 2025 17:19:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752106772; x=1752711572; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ji7e37qngWvjbl+0kQwPCSQJoUjgF+G1Qx/ETbmkYcI=;
+        b=GSt5x58k3UvybWtYT6epK/Yd3eBrskkvDDB/EFp1LVtTXITgC+kKWRoTTIRQw4Aqa3
+         VVqCwRMA0O73U76mi5aRJ1xBX3hrZ76lPcahLCZlQLe5tQXkxcwLGQpv9orItIsUTcI6
+         1ENa4vd+3E664cV7SZFt2U+T+S1CgW8SIKzmKtNwQavySGU82OLt4yuW5EddYxo0RWWt
+         Ajw7DV4P3IUnIH9p357yUkhAlUk1B784SFLyGL8nTytuypcIfuLeh5M+DnyPA2MynCLR
+         f+13Ir23fQJJXRdY3fnykszFJ8Z3lFbJ/g9lSuLqSNAVkFNJW0YZ8qdxFKBC853uRWbj
+         VP5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752106772; x=1752711572;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ji7e37qngWvjbl+0kQwPCSQJoUjgF+G1Qx/ETbmkYcI=;
+        b=au28e2QDjYbpxaGrf6ox28S+M+hCDb7Uy5QCyOnqfZs58Auru3XgMGG9k+4VIeoFnc
+         Wqx4iERyzDJe3MPXIFWuGyhUI3jFnRtxROjlWGpWb6vYOP1hHh0ne9qqUSQr3Dad5f+j
+         G4HNnOnzGifDSKZrxKCYA5ApV6wFa6B8DfDC+u58VHZpPXOQ6h8eXMW0bAHf6HhJeifk
+         tdf7H19P4kfvsJfZLC9kaAjuYL/HrkjDAg2PewuVBVxADRUm0UwDV18v2eGmwCF0NDjA
+         ppW+gS2vdlbXi2l9GwQnQUD3kEkHfPfEG9Sl7l8kNv4WkUqUXq8X2A644lAo3sC0ZDDh
+         0z5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV5OKfA9O/LCh3Dp4JECjQNwwwpmYZBLQDo6ARb1LkkK2JfV57RLv6+pU2OKhLfVUHADNVyR6o/CV16kt2S79F7@vger.kernel.org, AJvYcCW7Vxzh/Z8e/jt9sDKJN9IFfdCcxQ6urQQU8T9I5j4kzDpTrw0+Tb3pYS/HpVQN1uIA/OEQXVA9GKgvbVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySCChgPeUsvvCb1z5esBkQpKq4WWVNRr/WFoKCf+x706TvzKEV
+	OGkEp9gBXP1An7hCM2juasI4/dJytc6/YwuuNBgddtMd3kIqWFo9Nu2b
+X-Gm-Gg: ASbGncvy0EUSz3tAqQmpoVLy6NsCzXXFwKNV++OMkT8JCxVnY9pLgKP8v71V4uDazn1
+	40JGx82XbZSwrvaeXoiI1ZpVSVK4goyiN2FnEgwUJmEkHLdcnTOas+R3IWOqdyXV6Wn4RjmNHQp
+	eXDIk0R1BrSJKezfGihaId6fEMni535t4DcufFKGOJ6cKlgY0ItCVAKnI7xYAYqkC6j15wPJUHa
+	xW7t1nCRUtH+HUAQ2IwARjuj01bj1DSNByliNNwEsJZxBuSdNe4wOSZN+LYAJyxh+gq6ABhcBa6
+	iJUSLXmCgxZa9Mzroo5W+Ng837CWE/QbneguH9/aUx3t7SV2G+uCOd9B2DoLc5DRcunXxmDCMKs
+	yF9AKAnWv7OpbYyzSjKEg+05+z10fJxgwmMu2GIoLq2pllA==
+X-Google-Smtp-Source: AGHT+IF2zfYiETZK/hwApSPfG1ch573CkkficunrtEPCOTlBj/gs+csdtyHjkL7czN7gu/UA45Izww==
+X-Received: by 2002:a05:6000:2008:b0:3a5:8a09:70b7 with SMTP id ffacd0b85a97d-3b5e86bbb56mr454001f8f.38.1752106771498;
+        Wed, 09 Jul 2025 17:19:31 -0700 (PDT)
+Received: from alessandro-pc.station (net-2-37-207-91.cust.vodafonedsl.it. [2.37.207.91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd462b2fsm2860945e9.9.2025.07.09.17.19.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 17:19:30 -0700 (PDT)
+From: Alessandro Zanni <alessandro.zanni87@gmail.com>
+To: shuah@kernel.org,
+	brauner@kernel.org,
+	amir73il@gmail.com,
+	jhubbard@nvidia.com,
+	jack@suse.cz,
+	mszeredi@redhat.com
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/filesystems: Use return value of the function 'chdir()'
+Date: Thu, 10 Jul 2025 02:19:25 +0200
+Message-ID: <20250710001927.4726-1-alessandro.zanni87@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/DhmNvjei3inG+0qREg3VIte";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/DhmNvjei3inG+0qREg3VIte
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Fix to use the return value of the function 'chdir("/")' and check if the
+return is either 0 (ok) or 1 (not ok, so the test stops).
 
-Hi Leon,
+The patch fies the solves the following errors:
+mount-notify_test.c:468:17: warning: ignoring return value of ‘chdir’
+declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  468 |                 chdir("/");
 
-On Wed, 9 Jul 2025 21:16:31 +0300 Leon Romanovsky <leon@kernel.org> wrote:
->
-> I assume that this will fix the issue:
->=20
-> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-> index 29e8594a725a..cb8936e4ffab 100644
-> --- a/kernel/dma/mapping.c
-> +++ b/kernel/dma/mapping.c
-> @@ -157,7 +157,7 @@ dma_addr_t dma_map_phys(struct device *dev, phys_addr=
-_t phys, size_t size,
->  {
->  	const struct dma_map_ops *ops =3D get_dma_ops(dev);
->  	struct page *page =3D phys_to_page(phys);
-> -	size_t offset =3D offset_in_page(page);
-> +	size_t offset =3D offset_in_page(phys);
->  	bool is_pfn_valid =3D true;
->  	dma_addr_t addr;
+mount-notify_test_ns.c:489:17: warning: ignoring return value of
+‘chdir’ declared with attribute ‘warn_unused_result’ [-Wunused-
+result]
+  489 |                 chdir("/");
 
-I found time to test the above on top of yesterday's linux-next and it
-fixes the problem for me.  Thanks again.
+To reproduce the issue, use the command:
+make kselftest TARGET=filesystems/statmount
 
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+---
+ .../selftests/filesystems/mount-notify/mount-notify_test.c      | 2 +-
+ .../selftests/filesystems/mount-notify/mount-notify_test_ns.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
+index 5a3b0ace1a88..a7f899599d52 100644
+--- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
++++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
+@@ -458,7 +458,7 @@ TEST_F(fanotify, rmdir)
+ 	ASSERT_GE(ret, 0);
+ 
+ 	if (ret == 0) {
+-		chdir("/");
++		ASSERT_EQ(0, chdir("/"));
+ 		unshare(CLONE_NEWNS);
+ 		mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
+ 		umount2("/a", MNT_DETACH);
+diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
+index d91946e69591..dc9eb3087a1a 100644
+--- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
++++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
+@@ -486,7 +486,7 @@ TEST_F(fanotify, rmdir)
+ 	ASSERT_GE(ret, 0);
+ 
+ 	if (ret == 0) {
+-		chdir("/");
++		ASSERT_EQ(0, chdir("/"));
+ 		unshare(CLONE_NEWNS);
+ 		mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
+ 		umount2("/a", MNT_DETACH);
+-- 
+2.43.0
 
---Sig_/DhmNvjei3inG+0qREg3VIte
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhvBOcACgkQAVBC80lX
-0Gy7jwf+Pu+62IXPXlq03LXnNi4BBYxZSQNru/N0Iqbh79Imbu7TSFo7hsjK4AGp
-gMVsT8OU/wp/B8IbHY3TZZt3gvcoMmxmLyyfxfA7UCxgjL7ClOo6Ck291qUfO73D
-UF+QDuy15HYvQOsY0u5SANFqcf5OkXCOI5dLpMdFqIpa+JzqA80lYaDYSe93h52m
-EITmb+mzJHXFd8puyahfYtS0eSs1VDePjDADqdixj29/uc6+nJUvdDoN4ex1rmZg
-JN5K0slXVxX0jai8wZNdOJfM72f9KHMi38M8GA5o+pPukojibUiVVWcrcPeXWiwB
-nZLprocsAn2TEZwLa6JjwUkGxAN0Ug==
-=Usp3
------END PGP SIGNATURE-----
-
---Sig_/DhmNvjei3inG+0qREg3VIte--
 
