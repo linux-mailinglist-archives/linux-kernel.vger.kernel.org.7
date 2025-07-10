@@ -1,288 +1,332 @@
-Return-Path: <linux-kernel+bounces-726054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BE2B00791
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:50:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C3F7B00798
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A109016F356
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:46:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1FC1C23737
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4786274B29;
-	Thu, 10 Jul 2025 15:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE50C274FD3;
+	Thu, 10 Jul 2025 15:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7VFboe7"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNJ9wnkL"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701B62741D1;
-	Thu, 10 Jul 2025 15:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E062271468;
+	Thu, 10 Jul 2025 15:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752162409; cv=none; b=iPKBU8cEl/EjrbFnNkKE34ouP5g+HhJlC65At0npG9/tTC3GjR6xMa1GwbHaIW+4BhTWPY4kTRpZXNIMZLUqQWjB+iQnCNDP5Yak/LumPcppLQuUY19rDmrS3gnwj8nj2BnD6CwEB4ljCDZNbwteNRIewLuJAQb3GqDqXCfBirg=
+	t=1752162418; cv=none; b=d/LUYLIY8qIod+Z7BufAs9/Tg6rgQ/RtjnJCCipqxX30wT9duqyfTMc3KU7d1pKgGiNbycSf2vSWz9cKeZfTPyhxBzEpXdCdYRwJl4hriZAw40vubT0Zinf4FriYz26AdO2vsGHW7/+d1/k1AxjQNgqAZu7sEhqHUZHjUN3sdhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752162409; c=relaxed/simple;
-	bh=Meep8S48rXAr1IiHgTpdK/u6t6UuePEWQ1OMpVBq18U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J3cqetN19CkKdrePNOywdnTRL8WNGmyiLNz7Lxna1uuvbQVny7k2r5id/O7BmsalG9LmTm8zN9va8DdgyfZgS5c7FlyGgu4vAeiIU+kgjhEUhyqf4qmp2LRc1qwyhUw3bW6VDH2NcueO3p38W/MTogLLGt4Je/TDliaMBiGM+Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b7VFboe7; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1752162418; c=relaxed/simple;
+	bh=oM1+Ehyo1XKAXDXS91myjKMXCy9LpbNbrfG5dwb/SMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ux7pCHR7trmLVprSxHo2hV/Lf+KRLMDKVjGHk5Jl5Q8txgAtbNToiDsc9/wONLLG94yokSGVsp7hPfejE2OJW2LuY/Y/uz50/DxQfvuwyhvhtceRIxsjMnK2rW3A8nCYCz2HbB8hD8c8lZL3c0oON5GhRUxxGlcvyAc/iH/7ZUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNJ9wnkL; arc=none smtp.client-ip=209.85.160.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2353a2bc210so12553225ad.2;
-        Thu, 10 Jul 2025 08:46:47 -0700 (PDT)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a4312b4849so13717411cf.1;
+        Thu, 10 Jul 2025 08:46:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752162407; x=1752767207; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d8s8aI5nykbObjyK4zFELHxY4NnJWT0iSTl57boBPsE=;
-        b=b7VFboe7VT27VWIGUm4b1LccMehClv0EZckIL/ehFCc8jcAeBuHXU71iZ69DApmg0Y
-         1QX5WXAAGwPlX0w7jCcjT/xWtIyDoROjFb4/FXB+BEZD9yNBhjqLmJMG4BsoMQuOYtNX
-         MpWK2HUoNz0zHxpI4C0GKvdBR3nJKM3ZVHgsjZmBEZtbgM38tmbcu5sUXWOQWngn0LtE
-         OZImBSQ1bObroydJRzrYa3ZYBeQJWvJUNZ3OdFwmVf+4W3ymcCDShI0IKMxw7eBfxgrL
-         RFZe8GKC3hQ+Cy8wx+fWcuAWkLFVBUPtBmxqS4LnfxtFp2s5P4YNtZ86ZkWJF0mpQ+ap
-         HUog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752162407; x=1752767207;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752162416; x=1752767216; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d8s8aI5nykbObjyK4zFELHxY4NnJWT0iSTl57boBPsE=;
-        b=brphaq3hMRWLlt9gL+MCokkqjrW0UvdHbXpkTxG/rbboE+qMVlEgg8lSUR3SBeBFs8
-         tuQgG6B56qYqMJmBRUXxGu7fWD7D6JNcsQugwSAjcoCPyhf9Xt7EOLVXzMQ0DGG+p02R
-         J/MjE9hhJ8L/eEaQJfzAKkjI3zuv2BhnFESuJSgOvCC++dYlXQ6Cg5n9mkHPwLH06iGQ
-         RZni0zuQTt8PgZX9Iwm+HW9uMc3D8SAyUT+ZCFyGQYzJYhccW1vJKRxPtDv7y8Eyx18V
-         RlTP7kB0aKMOZHetb8yKnj+Wm3vpQOEN//KDfoxY3Shs+ENIis6S5vKwaQdExacTtnuH
-         zJbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgwb+Ij1eWthKvSuHeJspQ/OCY30Xtb/NtIb/nJIi5ZC8DsT61vYIXLcBOHyc3dCUDH0pTq6N63S1vjfs=@vger.kernel.org, AJvYcCXC/YEn5pmrx+MgRbmlyPkYQJNUuEJ3Da+ivsas9NEh8pC2jsyi7uYHMOZd2HJaQbs+VKTzBnhvZ0r4EZM7vKarnw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6GdgIzNU8NgyHPIMhBk7wkoMOYQXYeiwWflzNNMOlzIk1CpW7
-	g9hX3sbCibOUO5+cVgw1n5df0L5f2tlsbnUXBiT9GGTyQf3hJ+WXqa00dw608oXI
-X-Gm-Gg: ASbGncsOePrqoKkkxi0skc/+e1aSvrOJ56O+fjt9zQf8C5vuufqsVm+KlBpulwGogAe
-	n5CtGN5A40DnhUEKq36p0x3bTylhgy5WNTNo7090HZi63bhOLR1hAVolnvJYvod2dtD1PLH52sg
-	brLrKEUwC9F7+5YsF44CA1Y7oUKwoVMb4byrmcqVHw7B8s+4X0zkzge2Io5yvFJDUaMBWpyYEk6
-	qcuGLQ5IFTc8s0VimfPDAPFP/AHQpCHQold6jzoNMZAN1NFfMAsRWDB0MeKHcOrwPp1/9KAWXCz
-	kvPghcrdwwQk4pmr9vUHL+vTAy4lRlfN7ZNViZ0yGuFPN8ThzXEA5t4zn4Y=
-X-Google-Smtp-Source: AGHT+IEqqSp2Bx4H9HZGWjwyRbPvR+vWlgwLlpuGUtnloA4G9XjlM92Y9Stck87gfHrX+jJIWpVO8w==
-X-Received: by 2002:a17:902:ec88:b0:235:225d:30a2 with SMTP id d9443c01a7336-23de2512cecmr66021745ad.48.1752162406466;
-        Thu, 10 Jul 2025 08:46:46 -0700 (PDT)
-Received: from hiagonb ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4365b10sm23794255ad.240.2025.07.10.08.46.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 08:46:45 -0700 (PDT)
-Date: Thu, 10 Jul 2025 12:46:39 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Ritesh Kumar <ritesh.kumar@toradex.com>
-Subject: Re: [PATCH] remoteproc: imx_rproc: merge ITCM and DTCM regions
-Message-ID: <20250710154639.hmbmzpaizhxqodqk@hiagonb>
-References: <20250703130831.18830-1-hiagofranco@gmail.com>
- <aGgAbwToGhsc5VV9@p14s>
- <20250704190816.kth7bdf34ufc2ht6@hiagonb>
- <aGvyDp36iWv5UQ19@p14s>
- <20250708172953.rbsvk6gy4xuxo42l@hiagonb>
- <20250709082652.GA15057@nxa18884-linux>
+        bh=CFRh5M+wR2uMTMJ/MORNLebKOfjVF5STzcGd6MRegLQ=;
+        b=NNJ9wnkLoPT9OyT9eYgv7pU4yBozqcnbwEs8wzZAg0W2w6OZ0SbLfteUcCKcsGsslb
+         kZc6MG+IoZLQ2SWZlsBXMjE7EoLzLsFSSitKGy+Du1Ei+DA9WMesZLjhLabvi+fvEQzO
+         1Z1UjGbXJ38xwsOVgTXQ/cuZquWJRjD950J7GwrJ0+vjEuMKvwQ5biT8yYWbmWBlq/Xh
+         L7TuixLCNe0a0suAx88Jb9VCvM/7BhSgjC778ObaXqDuW3NtoibboraLd9CIUropBe+7
+         acGkNN4n5yJDuC7Cf44samTpsAUM3V6SUGFVGGuFqzjW7//RpYOxuMY2Fajlbt2oAC3A
+         kRIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752162416; x=1752767216;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CFRh5M+wR2uMTMJ/MORNLebKOfjVF5STzcGd6MRegLQ=;
+        b=fOKcoVcB3IP0wRPXG/SYpFX8jJaBBUA2QUdZyzOKe5i5LUQF5E/jBJf8z2wNEv/sfA
+         9F9SdCmgFesnNix9sWViWg8J+KiEEyQEcnRaPYWhz0vEaujR8cS5G847VaXPN2cFaDP5
+         ceIkP5xkYWeGetye+ob3oOheDMrGHrlbdy+GOSesFJsZWNK9DOGLETmB2V3gr2TdsT9q
+         rDBtp3jnq+2Y+HUR34pC94UxF3JBGWxFl+KsACaI4rnIWP8E72Gqe1b7/pvEgyvYptNc
+         r3mS/d2Oglb5XdlJzYHg0sFsgPb7au2u186vVtZyUJtIAquDfrwAqSAy6rrQBUTzH5Ca
+         YuXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0rZy5GaqX2+X52P5ypLcono4WuncqQJ1dg76hX4BF7e5LtdH5srVXQRVYITAarKJ2EDyMsr5aVw1S@vger.kernel.org, AJvYcCXHc6tLVDpw23GuJtkGJLI1S2fp66hxrr3lsINkq3Ws7u1lMQLgIgEXy8ZruBTqhqoJnWcYqwSxpfptDz3X@vger.kernel.org
+X-Gm-Message-State: AOJu0YztJZxSv3/j90WFQxxtJ9kGX/LkD5AFDKIuJkihsK5FBSUtDGm9
+	VT5AUt8lzDnT/tHfdPv9UeaBsBwBw9RcI13qa/IXUnkL3j1qjg+2f1zMwNTQTL2R0s48qJfKX1b
+	8RCflGhyw4xJKxK8Too7LQKz89SZH+Sh8pIEkBmCEFA==
+X-Gm-Gg: ASbGncvSekTjmnVJqXSNBNcInO1I/sYd3aQtun4rau2n34fiSUdXVN7G2UChJNNZHTr
+	ZSbYYYHiYYmDt/8v4Hlm+OnZSJ6dVgMxjmWDLLYS7hJxTrDjfxdJpV2WPnyZwPmuciRaKKHTQsW
+	HBQUk1VSnfKfSBuE983DYEWcNq8tTlmtvNjjqeszjUrETBQ2wwxpsPTg==
+X-Google-Smtp-Source: AGHT+IFzf7Wiy6uC7ifSVXNVJ02wG6d3iH9vAVhb54iIBDZYHdSilUfQGokgjtv7Vpa7hoe/Rf4u42B/9+7pm+cCcqs=
+X-Received: by 2002:ac8:5709:0:b0:4a8:5a:9e2f with SMTP id d75a77b69052e-4a9dec28aacmr85662381cf.8.1752162415579;
+ Thu, 10 Jul 2025 08:46:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709082652.GA15057@nxa18884-linux>
+References: <CANZ3JQTpr1xRwc9GED7aXePsZE_KZ6GnpO+wMn2UaMrD4tbMzg@mail.gmail.com>
+ <CY8PR11MB71349230AB9CF3347D333AC48948A@CY8PR11MB7134.namprd11.prod.outlook.com>
+In-Reply-To: <CY8PR11MB71349230AB9CF3347D333AC48948A@CY8PR11MB7134.namprd11.prod.outlook.com>
+From: Wang Haoran <haoranwangsec@gmail.com>
+Date: Thu, 10 Jul 2025 23:46:41 +0800
+X-Gm-Features: Ac12FXxzTjNlU8rlUG5TwEgMhAuCRQinxhwqzCZ1nLSH0eao7iaEPJVm5xWxsCc
+Message-ID: <CANZ3JQQdNGjzkAY-VUbs22sveHCsvCtgVkUApfTYFG7wGw1gCg@mail.gmail.com>
+Subject: Re: We found a bug in skx_common.c for the latest linux
+To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+Cc: "Luck, Tony" <tony.luck@intel.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 09, 2025 at 04:26:52PM +0800, Peng Fan wrote:
-> On Tue, Jul 08, 2025 at 02:29:53PM -0300, Hiago De Franco wrote:
-> >Hi Peng, Mathieu,
-> >
-> >On Mon, Jul 07, 2025 at 10:13:02AM -0600, Mathieu Poirier wrote:
-> >> On Fri, Jul 04, 2025 at 04:08:16PM -0300, Hiago De Franco wrote:
-> >> > Hi Mathieu,
-> >> > 
-> >> > On Fri, Jul 04, 2025 at 10:25:19AM -0600, Mathieu Poirier wrote:
-> >> > > Good morning,
-> >> > > 
-> >> > > On Thu, Jul 03, 2025 at 10:08:31AM -0300, Hiago De Franco wrote:
-> >> > > > From: Hiago De Franco <hiago.franco@toradex.com>
-> >> > > > 
-> >> > > > Merge the contiguous ITCM and DTCM regions into a single region to
-> >> > > > prevent failures when loading ELF files with large sections:
-> >> > > > 
-> >> > > > remoteproc remoteproc0: powering up imx-rproc
-> >> > > > remoteproc remoteproc0: Booting fw image rproc-imx-rproc-fw, size 151824
-> >> > > > imx-rproc imx8mp-cm7: Translation failed: da = 0x1f48 len = 0x1fcb0
-> >> > > > remoteproc remoteproc0: bad phdr da 0x1f48 mem 0x1fcb0
-> >> > > > remoteproc remoteproc0: Failed to load program segments: -22
-> >> > > > remoteproc remoteproc0: Boot failed: -22
-> >> > > > 
-> >> > > > This approach is the same as commit 8749919defb8 ("remoteproc:
-> >> > > > imx_rproc: Merge TCML/U").
-> >> > > > 
-> >> > > > Suggested-by: Ritesh Kumar <ritesh.kumar@toradex.com>
-> >> > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> >> > > > ---
-> >> > > > Hi,
-> >> > > > 
-> >> > > > The ELF I tested had the following data section:
-> >> > > > 
-> >> > > > Memory region         Used Size  Region Size  %age Used
-> >> > > >     m_interrupts:         680 B         1 KB     66.41%
-> >> > > >           m_text:        6984 B       127 KB      5.37%
-> >> > > >           m_data:      130224 B       128 KB     99.35%
-> >> > > >          m_data2:          0 GB        16 MB      0.00%
-> >> > > > [100%] Built target hello_world_cm7.elf
-> >> > > > 
-> >> > > > Which triggered the error. After this patch, remoteproc was able to boot
-> >> > > > and work fine. Thanks!
-> >> > > > ---
-> >> > > >  drivers/remoteproc/imx_rproc.c | 6 ++----
-> >> > > >  1 file changed, 2 insertions(+), 4 deletions(-)
-> >> > > > 
-> >> > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> >> > > > index 74299af1d7f1..bbf089ef48ee 100644
-> >> > > > --- a/drivers/remoteproc/imx_rproc.c
-> >> > > > +++ b/drivers/remoteproc/imx_rproc.c
-> >> > > > @@ -166,8 +166,8 @@ static const struct imx_rproc_att imx_rproc_att_imx8qxp[] = {
-> >> > > >  
-> >> > > >  static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
-> >> > > >  	/* dev addr , sys addr  , size	    , flags */
-> >> > > > -	/* ITCM   */
-> >> > > > -	{ 0x00000000, 0x007E0000, 0x00020000, ATT_OWN | ATT_IOMEM },
-> >> > > > +	/* D/ITCM */
-> >> > > > +	{ 0x00000000, 0x007E0000, 0x00040000, ATT_OWN | ATT_IOMEM },
-> >> > > >  	/* OCRAM_S */
-> >> > > >  	{ 0x00180000, 0x00180000, 0x00009000, 0 },
-> >> > > >  	/* OCRAM */
-> >> > > > @@ -180,8 +180,6 @@ static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
-> >> > > >  	{ 0x08000000, 0x08000000, 0x08000000, 0 },
-> >> > > >  	/* DDR (Code) - alias */
-> >> > > >  	{ 0x10000000, 0x40000000, 0x0FFE0000, 0 },
-> >> > > > -	/* DTCM */
-> >> > > > -	{ 0x20000000, 0x00800000, 0x00020000, ATT_OWN | ATT_IOMEM },
-> >> > > 
-> >> > > In commit 8749919defb8 "dev addr" and "sys addr" were both contiguous, but in
-> >> > > this patch "dev addr" is not.  How will this work with new kernel that use old
-> >> > > FW images?  Am I missing something?
-> >> > 
-> >> > No, you are correct, I think the use case I tested was not good enough.
-> >> > 
-> >> > If I understand correctly, this will break older firmware expecting
-> >> > .data at 0x20000000 because dev_addr is no longer mapped for DTCM entry.
-> >> > 
-> >> 
-> >> Correct.  Older firmware would still expect DTCM at 0x20000000.
-> >> 
-> >> 
-> >> > Do you think it is possible (or reccomend) another approach to fix this
-> >> > issue? In this case to keep using the TCM, instead of going to OCRAM or
-> >> > DDR.
-> >> >
-> >> 
-> >> To me the best way to proceed is understand why using the current mapping is a
-> >> problem.  The changelog describes a failure condition when dealing with large
-> >> sections but does not indicate _why_ that is happening.  I think that's what
-> >> needs to be fixed rather than trying to move mappings around.
-> >
-> >Thanks for the information you both provided, sorry for the noise, so
-> >please Mathieu ignore this patch. I will work around this in a different
-> >way.
-> >
-> >By the way, Peng, I noticed the DDR linker from MCUXpresso does not work
-> >if the firmware is larger than 128KB, since the .data is placed right
-> >after .text and loaded later to DDR. The imx_rproc driver should instead
-> >have a way to do the other way around: starting from the firwmare inside
-> >DDR, we could set PC and stack from M7 to point to DDR and start the
-> >execution. Probably will be slower, but it would make the DDR case
-> >possible.
-> 
-> I am not aware of the size limitation if image is built to run in DDR.
-> It maybe MCUXpresso team just reuse the linker script for TCM and only
-> update the link address.
-> 
-> You could update the linker script to build larger image.
-> 
-> In final elf, .data is put just after .text, but the related section
-> loading address should be specified as my understanding. See below,
-> .data is at 0x20000000 for M7.
-> 
-> xx-gcc -S imx8mn_m7_TCM_rpmsg_lite_str_echo_rtos.elf
-> There are 20 section headers, starting at offset 0xc998:
-> 
-> Section Headers:
->   [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
->   [ 0]                   NULL            00000000 000000 000000 00      0   0  0
->   [ 1] .interrupts       PROGBITS        00000000 001000 000240 00   A  0   0  4
->   [ 2] .resource_table   PROGBITS        00000240 001240 000058 00   A  0   0  1
->   [ 3] .text             PROGBITS        000002a0 0012a0 0046b0 00  AX  0   0 16
->   [ 4] .ARM              ARM_EXIDX       00004950 005950 000008 00  AL  3   0  4
->   [ 5] .init_array       INIT_ARRAY      00004958 005958 000004 04  WA  0   0  4
->   [ 6] .fini_array       FINI_ARRAY      0000495c 00595c 000004 04  WA  0   0  4
->   [ 7] .data             PROGBITS        20000000 006000 00000c 00  WA  0   0  4
->   [ 8] .ncache.init      PROGBITS        80000000 00600c 000000 00   W  0   0  1
->   [ 9] .ncache           PROGBITS        80000000 00600c 000000 00   W  0   0  1
->   [10] .bss              NOBITS          2000000c 00600c 00a4ac 00  WA  0   0  4
->   [11] .heap             NOBITS          2000a4b8 00600c 000400 00  WA  0   0  1
->   [12] .stack            NOBITS          2000a8b8 00600c 000400 00  WA  0   0  1
->   [13] .ARM.attributes   ARM_ATTRIBUTES  00000000 00600c 000030 00      0   0  1
->   [14] .debug_line_str   PROGBITS        00000000 00603c 0002b1 01  MS  0   0  1
->   [15] .comment          PROGBITS        00000000 0062ed 000055 01  MS  0   0  1
->   [16] .debug_frame      PROGBITS        00000000 006344 000260 00      0   0  4
->   [17] .symtab           SYMTAB          00000000 0065a4 003cd0 10     18 586  4
->   [18] .strtab           STRTAB          00000000 00a274 002664 00      0   0  1
->   [19] .shstrtab         STRTAB          00000000 00c8d8 0000bd 00      0   0  1
-> 
-> >
-> >Correct me if I am wrong, but as my current understanding the DDR linker
-> >is broken without this change to the driver. Anyway, maybe something for
-> >a future patch.
-> 
-> If you wanna image in DDR, you could specifiy the address of data section
-> in your linker script.
-> 
-> But for support ddr elf file, you need patches as below:
-> https://lore.kernel.org/linux-arm-kernel/CAEnQRZC5t=qmo+OJLW+dqZg4gH9cAN=paWDSGbrJb2AvkKBqxg@mail.gmail.com/T/#ec54c42b70416b002936a643b44b79661dd2a8483
-> This patchset was rejected, because we need to get stack/pc from .interrupts
-> section and store to ITCM.
-> 
-> Latest NXP m7 demo has included a new section for stack/pc, but
-> this will only be public in 2025 Q3 release, for pre-2025-Q3 releases,
-> still need the upper patchset.
+Yes, I have!
+Thank you for your reply.
+This issue was discovered through static analysis rather than at
+runtime, so unfortunately we do not have a real-world PoC or specific
+dmesg log from skx_show_retry_rd_err_log().
+To provide additional context, during the execution of
+skx_show_retry_rd_err_log(res, skx_msg + len, MSG_SIZE - len,
+scrub_err);
+if len is greater than the allocated MSG_SIZE, the subsequent call
+inside skx_show_retry_rd_err_log such as
+n =3D snprintf(msg, len, " retry_rd_err_log[%.8x %.8x %.8x %.8x %.8x]",
+log0, log1, log2, log3, log4);
+will pass an invalid address (skx_msg + len) that has exceeded the
+bounds of the skx_msg buffer. Moreover, the size parameter (len)
+becomes negative, which is treated as a very large positive number due
+to the use of size_t. This can result in out-of-bounds memory access
+and potentially dangerous behavior in the kernel.
 
-Great, thanks for all the information Peng. I will inform my team here.
+we crafted a minimal kernel module to demonstrate this case:
+#include <linux/module.h>
+#include <linux/init.h>
+#include <linux/kernel.h>
+#include <linux/string.h>
 
-Best regards,
-Hiago.
+static int __init snprintf_test_init(void)
+{
+    char buf[10];
+    int i;
 
-> 
-> Regards,
-> Peng
-> 
+    printk(KERN_INFO "snprintf_test: start\n");
+
+    for (i =3D 0; i < 10; i++) {
+        buf[i] =3D 'a' + i;
+    }
+
+    printk(KERN_INFO "snprintf_test: original buf (before snprintf):\n");
+    for (i =3D 0; i < sizeof(buf); i++) {
+        printk(KERN_INFO "  buf[%2d] =3D 0x%02x (%c)\n", i, buf[i],
+               (buf[i] >=3D 32 && buf[i] <=3D 126) ? buf[i] : '.');
+    }
+
+    int len =3D snprintf(buf + 12, -2, "snprintf with -2 size, num: %d", 12=
+3);
+
+    printk(KERN_INFO "snprintf_test: snprintf returned %d\n", len);
+
+    printk(KERN_INFO "snprintf_test: buf after snprintf:\n");
+    for (i =3D 0; i < sizeof(buf); i++) {
+        printk(KERN_INFO "  buf[%2d] =3D 0x%02x (%c)\n", i, buf[i],
+               (buf[i] >=3D 32 && buf[i] <=3D 126) ? buf[i] : '.');
+    }
+
+    return 0;
+}
+
+static void __exit snprintf_test_exit(void)
+{
+    printk(KERN_INFO "snprintf_test: exit\n");
+}
+
+module_init(snprintf_test_init);
+module_exit(snprintf_test_exit);
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("YourName");
+MODULE_DESCRIPTION("snprintf test");
+And here is the relevant excerpt from the kernel log (dmesg):
+[   61.503462] snprintf_test: loading out-of-tree module taints kernel.
+[   61.503472] snprintf_test: module verification failed: signature
+and/or required key missing - tainting kernel
+[   61.504431] snprintf_test: start
+[   61.504433] snprintf_test: original buf (before snprintf):
+[   61.504435]   buf[ 0] =3D 0x61 (a)
+[   61.504438]   buf[ 1] =3D 0x62 (b)
+[   61.504440]   buf[ 2] =3D 0x63 (c)
+[   61.504442]   buf[ 3] =3D 0x64 (d)
+[   61.504444]   buf[ 4] =3D 0x65 (e)
+[   61.504446]   buf[ 5] =3D 0x66 (f)
+[   61.504448]   buf[ 6] =3D 0x67 (g)
+[   61.504450]   buf[ 7] =3D 0x68 (h)
+[   61.504452]   buf[ 8] =3D 0x69 (i)
+[   61.504453]   buf[ 9] =3D 0x6a (j)
+[   61.504466] ------------[ cut here ]------------
+[   61.504468] WARNING: CPU: 0 PID: 4133 at lib/vsprintf.c:2780
+vsnprintf+0x5ad/0x5f0
+[   61.504475] Modules linked in: snprintf_test(OE+) snd_seq_dummy
+snd_hrtimer target_core_user uio target_core_pscsi target_core_file
+target_core_iblock iscsi_target_mod target_core_mod bnep qrtr
+intel_rapl_msr intel_rapl_common polyval_clmulni polyval_generic
+ghash_clmulni_intel sha256_ssse3 sha1_ssse3 aesni_intel crypto_simd
+cryptd vmw_balloon snd_ens1371 snd_ac97_codec gameport ac97_bus
+snd_pcm btusb btrtl snd_seq_midi snd_seq_midi_event btintel
+snd_rawmidi snd_seq btbcm btmtk bluetooth snd_seq_device
+vsock_loopback vmw_vsock_virtio_transport_common snd_timer
+vmw_vsock_vmci_transport snd vsock binfmt_misc soundcore vmw_vmci
+i2c_piix4 i2c_smbus input_leds joydev mac_hid sch_fq_codel vmwgfx
+drm_ttm_helper ttm msr parport_pc ppdev lp parport efi_pstore
+nfnetlink dmi_sysfs ip_tables x_tables autofs4 hid_generic psmouse
+vga16fb serio_raw vgastate mptspi mptscsih ahci mptbase e1000 libahci
+scsi_transport_spi pata_acpi usbhid hid floppy
+[   61.504595] CPU: 0 UID: 0 PID: 4133 Comm: insmod Tainted: G
+  OE       6.15.4-061504-generic #202506271452 PREEMPT(voluntary)
+[   61.504599] Tainted: [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODULE
+[   61.504600] Hardware name: VMware, Inc. VMware Virtual
+Platform/440BX Desktop Reference Platform, BIOS 6.00 11/12/2020
+[   61.504603] RIP: 0010:vsnprintf+0x5ad/0x5f0
+[   61.504606] Code: 73 04 41 c6 06 20 49 83 c6 01 4c 39 f0 75 ee 48
+8b 74 24 28 49 89 c6 45 31 c9 8b 06 83 f8 2f 0f 87 28 ff ff ff e9 a5
+fc ff ff <0f> 0b e9 d5 fb ff ff 48 8b 7c 24 28 48 8b 57 08 48 8d 42 08
+48 89
+[   61.504608] RSP: 0018:ffffd1ea04d4f7d0 EFLAGS: 00010296
+[   61.504611] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffd1ea04d=
+4f848
+[   61.504613] RDX: ffffffffc0abe0e8 RSI: fffffffffffffffe RDI: ffffd1ea04d=
+4f8bc
+[   61.504614] RBP: ffffd1ea04d4f838 R08: 0000000000000000 R09: 00000000000=
+00000
+[   61.504616] R10: 0000000000000000 R11: 0000000000000000 R12: ffffd1ea04d=
+4f8b0
+[   61.504617] R13: 0000000000000009 R14: 0000000000000009 R15: 00000000000=
+0006a
+[   61.504619] FS:  00007140a8251680(0000) GS:ffff8ccf6b49a000(0000)
+knlGS:0000000000000000
+[   61.504621] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   61.504623] CR2: 000072de22c27330 CR3: 0000000011235000 CR4: 00000000007=
+50ef0
+[   61.504639] PKRU: 55555554
+[   61.504641] Call Trace:
+[   61.504643]  <TASK>
+[   61.504648]  snprintf+0x4e/0x80
+[   61.504652]  snprintf_test_init+0xfb/0xff0 [snprintf_test]
+[   61.504656]  ? __pfx_snprintf_test_init+0x10/0x10 [snprintf_test]
+[   61.504659]  do_one_initcall+0x5d/0x330
+[   61.504697]  do_init_module+0x97/0x280
+[   61.504701]  load_module+0x74b/0x840
+[   61.504705]  init_module_from_file+0x95/0x100
+[   61.504710]  idempotent_init_module+0x110/0x300
+[   61.504715]  __x64_sys_finit_module+0x6b/0xd0
+[   61.504718]  x64_sys_call+0x18cd/0x2320
+[   61.504722]  do_syscall_64+0x7e/0x10c0
+[   61.504724]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504727]  ? ext4_llseek+0xc0/0x120
+[   61.504731]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504734]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504736]  ? arch_exit_to_user_mode_prepare.isra.0+0x22/0xd0
+[   61.504739]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504741]  ? syscall_exit_to_user_mode+0x38/0x1d0
+[   61.504744]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504746]  ? do_syscall_64+0x8a/0x10c0
+[   61.504749]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504751]  ? __fsnotify_parent+0x182/0x3e0
+[   61.504754]  ? __entry_text_end+0x102579/0x10257d
+[   61.504759]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504761]  ? vfs_read+0x178/0x390
+[   61.504766]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504769]  ? ksys_read+0x6f/0xf0
+[   61.504771]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504774]  ? arch_exit_to_user_mode_prepare.isra.0+0x22/0xd0
+[   61.504776]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504778]  ? syscall_exit_to_user_mode+0x38/0x1d0
+[   61.504781]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504784]  ? do_syscall_64+0x8a/0x10c0
+[   61.504786]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504788]  ? do_syscall_64+0x8a/0x10c0
+[   61.504791]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504794]  ? count_memcg_events.constprop.0+0x2a/0x50
+[   61.504797]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504799]  ? handle_mm_fault+0x1ca/0x2e0
+[   61.504803]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504806]  ? do_user_addr_fault+0x2f8/0x830
+[   61.504809]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504811]  ? arch_exit_to_user_mode_prepare.isra.0+0x22/0xd0
+[   61.504814]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504816]  ? irqentry_exit_to_user_mode+0x2d/0x1d0
+[   61.504819]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504821]  ? irqentry_exit+0x43/0x50
+[   61.504824]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   61.504826]  ? exc_page_fault+0x96/0x1e0
+[   61.504830]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[   61.504832] RIP: 0033:0x7140a7931a2d
+[   61.504835] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e
+fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
+08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 9b f3 0d 00 f7 d8 64 89
+01 48
+[   61.504837] RSP: 002b:00007ffd1bbeb7e8 EFLAGS: 00000246 ORIG_RAX:
+0000000000000139
+[   61.504839] RAX: ffffffffffffffda RBX: 00006484bd099790 RCX: 00007140a79=
+31a2d
+[   61.504841] RDX: 0000000000000000 RSI: 00006484887fd19e RDI: 00000000000=
+00003
+[   61.504843] RBP: 00007ffd1bbeb890 R08: 0000000000000000 R09: 00007ffd1bb=
+eb8d8
+[   61.504844] R10: 0000000000000000 R11: 0000000000000246 R12: 00006484887=
+fd19e
+[   61.504846] R13: 0000000000000000 R14: 00006484bd099750 R15: 00000000000=
+00000
+[   61.504850]  </TASK>
+[   61.504852] ---[ end trace 0000000000000000 ]---
+[   61.504854] snprintf_test: snprintf returned 0
+[   61.504856] snprintf_test: buf after snprintf:
+[   61.504857]   buf[ 0] =3D 0x61 (a)
+[   61.504858]   buf[ 1] =3D 0x62 (b)
+[   61.504860]   buf[ 2] =3D 0x63 (c)
+[   61.504861]   buf[ 3] =3D 0x64 (d)
+[   61.504863]   buf[ 4] =3D 0x65 (e)
+[   61.504864]   buf[ 5] =3D 0x66 (f)
+[   61.504865]   buf[ 6] =3D 0x67 (g)
+[   61.504867]   buf[ 7] =3D 0x68 (h)
+[   61.504868]   buf[ 8] =3D 0x69 (i)
+[   61.504869]   buf[ 9] =3D 0x6a (j)
+
+On Thu, Jul 10, 2025 at 7:39=E2=80=AFPM Zhuo, Qiuxu <qiuxu.zhuo@intel.com> =
+wrote:
+>
+> Hi Haoran,
+>
+> > From: Wang Haoran <haoranwangsec@gmail.com>
+> > [...]
+> > Subject: We found a bug in skx_common.c for the latest linux
 > >
-> >Thanks,
-> >Hiago.
-> >
-> >>  
-> >> > Thanks,
-> >> > Hiago.
-> >> > 
-> >> > > 
-> >> > > Thanks,
-> >> > > Mathieu
-> >> > > 
-> >> > > >  	/* OCRAM_S - alias */
-> >> > > >  	{ 0x20180000, 0x00180000, 0x00008000, ATT_OWN },
-> >> > > >  	/* OCRAM */
-> >> > > > -- 
-> >> > > > 2.39.5
-> >> > > > 
+> > Hi, my name is Wang Haoran. We found a bug in the skx_mce_output_error
+> > function located in drivers/edac/skx_common.c in the latest Linux kerne=
+l
+> > (version 6.15.5).
+> > The issue arises from the use of snprintf to write into the buffer skx_=
+msg,
+> > which is allocated with size MSG_SIZE.The function formats multiple str=
+ings
+> > into skx_msg, including the dynamically generated adxl_msg, which is al=
+so
+> > allocated with MSG_SIZE. When combined with the format string "%s%s
+> > err_code:0x%04x:0x%04x %s", the total output length may exceed MSG_SIZE=
+.
+> > As a result, the return value of snprintf may be greater than the actua=
+l buffer
+> > size, which can lead to truncation issues or cause the
+> > skx_show_retry_rd_err_log() function to fail unexpectedly.
+>
+> Do you have a dmesg log for the *issue* you described here?
+>
+> Thanks
+> -Qiuxu
 
