@@ -1,272 +1,530 @@
-Return-Path: <linux-kernel+bounces-724811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7E1AFF72D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:59:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5473AFF73C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8D0516A50F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:59:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54D503A108E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30AB27FB28;
-	Thu, 10 Jul 2025 02:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECC6280017;
+	Thu, 10 Jul 2025 03:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gNVsKJAj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="FHzujBSc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GxTeLlfT"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82A227FB37
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 02:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752116355; cv=fail; b=Sn65XTabK7L3TB44MgM+wUA9XEnsDGtinfywxzjijewtdwbtroPTmI9PBE/U1YqVBDIKyYNDBJHq+KlKXbCKp9M8opN8Rf+ZTjwyFsNEeQVH1Ml1Ah2qlC7g14ktR3hO95hE36Zx3FE2dRHX/LEzSrxwaTdGPiH+UnfKCq10WVk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752116355; c=relaxed/simple;
-	bh=QzIxbHvHRbzvFow8OvldZ4dpI+Mu27tP1EeoAyRHO2o=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=b/OZtZTLuG0s4MyptW+LB1xQZBvfeDmciaMVZM3rZdAJ5JTbTDQQwtgXTPPOQPBtFu68Z95iGw3Yc7vZjMdW6JLilqk8QHXqDBygMjyD0schnk8s6uSd7DL3+ka11LB9qdS9PXR2bNLhpsVpv8tZGGa20kmDGPWlhrj7XLIvV3s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gNVsKJAj; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752116354; x=1783652354;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=QzIxbHvHRbzvFow8OvldZ4dpI+Mu27tP1EeoAyRHO2o=;
-  b=gNVsKJAjpi+G4E8yrNgbhV7+LP0ET1HelE+JS9IcIhyuzSqfghuRdChj
-   2VmXyD1N83chfdEwHDf3u4fviwaEggmyapeM0kbwl8uXIjQCS4qgZ/lX8
-   pv6UagjlMVqapu9sf2cXuvmQHYegOpMG3cwaGJJdpxfsUM+TjQguVV/XT
-   8+WIctT1G/EUWiSkz99NOt3BAGkUEVEHZFzVSOzht9QW6xJM4RZiPescF
-   xOUcj020S9Kssue9PpeH88p17N5UwbPRcz+kd+wAvm+tziScxWpteqNsR
-   Z/MhTUzT1FAzN2ep1ZirL6+TEKhCMTjd1Owq/Yy+iahB/Kda3Rp7l26A4
-   A==;
-X-CSE-ConnectionGUID: 9W3n9undQHiJ2n1Ckc4tZQ==
-X-CSE-MsgGUID: cWdt7dD4Qguapy2LOoae3w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="58053173"
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="58053173"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 19:59:13 -0700
-X-CSE-ConnectionGUID: 1kiGD/ZJTOeEHTHW4Z8PZQ==
-X-CSE-MsgGUID: LYDxtq9iTK+6sDVqu4iLEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="179654785"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 19:59:11 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 9 Jul 2025 19:59:09 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 9 Jul 2025 19:59:09 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.59) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 9 Jul 2025 19:59:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wy/2qYw864rHlhpfdvU7qGhrA657QaV+q1GojVma822V5pt2dUHTAmQVu//8V9ueiDQHkH3ktoG4Qu96ayEM8inziwtk224+ijWxmxSA/XgifoilkQv9gQFSj4kDZ/RgJSBG2kPgc35hsJ5T+cUprHgbhhuslk4QoOxVHM3SnN1LoJdxJn/Of1SNGR9Q/iMWwwSz0O52qQQSNXY4vXUPvmBwX7QHD0WXEJ4mzx/mH4++jFAwULIPmzZCTiNjC1yP1fg68p2rzkfLZo8dNIEJM87NfhkRs7pvrcZ4cUEdjkLAvevmHcDfpWfL3tWTyzvAgXamk3QQxFu8ptx3v4FFPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3LV/gxZ3qLZWfTGEM8hjttUqmCq21zkE6BQVgV17v9g=;
- b=yuvxi7aiMQe+Oxx3yhk9ZTLBWIUUjnKjzN/w5/b6oMq8inr4et1byoVVll8KqiF4JTqfloHh9NH3mOfljqsgrKaAQC6PKMXsUUyPlRx06ViKB00CwtZiKXjbOVUlvNjtiQArjh0CaLgSrB2S0N8qfXkzgKVNJZvVdQgJGQa3U9gGnY6/zrFkbzmK8sXpPHd4bCnwIkXtemktoobgIHssSPeG+SEYJNrHM/R0TsEevb2hGbjaTg2kieSMtEbf/7BgZcPaAFS/H9O7NjRyMPEMXBfHUtRRUtLMKHcHNn3BOq75FvLXi5VorMARH/CYYcPDcUdF2dB3sD4OkvxI2vUXrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by SJ2PR11MB7453.namprd11.prod.outlook.com (2603:10b6:a03:4cb::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Thu, 10 Jul
- 2025 02:58:24 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%3]) with mapi id 15.20.8901.018; Thu, 10 Jul 2025
- 02:58:24 +0000
-Date: Thu, 10 Jul 2025 10:58:11 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Ingo Molnar <mingo@kernel.org>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
-	<x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Dietmar Eggemann
-	<dietmar.eggemann@arm.com>, Juri Lelli <juri.lelli@redhat.com>, "Linus
- Torvalds" <torvalds@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Shrikanth Hegde
-	<sshegde@linux.ibm.com>, Steven Rostedt <rostedt@goodmis.org>, "Valentin
- Schneider" <vschneid@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, <aubrey.li@linux.intel.com>,
-	<yu.c.chen@intel.com>, <oliver.sang@intel.com>
-Subject: [tip:sched/core] [sched/smp]  06ddd17521:
- BUG:using_smp_processor_id()in_preemptible
-Message-ID: <202507100448.6b88d6f1-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SG2PR03CA0092.apcprd03.prod.outlook.com
- (2603:1096:4:7c::20) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390F82E36E0;
+	Thu, 10 Jul 2025 03:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752116485; cv=none; b=njszUTXzNgznpoBS/EzkOfepYETU8qtEhZI9GakNwzNUda726tltG/1LKvzEFxr4dOvGmBu6DY9bHM5XW4gQk86j5PD3eAxInhhH2r1Eyj+OjrN4e6GnjKN9rDzC+KkEpiwK+5/EewwwfMV+tKUEHv72fsuHK4xFKOWefJXjuLg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752116485; c=relaxed/simple;
+	bh=fZZ65HoK2FR5aa2/mMDmNxe14yqcfCwzkX/Sjwb1H7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fGCxBEtjai/lVGPgFKwhpetUj5R2ZMNWottMWwqHgVE1al0kCH+r50BY2hBrxAdMkakvL2PFZCYQKozKlAFALqaSiPlGTv23MQ+EOqg+JyoMXmcTHz8s86T8fvmlgNFYxncdxSkH4SUvNiT1W6VXTjPnH7ppx+HWJKZpy1bsg2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=FHzujBSc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GxTeLlfT; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 502F01400209;
+	Wed,  9 Jul 2025 23:01:21 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Wed, 09 Jul 2025 23:01:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1752116481; x=1752202881; bh=gg85xa7w5q
+	RdyjV+YGztgSsXrtWr7iwCqJ/09LaFFWA=; b=FHzujBScv6ZIBxX6RU9/e7z4d6
+	WiL9KPo6wCKsivbfyk8M8m05vm6gp4f/zywRV3ODYlvyh0bykpA35qrSwIpjMPP7
+	obtNUHyArLN5h+jQGzdqLLrrQs5U2UwrxeU3kvDyClSiE8T8z6J5jgDl/locCAEp
+	YRC4ruE1ffK525az9QLTNnu16fwx4JwK4LbYZxnqzjEVIeJkyNJZwFq0nWAhNv1d
+	ugTUzJf2PIfEwfGV8d0Bf0cVjtL/YIdheHfIDdPTHayE4QQOBm143dopn2bt1K4o
+	hWSRmBHg8TfuPQvgtKMMyD6SjcvmcETzWEnmwLtClvxoxSaik6c9+/5CN5EQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1752116481; x=1752202881; bh=gg85xa7w5qRdyjV+YGztgSsXrtWr7iwCqJ/
+	09LaFFWA=; b=GxTeLlfT52TjVl/43v9I5gZjy6d1uHAcizDnp6ablb1nZi4T0RL
+	iB+sjxZ645u0RjkyzX3APp+AoL0YvPqfX90dVu64RVtAw76qzaKYDhVAHzcgi9TT
+	5xOUZ826IkXHtct+cI17ur+hHwCls5hVj0AzJ+lA3Gh5EjMb5b1Yqrb2QJB83rnA
+	2ORvbao90hKApfJ/ejJyd5pkYBcNBBHRmtsrR6hw5Q7xByYX40nNwCWND4IxfoHN
+	fP/qcXruhwg/mK3BtXsThkC1uoJSCJw8+0mzglpr76spyg4rS3fO1bUJ4SqsUI/c
+	I3vGittkPJ8r2zoufkkwfhOBr+vPeC8oDNQ==
+X-ME-Sender: <xms:AS1vaIPM7Uye2RnypZnws3jBt6agY9pAXkrPk6l7caIvaGoMtqaqaA>
+    <xme:AS1vaGU8ypeoiAfZo5MlST0XR_NhDcwkSMttsW7gajbsy4wFTmHq2lvpC-gzKdUUE
+    usSCRPQ351l8UHHzBg>
+X-ME-Received: <xmr:AS1vaE15SJUm9VtNkrVlsmD2gm5gaFvWyyyMhNKi6482_goLSLUs8FWMV9Ut93MgAx4whrjOAhX8UPLQLv3brFozkYJX57OvNQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefleefudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefrvghtvghrucfj
+    uhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvtheqne
+    cuggftrfgrthhtvghrnhepleeiueegieetveetfeelvdevhffffefhtedtvdduffduffei
+    geeikeffueeukeehnecuffhomhgrihhnpehgnhhurdhorhhgpdgpkhgvrhhnvghlpghish
+    gprhgvrgguhidrihhspdhtvghsthdrrghpphhlvgdpuggvvhhitggvrdhsohhnhidpthgv
+    shhtrdhsohhnhienucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvthdpnhgspghrtghp
+    thhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsggvnhhtihhssheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
+    dqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:AS1vaMqvFjHanjqSKHnUgaflu7S3Sx_5qpbDCkG6joQUGJL8jL66og>
+    <xmx:AS1vaDXDfxF6sAFFfjggg-Qjefe6jhv5tEp0V4FLnjwPaWwYX87dsg>
+    <xmx:AS1vaPaPWG_buhYHqOtadT8cYxgHUNvHUCkSD56jn2DA-1K-moTXvQ>
+    <xmx:AS1vaIevIVfm5DLW19zwNG5HqkGMhX5y7T1hsF4jgriPNbeQCagS5g>
+    <xmx:AS1vaKj1MKvD3znyLZN11pUNX60qrWRpgJm3ovhdbSDZxyzmMsYM2r-4>
+Feedback-ID: i7ce144cd:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Jul 2025 23:01:18 -0400 (EDT)
+Date: Thu, 10 Jul 2025 12:58:49 +1000
+From: Peter Hutterer <peter.hutterer@who-t.net>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] selftests/hid: sync the python tests to hid-tools 0.8
+Message-ID: <20250710025849.GA11111@quokka>
+References: <20250709-wip-fix-ci-v1-0-b7df4c271cf8@kernel.org>
+ <20250709-wip-fix-ci-v1-2-b7df4c271cf8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SJ2PR11MB7453:EE_
-X-MS-Office365-Filtering-Correlation-Id: f3588534-2501-401a-12c8-08ddbf5da2fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?6qalEB8X2Qp81kefwUQXBldvNW6BQe2BqYXswm3QutFU0Y0GbTMU50lp0iiP?=
- =?us-ascii?Q?ib64UcapIivZxVvlyaIpYDCH3FL2fhuHz0cX6lMLMiLYMcNO4HoYDKB4Up+F?=
- =?us-ascii?Q?78GfpSnse2ETnh8URW8vBfZGFwk5VCXfHlmdkUDj/t0wTmUaYZZ59wbnR6S1?=
- =?us-ascii?Q?x8h95BXfyFMKIh5+jMWWgD/Pf0My7z59CT9hG/78UGsGXeu2Yu8tNdZcIaOr?=
- =?us-ascii?Q?HH3UNBTSN9YJbXscSh/pExOfgWE2jJQH0euDkorSWilS5z0dW80Fj/p/3UyV?=
- =?us-ascii?Q?Mjte5NdBW42hdxSG/KjTLkj3+hCZW7TVGqq/Qli3SBLOAiZjL5F6UDoTG82K?=
- =?us-ascii?Q?moAAS0Q/aqYvcMbGTlZJXxwBnF+sr2rNs6Abf9bCZ3aFxVeyzqhff/lv/l/1?=
- =?us-ascii?Q?SdvdBMjWdqZXEvPTxFUFFEv35I9kV/BrTVl57MUqI1PGRsV1gzLWLC2t0sNI?=
- =?us-ascii?Q?t9eJjMDMcBX0lTP49FR9/UTcinwFAQnNYLPi4DkWxUfmQRja5QFX9vrdbDz7?=
- =?us-ascii?Q?t4sV9wZuSgr1ZPrtJ7ME8RmEhfGESj0faIojFtT++sEbV+w7vXru1ZRxgF0P?=
- =?us-ascii?Q?tFL6iD/EPPIfz955QkqB2rekLFM8uwoERQKvGRIsLYvlEJGSzuuFj8UUhKTW?=
- =?us-ascii?Q?MyxV2xRX0BooY3tfxqrpKlkpCfeNYpayQQoU2F0tB3q3uS003+dW2oqDPqA1?=
- =?us-ascii?Q?XIl78rqupBl/EIAlR5eZs1gke3pT09UQG/R7+2AA+fHLyS8Q3Q1hVmkpt8jf?=
- =?us-ascii?Q?1Fqfjfp/vqHAvEulI/UhrGhYuG5sqNg3FKTBuo1qU5H1UzbiMZAtCWfMEyCf?=
- =?us-ascii?Q?NMqSFD340p+4XwcYs8H3yFIgrzar9tOwVMeSfWx1IhEDeDouEKPuFc1+9AsZ?=
- =?us-ascii?Q?yZA+gKj53bmL5y14ABPtL3hoTkfFQZ7R1m332I1LsAMCUUh5t+1vGwzuJqfJ?=
- =?us-ascii?Q?Xp4k4IFsNqGyo7WCd3EDEjVCYyO6EeZB1hAhJZA1noQg5McpY5uvErskZEPh?=
- =?us-ascii?Q?QnqzGmzBJc9NU+MC0APbMWJ5nei/T11B4ebPQAlc65bG1qMZtwcFQQO+PR/t?=
- =?us-ascii?Q?FdH66j6dXnkLYL8tDAisNdNgQNSvHs/zaI4l2bqJAt8YqqX6v61MIX6FxxOF?=
- =?us-ascii?Q?wMSZdqMi11XF+S0RFAKektjKImWgeRKWx6M5lDSRISkClRKeVOPsKhlKOJN/?=
- =?us-ascii?Q?+hEiVhmm8bojj9QE0Pjx+NcrVffc2Rzbre0yrFoNQlG8yE3OfwgMk/iA/A4T?=
- =?us-ascii?Q?WMugNNjR8sfijCOKaSBUya+Dm9+cT+VQEnObpaGQ+qwT0VEsY+FiimjWb0+d?=
- =?us-ascii?Q?XcuWeS+tqZZ7YajzBesfuRRUeRvpQ740odDBZvkMzpS8MhnMaSs3MmTrCtQ7?=
- =?us-ascii?Q?UquuL+3G5ewuWAo0oYaigmbOlsvl?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Ld9r2B/Xlehy0MkoWRP62eDFttjPgabEpEFcT//Xaxi1IRrf6lZwTcFgzpwR?=
- =?us-ascii?Q?drtRhQwfxbr1MlgwRovyOIvW+oChPPdzwhCZYBD6vMybbzCsH7RhQjxjFT7j?=
- =?us-ascii?Q?LTVWz5rvtyDfszrrnxsvZYPU4+Zujl+/mOie4acWT0JaHWdmAOzndRhzBhRa?=
- =?us-ascii?Q?wRXPgZ8X6J4aQazWengR9NksY2/qs+TGdXTaHRco8Loa5Go/eu1dzr92+A9L?=
- =?us-ascii?Q?Did5Hew7Zo5CtKJGgMqckshsOfOkNgYnx3wr+IcW/HbnNOwNJDAIVcaIIzeK?=
- =?us-ascii?Q?6JW+ooGbQS4lHlTp0YzOHd1if0pFj6sLOQX+X3DtVaNXqfRaCzNN1I3ooExI?=
- =?us-ascii?Q?tartDwEfyYdIW2kdZCvpkzlk55wZDhchwPZv3jouw6iM/sx0GEGwW9FvhJXf?=
- =?us-ascii?Q?ZGZ96PyOGtyKNJbP00bB34+0+xO7IM+fKZqrvdgzMpp2Fkz+8LvcIPZtEEpI?=
- =?us-ascii?Q?0sOxLb0rYXpbYg9vohf4dXWm86mXvL0PU46x6yP6Pg68klo+yEQV0pf8i1T9?=
- =?us-ascii?Q?uBm6i+3kSHwIDhygPNv2/OMut7/dVWForXaGEP5cSYB1b98HqbEygPLv3/fL?=
- =?us-ascii?Q?O9mVT+/xwK4haBAApTEzSsSA/rFuAso8+lLbWFE2TuJL67cteCtkBoAMc9Hl?=
- =?us-ascii?Q?f2tf34Z6pXdgtHCxQHoR4u48dAeQMzDxrC4tduEQ8Onkr7ImaQhdQ81mlg3D?=
- =?us-ascii?Q?KKQm8tminKOgRqFxpxogT2DcWL+A3siC6pl4zhsolrZssdnw8m4eVIJX8+Zd?=
- =?us-ascii?Q?iBwwrMBKf53dHZmc+kf85+q2Cs+hd3X2xCNaVxKPcepIa7kiKJ3HFr7Fb0hg?=
- =?us-ascii?Q?aw0ZqSx9ncY4AhL65j/OtSqGCPBAkiVJ5Qj7EVd3Rw88mPo4neSdXHwMkdha?=
- =?us-ascii?Q?p9moyTt0D1pnzSoOOzSm83Mvq8gyioqCWSPIh4b+g35EDJ41pXVhiiu7HRPT?=
- =?us-ascii?Q?9AXyt2w18ype9onp9HmOhJTNra8t+NFJP+lx1ghUzk/QBib5DCUy1nnPmtTF?=
- =?us-ascii?Q?eEMIW6DdKr2D6MCcxL7GeOV6+6japW9wAIcZcxCEFudDM8gUZSIBjToxcLV9?=
- =?us-ascii?Q?fIXobxy1vdU8NJ32lFdCiV1pMh2PjA8KWRzsq3Yc4sMzZI+52EFXw7rgx312?=
- =?us-ascii?Q?XTlOg21/25DvViW4tkuhOq1en4Pv0a5GfDOsLuF48r468SVkjtDCT5x8OWCl?=
- =?us-ascii?Q?ehwMHUL2XyNmaeElh0p6fqR8keges8eyYwQJGU9+V6GB3NkJ2YCEaanMMLcR?=
- =?us-ascii?Q?ZAuvqOdqrr/9+3HKYcrXcayPTRgwxjoEwLBZoOKd9tcoqbAMK+dIRG1ldFtD?=
- =?us-ascii?Q?FMebCSVBr5HL8PpHGvZsjEIZ6X0p4Vd6wqdDSAagdGuYOpO9q5ySx4WSEzNQ?=
- =?us-ascii?Q?A7k2if/8SmnnJKvBcm5gwZMhd54X8TKYznOciDOOq68EpNZCUBH0e4C6lmiB?=
- =?us-ascii?Q?uSkpHbnDKOobIWNd89uzKqiFVWxqRm22XV+RJcgpJIm1S05rm2lSOxnA0vA+?=
- =?us-ascii?Q?g0jVLfSDF0k/skPd9FC5sYrc6HCw4GwxQPFVgGkOsWR3VYbdowjZf3gpuREF?=
- =?us-ascii?Q?ifZCRgV0WR3DyIcQsOevjqtr7zjBqAvWETlEi49xr0rDGl97IbuXkvFKYXEP?=
- =?us-ascii?Q?8Q=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3588534-2501-401a-12c8-08ddbf5da2fb
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 02:58:24.5933
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rVv5IWPK7p0nKcvv71m8m4p7JidbZIXHunAXdOHbdNOLnEvxG1Fsxa7iiGdhAXH8MmRQMX2s4CHDybES+Uw2Yw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7453
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709-wip-fix-ci-v1-2-b7df4c271cf8@kernel.org>
 
+On Wed, Jul 09, 2025 at 11:08:50AM +0200, Benjamin Tissoires wrote:
+> Instead of backporting one by one each commits, let's pull them in bulk
+> and reference the hid-tools project for a detailed history.
 
+s/reference/refer to/ ?
 
-Hello,
+otherwise, series:
 
-kernel test robot noticed "BUG:using_smp_processor_id()in_preemptible" on:
+Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
 
-commit: 06ddd17521bf11a3e7f59dafdf5c148f29467d2c ("sched/smp: Always define is_percpu_thread() and scheduler_ipi()")
-https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git sched/core
+Cheers,
+  Peter
 
-[test failed on linux-next/master 835244aba90de290b4b0b1fa92b6734f3ee7b3d9]
-
-in testcase: boot
-
-config: x86_64-randconfig-123-20250702
-compiler: gcc-12
-test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-+----------------------------------------------------------+------------+------------+
-|                                                          | cac5cefbad | 06ddd17521 |
-+----------------------------------------------------------+------------+------------+
-| boot_successes                                           | 20         | 0          |
-| boot_failures                                            | 0          | 18         |
-| BUG:using_smp_processor_id()in_preemptible               | 0          | 18         |
-| BUG:using__this_cpu_write()in_preemptible[#]code:swapper | 0          | 18         |
-| BUG:using__this_cpu_read()in_preemptible                 | 0          | 18         |
-+----------------------------------------------------------+------------+------------+
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202507100448.6b88d6f1-lkp@intel.com
-
-
-[   25.232998][    T1] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-[ 25.233645][ T1] caller is __kvm_is_vmx_supported (arch/x86/include/asm/cpuid/api.h:74 arch/x86/include/asm/cpuid/api.h:113 arch/x86/kvm/vmx/vmx.c:2789) 
-[   25.234128][    T1] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.16.0-rc1-00023-g06ddd17521bf #1 PREEMPT(lazy)
-[   25.234931][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[   25.235357][    T1] Call Trace:
-[   25.235357][    T1]  <TASK>
-[ 25.235357][ T1] dump_stack_lvl (lib/dump_stack.c:123 (discriminator 1)) 
-[ 25.235357][ T1] check_preemption_disabled (arch/x86/include/asm/preempt.h:85 lib/smp_processor_id.c:53) 
-[ 25.235357][ T1] __kvm_is_vmx_supported (arch/x86/include/asm/cpuid/api.h:74 arch/x86/include/asm/cpuid/api.h:113 arch/x86/kvm/vmx/vmx.c:2789) 
-[ 25.235357][ T1] ? __cpuid (arch/x86/include/asm/paravirt.h:179) 
-[ 25.235357][ T1] ? __sanitizer_cov_trace_pc (kernel/kcov.c:217) 
-[ 25.235357][ T1] ? ftrace_likely_update (arch/x86/include/asm/smap.h:53 kernel/trace/trace_branch.c:223) 
-[ 25.235357][ T1] ? __sanitizer_cov_trace_pc (kernel/kcov.c:217) 
-[ 25.235357][ T1] ? ftrace_likely_update (arch/x86/include/asm/smap.h:53 kernel/trace/trace_branch.c:223) 
-[ 25.235357][ T1] ? __sanitizer_cov_trace_pc (kernel/kcov.c:217) 
-[ 25.235357][ T1] ? ftrace_likely_update (arch/x86/include/asm/smap.h:53 kernel/trace/trace_branch.c:223) 
-[ 25.235357][ T1] vmx_init (arch/x86/kvm/vmx/vmx.c:2808 arch/x86/kvm/vmx/vmx.c:8653) 
-[ 25.235357][ T1] vt_init (arch/x86/kvm/vmx/main.c:1072) 
-[ 25.235357][ T1] ? pi_init_cpu (arch/x86/kvm/vmx/main.c:1067) 
-[ 25.235357][ T1] do_one_initcall (init/main.c:1273) 
-[ 25.235357][ T1] ? trace_initcall_level (init/main.c:1264) 
-[ 25.235357][ T1] ? __sanitizer_cov_trace_pc (kernel/kcov.c:217) 
-[ 25.235357][ T1] ? ftrace_likely_update (arch/x86/include/asm/smap.h:53 kernel/trace/trace_branch.c:223) 
-[ 25.235357][ T1] ? __sanitizer_cov_trace_pc (kernel/kcov.c:217) 
-[ 25.235357][ T1] ? ftrace_likely_update (arch/x86/include/asm/smap.h:53 kernel/trace/trace_branch.c:223) 
-[ 25.235357][ T1] do_initcalls (init/main.c:1334 init/main.c:1351) 
-[ 25.235357][ T1] kernel_init_freeable (init/main.c:1587) 
-[ 25.235357][ T1] ? rest_init (init/main.c:1465) 
-[ 25.235357][ T1] kernel_init (init/main.c:1475) 
-[ 25.235357][ T1] ? rest_init (init/main.c:1465) 
-[ 25.235357][ T1] ret_from_fork (arch/x86/kernel/process.c:154) 
-[ 25.235357][ T1] ? rest_init (init/main.c:1465) 
-[ 25.235357][ T1] ret_from_fork_asm (arch/x86/entry/entry_64.S:255) 
-[   25.235357][    T1]  </TASK>
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20250710/202507100448.6b88d6f1-lkp@intel.com
-
-
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+> 
+> The short summary is:
+> - make use of dataclass when possible, to avoid tuples
+> - wacom: remove unused uhdev parameter
+> - various small fixes not worth mentioning
+> 
+> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+> ---
+>  tools/testing/selftests/hid/tests/base.py          | 46 ++++++++++++++--------
+>  tools/testing/selftests/hid/tests/base_device.py   | 30 ++++++++------
+>  .../selftests/hid/tests/test_apple_keyboard.py     |  3 +-
+>  tools/testing/selftests/hid/tests/test_gamepad.py  |  3 +-
+>  .../selftests/hid/tests/test_ite_keyboard.py       |  3 +-
+>  .../testing/selftests/hid/tests/test_multitouch.py |  2 +-
+>  tools/testing/selftests/hid/tests/test_sony.py     |  7 ++--
+>  tools/testing/selftests/hid/tests/test_tablet.py   |  7 ++--
+>  .../selftests/hid/tests/test_wacom_generic.py      | 11 +++---
+>  9 files changed, 69 insertions(+), 43 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/hid/tests/base.py b/tools/testing/selftests/hid/tests/base.py
+> index 3a465768e507dd8fe540c60ebc2dd3a133e6f19b..5175cf235b2f877b90a942139318a0cd3845b6aa 100644
+> --- a/tools/testing/selftests/hid/tests/base.py
+> +++ b/tools/testing/selftests/hid/tests/base.py
+> @@ -5,6 +5,7 @@
+>  # Copyright (c) 2017 Benjamin Tissoires <benjamin.tissoires@gmail.com>
+>  # Copyright (c) 2017 Red Hat, Inc.
+>  
+> +import dataclasses
+>  import libevdev
+>  import os
+>  import pytest
+> @@ -145,6 +146,18 @@ class UHIDTestDevice(BaseDevice):
+>          self.name = name
+>  
+>  
+> +@dataclasses.dataclass
+> +class HidBpf:
+> +    object_name: str
+> +    has_rdesc_fixup: bool
+> +
+> +
+> +@dataclasses.dataclass
+> +class KernelModule:
+> +    driver_name: str
+> +    module_name: str
+> +
+> +
+>  class BaseTestCase:
+>      class TestUhid(object):
+>          syn_event = libevdev.InputEvent(libevdev.EV_SYN.SYN_REPORT)  # type: ignore
+> @@ -155,20 +168,20 @@ class BaseTestCase:
+>  
+>          # List of kernel modules to load before starting the test
+>          # if any module is not available (not compiled), the test will skip.
+> -        # Each element is a tuple '(kernel driver name, kernel module)',
+> -        # for example ("playstation", "hid-playstation")
+> -        kernel_modules: List[Tuple[str, str]] = []
+> +        # Each element is a KernelModule object, for example
+> +        # KernelModule("playstation", "hid-playstation")
+> +        kernel_modules: List[KernelModule] = []
+>  
+>          # List of in kernel HID-BPF object files to load
+>          # before starting the test
+>          # Any existing pre-loaded HID-BPF module will be removed
+>          # before the ones in this list will be manually loaded.
+> -        # Each Element is a tuple '(hid_bpf_object, rdesc_fixup_present)',
+> -        # for example '("xppen-ArtistPro16Gen2.bpf.o", True)'
+> -        # If 'rdesc_fixup_present' is True, the test needs to wait
+> +        # Each Element is a HidBpf object, for example
+> +        # 'HidBpf("xppen-ArtistPro16Gen2.bpf.o", True)'
+> +        # If 'has_rdesc_fixup' is True, the test needs to wait
+>          # for one unbind and rebind before it can be sure the kernel is
+>          # ready
+> -        hid_bpfs: List[Tuple[str, bool]] = []
+> +        hid_bpfs: List[HidBpf] = []
+>  
+>          def assertInputEventsIn(self, expected_events, effective_events):
+>              effective_events = effective_events.copy()
+> @@ -232,25 +245,26 @@ class BaseTestCase:
+>  
+>          @pytest.fixture()
+>          def load_kernel_module(self):
+> -            for kernel_driver, kernel_module in self.kernel_modules:
+> -                self._load_kernel_module(kernel_driver, kernel_module)
+> +            for k in self.kernel_modules:
+> +                self._load_kernel_module(k.driver_name, k.module_name)
+>              yield
+>  
+>          def load_hid_bpfs(self):
+> +            # this function will only work when run in the kernel tree
+>              script_dir = Path(os.path.dirname(os.path.realpath(__file__)))
+>              root_dir = (script_dir / "../../../../..").resolve()
+>              bpf_dir = root_dir / "drivers/hid/bpf/progs"
+>  
+> +            if not bpf_dir.exists():
+> +                pytest.skip("looks like we are not in the kernel tree, skipping")
+> +
+>              udev_hid_bpf = shutil.which("udev-hid-bpf")
+>              if not udev_hid_bpf:
+>                  pytest.skip("udev-hid-bpf not found in $PATH, skipping")
+>  
+> -            wait = False
+> -            for _, rdesc_fixup in self.hid_bpfs:
+> -                if rdesc_fixup:
+> -                    wait = True
+> +            wait = any(b.has_rdesc_fixup for b in self.hid_bpfs)
+>  
+> -            for hid_bpf, _ in self.hid_bpfs:
+> +            for hid_bpf in self.hid_bpfs:
+>                  # We need to start `udev-hid-bpf` in the background
+>                  # and dispatch uhid events in case the kernel needs
+>                  # to fetch features on the device
+> @@ -260,13 +274,13 @@ class BaseTestCase:
+>                          "--verbose",
+>                          "add",
+>                          str(self.uhdev.sys_path),
+> -                        str(bpf_dir / hid_bpf),
+> +                        str(bpf_dir / hid_bpf.object_name),
+>                      ],
+>                  )
+>                  while process.poll() is None:
+>                      self.uhdev.dispatch(1)
+>  
+> -                if process.poll() != 0:
+> +                if process.returncode != 0:
+>                      pytest.fail(
+>                          f"Couldn't insert hid-bpf program '{hid_bpf}', marking the test as failed"
+>                      )
+> diff --git a/tools/testing/selftests/hid/tests/base_device.py b/tools/testing/selftests/hid/tests/base_device.py
+> index e0515be97f83a4b5ff8ad47db15284365f7154dc..e13035fe1deb4c2ee5fd729d43c619bdd759c138 100644
+> --- a/tools/testing/selftests/hid/tests/base_device.py
+> +++ b/tools/testing/selftests/hid/tests/base_device.py
+> @@ -18,6 +18,7 @@
+>  # You should have received a copy of the GNU General Public License
+>  # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>  
+> +import dataclasses
+>  import fcntl
+>  import functools
+>  import libevdev
+> @@ -104,6 +105,12 @@ class PowerSupply(object):
+>          return self._type.str_value
+>  
+>  
+> +@dataclasses.dataclass
+> +class HidReadiness:
+> +    is_ready: bool = False
+> +    count: int = 0
+> +
+> +
+>  class HIDIsReady(object):
+>      """
+>      Companion class that binds to a kernel mechanism
+> @@ -115,18 +122,18 @@ class HIDIsReady(object):
+>      def __init__(self: "HIDIsReady", uhid: UHIDDevice) -> None:
+>          self.uhid = uhid
+>  
+> -    def is_ready(self: "HIDIsReady") -> bool:
+> +    def is_ready(self: "HIDIsReady") -> HidReadiness:
+>          """
+>          Overwrite in subclasses: should return True or False whether
+>          the attached uhid device is ready or not.
+>          """
+> -        return False
+> +        return HidReadiness()
+>  
+>  
+>  class UdevHIDIsReady(HIDIsReady):
+>      _pyudev_context: ClassVar[Optional[pyudev.Context]] = None
+>      _pyudev_monitor: ClassVar[Optional[pyudev.Monitor]] = None
+> -    _uhid_devices: ClassVar[Dict[int, Tuple[bool, int]]] = {}
+> +    _uhid_devices: ClassVar[Dict[int, HidReadiness]] = {}
+>  
+>      def __init__(self: "UdevHIDIsReady", uhid: UHIDDevice) -> None:
+>          super().__init__(uhid)
+> @@ -157,18 +164,19 @@ class UdevHIDIsReady(HIDIsReady):
+>  
+>              id = int(event.sys_path.strip().split(".")[-1], 16)
+>  
+> -            device_ready, count = cls._uhid_devices.get(id, (False, 0))
+> +            readiness = cls._uhid_devices.setdefault(id, HidReadiness())
+>  
+>              ready = event.action == "bind"
+> -            if not device_ready and ready:
+> -                count += 1
+> -            cls._uhid_devices[id] = (ready, count)
+> +            if not readiness.is_ready and ready:
+> +                readiness.count += 1
+> +
+> +            readiness.is_ready = ready
+>  
+> -    def is_ready(self: "UdevHIDIsReady") -> Tuple[bool, int]:
+> +    def is_ready(self: "UdevHIDIsReady") -> HidReadiness:
+>          try:
+>              return self._uhid_devices[self.uhid.hid_id]
+>          except KeyError:
+> -            return (False, 0)
+> +            return HidReadiness()
+>  
+>  
+>  class EvdevMatch(object):
+> @@ -322,11 +330,11 @@ class BaseDevice(UHIDDevice):
+>  
+>      @property
+>      def kernel_is_ready(self: "BaseDevice") -> bool:
+> -        return self._kernel_is_ready.is_ready()[0] and self.started
+> +        return self._kernel_is_ready.is_ready().is_ready and self.started
+>  
+>      @property
+>      def kernel_ready_count(self: "BaseDevice") -> int:
+> -        return self._kernel_is_ready.is_ready()[1]
+> +        return self._kernel_is_ready.is_ready().count
+>  
+>      @property
+>      def input_nodes(self: "BaseDevice") -> List[EvdevDevice]:
+> diff --git a/tools/testing/selftests/hid/tests/test_apple_keyboard.py b/tools/testing/selftests/hid/tests/test_apple_keyboard.py
+> index f81071d461663b36da8f48d75e7c178ffc145688..0e17588b945c222d1b52b944eebf0719ed7fa3fc 100644
+> --- a/tools/testing/selftests/hid/tests/test_apple_keyboard.py
+> +++ b/tools/testing/selftests/hid/tests/test_apple_keyboard.py
+> @@ -8,13 +8,14 @@
+>  
+>  from .test_keyboard import ArrayKeyboard, TestArrayKeyboard
+>  from hidtools.util import BusType
+> +from . import base
+>  
+>  import libevdev
+>  import logging
+>  
+>  logger = logging.getLogger("hidtools.test.apple-keyboard")
+>  
+> -KERNEL_MODULE = ("apple", "hid-apple")
+> +KERNEL_MODULE = base.KernelModule("apple", "hid-apple")
+>  
+>  
+>  class KbdData(object):
+> diff --git a/tools/testing/selftests/hid/tests/test_gamepad.py b/tools/testing/selftests/hid/tests/test_gamepad.py
+> index 8d5b5ffdae49505c213602e01cd6d92ee9eb83ca..6121978059311ef52ba83c91d39a08b522da84f2 100644
+> --- a/tools/testing/selftests/hid/tests/test_gamepad.py
+> +++ b/tools/testing/selftests/hid/tests/test_gamepad.py
+> @@ -12,6 +12,7 @@ import pytest
+>  
+>  from .base_gamepad import BaseGamepad, JoystickGamepad, AxisMapping
+>  from hidtools.util import BusType
+> +from .base import HidBpf
+>  
+>  import logging
+>  
+> @@ -654,7 +655,7 @@ class TestAsusGamepad(BaseTest.TestGamepad):
+>  
+>  
+>  class TestRaptorMach2Joystick(BaseTest.TestGamepad):
+> -    hid_bpfs = [("FR-TEC__Raptor-Mach-2.bpf.o", True)]
+> +    hid_bpfs = [HidBpf("FR-TEC__Raptor-Mach-2.bpf.o", True)]
+>  
+>      def create_device(self):
+>          return RaptorMach2Joystick(
+> diff --git a/tools/testing/selftests/hid/tests/test_ite_keyboard.py b/tools/testing/selftests/hid/tests/test_ite_keyboard.py
+> index 38550c167baea440d2dc869d719dbea010ff7639..f695eaad1648e7ea48873725740ea4daf1f9203e 100644
+> --- a/tools/testing/selftests/hid/tests/test_ite_keyboard.py
+> +++ b/tools/testing/selftests/hid/tests/test_ite_keyboard.py
+> @@ -11,10 +11,11 @@ from hidtools.util import BusType
+>  
+>  import libevdev
+>  import logging
+> +from . import base
+>  
+>  logger = logging.getLogger("hidtools.test.ite-keyboard")
+>  
+> -KERNEL_MODULE = ("itetech", "hid_ite")
+> +KERNEL_MODULE = base.KernelModule("itetech", "hid_ite")
+>  
+>  
+>  class KbdData(object):
+> diff --git a/tools/testing/selftests/hid/tests/test_multitouch.py b/tools/testing/selftests/hid/tests/test_multitouch.py
+> index 4265012231c660f4c97e4bff0feec324dd9115b6..5d2ffa3d59777e3cd93d1d7aebabc2a6b7ecb42a 100644
+> --- a/tools/testing/selftests/hid/tests/test_multitouch.py
+> +++ b/tools/testing/selftests/hid/tests/test_multitouch.py
+> @@ -17,7 +17,7 @@ import time
+>  
+>  logger = logging.getLogger("hidtools.test.multitouch")
+>  
+> -KERNEL_MODULE = ("hid-multitouch", "hid_multitouch")
+> +KERNEL_MODULE = base.KernelModule("hid-multitouch", "hid_multitouch")
+>  
+>  
+>  def BIT(x):
+> diff --git a/tools/testing/selftests/hid/tests/test_sony.py b/tools/testing/selftests/hid/tests/test_sony.py
+> index 7e52c28e59c5c210e081579f7047a368c16063ce..7fd3a8e6137d0b404b544f7b886ba4783f81faf1 100644
+> --- a/tools/testing/selftests/hid/tests/test_sony.py
+> +++ b/tools/testing/selftests/hid/tests/test_sony.py
+> @@ -7,6 +7,7 @@
+>  #
+>  
+>  from .base import application_matches
+> +from .base import KernelModule
+>  from .test_gamepad import BaseTest
+>  from hidtools.device.sony_gamepad import (
+>      PS3Controller,
+> @@ -24,9 +25,9 @@ import pytest
+>  
+>  logger = logging.getLogger("hidtools.test.sony")
+>  
+> -PS3_MODULE = ("sony", "hid_sony")
+> -PS4_MODULE = ("playstation", "hid_playstation")
+> -PS5_MODULE = ("playstation", "hid_playstation")
+> +PS3_MODULE = KernelModule("sony", "hid_sony")
+> +PS4_MODULE = KernelModule("playstation", "hid_playstation")
+> +PS5_MODULE = KernelModule("playstation", "hid_playstation")
+>  
+>  
+>  class SonyBaseTest:
+> diff --git a/tools/testing/selftests/hid/tests/test_tablet.py b/tools/testing/selftests/hid/tests/test_tablet.py
+> index 52fb22cac91e86f85b00a312895c98e6379f02ad..50d5699812bbad171f07386d1f914c3b8da9ac5b 100644
+> --- a/tools/testing/selftests/hid/tests/test_tablet.py
+> +++ b/tools/testing/selftests/hid/tests/test_tablet.py
+> @@ -10,6 +10,7 @@ from . import base
+>  import copy
+>  from enum import Enum
+>  from hidtools.util import BusType
+> +from .base import HidBpf
+>  import libevdev
+>  import logging
+>  import pytest
+> @@ -1472,7 +1473,7 @@ class TestGoodix_27c6_0e00(BaseTest.TestTablet):
+>  
+>  
+>  class TestXPPen_ArtistPro16Gen2_28bd_095b(BaseTest.TestTablet):
+> -    hid_bpfs = [("XPPen__ArtistPro16Gen2.bpf.o", True)]
+> +    hid_bpfs = [HidBpf("XPPen__ArtistPro16Gen2.bpf.o", True)]
+>  
+>      def create_device(self):
+>          dev = XPPen_ArtistPro16Gen2_28bd_095b(
+> @@ -1484,7 +1485,7 @@ class TestXPPen_ArtistPro16Gen2_28bd_095b(BaseTest.TestTablet):
+>  
+>  
+>  class TestXPPen_Artist24_28bd_093a(BaseTest.TestTablet):
+> -    hid_bpfs = [("XPPen__Artist24.bpf.o", True)]
+> +    hid_bpfs = [HidBpf("XPPen__Artist24.bpf.o", True)]
+>  
+>      def create_device(self):
+>          return XPPen_Artist24_28bd_093a(
+> @@ -1495,7 +1496,7 @@ class TestXPPen_Artist24_28bd_093a(BaseTest.TestTablet):
+>  
+>  
+>  class TestHuion_Kamvas_Pro_19_256c_006b(BaseTest.TestTablet):
+> -    hid_bpfs = [("Huion__Kamvas-Pro-19.bpf.o", True)]
+> +    hid_bpfs = [HidBpf("Huion__Kamvas-Pro-19.bpf.o", True)]
+>  
+>      def create_device(self):
+>          return Huion_Kamvas_Pro_19_256c_006b(
+> diff --git a/tools/testing/selftests/hid/tests/test_wacom_generic.py b/tools/testing/selftests/hid/tests/test_wacom_generic.py
+> index 5cbc0cc9308f653b817e54a95f8b53a83782f105..2d6d04f0ff80bea46dc6c61c2b3a43383be6ac50 100644
+> --- a/tools/testing/selftests/hid/tests/test_wacom_generic.py
+> +++ b/tools/testing/selftests/hid/tests/test_wacom_generic.py
+> @@ -40,7 +40,7 @@ import logging
+>  
+>  logger = logging.getLogger("hidtools.test.wacom")
+>  
+> -KERNEL_MODULE = ("wacom", "wacom")
+> +KERNEL_MODULE = base.KernelModule("wacom", "wacom")
+>  
+>  
+>  class ProximityState(Enum):
+> @@ -894,7 +894,7 @@ class TestDTH2452Tablet(test_multitouch.BaseTest.TestMultitouch, TouchTabletTest
+>          """
+>          return [self.make_contact(id, t) for id in range(0, n)]
+>  
+> -    def assert_contact(self, uhdev, evdev, contact_ids, t=0):
+> +    def assert_contact(self, evdev, contact_ids, t=0):
+>          """
+>          Assert properties of a contact generated by make_contact.
+>          """
+> @@ -916,12 +916,12 @@ class TestDTH2452Tablet(test_multitouch.BaseTest.TestMultitouch, TouchTabletTest
+>              assert evdev.slots[slot_num][libevdev.EV_ABS.ABS_MT_POSITION_X] == x
+>              assert evdev.slots[slot_num][libevdev.EV_ABS.ABS_MT_POSITION_Y] == y
+>  
+> -    def assert_contacts(self, uhdev, evdev, data, t=0):
+> +    def assert_contacts(self, evdev, data, t=0):
+>          """
+>          Assert properties of a list of contacts generated by make_contacts.
+>          """
+>          for contact_ids in data:
+> -            self.assert_contact(uhdev, evdev, contact_ids, t)
+> +            self.assert_contact(evdev, contact_ids, t)
+>  
+>      def test_contact_id_0(self):
+>          """
+> @@ -998,7 +998,6 @@ class TestDTH2452Tablet(test_multitouch.BaseTest.TestMultitouch, TouchTabletTest
+>          assert libevdev.InputEvent(libevdev.EV_KEY.BTN_TOUCH, 1) in events
+>  
+>          self.assert_contacts(
+> -            uhdev,
+>              evdev,
+>              [
+>                  self.ContactIds(contact_id=0, tracking_id=-1, slot_num=None),
+> @@ -1032,7 +1031,7 @@ class TestDTH2452Tablet(test_multitouch.BaseTest.TestMultitouch, TouchTabletTest
+>              self.debug_reports(r, uhdev, events)
+>  
+>              ids = [x[0] for x in state]
+> -            self.assert_contacts(uhdev, evdev, ids, t)
+> +            self.assert_contacts(evdev, ids, t)
+>  
+>              t += 1
+>  
+> 
+> -- 
+> 2.49.0
+> 
 
