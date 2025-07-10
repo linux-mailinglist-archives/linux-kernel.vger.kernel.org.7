@@ -1,137 +1,112 @@
-Return-Path: <linux-kernel+bounces-725145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE77AFFB4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:47:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFEB9AFFADF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02EE5A468C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:47:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 594735A41F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B355D28936F;
-	Thu, 10 Jul 2025 07:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E309288CBA;
+	Thu, 10 Jul 2025 07:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="VhSXHgvk"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="BfEBPzrN"
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DE51F1313;
-	Thu, 10 Jul 2025 07:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2221288C87;
+	Thu, 10 Jul 2025 07:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752133645; cv=none; b=ukvihr+nSkMgX2Z8sNoZeEC/NFUK9l/iqOmsALsutMXtj5rBvlF1lLKK7u78+3ufJJIn2MGCfWM37Qn0bDYtOmhybNIbplVOPO3K1/epNHhkKFcBSvu1tSxlrObVJC6wg0bofh/Wa6vX6q2wWsFbzXKmOHRROIm+CQ8+ifpYgIc=
+	t=1752132525; cv=none; b=KB8mHg0OYBz3BRTFuBas67qjLI9vTndSYwb9qPwn73h+LTPnqa8oV120+bkxx56StFbk31IsBM6Poqvb3yYnx2H+hsjGfeuvOOeSUbkYIk8xI7jFcwSSJ4TSvMR1x1WZVK6NLOFFFyBZhvXSGb0LoJrtuoefzqc9RYexDEA6PEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752133645; c=relaxed/simple;
-	bh=UqvmjkgZiJytd1q6ZQs8e6B+QvTW5XkRmxayF8Sjnls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dcmCSOfTZHJpqgeE8aVDdk7WcikqNoZ1IIwWQ4w0f2HUj19IofhSYxcRP3mrOJ75qp8TWdMKCZmq8uB38gj54D53Q82UDmvnGyF7u8XfE3lipQE+doBoGEp1vWAxxF9wY3OU+QLAVd8xzY8b9USRg2aPyTq7jmvkxg6TVneN3j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=VhSXHgvk; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A6nMQ4020561;
-	Thu, 10 Jul 2025 09:27:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	FteJQilrWBfBvhIiChMigkGkPT4QD1u6xypvpY95TU0=; b=VhSXHgvkoCKjL0PB
-	yLPzLljS9EtzmH6qBo4MWrhd/pumsuUD8+ON95lET7nmSmqFrQnoRVupBYdYAlfu
-	djGjVlo43TAdWUmsXUZgnroiJwMw47odRN0mNYABKDiOZ51Bt/EJzZNDPzmhBCJ0
-	CMbstpvVa2BWVI2D8EppAjFvYXVZ4ZhxSrngbuZELHV/aY6bFeDQ35BAlp1S7N2x
-	GeJfMjn0DSAq3a6zy8jnfueD2KysLIEasSHwMmzGQLS15g1t/eLo25EJf82KRv5d
-	sp1MjzM+BSKvkf8g6WMx0/jPp6e9fRSs21UvN8PDDjbqKUdd6eMSNQ0AzEYvOb8v
-	L38+Tg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47ptxjf7w9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Jul 2025 09:27:59 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CC7DF40048;
-	Thu, 10 Jul 2025 09:26:55 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 81309AE9D80;
-	Thu, 10 Jul 2025 09:26:06 +0200 (CEST)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Jul
- 2025 09:26:05 +0200
-Message-ID: <cadb2bcc-9a2a-447a-ac03-459f3e37a173@foss.st.com>
-Date: Thu, 10 Jul 2025 09:26:05 +0200
+	s=arc-20240116; t=1752132525; c=relaxed/simple;
+	bh=ltsU2DaNx9FwZfeJePEEPtIpFJ9EKoFKIkD3tPAkC8I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Be/HTgiktOE1wr42luzBbTzK34q795XrsJBmC3VeIQuBEFfL1iMAMZrDdmgR3AbF6fsZqnoLjriJNrjkTaTnsE/q3xH4yxbj7vWbYNuM6jpdwKGcbuvX1sK0jdcv7D/ONICMfgpoPv1CfaTwiKRKR9rXK05Y/vl4AoCoH+suD/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=BfEBPzrN; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1752132479;
+	bh=E5rR1x3jzWaA7GLvcOcQ7JJQ6DV+iJkrxTt3uzOCykU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=BfEBPzrNd8RZQL56FxyPbWSXGY2buV/hVMynuZCgykAwMcNd2CNcf93+bvDfVvuJE
+	 0aj8CQeADQWEflfv0ci1AR8fDOKwREcuFD9YW3Ltw75MWEOhIOPXtKPf/tDDY3qW5U
+	 QzVv7gtEBuPlwOqQwroxfwOYxB3oh7YmOJEsRIHE=
+X-QQ-mid: zesmtpip4t1752132428t0bb912da
+X-QQ-Originating-IP: DkPxi8Ft6VPmSHbgpYt3nR1mkcAgx4FrFGbifsodIBE=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 10 Jul 2025 15:27:06 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 11508008740617986207
+EX-QQ-RecipientCnt: 12
+From: WangYuli <wangyuli@uniontech.com>
+To: dmitry.torokhov@gmail.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	wangyuli@uniontech.com
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	wangyuli@deepin.org
+Subject: [PATCH 0/2] input: Add tracepoint support
+Date: Thu, 10 Jul 2025 15:26:34 +0800
+Message-ID: <19571F312EE197A5+20250710072634.3992019-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] dt-bindings: memory: add jedec,ddr[3-4]-channel
- binding
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Will Deacon <will@kernel.org>,
-        Mark
- Rutland <mark.rutland@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-perf-users@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20250626-ddr-bindings-v1-0-cae30933c54c@foss.st.com>
- <20250626-ddr-bindings-v1-1-cae30933c54c@foss.st.com>
- <e016efd6-891b-467e-8a4e-9ea53b7006a9@kernel.org>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <e016efd6-891b-467e-8a4e-9ea53b7006a9@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-09_05,2025-07-09_01,2025-03-28_01
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OFMq6CCtBSIOhGYybtgqnGq1rrspX3uZ7KG/4ljlE6fuqtmUK16ndG4U
+	IQHM4OSWQi5UYPsbfW54fJqfJFYQzZeF+Z8K+QQihHBMZOfVd9htcsULWnX+e5Rdourwkzb
+	4Ihmf25+YBk31EgIwhYjRF3g3MNBpJ07FYwhHaIWVM03UzG75+IZ9/daiqLQgg4K6Yu/1Xy
+	SyZMPZ5vW8/CcrEB4tE6RMe6n/rkJVN4DKzmFIVzz4xReE7RDEaAmhd/eqHZz47Nh6nkEUS
+	V2BpobRsswI3xCKV71hP810/luTuebiF4ZfA5x5ORaEyneF4F4f7PwLTVoerEk8umK2y90W
+	0IqU2yTy6PYr0Hvc6y7VFvh89gGvGYo9zfV7drS4p1V7dVttxUt4Ta/fSV97vOf9X4wDPHV
+	HUKMnGia0S5n+AgDYtU7nGJ4JYyIO7ZR4j2AI1dzAPPZrUQ2fGBDWMo+p5pJSab9d9+J9yV
+	fwvr/ZZqRPsNntytGkQr+SINbl0DuQmUeeDwQuQhPF996aqSU189x4x2tF2gwVUVwx4uqcF
+	XiUbfpm5UTBpiu61XqaYr/xkSCSdmKPvFB8HKcutfyQL/0p1d1iMN0CTR7nIGipw/rUmULu
+	Q3WYRPh90nqfygRiC83BRp193STFoy6/s6F6hscshBeNyIjmZQmBVyfSHG6txyUJ1jSnG5i
+	J6Iz8E71PfCKumBepZmLfXJZDKrwFt+rPGC9Jsac1NckID481Pob6GKtX8f3b8QH8ljojFa
+	TZtSddUdvobADsQqR16TXrkripackDZWjcErJ+nbmSngWOPUzyoyvxzM7MWGSSz1ZxEiRbi
+	iDVNVYvnHqp6ok+SlRTn48uj+ERm+RQpnaInRtxza0kuIF7LHYt73Vclz05aAG6EmxTK8UY
+	2/AjOiCZFhrWqBWDJZU6Kx8WHNaErt2HWNFJ0q3lh5LeIWay/LW/pOCZbzm6szy9ZqF+mr5
+	Hh+j9dTAjhSku+YlVU1mXMJSFj+xBsFCLl4Md6Dyvs4L/NhaK+tmpLXNBP+GE+5bZtMKEVP
+	kWOIaVSGAYvOZ61oiLlpYswfXjNZJbifgsChY0gv9lsQGfGzEAdo6/Z25eKBM=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-Hi Krzysztof,
+Introduce a set of tracepoints for the input subsystem to enable
+better debugging, monitoring, and performance analysis of input
+device operations.
 
-On 7/9/25 20:27, Krzysztof Kozlowski wrote:
-> On 26/06/2025 21:48, Clément Le Goffic wrote:
->> Introduce as per jdec,lpddrX-channel binding, jdec,ddr[3-4]-channel
-> 
-> s/jdec/jedec/
+WangYuli (2):
+  input: Add tracepoint support
+  selftests: input: Add tracepoint testing script
 
-Right thanks
+ MAINTAINERS                                   |   3 +
+ drivers/input/input.c                         |  18 +-
+ include/trace/events/input.h                  | 251 ++++++++++++++++++
+ .../selftests/input/test_input_tracepoints.sh |  78 ++++++
+ 4 files changed, 349 insertions(+), 1 deletion(-)
+ create mode 100644 include/trace/events/input.h
+ create mode 100755 tools/testing/selftests/input/test_input_tracepoints.sh
 
-> 
->> binding.
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
-> 
-> 
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    ddr_channel: ddr3-channel@0 {
->> +        compatible = "jedec,ddr3-channel";
->> +        io-width = <16>;
-> 
-> Missing reg... or not? What was your intention
-
-Indeed no reg.
-I'll drop the "@0" for the next version.
-
-> 
-> 
->> +    };
->>
-> 
-> 
-> Best regards,
-> Krzysztof
+-- 
+2.50.0
 
 
