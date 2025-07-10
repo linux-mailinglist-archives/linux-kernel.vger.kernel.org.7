@@ -1,163 +1,96 @@
-Return-Path: <linux-kernel+bounces-724750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94413AFF690
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:58:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8DDAFF697
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB17482D32
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:57:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C8D1C44804
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2FF27E7FD;
-	Thu, 10 Jul 2025 01:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5612427EFF3;
+	Thu, 10 Jul 2025 01:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iKlp836K"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nr0CpFpE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7569C25C711
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA80542AB4;
+	Thu, 10 Jul 2025 01:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752112695; cv=none; b=MHCjHN9zmD2mHa6lEE5Yg9bvbKIBd8M7TXnyNuNFDHG+8s5gundGWp5SwDi0kL7R8ccbzJeMNzlHQgni7u2gV09K5sOtbjCaXMB3XCkO+dhI8oILrWhcBI7bunaNv1Ki5FvUSrQFJSIdZXeMEwkNAtPHuXS29FqW77/ByNw2/9w=
+	t=1752112784; cv=none; b=GtBI5cmcxZkK6+rVFGHIuVln5zQibIysRLKXfhAzS+h6Dq0M+2nf3MB12sxpkoUiEZ5ayqhMOyu9RbKpq/H6C8E/13trPiFLSYxjSYx9JJfBkoba+NSI/mOHZRwdnxfCXShH0wQtlmBXioOIJzuJPpbldwgPnvXyl44tLDEiwkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752112695; c=relaxed/simple;
-	bh=ZcaLLyOB3tqdrpaoeuobLjo7b3y+N7vwVh9wdduZieM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rX030gGN1J4ft9heJ9K2RzFCVlOL5/GD1ioL4EVsyD4TQAXJ1Rxm1nwvpeCzNWwQ8HvKqdY1qux+SyN5psnP27Qa0CsQ0v9lq1hPiEZiPMNF11Q1SaGf2EAlwgKiP/YkPCgBeWT3qTlNRN+jJpTKDV+p+N0Je+TH2uol4uo2iL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iKlp836K; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752112683; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=MyRObTRkklQz6NQ2WdLXWBBkOrBh2ZjGUjiRtUdCUHc=;
-	b=iKlp836KEwetgOdcVFnIGUTjj5QhDBywSvjlrOAztZFOIl2Rm45t+FG8PKFp+DAAuPHnvn27JEmfKsNL+9wtiQmpBSRAarCAEQWQU0iVDNW3d6Voanx16L6/jlMgzWOkHQS6K2E9GVzPYEUUQzEloPh1woMU0EdCLiDU/OTzs84=
-Received: from 30.74.144.111(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WiaZUIW_1752112681 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 10 Jul 2025 09:58:02 +0800
-Message-ID: <ccce870e-3117-4044-96e6-4d0e15bef913@linux.alibaba.com>
-Date: Thu, 10 Jul 2025 09:58:00 +0800
+	s=arc-20240116; t=1752112784; c=relaxed/simple;
+	bh=O1GCpSX4Cy7TfdvPuHa0WAkHsRBKX3c4B8Ue3NoFr0A=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=RvlFoLq9iID4GSyayxUG+eBhaRIVLabiFWZrId46pEbbCN3E0scvEl9cyWC383ngMKrBoSOb/sDRAt/l04TdjqJ4CiygIiHZlVweJlHR6/itnfXW8DLqOAfM1u30S73ELXOkNdL/+82yn62QR8RCXsdCXyyb174/S1Q+Y4lbqeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nr0CpFpE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 487C2C4CEEF;
+	Thu, 10 Jul 2025 01:59:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752112784;
+	bh=O1GCpSX4Cy7TfdvPuHa0WAkHsRBKX3c4B8Ue3NoFr0A=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Nr0CpFpE8GCvAnhxFtSjNe3bTavh40kVkR48wpHR/4H5OtN2opcLyzC8VnqlZ1jpo
+	 Gz55DJyDS6oESF7vZiO2UIE7ytMKPNw5k5lf/oeqRqTChHaE2zYmj3vEhcMh3jpczV
+	 swNwK9KRgG8Dc/wska3rxMlwJIXbWQb9qXHi8bKT7816PvMNHNPm/hTSxZco1kDaxw
+	 PrK5/dfqkxiwGImCNPs8BKNNu7U25eISF7awQg7ckKOYpkrVeWScHD5IOtmiVSek3S
+	 uRo6PsBAYa6nSdlALWKd0HATCyID2ECs3LUafwt0OPKFvu1OBHB+kUgHgo8VayAAfM
+	 50X5TU1zQat8Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id DEC94383B261;
+	Thu, 10 Jul 2025 02:00:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] fix MADV_COLLAPSE issue if THP settings are
- disabled
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
- ziy@nvidia.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Pedro Falcato <pfalcato@suse.de>
-References: <cover.1750815384.git.baolin.wang@linux.alibaba.com>
- <573eb43a-8536-4206-a7c6-d0daa1fd7e70@lucifer.local>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <573eb43a-8536-4206-a7c6-d0daa1fd7e70@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] virtio-net: xsk: rx: move the xdp->data
+ adjustment
+ to buf_to_xdp()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175211280676.957497.383613725548170335.git-patchwork-notify@kernel.org>
+Date: Thu, 10 Jul 2025 02:00:06 +0000
+References: <20250705075515.34260-1-minhquangbui99@gmail.com>
+In-Reply-To: <20250705075515.34260-1-minhquangbui99@gmail.com>
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: netdev@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+ xuanzhuo@linux.alibaba.com, eperezma@redhat.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
 
+Hello:
 
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 2025/7/9 20:36, Lorenzo Stoakes wrote:
-> +cc Pedro as he'd raised concerns here also.
+On Sat,  5 Jul 2025 14:55:14 +0700 you wrote:
+> This commit does not do any functional changes. It moves xdp->data
+> adjustment for buffer other than first buffer to buf_to_xdp() helper so
+> that the xdp_buff adjustment does not scatter over different functions.
 > 
-> Hi Baolin,
-> 
-> Just for some clarification on this - thank you very much for this series,
-> but based on discussion with David and concerns raised by Hugh + others,
-> overall it feels as if, while the documentation is no doubt vague in ways
-> it ought not to be, this behaviour is something we have put out into the
-> world and we should continue to support it.
-> 
-> So overall I feel that this series should not be applied.
+> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+> ---
+>  drivers/net/virtio_net.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
 
-Fair enough.
+Here is the summary with links:
+  - [net-next] virtio-net: xsk: rx: move the xdp->data adjustment to buf_to_xdp()
+    https://git.kernel.org/netdev/net-next/c/f47e8f618c7d
 
-> 
-> Your work here is great, and really massive apologies for this after all
-> the work you've put in (and of course the review work here also), but on
-> reflection I think it's a risk we shouldn't take.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Consensus is the key. Thank you and David for the discussion and 
-suggestions.
-
-> I understand this means that MADV_COLLAPSE can't be used to collapse at a
-> mTHP granularity - we definitely need to have a think about how we might
-> provide this sensibly.
-> 
-> As for how to move forward - I will go ahead and update documentation to
-> make the situation absolutely crystal clear, both in the man page and the
-> rst.
-
-OK. Great. Thanks.
-
-> Thanks, Lorenzo
-> 
-> On Wed, Jun 25, 2025 at 09:40:08AM +0800, Baolin Wang wrote:
->> When invoking thp_vma_allowable_orders(), if the TVA_ENFORCE_SYSFS flag is not
->> specified, we will ignore the THP sysfs settings. Whilst it makes sense for the
->> callers who do not specify this flag, it creates a odd and surprising situation
->> where a sysadmin specifying 'never' for all THP sizes still observing THP pages
->> being allocated and used on the system. And the MADV_COLLAPSE is an example of
->> such a case, that means it will not set TVA_ENFORCE_SYSFS when calling
->> thp_vma_allowable_orders().
->>
->> As we discussed in the previous thread [1], the MADV_COLLAPSE will ignore
->> the system-wide anon/shmem THP sysfs settings, which means that even though
->> we have disabled the anon/shmem THP configuration, MADV_COLLAPSE will still
->> attempt to collapse into a anon/shmem THP. This violates the rule we have
->> agreed upon: never means never.
->>
->> For example, system administrators who disabled THP everywhere must indeed very
->> much not want THP to be used for whatever reason - having individual programs
->> being able to quietly override this is very surprising and likely to cause headaches
->> for those who desire this not to happen on their systems.
->>
->> This patch set will address the MADV_COLLAPSE issue.
->>
->> Test
->> ====
->> 1. Tested the mm selftests and found no regressions.
->> 2. With toggling different Anon mTHP settings, the allocation and madvise collapse for
->> anonymous pages work well.
->> 3. With toggling different shmem mTHP settings, the allocation and madvise collapse for
->> shmem work well.
->> 4. Tested the large order allocation for tmpfs, and works as expected.
->>
->> [1] https://lore.kernel.org/all/1f00fdc3-a3a3-464b-8565-4c1b23d34f8d@linux.alibaba.com/
->>
->> Changes from v3:
->>   - Collect reviewed tags. Thanks.
->>   - Update the commit message, per David.
->>
->> Changes from v2:
->>   - Update the commit message and cover letter, per Lorenzo. Thanks.
->>   - Simplify the logic in thp_vma_allowable_orders(), per Lorenzo and David. Thanks.
->>
->> Changes from v1:
->>   - Update the commit message, per Zi.
->>   - Add Zi's reviewed tag. Thanks.
->>   - Update the shmem logic.
->>
->> Baolin Wang (2):
->>    mm: huge_memory: disallow hugepages if the system-wide THP sysfs
->>      settings are disabled
->>    mm: shmem: disallow hugepages if the system-wide shmem THP sysfs
->>      settings are disabled
->>
->>   include/linux/huge_mm.h                 | 51 ++++++++++++++++++-------
->>   mm/shmem.c                              |  6 +--
->>   tools/testing/selftests/mm/khugepaged.c |  8 +---
->>   3 files changed, 43 insertions(+), 22 deletions(-)
->>
->> --
->> 2.43.5
->>
 
 
