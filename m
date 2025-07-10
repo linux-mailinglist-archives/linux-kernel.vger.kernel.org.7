@@ -1,158 +1,81 @@
-Return-Path: <linux-kernel+bounces-726346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5364EB00C23
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:30:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F5CB00C27
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E28D24E6747
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC8A5C4F18
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF1B2FD592;
-	Thu, 10 Jul 2025 19:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FF22FD5A3;
+	Thu, 10 Jul 2025 19:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="kw7up1/5"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4KrJlDa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACE721B9F4;
-	Thu, 10 Jul 2025 19:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752175850; cv=pass; b=VWTnB7C/OOA2xNpDjFUQ/eHhhU1Ps7XwRdojLaA2yHPdLIDNcjtYHUdh0pD/34l1E72HL32VHkMZiNIo1hqtQ4xZaVEtR4POOENfTgwbm/fnbgHZE6K/RsBDO1rk6cYeSajpk8XvcxiqMGzeVFtyWLpi+dX3pTvFJ+rkjxy6duc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752175850; c=relaxed/simple;
-	bh=B0vHwcGOIIHb89H2gzxv6p6IhFT8hgODSk55/vhzf4U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GJgXcydhShmNBQP0hosgPDsDXjB+rCRQxVLqMKnpNTcATFdQ6EEeS4VFFsrIlxQa4opRfu6vLYA52njd3Fm56a5DDfEaHshzb6j01scebmXLczjhAWfyQoL5DIMCjvtfGBp0h42/98Ii8cVybQlbLHst6WkRkVpdlSmaUfaydRM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=kw7up1/5; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752175820; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=I/ka+SLGhV+QGCE7fhGV9qYnglLgy9/7ibP/VHkpOEkzzlN+hYr3n1hU+m0Czd3JuzQEcq3dJutzOQDlLs4uuTOHYI/Lj8p3iXdTFweEpCXHRjKKkqLQ24u3kz7ogTT6ITQRIH8buzu3rmYlidtSoboB93yZBpHRO+aGTxnuDY4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752175820; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=2bzdLOutw45NuzUy8PqWXaJAtp7VYXU2KwETf6FwUq4=; 
-	b=KGNFyCXuU/Eu7gI53XiCbXZ+2vpS1Ajv5tsP6P5DkQZQ7IogkRrzv2E2nSQ6QPoYGfJZFxB9rHfMFncR5gkPpshEpNmhmshWWYu93Hkr46rex2NKwDW57U5JARz8hTeTCfu6ErwawJQdGWt5x+2Gy63PfS87RHWiQxSiNu09gwk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752175820;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=2bzdLOutw45NuzUy8PqWXaJAtp7VYXU2KwETf6FwUq4=;
-	b=kw7up1/5sk7CS9DwqFvhC738rMQmLkDy+YBescJyPukKyMiQXceMUwSSbDObh1iU
-	ZFgMXP3VSkSTnRsOVkc3kmN5JNUm1ed5mQHxwFolk5+x8M8+Yi9IJdDT66VzpDBwZwD
-	9Sono6bXrQ7cofGqQpGwIZMHjH9DgKP4GZKvxFWQ=
-Received: by mx.zohomail.com with SMTPS id 1752175818697100.88359010230067;
-	Thu, 10 Jul 2025 12:30:18 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Alexey Charkov <alchark@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v6 4/7] dt-bindings: thermal: rockchip: document otp thermal trim
-Date: Thu, 10 Jul 2025 21:30:12 +0200
-Message-ID: <6505070.lOV4Wx5bFT@workhorse>
-In-Reply-To: <3592348.tdWV9SEqCh@phil>
-References:
- <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
- <20250610-rk3576-tsadc-upstream-v6-4-b6e9efbf1015@collabora.com>
- <3592348.tdWV9SEqCh@phil>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A767221A43D;
+	Thu, 10 Jul 2025 19:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752175974; cv=none; b=uLyUKuptasCLek73Isy9r65Q7dPq2CZLf/NFbFeawn4MvzfG2yDIhd3uGt+BIUcRZCpK4MZcZhG3t/ILMabxU1pLIPhZRjMz7NoUfC1XvbKHL+Jt5JSmYRz/59htoYwgVka0+T9G+PKkglZtrtyVYlmn4N4cX2svS0HfxDduhz8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752175974; c=relaxed/simple;
+	bh=5iv/ybBT1EWpCtzUTeH7jOisZdpjTSxsHX5LZWaBTBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q6eSwtEnOD1JVKS/F6DpSYaMiPoVkkpPIvxTVClsZbDEypJh9+k6VPTwhH/BlPLVHuzIdspVvn3MC0oc3utoq/luGYAIGJXkWEn8ud75Q0VWGbJfGflHMmGQERO/ntR5H27LmP3EDStX1vPsJQXS+2KdHTS9e6P5x6ecmTV4QBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4KrJlDa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C0BC4CEE3;
+	Thu, 10 Jul 2025 19:32:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752175974;
+	bh=5iv/ybBT1EWpCtzUTeH7jOisZdpjTSxsHX5LZWaBTBs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d4KrJlDa0wqJNg3kV/Aycs4TlPYrAsCJRXY7pEr0yFXtTSr5FEeZGUF/jPySl86L0
+	 G2Wj3h88lJib/AeFNTfE55CceP6Z8QDP3lBTDwYqHHQju5mqPUOCa4/3mGS9h9fWN2
+	 8BE0kCRE4pggOceAMSsqBVWRr1gs6zAWJaNhtudIagRE9mkIDpF/mwipXJeEkW+oCM
+	 p3QbqdTQJ6FoWgjFXP97kQGwHc4BgJnkex2oGRmglmd2Gq6jytbt8BcKjvG56TNzdm
+	 tbQ0dW+FgZY3oL6JitibiLFuzcpQ3/iHOi8JgP4kOgyIMABWv4q4DV/rHXa0LiV7Mx
+	 Uwez3iX6QZFgw==
+Date: Thu, 10 Jul 2025 12:32:52 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
+	Yuwen Chen <ywen.chen@foxmail.com>, linux-mtd@lists.infradead.org,
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] ceph: Remove gfp_t argument from
+ ceph_fscrypt_encrypt_*()
+Message-ID: <20250710193252.GA20579@quark>
+References: <20250710060754.637098-1-ebiggers@kernel.org>
+ <20250710060754.637098-7-ebiggers@kernel.org>
+ <CAO8a2Sivm00NRM9Z-Fwp=FzcmkAP8m1uQR24-avT-tUug4VgmQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAO8a2Sivm00NRM9Z-Fwp=FzcmkAP8m1uQR24-avT-tUug4VgmQ@mail.gmail.com>
 
-On Thursday, 10 July 2025 13:21:19 Central European Summer Time Heiko Stueb=
-ner wrote:
-> Am Dienstag, 10. Juni 2025, 14:32:40 Mitteleurop=C3=A4ische Sommerzeit sc=
-hrieb Nicolas Frattaroli:
-> > Several Rockchip SoCs, such as the RK3576, can store calibration trim
-> > data for thermal sensors in OTP cells. This capability should be
-> > documented.
-> >=20
-> > Such a rockchip thermal sensor may reference cell handles that store
-> > both a chip-wide trim for all the sensors, as well as cell handles
-> > for each individual sensor channel pointing to that specific sensor's
-> > trim value.
-> >=20
-> > Additionally, the thermal sensor may optionally reference cells which
-> > store the base in terms of degrees celsius and decicelsius that the trim
-> > is relative to.
-> >=20
-> > Each SoC that implements this appears to have a slightly different
-> > combination of chip-wide trim, base, base fractional part and
-> > per-channel trim, so which ones do which is documented in the bindings.
-> >=20
-> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
->=20
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
->=20
-> with one question below
->=20
-> > ---
-> >  .../bindings/thermal/rockchip-thermal.yaml         | 61 ++++++++++++++=
-++++++++
-> >  1 file changed, 61 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/thermal/rockchip-thermal=
-=2Eyaml b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
-> > index 49ceed68c92ce5a32ed8d4f39bd88fd052de0e80..573f447cc26ed7100638277=
-598b0e745d436fd01 100644
-> > --- a/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
-> > +++ b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
-> > @@ -40,6 +40,17 @@ properties:
-> >        - const: tsadc
-> >        - const: apb_pclk
-> > =20
-> > +  nvmem-cells:
-> > +    items:
-> > +      - description: cell handle to where the trim's base temperature =
-is stored
-> > +      - description:
-> > +          cell handle to where the trim's tenths of Celsius base value=
- is stored
-> > +
-> > +  nvmem-cell-names:
-> > +    items:
-> > +      - const: trim_base
-> > +      - const: trim_base_frac
-> > +
->=20
-> are we sure, we want underscores here?
-> trim-base, trim-base-frac looks somewhat nicer.
+On Thu, Jul 10, 2025 at 02:07:47PM +0300, Alex Markuze wrote:
+> Reviewed-by: Alex Markuze amarkuze@redhat.com
 
-a quick grep of all the bindings shows me that _ vs. - is about even.
-I'm not sure deviating from what downstream calls it, what I already
-sent, and what the already sent driver expects is really worth anyone's
-time and mailbox space for what boils down to a matter of personal
-preference.
+Thanks!  In the future, when sending a tag, please include brackets around your
+email address, like Reviewed-by: Alex Markuze <amarkuze@redhat.com>.  Otherwise,
+when applying the patch, b4 skips the tag:
 
->=20
-> Heiko
->=20
+    NOTE: some trailers ignored due to from/email mismatches:
+        ! Trailer: Reviewed-by: Alex Markuze amarkuze@redhat.com
+         Msg From: Alex Markuze <amarkuze@redhat.com>
+    NOTE: Rerun with -S to apply them anyway
 
-Kind regards,
-Nicolas Frattaroli
+I'll add the brackets, so no need to resend anything.  But other maintainers
+could miss this, which would result in your review tags not being applied.
 
-
-
-
+- Eric
 
