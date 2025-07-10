@@ -1,339 +1,391 @@
-Return-Path: <linux-kernel+bounces-726206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1282DB0097B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:03:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBFDB00980
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C04C57B2FBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:01:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D31E74A1431
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C375E2F0050;
-	Thu, 10 Jul 2025 17:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9F12F0059;
+	Thu, 10 Jul 2025 17:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TLZnVgrU";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="LKYbhAhQ"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AAdAtPq2"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5F8275114
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752166968; cv=fail; b=LQyVF3mjm2EwCqFP7DyMhDw6TYq+PN07F2q51Y6sT75GXHH11Kire2BuKpEklVNbOXyx92CHdJSSv2MIbrjeappBegxtuM1wlk8MLfzCrs7ORE6fyenPwNYm0YwDK9mKMR13w0AOrGqr/hV+gYWOV6vtYmJXo4+BwsSEjQZj/2k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752166968; c=relaxed/simple;
-	bh=p8iDiVLNaRxCfPhEORieZE++SPbMFepTVtgQwU0Ix6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bYGA0QiLwWiHrwNwuPdbOeFpki7f75h60fL+P6i8N9UYNbD70POJ6AtkzO3gdkEJyus/CkMXYNJW7lBtLswYddNU6ovZbomB0fo+gUNiRpQEO9VMvzY1Aa9w6h2GvC5shene7r82Oda2T9ygQy4r+4h7Yk4LTzvUacxUDYjdCpw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TLZnVgrU; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=LKYbhAhQ; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56AGMWE7021850;
-	Thu, 10 Jul 2025 17:02:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=LoZmB1Pmy/k52y/VBF
-	tZ024bQSc5gQw116ReciHRzkc=; b=TLZnVgrU+wPWv6hgzZ/YhlyBsGwwst3pdL
-	XoAx6pIshYUvZ0IRpBvnpRl2rHenlxSrGEaV2K/qlAKAMIaZ2kfPPELaqM5CIkcU
-	DrIU73eo53cdFEPR8qBY5AwEMfNfwEZ5uIQuhZxZOTLplbQ1N/mdAjNmxOTVZoL/
-	X8MvtMdp4q2OLpPn1DZt9uiS/0dMMuYP1OBKW4XFTYJGG6gqQlPpnJAyBhua9CNr
-	N6DROBPdEn71zR/LDAeTSwV6ZZL8bLyjsY4MXUXY8mgzCxPSVOj3Om2aBDwl1vlg
-	E46wXPuCVSnvRwGPYStwdlmFmm+Fce0f8r9pOkOEpYyglyomAgag==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47tgym02m5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Jul 2025 17:02:16 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56AG7o8d014068;
-	Thu, 10 Jul 2025 17:02:15 GMT
-Received: from ch1pr05cu001.outbound.protection.outlook.com (mail-northcentralusazon11010057.outbound.protection.outlook.com [52.101.193.57])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ptgcjg3c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Jul 2025 17:02:14 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IbE+N+NrQMJv8APrC1gV5hVZ4oV1bvRH59CBTQGNmD2euXdKKZ7k+WwTHi/KGoD4qjtd3qzhbbgn8lahUMPHTZTrKAgkfaNdoHSQnH+iZC0JBfkHlKDuP5uEBV12TrC8JERH6Kxj1mocxU1DqZslcLSe7fRhq6urVdipkSJcvPbsoAksvD1cqPsfzhDAHq4lSdYRelMm3UQBkx4NMwTRNF2BsSC7Xmj5jGadm1IjQy9TRaEe4j4wfTOlYbjIjzd5QQlkVbPCC+skjSvq+MsghVWMx933ZJYYzDsRspRb4bZYZic4TF5Xujo2eqmK76ZXL1dQ4Ga4OEobW3iwDT0LBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LoZmB1Pmy/k52y/VBFtZ024bQSc5gQw116ReciHRzkc=;
- b=lLBEb55IFLyI6yfKIUTrL8YyvdkBBtJoBcU4jbIixD8fO5hFZzCOZO79A1/or3j0G5zkq4bEY2mQ42MnlKz+EvGxS9uVcPD6WbDKQLb//QBEHK865ndIU6fPibAJAlFCeb0pOalSWBPmUmanCKlU98Ox1kpWu19Mzf6WDLhXXCulY4znOTNLZWLGSpq6xRG0QO1v8+Ev04of77US2nVA/bVCSFhcHFYpj2tJiwCdPe7TcwYKtICun35GJX9OU0orNKVJUxG5481M8NXs51XsGzW+n0uHzKWPwUpN7i7xe0+9kYXodrsc1oua2yP1po2ZI5PFKi44FKSPApMN2EB6UA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9748E2797A0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752166969; cv=none; b=gvqkkKn0FdQZuz2WmogiEOPmngLsYBt7Fgrx20MIq1FAOJB54J5/WZFRyd4/IXsgFPbfFNKZwDLmi6q4i13GV4qACg3V+pWW4t7CNyggUjmmueJA+695QRt0VyaQKoEj65CBAjDHgWp0vgVA118FKkvq3SDTO5yY2K1o/Wk2JVI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752166969; c=relaxed/simple;
+	bh=1SMGOzOAT0vgNO8zV3p010iARupSLQVy+V5l86LUJFI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=j4zk+sEVy8WtCgsKIKaW4zDQ4LAy2LPv8ULcDExRrbsNYkvHe+6DKB4dkxWVyhtyfunXJgIOZgzKEdrMYXenQw/awO8Nvhj3KR6PBINhnJH/AA2fRZvBHulcggJZIudibRLr6cMP3O8ZLxiwemW3hJ5QrO6pbxvV5SBgHeiEFkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AAdAtPq2; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a9e8459f28so15591cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:02:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LoZmB1Pmy/k52y/VBFtZ024bQSc5gQw116ReciHRzkc=;
- b=LKYbhAhQWxFBJ8OPDqwI1PcKOujtaRzo9RCWp2Jomfqg9MmOBMFlNmNfVmF3JOD5QVi0xQQxFiFLob/yLMJN/cgFjz2J/tzHkjctnfaF/s2wjbF5gBTR0lmub9fj9eUWcE6NPdU85LuiWpWhoR7w+0RIJjvt/kCu5M2ozg2ukMY=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by CY5PR10MB6045.namprd10.prod.outlook.com (2603:10b6:930:3e::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Thu, 10 Jul
- 2025 17:02:11 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
- 17:02:11 +0000
-Date: Thu, 10 Jul 2025 18:02:07 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH] mm: implement "memory.oops_if_bad_pte=1" boot option
-Message-ID: <5242fca8-4a17-4ff8-a624-08778fc64f19@lucifer.local>
-References: <4e1b7d2d-ed54-4e0a-a0a4-906b14d9cd41@p183>
- <525a4060-2c8b-40c5-b4bd-b9c47de94f0f@lucifer.local>
- <72956765-39e0-445a-b381-6bbc54046544@p183>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72956765-39e0-445a-b381-6bbc54046544@p183>
-X-ClientProxiedBy: LO2P265CA0019.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:62::31) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=google.com; s=20230601; t=1752166966; x=1752771766; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rnbqDnenE+faR/O+T8DVj3lDgIynjuykWVsJFB/NPT8=;
+        b=AAdAtPq2IgCiqaghARGKFcMhbPvsBx0TsFgwanDn++2mJTKl8U/Dyw8532qW9YXDyn
+         xCrkiyAWOaMEa6YY3oIL4M3CLDfPJzJZNOwt7MY6hKAZNqnWYLF/EM/BUondVhyXhSf5
+         jLs11LFvzsbnCAZEfslC1QBdaefj6tHEcbS1IV1RM526j3I5LGyzeNVxPfxgw5YpWck+
+         gwGCXEJ1w3qcaJtAWzgqSQXM1Xwvm2TGNJyWGIIHeTETJ1QUnY5dchTnU55cOPtl8oFQ
+         V3d5yviHplKkWIUy4rqtAXM0sycYk79+nEmCI7f8JmZYWbYx9tRWW9Ey4wliMRAIvyYk
+         OKWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752166966; x=1752771766;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rnbqDnenE+faR/O+T8DVj3lDgIynjuykWVsJFB/NPT8=;
+        b=DeMYyThAELhciWSjOwopkxF9hyv87t3iNLQQeev1MbRK4jTXYp+elGFcqhFkENXAjZ
+         lcVe2lyyeL6ceoSq3NCEFqfrnv1wnF5U3ICXKxQvu459R9p8voUMJxESb4yY76br/Xms
+         kr5JBgYHC29E06c7EdnXQSomVFtDwr+jltN0dVvFiSleVNuJ9djU/iXlCe6UOKX/ZlNN
+         IV1rXgPABnPeY8b8P1aB6ZCZsaxBk7iMYSWx+CV6gXAadJdq+yalkqi75/1EvUDVGpgg
+         PxUmf47cxiLQk4XKG7nj1siKko8eLiynndGWxsv7Ami/y13HaiaOCdJKtw5uVvCGSO5j
+         rOVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqn/lfSuCy7r46tXEX9h6ZSFLyZ7q/bEiBJYhH2J7xNuG07TvoYvg3QXFTLOJWjCJqB7IQutOhvWH6gaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXEw+PO7t8C2PrQEenbVSSmhkS+jGTBJ87MA9Qo7+NGUbdCrkb
+	Wgm3BjhqVh7K/+pA4JF33CrMb6cBB6vEE51/6jzKmnuf5t4vL4HgUf+kNXY2eKlTE8xPfLG3FRx
+	oSBjSUGB9JCE4+Ck5VeLwTfCZuAcoz5kBk23jcGeW
+X-Gm-Gg: ASbGncvTBikLjRDdGKqLKyiX1eE6FlhGQHer21EtMw1n0zUulbg1MNgCTn5jAmZ4f7H
+	qBoJtfXJ6th925XBA2L8E/labHC8xTXWq6w4UMgU1Tm1JIGpz3WYOOa1/wPrgMJ2/7KwiOTSv8P
+	+GftGxaXdcw72khQVY9dH0tra+nDM8z4TE7WaxHauRNPWPv/UNZam1A9VF9XTtMu8p9X30Mk72Q
+	dH47hBGYRbd
+X-Google-Smtp-Source: AGHT+IFSez0+oMK6YMO+TcCXoRNn3chPSvpcOeXH7/WZTO3+0AFNyoo2EXsI3flRMIii6xEZbuW9CceMGCgKGn1wBAA=
+X-Received: by 2002:a05:622a:830f:b0:497:75b6:e542 with SMTP id
+ d75a77b69052e-4a9eb0d40dbmr4338371cf.10.1752166965550; Thu, 10 Jul 2025
+ 10:02:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CY5PR10MB6045:EE_
-X-MS-Office365-Filtering-Correlation-Id: b355faf6-9d38-41bf-17c1-08ddbfd3833d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vvdQTqp7/4rnpIwFEuTxvpZR9MGBg88YU/zgp06tq6hFnGn57LPvHJplnwve?=
- =?us-ascii?Q?ojdL44iTcaodgLotbgs2hNvqtr2Ku63hfqpRmpbh7T5Wh0ZvJAwE9t5mYzZF?=
- =?us-ascii?Q?RwAmJt9HUq4AtO04lNI8QVAagvi+EvBdEKXYeRN3Q5HaYeAcNv2gbp4Zdyf9?=
- =?us-ascii?Q?ltA9IUCa92p0FjY9J4T14j0xKNhHS5+jCdhIRM6Ny+/i6pxcupJjCpjK5nKl?=
- =?us-ascii?Q?n+p0NK2nCiiU8Ohoo9+Ov2wvfG1iRs7Gi48FlaEcN8DbjjiBrPVeM9cCi4yO?=
- =?us-ascii?Q?Di8LDbjPmajaKXTUjzzzfcunA74kHINXqoVHiGAwr9riOhvToR2dy5fk7lr9?=
- =?us-ascii?Q?pmNto9W36faWNqehUtuAQxH/11KCwG6p+SMK6sKMRFm7oNiS/sed/pBDeVV6?=
- =?us-ascii?Q?ZZUJJacMnXQIQZh90aaNtc6e8sIKHlNhdF6zsgneVmUrb7NdQG1IvyR/HPa2?=
- =?us-ascii?Q?obQ16/PiEGzbpyPSn6iIEIU5xYy+K2MW3kkABY6k15x8O6+rvUe/KLLnqQsH?=
- =?us-ascii?Q?9PL3VmmFxi2tfrOR+72+0myqyt6Z8lcqhmrvgxcKqiG4+u6W5RQOOK1xazeP?=
- =?us-ascii?Q?PMgJl9mvdVJh3Zj1XKjy7YX4buexuPCIDnOx5BAl8FCG/EGHwU4RmRM4rsuB?=
- =?us-ascii?Q?IjT6dl9ooc4Qmc/b+hJe6fGjzoNDOOQYXl0QGPV+ER2xzU3MdiC4OXwPIlkf?=
- =?us-ascii?Q?vilmb3y3QB2fyGvsmddc5nZsXBxuC/JCljmKftCiuGbW0mmO6zjznOUyrpmb?=
- =?us-ascii?Q?32xLTceiO2gzdkVjt3AuBdCBuGe6/SgpOPJfCzPAFUjPc93iOmV4FTgwQC1P?=
- =?us-ascii?Q?0/DLw4XyELDaSoGMv+CJ0x+hXVjbqZ49l3ORus0ey0jlyCrBuVS+bBaf2bgJ?=
- =?us-ascii?Q?iGIMY7PBsi6WJs+yknhQDrheLvQnBLuYwN+vVr1sts0uw/RTXCVlPOtXx+Yg?=
- =?us-ascii?Q?1aUDBEjkNK1wnuBQYRbKFXqgNSWAc7S85+OqsPGucXAmobBVyAk0H7PLn2qV?=
- =?us-ascii?Q?/4LvxbG0CU70DUj55DsyuQHCkamA+57wIK73Cw8wY6bRoRZZSVVOWi47S0Qw?=
- =?us-ascii?Q?DUUwrQf7yJ8oYYKoyvTWOFG7kXiRuRpeSdgzALgerqUbQ/ibgBFPnqRS+3sD?=
- =?us-ascii?Q?+AdXejnykWa62eRR6Y28aoFSZ2Ditiu8qTlPXIMzQyAoDgfumN08sC819EzM?=
- =?us-ascii?Q?gsSlBVPmQ0ZwICwUCnfxBRTQYYs0JGFYx93lCAbz0+snpdL1fsbhgZSTwf0J?=
- =?us-ascii?Q?sSrK9OCuTmjN4qgNBayjLR+cVw0aQzmaWp8LQ8Zs8F23dwE4Z5QKCqatzydD?=
- =?us-ascii?Q?e785Sm8Y6PJRGBP850jn6KwVk/ytK8v6BjS/hbX3gNCJ8+Vj+nBG3xNtpCL0?=
- =?us-ascii?Q?H4MeBkVXZmSG7sQJTdFm8xTHCdHaz8M8xnd4hPfOaNo9BhGg/Eba9uYyrp/F?=
- =?us-ascii?Q?fqRNoZF62ZA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?e6fapx/wxvPBi15O8VZEXSPCIJ/+cUM2KYhFhN2jewlmKguEzgyyFzenwp9H?=
- =?us-ascii?Q?vc6T3QHInTyEe8nJHM9x/bfh0HAtJa5QLSp2juj/2JVUJczKJIjWNSHMeskc?=
- =?us-ascii?Q?H1m/DJyGJ8nKlEV1h8rTml0UdfTcFUEzetBtDvDf/XmC9AwddBCrkuwMw/pD?=
- =?us-ascii?Q?8pR0ShbXIuKSFbMrtlE//x8S/kmtk3qtK0cZ0FXEbUbjAfJKFTPg7ImUFiPA?=
- =?us-ascii?Q?krtC1n7ERSYTyiXz6gSWag59oFo8nyFMcsiQHImNbdg/y76YJ6k3+RNJeSxC?=
- =?us-ascii?Q?UZreLwg4YZcT4N+2XUV7RFlLZHM7MVwinmlArGCYGcH8wwFq+2oVGIEO6wfB?=
- =?us-ascii?Q?5BGun+9Dakgv4/tz0xDQlyDKn5TjuqpJIroaL+KqaqGRzn0VC2obtuu6F1ef?=
- =?us-ascii?Q?9ezdhD1UckUa8+IkkzyLS08zA1XrlbMY4Si9ScZpztoDKx8lLUBjcC0NG1hg?=
- =?us-ascii?Q?5w/AIesleveFMBnCOfRaRlsGne+s36A1ZrS8vdIUgXJ31jBSs4G+w3YV/B8w?=
- =?us-ascii?Q?1hbDV7SGra/EilWFMVdyAdtr59VBgePcgtCx8VKo2w8IC46YdwApiamQnsQD?=
- =?us-ascii?Q?bl/f1FrsmC97EuvaCDpnchk6tOnu4/YzVSsV8h3GD6UBNwUdT2NmPiIf/V0V?=
- =?us-ascii?Q?7NfZL5whfPnLYw6FAv6h0MvYKtIArC1jwgP2zDBYKzL1HbR0En26I5XaGbCR?=
- =?us-ascii?Q?vFcpHMiuaBOSQFvrasycpyF+NsEWPtFpW3kRNGpmIiLo4n9eJpJDC4OsnHA8?=
- =?us-ascii?Q?hfjamztmpP1r3Xmd94vsxySeIMB4OmirdmrRe9M7MhluNDY9vlvgO7QZ2635?=
- =?us-ascii?Q?7ezTEKcOotRIQ+72XWoBa4PIbNhDpqpBQ4zd77BfaCFRmrdDT0lHcS0FhoZR?=
- =?us-ascii?Q?txaFdtXtdqhLfqrnNCq+Bfwk+q6FUPR5aZt+7Ypgkaz2gNo/DjdO3LlP5/Pf?=
- =?us-ascii?Q?3zP/lrdS6t9QcTVezpd0QWDxmNv+Z9iy9q0KSEFchmNpe35rG/QrWvhuXm40?=
- =?us-ascii?Q?l/T2S03FTuLXExZym+XbNBdOQpIQZT1USwtKb/NLUmbzMUODiSle2VjsDh89?=
- =?us-ascii?Q?djY0xZXFKxizyJrd6tZ+POL/IDi1dbadjRzG43lSjaCVVDlQeiNbZC+hXviz?=
- =?us-ascii?Q?M4eptLjJPo6pG1Exvyw/aXT1//Fz3i3RHvDe4Ycx5ZFouMrLAZVF58FP+jkZ?=
- =?us-ascii?Q?POcKiVzE7Bp4Pbz37MywQZ2m1Zf0WfiEwai7WpeakKtD5Vm0KkZaMokW1B0H?=
- =?us-ascii?Q?ehVYGhPz6zoc9F5owkRaINiIdlPeYZIqaGZj8q22HGD3tY/Q26sM1S24hwTk?=
- =?us-ascii?Q?WBSXaiOajWBjPbFLSEz9pdgKwxPdMGqQxnLObeUyHZWiEa02CPiVCruGH/5O?=
- =?us-ascii?Q?cpVyLrB51ns6MNPUt8nAIP3qzXV5kId6K44APJD6MXrgqaLwJecqakytVPaY?=
- =?us-ascii?Q?b9ryn9SatM0QoqSmIZyRSnprcBPfMSsAPpoWxt+qAz+RWo8R6GTUZh+F8PAw?=
- =?us-ascii?Q?t6LHeBIt6nadclIlmrlMSjJe0R26Ce5Z1k2ozVe9RNvVXc4Z8+9XBGLR5zUD?=
- =?us-ascii?Q?RZkJR+Uu2ZnWTXX6AbyanYAbpcn3/jYImeaZ7HZL3diJRUbSVFIH1IWhsV8X?=
- =?us-ascii?Q?eA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	QnFwk+Iw8uY8KmUHewHu0LAvv7/UeUbvwNKOGLKvliNqVKlIdPz5OtQKMccRNUc9/odKlAK3y1+CsynZb88vyWEs8engfrFKkoF0c3C6cKlp+YuoH1UtYXcuD34cCf0wWRb1C0lu3J7Eqhf2cSRTai1oJI/CW/UIQ8i9kKUaB+7yxUnmq+8s8jW951YmAzybdIDTJ2E7nKNiWn+lbc5CvviEXCwHueOZl0941qjloMvVRvX/JDdGrODTYrvBDGKptqOEm8Lgu1vI2MpBd3JTG/IcRQt4Gprwgrr2mhonGlQx1c0Y03QDSBbXy3q3GxI6QbvnW5vCfhxeSukQvBLsDc2NEy9+HznHHffiNuRfFOWqijXDuwYE9lg9fQsfgPV+unmJonlu3GYHkMwa4woTbdPwTw1AOuCND4chWpzqQ+QjpKQBYKGnuEMJiKbtEd8oojiV1BhSQD6gfD5mrETJhKwksc/n9Br9zSuy7/jQZEQvctuks2KdwIOYj1MxG2xwy8qSr285voPKCiUrA56DzN7RwN5DEEbdmzMDrdlQQhgHCe/VNrAfjd+llfLCL1m2h+4+F+7bLcozmc+kCpgnqW1WDOMeJrz0A/b/6cRt7ww=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b355faf6-9d38-41bf-17c1-08ddbfd3833d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 17:02:11.8088
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jkXKCf6yTy8cVM4Hw6SqYk6zgqWA7DRXRP3Fi8Zu01/UY7ishWFH8mjzTmtbg2UIdC4C931ncdXc5nuaNQEbMe9hexbxvtxgs5qdl096exM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR10MB6045
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_04,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
- suspectscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507100144
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDE0NSBTYWx0ZWRfX1zDMospsHNFB f6xT/IrZ/YFB7NNhgS3lwnKWp2Wa6InJcjTDGGMWghqDv4H1EcshsPGW7WRiUb1NYtweVbKaPY7 TPv3BaZ6vzYFWcVb4nUHhTlpjgWhASLvF2PHjBQg9CZQ44SNiea8T3+lOynjve60SCR37xho5bW
- fqRfgZ0kmZTGUqHqOvRYoYGSaAiiCcYITf3okqmeVSsmh7aZEYXLbsSYe1qXxvIVP5hi1ARD1J1 fxwc62bnp5OzxlnU+iNgwpxg6v1yIdt5xWncmcFrvGzZNZQrji6qPNHHftUQOCwbv/a2Fj6im2l zjXnomuQFj0pIhp7q9BvNhFD/X2gKC2ezwHqTEFxIXLEIexjsqW69PcBmzzlDgbF1FJ54u1tOeW
- kxv7LJ33KNQ0Z1V26dp9fLypQkI8PHmVksLGilUp23rOSHHy+g46hoZVLFoBuGaFNzmligmh
-X-Proofpoint-GUID: 03h-ttHJpQtVxkyvp4PV1JA0fFaoN2h2
-X-Proofpoint-ORIG-GUID: 03h-ttHJpQtVxkyvp4PV1JA0fFaoN2h2
-X-Authority-Analysis: v=2.4 cv=GqFC+l1C c=1 sm=1 tr=0 ts=686ff218 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=WIS7JU5awbCjlAP0JUoA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12062
+References: <20250704060727.724817-1-surenb@google.com> <20250704060727.724817-8-surenb@google.com>
+ <f532558b-b19a-40ea-b594-94d1ba92188d@lucifer.local> <CAJuCfpGegZkgmnGd_kAsR8Wh5SRv_gtDxKbfHdjpG491u5U5fA@mail.gmail.com>
+ <f60a932f-71c0-448f-9434-547caa630b72@suse.cz> <CAJuCfpE2H9-kRz6xSC43Ja0dmW+drcJa29hwQwQ53HRsuqRnwg@mail.gmail.com>
+ <3b3521f6-30c8-419e-9615-9228f539251e@suse.cz> <CAJuCfpEgwdbEXKoMyMFiTHJMV15_g77-7N-m6ykReHLjD9rFLQ@mail.gmail.com>
+ <bulkje7nsdfikukca4g6lqnwda6ll7eu2pcdn5bdhkqeyl7auh@yzzc6xkqqllm>
+ <CAJuCfpFKNm6CEcfkuy+0o-Qu8xXppCFbOcYVXUFLeg10ztMFPw@mail.gmail.com> <CAJuCfpG_dRLVDv1DWveJWS5cQS0ADEVAeBxJ=5MaPQFNEvQ1+g@mail.gmail.com>
+In-Reply-To: <CAJuCfpG_dRLVDv1DWveJWS5cQS0ADEVAeBxJ=5MaPQFNEvQ1+g@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 10 Jul 2025 10:02:32 -0700
+X-Gm-Features: Ac12FXyx_VaQ8h5nLqA_dLlxBKXAGv3g1OKRZbCjjg0VJoNtnRC8CppImxARGXU
+Message-ID: <CAJuCfpH0HzM97exh92mpkuimxaen2Qh+tj_tZ=QBHQfi-3ejLQ@mail.gmail.com>
+Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma lock
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org, 
+	david@redhat.com, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
+	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
+	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
+	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-OK I wasn't clear enough I guess - NAK.
+On Thu, Jul 10, 2025 at 12:03=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
+com> wrote:
+>
+> On Wed, Jul 9, 2025 at 10:47=E2=80=AFAM Suren Baghdasaryan <surenb@google=
+.com> wrote:
+> >
+> > On Wed, Jul 9, 2025 at 4:12=E2=80=AFPM Liam R. Howlett <Liam.Howlett@or=
+acle.com> wrote:
+> > >
+> > > * Suren Baghdasaryan <surenb@google.com> [250709 11:06]:
+> > > > On Wed, Jul 9, 2025 at 3:03=E2=80=AFPM Vlastimil Babka <vbabka@suse=
+.cz> wrote:
+> > > > >
+> > > > > On 7/9/25 16:43, Suren Baghdasaryan wrote:
+> > > > > > On Wed, Jul 9, 2025 at 1:57=E2=80=AFAM Vlastimil Babka <vbabka@=
+suse.cz> wrote:
+> > > > > >>
+> > > > > >> On 7/8/25 01:10, Suren Baghdasaryan wrote:
+> > > > > >> >>> +     rcu_read_unlock();
+> > > > > >> >>> +     vma =3D lock_vma_under_mmap_lock(mm, iter, address);
+> > > > > >> >>> +     rcu_read_lock();
+> > > > > >> >> OK I guess we hold the RCU lock the whole time as we traver=
+se except when
+> > > > > >> >> we lock under mmap lock.
+> > > > > >> > Correct.
+> > > > > >>
+> > > > > >> I wonder if it's really necessary? Can't it be done just insid=
+e
+> > > > > >> lock_next_vma()? It would also avoid the unlock/lock dance quo=
+ted above.
+> > > > > >>
+> > > > > >> Even if we later manage to extend this approach to smaps and e=
+mploy rcu
+> > > > > >> locking to traverse the page tables, I'd think it's best to se=
+parate and
+> > > > > >> fine-grain the rcu lock usage for vma iterator and page tables=
+, if only to
+> > > > > >> avoid too long time under the lock.
+> > > > > >
+> > > > > > I thought we would need to be in the same rcu read section whil=
+e
+> > > > > > traversing the maple tree using vma_next() but now looking at i=
+t,
+> > > > > > maybe we can indeed enter only while finding and locking the ne=
+xt
+> > > > > > vma...
+> > > > > > Liam, would that work? I see struct ma_state containing a node =
+field.
+> > > > > > Can it be freed from under us if we find a vma, exit rcu read s=
+ection
+> > > > > > then re-enter rcu and use the same iterator to find the next vm=
+a?
+> > > > >
+> > > > > If the rcu protection needs to be contigous, and patch 8 avoids t=
+he issue by
+> > > > > always doing vma_iter_init() after rcu_read_lock() (but does it r=
+eally avoid
+> > > > > the issue or is it why we see the syzbot reports?) then I guess i=
+n the code
+> > > > > quoted above we also need a vma_iter_init() after the rcu_read_lo=
+ck(),
+> > > > > because although the iterator was used briefly under mmap_lock pr=
+otection,
+> > > > > that was then unlocked and there can be a race before the rcu_rea=
+d_lock().
+> > > >
+> > > > Quite true. So, let's wait for Liam's confirmation and based on his
+> > > > answer I'll change the patch by either reducing the rcu read sectio=
+n
+> > > > or adding the missing vma_iter_init() after we switch to mmap_lock.
+> > >
+> > > You need to either be under rcu or mmap lock to ensure the node in th=
+e
+> > > maple state hasn't been freed (and potentially, reallocated).
+> > >
+> > > So in this case, in the higher level, we can hold the rcu read lock f=
+or
+> > > a series of walks and avoid re-walking the tree then the performance
+> > > would be better.
+> >
+> > Got it. Thanks for confirming!
+> >
+> > >
+> > > When we return to userspace, then we should drop the rcu read lock an=
+d
+> > > will need to vma_iter_set()/vma_iter_invalidate() on return.  I thoug=
+ht
+> > > this was being done (through vma_iter_init()), but syzbot seems to
+> > > indicate a path that was missed?
+> >
+> > We do that in m_start()/m_stop() by calling
+> > lock_vma_range()/unlock_vma_range() but I think I have two problems
+> > here:
+> > 1. As Vlastimil mentioned I do not reset the iterator when falling
+> > back to mmap_lock and exiting and then re-entering rcu read section;
+> > 2. I do not reset the iterator after exiting rcu read section in
+> > m_stop() and re-entering it in m_start(), so the later call to
+> > lock_next_vma() might be using an iterator with a node that was freed
+> > (and possibly reallocated).
+> >
+> > >
+> > > This is the same thing that needed to be done previously with the mma=
+p
+> > > lock, but now under the rcu lock.
+> > >
+> > > I'm not sure how to mitigate the issue with the page table, maybe we
+> > > guess on the number of vmas that we were doing for 4k blocks of outpu=
+t
+> > > and just drop/reacquire then.  Probably a problem for another day
+> > > anyways.
+> > >
+> > > Also, I think you can also change the vma_iter_init() to vma_iter_set=
+(),
+> > > which is slightly less code under the hood.  Vlastimil asked about th=
+is
+> > > and it's probably a better choice.
+> >
+> > Ack.
+> > I'll update my series with these fixes and all comments I received so
+> > far, will run the reproducers to confirm no issues and repost them
+> > later today.
+>
+> I have the patchset ready but would like to test it some more. Will
+> post it tomorrow.
 
-This is not upstreamable, nor anything like it.
+Ok, I found a couple of issues using the syzbot reproducer [1] (which
+is awesome BTW!):
+1. rwsem_acquire_read() inside vma_start_read() at [2] should be moved
+after the last check, otherwise the lock is considered taken on
+vma->vm_refcnt overflow;
+2. query_matching_vma() is missing unlock_vma() call when it does
+"goto next_vma;" and re-issues query_vma_find_by_addr(). The previous
+vma is left locked;
 
-On Thu, Jul 10, 2025 at 07:57:00PM +0300, Alexey Dobriyan wrote:
-> On Thu, Jul 10, 2025 at 05:16:52PM +0100, Lorenzo Stoakes wrote:
-> > Sorry but no - this seems to me to just be a hack. And it also appears to
-> > violate the rules on BUG_ON() (see [0]) so this is just a no.
+[1] https://syzkaller.appspot.com/x/repro.c?x=3D101edf70580000
+[2] https://elixir.bootlin.com/linux/v6.15.5/source/include/linux/mm.h#L747
+
+After these fixes it's much harder to fail but I still get one more
+error copied below. I will continue the investigation and will hold
+off reposting until this is fixed. That will be next week since I'll
+be out of town the rest of this week.
+
+Andrew, could you please remove this patchset from mm-unstable for now
+until I fix the issue and re-post the new version?
+
+The error I got after these fixes is:
+
+[   56.342886]
+[   56.342910] ------------[ cut here ]------------
+[   56.342934] WARNING: CPU: 46 PID: 5701 at lib/maple_tree.c:4734
+mas_next_slot+0x552/0x840
+[   56.344691] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+[   56.344695] WARNING: lock held when returning to user space!
+[   56.344698] 6.16.0-rc5-00321-g31d640f7b07c-dirty #379 Not tainted
+[   56.344702] ------------------------------------------------
+[   56.344704] syzbot_repro1/5700 is leaving the kernel with locks still he=
+ld!
+[   56.344715] 1 lock held by syzbot_repro1/5700:
+[   56.344720]  #0: ffff93a8c2cea788 (vm_lock){++++}-{0:0}
+[   56.349286] Modules linked in:
+[   56.355569] , at: get_next_vma+0x91/0xe0
+[   56.377452]
+[   56.377929] CPU: 46 UID: 0 PID: 5701 Comm: syzbot_repro1 Not
+tainted 6.16.0-rc5-00321-g31d640f7b07c-dirty #379 PREEMPT(voluntary)
+[   56.381592] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   56.384664] RIP: 0010:mas_next_slot+0x552/0x840
+[   56.386097] Code: 43 38 83 e8 02 83 f8 01 77 c4 e9 e5 fa ff ff 48
+8b 43 28 e9 83 fb ff ff 49 8b 06 30 c0 49 39 c6 74 be c7 43 38 05 00
+00 00 90 <0f> 0b 90 48 c7 04 24 00 001
+[   56.392303] RSP: 0018:ffffa01188217cd8 EFLAGS: 00010206
+[   56.393928] RAX: ffff93a8c2724e00 RBX: ffff93a8c1af2898 RCX: 1ffff275191=
+83e61
+[   56.396300] RDX: ffff93a8c2724e0e RSI: 0000000000000000 RDI: ffff93a8c1a=
+f2898
+[   56.398515] RBP: 00007ffd83c2ffff R08: 00000000ffffffff R09: ffff93a8c8c=
+1f308
+[   56.400722] R10: 0000000000000000 R11: 0000000000000000 R12: fffffffffff=
+fffff
+[   56.402935] R13: 0000000000000001 R14: ffff93a8c8c1f300 R15: ffff93a8c8c=
+1f308
+[   56.405222] FS:  00007ff71a3946c0(0000) GS:ffff93b83a9af000(0000)
+knlGS:0000000000000000
+[   56.408236] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   56.409994] CR2: 00007ff71a393bb0 CR3: 0000000102f84000 CR4: 00000000007=
+50ef0
+[   56.412367] PKRU: 55555554
+[   56.413231] Call Trace:
+[   56.413955]  <TASK>
+[   56.414672]  mas_find+0x5c/0x1c0
+[   56.415713]  lock_next_vma+0x41/0x4d0
+[   56.416869]  get_next_vma+0x91/0xe0
+[   56.417954]  do_procmap_query+0x249/0xa90
+[   56.419310]  ? do_procmap_query+0x1b8/0xa90
+[   56.420591]  procfs_procmap_ioctl+0x20/0x40
+[   56.421896]  __x64_sys_ioctl+0x8e/0xe0
+[   56.423514]  do_syscall_64+0xbb/0x360
+[   56.424715]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   56.426296] RIP: 0033:0x41a7e9
+[   56.427254] Code: c0 79 93 eb d5 48 8d 7c 1d 00 eb 99 0f 1f 44 00
+00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
+08 0f 05 <48> 3d 01 f0 ff ff 73 01 c38
+[   56.432893] RSP: 002b:00007ff71a3941f8 EFLAGS: 00000246 ORIG_RAX:
+0000000000000010
+[   56.435222] RAX: ffffffffffffffda RBX: 00007ff71a394cdc RCX: 00000000004=
+1a7e9
+[   56.437475] RDX: 0000200000000180 RSI: 00000000c0686611 RDI: 00000000000=
+00003
+[   56.440084] RBP: 00007ff71a394220 R08: 00007ff71a3946c0 R09: 00007ff71a3=
+94210
+[   56.442345] R10: 0000000000000000 R11: 0000000000000246 R12: fffffffffff=
+fffd0
+[   56.444545] R13: 0000000000000000 R14: 00007ffd83c4fe30 R15: 00007ffd83c=
+4ff18
+[   56.446732]  </TASK>
+[   56.447436] Kernel panic - not syncing: kernel: panic_on_warn set ...
+[   56.449433] CPU: 46 UID: 0 PID: 5701 Comm: syzbot_repro1 Not
+tainted 6.16.0-rc5-00321-g31d640f7b07c-dirty #379 PREEMPT(voluntary)
+[   56.453043] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   56.456564] Call Trace:
+[   56.457340]  <TASK>
+[   56.457969]  dump_stack_lvl+0x5d/0x80
+[   56.459188]  ? mas_next_slot+0x510/0x840
+[   56.460388]  panic+0x11a/0x2ce
+[   56.461353]  ? mas_next_slot+0x552/0x840
+[   56.462564]  check_panic_on_warn.cold+0xf/0x1e
+[   56.463960]  __warn.cold+0xc3/0x153
+[   56.465043]  ? mas_next_slot+0x552/0x840
+[   56.466367]  report_bug+0xff/0x140
+[   56.467441]  ? mas_next_slot+0x552/0x840
+[   56.468993]  handle_bug+0x163/0x1e0
+[   56.470236]  exc_invalid_op+0x17/0x70
+[   56.471366]  asm_exc_invalid_op+0x1a/0x20
+[   56.472629] RIP: 0010:mas_next_slot+0x552/0x840
+[   56.474053] Code: 43 38 83 e8 02 83 f8 01 77 c4 e9 e5 fa ff ff 48
+8b 43 28 e9 83 fb ff ff 49 8b 06 30 c0 49 39 c6 74 be c7 43 38 05 00
+00 00 90 <0f> 0b 90 48 c7 04 24 00 001
+[   56.479861] RSP: 0018:ffffa01188217cd8 EFLAGS: 00010206
+[   56.481501] RAX: ffff93a8c2724e00 RBX: ffff93a8c1af2898 RCX: 1ffff275191=
+83e61
+[   56.483665] RDX: ffff93a8c2724e0e RSI: 0000000000000000 RDI: ffff93a8c1a=
+f2898
+[   56.486323] RBP: 00007ffd83c2ffff R08: 00000000ffffffff R09: ffff93a8c8c=
+1f308
+[   56.488491] R10: 0000000000000000 R11: 0000000000000000 R12: fffffffffff=
+fffff
+[   56.490634] R13: 0000000000000001 R14: ffff93a8c8c1f300 R15: ffff93a8c8c=
+1f308
+[   56.492856]  mas_find+0x5c/0x1c0
+[   56.493888]  lock_next_vma+0x41/0x4d0
+[   56.495022]  get_next_vma+0x91/0xe0
+[   56.496204]  do_procmap_query+0x249/0xa90
+[   56.497515]  ? do_procmap_query+0x1b8/0xa90
+[   56.499232]  procfs_procmap_ioctl+0x20/0x40
+[   56.500500]  __x64_sys_ioctl+0x8e/0xe0
+[   56.501682]  do_syscall_64+0xbb/0x360
+[   56.502845]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   56.504408] RIP: 0033:0x41a7e9
+[   56.505362] Code: c0 79 93 eb d5 48 8d 7c 1d 00 eb 99 0f 1f 44 00
+00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
+08 0f 05 <48> 3d 01 f0 ff ff 73 01 c38
+[   56.511066] RSP: 002b:00007ff71a3941f8 EFLAGS: 00000246 ORIG_RAX:
+0000000000000010
+[   56.513523] RAX: ffffffffffffffda RBX: 00007ff71a394cdc RCX: 00000000004=
+1a7e9
+[   56.515977] RDX: 0000200000000180 RSI: 00000000c0686611 RDI: 00000000000=
+00003
+[   56.518440] RBP: 00007ff71a394220 R08: 00007ff71a3946c0 R09: 00007ff71a3=
+94210
+[   56.520643] R10: 0000000000000000 R11: 0000000000000246 R12: fffffffffff=
+fffd0
+[   56.522884] R13: 0000000000000000 R14: 00007ffd83c4fe30 R15: 00007ffd83c=
+4ff18
+[   56.525170]  </TASK>
+[   56.527859] Kernel Offset: 0x1a00000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[   56.531106] Rebooting in 86400 seconds..
+
+>
+> > Thanks,
+> > Suren.
 > >
-> > [0]:https://lore.kernel.org/linux-mm/CAHk-=wjO1xL_ZRKUG_SJuh6sPTQ-6Lem3a3pGoo26CXEsx_w0g@mail.gmail.com/
-> >
-> > On Wed, Jul 09, 2025 at 09:10:59PM +0300, Alexey Dobriyan wrote:
-> > > Implement
 > > >
-> > > 	memory.oops_if_bad_pte=1
-> >
-> > This is a totally new paradigm afaict - introducing an oops based on user
-> > input, I really don't think that's sensible.
-> >
-> > Unless kernel.panic_on_oops is set this won't necessarily cause anything to
-> > halt. Really you want a panic_on_bad_pte here, but that would be way way
-> > too specific.
-> >
-> > So it seems like a hack just so you can get a vmcore?
-> >
-> > You seem to be using BUG_ON() to _maybe_ cause a panic, maybe not, but by
-> > doing this you're inferring that there's unrecoverable system instability,
-> > which isf clearly not the case.
-> >
-> > All of the bad PTE handling seems to be intended to be recoverable and
-> > handled by calling code.
-> >
-> > Additionally we have uses like zap_present_folio_ptes() which use it to
-> > output PTE state in the instance of an invalid mapcount value - I don't
-> > think oopsing there would really be what you wanted right?
-> >
+> > > Thanks,
+> > > Liam
 > > >
-> > > boot option which oopses the machine instead of dreadful
-> > >
-> > > 	BUG: Bad page map in process
-> > >
-> > > message.
-> >
-> > I'm not sure what's so dreadful about it?
->
-> Because the root cause is unknown, happened at unknown time, dmesg
-> rotated away and nobody bothered to coredump the machine because it
-> didn't oops!
->
-> > And why an oops is better?
->
-> I apologize for stating the obvious but the less time between the bug
-> and coredump collection the better.
->
-> > > This is intended
-> > > for people who want to panic at the slightest provocation and
-> > > for people who ruled out hardware problems which in turn means that
-> > > delaying vmcore collection is counter-productive.
-> >
-> > Seems to be a specific edge case.
->
-> Yes, but the option is not enabled by default and costs 2 instructions
-> on the coldest code path, so...
->
-> > > Linux doesn't (never?) panicked on PTE corruption and even implemented
-> > > ratelimited version of the message meaning it can go for minutes and
-> > > even hours without anyone noticing which is exactly the opposite of what
-> > > should be done to facilitate debugging.
-> >
-> > But are there real situations you can cite where this has been problematic?
-> >
-> > >
-> > > Not enabled by default.
-> >
-> > Yeah, obviously.
-> >
-> > >
-> > > Not advertised.
-> >
-> > Umm why? Seems like you just want to add this for your own very specific
-> > purpose?
->
-> Sort of, I don't want to patch and unpatch things every time.
->
-> > > +/*
-> > > + * Oops instead of printing "Bad page map in process" message and
-> > > + * trying to continue.
-> > > + */
-> > > +static bool oops_if_bad_pte __ro_after_init = false;
-> > > +module_param(oops_if_bad_pte, bool, 0444);
-> > > +
-> > >  /*
-> > >   * This function is called to print an error when a bad pte
-> > >   * is found. For example, we might have a PFN-mapped pte in
-> > > @@ -490,6 +498,13 @@ static inline void add_mm_rss_vec(struct mm_struct *mm, int *rss)
-> > >  static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
-> > >  			  pte_t pte, struct page *page)
-> > >  {
-> > > +	/*
-> > > +	 * This line is a formality to collect vmcore ASAP. Real bug
-> > > +	 * (hardware or software) happened earlier, current registers and
-> > > +	 * backtrace aren't interesting.
-> > > +	 */
-> > > +	BUG_ON(oops_if_bad_pte);
-> >
-> > Except that it won't without panic_on_oops?
->
-> Yes, I'll update the comment. it is supposed to be used with
-> panic_on_oops=1 for maximum effect.
->
-> > I mean we can't just go around putting arbitrary BUG_ON()'s like this for
-> > cases we want data on.
->
-> Yes, we can!
->
-> > And far worse here - this is a print_xxx() function, and you're making it
-> > oops? That's really bad.
->
-> It's fine because, it is conditional BUG_ON.
->
-> > Note that other page table levels can be 'bad' as well, see pgd_bad() et
-> > al. - none of these will be caught.
->
-> Sure, I didn't think much about spreading this option to other places.
-> It can be spread independently.
->
-> > Overall I suspect there's one single case you're worried about, that really
-> > you want to put a WARN_ON_ONCE() against - then you can panic_on_warn and
-> > get what you want.
->
-> Ehh, no. WARN is for home users who can maybe photo the oops and fish it
-> out of dmesg and make bug report -- so that system survives until their
-> data are flushed to disk.
->
-> I suspect users are very bifurcated: some want to panic always, some
-> want to panic during QA but not in the field, and then there are users
-> whose only hope is cellphone camera.
->
-> > If you can make an argument in favour of this that's convincing then that
-> > would be a potentially upstreamable patch, but this one isn't, in my view.
 
