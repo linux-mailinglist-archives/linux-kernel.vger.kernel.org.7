@@ -1,109 +1,80 @@
-Return-Path: <linux-kernel+bounces-724792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D5DCAFF6F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:46:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6877AFF6FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57D38541FC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:45:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AA4F5A255F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B01827FB21;
-	Thu, 10 Jul 2025 02:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4AA27FB3A;
+	Thu, 10 Jul 2025 02:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gO+0bw9v"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCBs6n2A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181941FDD
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 02:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7483208;
+	Thu, 10 Jul 2025 02:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752115575; cv=none; b=s9/xdi6REqS1XruEgGQ2LwHznzviwYRjeftZqAFoSzKTx2rJEYk72fqiF1l71S1zSG0xcKDkwfJ6nxDO95vfxyANBpr2rPdDPV/Ix7Fmng00XcKYN1rcvfJDiZToWShwMUwyFzmaAvvyed9liGjZORVj2C6WO4/QLk2IcZBDMfw=
+	t=1752115639; cv=none; b=B8zg/3eNN5cik9sEJB+ZJrZD3Ojda1gQR+XWj2/87at7vgFksjG6rBx2lB/CiwkZM6BzfJLcBGVCcWPcaN0dId4Fkv5CSD73EjzBs0FhNOpZVj8M5xzcEy9oXl7oNHs68DEoG34Dyexiae2OwdtY6Xqc8/xBtxz1X8RX6mFLGLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752115575; c=relaxed/simple;
-	bh=Dq5E6qbcnp7OKpb31WemutPpvpSMukiF8kyCjkOa3q0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PlxAnWJPvUovfbQADTPAL92pCdi6U1/P+ti6moHWsvV7tjbVG+OEkAdPmqKXSZW4VdWyqCKOFrrjtpD+ptTKE7TKE1m/u5uGxYw0S2srSIQUtMfRgdUfQFhpe/O4aS2B4Qaby47yUU2wsnr0pkp/f4rahx8WAGWfTKaTq0YtJPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gO+0bw9v; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752115572;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iqwXOIteg9qCzt7xtB3xuBCygfMIm2/XPmfbhNkkYd8=;
-	b=gO+0bw9vuYPE4n4bviWPSs/IZIsAuO3HAWZIJ8lC2j4qTb042wFqejog36ihMe/+OfkbyU
-	KSlXOZX2tTSe+bZwjmZ2utP7sWc9wM34pgMRwEcuQf5Idt670pZnrKNT8izjZz+E/JNI+P
-	pg0q/IbXlhb3KvAaHaChQu9H4axUn+A=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-651-F9ekLMmrMuuv12pNqApSiw-1; Wed,
- 09 Jul 2025 22:46:11 -0400
-X-MC-Unique: F9ekLMmrMuuv12pNqApSiw-1
-X-Mimecast-MFC-AGG-ID: F9ekLMmrMuuv12pNqApSiw_1752115570
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E1DEC1954236;
-	Thu, 10 Jul 2025 02:46:09 +0000 (UTC)
-Received: from laptop.redhat.com (unknown [10.72.116.89])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E4ECF18002B5;
-	Thu, 10 Jul 2025 02:46:05 +0000 (UTC)
-From: Li Tian <litian@redhat.com>
-To: netdev@vger.kernel.org,
-	linux-hyperv@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Dexuan Cui <decui@microsoft.com>
-Subject: [PATCH] hv_netvsc: Set VF priv_flags to IFF_NO_ADDRCONF before open  to prevent IPv6 addrconf
-Date: Thu, 10 Jul 2025 10:46:03 +0800
-Message-ID: <20250710024603.10162-1-litian@redhat.com>
+	s=arc-20240116; t=1752115639; c=relaxed/simple;
+	bh=VeAI1FxBggyE+WQ47Zj1b5JN7ybUqwe9OVmx2IgcUNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ae9MIkxSIClbKkBvq3Frkny2dAGOpuK1L2bYASLjyaXZ8LvxeX53cZyf5OFlFJB7smBmnpjJqIJP7AwRTQva8kplHNMYX0YQMCPGei8ys+qXOslY4rUcijo6sGdLYp6h0D8AmMM6BxBs9wmgesHb2G+UvuKY2upDbIxc/BpbTpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCBs6n2A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 556E5C4CEEF;
+	Thu, 10 Jul 2025 02:47:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752115638;
+	bh=VeAI1FxBggyE+WQ47Zj1b5JN7ybUqwe9OVmx2IgcUNo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iCBs6n2Ay8o9kCaNx3pYsCaE0M80uKiSq72L69HaliTN8c5m2xXgPjF8WjOeQz5rh
+	 /t/rcGkg3ZsExNRcFi7lrtNXAAIxz9BJACMzgiUp9vZaVgbr3n6ICeYykmPnWKclMV
+	 EZ6p1hjH3BqjGslygJYT+cUvdu9CnVILBcfhtpTFKUIDfnayFlB2+kPnZ2JUsDXXRa
+	 PWQUHkH/Pt86XUf6TqMBZv/IZl1hrtvZ+g91Zwaf8HH3Zm2G1c+3yXqNIFqyNTKS2T
+	 ttblpCbqZPPJiLg3otPJElck9JLiSm3WNKZooBcrNTpxj3CNex9Thd5WlGiTV8NxE+
+	 WilRlekjUJZ0A==
+Date: Wed, 9 Jul 2025 19:47:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Saeed Mahameed <saeed@kernel.org>, Gal Pressman
+ <gal@nvidia.com>, "Leon Romanovsky" <leon@kernel.org>, Saeed Mahameed
+ <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+ <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 3/5] net/mlx5e: Replace recursive VLAN push
+ handling with an iterative loop
+Message-ID: <20250709194717.101a7a22@kernel.org>
+In-Reply-To: <1752009387-13300-4-git-send-email-tariqt@nvidia.com>
+References: <1752009387-13300-1-git-send-email-tariqt@nvidia.com>
+	<1752009387-13300-4-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The use of the IFF_SLAVE flag was replaced by IFF_NO_ADDRCONF to
-prevent ipv6 addrconf.
+On Wed, 9 Jul 2025 00:16:25 +0300 Tariq Toukan wrote:
+> +		rcu_read_lock();
+> +		*out_dev = dev_get_by_index_rcu(dev_net(vlan_dev),
+> +						dev_get_iflink(vlan_dev));
+> +		rcu_read_unlock();
+> +		if (!*out_dev)
+> +			return -ENODEV;
+> +	} while (is_vlan_dev(*out_dev));
 
-Commit 8a321cf7becc6c065ae595b837b826a2a81036b9
-("net: add IFF_NO_ADDRCONF and use it in bonding to prevent ipv6 addrconf")
-
-This new flag change was not made to hv_netvsc resulting in the VF being
-assinged an IPv6.
-
-Suggested-by: Cathy Avery <cavery@redhat.com>
-
-Signed-off-by: Li Tian <litian@redhat.com>
----
- drivers/net/hyperv/netvsc_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index c41a025c66f0..a31521f00681 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -2317,8 +2317,8 @@ static int netvsc_prepare_bonding(struct net_device *vf_netdev)
- 	if (!ndev)
- 		return NOTIFY_DONE;
- 
--	/* set slave flag before open to prevent IPv6 addrconf */
--	vf_netdev->flags |= IFF_SLAVE;
-+	/* Set no addrconf flag before open to prevent IPv6 addrconf */
-+	vf_netdev->priv_flags |= IFF_NO_ADDRCONF;
- 	return NOTIFY_DONE;
- }
- 
--- 
-2.50.0
-
+Would be good adding a comment here to explain why this odd rcu lock
+/ lookup / rcu unlock / keep using the return value outside of rcu
+protection - code flow is correct :S
 
