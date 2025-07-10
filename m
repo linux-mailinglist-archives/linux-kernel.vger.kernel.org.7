@@ -1,101 +1,194 @@
-Return-Path: <linux-kernel+bounces-725370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B958AFFE22
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:30:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 786A5AFFE28
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42D6B1C456AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:30:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A90234A4EAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2317329ACED;
-	Thu, 10 Jul 2025 09:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066772BEC4A;
+	Thu, 10 Jul 2025 09:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8niUqxk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pk5TCklL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DA8292B4E;
-	Thu, 10 Jul 2025 09:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26CC292B37;
+	Thu, 10 Jul 2025 09:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752139784; cv=none; b=b6JVv48sc/450aYTNf4lLj1bxH68fadEVoTtRe4qgh1pgBxTclRJbd1Ka/GiZOA4DJdbguo4IiaHMHF5QJEc0TO+C5g3ocOJTLpTwc/MjQgTxRhfZXEeCDsJIJ97vVOdlTswcBAi1l135REXRBT4YlV+2rprSlBaopvyw5iRgIE=
+	t=1752139799; cv=none; b=tdT2U7SBtQwfgCVC2gCXR1E7ccEx8LUCUI/0e92k/Kxm2w/nn5xMDYej96NSjdRWVukQknbR012Ut/aaNiHM7RRe6J1m+LFWTK2CAgF52SW3jHdJf5BfxRRNfAmZ1h+TvTA8ZmOPK1Ty1qV1VTA7frqQ8BTUTvyWyFYEyrsHNTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752139784; c=relaxed/simple;
-	bh=b7coBjKHXlBo1gRKTkQSuUICRQqoXBqojlzbdY8ZYok=;
+	s=arc-20240116; t=1752139799; c=relaxed/simple;
+	bh=FfyeP/NDyN7nfFZ6wzcvSd4IG6KdqSyCylHKZr3tP1Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XtHGusGG+2/YrgKDJgK3fMM+DcKO1/G8C+ayT1hPxqTQSiHGNoQL4OKZx1aZ0m2dCWJF8FtPf0ocYDvY5Fx1ydPNE8tTkLj2BrxHWf/iBbOkPAK9Z/wK1BPkghWgZl3GcPSsmnWUZalKK0jNrya5ml3JpKam2aWBb+WZS2B268w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8niUqxk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48526C4CEE3;
-	Thu, 10 Jul 2025 09:29:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752139783;
-	bh=b7coBjKHXlBo1gRKTkQSuUICRQqoXBqojlzbdY8ZYok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d8niUqxkhkse07uWcriW2vMAJ55Q1uUGsPgOsxdiliGT+Bl/BA0Xoba0o8Hed71hK
-	 XmJyT3e4rAjo52BwnTWJVpBZ1+GKWNIxw034iCXsu4OWW4B+CmtBHUHMMeXwJ2t3g0
-	 wTWFvxGbO1/qSO4xnEr6mpNKZNYKjKXlbCSjEsEgwbyNXC6Ib20OA3/74Kn0ccbmpw
-	 FvtQ7Su50C2qJYjbPQOg7aUUYQKhhTtM6Ke/VZLEPltUt0LvrdvaOHFwtKfjAP6JUF
-	 R6ghUXL2xYkNASNU768sib7yyWAdXGI8VHUkVX4/+3TMmih+Vp57qfDxH7XWE9kj/J
-	 8K1lDwrIlgshQ==
-Date: Thu, 10 Jul 2025 10:29:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Nick Li <nick.li@foursemi.com>
-Cc: lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com,
-	xiaoming.yang@foursemi.com, danyang.zheng@foursemi.com,
-	like.xy@foxmail.com, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] ASoC: codecs: Add FourSemi FS2104/5S audio
- amplifier driver
-Message-ID: <aG-IBT5tjMS7RiXe@finisterre.sirena.org.uk>
-References: <20250703035639.7252-1-nick.li@foursemi.com>
- <20250708112901.25228-1-nick.li@foursemi.com>
- <20250708112901.25228-5-nick.li@foursemi.com>
- <aG5Smt_DErSq5WjE@finisterre.sirena.org.uk>
- <61B23934F28A9F2C+aG-AXznikkHb2_jR@foursemi.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b+fZ7CcjDNyo3eoXUCaOMgITabVELur15Ho49ACJyNjdqXKz+1DNEUKyp4lFP5FBpCiBPYgNbNwLoHpfRM9Am7QyVidotksZiFNcUyy2Pp9OyeYa20HATF3CQkmHjQ2E3QoTi44u2Yoz+XkdEhkx4yUckUMxudCZjnDY5wurWLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pk5TCklL; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752139798; x=1783675798;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FfyeP/NDyN7nfFZ6wzcvSd4IG6KdqSyCylHKZr3tP1Y=;
+  b=Pk5TCklLp/5vP7aGDUqz3G/p6GY0BAlhhjBek8bHHsywkGvM+JDrRLcs
+   bqIbYCP4mWmq96z/t+Q+vaBdXDGTtYyvqY3virPkrZ27kVAJiHMosu9JB
+   3VNkuBa84x+OEMkEh5rhH2PetlC9qmyM7ZBf5Y32eBSITUpXCA6sjblCg
+   7cV6AHCNkqRfOxD4uVllWSmpaLvYxewubVyraxXouALhzq5CvjsvFxnPB
+   pznJZ+LoAPSxMpKwoHQMl9BKnBd2mkOkCWeTI8etBGBCdFfUOk7lKNsyW
+   XkEV1XzphIunZBX21RHQSd01zGfeFxnUglJLmGdiN087Io+FOO3KUcfLy
+   Q==;
+X-CSE-ConnectionGUID: aVs7HyjNTAG21ZkErQw7CQ==
+X-CSE-MsgGUID: xNvCV9aRTxeLzOwu0DtOgA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54130745"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="54130745"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:29:57 -0700
+X-CSE-ConnectionGUID: +Qa7pN1SRby0WTK7MhNp3w==
+X-CSE-MsgGUID: t8ai8+ECQD2mAtDj4NnN9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="186995337"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 02:29:54 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uZnbD-0000000E9ji-3joE;
+	Thu, 10 Jul 2025 12:29:51 +0300
+Date: Thu, 10 Jul 2025 12:29:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: remi.buisson@tdk.com
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] iio: imu: inv_icm45600: add new inv_icm45600
+ driver
+Message-ID: <aG-ID7O3HgVc1EOX@smile.fi.intel.com>
+References: <20250710-add_newport_driver-v2-0-bf76d8142ef2@tdk.com>
+ <20250710-add_newport_driver-v2-2-bf76d8142ef2@tdk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8XwfVoiK14qFQFUv"
-Content-Disposition: inline
-In-Reply-To: <61B23934F28A9F2C+aG-AXznikkHb2_jR@foursemi.com>
-X-Cookie: Do not cut switchbacks.
-
-
---8XwfVoiK14qFQFUv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250710-add_newport_driver-v2-2-bf76d8142ef2@tdk.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Jul 10, 2025 at 04:57:03PM +0800, Nick Li wrote:
-> On Wed, Jul 09, 2025 at 12:29:30PM +0100, Mark Brown wrote:
+On Thu, Jul 10, 2025 at 08:57:57AM +0000, Remi Buisson via B4 Relay wrote:
+> From: Remi Buisson <remi.buisson@tdk.com>
+> 
+> Core component of a new driver for InvenSense ICM-45600 devices.
+> It includes registers definition, main probe/setup, and device
+> utility functions.
+> 
+> ICM-456xx devices are latest generation of 6-axis IMU,
+> gyroscope+accelerometer and temperature sensor. This device
+> includes a 8K FIFO, supports I2C/I3C/SPI, and provides
+> intelligent motion features like pedometer, tilt detection,
+> and tap detection.
 
-> > The mixer-test test will spot this for you.
+...
 
-> BTW, what's the mixer-test? We tested it by using alsamixer and amixer.
+> +	INV_ICM45600_SENSOR_MODE_NB
 
-tools/testing/selftests/alsa/mixer-test.c
+What does the _NB stand for? Number of Bullets?
 
---8XwfVoiK14qFQFUv
-Content-Type: application/pgp-signature; name="signature.asc"
+...
 
------BEGIN PGP SIGNATURE-----
+> +struct inv_icm45600_sensor_conf {
+> +	int mode;
+> +	int fs;
+> +	int odr;
+> +	int filter;
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhviAIACgkQJNaLcl1U
-h9BlqQgAheK3u5Y8L+HQ21Fs/chPR36vlv9ZGV/1K+38He9hzrEHrC67Hn0N+aQI
-pCgknrhX0137zmvmydG75Efq7GLkGBVEWE7E8h61BZyr07JVYarzNfiMQ7aPsPGp
-zIOnopDIe4XvSP4We7pHKZuWp2eX6iGRIslPTCPglPw6FArqH5sBNvmcbPCsp3b1
-jjbhCF1PoVv36jzOs2mQPRQlyqH+PRdQI3stv3Hs/fB3qhyWrT+qHLH1pWplNGEK
-zdLEWMjCcfEF1/AFEYjauPQagoX8aouSMEI+gvvkqCkHjkV8O6EfGzHp6GslRKAZ
-rRwgXQ55kWuCgDlUYkVZNSRAwt5HbA==
-=GtFY
------END PGP SIGNATURE-----
+Any of them can hold negative value?
 
---8XwfVoiK14qFQFUv--
+> +};
+
+...
+
+> +#define INV_ICM45600_SENSOR_CONF_INIT		{-1, -1, -1, -1}
+
+Unused.
+
+
+> +#include <linux/bitfield.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/property.h>
+> +#include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/types.h>
+
+...
+
+> +static int inv_icm45600_ireg_read(struct regmap *map, unsigned int reg,
+> +				   u8 *data, size_t count)
+> +{
+> +	int ret;
+> +	u8 addr[2];
+> +	ssize_t i;
+> +	unsigned int d;
+> +
+> +	addr[0] = FIELD_GET(INV_ICM45600_REG_BANK_MASK, reg);
+> +	addr[1] = FIELD_GET(INV_ICM45600_REG_ADDR_MASK, reg);
+> +
+> +	/* Burst write address. */
+> +	ret = regmap_bulk_write(map, INV_ICM45600_REG_IREG_ADDR, addr, 2);
+
+sizeof()?
+
+> +	udelay(INV_ICM45600_IREG_DELAY_US);
+
+See below. This is also weird.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Read the data. */
+> +	for (i = 0; i < count; i++) {
+> +		ret = regmap_read(map, INV_ICM45600_REG_IREG_DATA, &d);
+> +		data[i] = d;
+> +		udelay(INV_ICM45600_IREG_DELAY_US);
+
+Can fsleep() be used here?
+
+> +		if (ret)
+> +			return ret;
+
+This is weird. First you assign a garbage to the output, delay and return
+an error. It seems entire code is broken...
+Please, fix all these and try again, I stop my review here.
+
+> +	}
+> +
+> +	return 0;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
