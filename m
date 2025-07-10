@@ -1,143 +1,130 @@
-Return-Path: <linux-kernel+bounces-725529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA6BB00051
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:15:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335A3B00056
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4D73B6658
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ADA017978E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEFC2D5C7B;
-	Thu, 10 Jul 2025 11:15:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432622E11B3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7482E265B;
+	Thu, 10 Jul 2025 11:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="hyIEnXbF"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CAA20FA9C;
+	Thu, 10 Jul 2025 11:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752146115; cv=none; b=r8w35RhI31ACxQ1AUJ/IVye3SW244+O82a1NngMmYWTG8Zx7BHOCEwVQv51FNyBoDj6RgcRX0J/+4wODAHA87yxPA+npoWQavRPcJir2MzTueEdRPTLLTwA++Ybc4qp6rXcFkYPKfZg+iC1TNUkGKWsJ48HJMzhCNTmYnGt992M=
+	t=1752146201; cv=none; b=MdKG2YE0BHcyhPzYiixaElyC9Z+IaVkdOU8Go0Xc+aDBmGH2UMEQ2OhaZd9ph3OyFeuRWM92dEmo/mpEG8jqlDBnZhmjfgo3xuD7N2pwAbUiG1bat+agBp4gFuf2AfVnfZ9xvT2OhHxzRlCHnZxLb+8CHhKmsT75nRKMyUL4ua0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752146115; c=relaxed/simple;
-	bh=/KNvUT70/P8YpgaATRZxKoGeGpydTeBdGvjDmlHFXSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mhQ4IV3xu2oo9EyfJtKxXEgiCrWsEKKvg5Ng3d7x40kVI1GQJ0ZzfW0ao2M4nWwlGFgD1Lb3AbnoH2Rl6jPlYxLh5l+7bCNFrTL0dZnuZWXWjynXBX7zpMMV4eViC6G+kVERRa2AknfC7bhuiwUSgWGO7Kq7S81lNvD6QFTxwPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1AFFF1EA6;
-	Thu, 10 Jul 2025 04:15:01 -0700 (PDT)
-Received: from [10.1.197.43] (eglon.cambridge.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABD8D3F66E;
-	Thu, 10 Jul 2025 04:15:09 -0700 (PDT)
-Message-ID: <89c6f2a2-e084-4899-a6d6-819917eb6324@arm.com>
-Date: Thu, 10 Jul 2025 12:15:08 +0100
+	s=arc-20240116; t=1752146201; c=relaxed/simple;
+	bh=MEmSgmVTX2PGVhfOQtQQrzoCYdMiXbOvniDFRRrYphU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t5jpqEfRteM/1e3257kPVmma1xFAxrDMaVWA7uGUIRj4q782nXfVuxYI2ieOzKv2oAM7NajBj4eiNz+AJWnOpzIoijzrdiaGkJWRv8PBARIqpKghF0WFQR8Y8aYuWK+wc/nS/L+Tej8Bio3gZlEaXyfTP6BDxJofifmESyCQv6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=hyIEnXbF; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=Kgi11dZK94dq8u+jzWaaEo1iTl1oo581SiHl97QOATU=; b=hyIEnXbFeVAiaubFEW+EudR2QL
+	EGJE/o6h3gS6JUHFZR3Mf8S5vi48x0m3Sf7Dt2MMo5ltxWJNW6iWfs3TP/fCzZESzKkGKZ3dbN2oQ
+	S9yuw8lyN4Xb/TpuzKcBtpGdIhynxmzninz4hBbO1QZKe3jR4nmVPF5J7WFpcEvGsgnp/gTNxNv7y
+	lgsSfvRdn1gd3LxtutYIgxAYEBGdLPIHa6cAgK4fngFNN2nCCOdous77NW5ojIPL/FwOrN2Ht7T9Z
+	oyvzeSRmWdE5alqzDgWsIa7iEiUpJsD7CqQp46/sg/W6TNtwNy2T64Sj7dhG3EeoNCpQaQAdX49l1
+	5uBHFEkw==;
+Received: from [194.95.143.137] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uZpGO-0004QB-JM; Thu, 10 Jul 2025 13:16:28 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Alexey Charkov <alchark@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: Re: [PATCH v6 1/7] thermal: rockchip: rename rk_tsadcv3_tshut_mode
+Date: Thu, 10 Jul 2025 13:16:27 +0200
+Message-ID: <7568508.DvuYhMxLoT@phil>
+In-Reply-To: <20250610-rk3576-tsadc-upstream-v6-1-b6e9efbf1015@collabora.com>
+References:
+ <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
+ <20250610-rk3576-tsadc-upstream-v6-1-b6e9efbf1015@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] cacheinfo: Set cache 'id' based on DT data
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Ben Horgan <ben.horgan@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>, sudeep.holla@arm.com,
- Rob Herring <robh@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- WillDeaconwill@kernel.org
-References: <20250704173826.13025-1-james.morse@arm.com>
- <20250704173826.13025-2-james.morse@arm.com>
- <9495df36-053e-49a3-8046-1e6aed63b4af@arm.com>
- <20250707133207.00001b88@huawei.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <20250707133207.00001b88@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi Ben, Jonathan,
+Am Dienstag, 10. Juni 2025, 14:32:37 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Nicolas Frattaroli:
+> The "v" version specifier here refers to the hardware IP revision.
+> Mainline deviated from downstream here by calling the v4 revision v3 as
+> it didn't support the v3 hardware revision at all.
+>=20
+> This creates needless confusion, so rename it to rk_tsadcv4_tshut_mode
+> to be consistent with what the hardware wants to be called.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-On 07/07/2025 13:32, Jonathan Cameron wrote:
-> On Mon, 7 Jul 2025 11:27:06 +0100
-> Ben Horgan <ben.horgan@arm.com> wrote:
->> On 7/4/25 18:38, James Morse wrote:
->>> From: Rob Herring <robh@kernel.org>
->>> Use the minimum CPU h/w id of the CPUs associated with the cache for the
->>> cache 'id'. This will provide a stable id value for a given system. As
->>> we need to check all possible CPUs, we can't use the shared_cpu_map
->>> which is just online CPUs. As there's not a cache to CPUs mapping in DT,
->>> we have to walk all CPU nodes and then walk cache levels.
->>>
->>> The cache_id exposed to user-space has historically been 32 bits, and
->>> is too late to change. This value is parsed into a u32 by user-space
->>> libraries such as libvirt:
->>> https://github.com/libvirt/libvirt/blob/master/src/util/virresctrl.c#L1588
->>>
->>> Give up on assigning cache-id's if a CPU h/w id greater than 32 bits
->>> is found.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
->>> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
->>> index cf0d455209d7..df593da0d5f7 100644
->>> --- a/drivers/base/cacheinfo.c
->>> +++ b/drivers/base/cacheinfo.c
->>> @@ -183,6 +184,42 @@ static bool cache_node_is_unified(struct cacheinfo *this_leaf,
->>>   	return of_property_read_bool(np, "cache-unified");
->>>   }
->>>   
->>> +static bool match_cache_node(struct device_node *cpu,
->>> +			     const struct device_node *cache_node)
->>> +{
->>> +	for (struct device_node *cache __free(device_node) = of_find_next_cache_node(cpu);  
->> Looks like the creation of this helper function has upset the 
->> device_node reference counting. This first __free(device_node) will only 
->> cause of_node_put() to be called in the case of the early return from 
->> the loop. You've dropped the second __free(device_node) which accounts 
->> for 'cache' changing on each iteration.
-
-Heh, I just took this hunk verbatim. Fixing this up with the __free() magic is tricky as
-the existing patterns all drop the reference to cpu, which we don't want to do here. I
-think at this point the __free() magic is just making this harder to understand. How about
-the old fashioned way:
-
-| static bool match_cache_node(struct device_node *cpu,
-|                              const struct device_node *cache_node)
-| {
-|         struct device_node *prev, *cache = of_find_next_cache_node(cpu);
-|
-|         while (cache) {
-|                 if (cache == cache_node) {
-|                         of_node_put(cache);
-|                         return true;
-|                 }
-|
-|                 prev = cache;
-|                 cache = of_find_next_cache_node(cache);
-|                 of_node_put(prev);
-|         }
-|
-|         return false;
-| }
+I checked the vendor-kernel, and your're right the
+rv1126 gets identified as v3 it seems, while all of rk35xx except rk3568
+(=3D rk3506, rk3528, rk3562, rk3576, rk3588) call themself v4
 
 
-> Good catch - this behaves differently from many of the of_get_next* type
-> helpers in that it doesn't drop the reference to the previous iteration
-> within the call.
-> 
-> Maybe it should?
-> 
-> I checked a few of the call sites and some would be simplified if it did
-> others would need some more complex restructuring but might benefit as
-> well.
+> ---
+>  drivers/thermal/rockchip_thermal.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchi=
+p_thermal.c
+> index a8ad85feb68fbb7ec8d79602b16c47838ecb3c00..40c7d234c3ef99f69dd8db4d8=
+c47f9d493c0583d 100644
+> --- a/drivers/thermal/rockchip_thermal.c
+> +++ b/drivers/thermal/rockchip_thermal.c
+> @@ -1045,7 +1045,7 @@ static void rk_tsadcv2_tshut_mode(int chn, void __i=
+omem *regs,
+>  	writel_relaxed(val, regs + TSADCV2_INT_EN);
+>  }
+> =20
+> -static void rk_tsadcv3_tshut_mode(int chn, void __iomem *regs,
+> +static void rk_tsadcv4_tshut_mode(int chn, void __iomem *regs,
+>  				  enum tshut_mode mode)
+>  {
+>  	u32 val_gpio, val_cru;
+> @@ -1297,7 +1297,7 @@ static const struct rockchip_tsadc_chip rk3588_tsad=
+c_data =3D {
+>  	.get_temp =3D rk_tsadcv4_get_temp,
+>  	.set_alarm_temp =3D rk_tsadcv3_alarm_temp,
+>  	.set_tshut_temp =3D rk_tsadcv3_tshut_temp,
+> -	.set_tshut_mode =3D rk_tsadcv3_tshut_mode,
+> +	.set_tshut_mode =3D rk_tsadcv4_tshut_mode,
+>  	.table =3D {
+>  		.id =3D rk3588_code_table,
+>  		.length =3D ARRAY_SIZE(rk3588_code_table),
+>=20
+>=20
 
-If it did, we'd end up dropping the reference to cpu on the way in, which
-of_get_next_cpu_node() in for_each_of_cpu_node() was expecting to do.
 
 
-Thanks,
 
-James
 
