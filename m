@@ -1,129 +1,115 @@
-Return-Path: <linux-kernel+bounces-726622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B666B00F66
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:18:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95ACFB00F68
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F12717F1FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:18:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 422057AD128
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBE229E0EB;
-	Thu, 10 Jul 2025 23:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549D52980BF;
+	Thu, 10 Jul 2025 23:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jw4R9Qng"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="HLZ0BNO7"
+Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3786621516E;
-	Thu, 10 Jul 2025 23:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621A12749C1;
+	Thu, 10 Jul 2025 23:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752189494; cv=none; b=slIZ3dpbcNexr49ZgLAkoUqczz1IU9dFmnFceOcW6eyvaLWP/bf7suIWU+cdjroTc+mLr8H4SrosVwgvoCAMj9yj8d8P4a4+fqpJy+PIg46upzxsh5qJvjVbf144bUMmzEB9vetYCphl7mFZskbDINDSLQr62Y4djh2wSibLDTE=
+	t=1752189512; cv=none; b=Dy8v3YKRsJ7IyQVjqMVqjouFmLlcjX3IaauxWk1IxKjQzPwAn3YMCgVVTwkrGAFVoiEiTVux1fdiG7eNl9A0PPru9ctUOtsFL9KLwe0XduY6D0TXr8UEwSQAtOQnOWKtREg8RD1F4kUYcONeIGLMbpO6mGPCSo3ZPdgJKhglHZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752189494; c=relaxed/simple;
-	bh=tjyghXvqEojFj3Pfwby+hkzR77SXqdDqIKc/4prwiCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q4lz/YKpIPV54jTkla/FuPhwZ29ADzBz79Vz8T4KZVUSvumELl3nCEV8Xju2qehBiK5dEXX94Gsz8OP42fT8A1q63irkEuFvBts8J3NeAEiWB23EA9yuA/A/uROvFQeSWpk8ohg9Aa7/Z+FLr/GUyuQPL/GaGuswgT9tYXM9CVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jw4R9Qng; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752189491; x=1783725491;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tjyghXvqEojFj3Pfwby+hkzR77SXqdDqIKc/4prwiCc=;
-  b=Jw4R9QngzggoEYx+GEtSTwfVSt0CIVzEhr4FdG7afCnqPWMoNgeruT8i
-   r0qGnP/5bJZHPCKc2Q1Wp8/1sT+3mYMaLoEC3pQZ6YJt+PSuj19SWjRYd
-   W7A1aUDErf1yammTdiIc/DV8z/4gHmZ91ZHAwh0ysHAEzfJfQqjRw92ky
-   cSPkpB1iJda2gHdMLTni7kbpqQhudGDzI26lbRCR04dhHBdJEcVqfpafe
-   mMXdNAqcWauOS2+Ml3SrheL5pnU4PN/3b26UPxD5j0QFPeS/b7oHUaNdz
-   Q+6fooGGAxDAstu0F5r3EiuGMBT4YCVYPafNmpNmbd/i936Z1hk1njRRc
-   A==;
-X-CSE-ConnectionGUID: IujVuMasSzChslYwFcMpeA==
-X-CSE-MsgGUID: BL1XFvvoQOi/kcfT22fL4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54573698"
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="54573698"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 16:18:11 -0700
-X-CSE-ConnectionGUID: /adAwK4+Sh6eT546oXugAA==
-X-CSE-MsgGUID: Go9DAg15TKq2937p/k7/bg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="160517973"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 10 Jul 2025 16:18:09 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ua0Wk-0005Zj-25;
-	Thu, 10 Jul 2025 23:18:06 +0000
-Date: Fri, 11 Jul 2025 07:17:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-	Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bitterblue Smith <rtl8821cerfe2@gmail.com>,
-	Fiona Klute <fiona.klute@gmx.de>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Andrey Skvortsov <andrej.skvortzov@gmail.com>
-Subject: Re: [PATCH v2 1/2] wifi: rtw88: introduce callback to override phy
- parameters from tables
-Message-ID: <202507110636.fqI1Fyh7-lkp@intel.com>
-References: <20250709223159.2787192-2-andrej.skvortzov@gmail.com>
+	s=arc-20240116; t=1752189512; c=relaxed/simple;
+	bh=aodGrJ/fTeAXeqty12g3ynGJwycpDTx4HpYmcMWtMl4=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=B7cbJ3jmtPiadpODi4KJtCnOuWQNv9PbN3FQD9YZEq5lfqAZfcVhiLqB+/C5A9Ly1Q5S6O5zJdvxDsSF41oY5P/JuGdfTcCeovVuoYwKbD7oBmA2tCUnCEO9C3Nl9fg7znnCAaGN1qTurmL/esvIakSnIubdukcjovWnZ3s0i/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=HLZ0BNO7; arc=none smtp.client-ip=143.255.12.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hkTY2Grgv3lxoA658Ko78kXLgI7Ac/QSzydWzjTrTvM=; b=HLZ0BNO7VxUIIj7URIpk/LQIlv
+	Y4DEH0kmjHX5x2lw/7+gV6odgnHKLGjOB1V/tYS6NcE27U7pgwd3sFI064VqV2V6+RXYxnoxz5BG1
+	VlsFOfnF5t0p2i0nB0xEuXNJvELanRW0JzQXc0lWEsOzh133dTxdjSm/4D7P7k4GsPfctaowXEfxy
+	QQ7vu3FWF60klTZZNyAPe44yTibVRSKwOwdVtPJXxzrvHaM3pLZSPVZNhbf/DPuZJo567SlK8VJGu
+	HbhTsxlTE2QrnjByaXQfZoLJxW3hpYde/wIZ4MYAEVOEjOl5xbesU2XvD9p8PuO+Po8IsL2zg/qEV
+	10pT5P3A==;
+Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
+	id 1ua0Wv-0000000090R-1Prn;
+	Thu, 10 Jul 2025 20:18:17 -0300
+Message-ID: <bb5dba5b431172ae8b268470d6e37419@manguebit.org>
+From: Paulo Alcantara <pc@manguebit.org>
+To: Wang Zhaolong <wangzhaolong@huaweicloud.com>, sfrench@samba.org,
+ ematsumiya@suse.de
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ linux-kernel@vger.kernel.org, wangzhaolong1@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com
+Subject: Re: [PATCH] smb: client: fix use-after-free in crypt_message when
+ using async crypto
+In-Reply-To: <20250705025118.48080-1-wangzhaolong@huaweicloud.com>
+References: <20250705025118.48080-1-wangzhaolong@huaweicloud.com>
+Date: Thu, 10 Jul 2025 20:18:15 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709223159.2787192-2-andrej.skvortzov@gmail.com>
+Content-Type: text/plain
 
-Hi Andrey,
+Wang Zhaolong <wangzhaolong@huaweicloud.com> writes:
 
-kernel test robot noticed the following build warnings:
+> The CVE-2024-50047 fix removed asynchronous crypto handling from
+> crypt_message(), assuming all crypto operations are synchronous.
+> However, when hardware crypto accelerators are used, this can cause
+> use-after-free crashes:
+>
+>   crypt_message()
+>     // Allocate the creq buffer containing the req
+>     creq = smb2_get_aead_req(..., &req);
+>
+>     // Async encryption returns -EINPROGRESS immediately
+>     rc = enc ? crypto_aead_encrypt(req) : crypto_aead_decrypt(req);
+>
+>     // Free creq while async operation is still in progress
+>     kvfree_sensitive(creq, ...);
+>
+> Hardware crypto modules often implement async AEAD operations for
+> performance. When crypto_aead_encrypt/decrypt() returns -EINPROGRESS,
+> the operation completes asynchronously. Without crypto_wait_req(),
+> the function immediately frees the request buffer, leading to crashes
+> when the driver later accesses the freed memory.
+>
+> This results in a use-after-free condition when the hardware crypto
+> driver later accesses the freed request structure, leading to kernel
+> crashes with NULL pointer dereferences.
+>
+> The issue occurs because crypto_alloc_aead() with mask=0 doesn't
+> guarantee synchronous operation. Even without CRYPTO_ALG_ASYNC in
+> the mask, async implementations can be selected.
+>
+> Fix by restoring the async crypto handling:
+> - DECLARE_CRYPTO_WAIT(wait) for completion tracking
+> - aead_request_set_callback() for async completion notification
+> - crypto_wait_req() to wait for operation completion
+>
+> This ensures the request buffer isn't freed until the crypto operation
+> completes, whether synchronous or asynchronous, while preserving the
+> CVE-2024-50047 fix.
+>
+> Fixes: b0abcd65ec54 ("smb: client: fix UAF in async decryption")
+> Link: https://lore.kernel.org/all/8b784a13-87b0-4131-9ff9-7a8993538749@huaweicloud.com/
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+> ---
+>  fs/smb/client/smb2ops.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 
-[auto build test WARNING on wireless-next/main]
-[also build test WARNING on wireless/main linus/master v6.16-rc5 next-20250710]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrey-Skvortsov/wifi-rtw88-introduce-callback-to-override-phy-parameters-from-tables/20250710-063838
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
-patch link:    https://lore.kernel.org/r/20250709223159.2787192-2-andrej.skvortzov%40gmail.com
-patch subject: [PATCH v2 1/2] wifi: rtw88: introduce callback to override phy parameters from tables
-config: x86_64-rhel-9.4 (https://download.01.org/0day-ci/archive/20250711/202507110636.fqI1Fyh7-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250711/202507110636.fqI1Fyh7-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507110636.fqI1Fyh7-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/net/wireless/realtek/rtw88/mac.c: In function 'rtw_mac_postinit':
->> drivers/net/wireless/realtek/rtw88/mac.c:1416:13: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
-    1416 |         int ret = 0;
-         |             ^~~
-
-
-vim +/ret +1416 drivers/net/wireless/realtek/rtw88/mac.c
-
-  1412	
-  1413	int rtw_mac_postinit(struct rtw_dev *rtwdev)
-  1414	{
-  1415		const struct rtw_chip_info *chip = rtwdev->chip;
-> 1416		int ret = 0;
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
 
