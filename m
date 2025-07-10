@@ -1,151 +1,101 @@
-Return-Path: <linux-kernel+bounces-726013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E19B006A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:30:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E67B006B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F376E7A7797
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:28:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D6501C42A52
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4A62749C6;
-	Thu, 10 Jul 2025 15:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TghXF2Vp"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597BA2749F6;
+	Thu, 10 Jul 2025 15:30:58 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E19F22E3FA
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEAD2737FD;
+	Thu, 10 Jul 2025 15:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752161396; cv=none; b=l0MzVmKShwu0KCZEnjv+2l9Xs/L/I/DxopB1ddSXIEz8Z0j4laTrUc1ik6DkmHPulpPcdRwrgVvXpRATivDbeXm1Rv1SsjknxKGaBwprjBurLajDcSXn12KmoLmObppu+IQTUgaR6k2AQWaa26MgS6B+kfKrwI8TsxHGpC+HGpA=
+	t=1752161458; cv=none; b=p+l/HwbAzKqc/ZeAKABkpgyY8Onk75uvz0NFzYwQFvxFWZNLQihinDrERMwtc4+HprAp8S/l6H+uhqJIqbOZiQDJKqs8fAZ32Awy13T2bn1vDaz1KajW/aGPEmfYTSncIYEdmPze0nbrUZrqWR/sytbAOFXLEe78B6sV2sO1aA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752161396; c=relaxed/simple;
-	bh=uXJ+Su3o1PPVQEWJgsrtc7LhMk7UVVMuONL6hP2mVEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKYEg//Pg3WkL38c5vz+p3+wodzfcRwldco3Onflz+HAKp51ste/GDRS0dDDWNU18vns/Juw4kIaz/kD2EPPpBrQXP4NgkPdXACy69HdCD7EwtnJf3Gia9+vWdBL8JAlS0B3Ky/Y8V8bpi/t5s5H7JrWkbdUAvzEhaDXH0Kb4OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TghXF2Vp; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so1440961f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:29:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1752161393; x=1752766193; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lSMS5g0FtH2qkHkZ1jt4pZS7KJcBgB7lox3WtRiFnhw=;
-        b=TghXF2VpNrDmLhksrMjT1MBzMUWYHez4Nx2SFdab9OTP0Dk7QBwVTJ+DwO3Suvn7d5
-         jZd3PFzoPLKeHKpeX+jnvfMDcbJTF/Y3DK+hE+A7FiBX0roZbRFrQOhnYYrNUbBNDo6P
-         kg8uITPqaIPsepc9/6OAfHI9THkxH0ajKjabWr+RV9wa5WZwW9pWDxLSrZXNEfcGjy5F
-         PPo43ZZ/9AEcAF34q9tkSmMNrnZYRMPnlRfVsj+lBy+hVzmiG0EKl3Rz0ZP0ykiL3cm/
-         h2J5qoIWr3WdorgNfVlJCVTdOsB+o3jXrwvxV3Do4PaLv2gz8aPy3aMCugfMJ7lTv/Ah
-         EccQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752161393; x=1752766193;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lSMS5g0FtH2qkHkZ1jt4pZS7KJcBgB7lox3WtRiFnhw=;
-        b=NTZCD7X72Zvrs4/xywDUZXlX1bgO0feUJwNz8oEcTSj7zKvzRG51r6UpDZt+Q7HyNB
-         htS8Tj3bv+FwiukbhItEygLxdt+YFoQ/QQ8s4iPmxVXkQ8QuBhiqpoEo7rv9Lltc+QBI
-         9zLZWb81WqXQEsJsogMB3y6ltpZ/LsSyq7vjHEcBP+EdhbqnJt9Y3cVfJIdzQjvNosEU
-         jugJd12L+Le5XMutTX56P4kKolWW0sHnKZ7EcMlFEDrKT27T8Yk3l33QJp1UtsMyPwzm
-         +OXjTgfMLp2yODZKAXZn4FYypMjXHP/Tz+6tSDVf08mZtETb5weaP/2K0QfpxIWJOUrr
-         nDQw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5HL1b5jwIlYi6tqHXsy4FSnQiRd/dZn/Xp6gKZwQVkKan9QlPE6jR6Rs3ssxSu+jSGivoRXrqpDFtK6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZmnVlNUWE7H4cKSJ6JZZ4DnR2Y9LiPJSjmT3MTnE1bvgDdb0o
-	Y8l/R2zQ5oQam1CS+vGxwcEH2QZte0NGXoIm/VU8l1Jy1ajcTv3KhoP2Isf31/zxmvs=
-X-Gm-Gg: ASbGncvA0j0oBOqnXdizhUDCaPMbBdk+EPESKAZwbvkRb+vFclhSkM19BVzOw0X6pSZ
-	CDvNxq/uyhZn01CIsd0eBBsE5iOJBXmMSnOvo8PIPE36WZnObXRHZe6MqXxS3c0IkMuOP2TkRFH
-	6Qpm5r46kqBx/XeDkm8v4EVvj2iJjCeqnbBypQYLPkuF+gPquhYBHJfujIBHf53Qb9fhRx9bDHj
-	TPIK/ciZCrr/KpCSDeV6PIwfIfKa17UcZGYTwJWNqkNtEPgPBQd3/ZF5wezjTsowIaMFP43xpO/
-	oyMWmHYQyByRbZNjUD32ZCZZjYxRK/tWHIgus7RSIVrhC+Vmx2DMQCgs34ynhHz9tLGfi4SyZR0
-	=
-X-Google-Smtp-Source: AGHT+IGk8jb4Q5+TtKQe7i5KrsnU2L8JxV8a+7deRG1vITo0uj9HDseycRwujjfxpSFT3oO40oNjMw==
-X-Received: by 2002:a5d:64e4:0:b0:3a4:e1f5:41f4 with SMTP id ffacd0b85a97d-3b5e7f2e929mr3675711f8f.17.1752161392588;
-        Thu, 10 Jul 2025 08:29:52 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd5ac0sm2649648b3a.22.2025.07.10.08.29.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 08:29:52 -0700 (PDT)
-Date: Thu, 10 Jul 2025 17:29:37 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	David Gow <davidgow@google.com>, Arnd Bergmann <arnd@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 0/3] printk: KUnit: Followup fixes for the new KUnit test
-Message-ID: <aG_cYSfhXfxQoKco@pathway.suse.cz>
-References: <20250702095157.110916-1-pmladek@suse.com>
+	s=arc-20240116; t=1752161458; c=relaxed/simple;
+	bh=eNnzmd/JEya04OP8Mh/whLJnjLXMDy1YqvTFq/nfITc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KdwJN9+8h/gRsf9bw2CoIBf4SRFEoe4dgiyrLF3aneET8PznKgYsrkJBx46zlvS6m1e19xLPCcZXCM0txAOVd4hfsPripgHxwPY8o7n0dy703VN3XqU9Vr4nFayBINKPoi7wn2AGTSb2DuedCv4XbtIfQPYCuDEc1z6jM2Sagzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id E214D129B3A;
+	Thu, 10 Jul 2025 15:30:45 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id BF99617;
+	Thu, 10 Jul 2025 15:30:40 +0000 (UTC)
+Date: Thu, 10 Jul 2025 11:30:39 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Steven Rostedt
+ <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
+ <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>, Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v8 06/12] unwind_user/sframe: Wire up unwind_user to
+ sframe
+Message-ID: <20250710113039.04a431d9@batman.local.home>
+In-Reply-To: <a52c508c-2596-49d1-bbe8-8a92599714f6@linux.ibm.com>
+References: <20250708021115.894007410@kernel.org>
+	<20250708021159.386608979@kernel.org>
+	<d7d840f6-dc79-471e-9390-a58da20b6721@efficios.com>
+	<20250708161124.23d775f4@gandalf.local.home>
+	<a52c508c-2596-49d1-bbe8-8a92599714f6@linux.ibm.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250702095157.110916-1-pmladek@suse.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: qfn11of8yy6w4krucobyhddby5pbo7ja
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: BF99617
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/2XbU+LTT2smNLeoAUds5lmeztJ568iEw=
+X-HE-Tag: 1752161440-812969
+X-HE-Meta: U2FsdGVkX18qTiNldn/rZBbbsD1cKNTotV3OEputbyHklyK3GRwYIGzQzpnKY/cLIpLnAPD6Q9/WihCefUuNf/aGVQUEmwfkm6uqm3OoFWYd4MGAlz5ty9ZJuylAJMuGskKCUJvCQvyDY2gsllVjjaemdOCqbzEBRkXtQz1zWIQ16+Z/27QHfesEuG8dMa5NFIaV2ntvnuSDeIOrUlYMuuiTJnKvoNSqG06BZAdi31QazUMgTNCIBzku1ztcHQvQDX6tMJxtLCG0jMLZY3gx7zjTOv9mlxUb9WRuKIDK6bX3ClktZZHrN9OwNTd86MzI/EDn0l+rJOv0dnxsWstUMj+3FvrCt3lp
 
-On Wed 2025-07-02 11:51:54, Petr Mladek wrote:
-> Hi,
-> 
-> this patchset puts together some followup fixes for the new KUnit test
-> which were discussed on several locations.
-> 
-> 1st patch:
-> 
->   + adds a comment exaplaing why the test ignores pr_reserve() failures.
-> 
->   + was proposed at https://lore.kernel.org/r/aFUiQESkXjFIGqez@pathway.suse.cz
-> 
->   + Thomas Weißschuh added into v4 of the original patch but I have already
->     comitted v3 in the meantime, see
->     https://lore.kernel.org/r/20250620-printk-ringbuffer-test-v4-1-8df873f1f3e0@linutronix.de
-> 
-> 
-> 2nd patch:
-> 
->   + dynamically allocates a cpu bitmap to make the code safe even on systems
->     with many CPUs.
-> 
->   + v1 was set by Arnd Bergmann but it had some problems, see
->     https://lore.kernel.org/r/20250620192554.2234184-1-arnd@kernel.org
-> 
->   + This version just integreates the proposed fixes from
->     https://lore.kernel.org/r/aFkuqaFn3BOvsPT-@pathway.suse.cz
-> 
-> 
-> 3rd patch:
-> 
->   + stores "size" instead on "len" in struct prbtest_rbdata so that
->     is can be used to check code sanity by __counted_by(size).
-> 
->   + fixes https://lore.kernel.org/r/eaea66b9-266a-46e7-980d-33f40ad4b215@sabinyo.mountain
-> 
->   + it is based on the idea from Thomas Weißschuh, see
->     20250626082605-c5fbbb88-f6cc-4659-bea0-a283cdb58e81@linutronix.de
+On Wed, 9 Jul 2025 09:58:26 +0200
+Jens Remus <jremus@linux.ibm.com> wrote:
 
+> I think Mathieu has a point, as unwind_user_next() calls the optional
+> architecture-specific arch_unwind_user_next() at the end.  The x86
+> implementation does state->type specific processing (for
+> UNWIND_USER_TYPE_COMPAT_FP).
 
-JFYI, the 1st and 3rd patch has been committed into printk/linux.git,
-branch rework/ringbuffer-kunit-test.
+I'm not too comfortable with the compat patches at this stage. I'm
+thinking of separating out the compat patches, and just reject the
+deferred unwind if the task is in compat mode (forcing perf or other
+tracers to use whatever it uses today).
 
-These two patches were reviewed by Thomas and John and were accepted.
+I'll take Mathieu's patches and merge them with Josh's, but make them a
+separate series.
 
-The 2nd patch is independent and has an issue. I am going to send
-an update separately.
+I'm aiming to get the core series into this merge window, and the less
+complexity we have, the better. Then everything can be worked on
+simultaneously in the next merge window as all the other patches will
+not have any dependency on each other. They all have dependency on the
+core set.
 
-Best Regards,
-Petr
+-- Steve
 
