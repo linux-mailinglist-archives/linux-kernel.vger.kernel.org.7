@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-724775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03280AFF6CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:29:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF173AFF6CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE8175484B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:29:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A47B584721
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC1927F4CA;
-	Thu, 10 Jul 2025 02:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6307127FB37;
+	Thu, 10 Jul 2025 02:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4f+6zxp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0EXEXk/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D0619D065;
-	Thu, 10 Jul 2025 02:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5D927FB2B;
+	Thu, 10 Jul 2025 02:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752114588; cv=none; b=TiqR0jj4RQQ7Bh4Dj6LspPB0NSDh7GzxpD467iLpsCKKYFKWwSLesM8gpz2R8GuYEOccxrMve9urrmLkwa4ParW3IugbG6EI1LGgKyRqm+TIxeNZXZQ0mTkNE2RQ4U4RAOh2abaSSdbkaIH3LYEyiKJgvm67tja/dPqEdSoo6WY=
+	t=1752114591; cv=none; b=JCKrk2Im93NHvmbrsdN6x37RLcCHQML+QQOu9hgfVg2dcPq3Enhw3ktSybuc9F6ptBJdShsIPIxFuLwFKVcnhvAlxBfvPw4IgJR5syiaLSIbDYK+R6ORrEpeYeinDhD43X8SVJrSBkC/gNIRuN3c8sXfeVYVRjld0yZakvEM+sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752114588; c=relaxed/simple;
-	bh=THlgbPKaBIAndpi3ctc5NliKSeKarMqNvCUYHFvBXYk=;
+	s=arc-20240116; t=1752114591; c=relaxed/simple;
+	bh=xXT4x4JaFjSeep/Mbd917xNGkwFl5LwRQcGW2dS7HC8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=aQTaEcC9A0baXYxWyiHyU5MdHXWGEp9mVJfxLem7+jfNjtfMXDG8dsFMQClCzfv8/pDxM2QXEAaq8vYYcP44AO8rlgX0XqfDr0KMHYrIO6vo5pE5ONYmuKRK+NBrvOpgdEk39jemOh7c5ieqsz4dpfs9zpeAAw5d8wYzJ9ULr90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4f+6zxp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA76C4CEEF;
-	Thu, 10 Jul 2025 02:29:48 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=kF8xs9OIGqVVHi2DlSQOqDYNiustYwRQs5DoUTyEyWVUcAJEdnEq2CgAy0CulKjJ+8yKMiyXN1AOE26LhknH43/K8QzS4/pdg3kT1szMZjZ5ovpDJ0W0Jgup9bc7UJHPahIdtHGg+jnGs5zcgx2Z2X6fBrIdVd9REEzmFMGXGEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0EXEXk/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D850C4CEEF;
+	Thu, 10 Jul 2025 02:29:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752114588;
-	bh=THlgbPKaBIAndpi3ctc5NliKSeKarMqNvCUYHFvBXYk=;
+	s=k20201202; t=1752114591;
+	bh=xXT4x4JaFjSeep/Mbd917xNGkwFl5LwRQcGW2dS7HC8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=f4f+6zxpZQe/wxBr6UdH5ju9D006L6rdEZnXXWtqLlrvV5iJvpnpVyfJ81qcOz80R
-	 kUB0CNZCz+v3/mPzDAsSkr8Id7wgYuN/hZ4m/JAE30WEILX6D/TAuiBtZq0lLZVMms
-	 lz/xHPOvrNrGeJizT1pWBPE7ONNgOyTPPRFY4TpmMoEwSYWX8IRNYBl/8EgCxC2rD4
-	 umPImKXPxe23kpO21p68mzz1ZqWjU5Z7pvqyuWHW3r2+fPAUNOxspAht+dV8sgeTwo
-	 ZTsx+Yb9RgpdeoFit1mtxSZt3omFyDE3IuNllRzlkRDmHc3TTNRel/xatqvUijPPLG
-	 X9oRetATGISgw==
+	b=Q0EXEXk/OPCEnCIfL1at2SfcbHc/XVDpGRJmLK9giQP6n+JX3ktQr8QELcBEnCGNK
+	 TwN/gcI31nVAcH1HecE8626G4LBn4EoEBg0PXWzrrEnUDqsftFiLxv+eVuquveUvKp
+	 VeEer/1AfJtBIjSdTuIZsic65zrcpq3jEx++h9hGNmLFjqni+6BJAoVN5ybCyw34q5
+	 /LkApYW/XJKmeuGp3ZieyBs/Hk+Arp/tUReN3uCkK+67AMvZo8xDIpdf34I/klunjz
+	 qHIe12ZxQ1G8eOp5AYFTCGUaSVep+QefC9X7mKmymhkXYSKnLUzMkZJNqAtbrlutKw
+	 qBuzl+6yx58IA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0E1383B261;
-	Thu, 10 Jul 2025 02:30:11 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB44B383B261;
+	Thu, 10 Jul 2025 02:30:14 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,42 +51,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] net: ethernet: ti: am65-cpsw-nuss: Fix skb size by
- accounting for skb_shared_info
+Subject: Re: [PATCH net v3] net: thunderx: avoid direct MTU assignment after
+ WRITE_ONCE()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175211461077.963219.10864182215949931442.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Jul 2025 02:30:10 +0000
-References: <20250707085201.1898818-1-c-vankar@ti.com>
-In-Reply-To: <20250707085201.1898818-1-c-vankar@ti.com>
-To: Chintan Vankar <c-vankar@ti.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, rogerq@kernel.org, horms@kernel.org,
- mwalle@kernel.org, jacob.e.keller@intel.com, jpanis@baylibre.com,
- s-vadapalli@ti.com, danishanwar@ti.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <175211461350.963219.17128181938751055078.git-patchwork-notify@kernel.org>
+Date: Thu, 10 Jul 2025 02:30:13 +0000
+References: <20250706194327.1369390-1-alok.a.tiwari@oracle.com>
+In-Reply-To: <20250706194327.1369390-1-alok.a.tiwari@oracle.com>
+To: Alok Tiwari <alok.a.tiwari@oracle.com>
+Cc: sgoutham@marvell.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ darren.kenny@oracle.com, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 7 Jul 2025 14:22:01 +0530 you wrote:
-> While transitioning from netdev_alloc_ip_align() to build_skb(), memory
-> for the "skb_shared_info" member of an "skb" was not allocated. Fix this
-> by allocating "PAGE_SIZE" as the skb length, accounting for the packet
-> length, headroom and tailroom, thereby including the required memory space
-> for skb_shared_info.
-> 
-> Fixes: 8acacc40f733 ("net: ethernet: ti: am65-cpsw: Add minimal XDP support")
-> Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
+On Sun,  6 Jul 2025 12:43:21 -0700 you wrote:
+> The current logic in nicvf_change_mtu() writes the new MTU to
+> netdev->mtu using WRITE_ONCE() before verifying if the hardware
+> update succeeds. However on hardware update failure, it attempts
+> to revert to the original MTU using a direct assignment
+> (netdev->mtu = orig_mtu)
+> which violates the intended of WRITE_ONCE protection introduced in
+> commit 1eb2cded45b3 ("net: annotate writes on dev->mtu from
+> ndo_change_mtu()")
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v3] net: ethernet: ti: am65-cpsw-nuss: Fix skb size by accounting for skb_shared_info
-    https://git.kernel.org/netdev/net/c/02c4d6c26f1f
+  - [net,v3] net: thunderx: avoid direct MTU assignment after WRITE_ONCE()
+    https://git.kernel.org/netdev/net/c/849704b8b211
 
 You are awesome, thank you!
 -- 
