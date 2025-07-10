@@ -1,128 +1,168 @@
-Return-Path: <linux-kernel+bounces-725490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E60AFFFE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:59:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863F9AFFFF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B77495A4F99
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:59:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35ADC76110F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5060F2E0B64;
-	Thu, 10 Jul 2025 10:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8C22185B1;
+	Thu, 10 Jul 2025 11:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYNHFa70"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JTkO1R1x"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88462877C1;
-	Thu, 10 Jul 2025 10:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A462E0937;
+	Thu, 10 Jul 2025 11:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145159; cv=none; b=fw1+2bDs/LxQBZtFOIN/Le7CrHyLE13ceG2MmvOudr+tW8CLfTc6VMcNlFikyLj9BztG9k4w/XvKVw/uOnSPifUOuOt2kZgcm98rSxYbihWJzrghmoJxS96sqvIGgoxC/w8tDmIp4iZVYRfuF4mm5wICmr2yPmoUScs0Zv3bJxg=
+	t=1752145205; cv=none; b=l9W6mRpNVXGNht1pQymO6/vO3JYSy2E7UFPcxLF8OXMPlr5mOSISS7j0jP81G7JNYLfwcZykPK0EHQJpEFrUsKGlsRjveJ77zvBGjcL4PE1T9OjStxgK/twRQRiJkzjgMY29cNZON7O0JaBG4ex9Vu8o1SfN+b0G0gVfbScxxx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145159; c=relaxed/simple;
-	bh=+9Aiaj5Zj4iemiwWv8ITBr4HJpVztCAHhr9QST4AMpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=szbwSuLfYociy5OcU6D1UwPELm0y3BVO8y4j95jjH1t8yWEkFreTXNRKbuICIOHNOeTnvOjscPu6zyCAs/x65Bfi9MIg97go1tdpDiAf7DXqT2ryxG+m53yxrHGAUfO+BMRczHoqvJNcKI53yaO2LwfHOlkT7oZkbYTWV6BmF+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYNHFa70; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18449C4CEE3;
-	Thu, 10 Jul 2025 10:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752145158;
-	bh=+9Aiaj5Zj4iemiwWv8ITBr4HJpVztCAHhr9QST4AMpM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mYNHFa70nvJ50iL0uCKjVAMeHVhRxcAByGoCreYB1OOp3FDxAgj18gj/ArF19YSCY
-	 rfC9xCmDPyFvE3H32en0cVmTRA1Tpzgzr01k8K2bXxpv8UB3gecqtB6h0zYx/Lesuz
-	 ws9IQkzBfoBYuHsps28B4NHdktVFPwACRAF47jULOSaWQ+l/5qfAdlZU++HuUQFfvO
-	 Y45AY4AoH32nhwtXeA2aWKohzAcZhOQPEPXu4LEJCwm51H5PRfjr2m77WIUSsxVKk8
-	 /USo0wB7j1g532G0k17lWxSr6djiN3MtrSURwsnbONHi/NS4f58v80xNMAWYxM2Yom
-	 uI/X1Rgqq5gsw==
-Date: Thu, 10 Jul 2025 12:59:14 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 12/12] docs: kdoc: Improve the output text accumulation
-Message-ID: <20250710125914.41fe8cf6@foz.lan>
-In-Reply-To: <20250710123155.1045831d@foz.lan>
-References: <20250702223524.231794-1-corbet@lwn.net>
-	<20250702223524.231794-13-corbet@lwn.net>
-	<20250710084119.3e5c1ced@foz.lan>
-	<20250710091352.4ae01211@foz.lan>
-	<20250710101931.202953d1@foz.lan>
-	<20250710121033.42db5ef3@foz.lan>
-	<20250710123155.1045831d@foz.lan>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752145205; c=relaxed/simple;
+	bh=4DFOJCCsvI24QKbrJDm/aFnyarYSoJI2WT5J2wb9AVM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ku/c9axVObPaQeMXuW0X3pf13khOeMBq+kdpUSRZ4Qt/WRYUjYSR8exyE1fAF7C9UU/5Dbp0stTfWCAt6tYt2rP3VoMcpqL5bqvVR8iVslJ3UR1sHFcKXTAsVuqUnt+Y1l/BtM0dMCv3sfysrnQjq0yhsR8JECzJvHLH5rbWpZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JTkO1R1x; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <41d1245c-8a7f-4c5a-ba84-8e7e33b896b2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752145191;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KtJpoUInX8ucjkyFAiUJkj/ubfAu8PdaUF9qEnnOSvU=;
+	b=JTkO1R1xjDfTuBgYIJDFm3myKaXQxfj7KA99JQhTwFwRfJfdlMfVqNb/32AJd5hVEQc+/y
+	ikDzG1CMPk+cf8GKLXp/oLnpGKCdp7YDNo5FxvVniKBGn3a8Zm+sh5S0I4Llam3Gk8JIy6
+	rXWG6A9C3kEzH2Wcxqp1WgkQkckbLIs=
+Date: Thu, 10 Jul 2025 18:59:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v2_00/11=5D_dm-pcache_=E2=80=93_persistent?=
+ =?UTF-8?Q?-memory_cache_for_block_devices?=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Dongsheng Yang <dongsheng.yang@linux.dev>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: agk@redhat.com, snitzer@kernel.org, axboe@kernel.dk, hch@lst.de,
+ dan.j.williams@intel.com, Jonathan.Cameron@Huawei.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev, dm-devel@lists.linux.dev
+References: <20250707065809.437589-1-dongsheng.yang@linux.dev>
+ <85b5cb31-b272-305f-8910-c31152485ecf@redhat.com>
+ <e50ef45e-4c1a-4874-8d5f-9ca86f9a532c@linux.dev>
+In-Reply-To: <e50ef45e-4c1a-4874-8d5f-9ca86f9a532c@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Em Thu, 10 Jul 2025 12:31:55 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
 
-> Em Thu, 10 Jul 2025 12:10:33 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
-> 
-> > From the above:
-> > 
-> > - It is not worth applying patch 12/12 as it makes the code slower;
-> > - Python 3.13t (no-GIL version) had very bad results. It seems it
-> >   still requires optimization;
-> > - Python 3.9 is a lot worse (140% to 190%) when using list append;
-> > - when there are not many concats, Python 3.13 is about 15% slower
-> >   with lists than concat strings. It only approaches str concat
-> >   when the number of concats is high.
-> > 
-> > With the above, clearly str += is faster than list append.
-> > 
-> > So, except if I did something wrong on this benchmark script, please
-> > don't apply patch 12/12.  
-> 
-> And I did: I forgot the final line at the concat code to get the
-> result as strings.
-> 
-> For explicit list:
-> 	result = obj.output()
-> 
-> For implicit ones:
-> 	result = str(obj)
-> 
-> Yet, the conclusion is similar. With Python 3.13:
-> 
->     $ for i in python3.13; do for j in 1 10 100 1000; do $i /tmp/bench.py $((1000000/$j)) $j 1; done; done
->     1 strings in a loop with 1000000 interactions, repeating 24 times
->         str +=       : time: 41.42
->         list join    : time: 127.33: 207.42% slower than str +=
->     10 strings in a loop with 100000 interactions, repeating 24 times
->         str +=       : time: 27.15
->         list join    : time: 39.19: 44.36% slower than str +=
->     100 strings in a loop with 10000 interactions, repeating 24 times
->         str +=       : time: 24.84
->         list join    : time: 30.70: 23.57% slower than str +=
->     1000 strings in a loop with 1000 interactions, repeating 24 times
->         str +=       : time: 21.84
->         list join    : time: 27.85: 27.50% slower than str +=
-> 
-> Explict list concat was between ~30% to ~200% worse than str concat.
+在 7/9/2025 5:45 PM, Dongsheng Yang 写道:
+>
+> 在 7/8/2025 4:16 AM, Mikulas Patocka 写道:
+>>
+>> On Mon, 7 Jul 2025, Dongsheng Yang wrote:
+>>
+>>> Hi Mikulas,
+>>>     This is V2 for dm-pcache, please take a look.
+>>>
+>>> Code:
+>>>      https://github.com/DataTravelGuide/linux tags/pcache_v2
+>>>
+>>> Changelogs
+>>>
+>>> V2 from V1:
+>>>     - introduce req_alloc() and req_init() in backing_dev.c, then we
+>>>       can do req_alloc() before holding spinlock and do req_init()
+>>>       in subtree_walk().
+>>>     - introduce pre_alloc_key and pre_alloc_req in walk_ctx, that
+>>>       means we can pre-allocate cache_key or backing_dev_request
+>>>       before subtree walking.
+>>>     - use mempool_alloc() with NOIO for the allocation of cache_key
+>>>       and backing_dev_req.
+>>>     - some coding style changes from comments of Jonathan.
+>> Hi
+>>
+>> mempool_alloc with GFP_NOIO never fails - so you don't have to check the
+>> returned value for NULL and propagate the error upwards.
+>
+>
+> Hi Mikulas:
+>
+>    I noticed that the implementation of mempool_alloc—it waits for 5 
+> seconds and retries when allocation fails.
+>
+> With this in mind, I propose that we handle -ENOMEM inside defer_req() 
+> using a similar mechanism. something like this commit:
+>
+>
+> https://github.com/DataTravelGuide/linux/commit/e6fc2e5012b1fe2312ed7dd02d6fbc2d038962c0 
+>
+>
+>
+> Here are two key reasons why:
+>
+> (1) If we manage -ENOMEM in defer_req(), we don’t need to modify every 
+> lower-level allocation to use mempool to avoid failures—for example,
+>
+> cache_key, backing_req, and the kmem.bvecs you mentioned. More 
+> importantly, there’s no easy way to prevent allocation failure in some 
+> places—for instance, bio_init_clone() could still return -ENOMEM.
+>
+> (2) If we use a mempool, it will block and wait indefinitely when 
+> memory is unavailable, preventing the process from exiting.
+>
+> But with defer_req(), the user can still manually stop the pcache 
+> device using dmsetup remove, releasing some memory if user want.
+>
+>
+> What do you think?
 
-Looking for an explanation, PEP 509 and PEP 393 did Short String Optimization
-and Inline Caching. This was applied Python 3.6, and Python 3.13 came with
-extra string optimizations.
 
-On the other hand, lists do more memory allocations, have some logic to
-extend list growth and has an extra concat loop.
+BTW, I added a test case for NOMEM scenario by using failslab:
 
-With that, contrary to popular belief, it sounds that str concat are
-nowadays faster.
 
-Thanks,
-Mauro
+https://github.com/DataTravelGuide/dtg-tests/blob/main/pcache.py.data/pcache_failslab.sh
+
+>
+> Thanx
+>
+> Dongsheng
+>
+>>
+>> "backing_req->kmem.bvecs = kmalloc_array(n_vecs, sizeof(struct bio_vec),
+>> GFP_NOIO)" - this call may fail and you should handle the error 
+>> gracefully
+>> (i.e. don't end the bio with an error). Would it be possible to trim the
+>> request to BACKING_DEV_REQ_INLINE_BVECS vectors and retry it?
+>> Alternativelly, you can create a mempool for the largest possible n_vecs
+>> and allocate from this mempool if kmalloc_array fails.
+>>
+>> I'm sending two patches for dm-pcache - the first patch adds the include
+>> file linux/bitfield.h - it is needed in my config. The second patch 
+>> makes
+>> slab caches per-module rather than per-device, if you have them
+>> per-device, there are warnings about duplicate cache names.
+>>
+>>
+>> BTW. What kind of persistent memory do you use? (afaik Intel killed the
+>> Optane products and I don't know of any replacement)
+>>
+>> Some times ago I created a filesystem for persistent memory - see
+>> git://leontynka.twibright.com/nvfs.git - I'd be interested if you can 
+>> test
+>> it on your persistent memory implementation.
+>>
+>> Mikulas
+>>
+>
 
