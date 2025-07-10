@@ -1,296 +1,174 @@
-Return-Path: <linux-kernel+bounces-725275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ACB0AFFCBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:47:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D015AFFCC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 278B33A7343
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:47:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0481C86A3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCB628DB7E;
-	Thu, 10 Jul 2025 08:47:30 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569D1156F4A;
-	Thu, 10 Jul 2025 08:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A660828CF4C;
+	Thu, 10 Jul 2025 08:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g3iH74tM"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A4328C5CE
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752137249; cv=none; b=UM60QQqoEsIvSWQVS6k7WQJZwKAhFSTQsKx2ZR1RfEI9DUoB2XG1qP/H5Oz9E6Jq4kZBmakHsBwzcl+duuPgAU1HMfPhBCePenIFzh1nkEG6gULtYVlH8cvScqzhHsgqkxxWgd0JEnYaoAphcPPBApfM8dAg30PyMQiAYcWebds=
+	t=1752137269; cv=none; b=NINqeyrKBF/yt23mHN+POqm6/Zk4x++bSkzuAf4t8MCBSCmYrRKyBlEUJ+tpcWtp4XMNpuwknT1wLvC6P8vkkUuixD0QmORrUpbNLZTpd4jz1Gpr0JwA1xYdVYVHT1uU7z5pQ9aYVRAEDDJqT+5uoGC/g0Pnw8VDP89coBCwVZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752137249; c=relaxed/simple;
-	bh=ekuLnQdZp5hBMg0GrYtuko9ZZ1jvyVh9UAP2a1KyHk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AiYfK5hpNSbnoA50EiacBpUJUiRL7AvOz5YKwtCMSpgYjoo+vhWa3hTSbHY05lTTOO5qsIVEMWArFvPESwxSndFkVI4PCY3T0m9CxAT/a/2w5q2803VZheUco7U2s3E4a/navcg6k9bqdiE8YnppxPqMeV4gArniSWnNSxKngo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-30-686f7e191331
-Date: Thu, 10 Jul 2025 17:47:16 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: willy@infradead.org, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
-	akpm@linux-foundation.org, davem@davemloft.net,
-	john.fastabend@gmail.com, andrew+netdev@lunn.ch,
-	asml.silence@gmail.com, toke@redhat.com, tariqt@nvidia.com,
-	edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com,
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-	david@redhat.com, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, horms@kernel.org,
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
-	vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
-	jackmanb@google.com
-Subject: Re: [PATCH net-next v9 0/8] Split netmem from struct page
-Message-ID: <20250710084716.GA36026@system.software.com>
-References: <20250710082807.27402-1-byungchul@sk.com>
+	s=arc-20240116; t=1752137269; c=relaxed/simple;
+	bh=57V0TYHG4HiRpDjObfiX8523KoBb7uejRCFwjUXkGuQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=otXGZdjnkb0VS7pAACkddbCYAy7aFnoTr9FNkwFlhOdyEm29oICiDTtmhujfRm907RB9NWb2MHQau1CqmIKfdQX1AN+T5/QZObZBKI5TzJrf4ri4uhAG24Urah3qlQxNrUX76c/YDi2EUtAKbbllfJdv+koUiXGt4mUgJ77UM50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g3iH74tM; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-453817323afso4081275e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:47:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752137265; x=1752742065; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZiT+cF5jie4GC59R8tbVZyTkxmY5kyeE7d02aQYTPCo=;
+        b=g3iH74tMDT98LkIjPjN1EVqMQnCHFxDi8QJeab45CF+BsyIqroNFjo/6z4eXeCs92E
+         KmWmHphBvcOW8o1cFA7AxMFrCjg68tNK/q6TXiHkmQ4u2UYhHdlcRuxENacdD3GCU0w5
+         W5GcAXSayuA0N6AIgQhatV8FzfRbbA74uOjSas5JvYqSpSa7QRTc+CfovBt/Gc1Gorj+
+         7pDW3q4UG3zfn0rF/16qJVvDNwUXCwnAmYT2z5J3qhwGbPIHmDhRbOGtl8H50SfMgFwg
+         3v5ploEMWoSeC19ERIy6HtjTDwLrvgtQXvBmo/hiHxv/goIe60aTaGxMrQ9gIuv9JJBu
+         oUgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752137265; x=1752742065;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZiT+cF5jie4GC59R8tbVZyTkxmY5kyeE7d02aQYTPCo=;
+        b=odlyHCuejK5z/MFtl26v45ZRjIBgwFT3GO08l705MhsA6b66FxJpOgOFkuYo0m9ZPo
+         QA9yptNMO8dqHqOfOhLgbtGm6f4hoPtk7KnLMp9QZz1ugX/wQvJZRznOxIB8iv+bjOkb
+         Xaf+2JjOfuxfxU7/NPtExri0H0Qab7p6f4oRoZzfTdVL/jIuHd3DdT0qZkH0/zMGZKwg
+         n6CAkxRATL4vSJi7xkNvW2LWW9Q3m7DZoiKrNJ7cfhKjcUydKGm6QVOOhiO0HRyNHlGG
+         7E6JNNlY9oTLR0S2OXc9+tfiyMcSqFMkGvE35DbKO6ZhpTxqZguHRtYI1xK5FZhp56+E
+         nDKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVI2GdF6ehzVQqyr/stIHJB7WQO2w8mhLGlSlitWKF5zomtd7dPTrXKsW6qk+q3lFVLe95ECeeXBXwtzqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ5C3h8vQcNX5+i+gl8geY3V4Wt910TkKjoLv2+ZahJdq9kzqU
+	jQv6xk2pZ354YnDxMmi4bthqtJU9nC/nN5kOBMJdxw4kmY1Njxp0tGu3y2K86SS8gqgYbSCtI1X
+	5ce5efFn8biQx8Oibww==
+X-Google-Smtp-Source: AGHT+IGK69YzUiltyubhCeTYslvStKPrTGYmrpcKUFP45k02gQ/9NltQd70XDpa+u73OYmjTLWZ0yP9DJqMc6GE=
+X-Received: from wmth15.prod.google.com ([2002:a05:600c:8b6f:b0:442:f9fc:2a02])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4e55:b0:453:5d8d:d1b8 with SMTP id 5b1f17b1804b1-454db8909a8mr28725405e9.30.1752137265730;
+ Thu, 10 Jul 2025 01:47:45 -0700 (PDT)
+Date: Thu, 10 Jul 2025 08:47:44 +0000
+In-Reply-To: <87qzypjrdm.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710082807.27402-1-byungchul@sk.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTYRTHefa8e/e6Wr1OsyfrS6sIDLOrnCC6GNVTEAlFZNFl5UvvaJuy
-	eS0qK0Wbl0qDai6aROYNVkvm7GI1zbQLyUpbFy9oFlFprbQtQ3NG1Lcf5/zP75wPh8PKs9Jw
-	TqNPEgx6tVbFyhn55/ElkeGHE8R53m4ZWGxVLFT60uBKl1MKlgoHgu/+1zL41vCAhUslgxgs
-	TzMZGLD9xNDbODpQad8AnaXvGLiVXYOh+2QTC/mZQxhu+/tkcMxZJoEWR4EUzvy8jKEmo0sG
-	z25YWOioGpHCO1c+A83mcgY6C1ZAozUMBh99QtBgq5HAYN4FForcVhZ6MjsRuOu7GSg+WoDA
-	VueRwpBv1FF8v0O2Yiat/9SPaXX5SwmtNbfLqNWeTK+XRVCTx42pveIES+3eQhl903aLpU3n
-	hhha6/wmofnH+1j6tfcVQ/vrWllqq25l6GNrgyw2eJt8abyg1aQIhqhlu+XipQEHm+iISTud
-	RzNQ7UITCuIIv4j0l/ZK//Lrch8TYIafRWxZdWyAWX428Xj82IQ4LpSPIm2FcSYk5zB/nCWF
-	rf6xfAgfQ85/fIEDrOCBjOTeGWMlv5gMtZqYP/Vg0nz+7RhjPoJ4hj9IAk7MTyVXhrkABvHR
-	xNlzMJCYxM8gdx0PJIFVhHdyJPeHG/85cwq5V+ZhTiHe/J/V/J/V/M9qRbgCKTX6FJ1ao100
-	V0zXa9Lm7k3Q2dHou5Qe+rXdibwtm1yI55BqvKJln15UStUpxnSdCxEOq0IVvq1aUamIV6cf
-	EAwJuwzJWsHoQlM5RjVZsWAwNV7J71MnCfsFIVEw/O1KuKDwDCRumRg6fFrescYzkGW8sTqu
-	9GZYdZHkSaMmp8mXt6r72brN5Fh586r0JbqNOTsWJoaIjX2pIRPcVcHbc5Mta3vGjQurfbP6
-	yPO+7KJi3fDspmuc6C3+cPTQ9Mjs5b73kSV76h+eKNw158vVzf6N06J3Rl3sXOltj+hP2NbQ
-	7jKsv9oWq2KMonp+BDYY1b8BtN2KSioDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHec97dnYcLk7L6mT1ZWkXITO6+EA3kcIXNRH6UEm3Yx3capu2
-	qWhRWFPK1TQ1QeeElWVqwWjaNsOs1LwVFcZq3WZo96vdzGl0mRH17cf/+f/+nx4WK/x0KKvW
-	ZYp6naBRMjJalrTMOH/a/nRVlK84Cqz2cwycHcmBM0/cErA2OBF88T+UwueOLgZqTgxjsN7K
-	p+GrfRTDs84BKZx1rIX+2uc0tBxyYRgo7mbAnD+G4ZL/vRQOuusoaK/ukcBtZ5EEjo+exuDK
-	eyKFOxetDPjO/ZTA8zYzDT2Wehr6i2Kg0zYFhq+/RdBhd1EwfLSagbI+GwOD+f0I+toHaKg6
-	UITA3uqVwNjI742qaz5pTDhpf/sBk6b6+xRptjyWEpsjizTWRRCTtw8TR0MhQxyfSqXk0d0W
-	hnRXjNGk2f2ZImbje4Z8fPaAJh9aPQypeTlEEXuTh05WpMiW7xA16mxRv2DlNpmq5quTyXDG
-	5pQcJXmoeZEJBbE8t5h/WD9CB5jmwnl7QSsTYIabw3u9fmxCLBvCLeDvlm40IRmLOSPDl3r8
-	4/1JXCxf+eYeDrCcA/7nkcvjrOCW8GMeE/0nn8j3VD4dZ8xF8N4fr6jAJuam82d+sAEM4pby
-	7sG9gcZkbhZ/xdlFHUNyy3+y5T/Z8k+2IdyAQtS6bK2g1iyJNOxS5erUOZHb07UO9Pshavd9
-	L3GjL3fi2hDHImWw/HaaTqWQCNmGXG0b4lmsDJGPbNCoFPIdQu4eUZ++VZ+lEQ1taDpLK6fK
-	49eL2xRcmpAp7hLFDFH/90qxQaF5aF6YkOG7Wteyr1FaNi1heePqd7BuQpq/3HrdUzb7cFzi
-	/lM3FFbn63WJyhWuzKTzrat6LxNivOoI3dyb6sYnC4aaMjpjhVqYGzoj2OxLTXS+KCxbyWmp
-	BKPhRHl0QUp2Z9am3VvMvUPJL1Meaft2fpt5YY3rcEkFrQuObrgZH6akDSphYQTWG4RfWB2W
-	HAwDAAA=
-X-CFilter-Loop: Reflected
+Mime-Version: 1.0
+References: <20250708-rnull-up-v6-16-v2-0-ab93c0ff429b@kernel.org>
+ <20250708-rnull-up-v6-16-v2-3-ab93c0ff429b@kernel.org> <kpVk60lBMPJ_b4glgS0w-BfbIjN1cMCDSKDoM0RAB4p1Bg1BNfIdA4YRuOu70BbSZjlserkd8EJDwy0vVmR7yQ==@protonmail.internalid>
+ <aG5tObucycBg9dP1@google.com> <87qzypjrdm.fsf@kernel.org>
+Message-ID: <aG9-MAwbNbjuoR0i@google.com>
+Subject: Re: [PATCH v2 03/14] rust: str: introduce `NullBorrowFormatter`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Jul 10, 2025 at 05:27:59PM +0900, Byungchul Park wrote:
-> Hi all,
+On Wed, Jul 09, 2025 at 05:49:57PM +0200, Andreas Hindborg wrote:
+> "Alice Ryhl" <aliceryhl@google.com> writes:
 > 
-> The MM subsystem is trying to reduce struct page to a single pointer.
-> See the following link for your information:
+> > On Tue, Jul 08, 2025 at 09:44:58PM +0200, Andreas Hindborg wrote:
+> >> Add `NullBorrowFormatter`, a formatter that writes a null terminated string
+> >> to an array or slice buffer. Because this type needs to manage the trailing
+> >> null marker, the existing formatters cannot be used to implement this type.
+> >>
+> >> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> >> ---
+> >>  rust/kernel/str.rs | 59 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 59 insertions(+)
+> >>
+> >> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> >> index 78b2f95eb3171..05d79cf40c201 100644
+> >> --- a/rust/kernel/str.rs
+> >> +++ b/rust/kernel/str.rs
+> >> @@ -860,6 +860,65 @@ fn deref_mut(&mut self) -> &mut Self::Target {
+> >>      }
+> >>  }
+> >>
+> >> +/// A mutable reference to a byte buffer where a string can be written into.
+> >> +///
+> >> +/// The buffer will be automatically null terminated after the last written character.
+> >> +///
+> >> +/// # Invariants
+> >> +///
+> >> +/// `buffer` is always null terminated.
+> >> +pub(crate) struct NullBorrowFormatter<'a> {
+> >> +    buffer: &'a mut [u8],
+> >> +    pos: usize,
+> >> +}
+> >
+> > Do you need `pos`? Often I see this kind of code subslice `buffer`
+> > instead.
 > 
->    https://kernelnewbies.org/MatthewWilcox/Memdescs/Path
-> 
-> The first step towards that is splitting struct page by its individual
-> users, as has already been done with folio and slab.  This patchset does
-> that for page pool.
-> 
-> Matthew Wilcox tried and stopped the same work, you can see in:
-> 
->    https://lore.kernel.org/linux-mm/20230111042214.907030-1-willy@infradead.org/
-> 
-> I focused on removing the page pool members in struct page this time,
-> not moving the allocation code of page pool from net to mm.  It can be
-> done later if needed.
-> 
-> The final patch removing the page pool fields will be posted once all
-> the converting of page to netmem are done:
-> 
->    1. converting use of the pp fields in struct page in prueth_swdata.
->    2. converting use of the pp fields in struct page in freescale driver.
+> How would that work? Can I move the start index of `buffer` in some way
+> without an unsafe block?
 
-     3. converting use of the pp fields in strcut page in libeth.
+Yes. I think this will work:
 
-	Byungchul
+let buffer = mem::take(&mut self.buffer);
+self.buffer = &mut buffer[pos..];
 
-> For our discussion, I'm sharing what the final patch looks like, in this
-> cover letter.
+Temporarily storing an empty slice avoids lifetime issues.
+
+> >> +    #[expect(dead_code)]
+> >> +    pub(crate) fn from_array<const N: usize>(
+> >> +        a: &'a mut [crate::ffi::c_char; N],
+> >> +    ) -> Result<NullBorrowFormatter<'a>> {
+> >> +        Self::new(
+> >> +            // SAFETY: the buffer of `a` is valid for read and write as `u8` for
+> >> +            // at least `N` bytes.
+> >> +            unsafe { core::slice::from_raw_parts_mut(a.as_mut_ptr().cast::<u8>(), N) },
+> >> +        )
+> >> +    }
+> >
+> > Arrays automatically coerce to slices, so I don't think this is
+> > necessary. You can just call `new`.
 > 
-> 	Byungchul
-> --8<--
-> commit 1847d9890f798456b21ccb27aac7545303048492
-> Author: Byungchul Park <byungchul@sk.com>
-> Date:   Wed May 28 20:44:55 2025 +0900
+> Nice!
+
+I'm guessing it used to be necessary back when we used core::ffi::c_char
+since &[i8;N] doesn't coerce to &[u8]. But now that we use the right
+c_char definition, that isn't the case anymore.
+
+> >> +impl Write for NullBorrowFormatter<'_> {
+> >> +    fn write_str(&mut self, s: &str) -> fmt::Result {
+> >> +        let bytes = s.as_bytes();
+> >> +        let len = bytes.len();
+> >> +
+> >> +        // We want space for a null terminator
+> >> +        if self.pos + len > self.buffer.len() - 1 {
+> >
+> > Integer overflow?
 > 
->     mm, netmem: remove the page pool members in struct page
->     
->     Now that all the users of the page pool members in struct page have been
->     gone, the members can be removed from struct page.
->     
->     However, since struct netmem_desc still uses the space in struct page,
->     the important offsets should be checked properly, until struct
->     netmem_desc has its own instance from slab.
->     
->     Remove the page pool members in struct page and modify static checkers
->     for the offsets.
->     
->     Signed-off-by: Byungchul Park <byungchul@sk.com>
+> In the subtraction? `buffer.len()` is at least 1, because of the type invariant.
 > 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 32ba5126e221..db2fe0d0ebbf 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -120,17 +120,6 @@ struct page {
->  			 */
->  			unsigned long private;
->  		};
-> -		struct {	/* page_pool used by netstack */
-> -			/**
-> -			 * @pp_magic: magic value to avoid recycling non
-> -			 * page_pool allocated pages.
-> -			 */
-> -			unsigned long pp_magic;
-> -			struct page_pool *pp;
-> -			unsigned long _pp_mapping_pad;
-> -			unsigned long dma_addr;
-> -			atomic_long_t pp_ref_count;
-> -		};
->  		struct {	/* Tail pages of compound page */
->  			unsigned long compound_head;	/* Bit zero is set */
->  		};
-> diff --git a/include/net/netmem.h b/include/net/netmem.h
-> index 8f354ae7d5c3..3414f184d018 100644
-> --- a/include/net/netmem.h
-> +++ b/include/net/netmem.h
-> @@ -42,11 +42,8 @@ struct netmem_desc {
->  	static_assert(offsetof(struct page, pg) == \
->  		      offsetof(struct netmem_desc, desc))
->  NETMEM_DESC_ASSERT_OFFSET(flags, _flags);
-> -NETMEM_DESC_ASSERT_OFFSET(pp_magic, pp_magic);
-> -NETMEM_DESC_ASSERT_OFFSET(pp, pp);
-> -NETMEM_DESC_ASSERT_OFFSET(_pp_mapping_pad, _pp_mapping_pad);
-> -NETMEM_DESC_ASSERT_OFFSET(dma_addr, dma_addr);
-> -NETMEM_DESC_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
-> +NETMEM_DESC_ASSERT_OFFSET(lru, pp_magic);
-> +NETMEM_DESC_ASSERT_OFFSET(mapping, _pp_mapping_pad);
->  #undef NETMEM_DESC_ASSERT_OFFSET
->  
->  /*
-> ---
-> Changes from v8:
-> 	1. Rebase on net-next/main as of Jul 10.
-> 	2. Exclude non-controversial patches that have already been
-> 	   merged to net-next.
-> 	3. Re-add the patches that focus on removing accessing the page
-> 	   pool fields in struct page.
-> 	4. Add utility APIs e.g. casting, to use struct netmem_desc as
-> 	   descriptor, to support __netmem_get_pp() that has started to
-> 	   be used again e.g. by libeth.
-> 
-> Changes from v7 (no actual updates):
-> 	1. Exclude "netmem: introduce struct netmem_desc mirroring
-> 	   struct page" that might be controversial.
-> 	2. Exclude "netmem: introduce a netmem API,
-> 	   virt_to_head_netmem()" since there are no users.
-> 
-> Changes from v6 (no actual updates):
-> 	1. Rebase on net-next/main as of Jun 25.
-> 	2. Supplement a comment describing struct net_iov.
-> 	3. Exclude a controversial patch, "page_pool: access ->pp_magic
-> 	   through struct netmem_desc in page_pool_page_is_pp()".
-> 	4. Exclude "netmem: remove __netmem_get_pp()" since the API
-> 	   started to be used again by libeth.
-> 
-> Changes from v5 (no actual updates):
-> 	1. Rebase on net-next/main as of Jun 20.
-> 	2. Add given 'Reviewed-by's and 'Acked-by's, thanks to all.
-> 	3. Add missing cc's.
-> 
-> Changes from v4:
-> 	1. Add given 'Reviewed-by's, thanks to all.
-> 	2. Exclude potentially controversial patches.
-> 
-> Changes from v3:
-> 	1. Relocates ->owner and ->type of net_iov out of netmem_desc
-> 	   and make them be net_iov specific.
-> 	2. Remove __force when casting struct page to struct netmem_desc.
-> 
-> Changes from v2:
-> 	1. Introduce a netmem API, virt_to_head_netmem(), and use it
-> 	   when it's needed.
-> 	2. Introduce struct netmem_desc as a new struct and union'ed
-> 	   with the existing fields in struct net_iov.
-> 	3. Make page_pool_page_is_pp() access ->pp_magic through struct
-> 	   netmem_desc instead of struct page.
-> 	4. Move netmem alloc APIs from include/net/netmem.h to
-> 	   net/core/netmem_priv.h.
-> 	5. Apply trivial feedbacks, thanks to Mina, Pavel, and Toke.
-> 	6. Add given 'Reviewed-by's, thanks to Mina.
-> 
-> Changes from v1:
-> 	1. Rebase on net-next's main as of May 26.
-> 	2. Check checkpatch.pl, feedbacked by SJ Park.
-> 	3. Add converting of page to netmem in mt76.
-> 	4. Revert 'mlx5: use netmem descriptor and APIs for page pool'
-> 	   since it's on-going by Tariq Toukan.  I will wait for his
-> 	   work to be done.
-> 	5. Revert 'page_pool: use netmem APIs to access page->pp_magic
-> 	   in page_pool_page_is_pp()' since we need more discussion.
-> 	6. Revert 'mm, netmem: remove the page pool members in struct
-> 	   page' since there are some prerequisite works to remove the
-> 	   page pool fields from struct page.  I can submit this patch
-> 	   separatedly later.
-> 	7. Cancel relocating a page pool member in struct page.
-> 	8. Modify static assert for offests and size of struct
-> 	   netmem_desc.
-> 
-> Changes from rfc:
-> 	1. Rebase on net-next's main branch.
-> 	   https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/
-> 	2. Fix a build error reported by kernel test robot.
-> 	   https://lore.kernel.org/all/202505100932.uzAMBW1y-lkp@intel.com/
-> 	3. Add given 'Reviewed-by's, thanks to Mina and Ilias.
-> 	4. Do static_assert() on the size of struct netmem_desc instead
-> 	   of placing place-holder in struct page, feedbacked by
-> 	   Matthew.
-> 	5. Do struct_group_tagged(netmem_desc) on struct net_iov instead
-> 	   of wholly renaming it to strcut netmem_desc, feedbacked by
-> 	   Mina and Pavel.
-> 
-> Byungchul Park (8):
->   netmem: introduce struct netmem_desc mirroring struct page
->   netmem: introduce utility APIs to use struct netmem_desc
->   page_pool: access ->pp_magic through struct netmem_desc in
->     page_pool_page_is_pp()
->   netmem: use netmem_desc instead of page to access ->pp in
->     __netmem_get_pp()
->   netmem: introduce a netmem API, virt_to_head_netmem()
->   mlx4: use netmem descriptor and APIs for page pool
->   netdevsim: use netmem descriptor and APIs for page pool
->   mt76: use netmem descriptor and APIs for page pool
-> 
->  drivers/net/ethernet/mellanox/mlx4/en_rx.c    |  48 ++---
->  drivers/net/ethernet/mellanox/mlx4/en_tx.c    |   8 +-
->  drivers/net/ethernet/mellanox/mlx4/mlx4_en.h  |   4 +-
->  drivers/net/netdevsim/netdev.c                |  19 +-
->  drivers/net/netdevsim/netdevsim.h             |   2 +-
->  drivers/net/wireless/mediatek/mt76/dma.c      |   6 +-
->  drivers/net/wireless/mediatek/mt76/mt76.h     |  12 +-
->  .../net/wireless/mediatek/mt76/sdio_txrx.c    |  24 +--
->  drivers/net/wireless/mediatek/mt76/usb.c      |  10 +-
->  include/linux/mm.h                            |  12 --
->  include/net/netmem.h                          | 183 +++++++++++++++---
->  mm/page_alloc.c                               |   1 +
->  12 files changed, 231 insertions(+), 98 deletions(-)
-> 
-> 
-> base-commit: c65d34296b2252897e37835d6007bbd01b255742
-> -- 
-> 2.17.1
+> Or do you mean I should do a checked add for `self.pos + len`?
+
+Ah, I guess self.pos and len are both <= the length of a slice, which is
+at most isize::MAX, so the addition can't overflow an usize. Would be
+good to comment this, though.
+
+Alice
 
