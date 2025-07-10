@@ -1,161 +1,94 @@
-Return-Path: <linux-kernel+bounces-725724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D41B002F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:10:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E241DB00308
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70440581768
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:10:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 848491C4307F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3FB299949;
-	Thu, 10 Jul 2025 13:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820552E0B64;
+	Thu, 10 Jul 2025 13:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FkJqyRRG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t4eB/E96"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6291DC9A3;
-	Thu, 10 Jul 2025 13:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D973F27F749;
+	Thu, 10 Jul 2025 13:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752153022; cv=none; b=Lozv5VMh4ZblN/qwWb+3DO6ED8wvvMiqZUKUjbZCdNpL5zAX5PgdxBwtP4X/QNQho0NQ4gjnwNqyp5pQXzjXIjTJYXeDYkYJUUVqS3sbYdhv9XHUkl6jl6r8ESe++8KoYObYkR6S+jFxGZySNOlaQQ90ffad8+hG1oMsL6eEfZ0=
+	t=1752153173; cv=none; b=Y0jE/7FRzpbhaOOGG2XUKQt999IFcD7CCdZ5YvcN8La7KDRqw5eAWvvNtaYA1Ss1biA8ZTj7Dxt3CUa4ANngm8WkL61FZWOK5aESlf4BS8OYKh3+YuMvzu7OIRJ/uQJd0eCS9xfQpMsDEUhLoW8Iz0+HXJLXEKSBGuwjJt48lMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752153022; c=relaxed/simple;
-	bh=T1QGcJNxK8BZy6hZ2D7Y/4Oab0tcD0n7rSuwkJBzXAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jR8JghonA9s8m0TktoZfcSrOOGzehGP3pS4T34Hmtdzr1hz+dzlnP1s1gRAvEz1f1VlUPgrwXvaYo+m2Z8rknZ64wFBTDpJjbLltlIesCy63UV1sdXyLthu4TZh9i4jv6NiLrwD3Z5rfmjUnNImJybtAAf385Wqaqb2a20cH6+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FkJqyRRG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACD26C4CEE3;
-	Thu, 10 Jul 2025 13:10:21 +0000 (UTC)
+	s=arc-20240116; t=1752153173; c=relaxed/simple;
+	bh=q9abc7oDZLcrtsMuNt1PO9GtWY5Cpp2InagfHvwx58A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vGwN0N/Sjl0jiPQaKhzR/G+CB4P6i2jkuU/b/gDNO5TYHN6DQl9CvfFPKdSu1eWAIWbOF44Yl18lCugnF+cK7or5i17ybOrufx4SwcTOuVyWy5Y0wPErM3St/oUqF64ShX4RtEefs8g1m/WtTr5XHwR0uwHxdHK706IdQkZw7jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t4eB/E96; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC2B7C4CEE3;
+	Thu, 10 Jul 2025 13:12:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752153022;
-	bh=T1QGcJNxK8BZy6hZ2D7Y/4Oab0tcD0n7rSuwkJBzXAg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FkJqyRRGBxuQi3JPKE7F07FeaVGgq/Qr4W2vFhQRw++dMOWbvgCEpS9ha9+oW4L1/
-	 fqKoPBhLJIir6y9N14kKMzNcoZjFxCXHcjv1hAYl3NG/WC8D2cyRVrkFOM8+Bv/Uvy
-	 r5I916QCGEOtXBhXnkBn1trmBAdJVvxI2lSReffjcjnSya4COhwK12gngoG3/zzwtH
-	 ddszCdQGYibdS0CnOdT9i2eRNFU3ZLCmCC2I1vSVMtHQgTKFGdaT+etu+ZXG7Ll4RW
-	 0dyA8HCuPH2bvKvvOhm4745UaM7qmI//Z7MSYc8OeGbNI18ayQeJU0aC8wR96rfAmE
-	 emVc/E9zVMfsQ==
-Date: Thu, 10 Jul 2025 15:10:19 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Benno Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Drew Fustini <fustini@kernel.org>, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v10 0/7] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-Message-ID: <ipvaegqlkco5qinhvn33mqvg7ev2walvs74xtzvhimxsfsfzhv@gcmpxcdtetdn>
-References: <CGME20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6@eucas1p1.samsung.com>
- <20250707-rust-next-pwm-working-fan-for-sending-v10-0-d0c5cf342004@samsung.com>
- <e8a4a821-e7e4-4bcd-a2ac-f6b684b6ceea@samsung.com>
+	s=k20201202; t=1752153172;
+	bh=q9abc7oDZLcrtsMuNt1PO9GtWY5Cpp2InagfHvwx58A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=t4eB/E96oPfoYrzKEEkI+GgqjVDfIsE8xFcwhS0OUm/BBiiSk2RYf2RUf0N9rFBqa
+	 cyeWTdcEiHkGjmWnAQ4+PqdIss7v/rC5faUUdtvgrSBKIfUzFHlXD/BLb1Y5P+Iwtn
+	 Dm+9JdtsGuzG2cBgU5Sx+UJ2YyTLfwDlmE+nYHCVknsIVXg+YOR4SdyywciLOShV6j
+	 FsqIzluUatlkHPWYrfk6D/MsKAn65jl9ezdWI1S9csY1M6VB/f/Tnsa24lSdojVjJX
+	 5kG38VgKR0AoFKfy6Z0dsL6F03PhwxR3jgNJd/BI/HEus9uKShLrl6AkZ93Smo2OkV
+	 SzYf97dkstYHA==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: kexec@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ David Woodhouse <dwmw2@infradead.org>
+Subject: [PATCH v1 1/2] kexec_core: Fix error code path in the KEXEC_JUMP flow
+Date: Thu, 10 Jul 2025 15:10:41 +0200
+Message-ID: <2396879.ElGaqSPkdT@rjwysocki.net>
+Organization: Linux Kernel Development
+In-Reply-To: <5046396.31r3eYUQgx@rjwysocki.net>
+References: <5046396.31r3eYUQgx@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kx6t7rsvihyfkddm"
-Content-Disposition: inline
-In-Reply-To: <e8a4a821-e7e4-4bcd-a2ac-f6b684b6ceea@samsung.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+If dpm_suspend_start() fails, dpm_resume_end() must be called to
+recover devices whose suspend callbacks have been called, but this
+does not happen in the KEXEC_JUMP flow's error path due to a confused
+goto target label.
+
+Address this by using the correct target label in the goto statement in
+question.
+
+Fixes: 2965faa5e03d ("kexec: split kexec_load syscall from kexec core code")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ kernel/kexec_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -1080,7 +1080,7 @@
+ 		console_suspend_all();
+ 		error = dpm_suspend_start(PMSG_FREEZE);
+ 		if (error)
+-			goto Resume_console;
++			goto Resume_devices;
+ 		/*
+ 		 * dpm_suspend_end() must be called after dpm_suspend_start()
+ 		 * to complete the transition, like in the hibernation flows
 
 
---kx6t7rsvihyfkddm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v10 0/7] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-MIME-Version: 1.0
 
-Hello,
-
-On Thu, Jul 10, 2025 at 10:42:07AM +0200, Michal Wilczynski wrote:
-> On 7/7/25 11:48, Michal Wilczynski wrote:
-> > This patch series introduces Rust support for the T-HEAD TH1520 PWM
-> > controller and demonstrates its use for fan control on the Sipeed Lichee
-> > Pi 4A board.
-> >=20
-> > The primary goal of this patch series is to introduce a basic set of
-> > Rust abstractions for the Linux PWM subsystem. As a first user and
-> > practical demonstration of these abstractions, the series also provides
-> > a functional PWM driver for the T-HEAD TH1520 SoC. This allows control
-> > of its PWM channels and ultimately enables temperature controlled fan
-> > support for the Lichee Pi 4A board. This work aims to explore the use of
-> > Rust for PWM drivers and lay a foundation for potential future
-> > Rust based PWM drivers.
-> >=20
-> > The core of this series is a new rust/kernel/pwm.rs module that provides
-> > abstractions for writing PWM chip provider drivers in Rust. This has
-> > been significantly reworked from v1 based on extensive feedback. The key
-> > features of the new abstraction layer include:
-> >=20
-> >  - Ownership and Lifetime Management: The pwm::Chip wrapper is managed
-> >    by ARef, correctly tying its lifetime to its embedded struct device
-> >    reference counter. Chip registration is handled by a pwm::Registrati=
-on
-> >    RAII guard, which guarantees that pwmchip_add is always paired with
-> >    pwmchip_remove, preventing resource leaks.
-> >=20
-> >  - Modern and Safe API: The PwmOps trait is now based on the modern
-> >    waveform API (round_waveform_tohw, write_waveform, etc.) as recommen=
-ded
-> >    by the subsystem maintainer. It is generic over a driver's
-> >    hardware specific data structure, moving all unsafe serialization lo=
-gic
-> >    into the abstraction layer and allowing drivers to be written in 100%
-> >    safe Rust.
-> >=20
-> >  - Ergonomics: The API provides safe, idiomatic wrappers for other PWM
-> >    types (State, Args, Device, etc.) and uses standard kernel error
-> >    handling patterns.
-> >=20
-> > The series is structured as follows:
-> >  - Expose static function pwmchip_release.
-
-Is this really necessary? I didn't try to understand the requirements
-yet, but I wonder about that. If you get the pwmchip from
-__pwmchip_add() the right thing to do to release it is to call
-pwmchip_remove(). Feels like a layer violation.
-
-> [...]
-> > ---
-> > base-commit: 47753b5a1696283930a78aae79b29371f96f5bca
-
-I have problems applying this series and don't have this base commit in
-my repo.
-
-Best regards
-Uwe
-
---kx6t7rsvihyfkddm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhvu7gACgkQj4D7WH0S
-/k6idAf7BH2gWVLF3hF8BnmdLYBZ0+8XBxqy4lGLYsGxaqfaca8W4jQVBO9vRFvr
-Gyd4nJKC4VbtGYMMl643mIztR/mZg8848mNa9W1JoRdr188lvhES1WaDf8etUqgZ
-+b4rnTHlafykGwVNr8tmC/OAA+TenvcE+mEw1fHvLVhRG13MEYzzj/+hHGud3sYO
-D360+gcZxxWnPiKIU8xZV+NafY9H0iZfDqpq2ejV+qL5oCrDomxA3D658TyhZM0e
-+w3pnzIFFw0r7JBKPEAbj5tf38KFITQmARETPEaqBuztkqUy29aNCGUr1cvF0qob
-YxK1jPaHLcpSpzHpMwRdPK72MxyrOw==
-=OJd8
------END PGP SIGNATURE-----
-
---kx6t7rsvihyfkddm--
 
