@@ -1,129 +1,159 @@
-Return-Path: <linux-kernel+bounces-726081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7B9B007F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:00:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD660B007F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179341CA699E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:56:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95A017D35B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F481279DA0;
-	Thu, 10 Jul 2025 15:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F0A51022;
+	Thu, 10 Jul 2025 15:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b5cBxwJu"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZjqwG/BZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BozYFRGQ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZjqwG/BZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BozYFRGQ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EAD275B01;
-	Thu, 10 Jul 2025 15:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A4627602E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752162811; cv=none; b=Fb6QzaMESP6/0gGjoTeFLIdzXHis6cp6qDSIURp2IpKex49FnyUNwKVfO7tVnmTLcoShysasaYGLuxrhJR9gCyERKwfIY8g7LfA16f/iG8oJO8M0+01JwSBIe8Ump5yc4vLrTPQ7xJxoUGusF0N4N8rC6jqnMa8D7/650OK9nj4=
+	t=1752162827; cv=none; b=R/pd1X4KMfA7czFonvVafr9gJXpIWoYkjP2xZVQgjEGijNl59BtMhjSLyHN+3POcSF6onra6C6RdAkfUUMOOThi90sEA2h5cqFSVthW0N6xtXXjYLNMlIhZHf13hF40pcUyU2zHBiFhG9cqCirxjeQcqKrTi+C4kpMRdkD8l6F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752162811; c=relaxed/simple;
-	bh=L+rDpjUR2YolHYl/VFVujaBW6nIbrti+jFY/+WP3xwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQCJ5nqDWV7hp76sf8OBBRwI1BP9gNqLALxTmVrsFd4yiZYyagN9eJ7Dn5ms9rZEdhQd5yNaTg/BdOTFxjnXpP3CuAIobH4HTZYrQuEYBGiWehq1GRqKriEbjoVOV8QlaHxVK3vr5DenunEO5mKlck8M9TQB2izRf+3e5EdOreY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b5cBxwJu; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1TxGwpUXO8/utlTFXwknHkG6WKa5EzfB/L/x9yt1Lew=; b=b5cBxwJuWuIJVHbzLh9DToDPhW
-	8RRoNBFZOex/z42OZLcHJ6AA41zGfo26ldL6U4weFwJpD3zOeq7BBRLBArMprePiXJ9DMyfC/yDIm
-	x5j/ZXvYCHpIk5JjV/N5Jp1CSFXgSiFbs6rEJuBeHxpUlQU507R7TX4QU/HYPyV5N5pU6iPiqsj2S
-	/HLQtBefZEApEBQgXfDt4OzSdNS9dLNEUf2iHrVhzMiTCYw311mHft7efdYyEjyqcs9F4mWQ1EnC3
-	TBWzhL6d0G4TLNq4iSxirohbficjX6+NaNhERLP71UiM2HlKQFU+TjK+nV4VppGugcMQAYQnIRsfn
-	NyxO5zDg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZtaK-00000009UNl-0UqQ;
-	Thu, 10 Jul 2025 15:53:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2B120300158; Thu, 10 Jul 2025 17:53:19 +0200 (CEST)
-Date: Thu, 10 Jul 2025 17:53:19 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Tested-by : Yi Lai" <yi1.lai@intel.com>, iommu@lists.linux.dev,
-	security@kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-Message-ID: <20250710155319.GK1613633@noisy.programming.kicks-ass.net>
-References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
- <20250710135432.GO1613376@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1752162827; c=relaxed/simple;
+	bh=IkBoNhttrTtkaubDJe8GX/zJdY0BaFLFvaMb15n9VAQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e2fnW1mZn2GGdGp4eR+tAF9cJyn7PyVBwnfYF1wrBlyk1kK067Fs7jDEelLPBpeDvuqMpkT1aCe3V6tRq1kmnbj4T6IAdo50BBj/Auu/EqfuFLNymZBNGVfa/hgKE6clCWBbQfH+MnfqWbwwbhOnFFgqdx8I/y/c+FADtCknOrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZjqwG/BZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BozYFRGQ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZjqwG/BZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BozYFRGQ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0EAFF1F457;
+	Thu, 10 Jul 2025 15:53:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752162824; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=43gQc/GEYmcCJWsGfpJtKf771cWtvI+yuBklyQeWbPQ=;
+	b=ZjqwG/BZeFzEdOOkwcd9O6iVDw3kwYyHpCuNdL9HohMk1d116i6xAVmvs89qh1+KLfNU1A
+	YlHMfvIooDXkYbk4rT1yIRKvlbgEV+e2Hf86aIOld46OnbD1RBd2UC4RWwX0NauSpXbAS9
+	S37bxyN1SB/E3Vb4GI2vliJFjRKwxYw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752162824;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=43gQc/GEYmcCJWsGfpJtKf771cWtvI+yuBklyQeWbPQ=;
+	b=BozYFRGQ8dEAFQ+2NXRdq/oWbxNPw06h/d13X9oVtNCZLyuy90GjQJMPiW2S27lzeGkBrm
+	E1l/BA9cJDyUYsBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752162824; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=43gQc/GEYmcCJWsGfpJtKf771cWtvI+yuBklyQeWbPQ=;
+	b=ZjqwG/BZeFzEdOOkwcd9O6iVDw3kwYyHpCuNdL9HohMk1d116i6xAVmvs89qh1+KLfNU1A
+	YlHMfvIooDXkYbk4rT1yIRKvlbgEV+e2Hf86aIOld46OnbD1RBd2UC4RWwX0NauSpXbAS9
+	S37bxyN1SB/E3Vb4GI2vliJFjRKwxYw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752162824;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=43gQc/GEYmcCJWsGfpJtKf771cWtvI+yuBklyQeWbPQ=;
+	b=BozYFRGQ8dEAFQ+2NXRdq/oWbxNPw06h/d13X9oVtNCZLyuy90GjQJMPiW2S27lzeGkBrm
+	E1l/BA9cJDyUYsBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D4F15136CB;
+	Thu, 10 Jul 2025 15:53:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nA/FMgfib2g0UQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 10 Jul 2025 15:53:43 +0000
+Date: Thu, 10 Jul 2025 17:53:43 +0200
+Message-ID: <87o6tsvy7s.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Ahelenia =?ISO-8859-2?Q?Ziemia=F1ska?=
+ <nabijaczleweli@nabijaczleweli.xyz>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ALSA: emu10k1: fix "for/take a while" typos
+In-Reply-To: <6fvir6xkdvdu4pfo7hcv7zucaxosxjqb5t7gklovzcglnfkvc7@tarta.nabijaczleweli.xyz>
+References: <e4owjda3hf5vjc2237m3ctokey4qglfrciga6ho24bd4os5awk@tarta.nabijaczleweli.xyz>
+	<87tt3kw26n.wl-tiwai@suse.de>
+	<6fvir6xkdvdu4pfo7hcv7zucaxosxjqb5t7gklovzcglnfkvc7@tarta.nabijaczleweli.xyz>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710135432.GO1613376@noisy.programming.kicks-ass.net>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[nabijaczleweli.xyz:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-On Thu, Jul 10, 2025 at 03:54:32PM +0200, Peter Zijlstra wrote:
-
-> > @@ -132,8 +136,15 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
-> >  	if (ret)
-> >  		goto out_free_domain;
-> >  	domain->users = 1;
-> > -	list_add(&domain->next, &mm->iommu_mm->sva_domains);
-> >  
-> > +	if (list_empty(&iommu_mm->sva_domains)) {
-> > +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
-> > +			if (list_empty(&iommu_sva_mms))
-> > +				static_branch_enable(&iommu_sva_present);
-> > +			list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
-> > +		}
-> > +	}
-> > +	list_add(&domain->next, &iommu_mm->sva_domains);
-> >  out:
-> >  	refcount_set(&handle->users, 1);
-> >  	mutex_unlock(&iommu_sva_lock);
-> > @@ -175,6 +186,15 @@ void iommu_sva_unbind_device(struct iommu_sva *handle)
-> >  		list_del(&domain->next);
-> >  		iommu_domain_free(domain);
-> >  	}
-> > +
-> > +	if (list_empty(&iommu_mm->sva_domains)) {
-> > +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
-> > +			list_del(&iommu_mm->mm_list_elm);
-> > +			if (list_empty(&iommu_sva_mms))
-> > +				static_branch_disable(&iommu_sva_present);
-> > +		}
-> > +	}
-> > +
-> >  	mutex_unlock(&iommu_sva_lock);
-> >  	kfree(handle);
-> >  }
+On Thu, 10 Jul 2025 17:44:20 +0200,
+Ahelenia Ziemiañska wrote:
 > 
-> This seems an odd coding style choice; why the extra unneeded
-> indentation? That is, what's wrong with:
-> 
-> 	if (list_empty()) {
-> 		guard(spinlock_irqsave)(&iommu_mms_lock);
-> 		list_del();
-> 		if (list_empty()
-> 			static_branch_disable();
-> 	}
+> On Thu, Jul 10, 2025 at 04:28:00PM +0200, Takashi Iwai wrote:
+> > On Thu, 03 Jul 2025 20:21:29 +0200,
+> > Ahelenia Ziemiañska wrote:
+> > > 
+> > > Signed-off-by: Ahelenia Ziemiañska <nabijaczleweli@nabijaczleweli.xyz>
+> > > ---
+> > > v1: https://lore.kernel.org/lkml/h2ieddqja5jfrnuh3mvlxt6njrvp352t5rfzp2cvnrufop6tch@tarta.nabijaczleweli.xyz/t/#u
+> > Well, "awhile" is a proper word, AFAIK.
+> Yes, but these two uses are clearly typos of "a while";
+> "awhile" is used differently: you could do
+> -	/* Step 3: Wait for awhile;   XXX We can't get away with this
+> +	/* Step 3: Wait awhile;   XXX We can't get away with this
+> for example.
 
-Well, for one, you can't do static_branch_{en,dis}able() from atomic
-context...
+That may be true from the strict grammatic POV, but "for awhile" is
+seen relatively frequently and loosely perceived.
 
-Was this ever tested?
+
+Takashi
 
