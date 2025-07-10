@@ -1,88 +1,113 @@
-Return-Path: <linux-kernel+bounces-725913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB895B0056F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:39:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00DCB0056B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BB057B7148
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:37:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E1F4847D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80223273D8E;
-	Thu, 10 Jul 2025 14:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBF0273D60;
+	Thu, 10 Jul 2025 14:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GM0qSzrP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jJpIA8pu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EObSc+5f";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jJpIA8pu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EObSc+5f"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C92027056F;
-	Thu, 10 Jul 2025 14:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DBE23ABA6
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752158341; cv=none; b=MB/TCziAjsgCh4TPtZ8Oqte+ClGlcfdq3CmLYF8WayfN7O85ibgt1Etx5gy8fP73KsALAp/Tt9bbfl9o3q2+0cXL9Y/F5d0BmA6gRv0PWGKLticNZ2LKunT/2BrSce7pmlsZyufZqq7lFKFwwks3Y93V93UB01Vfkoe6GEPVIlQ=
+	t=1752158321; cv=none; b=os1KWOhaLanQr3UfkJoC1sjm7JVm2yJLqMqUhSqHcY+D+jC/v4neeijbcnHk0hL6JTcoEiS5r1l4dEg1U3pWKUOxbslk91KrUFCnrxHcNEIrYC+T+dpOwjjDymflIAp+4IWkvixalm2o8vx1xJQMFEjoiG1qiaXVgeQSJHjiFQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752158341; c=relaxed/simple;
-	bh=FD8hVarMca4aHYDMf0qBmS7TfITzJMau4Ayre3VV148=;
+	s=arc-20240116; t=1752158321; c=relaxed/simple;
+	bh=cRt7UGQZN8+4O01IcOIY28tD3US5zQZgWXkz8/KUoOY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qhvFIrPvKvBlM+1tKwe0Qz/459Tf7Tt9AvlDUDTQmlr7GdBs0BMUruL3n4wrqbyYBWPaMbvMoz+g2u89OULKsZ5R4v1itr/j9R62q7X8n6GOiVjK7NHPaYFUOtZNta1F+l3PbGdBD/JhtOZAZG1W3YM1idj4Ozc7+TK1ZZxCmPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GM0qSzrP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 99D8240E0218;
-	Thu, 10 Jul 2025 14:38:56 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id c-rCGHqZO35y; Thu, 10 Jul 2025 14:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752158333; bh=FhbZcY5GA1HryF1g3erDNl7FlLcO1gA2VNO+aaalq6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GM0qSzrPaqKMRGUThyEc5iqYKjDRCOGwtj59bGXyntk+nyyjS58AEr3xAIG3xZXGG
-	 HYq2d8ZQ/EW6IRSQ7bgaKAPLFaOHftE47UnyR4o/8D3QpsGCGh2TS2aX+f3PX9sY2r
-	 a7NivCjvxazIwOC0xwqDyJwEEmW9KRfVeOSkHgRCLvLXN/U2rpIFNFMM0l6CBaSkR6
-	 j4KxWrvCzWjWgaOtwZh1ClkHMHvIeM1/IARSorOtfBa7fhkIR07nvOwnMX87Lm8V0r
-	 csexnEvrrMed21BnEC6NnhRaHT5vW0lAjJMl9BjjBgHnT667n6oCQxOYRwhwE3Uu5T
-	 soTNNe19PMSNBeebPOToRn0taFHJBnooRFQh9FkglzmW727S0jVhL3pl1ZMoCVF0Lp
-	 miD6Qrh2dCWX5Tu5+96NY9LvZCP9g2EIw9w+mBIBEGJGAf0ochXube1cyaMSuQycBG
-	 iL7kXQBPO0g5D428rUz6VtXxJPOEW46vL8nPWI36OE1V8oksW4qZNbhpsdRTgqqZwQ
-	 NwZ29hB31MzhX/dDBlp8z97/CQKrQoDBkWDjKrKcZXNX30ZqJ6q8gOxcirqwJIoRj+
-	 ssT5CgT0HpaRbAFP7xa5gxsqaDxWZtBZJ5Rvcn+OKDBcSxD4GNn/QVQdTW+YYSmebU
-	 TNYYlFAoFk2UH3AnGMjZJ1qk=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	 Content-Type:Content-Disposition:In-Reply-To; b=JPrUVXtfNwHtdrFV68Bc0VM16ZcVN1NxfKETRDTX+XLP5HoWJ9uvSGh1aXy4WpdqN0fcdDaYdhAI9PAyvUW2DTaNuX8FBThQSg9mptfbHQRHGnueV6Z2fhPNugicObv7q5tLxIrsR1i5m01e6bEc7lFUp36rSqsc7iPtCGaieGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jJpIA8pu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EObSc+5f; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jJpIA8pu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EObSc+5f; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B41EA40E00DE;
-	Thu, 10 Jul 2025 14:38:31 +0000 (UTC)
-Date: Thu, 10 Jul 2025 16:38:26 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Kai Huang <kai.huang@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	Zheyun Shen <szy0127@sjtu.edu.cn>,
-	Mingwei Zhang <mizhang@google.com>,
-	Francesco Lavra <francescolavra.fl@gmail.com>
-Subject: Re: [PATCH v3 3/8] x86, lib: Add WBNOINVD helper functions
-Message-ID: <20250710143826.GBaG_QYo-9k2G7fvUG@fat_crate.local>
-References: <20250522233733.3176144-1-seanjc@google.com>
- <20250522233733.3176144-4-seanjc@google.com>
- <20250710112902.GCaG-j_l-K6LYRzZsb@fat_crate.local>
- <aG_GlsJWRU0fVxt4@google.com>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D2C6E21755;
+	Thu, 10 Jul 2025 14:38:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752158317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=01QWlgVhoMPFwf4Far4BayktnHTsyOPbnHlHamwLxCI=;
+	b=jJpIA8puKLamy/AoL1QJZOfLEdcVCRHXXrI2R6oAvI+7Cr+PCPCwT4KFgGqn7N6gKWvfz8
+	8drkH2l5H+oViAh1aVEVSTxpvcSyXfJbkfLUJXr7ZeBEs5Pzq31oDRk2cydN76xs2jEG8u
+	cDLcjYklsg+qiapVc0s4J+WOoJMx2Lk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752158317;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=01QWlgVhoMPFwf4Far4BayktnHTsyOPbnHlHamwLxCI=;
+	b=EObSc+5f0a5OfEmheNKT0mCuNe+AiZnXl/5+8DZiDpHZcODnwSa56VzsQeANgD+b9jEeaI
+	4qXdO3W5nCVzJ2CA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752158317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=01QWlgVhoMPFwf4Far4BayktnHTsyOPbnHlHamwLxCI=;
+	b=jJpIA8puKLamy/AoL1QJZOfLEdcVCRHXXrI2R6oAvI+7Cr+PCPCwT4KFgGqn7N6gKWvfz8
+	8drkH2l5H+oViAh1aVEVSTxpvcSyXfJbkfLUJXr7ZeBEs5Pzq31oDRk2cydN76xs2jEG8u
+	cDLcjYklsg+qiapVc0s4J+WOoJMx2Lk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752158317;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=01QWlgVhoMPFwf4Far4BayktnHTsyOPbnHlHamwLxCI=;
+	b=EObSc+5f0a5OfEmheNKT0mCuNe+AiZnXl/5+8DZiDpHZcODnwSa56VzsQeANgD+b9jEeaI
+	4qXdO3W5nCVzJ2CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C0F30136DC;
+	Thu, 10 Jul 2025 14:38:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id b1/TLm3Qb2h4OAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 10 Jul 2025 14:38:37 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 516B9A098F; Thu, 10 Jul 2025 16:38:33 +0200 (CEST)
+Date: Thu, 10 Jul 2025 16:38:33 +0200
+From: Jan Kara <jack@suse.cz>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, linux-kernel@vger.kernel.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v2 03/16] ext4: remove unnecessary s_md_lock on update
+ s_mb_last_group
+Message-ID: <6bf7irhdjrsvuodga344g2ulha52z65f2qf2l3tuldvwbb5pf6@cz7m2gypd4su>
+References: <20250623073304.3275702-1-libaokun1@huawei.com>
+ <20250623073304.3275702-4-libaokun1@huawei.com>
+ <xlzlyqudvp7a6ufdvc4rgsoe7ty425rrexuxgfbgwxoazfjd25@6eqbh66w7ayr>
+ <1c2d7881-94bb-46ff-9cf6-ef1fbffc13e5@huawei.com>
+ <mfybwoygcycblgaln2j4et4zmyzli2zibcgvixysanugjjhhh5@xyzoc4juy4wv>
+ <db4b9d71-c34d-4315-a87d-2edf3bbaff2d@huawei.com>
+ <e2dgjtqvqjapir5xizb5ixkilhzr7fm7m7ymxzk6ixzdbwxjjs@24n4nzolye77>
+ <272e8673-36a9-4fef-a9f1-5be29a57c2dc@huawei.com>
+ <kvgztznp6z2gwuujrw5vtklfbmq3arjg54bpiufmxdwmuwjliw@og7qkacbdtax>
+ <9ecfe98f-b9d5-478a-b2a5-437b452dbd58@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,18 +116,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aG_GlsJWRU0fVxt4@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9ecfe98f-b9d5-478a-b2a5-437b452dbd58@huawei.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Thu, Jul 10, 2025 at 06:56:38AM -0700, Sean Christopherson wrote:
-> Yeah, AFAIK, no reason other than consistency.  GPL it.
+On Tue 08-07-25 21:08:00, Baokun Li wrote:
+> Sorry for getting to this so late – I've been totally overloaded
+> with stuff recently.
+> 
+> Anyway, back to what we were discussing. I managed to test
+> the performance difference between READ_ONCE / WRITE_ONCE and
+> smp_load_acquire / smp_store_release on an ARM64 server.
+> Here's the results:
+> 
+> CPU: Kunpeng 920
+> Memory: 512GB
+> Disk: 960GB SSD (~500M/s)
+> 
+>         | mb_optimize_scan  |       0        |       1        |
+>         |-------------------|----------------|----------------|
+>         | Num. containers   |  P80  |   P1   |  P80  |   P1   |
+> --------|-------------------|-------|--------|-------|--------|
+>         | acquire/release   | 9899  | 290260 | 5005  | 307361 |
+>  single | [READ|WRITE]_ONCE | 9636  | 337597 | 4834  | 341440 |
+>  goal   |-------------------|-------|--------|-------|--------|
+>         |                   | -2.6% | +16.3% | -3.4% | +11.0% |
+> --------|-------------------|-------|--------|-------|--------|
+>         | acquire/release   | 19931 | 290348 | 7365  | 311717 |
+>  muti   | [READ|WRITE]_ONCE | 19628 | 320885 | 7129  | 321275 |
+>  goal   |-------------------|-------|--------|-------|--------|
+>         |                   | -1.5% | +10.5% | -3.2% | +3.0%  |
+> 
+> So, my tests show that READ_ONCE / WRITE_ONCE gives us better
+> single-threaded performance. That's because it skips the mandatory
+> CPU-to-CPU syncing. This also helps explain why x86 has double the
+> disk bandwidth (~1000MB/s) of Arm64, but surprisingly, single
+> containers run much worse on x86.
 
-Done. Tag x86_core_for_kvm on tip.
+Interesting! Thanks for measuring the data!
 
-It should appear on the mirrors soon, I hope.
+> However, in multi-threaded scenarios, not consistently reading
+> the latest goal has these implications:
+> 
+>  * ext4_get_group_info() calls increase, as ext4_mb_good_group_nolock()
+>    is invoked more often on incorrect groups.
+> 
+>  * ext4_mb_load_buddy() calls increase due to repeated group accesses
+>    leading to more folio_mark_accessed calls.
+> 
+>  * ext4_mb_prefetch() calls increase with more frequent prefetch_grp
+>    access. (I suspect the current mb_prefetch mechanism has some inherent
+>    issues we could optimize later.)
+> 
+> At this point, I believe either approach is acceptable.
+> 
+> What are your thoughts?
 
+Yes, apparently both approaches have their pros and cons. I'm actually
+surprised the impact of additional barriers on ARM is so big for the
+single container case. 10% gain for single container cases look nice OTOH
+realistical workloads will have more container so maybe that's not worth
+optimizing for. Ted, do you have any opinion?
+
+								Honza
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
