@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-725723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1FCB002EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:10:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03BB1B0031F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D244A2259
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:10:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A0297BFE56
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F687273818;
-	Thu, 10 Jul 2025 13:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D054325760;
+	Thu, 10 Jul 2025 13:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eXWmdmpr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HeKZX4sK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26CA25D21A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A10E17993
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752153007; cv=none; b=BTkYkPaJ5S/u3uADKljWjfFFekubQ6jA6j6zcYJMcjYKAS0j2rvMK/UJEXCrHKxdvGxrg2XyToJKwLrCHz2pHOHsjsgvNZvbL8+pKvQOVoBEwLuSGhJxhcm1D95ul90C94wT7tqC4vbbAsLY3Hl33JtmdQY5Krl7tVVRBdgeQ5w=
+	t=1752153320; cv=none; b=dF9+2nmJTdUbAg9NOvXLIs/w98fagdomYk1DiYdBX06pP7QMIB0f3dVpfsCv7tdndDFqH17MqbfzeFfGLs0MS2KQ2/3aBkX3obR+/8JPDcTs1zQ4/MpjVtb6EIm8uPgIXFjUwuWnegRssPyDsGIABabp7vfS/c4fMnc2ro6SRcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752153007; c=relaxed/simple;
-	bh=BSnLUzqq1N/fCh++Lm+qRdhtj/inOFyn1GHJ4Q1j+rU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IUH4qy+06ecrGQ3WBHn5V9tsWUhYU+d6rQN5KW5R4SAjioN5rBsgdUEzAQAF72omTuPccpNIVY8IbqmUahO8ZMftDBkAm7B7YyLFaxltEgatyFl08TcLbEcTjzeqlirvObhO139wiOqOlD/5pQBcCDyzk5DjDDBqn5HtO958t1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eXWmdmpr; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752153006; x=1783689006;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=BSnLUzqq1N/fCh++Lm+qRdhtj/inOFyn1GHJ4Q1j+rU=;
-  b=eXWmdmprRewa6x29RXMNGrudwL0HfOP2Awcru/lw+K+T5X6J7KK+4r65
-   c2be5PWeUFwFCBZbhON835iJ0RK0KmSsp/3ZuFzvRpjacrur//V/o3OHb
-   +FYd5SqkY339nexrPy4/vXhPTpjWDCdJUd4obFR3Lx1Q89zH85dBm7i8/
-   fn2zCVr2tVjCp2C9M+Yt9yPI773Ed2xl7Of9R/Eo+CEOr8pwryyp7BXxD
-   3xAkefUGWuerodHyaFLl5/gS8WeVg4rYhLP8SYrxSWrKM//yUv+NUxnj/
-   npQsnaYBG8D7U+WqKRF4fpuR2DFbPnTxzp9rPGjorPXnPOzhKeQrd26YL
-   Q==;
-X-CSE-ConnectionGUID: NSeWas/cQpqqQln7flmj8A==
-X-CSE-MsgGUID: kyLpKXY6Qz6FvytTzbARHQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="72017815"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="72017815"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 06:10:05 -0700
-X-CSE-ConnectionGUID: JA1fnL0aQl2n0VH6GDO2MQ==
-X-CSE-MsgGUID: vlQOJ2I7R2yKOM1vNrXcwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="161643491"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.110.230]) ([10.125.110.230])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 06:10:04 -0700
-Message-ID: <d9e9ae3a-7637-4a0b-892d-9b7c6335c1d7@intel.com>
-Date: Thu, 10 Jul 2025 06:14:20 -0700
+	s=arc-20240116; t=1752153320; c=relaxed/simple;
+	bh=pvunt5eG5jjQjrQBbk3om39+1F4Hjs2yoeH3t0iPqo4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nZNioNL2Tf2E/w6NUveW2VAz75EYAcGyJL1F44ZI+NgVnjg8yPgGERLuxDcaK+79dy4Tuvo60YrCpMrSgJk4dIBF/V0yYT5pAftuaUnq0yoOfC0XyIfeIB8ud429xPZa7/lyh8p63N/Bfj4zY8b+51DU9aGKmRIs9GUGSrkJmnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HeKZX4sK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 256FAC4CEE3;
+	Thu, 10 Jul 2025 13:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752153317;
+	bh=pvunt5eG5jjQjrQBbk3om39+1F4Hjs2yoeH3t0iPqo4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=HeKZX4sK3OuQnuSdf3xL0o30Oa3B5fsldNuYpBE/8IbNGfgcfBDtLVPNItPY8Lzj+
+	 bPMv4O+GGDFLHrLdQbzi59IHRT30uXh0T2499MEljGPtYMnEdfsDtsojRTSNVWv5tl
+	 DUIRkL3K2dfb/wU+nYcq5wbbkYQ5p8YlWYxrvO5BBjf17yM9onBlSNAmuu734fZDfS
+	 f3ftR2pHzEd8oN1/mcuV7D1ySQGCxT8sDIQbvDEfb0WqpJo0QrITKpTQAg/fQM962i
+	 upemzxKkx/sKYNPJ01/QO39piSxYOJCCGQ1tGwX5umlkYnuChVVTkvKU+/PJTpG8og
+	 h+wMe9tXVePvg==
+Message-ID: <2d772d8b-1314-4af6-b17a-b5f09acbf25b@kernel.org>
+Date: Thu, 10 Jul 2025 21:15:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,81 +49,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/build: only align ENTRY_TEXT to PMD_SIZE if
- necessary
-To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
- linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, David Woodhouse <dwmw@amazon.co.uk>,
- Guenter Roeck <linux@roeck-us.net>, Jared White <jaredwhite@microsoft.com>
-References: <1752092219-16248-1-git-send-email-hamzamahfooz@linux.microsoft.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Cc: chao@kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, Yue Hu <zbestahu@gmail.com>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale
+ <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>
+Subject: Re: [PATCH 2/2] erofs: support to readahead dirent blocks in
+ erofs_readdir()
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, xiang@kernel.org
+References: <20250710073619.4083422-1-chao@kernel.org>
+ <20250710073619.4083422-2-chao@kernel.org>
+ <8cbaa76b-f6de-4242-bd6c-629980311f4a@linux.alibaba.com>
+ <2a2e0147-355b-4863-bcd7-6a227766f7b2@kernel.org>
+ <c0e0b8ed-13b6-41a4-b978-ff4b8f5b2634@linux.alibaba.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <1752092219-16248-1-git-send-email-hamzamahfooz@linux.microsoft.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <c0e0b8ed-13b6-41a4-b978-ff4b8f5b2634@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/9/25 13:16, Hamza Mahfooz wrote:
-> PTI requires the begin and end of ENTRY_TEXT be aligned to PMD_SIZE.
-> SRSO requires srso_alias_untrain_ret to be 2M aligned. This costs
-> between 2-4 MiB of RAM (depending on the size of the preceding section).
-> So, only align when PTI is enabled or SRSO is enabled.
+On 7/10/25 16:04, Gao Xiang wrote:
+> 
+> 
+> On 2025/7/10 15:59, Chao Yu wrote:
+>> On 7/10/25 15:46, Gao Xiang wrote:
+>>> Hi Chao,
+>>>
+>>> On 2025/7/10 15:36, Chao Yu wrote:
+>>>> This patch supports to readahead more blocks in erofs_readdir(),
+>>>> it can enhance performance in large direcotry.
+>>>>
+>>>> readdir test in a large directory which contains 12000 sub-files.
+>>>>
+>>>>          files_per_second
+>>>> Before:        926385.54
+>>>> After:        2380435.562
+>>>>
+>>>> Signed-off-by: Chao Yu <chao@kernel.org>
+>>>> ---
+>>>>    fs/erofs/dir.c      | 8 ++++++++
+>>>>    fs/erofs/internal.h | 3 +++
+>>>>    2 files changed, 11 insertions(+)
+>>>>
+>>>> diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+>>>> index cff61c5a172b..04113851fc0f 100644
+>>>> --- a/fs/erofs/dir.c
+>>>> +++ b/fs/erofs/dir.c
+>>>> @@ -47,8 +47,10 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+>>>>        struct inode *dir = file_inode(f);
+>>>>        struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+>>>>        struct super_block *sb = dir->i_sb;
+>>>> +    struct file_ra_state *ra = &f->f_ra;
+>>>>        unsigned long bsz = sb->s_blocksize;
+>>>>        unsigned int ofs = erofs_blkoff(sb, ctx->pos);
+>>>> +    unsigned long nr_pages = DIV_ROUND_UP_POW2(dir->i_size, PAGE_SIZE);
+>>>>        int err = 0;
+>>>>        bool initial = true;
+>>>>    @@ -65,6 +67,12 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+>>>>            }
+>>>>            cond_resched();
+>>>>    +        /* readahead blocks to enhance performance in large directory */
+>>>> +        if (nr_pages - dbstart > 1 && !ra_has_index(ra, dbstart))
+>>>> +            page_cache_sync_readahead(dir->i_mapping, ra, f,
+>>>> +                dbstart, min(nr_pages - dbstart,
+>>>> +                (pgoff_t)MAX_DIR_RA_PAGES));
+>>>> +
+>>>>            de = erofs_bread(&buf, dbstart, true);
+>>>>            if (IS_ERR(de)) {
+>>>>                erofs_err(sb, "failed to readdir of logical block %llu of nid %llu",
+>>>> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+>>>> index a32c03a80c70..ef9d1ee8c688 100644
+>>>> --- a/fs/erofs/internal.h
+>>>> +++ b/fs/erofs/internal.h
+>>>> @@ -238,6 +238,9 @@ EROFS_FEATURE_FUNCS(xattr_filter, compat, COMPAT_XATTR_FILTER)
+>>>>    #define EROFS_I_BL_XATTR_BIT    (BITS_PER_LONG - 1)
+>>>>    #define EROFS_I_BL_Z_BIT    (BITS_PER_LONG - 2)
+>>>>    +/* maximum readahead pages of directory */
+>>>> +#define MAX_DIR_RA_PAGES    4
+>>>
+>>> Could we set it as a per-sb sysfs configuration for users to config?
+>>
+>> Xiang,
+>>
+>> Oh, that will be better, how about introducing new sysfs in separated patch?
+> 
+> Hi Chao,
+> 
+> Thanks for your interest but in that case it could cause some bisect
+> issue anyway, could we just use one patch to add this optimization
+> for slow devices?
 
-This seems so utterly random.
+Xiang,
 
-I don't think I was even aware of the SRSO restriction here. Looking
-over it now, I do see the vmlinux.lds.S changes and this does make sense.
+Yeah, one patch includes all these looks fine to me, anyway, let me update v2.
 
-But I'm really worried that we've grown more dependencies on this
-alignment. Let's say, for instance, that you forgot to address SRSO in
-this patch and the mitigation got broken. Would we have ever known?
+Thanks,
 
-I'd like to hear a lot more from you about why 2-4 MiB of RAM is
-important and what the environment is where you presumably know that
-there are no Meltdown or SRSO vulnerable CPUs.
+> 
+> Thanks,
+> Gao Xiang
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>> Gao Xiang
+>>
+> 
+
 
