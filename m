@@ -1,122 +1,155 @@
-Return-Path: <linux-kernel+bounces-725709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F22B002BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:59:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0487AB002C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3817485DB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:59:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A73471740E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DB82676C9;
-	Thu, 10 Jul 2025 12:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE134273818;
+	Thu, 10 Jul 2025 13:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="cb7lY/YZ"
-Received: from r3-22.sinamail.sina.com.cn (r3-22.sinamail.sina.com.cn [202.108.3.22])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JdhAioSf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074AF1E8333
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3472561C2;
+	Thu, 10 Jul 2025 13:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752152370; cv=none; b=PMXZE7OZdSu/yq58cFKhqRjvmh27sltgpFhYurqc/NQ5Q4Ai1haXWg3ZP7oN8NNOgWINcbePMze/aCiKZ1MbvA7d4terJhDUqusYUZC35P8k9vhIjjMJdOyeGVurYCpXkbkErPMJF8cDK5Lq7QwhjMdoSJvS+FiwjB4LRcLpX5w=
+	t=1752152465; cv=none; b=mjb6hJhnNmw6YQ/VlaSF6Xgu6AdnjHP1nC4YQTmk+UHmS+EMDe9uxm7sghUaOHnWz21h7F/oHULvIDUTv1Y3Zo6eZ2p/mEH3CfWeO7J9MxdwpKqIkquOsADsd5/49zbKBVaGCC/w56hUSwHhmCdU7wS+hgTv0xZiteqYEch+Fb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752152370; c=relaxed/simple;
-	bh=XsHWzh739R/0Xp5skEzxxJDKVO8SM2jNBB2lP1jGp7U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uHh8YdVp4OZnTBAqLfHwwTnckJuzTEHVSD3x8obYh0GZKdF2ctfTcmH5h1E/M3538kQ/xdRgkjj2DEDc16lLNduMHf+jQleBJFwlPirV5O8mrLE704InL4Ks8Vib6ly/V+miNxinkL/oIxElvpmffM9iOXYGOklLuAhUSNShRhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=cb7lY/YZ; arc=none smtp.client-ip=202.108.3.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752152364;
-	bh=Ab4CDBXxluUdrB2nvGUuJhj2mAWlYx9keOVplqD+MtY=;
-	h=From:Subject:Date:Message-ID;
-	b=cb7lY/YZmZtptRJLnNZdBEEOtSv1Zi9hDcerCuOoZZfw56pyWaTjEWJiOvlKHbyUd
-	 +JdkOdzOO/ZiYVNrzIHEOwSm+ZkO3pFZTEAlkbJpFbewksT6or1BJh9oLLustq/XTE
-	 ELZzOKKZvxx8NlOcmjzeT9cjpnVN7RTg2Jg4Exco=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 686FB92000006B99; Thu, 10 Jul 2025 20:59:14 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9454786685134
-X-SMAIL-UIID: DAD66BA7CB87410D9FCF97470C1E4A3E-20250710-205914-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: task hung in uevent_show (2)
-Date: Thu, 10 Jul 2025 20:59:01 +0800
-Message-ID: <20250710125902.3195-1-hdanton@sina.com>
-In-Reply-To: <6730056d.050a0220.320e73.031c.GAE@google.com>
-References: 
+	s=arc-20240116; t=1752152465; c=relaxed/simple;
+	bh=wGEqQWA62p5nV7uB7ZoxfjLXbRLMiAil2CE47Jfw+Rk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=dGRm1GNSAI2DGfDaygpvkp+SnpPMDpIgZi3otIt0jlxjOE8Jq4w7iz2Cz67W0u85xWxorLd/6F6d7juEGjzzvcarx4rT32XMkcTNraNXktvFN+yueXuERW2bhxseiy5nIprOFcfCiEeq4amfFPxCB/Ip2MhZ9yjq43Cx7/Sfh68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JdhAioSf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A8ntnw031906;
+	Thu, 10 Jul 2025 13:00:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Xx5gNTNCdTTUgrZFfRwKqu
+	3OzTK6EmAIpqkDvcmqi80=; b=JdhAioSfgjf9nwPEKri53hqeou4ndWPn/tEn3m
+	QB3zEjjCVPA3NhQl4WO6wDWYuE6vpHYnbNYF+cg0Wh8be2T8zmRDIuzDEAUHL5b2
+	PoEQYC+O6WMQm9zncjVm0jhSHKqa5voc1BsZCQEVy+9xh/XbKw/U5ziV56BgiDU/
+	7pBPIUHGPucKPDxL7ame65WdFV9f7pQYKKsHB29D3+tSZJjiK3IlJ8SwP+PMASAz
+	2OT+019y2c+R7wyRQIP774jIuN5j63TnsId4K4L63QmNBaVv+ynmGcHKj415DyL4
+	lm04Wb7+tKYa0f0FtCoyZXHzI4y20Psk7ShpxhnbJCriksSw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pw7qymas-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 13:00:57 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56AD0uWo001669
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 13:00:56 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 10 Jul 2025 06:00:51 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [PATCH v4 0/2] Add video clock controller DT support for sc8180x
+Date: Thu, 10 Jul 2025 18:30:38 +0530
+Message-ID: <20250710-sc8180x-videocc-dt-v4-0-07a9d9d5e0e6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHa5b2gC/33NwQ4BMRDG8VeRno3MtFXl5D3EwU67zMEu29WQz
+ b67ckGI4/9L5jeDSrGTmNRqMqguZknSNiXsdKL4sGv2ESSUVhr1HJ02kNiTxytkCbFlhtCDjWw
+ YF45qH1Q5PHWxlusT3WxLHyT1bXd7/sj0WP9ymYBgGTQhk0WHuD5fhKXhGbdH9QCzfiELpJ+IB
+ oQK56Fyjplq942Yd0T/RExBluSCtSb4nfGfyDiOdzobcpdAAQAA
+X-Change-ID: 20250623-sc8180x-videocc-dt-4ec3c0761f8d
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh
+ Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDExMSBTYWx0ZWRfX7XZhWDWyjB63
+ PmRArCswdf86hlzFaFyA9s7rohnblgICBcq5sLE/2JttR2YpFv98kzo8P8Y3qk9H98G9Vp1Y/cp
+ Ee0nkXNXaaKDcwcoUQF8uz2xWTpefZ92eKDn6ldKwKRyVPMC7Di7Mkb+gUhBfB2+6enDN1b6r1T
+ 8qQ+tl/i14RbJKwdEXQpTi05G2eZCAYrq24EIK/dta8nb8vEX4Vb2XyvkAfLGBSpKiqyEmL49L1
+ MjjhggT0pD6Xi9B6is5FKLVek9iDA6QTZLDtpmVUQw1PLItvA6y4cmOY1rlC7GU5GXU698+U2r5
+ OwMD6oyLBHLlMIQmLI2bwieY0JLwPC0wK6ST8vcndsIhpb8grB1I8muskQq77aEc9xD8IBWQOTX
+ D79HzzuX30y60eNuDso7r7FFnDln2NSTIevQ10sAuJA9rBCj0uOJ/ek/XNXQmrMz5FfaRTpO
+X-Proofpoint-GUID: 1a5FCGMJXsypirSVlOl45asG7HPcllt5
+X-Proofpoint-ORIG-GUID: 1a5FCGMJXsypirSVlOl45asG7HPcllt5
+X-Authority-Analysis: v=2.4 cv=SOBCVPvH c=1 sm=1 tr=0 ts=686fb989 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=yiBUYm-Hlfb03F32K2EA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_03,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 mlxlogscore=813 mlxscore=0 phishscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507100111
 
-> Date: Sat, 09 Nov 2024 16:59:25 -0800	[thread overview]
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    226ff2e681d0 usb: typec: ucsi: Convert connector specific ..
-> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> console output: https://syzkaller.appspot.com/x/log.txt?x=132b5e30580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=358c1689354aeef3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=592e2ab8775dbe0bf09a
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=144614e8580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=172b5e30580000
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+Changes in v4:
+- [1/2] Add 'contains' in order to match the compatible properly for
+  sc8180x.
+- Link to v3: https://lore.kernel.org/r/20250702-sc8180x-videocc-dt-v3-0-916d443d8a38@quicinc.com
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git  usb-testing
+Changes in v3:
+- Fix the yaml binding indentation warnings.
+- Link to v2: https://lore.kernel.org/r/20250701-sc8180x-videocc-dt-v2-0-b05db66cc1f6@quicinc.com
 
---- x/drivers/media/rc/imon.c
-+++ y/drivers/media/rc/imon.c
-@@ -646,15 +646,15 @@ static int send_packet(struct imon_conte
- 		pr_err_ratelimited("error submitting urb(%d)\n", retval);
- 	} else {
- 		/* Wait for transmission to complete (or abort) */
--		retval = wait_for_completion_interruptible(
--				&ictx->tx.finished);
--		if (retval) {
-+		long rc = wait_for_completion_interruptible_timeout(&ictx->tx.finished, 60*HZ);
-+		if (rc <= 0) {
- 			usb_kill_urb(ictx->tx_urb);
- 			pr_err_ratelimited("task interrupted\n");
--		}
-+			retval = rc ? -EINTR : -ETIMEDOUT;
-+		} else
-+			retval = ictx->tx.status;
- 
- 		ictx->tx.busy = false;
--		retval = ictx->tx.status;
- 		if (retval)
- 			pr_err_ratelimited("packet tx failed (%d)\n", retval);
- 	}
-@@ -1765,6 +1765,7 @@ static void usb_rx_callback_intf0(struct
- 		break;
- 
- 	default:
-+		return;
- 		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
- 			 __func__, urb->status);
- 		break;
-@@ -1806,6 +1807,7 @@ static void usb_rx_callback_intf1(struct
- 		break;
- 
- 	default:
-+		return;
- 		dev_warn(ictx->dev, "imon %s: status(%d): ignored\n",
- 			 __func__, urb->status);
- 		break;
---
+Changes in v2:
+- Introduce new compatible for sc8180x videocc and use sm8150 as
+  fallback. 
+- Add new patch to update the bindings accordingly.
+- Link to v1: https://lore.kernel.org/r/20250623-sc8180x-videocc-dt-v1-1-9d210c140600@quicinc.com
+
+---
+Satya Priya Kakitapalli (2):
+      dt-bindings: clock: qcom,videocc: Add sc8180x compatible
+      arm64: dts: qcom: sc8180x: Add video clock controller node
+
+ .../devicetree/bindings/clock/qcom,videocc.yaml    | 23 +++++++++++++---------
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi              | 15 ++++++++++++++
+ 2 files changed, 29 insertions(+), 9 deletions(-)
+---
+base-commit: 5d4809e25903ab8e74034c1f23c787fd26d52934
+change-id: 20250623-sc8180x-videocc-dt-4ec3c0761f8d
+
+Best regards,
+-- 
+Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+
 
