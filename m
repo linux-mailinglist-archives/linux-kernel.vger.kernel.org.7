@@ -1,101 +1,92 @@
-Return-Path: <linux-kernel+bounces-726342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBCA0B00C12
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0215AB00C14
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 987BB764E71
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5499C3A0551
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3DF2882DE;
-	Thu, 10 Jul 2025 19:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23932FCFCC;
+	Thu, 10 Jul 2025 19:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="1gHgW9Wy";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="HQArWaY3"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERL+5YIm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F31738DD8
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 19:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE11C72627;
+	Thu, 10 Jul 2025 19:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752175112; cv=none; b=PYLY+IIQP04lTnOOtwfgOl17WXQR+yeTtxdN9qKdVdjyxFDdbyCj3eghJzUgoa+nnAlZb7Rg0anZtMyVvm7wDSGfVi6+7As7HGpPoqxEBz7FhLOWREDWLcb48n3masUIFOSrpEZV6/UJHv+xBPYgUEjn0lytorgY8EpNtPZsEhI=
+	t=1752175152; cv=none; b=hlWCM/blpx9ltXuwqJCfS0dsMvNs0Ky/ZPlTyHZRttUxPv1AvPsrnfpPK4CN5opOZLGZy4vylZ77a+e5PHntbVSy4WqTRZAVgedSbOXNa25ZNKfOwxY9o2UlyOVJHwtTYZIMMIk+PA0k3j/w9/xdQk/gJULhGrTpF8IbEilkHmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752175112; c=relaxed/simple;
-	bh=hYWCsiLaucrRCXLWTJZUAVyVH9wiplFqSsUs/v0qq5I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YKLtY3De44esbrGwFbOohI/1zogYFCw+zcwGyYZPS/neWOqQ2y7DmZ0Sawljyig3QUlNTcO3YQAgskC3e7XULpzziJr1z9rVQO8RVfmvpfq3YnSencsu0IJPrej6iSOxH7j47WfErpJngr5xwwtj9mrE1Hk6JrmSVU1CKC4u9bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=1gHgW9Wy; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=HQArWaY3; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752175107; x=1752779907;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=yIKje5wAXurxmtbQ0lnpzvJAveEfbYFc+nB4ATz4KQM=;
-	b=1gHgW9Wy1kLa3A2keL0jvqP6rnAv+NSNxIdwUQZduELYdUaBzW3GbfL0NeLnUrHTUmYm6TyE+tj5Q
-	 hMnixWlvApGzFsyw0XbDtObJJmwAOarFEsQTnR3V9lx1r9W8mtuZI6B+kpjAkeB1Bv9d8HfFY9H4m2
-	 5yMk+aOTr1eOnesJDQ6doUdyM65ysj6qcchRHkH7MEkbpeLG4LcJXrBQJFKBXDlsVagJXPAmQs7U3y
-	 cEH2thZ8JH9qtSkkXT10BU91qSZRwPLImqQlmEoMZjRd2uGH5OdOCESI8awIjY3scoC0iX+bObh2ph
-	 HgEVlPhrPkRcIkF1lPAj0mee+fLWnmQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752175107; x=1752779907;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=yIKje5wAXurxmtbQ0lnpzvJAveEfbYFc+nB4ATz4KQM=;
-	b=HQArWaY3WmpuxBewTZ4jna2D0DGoDICP3dHMkkJD8aWwXj7GQbgWocHLwmlsPxc3ZgFbWu+m6LF22
-	 9f4BGbSBA==
-X-HalOne-ID: a754a754-5dc2-11f0-9693-85eb291bc831
-Received: from slottsdator.home (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
-	by mailrelay5.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id a754a754-5dc2-11f0-9693-85eb291bc831;
-	Thu, 10 Jul 2025 19:18:27 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v2] mm: zswap: add myself back to MAINTAINERS
-Date: Thu, 10 Jul 2025 21:18:18 +0200
-Message-Id: <20250710191818.1429309-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1752175152; c=relaxed/simple;
+	bh=/VNtHzWlVrFxJTK4M067LDtmq1dxJcucRkdoJjYxRCk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=qwxjzvX6ffOkgc6q+BYD+h3wVuEUUyuN2noPTV3nw8RFVH0nE57gG/ySJwy6cibTxobcprfoSMCqZrJSABs1aoYBSf3VeYZ6FjQ0VvjxDbsO15NoEom4RngDJcOFVTQcJCaWFh1VgjYwG7NgVeg3E/OkTUs5DX625AoZGxQDz9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERL+5YIm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE1D7C4CEE3;
+	Thu, 10 Jul 2025 19:19:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752175151;
+	bh=/VNtHzWlVrFxJTK4M067LDtmq1dxJcucRkdoJjYxRCk=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=ERL+5YIm3WTY0Zy50rcfb2NunzB8IZCbwrOyu4jzokTU8g2PLzonM/IZ2MH382fKr
+	 PN7umPn5jx+3KbogFUTk7cPLGjDIwhV6tF8KsjLeF5VrPKn+KCZ1OPe0cQGNssiKUe
+	 KeVh+PN94mbNcx9V9T4l3XsLLqi3X/eeZ7Fs0r8uNEh3pNpNo8yEacEwWNnrxLVkR5
+	 ASUbv5sVAemo3O8WB57d9+/ryc5jASLLJfuLiFFAJh8qN+D/PAWNpH2QzDCKb6jbKj
+	 chOs6L0QDpcZf8mIb6dRw4RcPHvgYRglYPhRa9nmWZui+mQkD4xmQyYxEcCWjomTV2
+	 Z4lH41NcWaUMQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Jul 2025 21:19:05 +0200
+Message-Id: <DB8M91D7KIT4.14W69YK7108ND@kernel.org>
+Cc: "Andreas Hindborg" <a.hindborg@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
+ Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>, "Will
+ Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>, "Mark
+ Rutland" <mark.rutland@arm.com>, "Wedson Almeida Filho"
+ <wedsonaf@gmail.com>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude
+ Paul" <lyude@redhat.com>, "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Alan Stern" <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 3/9] rust: sync: atomic: Add ordering annotation
+ types
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-4-boqun.feng@gmail.com>
+ <4Ql5DIvfmXBHoUA428q2PelaaLNBI5Mi0jE3y3YPObJLRgY73zNZzQ8Pdl2qq25VWsMQFKUpYRHHQ1e7wFaGUw==@protonmail.internalid> <DB8BTA477Z2V.1J7XFLDXHMN2S@kernel.org> <87v7o0i7b8.fsf@kernel.org> <aG_RcB0tcdnkE_v4@Mac.home> <DB8GUTJA9QU1.X112WTV7ABZN@kernel.org> <aG_i1aQhkBa6k8JZ@Mac.home>
+In-Reply-To: <aG_i1aQhkBa6k8JZ@Mac.home>
 
-It's been a while since I was one of zswap mainainers but nevertheless
-I'd like to get back on board. There are some things in the pipeline
-related to zswap/zpool and Rust integration that I'd like to submit in
-close future and maintain thereafter.
+On Thu Jul 10, 2025 at 5:57 PM CEST, Boqun Feng wrote:
+> On Thu, Jul 10, 2025 at 05:05:25PM +0200, Benno Lossin wrote:
+>> If it were something private, then sure use `Any`, but since this is
+>> public, I don't think `Any` is a good name.
+>>=20
+>
+> This essentially means we keyword `Any` as a public trait name, then we
+> should document it somewhere, along with other names we want to keyword.
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+Then let's restrict `Any`.
+
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9dd4111d7d96..f3bfbfa27fce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -27474,6 +27474,7 @@ ZSWAP COMPRESSED SWAP CACHING
- M:	Johannes Weiner <hannes@cmpxchg.org>
- M:	Yosry Ahmed <yosry.ahmed@linux.dev>
- M:	Nhat Pham <nphamcs@gmail.com>
-+M:	Vitaly Wool <vitaly.wool@konsulko.se>
- R:	Chengming Zhou <chengming.zhou@linux.dev>
- L:	linux-mm@kvack.org
- S:	Maintained
--- 
-2.39.2
-
+Cheers,
+Benno
 
