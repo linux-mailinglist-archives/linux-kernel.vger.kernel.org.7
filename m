@@ -1,300 +1,123 @@
-Return-Path: <linux-kernel+bounces-726593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358A5B00F0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:51:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B4EB00F0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57B813A4537
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:50:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FE6E1CA8282
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894D328FFC6;
-	Thu, 10 Jul 2025 22:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDA329AB16;
+	Thu, 10 Jul 2025 22:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E6fbpKKz"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cAx0cX8F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC70241AAC
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCF31D432D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752187860; cv=none; b=pZciroV9/vvJyLihP6+C7UiJmE3xICgExD8ZYOrtm/hCCfV0pxXiYvyadbHaCP/dBlPjEpRFxrmXFBGKVCDGMoIXXCmhaePtMTjiI0/tV4r6Gej51aysgNRrOUOHR+iEIMTz/Gc8SFEMlyRsDcUmBEWqYVhgFfaMuJhA/UiGCJ0=
+	t=1752187914; cv=none; b=cdCBgcScU47+Bxbjn0T9xba2C7B9ydyiNMK8i70JR1gp/zThBVUGToHMbj6FJgrE0KKxojUhIZj7xMPb1hvIXMvHIcOTPJlYcPVTuWagtwm3qZvuZw08ZW4FO76DF75cdPBt6zxJEzz5IkQ79sEmcGjKXeTQ3X22r+HzM1NYv5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752187860; c=relaxed/simple;
-	bh=+EolrvCVJsFGGB9pFMRheCmv0qBdUlfl2FkBbq662Nk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k1yPvzw66Pj99kpaT/DPXG5lplzFbrxnGHmrwZuVuOYPAkxcDMWNUTGyY7NxBLRE2pgCFxu0hsNlPjA5LCe3KKcR19paOtFFB77El2ekS7MVmuYRjsPb7Y6+MEyaoQo2jRuDWvPS73lU0PYNxcuU1N55OnsKcqnjyAupE8r4ySY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E6fbpKKz; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c84518eb-15da-4356-ac6a-b2fcb807d92f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752187844;
+	s=arc-20240116; t=1752187914; c=relaxed/simple;
+	bh=uVeKJ8xBsRpkVuE4Q1BZswrNSbyNWSh8okxEnyGwfCc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uzZxUevH09m2RzB/y0/j5goOKemYoGANFFt/Y9YmG9hfdZsJ3R99Q8HJQUMdTJUmB2JPSnJO/ht37Jk/8YIec3ig3zwtVpUTPcafA6utMefFWj2QqOt9Rco5kIYXROHqOMF01bry0Dqd4Oczi15QsiyvkfqGiQ0X24ihWkhwigY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cAx0cX8F; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752187910;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gDk3n0e7IoK91zimJgnk+Q43ItNaULOpQqxSFl9TmHE=;
-	b=E6fbpKKz5TX6tsE+IXiP58sPW/EBymDyIjaWwOuxFLX8cq5HIH4bs5FsCVSJntzLmRKkVI
-	o78aYFySVzOte86DEiYk5ls60zLdKeL+zOC5GFw0ZlwaCzgz76rtz94oOs7B2ndkXXPSJ4
-	STjBmmTGW+8VyEXz0EJgwfA7rMwi65M=
-Date: Thu, 10 Jul 2025 18:50:16 -0400
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=O+Z1wrgBsDAZ+dNtmePreRESpDdntk9BeBWI/zMXSEo=;
+	b=cAx0cX8Fh8N3VWvWhFjU4cU/MfaFyVf7fuyIrT6VzUrszwCK3usWzaowf0PptKGoN7OAVx
+	bG55Xgj+9GmSqrud6PS9M6g3hbrsGmWS0cAW1JnOWdjAoXngwlGop7FvbbOoDVdsX1hLy1
+	srInyNz9yieoF0nV9sa71tMxfQDBHTM=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-538-2VNQnW15N4qoYaGp6dKjUw-1; Thu,
+ 10 Jul 2025 18:51:47 -0400
+X-MC-Unique: 2VNQnW15N4qoYaGp6dKjUw-1
+X-Mimecast-MFC-AGG-ID: 2VNQnW15N4qoYaGp6dKjUw_1752187905
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1868219560AD;
+	Thu, 10 Jul 2025 22:51:45 +0000 (UTC)
+Received: from chopper.lyude.net (unknown [10.22.88.104])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DEE76195607A;
+	Thu, 10 Jul 2025 22:51:40 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: rust-for-linux@vger.kernel.org
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] rust: time: Pass correct timer mode ID to hrtimer_start_range_ns
+Date: Thu, 10 Jul 2025 18:51:13 -0400
+Message-ID: <20250710225129.670051-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC] comparing the propesed implementation for standalone PCS
- drivers
-To: Simon Horman <horms@kernel.org>
-Cc: Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Russell King <linux@armlinux.org.uk>,
- Vineeth Karumanchi <vineeth.karumanchi@amd.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, linux-kernel@vger.kernel.org,
- Kory Maincent <kory.maincent@bootlin.com>,
- Christian Marangi <ansuelsmth@gmail.com>, Lei Wei <quic_leiwei@quicinc.com>,
- Michal Simek <michal.simek@amd.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Robert Hancock <robert.hancock@calian.com>, John Crispin <john@phrozen.org>,
- Felix Fietkau <nbd@nbd.name>, Robert Marko <robimarko@gmail.com>
-References: <aEwfME3dYisQtdCj@pidgin.makrotopia.org>
- <24c4dfe9-ae3a-4126-b4ec-baac7754a669@linux.dev>
- <20250709135216.GA721198@horms.kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20250709135216.GA721198@horms.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 7/9/25 09:52, Simon Horman wrote:
-> On Fri, Jun 13, 2025 at 12:06:23PM -0400, Sean Anderson wrote:
->> On 6/13/25 08:55, Daniel Golle wrote:
->> > Hi netdev folks,
->> > 
->> > there are currently 2 competing implementations for the groundworks to
->> > support standalone PCS drivers.
->> > 
->> > https://patchwork.kernel.org/project/netdevbpf/list/?series=970582&state=%2A&archive=both
->> > 
->> > https://patchwork.kernel.org/project/netdevbpf/list/?series=961784&state=%2A&archive=both
->> > 
->> > They both kinda stalled due to a lack of feedback in the past 2 months
->> > since they have been published.
->> > 
->> > Merging the 2 implementation is not a viable option due to rather large
->> > architecture differences:
->> > 
->> > 				| Sean			| Ansuel
->> > --------------------------------+-----------------------+-----------------------
->> > Architecture			| Standalone subsystem	| Built into phylink
->> > Need OPs wrapped		| Yes			| No
->> > resource lifecycle		| New subsystem		| phylink
->> > Supports hot remove		| Yes			| Yes
->> > Supports hot add		| Yes (*)		| Yes
->> > provides generic select_pcs	| No			| Yes
->> > support for #pcs-cell-cells	| No			| Yes
->> > allows migrating legacy drivers	| Yes			| Yes
->> > comes with tested migrations	| Yes			| No
->> > 
->> > (*) requires MAC driver to also unload and subsequent re-probe for link
->> > to work again
->> > 
->> > Obviously both architectures have pros and cons, here an incomplete and
->> > certainly biased list (please help completing it and discussing all
->> > details):
->> > 
->> > Standalone Subsystem (Sean)
->> > 
->> > pros
->> > ====
->> >  * phylink code (mostly) untouched
->> >  * doesn't burden systems which don't use dedicated PCS drivers
->> >  * series provides tested migrations for all Ethernet drivers currently
->> >    using dedicated PCS drivers
->> > 
->> > cons
->> > ====
->> >  * needs wrapper for each PCS OP
->> >  * more complex resource management (malloc/free) 
->> >  * hot add and PCS showing up late (eg. due to deferred probe) are
->> >    problematic
->> >  * phylink is anyway the only user of that new subsystem
->> 
->> I mean, if you want I can move the whole thing to live in phylink.c, but
->> that just enlarges the kernel if PCSs are not being used. The reverse
->> criticism can be made for Ansuel's series: most phylink users do not
->> have "dynamic" PCSs but the code is imtimately integrated with phylink
->> anyway.
-> 
-> At the risk of stating the obvious it seems to me that a key decision
-> that needs to be made is weather a new subsystem is the correct direction.
->
-> If I understand things correctly it seems that not creating a new subsystem
-> is likely to lead to a simpler implementation, at least in the near term.
+While rebasing rvkms I noticed that timers I was setting seemed to have
+pretty random timer values that amounted slightly over 2x the time value I
+set each time. After a lot of debugging, I finally managed to figure out
+why: it seems that since we moved to Instant and Delta, we mistakenly
+began passing the clocksource ID to hrtimer_start_range_ns, when we should
+be passing the timer mode instead. Presumably, this works fine for simple
+relative timers - but immediately breaks on other types of timers.
 
-It's really more of an unusual PCS driver with some routines for
-registering and looking up devices. I would like to note that Ansuel's
-approach has those same registration and lookup functions.
+So, fix this by passing the ID for the timer mode instead.
 
-> While doing so lends itself towards greater flexibility in terms of users,
-> I'd suggest a cleaner abstraction layer, and possibly a smaller footprint
-> (I assume space consumed by unused code) for cases where PCS is not used.
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Fixes: fcc1dd8c8656 ("rust: time: Make HasHrTimer generic over HrTimerMode")
+---
+ rust/kernel/time/hrtimer.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think the greatest strength of my implementation is its clean
-interface. The rest of phylink doesn't know or care whether the PCS is a
-traditional one (tied to the lifetime of the netdev) or whether it is
-dynamically looked up. 
+diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+index 8818775afaf69..e227fa95ab05c 100644
+--- a/rust/kernel/time/hrtimer.rs
++++ b/rust/kernel/time/hrtimer.rs
+@@ -398,7 +398,7 @@ unsafe fn start(this: *const Self, expires: <Self::TimerMode as HrTimerMode>::Ex
+                 Self::c_timer_ptr(this).cast_mut(),
+                 expires.as_nanos(),
+                 0,
+-                <Self::TimerMode as HrTimerMode>::Clock::ID as u32,
++                <Self::TimerMode as HrTimerMode>::C_MODE as u32
+             );
+         }
+     }
 
-> On the last point, I do wonder if there are other approaches to managing
-> the footprint. And if so, that may tip the balance towards a new subsystem.
-> 
-> 
-> Another way of framing this is: Say, hypothetically, Sean was to move his
-> implementation into phylink.c. Then we might be able to have a clearer
-> discussion of the merits of each implementation. Possibly driving towards
-> common ground. But it seems hard to do so if we're unsure if there should
-> be a new subsystem or not.
+base-commit: d4b29ddf82a458935f1bd4909b8a7a13df9d3bdc
+-- 
+2.50.0
 
-I really think it's just cosmetic. For example, in my implementation we have
-
-/* pcs/core.c */
-static void pcs_get_state(struct phylink_pcs *pcs, unsigned int neg_mode,
-			  struct phylink_link_state *state)
-{
-	struct pcs_wrapper *wrapper = pcs_to_wrapper(pcs);
-	struct phylink_pcs *wrapped;
-
-	guard(srcu)(&pcs_srcu);
-	wrapped = srcu_dereference(wrapper->wrapped, &pcs_srcu);
-	if (wrapped)
-		wrapped->ops->pcs_get_state(wrapped, neg_mode, state);
-	else
-		state->link = 0;
-}
-
-/* phylink.c */
-static void phylink_mac_pcs_get_state(struct phylink *pl,
-				      struct phylink_link_state *state)
-{
-	struct phylink_pcs *pcs;
-
-	/* ... snip ... */
-
-	pcs = pl->pcs;
-	if (pcs)
-		pcs->ops->pcs_get_state(pcs, pl->pcs_neg_mode, state);
-	else
-		state->link = 0;
-}
-
-and that would turn into
-
-/* phylink.c */
-static void phylink_mac_pcs_get_state(struct phylink *pl,
-				      struct phylink_link_state *state)
-{
-	struct pcs_wrapper *wrapper = pcs_to_wrapper(pcs);
-	struct phylink_pcs *pcs;
-
-	/* ... snip ... */
-	
-	guard(srcu)(&pcs_srcu);
-	if (pl->pcs->ops == &pcs_wrapper_ops)
-		pcs = srcu_dereference(wrapper->wrapped, &pcs_srcu);
-	else
-		pcs = pl->pcs;
-
-	if (pcs)
-		pcs->ops->pcs_get_state(pcs, pl->pcs_neg_mode, state);
-	else
-		state->link = 0;
-}
-
-and TBH I like the former much better since we avoid special-casing the
-wrapper stuff. We still have to do the wrapper stuff because the MAC
-owns the PCS and we can't prevent it from passing phylink a stale PCS
-pointer. Now, we could make phylink own the PCS, but that means going
-with Ansuel's approach. And the main problem phylink owning the PCS is
-that it complicates lookup for existing MACs that need to accomodate a
-variety of nonstandard ways of looking up a PCS for backwards-
-compatibility. The only real way to do it is something like
-
-/* In mac_probe() or whatever */
-scoped_guard(mutex)(&pcs_remove_lock) {
-	/* Just imagine some terrible contortions for compatibility here */
-	struct phylink_pcs *pcs = pcs_get(dev, "my_pcs");
-	if (IS_ERR(pcs))
-		return PTR_ERR(pcs);
-
-	list_add(pcs->list, &config.pcs_list);
-	ret = phylink_create(config, dev->fwnode, interface,
-			     &mac_phylink_ops);
-	if (ret)
-		return ret;
-}
-/* At this point the PCS could have already been removed */
-
-but even then the MAC has no idea how to mux the correct PCS. If you
-have more than one dynamically-looked-up PCS they can't be
-differentiated because they are both opaque pointers that may point to
-stale memory at any time.
-
-This is why I favor a wrapper approach because we can allocate some
-memory that's tied to the lifetime of the MAC rather than the lifetime
-of the PCS. Then we don't have to worry about whether the PCS is still
-valid and we can get on with our lives.
-
---Sean
-
->> > phylink-managed standalone PCS drivers (Ansuel)
->> > 
->> > pros
->> > ====
->> >  * trivial resource management
->> 
->> Actually, I would say the resource management is much more complex and
->> difficult to follow due to being spread out over many different
->> functions.
->> 
->> >  * no wrappers needed
->> >  * full support for hot-add and deferred probe
->> >  * avoids code duplication by providing generic select_pcs
->> >    implementation
->> >  * supports devices which provide more than one PCS port per device
->> >    ('#pcs-cell-cells')
->> > 
->> > cons
->> > ====
->> >  * inclusion in phylink means more (dead) code on platforms not using
->> >    dedicated PCS
->> >  * series does not provide migrations for existing drivers
->> >    (but that can be done after)
->> >  * probably a bit harder to review as one needs to know phylink very well
->> > 
->> > 
->> > It would be great if more people can take a look and help deciding the
->> > general direction to go.
->> 
->> I also encourage netdev maintainers to have a look; Russell does not
->> seem to have the time to review either system.
->> 
->> > There are many drivers awaiting merge which require such
->> > infrastructure (most are fine with either of the two), some for more
->> > than a year by now.
->> 
->> This is the major thing. PCS drivers should have been supported from the
->> start of phylink, and the longer there is no solution the more legacy
->> code there is to migrate.
-> 
-> This seems to be something we can all agree on :)
 
