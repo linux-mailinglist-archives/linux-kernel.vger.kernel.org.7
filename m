@@ -1,72 +1,128 @@
-Return-Path: <linux-kernel+bounces-725736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28C1B0030C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:13:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6223B002E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBB0A1C4391E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:14:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C374D1738BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2E62E7BBF;
-	Thu, 10 Jul 2025 13:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAEB28725D;
+	Thu, 10 Jul 2025 13:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SeKNo4Pn"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fkKybojH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6959273818;
-	Thu, 10 Jul 2025 13:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377411DC9A3;
+	Thu, 10 Jul 2025 13:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752153181; cv=none; b=XG0Vz7TIOam4Men5GiXbY52661a1Gyo3eiCUcL/h4L/hMK4c4AbS8ijZmeyysKea38rVqouN/+AR5hdnskz5j5HJ+v6U9N+6c2vDFaN2aGX8rnTtUtLPSQvhlC7+haN7uZBZ3IHhKhltDMb+JQLioIb/+jUqqZsOt0aspY/iR/I=
+	t=1752152963; cv=none; b=TdMMJ9IaFIMIviO1N7AWr6GVCWQLygdeFNVxxYrzBxi9J1zkkKK2FuAxLdcK2EDwy6/XKUueuJy4aE/cSAgIgkEbhvUwxi0kj/ktrGUDdwYstS+86UOcycqR6OdU9cEqevsn7S1JLSNXOZ96CBr7z9QOhjLueAfDgjBthZXtKX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752153181; c=relaxed/simple;
-	bh=G7DcbmMqL58QSRYvjU6ux4tXv5N0M2pspqDuxfXvmwI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HFTP4IYV+MurMDJgWErEhIBq/WdovIL9dqqj+GCs2Ljnlw0FXpJFtqiHWYRpzT+oA0bsaFzit4ktgzXJ+sfVMtTJgTCHon1xw5BgxcCMCbIkEGmGS2tkoyT1Kw0IsW51WRd4rwnKFpePySFf960/BBojbrajgJBLj8H8XuxbnA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SeKNo4Pn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3EABC4CEED;
-	Thu, 10 Jul 2025 13:12:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752153181;
-	bh=G7DcbmMqL58QSRYvjU6ux4tXv5N0M2pspqDuxfXvmwI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SeKNo4PnRUeD1IItr4pG0/AKI2v46qPG5UEB0UWIikDIyYgIjSSn6wB0nrpxB7UVp
-	 CLqTZahoWQ32TjMjoaTaPzL9mPvsUj053OB3u8GnYFcHqWlh6KavJRs2VlDGMg0EjD
-	 fqvag2hAkjGHtUWceQHTuiSJJwX0syKisP3CFCy9oPr2+S+i67zheIwi6sk1AryxaV
-	 g9flzqa+nsX4u+HT9Ljbf/rH3M1aMlYl0VbytabwmsOTsBjXeQryFbOacPqti2eX1d
-	 ZclD4LEXw5H02FGEwezHxKZRIg7sIOVVccaLO4f1ntUIMDv9GKCL+I3DHgtDi8ohTK
-	 3dK9Q0eVyPrFQ==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: kexec@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- David Woodhouse <dwmw2@infradead.org>
-Subject: [PATCH v1 0/2] kexec_core: Fix and cleanup for the KEXEC_JUMP flow
-Date: Thu, 10 Jul 2025 15:08:58 +0200
-Message-ID: <5046396.31r3eYUQgx@rjwysocki.net>
-Organization: Linux Kernel Development
+	s=arc-20240116; t=1752152963; c=relaxed/simple;
+	bh=aVJI3YGqiyP4dgHE0xW7hMbGBdmM1uJRcRjZGkNUOco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OB60JwQDRp8opgWYj1ugv9T5cJ7NEdmZMnn3YaM8eroVXBfx+1+lFp4pXS3VqhujoWiR4khj8/9NGa0ho6YvwXXkuURjuTm4n5eHo7vB6dlLEjaLv4bKMx7Sv9gRop7oQqmwj7RfLEpTV+NUNnZ1Uj+YvnWZEa7MvDDJ6kNZo4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fkKybojH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6742AC4CEE3;
+	Thu, 10 Jul 2025 13:09:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752152962;
+	bh=aVJI3YGqiyP4dgHE0xW7hMbGBdmM1uJRcRjZGkNUOco=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fkKybojHJPRa5y3uHhmoR9eXKXBDf+N/z0/WnpoGb47ABPkdj2QoKkt6EPM7/0u7+
+	 MWv/onIO98v1tbty8kXEekD4qQBeHv/ZaZzWzemcwdY+szSwe7TYVIbU1sRuWtBWl6
+	 b1ZLCK1af8fIqGG0c/z3oWma31mcYHCMFeS3RUbU=
+Date: Thu, 10 Jul 2025 15:09:20 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "Heyne, Maximilian" <mheyne@amazon.de>
+Cc: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	"Sauerwein, David" <dssauerw@amazon.de>,
+	Sasha Levin <sashal@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RESEND PATCH 5.10] fs/proc: do_task_stat: use
+ __for_each_thread()
+Message-ID: <2025071044-bunt-sister-9d9e@gregkh>
+References: <20250710-dyne-quaff-a6577749@mheyne-amazon>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710-dyne-quaff-a6577749@mheyne-amazon>
 
-Hi Everyone,
+On Thu, Jul 10, 2025 at 12:35:43PM +0000, Heyne, Maximilian wrote:
+> From: Oleg Nesterov <oleg@redhat.com>
+> 
+> [ Upstream commit 7904e53ed5a20fc678c01d5d1b07ec486425bb6a ]
+> 
+> do/while_each_thread should be avoided when possible.
+> 
+> Link: https://lkml.kernel.org/r/20230909164501.GA11581@redhat.com
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Stable-dep-of: 7601df8031fd ("fs/proc: do_task_stat: use sig->stats_lock to gather the threads/children stats")
+> Cc: stable@vger.kernel.org
+> [mheyne: adjusted context]
+> Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+> ---
+> 
+> Compile-tested only.
+> We're seeing soft lock-ups with 5.10.237 because of the backport of
+> commit 4fe85bdaabd6 ("fs/proc: do_task_stat: use sig->stats_lock to
+> gather the threads/children stats").
 
-These two patches fix an error code path issue in the KEXEC_JUMP flow (patch
-[1/2]) and clean it up a bit afterward (patch [2/2]).
+And this fixes it?
 
-Please see patch changelogs for details.
+How?
 
-Thanks!
+> 
+> ---
+>  fs/proc/array.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/proc/array.c b/fs/proc/array.c
+> index 8fba6d39e776..77b94c04e4af 100644
+> --- a/fs/proc/array.c
+> +++ b/fs/proc/array.c
+> @@ -512,18 +512,18 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+>  		cgtime = sig->cgtime;
+>  
+>  		if (whole) {
+> -			struct task_struct *t = task;
+> +			struct task_struct *t;
+>  
+>  			min_flt = sig->min_flt;
+>  			maj_flt = sig->maj_flt;
+>  			gtime = sig->gtime;
+>  
+>  			rcu_read_lock();
+> -			do {
+> +			__for_each_thread(sig, t) {
+>  				min_flt += t->min_flt;
+>  				maj_flt += t->maj_flt;
+>  				gtime += task_gtime(t);
+> -			} while_each_thread(task, t);
+> +			}
 
+Ideally, the code generated here should be identical as before, so why
+is this change needed?
 
+confused,
 
+greg k-h
 
