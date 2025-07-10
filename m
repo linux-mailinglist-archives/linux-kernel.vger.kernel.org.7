@@ -1,147 +1,205 @@
-Return-Path: <linux-kernel+bounces-724665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897F2AFF59A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:19:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15372AFF5A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBE204A4A03
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:19:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D46031C24D7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11F8B661;
-	Thu, 10 Jul 2025 00:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31D713AD26;
+	Thu, 10 Jul 2025 00:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSt5x58k"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="DYjoVkqB"
+Received: from spam.coasia.com (mail2.coasia.com [112.168.119.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC582576;
-	Thu, 10 Jul 2025 00:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BD7B661
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=112.168.119.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752106775; cv=none; b=VQy6Txlv1Lm//jVXbKHXH7rlfti5xlFlGQ/dkbh6/pC9uAJzTZlKm0d0iy/zqIEJuG/I+ZTqhFv4cBDbUpoX8DYX32LYwoLXuW6RAlFxLWmpwpzM5QxF7hHwp3VQVn/f9U7MpPQGVHeBo2W1zHmGelTFIV2GYXpxmYSXqyXjuA0=
+	t=1752106860; cv=none; b=edBzWnMNkEnun+GDmGqFZTHGyXpkuplB3kuA4gVgCz5+9ZGez7qf7DY3OjNpPwowM1BBPK8lw1ShusVVt5FsIOaOFRRjsznVa1/NVddAMZvd3tm0ZM+gWzBLk4bE6YHxNUKVqSQs42CxwBtsx/sNxBRdzNxIf87lIaMUQYa8W4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752106775; c=relaxed/simple;
-	bh=JmOsx5cBItV32FNWImzlQTBoy6p+tMlQ3/JbFRpfLZk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TbQz30DC6M9W97ST5VQNbBaZvxvTguosrnSbCWGculzfDVVwFobGqFwTOgNMzGdP3SAdSQ4X3lIXLIuO/i0EaklL2Uqg1oBdXo27WgjskU47QHo5sTHvEIkUMr2n9ITvmBZe87p3LkaGWWWUtnZKiWNqMtKIMKeF041wtWgIJbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSt5x58k; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a531fcaa05so233172f8f.3;
-        Wed, 09 Jul 2025 17:19:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752106772; x=1752711572; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ji7e37qngWvjbl+0kQwPCSQJoUjgF+G1Qx/ETbmkYcI=;
-        b=GSt5x58k3UvybWtYT6epK/Yd3eBrskkvDDB/EFp1LVtTXITgC+kKWRoTTIRQw4Aqa3
-         VVqCwRMA0O73U76mi5aRJ1xBX3hrZ76lPcahLCZlQLe5tQXkxcwLGQpv9orItIsUTcI6
-         1ENa4vd+3E664cV7SZFt2U+T+S1CgW8SIKzmKtNwQavySGU82OLt4yuW5EddYxo0RWWt
-         Ajw7DV4P3IUnIH9p357yUkhAlUk1B784SFLyGL8nTytuypcIfuLeh5M+DnyPA2MynCLR
-         f+13Ir23fQJJXRdY3fnykszFJ8Z3lFbJ/g9lSuLqSNAVkFNJW0YZ8qdxFKBC853uRWbj
-         VP5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752106772; x=1752711572;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ji7e37qngWvjbl+0kQwPCSQJoUjgF+G1Qx/ETbmkYcI=;
-        b=au28e2QDjYbpxaGrf6ox28S+M+hCDb7Uy5QCyOnqfZs58Auru3XgMGG9k+4VIeoFnc
-         Wqx4iERyzDJe3MPXIFWuGyhUI3jFnRtxROjlWGpWb6vYOP1hHh0ne9qqUSQr3Dad5f+j
-         G4HNnOnzGifDSKZrxKCYA5ApV6wFa6B8DfDC+u58VHZpPXOQ6h8eXMW0bAHf6HhJeifk
-         tdf7H19P4kfvsJfZLC9kaAjuYL/HrkjDAg2PewuVBVxADRUm0UwDV18v2eGmwCF0NDjA
-         ppW+gS2vdlbXi2l9GwQnQUD3kEkHfPfEG9Sl7l8kNv4WkUqUXq8X2A644lAo3sC0ZDDh
-         0z5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5OKfA9O/LCh3Dp4JECjQNwwwpmYZBLQDo6ARb1LkkK2JfV57RLv6+pU2OKhLfVUHADNVyR6o/CV16kt2S79F7@vger.kernel.org, AJvYcCW7Vxzh/Z8e/jt9sDKJN9IFfdCcxQ6urQQU8T9I5j4kzDpTrw0+Tb3pYS/HpVQN1uIA/OEQXVA9GKgvbVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySCChgPeUsvvCb1z5esBkQpKq4WWVNRr/WFoKCf+x706TvzKEV
-	OGkEp9gBXP1An7hCM2juasI4/dJytc6/YwuuNBgddtMd3kIqWFo9Nu2b
-X-Gm-Gg: ASbGncvy0EUSz3tAqQmpoVLy6NsCzXXFwKNV++OMkT8JCxVnY9pLgKP8v71V4uDazn1
-	40JGx82XbZSwrvaeXoiI1ZpVSVK4goyiN2FnEgwUJmEkHLdcnTOas+R3IWOqdyXV6Wn4RjmNHQp
-	eXDIk0R1BrSJKezfGihaId6fEMni535t4DcufFKGOJ6cKlgY0ItCVAKnI7xYAYqkC6j15wPJUHa
-	xW7t1nCRUtH+HUAQ2IwARjuj01bj1DSNByliNNwEsJZxBuSdNe4wOSZN+LYAJyxh+gq6ABhcBa6
-	iJUSLXmCgxZa9Mzroo5W+Ng837CWE/QbneguH9/aUx3t7SV2G+uCOd9B2DoLc5DRcunXxmDCMKs
-	yF9AKAnWv7OpbYyzSjKEg+05+z10fJxgwmMu2GIoLq2pllA==
-X-Google-Smtp-Source: AGHT+IF2zfYiETZK/hwApSPfG1ch573CkkficunrtEPCOTlBj/gs+csdtyHjkL7czN7gu/UA45Izww==
-X-Received: by 2002:a05:6000:2008:b0:3a5:8a09:70b7 with SMTP id ffacd0b85a97d-3b5e86bbb56mr454001f8f.38.1752106771498;
-        Wed, 09 Jul 2025 17:19:31 -0700 (PDT)
-Received: from alessandro-pc.station (net-2-37-207-91.cust.vodafonedsl.it. [2.37.207.91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd462b2fsm2860945e9.9.2025.07.09.17.19.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 17:19:30 -0700 (PDT)
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
-To: shuah@kernel.org,
-	brauner@kernel.org,
-	amir73il@gmail.com,
-	jhubbard@nvidia.com,
-	jack@suse.cz,
-	mszeredi@redhat.com
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/filesystems: Use return value of the function 'chdir()'
-Date: Thu, 10 Jul 2025 02:19:25 +0200
-Message-ID: <20250710001927.4726-1-alessandro.zanni87@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752106860; c=relaxed/simple;
+	bh=5TCqIKAAZraTPISadWHH3ICmjB1H6s6kj8mUhsQHdN4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gAh+XS/RoSuMn8CZznuxwiNf33eIjd6ypbrxcooPWvCS9in0pVI0SRSVwAeLiQSQgIV95uhrkWI0QcABJzHrs2xZuvCruP81y+pk+1nbEWjpofQQCI1TmjHchCFOmu3kv3hDFfkvJhEmf8r2DeMrgCjQW36p6zeZE0WY6NS7Z2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=DYjoVkqB; arc=none smtp.client-ip=112.168.119.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coasia.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=coasia.com; s=coasia;
+	t=1752106849; bh=5TCqIKAAZraTPISadWHH3ICmjB1H6s6kj8mUhsQHdN4=;
+	l=3410; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=DYjoVkqBmuQGkRBwZTGZHDjx9QRAz3kCc8AHXdSyuNrIOWvSGso8apc/shFMjuHNy
+	 bU/6WB8K81rKKfOSU75Nkhf2KTDLsNzIpDQt+qxAzR6MbAmAld0dOq5hC+K8uZwb2h
+	 k0mQfmGBOdlVRPFlYyNTt41E8XRcG9TS2KhAON78=
+Received: from unknown (HELO kangseongu..) (ksk4725@coasia.com@115.23.218.194)
+	by 192.168.10.159 with ESMTP; 10 Jul 2025 09:20:49 +0900
+X-Original-SENDERIP: 115.23.218.194
+X-Original-SENDERCOUNTRY: KR, South Korea 
+X-Original-MAILFROM: ksk4725@coasia.com
+X-Original-RCPTTO: jesper.nilsson@axis.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	krzk@kernel.org,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	alim.akhtar@samsung.com,
+	linus.walleij@linaro.org,
+	tomasz.figa@gmail.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	arnd@arndb.de,
+	kenkim@coasia.com,
+	pjsin865@coasia.com,
+	gwk1013@coasia.com,
+	ksk4725@coasia.com,
+	hgkim05@coasia.com,
+	mingyoungbo@coasia.com,
+	smn1196@coasia.com,
+	pankaj.dubey@samsung.com,
+	shradha.t@samsung.com,
+	ravi.patel@samsung.com,
+	inbaraj.e@samsung.com,
+	swathi.ks@samsung.com,
+	hrishikesh.d@samsung.com,
+	dj76.yang@samsung.com,
+	hypmean.kim@samsung.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@axis.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	soc@lists.linux.dev
+From: ksk4725@coasia.com
+To: Jesper Nilsson <jesper.nilsson@axis.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: kenkim <kenkim@coasia.com>,
+	Jongshin Park <pjsin865@coasia.com>,
+	GunWoo Kim <gwk1013@coasia.com>,
+	SeonGu Kang <ksk4725@coasia.com>,
+	HaGyeong Kim <hgkim05@coasia.com>,
+	GyoungBo Min <mingyoungbo@coasia.com>,
+	SungMin Park <smn1196@coasia.com>,
+	Pankaj Dubey <pankaj.dubey@samsung.com>,
+	Shradha Todi <shradha.t@samsung.com>,
+	Ravi Patel <ravi.patel@samsung.com>,
+	Inbaraj E <inbaraj.e@samsung.com>,
+	Swathi K S <swathi.ks@samsung.com>,
+	Hrishikesh <hrishikesh.d@samsung.com>,
+	Dongjin Yang <dj76.yang@samsung.com>,
+	Sang Min Kim <hypmean.kim@samsung.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@axis.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	soc@lists.linux.dev
+Subject: [PATCH 00/16] Add support for the Axis ARTPEC-8 SoC
+Date: Thu, 10 Jul 2025 09:20:30 +0900
+Message-Id: <20250710002047.1573841-1-ksk4725@coasia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Fix to use the return value of the function 'chdir("/")' and check if the
-return is either 0 (ok) or 1 (not ok, so the test stops).
+From: SeonGu Kang <ksk4725@coasia.com>
 
-The patch fies the solves the following errors:
-mount-notify_test.c:468:17: warning: ignoring return value of ‘chdir’
-declared with attribute ‘warn_unused_result’ [-Wunused-result]
-  468 |                 chdir("/");
+Add basic support for the Axis ARTPEC-8 SoC.
+This SoC contains four Cortex-A53 CPUs and other several IPs.
 
-mount-notify_test_ns.c:489:17: warning: ignoring return value of
-‘chdir’ declared with attribute ‘warn_unused_result’ [-Wunused-
-result]
-  489 |                 chdir("/");
+Patches 1 to 10 provide the support for the clock controller,
+which is similar to other Samsung SoCs.
 
-To reproduce the issue, use the command:
-make kselftest TARGET=filesystems/statmount
+The remaining patches provide pinctrl support and
+initial device tree support.
 
-Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
----
- .../selftests/filesystems/mount-notify/mount-notify_test.c      | 2 +-
- .../selftests/filesystems/mount-notify/mount-notify_test_ns.c   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Hakyeong Kim (9):
+  dt-bindings: clock: Add ARTPEC-8 CMU bindings
+  clk: samsung: Add clock PLL support for ARTPEC-8 SoC
+  clk: samsung: artpec-8: Add initial clock support
+  clk: samsung: artpec-8: Add clock support for CMU_CMU block
+  clk: samsung: artpec-8: Add clock support for CMU_BUS block
+  clk: samsung: artpec-8: Add clock support for CMU_CORE block
+  clk: samsung: artpec-8: Add clock support for CMU_CPUCL block
+  clk: samsung: artpec-8: Add clock support for CMU_FSYS block
+  clk: samsung: artpec-8: Add clock support for CMU_PERI block
 
-diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-index 5a3b0ace1a88..a7f899599d52 100644
---- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-+++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-@@ -458,7 +458,7 @@ TEST_F(fanotify, rmdir)
- 	ASSERT_GE(ret, 0);
- 
- 	if (ret == 0) {
--		chdir("/");
-+		ASSERT_EQ(0, chdir("/"));
- 		unshare(CLONE_NEWNS);
- 		mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
- 		umount2("/a", MNT_DETACH);
-diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-index d91946e69591..dc9eb3087a1a 100644
---- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-+++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-@@ -486,7 +486,7 @@ TEST_F(fanotify, rmdir)
- 	ASSERT_GE(ret, 0);
- 
- 	if (ret == 0) {
--		chdir("/");
-+		ASSERT_EQ(0, chdir("/"));
- 		unshare(CLONE_NEWNS);
- 		mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
- 		umount2("/a", MNT_DETACH);
+Ravi Patel (2):
+  dt-bindings: clock: Add CMU bindings definitions for ARTPEC-8 platform
+  dt-bindings: arm: Add Axis ARTPEC SoC platform
+
+SeonGu Kang (3):
+  dt-bindings: pinctrl: samsung: Add compatible for ARTPEC-8 SoC
+  pinctrl: samsung: Add ARTPEC-8 SoC specific configuration
+  arm64: dts: axis: Add initial pinctrl support
+
+sungminpark (2):
+  arm64: dts: axis: Add initial device tree support
+  arm64: defconfig: Enable Axis ARTPEC SoC
+
+ .../devicetree/bindings/arm/axis.txt          |  13 -
+ .../devicetree/bindings/arm/axis.yaml         |  35 +
+ .../bindings/clock/axis,artpec8-clock.yaml    | 224 +++++
+ .../bindings/pinctrl/samsung,pinctrl.yaml     |   1 +
+ MAINTAINERS                                   |  14 +
+ arch/arm64/Kconfig.platforms                  |  13 +
+ arch/arm64/boot/dts/Makefile                  |   1 +
+ arch/arm64/boot/dts/axis/Makefile             |   4 +
+ arch/arm64/boot/dts/axis/artpec-pinctrl.h     |  36 +
+ arch/arm64/boot/dts/axis/artpec8-grizzly.dts  |  68 ++
+ arch/arm64/boot/dts/axis/artpec8-pinctrl.dtsi | 373 ++++++++
+ arch/arm64/boot/dts/axis/artpec8.dtsi         | 269 ++++++
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/clk/samsung/Kconfig                   |   8 +
+ drivers/clk/samsung/Makefile                  |   1 +
+ drivers/clk/samsung/clk-artpec8.c             | 890 ++++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 | 129 ++-
+ drivers/clk/samsung/clk-pll.h                 |   2 +
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    |  50 +
+ drivers/pinctrl/samsung/pinctrl-exynos.h      |  10 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
+ include/dt-bindings/clock/axis,artpec8-clk.h  | 122 +++
+ 23 files changed, 2254 insertions(+), 14 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/axis.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/axis.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
+ create mode 100644 arch/arm64/boot/dts/axis/Makefile
+ create mode 100644 arch/arm64/boot/dts/axis/artpec-pinctrl.h
+ create mode 100644 arch/arm64/boot/dts/axis/artpec8-grizzly.dts
+ create mode 100644 arch/arm64/boot/dts/axis/artpec8-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/axis/artpec8.dtsi
+ create mode 100644 drivers/clk/samsung/clk-artpec8.c
+ create mode 100644 include/dt-bindings/clock/axis,artpec8-clk.h
+
 -- 
-2.43.0
+2.34.1
 
 
