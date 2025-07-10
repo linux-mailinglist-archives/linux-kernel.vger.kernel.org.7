@@ -1,89 +1,117 @@
-Return-Path: <linux-kernel+bounces-726408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4167DB00CD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:16:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48338B00CDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 515191C24B17
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:17:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F9BD5A207A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4CA2FD890;
-	Thu, 10 Jul 2025 20:10:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547693D6F;
+	Thu, 10 Jul 2025 20:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HBhLjKoR"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7509C2FD876
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 20:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C252FCE14
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 20:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752178204; cv=none; b=SWRMR10fFTUNuCNolOpyhvVxKuSVN6Zu6O/Q5/ZolrkeGDUB1hvl5SZbYoCo3QBn3ngfeM3lJay1/IAcxZpEr0q+bqvT6CXx9RVDqoIF5NMFlR6J620Ti6qLyDI8wA9sh5kHyKwCx/BMSr85IZrxMXIqlTF3lpBnvjzqfU9Hmyk=
+	t=1752178381; cv=none; b=Q1YBjOb0aqW9dwpx4xeyOKd9tQojmbLCiU6dTthOH3YgfJNNsH6lHttStNRy8411ZNwz43JguTWWaoB9bKl/hK8Pcco4UaeOjze7hFFUjldi6v5o0QBuQcwETtW7/oE+d7YZRojzg8hOjZ2qpPZXn2UuuV+6twSK4m7VHtIawOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752178204; c=relaxed/simple;
-	bh=gFQLhCQuO8ZeRAqNO4hLPYHcztfgq/Gntqnj5vgmx70=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iYepQ8rliF1ECPYjdNafI11baXdgtep7ICHSwP6ABuj9TVu9CEXCmxMq5QpLCgv8AzSJwPAcofLU276w03dXv7DJAxg8+tC+XBGNC1wSt8nogOYXKC3puDt8/EZrh0Q+w7mc1CdFfIaifsKLZL8zOgvImvoy4KW7MK7c02/ruGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3e172e68440so14907575ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:10:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752178201; x=1752783001;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Pxa3RmrXUd7XP4y3Ez9YoubgvwaMh3QfqWsCzDty0g=;
-        b=bi+7EYzT/8+dlNmQX5cgnUI8cGinDa2rQf1tXozdcClNGYfZcoa+aTFNEn2BSaz0Ik
-         x89Yll4lQlRWh4wOwJ+rWH+X4hLYG5bgPrl5B/+8R9NCnERYSzWipwD4XETfp6Pjaeyj
-         YR/TtBXR4+ZADGSBUESogzG0cW4zKh8UxG0wd8l3YK890m6nCq7TWv5JLbeRzRLhoeIY
-         Po+KWPzoQTVdZ4XzJmb1vE/cSLc1n0LHwE2wYa/oIM+wqtyxWKjYjMQHE9ON2ygdwSOs
-         qgBv/02YA8yupmGmcevYUZ6eZhw8G7sXKTCFCPFL/ClIQbkGy0KZfO4WyG6hHzBaPdFK
-         t3Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ5Y/rX+yJjcKSpIU/lX/iTtNEpTE8fxP9gKeZTEyjpcX99fm2r3Gh03voBE37vwo27wz+Bb8Arj3gCOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE3tWh+BzeDa01J9NJqw4KIt8W01jHsaL15LiYVWbVha/tyS3i
-	+y+IgOjlcmoIYao27w7AK/YjYdBP93R6ImlmHBgh0rd3db3daC1h0ANEx4tABlxdu9phfiI+Fr8
-	tCv7uqq8EjO8FLdF5pv0jCz6eOa/tFtsgqPExiOFs5U7B6dlM0tZyeBvZiEQ=
-X-Google-Smtp-Source: AGHT+IFggx9JbriZOmPuGXePKBTVWM5kDd3JYdYz87L6cNFN9QpcyR9jvFNkIRr+16nYfrzAdQaUNvtpGEKE4JF+LcDxTY3QCyh9
+	s=arc-20240116; t=1752178381; c=relaxed/simple;
+	bh=QCPVg61VylJXSuOMu9ZsxYQ07cmHN5/YuDlXLVOQtMQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HnczlYO8rWv3eucLS+sXgREqf11ij+qNdC2VcxP9TsVpEGHPa/dVbrWnLhOek6N22mOBeUyg/2IYghuZH6t70IeJ7WYMytapsGpE3KYb2rJPz+ZOYkLLeXpdvTVwHFWvdy8v50k7jg9RTdN1lcksz3nyDjFQ9iUhX9WD1aG/PVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HBhLjKoR; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <94e50246-5182-4b73-be59-9ce8e9afcfbb@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752178377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LMIXZWRDryeb5XrtMvENUKhI8DusK3gp45x6ISsgw14=;
+	b=HBhLjKoRBc0StGL3Mt+MLswKCg4OuIXp/T9z+rXzDnaXp1HF4xV6ufxE3FnGqCZBqSTyPV
+	HmUsvWp5IWjRXcXo/IsDzIkf3hZf+/XB61OTKUIysI+cuJBbDqqD1BBlxRz1cbXYr2wefz
+	/lPXB8Yukao5pVW/JRkGPPEnWnq5Iq4=
+Date: Thu, 10 Jul 2025 13:12:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b:b0:3df:4159:8fe5 with SMTP id
- e9e14a558f8ab-3e253272d56mr9684205ab.4.1752178201628; Thu, 10 Jul 2025
- 13:10:01 -0700 (PDT)
-Date: Thu, 10 Jul 2025 13:10:01 -0700
-In-Reply-To: <4687a61d-e4e7-4a1f-bbf6-59d3decd6fcc@suse.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68701e19.a00a0220.26a83e.0020.GAE@google.com>
-Subject: Re: [syzbot] [usb?] WARNING in usbnet_status_start
-From: syzbot <syzbot+3f89ec3d1d0842e95d50@syzkaller.appspotmail.com>
-To: andrew@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	netdev@vger.kernel.org, oneukum@suse.com, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "yanjun.zhu" <yanjun.zhu@linux.dev>
+Subject: Re: [PATCH] RDMA/mlx5: fix linking with
+ CONFIG_INFINIBAND_USER_ACCESS=n
+To: Arnd Bergmann <arnd@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Parav Pandit <parav@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Bloch <mbloch@nvidia.com>,
+ Patrisious Haddad <phaddad@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250710080955.2517331-1-arnd@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250710080955.2517331-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+On 7/10/25 1:09 AM, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The check for rdma_uattrs_has_raw_cap() is not possible if user
+> access is disabled:
+> 
+> ERROR: modpost: "rdma_uattrs_has_raw_cap" [drivers/infiniband/hw/mlx5/mlx5_ib.ko] undefined!
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+https://patchwork.kernel.org/project/linux-rdma/patch/72dee6b379bd709255a5d8e8010b576d50e47170.1751967071.git.leon@kernel.org/
 
-Reported-by: syzbot+3f89ec3d1d0842e95d50@syzkaller.appspotmail.com
-Tested-by: syzbot+3f89ec3d1d0842e95d50@syzkaller.appspotmail.com
+The issue you described seems to be the same as the one discussed in the 
+link above. Could you try applying the commit from that link and see if 
+the problem still persists?
 
-Tested on:
+Yanjun.Zhu
 
-commit:         d1b07cc0 arm64: dts: s32g: Add USB device tree informa..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=16f83a8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
-dashboard link: https://syzkaller.appspot.com/bug?extid=3f89ec3d1d0842e95d50
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=164bda8c580000
+> 
+> Limit the check to configurations that have the option enabled
+> and instead assume the capability is not there otherwise.
+> 
+>  From what I can tell, the UVERBS code in fs.c is not actually called
+> when INFINIBAND_USER_ACCESS is turned off, so this haz no effect
+> other than fixing the link error. A better change might be to not
+> build the code at all in that configuration, but I did not see
+> an obvious way to do that.
+> 
+> Fixes: 95a89ec304c3 ("RDMA/mlx5: Check CAP_NET_RAW in user namespace for flow create")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> If there is a better way of addressing the link failure, please just
+> treat this as a bug report
+> ---
+>   drivers/infiniband/hw/mlx5/fs.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/infiniband/hw/mlx5/fs.c b/drivers/infiniband/hw/mlx5/fs.c
+> index bab2f58240c9..c1ec9aa1dfd3 100644
+> --- a/drivers/infiniband/hw/mlx5/fs.c
+> +++ b/drivers/infiniband/hw/mlx5/fs.c
+> @@ -2459,7 +2459,8 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_CREATE_FLOW)(
+>   	struct mlx5_ib_dev *dev;
+>   	u32 flags;
+>   
+> -	if (!rdma_uattrs_has_raw_cap(attrs))
+> +	if (!IS_ENABLED(CONFIG_INFINIBAND_USER_ACCESS) ||
+> +	    !rdma_uattrs_has_raw_cap(attrs))
+>   		return -EPERM;
+>   
+>   	fs_matcher = uverbs_attr_get_obj(attrs,
 
-Note: testing is done by a robot and is best-effort only.
 
