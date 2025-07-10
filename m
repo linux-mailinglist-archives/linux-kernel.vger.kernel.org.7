@@ -1,133 +1,130 @@
-Return-Path: <linux-kernel+bounces-726243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90CF6B009FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:31:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17544B009FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D803567117
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:31:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB4E8640883
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69282EFDA3;
-	Thu, 10 Jul 2025 17:30:51 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB48E2EF9C0;
+	Thu, 10 Jul 2025 17:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4npnKFz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1538274FE8;
-	Thu, 10 Jul 2025 17:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452F8264FB3;
+	Thu, 10 Jul 2025 17:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752168651; cv=none; b=G2PFDtMDmHIGWgjyqpYnW8jSas+YvFJdq/QIKIlgXW6nQwmyNLL9K2Lgo1VqFXInGw0/rMZc90tdUjJJbma71Ia58s+8WNrDzvs9LTBQzHVyAea6gXZ2/0ZIlr/HN9uYTM6m+i5Os2hF+ypgxNrv412NtrrqtIVgzml1yg3GwoA=
+	t=1752168743; cv=none; b=pnSFjM/3ksbiWwhv6BH4EuFd4/sk32dGEdvyc1oNeAQ1T9TfHeDNyuhKryLC/4csE0Bd+m2zBN8dzxpkcRqIMz2UjBROUhx+GJSFm0nKabWylEmmLscSxbZiVWjTLvCP0NBfokQLtGlHboAdSTJMyF3BiOUW08sbpzbJycLlMaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752168651; c=relaxed/simple;
-	bh=aYGG3JC1rihltD2ay4sWRXTTZkljkpO+fxQvhPU8xek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wpzq7o/lCgH0efz1KzEfrNvQ8nfTkxboOxbJ188uFlUqyTw9FqcSfqGoJKxo039w/nT2hJFvizpeYbIaAnH+TTG346oWeCY8Sx8HpuHLao3vmA00QhlRGNDq4eAY4h5FCzKJuxOHqdB//6OdU062B2YN1bicX9MZxtolvfS49Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae3c5f666bfso210627566b.3;
-        Thu, 10 Jul 2025 10:30:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752168648; x=1752773448;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q5MFFBUYpLJN0PCMiBmsLfiSJha8AQz1cUcW2BMgMck=;
-        b=KeqTM4ryosNrFD9DrbomVn7sKl8zRM7ZgDdOu/q3CsElRg3xKThGzVOgx1nDdj172+
-         cwidr8ACYhl08nnqjeUrOIGiG5+VMGk95uQrYt2Akp0Q4tbsqVz9AiaOb8e+1WYEp2iG
-         yXGw3XU7zw2kQLs1KDhPxJ1a77Ddjs8rbrrHqPqvUinqKH90pcXUrxjPvZaJoC/jYrok
-         E5a1tlvQjkaLMLPjkUuqibztYrZSXdhaZkQXZMwcrypMNZcBCAQZPmSRJT6WseQeqOZc
-         PCkp1290c5592aAN25hAO33/kQ8+DaWC5Rf95j2CENRXbkwfUnNUs71kSsv8tKN+QwUv
-         IXVw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1RkIkzxL3qOwL+BZXCQKbOJTyqVaxw6rD6bOtsB022PjA9+7StyvNd1fNiVdhKLr0Lr+V4Mw0HxMKTmnN@vger.kernel.org, AJvYcCXLX+b5NXcDJMXjzfhpyH/JhCwTInkDENoAsuohrRkBgCDxH5q21SjB1kgk49IC0MpkXK4sresNBGz0Ysw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5ecibsfW9W83VmcAcrMbGudZHToZJMUFwkMZ6r58bBB631jbx
-	CEE7eJx/4Kb14yrUrQ9I1wE2Y6M7YzJxoEqfnVRuufiVcy1QzH3MJp8m
-X-Gm-Gg: ASbGnct/PJIP1cQrreXX2BML8kWPY75QnRa3adi0lpoovg8qtsgQMexOhGgNsPajL0O
-	CWb0IRRG4TRwtfmmLpAMQFOtNENh5b7mfstyfqz+ZKPp2MfpWGfXTZeXjTs16db0xfstYeWYsG6
-	gvrfsonGlk/mUrquFBSMyN1YXfPdaxDasM8cE+Lc0+Jtmrv+VtPnUL3K1MAAS0jQKaf4BNvyn7o
-	lpACmV6vv/8PHTXiUnT8z9MSx95k8YED4dVWWIiIlY7R36uTcXCqPrxw4SBFhw5NgLfN3jx6zhB
-	DUlyE6eAXxHkOVJpT3DH4FSDpQ9b+SK1OiiX5TZc/kvSTS94o4uL
-X-Google-Smtp-Source: AGHT+IE5r6DnY7Tz1x439NPiOFJH4b7xvN0OOgVA3uf34Ibu4HbS6dNTxi9HGTXJM+tj41v+FgbdjQ==
-X-Received: by 2002:a17:907:78c:b0:ae0:cae0:cb35 with SMTP id a640c23a62f3a-ae6fbf72e6amr9742666b.37.1752168647780;
-        Thu, 10 Jul 2025 10:30:47 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:3::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee47a2sm166404766b.58.2025.07.10.10.30.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 10:30:47 -0700 (PDT)
-Date: Thu, 10 Jul 2025 10:30:45 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, ankita@nvidia.com, 
-	bwicaksono@nvidia.com, rmk+kernel@armlinux.org.uk, catalin.marinas@arm.com, 
-	linux-serial@vger.kernel.org, rmikey@meta.com, linux-arm-kernel@lists.infradead.org, 
-	usamaarif642@gmail.com, linux-kernel@vger.kernel.org, paulmck@kernel.org
-Subject: Re: arm64: csdlock at early boot due to slow serial (?)
-Message-ID: <jlhgtwkeezoca34wbqipvsgr4muxov5wmgrswleo2k7zqitzfr@4ngriyb2udra>
-References: <aGVn/SnOvwWewkOW@gmail.com>
- <aGZbYmV26kUKJwu_@J2N7QTR9R3>
- <aGaQBghdAl8VGWmV@gmail.com>
- <aGawTd8N2i8MDCmL@J2N7QTR9R3>
- <aG0kYjl/sphGqd4r@gmail.com>
- <juiog3337iozva23zpf4apdydegj4z7jibqykfvcgnkabemw4w@z5g5hhwrqr2w>
- <20250710133557.GA1093654@e132581.arm.com>
+	s=arc-20240116; t=1752168743; c=relaxed/simple;
+	bh=c7oheQVC5hWj6OnaZx2PsISt0VpYPnvy54JLInoA3eY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=WXnt0YQmkSVmd3CsZvEbc3OAi28NFzNvIZpccX7lmft38TIBmtLb9pZyE5l7jlERGy6bs8HFshYZfl79F2+n0hJ+YctwB650zWIeQFg7LQPkmBkn+kAFf964KudnKcyrm6xmP/xZGfuKoHXxqPD0gL/kkRcEYFcv/8T5kOQYPT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4npnKFz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B40E1C4CEE3;
+	Thu, 10 Jul 2025 17:32:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752168742;
+	bh=c7oheQVC5hWj6OnaZx2PsISt0VpYPnvy54JLInoA3eY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=i4npnKFzOrjsll5Je1eMWMP193e/K/XbrTKUQEf/dd7VDm93AEWAFp8C29oqr68La
+	 cx6WE3rCgEAI93fwxC0ZB+L4tVFOJS4FhKKo0lMVygb63s/PHr25DQoHj9wcFMttkO
+	 bnyj5gGCw7KV1CIZFCwJgA/wxQdHhrnUH42/BhnyhN+wMcquFOj1HyVcrdn6SndfsN
+	 RgydcXHwpNFLOP+BNA3BXsztgWiPKD7GB7Saw7jF94knyXFlMr+Ifexntg+jkeFGqK
+	 lignNgAQgXfJ0n8PhLafLYzjFI7s5hvrzS1FRqF7wHsOPa26bXBBfKHOk1MclPz2Jz
+	 eD801fdsAHJEA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E81383B266;
+	Thu, 10 Jul 2025 17:32:46 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710133557.GA1093654@e132581.arm.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH RESEND] Bluetooth: btusb: Add new VID/PID 0489/e14e for
+ MT7925
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <175216876500.1607762.391638520128748254.git-patchwork-notify@kernel.org>
+Date: Thu, 10 Jul 2025 17:32:45 +0000
+References: <20250709063606.25806-1-en-wei.wu@canonical.com>
+In-Reply-To: <20250709063606.25806-1-en-wei.wu@canonical.com>
+To: En-Wei Wu <en-wei.wu@canonical.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cegolf@ugholf.net
 
-Hello Leo,
+Hello:
 
-On Thu, Jul 10, 2025 at 02:35:57PM +0100, Leo Yan wrote:
-> >     serial: amba-pl011: Fix boot performance by switching to console_initcall()
-> > 
-> >     Replace arch_initcall() with console_initcall() for PL011 driver initialization
-> >     to resolve severe boot performance issues.
-> 
-> pl011_init() registers as an AMBA device, so the PL011 driver depends
-> on the AMBA bus initialization. The AMBA bus is initialized with:
-> 
->     postcore_initcall(amba_init);
-> 
-> Therefore, the PL011 driver is initialized with arch_initcall(), which
-> occurs later than the postcore init.
-> 
-> My understanding is that console_initcall() is invoked much earlier
-> than other initcalls triggered by do_initcalls(). With your change, I
-> saw the PL011 driver fails to register on Juno-r2 board, due to AMBA bus
-> driver is not ready for a console init.
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-You are absolutely correct. I confirm that the machine is fast because
-pl011 is not working, which is sad and embarassing.
-
-> The atomic path is introduced recently by the commit:
+On Wed,  9 Jul 2025 14:36:06 +0800 you wrote:
+> Add VID 0489 & PID e14e for MediaTek MT7925 USB Bluetooth chip.
 > 
->   2eb2608618ce ("serial: amba-pl011: Implement nbcon console")
+> The information in /sys/kernel/debug/usb/devices about the Bluetooth
+> device is listed as the below.
 > 
-> My conclusion is that changing the initcall will not disable the atomic
-> path, changing to console_initcall() will cause AMBA device init
-> failure, and as a result, the clock operations will not be invoked.
-> Thus, I am curious if you have ruled out the issue is caused by the UART
-> clock (as I mentioned in another reply).
+> T:  Bus=01 Lev=01 Prnt=01 Port=03 Cnt=03 Dev#=  4 Spd=480  MxCh= 0
+> D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+> P:  Vendor=0489 ProdID=e14e Rev= 1.00
+> S:  Manufacturer=MediaTek Inc.
+> S:  Product=Wireless_Device
+> S:  SerialNumber=000000000
+> C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+> A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+> E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+> E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+> I:  If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+> E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+> I:* If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+> E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
 > 
-> BTW, since the atomic path is enabled in the commit 2eb2608618ce, what
-> is the result after reverting the commit?
+> [...]
 
-I've reverted commit 2eb2608618ce ("serial: amba-pl011: Implement nbcon
-console"), and I don't see the CSD locks anymoer. The serial speed is
-the same and continue to be slow, but, the CSD lock is not there. Here
-is the time spent on the serial flush when reverting the commit above
+Here is the summary with links:
+  - [RESEND] Bluetooth: btusb: Add new VID/PID 0489/e14e for MT7925
+    https://git.kernel.org/bluetooth/bluetooth-next/c/5ad198510b20
 
-	[    0.309561] printk: legacy console [ttyAMA0] enabled
-	[    8.657938] ACPI: PCI Root Bridge [PCI2] (domain 0002 [bus 00-ff])
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks
---breno
+
 
