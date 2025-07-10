@@ -1,196 +1,187 @@
-Return-Path: <linux-kernel+bounces-725865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBD2B004D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:14:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7AF1B004BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED0EB5816B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:09:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19C267B9AD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA289270EDE;
-	Thu, 10 Jul 2025 14:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9CD270552;
+	Thu, 10 Jul 2025 14:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EhGcZFQn"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="qGEM3rnm"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201781EA80;
-	Thu, 10 Jul 2025 14:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9892121CC56
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752156546; cv=none; b=tMbPFVe5BYOCx6s3q+Ku6hRQx+h9Eygus1fCYnnMYB9QuwJVmuI0FLiuuZB+Q4iCDlzPvsevQAkJwjBLDaYHfL686iz0DcNvJ23JWqxqwJRTwzWx9VSLsbBsL2Dy2QxwB+WEMjkfgs+8ruIflDhkSLT+9pvjr7iCfvtkg4IUIiw=
+	t=1752156577; cv=none; b=MPtHbCFI1Mg2in1t+4/WUgKB5HTi08hOzTAtUtLKCmOauBNmachslScZcs0GzY1NJGUFpgy54BBxvqgM69I26FtxhNpxuUwK4ptKelfNMRXxtBl91w5lRrbZrMQNMGoLHTPZML5rVoTuBKlzsoy3xjbbA9z//wNYDQsOy+X6z4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752156546; c=relaxed/simple;
-	bh=C2IXV9VtkXwpeToWek1QNdi7djkxP0oWTm8UbsISiSg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nQlg2XCMFkMxTwwxean5SO22VKjbtrgzNgfh4RQ7U73z0XfkvwFEhwcE4I7klfDrZFHxtpAc5XjN6/Fb835aPXJ4Mf6aVuhFOJKOIqN0LVjb50EirYbKrRuNH4LUj/FANNBumJ47UJjcXw1jNGxMKn9SeL71UQjm9k1jpv3+aDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EhGcZFQn; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56AE8j0H1164862;
-	Thu, 10 Jul 2025 09:08:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752156525;
-	bh=uHweeZh6O1CjqWLKV0spT6UJCiGmQMsSfwDHwIjUSFE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=EhGcZFQnFYl7CtAM/3B1wu8uOgZEQLe1iaybOchqsNTfGQVp8ZxNIoESjw6MzT7sH
-	 pRjU+L0TJKySVNDIuKGIjkkrFLBrrVLCmP94kczcLbrTUQq5V9krvp97VhcTh0RuDV
-	 j1kDjeV7rXzJlUyzw/aLiIx+SD7JhgERh8Y2eY/Q=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56AE8j1r234816
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 10 Jul 2025 09:08:45 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 10
- Jul 2025 09:08:45 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 10 Jul 2025 09:08:45 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56AE8jHo1776993;
-	Thu, 10 Jul 2025 09:08:45 -0500
-Message-ID: <299c363a-23c7-4522-b58c-100f49c4eece@ti.com>
-Date: Thu, 10 Jul 2025 09:08:44 -0500
+	s=arc-20240116; t=1752156577; c=relaxed/simple;
+	bh=2grR0mUlBz4k8clT2FNGCooSxKt52UcD68qKVQhldjU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=WApoUtI/joqJQE2/HSwkYpjvhGAN9elEJ2N1qqYyUweJ1Z23fbO9MJ5tQ+4iUMj23Pt/tBPUYzO8LhfnjOSnQmucKW2wMK6uhaT831DgVT7eYpLyPR6vHnRf8NhvOI1h9AGhIkeytq0qWMO/OFsmkpaZ6CAfbGP7owyhCOacdQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=qGEM3rnm; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-608acb0a27fso1442590a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:09:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1752156574; x=1752761374; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zQoCinxRRh/iq3oTutQRdNZV03mKs3O7qPm/FmODtXA=;
+        b=qGEM3rnmr3pYHyOtGRuhTp+UiuEvuktsPR41C3pDeprlC0oHjAZZtLmyjV7TcYcakX
+         4F9N06Nyvhda2jVoGPtTdnMONwslv2BKVfO1LKmO8Pft7aFWt7rEavG3wcACeF8BU3cE
+         7kAOBMPD2mlkUO2+hRpAzm1jcUl7PsUDT2iXGiW3wzIAOxTZrOEEpCrRIlvjVRekJAGU
+         yndxMBpd8OjlGh8ll22Trmrk0sO+m0kSsshMRHF8ZcfUP2PD6by86ndQSnXCLvsezilU
+         HX4TmFF6IGRRE4yBFXBtOgAzARBY8hGTQmEpAi80FjYxkLEJVyuDC1IWrMul+9iw0qA9
+         WBVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752156574; x=1752761374;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zQoCinxRRh/iq3oTutQRdNZV03mKs3O7qPm/FmODtXA=;
+        b=dnO9bzQMputz5VevHg46gNOxIggWlgzxrSL32moR2QqdrnwGyYMloTIp6CLnG3opr0
+         TSp+u/UWi21l3T2Ml5JpR9b+5+IlEhzBMOOy4U4WaUC4WylA23zVnMVeO4dGnTqij4ZC
+         FntGdbvULw4BL4dM6SWQeA9u6gQ9d4uhyGnPr3Okq0kmIsgLV7rnob/qLVe2WMpBhZIb
+         atANhNNniKPgWayRf3DOzqQf8BCrzsUcAQyGL+daxq1+iUVVTkTxNai1wVZp87teubVE
+         l/sduwfeTh/qXiOW7NBcLYVvesPRKD4ZFEYhFlIMwwISO+T6Ow+I0LPNeErXb/29efQj
+         Gm2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWnd3YmXzxmuTQAUg2BnpRUe5wtql/rRx2FoFIh0qtgCFQM79I0yvPDXtGcMO8cEpkABXATMuvu2j3FKH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQHzSvhIanz0CxQ6MJudR5HaiQok5Q7nH/harq/bFZ4OPN38bp
+	kEbvyzPhZdUgvBn3P4Wgg4U7N1z9sqq9qdg8dLKIIq/V528b1kGjv5gpdBp7+BwUyp0=
+X-Gm-Gg: ASbGncsKxSOZ5Ykwc637YwhQAXKu9Hc5jGWXeFZ1cIoW3XNw9xrInWicGC7iTabjT3V
+	kbaXtM3KX3TCHOMq+Z1JYCD/5EdcAo8J/uqYO3a5i4MotzZhqSim2Xpd5F5JByPNqpUXx1uIYXe
+	Q/DNrXAB/aOQanJKfIChgS6NVMfoQP/nhFi81TBsX/BR6VrwiKB6BECk1zBEIORoEaH8FlhhzbT
+	y44XaDZQ2JzGNG8jSmbHspJuWLGozP30lRgupBjclQARWwl5S8HC2NStHKb4gpm/aLhbfiTF5/E
+	EFTziJrDYbzvHTP+vNbo8PyOpdUPUHzxwhmuZjDIEMI0fSLqcTRaBZ9pST6yOu5u3LwwAj2WYJ7
+	umYDztF7StonY+tmLvTSRWFjP6rkWPLI=
+X-Google-Smtp-Source: AGHT+IG8YxUCUZJeWu7C8W4J27oyXKY2dGnFXQnEMhNeARIfZps63JGs0OVwIsREQQAKXy3KL4OREw==
+X-Received: by 2002:a17:906:9fce:b0:ae0:b49d:9cd with SMTP id a640c23a62f3a-ae6e70fee29mr278269666b.58.1752156573823;
+        Thu, 10 Jul 2025 07:09:33 -0700 (PDT)
+Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e910e8sm140856366b.36.2025.07.10.07.09.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 07:09:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] watchdog: rti_wdt: Add reaction control
-To: Guenter Roeck <linux@roeck-us.net>, Andrew Davis <afd@ti.com>
-CC: Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250707180002.3918865-1-jm@ti.com>
- <20250707180002.3918865-3-jm@ti.com>
- <cc37e797-d3e5-444d-8016-c437a0534001@roeck-us.net>
- <d96541bc-644d-4c90-b9f7-1e4afd16aeb6@ti.com>
- <953f78a8-3928-479d-8700-dfe1cea15454@roeck-us.net>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <953f78a8-3928-479d-8700-dfe1cea15454@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Jul 2025 16:09:33 +0200
+Message-Id: <DB8FO1H0LHQ0.2JBDBVE8JFJVC@fairphone.com>
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Wesley Cheng" <quic_wcheng@quicinc.com>, "Vinod Koul" <vkoul@kernel.org>,
+ "Kishon Vijay Abraham I" <kishon@kernel.org>, "Abel Vesa"
+ <abel.vesa@linaro.org>
+Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-phy@lists.infradead.org>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v2 4/4] phy: qcom: phy-qcom-snps-eusb2: Add extra
+ register write for Milos
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250709-sm7635-eusb-phy-v2-0-4790eeee7ae0@fairphone.com>
+ <20250709-sm7635-eusb-phy-v2-4-4790eeee7ae0@fairphone.com>
+ <7d073433-f254-4d75-a68b-d184f900294a@oss.qualcomm.com>
+ <DB8DGDEN23D2.1GFB8XI0P3YLR@fairphone.com>
+ <a2567891-1dd4-44ff-9853-6f9a451f0a74@oss.qualcomm.com>
+In-Reply-To: <a2567891-1dd4-44ff-9853-6f9a451f0a74@oss.qualcomm.com>
 
-Hi Guenter, Andrew,
-
-On 7/7/25 5:55 PM, Guenter Roeck wrote:
-> On Mon, Jul 07, 2025 at 04:49:31PM -0500, Andrew Davis wrote:
->> On 7/7/25 3:58 PM, Guenter Roeck wrote:
->>> On Mon, Jul 07, 2025 at 01:00:02PM -0500, Judith Mendez wrote:
->>>> This allows to configure reaction between NMI and reset for WWD.
+On Thu Jul 10, 2025 at 2:29 PM CEST, Konrad Dybcio wrote:
+> On 7/10/25 2:25 PM, Luca Weiss wrote:
+>> On Thu Jul 10, 2025 at 2:10 PM CEST, Konrad Dybcio wrote:
+>>> On 7/9/25 11:18 AM, Luca Weiss wrote:
+>>>> As per the downstream devicetree for Milos, add a register write for
+>>>> QCOM_USB_PHY_CFG_CTRL_1 as per the "eUSB2 HPG version 1.0.2 update".
 >>>>
->>>> On K3 SoC's other than AM62L SoC [0], watchdog reset output is routed
->>>> to the ESM module which can subsequently route the signal to safety
->>>> master or SoC reset. On AM62L, the watchdog reset output is routed
->>>> to the SoC HW reset block. So, add a new compatible for AM62l to add
->>>> SoC data and configure reaction to reset instead of NMI.
->>>>
->>>> [0] https://www.ti.com/product/AM62L
->>>> Signed-off-by: Judith Mendez <jm@ti.com>
+>>>> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 >>>> ---
->>>>    drivers/watchdog/rti_wdt.c | 32 ++++++++++++++++++++++++++++----
->>>>    1 file changed, 28 insertions(+), 4 deletions(-)
+>>>> The downstream driver supports an arbitrary extra init sequence via
+>>>> qcom,param-override-seq.
 >>>>
->>>> diff --git a/drivers/watchdog/rti_wdt.c b/drivers/watchdog/rti_wdt.c
->>>> index d1f9ce4100a8..c9ee443c70af 100644
->>>> --- a/drivers/watchdog/rti_wdt.c
->>>> +++ b/drivers/watchdog/rti_wdt.c
->>>> @@ -35,7 +35,8 @@
->>>>    #define RTIWWDRXCTRL	0xa4
->>>>    #define RTIWWDSIZECTRL	0xa8
->>>> -#define RTIWWDRX_NMI	0xa
->>>> +#define RTIWWDRXN_RST	0x5
->>>> +#define RTIWWDRXN_NMI	0xa
->>>>    #define RTIWWDSIZE_50P		0x50
->>>>    #define RTIWWDSIZE_25P		0x500
->>>> @@ -63,22 +64,29 @@
->>>>    static int heartbeat;
->>>> +struct rti_wdt_data {
->>>> +	bool reset;
->>>> +};
->>>> +
->>>>    /*
->>>>     * struct to hold data for each WDT device
->>>>     * @base - base io address of WD device
->>>>     * @freq - source clock frequency of WDT
->>>>     * @wdd  - hold watchdog device as is in WDT core
->>>> + * @data - hold configuration data
->>>>     */
->>>>    struct rti_wdt_device {
->>>>    	void __iomem		*base;
->>>>    	unsigned long		freq;
->>>>    	struct watchdog_device	wdd;
->>>> +	const struct rti_wdt_data *data;
->>>>    };
->>>>    static int rti_wdt_start(struct watchdog_device *wdd)
->>>>    {
->>>>    	u32 timer_margin;
->>>>    	struct rti_wdt_device *wdt = watchdog_get_drvdata(wdd);
->>>> +	u8 reaction;
->>>>    	int ret;
->>>>    	ret = pm_runtime_resume_and_get(wdd->parent);
->>>> @@ -101,8 +109,13 @@ static int rti_wdt_start(struct watchdog_device *wdd)
->>>>    	 */
->>>>    	wdd->min_hw_heartbeat_ms = 520 * wdd->timeout + MAX_HW_ERROR;
->>>> -	/* Generate NMI when wdt expires */
->>>> -	writel_relaxed(RTIWWDRX_NMI, wdt->base + RTIWWDRXCTRL);
->>>> +	/* Reset device if wdt serviced outside of window or generate NMI if available */
+>>>> volcano-usb.dtsi has the following which is implemented in this patch:
+>>>>
+>>>>     /* eUSB2 HPG version 1.0.2 update */
+>>>>     qcom,param-override-seq =3D
+>>>>             <0x00 0x58>;
+>>>> ---
+>>>>  drivers/phy/phy-snps-eusb2.c | 6 ++++++
+>>>>  1 file changed, 6 insertions(+)
+>>>>
+>>>> diff --git a/drivers/phy/phy-snps-eusb2.c b/drivers/phy/phy-snps-eusb2=
+.c
+>>>> index e232b8b4d29100b8fee9e913e2124788af09f2aa..87fc086424ba4d9fb3ce87=
+0aa7f7971a51d4a567 100644
+>>>> --- a/drivers/phy/phy-snps-eusb2.c
+>>>> +++ b/drivers/phy/phy-snps-eusb2.c
+>>>> @@ -420,6 +420,12 @@ static int qcom_snps_eusb2_hsphy_init(struct phy =
+*p)
+>>>>  	/* set default parameters */
+>>>>  	qcom_eusb2_default_parameters(phy);
+>>>> =20
+>>>> +	if (of_device_is_compatible(p->dev.of_node, "qcom,milos-snps-eusb2-p=
+hy")) {
+>>>> +		/* eUSB2 HPG version 1.0.2 update */
+>>>> +		writel_relaxed(0x0, phy->base + QCOM_USB_PHY_CFG_CTRL_1);
+>>>> +		readl_relaxed(phy->base + QCOM_USB_PHY_CFG_CTRL_1);
 >>>
->>> Shouldn't that be "or generate NMI if _not_ available" ?
->>>
->>
->> For almost all the K3 devices, the WDT has two selectable outputs, one resets
->> the device directly, the other is this "NMI" which is wired to an ESM module
->> which can take other actions (but usually it just also resets the device).
->> For AM62L that second NMI output is not wired (no ESM module), so our only
->> choice is to set the WDT to direct reset mode.
->>
->> The wording is a little strange, but the "or generate NMI if available" meaning
->> if NMI is available, then do that. Reset being the fallback when _not_ available.
->>
->> Maybe this would work better:
->>
->> /* If WDT is serviced outside of window, generate NMI if available, or reset device */
->>
-> 
-> The problem is that the code doesn't match the comment. The code checks the
-> "reset" flag and requests a reset if available. If doesn't check an "nmi"
-> flag.
-> 
-> If the preference is NMI, as your comment suggests, the flag should be named
-> "nmi" and be set if NMI is available. That would align the code and the
-> comment. Right now both code and comment are misleading, since the presence
-> of a reset flag (and setting it to false) suggests that a direct reset is
-> not available, and that reset is preferred if available. A reset is the
-> normally expected behavior for a watchdog, so the fact that this is _not_
-> the case for this watchdog should be made more visible.
+>>> Said HPG asks to clear bits [7:1] on all targets
+>>=20
+>> Okay, so make this unconditional and only update those bits instead of
+>> writing the full register?
+>
+> Yes
+>
+>>=20
+>> Keep the write at this location, or move the code somewhere else in the
+>> function?
+> Let's simply do this instead:
+>
+> diff --git a/drivers/phy/phy-snps-eusb2.c b/drivers/phy/phy-snps-eusb2.c
+> index 87f323e758d6..6c44d0366f34 100644
+> --- a/drivers/phy/phy-snps-eusb2.c
+> +++ b/drivers/phy/phy-snps-eusb2.c
+> @@ -392,7 +392,7 @@ static int qcom_snps_eusb2_hsphy_init(struct phy *p)
+> =20
+>         snps_eusb2_hsphy_write_mask(phy->base, QCOM_USB_PHY_CFG_CTRL_1,
+>                                     PHY_CFG_PLL_CPBIAS_CNTRL_MASK,
+> -                                   FIELD_PREP(PHY_CFG_PLL_CPBIAS_CNTRL_M=
+ASK, 0x1));
+> +                                   FIELD_PREP(PHY_CFG_PLL_CPBIAS_CNTRL_M=
+ASK, 0x0));
+> =20
+>         snps_eusb2_hsphy_write_mask(phy->base, QCOM_USB_PHY_CFG_CTRL_4,
+>                                     PHY_CFG_PLL_INT_CNTRL_MASK
 
+Sounds reasonable, if the HPG suggests that...
 
-How about:
+Just asking myself why this wasn't updated in the driver but only added
+via the qcom,param-override-seq for some SoCs. But downstream is still
+downstream I guess.
 
+Regards
+Luca
 
-/* If WWDT serviced outside of window, generate NMI or reset the device
-if NMI not available */
+>
+>
+> Konrad
 
-if (wdt->data->reset)
-	reaction = RTIWWDRXN_RST;
-else
-	reaction = RTIWWDRXN_NMI;
-
-~ Judith
-
-...
 
