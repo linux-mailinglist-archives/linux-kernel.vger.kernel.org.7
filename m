@@ -1,275 +1,200 @@
-Return-Path: <linux-kernel+bounces-726048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87949B00781
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ADF2B00784
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8EB61CA2B54
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:43:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D5BA1888032
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C4127C879;
-	Thu, 10 Jul 2025 15:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0B3274B47;
+	Thu, 10 Jul 2025 15:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QLe5pAVF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W2jihqNv"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC83275B18;
-	Thu, 10 Jul 2025 15:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752161981; cv=fail; b=M/lFfBbkry0Scpn6J+827qrsw5sNW71+B0Lz7QpxNH1gXIhHOxrm4A4Lor7jiX+EoQiBkmrmiGKjS7uSkCGqT9lnWHg69ETnEKAFZ3ZdklUXVCdFX4VWH0mw8Rq2GQhYCwyuUo6YJIabvO7D/QP9tNI9/6PBuevB/wJvhn8VXLo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752161981; c=relaxed/simple;
-	bh=IIFIZP7b/PUPnlC5kBc3FCjIEWUzEOTJTfXaJgAOt4E=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kAMvxbqPHP5cx8HANWcWiKcudOqTImR8ZNcM3PPK/k9plMf9PRFmicdLdY2kUavMn9/wT6ZJDcsqDoQc5Y9hpStRjmPbw9NLd+N1yLZuYiEsxtzsv/UrK1BBdMUEI8Yi3V8AGa150PEEVsLeSNxK0OUQIrmD5oZyi47tLEHQz1Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QLe5pAVF; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752161979; x=1783697979;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=IIFIZP7b/PUPnlC5kBc3FCjIEWUzEOTJTfXaJgAOt4E=;
-  b=QLe5pAVFeaPzcbmuULUTuGI33AHHfKZk5bkjNvzTJjs828rY8E5jzSF7
-   Sv6wtll5frX8LVIbgZ33+3fWwxZxqCIsGEpwwz4/csFG4DwfAguHrCdp7
-   bwn6CjwIb6OBX3l0In2JTPP+MzzVfcmJg1LjfryXFL5TZ38wQeu6yF161
-   70t3wYJ7QFQTRjpwiql04SLomhhqYK0FJNLL9wqusNcy5e30Ic1KQkW7m
-   ymYEB4ynQwUvadYiGdSWygWGvhEEUhY8oLcetninqn+eZHWpgZR1eYZ6T
-   uYLpsdUeiKxGDMWA0T9mixbDTaZvETI8cnHV4U13AV57v3/ap+NpPfwtw
-   w==;
-X-CSE-ConnectionGUID: Bn/M6pCXSBmfNigYIB8vFQ==
-X-CSE-MsgGUID: PH+BaXWdTxqgLe5tPrfEDw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="65028326"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="65028326"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 08:39:37 -0700
-X-CSE-ConnectionGUID: 7DIx2tR/RsCSuev455Y/BA==
-X-CSE-MsgGUID: OPhgVbVjStS38UlFGoWHLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="161693412"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 08:39:37 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 10 Jul 2025 08:39:36 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 10 Jul 2025 08:39:36 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.85) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 10 Jul 2025 08:39:34 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VkFYGsHw0gE0tSqa3Q/7wKTejwMI2XPY3V01kOLbyk14k7X05wg0/2nidVhopAIpZjBumyrRuSRg6EUJJn1wRyAkLbXsr0LMud1URv32pVlsnj83/2AIbTsVWbVd2DTdGKGwOFJVdFe5Uqs1pVbIrqo8RFYax4trpMlslhq6qcDT/MKcBjRWApLkyzv9KsxVWXoBnNcumYmQCnKew+r51+1khMhScSmzWHvX48jLcqi/5rpwafKHbEEHhmaq8jA8Oxrow8EDlDv8Ajs712Jk9cI5kXRBL6xPKB99Fo05QyPKr11+/IZkzQA/WdK5HwAyMF2Ulo+nJCJCilkKa2iqzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Rpl/gsBEL758dzHLDFkJuoAQvpJrlHxQ5CRrz6G2ugg=;
- b=R/sl9MuXzDVL9K5iGEQYiaawlgEQPPE1e0i8tr6Q/N3tXLq+R+JZiIrLjpVxpzKgzfidC43BP1b0+U6m9X2PxJJqviw8PgGwpW6mNZ/f08sM+f/exuuH3kcr2bdSaSRE9nB2yrmiMwLu87P2IANUDRV5KmIdtMZueM3EnyKfip/bd1do0cUlGAUjwfVJV0U/2iWVyOxNACspeuQQW7irGE8Uhoq2fIkMb97w9VTHNFxR0ZjRtolgOHV6LyDftd/uEGUeQ7uJ89Ny5BU8IoTRSCHCwa35LkVprgRVbYPaRWzHCTXc/sJY871VvNNRuZAj6cmP2JhEjzTMHjHbpv5VNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CYYPR11MB8430.namprd11.prod.outlook.com (2603:10b6:930:c6::19)
- by IA4PR11MB9280.namprd11.prod.outlook.com (2603:10b6:208:56f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Thu, 10 Jul
- 2025 15:39:31 +0000
-Received: from CYYPR11MB8430.namprd11.prod.outlook.com
- ([fe80::76d2:8036:2c6b:7563]) by CYYPR11MB8430.namprd11.prod.outlook.com
- ([fe80::76d2:8036:2c6b:7563%5]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
- 15:39:31 +0000
-Date: Thu, 10 Jul 2025 11:39:25 -0400
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-CC: <lucas.demarchi@intel.com>, <thomas.hellstrom@linux.intel.com>,
-	<jarkko.nikula@linux.intel.com>, <airlied@gmail.com>, <simona@ffwll.ch>,
-	<andriy.shevchenko@linux.intel.com>, <mika.westerberg@linux.intel.com>,
-	<jsd@semihalf.com>, <andi.shyti@kernel.org>, <riana.tauro@intel.com>,
-	<srinivasa.adatrao@intel.com>, <michael.j.ruhl@intel.com>,
-	<intel-xe@lists.freedesktop.org>, <linux-i2c@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 0/5] drm/xe: i2c support
-Message-ID: <aG_erdEFxtBPg_oh@intel.com>
-References: <20250710071612.2714990-1-raag.jadav@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250710071612.2714990-1-raag.jadav@intel.com>
-X-ClientProxiedBy: SJ2PR07CA0013.namprd07.prod.outlook.com
- (2603:10b6:a03:505::15) To CYYPR11MB8430.namprd11.prod.outlook.com
- (2603:10b6:930:c6::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22682737FD;
+	Thu, 10 Jul 2025 15:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752162135; cv=none; b=Eu6vDqyvn2HSbUXcGNX+xN1EbL2C4BXTn+JhqJdyZ0A2Q+yLtz4ysXYVkuzNKhF/YassuE6CsVD6E3iwRsjfFXzXwHf/zSB8lwzuEI5+QDchu/RCNmqJomvWZEEZVoPiisFBge3maUcgItHyusDZyVq0YWGbHx9G144pcaspuRI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752162135; c=relaxed/simple;
+	bh=Q84wSa4gEiDFfH5yarasNKbMrTnTs8J/rs21cprCxRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mhtmmph4Pi6ZfbXGD3/GTm2UGu7+6wGxfPKVGrwT2MsPgvGkp37irZRflChXOTIgdJVyJHgsJq8Vs+k1k8xLt9VWHLMdy4mpP+bS4NIwNrTAdo+yetqx2iKrXqz/KwvLTv17+8SYU1+uGuZIq6XmBnKezNlVuXuvbrHGhc3M3cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W2jihqNv; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56AD02oc015626;
+	Thu, 10 Jul 2025 15:41:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=n8/DCH
+	MtAXp3jd5yExP8Ei4NE6gz/N3w4heWlrqsi10=; b=W2jihqNvVWwlsNr7axABBr
+	XoNj8uYk41n3fiZU5SakE73Ff2ek7MFAzEycYgaOZ+sVi79ZEiycaMp/iaN8Nzv3
+	sRpsXA/qjBRIJPY6s7yB5Djvvz2SZg0QxdIIo6Z9bObnddVY3OGq9N3o98LgKb8E
+	ML+fO4TzQekHh/48mxF/PPgMtaNQrKLawfJN5PcrUpaIBM5/4GDVJ7mXCnDLubaE
+	9i5qThpcqPOKtCRS/AsBK7tKvEIaGa03I9LgQDQ39A6DIRrPc2YtRtBdXDfZpu/5
+	81dhoAbnqml6KEWV2lH5dPjQgAT+z2BTsupbl8/uB4IqDeJVOyZSrPZjfSKnBGew
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47ptjrcsas-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 15:41:43 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56ADaNt8021525;
+	Thu, 10 Jul 2025 15:41:41 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qectxgwx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 15:41:41 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56AFfcoi9765272
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Jul 2025 15:41:38 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1E66E2004B;
+	Thu, 10 Jul 2025 15:41:38 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ED8F420040;
+	Thu, 10 Jul 2025 15:41:36 +0000 (GMT)
+Received: from [9.111.128.203] (unknown [9.111.128.203])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 10 Jul 2025 15:41:36 +0000 (GMT)
+Message-ID: <155f22cb-b986-4d22-a853-6de49a1c2e03@linux.ibm.com>
+Date: Thu, 10 Jul 2025 17:41:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR11MB8430:EE_|IA4PR11MB9280:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ce3ef39-566f-4f07-bfa6-08ddbfc7f651
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?4CHGGG3SiexK0FmjM2yiYJNYhBja5tUiR3sjnKYeVFj5AzBtl8UcumAurJfs?=
- =?us-ascii?Q?GkdS42B7d91VbLrOSoecucb3cPnxW9qZIjVgNuIi0TLNH/wNm6P37GDQ7h6g?=
- =?us-ascii?Q?G8kkl3emP08rF7Iu5PXQMkpXc8kkQiH2ePiOhavcrWXfvIPIQo6jDNosezPO?=
- =?us-ascii?Q?hHhAF4H67hpyzs3p3ypGGsDDAVZAGiFjZvvsQi7j6e7jw1voL0dfpHUf1n1j?=
- =?us-ascii?Q?0Wvq+z92acJIhVOjFu+07vUcP+bgDb/NLrPVzeczxDqkRY+/cxCsH5vizvwU?=
- =?us-ascii?Q?lNH74gvgYi2Gm5SmS9bTt2oHBgu1q1C3FkawOOxHH4kP5KWqA6rVsSF/bE2i?=
- =?us-ascii?Q?CTN6XZvgU6N/FDHYhI2YTWdr5V5hztpQx2d5AycrrsDqQ3kL9KC1uBpNt+P1?=
- =?us-ascii?Q?oOMvF2RhF2fBoMQIxa8XLIZCjy6Bi1rI9o+Fa3MDTLs42Q7c/7L2ABWGi0EI?=
- =?us-ascii?Q?xcuy5wL8spi4AjObtMA5CMPLsntqD+odXXOuN1DmWnfSHKn4QZbWWFdrqCcT?=
- =?us-ascii?Q?pfDKd94C40VU99svRORvWZVPRoMLCe2hRPSq1Cg3xrocjiU0UVCgtWFEHq84?=
- =?us-ascii?Q?LSCkXDCRLAhGkb/Fcj+VLHMmcTt8oAULuRf0xw6lKaJwi9UKNmnYLNvc1tVL?=
- =?us-ascii?Q?KW4eRvSY34u0QQ2OdJaTsvrfl71IM85YV+cEZL4MR3kpVjZN6ffaMLBMImZW?=
- =?us-ascii?Q?xlUq23yyEWWeZRwfL66P/zw+oKThoD2l5GMVAgAyqH5u3RSbUYi9CKh8qEZi?=
- =?us-ascii?Q?33IfgsaRMO+Mmu9MYwOz1kREeVjQlBb8AXbb0KPvNB9LN2vpIeWB8znx8ylR?=
- =?us-ascii?Q?u0A8fm/gKQxzGwWGgzFEc4iEuVNdTOnjtDubjEiENAkOuD3HYlb1CfNaCWFb?=
- =?us-ascii?Q?+wb6F4wH7fPD/n49PLRM8ZRdOQyVxNce+hkNIuLSsahCO9JxlJ5ftfPWBJNE?=
- =?us-ascii?Q?NFMly4aJzKuCZjCXQbDSXqpBc/pPUc1RURq9Di7tBDXXNLS8/C6FY3RTSOj3?=
- =?us-ascii?Q?4JWfRUjOie7bYkZ0asmo1GXL/d/TvJ9jy8AS22rKUUTWYhT/GGODrRpUSee6?=
- =?us-ascii?Q?DNn7MHUAczdqj4F7078OJEEkglIofRwqUWLVzGZUt/1e46Knkzh/bIoe0dP5?=
- =?us-ascii?Q?qePV2S1XC3BmCWA7DS07isIoi62M+6gpwP2HNuCfudbaKEFUbFWjze3Q08+T?=
- =?us-ascii?Q?lhXZqJlWprxspviDdZDjOmJDLRMjKh1vg/947509TB+WQ4L1y/UbtIbtSqRy?=
- =?us-ascii?Q?z864s2jMuw6nCmuWmOCB1vjp9RZfnPpG622tS5JgcZIuLPSnY7OhDZy68CYT?=
- =?us-ascii?Q?Y2X+7v4gGym2vkVrcXvLrdrIAYtLdh9BsQS8ecKXM9LQ7p03Jk4dfJt2zoju?=
- =?us-ascii?Q?Qh6attHQaYar4pGyAm5ZDjQtcM+fpnuyszIZ2QH6iodIOqHtxoFs2Ds8OwgF?=
- =?us-ascii?Q?OSpt4P5NazA=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR11MB8430.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7CFB2tNW/vQW07OjMwcFOudVCBBXrWURGOkRnzunsUddR9sfywj/KzwaMsmT?=
- =?us-ascii?Q?o7laEzHPpFnEMLmTM2ONeSipk9MWMHtSbpVaiDL2Jt+L/c84gSfCMvlhEhBn?=
- =?us-ascii?Q?Qu6+dAxVWYCQlfzByaMAhhxhjvD6MY7H6szSCgQJX911YicuRi7vOZ2lFoDV?=
- =?us-ascii?Q?g2SPE6pkl2trlFou1wImqeVUu3hGdC58tzTGJRdR/CnCZ/Vpot4vGukNOKIK?=
- =?us-ascii?Q?uR5EPscqE4QQBwk4hA9C4N12edjSGati5eVesc2rvDW+cUEqLURXLgnzgQpn?=
- =?us-ascii?Q?PVN7REWPqxj/+UicdidJHoYRVTzEHUAuVpLL9cWjKvujK4ak3Hhxjr+BsvHJ?=
- =?us-ascii?Q?w7A9sF6sFaLFpyaAEUBzb6ExMtzcvL8MP7nPYg27/qY//5cuPrdY79pvrE3G?=
- =?us-ascii?Q?mZxdI5r8uK3eoj6Z7ReTuALTPvs3hgpRpgB1yU3aD6CiQ6RVNEl60H9Lq+sP?=
- =?us-ascii?Q?vGMIkQsCevzWpvhBg+oetbkKpBuPrsnCO4MGZJkazxN5xb5T9z0aWwPZzKY/?=
- =?us-ascii?Q?QGc8+CLDJ+c2w/9saPi8WarUZ10fP/yv7tUBiXf5dD92Bldh8WcRGpFXcWCu?=
- =?us-ascii?Q?1uGzdbEnCENg6hpVvrSiVLEbvFN6Km9gW/PKYhX3yba0iMftL15ZqsxL/Nyr?=
- =?us-ascii?Q?NJK2Dm9vBThTguRbLUu742LW4bdEHLTZtTxyz46wFZuqrvLtdzenJVyjoXQo?=
- =?us-ascii?Q?H0jy471pKBq03l8ecGPsQqEbr6bOCC5O/6aGEEsfoHmtY1rUe5hCiAQ8JSyS?=
- =?us-ascii?Q?PLWTOQ6Gc1uEav19n6Ks0s9Xb/cVkFK79QH9tcTQyRhWVlXU5e8OevX3qjAl?=
- =?us-ascii?Q?wOYEURW8cYdwLrPPI1qx97c4ivBii89SvHshDawU+gb9bfs4bfc50cvb/ppX?=
- =?us-ascii?Q?r4aX9TdEHEeaUubCXKIBrTAlPB/1GpUkqKoO2SmYX9wq2gACA6VKiEvl6aUp?=
- =?us-ascii?Q?WoGhS6Ch6Rht4NkzTmnTc6TaiMpi6GBzZIdhGubo+balzC7Xsvd6RrFjSGX5?=
- =?us-ascii?Q?QB1w0O1Hs7c6EPasIm9ol40WNVoe/NrjhR/zQdqM1IB+RXnAicAMBSzvzDi+?=
- =?us-ascii?Q?gJW3rHdU/ttBPkbuWK8asVBUNFtLeMluwPawYNRXKFfmUpRUb8UZLvSco+Ep?=
- =?us-ascii?Q?3DmLVN/hajzjcJg6Z9an3/+SpHauWjnFjst8XAzWL8QvOdQWr6gK7TsAR6Qr?=
- =?us-ascii?Q?VhLE7JkkOg+aJLiMqDNY2mPoYlrcG4yFQUT11KomZyCvb8AQmJ1msOhS49dO?=
- =?us-ascii?Q?MWQBh62z5hF+np5WKlmPV4By2dZS/IBt1YLNBd1v9X9Oz+QfoZSvX5CkOe04?=
- =?us-ascii?Q?ARmClmiUGn+FKyWrJf/p9thgG1n1YFLgJe0Js6eVMG5P9DZCoO3BwFiRiq9W?=
- =?us-ascii?Q?NBOKadYERwFCnjvog3gYmdc2nE+hNjVdChccsLyAWbLKPV4RQwywUPX1LSAh?=
- =?us-ascii?Q?ghwPzfWI7dhe20G9sr7J8QsiM2eqpci4uETPrGJgCiZ1TFQOmd6ZCZwEyRQe?=
- =?us-ascii?Q?ZIo6JCjUAGIROa6LO+Yhne1EDIA7f4IB6MrhByGo60jA9kqrCEI7j/wBIaQx?=
- =?us-ascii?Q?CMbL79LJsf7D1cWHjf4EWyLMo72IHo6ZXq4koT2ze0BgtrlMVRieUawXAQ+z?=
- =?us-ascii?Q?bg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ce3ef39-566f-4f07-bfa6-08ddbfc7f651
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR11MB8430.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 15:39:31.0519
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gXFpzFej+LzWpRUHhl5SBojEQZixhpU/+sXax/u467o9/u+s2w0rEobLKJPMQ4rkls3Xk8k//mL9M3jv2ewOtg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9280
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 02/14] unwind_user: Add frame pointer support
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+        Sam James <sam@gentoo.org>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+References: <20250708012239.268642741@kernel.org>
+ <20250708012357.982692711@kernel.org>
+ <d3279556-9bb6-429d-a037-fe279c5e3c67@linux.ibm.com>
+ <20250710112147.41585f6a@batman.local.home>
+Content-Language: en-US
+From: Jens Remus <jremus@linux.ibm.com>
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <20250710112147.41585f6a@batman.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=GL8IEvNK c=1 sm=1 tr=0 ts=686fdf37 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=Ezl6U-oBbhCAbrAPatEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: FStG2Q_hrPMgrV8gJgqFEHt6JVvS2wm5
+X-Proofpoint-GUID: FStG2Q_hrPMgrV8gJgqFEHt6JVvS2wm5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDEzMSBTYWx0ZWRfX/4n5NhYYMKhz 1+763M4hf6Hs2QXAAgoE8F9Jcf5jgsbsyJS2hhqoW6SVZvTGvfNdTHk4JR4BU8QaZhLPaOmJ8DR SSGMn4P2jydvFLuzXrhCW1mzroBYwEYBixa7czLCdNL0R6bDjKrXVgVbaYathXNO4vzXkYxMneR
+ n2PXutd93IpZvn392VBOtYZGv9sFzWCreb4YbfBBCzts4wlhA/EXa3/i1Bhn3N3nZTPGFkUmjX2 lLz4eJJnEajUinA4HYbI7cXF0fj3J3C0C1ymeMGZlL7k7oiD64AxH9fJy2Pe6SU3qnaWJsRAp64 86ljQU9deCDyX52tjFnurSGDgR7qA7vxfp+/jt2cqHxIDg9FPTbuSeZJWTCCPqIkP5WrOP4mJuQ
+ 6MDeae/MWbyAL+5jmB6GHPBYSn9o3DysrjXveSn8si6o5Rx9Yb1Atl9OTo/bEAJaMICrm61d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_03,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507100131
 
-On Thu, Jul 10, 2025 at 12:46:07PM +0530, Raag Jadav wrote:
-> Hi,
-> 
-> On behalf of Heikki, since he's on vacation.
+On 10.07.2025 17:21, Steven Rostedt wrote:
+> On Wed, 9 Jul 2025 12:01:14 +0200
+> Jens Remus <jremus@linux.ibm.com> wrote:
 
-ops, I'm really sorry that I had missed this.
-The first think I did this morning was to merge his series,
-changing while merging, once I heard he was out on vacation.
+>>> +	if (frame->use_fp) {
+>>> +		if (state->fp < state->sp)  
+>>
+>> 		if (state->fp <= state->sp)
+>>
+>> I meanwhile came to the conclusion that for architectures, such as s390,
+>> where SP at function entry == SP at call site, the FP may be equal to
+>> the SP.  At least for the brief period where the FP has been setup and
+>> stack allocation did not yet take place.  For most architectures this
+>> can probably only occur in the topmost frame.  For s390 the FP is setup
+>> after static stack allocation, so --fno-omit-frame-pointer would enforce
+>> FP==SP in any frame that does not perform dynamic stack allocation.
+> 
+> From your latest email, I take it I can ignore the above?
 
-But thank you so much for sending this as well.
+Correct.
 
+>>> +	/* Make sure that the address is word aligned */
+>>> +	shift = sizeof(long) == 4 ? 2 : 3;
+>>> +	if ((cfa + frame->ra_off) & ((1 << shift) - 1))
+>>> +		goto done;  
+>>
+>> Do all architectures/ABI mandate register stack save slots to be aligned?
+>> s390 does.
 > 
-> Changed since v6:
-> - Fix SPDX checkpatch warning.
+> I believe so.
 > 
-> Changed since v5:
-> - The modification to the dw_i2c_plat_probe() is split into its own
->   patch as proposed by Andi.
-> - I removed completely the comment from the last patch in the series
->   ("drm/xe/xe_i2c: Add support for i2c in survivability mode").
+>>
+>>> +
+>>> +	/* Find the Return Address (RA) */
+>>> +	if (get_user(ra, (unsigned long *)(cfa + frame->ra_off)))
+>>> +		goto done;
+>>> +  
+>>
+>> Why not validate the FP stack save slot address as well?
 > 
-> Changed since v4:
-> - Cleanups requested by Andy.
-> - Casting the PCI power modes to make sparse happy - Raag.
-> - Limiting the use of this thing to Battlemage again. But I'm not sure
->   if this is the correct thing to do.
-> 
-> Changed since v3:
-> - Cleanups as requested by Rodrigo.
-> - The licence is now changed, but still need confirmation for it!
-> 
-> Changed since v2:
-> - Added dependency on regmap when i2c is enabled.
-> 
-> Changed since v1:
-> - Now rebased on top of drm-tip.
-> - No longer ignoring errors from xe_i2c_probe().
-> - Cleanups pointed out by Lucas.
-> 
-> I've also included followup patches from Raag and Riana to this
-> series.
-> 
-> Original cover letter:
-> 
-> Some of the future GPUs will provide access to the on-board Synopsys
-> DesignWare I2C host adapter. The i2c is used to connect various
-> microcontrollers. The initially supported microcontroller unit is
-> called Add-In Management Controller (AMC).
-> 
-> Thanks,
-> 
-> Heikki Krogerus (3):
->   i2c: designware: Use polling by default when there is no irq resource
->   i2c: designware: Add quirk for Intel Xe
->   drm/xe: Support for I2C attached MCUs
-> 
-> Raag Jadav (1):
->   drm/xe/pm: Wire up suspend/resume for I2C controller
-> 
-> Riana Tauro (1):
->   drm/xe/xe_i2c: Add support for i2c in survivability mode
-> 
->  drivers/gpu/drm/xe/Kconfig                  |   1 +
->  drivers/gpu/drm/xe/Makefile                 |   1 +
->  drivers/gpu/drm/xe/regs/xe_i2c_regs.h       |  20 ++
->  drivers/gpu/drm/xe/regs/xe_irq_regs.h       |   1 +
->  drivers/gpu/drm/xe/regs/xe_pmt.h            |   2 +-
->  drivers/gpu/drm/xe/regs/xe_regs.h           |   2 +
->  drivers/gpu/drm/xe/xe_device.c              |   5 +
->  drivers/gpu/drm/xe/xe_device_types.h        |   4 +
->  drivers/gpu/drm/xe/xe_i2c.c                 | 329 ++++++++++++++++++++
->  drivers/gpu/drm/xe/xe_i2c.h                 |  62 ++++
->  drivers/gpu/drm/xe/xe_irq.c                 |   2 +
->  drivers/gpu/drm/xe/xe_pm.c                  |   9 +
->  drivers/gpu/drm/xe/xe_survivability_mode.c  |  19 +-
->  drivers/i2c/busses/i2c-designware-platdrv.c |  18 +-
->  14 files changed, 460 insertions(+), 15 deletions(-)
->  create mode 100644 drivers/gpu/drm/xe/regs/xe_i2c_regs.h
->  create mode 100644 drivers/gpu/drm/xe/xe_i2c.c
->  create mode 100644 drivers/gpu/drm/xe/xe_i2c.h
-> 
-> -- 
-> 2.34.1
-> 
+> You mean to validate cfa + frame->fp_off?
+
+Yes.
+
+> Isn't cfa the only real variable here? That is, if cfa + frame->ra_off
+> works, wouldn't the same go for frame->fp_off, as both frame->ra_off
+> and frame->fp_off are constants set by the architecture, and should be
+> word aligned.
+
+cfa + frame->ra_off could be aligned by chance.  So could
+cfa + frame->fp_off be as well of course.
+
+On s390 the CFA must be aligned (as the SP must be aligned) and the
+FP and RA offsets from CFA must be aligned, as pointer / 64-bit integers
+(such as 64-bit register values) must be aligned as well.
+
+So the CFA (and/or offset), FP offset, and RA offset could be validated
+individually.  Not sure if that would be over engineering though.
+
+>>> +	if (frame->fp_off && get_user(fp, (unsigned long __user *)(cfa + frame->fp_off)))
+>>> +		goto done;
+
+Regards,
+Jens
+-- 
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
+
 
