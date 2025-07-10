@@ -1,424 +1,85 @@
-Return-Path: <linux-kernel+bounces-726685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABA0B01009
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:02:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 661E5B01003
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 762ADB400E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:59:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3A7646F03
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB223196A5;
-	Thu, 10 Jul 2025 23:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1B7307ADE;
+	Thu, 10 Jul 2025 23:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RX+/nNnd"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEY/ZBhs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDE13196B0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60AD29ACDE;
+	Thu, 10 Jul 2025 23:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752191914; cv=none; b=ZNQelI9+tCDFacgFWcGTM/F5JXTIUd7G8gV4alXfUglzUQu2umVEdBXyXWdC/0Sq49oYnFkDBeoPt8yoYTqWHSG2gomEbeO1PCvkuk/zA2vy4PO8k32JYN1sGLsjBihcw/voJgydkQ4maxXxkJhb3E1yKKNK++pYE4WfDPjfQic=
+	t=1752191933; cv=none; b=NVArzqkhbqyyA+lnS0HFkMeIpG1DD0S2+okKdPyxyyYpa0obWxXQ0AtXOr+2Ntg3c4/8rnPFWfqgVNuqRczIDrFPdJpzekIKPDGpuufRy+9mjzUVBE1R9llUBHaPK1E10EkpEznYGxP34bYKz0MaxpToRe0PVDGaHcfQrERDsnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752191914; c=relaxed/simple;
-	bh=4DBEBdTfWfkhLt8ag7FL9lGLt+srCnvLuSveHjPSawA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=GTO7kJuLoxGGg70u/bHFePGZTx0PQON2iOZb8fE6o1/Px9nb8GzMc+pZwJZRo5XgwnxK73oyOLsQrtwrKbSI9x1mzpS2DfJRlvhd1y2s28B/ntPAmTctUmYAuB/zyzJz9J3ZEuZO6TSlQc/1U1w2/aRI71b9+vOx0Asq3HgHZ1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RX+/nNnd; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7489ac848f3so2155250b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:58:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752191912; x=1752796712; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BsThzVLcGqNGlV+OXH+rg8cRsNmgOdp9nQeDnnzr9WU=;
-        b=RX+/nNndH0YhHcbOok2dDHaJH1tYqrKJ9jhYz4CZZMD8J5rtU8hnKXNnzS7Wb0PBK+
-         RQBR7/NGOohBYUUfgFT6HDx/uvRTIVyEu6ST+nOFJbG/OWzvMDlz3mzwppExbaPWYWff
-         SO1WyTY9S/y3cykKn2ATB9ZzG4hQkqkno4nz5Do3rgDXulgC6fYJ1HZrYJdTDMo6pdR5
-         catR+oVGLwv7ETAA7tLMxPpXdEG80xTrrgUsI6kEMgq//0mlLh5tnznjd1z5qoiIkRJy
-         Wx/lDKLcaGvv1jjI9qymJIn3uayDHTaHmNjofe6Q1oU/ilEYJqku2B5pGqdIFyOSm8A7
-         ow/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752191912; x=1752796712;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BsThzVLcGqNGlV+OXH+rg8cRsNmgOdp9nQeDnnzr9WU=;
-        b=liVK6ggVgLt/VC80ptmkBSpxl2xFmXhtyodcrASwsD2oQ1JQcyuc9YN1uuuvXJQ3IA
-         yODGT8nf7Ok3PwDjhSN3svKxB5sUUDYEi5WoSHMmKWy28WcdAZmxn3TwrebJA+Fz9fmT
-         YEIElrf+08EwxoH/Ru6GLWkty1UTsx0nSBopt+0ubJhOSByke4NUiBeHML3xz4ivBdTy
-         EVaKzzpuj3bsUbDbY8ZiGZIyF80Zazjb0jtM/uFaBuUmnfYn2CU4mlwDembXbf/tOKou
-         JrSyAtZXwsdLYHotsSSC92l0AiDOA9HDz7Pa6dI1/KRnKIQptF0Wx+GNd9WvhlOeXYUD
-         /+SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHVmlYCU/ihDX7Y8kSRyay7JmrRLdBHWN2WQsX3C/W/8IuWLCz7H8dL1QdHamiqcrWCjeBK+Xh4xytDqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz7Is20gNqAjvgxnQZtGH5jaXjmHdSjezGklIpg9w8iP6b+dqU
-	ZHPwekLKbw/DdBUXGkTt4IBQB1OeuDLJVk1ynflHQlhwAkklAiGUMP5ItAlw7qE2QiMp3IrmB9X
-	5sR2tNfu35w==
-X-Google-Smtp-Source: AGHT+IHwwifwYLIYk/0rs9JVC1jLVNUSQ2XyDd1ZHWXgQdOcnurgh4WPsY87t4mgJqxvt+CX1/YduFsU/Xhk
-X-Received: from pgbfq20.prod.google.com ([2002:a05:6a02:2994:b0:b31:be7c:3c6b])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:431a:b0:215:efe1:a680
- with SMTP id adf61e73a8af0-231367675ebmr1366518637.16.1752191912159; Thu, 10
- Jul 2025 16:58:32 -0700 (PDT)
-Date: Thu, 10 Jul 2025 16:57:35 -0700
-In-Reply-To: <20250710235735.1089240-1-irogers@google.com>
+	s=arc-20240116; t=1752191933; c=relaxed/simple;
+	bh=RZSiQFQ5CJhU/h0mQJuZBqy5Y/7NgeYrUN8qKuNGZaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VCzSRk1kbeK/4y05Aw0WudUjF0bnujMTlP6oNPHvLcA/gP89I5iKWUkMi1oatf8cuybuupV05abFvUSShqUWNmkNgoqNfPc61xVK2ez/6pz6p989O0fAxw7KCPc0yFbLCR0VCszYSvKtIckF8SAWMXJLNT4XbrFA8lsCLERUt68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEY/ZBhs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B37E5C4CEE3;
+	Thu, 10 Jul 2025 23:58:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752191933;
+	bh=RZSiQFQ5CJhU/h0mQJuZBqy5Y/7NgeYrUN8qKuNGZaI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LEY/ZBhsaDpXenP21NMpx/v0+GdIHZP9qq9rcGq2t9XFbjm0DCSeVg/OP/j+KFDuu
+	 pLeuPg9fW/WQmiVRfAG/xwR0KitIoLbBTC+xJcj7MgQFrAqTQX4Qleugflp04piT0t
+	 9a+1uquoUkghyvYfix+SAtquNSpkwsnS4938SK+Ptg6cMTtMbm46w1mbyRniOsQ+Hr
+	 MAbPeSmLgAAATN+WIFgvc/b3phu3mDCF8tEv+babk1Uyg4sV8axpK6cCJQwT8pLDbL
+	 pFkzjcxZKkYh1Pk0Qcao5jxlna3CdJovmJlWsRLNHcqZ7DaFQ4AUxXbdZrA2Sp9KkJ
+	 nOzF8zO051G3A==
+Date: Thu, 10 Jul 2025 16:58:51 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Parav Pandit <parav@nvidia.com>
+Cc: Dragos Tatulea <dtatulea@nvidia.com>, "almasrymina@google.com"
+ <almasrymina@google.com>, "asml.silence@gmail.com"
+ <asml.silence@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Saeed Mahameed
+ <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Cosmin Ratiu
+ <cratiu@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next 1/4] net: Allow non parent devices to be used for
+ ZC DMA
+Message-ID: <20250710165851.7c86ba84@kernel.org>
+In-Reply-To: <CY8PR12MB7195361C14592016B8D2217DDC43A@CY8PR12MB7195.namprd12.prod.outlook.com>
+References: <20250702172433.1738947-1-dtatulea@nvidia.com>
+	<20250702172433.1738947-2-dtatulea@nvidia.com>
+	<20250702113208.5adafe79@kernel.org>
+	<c5pxc7ppuizhvgasy57llo2domksote5uvo54q65shch3sqmkm@bgcnojnxt4hh>
+	<20250702135329.76dbd878@kernel.org>
+	<CY8PR12MB7195361C14592016B8D2217DDC43A@CY8PR12MB7195.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250710235735.1089240-1-irogers@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250710235735.1089240-15-irogers@google.com>
-Subject: [PATCH v6 14/14] perf ilist: Add support for metrics
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Collin Funk <collin.funk1@gmail.com>, Howard Chu <howardchu95@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Gautam Menghani <gautam@linux.ibm.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Change tree nodes to having a value of either Metric or PmuEvent,
-these values have the ability to match searches, be parsed to create
-evlists and to give a value per CPU and per thread to display.  Use
-perf.metrics to generate a tree of metrics. Most metrics are placed
-under their metric group, if the metric group name ends with '_group'
-then the metric group is placed next to the associated metric.
+On Thu, 3 Jul 2025 11:58:50 +0000 Parav Pandit wrote:
+> > In my head subfunctions are a way of configuring a PCIe PASID ergo they
+> > _only_ make sense in context of DMA.  
+> SF DMA is on the parent PCI device.
+> 
+> SIOV_R2 will have its own PCI RID which is ratified or getting ratified.
+> When its done, SF (as SIOV_R2 device) instantiation can be extended
+> with its own PCI RID. At that point they can be mapped to a VM.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/python/ilist.py | 207 +++++++++++++++++++++++++++----------
- 1 file changed, 153 insertions(+), 54 deletions(-)
-
-diff --git a/tools/perf/python/ilist.py b/tools/perf/python/ilist.py
-index 3e2fae1db738..0d46b44d2961 100755
---- a/tools/perf/python/ilist.py
-+++ b/tools/perf/python/ilist.py
-@@ -2,8 +2,11 @@
- # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
- """Interactive perf list."""
- 
-+from abc import ABC, abstractmethod
- import argparse
--from typing import Any, Dict, Tuple
-+from dataclasses import dataclass
-+from typing import Any, Dict, Optional, Tuple
-+import math
- import perf
- from textual import on
- from textual.app import App, ComposeResult
-@@ -14,6 +17,103 @@ from textual.screen import ModalScreen
- from textual.widgets import Button, Footer, Header, Input, Label, Sparkline, Static, Tree
- from textual.widgets.tree import TreeNode
- 
-+def get_info(info: Dict[str, str], key: str):
-+    return (info[key] + "\n") if key in info else ""
-+
-+class TreeValue(ABC):
-+    """Abstraction for the data of value in the tree."""
-+
-+    @abstractmethod
-+    def name(self) -> str:
-+        pass
-+
-+    @abstractmethod
-+    def description(self) -> str:
-+        pass
-+
-+    @abstractmethod
-+    def matches(self, query: str) -> bool:
-+        pass
-+
-+    @abstractmethod
-+    def parse(self) -> perf.evlist:
-+        pass
-+
-+    @abstractmethod
-+    def value(self, evlist: perf.evlist, evsel: perf.evsel, cpu: int, thread: int) -> float:
-+        pass
-+
-+
-+@dataclass
-+class Metric(TreeValue):
-+    """A metric in the tree."""
-+    metric_name: str
-+
-+    def name(self) -> str:
-+        return self.metric_name
-+
-+    def description(self) -> str:
-+        """Find and format metric description."""
-+        for metric in perf.metrics():
-+            if metric["MetricName"] != self.metric_name:
-+                continue
-+            desc = get_info(metric, "BriefDescription")
-+            desc += get_info(metric, "PublicDescription")
-+            desc += get_info(metric, "MetricExpr")
-+            desc += get_info(metric, "MetricThreshold")
-+            return desc
-+        return "description"
-+
-+    def matches(self, query: str) -> bool:
-+        return query in self.metric_name
-+
-+    def parse(self) -> perf.evlist:
-+        return perf.parse_metrics(self.metric_name)
-+
-+    def value(self, evlist: perf.evlist, evsel: perf.evsel, cpu: int, thread: int) -> float:
-+        val = evlist.compute_metric(self.metric_name, cpu, thread)
-+        return 0 if math.isnan(val) else val
-+
-+
-+@dataclass
-+class PmuEvent(TreeValue):
-+    """A PMU and event within the tree."""
-+    pmu: str
-+    event: str
-+
-+    def name(self) -> str:
-+        if self.event.startswith(self.pmu) or ':' in self.event:
-+            return self.event
-+        else:
-+            return f"{self.pmu}/{self.event}/"
-+
-+    def description(self) -> str:
-+        """Find and format event description for {pmu}/{event}/."""
-+        for p in perf.pmus():
-+            if p.name() != self.pmu:
-+                continue
-+            for info in p.events():
-+                if "name" not in info or info["name"] != self.event:
-+                    continue
-+
-+                desc = get_info(info, "topic")
-+                desc += get_info(info, "event_type_desc")
-+                desc += get_info(info, "desc")
-+                desc += get_info(info, "long_desc")
-+                desc += get_info(info, "encoding_desc")
-+                return desc
-+        return "description"
-+
-+    def matches(self, query: str) -> bool:
-+        return query in self.pmu or query in self.event
-+
-+    def parse(self) -> perf.evlist:
-+        return perf.parse_events(self.name())
-+
-+    def value(self, evlist: perf.evlist, evsel: perf.evsel, cpu: int, thread: int) -> float:
-+        return evsel.read(cpu, thread).val
-+
-+
- class ErrorScreen(ModalScreen[bool]):
-     """Pop up dialog for errors."""
- 
-@@ -123,8 +223,9 @@ class IListApp(App):
-     def __init__(self, interval: float) -> None:
-         self.interval = interval
-         self.evlist = None
--        self.search_results: list[TreeNode[str]] = []
--        self.cur_search_result: TreeNode[str] | None = None
-+        self.selected: Optional[TreeValue] = None
-+        self.search_results: list[TreeNode[TreeValue]] = []
-+        self.cur_search_result: TreeNode[TreeValue] | None = None
-         super().__init__()
- 
- 
-@@ -180,15 +281,15 @@ class IListApp(App):
-             event = event.lower()
-             search_label.update(f'Searching for events matching "{event}"')
- 
--            tree: Tree[str] = self.query_one("#pmus", Tree)
--            def find_search_results(event: str, node: TreeNode[str], \
-+            tree: Tree[TreeValue] = self.query_one("#root", Tree)
-+            def find_search_results(event: str, node: TreeNode[TreeValue], \
-                                     cursor_seen: bool = False, \
--                                    match_after_cursor: TreeNode[str] | None = None) \
--                    -> Tuple[bool, TreeNode[str] | None]:
-+                                    match_after_cursor: TreeNode[TreeValue] | None = None) \
-+                    -> Tuple[bool, TreeNode[TreeValue] | None]:
-                 """Find nodes that match the search remembering the one after the cursor."""
-                 if not cursor_seen and node == tree.cursor_node:
-                     cursor_seen = True
--                if node.data and event in node.data:
-+                if node.data and node.data.matches(event):
-                     if cursor_seen and not match_after_cursor:
-                         match_after_cursor = node
-                     self.search_results.append(node)
-@@ -222,17 +323,17 @@ class IListApp(App):
- 
- 
-     def action_collapse(self) -> None:
--        """Collapse the potentially large number of events under a PMU."""
--        tree: Tree[str] = self.query_one("#pmus", Tree)
-+        """Collapse the part of the tree currently on."""
-+        tree: Tree[str] = self.query_one("#root", Tree)
-         node = tree.cursor_node
--        if node and node.parent and node.parent.parent:
-+        if node and node.parent:
-             node.parent.collapse_all()
-             node.tree.scroll_to_node(node.parent)
- 
- 
-     def update_counts(self) -> None:
-         """Called every interval to update counts."""
--        if not self.evlist:
-+        if not self.selected or not self.evlist:
-             return
- 
-         def update_count(cpu: int, count: int):
-@@ -261,8 +362,7 @@ class IListApp(App):
-             for cpu in evsel.cpus():
-                 aggr = 0
-                 for thread in evsel.threads():
--                    counts = evsel.read(cpu, thread)
--                    aggr += counts.val
-+                    aggr += self.selected.value(self.evlist, evsel, cpu, thread)
-                 update_count(cpu, aggr)
-                 total += aggr
-         update_count(-1, total)
-@@ -275,8 +375,10 @@ class IListApp(App):
-         self.set_interval(self.interval, self.update_counts)
- 
- 
--    def set_pmu_and_event(self, pmu: str, event: str) -> None:
-+    def set_selected(self, value: TreeValue) -> None:
-         """Updates the event/description and starts the counters."""
-+        self.selected = value
-+
-         # Remove previous event information.
-         if self.evlist:
-             self.evlist.disable()
-@@ -288,34 +390,13 @@ class IListApp(App):
-             for line in lines:
-                 line.remove()
- 
--        def pmu_event_description(pmu: str, event: str) -> str:
--            """Find and format event description for {pmu}/{event}/."""
--            def get_info(info: Dict[str, str], key: str):
--                return (info[key] + "\n") if key in info else ""
--
--            for p in perf.pmus():
--                if p.name() != pmu:
--                    continue
--                for info in p.events():
--                    if "name" not in info or info["name"] != event:
--                        continue
--
--                    desc = get_info(info, "topic")
--                    desc += get_info(info, "event_type_desc")
--                    desc += get_info(info, "desc")
--                    desc += get_info(info, "long_desc")
--                    desc += get_info(info, "encoding_desc")
--                    return desc
--            return "description"
--
--        # Parse event, update event text and description.
--        full_name = event if event.startswith(pmu) or ':' in event else f"{pmu}/{event}/"
--        self.query_one("#event_name", Label).update(full_name)
--        self.query_one("#event_description", Static).update(pmu_event_description(pmu, event))
-+        # Update event/metric text and description.
-+        self.query_one("#event_name", Label).update(value.name())
-+        self.query_one("#event_description", Static).update(value.description())
- 
-         # Open the event.
-         try:
--            self.evlist = perf.parse_events(full_name)
-+            self.evlist = value.parse()
-             if self.evlist:
-                 self.evlist.open()
-                 self.evlist.enable()
-@@ -323,7 +404,7 @@ class IListApp(App):
-             self.evlist = None
- 
-         if not self.evlist:
--            self.push_screen(ErrorScreen(f"Failed to open {full_name}"))
-+            self.push_screen(ErrorScreen(f"Failed to open {value.name()}"))
-             return
- 
-         # Add spark lines for all the CPUs. Note, must be done after
-@@ -344,24 +425,44 @@ class IListApp(App):
- 
-     def compose(self) -> ComposeResult:
-         """Draws the app."""
--        def pmu_event_tree() -> Tree:
--            """Create tree of PMUs with events under."""
--            tree: Tree[str] = Tree("PMUs", id="pmus")
--            tree.root.expand()
-+        def metric_event_tree() -> Tree:
-+            """Create tree of PMUs and metricgroups with events or metrics under."""
-+            tree: Tree[TreeValue] = Tree("Root", id="root")
-+            pmus = tree.root.add("PMUs")
-             for pmu in perf.pmus():
-                 pmu_name = pmu.name().lower()
--                pmu_node = tree.root.add(pmu_name, data=pmu_name)
-+                pmu_node = pmus.add(pmu_name)
-                 for event in sorted(pmu.events(), key=lambda x: x["name"]):
-                     if "name" in event:
-                         e = event["name"].lower()
-                         if "alias" in event:
--                            pmu_node.add_leaf(f'{e} ({event["alias"]})', data=e)
-+                            pmu_node.add_leaf(f'{e} ({event["alias"]})', data=PmuEvent(pmu_name, e))
-                         else:
--                            pmu_node.add_leaf(e, data=e)
-+                            pmu_node.add_leaf(e, data=PmuEvent(pmu_name, e))
-+            metrics = tree.root.add("Metrics")
-+            groups = set()
-+            for metric in perf.metrics():
-+                groups.update(metric["MetricGroup"])
-+
-+            def add_metrics_to_tree(node: TreeNode[TreeValue], parent: str):
-+                for metric in sorted(perf.metrics(), key=lambda x: x["MetricName"]):
-+                    if parent in metric["MetricGroup"]:
-+                        name = metric["MetricName"]
-+                        node.add_leaf(name, data=Metric(name))
-+                        child_group_name = f'{name}_group'
-+                        if child_group_name in groups:
-+                            add_metrics_to_tree(node.add(child_group_name), child_group_name)
-+
-+            for group in sorted(groups):
-+                if group.endswith('_group'):
-+                    continue
-+                add_metrics_to_tree(metrics.add(group), group)
-+
-+            tree.root.expand()
-             return tree
- 
-         yield Header(id="header")
--        yield Horizontal(Vertical(pmu_event_tree(), id="events"),
-+        yield Horizontal(Vertical(metric_event_tree(), id="events"),
-                          Vertical(Label("event name", id="event_name"),
-                                   Static("description", markup=False, id="event_description"),
-                                   ))
-@@ -371,12 +472,10 @@ class IListApp(App):
- 
- 
-     @on(Tree.NodeSelected)
--    def on_tree_node_selected(self, event: Tree.NodeSelected[str]) -> None:
-+    def on_tree_node_selected(self, event: Tree.NodeSelected[TreeValue]) -> None:
-         """Called when a tree node is selected, selecting the event."""
--        if event.node.parent and event.node.parent.parent:
--            assert event.node.parent.data is not None
--            assert event.node.data is not None
--            self.set_pmu_and_event(event.node.parent.data, event.node.data)
-+        if event.node.data:
-+            self.set_selected(event.node.data)
- 
- 
- if __name__ == "__main__":
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+AFAIU every PCIe transaction for a queue with a PASID assigned
+should have a PASID prefix. Why is a different RID necessary?
+CPUs can't select IOMMU context based on RID+PASID?
 
