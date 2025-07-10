@@ -1,127 +1,204 @@
-Return-Path: <linux-kernel+bounces-725871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4202B004DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:15:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05CEBB004E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60BBD488359
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:13:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F9B1C40F42
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E0E271456;
-	Thu, 10 Jul 2025 14:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2E22727FB;
+	Thu, 10 Jul 2025 14:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="m7JlWAkn"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="OIDPkdGX"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC60E26E6FE
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752156803; cv=none; b=sRAm/rcXYHf9Shdo9x0s94QCRQMgYYh1rd0Ehf7oGWGFyLpLc0LFpocWeq+unCPBIc/9r8Xxudtk8cSks2ssomTn0bJryEHYWH92dlvVsIUJpQINQ7xUnD/DH0+ZDrYmpaiYmgCsd75iJ8/Q2nyVfh08xMIcdUVIvo+UcR5Dz1g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752156803; c=relaxed/simple;
-	bh=m3jJP4tcnyBOZ/ODiD/dI+4CH6ZhaVWKBUwJ2va5Hpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aqf17Q/crwOVtn75r67n4uMOP3Wfu1h3HW4e3CrIW++0CwRok0vZ2U8vA3yCihv4tYuqO53hepkG2eIo1kA0Jx4Mrghjpsdzg+RcG8mjOsR4zBrfzASphi2ZaLMoJ942qMC5ul3P5eFiudgJQ5TjFvjB0lkioC1KmQvKV6K15KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=m7JlWAkn; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6fd0a91ae98so6674686d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1752156801; x=1752761601; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4D8h7/0g6nmmKvt9dKEaFtHgB5fxkN8z+u5enhCJdIQ=;
-        b=m7JlWAknaGo0wmwgKgW4efJBZT+/e/VqUQaLImZPrTd8YUOvF5Pm8J1IEjgWuiMGjr
-         FOXXo4PzVjhwpUZ2JbODYuAeOYGdmmaPmnvIdk+wi9SQOxS50civES8+5ojIiymz3jB8
-         FUq2BFyvbIjcJF7T5fWjh00WNvN0qI7NAhCuSQWRIS2/fSAjipBu8N9nZBIsYS1ON0AS
-         I3IsUMmb2Ktv7au6s3ZQKR6kvtr3QZxOTS6vz3c9GctryYMfqLYSADLAYLwiVIcnrR1d
-         MHdbNAP3UHi4XUud6Pjj0njEGLfDu/P4L+NVpNFzGchozxkgckS5kIsv81WZGiLWaGh4
-         9JRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752156801; x=1752761601;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4D8h7/0g6nmmKvt9dKEaFtHgB5fxkN8z+u5enhCJdIQ=;
-        b=h0XzTMY498PdWVg1RQxff6VXkrb9ROu0NFVphcqHWsOBjV3m3ymJBO4Py9Lkazwr4E
-         u34YXKqHZAR6SutKbqkPEqx+QJqSywIkhbWH2PBE0VxH8LHUHVTaBz2ofrIqTIOzG4Jb
-         41+sR8r7KkxVzb4PY5C3QXiVa1sZkbgj50n4mrPVmnQ+BqGpnp9Z1Vz7RHg2XxgCvJA8
-         iNSxHow8gkvdjYj56H+DBe/ko/PuPwjymfeD3QxQ7KqBg0y7fo8BFYL96npfepaLqMLp
-         BK3z7Yom2dYr0E5WhFPAs8HR0sjaIrWtYdrimKnMm9teDQS3tTSOjMrxpP6FNRRdbC90
-         UNjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJv9B0fi2SRhMFNMqJ165/n8q09+Fopvwfp3BOdiL12ZlDFCS7i+vaM/c/sG73wKN5+wWrwXpKq3wrpSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN1AVk+6PHOWUiACrZGAuYWKArhCNRmY7Lky4fCmiDN9085IZt
-	lX4qJTpNGMNEiQG/Cwqzn+gtA0DcvAmvO75Kpc3iF0W53cL41nv6IdP673gZZ7C9Eg==
-X-Gm-Gg: ASbGncscUdcjoueMRuu4ADcbMxVMVLUsLX1/t+JmjPcj6ttRhRJyxErm4KyM1Z6eK9F
-	nouBRzzo5v+tmpgMb7xHO/s5oJJZuANZarK7qspWEPQzbJbxK3/QjSn7LfixFmbOXBGtwVSKH+b
-	LP/2KFZeqFfYXX1jGXEdGQO7MAXGAumXNS8hZLkgpPktwEd+F0WAU9twZ9Ba92gim7OqnOT9fRY
-	R/5VjnF+jy7a5PjBeOCah6QWIISMidbiSlabMKha4x8oWpv7ljWxBTwoY/jqyrfVvPJuDKzZUGL
-	1iwNLR7Joa5YOf/+FvxYPx9mUj71SvQgPFs+OqijxsaH1qnwaxro3tiUYef4m1Ud871QfGgJxWG
-	7rl31dYtwcSYqy88=
-X-Google-Smtp-Source: AGHT+IHoXSW8SI/r5MX7aKZkdWUiZt8QqOcECvdbr80PUX2wz0dTv3Xj53RBdvKykmXs3qFGbGb50Q==
-X-Received: by 2002:a05:6214:450e:b0:704:8ce6:bda2 with SMTP id 6a1803df08f44-7049801dafemr48034246d6.14.1752156800537;
-        Thu, 10 Jul 2025 07:13:20 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-704979e459csm8813196d6.49.2025.07.10.07.13.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 07:13:20 -0700 (PDT)
-Date: Thu, 10 Jul 2025 10:13:18 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: syzbot <syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	USB list <linux-usb@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [syzbot] [kernel?] INFO: task hung in uevent_show (2)
-Message-ID: <b12dd926-2f81-4feb-a3b0-b7fca2592909@rowland.harvard.edu>
-References: <686e7698.050a0220.c28f5.0006.GAE@google.com>
- <79f634db-c149-4220-b8d4-0fff2c6b6a01@I-love.SAKURA.ne.jp>
- <e064a3e4-ae70-4a24-ba5e-1bb8c7971f23@rowland.harvard.edu>
- <39f312fa-d461-4377-b809-50c8a7188f6b@I-love.SAKURA.ne.jp>
- <dd932df4-2a13-4a5c-a531-376065f87391@rowland.harvard.edu>
- <43189e93-2cad-429a-a604-15bf5cc95e43@I-love.SAKURA.ne.jp>
- <1d471e25-6671-4cb2-a2c9-af96c2b4e13d@rowland.harvard.edu>
- <a8bed564-3eec-472d-8e57-aaf5274c13b1@I-love.SAKURA.ne.jp>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049A8231A24;
+	Thu, 10 Jul 2025 14:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752156944; cv=pass; b=DRHq9dtcO5+mEYaUySW3PK9LzWD7wNawODkoQbem7wxIurpaCUNom5Z4gRDEu6XPehbL0h7j4jEMe2PHcEJgi/hQt1pEHYKU4fez4ehm0wo69i+F5Rfv9VFBrlG44ocmD2HnLmgM+E+HiLbIXa40lAZOfQWMYereCxWRM2eCa+s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752156944; c=relaxed/simple;
+	bh=VkWIov4pncN1CxRUjWnTedpZphrnmnhBJGxO59cUQio=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n2CQrgplkTih2p4fEEmR0nElUcznkLn245ObJbRF1vHfJR4RRvbBh8ObswkBTzAOEMH3zQhxNTR3y7r+hAvb4l3qBnmyz+sYhH+CmzBGPBkbdpxympvPUcR1Q6v055HhvdzUVjF4wxUUPe5jXwBr8WmhQSDfyGpe3YJ9wd1fclY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=OIDPkdGX; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752156866; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BxbU6/hBdzFK5J83uPrxiRnMJK5DwDubdmhCFsE8xTFJLhOQwhMIoE0J/wBnyQyVlNelxEurbeyG3Xb5KTEPiBLS8OuGd9aH4/YeNeOF16WOmHfai83x8rCj2fNCFcM8D0abUMGw+4K606NNNvOwossKZ2ZMZhpe21y84FzzmbQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752156866; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+Bd1ScZrM2JC5+XfTmUMVfKPSMOMu2+hKdobUpn9uAo=; 
+	b=AWvkfaannUwK9VBk/+ID3M8INlNR+LiGkN7SOXEEnqmMuDP4zI3T+5yxF6efYDCxhR+Z8TG8xY5n450grEiA0kOdZ/E3Nz80+CF01Blo8mcW30Zc5SpF8UpJdaUFNybrwuCMUjWqAScmFQb47e2MLe3O+kweM9JCdjLvuO2frAU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752156866;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=+Bd1ScZrM2JC5+XfTmUMVfKPSMOMu2+hKdobUpn9uAo=;
+	b=OIDPkdGXgEeMzXE5rpruOGW/k17fl/ejoogEYAs4cEaibKURNF8jt9+ONc15Ma8w
+	ynSLNOGF5peSetDKVHK6VxLJi/C1EuJNxkmowaFbwvPQuPK8ez2Ud3aSag9e1SxQypg
+	MVpEQC+ZI+L9/HgMSDY9Yc3FhtnaiQxRiVysRfBA=
+Received: by mx.zohomail.com with SMTPS id 1752156862699411.0438114787785;
+	Thu, 10 Jul 2025 07:14:22 -0700 (PDT)
+Message-ID: <d4e9f38b-895e-45ea-90db-3c2839c76c70@collabora.com>
+Date: Thu, 10 Jul 2025 19:14:15 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a8bed564-3eec-472d-8e57-aaf5274c13b1@I-love.SAKURA.ne.jp>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] bus: mhi: host: keep bhi buffer through suspend cycle
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+ Manivannan Sadhasivam <mani@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+ Youssef Samir <quic_yabdulra@quicinc.com>,
+ Matthew Leung <quic_mattleun@quicinc.com>, Yan Zhen <yanzhen@vivo.com>,
+ Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+ Alex Elder <elder@kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Siddartha Mohanadoss <smohanad@codeaurora.org>,
+ Sujeev Dias <sdias@codeaurora.org>, Julia Lawall <julia.lawall@lip6.fr>,
+ John Crispin <john@phrozen.org>, Muna Sinada <quic_msinada@quicinc.com>,
+ Venkateswara Naralasetty <quic_vnaralas@quicinc.com>,
+ Maharaja Kennadyrajan <quic_mkenna@quicinc.com>, mhi@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
+Cc: kernel@collabora.com
+References: <20250630074330.253867-1-usama.anjum@collabora.com>
+ <20250630074330.253867-2-usama.anjum@collabora.com>
+ <b76cfe82-b977-4166-85d8-368539b392fd@oss.qualcomm.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <b76cfe82-b977-4166-85d8-368539b392fd@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Thu, Jul 10, 2025 at 07:17:19PM +0900, Tetsuo Handa wrote:
-> On 2025/07/10 0:41, Alan Stern wrote:
-> > Okay, I see what your problem is.
-> > 
-> > The bEndpointAddress field of the endpoint descriptor is not just the 
-> > endpoint's number.  It also includes the endpoint's direction in bit 7 
-> > (0 for OUT, 1 for IN).
+Thank you so much for review.
+
+On 7/8/25 2:47 PM, Krishna Chaitanya Chundru wrote:
 > 
-> I see, but I couldn't figure out whether BUG_ON(endpoint > 0xF) is bad.
 > 
-> I came up to try these BUG_ON() lines in case some of hung task reports (e.g.
-> https://lkml.kernel.org/r/686e8032.050a0220.385921.0006.GAE@google.com ) are
-> caused by use of unintended pipes created by out-of-range values being passed
-> to __create_pipe().
+> On 6/30/2025 1:13 PM, Muhammad Usama Anjum wrote:
+>> When there is memory pressure, at resume time dma_alloc_coherent()
+>> returns error which in turn fails the loading of firmware and hence
+>> the driver crashes:
+>>
+> why only bhi? bhie can also have same issue.
+I was thinking I'd handled all bhie cases in earlier patch. But I haven't. I'll post
+fix for bhie in next version.
 
-I think this is unlikely to be the cause of those BUG_ON()s, but go 
-ahead and see what happens.
+>> kernel: kworker/u33:5: page allocation failure: order:7,
+>> mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
+>> kernel: CPU: 1 UID: 0 PID: 7693 Comm: kworker/u33:5 Not tainted
+>> 6.11.11-valve17-1-neptune-611-g027868a0ac03 #1
+>> 3843143b92e9da0fa2d3d5f21f51beaed15c7d59
+>> kernel: Hardware name: Valve Galileo/Galileo, BIOS F7G0112 08/01/2024
+>> kernel: Workqueue: mhi_hiprio_wq mhi_pm_st_worker [mhi]
+>> kernel: Call Trace:
+>> kernel:  <TASK>
+>> kernel:  dump_stack_lvl+0x4e/0x70
+>> kernel:  warn_alloc+0x164/0x190
+>> kernel:  ? srso_return_thunk+0x5/0x5f
+>> kernel:  ? __alloc_pages_direct_compact+0xaf/0x360
+>> kernel:  __alloc_pages_slowpath.constprop.0+0xc75/0xd70
+>> kernel:  __alloc_pages_noprof+0x321/0x350
+>> kernel:  __dma_direct_alloc_pages.isra.0+0x14a/0x290
+>> kernel:  dma_direct_alloc+0x70/0x270
+>> kernel:  mhi_fw_load_handler+0x126/0x340 [mhi
+>> a96cb91daba500cc77f86bad60c1f332dc3babdf]
+>> kernel:  mhi_pm_st_worker+0x5e8/0xac0 [mhi
+>> a96cb91daba500cc77f86bad60c1f332dc3babdf]
+>> kernel:  ? srso_return_thunk+0x5/0x5f
+>> kernel:  process_one_work+0x17e/0x330
+>> kernel:  worker_thread+0x2ce/0x3f0
+>> kernel:  ? __pfx_worker_thread+0x10/0x10
+>> kernel:  kthread+0xd2/0x100
+>> kernel:  ? __pfx_kthread+0x10/0x10
+>> kernel:  ret_from_fork+0x34/0x50
+>> kernel:  ? __pfx_kthread+0x10/0x10
+>> kernel:  ret_from_fork_asm+0x1a/0x30
+>> kernel:  </TASK>
+>> kernel: Mem-Info:
+>> kernel: active_anon:513809 inactive_anon:152 isolated_anon:0
+>>      active_file:359315 inactive_file:2487001 isolated_file:0
+>>      unevictable:637 dirty:19 writeback:0
+>>      slab_reclaimable:160391 slab_unreclaimable:39729
+>>      mapped:175836 shmem:51039 pagetables:4415
+>>      sec_pagetables:0 bounce:0
+>>      kernel_misc_reclaimable:0
+>>      free:125666 free_pcp:0 free_cma:0
+>>
+>> In above example, if we sum all the consumed memory, it comes out
+>> to be 15.5GB and free memory is ~ 500MB from a total of 16GB RAM.
+>> Even though memory is present. But all of the dma memory has been
+>> exhausted or fragmented.
+>>
+>> Fix it by allocating it only once and then reuse the same allocated
+>> memory. As we'll allocate this memory only once, this memory will stay
+>> allocated.
+>>
+>> Tested-on: WCN6855 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
+>>
+>> Fixes: cd457afb1667 ("bus: mhi: core: Add support for downloading firmware over BHIe")
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>> Reported here:
+>> https://lore.kernel.org/all/ead32f5b-730a-4b81-b38f-93d822f990c6@collabora.com
+>>
+>> Still a lot of more fixes are required. Hence, I'm not adding closes tag.
+>> ---
+>>   drivers/bus/mhi/host/boot.c     | 19 ++++++++++---------
+>>   drivers/bus/mhi/host/init.c     |  5 +++++
+>>   drivers/bus/mhi/host/internal.h |  2 ++
+>>   include/linux/mhi.h             |  1 +
+>>   4 files changed, 18 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/bus/mhi/host/boot.c b/drivers/bus/mhi/host/boot.c
+>> index b3a85aa3c4768..11bb8c12ac597 100644
+>> --- a/drivers/bus/mhi/host/boot.c
+>> +++ b/drivers/bus/mhi/host/boot.c
+>> @@ -302,8 +302,8 @@ static int mhi_fw_load_bhi(struct mhi_controller *mhi_cntrl,
+>>       return -EIO;
+>>   }
+>>   -static void mhi_free_bhi_buffer(struct mhi_controller *mhi_cntrl,
+>> -                struct image_info *image_info)
+>> +void mhi_free_bhi_buffer(struct mhi_controller *mhi_cntrl,
+>> +             struct image_info *image_info)
+>>   {
+>>       struct mhi_buf *mhi_buf = image_info->mhi_buf;
+>>   @@ -455,18 +455,19 @@ static enum mhi_fw_load_type mhi_fw_load_type_get(const struct mhi_controller *m
+>>     static int mhi_load_image_bhi(struct mhi_controller *mhi_cntrl, const u8 *fw_data, size_t size)
+>>   {
+>> -    struct image_info *image;
+>> +    struct image_info *image = mhi_cntrl->bhi_image;
+>>       int ret;
+>>   -    ret = mhi_alloc_bhi_buffer(mhi_cntrl, &image, size);
+>> -    if (ret)
+>> -        return ret;
+>> +    if (!image) {
+>> +        ret = mhi_alloc_bhi_buffer(mhi_cntrl, &image, size);
+>> +        if (ret)
+>> +            return ret;
+>>   -    /* Load the firmware into BHI vec table */
+>> -    memcpy(image->mhi_buf->buf, fw_data, size);
+>> +        /* Load the firmware into BHI vec table */
+>> +        memcpy(image->mhi_buf->buf, fw_data, size);
+>> +    }
+>>         ret = mhi_fw_load_bhi(mhi_cntrl, &image->mhi_buf[image->entries - 1]);
+> if mhi fw load fails didn't we need to free bhi buffer.
+Good point. I'll fix in v2.
 
-> Should I give up BUG_ON(endpoint > 0xF) line?
-> Or should I try to update callers which trigger BUG_ON(endpoint > 0xF) line?
-
-You can change the test to BUG_ON(endpoint & ~0x8F).  That will mask 
-away the endpoint number and direction bit, leaving everything else 
-alone.
-
-Alan Stern
 
