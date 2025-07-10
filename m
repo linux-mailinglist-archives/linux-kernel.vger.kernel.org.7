@@ -1,165 +1,98 @@
-Return-Path: <linux-kernel+bounces-725764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F83AB00367
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:34:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA81B00363
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A166C5A0FD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:33:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E016A16B531
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19C325B2FC;
-	Thu, 10 Jul 2025 13:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B20B2594B4;
+	Thu, 10 Jul 2025 13:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUJzm+YK"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SZMXTeP/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414D482899;
-	Thu, 10 Jul 2025 13:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC28385C5E;
+	Thu, 10 Jul 2025 13:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752154410; cv=none; b=gXncGpGTLeSpC4pkHNq4E3mZXZclfHwibuHY5u9eVmo0/ChihNLenTelCd32NPmhSriFXGV8VNY5XBJ8GRuIDyCBfOryriYSMcLvVLv6W0g5snHJ0rUGYgo41hSg4w+sEdr5yio9avr3BXL7O0IFL044uvPYxFbN3WIrRctfPp4=
+	t=1752154400; cv=none; b=QHR6TmbpLg4IXJJ9UEQoNHzzWuL3HjUHreW9aKT9IrBxvuKvEBhtH6pXjtVseA14nizaGlTG5gF2afAebYJsC46mXPj6N7I7TgxQ3P+iQQy13FYdxTgOyKShpf880upm40+PET1bUrdTRCzFr4HRGGVZNOYZkaz/hAT//0WFLlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752154410; c=relaxed/simple;
-	bh=Q2kO4Y/oycTTePk3TM8auo1jZ3hHY5DEkbW5MUZk+PE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FJ1270e7TRwuI4e0w4VYN7a9TAkf+fjUzoAAIzUzqtUdkkvMIwksrNRaAWF9+p+QjiwMvrgIwchHc4p9YVZ6FhbkUJz/vp4+lgHeObbg0EPNZIxUauRN6Na1p6/JwJSTI4vU9fCwtJKe+JGQPEI3JJ0MegvAVJHolXEqKiOxQ+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUJzm+YK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06E65C4CEE3;
-	Thu, 10 Jul 2025 13:33:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752154409;
-	bh=Q2kO4Y/oycTTePk3TM8auo1jZ3hHY5DEkbW5MUZk+PE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jUJzm+YK4pt3e9elf4IPjgblfVRSj06kM9RizsWmebVfvV5XHQAZiahP6Prxk6OJn
-	 OFScmXKJHArvfzTIdCKy2/8+eNXhcd3IRNA4OFC0M6t/h+kwsnPY9si3GAAIyNIylm
-	 d+VpP9uVdUOKntn2XDnubPOi3yuvqRPOKRCPqxwuubGheFTELssUQ1Utth5xQWZQrV
-	 73XIh6fUBw3JlnlT0IW1Ffa6kz1huwxFVEHruFPPcKHZJhHTFp/mm1+AcnZkInXf2M
-	 wN7adrX9JxQJv9WI7YR+58HQRvxa4CRowv0HWxIqqMaLKXDDSje43HUDrhXp96f2ED
-	 CvcpDpgNlfxOA==
-Message-ID: <d870b11c-39e2-4b7a-a368-13b1c4b5a7c8@kernel.org>
-Date: Thu, 10 Jul 2025 15:33:10 +0200
+	s=arc-20240116; t=1752154400; c=relaxed/simple;
+	bh=OPUlVQruerq6SaJNDYI/Y8JtIqGXzYPnSz/i350i1vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WcrB2ju6SKm9WWf1iY2XA5iktC/3a9r7iVrZfKeAjTjpsAx7iIFSYsP1/L9h/+IWgpvAFETeYI9Z7ifRmKoZmQ2fulBp3fJlcWG64DveQRToWm/Y/Hffsl1ja5rsLH2xUbihWeO+wbP9OZEGKn7QK/I0jVw2v8e+D5NLCinCVl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SZMXTeP/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1DCEC4CEED;
+	Thu, 10 Jul 2025 13:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752154400;
+	bh=OPUlVQruerq6SaJNDYI/Y8JtIqGXzYPnSz/i350i1vw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SZMXTeP/lTJtxLap/oPB7mUZss8jmjBoiRVPCT9zdYMAUAXOCv41IC+bFtzNmnzg2
+	 MNYak8RMoagrAEw2NUsY6r96ZNcfViDA7OSbnFxb0Pe8WribDkAKpiodTtp+DBA+U7
+	 LqTC9kPU9o5hk2bFejMvd3r5M+w7P7d5I5EXfj3w=
+Date: Thu, 10 Jul 2025 15:33:17 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 6.6] thermal/of: Fix mask mismatch when no trips subnode
+Message-ID: <2025071012-granola-daylong-9943@gregkh>
+References: <20250707-trip-point-v1-1-8f89d158eda0@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: media: i2c: Add ov2735 sensor
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
- sakari.ailus@linux.intel.com, krzk+dt@kernel.org,
- kieran.bingham@ideasonboard.com
-Cc: dave.stevenson@raspberrypi.com, pratap.nirujogi@amd.com,
- laurent.pinchart@ideasonboard.com, tarang.raval@siliconsignals.io,
- Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Ricardo Ribalda <ribalda@chromium.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?=
- <git@apitzsch.eu>, Arnd Bergmann <arnd@arndb.de>,
- Dongcheng Yan <dongcheng.yan@intel.com>,
- Jingjing Xiong <jingjing.xiong@intel.com>,
- Matthias Fend <matthias.fend@emfend.at>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hans de Goede <hansg@kernel.org>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250710131107.69017-1-hardevsinh.palaniya@siliconsignals.io>
- <20250710131107.69017-2-hardevsinh.palaniya@siliconsignals.io>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250710131107.69017-2-hardevsinh.palaniya@siliconsignals.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707-trip-point-v1-1-8f89d158eda0@chromium.org>
 
-On 10/07/2025 15:10, Hardevsinh Palaniya wrote:
-> +
-> +  clocks:
-> +    items:
-> +      - description: XVCLK clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: xvclk
+On Mon, Jul 07, 2025 at 06:27:10PM +0800, Hsin-Te Yuan wrote:
+> After commit 725f31f300e3 ("thermal/of: support thermal zones w/o trips
+> subnode") was backported on 6.6 stable branch as commit d3304dbc2d5f
+> ("thermal/of: support thermal zones w/o trips subnode"), thermal zones
+> w/o trips subnode still fail to register since `mask` argument is not
+> set correctly. When number of trips subnode is 0, `mask` must be 0 to
+> pass the check in `thermal_zone_device_register_with_trips()`.
+> 
+> Set `mask` to 0 when there's no trips subnode.
+> 
+> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+> ---
+>  drivers/thermal/thermal_of.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+> index 0f520cf923a1e684411a3077ad283551395eec11..97aeb869abf5179dfa512dd744725121ec7fd0d9 100644
+> --- a/drivers/thermal/thermal_of.c
+> +++ b/drivers/thermal/thermal_of.c
+> @@ -514,7 +514,7 @@ static struct thermal_zone_device *thermal_of_zone_register(struct device_node *
+>  	of_ops->bind = thermal_of_bind;
+>  	of_ops->unbind = thermal_of_unbind;
+>  
+> -	mask = GENMASK_ULL((ntrips) - 1, 0);
+> +	mask = ntrips ? GENMASK_ULL((ntrips) - 1, 0) : 0;
 
-You don't use clock names here and example, so just drop the property.
+Meta-comment, I hate ? : lines in C, especially when they are not
+needed, like here.  Spell this out, with a real if statement please, so
+that we can read and easily understand what is going on.
 
-With this fixed:
+That being said, I agree with Rafael, let's do whatever is in mainline
+instead.  Fix it the same way it was fixed there by backporting the
+relevant commits.
 
+thanks,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
----
-
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
-
-Full context and explanation:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-</form letter>
-
-
-Best regards,
-Krzysztof
+greg k-h
 
