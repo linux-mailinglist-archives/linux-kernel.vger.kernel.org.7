@@ -1,190 +1,531 @@
-Return-Path: <linux-kernel+bounces-725927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B406BB00599
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:48:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6125DB005A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8579E165094
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:48:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E155C5A2628
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0866A270EB3;
-	Thu, 10 Jul 2025 14:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AC2274658;
+	Thu, 10 Jul 2025 14:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VQaxOxiG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="twBTXquX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="th1vnLCh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EysxaZgf"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="c1BkfNgx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99152749CB
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCB82741D4;
+	Thu, 10 Jul 2025 14:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752158848; cv=none; b=Sgzvg2CxZh4CuljBI0G6yq+Nndn/HVe3kJnfs3BINnE7prlBPEHil6Qsr3/fHRTPuZ6wPgS7zVKCyLVlu6Fqzkwm1iKH4elaWC/+7ZjkKcFwmJ2MNsHjd0S4wrVwWByvT4I44ktf26zzLIH5/NJJ6/A4o7bw6JjrMWcROOCZUnU=
+	t=1752158867; cv=none; b=VdjEk538gygjU05C7wJ0vLT+dZUcoA1rt7sY0hW7WkVengk3GlfGrJs/WYgqEfbRyrJnhIwzXhFk4Pkto6N7ZUylHOiswxX76RM9eKGgpqcWoJoLykQEiErJOH3x+GWUuef5Oi9PzVl2ySoj/EoelKZB5T3gJGH4IHVytHZERyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752158848; c=relaxed/simple;
-	bh=y1dnb0eblaUJuGuxTlMfLfmatHKxcGhk7x9nUy4WYz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R9dxx446nbH7CHki9V9GZQmTCiF6FhJ7i7/EE4FSVQR7DDnT4pwUhSCGohbJgZZYkUiF7jaWDoQN1JPPQmuN5tqZJJU9ZpWjpQZ6SI7eAUrDFTIWX3ghp1VcTz3A08HKcFE+tGGi0Guuhe6NB9eLxgDpvmBaN9IvxWp/mZ8+Rp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VQaxOxiG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=twBTXquX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=th1vnLCh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EysxaZgf; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B84EF21272;
-	Thu, 10 Jul 2025 14:47:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752158845; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nQN0ZaGOhR62EfLm/kyytZaAhcCxyqEACT60zUXWfpM=;
-	b=VQaxOxiGSWhpDgWZxtWman5OF8SALCrGLT4FwSgaXYFRl1S1TRncle0grFQhCMV4kXD0ng
-	40Yisja0DXcxwBZVHZjAqky6PgXKGO6ag7zQOjPLgjMqquNJL68mRbUB2xFWSblsO7Uzga
-	C67pi49ru2zFCQ6spZWCAfUgUQXaSq0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752158845;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nQN0ZaGOhR62EfLm/kyytZaAhcCxyqEACT60zUXWfpM=;
-	b=twBTXquXyFh1GgYGQpk4sgGRBe/uCX1iOo+cT91QulgCGvyRjj4DTDsLFrRQd4A6LhOCUp
-	GY5fNeQvzJy//TAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752158843; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nQN0ZaGOhR62EfLm/kyytZaAhcCxyqEACT60zUXWfpM=;
-	b=th1vnLCh6kDbbjFBN0nVBmL66Y97deMiJrJ6Jm5jh0tTJ0dAv1kEINRzaxwBOjWW+c/IRi
-	HYU3qiDfu5H2R9GI3iBl+/DuMMn9DleNiaagDp6eaSBYnF+cq4771ol9xHz2iWdw7vkybO
-	LAYrFFc5f8+BHH6xAUZuxozasxrHn2E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752158843;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nQN0ZaGOhR62EfLm/kyytZaAhcCxyqEACT60zUXWfpM=;
-	b=EysxaZgfpAoR0nkYIshObgKkpG1l4IZ2u3Y1USs/urWj/7xi0Yj2+BF40Mdcmur3pVk+IA
-	rGEiP5hdi2HuMqAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 94377136DC;
-	Thu, 10 Jul 2025 14:47:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ypEnI3vSb2hEOwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 10 Jul 2025 14:47:23 +0000
-Message-ID: <8074f0b2-c4c0-46ac-aca8-a395f30ab61d@suse.cz>
-Date: Thu, 10 Jul 2025 16:47:23 +0200
+	s=arc-20240116; t=1752158867; c=relaxed/simple;
+	bh=vZqCHX1OXrD2KLHekbcKncMPfRgic+fdEmzdEOdDhqo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j3NQBlE43m7qeHmHlPClmBEeUnq2urepwse3O5BldAPuUG8hffNKWVDJ5XpQm8cwESzPY0td716WWcOdZUUw5rsc3ewObT3cFz887dToO9VCR+CrWJDZ/XHihDWeYnT5COmUNJbxLplPC+QVxwdPDw5Tk7IAYsh396d17tkZP00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=c1BkfNgx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4A95C4CEF4;
+	Thu, 10 Jul 2025 14:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752158866;
+	bh=vZqCHX1OXrD2KLHekbcKncMPfRgic+fdEmzdEOdDhqo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=c1BkfNgx5MQNrPyVI9wmNfsnCID/9uSr7xr6eSS6V794W+pvsUeMKhexuYD5zmWs5
+	 ocfXXfLNYBGacvWMsnvtRonCONbW33bQIaYSxPy25rI9vuOtQVhENs0+xx51D0GPxs
+	 7l/vESSbcZGOmnowu6DggnznD6H9XxMPwyfE6MzQ=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	torvalds@linux-foundation.org,
+	stable@vger.kernel.org
+Cc: lwn@lwn.net,
+	jslaby@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Linux 6.6.97
+Date: Thu, 10 Jul 2025 16:47:29 +0200
+Message-ID: <2025071029-circus-smuggling-141f@gregkh>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/10] mm/mremap: clean up mlock populate behaviour
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <cover.1751865330.git.lorenzo.stoakes@oracle.com>
- <1bea4f7b5093d603ff323570076142eaabc8a480.1751865330.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <1bea4f7b5093d603ff323570076142eaabc8a480.1751865330.git.lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Content-Transfer-Encoding: 8bit
 
-On 7/7/25 07:27, Lorenzo Stoakes wrote:
-> When an mlock()'d VMA is expanded, we need to populate the expanded region
-> to maintain the contract that all mlock()'d memory is present (albeit -
-> with some period after mmap unlock where the expanded part of the mapping
-> remains unfaulted).
-> 
-> The current implementation is very unclear, so make it absolutely explicit
-> under what circumstances we do this.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+I'm announcing the release of the 6.6.97 kernel.
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+All users of the 6.6 kernel series must upgrade.
+
+The updated 6.6.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-6.6.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu              |    1 
+ Documentation/ABI/testing/sysfs-driver-ufs                      |    2 
+ Documentation/admin-guide/hw-vuln/processor_mmio_stale_data.rst |    4 
+ Documentation/admin-guide/kernel-parameters.txt                 |   13 
+ Documentation/arch/x86/mds.rst                                  |    8 
+ Documentation/core-api/symbol-namespaces.rst                    |   22 +
+ Makefile                                                        |    2 
+ arch/arm64/boot/dts/apple/t8103-jxxx.dtsi                       |    2 
+ arch/arm64/boot/dts/qcom/sm8550.dtsi                            |   30 +
+ arch/powerpc/include/uapi/asm/ioctls.h                          |    8 
+ arch/powerpc/kernel/Makefile                                    |    2 
+ arch/s390/pci/pci_event.c                                       |    4 
+ arch/x86/Kconfig                                                |    9 
+ arch/x86/entry/entry.S                                          |    8 
+ arch/x86/include/asm/cpu.h                                      |   12 
+ arch/x86/include/asm/cpufeatures.h                              |    6 
+ arch/x86/include/asm/irqflags.h                                 |    4 
+ arch/x86/include/asm/mwait.h                                    |   28 +
+ arch/x86/include/asm/nospec-branch.h                            |   37 +-
+ arch/x86/include/uapi/asm/debugreg.h                            |   21 +
+ arch/x86/kernel/cpu/amd.c                                       |   60 +++
+ arch/x86/kernel/cpu/bugs.c                                      |  133 +++++++-
+ arch/x86/kernel/cpu/common.c                                    |   38 +-
+ arch/x86/kernel/cpu/microcode/amd.c                             |   12 
+ arch/x86/kernel/cpu/microcode/amd_shas.c                        |  112 +++++++
+ arch/x86/kernel/cpu/scattered.c                                 |    2 
+ arch/x86/kernel/process.c                                       |   16 -
+ arch/x86/kernel/traps.c                                         |   32 +-
+ arch/x86/kvm/cpuid.c                                            |    8 
+ arch/x86/kvm/reverse_cpuid.h                                    |    8 
+ arch/x86/kvm/svm/vmenter.S                                      |    6 
+ arch/x86/kvm/vmx/vmx.c                                          |    2 
+ drivers/acpi/acpica/dsmethod.c                                  |    7 
+ drivers/ata/libata-acpi.c                                       |   24 +
+ drivers/ata/pata_cs5536.c                                       |    2 
+ drivers/ata/pata_via.c                                          |    6 
+ drivers/base/cpu.c                                              |    3 
+ drivers/block/aoe/aoe.h                                         |    1 
+ drivers/block/aoe/aoecmd.c                                      |    8 
+ drivers/block/aoe/aoedev.c                                      |    5 
+ drivers/dma-buf/dma-resv.c                                      |   12 
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c                        |   12 
+ drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c                  |    2 
+ drivers/gpu/drm/i915/gt/intel_gsc.c                             |    2 
+ drivers/gpu/drm/i915/gt/intel_ring_submission.c                 |    3 
+ drivers/gpu/drm/i915/selftests/i915_request.c                   |   20 -
+ drivers/gpu/drm/i915/selftests/mock_request.c                   |    2 
+ drivers/gpu/drm/msm/msm_gem_submit.c                            |   17 -
+ drivers/gpu/drm/tiny/simpledrm.c                                |    4 
+ drivers/gpu/drm/v3d/v3d_drv.h                                   |    8 
+ drivers/gpu/drm/v3d/v3d_gem.c                                   |    2 
+ drivers/gpu/drm/v3d/v3d_irq.c                                   |   37 +-
+ drivers/i2c/busses/i2c-designware-master.c                      |    1 
+ drivers/infiniband/hw/mlx5/counters.c                           |    4 
+ drivers/infiniband/hw/mlx5/devx.c                               |    2 
+ drivers/infiniband/hw/mlx5/main.c                               |   33 ++
+ drivers/input/joystick/xpad.c                                   |    2 
+ drivers/input/misc/iqs7222.c                                    |    7 
+ drivers/iommu/rockchip-iommu.c                                  |    3 
+ drivers/mmc/core/quirks.h                                       |   12 
+ drivers/mmc/host/mtk-sd.c                                       |   21 +
+ drivers/mmc/host/sdhci.c                                        |    9 
+ drivers/mmc/host/sdhci.h                                        |   16 +
+ drivers/mtd/nand/spi/core.c                                     |    1 
+ drivers/net/ethernet/amd/xgbe/xgbe-common.h                     |    2 
+ drivers/net/ethernet/amd/xgbe/xgbe-mdio.c                       |   13 
+ drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c                     |   24 -
+ drivers/net/ethernet/amd/xgbe/xgbe.h                            |    4 
+ drivers/net/ethernet/atheros/atlx/atl1.c                        |   79 +++-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c                       |    7 
+ drivers/net/ethernet/cisco/enic/enic_main.c                     |    4 
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c                |   26 +
+ drivers/net/ethernet/intel/igc/igc_main.c                       |   10 
+ drivers/net/ethernet/sun/niu.c                                  |   31 +
+ drivers/net/ethernet/sun/niu.h                                  |    4 
+ drivers/net/usb/lan78xx.c                                       |    2 
+ drivers/net/virtio_net.c                                        |   38 ++
+ drivers/net/wireless/ath/ath6kl/bmi.c                           |    4 
+ drivers/platform/mellanox/mlxbf-tmfifo.c                        |    3 
+ drivers/platform/mellanox/mlxreg-lc.c                           |    2 
+ drivers/platform/mellanox/nvsw-sn2201.c                         |    2 
+ drivers/platform/x86/amd/pmc/pmc-quirks.c                       |    9 
+ drivers/platform/x86/dell/dell-wmi-sysman/dell-wmi-sysman.h     |    5 
+ drivers/platform/x86/dell/dell-wmi-sysman/enum-attributes.c     |    5 
+ drivers/platform/x86/dell/dell-wmi-sysman/int-attributes.c      |    5 
+ drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c  |    5 
+ drivers/platform/x86/dell/dell-wmi-sysman/string-attributes.c   |    5 
+ drivers/platform/x86/dell/dell-wmi-sysman/sysman.c              |   25 -
+ drivers/platform/x86/firmware_attributes_class.c                |   43 --
+ drivers/platform/x86/firmware_attributes_class.h                |    5 
+ drivers/platform/x86/hp/hp-bioscfg/bioscfg.c                    |   14 
+ drivers/platform/x86/think-lmi.c                                |  103 ++----
+ drivers/powercap/intel_rapl_common.c                            |   18 +
+ drivers/regulator/fan53555.c                                    |   14 
+ drivers/regulator/gpio-regulator.c                              |    8 
+ drivers/rtc/rtc-cmos.c                                          |   10 
+ drivers/rtc/rtc-pcf2127.c                                       |    7 
+ drivers/scsi/qla2xxx/qla_mbx.c                                  |    2 
+ drivers/scsi/qla4xxx/ql4_os.c                                   |    2 
+ drivers/spi/spi-fsl-dspi.c                                      |   11 
+ drivers/target/target_core_pr.c                                 |    4 
+ drivers/ufs/core/ufs-sysfs.c                                    |    4 
+ drivers/ufs/core/ufshcd.c                                       |  160 +++++++---
+ drivers/usb/cdns3/cdnsp-ring.c                                  |    4 
+ drivers/usb/chipidea/udc.c                                      |    7 
+ drivers/usb/core/quirks.c                                       |    3 
+ drivers/usb/host/xhci-dbgcap.c                                  |    4 
+ drivers/usb/host/xhci-dbgtty.c                                  |    1 
+ drivers/usb/host/xhci-mem.c                                     |    4 
+ drivers/usb/host/xhci-pci.c                                     |   25 +
+ drivers/usb/host/xhci-plat.c                                    |    3 
+ drivers/usb/host/xhci.h                                         |    1 
+ drivers/usb/typec/altmodes/displayport.c                        |    5 
+ fs/anon_inodes.c                                                |   23 +
+ fs/btrfs/inode.c                                                |   56 +--
+ fs/btrfs/ordered-data.c                                         |   12 
+ fs/btrfs/tree-log.c                                             |    8 
+ fs/f2fs/file.c                                                  |  119 +++++--
+ fs/nfs/flexfilelayout/flexfilelayout.c                          |  121 +++++--
+ fs/nfs/inode.c                                                  |   17 -
+ fs/nfs/pnfs.c                                                   |    4 
+ fs/smb/client/cifsglob.h                                        |    2 
+ fs/smb/client/connect.c                                         |    7 
+ fs/smb/client/readdir.c                                         |    2 
+ fs/smb/client/smb2pdu.c                                         |   10 
+ fs/smb/client/trace.h                                           |   18 -
+ include/linux/cpu.h                                             |    1 
+ include/linux/export.h                                          |   12 
+ include/linux/fs.h                                              |    2 
+ include/linux/libata.h                                          |    7 
+ include/linux/usb/typec_dp.h                                    |    1 
+ include/net/bluetooth/hci_core.h                                |    2 
+ include/trace/events/f2fs.h                                     |   39 +-
+ include/ufs/ufshcd.h                                            |    4 
+ kernel/rcu/tree.c                                               |    4 
+ lib/test_objagg.c                                               |    4 
+ mm/secretmem.c                                                  |   11 
+ net/bluetooth/hci_core.c                                        |   34 +-
+ net/bluetooth/hci_sync.c                                        |   20 -
+ net/bluetooth/mgmt.c                                            |   25 +
+ net/mac80211/chan.c                                             |    6 
+ net/mac80211/ieee80211_i.h                                      |    9 
+ net/mac80211/link.c                                             |   15 
+ net/mac80211/rx.c                                               |    4 
+ net/rose/rose_route.c                                           |   15 
+ net/sched/sch_api.c                                             |   19 -
+ net/vmw_vsock/vmci_transport.c                                  |    4 
+ sound/isa/sb/sb16_main.c                                        |    7 
+ sound/soc/amd/yc/acp6x-mach.c                                   |   14 
+ 149 files changed, 1745 insertions(+), 629 deletions(-)
+
+Alok Tiwari (3):
+      platform/mellanox: nvsw-sn2201: Fix bus number in adapter error message
+      platform/mellanox: mlxreg-lc: Fix logic error in power state check
+      enic: fix incorrect MTU comparison in enic_change_mtu()
+
+Anand Jain (1):
+      btrfs: rename err to ret in btrfs_rmdir()
+
+Andrei Kuchynski (1):
+      usb: typec: displayport: Fix potential deadlock
+
+Avri Altman (1):
+      mmc: core: sd: Apply BROKEN_SD_DISCARD quirk earlier
+
+Bart Van Assche (1):
+      scsi: ufs: core: Fix spelling of a sysfs attribute name
+
+Benjamin Coddington (1):
+      NFSv4/pNFS: Fix a race to wake on NFS_LAYOUT_DRAIN
+
+Borislav Petkov (AMD) (5):
+      x86/bugs: Rename MDS machinery to something more generic
+      x86/bugs: Add a Transient Scheduler Attacks mitigation
+      KVM: SVM: Advertise TSA CPUID bits to guests
+      x86/microcode/AMD: Add TSA microcode SHAs
+      x86/process: Move the buffer clearing before MONITOR
+
+Bui Quang Minh (1):
+      virtio-net: ensure the received length does not exceed allocated size
+
+Chao Yu (4):
+      f2fs: add tracepoint for f2fs_vm_page_mkwrite()
+      f2fs: convert f2fs_vm_page_mkwrite() to use folio
+      f2fs: fix to zero post-eof page
+      f2fs: fix to avoid use-after-free issue in f2fs_filemap_fault
+
+Christian Eggers (3):
+      Bluetooth: hci_sync: revert some mesh modifications
+      Bluetooth: MGMT: set_mesh: update LE scan interval and window
+      Bluetooth: MGMT: mesh_send: check instances prior disabling advertising
+
+Christian König (1):
+      dma-buf: fix timeout handling in dma_resv_wait_timeout v2
+
+Daeho Jeong (1):
+      f2fs: prevent writing without fallocate() for pinned files
+
+Dan Carpenter (2):
+      drm/i915/selftests: Change mock_request() to return error pointers
+      lib: test_objagg: Set error message in check_expect_hints_stats()
+
+David Thompson (1):
+      platform/mellanox: mlxbf-tmfifo: fix vring_desc.len assignment
+
+Elena Popa (1):
+      rtc: pcf2127: fix SPI command byte for PCF2131
+
+Filipe Manana (5):
+      btrfs: fix missing error handling when searching for inode refs during log replay
+      btrfs: fix iteration of extrefs during log replay
+      btrfs: propagate last_unlink_trans earlier when doing a rmdir
+      btrfs: use btrfs_record_snapshot_destroy() during rmdir
+      btrfs: fix qgroup reservation leak on failure to allocate ordered extent
+
+Fushuai Wang (1):
+      dpaa2-eth: fix xdp_rxq_info leak
+
+Gabriel Santese (1):
+      ASoC: amd: yc: Add quirk for MSI Bravo 17 D7VF internal mic
+
+Greg Kroah-Hartman (1):
+      Linux 6.6.97
+
+HarshaVardhana S A (1):
+      vsock/vmci: Clear the vmci transport packet properly when initializing it
+
+Heiko Stuebner (1):
+      regulator: fan53555: add enable_time support and soft-start times
+
+Hongyu Xie (1):
+      xhci: Disable stream for xHC controller with XHCI_BROKEN_STREAMS
+
+Hugo Villeneuve (1):
+      rtc: pcf2127: add missing semicolon after statement
+
+James Clark (1):
+      spi: spi-fsl-dspi: Clear completion counter before initiating transfer
+
+Janne Grunau (1):
+      arm64: dts: apple: t8103: Fix PCIe BCM4377 nodename
+
+Janusz Krzysztofik (1):
+      drm/i915/gt: Fix timeline left held on VMA alloc error
+
+Jeff LaBundy (1):
+      Input: iqs7222 - explicitly define number of external channels
+
+Johannes Berg (5):
+      wifi: mac80211: chan: chandef is non-NULL for reserved
+      wifi: mac80211: finish link init before RCU publish
+      ata: pata_cs5536: fix build on 32-bit UML
+      wifi: mac80211: drop invalid source address OCB frames
+      wifi: ath6kl: remove WARN on bad firmware input
+
+Joonas Lahtinen (1):
+      Revert "drm/i915/gem: Allow EXEC_CAPTURE on recoverable contexts on DG1"
+
+Junxiao Chang (1):
+      drm/i915/gsc: mei interrupt top half should be in irq disabled context
+
+Justin Sanders (1):
+      aoe: defer rexmit timer downdev work to workqueue
+
+Kohei Enju (1):
+      rose: fix dangling neighbour pointers in rose_rt_device_down()
+
+Kuniyuki Iwashima (2):
+      nfs: Clean up /proc/net/rpc/nfs when nfs_fs_proc_net_init() fails.
+      Bluetooth: hci_core: Fix use-after-free in vhci_flush()
+
+Kurt Borja (7):
+      platform/x86: dell-wmi-sysman: Fix WMI data block retrieval in sysfs callbacks
+      platform/x86: think-lmi: Fix class device unregistration
+      platform/x86: dell-wmi-sysman: Fix class device unregistration
+      platform/x86: hp-bioscfg: Fix class device unregistration
+      platform/x86: think-lmi: Create ksets consecutively
+      platform/x86: think-lmi: Fix kobject cleanup
+      platform/x86: think-lmi: Fix sysfs group cleanup
+
+Lion Ackermann (1):
+      net/sched: Always pass notifications when child class becomes empty
+
+Madhavan Srinivasan (2):
+      powerpc: Fix struct termio related ioctl macros
+      powerpc/kernel: Fix ppc_save_regs inclusion in build
+
+Manivannan Sadhasivam (2):
+      regulator: gpio: Fix the out-of-bounds access to drvdata::gpiods
+      scsi: ufs: core: Add OPP support for scaling clocks and regulators
+
+Marek Szyprowski (1):
+      drm/exynos: fimd: Guard display clock control with runtime PM calls
+
+Mario Limonciello (1):
+      platform/x86/amd/pmc: Add PCSpecialist Lafite Pro V 14M to 8042 quirks list
+
+Mark Zhang (1):
+      RDMA/mlx5: Initialize obj_event->obj_sub_list before xa_insert
+
+Masami Hiramatsu (Google) (2):
+      mtk-sd: Fix a pagefault in dma_unmap_sg() for not prepared data
+      mtk-sd: Prevent memory corruption from DMA map failure
+
+Mateusz Jończyk (1):
+      rtc: cmos: use spin_lock_irqsave in cmos_interrupt
+
+Mathias Nyman (1):
+      xhci: dbc: Flush queued requests before stopping dbc
+
+Maurizio Lombardi (1):
+      scsi: target: Fix NULL pointer dereference in core_scsi3_decode_spec_i_port()
+
+Maíra Canal (1):
+      drm/v3d: Disable interrupts before resetting the GPU
+
+Michael J. Ruhl (1):
+      i2c/designware: Fix an initialization issue
+
+Muna Sinada (1):
+      wifi: mac80211: Add link iteration macro for link data
+
+Neil Armstrong (1):
+      arm64: dts: qcom: sm8550: add UART14 nodes
+
+Niklas Schnelle (1):
+      s390/pci: Do not try re-enabling load/store if device is disabled
+
+Nilton Perim Neto (1):
+      Input: xpad - support Acer NGR 200 Controller
+
+Oleksij Rempel (1):
+      net: usb: lan78xx: fix WARN in __netif_napi_del_locked on disconnect
+
+Oliver Neukum (1):
+      Logitech C-270 even more broken
+
+Pablo Martin-Gomez (1):
+      mtd: spinand: fix memory leak of ECC engine conf
+
+Patrisious Haddad (3):
+      RDMA/mlx5: Fix HW counters query for non-representor devices
+      RDMA/mlx5: Fix CC counters query for MPV
+      RDMA/mlx5: Fix vport loopback for MPV device
+
+Paulo Alcantara (1):
+      smb: client: fix warning when reconnecting channel
+
+Peter Chen (1):
+      usb: cdnsp: do not disable slot for disabled slot
+
+Peter Wang (1):
+      scsi: ufs: core: Fix abnormal scale up after last cmd finish
+
+Peter Zijlstra (1):
+      module: Provide EXPORT_SYMBOL_GPL_FOR_MODULES() helper
+
+Philipp Kerling (1):
+      smb: client: fix readdir returning wrong type with POSIX extensions
+
+RD Babiera (1):
+      usb: typec: altmodes/displayport: do not index invalid pin_assignments
+
+Rafael J. Wysocki (1):
+      ACPICA: Refuse to evaluate a method if arguments are missing
+
+Raju Rangoju (3):
+      amd-xgbe: align CL37 AN sequence as per databook
+      amd-xgbe: do not double read link status
+      usb: xhci: quirk for data loss in ISOC transfers
+
+Raven Black (1):
+      ASoC: amd: yc: update quirk data for HP Victus
+
+Ricardo B. Marliere (1):
+      platform/x86: make fw_attr_class constant
+
+Rob Clark (2):
+      drm/msm: Fix a fence leak in submit error path
+      drm/msm: Fix another leak in the submit error path
+
+Sergey Senozhatsky (1):
+      mtk-sd: reset host->mrq on prepare_data() error
+
+Shivank Garg (1):
+      fs: export anon_inode_make_secure_inode() and fix secretmem LSM bypass
+
+Simon Xue (1):
+      iommu/rockchip: prevent iommus dead loop when two masters share one IOMMU
+
+Stefan Metzmacher (1):
+      smb: client: remove \t from TP_printk statements
+
+Takashi Iwai (2):
+      ALSA: sb: Don't allow changing the DMA mode during operations
+      ALSA: sb: Force to disable DMAs once when DMA mode is changed
+
+Tasos Sahanidis (1):
+      ata: libata-acpi: Do not assume 40 wire cable if no devices are enabled
+
+Thomas Fourier (4):
+      scsi: qla2xxx: Fix DMA mapping test in qla24xx_get_port_database()
+      scsi: qla4xxx: Fix missing DMA mapping error in qla4xxx_alloc_pdu()
+      ethernet: atl1: Add missing DMA mapping error checks and count errors
+      nui: Fix dma_mapping_error() check
+
+Thomas Weißschuh (5):
+      platform/x86: firmware_attributes_class: Move include linux/device/class.h
+      platform/x86: firmware_attributes_class: Simplify API
+      platform/x86: think-lmi: Directly use firmware_attributes_class
+      platform/x86: dell-sysman: Directly use firmware_attributes_class
+      platform/x86: hp-bioscfg: Directly use firmware_attributes_class
+
+Thomas Zimmermann (1):
+      drm/simpledrm: Do not upcast in release helpers
+
+Trond Myklebust (1):
+      NFSv4/flexfiles: Fix handling of NFS level errors in I/O
+
+Uladzislau Rezki (Sony) (1):
+      rcu: Return early if callback is not specified
+
+Ulf Hansson (1):
+      Revert "mmc: sdhci: Disable SD card clock before changing parameters"
+
+Victor Shih (1):
+      mmc: sdhci: Add a helper function for dump register in dynamic debug mode
+
+Vitaly Lifshits (1):
+      igc: disable L1.2 PCI-E link substate to avoid performance issue
+
+Wang Zhaolong (1):
+      smb: client: fix race condition in negotiate timeout by using more precise timing
+
+Xin Li (Intel) (2):
+      x86/traps: Initialize DR6 by writing its architectural reset value
+      drm/i915/dp_mst: Work around Thunderbolt sink disconnect after SINK_COUNT_ESI read
+
+Xu Yang (1):
+      usb: chipidea: udc: disconnect/reconnect from host when do suspend/resume
+
+Yan Zhai (1):
+      bnxt: properly flush XDP redirect lists
+
+Yang Li (1):
+      Bluetooth: Prevent unintended pause by checking if advertising is active
+
+Zhang Rui (1):
+      powercap: intel_rapl: Do not change CLAMPING bit if ENABLE bit cannot be changed
+
+anvithdosapati (1):
+      scsi: ufs: core: Fix clk scaling to be conditional in reset and restore
+
+Łukasz Bartosik (1):
+      xhci: dbctty: disable ECHO flag by default
 
 
