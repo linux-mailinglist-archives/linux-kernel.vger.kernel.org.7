@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-725103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CD2DAFFAD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:27:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72BD7AFFAD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49129641F19
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:27:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25455A291B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A886B28A1E6;
-	Thu, 10 Jul 2025 07:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0D328983F;
+	Thu, 10 Jul 2025 07:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CcOZGnCI"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYCfigXh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224AD28981F
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F318F5E;
+	Thu, 10 Jul 2025 07:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752132434; cv=none; b=fDL1b3yWltEYBNM1jJpgFLNonQioANRuIjkJvR9QJDoKoPT7bsQaZu34KJdPDPC45lLkuCZkDGWSNsZ7MNvXsr10UsNxq83agEnyrGXMz1nbdsZ5dE2aFzn5UMtMYeSKUxsHVjGb7HgLQXao9beazMocXoS3/bSxSWNIesEewZg=
+	t=1752132432; cv=none; b=mrTod6CFMsGnyuL1eCo/B1fR0jAB2jOkrimXK5x/jtPJiuRpmKaSHJF/DUDtJN4v8MrrRiMpATaQOhYEJIrU/yIsiTxdL6ouN5QwwBQn4dcoHF7FoIghE+2ZS4v/iO+V39ZftSjjglIl1i0SLFqyKgtQH+9jSBmnXyMpQPxdrJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752132434; c=relaxed/simple;
-	bh=rGPXOLhW/ZBDbbSbCr7CIPthOkxpIALUagVApnO451Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=c7VSIX7h9e3IIz22EwGEKhnzWkIy7Z0egLz6LTZAPeUaXhT6JbGngEvS1gyJIY97QWnAPmTiE34KefIBUYWBOwrtMYa2cI4Ymn4OBkrFiOFELAe9danqzF9x2zzOf+qoyEl2Qji7vzwzoIJI0Zel4mv2EduYJ1J3iP26OxEp69c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CcOZGnCI; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250710072710euoutp0216e799768d5a040ae707327b0f97748d~Q0ymMcYli2812428124euoutp02L
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:27:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250710072710euoutp0216e799768d5a040ae707327b0f97748d~Q0ymMcYli2812428124euoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752132430;
-	bh=oTRMdhpVvZM6ziaWR/olIUECYo38sNOd9KGNsVaVt6E=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=CcOZGnCIrleveyg8c3rkylM7kODEMB5dkcxXKpnsK3/cQ1kRBQw9dpILw/FQNL9oJ
-	 Rm1aIO1o0WVqOaHokijac1CY8O88tWqLgURm4u7q03g5DZ69X1vt8GyKt7XlgIn00M
-	 soKB7QH7o1C0LjMpaNIfza92/e0ozGgtdAkaENes=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250710072709eucas1p2631d5fe8d35d10f7de05bd5ceb8ce5bd~Q0ylbGids2385423854eucas1p2Z;
-	Thu, 10 Jul 2025 07:27:09 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250710072707eusmtip2c499c55105ba1e1cb1cd664e35fedc38~Q0yj0B6or0472904729eusmtip2T;
-	Thu, 10 Jul 2025 07:27:07 +0000 (GMT)
-Message-ID: <e0f09c5a-1039-4d16-93c4-ada79929b8e4@samsung.com>
-Date: Thu, 10 Jul 2025 09:27:07 +0200
+	s=arc-20240116; t=1752132432; c=relaxed/simple;
+	bh=yR1yt72iESvtf706LR6VBiJOb+AEKItKxPYtLvUPyhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ciVlXGtRAZsgKs5RzQCcOr+S1V7y2+Yy9FvNvlennueyXdE815SsZPl36wVJtJti4uQA9YKlVHPkyen2RT7SMRT5JJF6Pet2mxbw2ea74WpAAfgadF80nJ3lkRPflCuOJV2z7KCLg1iwv36NW5Q/HIHZuADm9t3jDcV3AAGcGRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYCfigXh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A971C4CEE3;
+	Thu, 10 Jul 2025 07:27:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752132431;
+	bh=yR1yt72iESvtf706LR6VBiJOb+AEKItKxPYtLvUPyhE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tYCfigXhEmpMraXE+SzXg57pc60PfyVnaArkCqeGznlOXwQ/Y9NhpkO+Ca38NVEvl
+	 iQGVB9QNpqZ7usSvT5+8Mni8RdimYhCSzk++msnaC58io7HbuMjZ5FRIgW80PKpBG1
+	 ee8QPhmOLACZGKx3Q3u8NBqvRQIHHi6J/Hi75YTp/9ocEBaHACMI17Md1M7DIpIJGz
+	 KRWDV+pjp1AG8XJrHBu9crlyo98Ay7Ksg0CcVwvb85nncbsYUzkN4vuUCMSiUSMMyZ
+	 YXghCMXRjORlRJbbZzsYmX1XvdoP8gUON9ZxsBNxnTAiUFbKyPG4BaxF5oicIIRVZb
+	 2Vvp3osNZJsNw==
+Date: Thu, 10 Jul 2025 09:27:09 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 8/9] drm/bridge: put the bridge returned by
+ drm_bridge_get_next_bridge()
+Message-ID: <20250710-classic-bouncy-caiman-8e2045@houat>
+References: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-0-48920b9cf369@bootlin.com>
+ <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-8-48920b9cf369@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vdso/gettimeofday: Fix code refactoring
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arch@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Vincenzo
-	Frascino <vincenzo.frascino@arm.com>, Shuah Khan <shuah@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
-	<frederic@kernel.org>, John Stultz <jstultz@google.com>, Stephen Boyd
-	<sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
-	<will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Richard Cochran
-	<richardcochran@gmail.com>, Christopher Hall <christopher.s.hall@intel.com>,
-	Miroslav Lichvar <mlichvar@redhat.com>, Werner Abt
-	<werner.abt@meinberg-usa.com>, David Woodhouse <dwmw2@infradead.org>, Kurt
-	Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, Antoine
-	Tenart <atenart@kernel.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250710084337-0c82b93c-85f2-4305-95ba-8cb14042aed2@linutronix.de>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250710072709eucas1p2631d5fe8d35d10f7de05bd5ceb8ce5bd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250710062301eucas1p1b61431dc31a5933087b45c246866fb17
-X-EPHeader: CA
-X-CMS-RootMailID: 20250710062301eucas1p1b61431dc31a5933087b45c246866fb17
-References: <CGME20250710062301eucas1p1b61431dc31a5933087b45c246866fb17@eucas1p1.samsung.com>
-	<20250710062249.3533485-1-m.szyprowski@samsung.com>
-	<20250710084337-0c82b93c-85f2-4305-95ba-8cb14042aed2@linutronix.de>
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="3v6clpzuhyggvmrg"
+Content-Disposition: inline
+In-Reply-To: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-8-48920b9cf369@bootlin.com>
 
-On 10.07.2025 08:45, Thomas Weißschuh wrote:
-> On Thu, Jul 10, 2025 at 08:22:49AM +0200, Marek Szyprowski wrote:
->> Commit fcc8e46f768f ("vdso/gettimeofday: Return bool from clock_gettime()
->> helpers") changed the return value from clock_gettime() helpers, but it
->> missed updating the one call to the do_hres() function, what breaks VDSO
->> operation on some of my ARM 32bit based test boards. Fix this.
-> Thanks again for the report and fix.
-> This change has already been folded into the original commit by tglx.
-> It should show up in todays -next tree.
 
-Okay. I got no information about that, so I decided to send a patch just 
-in case.
+--3v6clpzuhyggvmrg
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 8/9] drm/bridge: put the bridge returned by
+ drm_bridge_get_next_bridge()
+MIME-Version: 1.0
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Hi,
 
+On Wed, Jul 09, 2025 at 06:48:07PM +0200, Luca Ceresoli wrote:
+> The bridge returned by drm_bridge_get_next_bridge() is refcounted. Put it
+> when done.
+>=20
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
+You should really expand a bit more your commit logs, and provide the
+context of why you think putting drm_bridge_put where you do is a good idea.
+
+> ---
+>  drivers/gpu/drm/drm_bridge.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index 0b450b334afd82e0460f18fdd248f79d0a2b153d..05e85457099ab1e0a23ea7842=
+c9654c9a6881dfb 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -1147,6 +1147,8 @@ drm_atomic_bridge_propagate_bus_flags(struct drm_br=
+idge *bridge,
+>  	} else {
+>  		next_bridge_state =3D drm_atomic_get_new_bridge_state(state,
+>  								next_bridge);
+> +		drm_bridge_put(next_bridge);
+> +
+>  		/*
+>  		 * No bridge state attached to the next bridge, just leave the
+>  		 * flags to 0.
+
+In particular, I don't think it is here.
+
+You still have a variable in scope after that branch that you would have
+given up the reference for, which is pretty dangerous.
+
+Also, the bridge state lifetime is shorter than the bridge lifetime
+itself, so we probably want to have the drm_bridge_put after we're done
+with next_bridge_state too.
+
+Overall, I think using __free here is probably the most robust solution.
+
+Maxime
+
+--3v6clpzuhyggvmrg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaG9rTAAKCRAnX84Zoj2+
+dr15AYCUDUXM2027tbhyBFNnTMDtHivlc5bgpEwgheOP8GXxP7YFX/QLF0BkDV7V
+DnRK0VQBfAsNfigLg8ct5uD7iCc3b1OYcgl8hgrtM7STVo7OZSQpRSJyWJv9Amo6
+YYUahgkEQw==
+=3R2K
+-----END PGP SIGNATURE-----
+
+--3v6clpzuhyggvmrg--
 
