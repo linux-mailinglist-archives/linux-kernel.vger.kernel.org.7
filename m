@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-724758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA98AFF6A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:16:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 956B2AFF6A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2BD43B13D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:16:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C86E77AF3C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CA927EC98;
-	Thu, 10 Jul 2025 02:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6BE26E14C;
+	Thu, 10 Jul 2025 02:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S8hZwqcE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I6dsZFjE"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FB3A944;
-	Thu, 10 Jul 2025 02:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87517A944;
+	Thu, 10 Jul 2025 02:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752113803; cv=none; b=hiqAZDKlFnPU5/oFcLhUdibxI8vk9ojuUBMQT3kNaXkvmID0NwIoTKyUWWKdPCqsL7yv4JKpF9MT+BwpqB8GrUNfKio1OuStAG3tcESBDZ5QlR4l/HhOI8e0IGhClRTq7m5n+wYwUJUVGEPwMGLruvtwofDn3NFI3wbCBZsIeEQ=
+	t=1752113735; cv=none; b=E6BVwhVgNXIeX4WkxtSPIFLEh8CskFTuhASgDFzVcT/7dcV9vXDiJlCjUmWRUj2iHKEGjHInoP4hGty9Krh7NkrQGJs3XmyoHdL/WRoRSmsuaMEoi/lvkin9eK9Inr1fNJ+6QNnFayGMvkquduxo51EoDzBGzSuscdmQzwA1RjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752113803; c=relaxed/simple;
-	bh=EyqwCncsgl6qAwYEVSz/MtYJS7SeGpr3zIv6jcm5xBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r2bd+rrH1/PdT6CupSBVAMiXOI/n/thk5+VM740J3ea7MGeNYF1UfF6Uf8/rETDrCnutiNtenckMcW+5Rf36KE8gd9B3k+D3XGXNg4TYenj7vLDV59suG95yg6VIufvLNc4PILLuKexYuaLysMvlGObhPHZi8XfskEhXR5v8jOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S8hZwqcE; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752113802; x=1783649802;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=EyqwCncsgl6qAwYEVSz/MtYJS7SeGpr3zIv6jcm5xBk=;
-  b=S8hZwqcEsU7ClmeHA5Q0r/YkXjY8p8aa39YEKZrPyi/univPKb9kedNN
-   5O6i8qAU/dfzIBxNq/KqmL7x4yy2I9YrRO38cBg6ryWCAYlESiVVpT8lU
-   qvmieNFwXInyWY/Alcge9kmpUh0xWTf9BaDP/+137NS/vI4yxJOzwxtU8
-   KdoO33mhle6gOLmM/2B+0JmLKfldTAhLYbpgaUkjQgfmoZ1Mi3yiQ1Lfw
-   kk+QwxJMU4NeOhCxagWZAdQAzW7D9Q54ObxQwtfy02UEaVnagVWpB58kG
-   pKgdj5Y1QgeBtP30qPaXUCyxF11RynBNnuYpK/bRfuWGHYlw7Q576OEtC
-   A==;
-X-CSE-ConnectionGUID: Q9jXkI/pRZGnrS5P9adFAw==
-X-CSE-MsgGUID: K+218n0kTwmrUg79XXNj1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54478315"
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="54478315"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 19:16:41 -0700
-X-CSE-ConnectionGUID: CtSF3vhWQlOmlEHQTgPpDw==
-X-CSE-MsgGUID: ueASjIQ0T+SeGsf66lCpDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="155588610"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 19:16:37 -0700
-Message-ID: <228cd2c9-b781-4505-8b54-42dab03f3650@linux.intel.com>
-Date: Thu, 10 Jul 2025 10:14:57 +0800
+	s=arc-20240116; t=1752113735; c=relaxed/simple;
+	bh=aJF9Sq4qL9z3KydcasTITDdgc6lO4iaKDIcFCqTpz8s=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=jP1RtblAJKN6L5kWT8qULhBJ7slzRWJzVqqP22I+4S6Xs0Fh8G2/48KFTJzDWeADBjN2izQo2ffOTLVn2ECHVnmlVpMjWdlVfVvq59i3u0ib4jRs6u3PbXQTo13yJgOMgLdY9R2i4nqnf5wQBJFST7myXG0Xd5W11sIVnUIGuR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I6dsZFjE; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a6f3f88613so5122661cf.1;
+        Wed, 09 Jul 2025 19:15:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752113732; x=1752718532; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NdZVUq25CvDB69OnkCN1Siez2qx/clpUZXCX1PPUIb4=;
+        b=I6dsZFjEU16wBl+BMVAcGt8vyXJ6k3dFXNfGyWVQYPmlIrAkF9IcAy+Pa9aOXgVCys
+         hVjYzYXRnxE7bDKceMgZtuNDPIlRelUaQvLicoe/BBSsQCPHlBlYlrD6oitulc3YzVmQ
+         CV20AtbG82mQm5AebnFywDFBo0/b31kQNqte4pQvXKjoObxLtIrk8GFsPQ15u57Rgccx
+         T/5WTF+IbvcMBVY8VjNksYqI13T0NhkdEYQ+J+x8BZKO2bOrpI2HpavnXxGnZRKgeslE
+         fxVYaoGC+G+EzQoLA+XC+66aybukFc2vmr9vHDsIDGF5NpCZmq5Uc1f6JFHkhciS6bMe
+         5w7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752113732; x=1752718532;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NdZVUq25CvDB69OnkCN1Siez2qx/clpUZXCX1PPUIb4=;
+        b=s433IYKF9FLIH38u+mDcGTobrxJzft5B0qbew1fAHDzmdbxyHSFXLGewj5pkRP89Zy
+         sF0zGaqZrG8dY2DAsfFtdcKKH7O1vUeVL7rwZylV9no2xR27JXZ8h5L95/HiIGUXhInO
+         0lWap5MxgoVBcc0IOo4a/IJ+squiMrXNAFITWhyKV7DeVqMNIp+I5FZZ3bPCjOwj5CQI
+         Hpfs7fjQsdE/eYezOU3+Bbil2yENJJPl7HDEgDYVo8DzqnypNPRf2jIzz9lHCPPpXaOQ
+         J2i0avZsbzoVgW687GPNSZxWAZ83dyliWAp/QjUNLYUR2HgAq66kfBnmGUx+4cuWQVoj
+         6gQg==
+X-Forwarded-Encrypted: i=1; AJvYcCW80tFzP1KwHszn2EuJaylGT7ANZ/e2TBlQ40zj2j4dvYYT8UujM4JpM8H+B6ZIdzifltT4e0CAlC/2Y4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+L1RctmaCoO7AkNMGHLyopaHMH7CMoTFWgUrESpFGJfLLtWL+
+	mCw4iTqDnnUlSmWrMuA8RTNcrmb3ZYyzfCysauol3nrJYpkbV/VhfUpM9fstJzgvtNl5A433VmG
+	uw6fk3gAsLehaqfggOguVRWPxutbQXRFuXpd4QSsHWw==
+X-Gm-Gg: ASbGnctNsikjVPbiOfDq4kT7mai/bI9jfYCB6jMwJJ78bBxiQUnFkty4YMiZ8lOYehw
+	WwukttedyBSBREH6dAwo0QVN6goL66L4jTR/S0U2YPmiXM20gnft2xl6F3pAYfgPz5Hja60xYAU
+	1Ylnz3m8GVehiIUHx1ONTmW+1AwcD7VuRxSYJgKnUB8EQ3L71sOTHm24aRnzEusfUUzMQg8/nEx
+	e05fQ==
+X-Google-Smtp-Source: AGHT+IEHTgEb3q219zK2MlVfoK/zYxdMvtt5jpr1y0SndTWyDXH5Ih4iIyg3CCE78AcyyIJNi7xTI6rZZrYL5mbCbY4=
+X-Received: by 2002:a05:622a:1802:b0:476:95dd:520e with SMTP id
+ d75a77b69052e-4a9ec74b18cmr20307621cf.16.1752113732264; Wed, 09 Jul 2025
+ 19:15:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Dave Hansen <dave.hansen@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
- Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, "Tested-by : Yi Lai" <yi1.lai@intel.com>
-Cc: iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
- <ee7585bd-d87c-4f93-9c8e-b8c1d649cdfe@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <ee7585bd-d87c-4f93-9c8e-b8c1d649cdfe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Wang Haoran <haoranwangsec@gmail.com>
+Date: Thu, 10 Jul 2025 10:15:19 +0800
+X-Gm-Features: Ac12FXwP7k3B20nSGClcg1Z_QPA541wm7fmHQxxuLFiq33CiX8WHTPmnOljfbRk
+Message-ID: <CANZ3JQTpr1xRwc9GED7aXePsZE_KZ6GnpO+wMn2UaMrD4tbMzg@mail.gmail.com>
+Subject: We found a bug in skx_common.c for the latest linux
+To: tony.luck@intel.com, bp@alien8.de
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/9/25 23:29, Dave Hansen wrote:
-> On 7/8/25 23:28, Lu Baolu wrote:
->> Modern IOMMUs often cache page table entries to optimize walk performance,
->> even for intermediate page table levels. If kernel page table mappings are
->> changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
->> entries, Use-After-Free (UAF) vulnerability condition arises. If these
->> freed page table pages are reallocated for a different purpose, potentially
->> by an attacker, the IOMMU could misinterpret the new data as valid page
->> table entries. This allows the IOMMU to walk into attacker-controlled
->> memory, leading to arbitrary physical memory DMA access or privilege
->> escalation.
-> 
-> The approach here is certainly conservative and simple. It's also not
-> going to cause big problems on systems without fancy IOMMUs.
-> 
-> But I am a _bit_ worried that it's _too_ conservative. The changelog
-> talks about page table page freeing, but the actual code:
-> 
->> @@ -1540,6 +1541,7 @@ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
->>   		kernel_tlb_flush_range(info);
->>   
->>   	put_flush_tlb_info();
->> +	iommu_sva_invalidate_kva_range(start, end);
->>   }
-> 
-> is in a very generic TLB flushing spot that's used for a lot more than
-> just freeing page tables.
-> 
-> If the problem is truly limited to freeing page tables, it needs to be
-> commented appropriately.
+Hi, my name is Wang Haoran. We found a bug in the skx_mce_output_error
+function located in drivers/edac/skx_common.c in the latest Linux
+kernel (version 6.15.5).
+The issue arises from the use of snprintf to write into the buffer
+skx_msg, which is allocated with size MSG_SIZE.The function formats
+multiple strings into skx_msg, including the dynamically generated
+adxl_msg, which is also allocated with MSG_SIZE. When combined with
+the format string "%s%s err_code:0x%04x:0x%04x %s", the total output
+length may exceed MSG_SIZE.
+As a result, the return value of snprintf may be greater than the
+actual buffer size, which can lead to truncation issues or cause the
+skx_show_retry_rd_err_log() function to fail unexpectedly.
+Replacing snprintf with scnprintf ensures the return value never
+exceeds the specified buffer size, preventing such issues.
 
-Yeah, good comments. It should not be limited to freeing page tables;
-freeing page tables is just a real case that we can see in the vmalloc/
-vfree paths. Theoretically, whenever a kernel page table update is done
-and the CPU TLB needs to be flushed, the secondary TLB (i.e., the caches
-on the IOMMU) should be flushed accordingly. It's assumed that this
-happens in flush_tlb_kernel_range().
+--- skx_common.c 2025-07-06 17:04:26.000000000 +0800
++++ skx_common.c 2025-07-09 17:16:56.912779591 +0800
+@@ -670,12 +670,12 @@
+  }
 
-Thanks,
-baolu
+  if (res->decoded_by_adxl) {
+- len = snprintf(skx_msg, MSG_SIZE, "%s%s err_code:0x%04x:0x%04x %s",
++ len = scnprintf(skx_msg, MSG_SIZE, "%s%s err_code:0x%04x:0x%04x %s",
+  overflow ? " OVERFLOW" : "",
+  (uncorrected_error && recoverable) ? " recoverable" : "",
+  mscod, errcode, adxl_msg);
+  } else {
+- len = snprintf(skx_msg, MSG_SIZE,
++ len = scnprintf(skx_msg, MSG_SIZE,
+  "%s%s err_code:0x%04x:0x%04x ProcessorSocketId:0x%x
+MemoryControllerId:0x%x PhysicalRankId:0x%x Row:0x%x Column:0x%x
+Bank:0x%x BankGroup:0x%x",
+  overflow ? " OVERFLOW" : "",
+  (uncorrected_error && recoverable) ? " recoverable" : "",
+
+Best regards,
+Wang Haoran
 
