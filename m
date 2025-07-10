@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-724702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9776CAFF608
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:36:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1B7AFF609
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FBA1562C83
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:35:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B211658262D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7801C433A5;
-	Thu, 10 Jul 2025 00:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0806051022;
+	Thu, 10 Jul 2025 00:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ep8VuA+j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ofaMpMMO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61B51442E8
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D583148FE6
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752107697; cv=none; b=tmQ8ffXfv63dkT5U2NLx6qA1NfFIoVrA0YREJuNWgok/MAUYu9TkTylqiMb37Kai0sV+iN7JqhJS9/m5smGWiBh4X/OjM+UZC2AvD4wG4GlU1eT7JJ3unMz5JnTE5EbbydiYXssIU2cmuJC0FPVsHjqRP3KLVue3zzoLVQLgdsY=
+	t=1752107697; cv=none; b=Eu/Y2FAH+yQc+YG6Yo5JgdU7wSE9FLjG1ARIijjYuaX+2R2e8Z/jYcoELlZ4q5ezmR6FOCvCSINgz9cit2pknQpSvnOLzxANuJlfm3UqGDKqn/gPlms31c50qaHxnVnwXsBCuL3KynMB1YZj67d52zCXFcUJTAcDOQSKg5oO90A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752107697; c=relaxed/simple;
-	bh=LQfrwZrWRYIqKVVIR3iO+TsksQaspGY3o5laAGrgm+M=;
+	bh=s4Nmof7rTdITh+6kUle4dTnOGGbKHVQPxgZCLbxQbng=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Rb0AxkKN9ANiezMUbcXAqjE0ZV2Ht8Mss8xQ7nTB1w37wUgMk67A/FEjFmB/1hREHW/HYelDp1MA9Luef2ST0pYadQRd8PDHj8XUTd7SUBJNMiSGn2p9Fj5NT6c12ibqyzGL7YS4UD8TFb/2QJOCQuX/KtZPnXBU8mLcKL/X0EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ep8VuA+j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BAF5C4CEEF;
+	 Content-Type; b=ZWJssCynjmptM31QkyeG12HkaMMebvZ9mhAbmveo/jOSo3M4cuVbRrWC0rwnZgArG0wy470ajh6mUQXDVjBUHWx5tmP/+GC0avm4UawYw2x4GablErfhIzvrLMtq/MltDNvzSBIqyBBmM6U0tYWtiknWLPBI2EDzwPYZZO/Jc4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ofaMpMMO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C78D4C4CEF1;
 	Thu, 10 Jul 2025 00:34:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752107696;
-	bh=LQfrwZrWRYIqKVVIR3iO+TsksQaspGY3o5laAGrgm+M=;
+	s=k20201202; t=1752107697;
+	bh=s4Nmof7rTdITh+6kUle4dTnOGGbKHVQPxgZCLbxQbng=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=Ep8VuA+jORm3sPl+r99s0hXZHIZpKS8F+qX0kiCr2T52gfxowuDoyUpasyZVwUoEO
-	 mD8e7nSNho8rHh89YcwvuPlI2RwD9j+FeFJvH++HD4I4pMubML+c97M0sVowOnMYvp
-	 FpFLV7Na7RXtRigks05DeDV8ro20qGNbMvN8Bw1qerhFPY2991PHnpDU8Z0V2+00I6
-	 AeOoSLOpRHq+kPL0rF/+xo9BSl/WtorLCiN3Mxv1fN1mmKvFz8g1727up7mq7Mk4be
-	 X05MSNbXQFg28JIMDWfvyuhY6odc8SO01tJ2FzTJr+QzTq3igwKlRGtO5QkzvKZlt9
-	 lhzqU0KdCqHyw==
+	b=ofaMpMMO6+vxf7OfameQ8cRfTvza8PAqXSSA3JC/NroluuEfxusnvtkRnwmPER/nZ
+	 8ZAYlDlsgP2y5Wmcr/i0+gu6a/SIxUxCZdBuITCES8t7xgvAAI9STBKCZsONsAtkyy
+	 iQniZkVgM2IMtBxj2On2u7HgjNJkB073xQsDHbHsgqCoGSLF0eorXXu6UxwaBgYQCc
+	 63D06ERua/74LMPIUqhLUJ70T9PaPS4Z8semZErF7iuyq299UVRSq7WRakxPGZ+QFm
+	 OE/b0PR+aslnZ9EjKhXL03who0ztgUZgxIX6qXgfCecwqpK9ynLcxbcTgqHb0pEpVf
+	 YzZHr0kPTdknw==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1uZfFd-00000001Wiv-1DKh;
+	id 1uZfFd-00000001WjQ-1vnI;
 	Wed, 09 Jul 2025 20:35:01 -0400
-Message-ID: <20250710003501.140835955@kernel.org>
+Message-ID: <20250710003501.310797033@kernel.org>
 User-Agent: quilt/0.68
-Date: Wed, 09 Jul 2025 20:34:44 -0400
+Date: Wed, 09 Jul 2025 20:34:45 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Tomas Glozar <tglozar@redhat.com>,
@@ -55,8 +55,7 @@ Cc: Tomas Glozar <tglozar@redhat.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Gabriele Monaco <gmonaco@redhat.com>,
  Nam Cao <namcao@linutronix.de>
-Subject: [for-next][PATCH 7/9] verification/rvgen: Restructure the classes to prepare for LTL
- inclusion
+Subject: [for-next][PATCH 8/9] verification/rvgen: Add support for linear temporal logic
 References: <20250710003437.191509804@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,697 +67,1004 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Nam Cao <namcao@linutronix.de>
 
-Both container generation and DA monitor generation is implemented in the
-class dot2k. That requires some ugly "if is_container ... else ...". If
-linear temporal logic support is added at the current state, the "if else"
-chain is longer and uglier.
-
-Furthermore, container generation is irrevelant to .dot files. It is
-therefore illogical to be implemented in class "dot2k".
-
-Clean it up, restructure the dot2k class into the following class
-hierarchy:
-
-         (RVGenerator)
-              /\
-             /  \
-            /    \
-           /      \
-          /        \
-    (Container)  (Monitor)
-                    /\
-                   /  \
-                  /    \
-                 /      \
-              (dot2k)  [ltl2k] <- intended
-
-This allows a simple and clean integration of LTL.
+Add support for generating RV monitors from linear temporal logic, similar
+to the generation of deterministic automaton monitors.
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/692137a581ba6bee7a64d37fb7173ae137c47bbd.1751634289.git.namcao@linutronix.de
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Gabriele Monaco <gmonaco@redhat.com>
+Link: https://lore.kernel.org/f3c63b363ff9c5af3302ba2b5d92a26a98700eaf.1751634289.git.namcao@linutronix.de
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- tools/verification/rvgen/Makefile           |   2 +
- tools/verification/rvgen/__main__.py        |   6 +-
- tools/verification/rvgen/rvgen/container.py |  22 ++
- tools/verification/rvgen/rvgen/dot2k.py     | 275 ++------------------
- tools/verification/rvgen/rvgen/generator.py | 264 +++++++++++++++++++
- 5 files changed, 308 insertions(+), 261 deletions(-)
- create mode 100644 tools/verification/rvgen/rvgen/container.py
- create mode 100644 tools/verification/rvgen/rvgen/generator.py
+ tools/verification/rvgen/.gitignore           |   3 +
+ tools/verification/rvgen/Makefile             |   2 +
+ tools/verification/rvgen/__main__.py          |   3 +-
+ tools/verification/rvgen/rvgen/ltl2ba.py      | 540 ++++++++++++++++++
+ tools/verification/rvgen/rvgen/ltl2k.py       | 252 ++++++++
+ .../rvgen/rvgen/templates/ltl2k/main.c        | 102 ++++
+ .../rvgen/rvgen/templates/ltl2k/trace.h       |  14 +
+ 7 files changed, 915 insertions(+), 1 deletion(-)
+ create mode 100644 tools/verification/rvgen/.gitignore
+ create mode 100644 tools/verification/rvgen/rvgen/ltl2ba.py
+ create mode 100644 tools/verification/rvgen/rvgen/ltl2k.py
+ create mode 100644 tools/verification/rvgen/rvgen/templates/ltl2k/main.c
+ create mode 100644 tools/verification/rvgen/rvgen/templates/ltl2k/trace.h
 
+diff --git a/tools/verification/rvgen/.gitignore b/tools/verification/rvgen/.gitignore
+new file mode 100644
+index 000000000000..1e288a076560
+--- /dev/null
++++ b/tools/verification/rvgen/.gitignore
+@@ -0,0 +1,3 @@
++__pycache__/
++parser.out
++parsetab.py
 diff --git a/tools/verification/rvgen/Makefile b/tools/verification/rvgen/Makefile
-index 8d08825e7e54..cca8c9ba82e8 100644
+index cca8c9ba82e8..cfc4056c1e87 100644
 --- a/tools/verification/rvgen/Makefile
 +++ b/tools/verification/rvgen/Makefile
-@@ -19,5 +19,7 @@ install:
- 	$(INSTALL) rvgen/dot2c.py -D -m 644 $(DESTDIR)$(PYLIB)/rvgen/dot2c.py
- 	$(INSTALL) dot2c -D -m 755 $(DESTDIR)$(bindir)/
+@@ -21,5 +21,7 @@ install:
  	$(INSTALL) rvgen/dot2k.py -D -m 644 $(DESTDIR)$(PYLIB)/rvgen/dot2k.py
-+	$(INSTALL) rvgen/container.py -D -m 644 $(DESTDIR)$(PYLIB)/rvgen/container.py
-+	$(INSTALL) rvgen/generator.py -D -m 644 $(DESTDIR)$(PYLIB)/rvgen/generator.py
+ 	$(INSTALL) rvgen/container.py -D -m 644 $(DESTDIR)$(PYLIB)/rvgen/container.py
+ 	$(INSTALL) rvgen/generator.py -D -m 644 $(DESTDIR)$(PYLIB)/rvgen/generator.py
++	$(INSTALL) rvgen/ltl2ba.py -D -m 644 $(DESTDIR)$(PYLIB)/rvgen/ltl2ba.py
++	$(INSTALL) rvgen/ltl2k.py -D -m 644 $(DESTDIR)$(PYLIB)/rvgen/ltl2k.py
  	$(INSTALL) __main__.py -D -m 755 $(DESTDIR)$(bindir)/rvgen
  	cp -rp rvgen/templates $(DESTDIR)$(PYLIB)/rvgen/
 diff --git a/tools/verification/rvgen/__main__.py b/tools/verification/rvgen/__main__.py
-index 994d320ad2d1..63ecf0c37034 100644
+index 63ecf0c37034..fa6fc1f4de2f 100644
 --- a/tools/verification/rvgen/__main__.py
 +++ b/tools/verification/rvgen/__main__.py
-@@ -10,6 +10,8 @@
- 
- if __name__ == '__main__':
+@@ -12,6 +12,7 @@ if __name__ == '__main__':
      from rvgen.dot2k import dot2k
-+    from rvgen.generator import Monitor
-+    from rvgen.container import Container
+     from rvgen.generator import Monitor
+     from rvgen.container import Container
++    from rvgen.ltl2k import ltl2k
      import argparse
      import sys
  
-@@ -29,7 +31,7 @@ if __name__ == '__main__':
-                                 help="Monitor class, either \"da\" or \"ltl\"")
-     monitor_parser.add_argument('-s', "--spec", dest="spec", help="Monitor specification file")
-     monitor_parser.add_argument('-t', "--monitor_type", dest="monitor_type",
--                                help=f"Available options: {', '.join(dot2k.monitor_types.keys())}")
-+                                help=f"Available options: {', '.join(Monitor.monitor_types.keys())}")
- 
-     container_parser = subparsers.add_parser("container")
-     container_parser.add_argument('-n', "--model_name", dest="model_name", required=True)
-@@ -47,7 +49,7 @@ if __name__ == '__main__':
+@@ -44,7 +45,7 @@ if __name__ == '__main__':
+             if params.monitor_class == "da":
+                 monitor = dot2k(params.spec, params.monitor_type, vars(params))
+             elif params.monitor_class == "ltl":
+-                raise NotImplementedError
++                monitor = ltl2k(params.spec, params.monitor_type, vars(params))
+             else:
                  print("Unknown monitor class:", params.monitor_class)
                  sys.exit(1)
-         else:
--            monitor = dot2k(None, None, vars(params))
-+            monitor = Container(vars(params))
-     except Exception as e:
-         print('Error: '+ str(e))
-         print("Sorry : :-(")
-diff --git a/tools/verification/rvgen/rvgen/container.py b/tools/verification/rvgen/rvgen/container.py
+diff --git a/tools/verification/rvgen/rvgen/ltl2ba.py b/tools/verification/rvgen/rvgen/ltl2ba.py
 new file mode 100644
-index 000000000000..47d8ab2ad3ec
+index 000000000000..d11840af7f5f
 --- /dev/null
-+++ b/tools/verification/rvgen/rvgen/container.py
-@@ -0,0 +1,22 @@
++++ b/tools/verification/rvgen/rvgen/ltl2ba.py
+@@ -0,0 +1,540 @@
 +#!/usr/bin/env python3
 +# SPDX-License-Identifier: GPL-2.0-only
 +#
-+# Copyright (C) 2019-2022 Red Hat, Inc. Daniel Bristot de Oliveira <bristot@kernel.org>
-+#
-+# Generator for runtime verification monitor container
++# Implementation based on
++# Gerth, R., Peled, D., Vardi, M.Y., Wolper, P. (1996).
++# Simple On-the-fly Automatic Verification of Linear Temporal Logic.
++# https://doi.org/10.1007/978-0-387-34892-6_1
++# With extra optimizations
 +
++from ply.lex import lex
++from ply.yacc import yacc
++
++# Grammar:
++# 	ltl ::= opd | ( ltl ) | ltl binop ltl | unop ltl
++#
++# Operands (opd):
++# 	true, false, user-defined names
++#
++# Unary Operators (unop):
++#       always
++#       eventually
++#       not
++#
++# Binary Operators (binop):
++#       until
++#       and
++#       or
++#       imply
++#       equivalent
++
++tokens = (
++   'AND',
++   'OR',
++   'IMPLY',
++   'UNTIL',
++   'ALWAYS',
++   'EVENTUALLY',
++   'VARIABLE',
++   'LITERAL',
++   'NOT',
++   'LPAREN',
++   'RPAREN',
++   'ASSIGN',
++)
++
++t_AND = r'and'
++t_OR = r'or'
++t_IMPLY = r'imply'
++t_UNTIL = r'until'
++t_ALWAYS = r'always'
++t_EVENTUALLY = r'eventually'
++t_VARIABLE = r'[A-Z_0-9]+'
++t_LITERAL = r'true|false'
++t_NOT = r'not'
++t_LPAREN = r'\('
++t_RPAREN = r'\)'
++t_ASSIGN = r'='
++t_ignore_COMMENT = r'\#.*'
++t_ignore = ' \t\n'
++
++def t_error(t):
++    raise ValueError(f"Illegal character '{t.value[0]}'")
++
++lexer = lex()
++
++class GraphNode:
++    uid = 0
++
++    def __init__(self, incoming: set['GraphNode'], new, old, _next):
++        self.init = False
++        self.outgoing = set()
++        self.labels = set()
++        self.incoming = incoming.copy()
++        self.new = new.copy()
++        self.old = old.copy()
++        self.next = _next.copy()
++        self.id = GraphNode.uid
++        GraphNode.uid += 1
++
++    def expand(self, node_set):
++        if not self.new:
++            for nd in node_set:
++                if nd.old == self.old and nd.next == self.next:
++                    nd.incoming |= self.incoming
++                    return node_set
++
++            new_current_node = GraphNode({self}, self.next, set(), set())
++            return new_current_node.expand({self} | node_set)
++        n = self.new.pop()
++        return n.expand(self, node_set)
++
++    def __lt__(self, other):
++        return self.id < other.id
++
++class ASTNode:
++    uid = 1
++
++    def __init__(self, op):
++        self.op = op
++        self.id = ASTNode.uid
++        ASTNode.uid += 1
++
++    def __hash__(self):
++        return hash(self.op)
++
++    def __eq__(self, other):
++        return self is other
++
++    def __iter__(self):
++        yield self
++        yield from self.op
++
++    def negate(self):
++        self.op = self.op.negate()
++        return self
++
++    def expand(self, node, node_set):
++        return self.op.expand(self, node, node_set)
++
++    def __str__(self):
++        if isinstance(self.op, Literal):
++            return str(self.op.value)
++        if isinstance(self.op, Variable):
++            return self.op.name.lower()
++        return "val" + str(self.id)
++
++    def normalize(self):
++        # Get rid of:
++        #   - ALWAYS
++        #   - EVENTUALLY
++        #   - IMPLY
++        # And move all the NOT to be inside
++        self.op = self.op.normalize()
++        return self
++
++class BinaryOp:
++    op_str = "not_supported"
++
++    def __init__(self, left: ASTNode, right: ASTNode):
++        self.left = left
++        self.right = right
++
++    def __hash__(self):
++        return hash((self.left, self.right))
++
++    def __iter__(self):
++        yield from self.left
++        yield from self.right
++
++    def normalize(self):
++        raise NotImplementedError
++
++    def negate(self):
++        raise NotImplementedError
++
++    def _is_temporal(self):
++        raise NotImplementedError
++
++    def is_temporal(self):
++        if self.left.op.is_temporal():
++            return True
++        if self.right.op.is_temporal():
++            return True
++        return self._is_temporal()
++
++    @staticmethod
++    def expand(n: ASTNode, node: GraphNode, node_set) -> set[GraphNode]:
++        raise NotImplementedError
++
++class AndOp(BinaryOp):
++    op_str = '&&'
++
++    def normalize(self):
++        return self
++
++    def negate(self):
++        return OrOp(self.left.negate(), self.right.negate())
++
++    def _is_temporal(self):
++        return False
++
++    @staticmethod
++    def expand(n: ASTNode, node: GraphNode, node_set) -> set[GraphNode]:
++        if not n.op.is_temporal():
++            node.old.add(n)
++            return node.expand(node_set)
++
++        tmp = GraphNode(node.incoming,
++                        node.new | ({n.op.left, n.op.right} - node.old),
++                        node.old | {n},
++                        node.next)
++        return tmp.expand(node_set)
++
++class OrOp(BinaryOp):
++    op_str = '||'
++
++    def normalize(self):
++        return self
++
++    def negate(self):
++        return AndOp(self.left.negate(), self.right.negate())
++
++    def _is_temporal(self):
++        return False
++
++    @staticmethod
++    def expand(n: ASTNode, node: GraphNode, node_set) -> set[GraphNode]:
++        if not n.op.is_temporal():
++            node.old |= {n}
++            return node.expand(node_set)
++
++        node1 = GraphNode(node.incoming,
++                          node.new | ({n.op.left} - node.old),
++                          node.old | {n},
++                          node.next)
++        node2 = GraphNode(node.incoming,
++                          node.new | ({n.op.right} - node.old),
++                          node.old | {n},
++                          node.next)
++        return node2.expand(node1.expand(node_set))
++
++class UntilOp(BinaryOp):
++    def normalize(self):
++        return self
++
++    def negate(self):
++        return VOp(self.left.negate(), self.right.negate())
++
++    def _is_temporal(self):
++        return True
++
++    @staticmethod
++    def expand(n: ASTNode, node: GraphNode, node_set) -> set[GraphNode]:
++        node1 = GraphNode(node.incoming,
++                          node.new | ({n.op.left} - node.old),
++                          node.old | {n},
++                          node.next | {n})
++        node2 = GraphNode(node.incoming,
++                          node.new | ({n.op.right} - node.old),
++                          node.old | {n},
++                          node.next)
++        return node2.expand(node1.expand(node_set))
++
++class VOp(BinaryOp):
++    def normalize(self):
++        return self
++
++    def negate(self):
++        return UntilOp(self.left.negate(), self.right.negate())
++
++    def _is_temporal(self):
++        return True
++
++    @staticmethod
++    def expand(n: ASTNode, node: GraphNode, node_set) -> set[GraphNode]:
++        node1 = GraphNode(node.incoming,
++                          node.new | ({n.op.right} - node.old),
++                          node.old | {n},
++                          node.next | {n})
++        node2 = GraphNode(node.incoming,
++                          node.new | ({n.op.left, n.op.right} - node.old),
++                          node.old | {n},
++                          node.next)
++        return node2.expand(node1.expand(node_set))
++
++class ImplyOp(BinaryOp):
++    def normalize(self):
++        # P -> Q === !P | Q
++        return OrOp(self.left.negate(), self.right)
++
++    def _is_temporal(self):
++        return False
++
++    def negate(self):
++        # !(P -> Q) === !(!P | Q) === P & !Q
++        return AndOp(self.left, self.right.negate())
++
++class UnaryOp:
++    def __init__(self, child: ASTNode):
++        self.child = child
++
++    def __iter__(self):
++        yield from self.child
++
++    def __hash__(self):
++        return hash(self.child)
++
++    def normalize(self):
++        raise NotImplementedError
++
++    def _is_temporal(self):
++        raise NotImplementedError
++
++    def is_temporal(self):
++        if self.child.op.is_temporal():
++            return True
++        return self._is_temporal()
++
++    def negate(self):
++        raise NotImplementedError
++
++class EventuallyOp(UnaryOp):
++    def __str__(self):
++        return "eventually " + str(self.child)
++
++    def normalize(self):
++        # <>F == true U F
++        return UntilOp(ASTNode(Literal(True)), self.child)
++
++    def _is_temporal(self):
++        return True
++
++    def negate(self):
++        # !<>F == [](!F)
++        return AlwaysOp(self.child.negate()).normalize()
++
++class AlwaysOp(UnaryOp):
++    def normalize(self):
++        # []F === !(true U !F) == false V F
++        new = ASTNode(Literal(False))
++        return VOp(new, self.child)
++
++    def _is_temporal(self):
++        return True
++
++    def negate(self):
++        # ![]F == <>(!F)
++        return EventuallyOp(self.child.negate()).normalize()
++
++class NotOp(UnaryOp):
++    def __str__(self):
++        return "!" + str(self.child)
++
++    def normalize(self):
++        return self.child.op.negate()
++
++    def negate(self):
++        return self.child.op
++
++    def _is_temporal(self):
++        return False
++
++    @staticmethod
++    def expand(n: ASTNode, node: GraphNode, node_set) -> set[GraphNode]:
++        for f in node.old:
++            if n.op.child is f:
++                return node_set
++        node.old |= {n}
++        return node.expand(node_set)
++
++class Variable:
++    def __init__(self, name: str):
++        self.name = name
++
++    def __hash__(self):
++        return hash(self.name)
++
++    def __iter__(self):
++        yield from ()
++
++    def negate(self):
++        new = ASTNode(self)
++        return NotOp(new)
++
++    def normalize(self):
++        return self
++
++    def is_temporal(self):
++        return False
++
++    @staticmethod
++    def expand(n: ASTNode, node: GraphNode, node_set) -> set[GraphNode]:
++        for f in node.old:
++            if isinstance(f, NotOp) and f.op.child is n:
++                return node_set
++        node.old |= {n}
++        return node.expand(node_set)
++
++class Literal:
++    def __init__(self, value: bool):
++        self.value = value
++
++    def __iter__(self):
++        yield from ()
++
++    def __hash__(self):
++        return hash(self.value)
++
++    def __str__(self):
++        if self.value:
++            return "true"
++        return "false"
++
++    def negate(self):
++        self.value = not self.value
++        return self
++
++    def normalize(self):
++        return self
++
++    def is_temporal(self):
++        return False
++
++    @staticmethod
++    def expand(n: ASTNode, node: GraphNode, node_set) -> set[GraphNode]:
++        if not n.op.value:
++            return node_set
++        node.old |= {n}
++        return node.expand(node_set)
++
++def p_spec(p):
++    '''
++    spec : assign
++         | assign spec
++    '''
++    if len(p) == 3:
++        p[2].append(p[1])
++        p[0] = p[2]
++    else:
++        p[0] = [p[1]]
++
++def p_assign(p):
++    '''
++    assign : VARIABLE ASSIGN ltl
++    '''
++    p[0] = (p[1], p[3])
++
++def p_ltl(p):
++    '''
++    ltl : opd
++        | binop
++        | unop
++    '''
++    p[0] = p[1]
++
++def p_opd(p):
++    '''
++    opd : VARIABLE
++        | LITERAL
++        | LPAREN ltl RPAREN
++    '''
++    if p[1] == "true":
++        p[0] = ASTNode(Literal(True))
++    elif p[1] == "false":
++        p[0] = ASTNode(Literal(False))
++    elif p[1] == '(':
++        p[0] = p[2]
++    else:
++        p[0] = ASTNode(Variable(p[1]))
++
++def p_unop(p):
++    '''
++    unop : ALWAYS ltl
++         | EVENTUALLY ltl
++         | NOT ltl
++    '''
++    if p[1] == "always":
++        op = AlwaysOp(p[2])
++    elif p[1] == "eventually":
++        op = EventuallyOp(p[2])
++    elif p[1] == "not":
++        op = NotOp(p[2])
++    else:
++        raise ValueError(f"Invalid unary operator {p[1]}")
++
++    p[0] = ASTNode(op)
++
++def p_binop(p):
++    '''
++    binop : opd UNTIL ltl
++          | opd AND ltl
++          | opd OR ltl
++          | opd IMPLY ltl
++    '''
++    if p[2] == "and":
++        op = AndOp(p[1], p[3])
++    elif p[2] == "until":
++        op = UntilOp(p[1], p[3])
++    elif p[2] == "or":
++        op = OrOp(p[1], p[3])
++    elif p[2] == "imply":
++        op = ImplyOp(p[1], p[3])
++    else:
++        raise ValueError(f"Invalid binary operator {p[2]}")
++
++    p[0] = ASTNode(op)
++
++parser = yacc()
++
++def parse_ltl(s: str) -> ASTNode:
++    spec = parser.parse(s)
++
++    rule = None
++    subexpr = {}
++
++    for assign in spec:
++        if assign[0] == "RULE":
++            rule = assign[1]
++        else:
++            subexpr[assign[0]] = assign[1]
++
++    if rule is None:
++        raise ValueError("Please define your specification in the \"RULE = <LTL spec>\" format")
++
++    for node in rule:
++        if not isinstance(node.op, Variable):
++            continue
++        replace = subexpr.get(node.op.name)
++        if replace is not None:
++            node.op = replace.op
++
++    return rule
++
++def create_graph(s: str):
++    atoms = set()
++
++    ltl = parse_ltl(s)
++    for c in ltl:
++        c.normalize()
++        if isinstance(c.op, Variable):
++            atoms.add(c.op.name)
++
++    init = GraphNode(set(), set(), set(), set())
++    head = GraphNode({init}, {ltl}, set(), set())
++    graph = sorted(head.expand(set()))
++
++    for i, node in enumerate(graph):
++        # The id assignment during graph generation has gaps. Reassign them
++        node.id = i
++
++        for incoming in node.incoming:
++            if incoming is init:
++                node.init = True
++            else:
++                incoming.outgoing.add(node)
++        for o in node.old:
++            if not o.op.is_temporal():
++                node.labels.add(str(o))
++
++    return sorted(atoms), graph, ltl
+diff --git a/tools/verification/rvgen/rvgen/ltl2k.py b/tools/verification/rvgen/rvgen/ltl2k.py
+new file mode 100644
+index 000000000000..92e713861d86
+--- /dev/null
++++ b/tools/verification/rvgen/rvgen/ltl2k.py
+@@ -0,0 +1,252 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0-only
++
++from pathlib import Path
 +from . import generator
++from . import ltl2ba
 +
++COLUMN_LIMIT = 100
 +
-+class Container(generator.RVGenerator):
-+    template_dir = "container"
++def line_len(line: str) -> int:
++    tabs = line.count('\t')
++    return tabs * 7 + len(line)
 +
-+    def __init__(self, extra_params={}):
-+        super().__init__(extra_params)
-+        self.name = extra_params.get("model_name")
-+        self.main_h = self._read_template_file("main.h")
++def break_long_line(line: str, indent='') -> list[str]:
++    result = []
++    while line_len(line) > COLUMN_LIMIT:
++        i = line[:COLUMN_LIMIT - line_len(line)].rfind(' ')
++        result.append(line[:i])
++        line = indent + line[i + 1:]
++    if line:
++        result.append(line)
++    return result
 +
-+    def fill_model_h(self):
-+        main_h = self.main_h
-+        main_h = main_h.replace("%%MODEL_NAME%%", self.name)
-+        return main_h
-diff --git a/tools/verification/rvgen/rvgen/dot2k.py b/tools/verification/rvgen/rvgen/dot2k.py
-index a9ed97d0b224..ed0a3c901106 100644
---- a/tools/verification/rvgen/rvgen/dot2k.py
-+++ b/tools/verification/rvgen/rvgen/dot2k.py
-@@ -9,108 +9,21 @@
- #   Documentation/trace/rv/da_monitor_synthesis.rst
- 
- from .dot2c import Dot2c
--import platform
--import os
-+from .generator import Monitor
- 
--class dot2k(Dot2c):
--    monitor_types = { "global" : 1, "per_cpu" : 2, "per_task" : 3 }
--    rv_dir = "kernel/trace/rv"
--    monitor_type = "per_cpu"
- 
--    def __init__(self, file_path, MonitorType, extra_params={}):
--        self.container = extra_params.get("subcmd") == "container"
--        self.parent = extra_params.get("parent")
--        if self.container:
--            self.abs_template_dir = os.path.join(os.path.dirname(__file__), "templates/container")
--        else:
--            self.abs_template_dir = os.path.join(os.path.dirname(__file__), "templates/dot2k")
--
--        if self.container:
--            if file_path:
--                raise ValueError("A container does not require a dot file")
--            if MonitorType:
--                raise ValueError("A container does not require a monitor type")
--            if self.parent:
--                raise ValueError("A container cannot have a parent")
--            self.name = extra_params.get("model_name")
--            self.events = []
--            self.states = []
--            self.main_h = self._read_template_file("main.h")
--        else:
--            super().__init__(file_path, extra_params.get("model_name"))
-+class dot2k(Monitor, Dot2c):
-+    template_dir = "dot2k"
- 
--            self.monitor_type = self.monitor_types.get(MonitorType)
--            if self.monitor_type is None:
--                raise ValueError("Unknown monitor type: %s" % MonitorType)
--            self.monitor_type = MonitorType
--            self.trace_h = self._read_template_file("trace.h")
--
--        self.main_c = self._read_template_file("main.c")
--        self.kconfig = self._read_template_file("Kconfig")
++def build_condition_string(node: ltl2ba.GraphNode):
++    if not node.labels:
++        return "(true)"
++
++    result = "("
++
++    first = True
++    for label in sorted(node.labels):
++        if not first:
++            result += " && "
++        result += label
++        first = False
++
++    result += ")"
++
++    return result
++
++def abbreviate_atoms(atoms: list[str]) -> list[str]:
++    def shorten(s: str) -> str:
++        skip = ["is", "by", "or", "and"]
++        return '_'.join([x[:2] for x in s.lower().split('_') if x not in skip])
++
++    abbrs = []
++    for atom in atoms:
++        for i in range(len(atom), -1, -1):
++            if sum(a.startswith(atom[:i]) for a in atoms) > 1:
++                break
++        share = atom[:i]
++        unique = atom[i:]
++        abbrs.append((shorten(share) + shorten(unique)))
++    return abbrs
++
++class ltl2k(generator.Monitor):
++    template_dir = "ltl2k"
++
 +    def __init__(self, file_path, MonitorType, extra_params={}):
-+        self.monitor_type = MonitorType
-+        Monitor.__init__(self, extra_params)
-+        Dot2c.__init__(self, file_path, extra_params.get("model_name"))
-         self.enum_suffix = "_%s" % self.name
--        self.description = extra_params.get("description", self.name) or "auto-generated"
--        self.auto_patch = extra_params.get("auto_patch")
--        if self.auto_patch:
--            self.__fill_rv_kernel_dir()
--
--    def __fill_rv_kernel_dir(self):
--
--        # first try if we are running in the kernel tree root
--        if os.path.exists(self.rv_dir):
--            return
--
--        # offset if we are running inside the kernel tree from verification/dot2
--        kernel_path = os.path.join("../..", self.rv_dir)
--
--        if os.path.exists(kernel_path):
--            self.rv_dir = kernel_path
--            return
--
--        if platform.system() != "Linux":
--            raise OSError("I can only run on Linux.")
--
--        kernel_path = os.path.join("/lib/modules/%s/build" % platform.release(), self.rv_dir)
--
--        # if the current kernel is from a distro this may not be a full kernel tree
--        # verify that one of the files we are going to modify is available
--        if os.path.exists(os.path.join(kernel_path, "rv_trace.h")):
--            self.rv_dir = kernel_path
--            return
--
--        raise FileNotFoundError("Could not find the rv directory, do you have the kernel source installed?")
--
--    def __read_file(self, path):
--        try:
--            fd = open(path, 'r')
--        except OSError:
--            raise Exception("Cannot open the file: %s" % path)
--
--        content = fd.read()
--
--        fd.close()
--        return content
--
--    def _read_template_file(self, file):
--        try:
--            path = os.path.join(self.abs_template_dir, file)
--            return self.__read_file(path)
--        except Exception:
--            # Specific template file not found. Try the generic template file in the template/
--            # directory, which is one level up
--            path = os.path.join(self.abs_template_dir, "..", file)
--            return self.__read_file(path)
- 
-     def fill_monitor_type(self):
-         return self.monitor_type.upper()
- 
--    def fill_parent(self):
--        return "&rv_%s" % self.parent if self.parent else "NULL"
--
--    def fill_include_parent(self):
--        if self.parent:
--            return "#include <monitors/%s/%s.h>\n" % (self.parent, self.parent)
--        return ""
--
-     def fill_tracepoint_handlers_skel(self):
-         buff = []
-         for event in self.events:
-@@ -144,30 +57,6 @@ class dot2k(Dot2c):
-             buff.append("\trv_detach_trace_probe(\"%s\", /* XXX: tracepoint */, handle_%s);" % (self.name, event))
-         return '\n'.join(buff)
- 
--    def fill_main_c(self):
--        main_c = self.main_c
--        monitor_type = self.fill_monitor_type()
--        min_type = self.get_minimun_type()
--        nr_events = len(self.events)
--        tracepoint_handlers = self.fill_tracepoint_handlers_skel()
--        tracepoint_attach = self.fill_tracepoint_attach_probe()
--        tracepoint_detach = self.fill_tracepoint_detach_helper()
--        parent = self.fill_parent()
--        parent_include = self.fill_include_parent()
--
--        main_c = main_c.replace("%%MONITOR_TYPE%%", monitor_type)
--        main_c = main_c.replace("%%MIN_TYPE%%", min_type)
--        main_c = main_c.replace("%%MODEL_NAME%%", self.name)
--        main_c = main_c.replace("%%NR_EVENTS%%", str(nr_events))
--        main_c = main_c.replace("%%TRACEPOINT_HANDLERS_SKEL%%", tracepoint_handlers)
--        main_c = main_c.replace("%%TRACEPOINT_ATTACH%%", tracepoint_attach)
--        main_c = main_c.replace("%%TRACEPOINT_DETACH%%", tracepoint_detach)
--        main_c = main_c.replace("%%DESCRIPTION%%", self.description)
--        main_c = main_c.replace("%%PARENT%%", parent)
--        main_c = main_c.replace("%%INCLUDE_PARENT%%", parent_include)
--
--        return main_c
--
-     def fill_model_h_header(self):
-         buff = []
-         buff.append("/* SPDX-License-Identifier: GPL-2.0 */")
-@@ -226,147 +115,15 @@ class dot2k(Dot2c):
-         buff.append("	     TP_ARGS(%s)" % tp_args_c)
-         return '\n'.join(buff)
- 
--    def fill_monitor_deps(self):
--        buff = []
--        buff.append("	# XXX: add dependencies if there")
--        if self.parent:
--            buff.append("	depends on RV_MON_%s" % self.parent.upper())
--            buff.append("	default y")
--        return '\n'.join(buff)
--
--    def fill_trace_h(self):
--        trace_h = self.trace_h
--        monitor_class = self.fill_monitor_class()
--        monitor_class_type = self.fill_monitor_class_type()
--        tracepoint_args_skel_event = self.fill_tracepoint_args_skel("event")
--        tracepoint_args_skel_error = self.fill_tracepoint_args_skel("error")
--        trace_h = trace_h.replace("%%MODEL_NAME%%", self.name)
--        trace_h = trace_h.replace("%%MODEL_NAME_UP%%", self.name.upper())
--        trace_h = trace_h.replace("%%MONITOR_CLASS%%", monitor_class)
--        trace_h = trace_h.replace("%%MONITOR_CLASS_TYPE%%", monitor_class_type)
--        trace_h = trace_h.replace("%%TRACEPOINT_ARGS_SKEL_EVENT%%", tracepoint_args_skel_event)
--        trace_h = trace_h.replace("%%TRACEPOINT_ARGS_SKEL_ERROR%%", tracepoint_args_skel_error)
--        return trace_h
--
--    def fill_kconfig(self):
--        kconfig = self.kconfig
--        monitor_class_type = self.fill_monitor_class_type()
--        monitor_deps = self.fill_monitor_deps()
--        kconfig = kconfig.replace("%%MODEL_NAME%%", self.name)
--        kconfig = kconfig.replace("%%MODEL_NAME_UP%%", self.name.upper())
--        kconfig = kconfig.replace("%%MONITOR_CLASS_TYPE%%", monitor_class_type)
--        kconfig = kconfig.replace("%%DESCRIPTION%%", self.description)
--        kconfig = kconfig.replace("%%MONITOR_DEPS%%", monitor_deps)
--        return kconfig
--
--    def fill_main_container_h(self):
--        main_h = self.main_h
--        main_h = main_h.replace("%%MODEL_NAME%%", self.name)
--        return main_h
--
--    def __patch_file(self, file, marker, line):
--        file_to_patch = os.path.join(self.rv_dir, file)
--        content = self.__read_file(file_to_patch)
--        content = content.replace(marker, line + "\n" + marker)
--        self.__write_file(file_to_patch, content)
--
--    def fill_tracepoint_tooltip(self):
--        monitor_class_type = self.fill_monitor_class_type()
--        if self.auto_patch:
--            self.__patch_file("rv_trace.h",
--                            "// Add new monitors based on CONFIG_%s here" % monitor_class_type,
--                            "#include <monitors/%s/%s_trace.h>" % (self.name, self.name))
--            return "  - Patching %s/rv_trace.h, double check the result" % self.rv_dir
--
--        return """  - Edit %s/rv_trace.h:
--Add this line where other tracepoints are included and %s is defined:
--#include <monitors/%s/%s_trace.h>
--""" % (self.rv_dir, monitor_class_type, self.name, self.name)
--
--    def fill_kconfig_tooltip(self):
--        if self.auto_patch:
--            self.__patch_file("Kconfig",
--                            "# Add new monitors here",
--                            "source \"kernel/trace/rv/monitors/%s/Kconfig\"" % (self.name))
--            return "  - Patching %s/Kconfig, double check the result" % self.rv_dir
--
--        return """  - Edit %s/Kconfig:
--Add this line where other monitors are included:
--source \"kernel/trace/rv/monitors/%s/Kconfig\"
--""" % (self.rv_dir, self.name)
--
--    def fill_makefile_tooltip(self):
--        name = self.name
--        name_up = name.upper()
--        if self.auto_patch:
--            self.__patch_file("Makefile",
--                            "# Add new monitors here",
--                            "obj-$(CONFIG_RV_MON_%s) += monitors/%s/%s.o" % (name_up, name, name))
--            return "  - Patching %s/Makefile, double check the result" % self.rv_dir
--
--        return """  - Edit %s/Makefile:
--Add this line where other monitors are included:
--obj-$(CONFIG_RV_MON_%s) += monitors/%s/%s.o
--""" % (self.rv_dir, name_up, name, name)
--
--    def fill_monitor_tooltip(self):
--        if self.auto_patch:
--            return "  - Monitor created in %s/monitors/%s" % (self.rv_dir, self. name)
--        return "  - Move %s/ to the kernel's monitor directory (%s/monitors)" % (self.name, self.rv_dir)
--
--    def __create_directory(self):
--        path = self.name
--        if self.auto_patch:
--            path = os.path.join(self.rv_dir, "monitors", path)
--        try:
--            os.mkdir(path)
--        except FileExistsError:
--            return
--        except:
--            print("Fail creating the output dir: %s" % self.name)
--
--    def __write_file(self, file_name, content):
--        try:
--            file = open(file_name, 'w')
--        except:
--            print("Fail writing to file: %s" % file_name)
--
--        file.write(content)
--
--        file.close()
--
--    def __create_file(self, file_name, content):
--        path = "%s/%s" % (self.name, file_name)
--        if self.auto_patch:
--            path = os.path.join(self.rv_dir, "monitors", path)
--        self.__write_file(path, content)
--
--    def __get_main_name(self):
--        path = "%s/%s" % (self.name, "main.c")
--        if not os.path.exists(path):
--            return "main.c"
--        return "__main.c"
--
--    def print_files(self):
--        main_c = self.fill_main_c()
--
--        self.__create_directory()
--
--        path = "%s.c" % self.name
--        self.__create_file(path, main_c)
-+    def fill_main_c(self):
-+        main_c = super().fill_main_c()
- 
--        if self.container:
--            main_h = self.fill_main_container_h()
--            path = "%s.h" % self.name
--            self.__create_file(path, main_h)
--        else:
--            model_h = self.fill_model_h()
--            path = "%s.h" % self.name
--            self.__create_file(path, model_h)
-+        min_type = self.get_minimun_type()
-+        nr_events = len(self.events)
-+        monitor_type = self.fill_monitor_type()
- 
--            trace_h = self.fill_trace_h()
--            path = "%s_trace.h" % self.name
--            self.__create_file(path, trace_h)
-+        main_c = main_c.replace("%%MIN_TYPE%%", min_type)
-+        main_c = main_c.replace("%%NR_EVENTS%%", str(nr_events))
-+        main_c = main_c.replace("%%MONITOR_TYPE%%", monitor_type)
- 
--        kconfig = self.fill_kconfig()
--        self.__create_file("Kconfig", kconfig)
-+        return main_c
-diff --git a/tools/verification/rvgen/rvgen/generator.py b/tools/verification/rvgen/rvgen/generator.py
-new file mode 100644
-index 000000000000..19d0078a3803
---- /dev/null
-+++ b/tools/verification/rvgen/rvgen/generator.py
-@@ -0,0 +1,264 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Copyright (C) 2019-2022 Red Hat, Inc. Daniel Bristot de Oliveira <bristot@kernel.org>
-+#
-+# Abtract class for generating kernel runtime verification monitors from specification file
-+
-+import platform
-+import os
-+
-+
-+class RVGenerator:
-+    rv_dir = "kernel/trace/rv"
-+
-+    def __init__(self, extra_params={}):
++        if MonitorType != "per_task":
++            raise NotImplementedError("Only per_task monitor is supported for LTL")
++        super().__init__(extra_params)
++        with open(file_path) as f:
++            self.atoms, self.ba, self.ltl = ltl2ba.create_graph(f.read())
++        self.atoms_abbr = abbreviate_atoms(self.atoms)
 +        self.name = extra_params.get("model_name")
-+        self.parent = extra_params.get("parent")
-+        self.abs_template_dir = \
-+            os.path.join(os.path.dirname(__file__), "templates", self.template_dir)
-+        self.main_c = self._read_template_file("main.c")
-+        self.kconfig = self._read_template_file("Kconfig")
-+        self.description = extra_params.get("description", self.name) or "auto-generated"
-+        self.auto_patch = extra_params.get("auto_patch")
-+        if self.auto_patch:
-+            self.__fill_rv_kernel_dir()
++        if not self.name:
++            self.name = Path(file_path).stem
 +
-+    def __fill_rv_kernel_dir(self):
++    def _fill_states(self) -> str:
++        buf = [
++            "enum ltl_buchi_state {",
++        ]
 +
-+        # first try if we are running in the kernel tree root
-+        if os.path.exists(self.rv_dir):
-+            return
++        for node in self.ba:
++            buf.append("\tS%i," % node.id)
++        buf.append("\tRV_NUM_BA_STATES")
++        buf.append("};")
++        buf.append("static_assert(RV_NUM_BA_STATES <= RV_MAX_BA_STATES);")
++        return buf
 +
-+        # offset if we are running inside the kernel tree from verification/dot2
-+        kernel_path = os.path.join("../..", self.rv_dir)
++    def _fill_atoms(self):
++        buf = ["enum ltl_atom {"]
++        for a in sorted(self.atoms):
++            buf.append("\tLTL_%s," % a)
++        buf.append("\tLTL_NUM_ATOM")
++        buf.append("};")
++        buf.append("static_assert(LTL_NUM_ATOM <= RV_MAX_LTL_ATOM);")
++        return buf
 +
-+        if os.path.exists(kernel_path):
-+            self.rv_dir = kernel_path
-+            return
++    def _fill_atoms_to_string(self):
++        buf = [
++            "static const char *ltl_atom_str(enum ltl_atom atom)",
++            "{",
++            "\tstatic const char *const names[] = {"
++        ]
 +
-+        if platform.system() != "Linux":
-+            raise OSError("I can only run on Linux.")
++        for name in self.atoms_abbr:
++            buf.append("\t\t\"%s\"," % name)
 +
-+        kernel_path = os.path.join("/lib/modules/%s/build" % platform.release(), self.rv_dir)
++        buf.extend([
++            "\t};",
++            "",
++            "\treturn names[atom];",
++            "}"
++        ])
++        return buf
 +
-+        # if the current kernel is from a distro this may not be a full kernel tree
-+        # verify that one of the files we are going to modify is available
-+        if os.path.exists(os.path.join(kernel_path, "rv_trace.h")):
-+            self.rv_dir = kernel_path
-+            return
++    def _fill_atom_values(self):
++        buf = []
++        for node in self.ltl:
++            if node.op.is_temporal():
++                continue
 +
-+        raise FileNotFoundError("Could not find the rv directory, do you have the kernel source installed?")
++            if isinstance(node.op, ltl2ba.Variable):
++                buf.append("\tbool %s = test_bit(LTL_%s, mon->atoms);" % (node, node.op.name))
++            elif isinstance(node.op, ltl2ba.AndOp):
++                buf.append("\tbool %s = %s && %s;" % (node, node.op.left, node.op.right))
++            elif isinstance(node.op, ltl2ba.OrOp):
++                buf.append("\tbool %s = %s || %s;" % (node, node.op.left, node.op.right))
++            elif isinstance(node.op, ltl2ba.NotOp):
++                buf.append("\tbool %s = !%s;" % (node, node.op.child))
++        buf.reverse()
 +
-+    def _read_file(self, path):
-+        try:
-+            fd = open(path, 'r')
-+        except OSError:
-+            raise Exception("Cannot open the file: %s" % path)
++        buf2 = []
++        for line in buf:
++            buf2.extend(break_long_line(line, "\t     "))
++        return buf2
 +
-+        content = fd.read()
++    def _fill_transitions(self):
++        buf = [
++            "static void",
++            "ltl_possible_next_states(struct ltl_monitor *mon, unsigned int state, unsigned long *next)",
++            "{"
++        ]
++        buf.extend(self._fill_atom_values())
++        buf.extend([
++            "",
++            "\tswitch (state) {"
++        ])
 +
-+        fd.close()
-+        return content
++        for node in self.ba:
++            buf.append("\tcase S%i:" % node.id)
 +
-+    def _read_template_file(self, file):
-+        try:
-+            path = os.path.join(self.abs_template_dir, file)
-+            return self._read_file(path)
-+        except Exception:
-+            # Specific template file not found. Try the generic template file in the template/
-+            # directory, which is one level up
-+            path = os.path.join(self.abs_template_dir, "..", file)
-+            return self._read_file(path)
++            for o in sorted(node.outgoing):
++                line   = "\t\tif "
++                indent = "\t\t   "
 +
-+    def fill_parent(self):
-+        return "&rv_%s" % self.parent if self.parent else "NULL"
++                line += build_condition_string(o)
++                lines = break_long_line(line, indent)
++                buf.extend(lines)
 +
-+    def fill_include_parent(self):
-+        if self.parent:
-+            return "#include <monitors/%s/%s.h>\n" % (self.parent, self.parent)
-+        return ""
++                buf.append("\t\t\t__set_bit(S%i, next);" % o.id)
++            buf.append("\t\tbreak;")
++        buf.extend([
++            "\t}",
++            "}"
++        ])
++
++        return buf
++
++    def _fill_start(self):
++        buf = [
++            "static void ltl_start(struct task_struct *task, struct ltl_monitor *mon)",
++            "{"
++        ]
++        buf.extend(self._fill_atom_values())
++        buf.append("")
++
++        for node in self.ba:
++            if not node.init:
++                continue
++
++            line   = "\tif "
++            indent = "\t   "
++
++            line += build_condition_string(node)
++            lines = break_long_line(line, indent)
++            buf.extend(lines)
++
++            buf.append("\t\t__set_bit(S%i, mon->states);" % node.id)
++        buf.append("}")
++        return buf
 +
 +    def fill_tracepoint_handlers_skel(self):
-+        return "NotImplemented"
-+
-+    def fill_tracepoint_attach_probe(self):
-+        return "NotImplemented"
-+
-+    def fill_tracepoint_detach_helper(self):
-+        return "NotImplemented"
-+
-+    def fill_main_c(self):
-+        main_c = self.main_c
-+        tracepoint_handlers = self.fill_tracepoint_handlers_skel()
-+        tracepoint_attach = self.fill_tracepoint_attach_probe()
-+        tracepoint_detach = self.fill_tracepoint_detach_helper()
-+        parent = self.fill_parent()
-+        parent_include = self.fill_include_parent()
-+
-+        main_c = main_c.replace("%%MODEL_NAME%%", self.name)
-+        main_c = main_c.replace("%%TRACEPOINT_HANDLERS_SKEL%%", tracepoint_handlers)
-+        main_c = main_c.replace("%%TRACEPOINT_ATTACH%%", tracepoint_attach)
-+        main_c = main_c.replace("%%TRACEPOINT_DETACH%%", tracepoint_detach)
-+        main_c = main_c.replace("%%DESCRIPTION%%", self.description)
-+        main_c = main_c.replace("%%PARENT%%", parent)
-+        main_c = main_c.replace("%%INCLUDE_PARENT%%", parent_include)
-+
-+        return main_c
-+
-+    def fill_model_h(self):
-+        return "NotImplemented"
-+
-+    def fill_monitor_class_type(self):
-+        return "NotImplemented"
-+
-+    def fill_monitor_class(self):
-+        return "NotImplemented"
-+
-+    def fill_tracepoint_args_skel(self, tp_type):
-+        return "NotImplemented"
-+
-+    def fill_monitor_deps(self):
 +        buff = []
-+        buff.append("	# XXX: add dependencies if there")
-+        if self.parent:
-+            buff.append("	depends on RV_MON_%s" % self.parent.upper())
-+            buff.append("	default y")
++        buff.append("static void handle_example_event(void *data, /* XXX: fill header */)")
++        buff.append("{")
++        buff.append("\tltl_atom_update(task, LTL_%s, true/false);" % self.atoms[0])
++        buff.append("}")
++        buff.append("")
 +        return '\n'.join(buff)
 +
-+    def fill_kconfig(self):
-+        kconfig = self.kconfig
-+        monitor_class_type = self.fill_monitor_class_type()
-+        monitor_deps = self.fill_monitor_deps()
-+        kconfig = kconfig.replace("%%MODEL_NAME%%", self.name)
-+        kconfig = kconfig.replace("%%MODEL_NAME_UP%%", self.name.upper())
-+        kconfig = kconfig.replace("%%MONITOR_CLASS_TYPE%%", monitor_class_type)
-+        kconfig = kconfig.replace("%%DESCRIPTION%%", self.description)
-+        kconfig = kconfig.replace("%%MONITOR_DEPS%%", monitor_deps)
-+        return kconfig
++    def fill_tracepoint_attach_probe(self):
++        return "\trv_attach_trace_probe(\"%s\", /* XXX: tracepoint */, handle_example_event);" \
++                % self.name
 +
-+    def __patch_file(self, file, marker, line):
-+        file_to_patch = os.path.join(self.rv_dir, file)
-+        content = self._read_file(file_to_patch)
-+        content = content.replace(marker, line + "\n" + marker)
-+        self.__write_file(file_to_patch, content)
++    def fill_tracepoint_detach_helper(self):
++        return "\trv_detach_trace_probe(\"%s\", /* XXX: tracepoint */, handle_sample_event);" \
++                % self.name
 +
-+    def fill_tracepoint_tooltip(self):
-+        monitor_class_type = self.fill_monitor_class_type()
-+        if self.auto_patch:
-+            self.__patch_file("rv_trace.h",
-+                            "// Add new monitors based on CONFIG_%s here" % monitor_class_type,
-+                            "#include <monitors/%s/%s_trace.h>" % (self.name, self.name))
-+            return "  - Patching %s/rv_trace.h, double check the result" % self.rv_dir
++    def fill_atoms_init(self):
++        buff = []
++        for a in self.atoms:
++            buff.append("\tltl_atom_set(mon, LTL_%s, true/false);" % a)
++        return '\n'.join(buff)
 +
-+        return """  - Edit %s/rv_trace.h:
-+Add this line where other tracepoints are included and %s is defined:
-+#include <monitors/%s/%s_trace.h>
-+""" % (self.rv_dir, monitor_class_type, self.name, self.name)
++    def fill_model_h(self):
++        buf = [
++            "/* SPDX-License-Identifier: GPL-2.0 */",
++            "",
++            "/*",
++            " * C implementation of Buchi automaton, automatically generated by",
++            " * tools/verification/rvgen from the linear temporal logic specification.",
++            " * For further information, see kernel documentation:",
++            " *   Documentation/trace/rv/linear_temporal_logic.rst",
++            " */",
++            "",
++            "#include <linux/rv.h>",
++            "",
++            "#define MONITOR_NAME " + self.name,
++            ""
++        ]
 +
-+    def fill_kconfig_tooltip(self):
-+        if self.auto_patch:
-+            self.__patch_file("Kconfig",
-+                            "# Add new monitors here",
-+                            "source \"kernel/trace/rv/monitors/%s/Kconfig\"" % (self.name))
-+            return "  - Patching %s/Kconfig, double check the result" % self.rv_dir
++        buf.extend(self._fill_atoms())
++        buf.append('')
 +
-+        return """  - Edit %s/Kconfig:
-+Add this line where other monitors are included:
-+source \"kernel/trace/rv/monitors/%s/Kconfig\"
-+""" % (self.rv_dir, self.name)
++        buf.extend(self._fill_atoms_to_string())
++        buf.append('')
 +
-+    def fill_makefile_tooltip(self):
-+        name = self.name
-+        name_up = name.upper()
-+        if self.auto_patch:
-+            self.__patch_file("Makefile",
-+                            "# Add new monitors here",
-+                            "obj-$(CONFIG_RV_MON_%s) += monitors/%s/%s.o" % (name_up, name, name))
-+            return "  - Patching %s/Makefile, double check the result" % self.rv_dir
++        buf.extend(self._fill_states())
++        buf.append('')
 +
-+        return """  - Edit %s/Makefile:
-+Add this line where other monitors are included:
-+obj-$(CONFIG_RV_MON_%s) += monitors/%s/%s.o
-+""" % (self.rv_dir, name_up, name, name)
++        buf.extend(self._fill_start())
++        buf.append('')
 +
-+    def fill_monitor_tooltip(self):
-+        if self.auto_patch:
-+            return "  - Monitor created in %s/monitors/%s" % (self.rv_dir, self. name)
-+        return "  - Move %s/ to the kernel's monitor directory (%s/monitors)" % (self.name, self.rv_dir)
++        buf.extend(self._fill_transitions())
++        buf.append('')
 +
-+    def __create_directory(self):
-+        path = self.name
-+        if self.auto_patch:
-+            path = os.path.join(self.rv_dir, "monitors", path)
-+        try:
-+            os.mkdir(path)
-+        except FileExistsError:
-+            return
-+        except:
-+            print("Fail creating the output dir: %s" % self.name)
++        return '\n'.join(buf)
 +
-+    def __write_file(self, file_name, content):
-+        try:
-+            file = open(file_name, 'w')
-+        except:
-+            print("Fail writing to file: %s" % file_name)
++    def fill_monitor_class_type(self):
++        return "LTL_MON_EVENTS_ID"
 +
-+        file.write(content)
++    def fill_monitor_class(self):
++        return "ltl_monitor_id"
 +
-+        file.close()
++    def fill_main_c(self):
++        main_c = super().fill_main_c()
++        main_c = main_c.replace("%%ATOMS_INIT%%", self.fill_atoms_init())
 +
-+    def _create_file(self, file_name, content):
-+        path = "%s/%s" % (self.name, file_name)
-+        if self.auto_patch:
-+            path = os.path.join(self.rv_dir, "monitors", path)
-+        self.__write_file(path, content)
++        return main_c
+diff --git a/tools/verification/rvgen/rvgen/templates/ltl2k/main.c b/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
+new file mode 100644
+index 000000000000..f85d076fbf78
+--- /dev/null
++++ b/tools/verification/rvgen/rvgen/templates/ltl2k/main.c
+@@ -0,0 +1,102 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/ftrace.h>
++#include <linux/tracepoint.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/rv.h>
++#include <rv/instrumentation.h>
 +
-+    def __get_main_name(self):
-+        path = "%s/%s" % (self.name, "main.c")
-+        if not os.path.exists(path):
-+            return "main.c"
-+        return "__main.c"
++#define MODULE_NAME "%%MODEL_NAME%%"
 +
-+    def print_files(self):
-+        main_c = self.fill_main_c()
++/*
++ * XXX: include required tracepoint headers, e.g.,
++ * #include <trace/events/sched.h>
++ */
++#include <rv_trace.h>
++%%INCLUDE_PARENT%%
 +
-+        self.__create_directory()
++/*
++ * This is the self-generated part of the monitor. Generally, there is no need
++ * to touch this section.
++ */
++#include "%%MODEL_NAME%%.h"
++#include <rv/ltl_monitor.h>
 +
-+        path = "%s.c" % self.name
-+        self._create_file(path, main_c)
++static void ltl_atoms_fetch(struct task_struct *task, struct ltl_monitor *mon)
++{
++	/*
++	 * This is called everytime the Buchi automaton is triggered.
++	 *
++	 * This function could be used to fetch the atomic propositions which
++	 * are expensive to trace. It is possible only if the atomic proposition
++	 * does not need to be updated at precise time.
++	 *
++	 * It is recommended to use tracepoints and ltl_atom_update() instead.
++	 */
++}
 +
-+        model_h = self.fill_model_h()
-+        path = "%s.h" % self.name
-+        self._create_file(path, model_h)
++static void ltl_atoms_init(struct task_struct *task, struct ltl_monitor *mon, bool task_creation)
++{
++	/*
++	 * This should initialize as many atomic propositions as possible.
++	 *
++	 * @task_creation indicates whether the task is being created. This is
++	 * false if the task is already running before the monitor is enabled.
++	 */
++%%ATOMS_INIT%%
++}
 +
-+        kconfig = self.fill_kconfig()
-+        self._create_file("Kconfig", kconfig)
++/*
++ * This is the instrumentation part of the monitor.
++ *
++ * This is the section where manual work is required. Here the kernel events
++ * are translated into model's event.
++ */
++%%TRACEPOINT_HANDLERS_SKEL%%
++static int enable_%%MODEL_NAME%%(void)
++{
++	int retval;
 +
++	retval = ltl_monitor_init();
++	if (retval)
++		return retval;
 +
-+class Monitor(RVGenerator):
-+    monitor_types = { "global" : 1, "per_cpu" : 2, "per_task" : 3 }
++%%TRACEPOINT_ATTACH%%
 +
-+    def __init__(self, extra_params={}):
-+        super().__init__(extra_params)
-+        self.trace_h = self._read_template_file("trace.h")
++	return 0;
++}
 +
-+    def fill_trace_h(self):
-+        trace_h = self.trace_h
-+        monitor_class = self.fill_monitor_class()
-+        monitor_class_type = self.fill_monitor_class_type()
-+        tracepoint_args_skel_event = self.fill_tracepoint_args_skel("event")
-+        tracepoint_args_skel_error = self.fill_tracepoint_args_skel("error")
-+        trace_h = trace_h.replace("%%MODEL_NAME%%", self.name)
-+        trace_h = trace_h.replace("%%MODEL_NAME_UP%%", self.name.upper())
-+        trace_h = trace_h.replace("%%MONITOR_CLASS%%", monitor_class)
-+        trace_h = trace_h.replace("%%MONITOR_CLASS_TYPE%%", monitor_class_type)
-+        trace_h = trace_h.replace("%%TRACEPOINT_ARGS_SKEL_EVENT%%", tracepoint_args_skel_event)
-+        trace_h = trace_h.replace("%%TRACEPOINT_ARGS_SKEL_ERROR%%", tracepoint_args_skel_error)
-+        return trace_h
++static void disable_%%MODEL_NAME%%(void)
++{
++%%TRACEPOINT_DETACH%%
 +
-+    def print_files(self):
-+        super().print_files()
-+        trace_h = self.fill_trace_h()
-+        path = "%s_trace.h" % self.name
-+        self._create_file(path, trace_h)
++	ltl_monitor_destroy();
++}
++
++/*
++ * This is the monitor register section.
++ */
++static struct rv_monitor rv_%%MODEL_NAME%% = {
++	.name = "%%MODEL_NAME%%",
++	.description = "%%DESCRIPTION%%",
++	.enable = enable_%%MODEL_NAME%%,
++	.disable = disable_%%MODEL_NAME%%,
++};
++
++static int __init register_%%MODEL_NAME%%(void)
++{
++	return rv_register_monitor(&rv_%%MODEL_NAME%%, %%PARENT%%);
++}
++
++static void __exit unregister_%%MODEL_NAME%%(void)
++{
++	rv_unregister_monitor(&rv_%%MODEL_NAME%%);
++}
++
++module_init(register_%%MODEL_NAME%%);
++module_exit(unregister_%%MODEL_NAME%%);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR(/* TODO */);
++MODULE_DESCRIPTION("%%MODEL_NAME%%: %%DESCRIPTION%%");
+diff --git a/tools/verification/rvgen/rvgen/templates/ltl2k/trace.h b/tools/verification/rvgen/rvgen/templates/ltl2k/trace.h
+new file mode 100644
+index 000000000000..49394c4b0f1c
+--- /dev/null
++++ b/tools/verification/rvgen/rvgen/templates/ltl2k/trace.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * Snippet to be included in rv_trace.h
++ */
++
++#ifdef CONFIG_RV_MON_%%MODEL_NAME_UP%%
++DEFINE_EVENT(event_%%MONITOR_CLASS%%, event_%%MODEL_NAME%%,
++	     TP_PROTO(struct task_struct *task, char *states, char *atoms, char *next),
++	     TP_ARGS(task, states, atoms, next));
++DEFINE_EVENT(error_%%MONITOR_CLASS%%, error_%%MODEL_NAME%%,
++	     TP_PROTO(struct task_struct *task),
++	     TP_ARGS(task));
++#endif /* CONFIG_RV_MON_%%MODEL_NAME_UP%% */
 -- 
 2.47.2
 
