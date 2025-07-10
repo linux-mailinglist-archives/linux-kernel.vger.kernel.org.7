@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-725029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F2EAFF9FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:41:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855CCAFFA02
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8521C825AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:41:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356933BF923
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136B1280A29;
-	Thu, 10 Jul 2025 06:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E89287274;
+	Thu, 10 Jul 2025 06:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HO9HyGOv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBJDF2So"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4B3287248;
-	Thu, 10 Jul 2025 06:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5A12E36F1;
+	Thu, 10 Jul 2025 06:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752129698; cv=none; b=B0LDSLUTyYkTVLCdmTa5BUNMWPvqLS9Jym2v9XXTVjBEMxqaw0yUtWcSxdZiMrGB/Kzq2x+byY06h3+At4yjghWde2MP/87cOc+4QovPzrBcHeD9DF1dKGmuknjX4FNu1MmgpW4stzhXaSdrpqYf+yzLJp5gAkPmi3eZjxXUrtk=
+	t=1752129761; cv=none; b=A42+YU03tLgt67+pvEEXt4HEQA8O/vP/bcYnfMooUuv8SkcjYilsRE5iftBbVe7VrbyDLrYKN+2v9qC7fcLLMCpDs6BxHQ39FoENE7RJdkNi3O1gt8TqWmWZmGpoH52X2iROC5S4ZxKQpmiDEa2aKAHdBQChKczzFKOgoo3Job0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752129698; c=relaxed/simple;
-	bh=we/ipfwmIbO428HHSc8m/3FIlkhp1xYcQZObCY7CDiA=;
+	s=arc-20240116; t=1752129761; c=relaxed/simple;
+	bh=+1QlV4f6NhAetL+F5xzFp+6HRg5Oul+rdbxn0eVu6qo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lDy6JIYN5d0ll3MSb9lDT3lnF3z36ozSMYyktXFbzyMmu1sNLEkHwqZLvhSEj0d6XlBAhoJ6grdX5fa+2Z1CvpkumqLZQM2zTy3nGTtHdg/Mx1kNm1sHyEfekGzdE1NxJkDAuxJKsXWERRhk2mEGfJDdc/kJmc9Q1khEf+sVIWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HO9HyGOv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5E17C4CEF5;
-	Thu, 10 Jul 2025 06:41:36 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=GmVEsmEv7bdz8WTPwlWsL27cvdTEoI4Yf5bc6/wKT16nc8Hpa6d3K7o4TjnF57X7iB5cdjeHiRmBhv/iZy8buhL+a7MC6yfZ46HmfnzEL9Rhba02FUGeFAu0fOpu7lvIB6JysD5uzz2H9vaZR+q0QWyyuWJi79S/15KUSkivGzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBJDF2So; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D6E0C4CEE3;
+	Thu, 10 Jul 2025 06:42:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752129697;
-	bh=we/ipfwmIbO428HHSc8m/3FIlkhp1xYcQZObCY7CDiA=;
+	s=k20201202; t=1752129761;
+	bh=+1QlV4f6NhAetL+F5xzFp+6HRg5Oul+rdbxn0eVu6qo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HO9HyGOvh2mfGdR/wLBBPJGQ51LC0H6mL+gC8J1TWcOspG1wYxTPXCzYiNMePrQmy
-	 NcbrXJS4I7UPc3tgT6/FPbiBqvhSmabLABbhSqSbpFeYpIQeK0g12r1IUooUmb++w/
-	 tGYllWtnfj3ZUynq5L2zVlR1aCs7JOjXcZ8dpvkgY+NuTw3Ej7HVe4/tXi+qI/X3m/
-	 i0Irl7+6b5dtscboPwG6+Qt/SXKQ5tEYsjoScIlXxbequCLTXy1n21fUpfknXJhXyd
-	 s+hnBvbTwImHC2LGrjO4n/MazQImT6uaeFium4X3bUJ7P3VGTpQeMedDo4cuy8FGzm
-	 nhSmCy8a4bsmA==
-Message-ID: <d2b283f9-18bf-4fc9-b888-997dbe9d9390@kernel.org>
-Date: Thu, 10 Jul 2025 08:41:34 +0200
+	b=KBJDF2SoH1ls1XmG3qy2WpddXriD7ED5Iil5yf4czl7bgfia8tWcT0CWTnui6Txll
+	 qsJxQW05pQkcBMLXJYczD+WylUJdjymWYJhmU5xgcjFsQQPjhNpZzST/gs4x2h2VW+
+	 kpkiCt0dCmOrYA0oHFyQ5+E9DWB0dfjgvWSpsARp+eAreCPWm93USjhtRoGyH6MnX2
+	 te52jU0ET5DILaed5Ff3asYomVuAbq10UrQg7gliE+RM6OsCDiXSOz0JlcPiKZIfoV
+	 RDlfTkxLADICCEVDcRYLSBY2d262x2EaZEVS9fHcmF5/K4go3dlE4y+Xz+3solmmhN
+	 cVKPaOYhNoAHg==
+Message-ID: <5fbf4f37-ca15-44ec-8f43-933dfdf609ba@kernel.org>
+Date: Thu, 10 Jul 2025 08:42:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] efi: add ovmf debug log driver
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Gerd Hoffmann <kraxel@redhat.com>, linux-efi@vger.kernel.org,
- open list <linux-kernel@vger.kernel.org>
-References: <20250708125624.734132-1-kraxel@redhat.com>
- <6edfa099-ab0c-41f6-89ea-0fd67666dd05@kernel.org>
- <2mn65slwkwmjpeilma2isw7zgabdmda4rhpqjiutwdwqno2wrh@zghymlce2fiy>
- <8621135e-445a-42dd-89e0-bf8fc3e2b6b7@kernel.org>
- <4cix3k4h32wozt3nxic5un7jyzfjrmqmzbzmtr3ivw5b2bz363@mw6bke7w4oaq>
- <5800c426-95fd-4a81-b979-c0bc2bc293dd@kernel.org>
- <CAMj1kXFvMVmxesoqaW254z85ZMRO4U+S3Cr7oyu4K-m-jiKVTg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: memory: tegra: Add Tegra264 support
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250708105245.1516143-1-thierry.reding@gmail.com>
+ <20250708105245.1516143-2-thierry.reding@gmail.com>
+ <abbfc54d-96af-4e9d-8c2c-8965aa99076b@kernel.org>
+ <2ohrp2tbun6xdi77phk3fa4xsy24xomgg3uzjqqogmz3vfdqmm@megeivnzsgqd>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,64 +103,126 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CAMj1kXFvMVmxesoqaW254z85ZMRO4U+S3Cr7oyu4K-m-jiKVTg@mail.gmail.com>
+In-Reply-To: <2ohrp2tbun6xdi77phk3fa4xsy24xomgg3uzjqqogmz3vfdqmm@megeivnzsgqd>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/07/2025 01:14, Ard Biesheuvel wrote:
-> On Thu, 10 Jul 2025 at 00:39, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On 09/07/2025 22:36, Thierry Reding wrote:
+> On Wed, Jul 09, 2025 at 08:19:51PM +0200, Krzysztof Kozlowski wrote:
+>> On 08/07/2025 12:52, Thierry Reding wrote:
+>>>    interrupts:
+>>> -    items:
+>>> -      - description: MC general interrupt
+>>> +    minItems: 1
+>>> +    maxItems: 8
+>>> +
+>>> +  interrupt-names:
+>>> +    minItems: 1
+>>> +    maxItems: 8
+>>>  
+>>>    "#address-cells":
+>>>      const: 2
+>>> @@ -74,6 +79,7 @@ patternProperties:
+>>>                - nvidia,tegra186-emc
+>>>                - nvidia,tegra194-emc
+>>>                - nvidia,tegra234-emc
+>>> +              - nvidia,tegra264-emc
+>>>  
+>>>        reg:
+>>>          minItems: 1
+>>> @@ -127,6 +133,15 @@ patternProperties:
+>>>              reg:
+>>>                minItems: 2
+>>>  
+>>> +      - if:
+>>> +          properties:
+>>> +            compatible:
+>>> +              const: nvidia,tegra264-emc
+>>> +        then:
+>>> +          properties:
+>>> +            reg:
+>>> +              minItems: 2
+>>> +
+>>>      additionalProperties: false
+>>>  
+>>>      required:
+>>> @@ -220,6 +235,52 @@ allOf:
+>>>              - const: ch14
+>>>              - const: ch15
+>>>  
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          const: nvidia,tegra264-mc
+>>> +    then:
+>>> +      properties:
+>>> +        reg:
+>>> +          minItems: 17
 >>
->> On 09/07/2025 16:31, Gerd Hoffmann wrote:
->>> On Wed, Jul 09, 2025 at 04:20:49PM +0200, Krzysztof Kozlowski wrote:
->>>> On 09/07/2025 16:17, Gerd Hoffmann wrote:
->>>>> On Wed, Jul 09, 2025 at 03:58:58PM +0200, Krzysztof Kozlowski wrote:
->>>>>> On 08/07/2025 14:56, Gerd Hoffmann wrote:
->>>>>>> +MODULE_DESCRIPTION("OVMF debug log");
->>>>>>> +MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
->>>>>>> +MODULE_LICENSE("GPL");
->>>>>>> +MODULE_ALIAS("platform:ovmf_debug_log");
->>>>>>> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
->>>>>>> index db8c5c03d3a2..ac0a03ec3452 100644
->>>>>>> --- a/drivers/firmware/efi/Kconfig
->>>>>>> +++ b/drivers/firmware/efi/Kconfig
->>>>>>> @@ -263,6 +263,14 @@ config EFI_COCO_SECRET
->>>>>>>     virt/coco/efi_secret module to access the secrets, which in turn
->>>>>>>     allows userspace programs to access the injected secrets.
->>>>>>>
->>>>>>> +config OVMF_DEBUG_LOG
->>>>>>> + tristate "Expose OVMF firmware debug log via sysfs"
->>>>>>> + depends on EFI
->>>>>>> + help
->>>>>>> +   Recent OVMF versions (edk2-stable202508 + newer) can write
->>>>>>> +   their debug log to a memory buffer.  This driver exposes the
->>>>>>> +   log content via sysfs (/sys/firmware/efi/ovmf_debug_log).
->>>>>>
->>>>>> Where did you document new ABI?
->>>>>
->>>>> The log buffer header struct is documented in the header file for the
->>>>> edk2 code:
->>>>> https://github.com/tianocore/edk2/blob/master/OvmfPkg/Include/Library/MemDebugLogLib.h
->>>>
->>>> You added a new sysfs interface. I meant documentation for this.
->>>
->>> The sysfs file contains the log and you can simply use
->>> 'cat /sys/firmware/efi/ovmf_debug_log' to read it.
->>
->> Don't explain how it works to me. I did not ask how it works. I asked
->> where is the new ABI documented?
->>
+>> Missing maxItems
 > 
-> Please drop the condescending tone, and don't make people guess at
-> what you are trying to say.
+> My recollection was that maxItems didn't have to be specified if we
+> already have minItems and they are both equal. That said, I see now
+
+There was never such rule.
+
+> there are a few cases in existing bindings where both are used in
+> conjunction, so I must be misremembering. I've added "maxItems: 17".
 > 
-> If you meant to say that the patch lacks an ABI description in
-> Documentation/ABI, then you are absolutely right, and you can just say
-> so.
+>>
+>>> +          description: 17 memory controller channels
+>>> +
+>>> +        reg-names:
+>>> +          items:
+>>> +            - const: broadcast
+>>> +            - const: ch0
+>>> +            - const: ch1
+>>> +            - const: ch2
+>>> +            - const: ch3
+>>> +            - const: ch4
+>>> +            - const: ch5
+>>> +            - const: ch6
+>>> +            - const: ch7
+>>> +            - const: ch8
+>>> +            - const: ch9
+>>> +            - const: ch10
+>>> +            - const: ch11
+>>> +            - const: ch12
+>>> +            - const: ch13
+>>> +            - const: ch14
+>>> +            - const: ch15
+>>> +
+>>> +        interrupts:
+>>> +          minItems: 8
+>>> +          maxItems: 8
+>>> +          description: One interrupt line for each MC component
+>>> +
+>>> +        interrupt-names:
+>>> +          items:
+>>> +            - const: mcf
+>>> +            - const: hub1
+>>> +            - const: hub2
+>>> +            - const: hub3
+>>> +            - const: hub4
+>>> +            - const: hub5
+>>> +            - const: sbs
+>>> +            - const: channel
+>>
+>>
+>> Missing constraints for interrupts and interrupt-names for all other
+>> variants. Now this patch claims they all have 8 interrupts with any name.
+> 
+> I'll add back the interrupts property for the other variants. For the
+> interrupt-names it's slightly more tricky because on older variants we
+> don't need it since there's only one interrupt. It looks like I can do
+> "interrupt-names: false" in those cases.
 
-Maybe it was documented already, so I asked where ABI is documented. I
-think this was exactly what you said here - Documentation/ABI:
+Yes.
 
-"Where did you document new ABI?"
+> 
+> Thanks,
+> Thierry
+
 
 Best regards,
 Krzysztof
