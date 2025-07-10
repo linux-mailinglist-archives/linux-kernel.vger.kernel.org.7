@@ -1,125 +1,99 @@
-Return-Path: <linux-kernel+bounces-725195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFA2AFFBD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:11:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04477AFFBD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D673AF50A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C57183BD1D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12FB28BABC;
-	Thu, 10 Jul 2025 08:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E18228C02B;
+	Thu, 10 Jul 2025 08:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HUiIfGRM"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FFE28B50E;
-	Thu, 10 Jul 2025 08:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FuRx17nY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qDfTXCpC"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5590C28B7F8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752135078; cv=none; b=l+aijIzoWBU8WSQKjrUUMPLAHbrQTfzAmzaKDXl15ud6KvkN/f7P5oQ+N6DmG89EiQ1w8yHkUMOPZJb1fke4LZuudkcEa2RGNcQKqeF1RQUS8z8u1Wy3XMgKrIupxU9BYuCmru3b2kcW4tIP/1wuo7lTwWNHzU7wTkGGJNXKJCo=
+	t=1752135078; cv=none; b=nIyjMXh3OdZ5ykHHYia5npwYIU1s2sVElEbpkP9OZFKkldUNs1fXVsMEidUf3h8ifsiQYtEjTG+2zQ8RIu3tESSRgpWWrAQPKL7krTc46B/Dk1mzQRENOHeP6FkiFFbNkpENNUnD8almJn20sX4Wtz1NIqCnDX6CtsisGhNJVKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752135078; c=relaxed/simple;
-	bh=TNhDjLxLFu+8LEoskEMgvQ5azEalvEUowDOAboTqavc=;
+	bh=dsD7VNjjSHdU7qf5/AGTy9WdVgPZeJ71oUU2caxq0mA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GrBvfwtNqS4IkKybLoTtSIT6VZuerJWJFbXO7RTZX0Ngpt4mIBZ30XpC4oSMdfNMidsiTRvojoL/gOs9cfDhA8WDxUCL5NXs5CAqKpd9i++E3A/dpKCDJUW0NfW2jYKhjUPgxzhIHBpBlk8QPHVg64BTfjuyEydgi+a5wp9CJh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HUiIfGRM; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from localhost (unknown [167.220.232.230])
-	by linux.microsoft.com (Postfix) with ESMTPSA id AB0082114268;
-	Thu, 10 Jul 2025 01:11:15 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AB0082114268
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1752135076;
-	bh=eOoVBg5tar1SHLNJ7Lvmm3yEhUrOVtzS88GwPN9nCs4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HUiIfGRM+dEKcEE0D7vvZ4OXeRlmO5v8jgRexaIEu1RpK5Vq34RsXE+EfNsNyBBv0
-	 AgrO7wD1gwow2NK9ebnfetgf8iEYmBrfZIMXNpoxxVEY1geCIurDiFcm218cEcy2ol
-	 oBZZM8UHi6uZBZVm96MgYJC4Sp7ISGYVj6qZO9g8=
-Date: Thu, 10 Jul 2025 16:11:13 +0800
-From: Yu Zhang <zhangyu1@linux.microsoft.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Jason Gunthorpe <jgg@nvidia.com>, Jann Horn <jannh@google.com>, 
-	Vasant Hegde <vasant.hegde@amd.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
-	Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Uladzislau Rezki <urezki@gmail.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, 
-	Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>, 
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "security@kernel.org" <security@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-Message-ID: <w3xhahute7xeci2swawsaaet5frxc3cacufsawok6hzkeklzo5@jzvkcpwp46lx>
-References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
- <BN9PR11MB52765F651EBE0988E35E15FF8C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YfyEmeZwXW0u5gV1wPm+vfcoWRICFER8b8eiauDYLaShsoXd9mQA/8HvrUA0XLxw2E8jEXTZ/9AG9YrF3kDxs2QdAt/S+Hm2p/IeGG+JkO2XINIJITqUYxGGQH/fOMhCVS2vch7yXNRzuQulmNMCFqnBoeqaWF+NQMDiAxw0hUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FuRx17nY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qDfTXCpC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 10 Jul 2025 10:11:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752135075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dsD7VNjjSHdU7qf5/AGTy9WdVgPZeJ71oUU2caxq0mA=;
+	b=FuRx17nYwUISNR6gBIUsyt7JqFkJrsLVMrtRcEtw1GilaVQPnr2kisKqwYscMZuV7Y3ZXP
+	dotpymeiJf3t9xZK7a8/M7CdOeE3HewYQhUEvnBeaCIkIenXddFNWGxzYkzuGmfZJ9XUON
+	MSIE3q+PXCKps37iy0ThyNo5ROsnTKusWepeNPhtF3ELhoKghlccyNTmR5+bNLMAJpSOel
+	OJ9L8zmJq1HNo86Kax/VVbCS+nL7+o9/D+VeBDYuv2nsh7g3YCD/ytzJn+ShN9rsd/bJ/9
+	tbY0pzn06yKyYkhswfflXYg9R7DVXdtWeyqnj6RNyHX+ZZ8I0/MT+9hHsyYgSw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752135075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dsD7VNjjSHdU7qf5/AGTy9WdVgPZeJ71oUU2caxq0mA=;
+	b=qDfTXCpCPz/DRV/GKdUOYwfwVE3KQpQ0pjchLZccExYjNpc25GV9qQPcxFI5NUDAuu9b7B
+	xpCB/CrauT9+6SAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: "Chen, Yu C" <yu.c.chen@intel.com>
+Cc: kernel test robot <oliver.sang@intel.com>,
+	Ingo Molnar <mingo@kernel.org>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mel Gorman <mgorman@suse.de>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	aubrey.li@linux.intel.com
+Subject: Re: [tip:sched/core] [sched/smp] 06ddd17521:
+ BUG:using_smp_processor_id()in_preemptible
+Message-ID: <20250710081114.5wnABNG7@linutronix.de>
+References: <202507100448.6b88d6f1-lkp@intel.com>
+ <6cf071f3-ff5b-4025-8ce7-2f2cceb03984@intel.com>
+ <20250710062528.T-Obm39T@linutronix.de>
+ <292e70ed-aae5-4f52-8f85-80cba7ff301d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <BN9PR11MB52765F651EBE0988E35E15FF8C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
+In-Reply-To: <292e70ed-aae5-4f52-8f85-80cba7ff301d@intel.com>
 
-On Thu, Jul 10, 2025 at 03:02:07AM +0000, Tian, Kevin wrote:
-> > From: Lu Baolu <baolu.lu@linux.intel.com>
-> > Sent: Wednesday, July 9, 2025 2:28 PM
-> > 
-> > The vmalloc() and vfree() functions manage virtually contiguous, but not
-> > necessarily physically contiguous, kernel memory regions. When vfree()
-> > unmaps such a region, it tears down the associated kernel page table
-> > entries and frees the physical pages.
-> > 
-> > In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU
-> > hardware
-> > shares and walks the CPU's page tables. Architectures like x86 share
-> > static kernel address mappings across all user page tables, allowing the
-> 
-> I'd remove 'static'
-> 
-> > IOMMU to access the kernel portion of these tables.
-> > 
-> > Modern IOMMUs often cache page table entries to optimize walk
-> > performance,
-> > even for intermediate page table levels. If kernel page table mappings are
-> > changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
-> > entries, Use-After-Free (UAF) vulnerability condition arises. If these
-> > freed page table pages are reallocated for a different purpose, potentially
-> > by an attacker, the IOMMU could misinterpret the new data as valid page
-> > table entries. This allows the IOMMU to walk into attacker-controlled
-> > memory, leading to arbitrary physical memory DMA access or privilege
-> > escalation.
-> 
-> this lacks of a background that currently the iommu driver is notified
-> only for changes of user VA mappings, so the IOMMU's internal caches
-> may retain stale entries for kernel VA.
-> 
-> > 
-> > To mitigate this, introduce a new iommu interface to flush IOMMU caches
-> > and fence pending page table walks when kernel page mappings are updated.
-> > This interface should be invoked from architecture-specific code that
-> > manages combined user and kernel page tables.
-> 
-> this also needs some words about the fact that new flushes are triggered
-> not just for freeing page tables.
-> 
-Thank you, Kevin. A question about the background of this issue: 
+On 2025-07-10 16:00:46 [+0800], Chen, Yu C wrote:
+> migrate_disable() disables the task migration between CPUs by restricting
+> the task's affinity, but it does not disable the preemption on single
+> CPUs IMO. The scope of guard(preempt)() in migrate_disable() is just
+> within the migrate_disable(). debug_smp_processor_id() warns when the
+> preemption is enabled.
 
-My understanding of the attacking scenario is, a malicious user application
-could initiate DMAs to some vmalloced address, causing the paging structure
-cache being loaded and then possibly being used after that paging structure
-is freed(may be allocated to some other users later). 
+does migrate_disable() really have no effect on
+debug_smp_processor_id()?
 
-If that is the case, only when the paging structures are freed, do we need
-to do the flush. I mean, the IOTLB entries may not be loaded at all when the
-permission check failes. Did I miss anything? :)
-
-
-B.R.
-Yu
+> Thanks,
+> Chenyu
+Sebastian
 
