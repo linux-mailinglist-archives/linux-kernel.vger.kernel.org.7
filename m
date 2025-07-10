@@ -1,357 +1,538 @@
-Return-Path: <linux-kernel+bounces-724930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07E8AFF8A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:55:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE58AFF8BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F135F7B22B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:53:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708D21895B9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29DD286891;
-	Thu, 10 Jul 2025 05:55:09 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A99122B8A5;
+	Thu, 10 Jul 2025 06:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RndceLmF"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2076.outbound.protection.outlook.com [40.107.243.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BF15383;
-	Thu, 10 Jul 2025 05:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752126909; cv=none; b=KhDHovSfCQ/elxNhK+pIIyNU/Yn89cM4duWJ3pfbn2XLZxvNlqMmNSJZk/p1IcyzCcKCeUnQwl1m/Gbqm2odOcvbrj2gZz8IqZfSr6O9rF58nLl7Tkqr39HBl28FK8VA+AR2DBwJPUd/2rFbWuFIIiY0XgQ6qfSNjKodu5djoQY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752126909; c=relaxed/simple;
-	bh=SI9KbhP6hIZ/8v4pGRoQDQgsPaxDH03U56iVsHXbOS8=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=WWmxAGHXASX/nlTQYn7H14sZyuI12lbAjpzfnZL+xCzjX+oy9fYpkzbhbxeLvoRAKxXZkjejN0PIkFwrNYV+C4kbKeXFetYvrXly2a9vAX6DNKZj2Jnag74MsUcbhzD/fq9l9a4KmSoQbxCaYHgRfymKKQrBqGFc3/Ew9s1+r6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bd3w81w7lz5F2lj;
-	Thu, 10 Jul 2025 13:55:04 +0800 (CST)
-Received: from njb2app06.zte.com.cn ([10.55.23.119])
-	by mse-fl1.zte.com.cn with SMTP id 56A5sn09052681;
-	Thu, 10 Jul 2025 13:54:49 +0800 (+08)
-	(envelope-from jiang.kun2@zte.com.cn)
-Received: from mapi (njb2app07[null])
-	by mapi (Zmail) with MAPI id mid204;
-	Thu, 10 Jul 2025 13:54:51 +0800 (CST)
-Date: Thu, 10 Jul 2025 13:54:51 +0800 (CST)
-X-Zmail-TransId: 2aff686f55abffffffff869-26c7b
-X-Mailer: Zmail v1.0
-Message-ID: <20250710135451340_5pOgpIFi0M5AE7H44W1D@zte.com.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FD61F948;
+	Thu, 10 Jul 2025 06:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752127209; cv=fail; b=DHjdZclsDCsTLGMFaJnuukIxKNnXhcUQuWX2ldtNVItwzJMRbr96Vr0bMnLJ8AsN0OvTj2wL1+K6SNiCl5KHb3NxejYIY6bvBGKV7G2T8fkR69pJHUnP2YoHi2tA+S21uodxMoy+RxIJgx8UpoXg6ewMQGn6GlF0+ifKv7g53b0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752127209; c=relaxed/simple;
+	bh=DjEs53CgkX+5gYx4Hbb+F1Zdm79QrMB7EHMSN5hAyOg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i+2N15/DFaXi/EhjmcoafHNovVJPC3URQkVIpFH0KKpINWvFg9x/yIn7VAUCx9a3hcKssKCPrGlqNsxtojPooxfYF3BPfbLQmg3IvKmDLEWT3hBbbko8IiWiiMNAeqPaXR11oZZkZG8wxswKSvQ72nq7ePUVkYBAkIXq1MCe9t0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RndceLmF; arc=fail smtp.client-ip=40.107.243.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H7WsR2cBxCCBWc5JKIJdwRkO1qfN+/7KWbHUKVwcmCpGHAIPcl7WcFwIYcJ8j5XXlf5WZ977I4sSulRDIPZ1c3aPjO5gH1vZrZeMey+OEqyh0AUG4OUaKxHLiFIQY1oGQjzx2/KdIimrXdpjBcskL9i/FgRyH0p3bsumiel2QfbNAR+Vnwz4d5SAewTWAB7kzoYK3UAQbIicjXr0It56QB5rvj2QSA32C2o0qKmKD3FOx66gS14WwyWGFDCr3aG7XUnh7ryjBYVQ8YdGP0VZxiVBdldcJGr1TMjVYpVonfHxT5/GfW8y7Y4O+74jhCLI/qe+gxGYJbHHhqZMfSwkIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g+LIoVq7w+eW2lM6Y3duxXQzYZaa5oDdhbHVlXmb8x0=;
+ b=iQrDBDSdl/aYANCrQdUUoxIT27bo9fn6mAwa+qsKhecEpYtyRFeY2xfQf/WKhLy17JhS4KSqKBfomlNS7ZN6m6mHQtNoYvtKzM3c9tttw9QCgYeMfpwatYFfoLV5xsT2QRClPOf9sEBK55lFSkzZ0octE/lXaeKqI0bSjwE2qIGdBIdH8tvG16aZ9aNraCTOiUuGmwlzxEkPWs/lWS86kkUTrKyBl5UxMPw0EtRclbuUqS/bsCuyHFC9EmyRx+k6mpKwyqU+eDodS34pAN5o2CsJXqzpiOI5XgJhTDpmXtGm3IY5sRg1+34DIB3B22Kwp5VFpW+ByqLp+9d78kmlRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g+LIoVq7w+eW2lM6Y3duxXQzYZaa5oDdhbHVlXmb8x0=;
+ b=RndceLmFIJ8/RGFBSteVN9ruEVQXoTClMp/RJNvFUaiBI5Z6mTHlNZvJoanc222LkQBMNKJ7+yHyqsWckdO0D+1ieLiBir7vf0ATIhHOpor9yC0Gj0m8iYRgJOnAJcbimcxciDfw07omzJS6wLX7X0oqudP9RDXi9UNnFlvtHXyurx1x7QZK7/DbHh/iUX4nO1dnlZIaf9/vYXbr/Y2wMqZKcEajEU17vWZty7yLcW4C20KyOrCh/ZnbgACkffY6wQ2z7OKzjd8vwFisCFAi6LDjVNFbOm2O2OVfSEGPrg+WcBEIc4o2P9jBmmfQ/sniwkFdcy3vKbQPspznCq8FjQ==
+Received: from MN2PR15CA0008.namprd15.prod.outlook.com (2603:10b6:208:1b4::21)
+ by DS0PR12MB7969.namprd12.prod.outlook.com (2603:10b6:8:146::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Thu, 10 Jul
+ 2025 06:00:00 +0000
+Received: from BL6PEPF0001AB76.namprd02.prod.outlook.com
+ (2603:10b6:208:1b4:cafe::b4) by MN2PR15CA0008.outlook.office365.com
+ (2603:10b6:208:1b4::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.21 via Frontend Transport; Thu,
+ 10 Jul 2025 06:00:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF0001AB76.mail.protection.outlook.com (10.167.242.169) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.22 via Frontend Transport; Thu, 10 Jul 2025 06:00:00 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 9 Jul 2025
+ 22:59:46 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 9 Jul
+ 2025 22:59:46 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Wed, 9 Jul 2025 22:59:44 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@nvidia.com>
+CC: <kevin.tian@intel.com>, <corbet@lwn.net>, <bagasdotme@gmail.com>,
+	<will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<shuah@kernel.org>, <jsnitsel@redhat.com>, <nathan@kernel.org>,
+	<peterz@infradead.org>, <yi.l.liu@intel.com>, <mshavit@google.com>,
+	<praan@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
+	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>,
+	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>
+Subject: [PATCH v9 00/29] iommufd: Add vIOMMU infrastructure (Part-4 HW QUEUE)
+Date: Wed, 9 Jul 2025 22:58:52 -0700
+Message-ID: <cover.1752126748.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <jiang.kun2@zte.com.cn>
-To: <bsingharora@gmail.com>, <akpm@linux-foundation.org>, <david@redhat.com>,
-        <yang.yang29@zte.com.cn>
-Cc: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-doc@vger.kernel.org>, <wang.yong12@zte.com.cn>,
-        <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
-        <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>,
-        <zhang.yunkai@zte.com.cn>, <xu.xin16@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4IG5leHRdIGRlbGF5dG9wOiBhZGQgcHNpIGluZm8gdG8gc2hvdyBzeXN0ZW0gZGVsYXk=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 56A5sn09052681
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 686F55B8.000/4bd3w81w7lz5F2lj
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB76:EE_|DS0PR12MB7969:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32315aea-0710-4ef3-c492-08ddbf770168
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?X6D4RX9JF/HEIYdKSerhYyiPUoUFwGQ9S5DIdMm3ntlIwedHovu2+TIT7V9E?=
+ =?us-ascii?Q?DTI7qaInAi5Qow1KrZWFZA3vKDE3s3oUw1QJWaMi1LXA4mcvyTM0c7PSDWGz?=
+ =?us-ascii?Q?6Bg2lUTEPEphlWDeYq9bicphs1J1CwAbv3eAMKuyZuvyJE9QHD1mt0T3/gbA?=
+ =?us-ascii?Q?j1e7sRKWOBMC60xQ5DpeBB20oECDsJ0LTNS7N276KdIZriYzK0gyPwWb2Iuy?=
+ =?us-ascii?Q?1k5GT7a02OcyBtksjzbhQEc02bfLHjXPZfrbNns0LPF1NJsoDGzPcJDhEZUO?=
+ =?us-ascii?Q?JY6v7oAknHVOFOMvjAofL0BeyI143DRdxzHyI/Y1mXzQ8RzFUtXvRcD4bglg?=
+ =?us-ascii?Q?9Xc5uX5UxSNBGn89rDI/eK7puhfvC2BzyTER/TvBf+gUoibNRBioh8pF2/ow?=
+ =?us-ascii?Q?kO1Gms0de0P/0w1MN87q1JC9z2yp8hY839natEv/DRQwuRCqBptS3QQtUF2T?=
+ =?us-ascii?Q?aiVrTLWSwtY4kSDqRnfL2vEWvet0/nZO5CvHUJXnNcr6ZESdK/z1Gya9yteK?=
+ =?us-ascii?Q?+WWQqhPAPG9rIVPFNZ3+tnq5BhQseYy+nYYAmF50Zn502I4CvpWX3uHk4CQC?=
+ =?us-ascii?Q?efKaRXZEvdyLTO1xpPMFhrvzpvVMXNWmGZvHGb1K3lyXkAIddPnyQwN5hMhP?=
+ =?us-ascii?Q?hWaoiGJYh0p8EElQAUQ2auimfnEYos5iXUha+cLd1gcQbN5x/w03wqvK8t62?=
+ =?us-ascii?Q?sdb25x9ec6+Hu/vF+/zPphuIxr43hzNtTXZy0v/EReT8DBHrRztfc1dZcoE5?=
+ =?us-ascii?Q?v1IRYBHFxwOZ7c95DJIKGRy6/OQwhDrF43JXbgaD8hEYoEfMQ3X1ugHkBP9F?=
+ =?us-ascii?Q?IBUwcDvRYLK6t+SoLOQgbTVn1dnA2QZosiKbPRh2nmhlOnjt+Ph13TI593SV?=
+ =?us-ascii?Q?ra9pknUXnp+t3XN9Y20WRwiU5E9qDKughfGyVNibiJP5yak/BYvFuV/hT+ZE?=
+ =?us-ascii?Q?Ro2lRgh+XOy5cmXFXpuANxL/qy7TeguD2bX4hghrcE38hFhZ+zfaRriFP5iT?=
+ =?us-ascii?Q?pb1mZnuIthtHaC691xQ7RnevETg+RODxIMDMpiMzMphc5QvUEwYdP2F74/aE?=
+ =?us-ascii?Q?QCUdOypRpYh9O28WmKmdHlP2NVz2eNj7RHNQaxFxp+AE7xTm+ZQ99sgIUTHZ?=
+ =?us-ascii?Q?5TMehG6Jsjju9SRK9BHLaByLt5PZ4Iv1hmlfNuokezUQGHMxqmSRh+ndDmbA?=
+ =?us-ascii?Q?p0ATBk1Q3ZJFcAtgdS+qOTpNlYr1yRegHQQ/Z6w3yPIIXLT46WfcEgf3x9vC?=
+ =?us-ascii?Q?2tL7u2e79ScY+xIul2ZDxN21p5fmO1otuD4g4ncAq2lxqdfwCeGTeDdylwa0?=
+ =?us-ascii?Q?Hq2HgeHfh7fVS0N4/qtufvVGYPuqja5Hz1OTtpZXF5rRTxnq/Gfb4VqthiEL?=
+ =?us-ascii?Q?QdOuYGna1TXaHtSF2sEKiZ2XjI9bwobgL68FUEEiacVH+ePJz8kZL3oCZeVW?=
+ =?us-ascii?Q?L4TuadaYhimjk8mmUGfpxt8TsSdMs9hWO3x/zd7/7NjgAcag9Vbq+KiFdiDo?=
+ =?us-ascii?Q?86u3T9DAYm7iqXwhN35Y9zf3VlyXIex7bC4AJk+/jpQHFwmveKEXq8p+FQ?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 06:00:00.0165
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32315aea-0710-4ef3-c492-08ddbf770168
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB76.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7969
 
-From: Wang Yaxin <wang.yaxin@zte.com.cn>
+The vIOMMU object is designed to represent a slice of an IOMMU HW for its
+virtualization features shared with or passed to user space (a VM mostly)
+in a way of HW acceleration. This extended the HWPT-based design for more
+advanced virtualization feature.
 
-support showing whole delay of system by reading PSI,
-just like the first few lines of information output
-by the top command. the output of delaytop includes
-both system-wide delay and delay of individual tasks,
-providing a more comprehensive reflection of system
-latency status.
+HW QUEUE introduced by this series as a part of the vIOMMU infrastructure
+represents a HW accelerated queue/buffer for VM to use exclusively, e.g.
+ - NVIDIA's Virtual Command Queue
+ - AMD vIOMMU's Command Buffer, Event Log Buffer, and PPR Log Buffer
+each of which allows its IOMMU HW to directly access a queue memory owned
+by a guest VM and allows a guest OS to control the HW queue direclty, to
+avoid VM Exit overheads to improve the performance.
 
-Use case
-========
-bash# ./delaytop
-System Pressure Information: (avg10/avg60/avg300/total)
-CPU:    full:    0.0%/   0.0%/   0.0%/0           some:    0.1%/   0.0%/   0.0%/14216596
-Memory: full:    0.0%/   0.0%/   0.0%/34010659    some:    0.0%/   0.0%/   0.0%/35406492
-IO:     full:    0.1%/   0.0%/   0.0%/51029453    some:    0.1%/   0.0%/   0.0%/55330465
-IRQ:    full:    0.0%/   0.0%/   0.0%/0
+Introduce IOMMUFD_OBJ_HW_QUEUE and its pairing IOMMUFD_CMD_HW_QUEUE_ALLOC
+allowing VMM to forward the IOMMU-specific queue info, such as queue base
+address, size, and etc.
 
-Top 20 processes (sorted by CPU delay):
+Meanwhile, a guest-owned queue needs the guest kernel to control the queue
+by reading/writing its consumer and producer indexes, via MMIO acceses to
+the hardware MMIO registers. Introduce an mmap infrastructure for iommufd
+to support passing through a piece of MMIO region from the host physical
+address space to the guest physical address space. The mmap info (offset/
+length) used by an mmap syscall must be pre-allocated and returned to the
+user space via an output driver-data during an IOMMUFD_CMD_HW_QUEUE_ALLOC
+call. Thus, it requires a driver-specific user data support in the vIOMMU
+allocation flow.
 
-  PID   TGID  COMMAND            CPU(ms)  IO(ms)        SWAP(ms) RCL(ms) THR(ms)  CMP(ms)  WP(ms)  IRQ(ms)
----------------------------------------------------------------------------------------------
-   32     32  kworker/2:0H-sy   23.65     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-  497    497  kworker/R-scsi_    1.20     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-  495    495  kworker/R-scsi_    1.13     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-  494    494  scsi_eh_0          1.12     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-  485    485  kworker/R-ata_s    0.90     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-  574    574  kworker/R-kdmfl    0.36     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-   34     34  idle_inject/3      0.33     0.00     0.00     0.00    0.00     0.00     0.00     0.00
- 1123   1123  nde-netfilter      0.28     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-   60     60  ksoftirqd/7        0.25     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-  114    114  kworker/0:2-cgr    0.25     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-  496    496  scsi_eh_1          0.24     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-   51     51  cpuhp/6            0.24     0.00     0.00     0.00    0.00     0.00     0.00     0.00
- 1667   1667  atd                0.24     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-   45     45  cpuhp/5            0.23     0.00     0.00     0.00    0.00     0.00     0.00     0.00
- 1102   1102  nde-backupservi    0.22     0.00     0.00     0.00    0.00     0.00     0.00     0.00
- 1098   1098  systemsettings     0.21     0.00     0.00     0.00    0.00     0.00     0.00     0.00
- 1100   1100  audit-monitor      0.20     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-   53     53  migration/6        0.20     0.00     0.00     0.00    0.00     0.00     0.00     0.00
- 1482   1482  sshd               0.19     0.00     0.00     0.00    0.00     0.00     0.00     0.00
-   39     39  cpuhp/4            0.19     0.00     0.00     0.00    0.00     0.00     0.00     0.00
+As a real-world use case, this series implements a HW QUEUE support in the
+tegra241-cmdqv driver for VCMDQs on NVIDIA Grace CPU. In another word, it
+is also the Tegra CMDQV series Part-2 (user-space support), reworked from
+Previous RFCv1:
+    https://lore.kernel.org/all/cover.1712978212.git.nicolinc@nvidia.com/
+This enables the HW accelerated feature for NVIDIA Grace CPU. Compared to
+the standard SMMUv3 operating in the nested translation mode trapping CMDQ
+for TLBI and ATC_INV commands, this gives a huge performance improvement:
+70% to 90% reductions of invalidation time were measured by various DMA
+unmap tests running in a guest OS.
 
-Co-developed-by: Fan Yu <fan.yu9@zte.com.cn>
-Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
-Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
-Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
----
- tools/accounting/delaytop.c | 163 ++++++++++++++++++++++++++++++++----
- 1 file changed, 149 insertions(+), 14 deletions(-)
+// Unmap latencies from "dma_map_benchmark -g @granule -t @threads",
+// by toggling "/sys/kernel/debug/iommu/tegra241_cmdqv/bypass_vcmdq"
+@granule | @threads | bypass_vcmdq=1 | bypass_vcmdq=0
+    4KB        1          35.7 us          5.3 us
+   16KB        1          41.8 us          6.8 us
+   64KB        1          68.9 us          9.9 us
+  128KB        1         109.0 us         12.6 us
+  256KB        1         187.1 us         18.0 us
+    4KB        2          96.9 us          6.8 us
+   16KB        2          97.8 us          7.5 us
+   64KB        2         151.5 us         10.7 us
+  128KB        2         257.8 us         12.7 us
+  256KB        2         443.0 us         17.9 us
 
-diff --git a/tools/accounting/delaytop.c b/tools/accounting/delaytop.c
-index 23e38f39e97d..cd848af9a856 100644
---- a/tools/accounting/delaytop.c
-+++ b/tools/accounting/delaytop.c
-@@ -10,9 +10,9 @@
-  * individual tasks (PIDs).
-  *
-  * Key features:
-- *   - Collects per-task delay accounting statistics via taskstats.
-- *   - Supports sorting, filtering.
-- *   - Supports both interactive (screen refresh).
-+ *	- Collects per-task delay accounting statistics via taskstats.
-+ *	- Supports sorting, filtering.
-+ *	- Supports both interactive (screen refresh).
-  *
-  * Copyright (C) Fan Yu, ZTE Corp. 2025
-  * Copyright (C) Wang Yaxin, ZTE Corp. 2025
-@@ -43,6 +43,14 @@
- #include <linux/cgroupstats.h>
- #include <ncurses.h>
+This is on Github:
+https://github.com/nicolinc/iommufd/commits/iommufd_hw_queue-v9
 
-+#define PSI_CPU_SOME "/proc/pressure/cpu"
-+#define PSI_CPU_FULL	"/proc/pressure/cpu"
-+#define PSI_MEMORY_SOME "/proc/pressure/memory"
-+#define PSI_MEMORY_FULL "/proc/pressure/memory"
-+#define PSI_IO_SOME "/proc/pressure/io"
-+#define PSI_IO_FULL "/proc/pressure/io"
-+#define PSI_IRQ_FULL	"/proc/pressure/irq"
-+
- #define NLA_NEXT(na)			((struct nlattr *)((char *)(na) + NLA_ALIGN((na)->nla_len)))
- #define NLA_DATA(na)			((void *)((char *)(na) + NLA_HDRLEN))
- #define NLA_PAYLOAD(len)		(len - NLA_HDRLEN)
-@@ -66,6 +74,24 @@ struct config {
- 	char *container_path;	/* Path to container cgroup */
- };
+Paring QEMU branch for testing (reusing v8):
+https://github.com/nicolinc/qemu/commits/wip/for_iommufd_hw_queue-v8
 
-+/* PSI statistics structure */
-+struct psi_stats {
-+	double cpu_some_avg10, cpu_some_avg60, cpu_some_avg300;
-+	unsigned long long cpu_some_total;
-+	double cpu_full_avg10, cpu_full_avg60, cpu_full_avg300;
-+	unsigned long long cpu_full_total;
-+	double memory_some_avg10, memory_some_avg60, memory_some_avg300;
-+	unsigned long long memory_some_total;
-+	double memory_full_avg10, memory_full_avg60, memory_full_avg300;
-+	unsigned long long memory_full_total;
-+	double io_some_avg10, io_some_avg60, io_some_avg300;
-+	unsigned long long io_some_total;
-+	double io_full_avg10, io_full_avg60, io_full_avg300;
-+	unsigned long long io_full_total;
-+	double irq_full_avg10, irq_full_avg60, irq_full_avg300;
-+	unsigned long long irq_full_total;
-+};
-+
- /* Task delay information structure */
- struct task_info {
- 	int pid;
-@@ -100,6 +126,7 @@ struct container_stats {
+Changelog
+v9  (attached git-diff v8..v9 at the end of this letter)
+ * Add Reviewed-by from Vasant and Jason
+ * [iommufd] Fix offset calculation
+ * [iommufd] Add unaligned iova/length selftest coverage for hw_queue
+ * [iommufd] Pass in aligned iova/length to iommufd_access_pin_pages()
+ * [smmu] Change "u32 *type" at arm_smmu_hw_info() in the header
+v8
+ https://lore.kernel.org/all/cover.1751677708.git.nicolinc@nvidia.com/
+ * Add Reviewed-by from Pranj, Kevin and Jason
+ * Improve kdoc and comments
+ * [iommufd] Skip selftest for no_viommu variants
+ * [iommufd] Add unmap coverage for non internal area
+ * [iommufd] Skip the first page when mtree_alloc_range()
+ * [iommufd] Correct the passed in index to mtree_erase()
+ * [iommufd] Correct variable types in iommufd_hw_queue_alloc_phys()
+ * [iommufd] Reject iopt_unmap_iova_range() if area->num_locks is set
+ * [tegra] Rename "SID replacement" with "SID mapping"
+ * [tegra] Unwrap useless _tegra241_vcmdq_hw_init helper
+v7
+ https://lore.kernel.org/all/cover.1750966133.git.nicolinc@nvidia.com/
+ * Rebased on Jason's for-next tree (iommufd_hw_queue-prep series)
+ * Add Reviewed-by from Baolu, Jason, Pranjal
+ * Update kdocs and notes
+ * [iommu] Replace "u32" with "enum iommu_hw_info_type"
+ * [iommufd] Rename vdev->id to vdev->virt_id
+ * [iommufd] Replace macros with inline helpers
+ * [iommufd] Report unmapped_bytes in error path
+ * [iommufd] Add iommufd_access_is_internal helper
+ * [iommufd] Do not drop ops->unmap check for mdevs
+ * [iommufd] Store physical addresses in immap structure
+ * [iommufd] Reorder access and hw_queue object allocations
+ * [iommufd] Scan for an internal access before any unmap call
+ * [iommufd] Drop unused ictx pointer in struct iommufd_hw_queue
+ * [iommufd] Use kcalloc to avoid failure due to memory fragmentation
+ * [tegra] Use "else"
+ * [tegra] Lock destroy() using lvcmdq_mutex
+v6
+ https://lore.kernel.org/all/cover.1749884998.git.nicolinc@nvidia.com/
+ * Rebase on iommufd_hw_queue-prep-v2
+ * Add Reviewed-by from Kevin and Jason
+ * [iommufd] Update kdocs and notes
+ * [iommufd] Drop redundant pages[i] check
+ * [iommufd] Allow nesting_parent_iova to be 0
+ * [iommufd] Add iommufd_hw_queue_alloc_phys()
+ * [iommufd] Revise iommufd_viommu_alloc/destroy_mmap APIs
+ * [iommufd] Move destroy ops to vdevice/hw_queue structures
+ * [iommufd] Add union in hw_info struct to share out_data_type field
+ * [iommufd] Replace iopt_pin/unpin_pages() with internal access APIs
+ * [iommufd] Replace vdevice_alloc with vdevice_size and vdevice_init
+ * [iommufd] Replace hw_queue_alloc with get_hw_queue_size/hw_queue_init
+ * [iommufd] Replace IOMMUFD_VIOMMU_FLAG_HW_QUEUE_READS_PA with init_phys
+ * [smmu] Drop arm_smmu_domain_ipa_to_pa
+ * [smmu] Update arm_smmu_impl_ops changes for vsmmu_init
+ * [tegra] Add a vdev_to_vsid macro
+ * [tegra] Add lvcmdq_mutex to protect multi queues
+ * [tegra] Drop duplicated kcalloc for vintf->lvcmdqs (memory leak)
+v5
+ https://lore.kernel.org/all/cover.1747537752.git.nicolinc@nvidia.com/
+ * Rebase on v6.15-rc6
+ * Add Reviewed-by from Jason and Kevin
+ * Correct typos in kdoc and update commit logs
+ * [iommufd] Add a cosmetic fix
+ * [iommufd] Drop unused num_pfns
+ * [iommufd] Drop unnecessary check
+ * [iommufd] Reorder patch sequence
+ * [iommufd] Use io_remap_pfn_range()
+ * [iommufd] Use success oriented flow
+ * [iommufd] Fix max_npages calculation
+ * [iommufd] Add more selftest coverage
+ * [iommufd] Drop redundant static_assert
+ * [iommufd] Fix mmap pfn range validation
+ * [iommufd] Reject unmap on pinned iovas
+ * [iommufd] Drop redundant vm_flags_set()
+ * [iommufd] Drop iommufd_struct_destroy()
+ * [iommufd] Drop redundant queue iova test
+ * [iommufd] Use "mmio_addr" and "mmio_pfn"
+ * [iommufd] Rename to "nesting_parent_iova"
+ * [iommufd] Make iopt_pin_pages call option
+ * [iommufd] Add ictx comparison in depend()
+ * [iommufd] Add iommufd_object_alloc_ucmd()
+ * [iommufd] Move kcalloc() after validations
+ * [iommufd] Replace ictx setting with WARN_ON
+ * [iommufd] Make hw_info's type bidirectional
+ * [smmu] Add supported_vsmmu_type in impl_ops
+ * [smmu] Drop impl report in smmu vendor struct
+ * [tegra] Add IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV
+ * [tegra] Replace "number of VINTFs" with a note
+ * [tegra] Drop the redundant lvcmdq pointer setting
+ * [tegra] Flag IOMMUFD_VIOMMU_FLAG_HW_QUEUE_READS_PA
+ * [tegra] Use "vintf_alloc_vsid" for vdevice_alloc op
+v4
+ https://lore.kernel.org/all/cover.1746757630.git.nicolinc@nvidia.com/
+ * Rebase on v6.15-rc5
+ * Add Reviewed-by from Vasant
+ * Rename "vQUEUE" to "HW QUEUE"
+ * Use "offset" and "length" for all mmap-related variables
+ * [iommufd] Use u64 for guest PA
+ * [iommufd] Fix typo in uAPI doc
+ * [iommufd] Rename immap_id to offset
+ * [iommufd] Drop the partial-size mmap support
+ * [iommufd] Do not replace WARN_ON with WARN_ON_ONCE
+ * [iommufd] Use "u64 base_addr" for queue base address
+ * [iommufd] Use u64 base_pfn/num_pfns for immap structure
+ * [iommufd] Correct the size passed in to mtree_alloc_range()
+ * [iommufd] Add IOMMUFD_VIOMMU_FLAG_HW_QUEUE_READS_PA to viommu_ops
+v3
+ https://lore.kernel.org/all/cover.1746139811.git.nicolinc@nvidia.com/
+ * Add Reviewed-by from Baolu, Pranjal, and Alok
+ * Revise kdocs, uAPI docs, and commit logs
+ * Rename "vCMDQ" back to "vQUEUE" for AMD cases
+ * [tegra] Add tegra241_vcmdq_hw_flush_timeout()
+ * [tegra] Rename vsmmu_alloc to alloc_vintf_user
+ * [tegra] Use writel for SID replacement registers
+ * [tegra] Move mmap removal call to vsmmu_destroy op
+ * [tegra] Fix revert in tegra241_vintf_alloc_lvcmdq_user()
+ * [iommufd] Replace "& ~PAGE_MASK" with PAGE_ALIGNED()
+ * [iommufd] Add an object-type "owner" to immap structure
+ * [iommufd] Drop the ictx input in the new for-driver APIs
+ * [iommufd] Add iommufd_vma_ops to keep track of mmap lifecycle
+ * [iommufd] Add viommu-based iommufd_viommu_alloc/destroy_mmap helpers
+ * [iommufd] Rename iommufd_ctx_alloc/free_mmap to
+             _iommufd_alloc/destroy_mmap
+v2
+ https://lore.kernel.org/all/cover.1745646960.git.nicolinc@nvidia.com/
+ * Add Reviewed-by from Jason
+ * [smmu] Fix vsmmu initial value
+ * [smmu] Support impl for hw_info
+ * [tegra] Rename "slot" to "vsid"
+ * [tegra] Update kdocs and commit logs
+ * [tegra] Map/unmap LVCMDQ dynamically
+ * [tegra] Refcount the previous LVCMDQ
+ * [tegra] Return -EEXIST if LVCMDQ exists
+ * [tegra] Simplify VINTF cleanup routine
+ * [tegra] Use vmid and s2_domain in vsmmu
+ * [tegra] Rename "mmap_pgoff" to "immap_id"
+ * [tegra] Add more addr and length validation
+ * [iommufd] Add more narrative to mmap's kdoc
+ * [iommufd] Add iommufd_struct_depend/undepend()
+ * [iommufd] Rename vcmdq_free op to vcmdq_destroy
+ * [iommufd] Fix bug in iommu_copy_struct_to_user()
+ * [iommufd] Drop is_io from iommufd_ctx_alloc_mmap()
+ * [iommufd] Test the queue memory for its contiguity
+ * [iommufd] Return -ENXIO if address or length fails
+ * [iommufd] Do not change @min_last in mock_viommu_alloc()
+ * [iommufd] Generalize TEGRA241_VCMDQ data in core structure
+ * [iommufd] Add selftest coverage for IOMMUFD_CMD_VCMDQ_ALLOC
+ * [iommufd] Add iopt_pin_pages() to prevent queue memory from unmapping
+v1
+ https://lore.kernel.org/all/cover.1744353300.git.nicolinc@nvidia.com/
 
- /* Global variables */
- static struct config cfg;
-+static struct psi_stats psi;
- static struct task_info tasks[MAX_TASKS];
- static int task_count;
- static int running = 1;
-@@ -130,13 +157,13 @@ static void usage(void)
- {
- 	printf("Usage: delaytop [Options]\n"
- 	"Options:\n"
--	"  -h, --help               Show this help message and exit\n"
--	"  -d, --delay=SECONDS      Set refresh interval (default: 2 seconds, min: 1)\n"
--	"  -n, --iterations=COUNT   Set number of updates (default: 0 = infinite)\n"
--	"  -P, --processes=NUMBER   Set maximum number of processes to show (default: 20, max: 1000)\n"
--	"  -o, --once               Display once and exit\n"
--	"  -p, --pid=PID            Monitor only the specified PID\n"
--	"  -C, --container=PATH     Monitor the container at specified cgroup path\n");
-+	"  -h, --help				Show this help message and exit\n"
-+	"  -d, --delay=SECONDS	  Set refresh interval (default: 2 seconds, min: 1)\n"
-+	"  -n, --iterations=COUNT	Set number of updates (default: 0 = infinite)\n"
-+	"  -P, --processes=NUMBER	Set maximum number of processes to show (default: 20, max: 1000)\n"
-+	"  -o, --once				Display once and exit\n"
-+	"  -p, --pid=PID			Monitor only the specified PID\n"
-+	"  -C, --container=PATH	 Monitor the container at specified cgroup path\n");
- 	exit(0);
- }
+Thanks
+Nicolin
 
-@@ -276,7 +303,7 @@ static int send_cmd(int sd, __u16 nlmsg_type, __u32 nlmsg_pid,
- 	memset(&nladdr, 0, sizeof(nladdr));
- 	nladdr.nl_family = AF_NETLINK;
- 	while ((r = sendto(sd, buf, buflen, 0, (struct sockaddr *) &nladdr,
--				   sizeof(nladdr))) < buflen) {
-+					sizeof(nladdr))) < buflen) {
- 		if (r > 0) {
- 			buf += r;
- 			buflen -= r;
-@@ -320,6 +347,89 @@ static int get_family_id(int sd)
- 	return id;
- }
+Nicolin Chen (29):
+  iommufd: Report unmapped bytes in the error path of
+    iopt_unmap_iova_range
+  iommufd: Correct virt_id kdoc at struct iommu_vdevice_alloc
+  iommufd/viommu: Explicitly define vdev->virt_id
+  iommu: Use enum iommu_hw_info_type for type in hw_info op
+  iommu: Add iommu_copy_struct_to_user helper
+  iommu: Pass in a driver-level user data structure to viommu_init op
+  iommufd/viommu: Allow driver-specific user data for a vIOMMU object
+  iommufd/selftest: Support user_data in mock_viommu_alloc
+  iommufd/selftest: Add coverage for viommu data
+  iommufd/access: Add internal APIs for HW queue to use
+  iommufd/access: Bypass access->ops->unmap for internal use
+  iommufd/viommu: Add driver-defined vDEVICE support
+  iommufd/viommu: Introduce IOMMUFD_OBJ_HW_QUEUE and its related struct
+  iommufd/viommu: Add IOMMUFD_CMD_HW_QUEUE_ALLOC ioctl
+  iommufd/driver: Add iommufd_hw_queue_depend/undepend() helpers
+  iommufd/selftest: Add coverage for IOMMUFD_CMD_HW_QUEUE_ALLOC
+  iommufd: Add mmap interface
+  iommufd/selftest: Add coverage for the new mmap interface
+  Documentation: userspace-api: iommufd: Update HW QUEUE
+  iommu: Allow an input type in hw_info op
+  iommufd: Allow an input data_type via iommu_hw_info
+  iommufd/selftest: Update hw_info coverage for an input data_type
+  iommu/arm-smmu-v3-iommufd: Add vsmmu_size/type and vsmmu_init impl ops
+  iommu/arm-smmu-v3-iommufd: Add hw_info to impl_ops
+  iommu/tegra241-cmdqv: Use request_threaded_irq
+  iommu/tegra241-cmdqv: Simplify deinit flow in
+    tegra241_cmdqv_remove_vintf()
+  iommu/tegra241-cmdqv: Do not statically map LVCMDQs
+  iommu/tegra241-cmdqv: Add user-space use support
+  iommu/tegra241-cmdqv: Add IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV support
 
-+static void read_psi_stats(void)
-+{
-+	FILE *fp;
-+	char line[256];
-+	int ret = 0;
-+	/* Zero all fields */
-+	memset(&psi, 0, sizeof(psi));
-+	/* CPU pressure */
-+	fp = fopen(PSI_CPU_SOME, "r");
-+	if (fp) {
-+		while (fgets(line, sizeof(line), fp)) {
-+			if (strncmp(line, "some", 4) == 0) {
-+				ret = sscanf(line, "some avg10=%lf avg60=%lf avg300=%lf total=%llu",
-+							&psi.cpu_some_avg10, &psi.cpu_some_avg60,
-+							&psi.cpu_some_avg300, &psi.cpu_some_total);
-+				if (ret != 4)
-+					fprintf(stderr, "Failed to parse CPU some PSI data\n");
-+			} else if (strncmp(line, "full", 4) == 0) {
-+				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
-+						&psi.cpu_full_avg10, &psi.cpu_full_avg60,
-+						&psi.cpu_full_avg300, &psi.cpu_full_total);
-+				if (ret != 4)
-+					fprintf(stderr, "Failed to parse CPU full PSI data\n");
-+			}
-+		}
-+		fclose(fp);
-+	}
-+	/* Memory pressure */
-+	fp = fopen(PSI_MEMORY_SOME, "r");
-+	if (fp) {
-+		while (fgets(line, sizeof(line), fp)) {
-+			if (strncmp(line, "some", 4) == 0) {
-+				ret = sscanf(line, "some avg10=%lf avg60=%lf avg300=%lf total=%llu",
-+						&psi.memory_some_avg10, &psi.memory_some_avg60,
-+						&psi.memory_some_avg300, &psi.memory_some_total);
-+				if (ret != 4)
-+					fprintf(stderr, "Failed to parse Memory some PSI data\n");
-+			} else if (strncmp(line, "full", 4) == 0) {
-+				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
-+						&psi.memory_full_avg10, &psi.memory_full_avg60,
-+						&psi.memory_full_avg300, &psi.memory_full_total);
-+			}
-+				if (ret != 4)
-+					fprintf(stderr, "Failed to parse Memory full PSI data\n");
-+		}
-+		fclose(fp);
-+	}
-+	/* IO pressure */
-+	fp = fopen(PSI_IO_SOME, "r");
-+	if (fp) {
-+		while (fgets(line, sizeof(line), fp)) {
-+			if (strncmp(line, "some", 4) == 0) {
-+				ret = sscanf(line, "some avg10=%lf avg60=%lf avg300=%lf total=%llu",
-+						&psi.io_some_avg10, &psi.io_some_avg60,
-+						&psi.io_some_avg300, &psi.io_some_total);
-+				if (ret != 4)
-+					fprintf(stderr, "Failed to parse IO some PSI data\n");
-+			} else if (strncmp(line, "full", 4) == 0) {
-+				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
-+						&psi.io_full_avg10, &psi.io_full_avg60,
-+						&psi.io_full_avg300, &psi.io_full_total);
-+				if (ret != 4)
-+					fprintf(stderr, "Failed to parse IO full PSI data\n");
-+			}
-+		}
-+		fclose(fp);
-+	}
-+	/* IRQ pressure (only full) */
-+	fp = fopen(PSI_IRQ_FULL, "r");
-+	if (fp) {
-+		while (fgets(line, sizeof(line), fp)) {
-+			if (strncmp(line, "full", 4) == 0) {
-+				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
-+						&psi.irq_full_avg10, &psi.irq_full_avg60,
-+						&psi.irq_full_avg300, &psi.irq_full_total);
-+				if (ret != 4)
-+					fprintf(stderr, "Failed to parse IRQ full PSI data\n");
-+			}
-+		}
-+		fclose(fp);
-+	}
-+}
-+
- static int read_comm(int pid, char *comm_buf, size_t buf_size)
- {
- 	char path[64];
-@@ -549,7 +659,29 @@ static void display_results(void)
- 	FILE *out = stdout;
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  25 +-
+ drivers/iommu/iommufd/io_pagetable.h          |   5 +-
+ drivers/iommu/iommufd/iommufd_private.h       |  46 +-
+ drivers/iommu/iommufd/iommufd_test.h          |  20 +
+ include/linux/iommu.h                         |  50 +-
+ include/linux/iommufd.h                       | 160 ++++++
+ include/uapi/linux/iommufd.h                  | 147 +++++-
+ tools/testing/selftests/iommu/iommufd_utils.h |  89 +++-
+ .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     |  28 +-
+ .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 477 +++++++++++++++++-
+ drivers/iommu/intel/iommu.c                   |   7 +-
+ drivers/iommu/iommufd/device.c                |  87 +++-
+ drivers/iommu/iommufd/driver.c                |  82 ++-
+ drivers/iommu/iommufd/io_pagetable.c          |  13 +-
+ drivers/iommu/iommufd/main.c                  |  69 +++
+ drivers/iommu/iommufd/pages.c                 |  12 +-
+ drivers/iommu/iommufd/selftest.c              | 153 +++++-
+ drivers/iommu/iommufd/viommu.c                | 218 +++++++-
+ tools/testing/selftests/iommu/iommufd.c       | 141 +++++-
+ .../selftests/iommu/iommufd_fail_nth.c        |  15 +-
+ Documentation/userspace-api/iommufd.rst       |  12 +
+ 21 files changed, 1745 insertions(+), 111 deletions(-)
 
- 	fprintf(out, "\033[H\033[J");
--
-+	/* PSI output (one-line, no cat style) */
-+	fprintf(out, "System Pressure Information: ");
-+	fprintf(out, "(avg10/avg60/avg300/total)\n");
-+	fprintf(out, "CPU:");
-+	fprintf(out, "	full: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu", psi.cpu_full_avg10,
-+			psi.cpu_full_avg60, psi.cpu_full_avg300, psi.cpu_full_total);
-+	fprintf(out, "  some: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu\n", psi.cpu_some_avg10,
-+			psi.cpu_some_avg60, psi.cpu_some_avg300, psi.cpu_some_total);
-+
-+	fprintf(out, "Memory:");
-+	fprintf(out, " full: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu", psi.memory_full_avg10,
-+			psi.memory_full_avg60, psi.memory_full_avg300, psi.memory_full_total);
-+	fprintf(out, "  some: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu\n", psi.memory_some_avg10,
-+			psi.memory_some_avg60, psi.memory_some_avg300, psi.memory_some_total);
-+
-+	fprintf(out, "IO:");
-+	fprintf(out, "	full: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu", psi.io_full_avg10,
-+			psi.io_full_avg60, psi.io_full_avg300, psi.io_full_total);
-+	fprintf(out, "  some: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu\n", psi.io_some_avg10,
-+			psi.io_some_avg60, psi.io_some_avg300, psi.io_some_total);
-+	fprintf(out, "IRQ:");
-+	fprintf(out, "	full: %6.1f%%/%6.1f%%/%6.1f%%/%-10llu\n\n", psi.irq_full_avg10,
-+			psi.irq_full_avg60, psi.irq_full_avg300, psi.irq_full_total);
- 	if (cfg.container_path) {
- 		fprintf(out, "Container Information (%s):\n", cfg.container_path);
- 		fprintf(out, "Processes: running=%d, sleeping=%d, ",
-@@ -559,8 +691,8 @@ static void display_results(void)
- 			container_stats.nr_io_wait);
- 	}
- 	fprintf(out, "Top %d processes (sorted by CPU delay):\n\n",
--		   cfg.max_processes);
--	fprintf(out, "  PID	TGID  COMMAND		 CPU(ms)  IO(ms)   ");
-+			cfg.max_processes);
-+	fprintf(out, "  PID	TGID  COMMAND		 CPU(ms)  IO(ms)	");
- 	fprintf(out, "SWAP(ms) RCL(ms) THR(ms)  CMP(ms)  WP(ms)  IRQ(ms)\n");
- 	fprintf(out, "-----------------------------------------------");
- 	fprintf(out, "----------------------------------------------\n");
-@@ -616,6 +748,9 @@ int main(int argc, char **argv)
-
- 	/* Main loop */
- 	while (running) {
-+		/* Read PSI statistics */
-+		read_psi_stats();
-+
- 		/* Get container stats if container path provided */
- 		if (cfg.container_path)
- 			get_container_stats();
 -- 
-2.25.1
+2.43.0
+
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+index aa25156e04a3..3fa02c51df9f 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+@@ -1045,7 +1045,8 @@ struct arm_vsmmu {
+ };
+ 
+ #if IS_ENABLED(CONFIG_ARM_SMMU_V3_IOMMUFD)
+-void *arm_smmu_hw_info(struct device *dev, u32 *length, u32 *type);
++void *arm_smmu_hw_info(struct device *dev, u32 *length,
++		       enum iommu_hw_info_type *type);
+ size_t arm_smmu_get_viommu_size(struct device *dev,
+ 				enum iommu_viommu_type viommu_type);
+ int arm_vsmmu_init(struct iommufd_viommu *viommu,
+diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
+index 00641204efb2..91339f799916 100644
+--- a/drivers/iommu/iommufd/viommu.c
++++ b/drivers/iommu/iommufd/viommu.c
+@@ -206,7 +206,11 @@ static void iommufd_hw_queue_destroy_access(struct iommufd_ctx *ictx,
+ 					    struct iommufd_access *access,
+ 					    u64 base_iova, size_t length)
+ {
+-	iommufd_access_unpin_pages(access, base_iova, length);
++	u64 aligned_iova = PAGE_ALIGN_DOWN(base_iova);
++	u64 offset = base_iova - aligned_iova;
++
++	iommufd_access_unpin_pages(access, aligned_iova,
++				   PAGE_ALIGN(length + offset));
+ 	iommufd_access_detach_internal(access);
+ 	iommufd_access_destroy_internal(ictx, access);
+ }
+@@ -239,22 +243,23 @@ static struct iommufd_access *
+ iommufd_hw_queue_alloc_phys(struct iommu_hw_queue_alloc *cmd,
+ 			    struct iommufd_viommu *viommu, phys_addr_t *base_pa)
+ {
++	u64 aligned_iova = PAGE_ALIGN_DOWN(cmd->nesting_parent_iova);
++	u64 offset = cmd->nesting_parent_iova - aligned_iova;
+ 	struct iommufd_access *access;
+ 	struct page **pages;
+ 	size_t max_npages;
+ 	size_t length;
+-	u64 offset;
+ 	size_t i;
+ 	int rc;
+ 
+-	offset =
+-		cmd->nesting_parent_iova - PAGE_ALIGN(cmd->nesting_parent_iova);
+-	/* DIV_ROUND_UP(offset + cmd->length, PAGE_SIZE) */
++	/* max_npages = DIV_ROUND_UP(offset + cmd->length, PAGE_SIZE) */
+ 	if (check_add_overflow(offset, cmd->length, &length))
+ 		return ERR_PTR(-ERANGE);
+ 	if (check_add_overflow(length, PAGE_SIZE - 1, &length))
+ 		return ERR_PTR(-ERANGE);
+ 	max_npages = length / PAGE_SIZE;
++	/* length needs to be page aligned too */
++	length = max_npages * PAGE_SIZE;
+ 
+ 	/*
+ 	 * Use kvcalloc() to avoid memory fragmentation for a large page array.
+@@ -274,8 +279,7 @@ iommufd_hw_queue_alloc_phys(struct iommu_hw_queue_alloc *cmd,
+ 	if (rc)
+ 		goto out_destroy;
+ 
+-	rc = iommufd_access_pin_pages(access, cmd->nesting_parent_iova,
+-				      cmd->length, pages, 0);
++	rc = iommufd_access_pin_pages(access, aligned_iova, length, pages, 0);
+ 	if (rc)
+ 		goto out_detach;
+ 
+@@ -287,13 +291,12 @@ iommufd_hw_queue_alloc_phys(struct iommu_hw_queue_alloc *cmd,
+ 		goto out_unpin;
+ 	}
+ 
+-	*base_pa = page_to_pfn(pages[0]) << PAGE_SHIFT;
++	*base_pa = (page_to_pfn(pages[0]) << PAGE_SHIFT) + offset;
+ 	kfree(pages);
+ 	return access;
+ 
+ out_unpin:
+-	iommufd_access_unpin_pages(access, cmd->nesting_parent_iova,
+-				   cmd->length);
++	iommufd_access_unpin_pages(access, aligned_iova, length);
+ out_detach:
+ 	iommufd_access_detach_internal(access);
+ out_destroy:
+diff --git a/tools/testing/selftests/iommu/iommufd.c b/tools/testing/selftests/iommu/iommufd.c
+index 9d5b852d5e19..d59d48022a24 100644
+--- a/tools/testing/selftests/iommu/iommufd.c
++++ b/tools/testing/selftests/iommu/iommufd.c
+@@ -3104,17 +3104,18 @@ TEST_F(iommufd_viommu, hw_queue)
+ 	/* Allocate index=0, declare ownership of the iova */
+ 	test_cmd_hw_queue_alloc(viommu_id, IOMMU_HW_QUEUE_TYPE_SELFTEST, 0,
+ 				iova, PAGE_SIZE, &hw_queue_id[0]);
+-	/* Fail duplicate */
++	/* Fail duplicated index */
+ 	test_err_hw_queue_alloc(EEXIST, viommu_id, IOMMU_HW_QUEUE_TYPE_SELFTEST,
+ 				0, iova, PAGE_SIZE, &hw_queue_id[0]);
+ 	/* Fail unmap, due to iova ownership */
+ 	test_err_ioctl_ioas_unmap(EBUSY, iova, PAGE_SIZE);
+ 	/* The 2nd page is not pinned, so it can be unmmap */
+-	test_ioctl_ioas_unmap(iova + PAGE_SIZE, PAGE_SIZE);
++	test_ioctl_ioas_unmap(iova2, PAGE_SIZE);
+ 
+-	/* Allocate index=1 */
++	/* Allocate index=1, with an unaligned case */
+ 	test_cmd_hw_queue_alloc(viommu_id, IOMMU_HW_QUEUE_TYPE_SELFTEST, 1,
+-				iova, PAGE_SIZE, &hw_queue_id[1]);
++				iova + PAGE_SIZE / 2, PAGE_SIZE / 2,
++				&hw_queue_id[1]);
+ 	/* Fail to destroy, due to dependency */
+ 	EXPECT_ERRNO(EBUSY, _test_ioctl_destroy(self->fd, hw_queue_id[0]));
+ 
 
