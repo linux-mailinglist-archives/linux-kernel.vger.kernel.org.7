@@ -1,197 +1,215 @@
-Return-Path: <linux-kernel+bounces-724783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C61AFF6E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:37:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C680EAFF6E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A80B1BC78A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:37:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D85B56679E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0339E27F19B;
-	Thu, 10 Jul 2025 02:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AF427F178;
+	Thu, 10 Jul 2025 02:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SW3yvwov"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086E922301;
-	Thu, 10 Jul 2025 02:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Qz9PHANp"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A89226D18
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 02:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752115036; cv=none; b=bq/hO8dyfpGiD1P8ZjHFwZ08DHr3X4/07rIE2YUv79mD29f7qeY3oBl+hTYH0L+9DnUqrbbEgeJaq2ZVDXcx8WLHWigY5ITmxq/mauJRVgN/lDk7h1lD2qzN59NeypN8AXnYnn96hE3jxao4R/xDANQnfsrg0NEoLufcrX/Uu4Q=
+	t=1752115149; cv=none; b=n8kyfp6YMyXyjGFTgWvHw4iKDNk0Yxk5IDl/2E6DhG+DhU/n7liYFhrt1DT/8abH6eCZ2Vd77JCLIwngQ+YHBgozkEXGiTuKvNcxmkmxZN3uf/I7UIYlBLBd2CziK2FDD4i9y40+6yhkyaNpBMSMQu2q279ufpmunGOWcaF64bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752115036; c=relaxed/simple;
-	bh=8I4jJwxbyc5Wf4Bfe3JIRJ3cIJzDrrDbBswSK47keko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RADlDk8l90S52pafzA0WjpIulnOKRdG7bG5Jd/U75+P1HDxVsgN+XpXQs24H9qSYDkINpxr9eE8IiFvkenMWytDmfr7YLpJoBBT7VhYHmlFKCGYwcL0YutWTnTJ+2nUErCisZvds4piAGFlZJnYPb/KazJ3qyuXq37jsdJ8kvN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SW3yvwov; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=QJeyLayR2wnqu06I+wNLQYd2tZdSLLwivP8EyeVyOE0=;
-	b=SW3yvwovHR910rrGQ0sdq1jxB3GIwadvFL+u6RsgA+8EDnBO3subzjAszZs1We
-	aJmSVO1tUy0iDgBq2qa0+2SQbzJ37y1xkOVU91rNnj85Nlee0xNK4QpVr22DrSt7
-	aDeSfQUdlVtyShY3p8pZOKUBwX1Sw24z4oRwHT2Eihq00=
-Received: from [172.21.20.151] (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3saA+J29onVfODg--.18673S2;
-	Thu, 10 Jul 2025 10:36:47 +0800 (CST)
-Message-ID: <f9c1e53b-7956-44d2-8d8c-20dfd1671242@163.com>
-Date: Thu, 10 Jul 2025 10:36:46 +0800
+	s=arc-20240116; t=1752115149; c=relaxed/simple;
+	bh=GF76M5E6hbbFm7aVsp0VBgRNPnxrrzDrIQh8Pm1szGU=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=l9R5cK94Mt4yO/XljYnxcq0UPnsAbtTUB/mqIwzD9RD8BUrsaIMuUXtru2dp2oqvpur+ZosQMxv2dat/QDE6xcJvu2W0c5eJoUsBD5ZgVr+dnKCAdHgQHFQbF90HtbdOa8DmaqYhgMhrsdOgrfI8L2mXqmk7sXzjGfqIWowwJ2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Qz9PHANp; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1752115145;
+	bh=kzQmumURQa/WWjdaeL/eWLu8XO9uaBPc5m+hWTIurSU=;
+	h=Subject:From:To:Cc:Date;
+	b=Qz9PHANpkZmXhsQ1QpywiV3j6KHolnaUt+F88h8Uj72O0vrTQk27j0DMzsqBBHR8k
+	 wrGPG+vDdxZyORnbwih1LVnTSxvztUt3omWFS1MpKZZi33fL8ulhSAl6P5hHjrOpY2
+	 7dFiuliA3LUccGPHZ09dJSgef69Q56DiEOKS+XjA41+Ad27QBbvEi6hkt/NkvYu6LI
+	 bWlz7agQVAfaoHFzVLFdumhta1EM4wy0bEKOHZ8rDyT4qWucB0foTh2HYd4QbiL/VA
+	 LXnONg7yqdXDCYb6R/JIf/XLkXyrwdxZ9iD6gxjhgukqVgWZrgxcVRcogIbs/YFzRH
+	 sT1HrpifSgZqw==
+Received: from [192.168.68.112] (unknown [180.150.112.70])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 632596508A;
+	Thu, 10 Jul 2025 10:39:05 +0800 (AWST)
+Message-ID: <36d50489cac1fbae01ec699b742f6c6c459a01cb.camel@codeconstruct.com.au>
+Subject: [GIT PULL] aspeed: devicetree changes for 6.17
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: soc <soc@lists.linux.dev>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-aspeed
+ <linux-aspeed@lists.ozlabs.org>, linux-kernel
+ <linux-kernel@vger.kernel.org>,  Joel Stanley <joel@jms.id.au>
+Date: Thu, 10 Jul 2025 12:09:04 +0930
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] af_packet: fix soft lockup issue caused by
- tpacket_snd()
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250709095653.62469-1-luyun_611@163.com>
- <20250709095653.62469-3-luyun_611@163.com>
- <686edbb8943d2_a6f49294e2@willemb.c.googlers.com.notmuch>
-Content-Language: en-US
-From: luyun <luyun_611@163.com>
-In-Reply-To: <686edbb8943d2_a6f49294e2@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3saA+J29onVfODg--.18673S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Xr47Zw13KrW8Jw4DCFWfKrg_yoW7Ary8pa
-	yYg390k3WDJr10yw1fGFs5tr1avw4rJFs5GrZYq34SyrnxtwnYvryI9rWj9FyDuFykta42
-	vF4qvr15Cw1qya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07USiiDUUUUU=
-X-CM-SenderInfo: pox130jbwriqqrwthudrp/1tbiQxCGzmhvJzICQwAAsI
 
+Hello SoC maintainers,
 
-在 2025/7/10 05:14, Willem de Bruijn 写道:
-> Yun Lu wrote:
->> From: Yun Lu <luyun@kylinos.cn>
->>
->> When MSG_DONTWAIT is not set, the tpacket_snd operation will wait for
->> pending_refcnt to decrement to zero before returning. The pending_refcnt
->> is decremented by 1 when the skb->destructor function is called,
->> indicating that the skb has been successfully sent and needs to be
->> destroyed.
->>
->> If an error occurs during this process, the tpacket_snd() function will
->> exit and return error, but pending_refcnt may not yet have decremented to
->> zero. Assuming the next send operation is executed immediately, but there
->> are no available frames to be sent in tx_ring (i.e., packet_current_frame
->> returns NULL), and skb is also NULL
-> This is a very specific edge case. And arguably the goal is to wait
-> for any pending skbs still, even if from a previous call.
->
-> skb is true for all but the first iterations of that loop. So your
-> earlier patch
->
-> -                       if (need_wait && skb) {
-> +                       if (need_wait && packet_read_pending(&po->tx_ring)) {
->
-> Is more concise and more obviously correct.
->
->> , the function will not execute
->> wait_for_completion_interruptible_timeout() to yield the CPU. Instead, it
->> will enter a do-while loop, waiting for pending_refcnt to be zero. Even
->> if the previous skb has completed transmission, the skb->destructor
->> function can only be invoked in the ksoftirqd thread (assuming NAPI
->> threading is enabled). When both the ksoftirqd thread and the tpacket_snd
->> operation happen to run on the same CPU, and the CPU trapped in the
->> do-while loop without yielding, the ksoftirqd thread will not get
->> scheduled to run.
-> Interestingly, this is quite similar to the issue that caused adding
-> the completion in the first place. Commit 89ed5b519004 ("af_packet:
-> Block execution of tasks waiting for transmit to complete in
-> AF_PACKET") added the completion because a SCHED_FIFO task could delay
-> ksoftirqd indefinitely.
->
->> As a result, pending_refcnt will never be reduced to
->> zero, and the do-while loop cannot exit, eventually leading to a CPU soft
->> lockup issue.
->>
->> In fact, as long as pending_refcnt is not zero, even if skb is NULL,
->> wait_for_completion_interruptible_timeout() should be executed to yield
->> the CPU, allowing the ksoftirqd thread to be scheduled. Therefore, move
->> the penging_refcnt check to the start of the do-while loop, and reuse ph
->> to continue for the next iteration.
->>
->> Fixes: 89ed5b519004 ("af_packet: Block execution of tasks waiting for transmit to complete in AF_PACKET")
->> Cc: stable@kernel.org
->> Suggested-by: LongJun Tang <tanglongjun@kylinos.cn>
->> Signed-off-by: Yun Lu <luyun@kylinos.cn>
->>
->> ---
->> Changes in v3:
->> - Simplify the code and reuse ph to continue. Thanks: Eric Dumazet.
->> - Link to v2: https://lore.kernel.org/all/20250708020642.27838-1-luyun_611@163.com/
-> If the fix alone is more obvious without this optimization, and
-> the extra packet_read_pending() is already present, not newly
-> introduced with the fix, then I would prefer to split the fix (to net,
-> and stable) from the optimization (to net-next).
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494=
+:
 
-Alright, referring to your suggestion, I will split this patch into two 
-for the next version: one to fix the issue (as the first version, to 
-net, and stable), and the other to optimize the code (to net-next).
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 
-Thanks for your review and suggestion.
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/bmc/linux.git tags/aspeed=
+-6.17-devicetree-1
 
->   
->> Changes in v2:
->> - Add a Fixes tag.
->> - Link to v1: https://lore.kernel.org/all/20250707081629.10344-1-luyun_611@163.com/
->> ---
->>   net/packet/af_packet.c | 21 ++++++++++++---------
->>   1 file changed, 12 insertions(+), 9 deletions(-)
->>
->> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
->> index 7089b8c2a655..89a5d2a3a720 100644
->> --- a/net/packet/af_packet.c
->> +++ b/net/packet/af_packet.c
->> @@ -2846,11 +2846,21 @@ static int tpacket_snd(struct packet_sock *po, struct msghdr *msg)
->>   		ph = packet_current_frame(po, &po->tx_ring,
->>   					  TP_STATUS_SEND_REQUEST);
->>   		if (unlikely(ph == NULL)) {
->> -			if (need_wait && skb) {
->> +			/* Note: packet_read_pending() might be slow if we
->> +			 * have to call it as it's per_cpu variable, but in
->> +			 * fast-path we don't have to call it, only when ph
->> +			 * is NULL, we need to check pending_refcnt.
->> +			 */
->> +			if (need_wait && packet_read_pending(&po->tx_ring)) {
->>   				timeo = wait_for_completion_interruptible_timeout(&po->skb_completion, timeo);
->>   				if (timeo <= 0) {
->>   					err = !timeo ? -ETIMEDOUT : -ERESTARTSYS;
->>   					goto out_put;
->> +				} else {
->> +					/* Just reuse ph to continue for the next iteration, and
->> +					 * ph will be reassigned at the start of the next iteration.
->> +					 */
->> +					ph = (void *)1;
->>   				}
->>   			}
->>   			/* check for additional frames */
->> @@ -2943,14 +2953,7 @@ static int tpacket_snd(struct packet_sock *po, struct msghdr *msg)
->>   		}
->>   		packet_increment_head(&po->tx_ring);
->>   		len_sum += tp_len;
->> -	} while (likely((ph != NULL) ||
->> -		/* Note: packet_read_pending() might be slow if we have
->> -		 * to call it as it's per_cpu variable, but in fast-path
->> -		 * we already short-circuit the loop with the first
->> -		 * condition, and luckily don't have to go that path
->> -		 * anyway.
->> -		 */
->> -		 (need_wait && packet_read_pending(&po->tx_ring))));
->> +	} while (likely(ph != NULL))
->>   
->>   	err = len_sum;
->>   	goto out_put;
->> -- 
->> 2.43.0
->>
+for you to fetch changes up to 1c15e359ba53b297ba5fd72bbf626ede72c3de3e:
+
+  ARM: dts: aspeed: yosemite4: add gpio name for uart mux sel (2025-07-04 1=
+3:28:25 +0930)
+
+----------------------------------------------------------------
+ASPEED devicetree updates for 6.17
+
+Removed platforms:
+
+- IBM's Swift BMC
+
+New platforms:
+
+- Meta's Santabarbara
+
+  Santabarbara is a compute node with an accelerator module
+
+- NVIDIA's GB200NVL BMC
+
+  NVIDIA GB200 NVL72 connects 36 Grace CPUs and 72 Blackwell GPUs in an NVI=
+DIA
+  NVLink-connected, liquid-cooled, rack-scale design.
+
+Updated BMC platforms:
+
+- Bletchley (Meta): GPIO hog names, remove ethernet-phy node, USB PD negoti=
+ation
+- Catalina (Meta): Various sensors added, MCTP support for NIC management
+- Harma (Meta): Various sensors added
+- System1 (IBM): IPMB and various GPIO-related updates
+- Yosemite4 (Meta): GPIO names for UART mux select lines
+
+The System1 series includes a devicetree binding patch for IPMI IPMB device=
+s.
+
+----------------------------------------------------------------
+Ankit Chauhan (1):
+      ARM: dts: aspeed: lanyang: Fix 'lable' typo in LED nodes
+
+Cosmo Chou (1):
+      ARM: dts: aspeed: bletchley: enable USB PD negotiation
+
+Fred Chen (2):
+      dt-bindings: arm: aspeed: add Meta Santabarbara board
+      ARM: dts: aspeed: santabarbara: Add Meta Santabarbara BMC
+
+Joel Stanley (1):
+      ARM: dts: aspeed: Remove swift machine
+
+Krzysztof Kozlowski (1):
+      ARM: dts: aspeed: Align GPIO hog name with bindings
+
+Marshall Zhan (1):
+      ARM: dts: aspeed: yosemite4: add gpio name for uart mux sel
+
+Ninad Palsule (8):
+      dt-bindings: ipmi: Add binding for IPMB device
+      ARM: dts: aspeed: system1: Add IPMB device
+      ARM: dts: aspeed: system1: Add GPIO line name
+      ARM: dts: aspeed: system1: Reduce sgpio speed
+      ARM: dts: aspeed: system1: Update LED gpio name
+      ARM: dts: aspeed: system1: Remove VRs max8952
+      ARM: dts: aspeed: system1: Mark GPIO line high/low
+      ARM: dts: aspeed: system1: Disable gpio pull down
+
+Peter Yin (5):
+      ARM: dts: aspeed: harma: add E1.S power monitor
+      ARM: dts: aspeed: harma: add fan board I/O expander
+      ARM: dts: aspeed: harma: add ADC128D818 for voltage monitoring
+      ARM: dts: aspeed: Harma: revise gpio bride pin for battery
+      ARM: dts: aspeed: harma: add mmc health
+
+Potin Lai (12):
+      ARM: dts: aspeed: bletchley: remove unused ethernet-phy node
+      ARM: dts: aspeed: catalina: Add IO Mezz board thermal sensor nodes
+      ARM: dts: aspeed: catalina: Add Front IO board remote thermal sensor
+      ARM: dts: aspeed: catalina: Add MP5990 power sensor node
+      ARM: dts: aspeed: catalina: Add fan controller support
+      ARM: dts: aspeed: catalina: Add second source fan controller support
+      ARM: dts: aspeed: catalina: Add second source HSC node support
+      ARM: dts: aspeed: catalina: Remove INA238 and INA230 nodes
+      ARM: dts: aspeed: catalina: Enable multi-master on additional I2C bus=
+es
+      ARM: dts: aspeed: catalina: Update CBC FRU EEPROM I2C bus and address
+      ARM: dts: aspeed: catalina: Enable MCTP support for NIC management
+      ARM: dts: aspeed: catalina: Enable MCTP for frontend NIC management
+
+Willie Thai (2):
+      dt-bindings: arm: aspeed: add Nvidia's GB200NVL BMC
+      ARM: dts: aspeed: Add device tree for Nvidia's GB200NVL BMC
+
+ Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml        |    2 +
+ Documentation/devicetree/bindings/ipmi/ipmb-dev.yaml            |   56 +++=
+++
+ arch/arm/boot/dts/aspeed/Makefile                               |    3 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjade.dts           |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-arm-stardragon4800-rep2.dts |    4 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c246d4i.dts        |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-bytedance-g220a.dts         |    4 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-delta-ahe50dc.dts           |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dts      |   71 +++=
+---
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts       |  209 +++=
++++++++++----
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts          |   85 +++=
++++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-santabarbara.dts   |  982 +++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts      |   40 +++=
++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-bonnell.dts             |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts             |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dts             |    4 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts             |  139 +++=
++++-----
+ arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr630.dts            |   46 ++-=
+-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr855xg2.dts         |   68 +++=
+---
+ arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts     | 1128 +++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-lanyang.dts             |   18 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dts              |   10 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-palmetto.dts            |   40 ++-=
+-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dts             |    6 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-swift.dts               |  974 ---=
+-----------------------------------------------------------------------
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-zaius.dts               |    8 +-
+ 26 files changed, 2685 insertions(+), 1222 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/ipmi/ipmb-dev.yaml
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-santabarba=
+ra.dts
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc=
+.dts
+ delete mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-opp-swift.dts
+
 
 
