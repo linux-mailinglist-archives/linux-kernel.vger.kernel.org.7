@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-726619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07AFEB00F5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:11:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC429B00F55
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07EC37B04DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:09:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89CFD547887
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8E82D375D;
-	Thu, 10 Jul 2025 23:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FCE2BEC52;
+	Thu, 10 Jul 2025 23:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oulmYX2r"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="loS9hw5K"
+Received: from r3-24.sinamail.sina.com.cn (r3-24.sinamail.sina.com.cn [202.108.3.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAD72BE7A6
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EC12BE7B0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752188994; cv=none; b=pk+/wKtE+xrIyJxTNpKzkFyuH30dh0D1uXNReYIYD3wcaV6EcjqhU6arDIxFTC+tvgTn7fuxNzu4DY0knV7vqO1mhfGw6yrV3YNtqALAm0EFUQg34Aj6WF9Aoss2Wtysg7EIVX+S/1teu+cno7vty7a8eJvxyqTCY+8DP3oytRA=
+	t=1752189023; cv=none; b=XioASOngqyVUrzckbumpkRugi4EntkHqRWdLstfdjQmUm3BiGlW5UKUIgOJ2WTKmbv5D+pBrqqgKdb72SD/DZw7qr81+CdfH2if1Dd7kP4a6+X8qcbwEc7UJ9C/F85X3VIycn23VVcOHSEaBpwDVn3jRPWkDu9h/ggLl39ZwZnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752188994; c=relaxed/simple;
-	bh=rDR6TFy0U1+b5Ym9QhsrmAuvjwRfWzlAYTN870XnoWE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bZFPDUu1I6SQFPxw0gH4wNr6OSTejAJaalK1SwadBG73ShyQxo2YKgRtk+Sn9ZAJh+N9i1dsOiCEF7IjapATlTLT0Gj9T7isjoaXujkkGIRcEsLQtxTexOp6KyLaiuflDivAdg82C8PI84BkDq1Pcx1wc0EQ6g3gu3DN5G73WqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oulmYX2r; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31215090074so2463457a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:09:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752188993; x=1752793793; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=67GwB+aWyumwRZOh2fINIZ/EYoiexZgJdVtrS9LdzOY=;
-        b=oulmYX2rCjWPySXBUpjljAnUIWM+0rE7jd7wXo8dAa4BITFOTLkBTsSU+DrIoawIEC
-         fYxWrS1t7UEu/XaB8oLDCofLm1Nte3XZNarBhP4CEmlQM7bJgwpwzG4teE+ZGdK9b1QZ
-         IroMbvL5FDmTLMji/QKb+qWy5xUKqsWudiF3hkoChNyFy4nXRC7VMsp38/Hu2iaeAshK
-         /Jp7gBSY8j9NmJf0W2iw5iQtaPFeqP3JM3KrHEwk3MJAtkSjLw3e1SJBzCT8qAyUf0r9
-         I6n2qe4cxvXhuLsIy+Wp9Z97imwzMSV5C5KQ3/K9Wk2ZuVjJXiZKA1WQAsNzr7uQtBVB
-         iVPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752188993; x=1752793793;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=67GwB+aWyumwRZOh2fINIZ/EYoiexZgJdVtrS9LdzOY=;
-        b=PJQYIv+eUIvSxsZFtnVFkmffUK0Ib7HoBywT8G5W736i95W6uzwEIBWT9fD4iHMvp9
-         hC93evuscXWa6y2HTt1m/0G113UA7+rrfrgtjVEe93pjUoCaP8A4BIJnUVjMLvbt+105
-         k/uVmYGICZuUfuWGDm4i3tQb7/RDxqnkIGayhTk1qpO9m/oDqOZ4fdeCdgc14KDwgmII
-         Ygpg6Dg74HDY1mgSBjj7v2/AXdsJWy3CwfW1V8w39zmkxrCb7wKDSyVIrxflCY0WojXQ
-         qQbFYJ8hEsD4hAdYWCt31kOWFWeLwcsbR6LRES3AKKifvO1jJiLQfLAegIjtvE2QKTgE
-         CxUg==
-X-Gm-Message-State: AOJu0Ywbi/duo/b2TcQh4WnG9xaglD/QTehMMQGs79rNcevtotHfC7By
-	DrxUZZmmc47OTY3w6TJXCA4XSiy5ltOnRelHzSxNFJF8lL2TUmyihQv8IdQzND7ymzrOE4dRnoW
-	eahhOkg==
-X-Google-Smtp-Source: AGHT+IEo94Y3+LJsQbHDiFEaMdeiLRqMSRnEEoCZTsH9vs3Gi2iRWPU6d3/xOwSjelhz6h4GAhCCPZ+Zu1E=
-X-Received: from pjqq16.prod.google.com ([2002:a17:90b:5850:b0:2ff:6132:8710])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5710:b0:311:a314:c2ca
- with SMTP id 98e67ed59e1d1-31c4f4b557bmr528192a91.6.1752188992830; Thu, 10
- Jul 2025 16:09:52 -0700 (PDT)
-Date: Thu, 10 Jul 2025 16:08:54 -0700
-In-Reply-To: <20250522233733.3176144-1-seanjc@google.com>
+	s=arc-20240116; t=1752189023; c=relaxed/simple;
+	bh=gJXg27jM3dtNo58bvL/wyJvdIwDKMd12uZZgP0khWoo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qOiFPKYzMSxLorYKSx8DFRaCfUUaUcaYuUvgzVqMHeZKiqiQvCY5Xe7wZ+LkDOnWfDVsIo6ZUSywCcqlaBUUiiTZWXg/nblvT36r73MkpxjSm9cj53kBs9Gi4hdwY0PQAJ6Qi9Nn1QA1J9PgmsYWfToJ9xHzzvynLtOvrlIOJXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=loS9hw5K; arc=none smtp.client-ip=202.108.3.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752189017;
+	bh=scMGScdEyyL/SdjxNz6/leh7ASjx1NNSaetWrkz6Wt0=;
+	h=From:Subject:Date:Message-ID;
+	b=loS9hw5K5SwMf0iWjEaxXuYxMUZxoC+ivvIpnaMsOoqjBkRd/sFuZG3JMRrkqo/ZC
+	 Cp32CxGz+v09AGT3v99R+W3Ds/b7T1uOzaEUq3x7uQG4aWhU2s15V7b0wo9z+4Ke0d
+	 4qeVWCJ5ufQE17Eu0BJHG0r/N7UCRH2E8gYf/+YM=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 6870482A0000369B; Thu, 11 Jul 2025 07:09:32 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5966936816264
+X-SMAIL-UIID: 598792E4F57A457BB45C0487F5B424C0-20250711-070932-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
+Date: Fri, 11 Jul 2025 07:09:08 +0800
+Message-ID: <20250710230921.3225-1-hdanton@sina.com>
+In-Reply-To: <686d9b50.050a0220.1ffab7.0020.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250522233733.3176144-1-seanjc@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <175218114710.1488061.16698832498491480621.b4-ty@google.com>
-Subject: Re: [PATCH v3 0/8] x86, KVM: Optimize SEV cache flushing
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Kevin Loughlin <kevinloughlin@google.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Kai Huang <kai.huang@intel.com>, 
-	Ingo Molnar <mingo@kernel.org>, Zheyun Shen <szy0127@sjtu.edu.cn>, 
-	Mingwei Zhang <mizhang@google.com>, Francesco Lavra <francescolavra.fl@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 22 May 2025 16:37:24 -0700, Sean Christopherson wrote:
-> This is the combination of Kevin's WBNOINVD series[1] with Zheyun's targeted
-> flushing series[2].  The combined goal is to use WBNOINVD instead of WBINVD
-> when doing cached maintenance to prevent data corruption due to C-bit aliasing,
-> and to reduce the number of cache invalidations by only performing flushes on
-> CPUs that have entered the relevant VM since the last cache flush.
+> Date: Tue, 08 Jul 2025 15:27:28 -0700	[thread overview]
+> Hello,
 > 
-> All of the non-KVM patches are frontloaded and based on v6.15-rc7, so that
-> they can go through the tip tree (in a stable branch, please :-) ).
+> syzbot found the following issue on:
 > 
-> [...]
+> HEAD commit:    7482bb149b9f Merge branch 'for-next/core' into for-kernelci
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=130c528c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3c06e3e2454512b3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1257428c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15fe9582580000
 
-Applied 5-8 to kvm-x86 sev (which is built on tip/x86_core_for_kvm).
+#syz test
 
-[5/8] KVM: x86: Use wbinvd_on_cpu() instead of an open-coded equivalent
-      https://github.com/kvm-x86/linux/commit/55aed8c2dbc4
-[6/8] KVM: SVM: Remove wbinvd in sev_vm_destroy()
-      https://github.com/kvm-x86/linux/commit/7e00013bd339
-[7/8] KVM: SEV: Prefer WBNOINVD over WBINVD for cache maintenance efficiency
-      https://github.com/kvm-x86/linux/commit/a77896eea33d
-[8/8] KVM: SVM: Flush cache only on CPUs running SEV guest
-      https://github.com/kvm-x86/linux/commit/d6581b6f2e26
-
+--- x/net/ipv4/cipso_ipv4.c
++++ y/net/ipv4/cipso_ipv4.c
+@@ -1848,6 +1848,7 @@ static int cipso_v4_get_actual_opt_len(c
+  * values on failure.
+  *
+  */
++static DEFINE_SPINLOCK(setattr_spinlock);
+ int cipso_v4_sock_setattr(struct sock *sk,
+ 			  const struct cipso_v4_doi *doi_def,
+ 			  const struct netlbl_lsm_secattr *secattr,
+@@ -1899,6 +1900,7 @@ int cipso_v4_sock_setattr(struct sock *s
+ 	kfree(buf);
+ 	buf = NULL;
+ 
++	spin_lock(&setattr_spinlock);
+ 	sk_inet = inet_sk(sk);
+ 
+ 	old = rcu_dereference_protected(sk_inet->inet_opt, sk_locked);
+@@ -1910,6 +1912,7 @@ int cipso_v4_sock_setattr(struct sock *s
+ 		sk_conn->icsk_sync_mss(sk, sk_conn->icsk_pmtu_cookie);
+ 	}
+ 	rcu_assign_pointer(sk_inet->inet_opt, opt);
++	spin_unlock(&setattr_spinlock);
+ 	if (old)
+ 		kfree_rcu(old, rcu);
+ 
 --
-https://github.com/kvm-x86/linux/tree/next
 
