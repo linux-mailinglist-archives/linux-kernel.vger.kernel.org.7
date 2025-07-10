@@ -1,285 +1,137 @@
-Return-Path: <linux-kernel+bounces-725431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9EC2AFFF09
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:16:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14724AFFF0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01A5D1C87022
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:16:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD511C86DF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59622E6135;
-	Thu, 10 Jul 2025 10:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74CB2BF3D3;
+	Thu, 10 Jul 2025 10:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SY6blPnP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHOptsQX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5982D9792;
-	Thu, 10 Jul 2025 10:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068C72AEF1;
+	Thu, 10 Jul 2025 10:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752142495; cv=none; b=BgPhQpKdxzqYEx4sQiUOWWsG5xDpVbWzcq0aIiVM+cXzSWNTAVYrB9Mf7erQTKSX3KOu1H4CAqSvlEWB1ENhobMiaGBEMODNTlA2jiWkFDnf/HV/PtBp4epxIJfGrASLcCe01YQ0MgXDBn9XsJhq5AKfKp8Lk3xoIVjnE3ZWjjY=
+	t=1752142631; cv=none; b=okiIWVyyGg3mWIG3qc4SfcmJp86fbWQBUDaTtca/d2pozphLEaez8Fr3mBCZJwN9UwglRnN2l1Rv5c/QrFZ/WD0iBBlxI8bj0aLEbPD1ki5UCjI5dN5sp4884HmZaqUS90vV4Uig1Uqk4xkBex5poPPLL7XFjZ7ThtNxFB4B4oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752142495; c=relaxed/simple;
-	bh=88rsh88mpW5gcwA7FMx0qvwMnXGoQaLQuq1H0aQocyg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=otdx7EO6yAUjHGpQH9QLprfhSq5+RS0Xgy++Askzt/OpVjF89+tA8g1Rtp9JUB1KvZt5og0aakHgGfEGUzxnw4bPyrA8xPM2XqhvN0t6Cv4FHcQeAfKEpaa7mrQqdKXccKeyoeW13cBjlRPAbrLcE3Y7d8+AdjuzV0WPGr5Qgz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SY6blPnP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DACDC4CEF8;
-	Thu, 10 Jul 2025 10:14:50 +0000 (UTC)
+	s=arc-20240116; t=1752142631; c=relaxed/simple;
+	bh=fiadbZJTOVijBGDI4SQbxUWDNXsmiOttH+ylENKymGE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=OyAy3DbRf19jAg9u2JqPCeSvpxESBi118AErInttl+4x8Oi7SzMfZBtQ4vG1pGqZjpTjEdcL4nPTVKCHiorVhhYpBJDnk+5TCfSXn/gQHJA3ax8e9Xe6rTIMihNksO+m7UL6a76sifFpXHntzTRueG70OmHYYEq+ksaeUxFpOB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHOptsQX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 911DFC4CEE3;
+	Thu, 10 Jul 2025 10:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752142495;
-	bh=88rsh88mpW5gcwA7FMx0qvwMnXGoQaLQuq1H0aQocyg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=SY6blPnPbTmwB4sDAlK0OqG/Or1ix1Bk/GL9MoAJ5cD0inWZ7+8jWKq9WMaRgnktJ
-	 KXrtNH9VP/Rwup+Q4VeOlfFoaI6LUjDtNaavHZ+ixMUrbSp6VuZqXbqy56Gh5jgPLy
-	 FtPOwxtKtK+WXMc4mg88eaY+u5RQe8jKhYlNoeUttqkVA7N+Xo3+3ciYDxR0tPiPai
-	 IbHEaqd5Sa9AhVX1NWu1OP2PNjHKTMUAmXQwyHNJ2cvDB9/XCF4xdjpUG4nC/Ojzzh
-	 R1jQ1W26mtFx/727ckjEaQJFPtJVmORHvz0d0s8sag02MSUtpkc3HbKALCEMTxh2nb
-	 8CuePCkWuVivg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Masahiro Yamada" <masahiroy@kernel.org>,
-  "Nathan Chancellor" <nathan@kernel.org>,  "Luis Chamberlain"
- <mcgrof@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,  "Nicolas
- Schier" <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu" <petr.pavlu@suse.com>,
-  "Sami Tolvanen" <samitolvanen@google.com>,  "Daniel Gomez"
- <da.gomez@samsung.com>,  "Simona Vetter" <simona.vetter@ffwll.ch>,  "Greg
- KH" <gregkh@linuxfoundation.org>,  "Fiona Behrens" <me@kloenk.dev>,
-  "Daniel Almeida" <daniel.almeida@collabora.com>,
-  <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v16 1/7] rust: sync: add `SetOnce`
-In-Reply-To: <DB7SUDRTDJK7.2TXKP6EQJ77FL@kernel.org> (Benno Lossin's message
-	of "Wed, 09 Jul 2025 22:16:24 +0200")
-References: <20250709-module-params-v3-v16-0-4f926bcccb50@kernel.org>
-	<20250709-module-params-v3-v16-1-4f926bcccb50@kernel.org>
-	<9xgynwGn-IAcmiUICPvPtOFa-TV5IRH8pu3WLdvQRLG56Q_DXBvxy0q_9Ykmgff1LbRXht1XoYaQq13av21T2A==@protonmail.internalid>
-	<DB7SUDRTDJK7.2TXKP6EQJ77FL@kernel.org>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Thu, 10 Jul 2025 12:14:45 +0200
-Message-ID: <87cya8jqsq.fsf@kernel.org>
+	s=k20201202; t=1752142630;
+	bh=fiadbZJTOVijBGDI4SQbxUWDNXsmiOttH+ylENKymGE=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=VHOptsQXxjGrjx+Epibq7qQYdIn3VPDfFMd20JJPXeMITVuNGQLN+hXAugz3/Z+AB
+	 zguJuAGrZw/QlDKd3R8XJjLNVBzyeGURC46uQ6hM8/p06xwFSufr2tP9CPbU3LAgk1
+	 WbiyR0+PqAEhA8KTFN6BerhC6lA5bpl7SBWWCV+VtbOkl4PZKlMMSAY3JF+svS+T2l
+	 cT7lCpYgKs4itMuClsaNV3yn4vyQjJG7UCd6al4wQ9/anCtDxwsA5KtZR0iuADWlCg
+	 n5HypetI6XoXSaTtFO2bK7AG4pGTvpX7eX3Vr22Vviw/fUoJCX5kVhzVSL9AB6hzt+
+	 s0uEPLD0pCj9g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Jul 2025 12:17:03 +0200
+Message-Id: <DB8AQ15RTAJ2.3QXX8Q2FTFGCP@kernel.org>
+Subject: Re: [PATCH v10 0/7] Rust Abstractions for PWM subsystem with TH1520
+ PWM driver
+Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Guo Ren" <guoren@kernel.org>, "Fu Wei"
+ <wefu@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Paul Walmsley"
+ <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
+ Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, "Marek
+ Szyprowski" <m.szyprowski@samsung.com>, "Benno Lossin" <lossin@kernel.org>,
+ "Michael Turquette" <mturquette@baylibre.com>, "Drew Fustini"
+ <fustini@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>, "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>
+To: "Michal Wilczynski" <m.wilczynski@samsung.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <CGME20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6@eucas1p1.samsung.com> <20250707-rust-next-pwm-working-fan-for-sending-v10-0-d0c5cf342004@samsung.com> <e8a4a821-e7e4-4bcd-a2ac-f6b684b6ceea@samsung.com>
+In-Reply-To: <e8a4a821-e7e4-4bcd-a2ac-f6b684b6ceea@samsung.com>
 
-"Benno Lossin" <lossin@kernel.org> writes:
+On Thu Jul 10, 2025 at 10:42 AM CEST, Michal Wilczynski wrote:
+> I was hoping you could clarify the intended merge path for this series,
+> as it introduces changes to both the Rust and PWM subsystems.
+>
+> Is the expectation that the Rust maintainers will take the abstraction
+> patches into the Rust tree first? Or would Uwe, as the PWM maintainer,
+> pull the entire series? Any guidance on the coordination would be very
+> helpful.
 
-> On Wed Jul 9, 2025 at 7:52 PM CEST, Andreas Hindborg wrote:
->> Introduce the `SetOnce` type, a container that can only be written once.
->> The container uses an internal atomic to synchronize writes to the internal
->> value.
->>
->> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->
-> A couple notes on safety documentation below. Also one pretty subtle
-> functionality change from last version. With everything fixed:
->
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
->
->> ---
->>  rust/kernel/sync.rs          |   2 +
->>  rust/kernel/sync/set_once.rs | 122 +++++++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 124 insertions(+)
->>
->> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
->> index 81e3a806e57e2..13e6bc7fa87ac 100644
->> --- a/rust/kernel/sync.rs
->> +++ b/rust/kernel/sync.rs
->> @@ -18,6 +18,7 @@
->>  mod locked_by;
->>  pub mod poll;
->>  pub mod rcu;
->> +mod set_once;
->>
->>  pub use arc::{Arc, ArcBorrow, UniqueArc};
->>  pub use completion::Completion;
->> @@ -26,6 +27,7 @@
->>  pub use lock::mutex::{new_mutex, Mutex, MutexGuard};
->>  pub use lock::spinlock::{new_spinlock, SpinLock, SpinLockGuard};
->>  pub use locked_by::LockedBy;
->> +pub use set_once::SetOnce;
->>
->>  /// Represents a lockdep class. It's a wrapper around C's `lock_class_key`.
->>  #[repr(transparent)]
->> diff --git a/rust/kernel/sync/set_once.rs b/rust/kernel/sync/set_once.rs
->> new file mode 100644
->> index 0000000000000..73706abfe9991
->> --- /dev/null
->> +++ b/rust/kernel/sync/set_once.rs
->> @@ -0,0 +1,122 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! A container that can be initialized at most once.
->> +
->> +use super::atomic::{
->> +    ordering::{Acquire, Relaxed, Release},
->> +    Atomic,
->> +};
->> +use core::{cell::UnsafeCell, mem::MaybeUninit, ptr::drop_in_place};
->> +
->> +/// A container that can be populated at most once. Thread safe.
->> +///
->> +/// Once the a [`SetOnce`] is populated, it remains populated by the same object for the
->> +/// lifetime `Self`.
->> +///
->> +/// # Invariants
->> +///
->> +/// - `init` may only increase in value.
->> +/// - `init` may only assume values in the range `0..=2`.
->> +/// - `init == 0` if and only if the container is empty.
->> +/// - `init == 1` if and only if being initialized.
->> +/// - `init == 2` if and only if the container is populated and valid for shared access.
->
-> I think I have a better idea for the last three invariants:
->
-> - `init == 0` if and only if `value` is uninitialized.
-> - `init == 1` if and only if there is exactly one thread with exclusive
->   access to `self.value`.
-> - `init == 2` if and only if `value` is initialized and valid for shared
->   access.
+Except for the helpers I only see PWM code, so this is fully on Uwe's purvi=
+ew I
+think.
 
-Sounds good to me.
+I see that there is a new MAINTAINERS entry:
 
+	PWM SUBSYSTEM BINDINGS [RUST]
+	M:	Michal Wilczynski <m.wilczynski@samsung.com>
+	S:	Maintained
+	F:	rust/helpers/pwm.c
+	F:	rust/kernel/pwm.rs
+
+I assume this is agreed with Uwe?
+
+In case there's no agreement yet, the typical options are:
+
+  1) Maintain the Rust abstractions as part of the existing MAINTAINERS ent=
+ry.
+     Optionally, the author can be added as another maintainer or reviewer.
+
+  2) Add a separate MAINTAINERS entry; patches / PRs still go through the s=
+ame
+     subsystem tree.
+
+  3) Add a separate MAINTAINERS entry; patches don't go through the subsyst=
+em
+     tree (e.g. because the subsystem maintainers don't want to deal with i=
+t).
+
+I don't recommend (3), since it's really just a fallback.
+
+The above looks like (2). In this case I recommend to also add the C mainta=
+iners
+as reviewers, such that they can easily follow along and specifiy the tree =
+(T:).
+
+But, of course, that's up to you and Uwe.
+
+> I understand that it may be too late in the development cycle to merge
+> the full series. If that's the case, perhaps patch 2 could be considered
+> on its own, as it hasn't received comments in the last couple of
+> revisions. As another possibility, patch 1 and patch 3 are dependent on
+> each other and could be applied as a pair, depending on your assessment.
 >
->> +///
->> +/// # Example
->> +///
->> +/// ```
->> +/// # use kernel::sync::SetOnce;
->> +/// let value = SetOnce::new();
->> +/// assert_eq!(None, value.as_ref());
->> +///
->> +/// let status = value.populate(42u8);
->> +/// assert_eq!(true, status);
->> +/// assert_eq!(Some(&42u8), value.as_ref());
->> +/// assert_eq!(Some(42u8), value.copy());
->> +///
->> +/// let status = value.populate(101u8);
->> +/// assert_eq!(false, status);
->> +/// assert_eq!(Some(&42u8), value.as_ref());
->> +/// assert_eq!(Some(42u8), value.copy());
->> +/// ```
->> +pub struct SetOnce<T> {
->> +    init: Atomic<u32>,
->> +    value: UnsafeCell<MaybeUninit<T>>,
->> +}
->> +
->> +impl<T> Default for SetOnce<T> {
->> +    fn default() -> Self {
->> +        Self::new()
->> +    }
->> +}
->> +
->> +impl<T> SetOnce<T> {
->> +    /// Create a new [`SetOnce`].
->> +    ///
->> +    /// The returned instance will be empty.
->> +    pub const fn new() -> Self {
->> +        // INVARIANT: The container is empty and we initialize `init` to `0`.
->> +        Self {
->> +            value: UnsafeCell::new(MaybeUninit::uninit()),
->> +            init: Atomic::new(0),
->> +        }
->> +    }
->> +
->> +    /// Get a reference to the contained object.
->> +    ///
->> +    /// Returns [`None`] if this [`SetOnce`] is empty.
->> +    pub fn as_ref(&self) -> Option<&T> {
->> +        if self.init.load(Acquire) == 2 {
->> +            // SAFETY: By the type invariants of `Self`, `self.init == 2` means that `self.value`
->> +            // contains a valid value.
+> The RISC-V driver itself would need to wait for the IoMem series merge [1=
+].
 >
-> s/contains a valid value/is initialized and valid for shared access/
-
-OK.
-
+> [1] - https://lore.kernel.org/rust-for-linux/20250704-topics-tyr-platform=
+_iomem-v12-0-1d3d4bd8207d@collabora.com/
 >
->> +            Some(unsafe { &*self.value.get().cast() })
->> +        } else {
->> +            None
->> +        }
->> +    }
->> +
->> +    /// Populate the [`SetOnce`].
->> +    ///
->> +    /// Returns `true` if the [`SetOnce`] was successfully populated.
->> +    pub fn populate(&self, value: T) -> bool {
->> +        // INVARIANT: If the swap succeeds:
->> +        //  - We increase `init`.
->> +        //  - We write the valid value `1` to `init`.
->> +        //  - Only one thread can succeed in this write, so we have exclusive access after the
->> +        //    write.
->> +        if let Ok(0) = self.init.cmpxchg(0, 1, Relaxed) {
->> +            // SAFETY: By the type invariants of `Self`, the fact that we succeeded in writing `1`
->> +            // to `self.init` means we obtained exclusive access to the contained object.
->
-> s/to the contained object/to `self.value`/
-
-OK.
-
->
->> +            unsafe { core::ptr::write(self.value.get().cast(), value) };
->> +            // INVARIANT:
->> +            //  - We increase `init`.
->> +            //  - We write the valid value `2` to `init`.
->> +            //  - We release our exclusive access to the contained object and the object is now
->> +            //    valid for shared access.
->> +            self.init.store(2, Release);
->> +            true
->> +        } else {
->> +            false
->> +        }
->> +    }
->> +
->> +    /// Get a copy of the contained object.
->> +    ///
->> +    /// Returns [`None`] if the [`SetOnce`] is empty.
->> +    pub fn copy(&self) -> Option<T>
->> +    where
->> +        T: Copy,
->> +    {
->> +        self.as_ref().copied()
->> +    }
->> +}
->> +
->> +impl<T> Drop for SetOnce<T> {
->> +    fn drop(&mut self) {
->> +        if *self.init.get_mut() == 2 {
->> +            // SAFETY: By the type invariants of `Self`, `self.init == 2` means that `self.value`
->> +            // contains a valid value. We have exclusive access, as we hold a `mut` reference to
->> +            // `self`.
->> +            unsafe { drop_in_place(self.value.get()) };
->
-> This is sadly doing the wrong thing now since you changed the type of
-> `value`: `self.value.get()` is of type `MaybeUninit<T>` and dropping
-> that has (obviously) no effect. So we probably need to do
->
->     let value = unsafe { &mut *self.value.get() };
->     unsafe { value.assume_init_drop() };
->
-> I almost overlooked this :)
-
-Oops.
-
-
-Best regards,
-Andreas Hindborg
-
+> Best regards,
 
 
