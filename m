@@ -1,143 +1,130 @@
-Return-Path: <linux-kernel+bounces-725535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB57AB0006D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:19:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2C5B00086
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAA881C42AAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:19:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC28D1C42F2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499A32E267A;
-	Thu, 10 Jul 2025 11:19:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0855E2E541B;
+	Thu, 10 Jul 2025 11:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IeaBNTbq"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5006A2BE053
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05CD2C15B7;
+	Thu, 10 Jul 2025 11:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752146364; cv=none; b=LsXy7RbfGODSKnb41qMMym2LRh+zZ5Ld4yx1nNJvU50m8NC13RJhArYuHK7AtKgFUJD+CAKujq4y5mcEGgcNRoj3UCV/dVKO40eA6Dp5PM5WCw9+7z25nGUg0gvlRDSSmzB3PfNhUmzF2ISJ7cmpKuF0BqVxbuACaOuTECqR0Ro=
+	t=1752146861; cv=none; b=dTBI3XHZIOTcW6SQmIthZ5LBQbvxdwMYGwNpEoHOIWzhc2MHDnJkpZcWO2pDOiTc5PYLvxfV+JretAz29nefJ0DMK14APgCNk8MF8VZczYK+AGtegv+KKGSHi+NVYJlKz7O/Cmw3QMPyREUX3lomQ9maHzvM9NzR5+R04TCjGUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752146364; c=relaxed/simple;
-	bh=hVTlkkYVx+zgA49YUqsyk8/rtWGefGbrJCH+hDheQ3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQrGxVusPwyCs1jh2fUPonw5uRFRfE/D3NO66ElkXE1UYOj99F30tD7bNoe3+Opfy5DeeLUWeZdZilnf80y3VPQWHgEIiaKglYD0IG2TqY2uNJRSAyu7YpGBujzUPo6UJDXcN88mWGbu3BwDx8N6X8b7BBHPNYAq/fpObPB5B/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uZpIq-0005DU-Ed; Thu, 10 Jul 2025 13:19:00 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uZpIp-007k5r-1e;
-	Thu, 10 Jul 2025 13:18:59 +0200
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 1FC5843AC8F;
-	Wed, 09 Jul 2025 08:24:21 +0000 (UTC)
-Date: Wed, 9 Jul 2025 10:24:20 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: "Hohn, Torben" <Torben.Hohn@bruker.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	"amit.kumar-mahapatra@amd.com" <amit.kumar-mahapatra@amd.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "linux@roeck-us.net" <linux@roeck-us.net>
-Subject: Re: AW: [PATCH v2] spi: Raise limit on number of chip selects
-Message-ID: <20250709-bronze-duck-from-valhalla-118ef8-mkl@pengutronix.de>
-References: <FR4P281MB343441EB901D3DD286B923D6837AA@FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM>
- <aF553GU_btT81_b_@finisterre.sirena.org.uk>
- <FR4P281MB34343BD0D260C127866768298346A@FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1752146861; c=relaxed/simple;
+	bh=YclzCq5dgl0eE5mdpw+qGsvA9kPcMfcy+INW0Pn6OCk=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=I+Wrs/dHE9RXybAewVMGP8GFHlFQ3RC71zyeXFNPAcXS4Y7BooYAMG6pMQkIn/k2vtd8Z6IjR0gFMRJ7nkyyNDKsARb8Nt3OwFyQrEdXcJfkkwGm/Rj7E8yM/vV/uIyjaVX+eyBd3aRL3tyWL+cy3Xeb15PZCc8X9wwOVbE23AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IeaBNTbq; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-453643020bdso6293235e9.1;
+        Thu, 10 Jul 2025 04:27:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752146858; x=1752751658; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aR5gXXhx3VKvItg1BxdxP0PttmLiDwY44F0xz6t0vkU=;
+        b=IeaBNTbqdhpaOEVBZy2z24GFg77a14/m5533IK2VXGO5oOSkCzl74Rr9/XgrXbQiOQ
+         QZh4sN9i1BpLOrlVbgB7SvZZcPtN5NH+u8hnQK1Y8xPY7qtWY9qWVGgFAIbaqS5ZbjUG
+         5QL+ZJvmu6EPNZx1uW9JYUmAmCVx2N4ArAtMbiAFRdO8W397/NAS/yGww5EULg8hyonp
+         z4sR7AcYNN40Jvc/HzFTHb+GoROLAY6xqI7dOxqRON1ZNqeev4j4drsui0Hyq6Xi+oY6
+         5gw+uvVVs4s0zowOBjV76aML7lwpuqOAx/AYVvb6xJ1WLgiFeXr501edeQKZkxlzw00L
+         YqqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752146858; x=1752751658;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aR5gXXhx3VKvItg1BxdxP0PttmLiDwY44F0xz6t0vkU=;
+        b=E12M3/J10xEngwn7KPbpipl0EXngR5Atp7fOrqUmN+Pb7m0rGY7vCsCU1vw/4JwtjD
+         HZLw0vAVsD0iBNNKfLrV99r5vto9U0SF0Ppfq/Vnuld+xQyLyhBBWPq7Cae9iyZPTr6X
+         h4iVsJkyPe6otJP/AEr7x/cMk99yXY3w2R/7jT+xmO9weWGsLxQ1d8PBVswbLzTSCiEK
+         G61FWdVw8oJznYbmz4SXlBSV7ohDoxUCl1qe59sMwm/QRYlBemKjIU2uiWY63gtbO/84
+         2MDmx+iDzYsfG4UBBoa7j2bsFlyhxYiR6TS2/PZPwzeNzbLaecmcS5HS7RABqlEeWF55
+         VAdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWISgNXOI0kWVIXH3ENB293MSHMinwy4uynh0v5NGph7/yhzpFJK+GgIhzJ5bI0bFZKi5c7BRp4oP3IPYI=@vger.kernel.org, AJvYcCX9Uu3eSX0Qm//OL+3COgqtvXd17A4wqFrnE4HHuOMO0zFJldH8QHvD2i84yBOWuEmMvEj6rCQB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2uoSCbYhOsAJv+NGeuP3Twj8rD24Hog9Kl10GNae7TM2GRfop
+	6uhHV61f8mMwgfMuyUCTWP7MS9w2QBJXOscjVC2zsINBJtXXLI4ht/0a
+X-Gm-Gg: ASbGncuNxB7wmrIizV6wr/RHU4YAnFK0qAlGJFY983tZoICtYkr/0XckrjgvcsGWeVD
+	JB3h8ZEVtShq6hLS5K6trdY1Va+VPC7prx9uVl49F/iPGOKkDUXxefrHF2+f268476usX9h5ee3
+	4gl7mFImzk8Ul5cQ3Mdq6lRJQ2DMBLzgCktzxsq84/PxgNIU7NC32LUp1kQuOS+/Fq3TuFQrXFP
+	qsDJM9a0sIlsHC2rWlgxr55k6YTskFnosbYAhjn7eHjCfPHKsCxxxuOXv8fCvBYJmJClrK/ylvQ
+	L9t/lve4NhZrIcSpZCtVM5+hHjfQnEM/QS8+3D5TvVd0DWiJ1JVvaqUeK0EzIZzzWZDPqxbgDJo
+	=
+X-Google-Smtp-Source: AGHT+IGeZUzCYmlnvQ1gNQzLgpBT+E7yRCR2OB33C3dIxv4RY59Cz2VgZaNawdxcr0x12uYPeJ5XMQ==
+X-Received: by 2002:a05:6000:310e:b0:3a5:85cb:e9f3 with SMTP id ffacd0b85a97d-3b5e44e3b34mr5080756f8f.12.1752146857827;
+        Thu, 10 Jul 2025 04:27:37 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:a8bc:3071:67a5:abea])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd1932sm1652558f8f.17.2025.07.10.04.27.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 04:27:37 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
+ <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
+ <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
+ Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
+ Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Randy
+ Dunlap" <rdunlap@infradead.org>,  "Ruben Wauters" <rubenru09@aol.com>,
+  "Shuah Khan" <skhan@linuxfoundation.org>,  joel@joelfernandes.org,
+  linux-kernel-mentees@lists.linux.dev,  linux-kernel@vger.kernel.org,
+  lkmm@lists.linux.dev,  netdev@vger.kernel.org,  peterz@infradead.org,
+  stern@rowland.harvard.edu
+Subject: Re: [PATCH v9 05/13] docs: sphinx: add a parser for yaml files for
+ Netlink specs
+In-Reply-To: <eab7fb6b3ab7a29a71c35452478619745e66b621.1752076293.git.mchehab+huawei@kernel.org>
+Date: Thu, 10 Jul 2025 09:27:31 +0100
+Message-ID: <m24ivk78ng.fsf@gmail.com>
+References: <cover.1752076293.git.mchehab+huawei@kernel.org>
+	<eab7fb6b3ab7a29a71c35452478619745e66b621.1752076293.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h4dwjh3fdds6dhj7"
-Content-Disposition: inline
-In-Reply-To: <FR4P281MB34343BD0D260C127866768298346A@FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
 
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
---h4dwjh3fdds6dhj7
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: AW: [PATCH v2] spi: Raise limit on number of chip selects
-MIME-Version: 1.0
+> Add a simple sphinx.Parser to handle yaml files and add the
+> the code to handle Netlink specs. All other yaml files are
+> ignored.
+>
+> The code was written in a way that parsing yaml for different
+> subsystems and even for different parts of Netlink are easy.
+>
+> All it takes to have a different parser is to add an
+> import line similar to:
+>
+> 	from doc_generator import YnlDocGenerator
+>
+> adding the corresponding parser somewhere at the extension:
+>
+> 	netlink_parser = YnlDocGenerator()
+>
+> And then add a logic inside parse() to handle different
+> doc outputs, depending on the file location, similar to:
+>
+>         if "/netlink/specs/" in fname:
+>             msg = self.netlink_parser.parse_yaml_file(fname)
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On 07.07.2025 07:30:29, Hohn, Torben wrote:
-> > > +#define SPI_CS_CNT_MAX 16
-> >
-> > > If this is increased to 24 now, we need to carry another patch on top=
- of mainline again once we add another Chipselect
-> > > into our FPGA, or into the next iteration of our hardware. We would r=
-eally prefer that a Kconfig value is used.
-> > > We have handed a patch to pengutronix, because they can send proper e=
-mails.
->=20
-> > > In the IIO framework there is a Konfig Value for something similar:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
-ee/include/linux/iio/trigger.h#n74
-> >
-> > This doesn't really work, we're supposed to support single kernel image
-> > so putting per platform configuration in Kconfig ends up being at best a
-> > usability problem.  At some point it's better to just bite the bullet
-> > and make things dynamic.
->=20
-> After looking a bit more throughly at the code, i dont think it is
-> necessary to make this dynamic. The Value at hand is actually the
-> number of Chipselects a Device might have and not the the maximum
-> number of Chipselects a Controller might have.
-
-I think it's both. The struct spi_controller uses SPI_CS_CNT_MAX:
-
-| struct spi_controller {
-[...]
-| 	s8				last_cs[SPI_CS_CNT_MAX];
-| 	u32				last_cs_index_mask : SPI_CS_CNT_MAX;
-
-See discussion
-https://lore.kernel.org/all/49b52941-6205-48bd-b2ae-e334018ac5cd@sirena.org=
-=2Euk/
-for more details.
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---h4dwjh3fdds6dhj7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmhuJzEACgkQDHRl3/mQ
-kZydUAgAhEyAcO60yhvP3araIxC+QDMZSly0OhyOr8hpJY6kEJMy95PrFkfzo1Hm
-0FNGlmsXLqU9Rv5LL9+Yn1gP9Junz8rbm0pyDMaWcoeBh4QP0x+uzShklahuHGtb
-PciVyOop48TNiJhK6X4Y8ocUeYTPccbwSw4DuHy6NqCJoQ/+3gJJ9Dosj/mYiA1f
-PoBdVBKmO90l9NwKmXrizZNKllztaQK/rPr1nEXYzhsIRDQJvWY+34tQj1YNfa+p
-xGaG2D1iimEHX560E/tbGK/dam4C3QljNXOpcYCxBz5u33hrT5JC2mbOGIMhpRzv
-qK139hd75GaYPijSm4j2YN0rIg6g8A==
-=iiZz
------END PGP SIGNATURE-----
-
---h4dwjh3fdds6dhj7--
+Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 
