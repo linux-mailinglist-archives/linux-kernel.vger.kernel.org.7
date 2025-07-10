@@ -1,127 +1,134 @@
-Return-Path: <linux-kernel+bounces-725492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8099AFFFE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:00:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F091AFFFF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B9C1C85A56
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983FA5C14A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F7B2E3AF2;
-	Thu, 10 Jul 2025 10:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586AF2E54AD;
+	Thu, 10 Jul 2025 11:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F31DW1Wa"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZKVyXKsk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gmPoe4qO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7CE2E11B3;
-	Thu, 10 Jul 2025 10:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460522E0937
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145190; cv=none; b=ghjzX7wnmNK6mTk2shJRbz9eZUkZfvR8J07Iv2qf/zNtldmxE62ndc/Zhte131VPyXgvZpLacao9u+dbZxSVXmRnSFH7txdqUzsBLVpER2V13VG3F4b+ne/aa3n+evDBUyDBbbrAPQZOSyxgX7GiW+8jxmAJtM+1sJWpk5mEjRI=
+	t=1752145220; cv=none; b=Rl8IZ7CO7iVR69dn9RPYu3A1B6+xzY7iBh6tryukusAJAvy4I5as35Dx8I38OoWn8R8n212TGrWZOo+x/xnzf+QzDpzNjWpigq0WBmACVJu6I1NlQFmE2kyDyVtoiJV8LZ3STYALD2QnMFRBsrafFx77ZqLDh3VlVTooP/TkUjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145190; c=relaxed/simple;
-	bh=YddTB88+2/kA7OwDamO75o6X4XVq0EuQfkSw74+nQxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iL/8/mMMZCfOuTojWLWI2jkX4rNq2pe0n6j4AXfNK+upFRVdZ3tw6Y0dPdoru04+eTej6fMjrIBbY3yIUeyJUU11mO+mmnEXQWOrii+nWAcLcN0tgQa1/ZqX/J37DHo69bxxDsRawVv6fgHoCEBRWqSPTyIUSlXj2VmczrwzzuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F31DW1Wa; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=WvqIPEfWD9uD4rQga0dMwrnfQPe1vBwSUrMxLgce8Pk=; b=F31DW1Wa5Nx5SLpLnoAlmgXvTt
-	wF+bfPNY37kl4oiz+KPTroEs3Fzg0GaJYS1pxWOkc4wQ7D0DDxiDm6vKrh7M+nSlrbof4Vcp/azDN
-	bIkeFcgl3G7/C+LN9W2mzy6vupqXsn2VnU37yqV+JaqTbRwAfZBZVJdevQI/KBx2G4PI4pL8ONeOw
-	VgPcDKTEQo3zVNTRihed1GniZOlEh7K+2UlD9y4SgIIsFGgW/UwYu7GQiXaEnHYiGLimKRcs1P9Wi
-	cwsNw+G46LRmrdpXjSLtjP7jHXd1cma1CDTFyJCDiGL+xw/RlMwFCbxekawE6JdHt7P2BhClCn34B
-	boPWe5aw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZp0F-0000000BYbt-1Zv1;
-	Thu, 10 Jul 2025 10:59:47 +0000
-Date: Thu, 10 Jul 2025 03:59:47 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Arnd Bergmann <arnd@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org, Anuj Gupta <anuj20.g@samsung.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Kanchan Joshi <joshi.k@samsung.com>, LTP List <ltp@lists.linux.it>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Benjamin Copeland <benjamin.copeland@linaro.org>, rbm@suse.com,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Eric Biggers <ebiggers@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: fix FS_IOC_GETLBMD_CAP parsing in
- blkdev_common_ioctl()
-Message-ID: <aG-dI2wJDl-HfzFG@infradead.org>
-References: <20250709181030.236190-1-arnd@kernel.org>
- <20250710-passen-petersilie-32f6f1e9a1fc@brauner>
- <aG92abpCeyML01E1@infradead.org>
- <14865b4a-dfad-4336-9113-b70d65c9ad52@app.fastmail.com>
+	s=arc-20240116; t=1752145220; c=relaxed/simple;
+	bh=zoQcxiQn5CX5waZb1SoMGVD5PXot1RDtbj5z6HDb6kQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JRaVNqNaYu2FvasKCvFwNRYKuhPhVbpBxY3ftdelzB6RysoSJapj8Kl5xI43x5nhrf4SxSWUvdj+22jzLGRMbHJ8kGQIv+XWooRMP8z4vrEPv1z/CMW2vSEJVFjgivlaujX64ZZvhaoW05hP/sqzEHqbaNdxoRe2nEjVllkqAfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZKVyXKsk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gmPoe4qO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752145217;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ah2/AINaMzthGxZV+T0/NUrwy8+v7yatwCmqcan2fGM=;
+	b=ZKVyXKskLVWogFdLA5l0+GXd/IayC2n+zgB1DTEQUKEXN9XdByP6IAGvv0IJWkotg5r/i6
+	hwOlPTjVSm29c4dzU93v4mXrQ/lsefB4x0p1yu+aKTlGBkscYuzK/7fw32cv5QHRDlnHhe
+	gh0lpvi2sSVhjns0OxeB7c5fRXrx17Vh6rTqYjHFQKmJkM7itjeNhUktVVqa0NZWxW52Ue
+	gTytSRjJd1vNgVe6JFNOXOVwAy5RrwA8cbJ+EVGYghGY5m63qAsPTYBwxfCmuWZzjcPWX2
+	ikv6C8MZt1++wCCacrVbZbOT3FGHfCuu6QqbL0FKZJAo004N535iiupgdYJL8g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752145217;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ah2/AINaMzthGxZV+T0/NUrwy8+v7yatwCmqcan2fGM=;
+	b=gmPoe4qOjUHhqOBW/eX3YqWJfA5tbEolG/ErBTJCVmx4+L8Zud2ZQUq8m2PzERfPfPUkvb
+	oJKfUUOYWrjuimBg==
+To: linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v2 0/6] futex: Use RCU-based per-CPU reference counting
+Date: Thu, 10 Jul 2025 13:00:05 +0200
+Message-ID: <20250710110011.384614-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14865b4a-dfad-4336-9113-b70d65c9ad52@app.fastmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 10, 2025 at 12:50:44PM +0200, Arnd Bergmann wrote:
-> There are multiple methods we've used to do this in the past,
-> but I don't think any of them are great, including the version
-> that Christian is trying to push now:
-> 
-> The most common variant is to leave extra room at the end of
-> a structure and use that as in your 1fd8159e7ca4 ("xfs: export zoned
-> geometry via XFS_FSOP_GEOM") and many other examples.
+I picked up PeterZ futex patch from
+    https://lore.kernel.org/all/20250624190118.GB1490279@noisy.programming.=
+kicks-ass.net/
 
-That's using the space.  I had that discussion before in context of
-this API, and I still think that reserving a small amount of space
-that can be used for extensions is usually good practice.  Often
-we get some of that for free by 64-bit aligning anyway, and adding
-a bit more tends to also be useful.
+and I am posting it here it now so it can be staged for v6.17.
 
-> This is probably the easiest and it only fails once you run out of
-> spare room and have to pick a new command number. A common mistake
-> here is to forget checking the padding in the input data against
-> zero, so old kernels just ignore whatever new userspace tried
-> to pass.
-> 
-> I think the variant from commit 1b6d968de22b ("xfs: bump
-> XFS_IOC_FSGEOMETRY to v5 structures") where the old structure
-> gets renamed and the existing macro refers to a different
-> command code is more problematic. We used to always require
-> userspace to be built against the oldest kernel headers it could run
-> on. This worked fine in the past but it appears that userspace
-> (in particular glibc) has increasingly expected to also work
-> on older kernels when building against new headers.
+This survived a few days on my machine and compile robot reported that
+is passes its tests.
 
-This is what I meant.  Note that the userspace in this case also keeps a
-case trying the old structure, but that does indeed require keeping the
-userspace somewhat in lockstep if you do the renaming as in this example.
-The better example would be one using a new new for the extended
-structure, or requiring a feature macro to get the larger structure.
+v1=E2=80=A6v2 https://lore.kernel.org/all/20250707143623.70325-1-bigeasy@li=
+nutronix.de
+ - Removed the IMMUTABLE bits
+ - There was a race if the application exits while the RCU callback is
+   pending. Stuffed with mmget()/ mmput_async().
 
-> Christian's version using the copy_struct_{from,to}_user()
-> aims to avoid most of the problems. The main downside I see
-> here is the extra complexity in the kernel. As far as I can
-> tell, this has mainly led to extra kernel bugs but has not
-> actually resulted in any structure getting seamlessly
-> extended.
+Changes since its initial posting:
+- A patch description has been added
+- The testuite is "fixed" slightly different and has been split out
+- futex_mm_init() is fixed up.
+- The guard(preempt) has been replaced with guard(rcu) since there is
+  no reason to disable preemption.
 
-That is my (non-scientific) impression as well.
+Since it was not yet released, should we rip out the IMMUTABLE bits and
+just stick with GET/SET slots?
+
+Peter Zijlstra (1):
+  futex: Use RCU-based per-CPU reference counting instead of rcuref_t
+
+Sebastian Andrzej Siewior (5):
+  selftests/futex: Adapt the private hash test to RCU related changes
+  futex: Make futex_private_hash_get() static
+  futex: Remove support for IMMUTABLE
+  selftests/futex: Remove support for IMMUTABLE
+  perf bench futex: Remove support for IMMUTABLE
+
+ include/linux/futex.h                         |  16 +-
+ include/linux/mm_types.h                      |   5 +
+ include/linux/sched/mm.h                      |   2 +-
+ include/uapi/linux/prctl.h                    |   2 -
+ init/Kconfig                                  |   4 -
+ kernel/fork.c                                 |   8 +-
+ kernel/futex/core.c                           | 281 ++++++++++++++----
+ kernel/futex/futex.h                          |   2 -
+ tools/include/uapi/linux/prctl.h              |   2 -
+ tools/perf/bench/futex-hash.c                 |   1 -
+ tools/perf/bench/futex-lock-pi.c              |   1 -
+ tools/perf/bench/futex-requeue.c              |   1 -
+ tools/perf/bench/futex-wake-parallel.c        |   1 -
+ tools/perf/bench/futex-wake.c                 |   1 -
+ tools/perf/bench/futex.c                      |  21 +-
+ tools/perf/bench/futex.h                      |   1 -
+ .../trace/beauty/include/uapi/linux/prctl.h   |   2 -
+ .../futex/functional/futex_priv_hash.c        | 113 +++----
+ 18 files changed, 315 insertions(+), 149 deletions(-)
+
+--=20
+2.50.0
 
 
