@@ -1,174 +1,156 @@
-Return-Path: <linux-kernel+bounces-726495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7578BB00DAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:19:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A1DB00DAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3245C19F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 019353B4C63
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2342FE317;
-	Thu, 10 Jul 2025 21:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037E02FE308;
+	Thu, 10 Jul 2025 21:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPkUlA0N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gj450Crq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8BD22338;
-	Thu, 10 Jul 2025 21:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D81322338;
+	Thu, 10 Jul 2025 21:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752182372; cv=none; b=AVXFfqkpNQwg2OxO3MFW8P/wUsXKJJrmQgEeq0lYr3TXa0r0FIb6KzSbfo3a5Mj0A9g1Z3xtmeGSidFqGJj8bzCKR10gevjNwnbBFRBF3HHD45cQNj3VJImw5sXsmtybXABKZ0R5MHiGUWynbmum2kJd14MwvkUcKfeeQnfHaY8=
+	t=1752182495; cv=none; b=O/9DB5ewPNVYabaiBFrVfPGv0chpjfIOmlgvik6EvDasNVwD5dgP39n8OAW/ct4gQAFwKck2GocK6fSX5PwrbBQi5aaur/mn7pmLMYcR/ufV/1JkAlYl7t8rw7zvA6C0s4cV5zkw10BK2YeRsHa7F6UnJV6I0PN9yTzG3DvxcIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752182372; c=relaxed/simple;
-	bh=0zK4b9WCKbhDn6z7GD5R0mIS3pwTZmyc1BLcnwDAQs4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=WAHwIreK++6CLdMao0z0J11KwLWFkGtVAQBmGwa65Kiu1aO9ZrLXjtDmpfMxUa7pvqZLGsrQ/tfzogIof6ERYq3SYdPmg17Id0Dq5G1max3Gd9Qbh3sbVI6O8vLnQQcgptEvNibPJ8emEUEBJDqfARJXB36p/BQgvK5bWTwMN7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPkUlA0N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8929FC4CEE3;
-	Thu, 10 Jul 2025 21:19:26 +0000 (UTC)
+	s=arc-20240116; t=1752182495; c=relaxed/simple;
+	bh=f4dUVXALsAYXTk+NKQ03a6GOt4JCMgbf8SSf+frc2Pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bGjPeXbdhXGl6BN8h8iELxx8IkOPKaglomQdVi5bpqQWc8CkJ+XBOcYghgGcvVk11hdLUogQd3/NHzmwopItDT430DsYbVN0SaMVSKGWmbant7oV6BP9GTxqRblvFWqBhwm5oWfciMDoqbZ8pUwIjqB5MlEV2s4necCMuR3qmjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gj450Crq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 213A6C4CEED;
+	Thu, 10 Jul 2025 21:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752182371;
-	bh=0zK4b9WCKbhDn6z7GD5R0mIS3pwTZmyc1BLcnwDAQs4=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=vPkUlA0NUJLGY/Q4PvaaFqidAOKuSwxT+5jVUD9cwF/qy/NHVyyVRYgDzjtWs51TE
-	 TgfvcQUsC55IDISpn13HnEy7SQybmToEkjdwJDu6iiQhJ16+k+cc+5JqQ/vj4m4ToW
-	 iwjYVqttFqRRFrilkHJAj3kMi4f91IftPYkBz3+9Sg2wTit/UprIqtsoNOOs13Rc1K
-	 voWpDI6wCmV+valiZDVLyo+3C9G/cVISn5p7R4pRMdHs2LFlrbAcGt+TnTUCjNihET
-	 +Hiva66FTC+buuJJFdmDf+A+Dk/vyqoKWkVhxvpzUQq68t25OH58dtSdlTeCaWfIX0
-	 /c+ZvJbVzx/cg==
+	s=k20201202; t=1752182495;
+	bh=f4dUVXALsAYXTk+NKQ03a6GOt4JCMgbf8SSf+frc2Pg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gj450CrqRm1IIoaIZ6Ao9BQGP3GXe2Ay3WiAmPp7j3VkZxQ/GWD2Pe8ctq4sv4tKT
+	 vnD7/mJjWXKUag5QerCCfnVpFIkjODzwV023Y9rUj8WVad8afw6zOa5bCW/U4LOea5
+	 aRH2eIh3XSsqOY9TFgRxlaXUax4fRE3gAAlZJI4zVU6SqiQtqSyZTR0F/nL7jXS/LF
+	 KfK+iykaKTDSODNqzmHsO/pPbmLuwnYA5t4EIJmzBJdvxNpm0BspuJ1PqW3wA3LFS/
+	 3LqmuRvkzkRfmnOOEi8Ndjw+2e8kasECXxt2pqQTaIi2PNznXOds/WDYNsHapsq1mM
+	 VoQe+suzA6P2A==
+Date: Thu, 10 Jul 2025 23:21:28 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC v4 6/7] sprintf: Add [V]SPRINTF_END()
+Message-ID: <yxa4mb4tq4uamjc5atvhfefvxyu6fl6e6peuozd5j5cemaqd2t@pfwybj4oyscs>
+References: <cover.1751823326.git.alx@kernel.org>
+ <cover.1752113247.git.alx@kernel.org>
+ <0314948eb22524d8938fab645052840eb0c20cfa.1752113247.git.alx@kernel.org>
+ <CAHk-=wiYistgF+BBeHY_Q58-7-MZLHsvtKybrwtiF97w+aU-UQ@mail.gmail.com>
+ <svune35mcrnaiuoz4xtzegnghojmphxulpb2jdgczy3tcqaijb@dskdebhbhtrq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7rucxqy6jxtw6lim"
+Content-Disposition: inline
+In-Reply-To: <svune35mcrnaiuoz4xtzegnghojmphxulpb2jdgczy3tcqaijb@dskdebhbhtrq>
+
+
+--7rucxqy6jxtw6lim
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 23:19:24 +0200
-Message-Id: <DB8OT5ZZ4SRO.WP5PBFLML683@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v10 0/7] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-Cc: "Michal Wilczynski" <m.wilczynski@samsung.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Guo Ren" <guoren@kernel.org>, "Fu Wei"
- <wefu@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Paul Walmsley"
- <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
- Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, "Marek
- Szyprowski" <m.szyprowski@samsung.com>, "Benno Lossin" <lossin@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Drew Fustini"
- <fustini@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-References: <CGME20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6@eucas1p1.samsung.com> <20250707-rust-next-pwm-working-fan-for-sending-v10-0-d0c5cf342004@samsung.com> <e8a4a821-e7e4-4bcd-a2ac-f6b684b6ceea@samsung.com> <ipvaegqlkco5qinhvn33mqvg7ev2walvs74xtzvhimxsfsfzhv@gcmpxcdtetdn> <e77eab1c-446f-4620-95be-d343684d1e95@samsung.com> <4hmb3di5x2iei43nmrykrj5wzlltrf3vrnqvexiablonbscn57@4bbsz5c76t63> <DB8I5J8ZY7QF.2D8HEN6JX4HSZ@kernel.org> <cbxpqormchajfcnf7xxopd7j7igriqus4cuu5jfvxb3mbfb5tu@qz4rc67vjyif>
-In-Reply-To: <cbxpqormchajfcnf7xxopd7j7igriqus4cuu5jfvxb3mbfb5tu@qz4rc67vjyif>
+From: Alejandro Colomar <alx@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC v4 6/7] sprintf: Add [V]SPRINTF_END()
+References: <cover.1751823326.git.alx@kernel.org>
+ <cover.1752113247.git.alx@kernel.org>
+ <0314948eb22524d8938fab645052840eb0c20cfa.1752113247.git.alx@kernel.org>
+ <CAHk-=wiYistgF+BBeHY_Q58-7-MZLHsvtKybrwtiF97w+aU-UQ@mail.gmail.com>
+ <svune35mcrnaiuoz4xtzegnghojmphxulpb2jdgczy3tcqaijb@dskdebhbhtrq>
+MIME-Version: 1.0
+In-Reply-To: <svune35mcrnaiuoz4xtzegnghojmphxulpb2jdgczy3tcqaijb@dskdebhbhtrq>
 
-On Thu Jul 10, 2025 at 10:57 PM CEST, Uwe Kleine-K=C3=B6nig wrote:
-> On Thu, Jul 10, 2025 at 06:06:26PM +0200, Danilo Krummrich wrote:
->> On Thu Jul 10, 2025 at 5:25 PM CEST, Uwe Kleine-K=C3=B6nig wrote:
->> > Hello Michal,
->> >
->> > On Thu, Jul 10, 2025 at 03:48:08PM +0200, Michal Wilczynski wrote:
->> >> On 7/10/25 15:10, Uwe Kleine-K=C3=B6nig wrote:
->> >> > On Thu, Jul 10, 2025 at 10:42:07AM +0200, Michal Wilczynski wrote:
->> >> >> On 7/7/25 11:48, Michal Wilczynski wrote:
->> >> >>> The series is structured as follows:
->> >> >>>  - Expose static function pwmchip_release.
->> >> >=20
->> >> > Is this really necessary? I didn't try to understand the requiremen=
-ts
->> >> > yet, but I wonder about that. If you get the pwmchip from
->> >> > __pwmchip_add() the right thing to do to release it is to call
->> >> > pwmchip_remove(). Feels like a layer violation.
->> >>=20
->> >> It's required to prevent a memory leak in a specific, critical failur=
-e
->> >> scenario. The sequence of events is as follows:
->> >>=20
->> >>     pwm::Chip::new() succeeds, allocating both the C struct pwm_chip =
-and
->> >>     the Rust drvdata.
->> >>=20
->> >>     pwm::Registration::register() (which calls pwmchip_add()) fails f=
-or
->> >>     some reason.
->> >
->>=20
->> (Just trying to help clear up the confusion.)
->
-> Very appreciated!
->
->> > If you called pwmchip_alloc() but not yet pwmchip_add(), the right
->> > function to call for cleanup is pwmchip_put().
->>=20
->> That is exactly what is happening when ARef<Chip> is dropped. If the ref=
-erence
->> count drops to zero, pwmchip_release() is called, which frees the chip. =
-However,
->> this would leave the driver's private data allocation behind, which is o=
-wned by
->> the Chip instance.
->
-> I don't understand that. The chip and the driver private data both are
-> located in the same allocation. How is this a problem of the driver
-> private data only then? The kfree() in pwmchip_release() is good enough
-> for both?!
+Hi Linus,
 
-Not in the current abstractions, there are two allocations, one for the Chi=
-p and
-one for the driver's private data, or in other words the abstraction uses
-pwmchip_set_drvdata() and pwmchip_get_drvdata().
+On Thu, Jul 10, 2025 at 08:30:59PM +0200, Alejandro Colomar wrote:
+> > IOW, why isn't this just
+> >=20
+> >   #define sprintf_array(a,...) snprintf(a, ARRAY_SIZE(a), __VA_ARGS__)
+>=20
+> Agree.  This is a better name for the kernel.
 
-Having a brief look at pwmchip_alloc(), it seems to me that PWM supports th=
-e
-subclassing pattern with pwmchip_priv().
+Oops, I misread.  I thought you were implementing it as
 
-We should probably take advantage of that. Assuming we do that, the Rust
-abstraction still needs a release() callback because we still need to call
-drop_in_place() in order to get the destructor of the driver's private data
-type called. We actually missed this in DRM and I fixed it up recently [1].
+	#define sprintf_array(a, ...)  sprintf_end(a, ENDOF(a), __VA_ARGS__)
 
-@Michal: With the subclassing pattern the Chip structure would look like th=
-is:
+So, I prefer my implementation because it returns NULL on truncation.
+Compare usage:
 
-	#[repr(C)]
-	#[pin_data]
-	pub struct Chip<T> {
-	   inner: Opaque<bindings::pwm_chip>,
-	   #[pin]
-	   data: T,
-	}
+	if (linus_sprintf_array(a, "foo") >=3D ARRAY_SIZE(a))
+		goto fail;
 
-And in the release() callback would look like this:
+	if (alex_sprintf_array(a, "foo") =3D=3D NULL)
+		goto fail;
 
-    extern "C" fn release(ptr: *mut bindings::pwm_chip) {
-        // CAST: Casting `ptr` to `Chip<T>` is valid, since [...].
-        let this =3D ptr.cast<Chip<T>>();
+Another approach would be to have
 
-        // SAFETY:
-        // - When `release` runs it is guaranteed that there is no further =
-access to `this`.
-        // - `this` is valid for dropping.
-        unsafe { core::ptr::drop_in_place(this) };
-    }
+	if (third_sprintf_array(a, "foo") < 0)  // -E2BIG
+		goto fail;
 
-This is exactly what we're doing in DRM as well, I would have recommended t=
-his
-to begin with, but I didn't recognize that PWM supports subclassing. :)
+Which was my first approach, but since we have sprintf_end(), let's just
+reuse it.
 
-I recommend having a look at [2].
 
-[1] https://lore.kernel.org/all/20250629153747.72536-1-dakr@kernel.org/
-[2] https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-fixes/ru=
-st/kernel/drm/device.rs
+Cheers,
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--7rucxqy6jxtw6lim
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhwLtMACgkQ64mZXMKQ
+wqlldw/9G3vuwHK1ltksLTZk/bAMY1df2lNT+Tnvbn1O60dXRLNSLE1uslMMtt5m
+Ch9ME1lm4Z3rjU+EvgVg+CTTUXjmwPBMwC54IX4d55SJPLERcYcjrftC7AkDiaqA
++lHnVLrZzGgcdypVU7sADXi4efbbA2ju7Z9vpmvAivQr8bpP49dsahV/DjjVGOqT
+t9ZPfx6FbbGkGbceyVrYVVGdPt+2xRQ1lWAmmNxHvw2s4FPsbX3qTjFzCi3py3jr
+YfMncGwTyfeaivqCtayzi4w32hYDAsP6zigcf3ZPv2coww51DP1dnvY8c6CqabF4
+SBTYZPtTfbByr/COPxdNvJKqszwUKnuMpbLK0nSXe+zKUJsNGeQfFbg8SWG/AK+P
+miRh99ztSOhn13wqYqkJZEpVhPfjDgurEYVN1DeOMMLkvjEThtTF5A5gQebKAe0a
+nVxc+0UBwZyJflXngUvrwazrM+20tt+YK992Mgus+1tOcdF3RpphzR6umUkiv6de
+pesBSrzjVFdb81e1slMHaPpuouaIcTGHh+wuDSamjx/7Tfi/dUpz1ifa19UdUeWR
+4LJMN2FPIW+41OM8WwAppQXwehXlE2gKssUEa6tln4k8Pi/dn6ZZTxh25TPYI0Lc
+1O7lU+hNeS52MnpJRCpZpRhhZB0CAfGIFVBGT2EKIFdHWTbT1ho=
+=0kpp
+-----END PGP SIGNATURE-----
+
+--7rucxqy6jxtw6lim--
 
