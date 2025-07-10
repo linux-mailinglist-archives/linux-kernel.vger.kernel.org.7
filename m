@@ -1,187 +1,150 @@
-Return-Path: <linux-kernel+bounces-725168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D396AFFB8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:01:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6572BAFFB93
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25BF81C84C3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:01:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15B2C1C85220
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EE328BAB1;
-	Thu, 10 Jul 2025 08:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0814328BABC;
+	Thu, 10 Jul 2025 08:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGf2wODU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="crrnuyG4"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F3628935D;
-	Thu, 10 Jul 2025 08:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9D74A0C;
+	Thu, 10 Jul 2025 08:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752134456; cv=none; b=QGoARZRaW82BcUUC9FArHMYi8dylyEHit2pU4McqT1pkz3IUIn441FopxH/SPxR3CmXdVNTs7++5EhURDpGng42x2ZFjK3k17iBKX3tUHm8BjpGwe+rRaYwymHq/eZoG0iFnFx4JYT1o2440PUVq9cZhNcMFntECsKwbtUCypjY=
+	t=1752134479; cv=none; b=psHZsWHbsSx2mL7FrMJmStBUGslhAdLPVNLwCr6cstkhCwqjzFVp6M/4vor+wpGjAblukdo2QWwGvoZ1ym30QTR9gYLRjYRIwttAILp/P8DyXBAZ2ioTBte1fq7h/JJ0vDL3rdHWk/gG2ZTGsjXcs8na4eKdbtYwm9HCZDCinvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752134456; c=relaxed/simple;
-	bh=3kJXKGVy19HwRS0v8G4JAZbl9NgESNksh+wuchZQHok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NlAvWiuhtQSd0N1woR7HG0yCb2r+iQswhmWYK23dtyVrLCb8T1q/RM1CWWhH7gCNgpjlfuxqJaZvpXIkG2khBjhTBuXUrGSZeC4W7kBevFLnHPx7maSkST40kSyntfh/ACTCzK+6fHeOnAEQ4xEXthGhhpQsqVEGF2lE6NJFq4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGf2wODU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D9BDC4CEE3;
-	Thu, 10 Jul 2025 08:00:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752134455;
-	bh=3kJXKGVy19HwRS0v8G4JAZbl9NgESNksh+wuchZQHok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GGf2wODUPZB/EEXI0mi84RwgS5MLrJXyRX17IKrUPTWEWDDQQ+nINLDhMYWR5/uoO
-	 go2vPoVflCUWA3uyRgB11W5vOfq7RKfENtWfYwj6BiLnNLSlipSmfzLKVnPfl1eS/+
-	 t+SfH91y5Qs4IbTW8SzuLoyyzuhnG/rXubMaQTSo1r6DphveXGcxcpXQ/NamJHBStM
-	 3q06LyImZ559wXvkq7miclNeKMHLEciIx/esPs/ZueLMqe0q4lmJYaTLBnhchQjef7
-	 dyvfBjs9ez5J/FKNxug3E7XivS1a+IMXqf2Mg6oyROilNFuRXi67c4C46GB4GTBQCC
-	 jdAYHoKSrlkHw==
-Date: Thu, 10 Jul 2025 10:00:48 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
-	Anuj Gupta <anuj20.g@samsung.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, 
-	Kanchan Joshi <joshi.k@samsung.com>, ltp@lists.linux.it, dan.carpenter@linaro.org, 
-	benjamin.copeland@linaro.org, rbm@suse.com, Arnd Bergmann <arnd@arndb.de>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
-	Alexey Dobriyan <adobriyan@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Eric Biggers <ebiggers@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: fix FS_IOC_GETLBMD_CAP parsing in
- blkdev_common_ioctl()
-Message-ID: <20250710-passen-petersilie-32f6f1e9a1fc@brauner>
-References: <20250709181030.236190-1-arnd@kernel.org>
+	s=arc-20240116; t=1752134479; c=relaxed/simple;
+	bh=0PusPnpFnTlbrblpYcCcHC6N4Y/b1hVkCXLxbwboymE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=r0Wdof89xZDZzjwBxOmAxlTprVilDbJZJ/cgHNrJc778OP097fpS2QEaIY18eN4hprxEjfcBt+Ck9lvvTAw/NiIfGnWAwMoR9vLTF9gqEuiDwq0M4mv+3RvJPk/UADAe6RgItjIZfr0UbPGClz6FVv17CxDRel07iCjsPHJ9upQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=crrnuyG4; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-70e75f30452so5361127b3.2;
+        Thu, 10 Jul 2025 01:01:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752134477; x=1752739277; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zytixeyOaVsZsVPxMl3VgZGoSUYVIoQIYSgbcQtVoXQ=;
+        b=crrnuyG4gFQr9vvs/1EWKdh2sLX0lg5I/aUHSllId/p55hZvIItBPnId7hZlUORI+w
+         13N0k+HQiq5aPJv8GujyjfB3c5Ba8Y/y3cMZm2P2yo3oCsAc1H24S1KVerrbfFat1eJv
+         diUhA8q71ilTLUQlbEQKd/G8Iw3xQeIlfhNU99ki8YCyNCOoAhOCa8DlienEKD3/Rt1S
+         bGJ5OfUE5/7OrducZm+Udm9Ge8/a1CB77GADeWozQqEOsCo3FKurJOghXl+8BhekbN94
+         C3kdhgx2RzQAK90ya0sx+ufUiUVYkJS/N+LP8cT9jWwpScPsJor+Jgm5w3RI8n3iHwSq
+         OlDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752134477; x=1752739277;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zytixeyOaVsZsVPxMl3VgZGoSUYVIoQIYSgbcQtVoXQ=;
+        b=iVDxCFBBcuiLYy5kLlqpg2wEGcuWJjzDGeGOe9Fq1rkv9rbq2UmXzts+em93bQKOvK
+         /nj7ThH2VxE0WCElVMVtNxgN7n2oL9L97WNnI/CjkjhqNYZDbg5Vrf8xb+GL1MgsvKlG
+         H/cPhf5CDBq71qpZfJrU65UCIfAdcz74iqL8agiRktiPbgRK5HzZzRfbdpXjFC4VtWGE
+         CWi4hHFQ4NwwZseZGgip4hQiQqXZg0SfYfkuzOP0+gJ0mdEiIOz3rdaH/5hDUwac27+F
+         nLy5Jg6PcQoAkpJFCt0oj1fpeoVcbAsgharv2R2hyv3FGiuVE5Mb3DdcE/FpSXKQbd4y
+         MTHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhlqTiMBVi/RlxIThVvKVmrFFkfRFp/s3a5BCYquD6B0cs75tEi39Zn53iubh2a8lUHPIQAVpNIqUE@vger.kernel.org, AJvYcCVqgWd6FJ8RJ2tid1fyh4QAvuMGI5CJT1oIjPXDmB5joLzSsR8nT6n/eitElKsYt+nw3xlp8SLNHtMtWvM5@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxot6vdksBRvsQ+HG9wWciEleSd2X48KJx1gvMednggB8EKgB8
+	x9oGv67Hy+fDnUKagA/4P+CTbAl4lzxP6nbrs3esaKNsNZlIh5vjWa7+Xfx51QsdV/VttKJ1HdM
+	xpZXlkfLUEfvLuXY5xs+xU9zLjWFztKjL+Rxg
+X-Gm-Gg: ASbGncvIOLU+7HQrSIm/zvCPKJc4APbxsGL1UdbtY1Co7GhOue2+5fTvx2FC9+HC9QW
+	sb+7vHZ59yvabJlyOhcm+ppUmF1DEN93eVsOfpz+Y1V3771paeJHMuc/LRgXTCaBJ8q7ZbvyIQe
+	ut9JD+E4bf2VkJQA3GLT8aaIbw9pVWkCZd9B4HG+ITDa2F0kuQhk5YDwdblwt+rZ8bqlpJJTTCQ
+	A==
+X-Google-Smtp-Source: AGHT+IEHfohL6BddQFCBJF5UdoqN6sZoJbkktMXmVdH4C9V5wC78TIMDtZQ+tnpi8LTtBVs4kPjzw6NBsx8RBlPmAsg=
+X-Received: by 2002:a05:690c:ec8:b0:70c:b983:f058 with SMTP id
+ 00721157ae682-717b17a72admr87661067b3.14.1752134476376; Thu, 10 Jul 2025
+ 01:01:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250709181030.236190-1-arnd@kernel.org>
+From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Date: Thu, 10 Jul 2025 01:01:04 -0700
+X-Gm-Features: Ac12FXzd66TvqRlXuJxrYkqpUCznGITKmdrCgldXHCafXfCAIXhLgs89LXS0nRs
+Message-ID: <CAF3JpA7a0ExYEJ8_c7v7evKsV83s+_p7qUoH9uiYZLPxT_Md6g@mail.gmail.com>
+Subject: [syzbot] [ext4?] kernel BUG in ext4_update_inline_data
+To: syzbot+544248a761451c0df72f@syzkaller.appspotmail.com
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: multipart/mixed; boundary="00000000000010610706398e9916"
 
-On Wed, Jul 09, 2025 at 08:10:14PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Anders and Naresh found that the addition of the FS_IOC_GETLBMD_CAP
-> handling in the blockdev ioctl handler breaks all ioctls with
-> _IOC_NR==2, as the new command is not added to the switch but only
-> a few of the command bits are check.
-> 
-> Refine the check to also validate the direction/type/length bits,
-> but still allow all supported sizes for future extensions.
-> 
-> Move the new command to the end of the function to avoid slowing
-> down normal ioctl commands with the added branches.
-> 
-> Fixes: 9eb22f7fedfc ("fs: add ioctl to query metadata and protection info capabilities")
-> Link: https://lore.kernel.org/all/CA+G9fYvk9HHE5UJ7cdJHTcY6P5JKnp+_e+sdC5U-ZQFTP9_hqQ@mail.gmail.com/
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+--00000000000010610706398e9916
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks!
+#syz test
 
-> It seems that we have a lot of drivers with the same bug, as the
-> large majority of all _IOC_NR() users in the kernel fail to also
-> check the other bits of the ioctl command code. There are currently
-> 55 files referencing _IOC_NR, and they all need to be manually
-> checked for this problem.
-> ---
+--00000000000010610706398e9916
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-ext4-bail-out-when-INLINE_DATA_FL-lacks-system.data-.patch"
+Content-Disposition: attachment; 
+	filename="0001-ext4-bail-out-when-INLINE_DATA_FL-lacks-system.data-.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mcx3hgod0>
+X-Attachment-Id: f_mcx3hgod0
 
-The current documentation in Documentation/dev-tools/checkuapi.rst needs
-updating too then.
-
-I want this to work. So as a start we should have a common static inline
-helper that encapsulates the barrage of checks.
-
->  block/ioctl.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/block/ioctl.c b/block/ioctl.c
-> index 9ad403733e19..5e5a422bd09f 100644
-> --- a/block/ioctl.c
-> +++ b/block/ioctl.c
-> @@ -567,9 +567,6 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
->  {
->  	unsigned int max_sectors;
->  
-> -	if (_IOC_NR(cmd) == _IOC_NR(FS_IOC_GETLBMD_CAP))
-> -		return blk_get_meta_cap(bdev, cmd, argp);
-> -
->  	switch (cmd) {
->  	case BLKFLSBUF:
->  		return blkdev_flushbuf(bdev, cmd, arg);
-> @@ -647,9 +644,16 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
->  		return blkdev_pr_preempt(bdev, mode, argp, true);
->  	case IOC_PR_CLEAR:
->  		return blkdev_pr_clear(bdev, mode, argp);
-> -	default:
-> -		return -ENOIOCTLCMD;
->  	}
-> +
-> +	if (_IOC_DIR(cmd)  == _IOC_DIR(FS_IOC_GETLBMD_CAP) &&
-> +	    _IOC_TYPE(cmd) == _IOC_TYPE(FS_IOC_GETLBMD_CAP) &&
-> +	    _IOC_NR(cmd)   == _IOC_NR(FS_IOC_GETLBMD_CAP) &&
-> +	    _IOC_SIZE(cmd) >= LBMD_SIZE_VER0 &&
-> +	    _IOC_SIZE(cmd) <= _IOC_SIZE(FS_IOC_GETLBMD_CAP))
-
-This part is wrong as we handle larger sizes just fine via
-copy_struct_{from,to}_user().
-
-Arnd, objections to writing it as follows?:
-
-diff --git a/block/ioctl.c b/block/ioctl.c
-index 9ad403733e19..9887ec55f8ce 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -567,9 +567,6 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
- {
-        unsigned int max_sectors;
-
--       if (_IOC_NR(cmd) == _IOC_NR(FS_IOC_GETLBMD_CAP))
--               return blk_get_meta_cap(bdev, cmd, argp);
--
-        switch (cmd) {
-        case BLKFLSBUF:
-                return blkdev_flushbuf(bdev, cmd, arg);
-@@ -647,9 +644,25 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
-                return blkdev_pr_preempt(bdev, mode, argp, true);
-        case IOC_PR_CLEAR:
-                return blkdev_pr_clear(bdev, mode, argp);
--       default:
--               return -ENOIOCTLCMD;
-        }
-+
-+       /* extensible ioctls */
-+       switch (_IOC_NR(cmd)) {
-+       case _IOC_NR(FS_IOC_GETLBMD_CAP):
-+               if (_IOC_DIR(cmd) != _IOC_DIR(FS_IOC_GETLBMD_CAP))
-+                       break;
-+               if (_IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_GETLBMD_CAP))
-+                       break;
-+               if (_IOC_NR(cmd) != _IOC_NR(FS_IOC_GETLBMD_CAP))
-+                       break;
-+               if (_IOC_SIZE(cmd) < LBMD_SIZE_VER0)
-+                       break;
-+               if (_IOC_SIZE(cmd) > PAGE_SIZE)
-+                       break;
-+               return blk_get_meta_cap(bdev, cmd, argp);
-+       }
-+
-+       return -ENOIOCTLCMD;
- }
-
- /*
-
-And can I ask you to please take a look at fs/pidfs.c:pidfd_ioctl() and
-fs/nsfs.c:ns_ioctl()?
-
+RnJvbSA0YzkxMGFjOTg5ZTdhNmQ5NzU2NWE2NzY3N2ExZWU4OGUyZDFhOWFkIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNb29uIEhlZSBMZWUgPG1vb25oZWUubGVlLmNhQGdtYWlsLmNv
+bT4KRGF0ZTogVGh1LCAxMCBKdWwgMjAyNSAwMDozNjo1OSAtMDcwMApTdWJqZWN0OiBbUEFUQ0hd
+IGV4dDQ6IGJhaWwgb3V0IHdoZW4gSU5MSU5FX0RBVEFfRkwgbGFja3Mgc3lzdGVtLmRhdGEgeGF0
+dHIKCkEgc3l6Ym90IGZ1enplZCBpbWFnZSB0cmlnZ2VyZWQgYSBCVUdfT04gaW4gZXh0NF91cGRh
+dGVfaW5saW5lX2RhdGEoKQp3aGVuIGFuIGlub2RlIGhhZCB0aGUgSU5MSU5FX0RBVEFfRkwgZmxh
+ZyBzZXQgYnV0IHdhcyBtaXNzaW5nIHRoZQpzeXN0ZW0uZGF0YSBleHRlbmRlZCBhdHRyaWJ1dGUu
+CgpleHQ0X3ByZXBhcmVfaW5saW5lX2RhdGEoKSBub3cgY2hlY2tzIGZvciB0aGUgcHJlc2VuY2Ug
+b2YgdGhhdCB4YXR0cgphbmQgcmV0dXJucyAtRUZTQ09SUlVQVEVEIGlmIGl0IGlzIG1pc3Npbmcs
+IHByZXZlbnRpbmcgY29ycnVwdGVkIGlub2Rlcwpmcm9tIHJlYWNoaW5nIHRoZSB1cGRhdGUgcGF0
+aCBhbmQgdHJpZ2dlcmluZyBhIGNyYXNoLgoKUHJvb2YgZnJvbSBlMmZzY2sgb24gdGhlIGZ1enpl
+ZCBpbWFnZToKCiAgICAkIGUyZnNjayAtZm4gbW91bnRfMAogICAgZTJmc2NrIDEuNDcuMCAoNS1G
+ZWItMjAyMykKICAgIE9uZSBvciBtb3JlIGJsb2NrIGdyb3VwIGRlc2NyaXB0b3IgY2hlY2tzdW1z
+IGFyZSBpbnZhbGlkLiAgRml4PyBubwoKICAgIEdyb3VwIGRlc2NyaXB0b3IgMCBjaGVja3N1bSBp
+cyAweDgyNDUsIHNob3VsZCBiZSAweDM1M2EuICBJR05PUkVELgogICAgUGFzcyAxOiBDaGVja2lu
+ZyBpbm9kZXMsIGJsb2NrcywgYW5kIHNpemVzCiAgICBJbm9kZSAxMiBoYXMgSU5MSU5FX0RBVEFf
+RkwgZmxhZyBidXQgZXh0ZW5kZWQgYXR0cmlidXRlIG5vdCBmb3VuZC4gIFRydW5jYXRlPyBubwoK
+ICAgIElub2RlIDE2LCBpX2Jsb2NrcyBpcyAzMjk4NTM0ODgzMzQ2LCBzaG91bGQgYmUgMTguICBG
+aXg/IG5vCgogICAgSW5vZGUgMTcsIGlfYmxvY2tzIGlzIDE3NTkyMTg2MDQ0NDE2LCBzaG91bGQg
+YmUgMC4gIEZpeD8gbm8KCiAgICBQYXNzIDI6IENoZWNraW5nIGRpcmVjdG9yeSBzdHJ1Y3R1cmUK
+ICAgIFN5bWxpbmsgL2ZpbGUwL2ZpbGUxIChpbm9kZSAjMTQpIGlzIGludmFsaWQuCiAgICBDbGVh
+cj8gbm8KCiAgICBFbnRyeSAnZmlsZTEnIGluIC9maWxlMCAoMTIpIGhhcyBhbiBpbmNvcnJlY3Qg
+ZmlsZXR5cGUgKHdhcyA3LCBzaG91bGQgYmUgMCkuCiAgICBGaXg/IG5vCgogICAgRGlyZWN0b3J5
+IGlub2RlIDExLCBibG9jayAjNSwgb2Zmc2V0IDA6IGRpcmVjdG9yeSBjb3JydXB0ZWQKICAgIFNh
+bHZhZ2U/IG5vCgogICAgZTJmc2NrOiBhYm9ydGVkCgogICAgc3l6a2FsbGVyOiAqKioqKioqKioq
+IFdBUk5JTkc6IEZpbGVzeXN0ZW0gc3RpbGwgaGFzIGVycm9ycyAqKioqKioqKioqCgpTaWduZWQt
+b2ZmLWJ5OiBNb29uIEhlZSBMZWUgPG1vb25oZWUubGVlLmNhQGdtYWlsLmNvbT4KLS0tCiBmcy9l
+eHQ0L2lubGluZS5jIHwgMjIgKysrKysrKysrKysrKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQs
+IDIyIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9mcy9leHQ0L2lubGluZS5jIGIvZnMvZXh0
+NC9pbmxpbmUuYwppbmRleCBhMWJiY2RmNDA4MjQuLmQ5ZGNiMGIwOWU1YyAxMDA2NDQKLS0tIGEv
+ZnMvZXh0NC9pbmxpbmUuYworKysgYi9mcy9leHQ0L2lubGluZS5jCkBAIC0zOTksNiArMzk5LDEz
+IEBAIHN0YXRpYyBpbnQgZXh0NF91cGRhdGVfaW5saW5lX2RhdGEoaGFuZGxlX3QgKmhhbmRsZSwg
+c3RydWN0IGlub2RlICppbm9kZSwKIHN0YXRpYyBpbnQgZXh0NF9wcmVwYXJlX2lubGluZV9kYXRh
+KGhhbmRsZV90ICpoYW5kbGUsIHN0cnVjdCBpbm9kZSAqaW5vZGUsCiAJCQkJICAgIGxvZmZfdCBs
+ZW4pCiB7CisJc3RydWN0IGV4dDRfeGF0dHJfaWJvZHlfZmluZCBpcyA9IHsKKwkJLnMgPSB7IC5u
+b3RfZm91bmQgPSAtRU5PREFUQSwgfSwKKwl9OworCXN0cnVjdCBleHQ0X3hhdHRyX2luZm8gaSA9
+IHsKKwkJLm5hbWVfaW5kZXggPSBFWFQ0X1hBVFRSX0lOREVYX1NZU1RFTSwKKwkJLm5hbWUgPSBF
+WFQ0X1hBVFRSX1NZU1RFTV9EQVRBLAorCX07CiAJaW50IHJldCwgc2l6ZSwgbm9fZXhwYW5kOwog
+CXN0cnVjdCBleHQ0X2lub2RlX2luZm8gKmVpID0gRVhUNF9JKGlub2RlKTsKIApAQCAtNDA5LDYg
+KzQxNiwxOSBAQCBzdGF0aWMgaW50IGV4dDRfcHJlcGFyZV9pbmxpbmVfZGF0YShoYW5kbGVfdCAq
+aGFuZGxlLCBzdHJ1Y3QgaW5vZGUgKmlub2RlLAogCWlmIChzaXplIDwgbGVuKQogCQlyZXR1cm4g
+LUVOT1NQQzsKIAorCXJldCA9IGV4dDRfZ2V0X2lub2RlX2xvYyhpbm9kZSwgJmlzLmlsb2MpOwor
+CWlmIChyZXQpCisJCWdvdG8gb3V0OworCisJcmV0ID0gZXh0NF94YXR0cl9pYm9keV9maW5kKGlu
+b2RlLCAmaSwgJmlzKTsKKwlpZiAocmV0KQorCQlnb3RvIG91dDsKKworCWlmIChpcy5zLm5vdF9m
+b3VuZCkgeworCQlyZXQgPSAtRUZTQ09SUlVQVEVEOworCQlnb3RvIG91dDsKKwl9CisKIAlleHQ0
+X3dyaXRlX2xvY2tfeGF0dHIoaW5vZGUsICZub19leHBhbmQpOwogCiAJaWYgKGVpLT5pX2lubGlu
+ZV9vZmYpCkBAIC00MTcsNiArNDM3LDggQEAgc3RhdGljIGludCBleHQ0X3ByZXBhcmVfaW5saW5l
+X2RhdGEoaGFuZGxlX3QgKmhhbmRsZSwgc3RydWN0IGlub2RlICppbm9kZSwKIAkJcmV0ID0gZXh0
+NF9jcmVhdGVfaW5saW5lX2RhdGEoaGFuZGxlLCBpbm9kZSwgbGVuKTsKIAogCWV4dDRfd3JpdGVf
+dW5sb2NrX3hhdHRyKGlub2RlLCAmbm9fZXhwYW5kKTsKK291dDoKKwlicmVsc2UoaXMuaWxvYy5i
+aCk7CiAJcmV0dXJuIHJldDsKIH0KIAotLSAKMi40My4wCgo=
+--00000000000010610706398e9916--
 
