@@ -1,144 +1,104 @@
-Return-Path: <linux-kernel+bounces-725474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA08AFFF93
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:47:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C95EAFFF96
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3192E1C280F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:47:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 301D25A46CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC6E2E49A3;
-	Thu, 10 Jul 2025 10:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762E22DEA7B;
+	Thu, 10 Jul 2025 10:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BKk6Jbww"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jAUJfQ1E";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2+vSIxPP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E22B2E11B6
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DDF2D3ED2
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752144442; cv=none; b=UX9guHQ9xyeb7vdydso8uOPtVFsj8+vHhJllaaWXRcwYsA0nsfD3MZO7iXogGL++CFzFtZqROSJh0WHxH5X5gVvdU+2ghTTnoQFWtLQxzQWwloMSan78jvrJEfLY8dTGQ7F1y9cDVTUfZFf0OhoNKxlUXKWLO+N+5eqOmDuMWds=
+	t=1752144465; cv=none; b=JhEObL47jl6rMoisYMN6idsAwstprLnA6CToJeWM4hSZPMsGm/hmxeGHOMrdzIRMIQShVRGXHRUhPfgjWLAArAB7F0RyCx8Wdl7/AR4eg7bB+1Z31KwdBoBpP9OsZxGnRQnj7d2WJe5PG48XddoBDjWQVokq1frYS8KH7lJlJqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752144442; c=relaxed/simple;
-	bh=SOep39LCruQJ5eUJmcxYU0zPt7Rxb5VZwOl88D+y7tQ=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=C8c/ZAMG3Bw+jwh/VAvVYW8lqrD/pYmsRWNzc29krbZyTznHUkzE7iJ2kCKQlcbssb+rCfYvmsMmaU13b6mlUK0FT+tT23DjDPf/oXa04Nnl038Vbr9/NvdY4ftm8jAWZ4fvcVwADUh/CAWXV+e4TJs6t/xw1q/mSTYbN2pd6Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BKk6Jbww; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752144439;
+	s=arc-20240116; t=1752144465; c=relaxed/simple;
+	bh=PagKpfrg/CoVjOCw2gulRvIjEDVrXdnTDmoAFAYLbnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9ipB3Yzoq7w6sTYkjQZ6wVIBYHT+8IIQSYGAg9YhVMT0EdyyWdEA/bD2BmGiJzHFC6m+otV2Wx2siNC7VhM7HSb3g7rpEJQZP02THBVkKhnRNIdFWG/qIPKY/afYUBYytppTacbWSaKgLOPo91ADekSiav4asc24H+2tH/v1uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jAUJfQ1E; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2+vSIxPP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 10 Jul 2025 12:47:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752144462;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=q0u3HIoTZyqgg631O8XZeTrysi+dlK3ZJXgoQ/uYQ84=;
-	b=BKk6Jbww2FSrepC5BeSV/XFncmwRmMhgnhmgTd7M6V+y0Cfv53s1qBnI0dfw5iNsxOvxjy
-	4CRZJ1ypVF3lPJFGe3oml2St1AFYiBPvOUw/I8wgjmrXrzNb1pOvRJUvI8liGyCBvsv4mp
-	yMI7fW12/dStW9Eqfuz8Z8M6JK418is=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-408-Qs5apeF0MfKwPreNiR2KRQ-1; Thu,
- 10 Jul 2025 06:47:16 -0400
-X-MC-Unique: Qs5apeF0MfKwPreNiR2KRQ-1
-X-Mimecast-MFC-AGG-ID: Qs5apeF0MfKwPreNiR2KRQ_1752144434
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D985519560B0;
-	Thu, 10 Jul 2025 10:47:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 488C719373D8;
-	Thu, 10 Jul 2025 10:47:09 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com>
-References: <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com> <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com> <2724318.1752066097@warthog.procyon.org.uk> <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com> <2738562.1752092552@warthog.procyon.org.uk>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Viacheslav Dubeyko <slava@dubeyko.com>,
-    Alex Markuze <amarkuze@redhat.com>, Steve French <sfrench@samba.org>,
-    Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
+	bh=PagKpfrg/CoVjOCw2gulRvIjEDVrXdnTDmoAFAYLbnw=;
+	b=jAUJfQ1EsTwFcysThuS+KO9PEGuqZEh8nGOZoo43TMNHng3gpe2oFLkTUJkWD4cm1Y2ODq
+	KTD+oTny42JjNrXzm5glxn8ojp4m+SR5pHIbSqBVuTDJkyAZPlzehHaRrAFEbQEEIoh4wr
+	UUHxuZqwPaffva1EWAZeY7AzUhBc7qTSWru2uaSVcv7sjlzDd1WIt/bIRmOTpamqvkwj6h
+	LUuKFwPryCWMuVeWvissTzVbrnbqijztda1jM3HkJAtRK0KQbNnZ9Zi9EhYriilWuz00rz
+	a/HqFeglH/Wvzuo2jdRUzEiPgmurVwll7zCZ1WfLQBK7+HTnYyuo8DKspRMmkg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752144462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PagKpfrg/CoVjOCw2gulRvIjEDVrXdnTDmoAFAYLbnw=;
+	b=2+vSIxPPORjjdSfzFFX7diVuu+QwkLrVLn6SAUealHMHy8JhJt9CiQe6FLy2xp3L/OEbfF
+	ipygo0MoeCe4M6DA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: "Chen, Yu C" <yu.c.chen@intel.com>
+Cc: kernel test robot <oliver.sang@intel.com>,
+	Ingo Molnar <mingo@kernel.org>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mel Gorman <mgorman@suse.de>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	aubrey.li@linux.intel.com
+Subject: Re: [tip:sched/core] [sched/smp] 06ddd17521:
+ BUG:using_smp_processor_id()in_preemptible
+Message-ID: <20250710104740.XLv9MRX1@linutronix.de>
+References: <202507100448.6b88d6f1-lkp@intel.com>
+ <6cf071f3-ff5b-4025-8ce7-2f2cceb03984@intel.com>
+ <20250710062528.T-Obm39T@linutronix.de>
+ <292e70ed-aae5-4f52-8f85-80cba7ff301d@intel.com>
+ <20250710081114.5wnABNG7@linutronix.de>
+ <99573578-95e8-4b97-b2c8-d8229e4816e5@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2807749.1752144428.1@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 10 Jul 2025 11:47:08 +0100
-Message-ID: <2807750.1752144428@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <99573578-95e8-4b97-b2c8-d8229e4816e5@intel.com>
 
-Hi Max,
+On 2025-07-10 16:29:51 [+0800], Chen, Yu C wrote:
+> I see. So there is still a CONFIG_SMP to check migrate_disbled
+> in debug_smp_processor_id(), and that was skipped if we do not
+> have CONFIG_SMP set.
 
-I managed to reproduce it on my test machine with ceph + fscache.
+Exactly, sorry for that.
+I planned to let you do the figuring out and sending the patch but got
+confused midway, had to look it up and then had the patch ready and
+decided to send it=E2=80=A6
 
-Does this fix the problem for you?
-
-David
----
-netfs: Fix copy-to-cache so that it performs collection with ceph+fscache
-
-The netfs copy-to-cache that is used by Ceph with local caching sets up a
-new request to write data just read to the cache.  The request is started
-and then left to look after itself whilst the app continues.  The request
-gets notified by the backing fs upon completion of the async DIO write, bu=
-t
-then tries to wake up the app because NETFS_RREQ_OFFLOAD_COLLECTION isn't
-set - but the app isn't waiting there, and so the request just hangs.
-
-Fix this by setting NETFS_RREQ_OFFLOAD_COLLECTION which causes the
-notification from the backing filesystem to put the collection onto a work
-queue instead.
-
-Fixes: e2d46f2ec332 ("netfs: Change the read result collector to only use =
-one work item")
-Reported-by: Max Kellermann <max.kellermann@ionos.com>
-Link: https://lore.kernel.org/r/CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=3DshxyGLwfe-L=
-7AV3DhebS3w@mail.gmail.com/
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: Alex Markuze <amarkuze@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: netfs@lists.linux.dev
-cc: ceph-devel@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: stable@vger.kernel.org
----
- fs/netfs/read_pgpriv2.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
-index 5bbe906a551d..080d2a6a51d9 100644
---- a/fs/netfs/read_pgpriv2.c
-+++ b/fs/netfs/read_pgpriv2.c
-@@ -110,6 +110,7 @@ static struct netfs_io_request *netfs_pgpriv2_begin_co=
-py_to_cache(
- 	if (!creq->io_streams[1].avail)
- 		goto cancel_put;
- =
-
-+	__set_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &creq->flags);
- 	trace_netfs_write(creq, netfs_write_trace_copy_to_cache);
- 	netfs_stat(&netfs_n_wh_copy_to_cache);
- 	rreq->copy_to_cache =3D creq;
-
+> thanks,
+> Chenyu>> Thanks,
+Sebastian
 
