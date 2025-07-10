@@ -1,204 +1,236 @@
-Return-Path: <linux-kernel+bounces-725872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05CEBB004E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:16:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7945EB004E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F9B1C40F42
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:16:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 800747B3935
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2E22727FB;
-	Thu, 10 Jul 2025 14:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="OIDPkdGX"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5B3271A84;
+	Thu, 10 Jul 2025 14:16:15 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049A8231A24;
-	Thu, 10 Jul 2025 14:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752156944; cv=pass; b=DRHq9dtcO5+mEYaUySW3PK9LzWD7wNawODkoQbem7wxIurpaCUNom5Z4gRDEu6XPehbL0h7j4jEMe2PHcEJgi/hQt1pEHYKU4fez4ehm0wo69i+F5Rfv9VFBrlG44ocmD2HnLmgM+E+HiLbIXa40lAZOfQWMYereCxWRM2eCa+s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752156944; c=relaxed/simple;
-	bh=VkWIov4pncN1CxRUjWnTedpZphrnmnhBJGxO59cUQio=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n2CQrgplkTih2p4fEEmR0nElUcznkLn245ObJbRF1vHfJR4RRvbBh8ObswkBTzAOEMH3zQhxNTR3y7r+hAvb4l3qBnmyz+sYhH+CmzBGPBkbdpxympvPUcR1Q6v055HhvdzUVjF4wxUUPe5jXwBr8WmhQSDfyGpe3YJ9wd1fclY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=OIDPkdGX; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752156866; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BxbU6/hBdzFK5J83uPrxiRnMJK5DwDubdmhCFsE8xTFJLhOQwhMIoE0J/wBnyQyVlNelxEurbeyG3Xb5KTEPiBLS8OuGd9aH4/YeNeOF16WOmHfai83x8rCj2fNCFcM8D0abUMGw+4K606NNNvOwossKZ2ZMZhpe21y84FzzmbQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752156866; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+Bd1ScZrM2JC5+XfTmUMVfKPSMOMu2+hKdobUpn9uAo=; 
-	b=AWvkfaannUwK9VBk/+ID3M8INlNR+LiGkN7SOXEEnqmMuDP4zI3T+5yxF6efYDCxhR+Z8TG8xY5n450grEiA0kOdZ/E3Nz80+CF01Blo8mcW30Zc5SpF8UpJdaUFNybrwuCMUjWqAScmFQb47e2MLe3O+kweM9JCdjLvuO2frAU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752156866;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=+Bd1ScZrM2JC5+XfTmUMVfKPSMOMu2+hKdobUpn9uAo=;
-	b=OIDPkdGXgEeMzXE5rpruOGW/k17fl/ejoogEYAs4cEaibKURNF8jt9+ONc15Ma8w
-	ynSLNOGF5peSetDKVHK6VxLJi/C1EuJNxkmowaFbwvPQuPK8ez2Ud3aSag9e1SxQypg
-	MVpEQC+ZI+L9/HgMSDY9Yc3FhtnaiQxRiVysRfBA=
-Received: by mx.zohomail.com with SMTPS id 1752156862699411.0438114787785;
-	Thu, 10 Jul 2025 07:14:22 -0700 (PDT)
-Message-ID: <d4e9f38b-895e-45ea-90db-3c2839c76c70@collabora.com>
-Date: Thu, 10 Jul 2025 19:14:15 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C1913C3F2
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752156975; cv=none; b=oTAj8tGxK8l4KnxHnkYV/fUwj+hTZWyfH6dq94h1JKJxq+LGSXG59vNv5gOtJ2vFvZ4O/fHI2HMbxBC+duWM/NYkwkqEazqoRyCb0Y0cPQ7HTIC8+f9NGs+1hPuT1nbc8hhO+ngdm/UAL/rdYO2BjBWx+PSeXdYqhL+kyFjT3u8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752156975; c=relaxed/simple;
+	bh=c1ifoubkcy4+/WwPHlkZXEaCUsq5M2tanwIhbni9MCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HPS67U/XRSei0zWNqlLwmqyHJbl+ApEHnZ++vH8PXq69o8SXTNYqYCw3y07IFQJ7jcP87OBNw/6LwOL1FFySlZPWldWDR7Mwf3JcRuVnAlK9ZpytPmP0h6e3PsQJsGOldwbFOfQZ9zl54qbx2PJORgnmXhmBFiXvJDI4OR4Ao00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 0645514010C;
+	Thu, 10 Jul 2025 14:16:04 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 981AB30;
+	Thu, 10 Jul 2025 14:16:03 +0000 (UTC)
+Date: Thu, 10 Jul 2025 10:16:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: [for-next][PATCH] tracing: ring_buffer: Rewind persistent ring
+ buffer on reboot
+Message-ID: <20250710101603.02970da4@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] bus: mhi: host: keep bhi buffer through suspend cycle
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
- Manivannan Sadhasivam <mani@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
- Youssef Samir <quic_yabdulra@quicinc.com>,
- Matthew Leung <quic_mattleun@quicinc.com>, Yan Zhen <yanzhen@vivo.com>,
- Alexander Wilhelm <alexander.wilhelm@westermo.com>,
- Alex Elder <elder@kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Siddartha Mohanadoss <smohanad@codeaurora.org>,
- Sujeev Dias <sdias@codeaurora.org>, Julia Lawall <julia.lawall@lip6.fr>,
- John Crispin <john@phrozen.org>, Muna Sinada <quic_msinada@quicinc.com>,
- Venkateswara Naralasetty <quic_vnaralas@quicinc.com>,
- Maharaja Kennadyrajan <quic_mkenna@quicinc.com>, mhi@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
-Cc: kernel@collabora.com
-References: <20250630074330.253867-1-usama.anjum@collabora.com>
- <20250630074330.253867-2-usama.anjum@collabora.com>
- <b76cfe82-b977-4166-85d8-368539b392fd@oss.qualcomm.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <b76cfe82-b977-4166-85d8-368539b392fd@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: w4ihbhubpm1rhex8rabuesespujtoxqu
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 981AB30
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19PP3n/frLQjfDacq2cq9oJAz+5R7rL0bM=
+X-HE-Tag: 1752156963-936725
+X-HE-Meta: U2FsdGVkX190/vLj9QY9D5lW5+DNJ5ELhOIDLalhSoy29mWW6f3+6LH5WLGrPOX6zAP9EBPpmlaVi/7yR2V9A2p3AeYe5DiiLUWtHfllMxH7PNDK+Pi/iXLUTvlZFAqLn5fOO5oqbMqzfSglxYKpzfngnsi7Ly6WWlFX3U2+FSCXbVEZPg3pO6R36CWe7D/rVDUlKDNvKTnrrWoFzD3QYlFOmg9OKarxNcfb8LMRsMNlI1/pWRDYh97uQdihxTDALoLFDK2s/txE5ESW5UylQtG7TGfkNSUi1gxDeDOiV1/7tZIHYujDVJ8hn1Ht2u2GiQ+RnR3W6T2rg17ht3Ykg9TE4hgvEpSUhZb+2GrmiyjwaG4L0bHFD0gfIWvwyNTLnDCPNhWgWoEH6UA39kI8bqOq0JXyTQ0/1wHOlH0IUorPM4zVh+M1okWzbNTuC0HyZw/KT6lC0AO5lAl1HSWB1mZMaTy4PFtzZZfbzRmFquM=
 
-Thank you so much for review.
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ring-buffer/for-next
 
-On 7/8/25 2:47 PM, Krishna Chaitanya Chundru wrote:
-> 
-> 
-> On 6/30/2025 1:13 PM, Muhammad Usama Anjum wrote:
->> When there is memory pressure, at resume time dma_alloc_coherent()
->> returns error which in turn fails the loading of firmware and hence
->> the driver crashes:
->>
-> why only bhi? bhie can also have same issue.
-I was thinking I'd handled all bhie cases in earlier patch. But I haven't. I'll post
-fix for bhie in next version.
+Head SHA1: ca296d32ece38b07113bad64e08add75073a0e2b
 
->> kernel: kworker/u33:5: page allocation failure: order:7,
->> mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
->> kernel: CPU: 1 UID: 0 PID: 7693 Comm: kworker/u33:5 Not tainted
->> 6.11.11-valve17-1-neptune-611-g027868a0ac03 #1
->> 3843143b92e9da0fa2d3d5f21f51beaed15c7d59
->> kernel: Hardware name: Valve Galileo/Galileo, BIOS F7G0112 08/01/2024
->> kernel: Workqueue: mhi_hiprio_wq mhi_pm_st_worker [mhi]
->> kernel: Call Trace:
->> kernel:  <TASK>
->> kernel:  dump_stack_lvl+0x4e/0x70
->> kernel:  warn_alloc+0x164/0x190
->> kernel:  ? srso_return_thunk+0x5/0x5f
->> kernel:  ? __alloc_pages_direct_compact+0xaf/0x360
->> kernel:  __alloc_pages_slowpath.constprop.0+0xc75/0xd70
->> kernel:  __alloc_pages_noprof+0x321/0x350
->> kernel:  __dma_direct_alloc_pages.isra.0+0x14a/0x290
->> kernel:  dma_direct_alloc+0x70/0x270
->> kernel:  mhi_fw_load_handler+0x126/0x340 [mhi
->> a96cb91daba500cc77f86bad60c1f332dc3babdf]
->> kernel:  mhi_pm_st_worker+0x5e8/0xac0 [mhi
->> a96cb91daba500cc77f86bad60c1f332dc3babdf]
->> kernel:  ? srso_return_thunk+0x5/0x5f
->> kernel:  process_one_work+0x17e/0x330
->> kernel:  worker_thread+0x2ce/0x3f0
->> kernel:  ? __pfx_worker_thread+0x10/0x10
->> kernel:  kthread+0xd2/0x100
->> kernel:  ? __pfx_kthread+0x10/0x10
->> kernel:  ret_from_fork+0x34/0x50
->> kernel:  ? __pfx_kthread+0x10/0x10
->> kernel:  ret_from_fork_asm+0x1a/0x30
->> kernel:  </TASK>
->> kernel: Mem-Info:
->> kernel: active_anon:513809 inactive_anon:152 isolated_anon:0
->>      active_file:359315 inactive_file:2487001 isolated_file:0
->>      unevictable:637 dirty:19 writeback:0
->>      slab_reclaimable:160391 slab_unreclaimable:39729
->>      mapped:175836 shmem:51039 pagetables:4415
->>      sec_pagetables:0 bounce:0
->>      kernel_misc_reclaimable:0
->>      free:125666 free_pcp:0 free_cma:0
->>
->> In above example, if we sum all the consumed memory, it comes out
->> to be 15.5GB and free memory is ~ 500MB from a total of 16GB RAM.
->> Even though memory is present. But all of the dma memory has been
->> exhausted or fragmented.
->>
->> Fix it by allocating it only once and then reuse the same allocated
->> memory. As we'll allocate this memory only once, this memory will stay
->> allocated.
->>
->> Tested-on: WCN6855 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
->>
->> Fixes: cd457afb1667 ("bus: mhi: core: Add support for downloading firmware over BHIe")
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->> Reported here:
->> https://lore.kernel.org/all/ead32f5b-730a-4b81-b38f-93d822f990c6@collabora.com
->>
->> Still a lot of more fixes are required. Hence, I'm not adding closes tag.
->> ---
->>   drivers/bus/mhi/host/boot.c     | 19 ++++++++++---------
->>   drivers/bus/mhi/host/init.c     |  5 +++++
->>   drivers/bus/mhi/host/internal.h |  2 ++
->>   include/linux/mhi.h             |  1 +
->>   4 files changed, 18 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/bus/mhi/host/boot.c b/drivers/bus/mhi/host/boot.c
->> index b3a85aa3c4768..11bb8c12ac597 100644
->> --- a/drivers/bus/mhi/host/boot.c
->> +++ b/drivers/bus/mhi/host/boot.c
->> @@ -302,8 +302,8 @@ static int mhi_fw_load_bhi(struct mhi_controller *mhi_cntrl,
->>       return -EIO;
->>   }
->>   -static void mhi_free_bhi_buffer(struct mhi_controller *mhi_cntrl,
->> -                struct image_info *image_info)
->> +void mhi_free_bhi_buffer(struct mhi_controller *mhi_cntrl,
->> +             struct image_info *image_info)
->>   {
->>       struct mhi_buf *mhi_buf = image_info->mhi_buf;
->>   @@ -455,18 +455,19 @@ static enum mhi_fw_load_type mhi_fw_load_type_get(const struct mhi_controller *m
->>     static int mhi_load_image_bhi(struct mhi_controller *mhi_cntrl, const u8 *fw_data, size_t size)
->>   {
->> -    struct image_info *image;
->> +    struct image_info *image = mhi_cntrl->bhi_image;
->>       int ret;
->>   -    ret = mhi_alloc_bhi_buffer(mhi_cntrl, &image, size);
->> -    if (ret)
->> -        return ret;
->> +    if (!image) {
->> +        ret = mhi_alloc_bhi_buffer(mhi_cntrl, &image, size);
->> +        if (ret)
->> +            return ret;
->>   -    /* Load the firmware into BHI vec table */
->> -    memcpy(image->mhi_buf->buf, fw_data, size);
->> +        /* Load the firmware into BHI vec table */
->> +        memcpy(image->mhi_buf->buf, fw_data, size);
->> +    }
->>         ret = mhi_fw_load_bhi(mhi_cntrl, &image->mhi_buf[image->entries - 1]);
-> if mhi fw load fails didn't we need to free bhi buffer.
-Good point. I'll fix in v2.
 
+Masami Hiramatsu (Google) (1):
+      tracing: ring_buffer: Rewind persistent ring buffer on reboot
+
+----
+ kernel/trace/ring_buffer.c | 103 +++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 100 insertions(+), 3 deletions(-)
+---------------------------
+commit ca296d32ece38b07113bad64e08add75073a0e2b
+Author: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Date:   Wed Jun 4 09:10:21 2025 +0900
+
+    tracing: ring_buffer: Rewind persistent ring buffer on reboot
+    
+    Rewind persistent ring buffer pages which have been read in the previous
+    boot. Those pages are highly possible to be lost before writing it to the
+    disk if the previous kernel crashed. In this case, the trace data is kept
+    on the persistent ring buffer, but it can not be read because its commit
+    size has been reset after read.  This skips clearing the commit size of
+    each sub-buffer and recover it after reboot.
+    
+    Note: If you read the previous boot data via trace_pipe, that is not
+    accessible in that time. But reboot without clearing (or reusing) the read
+    data, the read data is recovered again in the next boot.
+    
+    Thus, when you read the previous boot data, clear it by `echo > trace`.
+    
+    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+    Link: https://lore.kernel.org/174899582116.955054.773265393511190051.stgit@mhiramat.tok.corp.google.com
+    Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 00fc38d70e86..a99ed4716de9 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -1358,6 +1358,13 @@ static inline void rb_inc_page(struct buffer_page **bpage)
+ 	*bpage = list_entry(p, struct buffer_page, list);
+ }
+ 
++static inline void rb_dec_page(struct buffer_page **bpage)
++{
++	struct list_head *p = rb_list_head((*bpage)->list.prev);
++
++	*bpage = list_entry(p, struct buffer_page, list);
++}
++
+ static struct buffer_page *
+ rb_set_head_page(struct ring_buffer_per_cpu *cpu_buffer)
+ {
+@@ -1866,10 +1873,11 @@ static int rb_validate_buffer(struct buffer_data_page *dpage, int cpu)
+ static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
+ {
+ 	struct ring_buffer_cpu_meta *meta = cpu_buffer->ring_meta;
+-	struct buffer_page *head_page;
++	struct buffer_page *head_page, *orig_head;
+ 	unsigned long entry_bytes = 0;
+ 	unsigned long entries = 0;
+ 	int ret;
++	u64 ts;
+ 	int i;
+ 
+ 	if (!meta || !meta->head_buffer)
+@@ -1885,8 +1893,98 @@ static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
+ 	entry_bytes += local_read(&cpu_buffer->reader_page->page->commit);
+ 	local_set(&cpu_buffer->reader_page->entries, ret);
+ 
+-	head_page = cpu_buffer->head_page;
++	orig_head = head_page = cpu_buffer->head_page;
++	ts = head_page->page->time_stamp;
++
++	/*
++	 * Try to rewind the head so that we can read the pages which already
++	 * read in the previous boot.
++	 */
++	if (head_page == cpu_buffer->tail_page)
++		goto skip_rewind;
++
++	rb_dec_page(&head_page);
++	for (i = 0; i < meta->nr_subbufs + 1; i++, rb_dec_page(&head_page)) {
++
++		/* Rewind until tail (writer) page. */
++		if (head_page == cpu_buffer->tail_page)
++			break;
++
++		/* Ensure the page has older data than head. */
++		if (ts < head_page->page->time_stamp)
++			break;
++
++		ts = head_page->page->time_stamp;
++		/* Ensure the page has correct timestamp and some data. */
++		if (!ts || rb_page_commit(head_page) == 0)
++			break;
+ 
++		/* Stop rewind if the page is invalid. */
++		ret = rb_validate_buffer(head_page->page, cpu_buffer->cpu);
++		if (ret < 0)
++			break;
++
++		/* Recover the number of entries and update stats. */
++		local_set(&head_page->entries, ret);
++		if (ret)
++			local_inc(&cpu_buffer->pages_touched);
++		entries += ret;
++		entry_bytes += rb_page_commit(head_page);
++	}
++	if (i)
++		pr_info("Ring buffer [%d] rewound %d pages\n", cpu_buffer->cpu, i);
++
++	/* The last rewound page must be skipped. */
++	if (head_page != orig_head)
++		rb_inc_page(&head_page);
++
++	/*
++	 * If the ring buffer was rewound, then inject the reader page
++	 * into the location just before the original head page.
++	 */
++	if (head_page != orig_head) {
++		struct buffer_page *bpage = orig_head;
++
++		rb_dec_page(&bpage);
++		/*
++		 * Insert the reader_page before the original head page.
++		 * Since the list encode RB_PAGE flags, general list
++		 * operations should be avoided.
++		 */
++		cpu_buffer->reader_page->list.next = &orig_head->list;
++		cpu_buffer->reader_page->list.prev = orig_head->list.prev;
++		orig_head->list.prev = &cpu_buffer->reader_page->list;
++		bpage->list.next = &cpu_buffer->reader_page->list;
++
++		/* Make the head_page the reader page */
++		cpu_buffer->reader_page = head_page;
++		bpage = head_page;
++		rb_inc_page(&head_page);
++		head_page->list.prev = bpage->list.prev;
++		rb_dec_page(&bpage);
++		bpage->list.next = &head_page->list;
++		rb_set_list_to_head(&bpage->list);
++		cpu_buffer->pages = &head_page->list;
++
++		cpu_buffer->head_page = head_page;
++		meta->head_buffer = (unsigned long)head_page->page;
++
++		/* Reset all the indexes */
++		bpage = cpu_buffer->reader_page;
++		meta->buffers[0] = rb_meta_subbuf_idx(meta, bpage->page);
++		bpage->id = 0;
++
++		for (i = 1, bpage = head_page; i < meta->nr_subbufs;
++		     i++, rb_inc_page(&bpage)) {
++			meta->buffers[i] = rb_meta_subbuf_idx(meta, bpage->page);
++			bpage->id = i;
++		}
++
++		/* We'll restart verifying from orig_head */
++		head_page = orig_head;
++	}
++
++ skip_rewind:
+ 	/* If the commit_buffer is the reader page, update the commit page */
+ 	if (meta->commit_buffer == (unsigned long)cpu_buffer->reader_page->page) {
+ 		cpu_buffer->commit_page = cpu_buffer->reader_page;
+@@ -5342,7 +5440,6 @@ rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
+ 	 */
+ 	local_set(&cpu_buffer->reader_page->write, 0);
+ 	local_set(&cpu_buffer->reader_page->entries, 0);
+-	local_set(&cpu_buffer->reader_page->page->commit, 0);
+ 	cpu_buffer->reader_page->real_end = 0;
+ 
+  spin:
 
