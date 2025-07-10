@@ -1,231 +1,417 @@
-Return-Path: <linux-kernel+bounces-726320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE61B00BC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:58:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD850B00BC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6D4116FB6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:58:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E50E7B683E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4853A2FCFE4;
-	Thu, 10 Jul 2025 18:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BA82FCFE1;
+	Thu, 10 Jul 2025 19:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="59u0gWhR";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="Z6euGjn8"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ppLsqvvk"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A011F2FD590
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752173885; cv=none; b=cIEgg4UvV+QLVR4mNARgAIiQ05iNvwJuv6i2AA4XeRVaX2ZBJRbzHZxynb2SNR3JQZ8bHVbDrFjg5MAlNmS3s52Ou8lp1o6BVtOML/joe8LcKfmMYsEnyi2Od7oAYg4sV6BoVasxymz3Gjmc/s7L62L5qJK4Vs94oyCyMZdDAEA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752173885; c=relaxed/simple;
-	bh=pe4AI+RI8fgZTAcJ20G+kMV/6FPxTNz+kibld3PNvek=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=T88Rh/V9xhni/E7j+CP4Pmu1p90S6LMGTObOABCEMO9D8k/abfk/fPrfktH9i1/lo1sBKDqWlYsxegSQ1LdvrSsiPwynFy52IMmCFbeeAriYfomeJryJDcUG2W4VDOP9x4s6FjJIGkm2TLyY59uo7hM94YRW8yvtbfBeaHvJbxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=59u0gWhR; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=Z6euGjn8; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752173879; x=1752778679;
-	d=konsulko.se; s=rsa1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=qOROnEfbRMkEU9HUIlrw8G/gc7MbaqKeDQV/AuFw0LU=;
-	b=59u0gWhR/XhR/i5COmwjWdLGRDxP9xDXHDopl2OUB0iq94dLbpEeYI7Vz1wimKDxihVFX59SQmx+V
-	 4IrlXC7v64t9gScthV2gZhTtx+AzVXPmuO6lqlvgbUHCRVJurwRE6W+yLK+m71O/CWRks6wFn7wvyC
-	 1srhBrdDsj6lXbdNNVWqQbs26VS/nXQH6SzfgsR8amVggugx648AYHZmJAThmuZnloO6LgMLB/Myxg
-	 XY3CWlKactui0SrgVoLBfB2EhQBLRH+fqfQDGSqv9uzvosBsOgiC9Yp9gqFZlT1s4cJKfnT9bRXKmG
-	 lD7N51RK0yaCSc/InhrGXh4Jfb4SIJg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752173879; x=1752778679;
-	d=konsulko.se; s=ed1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=qOROnEfbRMkEU9HUIlrw8G/gc7MbaqKeDQV/AuFw0LU=;
-	b=Z6euGjn8Mwt0J/TG8fUhvLbVRpyUb5j4Wf9Bv9akAk10Z6B/49l8SclhsQwGW5lI0CgIAMtsb89gN
-	 /5kL9yNBA==
-X-HalOne-ID: cb161d63-5dbf-11f0-b814-e90f2b8e16ca
-Received: from smtpclient.apple (c188-150-224-8.bredband.tele2.se [188.150.224.8])
-	by mailrelay2.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id cb161d63-5dbf-11f0-b814-e90f2b8e16ca;
-	Thu, 10 Jul 2025 18:57:58 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818A321CC63;
+	Thu, 10 Jul 2025 19:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752174220; cv=fail; b=nKVwnewSdLtayR1GAwMYTH4VF9xsaEC8C0muNyXiCTnrh2sgT0SOesR5MV7UaqAfLgJGQMMQWH3uKvhzm8eory08PjfJnH2f7otNrVwjbr9lpR68xJj8LrAYsE6ua99huuMk5jhz1+Z0ASPPlH2JVEcCo/Y6okw0jh2FR/UL8yA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752174220; c=relaxed/simple;
+	bh=BNPQyAEi0kYSuWkHE29WJIw9hTupEO5I9SSI/1g7YuM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FsBysavw3wCy12OBWFDbqrfz2uOrRauGNVNuh/NF/kdZPCwnhuz3BqSKETeyyeX6f/SjgYU/fxk+M2Hj5uaGZZqWX60vW9c7I2UKCB3X7DvcQvoo5nL4fbuLzkb9gub0lp5+EU1ii9PPin3kMreq/8vBJnUxTv3mcP65ccNSV58=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ppLsqvvk; arc=fail smtp.client-ip=40.107.244.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s+P5803E6UzzVnM54mOxRFWc+9usTGld/XHSm8lOH6h4+zQVBjCCZe63IXPahvJxXT1O8+obfzb8fCpnb6GbdZrcojZkHJQmPDo4nHTEQT2MOyw9ttqXBLsq5wpNlw6HKUJlR735ONbsvvB91OH45QJM9MmwfZT6Yqz3+oholoAMKOd+EJiHJ4CYaADTIIFz3IRr1j1O/pm1xKiBra3fBzi9ok3FrRWX2Z9KFJUuz5apIZpMj7BmpLV0P1dU0PEeOqGZTFqyrXkCAlZHT/nPnf0m96pUTxygowk6+B7+JgJNlB0RZpEw9g9tXuTSZ6hy+NTRgPGI7EBgkQ9+tEmMzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OveTLmtpiGd+P8xmohHn0OvZvMpDxWl+VB7sp3SK8JU=;
+ b=NG5ZE5QM0XlgLjPa06eHyG148mok90lvyeQbvopImwXVCTMQxo8jtNupyHgLoP4GGt21oIP6FXZZFxmYqPJZIPfAPHbTazp58E8sznNyhnd2BA8Nd7Qh1hEmijap/Pd47sLlfFbAJPcpgk69xr01u/9baqi95Pg/Uxxn4KfNNRF9+gCYFlJsU/6inlqdriqQBO5omgcDy3fbggvMdwIviq01f6Jr0yBHkZd9h4Q2IRXNEjZb6lAqVlpxAbuYXjniDUBSpZT2qQkxS/ki9DmsCF3k2wxfjERL/omCPCFsxMHm3irRXiMcxM84SfsZozwUMsOzb/ia3QZyrJyoISvI3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OveTLmtpiGd+P8xmohHn0OvZvMpDxWl+VB7sp3SK8JU=;
+ b=ppLsqvvk8fUjMlhF7mi2xRiJeO08GnpJxQjeayfw4zE6yyP1Vo0WfLXXVKdMmhXSB0ZKAwDnIZuqnDQ2/kLTX2HxJHCZFLhqRAmT00xk1FLL2gVZWAlm12iNW/gAXvID96mvdX7FMPhubq6VDQK8TaguLV260chsggoq9y4ZTkk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL3PR12MB6642.namprd12.prod.outlook.com (2603:10b6:208:38e::15)
+ by LV8PR12MB9232.namprd12.prod.outlook.com (2603:10b6:408:182::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Thu, 10 Jul
+ 2025 19:03:36 +0000
+Received: from BL3PR12MB6642.namprd12.prod.outlook.com
+ ([fe80::aacd:a6d8:e180:46bc]) by BL3PR12MB6642.namprd12.prod.outlook.com
+ ([fe80::aacd:a6d8:e180:46bc%5]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
+ 19:03:36 +0000
+Message-ID: <eb3c843a-6762-4ac0-b863-3f500fb15b6f@amd.com>
+Date: Thu, 10 Jul 2025 13:03:33 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 4/9] dt-bindings: soc: xilinx: Add AI engine DT binding
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Gregory Williams <gregory.williams@amd.com>, ogabbay@kernel.org,
+ michal.simek@amd.com, robh@kernel.org
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250702155630.1737227-1-gregory.williams@amd.com>
+ <20250702155630.1737227-5-gregory.williams@amd.com>
+ <7533fd56-aeef-4685-a25f-d64b3f6a2d78@kernel.org>
+Content-Language: en-US
+From: "Williams, Gregory" <gregoryw@amd.com>
+In-Reply-To: <7533fd56-aeef-4685-a25f-d64b3f6a2d78@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0130.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:3c2::21) To BL3PR12MB6642.namprd12.prod.outlook.com
+ (2603:10b6:208:38e::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v12 1/4] mm/vmalloc: allow to set node and align in
- vrealloc
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <aedc2b36-b3b0-4367-aa68-ba9f8a110b52@lucifer.local>
-Date: Thu, 10 Jul 2025 20:57:48 +0200
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- linux-mm@kvack.org,
- akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org,
- Uladzislau Rezki <urezki@gmail.com>,
- Danilo Krummrich <dakr@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- rust-for-linux@vger.kernel.org,
- Kent Overstreet <kent.overstreet@linux.dev>,
- linux-bcachefs@vger.kernel.org,
- bpf@vger.kernel.org,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2D8A1A29-C847-479F-B732-A7CB13A46FA7@konsulko.se>
-References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
- <20250709172416.1031970-1-vitaly.wool@konsulko.se>
- <nsacpwgldqdidsqkqalxdhwptikk7srnhjncmjaulnzcf6nsmu@fisb5w4aamhl>
- <D0D76B82-E390-498E-AE84-1B2CA6C0F809@konsulko.se>
- <aedc2b36-b3b0-4367-aa68-ba9f8a110b52@lucifer.local>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-X-Mailer: Apple Mail (2.3826.200.121)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR12MB6642:EE_|LV8PR12MB9232:EE_
+X-MS-Office365-Filtering-Correlation-Id: 24f0ae59-16a6-44e3-be58-08ddbfe478ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q0dzZlhsZ3BpcE5jcER0akthY013WXhLUVlkeEs2WGJzTS96bFZlU1VpK3l3?=
+ =?utf-8?B?Njl3QllmZTZsUGt4RU9vcEZ5bzhydCtIL1lQYnkwSFVDcVBOd29wM05ES2ZI?=
+ =?utf-8?B?OU5TU2dWR29qRERKYXQzeURHZ3A5Z2pVV3J6ZGZ3eFZPMFQ5QlA4YkdTdzQ5?=
+ =?utf-8?B?Q1JsNFB0dVlha1dBVE5FMkYrS1hxM29NMWp6T1hlWUdLNXZQb3ZHRDVMUUUx?=
+ =?utf-8?B?MEZOcCtrOEF2NlRyN3VQNWJKWkhMN0trc0RQYm9NZ1YrVHgxaHY1cjRTUkZN?=
+ =?utf-8?B?N3ZTU3FrQzNQNlUwdUtVWVFTczNtcXpBWGRKUERJVGNUaEJlbkZsZkVqdUxl?=
+ =?utf-8?B?cllqQXVmOFdLYTV0MktJbFpvR285dnBtdHpnR3dlVVhYYk1zMHI1V28wWDhn?=
+ =?utf-8?B?dkZQME5KL1dud0hKZzlGR09xVVhZZ1NvQmN6RmdkMnBSWFBZZHdnM29GMVpy?=
+ =?utf-8?B?aWlZK3VGbktxZnRpKzNyajk5SVgrcFpEM09ZbFpFTGtEdG9qMHhYVFdFMTEx?=
+ =?utf-8?B?VGVhdjI2Y0s5akluQXJjOFRyb3ZPYnlGaHVJTzZwQjFLbEdKSTRoa2pGZ0JO?=
+ =?utf-8?B?dGNwVTQrYkNMUjduWU9hQzFGVzgyRFFIbTJSZng2d0F4S0pkSi9vYTBDRnhO?=
+ =?utf-8?B?OXlWSERybXJlb01tMEJWWWZVeURXWWk5RUVpcUczMlNJa1VkS0Y5UEx5Y0Y1?=
+ =?utf-8?B?bXZNL3k0aGdNOUcza29XRXMwREIvTFRTZzJRWGMwNWw5ay9rZ3lUeks4cTBZ?=
+ =?utf-8?B?YzdzdlN1ZytjbnZkVzhpYXpJMlRlSVNEYWU4Ymo0OCt3bWFhaHJNYWFSOFdz?=
+ =?utf-8?B?eW5WVzBUU3pGMEJySFdkR1V2d1RkcEtvb1dwTnc3MS85RzlESUhxOFNXKzBo?=
+ =?utf-8?B?QzBabkE3WU56Tm11QlBvNjhwa2lQemt4dUZubzRacFZBMG0yY1JBb3dWdWRN?=
+ =?utf-8?B?QXVRcDR2MlgvdFQraC9RaWF2S1RMRldrUG5ra3hDZ29VcVFOYnNwTlBSSE93?=
+ =?utf-8?B?cldhUktydUMrM0QzNlNEUkxIMTF1YmZrZGVoZ0FRczNXa0xaZFM0RVBuK2dh?=
+ =?utf-8?B?eW9pdlZ3V2JjbXFiSWljaUFGcENVK0pLbllBOUZlT3djU0JYV1VDN1h0a3dR?=
+ =?utf-8?B?bzZoKzBRb3E3dzdUTWpubWRCdEVCM2ZuZkJyOFY0WTBCM0Q3Zk54RkVhSVBT?=
+ =?utf-8?B?cTJ0TjdReFBkWkU1a1JTeXRNN2gxVFlaWm16bWhvdy9aVEU3UjRzUW5ObVQ0?=
+ =?utf-8?B?ajZseUNseGY0dytydjFCbzA2c1NOUkNHNXFhUDl6WTBNbUtYSFNJVjJaUXNK?=
+ =?utf-8?B?OGdrSXM2a1RPMVRlemRFakxqaUlnVFR4NWZrZVhaN2NWOE1pcUI3UTVHUitP?=
+ =?utf-8?B?STNabWpnMnZZUmsrTzRBekR5UXpId1JrZDZDUmlmUTd2RllRcU5YR2FWSUpW?=
+ =?utf-8?B?VTZ0MnVESnNZSmtmOWRoNkRPdHdMbzhyVEJRbXBEeWVrOW1tVlFoaDNjUCtW?=
+ =?utf-8?B?MzVlaXNEQWFCMWorOVduVzVCMlFJdmlEV3dINDkzdDBYS0tyL3N4WXBHT2JL?=
+ =?utf-8?B?bzZ5ZjlQMkx1UEI5TEFaQlRhalVDQjQvcXVRWXJtc3RSQlViQVBmMDI3ZDVn?=
+ =?utf-8?B?N05HQWExa2tJYjY1K3VycVptMy92TVN6VFpuWldGYUhpVkYwOVQ4WDNXSDJR?=
+ =?utf-8?B?ZkdYWGd3OEpXSUc2SUd3NkZVRGlVeTZHL1VNZnIranVCSVQ2RjgzbVZlaVZq?=
+ =?utf-8?B?YzE1d1RZMjY5ZElKYzExaDJ2U2R6NkZyZjduS2hMbnk4Q1g0WmRIWmtCdzMv?=
+ =?utf-8?B?aFNIT1EyMVRrVjlwYkpwU1kxMmpmZjhQNEFTdTlML1dwUll0SExaK0FTSWVu?=
+ =?utf-8?Q?OqSh/sppDHCI0?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6642.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NldKS0JoQ2tpemtvdGRTN2UrWkhkRGRmK1FHREVXNGpFbHQwb2Rpa2I5VTJw?=
+ =?utf-8?B?d280bUtwSVh6aGprOFhiSkhBL3FPVlhEbEl6cjZNYkRwcUp1eW5kQ2VuRjR3?=
+ =?utf-8?B?K0hKZzNuSUpuaGdEVGdPQ1FzL3hDYU9KODkwUldSQzdSWi9Yc1pWNDdBZmN0?=
+ =?utf-8?B?YUc2VTFxaHJCZ3RTVTI2eXgweitXQTNLaWxTQ2p2UUZRZmpsRHVsMytJdVBU?=
+ =?utf-8?B?UVFUV3NzbE12T1I2ZHBlaEp3bjdzY1NKWFRzNm9tOHJuZDgwYlVQLzVJc1F1?=
+ =?utf-8?B?dTRyOFFiSXFXVVB0Z3pHOHpBdjJ6SU5yK2FlNm5lUTVkS240NUxQMHFSSTdv?=
+ =?utf-8?B?ZElXZmxBTENIL3RTQTlnei9NMHorWFFmbTNkQlN2S0JFYzVjbHFzbnNrM1I0?=
+ =?utf-8?B?WFZES1FWQ3ZjcUxlSUx6dG9VbDdIK2J4dkcrcXIwK3AvVHhiY3lhVmFqcmZi?=
+ =?utf-8?B?N01wV093TUMrNVVSQ3pkZjdPOUk3UTdZRVBrNUVsT1lleVNiT1JtVG5aSEtr?=
+ =?utf-8?B?cE1MOVo1MnB1MmttR2h3dkVQSENKZXM5V3JNemtDK2tZQnBzZ2g0NFE2djNh?=
+ =?utf-8?B?SjlsMC90WFNOUmtjSlViaFRwRmJ0akhhMW5SbloxeUlLQnNnaStidWhXUWdR?=
+ =?utf-8?B?cGNTdWVUWGxQVVR0ZkcxVkYrTjRScHdXKzVPRTBlV0p2Q1ZJZ0UzS3htTXc3?=
+ =?utf-8?B?dEJhMHZzZVdNaE9vZ0RBVEpuUUhvMnB3UU5pbXFMMnUxQjkrV2ZmNnN2anl5?=
+ =?utf-8?B?c1dwUEQ0NksxNGNqZUxsTkZ5bWk3bFYwdVNQVWZJWlZKWUFXdVZHZ3R5Z0hV?=
+ =?utf-8?B?Y1N5SkZDZ1pNamN4MnJmLzFoN3lKeGVpRkY3TWRsREoxdjg3NlN2T0Y1UGw5?=
+ =?utf-8?B?UTJmcEo2RVBsb1hRWmI2QnNXMEpUcUI2YjZOYTRablNUNUZEbDU3SnplcXFs?=
+ =?utf-8?B?SEZ6US9EdXE0eTdmZFNNQ1VVN0x1Tys0SzIwaXE4WmgyZ0xvS1BHa3V6S1N0?=
+ =?utf-8?B?K3lUQkdUc1NKRXd4ak9LWFgzNFQ3V1hNVEVkcHJ4a0hhUEd4TzhLeUxwNm9a?=
+ =?utf-8?B?Q3NRK0hoREtCTW1yM0lMWmZVazZ4ZlUzS2RxZ2I1RnZWVVJhbmwrVkZyeXpM?=
+ =?utf-8?B?NVVKdVRKaEtTTE10Z05nR1NVQitVQURaMmZvN0JPS1pibEFFaG5DSjIwZHBQ?=
+ =?utf-8?B?TVhoM2NLNHBneUlFZkxLK0xiRGF3M1M4NlVKa0c2UUh3clArWjZSbDdLWWcv?=
+ =?utf-8?B?cHNtYjhoRG5GZElFc0ROUEZHS1R5SUE0SUNuSDU3dEkrcWNPRXNKVkp4N2Mr?=
+ =?utf-8?B?Q2JwOGtVU3o5WFNMc2JMbURHTVZWNVc4NisrdEtIU2IxMEpRVDR3RFM3bVhX?=
+ =?utf-8?B?bGRlSzdXQmhRZWRIUjNNODE3TytMK1dxTHBsdkd6WHh0Mmx0cmljb0JCTFJM?=
+ =?utf-8?B?OTdZNXVvbWx4ZGpiZS9LcjZmeFpNOEVYT20rU0xyOEVBaDRhUDVndWNibHJu?=
+ =?utf-8?B?Y1hjbnF3Z1NwR0o2RU9jVGttd2VQc1BEMWFZc3JWZXpGWFFWRE1LSm1RcjRu?=
+ =?utf-8?B?TE5EUTZvNGRPcDNoWUIvYXN4ZVdpT3FaY1RxdnZMTmhTRkV2ekFnVm45SWtB?=
+ =?utf-8?B?T204anZCVmFGOTJWSHM5QnZKL0dSL2RneW0zRmRhV24wK2JSZndIRHZHVWVS?=
+ =?utf-8?B?OG1vZDJKem53L2xCUFYxNVQ3aUNGN3ZTRFBZaFBUWndwK1FSWGl3WGt4ZmYx?=
+ =?utf-8?B?S21xMEJ0cEFLNWZQMndPK0FaMERoVVRkUElOVnpVOFdKV2h4bmU3TTUwSHh6?=
+ =?utf-8?B?djBXK3lhZnpiNkhWNVpEdTl2aSsyeFMyaHoreFNRNWVkUjZmRDNiY1VUNEtv?=
+ =?utf-8?B?MHcwSytvU3NiUnVDYXNxanUzSmxnVlkvaTl3OUVnakVwMWRSSHYxbm53a09P?=
+ =?utf-8?B?R0NpUWc2dkhyRWxVdXVDVWhUbCsxL1J4TnhvQUJJQ2ROTGxIR3pqTVhzbUZ2?=
+ =?utf-8?B?MjdUcVIyaDRCNE9iK2E0SzJySitqUzBuRWtnNVZ4L1dZSnNrR0Z1RUdBZlFz?=
+ =?utf-8?B?QkdUZk8zVW9xc1hnaTFSYW1RVFh2R0kwcmdYdVcvcWFkdjBXbmhzYzFiVEtl?=
+ =?utf-8?Q?yTQf40323lvV2lqkx/TosvGoN?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 24f0ae59-16a6-44e3-be58-08ddbfe478ec
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6642.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 19:03:36.0512
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: A0+qRu60sKpv3B7LSA9UCP3ou2pnbMuwmzL0wlGvtLntwVhhVXUy5kphqHM/4XpCRg5+wYxr+XWWMcon3GgeMg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9232
 
+On 7/3/2025 12:48 AM, Krzysztof Kozlowski wrote:
+> On 02/07/2025 17:56, Gregory Williams wrote:
+>> In the device tree, there will be device node for the AI engine device,
+>> and device nodes for the statically configured AI engine apertures.
+> 
+> No, describe the hardware, not DTS.
+> 
+>> Apertures are an isolated set of columns with in the AI engine device
+>> with their own address space and interrupt.
+>>
+>> Signed-off-by: Gregory Williams <gregory.williams@amd.com>
+>> ---
+>>  .../bindings/soc/xilinx/xlnx,ai-engine.yaml   | 151 ++++++++++++++++++
+>>  1 file changed, 151 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml b/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
+>> new file mode 100644
+>> index 000000000000..7d9a36c56366
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
+> 
+> Filename matching compatible.
+> 
+>> @@ -0,0 +1,151 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/soc/xilinx/xlnx,ai-engine.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: AMD AI Engine
+> 
+> That's really too generic...
+> 
+>> +
+>> +maintainers:
+>> +  - Gregory Williams <gregory.williams@amd.com>
+>> +
+>> +description:
+>> +  The AMD AI Engine is a tile processor with many cores (up to 400) that
+>> +  can run in parallel. The data routing between cores is configured through
+>> +  internal switches, and shim tiles interface with external interconnect, such
+>> +  as memory or PL. One AI engine device can have multiple apertures, each
+>> +  has its own address space and interrupt. At runtime application can create
+>> +  multiple partitions within an aperture which are groups of columns of AI
+>> +  engine tiles. Each AI engine partition is the minimum resetable unit for an
+>> +  AI engine application.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: xlnx,ai-engine-v2.0
+> 
+> What does v2.0 stands for? Versioning is discouraged, unless mapping is
+> well documented.
 
+Sure, I will remove the versioning in V2 patch.
 
-> On Jul 10, 2025, at 5:19=E2=80=AFPM, Lorenzo Stoakes =
-<lorenzo.stoakes@oracle.com> wrote:
->=20
-> On Thu, Jul 10, 2025 at 08:21:19AM +0200, Vitaly Wool wrote:
->>=20
->>=20
->>> On Jul 9, 2025, at 9:01=E2=80=AFPM, Liam R. Howlett =
-<Liam.Howlett@oracle.com> wrote:
->>>=20
->>> * Vitaly Wool <vitaly.wool@konsulko.se =
-<mailto:vitaly.wool@konsulko.se>> [250709 13:24]:
->>>> Reimplement vrealloc() to be able to set node and alignment should
->>>> a user need to do so. Rename the function to vrealloc_node_align()
->>>> to better match what it actually does now and introduce macros for
->>>> vrealloc() and friends for backward compatibility.
->>>>=20
->>>> With that change we also provide the ability for the Rust part of
->>>> the kernel to set node and alignment in its allocations.
->>>>=20
->>>> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
->>>> Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
->>>> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
->>>> ---
->>>> include/linux/vmalloc.h | 12 +++++++++---
->>>> mm/nommu.c              |  3 ++-
->>>> mm/vmalloc.c            | 31 ++++++++++++++++++++++++++-----
->>>> 3 files changed, 37 insertions(+), 9 deletions(-)
->>>>=20
->>> ...
->>>=20
->>>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
->>>> index 6dbcdceecae1..03dd06097b25 100644
->>>> --- a/mm/vmalloc.c
->>>> +++ b/mm/vmalloc.c
->>>> @@ -4089,19 +4089,31 @@ void *vzalloc_node_noprof(unsigned long =
-size, int node)
->>>> EXPORT_SYMBOL(vzalloc_node_noprof);
->>>>=20
->>>> /**
->>>> - * vrealloc - reallocate virtually contiguous memory; contents =
-remain unchanged
->>>> + * vrealloc_node_align_noprof - reallocate virtually contiguous =
-memory; contents
->>>> + * remain unchanged
->>>> * @p: object to reallocate memory for
->>>> * @size: the size to reallocate
->>>> + * @align: requested alignment
->>>> * @flags: the flags for the page level allocator
->>>> + * @nid: node number of the target node
->>>> + *
->>>> + * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc(). =
-If @size is
->>>> + * 0 and @p is not a %NULL pointer, the object pointed to is =
-freed.
->>>> *
->>>> - * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If =
-@size is 0 and
->>>> - * @p is not a %NULL pointer, the object pointed to is freed.
->>>> + * if @nid is not NUMA_NO_NODE, this function will try to allocate =
-memory on
->>>> + * the given node. If reallocation is not necessary (e. g. the new =
-size is less
->>>> + * than the current allocated size), the current allocation will =
-be preserved
->>>> + * unless __GFP_THISNODE is set. In the latter case a new =
-allocation on the
->>>> + * requested node will be attempted.
->=20
-> Agreed with Liam, this is completely unreadable.
->=20
-> I think the numa node stuff is unnecesasry, that's pretty much =
-inferred.
->=20
-> I'd just go with something like 'if the function can void having to =
-reallocate
-> then it does'.
->=20
-> Nice and simple :)
+> 
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  '#address-cells':
+>> +    const: 2
+>> +
+>> +  '#size-cells':
+>> +    const: 2
+>> +
+>> +  power-domains:
+> 
+> Missing constraints.
+> 
+>> +    description:
+>> +      Platform management node id used to request power management services
+>> +      from the firmware driver.
+> 
+> Drop description, redundant.
+> 
+>> +
+>> +  xlnx,aie-gen:
+>> +    $ref: /schemas/types.yaml#/definitions/uint8
+> 
+> Why uint8?
+> 
+>> +    description:
+>> +      Hardware generation of AI engine device. E.g. the current values supported
+>> +      are 1 (AIE) and 2 (AIEML).
+> 
+> No clue what's that, but it is implied by compatible, isn't it?
 
-I think it is important to stress that the function is not always =
-following the specified nid.
-How about =E2=80=9CIf the caller wants the new memory to be on specific =
-node *only*, __GFP_THISNODE flag should be set, otherwise the function =
-will try to avoid reallocation and possibly disregard the specified =
-@nid=E2=80=9D ?
+The driver supports multiple hardware generations. During driver probe, this value is read from the device tree and hardware generation specific
+data structures are loaded based on this value. The compatible string is the same between devices.
 
->=20
->>>=20
->>> I am having a very hard time understanding what you mean here.  What =
-is
->>> the latter case?
->>>=20
->>> If @nis is !NUMA_NO_NODE, the allocation will be attempted on the =
-given
->>> node.  Then things sort of get confusing.  What is the latter case?
->>=20
->> The latter case is __GFP_THISNODE present in flags. That=E2=80=99s =
-the latest if-clause in this paragraph.
->>>=20
->>>> *
->>>> * If __GFP_ZERO logic is requested, callers must ensure that, =
-starting with the
->>>> * initial memory allocation, every subsequent call to this API for =
-the same
->>>> * memory allocation is flagged with __GFP_ZERO. Otherwise, it is =
-possible that
->>>> * __GFP_ZERO is not fully honored by this API.
->>>> *
->>>> + * If the requested alignment is bigger than the one the =
-*existing* allocation
->>>> + * has, this function will fail.
->>>> + *
->>>=20
->>> It might be better to say something like:
->>> Requesting an alignment that is bigger than the alignment of the
->>> *existing* allocation will fail.
->>>=20
->>=20
->> The whole function description in fact consists of several if-clauses =
-(some of which are nested) so I am just following the pattern here.
->=20
-> Right, but in no sane world is essentially describing a series of =
-if-clauses in
-> a kerneldoc a thing.
->=20
-> Just it keep it simple, this is meant to be an overview, people can go =
-read the
-> code if they need details :)
->=20
-Alright, no strong feelings about it anyway. Will reword as you guys =
-suggest.
+> 
+> Missing constraints.
+> 
+>> +
+>> +  xlnx,shim-rows:
+>> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+>> +    description:
+>> +      start row and the number of rows of SHIM tiles of the AI engine device
+> 
+> Implied by compatible.
+
+The AI Engine device can have different configurations for number of rows and column (even if it is the same hardware generation). This property
+tells the driver the size and layout of the array, this is not implied by compatible.
+
+> 
+> Missing constraints.
+> 
+> 
+>> +
+>> +  xlnx,core-rows:
+>> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+>> +    description:
+>> +      start row and the number of rows of core tiles of the AI engine device
+>> +
+>> +  xlnx,mem-rows:
+>> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+>> +    description:
+>> +      start row and the number of rows of memory tiles of the AI engine device
+>> +
+> 
+> Same comments everywhere.
+> 
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - power-domains
+>> +  - xlnx,aie-gen
+>> +  - xlnx,shim-rows
+>> +  - xlnx,core-rows
+>> +  - xlnx,mem-rows
+>> +
+>> +patternProperties:
+> 
+> This goes after properties.
+> 
+>> +  "^aperture@[0-9]+$":
+>> +    type: object
+>> +    description:
+>> +      AI engine aperture which is a group of column based tiles of the
+>> +      AI engine device. Each AI engine apertures isolated from the
+>> +      other AI engine apertures. An AI engine aperture is defined by
+>> +      AMD/Xilinx platform design tools.
+>> +
+>> +    properties:
+>> +      compatible:
+>> +        const: xlnx,ai-engine-aperture
+>> +
+>> +      reg:
+>> +        description:
+>> +          Physical base address and length of the aperture registers.
+>> +          The AI engine address space assigned to Linux is defined by
+>> +          Xilinx/AMD platform design tool.
+> 
+> Missing constraints. Description is redundant - can it be anything else?
+> 
+> Plus you clearly miss ranges.
+> 
+> 
+>> +
+>> +      interrupts:
+>> +        maxItems: 3
+>> +
+>> +      interrupt-names:
+>> +        items:
+>> +          - const: interrupt1
+>> +          - const: interrupt2
+>> +          - const: interrupt3
+> 
+> Useless names, drop entirely.
+> 
+>> +
+>> +      xlnx,columns:
+>> +        $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +        description:
+>> +          It describes the location of the aperture. It specifies the start
+>> +          column and the number of columns. E.g. an aperture starts from
+>> +          column 0 and there are 50 columns, it will be presented as <0 50>.
+> 
+> Same comments as before
+> 
+>> +
+>> +      xlnx,node-id:
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        description:
+>> +          AI engine aperture node ID, which is defined by AMD/Xilinx platform
+>> +          design tool to identify the AI engine aperture in the firmware.
+> 
+> No, you do not get node ID. Recently every day a patch comes for that...
+> 
+>> +
+>> +    required:
+>> +      - compatible
+>> +      - reg
+>> +      - xlnx,columns
+>> +      - xlnx,node-id
+>> +
+>> +    additionalProperties: false
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/power/xlnx-versal-power.h>
+>> +    bus {
+>> +      #address-cells = <2>;
+>> +      #size-cells = <2>;
+>> +      ai_engine: ai-engine@20000000000 {
+>> +        compatible = "xlnx,ai-engine-v2.0";
+>> +        reg = <0x200 0x00 0x01 0x00>;
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
+>> +        power-domains = <&versal_firmware PM_DEV_AI>;
+>> +        xlnx,aie-gen = /bits/ 8 <0x1>;
+>> +        xlnx,core-rows = /bits/ 8 <1 8>;
+>> +        xlnx,mem-rows = /bits/ 8 <0 0>;
+>> +        xlnx,shim-rows = /bits/ 8 <0 1>
+> 
+> This cannot be without ranges... I am surprised it actually works, but
+> for sure was not tested and produces warnings.
+> 
+>> +
+>> +        aperture0: aperture@200000000000 {
+>> +          /* 50 columns and 8 core tile rows + 1 SHIM row */
+>> +          compatible = "xlnx,ai-engine-aperture";
+>> +          reg = <0x200 0x0 0x1 0x0>;
+>> +          interrupts = <0x0 0x94 0x4>,
+>> +                       <0x0 0x95 0x4>,
+>> +                       <0x0 0x96 0x4>;
+> Use proper flags.
+> 
+> Best regards,
+> Krzysztof
+
+Thanks again for the review Krzysztof, I appreciate your time. I will address the remaining comments in a V2 patch.
 
 Thanks,
-Vitaly
+Greg
 
 
