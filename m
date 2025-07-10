@@ -1,123 +1,223 @@
-Return-Path: <linux-kernel+bounces-726307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D47B00B73
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:33:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB27B00B79
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 311D6188CA43
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:33:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31C1B1887ED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015C52FCE3B;
-	Thu, 10 Jul 2025 18:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53012FCFC3;
+	Thu, 10 Jul 2025 18:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOtLXRKS"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLL5WEkl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE1C1E0489;
-	Thu, 10 Jul 2025 18:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB681D7E54;
+	Thu, 10 Jul 2025 18:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752172375; cv=none; b=CSKaeqJw42VarKHs8j7Q7hYXtnWk5905haDzYbkhx1ymf+OPQsldrvqIO/BXWlVCr2v3YwDYBBXOwUW1U98GZ5NktbyUILWCKhY6hMYiZbElBVMJE9OmQYJx9kkV96Bpmmk7Td8jndE2K9h/XNUZjxh9RRK3bxqQ3csjRq2Mm4A=
+	t=1752172440; cv=none; b=C6sdgodYq6kXJvL8VfSpCYk0wZMRFQphQxqGUKyVRmtJAQGRJU3kbjrd7f17hJIjo+txChmSxomNBRIsMgnpSeAsZUno39V2j2PyHitMCp1ZuxG/Tkuj1O+KuloipqStTZySPnlH4d6kUTVg5FqjYfzrSnPbjyZcSEAi+Co0b08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752172375; c=relaxed/simple;
-	bh=WepPI1QEsb7KVPco0eNErLMr0WYuLRbteu135zLMSYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=knCVVmgpW+LFKTXv/HbPOoWta+uwP4gxXvTXZJnG/7UXCLB1mnra1/0ecBHvaZX4hAmwjvmJcuTJ9RvqetUVGypSuFIiyijSm79KoZ41E3oBOQdTeq/QYV6CCs5znKBzDHTl+hWLvJlFtgLbxWB8OY9Zw02b//70lca1BBC40PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOtLXRKS; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-234b122f2feso1108375ad.0;
-        Thu, 10 Jul 2025 11:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752172373; x=1752777173; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WepPI1QEsb7KVPco0eNErLMr0WYuLRbteu135zLMSYg=;
-        b=WOtLXRKS8u2QY0/zPyBP/SU7lqkJu3mkcXI42Pk3Ng61I6VeBO5oaCZh3drRqlJrrL
-         RGYJiaFkeOx2Y9UDIMQIcOg9tleFuRmBwHckfdhDFYRwKr6ENdUlyiYxWVHZbU09jJ4q
-         FoIsmub/J5ipNwUo9D1Mcw4slSTDvSlIw+etGn2jQLIgQVwYe+1uBVKF88emrbAnk9xJ
-         8M+/S1+Zpxf+Tif7mVJPlZwkXxPEka8VpugVsz+///mHH332NH/H1UiCoIBq5EJkrcER
-         6K24+V2U9QtOHpoI/RNtlw4jonDPqDHjz37NdFm/s/34QjHrqdNALAdRplVfBS9qO2YX
-         3heg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752172373; x=1752777173;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WepPI1QEsb7KVPco0eNErLMr0WYuLRbteu135zLMSYg=;
-        b=R9v5MRjLx1mNS4orjpnO4S2GK8ixky4sWV1FJqhgNrxRsny8W5/g0aJHe5tDYmnz+g
-         aegqsjdVHBjUmg59fqso0v5HY0ddbFYer79nF31rSiEbKSt0gmlhv5VXQyEmYeFHcXC2
-         3U2yFih58ED4kQ1VJU0h0k90xeboOzIzBxEhSAHIpCqAs7LLPblw8CkvwAkFY36b2mUI
-         bt96ZXWcwckeSA3lsWtWDKiqmrI+9qWek404Fdf+BEwzjiDB4EEcIew9oi6bUrBWU+PG
-         8lw8B0jMoE6OzKYkXamoNadvn4kqEGcXj3obLhqfRPzfPD8+yfHHwcXwZBzFwtUh/7xU
-         MHXA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0pWz3grwPZ+Zz8Z40SDkhPBmFuo5ynG2+VsYnZwm5Q8Fn+55Dp9Q7Uho0DbsuNUVPpdEcSSfZgO4Su8CF@vger.kernel.org, AJvYcCVfrdG/SGJv3G1PwBXMIIjy+VtAYp0RTZUWWhBavZfmbIl8v/D2NeYxbBNY4vnjZoTI8AJ27AElIQVa@vger.kernel.org, AJvYcCXos4JRX2w7e7Ugl/dqhsvZdjpBu+09Esirs50PTWL3fIMmq+jdIoPTIT5svD2L5wjoS3T48wEKEkbaiDK1sfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5CbU9ylubf+ByGbMui5dkmU8mqz00A3ufHbqDdFUuJVgWj6ou
-	+QsIQSESqlPx0RnZUc8Jkw0zBVQOyZFcXFGVV4g2eR0aF1xGL65f66pM0HqDKdQpOkT3JY0EUq8
-	VXwdNUGyLSE+GHsJfR4agOcv2JSc8sbQ=
-X-Gm-Gg: ASbGnct3ak6wcS1CSTZJermz4oOwfs2l9h4UofvIS1ox1KXrU69nJIqDEU5Pw/x7F6t
-	UJuCqEqMYt6dCFkMxLhMPouHTZAMtLzZ4rE83qRgr7MEd91UCUNu1F5Jobl6t5cEpNHOtlV3ovx
-	whS18njdPrbqkcTcOUlZ5fdLjyTa3ScCwSYzFiMgPC
-X-Google-Smtp-Source: AGHT+IFTkKMM44D0WTx8T2njTBo+Lj4fPVbE0SyMH8GHthy2NxnMMGZoDLNlGDght6fNtjTJq1SCULKC7PXatR5fYYs=
-X-Received: by 2002:a17:902:d504:b0:236:9302:bf11 with SMTP id
- d9443c01a7336-23dede81473mr1222765ad.13.1752172373216; Thu, 10 Jul 2025
- 11:32:53 -0700 (PDT)
+	s=arc-20240116; t=1752172440; c=relaxed/simple;
+	bh=Vs70MeZf1mYaXGnKJLdsSgmTm2iQdUulBxeRcsD98/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L73wqrudZT/2qVaaho3Bl3jFXnBM8Eh28U2ctjVvSQGqOMH1VTQjGUURctvgRBl3Rebk4Tiv+g4C2DJ0pRLKEcv0DBjija2mN0QOu64hC77A8uqOJHeGMzJWkQ73qg8NKjKG0K742V33JD/e/T0ydbaAKw00Qt0Y7XRSXbjjqJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLL5WEkl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54AD0C4CEE3;
+	Thu, 10 Jul 2025 18:33:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752172439;
+	bh=Vs70MeZf1mYaXGnKJLdsSgmTm2iQdUulBxeRcsD98/w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QLL5WEkl9iGpzg+UXniN8zcwc/kvgVq9XmsTyTWBzXNIbNgRyUqB2nCT09Vfsdalm
+	 0bUTot71/LUmO2cqqlCNekoDAwcA1TWAWxbPRH6RHYMvCghZYaeM14yKPcHvfziQLS
+	 +NNapYYO5PteG6Yz9FDFrohN9k649YHr6TnGgtIu8SfCAlz6t0AtNHqxFdJZp7zPsE
+	 gfKV0fRP3Fe3CgjPy7rr75VtQIkFzblwRqwMLSROlQGjL6Ca2zLISrGEDAJCY/bnk4
+	 VFJZXryAEkyIYsU5F9APD7VQYZf049o+okma2hn0ZL9DYc0KHfKoYqhFY/Et9QBgo1
+	 DoqhsSN6ReSww==
+Date: Thu, 10 Jul 2025 13:33:56 -0500
+From: Rob Herring <robh@kernel.org>
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: sakari.ailus@linux.intel.com, krzk+dt@kernel.org,
+	kieran.bingham@ideasonboard.com, dave.stevenson@raspberrypi.com,
+	pratap.nirujogi@amd.com, laurent.pinchart@ideasonboard.com,
+	tarang.raval@siliconsignals.io,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hans de Goede <hansg@kernel.org>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: media: i2c: Add ov2735 sensor
+Message-ID: <20250710183356.GA3026892-robh@kernel.org>
+References: <20250710131107.69017-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250710131107.69017-2-hardevsinh.palaniya@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710060052.11955-1-boqun.feng@gmail.com> <20250710060052.11955-4-boqun.feng@gmail.com>
- <4Ql5DIvfmXBHoUA428q2PelaaLNBI5Mi0jE3y3YPObJLRgY73zNZzQ8Pdl2qq25VWsMQFKUpYRHHQ1e7wFaGUw==@protonmail.internalid>
- <DB8BTA477Z2V.1J7XFLDXHMN2S@kernel.org> <87v7o0i7b8.fsf@kernel.org>
- <aG_RcB0tcdnkE_v4@Mac.home> <DB8GUTJA9QU1.X112WTV7ABZN@kernel.org>
-In-Reply-To: <DB8GUTJA9QU1.X112WTV7ABZN@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 10 Jul 2025 20:32:40 +0200
-X-Gm-Features: Ac12FXxC1iNg6z30MULXJfC5bntwimdqt0Ot5Oz7qXD1RzXTBtdQy9P9OvPMxcw
-Message-ID: <CANiq72=Oq-JHkBuTAZPVYO5omuXswgGfLXu+nAGwEdRdgkU-0w@mail.gmail.com>
-Subject: Re: [PATCH v6 3/9] rust: sync: atomic: Add ordering annotation types
-To: Benno Lossin <lossin@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Lyude Paul <lyude@redhat.com>, 
-	Ingo Molnar <mingo@kernel.org>, Mitchell Levy <levymitchell0@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Alan Stern <stern@rowland.harvard.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710131107.69017-2-hardevsinh.palaniya@siliconsignals.io>
 
-On Thu, Jul 10, 2025 at 5:05=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
-ote:
->
-> I don't think we have a lint for that, so I'd prefer if we avoid that...
->
-> Someone is going to just `use ...::ordering::Any` and then have a
-> function `fn<T: Any>(_: T)` in their code and that will be very
-> confusing.
+On Thu, Jul 10, 2025 at 06:40:58PM +0530, Hardevsinh Palaniya wrote:
+> From: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+> 
+> Add bindings for Omnivision OV2735 sensor.
+> 
+> Signed-off-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+> Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+> ---
+>  .../bindings/media/i2c/ovti,ov2735.yaml       | 115 ++++++++++++++++++
+>  1 file changed, 115 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/ovti,ov2735.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov2735.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov2735.yaml
+> new file mode 100644
+> index 000000000000..d9d01db88844
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov2735.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/i2c/ovti,ov2735.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: OmniVision OV2735 Image Sensor
+> +
+> +maintainers:
+> +  - Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+> +
+> +description: |
 
-I guess there could be a lint that detects a given item being `use`d
-which we could use in some cases like this.
+Don't need '|' if no formatting to preserve.
 
-I took a quick look, and I see `enum_glob_use`, but that seems global
-without a way to filter, and it doesn't cover direct `use`s.
+> +  The OmniVision OV2735 is a 2MP (1920x1080) color CMOS image sensor controlled
+> +  through an I2C-compatible SCCB bus. it outputs RAW10 format and uses a 1/2.7"
+> +  optical format.
+> +
+> +properties:
+> +  compatible:
+> +    const: ovti,ov2735
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: XVCLK clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xvclk
+> +
+> +  avdd-supply:
+> +    description: Analog Domain Power Supply
+> +
+> +  dovdd-supply:
+> +    description: I/O Domain Power Supply
+> +
+> +  dvdd-supply:
+> +    description: Digital Domain Power Supply
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description: Reset Pin GPIO Control (active low)
+> +
+> +  enable-gpios:
+> +    maxItems: 1
+> +    description: |
 
-Then there is `wildcard_imports`, and that seems fairly usable (it has
-an allowed list), but of course doesn't cover non-wildcard ones.
+Same here.
 
-Cheers,
-Miguel
+> +      Active-low enable pin. Labeled as 'PWDN' in the datasheet, but acts as
+> +      an enable signal. During power rail ramp-up, the device remains powered
+> +      down. Once power rails are stable, pulling this pin low powers on the
+> +      device.
+> +
+> +  port:
+> +    description: MIPI CSI-2 transmitter port
+> +    $ref: /schemas/graph.yaml#/$defs/port-base
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      endpoint:
+> +        $ref: /schemas/media/video-interfaces.yaml#
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          data-lanes:
+> +            items:
+> +              - const: 1
+> +              - const: 2
+> +
+> +        required:
+> +          - data-lanes
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - avdd-supply
+> +  - dovdd-supply
+> +  - dvdd-supply
+> +  - port
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/rk3399-cru.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        camera-sensor@3c {
+> +            compatible = "ovti,ov2735";
+> +            reg = <0x3c>;
+> +            clocks = <&ov2735_clk>;
+> +
+> +            assigned-clocks = <&ov2735_clk>;
+> +            assigned-clock-parents = <&ov2735_clk_parent>;
+> +            assigned-clock-rates = <24000000>;
+> +
+> +            avdd-supply = <&ov2735_avdd>;
+> +            dovdd-supply = <&ov2735_dovdd>;
+> +            dvdd-supply = <&ov2735_dvdd>;
+> +
+> +            reset-gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
+> +            enable-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
+> +
+> +            port {
+> +                cam_out: endpoint {
+> +                    remote-endpoint = <&mipi_in_cam>;
+> +                    data-lanes = <1 2>;
+> +                };
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.34.1
+> 
 
