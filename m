@@ -1,99 +1,173 @@
-Return-Path: <linux-kernel+bounces-725020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1136AFF9D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560CCAFF9DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15258169573
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:29:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90C62542616
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E227287278;
-	Thu, 10 Jul 2025 06:29:29 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999CC287258;
+	Thu, 10 Jul 2025 06:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uA93EhAp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCBA43AA1;
-	Thu, 10 Jul 2025 06:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C6243AA1;
+	Thu, 10 Jul 2025 06:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752128968; cv=none; b=A26PkJiehsZnQWr82qLyOxReJztKHH2x67hC/RH8euJcpLhfSOebjem9YKS+rahyzagrdHsZaEFNCqFdqTKVMHS7evjgLuCFSExd7KJolisaYfLkA+Y7q97CGZskpi937QVIPa0efemwgz4He+Yhg4S/RHeH2E6wO3tIjP+jhCY=
+	t=1752128973; cv=none; b=MbSkYVtIfaOzTRnZjEPxp7jOtkMgE52moYHpFXnQPTNMuZkvee0IhdB03rx4eyRRJf1mrkECv+VPCFMJ/2AJCxZGlD7SXHW4u6S6WgONzT647f6AzRXX/YlBmC+GYEj2CaDwRmu9lCDurfq2Lz+90TRQcQ1dfmJ6T5Y5F8Jb3yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752128968; c=relaxed/simple;
-	bh=gvdq60nzfNG2esKxBfmnuhBh+aKn0Wz4qX28y8HNUkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ez8zywGSqFCQnhslQD60ODQoAkeCZunkBsIjv6IOOwtyYHw/jUvwXbsthFtuSMyzsQJ6rAN4i431PxyFMvZpTS3hxTNyExzCPqVxgS3o4DvCFi01pKfKDQm06Tl4uOLrfZmpkbYZMDeSC32oiGBvGFMaTgcPAvsAliMrjGF3A4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 30d60d2c5d5711f0b29709d653e92f7d-20250710
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:0043cf3f-91f2-40cc-b799-60f2b559615a,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:14aab8415650b34f3e5ca436a8a56690,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 30d60d2c5d5711f0b29709d653e92f7d-20250710
-X-User: dengjie03@kylinos.cn
-Received: from [10.42.12.86] [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <dengjie03@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
-	with ESMTP id 1849901318; Thu, 10 Jul 2025 14:29:11 +0800
-Message-ID: <0056f856-bd81-403d-84cb-339a37a73b8f@kylinos.cn>
-Date: Thu, 10 Jul 2025 14:28:43 +0800
+	s=arc-20240116; t=1752128973; c=relaxed/simple;
+	bh=ffM5skOHJyuqemBuXSUWFaQh2Zi0Kcb5KVfxZLvWKoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ejTyTXiUaGMdkl4t4VVC09f/OKs4WC7FuWpdVyd4SCZfIwRB7OEUPfzCynwhSpupAAQWeko8e6TduNBhTAoblcUpFdNdUEz1CBh1d0SyL5pdOX/muhNXAAN4E8SiZIn1i171WBsMGrQUbSEnSefIwor7GO9mBo6mmdC6aLgeIRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uA93EhAp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6B6C4CEF5;
+	Thu, 10 Jul 2025 06:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752128972;
+	bh=ffM5skOHJyuqemBuXSUWFaQh2Zi0Kcb5KVfxZLvWKoY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uA93EhApmzRMr3l2azxesncXsGYG3NlPfIJ0FIGkOK31aTyKEW9a8yzrtauCxNvjv
+	 qsbXk2WTnUygbpQ6/ezpaTyzBo0vMCxqMRtHrOcd/0nRUwEKepfngcl7QmPQn502qu
+	 m22Bb1JvMogCpVrHXoX51tWyHR3qcN3Qt0JoaEmduhrzytUEyVTl4z8T1AzXRjfjWV
+	 0VN0hx2xEPHCSZLYjz5wt/sFNAAGhpGAOkXFfpoms3+7SuSrWrTJzLOutudN6Hye7E
+	 ozYt+rIqfsiLzwmXgUDhjtcZFw9CkWcPf7ce0U6SmwcaPkc3XDqjUYu+fPaOif//V/
+	 Ceo9qFVshi9xA==
+Date: Thu, 10 Jul 2025 08:29:27 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 11/12] docs: kdoc: clean up check_sections()
+Message-ID: <20250710082927.10b13862@foz.lan>
+In-Reply-To: <20250702223524.231794-12-corbet@lwn.net>
+References: <20250702223524.231794-1-corbet@lwn.net>
+	<20250702223524.231794-12-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] usb: storage: Ignore UAS driver for SanDisk Extreme
- Pro 55AF storage device
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: stern@rowland.harvard.edu, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
-References: <2025070422-punctured-opal-f51e@gregkh>
- <20250707062507.39531-1-dengjie03@kylinos.cn>
- <2025070702-unsigned-runny-62c6@gregkh>
- <4bac2d53-0e5b-437e-92bc-12921a8efd8d@kylinos.cn>
- <2025070810-nintendo-congenial-95d4@gregkh>
- <92f1e73f-5814-4e01-98b6-1c9c0b87f903@kylinos.cn>
- <2025070902-service-foam-1da5@gregkh>
-From: Jie Deng <dengjie03@kylinos.cn>
-In-Reply-To: <2025070902-service-foam-1da5@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+Em Wed,  2 Jul 2025 16:35:23 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
+
+> entry.sectcheck is just a duplicate of our list of sections that is only
+> passed to check_sections(); its main purpose seems to be to avoid checking
+> the special named sections.  Rework check_sections() to not use that field
+> (which is then deleted), tocheck for the known sections directly, and
+> tighten up the logic in general.
+> 
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+
+LGTM.
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 31 +++++++++++--------------------
+>  1 file changed, 11 insertions(+), 20 deletions(-)
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index 7191fa94e17a..fdde14b045fe 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -42,9 +42,11 @@ doc_decl = doc_com + KernRe(r'(\w+)', cache=False)
+>  #         @{section-name}:
+>  # while trying to not match literal block starts like "example::"
+>  #
+> +known_section_names = 'description|context|returns?|notes?|examples?'
+> +known_sections = KernRe(known_section_names, flags = re.I)
+>  doc_sect = doc_com + \
+> -            KernRe(r'\s*(\@[.\w]+|\@\.\.\.|description|context|returns?|notes?|examples?)\s*:([^:].*)?$',
+> -                flags=re.I, cache=False)
+> +    KernRe(r'\s*(\@[.\w]+|\@\.\.\.|' + known_section_names + r')\s*:([^:].*)?$',
+> +           flags=re.I, cache=False)
+>  
+>  doc_content = doc_com_body + KernRe(r'(.*)', cache=False)
+>  doc_inline_start = KernRe(r'^\s*/\*\*\s*$', cache=False)
+> @@ -115,7 +117,6 @@ class KernelEntry:
+>          self.config = config
+>  
+>          self._contents = []
+> -        self.sectcheck = ""
+>          self.prototype = ""
+>  
+>          self.warnings = []
+> @@ -187,7 +188,6 @@ class KernelEntry:
+>              self.parameterdescs[name] = contents
+>              self.parameterdesc_start_lines[name] = self.new_start_line
+>  
+> -            self.sectcheck += name + " "
+>              self.new_start_line = 0
+>  
+>          else:
+> @@ -478,29 +478,20 @@ class KernelDoc:
+>                          self.push_parameter(ln, decl_type, param, dtype,
+>                                              arg, declaration_name)
+>  
+> -    def check_sections(self, ln, decl_name, decl_type, sectcheck):
+> +    def check_sections(self, ln, decl_name, decl_type):
+>          """
+>          Check for errors inside sections, emitting warnings if not found
+>          parameters are described.
+>          """
+> -
+> -        sects = sectcheck.split()
+> -
+> -        for sx in range(len(sects)):                  # pylint: disable=C0200
+> -            err = True
+> -            for param in self.entry.parameterlist:
+> -                if param == sects[sx]:
+> -                    err = False
+> -                    break
+> -
+> -            if err:
+> +        for section in self.entry.sections:
+> +            if section not in self.entry.parameterlist and \
+> +               not known_sections.search(section):
+>                  if decl_type == 'function':
+>                      dname = f"{decl_type} parameter"
+>                  else:
+>                      dname = f"{decl_type} member"
+> -
+>                  self.emit_msg(ln,
+> -                              f"Excess {dname} '{sects[sx]}' description in '{decl_name}'")
+> +                              f"Excess {dname} '{section}' description in '{decl_name}'")
+>  
+>      def check_return_section(self, ln, declaration_name, return_type):
+>          """
+> @@ -754,7 +745,7 @@ class KernelDoc:
+>  
+>          self.create_parameter_list(ln, decl_type, members, ';',
+>                                     declaration_name)
+> -        self.check_sections(ln, declaration_name, decl_type, self.entry.sectcheck)
+> +        self.check_sections(ln, declaration_name, decl_type)
+>  
+>          # Adjust declaration for better display
+>          declaration = KernRe(r'([\{;])').sub(r'\1\n', declaration)
+> @@ -1018,7 +1009,7 @@ class KernelDoc:
+>                            f"expecting prototype for {self.entry.identifier}(). Prototype was for {declaration_name}() instead")
+>              return
+>  
+> -        self.check_sections(ln, declaration_name, "function", self.entry.sectcheck)
+> +        self.check_sections(ln, declaration_name, "function")
+>  
+>          self.check_return_section(ln, declaration_name, return_type)
+>  
 
 
-在 2025/7/9 14:21, Greg KH 写道:
-> On Wed, Jul 09, 2025 at 11:40:03AM +0800, Jie Deng wrote:
->> 在 2025/7/8 15:33, Greg KH 写道:
->>>> 2) linux + arm64: The SanDisk Extreme Pro 55AF device will report an error
->>>> when
->>>> using the uas driver and the driver cannot be loaded. USB Controller model
->>>> (Vendor ID: 1912, Device ID: 0014,uPD720201 USB 3.0 Host Controller).
->>> Ok, that sounds like an arm64 issue we should resolve.  Why can the
->>> driver not be loaded at all?  What happens?
->> 1. During the process of loading the uas driver, the following error message
->> will occur,
->> resulting in the failure of driver loading:
->> scsi 3:0:0:1: Failed to get diagnostic page 0x1
->> scsi 3:0:0:1: Failed to bind enclosure -19
->> ses 3:0:0:1: Attached Enclosure device
->> sd 3:0:0:0: [sda] tag#10 data cmplt err -75 uas-tag 1 inflight: CMD
->> sd 3:0:0:0: [sda] tag#10 CDB: Read(10) 28 00 74 6f 6d 00 00 00 08 00
->> sd 3:0:0:0: [sda] tag#10 uas_eh_abort_handler 0 uas-tag 1 inflight: CMD
->> sd 3:0:0:0: [sda] tag#10 CDB: Read(10) 28 00 74 6f 6d 00 00 00 08 00
-> Any chance you can use usbmon to try to figure out why the arm64 system
-> is sending different commands or failures than x86 is?
-Thank you for your suggestions. I’ll review them thoroughly going 
-forward.🙂
+
+Thanks,
+Mauro
 
