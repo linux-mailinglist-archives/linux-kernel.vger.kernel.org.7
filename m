@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-726095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A2FB007FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0F4B00805
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C31465434D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508653AAF11
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B82A2EE99D;
-	Thu, 10 Jul 2025 16:02:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E8B2586C8;
-	Thu, 10 Jul 2025 16:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3A52EF2BA;
+	Thu, 10 Jul 2025 16:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B9blc9KE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814DD2857FF
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752163338; cv=none; b=P+AcePEf6uy4zOdQaEkTkoH6nvqH5XMCwYxV95ieya8lcd5zRPn643AUS4t+N5Mq4NXvIo7r1i4J4whXf5zDS9evQ3odf/TaZ1wS4aWvJrT+JI3QDvpqcSXYgiDKr9BajxSJZMclUn4qVey8ySR+wT4qGZOG2E6CNZHudHrGTts=
+	t=1752163452; cv=none; b=k6Mlx3VPmReMRN6hpwg7SZH4XrvBb9OECyrpJyPtoXyHWjA1qHcwdZKwre4X6U5oHt6xWN6bRR+gVCBrW45zAe7xqsTTNpvXSKNmZNUoDb27W1a/lH7FmTo6lESmQ6YN09A+Onx7qBeI6KzpEi2SpH7Lkp+S7G4F/4EWMp1mvH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752163338; c=relaxed/simple;
-	bh=lN750KO/pPWnzCXFx4f46ZxdEyd/vB6O8CNNoB35e0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+slkH/UnUQwzu4PfrgQmyu2hA5zmv0+Cp++OZ2EHpIc3rW4n/PH5Z+5X5qxWcqHsRN6xcbmIB7RsIW0JAredtT8MsNe1AP/OlaAJzEapVqrpTUxmbB+xxmCCecuuRAg69bnos7PqxzDQjys9brbVFo2oWs+NFUBH9xMLOmW9vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62A281EA6;
-	Thu, 10 Jul 2025 09:02:04 -0700 (PDT)
-Received: from bogus (unknown [10.57.50.184])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF7503F738;
-	Thu, 10 Jul 2025 09:02:12 -0700 (PDT)
-Date: Thu, 10 Jul 2025 17:02:03 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	William Mcvicker <willmcvicker@google.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v5] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
-Message-ID: <20250710-translucent-mastiff-of-performance-b5f1ba@sudeepholla>
-References: <20250709-gs101-cpuidle-v5-1-b34d3210286d@linaro.org>
- <20250709-chocolate-flamingo-of-nirvana-5de895@sudeepholla>
- <CADrjBPqYSVO20a0ox9un0fq7dBss9sMGK1Q3ivCjCGaFyqhZFA@mail.gmail.com>
+	s=arc-20240116; t=1752163452; c=relaxed/simple;
+	bh=45SIG5rPi31Du7cZARxkbmyB/fEEYfkUbHU85m7Yd/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rjoV36W8OJwaYxfG1buEzItoLZls7NouTJpZpQN12u5hqbCfNypo4U1FU2aI1Wx2Bsf1LjtNnOyF+iHNKULdhF3FT3pYq1GD68sfyxmC9PFt73D5Bu2FqdnpyE2M7COAkVRl9qANCDVVkbmT4NXfWsnuhv+ICUNojEVwllMNtsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B9blc9KE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752163447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NSCoFxZmQFbdN64FGaIzAmf+ZfaD0SDOkGG3PDCYahE=;
+	b=B9blc9KEO6bp7K2+dwPtdUO1mhGx8MfnhwTSEfSt0SjAjnsYbxc7GBafqoBHOAjBr5HFVi
+	6PTTyaUuniFRgz/Zt6EVjZyE7WDwCN6+2B3mlEZigy3JysaM/fzDnNSWTXb7ttvGspCe7A
+	YiH+H3Lo2SO+8jv1+jRmcHH/OxoxoNg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-226-VSdjvebxOpmee4f3yln7SQ-1; Thu, 10 Jul 2025 12:04:06 -0400
+X-MC-Unique: VSdjvebxOpmee4f3yln7SQ-1
+X-Mimecast-MFC-AGG-ID: VSdjvebxOpmee4f3yln7SQ_1752163445
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4538f375e86so9037405e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:04:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752163445; x=1752768245;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NSCoFxZmQFbdN64FGaIzAmf+ZfaD0SDOkGG3PDCYahE=;
+        b=mcC1Syrt/49/CGJbJzJQ1SM9Jdp+zPcS7hWmIoTJZTfc6TbUqllSjQc+PEBotC6tdS
+         ONu1f3vXk4ces8NfB7YrlwXECNsdWR07d+5aN9b9i/dPoPDDGcztJ6NRFgV8IAUcEu5m
+         mW93e5JDtca50+9UI11HrHLmp59YJ5Vavj73xn5oSlk+icGjEHQO+hp2eICXEhxch/02
+         OY+4st52/5fCRhABF/VjM2wmjKpTYM7XBdb3LnPjH87gaBlLPLN04Grzglqc5GiOUQXP
+         4m1KS1fYHsdZU/n7E1D8voExwQ0I3xewAarkrbA/ygEktKUfLVDlMc52qIWy0QWRZt0o
+         lZfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyyEMP6mtbXE4Mp5/65eVQzhHHsmYXmZLH2/WXxb6ICXCbxMw3m2tGGAsN9uw4AJZCEOvIi/wAzfWOVbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoQKbIDJxT/mYE8+0VwB09JfRTJBFElNRsGHRqrqtCj3FLa7Bg
+	p62U+Z+BBNufAV4RNhaQCDGv0BchkTit9R9vips3cr42/WyHsyIgcmlSJXrdmw/raO45+831jZU
+	Dz7bUX1YCXx31sCQ40KA88zW9Dyg8WfJCdt6c4XdgwZk6heTZHt2qEmQm4gre111O7A==
+X-Gm-Gg: ASbGnctw6SrzqcMK/TbB9waHa/mNVW44Ih66fMa6ldsSaoitaRbCOc4/maFw6rRhel2
+	oTUcaMa8N14c3FLUOcsFhQ/+LUB42GhVpHqtcu82LIcjSUngqm0sxhcU7AyTfpkwikOPgV+U9by
+	jXP4hm1T6LFvYI+u5Hrv+jImpXR5HezgrxFaO8DX/H6tYuxEZb+URzeiiRE2SBLFjD/NjIICSBm
+	/Ai9WDJtmCk1TqorO0AC8AU747Hx6noEDdZi0BlFmu+h62R4b8G7yJgMx1XDas4a0K7j3BuZlE4
+	21TdVMPP4obS8HbDpRgEeLnsH7YxDV6H1C6ZR6oqW+chzTItQ6zdYACvFtnnOZ1hqdmoRA==
+X-Received: by 2002:a05:600c:8b07:b0:43d:fa59:af97 with SMTP id 5b1f17b1804b1-454d5404715mr63093135e9.32.1752163443509;
+        Thu, 10 Jul 2025 09:04:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwQsXap6CXeZtb932z9EyvfOv6madp5+KBeR3+NEb4XXN6+C92DcDbsyl7FzhVwLWiFi+d5w==
+X-Received: by 2002:a05:600c:8b07:b0:43d:fa59:af97 with SMTP id 5b1f17b1804b1-454d5404715mr63092535e9.32.1752163442931;
+        Thu, 10 Jul 2025 09:04:02 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:271f:bc10:144e:d87a:be22:d005? ([2a0d:3344:271f:bc10:144e:d87a:be22:d005])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d5032e9esm62029605e9.3.2025.07.10.09.04.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 09:04:02 -0700 (PDT)
+Message-ID: <e0f9befa-d29b-4cc4-ba41-e38f398a6589@redhat.com>
+Date: Thu, 10 Jul 2025 18:04:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADrjBPqYSVO20a0ox9un0fq7dBss9sMGK1Q3ivCjCGaFyqhZFA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
+To: Kuniyuki Iwashima <kuniyu@google.com>,
+ syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+ paul@paul-moore.com, syzkaller-bugs@googlegroups.com
+References: <686da18a.050a0220.1ffab7.0023.GAE@google.com>
+ <20250708231926.356365-1-kuniyu@google.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250708231926.356365-1-kuniyu@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 10:36:59PM +0100, Peter Griffin wrote:
-> Hi Sudeep,
+On 7/9/25 1:17 AM, Kuniyuki Iwashima wrote:
+> From: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
+> Date: Tue, 08 Jul 2025 15:54:02 -0700
+>> Hello,
+>>
+>> syzbot tried to test the proposed patch but the build/boot failed:
+>>
+>> net/smc/af_smc.c:365:3: error: call to undeclared function 'inet_sock_destruct'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+>>
 > 
-> Thanks for your review feedback!
-> 
-> On Wed, 9 Jul 2025 at 17:10, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >
-> > On Wed, Jul 09, 2025 at 02:26:27PM +0100, Peter Griffin wrote:
-> > > Register cpu pm notifiers for gs101 which call the
-> > > gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
-> > > C2 hint. This hint is required to actually enter the C2 idle state.
-> > >
-> > > A couple of corner cases are handled, namely when the system is rebooting
-> > > or suspending we ignore the request. Additionally the request is ignored if
-> > > the CPU is in CPU hot plug. Some common code is refactored so that it can
-> > > be called from both the CPU hot plug callbacks and CPU PM notifier taking
-> > > into account that CPU PM notifiers are called with IRQs disabled whereas
-> > > CPU hotplug callbacks are not.
-> > >
-> > > Additionally due to CPU PM notifiers using raw_spinlock the locking is
-> > > updated to use raw_spinlock variants, this includes updating the pmu_regs
-> > > regmap to use .use_raw_spinlock = true and additionally creating and
-> > > registering a custom  pmu-intr-gen regmap instead of using the regmap
-> > > provided by syscon.
-> > >
-> > > Note: this patch has a runtime dependency on adding 'local-timer-stop' dt
-> > > property to the CPU nodes. This informs the time framework to switch to a
-> > > broadcast timer as the local timer will be shutdown. Without that DT
-> > > property specified the system hangs in early boot with this patch applied.
-> > >
-> >
-> > Assuming this is arm64 platform and using PSCI for all the power management,
-> > can you please briefly explain why all these dance is absolutely necessary
-> > when PSCI calls can be the clue for the EL3 firmware. I am basing my question
-> > on this information in the file:
-> 
-> Yes, you're correct it is an arm64 platform using PSCI. Unfortunately
-> I don't have access to the el3mon firmware code to speak super
-> authoritatively about it, but you're correct that it is essentially
-> working around a firmware limitation.
-> 
-> What I initially observed whilst working on suspend to RAM, when
-> hotplugging CPU's with just the PSCI calls the system hangs. Debugging
-> this and tracing versus the downstream production drivers the missing
-> piece was programming the "ACPM hint" to the CPU_INFORM registers.
-> Further debugging and power measurements also showed that the ACPM
-> hint is also required in addition to PSCI calls for the cpuidle states
-> to function correctly.
-> 
+> #syz test
 
-It is definitely worth adding all the above info and shaming the firmware
-for not taking care of this. I still don't like this as PSCI is there
-for nearly a decade now and still we see such limitations that needs to
-be fixed in the firmware and now workaround in the kernel.
+Please, strip down the CC list to strictly skyzaller related recipients
+while sending this kind of test, as they may foul PW and the CI.
 
-> > /*
-> >  * CPU_INFORM register hint values which are used by
-> >  * EL3 firmware (el3mon).
-> >  */
-> >
-> > This clearly sounds like workaround for the firmware limitations. That
-> > needs to be clearly documented IMO.
-> 
-> Sure I can add a more verbose comment, that this is required to work
-> around firmware limitations in the PSCI implementation.
-> 
+Thanks,
 
-Thanks that's what we need to fully understand the need of otherwise
-useless dance around hotplug and idle state machinery in the kernel.
+Paolo
 
--- 
-Regards,
-Sudeep
 
