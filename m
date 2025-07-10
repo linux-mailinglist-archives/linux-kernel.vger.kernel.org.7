@@ -1,250 +1,268 @@
-Return-Path: <linux-kernel+bounces-725067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2255AFFA6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B234AFFA75
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 868FC4E0B0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:09:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 391A84E0DE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ACE2882A7;
-	Thu, 10 Jul 2025 07:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E653F2882C9;
+	Thu, 10 Jul 2025 07:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYao3mMp"
-Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAeG1Z8f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053C3FC1D;
-	Thu, 10 Jul 2025 07:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1911FFC1D;
+	Thu, 10 Jul 2025 07:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752131405; cv=none; b=lqN/H+P7rTqYDTYRKI+d7bFH1bVaUJoHqXtrTfdhkAamhppB0sone9gHPoKOKBXG9pMWBRwlO1hbcrvTkSvg27jlB+S6uqNiT0jwYI816abVf/YGDKU+gnvdb3rfk5U10DMY6czRumB8hYbATrLIGChmITRrbyTQamPQ5sUBzEI=
+	t=1752131456; cv=none; b=juVV8GK/XhbrYD8sKOaeF/NOVC7k795sHm1lTZ52uNzGj12tPeJrswVgmWxaKLRvNpS2Pl+YDcqkK9+I2sOL5wqJDKgzM23nNVG2DiUtv8bZIm1ZTwMxNk0efEaSUFY73FBttMlcXIJPYtko3WooNNma18eBAdS7/1VdHSvUV5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752131405; c=relaxed/simple;
-	bh=akcgg5mW5WGYZgdqEKOu3qm5DUGijzYwSIqa3Jci3P8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sw3j+x9j5eh0MvMaEmyplrKG+Xzfh+5T8AyWHrmof0fQNzb4N7fflbpUK3ar1I8dDenZ5KPHLu3aBhdpJCfNTp6ydcFnyhBxr6CVBt5dqujlYX5N5/0/qowJV3Mg7YBBdOttHzuTjL2SqPwU87k26us+ILIRiMa5rz2HKLDV8r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYao3mMp; arc=none smtp.client-ip=209.85.215.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b34c068faf8so817507a12.2;
-        Thu, 10 Jul 2025 00:10:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752131403; x=1752736203; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SpdfnhJLhS9MZBFPz+sw+aIul+Ov94DKw8DM9F37WyU=;
-        b=GYao3mMpR3hr+PGaRYWbbOBOQGB9flZZFcI5W6CeJdwFPX51FW4uSVqalOhoTrwY/R
-         svn7ApsAUqNZTlA9FziAGoTBSMKSThoAdxh/ODREzAQI98n3blsgcHdNGNm5blmIn51n
-         VaA/0PrdT0yl/nlZi4WoCmc6qSbVqyNJ8CyojxLUXIPFQpUFNT3y0iTStWZTav8uobCN
-         GBBP4Ty8Z0rcdFuZl3cwYv9bqag5HdQgGUI5OtMiqZ02jJr255PdurysUa2wJmT4kxAu
-         373vwMXbWj1P6Yisl/iIYqiSuYUv5FRbx/1jpd0M9mqifpG7/YWcWNlTSgdT66RPxggk
-         ubIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752131403; x=1752736203;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SpdfnhJLhS9MZBFPz+sw+aIul+Ov94DKw8DM9F37WyU=;
-        b=pxpg4TnyWQu/1s7FWJKEc3rxR7bBoMTVQPdroUoJD88a8oZ9CFkqhu0wDRKLepFeRF
-         7cb7a4nlxTSiFqVUrSvrTBwkrxn4jOozFkKWSYTtIYASegLeGdStyLE4DPAoD/8u3yRW
-         GPbNanuCDHmJKlchYi1pj/jx1gOq4mI4RkwtiLmT/hFMNmIlWuiUwJqKqEmtijglyAbT
-         yHS/N1LcERq07bYzcyYegmDpHLWhF2p6Nzt4y9QUJu325BglefpK8jnpwrGdgHY7jf1R
-         aP0e53b0rAZJB1s35kz68Ak9ERwKQGJ93RnAr0F76OzxGYnCrMnWjSliII5HZN7fg8cS
-         1q2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV6W6hSGu4L3bw+iuRAvtKfD8l7wgn6IarsWxJZwx0T/22de9s1Rfaca5KaAhJg5LMMPfY=@vger.kernel.org, AJvYcCVqouDtjyJ71Ow7MdO0+ctzuAn3+SNWH2e+5Qyn1KGdwSiOkp46nUZdoy6TulCEQAaKcDWIhmd+Cc1sHE3p@vger.kernel.org
-X-Gm-Message-State: AOJu0YyudptLN6Z3X9LtwbVa6fxDCwDY3F3lJ5ybEbi6IZLLw5U4qc1x
-	GAfel9JrAn9+47rxvFW6PsbW8MNqK3v6MDM80C9c8+oMb6L5tUPfXJVh
-X-Gm-Gg: ASbGnctbb4lNU2/H3xfcHH4buZa7710fAv7bOt+5moDguMrZblZFme9ImFUezubn+xL
-	PyVw8ayclYOmWJ5oCAEnuNyHx3lopk64sTcZYCLpOuwBrdu+pcZyoF94syELofD+x+psqQgoTpF
-	swMNeNa2T8QjEjaxhXf1OQek64T+phzVf6aoOI0hSz1xqoy+Gsav2F58HZhWViHcrVxKPEdxvmI
-	wASxhEgLy7MlHSakffY+o4VNvAkJZVV8aPoX++ow0Ik2abx3qfgeNdpVvIs2ma7LOJQQxK+/gt0
-	ZIjm1CXgLkfnaj+7diaj3wdWq4/t3GhbCmH5ZsuUNm66G7vbjl85df+w4urPKmnxh/mE/VxiRlb
-	VoK8=
-X-Google-Smtp-Source: AGHT+IHzKNFyu3q0pi9zeSB7GFSW9QDiBk5Wkiz1QExKmR0pK/SLNM/UMYxntP1wy2fuBJpE6QRpnA==
-X-Received: by 2002:a17:90b:5610:b0:308:7270:d6ea with SMTP id 98e67ed59e1d1-31c2fdf4897mr8453314a91.30.1752131403111;
-        Thu, 10 Jul 2025 00:10:03 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3003d504sm4211313a91.10.2025.07.10.00.09.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 00:10:02 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: ast@kernel.org,
-	daniel@iogearbox.net
-Cc: john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Menglong Dong <dongml2@chinatelecom.cn>
-Subject: [PATCH bpf-next v3] bpf: make the attach target more accurate
-Date: Thu, 10 Jul 2025 15:08:35 +0800
-Message-Id: <20250710070835.260831-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752131456; c=relaxed/simple;
+	bh=PkKCrCcuyuxh4trwp8qE8i2qCxJqLT90JXicLKiO9cA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gxwoA+MnXfyLbq15yaLAp+ZCoVaZxC7zO9jrMCUn2tfycrd7QmPtWTzOa+9IgyV+tiPlPCFhV1YwFo5hvf7c19qRBMOzQKVZx/XMjzbGIgkAoZcMEu6iRDYKES70WdvtltPq+gNY1s1vr2YL9xKwuw1eFMNOKgZHMtqbv0rDw1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAeG1Z8f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA3C0C4CEE3;
+	Thu, 10 Jul 2025 07:10:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752131455;
+	bh=PkKCrCcuyuxh4trwp8qE8i2qCxJqLT90JXicLKiO9cA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jAeG1Z8frnlkFN+0+0Nw0xKkqVZXOpspn0FYUUkeiW8FbebUB1TRP6wihV2qGCaBz
+	 upffSTPPJ+5TU0GY+D1Am7yDN3eZZRLKCkvAjS1b3vyAvSZTze2402CjDpG9X/yTCR
+	 0OiNSikEc3O72nfXpRJ86dh62L5FM+Ohwp+tz7CCL2MjxXkNltCMKzFsZQhWbfX2g+
+	 osyX2l4l+qqXsEHtZHq8C8aTOxj6DzP8FMyq19Q4oYGfS64m99zsNUuSvlC10vYakQ
+	 GpSdkAdr0TfiDmdmYTn+p1z8SENh6WaMij/5mUrXjnqjebTGEUnhFqDvgWcnswsgmE
+	 8D2G8ON4F6DYw==
+Message-ID: <7b9a8203-2d66-4735-a6a2-762f57fb5cef@kernel.org>
+Date: Thu, 10 Jul 2025 09:10:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/16] dt-bindings: clock: Add ARTPEC-8 CMU bindings
+To: ksk4725@coasia.com, Jesper Nilsson <jesper.nilsson@axis.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
+ <tomasz.figa@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Ravi Patel <ravi.patel@samsung.com>, SungMin Park <smn1196@coasia.com>
+Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>,
+ GunWoo Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>,
+ GyoungBo Min <mingyoungbo@coasia.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Shradha Todi
+ <shradha.t@samsung.com>, Inbaraj E <inbaraj.e@samsung.com>,
+ Swathi K S <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>,
+ Dongjin Yang <dj76.yang@samsung.com>, Sang Min Kim
+ <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+ <20250710002047.1573841-3-ksk4725@coasia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250710002047.1573841-3-ksk4725@coasia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For now, we lookup the address of the attach target in
-bpf_check_attach_target() with find_kallsyms_symbol_value or
-kallsyms_lookup_name, which is not accurate in some cases.
+On 10/07/2025 02:20, ksk4725@coasia.com wrote:
+> From: Hakyeong Kim <hgkim05@coasia.com>
+> 
+> Add dt-schema for ARTPEC-8 SoC clock controller.
+> 
+> Add device-tree binding definitions for following CMU blocks:
+> - CMU_CMU
+> - CMU_BUS
+> - CMU_CORE
+> - CMU_CPUCL
+> - CMU_FSYS
+> - CMU_IMEM
+> - CMU_PERI
+> 
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> Signed-off-by: Hakyeong Kim <hgkim05@coasia.com>
 
-For example, we want to attach to the target "t_next", but there are
-multiple symbols with the name "t_next" exist in the kallsyms, which makes
-the attach target ambiguous, and the attach should fail.
+Confusing order, unless you really understand this, but considering you
+did not add your own SoB I claim you do not understand this. What does
+Ravi's SoB mean here?
 
-Introduce the function bpf_lookup_attach_addr() to do the address lookup,
-which will return -EADDRNOTAVAIL when the symbol is not unique.
+> ---
+>  .../bindings/clock/axis,artpec8-clock.yaml    | 224 ++++++++++++++++++
+>  1 file changed, 224 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml b/Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
+> new file mode 100644
+> index 000000000000..baacea10599b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/axis,artpec8-clock.yaml
+> @@ -0,0 +1,224 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/axis,artpec8-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Axis ARTPEC-8 SoC clock controller
+> +
+> +maintainers:
+> +  - Jesper Nilsson <jesper.nilsson@axis.com>
+> +
+> +description: |
+> +  ARTPEC-8 clock controller is comprised of several CMU units, generating
+> +  clocks for different domains. Those CMU units are modeled as separate device
+> +  tree nodes, and might depend on each other. The root clock in that root tree
+> +  is an external clock: OSCCLK (25 MHz). This external clock must be defined
+> +  as a fixed-rate clock in dts.
+> +
+> +  CMU_CMU is a top-level CMU, where all base clocks are prepared using PLLs and
+> +  dividers; all other clocks of function blocks (other CMUs) are usually
+> +  derived from CMU_CMU.
+> +
+> +  Each clock is assigned an identifier and client nodes can use this identifier
+> +  to specify the clock which they consume. All clocks available for usage
+> +  in clock consumer nodes are defined as preprocessor macros in
+> +  'include/dt-bindings/clock/axis,artpec8-clk.h' header.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - axis,artpec8-cmu-cmu
+> +      - axis,artpec8-cmu-bus
+> +      - axis,artpec8-cmu-core
+> +      - axis,artpec8-cmu-cpucl
+> +      - axis,artpec8-cmu-fsys
+> +      - axis,artpec8-cmu-imem
+> +      - axis,artpec8-cmu-peri
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 5
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 5
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
 
-We can do the testing with following shell:
+reg goes second, after compatible (Samsung bindings are not the best
+example because I converted them long time ago before many coding style
+practices were encouraged)
 
-for s in $(cat /proc/kallsyms | awk '{print $3}' | sort | uniq -d)
-do
-  if grep -q "^$s\$" /sys/kernel/debug/tracing/available_filter_functions
-  then
-    bpftrace -e "fentry:$s {printf(\"1\");}" -v
-  fi
-done
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
 
-The script will find all the duplicated symbols in /proc/kallsyms, which
-is also in /sys/kernel/debug/tracing/available_filter_functions, and
-attach them with bpftrace.
+Drop contains.
 
-After this patch, all the attaching fail with the error:
+> +            const: axis,artpec8-cmu-cmu
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (25 MHz)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: fin_pll
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: axis,artpec8-cmu-bus
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (25 MHz)
+> +            - description: CMU_BUS BUS clock (from CMU_CMU)
+> +            - description: CMU_BUS DLP clock (from CMU_CMU)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: fin_pll
+> +            - const: dout_clkcmu_bus_bus
+> +            - const: dout_clkcmu_bus_dlp
 
-The address of function xxx cannot be found
-or
-No BTF found for xxx
+All these names should be changed to match what is the input. Look at
+latest bindings, we moved away from that style.
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
-v3:
-- reject all the duplicated symbols
-v2:
-- Lookup both vmlinux and modules symbols when mod is NULL, just like
-  kallsyms_lookup_name().
 
-  If the btf is not a modules, shouldn't we lookup on the vmlinux only?
-  I'm not sure if we should keep the same logic with
-  kallsyms_lookup_name().
 
-- Return the kernel symbol that don't have ftrace location if the symbols
-  with ftrace location are not available
----
- kernel/bpf/verifier.c | 71 ++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 66 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 53007182b46b..bf4951154605 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -23476,6 +23476,67 @@ static int check_non_sleepable_error_inject(u32 btf_id)
- 	return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_id);
- }
- 
-+struct symbol_lookup_ctx {
-+	const char *name;
-+	unsigned long addr;
-+};
-+
-+static int symbol_callback(void *data, unsigned long addr)
-+{
-+	struct symbol_lookup_ctx *ctx = data;
-+
-+	if (ctx->addr)
-+		return -EADDRNOTAVAIL;
-+	ctx->addr = addr;
-+
-+	return 0;
-+}
-+
-+static int symbol_mod_callback(void *data, const char *name, unsigned long addr)
-+{
-+	if (strcmp(((struct symbol_lookup_ctx *)data)->name, name) != 0)
-+		return 0;
-+
-+	return symbol_callback(data, addr);
-+}
-+
-+/**
-+ * bpf_lookup_attach_addr: Lookup address for a symbol
-+ *
-+ * @mod: kernel module to lookup the symbol, NULL means to lookup both vmlinux
-+ * and modules symbols
-+ * @sym: the symbol to resolve
-+ * @addr: pointer to store the result
-+ *
-+ * Lookup the address of the symbol @sym. If multiple symbols with the name
-+ * @sym exist, -EADDRNOTAVAIL will be returned.
-+ *
-+ * Returns: 0 on success, -errno otherwise.
-+ */
-+static int bpf_lookup_attach_addr(const struct module *mod, const char *sym,
-+				  unsigned long *addr)
-+{
-+	struct symbol_lookup_ctx ctx = { .addr = 0, .name = sym };
-+	const char *mod_name = NULL;
-+	int err = 0;
-+
-+#ifdef CONFIG_MODULES
-+	mod_name = mod ? mod->name : NULL;
-+#endif
-+	if (!mod_name)
-+		err = kallsyms_on_each_match_symbol(symbol_callback, sym, &ctx);
-+
-+	if (!err && !ctx.addr)
-+		err = module_kallsyms_on_each_symbol(mod_name, symbol_mod_callback,
-+						     &ctx);
-+
-+	if (!ctx.addr)
-+		err = -ENOENT;
-+	*addr = err ? 0 : ctx.addr;
-+
-+	return err;
-+}
-+
- int bpf_check_attach_target(struct bpf_verifier_log *log,
- 			    const struct bpf_prog *prog,
- 			    const struct bpf_prog *tgt_prog,
-@@ -23729,18 +23790,18 @@ int bpf_check_attach_target(struct bpf_verifier_log *log,
- 			if (btf_is_module(btf)) {
- 				mod = btf_try_get_module(btf);
- 				if (mod)
--					addr = find_kallsyms_symbol_value(mod, tname);
-+					ret = bpf_lookup_attach_addr(mod, tname, &addr);
- 				else
--					addr = 0;
-+					ret = -ENOENT;
- 			} else {
--				addr = kallsyms_lookup_name(tname);
-+				ret = bpf_lookup_attach_addr(NULL, tname, &addr);
- 			}
--			if (!addr) {
-+			if (ret) {
- 				module_put(mod);
- 				bpf_log(log,
- 					"The address of function %s cannot be found\n",
- 					tname);
--				return -ENOENT;
-+				return ret;
- 			}
- 		}
- 
--- 
-2.39.5
-
+Best regards,
+Krzysztof
 
