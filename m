@@ -1,116 +1,147 @@
-Return-Path: <linux-kernel+bounces-725287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63903AFFCF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:56:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D6AAFFD89
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD5BC586E76
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:56:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4763A64192E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156E728FAA1;
-	Thu, 10 Jul 2025 08:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rduY9cQH"
-Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com [203.205.221.192])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7065290BBD;
+	Thu, 10 Jul 2025 09:05:57 +0000 (UTC)
+Received: from mail.actia.se (mail.actia.se [212.181.117.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA58928FA91;
-	Thu, 10 Jul 2025 08:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.192
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB03928E56B;
+	Thu, 10 Jul 2025 09:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752137682; cv=none; b=Mu1ZtAJXZ/aLQRsfT3hX9E9tQHetMh02i4PqcFKgsyNrVTbEhTOptP+SRnrQmo/TasuQ+nvamVukOeCS7zaWErpbz5EjuQJaaceJHww5LwNFniYtxEruYxEDN1639NLwqKXiI565J3v2bQY5L3ihVrwl91xJzC74BNRDn8H96zA=
+	t=1752138357; cv=none; b=kOqTYhu2U4OXB0SQcp14uHi44SC3ForY66WzrShixZUpZWBMrenG6ssY03BpNvKAmqyVKLooCnZuCzjcp6MgPvaoTv7lc90/7+gnA7Whhp5mSMRzv5yNPYeeQ3piCGcim155wWfQX6ncJxOqDuFKHIWGLXy9vc9XSwfR4St8/7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752137682; c=relaxed/simple;
-	bh=INz7KzEfoZWjv0Hj1dr3Xxd3M2v2qBOwSQrKcFMOUQE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tossMvh7YiyIoubwXxQeTMlGjATNrOjoMeVCLxPqzdt+sOn4htEPVUCSljKMQ7HU1ti7SIN7Ph3ZXfFccn1tC5YipipTiFRMAXQovdYzxCZ29PYDMPA41H+Ex3Fe//I7RoTgvQWOPgsddbgoZWV49b5HaW33561uKad5vcAQX10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rduY9cQH; arc=none smtp.client-ip=203.205.221.192
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1752137371; bh=NQ79ido2IH/sPMyuVTJTLIo7AavKH2feMjmTGujZTlg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=rduY9cQHGBEEIWF+03K53/W/cVLMWesKK6I5GdGLXH/dJhtXxJTWf8was0rjUGgsG
-	 KPz0KFpjeKsKUqIhODkHlsCKQQmezlPgPRPyjrUoCluBLDijsVdQOktRDo4BpX6OUS
-	 eKv/Y4s6nerVUfts1VHJLARBjoq2pPADyrTYb/uI=
-Received: from VM-222-126-tencentos.localdomain ([14.22.11.161])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id C5DA7AA5; Thu, 10 Jul 2025 16:49:29 +0800
-X-QQ-mid: xmsmtpt1752137369tq09sdzyr
-Message-ID: <tencent_21B82DB792FE0049B6EF5ECD81285669C908@qq.com>
-X-QQ-XMAILINFO: MzNwb/pqyJTkAiA8k4Bk2x6p8F6TRHD/q18drB1bXeEMCfX8pwVkBrxc4+l83H
-	 wPh/SjDJjiSzV8yhAexhKm0iGoPcpwlAUojBo5n8LFD7xAziSGEPlwIUtc4gjVCsV1nFZ7JKPPhq
-	 X7pglVwUGeEArumcEm5I97fzxd2f1DTGnQ8EjKzbO65xACbrmXEs7r+mh2ltTy6y6J4Tw+Yhm1tE
-	 Lmfpj0e0zOp7WhwN1BUkZbOm0L4TgxFar/pWZ0cK0qE0ggp7kaK+cG15dU9XRyUcWKStOTw9VCIY
-	 VCixwuNE1Rq13oHyJZwLhH7xawTDBKTJlKwWsT+BFMn07GJA+VhpKFhf5lwAC4EQ2wTTw3c42XBE
-	 zybi3okldTn8mecrHjLJnHr3DABpDakyD/PvESvqc9qROJ8i4yA18X+gY/A+Puj/MqTk1l1h0UAU
-	 LGkKZTGTtU9f/dEr4ERkPfA66PGUc15oJ3GnkDKzTeupPs9WdOSYDOy4r5WcM77n/TXEfG8kbT4I
-	 J88r5XxwiX9AVyrKNJaD/Wes2203/p67q4FPKwvZ8Ya5p/y7ilIEdC0JT/cZcjn4+/HCrYpTjaUe
-	 +WP91ri4kxEcLyDCHKzzMIriRmUq7xGSO+9xZ6ghrTegfdHUglH5L6sp+wD/Pglqo6ewilPWOiLw
-	 hMHXAnVeykBOPEH7xuxZez0BWI+bNvc3RFUUhP+xp8x2vMPGLuihnI4Sta73eSEujkfaUc09yKRy
-	 fYO/UFyrXiYc/1FErUS+jAIhM/Ipu9Q50Iu2o88fDt8HtcUDhsV7TwAy8lI95oJ1jmqXR6q1wvRS
-	 INldyl5ESdYNkk2jXG6Y+QhGu70ch0KpIuohBYKb4BKQ8Z8eu0BWXZzWItPGHmTOW8mJv16X+Sdw
-	 6d3o62e8YhEUnh0KDXu/apathSnkQANx/GdsyCnibb5fXfVl75H/kGfggcesrAf9PUs7j2qN7bJK
-	 w68KoBANh7YI/st7hSsSvUrv4RWhx4qg/YPvPwX1g9a6HEX6TQe4eQ3g/FauzJLye8FDtfME+UsY
-	 DlzcIHZBk01TxvyfyK8T+y6CA1IpBzqnqZPgiFE/2L7aRiUONlT886eSmvqEM=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: jackysliu <1972843537@qq.com>
-To: gregkh@linuxfoundation.org
-Cc: 1972843537@qq.com,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: [PATCH v2] usb: gadget: functioni: Fix a oob problem in rndis
-Date: Thu, 10 Jul 2025 16:49:22 +0800
-X-OQ-MSGID: <20250710084922.169557-1-1972843537@qq.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <2025071026-fanciness-size-1d5d@gregkh>
-References: <2025071026-fanciness-size-1d5d@gregkh>
+	s=arc-20240116; t=1752138357; c=relaxed/simple;
+	bh=7WYC0Q01SuTeXVO2p/jlKOCMn9aAW/fTfixuG0PDXYo=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=UKLmLO6gkeJC/jyoQ9kLbtYwXvChoBjXsnKeb52t8Oo9QEzqszpRAMfvDUW913EX1qcN/SoUljd0vwT75cLGyYpnxOJlB+b3JClJNwvNLh2C2OHBtue7sWQNljUSdFtNM/pKkGWImNbFt+/X4snha5/d/Lc4MfS6qQr/9Wzf5h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
+Received: from S036ANL.actianordic.se (10.12.31.117) by S035ANL.actianordic.se
+ (10.12.31.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Thu, 10 Jul
+ 2025 10:50:40 +0200
+Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
+ S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%6]) with mapi id
+ 15.01.2507.057; Thu, 10 Jul 2025 10:50:40 +0200
+From: John Ernberg <john.ernberg@actia.se>
+To: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+CC: Ming Lei <ming.lei@canonical.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-usb@vger.kernel.org"
+	<linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, John Ernberg <john.ernberg@actia.se>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: [PATCH] net: usbnet: Avoid potential RCU stall on LINK_CHANGE event
+Thread-Topic: [PATCH] net: usbnet: Avoid potential RCU stall on LINK_CHANGE
+ event
+Thread-Index: AQHb8Xe2qza52xx55UmGbnkg6Pc/lg==
+Date: Thu, 10 Jul 2025 08:50:40 +0000
+Message-ID: <20250710085028.1070922-1-john.ernberg@actia.se>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: git-send-email 2.49.0
+x-esetresult: clean, is OK
+x-esetid: 37303A2956B14450657066
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-From: Siyang Liu <1972843537@qq.com>
+Having a Gemalto Cinterion PLS83-W modem attached to USB and activating the
+cellular data link would sometimes yield the following RCU stall, leading
+to a system freeze:
 
-An out-of-bounds memory access vulnerability exists in the RNDIS
-(Remote Network Driver Interface Specification) implementation.
-The vulnerability stems from insufficient boundary validation when
-processing SET requests with user-controlled InformationBufferOffset
-and InformationBufferLength parameters.
+    rcu: INFO: rcu_sched detected expedited stalls on CPUs/tasks: { 0-.... =
+} 33108 jiffies s: 201 root: 0x1/.
+    rcu: blocking rcu_node structures (internal RCU debug):
+    Sending NMI from CPU 1 to CPUs 0:
+    NMI backtrace for cpu 0
 
-Fix on commit id:
-commit 5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
+    Call trace:
+     arch_local_irq_enable+0x4/0x8
+     local_bh_enable+0x18/0x20
+     __netdev_alloc_skb+0x18c/0x1cc
+     rx_submit+0x68/0x1f8 [usbnet]
+     rx_alloc_submit+0x4c/0x74 [usbnet]
+     usbnet_bh+0x1d8/0x218 [usbnet]
+     usbnet_bh_tasklet+0x10/0x18 [usbnet]
+     tasklet_action_common+0xa8/0x110
+     tasklet_action+0x2c/0x34
+     handle_softirqs+0x2cc/0x3a0
+     __do_softirq+0x10/0x18
+     ____do_softirq+0xc/0x14
+     call_on_irq_stack+0x24/0x34
+     do_softirq_own_stack+0x18/0x20
+     __irq_exit_rcu+0xa8/0xb8
+     irq_exit_rcu+0xc/0x30
+     el1_interrupt+0x34/0x48
+     el1h_64_irq_handler+0x14/0x1c
+     el1h_64_irq+0x68/0x6c
+     _raw_spin_unlock_irqrestore+0x38/0x48
+     xhci_urb_dequeue+0x1ac/0x45c [xhci_hcd]
+     unlink1+0xd4/0xdc [usbcore]
+     usb_hcd_unlink_urb+0x70/0xb0 [usbcore]
+     usb_unlink_urb+0x24/0x44 [usbcore]
+     unlink_urbs.constprop.0.isra.0+0x64/0xa8 [usbnet]
+     __handle_link_change+0x34/0x70 [usbnet]
+     usbnet_deferred_kevent+0x1c0/0x320 [usbnet]
+     process_scheduled_works+0x2d0/0x48c
+     worker_thread+0x150/0x1dc
+     kthread+0xd8/0xe8
+     ret_from_fork+0x10/0x20
 
-The vulnerability can be fixed by adding addtional boundary checks
+It turns out that during the link activation a LINK_CHANGE event is emitted
+which causes the active RX URBs to be unlinked, while that is happening
+rx_submit() may begin pushing new URBs to the queue being emptied.
+Causing the unlink queue to never empty.
 
-Signed-off-by: Siyang Liu <1972843537@qq.com>
+Use the same approach as commit 43daa96b166c ("usbnet: Stop RX Q on MTU
+change") and pause the RX queue while unlinking the URBs on LINK_CHANGE
+as well.
+
+Fixes: 4b49f58fff00 ("usbnet: handle link change")
+Cc: stable@vger.kernel.org
+Signed-off-by: John Ernberg <john.ernberg@actia.se>
+
 ---
- drivers/usb/gadget/function/rndis.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/function/rndis.c b/drivers/usb/gadget/function/rndis.c
-index afd75d72412c..cc522fb4c06c 100644
---- a/drivers/usb/gadget/function/rndis.c
-+++ b/drivers/usb/gadget/function/rndis.c
-@@ -641,7 +641,8 @@ static int rndis_set_response(struct rndis_params *params,
- 	BufOffset = le32_to_cpu(buf->InformationBufferOffset);
- 	if ((BufLength > RNDIS_MAX_TOTAL_SIZE) ||
- 	    (BufOffset > RNDIS_MAX_TOTAL_SIZE) ||
--	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE))
-+	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE) ||
-+		(BufOffset + BufLength+8 > RNDIS_MAX_TOTAL_SIZE))
- 		    return -EINVAL;
- 
- 	r = rndis_add_response(params, sizeof(rndis_set_cmplt_type));
--- 
-2.43.5
+Tested on 6.12.20 and forward ported.
+---
+ drivers/net/usb/usbnet.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index c04e715a4c2a..156f0e85a135 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -1115,7 +1115,9 @@ static void __handle_link_change(struct usbnet *dev)
+=20
+ 	if (!netif_carrier_ok(dev->net)) {
+ 		/* kill URBs for reading packets to save bus bandwidth */
++		usbnet_pause_rx(dev);
+ 		unlink_urbs(dev, &dev->rxq);
++		usbnet_resume_rx(dev);
+=20
+ 		/*
+ 		 * tx_timeout will unlink URBs for sending packets and
+--=20
+2.49.0
 
