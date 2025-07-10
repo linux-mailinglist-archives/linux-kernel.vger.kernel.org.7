@@ -1,155 +1,235 @@
-Return-Path: <linux-kernel+bounces-725584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3DA0B00116
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:02:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D056AB0010E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C64C7B8869
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5323AD6DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC66928D849;
-	Thu, 10 Jul 2025 11:59:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5FE25229C;
+	Thu, 10 Jul 2025 11:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EIwoMnsQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB32224DD1B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C20524DCF8;
+	Thu, 10 Jul 2025 11:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752148745; cv=none; b=hohzJS6fSHlrY4dbCpKadWhYbB67opUp9sH6AZIdM4GMSssTtI2H0se8YGiyOdPkhS102/46E9KBG1lAUOaGKfmgIwHJcvizCfuXPadwlh9JB8qtD8f+nEPij2mit2YBn4+lP59glHsgRuzRFgCz9k20SZZkds4QVSilX30ICZ8=
+	t=1752148771; cv=none; b=sZHK+xwOWN1scZ3H1z8rAzqt3IDf5/hVHRk9TM3vTEGIOU4k4ygcrmqVbnBou6I4S6pcvy7TyxZEb8+Nv73ggkiZNnX1B46pkflD9ugNG7LIJaJgv9ZHtj/MFXeaKPFyG7VIcf1fW0/6HQyi1G1ALyUPwCmdJNu62UaSwWiPbe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752148745; c=relaxed/simple;
-	bh=CQ1RrZv80pg4xVgU+w2Fk6UnKG/bifaJSGmmpX0/PqM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RSqmEt4ZAzfk2N2veUzdev1/yYwOLz8UyVk1UnFowSHpL6a9IPtuU8EJEBVCBcm5PvSICHbi9e1A8/3uNUWo09H/2Airfc8ErcLHSjDNfbyCgWQ4Gu5+L7xrt/SlxnQAEvCx2jah0Hq7w2eyKczFKtiTgJcWHAh/ug8/1Lq8GLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86d01ff56ebso155918839f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 04:59:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752148743; x=1752753543;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E+MtTEKN3uuEu/Pw/kFBjduqVFgqx6sd0+WtN/rGCco=;
-        b=h7uS2ypWwB7fqWFMqJT2vRcIFktzEZLn06B90oEJSD/olHsWYe13/UzE24zanO7zTV
-         3+WXTHv6fU0J5Yifvub3rCtSlkip1Egv+jIf7jyB4VA3/mpy04/9rVrHVHyul9c1uSak
-         TXVho6hyhMofPLbLLfYSc0rbkF/qYVDzvZYRpXR5fKrq3cXZHBvozI3CpgFmhm8htKjB
-         OrPCvPoz7Qz2ya8onXZvd4Y4emMj97e9yywNdB2hsv3fGJk3nu3yqP7w0ae7ePP0mHmR
-         KQ0OnQBrfYxQSUBNgoQUlIU27qEpEKzZhSa4mJCoM82tLh5nNMoNNMkjUDH5EhscDSpv
-         o0Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJVxKaW6B+dKm9t6ZcwrCgEOP8f40bvvfeQ2991yq8FOZSerRGjvTlHvrbiTicyNTYmBtgtkiRBWEpHRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjbxnM/XMQlmGTAMu4REVIi6GvnsYxepVDQsVnbGPCmciIa4Sx
-	Eq8B3V1yFmwQuzA7wBbuqFsCirTlQHfEHbyL2Vi8OSMG5ifXoxt4O655uDvJ7QUsPLiueaJCnoG
-	36lNJdeV+fdniR1ezocauJFWvxsuUF8ZmkG8jTJ41VWaJDDhDqiRg1FLk4E0=
-X-Google-Smtp-Source: AGHT+IFO402OfJIPTmlN27dpNQyVhJeFFOiZUUde6AD306YTESVPTJBoAsA55ER0osAA45QfN5l34ipDw6kHl7qCkOr9W3zaF54B
+	s=arc-20240116; t=1752148771; c=relaxed/simple;
+	bh=rsy5WZacwZWU86OvNk0YvSH3NT8R8QHi3tjqaMIzFls=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nKVageZvO7oHbdhkX0NsqDmaOAJ1ATzs6A2E1uzMoro3ZfhWTHdhC6zXPYI8QqDOlVXI0zCYWCFGQfZcKpv2Yz5G6OYwboGoIPcLANJN3huT9BovqLZIyYgdM9VBDo1u4ikbS5KasnjQHB8QF48eGVHKEggN17mj8kkzAVYeNJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EIwoMnsQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75C0EC4CEE3;
+	Thu, 10 Jul 2025 11:59:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752148771;
+	bh=rsy5WZacwZWU86OvNk0YvSH3NT8R8QHi3tjqaMIzFls=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=EIwoMnsQEQyfkRpQ8S5T5vRXNvGXOEeK7l7tXySw6Ucaz3EdZYvY+AQpJDYGSPOTF
+	 G7c7r4KwjA8ffR/6V+Zq5dG0C/I8a+fk1v+aK3nQoYB6QBjI5Ub+70vS/ToGlViDc1
+	 ZQjv4m/8jrTrFderf5/6eC6E0uMwJCVHFSzlpfhngYJb20Fds3Bo3j/iWkOJElzeYl
+	 2cpi/x4pufka+PFfeAUU7u4yRjWfxLgzWygU74Wjm7gHd9npapE9bDMTX9aYMKPA4x
+	 QiDk41QnqsQmvOubTXlBoE3OealLT7RXiDrw4KBGqoMtCX9x2bN5dQFZ42BSK2unjd
+	 +QDFlgHjlzHGA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
+Cc: <miguel.ojeda.sandonis@gmail.com>,  <alex.gaynor@gmail.com>,
+  <ojeda@kernel.org>,  <aliceryhl@google.com>,  <anna-maria@linutronix.de>,
+  <bjorn3_gh@protonmail.com>,  <boqun.feng@gmail.com>,  <dakr@kernel.org>,
+  <frederic@kernel.org>,  <gary@garyguo.net>,  <jstultz@google.com>,
+  <linux-kernel@vger.kernel.org>,  <lossin@kernel.org>,
+  <lyude@redhat.com>,  <rust-for-linux@vger.kernel.org>,
+  <sboyd@kernel.org>,  <tglx@linutronix.de>,  <tmgross@umich.edu>
+Subject: Re: [PATCH v3 0/5] rust: time: Convert hrtimer to use Instant and
+ Delta
+In-Reply-To: <87h5zstoaq.fsf@kernel.org> (Andreas Hindborg's message of "Fri,
+	04 Jul 2025 09:20:29 +0200")
+References: <94kOZwdYnRPRMO6SAHAvEFEygT4dU-njfBxTMC6BiPQ-u49pyL5hLgbLQBGOct1ruxVJPtYGJ0Dq0Ns2mh-sMQ==@protonmail.internalid>
+	<20250625.082020.1714542193051382332.fujita.tomonori@gmail.com>
+	<877c102pxs.fsf@kernel.org>
+	<ZFASmKV5PIQgMyCMtprnQhN2MklF9_-3RwUFGLemFqvv23Cm3vyKh-spm0PhKWFjc8vixGNYrAlz93Dw_ruczw==@protonmail.internalid>
+	<20250626.091248.526065656918619245.fujita.tomonori@gmail.com>
+	<87h5zstoaq.fsf@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 10 Jul 2025 13:59:17 +0200
+Message-ID: <871pqojlyi.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:15cc:b0:86a:93c:f5fb with SMTP id
- ca18e2360f4ac-87968f57664mr238219439f.1.1752148742833; Thu, 10 Jul 2025
- 04:59:02 -0700 (PDT)
-Date: Thu, 10 Jul 2025 04:59:02 -0700
-In-Reply-To: <20250710110510.3162-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686fab06.a00a0220.26a83e.0011.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] INFO: task hung in uevent_show (2)
-From: syzbot <syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Andreas Hindborg <a.hindborg@kernel.org> writes:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: task hung in usbdev_ioctl
+> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+>
+>> On Wed, 25 Jun 2025 10:19:59 +0200
+>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>
+>>> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+>>>
+>>>> On Tue, 24 Jun 2025 21:03:24 +0200
+>>>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>>>
+>>>>> Andreas Hindborg <a.hindborg@kernel.org> writes:
+>>>>>
+>>>>>> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+>>>>>>
+>>>>>>> On Tue, 24 Jun 2025 15:11:31 +0200
+>>>>>>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>>>>>>
+>>>>>>>>> and already introduces pain for
+>>>>>>>>> others (and likely even more pain when we need to rename it back =
+next
+>>>>>>>>> cycle), it doesn't look like a good idea to keep it.
+>>>>>>>>
+>>>>>>>> Ok, I'll drop it.
+>>>>>>>
+>>>>>>> Do you want me to send the updated hrtimer conversion patchset
+>>>>>>> (using as_* names)?
+>>>>>>
+>>>>>> No, I am just about finished fixing up the rest. You can check if it=
+ is
+>>>>>> OK when I push.
+>>>>>
+>>>>> I pushed it, please check.
+>>>>
+>>>> Thanks!
+>>>>
+>>>> The commit d9fc00dc7354 ("rust: time: Add HrTimerExpires trait") adds
+>>>> to Instant structure:
+>>>>
+>>>> +    #[inline]
+>>>> +    pub(crate) fn as_nanos(&self) -> i64 {
+>>>> +        self.inner
+>>>> +    }
+>>>>
+>>>> Would it be better to take self instead of &self?
+>>>>
+>>>> pub(crate) fn as_nanos(self) -> i64 {
+>>>>
+>>>> Because the as_nanos method on the Delta struct takes self, wouldn=E2=
+=80=99t it
+>>>> be better to keep it consistent? I think that my original patch adds
+>>>> into_nanos() that takes self.
+>>>>
+>>>> This commit also adds HrTimerExpire strait, which as_nanos() method
+>>>> takes &self:
+>>>>
+>>>> +/// Time representations that can be used as expiration values in [`H=
+rTimer`].
+>>>> +pub trait HrTimerExpires {
+>>>> +    /// Converts the expiration time into a nanosecond representation.
+>>>> +    ///
+>>>> +    /// This value corresponds to a raw ktime_t value, suitable for p=
+assing to kernel
+>>>> +    /// timer functions. The interpretation (absolute vs relative) de=
+pends on the
+>>>> +    /// associated [HrTimerMode] in use.
+>>>> +    fn as_nanos(&self) -> i64;
+>>>> +}
+>>>>
+>>>> That's because as I reported, Clippy warns if as_* take self.
+>>>>
+>>>> As Alice pointed out, Clippy doesn't warn if a type implements
+>>>> Copy. So we can add Copy to HrTimerExpires trait, then Clippy doesn't
+>>>> warn about as_nanos method that takes self:
+>>>>
+>>>> +/// Time representations that can be used as expiration values in [`H=
+rTimer`].
+>>>> +pub trait HrTimerExpires: Copy {
+>>>> +    /// Converts the expiration time into a nanosecond representation.
+>>>> +    ///
+>>>> +    /// This value corresponds to a raw ktime_t value, suitable for p=
+assing to kernel
+>>>> +    /// timer functions. The interpretation (absolute vs relative) de=
+pends on the
+>>>> +    /// associated [HrTimerMode] in use.
+>>>> +    fn as_nanos(self) -> i64;
+>>>> +}
+>>>>
+>>>> I'm fine with either (taking &self or Adding Copy).
+>>>
+>>> Let's wait for the whole naming discussion to resolve before we do
+>>> anything. I am honestly a bit confused as to what is the most idiomatic
+>>> resolution here.
+>>>
+>>> I think taking `&self` vs `self` makes not difference in codegen if we
+>>> mark the function `#[inline(always)]`.
+>>
+>> I believe we've reached a consensus on the discussion about `&self` vs
+>> `self`.
+>
+> But not on the function name, right?
+>
+>>
+>> Miguel summarized nicely:
+>>
+>> https://lore.kernel.org/lkml/CANiq72nd6m3eOxF+6kscXuVu7uLim4KgpONupgTsMc=
+AF9TNhYQ@mail.gmail.com/
+>>
+>>>> Yes, I would prefer taking by value. I think Alice mentioned earlier in
+>>>> this thread that the compiler will be smart about this and just pass t=
+he
+>>>> value. But it still feels wrong to me.
+>>>
+>>> If inlined/private, yes; but not always.
+>>>
+>>> So for small ("free") functions like this, it should generally not
+>>> matter, since they should be inlined whether by manual marking or by
+>>> the compiler.
+>>
+>>> But, in general, it is not the same, and you can see cases where the
+>>> compiler will still pass a pointer, and thus dereferences and writes
+>>> to memory to take an address to pass it.
+>>>
+>>> Which means that, outside small things like `as_*`, one should still
+>>> probably take by value. Which creates an inconsistency.
+>>
+>>
+>> I think that another consensus from this discussion is that the table
+>> in the API naming guidelines doesn't cover this particular case.
+>> Therefore, it makes sense to keep the current function name and move
+>> forward.
+>>
+>> Delta already provides `fn as_nanos(self)` (and drm uses in
+>> linux-next, as you know) so I believe that Instant should use the same
+>> interface.
+>>
+>>
+>> That table needs improvement, but reaching consensus will likely take
+>> time, it makes sense to address it independently.
+>
+> I am still uncertain what guidelines to follow inside the kernel. Last
+> time I applied a patch in this situation, I had to remove it again. I
+> would rather not have to do that.
+>
+> Perhaps the best way forward is if you send the patch with the naming
+> and argument type you think is best, and then we continue the discussion
+> on that patch?
 
-INFO: task syz.1.17:6837 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc4-syzkaller-00314-gb4b4dbfa96de-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.1.17        state:D stack:24088 pid:6837  tgid:6836  ppid:6635   task_flags:0x400040 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5396 [inline]
- __schedule+0x16a2/0x4cb0 kernel/sched/core.c:6785
- __schedule_loop kernel/sched/core.c:6863 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6878
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6935
- __mutex_lock_common kernel/locking/mutex.c:679 [inline]
- __mutex_lock+0x65d/0xc70 kernel/locking/mutex.c:747
- device_lock include/linux/device.h:884 [inline]
- usbdev_do_ioctl drivers/usb/core/devio.c:2611 [inline]
- usbdev_ioctl+0x140/0x20c0 drivers/usb/core/devio.c:2827
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fddcf58d169
-RSP: 002b:00007fddd03af038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fddcf7a5fa0 RCX: 00007fddcf58d169
-RDX: 0000000000000000 RSI: 0000000041045508 RDI: 0000000000000003
-RBP: 00007fddcf60e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fddcf7a5fa0 R15: 00007fff1a55f668
- </TASK>
-INFO: task syz.1.17:6837 is blocked on a mutex likely owned by task kworker/1:4:5945.
-task:kworker/1:4     state:S stack:22472 pid:5945  tgid:5945  ppid:2      task_flags:0x4208060 flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5396 [inline]
- __schedule+0x16a2/0x4cb0 kernel/sched/core.c:6785
- __schedule_loop kernel/sched/core.c:6863 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6878
- schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common+0x3d7/0x710 kernel/sched/completion.c:116
- wait_for_common kernel/sched/completion.c:127 [inline]
- wait_for_completion_interruptible+0x1f/0x40 kernel/sched/completion.c:216
- send_packet+0x63b/0xae0 drivers/media/rc/imon.c:649
- imon_init_rdev drivers/media/rc/imon.c:1990 [inline]
- imon_init_intf0 drivers/media/rc/imon.c:2279 [inline]
- imon_probe+0x1f7e/0x3410 drivers/media/rc/imon.c:2436
- usb_probe_interface+0x644/0xbc0 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:-1 [inline]
- really_probe+0x26d/0x9a0 drivers/base/dd.c:657
- __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:799
- driver_probe_device+0x4f/0x430 drivers/base/dd.c:829
- __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:957
- bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:462
- __device_attach+0x2b8/0x400 drivers/base/dd.c:1029
- bus_probe_device+0x185/0x260 drivers/base/bus.c:537
- device_add+0x7b6/0xb50 drivers/base/core.c:3692
- usb_set_configuration+0x1a87/0x20e0 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0x8d/0x150 drivers/usb/core/generic.c:250
- usb_probe_device+0x1c4/0x390 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:-1 [inline]
- really_probe+0x26d/0x9a0 drivers/base/dd.c:657
- __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:799
- driver_probe_device+0x4f/0x430 drivers/base/dd.c:829
- __device_attach_driver+0x2ce/0x530 drivers/base/dd.c:957
- bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:462
- __device_attach+0x2b8/0x400 drivers/base/dd.c:1029
- bus_probe_device+0x185/0x260 drivers/base/bus.c:537
+This was discussed [1] and consensus was reached that `as_*` iwth pass
+by value plus a `Copy` bound on the trait is the way to go for this
+method.
 
 
-Tested on:
+Best regards,
+Andreas Hindborg
 
-commit:         b4b4dbfa media: stk1160: use usb_alloc_noncoherent/usb..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=170c9bd4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b49da22b2184ad70
-dashboard link: https://syzkaller.appspot.com/bug?extid=592e2ab8775dbe0bf09a
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=152f5a8c580000
+
+[1] https://hackmd.io/ZXXSbxxQRpiWzX61sJFlcg?view#API-Naming-guidelines-for=
+-conversion-functions
 
 
