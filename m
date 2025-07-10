@@ -1,272 +1,180 @@
-Return-Path: <linux-kernel+bounces-725774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAB7B003D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:40:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D76B003D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EA8B164103
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:38:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C95D03A1D1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3DB262FE6;
-	Thu, 10 Jul 2025 13:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501E725A620;
+	Thu, 10 Jul 2025 13:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gHU6AxGK"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vm14feyC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C638A261588;
-	Thu, 10 Jul 2025 13:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF5C259C9C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752154573; cv=none; b=LXOo47WlgAASWCeeSOIAn180Lbt3DD7J4mYlruuwJUHDcPWAT9aXDZRdbTGAf8lbfFnIQNhWNjBWFgXRSAIetsMfLk22TwqvT1YLEJLhtQvDJ9W2S0DGjncKzy7HPUMw8zBJKfbE/lYtozRuUm5LEZKsdgcNpQoTNS8Z3xGkQxA=
+	t=1752154699; cv=none; b=W1Ku2lfyni8uuhluEQ0n6Ju0ptOqfKFbHzk/0J4i0BOnd7Ed+r8ZJcW4s54CPB+YeeSwGd/Lu892LGe2tIRh+qxRaOB9x2GnrbvlDGRxXJz3b+LSkQADw+dX2sRXI+mcuzonF4Pkw3ZHIrRC/YryFQY+a7USPM4Ohkgyz0kgtAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752154573; c=relaxed/simple;
-	bh=sHYErsaISg+JEDCMHjENgDmRI113up2ilqfeDAvXGhg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZNQXu+QN1sIMHs+QOz0I3/tu0ZdCbXR+p1ZEaRk9zw1CDU9wxh9DMM/LtwTWy3QBNPGeKsM41/iGAIHBFAYiCmCH84572NxToNXYpwkOMKB+xc//l/hIhZXJ0eSUyX3MUKAUapTkGCILR90hp2+En/r0JR3bR4bRbCs6v7NyQlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gHU6AxGK; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4C6C843865;
-	Thu, 10 Jul 2025 13:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752154567;
+	s=arc-20240116; t=1752154699; c=relaxed/simple;
+	bh=8HdzRL7XwSUmaZJn3OLC1wcMSvNhBJrMNCIW+lLGX3w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GxIYA9qrvtJ0sYInrSED/nVxfY3pBZNCli5bKVNAXg0XKtasq5QttB3kPX5sY5QwRMwIjFvSFy60lx+alfK7OZsEjuR/2au5Ry4LBCdcvCl5HbBEPPS6lCL9AtousS0yPd7489g8LRx4uG7pzke0XqkeXgiJUBqZGZhhocoz+aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vm14feyC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752154696;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=X5Y3YaPvhaFvXrIQ8EoGfKQ12UoZ0NZinu7gdcixP2s=;
-	b=gHU6AxGKFelsF4P5ZQQkjMm+peUHlzuHT/4FOVKcUrGu6MDIgJdYH27sTt1IQewLwRW7b9
-	m/Te/xtNITBmnOibpE7uTt5lheebfg3oaH/Xa4J5J2RPy6UR93Iffm5F2HXiFLMYlP1JQF
-	FUmD24VpJL7N8Fr9XiBFtlt7HASAgfahqa5W/XtPiIFKBRpRAYfy53BVNTP5IFfvYVW6DG
-	Bg/tgar2RlmE3JqAoF/aB0O1DjmymYWBVNH2dVqlaqZTUb+0mFiyvzUJFBu7De/ZWsIKVH
-	VF3FuOxOy2u9m8CukXUGK9nx8LGpKUtTCYA6kyyaPRy6UXvw4ujj8cqZ57Bh4g==
-From: =?UTF-8?B?QmVub8OudA==?= Monin <benoit.monin@bootlin.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 1/4] mmc: core: add mmc_read_blocks to mmc_ops
-Date: Thu, 10 Jul 2025 15:36:06 +0200
-Message-ID: <9903989.eNJFYEL58v@benoit.monin>
-In-Reply-To:
- <CAPDyKFp=fvyUhkeiw5TmYbELM+MiC8Do20afrainOyq_pLvSHw@mail.gmail.com>
-References:
- <cover.1751898225.git.benoit.monin@bootlin.com>
- <346c422139b658b2ba6272f7ba7b07374008760f.1751898225.git.benoit.monin@bootlin.com>
- <CAPDyKFp=fvyUhkeiw5TmYbELM+MiC8Do20afrainOyq_pLvSHw@mail.gmail.com>
+	bh=k74++Gj6mC8jHgJQv0ogxWO3KmAcEfy1icxFrtSNc/Y=;
+	b=Vm14feyCP+HmcgpYzZ5K2IJIHVN6HqCeNDrMQ/VUGaq8yk9QxBz6aisjHEhxwpi4r88vyy
+	coL28rAIqIGufOzQ6EogjXp1UD0Mh81FBuDIQU1IkgZUKj2JEYDUVah0F/qGPznSVvDF4D
+	Z8QaFTIg0CZu5Z7IKnV3mDo3AhdGfSc=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-82-f1lvfYHdNiqT6MiEnnhslQ-1; Thu, 10 Jul 2025 09:38:15 -0400
+X-MC-Unique: f1lvfYHdNiqT6MiEnnhslQ-1
+X-Mimecast-MFC-AGG-ID: f1lvfYHdNiqT6MiEnnhslQ_1752154694
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4fabcafecso549425f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:38:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752154694; x=1752759494;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k74++Gj6mC8jHgJQv0ogxWO3KmAcEfy1icxFrtSNc/Y=;
+        b=ewqAOBJR3TF1Rdc61Q2Oilrmuuaf02YJ3pVGMlWILUHUlPoVeOMGhhmBdQojIIwbAG
+         WcgKIwaR02PFOTkBG8XfmyGXUtNRpUYmAK30X3rLy+JyfcU2ErHazt6PqP9zR1P0x88Q
+         2nRSu6vFbz9VV0GAqDN5CPKcV5n3TNK51Py7TTTKXbKfJLBCSjHoaYppeCzw3J2ic0Qx
+         QARZsHAbM1WjmENlE81/AMDdLR7f3cQsmGbBe7/P38/bhoxUrufdyPGfck1SOr4seOgO
+         I1n554LDvWMGXlQtJCuXoc9qTszGePEkt+nwD0McKvc4RrOBuVNyeE2ihybXC2c3l2GF
+         Ed4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXGkjWJ5VRlRFGxlGf4tw++GT05aTWEmE4c6qMgujOpsEZkclOngvLNHVmOHPw6TsotDRd1wErhHGCa2f4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE6cX6f4/KAr8qz/H9mnO2D6erBky34XH7bw0xF5P/UllZR0Kx
+	NHqZjn8M3rwjU/NppaCn5zBeIFZvkQGnE36P5CRmg4hdQQsh8zzvjQRSABvAYjCmwFXmHGVlLoz
+	tkYejCnjEhX29xCDOLF8AqNDbql7qhxElE/j7T67W0YZKdqRqiIvBIh8to6cTDSg7eA==
+X-Gm-Gg: ASbGncu3/UKfyzKkBlrsyDlqW5mwbIoCNOlg4dv9ICi/cie2hEUE7FcV0t3unqRU8wF
+	cFBIAimdz5Jz4cTQNCsL6zfw+ifnUgREQsVXBCWOgCuVY5LZTQe5k3bKsH7NXCgcOgab5kYavZi
+	Z5Gj2CpYP18La5P1SHTXnmV5xTvjlnqjvSYnggymKnvL+kNk2n2QjDE1/TwtQ+axhBI3q49+cZp
+	bbuGXIKClfjAbMGHXAbcNF2N1YaId531hZiPOceC4ru2qTeP4kg6RF5hLn7W5ud9qXfl9PpCogU
+	zK7ifwQ53s371iLglmHBaj3ARMZiVr2sYvfRarURgGnAckpke7nSkksgn4Eu/CBuDpmXqA==
+X-Received: by 2002:a05:6000:25c1:b0:3a3:67bb:8f3f with SMTP id ffacd0b85a97d-3b5e453e795mr6293762f8f.53.1752154694222;
+        Thu, 10 Jul 2025 06:38:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF/3w+jgqSIhgVT6bjFgh6I2ptL2zBPyyD880oIC6m2OkrqYySieSotNvQKfZlGVi50FjlirQ==
+X-Received: by 2002:a05:6000:25c1:b0:3a3:67bb:8f3f with SMTP id ffacd0b85a97d-3b5e453e795mr6293734f8f.53.1752154693763;
+        Thu, 10 Jul 2025 06:38:13 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:271f:bc10:144e:d87a:be22:d005? ([2a0d:3344:271f:bc10:144e:d87a:be22:d005])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1f4edsm1872432f8f.83.2025.07.10.06.38.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 06:38:13 -0700 (PDT)
+Message-ID: <60e77fb5-ef9f-4c89-899d-398cd9eb8f85@redhat.com>
+Date: Thu, 10 Jul 2025 15:38:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdehkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepuegvnhhofphtucfoohhnihhnuceosggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedvtdetudelkeeuteffgeduleettdefieegfeffteehvdevudetjeefvdffveduueenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeduheefjeemfhefheemleefiegumegvledvheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemudehfeejmehffeehmeelfeeiugemvgelvdehpdhhvghlohepfhhrrghmvgifohhrkhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepsggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprggurhhirghnrdhhuhhnthgvrhesihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdhmmhgts
- ehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhlrgguihhmihhrrdhkohhnughrrghtihgvvhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepthgrfihfihhkrdgsrgihohhukhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomh
-X-GND-Sasl: benoit.monin@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: phy: micrel: Add callback for restoring
+ context
+To: Biju Das <biju.das.jz@bp.renesas.com>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Biju Das <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org
+References: <20250707142957.118966-1-biju.das.jz@bp.renesas.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250707142957.118966-1-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Ulf,
+On 7/7/25 4:29 PM, Biju Das wrote:
+> @@ -374,6 +376,7 @@ static struct kszphy_hw_stat kszphy_hw_stats[] = {
+>  };
+>  
+>  struct kszphy_type {
+> +	void (*resume)(struct phy_device *phydev);
+>  	u32 led_mode_reg;
+>  	u16 interrupt_level_mask;
+>  	u16 cable_diag_reg;
 
-Thanks for the review.
+Why adding another callback? I think you could avoid it using a
+ksz9131-specific phy_driver->resume.
 
-On Wednesday, 9 July 2025 at 16:46:45 CEST, Ulf Hansson wrote:
-> On Mon, 7 Jul 2025 at 17:24, Beno=C3=AEt Monin <benoit.monin@bootlin.com>=
- wrote:
-> >
-> > Add a generic function to read some blocks of data from the MMC, to be
-> > used by drivers as part of their tuning.
-> >
-> > Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
-> > ---
-> >  drivers/mmc/core/card.h    | 10 ++++++
-> >  drivers/mmc/core/mmc_ops.c | 69 ++++++++++++++++++++++++++++++++++++++
-> >  include/linux/mmc/host.h   |  3 ++
-> >  3 files changed, 82 insertions(+)
-> >
-> > diff --git a/drivers/mmc/core/card.h b/drivers/mmc/core/card.h
-> > index 9cbdd240c3a7d..93fd502c1f5fc 100644
-> > --- a/drivers/mmc/core/card.h
-> > +++ b/drivers/mmc/core/card.h
-> > @@ -11,6 +11,7 @@
-> >  #define _MMC_CORE_CARD_H
-> >
-> >  #include <linux/mmc/card.h>
-> > +#include <linux/mmc/mmc.h>
-> >
-> >  #define mmc_card_name(c)       ((c)->cid.prod_name)
-> >  #define mmc_card_id(c)         (dev_name(&(c)->dev))
-> > @@ -300,4 +301,13 @@ static inline int mmc_card_no_uhs_ddr50_tuning(con=
-st struct mmc_card *c)
-> >         return c->quirks & MMC_QUIRK_NO_UHS_DDR50_TUNING;
-> >  }
-> >
-> > +static inline bool mmc_card_can_cmd23(struct mmc_card *card)
-> > +{
-> > +       return ((mmc_card_mmc(card) &&
-> > +                card->csd.mmca_vsn >=3D CSD_SPEC_VER_3) ||
-> > +               (mmc_card_sd(card) && !mmc_card_ult_capacity(card) &&
-> > +                card->scr.cmds & SD_SCR_CMD23_SUPPORT)) &&
-> > +               !(card->quirks & MMC_QUIRK_BLK_NO_CMD23);
->=20
-> First, please make the above part a separate patch. It makes sense to
-> add a helper for this, as you show in patch3 and patch4. I also
-> recommend that these patches should also be re-ordered so they come
-> first in the series.
->=20
-> Second, I don't think we should mix mmc_card_can* functions with the
-> card-quirks. Better to have two separate helpers, especially since
-> CMD23 is used for other things too, like RPMB and reliable writes, for
-> example. Thus I suggest we add:
->=20
-> mmc_card_can_cmd23() - which looks at what the card supports, similar
-> to above without MMC_QUIRK_BLK_NO_CMD23. Put the definition in
-> drivers/mmc/core/core.h and export the symbols, similar to what we do
-> for mmc_card_can_erase() and friends.
->=20
-> mmc_card_broken_blk_cmd23() - which should only check
-> MMC_QUIRK_BLK_NO_CMD23. This belongs in drivers/mmc/core/card.h.
->=20
-Ok, I will do that.
+> @@ -444,6 +447,7 @@ struct kszphy_priv {
+>  	bool rmii_ref_clk_sel;
+>  	bool rmii_ref_clk_sel_val;
+>  	bool clk_enable;
+> +	bool is_suspended;
+>  	u64 stats[ARRAY_SIZE(kszphy_hw_stats)];
+>  	struct kszphy_phy_stats phy_stats;
+>  };
+> @@ -491,6 +495,7 @@ static const struct kszphy_type ksz9021_type = {
+>  };
+>  
+>  static const struct kszphy_type ksz9131_type = {
+> +	.resume = ksz9131_restore_rgmii_delay,
+>  	.interrupt_level_mask	= BIT(14),
+>  	.disable_dll_tx_bit	= BIT(12),
+>  	.disable_dll_rx_bit	= BIT(12),
+> @@ -1387,6 +1392,12 @@ static int ksz9131_config_rgmii_delay(struct phy_device *phydev)
+>  			      txcdll_val);
+>  }
+>  
+> +static void ksz9131_restore_rgmii_delay(struct phy_device *phydev)
+> +{
+> +	if (phy_interface_is_rgmii(phydev))
+> +		ksz9131_config_rgmii_delay(phydev);
+> +}
+> +
+>  /* Silicon Errata DS80000693B
+>   *
+>   * When LEDs are configured in Individual Mode, LED1 is ON in a no-link
+> @@ -2345,6 +2356,11 @@ static int kszphy_generic_suspend(struct phy_device *phydev)
+>  
+>  static int kszphy_suspend(struct phy_device *phydev)
+>  {
+> +	struct kszphy_priv *priv = phydev->priv;
+> +
+> +	if (priv)
+> +		priv->is_suspended = true;
 
-> > +}
-> > +
-> >  #endif
-> > diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
-> > index 66283825513cb..848d8aa3ff2b5 100644
-> > --- a/drivers/mmc/core/mmc_ops.c
-> > +++ b/drivers/mmc/core/mmc_ops.c
-> > @@ -1077,3 +1077,72 @@ int mmc_sanitize(struct mmc_card *card, unsigned=
- int timeout_ms)
-> >         return err;
-> >  }
-> >  EXPORT_SYMBOL_GPL(mmc_sanitize);
-> > +
-> > +/**
-> > + * mmc_read_blocks() - read data blocks from the mmc
-> > + * @card: mmc card to read from, can be NULL
-> > + * @host: mmc host doing the read
-> > + * @blksz: data block size
-> > + * @blocks: number of blocks to read
-> > + * @blk_addr: first block address
-> > + * @buf: output buffer
-> > + * @len: size of the buffer
-> > + *
-> > + * Read one or more blocks of data from the mmc. This is a low-level h=
-elper for
-> > + * tuning operation. If card is NULL, it is assumed that CMD23 can be =
-used for
-> > + * multi-block read.
-> > + *
-> > + * Return: 0 in case of success, otherwise -EIO
-> > + */
-> > +int mmc_read_blocks(struct mmc_card *card, struct mmc_host *host,
-> > +                   unsigned int blksz, unsigned int blocks,
-> > +                   unsigned int blk_addr, void *buf, unsigned int len)
-> > +{
-> > +       struct mmc_request mrq =3D {};
-> > +       struct mmc_command sbc =3D {};
-> > +       struct mmc_command cmd =3D {};
-> > +       struct mmc_command stop =3D {};
-> > +       struct mmc_data data =3D {};
-> > +       struct scatterlist sg;
-> > +
-> > +       if (blocks > 1) {
-> > +               if (mmc_host_can_cmd23(host) &&
-> > +                   (!card || mmc_card_can_cmd23(card))) {
-> > +                       mrq.sbc =3D &sbc;
-> > +                       sbc.opcode =3D MMC_SET_BLOCK_COUNT;
-> > +                       sbc.arg =3D blocks;
-> > +                       sbc.flags =3D MMC_RSP_R1 | MMC_CMD_AC;
-> > +               }
-> > +               cmd.opcode =3D MMC_READ_MULTIPLE_BLOCK;
-> > +               mrq.stop =3D &stop;
-> > +               stop.opcode =3D MMC_STOP_TRANSMISSION;
-> > +               stop.flags =3D MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
-> > +       } else {
-> > +               cmd.opcode =3D MMC_READ_SINGLE_BLOCK;
-> > +       }
-> > +
-> > +       mrq.cmd =3D &cmd;
-> > +       cmd.flags =3D MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_ADTC;
-> > +
-> > +       mrq.data =3D &data;
-> > +       data.flags =3D MMC_DATA_READ;
-> > +       data.blksz =3D blksz;
-> > +       data.blocks =3D blocks;
-> > +       data.blk_addr =3D blk_addr;
-> > +       data.sg =3D &sg;
-> > +       data.sg_len =3D 1;
-> > +       if (card)
-> > +               mmc_set_data_timeout(&data, card);
-> > +       else
-> > +               data.timeout_ns =3D 1000000000;
-> > +
-> > +       sg_init_one(&sg, buf, len);
-> > +
-> > +       mmc_wait_for_req(host, &mrq);
-> > +
-> > +       if (sbc.error || cmd.error || data.error)
-> > +               return -EIO;
-> > +
-> > +       return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(mmc_read_blocks);
-> > diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-> > index 68f09a955a902..72196817a6f0f 100644
-> > --- a/include/linux/mmc/host.h
-> > +++ b/include/linux/mmc/host.h
-> > @@ -743,5 +743,8 @@ int mmc_send_status(struct mmc_card *card, u32 *sta=
-tus);
-> >  int mmc_send_tuning(struct mmc_host *host, u32 opcode, int *cmd_error);
-> >  int mmc_send_abort_tuning(struct mmc_host *host, u32 opcode);
-> >  int mmc_get_ext_csd(struct mmc_card *card, u8 **new_ext_csd);
-> > +int mmc_read_blocks(struct mmc_card *card, struct mmc_host *host,
-> > +                   unsigned int blksz, unsigned int blocks,
-> > +                   unsigned int blk_addr, void *buf, unsigned int len);
->=20
-> I really think we must avoid exporting such a generic function. This
-> becomes visible outside the mmc subsystem and I am worried that it
-> will be abused.
->=20
-> Can we perhaps make it harder to integrate with the tuning support on
-> the core, somehow? I haven't thought much about it, but maybe you can
-> propose something along those lines - otherwise I will try to think of
-> another way to do it.
->=20
-I agree that the function might be too generic now. Here are some of
-the ideas I have to make less appealing for abuse:
+Under which circumstances `priv` could be NULL? AFAICS it should always
+not NULL after probe.
 
-* Rename it to mention tuning (mmc_tuning_read?)
-* Drop some parameters:
-  * blk_addr: Reading from 0 should be all that is needed for tuning
-  * other?
-* Move its declaration to a header private to drivers/mmc (where?)
+> +
+>  	/* Disable PHY Interrupts */
+>  	if (phy_interrupt_is_valid(phydev)) {
+>  		phydev->interrupts = PHY_INTERRUPT_DISABLED;
+> @@ -2381,8 +2397,17 @@ static void kszphy_parse_led_mode(struct phy_device *phydev)
+>  
+>  static int kszphy_resume(struct phy_device *phydev)
+>  {
+> +	struct kszphy_priv *priv = phydev->priv;
+>  	int ret;
+>  
+> +	if (priv && priv->is_suspended) {
 
-Let me know what you think.
+I think you can use phydev->suspended instead of adding another flag.
 
-> >
-> >  #endif /* LINUX_MMC_HOST_H */
->=20
-> Kind regards
-> Uffe
->=20
+Also, can resume be invoked without the phydev being suspended?
 
-Best regards,
-=2D-=20
-Beno=C3=AEt Monin, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
-
+/P
 
 
