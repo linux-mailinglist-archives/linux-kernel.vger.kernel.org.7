@@ -1,149 +1,348 @@
-Return-Path: <linux-kernel+bounces-725081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68BEAFFA9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:15:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2318CAFFAA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12A8C171A39
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:15:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD2A4E49E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE58D288C30;
-	Thu, 10 Jul 2025 07:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CB1288C80;
+	Thu, 10 Jul 2025 07:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UlpwZ4Jv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BUpvW6y0"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C80F8F5E;
-	Thu, 10 Jul 2025 07:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2228728850D;
+	Thu, 10 Jul 2025 07:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752131737; cv=none; b=Gx+3H5Fh19o8rfFMKMuLsl3lHW9YWoyesJQcVhD2jHDh/pswhUxYEKzB2yA+WKtnRWvmG2TNWKTx+zFHadvxscGUx8ObNk74LsPZ87R38u0dSuBzQ1a1WAmhM4VbFxOu10FdqoXulVOjC2PPenhoCThQBzHyuf33DQvnYGqG70U=
+	t=1752131765; cv=none; b=hdOOpWmlR26SiBuhkL9gHn9uSbfB67YbeW8nZaVsaqTvIlN76PzANbxL9vaZM0KFHSswIKsP1eE0gQ9vXCz0bSLAW+rUSKggDc9rHLVvFfAhcC67FmSnnCRlauZ+CAC/nDjzODz/b7KMK+OWG+JurZWO60tG25oINq2jcBIv4dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752131737; c=relaxed/simple;
-	bh=r/IHHg2/rKtSBRBIR9amX8nuBDjwCD7GzpJ+h1lge4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W/TmrAfoM3LHfFuSXwr8N+2VF5Nol4XxmFvZVlmByxeVhDc+WLm0UFbHgjstv2tHQSxOwPCWHh+tJfpPUecPaA4ljYFVIiiVkvbu4HoSATC3PXCn3DOnABSHieMFK0PwjVnYIJ+8CncSIdFLLqU92je7cN3daueaRJv1nqZAhjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UlpwZ4Jv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E746C4CEE3;
-	Thu, 10 Jul 2025 07:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752131737;
-	bh=r/IHHg2/rKtSBRBIR9amX8nuBDjwCD7GzpJ+h1lge4k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UlpwZ4JvhE6CfOq0Pbz4STUIAcRcaah8QMiRskKTCFnyVu7v38Q4Mr4man6iVgkOa
-	 B7E9fQKKswgNnYucbpERIhir7fJqOmVfQmuNcoMfdAyGlwJg66GMvNnd+tF13ursvc
-	 A2luUMvGlDgIUzYDu6+Wq7brLSscz9CK3JvcE/n5P7U9KBNCIfxvD9iCXzLAVK4mfE
-	 P7m9DpuQAQybIz29bhn7CGpjgBz4vjp3XMuNzuBWZuO/8x7pkaG0lKLwpy8UEaMjTt
-	 +gprlr5nd+Fgh96aupBrFo/cBwcP7SRfqnIqy1KGEqcMc5ji5FeBOplIZuDxr4RD+S
-	 vwicw7TpkC5sw==
-Message-ID: <e805be4b-4fe8-42e6-9269-84112a16392f@kernel.org>
-Date: Thu, 10 Jul 2025 09:15:23 +0200
+	s=arc-20240116; t=1752131765; c=relaxed/simple;
+	bh=y9hF6EZ050Yv7spxWNq7VKXwB2SKwvLGZ5USQEX2/rM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kiLlfI2fm2cTLe8LcjVLUmzZzpbZZr/r1Wadljs5D+Kz1AgjSorckEsxGrYoZ9dbR1yMwWkCCNrsQLRwmu0ukq1hQk/aQhXEJShqN4jepkJEgWL9wv788+/Dr/5rJxViFA23cO9KMv80Ndk/++6+auH4/ltReJLQNqV9eNGOjt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BUpvW6y0; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-141-178.net.vodafone.it [5.90.141.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 45227465;
+	Thu, 10 Jul 2025 09:15:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752131731;
+	bh=y9hF6EZ050Yv7spxWNq7VKXwB2SKwvLGZ5USQEX2/rM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BUpvW6y0Fb2rHiacy8qjEcnsw4yNiL3dYBSo+RJoKrAGhlaWq4jduXJXzq6CNYIS+
+	 Lp7Yu5HoJjx04WkfUvZomIainwJT6Hv9K3sRa81jUoSM81Liix6BGU3+sJgrDE1GRr
+	 24Vzgxa8h8UPpzyWIq9R2d/zLz8X5gvKe3FUZb4E=
+Date: Thu, 10 Jul 2025 09:15:54 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Dan Scally <dan.scally@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Dafna Hirschfeld <dafna@fastmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/8] media: uapi: Introduce V4L2 extensible params
+Message-ID: <gemjiujyal7jf6gq7vd5wemriqkz7knxmkoe76fgmhhto6xzqu@zgy4r4ynaoe7>
+References: <20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com>
+ <20250708-extensible-parameters-validation-v1-1-9fc27c9c728c@ideasonboard.com>
+ <9b12b035-a80d-4d12-a039-daa94d13280e@ideasonboard.com>
+ <yydzeg53koeawjc3vtzwfnq5x6avmv4ep53bcxff6kvzzu36jl@qp37ojw2drug>
+ <78006c71-592b-4f54-93ed-5f4b21b5bc33@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/16] dt-bindings: arm: Add Axis ARTPEC SoC platform
-To: ksk4725@coasia.com, Jesper Nilsson <jesper.nilsson@axis.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
- <tomasz.figa@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- SungMin Park <smn1196@coasia.com>, Ravi Patel <ravi.patel@samsung.com>,
- linux-arm-kernel@axis.com
-Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>,
- GunWoo Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>,
- GyoungBo Min <mingyoungbo@coasia.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Shradha Todi
- <shradha.t@samsung.com>, Inbaraj E <inbaraj.e@samsung.com>,
- Swathi K S <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>,
- Dongjin Yang <dj76.yang@samsung.com>, Sang Min Kim
- <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, soc@lists.linux.dev
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
- <20250710002047.1573841-14-ksk4725@coasia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250710002047.1573841-14-ksk4725@coasia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <78006c71-592b-4f54-93ed-5f4b21b5bc33@ideasonboard.com>
 
-On 10/07/2025 02:20, ksk4725@coasia.com wrote:
-> From: Ravi Patel <ravi.patel@samsung.com>
-> 
-> Add device tree bindings for the Axis ARTPEC-8 SoC platform
-> and ARTPEC-8 Grizzly board.
-> 
-> Also move the existing ARTPEC-6 related bindings from .txt
-> to yaml format.
+Hi Dan
 
-Don't mix conversion with new boards.
+On Wed, Jul 09, 2025 at 02:18:07PM +0100, Dan Scally wrote:
+> Hi Jacopo
+>
+> On 09/07/2025 12:53, Jacopo Mondi wrote:
+> > Hi Dan,
+> >     thanks for the comments
+> >
+> > On Wed, Jul 09, 2025 at 12:33:17PM +0100, Dan Scally wrote:
+> > > Hi Jacopo - thanks for the patches
+> > >
+> > > On 08/07/2025 11:40, Jacopo Mondi wrote:
+> > > > Introduce v4l2-extensible-params.h in the Linux kernel uAPI.
+> > > >
+> > > > The header defines two types that all drivers that use the extensible
+> > > > parameters format for ISP configuration shall use to build their own
+> > > > parameters format.
+> > > >
+> > > > The newly introduce type v4l2_params_block represent the
+> > > > header to be prepend to each ISP configuration block and the
+> > > > v4l2_params_buffer type represent the base type for the configuration
+> > > > parameters buffer.
+> > > >
+> > > > The newly introduced header is not meant to be used directly by
+> > > > applications which should instead use the platform-specific ones.
+> > > >
+> > > > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > > > ---
+> > > >    MAINTAINERS                                       |   6 ++
+> > > >    include/uapi/linux/media/v4l2-extensible-params.h | 106 ++++++++++++++++++++++
+> > > >    2 files changed, 112 insertions(+)
+> > > >
+> > > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > > index 658543062bba3b7e600699d7271ffc89250ba7e5..49a9329e5fe8874bdbaca13946ea28bd80134cb3 100644
+> > > > --- a/MAINTAINERS
+> > > > +++ b/MAINTAINERS
+> > > > @@ -25968,6 +25968,12 @@ F:	drivers/media/i2c/vd55g1.c
+> > > >    F:	drivers/media/i2c/vd56g3.c
+> > > >    F:	drivers/media/i2c/vgxy61.c
+> > > > +V4L2 EXTENSIBLE PARAMETERS FORMAT
+> > > > +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > > > +L:	linux-media@vger.kernel.org
+> > > > +S:	Maintained
+> > > > +F:	include/uapi/linux/media/v4l2-extensible-params.h
+> > > > +
+> > > >    VF610 NAND DRIVER
+> > > >    M:	Stefan Agner <stefan@agner.ch>
+> > > >    L:	linux-mtd@lists.infradead.org
+> > > > diff --git a/include/uapi/linux/media/v4l2-extensible-params.h b/include/uapi/linux/media/v4l2-extensible-params.h
+> > > > new file mode 100644
+> > > > index 0000000000000000000000000000000000000000..ed37da433c6b1a34523b6a9befde5c0dee601cfb
+> > > > --- /dev/null
+> > > > +++ b/include/uapi/linux/media/v4l2-extensible-params.h
+> > > > @@ -0,0 +1,106 @@
+> > > > +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR MIT) */
+> > > > +/*
+> > > > + * Video4Linux2 extensible configuration parameters base types
+> > > > + *
+> > > > + * Copyright (C) 2025 Ideas On Board Oy
+> > > > + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > > > + */
+> > > > +
+> > > > +#ifndef _UAPI_V4L2_PARAMS_H_
+> > > > +#define _UAPI_V4L2_PARAMS_H_
+> > > > +
+> > > > +#ifndef _UAPI_V4L2_EXTENSIBLE_PARAMS_GUARD_
+> > > > +/*
+> > > > + * Note: each ISP driver exposes a different uAPI, where the types layout
+> > > > + * match (more or less strictly) the hardware registers layout.
+> > > > + *
+> > > > + * This file defines the base types on which each ISP driver can implement its
+> > > > + * own types that define its uAPI.
+> > > > + *
+> > > > + * This file is not meant to be included directly by applications which shall
+> > > > + * instead only include the ISP-specific implementation.
+> > > > + */
+> > > > +#error "This file should not be included directly by applications"
+> > > > +#endif
+> > > > +
+> > > > +#include <linux/types.h>
+> > > > +
+> > > > +/**
+> > > > + * struct v4l2_params_block - V4L2 extensible parameters block header
+> > > struct v4l2_params_block_header would be nicer I think
+> > >
+> > That's what I had started with :)
+> >
+> > I'm debated between a longer but more explicative name, or a shorter
+> > one.
+>
+>
+> I vote for longer here but only because I think the phrase "block" applies
+> more properly to the likes of struct rkisp1_ext_params_bls_config for
+> example.
 
-> 
-> Signed-off-by: sungminpark <smn1196@coasia.com>
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+Thanks, I've seen you made a patch to change this!
 
-Same problems about SoB chain...
+>
+> >
+> > > > + *
+> > > > + * This structure represents the common part of all the ISP configuration
+> > > > + * blocks. Each parameters block shall embed an instance of this structure type
+> > > > + * as its first member, followed by the block-specific configuration data. The
+> > > > + * driver inspects this common header to discern the block type and its size and
+> > > > + * properly handle the block content by casting it to the correct block-specific
+> > > > + * type.
+> > > > + *
+> > > > + * The @type field is one of the values enumerated by each platform-specific ISP
+> > > > + * block types which specifies how the data should be interpreted by the driver.
+> > > > + * The @size field specifies the size of the parameters block and is used by the
+> > > > + * driver for validation purposes.
+> > > > + *
+> > > > + * The @flags field is a bitmask of platform-specific control flags.
+> > > Since we're including flags in this base struct rather than a platform
+> > > specific subclass I think perhaps we should centralise some flags (which I
+> > > think is supported by the fact that all three implementations share the same
+> > > flags so far). Perhaps we could reserve the bottom 8 bits for common flags
+> > > (like ENABLE / DISABLE) and validate them centrally, and leave the top 8 for
+> > > platform specific flags. I think we could then drop the platform specific
+> > > validation for rkisp1 and c3 and just pass null to the helpers, since they
+> > > do the same thing.
+> > Yes, that's one of the things I was not sure about... if we should
+> > centralize flags definition as well or not...
+>
+>
+> I think probably the ability to have both centralised and platform specific ones would be worthwhile
+>
+> >
+> > Knowing that Mali will use the same flags that the two existing
+> > implementations already have is a good indication that we can probably
+> > centralize at least the ENABLE/DISABLE ones
+>
+>
+> Yeah
+>
+> >
+> > > > + *
+> > > > + * Userspace shall never use this type directly but use the platform specific
+> > > > + * one with the associated data types.
+> > > Why wouldn't userspace just use these directly? I could see why it might be
+> > > difficult for the C3 and Rkisp1 which are merged, but for a new
+> > > implementation couldn't they just use these objects without bothering to
+> > > define their own?
+> > >
+> > mmm, my thinking was that each driver implementation shall define
+> > their own types because I would expect that they will have to define
+> > their own meta image format... For v4l2_params_buffer see below, for
+> > the blocks it might be totally possible to use these type most
+> > probably..
+> >
+> > > If we end up using these objects directly I think it would be nice to have
+> > > the example code block from the platform specific headers documentation here
+> > > too.
+> > >
+> > > > + *
+> > > > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_block_type`
+> > > > + * - Amlogic C3: :c:type:`c3_isp_params_block_type`
+> > > > + *
+> > > > + * @type: The parameters block type (platform-specific)
+> > > > + * @flags: A bitmask of block flags (platform-specific)
+> > > > + * @size: Size (in bytes) of the parameters block, including this header
+> > > > + */
+> > > > +struct v4l2_params_block {
+> > > > +	__u16 type;
+> > > > +	__u16 flags;
+> > > > +	__u32 size;
+> > > > +} __attribute__((aligned(8)));
+> > > > +
+> > > > +/**
+> > > > + * struct v4l2_params_buffer - V4L2 extensible parameters configuration
+> > > > + *
+> > > > + * This struct contains the configuration parameters of the ISP algorithms,
+> > > > + * serialized by userspace into a data buffer. Each configuration parameter
+> > > > + * block is represented by a block-specific structure which contains a
+> > > > + * :c:type:`v4l2_params_block` entry as first member. Userspace populates
+> > > > + * the @data buffer with configuration parameters for the blocks that it intends
+> > > > + * to configure. As a consequence, the data buffer effective size changes
+> > > > + * according to the number of ISP blocks that userspace intends to configure and
+> > > > + * is set by userspace in the @data_size field.
+> > > > + *
+> > > > + * The parameters buffer is versioned by the @version field to allow modifying
+> > > > + * and extending its definition. Userspace shall populate the @version field to
+> > > > + * inform the driver about the version it intends to use. The driver will parse
+> > > > + * and handle the @data buffer according to the data layout specific to the
+> > > > + * indicated version and return an error if the desired version is not
+> > > > + * supported.
+> > > > + *
+> > > > + * For each ISP block that userspace wants to configure, a block-specific
+> > > > + * structure is appended to the @data buffer, one after the other without gaps
+> > > > + * in between nor overlaps. Userspace shall populate the @data_size field with
+> > > > + * the effective size, in bytes, of the @data buffer.
+> > > > + *
+> > > > + * Each ISP driver using the extensible parameters format shall define a
+> > > > + * type which is type-convertible to this one, with the difference that the
+> > > > + * @data member shall actually a memory buffer of platform-specific size and
+> > > > + * not a pointer.
+> > > Why not just use this object directly? We could provide a helper in
+> > > v4l2-extensible-params.h that calculates the size of the buffer with a given
+> > > data array size for the driver's convenience
+> > The main reason I thought v4l2_params_buffer cannot be used is because
+> > of the flexible-array at the end of the type
+> >
+> > struct v4l2_params_buffer {
+> > 	__u32 version;
+> > 	__u32 data_size;
+> > 	__u8 data[];
+> > };
+> >
+> > vs
+> >
+> > struct rkisp1_ext_params_cfg {
+> > 	__u32 version;
+> > 	__u32 data_size;
+> > 	__u8 data[RKISP1_EXT_PARAMS_MAX_SIZE];
+> > };
+> >
+> > I might have missed what you're suggesting here with the helper in
+> > v4l2-extensible-params.h :)
+>
+> So I think a known size is needed to accomodate operations like "memcpy(dst,
+> src, sizeof(rkisp1_ext_params_cfg))", but with something like...
+>
+>
+> #define v4l2_params_buffer_size(max_params_size) \
+>
+>         (offsetof(struct v4l2_params_buffer, data) + max_params_size)
+>
+>
+> then the above operation can be memcpy(dst,
+> src, v4l2_params_buffer_size(RKISP1_EXT_PARAMS_MAX_SIZE)) instead
 
-> ---
+Fine for drivers indeed, my thinking was that we would need to reserve
+space for userspace to write configuration blocks in...
 
+However, buffers are allocated by videobuf2 and We could certainly
+allocate the appropriate size using the vb2 queue 'buf_struct_size' member...
 
+I can experiment with that indeed, in the meantime I wonder what
+maintainers think about this ;)
 
-Best regards,
-Krzysztof
+Thanks
+  j
+
+>
+>
+> Unless I'm missing something that should be enough to drop the driver
+> specific struct...it seems to work ok anyway
+>
+>
+> Dan
+>
+> >
+> >
+> > >
+> > > Thanks
+> > >
+> > > Dan
+> > >
+> > > > + *
+> > > > + * Userspace shall never use this type directly but use the platform specific
+> > > > + * one with the associated data types.
+> > > > + *
+> > > > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_cfg`
+> > > > + * - Amlogic C3: :c:type:`c3_isp_params_cfg`
+> > > > + *
+> > > > + * @version: The parameters buffer version (platform-specific)
+> > > > + * @data_size: The configuration data effective size, excluding this header
+> > > > + * @data: The configuration data
+> > > > + */
+> > > > +struct v4l2_params_buffer {
+> > > > +	__u32 version;
+> > > > +	__u32 data_size;
+> > > > +	__u8 data[];
+> > > > +};
+> > > > +
+> > > > +#endif /* _UAPI_V4L2_PARAMS_H_ */
+> > > >
 
