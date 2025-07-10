@@ -1,143 +1,158 @@
-Return-Path: <linux-kernel+bounces-726534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3C7B00E42
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:58:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C1EB00E55
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7161C86701
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:59:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 773A9542A29
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3825F291C2E;
-	Thu, 10 Jul 2025 21:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAFB274FD0;
+	Thu, 10 Jul 2025 22:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GCMk6nxO"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bHCc6UMh"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EEF23506E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 21:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAE520296A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752184726; cv=none; b=dB/GVCOWPDz3NkktzXPCeBmw7BFxDnFu2vQfQOZbUcwCcMCRiCHWSNQMdOGYdqHlHXNerNlwDZYT5Y0vdc13HnlOFsQBw50r/J1Edqm+ONQgFdhARcaF4pT1bRsP+DRk8oRGaGGXJ1kn97qwOiQVmhkGiupAo1xo+ds/x2Z96Fw=
+	t=1752184812; cv=none; b=DzUHMJjZMze8ZTWZg/XuylD04lsFjsDuZrnSKC1S+zP0iF7TcGBXT/nNNcbHzXzLet22whVE5n3bPP/Qf31YlbC7RyG7Uri3Wo4L+pUvDUTtBt1QROV2hF1BfPjDTat+JChw0DEUPwwzJVgsrQutPJRKnrg1OqjmKBmKW1uSYuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752184726; c=relaxed/simple;
-	bh=ylyRbKljNFjJtaMPwqP1eMnpQYJpOhfIDXsclrUxY9o=;
+	s=arc-20240116; t=1752184812; c=relaxed/simple;
+	bh=6v9lXiTjYqyqXWDAP41VGCNxsCXH1turXzPssZQNhV8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kKnmogsylbnqDcbHjK4SSJBBy1Z4OIe3Eg/auJANrmdHLseDOVyX52bgmFvFyOJcVQ6SUGixGcgaoQUusS6I/k+JIhNgRYegCJD0S/GED6x1SwNHAoDyM3CvNm+a0bje1xY4syYnY8qYK+l9IvIj3uzrY6miKAMD9GNESlOvKsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GCMk6nxO; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae0d7b32322so224889466b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:58:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=ltV7gdtBistRJoUfFZeXzgbEcaEeWrNCcfcSPWIMwyvQ/8Als+KxjensJL6wQF5C0sHYbcpiCkPOvPXDjXtLjsXao4TSaFNRj6DS6E+BWkEPrk2eNxZyHR7d9Za7tzzAvencGXim4qL2jEe79YayOFsC+0UsepTCU4nVJ9ZuFJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bHCc6UMh; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55502821bd2so1518064e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1752184722; x=1752789522; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NOhvg1l0t2LaUB8HzcyN7Tq+OVNAbmeCuPM6bN+kiYw=;
-        b=GCMk6nxOkdyd2pamGnxs2GgAP1wWSpPqc8tobUfC1faYtSfVezeQ3IRI1Ffto/UjZ2
-         JAP5rHgxclbnTjFevxf1a30mqs5c887ziLgbhgJzb92OpCbXYGmsKm2wMVUqx+MdxbvI
-         NWsuiXFbmyMtUuC2p9Uk4kyKHbRxPzjsDPLBM=
+        d=google.com; s=20230601; t=1752184809; x=1752789609; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uct7aOErRM1CCmDJ1gJe+QQrgk7Mmc9j1Oknv+rQqv8=;
+        b=bHCc6UMhebxneFHFQYKLUBTC18R9YofIBkkKW2Wx9FI43lTtAbuFiBPraT4/3LEBu+
+         w9SP7KIIXFQ6Ckz7OAwvqGxR0C9K0J02RiUb8uLqwdTRR7t1fEd5bsv6nWYT9HqMKxJI
+         B/MtSvEpZkYrA1Arj7YgOkFXw7a2hqNTHB1WObnJ+L9rBI+MuApxxSqSt5KXieciRIh5
+         LaLI4Xi+8GxMxapsid/sV9JefAp+H0A6IE9byAQ+LEaceqMnYTfLTv41gqkCfj5A/D+/
+         3a4SIyAEFEk2EyY7iOkaQG9hOXuS+8oEj/8UMxhRKgeQXI4/90oDGELPKfWgQprgEfoB
+         r85A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752184722; x=1752789522;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NOhvg1l0t2LaUB8HzcyN7Tq+OVNAbmeCuPM6bN+kiYw=;
-        b=ud3mkIXQfKqTRpcFBHPOkZlihapGRvy6ZfRly0A/kNIpQB3/uf86xzdZsDJf7QLI0Y
-         wDV1sasO7afc6R92p1G17ynNa+uZdZRrTQZslH0s2c5kIw+ilvIbr40g+EKroY+Ahu45
-         iDIsnp7gHTyVvXTRg7423HhMXw+zTFUN3dYT3ltjn2tDdlzLtNxRFHfJDxNiVJOJO+5Q
-         pStwNmzbnijqiY/EAaK2fjI6Fb4d1SSRNL8abCkBd8rddIpJBw9xq6FmoKa0y09WhQlZ
-         jc+G0tmL6hvEKi1mGiUPFqOnR9wLWlMvd+z9SpyKZEI1rEPIsvedq7a9TEQ9JBU59zqK
-         vRAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjpVpbXX1/qur7lqNC/DbbyP1ofYsI+FH7q8gLn1vjdwv6Hj4mgg+cHzpDItAuMv91lsMvi8IkZOjHjtI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyvkOdD8e411VjcNMp1rg7TOjpBhvl2t+F2Mjy/W1/7dUPloeJ
-	F09aO+41/2PLN9QFL4nBNVdAoHKxUP1ENoBkCiZzflAlVI2QSD2ukpWY0ZGCU46gKphJeFgWcjo
-	O4MHVfHs=
-X-Gm-Gg: ASbGncuTXUM8O0ng+TAqS3glCPGUo/q7LV4CjXQE8khA0lfrXPfXSJGnBEBOyq8hQqq
-	pX1tmd6IFuRIKtcNRcQPfm9FtrXElph6cofYF18QnrN2O1yKDJfoPDgYun8LNfSmgZaihn9018D
-	ahRFaRdwGklZ3I7kOh5b/NxmTMV2Yk36sjlI2lq2Yej9TMVpLFdSsaDFuoPEpAsd7J/x0lXsxXL
-	juPyhr68aMCxa4AYAJfQdbzpSAv8Zq53+rhZ2Nci4bjRCcqIeCuoj6zGEaZd+3GoBgAwuCy9JVo
-	FvzmfgVARnPulBzM1f4wLE2OqIBLaV51WGmAj9adsaRSTH6/Pf7OEb5mhXStRWoEfn/E/Y5h+xB
-	tqkhOVtzCGDFusNOSFiP4n8je4hodkPdwGPTe
-X-Google-Smtp-Source: AGHT+IGNl74S0VPQH1vvAizWFzYnOLeMwjzgCziwfilCO1s82hZCGXmpDYLmHiEabfrRVMXZwKu6Zg==
-X-Received: by 2002:a17:906:9fcd:b0:ae3:595f:91a0 with SMTP id a640c23a62f3a-ae6fbfaa5e5mr84542266b.16.1752184722166;
-        Thu, 10 Jul 2025 14:58:42 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82de902sm193703866b.147.2025.07.10.14.58.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 14:58:41 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-607cc1a2bd8so2373070a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:58:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVcmRq4twChcdtJAOxI7fB+gmRvZ5JX5ldT46o9ldI5JRzICtPNBKxPxlojWloIaAt5gVV3iEh/lhk7VS8=@vger.kernel.org
-X-Received: by 2002:a05:6402:289c:b0:607:206f:a19 with SMTP id
- 4fb4d7f45d1cf-611e84a9aa4mr389972a12.25.1752184721009; Thu, 10 Jul 2025
- 14:58:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752184809; x=1752789609;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uct7aOErRM1CCmDJ1gJe+QQrgk7Mmc9j1Oknv+rQqv8=;
+        b=AywKONmqbKllMMaxn7XY8vUJbmpcCHnB2Oet/nZUIKF6iM2QEGKie4NrqZKkzaauLc
+         Ce62i09y8lUl7uCbSPPYav9PphYtzw3z8QGOVIuggCDEqZZFObEfsHScV+8YXAZ5ahJZ
+         AbkMVpo+770rfxsep7w+jd+nejs66ABogg5Vtz9ZsoAUz7KY17AaXMhr8ZFP1FvE+gwr
+         8FDdXNleSh2x+NlynD7xHfjc5hIw8G/krjy8ukvB6jMvCPDd8zTBqcZ7uzGA6hBVGKGX
+         nvCWhqqyp1YrCpgRWoC1GK6HHiwdz+x3YbXQ0X60yxqlkzpBC/OTDJe7WDCd3AjYgfZI
+         LKmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJo6eFkrY5MPgPyeXE+oPOi8cpcE6qD/+CGFMPWsphODFK8hUTO4r0VniFYFLxtnh8EZts/8jmUKZOyU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXT08IahahBIEd/F+YznpTbZ4v/Z9PuRw0PEHc8kAp+qogNFnP
+	7/jP+H0rBBVAc3zdGoQ0EIe/awOpGGoK9t7/fw8F4vBkBfUTSQ07Ls4htU+iuMsipEbAiBSUwzO
+	AVqC0BgmG53JTxsG3zIhBzJA2f5kAlcSnymKqY9F+3pnxkscPqHZf4Rs=
+X-Gm-Gg: ASbGncuUCxvCZGsfqG1YXAVBjcz6RvdPyUcKxAuBCrJShfUZY63pE3jOUSyX68upptb
+	GKPVY1XDFOOz4coBnF2z8/gukuz/CJGu1jrk1ZReFBlh5312GP3L6Zjq7539UoWGwXZGdSL5WmQ
+	91vGwwWYL74Hx/uKGo0KEJCPe9qPx9DQ/uOPDa/jpNXedY8ilz4B5ah4rAfscM+HzmPcTjYvCkT
+	liOHbOhSbeW+7Ubrw5T8xONLTAYulzudiRNy3wyQstBerE=
+X-Google-Smtp-Source: AGHT+IHAjon2Hbm1rrI9IYhjGF3rvGdl480y52h3Ov1ouiJQVcbaeaXPgibtRUczZh3fYpr6xxHla4+6l3JaHEYeI24=
+X-Received: by 2002:a05:6512:4026:b0:550:e527:886f with SMTP id
+ 2adb3069b0e04-55a046264ebmr140054e87.51.1752184809053; Thu, 10 Jul 2025
+ 15:00:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1751823326.git.alx@kernel.org> <cover.1752182685.git.alx@kernel.org>
- <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
-In-Reply-To: <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 10 Jul 2025 14:58:24 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
-X-Gm-Features: Ac12FXwFBMXaxRHdcUswF9pkpuvbALmMtsHBeK-c4iMg5ugUB_Hn2l67aUaOXFU
-Message-ID: <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
-Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, 
-	Dmitry Vyukov <dvyukov@google.com>, Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Martin Uecker <uecker@tugraz.at>, Sam James <sam@gentoo.org>, Andrew Pinski <pinskia@gmail.com>
+References: <3cbd9533b091576a62f597691ced375850d7464a.camel@decadent.org.uk>
+In-Reply-To: <3cbd9533b091576a62f597691ced375850d7464a.camel@decadent.org.uk>
+From: John Stultz <jstultz@google.com>
+Date: Thu, 10 Jul 2025 14:59:56 -0700
+X-Gm-Features: Ac12FXyg7QYRF9eh_3GGUnrIobhIJbVBnaJ63BO1sJW_Jj4Kp_BPR9TAQFD1dlw
+Message-ID: <CANDhNCoYPX_5m-v_sR4TJ3Xj5TVtrMLP8Bswo_-_+BMXwWUkjg@mail.gmail.com>
+Subject: Re: User-space watchdog timers vs suspend-to-idle
+To: Ben Hutchings <ben@decadent.org.uk>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, 
+	Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-pm@vger.kernel.org, 1107785@bugs.debian.org, 
+	Tiffany Yang <ynaffit@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 10 Jul 2025 at 14:31, Alejandro Colomar <alx@kernel.org> wrote:
+On Thu, Jul 10, 2025 at 12:52=E2=80=AFPM Ben Hutchings <ben@decadent.org.uk=
+> wrote:
 >
-> These macros are essentially the same as the 2-argument version of
-> strscpy(), but with a formatted string, and returning a pointer to the
-> terminating '\0' (or NULL, on error).
+> There seems to be a longstanding issue with the combination of user-
+> space watchdog timers (using CLOCK_MONOTONIC) and suspend-to-idle.  This
+> was reported at <https://bugzilla.kernel.org/show_bug.cgi?id=3D200595> an=
+d
+> more recently at <https://bugs.debian.org/1107785>.
+>
+> During suspend-to-idle the system may be woken by interrupts and the
+> CLOCK_MONOTONIC clock may tick while that happens, but no user-space
+> tasks are allowed to run.  So when the system finally exits suspend, a
+> watchdog timer based on CLOCK_MONOTONIC may expire immediately without
+> the task being supervised ever having an opportunity to pet the
+> watchdog.
+>
+> This seems like a hard problem to solve!
 
-No.
+So I don't know much about suspend-to-idle, but I'm surprised it's not
+suspending timekeeping! That definitely seems problematic.
 
-Stop this garbage.
+> By definition we cannot allow CLOCK_MONOTONIC to run backward, and I
+> assume we do not want it to stop while interrupts are being handled.
 
-You took my suggestion, and then you messed it up.
+How much work do we expect to be done in irq context when we are in
+suspend-to-idle?
+Will any IRQ that fires (I assume many are masked in suspend-to-idle)
+resume the system? Or are there some irqs that fire and do work, but
+return without the system resuming?
 
-Your version of sprintf_array() is broken. It evaluates 'a' twice.
-Because unlike ARRAY_SIZE(), your broken ENDOF() macro evaluates the
-argument.
+> But could CLOCK_MONOTONIC be split into a CLOCK_MONOTONIC_KERNEL (may
+> tick during suspend-to-idle) and CLOCK_MONOTONIC_USER (only ticks while
+> user tasks can run), with user-space CLOCK_MONOTONIC being the latter?
+> (I'm aware that adding yet another clock type would be a rather large
+> job even if this is possible.)
 
-And you did it for no reason I can see. You said that you wanted to
-return the end of the resulting string, but the fact is, not a single
-user seems to care, and honestly, I think it would be wrong to care.
-The size of the result is likely the more useful thing, or you could
-even make these 'void' or something.
+Yeah, I'm not eager for another functionally very similar clockid to
+be added, though something like this approach could be used.
 
-But instead you made the macro be dangerous to use.
+But I'd probably prefer to find a way to suspend/resume timekeeping
+instead (likely reading the clock, calculating the delta from suspend
+and calling timekeeping_inject_sleeptime64() from the irq handler).
 
-This kind of churn is WRONG. It _looks_ like a cleanup that doesn't
-change anything, but then it has subtle bugs that will come and bite
-us later because you did things wrong.
+> Until and unless that happens, is it possible to detect that
+> CLOCK_MONOTONIC advanced during suspend-to-idle by reading e.g.
+> /proc/schedtat?  If not, could the necessary information be exposed
+> through one of the pseudo-filesystems?
 
-I'm NAK'ing all of this. This is BAD. Cleanup patches had better be
-fundamentally correct, not introduce broken "helpers" that will make
-for really subtle bugs.
+This is very similar to a problem Tiffany (CC'ed) is working on:
+  https://lore.kernel.org/lkml/20250603224304.3198729-3-ynaffit@google.com/
 
-Maybe nobody ever ends up having that first argument with a side
-effect. MAYBE. It's still very very wrong.
+Where different tasks are frozen via the cgroup-v2 freezer, and we
+want to avoid watchdog timers from firing immediately when the task is
+pulled out of the freezer. In that case the proposal is to account for
+the per-task or per-cgroup freezer time, and export that so the
+watchdog logic understand if the application had a chance to run, or
+if a new watchdog timer should just be set instead.
 
-                Linus
+In that case there's a little more control over things, so adding the
+freezer time into the watchdog logic is doable, but I'm not sure if a
+similar approach would be viable for existing general linux
+applications around CLOCK_MONOTONIC.
+
+thanks
+-john
 
