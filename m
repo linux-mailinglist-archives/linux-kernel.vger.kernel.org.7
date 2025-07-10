@@ -1,303 +1,288 @@
-Return-Path: <linux-kernel+bounces-726053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 551ADB00780
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:48:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BE2B00791
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 724AC3B466D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:45:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A109016F356
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E712749E8;
-	Thu, 10 Jul 2025 15:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4786274B29;
+	Thu, 10 Jul 2025 15:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KnNb1FX5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7VFboe7"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76CC273D99
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701B62741D1;
+	Thu, 10 Jul 2025 15:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752162325; cv=none; b=Aizwg4dR62KG7K63e+AWTb32UIgHWpH5EquEU6RYLUrUnUlomSrYwFBeig0G+Op+aJjQ2rhb2qJ/N+GBJKpjRAQoUvm9PY8eVX8VWB28pMP/bzQob42UvH13OaaEnfSq6lgY3bkL0gxFtjlySx9WM66TlLspHQkUiGVe4euTF/8=
+	t=1752162409; cv=none; b=iPKBU8cEl/EjrbFnNkKE34ouP5g+HhJlC65At0npG9/tTC3GjR6xMa1GwbHaIW+4BhTWPY4kTRpZXNIMZLUqQWjB+iQnCNDP5Yak/LumPcppLQuUY19rDmrS3gnwj8nj2BnD6CwEB4ljCDZNbwteNRIewLuJAQb3GqDqXCfBirg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752162325; c=relaxed/simple;
-	bh=sWLNbRGR1WallWCM4ueaRFzJawzsy7FQNASnovpTbV8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nGt66N3Y/xxJSCZ5RVHBJDpGR6k2VSqX5LiqofkZg6emhNLTxohd2YfAt2fTgWtLIbgbDn7db/gCDpRnmYHVKbuNa8kjf7yyh0SpNU7opxotkHScog5nd9fXEyng5b4OHWclCackYJbzilKQgLj86I+mRN2OWKrVwjGv0jA1nMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KnNb1FX5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A96j3R031763
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:45:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2Ncm63/MfiuPbDjDVklTQd8+kupDoVzcsE+k6jeIleo=; b=KnNb1FX5hzQYi1xI
-	zA7Uh98UKUkyt/1X3LPA+iboHhUo60Q8NsuQ+j/+pYe+V7qm/tdkojBRTi5GoUkX
-	nPMaDQzL3Wy8yMmK8Bke6qmNICNdt+b+pJEo7gOKKm7moVknA276ngxWtJI9K7ux
-	hadHKYaTyBxM3ndfT+EmJPJxL4KWJbITB/2JWZbHJK6k1zpzRYszhYf366yP7Q5+
-	VLnfL+zNUfcmJk7YHDU4yqMlV+1NhXfhYElD9wD5zJ6gWVPTKY3rqFj8xjkk4Hhf
-	2hUhXMgwOTO0cGdte45iIxSOpCdFB+1zryLDHG6KpNvv0jVVCJ9ouQgDdAd50ChW
-	t9iZYQ==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pw7r04g6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:45:22 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a9af669a0cso2383361cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:45:22 -0700 (PDT)
+	s=arc-20240116; t=1752162409; c=relaxed/simple;
+	bh=Meep8S48rXAr1IiHgTpdK/u6t6UuePEWQ1OMpVBq18U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J3cqetN19CkKdrePNOywdnTRL8WNGmyiLNz7Lxna1uuvbQVny7k2r5id/O7BmsalG9LmTm8zN9va8DdgyfZgS5c7FlyGgu4vAeiIU+kgjhEUhyqf4qmp2LRc1qwyhUw3bW6VDH2NcueO3p38W/MTogLLGt4Je/TDliaMBiGM+Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b7VFboe7; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2353a2bc210so12553225ad.2;
+        Thu, 10 Jul 2025 08:46:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752162407; x=1752767207; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d8s8aI5nykbObjyK4zFELHxY4NnJWT0iSTl57boBPsE=;
+        b=b7VFboe7VT27VWIGUm4b1LccMehClv0EZckIL/ehFCc8jcAeBuHXU71iZ69DApmg0Y
+         1QX5WXAAGwPlX0w7jCcjT/xWtIyDoROjFb4/FXB+BEZD9yNBhjqLmJMG4BsoMQuOYtNX
+         MpWK2HUoNz0zHxpI4C0GKvdBR3nJKM3ZVHgsjZmBEZtbgM38tmbcu5sUXWOQWngn0LtE
+         OZImBSQ1bObroydJRzrYa3ZYBeQJWvJUNZ3OdFwmVf+4W3ymcCDShI0IKMxw7eBfxgrL
+         RFZe8GKC3hQ+Cy8wx+fWcuAWkLFVBUPtBmxqS4LnfxtFp2s5P4YNtZ86ZkWJF0mpQ+ap
+         HUog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752162318; x=1752767118;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Ncm63/MfiuPbDjDVklTQd8+kupDoVzcsE+k6jeIleo=;
-        b=Ju2KRxwfjx1kiQAHVZJCdiuDXo+4fUAWAJUOxU4kH0TTPq4DwCv5JTQ2qnu+cBa509
-         WPZkQ4nEZJfrbVlHNeTmKcYcXyLyj3+iguIpkVmjOlHmlPELYg2w1KnIFPM3FCCYjRey
-         fSnIP0Z1kFYCUOws0wgXZtykAVNquTgy5Qmfl6Ryx3iJe3eZXllfmSNTnJnthxlZs59k
-         fbPJHSip3a4rkG6JXWrSINjGCHqQ7oMXgm5TXZOm3Iy4mUEHReLzPvLkKoUJIh9oBpVV
-         erE/kZEtjzbqdWSbwaMzvlY5TwiM9kwxr1U+RTPF8eIlE4zi+FYjvOW/2A6CsNzLKckv
-         3scA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgxAm58Jh8StaeZLA5ZYv1W8DsI7mM3/rnByhcjN/S4GFpZR/CUFNtO88zfctq1oVbxRuL8Ate+aiPPus=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7BoHAMWLNmXsKHiWvu7MfC8dI5D1xVAo65JSqU2j/EfObbt8b
-	PMQ6ZTFiLUpZ32rfRZUfBz8jr6J/zLPbE4RxxVuWjk3Ehra03c98iDYpT8SDzIC+pFgOHxgdMnA
-	ftA4ULR2oukOAhtIuSpKwSkbZA1X8foLD41qWSV4bEiqjJBCrLSHa8vwQP1b1Tujp+T4=
-X-Gm-Gg: ASbGnct6tZjUoDwncbl3BxMm0MCMhjziQaGKbE4fSquGFbmbOnv0axNy3T54uX2e6HK
-	/0wK5n7wQyXqTD52lcgxwb5pbDD05jDCmOYm3RRgUcdeVfR/jfqdkX+HXGP+eyxN6EabkPB/fnM
-	PLRtYIbOjq59SCFtKSl++sgUr8nlrMDzdzTcCM1WQF6MF6gnh6gkTNJa2GgO1JnrwOnwebKZVs0
-	dS6WqDUJ3Y70OEZJmu3wyisJvr1uaT/RFkPVZgEgeU6H/UGQZafuEqki6QUtTkoOiMP3r9NGDCS
-	p/89wc+4TaT0RkVLrv7u0dTobyTI5/m0CLGBVn57iwUGOhlOcyOawVRVxcgkEHGbiApM5hkMphM
-	As6Q=
-X-Received: by 2002:ac8:5e46:0:b0:4a9:f582:dc03 with SMTP id d75a77b69052e-4a9f582dfcemr10046711cf.9.1752162318068;
-        Thu, 10 Jul 2025 08:45:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGMNtJ4drdObgcfuSdkFknAQN4Odw7/i1HjVhwWIis053P28UmmNK+qrTjCWD2/caZ4V7w5g==
-X-Received: by 2002:ac8:5e46:0:b0:4a9:f582:dc03 with SMTP id d75a77b69052e-4a9f582dfcemr10046111cf.9.1752162317396;
-        Thu, 10 Jul 2025 08:45:17 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee44basm152828266b.42.2025.07.10.08.45.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 08:45:16 -0700 (PDT)
-Message-ID: <4ca0df4e-7697-4cfe-ada4-6eee8224938f@oss.qualcomm.com>
-Date: Thu, 10 Jul 2025 17:45:11 +0200
+        d=1e100.net; s=20230601; t=1752162407; x=1752767207;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d8s8aI5nykbObjyK4zFELHxY4NnJWT0iSTl57boBPsE=;
+        b=brphaq3hMRWLlt9gL+MCokkqjrW0UvdHbXpkTxG/rbboE+qMVlEgg8lSUR3SBeBFs8
+         tuQgG6B56qYqMJmBRUXxGu7fWD7D6JNcsQugwSAjcoCPyhf9Xt7EOLVXzMQ0DGG+p02R
+         J/MjE9hhJ8L/eEaQJfzAKkjI3zuv2BhnFESuJSgOvCC++dYlXQ6Cg5n9mkHPwLH06iGQ
+         RZni0zuQTt8PgZX9Iwm+HW9uMc3D8SAyUT+ZCFyGQYzJYhccW1vJKRxPtDv7y8Eyx18V
+         RlTP7kB0aKMOZHetb8yKnj+Wm3vpQOEN//KDfoxY3Shs+ENIis6S5vKwaQdExacTtnuH
+         zJbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgwb+Ij1eWthKvSuHeJspQ/OCY30Xtb/NtIb/nJIi5ZC8DsT61vYIXLcBOHyc3dCUDH0pTq6N63S1vjfs=@vger.kernel.org, AJvYcCXC/YEn5pmrx+MgRbmlyPkYQJNUuEJ3Da+ivsas9NEh8pC2jsyi7uYHMOZd2HJaQbs+VKTzBnhvZ0r4EZM7vKarnw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6GdgIzNU8NgyHPIMhBk7wkoMOYQXYeiwWflzNNMOlzIk1CpW7
+	g9hX3sbCibOUO5+cVgw1n5df0L5f2tlsbnUXBiT9GGTyQf3hJ+WXqa00dw608oXI
+X-Gm-Gg: ASbGncsOePrqoKkkxi0skc/+e1aSvrOJ56O+fjt9zQf8C5vuufqsVm+KlBpulwGogAe
+	n5CtGN5A40DnhUEKq36p0x3bTylhgy5WNTNo7090HZi63bhOLR1hAVolnvJYvod2dtD1PLH52sg
+	brLrKEUwC9F7+5YsF44CA1Y7oUKwoVMb4byrmcqVHw7B8s+4X0zkzge2Io5yvFJDUaMBWpyYEk6
+	qcuGLQ5IFTc8s0VimfPDAPFP/AHQpCHQold6jzoNMZAN1NFfMAsRWDB0MeKHcOrwPp1/9KAWXCz
+	kvPghcrdwwQk4pmr9vUHL+vTAy4lRlfN7ZNViZ0yGuFPN8ThzXEA5t4zn4Y=
+X-Google-Smtp-Source: AGHT+IEqqSp2Bx4H9HZGWjwyRbPvR+vWlgwLlpuGUtnloA4G9XjlM92Y9Stck87gfHrX+jJIWpVO8w==
+X-Received: by 2002:a17:902:ec88:b0:235:225d:30a2 with SMTP id d9443c01a7336-23de2512cecmr66021745ad.48.1752162406466;
+        Thu, 10 Jul 2025 08:46:46 -0700 (PDT)
+Received: from hiagonb ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4365b10sm23794255ad.240.2025.07.10.08.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 08:46:45 -0700 (PDT)
+Date: Thu, 10 Jul 2025 12:46:39 -0300
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Ritesh Kumar <ritesh.kumar@toradex.com>
+Subject: Re: [PATCH] remoteproc: imx_rproc: merge ITCM and DTCM regions
+Message-ID: <20250710154639.hmbmzpaizhxqodqk@hiagonb>
+References: <20250703130831.18830-1-hiagofranco@gmail.com>
+ <aGgAbwToGhsc5VV9@p14s>
+ <20250704190816.kth7bdf34ufc2ht6@hiagonb>
+ <aGvyDp36iWv5UQ19@p14s>
+ <20250708172953.rbsvk6gy4xuxo42l@hiagonb>
+ <20250709082652.GA15057@nxa18884-linux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 05/10] firmware: psci: Implement vendor-specific
- reset-types as reboot-mode
-To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Elliot Berman <elliotb317@gmail.com>
-Cc: Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        Andre Draszik <andre.draszik@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
-        linux-rockchip@lists.infradead.org,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
-        Macpaul Lin <macpaul.lin@mediatek.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-References: <20250710-arm-psci-system_reset2-vendor-reboots-v10-0-b2d3b882be85@oss.qualcomm.com>
- <20250710-arm-psci-system_reset2-vendor-reboots-v10-5-b2d3b882be85@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250710-arm-psci-system_reset2-vendor-reboots-v10-5-b2d3b882be85@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDEzNiBTYWx0ZWRfX8LQrTDz1K54q
- 5QWphBG9fsnI2/w/7/V3I8mkFp+uToidiVCR6riO8bgt4mvLXgL+JJcZ+MwX0eKFhHb6MsoQ3wy
- IA8dm8fcc1hKURkOCAlR9SwfJF6Vrv95bUA1bh6d0zn47GEBDqf+P7/TN4IWO/3AWzVArxyRA5/
- Kf7NTrRkUly6IiT2jsanCNKvQmdsYrP0ydu25lZII1LdYAW4va1grF4dM8GWjk9N4GhrjuZCgPc
- yuoJEiissLrEJCeJ3398Iug0vQ/ekueueuLRFC8LtHM3rxBtrwEwPraZnk9/2iN5mpYUxe83NTF
- 4qeKekOYxzCyzZx/zboCBh3yKQL0bEdt5gCzpP76kfy31uMKhXPhf4A08gB8UCSbMsrneoygToR
- vUK3ZTHE29alZoIIONIWGE1mTsjMTo2KPnokfT8PXKTXt/CYjmCU4GpR1PhqgwoYMkHKOt2y
-X-Proofpoint-GUID: 0fDo_AzPEHcw1uUZcbUAKQOumC4kxbzz
-X-Proofpoint-ORIG-GUID: 0fDo_AzPEHcw1uUZcbUAKQOumC4kxbzz
-X-Authority-Analysis: v=2.4 cv=SOBCVPvH c=1 sm=1 tr=0 ts=686fe012 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=GLYJuuS3cqMp142eAlYA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_04,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- impostorscore=0 mlxlogscore=999 mlxscore=0 phishscore=0 malwarescore=0
- adultscore=0 suspectscore=0 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507100136
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709082652.GA15057@nxa18884-linux>
 
-On 7/10/25 11:15 AM, Shivendra Pratap wrote:
-> SoC vendors have different types of resets which are controlled
-> through various hardware registers. For instance, Qualcomm SoC
-> may have a requirement that reboot with “bootloader” command
-> should reboot the device to bootloader flashing mode and reboot
-> with “edl” should reboot the device into Emergency flashing mode.
-> Setting up such reboots on Qualcomm devices can be inconsistent
-> across SoC platforms and may require setting different HW
-> registers, where some of these registers may not be accessible to
-> HLOS. These knobs evolve over product generations and require
-> more drivers. PSCI spec defines, SYSTEM_RESET2, vendor-specific
-> reset which can help align this requirement. Add support for PSCI
-> SYSTEM_RESET2, vendor-specific resets and align the implementation
-> to allow user-space initiated reboots to trigger these resets.
+On Wed, Jul 09, 2025 at 04:26:52PM +0800, Peng Fan wrote:
+> On Tue, Jul 08, 2025 at 02:29:53PM -0300, Hiago De Franco wrote:
+> >Hi Peng, Mathieu,
+> >
+> >On Mon, Jul 07, 2025 at 10:13:02AM -0600, Mathieu Poirier wrote:
+> >> On Fri, Jul 04, 2025 at 04:08:16PM -0300, Hiago De Franco wrote:
+> >> > Hi Mathieu,
+> >> > 
+> >> > On Fri, Jul 04, 2025 at 10:25:19AM -0600, Mathieu Poirier wrote:
+> >> > > Good morning,
+> >> > > 
+> >> > > On Thu, Jul 03, 2025 at 10:08:31AM -0300, Hiago De Franco wrote:
+> >> > > > From: Hiago De Franco <hiago.franco@toradex.com>
+> >> > > > 
+> >> > > > Merge the contiguous ITCM and DTCM regions into a single region to
+> >> > > > prevent failures when loading ELF files with large sections:
+> >> > > > 
+> >> > > > remoteproc remoteproc0: powering up imx-rproc
+> >> > > > remoteproc remoteproc0: Booting fw image rproc-imx-rproc-fw, size 151824
+> >> > > > imx-rproc imx8mp-cm7: Translation failed: da = 0x1f48 len = 0x1fcb0
+> >> > > > remoteproc remoteproc0: bad phdr da 0x1f48 mem 0x1fcb0
+> >> > > > remoteproc remoteproc0: Failed to load program segments: -22
+> >> > > > remoteproc remoteproc0: Boot failed: -22
+> >> > > > 
+> >> > > > This approach is the same as commit 8749919defb8 ("remoteproc:
+> >> > > > imx_rproc: Merge TCML/U").
+> >> > > > 
+> >> > > > Suggested-by: Ritesh Kumar <ritesh.kumar@toradex.com>
+> >> > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> >> > > > ---
+> >> > > > Hi,
+> >> > > > 
+> >> > > > The ELF I tested had the following data section:
+> >> > > > 
+> >> > > > Memory region         Used Size  Region Size  %age Used
+> >> > > >     m_interrupts:         680 B         1 KB     66.41%
+> >> > > >           m_text:        6984 B       127 KB      5.37%
+> >> > > >           m_data:      130224 B       128 KB     99.35%
+> >> > > >          m_data2:          0 GB        16 MB      0.00%
+> >> > > > [100%] Built target hello_world_cm7.elf
+> >> > > > 
+> >> > > > Which triggered the error. After this patch, remoteproc was able to boot
+> >> > > > and work fine. Thanks!
+> >> > > > ---
+> >> > > >  drivers/remoteproc/imx_rproc.c | 6 ++----
+> >> > > >  1 file changed, 2 insertions(+), 4 deletions(-)
+> >> > > > 
+> >> > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> >> > > > index 74299af1d7f1..bbf089ef48ee 100644
+> >> > > > --- a/drivers/remoteproc/imx_rproc.c
+> >> > > > +++ b/drivers/remoteproc/imx_rproc.c
+> >> > > > @@ -166,8 +166,8 @@ static const struct imx_rproc_att imx_rproc_att_imx8qxp[] = {
+> >> > > >  
+> >> > > >  static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
+> >> > > >  	/* dev addr , sys addr  , size	    , flags */
+> >> > > > -	/* ITCM   */
+> >> > > > -	{ 0x00000000, 0x007E0000, 0x00020000, ATT_OWN | ATT_IOMEM },
+> >> > > > +	/* D/ITCM */
+> >> > > > +	{ 0x00000000, 0x007E0000, 0x00040000, ATT_OWN | ATT_IOMEM },
+> >> > > >  	/* OCRAM_S */
+> >> > > >  	{ 0x00180000, 0x00180000, 0x00009000, 0 },
+> >> > > >  	/* OCRAM */
+> >> > > > @@ -180,8 +180,6 @@ static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
+> >> > > >  	{ 0x08000000, 0x08000000, 0x08000000, 0 },
+> >> > > >  	/* DDR (Code) - alias */
+> >> > > >  	{ 0x10000000, 0x40000000, 0x0FFE0000, 0 },
+> >> > > > -	/* DTCM */
+> >> > > > -	{ 0x20000000, 0x00800000, 0x00020000, ATT_OWN | ATT_IOMEM },
+> >> > > 
+> >> > > In commit 8749919defb8 "dev addr" and "sys addr" were both contiguous, but in
+> >> > > this patch "dev addr" is not.  How will this work with new kernel that use old
+> >> > > FW images?  Am I missing something?
+> >> > 
+> >> > No, you are correct, I think the use case I tested was not good enough.
+> >> > 
+> >> > If I understand correctly, this will break older firmware expecting
+> >> > .data at 0x20000000 because dev_addr is no longer mapped for DTCM entry.
+> >> > 
+> >> 
+> >> Correct.  Older firmware would still expect DTCM at 0x20000000.
+> >> 
+> >> 
+> >> > Do you think it is possible (or reccomend) another approach to fix this
+> >> > issue? In this case to keep using the TCM, instead of going to OCRAM or
+> >> > DDR.
+> >> >
+> >> 
+> >> To me the best way to proceed is understand why using the current mapping is a
+> >> problem.  The changelog describes a failure condition when dealing with large
+> >> sections but does not indicate _why_ that is happening.  I think that's what
+> >> needs to be fixed rather than trying to move mappings around.
+> >
+> >Thanks for the information you both provided, sorry for the noise, so
+> >please Mathieu ignore this patch. I will work around this in a different
+> >way.
+> >
+> >By the way, Peng, I noticed the DDR linker from MCUXpresso does not work
+> >if the firmware is larger than 128KB, since the .data is placed right
+> >after .text and loaded later to DDR. The imx_rproc driver should instead
+> >have a way to do the other way around: starting from the firwmare inside
+> >DDR, we could set PC and stack from M7 to point to DDR and start the
+> >execution. Probably will be slower, but it would make the DDR case
+> >possible.
 > 
-> Introduce a late_initcall to register PSCI vendor-specific resets
-> as reboot-mode arguments like reset_type and cookie. For a SoC
-> where, PSCI vendor-specific system_reset2 is supported, the
-> appropriate value gets filled to reset_type and cookie during
-> this reboot-mode hook registration. If the secure firmware
-> supports PSCI system_reset2, restart notifier will make secure
-> call to trigger appropriate requested reset type.
+> I am not aware of the size limitation if image is built to run in DDR.
+> It maybe MCUXpresso team just reuse the linker script for TCM and only
+> update the link address.
 > 
-> By using the above implementation, usespace will be able to issue
-> such resets using the reboot() system call with the "*arg"
-> parameter as a string based command. The commands can be defined
-> in PSCI device tree node as “reset-types” and are based on the
-> reboot-mode based commands.
+> You could update the linker script to build larger image.
 > 
-> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-> ---
->  drivers/firmware/psci/Kconfig |  1 +
->  drivers/firmware/psci/psci.c  | 53 ++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 53 insertions(+), 1 deletion(-)
+> In final elf, .data is put just after .text, but the related section
+> loading address should be specified as my understanding. See below,
+> .data is at 0x20000000 for M7.
 > 
-> diff --git a/drivers/firmware/psci/Kconfig b/drivers/firmware/psci/Kconfig
-> index 97944168b5e66aea1e38a7eb2d4ced8348fce64b..9d65fe7b06a6429de8a26d06f9384e5c93f36e5f 100644
-> --- a/drivers/firmware/psci/Kconfig
-> +++ b/drivers/firmware/psci/Kconfig
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  config ARM_PSCI_FW
->  	bool
-> +	select REBOOT_MODE
->  
->  config ARM_PSCI_CHECKER
->  	bool "ARM PSCI checker"
-> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> index 38ca190d4a22d6e7e0f06420e8478a2b0ec2fe6f..87293f78ed83eb33ba67ded73728729811693ea3 100644
-> --- a/drivers/firmware/psci/psci.c
-> +++ b/drivers/firmware/psci/psci.c
-> @@ -13,10 +13,13 @@
->  #include <linux/errno.h>
->  #include <linux/linkage.h>
->  #include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
->  #include <linux/pm.h>
->  #include <linux/printk.h>
->  #include <linux/psci.h>
->  #include <linux/reboot.h>
-> +#include <linux/reboot-mode.h>
->  #include <linux/slab.h>
->  #include <linux/suspend.h>
->  
-> @@ -51,6 +54,14 @@ static int resident_cpu = -1;
->  struct psci_operations psci_ops;
->  static enum arm_smccc_conduit psci_conduit = SMCCC_CONDUIT_NONE;
->  
-> +struct psci_vendor_sysreset2 {
-> +	u32 reset_type;
-> +	u32 cookie;
-> +	bool valid;
-> +};
-> +
-> +static struct psci_vendor_sysreset2 vendor_reset;
-> +
->  bool psci_tos_resident_on(int cpu)
->  {
->  	return cpu == resident_cpu;
-> @@ -309,7 +320,14 @@ static int get_set_conduit_method(const struct device_node *np)
->  static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
->  			  void *data)
->  {
-> -	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
-> +	if (vendor_reset.valid && psci_system_reset2_supported) {
-> +		/*
-> +		 * if vendor_reset.valid is true call sys reset2 with
-> +		 * the vendor_reset(reset_type and cookie).
-> +		 */
+> xx-gcc -S imx8mn_m7_TCM_rpmsg_lite_str_echo_rtos.elf
+> There are 20 section headers, starting at offset 0xc998:
+> 
+> Section Headers:
+>   [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+>   [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+>   [ 1] .interrupts       PROGBITS        00000000 001000 000240 00   A  0   0  4
+>   [ 2] .resource_table   PROGBITS        00000240 001240 000058 00   A  0   0  1
+>   [ 3] .text             PROGBITS        000002a0 0012a0 0046b0 00  AX  0   0 16
+>   [ 4] .ARM              ARM_EXIDX       00004950 005950 000008 00  AL  3   0  4
+>   [ 5] .init_array       INIT_ARRAY      00004958 005958 000004 04  WA  0   0  4
+>   [ 6] .fini_array       FINI_ARRAY      0000495c 00595c 000004 04  WA  0   0  4
+>   [ 7] .data             PROGBITS        20000000 006000 00000c 00  WA  0   0  4
+>   [ 8] .ncache.init      PROGBITS        80000000 00600c 000000 00   W  0   0  1
+>   [ 9] .ncache           PROGBITS        80000000 00600c 000000 00   W  0   0  1
+>   [10] .bss              NOBITS          2000000c 00600c 00a4ac 00  WA  0   0  4
+>   [11] .heap             NOBITS          2000a4b8 00600c 000400 00  WA  0   0  1
+>   [12] .stack            NOBITS          2000a8b8 00600c 000400 00  WA  0   0  1
+>   [13] .ARM.attributes   ARM_ATTRIBUTES  00000000 00600c 000030 00      0   0  1
+>   [14] .debug_line_str   PROGBITS        00000000 00603c 0002b1 01  MS  0   0  1
+>   [15] .comment          PROGBITS        00000000 0062ed 000055 01  MS  0   0  1
+>   [16] .debug_frame      PROGBITS        00000000 006344 000260 00      0   0  4
+>   [17] .symtab           SYMTAB          00000000 0065a4 003cd0 10     18 586  4
+>   [18] .strtab           STRTAB          00000000 00a274 002664 00      0   0  1
+>   [19] .shstrtab         STRTAB          00000000 00c8d8 0000bd 00      0   0  1
+> 
+> >
+> >Correct me if I am wrong, but as my current understanding the DDR linker
+> >is broken without this change to the driver. Anyway, maybe something for
+> >a future patch.
+> 
+> If you wanna image in DDR, you could specifiy the address of data section
+> in your linker script.
+> 
+> But for support ddr elf file, you need patches as below:
+> https://lore.kernel.org/linux-arm-kernel/CAEnQRZC5t=qmo+OJLW+dqZg4gH9cAN=paWDSGbrJb2AvkKBqxg@mail.gmail.com/T/#ec54c42b70416b002936a643b44b79661dd2a8483
+> This patchset was rejected, because we need to get stack/pc from .interrupts
+> section and store to ITCM.
+> 
+> Latest NXP m7 demo has included a new section for stack/pc, but
+> this will only be public in 2025 Q3 release, for pre-2025-Q3 releases,
+> still need the upper patchset.
 
-This comment repeats the line above and below it without
-bringing additional value
+Great, thanks for all the information Peng. I will inform my team here.
 
-Konrad
+Best regards,
+Hiago.
 
-> +		invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2), vendor_reset.reset_type,
-> +			       vendor_reset.cookie, 0);
-> +	} else if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
->  	    psci_system_reset2_supported) {
->  		/*
->  		 * reset_type[31] = 0 (architectural)
-> @@ -547,6 +565,39 @@ static const struct platform_suspend_ops psci_suspend_ops = {
->  	.enter          = psci_system_suspend_enter,
->  };
->  
-> +static int psci_set_vendor_sys_reset2(struct reboot_mode_driver *reboot,
-> +				      u32 reset_type, u32 cookie)
-> +{
-> +	if (psci_system_reset2_supported) {
-> +		vendor_reset.reset_type = PSCI_1_1_RESET_TYPE_VENDOR_START | reset_type;
-> +		vendor_reset.cookie = cookie;
-> +		vendor_reset.valid = true;
-> +	}
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static int __init psci_init_vendor_reset(void)
-> +{
-> +	struct reboot_mode_driver *reboot;
-> +	struct device_node *np;
-> +
-> +	np = of_find_node_by_name(NULL, "reset-types");
-> +	if (!np)
-> +		return -ENODEV;
-> +
-> +	reboot = kzalloc(sizeof(*reboot), GFP_KERNEL);
-> +	if (!reboot) {
-> +		of_node_put(np);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	reboot->write_with_cookie = psci_set_vendor_sys_reset2;
-> +
-> +	return reboot_mode_register(reboot, np);
-> +}
-> +late_initcall(psci_init_vendor_reset)
-> +
->  static void __init psci_init_system_reset2(void)
->  {
->  	int ret;
 > 
+> Regards,
+> Peng
+> 
+> >
+> >Thanks,
+> >Hiago.
+> >
+> >>  
+> >> > Thanks,
+> >> > Hiago.
+> >> > 
+> >> > > 
+> >> > > Thanks,
+> >> > > Mathieu
+> >> > > 
+> >> > > >  	/* OCRAM_S - alias */
+> >> > > >  	{ 0x20180000, 0x00180000, 0x00008000, ATT_OWN },
+> >> > > >  	/* OCRAM */
+> >> > > > -- 
+> >> > > > 2.39.5
+> >> > > > 
 
