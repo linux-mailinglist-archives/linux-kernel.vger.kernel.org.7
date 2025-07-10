@@ -1,149 +1,132 @@
-Return-Path: <linux-kernel+bounces-725567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A090AB000D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:53:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76627B00110
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31669544E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:53:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41BE3B2551
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1493124DD07;
-	Thu, 10 Jul 2025 11:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B464258CFA;
+	Thu, 10 Jul 2025 11:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="H5g/QZFU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OPezGPcZ"
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fyZ5EV88"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BD3248F7D;
-	Thu, 10 Jul 2025 11:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D71230D1E;
+	Thu, 10 Jul 2025 11:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752148403; cv=none; b=pqMDoxN3IQoEjkW+a5rEnB09FO6oLp0yi7AfUhdt1jnOqrm1wKtAh2pNbW1Jq3JyPZE1U8aeDNo7hFsb/SJRSzfPtlEHTqablUVI5Bt/o7QCX4Sb28ogFzO+UFzxqVNaiyFvswGK1HZWiS5oRO3E3dX53Yn5iLHaq3Wbtn9cAc4=
+	t=1752148788; cv=none; b=OS0SoQcUoLyx6eD1/G4HNP4D3cCzI/tO2nn2POeNr0jXKKSvosh3ctW9iPh5lvgWLcSS8ucIn55tRdmdZQMU9FUvaYubeEb/YswN+cUBwaXmrk4Vw8iRvLDfHXf0UUkdtgVdOoz7jngAxh1BKGVs/X7AIZ+LTx1V/qGrD0onCeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752148403; c=relaxed/simple;
-	bh=0rNi0NWwAGS/m3tH+/mj7RHCQBBaydL72v9Fg5u9Ueg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=b7xEH8shOpIEjSp/03vE93wecRIMZ14aE5qplVHg+BLzjU3KLfhTpNKTc2FObca0xeF2PtPeSd43ZXTzi0vD+9eoCD5CWtyTiRxP76MqxDmdyB8TmJVPVB/3mCGZ8537m0a+0urMrjVcZpAxi/9jWB5Q9NITWot8a/zbmFHiAz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=H5g/QZFU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OPezGPcZ; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 240371D000FD;
-	Thu, 10 Jul 2025 07:53:19 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 10 Jul 2025 07:53:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752148398;
-	 x=1752234798; bh=sje5hVMNJ8lPTMZdAUbJxjg9+p9H/ddbEIFabV5Qvsk=; b=
-	H5g/QZFUxQ7xVn9yddlLHQ0YjxLDnqSf1BIV8mBUShvFeRMBDKhXER5GYcjHDGHd
-	1fu88NUSLA5oyMVQRmQWMz1B7+4l9ejbI+srWjmtrTrLWXDQOpKyDL9MmErGWz61
-	Se0y3wkbZ8xrJG8Dux+VBRUXWjvTMER0jxMNvpSriT8f/nY6/YURf69x7/YA0veZ
-	jNolUp6MYMkGsJzyWOMrD52NUhyxW7XFRDftUTHcjHTnnFHB5YPw5Hh1aNA/R1nC
-	+xDVH6GSJwS6MFWri1nJVOm58y+5ng76NnLNtWAXAgAWHLErjF2+Su5HLSNwkDim
-	xRvgj/F+iSQg7w4UZ5BakQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752148398; x=
-	1752234798; bh=sje5hVMNJ8lPTMZdAUbJxjg9+p9H/ddbEIFabV5Qvsk=; b=O
-	PezGPcZCPi7/YI6RyX0H7hEWY6gO8J+wGDeVAv8ZJNDoAK9DK5xH5s7hL8PxkjCA
-	2Q2Had7guZJC/veJIiFvpld6N2QkbQVd5zUkX/6kwgL+XLSgVa1/Pu6sxiiu/AZO
-	Ug/3hVOYqetr6DcvUbuGcKkvTlgiuFJ4Ny7pSsK8z7nUnsOQxYd2fBVvrDwxM+tj
-	6e6XjA9stwjgjlsXj++o68ZAOUMgn4UBQiCR1EwpXoEdKl9ysMIxh9BDEOxR/IY8
-	1gzoFt6GaFcLmqtEFZSLiyEnWZyO8iTEa+nOCgT1kRGw0ZFzhTCt4Dr2Lh5RZNwm
-	1HeSxPKYkwIXtnyfgio4g==
-X-ME-Sender: <xms:rqlvaIL-OWtGobJ1BygHkArXG8NxhDInoaWQkevKsHA7E038cYk2Pw>
-    <xme:rqlvaIJFKGavDtgfz1irQKtYLyk-9KN7jUFP1eDfAaVXq-jOCmvuWO7bN7R70Nt6-
-    SB2zWaItmBeF_FGN9k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdefjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvtddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheprgguohgsrhhihigrnhesghhmrghilhdrtghomhdprhgtphhtthhope
-    grshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopegvsghighhg
-    vghrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohephhgthhesihhnfhhrrgguvggrug
-    drohhrghdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtohep
-    rghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegujhifohhngheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheprghnuggvrhhsrdhrohigvghllheslhhinhgrrhhordhorhhg
-X-ME-Proxy: <xmx:rqlvaJgth2K4VWfvfXK_ydRAItC1dpGByAKUCbDdSiaZcbVLkOagTA>
-    <xmx:rqlvaLuyELow4oH9maxfs-PYJk0tTRDa9z1vpUQQNzGdumf9o2makg>
-    <xmx:rqlvaDiyb-hS6MjVhM7nn1HGTWos7O7P53HGbsfC_EI6u9pCX8xfmw>
-    <xmx:rqlvaGdTFzdFQOPw6oZ3qgf08FBCwlB89Uvp3NIzEqAQUoD-Mo747Q>
-    <xmx:rqlvaE2LP-vm7ChxAYptsC5zW5BZrB0ztKgF6gt4f-68g-j3q0sERj7d>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id F28FA700065; Thu, 10 Jul 2025 07:53:17 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752148788; c=relaxed/simple;
+	bh=gNCxzJsDn9gdEyJo3Z7t2p8WEEmiQ2LS5kDUpkWb5nk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MsozmpUO/v4z/jiNXoh3KOcUChtBtw85BXR2geUm5aBEe9VBrCKzBmeeeE4djeXDPB/DUvFUJmdruVw4qg5aZy4PWWwDXkZG12WaCtC58cNUPGYgjtgYefojwRk5XzWhYZHwj6/Y1UlHReDGw7RzC1o1uvQSK/6flk2GvdbCgJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fyZ5EV88; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A7YlIE010973;
+	Thu, 10 Jul 2025 11:59:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=OpCNIQJBz886dEMbI2Ec3w9pVflL1kz7l1b1KeRf/
+	vE=; b=fyZ5EV883tAhyxDnybYgZYPvXQQvYQ0lDElNIx2UjaCTU9+FJFXkIjOa4
+	MUxBH2Xlx9HtFPUzhc8wKSa2LHIi1DRhaa5gNMgZK19smlSBqxDgH1C5Nl191Uvc
+	C7HPJvFhAYhl4bFUNfXwW02+LeIQ1Yq77qNiKi0rhLSxMzwPN9y/8qtty5frE+IE
+	e2boqwV/6FqKHXBPfB6X7DEE3+lDWSGzovtvUO6iza23A1dSMRMRSSH0S15KkHIo
+	VSO4qIuov2QGYDtz9PYWjVeTGfQT2+3p0K2rR7g2de8EIrdcm4OONHOARyjQcCga
+	fEQ7Gyga1D2QlRdood+h5gDGepNxg==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puqnkj47-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 11:59:31 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56A9HFKF021522;
+	Thu, 10 Jul 2025 11:59:31 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qectwp9q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Jul 2025 11:59:31 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56ABxRBU32702836
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Jul 2025 11:59:27 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5D6032004B;
+	Thu, 10 Jul 2025 11:59:27 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9AC5920043;
+	Thu, 10 Jul 2025 11:59:26 +0000 (GMT)
+Received: from heavy.ibm.com (unknown [9.87.154.34])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 10 Jul 2025 11:59:26 +0000 (GMT)
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Kieran Bingham <kbingham@kernel.org>
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>
+Subject: [PATCH 0/2] scripts/gdb/symbols: make BPF debug info available to GDB
+Date: Thu, 10 Jul 2025 13:53:18 +0200
+Message-ID: <20250710115920.47740-1-iii@linux.ibm.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tfdac8457399410f6
-Date: Thu, 10 Jul 2025 13:52:57 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christoph Hellwig" <hch@infradead.org>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Arnd Bergmann" <arnd@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-block@vger.kernel.org, "Anuj Gupta" <anuj20.g@samsung.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- "Kanchan Joshi" <joshi.k@samsung.com>, "LTP List" <ltp@lists.linux.it>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Benjamin Copeland" <benjamin.copeland@linaro.org>, rbm@suse.com,
- "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "Anders Roxell" <anders.roxell@linaro.org>, "Jens Axboe" <axboe@kernel.dk>,
- "Pavel Begunkov" <asml.silence@gmail.com>,
- "Alexey Dobriyan" <adobriyan@gmail.com>,
- "Darrick J. Wong" <djwong@kernel.org>, "Eric Biggers" <ebiggers@google.com>,
- linux-kernel@vger.kernel.org
-Message-Id: <50e77c3f-4704-4fb8-a3ac-9686d76fad30@app.fastmail.com>
-In-Reply-To: <aG-dI2wJDl-HfzFG@infradead.org>
-References: <20250709181030.236190-1-arnd@kernel.org>
- <20250710-passen-petersilie-32f6f1e9a1fc@brauner>
- <aG92abpCeyML01E1@infradead.org>
- <14865b4a-dfad-4336-9113-b70d65c9ad52@app.fastmail.com>
- <aG-dI2wJDl-HfzFG@infradead.org>
-Subject: Re: [PATCH] block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=FZ43xI+6 c=1 sm=1 tr=0 ts=686fab23 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=Wb1JkmetP80A:10 a=IYNAWcdd8jllPgNNEL8A:9
+X-Proofpoint-GUID: KbXdV9Z0tZv8HI9n-VMQeVRT5dOucmdt
+X-Proofpoint-ORIG-GUID: KbXdV9Z0tZv8HI9n-VMQeVRT5dOucmdt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDEwMSBTYWx0ZWRfX9aXX2knXaKx0 +vVUWje1KN6zPgQ5Mwta8qI7u9WFdZi538Kw2QfDFVKdPQdsUIeEOjLl5pZJIsaGT6KdB4Etise yQKbHEmQUyX1sJnLadyW0PgocnAU+X57fLtJuYzXUGbeimGqdzkQ5Tp0TyuyQOmJTEvhw4Id1fv
+ MekgrVg9EDkmT1HPp57+MYD3zEgySfu1XPGKURFYlH/xE2Ib6tzCACm2KKYQydzxcmnL90AzWvc 6n/pvcH4/ohk7DIr/UsCNnE+fl1u6TmDKFZK3l5yej5Vnll5gp68De6nZyKQx8iMNQhlk6Cg40X Cxt70Lq6CkyUoNBUvOnXEHDh4g3XgUXneyqTw0E1zwF8k2XkB02CQr2PGXNFqyW8pF9OhnM1ONE
+ KBRI5RkM4kkS6oOdXZnhaL/BLntcdVi2jvT/H7RrbSh+8aT3/kSzhF+hwELGxL70mZ9Itsro
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-10_02,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ priorityscore=1501 malwarescore=0 mlxlogscore=534 clxscore=1015
+ spamscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507100101
 
-On Thu, Jul 10, 2025, at 12:59, Christoph Hellwig wrote:
->> I think the variant from commit 1b6d968de22b ("xfs: bump
->> XFS_IOC_FSGEOMETRY to v5 structures") where the old structure
->> gets renamed and the existing macro refers to a different
->> command code is more problematic. We used to always require
->> userspace to be built against the oldest kernel headers it could run
->> on. This worked fine in the past but it appears that userspace
->> (in particular glibc) has increasingly expected to also work
->> on older kernels when building against new headers.
->
-> This is what I meant.  Note that the userspace in this case also keeps a
-> case trying the old structure, but that does indeed require keeping the
-> userspace somewhat in lockstep if you do the renaming as in this example.
+Hi,
 
-Right, it's fine for applications that keep a copy of the uapi
-header file, because they can implement both versions when they
-update to the new version of that file.
+This series greatly simplifies debugging BPF progs when using QEMU
+gdbstub by providing symbol names, sizes, and line numbers to GDB.
 
-Redefining the ioctl command code does break if you have an
-unmodified application source tree that unintentionally uses
-the updated /usr/include/linux/*.h file. In this case there is
-no benefit from the new header because it isn't aware of the
-new struct member but it still ends up failing on old kernels.
+Patch 1 adds radix tree iteration, which is necessary for parsing
+prog_idr. Patch 2 is the actual implementation; its description
+contains some details on how to use this.
 
-   Arnd
+Best regards,
+Ilya
+
+Ilya Leoshkevich (2):
+  scripts/gdb/radix-tree: add lx-radix-tree-command
+  scripts/gdb/symbols: make BPF debug info available to GDB
+
+ scripts/gdb/linux/bpf.py          | 253 ++++++++++++++++++++++++++++++
+ scripts/gdb/linux/constants.py.in |   3 +
+ scripts/gdb/linux/radixtree.py    | 139 +++++++++++++++-
+ scripts/gdb/linux/symbols.py      |  77 ++++++++-
+ 4 files changed, 462 insertions(+), 10 deletions(-)
+ create mode 100644 scripts/gdb/linux/bpf.py
+
+-- 
+2.50.0
+
 
