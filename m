@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-724823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3EF3AFF74A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:04:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0BDAFF74B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654461C4181B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:04:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46E5E5A542C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F342836BE;
-	Thu, 10 Jul 2025 03:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09713280A58;
+	Thu, 10 Jul 2025 03:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GPJ5wft0"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AtrbzE89"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1006B283695;
-	Thu, 10 Jul 2025 03:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B4D283FE5;
+	Thu, 10 Jul 2025 03:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752116635; cv=none; b=TOD7vldCytBab8xD+pou+V5Isr9g96xDyGAD4IxnrBC9WDJRXXQfN77ocDij/1GiWBOXLrxmwa6bBwK6wkN08hMjoBLsy8W8pKuAQFoEY9Hlcu5edOIUY3LpIU9UyaCjUVlGKoZ8wJ7VN6hqw4oDV2n7OgUBwmiaZeiLyzvtGfo=
+	t=1752116639; cv=none; b=nEsslaqZ+uBt4MfSZN675gQ2J9XDHNbkaigfoG2r8cGd8RfvXrjX2CAca9hdMhIX/HH9b28ggeMwvK4njCPsShyLhAWm1pB+yRl+PiKHdhH+IXhqrOD/3VkEoeFB6VwwkTMs5JhR6UfisEOE16kdzSnr/JwURc5wgxgMF6Zy/10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752116635; c=relaxed/simple;
-	bh=PGzNmxKPeKeIW9y3SLrZgxUtNxszaOvcO3mqQbh5IU4=;
+	s=arc-20240116; t=1752116639; c=relaxed/simple;
+	bh=PFA+oHZQpzOnGYRE6dsJRrBUdbqwbvmreuJ/bqsngw8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EteYKou9hI1w4BI92xaG8YOAA0tlEn9kJQZ08Vxu0T61BfYlaeHDdjYffpIzyXXPTkQOoZD72Ss1TojE9n1Jx7DXf+E5TwwypqxJRup3SQpoNphyvK2G7luS8apZvBUCnqxXCewP9tnG9+jjJVUnonMhulomKIYKCOWfcyOJb9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GPJ5wft0; arc=none smtp.client-ip=209.85.214.181
+	 In-Reply-To:To:Cc; b=Mh1+sOb4sAQ+iL9KrdhwrmCoeqe/6sgjBTlf1oIDyen4XiYy8O5b9Kr6whHfuCQVZW50MUwwta6fxto7ejXAlXrqirYulT8RvBXD6qJ83iqPFF+mJ4txwFvCmNqZE83lIolqijBcfTfAx0hQyp3FJ4jwU2HCuoAGneDXIW+b6gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AtrbzE89; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2353a2bc210so5678545ad.2;
-        Wed, 09 Jul 2025 20:03:53 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2366e5e4dbaso13740695ad.1;
+        Wed, 09 Jul 2025 20:03:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752116633; x=1752721433; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752116637; x=1752721437; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SXIjFbe4Vrz2bi8rFlLHVCaoVK6EIDR/YQX7SQMy1sc=;
-        b=GPJ5wft0REkbSF7FNu+GCQoXc4XNbCaX5gUQj7XSFxZbLY8tqhcNW/xG4gF8BjPvy2
-         n8lD/HL0jL76TqumMARvfDCHQgB+gpCDQ5Oo2oRD7GY5DMxZXkHZpZKZaWphXdtR3A94
-         MNcMQlYx9Hodk7dAj59YZbUt0lDFh/O7ticvXuzuWYO0efCdUuWfUfL1rK6lT0OLOpyG
-         c4weeqRo17QSREKluKyslh1FBpSaA+0v3ioaPNMGosPjEazYian/abajHYUF1zgvh45v
-         8yq2Kl0Z3vhysoFpcp+d2OZEimhuA0UBBsKNAU2PK+5ieyOiB2KsMy443YQG056q+aL1
-         atmw==
+        bh=6qzbm7XHfXh5ZmWOnzS98wjSUhwQBx3n0KIGDo+6oRk=;
+        b=AtrbzE89bI9X8pGTniXXEMrkZz05dBN4nCdvIjUr/7WIXTvOulYE8qBA+WYeifZHdm
+         TFOQCCpHFfLYyK8x9RYRtcWIekg4VUFzwdd03ccVqlCVY2dXsx5dk6zG77rkIZQLKTWh
+         Y1RbZY4jCeilT+/XFMbmHx13SSpQe+MuDKqpddEv/Only0SnD2ah2NcDpq1/9oAFYs0U
+         qW7b8K5wllrcF27oMZ2+AdgItlsKMdXYMvL7K8Yk6yOPUC4u4mINPiNyOiiou0adh2fL
+         aZc+hObHejhawFW5CoszD5hTp20Gc51egBFHvDa5zuuBZQ2pKWPCYe0ysVmSCi0rMahI
+         TMpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752116633; x=1752721433;
+        d=1e100.net; s=20230601; t=1752116637; x=1752721437;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SXIjFbe4Vrz2bi8rFlLHVCaoVK6EIDR/YQX7SQMy1sc=;
-        b=VrqdsJUyxClLs23D482LhQ9kwdbXz1Ftfjfsl1hRue9l2eBRQpDnIPNsYy9WprXf8F
-         HJ+owRGSRLeHlZxTGEx3zpEtgG8ergTj85Tzac2iXEWvwddLoAGuMG71qXCDPK8vV2sG
-         suxEt/8PbhN6eApSlB2VEQVNhtnfQZvp37CoyMqmyEo0sVBkk9NDcUm6wd4w9kH20CZE
-         KBfxmbvlMPyj9NbnrhT4LWAZAD5ibgrxdHVkve7sXDHGnCv57n/rv+y17rcTj+o7jCiB
-         uu/V868BU0YdyWhC4x7cywa363fiv5TQEmVnT/DDmRH3LrQtZo69VYibJyS3EHOy8/9D
-         xuKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3yoXybAt2T72hkp6K7FkSfX8G7CEkaX4F1Y1IPRH7fVdzX0Y9tU+h2A5ky2avUGdtZhJe7sH9iTBognY=@vger.kernel.org, AJvYcCX7FeQC6sTkHAw7PdZgvmFBg0j2sntW/lExdrOqIGltNy0AhBIkiU/G9HpqpBuBmaIvol9Zuk06qKj0VaSiskODHu4Q/A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcmYAAYDgru4CyIsh8Cc0EP95AcxQjQPherOiyQlyhx5HKB1tE
-	nVKmwFUQ7YgoUDwk1qbRvAwIWR0ZYeueDiyBpgl0pZ1Sqca3IT/e2nOt
-X-Gm-Gg: ASbGnctCfUwS+qJSHQb6TnezmL12OiJ1DdWxlszthRHX1bYuoZnL8eEYJJMglpGhv7q
-	4phUwib3DHI8siAiNf1ebrW31k2ZTqX23/VLcozbOCtmhlSheZEC9qf0UEoAiGpWDKy7r0Qo9Vr
-	DIIemB6oROF1FxSiWASnLyx/gOUJKVo9FLziSgh5qEOMUT38TRDKyuyRrdFE1Qri4Ll9CoNIU0b
-	1lJx5nlWd6LFuqzLfszwY6m3ek7DZ5NnAiMigu8L7qUDXcoe1KkahQ5RGBh9nvVBtEuhV0e/WYN
-	6vdH3j2QeLjbzvzXa+/9XmtGwV2q/QGXhHzYE1A4POp7oUqgw5RgHoRFGH5R4Q==
-X-Google-Smtp-Source: AGHT+IHrgD3VdqjJ19DTZubtWqeYSn6DUskkZ+P8TziZK0NPI1P9/RRwcb9bYSMrI5ZrSsAHwBf9Tg==
-X-Received: by 2002:a17:903:2448:b0:229:1619:ab58 with SMTP id d9443c01a7336-23de24f5a39mr37319685ad.43.1752116633351;
-        Wed, 09 Jul 2025 20:03:53 -0700 (PDT)
+        bh=6qzbm7XHfXh5ZmWOnzS98wjSUhwQBx3n0KIGDo+6oRk=;
+        b=MwTdELl6M0lItqfpYEpp5RaJN45LnH4TCKF4aOfsq24AOQBDZfgok2ec5LqGH1MExg
+         ayV6o5lRxrz73kRtuxm/4ioq0EzqZnhJSh1/uMDAplDIarEA3lXIFXIhBe6dcf5wAg9U
+         MCRgh/1GGRTvOP3t29C9Q3Ik0i0hcNcneAffdCrQLRRuBSXDn5GzuraNfk9IKuMaGzn9
+         gnHONCGpHuDRY2GGKR5weAcodPkf+MeL5nTnH/IblVDrpAPDVy71PLhoPz+czoc4D1VA
+         okb/rz9miIe2LdRH7+bcIv9eGVl68LpY5w3HHjC0CYNIoJwjCn/HUvuBeD6RiGVqv/oS
+         b0pA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCzfYlryGm5+J6LazZCyJ5T6Y9iO5WvcRXplm3oX5ZtWwUmy+80wRsGjnrpav+6OHB7pYcyILN8K24qvz/HjAf8x1QOg==@vger.kernel.org, AJvYcCVYu746K0QltqHjOyXIw5QXygQlwt3wvbPlndDb3c9SN6tl0pr8hjXbT56pvBAe90S305SqmgfIF9XU7nA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjsfjCZNRv02zXxNNnwxgPJ0M2PrlR5W1wk5XWUMSObqV55Sza
+	g0b5Bh+JUv0HtsAwHfB0px0UU0oPRI40VqDE2wUnJYdjU0gfWnabIg0h
+X-Gm-Gg: ASbGncuA8we+DxfV7ro6uT8J4fkg+/lDlWo1PrbAcBPbjaTaOnpqkI5g/yOWgIls+Zg
+	YMsTAtPXoVQGXXN5pefhJJtYRnqDvImJblxOUCRlmFoLwJij7Y01hQj1KhCo95inw+HKiGXxvUf
+	OyUyB8dlTgsqrjQj877BKq5WkKvcRQRGUO458IsoJbvawWwBFVukGKmV8uEa6sZiLvvv8+H//Z3
+	ttwOrIBiURXAPiuIw2AcuLr3XijPas1W0CZNEuJ+uOP43shTFOjaTHv66C2i+cPnQOyWxks7nTH
+	KCRztRLUw/X25SpP0dRyzC/EAIKnf58FgkR+xUXSZcJpJCBUvjf/Wbcox/I2cA==
+X-Google-Smtp-Source: AGHT+IGr0Mdzk8hxY3NE9aPkmRinUI9rqTo0avnUKCQKUGwayLo5mL4EWLpZE4YqruovjO0FOJckkg==
+X-Received: by 2002:a17:903:1a44:b0:234:b445:3f31 with SMTP id d9443c01a7336-23de2fe36b4mr26797485ad.17.1752116637312;
+        Wed, 09 Jul 2025 20:03:57 -0700 (PDT)
 Received: from [192.168.1.26] ([181.88.247.122])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de435b7e3sm6210445ad.224.2025.07.09.20.03.49
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de435b7e3sm6210445ad.224.2025.07.09.20.03.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 20:03:53 -0700 (PDT)
+        Wed, 09 Jul 2025 20:03:56 -0700 (PDT)
 From: Kurt Borja <kuurtb@gmail.com>
-Date: Thu, 10 Jul 2025 00:03:20 -0300
-Subject: [PATCH v6 5/6] Documentation: ABI: Update
- sysfs-class-firmware-attributes documentation
+Date: Thu, 10 Jul 2025 00:03:21 -0300
+Subject: [PATCH v6 6/6] MAINTAINERS: Add FIRMWARE ATTRIBUTES CLASS entry
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-fw-attrs-api-v6-5-9959ef759771@gmail.com>
+Message-Id: <20250710-fw-attrs-api-v6-6-9959ef759771@gmail.com>
 References: <20250710-fw-attrs-api-v6-0-9959ef759771@gmail.com>
 In-Reply-To: <20250710-fw-attrs-api-v6-0-9959ef759771@gmail.com>
 To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
@@ -99,34 +98,41 @@ Cc: Alok Tiwari <alok.a.tiwari@oracle.com>,
  platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Dell.Client.Kernel@dell.com, Kurt Borja <kuurtb@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=756; i=kuurtb@gmail.com;
- h=from:subject:message-id; bh=PGzNmxKPeKeIW9y3SLrZgxUtNxszaOvcO3mqQbh5IU4=;
- b=owGbwMvMwCUmluBs8WX+lTTG02pJDBn5uo1XZ0Xcf/KxTeHBPgnjfS23WUtncp1ob3potiLEV
- zEu5eyKjlIWBjEuBlkxRZb2hEXfHkXlvfU7EHofZg4rE8gQBi5OAZjI5V2MDFfEdTXt6vIelSUb
- 7tSve50nkWxzSOih3G51n2/BEXOe2DIyXLu5j9dJbovvM65O2blH0v4keD3+KMZ2JshcMLkskrm
- bDwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=875; i=kuurtb@gmail.com;
+ h=from:subject:message-id; bh=PFA+oHZQpzOnGYRE6dsJRrBUdbqwbvmreuJ/bqsngw8=;
+ b=kA0DAAoWFmBDOPSf1GYByyZiAGhvLYGgelkyhgpfp+r9OlAsJtx0nxEvOyzusZmvB4WEuYmZW
+ 4h1BAAWCgAdFiEEh2Ci9uJabu1OwFXfFmBDOPSf1GYFAmhvLYEACgkQFmBDOPSf1GYMngEAucNy
+ 2nlSwdi6QsA3aSz+XYaA3ovkxmgbL6g8uxs+PUIA/jIdePpxGhGO1QTNRwV3cadm57PlHMSV03C
+ Gy81K+y0A
 X-Developer-Key: i=kuurtb@gmail.com; a=openpgp;
  fpr=54D3BE170AEF777983C3C63B57E3B6585920A69A
 
-Add a simple boolean type.
+Add entry for the FIRMWARE ATTRIBUTES CLASS.
 
 Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- Documentation/ABI/testing/sysfs-class-firmware-attributes | 1 +
- 1 file changed, 1 insertion(+)
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-firmware-attributes b/Documentation/ABI/testing/sysfs-class-firmware-attributes
-index 2713efa509b465a39bf014180794bf487e5b42d6..64b8d5d49716e8387fee26e3e56910862f6a4f5c 100644
---- a/Documentation/ABI/testing/sysfs-class-firmware-attributes
-+++ b/Documentation/ABI/testing/sysfs-class-firmware-attributes
-@@ -18,6 +18,7 @@ Description:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0a5309abba307992d4bf5b05ef8a65c839fb7606..9ef3dcadc2d6adfcdb6832026681691586c613ce 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9352,6 +9352,14 @@ F:	include/linux/firewire.h
+ F:	include/uapi/linux/firewire*.h
+ F:	tools/firewire/
  
- 		The following are known types:
- 
-+			- boolean
- 			- enumeration: a set of pre-defined valid values
- 			- integer: a range of numerical values
- 			- string
++FIRMWARE ATTRIBUTES CLASS
++M:	Kurt Borja <kuurtb@gmail.com>
++L:	platform-driver-x86@vger.kernel.org
++S:	Maintained
++F:	drivers/platform/x86/firmware_attributes_class.c
++F:	include/linux/firmware_attributes_class.h
++K:	(devm_)?fwat_device_(un)?register
++
+ FIRMWARE FRAMEWORK FOR ARMV8-A
+ M:	Sudeep Holla <sudeep.holla@arm.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
 
 -- 
 2.50.0
