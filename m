@@ -1,81 +1,156 @@
-Return-Path: <linux-kernel+bounces-726347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F5CB00C27
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:33:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2E5B00C2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC8A5C4F18
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:33:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5135540356
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FF22FD5A3;
-	Thu, 10 Jul 2025 19:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4KrJlDa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753F62741C6;
+	Thu, 10 Jul 2025 19:34:18 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A767221A43D;
-	Thu, 10 Jul 2025 19:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A2E21A43D;
+	Thu, 10 Jul 2025 19:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752175974; cv=none; b=uLyUKuptasCLek73Isy9r65Q7dPq2CZLf/NFbFeawn4MvzfG2yDIhd3uGt+BIUcRZCpK4MZcZhG3t/ILMabxU1pLIPhZRjMz7NoUfC1XvbKHL+Jt5JSmYRz/59htoYwgVka0+T9G+PKkglZtrtyVYlmn4N4cX2svS0HfxDduhz8=
+	t=1752176058; cv=none; b=kesc6wg55osaVX4lH/3GnA6lzxvUZBZvyIk2yzLJUUD28fz0BCSKyDUGcoxDxc7WnvcZpYSxkf8q6YiVPNaN74XFO+Xm93NtoDz2KEoXKDT9kJ0Eu1MidQF6jNZOeIHY24v9IqHosk/Rdbn8baoHbYn2sDwQDOJ9XO/HjeH4rDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752175974; c=relaxed/simple;
-	bh=5iv/ybBT1EWpCtzUTeH7jOisZdpjTSxsHX5LZWaBTBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6eSwtEnOD1JVKS/F6DpSYaMiPoVkkpPIvxTVClsZbDEypJh9+k6VPTwhH/BlPLVHuzIdspVvn3MC0oc3utoq/luGYAIGJXkWEn8ud75Q0VWGbJfGflHMmGQERO/ntR5H27LmP3EDStX1vPsJQXS+2KdHTS9e6P5x6ecmTV4QBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4KrJlDa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C0BC4CEE3;
-	Thu, 10 Jul 2025 19:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752175974;
-	bh=5iv/ybBT1EWpCtzUTeH7jOisZdpjTSxsHX5LZWaBTBs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d4KrJlDa0wqJNg3kV/Aycs4TlPYrAsCJRXY7pEr0yFXtTSr5FEeZGUF/jPySl86L0
-	 G2Wj3h88lJib/AeFNTfE55CceP6Z8QDP3lBTDwYqHHQju5mqPUOCa4/3mGS9h9fWN2
-	 8BE0kCRE4pggOceAMSsqBVWRr1gs6zAWJaNhtudIagRE9mkIDpF/mwipXJeEkW+oCM
-	 p3QbqdTQJ6FoWgjFXP97kQGwHc4BgJnkex2oGRmglmd2Gq6jytbt8BcKjvG56TNzdm
-	 tbQ0dW+FgZY3oL6JitibiLFuzcpQ3/iHOi8JgP4kOgyIMABWv4q4DV/rHXa0LiV7Mx
-	 Uwez3iX6QZFgw==
-Date: Thu, 10 Jul 2025 12:32:52 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
-	Yuwen Chen <ywen.chen@foxmail.com>, linux-mtd@lists.infradead.org,
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] ceph: Remove gfp_t argument from
- ceph_fscrypt_encrypt_*()
-Message-ID: <20250710193252.GA20579@quark>
-References: <20250710060754.637098-1-ebiggers@kernel.org>
- <20250710060754.637098-7-ebiggers@kernel.org>
- <CAO8a2Sivm00NRM9Z-Fwp=FzcmkAP8m1uQR24-avT-tUug4VgmQ@mail.gmail.com>
+	s=arc-20240116; t=1752176058; c=relaxed/simple;
+	bh=HQmL8qC/NJpVN+Y9DU6iB7BsPtcSr1FwNmcTw1svsfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mWn7SD5yvThDCbHX+zXsNg+X1S+PovC9m/IhadNnzpFN3SnBjep1TUQzxKpgJRBBQwsNCW6eZuM4PB1OSQrPNvW1wrTiHlyDMTcRQd2ihTRwIKGI+lh01+pTNLeUooz5OmSAbHydYLekEEm1TUDEwQSDdyv3/dO5T+OHDv+vZ/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 15BEE140F6F;
+	Thu, 10 Jul 2025 19:34:13 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 0578420026;
+	Thu, 10 Jul 2025 19:34:10 +0000 (UTC)
+Date: Thu, 10 Jul 2025 15:34:09 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tengda Wu <wutengda@huaweicloud.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Shuah Khan <shuah@kernel.org>, Yuanhe Shu
+ <xiangzao@linux.alibaba.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH -next] selftests/ftrace: Prevent potential failure in
+ subsystem-enable test case
+Message-ID: <20250710153409.3135fb17@batman.local.home>
+In-Reply-To: <20250710130134.591066-1-wutengda@huaweicloud.com>
+References: <20250710130134.591066-1-wutengda@huaweicloud.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAO8a2Sivm00NRM9Z-Fwp=FzcmkAP8m1uQR24-avT-tUug4VgmQ@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: hbn5tzpcwd5ghuwt5pssryo7et9px9pj
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 0578420026
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19ny7HmihNTvti8NVpFB1Jp8hNcklJzZc4=
+X-HE-Tag: 1752176050-153866
+X-HE-Meta: U2FsdGVkX1//K8elZUG++8hVHzegozmIyXvruB1fQfVLOaf3/LlwE2lUGVSEyrYP89mNBXwdjJmv2OlMflHCchCyJz1WMymp9xY1fLX9bUxUqTiRfyiwZzUV9a3Ws1kf7LCKLMeOqeHEmLZfkhAgnBSyS3Wzj8mOrAsqa9bpqKM9lRx2fM5L56/o7jyurhWx6v/LAIQzarUhuHOkfvTxK3nL5LofiRQpc/HvwR7zZAN18O/989aWVnv2hr2zDSoI53wA0U135iRaMjT58WTMvxC/enWrFBmswzt6lNF2Ci42+6k6Tlp15vtw5KmZK3nhvy7TPP1L2ShfVIOg7B5Ar2CS0ShiSB8zG9eI5GpKMwUeycMTxMUbPxBUGzzr4Ap2
 
-On Thu, Jul 10, 2025 at 02:07:47PM +0300, Alex Markuze wrote:
-> Reviewed-by: Alex Markuze amarkuze@redhat.com
+On Thu, 10 Jul 2025 13:01:34 +0000
+Tengda Wu <wutengda@huaweicloud.com> wrote:
 
-Thanks!  In the future, when sending a tag, please include brackets around your
-email address, like Reviewed-by: Alex Markuze <amarkuze@redhat.com>.  Otherwise,
-when applying the patch, b4 skips the tag:
 
-    NOTE: some trailers ignored due to from/email mismatches:
-        ! Trailer: Reviewed-by: Alex Markuze amarkuze@redhat.com
-         Msg From: Alex Markuze <amarkuze@redhat.com>
-    NOTE: Rerun with -S to apply them anyway
+> 
+> Fixes: 1a4ea83a6e67 ("selftests/ftrace: Limit length in subsystem-enable tests")
+> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+> ---
+>  .../selftests/ftrace/test.d/event/subsystem-enable.tc     | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+> index b7c8f29c09a9..3a28adc7b727 100644
+> --- a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+> @@ -19,8 +19,8 @@ echo 'sched:*' > set_event
+>  yield
+>  
+>  count=`head -n 100 trace | grep -v ^# | awk '{ print $5 }' | sort -u | wc -l`
+> -if [ $count -lt 3 ]; then
+> -    fail "at least fork, exec and exit events should be recorded"
+> +if [ $count -eq 0 ]; then
+> +    fail "none of scheduler events are recorded"
+>  fi
+>  
+>  do_reset
+> @@ -30,8 +30,8 @@ echo 1 > events/sched/enable
+>  yield
+>  
+>  count=`head -n 100 trace | grep -v ^# | awk '{ print $5 }' | sort -u | wc -l`
+> -if [ $count -lt 3 ]; then
+> -    fail "at least fork, exec and exit events should be recorded"
+> +if [ $count -eq 0 ]; then
+> +    fail "none of scheduler events are recorded"
 
-I'll add the brackets, so no need to resend anything.  But other maintainers
-could miss this, which would result in your review tags not being applied.
+So if there's a bug that causes the system enable to only enable a
+single event, this will no longer catch it?
 
-- Eric
+I rather not let the slide.
+
+Can you test this to see if this works for you?
+
+-- Steve
+
+diff --git a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+index b7c8f29c09a9..46a9e6d92730 100644
+--- a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
++++ b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+@@ -14,11 +14,32 @@ fail() { #msg
+     exit_fail
+ }
+ 
++check_unique() {
++    cat trace_pipe | grep -v '^#' | awk '
++	BEGIN { cnt = 0; }
++	{
++	    for (i = 0; i < cnt; i++) {
++		if (event[i] == $5) {
++		    break;
++		}
++	    }
++	    if (i == cnt) {
++		event[cnt++] = $5;
++		if (cnt > 2) {
++		    exit;
++		}
++	    }
++	}
++	END {
++	    printf "%d", cnt;
++	}'
++}
++
+ echo 'sched:*' > set_event
+ 
+ yield
+ 
+-count=`head -n 100 trace | grep -v ^# | awk '{ print $5 }' | sort -u | wc -l`
++count=`check_unique`
+ if [ $count -lt 3 ]; then
+     fail "at least fork, exec and exit events should be recorded"
+ fi
+@@ -29,7 +50,7 @@ echo 1 > events/sched/enable
+ 
+ yield
+ 
+-count=`head -n 100 trace | grep -v ^# | awk '{ print $5 }' | sort -u | wc -l`
++count=`check_unique`
+ if [ $count -lt 3 ]; then
+     fail "at least fork, exec and exit events should be recorded"
+ fi
 
