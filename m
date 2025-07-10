@@ -1,221 +1,266 @@
-Return-Path: <linux-kernel+bounces-725012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB0DAFF9C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:25:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D40AFF9C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DD45542ED9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE9FE546DAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5DC28B7C3;
-	Thu, 10 Jul 2025 06:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DB1287278;
+	Thu, 10 Jul 2025 06:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vuX1svhw"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757C228982D;
-	Thu, 10 Jul 2025 06:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752128640; cv=fail; b=mRkMHf1t8QxQP8hYzo/qvG2JOrlVLRSExuIHu/O3WUVMEbZRmIBr0JWnr6YCui/1QFRtL01CH8fH3O5BVLrr+yUfCIn2TCpePa6IqMSt/4cjBppuJwwTVYfxLTUF4E7glYvQAA9fMgV8ib6FZ/U5vh1hrXOhT2X1mnkwoaivQj4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752128640; c=relaxed/simple;
-	bh=FnvTtNQk++SEkQrgDk1QB2UqOHajAPWX99rFSpbqlwA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MFs/+t/kHpDtZti65S1eqrgZEgyzP2wVY6MbdD5HXPszy3VhvXfLooO67YV9WrWMp2uaevijVvk34m8iDXhJewnE61ziJ2pH+fH8R9EBwokC3aKV3Uxg8qrNA13gtF2K6goFcGjgTm9i7T7CRnO8CASHris2Ob+ACIPKOUy/MyY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vuX1svhw; arc=fail smtp.client-ip=40.107.223.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H3XDvH5/JkODqqYxYFC4/rObRR08X89DPw7BVoy/ar+qJ8D3FPlgs/Iw2UIsUB33X/ppm4jZOXHV7d+DvkGeng4Np0o9KKSWd1VF8Hpoc3o9Tc33BqxitK/yVYg6PAolp+AOVh+FoheGCdTxDRDNYZVBs8jovRtRbbquSV8v4GdPAdvm7gNervNpeudCzs6+BwsqjpK4ORZQq2fNVRrsv1G0uFJ9nNUoNWlgHfHKM6CXhtIW2O/I718++PBgDUI7YV4yo+PfSuLobJdhO951LkXP6Y3QDFS6pbHNa4HEMd/YfTl9h14e6FfZUXAeKUvbWEOBhdj11s0iZwCF700J3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vfSTMpMDhiIuTq3yjZ4aIK59TlX2Yq1gv0AJHdRSBWU=;
- b=bSNASPRd1gU2ztjxm1iMAgxRplIBCIBj2ZPObwZAIxPn4t1AuDUNy/a+8RFLxYXt31pmxrUjXCKodnlOJr5rKChJeXloY9nq1eMRuv6oEllTK+sTolrnKWBswjAD+qnVbi9WjJ8WP6F5USx7HD7VPDJPKYsdopiYLZpoFCEVoV0GYjL9FebDsRQC5Oi6ZfD+b8B5OPtifpulSLwGhEfdIkgwuOpmVqO8C/YImm0CXvvM/s8QrBvDyxh74NJrgDpPKaa0tZ+b6mTNr1Vmo/49FMPmeXclSH5p4BlJxQN+vi8bjFihncwQBU6DcKkZrz5zESXymoZPEB1ZqsrMgfnxwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vfSTMpMDhiIuTq3yjZ4aIK59TlX2Yq1gv0AJHdRSBWU=;
- b=vuX1svhwf379I5y5q7GjwoT1jszQ7OeU3A/FuLYhO7wEc6yPfjPz/gYXuCKdrQd6jHtRq81WVLXxFk1rmynK9TyKEGZF686vSKkdRMdmMmU4IEKtKUM8zxHlGrCm8nhG8/ZYAGaH8Wed5kYK1C1PCgPCdqo/tYP4a+/grZBKxzU=
-Received: from BLAPR03CA0137.namprd03.prod.outlook.com (2603:10b6:208:32e::22)
- by MN0PR12MB6077.namprd12.prod.outlook.com (2603:10b6:208:3cb::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Thu, 10 Jul
- 2025 06:23:56 +0000
-Received: from BL6PEPF0001AB74.namprd02.prod.outlook.com
- (2603:10b6:208:32e:cafe::31) by BLAPR03CA0137.outlook.office365.com
- (2603:10b6:208:32e::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22 via Frontend Transport; Thu,
- 10 Jul 2025 06:23:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF0001AB74.mail.protection.outlook.com (10.167.242.167) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Thu, 10 Jul 2025 06:23:56 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Jul
- 2025 01:23:56 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Jul
- 2025 01:23:56 -0500
-Received: from hjbog-srdc-41.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Thu, 10 Jul 2025 01:23:50 -0500
-From: Samuel Zhang <guoqing.zhang@amd.com>
-To: <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-	<rafael@kernel.org>, <len.brown@intel.com>, <pavel@kernel.org>,
-	<gregkh@linuxfoundation.org>, <dakr@kernel.org>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <ray.huang@amd.com>, <matthew.auld@intel.com>,
-	<matthew.brost@intel.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>
-CC: <mario.limonciello@amd.com>, <lijo.lazar@amd.com>, <victor.zhao@amd.com>,
-	<haijun.chang@amd.com>, <Qing.Ma@amd.com>, <Owen.Zhang2@amd.com>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>, "Samuel
- Zhang" <guoqing.zhang@amd.com>
-Subject: [PATCH v6 5/5] drm/amdgpu: do not resume device in thaw for normal hibernation
-Date: Thu, 10 Jul 2025 14:23:13 +0800
-Message-ID: <20250710062313.3226149-6-guoqing.zhang@amd.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250710062313.3226149-1-guoqing.zhang@amd.com>
-References: <20250710062313.3226149-1-guoqing.zhang@amd.com>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="n+t7K+9K"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC343287258;
+	Thu, 10 Jul 2025 06:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752128665; cv=none; b=cAkSXO2h0dJpL6K7fIx7iJ54pVk8dWX0gBQAJkeuhJXUTLAHGESndC2mvx6CQus/OJilGd8D5TDdCLzMrQIuVbLgINgZnvf32ond4AIB6hDlVbjS24/coGD4Oe9X0BAdR121CLBWHqIYX+KdHE3zJ5Y0B3I2XfjnZZAa5h1yoog=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752128665; c=relaxed/simple;
+	bh=ymwPWNJJsgZ6RW0m+vOuRlvr+kPdRXWSpovz0vsAdyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=snTswT29047aS/hWTc7Uhmg5B6hwrnME0/ndfmo4IBT8boIa2f9PCfBnkiN9LQktgGVzXVAY/xT/XpHTT+kkO9DROkB/kvVXXlQY31fH1KcwhIEXNaowNI5mnREkkhj4URy0ghtH6D6ZIbmTws+Qpvsge26v+VBZvL6gKvPUmqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=n+t7K+9K; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.160.22] (unknown [4.194.122.136])
+	by linux.microsoft.com (Postfix) with ESMTPSA id AAE0A21130B9;
+	Wed,  9 Jul 2025 23:24:20 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AAE0A21130B9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752128663;
+	bh=EHJa5emz5zqIQxcHSm5z73ZxuksS20iqAv6kSHAYKU8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n+t7K+9Kjr0jsWiUvRXMXizL3IjcMh9QXCOnccJhsWxWv31LVuiwhM9CRlvxDXXg1
+	 9bcm8tzX3bjWCZt655btka10Wr/w6Z6p+VlWwwKBklCqCHaMURsTWUagyBn4rLU4na
+	 fCeBrXKex+Od8ZjzdGzueaVbkS2vQktpO9UYA39Y=
+Message-ID: <89ff0e52-377c-4c9f-a61e-f73639304767@linux.microsoft.com>
+Date: Thu, 10 Jul 2025 11:54:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: guoqing.zhang@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB74:EE_|MN0PR12MB6077:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4a7073a-44d9-48fb-216a-08ddbf7a59c3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3lWqLs6Nwq3H6xi741Q6El3FFzzUF98Kc4Ml/qTpPmXZZjvMrBk1NDkLYxh0?=
- =?us-ascii?Q?VeqFZ/CSF5WAGsCah3hsiZ2rDqwvT1iPgoxkOPjHdkfSJ45neaad1Qvqryki?=
- =?us-ascii?Q?XLLQnqz7xzRL3ZYYDWuOFqbk15bPlorkUK0uMinvAA+rGigeb8c9wQm/3hvW?=
- =?us-ascii?Q?z1D6Ox4lgw5Onhv+XpXwr9MhVaWONy0KqIsEBtIGpUoLnEnxolNVgWKYP2P5?=
- =?us-ascii?Q?+Z8tqrrRzMWgNqz0Jo6h1vtUU8H24xE/UxWddRqLzXXkkA75QqdYxCZngA17?=
- =?us-ascii?Q?/tDILcowTKhOK3z7WSmTad7FpHB/AgbG1AmODM66UYyKNBjK6Y+ih283pDC0?=
- =?us-ascii?Q?Lg/CmN4sgVys4vClsNIOcWsV24Dr+fHXgg1xuBCLXi5RGu2roI3FRcc/u2tr?=
- =?us-ascii?Q?xthjZl1B2Xrp0n/PAd2jrk3mnT0euOdxSu/0iGDSrS2kIRpfMcVAI6FTdZat?=
- =?us-ascii?Q?gnH87443YNHFy9IoQKIwgYe488hkqi501ZK8VEWUixDG0QB04wJhTe8N37Cm?=
- =?us-ascii?Q?1D+iHgAToOMh+a+f2vuct3jSDtPNns1+UXP1KUStC6vT7WaajHuPv6THHTr/?=
- =?us-ascii?Q?TTMucNdyH6K2K1TxXtigCCNDiIJaDc/Oifm2oMlMzhB808KdUAUcfL+e+4PO?=
- =?us-ascii?Q?alm0H7TqqdVUIXnKcZ3Y0MYQJHXE131JzwdGFwrzY6ikOU3F46NtE9B2PybY?=
- =?us-ascii?Q?B5wWncZX8JWPOFFuSMwO4sa+gODNAkwNq67SW1UgG+XdM6CchHYL0GbHdgaT?=
- =?us-ascii?Q?RGcAjWaVNBDXzBVFabuB5J0VtSHHBcSL1yXp18AzdCRk4u87rFrminxmPiB0?=
- =?us-ascii?Q?9FTonzTUVY75O4MFxqZRL1FIuFdmcgEVsPx6vOt+jzgxuKl3i6di3PAL8JjF?=
- =?us-ascii?Q?D/SwEFQC5VNyRPFq7Fb9JcxQ9SIBaFIZKFwXDD9iXem9LYaTQIxPmlRZRDPs?=
- =?us-ascii?Q?+f1FfBAmeiJl97gIR0wx4Q9kJKFn04hij6Oe8gd6eOEuLQU61OtOuxMJmp7S?=
- =?us-ascii?Q?Jdske4fpasJkq+3eo7omjNZjhKr6qSaRn1+kd9X1zQklJ6Z9ewoDssq+Cp1L?=
- =?us-ascii?Q?Hbqbq5O086OqRAkTIQ3xvzBO/OMvJSdNW+aBhDAr/9XsZM1xvKV4SjASW7zS?=
- =?us-ascii?Q?JMf/CoUWimDxABtAtjFy1FpkEkJ3YKHKFlayF808X1FvUEbPS7JicDp6pSdo?=
- =?us-ascii?Q?fIIHslhUD58YNeVaFkCsDvHG9MYIqABUVAwmv7bseYEQBxIZ0E3gkHnYWJH9?=
- =?us-ascii?Q?E96j30BAEDAJYQyAzA1pB0ueYrVLOarhM0nTpsUEJ8Ywxm+z2UGRbxb2t89/?=
- =?us-ascii?Q?tVLugDoxSike4ty4y5DuuVgOt/hi8Chy6BSYJnt0ivNkuXYa2Xt8cw0imk6t?=
- =?us-ascii?Q?loUxQ0ifrNGdPUtMw7Zie8fiEjKAcqf520+1Oncs60AzNU6c0OX/B1N37y9X?=
- =?us-ascii?Q?+sm+zkAKdFDciOcfe951R/+CSSYHrsXnWnH8oc762IWff+vahFsdnomFO+k/?=
- =?us-ascii?Q?5PFjDDbEI8aukWm/XCVPzOd6WyKDOK4ql18oQ9lxUJE+SdHQjPayQ+nKcQ?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 06:23:56.8916
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4a7073a-44d9-48fb-216a-08ddbf7a59c3
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB74.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6077
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] tools/hv: fcopy: Fix irregularities with size of ring
+ buffer
+To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Long Li <longli@microsoft.com>,
+ Michael Kelley <mhklinux@outlook.com>, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Olaf Hering <olaf@aepfle.de>
+References: <20250708080319.3904-1-namjain@linux.microsoft.com>
+ <20250709112201.GA26241@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <20250709112201.GA26241@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For normal hibernation, GPU do not need to be resumed in thaw since it is
-not involved in writing the hibernation image. Skip resume in this case
-can reduce the hibernation time.
 
-On VM with 8 * 192GB VRAM dGPUs, 98% VRAM usage and 1.7TB system memory,
-this can save 50 minutes.
 
-Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
-Tested-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+On 7/9/2025 4:52 PM, Saurabh Singh Sengar wrote:
+> On Tue, Jul 08, 2025 at 01:33:19PM +0530, Naman Jain wrote:
+>> Size of ring buffer, as defined in uio_hv_generic driver, is no longer
+>> fixed to 16 KB. This creates a problem in fcopy, since this size was
+>> hardcoded. With the change in place to make ring sysfs node actually
+>> reflect the size of underlying ring buffer, it is safe to get the size
+>> of ring sysfs file and use it for ring buffer size in fcopy daemon.
+>> Fix the issue of disparity in ring buffer size, by making it dynamic
+>> in fcopy uio daemon.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 0315fef2aff9 ("uio_hv_generic: Align ring size to system page")
+>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>> ---
+>>   tools/hv/hv_fcopy_uio_daemon.c | 82 +++++++++++++++++++++++++++++++---
+>>   1 file changed, 75 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/tools/hv/hv_fcopy_uio_daemon.c b/tools/hv/hv_fcopy_uio_daemon.c
+>> index 0198321d14a2..5388ee1ebf4d 100644
+>> --- a/tools/hv/hv_fcopy_uio_daemon.c
+>> +++ b/tools/hv/hv_fcopy_uio_daemon.c
+>> @@ -36,6 +36,7 @@
+>>   #define WIN8_SRV_VERSION	(WIN8_SRV_MAJOR << 16 | WIN8_SRV_MINOR)
+>>   
+>>   #define FCOPY_UIO		"/sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/uio"
+>> +#define FCOPY_CHANNELS_PATH	"/sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/channels"
+> 
+> We can use a single path up to the device ID and then append either 'uio' or 'channels' using
+> two separate variables.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 1c54b2e5a225..021defca9b61 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -2541,6 +2541,10 @@ amdgpu_pci_shutdown(struct pci_dev *pdev)
- 	if (amdgpu_ras_intr_triggered())
- 		return;
- 
-+	/* device maybe not resumed here, return immediately in this case */
-+	if (adev->in_s4 && adev->in_suspend)
-+		return;
-+
- 	/* if we are running in a VM, make sure the device
- 	 * torn down properly on reboot/shutdown.
- 	 * unfortunately we can't detect certain
-@@ -2557,6 +2561,10 @@ static int amdgpu_pmops_prepare(struct device *dev)
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
- 	struct amdgpu_device *adev = drm_to_adev(drm_dev);
- 
-+	/* device maybe not resumed here, return immediately in this case */
-+	if (adev->in_s4 && adev->in_suspend)
-+		return 0;
-+
- 	/* Return a positive number here so
- 	 * DPM_FLAG_SMART_SUSPEND works properly
- 	 */
-@@ -2655,12 +2663,21 @@ static int amdgpu_pmops_thaw(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
- 
-+	/* do not resume device if it's normal hibernation */
-+	if (!pm_hibernate_is_recovering())
-+		return 0;
-+
- 	return amdgpu_device_resume(drm_dev, true);
- }
- 
- static int amdgpu_pmops_poweroff(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
-+	struct amdgpu_device *adev = drm_to_adev(drm_dev);
-+
-+	/* device maybe not resumed here, return immediately in this case */
-+	if (adev->in_s4 && adev->in_suspend)
-+		return 0;
- 
- 	return amdgpu_device_suspend(drm_dev, true);
- }
--- 
-2.43.5
+I am planning to use it like this, please let me know if it is OK.
 
++#define FCOPY_DEVICE_PATH(subdir) 
+"/sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/"#subdir
++#define FCOPY_UIO_PATH          FCOPY_DEVICE_PATH(uio)
++#define FCOPY_CHANNELS_PATH     FCOPY_DEVICE_PATH(channels)
+
+> 
+>>   
+>>   #define FCOPY_VER_COUNT		1
+>>   static const int fcopy_versions[] = {
+>> @@ -47,9 +48,62 @@ static const int fw_versions[] = {
+>>   	UTIL_FW_VERSION
+>>   };
+>>   
+>> -#define HV_RING_SIZE		0x4000 /* 16KB ring buffer size */
+>> +static uint32_t get_ring_buffer_size(void)
+>> +{
+>> +	char ring_path[PATH_MAX];
+>> +	DIR *dir;
+>> +	struct dirent *entry;
+>> +	struct stat st;
+>> +	uint32_t ring_size = 0;
+>> +	int retry_count = 0;
+>>   
+>> -static unsigned char desc[HV_RING_SIZE];
+>> +	/* Find the channel directory */
+>> +	dir = opendir(FCOPY_CHANNELS_PATH);
+>> +	if (!dir) {
+>> +		usleep(100 * 1000); /* Avoid race with kernel, wait 100ms and retry once */
+>> +		dir = opendir(FCOPY_CHANNELS_PATH);
+>> +		if (!dir) {
+>> +			syslog(LOG_ERR, "Failed to open channels directory: %s", strerror(errno));
+>> +			return 0;
+>> +		}
+>> +	}
+>> +
+>> +retry_once:
+>> +	while ((entry = readdir(dir)) != NULL) {
+>> +		if (entry->d_type == DT_DIR && strcmp(entry->d_name, ".") != 0 &&
+>> +		    strcmp(entry->d_name, "..") != 0) {
+>> +			snprintf(ring_path, sizeof(ring_path), "%s/%s/ring",
+>> +				 FCOPY_CHANNELS_PATH, entry->d_name);
+>> +
+>> +			if (stat(ring_path, &st) == 0) {
+>> +				/*
+>> +				 * stat returns size of Tx, Rx rings combined,
+>> +				 * so take half of it for individual ring size.
+>> +				 */
+>> +				ring_size = (uint32_t)st.st_size / 2;
+>> +				syslog(LOG_INFO, "Ring buffer size from %s: %u bytes",
+>> +				       ring_path, ring_size);
+>> +				break;
+>> +			}
+>> +		}
+>> +	}
+>> +
+>> +	if (!ring_size && retry_count == 0) {
+>> +		retry_count = 1;
+>> +		rewinddir(dir);
+>> +		usleep(100 * 1000); /* Wait 100ms and retry once */
+>> +		goto retry_once;
+> 
+> 		Is this retry solving any real problem ?
+
+Yes, these two retry mechanism are added to avoid race conditions with 
+creation of channels dir, numbered channels inside channels directory.
+More in patch 1 comment by Michael.
+https://lore.kernel.org/all/SN6PR02MB41574C54FFDE0D3F3B7A5649D47CA@SN6PR02MB4157.namprd02.prod.outlook.com/
+
+> 
+>> +	}
+>> +
+>> +	closedir(dir);
+>> +
+>> +	if (!ring_size)
+>> +		syslog(LOG_ERR, "Could not determine ring size");
+>> +
+>> +	return ring_size;
+>> +}
+>> +
+>> +static unsigned char *desc;
+>>   
+>>   static int target_fd;
+>>   static char target_fname[PATH_MAX];
+>> @@ -406,7 +460,7 @@ int main(int argc, char *argv[])
+>>   	int daemonize = 1, long_index = 0, opt, ret = -EINVAL;
+>>   	struct vmbus_br txbr, rxbr;
+>>   	void *ring;
+>> -	uint32_t len = HV_RING_SIZE;
+>> +	uint32_t ring_size, len;
+>>   	char uio_name[NAME_MAX] = {0};
+>>   	char uio_dev_path[PATH_MAX] = {0};
+>>   
+>> @@ -437,6 +491,20 @@ int main(int argc, char *argv[])
+>>   	openlog("HV_UIO_FCOPY", 0, LOG_USER);
+>>   	syslog(LOG_INFO, "starting; pid is:%d", getpid());
+>>   
+>> +	ring_size = get_ring_buffer_size();
+>> +	if (!ring_size) {
+>> +		ret = -ENODEV;
+>> +		goto exit;
+>> +	}
+>> +
+>> +	len = ring_size;
+> 
+> 	Do we need this ?
+
+Yes, because len is being used as a temporary variable for storing
+ring_size, and it is modified when we pass it with reference in
+rte_vmbus_chan_recv_raw. In order to avoid calculating ring sizes again,
+we need to keep ring_size separate.
+
+> 
+>> +	desc = malloc(ring_size * sizeof(unsigned char));
+>> +	if (!desc) {
+>> +		syslog(LOG_ERR, "malloc failed for desc buffer");
+>> +		ret = -ENOMEM;
+>> +		goto exit;
+>> +	}
+> 
+> 	This memory is not being freed anywhere. While I agree that freeing memory at
+> 	program exit may not have much practical value, we can easily address
+> 	this by adding a goto label for cleanup, this will keep all the static code
+> 	analyzers happy.
+> 
+
+Sure. Will add it.
+
+>> +
+>>   	fcopy_get_first_folder(FCOPY_UIO, uio_name);
+>>   	snprintf(uio_dev_path, sizeof(uio_dev_path), "/dev/%s", uio_name);
+>>   	fcopy_fd = open(uio_dev_path, O_RDWR);
+>> @@ -448,14 +516,14 @@ int main(int argc, char *argv[])
+>>   		goto exit;
+>>   	}
+>>   
+>> -	ring = vmbus_uio_map(&fcopy_fd, HV_RING_SIZE);
+>> +	ring = vmbus_uio_map(&fcopy_fd, ring_size);
+>>   	if (!ring) {
+>>   		ret = errno;
+>>   		syslog(LOG_ERR, "mmap ringbuffer failed; error: %d %s", ret, strerror(ret));
+>>   		goto close;
+>>   	}
+>> -	vmbus_br_setup(&txbr, ring, HV_RING_SIZE);
+>> -	vmbus_br_setup(&rxbr, (char *)ring + HV_RING_SIZE, HV_RING_SIZE);
+>> +	vmbus_br_setup(&txbr, ring, ring_size);
+>> +	vmbus_br_setup(&rxbr, (char *)ring + ring_size, ring_size);
+>>   
+>>   	rxbr.vbr->imask = 0;
+>>   
+>> @@ -472,7 +540,7 @@ int main(int argc, char *argv[])
+>>   			goto close;
+>>   		}
+>>   
+>> -		len = HV_RING_SIZE;
+>> +		len = ring_size;
+>>   		ret = rte_vmbus_chan_recv_raw(&rxbr, desc, &len);
+>>   		if (unlikely(ret <= 0)) {
+>>   			/* This indicates a failure to communicate (or worse) */
+>>
+>> base-commit: 26ffb3d6f02cd0935fb9fa3db897767beee1cb2a
+>> -- 
+>> 2.34.1
+
+Regards,
+Naman
 
