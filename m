@@ -1,151 +1,192 @@
-Return-Path: <linux-kernel+bounces-726208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F99BB00981
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B215B00975
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC7F4E72BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:03:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783413B0A13
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EA02F0C6C;
-	Thu, 10 Jul 2025 17:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047552F0C47;
+	Thu, 10 Jul 2025 17:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g2UKz81w"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="oQDLnUo2"
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7FD2797A0;
-	Thu, 10 Jul 2025 17:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DF642A9D;
+	Thu, 10 Jul 2025 17:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752166998; cv=none; b=k3ePJHeIxiVcuWTaWXz+05nbT/xDjt40ZBqFuaGBfzK7jGDi4h9hxhpL/KX/4cnr117bfvAsgY3WvqDKTUfqPebgrLvtc9vjqPHpqZzxDZ8r0VyTe4UXs8tiV/rV7MFCQ3ZuGb7qtPS+o9xNoLdga2XN3ZNKfCBWAA7KsiyFzkM=
+	t=1752166903; cv=none; b=XAxb7uPTtrhpVj/MznDH65qFtR8PpcGLagSQdHB8wv3St4SKnlEBFS9fkUe8HpRRq+qoRdbhcXLKS15Cw8F/J17B/VAqjO/lK91uea7xGZmrOdB9FfGIRTgK/7rUHvyKfWYJku5YpQ8+TCLRE+gY6BK76lhvHJdSjsTD5B6AixM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752166998; c=relaxed/simple;
-	bh=W7zbUH+rxVwiXWiCIcevxN/uLfmclgsMQLofiJFemE8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DpE11Fzch2RRJ+vgGOG5j7P6S6iyDiwPBchPr4NlwAjjvScgP93hQ6CKn0V11Sm5BblcOqVbAcliEwia7lYeQTJHsvHxGEwvB10wNMvL67uo4YtYVdeimH2zZ15tpi5ABVyYELs0QmJYk+toti++kF+gkS9AWwalEAN3Gg9FHr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g2UKz81w; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752166997; x=1783702997;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=W7zbUH+rxVwiXWiCIcevxN/uLfmclgsMQLofiJFemE8=;
-  b=g2UKz81w9OmiifzRG7UjxBwNPU2lRFSL4JOnnSPaOc7/ga863nI/zehy
-   3wyO+F/IGfQvQjsJ1v/vu0FCpL7oWt5aGVjRrWxNboyJX6VLoXbDlXqQz
-   ZdIaWIVHzAqLpxl+3FgVkuF8xSDKhI9uXuCrl6zSUv+DcIRb+8zwrfZX6
-   t40MG4QYkUfje8tNDzF1yjqn2sDa85ezg+pQxJ613FfRBHduGHf0Pz2Cb
-   N8i0iMoTfq+IVj9WT4DJNpZG6xnBvzwMXBuOtedTkf3dEvWEW14RPCJoA
-   9K/CIz8srGkNElYckqId1DpvrCsBNB/aDOpPqmTCKw8UDVkbRhcTwFPyz
-   Q==;
-X-CSE-ConnectionGUID: 7j6GJ7G4TxC8T0HKNDv6Fw==
-X-CSE-MsgGUID: FcXhll5BQZ2PDrz2+Tb2fQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54611069"
-X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
-   d="scan'208";a="54611069"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 10:02:32 -0700
-X-CSE-ConnectionGUID: e3p89pHySIe68v8tQzAc5g==
-X-CSE-MsgGUID: Jwe4w9AYQymXoADwzaUQow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
-   d="scan'208";a="161710434"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP; 10 Jul 2025 10:02:30 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id C43FB1A1; Thu, 10 Jul 2025 20:02:28 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Yevhen Kondrashyn <e.kondrashyn@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v1 1/1] Documentation: ACPI: Fix parent device references
-Date: Thu, 10 Jul 2025 20:00:23 +0300
-Message-ID: <20250710170225.961303-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1752166903; c=relaxed/simple;
+	bh=QSzDAxfN4sppY+oXqLp+S3cjY5KSRmdh52uliVq4nZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lKAx2LKBpvAULhGXqFhlJzKv7pOiMlVamxKsW226SWT8tg0MrK719pQkAUdJvdpmJLNzu4QRpnHl8dIK6/cyF4ib6IjBgX8u9iWlhwC1/rCNOUuLUg0ttNhRO2RJBMggQDfUWfx3VfPSGmaYf8FexTNhq64sBIh/RUdBzIaS/Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=oQDLnUo2; arc=none smtp.client-ip=208.88.110.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id BDE7C3D84E48;
+	Thu, 10 Jul 2025 13:01:39 -0400 (EDT)
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id TygYQdipvOq3; Thu, 10 Jul 2025 13:01:39 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 037013D8E983;
+	Thu, 10 Jul 2025 13:01:39 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 037013D8E983
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
+	t=1752166899; bh=hqZi4qDDb5Krwc362RQG8hRtm8pWkvSstpAwC6iu2Q4=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=oQDLnUo21iaviaOCbPhg9A0kthbm1iljyw+x9vWRaVJ2aCcG3GR5eO03FUYLz2eSu
+	 w3cc6Vi0eVFBeyP5ZLm1Y8OHyhjWAVQPgHIZ1khOgD+6JELcvW5O/yubwNGgJpDz/r
+	 rxJJvR0dIfeKx6XBLmvKot1TKXwprn0IaAiIN6jEHIl5jbvRWEiqgK0D8Ui99hghZI
+	 kPXEdUY+aWnkzgB4/+ap6m0nrBF69lO/ALO/BhbejvWC0oVxPY5DfiNqTtrmWt6tGl
+	 EkkMWzNOgdvkRWrk0vwSCxU9P+EYcvqkz5JimrfrfQBnzqfAgyyfF8AGHY/TCm/wwd
+	 CpGabtHMq2HkA==
+X-Virus-Scanned: amavis at mail.savoirfairelinux.com
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id bAcRyZFUQaQ6; Thu, 10 Jul 2025 13:01:38 -0400 (EDT)
+Received: from fedora (unknown [192.168.51.254])
+	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id 9D14A3D84E48;
+	Thu, 10 Jul 2025 13:01:38 -0400 (EDT)
+Date: Thu, 10 Jul 2025 13:01:37 -0400
+From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
+	Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>,
+	Robin Gong <yibin.gong@nxp.com>,
+	Enric Balletbo i Serra <eballetbo@gmail.com>
+Subject: Re: [PATCH v8 3/6] regulator: pf1550: add support for regulator
+Message-ID: <aG_x8VELlUvLxezY@fedora>
+References: <20250707-pf1550-v8-0-6b6eb67c03a0@savoirfairelinux.com>
+ <20250707-pf1550-v8-3-6b6eb67c03a0@savoirfairelinux.com>
+ <ni3bmj4ye3dp3opolk466r2ayx7iuk6hhyx4pdikydizqykfx7@nc5qdok32hsm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ni3bmj4ye3dp3opolk466r2ayx7iuk6hhyx4pdikydizqykfx7@nc5qdok32hsm>
 
-The _CRS resources in many cases want to have ResourceSource field
-to be a type of ACPI String. This means that to compile properly
-we need to enclosure the name path into double quotes. This will
-in practice defer the interpretation to a run-time stage, However,
-this may be interpreted differently on different OSes and ACPI
-interpreter implementations. In particular ACPICA might not correctly
-recognize the leading '^' (caret) character and will not resolve
-the relative name path properly. On top of that, this piece may be
-used in SSDTs which are loaded after the DSDT and on itself may also
-not resolve relative name paths outside of their own scopes.
-With this all said, fix documentation to use fully-qualified name
-paths always to avoid any misinterpretations, which is proven to
-work.
+On Thu, Jul 10, 2025 at 02:49:21PM +0000, Sean Nyekjaer wrote:
+> > +#define PF_SW1(_chip, match, _name, mask, voltages)	{	\
+> > +	.desc = {	\
+> > +		.name = #_name,	\
+> > +		.of_match = of_match_ptr(match),	\
+> > +		.regulators_node = of_match_ptr("regulators"),	\
+> > +		.n_voltages = ARRAY_SIZE(voltages),	\
+> > +		.ops = &pf1550_sw1_ops,	\
+> > +		.type = REGULATOR_VOLTAGE,	\
+> > +		.id = _chip ## _ ## _name,	\
+> > +		.owner = THIS_MODULE,	\
+> > +		.volt_table = voltages,	\
+> > +		.vsel_reg = _chip ## _PMIC_REG_ ## _name ## _VOLT, \
+> > +		.vsel_mask = (mask),	\
+> > +	},	\
+> > +	.stby_reg = _chip ## _PMIC_REG_ ## _name ## _STBY_VOLT,	\
+> > +	.stby_mask = (mask),	\
+> > +}
+> 
+> This is unused.
+>
+If checking of the DVS status for the SW1 regulator is added as you requested.
+This would prove beneficial because it is the preferred method when DVS is
+disabled for the SW1. This is the case for the default variant, A1, of the
+PMIC.
+> > +
+> > +#define PF_SW3(_chip, match, _name, min, max, mask, step)	{	\
+> 
+> [...]
+> 
+> > +
+> > +static struct pf1550_desc pf1550_regulators[] = {
+> > +	PF_SW3(PF1550, "sw1", SW1, 600000, 1387500, 0x3f, 12500),
+> > +	PF_SW3(PF1550, "sw2", SW2, 600000, 1387500, 0x3f, 12500),
+> > +	PF_SW3(PF1550, "sw3", SW3, 1800000, 3300000, 0xf, 100000),
+> 
+> Seems weird they all use the PF_SW3 macro.
+> 
+The PF_SW3 macro is very generic. It is the preferred macro when a step has to
+be provided which is the case for SW1 & SW2 with DVS enabled. The default
+variant, A1, has SW2 enabled.
+> > +	PF_VREF(PF1550, "vrefddr", VREFDDR, 1200000),
+> > +	PF_LDO1(PF1550, "ldo1", LDO1, 0x1f, pf1550_ldo13_volts),
+> > +	PF_LDO2(PF1550, "ldo2", LDO2, 0xf, 1800000, 3300000, 100000),
+> > +	PF_LDO1(PF1550, "ldo3", LDO3, 0x1f, pf1550_ldo13_volts),
+> > +};
+> > +
+> 
+> [...]
+> 
+> > +
+> > +static int pf1550_regulator_probe(struct platform_device *pdev)
+> > +{
+> > +	const struct pf1550_ddata *pf1550 = dev_get_drvdata(pdev->dev.parent);
+> > +	struct regulator_config config = { };
+> > +	struct pf1550_regulator_info *info;
+> > +	int i, irq = -1, ret = 0;
+> > +
+> > +	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+> > +	if (!info)
+> > +		return -ENOMEM;
+> > +
+> > +	config.regmap = dev_get_regmap(pf1550->dev, NULL);
+> > +	if (!config.regmap)
+> > +		return dev_err_probe(&pdev->dev, -ENODEV,
+> > +				     "failed to get parent regmap\n");
+> > +
+> > +	config.dev = pf1550->dev;
+> > +	config.regmap = pf1550->regmap;
+> > +	info->dev = &pdev->dev;
+> > +	info->pf1550 = pf1550;
+> > +
+> > +	memcpy(info->regulator_descs, pf1550_regulators,
+> > +	       sizeof(info->regulator_descs));
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(pf1550_regulators); i++) {
+> > +		struct regulator_desc *desc;
+> > +
+> > +		desc = &info->regulator_descs[i].desc;
+> > +
+> > +		if (desc->id == PF1550_SW2 && pf1550->dvs_enb) {
+> 
+> We should enter here if dvs_enb == false.
+> My A6 variant reported 0.625V instead of the correct 1.35V
+> 
+Yeah, that would happen with the current if statement.
 
-Fixes: 8eb5c87a92c0 ("i2c: add ACPI support for I2C mux ports")
-Reported-by: Yevhen Kondrashyn <e.kondrashyn@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
+Since dvs_enb is true when DVS is enabled (OTP_SW2_DVS_ENB == 0), I should
+modify the if statment to:
+(desc->id == PF1550_SW2 && !pf1550->dvs_enb) /* OTP_SW2_DVS_ENB == 1 */
 
-Rafael, I prefer, if no objections, to push this as v6.16-rc6 material since
-the reported issue was detected on old (v5.10.y) and still LTS kernel. Would be
-nice for people to not trap to it in older kernels.
+I think that would be a more readable solution.
+> > +			/* OTP_SW2_DVS_ENB == 1? */
+> > +			desc->volt_table = pf1550_sw12_volts;
+> > +			desc->n_voltages = ARRAY_SIZE(pf1550_sw12_volts);
+> > +			desc->ops = &pf1550_sw1_ops;
+> > +		}
+> >
 
- Documentation/firmware-guide/acpi/i2c-muxes.rst | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/firmware-guide/acpi/i2c-muxes.rst b/Documentation/firmware-guide/acpi/i2c-muxes.rst
-index 3a8997ccd7c4..f366539acd79 100644
---- a/Documentation/firmware-guide/acpi/i2c-muxes.rst
-+++ b/Documentation/firmware-guide/acpi/i2c-muxes.rst
-@@ -14,7 +14,7 @@ Consider this topology::
-     |      |   | 0x70 |--CH01--> i2c client B (0x50)
-     +------+   +------+
- 
--which corresponds to the following ASL::
-+which corresponds to the following ASL (in the scope of \_SB)::
- 
-     Device (SMB1)
-     {
-@@ -24,7 +24,7 @@ which corresponds to the following ASL::
-             Name (_HID, ...)
-             Name (_CRS, ResourceTemplate () {
-                 I2cSerialBus (0x70, ControllerInitiated, I2C_SPEED,
--                            AddressingMode7Bit, "^SMB1", 0x00,
-+                            AddressingMode7Bit, "\\_SB.SMB1", 0x00,
-                             ResourceConsumer,,)
-             }
- 
-@@ -37,7 +37,7 @@ which corresponds to the following ASL::
-                     Name (_HID, ...)
-                     Name (_CRS, ResourceTemplate () {
-                         I2cSerialBus (0x50, ControllerInitiated, I2C_SPEED,
--                                    AddressingMode7Bit, "^CH00", 0x00,
-+                                    AddressingMode7Bit, "\\_SB.SMB1.CH00", 0x00,
-                                     ResourceConsumer,,)
-                     }
-                 }
-@@ -52,7 +52,7 @@ which corresponds to the following ASL::
-                     Name (_HID, ...)
-                     Name (_CRS, ResourceTemplate () {
-                         I2cSerialBus (0x50, ControllerInitiated, I2C_SPEED,
--                                    AddressingMode7Bit, "^CH01", 0x00,
-+                                    AddressingMode7Bit, "\\_SB.SMB1.CH01", 0x00,
-                                     ResourceConsumer,,)
-                     }
-                 }
--- 
-2.47.2
-
+Thanks,
+Sam
 
