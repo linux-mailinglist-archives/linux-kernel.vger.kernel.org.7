@@ -1,66 +1,107 @@
-Return-Path: <linux-kernel+bounces-725192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488B2AFFBD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:10:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE36AFFBD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78E7F3AE5B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:09:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4CE53BC0E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332D428B7E5;
-	Thu, 10 Jul 2025 08:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87C228C025;
+	Thu, 10 Jul 2025 08:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcJULciX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xtnLyIrb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pDcB4pF+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xtnLyIrb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pDcB4pF+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9456B289340
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B8628A1D4
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752135018; cv=none; b=M+MZzRM2iGemmUkqkSRRN4wgmwnWlHDBUHGfOwn1OMBw56VUouNgPuMQ78LKbxr2/Z3EP/YGkPCT0lXfYnCSIi6W+s4ih8KJ1dF9a/n2tpiP16+wOpoOlIK2qTMSL+1xQ56Gi4bExX4U15PpU+2csW2pbUh7vLaFxgiqORHxEkg=
+	t=1752135042; cv=none; b=mrcVB0iHabemUPOA38EdLHxkB3MGBGi3z1khZUIQuKKIPplAiNg8uYgNc3Mp9Af+GoIifTfLFEktgUh9zZDwqi3Rjhu5JHQ09ogSNNPYBggKOXvBAlGGXaRyHxDmYgbBe6zvPmSTJlTp7zUnIvhmaayLalsCAtikUoQN6NGwXYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752135018; c=relaxed/simple;
-	bh=hNiCLR/9Bi1BlmUfdE7rYZFbDwUrR2MgeU/x77j9E/E=;
+	s=arc-20240116; t=1752135042; c=relaxed/simple;
+	bh=wL/fTTC62hIuMOiuvtrITNVGdqQWG18qkH1zS29wh/A=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aFmKVkopu+8J4kZCduibPavBVkMeyq3GK6xTJLI+bag7SNgefORktnjy8WTy65mOUl9ru4WsM/b3Q/AVwh+nmtgT/U5OhYMjG2tVqv0lpQ/7a2E0FX8EOeR46LygQfWrePmAAZxvsMZZzWwtEoJzFA+aFT1MT0NYA7D/R1TFMtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcJULciX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17AA3C4CEE3;
-	Thu, 10 Jul 2025 08:10:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752135018;
-	bh=hNiCLR/9Bi1BlmUfdE7rYZFbDwUrR2MgeU/x77j9E/E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fcJULciXT3toou1HazHEtjMCYG5kGpdICpbwfRVJ9RTvJ3LaiEXQcqHXZ/bJDJ4hO
-	 qy6dULTVKv8ef0amzGbybb0BAdxFgqk3CB5NaAZyf1UWmzlRg9FsIYNocTUc9rJafS
-	 3P4ZrJpQK7DiGdb35vm3dETYjOL2WBCzhgNbySqLtrxfjnj5xYv5aDS4/wrdFbfDcv
-	 wol2OYGmtXiT4PVwR+tNYTRLT8GxxeJ5944EMbm9CNc6Ehue6hjhCfllNZJRhSYzQl
-	 FOYMnRV+cZttKIzul0ghx0J2VVYGoTCpRwXGu0rWblRMWJvyltEfngyxDdyr/hARp7
-	 82gap/iOJb2cw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uZmMB-00EQed-MP;
-	Thu, 10 Jul 2025 09:10:15 +0100
-Date: Thu, 10 Jul 2025 09:10:15 +0100
-Message-ID: <86ikk0a2l4.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
+	 MIME-Version:Content-Type; b=KxKymN3NGOQbqlVeeJUI+72AXhp4oyI3U0n4Zvg4Ex606+hPkXqgpGvaGUZcElIskSauSXMEGe7eb7+ZsV2ummXF+lp0jDS5s0wKHTkXqQJtR/PFm8WlS04AZdC017cxGEur8vFsXKGh2vIl0LrUyMNHGsDykP2VWWnsbQsUSVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xtnLyIrb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pDcB4pF+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xtnLyIrb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pDcB4pF+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1557421164;
+	Thu, 10 Jul 2025 08:10:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752135032; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zip6Hzfq5HRcDJLw/79GuoZPCQk7rGMP5UumgQ0x1FI=;
+	b=xtnLyIrbCkpGUxZWh4MmWseH5civhMnBv/w+zEog9bQaTutcO2nvj9+IHcwfXra/i5yCwQ
+	h8NAyBl5InAdbI+A08dDIe2ycYsgorVEwbh/Yx2tSNQdYAlPsoKX1bhgTD/xhZ1YIcZ1eR
+	5wIbR+Ql5Wp3vm3oqckNd2T2ZlEVnpg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752135032;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zip6Hzfq5HRcDJLw/79GuoZPCQk7rGMP5UumgQ0x1FI=;
+	b=pDcB4pF+nkVUkBPlUXhpOO1Rc7xy426wcD3JFqYEQmxZq/6w2i9ORhY3FtRPquVb5Y8G0e
+	DkCMzLEIYczXoPDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1752135032; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zip6Hzfq5HRcDJLw/79GuoZPCQk7rGMP5UumgQ0x1FI=;
+	b=xtnLyIrbCkpGUxZWh4MmWseH5civhMnBv/w+zEog9bQaTutcO2nvj9+IHcwfXra/i5yCwQ
+	h8NAyBl5InAdbI+A08dDIe2ycYsgorVEwbh/Yx2tSNQdYAlPsoKX1bhgTD/xhZ1YIcZ1eR
+	5wIbR+Ql5Wp3vm3oqckNd2T2ZlEVnpg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1752135032;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zip6Hzfq5HRcDJLw/79GuoZPCQk7rGMP5UumgQ0x1FI=;
+	b=pDcB4pF+nkVUkBPlUXhpOO1Rc7xy426wcD3JFqYEQmxZq/6w2i9ORhY3FtRPquVb5Y8G0e
+	DkCMzLEIYczXoPDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B60A4136CB;
+	Thu, 10 Jul 2025 08:10:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nB5KK3d1b2iyMQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 10 Jul 2025 08:10:31 +0000
+Date: Thu, 10 Jul 2025 10:10:31 +0200
+Message-ID: <87ikk0xy88.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
 To: Arnd Bergmann <arnd@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
 	Arnd Bergmann <arnd@arndb.de>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Yu Jiaoliang <yujiaoliang@vivo.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip: irq-msi-lib: fix build with PCI disabled
-In-Reply-To: <20250710080021.2303640-1-arnd@kernel.org>
-References: <20250710080021.2303640-1-arnd@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Subject: Re: [PATCH] ALSA: compress_offload: tighten ioctl command number checks
+In-Reply-To: <20250710063059.2683476-1-arnd@kernel.org>
+References: <20250710063059.2683476-1-arnd@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,47 +109,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: arnd@kernel.org, tglx@linutronix.de, arnd@arndb.de, anna-maria@linutronix.de, shivamurthy.shastri@linutronix.de, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,perex.cz,suse.com,linux.dev,arndb.de,gmail.com,vivo.com,linux.intel.com,zeniv.linux.org.uk,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,arndb.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -1.80
 
-On Thu, 10 Jul 2025 09:00:12 +0100,
-Arnd Bergmann <arnd@kernel.org> wrote:
+On Thu, 10 Jul 2025 08:30:49 +0200,
+Arnd Bergmann wrote:
 > 
 > From: Arnd Bergmann <arnd@arndb.de>
 > 
-> The armada-370-xp irqchip fails in some randconfig builds because
-> of a missing declaration:
+> The snd_compr_ioctl() ignores the upper 24 bits of the ioctl command
+> number and only compares the number of the ioctl command, which can
+> cause unintended behavior if an application tries to use an unsupprted
+> command that happens to have the same _IOC_NR() value.
 > 
-> In file included from drivers/irqchip/irq-armada-370-xp.c:23:
-> include/linux/irqchip/irq-msi-lib.h:25:39: error: 'struct msi_domain_info' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+> Remove the truncation to the low bits and compare the entire ioctl
+> command code like every other driver does.
 > 
-> Add a forward declaration for the msi_domain_info structure.
-> 
-> Fixes: e51b27438a10 ("irqchip: Make irq-msi-lib.h globally available")
+> Fixes: b21c60a4edd2 ("ALSA: core: add support for compress_offload")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  include/linux/irqchip/irq-msi-lib.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/linux/irqchip/irq-msi-lib.h b/include/linux/irqchip/irq-msi-lib.h
-> index dd8d1d138544..224ac28e88d7 100644
-> --- a/include/linux/irqchip/irq-msi-lib.h
-> +++ b/include/linux/irqchip/irq-msi-lib.h
-> @@ -17,6 +17,7 @@
->  
->  #define MATCH_PLATFORM_MSI	BIT(DOMAIN_BUS_PLATFORM_MSI)
->  
-> +struct msi_domain_info;
->  int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
->  			      enum irq_domain_bus_token bus_token);
->  
+> I could not find any indication on why this driver did this in
+> the first place, it already was this way in the original commit
+> back in 2011.
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+Applied with Vinod's ack now.  Thanks.
 
-	M.
 
--- 
-Without deviation from the norm, progress is not possible.
+Takashi
 
