@@ -1,49 +1,83 @@
-Return-Path: <linux-kernel+bounces-724833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50753AFF75F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:20:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E66DAFF763
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D2CE7AD0D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:18:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ACE6189885D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2896C28137C;
-	Thu, 10 Jul 2025 03:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2792A281371;
+	Thu, 10 Jul 2025 03:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RmMRlX75"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xalXz70u"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8324B28134C;
-	Thu, 10 Jul 2025 03:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51F0280325;
+	Thu, 10 Jul 2025 03:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752117589; cv=none; b=l+Qr62SDMy7ItxCakwlzeAw9A5z+/iLUpnmOF1t/wpyUtLl63CjQXlzA9FotaU/6n0yR/5qQyD+hMxEp466lPhb2Gml5Q2lXZpqFeSSLhhlKdfOay9622OvbzZrLZWDP3LQnbSGkGi74hrTdRFagV8VlZtLFJro3vPGkZzl0d7g=
+	t=1752117693; cv=none; b=X3Ze3JajF7Q7Nt4d1NSoJgys4Ekqcq72dfLZw1Voeq/k4euTCSeTIgEZizHe0FePVN8dhpHR/KdSanGQl67viW+4OO5+J0Z/7hpUCjPrxz6a/dWamx9rgBEEayC8nEnU86yEgYmUbxIGfHSZsnNPjpdWWG9uPwWTmoH5rmKXgtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752117589; c=relaxed/simple;
-	bh=y5UuWEGLf+ly566xqWaqO5gL56qvLAjYHdgMwg7SsQc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DquY7u75zg610xXWBj4lGsDxpULJlQ7Ko8Wt1P371/YZSQoKnP9AJhIJXZ16Jt/XfyfNyGhYxtg874wISBSIv5iCq0DcMAvaWHc83Ujfs8vCU4rxCPQtECAknD32KgftmpkX0OJmUTHI8VXJIsgLm7z20mMFnxzihcrYDk3Iksg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RmMRlX75; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53D65C4CEF6;
-	Thu, 10 Jul 2025 03:19:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752117589;
-	bh=y5UuWEGLf+ly566xqWaqO5gL56qvLAjYHdgMwg7SsQc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RmMRlX758+QpPaFnCOJ6fr5AtADwz4I0G1mnursHRkVsvF3yqpP9XGD7A2TXloIq4
-	 InSkbB18r3pvmOJS5oL036KHJnuuJTzjY5z2BtpUqSJ5Dt8XLv0z7Brfqnp5njIewP
-	 ME6qV3YsD7YpqlmHttb+rYmrq57GbY/5XULAZc3zjCdod0Ju1p+rBanFZImUqgIfpR
-	 F/n5K6q8YSiAOCYRd9bQVwNOWhf1C9QUnsSr0+LHYIBch7z2rCUwcVvuPCWoAEmv35
-	 7CO4i9g7k+hIcsomSU1az3HKvTXPPvOTxAsE2ZLKvurtTyLe2PEondca84tSeqiSid
-	 ACUBG4W4Q7Agw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE56383B261;
-	Thu, 10 Jul 2025 03:20:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1752117693; c=relaxed/simple;
+	bh=NWCmJ+zEfwfgbRXquUFr7EcLgUu+2CJdCCQRAI+xnEs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H57jzkcuCJVZIyCYTm9nOJTOxj35oxqzTn3jgwacopFYEjhjVe0l0Sm1E6ts/o7a9c5/3P/LDFqCwhYrykHRAiXGkrGPGETRFks4MDWfQO6w2hUe216bw50MibWcSHdd/aECG05byNzPt8Vv3h30wUoY7RYgOJC7b+HRMAn2gN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xalXz70u; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752117677;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CSR2uISZBceEd6Z8VzgB8CnshhCFLyi1u5l5/uiK2t0=;
+	b=xalXz70uPE7TM/EnJhABWTskkpSkP/48ZNhb0HZ/XIR08pxqgK5jPRAFHH66m5BdbOkSJJ
+	MouBHfI9xuQKxCmWPea/9/pw3RTZQVpqEybcPS4Xy41Bh9IXIa/Gi3KnC9mHSOy0XKahy9
+	htyXdtKeOkzAsx1lqs5NzRHSfqDbt+M=
+From: Tao Chen <chen.dylane@linux.dev>
+To: daniel@iogearbox.net,
+	razor@blackwall.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ast@kernel.org,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mattbobrowski@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	horms@kernel.org,
+	willemb@google.com,
+	jakub@cloudflare.com,
+	pablo@netfilter.org,
+	kadlec@netfilter.org,
+	hawk@kernel.org
+Cc: bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v4 0/7] Move attach_type into bpf_link
+Date: Thu, 10 Jul 2025 11:20:31 +0800
+Message-ID: <20250710032038.888700-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,43 +85,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2 0/2] rxrpc: Miscellaneous fixes
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175211761149.973534.17143599338508690586.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Jul 2025 03:20:11 +0000
-References: <20250708211506.2699012-1-dhowells@redhat.com>
-In-Reply-To: <20250708211506.2699012-1-dhowells@redhat.com>
-To: David Howells <dhowells@redhat.com>
-Cc: netdev@vger.kernel.org, marc.dionne@auristor.com, kuba@kernel.org,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
+Andrii suggested moving the attach_type into bpf_link, the previous discussion
+is as follows:
+https://lore.kernel.org/bpf/CAEf4BzY7TZRjxpCJM-+LYgEqe23YFj5Uv3isb7gat2-HU4OSng@mail.gmail.com
 
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+patch1 add attach_type in bpf_link, and pass it to bpf_link_init, which
+will init the attach_type field.
 
-On Tue,  8 Jul 2025 22:15:02 +0100 you wrote:
-> Here are some miscellaneous fixes for rxrpc:
-> 
->  (1) Fix assertion failure due to preallocation collision.
-> 
->  (2) Fix oops due to prealloc backlog struct not yet having been allocated
->      if no service calls have yet been preallocated.
-> 
-> [...]
+patch2-7 remove the attach_type in struct bpf_xx_link, update the info
+with bpf_link attach_type.
 
-Here is the summary with links:
-  - [net,v2,1/2] rxrpc: Fix bug due to prealloc collision
-    https://git.kernel.org/netdev/net/c/69e4186773c6
-  - [net,v2,2/2] rxrpc: Fix oops due to non-existence of prealloc backlog struct
-    https://git.kernel.org/netdev/net/c/880a88f318cf
+There are some functions finally call bpf_link_init but do not have bpf_attr
+from user or do not need to init attach_type from user like bpf_raw_tracepoint_open,
+now use prog->expected_attach_type to init attach_type.
 
-You are awesome, thank you!
+bpf_struct_ops_map_update_elem
+bpf_raw_tracepoint_open
+bpf_struct_ops_test_run
+
+Feedback of any kind is welcome, thanks.
+
+Tao Chen (7):
+  bpf: Add attach_type in bpf_link
+  bpf: Remove attach_type in bpf_cgroup_link
+  bpf: Remove attach_type in sockmap_link
+  bpf: Remove location field in tcx_link
+  bpf: Remove attach_type in bpf_netns_link
+  bpf: Remove attach_type in bpf_tracing_link
+  netkit: Remove location field in netkit_link
+
+ drivers/net/netkit.c           | 10 ++++-----
+ include/linux/bpf-cgroup.h     |  1 -
+ include/linux/bpf.h            | 29 ++++++++++++++----------
+ include/net/tcx.h              |  1 -
+ kernel/bpf/bpf_iter.c          |  3 ++-
+ kernel/bpf/bpf_struct_ops.c    |  5 +++--
+ kernel/bpf/cgroup.c            | 17 +++++++--------
+ kernel/bpf/net_namespace.c     | 10 ++++-----
+ kernel/bpf/syscall.c           | 40 ++++++++++++++++++++--------------
+ kernel/bpf/tcx.c               | 16 +++++++-------
+ kernel/bpf/trampoline.c        | 10 +++++----
+ kernel/trace/bpf_trace.c       |  4 ++--
+ net/bpf/bpf_dummy_struct_ops.c |  3 ++-
+ net/core/dev.c                 |  3 ++-
+ net/core/sock_map.c            | 13 +++++------
+ net/netfilter/nf_bpf_link.c    |  3 ++-
+ 16 files changed, 90 insertions(+), 78 deletions(-)
+
+Change list:
+ v3 -> v4:
+  - move netns_type field to the end in bpf_netns_link to fill the byte
+    hole.(Jakub)
+  - the series reviewed-by Jakub
+  - patch1,2,3,4,7 acked-by Daniel
+  - patch7 acked-by Nikolay
+  - change the patch0 name to be consistent with the v1 version, sorry for that
+    the name is the same as patch1 in v2 and v3.
+ v3: https://lore.kernel.org/bpf/20250709030802.850175-1-chen.dylane@linux.dev
+
+ v2 -> v3:
+  - move sleepable field to the end in bpf_link to fill the byte hole.(Jiri)
+  - Acked from Jiri
+ v2: https://lore.kernel.org/bpf/20250708082228.824766-1-chen.dylane@linux.dev
+
+ v1 -> v2:
+  - fix build error.(Jiri)
+ v1: https://lore.kernel.org/bpf/20250707153916.802802-1-chen.dylane@linux.dev
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.48.1
 
 
