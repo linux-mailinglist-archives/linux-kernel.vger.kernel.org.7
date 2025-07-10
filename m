@@ -1,166 +1,235 @@
-Return-Path: <linux-kernel+bounces-724929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3494DAFF8A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:54:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8838EAFF8AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D13B1C41505
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:54:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D17D6585D6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33954286891;
-	Thu, 10 Jul 2025 05:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E054E286D74;
+	Thu, 10 Jul 2025 05:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NtDKxAY5"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E68F2857FF
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hfrQuwvl"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420205383;
+	Thu, 10 Jul 2025 05:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752126855; cv=none; b=njBIwkaGlUnIjBiakQWDkzfgCKahhYmBg3vSbiLZrZ5SRA+kdAAT2DKJ8/auyqsaGpGxjnSaR5Hz9Ey/1wS6RyhqKSTAvU+RV6ZJyLDRw2lPwX3uiW6zYI/nfEToE/bwIrHnbcQVuf1TAZmYcIX97hCAwpV9uugZrZvJ9a5FKwY=
+	t=1752126930; cv=none; b=RAXjFMJx8654T5wXIId4AX2jnj1puFQbkZyBheF1EGryp6rlm/31muQpdtr2nlijsuQaXYP/T8JaHNs7ZgqrPyl1fwEsw1LDwXEOyPjEqD+Z5VkKNe3ZJIjM3vCWmyO7YDozU2w85FYV1aaGKD6UmdGrUt2U5nnHE0HIS99l17c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752126855; c=relaxed/simple;
-	bh=iXjJt3i1fOL8WrpeIhOpImCoA8MMVW5QWjWp5ixWSvQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PFhczUztsFCFBCNzw8mAQ1L+8RCxsVnoqvPQQzD8vcCwXZLnJP/7z0QUNT0krEC/in/CWFHlwc5LfuWl+ztTxunnBLNZNDbpJrpwgLl0cwurBZIKicXlLyEzcZRvyefWH5fKt8LaXQ4lvwIUSMT/G+gqx3qonlh2bik6TMr/hv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NtDKxAY5; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a9e8459f28so205921cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 22:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752126853; x=1752731653; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HelAxtimgRzObN608eoZdcv1cFYYfoEA/RL9Fs/79Nc=;
-        b=NtDKxAY5jXZsGDPzex5GFK1S8YXAXsoXUWbT50hstUOYik5xLsjtADS458VnsJ9bA5
-         akdQ7kSCmDbEAuAGDoqaULfMrdpKB8QQqO0OjxMaJzFELSOwDMTWInvfY+fjaD84emvA
-         3ZaS7WcoK6BKas/drtXJusGONg+VbPJ597/ic5/+ZX7lvOcsqyEo24kt01Kbz8p+7FdM
-         hdlmwqizq8skuNyNX1GsDJXjVL6NIW02+0Idscaf8sdxhTiHiMCkiGhNoIEi7L2WOquy
-         b0+QmZUS4H5xglvcbCx4qICTKF6V43kBbkCKW/ZZlBXCbLZfVtHtxeQ9kbd8C1bJNm2A
-         8tSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752126853; x=1752731653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HelAxtimgRzObN608eoZdcv1cFYYfoEA/RL9Fs/79Nc=;
-        b=GFpJ5E+TOWRsdxKaCQ4K7M3zyi+973sO9aIcBgRGrJnwvVRXbMmKcD6FuVReU6mh/w
-         r1a+0kuv53rodUwxSEbOlExQ1WwnkMgP8zJdomWFzsnc48Z3OqTn28mRvytbZHOENiiO
-         9LCzMRVLEkFlaFoLvIE9w/dyTsMVrqD6qBsWlN0HjJgckm3KiSeQTSAhDxm9vhXYsaPP
-         aC5SZHwINWZ8Z5ME4wFBydsvUQRIRP7pb4zeINm11B+trLPhtHTGwwmjLtEdp008QC5S
-         7yKyQbYaNDZaUUIRsYlR27SyJFREjzGcWUdzi5obvtX6V3wqqAYA4ZVuvI/D2ArWyXTj
-         sokg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMr/Aerl8EOCfpvo4Lcd35tfKeSuZ1mg9s4MpXsVrd6lrm2Ua932aJI1OlQZTA8ZduUXMIKueHNIDSFUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaDnmM5txwEljYGw2tbU7KFShOYiSwyiEny9ogPmfgPwn4/MnA
-	M6f41rALwrpDAW5sK/RNY8sZzeMktnH3qrVjIQBt3fW65L3SUMT3n9lrGaBF0CitWOkwJ40MRRe
-	+x0N0jaVQmEAVbeiZ8Sab+bsgUChI4N0BWhyyeERw
-X-Gm-Gg: ASbGncsLRUXuKFXF1p7dK0fGKLdyHv3+cAKKedPRick0lkgA4vg5PLzMgLeLzK4W1iH
-	z3pwZzozYkTITWNHVWBbjGQUv1JwLg9CD4N86Vs3osoelADW/Xj3CILaldZ9EYZrX9XSZWuBOWV
-	Png/KLIEcujcKtsaxb3xJmFmIkIDV6Dj7GEWCaT3Zs776bdmlj4RSLcjuo3WHDFF3LoLMEt6LF3
-	E8=
-X-Google-Smtp-Source: AGHT+IH6fVu3kc1LHhY0WLz6SMRAI1DYB0Qx1UNZHTLMuzqJ3eAvGOift1Je6fadKbOCVocb+sv+6Dh/tKBSZvaKClw=
-X-Received: by 2002:a05:622a:8e0a:b0:4a7:ff6d:e956 with SMTP id
- d75a77b69052e-4a9ec7d20b7mr1720491cf.3.1752126852575; Wed, 09 Jul 2025
- 22:54:12 -0700 (PDT)
+	s=arc-20240116; t=1752126930; c=relaxed/simple;
+	bh=GlRTsNWYMTrAcXnXTGWwFfiMFFeCUzzVnFeqbx0HAzs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lLruVrfmdSKcswuL2Dc/p3peSmouf9/JLsdOS2Q6ZkrWb3tcW7w+KnAZs8p7ybNYm0JpRl1BLlOZIvisfVNALgJ4aFHdAXFpPG5soq1YUdNLYIad2mcZHukIayCB0zR+anrPYhE3y4fkTlZ2hqQaA0dfUDv3zApk/oG6U/nMGyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hfrQuwvl; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ok
+	Omog+xA6ZskFrf7mJLxT2vs7YHH1y9jNOPVQ1DbRU=; b=hfrQuwvlfSGZevpZBB
+	M2b5RmvtGGFuO64H2DqqDVLLUBe4XlCOZgtADHgyYvQctTxuSMIAgALe2gogRy65
+	hxvwpOVDDxLTgZziu789UyTFNTG20xfRBGv7dBE2NuXwpFafhKe2BVlYFMrKZNVb
+	yRVRyckjLVamBdkIIHDmVBUzk=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wCnddKLVW9o_xi_Dw--.25287S2;
+	Thu, 10 Jul 2025 13:54:21 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: martin.lau@linux.dev,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mattbobrowski@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	olsajiri@gmail.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v2 bpf-next] bpf: Clean up individual BTF_ID code
+Date: Thu, 10 Jul 2025 13:54:19 +0800
+Message-Id: <20250710055419.70544-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610233053.973796-1-cachen@purestorage.com>
- <cvrr3u7n424dhroqi7essjm53kqrqjomatly2b7us4b6rymcox@3ttbatss6ypy> <3c9b5773-83ed-4f13-11a8-fcc162c8c483@google.com>
-In-Reply-To: <3c9b5773-83ed-4f13-11a8-fcc162c8c483@google.com>
-From: Sourav Panda <souravpanda@google.com>
-Date: Wed, 9 Jul 2025 22:54:00 -0700
-X-Gm-Features: Ac12FXyaRdeLntAIQEIZ4cd__y1aYV_48k84kwCaGUCeCv7hvCMu5cSVNB4I6bI
-Message-ID: <CANruzcRE_EtczNpwus65tpfqLuwSEU+xyRG-hs10PAsj=cP4ow@mail.gmail.com>
-Subject: Re: [PATCH] alloc_tag: add per-NUMA node stats
-To: David Rientjes <rientjes@google.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Casey Chen <cachen@purestorage.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, surenb@google.com, corbet@lwn.net, 
-	dennis@kernel.org, tj@kernel.org, cl@gentwo.org, 
-	Vlastimil Babka <vbabka@suse.cz>, mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org, 
-	ziy@nvidia.com, roman.gushchin@linux.dev, harry.yoo@oracle.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	yzhong@purestorage.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCnddKLVW9o_xi_Dw--.25287S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Ww15KFy5AF4UKw15ZrWDJwb_yoW7tr1fpF
+	W8Z3srCr48tw4YgF1DJF4Uuryag3Z5W3y7Cr4DC3ySkF1DXryDWF1jgw13ZF1a9ryqgr9a
+	qr109F1avw1fuFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnYFAUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbipRWGeGhvJOiDmgABsd
 
-On Tue, Jul 8, 2025 at 2:52=E2=80=AFPM David Rientjes <rientjes@google.com>=
- wrote:
->
-> On Wed, 18 Jun 2025, Kent Overstreet wrote:
->
-> > On Tue, Jun 10, 2025 at 05:30:53PM -0600, Casey Chen wrote:
-> > > Add support for tracking per-NUMA node statistics in /proc/allocinfo.
-> > > Previously, each alloc_tag had a single set of counters (bytes and
-> > > calls), aggregated across all CPUs. With this change, each CPU can
-> > > maintain separate counters for each NUMA node, allowing finer-grained
-> > > memory allocation profiling.
-> > >
-> > > This feature is controlled by the new
-> > > CONFIG_MEM_ALLOC_PROFILING_PER_NUMA_STATS option:
-> > >
-> > > * When enabled (=3Dy), the output includes per-node statistics follow=
-ing
-> > >   the total bytes/calls:
-> > >
-> > > <size> <calls> <tag info>
-> > > ...
-> > > 315456       9858     mm/dmapool.c:338 func:pool_alloc_page
-> > >         nid0     94912        2966
-> > >         nid1     220544       6892
-> > > 7680         60       mm/dmapool.c:254 func:dma_pool_create
-> > >         nid0     4224         33
-> > >         nid1     3456         27
-> >
-> > I just received a report of memory reclaim issues where it seems DMA32
-> > is stuffed full.
-> >
-> > So naturally, instrumenting to see what's consuming DMA32 is going to b=
-e
-> > the first thing to do, which made me think of your patchset.
-> >
-> > I wonder if we should think about something a bit more general, so it's
-> > easy to break out accounting different ways depending on what we want t=
-o
-> > debug.
-> >
->
-> Right, per-node memory attribution, or per zone, is very useful.
->
-> Casey, what's the latest status of your patch?  Using alloc_tag for
-> attributing memory overheads has been exceedingly useful for Google Cloud
-> and adding better insight it for per-node breakdown would be even better.
->
-> Our use case is quite simple: we sell guest memory to the customer as
-> persistent hugetlb and keep some memory on the host for ourselves (VMM,
-> host userspace, host kernel).  We track every page of that overhead memor=
-y
-> because memory pressure here can cause all sorts of issues like userspace
-> unresponsiveness.  We also want to sell as much guest memory as possible
-> to avoid stranding cpus.
->
-> To do that, per-node breakdown of memory allocations would be a tremendou=
-s
-> help.  We have memory that is asymmetric for NUMA, even for memory that
-> has affinity to the NIC.  Being able to inspect the origins of memory for
-> a specific NUMA node that is under memory pressure where other NUMA nodes
-> are not under memory pressure would be excellent.
->
-> Adding Sourav Panda as well as he may have additional thoughts on this.
+From: Feng Yang <yangfeng@kylinos.cn>
 
-I agree with David, especially the point regarding NIC affinity. I was
-dealing with a similar bug today, but pertaining to SSD where this
-patchset would have helped in the investigation.
+Use BTF_ID_LIST_SINGLE(a, b, c) instead of
+BTF_ID_LIST(a)
+BTF_ID(b, c)
 
-That being said, I think pgalloc_tag_swap() has to be modified as
-well, which gets called by __migrate_folio().
+Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+---
+Changes in v2:
+- Add the missing ones, thanks: jirka.
+- Link to v1: https://lore.kernel.org/all/20250709082038.103249-1-yangfeng59949@163.com/
+---
+ kernel/bpf/btf.c         | 3 +--
+ kernel/bpf/link_iter.c   | 3 +--
+ kernel/bpf/prog_iter.c   | 3 +--
+ kernel/kallsyms.c        | 3 +--
+ kernel/trace/bpf_trace.c | 3 +--
+ net/ipv6/route.c         | 3 +--
+ net/netlink/af_netlink.c | 3 +--
+ net/sched/bpf_qdisc.c    | 9 +++------
+ 8 files changed, 10 insertions(+), 20 deletions(-)
+
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 2dd13eea7b0e..0aff814cb53a 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -6200,8 +6200,7 @@ int get_kern_ctx_btf_id(struct bpf_verifier_log *log, enum bpf_prog_type prog_ty
+ 	return kctx_type_id;
+ }
+ 
+-BTF_ID_LIST(bpf_ctx_convert_btf_id)
+-BTF_ID(struct, bpf_ctx_convert)
++BTF_ID_LIST_SINGLE(bpf_ctx_convert_btf_id, struct, bpf_ctx_convert)
+ 
+ static struct btf *btf_parse_base(struct btf_verifier_env *env, const char *name,
+ 				  void *data, unsigned int data_size)
+diff --git a/kernel/bpf/link_iter.c b/kernel/bpf/link_iter.c
+index fec8005a121c..8158e9c1af7b 100644
+--- a/kernel/bpf/link_iter.c
++++ b/kernel/bpf/link_iter.c
+@@ -78,8 +78,7 @@ static const struct seq_operations bpf_link_seq_ops = {
+ 	.show	= bpf_link_seq_show,
+ };
+ 
+-BTF_ID_LIST(btf_bpf_link_id)
+-BTF_ID(struct, bpf_link)
++BTF_ID_LIST_SINGLE(btf_bpf_link_id, struct, bpf_link)
+ 
+ static const struct bpf_iter_seq_info bpf_link_seq_info = {
+ 	.seq_ops		= &bpf_link_seq_ops,
+diff --git a/kernel/bpf/prog_iter.c b/kernel/bpf/prog_iter.c
+index 53a73c841c13..85d8fcb56fb7 100644
+--- a/kernel/bpf/prog_iter.c
++++ b/kernel/bpf/prog_iter.c
+@@ -78,8 +78,7 @@ static const struct seq_operations bpf_prog_seq_ops = {
+ 	.show	= bpf_prog_seq_show,
+ };
+ 
+-BTF_ID_LIST(btf_bpf_prog_id)
+-BTF_ID(struct, bpf_prog)
++BTF_ID_LIST_SINGLE(btf_bpf_prog_id, struct, bpf_prog)
+ 
+ static const struct bpf_iter_seq_info bpf_prog_seq_info = {
+ 	.seq_ops		= &bpf_prog_seq_ops,
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index 4198f30aac3c..1e7635864124 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -829,8 +829,7 @@ static struct bpf_iter_reg ksym_iter_reg_info = {
+ 	.seq_info		= &ksym_iter_seq_info,
+ };
+ 
+-BTF_ID_LIST(btf_ksym_iter_id)
+-BTF_ID(struct, kallsym_iter)
++BTF_ID_LIST_SINGLE(btf_ksym_iter_id, struct, kallsym_iter)
+ 
+ static int __init bpf_ksym_iter_register(void)
+ {
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index e7f97a9a8bbd..c8162dc89dc3 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -781,8 +781,7 @@ BPF_CALL_1(bpf_task_pt_regs, struct task_struct *, task)
+ 	return (unsigned long) task_pt_regs(task);
+ }
+ 
+-BTF_ID_LIST(bpf_task_pt_regs_ids)
+-BTF_ID(struct, pt_regs)
++BTF_ID_LIST_SINGLE(bpf_task_pt_regs_ids, struct, pt_regs)
+ 
+ const struct bpf_func_proto bpf_task_pt_regs_proto = {
+ 	.func		= bpf_task_pt_regs,
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index 79c8f1acf8a3..0d5464c64965 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -6805,8 +6805,7 @@ void __init ip6_route_init_special_entries(void)
+ #if defined(CONFIG_BPF_SYSCALL) && defined(CONFIG_PROC_FS)
+ DEFINE_BPF_ITER_FUNC(ipv6_route, struct bpf_iter_meta *meta, struct fib6_info *rt)
+ 
+-BTF_ID_LIST(btf_fib6_info_id)
+-BTF_ID(struct, fib6_info)
++BTF_ID_LIST_SINGLE(btf_fib6_info_id, struct, fib6_info)
+ 
+ static const struct bpf_iter_seq_info ipv6_route_seq_info = {
+ 	.seq_ops		= &ipv6_route_seq_ops,
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index e8972a857e51..bea064febf80 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -2869,8 +2869,7 @@ static const struct rhashtable_params netlink_rhashtable_params = {
+ };
+ 
+ #if defined(CONFIG_BPF_SYSCALL) && defined(CONFIG_PROC_FS)
+-BTF_ID_LIST(btf_netlink_sock_id)
+-BTF_ID(struct, netlink_sock)
++BTF_ID_LIST_SINGLE(btf_netlink_sock_id, struct, netlink_sock)
+ 
+ static const struct bpf_iter_seq_info netlink_seq_info = {
+ 	.seq_ops		= &netlink_seq_ops,
+diff --git a/net/sched/bpf_qdisc.c b/net/sched/bpf_qdisc.c
+index 7ea8b54b2ab1..adcb618a2bfc 100644
+--- a/net/sched/bpf_qdisc.c
++++ b/net/sched/bpf_qdisc.c
+@@ -130,8 +130,7 @@ static int bpf_qdisc_btf_struct_access(struct bpf_verifier_log *log,
+ 	return 0;
+ }
+ 
+-BTF_ID_LIST(bpf_qdisc_init_prologue_ids)
+-BTF_ID(func, bpf_qdisc_init_prologue)
++BTF_ID_LIST_SINGLE(bpf_qdisc_init_prologue_ids, func, bpf_qdisc_init_prologue)
+ 
+ static int bpf_qdisc_gen_prologue(struct bpf_insn *insn_buf, bool direct_write,
+ 				  const struct bpf_prog *prog)
+@@ -161,8 +160,7 @@ static int bpf_qdisc_gen_prologue(struct bpf_insn *insn_buf, bool direct_write,
+ 	return insn - insn_buf;
+ }
+ 
+-BTF_ID_LIST(bpf_qdisc_reset_destroy_epilogue_ids)
+-BTF_ID(func, bpf_qdisc_reset_destroy_epilogue)
++BTF_ID_LIST_SINGLE(bpf_qdisc_reset_destroy_epilogue_ids, func, bpf_qdisc_reset_destroy_epilogue)
+ 
+ static int bpf_qdisc_gen_epilogue(struct bpf_insn *insn_buf, const struct bpf_prog *prog,
+ 				  s16 ctx_stack_off)
+@@ -451,8 +449,7 @@ static struct bpf_struct_ops bpf_Qdisc_ops = {
+ 	.owner = THIS_MODULE,
+ };
+ 
+-BTF_ID_LIST(bpf_sk_buff_dtor_ids)
+-BTF_ID(func, bpf_kfree_skb)
++BTF_ID_LIST_SINGLE(bpf_sk_buff_dtor_ids, func, bpf_kfree_skb)
+ 
+ static int __init bpf_qdisc_kfunc_init(void)
+ {
+-- 
+2.43.0
+
 
