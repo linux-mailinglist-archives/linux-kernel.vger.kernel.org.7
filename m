@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-725034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0FB1AFFA10
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:46:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDE1AFFA12
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9689C3A7016
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:46:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 215124A78FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDCD230BE1;
-	Thu, 10 Jul 2025 06:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F278C236451;
+	Thu, 10 Jul 2025 06:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bnvAWsei"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnkB6qNS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC86522338;
-	Thu, 10 Jul 2025 06:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FF6DDC1;
+	Thu, 10 Jul 2025 06:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752129978; cv=none; b=uXr8PHdh3lTMCwKESNSHDkOqcbn5OfHjEMuV9QhbG7qrF7IdoTC01xRbzEKZuBby8auNnTXzEptpSnTrvfug4zVLzCVAP6W90zJn40RElJn8FVPCrklLxd9coUnnkJIk3F2rnsSuU0Ogr+XQJli3quHp2pRZvApWDlcNt7vdZHE=
+	t=1752130122; cv=none; b=ZTQOZYHigk7IJJZY4yo4Js3DRsDcZGA8EF3bIJkglQ0dMoSCmMUuxUSGPMY/diEjsRxpwG3LBF/z0HWha7Zu4ePhb+h8tMxak2qvh7QQUKwaMDV2SdBa3I3wQEa/OJS6fsdSEHs/+kgYobOOu31CnvTOkKCuuI5JFA2D3Hho4JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752129978; c=relaxed/simple;
-	bh=SaWBkZcHZ4aKxg3FkTHQpx1YP6uSo8+yenkvJCAFQCo=;
+	s=arc-20240116; t=1752130122; c=relaxed/simple;
+	bh=9Fe/JMQR4NwZmzapju1AGuKy738zJhIvHcGQ33AR1wE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hMsqdp0OecExo1XM50hsWKQlI9MIT3EuGtlLpugIuUVqdGxSitkB6xNAT5fyG6JZnX1KBdrWO9sd95+pKi7O86gOSIjKhXzpj1U9mjaTU4IXwvLgwK4OZRt4a6sdeOMWtA/EOUSvrCcSAO9IJQGhyPZzgDRehlHaxOA+GwzkBGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bnvAWsei; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-555024588a8so517635e87.0;
-        Wed, 09 Jul 2025 23:46:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752129975; x=1752734775; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LBFok7NYlB5OyToL0/XSTt/GomMYeSZX2t1V5vo0a+Q=;
-        b=bnvAWseiT7ldDile1aB7kwlnlhc/dlckfjTyNua3QFE31AgbgnCfzy4/iKjOTMcsRZ
-         wUa+3NLGsG7/7Uq0hEBPpaXrN1eXGOh7v0Z5MJ5lcEDstCNynH+hPUl3OC1nUMoToBq0
-         H/DZoIL0TwuG5xGtb6G20Nj8OHoL0z6QZNVkF0vqVneqKLvxmvCJkLwY3n45ek8cLzy4
-         aBWpwv7iekLx7ARej70SDDL8fmsBiYuuu7rGkhebnYHpS9AB1ZSldwo+xdlKb2fknhSV
-         umI8KTvn39gGtHNWG4+gqg/UjK3caZBrJjyGn18jI/rkgIUWQumuoEkgzGktznYbT5ko
-         g1bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752129975; x=1752734775;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LBFok7NYlB5OyToL0/XSTt/GomMYeSZX2t1V5vo0a+Q=;
-        b=c929To0ZTrXEi+sbxfp20IWgoq35mq1jNUESGQ8eN+Ww0RXzRaUzFTLC5Gezl4ImZo
-         6VFZGugHyzQuVBfVrtI1slP5gtEq0yJDY438QU9FuShlQxkfvPjWS8+ju1I4QzdVAMBf
-         Z0lEnhEkTOpngXdQZKXOGsbP652Gnqhlv4c/sFvrtiUbov2VS6CbP5iCAlvVPrnIe1/Q
-         Se1ZdMC0eQLdN4TVQzOSNIOHtSPVMmF/+4IC1oYdC4WdilpLZs1G7BpTFhZbP4YG2IH5
-         bVk0JCVqbjhFwEURxDP3ijxdR5/kjcfmces72EIQeeJIz5gpwpAWsvl+pOxchfTtPsJI
-         7Cbw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsxncTP1xz+/acWxJ26FrI1YEyXmMdshWw7BQZNApdHGSJxMxWlPiRUfc1He+UV3geoRlWRM1YbhF5PMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy33bdIV3YuM+Bvk/IyWjg/iBW8h8VZ79T9DmA7sVtYsIQeHNru
-	xlIG/iZkc831ObG8ENgSgs408UM1elkV87MeiCd9u4u3X75UpAgysvMh
-X-Gm-Gg: ASbGncv0ilNoeY+S684Attlerty7pr6ZuveXH3zPXf3+ylbZNYZQ+RE1Xj5dTBKAjZW
-	kezqms1GIVzWofMZ1g5p04FAacH03L0mldHz+wYLYH1UVgvjg3avYjWk51QFDZpHLac328L+BlW
-	BUVp3Vnwgf1kJL+tIze+GUcJiRGgKOaULfa+XXC7wyjh68rgFOqYpYRAAjM0HZZV6kh0/nNX0Mc
-	BTscaR3ux9U2Qot2nutbc7pRmzKsSovs5rO0zfNQteOxQfGX2qEyPI7qPXXVn2PZwORoYBtCyNb
-	oJQ7Fwvs9Zs9XlyKW2b7SpBqF0nV8srrOtaQ9s5wJfZMIW8dPUvHH3DLa0klxzEkGP91Frh9FJc
-	7kBXSpCfdAluK/s0pR0QLabjpzlB808taviSY768eXuM=
-X-Google-Smtp-Source: AGHT+IE+mINE/wii0xEgdb9J5tybiK7jCpBxHMWvI9VPEHL4zjMQcjhCWxPOVh3uPNn/j1WMmMb/vg==
-X-Received: by 2002:a05:6512:4019:b0:553:35ad:2f33 with SMTP id 2adb3069b0e04-5592e3e0fbamr545945e87.37.1752129974453;
-        Wed, 09 Jul 2025 23:46:14 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55943b7ebf3sm233094e87.243.2025.07.09.23.46.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jul 2025 23:46:13 -0700 (PDT)
-Message-ID: <090c1c98-0f68-47d5-9e57-bd764b2856de@gmail.com>
-Date: Thu, 10 Jul 2025 09:46:12 +0300
+	 In-Reply-To:Content-Type; b=dNUwSo+GeQg7x8uFUHQoOi8ETuo8x6+zYXweFh38hhza187Dv3OmBG7NZhTAPCWx+XiBfhH6pADSqdkezrrPmweUEfS96Qjvj1azqqXDSyDcwf5HTjDVnb7F7FE2oFgMuW0CC5U7+99ewffEIyRofEWAjGknUl9odDJrvUqWwlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tnkB6qNS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E715C4CEE3;
+	Thu, 10 Jul 2025 06:48:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752130121;
+	bh=9Fe/JMQR4NwZmzapju1AGuKy738zJhIvHcGQ33AR1wE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tnkB6qNS/XKW0+1t5MTKPUbr5ef+/JIZl1V8wJpUg6J+ouON5QodXcAKia/+ihRha
+	 hhpLGOInOW5fHYA1pDNI1N2duyOiTPIcXjJxBQkkBlgzGXGay259la4xVy9ztN/2Ov
+	 Um1px8g9Ww9SoG20qKwqzwyK5joJvWbBOwvM9ikQjLdFwJGpf5aNXxZnyOwyNGKREb
+	 uKyWOZen49v7d999FhtQKCjxmkw3BoIrtxbVHZ/a24Tdlypjnh6gIqjwZvFReLq03C
+	 DTddLM8TWIAHyjMjlpfw1WNU3koiXB405ECOsMHi7cAHB+71ceN/KJ9JBhLXLY4zS7
+	 NIHUW/+sUg8KQ==
+Message-ID: <a5726a25-9df0-453c-9e4f-c26e223940dd@kernel.org>
+Date: Thu, 10 Jul 2025 08:48:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,128 +49,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 27/80] iio: accel: Remove redundant
- pm_runtime_mark_last_busy() calls
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Waqar Hameed <waqar.hameed@axis.com>,
- Julien Stephan <jstephan@baylibre.com>, Peter Zijlstra
- <peterz@infradead.org>, Bo Liu <liubo03@inspur.com>,
- Greg KH <gregkh@linuxfoundation.org>, Al Viro <viro@zeniv.linux.org.uk>,
- Sean Nyekjaer <sean@geanix.com>, Marcelo Schmitt
- <marcelo.schmitt1@gmail.com>, Rayyan Ansari <rayyan@ansari.sh>,
- Francisco Henriques <franciscolealhenriques@usp.br>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
- <20250704075418.3218938-1-sakari.ailus@linux.intel.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250704075418.3218938-1-sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v1 2/3] arm64: dts: ti: Add support for Variscite
+ VAR-SOM-AM62P
+To: Stefano Radaelli <stefano.radaelli21@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
+References: <20250708184841.72933-1-stefano.radaelli21@gmail.com>
+ <20250708184841.72933-3-stefano.radaelli21@gmail.com>
+ <0454b830-b9bf-4d04-8e91-d5c514ac4aae@kernel.org>
+ <CAK+owoiL8613hEqDso7cCbqw9vT-TV0eRLvJPq81ZwVDHT7rHA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAK+owoiL8613hEqDso7cCbqw9vT-TV0eRLvJPq81ZwVDHT7rHA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/07/2025 10:54, Sakari Ailus wrote:
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
+On 09/07/2025 19:16, Stefano Radaelli wrote:
+> Hello Krzysztof,
 > 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
+> thank you for your corrections, I completely forgot to compile with
+> the W=1 flag.
 
-Looks good to me. Just one comment (to 4 drivers) - but I'm not 
-insisting it to be addressed :)
+Don't top post. I did not ask to compile with W=1, but check your dtbs.
+Please read carefully instructions.
 
-> The cover letter of the set can be found here
-> <URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
-> 
-> In brief, this patch depends on PM runtime patches adding marking the last
-> busy timestamp in autosuspend related functions. The patches are here, on
-> rc2:
-> 
->          git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
->                  pm-runtime-6.17-rc1
-> 
->   drivers/iio/accel/bmc150-accel-core.c | 1 -
->   drivers/iio/accel/bmi088-accel-core.c | 3 ---
->   drivers/iio/accel/fxls8962af-core.c   | 1 -
->   drivers/iio/accel/kxcjk-1013.c        | 1 -
->   drivers/iio/accel/kxsd9.c             | 3 ---
->   drivers/iio/accel/mma8452.c           | 1 -
->   drivers/iio/accel/mma9551_core.c      | 1 -
->   drivers/iio/accel/msa311.c            | 6 ------
->   8 files changed, 17 deletions(-)
-> 
-> diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
-> index be5fbb0c5d29..f45beae83f8b 100644
-> --- a/drivers/iio/accel/bmc150-accel-core.c
-> +++ b/drivers/iio/accel/bmc150-accel-core.c
-> @@ -335,7 +335,6 @@ static int bmc150_accel_set_power_state(struct bmc150_accel_data *data, bool on)
->   	if (on) {
->   		ret = pm_runtime_resume_and_get(dev);
->   	} else {
-> -		pm_runtime_mark_last_busy(dev);
->   		ret = pm_runtime_put_autosuspend(dev);
->   	}
->   
-
-// snip
-
-> diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
-> index 6aefe8221296..44d770729186 100644
-> --- a/drivers/iio/accel/kxcjk-1013.c
-> +++ b/drivers/iio/accel/kxcjk-1013.c
-> @@ -637,7 +637,6 @@ static int kxcjk1013_set_power_state(struct kxcjk1013_data *data, bool on)
->   	if (on)
->   		ret = pm_runtime_resume_and_get(&data->client->dev);
->   	else {
-> -		pm_runtime_mark_last_busy(&data->client->dev);
->   		ret = pm_runtime_put_autosuspend(&data->client->dev);
->   	}
->   	if (ret < 0) {
-
-//snip
-
-> diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
-> index aba444a980d9..5863478bab62 100644
-> --- a/drivers/iio/accel/mma8452.c
-> +++ b/drivers/iio/accel/mma8452.c
-> @@ -227,7 +227,6 @@ static int mma8452_set_runtime_pm_state(struct i2c_client *client, bool on)
->   	if (on) {
->   		ret = pm_runtime_resume_and_get(&client->dev);
->   	} else {
-> -		pm_runtime_mark_last_busy(&client->dev);
->   		ret = pm_runtime_put_autosuspend(&client->dev);
->   	}
-
-//snip
-
->   
-> diff --git a/drivers/iio/accel/mma9551_core.c b/drivers/iio/accel/mma9551_core.c
-> index 3e7d9b79ed0e..22768f43fd24 100644
-> --- a/drivers/iio/accel/mma9551_core.c
-> +++ b/drivers/iio/accel/mma9551_core.c
-> @@ -672,7 +672,6 @@ int mma9551_set_power_state(struct i2c_client *client, bool on)
->   	if (on)
->   		ret = pm_runtime_resume_and_get(&client->dev);
->   	else {
-> -		pm_runtime_mark_last_busy(&client->dev);
->   		ret = pm_runtime_put_autosuspend(&client->dev);
->   	}
->   
-
-Do these really warrant a function? (Especially for the mma9551 where 
-the function is exported). I think it'd be fine to have the 
-pm_runtime_resume_and_get() and the pm_runtime_put_autosuspend() called 
-directly without these wrappers.
-
-Anyways, this looks good to me - thanks!
-
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
-Yours
-	-- Matti
-
-
+Best regards,
+Krzysztof
 
