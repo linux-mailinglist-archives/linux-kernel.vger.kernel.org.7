@@ -1,81 +1,149 @@
-Return-Path: <linux-kernel+bounces-725080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4384AFFA99
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:14:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C68BEAFFA9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC47D1890105
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:15:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12A8C171A39
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6DB288512;
-	Thu, 10 Jul 2025 07:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE58D288C30;
+	Thu, 10 Jul 2025 07:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhXAvlda"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UlpwZ4Jv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEE92877FB;
-	Thu, 10 Jul 2025 07:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C80F8F5E;
+	Thu, 10 Jul 2025 07:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752131684; cv=none; b=UyVrk3+gdCvlERcYoI37hITbBeT83ort7vAIFrUb7QHa3LGrCLk3TIvIkeeqiixwjAJNNzBKPdQ6yEByrtjN59rEpAJ6DINRwB4n3OqH8uoPm22irE00TVmK9j8qqNqJRq2uTxahgMXj4cRb7Nm1rWF4brUbBR2OCC7vt33hs2w=
+	t=1752131737; cv=none; b=Gx+3H5Fh19o8rfFMKMuLsl3lHW9YWoyesJQcVhD2jHDh/pswhUxYEKzB2yA+WKtnRWvmG2TNWKTx+zFHadvxscGUx8ObNk74LsPZ87R38u0dSuBzQ1a1WAmhM4VbFxOu10FdqoXulVOjC2PPenhoCThQBzHyuf33DQvnYGqG70U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752131684; c=relaxed/simple;
-	bh=FvFyBYxEpy9Sn7Einro160cdlw9VKDe5feG5m85a5bA=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=XC7Os5x4CZ8JmPo6ZT8xIug/ioHNKuOuhpliVb4pcWbvSs7e/nie0L6KlAMguTGr3rbXb04z5ind0aZwyTWaxZrP9QZS3N3jr/Z8Xbff6t8Ex52C8rUu8LDeEoBkc7HKJY8PXMYMt7OQtojknRPR5sB+/y9n3L/SYCYfSiZ66Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhXAvlda; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C3DAC4CEE3;
-	Thu, 10 Jul 2025 07:14:43 +0000 (UTC)
+	s=arc-20240116; t=1752131737; c=relaxed/simple;
+	bh=r/IHHg2/rKtSBRBIR9amX8nuBDjwCD7GzpJ+h1lge4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W/TmrAfoM3LHfFuSXwr8N+2VF5Nol4XxmFvZVlmByxeVhDc+WLm0UFbHgjstv2tHQSxOwPCWHh+tJfpPUecPaA4ljYFVIiiVkvbu4HoSATC3PXCn3DOnABSHieMFK0PwjVnYIJ+8CncSIdFLLqU92je7cN3daueaRJv1nqZAhjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UlpwZ4Jv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E746C4CEE3;
+	Thu, 10 Jul 2025 07:15:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752131684;
-	bh=FvFyBYxEpy9Sn7Einro160cdlw9VKDe5feG5m85a5bA=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=KhXAvlda8kGZUzTXYkhLg3om+Qo32HaFYb14lK9fV4FGNBGD7XebP+umP0MEXay13
-	 lw5BeT46/tqhFmHXABvGhETF8s/yPBhXwqA3TleECzaorb2joMVovTZ42Rkf3Mso/q
-	 hFrDdruiJnJ28JfKbla+Ypq4zDGsG7UTp6+ICk997Kbn0lP4vp1j+8Bk9yAdGoMLh5
-	 HZLvuTNeU2gMoi4s1BdRRojbsK2wv3btMSk0QthDZ6wyoF4Sdflh7Y5Hf35p/SvcVc
-	 rxlgxw0D+4DTo95e8qolkjude05rg1SvTWBPS1W5IhDc4JuuseQqp2ilnPJae14MiF
-	 F0YUPxTzxf6pw==
-Message-ID: <966d844a84836a47ddcc49da0c779633@kernel.org>
-Date: Thu, 10 Jul 2025 07:14:41 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH 7/9] drm/bridge: get the bridge returned by
- drm_bridge_get_next_bridge()
-In-Reply-To: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-7-48920b9cf369@bootlin.com>
-References: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-7-48920b9cf369@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, "Andrzej
- Hajda" <andrzej.hajda@intel.com>, "David Airlie" <airlied@gmail.com>, "Fabio
- Estevam" <festevam@gmail.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Jernej
- Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Liu Ying" <victor.liu@nxp.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>, "Neil
- Armstrong" <neil.armstrong@linaro.org>, "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Philipp
- Zabel" <p.zabel@pengutronix.de>, "Robert Foss" <rfoss@kernel.org>, "Sascha
- Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>, "Simona
- Vetter" <simona@ffwll.ch>, "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>, "Thomas
- Zimmermann" <tzimmermann@suse.de>, "Tomi Valkeinen" <tomi.valkeinen@ideasonboard.com>
-Content-Transfer-Encoding: quoted-printable
+	s=k20201202; t=1752131737;
+	bh=r/IHHg2/rKtSBRBIR9amX8nuBDjwCD7GzpJ+h1lge4k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UlpwZ4JvhE6CfOq0Pbz4STUIAcRcaah8QMiRskKTCFnyVu7v38Q4Mr4man6iVgkOa
+	 B7E9fQKKswgNnYucbpERIhir7fJqOmVfQmuNcoMfdAyGlwJg66GMvNnd+tF13ursvc
+	 A2luUMvGlDgIUzYDu6+Wq7brLSscz9CK3JvcE/n5P7U9KBNCIfxvD9iCXzLAVK4mfE
+	 P7m9DpuQAQybIz29bhn7CGpjgBz4vjp3XMuNzuBWZuO/8x7pkaG0lKLwpy8UEaMjTt
+	 +gprlr5nd+Fgh96aupBrFo/cBwcP7SRfqnIqy1KGEqcMc5ji5FeBOplIZuDxr4RD+S
+	 vwicw7TpkC5sw==
+Message-ID: <e805be4b-4fe8-42e6-9269-84112a16392f@kernel.org>
+Date: Thu, 10 Jul 2025 09:15:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/16] dt-bindings: arm: Add Axis ARTPEC SoC platform
+To: ksk4725@coasia.com, Jesper Nilsson <jesper.nilsson@axis.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
+ <tomasz.figa@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ SungMin Park <smn1196@coasia.com>, Ravi Patel <ravi.patel@samsung.com>,
+ linux-arm-kernel@axis.com
+Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>,
+ GunWoo Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>,
+ GyoungBo Min <mingyoungbo@coasia.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Shradha Todi
+ <shradha.t@samsung.com>, Inbaraj E <inbaraj.e@samsung.com>,
+ Swathi K S <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>,
+ Dongjin Yang <dj76.yang@samsung.com>, Sang Min Kim
+ <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, soc@lists.linux.dev
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+ <20250710002047.1573841-14-ksk4725@coasia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250710002047.1573841-14-ksk4725@coasia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 9 Jul 2025 18:48:06 +0200, Luca Ceresoli wrote:
-> drm_bridge_get_next_bridge() returns a bridge pointer that the
-> caller could hold for a long time. Increment the refcount of the returned
-> bridge and document it must be put by the caller.
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->=20
-> [ ... ]
+On 10/07/2025 02:20, ksk4725@coasia.com wrote:
+> From: Ravi Patel <ravi.patel@samsung.com>
+> 
+> Add device tree bindings for the Axis ARTPEC-8 SoC platform
+> and ARTPEC-8 Grizzly board.
+> 
+> Also move the existing ARTPEC-6 related bindings from .txt
+> to yaml format.
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Don't mix conversion with new boards.
 
-Thanks!
-Maxime
+> 
+> Signed-off-by: sungminpark <smn1196@coasia.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+
+Same problems about SoB chain...
+
+> ---
+
+
+
+Best regards,
+Krzysztof
 
