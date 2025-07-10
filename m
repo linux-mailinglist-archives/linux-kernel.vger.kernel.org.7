@@ -1,178 +1,214 @@
-Return-Path: <linux-kernel+bounces-726003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC15B00686
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:24:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4DBB00663
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C2B13B089F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:23:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95C453B2713
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FDA279DBD;
-	Thu, 10 Jul 2025 15:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF082749EA;
+	Thu, 10 Jul 2025 15:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eOIpIwe9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="ejoiv/xF"
+Received: from mail-qv1-f66.google.com (mail-qv1-f66.google.com [209.85.219.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB4D274FE3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2ABB2749C9
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752160899; cv=none; b=tPpmOefqKN92UFNLoqsPiwx88qZSKPIwGzLXF614pGyL3i61Qwmp2xUDej/HLG70SYg287whRgaAjlTh3FEUmDQjr/GKTZ+/hI5CWWPg/C6BGy3is4skukofPJlrAwn8mtHcIEs5K2SVq97w34uI43vjzu8Y3AD30AqrjFX93XM=
+	t=1752160867; cv=none; b=VKElYxFKhfQWc6Gq+FO39E+c689RMAdyDkjU2SdK/kRisbWsMR7LXh5NqnfJ99kZH4wUjN7td3PWLdPGNU1jt3799Z6ZYzU0fHWIgVN2ILFTraL6nv0KbIYPSq4k8q+5btDqFU0YaG3YM8pPNOVxksbvKGcImaMK3qZf7J926x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752160899; c=relaxed/simple;
-	bh=5ZVOk+ZOrENo582GUq8LCq+7YYXjCzCCpjXuZ1lV7ck=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QIaeYbMLty3ARmIBp529lUW6zbrMAzEmu3a9qbWgAWLOS0vPoqrZs2gZiV6ssIBtahXLZ2CngzGlEOJgLrxunv93poau/dBfTeU9K2lIaKYPIjekygu+9su+Dmc8urc1AEQkmm8u2jklFMAXWtGdexyhdCces8yIVTVzspn/fsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eOIpIwe9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752160895;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2dw2Z+Nvvv7e9dl6Tk8Gm4QoVSZGDUeLTWDCuXgyoEs=;
-	b=eOIpIwe9JjJlLZlX5JSk19rt3BL70IZNSFJGXLig9Deqa2pT7Zq7ipEzykuZPhqxSFgvhN
-	aYfjPA8IXLSYpCYAY8lCt/eYEAGDAVqeqAXBpG/QUJ4lTSVZ5LaOm9/RHSKy0WJrPcTxAI
-	qlLg3mPp4fROhFvZEpCMYdhD/q4FMg4=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-393-Df1HJgw_O3e-3agtS2SlsQ-1; Thu, 10 Jul 2025 11:21:34 -0400
-X-MC-Unique: Df1HJgw_O3e-3agtS2SlsQ-1
-X-Mimecast-MFC-AGG-ID: Df1HJgw_O3e-3agtS2SlsQ_1752160894
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4a43988c314so20372891cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:21:34 -0700 (PDT)
+	s=arc-20240116; t=1752160867; c=relaxed/simple;
+	bh=xKpf3SbAmWkt5VJofJn48qdY/118qeqD5HjzAhisH5k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LvOO2w3MOfF3eeq9SNa9HBxSTew2xlx6d2t9KTj6AA5FkW+6EvkGm4OXLJtqHPpsUTJvuQFZpbmO2MHSlPvMuBz5jlMoKcOAiPvONj5U12N78FEDzZRTRc2TPNfzSifJy/jiwfecXZHf4vprm2PRzG7g/GjkICKahFX+6E08TmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=ejoiv/xF; arc=none smtp.client-ip=209.85.219.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f66.google.com with SMTP id 6a1803df08f44-6fb0eb0f0fbso13170996d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:21:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1752160865; x=1752765665; darn=vger.kernel.org;
+        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
+         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=xKpf3SbAmWkt5VJofJn48qdY/118qeqD5HjzAhisH5k=;
+        b=ejoiv/xF4795KY/I32aTsxdkxFhqS7S7mZG8Ihq2GAvpIiDNRStRgoH0q8orS46r5c
+         TLnj7YardrNIZVZfR+TJKDZ+ucYCHZRy4da1uQcYSRgWF0Xiu/+DEUvo51LibBtRT+BB
+         pTUDhfTIy933xRwH7vnZXmUvY1uf972w3GRFJVGllZ3U8ksJl677GoOPJ4DvcaLUL56m
+         pPJpDb7uxcK4EFJ6R3UMuSMhqp1vo6IBxKYxA9M5mkI+2/7/pMxMmvEvJyE3WD81JlEQ
+         thFL236GNPeF3DAjzJ92+CQVkkRmMrQqyS/Nb19Fk3GupTIT9QkhEIgXVk0B4+YmQWw9
+         ZlpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752160894; x=1752765694;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2dw2Z+Nvvv7e9dl6Tk8Gm4QoVSZGDUeLTWDCuXgyoEs=;
-        b=mkHwvTB0fpdeBmjY1kdWz97y+OQPCAImZhc2C7s8JdaiyLzxU4Cbq09zvUUaV0bhNN
-         4xbdm9pdMAABMFcsUCDu1DS0oCHSKHjihkHMChbIUrcugLNmblaKC3OOCa7/03StF4uf
-         nFumieI2h+Z/dnCwTQflit4YdnhS9Q2oTLz4bnbw92FBU+q6IQnUrKGbExkoXSnSfCPf
-         jfRRlyuauwKOraOKfNqb1RRYZUqoJDbajmYNwhZCjBUVLhh28BwaRaYxWPFnsuiOBE5g
-         BvvMZ2b9URdSInfxCLZpNcgLuoUsFBX6/dT3Qmf0pVODZustiyQ5KzmW8hK5BHn45iy5
-         dfeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWC+90lXG+rb3NzXa62DziMFexL7bzJA+togUzDbqBYWogtMWk1IAixmzyFT1NGgrJX2m8pSNECvkQ1NXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpZxsF0TdfKqnvkSXNH+jdAvF6uTzF1PTANLubReQopi3kf5az
-	n/s1cR1bZhO9n43oLy0UZI8AN+1IGGEoDv+n1PGK9jAEajdmRZmeN75uTuZpPEmX9fFLo8up5cs
-	DtEZDbYlSvyXW/CzNKca7qoCpOoXH6zxVjlIVOu2QTCembHOCQEd1vtTAXNb/e3aluw==
-X-Gm-Gg: ASbGncupo8V+vzgoTHp3sqGVhuH5kOIABWd19/KCCeg2hT+DBxD1gAfLhqi2gETs7Yb
-	ttetfEFwaV44xzvg3Td9jiWcs6DSNscdvJGkbfKCgd8TvSl1q3KAIGvzoultOfIz/FuKMU4d2LC
-	QnnCQP2YpxVqXbYuGspueW2MewqQcPRbJA2q1bi8NBVtmqCLHEZukL5kv+RTfn/+YlJb/4UOiix
-	AtB9gIYgzZNPUf+vUApAJcVmoQtxCZPUfczWAEOXeAblNuuyUfGCRoUqrf28efSCOAizmvuyGJO
-	1F1rQZna5xZVPna0wR+HRkNnfUrxi0OFG/bhWUecGLhiroCRvn7ObD805Oku
-X-Received: by 2002:ac8:59c3:0:b0:4a5:9b9c:2d9f with SMTP id d75a77b69052e-4a9e92fb39bmr60789651cf.2.1752160893926;
-        Thu, 10 Jul 2025 08:21:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEssxFzmy5DZaFLWrhwRKaLprHY91yPLmVxKn2VUF7H3TGYR0HmxKyVMLk0dM4mEtgHsRmiqw==
-X-Received: by 2002:ac8:59c3:0:b0:4a5:9b9c:2d9f with SMTP id d75a77b69052e-4a9e92fb39bmr60787681cf.2.1752160892253;
-        Thu, 10 Jul 2025 08:21:32 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9edeee2c2sm9654471cf.74.2025.07.10.08.21.29
+        d=1e100.net; s=20230601; t=1752160865; x=1752765665;
+        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
+         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xKpf3SbAmWkt5VJofJn48qdY/118qeqD5HjzAhisH5k=;
+        b=bkQoKrRnyddb5QMSRi/zyyuDwhH8m92TNf0/5DL9SJLMrLBNT1lB0HMI6daOTcEm3z
+         Lm5eq3XFfcT0/sgtsN0CsAT6UOf1CLmUJk/PODL9g8sS+P+cxXO5IHrMRdZuJ998Gtmp
+         qbMf9rt5uP3CqJBnCYM/cufO11r+VqiFFCBmS/lbAjNIE/QSyI9oV+YFm6TKj2U7cIi0
+         kVm2D6neC4/C6VqjrEPxlFpuMkMZRLZ+z3hKNcMX6sj1RAChlk0b6qo/3CsHMUWQE4as
+         ZR30vauFdsUvUs+740tx4GzHMSzZ/+vmJN+PXWs9mSeYBcrRWr6gGbPggOOb4MtWRhdn
+         Q76w==
+X-Forwarded-Encrypted: i=1; AJvYcCXz1oEKXHHMcBBL8q2CcaM2tbcX6JU27IdUXyBbJPSDlOBS6qs8yU+k6PLLaeJ14L6drNazkGltqMaG+tY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvEcxKY9GxR64yQc6qlu8sKjo5hdiVkzB6Ma5u+i+9pGFRbKlL
+	5Uw1Qx/kmn6jajgCUvOyrRSLL5mPruUb89RTkO/+4RkE0kwMvZMzyonJJgoQbflij7U=
+X-Gm-Gg: ASbGncvDGv0NuuzRO0zNDrhEao9gdQATVHdXjXzvChIeuzOh8aAkz5B9DImWN72/jYQ
+	GzZI5w2Cssem4+fbkE5eNaX8/2i9Axq20LOJFaiULsZ4pphYciT1/xAIX8dp6u4mmS/Es09vwyR
+	0+r/PmgVHJBtONWk+f4W3IlKe92sQOvRv13r2aRKK/4Dw2q51r86PCsT7LU87qLyU4xUGN4sGKI
+	cDMPB3SXscAUsRi9ef5JZE4NITyuLnP9np5k+bXqlfk96P5SggN0EkGdsCJM+F9p47q8bYwGAYP
+	xYb98kvAivL1qpNIvL2RtKzlWz33YdunWIDKkDcyxolY/gimG4n39GZuUqF6Cem6Cg0=
+X-Google-Smtp-Source: AGHT+IH0uA7EbnPkACvyJEVJCpbYJKsf0sky4Js9sJlbaC40zioZfAIyIXsCJGWIghdll3hzxEsL/w==
+X-Received: by 2002:a05:6214:4e14:b0:6fa:a5c9:2ee7 with SMTP id 6a1803df08f44-70495a1fe12mr51088666d6.8.1752160864846;
+        Thu, 10 Jul 2025 08:21:04 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:17:b699::5ac? ([2606:6d00:17:b699::5ac])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7049799e407sm9536186d6.23.2025.07.10.08.21.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 08:21:31 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 10 Jul 2025 11:20:35 -0400
-Subject: [PATCH 15/15] rtc: rv3032: convert from round_rate() to
- determine_rate()
+        Thu, 10 Jul 2025 08:21:04 -0700 (PDT)
+Message-ID: <78c981eb7fafe864bea60c662ba5b474fbd44669.camel@ndufresne.ca>
+Subject: Re: [PATCH v6 0/2] dma-buf: heaps: Create a CMA heap for each CMA
+ reserved region
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Brian Starkey	 <Brian.Starkey@arm.com>,
+ John Stultz <jstultz@google.com>, "T.J. Mercier"	 <tjmercier@google.com>,
+ Christian =?ISO-8859-1?Q?K=F6nig?=	 <christian.koenig@amd.com>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek
+ Szyprowski <m.szyprowski@samsung.com>, Robin Murphy	
+ <robin.murphy@arm.com>, Andrew Davis <afd@ti.com>, Jared Kangas	
+ <jkangas@redhat.com>, Mattijs Korpershoek <mkorpershoek@kernel.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, iommu@lists.linux.dev
+Date: Thu, 10 Jul 2025 11:21:02 -0400
+In-Reply-To: <20250709-spotted-ancient-oriole-c8bcd1@houat>
+References: <20250709-dma-buf-ecc-heap-v6-0-dac9bf80f35d@kernel.org>
+	 <49e3fa834aadb37452112bb704a1a1593c1fd0b8.camel@ndufresne.ca>
+	 <20250709-spotted-ancient-oriole-c8bcd1@houat>
+Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0MU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAY29sbGFib3JhLmNvbT6ImQQTFg
+ oAQQIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBO8NUoEVxMPCGgRvEtlBlFEpYHL0BQJ
+ oLLLGBQkJZfd1AAoJENlBlFEpYHL0BEkA/3qkWYt99myYFSmTJUF8UB/7OroEm3vr1HRqXeQe9Qp2
+ AP0bsoAe6KjEPa/pJfuJ2khrOPPHxvyt/PBNbI5BYcIABLQnTmljb2xhcyBEdWZyZXNuZSA8bmljb
+ 2xhc0BuZHVmcmVzbmUuY2E+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQ
+ TvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyy+AUJCWX3dQAKCRDZQZRRKWBy9FJ5AQCNy8SX8DpHbLa
+ cy58vgDwyIpB89mok9eWGGejY9mqpRwEAhHzs+/n5xlVlM3bqy1yHnAzJqVwqBE1D0jG0a9V6VQI=
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-0srW01EuwsYGDYpmIBS/"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-rtc-clk-round-rate-v1-15-33140bb2278e@redhat.com>
-References: <20250710-rtc-clk-round-rate-v1-0-33140bb2278e@redhat.com>
-In-Reply-To: <20250710-rtc-clk-round-rate-v1-0-33140bb2278e@redhat.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Akinobu Mita <akinobu.mita@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Heiko Stuebner <heiko@sntech.de>, Andrew Morton <akpm@linux-foundation.org>, 
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
- Mia Lin <mimi05633@gmail.com>, 
- Michael McCormick <michael.mccormick@enatel.net>, 
- Heiko Schocher <hs@denx.de>, Parthiban Nallathambi <pn@denx.de>, 
- Antoniu Miclaus <antoniu.miclaus@analog.com>, 
- Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, 
- Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752160847; l=1946;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=5ZVOk+ZOrENo582GUq8LCq+7YYXjCzCCpjXuZ1lV7ck=;
- b=DT4kedVd9JHLVr7GcGFwVFd+HuL+eV6cYmrDz6pnKaO4779AT/8pJh1xVZGoHYgcUbXEwBISq
- HkwA/DTaq7wAhW2EXESEGcFAJ+P+8vXhpwlHpiLGX//6sA6oikBaxHi
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-on the cover letter of this series.
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/rtc/rtc-rv3032.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+--=-0srW01EuwsYGDYpmIBS/
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/rtc/rtc-rv3032.c b/drivers/rtc/rtc-rv3032.c
-index 2c6a8918acba50e57ed923db0834c7c4620ef2cd..b8376bd1d905be63afbcbc688825c0caff74a3b5 100644
---- a/drivers/rtc/rtc-rv3032.c
-+++ b/drivers/rtc/rtc-rv3032.c
-@@ -646,19 +646,24 @@ static unsigned long rv3032_clkout_recalc_rate(struct clk_hw *hw,
- 	return clkout_xtal_rates[FIELD_GET(RV3032_CLKOUT2_FD_MSK, clkout)];
- }
- 
--static long rv3032_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
--				     unsigned long *prate)
-+static int rv3032_clkout_determine_rate(struct clk_hw *hw,
-+					struct clk_rate_request *req)
- {
- 	int i, hfd;
- 
--	if (rate < RV3032_HFD_STEP)
-+	if (req->rate < RV3032_HFD_STEP)
- 		for (i = 0; i < ARRAY_SIZE(clkout_xtal_rates); i++)
--			if (clkout_xtal_rates[i] <= rate)
--				return clkout_xtal_rates[i];
-+			if (clkout_xtal_rates[i] <= req->rate) {
-+				req->rate = clkout_xtal_rates[i];
- 
--	hfd = DIV_ROUND_CLOSEST(rate, RV3032_HFD_STEP);
-+				return 0;
-+			}
-+
-+	hfd = DIV_ROUND_CLOSEST(req->rate, RV3032_HFD_STEP);
- 
--	return RV3032_HFD_STEP * clamp(hfd, 0, 8192);
-+	req->rate = RV3032_HFD_STEP * clamp(hfd, 0, 8192);
-+
-+	return 0;
- }
- 
- static int rv3032_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -738,7 +743,7 @@ static const struct clk_ops rv3032_clkout_ops = {
- 	.unprepare = rv3032_clkout_unprepare,
- 	.is_prepared = rv3032_clkout_is_prepared,
- 	.recalc_rate = rv3032_clkout_recalc_rate,
--	.round_rate = rv3032_clkout_round_rate,
-+	.determine_rate = rv3032_clkout_determine_rate,
- 	.set_rate = rv3032_clkout_set_rate,
- };
- 
+Hi,
 
--- 
-2.50.0
+Le mercredi 09 juillet 2025 =C3=A0 15:38 +0200, Maxime Ripard a =C3=A9crit=
+=C2=A0:
+> > Will there be a generic way to find out which driver/device this carveo=
+ut
+> > belongs to ? In V4L2, only complex cameras have userspace drivers,
+> > everything
+> > else is generic code.
+>=20
+> I believe it's a separate discussion, but the current stance is that the
+> heap name is enough to identify in a platform-specific way where you
+> allocate from. I've worked on documenting what a good name is so
+> userspace can pick it up more easily here:
+>=20
+> https://lore.kernel.org/r/20250616-dma-buf-heap-names-doc-v2-1-8ae43174cd=
+bf@kernel.org
+>=20
+> But it's not really what you expected
 
+=46rom a dma-heap API, the naming rules seems necessary, but suggesting gener=
+ic
+code to use "grep" style of search to match a heap is extremely fragile. Th=
+e
+documentation you propose is (intentionally?) vague. For me, the naming is =
+more
+like giving proper names to your function calls do devs can make sense out =
+of
+it.
+
+Stepping back a little, we already opened the door for in-driver use of hea=
+ps.
+So perhaps the way forward is to have V4L2 drivers utilize heaps from insid=
+e the
+kernel. Once driver are fully ported, additional APIs could be added so tha=
+t
+userspace can read which heap(s) is going to be used for the active
+configuration, and which other heaps are known usable (enumerate them). The=
+re is
+no need to add properties in that context, since these will derives from th=
+e
+driver configuration you picked. If you told you driver you doing secure me=
+mory
+playback, the driver will filter-out what can't be used.
+
+Examples out there often express simplified view of the problem. Your ECC v=
+ideo
+playback case is a good one. Let's say you have performance issue in both
+decoder and display due to ECC. You may think that you just allocate from a=
+ non-
+ECC heap, import these into the decoder, and once filled, import these into=
+ the
+display driver and you won.
+
+But in reality, your display buffer might not be the reference buffers, and=
+ most
+of the memory bandwidth in a modern decoder goes into reading reference fra=
+mes
+and the attached metadata (the later which may or may not be in the same
+allocation block).
+
+Even once the reference frames get exposed to userspace (which is a long te=
+rm
+goal), there will still be couple of buffers that just simply don't fit and=
+ must
+be kept hidden inside the driver.
+
+My general conclusion is that once these heap exists, and that we guarantee
+platform specific unique names, we should probably build on top. Both users=
+pace
+and driver become consumers of the heap. And for the case where the platfor=
+m-
+specific knowledge lives inside the kernel, then heaps are selected by the
+kernel. Also, very little per-driver duplication will be needed, since 90% =
+of
+the V4L2 driver share the allocator implementation.
+
+Does that makes any sense to anyone ?
+
+Nicolas
+
+
+--=-0srW01EuwsYGDYpmIBS/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaG/aXgAKCRDZQZRRKWBy
+9DlHAP9fTMIloahiN5XMBZnBB4aGkZUXdygAalNGlj6RFJZc3AD/RAhlPPmyBaVt
+ZDKBRjZVW40OnGDxhAYZePpjsIkSPw4=
+=uaX4
+-----END PGP SIGNATURE-----
+
+--=-0srW01EuwsYGDYpmIBS/--
 
