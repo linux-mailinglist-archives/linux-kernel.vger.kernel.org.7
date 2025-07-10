@@ -1,102 +1,767 @@
-Return-Path: <linux-kernel+bounces-724843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DFF1AFF782
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:32:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F9FAFF783
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670A91C43700
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:32:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7EF31C43387
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDD5280017;
-	Thu, 10 Jul 2025 03:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E2D27F18C;
+	Thu, 10 Jul 2025 03:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAoVTWu3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cwzv3/2Y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEAB8821;
-	Thu, 10 Jul 2025 03:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB018821
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 03:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752118344; cv=none; b=ZTisUnhIe7gf/c6OorKfXsBNl+85c6DGaqhmYxyCVo/JoxW8rG9YNxnr9YlRjyQQttNnejuCji6wo3l8wDNCqbNcMVe23XXhErCkw+1g0WmFy0cC2H/S7gVEU0yPm+mNYF0cGvZLaZglUWEHSAEzPZgqGUa+qx+oMEeIaBMtUAA=
+	t=1752118384; cv=none; b=dXfmkPiNrsD9dV9+Ntn+94T3IwdR84ho5Lm4UT4NbPrs9Nj6HBPK43H41tuky/3P8/cdjanbkTNt2LPMlCmL0G2GNrqe4G2x0Kmjs1RVqt51OdOWoMlm6Jicjf6DP2QTrGgNlwCSEQQRFnv7UYNbkcEIW16NTRAGfujE20NA800=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752118344; c=relaxed/simple;
-	bh=oxGPO90kQ8j+s8Nl8EgW9xfp03BNzI52lv+hwW5eeqI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Nl3w443AZ1vp4AUFQM2M0zquYZDrTp/RkJG7Hu+o91QXDp7k/v8UrhxQE7Si/lx4aiRw0nPO9eHh5j31UoD7mFuTU5c3hNR1o1QdsSHH+PbxILmuXDKgb8HL9YD6lQ7K1QOkP+2VnGCgJvfClWmcFT0DkIfATtDPHdzDns6is64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAoVTWu3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21A33C4CEEF;
-	Thu, 10 Jul 2025 03:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752118343;
-	bh=oxGPO90kQ8j+s8Nl8EgW9xfp03BNzI52lv+hwW5eeqI=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=hAoVTWu32BeoY6rMDV1LAW6x1InCW45cEMjW3Ok3rX1vaXaAkfIybTgrZQ6DrfF0C
-	 yK/0L8ipNICEfa/yzlJHR1Tb7iWiq42J6Ca77rFmVkfWZrqq2qlR28KIArzhoFS/zr
-	 94/tTOFTfGlTuYtNaaPkD3un3cdGZyEZqglmlHu7gRSAM6A78M5O6ICyedni4N9DpP
-	 fqTLhR+jt9PlLmKZC11MK5d9So7/BF4z11ZtMhF1z+qvTGhno21FD6eqmOV9YwdznQ
-	 rt5dVkeV6vjfS4JDzs/VVYakb8x94IE3zrb1e8qujyJ/VDt+rr2ovWlCRslG2La/db
-	 0lwpKxUzAHzWA==
-Date: Wed, 09 Jul 2025 22:32:22 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1752118384; c=relaxed/simple;
+	bh=V3ulEGP6biNe+2sXllyC489qIHZpfEMpyiZVrjXHVzI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GsQ/7zZkdc91JRVQOfofp15uKnY7WXbTa6BF78yEGyIXK/Pk9uueu257ACZKOW0FmDgw3FzepKqwWazq0q2xxoEA0swW15fWDMaWe/DMzDqZw4MvlwADhdM+yICjh8VBFdUeohzqej1G3EG2fvWg1hDYR7jr8MJ9ENcaGi5FEXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cwzv3/2Y; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752118380;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fTbICbCgKmj+nqaM8Us84fvwoPzsQgqU+2HpbTDHS7I=;
+	b=Cwzv3/2YpkiSW/CtVF/SGzkGdZAMEpAF9GSCp6RzN89gkpxws0xFtIQv0K0UOj9bKqUdnw
+	lCTWIkH6FQXoqpL322UlusfquVMFUfyJ8O/dtS+wR1OZeIvRSUwEaxIc2Hce1Ky/7JViB8
+	OrGvwuIMY4iYHfsWQC9kGK0P4YINQrY=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-120-n2zDCaGQNE2prXU66UMpIg-1; Wed, 09 Jul 2025 23:32:59 -0400
+X-MC-Unique: n2zDCaGQNE2prXU66UMpIg-1
+X-Mimecast-MFC-AGG-ID: n2zDCaGQNE2prXU66UMpIg_1752118378
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-315af0857f2so658188a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 20:32:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752118377; x=1752723177;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fTbICbCgKmj+nqaM8Us84fvwoPzsQgqU+2HpbTDHS7I=;
+        b=OT8gtkqcrzQpti2p5VTlBRifjr3lZVQ9sUCYVdEH1slQ9EsM824z898LxmpktYMlUF
+         JbZtEL0vKCpLs6GQ0l69UoaSfv8AkpkEql0NtpnxkYLjdRDEVevF3r0ex9gr+Q3OA7na
+         x+6dIA6TddYepEmku5c1lw76EmUhkqcDNA0bJlBlxu0dWJf+yoitSPSyi9IQ0NuHz1F3
+         d3msr301jxZl21s7vXetaibodMTNwGBr5NeBAI3aNb5Ptbj0hNp2vqgdfq0ld84sKLVh
+         zRC+gODbl7E0ndziwbD9O2gqKEVFuUDv3qg9yoHvuHqW1CzOVUwFeYlQdZngBPtroMPz
+         OXUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoYQf9xlKyDgIUwSmwHG3t2nfvaRQGwyAsjm4kIr4wCfYct1/y4G8ET3w/Gcujpdr+PI3A4IA2ua0ZsEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRba74B8gF4qUkRLvsPotRMGWG4EcRcHHQ5jbIksNAgVhCNZsX
+	9DU07MdosbaZ6zYJgThl5hFECSLFhUbYQjnrF636QzOmCrbt20CVKT4JfZrhGOE4QF7PNRDoRfZ
+	IxqtNua2Y1elldJtkvd7A0mMaxboVy7bLd2ekWw7R1gs40xQBCSydVaY/+k19AblNsg==
+X-Gm-Gg: ASbGnct/RNBWijC17p07pjncQy6lW2AXUH57yx1H6LDOQEpnjprM4cffSkX/udBRm4D
+	K1UaT17Gtni5ab5fiw5733QiMMk+5Qdvy2eaA7LoN8vGW4wahF5XzW7Y5QcTUbTNoCWjmRbmoDB
+	dr+ByhvGerz6RyY+tWIeZ5lHv8J3xW+MRlvDAbTLkUhx4eJUG8i4F1gz8mBlcmivNlDiF9td8qK
+	LqhdO3N2FDI8r0JOS4Hd82XtzlebrcNywV9bV6D6zjggIECBmbNneFrOGojgewbjCFFfqiCPbJ7
+	uucCv/HvoaLq7lMkCH/svCWPWIMPFIOlOovuftJFqatstPP2gA/BpBjN7pFyOPj9SfDq/uhn7EC
+	ZmJ06Qv0vow==
+X-Received: by 2002:a17:903:f90:b0:234:dd3f:80fd with SMTP id d9443c01a7336-23de47cd504mr17241585ad.2.1752118377021;
+        Wed, 09 Jul 2025 20:32:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHkzWKe/PmQ4gx14lsUVcH1Q2Uv/XRmbGvngXA+Nyw1bdnBsPr2ciWtIjq96WZ5heeZXqzGfw==
+X-Received: by 2002:a17:903:f90:b0:234:dd3f:80fd with SMTP id d9443c01a7336-23de47cd504mr17240905ad.2.1752118376232;
+        Wed, 09 Jul 2025 20:32:56 -0700 (PDT)
+Received: from [192.168.2.110] (bras-base-aylmpq0104w-grc-59-70-29-229-84.dsl.bell.ca. [70.29.229.84])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de428497fsm7675145ad.49.2025.07.09.20.32.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Jul 2025 20:32:55 -0700 (PDT)
+Message-ID: <19e264ff-3820-493f-b110-ff6c7b5d0e24@redhat.com>
+Date: Wed, 9 Jul 2025 23:32:53 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, vkoul@kernel.org, anishkmr@amazon.com, 
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
- jyxiong@amazon.com, miguel.lopes@synopsys.com, kishon@kernel.org, 
- linux-phy@lists.infradead.org
-To: Karthik Poduval <kpoduval@lab126.com>
-In-Reply-To: <7f4b676678b27ea91314c834a297c1e057959b09.1752106239.git.kpoduval@lab126.com>
-References: <cover.1752106239.git.kpoduval@lab126.com>
- <7f4b676678b27ea91314c834a297c1e057959b09.1752106239.git.kpoduval@lab126.com>
-Message-Id: <175211834224.541763.16377287764717313428.robh@kernel.org>
-Subject: Re: [PATCH v2 2/2] phy: dw-dphy-rx: Add dt bindings for Synopsys
- MIPI D-PHY RX
+User-Agent: Mozilla Thunderbird
+Subject: Re: BUG: KASAN: stack-out-of-bounds in snapshot_page during gup_test
+ test case
+From: Luiz Capitulino <luizcap@redhat.com>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: david@redhat.com, willy@infradead.org, akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, shivankg@amd.com,
+ sj@kernel.org
+References: <cover.1751914235.git.luizcap@redhat.com>
+ <aG4k3qwb8wbmfq5V@hyeyoo> <97d9d605-8216-4e31-b31b-113764781b13@redhat.com>
+Content-Language: en-US, en-CA
+In-Reply-To: <97d9d605-8216-4e31-b31b-113764781b13@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Wed, 09 Jul 2025 19:42:21 -0700, Karthik Poduval wrote:
-> Add DT Bindings for Synopsys D-PHY RX, presently tested on version 1.2
+On 2025-07-09 08:51, Luiz Capitulino wrote:
+> On 2025-07-09 04:14, Harry Yoo wrote:
+>> On Mon, Jul 07, 2025 at 02:50:42PM -0400, Luiz Capitulino wrote:
+>>> Hi,
+>>>
+>>> The series introduction will follow the changelog. This is against v6.16-rc5.
+>>>
+>>> Changelog
+>>> =========
+>>>
+>>> v1 -> v2
+>>>    - Include is_huge_zero_pfn() patch and use it (David)
+>>>    - Move free page detection to snapshot_page() (David)
+>>>    - Changelog improvements (Shivank)
+>>>    - Added Acked-bys
+>>>
+>>> RFC -> v1
+>>>    - Include <linux/page_idle.h> to avoid build error on sh arch
+>>>
+>>> Introduction
+>>> ============
+>>>
+>>> This series introduces snapshot_page(), a helper function that can be used
+>>> to create a snapshot of a struct page and its associated struct folio.
+>>>
+>>> This function is intended to help callers with a consistent view of a
+>>> a folio while reducing the chance of encountering partially updated or
+>>> inconsistent state, such as during folio splitting which could lead to
+>>> crashes and BUG_ON()s being triggered.
+>>
+>> Hi, my mm-new test environment started hitting a kernel crash with
+>> snapshot_page() involved. As it's pretty new function, reporting
+>> the bug directly here.
 > 
-> Signed-off-by: Karthik Poduval <kpoduval@lab126.com>
-> ---
->  .../bindings/phy/snps,dw-dphy-rx.yaml         | 44 +++++++++++++++++++
->  MAINTAINERS                                   |  7 +++
->  2 files changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml
+> Thanks for the detailed report Harry, I'll look into this shortly.
+
+I was able to reproduce just by enabling CONFIG_KASAN (yes, I was testing
+w/o it /o\). It is an obvious bug, I'll send v3 shortly.
+
 > 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.example.dtb: dw-dphy@900000040 (snps,dw-dphy-1p2): reg: [[0, 2415919168], [0, 32], [0, 2415923200], [0, 8]] is too long
-	from schema $id: http://devicetree.org/schemas/phy/snps,dw-dphy-rx.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/7f4b676678b27ea91314c834a297c1e057959b09.1752106239.git.kpoduval@lab126.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+>>
+>> I have three independent reports, and all of them fails at:
+>>     `./gup_test -ct -F 0x1 0 19 0x1000`
+>> while dumping the page in tools/testing/selftests/mm/gup_test.c
+>> test case.
+>>
+>> Attaching the configs as attachment.
+>>
+>> If you need further help to reproduce this, please let me know.
+>>
+>> # Report 1
+>>
+>> # -----------------------------------------
+>> # running ./gup_test -ct -F 0x1 0 19 0x1000
+>> # -----------------------------------------
+>> # TAP version 13
+>> # 1..1
+>> ==================================================================
+>> BUG: KASAN: stack-out-of-bounds in snapshot_page+0x282/0x5d0
+>> Read of size 256 at addr ffff88810c52fc50 by task gup_test/2236
+>>
+>> CPU: 3 UID: 0 PID: 2236 Comm: gup_test Not tainted 6.16.0-rc5 #22 PREEMPT(voluntary)
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+>> Call Trace:
+>>   <TASK>
+>>   dump_stack_lvl+0x66/0xa0
+>>   print_report+0xd0/0x640
+>>   ? snapshot_page+0x282/0x5d0
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? __virt_addr_valid+0x208/0x3f0
+>>   ? snapshot_page+0x282/0x5d0
+>>   kasan_report+0xe4/0x120
+>>   ? snapshot_page+0x282/0x5d0
+>>   kasan_check_range+0x105/0x1b0
+>>   __asan_memcpy+0x23/0x60
+>>   snapshot_page+0x282/0x5d0
+>>   ? desc_read_finalized_seq+0x75/0x130
+>>   ? __pfx_snapshot_page+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? _raw_spin_unlock_irqrestore+0x22/0x50
+>>   ? prb_read_valid+0x64/0x90
+>>   __dump_page+0x9b/0x590
+>>   ? __pfx___dump_page+0x10/0x10
+>>   ? __pfx__printk+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? mark_held_locks+0x40/0x70
+>>   ? dump_page+0x34/0x80
+>>   dump_page+0x34/0x80
+>>   gup_test_ioctl+0x100d/0x1790
+>>   ? __pfx_gup_test_ioctl+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+>>   ? __fget_files+0x1a7/0x2f0
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? lock_release+0xc5/0x290
+>>   __x64_sys_ioctl+0x134/0x1c0
+>>   do_syscall_64+0xbb/0x360
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7f8704b24ded
+>> Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
+>> RSP: 002b:00007f86fc9fedd0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>> RAX: ffffffffffffffda RBX: 00007f86fc9ffcdc RCX: 00007f8704b24ded
+>> RDX: 00007f86fc9fee30 RSI: 00000000c0506706 RDI: 0000000000000004
+>> RBP: 00007f86fc9fee20 R08: 0000000000000000 R09: 00007f86fc9ff6c0
+>> R10: 00007f8704a18808 R11: 0000000000000246 R12: 00007f86fc9ff6c0
+>> R13: ffffffff3faf98ff R14: 0000000000000000 R15: 00007fff93bc7f10
+>>   </TASK>
+>>
+>> The buggy address belongs to stack of task gup_test/2236
+>>   and is located at offset 288 in frame:
+>>   __dump_page+0x0/0x590
+>>
+>> This frame has 1 object:
+>>   [32, 384) 'ps'
+>>
+>> The buggy address belongs to the physical page:
+>>
+>> Memory state around the buggy address:
+>>   ffff88810c52fb80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>>   ffff88810c52fc00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>>> ffff88810c52fc80: 00 00 00 00 00 00 f3 f3 f3 f3 f3 f3 f3 f3 00 00
+>>                                       ^
+>>   ffff88810c52fd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>>   ffff88810c52fd80: 00 00 00 f1 f1 f1 f1 f1 f1 00 f2 f2 f2 00 00 00
+>> ==================================================================
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043139c1
+>> Oops: general protection fault, probably for non-canonical address 0xe3fffa2204313c50: 0000 [#1] SMP KASAN NOPTI
+>> KASAN: maybe wild-memory-access in range [0x1ffff1102189e280-0x1ffff1102189e287]
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043139b7
+>> CPU: 0 UID: 102 PID: 444 Comm: in:imklog Tainted: G    B               6.16.0-rc5 #22 PREEMPT(voluntary)
+>> Tainted: [B]=BAD_PAGE
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+>> RIP: 0010:get_mem_cgroup_from_mm+0xe0/0x600
+>> Code: 03 80 3c 28 00 0f 85 4a 04 00 00 4c 8b bb d0 12 00 00 e8 d3 1b dc 02 85 c0 0f 85 c6 00 00 00 49 8d 7f 20 48 89 f8 48 c1 e8 03 <80> 3c 28 00 0f 85 2b 04 00 00 49 8b 5f 20 48 85 db 0f 84 98 00 00
+>> RSP: 0000:ffff88810b957bc8 EFLAGS: 00010216
+>> RAX: 03fffe2204313c50 RBX: ffff88810c4f0000 RCX: ffffffff91cb0e6a
+>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 1ffff1102189e282
+>> RBP: dffffc0000000000 R08: 0000000000000000 R09: 0000000000000000
+>> R10: ffffea00042588c7 R11: ffff88810b957e20 R12: ffff88810edc2700
+>> R13: ffffed1021db85e9 R14: ffffffff91cb0eb0 R15: 1ffff1102189e262
+>> FS:  00007fe8d345b6c0(0000) GS:ffff888183970000(0000) knlGS:0000000000000000
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043139ac
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 00007fe8d3860000 CR3: 000000010426b000 CR4: 0000000000350ef0
+>> Call Trace:
+>>   <TASK>
+>>   __mem_cgroup_charge+0x1a/0x1e0
+>>   folio_prealloc+0x109/0x220
+>>   do_anonymous_page+0x853/0x1f00
+>>   ? srso_return_thunk+0x5/0x5f
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043139a2
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313997
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431398d
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313982
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313978
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431396d
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313963
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313958
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431394e
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313943
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313939
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431392e
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313924
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313919
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431390f
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313904
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043138fa
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043138ef
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043138e5
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043138da
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043138d0
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043138c5
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043138bb
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043138b0
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043138a6
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431389b
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313891
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313886
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431387c
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313871
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313867
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431385c
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313852
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313847
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431383d
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313832
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313828
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431381d
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313813
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313808
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043137fe
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043137f3
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043137e9
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043137de
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043137d4
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043137c9
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043137bf
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043137b4
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043137aa
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431379f
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313795
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431378a
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313780
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313775
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431376b
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313760
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313756
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431374b
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313741
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313736
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431372c
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313721
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313717
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431370c
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313702
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043136f7
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043136ed
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043136e2
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043136d8
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043136cd
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043136c3
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043136b8
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043136ae
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043136a3
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313699
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431368e
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313684
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313679
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431366f
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313664
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431365a
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431364f
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313645
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431363a
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313630
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313625
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431361b
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313610
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313606
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043135fb
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043135f1
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043135e6
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043135dc
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043135d1
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043135c7
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043135bc
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043135b2
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043135a7
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431359d
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313592
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313588
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431357d
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313573
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313568
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431355e
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313553
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313549
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431353e
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313534
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313529
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431351f
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a04313514
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0431350a
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043134ff
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043134f5
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a043134ea
+>> traps: PANIC: double fault, error_code: 0x0
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? lock_release+0x1c0/0x290
+>>   __handle_mm_fault+0xfb7/0x1310
+>>   ? __pfx___handle_mm_fault+0x10/0x10
+>>   ? lock_release+0x1c0/0x290
+>>   handle_mm_fault+0x2a2/0x670
+>>   ? __x64_sys_gettimeofday+0x118/0x1a0
+>>   do_user_addr_fault+0x242/0xb10
+>>   exc_page_fault+0x5c/0xc0
+>>   asm_exc_page_fault+0x26/0x30
+>> RIP: 0033:0x564750127362
+>> Code: ff c3 66 0f 1f 44 00 00 f3 0f 1e fa b8 f9 ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 8b 97 38 02 00 00 48 8b 87 40 02 00 00 <48> 89 34 d0 48 8b 87 38 02 00 00 48 63 57 24 48 83 c0 01 48 39 d0
+>> RSP: 002b:00007fe8d343a1f8 EFLAGS: 00010246
+>> RAX: 00007fe8d385d010 RBX: 0000000000000001 RCX: 0000000000000000
+>> RDX: 00000000000005fe RSI: 00007fe8c4016f10 RDI: 000056476d61fc70
+>> RBP: 00007fe8d343a270 R08: 0000000000000056 R09: 0000000000000000
+>> R10: a3d70a3d70a3d70b R11: 0000000000000000 R12: 000056475018a560
+>> R13: 00007fe8d343a220 R14: 0000000000000004 R15: 000056476d61fc70
+>>   </TASK>
+>> Modules linked in:
+>> Oops: double fault: 0000 [#2] SMP KASAN NOPTI
+>> CPU: 3 UID: 0 PID: 2236 Comm: gup_test Tainted: G    B D             6.16.0-rc5 #22 PREEMPT(voluntary)
+>> Tainted: [B]=BAD_PAGE, [D]=DIE
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+>> RIP: 0010:default_pointer+0x2b/0x490
+>> Code: 57 41 56 49 89 f6 48 89 ce 48 b9 00 00 00 00 00 fc ff df 41 55 41 54 55 53 48 89 fb 48 83 ec 78 4c 8d 64 24 18 48 8d 7c 24 3c <48> c7 44 24 18 b3 8a b5 41 48 c7 44 24 20 32 42 85 95 49 c1 ec 03
+>> RSP: 0018:ffff88810c4d2fd8 EFLAGS: 00010096
+>> RAX: 0000000000000020 RBX: ffff88810c4d337e RCX: dffffc0000000000
+>> RDX: 0000000000000000 RSI: ffffffffffff0a00 RDI: ffff88810c4d3014
+>> RBP: ffffffff94cff76a R08: ffffffffffff0a00 R09: 00000000fffffffc
+>> R10: 0000000000000004 R11: 00000000ffffffff R12: ffff88810c4d2ff0
+>> R13: ffff88810c4d3360 R14: ffff88810c4d3360 R15: 000000000000ffff
+>> ---[ end trace 0000000000000000 ]---
+>> FS:  00007f86fc9ff6c0(0000) GS:ffff888183af0000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: ffff88810c4d2fc8 CR3: 000000010135a000 CR4: 0000000000350ef0
+>> Call Trace:
+>> Modules linked in:
+>> ---[ end trace 0000000000000000 ]---
+>> RIP: 0010:get_mem_cgroup_from_mm+0xe0/0x600
+>> Oops: general protection fault, probably for non-canonical address 0xe3fffa2204313c50: 0000 [#3] SMP KASAN NOPTI
+>> Code: 03 80 3c 28 00 0f 85 4a 04 00 00 4c 8b bb d0 12 00 00 e8 d3 1b dc 02 85 c0 0f 85 c6 00 00 00 49 8d 7f 20 48 89 f8 48 c1 e8 03 <80> 3c 28 00 0f 85 2b 04 00 00 49 8b 5f 20 48 85 db 0f 84 98 00 00
+>> RSP: 0000:ffff88810b957bc8 EFLAGS: 00010216
+>> RAX: 03fffe2204313c50 RBX: ffff88810c4f0000 RCX: ffffffff91cb0e6a
+>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 1ffff1102189e282
+>> RBP: dffffc0000000000 R08: 0000000000000000 R09: 0000000000000000
+>> R10: ffffea00042588c7 R11: ffff88810b957e20 R12: ffff88810edc2700
+>> R13: ffffed1021db85e9 R14: ffffffff91cb0eb0 R15: 1ffff1102189e262
+>> FS:  00007f86fc9ff6c0(0000) GS:ffff888183af0000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: ffff88810c4d2fc8 CR3: 000000010135a000 CR4: 0000000000350ef0
+>> Kernel panic - not syncing: Fatal exception in interrupt
+>> Shutting down cpus with NMI
+>> Kernel Offset: 0x10200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>> ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+>>
+>> # Report 2
+>>
+>> # -----------------------------------------
+>> # running ./gup_test -ct -F 0x1 0 19 0x1000
+>> # -----------------------------------------
+>> # TAP version 13
+>> # 1..1
+>> ==================================================================
+>> BUG: KASAN: stack-out-of-bounds in snapshot_page+0x27e/0x5b0
+>> Read of size 256 at addr ffff888100f67c50 by task gup_test/2268
+>>
+>> CPU: 0 UID: 0 PID: 2268 Comm: gup_test Not tainted 6.16.0-rc5 #24 PREEMPT(voluntary)
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+>> Call Trace:
+>>   <TASK>
+>>   dump_stack_lvl+0x66/0xa0
+>>   print_report+0xd0/0x640
+>>   ? snapshot_page+0x27e/0x5b0
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? __virt_addr_valid+0x208/0x3f0
+>>   ? snapshot_page+0x27e/0x5b0
+>>   kasan_report+0xe4/0x120
+>>   ? snapshot_page+0x27e/0x5b0
+>>   kasan_check_range+0x105/0x1b0
+>>   __asan_memcpy+0x23/0x60
+>>   snapshot_page+0x27e/0x5b0
+>>   ? desc_read_finalized_seq+0x75/0x130
+>>   ? __asan_memcpy+0x3c/0x60
+>>   ? __pfx_snapshot_page+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? _raw_spin_unlock_irqrestore+0x22/0x50
+>>   ? prb_read_valid+0x64/0x90
+>>   __dump_page+0x9b/0x590
+>>   ? __pfx___dump_page+0x10/0x10
+>>   ? __pfx__printk+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? mark_held_locks+0x40/0x70
+>>   ? dump_page+0x34/0x80
+>>   dump_page+0x34/0x80
+>>   gup_test_ioctl+0x100d/0x1780
+>>   ? __pfx_gup_test_ioctl+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+>>   ? __fget_files+0x1a7/0x2f0
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? lock_release+0xc5/0x290
+>>   __x64_sys_ioctl+0x134/0x1c0
+>>   do_syscall_64+0xbb/0x360
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7f8eb9f24ded
+>> Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
+>> RSP: 002b:00007f8eb1dfedd0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>> RAX: ffffffffffffffda RBX: 00007f8eb1dffcdc RCX: 00007f8eb9f24ded
+>> RDX: 00007f8eb1dfee30 RSI: 00000000c0506706 RDI: 0000000000000004
+>> RBP: 00007f8eb1dfee20 R08: 0000000000000000 R09: 00007f8eb1dff6c0
+>> R10: 00007f8eb9e18808 R11: 0000000000000246 R12: 00007f8eb1dff6c0
+>> R13: ffffffff3faf98ff R14: 0000000000000000 R15: 00007ffc0a5f6560
+>>   </TASK>
+>>
+>> The buggy address belongs to stack of task gup_test/2268
+>>   and is located at offset 288 in frame:
+>>   __dump_page+0x0/0x590
+>>
+>> This frame has 1 object:
+>>   [32, 384) 'ps'
+>>
+>> The buggy address belongs to the physical page:
+>>
+>> Memory state around the buggy address:
+>>   ffff888100f67b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>>   ffff888100f67c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>>> ffff888100f67c80: 00 00 00 00 00 00 f3 f3 f3 f3 f3 f3 f3 f3 00 00
+>>                                       ^
+>>   ffff888100f67d00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>>   ffff888100f67d80: 00 00 00 f1 f1 f1 f1 f1 f1 00 f2 f2 f2 00 00 00
+>> ==================================================================
+>> BUG: unable to handle page fault for address: ffffde2055761988
+>> #PF: supervisor read access in kernel mode
+>> #PF: error_code(0x0000) - not-present page
+>> PGD 10002a067 P4D 10002a067 PUD 0
+>> page: refcount:0 mapcount:1 mapping:0000000000000000 index:0x0 pfn:0xfffffe7a0403b3e7
+>> Oops: Oops: 0000 [#1] SMP KASAN NOPTI
+>> CPU: 3 UID: 102 PID: 449 Comm: in:imklog Tainted: G    B               6.16.0-rc5 #24 PREEMPT(voluntary)
+>> Tainted: [B]=BAD_PAGE
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+>> RIP: 0010:__cgroup_account_cputime_field+0x6a/0x130
+>> Code: 00 00 00 48 03 9d f0 03 00 00 83 fe 01 74 2a 76 4b 83 ee 02 83 fe 02 77 62 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03 <80> 3c 02 00 0f 85 97 00 00 00 4c 01 23 eb 42 48 b8 00 00 00 00 00
+>> RSP: 0018:ffff88811af88d30 EFLAGS: 00010016
+>> RAX: dffffc0000000000 RBX: ffff1102abb0cc40 RCX: 0000000000010000
+>> RDX: 1fffe22055761988 RSI: 0000000000000000 RDI: ffff888100ef53f0
+>> RBP: ffff888100ef5000 R08: 0000000000000000 R09: 0000000000000000
+>> R10: ffffffffae4aa457 R11: ffff88811afa96e8 R12: 00000000000f4240
+>> R13: 0000000000000002 R14: ffff888107a21578 R15: 00000000fffe958d
+>> FS:  00007f18074466c0(0000) GS:ffff88816bb13000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: ffffde2055761988 CR3: 000000010b9ec000 CR4: 0000000000350ef0
+>> Call Trace:
+>>   <IRQ>
+>>   account_system_index_time+0x1ac/0x2d0
+>>   update_process_times+0x71/0x1e0
+>>   ? __pfx_update_process_times+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? ktime_get+0xa0/0x1e0
+>>   tick_nohz_handler+0x19e/0x440
+>>   ? __pfx_tick_nohz_handler+0x10/0x10
+>>   __hrtimer_run_queues+0x505/0x8c0
+>>   ? __pfx___hrtimer_run_queues+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? ktime_get_update_offsets_now+0xbe/0x360
+>>   hrtimer_interrupt+0x30a/0x860
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? __flush_smp_call_function_queue+0x35b/0x600
+>>   __sysvec_apic_timer_interrupt+0xbc/0x330
+>>   sysvec_apic_timer_interrupt+0x66/0x80
+>>   </IRQ>
+>>   <TASK>
+>>   asm_sysvec_apic_timer_interrupt+0x1a/0x20
+>> RIP: 0010:kasan_check_range+0x15/0x1b0
+>> Code: 00 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 85 f6 0f 84 5b 01 00 00 48 89 f8 41 54 41 89 d0 <48> 01 f0 55 53 0f 82 dc 00 00 00 eb 0f cc cc cc 48 b8 00 00 00 00
+>> RSP: 0018:ffff888109427760 EFLAGS: 00000202
+>> RAX: ffff888109427900 RBX: ffffffffadbe0fd8 RCX: ffffffffa96fb3ba
+>> RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff888109427900
+>> RBP: ffff888109427900 R08: 0000000000000001 R09: fffffbfff5b7c1fb
+>> R10: ffffffffadbe0fdf R11: fffffffffffd9500 R12: 00000000ffffe4ad
+>> R13: 0000000000000000 R14: ffff8881094277d8 R15: 0000000000000002
+>>   ? desc_read+0x21a/0x2f0
+>>   desc_read+0x21a/0x2f0
+>>   desc_read_finalized_seq+0x75/0x130
+>>   ? __pfx_desc_read_finalized_seq+0x10/0x10
+>>   ? lock_release+0x1c0/0x290
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? __mutex_trylock_common+0xdd/0x250
+>>   _prb_read_valid+0x1ac/0x680
+>>   ? trace_contention_end+0xc4/0x100
+>>   ? __pfx__prb_read_valid+0x10/0x10
+>>   ? lock_release+0x1c0/0x290
+>>   ? syslog_print+0x34c/0x550
+>>   ? record_print_text+0x2e9/0x3a0
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? lock_acquire+0x286/0x2e0
+>>   prb_read_valid+0x64/0x90
+>>   ? __pfx_prb_read_valid+0x10/0x10
+>>   syslog_print+0x37d/0x550
+>>   ? lock_acquire+0x286/0x2e0
+>>   ? __pfx_syslog_print+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? lock_release+0x1c0/0x290
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? __pfx_autoremove_wake_function+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? lock_release+0x1c0/0x290
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? lock_acquire+0x286/0x2e0
+>>   do_syslog+0x12b/0x4b0
+>>   ? __pfx_do_syslog+0x10/0x10
+>>   ? __mutex_trylock_common+0xdd/0x250
+>>   ? __pfx___mutex_trylock_common+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? selinux_file_permission+0x3a7/0x520
+>>   kmsg_read+0x63/0x80
+>>   vfs_read+0x16e/0xa40
+>>   ? fdget_pos+0x228/0x2e0
+>>   ? __pfx___mutex_lock+0x10/0x10
+>>   ? __pfx_vfs_read+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? __fget_files+0x1b1/0x2f0
+>>   ksys_read+0xf4/0x1c0
+>>   ? __pfx_ksys_read+0x10/0x10
+>>   do_syscall_64+0xbb/0x360
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7f1807d1ba9a
+>> Code: 55 48 89 e5 48 83 ec 20 48 89 55 e8 48 89 75 f0 89 7d f8 e8 c8 ca f7 ff 48 8b 55 e8 48 8b 75 f0 41 89 c0 8b 7d f8 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 2e 44 89 c7 48 89 45 f8 e8 22 cb f7 ff 48 8b
+>> RSP: 002b:00007f1807425440 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+>> RAX: ffffffffffffffda RBX: 000055a4e236a820 RCX: 00007f1807d1ba9a
+>> RDX: 0000000000001fa0 RSI: 00007f1807425c80 RDI: 0000000000000005
+>> RBP: 00007f1807425460 R08: 0000000000000000 R09: 000055a4e2373348
+>> R10: 00000000000001d4 R11: 0000000000000246 R12: 0000000000000000
+>> R13: 00007f1807425c80 R14: 0000000000020001 R15: 00007f1807426368
+>>   </TASK>
+>> Modules linked in:
+>> CR2: ffffde2055761988
+>> ---[ end trace 0000000000000000 ]---
+>> RIP: 0010:__cgroup_account_cputime_field+0x6a/0x130
+>> Code: 00 00 00 48 03 9d f0 03 00 00 83 fe 01 74 2a 76 4b 83 ee 02 83 fe 02 77 62 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03 <80> 3c 02 00 0f 85 97 00 00 00 4c 01 23 eb 42 48 b8 00 00 00 00 00
+>> RSP: 0018:ffff88811af88d30 EFLAGS: 00010016
+>> RAX: dffffc0000000000 RBX: ffff1102abb0cc40 RCX: 0000000000010000
+>> RDX: 1fffe22055761988 RSI: 0000000000000000 RDI: ffff888100ef53f0
+>> RBP: ffff888100ef5000 R08: 0000000000000000 R09: 0000000000000000
+>> R10: ffffffffae4aa457 R11: ffff88811afa96e8 R12: 00000000000f4240
+>> R13: 0000000000000002 R14: ffff888107a21578 R15: 00000000fffe958d
+>> FS:  00007f18074466c0(0000) GS:ffff88816bb13000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: ffffde2055761988 CR3: 000000010b9ec000 CR4: 0000000000350ef0
+>> Kernel panic - not syncing: Fatal exception in interrupt
+>> Kernel Offset: 0x28200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>> ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+>>
+>> # Report 3
+>>
+>> # -----------------------------------------
+>> # running ./gup_test -ct -F 0x1 0 19 0x1000
+>> # -----------------------------------------
+>> # TAP version 13
+>> # 1..1
+>> ==================================================================
+>> BUG: KASAN: stack-out-of-bounds in snapshot_page+0x27e/0x5b0
+>> Read of size 256 at addr ffff88810360fc50 by task gup_test/2123
+>>
+>> CPU: 3 UID: 0 PID: 2123 Comm: gup_test Not tainted 6.16.0-rc5 #24 PREEMPT(voluntary)
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+>> Call Trace:
+>>   <TASK>
+>>   dump_stack_lvl+0x66/0xa0
+>>   print_report+0xd0/0x640
+>>   ? snapshot_page+0x27e/0x5b0
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? __virt_addr_valid+0x208/0x3f0
+>>   ? snapshot_page+0x27e/0x5b0
+>>   kasan_report+0xe4/0x120
+>>   ? snapshot_page+0x27e/0x5b0
+>>   kasan_check_range+0x105/0x1b0
+>>   __asan_memcpy+0x23/0x60
+>>   snapshot_page+0x27e/0x5b0
+>>   ? desc_read_finalized_seq+0x75/0x130
+>>   ? __asan_memcpy+0x3c/0x60
+>>   ? __pfx_snapshot_page+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? _raw_spin_unlock_irqrestore+0x22/0x50
+>>   ? prb_read_valid+0x64/0x90
+>>   __dump_page+0x9b/0x590
+>>   ? __pfx___dump_page+0x10/0x10
+>>   ? __pfx__printk+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? mark_held_locks+0x40/0x70
+>>   ? dump_page+0x34/0x80
+>>   dump_page+0x34/0x80
+>>   gup_test_ioctl+0xef0/0x1630
+>>   ? __pfx_gup_test_ioctl+0x10/0x10
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+>>   ? __fget_files+0x1a7/0x2f0
+>>   ? srso_return_thunk+0x5/0x5f
+>>   ? lock_release+0xc5/0x290
+>>   __x64_sys_ioctl+0x134/0x1c0
+>>   do_syscall_64+0xbb/0x360
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7f02c0924ded
+>> Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
+>> RSP: 002b:00007f02b87fedd0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>> RAX: ffffffffffffffda RBX: 00007f02b87ffcdc RCX: 00007f02c0924ded
+>> RDX: 00007f02b87fee30 RSI: 00000000c0506706 RDI: 0000000000000004
+>> RBP: 00007f02b87fee20 R08: 0000000000000000 R09: 00007f02b87ff6c0
+>> R10: 00007f02c0818808 R11: 0000000000000246 R12: 00007f02b87ff6c0
+>> R13: ffffffff3faf98ff R14: 0000000000000000 R15: 00007ffe07145b50
+>>   </TASK>
+>>
+>> The buggy address belongs to stack of task gup_test/2123
+>>   and is located at offset 288 in frame:
+>>   __dump_page+0x0/0x590
+>>
+>> This frame has 1 object:
+>>   [32, 384) 'ps'
+>>
+>> The buggy address belongs to the physical page:
+>>
+>> Memory state around the buggy address:
+>>   ffff88810360fb80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>>   ffff88810360fc00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>>> ffff88810360fc80: 00 00 00 00 00 00 f3 f3 f3 f3 f3 f3 f3 f3 00 00
+>>                                       ^
+>>   ffff88810360fd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>>   ffff88810360fd80: 00 00 00 f1 f1 f1 f1 f1 f1 00 f2 f2 f2 00 00 00
+>> ==================================================================
+>> traps: PANIC: double fault, error_code: 0x0
+>> Oops: double fault: 0000 [#1] SMP KASAN NOPTI
+>> CPU: 3 UID: 0 PID: 2123 Comm: gup_test Tainted: G    B               6.16.0-rc5 #24 PREEMPT(voluntary)
+>> Tainted: [B]=BAD_PAGE
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+>> RIP: 0010:number+0x1c/0xa00
+>> Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 41 57 41 56 41 55 41 54 49 89 f4 55 53 48 89 fb 48 81 ec f8 00 00 00 48 8d 44 24 58 <48> 89 54 24 08 48 ba 00 00 00 00 00 fc ff df 48 8d 7c 24 78 48 c7
+>> RSP: 0018:ffff8881035bdfe8 EFLAGS: 00010096
+>> RAX: ffff8881035be040 RBX: ffff8881035be349 RCX: ffffffffffff0a01
+>> RDX: 0000000000000000 RSI: ffff8881035be340 RDI: ffff8881035be349
+>> RBP: ffff8881035be1e8 R08: 0000000000000001 R09: 203a656761703401
+>> R10: 0000000000000004 R11: ffff8881035be338 R12: ffff8881035be340
+>> R13: ffff8881035be349 R14: ffff8881035be2f8 R15: 0000000000000010
+>> FS:  00007f02b87ff6c0(0000) GS:ffff88818e7a2000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: ffff8881035bdfd8 CR3: 000000010c1d3000 CR4: 0000000000350ef0
+>> Call Trace:
+>> Modules linked in:
+>> ---[ end trace 0000000000000000 ]---
+>> RIP: 0010:number+0x1c/0xa00
+>> Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 41 57 41 56 41 55 41 54 49 89 f4 55 53 48 89 fb 48 81 ec f8 00 00 00 48 8d 44 24 58 <48> 89 54 24 08 48 ba 00 00 00 00 00 fc ff df 48 8d 7c 24 78 48 c7
+>> RSP: 0018:ffff8881035bdfe8 EFLAGS: 00010096
+>> RAX: ffff8881035be040 RBX: ffff8881035be349 RCX: ffffffffffff0a01
+>> RDX: 0000000000000000 RSI: ffff8881035be340 RDI: ffff8881035be349
+>> RBP: ffff8881035be1e8 R08: 0000000000000001 R09: 203a656761703401
+>> R10: 0000000000000004 R11: ffff8881035be338 R12: ffff8881035be340
+>> R13: ffff8881035be349 R14: ffff8881035be2f8 R15: 0000000000000010
+>> FS:  00007f02b87ff6c0(0000) GS:ffff88818e7a2000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: ffff8881035bdfd8 CR3: 000000010c1d3000 CR4: 0000000000350ef0
+>> Kernel panic - not syncing: Fatal exception in interrupt
+>> Kernel Offset: 0x5a00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>> ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+>> Marking unfinished test run as failed
+>>
+>>> David Hildenbrand (1):
+>>>    mm/memory: introduce is_huge_zero_pfn() and use it in
+>>>      vm_normal_page_pmd()
+>>>
+>>> Luiz Capitulino (3):
+>>>    mm/util: introduce snapshot_page()
+>>>    proc: kpagecount: use snapshot_page()
+>>>    fs: stable_page_flags(): use snapshot_page()
+>>>
+>>>   fs/proc/page.c          | 50 +++++++++++++++-----------
+>>>   include/linux/huge_mm.h | 12 ++++++-
+>>>   include/linux/mm.h      | 19 ++++++++++
+>>>   mm/debug.c              | 42 +++-------------------
+>>>   mm/memory.c             |  2 +-
+>>>   mm/util.c               | 77 +++++++++++++++++++++++++++++++++++++++++
+>>>   6 files changed, 142 insertions(+), 60 deletions(-)
+>>>
+>>> -- 
+>>> 2.50.0
+>>>
+>>>
+>>
+> 
 
 
