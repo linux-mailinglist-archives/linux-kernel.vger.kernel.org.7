@@ -1,117 +1,199 @@
-Return-Path: <linux-kernel+bounces-725461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422DCAFFF66
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:36:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23063AFFF69
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E206189E1BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:37:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F03691C23239
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670F6294A1C;
-	Thu, 10 Jul 2025 10:36:50 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096952D978A;
+	Thu, 10 Jul 2025 10:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TyTqWEr5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21ED3A920
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CC22D3EE5
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752143810; cv=none; b=sdT3DwLJv0qgcJrOmRgkPbOT4WB0R9xqqXS2qC0a0G5CW6R8EhYvnDepXPOGbyG8QTkyhupW2xfoa0k7x1PHGspUXdvyHTcJ4D0Mk078LK6pUW5GskswKxXIWuRdrJrjw5vEMFb18VrgniA4TlL1Ry0uBra8HUDu+4UhBt/GNEk=
+	t=1752143877; cv=none; b=AnhkrWv/mdnGBe84UAbFfvyu+Mz3oXbK1FxC+Szfmiyq/r51XCqvOEQQaoirsGIivCDxtsNg7hhdPGeI1GqDCq/iupeLEtmPrubmDGIPr0MoIridnq2gytkwhniOa7mGJsUUYcFhA2YpLu6iM7d4l2W5EvBtROeu0GaxwBriuDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752143810; c=relaxed/simple;
-	bh=NydJ29IjgJTCURFL78kOCTvD7Ht2lS66ZjTpm2V2Wyc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RsWarKq0jnWfoeatrN6C/c8aChk8m7wuiNnhq2kPo8VXgOLX0uYfUS+EFM6gurPgDIdHcuYwjxCsFk3Hm+UIPnii5ADCjNCCUHeFaHkEVftoQGM+/h2qpYGwrwHpEoLU/yhZ3d8QNL/jEm3HyFVImtatuK/1fpa/Zcuh/3HrRmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 56AAaWfu094219
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Jul 2025 18:36:32 +0800 (+08)
-	(envelope-from ben717@andestech.com)
-Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS31.andestech.com
- (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Thu, 10 Jul 2025
- 18:36:32 +0800
-From: Ben Zong-You Xie <ben717@andestech.com>
-To:
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <peterz@infradead.org>,
-        <dvhart@infradead.org>, <dave@stgolabs.net>, <andrealmeid@igalia.com>,
-        <shuah@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <tim609@andestech.com>,
-        Cynthia Huang
-	<cynthia@andestech.com>,
-        Ben Zong-You Xie <ben717@andestech.com>,
-        "Muhammad
- Usama Anjum" <usama.anjum@collabora.com>
-Subject: [PATCH v3] selftests: futex: define SYS_futex on 32-bit architectures with 64-bit time_t
-Date: Thu, 10 Jul 2025 18:36:30 +0800
-Message-ID: <20250710103630.3156130-1-ben717@andestech.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752143877; c=relaxed/simple;
+	bh=E1IvFOQoLURdcJQB2p+E9GkpDx62kIwKiy/goHCxfoM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=crx9R5bTfuycL+LafhXm1NdDNYnvh2acKRWMmW4WVWHJOQWNi0o7Oot6Z5ATVtIfzsRlUfIEWjsO4OgBGh32QGGv1F2/iNQJ2PwBmslmlnwmNqLTModfGoeegZhK6bAlzYSWAUJUIqnc/ZsiNhQp+m0A0PEafsiaMXaHV9Iurs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TyTqWEr5; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752143875; x=1783679875;
+  h=date:from:to:cc:subject:message-id;
+  bh=E1IvFOQoLURdcJQB2p+E9GkpDx62kIwKiy/goHCxfoM=;
+  b=TyTqWEr5H0HdrKOzgvy+ViMfl9AkOTgP8coXA8HpM3vMDQZ4UOdjlUgV
+   GiDPITL9+1fVdz2tBFd2RGa7cMmHLYl19jzifu6b9OpUwhrxyLQgb49/s
+   jFIdj3TXwOkuLVrh27K0oh09j4YsPC7UlXXTKvzavyZ4IEnu55O2Q2XGb
+   77l054ZnSb4ibKHGX8q+uGtJb9f4S1Brd3AiEGTYRxVPCA5YPuzGq/vVh
+   WaMq8DOkKq1IB1IE8LxcnSYKmSQqNkiVin7zSnxnq5pMPhSblvj+mG2vZ
+   36Ry9/oWI9uxqOZNzT6+t9ikAitd8QEKJC6CjQW+0GwsdtJt2bXKRFIHK
+   g==;
+X-CSE-ConnectionGUID: 4Gd/+EDyTl+Z5VKultD5EA==
+X-CSE-MsgGUID: JtA99YVeTyiKAhxj/3ZTQw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54550545"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="54550545"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 03:37:55 -0700
+X-CSE-ConnectionGUID: a9HBqhCISqGma6u5STirKA==
+X-CSE-MsgGUID: Ft3cyH37SIiy/MfytnVjWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="156769083"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 10 Jul 2025 03:37:54 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uZof1-0004vf-21;
+	Thu, 10 Jul 2025 10:37:51 +0000
+Date: Thu, 10 Jul 2025 18:37:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:timers/ptp] BUILD SUCCESS
+ dea57842479175fe0914e363b503ccff378ac54d
+Message-ID: <202507101836.VGukKLSO-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 56AAaWfu094219
 
-From: Cynthia Huang <cynthia@andestech.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/ptp
+branch HEAD: dea57842479175fe0914e363b503ccff378ac54d  vdso/gettimeofday: Add support for auxiliary clocks
 
-Linux kernel does not provide sys_futex() on some 32-bit architectures
-that do not support 32-bit time representations, such as riscv32.
-As a result, glibc cannot define SYS_futex, causing compilation failures
-in tests that rely on this syscall. Define SYS_futex as SYS_futex_time64
-in such cases to ensure successful compilation and compatibility.
+elapsed time: 1446m
 
-Signed-off-by: Cynthia Huang <cynthia@andestech.com>
-Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
-Changes since v2:
-  - Refine the commit message suggested by tglx
-  - Attribute the authorship to Cynthia
-  - Add the Reviewed-by tag from Muhammad
+configs tested: 107
+configs skipped: 3
 
-v2 : https://lore.kernel.org/all/20250627090812.937939-1-ben717@andestech.com/
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Changes since v1:
-  - Fix the SOB chain
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                   randconfig-001-20250709    gcc-8.5.0
+arc                   randconfig-002-20250709    gcc-11.5.0
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-21
+arm                              allyesconfig    gcc-15.1.0
+arm                   randconfig-001-20250709    gcc-12.4.0
+arm                   randconfig-002-20250709    gcc-10.5.0
+arm                   randconfig-003-20250709    clang-21
+arm                   randconfig-004-20250709    clang-21
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250709    clang-21
+arm64                 randconfig-002-20250709    gcc-15.1.0
+arm64                 randconfig-003-20250709    clang-21
+arm64                 randconfig-004-20250709    gcc-10.5.0
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250709    gcc-15.1.0
+csky                  randconfig-002-20250709    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+hexagon               randconfig-001-20250709    clang-19
+hexagon               randconfig-002-20250709    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250709    gcc-12
+i386        buildonly-randconfig-002-20250709    clang-20
+i386        buildonly-randconfig-003-20250709    clang-20
+i386        buildonly-randconfig-004-20250709    clang-20
+i386        buildonly-randconfig-005-20250709    gcc-12
+i386        buildonly-randconfig-006-20250709    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-21
+loongarch             randconfig-001-20250709    gcc-15.1.0
+loongarch             randconfig-002-20250709    gcc-12.4.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                               defconfig    gcc-14.2.0
+nios2                 randconfig-001-20250709    gcc-14.2.0
+nios2                 randconfig-002-20250709    gcc-14.2.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250709    gcc-15.1.0
+parisc                randconfig-002-20250709    gcc-14.3.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc               randconfig-001-20250709    gcc-8.5.0
+powerpc               randconfig-002-20250709    clang-21
+powerpc               randconfig-003-20250709    clang-21
+powerpc64             randconfig-001-20250709    gcc-10.5.0
+powerpc64             randconfig-002-20250709    gcc-10.5.0
+powerpc64             randconfig-003-20250709    clang-21
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20250709    gcc-10.5.0
+riscv                 randconfig-002-20250709    clang-21
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-001-20250709    clang-17
+s390                  randconfig-002-20250709    clang-21
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                    randconfig-001-20250709    gcc-10.5.0
+sh                    randconfig-002-20250709    gcc-14.3.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250709    gcc-15.1.0
+sparc                 randconfig-002-20250709    gcc-10.3.0
+sparc64               randconfig-001-20250709    clang-21
+sparc64               randconfig-002-20250709    clang-21
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250709    clang-17
+um                    randconfig-002-20250709    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250709    gcc-12
+x86_64      buildonly-randconfig-002-20250709    clang-20
+x86_64      buildonly-randconfig-003-20250709    gcc-12
+x86_64      buildonly-randconfig-004-20250709    gcc-12
+x86_64      buildonly-randconfig-005-20250709    clang-20
+x86_64      buildonly-randconfig-006-20250709    gcc-12
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250709    gcc-8.5.0
+xtensa                randconfig-002-20250709    gcc-11.5.0
 
-v1 : https://lore.kernel.org/all/20250527093536.3646143-1-ben717@andestech.com/
----
- tools/testing/selftests/futex/include/futextest.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/tools/testing/selftests/futex/include/futextest.h b/tools/testing/selftests/futex/include/futextest.h
-index ddbcfc9b7bac..7a5fd1d5355e 100644
---- a/tools/testing/selftests/futex/include/futextest.h
-+++ b/tools/testing/selftests/futex/include/futextest.h
-@@ -47,6 +47,17 @@ typedef volatile u_int32_t futex_t;
- 					 FUTEX_PRIVATE_FLAG)
- #endif
-
-+/*
-+ * SYS_futex is expected from system C library, in glibc some 32-bit
-+ * architectures (e.g. RV32) are using 64-bit time_t, therefore it doesn't have
-+ * SYS_futex defined but just SYS_futex_time64. Define SYS_futex as
-+ * SYS_futex_time64 in this situation to ensure the compilation and the
-+ * compatibility.
-+ */
-+#if !defined(SYS_futex) && defined(SYS_futex_time64)
-+#define SYS_futex SYS_futex_time64
-+#endif
-+
- /**
-  * futex() - SYS_futex syscall wrapper
-  * @uaddr:	address of first futex
 --
-2.34.1
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
