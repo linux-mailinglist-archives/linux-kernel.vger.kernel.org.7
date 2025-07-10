@@ -1,122 +1,124 @@
-Return-Path: <linux-kernel+bounces-725169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC85AFFB90
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:02:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E07EAFFB99
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9E2A1C84F31
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:01:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA101C84FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB87428B7D0;
-	Thu, 10 Jul 2025 08:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE55628B4FC;
+	Thu, 10 Jul 2025 08:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVZBLLKl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wkZPnnmi"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFA94A0C;
-	Thu, 10 Jul 2025 08:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68609285C89
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752134471; cv=none; b=KYu46awj9m0rD3kGJu/NPVdIaZLWsZlAovwqbqrwKo3q7Wqw20iqpWbtXxOKFXUR/pP9Gg9bdji9dtlC5YgLwr21CtEfEZo9Jy0uEmswuGL4Mqbx+Lrs/0X4mH45+LCyBDK9XUdua1WLx/BIxqc6naC8b0hsLT08qf8D/ezOtPg=
+	t=1752134549; cv=none; b=Jr7OaG6hoqKh8aWGvv1Y4uocil+i4+8M+ylmky4nJIMgf7/xvnEo58OKp6krIkCW4SfexHMLMqgYee1qkon3LjYxESIr6NxEQMZPBPUz9/otPllenOtNXqehjiNCfaLYxnLpSHmzAasP3kkfP9lvquNLOvYhK5b0e8b50n6WbHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752134471; c=relaxed/simple;
-	bh=LSkqtv/Jm6atWS2WbV4u56HiviuAMPR7h1WDIBqd+kI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ssnduwR2gwZ0Vc4XPxBcO79wdYajAMsiwIB/Ly4JcKfH8Xnhm/y5RotDYGCRTTBQDn0bkj4Ia0h+uHzQ4X4j3u6TE0izj8ZSk5B03GRqXHDgB3wGFMPChWEbGhTSCDPO0e95Hwnm1GKayhhjcoepZuMeZ46yxEHt7evCCIzEVfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DVZBLLKl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 504A5C4CEE3;
-	Thu, 10 Jul 2025 08:01:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752134470;
-	bh=LSkqtv/Jm6atWS2WbV4u56HiviuAMPR7h1WDIBqd+kI=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=DVZBLLKl00oQNEGXVxmLxLf8rW/NcitEm041FBrSH+sHSrIpD8itPkHVCb+oR4kQj
-	 HzZUAI8Y5TdYwRl1pXvBZLNN+/FBLT/KPub1kLcBlO3dabNEXmwDvwJFRZLCgzpXD4
-	 1ephKeAe0zb+36wsUkFNF3hCIKYD7LeSJdfhJVnbNvKqjZJy0fRfBVhfQdeStMX0Le
-	 nav/JS8BYbDDkU6B3L90QtxmA+Hl5BoKdMfU2yAmwwqV4/nT4O5u+CEIr7WRCMC8GP
-	 rwSdYeF+wcOMzZG9n/JT24ehgts6KHBchTEAgORZQx+7LY/MsTXxlnowbRsft+GRkB
-	 u5gZ4OUEWT8cA==
+	s=arc-20240116; t=1752134549; c=relaxed/simple;
+	bh=GI1VtsjhXtrT2WJCXUGzz8y+u1YIjjmIvhsqRtpRE5k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rMY6vX9iXqLXBYRRjM8GVfqTcmlIRaZ9G0C7kemrvnxr5ibEMWS3eVtfNGcEcppDTrpigZHZ3mCS+tbn/hD7wzbIwFMhTmVnMicYLi9u1L7unF73PWRq2kLOvY+46E1HzG3r/rJdKD8cJ4DAHIMfWyJjCfuSP+YuIatDpqDsoQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wkZPnnmi; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-611b246727cso356221eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752134546; x=1752739346; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fK8V0E4Xdcf1fTBLfVQvRq2RbYuBxS2NIoLWeiVRMmk=;
+        b=wkZPnnmidyJSCaLNWtyJhGh9e0+16A29vkVSz8bkZKgdtNVyBUkmiqZbxdbg5WQINy
+         xodsGCuA5b6dM2hysgikYh/bnVvgKwgU6SdcY4urPjaU6IW+QwKA3d6UEksSFKbjuLM7
+         Sis63Zn+sbeLvxr0znbSNrbUWnsLSi2HYH2jgTnMS2xFaQ+rijuR94bV7KXyDuSjA3y/
+         J8HIkBiFh+BA0dAhl8DMm5cD52faHyi25VbCqdlvnforhWcNGLU2PyhBnJSGEMwgdCxp
+         c7EvgGd0t6lF4Ca4f/QY2a+Xb+cl/hsdHjougPVqXZ2yUOExfY8qKGhDRvrd7FITNMKP
+         aYTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752134546; x=1752739346;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fK8V0E4Xdcf1fTBLfVQvRq2RbYuBxS2NIoLWeiVRMmk=;
+        b=eJTGYXKG7zmQyW3A3ZVawDYb+mKeJ/CRCitDB7rTaESODhWt6Tp1C49GkwF4Roz5Rf
+         PRlihEASU5to5Tjk5Mfbz9qe43vj4Pv1QlbEW9710HExAcpO7zfRDTK/IEtVc9lsOR6W
+         nlpZgfFkwJwGEdqwA+qnTDlKRZmBu1EH01DNXFCJ2nc7J35tX1bMDsez2nQHom7PkAVT
+         BI6p/1hYnDUXDK8v7mJX7RCMDncdZ8j0WYBftVaILkD17IUpPcWom2KZ8gUMBGEU+9YP
+         N3tLDsmP+pMU3UQ/4dtOwypDHUANRQwHLOcTaSvKQHX1NJtbE65vlrdtfEzUn45LSJmP
+         WfkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeUpOQ2vOrYYnekffNjGbfCO7UIUn9oY2wiJg/l5UTelQ0LvwDp4WtOksA0Qq3h3e984bXgx5debumLxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0vxvJhu+Mkfv+m+FktBpavfsZJtC7nPPEBUYA2CVCY7EqfFL3
+	6KPgF/lbJl1beVfP0gsYzgg7pxAcu41suEj1qNjTwGJl1RhJastOjpKw+tbB6Rcxha1o7bkONw/
+	PucHCZpYD4n07huib6XUExdCd14oeiDjiZvGzCu0vOg==
+X-Gm-Gg: ASbGncsSB4zEjMYQ6Xx/UE/rEoHwfOsIoMFxTvobqoGvl6ItluCRjaI68j4/CjNYmvr
+	RysEA0genDCdU2NDBUlewtH9mVkjLhngeqobszplVCo+eGYT4jrisKdYbyjcQbTA9BapvVsOxEl
+	2R6s8yLqMO7UR1Ele1fYAkgQXSIV2yrcD4fRMyIKXEEL0nBYZtVARFug==
+X-Google-Smtp-Source: AGHT+IHrFLYymR6F7UKamK/gjTFOEV/FWv98kovyNcG7HeAzZOtkYSEipfwxdZEaT2lEQ5TAU9vcD7JJ0ogSkLcbVfA=
+X-Received: by 2002:a05:6820:260e:b0:613:8176:8a00 with SMTP id
+ 006d021491bc7-613d9db2e43mr1002071eaf.2.1752134546426; Thu, 10 Jul 2025
+ 01:02:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250707-ufs-exynos-shift-v1-1-1418e161ae40@linaro.org>
+In-Reply-To: <20250707-ufs-exynos-shift-v1-1-1418e161ae40@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 10 Jul 2025 09:02:15 +0100
+X-Gm-Features: Ac12FXw14Fnv-NHIV6I5KCDE4Qv3eilf3MCfG465JBU1_Jo35wVeJqk-I6YsdjU
+Message-ID: <CADrjBPr_7NL4jFY=0B=VN7+WtxHrFxGvvqg0AnnPY_P45dtngQ@mail.gmail.com>
+Subject: Re: [PATCH] scsi: ufs: exynos: fix programming of HCI_UTRL_NEXUS_TYPE
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Seungwon Jeon <essuuj@gmail.com>, Avri Altman <avri.altman@wdc.com>, 
+	Kiwoong Kim <kwmad.kim@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 10:01:05 +0200
-Message-Id: <DB87TX9Y5018.N1WDM8XRN74K@kernel.org>
-Cc: "Danilo Krummrich" <dakr@kernel.org>, "Bjorn Helgaas"
- <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "John Hubbard" <jhubbard@nvidia.com>, "Alexandre
- Courbot" <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: Update PCI binding safety comments and add
- inline compiler hint
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Alistair Popple" <apopple@nvidia.com>, <rust-for-linux@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250710022415.923972-1-apopple@nvidia.com>
-In-Reply-To: <20250710022415.923972-1-apopple@nvidia.com>
 
-On Thu Jul 10, 2025 at 4:24 AM CEST, Alistair Popple wrote:
-> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> index 8435f8132e38..5c35a66a5251 100644
-> --- a/rust/kernel/pci.rs
-> +++ b/rust/kernel/pci.rs
-> @@ -371,14 +371,18 @@ fn as_raw(&self) -> *mut bindings::pci_dev {
-> =20
->  impl Device {
->      /// Returns the PCI vendor ID.
-> +    #[inline]
->      pub fn vendor_id(&self) -> u16 {
-> -        // SAFETY: `self.as_raw` is a valid pointer to a `struct pci_dev=
-`.
-> +        // SAFETY: by its type invariant `self.as_raw` is always a valid=
- pointer to a
+On Mon, 7 Jul 2025 at 18:05, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
+>
+> On Google gs101, the number of UTP transfer request slots (nutrs) is
+> 32, and in this case the driver ends up programming the UTRL_NEXUS_TYPE
+> incorrectly as 0.
+>
+> This is because the left hand side of the shift is 1, which is of type
+> int, i.e. 31 bits wide. Shifting by more than that width results in
+> undefined behaviour.
+>
+> Fix this by switching to the BIT() macro, which applies correct type
+> casting as required. This ensures the correct value is written to
+> UTRL_NEXUS_TYPE (0xffffffff on gs101), and it also fixes a UBSAN shift
+> warning:
+>     UBSAN: shift-out-of-bounds in drivers/ufs/host/ufs-exynos.c:1113:21
+>     shift exponent 32 is too large for 32-bit type 'int'
+>
+> For consistency, apply the same change to the nutmrs / UTMRL_NEXUS_TYPE
+> write.
+>
+> Fixes: 55f4b1f73631 ("scsi: ufs: ufs-exynos: Add UFS host support for Exy=
+nos SoCs")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
 
-s/by its type invariant/by the type invariants of `Self`,/
-s/always//
-
-Also, which invariant does this refer to? The only one that I can see
-is:
-
-    /// A [`Device`] instance represents a valid `struct device` created by=
- the C portion of the kernel.
-
-And this doesn't say anything about the validity of `self.as_raw()`...
-
-> +        // `struct pci_dev`.
->          unsafe { (*self.as_raw()).vendor }
->      }
-> =20
->      /// Returns the PCI device ID.
-> +    #[inline]
->      pub fn device_id(&self) -> u16 {
-> -        // SAFETY: `self.as_raw` is a valid pointer to a `struct pci_dev=
-`.
-> +        // SAFETY: by its type invariant `self.as_raw` is always a valid=
- pointer to a
-> +        // `struct pci_dev`.
-
-Ditto here.
-
----
-Cheers,
-Benno
-
->          unsafe { (*self.as_raw()).device }
->      }
-> =20
-
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
