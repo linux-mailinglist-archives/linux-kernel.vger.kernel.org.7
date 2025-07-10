@@ -1,186 +1,180 @@
-Return-Path: <linux-kernel+bounces-724899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA84AFF84A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:01:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A68C9AFF84B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB06B3A7E2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1934E82E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEEE21C173;
-	Thu, 10 Jul 2025 05:01:41 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0333C21FF42;
+	Thu, 10 Jul 2025 05:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="By2y6vF6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C782721B9F4
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D67D21CC71
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 05:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752123701; cv=none; b=YMFPi9B9U4wrwIIr+qd9C8Eeg6JO5+ers03h/SwTdZwXKbiXvxgFR7X7NCOHvEn6Q0RyJFgCha73qrP2PJZ26KCkvGt7ZGXfE4nHwufkTaNXUJ60kaMDQh1ySIUF/mJY1xm5mY0RWiKOGScDVQNHmEMD75j2tB1WxeiZ5VT4+LA=
+	t=1752123796; cv=none; b=CwYmy4xTjOEihldys8jhvx1ZpLEnTROfbVUeBUl4Y2xK8XLoiu0K6/WcrCy+DB5CTMIye1wt2JBwynPKcr4SEzZaBPKMzLMHVT/yVy+ngtksVLPtBmuhU6rkbL8RluKIsgbZ5EZvTspvF72aHtqQmBefaWQRjF379ICur/vNQPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752123701; c=relaxed/simple;
-	bh=xTWfKQIIZ41M6baz6IAELijnUUHkbU/vVFKVS7CR+3g=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QK299XTxW/l8gp5igXOEg7Ynl7+JlLq/tMnHKuTHJ/fYDpHCENg1oO5f+MzXxzuBhYECIrbYuO9euY0nt+j2nPmNRoQcSbQAUxXeBDriHyvICO2LkHKbEHHIW5eci0qWT/G0IMZfEkj7YZ2J61zG1ZEzMcLiECD879L3TDb8llM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e05997f731so12537885ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 22:01:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752123699; x=1752728499;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bCEiVpSgRHQFuAGiv12yYI7VN2M+R1XWegrkUiNhdKY=;
-        b=DJPYFo9wed4q93tOJgOv0O7TBM9fnRmqbD0yKo9U3Sea89m0CxnUwe5AfEhw/rSgjN
-         mzY07AAZHnqqMfWq/mCa98uq85NiaQvgV2Bd7RHZvgm20DKai1x4eY6Ikutu1SNxUgYe
-         Vc9YhTsxqEqeDiWHs6a7jFlXCrKhnfshPGp/sLnyQkWNxb7QRItzXG8U0cEYXo5tpLl6
-         t1mhv33cCG3OJdwalVxI8yEYcOCrioo2sVCw/nM5SUdTzmcS59XauhLdvizQjG9YDG0O
-         y4D1fOWhSX2VwDb2svsNsak5p0LeNTo8iiP6O+c5TO5vH5YqQnmhfUUlbEgTZtHRLMfE
-         gyZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKd4dj538RFmHUwylK6QbagI0UN3l5UQzWBmePwisk9uKEaua+oBO++NRKNzgmnH0GpxS/4QCqKDG7HqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/h+H+z6R8trDoeHI1TGy2SDHzfMfhtzu0PAnN4LFscEfAJk/+
-	DnxjkWcpBTN2RjzYYQUBbg+fA1671b0mdQD0OdnDGXpmLcwJNepjIq/EHKyyYAdl8vKE8tixpUQ
-	Y0CzmtAmpnADeRyIl32DOPCUEfC1ICl9qPoQuYdDHyzv1DNqyfUn7eVDrya4=
-X-Google-Smtp-Source: AGHT+IGeXN3chGLEQ6sMdLWudq7HNgjIqHit9EEVXRxOszKa9RnsZDqAlN0IouUOMZd6MnYYZ+eCpkn3PFwljnhoKLDLhoBKX7Kf
+	s=arc-20240116; t=1752123796; c=relaxed/simple;
+	bh=Ceu1vyvqX6TYeOkJEwk23yxxRDONyxh9J+9TUBafHoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YZBMKXnrr2bSCg8ry1mJdMRIRMZbJwKUZzm12+pkVjFm1FjQmr4qHY1prClKv30L+7cVHFF5otHd+R3ijPNqeYd48LV4NvHPcbRMOfQf1uPCt0mPHA3CaLrPwg+PJ5nUwVEfTFBsW4pZQMyDmAJlyDEzYGlDRZmTSLnXfKUcePo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=By2y6vF6; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752123794; x=1783659794;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Ceu1vyvqX6TYeOkJEwk23yxxRDONyxh9J+9TUBafHoU=;
+  b=By2y6vF6a8uUlHZlGK0ClK2bcpXGUsJVWh8epCZT0EYPJrMkDrRvXvN2
+   AB/ExbyAkzJ1Rj5IOUZx8uuHblqu2foPwtjz3Wrr5HNPawzMtQzV0Xyzx
+   3Ng1ejtD3kSMU0RoLDLMnfZT+Nzwqo4hhswXBkbjwgb8z96GtjfdxJNRI
+   rcWyzNpID2zfxUwwJ2pMcfTVMCDZfHx58ZUixYJvPUlLhH/bAq9W4Zk1Y
+   uSeyaBjj0yjCrqufEVd1pJ0H1FP7jPB/1lICkCx9bc1uhZyZ/ydHHrnq9
+   RRSdJd4CWCteUAc8J2zUYvmAYG6oNORWa/emzZT9FVzlN8+mkkdtD52Jr
+   w==;
+X-CSE-ConnectionGUID: O8CyrG61QZyEj4hn05vNRA==
+X-CSE-MsgGUID: n7xyr2QbRyWI2C64XocW3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="71977974"
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="71977974"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 22:03:14 -0700
+X-CSE-ConnectionGUID: fR1eTBIWSDmFpWh27Ok4Kw==
+X-CSE-MsgGUID: crU3mnTXSU6ZxBpS49yptA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="155380034"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 09 Jul 2025 22:03:12 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uZjR7-0004V3-2s;
+	Thu, 10 Jul 2025 05:03:09 +0000
+Date: Thu, 10 Jul 2025 13:02:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: arch/arm64/kernel/signal.c:1042: undefined reference to
+ `restore_gcs_context'
+Message-ID: <202507101225.jSw3nM7e-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3992:b0:3dc:8b57:b750 with SMTP id
- e9e14a558f8ab-3e2461e8093mr12244735ab.17.1752123698855; Wed, 09 Jul 2025
- 22:01:38 -0700 (PDT)
-Date: Wed, 09 Jul 2025 22:01:38 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686f4932.050a0220.385921.0028.GAE@google.com>
-Subject: [syzbot] [input?] WARNING in cm109_submit_buzz_toggle/usb_submit_urb (2)
-From: syzbot <syzbot+4dc9622046108c10b6e6@syzkaller.appspotmail.com>
-To: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+Hi Robin,
 
-syzbot found the following issue on:
+FYI, the error/warning still remains.
 
-HEAD commit:    733923397fd9 Merge tag 'pwm/for-6.16-rc6-fixes' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13811a8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=84eae426cbd8669c
-dashboard link: https://syzkaller.appspot.com/bug?extid=4dc9622046108c10b6e6
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   8c2e52ebbe885c7eeaabd3b7ddcdc1246fc400d2
+commit: f00b53f1614f7be554fd28b9594ef4e63e2686c5 arm64: cpufeature: Add GCS to cpucap_is_possible()
+date:   7 months ago
+config: arm64-randconfig-003-20250710 (https://download.01.org/0day-ci/archive/20250710/202507101225.jSw3nM7e-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250710/202507101225.jSw3nM7e-lkp@intel.com/reproduce)
 
-Unfortunately, I don't have any reproducer for this issue yet.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507101225.jSw3nM7e-lkp@intel.com/
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-73392339.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/343415a883fb/vmlinux-73392339.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/46225910a4d1/bzImage-73392339.xz
+All errors (new ones prefixed by >>):
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4dc9622046108c10b6e6@syzkaller.appspotmail.com
-
-cm109 6-1:0.8: cm109_urb_ctl_callback: urb status -71
-------------[ cut here ]------------
-URB ffff8880232ba400 submitted while active
-WARNING: CPU: 0 PID: 15 at drivers/usb/core/urb.c:379 usb_submit_urb+0x152b/0x1790 drivers/usb/core/urb.c:379
-Modules linked in:
-CPU: 0 UID: 0 PID: 15 Comm: ksoftirqd/0 Not tainted 6.16.0-rc5-syzkaller-00038-g733923397fd9 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:usb_submit_urb+0x152b/0x1790 drivers/usb/core/urb.c:379
-Code: fd eb cb bb fe ff ff ff e9 70 f3 ff ff e8 9d 48 89 fa c6 05 e5 d9 5f 09 01 90 48 c7 c7 00 1c 73 8c 48 89 de e8 86 94 48 fa 90 <0f> 0b 90 90 e9 b6 fe ff ff bb f8 ff ff ff e9 40 f3 ff ff 48 89 ef
-RSP: 0018:ffffc90000007a68 EFLAGS: 00010086
-RAX: 0000000000000000 RBX: ffff8880232ba400 RCX: ffffffff817ab108
-RDX: ffff88801daec880 RSI: ffffffff817ab115 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff88804dcaf058 R15: 0000000000000004
-FS:  0000000000000000(0000) GS:ffff888097521000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000013c28000 CR4: 0000000000352ef0
-Call Trace:
- <IRQ>
- cm109_submit_buzz_toggle+0xd9/0x180 drivers/input/misc/cm109.c:351
- cm109_urb_ctl_callback+0x362/0x4c0 drivers/input/misc/cm109.c:463
- __usb_hcd_giveback_urb+0x38a/0x6e0 drivers/usb/core/hcd.c:1650
- usb_hcd_giveback_urb+0x39b/0x450 drivers/usb/core/hcd.c:1734
- dummy_timer+0x180e/0x3a20 drivers/usb/gadget/udc/dummy_hcd.c:1995
- __run_hrtimer kernel/time/hrtimer.c:1761 [inline]
- __hrtimer_run_queues+0x202/0xad0 kernel/time/hrtimer.c:1825
- hrtimer_run_softirq+0x17d/0x350 kernel/time/hrtimer.c:1842
- handle_softirqs+0x219/0x8e0 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0x109/0x170 kernel/softirq.c:680
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
- sysvec_apic_timer_interrupt+0xa4/0xc0 arch/x86/kernel/apic/apic.c:1050
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:finish_task_switch.isra.0+0x22a/0xc10 kernel/sched/core.c:5269
-Code: fb 09 00 00 44 8b 05 a9 55 20 0f 45 85 c0 0f 85 be 01 00 00 4c 89 e7 e8 a4 f6 ff ff e8 6f bc 39 00 fb 65 48 8b 1d 7e 79 46 12 <48> 8d bb 18 16 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1
-RSP: 0018:ffffc9000041fbe8 EFLAGS: 00000202
-RAX: 0000000000164fb9 RBX: ffff88801daec880 RCX: ffffffff81c331ff
-RDX: 0000000000000000 RSI: ffffffff8de2be6b RDI: ffffffff8c1578e0
-RBP: ffffc9000041fc30 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff90a99a57 R11: 0000000000000001 R12: ffff88802b23a400
-R13: ffff8880262f2440 R14: ffff88801daec880 R15: ffff88802b23b270
- context_switch kernel/sched/core.c:5404 [inline]
- __schedule+0x1172/0x5de0 kernel/sched/core.c:6790
- __schedule_loop kernel/sched/core.c:6868 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:6883
- smpboot_thread_fn+0x8e6/0xae0 kernel/smpboot.c:160
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	fb                   	sti
-   1:	09 00                	or     %eax,(%rax)
-   3:	00 44 8b 05          	add    %al,0x5(%rbx,%rcx,4)
-   7:	a9 55 20 0f 45       	test   $0x450f2055,%eax
-   c:	85 c0                	test   %eax,%eax
-   e:	0f 85 be 01 00 00    	jne    0x1d2
-  14:	4c 89 e7             	mov    %r12,%rdi
-  17:	e8 a4 f6 ff ff       	call   0xfffff6c0
-  1c:	e8 6f bc 39 00       	call   0x39bc90
-  21:	fb                   	sti
-  22:	65 48 8b 1d 7e 79 46 	mov    %gs:0x1246797e(%rip),%rbx        # 0x124679a8
-  29:	12
-* 2a:	48 8d bb 18 16 00 00 	lea    0x1618(%rbx),%rdi <-- trapping instruction
-  31:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  38:	fc ff df
-  3b:	48 89 fa             	mov    %rdi,%rdx
-  3e:	48                   	rex.W
-  3f:	c1                   	.byte 0xc1
+   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
+   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
+   aarch64-linux-ld: arch/arm64/kernel/signal.o: in function `restore_sigframe':
+>> arch/arm64/kernel/signal.c:1042: undefined reference to `restore_gcs_context'
+   aarch64-linux-ld: arch/arm64/kernel/signal.o: in function `setup_sigframe':
+>> arch/arm64/kernel/signal.c:1300: undefined reference to `preserve_gcs_context'
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +1042 arch/arm64/kernel/signal.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+47ccb02868cead Dave Martin      2017-06-15  1002  
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1003  static int restore_sigframe(struct pt_regs *regs,
+2e8a1acea8597f Kevin Brodsky    2024-10-29  1004  			    struct rt_sigframe __user *sf,
+2e8a1acea8597f Kevin Brodsky    2024-10-29  1005  			    struct user_access_state *ua_state)
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1006  {
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1007  	sigset_t set;
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1008  	int i, err;
+47ccb02868cead Dave Martin      2017-06-15  1009  	struct user_ctxs user;
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1010  
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1011  	err = __copy_from_user(&set, &sf->uc.uc_sigmask, sizeof(set));
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1012  	if (err == 0)
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1013  		set_current_blocked(&set);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1014  
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1015  	for (i = 0; i < 31; i++)
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1016  		__get_user_error(regs->regs[i], &sf->uc.uc_mcontext.regs[i],
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1017  				 err);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1018  	__get_user_error(regs->sp, &sf->uc.uc_mcontext.sp, err);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1019  	__get_user_error(regs->pc, &sf->uc.uc_mcontext.pc, err);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1020  	__get_user_error(regs->pstate, &sf->uc.uc_mcontext.pstate, err);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1021  
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1022  	/*
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1023  	 * Avoid sys_rt_sigreturn() restarting.
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1024  	 */
+17c28958600928 Dave Martin      2017-08-01  1025  	forget_syscall(regs);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1026  
+dbd4d7ca563fd0 Mark Rutland     2016-03-01  1027  	err |= !valid_user_regs(&regs->user_regs, current);
+47ccb02868cead Dave Martin      2017-06-15  1028  	if (err == 0)
+47ccb02868cead Dave Martin      2017-06-15  1029  		err = parse_user_sigframe(&user, sf);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1030  
+6d502b6ba1b267 Suzuki K Poulose 2020-01-13  1031  	if (err == 0 && system_supports_fpsimd()) {
+8cd969d28fd284 Dave Martin      2017-10-31  1032  		if (!user.fpsimd)
+8cd969d28fd284 Dave Martin      2017-10-31  1033  			return -EINVAL;
+8cd969d28fd284 Dave Martin      2017-10-31  1034  
+df07443f477a7e Mark Brown       2022-06-24  1035  		if (user.sve)
+8cd969d28fd284 Dave Martin      2017-10-31  1036  			err = restore_sve_fpsimd_context(&user);
+df07443f477a7e Mark Brown       2022-06-24  1037  		else
+4e4e93045fe1ad Mark Brown       2023-01-31  1038  			err = restore_fpsimd_context(&user);
+8cd969d28fd284 Dave Martin      2017-10-31  1039  	}
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1040  
+16f47bb9ac8afe Mark Brown       2024-10-01  1041  	if (err == 0 && system_supports_gcs() && user.gcs)
+16f47bb9ac8afe Mark Brown       2024-10-01 @1042  		err = restore_gcs_context(&user);
+16f47bb9ac8afe Mark Brown       2024-10-01  1043  
+e9d14f3f3fb76c Dongxu Sun       2023-03-17  1044  	if (err == 0 && system_supports_tpidr2() && user.tpidr2)
+39e54499280f37 Mark Brown       2022-12-27  1045  		err = restore_tpidr2_context(&user);
+39e54499280f37 Mark Brown       2022-12-27  1046  
+8c46def44409fc Mark Brown       2024-03-06  1047  	if (err == 0 && system_supports_fpmr() && user.fpmr)
+8c46def44409fc Mark Brown       2024-03-06  1048  		err = restore_fpmr_context(&user);
+8c46def44409fc Mark Brown       2024-03-06  1049  
+39782210eb7e87 Mark Brown       2022-04-19  1050  	if (err == 0 && system_supports_sme() && user.za)
+39782210eb7e87 Mark Brown       2022-04-19  1051  		err = restore_za_context(&user);
+39782210eb7e87 Mark Brown       2022-04-19  1052  
+ee072cf708048c Mark Brown       2023-01-16  1053  	if (err == 0 && system_supports_sme2() && user.zt)
+ee072cf708048c Mark Brown       2023-01-16  1054  		err = restore_zt_context(&user);
+ee072cf708048c Mark Brown       2023-01-16  1055  
+9160f7e909e179 Joey Gouly       2024-08-22  1056  	if (err == 0 && system_supports_poe() && user.poe)
+2e8a1acea8597f Kevin Brodsky    2024-10-29  1057  		err = restore_poe_context(&user, ua_state);
+9160f7e909e179 Joey Gouly       2024-08-22  1058  
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1059  	return err;
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1060  }
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1061  
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+:::::: The code at line 1042 was first introduced by commit
+:::::: 16f47bb9ac8afe09e7ca14cc53748f779b2a12e0 arm64/signal: Expose GCS state in signal frames
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+:::::: TO: Mark Brown <broonie@kernel.org>
+:::::: CC: Catalin Marinas <catalin.marinas@arm.com>
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
