@@ -1,154 +1,129 @@
-Return-Path: <linux-kernel+bounces-725093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF7CAFFAB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:20:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2CAAFFAA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00F197AB045
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:19:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A5267BB690
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F7628AAEB;
-	Thu, 10 Jul 2025 07:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2244728852B;
+	Thu, 10 Jul 2025 07:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RKyODRN9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLjJfgM+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1A728935D;
-	Thu, 10 Jul 2025 07:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECBE8F5E;
+	Thu, 10 Jul 2025 07:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752132010; cv=none; b=tXF3ARTz9rT4BdxlHXnECUQC4b5NPbnh/g6wGkbJ0kn2OM6lKOl+HY3yF8XKqDAUAuXLiUXWMQlk0Qd1+11AuCIvnyaqHgt1BlJKj3BEy901gsPop4o9AW4Wo0deJVfGhk/onKFtS/2pe5vqHPRB4s0s9kUaRkBTQxCXAOl0L+A=
+	t=1752131835; cv=none; b=rtu5FTmmYA134OOvOHjPuUZ9pweaFyjuIvtU/KN2mHSW50ZKF/Iz7Op1vh+ZE8XMfNA4D4weLfAQcRfy5DnrkmAQqM40jJrWzxA1XUHw/iekn6gX40mctCiXkzBJqqgi7mbdU3THttd8c0+FwbkHn2gmt0oDT6OddLNJeVXc91s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752132010; c=relaxed/simple;
-	bh=eDgyFNCgu4JicpIGG07OSk6fqOrWP0ja+PHV9H01Oa0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JYvNAx9IOVaAHkarDfsZXU3zjMbqPBFPMdQ/bDGJa31S4ppLelwuKlW20U93TpE47oBkeANt53+2u3jMy3IKtTCKbE38b8Q4VXbDSyzXhkW4pycXD9VrHBYE3xevgkeW9JZxQot4+RA7oIyq2LvwtVHk27AFIYO6wgFiwn4HpG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RKyODRN9; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752132009; x=1783668009;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=eDgyFNCgu4JicpIGG07OSk6fqOrWP0ja+PHV9H01Oa0=;
-  b=RKyODRN9tHOs+AKUzRPz3OSFCuxlur0ngU5Du6/9lvJkQIo9/oyXQGn6
-   5GAO+ds8cbXwmzBeVXgvi23VgRrn/UbN9PCuB2uZm37aNUEloxlR9HG/Y
-   Kdpj/ku2MB6fxo9rZLy8Mn/Y/W8btqju+Mwl+32H5NVp4fXFUXQHHgPJx
-   b6JqwBKPz7rWiOKQ6nCS9Da5SVhp9bGwp8H+V6weqLnB8lv9ZpfMYrVCd
-   WHAGtp9BMfotoGG6Cdd8gdjfOPdtK40zXjZEACCRfJjP+gnl2ZYc76sUO
-   jLJ8MVzX7ANHk5FIFQEu6pAfd/xAKYgk44izrJpzUELKKPbM71JAChvVG
-   w==;
-X-CSE-ConnectionGUID: QW4nJl0ETcaN1S3UODsUQQ==
-X-CSE-MsgGUID: namH3tddQXGefmwesxks0g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54256746"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="54256746"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 00:20:08 -0700
-X-CSE-ConnectionGUID: wxyUNwkBSaqM6p7EKD6arQ==
-X-CSE-MsgGUID: c534Jed4S+e0kQ6Jkn6abQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="160324007"
-Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
-  by orviesa003.jf.intel.com with ESMTP; 10 Jul 2025 00:20:03 -0700
-From: Raag Jadav <raag.jadav@intel.com>
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com
-Cc: jarkko.nikula@linux.intel.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	andriy.shevchenko@linux.intel.com,
-	mika.westerberg@linux.intel.com,
-	jsd@semihalf.com,
-	andi.shyti@kernel.org,
-	raag.jadav@intel.com,
-	riana.tauro@intel.com,
-	srinivasa.adatrao@intel.com,
-	michael.j.ruhl@intel.com,
-	intel-xe@lists.freedesktop.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>
-Subject: [PATCH v7 5/5] drm/xe/xe_i2c: Add support for i2c in survivability mode
-Date: Thu, 10 Jul 2025 12:46:12 +0530
-Message-Id: <20250710071612.2714990-6-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250710071612.2714990-1-raag.jadav@intel.com>
-References: <20250710071612.2714990-1-raag.jadav@intel.com>
+	s=arc-20240116; t=1752131835; c=relaxed/simple;
+	bh=dYHTt30jn0HJON45ps6wRhM9waB9aEuCZHTB38SrkRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bNtA2/DJ++KYtnwAq1RTp5lyX9ByRhrlHnVaQLNM6aHz9FluE/FguiSDBx6X63QJIrrPoExmfDC2AWMSz0Q32EsSfm2pid1nQi9UDwf/tV1iwx8HM/EoRgO1Z3DI/hAp4FAgBfA1yiacY/W2xwF3b3AJkX76GKMkJ5m4sFEZ0+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLjJfgM+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 430E4C4CEE3;
+	Thu, 10 Jul 2025 07:17:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752131835;
+	bh=dYHTt30jn0HJON45ps6wRhM9waB9aEuCZHTB38SrkRI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bLjJfgM+ZAGyBvHyNubFyxyMcZKvKNl/bvhCwj8fHZgoFL12ObuOQoyRPJAVk+3Cq
+	 f6EArTI0NKXe/I5HVkkCcntwoCG9lKcv9YlWk5BQGGtgKUhyFiHc2acVESXSaJPDKA
+	 /3uAgR7Y7emot2UpdmO/Li+NunTzHJnN/uSgOfJOUG3lrLcPeeM/3sIriD0R8izClT
+	 BsR93QFhBlFxx2JTAubuNfT3A5mhFgN1D6IvYsZzd3bLKD018VNMHGJIf6Q4lGgn7x
+	 CvSSpRl8aWZsgHxDC16NUe0hOblntOoDNFuxB/72022lPA0jEApPAyuBBFbQjgE+X6
+	 grLE025/vApcQ==
+Message-ID: <9627b253-5c43-4cfc-83c1-d5b4d36fd967@kernel.org>
+Date: Thu, 10 Jul 2025 09:17:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: samsung: Implement abox generic structure
+To: =?UTF-8?B?6rmA7J2A7Jqw?= <ew.kim@samsung.com>, s.nawrocki@samsung.com,
+ lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
+Cc: linux-sound@vger.kernel.org, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org
+References: <CGME20250709002150epcas2p467416bdbc16754726599a0cacb1feecc@epcas2p4.samsung.com>
+ <20250709001002.378246-1-ew.kim@samsung.com>
+ <7d2401d6-d897-49d7-a3be-50de0727b037@kernel.org>
+ <01a401dbf16a$33fbd0d0$9bf37270$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <01a401dbf16a$33fbd0d0$9bf37270$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Riana Tauro <riana.tauro@intel.com>
+On 10/07/2025 09:13, 김은우 wrote:
+> Thank you for your review.
+> We will proceed to remove unnecessary Doxygen comments and logs as suggested.
 
-Initialize i2c in survivability mode to allow firmware
-update of Add-In Management Controller (AMC) in
-survivability mode.
+Only these, but what about all other comments? Please implement all
+comments and do a thorough internal review cleaning all the downstream
+stuff from here. Your patchset is also not correctly threaded, so please
+read submitting patches or just use `b4`.
 
-Signed-off-by: Riana Tauro <riana.tauro@intel.com>
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Raag Jadav <raag.jadav@intel.com>
-Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
----
- drivers/gpu/drm/xe/xe_survivability_mode.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+Please avoid top-posting.
 
-diff --git a/drivers/gpu/drm/xe/xe_survivability_mode.c b/drivers/gpu/drm/xe/xe_survivability_mode.c
-index 1f710b3fc599..41705f5d52e3 100644
---- a/drivers/gpu/drm/xe/xe_survivability_mode.c
-+++ b/drivers/gpu/drm/xe/xe_survivability_mode.c
-@@ -14,6 +14,7 @@
- #include "xe_device.h"
- #include "xe_gt.h"
- #include "xe_heci_gsc.h"
-+#include "xe_i2c.h"
- #include "xe_mmio.h"
- #include "xe_pcode_api.h"
- #include "xe_vsec.h"
-@@ -173,20 +174,22 @@ static int enable_survivability_mode(struct pci_dev *pdev)
- 	survivability->mode = true;
- 
- 	ret = xe_heci_gsc_init(xe);
--	if (ret) {
--		/*
--		 * But if it fails, device can't enter survivability
--		 * so move it back for correct error handling
--		 */
--		survivability->mode = false;
--		return ret;
--	}
-+	if (ret)
-+		goto err;
- 
- 	xe_vsec_init(xe);
- 
-+	ret = xe_i2c_probe(xe);
-+	if (ret)
-+		goto err;
-+
- 	dev_err(dev, "In Survivability Mode\n");
- 
- 	return 0;
-+
-+err:
-+	survivability->mode = false;
-+	return ret;
- }
- 
- /**
--- 
-2.34.1
+> 
+> Based on the feedback provided, we will revise the work accordingly and resubmit it for further review.
+> 
 
+
+
+Best regards,
+Krzysztof
 
