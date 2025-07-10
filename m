@@ -1,84 +1,160 @@
-Return-Path: <linux-kernel+bounces-725382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B31AFFE50
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:39:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45361AFFE5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 143BB7B4245
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:37:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81E2B582609
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65CA2D3ED1;
-	Thu, 10 Jul 2025 09:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcgQ97ug"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2562D3EDC;
+	Thu, 10 Jul 2025 09:41:33 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C642980D0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88DF2D3EE9
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752140349; cv=none; b=gRkC5PQvfJvYxkfEC2Q9WVkgAovAnP8p5cfM5mWZe6eCBvD6zDg7M/PhX91VwZKNX7mNXUSrds4jH67KAOYaxu+mdgUdJUt0BL+oA554HOyNYf6eIYMkId6OU73xVlTbEpKtv5BTMk11anex/I0qJX6hC5m/F3zvS9IdKRey8lo=
+	t=1752140492; cv=none; b=YUvbK/hJotooetrQV43tWGiNEyRzRfqdyUZSDzbh9lu5sBdG4d49aynbTnE63S0+RxRm7UD7+LNcdH37PypzgwzSDmEElTEkYtHSSkCFrSyW5Qb5SEcUo+wscAUVdWOOjnkwF0hk2iVG9+vVhTLv25GQ1S15WuhiP6adWcOzTZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752140349; c=relaxed/simple;
-	bh=s094nnHI8Ya6ISRwM2Ef/UymmN9TAegq8YURS8gtBO4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=P0xEDzPaS3bk2TZhRvezEnYLCOLDkDFDwoGBusKz7D2sRasAnYv7XhsUM05uqRJxL8zBOVwBod7/NlQ++LnIau38TEa0HG/kaijZ92ZifkCCNpC/ox1PCgio09ErRB2iRuNLQ4R4A9jwNpHJ6YAGF2cO3aMFDbDzLN8EY1fomko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcgQ97ug; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D04E4C4CEE3;
-	Thu, 10 Jul 2025 09:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752140348;
-	bh=s094nnHI8Ya6ISRwM2Ef/UymmN9TAegq8YURS8gtBO4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=pcgQ97ugxwFP4GGpXlZYc0BCPdVElEEfwL4Gi4zxpOZdrvMOvJpIdIq1UPgJAmzxk
-	 t2ENz4Bwq060F1gsSI63RbiDySPeTR91ay64ob8E0pcMRwUNe1s6+OQ2BPq0SyuhoN
-	 6scPGA9HD/GRq+NxfNDD9C+rckqTkG+3ff2PKZRSBpJdVU56I4tgULKLhQzKnMseZB
-	 i3cvJcGvWUSFDWiIjGo85plPlZnt2bEexAp/XK+wpvZmOLuFaydebIygrWC3X7135e
-	 efPBfCzbDHiLRNQb3XmyE3BrtH7iWMMUmuBkHRJz62ScOZBX3BCAx/WjRElMQ+Chz3
-	 cHaSQSLPAQrAw==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Yassine Oudjana <y.oudjana@protonmail.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Fabien Parent <fparent@baylibre.com>, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org
-In-Reply-To: <r4k3pgd3ew3ypne7ernxuzwgniiyvzosbce4cfajbcu7equblt@yato35tjb3lw>
-References: <r4k3pgd3ew3ypne7ernxuzwgniiyvzosbce4cfajbcu7equblt@yato35tjb3lw>
-Subject: Re: (subset) [PATCH] MFD: mt6397: do not use generic name for
- keypad sub-devices
-Message-Id: <175214034660.1450853.10120775474738135399.b4-ty@kernel.org>
-Date: Thu, 10 Jul 2025 10:39:06 +0100
+	s=arc-20240116; t=1752140492; c=relaxed/simple;
+	bh=xJvfFJMpi1wOJl/W6dGXUC2Fpt7tc4X/oyPACOOjUPY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rqHPYQTkZlB+zq3e3ouw//cb7ZmabVZrf70nW4ujuY4PchiNH9zDZJx3BlPxop8OefVw44g/W9EUHkEss/8zEFqHj5/KW92SGN8GCTPBP9F186loywUOS+toXSqlkRF57kBo4ECN79vIfNjWDw52/CUcW64qD2hdmnbgOazkPCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: David Laight <david.laight.linux@gmail.com>, Andrew Morton
+	<akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: "u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>, "Nicolas
+ Pitre" <npitre@baylibre.com>, Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra
+	<peterz@infradead.org>, Biju Das <biju.das.jz@bp.renesas.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>
+Subject: =?gb2312?B?tPC4tDogWz8/Pz9dIFJlOiBbUEFUQ0ggdjMgbmV4dCAwOS8xMF0gbGliOiBt?=
+ =?gb2312?B?dWxfdTY0X3U2NF9kaXZfdTY0KCkgT3B0aW1pc2UgdGhlIGRpdmlkZSBjb2Rl?=
+Thread-Topic: [????] Re: [PATCH v3 next 09/10] lib: mul_u64_u64_div_u64()
+ Optimise the divide code
+Thread-Index: AQHb8N0u/8upQgcCsUmzD4yDxuXXbbQrF4GQ
+Date: Thu, 10 Jul 2025 09:39:51 +0000
+Message-ID: <08a4b591e9ee41ca8cec888772a0fc43@baidu.com>
+References: <20250614095346.69130-1-david.laight.linux@gmail.com>
+	<20250614095346.69130-10-david.laight.linux@gmail.com>
+ <20250709152420.4c95c22d@pumpkin>
+In-Reply-To: <20250709152420.4c95c22d@pumpkin>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
+X-FEAS-Client-IP: 172.31.50.18
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Mon, 30 Jun 2025 16:01:06 -0700, Dmitry Torokhov wrote:
-> Do not use "mtk-pmic-keys" when creating sub-device for the keypad to
-> make sure the keypad driver will only bind to the sub-device if it has
-> support for the variant/has matching compatible.
-> 
-> 
-
-Applied, thanks!
-
-[1/1] MFD: mt6397: do not use generic name for keypad sub-devices
-      commit: aea2ceab5917b72d37a2b2008e9e2489877737a9
-
---
-Lee Jones [李琼斯]
-
+PiAkIGNjIC1PMiAtbyBkaXZfcGVyZiBkaXZfcGVyZi5jIC1ETVVMRElWX09QVD0weGMzICAmJiBz
+dWRvIC4vZGl2X3BlcmYNCj4gMDogb2sgICAxNjIgICAxMzQgICAgNzggICAgNzggICAgNzggICAg
+NzggICAgNzggICAgODAgICAgODAgICAgODANCj4gbXVsX3U2NF91NjRfZGl2X3U2NF9uZXcgYio3
+LzMgPSAxOQ0KPiAxOiBvayAgICA5MSAgICA5MSAgICA5MSAgICA5MSAgICA5MSAgICA5MSAgICA5
+MSAgICA5MSAgICA5MSAgICA5MQ0KPiBtdWxfdTY0X3U2NF9kaXZfdTY0X25ldyBmZmZmMDAwMCpm
+ZmZmMDAwMC9mID0gMTExMGVlZWYwMDAwMDAwMA0KPiAyOiBvayAgICA3NSAgICA3NyAgICA3NSAg
+ICA3NyAgICA3NyAgICA3NyAgICA3NyAgICA3NyAgICA3NyAgICA3Nw0KPiBtdWxfdTY0X3U2NF9k
+aXZfdTY0X25ldyBmZmZmZmZmZipmZmZmZmZmZi8xID0gZmZmZmZmZmUwMDAwMDAwMQ0KPiAzOiBv
+ayAgICA4OSAgICA5MSAgICA5MSAgICA5MSAgICA5MSAgICA5MSAgICA4OSAgICA5MCAgICA5MSAg
+ICA5MQ0KPiBtdWxfdTY0X3U2NF9kaXZfdTY0X25ldyBmZmZmZmZmZipmZmZmZmZmZi8yID0gN2Zm
+ZmZmZmYwMDAwMDAwMA0KPiA0OiBvayAgIDE0NyAgIDE0NyAgIDEyOCAgIDEyOCAgIDEyOCAgIDEy
+OCAgIDEyOCAgIDEyOCAgIDEyOCAgIDEyOA0KPiBtdWxfdTY0X3U2NF9kaXZfdTY0X25ldyAxZmZm
+ZmZmZmYqZmZmZmZmZmYvMiA9IGZmZmZmZmZlODAwMDAwMDANCj4gNTogb2sgICAxMjggICAxMjgg
+ICAxMjggICAxMjggICAxMjggICAxMjggICAxMjggICAxMjggICAxMjggICAxMjgNCj4gbXVsX3U2
+NF91NjRfZGl2X3U2NF9uZXcgMWZmZmZmZmZmKmZmZmZmZmZmLzMgPSBhYWFhYWFhOWFhYWFhYWFi
+DQo+IDY6IG9rICAgMTIxICAgMTIxICAgMTIxICAgMTIxICAgMTIxICAgMTIxICAgMTIxICAgMTIx
+ICAgMTIxICAgMTIxDQo+IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3IDFmZmZmZmZmZioxZmZmZmZm
+ZmYvNCA9IGZmZmZmZmZmMDAwMDAwMDANCj4gNzogb2sgICAyNzQgICAyMzQgICAxNDYgICAxMzgg
+ICAxMzggICAxMzggICAxMzggICAxMzggICAxMzggICAxMzgNCj4gbXVsX3U2NF91NjRfZGl2X3U2
+NF9uZXcNCj4gZmZmZjAwMDAwMDAwMDAwMCpmZmZmMDAwMDAwMDAwMDAwL2ZmZmYwMDAwMDAwMDAw
+MDEgPSBmZmZlZmZmZmZmZmZmZmZmDQo+IDg6IG9rICAgMTc3ICAgMTQ4ICAgMTQ4ICAgMTQ5ICAg
+MTQ5ICAgMTQ5ICAgMTQ5ICAgMTQ5ICAgMTQ5ICAgMTQ5DQo+IG11bF91NjRfdTY0X2Rpdl91NjRf
+bmV3DQo+IDMzMzMzMzMzMzMzMzMzMzMqMzMzMzMzMzMzMzMzMzMzMy81NTU1NTU1NTU1NTU1NTU1
+ID0NCj4gMWViODUxZWI4NTFlYjg1MQ0KPiA5OiBvayAgIDEzOCAgICA5MCAgIDExOCAgICA5MSAg
+ICA5MSAgICA5MSAgICA5MSAgICA5MiAgICA5MiAgICA5Mg0KPiBtdWxfdTY0X3U2NF9kaXZfdTY0
+X25ldyA3ZmZmZmZmZmZmZmZmZmZmKjIvMyA9IDU1NTU1NTU1NTU1NTU1NTQNCj4gMTA6IG9rICAg
+MTEzICAgMTE0ICAgIDg2ICAgIDg2ICAgIDg0ICAgIDg2ICAgIDg2ICAgIDg0ICAgIDg3DQo+IDg3
+IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3IGZmZmZmZmZmZmZmZmZmZmYqMi84MDAwMDAwMDAwMDAw
+MDAwID0gMw0KPiAxMTogb2sgICAgODcgICAgODggICAgODggICAgODYgICAgODggICAgODggICAg
+ODggICAgODggICAgOTANCj4gOTAgbXVsX3U2NF91NjRfZGl2X3U2NF9uZXcgZmZmZmZmZmZmZmZm
+ZmZmZioyL2MwMDAwMDAwMDAwMDAwMDAgPSAyDQo+IDEyOiBvayAgICA4MiAgICA4NiAgICA4NCAg
+ICA4NiAgICA4MyAgICA4NiAgICA4MyAgICA4NiAgICA4Mw0KPiA4NyBtdWxfdTY0X3U2NF9kaXZf
+dTY0X25ldw0KPiBmZmZmZmZmZmZmZmZmZmZmKjQwMDAwMDAwMDAwMDAwMDQvODAwMDAwMDAwMDAw
+MDAwMCA9IDgwMDAwMDAwMDAwMDAwMDcNCj4gMTM6IG9rICAgIDgyICAgIDg2ICAgIDg0ICAgIDg2
+ICAgIDgzICAgIDg2ICAgIDgzICAgIDg2ICAgIDgzDQo+IDg2IG11bF91NjRfdTY0X2Rpdl91NjRf
+bmV3DQo+IGZmZmZmZmZmZmZmZmZmZmYqNDAwMDAwMDAwMDAwMDAwMS84MDAwMDAwMDAwMDAwMDAw
+ID0gODAwMDAwMDAwMDAwMDAwMQ0KPiAxNDogb2sgICAxODkgICAxODcgICAxMzggICAxMzIgICAx
+MzIgICAxMzIgICAxMzEgICAxMzEgICAxMzENCj4gMTMxIG11bF91NjRfdTY0X2Rpdl91NjRfbmV3
+IGZmZmZmZmZmZmZmZmZmZmYqODAwMDAwMDAwMDAwMDAwMS9mZmZmZmZmZmZmZmZmZmZmID0NCj4g
+ODAwMDAwMDAwMDAwMDAwMQ0KPiAxNTogb2sgICAyMjEgICAxNzUgICAxNTkgICAxMzEgICAxMzEg
+ICAxMzEgICAxMzEgICAxMzEgICAxMzENCj4gMTMxIG11bF91NjRfdTY0X2Rpdl91NjRfbmV3IGZm
+ZmZmZmZmZmZmZmZmZmUqODAwMDAwMDAwMDAwMDAwMS9mZmZmZmZmZmZmZmZmZmZmDQo+ID0gODAw
+MDAwMDAwMDAwMDAwMA0KPiAxNjogb2sgICAxMzQgICAxMzIgICAxMzQgICAxMzQgICAxMzQgICAx
+MzUgICAxMzQgICAxMzQgICAxMzQNCj4gMTM0IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3IGZmZmZm
+ZmZmZmZmZmZmZmYqODAwMDAwMDAwMDAwMDAwMS9mZmZmZmZmZmZmZmZmZmZlDQo+ID0gODAwMDAw
+MDAwMDAwMDAwMQ0KPiAxNzogb2sgICAxNzIgICAxMzQgICAxMzcgICAxMzQgICAxMzQgICAxMzQg
+ICAxMzQgICAxMzQgICAxMzQNCj4gMTM0IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3IGZmZmZmZmZm
+ZmZmZmZmZmYqODAwMDAwMDAwMDAwMDAwMS9mZmZmZmZmZmZmZmZmZmZkDQo+ID0gODAwMDAwMDAw
+MDAwMDAwMg0KPiAxODogb2sgICAxODIgICAxODIgICAxMjkgICAxMjkgICAxMjkgICAxMjkgICAx
+MjkgICAxMjkgICAxMjkNCj4gMTI5IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3IDdmZmZmZmZmZmZm
+ZmZmZmYqZmZmZmZmZmZmZmZmZmZmZi9jMDAwMDAwMDAwMDAwMDAwDQo+ID0gYWFhYWFhYWFhYWFh
+YWFhOA0KPiAxOTogb2sgICAxMzAgICAxMjkgICAxMzAgICAxMjkgICAxMjkgICAxMjkgICAxMjkg
+ICAxMjkgICAxMjkNCj4gMTI5IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3IGZmZmZmZmZmZmZmZmZm
+ZmYqN2ZmZmZmZmZmZmZmZmZmZi9hMDAwMDAwMDAwMDAwMDAwDQo+ID0gY2NjY2NjY2NjY2NjY2Nj
+YQ0KPiAyMDogb2sgICAxMzAgICAxMjkgICAxMjkgICAxMjkgICAxMjkgICAxMjkgICAxMjkgICAx
+MjkgICAxMjkNCj4gMTI5IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3IGZmZmZmZmZmZmZmZmZmZmYq
+N2ZmZmZmZmZmZmZmZmZmZi85MDAwMDAwMDAwMDAwMDAwDQo+ID0gZTM4ZTM4ZTM4ZTM4ZTM4Yg0K
+PiAyMTogb2sgICAxMzAgICAxMjkgICAxMjkgICAxMjkgICAxMjkgICAxMjkgICAxMjkgICAxMjkg
+ICAxMjkNCj4gMTI5IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3IDdmZmZmZmZmZmZmZmZmZmYqN2Zm
+ZmZmZmZmZmZmZmZmZi81MDAwMDAwMDAwMDAwMDAwDQo+ID0gY2NjY2NjY2NjY2NjY2NjOQ0KPiAy
+Mjogb2sgICAyMDYgICAxNDAgICAxMzggICAxMzggICAxMzggICAxMzggICAxMzggICAxMzggICAx
+MzgNCj4gMTM4IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3IGZmZmZmZmZmZmZmZmZmZmYqZmZmZmZm
+ZmZmZmZmZmZmZS9mZmZmZmZmZmZmZmZmZmZmID0NCj4gZmZmZmZmZmZmZmZmZmZmZQ0KPiAyMzog
+b2sgICAxNzQgICAxNDAgICAxMzggICAxMzggICAxMzggICAxMzggICAxMzggICAxMzggICAxMzgN
+Cj4gMTM4IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3DQo+IGU2MTAyZDI1NmQ3ZWEzYWUqNzBhNzdk
+MGJlNGMzMTIwMS9kNjNlYzM1YWIzMjIwMzU3ID0NCj4gNzhmOGJmOGNjODZjNmUxOA0KPiAyNDog
+b2sgICAxMzUgICAxMzcgICAxMzcgICAxMzcgICAxMzcgICAxMzcgICAxMzcgICAxMzcgICAxMzcN
+Cj4gMTM3IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3DQo+IGY1M2JhZTA1Y2I4NmM2ZTEqMzg0N2Iz
+MmQyZjhkMzJlMC9jZmQ0ZjU1YTY0N2Y0MDNjID0NCj4gNDI2ODdmNzlkODk5OGQzNQ0KPiAyNTog
+b2sgICAxMzQgICAxMzYgICAxMzYgICAxMzYgICAxMzYgICAxMzYgICAxMzYgICAxMzYgICAxMzYN
+Cj4gMTM2IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3DQo+IDk5NTFjNTQ5OGY5NDEwOTIqMWY4Yzhi
+ZmRmMjg3YTI1MS9hM2M4ZGM1ZjgxZWEzZmUyID0gMWQ4ODdjYjI1OTAwMDkxZg0KPiAyNjogb2sg
+ICAxMzYgICAxMzQgICAxMzQgICAxMzQgICAxMzQgICAxMzQgICAxMzQgICAxMzQgICAxMzQNCj4g
+MTM0IG11bF91NjRfdTY0X2Rpdl91NjRfbmV3DQo+IDM3NGZlZTlkYWExYmIyYmIqZDBiZmJmZjdi
+OGFlM2VmL2MxNjkzMzdiZDQyZDUxNzkgPSAzYmIyZGJhZmZjYmI5NjENCj4gMjc6IG9rICAgMTM5
+ICAgMTM4ICAgMTM4ICAgMTM4ICAgMTM4ICAgMTM4ICAgMTM4ICAgMTM4ICAgMTM4DQo+IDEzOCBt
+dWxfdTY0X3U2NF9kaXZfdTY0X25ldw0KPiBlYWMwZDAzYWMxMGVlYWYwKjg5YmUwNWRmYTE2MmVk
+OWIvOTJiYjE2NzlhNDFmMGU0YiA9DQo+IGRjNWY1Y2M5ZTI3MGQyMTYNCj4gMjg6IG9rICAgMTMw
+ICAgMTQzICAgIDk1ICAgIDk1ICAgIDk2ICAgIDk2ICAgIDk2ICAgIDk2ICAgIDk2DQo+IDk2IG11
+bF91NjRfdTY0X2Rpdl91NjRfbmV3DQo+IDJkMjU2ZDdlYTNhZSo3ZDBiZTRjMzEyMDEvZDYzZWMz
+NWFiMzIyMDM1NyA9IDFhNTk5ZDZlDQo+IDI5OiBvayAgIDE2OSAgIDE1OCAgIDE1OCAgIDEzOCAg
+IDEzOCAgIDEzOCAgIDEzOCAgIDEzOCAgIDEzOA0KPiAxMzggbXVsX3U2NF91NjRfZGl2X3U2NF9u
+ZXcNCj4gZWFjMGQwM2FjMTBlZWFmMCo4OWJlMDVkZmExNjJlZDliLzkyYmIxNjc5YTQxZjBlNGIg
+PQ0KPiBkYzVmNWNjOWUyNzBkMjE2DQo+IDMwOiBvayAgIDE3OCAgIDE2NCAgIDE0NCAgIDE0NyAg
+IDE0NyAgIDE0NyAgIDE0NyAgIDE0NyAgIDE0Nw0KPiAxNDcgbXVsX3U2NF91NjRfZGl2X3U2NF9u
+ZXcNCj4gMmQyNTZkN2VhM2FlKjdkMGJlNGMzMTIwMS82M2VjMzVhYjMyMjAzNTcgPSAzODdmNTVj
+ZWYNCj4gMzE6IG9rICAgMTYzICAgMTI4ICAgMTI4ICAgMTI4ICAgMTI4ICAgMTI4ICAgMTI4ICAg
+MTI4ICAgMTI4DQo+IDEyOCBtdWxfdTY0X3U2NF9kaXZfdTY0X25ldw0KPiBlYWMwZDAzYWMxMGVl
+YWYwKjg5YmUwNWRmYTE2MmVkOWIvOTJiYjAwMDAwMDAwMDAwMCA9DQo+IGRjNWY3ZThiMzM0ZGIw
+N2QNCj4gMzI6IG9rICAgMTYzICAgMTg0ICAgMTM3ICAgMTM2ICAgMTM2ICAgMTM4ICAgMTM4ICAg
+MTM4ICAgMTM4DQo+IDEzOCBtdWxfdTY0X3U2NF9kaXZfdTY0X25ldw0KPiBlYWMwZDAzYWMxMGVl
+YWYwKjg5YmUwNWRmYTE2MmVkOWIvOTJiYjE2NzlhNDFmMGU0YiA9DQo+IGRjNWY1Y2M5ZTI3MGQy
+MTYNCj4gDQoNCk5pY2Ugd29yayENCg0KSXMgaXQgbmVjZXNzYXJ5IHRvIGFkZCBhbiBleGNlcHRp
+b24gdGVzdCBjYXNlLCBzdWNoIGFzIGEgY2FzZSBmb3IgZGl2aXNpb24gcmVzdWx0IG92ZXJmbG93
+aW5nIDY0Yml0Pw0KDQpUaGFua3MNCg0KLUxpDQo=
 
