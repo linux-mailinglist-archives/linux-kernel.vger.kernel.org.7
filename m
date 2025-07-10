@@ -1,125 +1,109 @@
-Return-Path: <linux-kernel+bounces-725742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8856CB00327
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:17:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F05B0036B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5902116A4D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:17:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 848281888E7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A561C2253F2;
-	Thu, 10 Jul 2025 13:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749DA25A351;
+	Thu, 10 Jul 2025 13:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ZaJHaMbr"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="rIEOUeXs";
+	dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b="TusmlQ2g"
+Received: from e3i282.smtp2go.com (e3i282.smtp2go.com [158.120.85.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69237221F29;
-	Thu, 10 Jul 2025 13:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752153433; cv=pass; b=H81ag8SA/qPtFc+wqj+cpgQE0hymp7FpNZhF/ldUEnumk4EtuLMtzCW5GfOs9/itagO6DUZQ/8wV5kHtUXe2dy2odiIflETVvdhtQVU1E+nUcKGdnudCYxnjG30Y4R8Pu0uM6Lb5XaZJKhBRRQqAxK/5FYdA6Sdn2u+f7KBHF+w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752153433; c=relaxed/simple;
-	bh=lMlH0CkVmMtMpfmR+DhnUvRnkI8F6sCWPShVUe4gBQU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=T2s83KhAm0IEXiV3XL43UjoXWOi0iHrXwZ5wd55KC0PGSfnKAv+IkLEzkCwVZvMfoxd4HCPpsLB5N2DdRbrQdFbKnKMhvZHb+yo1wNhAjEY8YEu/qZeb2GVcfpdnKVevdKqzSqcWoVEf8DRNZxJkfdDa8uRseydKutC49oS1D4w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ZaJHaMbr; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752153402; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Kuq6Ieb/UfY2uh+Sg5DtsPMvV1wK9CtE+b5zxph8TQEk3DMWGpT56wJI9d61oYQ+GrLL1XERSJq1KTktzH98ywha1g2/VN6Sr3RM8bhceU1KUM+xS53cr2O6xXD9nytkH+G4zCcW7SSIJ2Z5ecmeFkfL+H4WDmi4/e0LHLFqYHI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752153402; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SFPxdbWPvOwzpJJw2wS8FEYjCUqBehpDqU3KFQNmQW8=; 
-	b=lKtmVToCftGtCk6UTR+1GRvy9S+kvyfStKznX8akbv8X0MuwDQgMsreNjhyVTtKdCyOMCSWPefS5dKeyJ7Pd0XGkxU+6mScgvdbO5KmrXSx3Ou/2Gx2yvjN9/MZIdJjYMGHKbY4UPNvTqk945QNHIC0HiI1W9/YLDjSaVRJzRTQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752153402;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=SFPxdbWPvOwzpJJw2wS8FEYjCUqBehpDqU3KFQNmQW8=;
-	b=ZaJHaMbrWeE7xZw8FwFQpE/sp86nHH4GlI0N69B6tNtPFG//QB4I1Xavk4JCdD/+
-	BcOBVMnuL+KBSj2n4d6+tL3GjuA4NAVYyMAzfpIKUaWvQv0A+SQsRT1G5NIAIqfUigZ
-	dL3n6AX/WOURnsa8A1nDA9e3kTWuMEvt/+ValCc8=
-Received: by mx.zohomail.com with SMTPS id 1752153398901356.9197818711657;
-	Thu, 10 Jul 2025 06:16:38 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E9125A320
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.85.26
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752154425; cv=none; b=icq8+nMvfPwazhpQ/RyxqIJPGrLzY+gPAfT648Cg4pKX3HwXDp+dH54JKd2p1z5PMEE+GAX44RjrA8uQ6R1JukgFB02Zan/EPmZGoIcQ/UfM9p5clVuyOTYJMjspAlU/rGmXK2QsQVtKWfDttfJF5ng6vurli5wTFDkGflm+0m4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752154425; c=relaxed/simple;
+	bh=M7l6/QLIPUoglGrfdye4yiQdtH9sXmYpR0Yv55tKrto=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fvVsmX3K4qr5XhFhN7wikeIo1q/bMlZpYO/JRZGA0vV4GXdPt7FFTuHZSTiNX1bY2rK+3E8jvvVokf0p+ihvQdjsXbcZIwGyQCHnWryt4wICoSG+fgKE+4Tk1NixCzfsrR3c7kgDhjy/ctnmVxW3/Bw/Uy0ioilWFniRkeMUeY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev; spf=pass smtp.mailfrom=em1255854.medip.dev; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=rIEOUeXs; dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b=TusmlQ2g; arc=none smtp.client-ip=158.120.85.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1255854.medip.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1752153510; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=vsPjCCPZRDftl844wyMwpzELOqTezWUQYA1LB69ZyMk=;
+ b=rIEOUeXsd8UNG/ux3auImqwRZ+RuK9LbzN1PEngsIdXu8LwwKLDnZT417DTV7TJ/mn3fm
+ Rt5bkdxlxx08NZ241gg30cNF5FAl8/nfNpcuAKhKVjVDgOZI8XYHn4NHrQbQNMU6HPVeeWO
+ 4yrYeuBZQSm8R3VO70a6yVIIZyf8uD7a7uC8Ji7CQX/mYy7G2OYnac3RUAlx1qhQxwAeSBH
+ rUiIZnkUrXPrz+KJiA4rLo2iI3d6QrhHcl9sNlRRMkj3X0km1CuV0W7fcwPQMORGGymey/s
+ cvCccFQXapuZxrqAogiYo7iYm0aOGV+82mz6JdAudbGRXvtI994HHWnJpwcw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=medip.dev;
+ i=@medip.dev; q=dns/txt; s=s1255854; t=1752153510; h=from : subject :
+ to : message-id : date;
+ bh=vsPjCCPZRDftl844wyMwpzELOqTezWUQYA1LB69ZyMk=;
+ b=TusmlQ2gjfXqE9TlbIih8sKHnhk2eaf5LjNnVBYqv5MWxlgv0CMse27WKCZ+ckgdVP9OI
+ f1BT+IcQQ4yIHuwCTfoJSAz2V6uIeZqFeK1X+fb9OaEO9XnSueKSenrhkbnT1dO3fxOOiwx
+ VNSKyMIIfeAT0nI/8sZYXZuBszJoFdzbn67Qwan8eAOncjEXdevl0JsaDvDF7byktt4zSu7
+ Yvx44DzCFLWh6dgZu13Y/KjISNfYXzxXoHKzQx+rbcZ7Er8icEohaOyJeXDwSetOUrKZrgY
+ yn384jefVLRHsEVer6GSCWV70evGdgBAXPDUTe/zuyAbJ9GUZpoJgKwgBglA==
+Received: from [10.152.250.198] (helo=vilez)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.1-S2G)
+	(envelope-from <edip@medip.dev>)
+	id 1uZrAQ-4o5NDgrsm8D-h6lg;
+	Thu, 10 Jul 2025 13:18:26 +0000
+From: edip@medip.dev
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Edip Hazuri <edip@medip.dev>,
+	stable@vger.kernel.org
+Subject: [PATCH] ALSA: hda/realtek - Fix mute LED for HP Victus 16-r0xxx
+Date: Thu, 10 Jul 2025 16:18:12 +0300
+Message-ID: <20250710131812.27509-1-edip@medip.dev>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v12 1/3] rust: io: add resource abstraction
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aGt6CZAUeuK0XnmP@google.com>
-Date: Thu, 10 Jul 2025 10:16:21 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?utf-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Ying Huang <huang.ying.caritas@gmail.com>,
- Benno Lossin <lossin@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- Fiona Behrens <me@kloenk.dev>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8A2EA665-F738-4C5D-914E-11380422038A@collabora.com>
-References: <20250704-topics-tyr-platform_iomem-v12-0-1d3d4bd8207d@collabora.com>
- <20250704-topics-tyr-platform_iomem-v12-1-1d3d4bd8207d@collabora.com>
- <aGt6CZAUeuK0XnmP@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 1255854m:1255854ay30w_v:1255854sasdnPZ66u
+X-smtpcorp-track: MJPPRSxZKhyL.8D4jXHymOJFq._nKw1w0NJU9
 
-Hi Alice,
+From: Edip Hazuri <edip@medip.dev>
 
-> Is this name used for a lookup or stored? If just a lookup, then it
-> doesn't need to be 'static.
->=20
->> +        flags: Flags,
->> +    ) -> Option<Region> {
->> +        // SAFETY: Safe as per the invariant of `Resource`.
->> +        let region =3D unsafe {
->> +            bindings::__request_region(
->> +                self.0.get(),
->> +                start,
->> +                size,
->> +                name.as_char_ptr(),
->> +                flags.0 as i32,
->=20
+The mute led on this laptop is using ALC245 but requires a quirk to work
+This patch enables the existing quirk for the device.
 
-JFYI, this is stored:
+Tested on Victus 16-r0xxx Laptop. The LED behaviour works
+as intended.
 
-static int __request_region_locked(struct resource *res, struct resource =
-*parent,
-				   resource_size_t start, =
-resource_size_t n,
-				   const char *name, int flags)
-{
-	DECLARE_WAITQUEUE(wait, current);
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Edip Hazuri <edip@medip.dev>
+---
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-	res->name =3D name;
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 060db37ea..132cef8fa 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10814,6 +10814,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8b97, "HP", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
+ 	SND_PCI_QUIRK(0x103c, 0x8bb3, "HP Slim OMEN", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x103c, 0x8bb4, "HP Slim OMEN", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8bbe, "HP Victus 16-r0xxx (MB 8BBE)", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8bc8, "HP Victus 15-fa1xxx", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8bcd, "HP Omen 16-xd0xxx", ALC245_FIXUP_HP_MUTE_LED_V1_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8bdd, "HP Envy 17", ALC287_FIXUP_CS35L41_I2C_2),
+-- 
+2.50.1
 
-
-=E2=80=94 Daniel=
 
