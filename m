@@ -1,173 +1,151 @@
-Return-Path: <linux-kernel+bounces-726471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9716BB00D67
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:52:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8D3B00D6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E46975684A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:52:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7670A483BD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1787E2FCFDA;
-	Thu, 10 Jul 2025 20:52:11 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E382FD586;
+	Thu, 10 Jul 2025 20:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DORON7vg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270A118FDAF;
-	Thu, 10 Jul 2025 20:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E90F510;
+	Thu, 10 Jul 2025 20:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752180730; cv=none; b=l+8CVal4X9iN8zpmbr6qgQd2kRS5tTa+Yw0MNps3LSRx8nCNCHP7XHDroP4dELs1Y4pXj6cHmadN7Niq3GJ4yMsw0gFUlA+CQ66v0DC/CCNnyekiSgSysSG5NngG4ma+l6H1kxoV0Mj5XdSiNgwQ24Iu5r58xKQ2aIOgbnlhCDY=
+	t=1752180769; cv=none; b=gq66Tx5OK6lkEOnmQWqaaJwXQ9uI36CdwLqZut7apAjSWRQzTlD2yCXPVihh4SZAzFGozSLEs6OeZzecMNoMBm5xrDn+zN3zG/7BJ3glbNH9Ci3XAPJJkDViW6AbNd5AIl8RV0VDn1nsxS85fNI7hQhyh9JJwkTWt28UzKKLPvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752180730; c=relaxed/simple;
-	bh=rdpdVgXpSuN5GUouenqoitYbhNcxEsDckDUzI/BHjH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZqbisRhXb2wc4ScyYNhDN6s9q/u/4+rjhV/21Ma4ZhPe7ygBGquNPP0x+tlLNesMkCAjCNAa6mLqWo5lcFvSfcW/8azSbP0SXg/nFAsDBo/prMUfUG48VrW7jBHqJBoaiXcCikqNvuvgjEDQgiy0qouh2um6FByEiiPoesU2FBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 8DE67141589;
-	Thu, 10 Jul 2025 20:52:03 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 3D0368000F;
-	Thu, 10 Jul 2025 20:51:58 +0000 (UTC)
-Date: Thu, 10 Jul 2025 16:51:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Steven Rostedt
- <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
- <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
- Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
- E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
- <fweimer@redhat.com>, Sam James <sam@gentoo.org>, Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH v8 06/12] unwind_user/sframe: Wire up unwind_user to
- sframe
-Message-ID: <20250710165157.6e0936e9@batman.local.home>
-In-Reply-To: <20250710113039.04a431d9@batman.local.home>
-References: <20250708021115.894007410@kernel.org>
-	<20250708021159.386608979@kernel.org>
-	<d7d840f6-dc79-471e-9390-a58da20b6721@efficios.com>
-	<20250708161124.23d775f4@gandalf.local.home>
-	<a52c508c-2596-49d1-bbe8-8a92599714f6@linux.ibm.com>
-	<20250710113039.04a431d9@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752180769; c=relaxed/simple;
+	bh=Mglw2ksv6p0jmkNc6ppoxSBvG/wPI1OuhGnfRBEN8og=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AesSaMoQEuGlrA436coasItoRjECTie2ulRDVnYyRhwvCkAawMS1G1PUULDHjAbCXC9OSp2ISvmy7ZXNPiizRsK5WUKQVyuJEF3PmZkIBdfZEbghr3UP2vpkH1c4TjqzUgnM/vmbiRtO1xL2dkXDJ/W5k1g5960C2nFCEq6UEfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DORON7vg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC609C4CEE3;
+	Thu, 10 Jul 2025 20:52:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752180768;
+	bh=Mglw2ksv6p0jmkNc6ppoxSBvG/wPI1OuhGnfRBEN8og=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DORON7vgn8ny5uJ0L+QkdObMERtukYD5htopGHQZ3hHzt2UVpAtAvylvK9HNubGh8
+	 lO8TkEc0vxQ1jLydCGrkdTklJgguo2YcLxyPDASsimPQoP+oYSihcdXks+cjwti4Yw
+	 S0lxYVKFH79tz84Qnnv4VCm5d4w3xFiWHR3ode/fv+wpS5NTeK+mozGPykVAuYoMzy
+	 b4U9vDkhwdXjwQVqeXjAzJW6kepyG6g2eq/Fg8jYjj4ah/4OecNk2qirhKh/EqUeFe
+	 jET2nhXRgHjQjtzRt8mOjrl3XBy+FNFrQ4EzmFGAsfrPcD45tk0ukc1sjxB7EhoNxA
+	 CcB0ybi7BPCXw==
+Date: Thu, 10 Jul 2025 22:52:45 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Drew Fustini <fustini@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v11 1/3] pwm: Export `pwmchip_release` for external use
+Message-ID: <tepvopkizn4jezpqcbhwrcsnsrjacztv6kuv53hidcjbrnrs3c@pfcp45jarcoy>
+References: <20250710-rust-next-pwm-working-fan-for-sending-v11-0-93824a16f9ec@samsung.com>
+ <CGME20250710185439eucas1p2684255d83d807dfd6f8b9b3caea65df6@eucas1p2.samsung.com>
+ <20250710-rust-next-pwm-working-fan-for-sending-v11-1-93824a16f9ec@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: wg7qym5dhdouejzwatqiqc4e5qk7187g
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: 3D0368000F
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+mONFfQ6muWwYwXRfXDA3phF2+Buj9aKA=
-X-HE-Tag: 1752180718-389422
-X-HE-Meta: U2FsdGVkX1/zGKDFsZIgwyfki/04YelAXL/CFwu3MtOfXh6MZ5lRKF3ALBt+23EQkFXrhZX0apSeNji5UwtoDJEzfKleuVKUoeIUEpmmx2Dlr3nTJZQUIC7wtAKnLGNevwpoWajqHSworsX4u4xTiO9CSxpHAafYXbo54zws1+uq5puNSaw2s1yeVIDomuFBka9UcQ9N3a7CG1BN5G4LGrVjXPAyhKWZiEUyatNITEWgz17DDP/EigFdcbeejGG+XfCA8GJUcI1aesPTBZaVnU66ZKu5DfSMywjJFYa6Vkh87K6Is6hn6NoDiAKU5NorPOCHMNKDEPz+ARMuHInYoUsixw9PqYUm/SQkeY4zX0j042jsxMHAIVsLG4OuFRQb
-
-On Thu, 10 Jul 2025 11:30:39 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> I'm not too comfortable with the compat patches at this stage. I'm
-> thinking of separating out the compat patches, and just reject the
-> deferred unwind if the task is in compat mode (forcing perf or other
-> tracers to use whatever it uses today).
-> 
-> I'll take Mathieu's patches and merge them with Josh's, but make them a
-> separate series.
-
-So I'm removing the two compat patches from the series for now and plan
-to replace it with this:
-
--- Steve
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="52heviwukb62zeme"
+Content-Disposition: inline
+In-Reply-To: <20250710-rust-next-pwm-working-fan-for-sending-v11-1-93824a16f9ec@samsung.com>
 
 
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH] unwind deferred/x86: Do not defer stack tracing for compat
- tasks
+--52heviwukb62zeme
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v11 1/3] pwm: Export `pwmchip_release` for external use
+MIME-Version: 1.0
 
-Currently compat tasks are not supported. If a deferred user space stack
-trace is requested on a compat task, it should fail and return an error so
-that the profiler can use an alternative approach (whatever it uses
-today).
+Hello Michal,
 
-Add a arch_unwind_can_defer() macro that is called in
-unwind_deferred_request(). Have x86 define it to a function that makes
-sure that the current task is running in 64bit mode, and if it is not, it
-returns false. This will cause unwind_deferred_request() to error out and
-the caller can use the current method of user space stack tracing.
+On Thu, Jul 10, 2025 at 08:54:28PM +0200, Michal Wilczynski wrote:
+> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+> index 8cafc483db53addf95591d1ac74287532c0fa0ee..8f0698c09e62b893d63fc258d=
+a3c34781183056f 100644
+> --- a/include/linux/pwm.h
+> +++ b/include/linux/pwm.h
+> @@ -478,6 +478,7 @@ static inline bool pwm_might_sleep(struct pwm_device =
+*pwm)
+> =20
+>  /* PWM provider APIs */
+>  void pwmchip_put(struct pwm_chip *chip);
+> +void pwmchip_release(struct device *dev);
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- arch/x86/include/asm/unwind_user.h | 11 +++++++++++
- include/linux/unwind_deferred.h    |  5 +++++
- kernel/unwind/deferred.c           |  3 +++
- 3 files changed, 19 insertions(+)
+I want this in a separate section because "normal" provider don't need
+that. Please add a comment that this is only public for technical
+reasons for the Rust wrappers.
 
-diff --git a/arch/x86/include/asm/unwind_user.h b/arch/x86/include/asm/unwind_user.h
-index 8597857bf896..220fd0a6e175 100644
---- a/arch/x86/include/asm/unwind_user.h
-+++ b/arch/x86/include/asm/unwind_user.h
-@@ -2,6 +2,17 @@
- #ifndef _ASM_X86_UNWIND_USER_H
- #define _ASM_X86_UNWIND_USER_H
- 
-+#ifdef CONFIG_IA32_EMULATION
-+/* Currently compat mode is not supported for deferred stack trace */
-+static inline bool arch_unwind_can_defer(void)
-+{
-+	struct pt_regs *regs = task_pt_regs(current);
-+
-+	return user_64bit_mode(regs);
-+}
-+# define arch_unwind_can_defer	arch_unwind_can_defer
-+#endif /* CONFIG_IA32_EMULATION */
-+
- #define ARCH_INIT_USER_FP_FRAME							\
- 	.cfa_off	= (s32)sizeof(long) *  2,				\
- 	.ra_off		= (s32)sizeof(long) * -1,				\
-diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
-index a9d5b100d6b2..6ba4fff066dd 100644
---- a/include/linux/unwind_deferred.h
-+++ b/include/linux/unwind_deferred.h
-@@ -16,6 +16,11 @@ struct unwind_work {
- 	int				bit;
- };
- 
-+/* Architectures can add a test to not defer unwinding */
-+#ifndef arch_unwind_can_defer
-+# define arch_unwind_can_defer()	(true)
-+#endif
-+
- #ifdef CONFIG_UNWIND_USER
- 
- #define UNWIND_PENDING_BIT	(BITS_PER_LONG - 1)
-diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
-index 039e12700d49..745144e4717c 100644
---- a/kernel/unwind/deferred.c
-+++ b/kernel/unwind/deferred.c
-@@ -236,6 +236,9 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
- 
- 	*cookie = 0;
- 
-+	if (!arch_unwind_can_defer())
-+		return -EINVAL;
-+
- 	if ((current->flags & (PF_KTHREAD | PF_EXITING)) ||
- 	    !user_mode(task_pt_regs(current)))
- 		return -EINVAL;
--- 
-2.47.2
+I understand you are eager to get this merged, but still I'd ask you to
+slow down your patch sending frequency. Currently I tend to not apply it
+for v6.17-rc1 as I'd like to have that in next for some time.
 
+With you waiting a bit longer before v11 I would have written that in
+reply to the explanation in the v10 thread and we might have saved
+one iteration ...
+
+>  struct pwm_chip *pwmchip_alloc(struct device *parent, unsigned int npwm,=
+ size_t sizeof_priv);
+>  struct pwm_chip *devm_pwmchip_alloc(struct device *parent, unsigned int =
+npwm, size_t sizeof_priv);
+> =20
+> @@ -551,6 +552,10 @@ static inline void pwmchip_put(struct pwm_chip *chip)
+>  {
+>  }
+> =20
+> +static inline void pwmchip_release(struct device *dev)
+> +{
+> +}
+> +
+
+Is this needed? There is no user of this function that doesn't depend
+on CONFIG_PWM?!
+
+>  static inline struct pwm_chip *pwmchip_alloc(struct device *parent,
+>  					     unsigned int npwm,
+>  					     size_t sizeof_priv)
+>=20
+
+Best regards
+Uwe
+
+--52heviwukb62zeme
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhwKBoACgkQj4D7WH0S
+/k7Blwf+LeGyU+ZX3f7XS0pHm8zBWkJ0woOP+GYaAZLba3sufqsqBh90rQuPvYFG
+yfOmrF9i/IpGim42booPz1OZD+PGe17Wx6+iQ57RuLkXxKfIwqAGfQnBW5BunJWL
+b7xkg1vRjmnZdQgixsTRSZoE/QjqSzKYzooogPg/bAtUy92n5vzpafgxy9zqsfZ/
+6wtM1Kc/nRir2TbVMFBNlu2ZzjNd9gyTk42gxQBgXqzG7PzA+gdaN1A2n58tdzUd
+44aN7WhPOEUPT3GJwyLrkwcKulGPyGY8Do3sYujEV98E5HbRdy5K/Ctsrm3ixD+A
+X994v6aaOHQQA0XiVBE695HLVVwLCQ==
+=vBNR
+-----END PGP SIGNATURE-----
+
+--52heviwukb62zeme--
 
