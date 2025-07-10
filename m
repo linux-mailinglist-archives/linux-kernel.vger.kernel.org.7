@@ -1,185 +1,125 @@
-Return-Path: <linux-kernel+bounces-725198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307A9AFFBD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:11:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFA2AFFBD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22FD01C84BD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:12:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D673AF50A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93CD28B7FC;
-	Thu, 10 Jul 2025 08:11:53 +0000 (UTC)
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8F028B7DA;
-	Thu, 10 Jul 2025 08:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12FB28BABC;
+	Thu, 10 Jul 2025 08:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HUiIfGRM"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FFE28B50E;
+	Thu, 10 Jul 2025 08:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752135113; cv=none; b=XPmhSZlBsgDc9LDf43iKIxoEz+xLGXr1ckLGjfNC38YmJ5dT0daX4BlEchcwL03m5gIIDab5nIA91ttDQa2hdvj+PwSuSrPGC4Ol21zUWtkxSd1CkZh3KSBT4j5FOy4FCGO+PpMwv7KVQ3epYfSj7i/aLnRsLnJGKpS0yyqzs70=
+	t=1752135078; cv=none; b=l+aijIzoWBU8WSQKjrUUMPLAHbrQTfzAmzaKDXl15ud6KvkN/f7P5oQ+N6DmG89EiQ1w8yHkUMOPZJb1fke4LZuudkcEa2RGNcQKqeF1RQUS8z8u1Wy3XMgKrIupxU9BYuCmru3b2kcW4tIP/1wuo7lTwWNHzU7wTkGGJNXKJCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752135113; c=relaxed/simple;
-	bh=KdRG9hQox2LIVg5BQbJagwBCdXub17DTK0Abf1w5+Pk=;
+	s=arc-20240116; t=1752135078; c=relaxed/simple;
+	bh=TNhDjLxLFu+8LEoskEMgvQ5azEalvEUowDOAboTqavc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iob7tMiepsMK1OOy/NbAPZ9sE0gdysloBzprTAIq79bWfyw679SofW1zhLpG9w5Jfj3t9eypWAmktU+11Ng9QA1vMVILcWwi4vDdULQCI2nHGR24eAGXw8WTJ8RnWYmkUJdSp+3cQ6rnrwZPfGIp3jVgPydYpPEqnC66q7xuad0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com; spf=pass smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foursemi.com
-X-QQ-mid: zesmtpsz8t1752135064t9362b96b
-X-QQ-Originating-IP: r3LYCXsJvRGu4NM29rklbYDyiBmQ2Aw00APHKgzq3Aw=
-Received: from localhost ( [183.17.231.23])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 10 Jul 2025 16:11:02 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14875192277165604199
-EX-QQ-RecipientCnt: 14
-Date: Thu, 10 Jul 2025 16:11:02 +0800
-From: Nick Li <nick.li@foursemi.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz,
-	tiwai@suse.com, xiaoming.yang@foursemi.com,
-	danyang.zheng@foursemi.com, like.xy@foxmail.com,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] ASoC: dt-bindings: Add schema for FS2104/5S audio
- amplifiers
-Message-ID: <BD2D8A14FDC941B8+aG91lowfru0KiWWW@foursemi.com>
-References: <20250703035639.7252-1-nick.li@foursemi.com>
- <20250708112901.25228-1-nick.li@foursemi.com>
- <20250708112901.25228-3-nick.li@foursemi.com>
- <20250709-invisible-frigatebird-of-felicity-7e87c4@krzk-bin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GrBvfwtNqS4IkKybLoTtSIT6VZuerJWJFbXO7RTZX0Ngpt4mIBZ30XpC4oSMdfNMidsiTRvojoL/gOs9cfDhA8WDxUCL5NXs5CAqKpd9i++E3A/dpKCDJUW0NfW2jYKhjUPgxzhIHBpBlk8QPHVg64BTfjuyEydgi+a5wp9CJh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HUiIfGRM; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from localhost (unknown [167.220.232.230])
+	by linux.microsoft.com (Postfix) with ESMTPSA id AB0082114268;
+	Thu, 10 Jul 2025 01:11:15 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AB0082114268
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752135076;
+	bh=eOoVBg5tar1SHLNJ7Lvmm3yEhUrOVtzS88GwPN9nCs4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HUiIfGRM+dEKcEE0D7vvZ4OXeRlmO5v8jgRexaIEu1RpK5Vq34RsXE+EfNsNyBBv0
+	 AgrO7wD1gwow2NK9ebnfetgf8iEYmBrfZIMXNpoxxVEY1geCIurDiFcm218cEcy2ol
+	 oBZZM8UHi6uZBZVm96MgYJC4Sp7ISGYVj6qZO9g8=
+Date: Thu, 10 Jul 2025 16:11:13 +0800
+From: Yu Zhang <zhangyu1@linux.microsoft.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Jason Gunthorpe <jgg@nvidia.com>, Jann Horn <jannh@google.com>, 
+	Vasant Hegde <vasant.hegde@amd.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
+	Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, 
+	Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>, 
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "security@kernel.org" <security@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+Message-ID: <w3xhahute7xeci2swawsaaet5frxc3cacufsawok6hzkeklzo5@jzvkcpwp46lx>
+References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
+ <BN9PR11MB52765F651EBE0988E35E15FF8C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250709-invisible-frigatebird-of-felicity-7e87c4@krzk-bin>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:foursemi.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MmIUUz9KGMMd5/Ko+h+fnJi05RQWsq8reqQBiAt6oWi59ZBkTF/AFz90
-	Z/h2SSR2NpjrPRMrsXNqumktM4Pz1/6xVSwKsmnp2CYopdv49p+XfHAfo9dbShYpE9s3gTL
-	/zHE+Vyd7bRdltaiRVGnOR5bUiT3hj4MRPAZhbW3jVXAcKbglRTJsj/vYjalkFpJWHrm/Vo
-	GvArP8Ao9I9/jhHQRthfbcbK4mM1cq5kNgo1sQcoVbMUN7/kO3FxYTQ8jNmU/SEIOcl1qUH
-	1L65sng1sAEZzrNEYDNAnBLzSywiyk36ytXoM8/2TgSAKVvnbA3CisadctPHZcp+OAJqNzV
-	p2/d0jpsKm8+/4CUfeRxCZ5FNjjYaR4n450qHfJmmQ3FXn5lL9vyPjEclgdTOa80Ga4Zc89
-	+nxOmEHz4CRY/jVLQ6q2RbHVEUDKRXnBxez8RrdvAcN6fNtLtINkhiNTrbWi36GQsWANm3B
-	Qv1+YH28gT3HUgQHK0no4d6bHCFC/vEDl4El3xiFgaL//HwnCE3+uksBP/svby2guLPX8aS
-	hUuhWRN1SpFB/R/RWSLSa9GXNci55rugKpTQOkF1NvwykErSr8JCVOi6Woj6B6Ce/UgxRy6
-	AtzjSUjkhkHoBgxWTzyqx9rqIp5urcAF7Y+FFDjMe53pxbADC9FXecvc44D4Z2O6sYuD+sz
-	kI1790MKbyPM/x8uQGSvvQ6tJ4/Ewp9YGDorqq6HReNLLDX5LHCRsjLj6a/FP6GSvAuwyYh
-	1YBTzceS2p2TenxVqiWW7Knt1jgs+5esClDChFgDZlq+/3jKPf2gSuH6fYy4oIXRbf6WR4+
-	uYJrLY/XaOGpAuyJA/1K/zI/ng5lCelkF0grgIhalmN4VZVHAXFEsn5GUzlV9FnCvaoAfgZ
-	PuMIMF3w7K8fvC29fAAqWTKAtorM4YZ7zTl12J5H9WRG3sOz2h3KyxhGNvFSHR0UsDApiPM
-	LbGLs6hy+gCrteV4MlWPTx3xI/HCMxZIHXUCkszjI011YM3PepOVxUp9nJjFU4WwTMzUdjM
-	DrH5vsy1qbyYibpps/2DFOfrEk8zVPZEFKxWxoqA==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <BN9PR11MB52765F651EBE0988E35E15FF8C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
 
-On Wed, Jul 09, 2025 at 12:40:33PM +0200, Krzysztof Kozlowski wrote:
-> On Tue, Jul 08, 2025 at 07:28:59PM +0800, Nick Li wrote:
-> > +description:
-> > +  The FS2104 is a 15W Inductor-Less, Stereo, Closed-Loop,
-> > +  Digital Input Class-D Power Amplifier with Enhanced Signal Processing.
-> > +  The FS2105S is a 30W Inductor-Less, Stereo, Closed-Loop,
-> > +  Digital Input Class-D Power Amplifier with Enhanced Signal Processing.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - items:
-> > +          - enum:
-> > +              - foursemi,fs2104
-> > +          - const: foursemi,fs2105s
-> > +      - enum:
-> > +          - foursemi,fs2105s
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +    description:
-> > +      I2C address of the device. Refer to datasheet for possible values
+On Thu, Jul 10, 2025 at 03:02:07AM +0000, Tian, Kevin wrote:
+> > From: Lu Baolu <baolu.lu@linux.intel.com>
+> > Sent: Wednesday, July 9, 2025 2:28 PM
+> > 
+> > The vmalloc() and vfree() functions manage virtually contiguous, but not
+> > necessarily physically contiguous, kernel memory regions. When vfree()
+> > unmaps such a region, it tears down the associated kernel page table
+> > entries and frees the physical pages.
+> > 
+> > In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU
+> > hardware
+> > shares and walks the CPU's page tables. Architectures like x86 share
+> > static kernel address mappings across all user page tables, allowing the
 > 
-> Now the description is entirely redundant, brings no value. Drop.
+> I'd remove 'static'
+> 
+> > IOMMU to access the kernel portion of these tables.
+> > 
+> > Modern IOMMUs often cache page table entries to optimize walk
+> > performance,
+> > even for intermediate page table levels. If kernel page table mappings are
+> > changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
+> > entries, Use-After-Free (UAF) vulnerability condition arises. If these
+> > freed page table pages are reallocated for a different purpose, potentially
+> > by an attacker, the IOMMU could misinterpret the new data as valid page
+> > table entries. This allows the IOMMU to walk into attacker-controlled
+> > memory, leading to arbitrary physical memory DMA access or privilege
+> > escalation.
+> 
+> this lacks of a background that currently the iommu driver is notified
+> only for changes of user VA mappings, so the IOMMU's internal caches
+> may retain stale entries for kernel VA.
+> 
+> > 
+> > To mitigate this, introduce a new iommu interface to flush IOMMU caches
+> > and fence pending page table walks when kernel page mappings are updated.
+> > This interface should be invoked from architecture-specific code that
+> > manages combined user and kernel page tables.
+> 
+> this also needs some words about the fact that new flushes are triggered
+> not just for freeing page tables.
+> 
+Thank you, Kevin. A question about the background of this issue: 
 
-OK.
+My understanding of the attacking scenario is, a malicious user application
+could initiate DMAs to some vmalloced address, causing the paging structure
+cache being loaded and then possibly being used after that paging structure
+is freed(may be allocated to some other users later). 
 
-> 
-> > +
-> > +  clocks:
-> > +    description: The clock of I2S BCLK
-> 
-> This was different... Previous code was correct, this is not correct.
-> And nothing in changelog explains this. Do not make random changes after
-> review.
-> 
+If that is the case, only when the paging structures are freed, do we need
+to do the flush. I mean, the IOTLB entries may not be loaded at all when the
+permission check failes. Did I miss anything? :)
 
-OK, I will recover it to version v1.
 
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: bclk
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  '#sound-dai-cells':
-> > +    const: 0
-> > +
-> > +  pvdd-supply:
-> > +    description:
-> > +      Regulator for power supply(PVDD in datasheet).
-> > +
-> > +  dvdd-supply:
-> > +    description:
-> > +      Regulator for digital supply(DVDD in datasheet).
-> > +
-> > +  reset-gpios:
-> > +    maxItems: 1
-> > +    description:
-> > +      It's the SDZ pin in datasheet, the pin is active low,
-> > +      it will power down and reset the chip to shut down state.
-> > +
-> > +  firmware-name:
-> > +    maxItems: 1
-> > +    description: |
-> > +      The firmware(*.bin) contains:
-> > +      a. Register initialization settings
-> > +      b. DSP effect parameters
-> > +      c. Multi-scene sound effect configurations(optional)
-> > +      It's gernerated by FourSemi's tuning tool.
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - reset-gpios
-> > +  - firmware-name
-> > +  - '#sound-dai-cells'
-> 
-> Keep the same order as in list of properties. OTOH, missing supplies.
-
-OK, we will fix the order, but the supplies may not be used as regulator,
-we mark them as required, is it OK?
-
-Best regards,
-Nick
-
-> 
-> > +
-> > +allOf:
-> > +  - $ref: dai-common.yaml#
-> > +
-> > +unevaluatedProperties: false
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+B.R.
+Yu
 
