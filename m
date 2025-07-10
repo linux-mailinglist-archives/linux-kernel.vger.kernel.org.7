@@ -1,92 +1,241 @@
-Return-Path: <linux-kernel+bounces-726313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90FBB00BA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:49:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D50EB00BAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC20B5682C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:49:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3E134E3332
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00842FD598;
-	Thu, 10 Jul 2025 18:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792A62FCFE0;
+	Thu, 10 Jul 2025 18:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OX0m5Hj7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ppbfz5QP"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2063.outbound.protection.outlook.com [40.107.236.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5560118E25;
-	Thu, 10 Jul 2025 18:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752173368; cv=none; b=UgsFVytIQUfH57N5GOmG3l24xu/fKLwBitXdso9lcjozCINpFDZ/1+zlSVXHJjOX3zMhD304nQ8FErM5N1LrgAyW+xJM4rrXIarZ/PwLNntXmI8496ofANWFvzhWWnzQ/LKFsz0xfB9hGHyIQ3TiTOqyMcuKzNwCIpmZpZR3QjU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752173368; c=relaxed/simple;
-	bh=PYBQTtwI7qUGNZYkLdqat2uZgEeL9RAyXWixkPD0vO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=arDaw4WHNOIfBTg82wtgpX6l6/iDDB/2g9qfMy2gYGFvP8YLA2BIrz6ZzLvvpgBXAhB/trkwuSfapk8YeSztez0oBLydrwOUEyu4Jk8JbBT6meD70LZ39eGDU6Zi9qxpWlNfYcTThxwf6zn9eYGGqLQIa8uFityk3GLuYhzyRPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OX0m5Hj7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7241FC4CEE3;
-	Thu, 10 Jul 2025 18:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752173367;
-	bh=PYBQTtwI7qUGNZYkLdqat2uZgEeL9RAyXWixkPD0vO4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OX0m5Hj7/oHn9SK0dlRslPbntIbL04R0yEig+jcfrsqx3FgPqCMhmfz8p1Uzv63Gd
-	 UWd10oGsXY8ROaK2MIt9pNUbVirIJSdQNwTVOgPxT+3mPz2b5FEUZPdvEZF2Mr7q7n
-	 6fIhbqVfHRSnmTi3jjWpPgsmtUCCeRdZdUiS48s3Iwvq5miohKEo9oQx8OFgaNF5KO
-	 7TTJOM4tGHAQnuL1yD1UT4Ps1N93L1dQiGcYvQuKgp2BqfnaPq/GChZhYzky5872bA
-	 yHBJMUQCr+3WD4FAO07RuxJO4kExw4sKKJ/vcJS23s2Svkr+Dlybl/afaVnniyyJVU
-	 uwA58h2oJ0Viw==
-Date: Thu, 10 Jul 2025 11:49:26 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org, Paolo Abeni
- <pabeni@redhat.com>, linux-kernel@vger.kernel.org, "David S . Miller"
- <davem@davemloft.net>, Florian Fainelli <f.fainelli@gmail.com>, Eric
- Dumazet <edumazet@google.com>, Christian Marangi <ansuelsmth@gmail.com>
-Subject: Re: [PATCH net] net: phy: Don't register LEDs for genphy
-Message-ID: <20250710114926.7ec3a64f@kernel.org>
-In-Reply-To: <04583ed9-0997-4a54-a255-540837f1dff8@linux.dev>
-References: <20250707195803.666097-1-sean.anderson@linux.dev>
-	<20250707163219.64c99f4d@kernel.org>
-	<3aae1c17-2ce8-4229-a397-a8a25cc58fe9@linux.dev>
-	<1019ee40-e7df-43a9-ae3f-ad3172e5bf3e@linux.dev>
-	<20250710105254.071c2af4@kernel.org>
-	<04583ed9-0997-4a54-a255-540837f1dff8@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAEC2264D7;
+	Thu, 10 Jul 2025 18:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752173639; cv=fail; b=hPXCpmuW7eiZWQ8bq2eUXvXITz9eLFDNqQkz7yP8yyp6J6H5Wb1Ijc8bTdJioYO5LXTnwS3UFSjL3+upGoZOv2KvM60uvT7uelSMit17KHnp3YnUm6Cy4tUcJ6XGKA/x1mXZZE6fTtWVhx5+PpONngaQoJbnjXgCdcbvbGWYlFA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752173639; c=relaxed/simple;
+	bh=fS1tnVVQMcf8IYik47b4i2pw1RUIQ5lVnSJxRR7p4+k=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ebE3VKWALUBwddSz6kuTVMZftgdh76Cw1aYmImgTmjFciqqW6rOHi4O7BeHS9d1OYflvuwsRrn3xYjLXmPvooMdA0QaFKzB1CmTnJ5AHvSaNqQRM669XDX5JmCPbh3GLZ636JEPtWpcca6JSunasoLaGfvAU0tqwmfCip0kJwbc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ppbfz5QP; arc=fail smtp.client-ip=40.107.236.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QoQO5w4htxva1wUTygiPFnmMns6JmTtKmqU5ya2+mq5Jj68F+KWs2XBaUtR0KyrUyOH1w+HIG/VnKovR0oMQdQH0voRWhpO57v4e9rEFdaZGxgHBAlKVaqeh0woO5Ds6YIpfbOUGdz5Sto6p8cychk6NbRQqaSCwpIhwcqscFRGu1DSIDr5WXqyD0SXzZInTunYraXtvdj/+ghw/qYaL1KNbYFtZjGrvHVxQquZGZugNitZLyHGO9jvRA7sMeZm0JAfgYnqwYg/FhVKkr6rtBecYiw2DxO+7ECxVdG5KD4qQ7ic6NXk2i1zo+RA/R8JmacueGyskj5jYdRbxZv8EcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kqDh5ntcAez8YrGnHmsPrgh1eh+pG5B/NIX7at9J/YE=;
+ b=v6Bzg1HIo6epfNQB7JBL0HEP5GCQx4kZS3ZFcSXgnLBQHh+PoqPRIGEF/9fQy/MtnZ3wSbhH5IvIwlOBxMVXSfUv3Qxgxj45G0KRcwe98WqBlS0qRLGIyUAKnNIyaxi3Y+mbzmWX4UMa/0M+vowqJb6rD54e5n4K4PPOztm18wIprnTKbnMvpPf9mmzHQH8aDmhBjE1CqWqhpXJeHyQv5IjYjxxOk9HntgiOmmkxBXOCnvm61xcVn7z2XbNRuk5vtpFj2KNd1rcH1TsRPql9FtyIq+iMQph6GG4GABKI95cYp7r5jsKFohRUn+9ZKIBu7Ft5wPRNr/j7AigYT1x77Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kqDh5ntcAez8YrGnHmsPrgh1eh+pG5B/NIX7at9J/YE=;
+ b=ppbfz5QPitUDh6M/6zsSZj+5jS94EgkXLyePqusI8ADhGGpjfZfv8kD03wrv5iw79smNytxw1FSswBrBebLyb6BdjPosEcR8RXrKGQzNzSmswGo5JtfIHgPG65zJpC93ehb4eLdoPUJIkzpw77XmKyAakITSQ8JbGo16gdTwxZ8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL3PR12MB6642.namprd12.prod.outlook.com (2603:10b6:208:38e::15)
+ by MW3PR12MB4490.namprd12.prod.outlook.com (2603:10b6:303:2f::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Thu, 10 Jul
+ 2025 18:53:52 +0000
+Received: from BL3PR12MB6642.namprd12.prod.outlook.com
+ ([fe80::aacd:a6d8:e180:46bc]) by BL3PR12MB6642.namprd12.prod.outlook.com
+ ([fe80::aacd:a6d8:e180:46bc%5]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
+ 18:53:51 +0000
+Message-ID: <d4beb853-12a4-43ec-96af-9f6a7881600f@amd.com>
+Date: Thu, 10 Jul 2025 12:53:48 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 3/9] dt-bindings: power: Add AMD Versal power domain
+ bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Gregory Williams <gregory.williams@amd.com>, ogabbay@kernel.org,
+ michal.simek@amd.com, robh@kernel.org
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250702155630.1737227-1-gregory.williams@amd.com>
+ <20250702155630.1737227-4-gregory.williams@amd.com>
+ <6f4f68af-7b24-480f-8dae-372098b437fc@kernel.org>
+Content-Language: en-US
+From: "Williams, Gregory" <gregoryw@amd.com>
+In-Reply-To: <6f4f68af-7b24-480f-8dae-372098b437fc@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR03CA0015.namprd03.prod.outlook.com
+ (2603:10b6:806:2d3::22) To BL3PR12MB6642.namprd12.prod.outlook.com
+ (2603:10b6:208:38e::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR12MB6642:EE_|MW3PR12MB4490:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8015b98b-3e66-422b-6a49-08ddbfe31caa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?T1dZOUs5ZFZjRnVCbG1rM29hL3piWnpzTXpsRjNCaW1hT0ZGcGFxWG11UWNE?=
+ =?utf-8?B?VWxjdGNQWlQxNlROSCs2ZFRPMmRRL0RsRFlpSm5vZUlUMEhWbFV1NkZvM0Ju?=
+ =?utf-8?B?TnpVWGl4Wk9ydko5MzdkMXVVRzNHOTNOYlNnWDlrUjhHeThoUjZaQVRWUEVF?=
+ =?utf-8?B?Q3RZWnhIeWdUQ0g4UGFQbFZ5c1VVZnV0WGh1QkJqWG1CUjB5QjVCSXhPOUdy?=
+ =?utf-8?B?aHJyOU9OQmd5QUJkRTBxS1F2d1J0eUJHV1c4SFBZaWxsM3k4SmoycHBFdkNE?=
+ =?utf-8?B?UkVpUkpzTmdkd0lRLzZrNTF5a25TUzBXZzU1Rld4UFJVRjRFZXlGYUxMdVFw?=
+ =?utf-8?B?YWtUY1NhTzJCckJCUHFiQTNlU1pVNDRyOGVLU1pRakEwZFJtYm5NWHZlVS9T?=
+ =?utf-8?B?YjZjbEhxU2F1VGx5dnY4SDdCeGNIMjBma3FWaElaSTdZZXJuNDJOVm9yNjZY?=
+ =?utf-8?B?SUdhLzlWOHkvSUdYb3ZkblZxQmovYmhHMzF3Vis5OUwwSEpDOUcyeGgzc2ta?=
+ =?utf-8?B?Y2s1NGJ0clkxczdTR3YvRkQ2Z0tnK051NzdYWngwcEprSGhKK2pnVjJocXMx?=
+ =?utf-8?B?em4xZDd4Sml2MFJNOXQzMXVKNnFrQ0t5bFhBdnJIdVp5MXdRaFBCKzJzZ0lC?=
+ =?utf-8?B?WGxvSkNJQU9heHZtTXlUNVVJeHlmNmloSFU3akJuZWYvNXFXbU5xZlpXMyt2?=
+ =?utf-8?B?TTJHZ1Y2a3owY1VFNDJVeUROY29xREcvUU1RZmROd3ZyRVc5UEdlZmNHbXRC?=
+ =?utf-8?B?bXBlaElYb2JqNGIvREFjWnNJWmM0bm5oOXp5di9RU1A5cVhlL09ib2FnU1h0?=
+ =?utf-8?B?NVl3ZkFNMjRVdjRtL3cxaDZnaGFxNlRmb05xUVE4b2xWQnhreW9GVlZ6SzV0?=
+ =?utf-8?B?WHpUUmRtb3ZvYU9YcEgrYTFTZDZVVUhPTFc3YzZJRXNnTlFqdDlOY3NyMExn?=
+ =?utf-8?B?TmxGckFBSGxMcHNmeU1vR29UczRwL0JLWmJQSjdsR0dDVFJDMmpvQURjUGpJ?=
+ =?utf-8?B?RnZQK09qZzV0RjVUbklLVWxlS0EvcWpJcVBVcEdUWGJDWnlsa1psWk4xN0N0?=
+ =?utf-8?B?VUoyUHVWbFN4VVlIRkVqMFpNU0dJVmZUUkkzYzAxMXYxd1JQT2NLMFZIOWE5?=
+ =?utf-8?B?bmRSNHd6WE5nK2VrT1NxN0ZKTEZjbDFrUjBxQ3JGT3dzUFV2TEVZT0UzcENV?=
+ =?utf-8?B?ZGlxTGZ6Rm1jVGl3UlRIRlN0UnU5S1dDY29SN05maHN5cWhIZm93Uk5XM2tz?=
+ =?utf-8?B?MTFxVnhVOCttZEo0SjZOeW5xTi96YllrelI2eUJ1emh3dnFaNGhVeFY3VG1Y?=
+ =?utf-8?B?anVobVpFVGRqTU12YjNIWm1HM2d5SG1HdUxSYUkvQ3hDL0Y1ZHNsSjU2V0o3?=
+ =?utf-8?B?YkxiNWluMnBiNlZWdU9IY2lKNjhlT2pNWmxNOUdKRTJ6a3RFTW93L01hSXdx?=
+ =?utf-8?B?MHpYdlJLRGQ4R25RQWN2RGR6Z1BPUFdkamVURll5YzNFd1dqOGVWcXF2ZXV0?=
+ =?utf-8?B?WnpQK3FIbnlXTndTem5TZkp0WlRCd3NjSDZlUWhiZEtFcmlFdytwRERxSFlI?=
+ =?utf-8?B?MFd0Y1ZmRjlNTEh3aElsaWhqdTlpQjltUzZSZGNSWWVvMkZPdmxWUTduT05L?=
+ =?utf-8?B?TGg0QzdyMVI3TXIyQ0FEQUtGS2puSXBndklhUUR1UjlUTnpYOGdJSEpJclJK?=
+ =?utf-8?B?dlUzeFB4UmdPQVUrMjFzOG5CK3NxV0JOUlVFcDVpaUhlcWgxeFIyeEhLWUIz?=
+ =?utf-8?B?RWV2aXpWUmJhcjZWNGdYaWhPdWZIeEhzVnpsRzhHSkdBWTkzTjV1QzBGSlRC?=
+ =?utf-8?B?NmlPQk9DK2ZacCtXaUcrZmc5UHR3cnhSeVlMNkh1N1Y5dHpqbjgyZ3RTb2Fx?=
+ =?utf-8?B?YjdraFJqeUk5RFEydFdCSzhZSUFiYTE4VktIYTFNWlY0KzJhdGVqTFlGOVNh?=
+ =?utf-8?Q?0X/EmE+iJLg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6642.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UGdSZ00wVmJIWG92VHRmdC9XazBFLzl5dGQvOHdEaEg5VHpNcmxFU1psOVJl?=
+ =?utf-8?B?ZUFCc2ZGMFdmZnVjZHlCWVd6ZEVUQjhCdzZrZWRvT0I0R0IxTDhLNUJqY20x?=
+ =?utf-8?B?N29GTEczaFQ4MnE0eHl5SEFzU0gzR1k2dUlXajFkNDdiOXQ2S1BvQnBqaGFP?=
+ =?utf-8?B?Y1hieGpCVk5vVFUvWTBqS3NkL05zcVhWVDA3VnlDSW83VHY4eUdJSFdsOTh1?=
+ =?utf-8?B?ajFlaklGaHBydTZvUXFSMzlvQ3hEQk03TXVmMkVDN1k2UjUzRUdsRG5VYkUw?=
+ =?utf-8?B?WFAvL2FYQURPWnlqTEI3RStFbnRJOFVLbkpPTGs2cmlIS2QrRlRJQXp0ZjNu?=
+ =?utf-8?B?cmJnS05wTDZ0dURuTUovbVY3TFUwUGZ1ZHdWdmp1MWc3YVhZRDJ1V1hQRWlE?=
+ =?utf-8?B?SW5VZzQ4Z05PaUMxT3J5YllqTTdCOHRYWkNRL1B3SHBaWWRPR1YwSlFFemgz?=
+ =?utf-8?B?NXBxby9talR6ZkJLRjVOTkVlZEtFYWF5djJtQzVvNERJdlpoNEU0Z1cxT0s3?=
+ =?utf-8?B?b3hTOEgxWFJQYUhaL09UeWhCb1ZpalhNNXpFTS9MaEJVOG1SU2tzQnlJQmp5?=
+ =?utf-8?B?UkZxUGlGUlBpUzR6bUVob0lzSmw1K3VSNEs0UC82MnVoVjA3N3NvTlBiSUVa?=
+ =?utf-8?B?bzByT0JVK3V6TFo4UEVxa21KOUU3ZEhlYlkraFBuekhyZ3JwbkdaWlJSdXZw?=
+ =?utf-8?B?aXpWUW9ZYmVDK0lGblkzV202L0JuUERaaGZ6bld1S3gxV01LNDNRcTFla3or?=
+ =?utf-8?B?THMrL2Jhc3NxandkTTJsQy9wT3h5alhYR2VSbEdBNzFZT3lOSHN5cUdTQ3VM?=
+ =?utf-8?B?d3ZZbkJ0OVdNZ3IvcWIxVTVZZ3AyVDgrNjBvTTltRm5aZTZVbFUrK3lBVFFR?=
+ =?utf-8?B?L1l4bUpwSXErc1ViWUY2blVNd2l5L2hzRVcwakFCTHVNY3JSa0VuWURZVm1y?=
+ =?utf-8?B?T3A0b0ErZkdHNDN3TUNXR3JYWjdMZWxvUUc5dHEyYytxaFNNREUyRWpRdm1v?=
+ =?utf-8?B?Yzlyc2k3UjFxK0g1UXh1VWdQS0hEVU0vVUFLcnZCY2JjRGFsUTV0T3RYS2pl?=
+ =?utf-8?B?S3JyQ05SQlRrekFmNTVnS3duWE1vbUFCdG9DeXRwbUJqRUpPM0xKa21DRnI0?=
+ =?utf-8?B?N0VpNVRBcmdtRnU1VkwwYUhCbWxrVFJHOXB2U2lDT05jTVNtU0tXLzM0WFhz?=
+ =?utf-8?B?ME4rRzZxWmNRV3ZLN3pnUXhkUmdpM1JpOVk1K2xQZTMxVkNvYW9qNE1LakVT?=
+ =?utf-8?B?NTl1NXNVYXhkSm15dVdHTUUrSk1aV3k5MzEwVjdxaEN5ODB4SUpKVGt6OUpN?=
+ =?utf-8?B?WHhPZnNNcExFdzh2MFpxVXA2Y1dCYk0yVFV3YzF0MmxZWVpyMkJKbEhvKzVP?=
+ =?utf-8?B?Y0xDR0t5cDk4Y2JuZDRBNFlkYTE4d21Fd1VsMWplNmlVRG5QdmdkS2grajha?=
+ =?utf-8?B?a3hrb0JqeWliNHA0WTN2S0o1eEhjYWpjQ0VKRklFY09DOStrWHNLTkh3cmpU?=
+ =?utf-8?B?dUx3cnQ1eVFVbmREZXAvMFJudldIS3Zwc2lOd0R2Rmd0am5wWUtOWGY1a3FP?=
+ =?utf-8?B?eE55ejVmN01YRGtDcWRTK0tZSU1DVXBIVkpxakl5NXh0TGhORnNQQjR0ZFZ0?=
+ =?utf-8?B?SExOcFlyazd3M2dueWw1VGhlTStrNnRPelhvY3BoUmtGQmsyOUhmdytOeUo4?=
+ =?utf-8?B?TzNSMngwUFR0OE9HcVpvWlRiOG92RFA0V3ZOTGY2MUJQalJTK0FoRWRheVlX?=
+ =?utf-8?B?ekZzVXFBZW1iUU44RkhUMXMxWVdLWmFhSW10NWZVUXNsTFcwSVlWSDFFZXk2?=
+ =?utf-8?B?dWV3Q244Mm1weFYxS0FXT0h0NkdJZHVJYU42VjllL1o5RWtHLy9kQU1WcWYy?=
+ =?utf-8?B?N3gzM2dPNGIxV1psOWNPYURCUWR3NU9paDhrNndkR0dOYWw2M3JMVmhDNDRS?=
+ =?utf-8?B?YUx0YVl0blgrNnZCWDl2TlpYWC9IZGw4MEtZdE9YczFic0xJRFRmUGN6b1pG?=
+ =?utf-8?B?d0FoN09neTJWN3JyS08vWjdZOVE0T3Vyb3R5dXJmc2cxUVdZV2pxOUlDMll6?=
+ =?utf-8?B?YUF5RXZRSERyU2RDMVhFTnoxUmxhbVo4UG1MVHZ3ck1GRTlaK1RRemZBc2xQ?=
+ =?utf-8?Q?v3QJtluxS+xzCK/zOHhZk6F5g?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8015b98b-3e66-422b-6a49-08ddbfe31caa
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6642.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 18:53:51.8135
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CL6vm8NnvAotMtMDtsHydsaK4SS6aiTYfbl+lax/5o/e2oamZyajL95EWQygBVIikKPQauvFExzrYDZBRfck6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4490
 
-On Thu, 10 Jul 2025 14:17:18 -0400 Sean Anderson wrote:
-> On 7/10/25 13:52, Jakub Kicinski wrote:
-> > On Thu, 10 Jul 2025 13:40:33 -0400 Sean Anderson wrote:  
-> >> I see this is marked "Changes Requested" in patchwork. However, I don't
-> >> believe that I need to change anything until the above commit is merged
-> >> into net/main. Will you be merging that commit? Or should I just resend
-> >> without changes?  
-> > 
-> > The patch must build when posted. If it didn't you need to repost.  
+
+
+On 7/3/2025 12:43 AM, Krzysztof Kozlowski wrote:
 > 
-> It builds on net/main. Which is what I posted for. The CI applied it to net-next/main.
+> On 02/07/2025 17:56, Gregory Williams wrote:
+>> Define Versal power domain value macros.
+>>
+>> Signed-off-by: Gregory Williams <gregory.williams@amd.com>
+>> ---
+>>  include/dt-bindings/power/xlnx-versal-power.h | 55 +++++++++++++++++++
+> 
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC (and consider --no-git-fallback argument, so you will
+> not CC people just because they made one commit years ago). It might
+> happen, that command when run on an older kernel, gives you outdated
+> entries. Therefore please be sure you base your patches on recent Linux
+> kernel.
+> 
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be
+> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> patches to the patchset.
+> </form letter>
+> 
+> 
+>>  1 file changed, 55 insertions(+)
+>>  create mode 100644 include/dt-bindings/power/xlnx-versal-power.h
+>>
+>> diff --git a/include/dt-bindings/power/xlnx-versal-power.h b/include/dt-bindings/power/xlnx-versal-power.h
+>> new file mode 100644
+>> index 000000000000..effbc70e5a12
+>> --- /dev/null
+>> +++ b/include/dt-bindings/power/xlnx-versal-power.h
+>> @@ -0,0 +1,55 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) */
+>> +/*
+>> + *  Copyright (C) 2019 - 2021 Xilinx, Inc.
+>> + *  Copyright (C) 2024 Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_VERSAL_POWER_H
+>> +#define _DT_BINDINGS_VERSAL_POWER_H
+>> +
+>> +#define PM_DEV_RPU0_0                                (0x18110005U)
+>> +#define PM_DEV_RPU0_1                                (0x18110006U)
+> 
+> Bindings ID start from 0 or 1 and are decimal numbers. None of these are
+> bindings (and commit msg does not explain here anything).
+> 
+> Also, where is the compatible using these? Why is this a separate patch?
+In 'Submitting DT binding patches' it says: "The Documentation/ and include/dt-bindings/ portion of the patch should be a separate patch".
+This define was only used in the device tree binding example, I see the issue with this and will remove for V2.
 
-Damn, I see your point now, sorry :/
-So in net-next we'll have to drop the phy_driver_is_genphy_10g() ?
+Thanks,
+Greg
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
 
-I think it may be best if we turn this into an explicit merge
-conflict, IOW if you could post both net and net-next version
-I will merge them at the same time. Upstream trees like CI or
-linux-next will have easier time handling a git conflict than
-a build failure. Does that make sense? For the net-next version
-describe it from the perspective of the net patch already being
-merged and you're writing the "-next" version of the patch.
-I'll edit in the git hash of the net commit when applying.
 
