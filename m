@@ -1,62 +1,61 @@
-Return-Path: <linux-kernel+bounces-724684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31371AFF5F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:32:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C44EFAFF5F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 196841BC89D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:32:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E40803B7217
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B7F51022;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5277372636;
 	Thu, 10 Jul 2025 00:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leZPM5MG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLSoxCcZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A4A79EA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC14EB672
 	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752107551; cv=none; b=XV+3P6fc4S4PpxMXQMDrKjgctpwBZVoPaFiG2wobH3bd9InaSWR3u1pZVs4rDNZO5387EQ+mq48SMQXG3Vs3WQtqlUpqBYupKYrqTwENEcYq7W+UUl0oNlRbbbNpzrXvArQtEIgkX2XBuVEi7qnYk9zrPouhV+IgdBC48MmskMU=
+	t=1752107551; cv=none; b=SURycitaluHW0273GmAxQ0lAqR4ZkltfaDxWvtSDi/2XphPaf9J3/FzusuZ3Osy9PqLiaJILfEXjFvilLy8Rn0O1Uk3j6IrmWLldM5/vEqDYGqWUhmdAD82pp0ObbDz3NoENj0NZJNH5lIA4OfDyGb3VIQ/JVPUqyHcaMgO6Duo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752107551; c=relaxed/simple;
-	bh=VMkehqEglV0PNHoEULj2WvYVKtMA6UZI68rGYcKAX+A=;
+	bh=vQqrhoGSR+WKR28YzxztOGwiKAKirp5vAByB76774lw=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=J50cUpzEsRb1JrlgGAM5960vh0QNs9Q6F5h/n2fp2BpptPiQFWkx23U2VjiLYu8VsIZ9TFE6OV8sMxyA29i2FzGa+Fzn8OVF7YT1g8i3WaDAyxdx+oz9o60HXANzqPGyF8MjURd/N+iWghnscu8/4dTYL5tKIPThJy//5S4u230=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leZPM5MG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19E8CC4CEEF;
+	 Content-Type; b=ug8i/CE0KJSFyXB74zZEazA/bXF+dwzmETvS+nTvCNjeyw/P+UROUZmAOZqa5aq/CtJR7X/EX5n3oIYe4CD4b/H9DCKG+aJkNS33ZTzehEnQr4IoGpCQVpSwRjqUXVcwP3lmSIdWHpJZA0TarBErJf6NCbtqPehmz/1kMv5Dt1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLSoxCcZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A0BC4CEF8;
 	Thu, 10 Jul 2025 00:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1752107551;
-	bh=VMkehqEglV0PNHoEULj2WvYVKtMA6UZI68rGYcKAX+A=;
+	bh=vQqrhoGSR+WKR28YzxztOGwiKAKirp5vAByB76774lw=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=leZPM5MGY2kbpwsEIkx6XllrRhNnasguIygCDOB5qPLct32/UcPQw5ndJwajRm2RA
-	 4iY1aznkwI/lLtEuH/9cKs9sjq6d8a5H4nRojO4/jfxrDLz+2Va52CJ3yYrsaneFqV
-	 TcZ+xtYKlkPEBiJ1Vd/Uktfq+oFFYLK817T1txqIBPEb97cyK+/YldJZipVeg1E/Iw
-	 haqyov3jGNOSKmXEf+rvdQoXZSMU4m05DDMCPw0WYRjP8dit4XnTx7JuBTvqcQRolV
-	 Z9NkaHXYvVDLMrQ1CXjk5Ual/XJx3lrIRvsWVmK0cp36jwY7LlkcYQRuPeQwJuY0q+
-	 auWYEciCjttBA==
+	b=fLSoxCcZnDkD4YrzFqT/fSdaI2kqxiJS46bjuANiKM8PsBvQ2RqQMkXlPl8xYdDzl
+	 K/3AZpvD5Vyni/MJb6j257M9tQA2qa2x7Hh3X/bzMdMEd7xBLOvlODkVl725J02a6O
+	 ZT6RsQVSiYKngB+PxTb3f67S6rL+aJnQgJhvZ+TWeRQwxGLqpYlCgPqiivABtBhLTD
+	 v0TORBb/2xKWVur2hl/KMV1/AW+JKPDi4H9DRLCH6KzG6qloq7rlkHd4ZJT+raOveG
+	 Da9Fvc4JZMWsLhWQRMwX6qzJHOtoJFkRtilaAnunIdJdF/3vShkkCIKoxJz2HdyviZ
+	 YR39SdseVWztw==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1uZfDH-00000001WNo-2rTi;
+	id 1uZfDH-00000001WOI-3YLr;
 	Wed, 09 Jul 2025 20:32:35 -0400
-Message-ID: <20250710003235.532464704@kernel.org>
+Message-ID: <20250710003235.703485893@kernel.org>
 User-Agent: quilt/0.68
-Date: Wed, 09 Jul 2025 20:31:57 -0400
+Date: Wed, 09 Jul 2025 20:31:58 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- John Ogness <john.ogness@linutronix.de>,
- Gabriele Monaco <gmonaco@redhat.com>,
- Nam Cao <namcao@linutronix.de>
-Subject: [for-next][PATCH 01/12] rv: Add #undef TRACE_INCLUDE_FILE
+ Nam Cao <namcao@linutronix.de>,
+ Petr Mladek <pmladek@suse.com>
+Subject: [for-next][PATCH 02/12] printk: Make vprintk_deferred() public
 References: <20250710003156.209859354@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,37 +67,54 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Nam Cao <namcao@linutronix.de>
 
-Without "#undef TRACE_INCLUDE_FILE", there could be a build error due to
-TRACE_INCLUDE_FILE being redefined. Therefore add it.
+vprintk_deferred() is useful for implementing runtime verification
+reactors. Make it public.
 
-Also fix a typo while at it.
-
-Cc: John Ogness <john.ogness@linutronix.de>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/f805e074581e927bb176c742c981fa7675b6ebe5.1752088709.git.namcao@linutronix.de
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/rv/rv_trace.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/printk.h   | 7 +++++++
+ kernel/printk/internal.h | 1 -
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/rv/rv_trace.h b/kernel/trace/rv/rv_trace.h
-index 422b75f58891..99c3801616d4 100644
---- a/kernel/trace/rv/rv_trace.h
-+++ b/kernel/trace/rv/rv_trace.h
-@@ -129,8 +129,9 @@ DECLARE_EVENT_CLASS(error_da_monitor_id,
- #endif /* CONFIG_DA_MON_EVENTS_ID */
- #endif /* _TRACE_RV_H */
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 5b462029d03c..5d22b803f51e 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -154,6 +154,8 @@ int vprintk_emit(int facility, int level,
  
--/* This part ust be outside protection */
-+/* This part must be outside protection */
- #undef TRACE_INCLUDE_PATH
- #define TRACE_INCLUDE_PATH .
-+#undef TRACE_INCLUDE_FILE
- #define TRACE_INCLUDE_FILE rv_trace
- #include <trace/define_trace.h>
+ asmlinkage __printf(1, 0)
+ int vprintk(const char *fmt, va_list args);
++__printf(1, 0)
++int vprintk_deferred(const char *fmt, va_list args);
+ 
+ asmlinkage __printf(1, 2) __cold
+ int _printk(const char *fmt, ...);
+@@ -214,6 +216,11 @@ int vprintk(const char *s, va_list args)
+ {
+ 	return 0;
+ }
++static inline __printf(1, 0)
++int vprintk_deferred(const char *fmt, va_list args)
++{
++	return 0;
++}
+ static inline __printf(1, 2) __cold
+ int _printk(const char *s, ...)
+ {
+diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+index 48a24e7b309d..bbed41ad29cf 100644
+--- a/kernel/printk/internal.h
++++ b/kernel/printk/internal.h
+@@ -72,7 +72,6 @@ int vprintk_store(int facility, int level,
+ 		  const char *fmt, va_list args);
+ 
+ __printf(1, 0) int vprintk_default(const char *fmt, va_list args);
+-__printf(1, 0) int vprintk_deferred(const char *fmt, va_list args);
+ 
+ void __printk_safe_enter(void);
+ void __printk_safe_exit(void);
 -- 
 2.47.2
 
