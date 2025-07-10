@@ -1,86 +1,64 @@
-Return-Path: <linux-kernel+bounces-726227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A4EB009C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:19:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2493B009C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC634A31F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0FD76148D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76D82EFD81;
-	Thu, 10 Jul 2025 17:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52E72F0C6A;
+	Thu, 10 Jul 2025 17:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kftSpZ9Y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g+HwFXFo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759B022FDF2
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC822F0C4E;
+	Thu, 10 Jul 2025 17:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752167889; cv=none; b=g54SnRvUmDLNbveGOcCMwwWC93GSaP/tAOXgpVHJ1JnTkQqEJIE5KcHxtSCx/CJfODDuvv2R4QqbwQ3vXIIl2ISHq4drL2dJXIkt1zJPoHMYwvWXmn6rZicf2UywlMDwWgWUvy/aLiZWD5VK7LmlL1548ro0xgkkBmSwYy+AZNo=
+	t=1752167912; cv=none; b=gtQayUirfk/uFkaApG5dTsKtVmlE4sV+ADppTd73/9RiZs8yiKg+MO0SEGT1j56I1ANV49Qx79J69YGdMKl1FQK3uZnyCiLEgYC2/COgp4urOJkL+6K0pR6H4sn2cfeTqdKySLjKik0d0Jkm6GJolgLjMA9VBFs/yyBcK80RxAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752167889; c=relaxed/simple;
-	bh=AMvH8CbgflCSwtZv4m6a1RA/Wg9jDTGoMyT6/VZgH/o=;
+	s=arc-20240116; t=1752167912; c=relaxed/simple;
+	bh=5gyg9rYJ+egrYstYAbgunAN1HeUaP9Gl1TjTxT96v8U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eG8CjAKPS/lUAxtHGzfMGS2ArNt0xLHIyRwHva1uCG7OQvqFFZdbVTfXQmUnEAza+n5pjKaQqGbbLqpUFfCDuW60F6YbBbtWZsi/rhLUeSL6o5g3Ef/6wdhw0dIkugwLdbnakVKjkV/ADd8VRhVWOADxLb+m/GrrQTr9nWwIOG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kftSpZ9Y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A9FxIs009948
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:18:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ar7cVymq/jtUHBmvH1VZaUyciNOHi8uWBeFm9Lj+JaM=; b=kftSpZ9YXjb9tP8z
-	JAa7GP/C5N1nGxlH9A8arpDhrAqIcgd0Ga9o0P84DK05+Q7dKtyGNZt6b8HMn2tw
-	2ORX65/2UdoBSPG0ncP6NiYWtDVilajBiYoZ6j+5CahLCPbwt4t8lyz9oZ8rUkB5
-	tmZWZN+HNChoCB6+SRBUW4I1tS2X3FifvuGUeLC2qUMcNERFtPWQ27xtQePftVGY
-	H5SdSLyPMSLonbwuZYQFzVQHI43CrnNINhkcycur23ivtvSTguMNk/IHaQh8e8c+
-	x1KfD1I4AVZIIxD8PhiiccHeNDKBbgGNNU51RDnTtnRF11rxnwvnNfHsIZ5/Uw/3
-	o+Vzeg==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47sm9dwshe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:18:06 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-748e6457567so1829984b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:18:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752167885; x=1752772685;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ar7cVymq/jtUHBmvH1VZaUyciNOHi8uWBeFm9Lj+JaM=;
-        b=fIz5gjvPu2nSbgGnsyPVQoDWlaD/3yrpHAySOjvi/98Gf4HhhXN8DNb2b8SrJYZkso
-         f64pvSXwOd1xXgQIiAlFUX/YVyPU2XCzmclTAb4KF0OPxbZk3Jy1/EAIb3qh41AH1Xd2
-         Lel2AlEzwTj+e8vVuhpyixC1aCqE5C6kTuUchbDj6KPqI+MQrM/vGeS6VMCmLCZELc9v
-         E8f+dRsu+FbnETu6rqkTY42KVN+pavWd86nGOjPryBQO++oGBMVxGwFNQKcbKge0wwN+
-         eVCDsayfJmd1ETJDhumukSgoKcXknAIpd6ffTfj52wxecK5j4uKAlKCOez/kwI1BF4s3
-         OL8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWar+U3e0zRWvZE8CzQAnjo5GfZM/xFVe89ZxT0kY21owhRgKsMi8aJ35WsKC3QR+O7paxrZ/3Xrosjz+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzHqzMtkd4SvZ2+tUG7ossGXvCJmSM8n2RzbIlYrONqf0+JbfP
-	Hwa6knW019tv5szACel1f2W72LsZJjJeyjJOj5y650kPa/o+2LAfopfQku6RrbLkG44Msukk93K
-	Wjivjg3bAAv4hL9Q8TkktOeHfJmlFtghQBAE72oWCRlrFVkS7gWqpmczal8vXmN5SzlQ=
-X-Gm-Gg: ASbGncvQ86upMJ/P/AY6U1tqsFRdmNTuSbY7hVYEIHiNpb4GVAFVIqtRBEoS1LYllk9
-	yRrx0LF/3WhN4noR/vZJD9nU4tRE9ip1qJahszTV0hgN+Rn53rAPwbKID1844N7IoqxCVNMKtON
-	BUokyfPMPVl9xT1gTHO8EBmnPsc6EAyR0kQDgdXtB1Hn/I1oQGtDQbTiiAsrNYubMieohBG74Ek
-	mEmZ3QA0OjPwGsGJVz0for0BETSgt4txssUnBimyNnsNPgn+KKAdn5e6DxIigpRBDuW5GqcbsRI
-	bsdvAs9891JT5UclMuwBtcMBz3rltD3FZfmzBQ7yWuera7J3XAU=
-X-Received: by 2002:a05:6a20:729e:b0:21f:9b24:321b with SMTP id adf61e73a8af0-22fc57e7824mr8500611637.20.1752167884941;
-        Thu, 10 Jul 2025 10:18:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHffsp+s2THEsKwd99/2YsGeT6E/wKdQJkZlm+vr/bjKBhhIbOq/IXrxnXy0oU1VYAbUwh2SA==
-X-Received: by 2002:a05:6a20:729e:b0:21f:9b24:321b with SMTP id adf61e73a8af0-22fc57e7824mr8500573637.20.1752167884443;
-        Thu, 10 Jul 2025 10:18:04 -0700 (PDT)
-Received: from [192.168.29.92] ([49.43.227.1])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe72ea8bsm2779997a12.76.2025.07.10.10.17.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 10:18:04 -0700 (PDT)
-Message-ID: <304d71ca-5773-4fa6-aece-50f92b70c77f@oss.qualcomm.com>
-Date: Thu, 10 Jul 2025 22:47:53 +0530
+	 In-Reply-To:Content-Type; b=eQcfzbqr/h92qv8ThudGDQ0DP3/8B+0WoKZfwZSzRC6DvkAnHbiupOQZzdkVxBPtkNl9er1YGu7lGNF07YVWK+SWF7CGvrrfbuYQ5Anbc2PUcf27tqADTjDaZCKJ0Yx/NBJmfyZgO2u/gJW71VJ4UVz3GMyqnOCcCZYexL/YZwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g+HwFXFo; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752167910; x=1783703910;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5gyg9rYJ+egrYstYAbgunAN1HeUaP9Gl1TjTxT96v8U=;
+  b=g+HwFXFoTdnNRpvBZ24iMlf+M0oHUcPDwnpXCbBvpsJFQSShmRlRkyLL
+   WwXTGYArI97AwFU9E/7YVUO++BarGYti/ztbGHhF2cR/eNkrWTTAMbcvU
+   ovF8kTHl4noJ3YAvvmN30PnNUzaEY/QxRKqmxhUP1LwVBzapw5vL5NZnA
+   mgwv/Cui5ukSG7Izziex7xDK9iBFd3DTCjQ6CwYukUBkWFBSYnBl7T9It
+   imPqNxGg3YfbVqEBeACPF8Ag6QU3Hkfw42vX+boz6eEruHfxjHCUbSQqj
+   pnE/zeIknUXhEqB7YNwbTHEo0Wgmcp8Aee6ptQeqA2WDYLUFCPsBAxWkn
+   w==;
+X-CSE-ConnectionGUID: NaVweL+cSl+4VrbGJvscvw==
+X-CSE-MsgGUID: 0yf4tNqjQ9mYewgUqCBbTw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="53678045"
+X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
+   d="scan'208";a="53678045"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 10:18:30 -0700
+X-CSE-ConnectionGUID: lzbY+D7oQ7mK/+Z1Gp8Alg==
+X-CSE-MsgGUID: eBp5sAI/Q9iYYWQsxRdpnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
+   d="scan'208";a="156494179"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.242]) ([10.125.110.242])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 10:18:28 -0700
+Message-ID: <45c254fe-fd74-46e7-bf06-5614810f7193@intel.com>
+Date: Thu, 10 Jul 2025 10:18:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,127 +66,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] bus: mhi: keep device context through suspend cycles
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-        Youssef Samir <quic_yabdulra@quicinc.com>,
-        Matthew Leung <quic_mattleun@quicinc.com>, Yan Zhen <yanzhen@vivo.com>,
-        Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-        Alex Elder <elder@kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
-        Sujeev Dias <sdias@codeaurora.org>,
-        Julia Lawall <julia.lawall@lip6.fr>, John Crispin <john@phrozen.org>,
-        Muna Sinada <quic_msinada@quicinc.com>,
-        Venkateswara Naralasetty <quic_vnaralas@quicinc.com>,
-        Maharaja Kennadyrajan <quic_mkenna@quicinc.com>, mhi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
-Cc: kernel@collabora.com
-References: <20250630074330.253867-1-usama.anjum@collabora.com>
- <20250630074330.253867-4-usama.anjum@collabora.com>
- <b72b3635-1c09-444f-98f5-30fcc219b297@oss.qualcomm.com>
- <c40f13e8-7420-4046-880d-7c72620fc021@collabora.com>
+Subject: Re: [RFC PATCH 18/20] cxl/pmem: Add support of cxl lsa 2.1 support in
+ cxl pmem
+To: Neeraj Kumar <s.neeraj@samsung.com>, dan.j.williams@intel.com,
+ dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com
+Cc: a.manzanares@samsung.com, nifan.cxl@gmail.com, anisa.su@samsung.com,
+ vishak.g@samsung.com, krish.reddy@samsung.com, arun.george@samsung.com,
+ alok.rathore@samsung.com, neeraj.kernel@gmail.com,
+ linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, gost.dev@samsung.com, cpgs@samsung.com
+References: <20250617123944.78345-1-s.neeraj@samsung.com>
+ <CGME20250617124058epcas5p2324bd3b1bf95d47f553d90fdc727e50d@epcas5p2.samsung.com>
+ <592959754.121750165383213.JavaMail.epsvc@epcpadp2new>
 Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <c40f13e8-7420-4046-880d-7c72620fc021@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: QNTylPatn27AnxSrTKfXbr1whHI3Z9_T
-X-Authority-Analysis: v=2.4 cv=W7k4VQWk c=1 sm=1 tr=0 ts=686ff5ce cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=4nqOr+EkFiuPl9GB/B4vcQ==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=QX4gbG5DAAAA:8 a=zOkQIraDPy1jB-BB_0EA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
- a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-ORIG-GUID: QNTylPatn27AnxSrTKfXbr1whHI3Z9_T
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDE0NyBTYWx0ZWRfX/UyKh3MogcaW
- hvi4ap5jfp9+c0gk4FfD2KL38B07qpGTB2Gk4eh7Cm43jjBXHn5QYm7kCVEs2Vb3ONIbbAxD1ct
- 0yrw4DbwAFuDVEDAvUt2R2iYaQDgcluI6HAdgZfd6CJ5QJ7LJsJMRjncBw2/bgv/uQS6WPIhr5u
- wBeMSkVqh7786ftkLQEsGo/tNtpP4WDLb2E0Lfh/b5wrp2ZZhe4VAftFmZpIccJPlc/AE9ETfaA
- nJqWOwJonxbq1Zh8orasTtZVvphBu0/+ySzM/HDifth5/F0YxT7t63Hy5pJOJ7PQExv8pUo3MW7
- GjeYrudaLYUn3zP5Wdii9u6PP8kz/9/856DfFrywQ9f2jXUVNSkyi6mheDPhVLL3kmtUMpXl5/+
- BL5eYzK9HJ0RvUw9i6vLQ43Am6m6+c8ImumoE6gns15asa56AzuVLccE9DLHaGVKeRSGFlBS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_04,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 phishscore=0
- mlxlogscore=999 priorityscore=1501 impostorscore=0 malwarescore=0 mlxscore=0
- adultscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507100147
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <592959754.121750165383213.JavaMail.epsvc@epcpadp2new>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-On 7/10/2025 8:37 PM, Muhammad Usama Anjum wrote:
-> On 7/8/25 3:15 PM, Krishna Chaitanya Chundru wrote:
->>
->>
->> On 6/30/2025 1:13 PM, Muhammad Usama Anjum wrote:
->>> Don't deinitialize the device context while going into suspend or
->>> hibernation cycles. Otherwise the resume may fail if at resume time, the
->>> memory pressure is high and no dma memory is available.
->>>
->>> Tested-on: WCN6855 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
->>>
->>> Fixes: 3000f85b8f47 ("bus: mhi: core: Add support for basic PM operations")
->>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->>> ---
->>>    drivers/bus/mhi/host/init.c | 11 ++++++-----
->>>    1 file changed, 6 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
->>> index 2e0f18c939e68..8f56e73fdc42e 100644
->>> --- a/drivers/bus/mhi/host/init.c
->>> +++ b/drivers/bus/mhi/host/init.c
->>> @@ -1133,9 +1133,11 @@ int mhi_prepare_for_power_up(struct mhi_controller *mhi_cntrl)
->>>          mutex_lock(&mhi_cntrl->pm_mutex);
->>>    -    ret = mhi_init_dev_ctxt(mhi_cntrl);
->> mhi init dev ctxt also initializes the ring pointers to base value,
->> I think we should take care of them also ?
-> Are you referring to mhi_rings? They are getting initialized inside
-> mhi_init_dev_ctxt() and de-initialized in __mhi_deinit_dev_ctxt(). That's
-> why I've not handled them separately.
+On 6/17/25 5:39 AM, Neeraj Kumar wrote:
+> Add support of cxl lsa 2.1 using NDD_CXL_LABEL flag. It also creates cxl
+> region based on region information parsed from LSA.
 > 
-Maybe I was not clear in my previous comment/not a correct place to do
-the comment.
-
-My point you are not freeing __mhi_deinit_dev_ctxt as part of suspend,
-that means we are expecting device will continue to use the rp and wr 
-pointers of ring as the previous i.e before suspend pointers.
-
-What if PCIe keeps link in D3cold as part of system suspend, will the
-device able to handle the previous rp & wp of ring. I don't think
-device can handle this.
-
-- Krishna Chaitanya.
->>
->> - Krishna Chaitanya.
->>> -    if (ret)
->>> -        goto error_dev_ctxt;
->>> +    if (!mhi_cntrl->mhi_ctxt) {
->>> +        ret = mhi_init_dev_ctxt(mhi_cntrl);
->>> +        if (ret)
->>> +            goto error_dev_ctxt;
->>> +    }
->>>          ret = mhi_read_reg(mhi_cntrl, mhi_cntrl->regs, BHIOFF, &bhi_off);
->>>        if (ret) {
->>> @@ -1212,8 +1214,6 @@ void mhi_deinit_dev_ctxt(struct mhi_controller *mhi_cntrl)
->>>    {
->>>        mhi_cntrl->bhi = NULL;
->>>        mhi_cntrl->bhie = NULL;
->>> -
->>> -    __mhi_deinit_dev_ctxt(mhi_cntrl);
->>>    }
->>>      void mhi_unprepare_after_power_down(struct mhi_controller *mhi_cntrl)
->>> @@ -1234,6 +1234,7 @@ void mhi_unprepare_after_power_down(struct mhi_controller *mhi_cntrl)
->>>        }
->>>          mhi_deinit_dev_ctxt(mhi_cntrl);
->>> +    __mhi_deinit_dev_ctxt(mhi_cntrl);
->>>    }
->>>    EXPORT_SYMBOL_GPL(mhi_unprepare_after_power_down);
->>>    
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+>  drivers/cxl/pmem.c | 59 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
 > 
+> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
+> index ffcebb8d382f..2733d79b32d5 100644
+> --- a/drivers/cxl/pmem.c
+> +++ b/drivers/cxl/pmem.c
+> @@ -58,6 +58,63 @@ static const struct attribute_group *cxl_dimm_attribute_groups[] = {
+>  	NULL
+>  };
+>  
+> +static int match_ep_decoder(struct device *dev, void *data)
+> +{
+> +	struct cxl_decoder *cxld = to_cxl_decoder(dev);
+> +
+> +	if (!cxld->region)
+> +		return 1;
+> +	else
+> +		return 0;
+> +}
+
+return !cxld->region;
+
+
+> +
+> +static struct cxl_decoder *cxl_find_free_decoder(struct cxl_port *port)
+> +{
+> +	struct device *dev;
+> +
+> +	dev = device_find_child(&port->dev, NULL, match_ep_decoder);
+> +	if (!dev)
+> +		return NULL;
+> +
+> +	return to_cxl_decoder(dev);
+> +}
+> +
+> +static int create_pmem_region(struct nvdimm *nvdimm)
+> +{
+> +	struct cxl_nvdimm *cxl_nvd;
+> +	struct cxl_memdev *cxlmd;
+> +	struct cxl_nvdimm_bridge *cxl_nvb;
+> +	struct cxl_pmem_region_params *params;
+> +	struct cxl_root_decoder *cxlrd;
+> +	struct cxl_decoder *cxld;
+> +	struct cxl_region *cxlr;
+> +
+
+probably need a lockdep_assert_held(&cxl_region_rwsem).
+
+> +	if (!nvdimm)
+> +		return -ENOTTY;
+
+-ENODEV?
+
+> +
+> +	if (!nvdimm_has_cxl_region(nvdimm))
+> +		return 0;
+> +
+> +	cxl_nvd = nvdimm_provider_data(nvdimm);
+> +	params = nvdimm_get_cxl_region_param(nvdimm);
+> +	cxlmd = cxl_nvd->cxlmd;
+> +	cxl_nvb = cxlmd->cxl_nvb;
+> +	cxlrd = cxlmd->cxlrd;
+> +
+> +	/* FIXME: Limitation: Region creation only when interleave way == 1 */
+> +	if (params->nlabel == 1) {
+> +		cxld = cxl_find_free_decoder(cxlmd->endpoint);
+> +		cxlr = cxl_create_pmem_region(cxlrd, cxld, params,
+> +				atomic_read(&cxlrd->region_id));
+> +		if (IS_ERR(cxlr))
+> +			dev_dbg(&cxlmd->dev, "Region Creation failed\n");
+
+return PTR_ERR(cxlr); ?
+
+> +	} else {
+> +		dev_dbg(&cxlmd->dev, "Region Creation is not supported with iw > 1\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int cxl_nvdimm_probe(struct device *dev)
+>  {
+>  	struct cxl_nvdimm *cxl_nvd = to_cxl_nvdimm(dev);
+> @@ -74,6 +131,7 @@ static int cxl_nvdimm_probe(struct device *dev)
+>  		return rc;
+>  
+>  	set_bit(NDD_LABELING, &flags);
+> +	set_bit(NDD_CXL_LABEL, &flags);
+
+Ok here's the NDD_CXL_LABEL set. I think the driver should be probing the label index block and retrieve the label version and determine how to support from there instead of hard coding a flag. 
+
+>  	set_bit(NDD_REGISTER_SYNC, &flags);
+>  	set_bit(ND_CMD_GET_CONFIG_SIZE, &cmd_mask);
+>  	set_bit(ND_CMD_GET_CONFIG_DATA, &cmd_mask);
+> @@ -86,6 +144,7 @@ static int cxl_nvdimm_probe(struct device *dev)
+>  		return -ENOMEM;
+>  
+>  	dev_set_drvdata(dev, nvdimm);
+> +	create_pmem_region(nvdimm);
+>  	return devm_add_action_or_reset(dev, unregister_nvdimm, nvdimm);
+>  }
+>  
+
 
