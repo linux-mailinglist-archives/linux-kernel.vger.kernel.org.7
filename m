@@ -1,357 +1,635 @@
-Return-Path: <linux-kernel+bounces-725330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7EAAFFD9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:10:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 543C9AFFDA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 007F3483F8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:10:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92ABB5A4128
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199DF28FFC6;
-	Thu, 10 Jul 2025 09:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1D028DB48;
+	Thu, 10 Jul 2025 09:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QNPTeQr+"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pLs7fQvS"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B4F28ECC0;
-	Thu, 10 Jul 2025 09:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B7128D8C2
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752138635; cv=none; b=SSMEQpeDkO4MHjhcCYhBg4/t1qE8FnitrMnlVlzReceWsNfYABjL4X+l7vSeOGVrXG7mp3IHDxPtKlG+CD38gpQzBHomollTA0WljGxrCWmTeS+KQAtBygMT6aNAV9GqfyTGlcKu5HRGoiQmA0+MRnNQ/YozUu7jIWW8+cKf8ic=
+	t=1752138689; cv=none; b=rZE4iUgNvyhTg5WUyrW0rJe3bRVGAZCPU9ODtmbmMNwekvHvr6oWdHfPnV9FRaJXQHyjJt/cYsDMPg4+4a2jl4o2YC90KbrWQ3yDWs0s4rh9MQ+/iB6yfpzolgkzTq3SsImsqlPhM2iW4TK8j97CnY9Lsv8DK6fjMyHppUnlkYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752138635; c=relaxed/simple;
-	bh=KnQLeV/muA9zmcPpgnW5VbMVrTzSV8M0rsvTF3LBqxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gER6lQiDhkdpEPyr8iytoAEtnChmaUuqmZuDBIY8g1igMHGmnkr9pjjH793f68J5YrN1koFT9PRpZrO/C4dcieuzvN7J6p0xelsPOVWCAUhM2/D/cTY8mip35j7mQDhqzMPZViNZ+JJFa3e+0i6njAzOJg7DLyJFg6fPXHlRo7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=QNPTeQr+; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (unknown [78.208.207.146])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B18E7C0B;
-	Thu, 10 Jul 2025 11:10:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752138602;
-	bh=KnQLeV/muA9zmcPpgnW5VbMVrTzSV8M0rsvTF3LBqxA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QNPTeQr+a2cRLw7XRTh+kjj+if9f/5JnsJvs69DfVjKYIYLCQ50RCkTHob1dKtzcA
-	 awpdJIWOCzoIaLBPthhWNTN2QrrgwnqRX/Vw1hDwj/tc7KKJn6hdPts8RQY1ZD888g
-	 q0phSQMERsSQQDfKEvqgFP0AJjCjZN9/ive80a78=
-Date: Thu, 10 Jul 2025 11:10:26 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Dan Scally <dan.scally@ideasonboard.com>, 
-	Dafna Hirschfeld <dafna@fastmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/8] media: uapi: Introduce V4L2 extensible params
-Message-ID: <b6b5pmk3flqfminyrccmespqhbznqqfn2ggn2ooqomflcoqun6@maoza7zuoq2r>
-References: <20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com>
- <20250708-extensible-parameters-validation-v1-1-9fc27c9c728c@ideasonboard.com>
- <9b12b035-a80d-4d12-a039-daa94d13280e@ideasonboard.com>
- <yydzeg53koeawjc3vtzwfnq5x6avmv4ep53bcxff6kvzzu36jl@qp37ojw2drug>
- <78006c71-592b-4f54-93ed-5f4b21b5bc33@ideasonboard.com>
- <gemjiujyal7jf6gq7vd5wemriqkz7knxmkoe76fgmhhto6xzqu@zgy4r4ynaoe7>
+	s=arc-20240116; t=1752138689; c=relaxed/simple;
+	bh=3Kp2lL3c5bPezatIHuV8iC4EKTnIBC9oP8yrNWjQJ70=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uppMgh+iCwWE1LJqXLMQtqEvB9iB4qlJ9u0i1T8j4OOhlhbl0HuftOrNPYyN0AVu7cL5t0j3jTcM98FAU0ZSJimQrKdQYzX7A7dna3w2xvN6tRxXefMyNldMKVkH94uc8O3NyRness8H09faUW0J2IMSQNayYoXnmyqv21XL4Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pLs7fQvS; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a510432236so595069f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 02:11:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752138685; x=1752743485; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OKAR3rf4mzMzM/j7JiGXgY9bLFcj2b58tTeLzbaqoAo=;
+        b=pLs7fQvSE6veKD0D6ksh06Qm042XyPVBrcLhpOu2nuOfpyDKggAhU9zhmjVs11AQbQ
+         5UcjxTWCwMw59tNUNjr201P83smffI0T0R9QhUKgpMeqyn61+lbeas8JoW1sny/6zVLc
+         LR7zJ6gVUtkUkFZkGIndcq+BV8HBBbV+8KYCJQOPXYio6E0ecuK7C5Iz2H96usAqwoUf
+         5IlQR5wlGRxVN1p5o4P7UYGoIQqAlXthU9mRFNMDss70wkQV8+s6kqfIrjQNr1bDFRhP
+         0aJsboLVZ5gt4e24dsyD4R9/HVPUEFAfOU77fvBdu2H6u3Ox8/Pp231rbx72HZQru83c
+         8Z7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752138685; x=1752743485;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OKAR3rf4mzMzM/j7JiGXgY9bLFcj2b58tTeLzbaqoAo=;
+        b=WrwJ3VXELES4e1pm1kuhylXq2OxqDoxB+uZWBX8e2NO/De5blb+DNy70tPOYAaHZCd
+         MYgAVv995VPoQl21ALR7uyisCTumCzOzoCy7APqvKEv2wm8m8uFbgcNDgM5zeuMnbJGU
+         bEzrXOQCUItKqed8Z1cQNfnRsGKOPToMmOpj0uifsv05knittfN6/ewLLzIHonTvg1OX
+         SrGCf+Vqwl5pwreIqp6paIpC/0coedO4CNPc9o0ScxhL2ormF5FpoeM6tL6VPuLHj2N1
+         kyjzAY2kN34Y1ZmKktxJN83ZfwKA3vdlhnjvKAm9rrsHM1eDJXHmT7uluxUhnREuiVIA
+         rGzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJtAy1QA8lMSEkZSjkQRe7faftNJ4DQv7qtioL12wrk9LJKDSWuOzgjk9DGjqxBTzq/qpC9yD4BCYq990=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7wA3raEeCJtZLTsyggConMqu6drwMQxgdy0tMv87wxkLtB2uB
+	ysXBjwdwv/icaGBx02PiVxuzoDT4qHwvelK3mIIDko4MZA4eSB/vCS6Xd2dydqcVYXE=
+X-Gm-Gg: ASbGncvuGVDmr17g4/v/eAvG2cgVNWXz2221U+wumcOw0opb6Lx+QApEMkFm09pY6Mp
+	JnmRxOi0xZDzV6Nhzgh0YVDPAU6AcSBXl3bV85FVsTytoJ4fwwXZ78ejgBrxnBeLGL7seHrT5EV
+	vXoyS8DXikWSHWldygv/9vhU92wH16Xts8yrcIVLFwVyszdD7Id0c5/tsxFfpJnYqbK85S/Bksl
+	Wh9dwpuJW1PftHHm7lzqmPjtacapgFiUcu8Yu92YOsbUPCStKcOK1LrDtnddcT8M5JTOPaouJjW
+	hn1mAv3ew3+O9XmysOHMhOlVhxzD6JMugr1q1XF+tq6V6N0xQ0gh/pkIFtTyrQ==
+X-Google-Smtp-Source: AGHT+IGycRS6fSRqcP2Oa3hZlpuCwYHD4j+AVDmp25ICqMzbzE4rwVF462heSULw4o+KLwX9MkZC9w==
+X-Received: by 2002:a05:6000:643:b0:3a4:f72a:b18a with SMTP id ffacd0b85a97d-3b5e8680562mr1699621f8f.26.1752138684537;
+        Thu, 10 Jul 2025 02:11:24 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:9fcc:5953:3d1a:6b41])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8dc9268sm1317632f8f.41.2025.07.10.02.11.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 02:11:24 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>,
+  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>,  Jaroslav Kysela <perex@perex.cz>,
+  Takashi Iwai <tiwai@suse.com>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+  jiebing.chen@amlogic.com,  linux-sound@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  jian.xu@amlogic.com,  shuai.li@amlogic.com,
+  zhe.wang@amlogic.com
+Subject: Re: [PATCH v5 5/6] clk: meson: axg-audio: Add the mclk pad div for
+ s4 chip
+In-Reply-To: <20250710-audio_drvier-v5-5-d4155f1e7464@amlogic.com> (jiebing
+	chen via's message of "Thu, 10 Jul 2025 11:35:41 +0800")
+References: <20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com>
+	<20250710-audio_drvier-v5-5-d4155f1e7464@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 10 Jul 2025 11:11:23 +0200
+Message-ID: <1j5xg0qukk.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <gemjiujyal7jf6gq7vd5wemriqkz7knxmkoe76fgmhhto6xzqu@zgy4r4ynaoe7>
+Content-Type: text/plain
 
-Hi Dan
- one correction
+On Thu 10 Jul 2025 at 11:35, jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org> wrote:
 
-On Thu, Jul 10, 2025 at 09:15:54AM +0200, Jacopo Mondi wrote:
-> Hi Dan
+> From: jiebing chen <jiebing.chen@amlogic.com>
 >
-> On Wed, Jul 09, 2025 at 02:18:07PM +0100, Dan Scally wrote:
-> > Hi Jacopo
-> >
-> > On 09/07/2025 12:53, Jacopo Mondi wrote:
-> > > Hi Dan,
-> > >     thanks for the comments
-> > >
-> > > On Wed, Jul 09, 2025 at 12:33:17PM +0100, Dan Scally wrote:
-> > > > Hi Jacopo - thanks for the patches
-> > > >
-> > > > On 08/07/2025 11:40, Jacopo Mondi wrote:
-> > > > > Introduce v4l2-extensible-params.h in the Linux kernel uAPI.
-> > > > >
-> > > > > The header defines two types that all drivers that use the extensible
-> > > > > parameters format for ISP configuration shall use to build their own
-> > > > > parameters format.
-> > > > >
-> > > > > The newly introduce type v4l2_params_block represent the
-> > > > > header to be prepend to each ISP configuration block and the
-> > > > > v4l2_params_buffer type represent the base type for the configuration
-> > > > > parameters buffer.
-> > > > >
-> > > > > The newly introduced header is not meant to be used directly by
-> > > > > applications which should instead use the platform-specific ones.
-> > > > >
-> > > > > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > > > > ---
-> > > > >    MAINTAINERS                                       |   6 ++
-> > > > >    include/uapi/linux/media/v4l2-extensible-params.h | 106 ++++++++++++++++++++++
-> > > > >    2 files changed, 112 insertions(+)
-> > > > >
-> > > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > > index 658543062bba3b7e600699d7271ffc89250ba7e5..49a9329e5fe8874bdbaca13946ea28bd80134cb3 100644
-> > > > > --- a/MAINTAINERS
-> > > > > +++ b/MAINTAINERS
-> > > > > @@ -25968,6 +25968,12 @@ F:	drivers/media/i2c/vd55g1.c
-> > > > >    F:	drivers/media/i2c/vd56g3.c
-> > > > >    F:	drivers/media/i2c/vgxy61.c
-> > > > > +V4L2 EXTENSIBLE PARAMETERS FORMAT
-> > > > > +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > > > > +L:	linux-media@vger.kernel.org
-> > > > > +S:	Maintained
-> > > > > +F:	include/uapi/linux/media/v4l2-extensible-params.h
-> > > > > +
-> > > > >    VF610 NAND DRIVER
-> > > > >    M:	Stefan Agner <stefan@agner.ch>
-> > > > >    L:	linux-mtd@lists.infradead.org
-> > > > > diff --git a/include/uapi/linux/media/v4l2-extensible-params.h b/include/uapi/linux/media/v4l2-extensible-params.h
-> > > > > new file mode 100644
-> > > > > index 0000000000000000000000000000000000000000..ed37da433c6b1a34523b6a9befde5c0dee601cfb
-> > > > > --- /dev/null
-> > > > > +++ b/include/uapi/linux/media/v4l2-extensible-params.h
-> > > > > @@ -0,0 +1,106 @@
-> > > > > +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR MIT) */
-> > > > > +/*
-> > > > > + * Video4Linux2 extensible configuration parameters base types
-> > > > > + *
-> > > > > + * Copyright (C) 2025 Ideas On Board Oy
-> > > > > + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > > > > + */
-> > > > > +
-> > > > > +#ifndef _UAPI_V4L2_PARAMS_H_
-> > > > > +#define _UAPI_V4L2_PARAMS_H_
-> > > > > +
-> > > > > +#ifndef _UAPI_V4L2_EXTENSIBLE_PARAMS_GUARD_
-> > > > > +/*
-> > > > > + * Note: each ISP driver exposes a different uAPI, where the types layout
-> > > > > + * match (more or less strictly) the hardware registers layout.
-> > > > > + *
-> > > > > + * This file defines the base types on which each ISP driver can implement its
-> > > > > + * own types that define its uAPI.
-> > > > > + *
-> > > > > + * This file is not meant to be included directly by applications which shall
-> > > > > + * instead only include the ISP-specific implementation.
-> > > > > + */
-> > > > > +#error "This file should not be included directly by applications"
-> > > > > +#endif
-> > > > > +
-> > > > > +#include <linux/types.h>
-> > > > > +
-> > > > > +/**
-> > > > > + * struct v4l2_params_block - V4L2 extensible parameters block header
-> > > > struct v4l2_params_block_header would be nicer I think
-> > > >
-> > > That's what I had started with :)
-> > >
-> > > I'm debated between a longer but more explicative name, or a shorter
-> > > one.
-> >
-> >
-> > I vote for longer here but only because I think the phrase "block" applies
-> > more properly to the likes of struct rkisp1_ext_params_bls_config for
-> > example.
->
-> Thanks, I've seen you made a patch to change this!
->
-> >
-> > >
-> > > > > + *
-> > > > > + * This structure represents the common part of all the ISP configuration
-> > > > > + * blocks. Each parameters block shall embed an instance of this structure type
-> > > > > + * as its first member, followed by the block-specific configuration data. The
-> > > > > + * driver inspects this common header to discern the block type and its size and
-> > > > > + * properly handle the block content by casting it to the correct block-specific
-> > > > > + * type.
-> > > > > + *
-> > > > > + * The @type field is one of the values enumerated by each platform-specific ISP
-> > > > > + * block types which specifies how the data should be interpreted by the driver.
-> > > > > + * The @size field specifies the size of the parameters block and is used by the
-> > > > > + * driver for validation purposes.
-> > > > > + *
-> > > > > + * The @flags field is a bitmask of platform-specific control flags.
-> > > > Since we're including flags in this base struct rather than a platform
-> > > > specific subclass I think perhaps we should centralise some flags (which I
-> > > > think is supported by the fact that all three implementations share the same
-> > > > flags so far). Perhaps we could reserve the bottom 8 bits for common flags
-> > > > (like ENABLE / DISABLE) and validate them centrally, and leave the top 8 for
-> > > > platform specific flags. I think we could then drop the platform specific
-> > > > validation for rkisp1 and c3 and just pass null to the helpers, since they
-> > > > do the same thing.
-> > > Yes, that's one of the things I was not sure about... if we should
-> > > centralize flags definition as well or not...
-> >
-> >
-> > I think probably the ability to have both centralised and platform specific ones would be worthwhile
-> >
-> > >
-> > > Knowing that Mali will use the same flags that the two existing
-> > > implementations already have is a good indication that we can probably
-> > > centralize at least the ENABLE/DISABLE ones
-> >
-> >
-> > Yeah
-> >
-> > >
-> > > > > + *
-> > > > > + * Userspace shall never use this type directly but use the platform specific
-> > > > > + * one with the associated data types.
-> > > > Why wouldn't userspace just use these directly? I could see why it might be
-> > > > difficult for the C3 and Rkisp1 which are merged, but for a new
-> > > > implementation couldn't they just use these objects without bothering to
-> > > > define their own?
-> > > >
-> > > mmm, my thinking was that each driver implementation shall define
-> > > their own types because I would expect that they will have to define
-> > > their own meta image format... For v4l2_params_buffer see below, for
-> > > the blocks it might be totally possible to use these type most
-> > > probably..
-> > >
-> > > > If we end up using these objects directly I think it would be nice to have
-> > > > the example code block from the platform specific headers documentation here
-> > > > too.
-> > > >
-> > > > > + *
-> > > > > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_block_type`
-> > > > > + * - Amlogic C3: :c:type:`c3_isp_params_block_type`
-> > > > > + *
-> > > > > + * @type: The parameters block type (platform-specific)
-> > > > > + * @flags: A bitmask of block flags (platform-specific)
-> > > > > + * @size: Size (in bytes) of the parameters block, including this header
-> > > > > + */
-> > > > > +struct v4l2_params_block {
-> > > > > +	__u16 type;
-> > > > > +	__u16 flags;
-> > > > > +	__u32 size;
-> > > > > +} __attribute__((aligned(8)));
-> > > > > +
-> > > > > +/**
-> > > > > + * struct v4l2_params_buffer - V4L2 extensible parameters configuration
-> > > > > + *
-> > > > > + * This struct contains the configuration parameters of the ISP algorithms,
-> > > > > + * serialized by userspace into a data buffer. Each configuration parameter
-> > > > > + * block is represented by a block-specific structure which contains a
-> > > > > + * :c:type:`v4l2_params_block` entry as first member. Userspace populates
-> > > > > + * the @data buffer with configuration parameters for the blocks that it intends
-> > > > > + * to configure. As a consequence, the data buffer effective size changes
-> > > > > + * according to the number of ISP blocks that userspace intends to configure and
-> > > > > + * is set by userspace in the @data_size field.
-> > > > > + *
-> > > > > + * The parameters buffer is versioned by the @version field to allow modifying
-> > > > > + * and extending its definition. Userspace shall populate the @version field to
-> > > > > + * inform the driver about the version it intends to use. The driver will parse
-> > > > > + * and handle the @data buffer according to the data layout specific to the
-> > > > > + * indicated version and return an error if the desired version is not
-> > > > > + * supported.
-> > > > > + *
-> > > > > + * For each ISP block that userspace wants to configure, a block-specific
-> > > > > + * structure is appended to the @data buffer, one after the other without gaps
-> > > > > + * in between nor overlaps. Userspace shall populate the @data_size field with
-> > > > > + * the effective size, in bytes, of the @data buffer.
-> > > > > + *
-> > > > > + * Each ISP driver using the extensible parameters format shall define a
-> > > > > + * type which is type-convertible to this one, with the difference that the
-> > > > > + * @data member shall actually a memory buffer of platform-specific size and
-> > > > > + * not a pointer.
-> > > > Why not just use this object directly? We could provide a helper in
-> > > > v4l2-extensible-params.h that calculates the size of the buffer with a given
-> > > > data array size for the driver's convenience
-> > > The main reason I thought v4l2_params_buffer cannot be used is because
-> > > of the flexible-array at the end of the type
-> > >
-> > > struct v4l2_params_buffer {
-> > > 	__u32 version;
-> > > 	__u32 data_size;
-> > > 	__u8 data[];
-> > > };
-> > >
-> > > vs
-> > >
-> > > struct rkisp1_ext_params_cfg {
-> > > 	__u32 version;
-> > > 	__u32 data_size;
-> > > 	__u8 data[RKISP1_EXT_PARAMS_MAX_SIZE];
-> > > };
-> > >
-> > > I might have missed what you're suggesting here with the helper in
-> > > v4l2-extensible-params.h :)
-> >
-> > So I think a known size is needed to accomodate operations like "memcpy(dst,
-> > src, sizeof(rkisp1_ext_params_cfg))", but with something like...
-> >
-> >
-> > #define v4l2_params_buffer_size(max_params_size) \
-> >
-> >         (offsetof(struct v4l2_params_buffer, data) + max_params_size)
-> >
-> >
-> > then the above operation can be memcpy(dst,
-> > src, v4l2_params_buffer_size(RKISP1_EXT_PARAMS_MAX_SIZE)) instead
->
-> Fine for drivers indeed, my thinking was that we would need to reserve
-> space for userspace to write configuration blocks in...
->
-> However, buffers are allocated by videobuf2 and We could certainly
-> allocate the appropriate size using the vb2 queue 'buf_struct_size' member...
+> Add MCLK pad divider support and expanded LRCLK/SCLK pad count to five.
 
-I was cearly confused. What I should have suggested is using the
-queue_setup() vb2 op to specify the desired plane sizes.
+This does not describe what the change does and you have a fair amount
+of rebasing to do
 
 >
-> I can experiment with that indeed, in the meantime I wonder what
-> maintainers think about this ;)
+> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+> ---
+>  drivers/clk/meson/axg-audio.c | 435 +++++++++++++++++++++++++++++++++++++++++-
+>  drivers/clk/meson/axg-audio.h |   6 +
+>  2 files changed, 439 insertions(+), 2 deletions(-)
 >
-> Thanks
->   j
->
-> >
-> >
-> > Unless I'm missing something that should be enough to drop the driver
-> > specific struct...it seems to work ok anyway
-> >
-> >
-> > Dan
-> >
-> > >
-> > >
-> > > >
-> > > > Thanks
-> > > >
-> > > > Dan
-> > > >
-> > > > > + *
-> > > > > + * Userspace shall never use this type directly but use the platform specific
-> > > > > + * one with the associated data types.
-> > > > > + *
-> > > > > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_cfg`
-> > > > > + * - Amlogic C3: :c:type:`c3_isp_params_cfg`
-> > > > > + *
-> > > > > + * @version: The parameters buffer version (platform-specific)
-> > > > > + * @data_size: The configuration data effective size, excluding this header
-> > > > > + * @data: The configuration data
-> > > > > + */
-> > > > > +struct v4l2_params_buffer {
-> > > > > +	__u32 version;
-> > > > > +	__u32 data_size;
-> > > > > +	__u8 data[];
-> > > > > +};
-> > > > > +
-> > > > > +#endif /* _UAPI_V4L2_PARAMS_H_ */
-> > > > >
+> diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+> index 9df627b142f89788966ede0262aaaf39e13f0b49..7dc1f464bd55fa33ca3260002ed1b3929061f99b 100644
+> --- a/drivers/clk/meson/axg-audio.c
+> +++ b/drivers/clk/meson/axg-audio.c
+> @@ -323,6 +323,16 @@ static const struct clk_parent_data lrclk_pad_ctrl_parent_data[] = {
+>  	AUD_MUX(_name, _reg, 0x7, _shift, 0, _parents,		\
+>  		CLK_SET_RATE_NO_REPARENT)
+>  
+> +#define AUD_MCLK_PAD_MUX(_name, _reg, _shift)					\
+> +	AUD_MUX(_name##_sel, _reg, 0x7, _shift, CLK_MUX_ROUND_CLOSEST,			\
+> +		mclk_pad_ctrl_parent_data, 0)
+> +#define AUD_MCLK_PAD_DIV(_name, _reg, _shift)					\
+> +	AUD_DIV(_name##_div, _reg, _shift, 8, CLK_DIVIDER_ROUND_CLOSEST,			\
+> +		aud_##_name##_sel, CLK_SET_RATE_PARENT)
+> +#define AUD_MCLK_PAD_GATE(_name, _reg, _shift)					\
+> +	AUD_GATE(_name, _reg, _shift, aud_##_name##_div,			\
+> +		 CLK_SET_RATE_PARENT)
+> +
+>  /* Common Clocks */
+>  static struct clk_regmap ddr_arb =
+>  	AUD_PCLK_GATE(ddr_arb, AUDIO_CLK_GATE_EN, 0);
+> @@ -826,6 +836,49 @@ static struct clk_regmap sm1_tdm_sclk_pad_1 = AUD_TDM_PAD_CTRL(
+>  static struct clk_regmap sm1_tdm_sclk_pad_2 = AUD_TDM_PAD_CTRL(
+>  	tdm_sclk_pad_2, AUDIO_SM1_MST_PAD_CTRL1, 8, sclk_pad_ctrl_parent_data);
+>  
+> +static struct clk_regmap s4_tdm_mclk_pad0_sel =
+> +	AUD_MCLK_PAD_MUX(mclk_pad0, AUDIO_S4_MCLK_PAD_CTRL0, 8);
+> +static struct clk_regmap s4_tdm_mclk_pad1_sel =
+> +	AUD_MCLK_PAD_MUX(mclk_pad1, AUDIO_S4_MCLK_PAD_CTRL0, 24);
+> +static struct clk_regmap s4_tdm_mclk_pad2_sel =
+> +	AUD_MCLK_PAD_MUX(mclk_pad2, AUDIO_S4_MCLK_PAD_CTRL1, 8);
+> +
+> +static struct clk_regmap s4_tdm_mclk_pad0_div =
+> +	AUD_MCLK_PAD_DIV(mclk_pad0, AUDIO_S4_MCLK_PAD_CTRL0, 0);
+> +static struct clk_regmap s4_tdm_mclk_pad1_div =
+> +	AUD_MCLK_PAD_DIV(mclk_pad1, AUDIO_S4_MCLK_PAD_CTRL0, 16);
+> +static struct clk_regmap s4_tdm_mclk_pad2_div =
+> +	AUD_MCLK_PAD_DIV(mclk_pad2, AUDIO_S4_MCLK_PAD_CTRL1, 0);
+> +
+> +static struct clk_regmap s4_tdm_mclk_pad_0 =
+> +	AUD_MCLK_PAD_GATE(mclk_pad0, AUDIO_S4_MCLK_PAD_CTRL0, 15);
+> +static struct clk_regmap s4_tdm_mclk_pad_1 =
+> +	AUD_MCLK_PAD_GATE(mclk_pad1, AUDIO_S4_MCLK_PAD_CTRL0, 31);
+> +static struct clk_regmap s4_tdm_mclk_pad_2 =
+> +	AUD_MCLK_PAD_GATE(mclk_pad2, AUDIO_S4_MCLK_PAD_CTRL1, 15);
+> +
+> +static struct clk_regmap s4_tdm_sclk_pad_0 =
+> +	AUD_TDM_PAD_CTRL(tdm_sclk_pad_0, AUDIO_S4_SCLK_PAD_CTRL0, 0, lrclk_pad_ctrl_parent_data);
+> +static struct clk_regmap s4_tdm_sclk_pad_1 =
+> +	AUD_TDM_PAD_CTRL(tdm_sclk_pad_1, AUDIO_S4_SCLK_PAD_CTRL0, 4, lrclk_pad_ctrl_parent_data);
+> +static struct clk_regmap s4_tdm_sclk_pad_2 =
+> +	AUD_TDM_PAD_CTRL(tdm_sclk_pad_2, AUDIO_S4_SCLK_PAD_CTRL0, 8, lrclk_pad_ctrl_parent_data);
+> +static struct clk_regmap s4_tdm_sclk_pad_3 =
+> +	AUD_TDM_PAD_CTRL(tdm_sclk_pad_3, AUDIO_S4_SCLK_PAD_CTRL0, 16, lrclk_pad_ctrl_parent_data);
+> +static struct clk_regmap s4_tdm_sclk_pad_4 =
+> +	AUD_TDM_PAD_CTRL(tdm_sclk_pad_4, AUDIO_S4_SCLK_PAD_CTRL0, 20, lrclk_pad_ctrl_parent_data);
+> +
+> +static struct clk_regmap s4_tdm_lrclk_pad_0 =
+> +	AUD_TDM_PAD_CTRL(tdm_lrclk_pad_0, AUDIO_S4_SCLK_PAD_CTRL1, 0, lrclk_pad_ctrl_parent_data);
+> +static struct clk_regmap s4_tdm_lrclk_pad_1 =
+> +	AUD_TDM_PAD_CTRL(tdm_lrclk_pad_1, AUDIO_S4_SCLK_PAD_CTRL1, 4, lrclk_pad_ctrl_parent_data);
+> +static struct clk_regmap s4_tdm_lrclk_pad_2 =
+> +	AUD_TDM_PAD_CTRL(tdm_lrclk_pad_2, AUDIO_S4_SCLK_PAD_CTRL1, 8, lrclk_pad_ctrl_parent_data);
+> +static struct clk_regmap s4_tdm_lrclk_pad_3 =
+> +	AUD_TDM_PAD_CTRL(tdm_lrclk_pad_3, AUDIO_S4_SCLK_PAD_CTRL1, 16, lrclk_pad_ctrl_parent_data);
+> +static struct clk_regmap s4_tdm_lrclk_pad_4 =
+> +	AUD_TDM_PAD_CTRL(tdm_lrclk_pad_4, AUDIO_S4_SCLK_PAD_CTRL1, 20, lrclk_pad_ctrl_parent_data);
+> +
+>  /*
+>   * Array of all clocks provided by this provider
+>   * The input clocks of the controller will be populated at runtime
+> @@ -1257,6 +1310,182 @@ static struct clk_hw *sm1_audio_hw_clks[] = {
+>  	[AUD_CLKID_EARCRX_DMAC]		= &sm1_earcrx_dmac_clk.hw,
+>  };
+>  
+> +/*
+> + * Array of all S4 clocks provided by this provider
+> + * The input clocks of the controller will be populated at runtime
+> + */
+> +static struct clk_hw *s4_audio_hw_clks[] = {
+> +	[AUD_CLKID_DDR_ARB]		= &ddr_arb.hw,
+> +	[AUD_CLKID_PDM]			= &pdm.hw,
+> +	[AUD_CLKID_TDMIN_A]		= &tdmin_a.hw,
+> +	[AUD_CLKID_TDMIN_B]		= &tdmin_b.hw,
+> +	[AUD_CLKID_TDMIN_C]		= &tdmin_c.hw,
+> +	[AUD_CLKID_TDMIN_LB]		= &tdmin_lb.hw,
+> +	[AUD_CLKID_TDMOUT_A]		= &tdmout_a.hw,
+> +	[AUD_CLKID_TDMOUT_B]		= &tdmout_b.hw,
+> +	[AUD_CLKID_TDMOUT_C]		= &tdmout_c.hw,
+> +	[AUD_CLKID_FRDDR_A]		= &frddr_a.hw,
+> +	[AUD_CLKID_FRDDR_B]		= &frddr_b.hw,
+> +	[AUD_CLKID_FRDDR_C]		= &frddr_c.hw,
+> +	[AUD_CLKID_TODDR_A]		= &toddr_a.hw,
+> +	[AUD_CLKID_TODDR_B]		= &toddr_b.hw,
+> +	[AUD_CLKID_TODDR_C]		= &toddr_c.hw,
+> +	[AUD_CLKID_LOOPBACK]		= &loopback.hw,
+> +	[AUD_CLKID_SPDIFIN]		= &spdifin.hw,
+> +	[AUD_CLKID_SPDIFOUT]		= &spdifout.hw,
+> +	[AUD_CLKID_RESAMPLE]		= &resample.hw,
+> +	[AUD_CLKID_SPDIFOUT_B]		= &spdifout_b.hw,
+> +	[AUD_CLKID_MST_A_MCLK_SEL]	= &sm1_mst_a_mclk_sel.hw,
+> +	[AUD_CLKID_MST_B_MCLK_SEL]	= &sm1_mst_b_mclk_sel.hw,
+> +	[AUD_CLKID_MST_C_MCLK_SEL]	= &sm1_mst_c_mclk_sel.hw,
+> +	[AUD_CLKID_MST_D_MCLK_SEL]	= &sm1_mst_d_mclk_sel.hw,
+> +	[AUD_CLKID_MST_E_MCLK_SEL]	= &sm1_mst_e_mclk_sel.hw,
+> +	[AUD_CLKID_MST_F_MCLK_SEL]	= &sm1_mst_f_mclk_sel.hw,
+> +	[AUD_CLKID_MST_A_MCLK_DIV]	= &sm1_mst_a_mclk_div.hw,
+> +	[AUD_CLKID_MST_B_MCLK_DIV]	= &sm1_mst_b_mclk_div.hw,
+> +	[AUD_CLKID_MST_C_MCLK_DIV]	= &sm1_mst_c_mclk_div.hw,
+> +	[AUD_CLKID_MST_D_MCLK_DIV]	= &sm1_mst_d_mclk_div.hw,
+> +	[AUD_CLKID_MST_E_MCLK_DIV]	= &sm1_mst_e_mclk_div.hw,
+> +	[AUD_CLKID_MST_F_MCLK_DIV]	= &sm1_mst_f_mclk_div.hw,
+> +	[AUD_CLKID_MST_A_MCLK]		= &sm1_mst_a_mclk.hw,
+> +	[AUD_CLKID_MST_B_MCLK]		= &sm1_mst_b_mclk.hw,
+> +	[AUD_CLKID_MST_C_MCLK]		= &sm1_mst_c_mclk.hw,
+> +	[AUD_CLKID_MST_D_MCLK]		= &sm1_mst_d_mclk.hw,
+> +	[AUD_CLKID_MST_E_MCLK]		= &sm1_mst_e_mclk.hw,
+> +	[AUD_CLKID_MST_F_MCLK]		= &sm1_mst_f_mclk.hw,
+> +	[AUD_CLKID_SPDIFOUT_CLK_SEL]	= &spdifout_clk_sel.hw,
+> +	[AUD_CLKID_SPDIFOUT_CLK_DIV]	= &spdifout_clk_div.hw,
+> +	[AUD_CLKID_SPDIFOUT_CLK]	= &spdifout_clk.hw,
+> +	[AUD_CLKID_SPDIFOUT_B_CLK_SEL]	= &spdifout_b_clk_sel.hw,
+> +	[AUD_CLKID_SPDIFOUT_B_CLK_DIV]	= &spdifout_b_clk_div.hw,
+> +	[AUD_CLKID_SPDIFOUT_B_CLK]	= &spdifout_b_clk.hw,
+> +	[AUD_CLKID_SPDIFIN_CLK_SEL]	= &spdifin_clk_sel.hw,
+> +	[AUD_CLKID_SPDIFIN_CLK_DIV]	= &spdifin_clk_div.hw,
+> +	[AUD_CLKID_SPDIFIN_CLK]		= &spdifin_clk.hw,
+> +	[AUD_CLKID_PDM_DCLK_SEL]	= &pdm_dclk_sel.hw,
+> +	[AUD_CLKID_PDM_DCLK_DIV]	= &pdm_dclk_div.hw,
+> +	[AUD_CLKID_PDM_DCLK]		= &pdm_dclk.hw,
+> +	[AUD_CLKID_PDM_SYSCLK_SEL]	= &pdm_sysclk_sel.hw,
+> +	[AUD_CLKID_PDM_SYSCLK_DIV]	= &pdm_sysclk_div.hw,
+> +	[AUD_CLKID_PDM_SYSCLK]		= &pdm_sysclk.hw,
+> +	[AUD_CLKID_MST_A_SCLK_PRE_EN]	= &mst_a_sclk_pre_en.hw,
+> +	[AUD_CLKID_MST_B_SCLK_PRE_EN]	= &mst_b_sclk_pre_en.hw,
+> +	[AUD_CLKID_MST_C_SCLK_PRE_EN]	= &mst_c_sclk_pre_en.hw,
+> +	[AUD_CLKID_MST_D_SCLK_PRE_EN]	= &mst_d_sclk_pre_en.hw,
+> +	[AUD_CLKID_MST_E_SCLK_PRE_EN]	= &mst_e_sclk_pre_en.hw,
+> +	[AUD_CLKID_MST_F_SCLK_PRE_EN]	= &mst_f_sclk_pre_en.hw,
+> +	[AUD_CLKID_MST_A_SCLK_DIV]	= &mst_a_sclk_div.hw,
+> +	[AUD_CLKID_MST_B_SCLK_DIV]	= &mst_b_sclk_div.hw,
+> +	[AUD_CLKID_MST_C_SCLK_DIV]	= &mst_c_sclk_div.hw,
+> +	[AUD_CLKID_MST_D_SCLK_DIV]	= &mst_d_sclk_div.hw,
+> +	[AUD_CLKID_MST_E_SCLK_DIV]	= &mst_e_sclk_div.hw,
+> +	[AUD_CLKID_MST_F_SCLK_DIV]	= &mst_f_sclk_div.hw,
+> +	[AUD_CLKID_MST_A_SCLK_POST_EN]	= &mst_a_sclk_post_en.hw,
+> +	[AUD_CLKID_MST_B_SCLK_POST_EN]	= &mst_b_sclk_post_en.hw,
+> +	[AUD_CLKID_MST_C_SCLK_POST_EN]	= &mst_c_sclk_post_en.hw,
+> +	[AUD_CLKID_MST_D_SCLK_POST_EN]	= &mst_d_sclk_post_en.hw,
+> +	[AUD_CLKID_MST_E_SCLK_POST_EN]	= &mst_e_sclk_post_en.hw,
+> +	[AUD_CLKID_MST_F_SCLK_POST_EN]	= &mst_f_sclk_post_en.hw,
+> +	[AUD_CLKID_MST_A_SCLK]		= &mst_a_sclk.hw,
+> +	[AUD_CLKID_MST_B_SCLK]		= &mst_b_sclk.hw,
+> +	[AUD_CLKID_MST_C_SCLK]		= &mst_c_sclk.hw,
+> +	[AUD_CLKID_MST_D_SCLK]		= &mst_d_sclk.hw,
+> +	[AUD_CLKID_MST_E_SCLK]		= &mst_e_sclk.hw,
+> +	[AUD_CLKID_MST_F_SCLK]		= &mst_f_sclk.hw,
+> +	[AUD_CLKID_MST_A_LRCLK_DIV]	= &mst_a_lrclk_div.hw,
+> +	[AUD_CLKID_MST_B_LRCLK_DIV]	= &mst_b_lrclk_div.hw,
+> +	[AUD_CLKID_MST_C_LRCLK_DIV]	= &mst_c_lrclk_div.hw,
+> +	[AUD_CLKID_MST_D_LRCLK_DIV]	= &mst_d_lrclk_div.hw,
+> +	[AUD_CLKID_MST_E_LRCLK_DIV]	= &mst_e_lrclk_div.hw,
+> +	[AUD_CLKID_MST_F_LRCLK_DIV]	= &mst_f_lrclk_div.hw,
+> +	[AUD_CLKID_MST_A_LRCLK]		= &mst_a_lrclk.hw,
+> +	[AUD_CLKID_MST_B_LRCLK]		= &mst_b_lrclk.hw,
+> +	[AUD_CLKID_MST_C_LRCLK]		= &mst_c_lrclk.hw,
+> +	[AUD_CLKID_MST_D_LRCLK]		= &mst_d_lrclk.hw,
+> +	[AUD_CLKID_MST_E_LRCLK]		= &mst_e_lrclk.hw,
+> +	[AUD_CLKID_MST_F_LRCLK]		= &mst_f_lrclk.hw,
+> +	[AUD_CLKID_TDMIN_A_SCLK_SEL]	= &tdmin_a_sclk_sel.hw,
+> +	[AUD_CLKID_TDMIN_B_SCLK_SEL]	= &tdmin_b_sclk_sel.hw,
+> +	[AUD_CLKID_TDMIN_C_SCLK_SEL]	= &tdmin_c_sclk_sel.hw,
+> +	[AUD_CLKID_TDMIN_LB_SCLK_SEL]	= &tdmin_lb_sclk_sel.hw,
+> +	[AUD_CLKID_TDMOUT_A_SCLK_SEL]	= &tdmout_a_sclk_sel.hw,
+> +	[AUD_CLKID_TDMOUT_B_SCLK_SEL]	= &tdmout_b_sclk_sel.hw,
+> +	[AUD_CLKID_TDMOUT_C_SCLK_SEL]	= &tdmout_c_sclk_sel.hw,
+> +	[AUD_CLKID_TDMIN_A_SCLK_PRE_EN]	= &tdmin_a_sclk_pre_en.hw,
+> +	[AUD_CLKID_TDMIN_B_SCLK_PRE_EN]	= &tdmin_b_sclk_pre_en.hw,
+> +	[AUD_CLKID_TDMIN_C_SCLK_PRE_EN]	= &tdmin_c_sclk_pre_en.hw,
+> +	[AUD_CLKID_TDMIN_LB_SCLK_PRE_EN] = &tdmin_lb_sclk_pre_en.hw,
+> +	[AUD_CLKID_TDMOUT_A_SCLK_PRE_EN] = &tdmout_a_sclk_pre_en.hw,
+> +	[AUD_CLKID_TDMOUT_B_SCLK_PRE_EN] = &tdmout_b_sclk_pre_en.hw,
+> +	[AUD_CLKID_TDMOUT_C_SCLK_PRE_EN] = &tdmout_c_sclk_pre_en.hw,
+> +	[AUD_CLKID_TDMIN_A_SCLK_POST_EN] = &tdmin_a_sclk_post_en.hw,
+> +	[AUD_CLKID_TDMIN_B_SCLK_POST_EN] = &tdmin_b_sclk_post_en.hw,
+> +	[AUD_CLKID_TDMIN_C_SCLK_POST_EN] = &tdmin_c_sclk_post_en.hw,
+> +	[AUD_CLKID_TDMIN_LB_SCLK_POST_EN] = &tdmin_lb_sclk_post_en.hw,
+> +	[AUD_CLKID_TDMOUT_A_SCLK_POST_EN] = &tdmout_a_sclk_post_en.hw,
+> +	[AUD_CLKID_TDMOUT_B_SCLK_POST_EN] = &tdmout_b_sclk_post_en.hw,
+> +	[AUD_CLKID_TDMOUT_C_SCLK_POST_EN] = &tdmout_c_sclk_post_en.hw,
+> +	[AUD_CLKID_TDMIN_A_SCLK]	= &tdmin_a_sclk.hw,
+> +	[AUD_CLKID_TDMIN_B_SCLK]	= &tdmin_b_sclk.hw,
+> +	[AUD_CLKID_TDMIN_C_SCLK]	= &tdmin_c_sclk.hw,
+> +	[AUD_CLKID_TDMIN_LB_SCLK]	= &tdmin_lb_sclk.hw,
+> +	[AUD_CLKID_TDMOUT_A_SCLK]	= &g12a_tdmout_a_sclk.hw,
+> +	[AUD_CLKID_TDMOUT_B_SCLK]	= &g12a_tdmout_b_sclk.hw,
+> +	[AUD_CLKID_TDMOUT_C_SCLK]	= &g12a_tdmout_c_sclk.hw,
+> +	[AUD_CLKID_TDMIN_A_LRCLK]	= &tdmin_a_lrclk.hw,
+> +	[AUD_CLKID_TDMIN_B_LRCLK]	= &tdmin_b_lrclk.hw,
+> +	[AUD_CLKID_TDMIN_C_LRCLK]	= &tdmin_c_lrclk.hw,
+> +	[AUD_CLKID_TDMIN_LB_LRCLK]	= &tdmin_lb_lrclk.hw,
+> +	[AUD_CLKID_TDMOUT_A_LRCLK]	= &tdmout_a_lrclk.hw,
+> +	[AUD_CLKID_TDMOUT_B_LRCLK]	= &tdmout_b_lrclk.hw,
+> +	[AUD_CLKID_TDMOUT_C_LRCLK]	= &tdmout_c_lrclk.hw,
+> +	[AUD_CLKID_TOP]			= &sm1_aud_top.hw,
+> +	[AUD_CLKID_TORAM]		= &toram.hw,
+> +	[AUD_CLKID_EQDRC]		= &eqdrc.hw,
+> +	[AUD_CLKID_RESAMPLE_B]		= &resample_b.hw,
+> +	[AUD_CLKID_TOVAD]		= &tovad.hw,
+> +	[AUD_CLKID_LOCKER]		= &locker.hw,
+> +	[AUD_CLKID_SPDIFIN_LB]		= &spdifin_lb.hw,
+> +	[AUD_CLKID_FRDDR_D]		= &frddr_d.hw,
+> +	[AUD_CLKID_TODDR_D]		= &toddr_d.hw,
+> +	[AUD_CLKID_LOOPBACK_B]		= &loopback_b.hw,
+> +	[AUD_CLKID_CLK81_EN]		= &sm1_clk81_en.hw,
+> +	[AUD_CLKID_SYSCLK_A_DIV]	= &sm1_sysclk_a_div.hw,
+> +	[AUD_CLKID_SYSCLK_A_EN]		= &sm1_sysclk_a_en.hw,
+> +	[AUD_CLKID_SYSCLK_B_DIV]	= &sm1_sysclk_b_div.hw,
+> +	[AUD_CLKID_SYSCLK_B_EN]		= &sm1_sysclk_b_en.hw,
+> +	[AUD_CLKID_EARCRX]		= &earcrx.hw,
+> +	[AUD_CLKID_EARCRX_CMDC_SEL]	= &sm1_earcrx_cmdc_clk_sel.hw,
+> +	[AUD_CLKID_EARCRX_CMDC_DIV]	= &sm1_earcrx_cmdc_clk_div.hw,
+> +	[AUD_CLKID_EARCRX_CMDC]		= &sm1_earcrx_cmdc_clk.hw,
+> +	[AUD_CLKID_EARCRX_DMAC_SEL]	= &sm1_earcrx_dmac_clk_sel.hw,
+> +	[AUD_CLKID_EARCRX_DMAC_DIV]	= &sm1_earcrx_dmac_clk_div.hw,
+> +	[AUD_CLKID_EARCRX_DMAC]		= &sm1_earcrx_dmac_clk.hw,
+> +
+> +};
+> +
+> +static struct clk_hw *audio_clock_pads_hw_clks[] = {
+> +	[AUD_CLKID_TDM_MCLK_PAD0]	= &s4_tdm_mclk_pad_0.hw,
+> +	[AUD_CLKID_TDM_MCLK_PAD1]	= &s4_tdm_mclk_pad_1.hw,
+> +	[AUD_CLKID_TDM_LRCLK_PAD0]	= &s4_tdm_lrclk_pad_0.hw,
+> +	[AUD_CLKID_TDM_LRCLK_PAD1]	= &s4_tdm_lrclk_pad_1.hw,
+> +	[AUD_CLKID_TDM_LRCLK_PAD2]	= &s4_tdm_lrclk_pad_2.hw,
+> +	[AUD_CLKID_TDM_SCLK_PAD0]	= &s4_tdm_sclk_pad_0.hw,
+> +	[AUD_CLKID_TDM_SCLK_PAD1]	= &s4_tdm_sclk_pad_1.hw,
+> +	[AUD_CLKID_TDM_SCLK_PAD2]	= &s4_tdm_sclk_pad_2.hw,
+> +	[AUD_CLKID_TDM_MCLK_PAD0_SEL]		= &s4_tdm_mclk_pad0_sel.hw,
+> +	[AUD_CLKID_TDM_MCLK_PAD1_SEL]       = &s4_tdm_mclk_pad1_sel.hw,
+> +	[AUD_CLKID_TDM_MCLK_PAD0_DIV]		= &s4_tdm_mclk_pad0_div.hw,
+> +	[AUD_CLKID_TDM_MCLK_PAD1_DIV]       = &s4_tdm_mclk_pad1_div.hw,
+> +	[AUD_CLKID_TDM_MCLK_PAD2]	        = &s4_tdm_mclk_pad_2.hw,
+> +	[AUD_CLKID_TDM_MCLK_PAD2_SEL]		= &s4_tdm_mclk_pad2_sel.hw,
+> +	[AUD_CLKID_TDM_MCLK_PAD2_DIV]       = &s4_tdm_mclk_pad2_div.hw,
+> +	[AUD_CLKID_TDM_SCLK_PAD3]	= &s4_tdm_sclk_pad_3.hw,
+> +	[AUD_CLKID_TDM_SCLK_PAD4]	= &s4_tdm_sclk_pad_4.hw,
+> +	[AUD_CLKID_TDM_LRCLK_PAD3]	= &s4_tdm_lrclk_pad_3.hw,
+> +	[AUD_CLKID_TDM_LRCLK_PAD4]	= &s4_tdm_lrclk_pad_4.hw,
+> +
+> +};
+>  
+>  /* Convenience table to populate regmap in .probe(). */
+>  static struct clk_regmap *const axg_clk_regmaps[] = {
+> @@ -1678,6 +1907,177 @@ static struct clk_regmap *const sm1_clk_regmaps[] = {
+>  	&sm1_earcrx_dmac_clk,
+>  };
+>  
+> +static struct clk_regmap *const s4_clk_regmaps[] = {
+> +	&ddr_arb,
+> +	&pdm,
+> +	&tdmin_a,
+> +	&tdmin_b,
+> +	&tdmin_c,
+> +	&tdmin_lb,
+> +	&tdmout_a,
+> +	&tdmout_b,
+> +	&tdmout_c,
+> +	&frddr_a,
+> +	&frddr_b,
+> +	&frddr_c,
+> +	&toddr_a,
+> +	&toddr_b,
+> +	&toddr_c,
+> +	&loopback,
+> +	&spdifin,
+> +	&spdifout,
+> +	&resample,
+> +	&spdifout_b,
+> +	&sm1_mst_a_mclk_sel,
+> +	&sm1_mst_b_mclk_sel,
+> +	&sm1_mst_c_mclk_sel,
+> +	&sm1_mst_d_mclk_sel,
+> +	&sm1_mst_e_mclk_sel,
+> +	&sm1_mst_f_mclk_sel,
+> +	&sm1_mst_a_mclk_div,
+> +	&sm1_mst_b_mclk_div,
+> +	&sm1_mst_c_mclk_div,
+> +	&sm1_mst_d_mclk_div,
+> +	&sm1_mst_e_mclk_div,
+> +	&sm1_mst_f_mclk_div,
+> +	&sm1_mst_a_mclk,
+> +	&sm1_mst_b_mclk,
+> +	&sm1_mst_c_mclk,
+> +	&sm1_mst_d_mclk,
+> +	&sm1_mst_e_mclk,
+> +	&sm1_mst_f_mclk,
+> +	&spdifout_clk_sel,
+> +	&spdifout_clk_div,
+> +	&spdifout_clk,
+> +	&spdifin_clk_sel,
+> +	&spdifin_clk_div,
+> +	&spdifin_clk,
+> +	&pdm_dclk_sel,
+> +	&pdm_dclk_div,
+> +	&pdm_dclk,
+> +	&pdm_sysclk_sel,
+> +	&pdm_sysclk_div,
+> +	&pdm_sysclk,
+> +	&mst_a_sclk_pre_en,
+> +	&mst_b_sclk_pre_en,
+> +	&mst_c_sclk_pre_en,
+> +	&mst_d_sclk_pre_en,
+> +	&mst_e_sclk_pre_en,
+> +	&mst_f_sclk_pre_en,
+> +	&mst_a_sclk_div,
+> +	&mst_b_sclk_div,
+> +	&mst_c_sclk_div,
+> +	&mst_d_sclk_div,
+> +	&mst_e_sclk_div,
+> +	&mst_f_sclk_div,
+> +	&mst_a_sclk_post_en,
+> +	&mst_b_sclk_post_en,
+> +	&mst_c_sclk_post_en,
+> +	&mst_d_sclk_post_en,
+> +	&mst_e_sclk_post_en,
+> +	&mst_f_sclk_post_en,
+> +	&mst_a_sclk,
+> +	&mst_b_sclk,
+> +	&mst_c_sclk,
+> +	&mst_d_sclk,
+> +	&mst_e_sclk,
+> +	&mst_f_sclk,
+> +	&mst_a_lrclk_div,
+> +	&mst_b_lrclk_div,
+> +	&mst_c_lrclk_div,
+> +	&mst_d_lrclk_div,
+> +	&mst_e_lrclk_div,
+> +	&mst_f_lrclk_div,
+> +	&mst_a_lrclk,
+> +	&mst_b_lrclk,
+> +	&mst_c_lrclk,
+> +	&mst_d_lrclk,
+> +	&mst_e_lrclk,
+> +	&mst_f_lrclk,
+> +	&tdmin_a_sclk_sel,
+> +	&tdmin_b_sclk_sel,
+> +	&tdmin_c_sclk_sel,
+> +	&tdmin_lb_sclk_sel,
+> +	&tdmout_a_sclk_sel,
+> +	&tdmout_b_sclk_sel,
+> +	&tdmout_c_sclk_sel,
+> +	&tdmin_a_sclk_pre_en,
+> +	&tdmin_b_sclk_pre_en,
+> +	&tdmin_c_sclk_pre_en,
+> +	&tdmin_lb_sclk_pre_en,
+> +	&tdmout_a_sclk_pre_en,
+> +	&tdmout_b_sclk_pre_en,
+> +	&tdmout_c_sclk_pre_en,
+> +	&tdmin_a_sclk_post_en,
+> +	&tdmin_b_sclk_post_en,
+> +	&tdmin_c_sclk_post_en,
+> +	&tdmin_lb_sclk_post_en,
+> +	&tdmout_a_sclk_post_en,
+> +	&tdmout_b_sclk_post_en,
+> +	&tdmout_c_sclk_post_en,
+> +	&tdmin_a_sclk,
+> +	&tdmin_b_sclk,
+> +	&tdmin_c_sclk,
+> +	&tdmin_lb_sclk,
+> +	&g12a_tdmout_a_sclk,
+> +	&g12a_tdmout_b_sclk,
+> +	&g12a_tdmout_c_sclk,
+> +	&tdmin_a_lrclk,
+> +	&tdmin_b_lrclk,
+> +	&tdmin_c_lrclk,
+> +	&tdmin_lb_lrclk,
+> +	&tdmout_a_lrclk,
+> +	&tdmout_b_lrclk,
+> +	&tdmout_c_lrclk,
+> +	&spdifout_b_clk_sel,
+> +	&spdifout_b_clk_div,
+> +	&spdifout_b_clk,
+> +	&sm1_aud_top,
+> +	&toram,
+> +	&eqdrc,
+> +	&resample_b,
+> +	&tovad,
+> +	&locker,
+> +	&spdifin_lb,
+> +	&frddr_d,
+> +	&toddr_d,
+> +	&loopback_b,
+> +	&sm1_clk81_en,
+> +	&sm1_sysclk_a_div,
+> +	&sm1_sysclk_a_en,
+> +	&sm1_sysclk_b_div,
+> +	&sm1_sysclk_b_en,
+> +	&earcrx,
+> +	&sm1_earcrx_cmdc_clk_sel,
+> +	&sm1_earcrx_cmdc_clk_div,
+> +	&sm1_earcrx_cmdc_clk,
+> +	&sm1_earcrx_dmac_clk_sel,
+> +	&sm1_earcrx_dmac_clk_div,
+> +	&sm1_earcrx_dmac_clk,
+> +};
+> +
+> +static struct clk_regmap *const clk_pads_regmaps[] = {
+> +	&s4_tdm_mclk_pad_0,
+> +	&s4_tdm_mclk_pad_1,
+> +	&s4_tdm_mclk_pad_2,
+> +	&s4_tdm_lrclk_pad_0,
+> +	&s4_tdm_lrclk_pad_1,
+> +	&s4_tdm_lrclk_pad_2,
+> +	&s4_tdm_lrclk_pad_3,
+> +	&s4_tdm_lrclk_pad_4,
+> +	&s4_tdm_sclk_pad_0,
+> +	&s4_tdm_sclk_pad_1,
+> +	&s4_tdm_sclk_pad_2,
+> +	&s4_tdm_sclk_pad_3,
+> +	&s4_tdm_sclk_pad_4,
+> +	&s4_tdm_mclk_pad0_sel,
+> +	&s4_tdm_mclk_pad1_sel,
+> +	&s4_tdm_mclk_pad0_div,
+> +	&s4_tdm_mclk_pad1_div,
+> +	&s4_tdm_mclk_pad2_sel,
+> +	&s4_tdm_mclk_pad2_div,
+> +};
+> +
+>  struct axg_audio_reset_data {
+>  	struct reset_controller_dev rstc;
+>  	struct regmap *map;
+> @@ -1802,7 +2202,8 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+>  	if (IS_ERR(clk))
+>  		return PTR_ERR(clk);
+>  
+> -	ret = device_reset(dev);
+> +	/*some clock control might be no reset*/
+> +	ret = device_reset_optional(dev);
+
+It is not optional on existing SoC.
+
+What about RESET1 bit 0 on S4 ?
+
+>  	if (ret) {
+>  		dev_err_probe(dev, ret, "failed to reset device\n");
+>  		return ret;
+> @@ -1886,6 +2287,30 @@ static const struct audioclk_data sm1_audioclk_data = {
+>  	.max_register = AUDIO_EARCRX_DMAC_CLK_CTRL,
+>  };
+>  
+> +static const struct audioclk_data s4_audioclk_data = {
+> +	.regmap_clks = s4_clk_regmaps,
+> +	.regmap_clk_num = ARRAY_SIZE(s4_clk_regmaps),
+> +	.hw_clks = {
+> +		.hws = s4_audio_hw_clks,
+> +		.num = ARRAY_SIZE(s4_audio_hw_clks),
+> +	},
+> +	.reset_offset = AUDIO_SM1_SW_RESET0,
+> +	.reset_num = 39,
+> +	.max_register = AUDIO_EARCRX_DMAC_CLK_CTRL,
+> +};
+> +
+> +static const struct audioclk_data audioclk_pads_data = {
+> +	.regmap_clks = clk_pads_regmaps,
+> +	.regmap_clk_num = ARRAY_SIZE(clk_pads_regmaps),
+> +	.hw_clks = {
+> +		.hws = audio_clock_pads_hw_clks,
+> +		.num = ARRAY_SIZE(audio_clock_pads_hw_clks),
+> +	},
+> +	.reset_offset = AUDIO_SM1_SW_RESET0,
+> +	.reset_num = 0,
+> +	.max_register = AUDIO_S4_SCLK_PAD_CTRL1,
+> +};
+
+Ok ... now I get it. This is not described anywhere !
+There is no reason from this be in the same file/driver AFAICT.
+
+> +
+>  static const struct of_device_id clkc_match_table[] = {
+>  	{
+>  		.compatible = "amlogic,axg-audio-clkc",
+> @@ -1896,7 +2321,13 @@ static const struct of_device_id clkc_match_table[] = {
+>  	}, {
+>  		.compatible = "amlogic,sm1-audio-clkc",
+>  		.data = &sm1_audioclk_data
+> -	}, {}
+> +	}, {
+> +		.compatible = "amlogic,s4-audio-clkc",
+> +		.data = &s4_audioclk_data
+> +	}, {
+> +		.compatible = "amlogic,clock-pads-clkc",
+> +		.data = &audioclk_pads_data
+> +	}, { },
+>  };
+>  MODULE_DEVICE_TABLE(of, clkc_match_table);
+>  
+> diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
+> index 9e7765b630c96a8029140539ffda789b7db5277a..24233c40171034eba86c699db0200f07555926af 100644
+> --- a/drivers/clk/meson/axg-audio.h
+> +++ b/drivers/clk/meson/axg-audio.h
+> @@ -67,4 +67,10 @@
+>  #define AUDIO_EARCRX_CMDC_CLK_CTRL	0x0D0
+>  #define AUDIO_EARCRX_DMAC_CLK_CTRL	0x0D4
+>  
+> +/* s4 clock pads use new reg base */
+> +#define AUDIO_S4_MCLK_PAD_CTRL0 0x0
+> +#define AUDIO_S4_MCLK_PAD_CTRL1 0x4
+> +#define AUDIO_S4_SCLK_PAD_CTRL0 0x8
+> +#define AUDIO_S4_SCLK_PAD_CTRL1 0xC
+> +
+>  #endif /*__AXG_AUDIO_CLKC_H */
+
+-- 
+Jerome
 
