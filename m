@@ -1,160 +1,182 @@
-Return-Path: <linux-kernel+bounces-726412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A22AB00CFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:22:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30EFDB00CFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 864B95882A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D48DA1C44D66
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C9F2FD881;
-	Thu, 10 Jul 2025 20:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E132FD877;
+	Thu, 10 Jul 2025 20:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTF/m2jZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="prJ9D6SU"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2055.outbound.protection.outlook.com [40.107.212.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8DB2749D1;
-	Thu, 10 Jul 2025 20:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752178918; cv=none; b=m57m45OIXx8PtuWFNIehK8tjyFjRJm42LDXhJX95lZMqsNqmr4fRZiA/mAy1bDBZG6nceohT0jNZf9c8YgATB4DX4NNxBpeBteWLGEyViZ21LswOhtqwHpzM5AZcqw8w3cd/+9NrZ7NTh3tFajRS/fQwfRAy+N27t79M+VTXGfI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752178918; c=relaxed/simple;
-	bh=I/H9BnWKae5+EgQRia3ov8/49jcWJjRuFEhnoiWa0Jc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cLH/W7EsCeXklYaIdN1H/L41wlFINJpHtez4FR8xDvcQzid3Cb5dpGZSUs4221v5UNnrp/SFVQ1djBp/F7SDR5YEo3iQpbV6MQ0yfl6bLgmM8hV2O+M+qwQjsfFJ9Z683JmhQD5ElfEq7Qx0Oo0MN8B4lx22pkp0EQFq4Sw5PrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTF/m2jZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ADB5C4CEE3;
-	Thu, 10 Jul 2025 20:21:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752178918;
-	bh=I/H9BnWKae5+EgQRia3ov8/49jcWJjRuFEhnoiWa0Jc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hTF/m2jZLQEOu/55eqFOHpdTzqZ3hmyLzgZlM/2jdH2T+yBOAZ/3FLgs4XSh4Jbm6
-	 EbJm+YE6HP/0V0OCFyyFrch0U01vnjN2LP9k1THmvGDKtOx/B7SCcDEYcMiPG0BgQ+
-	 gm+OetqlRYPcK33LVX4klARbtSRfTqYDY+jmNN0giJycUZJq40Esr+DuzGD+wD1i+p
-	 TQ0ot+LL14MZSzv8HZZtcYic/eYtaSAVN48vmFjv/8MPinyf01HhYkTGD1XrsTI+0u
-	 vbvw9XbEk1vZzzKShgqUz9yyqz3KKa/JSPuHDfVsa7bEx7SS6e/XgF8QB2bdTnXCe3
-	 DpsHArr/mRIPg==
-Date: Thu, 10 Jul 2025 15:21:56 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Luca Weiss <luca.weiss@fairphone.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: document the Milos Top
- Level Mode Multiplexer
-Message-ID: <hdocf4qsja3i5qlj3qzzgfyibgbwytlkmdoc4n4lvryilez5uf@7bwnbnav3bui>
-References: <20250702-sm7635-pinctrl-v2-0-c138624b9924@fairphone.com>
- <20250702-sm7635-pinctrl-v2-1-c138624b9924@fairphone.com>
- <20250703-daring-burgundy-limpet-a1c97e@krzk-bin>
- <DB293G0PC5P8.13IW22M6DDESM@fairphone.com>
- <a453bd90-b7c7-42eb-b769-b4c87b6dac12@oss.qualcomm.com>
- <424285fb-14a0-452b-8d18-6165d2a78497@kernel.org>
- <3d3g2sq4r7pruu4c2sl2itclx7xuja6inasaicm67t4sx6u5fl@xq5g7h4rabno>
- <20250708171515.GA640511-robh@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63A121CC63
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 20:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752179061; cv=fail; b=dpGedw4nhTSr0BdoHTnDDXHY00bcgn7F3gIXB60iMgdn1VAxd2+7tnVAuCVStmpp20AIG522WN92huvZ8DYj+iGTHUMN2PmKEfF9mETVtbXZAPadtAddiKTPQp17iscQLuVzHw0/mk5bJTYZD+DErW9jSW3Vbpd7NmFjLIr5Kbc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752179061; c=relaxed/simple;
+	bh=29OGNIxe0px1aidYozlrPjJwtPxsR9yFHOkWt6oD18g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mQELBS5SY27LTxxJOCkXH8nnBnOXOh61O3QHD1s8Ww6q24QmK7kIvQkTE9dx8nsdKV7Ou8rUrj10k2p1A5QVndNTsXl0KebGHL5h3p0RpHqIxs2QJ4ZfQOugOwdkESoFNY2KeQiAgwIQnm+j6WGngKQ1XjlfnMOooJfgB2TDDyM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=prJ9D6SU; arc=fail smtp.client-ip=40.107.212.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bS6V8lM96NgQENujSnVg6zRfF8NMBfEC9FMy1hpH2gsBdYxkDZb6vbAYs3KXPXTIOyiz6OiAcEqV7tEMN2pO4+FKZeRMfREmTET9dHMZS7s2AYuJmpC4/cmD+9WbcNofKN6bdNe7yVR1kRwAMJCPwgqVJ9JpDJevEwVkJ7IriMxCRyyAdoz3oYIEtdE3O+kmdMc754KDiWXU78J49sJGnlt9cpJCkFROwQJ1234QJe+PCJku9xbNQWRAlKaUsIa315SGxceERq82Ejf3G5rj6W4CfJdheg1CdBvJilsTE15j7BxEsqZb2fhdYegpFiLmTrQ4jFVNw8inxnMmVQVI7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KvmcJ6ox4F9BTUSGvyPFQ6wauFYpZaUNgHUzgFcyb0A=;
+ b=CzWdMQuJY8YmYGrbo2Z2LBuOYQvQeJFq8BQwBLn6FyhcGCWLNg5mOxe00JxpOjdKVjHW1vy8RheOmE3oc55xGMx45QUhBAHr2CGJr5/eRKLYxB7k2h30kukX6PjtVEzyNldzhKcZm5xlSzFw9B8kWb5QAMQUtIg5jTYUoXgYKof4zRlhmhgfMvYmHxafetfh2doG3a0HdBecZPbd8qTXfBuinGzh9efvCKYP9wNBMMkgwFpJnha0B02f6V9dmgXLR+h/OPbEW5VHnjtQMS/SGknxbWbdRVjWQmTx3+iShR8V4LKdreUNVV4jegoxhVREd0814GsNi36YGDdB5erIwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KvmcJ6ox4F9BTUSGvyPFQ6wauFYpZaUNgHUzgFcyb0A=;
+ b=prJ9D6SUlcPneRWSV82Z7+pMi7kB4d1fk4qoRoGwbyfOTjczlzc8PRDm6XBTrTz+ZrY3KOM6ICErk6Y0KuLDKLf4lIf+YcZwliq+BTRXdJIWXuNY/CHZ34qBxq6WfbKBWQEvnpxBBtqVKtdVUNre8mls/wPxTM+nEta1YGpa5onk5LiJNLnOzHMHu8hmF8v4iELJkDSdtyb702cQ509V0kwuqQpQIo76J8zsywduCtR8/HqniGjfVXHt97aIk0DspWIaQbE13ZFRAvc1LcDJDjrCkN7AUuOlng2VNMmSJ6VarOfl0FBpZt5sWkiQViT7BT9wduu56N2PDpaKYVm6GQ==
+Received: from MW4PR03CA0286.namprd03.prod.outlook.com (2603:10b6:303:b5::21)
+ by IA0PR12MB8206.namprd12.prod.outlook.com (2603:10b6:208:403::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.23; Thu, 10 Jul
+ 2025 20:24:14 +0000
+Received: from CO1PEPF000044F8.namprd21.prod.outlook.com
+ (2603:10b6:303:b5:cafe::24) by MW4PR03CA0286.outlook.office365.com
+ (2603:10b6:303:b5::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.25 via Frontend Transport; Thu,
+ 10 Jul 2025 20:24:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1PEPF000044F8.mail.protection.outlook.com (10.167.241.198) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8943.1 via Frontend Transport; Thu, 10 Jul 2025 20:24:14 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 10 Jul
+ 2025 13:24:07 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 10 Jul 2025 13:24:07 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Thu, 10 Jul 2025 13:24:06 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@nvidia.com>, <kevin.tian@intel.com>
+CC: <yilun.xu@linux.intel.com>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] iommufd: Do not allow _iommufd_object_alloc_ucmd if abort op is set
+Date: Thu, 10 Jul 2025 13:23:54 -0700
+Message-ID: <20250710202354.1658511-1-nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708171515.GA640511-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F8:EE_|IA0PR12MB8206:EE_
+X-MS-Office365-Filtering-Correlation-Id: eac4d5c0-601d-459c-cd3d-08ddbfefbccd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FNeZ/OCBPn4ft/UMphycmGA1oVJjwGNUj9lbgwiIuTt+Rc8xMuFVAN/GTgB9?=
+ =?us-ascii?Q?LRJn1S0opnacqJDUi/uAuPQ8OObkq+IfKgWc42gjJTLDPW9NFlRXTk8yTjpA?=
+ =?us-ascii?Q?GdBbj+IZMAzwXPqXeNdS7G+8T1UDPdTxwi1U35NCgAs7jyNowl3tyKmifSLw?=
+ =?us-ascii?Q?tRFvHGAJ+xn39eibek1AZVrv06dXtv59gQ8BuJhPQWhva4fx7i4enk+uvoOr?=
+ =?us-ascii?Q?SBZTnz3X7ZT9LbADxot/mw3X+J7sJXp7wfys75fwlVjFAIVwKPi+MpTXzuXV?=
+ =?us-ascii?Q?9rs5JCOT5EhXn5u5XIEl/lcojovEcGJ5Ildqx+IxDyD6f9BIncMZxwjjRJSj?=
+ =?us-ascii?Q?Rs8NdJmRnUxaS6JcpQJfmPdfQR/Cf/82jmcSb1v2Mgg0uI+H51a9lG0qJyFo?=
+ =?us-ascii?Q?2xqpBUAZAWo3eoycrOCo40VjRt75GUTmb6z05BdAYqK52XNk+qln39eeMtP6?=
+ =?us-ascii?Q?1iaKk7cgQ8AzVskUc5f/dW3em4+u4ZhVkmHSZf3hhlyYZWZzm8Mx5jEQ2cmt?=
+ =?us-ascii?Q?xuUWj9tPgEnkF+lGVa0tZclavw5oYZ6RlELIXSNjzeV+ozu2XV6RWxntVBqZ?=
+ =?us-ascii?Q?Sw8WNeABk1gzmEku5SHu2ilqk+KsJkWxjPrxYUGxe0kjYaWJzGNY48YfoTrN?=
+ =?us-ascii?Q?W49WFS1QnDr1Z6qwyGlS8afrRTAO28rFLLXetly88W3mccCfA5+VNBmUGLit?=
+ =?us-ascii?Q?0mL5cnm53cgvPOWDLKc+Cwb46NN6biprobkDjDd3JISh6sBdyQsI2rnHGMTH?=
+ =?us-ascii?Q?3+RBRogZ0ZGETN5944fZcW/zirpXgyoRaYup4Sbmwb48y+f3/tr7zNKoWV4Z?=
+ =?us-ascii?Q?9AX9rjuKNC0oRTcGwwIZM0YKpgNk4lNyGY3RM6KJg8m7fEOgWKQY9Stj1Qp7?=
+ =?us-ascii?Q?D/q5Pgyeoyu7pg/vmKR5CxSSl0bBetxWcUCViF0rI33Q1HESCuE2nXfyP9Zk?=
+ =?us-ascii?Q?guZ6zccBtFBQlig5NRC9WqRXamEWmhTsfDGzQVcQobCioEPZrsJhh+K40qzk?=
+ =?us-ascii?Q?nljeHrYc24c5GtI5rUKS+soMVECiT4rZJY4TMHvaOV+vnpUBNXkG+IKldvLu?=
+ =?us-ascii?Q?4fxfcFafE3gXrS5S6OBxkgUCFb/OLtEp40IMkY//KqpJkFuIQOc2TUf91hmA?=
+ =?us-ascii?Q?Wfdknqj2iefSjwprTfZnT8qZGCt3s91oCYBr3/dcE0cfBuG6FmtUu/H6qPyv?=
+ =?us-ascii?Q?lGjbI7pNGEfrlyMDexF3aF7UMi75Gv2o0vetWdMqQ0NCVOmzZ7+m06FhlEgj?=
+ =?us-ascii?Q?Njic7yQEqoyTIp1xvLrIMUU4W3q621WD2FQsY2EHctqwwWXu9oDdLOiUu9Ug?=
+ =?us-ascii?Q?Q+sj6IiwYQr5M0F2CVENBtW4L649QQGj0ECW0g865ezBTAKPFQFkEvT5diu8?=
+ =?us-ascii?Q?GdFR2FiTP8mp/yRvUW8tKjQGOyEX9/3Rozngqaxbv/2Uo/oseKxnj6X1RkT/?=
+ =?us-ascii?Q?hS7ycijkVAaoA4ld/rlRwg35XIh6262OD3F95qsDK6g2AfJbYMUMrw3t+j+U?=
+ =?us-ascii?Q?LJXxTOah+46Ti+2wohBOjbw67NxoSHSGCRRG?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 20:24:14.1730
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: eac4d5c0-601d-459c-cd3d-08ddbfefbccd
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F8.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8206
 
-On Tue, Jul 08, 2025 at 12:15:15PM -0500, Rob Herring wrote:
-> On Thu, Jul 03, 2025 at 12:31:46PM -0500, Bjorn Andersson wrote:
-> > On Thu, Jul 03, 2025 at 01:26:11PM +0200, Krzysztof Kozlowski wrote:
-> > > On 03/07/2025 12:04, Konrad Dybcio wrote:
-> > > > 
-> > > > 
-> > > > On 03-Jul-25 09:44, Luca Weiss wrote:
-> > > >> On Thu Jul 3, 2025 at 9:41 AM CEST, Krzysztof Kozlowski wrote:
-> > > >>> On Wed, Jul 02, 2025 at 05:56:16PM +0200, Luca Weiss wrote:
-> > > >>>> Document the Top Level Mode Multiplexer on the Milos Platform.
-> > > >>>
-> > > >>> What is Milos platform? Does it have some sort of model number how we
-> > > >>> usually expect? Wasn't this SM7325 or similar?
-> > > >>>
-> > 
-> > Milos is the actual name of the SoC.
-> > 
-> > > >>> The problem with such new naming that it awfully sounds like family
-> > > >>> names, so just expand the name and explain it.
-> > > >>
-> > > >> Please go argue with Bjorn/Konrad about this, wasn't my idea.
-> > > >>
-> > > >> https://lore.kernel.org/linux-arm-msm/aGMI1Zv6D+K+vWZL@hu-bjorande-lv.qualcomm.com/
-> > > >> https://lore.kernel.org/linux-arm-msm/b98d305b-247f-415b-8675-50d073452feb@oss.qualcomm.com/
-> > > > 
-> > > > Milos is the "real-est" name of this silicon. All the associated
-> > > > S[AM]|QC[MS]s are just variations of it, with different fusing.
-> > > > 
-> > > > You'll stumble upon it across e.g. firmware build strings, as
-> > > > well as in any documentation pieces.
-> > > > 
-> > > > There are various internal reasons for the switch, but the most
-> > > > obvious external-facing one is not to have the user buy a devkit
-> > > > and wonder whether they should use QCS9100 or QCS9075 DTB, and
-> > > > why there's zero drivers code for these magic numbers (they
-> > > > include SA8775P). We can simply point them to "codename" and
-> > > > all C code will refer to it as well.
-> > > 
-> > > These are different SoCs, optionally with different firmware, so they
-> > > cannot use the same top-level compatible chain. I hope you did not
-> > > propose that.
-> > > 
-> > 
-> > No they are not different SoCs, and that's the problem with the current
-> > naming scheme.
-> > 
-> > > For me list like "qcs9100, sa8775p" is clear enough, but if you want
-> > > "qcs9100, koala-bear" or "brown-bear, koala-bear" it is fine as well.
-> > > You just cannot use koala-bear for all of them.
-> > > 
-> > 
-> > It looks "clear enough", but it's wrong. The problem is that sa8775p,
-> > qca9100, and qcs9075 are the "same" hardware and firmware.
-> > 
-> > The difference between sa8775p and qcs9100 is the reserved-memory map,
-> > the difference between qcs9100 and qcs9075 is one IP block being status
-> > = "okay" vs "disabled", due to fuses.
-> > 
-> > It's exactly the same problem we first saw in QRB5165, but we let the
-> > problem explode. Now we use the names sc7280, sm7325, qcm6490, and
-> > qcs6490 for the same SoC.
-> > 
-> > Using the SoC's actual name here will remove the need for playing games
-> > with DT includes etc to try to map things to the current naming scheme.
-> > 
-> > 
-> > The one case that isn't being taking care of such naming is when there
-> > are differences in the firmware. But as can be seen in the "sc7280"
-> > familiy, those software differences doesn't align with the chosen names.
-> > And even within a given SoC, with a (overall) given firmware, the
-> > reserved-memory map ends up differing.
-> > 
-> > 
-> > So, the name of the SoC in this patch is "Milos". We already have ways
-> > of dealing with firmware and/or hardware variations within one SoC, we
-> > should use them (and refine them as necessary), rather than pretending
-> > that something like SM7325 will define those properties.
-> 
-> I for one prefer 1 compatible per die. We often don't know if that's 
-> the case, but in this case we do so let's take advantage of it. 
-> 
+An abort op was introduced to allow its caller to invoke it within a lock
+in the caller's function. On the other hand, _iommufd_object_alloc_ucmd()
+would invoke the abort op in iommufd_object_abort_and_destroy() that must
+be outside the caller's lock. So, these two cannot work together.
 
-I like this definition, and to the best of my knowledge these are all
-examples of "it's the same die".
+Add a validation in the _iommufd_object_alloc_ucmd(). Pick -EOPNOTSUPP to
+reject the function call, indicating that the object allocator is buggy.
 
-Regards,
-Bjorn
+Suggested-by: Xu Yilun <yilun.xu@linux.intel.com>
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+---
+ drivers/iommu/iommufd/main.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
+index 0fb81a905cb1..69c2195e77ca 100644
+--- a/drivers/iommu/iommufd/main.c
++++ b/drivers/iommu/iommufd/main.c
+@@ -71,6 +71,15 @@ struct iommufd_object *_iommufd_object_alloc_ucmd(struct iommufd_ucmd *ucmd,
+ 	if (WARN_ON(ucmd->new_obj))
+ 		return ERR_PTR(-EBUSY);
+ 
++	/*
++	 * An abort op means that its caller needs to invoke it within a lock in
++	 * the caller. So it doesn't work with _iommufd_object_alloc_ucmd() that
++	 * will invoke the abort op in iommufd_object_abort_and_destroy(), which
++	 * must be outside the caller's lock.
++	 */
++	if (WARN_ON(iommufd_object_ops[type].abort))
++		return ERR_PTR(-EOPNOTSUPP);
++
+ 	new_obj = _iommufd_object_alloc(ucmd->ictx, size, type);
+ 	if (IS_ERR(new_obj))
+ 		return new_obj;
+-- 
+2.43.0
+
 
