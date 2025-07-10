@@ -1,100 +1,103 @@
-Return-Path: <linux-kernel+bounces-725785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE873B003E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:43:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01BCCB003ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 846837BDBDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3433BD86A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB26B25D8E8;
-	Thu, 10 Jul 2025 13:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3098268FE3;
+	Thu, 10 Jul 2025 13:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qnatzMaX"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f4Rpgmm/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305C726A0B3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27785267F5C;
 	Thu, 10 Jul 2025 13:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752154918; cv=none; b=SuyyvChZMTcQT9bf75rLsj6RyLglLqYV4vuSu/W6tuzvh37iLhq0oftI+7Qwx8UcdEjnwzt8pT7gTJo6QVx1T6yiNiEvPqBBVsyCLzj3olg+ymJporPixcZbud2wMSuW1J937iW+LDzo79+oVHYVNUHB+EDUjKDCKXs9Rq0yZf0=
+	t=1752154917; cv=none; b=NiMJf35DlW4KnJX3kjsm0SuM/kxddX4tX+d8qGqwaxOEHn3DCycEdvd9b+6RHu45RisQrq4jaHvj3jF79rZ1h8+M+0W03aRHnDvp0emysdbTAzBfCzy7qmzIcBADK9KjW36DNa22yJIDdxbu207+S7yE40sm/MJb9+3gMdyKCEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752154918; c=relaxed/simple;
-	bh=SlMbXo298xvQjkFJyCKDy58mImmJ1m24txuya44+l64=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=kIt72RsL/qYaAY4uRPCJhL9zj6llBBtVQOv06B/JvCdo7gx2J77DlaMs2FxU2ZC1Q1izwF6XnVXAW9qj37FA0VZnuhB8RmykbAuAM/5DLa9gcIdd+F1eTTshiMuGJh6riRf5PO3stuxTO1nDoP75BtCrvj1pIGv7qpRZr29F8lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qnatzMaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B423C4CEE3;
-	Thu, 10 Jul 2025 13:41:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752154916;
-	bh=SlMbXo298xvQjkFJyCKDy58mImmJ1m24txuya44+l64=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=qnatzMaX9jyeMlbtDSEDGQ07J49VSiUNdF+y1WazyHlLZV2GgDtI9RcZhYCPMCTf4
-	 L8NKGsccmI494iYQNXLWTHQx9yuXRJ22gB5/PFdV8vk1xW+uwYh8KGxWRMhhNIB3so
-	 xYjo5/tiLvjFAOpfGqhtKMliOdmm3o0I/TPpoANt7U8fT8VHZwBteo18iBi68Df2NX
-	 KDzIKmz9RousA36qqfDWNGr+bwQPvWJ7XT5fyr9RvSVZpE1uQxNEvIcAPLUYT1wCdh
-	 3SAGXOTU1G8EbIYacwTLVeMzqsm7qY4W+d86IdE7yZZdxnsWF63i39LMlaN13d/YSt
-	 Fk5lmQRLqokMw==
+	s=arc-20240116; t=1752154917; c=relaxed/simple;
+	bh=R3wYP0vZ7YSmBqpNoEZUZ3lDqGlCvdsW7hEuwVuKihQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fM4bdgvwZ3cdpQp9PCYwYTA5u6e39aF0hGDjstpGSnPyC2P7H7ydjmlcveIRrqUpL9tT7tVH6ZFvHmve+oF2BDXxJZRZUmTVW4FnEFkzmHi7cVj9CvQTmGbQdvhEIPxCfPneQnEPMZB3xpEMBJ+xI4tNSF2nZOFbbn4kTzZ52HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f4Rpgmm/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E9FBC4CEED;
+	Thu, 10 Jul 2025 13:41:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752154916;
+	bh=R3wYP0vZ7YSmBqpNoEZUZ3lDqGlCvdsW7hEuwVuKihQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f4Rpgmm/twVfUpYQGZNjRzqk2ZZbkdYqa9MVPVVC56OHPtCAtG2ANZPnmZXqvwDgB
+	 cWeWM7bGkQiqtr8ZDlXL8b8dHU55LwAWkrT826GrHv4J98NcCJXsfRFHkCfxSlN1WD
+	 CjCs/ppOK4le0TF+O0CHucdjPy5QrG8ty28wPa/U=
+Date: Thu, 10 Jul 2025 15:41:53 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Xinyu Zheng <zhengxinyu6@huawei.com>
+Cc: mst@redhat.com, jasowang@redhat.com, pbonzini@redhat.com,
+	stefanha@redhat.com, virtualization@lists.linux-foundation.org,
+	kvm@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v5.10] vhost-scsi: protect vq->log_used with vq->mutex
+Message-ID: <2025071002-festive-outcast-7edd@gregkh>
+References: <20250702082945.4164475-1-zhengxinyu6@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 15:41:49 +0200
-Message-Id: <DB8F2T9YIJ1B.13Q6T3CW0MV6U@kernel.org>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v10 0/7] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-Cc: "Michal Wilczynski" <m.wilczynski@samsung.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Guo Ren" <guoren@kernel.org>, "Fu Wei"
- <wefu@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Paul Walmsley"
- <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
- Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, "Marek
- Szyprowski" <m.szyprowski@samsung.com>, "Benno Lossin" <lossin@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Drew Fustini"
- <fustini@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>
-References: <CGME20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6@eucas1p1.samsung.com> <20250707-rust-next-pwm-working-fan-for-sending-v10-0-d0c5cf342004@samsung.com> <e8a4a821-e7e4-4bcd-a2ac-f6b684b6ceea@samsung.com> <DB8AQ15RTAJ2.3QXX8Q2FTFGCP@kernel.org> <e494422b-b989-4dc3-9828-b080dbf4c34d@samsung.com> <judbbl4d3z7nd2wi3grlwf3cmqgdycb5ljyyqx6r4w2zluhmwy@yxrqnf2hcnzw>
-In-Reply-To: <judbbl4d3z7nd2wi3grlwf3cmqgdycb5ljyyqx6r4w2zluhmwy@yxrqnf2hcnzw>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702082945.4164475-1-zhengxinyu6@huawei.com>
 
-On Thu Jul 10, 2025 at 3:36 PM CEST, Uwe Kleine-K=C3=B6nig wrote:
-> On Thu, Jul 10, 2025 at 12:29:59PM +0200, Michal Wilczynski wrote:
->> On 7/10/25 12:17, Danilo Krummrich wrote:
->> > I see that there is a new MAINTAINERS entry:
->> >=20
->> > 	PWM SUBSYSTEM BINDINGS [RUST]
->> > 	M:	Michal Wilczynski <m.wilczynski@samsung.com>
->> > 	S:	Maintained
->> > 	F:	rust/helpers/pwm.c
->> > 	F:	rust/kernel/pwm.rs
->> >=20
->> > I assume this is agreed with Uwe?
->
-> I suggest to add
->
-> 	L:	linux-pwm@vger.kernel.org
->
-> then I'm happy with it. I'm definitively not capable to review the Rust
-> details of Rust code. But I think Rust is readable enough that I can
-> judge the algorithmic parts.
+On Wed, Jul 02, 2025 at 08:29:45AM +0000, Xinyu Zheng wrote:
+> From: Dongli Zhang <dongli.zhang@oracle.com>
+> 
+> [ Upstream commit f591cf9fce724e5075cc67488c43c6e39e8cbe27 ]
+> 
+> The vhost-scsi completion path may access vq->log_base when vq->log_used is
+> already set to false.
+> 
+>     vhost-thread                       QEMU-thread
+> 
+> vhost_scsi_complete_cmd_work()
+> -> vhost_add_used()
+>    -> vhost_add_used_n()
+>       if (unlikely(vq->log_used))
+>                                       QEMU disables vq->log_used
+>                                       via VHOST_SET_VRING_ADDR.
+>                                       mutex_lock(&vq->mutex);
+>                                       vq->log_used = false now!
+>                                       mutex_unlock(&vq->mutex);
+> 
+> 				      QEMU gfree(vq->log_base)
+>         log_used()
+>         -> log_write(vq->log_base)
+> 
+> Assuming the VMM is QEMU. The vq->log_base is from QEMU userpace and can be
+> reclaimed via gfree(). As a result, this causes invalid memory writes to
+> QEMU userspace.
+> 
+> The control queue path has the same issue.
+> 
+> CVE-2025-38074
 
-What about the merge strategy? Do you want to pick up patches yourself (thr=
-ough
-your tree), receive PRs from Michal or none of those?
+This is not needed.
+
+> Cc: stable@vger.kernel.org#5.10.x
+
+What about 5.15.y and 6.1.y?  We can't take a patch just for 5.10 as
+that would cause regressions, right?
+
+Please provide all relevant backports and I will be glad to queue them
+up then.  I'll drop this from my queue for now, thanks.
+
+greg k-h
 
