@@ -1,185 +1,135 @@
-Return-Path: <linux-kernel+bounces-724889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB5FAFF82B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:47:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A209CAFF831
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE160482BAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:46:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C5EF7AC711
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7B322A7E5;
-	Thu, 10 Jul 2025 04:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9CB27FD71;
+	Thu, 10 Jul 2025 04:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="i2ulREGY"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtbg01S+"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5DA86334;
-	Thu, 10 Jul 2025 04:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589FD219A6B;
+	Thu, 10 Jul 2025 04:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752122819; cv=none; b=A2L3+/V2WypXOKNU6Z4sKqgl3eAkaw0W2UiaVvLh9JHiofdCJYYRfRJyLDV32UHGjWlRtMkEL4jgOW0Ds5URjJUslThW56OwWt+O6P9+1I6kDyDU7m3vDerDOXJATmnJvX6ZO+VEG82oiBeq/5pON7cyq9PbVQ8yZOGJSMh4xN4=
+	t=1752123018; cv=none; b=cB/0cnyrQuWGmCnopPnFLsnig487QR1UkGUWu874M+SNgX/+QoXG8sS0X8qpprm/2qblIU3uSORbgh7Z7l6uJBUaN1f4niwAzO85luP038VLrP1apFtKqI4kWMs39Skc0j/0w4oMvfojayU+NagKndU68BPMc63Qi0k1GvGgDt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752122819; c=relaxed/simple;
-	bh=lRrvdxoQ8kfjvlyq8xtDDHfI24t2jxQ7rUu1QQGbZfA=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=H5v0F7ASICq2q9/ljlG/UVE5dsl30AoSB0Tm4YiZYceM4rPglOt8Z/JcTbNsljy/7yHhATSY0WphZi8/JUqDHvd/V5JzM72pmoZA9zFlWgwmHX9vpTd2ThWqc02qURZ6zmt4hjpe/UBP16FM9FLA/UOBUUi2J3U7I4koVX8ux4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=i2ulREGY; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56A4keMT32473185, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1752122800; bh=MSGiwy5B293W63Ftra/XBc6fKHi2m/FMSRKkjudLxM0=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=i2ulREGYvF0znCMLLmJzOhRS/ZEuzEPYOnWyVCF7Hx+DoXkiijUpJrfm2roAHCKZU
-	 Mfy/JzucG/fcShSftV8rbHO/sQAC4HiNU2GbNkN+6AlwkAk7Tzk2dObpLX34NXhuRv
-	 6xhzLecZN0izeQHugOTGc5EUnJ4MJ/9QrAdLPTKdZYv+PBx6Coty0dgVnxNpoodNfV
-	 me8KAUxnRhgSlEIkmYqKVioXD/A/OOfu1AMfHKM4XO1BPvRzsBpnmuZ0gEJgag3m6m
-	 IXGo0x1a27EzZhH2ewfVUKcbw12B3xy5t82KqiqhIGjHPAsuHH15m1Zz1nebFifO/b
-	 7K97qAlb+x3aA==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56A4keMT32473185
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Jul 2025 12:46:40 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Jul 2025 12:46:40 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 10 Jul 2025 12:46:39 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
- RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
- 15.01.2507.035; Thu, 10 Jul 2025 12:46:39 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-        Kalle Valo
-	<kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Bitterblue Smith <rtl8821cerfe2@gmail.com>,
-        Fiona Klute <fiona.klute@gmx.de>
-Subject: RE: [PATCH v2 1/2] wifi: rtw88: introduce callback to override phy parameters from tables
-Thread-Topic: [PATCH v2 1/2] wifi: rtw88: introduce callback to override phy
- parameters from tables
-Thread-Index: AQHb8SHTsg0YI0LK4kuloM5YSiDzqbQqyHqg
-Date: Thu, 10 Jul 2025 04:46:39 +0000
-Message-ID: <7862f0bc08014a80be76f5513c1b6cd8@realtek.com>
-References: <20250709223159.2787192-1-andrej.skvortzov@gmail.com>
- <20250709223159.2787192-2-andrej.skvortzov@gmail.com>
-In-Reply-To: <20250709223159.2787192-2-andrej.skvortzov@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1752123018; c=relaxed/simple;
+	bh=OEspdNkpeaGb6UthJe0zFS9Qljw+kdaXflFHboC9c60=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jQJukdn9SqYfzUhlInag3B0iAjsLQwC688PMl+DalBbDk172nqyFgPlTmj4i77K9cNntDhXOzA7cXFvDXiWqOAbAx0ZsD8zqtIkBeOZXaQp0WSl1GIULFvCzyeFblRnUdBMXns0/mJFSh06KVFbdW19bNXJZeM/b93qyGx1Fj0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtbg01S+; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so586507b3a.0;
+        Wed, 09 Jul 2025 21:50:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752123016; x=1752727816; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=43W4i1GCTgED74WiEGNoHpiF4mzL+pQO2g8gssUc4vE=;
+        b=dtbg01S+pZ48VCqevTYo9vxdmCOsC++nn57PSavyRJ2z6X9UlDwBjREcT9hWuS/2LN
+         +KCG9djnDRjUY5wsI938X7BGx8vSwHJznbyV6EbJpcsA4t7SB9Ydmic38LTEQJaOrGxz
+         /P6VOhn/z7HUiyPxvAAKFA6DM/iMsyrgujCQfVv2Z05rTGrCYb6f78M7CjNVFNcYOG+8
+         2oUanx6lvPV18XwI0dLqdVJw2GlHlCeuV/MGx4aH7B/iiinYSMoa0rNCMDjw3DO+cAJo
+         FR1ln4EMW+Rdn4VuC2DsIXuehi2dwiGARdMfp11WzLbHfVeSvuOqM8p2cYUr3rVSBXc2
+         wOvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752123016; x=1752727816;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=43W4i1GCTgED74WiEGNoHpiF4mzL+pQO2g8gssUc4vE=;
+        b=eLUqj8QHJ82IU+Da7WLKeq8NT83zsk7fI9wh7/8xon/Bz1L9mF7JEqG7FwSVExznS/
+         lJ37bRmnxGHxkH5u/tIAFHeFG4vi1KTX5Ux3mzOkG/9zQhH93enUOeshwan1CFYYl72W
+         5xgqjIqMb8zAk96jFryNInAdtgmpjpFDXBYDsdzClKA1duFmgKHBSw4GzqpfwW06W+Pt
+         pQ0NP9AKGrqMDnMplEuhF9k24GypaQQO8XIu1KPK6ZVejjeWhny54YdZ5o2FddafuAgt
+         b8p6cs4Cn1HX2wikuFuCJswGGnIfvMugD+yVqKiPnBw7qbo46gFuvbEIoiUuMbdMHKNu
+         3GCg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7GMKku/ZiOsiz4otE9EzuitxUFR0Qlpv/4buiV2CZx4DofNFKiw28Zr1tHKiltAKyMmB7lDYQ@vger.kernel.org, AJvYcCXm6eVR7pVO+21NguA16WNCn0inlaFOcJ/6x0BgdL/wX2NytixMNpDLTjTt5kuImIwqpSLRPp/rZwTSBVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTBNWJMB+k5SEXr4bE+0dh1ZLjvgHX9Rlphne4pL03EpkVa/QB
+	gFKI/ItvAHVWZlcjvYKRKm10QPGUldYiNQTxdi5XkWuwx3xQiCGeVyrB
+X-Gm-Gg: ASbGncs7dNUJBYPnYmRfC7qx61xWJmLCUMhRWhxD09Zq9i3zIicX+3jYZPnbGr5ARqf
+	g2gth7IAsB7StVl9ObWpHW+MW4tmXEq60FoP052zVILuvpefevwTznMk2v0csl1KQ1ZbDH1kI+v
+	kmgSmCUSFFi4s3E5rGZnxhBCMnYPYuXfAgz4o9pNScURS5ln+aDzbCWR1Iai2yYHJ+R5hmF/UUt
+	u63UUzIPPAa3XdUMfLvPSDoKpM6C9l+ff4JIl+qIdsSLQ2nq9gkp8Ts8LmPm/DN7bDvrYOVf3YC
+	u7pYXARXolLHnM0IBVGqhos9VjzrLmZSYXIZrx8BOHgD9SFba31gAyRqtxSlaQ==
+X-Google-Smtp-Source: AGHT+IGZnsUpzh+ZmsBVRBPZSQgS+0QwmCGnqZeIQPjP/On8etzioYUBd10sRVdO4/dKBZSQ/6l1KQ==
+X-Received: by 2002:a05:6a00:994:b0:748:fb7c:bbe0 with SMTP id d2e1a72fcca58-74ea6709f51mr8662943b3a.24.1752123016476;
+        Wed, 09 Jul 2025 21:50:16 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-74eb9f4bc51sm808024b3a.116.2025.07.09.21.50.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 21:50:16 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Ze Huang <huangze@whut.edu.cn>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 0/3] riscv: dts: sophgo: Add ethernet support for cv18xx
+Date: Thu, 10 Jul 2025 12:49:44 +0800
+Message-ID: <175212292374.416883.3089328739735203878.b4-ty@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250703021600.125550-1-inochiama@gmail.com>
+References: <20250703021600.125550-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Andrey Skvortsov <andrej.skvortzov@gmail.com> wrote:
-> tables with register values for phy parameters initialization are
-> copied from vendor driver usually. Sometimes these parameters has to
-> be modified. When table will be regenerated, manual modifications to
-> it may be lost. To avoid regressions in this case new callback
-> mac_postinit is introduced, that is called after parameters from table
-> are set.
->=20
-> Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-> ---
->  drivers/net/wireless/realtek/rtw88/mac.c  | 11 +++++++++++
->  drivers/net/wireless/realtek/rtw88/mac.h  |  1 +
->  drivers/net/wireless/realtek/rtw88/main.c |  6 ++++++
->  drivers/net/wireless/realtek/rtw88/main.h |  1 +
->  4 files changed, 19 insertions(+)
->=20
-> diff --git a/drivers/net/wireless/realtek/rtw88/mac.c b/drivers/net/wirel=
-ess/realtek/rtw88/mac.c
-> index 011b81c82f3ba..e05d06678050d 100644
-> --- a/drivers/net/wireless/realtek/rtw88/mac.c
-> +++ b/drivers/net/wireless/realtek/rtw88/mac.c
-> @@ -1409,3 +1409,14 @@ int rtw_mac_init(struct rtw_dev *rtwdev)
->=20
->         return 0;
->  }
-> +
-> +int rtw_mac_postinit(struct rtw_dev *rtwdev)
-> +{
-> +       const struct rtw_chip_info *chip =3D rtwdev->chip;
-> +       int ret =3D 0;
+On Thu, 03 Jul 2025 10:15:55 +0800, Inochi Amaoto wrote:
+> Add device binding and dts for CV18XX series SoC.
+> 
+> Change from RFC v4:
+> - https://lore.kernel.org/all/20250701011730.136002-1-inochiama@gmail.com
+> 1. split the binding patch as a standalone series.
+> 
+> Change from RFC v3:
+> - https://lore.kernel.org/all/20250626080056.325496-1-inochiama@gmail.com
+> 1. patch 3: change internal phy id from 0 to 1
+> 
+> [...]
 
-This initializer is not necessary. See [1]
+Applied to for-next, thanks!
 
-[1] http://wifibot.sipsolutions.net/results/980760/14150387/build_clang/std=
-err
+[1/3] riscv: dts: sophgo: Add ethernet device for cv18xx
+      https://github.com/sophgo/linux/commit/0100910f6ae2659c1178b3ece064c2f2e7eefbae
+[2/3] riscv: dts: sophgo: Add mdio multiplexer device for cv18xx
+      https://github.com/sophgo/linux/commit/a4fb40b240fecc3cf84e12277e5b66818a80e3ad
+[3/3] riscv: dts: sophgo: Enable ethernet device for Huashan Pi
+      https://github.com/sophgo/linux/commit/8f8de50d4bddf155b5e5c70072c3048829a90a98
 
-> +
-> +       if (chip->ops->mac_postinit)
-> +               ret =3D chip->ops->mac_postinit(rtwdev);
-> +
-> +       return 0;
-> +}
-> diff --git a/drivers/net/wireless/realtek/rtw88/mac.h b/drivers/net/wirel=
-ess/realtek/rtw88/mac.h
-> index e92b1483728d5..b73af90ee1d7f 100644
-> --- a/drivers/net/wireless/realtek/rtw88/mac.h
-> +++ b/drivers/net/wireless/realtek/rtw88/mac.h
-> @@ -38,6 +38,7 @@ void rtw_write_firmware_page(struct rtw_dev *rtwdev, u3=
-2 page,
->                              const u8 *data, u32 size);
->  int rtw_download_firmware(struct rtw_dev *rtwdev, struct rtw_fw_state *f=
-w);
->  int rtw_mac_init(struct rtw_dev *rtwdev);
-> +int rtw_mac_postinit(struct rtw_dev *rtwdev);
->  void rtw_mac_flush_queues(struct rtw_dev *rtwdev, u32 queues, bool drop)=
-;
->  int rtw_set_trx_fifo_info(struct rtw_dev *rtwdev);
->  int rtw_ddma_to_fw_fifo(struct rtw_dev *rtwdev, u32 ocp_src, u32 size);
-> diff --git a/drivers/net/wireless/realtek/rtw88/main.c b/drivers/net/wire=
-less/realtek/rtw88/main.c
-> index 97756bdf57b27..b706c5a21a6c5 100644
-> --- a/drivers/net/wireless/realtek/rtw88/main.c
-> +++ b/drivers/net/wireless/realtek/rtw88/main.c
-> @@ -1412,6 +1412,12 @@ int rtw_power_on(struct rtw_dev *rtwdev)
->=20
->         chip->ops->phy_set_param(rtwdev);
->=20
-> +       ret =3D rtw_mac_postinit(rtwdev);
-> +       if (ret) {
-> +               rtw_err(rtwdev, "failed to configure mac in postinit\n");
-> +               goto err_off;
-> +       }
-> +
->         ret =3D rtw_hci_start(rtwdev);
->         if (ret) {
->                 rtw_err(rtwdev, "failed to start hci\n");
-> diff --git a/drivers/net/wireless/realtek/rtw88/main.h b/drivers/net/wire=
-less/realtek/rtw88/main.h
-> index b42538cce3598..43ed6d6b42919 100644
-> --- a/drivers/net/wireless/realtek/rtw88/main.h
-> +++ b/drivers/net/wireless/realtek/rtw88/main.h
-> @@ -858,6 +858,7 @@ struct rtw_chip_ops {
->         int (*power_on)(struct rtw_dev *rtwdev);
->         void (*power_off)(struct rtw_dev *rtwdev);
->         int (*mac_init)(struct rtw_dev *rtwdev);
-> +       int (*mac_postinit)(struct rtw_dev *rtwdev);
->         int (*dump_fw_crash)(struct rtw_dev *rtwdev);
->         void (*shutdown)(struct rtw_dev *rtwdev);
->         int (*read_efuse)(struct rtw_dev *rtwdev, u8 *map);
-> --
-> 2.47.2
+Thanks,
+Inochi
 
 
