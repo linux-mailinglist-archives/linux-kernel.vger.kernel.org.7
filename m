@@ -1,172 +1,136 @@
-Return-Path: <linux-kernel+bounces-726181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BC6B00919
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:43:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A95AB0091C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2843E178B69
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:43:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0FF71886BEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71262F0044;
-	Thu, 10 Jul 2025 16:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703892F002D;
+	Thu, 10 Jul 2025 16:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="W2FEa5gW"
-Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mDO8tI3t"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5040280A3B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C902EFDA3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752165790; cv=none; b=FR3AHnmqF8bQBDSYx/whnW0qhy4N0DXGkAGLZ42Jld62CFj6TEPldFs+XsMIWSN/HocbjfBAuRlWvULkq1PrZEMgp4XU3zokAXXO1QGqqK7J2u4OdI9LyGaokYv9SsYDZitW7fpUeEwbzhffhgq/B2nXJ33fuW/A75LZNaKEbIM=
+	t=1752165807; cv=none; b=fxNjv9Whv7tDEcnIe5XJJxUiIaIR8LceK4vnG/yDcewDCCnUTPaKFrPBxbeWCYnc898KQiXijXUAbL/fTORwDhNorj/qtRFyot+1eG6LUciA3gxQPkF8bVXmJ4lrPR9Mi9TG7O1FHgT3iZvDioc8Tm6GdAqsrVTqnmqZMVorD7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752165790; c=relaxed/simple;
-	bh=iauZL9jmjufsByEqjLynOS/a/I/93HipMuGHw4CkAUk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G2AzFjzJcniWE4eh7aT0qV2sBOHdjPNIMK0Cot+/LTy04cvWY4gD7Y4qDpMn8ReUHscEBYAaou0y44Ppyov+ZHurONUC8UqWEDInLCrKCNW6NrN9FuQaUucT19e/XtXdTxjL5g8g8Jia117bExy++AtTi5P9g3IJ+pFUyjn6pN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=W2FEa5gW; arc=none smtp.client-ip=158.69.130.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1752165787;
-	bh=iauZL9jmjufsByEqjLynOS/a/I/93HipMuGHw4CkAUk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W2FEa5gWKrWfLNFrclgLeBD1+6NtU9tpTe6XPzm1LsN4QxMfQg8tAsJCKPdQP9RvY
-	 SK1jd44Qn3Odt+TsFhLZzFmsXlhesFiZ7rx359D5ogGqHpRgltrd/TxNRr038bg0UO
-	 EbZzRrGNbmcudCowsvXTs54QAj78PNFKuWebGUlyY1YdtN3M7ZpM5XHr+HawyWHoio
-	 RJGRKovFvIvDwdbodtBHASRvAb3NJe6imnyDLWF70y0u/oc5qHRc8kcme2nmckNvbu
-	 umB3WZR6/R6GVH93HhWfAqlbBbY9sOr2G6rcZzi1zGljJdDmJ+OoD4uJ25rMPbTtHE
-	 0doI4YoSOzKgw==
-Received: from compudjdev.. (192-222-132-26.qc.cable.ebox.net [192.222.132.26])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4bdLHv40qpzq8s;
-	Thu, 10 Jul 2025 12:43:07 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [RFC PATCH v2 3/3] unwind deferred: Introduce unwind_user_trace_cached
-Date: Thu, 10 Jul 2025 12:42:58 -0400
-Message-ID: <20250710164301.3094-4-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250710164301.3094-1-mathieu.desnoyers@efficios.com>
-References: <20250710164301.3094-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1752165807; c=relaxed/simple;
+	bh=FL1g7AAqZse2G2GgfyKga3py6hCil3qJCjBWU6lZuGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BScnswGOqCVvFW7+UVK2i4KqjGfrJ10FOSEzHjb7UhzNrAp8MFdoQjUU++1dBxYYgGrWfQZADiWJFKveVZMTBhkJbF+jjn/fUVL3Gd45YEDUz0ulTYs9mQGNyQnbHAMj3IesexNIPR/YbdCggGAbq4iwJ9yA5BdemFFO76+3kK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mDO8tI3t; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-237f18108d2so3875ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:43:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752165804; x=1752770604; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C2eyvzlKuLCQH5Cuh9KFE8Y+QAaptwkDzMvAXLYmk8E=;
+        b=mDO8tI3trph7Q7JCSujSBTzLMo0Dca9w+tnxTk1Z9AxTmypcTu9xM3d5v6X4Y9aDPR
+         qvT7kLoghGCVduxDadhOfisxcw5UghPWM9/4GmXMhy5GZhgA3e6/Ysuldp4RiY3UqRdW
+         WrsHi5qi7zczH1pSQJCRKMEOnmFrJvc8xoOUV2LSbRtWVuRKYPknQs5B00kZit3XMbaG
+         u2aWPRu1E8Pe2myaDn0QwYrXROD+EIbA69jI/yFXi+y6y40mO/a6ws4u8h7xJDHtkWB9
+         ZoViebSMvBSqM2X03ZCmCWZQWYyrcVnT1TYGv90j4J50wLt6GGwbi1zz7iKhyYKauS9e
+         XWaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752165804; x=1752770604;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C2eyvzlKuLCQH5Cuh9KFE8Y+QAaptwkDzMvAXLYmk8E=;
+        b=BK9hVz+NBhsFHGajnpoerPz90fYXxyuXt/Gy1CKAVrjFnKY+gdegqva2708mRFZ2U9
+         DyDWN9O4EXSVaAv8zRJLl26uxWg24BNBKYWruHFHkUoWnvHbdO/azeGG/iWbscQCz3eC
+         syICc4Zj2y2ADzXxeH4dl0OL7XzpROJYTukwNp59FvY6jwPLdZF7sPQvpz+IALkmn98g
+         63yrihRzHW3BHxakLkjeIhLxjbseKsY4Q7BoqnC2Mq2rSu8d1+Jrg5dvitIzDjvQf9IM
+         KE834ETCfO6McYy6UO1aqlphe6UdoU7xVplpplg4IfHRWCLgvpkPh9wDrB6BmeUu82TA
+         mkBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbtXb5OSaPQahggiHHoksRC8p7U6m6SxUfY8TNk22C/JSZZDMB2mEvVUHlpKtID40rJfdIA9hLsC0eq3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpIzU33Bzbw4lF4ZJ8edrSARoSaMn7gD0cWf5wL/tmwEvzLph4
+	KjmSCHGwp0mBF1/w/NeJrLDZZ+azFOGxjFyaQ8Gq3uwyXB3LRiNCgQEf212svsctOw==
+X-Gm-Gg: ASbGncvuHNDIlclyQq4xENXeDdNgZaefMGNrD9+sCpZ+nJNji0FPHya0SlwDi7nuQfz
+	0bF2IIwdpjIv5CGdiENxl0GEkTs1XSzjfcWFBdA162ifY/YixWB4iX86K29ydgrCkfbNU2mfBt4
+	/t+9UkrHTdlVRhKXi24X+N38+OCEiAZch34EMwW/Dn1MqKya6uhNdZeuanfX+wnqKUX+bdc2Q67
+	N6z7ns2wTIQsoSVmf6yrK0qPUcyKAljKKZ5Tt6MKFkv8fHTYm1po+JPyLaYLKZab12IpJ2zJMeN
+	5OO802bye5n/+WDAEDrorXfkGj2jqF9cRnKTSP1Ngdlikj31NoFFkvsAqeJxjgsR5JSDuQhqK7o
+	HHypi4fp8zUJrYWPAe2iLp7mLKpGDqk4=
+X-Google-Smtp-Source: AGHT+IEFm5EK2K+aFRgM2luBkKYZSMINjT3NZbf79E/WEwhVEuFkFUby27jaM+gbx9d+ftRkB3XZMQ==
+X-Received: by 2002:a17:902:e94c:b0:234:9fd6:9796 with SMTP id d9443c01a7336-23de43702c4mr3052595ad.19.1752165804369;
+        Thu, 10 Jul 2025 09:43:24 -0700 (PDT)
+Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de435c2e3sm24897415ad.226.2025.07.10.09.43.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 09:43:23 -0700 (PDT)
+Date: Thu, 10 Jul 2025 16:43:14 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
+	corbet@lwn.net, bagasdotme@gmail.com, will@kernel.org,
+	robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
+	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
+	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
+	yi.l.liu@intel.com, mshavit@google.com, zhangzekun11@huawei.com,
+	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
+	vasant.hegde@amd.com, dwmw2@infradead.org, baolu.lu@linux.intel.com
+Subject: Re: [PATCH v9 22/29] iommufd/selftest: Update hw_info coverage for
+ an input data_type
+Message-ID: <aG_togvop53dLSZM@google.com>
+References: <cover.1752126748.git.nicolinc@nvidia.com>
+ <f01a1e50cd7366f217cbf192ad0b2b79e0eb89f0.1752126748.git.nicolinc@nvidia.com>
+ <aG-fZv39ci6yip3z@google.com>
+ <20250710153202.GO1599700@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710153202.GO1599700@nvidia.com>
 
-Introduce unwind_user_trace_cached which copies the stack trace if it
-was previously stored into the cache since the last reset of the cache.
+On Thu, Jul 10, 2025 at 12:32:02PM -0300, Jason Gunthorpe wrote:
+> On Thu, Jul 10, 2025 at 11:09:26AM +0000, Pranjal Shrivastava wrote:
+> > On Wed, Jul 09, 2025 at 10:59:14PM -0700, Nicolin Chen wrote:
+> > > Test both IOMMU_HW_INFO_TYPE_DEFAULT and IOMMU_HW_INFO_TYPE_SELFTEST, and
+> > > add a negative test for an unsupported type.
+> > > 
+> > > Also drop the unused mask in test_cmd_get_hw_capabilities() as checkpatch
+> > > is complaining.
+> > > 
+> > > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> > 
+> > Reviewed-by: Pranjal Shrivastava <praan@google.com>
+> > 
+> > Note: I see a couple of warnings while building the selftests on Jason's
+> > tree, but these seem unrelated to this series:
+> 
+> This is fixed in v6.16-rc5
+> 
 
-The expected use-case is sampling a stack trace from a faultable context
-at system call entry (coping it into the cache), and then copying the
-stack trace from the cache from non-faultable context to a ring buffer.
+Alright, this was on the `for-next` branch when the head was at:
+3e2a9811f6a9cefd310cc33cab73d5435b4a4caa
+iommufd: Apply the new iommufd_object_alloc_ucmd helper
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt (Google) <rostedt@goodmis.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrii Nakryiko <andrii@kernel.org>
-Cc: Indu Bhagat <indu.bhagat@oracle.com>
-Cc: "Jose E. Marchesi" <jemarch@gnu.org>
-Cc: Beau Belgrave <beaub@linux.microsoft.com>
-Cc: Jens Remus <jremus@linux.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- include/linux/unwind_deferred.h |  2 ++
- kernel/unwind/deferred.c        | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 33 insertions(+)
+But I see that on `for-rc` [1] the fixes are merged.
 
-diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
-index a9d5b100d6b2..ddc985ba982a 100644
---- a/include/linux/unwind_deferred.h
-+++ b/include/linux/unwind_deferred.h
-@@ -34,6 +34,7 @@ void unwind_task_init(struct task_struct *task);
- void unwind_task_free(struct task_struct *task);
- 
- int unwind_user_faultable(struct unwind_stacktrace *trace);
-+int unwind_user_trace_cached(struct unwind_stacktrace *trace);
- 
- int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func);
- int unwind_deferred_request(struct unwind_work *work, u64 *cookie);
-@@ -67,6 +68,7 @@ static inline void unwind_task_init(struct task_struct *task) {}
- static inline void unwind_task_free(struct task_struct *task) {}
- 
- static inline int unwind_user_faultable(struct unwind_stacktrace *trace) { return -ENOSYS; }
-+static inline int unwind_user_trace_cached(struct unwind_stacktrace *trace) { return -ENOSYS; }
- static inline int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func) { return -ENOSYS; }
- static inline int unwind_deferred_request(struct unwind_work *work, u64 *timestamp) { return -ENOSYS; }
- static inline void unwind_deferred_cancel(struct unwind_work *work) {}
-diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
-index 039e12700d49..02ab1d2afc21 100644
---- a/kernel/unwind/deferred.c
-+++ b/kernel/unwind/deferred.c
-@@ -145,6 +145,37 @@ int unwind_user_faultable(struct unwind_stacktrace *trace)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(unwind_user_faultable);
-+
-+/**
-+ * unwind_user_trace_cached - Copy user stack trace from cache
-+ * @trace: The descriptor that will store the user stacktrace
-+ *
-+ * Copy user stack trace from cache if the cache was populated by
-+ * unwind_user_faultable prior to this call. The returned trace
-+ * entries are only valid until the cache is reset.
-+ *
-+ * Return: 0 on success and negative on error
-+ *         On success @trace will contain the user space stacktrace
-+ */
-+int unwind_user_trace_cached(struct unwind_stacktrace *trace)
-+{
-+	struct unwind_task_info *info = &current->unwind_info;
-+	struct unwind_cache *cache;
-+
-+	if (!current->mm)
-+		return -EINVAL;
-+
-+	cache = info->cache;
-+	if (!cache || !cache->nr_entries)
-+		return -ENOENT;
-+
-+	trace->nr = cache->nr_entries;
-+	trace->entries = cache->entries;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(unwind_user_trace_cached);
- 
- static void process_unwind_deferred(struct task_struct *task)
- {
--- 
-2.43.0
+> Jason
 
+Thanks
+Praan
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/jgg/iommufd.git/commit/?h=for-rc
 
