@@ -1,139 +1,125 @@
-Return-Path: <linux-kernel+bounces-725102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BD7AFFAD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:27:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0AB4AFFAD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25455A291B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:27:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026501C82D0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0D328983F;
-	Thu, 10 Jul 2025 07:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4EE289807;
+	Thu, 10 Jul 2025 07:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYCfigXh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0rQ6/oJ3"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F318F5E;
-	Thu, 10 Jul 2025 07:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCB128751F;
+	Thu, 10 Jul 2025 07:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752132432; cv=none; b=mrTod6CFMsGnyuL1eCo/B1fR0jAB2jOkrimXK5x/jtPJiuRpmKaSHJF/DUDtJN4v8MrrRiMpATaQOhYEJIrU/yIsiTxdL6ouN5QwwBQn4dcoHF7FoIghE+2ZS4v/iO+V39ZftSjjglIl1i0SLFqyKgtQH+9jSBmnXyMpQPxdrJ8=
+	t=1752132451; cv=none; b=Loju6D9QFNpTyIqHmEyFU/xUbodJEGNhLqQ6mewxuI3e/CFRFKcgsMLYBBoSZ/Dz6LeiXgrw+S4mCNfARzxuaqs88P//wgDh6b8T3mYlBxpFUkx9AoPrQEFBQqN/11ldkavO7zy5SBsA3N93ia+YoHZ+mEPoLpO9WwFj+f/+wHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752132432; c=relaxed/simple;
-	bh=yR1yt72iESvtf706LR6VBiJOb+AEKItKxPYtLvUPyhE=;
+	s=arc-20240116; t=1752132451; c=relaxed/simple;
+	bh=g8YKwRBQ/Daz6OJS1mQgLxGoQfTbhZoc2pRv7WiVHAU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ciVlXGtRAZsgKs5RzQCcOr+S1V7y2+Yy9FvNvlennueyXdE815SsZPl36wVJtJti4uQA9YKlVHPkyen2RT7SMRT5JJF6Pet2mxbw2ea74WpAAfgadF80nJ3lkRPflCuOJV2z7KCLg1iwv36NW5Q/HIHZuADm9t3jDcV3AAGcGRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYCfigXh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A971C4CEE3;
-	Thu, 10 Jul 2025 07:27:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752132431;
-	bh=yR1yt72iESvtf706LR6VBiJOb+AEKItKxPYtLvUPyhE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tYCfigXhEmpMraXE+SzXg57pc60PfyVnaArkCqeGznlOXwQ/Y9NhpkO+Ca38NVEvl
-	 iQGVB9QNpqZ7usSvT5+8Mni8RdimYhCSzk++msnaC58io7HbuMjZ5FRIgW80PKpBG1
-	 ee8QPhmOLACZGKx3Q3u8NBqvRQIHHi6J/Hi75YTp/9ocEBaHACMI17Md1M7DIpIJGz
-	 KRWDV+pjp1AG8XJrHBu9crlyo98Ay7Ksg0CcVwvb85nncbsYUzkN4vuUCMSiUSMMyZ
-	 YXghCMXRjORlRJbbZzsYmX1XvdoP8gUON9ZxsBNxnTAiUFbKyPG4BaxF5oicIIRVZb
-	 2Vvp3osNZJsNw==
-Date: Thu, 10 Jul 2025 09:27:09 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 8/9] drm/bridge: put the bridge returned by
- drm_bridge_get_next_bridge()
-Message-ID: <20250710-classic-bouncy-caiman-8e2045@houat>
-References: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-0-48920b9cf369@bootlin.com>
- <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-8-48920b9cf369@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BIgzBRuNbwZd6lbqdIAJeSZTfIkhgWoTRZgfrcbTKVHhNrJYrdBAZ3eHSNr2oKfDAHC29no1akknTiWo0zqYiVBtLX/+ECmhusg/2D1LEVkamjTAoOuUJPeOZvU2tpR0tDL78t46Xdv71x7+Nk7PBwZLPtJCKweb924r7Fj37Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0rQ6/oJ3; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ap7vfZ6nvvwfafMk1H3deMvYucsWuAVGhSig+rD+R/U=; b=0rQ6/oJ3BTNYtBkDfwNB+/2ZFm
+	Wmqt9A3hL5DX4lHGKGvkdqRhMvb3fu8IVfu70YoRRj61It/AXji2lOA8voJX5pANuYMlUbP2EAit5
+	B5fYPVp3RZVimkwYA3/xgAbPXElOtaBe1hpAzNPOBVqFgPDGWGEvE7m7RF/uFSGtweJebEcHAJuI8
+	KNZh7xcz5W1WF4p89pDUxWyvOGkFG79C+VrX7qMuJxTV34VPSZYiB28HX9OziIcSRHzlPakFvE//u
+	ImrUwpnhYFabW0QjzYGYdmgtKGktlpjOo3qiuTwGwkF3azSXMZrldwBkVJ2lZMwHirDKnsqd7/vNO
+	RZHZZAPg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZlgl-0000000B0NK-3eT2;
+	Thu, 10 Jul 2025 07:27:27 +0000
+Date: Thu, 10 Jul 2025 00:27:27 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Sergey Bashirov <sergeybashirov@gmail.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Konstantin Evtushenko <koevtushenko@yandex.com>
+Subject: Re: [PATCH 2/2] NFSD: Fix last write offset handling in layoutcommit
+Message-ID: <aG9rX2zPlCC1pnSa@infradead.org>
+References: <20250704114917.18551-1-sergeybashirov@gmail.com>
+ <20250704114917.18551-3-sergeybashirov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="3v6clpzuhyggvmrg"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-8-48920b9cf369@bootlin.com>
+In-Reply-To: <20250704114917.18551-3-sergeybashirov@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-
---3v6clpzuhyggvmrg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 8/9] drm/bridge: put the bridge returned by
- drm_bridge_get_next_bridge()
-MIME-Version: 1.0
-
-Hi,
-
-On Wed, Jul 09, 2025 at 06:48:07PM +0200, Luca Ceresoli wrote:
-> The bridge returned by drm_bridge_get_next_bridge() is refcounted. Put it
-> when done.
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
-You should really expand a bit more your commit logs, and provide the
-context of why you think putting drm_bridge_put where you do is a good idea.
-
+On Fri, Jul 04, 2025 at 02:49:05PM +0300, Sergey Bashirov wrote:
+> The data type of loca_last_write_offset is newoffset4 and is switched
+> on a boolean value, no_newoffset, that indicates if a previous write
+> occurred or not. If no_newoffset is FALSE, an offset is not given.
+> This means that client does not try to update the file size. Thus,
+> server should not try to calculate new file size and check if it fits
+> into the seg range.
+> 
+> Co-developed-by: Konstantin Evtushenko <koevtushenko@yandex.com>
+> Signed-off-by: Konstantin Evtushenko <koevtushenko@yandex.com>
+> Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
 > ---
->  drivers/gpu/drm/drm_bridge.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> index 0b450b334afd82e0460f18fdd248f79d0a2b153d..05e85457099ab1e0a23ea7842=
-c9654c9a6881dfb 100644
-> --- a/drivers/gpu/drm/drm_bridge.c
-> +++ b/drivers/gpu/drm/drm_bridge.c
-> @@ -1147,6 +1147,8 @@ drm_atomic_bridge_propagate_bus_flags(struct drm_br=
-idge *bridge,
->  	} else {
->  		next_bridge_state =3D drm_atomic_get_new_bridge_state(state,
->  								next_bridge);
-> +		drm_bridge_put(next_bridge);
-> +
->  		/*
->  		 * No bridge state attached to the next bridge, just leave the
->  		 * flags to 0.
+>  fs/nfsd/blocklayout.c |  2 +-
+>  fs/nfsd/nfs4proc.c    | 16 ++++++++--------
+>  2 files changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
+> index 19078a043e85..ee6544bdc045 100644
+> --- a/fs/nfsd/blocklayout.c
+> +++ b/fs/nfsd/blocklayout.c
+> @@ -118,7 +118,7 @@ nfsd4_block_commit_blocks(struct inode *inode, struct nfsd4_layoutcommit *lcp,
+>  		struct iomap *iomaps, int nr_iomaps)
+>  {
+>  	struct timespec64 mtime = inode_get_mtime(inode);
+> -	loff_t new_size = lcp->lc_last_wr + 1;
+> +	loff_t new_size = (lcp->lc_newoffset) ? lcp->lc_last_wr + 1 : 0;
+>  	struct iattr iattr = { .ia_valid = 0 };
+>  	int error;
 
-In particular, I don't think it is here.
+Please guard the entire new_size check below instead, i.e.
 
-You still have a variable in scope after that branch that you would have
-given up the reference for, which is pretty dangerous.
+	if (lcp->lc_newoffset) {
+		loff_t new_size = lcp->lc_last_wr + 1;
 
-Also, the bridge state lifetime is shorter than the bridge lifetime
-itself, so we probably want to have the drm_bridge_put after we're done
-with next_bridge_state too.
+		if (new_size > i_size_read(inode)) {
+			iattr.ia_valid |= ATTR_SIZE;
+			iattr.ia_size = new_size;
+		}
+	}
 
-Overall, I think using __free here is probably the most robust solution.
 
-Maxime
+> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+> index 37bdb937a0ae..ff38be803d8b 100644
+> --- a/fs/nfsd/nfs4proc.c
+> +++ b/fs/nfsd/nfs4proc.c
+> @@ -2482,7 +2482,7 @@ nfsd4_layoutcommit(struct svc_rqst *rqstp,
+>  	const struct nfsd4_layout_seg *seg = &lcp->lc_seg;
+>  	struct svc_fh *current_fh = &cstate->current_fh;
+>  	const struct nfsd4_layout_ops *ops;
+> -	loff_t new_size = lcp->lc_last_wr + 1;
+> +	loff_t new_size = (lcp->lc_newoffset) ? lcp->lc_last_wr + 1 : 0;
 
---3v6clpzuhyggvmrg
-Content-Type: application/pgp-signature; name="signature.asc"
+Same here.
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaG9rTAAKCRAnX84Zoj2+
-dr15AYCUDUXM2027tbhyBFNnTMDtHivlc5bgpEwgheOP8GXxP7YFX/QLF0BkDV7V
-DnRK0VQBfAsNfigLg8ct5uD7iCc3b1OYcgl8hgrtM7STVo7OZSQpRSJyWJv9Amo6
-YYUahgkEQw==
-=3R2K
------END PGP SIGNATURE-----
-
---3v6clpzuhyggvmrg--
 
