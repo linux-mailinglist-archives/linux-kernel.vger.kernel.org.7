@@ -1,139 +1,172 @@
-Return-Path: <linux-kernel+bounces-725792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68847B003F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:44:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FB8B003F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4931AA30B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:44:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA52E7B9010
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E055426FD84;
-	Thu, 10 Jul 2025 13:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F41626A090;
+	Thu, 10 Jul 2025 13:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RxUEE1AC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocyvsUWm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A2726FA4B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3460269B01;
+	Thu, 10 Jul 2025 13:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752154967; cv=none; b=NBWQ9MUGWzpYu7WaZ8UhZpBhE4DLtfSt/P9FU38zKLOVU3l4EKhQS6M8eYabt8Ud2Gvy6IoCwSpaFio25lHEridGzAl25CJxCaVaCG15ISLitluu0Bcd9hrSJNY0TAfZCItTeMtP3JVJ4JLseaVa7f/KmuqJoEwv3p2EaXYj6Vk=
+	t=1752154943; cv=none; b=SWIj0/CMyoo+cJUdMZ1fZq6FAorb/XmBzglWRWHALbJkw3CwmMBaPPHu3hN/tJsMp1ZId3SSFJvf4/B5M1ZVbRzDV+gWWt6g7bYGAM9zFwd6GU1yiIj4tRjYHBpHDszRZBn1sQpHMpvjehYOium728pYQtYL6sHFwzE6gYTfJMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752154967; c=relaxed/simple;
-	bh=qlDbBioPcf0F/yj17NDrFJ67aogsWu+TJV48R191QIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Is5a9z0gU6BNZcfSr6GbsiKJW5RLUSQ+a+dnXdsEYHtdAQijFSuiHNosAexJ41DyQZWtD6hxhMhud1qn3C9U5x43d0Il+0Zm7lwgQPRF+04ICgjPzNFs/qnfYSchyrqzNxkaVvKjJImUbwi5u7FFxUqj8v59+hp+c0T4EFAklYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RxUEE1AC; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752154966; x=1783690966;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qlDbBioPcf0F/yj17NDrFJ67aogsWu+TJV48R191QIc=;
-  b=RxUEE1ACQdNKqvPioNVD8jrZB5rCv31gG1NjcaoQ8o+hpaRtPj+8HH2T
-   Uasr58tAwU6qEt9i5Bhily90yBJB8SMKgxuAZf3mPGNHs4ARnYTnl6Usd
-   fpIgqHkRBpjlutmnXdZDDWNvN/3VOzsD/qB1OhfKjFGJHQxWq+VeFGadU
-   KTm4y21ZtyheJkVc/+HoIoZg01+yEeqFD/1quNONbdfC2fbE9HKyxNPPl
-   Gi7bWAeyF2lDkPoHQTGNQjUqr4Ngxey6wWQg/oqlpXdT2Q/MOCQpKcdCy
-   hfV7xLLD0Q50SNW5PyvDZLAyPKTlw0DEqFY0uE/WH0TKjjaJHjx6h+dhZ
-   w==;
-X-CSE-ConnectionGUID: C85mxsszQJST/KFtqZNj+Q==
-X-CSE-MsgGUID: yidrgtsmSSOINiEfqP4eNw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="65787695"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="65787695"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 06:42:46 -0700
-X-CSE-ConnectionGUID: AWxHHtRNQT64vH5FrrDDSg==
-X-CSE-MsgGUID: oNvLIZCESdSB4d8BqPSC3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="156809445"
-Received: from gnrd8.igk.intel.com ([10.123.232.137])
-  by fmviesa010.fm.intel.com with ESMTP; 10 Jul 2025 06:42:44 -0700
-From: Sergey Temerkhanov <sergey.temerkhanov@intel.com>
-To: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Sergey Temerkhanov <sergey.temerkhanov@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 4/4] iommu: Notify requesters of IOMMU fault failures
-Date: Thu, 10 Jul 2025 13:42:15 +0000
-Message-ID: <20250710134215.97840-5-sergey.temerkhanov@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250710134215.97840-1-sergey.temerkhanov@intel.com>
-References: <20250710134215.97840-1-sergey.temerkhanov@intel.com>
+	s=arc-20240116; t=1752154943; c=relaxed/simple;
+	bh=O2w/SrY5DG8vVLbvJhBCppXT7i2aFFp1w3GpcEDJZYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s901U7XZGI46cRx6WhRVZX6MtFesiYWalSSWotQ3BSYZKXeT7rTaCquqclD0NvxOGjrNAjBmGF2IzmgCau87AOPrz45Z0xi/ii2kkWOmPTvm94P/bJaLCnDkkRuEI/W0jrYakN9QdM9pUSjKbgNnJy8cZxBH196e1PyMjjz87VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocyvsUWm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1081EC4CEE3;
+	Thu, 10 Jul 2025 13:42:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752154943;
+	bh=O2w/SrY5DG8vVLbvJhBCppXT7i2aFFp1w3GpcEDJZYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ocyvsUWmeyX/jVDFjgpEWtnc/Geca+FwAttm6LhCXok/nvdY5B3MLJeEfxLULOq8J
+	 yu5SM/k7mG4ZxtVw5Gp7MQ17e3Yl3y2+mRXkWZOuXCt8keVFRfLM9GbgxxdlZxlfgR
+	 8opp23wa8A5Nzo1830EWrtVfwLV9EYhQsPQcCNdGOYMtZmXKFUHsKHGuqdEGOinCTk
+	 Es/C2bZ3ndP9uFsi05hsdAvUpViWsW4YF3W4JzfPH6ZZHzrHjPYV/T49HxB2VuRheh
+	 rEf4VMbTcvrAI2X606n8ARgQWJbuluoeBKKuClkLrTuTeDpn4RXsUa7cWivE5wqQ5F
+	 13TBFAVlUvOvA==
+Date: Thu, 10 Jul 2025 14:42:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: wang lian <lianux.mm@gmail.com>
+Cc: akpm@linux-foundation.org, ziy@nvidia.com, lorenzo.stoakes@oracle.com,
+	david@redhat.com, sj@kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+	shuah@kernel.org, Liam.Howlett@oracle.com, brauner@kernel.org,
+	gkwang@linx-info.com, jannh@google.com, p1ucky0923@gmail.com,
+	ryncsn@gmail.com, vbabka@suse.cz, zijing.zhang@proton.me
+Subject: Re: [PATCH v4] selftests/mm: add process_madvise() tests
+Message-ID: <aG_DPLhtZ5qDuWHY@finisterre.sirena.org.uk>
+References: <20250710112249.58722-1-lianux.mm@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JxpZ0RoUQgE6HJjN"
+Content-Disposition: inline
+In-Reply-To: <20250710112249.58722-1-lianux.mm@gmail.com>
+X-Cookie: Do not cut switchbacks.
 
-Call the notifier callbacks installed by the device drivers when
-failing IOMMU page faults occur during the SVA mode operation.
 
-Signed-off-by: Sergey Temerkhanov <sergey.temerkhanov@intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/iommu/iommu-sva.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+--JxpZ0RoUQgE6HJjN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/iommu/iommu-sva.c b/drivers/iommu/iommu-sva.c
-index 1a51cfd82808..18b6d9b02899 100644
---- a/drivers/iommu/iommu-sva.c
-+++ b/drivers/iommu/iommu-sva.c
-@@ -256,11 +256,19 @@ iommu_sva_handle_mm(struct iommu_fault *fault, struct mm_struct *mm)
- 	return status;
- }
- 
-+static struct iommu_rid_notifier *iommu_get_rid_notifier(struct device *dev, u32 rid)
-+{
-+	struct dev_iommu *param = dev->iommu;
-+
-+	return xa_load(&param->rid_notifiers, rid);
-+}
-+
- static void iommu_sva_handle_iopf(struct work_struct *work)
- {
- 	struct iopf_fault *iopf;
- 	struct iopf_group *group;
- 	enum iommu_page_response_code status = IOMMU_PAGE_RESP_SUCCESS;
-+	struct iommu_rid_notifier *rid_notifier;
- 
- 	group = container_of(work, struct iopf_group, work);
- 	list_for_each_entry(iopf, &group->faults, list) {
-@@ -268,8 +276,17 @@ static void iommu_sva_handle_iopf(struct work_struct *work)
- 		 * For the moment, errors are sticky: don't handle subsequent
- 		 * faults in the group if there is an error.
- 		 */
--		if (status != IOMMU_PAGE_RESP_SUCCESS)
-+		if (status != IOMMU_PAGE_RESP_SUCCESS) {
-+			/* Notify the requester of a failure. */
-+			rid_notifier = iommu_get_rid_notifier(group->fault_param->dev,
-+							      iopf->fault.prm.rid);
-+
-+			if (rid_notifier && rid_notifier->notifier)
-+				rid_notifier->notifier(rid_notifier->dev, &iopf->fault,
-+						       status, rid_notifier->data);
-+
- 			break;
-+		}
- 
- 		status = iommu_sva_handle_mm(&iopf->fault,
- 					     group->attach_handle->domain->mm);
--- 
-2.43.0
+On Thu, Jul 10, 2025 at 07:22:49PM +0800, wang lian wrote:
 
+> Add tests for process_madvise(), focusing on verifying behavior under
+> various conditions including valid usage and error cases.
+
+> --- a/tools/testing/selftests/mm/guard-regions.c
+> +++ b/tools/testing/selftests/mm/guard-regions.c
+
+> -static void handle_fatal(int c)
+> -{
+> -	if (!signal_jump_set)
+> -		return;
+> -
+> -	siglongjmp(signal_jmp_buf, c);
+> -}
+
+I see from looking later in the patch that you're factoring this out of
+the guard regions test into vm_util.c so that it can be used by your new
+test.  This is good and sensible but it's a bit surprising, especially
+since your changelog only said you were adding a new test.  It would be
+better to split this out into a separate refactoring patch that just
+does the code motion, as covered in submitting-patches.rst it's better
+if changes just do one thing.
+
+> +#include <linux/pidfd.h>
+> +#include <linux/uio.h>
+
+Does this work without 'make headers_install' for the systems that were
+affectd by missing headers?  Lorenzo mentioned that we shouldn't depend
+on that for the mm tests (I'm not enthusiastic about that approach
+myself, but if it's what mm needs).
+
+> +	ret =3D read(pipe_info[0], &info, sizeof(info));
+> +	if (ret <=3D 0) {
+> +		waitpid(self->child_pid, NULL, 0);
+> +		ksft_exit_skip("Failed to read child info from pipe.\n");
+> +	}
+
+If you're using the harness you should use SKIP() rather than the ksft
+APIs for reporting test results.  Don't mix and match the result
+reporting APIs, harness will call the ksft_ APIs appropriately for you.
+
+> +			/*
+> +			 * MADV_COLLAPSE lost the race to khugepaged, which
+> +			 * likely held a page lock. The kernel correctly
+> +			 * reports this temporary contention with EAGAIN.
+> +			 */
+> +			if (errno =3D=3D EAGAIN) {
+> +				ksft_test_result_skip(
+> +					"THP is 'always', process_madvise returned EAGAIN due to an expecte=
+d race with khugepaged.\n");
+> +			} else {
+> +				ksft_test_result_fail(
+> +					"process_madvise failed with unexpected errno %d in 'always' mode.\=
+n",
+> +					errno);
+> +			}
+
+Similarly, to fail use an ASSERT or EXPECT.  Note also that when using
+the ksft_ API for reporting results each test should report a consistent
+test name as the string, if you want to report an error message print it
+separately to the test result.=20
+
+This applies throughout the program.
+
+> +/*
+> + * Test process_madvise() with various invalid pidfds to ensure correct =
+error
+> + * handling. This includes negative fds, non-pidfd fds, and pidfds for
+> + * processes that no longer exist.
+> + */
+
+This sounds like it should be a series of small tests rather than a
+single omnibus test, that'd result in clearer error reporting from test
+frameworks since they will say which operation failed directly rather
+than having to look at the logs then match them to the source.
+
+> +	pidfd =3D syscall(__NR_pidfd_open, child_pid, 0);
+> +	ASSERT_GE(pidfd, 0);
+
+This is particularly the case given the use of ASSERTs, we'll not report
+any issues other than the first one we hit.
+
+--JxpZ0RoUQgE6HJjN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhvwzIACgkQJNaLcl1U
+h9B9Iwf/fvpOkRD8HNeEFM0rMg/Fod98NV2uGuIyKgK6Hl5gAzErKqNHVMxsEKY7
+AMsj9qiWyBGvjCYarJAQOUjaODDhIQneeAfsLpNekzU/zlP9ATZywL8zRJEjGKxO
+vOgpThb5FtX5BIk9enHmbMavCkqHVis/H/SW394EAdWOuRRHuQ8xx3OWIh49H0a/
+EG60q8SJzg9/f/F0RiznX03w+tnPsGgCM4cfW4bLs6WKqIL0ZSj1bUswJ2jE7VrI
+HBYQF7e87dy+NB2myp5c1mlxI52xxgAJnrp6HjyyqlnqITo+MOb+BPnawTaZ1rpY
+srJpsaZtAtnsj2j3tiugOU4nhnoqZg==
+=uYWZ
+-----END PGP SIGNATURE-----
+
+--JxpZ0RoUQgE6HJjN--
 
