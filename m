@@ -1,242 +1,205 @@
-Return-Path: <linux-kernel+bounces-724864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F13AFF7A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:40:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADE2AFF7AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13B054804D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:39:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25723A2594
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96D3283FE5;
-	Thu, 10 Jul 2025 03:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A3B280017;
+	Thu, 10 Jul 2025 03:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PK4EnXIu"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="P9+vWEPy"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2048.outbound.protection.outlook.com [40.107.236.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE1728152B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 03:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752118792; cv=none; b=uicfvkDs4ZIUC/IUQuxkVlW//MkB3JriOyN+H1mfa3dDXjPd1X43FAgHlLZ+OZff8duOY/BIdQGbX6GHJ+zjwQYL5TW7BQYveqDDbtESeGcmDXkp2Zap9jsfbMJYaaNf6gTCm19rMy9rKuOWIOvFBEbdr3LS5pVRR7pxHxve+NQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752118792; c=relaxed/simple;
-	bh=ltuIyEGsYKAVkUC8bI6NbuIrfZ6n2CS6dG1w/GUIO1w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ij4QuHQbpiwVm9cOjtyi+UXLvsfRYeQwwmljoKzWtavs0HNLuX/5PDFydrPYfZ9DpqoocHWOTmJR9WRaTlS9psB2crvT5I4RUmPQjheddyooLbfptPoxRJmEVvxcazB5yCXteR6ZZowT2lj324bcwOH+tkHISmftnJu7ElNfMY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PK4EnXIu; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-235e389599fso118705ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 20:39:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752118790; x=1752723590; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tRlQ79ljXXr6mSwltdgFEe59EkK6pS6NPipORQRa7q4=;
-        b=PK4EnXIugTaCkLILbQR23ljaZ70cbRK7yDJLqBV25pv2DGAsklGLRirjxi/b96naEm
-         zVck4NAy1lbGXakYhfKMgW9KGPXBrXtw3Qv3/kQ8S2m05KPj6UNQ65Tc6rexKkUrqvvg
-         cK/VkeoOM2z8g2NnDhH1YM2HvvOMbged0AJf+0BudW6Ysfs2+Cj1BhzZ47J+JbuuAu/w
-         8DstFQdjcFsU/SAoZ5YI4NdWXohacMYH3v+jz9PSPd/+odSN+jgolOKNXewAcZf0vJ8h
-         o6IFgrZ/T2xOoi9wA+qDO2etf9fpuVdT26kBKrW24nQotsSsu6t6br89CjYF/om/ThGI
-         NeYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752118790; x=1752723590;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tRlQ79ljXXr6mSwltdgFEe59EkK6pS6NPipORQRa7q4=;
-        b=M0KJr+obfZvzOoVZyO5FZTD8KmBPLkq0kssaNLnxEXY1T8nLPvRoi+zfGQdiG4lmV3
-         9+KVoa7g9vQbi/0AYG9ZKdk2g1usCYLStJ0DyVqD+MpD4dLwZZ9Ghn2KnuiuBznW8O2f
-         I/6c2Gz9C/FWFDnsZhuejdtrxgBrJrEj4LkOy3XXm50ToBhelu1K2ttQH2L+urtNIw3n
-         DICHn1w/DmRwfY0ZBffsiCOnSpk4o1XdVOQJyQycXMHhKj9pd4dgf7RZl+JaxTkcIam/
-         LkXFBEfs31dbXm0svXHbiWggq7yzWPb921zwQ6QADxAZnXeflFa2fCFvVfPOQk8QXow/
-         s0Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+/3wDX9dRSkPydwrzFDBGeA6ueiySE3dAU4uexQOy11gpWejAxhq8Sx8Pdxri0XfMXrbZC9XUMHMR8io=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTiRqe/CIvPQ3GoAnAYAjT4+icm+971LMImSGbkwmsRR+7LEjq
-	eGSQStS+iqXSHBS9D6qQfGzR69kioyNPhJuKaqY4GdoXVStLpkLjq/D+fy+0Zy4AoOSgLXwbYp1
-	o4oL/5aIS42E14odev2NjqWDM/QC3wfOFbewrdtM/
-X-Gm-Gg: ASbGncuhrfZpgDtrcfqZFu6qRJ3lx9fWJOquJOkMRZR8MCyeDKBJ+U+GyutL9XueVnC
-	vI5fW0ySoXZq6WjZsrhErkK0kbY/yeEUbMd2H3WNE/g6Ln43qU35jKGwC8bamt4sQkeZh3PR7eS
-	eXHct6Go7sZDQANdR89iTed9RDyD1I4sedNs0Ot3GXDT1RtRleB6dtciQGP+mHF98cW9HX7txSb
-	A==
-X-Google-Smtp-Source: AGHT+IFNdXMLLMHzYyYMCLYInTnZ0FqKDLOyiXEeczMGTqoYZAimdGifr5hKh7FXeaefcn7hZsZlz0Q2uZ9bsaSqKBg=
-X-Received: by 2002:a17:902:cec8:b0:231:d0ef:e8ff with SMTP id
- d9443c01a7336-23de372b919mr1790925ad.8.1752118789639; Wed, 09 Jul 2025
- 20:39:49 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0132AF9D6
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 03:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752118902; cv=fail; b=qhQU5CKnXo/oAuoh+qxQNs4StLVfKAl8r2yjl7sif9mfTkx3jKYrEiomWpoAq6YRJAnAGft+80u/GnnoONWLh1rmx7gm0V2v7HBZKlL3prFgRHD4TwoB5Ek2E51ukKZf3KD8gWRliy5QcFtzgVhV0BJ7vH5R+v6TmJlrb4amHjQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752118902; c=relaxed/simple;
+	bh=I0Sb7/gfMvonkTOHOnG7THEk86z4UX/rY+ZDNaqWdNY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=vAPlvAcjHR/YmwpakDXahLDLL5Zers+NAJhqMZFSdxwaH16ZA+RVRloVqtFWvtQHhiwb3D+wTzb5WQ0Ou79bQwnFt1zbepmH5XmrtN+HSROngzJbah+wqYUPqHu7I/oxWvfurG3xa+SIZmpG5DWd4ZTP7Nilvh61l+Htdu2yRhM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=P9+vWEPy; arc=fail smtp.client-ip=40.107.236.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JpHjo10+Wt9M2NIGKj/k3AtWBlHOqGGZqMWZHZEfrzoyDJB0SsL8vPYS9O7wddH91yvqqZlQ9LjoFZQ3muKijnhjLppZWtnJzZZwaVpH3FgxSSX5vQNH4NcOETFdqG0+AKKFe2/7GD1g2cHn/mqTUjjYkoRHIZzpDFVukn9/+hok0PBmBi+8ijpOn0/hDc3LSUd6FiejllNTQfJwvW0e1zmFDCjYT9UgcLXO3dhpZfKlQpj0SaasFnT7IwSx3eRCdpsXQlKcN104HvkYWH5TMmrIP9ZFopzG3NJUvmI9mJ5DVcJyFFlo2PTPI5jMhAoZD59ArR39d6bmZ7NKJK+yYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wro/n7xSWKseYmp/iJFLRYbKjfaehDrauql0Rkqu7Bw=;
+ b=bq8k0Lb5JD84ZJVCOVtvo17BiMiyoWHemetdSKAWlKUsahKm0Zabe1bRj3xT7y23cgHiMCqN5/8XTH6A5vAvNiqN6KGzTBEy7IvqapzprZXj7yi7io3UneUugBmKBgVeSjhb/rLdwlij/tse0UQy89mXdSeqY+5eAPOe1zUUYffakqFsUpItgLTjoe5A243aCQCI8ArK/zu6jRSctAB9l2lDltQGxZ2ZCpFxSxY1RB0EbbspPCZ7x3g0bQAcq7nIBvg3IaJiEabDTiptTllS3d3+gBYZwNrNDdL5+REZcelYrRHR4AQfw1Z8pAwcxKe++Y7ARPpkRZBzCdhfysxiQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wro/n7xSWKseYmp/iJFLRYbKjfaehDrauql0Rkqu7Bw=;
+ b=P9+vWEPye0ZVq2meFTYxQKT0MhXAuigDkR3f85fsq1Th01BUpU9+c2DwCHbplL76yOvvvx6yY2aZY22icLAkV8MTQT9q+NfyAvBBooswu3ZuTEoexNud8IQzkzgEw0Ghv0eGC/3U7KyyzjSShi+0ggrV95h79XMFIMKc/AhuGDw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH3PR12MB8658.namprd12.prod.outlook.com (2603:10b6:610:175::8)
+ by DM4PR12MB7718.namprd12.prod.outlook.com (2603:10b6:8:102::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Thu, 10 Jul
+ 2025 03:41:37 +0000
+Received: from CH3PR12MB8658.namprd12.prod.outlook.com
+ ([fe80::d5cc:cc84:5e00:2f42]) by CH3PR12MB8658.namprd12.prod.outlook.com
+ ([fe80::d5cc:cc84:5e00:2f42%4]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
+ 03:41:36 +0000
+Message-ID: <fb97657e-cb61-4e8d-a156-eb1141dce19e@amd.com>
+Date: Thu, 10 Jul 2025 09:11:27 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] sched/uclamp: Exclude kernel threads from uclamp logic
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>,
+ Christian Loehle <christian.loehle@arm.com>, xuewen.yan@unisoc.com,
+ vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com
+Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, hongyan.xia2@arm.com, linux-kernel@vger.kernel.org,
+ ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com,
+ kuyo.chang@mediatek.com, juju.sung@mediatek.com, qyousef@layalina.io
+References: <20250703091437.79861-1-zhangzihuan@kylinos.cn>
+ <675563a5-8f1d-4249-9828-9fb353dd7dd1@arm.com>
+ <6414cb05-11d3-4b2a-ae97-7bb0ca0ea898@kylinos.cn>
+ <8a64cb22-24f7-4ca7-8e4e-22e1612124d9@arm.com>
+ <386d99d3-aa97-4069-8d63-d197262832bf@kylinos.cn>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <386d99d3-aa97-4069-8d63-d197262832bf@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0029.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:25::34) To CH3PR12MB8658.namprd12.prod.outlook.com
+ (2603:10b6:610:175::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
- <006899ccedf93f45082390460620753090c01914.camel@intel.com>
- <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
- <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
- <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
- <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com>
- <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
- <aG1dbD2Xnpi_Cqf_@google.com> <5decd42b3239d665d5e6c5c23e58c16c86488ca8.camel@intel.com>
- <aG1ps4uC4jyr8ED1@google.com> <CAGtprH86N7XgEXq0UyOexjVRXYV1KdOguURVOYXTnQzsTHPrJQ@mail.gmail.com>
- <c9bf0d3eca32026fae58c6d0ce3298ec01629d33.camel@intel.com>
-In-Reply-To: <c9bf0d3eca32026fae58c6d0ce3298ec01629d33.camel@intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Wed, 9 Jul 2025 20:39:36 -0700
-X-Gm-Features: Ac12FXzLm-0HLY-D-VuCf-_kpUdqDwZmo7Dl0JNusIPodOTsjQNE_6ODLGzw0B4
-Message-ID: <CAGtprH9v=bw2q7ogo0Z46icsVWMUhm1ryyxdRFuiMkcGgxrw2w@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "seanjc@google.com" <seanjc@google.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
-	"Miao, Jun" <jun.miao@intel.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
-	"pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"amoorthy@google.com" <amoorthy@google.com>, "tabba@google.com" <tabba@google.com>, 
-	"maz@kernel.org" <maz@kernel.org>, "quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, 
-	"vkuznets@redhat.com" <vkuznets@redhat.com>, 
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, "jack@suse.cz" <jack@suse.cz>, 
-	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
-	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "Wang, Wei W" <wei.w.wang@intel.com>, 
-	"keirf@google.com" <keirf@google.com>, 
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, 
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
-	"aik@amd.com" <aik@amd.com>, "usama.arif@bytedance.com" <usama.arif@bytedance.com>, 
-	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "fvdl@google.com" <fvdl@google.com>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
-	"nsaenz@amazon.es" <nsaenz@amazon.es>, "anup@brainfault.org" <anup@brainfault.org>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mic@digikod.net" <mic@digikod.net>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "Du, Fan" <fan.du@intel.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "steven.price@arm.com" <steven.price@arm.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
-	"Li, Zhiquan1" <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
-	"Aktas, Erdem" <erdemaktas@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
-	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "hughd@google.com" <hughd@google.com>, 
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "Xu, Haibo1" <haibo1.xu@intel.com>, 
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
-	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
-	"Shutemov, Kirill" <kirill.shutemov@intel.com>, "chenhuacai@kernel.org" <chenhuacai@kernel.org>, 
-	"Huang, Kai" <kai.huang@intel.com>, "shuah@kernel.org" <shuah@kernel.org>, 
-	"bfoster@redhat.com" <bfoster@redhat.com>, "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, 
-	"Peng, Chao P" <chao.p.peng@intel.com>, "pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, 
-	"Graf, Alexander" <graf@amazon.com>, "nikunj@amd.com" <nikunj@amd.com>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "jroedel@suse.de" <jroedel@suse.de>, 
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "jgowans@amazon.com" <jgowans@amazon.com>, 
-	"Xu, Yilun" <yilun.xu@intel.com>, "liam.merwick@oracle.com" <liam.merwick@oracle.com>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, "quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, 
-	"Li, Xiaoyao" <xiaoyao.li@intel.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
-	"Weiny, Ira" <ira.weiny@intel.com>, 
-	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
-	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
-	"brauner@kernel.org" <brauner@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
-	"hch@infradead.org" <hch@infradead.org>, "will@kernel.org" <will@kernel.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8658:EE_|DM4PR12MB7718:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0397a78c-1c9b-4cfe-b37f-08ddbf63aba4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?STJoZ2hZR0thOFQrQkVyMGwwdDlDdWx5NXU0Q21NV2FYM3ZNNGs4UmlCM0hn?=
+ =?utf-8?B?UXdzQlY4UzFyOVY2MVp2RDhESzh3bEkrQWJJbzBDR1A3eEF3K2g5WFByWjhh?=
+ =?utf-8?B?dXNsblBaM2hoQmNZRllyN3AwbHdSWDMwWml5ellRNGZlS3JwRWh1d2RZRnBG?=
+ =?utf-8?B?cHo2enV4emNlRUsxdmg4Y0JBMUVDTVBzK3pzMTFCeWR2WW1jY0R1L2QvUTEz?=
+ =?utf-8?B?a2xPMjdBdFM2WHRCaFJ0cDJDRWNiZFRiMlozYS9BbllRK0lKR0RnV1ZTa2E0?=
+ =?utf-8?B?Q0xNZllWNnZRQXFBd0pPdFJrY0JnYkxjOFpSMEVFakNYMkFQZ1FFMTNMdWYx?=
+ =?utf-8?B?Zy81cmkvUkt3L0x2aFIzWHdWS0RBQmZEV216RTBZdDZnRVp6N3grWWRocWZE?=
+ =?utf-8?B?MlpENWxybktFT0Z5Z1Fjdm5GSXp0TkJ3R3JDQTdvZ2F5d2RGU0tSYmdEcHZs?=
+ =?utf-8?B?aGxxZTdsN1k0ZlhWS3hTNTgxSVZTOTByRVI2MUZ4RGN2cnM5SDVTNGZ3R0FP?=
+ =?utf-8?B?ZEQ5clJpUjYrMGdHVE0vb2l2a2o4ZG93V2JKWmk4WFBybEtnN2tzRWtrYm5W?=
+ =?utf-8?B?ZlFnV2E1bmYzRnRCM3NkeGsvTFp5bHFBM0hWZUFzaXhJc0k3SzRVc0s2eFpU?=
+ =?utf-8?B?V2lYdlVQVm9PS2ltbDhLeGJGTHJPWjlRMy96b290L3B5MEQ1cG9uRk1LcG9p?=
+ =?utf-8?B?eFpEeVpqMlNzK1FlVWxrL3JSTWt3VWpqaCthZDM5amZlUmJGQXFIYXRUVzV2?=
+ =?utf-8?B?Mm11a0ZrQ2NpcXNXSHVTdTNESy90M2lVcGFDNEowV2FOcHhnakRBdHVkUGVV?=
+ =?utf-8?B?WHl0WVJEaWhqMStLd2hxR0llWjVTQ1hhcnFhNiswaDlIak11ZWd1WkVuQWJi?=
+ =?utf-8?B?R09DTVVuMFE2ZWxBS0Z0Vkg0OERyVXNSZVNGc1puaHp3UGNNM1d4TDhXRk9i?=
+ =?utf-8?B?ZnFmSFdEN0tqTVVIYmdRVXlrWG1aeWpVS3JsSXF5ZWJiUVRsaG1kMGtQdkM3?=
+ =?utf-8?B?Wi85OFl0RGFyMDZCbytsb29ST0lVb2Q1b3hwOFIvL0dxUHZDMFhvYWRjSlVV?=
+ =?utf-8?B?RXp2a2gvbTFGTytWdmF5WXVyaituTFdzbkU5empVTll4YzE1dXZxZkdHbjVN?=
+ =?utf-8?B?ei9pMWF3TEJCaC9PSWllaGhFdGVmMjBUaUpIdlBXM2pWY0Q1eUVBRDdvWVJS?=
+ =?utf-8?B?eEo4dlhuZEVJVC8xVjNDd2pzZnZJbWlYR0tUdGhBUUY4T1ZHckt1MVljaVJu?=
+ =?utf-8?B?QjRuZnNSaVBKdWFPWERPZU1rNDRDdVNYZUFhYk1LWnNxNGp3N1ZKYUM0ZkZB?=
+ =?utf-8?B?OUFsU2xqMTNPUVgyd0JLKy91MjN1bmt5NEhLRnpSY3o0VDh5eW5pbzZLWjRH?=
+ =?utf-8?B?bVg4UjQ5am5pRlZKRDNNSGsxcVBWLzN4U0RtZW16SUViaHhoRFJXMDlOdUkx?=
+ =?utf-8?B?L2FVSWh5YmRSRmhYMjRpWmhVbzhqakcxdFlkdFVuSFA1UFZzcjFxNFA5dEs0?=
+ =?utf-8?B?Smh1dDBDQlc3UzhwZDRGblREaDNvMHV2aktsUGJTbHFjaTZyM0JzcEZFRmRu?=
+ =?utf-8?B?MHE3RkFQTlBaL2pQUDRYVDV1eU4wcjE0TS9nTHZLbHRiajYzeVZCcGhZZkZz?=
+ =?utf-8?B?aS9FejJRZEV0UEJ0VzdHSmVVRndDYi9aUkFFWU9oV01NbkVxd21FNktIczNu?=
+ =?utf-8?B?amVJaFQ1L3NJdWpKeUVaeHVRbng0aFR1anlBKy9CeFhLdTJtR0hjK0pSVzhq?=
+ =?utf-8?B?Z2Z2RnN1R0dDOGhGMHlLbWxoM0xuRURnMXpqY1RXYWtXZklEQjBsV05XQnVM?=
+ =?utf-8?B?S2ZaaHkwZUlVcXBlNXlLK0hTVDVXeStxb0pHSFdJdGRHSnFTVkNMUU5ZZDF1?=
+ =?utf-8?B?S0RJL1dlU25oSEpCSVVEN0FWWVBZbE43OC8rU3NkTWZ0cTJ6ZUdlYTVudTZz?=
+ =?utf-8?Q?TQIbRLV/ucs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8658.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZkZRZFNYNE5NYStwTjViUHEvQ01EL2VsSE9hZFVsUlE5RDgyaTFQaTUxWXJy?=
+ =?utf-8?B?Z2RabUpaS0crMTlsT0hyaXljZEY5MVdZWXM5OTY4OWw2TGQxdEZZV2pNN2RH?=
+ =?utf-8?B?MzQ1d1NidDhDY3VCUWd3ZmpGNXRRZW1uY0kza3pGWSt0TE5jd1NpYmFvdnYw?=
+ =?utf-8?B?S1h2ME1jdFByUDJQa2taZ05lMnVxdVEwQ1dEbFQ2UnU3SGIrUU94bjhUa05m?=
+ =?utf-8?B?QlU2ZUtqbm44RUFTUXVuWEZwNURnendQbkU0YWMyMmFBcDNKQ2pteGYxK3Jq?=
+ =?utf-8?B?MjJZa2ljUkdlbVF6RTdMbm12RkVBTTNqa1VIdk8wMTd1L2UzQjVxV1l0NHVm?=
+ =?utf-8?B?Y3lEMjlPUDRnb0NJN0lVQ01OVy9HNUZrU0F1a3ZhV2RkRVVjQUtpSjQwa0pL?=
+ =?utf-8?B?cks1Y1REZTJUcjhoOFR6K0pjS0RTZnRybThtY3dnTUFRaXA4Vy85dEpKcjBs?=
+ =?utf-8?B?SlVPdFZyTEVzSld0Ym1xdndiY0x4NDRLRFFHbGtUNUxWbTV3blJHVmhySjU2?=
+ =?utf-8?B?VG5SWlVUSjJyWW0zekg0d1BDcDVJQzlPUnBwQjMyZ3gzS2F6YndDV3lGSEtn?=
+ =?utf-8?B?QkYyQVFIVktzRlpyZW5kL2F1ZUVEUzQ4OEpNanQ4d3lzMGRlaW1SYlZLTjlp?=
+ =?utf-8?B?RGl3WmIvdlV0WUxhcFRkNXppV1RvVW5pRnplaktKZTNJd2QzL0tyeVZ6eGt0?=
+ =?utf-8?B?Zm9Qam1xanZXQk5JUnBDNEpkVHVIUTVLem9YYjlFaHNpRDFwOGNzNkxqSm9P?=
+ =?utf-8?B?UXU2WHJtK2NFa0RuaHhZa1BRZlZHd00xZlQ1K3lmL0h4cXV1N09tUytpTmh4?=
+ =?utf-8?B?WHFJUCthaE9qVWNiMGdkWndmcXY4bjBUYWdkemRXWmZ5VWhDV3pVVWpjcGQx?=
+ =?utf-8?B?SS9VSnZVWlEycUd6alZSQ1pSMWZQMDhvVVdkZE9hMHlmRExaSHVWQ0I5TTJY?=
+ =?utf-8?B?c1ZhTnJGcXU5SE9Cc0ZTL0hXM1ZqSTJFQ2YrbXZXVHNXdjU3UnFxQTZtc2lG?=
+ =?utf-8?B?U0JBQWFCdGRWbGNUS3VyNytpbVdJd1NCNTQxbjVqK2kvdWlhZHlCNi9BbVlO?=
+ =?utf-8?B?K2g4TnRnTyt4dndjOGhiSHZQYmNIek45dExQMFNydWFhT3gxZjdJOVd2bFda?=
+ =?utf-8?B?QjFlY2E4MEdWTHhHajc1M01JUDhqbk44L1RFOWhPTGxxbENUc3h3WEZqMlpS?=
+ =?utf-8?B?Qkl2UXF6WHljR3hiL1pVdFpBaE9lOUZZK1lXL3JqS2JRaXlDQitSWGZWVkl3?=
+ =?utf-8?B?dXRDNVoyK0xoSmhzd3FMSjNOMXFjY1k3RXcrZDRDS28rWXh6RUs1aERpcVhF?=
+ =?utf-8?B?aHNKYlZrRFVueVRzdGNXV3hVa0VoaUUxUU50TDFFa3J4QUhRU2Q5M1ZLYVhD?=
+ =?utf-8?B?WkVleTNURjFmeHR0MThHUGZGNS9MeUxLbGpQZUJEemo3c3plWUZ0T1lqNlBp?=
+ =?utf-8?B?K1Q3VUxaakd5YmQwaWVvTm9qbjUxcko5VkZoK1ZPZzJPbzFzYzFWcXpPNVJI?=
+ =?utf-8?B?K0Jnc0JsREcxaWxlM0V1YTJVZFUxTnRKdGRRNmF0OWpEUTlqZjZRcnUyVCt1?=
+ =?utf-8?B?ZEI4aFpMVzBJQ3QrNWh2RWZyeUhDK2ZLYzArVUFzekhQZXQzMDBqRTFMTXVH?=
+ =?utf-8?B?UTQ3SDd1cTlIb2YwZ0FKQUIyNkV3Q3lTY2RWMTFyNFhJaXlsRmxHQ1pOV050?=
+ =?utf-8?B?Y3NEYVVqb01ZUUlGTkdNUnkxNThqMFdhWCs3V3hmZ1VBcHJycUZ5Z2NuNTQ0?=
+ =?utf-8?B?WlJRSmFyTHV5emMyMm5rT3NscjFiWkMwckNtWXB6ZHpEbnRQVlY5VzB6VEZO?=
+ =?utf-8?B?SVIxODdTUm12aWJ4YU9oSjZwM09jb0REaEw2M0NyRkIvSGlPL0xQdDRMRVFC?=
+ =?utf-8?B?OGxjSmc3VGdBYTR2b2trRkZ5VHFlS2FMOXpWYUNwak1JZlIwRTBtZEw3NXls?=
+ =?utf-8?B?cTZjdFlnc25EdldiaG5yQ3dhU2g5YnBHT2RwZnoxS3d5eG9aUk02SGFuYkFo?=
+ =?utf-8?B?WDlpSG1uczRGLzdVamVNS2pOUkY3M1dzb28yaFNyUlZVTTR2a0JabGRGcGlK?=
+ =?utf-8?B?cUR5QXRzcUliTVV4eTBUZHJHaWlqMVUwcU9LS1hGRnFRMVNva1VNMitNRUlK?=
+ =?utf-8?Q?6rvBKDs2y2cTp1p2zoR0MRhEj?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0397a78c-1c9b-4cfe-b37f-08ddbf63aba4
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8658.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 03:41:36.2966
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YXfz7xFFIH+D7quawGwIjTN1yNEOO1sDFRq8LixhbkROmyBAN4iuHDp+hx3VunCFO9OFdQqzQktEAH8LGG4VZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7718
 
-On Wed, Jul 9, 2025 at 8:17=E2=80=AFAM Edgecombe, Rick P
-<rick.p.edgecombe@intel.com> wrote:
->
-> On Wed, 2025-07-09 at 07:28 -0700, Vishal Annapurve wrote:
-> > I think we can simplify the role of guest_memfd in line with discussion=
- [1]:
-> > 1) guest_memfd is a memory provider for userspace, KVM, IOMMU.
-> >          - It allows fallocate to populate/deallocate memory
-> > 2) guest_memfd supports the notion of private/shared faults.
-> > 3) guest_memfd supports memory access control:
-> >          - It allows shared faults from userspace, KVM, IOMMU
-> >          - It allows private faults from KVM, IOMMU
-> > 4) guest_memfd supports changing access control on its ranges between
-> > shared/private.
-> >          - It notifies the users to invalidate their mappings for the
-> > ranges getting converted/truncated.
->
-> KVM needs to know if a GFN is private/shared. I think it is also intended=
- to now
-> be a repository for this information, right? Besides invalidations, it ne=
-eds to
-> be queryable.
+Hello Zihuan,
 
-Yeah, that interface can be added as well. Though, if possible KVM can
-just directly pass the fault type to guest_memfd and it can return an
-error if the fault type doesn't match the permission. Additionally KVM
-does query the mapping order for a certain pfn/gfn which will need to
-be supported as well.
+On 7/10/2025 6:17 AM, Zihuan Zhang wrote:
+> - For kernel threads that do not set any clamp values, skip the clamp
+> aggregation step
+> 
+> - If a kernel thread explicitly sets clamp attributes, it should of
+> course remain fully visible to uclamp logic.
 
->
-> >
-> > Responsibilities that ideally should not be taken up by guest_memfd:
-> > 1) guest_memfd can not initiate pre-faulting on behalf of it's users.
-> > 2) guest_memfd should not be directly communicating with the
-> > underlying architecture layers.
-> >          - All communication should go via KVM/IOMMU.
->
-> Maybe stronger, there should be generic gmem behaviors. Not any special
-> if (vm_type =3D=3D tdx) type logic.
->
-> > 3) KVM should ideally associate the lifetime of backing
-> > pagetables/protection tables/RMP tables with the lifetime of the
-> > binding of memslots with guest_memfd.
-> >          - Today KVM SNP logic ties RMP table entry lifetimes with how
-> > long the folios are mapped in guest_memfd, which I think should be
-> > revisited.
->
-> I don't understand the problem. KVM needs to respond to user accessible
-> invalidations, but how long it keeps other resources around could be usef=
-ul for
-> various optimizations. Like deferring work to a work queue or something.
+There are also sched_util_clamp_{min,max} global controls via sysctl
+which can be influencing the kthread scheduling / freq behavior
+indirectly and glancing at the implementation, I think these are
+still handled by clamping in uclamp_eff_get() and effective_cpu_util()
+only looks at uclamp_rq_get() to make freq decisions.
 
-I don't think it could be deferred to a work queue as the RMP table
-entries will need to be removed synchronously once the last reference
-on the guest_memfd drops, unless memory itself is kept around after
-filemap eviction. I can see benefits of this approach for handling
-scenarios like intrahost-migration.
+Wouldn't excluding the kthreads from the uclamp aggregation also change
+this behavior? I'm assuming these global knobs can be used to limit
+frequencies when thermal throttle is detected and be reset again once
+the SoC falls below the throttle limits?
 
->
-> I think it would help to just target the ackerly series goals. We should =
-get
-> that code into shape and this kind of stuff will fall out of it.
->
-> >
-> > Some very early thoughts on how guest_memfd could be laid out for the l=
-ong term:
-> > 1) guest_memfd code ideally should be built-in to the kernel.
-> > 2) guest_memfd instances should still be created using KVM IOCTLs that
-> > carry specific capabilities/restrictions for its users based on the
-> > backing VM/arch.
-> > 3) Any outgoing communication from guest_memfd to it's users like
-> > userspace/KVM/IOMMU should be via notifiers to invalidate similar to
-> > how MMU notifiers work.
-> > 4) KVM and IOMMU can implement intermediate layers to handle
-> > interaction with guest_memfd.
-> >      - e.g. there could be a layer within kvm that handles:
-> >              - creating guest_memfd files and associating a
-> > kvm_gmem_context with those files.
-> >              - memslot binding
-> >                        - kvm_gmem_context will be used to bind kvm
-> > memslots with the context ranges.
-> >              - invalidate notifier handling
-> >                         - kvm_gmem_context will be used to intercept
-> > guest_memfd callbacks and
-> >                           translate them to the right GPA ranges.
-> >              - linking
-> >                         - kvm_gmem_context can be linked to different
-> > KVM instances.
->
-> We can probably look at the code to decide these.
->
+-- 
+Thanks and Regards,
+Prateek
 
-Agree.
 
