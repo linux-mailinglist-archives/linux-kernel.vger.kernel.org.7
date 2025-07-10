@@ -1,132 +1,108 @@
-Return-Path: <linux-kernel+bounces-725202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F656AFFBE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:14:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E32AFFC07
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31AE11C25BC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:14:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8D49544BD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A983428BABC;
-	Thu, 10 Jul 2025 08:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479D028D837;
+	Thu, 10 Jul 2025 08:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PI9FuUCE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="IreOlGsQ"
+Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1AB3208;
-	Thu, 10 Jul 2025 08:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDDD28C87C;
+	Thu, 10 Jul 2025 08:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752135255; cv=none; b=KAuAAwtCsImPkAHxTbT4kUMtQZwqyaCBp+OfAA/TSX8kNdnOn2liHtORHj3Q8VnWJaSK2VblM/+YqqIBa2drc6W+GgS+b7cLYqsG13sbD/mpNHRSXxeT+t5LKXfZbH67fa/D6AKegHscg93Gp87jNdX+DIsdV6znV2t21TvE8rQ=
+	t=1752135583; cv=none; b=XGQV65bzMEa8CuIWzqCYdjTu8YZkQh3KYXM+nAFCkbeqlHmSvsXRlT8bCw2GbKlIRCAzJFSgNNLPKhu2kzWVITj+dNlctMqu1BrcV90+fqqmUi3CKOiUuxLNG23mmiIj5+cm/wkFihhm9yIXv+FpHUToMZHEkGXzXbTtCb/IuP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752135255; c=relaxed/simple;
-	bh=XiQbrbHSYuCQNbkNTFIUy2kvXW3Kfl7lo/NLSUqOPAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FucXox6oxcQ8sQ8lkr2u88fXvz2uueeJwwfQr7v9jpjrfQqWRy6nfh+1Nzh+MQB4Z2oB2nWRgo9obozd8DV6cuHTwpPyvVi4HKpCnb2/nZP5iKF0PgkTKhGctB76wXsPEaRSa7VylpMItVtuYg7PdHFpr0XhQpXrTNIABTsgke8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PI9FuUCE; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752135254; x=1783671254;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XiQbrbHSYuCQNbkNTFIUy2kvXW3Kfl7lo/NLSUqOPAs=;
-  b=PI9FuUCEtasJ9UKvwUOcfzRfFxoXFpsMM+fsqLE5ny7mfvMrJxO16TIF
-   3Xor8nqrXey8x3bAilDnh4FuSpVVogUxFBw6jUeZHlHjpt35EJzBkao3+
-   cbUqaTLy1dG3OmBiu1qHAP9Ax/TeDVdRNL8DenrUyn5VIBVW/bFlcYAG9
-   gWgLQCl8074VwrO+X0Vtr4CxwjfA9dHKS5V/39SF/q9fAsRNyvo4o0ZHN
-   H98cGRcahYSDvbks2PR574Yw40vwCCcqtVRE37MAgBAcMeWenWiml40Nh
-   nJsXN8N+vBoThoypUK2scrK7UCc8C0szHSRlHVwXROVhIKKYsrFk475/e
-   Q==;
-X-CSE-ConnectionGUID: K4k3CXapT7GutmlXJ++GLw==
-X-CSE-MsgGUID: 2QhxT1tJRYCgTBOv3gwTQQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54500656"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="54500656"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 01:14:13 -0700
-X-CSE-ConnectionGUID: t/xAE7IGRk+I77wD+L63HQ==
-X-CSE-MsgGUID: t5NYqiIvRpmLlWABANY9XQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="187009296"
-Received: from ettammin-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.98])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 01:14:10 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 16EAC12073C;
-	Thu, 10 Jul 2025 11:14:07 +0300 (EEST)
-Date: Thu, 10 Jul 2025 08:14:07 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v5 06/10] media: i2c: ov9282: add led_mode v4l2 control
-Message-ID: <aG92TxxIRdRES5cs@kekkonen.localdomain>
-References: <20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev>
- <20250617-ov9282-flash-strobe-v5-6-9762da74d065@linux.dev>
- <aG7bWXpz5sxYcLKI@kekkonen.localdomain>
- <5i6a77wbggmjjxfridurbq5mrdjksse236vwucawbi43fjv2ae@umy4fe7six5p>
+	s=arc-20240116; t=1752135583; c=relaxed/simple;
+	bh=cPa0vR7JxoXcwBgmLMAumrfFT2HcMgxfIBiuqRRWEGw=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version:Content-Type; b=XCwcos85Ws1FYxiJolfy0QNA5IC51cPBmlQ0w9qI1B0QJcnFqPTO4ygS+/7/mRQzVbdpkW+Jl8WsSHPiZ3/1nwDUeha9LXD2jMV/+R9dQOUJQ+Iqt9o/ZfMtlVRToCUCR+swDmpgZ28m1iD8LFoouS1TIjInYNxL8pY7hTww0H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=IreOlGsQ; arc=none smtp.client-ip=203.205.221.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1752135267; bh=UDJSufRH7MdpT73PTeJHI5B5xQ/ocRLDn19NK0yHIMQ=;
+	h=From:To:Cc:Subject:Date;
+	b=IreOlGsQ+tw/SEuB6cj2mkcGmHDKMh8vLroqQxC3XqQ/enCqcK+mOY0WBFrtYlF+9
+	 B8j2on/HEG27ho5ts2FcgsehOkVP9ZM725gRe9bmbRM4hjkJ06lQwTiOp0wurum//t
+	 qR1yGDoe2EOnfXu/3YkDEiLBa8K81jLKMctOyUro=
+Received: from VM-222-126-tencentos.localdomain ([14.22.11.164])
+	by newxmesmtplogicsvrsza28-0.qq.com (NewEsmtp) with SMTP
+	id 3998EE76; Thu, 10 Jul 2025 16:14:25 +0800
+X-QQ-mid: xmsmtpt1752135265tzefjw1zb
+Message-ID: <tencent_8E3F0D0AD7E5F6DC1F3009EA1DB7391A8505@qq.com>
+X-QQ-XMAILINFO: ML9YGTkUAlSnKW9XbBOS+XuF04tvmh5Gcnes7kKAR9AU//kODsNwoHw13JwxkL
+	 c59CFhLAAFryd9M0TvcPZSXsZHMF8uyCcH8eS6B+ZXbuBfizNnr5+bz63KF56/Dfqu/RluLxU6Mk
+	 UtZx/xx0weo+lTYGXS082E31vYAzhoQKzkZAmxYVEfhvh74ohhzJ6yVjbIwJ0D6Wvzqcu628eX5U
+	 knDnbPUKYYFkxhGIJq7SX5OV8XrXq6F8zqor6rUxcrV6daRqUM7eNjsa8kKwjbhQKI8yhiCbORCs
+	 zwDOUD33b0x3qiv9T+d43sm6GHfGhvIZ48l4Qzyl7rwKFXef9mtx2+Y3/jsYAyPx7/8r3uRcLc0M
+	 TGhkjdzSQiIPOjzAI9WKkiorMS0989I1MkvbKlepPIDla92q9TeRQotciZFVp6tSutBkQ4fRUd5E
+	 9gtplsbp5ldnfrrr3OmQ66A3AzZCz/uu0uSERglCtZDii4wV/S1UMHe8mirlt6szcipMR49wf/ET
+	 wzGzGHmQSJXzEylzZUPj6Xc0Of74Tsw38ONuIb6oDv1w3LpUi9LiatLIY6U3CgQ9cEj3v3n9xEKr
+	 U10nAz/Qcu8L6fhe0uC8v/o0ydTBJYGXuvAOGSvWm4LhWNuoCU2Y7S9t6pKSvIYqZDn/FYLnVTJ8
+	 cnJtWNiY5s5MT+E4EXnwLi15q7Faxv4sOJKKamrOZaKDk4IrfWiMqCdDkFyrZXkyYLmBOs9qLfpT
+	 pC3qghWSKcnBMCVl9kwz9R/xmEeDTsev8LqecnDFSLqVvevAryXwaZFyQFUiPe2gB52uYXf6stlN
+	 94eXFAC/rAl2kygXwYENrSWZI3u5fAVKa1gLW9TUD+B9H//8uXrgZW7/8mb+E8yNXQV+1L1fFe2R
+	 UmmAS/FIXfieBn1hQmPLUyZ1IgXPDgvsH51iQpnVZmSYmzL7H0HDGINg2dDa2QIgtWT5X2ZRRYv2
+	 5FVKp/WcY49bz+FEQS0N3sSpyVLY/hIV5YxDM5Q1dGgvaK/yzdAjJkzE+/c3WUiDHwwox8xchcHf
+	 3V3E6K9wmsGe1X4zjY
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: jackysliu <1972843537@qq.com>
+To: gregkh@linuxfoundation.org
+Cc: 1972843537@qq.com,
+	viro@zeniv.linux.org.uk,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: gadget: functioni: Fix a oob problem in rndis
+Date: Thu, 10 Jul 2025 16:14:18 +0800
+X-OQ-MSGID: <20250710081418.131900-1-1972843537@qq.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5i6a77wbggmjjxfridurbq5mrdjksse236vwucawbi43fjv2ae@umy4fe7six5p>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Richard,
+A critical out-of-bounds memory access vulnerability exists in the RNDIS
+(Remote Network Driver Interface Specification) implementation.
+The vulnerability stems from insufficient boundary validation when
+processing SET requests with user-controlled InformationBufferOffset
+and InformationBufferLength parameters.
 
-On Thu, Jul 10, 2025 at 08:50:24AM +0200, Richard Leitner wrote:
-> Hi Sakari,
-> 
-> thanks for the feedback :)
-> 
-> On Wed, Jul 09, 2025 at 09:12:57PM +0000, Sakari Ailus wrote:
-> > Hi Richard,
-> > 
-> > Thanks for the update.
-> > 
-> > On Tue, Jun 17, 2025 at 09:31:40AM +0200, Richard Leitner wrote:
-> > > Add V4L2_CID_FLASH_LED_MODE support using the "strobe output enable"
-> > > feature of the sensor. This implements following modes:
-> > > 
-> > >  - V4L2_FLASH_LED_MODE_NONE, which disables the strobe output
-> > >  - V4L2_FLASH_LED_MODE_FLASH, which enables the strobe output
-> > 
-> > I really think you should use a different control for this. The sensor can
-> > strobe the flash but it won't control its mode.
-> > 
-> > How about calling it V4L2_FLASH_STROBE_ENABLE?
-> 
-> I agree on that. But tbh V4L2_FLASH_STROBE_ENABLE somehow sounds wrong
-> to me. As the strobe output in the ov9282 case goes high for the strobe
-> duration, what do you think about calling it V4L2_FLASH_STROBE_PULSE?
+The vulnerability can be fixed by adding addtional boundary checks
 
-That's how the hardware strobe is supposed to work, there's nothing unusual
-in that. How about V4L2_FLASH_HW_STROBE_ENABLE?
+Signed-off-by: jackysliu <1972843537@qq.com>
+---
+ drivers/usb/gadget/function/rndis.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> Or should it be V4L2_FLASH_LED_MODE_STROBE_PULSE?
-> 
-> Regarding disabling the strobe output: Is sticking with V4L2_FLASH_LED_MODE_NONE
-> fine? Or do you prefer an additional V4L2_FLASH_(MODE_)STROBE_DISABLE
-> or something similar?
-
-This isn't about the LED flash mode and we shouldn't suggest it is.
-
+diff --git a/drivers/usb/gadget/function/rndis.c b/drivers/usb/gadget/function/rndis.c
+index afd75d72412c..cc522fb4c06c 100644
+--- a/drivers/usb/gadget/function/rndis.c
++++ b/drivers/usb/gadget/function/rndis.c
+@@ -641,7 +641,8 @@ static int rndis_set_response(struct rndis_params *params,
+ 	BufOffset = le32_to_cpu(buf->InformationBufferOffset);
+ 	if ((BufLength > RNDIS_MAX_TOTAL_SIZE) ||
+ 	    (BufOffset > RNDIS_MAX_TOTAL_SIZE) ||
+-	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE))
++	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE) ||
++		(BufOffset + BufLength+8 > RNDIS_MAX_TOTAL_SIZE))
+ 		    return -EINVAL;
+ 
+ 	r = rndis_add_response(params, sizeof(rndis_set_cmplt_type));
 -- 
-Regards,
+2.43.5
 
-Sakari Ailus
 
