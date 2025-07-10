@@ -1,205 +1,157 @@
-Return-Path: <linux-kernel+bounces-726326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18288B00BD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:08:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01585B00BDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D15CA3AB7D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:08:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C86093B3C20
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 19:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59522FCFE4;
-	Thu, 10 Jul 2025 19:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9550B2FD594;
+	Thu, 10 Jul 2025 19:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="h5iQDBvB"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2055.outbound.protection.outlook.com [40.107.220.55])
+	dkim=pass (2048-bit key) header.d=aiyionpri.me header.i=@aiyionpri.me header.b="CuFP+KHr";
+	dkim=permerror (0-bit key) header.d=aiyionpri.me header.i=@aiyionpri.me header.b="zQ4hvJY1"
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660E325760
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 19:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371162FCFFC;
+	Thu, 10 Jul 2025 19:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.220
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752174527; cv=fail; b=d1LfQgmw4tdz9UVbNcMqW5XwzHp8zB9699dZlX8e1WhLwxX04Bd+TbM8YEb0IsAVesheVfhzzcYhWkB7v97FUaUTVCyrGvtVCqw2bN+RO6jSLblcw3CafWMUuTTA2cMAgLzyr/z1BaIoENEVcFI01vWY+bznSPVhUZJcMujNWag=
+	t=1752174591; cv=pass; b=XOohHZ5rhGASFB5Js3jynfIQScA/ibVCm6c+cExArbLmiNVIXj1IjwfUEbw5G/pJm6Ie9gWrxMMbjSb6z7I6XgKb0YL+X6TvwVf2R1nOzMM7Z5zj7fK0DpR/P7gKchheJ0IKQigEKfNYx0UMOt8jY6ySntSTZ+FC/ujgdFcpXao=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752174527; c=relaxed/simple;
-	bh=8kUyoq5+QsyN95Y3LBUAKxA5lgVTbFQe2sfKwJ4v2nM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tFuwTtwxkdn5UOi73yUG4j0FtJoRH0JNWIzqnkuLaQnHv4gygnneGMSoDyiDMb9eK+brUqH8BZ3VjNugFqpXVB+R0WH+HUkGRBzxFXhL/AxFwGgKJy3JcfSeoHCsNl+cxeRQ7CkT2lnEI2q3jxkGjrScCEBZTi5qKBm4gXVe8/0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=h5iQDBvB; arc=fail smtp.client-ip=40.107.220.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QI4Nta9+BAq/jjXPkiV0c8YlqwIx1nAyyoG2klXXqFAC0owpoEJvWj6ShlvO5AkP3X9F8hwUxdHSwExBYjN4/eLhHByNX8Ir3ofTUhHFTGggMclSd/Ein3u5v+7OxLnYkxIjxFNv/t9NYpMDPTMq9Hf51t2Fym4VCXk8seOp6BLxFpji/IR92Zhu6fru5hPoirmuxoY+xZFwyuuXbs8hE4yGQsCLI8hPYxflB5EE9cPyiNgjcxV220YIej7SObUJ/8me/hR/E/DmXL6w1AZZ4OnU0e4M25KVNGHIHeUH4bEdh4N/h7wK7DIizjXPE7ahgKZH6amvr7TsyzmMyy1gJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gsVOzS1926zFD6EgT4IeTcVX1/w7B/qZ3wEZFyXtgzw=;
- b=a40lYM4cxSyCk3FPRhHZHG799Z5oHENxlK2ryZX/mv9A9EB0/v6bt5PepCIK5p37k0C57IQpv2Wxi93qqnZcydk5/JT5MEVjqXrUQwravihN8YQ9e8JqPw9tejCfeEgZgdmUpWB0VD/yDPim3XJcyq+va08nQuq9PyheYxcc8+Yk5esCO26B7nnKX1qtLnkVokbzHAeOQ4ZVAOsrPD8CV4/MjIBEgqcIceYVlujsLJTI5jE5RrdW0p6kP+EBLURQAvv/xObPWTQkqHTQ6dyt1A6o2PtOSFSG4B9+GVZ7Ihk1bobD9GElOVQfLzyvi5rdsU/djAoLbWocDnfNII0qNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gsVOzS1926zFD6EgT4IeTcVX1/w7B/qZ3wEZFyXtgzw=;
- b=h5iQDBvBZ06vi1N3uxeThZ1ihzqsq32iU940eCV2gsZZY1ZWiLlUkEYV/saILSj7DPWVyTUqben4fmeU7GrnaSgsUtdAAjLN2G23+kA/knRrbZh6L5/HtBX8eoCiRZmAWSJB3KhapTD0NQiIkJQGjk4Nj8IQAlVeXQh/xw7QvdatTmNDhbqLzThjMuMCzByJtTI+JWymuXf3VN6eu8eFS+Gf17hLbiGGMjLBbK+llXUyxDpYHmb+xgX0Kg83VQ2gyzXMeeHJz7h6aqZoeDENXGA8EvRBQtNxDo8WbawsX9vnpxKAbHs8a71J6nKnTqBJx3+hW6cskTK/k8ImbxrwhQ==
-Received: from SJ0PR03CA0232.namprd03.prod.outlook.com (2603:10b6:a03:39f::27)
- by CH1PR12MB9693.namprd12.prod.outlook.com (2603:10b6:610:2b0::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Thu, 10 Jul
- 2025 19:08:42 +0000
-Received: from MWH0EPF000A6731.namprd04.prod.outlook.com
- (2603:10b6:a03:39f:cafe::55) by SJ0PR03CA0232.outlook.office365.com
- (2603:10b6:a03:39f::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.25 via Frontend Transport; Thu,
- 10 Jul 2025 19:08:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- MWH0EPF000A6731.mail.protection.outlook.com (10.167.249.23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.22 via Frontend Transport; Thu, 10 Jul 2025 19:08:41 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 10 Jul
- 2025 12:08:27 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 10 Jul 2025 12:08:27 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Thu, 10 Jul 2025 12:08:26 -0700
-Date: Thu, 10 Jul 2025 12:08:25 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Xu Yilun <yilun.xu@linux.intel.com>
-CC: <jgg@nvidia.com>, <jgg@ziepe.ca>, <kevin.tian@intel.com>,
-	<will@kernel.org>, <aneesh.kumar@kernel.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <joro@8bytes.org>, <robin.murphy@arm.com>,
-	<shuah@kernel.org>, <aik@amd.com>, <dan.j.williams@intel.com>,
-	<baolu.lu@linux.intel.com>, <yilun.xu@intel.com>
-Subject: Re: [PATCH v4 2/7] iommufd: Add iommufd_object_tombstone_user()
- helper
-Message-ID: <aHAPqdZKfdeEMDs2@Asurada-Nvidia>
-References: <20250709040234.1773573-1-yilun.xu@linux.intel.com>
- <20250709040234.1773573-3-yilun.xu@linux.intel.com>
+	s=arc-20240116; t=1752174591; c=relaxed/simple;
+	bh=t+LTk94kgoTR6lJqzrcbGjfmfT6df0JsCZ8AIRAZjbw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LJWphHmfn3SbB4yAD1Qd0nw46w+QnaA9u/YD0WFpEWBVGqF4hrvvKvbL6u/5evtObzxU3H3gYwW+2atrY9rk2VKcIDjs7fgF3Ln1mdvMJaS63MwhwebNKBFeGIyl2j3FYukhsyxyWf+zH8DenUl52DNsSL0qX2O/z3TtHYLTqGY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiyionpri.me; spf=none smtp.mailfrom=aiyionpri.me; dkim=pass (2048-bit key) header.d=aiyionpri.me header.i=@aiyionpri.me header.b=CuFP+KHr; dkim=permerror (0-bit key) header.d=aiyionpri.me header.i=@aiyionpri.me header.b=zQ4hvJY1; arc=pass smtp.client-ip=81.169.146.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiyionpri.me
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=aiyionpri.me
+ARC-Seal: i=1; a=rsa-sha256; t=1752174566; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=GlcinUFybpp74LXlOPbfJq/vIj2yYcvg7v+3jVMMbIf0cy8pc9Hqjm0Wwhb71EZpWe
+    kuSkxj0Ttju65YF6oS7/UWPE9puB4VPk1c1tVm2Fa94OaB//FYJqR89zkSGZ8keGnHQE
+    I/v5LGISfnVd3ui0UiDPyypvmqszoc9NGYehMsvkeknKVB70+kQWChEuwgbfOVCPuZl6
+    QC0KCUCSqVYN1UenRcl8tdP6aBPzwK1WD+v27E++WyVycm+9R7AlJoGCtIce4YaFhJOH
+    9APDpngWhGofn+TNBltVz5CqoivhzA1t9rSMK0aJDj+Wf4IoUGlxvT/Dj1FO7sJdPhwt
+    ko+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1752174566;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=FnjGVJXcq5/ir418FcqAdHT1NoKLuU/1sfPHApNdJ38=;
+    b=OdjcIQ31Q0xmGcSb2GVBg4esTFjFWz0mJ0ZB72gdudckrhBmy2ipelTQDFrrHer0fK
+    ouj5+jYYhIu50mjC1b5t1+BqX+9Vm4VNACy/YeThRIGfAJAHzs8Wnyei71DpJTkjpOjS
+    WfATTXO62jEfReEOX9GnTrSe+AyfTIHY+Wwnm4tLEkQDkCSWMzvww7/TXRvOOAhd7WEq
+    g8aIepbxpiPlp4TlYGUGF8CEvCAVE6hM1m1R5dmnk2QahD1WgJ1ISl5to1OuV63yRfJU
+    Qm1YNFHBqINKURmKQFkNH6Nhd0uDGLWR5NrBd0HvHH9NFIMAajNrc/++OQPHt6amUszx
+    6CSw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752174566;
+    s=strato-dkim-0002; d=aiyionpri.me;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=FnjGVJXcq5/ir418FcqAdHT1NoKLuU/1sfPHApNdJ38=;
+    b=CuFP+KHrMnLLrwHbAJPhsTeGFjyWeBQWvuM/dARYAsj09gfQAfOxsBJUntFK6u/8aC
+    hTTljWAkWR9lRSNP2kZd1rfv39P7V7Hlin6hSF5I4VwECVapX8He3k0zYir+9+tuc7qt
+    oYpGKdfRxlNo2s80c8A33ydxJpsag6aXB/tY4NMOKhnsYGGhz74+/hYYBPWkCmMgJ3/h
+    gkv3766BD2KVJzKnBcZ2xQjmrot0F+UeralOcWH8+X0k8F5voXnS94W94tzzE7CwdAhP
+    ndYWvJ3iEeIXVUMTUFKMSYu0DEs58dFoMLmfHmdKNPm7u0EfpIhzfUgIQXB9/wQPX2tO
+    g/JQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752174566;
+    s=strato-dkim-0003; d=aiyionpri.me;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=FnjGVJXcq5/ir418FcqAdHT1NoKLuU/1sfPHApNdJ38=;
+    b=zQ4hvJY15QtbxtaF4fUOY4PgZ029VZtZ0NPxpMyCDwiJ3jV1xmCBb4TLLx2h5+fZbA
+    KZZdhOrF3cc0gSxB8aAQ==
+X-RZG-AUTH: ":IWkkdEmxcvCtRDtHUQOu48a0Nfy9hOkbtqpt5cBSoxNQElJG620TYCK8nAkXs7YKQSRsyIcBIbULXaQjCPjUFD1kdMW0"
+Received: from aura.ffh.zone
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id 533eb916AJ9Q8xJ
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Thu, 10 Jul 2025 21:09:26 +0200 (CEST)
+From: Jan-Niklas Burfeind <kernel@aiyionpri.me>
+To: linux-kernel@vger.kernel.org
+Cc: platform-driver-x86@vger.kernel.org,
+	Hans de Goede <hansg@kernel.org>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Jan-Niklas Burfeind <kernel@aiyionpri.me>
+Subject: [PATCH] platform/x86: dell-lis3lv02d: Add Precision 3551
+Date: Thu, 10 Jul 2025 21:09:19 +0200
+Message-ID: <20250710190919.37842-1-kernel@aiyionpri.me>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250709040234.1773573-3-yilun.xu@linux.intel.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6731:EE_|CH1PR12MB9693:EE_
-X-MS-Office365-Filtering-Correlation-Id: cbb8a8dd-7df0-4618-2157-08ddbfe52f3c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|36860700013|82310400026|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Qg/E+Dz1/xMXKxe9HweM0GFKGxQ/ipuaHfD50cSY0zXqwWya63VhGDWk7noA?=
- =?us-ascii?Q?nOjpFRv7k2CnaH/zdJf+3fketgnReGJj1ybEFHlRUIttg+IDdChYFiEHSrOX?=
- =?us-ascii?Q?N0yfUHFvnkiZl2ppayNx9HCPg7NBgZAxdioa+4B67Q3KzmseZrsLxDI5zIa3?=
- =?us-ascii?Q?HllprrsgVX4o4nZ/kSTPPMyup0pgPOCo3196F1teUJsDbQQmh/SD+e9xxaHV?=
- =?us-ascii?Q?BrHZsXMXUiQ2mlHsbdVjPO6niTqPeXkhtFmTDm06PcAKutF0DQhTOJYc2XYG?=
- =?us-ascii?Q?0zJeQZwgDzERvdYwNFZaVyYBfuVcpFBS9E+Z+pywzP8jiVI6Tsvy+Wpya0Zv?=
- =?us-ascii?Q?0LPXBhwAq0rnqCDjTw/2JFgVXLp9/+o3QRUSzaAeOhw1yrfE+W76hcqT8UvE?=
- =?us-ascii?Q?+W+dYBf4PXJm13eqD/OxV0T6OYe6p5nz5zatWV2ukDe23vGmOsobPIoJou1/?=
- =?us-ascii?Q?c4+JYV6r0NoWYEGOUIfV19fZatJoZoINGpOXfByT46wMaG+JvyLvtgpl9JeR?=
- =?us-ascii?Q?ItgtVPHeB2OPI7TS9WwHMu7D3TbW5aOc9VYvUdhDtsYTzkWRVYCPAfSfQzCe?=
- =?us-ascii?Q?Uk4AytNQPh4WUkVlQh75FW7K6dQ/3Nj07JixGARrvo+M14TBilt8f9AtEP9f?=
- =?us-ascii?Q?49nlL7szj5pQzRyb0ZNvxKOheSg2QmaPNqf5qvzosF+Z1RrG2BJe8yA5Foa1?=
- =?us-ascii?Q?yqcjO0ievIeXQEXhaFjwpxl26AZtMMC7ex8wUTVgcXBpdYg8NTYHEP9vDQOC?=
- =?us-ascii?Q?517jqQ72js4+r6tebfiCEMNM0Lic0ZOEyOpTaePZi9ivV55twUiKIU5XVmGH?=
- =?us-ascii?Q?JSelnvQ3P/l6czPzHonES79NYzSMVLg3W0neKcbCv4Nc9Uzo38T2kEx7bHzj?=
- =?us-ascii?Q?ArdSLU/sK/HbEL/Dx4nrOyM7vold5E2H4JpWFE3h10p04YmAmMPTfRKC0UYo?=
- =?us-ascii?Q?b6FWQrHHhXp3wQi/jlc2JZHGcjmN4xqJx2kDC7yMK5EMn+QSVFNsc0NW8SJb?=
- =?us-ascii?Q?zSk92ZLrlwRV4mSAD+XYbea8WtLCu+Prn+6qiyxrwKRvymUnbzwO/NrSqzjy?=
- =?us-ascii?Q?4OJSynxOvLAr7dA/YRAJu+pf/Jrx0H9Dt3KmqjJKWIdjyUKMI8/SJKTS03AC?=
- =?us-ascii?Q?2r3ptTq74KB1kFTKGLoznjklKRtOSR25qPRkA20hQYJpDK8QJjrirS5opk/U?=
- =?us-ascii?Q?4dG8Z/yW11hiECiojxz9IqqwjLvXATFvdjuRXESYFd2Lxs3aHeDSUljrijgS?=
- =?us-ascii?Q?/KSyADHbiFU4ZCiA294msIhD+3xovwrgmInIiKANMS4Rx9B1CiUnGkSN3Weq?=
- =?us-ascii?Q?CpWnVgCNOfRpviyNAysE9/7JGZo1QBnXrZ9q6GAaTFaP6VWne2FBf4fxSUS0?=
- =?us-ascii?Q?bN/YqGlsKf1O4cde4nj9IOZrJ2QskEWLEeTNeQsKiryRDqdDnyUC7DXjhBZb?=
- =?us-ascii?Q?zqvfS1XiNxW73MOrcUr6B8Mianfltw/o9x2IGKaqEp3MFmVOczR2BmJkbml0?=
- =?us-ascii?Q?vLGMgiPD88hBZhroWZuYeCwO2O04tjKHR99F?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(36860700013)(82310400026)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 19:08:41.6369
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cbb8a8dd-7df0-4618-2157-08ddbfe52f3c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6731.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9693
 
-On Wed, Jul 09, 2025 at 12:02:29PM +0800, Xu Yilun wrote:
-> Add the iommufd_object_tombstone_user() helper, which allows the caller
-> to destroy an iommufd object created by userspace.
-> 
-> This is useful on some destroy paths when the kernel caller finds the
-> object should have been removed by userspace but is still alive. With
-> this helper, the caller destroys the object but leave the object ID
-> reserved (so called tombstone). The tombstone prevents repurposing the
-> object ID without awareness of the original user.
-> 
-> Since this happens for abnormal userspace behavior, for simplicity, the
-> tombstoned object ID would be permanently leaked until
-> iommufd_fops_release(). I.e. the original user gets an error when
-> calling ioctl(IOMMU_DESTROY) on that ID.
-> 
-> The first use case would be to ensure the iommufd_vdevice can't outlive
-> the associated iommufd_device.
-> 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Co-developed-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
+This marks 0x29 as accelerometer address on Dell Precision 3551.
 
-Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+I followed previous works of Paul Menzel and Hans de Goede to verify it:
 
-With one nit:
+$ cd /sys/bus/pci/drivers/i801_smbus/0000\:00\:1f.4
 
-> -	while (!xa_empty(&ictx->objects)) {
-> +	for (;;) {
->  		unsigned int destroyed = 0;
->  		unsigned long index;
-> +		bool empty = true;
->  
-> +		/*
-> +		 * xa_for_each() will not return tomestones (zeroed entries),
-> +		 * which prevent the xarray being empty. So use an empty flags
+$ ls -d i2c-?
+i2c-0
 
-Since the first "empty" and the second "empty" are different things,
+$ sudo modprobe i2c-dev
 
-> +		 * instead of xa_empty() to indicate all entries are either
-> +		 * NULLed or tomestoned.
-> +		 */
+$ sudo i2cdetect 0
+WARNING! This program can confuse your I2C bus, cause data loss and worse!
+I will probe file /dev/i2c-0.
+I will probe address range 0x08-0x77.
+Continue? [Y/n] Y
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:                         08 -- -- -- -- -- -- --
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+20: -- -- -- -- -- -- -- -- -- 29 -- -- -- -- -- --
+30: 30 -- -- -- -- 35 UU UU -- -- -- -- -- -- -- --
+40: -- -- -- -- 44 -- -- -- -- -- -- -- -- -- -- --
+50: UU -- 52 -- -- -- -- -- -- -- -- -- -- -- -- --
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+70: -- -- -- -- -- -- -- --
 
-let's write something like this (correcting typos too):
+$ echo lis3lv02d 0x29 > sudo tee /sys/bus/i2c/devices/i2c-0/new_device
+lis3lv02d 0x29
 
-		/*
-		 * We can't use xa_empty(), as a tombstone (NULLed entry) would
-		 * prevent it returning true, unlike xa_for_each() ignoring the
-		 * NULLed entries. So use an empty flag instead of xa_empty() to
-		 * indicate all entries are either NULLed or tombstoned.
-		 */
+$ sudo dmesg
+[    0.000000] Linux version 6.12.28 (nixbld@localhost) (gcc (GCC) 14.2.1 20250322, GNU ld (GNU Binutils) 2.44) #1-NixOS SMP PREEMPT_DYNAMIC Fri May  9 07:50:53 UTC 2025
+[...]
+[    0.000000] DMI: Dell Inc. Precision 3551/07YHW8, BIOS 1.18.0 10/03/2022
+[...]
+[ 3749.077624] lis3lv02d_i2c 0-0029: supply Vdd not found, using dummy regulator
+[ 3749.077732] lis3lv02d_i2c 0-0029: supply Vdd_IO not found, using dummy regulator
+[ 3749.098674] lis3lv02d: 8 bits 3DC sensor found
+[ 3749.182480] input: ST LIS3LV02DL Accelerometer as /devices/platform/lis3lv02d/input/input28
+[ 3749.182899] i2c i2c-0: new_device: Instantiated device lis3lv02d at 0x29
+
+Signed-off-by: Jan-Niklas Burfeind <kernel@aiyionpri.me>
+---
+ drivers/platform/x86/dell/dell-lis3lv02d.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/platform/x86/dell/dell-lis3lv02d.c b/drivers/platform/x86/dell/dell-lis3lv02d.c
+index 0791118dd6b7..732de5f556f8 100644
+--- a/drivers/platform/x86/dell/dell-lis3lv02d.c
++++ b/drivers/platform/x86/dell/dell-lis3lv02d.c
+@@ -49,6 +49,7 @@ static const struct dmi_system_id lis3lv02d_devices[] __initconst = {
+ 	DELL_LIS3LV02D_DMI_ENTRY("Latitude E6330",     0x29),
+ 	DELL_LIS3LV02D_DMI_ENTRY("Latitude E6430",     0x29),
+ 	DELL_LIS3LV02D_DMI_ENTRY("Precision 3540",     0x29),
++	DELL_LIS3LV02D_DMI_ENTRY("Precision 3551",     0x29),
+ 	DELL_LIS3LV02D_DMI_ENTRY("Precision M6800",    0x29),
+ 	DELL_LIS3LV02D_DMI_ENTRY("Vostro V131",        0x1d),
+ 	DELL_LIS3LV02D_DMI_ENTRY("Vostro 5568",        0x29),
+-- 
+2.49.0
+
 
