@@ -1,54 +1,56 @@
-Return-Path: <linux-kernel+bounces-725099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4C5AFFAC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:24:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E065AFFACC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7391A641DA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:23:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26C15641D02
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42742289344;
-	Thu, 10 Jul 2025 07:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E831289340;
+	Thu, 10 Jul 2025 07:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Z0fm0Heh"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rB+FnS+N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9F6288C27;
-	Thu, 10 Jul 2025 07:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A3921B195;
+	Thu, 10 Jul 2025 07:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752132262; cv=none; b=dYmAXnp1e6FkUoKaFFEMU8IvjTpD8KJ46w0P4aEYDPdqgBFKnwMyVNbJHiQAN5Q86wznL0V4QPgC7sySRnx5r4vjpWIEv79i5LdyhEA/rBf62DXyEWtKXhY2nJ/PrIyRzi0DMRxAejzQQG9Z/JZfcSdqyZLxnUYJ4Ax75VeUMpo=
+	t=1752132366; cv=none; b=LDvm0oN8RaaSZYUnsq0mXavsZvxi2VFuX1WyTKchU8PPwIGclv7TyXifrDRD6tWI6k4J7r86aMQe23h0s33gtuOP4Fy+oL9QZ6RRVLMTqoJgsk6uEcA7C/jU8fKgGLw+VOptQoPyd96xTHSSNiSmrHl0oRW6ZNRfKB6Trrl471w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752132262; c=relaxed/simple;
-	bh=hj1wHBXsOXAzb0/74g63WRGpCXf33Xc+zY0S+GiRtF0=;
+	s=arc-20240116; t=1752132366; c=relaxed/simple;
+	bh=S8zzqP7m8nDKjbkX5GeKEnyhQD//kGc7olrVD3SohzA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6CQzfvZ6n1R5/Q5YUwc8a+Uq8Ym4PErQugbBXp1yWrJ48DZuGjfQJdNFiGLUqJybhDxJgW/0I2vmfwV5sdRqWEmDIhHEjJriBgFU64dRCQJn5i4Vy3Fa+wllX1CSynVFRkgWpwCN/ex0y6qcpiiOkYh35tS7bAA1ZG+p7exHZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Z0fm0Heh; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752132250; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=jzNpYOFOnap/qF7qFC2NV9w8EFH37E1K9D31EdWc9Yk=;
-	b=Z0fm0HehE9gbr02XGj17KU/Jh/mvcu1K9a5Tse50GMEp2qUXiY4GHuXQBWlVxETC9Q+8bFjtzzI0IK62GKYvAeNgKlJzhHlK4E0J7SSg9Mc2JxxqIQqjw2GeuIxUOtT1KalZgRjrYJOBNj6OBaIzy4E6RhxOdDbKkyGW32E/+eo=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0Wic.8WA_1752132249 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 10 Jul 2025 15:24:09 +0800
-Date: Thu, 10 Jul 2025 15:24:09 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Ard Biesheuvel <ardb@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] efi: remove the rtc-wakeup capability from default value
-Message-ID: <aG9qmV-wzFr7I-Tb@U-2FWC9VHC-2323.local>
-References: <20250709103541.7268-1-feng.tang@linux.alibaba.com>
- <CAMj1kXEvxPjFsqoMzZnb2zxSf9uyLVzuzKEeKD4fLEux3NbUhw@mail.gmail.com>
- <aG5Lod-McOlBmt7_@U-2FWC9VHC-2323.local>
- <CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRgC7QWCaedy4j2Z51l4GaYbUigdvJ6+mHY5UTd7q5zWpIiLr62Kxo0JaWZJxwrWw3xwmOii4D0+2mA2UCR6vxz4/p4voB9h5HRTBouzV/oK0Y5r3KzUIW3PI0XL8r3xxPcjaetGrz7QaVvbOVLrcUgBUGy/04urqoq9ca6uZqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rB+FnS+N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05D63C4CEE3;
+	Thu, 10 Jul 2025 07:26:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752132365;
+	bh=S8zzqP7m8nDKjbkX5GeKEnyhQD//kGc7olrVD3SohzA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rB+FnS+NgGqBg7cfEhioIsVnv9NflbSh5+zGFkD7Q5AgHl9IJEWfX3+5wZQxvziiw
+	 wNxrOF5iE7oWRaZgbznYwWp7XMTAF6kH5htQsgEaN07x4jmt6PVhn6/duqO7Z2VDgq
+	 zMSKeMEWs7ZaumQHdsoDFlSFUuUcm7UCrI35ch8VQud98CT1DE7r1ecTnh5NPO+EgE
+	 6hyLP4kEPWPb51HRxlZtEZQgFce2WzGPYVar3OHUfA0gwQm/FJGrW0aubh2SwJ0H1O
+	 zy8tYOCpQNxpA4blXYUjXYxPc7lavF507PopQIhvqN+AGW3ofXYmSAbW5aV+rUgan0
+	 gfV8l3glDHnaA==
+Date: Thu, 10 Jul 2025 09:26:02 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Karthik Poduval <kpoduval@lab126.com>
+Cc: jyxiong@amazon.com, miguel.lopes@synopsys.com, anishkmr@amazon.com, 
+	vkoul@kernel.org, kishon@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] phy: dw-dphy-rx: Add Synopsys DesignWare D-PHY RX
+Message-ID: <20250710-sly-rigorous-silkworm-6d67ea@krzk-bin>
+References: <cover.1752106239.git.kpoduval@lab126.com>
+ <2383f8cf2a8f5e1b914d4cf9bd11674ed55876d2.1752106239.git.kpoduval@lab126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,97 +59,147 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com>
+In-Reply-To: <2383f8cf2a8f5e1b914d4cf9bd11674ed55876d2.1752106239.git.kpoduval@lab126.com>
 
-Add Alexandre Belloni for his view on rtc-efi driver
+On Wed, Jul 09, 2025 at 07:42:20PM -0700, Karthik Poduval wrote:
+> +static const struct regmap_config dw_dphy_regmap_cfg1 = {
+> +	.reg_bits = 32,
+> +	.val_bits = 32,
+> +	.reg_stride = 4,
+> +	.name = "dw-dhpy-cfg1",
+> +	.fast_io = true,
+> +};
+> +
+> +/**
+> + * dw_dphy_regmap_cfg2 - Register map configuration for DW DPHY
+> + * @reg_bits: Width of register address in bits (32)
+> + * @val_bits: Width of register value in bits (32)
+> + * @reg_stride: Number of bytes between registers (4)
+> + * @name: Name identifier for this register map
+> + * @fast_io: Flag to indicate fast I/O operations are supported
+> + *
+> + **/
 
-On Thu, Jul 10, 2025 at 09:33:19AM +1000, Ard Biesheuvel wrote:
-> On Wed, 9 Jul 2025 at 21:00, Feng Tang <feng.tang@linux.alibaba.com> wrote:
-> >
-> > On Wed, Jul 09, 2025 at 08:42:24PM +1000, Ard Biesheuvel wrote:
-> > > On Wed, 9 Jul 2025 at 20:35, Feng Tang <feng.tang@linux.alibaba.com> wrote:
-> > > >
-> > > > The kernel selftest of rtc reported a error on an ARM server:
-> > > >
-> > > >         RUN           rtc.alarm_alm_set ...
-> > > >         rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
-> > > >         rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
-> > > >         alarm_alm_set: Test terminated by assertion
-> > > >                  FAIL  rtc.alarm_alm_set
-> > > >         not ok 5 rtc.alarm_alm_set
-> > > >
-> > > > The root cause is, the unerlying EFI firmware doesn't support wakeup
-> > > > service (get/set alarm), while it doesn't have the efi 'RT_PROP'
-> > > > table either. The current code logic will claim efi supports these
-> > > > runtime service capability by default, and let following 'RT_PROP'
-> > > > table parsing to correct it, if that table exists.
-> > > >
-> > > > This issue was reproduced on ARM server from another verndor, and not
-> > > > reproudce on one x86 server (Icelake). All these 3 platforms don't have
-> > > > 'RT_PROP' tables, so they are all claimed to support alarm service,
-> > > > but x86 server uses real CMOS RTC device instead rtc-efi device, and
-> > > > passes the test.
-> > > >
-> > > > So remove the wakeup/alarm capability from default value, and setup
-> > > > the capability bits according to the 'RT_PROP' table parsing.
-> > > >
-> > >
-> > > What does this achieve? The test result is accurate, as the platform
-> > > violates the spec by not implementing the RTC wakeup services, and not
-> > > setting the RT_PROP table bits accordingly.
-> > >
-> > > What do we gain by pretending that the platform is not broken, and
-> > > lying about it?
-> >
-> > I don't have much experience with EFI, so I might be totally wrong. I
-> > don't think not providing the RT_PROP table is 'broken', that's why I
-> > tried to borrow platforms from different vendors to do the check, which
-> > all have no this table.
-> >
-> > For platform which have no 'RT_PROP' tables (seems to be not a rare case),
-> > claiming them support all efi runtime service may be kind of risky.
-> >
-> 
-> It is the other way around. The UEFI spec mandates that all runtime
-> services are implemented, unless a RT_PROP table is provided.
+Drop
 
-Thanks for the explaination! Yes, it's fair to claim the uefi implementation
-on the 2 ARM servers 'broken' :)
+> +static const struct regmap_config dw_dphy_regmap_cfg2 = {
+> +	.reg_bits = 32,
+> +	.val_bits = 32,
+> +	.reg_stride = 4,
+> +	.name = "dw-dhpy-cfg2",
+> +	.fast_io = true,
+> +};
+> +
+> +/**
+> + * dw_dphy_probe - Probe and initialize DW DPHY device
+> + * @pdev: Platform device pointer
+> + * Return: 0 on success, negative error code on failure
+> + *
+> + **/
 
-I talked with some firmware developers. They said the rtc-alarm service could
-be implemented, while the difficult part is how to notify OS. I submitted a 
-request for a correct RT_PROP table.
+Drop
 
-Meanwhile, given there are quite some platforms (All ARM server I can access)
-don't have the table and not support rtc wakeup service, I'm thinking of adding
-some runtime check for the service in rtc-efi driver, something like:
+> +static int dw_dphy_probe(struct platform_device *pdev)
+> +{
+> +	struct dw_dphy *dphy;
+> +	struct resource *res;
+> +	struct device *dev = &pdev->dev;
+> +	struct phy_provider *phy_provider;
+> +	int ret;
+> +
+> +	dphy = devm_kzalloc(&pdev->dev, sizeof(*dphy), GFP_KERNEL);
+> +	if (!dphy)
+> +		return -ENOMEM;
+> +
+> +	dphy->dt_data =
+> +		(struct dt_data_dw_dphy *)of_device_get_match_data(&pdev->dev);
+> +	dev_set_drvdata(&pdev->dev, dphy);
+> +	dphy->dev = &pdev->dev;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	dphy->iomem_cfg1 = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(dphy->iomem_cfg1))
+> +		return PTR_ERR(dphy->iomem_cfg1);
+> +
+> +	dphy->regmap_cfg1 =
+> +		devm_regmap_init_mmio(dev, dphy->iomem_cfg1, &dw_dphy_regmap_cfg1);
+> +	if (IS_ERR(dphy->regmap_cfg1))
+> +		return PTR_ERR(dphy->regmap_cfg1);
+> +
+> +	ret = devm_regmap_field_bulk_alloc(dev, dphy->regmap_cfg1, dphy->rf_cfg1,
+> +					   dw_dphy_v1_2_cfg1, DW_DPHY_RF_CFG1_MAX);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Could not alloc RF\n");
+> +		return ret;
+> +	}
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +	dphy->iomem_cfg2 = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(dphy->iomem_cfg2))
+> +		return PTR_ERR(dphy->iomem_cfg2);
+> +
+> +	dphy->regmap_cfg2 = devm_regmap_init_mmio(dev, dphy->iomem_cfg2,
+> +						 &dw_dphy_regmap_cfg2);
+> +	if (IS_ERR(dphy->regmap_cfg2))
+> +		return PTR_ERR(dphy->regmap_cfg2);
+> +
+> +	ret = devm_regmap_field_bulk_alloc(dev, dphy->regmap_cfg2, dphy->rf_cfg2,
+> +					   dw_dphy_v1_2_cfg2, DW_DPHY_RF_CFG2_MAX);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Could not alloc RF\n");
+> +		return ret;
+> +	}
+> +
+> +	dphy->phy = devm_phy_create(&pdev->dev, NULL, dphy->dt_data->phy_ops);
+> +	if (IS_ERR(dphy->phy)) {
+> +		dev_err(dev, "failed to create PHY\n");
+> +		return PTR_ERR(dphy->phy);
+> +	}
+> +
+> +	phy_set_drvdata(dphy->phy, dphy);
+> +	phy_provider =
+> +		devm_of_phy_provider_register(&pdev->dev, of_phy_simple_xlate);
+> +
+> +	return PTR_ERR_OR_ZERO(phy_provider);
+> +}
+> +
+> +/**
+> + * dw_dphy_of_match - Device tree match table for DW DPHY
+> + * @compatible: Compatible string to match device tree node
+> + * @data: Pointer to configuration data for matched device
+> + *
+> + * Table of compatible strings and associated configuration data
+> + * for supported DW DPHY variants.
+> + * Currently supports:
+> + * - DW DPHY v1.2 ("snps,dw-dphy-1p2")
+> + *
+> + **/
 
----
-diff --git a/drivers/rtc/rtc-efi.c b/drivers/rtc/rtc-efi.c
-index fa8bf82df948..7ae948aebd11 100644
---- a/drivers/rtc/rtc-efi.c
-+++ b/drivers/rtc/rtc-efi.c
-@@ -259,6 +259,7 @@ static int __init efi_rtc_probe(struct platform_device *dev)
- 	struct rtc_device *rtc;
- 	efi_time_t eft;
- 	efi_time_cap_t cap;
-+	efi_bool_t enabled, pending;
- 
- 	/* First check if the RTC is usable */
- 	if (efi.get_time(&eft, &cap) != EFI_SUCCESS)
-@@ -272,7 +273,8 @@ static int __init efi_rtc_probe(struct platform_device *dev)
- 
- 	rtc->ops = &efi_rtc_ops;
- 	clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->features);
--	if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES))
-+	if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES) &&
-+		efi.get_wakeup_time(&enabled, &pending, &eft) == EFI_SUCCESS)
- 		set_bit(RTC_FEATURE_ALARM_WAKEUP_ONLY, rtc->features);
- 	else
- 		clear_bit(RTC_FEATURE_ALARM, rtc->features);
+Drop
 
-This works on one ARM server I can test kernel with. Any suggestions?
+> +static const struct of_device_id dw_dphy_of_match[] = {
+> +	{ .compatible = "snps,dw-dphy-1p2", .data = &dw_dphy_1p2 },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, dw_dphy_of_match);
+> +
+> +/**
+> + * dw_dphy_platform_driver - Platform driver structure for DW DPHY
+> + * @probe: Pointer to probe function called on device discovery
+> + * @driver: Core driver structure containing:
+> + *         - name: Driver name used for matching and debugging
+> + *         - of_match_table: Table of compatible device tree matches
+> + *
+> + **/
 
-Thanks,
-Feng
+Drop all such useless generic kerneldocs. Not helpful. Keep useful ones,
+so ones not saying obvious parts of core
+
+
+> +static struct platform_driver dw_dphy_platform_driver = {
+> +	.probe		= dw_dphy_probe,
+
+Best regards,
+Krzysztof
+
 
