@@ -1,59 +1,62 @@
-Return-Path: <linux-kernel+bounces-724988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E914EAFF970
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:15:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80EEAFF94D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E5074E6C0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:14:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 559675A6906
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69C3294A1C;
-	Thu, 10 Jul 2025 06:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYovnpkz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95711288C81;
+	Thu, 10 Jul 2025 06:08:41 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C192900A0;
-	Thu, 10 Jul 2025 06:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22E83B280;
+	Thu, 10 Jul 2025 06:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752127806; cv=none; b=BI7gJZzNyOYaD0H6x4HIeiKdbi72lfImofzS41xPHonOVtQ8iclgJMx2uRK2132cluAHRESEw/0c28uxF/TUFok0kgb2h3HaMk+5kv8toRd3b1AVgHxgIfqJ9kCgZAG9wGFF+bZSe79fl+cUQlEFgNmS8VGAEEMR9LArifcBVtI=
+	t=1752127721; cv=none; b=jbrzeN/yqRHShCJB495W8YnpY+WGjiqsH/ZarfAGo1IM9ZxEnPEQRD2K9dwjzg9yrg8zdJErL/HymbmQ65zDyNP9rdP27B6GsHJiRJb3/aA461P5iA1uYa9q9qukw+6V0gMLbHKOXH8plmskGfRQFGSjlqzXibcYBCHdczlY2Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752127806; c=relaxed/simple;
-	bh=ISOZqqMIoJ6Bo5XTcKQL1qoCe0p7TsANa33nW9/riCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g9IT1n2qmGRYtH+NVjIJsUpOR+jva02GvnZ5a1UnLvz1B9f4si617msRQLJmfQjjO602KW//ivN949nJesPneF17une3sUVWRFJ//Vwo625WyJ+ShmPfLbWX0ZZJ0iSXGDji1VYQfERVoSsljaO8AKeaMuJpDv+4pKhbT26+/Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYovnpkz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 117B6C4CEF5;
-	Thu, 10 Jul 2025 06:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752127806;
-	bh=ISOZqqMIoJ6Bo5XTcKQL1qoCe0p7TsANa33nW9/riCk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PYovnpkzkt5PCA7vwOfL7C9eve152diJJlXfQx15ECLzlSRHlPsJXGI7QIgDzWuoP
-	 KudQTYDaakvkIV42pmfVyvPlJa9ZF74H5TewLj2ilLCEeTo3pna7RkK0mGcIk6yvvo
-	 5FxRLBVr6R79yOMb1tCqOk6u+95B63IVaZeFE/rwBYd1ch+ESB5jj1VHX08Y4jhOBH
-	 59teAf9H1O4Ztnx0cJeZWnu+2mUyKUeAvwwofKB9C4FLCdRinGdO5fULHMSzLgu93W
-	 p7TdAuxyh4mVuB10S9v+8y+T03k3vfl/ITOeeGJufJA03zOH7HGV8ORpz3aoe4a4ca
-	 hJl5D/+QR0cJw==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org,
-	Yuwen Chen <ywen.chen@foxmail.com>,
-	linux-mtd@lists.infradead.org,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v2 6/6] ceph: Remove gfp_t argument from ceph_fscrypt_encrypt_*()
-Date: Wed,  9 Jul 2025 23:07:53 -0700
-Message-ID: <20250710060754.637098-7-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250710060754.637098-1-ebiggers@kernel.org>
-References: <20250710060754.637098-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1752127721; c=relaxed/simple;
+	bh=v+NnkqyBxwnzr6RcVtQ2fleW9QBm5QbCpS7Tiam1lFE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TWvHFyu5//OUX9G2nHiorlEKmRf0C7QbmkJaNBWGA/gaX1ahuR23miGOZX5+Qrk/DDdBYqpSHtOws33KZByErMHL4pl6zikccnSJmwktBl2g2u0CHIBeehikq0kfBREsUnhnWsGhfynQj97EVBM2P1I+llBot2zk3k9r2rnJ4qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4bd49N5mKxz2Bcq9;
+	Thu, 10 Jul 2025 14:06:32 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id D57411A016C;
+	Thu, 10 Jul 2025 14:08:29 +0800 (CST)
+Received: from DESKTOP-F6Q6J7K.china.huawei.com (10.174.175.220) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Jul 2025 14:08:28 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
+	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
+	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
+ Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
+	<shijing34@huawei.com>, Fu Guiming <fuguiming@h-partners.com>, Meny Yossefi
+	<meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, Lee Trager
+	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Vadim Fedorenko
+	<vadim.fedorenko@linux.dev>, Suman Ghosh <sumang@marvell.com>, Przemek
+ Kitszel <przemyslaw.kitszel@intel.com>, Joe Damato <jdamato@fastly.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next v08 0/8] net: hinic3: Add a driver for Huawei 3rd gen  NIC - management interfaces
+Date: Thu, 10 Jul 2025 14:08:16 +0800
+Message-ID: <cover.1752126177.git.zhuyikai1@h-partners.com>
+X-Mailer: git-send-email 2.21.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,162 +64,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
 
-This argument is no longer used, so remove it.
+This is the 2/3 patch of the patch-set described below.
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- fs/ceph/crypto.c | 10 ++++------
- fs/ceph/crypto.h | 10 ++++------
- fs/ceph/file.c   |  3 +--
- fs/ceph/inode.c  |  3 +--
- 4 files changed, 10 insertions(+), 16 deletions(-)
+The patch-set contains driver for Huawei's 3rd generation HiNIC
+Ethernet device that will be available in the future.
 
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index 6d04d528ed038..91e62db0c2050 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -514,12 +514,11 @@ int ceph_fscrypt_decrypt_block_inplace(const struct inode *inode,
- 	return fscrypt_decrypt_block_inplace(inode, page, len, offs, lblk_num);
- }
- 
- int ceph_fscrypt_encrypt_block_inplace(const struct inode *inode,
- 				  struct page *page, unsigned int len,
--				  unsigned int offs, u64 lblk_num,
--				  gfp_t gfp_flags)
-+				  unsigned int offs, u64 lblk_num)
- {
- 	struct ceph_client *cl = ceph_inode_to_client(inode);
- 
- 	doutc(cl, "%p %llx.%llx len %u offs %u blk %llu\n", inode,
- 	      ceph_vinop(inode), len, offs, lblk_num);
-@@ -639,21 +638,20 @@ int ceph_fscrypt_decrypt_extents(struct inode *inode, struct page **page,
-  * ceph_fscrypt_encrypt_pages - encrypt an array of pages
-  * @inode: pointer to inode associated with these pages
-  * @page: pointer to page array
-  * @off: offset into the file that the data starts
-  * @len: max length to encrypt
-- * @gfp: gfp flags to use for allocation
-  *
-- * Decrypt an array of cleartext pages and return the amount of
-+ * Encrypt an array of cleartext pages and return the amount of
-  * data encrypted. Any data in the page prior to the start of the
-  * first complete block in the read is ignored. Any incomplete
-  * crypto blocks at the end of the array are ignored.
-  *
-  * Returns the length of the encrypted data or a negative errno.
-  */
- int ceph_fscrypt_encrypt_pages(struct inode *inode, struct page **page, u64 off,
--				int len, gfp_t gfp)
-+				int len)
- {
- 	int i, num_blocks;
- 	u64 baseblk = off >> CEPH_FSCRYPT_BLOCK_SHIFT;
- 	int ret = 0;
- 
-@@ -670,11 +668,11 @@ int ceph_fscrypt_encrypt_pages(struct inode *inode, struct page **page, u64 off,
- 		unsigned int pgoffs = offset_in_page(blkoff);
- 		int fret;
- 
- 		fret = ceph_fscrypt_encrypt_block_inplace(inode, page[pgidx],
- 				CEPH_FSCRYPT_BLOCK_SIZE, pgoffs,
--				baseblk + i, gfp);
-+				baseblk + i);
- 		if (fret < 0) {
- 			if (ret == 0)
- 				ret = fret;
- 			break;
- 		}
-diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-index d0768239a1c9c..6db28464ff803 100644
---- a/fs/ceph/crypto.h
-+++ b/fs/ceph/crypto.h
-@@ -153,19 +153,18 @@ static inline void ceph_fscrypt_adjust_off_and_len(struct inode *inode,
- int ceph_fscrypt_decrypt_block_inplace(const struct inode *inode,
- 				  struct page *page, unsigned int len,
- 				  unsigned int offs, u64 lblk_num);
- int ceph_fscrypt_encrypt_block_inplace(const struct inode *inode,
- 				  struct page *page, unsigned int len,
--				  unsigned int offs, u64 lblk_num,
--				  gfp_t gfp_flags);
-+				  unsigned int offs, u64 lblk_num);
- int ceph_fscrypt_decrypt_pages(struct inode *inode, struct page **page,
- 			       u64 off, int len);
- int ceph_fscrypt_decrypt_extents(struct inode *inode, struct page **page,
- 				 u64 off, struct ceph_sparse_extent *map,
- 				 u32 ext_cnt);
- int ceph_fscrypt_encrypt_pages(struct inode *inode, struct page **page, u64 off,
--			       int len, gfp_t gfp);
-+			       int len);
- 
- static inline struct page *ceph_fscrypt_pagecache_page(struct page *page)
- {
- 	return fscrypt_is_bounce_page(page) ? fscrypt_pagecache_page(page) : page;
- }
-@@ -244,12 +243,11 @@ static inline int ceph_fscrypt_decrypt_block_inplace(const struct inode *inode,
- 	return 0;
- }
- 
- static inline int ceph_fscrypt_encrypt_block_inplace(const struct inode *inode,
- 					  struct page *page, unsigned int len,
--					  unsigned int offs, u64 lblk_num,
--					  gfp_t gfp_flags)
-+					  unsigned int offs, u64 lblk_num)
- {
- 	return 0;
- }
- 
- static inline int ceph_fscrypt_decrypt_pages(struct inode *inode,
-@@ -267,11 +265,11 @@ static inline int ceph_fscrypt_decrypt_extents(struct inode *inode,
- 	return 0;
- }
- 
- static inline int ceph_fscrypt_encrypt_pages(struct inode *inode,
- 					     struct page **page, u64 off,
--					     int len, gfp_t gfp)
-+					     int len)
- {
- 	return 0;
- }
- 
- static inline struct page *ceph_fscrypt_pagecache_page(struct page *page)
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index a7254cab44cc2..9b79da6d1aee7 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1990,12 +1990,11 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
- 			break;
- 		}
- 
- 		if (IS_ENCRYPTED(inode)) {
- 			ret = ceph_fscrypt_encrypt_pages(inode, pages,
--							 write_pos, write_len,
--							 GFP_KERNEL);
-+							 write_pos, write_len);
- 			if (ret < 0) {
- 				doutc(cl, "encryption failed with %d\n", ret);
- 				ceph_release_page_vector(pages, num_pages);
- 				break;
- 			}
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 06cd2963e41ee..fc543075b827a 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2434,12 +2434,11 @@ static int fill_fscrypt_truncate(struct inode *inode,
- 		memset(iov.iov_base + boff, 0, PAGE_SIZE - boff);
- 
- 		/* encrypt the last block */
- 		ret = ceph_fscrypt_encrypt_block_inplace(inode, page,
- 						    CEPH_FSCRYPT_BLOCK_SIZE,
--						    0, block,
--						    GFP_KERNEL);
-+						    0, block);
- 		if (ret)
- 			goto out;
- 	}
- 
- 	/* Insert the header */
+This is an SRIOV device, designed for data centers.
+Initially, the driver only supports VFs.
+
+Following the discussion over RFC01, the code will be submitted in
+separate smaller patches where until the last patch the driver is
+non-functional. The RFC02 submission contains overall view of the entire
+driver but every patch will be posted as a standalone submission.
+
+Changes:
+
+PATCH 02 V01: https://lore.kernel.org/netdev/cover.1749561390.git.root@localhost.localdomain
+
+PATCH 02 V02: https://lore.kernel.org/netdev/cover.1749718348.git.zhuyikai1@h-partners.com
+* Fix build allmodconfig warning (patchwork)
+* Update cover-letter changes information.
+
+PATCH 02 V03: https://lore.kernel.org/netdev/cover.1750054732.git.zhuyikai1@h-partners.com
+* Use refcount_*() instead of atomic_*() (Jakub Kicinski)
+* Consistency fixes : HIG->HIGH, BAR45->BAR4/5 , etc (ALOK TIWARI)
+* Code format fixes : use \n before return, remove extra spaces (ALOK TIWARI)
+* Remove hinic3_request_irq redundant error print (ALOK TIWARI)
+* Modify hinic3_wq_create error print (ALOK TIWARI)
+
+PATCH 02 V04: https://lore.kernel.org/netdev/cover.1750665915.git.zhuyikai1@h-partners.com
+* Break it up into smaller patches (Jakub Kicinski)
+
+PATCH 02 V05: https://lore.kernel.org/netdev/cover.1750821322.git.zhuyikai1@h-partners.com
+* Fix build clang warning (Jakub Kicinski)
+
+PATCH 02 V06: https://lore.kernel.org/netdev/cover.1750937080.git.zhuyikai1@h-partners.com
+* Use kmalloc instead of kzalloc for cmd_buf allocation (Vadim Fedorenko)
+* Use usleep_range() for avoid CPU busy waiting (Vadim Fedorenko)
+* Use kcalloc for intr_coalesce initialization (Vadim Fedorenko)
+* Code format fixes: use reverse x-mas tree (Vadim Fedorenko)
+* Simplify hinic3_mbox_pre_init logic (Vadim Fedorenko)
+
+PATCH 02 V07: https://lore.kernel.org/netdev/cover.1751597094.git.zhuyikai1@h-partners.com
+* Use threaded IRQ instead of tasklet (Paolo Abeni)
+* Use wmb instead of rmb in cmdq_sync_cmd_handler (Paolo Abeni)
+
+PATCH 02 V08:
+* Remove msg_send_lock to avoid a double-locking schema (Vadim Fedorenko)
+* Use send_msg_id when assigning the value to msg_id (Vadim Fedorenko)
+
+Fan Gong (8):
+  hinic3: Async Event Queue interfaces
+  hinic3: Complete Event Queue interfaces
+  hinic3: Command Queue framework
+  hinic3: Command Queue interfaces
+  hinic3: TX & RX Queue coalesce interfaces
+  hinic3: Mailbox framework
+  hinic3: Mailbox management interfaces
+  hinic3: Interrupt request configuration
+
+ drivers/net/ethernet/huawei/hinic3/Makefile   |   4 +-
+ .../net/ethernet/huawei/hinic3/hinic3_cmdq.c  | 914 ++++++++++++++++++
+ .../net/ethernet/huawei/hinic3/hinic3_cmdq.h  | 156 +++
+ .../ethernet/huawei/hinic3/hinic3_common.c    |  31 +
+ .../ethernet/huawei/hinic3/hinic3_common.h    |  27 +
+ .../net/ethernet/huawei/hinic3/hinic3_csr.h   |  79 ++
+ .../net/ethernet/huawei/hinic3/hinic3_eqs.c   | 793 +++++++++++++++
+ .../net/ethernet/huawei/hinic3/hinic3_eqs.h   | 129 +++
+ .../ethernet/huawei/hinic3/hinic3_hw_cfg.c    |  43 +
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.c   |  31 +
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |  13 +
+ .../ethernet/huawei/hinic3/hinic3_hw_intf.h   |  36 +
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.c  | 153 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  16 +
+ .../net/ethernet/huawei/hinic3/hinic3_irq.c   | 137 ++-
+ .../net/ethernet/huawei/hinic3/hinic3_main.c  |  61 +-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.c  | 838 +++++++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_mbox.h  | 125 +++
+ .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |  14 +-
+ .../huawei/hinic3/hinic3_queue_common.h       |   1 +
+ .../net/ethernet/huawei/hinic3/hinic3_wq.c    | 109 +++
+ .../net/ethernet/huawei/hinic3/hinic3_wq.h    |  11 +
+ 22 files changed, 3706 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_csr.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_eqs.h
+
+
+base-commit: 5e95c0a3a55aea490420bd6994805edb050cc86b
 -- 
-2.50.1
+2.43.0
 
 
