@@ -1,216 +1,174 @@
-Return-Path: <linux-kernel+bounces-725568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8DCB000D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:54:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A8C9B000DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0CAA5460F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:53:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14AF91C44B95
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA0624A05D;
-	Thu, 10 Jul 2025 11:54:09 +0000 (UTC)
-Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C8024A061;
+	Thu, 10 Jul 2025 11:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="YXhZDUkt";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="MhpX0a4k"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE8423E226;
-	Thu, 10 Jul 2025 11:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963D52222AB;
+	Thu, 10 Jul 2025 11:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752148449; cv=none; b=PvxNrT2hiLOF0bM+o2sjRHSiHGj6T8fXxKCwpeRRUxHpV3sQHuupnHdsstmpssINtIgKpa68tAufjFLI8i24++olB07Qt3axVWXPWkkBxKNtv8EiPHdI8c7KfG8iMhtR7AezJriVUnjuTo3RZ9z8Pw0hfBHmrpP15ZWJ2Fa2wn4=
+	t=1752148547; cv=none; b=qIlOf06OGvRnpPVtwnW+jJvyV2grimhcQVl0nsigOObetz2bG2JYXGDDxw5cw9Rxr4CwJfL4sPNqXSdSwfwheQ1li02UpWrIjJQh0asR2DLAq71QpLHC8w5TT7oMAYk8WfO4tBT7i+GbyjHUZQU5NmwgogPoAeH4LYgIA53qMPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752148449; c=relaxed/simple;
-	bh=MVHqixVBLg0H9xE1bSL31ysVRFUE+Oyp0iIqhY4ebuw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DgIIZOkpZrBR5hqAGNcSjJ3BrPBai2x8iijbosFq5gtqfS9J46IzjtlbVUviJRg3hdQI8xUEzkQHrOLPwvnYntopM+MVopN953pC6cglf9fXAmX4zWkU9ga5Gd8RjOa+w5TB00Cv/kq1bIuo2JZ/tkFeBqABbMe2TynE6WVChqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 670B8449CD;
-	Thu, 10 Jul 2025 11:53:54 +0000 (UTC)
-Message-ID: <f5b1fc77-d180-4df7-b8f6-0cb0ca4a187a@ghiti.fr>
-Date: Thu, 10 Jul 2025 13:53:53 +0200
+	s=arc-20240116; t=1752148547; c=relaxed/simple;
+	bh=3juJXtwRqTMRqGAqlCmyVvx+e7eoGT6bsJ70gv6r93M=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dxPWdvd6VlUUOK3y058MZS6RIQ39K2l5MIlb2nr/tZOZnOqjbzty9/SfQ/ZZp1twWoXiWKhPnjufxewF32Gp6uI81yaiBQucAQIL+YeO07nkAdJz8j3roH+o5MCSnYyJjunJXzH+hPeUlA/h/fzES5h7xT65N9vf0G3o7ppNObY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=YXhZDUkt; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=MhpX0a4k reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1752148543; x=1783684543;
+  h=from:to:subject:date:message-id:in-reply-to:references:
+   mime-version:content-transfer-encoding;
+  bh=1M/8ZPDR+jqD9KgmK8AzTlm6VYkQ4n5iRWmdgmfKnjw=;
+  b=YXhZDUktCbCDjEqyIhLHalAtlGyHojyxYJOClqsZKvuEc32+haz97EAG
+   RCNkJsaEuwUkzG32p9W2pWmRXLbW3lFGY7UoyqpADhKyqWptjlv1JxOat
+   xRbbyq1s+JsO8+7z0Otbq6d593RtE2ji2v3gLjUIgr9ezsgGqLqi0n7EP
+   ZHeOZauqaa1Ar5siTQmDxenaMjOdiKdTfWxHcWA749KmTW88F9oOZbuKz
+   9qqpx8L44YkgS3MXU4qUuEamYnf8s0MqcJRB6xMs8NHUVcH+FPjvQcIED
+   4fk62zeMmywaSdhyWclab1opj3lpDA8AD7XXoIsfTTCFqUMbsqike0b8t
+   g==;
+X-CSE-ConnectionGUID: p3swa5/FQxurqVfx6Se2Tw==
+X-CSE-MsgGUID: sZub9Ib2Rp+Q8uPhcjJ4rg==
+X-IronPort-AV: E=Sophos;i="6.16,300,1744063200"; 
+   d="scan'208";a="45137225"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 10 Jul 2025 13:55:34 +0200
+X-CheckPoint: {686FAA35-26-A38CADE4-FD2ABC4A}
+X-MAIL-CPID: 4B1FD4FB117D508654D687B6302666B6_3
+X-Control-Analysis: str=0001.0A006397.686FAA49.0009,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 816DE168182;
+	Thu, 10 Jul 2025 13:55:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1752148529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1M/8ZPDR+jqD9KgmK8AzTlm6VYkQ4n5iRWmdgmfKnjw=;
+	b=MhpX0a4krtgS/76DyMt/ZA3ruTx1AiGsyMjQRadoRYZTnpXZMlOT023OSX1rE7jwpvlMc4
+	W12hqbjo4X7TK6eBbkTrn+/zNP1qs5CwSG52xcFoBxQDauH92P+Oub9EooaA0aOzotDfnh
+	hs+GoALxaDL9BYeVUHt1H3kJ9OTTlyzKh54k7wdsjKz/W4nHXChfbZ0/9ciAgJwofulpkt
+	oTvbAz2ljGCqvyT/tPPfA4wDF24ig14aw15YWkjWE7OXXBf+cAKnrZfa8yLEK/upv36RZ1
+	aumvfjjhBVisolO02gYQA48hNa3xfxdR57PzWiqp9W0opZYMIIxM+N4md2ZETQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Schmid <lukas.schmid@netcube.li>
+Subject:
+ Re: BUG: "scheduling while atomic" with MCP23008 + matrix_keypad IRQ mode on
+ Linux 6.15.5
+Date: Thu, 10 Jul 2025 13:55:29 +0200
+Message-ID: <6072675.MhkbZ0Pkbq@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <15509576.tv2OnDr8pf@lukas-hpz440workstation>
+References: <15509576.tv2OnDr8pf@lukas-hpz440workstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE
- selection
-To: kernel test robot <lkp@intel.com>, ChenMiao <chenmiao.ku@gmail.com>,
- Linux RISCV <linux-riscv@lists.infradead.org>
-Cc: oe-kbuild-all@lists.linux.dev, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Heiko Carstens <hca@linux.ibm.com>, Pu Lehui <pulehui@huawei.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <aG3A8Jirg+TxNza/@rli9-mobl>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <aG3A8Jirg+TxNza/@rli9-mobl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdefiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepueekjeefieeikeevvefhtddtteevgefgtdffheegieegkeffueeujefhjefftdeinecuffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemsgeffhdumeejtgeirgemsgehudelmegrfhgstdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemsgeffhdumeejtgeirgemsgehudelmegrfhgstddphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemsgeffhdumeejtgeirgemsgehudelmegrfhgstdgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudehpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdprhgtphhtthhopegthhgvnhhmihgrohdrkhhusehgmhgrihhlrdgtohhmpdhrtghpthhto
- heplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehovgdqkhgsuhhilhguqdgrlhhlsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhg
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi ChenMiao,
+Am Donnerstag, 10. Juli 2025, 13:44:01 CEST schrieb Lukas Schmid:
+> Hi all,
+>=20
+> I'm encountering a "BUG: scheduling while atomic" when using the MCP23008=
+ GPIO=20
+> expander with the `matrix_keypad` driver in IRQ mode on Linux v6.15.5
+>=20
+> Hardware setup:
+> - MCP23008 connected via I2C
+> - 4x4 matrix keypad hooked to MCP23008 GPIOs
+> - SoC: Allwinner T113-s3 SoC
+> - Using devicetree configuration for `microchip,mcp23008` and `gpio-
+> matrix-keypad`
+>=20
+> When I press buttons on the keypad, after some amount of presses I get th=
+e=20
+> following error from the Kernel:
+>=20
+> [   81.921114] BUG: scheduling while atomic: kworker/1:4/383/0x00000002
+> [   81.921155] Modules linked in: esp32_sdio(O) bluetooth ecdh_generic ec=
+c=20
+> cfg80211 rfkill ipv6 af_packet evdev matrix_keypad matrix_keymap=20
+> pinctrl_mcp23s08_i2c pinctrl_mcp23s08 sun8i_ce crypto_engine uio_pdrv_gen=
+irq=20
+> uio
+> [   81.921287] CPU: 1 UID: 0 PID: 383 Comm: kworker/1:4 Tainted: G       =
+    O       =20
+> 6.15.4 #1 PREEMPT=20
+> [   81.921305] Tainted: [O]=3DOOT_MODULE
+> [   81.921310] Hardware name: Generic DT based system
+> [   81.921317] Workqueue: events matrix_keypad_scan [matrix_keypad]
+> [   81.921343] Call trace:=20
+> [   81.921353]  unwind_backtrace from show_stack+0x18/0x1c
+> [   81.921381]  show_stack from dump_stack_lvl+0x68/0x74
+> [   81.921398]  dump_stack_lvl from __schedule_bug+0x5c/0x70
+> [   81.921423]  __schedule_bug from __schedule+0xb48/0xd24
+> [   81.921451]  __schedule from schedule+0x34/0x144
+> [   81.921472]  schedule from schedule_preempt_disabled+0x24/0x34
+> [   81.921494]  schedule_preempt_disabled from __mutex_lock.constprop.
+> 0+0x308/0xaa4
+> [   81.921519]  __mutex_lock.constprop.0 from mcp23s08_irq_bus_lock+0x20/=
+0x30=20
+> [pinctrl_mcp23s08]
+> [   81.921553]  mcp23s08_irq_bus_lock [pinctrl_mcp23s08] from=20
+> __irq_get_desc_lock+0x84/0xac
+> [   81.921584]  __irq_get_desc_lock from enable_irq+0x38/0xa8
+> [   81.921605]  enable_irq from matrix_keypad_scan+0x2b8/0x3ac [matrix_ke=
+ypad]
+> [   81.921626]  matrix_keypad_scan [matrix_keypad] from=20
+> process_one_work+0x160/0x410
+> [   81.921649]  process_one_work from worker_thread+0x25c/0x408
+> [   81.921668]  worker_thread from kthread+0x144/0x264
+> [   81.921685]  kthread from ret_from_fork+0x14/0x38
+> [   81.921699] Exception stack(0xc896dfb0 to 0xc896dff8)
+> [   81.921709] dfa0:                                     00000000 0000000=
+0=20
+> 00000000 00000000
+> [   81.921720] dfc0: 00000000 00000000 00000000 00000000 00000000 0000000=
+0=20
+> 00000000 00000000
+> [   81.921730] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>=20
+> Happy to test patches or provide further debugging info.
 
-On 7/9/25 03:08, kernel test robot wrote:
-> Hi ChenMiao,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on fda589c286040d9ba2d72a0eaf0a13945fc48026]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/ChenMiao/riscv-ftrace-Fix-the-logic-issue-in-DYNAMIC_FTRACE-selection/20250706-231907
-> base:   fda589c286040d9ba2d72a0eaf0a13945fc48026
-> patch link:    https://lore.kernel.org/r/20250706151830.25091-1-chenmiao.ku%40gmail.com
-> patch subject: [PATCH V2] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE selection
-> :::::: branch date: 2 days ago
-> :::::: commit date: 2 days ago
-> config: riscv-randconfig-r112-20250708 (attached as .config)
-> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-> reproduce: (attached as reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202507090650.YGY56SIA-lkp@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->>> <instantiation>:1:14: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
->     addi sp, sp, -FREGS_SIZE_ON_STACK
->                  ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->>> <instantiation>:2:18: error: unexpected token
->      sw t0, FREGS_EPC(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:3:17: error: unexpected token
->      sw x1, FREGS_RA(sp)
->                     ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:7:17: error: unexpected token
->      sw x6, FREGS_T1(sp)
->                     ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:9:17: error: unexpected token
->      sw x7, FREGS_T2(sp)
->                     ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:10:18: error: unexpected token
->      sw x28, FREGS_T3(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:11:18: error: unexpected token
->      sw x29, FREGS_T4(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:12:18: error: unexpected token
->      sw x30, FREGS_T5(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:13:18: error: unexpected token
->      sw x31, FREGS_T6(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:16:18: error: unexpected token
->      sw x10, FREGS_A0(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:17:18: error: unexpected token
->      sw x11, FREGS_A1(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:18:18: error: unexpected token
->      sw x12, FREGS_A2(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:19:18: error: unexpected token
->      sw x13, FREGS_A3(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:20:18: error: unexpected token
->      sw x14, FREGS_A4(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:21:18: error: unexpected token
->      sw x15, FREGS_A5(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:22:18: error: unexpected token
->      sw x16, FREGS_A6(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:23:18: error: unexpected token
->      sw x17, FREGS_A7(sp)
->                      ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->      ^
->     <instantiation>:25:15: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
->      addi a0, a0, FREGS_SIZE_ON_STACK
->                   ^
->     arch/riscv/kernel/mcount-dyn.S:185:2: note: while in macro instantiation
->      SAVE_ABI_REGS
->
-> Kconfig warnings: (for reference only)
->     WARNING: unmet direct dependencies detected for DYNAMIC_FTRACE
->     Depends on [n]: FTRACE [=y] && FUNCTION_TRACER [=y] && HAVE_DYNAMIC_FTRACE [=n]
->     Selected by [y]:
->     - RISCV [=y] && FUNCTION_TRACER [=y]
+The culprit is
+> scoped_guard(spinlock_irq, &keypad->lock) {
+> 	keypad->scan_pending =3D false;
+> 	enable_row_irqs(keypad);
+> }
 
-To avoid that, we should check HAVE_DYNAMIC_FTRACE too:
+Here a spinlock is held, while during enable_irq() call the function
+mcp23s08_irq_bus_lock() is called. The latter one tries to lock a mutex
+while holding a spinlock. This doesn'twork.
 
-select DYNAMIC_FTRACE if FUNCTION_TRACER && HAVE_DYNAMIC_FTRACE
-
-That fixes the build error for me. Can you send a v3 with this change?
-
-Thanks,
-
-Alex
+Best regards,
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
 
->
 
