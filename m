@@ -1,481 +1,335 @@
-Return-Path: <linux-kernel+bounces-725878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E10BB004F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:19:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB28B004FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670963BCF09
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:18:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE651898506
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB63272E7B;
-	Thu, 10 Jul 2025 14:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1BA272813;
+	Thu, 10 Jul 2025 14:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jXhvCgOw"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PC+aKiYi"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEC32727E3;
-	Thu, 10 Jul 2025 14:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADC92727F1;
+	Thu, 10 Jul 2025 14:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752157146; cv=none; b=BeBlaCg/w86Fubug4oamNy6puTSBbaCApSGGaN+XFMZAj/3RuG7T36yohDzpBzUfljPUYfQWw/26CEz5vvb7yIYjz7vOXKdf5L2+dFI352Z2h7dz185vzk702jCdNgowzQfGPk9jatSG/oSymB/cHDFjLmxRsptcHhACJru2/YQ=
+	t=1752157262; cv=none; b=rSjY6AeTcO8V5eVFDW4ZAh1dX9BrkFFai0WZeMAr9ndvZ++iQabpoqpeY9mtaQC+HjbA5NlBK5gqnw/nNUOT3D9lL1f8qnfJu3g0Ker9y7kb/xKuS4OEpR9mLhFbY31rlLoiobXmkY9m5fdSfcIcscsX/GSXcgVhG7b8+ylAAFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752157146; c=relaxed/simple;
-	bh=sT3ywBHEfpXEefoY6lqNZHdBEznFpDC193UbVPYvSgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HyFeNZWAdnBSIBGcTylnK9cY8mlrxJqOdHgV9B32zi3fWx+ugVKV0EShqhOeUGA2UuP4SWIuoOHb0uQ6P4EuZDn8SlQtl3ag9E4VsMCzEHULPnwDzlJ1QUw6gOeARM9ub7PqYgJw08zU+lFb5uge81tKg4ny8ZG+WH+n9dLvdDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jXhvCgOw; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E8002465;
-	Thu, 10 Jul 2025 16:18:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752157113;
-	bh=sT3ywBHEfpXEefoY6lqNZHdBEznFpDC193UbVPYvSgo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jXhvCgOw19rQH08pYY7xv8WU9lt35cATNzcLSeSiXbUUf3jowuSOpzSRdc/E1aZNf
-	 Qk8ytLvt56fSqcj5/VsPM1rD0y98htn9QYvxgB6zwRSs6Lh2k0SJJe2giZkTntq3yn
-	 nEi8hhFMX+N2Bd34k4S8D1vaGhtdzdD3k8u+SIaM=
-Message-ID: <722f84e6-c253-4ef2-a65d-72f9215c5ab0@ideasonboard.com>
-Date: Thu, 10 Jul 2025 15:18:59 +0100
+	s=arc-20240116; t=1752157262; c=relaxed/simple;
+	bh=2XjHkdOkObP5HVj5iejMMSjoEC9b3hAuC6HFJ71aAK4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a8I0mFPbEpdwrE2fRMg3qITHgWndYu8+J8TubOK8idlfSz5feC6n8+eg/bBwLHSmu24/xHhcgZldWCiFa3lbEBnT3Z1BmM2ckCus6wgZKq5gbPEpoqZ2681hXYHKefPdXKvX2xBCdOiTW9SG89KKJJhVaNBuT0cuTmK0IeALW24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PC+aKiYi; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1752157257;
+	bh=2XjHkdOkObP5HVj5iejMMSjoEC9b3hAuC6HFJ71aAK4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PC+aKiYiogEuqlNa7TQGKyCx3vgGKlbJ3LCBXKRZ6o/4xDXSvVFGj2IWV3ohYnH8s
+	 q15YA5AcEoi54jaepRL9uEen3Ks+cgfy8IN3lKgCbSt/b7XWvpwL2s2uJgwn/JyS4W
+	 OfGtIffWq0aCuAqQQsh3AAfQcCSKxgbYO3YedG7wX3u3/vo7lrM7vAzM8+tEiS+8jh
+	 9ddmmRg+cDckW8WFvYCQPfBRBXCdIh3KMLfUf0mXuq2z3P6fbkOX7hAE0wdgwVVFOJ
+	 4R/+nmf67pi0PGgvns15v1dA09prn64xdvpKJgWWOT9Lms+OgLsPsk3XxqV8ZIJw0C
+	 zMlrYgPRAyXdQ==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:bff:3863:712c:1a2c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 01D1D17E08E3;
+	Thu, 10 Jul 2025 16:20:55 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: angelogioacchino.delregno@collabora.com
+Cc: arnd@arndb.de,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	drew@pdp7.com,
+	gregkh@linuxfoundation.org,
+	kabel@kernel.org,
+	kernel@collabora.com,
+	khilman@baylibre.com,
+	krzk@kernel.org,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	m.wilczynski@samsung.com,
+	matthias.bgg@gmail.com,
+	nm@ti.com,
+	pjp@fedoraproject.org,
+	quic_hyiwei@quicinc.com,
+	robh@kernel.org,
+	tudor.ambarus@linaro.org,
+	u.kleine-koenig@baylibre.com,
+	ulf.hansson@linaro.org
+Subject: Re: [RFC PATCH 2/3] dt-bindings: firmware: Document the MediaTek Hardware Voter (HWV)
+Date: Thu, 10 Jul 2025 16:19:41 +0200
+Message-Id: <20250710141941.75843-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <9560d4d2-5346-4d0a-a96f-c96ebe335f3c@collabora.com>
+References: <9560d4d2-5346-4d0a-a96f-c96ebe335f3c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] media: v4l2-common: Introduce v4l2-params.c
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Dafna Hirschfeld <dafna@fastmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250710-extensible-parameters-validation-v2-0-7ec8918ec443@ideasonboard.com>
- <20250710-extensible-parameters-validation-v2-5-7ec8918ec443@ideasonboard.com>
-Content-Language: en-US
-From: Dan Scally <dan.scally@ideasonboard.com>
-Autocrypt: addr=dan.scally@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250710-extensible-parameters-validation-v2-5-7ec8918ec443@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Jacopo - just one nit, but ignore it if you want
-
-On 10/07/2025 14:52, Jacopo Mondi wrote:
-> Add to the v4l2 framework an helper function to support drivers
-> when validating a buffer of extensible parameters.
+On 7/7/25 12:40, AngeloGioacchino Del Regno wrote:
+> Il 03/07/25 10:56, AngeloGioacchino Del Regno ha scritto:
+>> Il 02/07/25 08:50, Krzysztof Kozlowski ha scritto:
+>>> On Tue, Jul 01, 2025 at 05:11:48PM +0200, AngeloGioacchino Del Regno wrote:
+>>>> Add documentation for the new MediaTek Hardware Voter, found in
+>>>> MediaTek SoCs like the MT8196 Kompanio Ultra for Chromebooks and
+>>>> the MT6991 Dimensity 9400 for Smartphones.
+>>>>
+>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>> ---
+>>>>   .../mediatek,mt6991-hardware-voter.yaml       | 70 +++++++++++++++++++
+>>>>   1 file changed, 70 insertions(+)
+>>>>   create mode 100644 Documentation/devicetree/bindings/firmware/mediatek,mt6991- hardware-voter.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/firmware/mediatek,mt6991- hardware-voter.yaml b/Documentation/devicetree/bindings/firmware/ mediatek,mt6991-hardware-voter.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..173b74c23a91
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/firmware/mediatek,mt6991-hardware- voter.yaml
+>>>> @@ -0,0 +1,70 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>>> +# Copyright 2025 Collabora Ltd
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/firmware/mediatek,mt6991-hardware-voter.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: MediaTek Hardware Voter (HWV)
+>>>> +
+>>>> +maintainers:
+>>>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>> +
+>>>> +description:
+>>>> +  The MediaTek Hardware Voter (HWV) is a SoC-internal fixed-function MCU
+>>>> +  used to collect votes from both the Application Processor and from the
+>>>> +  various other remote processors present in the SoC, and transparently
+>>>> +  turn on or off various hardware resources (for example, power domains
+>>>> +  or system clocks) based on aggregation of votes done in the HWV MCU's
+>>>> +  internal state machine, therefore guaranteeing synchronization of the
+>>>> +  hardware resource requests between all components of the SoC and hence
+>>>> +  avoiding, for example, unclocked or unpowered access to the hardware.
+>>>> +
+>>>> +properties:
+>>>> +  $nodename:
+>>>> +    pattern: "^system-controller@[0-9a-f]+$"
+>>>> +
+>>>> +  compatible:
+>>>> +    const: mediatek,mt6991-hardware-voter
+>>>> +
+>>>> +  reg:
+>>>> +    items:
+>>>> +      - description: Address and size of the Hardware Voter MMIO
+>>>> + 
+>>>
+>>> No resources here, so this should go to power controller
+>>>
+>>>> +  power-controller:
+>>>> +    $ref: /schemas/power/mediatek,power-controller.yaml
+>>>> +
+>>>> +required:
+>>>> +  - compatible
+>>>> +  - reg
+>>>> +
+>>>> +additionalProperties: true
+>>>> +
+>>>> +examples:
+>>>> + - |
+>>>> +   scp_hwv: system-controller@14500000 {
+>>>> +     compatible = "mediatek,mt6991-hardware-voter";
+>>>> +     reg = <0 0x14500000 0 0x3000>;
+>>>> +
+>>>> +     power-controller {
+>>>> +       compatible = "mediatek,mt8196-hwv-scp-power-controller"; 
+>>>
+>>> mt8196 in mt6991 is very confusing.
+>>>
+>>
+>> Yeah that wasn't intentional; fyi, it's almost the same soc, that's why I mixed
+>> them up... :-)
+>>
+>>> Anyway, this does not address my comment at all. You again create some
+>>> sort of syscon for voting, so no. You are supposed to use generic API
+>>> for voting: clocks, power domains, interconnects - whatever is there
+>>> applicable or necessary.
+>>>
+>>
+>> Making that loud and clear: Interconnect is not applicable.
+>>
+>> The only way to do what you're proposing would be to add a bunch of `reg`
+>> to each devicetree node for each clock controller and each power controller;
+>> I can do that, but looks a bit dirty - and still yet another syscon-like
+>> alternative, but without having a real syscon declared in there.
+>>
+>> Mind you - both clock and power controllers are writing both to their own
+>> register space (and enabling external regulators, etc, for power domains)
+>> and to the hardware voter MMIO (which means that the HWV, in hardware, is
+>> fundamentally broken).
+>>
+>> After this reply, the only option that is left to me is the following:
+>>
+>>          topckgen: clock-controller@10000000 {
+>>              compatible = "mediatek,mt8196-topckgen", "syscon";
+>>              reg = <0 0x10000000 0 0x800>, <0 0x14500010 0 0x48>,
+>>                    <0 0x14502c08 0 0x24>;
+>>              reg-names = "base", "hwvoter-base", "hwvoter-status";
+>>              #clock-cells = <1>;
+>>          };
+>>
+>>          imp_iic_wrap_north: clock-controller@13c30000 {
+>>              compatible = "mediatek,mt8196-imp-iic-wrap-n", "syscon";
+>>              reg = <0 0x13c30000 0 0x1000>, <0 0x14500000 0 0xc>,
+>>                    <0 0x14502c00 0 0xc>;
+>>              reg-names = "base", "hwvoter-base", "hwvoter-status";
+>>              #clock-cells = <1>;
+>>          };
+>>
+>>          /* Power Manager with Hardware Voter */
+>>          spm_hwv: power-controller@14500218 {
+>>              compatible = "mediatek,mt8196-hwv-scp-power-controller";
+>>              reg = <0 0x14500218 0 0x20>, <0 0x14501410 0 0x20>,
+>>                    <0 0x14505514 0 0xc>;
+>>              reg-names = "hwvoter-base", "hwvoter-status", "hwvoter-ack";
+>>              #address-cells = <1>;
+>>              #size-cells = <0>;
+>>              #power-domain-cells = <1>;
+>>
+>>              /* SCPSYS hardware voter power domains */
+>>              mm_proc_dormant: power-domain@MT8196_POWER_DOMAIN_MM_PROC_DORMANT {
+>>                  ..... etc, all power domains
+>>
+>> At this point, I'm really not sure that this would be better than just passing
+>> the mediatek,hardware-voter syscon to the clock controllers - as what I've done
+>> previously was effectively representing the hardware in the devicetree as it is,
+>> matching the real HW layout 1:1 (because again, each of the whole HWV MCU(s) are
+>> embedded into each of the two power controllers, one for System power, and one
+>> for Multimedia power).
+>>
+>> (btw, hardware speaking, the power controller is child of a system controller:
+>> there are two system controllers - "scpsystem" is for "compute part", and the
+>> "hfrpsystem" is for the "multimedia part" of the soc).
+>>
+>>   _______________________________________
+>> |                                       |
+>> | SYSTEM CONTROLLER (SCPSYS or HFRPSYS) |
+>> |   _____________________               |
+>> |  |                     |              | <===> Clock Controllers (more than one)
+>> |  | Power Controller    |     SOME     |       (provide subsystem clocks for iso
+>> |  |                     |    OTHER     |        during power domain enablement
+>> |  |     ______________  |   BLOCKS     |        even if a PD is voted)
+>> |  |    |              | |              |       non-subsystem clocks are voted,
+>> |  |    | HW Voter MCU | |              |       but subsystem ones are not voted
+>> |  |    |______________| |              |
+>> |  |_____________________|              | ===> Rest of the SoC
+>> |_______________________________________|
+>>
+>>
+>> Hence I'm asking you - does your idea still stand?
+>>
+>> Because after this, sorry for that - this doesn't want to be an attack - but
+>> I'm starting to have doubts about an approach that doesn't involve syscons.
+>>
+>> Cheers,
+>> Angelo 
 >
-> Introduce new types in include/media/v4l2-params.h that drivers shall
-> use in order to comply with the v4l2-params validation procedure, and
-> add a helper functions to v4l2-params.c to perform block and buffer
-> validation.
+> Sorry for the double reply, wanted to add some more words :-)
 >
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
->   MAINTAINERS                           |   2 +
->   drivers/media/v4l2-core/Makefile      |   3 +-
->   drivers/media/v4l2-core/v4l2-params.c | 128 ++++++++++++++++++++++++++
->   include/media/v4l2-params.h           | 165 ++++++++++++++++++++++++++++++++++
->   4 files changed, 297 insertions(+), 1 deletion(-)
+> As a note, I also thought about doing the following:
 >
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index beecac86991d988c48d31366ba5201b09ef25715..3d9a8e06c59eb08360d1e8eea85e450a15ee95af 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -25973,6 +25973,8 @@ M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->   L:	linux-media@vger.kernel.org
->   S:	Maintained
->   F:	Documentation/userspace-api/media/v4l/extensible-parameters.rst
-> +F:	drivers/media/v4l2-core/v4l2-params.c
-> +F:	include/media/v4l2-params.h
->   F:	include/uapi/linux/media/v4l2-extensible-params.h
->   
->   VF610 NAND DRIVER
-> diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
-> index 2177b9d63a8ffc1127c5a70118249a2ff63cd759..323330dd359f95c1ae3d0c35bd6fcb8291a33a07 100644
-> --- a/drivers/media/v4l2-core/Makefile
-> +++ b/drivers/media/v4l2-core/Makefile
-> @@ -11,7 +11,8 @@ tuner-objs	:=	tuner-core.o
->   videodev-objs	:=	v4l2-dev.o v4l2-ioctl.o v4l2-device.o v4l2-fh.o \
->   			v4l2-event.o v4l2-subdev.o v4l2-common.o \
->   			v4l2-ctrls-core.o v4l2-ctrls-api.o \
-> -			v4l2-ctrls-request.o v4l2-ctrls-defs.o
-> +			v4l2-ctrls-request.o v4l2-ctrls-defs.o \
-> +			v4l2-params.o
->   
->   # Please keep it alphabetically sorted by Kconfig name
->   # (e. g. LC_ALL=C sort Makefile)
-> diff --git a/drivers/media/v4l2-core/v4l2-params.c b/drivers/media/v4l2-core/v4l2-params.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..e2d27fa595110600ea27f1c14cd3d129c66dcd75
-> --- /dev/null
-> +++ b/drivers/media/v4l2-core/v4l2-params.c
-> @@ -0,0 +1,128 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Video4Linux2 extensible parameters helpers
-> + *
-> + * Copyright (C) 2025 Ideas On Board Oy
-> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> + */
-> +
-> +#include <media/v4l2-params.h>
-> +
-> +int v4l2_params_buffer_validate(struct device *dev, struct vb2_buffer *vb,
-> +				size_t max_size,
-> +				v4l2_params_validate_buffer buffer_validate)
-> +{
-> +	size_t header_size = offsetof(struct v4l2_params_buffer, data);
-> +	struct v4l2_params_buffer *buffer = vb2_plane_vaddr(vb, 0);
-> +	size_t payload_size = vb2_get_plane_payload(vb, 0);
-> +	size_t buffer_size;
-> +	int ret;
-> +
-> +	/* Payload size can't be greater than the destination buffer size */
-> +	if (payload_size > max_size) {
-> +		dev_dbg(dev, "Payload size is too large: %zu\n", payload_size);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Payload size can't be smaller than the header size */
-> +	if (payload_size < header_size) {
-> +		dev_dbg(dev, "Payload size is too small: %zu\n", payload_size);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Validate the size reported in the parameter buffer header */
-> +	buffer_size = header_size + buffer->data_size;
-> +	if (buffer_size != payload_size) {
-> +		dev_dbg(dev, "Data size %zu and payload size %zu are different\n",
-> +			buffer_size, payload_size);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Driver-specific buffer validation. */
-> +	if (buffer_validate) {
-> +		ret = buffer_validate(dev, buffer);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_params_buffer_validate);
-> +
-> +int v4l2_params_blocks_validate(struct device *dev,
-> +				const struct v4l2_params_buffer *buffer,
-> +				const struct v4l2_params_handler *handlers,
-> +				size_t num_handlers,
-> +				v4l2_params_validate_block block_validate)
-> +{
-> +	size_t block_offset = 0;
-> +	size_t buffer_size;
-> +	int ret;
-> +
-> +	/* Walk the list of parameter blocks and validate them. */
-> +	buffer_size = buffer->data_size;
-> +	while (buffer_size >= sizeof(struct v4l2_params_block_header)) {
-> +		const struct v4l2_params_handler *handler;
-> +		const struct v4l2_params_block_header *block;
-> +		bool valid_size = true;
-> +
-> +		/* Validate block sizes and types against the handlers. */
-> +		block = (const struct v4l2_params_block_header *)
-> +			(buffer->data + block_offset);
-> +
-> +		if (block->type >= num_handlers) {
-> +			dev_dbg(dev, "Invalid parameters block type\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		if (block->size > buffer_size) {
-> +			dev_dbg(dev, "Premature end of parameters data\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		/* It's invalid to specify both ENABLE and DISABLE. */
-> +		if ((block->flags & (V4L2_PARAMS_FL_BLOCK_ENABLE |
-> +				     V4L2_PARAMS_FL_BLOCK_DISABLE)) ==
-> +		     (V4L2_PARAMS_FL_BLOCK_ENABLE |
-> +		     V4L2_PARAMS_FL_BLOCK_DISABLE)) {
-> +			dev_dbg(dev, "Invalid parameters block flags\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		/*
-> +		 * Match the block reported size against the handler's expected
-> +		 * one, but allow the block to only contain the header in
-> +		 * case it is going to be disabled.
-> +		 */
-> +		handler = &handlers[block->type];
-> +		if (block->size != handler->size) {
-> +			valid_size = false;
-> +
-> +			if ((block->flags & V4L2_PARAMS_FL_BLOCK_DISABLE) &&
-> +			    block->size == sizeof(*block))
-> +				valid_size = true;
-> +		}
-> +		if (!valid_size) {
-> +			dev_dbg(dev, "Invalid parameters block size\n");
-> +			return -EINVAL;
-> +		}
-
-Maybe just
-
-
-         if (block->size != handler->size) {
-             if (!(block->flags & V4L2_PARAMS_FL_BLOCK_DISABLE) ||
-                 block->size != sizeof(*block)) {
-                 dev_dbg(dev, "Invalid parameters block size\n");
-                 return -EINVAL;
-             }
-         }
-
-
-But don't bother with a new version if that's the only change.
-
-
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-
-> +
-> +		/* Driver-specific per-block validation. */
-> +		if (block_validate) {
-> +			ret = block_validate(dev, block);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +
-> +		block_offset += block->size;
-> +		buffer_size -= block->size;
-> +	}
-> +
-> +	if (buffer_size) {
-> +		dev_dbg(dev, "Unexpected data after the parameters buffer end\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_params_blocks_validate);
-> diff --git a/include/media/v4l2-params.h b/include/media/v4l2-params.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..e8169e559d114af03bb41876111839fbe023ee6d
-> --- /dev/null
-> +++ b/include/media/v4l2-params.h
-> @@ -0,0 +1,165 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + * Video4Linux2 extensible parameters helpers
-> + *
-> + * Copyright (C) 2025 Ideas On Board Oy
-> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> + */
-> +
-> +#ifndef V4L2_PARAMS_H_
-> +#define V4L2_PARAMS_H_
-> +
-> +#include <linux/media/v4l2-extensible-params.h>
-> +
-> +#include <linux/device.h>
-> +
-> +#include <media/videobuf2-core.h>
-> +
-> +/**
-> + * typedef v4l2_params_block_handler - V4L2 extensible format block handler
-> + * @arg: pointer the driver-specific argument
-> + * @block: the ISP configuration block to handle
-> + *
-> + * Defines the function signature of the functions that handle an ISP block
-> + * configuration.
-> + */
-> +typedef void (*v4l2_params_block_handler)(void *arg,
-> +					  const struct v4l2_params_block_header *block);
-> +
-> +/**
-> + * struct v4l2_params_handler - V4L2 extensible format handler
-> + * @size: the block expected size
-> + * @handler: the block handler function
-> + * @group: the device-specific group id the block belongs to (optional)
-> + * @features: the device-specific features flags (optional)
-> + *
-> + * The v4l2_params_handler defines the type that driver making use of the
-> + * V4L2 extensible parameters shall use to define their own ISP block
-> + * handlers.
-> + *
-> + * Drivers shall prepare a list of handlers, one for each supported ISP block
-> + * and correctly populate the structure's field with the expected block @size
-> + * (used for validation), a pointer to each block @handler function and an
-> + * optional @group and @feature flags, the driver can use to differentiate which
-> + * ISP blocks are present on the ISP implementation.
-> + *
-> + * The @group field is intended to be used as a bitmask of driver-specific
-> + * flags to allow the driver to setup certain blocks at different times. As an
-> + * example an ISP driver can divide its block handlers in "pre-configure" blocks
-> + * and "run-time" blocks and use the @group bitmask to identify the ISP blocks
-> + * that have to be pre-configured from the ones that only have to be handled at
-> + * run-time. The usage and definition of the @group field is totally
-> + * driver-specific.
-> + *
-> + * The @features flag can instead be used to differentiate between blocks
-> + * implemented in different revisions of the ISP design. In example some ISP
-> + * blocks might be present on more recent revision than others. Populating the
-> + * @features bitmask with the ISP/SoC machine identifier allows the driver to
-> + * correctly ignore the blocks not supported on the ISP revision it is running
-> + * on. As per the @group bitmask, the usage and definition of the @features
-> + * field is totally driver-specific.
-> + */
-> +struct v4l2_params_handler {
-> +	size_t size;
-> +	v4l2_params_block_handler handler;
-> +	unsigned int group;
-> +	unsigned int features;
-> +};
-> +
-> +/**
-> + * typedef v4l2_params_validate_buffer - V4L2 extensible parameters buffer
-> + *					 validation callback
-> + * @dev: the driver's device pointer (as passed by the driver to
-> + *	 v4l2_params_buffer_validate())
-> + * @buffer: the extensible parameters buffer
-> + *
-> + * Defines the function prototype for the driver's callback to perform
-> + * driver-specific validation on the extensible parameters buffer
-> + */
-> +typedef int (*v4l2_params_validate_buffer)(struct device *dev,
-> +					   const struct v4l2_params_buffer *buffer);
-> +
-> +/**
-> + * v4l2_params_buffer_validate - Validate a V4L2 extensible parameters buffer
-> + * @dev: the driver's device pointer
-> + * @vb: the videobuf2 buffer
-> + * @max_size: the maximum allowed buffer size
-> + * @buffer_validate: callback to the driver-specific buffer validation
-> + *
-> + * Helper function that performs validation of an extensible parameters buffer.
-> + *
-> + * The helper is meant to be used by drivers to perform validation of the
-> + * extensible parameters buffer size correctness.
-> + *
-> + * The @vb buffer as received from the vb2 .buf_prepare operation is checked
-> + * against @max_size and its validated to be large enough to accommodate at
-> + * least one ISP configuration block. The effective buffer size is compared
-> + * to the data size reported by @cfg to make sure they match.
-> + *
-> + * If provided, the @buffer_validate callback function is invoked to allow
-> + * drivers to perform driver-specific validation (such as checking that the
-> + * buffer version is supported).
-> + *
-> + * Drivers should use this function to validate the buffer size correctness
-> + * before performing a copy of the user-provided videobuf2 buffer content into a
-> + * kernel-only memory buffer to prevent userspace from modifying the buffer
-> + * content after it has been submitted to the driver.
-> + *.
-> + * Examples of users of this function can be found in
-> + * rkisp1_params_prepare_ext_params() and in c3_isp_params_vb2_buf_prepare().
-> + */
-> +int v4l2_params_buffer_validate(struct device *dev, struct vb2_buffer *vb,
-> +				size_t max_size,
-> +				v4l2_params_validate_buffer buffer_validate);
-> +
-> +/**
-> + * typedef v4l2_params_validate_block - V4L2 extensible parameters block
-> + *					validation callback
-> + * @dev: the driver's device pointer (as passed by the driver to
-> + *	 v4l2_params_validate())
-> + * @block: the ISP configuration block to validate
-> + *
-> + * Defines the function prototype for the driver's callback to perform
-> + * driver-specific validation on each ISP block.
-> + */
-> +typedef int (*v4l2_params_validate_block)(struct device *dev,
-> +					  const struct v4l2_params_block_header *block);
-> +
-> +/**
-> + * v4l2_params_blocks_validate - Validate V4L2 extensible parameters ISP
-> + *				 configuration blocks
-> + * @dev: the driver's device pointer
-> + * @buffer: the extensible parameters configuration buffer
-> + * @handlers: the list of block handlers
-> + * @num_handlers: the number of block handlers
-> + * @block_validate: callback to the driver-specific per-block validation
-> + *		    function
-> + *
-> + * Helper function that performs validation of the ISP configuration blocks in
-> + * an extensible parameters buffer.
-> + *
-> + * The helper is meant to be used by drivers to perform validation of the
-> + * ISP configuration data blocks. For each block in the extensible parameters
-> + * buffer, its size and correctness are validated against its associated handler
-> + * in the @handlers list. Additionally, if provided, the @block_validate
-> + * callback is invoked on each block to allow drivers to perform driver-specific
-> + * validation.
-> + *
-> + * Drivers should to use this function to validate the ISP configuration blocks
-> + * after having validated the correctness of the vb2 buffer sizes by using the
-> + * v4l2_params_buffer_validate() helper first. Once the buffer size has been
-> + * validated, drivers should perform a copy of the user-provided buffer into a
-> + * kernel-only memory buffer @cfg to prevent userspace from modifying the buffer
-> + * content after it has been submitted to the driver, and then call this
-> + * function to perform per-block validation.
-> + *
-> + * Examples of users of this function can be found in
-> + * rkisp1_params_prepare_ext_params() and in c3_isp_params_vb2_buf_prepare().
-> + */
-> +int v4l2_params_blocks_validate(struct device *dev,
-> +				const struct v4l2_params_buffer *buffer,
-> +				const struct v4l2_params_handler *handlers,
-> +				size_t num_handlers,
-> +				v4l2_params_validate_block block_validate);
-> +
-> +#endif /* V4L2_PARAMS_H_ */
+>     /* Secondary SCPSYS block with HWV capabilities */
+>     scp1_hwv: system-controller@14500000 {
+>         compatible = "mediatek,mt8196-scpsys", "syscon", "simple-mfd";
+>         reg = <0 0x14500000 0 0x3000>;
 >
+>         /* SCP Power Manager with Hardware Voter */
+>         spm_hwv: power-controller {
+>             compatible = "mediatek,mt8196-hwv-scp-power-controller";
+>             #address-cells = <1>;
+>             #size-cells = <0>;
+>             #power-domain-cells = <1>;
+>
+>             /* SCPSYS hardware voter power domains */
+>             mm_proc_dormant: power-domain@MT8196_POWER_DOMAIN_MM_PROC_DORMANT {
+>             ..... etc etc
+>             };
+>         };
+>
+>         imp_iic_wrap_north: clock-controller@13c30000 {
+>             compatible = "mediatek,mt8196-imp-iic-wrap-n", "syscon";
+>             reg = <0 0x13c30000 0 0x1000>;
+>             #clock-cells = <1>;
+>         };
+>     };
+>
+> ...but that's also not applicable, because the clock controllers are physically
+> *not* inside of the scpsys1 block, so that would *also* misrepresent the hardware
+> in the devicetree (besides still using a syscon in a way or another).
+>
+> So... I really don't see any way out of that, which really leaves me with the two
+> options that I described in the previous reply.
+>
+> Summarizing, either:
+>  - Adding hwv MMIOs (a bunch of, and each very small) to each clock controller (but
+>    still all of them are poking at the same HWV controller, and I foresee that this
+>    will backfire in some future iteration of the HWV hardware)
+>  - Reverting back to using the "mediatek,hardware-voter" syscon, like done in
+>    https://lore.kernel.org/20250624143220.244549-10-laura.nao@collabora.com
+>
+> I tried really hard and thought about this for weeks (actually, started even before
+> your feedback on Laura's series), but now I'm out of practical options that are
+> both correctly representing the hardware and not making the implementation fragile
+> (or actually more fragile than the actually broken HW implementation's fragility,
+> anyway).
+>
+> And besides - re-reading what I wrote after a bunch of days, the first option of
+> adding a bunch of hwv mmios to all of the clock controllers is, in my opinion, a
+> (dirty) hack - because those mmios don't belong to the clock controllers, and would
+> again misrepresent the hardware in DT - especially keeping in mind the fact that
+> the clock controllers can be controlled with *and* (not or) without the HWV (and in
+> some instances, even if using HWV, we must still write to the clock controllers'
+> mmio for extra programming, as explained before).
+>
+> Every second I think about this I get more and more convinced that my way of
+> passing the SCPSYS-HWV system controller handle as a syscon is right.
+>
+> Angelo
+>
+
+I’ve given this some more thought over the past few days.
+
+I can't see of any other viable alternative either, other than splitting 
+up the HWV MMIOs into multiple tiny reg entries across each consumer 
+node as mentioned..which feels fragile and wouldn't really be an accurate 
+representation of the HW, given they all ultimately target the same HWV MCU.
+
+All considered, modeling the HWV as a shared syscon passed to both clock 
+and power controllers still seems to me like the more accurate 
+representation of this specific hw layout, given both types of 
+controllers interact with the same voter logic and MMIO region.
+
+Krzysztof, does the approach with scattered small reg entries per clock 
+controller seem as awkward to you as it does to us? are there any other 
+directions you think we should explore here?
+
+Best,
+
+Laura
 
