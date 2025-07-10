@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-726532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B92B00E3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 962BEB00E3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ECFD1C86057
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:56:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC6A1C863D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD84D290D9C;
-	Thu, 10 Jul 2025 21:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4773F290D96;
+	Thu, 10 Jul 2025 21:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AneX5pvc"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="31wMQMwB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0khRk/Sk"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D05323FC74
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 21:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BA928DF27;
+	Thu, 10 Jul 2025 21:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752184571; cv=none; b=EHrpXA83fxehY7K3/9JXAlz2TeBFR49s5VPulLy6Tk8MQJ//IuKks3FpRJuSRELwIAIUUogwKI9RFmwktPVS1e8n8TnN3r3S0dpf5Xn8LlkYZTWpvOBoHD4dcFPW5VEpfDWukvDrDfHpVetV8T33ZPvSIt44+fmAGWWvOXide0k=
+	t=1752184586; cv=none; b=uBI0PgbFInD9eK/9xlelFwWOSREM+TqHGyZiGRDHoknfmBHLKbtASOqr9ugkZA9J8COi9Gt19scwRBrB60kMoE1+zNkREmG6mqXM+G/HGeDZzAE47EYui2sQT33vIHVbxY3yVIMovReWpsB45cV8J/nllCPNHtD5jOGP4ZZDVAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752184571; c=relaxed/simple;
-	bh=yEUe36iGT2tjYBEroWVItA/U8MgbKRguqLFT0OU+jLo=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=tJGFdqpsJQ1ogDkyUB6BTE5rpCWbDmDhw2/AbyhtRO9F6oJHSs71ejW3P5y/jMqqtoHFRyLN171wZgJ5T885XtchWS7RCQ+8yE1YrqdqpKr7w+mQWmepGmtUsKgJXiZiJ6t9DQxXD74nvaFqnQGBdF04jrZ52Qk8fH7LBo4VXOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AneX5pvc; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a97a67aa97so11111071cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:56:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1752184568; x=1752789368; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yWbp11K8y8N54piZ0w9HEapGynmdQ61Of/cRxlwOOcw=;
-        b=AneX5pvcDwhox3k3cfU2QySpiKm4c0b7zBygPtlf0O5EIRHmYDOKnxdVgfLbqQXE8s
-         EJ444n5LJAAu3d6bBMgCFPso9AnU8+R/dmEc52Qyf3fiiNrCzjqoIZ3hjZufR//pq7qE
-         Th6R2I+3rViKIq3gVsPWuAHlRYprf0CS52RhSLIijc27ExlRyaS2c9xBIw0TodX/N0HJ
-         YjxNGAbvcuw58x/jcqcsJUFCNADYWrWHw82bSX1/Zq0x3IoTtJhgJ3PorpfAMsGFaDh6
-         1ON0U4aBAof86ogjtcqzHck7s0/38FUNfoYCJu3ZY50qpDocns2oPNHTo03kLGvN/ZVU
-         QGvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752184568; x=1752789368;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yWbp11K8y8N54piZ0w9HEapGynmdQ61Of/cRxlwOOcw=;
-        b=pX9KOtUGF0Rhun6C/6cj9n4YdI8dVBlJRquCeFhlK8LkzwWZORTHyOpEpVHPc9LfRo
-         JD2wp4QDL4+MmRtfFzFeTgoQFdZE/g7jT0JpoStjf7ZDCxaQw3H25/d1PAtZvnXI0aTK
-         518jI5kiPBfJYmHIg9nkiyXi8k6AGTNbWLOZLVEicwY4GYqa47eMlWd/2TEBYo2lYeG2
-         Pz5Bww7yhcyfEptFiTTkYSLW+oYYRN5rQwcUrHf3tOifuRcA+Gw4AWAjRAaicnUi1DuM
-         P1HA77C2YNzzMZnYKw+CRn+B+OzDVCh8gNCLBlJqt8z8qj5tpN9dl3stWQdfvGBQa4iP
-         yotA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJt51wNnO98PPSzuV32SKrWvKTPXEtiDvb4g664Hs01TmbGp18U5hhsXA+dS1DTmLZyeBQAZyy9ZwDhSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+zvD7KzhqdSdH3FsG8cbkngGUulvt/JHR8e5HuY+xwCDUPSGA
-	U2CbZGKV2uvgMIQRPXgJrHoP+zNxEhd7B+WpkXmShywbJyh1b5Lt5CLh+M/NRbQy/w==
-X-Gm-Gg: ASbGncu+zUzUk1p7w/62+6yWMs0LKUA2Jn2X1LGjwomW0jlyPlpyJAes5iA6D2Ge3OR
-	cJcqLcpaqEm2zwDtDktIc6rFCRfdyZ1b7xWQc1mqri1GB0QFuk5zt3Omsn0RDb5rCAKdWbbEoOd
-	PrJBFo2GGKVw57e03mChcgBhLDQulW7UVgeAYdMQOqa6C6C/Q4vsdhLT9RgB7DGu9iFAIPLrn9c
-	qBoP/QsFydqgVz71p+jCXCRySEERuygdly15boaQayR2mYHeG4sDlpqycm5l7HzuZuMct1uoU4q
-	PZIIoRNE1jEnC7yMlRGqrIPKH8VCtJ1xwRNPgrOg/puvjR94nMMCq/okRonN2Fat2dlA3CBgZpa
-	WWumvGs4faKADrjtPBG0qvhjN+5O+ysg=
-X-Google-Smtp-Source: AGHT+IEpnELhzqIjxusSklObVJoQn6zvdS6ZOqrP6ujD96X7xvUTFs2JekOXI6D29K/IxMigh4k6Mg==
-X-Received: by 2002:ac8:7c48:0:b0:4a7:fbd0:79c4 with SMTP id d75a77b69052e-4aa35ca48dbmr4704511cf.11.1752184568511;
-        Thu, 10 Jul 2025 14:56:08 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4a9ede764acsm13481451cf.38.2025.07.10.14.56.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 14:56:08 -0700 (PDT)
-Date: Thu, 10 Jul 2025 17:56:07 -0400
-Message-ID: <9076ab8364625a675e2c548adedeb854@paul-moore.com>
+	s=arc-20240116; t=1752184586; c=relaxed/simple;
+	bh=QHNBja283vzdVpy070jqNyFysgvX9DvQT90Xk9Kdmfw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Mu+qv25ETNoIxiAqu93/YeUCqoiLsksi92Vsen9Ibpiabga582G2Lt5gS5bpgzjfVbKIA6llhFsnXBy+vtnDmmu+UBVgP8g8uZwaaPUHmSxxr943Nar9NjdSBrapkZXfApBOhBAKcCYyTG+xZdwrUq37svLGnai+sBbKteJQ/Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=31wMQMwB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0khRk/Sk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 10 Jul 2025 21:56:21 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752184583;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QUPnAwJVipvlnYGY44ZfC/0a45hH1uK/2owJhHlfmvE=;
+	b=31wMQMwBHEERrSm49/OcVHRn3R2fTTSXV3DlYLHcUIASlIzu5i7bQ0e5TVcm7bQUi3pB2Z
+	6BEF2FiTioJPZLb2Go4GDdlYbDokiVmIPWkcdhID8svD/naXEFtVmzEWrInnaNYFZd7ZTD
+	fCvFjGX/RFX2j0mK3b0ACTd7JAgghyhlQNBodorQg1FXbKWhapcWRqwjWG76Vg69zm1DAf
+	lYQUNs2IrjO4XmVUdKvpY3hV+Zn85AcMLsSwzG7NTaZssQm4QT1k7NTTMQ7zY72idgHPwf
+	hA1FEGgg0jbGjr9IpwF3tmuPD8EVqX8eXMl/vR+dId4Tt23yqOREbDl45qrmKA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752184583;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QUPnAwJVipvlnYGY44ZfC/0a45hH1uK/2owJhHlfmvE=;
+	b=0khRk/SkfbRCqTVgB/JL4VGWAxjpzNClVQHl29PrYwakP13lfushRMEj6m5cP4nUnggGOi
+	BZIxXDxkrsR58cDA==
+From: "tip-bot2 for Arnd Bergmann" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/irq-msi-lib: Fix build with PCI disabled
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Marc Zyngier <maz@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250710080021.2303640-1-arnd@kernel.org>
+References: <20250710080021.2303640-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250710_1750/pstg-lib:20250710_1741/pstg-pwork:20250710_1750
-From: Paul Moore <paul@paul-moore.com>
-To: nicolas.bouchinet@oss.cyber.gouv.fr
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Subject: Re: [PATCH] MAINTAINERS: Add Xiu and myself as Lockdown maintainers
-References: <20250624-add_myself_to_lockdown_maintainers-v1-1-bed2bc934666@ssi.gouv.fr>
-In-Reply-To: <20250624-add_myself_to_lockdown_maintainers-v1-1-bed2bc934666@ssi.gouv.fr>
+MIME-Version: 1.0
+Message-ID: <175218458197.406.10894224254556298432.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Jun 24, 2025 nicolas.bouchinet@oss.cyber.gouv.fr wrote:
-> 
-> The Lockdown LSM has been unmaintained for some time now. It requires
-> some work to ensure it works as intended.
-> 
-> Xiu Jianfeng and I volunteer to maintain the LSM.
-> 
-> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> Acked-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-> ---
->  MAINTAINERS | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+The following commit has been merged into the irq/urgent branch of tip:
 
-It's been a couple of weeks now without any objections, so I'm merging
-this into lsm/dev and will send this up to Linus during the next merge
-window.  Once again, thank you both for volunteering to maintain
-Lockdown.
+Commit-ID:     a8b289f0f2dcbadd8c207ad8f33cf7ba2b4eb088
+Gitweb:        https://git.kernel.org/tip/a8b289f0f2dcbadd8c207ad8f33cf7ba2b4eb088
+Author:        Arnd Bergmann <arnd@arndb.de>
+AuthorDate:    Thu, 10 Jul 2025 10:00:12 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 10 Jul 2025 23:46:05 +02:00
 
-There are a few more adinistrative things we need to do off-list, but
-those are probably best deferred until this change lands in Linus' tree.
+irqchip/irq-msi-lib: Fix build with PCI disabled
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0c1d245bf7b84f8a78b811e0c9c5a3edc09edc22..776c7fffcaec08f71faf2740599f0b4570179832 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14060,8 +14060,10 @@ F:	Documentation/admin-guide/LSM/LoadPin.rst
->  F:	security/loadpin/
->  
->  LOCKDOWN SECURITY MODULE
-> +M:	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-> +M:	Xiu Jianfeng <xiujianfeng@huawei.com>
->  L:	linux-security-module@vger.kernel.org
-> -S:	Odd Fixes
-> +S:	Maintained
->  T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
->  F:	security/lockdown/
+The armada-370-xp irqchip fails in some randconfig builds because
+of a missing declaration:
 
---
-paul-moore.com
+In file included from drivers/irqchip/irq-armada-370-xp.c:23:
+include/linux/irqchip/irq-msi-lib.h:25:39: error: 'struct msi_domain_info' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+
+Add a forward declaration for the msi_domain_info structure.
+
+[ tglx: Fixed up the subsystem prefix. Is it really that hard to get right? ]
+
+Fixes: e51b27438a10 ("irqchip: Make irq-msi-lib.h globally available")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/all/20250710080021.2303640-1-arnd@kernel.org
+
+---
+ include/linux/irqchip/irq-msi-lib.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/irqchip/irq-msi-lib.h b/include/linux/irqchip/irq-msi-lib.h
+index dd8d1d1..224ac28 100644
+--- a/include/linux/irqchip/irq-msi-lib.h
++++ b/include/linux/irqchip/irq-msi-lib.h
+@@ -17,6 +17,7 @@
+ 
+ #define MATCH_PLATFORM_MSI	BIT(DOMAIN_BUS_PLATFORM_MSI)
+ 
++struct msi_domain_info;
+ int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
+ 			      enum irq_domain_bus_token bus_token);
+ 
 
