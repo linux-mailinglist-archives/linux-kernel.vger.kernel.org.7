@@ -1,117 +1,130 @@
-Return-Path: <linux-kernel+bounces-725579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60599B00100
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:59:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB276B0010C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0D11893A05
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:59:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50ADD7BB12D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B222566F2;
-	Thu, 10 Jul 2025 11:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB26254864;
+	Thu, 10 Jul 2025 11:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="XGm4H9E+"
-Received: from outbound.pv.icloud.com (p-west1-cluster1-host1-snip4-2.eps.apple.com [57.103.64.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fsbjY5kj"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C42295504
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.64.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D1D24DD1B;
+	Thu, 10 Jul 2025 11:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752148667; cv=none; b=gAsNXc1dTedIUd12cqiuAhOdltjOyHikA68mdVitlY3Z78ax6JIgd9q5KCHRu7+c/pd/wb8lZIsc0FkEESK5TaefCLvFAlpez2JgPjMaJR8pNbit/4ZxnX/s83ZEM2/F1zISOGSsF05XERCwQ4ILYyARW51KkEeIucoJPDYVikQ=
+	t=1752148712; cv=none; b=V8Fl7PmNfwGHBVmBaIhjcqXh/J1AYBDDeeJAkUWfmnX8iMy09qC5H9BFbI5HtR7WfKL6dJ9od2rfldaafRMXSkGys4FQ/4wMue8ifHI9bbpmS8weWrp8zarKxvENnAvUcs3lzgf4nIwH84PAml+DWO2C3CVvp8kS3j+2JqT5VJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752148667; c=relaxed/simple;
-	bh=rUPc6HarIFgYCi5PCcb/6kreZya/jVbJye2++gX7mpw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C29c9LCNB2ZzSR5OIoXwEHqNYVpEVZUzjJwRZ0jFgvEj5Gd7uZdF4WRKRhBZONSmqQyLXjB9016/5XTwkA3IGT3dgN6mXvoeHmbJdxd4SInkLogNVzqTzzlECyzB2fDtHWqDJGqBnpXEZEQGvh0vd51Obhx9uwSfDpp9b7jUVPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=XGm4H9E+; arc=none smtp.client-ip=57.103.64.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
-	by outbound.pv.icloud.com (Postfix) with ESMTPS id B912A180019E;
-	Thu, 10 Jul 2025 11:57:40 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=MxR3vmUTXOypUpeb+mW6WO9zX6HevJTvOmfA6oc0iJM=; h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme; b=XGm4H9E+eeuvM1OZhXB05wdbNN+kl9lBzQf3eA7dxlvz4IeFFE16Nbx4AVkACGxTzwAZUtyrhGOm3SucvrmUd7sE8DD4XsGeNfSDVmTdPXyhs9V0EuNl0WWnUO65T86k2n7UghABDaM2LtZp7sJnoya2xkpADBdPMC/MZDS7pxWK91MzB4jff9uzqiigGXLOJTnIftG+mVFwy5jjrbeHnLTYFVyOg9R7ftrwIhuFTGIlKEUztCxJK9dMjEfMkBAJQkM6yE8F4enG39E0NuguHQyi0BZRYsv/2eisp/cIrA453UxYTwXue4ZhD2FiHr+iS8//0BejtkcxsSxsnQnB+w==
-Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 7E06718000AF;
-	Thu, 10 Jul 2025 11:57:36 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Thu, 10 Jul 2025 19:56:51 +0800
-Subject: [PATCH v5 8/8] sparc: kernel: apc: Remove macro APC_MINOR
- definition
+	s=arc-20240116; t=1752148712; c=relaxed/simple;
+	bh=phIl8APHRhPIycM6T9xgoZ0LkCXuLTSGetz9ZKiWESY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HAGNj9QaLiHOx158gx5EElY6O9q/Eusf5trCkOb7gub1VCAOQRQNmU/fmSUSkbolscNbY8Ye7Dnw+h50I3UScSOTnT/YGeThgebD4OPjJvwCxqRnZ2kcLmxmpIlnZMBpOC9rmgAmbmKeCT53G6hnaXy8U3HZB9UeRp9bvBFvzb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fsbjY5kj; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b34a6d0c9a3so992105a12.3;
+        Thu, 10 Jul 2025 04:58:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752148710; x=1752753510; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bYAG94f3cdFe/xFr6SsC7bkBwmMBOuw9aXBootYb5SI=;
+        b=fsbjY5kjDYSUvTB9/gZV0AzmNY/EefVenpyiwicsTn6iDMDswjGummbxVtQjoojGkb
+         0iYTrTwmtQg/mIcdCvvhG9iMz8gzQIcKG2xFVHbpFON6jQB+74ZF1aW7Oz1Ji1PtF2bZ
+         zvZaqHLz5K+QGRxcv9I7OYA9M8vc56vIcpTLQDCKQhSpKK3nCdYKKQd6gupRYcq+Da+h
+         dwUGPvDGvxNcT4FVwpe9C3SguiH/+rM+KgDPKNI1owUyhWD2k0KNH9TIRustNKbzfJm2
+         RE7T94XaOOpmO1SjirAQR5jR2QSUAZpLhEaS7dKhcsozRvOAPA9bY6BJHq0UL4e2sH4/
+         jYKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752148710; x=1752753510;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bYAG94f3cdFe/xFr6SsC7bkBwmMBOuw9aXBootYb5SI=;
+        b=KfF2ouh1WBYqwJXWKrwXFuqBIXnUKXyr8lUCHbRVAAPqE2MhAcduD1ptyuOXg6JpnG
+         DjfPbS5wlIA24zXLFsUeyuzGvL6SrDN2O8mE75byfitSb5hmMmO3jcJf0BMlO6rV4dVt
+         PolkBx9xCevhBK+jnHFr2FUvwy9RQ8MBNsikb82ReWVjZ7cPXsmYtYlBS6swYRRpZ2os
+         73O9idGbJw+9mAoY0Gm+TmwIv+umkCyq+U3v+TshAOv9nWDVB6N5mKtFuhK+NqSUe75m
+         YtPKaUmZgqax71MXCycdEpdjG3uVPztetGAG0Ie8h0x3ED8o44BaFcjdt4qpjTO+FhBr
+         Wo+w==
+X-Forwarded-Encrypted: i=1; AJvYcCU3IzY+qffUzmRxtlasbHDJmbiBm22v+wXClvvL0egD2mmrTrNtyfiG0J6f1TAIpQb2/59pViCuAsIn08We@vger.kernel.org, AJvYcCVB8imflZ2S28LvZwZsEl5pMQh66FfkxGCqapaEDdxFLAkrcHnkcOXJTe5SGRudc1ps4buujOzcRIkLIDA=@vger.kernel.org, AJvYcCWTURUc0FLfN9ZuvJBtBp6xUgLP/tMwoGdsYpf0tcHMemWcXRDtbZ/TiXOiMT9ZhweGrUcvjmm5GiBb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBXzZtpxSnoOTRFIaEhjuHeLtVj1KMspiiJzvtC+MD2/qDKsLl
+	Xct1K3HDq7wiD6mEneBjY2pt1jcg+TCUQr5njteEWtVQF7aiXND0rD5P
+X-Gm-Gg: ASbGncusiJeEtmm5Cb2LDH4/oua+QCMmAZLuh9Elt04WD8fMDI9S/jmht5vGFBewaGA
+	4BYmWgSRxYIO/keH9lgRJN6B4dTt0s7k4cA+JLt6c+YVUv6ak5h1MKkMl9O8QsSCyClKt6bbSwJ
+	eOH14kDgmr9J/bcNXh6U1o/i1xPNG8Ddwk+9GkRUhYAJ3ZV/S6snpKphmT15SR1KuJqeRpfY/Mg
+	NmHWyNq5zCWa45m0YxjjOi1pf6gsJiwZOEGLJKQZeLJ9WNyY7g4es2UB3rZc3aYnjHksKUKs19f
+	//kzp6s5y5/5Q/IlkYdlGE8v716WTdMH3V5Y3Yezmxg82Hgj7xEZU2D77J7r8kE=
+X-Google-Smtp-Source: AGHT+IFdsFuMSTURrwmuDpYpWhonrZgTX3su3tw7c5E/wekRv3ilQ1zodr1Iaoebzy9KO2usRdOYhA==
+X-Received: by 2002:a17:90b:164b:b0:311:ff18:b84b with SMTP id 98e67ed59e1d1-31c3f03860dmr4002613a91.25.1752148709962;
+        Thu, 10 Jul 2025 04:58:29 -0700 (PDT)
+Received: from nuvole.lan ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4284732sm18510685ad.10.2025.07.10.04.58.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 04:58:29 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Len Brown <len.brown@intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Luke Jones <luke@ljones.dev>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Charles Wang <charles.goodix@gmail.com>,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pengyu Luo <mitltlatltl@gmail.com>
+Subject: [PATCH v2 0/2] input: touchscreen: goodix_berlin: Add stylus support
+Date: Thu, 10 Jul 2025 19:57:31 +0800
+Message-ID: <20250710115733.226670-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-rfc_miscdev-v5-8-b3940297db16@oss.qualcomm.com>
-References: <20250710-rfc_miscdev-v5-0-b3940297db16@oss.qualcomm.com>
-In-Reply-To: <20250710-rfc_miscdev-v5-0-b3940297db16@oss.qualcomm.com>
-To: Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- Helge Deller <deller@gmx.de>, "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>
-Cc: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, 
- Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
- Zijun Hu <zijun.hu@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: XzD6-IKcDD6HZSrXuec3CEZvteRfvgZP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDEwMiBTYWx0ZWRfX+FU3dhL/LRLX
- RFEmphM6sMFjUOtFcKdOyZWsmISnAzedq9pAGue1BmSLpGjMXf/gsT/qdBoWRGutRIC2lFbCh1e
- m5WnVuN3ITjDhhKC6XW8IkB0lEHfUnW1M44gUDzm+cQtHPkTJIh6rQRhow/v/5MML6Hrxn9uhyI
- FbD7al7vbEDt1W9JpDFOPiOLEPgm0pLpVTnMp6a/7R5eYVl/Co3EW9gVVQnHDMdbRjvKip7EKQ9
- lLnO05CIs4/qMzP9d5Tj2EIO6MY0GsE/1c76SH4FlSE5aAJKIzYuUAIa3LRlU/fW/ce+FHx5U=
-X-Proofpoint-GUID: XzD6-IKcDD6HZSrXuec3CEZvteRfvgZP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_02,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
- clxscore=1015 mlxlogscore=999 adultscore=0 malwarescore=0 phishscore=0
- suspectscore=0 spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.22.0-2506270000 definitions=main-2507100102
+Content-Transfer-Encoding: 8bit
 
-From: Zijun Hu <zijun.hu@oss.qualcomm.com>
+This series introduces a new input device dedicated to stylus reporting,
+allowing handling of stylus-specific data such as pressure, tilt, and
+side buttons. The implementation distinguishes between touch and stylus
+events and ensures that the appropriate input device reports each event.
 
-Macro APC_MINOR is defined as MISC_DYNAMIC_MINOR to request dynamic
-minor, but its name 'APC_MINOR' looks like fixed minor.
+base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
 
-Remove the macro definition and directly use MISC_DYNAMIC_MINOR instead.
-
-Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
+Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
 ---
- arch/sparc/kernel/apc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Changes in v2:
+- use existing input properties (Krzysztof)
+- add handling for touch up event
+- Link to v1: https://lore.kernel.org/linux-input/20250605054855.403487-1-mitltlatltl@gmail.com
 
-diff --git a/arch/sparc/kernel/apc.c b/arch/sparc/kernel/apc.c
-index d44725d37e30f388bf8cf19d72baf720f94da084..849db20e7165cdf48d4d36cf770dd6aaaa191b41 100644
---- a/arch/sparc/kernel/apc.c
-+++ b/arch/sparc/kernel/apc.c
-@@ -28,7 +28,6 @@
-  * #define APC_DEBUG_LED
-  */
- 
--#define APC_MINOR	MISC_DYNAMIC_MINOR
- #define APC_OBPNAME	"power-management"
- #define APC_DEVNAME "apc"
- 
-@@ -138,7 +137,7 @@ static const struct file_operations apc_fops = {
- 	.llseek =		noop_llseek,
- };
- 
--static struct miscdevice apc_miscdev = { APC_MINOR, APC_DEVNAME, &apc_fops };
-+static struct miscdevice apc_miscdev = { MISC_DYNAMIC_MINOR, APC_DEVNAME, &apc_fops };
- 
- static int apc_probe(struct platform_device *op)
- {
+Pengyu Luo (2):
+  dt-bindings: input: goodix,gt9916: Document stylus support
+  input: touchscreen: goodix_berlin: Add stylus support
+
+ .../input/touchscreen/goodix,gt9916.yaml      |  12 +
+ .../input/touchscreen/goodix_berlin_core.c    | 240 ++++++++++++++++--
+ 2 files changed, 234 insertions(+), 18 deletions(-)
 
 -- 
-2.34.1
+2.50.0
 
 
