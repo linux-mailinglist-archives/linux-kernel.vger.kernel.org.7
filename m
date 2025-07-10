@@ -1,208 +1,121 @@
-Return-Path: <linux-kernel+bounces-725612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1F3B00176
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:17:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C780B0017E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DBAF1C882FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:17:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5143F7AE5F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB7B24DD0E;
-	Thu, 10 Jul 2025 12:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D79C24DD12;
+	Thu, 10 Jul 2025 12:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FosT1/DU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="odkzCOiD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4F41EA73
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 12:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F021EA73;
+	Thu, 10 Jul 2025 12:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752149832; cv=none; b=GUg+0hy7vyoq4MRMAFT2JDISUCyhdWSPvnkbRVEK2FWp9PAhTGWm79Xl+Ihnqra6LEHbSRGRI8BGGBVl7c9UISSG6o0t3i2Qd3boiTX5ua9di3e16iRmk8bQTy/5EQtv3/AaVDSt8inxmH3YAsX45QFnH8xZ1tSgdBeu+VTKyTM=
+	t=1752149990; cv=none; b=Nr1EP++SVOaD3bj2+fvVMFqMXeXAjtdIxMqFSCyGLEYHxxaPPEGQWovSqujphfkiGNEZ/8LnRHQ4QqeRNPo9E9Qos6k56f4lqzG9n/BH6MG5Fz2cddHIItkGi+SijwdgI70+yUXOw+ddxQyFviZHa7zS7hee/pV60Xyug0KbsmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752149832; c=relaxed/simple;
-	bh=VjfCuE+U8/TRP5Ba0o0oxRmFLOu1p/4UQMt2xvHr20w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vaqrq6A1mbaJz5ygPYFjJadZQErN8LfbXsiAs/DBgjJdjjFhJRGY0EKDCmzm5if2SljbK0WB5+rZ3Y50H1znxfL9MjgmphiI568oZEWnUAEXG0oVsIilXjW+0JIojPcy6f7wtK5TOJd2/IhyxtsPoj0CPxI6LO1u3Gs0oVf6h+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FosT1/DU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752149828;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=p3er1+S1ghqVmC558ORCh1Xcymb4Uf9m+2L2EUwIcoU=;
-	b=FosT1/DUgOzX/X3rP27Eu9qvwKqwavW6SF0muZgr7fzSuD8NEXRv5jjU/6jvCt9e1Vssml
-	Nnzygh4LePadc2wNPdp4GTaryxiQLoQ+PzpHMNRr3BhoOQhjcDEa6Yj4KBSB/4uBZTEBtD
-	fPZi92AaN8sI+D6CbWtxDLtO21aMTDw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-103-nkj96xV3NyKnbAJI-mOrKw-1; Thu,
- 10 Jul 2025 08:17:05 -0400
-X-MC-Unique: nkj96xV3NyKnbAJI-mOrKw-1
-X-Mimecast-MFC-AGG-ID: nkj96xV3NyKnbAJI-mOrKw_1752149824
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A8AD419560B0;
-	Thu, 10 Jul 2025 12:17:03 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.45.224.72])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 551A5195607A;
-	Thu, 10 Jul 2025 12:16:59 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [PATCH] powerpc: Replace the obsolete address of the FSF
-Date: Thu, 10 Jul 2025 14:16:57 +0200
-Message-ID: <20250710121657.169969-1-thuth@redhat.com>
+	s=arc-20240116; t=1752149990; c=relaxed/simple;
+	bh=FiDXHZ22T/moaPefHhmdxPOIho6bxu8f1vznhOn80m4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+iAGLYwmsMpWrsyk550GhdGqXVBzV9AuNQTK6ZvQRSREL4nFHPym90G5RJgBjozYE3Xo6c8sCxbZQNwJCwmIiMejN14E1Hmju7+yM5HgWlV7G0l9pjfY51QGcxW0IKrsyOms6zB6KNlZ+6+zVhydZjwGNIWXOfNFlLwVLz3JfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=odkzCOiD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A201AC4CEE3;
+	Thu, 10 Jul 2025 12:19:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752149990;
+	bh=FiDXHZ22T/moaPefHhmdxPOIho6bxu8f1vznhOn80m4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=odkzCOiDlTA0uB41s741UGQ3GUDbKa+l85uq/+HsS6R46M9+hdScN7U5jicwTQUfN
+	 0Dt+gJlXBKL5gjFQ43LM/ToyrPX0MKDC6a9Zls9KLxggdP8ErmN6Ze5YmG9My8yQkI
+	 a8GCvzEW+wJodFMQRHszsEphHyDF7s/VLuj5NnjA=
+Date: Thu, 10 Jul 2025 14:19:47 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: jackysliu <1972843537@qq.com>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v2] usb: gadget: functioni: Fix a oob problem in rndis
+Message-ID: <2025071010-outlet-stencil-663d@gregkh>
+References: <2025071026-fanciness-size-1d5d@gregkh>
+ <tencent_21B82DB792FE0049B6EF5ECD81285669C908@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+In-Reply-To: <tencent_21B82DB792FE0049B6EF5ECD81285669C908@qq.com>
 
-From: Thomas Huth <thuth@redhat.com>
+On Thu, Jul 10, 2025 at 04:49:22PM +0800, jackysliu wrote:
+> From: Siyang Liu <1972843537@qq.com>
+> 
+> An out-of-bounds memory access vulnerability exists in the RNDIS
+> (Remote Network Driver Interface Specification) implementation.
+> The vulnerability stems from insufficient boundary validation when
+> processing SET requests with user-controlled InformationBufferOffset
+> and InformationBufferLength parameters.
+> 
+> Fix on commit id:
+> commit 5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
+> 
+> The vulnerability can be fixed by adding addtional boundary checks
+> 
+> Signed-off-by: Siyang Liu <1972843537@qq.com>
+> ---
+>  drivers/usb/gadget/function/rndis.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/gadget/function/rndis.c b/drivers/usb/gadget/function/rndis.c
+> index afd75d72412c..cc522fb4c06c 100644
+> --- a/drivers/usb/gadget/function/rndis.c
+> +++ b/drivers/usb/gadget/function/rndis.c
+> @@ -641,7 +641,8 @@ static int rndis_set_response(struct rndis_params *params,
+>  	BufOffset = le32_to_cpu(buf->InformationBufferOffset);
+>  	if ((BufLength > RNDIS_MAX_TOTAL_SIZE) ||
+>  	    (BufOffset > RNDIS_MAX_TOTAL_SIZE) ||
+> -	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE))
+> +	    (BufOffset + 8 >= RNDIS_MAX_TOTAL_SIZE) ||
+> +		(BufOffset + BufLength+8 > RNDIS_MAX_TOTAL_SIZE))
 
-The FSF does not reside in the Franklin street anymore. Let's update
-the address with the link to their website, as suggested in the latest
-revision of the GPL-2.0 license.
-(See https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt for example)
+In digging in this further, I don't see how this actually changes
+anything.  BufLength is used for nothing that I can determine, except in
+some debugging code that is always compiled out (i.e. you can NOT enable
+it unless you modify the kernel source.)
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- arch/powerpc/boot/crtsavres.S            | 5 ++---
- arch/powerpc/include/uapi/asm/eeh.h      | 5 ++---
- arch/powerpc/include/uapi/asm/kvm.h      | 5 ++---
- arch/powerpc/include/uapi/asm/kvm_para.h | 5 ++---
- arch/powerpc/include/uapi/asm/ps3fb.h    | 3 +--
- arch/powerpc/lib/crtsavres.S             | 5 ++---
- arch/powerpc/xmon/ppc.h                  | 5 +++--
- 7 files changed, 14 insertions(+), 19 deletions(-)
+So what exactly is this check checking?
 
-diff --git a/arch/powerpc/boot/crtsavres.S b/arch/powerpc/boot/crtsavres.S
-index 085fb2b9a8b89..a710a49a5dbca 100644
---- a/arch/powerpc/boot/crtsavres.S
-+++ b/arch/powerpc/boot/crtsavres.S
-@@ -26,9 +26,8 @@
-  * General Public License for more details.
-  *
-  * You should have received a copy of the GNU General Public License
-- * along with this program; see the file COPYING.  If not, write to
-- * the Free Software Foundation, 51 Franklin Street, Fifth Floor,
-- * Boston, MA 02110-1301, USA.
-+ * along with this program; see the file COPYING.  If not, see
-+ * <https://www.gnu.org/licenses/>.
-  *
-  *    As a special exception, if you link this library with files
-  *    compiled with GCC to produce an executable, this does not cause
-diff --git a/arch/powerpc/include/uapi/asm/eeh.h b/arch/powerpc/include/uapi/asm/eeh.h
-index 28186071fafc4..4a117cc475299 100644
---- a/arch/powerpc/include/uapi/asm/eeh.h
-+++ b/arch/powerpc/include/uapi/asm/eeh.h
-@@ -9,9 +9,8 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-+ * You should have received a copy of the GNU General Public License along
-+ * with this program; if not, see <https://www.gnu.org/licenses/>.
-  *
-  * Copyright IBM Corp. 2015
-  *
-diff --git a/arch/powerpc/include/uapi/asm/kvm.h b/arch/powerpc/include/uapi/asm/kvm.h
-index eaeda001784eb..75c1d7a48ad52 100644
---- a/arch/powerpc/include/uapi/asm/kvm.h
-+++ b/arch/powerpc/include/uapi/asm/kvm.h
-@@ -9,9 +9,8 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-+ * You should have received a copy of the GNU General Public License along
-+ * with this program; if not, see <https://www.gnu.org/licenses/>.
-  *
-  * Copyright IBM Corp. 2007
-  *
-diff --git a/arch/powerpc/include/uapi/asm/kvm_para.h b/arch/powerpc/include/uapi/asm/kvm_para.h
-index a809b1b44ddfe..66d1e17e427a6 100644
---- a/arch/powerpc/include/uapi/asm/kvm_para.h
-+++ b/arch/powerpc/include/uapi/asm/kvm_para.h
-@@ -9,9 +9,8 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-+ * You should have received a copy of the GNU General Public License along
-+ * with this program; if not, see <https://www.gnu.org/licenses/>.
-  *
-  * Copyright IBM Corp. 2008
-  *
-diff --git a/arch/powerpc/include/uapi/asm/ps3fb.h b/arch/powerpc/include/uapi/asm/ps3fb.h
-index fd7e3a0d35d57..af6322042b3b0 100644
---- a/arch/powerpc/include/uapi/asm/ps3fb.h
-+++ b/arch/powerpc/include/uapi/asm/ps3fb.h
-@@ -13,8 +13,7 @@
-  * General Public License for more details.
-  *
-  * You should have received a copy of the GNU General Public License along
-- * with this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-+ * with this program; if not, see <https://www.gnu.org/licenses/>.
-  */
- 
- #ifndef _ASM_POWERPC_PS3FB_H_
-diff --git a/arch/powerpc/lib/crtsavres.S b/arch/powerpc/lib/crtsavres.S
-index 8967903c15e99..c7e58b6614169 100644
---- a/arch/powerpc/lib/crtsavres.S
-+++ b/arch/powerpc/lib/crtsavres.S
-@@ -27,9 +27,8 @@
-  * General Public License for more details.
-  *
-  * You should have received a copy of the GNU General Public License
-- * along with this program; see the file COPYING.  If not, write to
-- * the Free Software Foundation, 51 Franklin Street, Fifth Floor,
-- * Boston, MA 02110-1301, USA.
-+ * along with this program; see the file COPYING.  If not, see
-+ * <https://www.gnu.org/licenses/>.
-  *
-  *    As a special exception, if you link this library with files
-  *    compiled with GCC to produce an executable, this does not cause
-diff --git a/arch/powerpc/xmon/ppc.h b/arch/powerpc/xmon/ppc.h
-index 1d98b8dd134ef..270097f6e905b 100644
---- a/arch/powerpc/xmon/ppc.h
-+++ b/arch/powerpc/xmon/ppc.h
-@@ -15,8 +15,9 @@ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
- the GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
--along with this file; see the file COPYING.  If not, write to the Free
--Software Foundation, 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.  */
-+along with this file; see the file COPYING.  If not, see
-+<https://www.gnu.org/licenses/>.
-+*/
- 
- #ifndef PPC_H
- #define PPC_H
--- 
-2.50.0
+I can see that we really should be checking if the buffer is too small,
+but that's not what you are doing here at all.
 
+And all this buffer is used for is to read a 32bit value out of, so
+verifying that the buffer really is big enough to hold that value SHOULD
+be what we do here, not check to see if the buffer is too big.
+
+Also, you can't trust that BufLength is even correct as it comes from
+the other side, right?  Because of that, we should just be ignoring it
+entirely and verifying that the message size really is as big as the
+structure is supposed to be.  But that means passing down the message
+size to the lower layers here, which gets into the issues that I have
+raised before many years ago about this protocol, and this
+implementation of this protocol.  I.e, it is COMPLETELY INSECURE and
+should ONLY be used on systems where you trust both sides of the wire.
+
+Again, how was this change tested?  And what exactly does it fix?  I'm
+missing how this change is going to actually catch anything, can you
+spell it out in detail for me?
+
+thanks,
+
+greg k-h
 
