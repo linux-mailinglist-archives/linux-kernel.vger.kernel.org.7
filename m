@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-725306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E61BAFFD5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:01:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17DCAFFD64
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61A465A597F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:01:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23B7C7B0C54
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D20B28DB7E;
-	Thu, 10 Jul 2025 08:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71E62C325D;
+	Thu, 10 Jul 2025 08:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ab6/0p0c"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F8udDjTn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF3828EA4B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1C928F947
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752137908; cv=none; b=fqVMJ5JxEvAc4WnbIFyD/HFXRFjKCk5WXcoGsdDxhrcfRt9hFTz9K7e3IipNzcj9TlfakOS+S8A/7Fbx+CsId8RmyIgcLV1+12WC914a8Xu6sgG+jABMBv+fAp+kVkSWEABn6OO2cyRi1+W3fh2lh/9W2ZX/4DxyYgNkJF1HJr0=
+	t=1752137915; cv=none; b=BYZDqPdgPF5drsFmHoE4Px+oh0Of1TvPfIOg5nmnUNJmfRF+Tq5+++YOTF67Kag7Oq7IqAGBnzV7TQSQdm9CVKARbAXrle+t6ieiY2SyxU+aYB19tC8o2ovOEJcO8gj7CcRHgZjIxTQRKn6/U/JVcSHdP2IDxiJxovleZaAijIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752137908; c=relaxed/simple;
-	bh=rbhhgm0mzzYRhk7iKypZV4vkGP7IKSBeOXegRqSG3Nc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cgvPyQrN1itGIc9PqvSufs5nZ819PunUsISw0RWbQ9cEAAxBLDmv8pWg2luujSbHByBqLQwRWFZlHACLDEiECTxjUXpB/FLVaQZKJ/FMDNO97F910GpQfgMKA0FPxcq8sWr9ObvpAxjcbDbdSGDl5w76cjrUp5B1mv3sjuqMfN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ab6/0p0c; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4eed70f24so113075f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752137905; x=1752742705; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AFGcDq9X9d1S3/rYRs3p2USqJvjKS3vZk8Rfjbj4Ks4=;
-        b=Ab6/0p0cZ/ZYcvJIDWUkBAuEYvZFaatoCsQhfjpkjHeXlrDRSM7Xjski19w/Oj+BqT
-         dmhlM8APqugw+XH5ziY2QjNsND9l4JjZACzik8yzsquW2PSn9I9rbPpEcjk1E9FtZWIA
-         SlVIpvaqPtxrSksPdj0kFE+17R72SC7rMVL02SuFZUaBa5/RyUgWFKeNS8PAE4IozCqV
-         vUbbqTs1g4ULWXAG0Qdcpv9OfdTugjQRvrq8DKcmP7ULJbR+5P3+fW2eRoQ4PEgWMuyY
-         ZkOo7bGYDSqqqJ389UQUPqxXWK/fybyKwfddsJ68ihBO3fBLi3n4d2A6Feon8QFuoXQf
-         24HA==
+	s=arc-20240116; t=1752137915; c=relaxed/simple;
+	bh=2IT9MY1RATVHLm7ZV+H0oG+4vlbv4+B1KFHHRv+w5+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S8z6kScVPRTjMP1mbkWw1tNbLeg9zrwr76slcXBRPecxsHnx2ZKtuJN4HQw5EkTZ2Vaansz8OgaQhF+r/Uz0J4lCWDS79FmszKOxQ16M14cA+Rzq0RDmUXiDqH41zhlQbIHk1ajk9692SjnMumgO8hsY5GHMB/HWxZ9y6mYUMvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F8udDjTn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752137912;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A2jflg3WATaKBBDi6HmSHGxR6uEGPyyU47GcZAKSr9w=;
+	b=F8udDjTnsFeofwruYD7QoeRwHHWCtMETp8RssXOo4dXpFK36j/uIdOa+S7yxG2EzQI1PhV
+	l/gvHVe91A+KkenuXtV/AO92Pd+UG7eE+5zeqkgKr1P1gMHhQLsW1ZBh7gCJ9rQutdnzMQ
+	H+GIRKGv1nPYlgvTBK2e6kH2ejJed/M=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-9-wLqliaQmNNGqT9GMZAXJQA-1; Thu, 10 Jul 2025 04:58:31 -0400
+X-MC-Unique: wLqliaQmNNGqT9GMZAXJQA-1
+X-Mimecast-MFC-AGG-ID: wLqliaQmNNGqT9GMZAXJQA_1752137910
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f7f1b932so511793f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:58:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752137905; x=1752742705;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AFGcDq9X9d1S3/rYRs3p2USqJvjKS3vZk8Rfjbj4Ks4=;
-        b=i/UvPnnG3vc/5B/AGvh/hVjoR4WmytG1Htq29zAO7Z+XTHupuWfvFRm7eLFbt6Uo2O
-         pCKfFrb1rb49uYIAcHoEygbFwmwBRzro/ne3pBN/qf0Sv+hQJZVGMdxNr1yB5Vq98qtb
-         HILeoEHQJCiUOQ58JQaV7TneCNYsB4s9SyAmxAxSYNQ3+Wy3/A6XUjv0qC5nJ5uPpZuf
-         mCUKOYMDwpxZjTQ5refmehT0ifjM9I9KIP4pl+dc5hMMl0xGCkv1HGrFJto6lJWsBjZL
-         RcZ37/b1pOYmxKDW0DD/vRZ/aQVlQhF9kSqC/DfMJjblCO5tpSF/P+h+XABvDGZpIyl/
-         M7zg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDF1YgLEM/XFWTm36FtEn666ulZcWSXuzrmBFOLNWYklsqkMXvptr4lJvHbPt1/yqMW3Fee4kqqeTlsbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu/kkFvz7AGpR/2d0galJfmJOgsCbw25Vze4j7AK7mHVgamyPK
-	+yokwZFySOQE7Re5SKJjkd/KhUfG1pnKwgCko/4q6D5v3cjOsFKBcOuQWm38hg/WHEg=
-X-Gm-Gg: ASbGncvBmGpp1QtlAppur+zCT7lU0zAQ6MmWoXy9KYZnxO5WCT6T5xiXqPwNHEGVe8c
-	Mr0Q92a+5kQ8XXd0SlZByT6Qj+35H1SqS2z9Wdbq9w57KmbR8ImDt8lSWpMO9Pjt78GUafwNqhL
-	hvymRMQEUTvuH8vmX+OXMkHkbpmlvWVylXO92yxRKxAcBk0/JRqCBx5s0m5bZv7qQVlvh9LY75u
-	zP+EC200fyCQhzwbvua3zASazbJl0xotCnV/tm+uKtuUuKE+OB/kZayIfJW3YqZgR1zyfAWmxKD
-	K1IwEXdhW+QR34iEbMtBww2RXHqRrydWbmgB78anRVOYeTM2hE1HxDhjjmp89CAwXL0SkhXOz7U
-	=
-X-Google-Smtp-Source: AGHT+IGcF8p+1kAeeqUtTkgwKXgn6mbF97E2/bYy8J5UhMbcz5BE39eu+vDCag+9znaVA+I+mpt5CA==
-X-Received: by 2002:a05:600c:3e0f:b0:43e:94fa:4aef with SMTP id 5b1f17b1804b1-454d541463bmr21300385e9.8.1752137904953;
-        Thu, 10 Jul 2025 01:58:24 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd47543asm13248225e9.15.2025.07.10.01.58.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 01:58:24 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] docs: dt: submitting-patches: Avoid 'schema' in subject and add an example
-Date: Thu, 10 Jul 2025 10:58:15 +0200
-Message-ID: <20250710085814.21810-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1752137910; x=1752742710;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A2jflg3WATaKBBDi6HmSHGxR6uEGPyyU47GcZAKSr9w=;
+        b=Dr7VgzeWN3aMQSVFgvsf8Cj+ykJKwKgk3rtvybZ+70Pyhwh1DFMJX9vo6XNrrf+TjV
+         f9VIgMg/d/NWUlclcwMaovRjSNu2JHznTOY0WoY+tzz1zKF1+aMjYRg9i+94EBMyG0Ja
+         goym45fyTQZn+ZDs5sNd3iZu2OiK5F5ia0UPsA7OCWGh8h8dzGNxU1plCgwzujL3l653
+         On+34WP9vcIgsnVg63RZTN5BJ03MqxaEgHWrHsBXfCVVTvfRCWzyQXM3gx7s41gmw38C
+         bH+5fDc/k3nSPNBAF7Ou4xA7JPhtcqr59GFa6PsLjYaoJruEkqOYfMs/IJ03HvNWISqV
+         fFiw==
+X-Gm-Message-State: AOJu0YyOE/DBtkvJHbfPzxboiLpk48L4io4x50cMrNET0673B7I69PWJ
+	iCwwLxRq8Kpf16+oADq4PcAzbonF8kDhDpA4wIGufOWgN8pvQ9vQ/yghY8iXdowoJNmRo+chql0
+	5C5u9EhwgGjc0g1hK1BqsBF2PaQ8ZjiVDqL/cZr5SZk+0Qc9e39g4odakl0yLptMIZA==
+X-Gm-Gg: ASbGnctAP3bb75D/xhr1iOTyCmi8S+8kHHHlTGVKH88f6Iz0NHRYrl8Uwou+jrph/wK
+	pN1NMe+GgEJ6hz47dnVfncIOpCdUIyiC5bOXOiblawu0PnnVfov5cPu920NKFjQDZU6OwpXWCO4
+	uE6PaitlZxxi7PlfGISJlyFJDEQ51RhDFU1pMDtixup0jKyQty0NVtjefciIxSXMCnKJr6uFp8E
+	3GvSLuuNPU5Qv9yt4YTbffP/iySK//M6cllPv0fYovkhqvxuBhj4KHBm+WM6OdB37VGq0PEzmLU
+	0OjUdmxHYxiD6RzGO4huUtofqGfwS+4fFA7QjF8T74WrN2E3YtZIayFUS0EVB2jM+GqVtg==
+X-Received: by 2002:a05:6000:4703:b0:3a5:783f:528a with SMTP id ffacd0b85a97d-3b5e86fd876mr1548691f8f.59.1752137910137;
+        Thu, 10 Jul 2025 01:58:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSnNdMaTPqEf+Unk95Crd5eDsF8pipQDUbGam/OEzbuYLLgpwArK1puRfQ0V2wgOSSfOwGDw==
+X-Received: by 2002:a05:6000:4703:b0:3a5:783f:528a with SMTP id ffacd0b85a97d-3b5e86fd876mr1548662f8f.59.1752137909676;
+        Thu, 10 Jul 2025 01:58:29 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:271f:bc10:144e:d87a:be22:d005? ([2a0d:3344:271f:bc10:144e:d87a:be22:d005])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1e135sm1294564f8f.72.2025.07.10.01.58.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 01:58:29 -0700 (PDT)
+Message-ID: <47e7fb60-9e61-419f-ba22-8f3c5337627b@redhat.com>
+Date: Thu, 10 Jul 2025 10:58:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1577; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=rbhhgm0mzzYRhk7iKypZV4vkGP7IKSBeOXegRqSG3Nc=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBob4CmxqyCTItfrNqR2TfTiSqCnuLODTEiTFqQZ
- DOp8B7dPguJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaG+ApgAKCRDBN2bmhouD
- 1wXUD/9jbnLNFo5DR1vaPBVCZC2y3AN0nwILD45Z8ErPWmxWkPAthGPxqOLIrR2VgtFP3LhcFc4
- z2U2MScFup9bE+4AU6o1Nx99sLvegsB+B8zu8K4k+rGC4GoXDLIYChG4BbpM7jjXb9FAdFVSIFV
- CqmnRG+60jeJwSjSR5BJlBksxU3cSpzag1pW4Y2U+hpcnzgh1k00ThMCamQ6CuUK9PHS4S+3mZ0
- 1YaguuLvsETiVvxmtLlrewJ/WbGXJBwoNnN94n3uQW3E/9HYYQldXTyGHT4gcxPokFRHq+mEBtU
- 4dUFvgiSGpJWebQDh01/ULAqmlluevyG1h5NoXPdzMG+Irouc04FxZ+HwgMh0hTsqM0WpEMbxrB
- eLprM4Dsn5mAMurO7dQlnUjIZkbKZpvenwLEGwHfV7J/B5AQoIyfdHu/gbOBl9cyu4ZU0NUQ7Ua
- KPt4PQvMAui93csoYWIoV28giEA7HanPChNQvol7PE+jN+l+ZbC9bWJNc8etfqajMfY8+d39IRn
- zbT2fueaFdB88tZu91CWhplqmaaOiRC9NhKFXfUr8/FOadwjIPWEPwbuEawADbFJXNBIzCpkTyX
- jq0WvKPJLZlKRL65MGP44zJz8pbq9mrDYD7/hs62sbxHNP0JVKzv9W9Te2wMxeYIfinYXS+yys6 XWfv3OsQaGf4lug==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: fix segmentation after TCP/UDP fraglist GRO
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
+ Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>,
+ Kuniyuki Iwashima <kuniyu@google.com>, "David S. Miller"
+ <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+ Willem de Bruijn <willemb@google.com>,
+ Richard Gobert <richardbgobert@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20250705150622.10699-1-nbd@nbd.name>
+ <686a7e07728fc_3aa654294f9@willemb.c.googlers.com.notmuch>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <686a7e07728fc_3aa654294f9@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Subjects should avoid also 'schema' keyword, because all bindings are
-supposed to be in DT schema format.  Effectively people get confused
-that subject should not contain anything else than device name after the
-prefix, so add a recommended example.
+On 7/6/25 3:45 PM, Willem de Bruijn wrote:
+> Felix Fietkau wrote:
+>> Since "net: gro: use cb instead of skb->network_header", the skb network
+>> header is no longer set in the GRO path.
+>> This breaks fraglist segmentation, which relies on ip_hdr()/tcp_hdr()
+> 
+> Only ip_hdr is in scope.
+> 
+> Reviewing TCP and UDP GSO, tcp_hdr/transport header is used also
+> outside segment list. Non segment list GSO also uses ip_hdr in case
+> pseudo checksum needs to be set.
+> 
+> The GSO code is called with skb->data at the relevant header, so L4
+> helpers are not strictly needed. The main issue is that data will be
+> at the L4 header, and some GSO code also needs to see the IP header
+> (e.g., for aforementioned pseudo checksum calculation).
+> 
+>> to check for address/port changes.
+> 
+> If in GSO, then the headers are probably more correctly set at the end
+> of GRO, in gro_complete.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/submitting-patches.rst | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
++1 on setting the headers at GSO time.
 
-diff --git a/Documentation/devicetree/bindings/submitting-patches.rst b/Documentation/devicetree/bindings/submitting-patches.rst
-index f3e23e69a638..bf32b784cb82 100644
---- a/Documentation/devicetree/bindings/submitting-patches.rst
-+++ b/Documentation/devicetree/bindings/submitting-patches.rst
-@@ -21,8 +21,12 @@ I. For patch submitters
-        "<binding dir>: dt-bindings: ..."
- 
-      The 80 characters of the subject are precious. It is recommended to not
--     use "Documentation" or "doc" because that is implied. All bindings are
--     docs. Repeating "binding" again should also be avoided.
-+     use "Documentation", "doc" or "schema" because that is implied. All
-+     bindings are docs and all new bindings are supposed to be in Devicetree
-+     schema format.  Repeating "binding" again should also be avoided, so for
-+     a new device it is often enough for example::
-+
-+       "dt-bindings: iio: adc: Add ROHM BD79100G"
- 
-   2) DT binding files are written in DT schema format using json-schema
-      vocabulary and YAML file format. The DT binding files must pass validation
--- 
-2.43.0
+> The blamed commit was added to support tunneling. It's not obvious
+> that unconditionally setting network header again, instead of inner
+> network header, will break that.
+
+I think this actually breaks tunneled use-case, when the aggregated
+packet is forwarded to an output device before traversing the relevant
+tunnel.
+
+/P
 
 
