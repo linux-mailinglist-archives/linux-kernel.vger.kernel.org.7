@@ -1,136 +1,148 @@
-Return-Path: <linux-kernel+bounces-726182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A95AB0091C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:44:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2F7B00923
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0FF71886BEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:44:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AE827B1672
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703892F002D;
-	Thu, 10 Jul 2025 16:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7CE275853;
+	Thu, 10 Jul 2025 16:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mDO8tI3t"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqZk4nLG"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C902EFDA3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07142AE6D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752165807; cv=none; b=fxNjv9Whv7tDEcnIe5XJJxUiIaIR8LceK4vnG/yDcewDCCnUTPaKFrPBxbeWCYnc898KQiXijXUAbL/fTORwDhNorj/qtRFyot+1eG6LUciA3gxQPkF8bVXmJ4lrPR9Mi9TG7O1FHgT3iZvDioc8Tm6GdAqsrVTqnmqZMVorD7M=
+	t=1752166014; cv=none; b=jHIZfu/BwNdIQS9ISiQhu2+74TzwuiGKfbVFNU7pDfNxwvYA0L7llStDmotiW0UbFFRVv3hUqdudA5ysnB1FXw5gMUJ6znEaA08SZHITzccMTOWMVd60VTm2KGqJSdtogFmoaX9ToB1IElxUMxltb5YGl6BMNTHC1gFiQXwuIkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752165807; c=relaxed/simple;
-	bh=FL1g7AAqZse2G2GgfyKga3py6hCil3qJCjBWU6lZuGA=;
+	s=arc-20240116; t=1752166014; c=relaxed/simple;
+	bh=2SXQEo1fZlKHVUZqF1a+XIQ8cCnhhvkbKDNxVjYPVbg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BScnswGOqCVvFW7+UVK2i4KqjGfrJ10FOSEzHjb7UhzNrAp8MFdoQjUU++1dBxYYgGrWfQZADiWJFKveVZMTBhkJbF+jjn/fUVL3Gd45YEDUz0ulTYs9mQGNyQnbHAMj3IesexNIPR/YbdCggGAbq4iwJ9yA5BdemFFO76+3kK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mDO8tI3t; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-237f18108d2so3875ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:43:25 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=V+BuwWT5/2nvsynB3MeSVOqe1D0a4FPwtW7vxZIcnFIp/GT3nW+j1UVWapPp8fD0uIl0PIYVMvq50lOpY4l4bcvF+8ghzchx/DQMDWTyVvmnJ+rDPmoGi0UeL5xbg7naVGfbbzqvKFcydcwGmaFBMOKetWZeUjW4LlWbPtcu0BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqZk4nLG; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae223591067so196682266b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:46:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752165804; x=1752770604; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752166011; x=1752770811; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C2eyvzlKuLCQH5Cuh9KFE8Y+QAaptwkDzMvAXLYmk8E=;
-        b=mDO8tI3trph7Q7JCSujSBTzLMo0Dca9w+tnxTk1Z9AxTmypcTu9xM3d5v6X4Y9aDPR
-         qvT7kLoghGCVduxDadhOfisxcw5UghPWM9/4GmXMhy5GZhgA3e6/Ysuldp4RiY3UqRdW
-         WrsHi5qi7zczH1pSQJCRKMEOnmFrJvc8xoOUV2LSbRtWVuRKYPknQs5B00kZit3XMbaG
-         u2aWPRu1E8Pe2myaDn0QwYrXROD+EIbA69jI/yFXi+y6y40mO/a6ws4u8h7xJDHtkWB9
-         ZoViebSMvBSqM2X03ZCmCWZQWYyrcVnT1TYGv90j4J50wLt6GGwbi1zz7iKhyYKauS9e
-         XWaQ==
+        bh=j4+b4mC3HT2l2CGi9AAd2/CUQyS9zx3Y/fMcj/u4cU8=;
+        b=AqZk4nLGxOFwi0jPsd7jcs04WvvVnUgn6aFHZtORa8INOs3vs9Bulja2G3Riaiq+T6
+         nnB1hnzUnEKG053173HSxexBWgSBXoMM/YpoCgcWDwYJ/Jmp0ubLakukORKqvRC6v7lo
+         0Dx/h/UN10A4MnN25/PJxya0QPC+rne1OZjkDfD7xuofe3U1cRDLN8x2KOy7sJEe4pp3
+         L55oRgXySlocqh1RyYzGH8/9KDqovCHM+sqgNIfeblOpcrn+iB6AEUYwDzlNsU7zngRm
+         gpPG0Q8BuJ4m1g5m+CwUETHnlZoPfiouUeF/ac8hfh/F2fqpO4jMe+Z/Wuc304e3ZJbO
+         8JYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752165804; x=1752770604;
+        d=1e100.net; s=20230601; t=1752166011; x=1752770811;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C2eyvzlKuLCQH5Cuh9KFE8Y+QAaptwkDzMvAXLYmk8E=;
-        b=BK9hVz+NBhsFHGajnpoerPz90fYXxyuXt/Gy1CKAVrjFnKY+gdegqva2708mRFZ2U9
-         DyDWN9O4EXSVaAv8zRJLl26uxWg24BNBKYWruHFHkUoWnvHbdO/azeGG/iWbscQCz3eC
-         syICc4Zj2y2ADzXxeH4dl0OL7XzpROJYTukwNp59FvY6jwPLdZF7sPQvpz+IALkmn98g
-         63yrihRzHW3BHxakLkjeIhLxjbseKsY4Q7BoqnC2Mq2rSu8d1+Jrg5dvitIzDjvQf9IM
-         KE834ETCfO6McYy6UO1aqlphe6UdoU7xVplpplg4IfHRWCLgvpkPh9wDrB6BmeUu82TA
-         mkBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbtXb5OSaPQahggiHHoksRC8p7U6m6SxUfY8TNk22C/JSZZDMB2mEvVUHlpKtID40rJfdIA9hLsC0eq3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpIzU33Bzbw4lF4ZJ8edrSARoSaMn7gD0cWf5wL/tmwEvzLph4
-	KjmSCHGwp0mBF1/w/NeJrLDZZ+azFOGxjFyaQ8Gq3uwyXB3LRiNCgQEf212svsctOw==
-X-Gm-Gg: ASbGncvuHNDIlclyQq4xENXeDdNgZaefMGNrD9+sCpZ+nJNji0FPHya0SlwDi7nuQfz
-	0bF2IIwdpjIv5CGdiENxl0GEkTs1XSzjfcWFBdA162ifY/YixWB4iX86K29ydgrCkfbNU2mfBt4
-	/t+9UkrHTdlVRhKXi24X+N38+OCEiAZch34EMwW/Dn1MqKya6uhNdZeuanfX+wnqKUX+bdc2Q67
-	N6z7ns2wTIQsoSVmf6yrK0qPUcyKAljKKZ5Tt6MKFkv8fHTYm1po+JPyLaYLKZab12IpJ2zJMeN
-	5OO802bye5n/+WDAEDrorXfkGj2jqF9cRnKTSP1Ngdlikj31NoFFkvsAqeJxjgsR5JSDuQhqK7o
-	HHypi4fp8zUJrYWPAe2iLp7mLKpGDqk4=
-X-Google-Smtp-Source: AGHT+IEFm5EK2K+aFRgM2luBkKYZSMINjT3NZbf79E/WEwhVEuFkFUby27jaM+gbx9d+ftRkB3XZMQ==
-X-Received: by 2002:a17:902:e94c:b0:234:9fd6:9796 with SMTP id d9443c01a7336-23de43702c4mr3052595ad.19.1752165804369;
-        Thu, 10 Jul 2025 09:43:24 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de435c2e3sm24897415ad.226.2025.07.10.09.43.18
+        bh=j4+b4mC3HT2l2CGi9AAd2/CUQyS9zx3Y/fMcj/u4cU8=;
+        b=GwqT8UFfXA3R7dqvTMrYOxMNwpZXDIQVqxRXpSYw+Z3Wqr/0VoSMGULKIpb7hUSY3Q
+         EXlwrm6iSn9bwBaKJ/9GxaXPsHGiKYq7kiwAWe2g0P0SvBco16RWjLYZGB5nEcpvSk6I
+         zBsVN9QUYJrDyWtPBE584jS7owJcff8eL3GJimyFVPw/WoI04ddAF26RahyNF8j4Nm6m
+         vulZAy8bQ4egULuKUv6A3spJwYLj69T8JV+taZvsjJBIPjfFkBphj8rGfMHyEQGXPsRj
+         pR6NkLMuNHi9lHlm2jN7od78Ig2F5rIWxSLTTiuULIFoeF7sEnTPhaiNyjpToUBVTYcg
+         tCzA==
+X-Gm-Message-State: AOJu0Ywas+dBvkVMAawTylRrU9FI8y+A1Zq+5DzAoFY/V3agaLFowxn1
+	wDEYURPssLdUdzNekrye+tRAnhi1XatRZJpwxxq53i1tCvnVDiseWF0=
+X-Gm-Gg: ASbGncsbnR9MwX7IC+ktOYZ++5f8VSzUD2Yo4NXSfE1CzvKAdTg+S4azcOwfywXk7Zh
+	znCM8FrmXcQslJCP1+ALNBBzPSd+lj+WvJAnpbX3xJ4HQDzmJmGKna5dTakQ81JMqqPh1jrHCE1
+	v0a/HuLQRlgkrY0LM4P7mw+xtnTieH9L/PrmHy5F/P1gNvKBHDS3RzicHxmV44qiYHwjY/YjRfM
+	Vjk4cJJdECoAYVZSr4xDxgWFCnIqfiyHXKk3BznPT2RmyFmfsgkaTibtYM2spECYcfAWzPvl2Zl
+	Z9nPwe+PlSXhJ9o77C42Xkbs0ES41MTI9Mwl6MEjws/DbnbsRkzXwY8uGLxq
+X-Google-Smtp-Source: AGHT+IH23nDcXHOGmf5MwTJfBGqbZyv2XIbr7qmXq0Q+P00iobs24hGXwBeOoXDJEXEyxxqayy4n2A==
+X-Received: by 2002:a17:907:3f89:b0:ae0:5137:fc44 with SMTP id a640c23a62f3a-ae6e6e9323dmr433697366b.18.1752166010589;
+        Thu, 10 Jul 2025 09:46:50 -0700 (PDT)
+Received: from p183 ([46.53.250.196])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8293ff2sm159477466b.111.2025.07.10.09.46.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 09:43:23 -0700 (PDT)
-Date: Thu, 10 Jul 2025 16:43:14 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
-	corbet@lwn.net, bagasdotme@gmail.com, will@kernel.org,
-	robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
-	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
-	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
-	yi.l.liu@intel.com, mshavit@google.com, zhangzekun11@huawei.com,
-	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
-	vasant.hegde@amd.com, dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v9 22/29] iommufd/selftest: Update hw_info coverage for
- an input data_type
-Message-ID: <aG_togvop53dLSZM@google.com>
-References: <cover.1752126748.git.nicolinc@nvidia.com>
- <f01a1e50cd7366f217cbf192ad0b2b79e0eb89f0.1752126748.git.nicolinc@nvidia.com>
- <aG-fZv39ci6yip3z@google.com>
- <20250710153202.GO1599700@nvidia.com>
+        Thu, 10 Jul 2025 09:46:50 -0700 (PDT)
+Date: Thu, 10 Jul 2025 19:46:48 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] mm: implement "memory.oops_if_bad_pte=1" boot option
+Message-ID: <b67c9197-c519-4759-8813-4388428d88f3@p183>
+References: <4e1b7d2d-ed54-4e0a-a0a4-906b14d9cd41@p183>
+ <20250709153751.222ea2d1de1313a22a69e64e@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250710153202.GO1599700@nvidia.com>
+In-Reply-To: <20250709153751.222ea2d1de1313a22a69e64e@linux-foundation.org>
 
-On Thu, Jul 10, 2025 at 12:32:02PM -0300, Jason Gunthorpe wrote:
-> On Thu, Jul 10, 2025 at 11:09:26AM +0000, Pranjal Shrivastava wrote:
-> > On Wed, Jul 09, 2025 at 10:59:14PM -0700, Nicolin Chen wrote:
-> > > Test both IOMMU_HW_INFO_TYPE_DEFAULT and IOMMU_HW_INFO_TYPE_SELFTEST, and
-> > > add a negative test for an unsupported type.
-> > > 
-> > > Also drop the unused mask in test_cmd_get_hw_capabilities() as checkpatch
-> > > is complaining.
-> > > 
-> > > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> > 
-> > Reviewed-by: Pranjal Shrivastava <praan@google.com>
-> > 
-> > Note: I see a couple of warnings while building the selftests on Jason's
-> > tree, but these seem unrelated to this series:
+On Wed, Jul 09, 2025 at 03:37:51PM -0700, Andrew Morton wrote:
+> On Wed, 9 Jul 2025 21:10:59 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
 > 
-> This is fixed in v6.16-rc5
+> > Implement
+> > 
+> > 	memory.oops_if_bad_pte=1
+> > 
+> > boot option which oopses the machine instead of dreadful
+> > 
+> > 	BUG: Bad page map in process
+> > 
+> > message.
+> > 
+> > This is intended
+> > for people who want to panic at the slightest provocation and
+> > for people who ruled out hardware problems which in turn means that
+> > delaying vmcore collection is counter-productive.
+> > 
+> > Linux doesn't (never?) panicked on PTE corruption and even implemented
+> > ratelimited version of the message meaning it can go for minutes and
+> > even hours without anyone noticing which is exactly the opposite of what
+> > should be done to facilitate debugging.
+> > 
+> > Not enabled by default.
+> > 
+> > Not advertised.
+> > 
+> > @@ -490,6 +498,13 @@ static inline void add_mm_rss_vec(struct mm_struct *mm, int *rss)
+> >  static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
+> >  			  pte_t pte, struct page *page)
+> >  {
+> > +	/*
+> > +	 * This line is a formality to collect vmcore ASAP. Real bug
+> > +	 * (hardware or software) happened earlier, current registers and
+> > +	 * backtrace aren't interesting.
+> > +	 */
+> > +	BUG_ON(oops_if_bad_pte);
+> > +
 > 
+> Oh.  A pretty simple thing to do with bpf?
 
-Alright, this was on the `for-next` branch when the head was at:
-3e2a9811f6a9cefd310cc33cab73d5435b4a4caa
-iommufd: Apply the new iommufd_object_alloc_ucmd helper
+Unless you need to explain how to set it up on QA machines :^)
+The good thing about boot options -- they are very easy to use.
 
-But I see that on `for-rc` [1] the fixes are merged.
+> A script to tell the kernel
+> "dump vmcore if you get here" would have applications in places other
+> than print_bad_pte()?
 
-> Jason
+Sure!
 
-Thanks
-Praan
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/jgg/iommufd.git/commit/?h=for-rc
+> That's what bpf_panic() was for (https://lwn.net/Articles/901284/) but
+> it apparently didn't get merged for <reasons>.
 
