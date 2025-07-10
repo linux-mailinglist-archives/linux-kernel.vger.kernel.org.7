@@ -1,155 +1,115 @@
-Return-Path: <linux-kernel+bounces-725174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFBCAFFB98
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:03:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95CADAFFBA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994A6588660
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:02:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E88E547917
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C9426B2D5;
-	Thu, 10 Jul 2025 08:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Sar5fLI/"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2055.outbound.protection.outlook.com [40.107.93.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D84528B7E5;
+	Thu, 10 Jul 2025 08:03:24 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0A22877E1;
-	Thu, 10 Jul 2025 08:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752134566; cv=fail; b=n0ZROBcIqIhZt4SERkDGXHKTVcQ20TN1aWncB/LdAJ/MIwPaPSsTQhrUXwyRjPeAxaroZuQ5qHFuCju4BSuEhbwKkADyYHmI2Xs6cfI6mRoSXUa3P7rCj6rsB/U8c/k2TjmLbTPxhPpanEHsKsDWsOs8NhndNC/D/CVNAELroB8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752134566; c=relaxed/simple;
-	bh=mUY911TRFzj6QicxyFw6xg5n8lpiNeXyT+rWsYuEQ2I=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=b73iyEHkIlT8QwfBujkEbIxMhqkSaVAWQZX4PQgJPopJpWwn75eE3gYahyM/JHUpdMydliusp/WRJuBMOR4h57qmDHkjxyBVeT78cuFSIuGFwqhGdJGNsMKLLy7K8V+U/ZXlKqSmsRCoj/dDRtvuXOjNlp8DqrM9uRVEDjT/EGM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Sar5fLI/; arc=fail smtp.client-ip=40.107.93.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hqFNOox1LmMGCklSjsBK6QoEpth4/BeQqdzLAC7G0DzDkMNS9Gh2Av+17Ga5GFAVTjkM/l1t6sjy0PNQL8+mjovqe0xSdsAPbWu+JVek8lBxGEY5stM/SIQbSP9tByX6PmjmGBScDR8t1MAxZCASUZhqPGCSlG/8tcjHPePWjdm4NS6KZli+NOCEOvSeVYpt3hUTaZjUNfkq/UYyPEeGmzC2sEUGRmoDNNV9gxRCzvZj6FDdkGMsr8nxv+IOMlgjM4gM7Y1gsCDBTsY1LB0q4Ole4tA1ChEnfxk225xGIdmaDE0PTLbHs/DvsDRJ1nDb77mcIQqySyLdz//lKTuD+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mUY911TRFzj6QicxyFw6xg5n8lpiNeXyT+rWsYuEQ2I=;
- b=qb/YvhnJWVTPJcKb75pQYWC/EgIOfrGIqHqj6NxiXFArB78+/MILJgHHenRik6NShSX/onWEdLOWr5Dl9u6Q6lHDE5ptTJ4qen59g4lLD46QNBnbYsBgugeEFUzi/Qj/9lWWaKOyiJSUOGAcoww+dedSTNhUonr66hX0auLcRsoKJOpYKOJ90bfah0CRepq6fiV4EZUrCs99d/mYKanqm1ZBmnGs24OfDuGgUWHttmINxbVYgtSWaUsbWVWSuQuKcPRIuopxPzqFtmWHge9twPRNRWO3zJg4Swibnp+vdqL80ITDrnCg/NupkG6htSdHHysz0+9itt5IAxgRVMFNJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mUY911TRFzj6QicxyFw6xg5n8lpiNeXyT+rWsYuEQ2I=;
- b=Sar5fLI/nF6L40k3FX5dHefXTKktEVFRA5RrU55PxTibMfiQMYJrCzd5g+db0C6NFyPhG0yro7ttN1lP/9uIj/4xEFNarq4LQqj9Go55Cr/XkSJGlrsjcCbkeLr+V7PVaEiEllgSeki1/nXJRDtmo0VdL/IDLDFU2dqy+GKrzos=
-Received: from BYAPR07CA0088.namprd07.prod.outlook.com (2603:10b6:a03:12b::29)
- by SN7PR12MB6741.namprd12.prod.outlook.com (2603:10b6:806:26f::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Thu, 10 Jul
- 2025 08:02:41 +0000
-Received: from SJ5PEPF000001D4.namprd05.prod.outlook.com
- (2603:10b6:a03:12b:cafe::d4) by BYAPR07CA0088.outlook.office365.com
- (2603:10b6:a03:12b::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22 via Frontend Transport; Thu,
- 10 Jul 2025 08:02:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001D4.mail.protection.outlook.com (10.167.242.56) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Thu, 10 Jul 2025 08:02:41 +0000
-Received: from BLR-L1-NDADHANI (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Jul
- 2025 03:02:37 -0500
-From: Nikunj A Dadhania <nikunj@amd.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-efi
-	<linux-efi@vger.kernel.org>, X86 ML <x86@kernel.org>, Borislav Petkov
-	<bp@alien8.de>, Ingo Molnar <mingo@kernel.org>, Kevin Loughlin
-	<kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, "Josh
- Poimboeuf" <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v4 12/24] x86/sev: Unify SEV-SNP hypervisor feature check
-In-Reply-To: <CAMj1kXHZhFQ0DQWGDXtX4+-RWUFgyfL1qJh4hCONdi29NeBzhQ@mail.gmail.com>
-References: <20250709080840.2233208-26-ardb+git@google.com>
- <20250709080840.2233208-38-ardb+git@google.com> <85qzyovfov.fsf@amd.com>
- <CAMj1kXF73myE9sKos5j9ErZi14ExDQBDZvp8PEhG3K4PELQrSw@mail.gmail.com>
- <85o6tsv8m2.fsf@amd.com>
- <CAMj1kXHZhFQ0DQWGDXtX4+-RWUFgyfL1qJh4hCONdi29NeBzhQ@mail.gmail.com>
-Date: Thu, 10 Jul 2025 08:02:29 +0000
-Message-ID: <85jz4gv5gq.fsf@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9D028853C;
+	Thu, 10 Jul 2025 08:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752134604; cv=none; b=o3lNS7DxI6WkycXfe/GpbmLYS7c9KaOgRH5bYKoAcspD6G2RIGFlB+NgIXzOumIMOjHHVEAjqh8OJzKaPM6ZIAYq+N2n1erTNym1kYgcCU6nYHddvApBP8B0OtEMhzArFVJSniB9MZQ7giNRO89f12SUC//IrJw1aKpLWaHld5g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752134604; c=relaxed/simple;
+	bh=vwkFwjpE+Upplw8PdIDh5qpFIDC+P4YWqyGX/LC2JuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXARtzT+qe+9L+R3LQq7D8ssSTFhWDAh3Zm4tikDakUyZQCFaf6aEk7lc1N5iQay43RhiVFrjcQbJ3E9SUowo8/C++oVwyswqXBbsH3RUqfSyAHHsU8kmKk8cbz7Y59+yW/+YOAeDBOlzURe88VvosFlycW6NaV6ZHF9gfK9Oos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com; spf=pass smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foursemi.com
+X-QQ-mid: esmtpgz15t1752134553t6f595ebe
+X-QQ-Originating-IP: TMeCWw3VhbtL055KbbMrtfQNlR6MVhF9cJq+MR8ibLs=
+Received: from localhost ( [183.17.231.23])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 10 Jul 2025 16:02:32 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 7094107306005909391
+EX-QQ-RecipientCnt: 14
+Date: Thu, 10 Jul 2025 16:02:31 +0800
+From: Nick Li <nick.li@foursemi.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz,
+	tiwai@suse.com, xiaoming.yang@foursemi.com,
+	danyang.zheng@foursemi.com, like.xy@foxmail.com,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] ASoC: dt-bindings: Add schema for FS2104/5S audio
+ amplifiers
+Message-ID: <1817574C54F0A79C+aG9zl_ERp5hbxwer@foursemi.com>
+References: <20250703035639.7252-1-nick.li@foursemi.com>
+ <20250708112901.25228-1-nick.li@foursemi.com>
+ <20250708112901.25228-3-nick.li@foursemi.com>
+ <20250709-hypersonic-piculet-of-fertility-7c4a82@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D4:EE_|SN7PR12MB6741:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9db0eedf-175a-4084-13a2-08ddbf8824f4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?f0MCOha3JGPnqJ25+wfWPjRNC2JbuIALvRPSvDx731EtmaSajjFgEolCrKqr?=
- =?us-ascii?Q?Pfd1gV5OfbicAUVBo8bXdMIMENNQ39AAOgKpm9T229Ni7g23or4Zq1LuDi/S?=
- =?us-ascii?Q?NomWEkJ69+MoDOZXbM0tVXSFLGxs6NnVj7JeD09YycmpU8wD8k9r8BkUZtYe?=
- =?us-ascii?Q?H7eSXcEgxIhj1wNNPnJeWtWBNzdnbYtfOYFSndM9W4gLzuAT0+QVJDMDvQ7q?=
- =?us-ascii?Q?0MCgpY5c2BbQkjpHG3fPcBfv70xX3Gez2l/XPSS4eW6vRVmYCBiDCUdU4zVp?=
- =?us-ascii?Q?uYA7RXkaAIuwBVdrnFMsPBZ6vK9DDRRJt8Fg6emGiU6YLqSqqpwGGQzc+ZWV?=
- =?us-ascii?Q?QvoyGdzyZFFo5ocLnhI5A2EpFJB8u33KFm+dErb2pFW1cdcedcO4H5kp581K?=
- =?us-ascii?Q?JUzB2o8Q7jHUSghpcSaFe7uJpt4ztbXlhtXN8TuX6fJnpJDYx4yNB3WWIiOs?=
- =?us-ascii?Q?5e2mM72VSg5nqL3RTrYX40qBqX5q8KL77vwDqH0HDcfVzPXjy9ZgLnFtR6rS?=
- =?us-ascii?Q?NJWYWcbzInxT2qcZWpDcpzI1qDhi6W91rKEcv771iebDs5+QLajU2aD1aVrj?=
- =?us-ascii?Q?H1suO377BRn+LXI8a7WslJJ+1iZAv8UD9um02NPqt+R+vdIgRdW+G8V+yh74?=
- =?us-ascii?Q?Wuh4Qbj1NP9XbQQp78KD8Xi4wqDAA/gx7Olsn4MyDQKnXt8xYIPVN5SC9sym?=
- =?us-ascii?Q?GEHJUF9KndBJC+vBKgJ3eKfSV27FlxBaUn3pWzEFPZ6E2NvnxcuYcoAuL2AN?=
- =?us-ascii?Q?hRYpjYdJJoL3r//iuLuPXsPYj3Lx9TPoGs3z+Ukl9yQay7DW0BLL7baFV0Lz?=
- =?us-ascii?Q?8gqWw2c1W+9H/obCBgvmDg0mphV15ryb4smxH5xB2JUaGekqO1G2cq5ROyNV?=
- =?us-ascii?Q?9qIGPRqKm2faIM2fKqp0fcShO1NWSaDeEh1COMD4zA0jwp56gnY+5SBhsQxT?=
- =?us-ascii?Q?ua07Q65EzyNdeXGGgDvppPZjvyRSh8TkFoK7SGqJaHlpIHOTjF9XuxqrWtXi?=
- =?us-ascii?Q?gCBWeV4yaOes3wMl3tcdVd67GQNliS1WeGBDbgOpc9Ow2jVsEyZ0peVs8GAr?=
- =?us-ascii?Q?seeW7oG7EJr5M8yzwACGcQ5RhO2cbHR7XsbMg02rnNFtAHPZKYitvfnGX3sz?=
- =?us-ascii?Q?fh4ADxtBGjtfxkGAOyM6sii8NoFOxXwdzXTN2v00L/uoq/K1AM53QomrQJEG?=
- =?us-ascii?Q?JBpgqC018tUJ8GGqSAlPgTXrhlqLU4KAXCmUgkx+dHr1l4Z8dCjeFJEDIFVo?=
- =?us-ascii?Q?v68xq53UPpZQd0K4hwU2CGAeYje/37LQFqy6SS16xjN3l8G1cWTB42bKrhTO?=
- =?us-ascii?Q?qL7d77zNihwexx+vV+HfSuwY/AYfgmpF0VeZQNUnrz493yVK2l8wh1v2AIoJ?=
- =?us-ascii?Q?JR4vgDvIQg5s78H4TUUoC9/kHRJQrlHIdn+vS5c+Uz9A+RgH9rWjobfruMzz?=
- =?us-ascii?Q?w7RXytP0LyKTFNZQuLgZUexef+VodpXxT1WqmGpToKS4HVha22MfIBEgOGFk?=
- =?us-ascii?Q?p62yJas3Z8kjzkfJFaIpEHl3JCV7Y3ADebnZ?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 08:02:41.1623
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9db0eedf-175a-4084-13a2-08ddbf8824f4
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D4.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6741
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250709-hypersonic-piculet-of-fertility-7c4a82@krzk-bin>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:foursemi.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: OXWhkXa0b/rw1OFVl7E7ZyFXVlAH4+lvGcEbYK7YmS6UbHTWTG50MlhE
+	gEwmPk/RA2OfIl85y5IV2dCUKUNzn2bUaK0Wx3yhBVrrv8khUHgZuA4QO1aCgYSUhTzt9qr
+	0riALQR+yfmRjbdRynC9Nstvk+pjgtUlWUofU/AdJzNiib8eRsedzjFqyvdgN0zh9OhORUq
+	Kxxo/OiMInhm/vhmcpAUgbdI5WL4nNY0V3GXZI2jXxuw1dHOaGHiQRZ3Te83ng3IUw4U3fg
+	0FU5ZuGe1Km5EWiyxk5lHaDfzqC3NTRQP8PbPxGPV2K8OAmkw0jnw4K1gMZaHflI8X+WlxT
+	PhSTUBmGKIG7GoH1xferwAgQxPLxBp2RiI5EzZ6Zsr5sWRRDWEuqZFuhz00+S3laTPh6io9
+	kOmHLsXtdgPLixkMpSs8jP6FvgvLjlEH7D8WYhmeGi6qzvr0AE7FPzgfn9wGLKEVZ9DQxPv
+	leWL/ZRvbv/ySDjMYcyqqXMniRn7EouP0olIfvpTqNNuVFnPlr2TOSK2HSGCvdGk5bZ+5SU
+	x2rh97wxKcsavCXWNBX2252LdF8n7k4JFfAVCWch3HQB20q3X7oOG5W3jW4Ep9iYRcsnCy/
+	zccoVKR2aXnXUo/E7dAZH+dAokss02v0wcKBZjose0One8BCI6bYUquobCpnfN6xshroSsZ
+	RpLhMOGbuw8DfWAgDfEFNAmTpbCR/CvINb9jLNU3CBunFI22orWaMfqz5NW2ra41bTh9M3+
+	IMMGM8ci1MmTx7wxVaoTTgibL1ZaIlkmqw2cC3Fz0JBTnRaslzo8Tuh0fvHIZ9lZQH3lfO0
+	YJZDP6Qzrmu4IaAKJVFpoH75A1H1sQy38xJjXh6kG9kd6Z8YBCAv4uGM3zuUsUzkPAPJ/tt
+	nDWN0FTFoyAMQILum036pTxQLyGecqTMxwR/lv3YOS+W2FQx/15Dv1SEebL/zGQ/beuXrnM
+	l8IdYYZXM6my1harzJu5e5BXxbzVSCbTXhwwYkHKf6Jq/lviASSMLu5SfEh5MDQvnYvpegS
+	gzdFWeky3UFboNYVJo03rKF8XrWQsG9b69rh1wwJDIZwpUUS2W
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-Ard Biesheuvel <ardb@kernel.org> writes:
+On Wed, Jul 09, 2025 at 12:42:35PM +0200, Krzysztof Kozlowski wrote:
+> On Tue, Jul 08, 2025 at 07:28:59PM +0800, Nick Li wrote:
+> > Add a DT schema for describing FourSemi FS2104/5S
+> > audio amplifiers which support both I2S and I2C interface.
+> > 
+> 
+> Another unexpected change from v1: subject: why did you add "schema"?
+> 
+> I asked to drop it and gave you reference explaining this. Did you read
+> it?
+> 
+> So again, same template:
+> 
+> A nit, subject: drop second/last, redundant "schema for". The
+> "dt-bindings" prefix is already stating that these are bindings in
+> schema format, because they cannot be anything else.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> 
 
-> (please keep the CCs)
+Sorry, I misunderstood, I will fix it by dropping "schema for ".
 
-I hit reply instead of reply-all, thanks for including all.
+Best regards,
+Nick
 
-Regards
-Nikunj
-
+> Best regards,
+> Krzysztof
+> 
+> 
 
