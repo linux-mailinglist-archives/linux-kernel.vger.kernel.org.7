@@ -1,186 +1,87 @@
-Return-Path: <linux-kernel+bounces-725286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2181AFFCEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:55:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57BD4AFFCE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 955503BFB4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:55:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539A71C86A58
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7421628EA5A;
-	Thu, 10 Jul 2025 08:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD753291C11;
+	Thu, 10 Jul 2025 08:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="GvPDJlwY"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YpUhlpaP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EB728F527
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F2B290DBB;
+	Thu, 10 Jul 2025 08:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752137673; cv=none; b=p5YWw8x0jrYIy1N9BLuwKm3XETYafYWcIgojZo8GORkEMjCP/PjtdK4eH78UnLGOpJyy2EaBLeY5viJI15IsseCWEmtbBF1QIjx7HOCxqDwcL9AsOnSHiUw9gHRqGH9ishJkdpTAV4cMJmVv2oe7iv1mrUtOcz+LcuHG9K7g0OY=
+	t=1752137663; cv=none; b=nfTwZokrTdoyK31b153+LUvTo43vlkMHhdwZvj1rueyfgYJxdUxiBrss3U4Ff4+Lc0ZtU9fmO05pBMvJfkcL1Or9ch7blzyBEAhV3t4TGpwT9CY4uy5xcieERDXWjjdv7LrTt/1EKVHAPl1ZTsJa54uFvAmJTbQSpunjgX6KDUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752137673; c=relaxed/simple;
-	bh=XzjoEAh+cvHyRje+0Tjj6rqGbTKwrsSfOvDNlMabzbU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W6jpiBCsreOzKDuyo9X3zRGDaco8aF31d1UggziUHNYJ7dxW35c0dIcYiF4kMIR1VC+BcfSEfb1f8esWZecyaFz8+AHzTgzappKkdbspI/5KVMwmWHCwEIh88GZVLa3tY7BaTrhUUlT8E9zD9JMGr26mBqwiixjTeOYGx77xfso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=GvPDJlwY; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b31c978688dso520156a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1752137672; x=1752742472; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i4mO6QS2sYfv7EymtBvZKW+/VtzFT/ogV5HmARdE954=;
-        b=GvPDJlwYCa0EBotRO1G6jKvgrURnBT/0qOFF844NJuPh5mxNgqDfu1uX2wJ8zJP8ra
-         EfVxne82R6oR1oQXLSZguqop+c/hrZ4bq0jInTgt5v+zW4IRAmrsmuVXR/kDMsVSWu1I
-         Vsccg+SLrdhwBjO2sXzvRGfwkCDGKKeKBn62SwqfO0z/XUjfPBwF/CKRFyOu+81xslUJ
-         My+ASvGz68uRYFE9FT2SHjqpMQQFCJxQs/sRXvG0dt1mffn0yzMr8Roc57r5fQI6rk1f
-         jKROmQJt8/7IOB4X42ro+P9uTkjZ66IsYA3Q58sUN+EN5hi5j+LVHkXrWHE+ovJvw24B
-         Tvqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752137672; x=1752742472;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i4mO6QS2sYfv7EymtBvZKW+/VtzFT/ogV5HmARdE954=;
-        b=gHpwtUQWyeuC4RXElPOyeZ+6szknmTYcnzBmFbmxVegKN11aA/TrYTrMXzPdFbquFD
-         1031WQ8lWy2vurcgfcIaWJ2mfpel4/XZ44dxOZtf5uZdGXMoUPyeo8/FpmO0BWhThx4t
-         gV+A6mPMY8Af+f3gfFFsI5LaPmJTlxeVTQb16ETCILTz91eAxvQH5EXbLO6f+idzwBQg
-         842YZ4ra7zIzMfbtrKkoBuwbxtW86enUSAwDV1miYr2Oi2aQFm3yWKRQIybnTwQe31T8
-         50I526BjTaQjcTVoo7HUF7fkV0iHxL/6UIPpB1ZF5uNZ8mdE5ERp569o5kZi3+qNtGm2
-         Yf4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXBjmjASmRwtg9fZy80xdhX/vELy6gZf+nYiT8uVyk+49mXECSGP+WhmB57giZ6V1In7/X/9wyFpLFB/BA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsEken0AOE0ohYJxLRu6ppola9h+oBC1zrl7VZQbvPfoAcgSuu
-	0UzKApeb6RoK+vvuohoUpTgf03eOVIYgZBoUwquiK2J4+gpNzqkRxSgN23LtBWexCkE=
-X-Gm-Gg: ASbGncv28Et9m1LKipQKn0JGA7mwobIZFQz+Zr6E1SHnlyja1ugS9ayqHWnUMma46mo
-	HvkkI3mgx37KbYn4HUjKUVietxMR2iubItGj0CT1NIqUpmki7EzsXWCR761SVejjWvFgLmBBbwc
-	4ha+nyB7aMOCJYzjXpcuMviR8BDbvw7eF5YfLjDlzTK3AJfLH0XszN/Ag0B7IqGnZ+AgDqhjFVQ
-	qj64JjwRG/Nue2YhNfFysg+pYIuappOIin2gRRI21hXsFHxjGID2epi1dd12ohLGSeUXw2A5vJP
-	yxOTu/050eRSC+w4iKtOrqtzp1DV7TUHba44jE9G2KPl4ntTlJ9ZPrLE7Jx3LwgnNJzji4f45KV
-	KEnsChPyffna/xg==
-X-Google-Smtp-Source: AGHT+IHpGnM8/RSgCKrl528Fh5n6c4YlUKSZpBOagB5O4dzJXeVEsMY3FEHcb5l/h+FzLkNngxE9NQ==
-X-Received: by 2002:a17:90b:4a4a:b0:311:b005:93d4 with SMTP id 98e67ed59e1d1-31c2fdd1479mr9203981a91.25.1752137671529;
-        Thu, 10 Jul 2025 01:54:31 -0700 (PDT)
-Received: from localhost.localdomain ([203.208.189.12])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3e975d41sm1650228a91.13.2025.07.10.01.54.27
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 10 Jul 2025 01:54:31 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: alex.williamson@redhat.com,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	jgg@ziepe.ca,
-	peterx@redhat.com
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lizhe.67@bytedance.com
-Subject: [PATCH v4 5/5] vfio/type1: optimize vfio_unpin_pages_remote()
-Date: Thu, 10 Jul 2025 16:53:55 +0800
-Message-ID: <20250710085355.54208-6-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250710085355.54208-1-lizhe.67@bytedance.com>
-References: <20250710085355.54208-1-lizhe.67@bytedance.com>
+	s=arc-20240116; t=1752137663; c=relaxed/simple;
+	bh=EjUzA2JuHZbrcdIUc8oh0BWkdNOAqsv/Xix52ydC7b4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OSad3zsBj27EcuNUldqugm6ht2xF4IFkoF8pb2bCMK9WWnzempxFGwMq/9hULs2QlqWoGlXuN/iNCUQBxUbyYyzupYFjo2nPP1N5WDKpY6eMR/XtQ1QnU2W3bR3ihxHm1/YrAIRO3XvbpTbAbDVPxUo/7snZdjv4eWW1nWYNiLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpUhlpaP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28F14C4CEF8;
+	Thu, 10 Jul 2025 08:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752137662;
+	bh=EjUzA2JuHZbrcdIUc8oh0BWkdNOAqsv/Xix52ydC7b4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=YpUhlpaPxI3/ftOuwSjld66/8g1woL5g0sbycmL2p7EgKoRCdhnBMk9Mo/KxNdmLD
+	 WNSJnH8TvKfSQ3bwnBxqujCIiJmaKX32ISmFlXTJVAm/CTytbYg7/Q+ThYK6WGGeZt
+	 DgZ2tteMJigTOT81nYj7fEEgfmGEvGkgGqVc378qNwWhnlJLaIyAb84bd0+66yWSgy
+	 afd2FNXLko98/vbHGH+eQ9bvdTfW/opCfNXTq6WHB4H4LOGle+qugSQslX2asMpux2
+	 fTvhEXyqGRZ5MMcMn1fjD3x3WzAzF7g5srXogyxHk7PzvoLNT6dcd/sQ1E7zLdMUVZ
+	 BHAzabvLhRZIw==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Chen-Yu Tsai <wens@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Andre Przywara <andre.przywara@arm.com>, 
+ Chris Morgan <macroalpha82@gmail.com>, 
+ Vasily Khoruzhick <anarsoul@gmail.com>
+In-Reply-To: <20250701163652.252010-1-wens@kernel.org>
+References: <20250701163652.252010-1-wens@kernel.org>
+Subject: Re: (subset) [PATCH v2] mfd: axp20x: set explicit ID for regulator
+ cell if no IRQ line is present
+Message-Id: <175213766092.1425808.13168630875938700813.b4-ty@kernel.org>
+Date: Thu, 10 Jul 2025 09:54:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-From: Li Zhe <lizhe.67@bytedance.com>
+On Wed, 02 Jul 2025 00:36:52 +0800, Chen-Yu Tsai wrote:
+> Originally an explicit ID for the AXP313/AXP323 regulator was set to
+> avoid a conflict with the primary AXP717 PMIC on Allwinner A523 family
+> boards.
+> 
+> This didn't entirely work since on some or all of these boards, the
+> interrupt line on this secondary PMIC was left unconnected, and thus
+> the driver would fall back to the generic "no interrupt; only regulators"
+> case, which didn't have the explicit ID set, thus undoing the intended
+> fix.
+> 
+> [...]
 
-When vfio_unpin_pages_remote() is called with a range of addresses that
-includes large folios, the function currently performs individual
-put_pfn() operations for each page. This can lead to significant
-performance overheads, especially when dealing with large ranges of pages.
+Applied, thanks!
 
-It would be very rare for reserved PFNs and non reserved will to be mixed
-within the same range. So this patch utilizes the has_rsvd variable
-introduced in the previous patch to determine whether batch put_pfn()
-operations can be performed. Moreover, compared to put_pfn(),
-unpin_user_page_range_dirty_lock() is capable of handling large folio
-scenarios more efficiently.
+[1/1] mfd: axp20x: set explicit ID for regulator cell if no IRQ line is present
+      commit: c6c68f08d524ab76cc3cf6449a8cb235b8c3fc06
 
-The performance test results for completing the 16G VFIO IOMMU DMA
-unmapping are as follows.
-
-Base(v6.16-rc4):
-./vfio-pci-mem-dma-map 0000:03:00.0 16
-------- AVERAGE (MADV_HUGEPAGE) --------
-VFIO UNMAP DMA in 0.135 s (118.6 GB/s)
-------- AVERAGE (MAP_POPULATE) --------
-VFIO UNMAP DMA in 0.312 s (51.3 GB/s)
-------- AVERAGE (HUGETLBFS) --------
-VFIO UNMAP DMA in 0.136 s (117.3 GB/s)
-
-With this patchset:
-------- AVERAGE (MADV_HUGEPAGE) --------
-VFIO UNMAP DMA in 0.045 s (357.0 GB/s)
-------- AVERAGE (MAP_POPULATE) --------
-VFIO UNMAP DMA in 0.288 s (55.6 GB/s)
-------- AVERAGE (HUGETLBFS) --------
-VFIO UNMAP DMA in 0.045 s (353.9 GB/s)
-
-For large folio, we achieve an over 66% performance improvement in
-the VFIO UNMAP DMA item. For small folios, the performance test
-results appear to show a slight improvement.
-
-Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Acked-by: David Hildenbrand <david@redhat.com>
----
- drivers/vfio/vfio_iommu_type1.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 61455d725412..133f284ae168 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -792,17 +792,29 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 	return pinned;
- }
- 
-+static inline void put_valid_unreserved_pfns(unsigned long start_pfn,
-+		unsigned long npage, int prot)
-+{
-+	unpin_user_page_range_dirty_lock(pfn_to_page(start_pfn), npage,
-+					 prot & IOMMU_WRITE);
-+}
-+
- static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
- 				    unsigned long pfn, unsigned long npage,
- 				    bool do_accounting)
- {
- 	long unlocked = 0, locked = vpfn_pages(dma, iova, npage);
--	long i;
- 
--	for (i = 0; i < npage; i++)
--		if (put_pfn(pfn++, dma->prot))
--			unlocked++;
-+	if (dma->has_rsvd) {
-+		unsigned long i;
- 
-+		for (i = 0; i < npage; i++)
-+			if (put_pfn(pfn++, dma->prot))
-+				unlocked++;
-+	} else {
-+		put_valid_unreserved_pfns(pfn, npage, dma->prot);
-+		unlocked = npage;
-+	}
- 	if (do_accounting)
- 		vfio_lock_acct(dma, locked - unlocked, true);
- 
--- 
-2.20.1
+--
+Lee Jones [李琼斯]
 
 
