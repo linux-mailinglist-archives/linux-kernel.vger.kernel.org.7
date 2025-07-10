@@ -1,386 +1,214 @@
-Return-Path: <linux-kernel+bounces-726127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0FF5B00879
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:25:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03976B0087E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DAB51CA1135
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:24:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44FCE1C26C27
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1182EFD96;
-	Thu, 10 Jul 2025 16:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D272EFD92;
+	Thu, 10 Jul 2025 16:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bYL5dqkj"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="T20/0tva"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013021.outbound.protection.outlook.com [40.107.162.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32EC267732
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 16:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752164658; cv=none; b=onRIXYfbx8mqblPLh/Lng0LDYWOsaxFI867CcEg6A5MZCloAkeetzQqtraZIDC7ziuxAzCrV4sQmnUagQ2t43IMC89oYwa8dY3+T0DkVsZ41c4AYR00VnA06VO0IKlI1qN5CcafMCyH/NTwKuA9pXH3MgTFEqemec/5vFaQRUnk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752164658; c=relaxed/simple;
-	bh=7htcxq6XrknTBPYYPhKsQq4U2qiSMnoMMfs6z75EYl4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ka1odzdC1VEjMmDidmCFGM4YoMTHxUcMhD/R8ORJ0+f4+C8sY4VSjG+ixr0jSjaPQQ6qQXvo2oeGoWXAY5K/HhkrpewIY3nPB9YJ2fiK4IBbRK97wJzerU1oqEYjO2oOrI5wUyCTSiLJmA7laA7o8kkIo5qF50nKzjrjBMqZjuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bYL5dqkj; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31315427249so1134244a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 09:24:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752164655; x=1752769455; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZRYvrQrxBC58DxVhyHaBg+5Yt1iushnmgR45IacO10Y=;
-        b=bYL5dqkjYY+5Gl/gyGl44za10KIU7jb9Rb7U9PHSk5NnOaZIt8ZOlFyWmBCi/Jvh4s
-         ZJ8m3fk3mPdXltAL7q++eHYPgYIxx4vqmjxxqsou/yRXwsGNf3PqEkC0H96yAveHWGpO
-         ciToL5eRGZayN7nDbJLlMYx9uHuNMCoCrk4K4t9sQTAH7kkHVtWhgRV+xS/GGE8FQg7s
-         eN3X+8xzhE1hgV75gdb6trflKQQhZn+wyZA6Rh+hQRCu1zxQ768lz1yOnjvzhX2jB7v8
-         vyXaZe8VDzJvwiSmS1qzHPryktDPBMyuk2N3J4QzK0d2G+/4xCNMPyX29LC4i3svZgr1
-         EXHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752164655; x=1752769455;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZRYvrQrxBC58DxVhyHaBg+5Yt1iushnmgR45IacO10Y=;
-        b=MLCEzA0F5sUdWmzEvgewQm6gSrntmUhHDs88w6wpyh79JG5gSdXwzHfA7ASFOX+XLD
-         HrHlQuRZVSvQfhhSpbQHVsyvAoIcYJDWdEBnGUUil55b25x4syrsB+CGlHNnK2QLTJvo
-         YP5FNHWxhhQm/J6x1ANXyhfuZy2TTyclWX0gNZWy1UvRdzpIMyXsCcfkTFswYCI0yOMS
-         17t/IEhecUdV0EM3i7FY7emMfgl2KeOcHwk+Dj4S8K1pLCtMO2peDqrfEKVRNAyeT5Kz
-         jdJ3WwnoBrOw1Mb2xxpnX1fMn18DlfBMq8c46QVzQsJXkZQpWChB9sQvnJZmHxHao9B0
-         YLQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqyVDqIphka6cPmW+vIwT56rxHBV+Av44LJRW+YcxzqqZCwmo0SXjLxPhQDvXVMwCHSPN0uhxbZqdPmOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfrbA3939ZBBToNjgPkpBGjjfUCcONP2ra/4d0hfJSWMSviQPi
-	y9FhkL+sR23+ZETX8GPl/1/zYf+zJ5c8tLPFa94vAq2s/YKXCWzkzdcllXz+3sxiZtoWkHCgv+O
-	FAggqPw==
-X-Google-Smtp-Source: AGHT+IFcsMbGxBy7c5ZOpbZMhNSeXz32OavcHTzFLmR2WdDBV0KMin9CgtVEhZoDpR8WM4B/hAs253kWdTg=
-X-Received: from pjuu13.prod.google.com ([2002:a17:90b:586d:b0:31c:2fe4:33b8])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:390f:b0:311:ed2:b758
- with SMTP id 98e67ed59e1d1-31c4ca758a6mr211135a91.3.1752164655005; Thu, 10
- Jul 2025 09:24:15 -0700 (PDT)
-Date: Thu, 10 Jul 2025 09:24:13 -0700
-In-Reply-To: <20250709232103.zwmufocd3l7sqk7y@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7E279DA;
+	Thu, 10 Jul 2025 16:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752164708; cv=fail; b=H6/lOZXJAxmKQOZXgFtQ4LoLBDaSgUuwLjvQLXr0O43ahDRuQHT9ET9wn/v8M6PqgGwAgDBth3ciHQdkpSCsT6h/wtZ4MEWDUiB2GGF4jGKe90zMjkxA+fn28RQLRJLlj1NfBxl/oPvxwVNnyqfyQ7nnJ/vfopTHkloQvrNgT0Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752164708; c=relaxed/simple;
+	bh=yFrRAUgnpZ4QXyxH3omefgi6Cud5/EFZtkkfZ/QmdUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mYxxmPH4DWnUnmv6ljAKwhl4ajW5STFcrYWedfkIptdtGAXshqMN4RhMyFYQGlU2iH+8hIRpEZT62He9QszyYkN/mQSZTnVqCiSn2BMJTTSLWYi4LzyWE8BOb3EChBJomMjX8G+HJDcR9CyT7AstEGEe+FFfxSckGU8huoskjjA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=T20/0tva; arc=fail smtp.client-ip=40.107.162.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y+WIEQpBuoog7S6sr5Zs+AAh+crFUGz1Q+hbgzjoeyr5QRIEkoj5MDsBq09xD4Rbsgxugwe8kTxM+tVJXmkL2AEW+laTAz9qnFK0T7/O3A0ehpcg27LWHIRefkuG4yC9VwP9dvHMyzuo86PuLP/8Dw28gyKicVPti3dxWcK23bt1EjF3xiFRpG2K6SmxM9pIxpnHvZGkm/DzsxAj9V+Nm9IHLMy6bC+Uo7TJFT0sxPY3tEsBHqRCHLYTwjmrXC9MgdP2tLsLkzcxnnMH5XuBapA5IryDd4DnrlLx/NXIpDEk89Rgm71WlqVymQ6GwyEMy7f4Q2bnsT/NX5hICNF5iQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BXeEJCjPoPxjnv4tSbODga6+fdlDrTO7SevdKdGGMEc=;
+ b=yFAWsxEGFU7+lRM9v89wS7/+ORqS3Z0azAlHu8pFCt5yck8QEM8nF3COl1SUvMeaR/SmoC7N6Oq1DQSgfPc9fi0FlqzLHfb5VCaQMhfRXVSYqIatFS9wHDU4257/P45fV6GqB0JCnJO/clWEeX+HT8o3VjCi7KfDxSs/+acCxsx9xCTiKbyhjWrXV8gMpasPHVTpYLqCRfoGzXekcu6UqseEahNScGTC7hYYPDtMSm3A0idEC2rLcjOFNCa8gEswIAWApzGZW/iNtxiAC06wiuC7pvMJEedk/GqwGLM0rOeVyofjS/F4or+vVBU/PwfEic22f/uUg+z4a8Fxn8YHIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BXeEJCjPoPxjnv4tSbODga6+fdlDrTO7SevdKdGGMEc=;
+ b=T20/0tvaV3gwTGaPms2eVUwUfixhyytFZnKQONmiIhTn3cK3dCrRJ3jcBuDSN/ehYdCHZDDnoWK+KcSOx3uO1zWjy9UWlGh4XiFPk1bsCFZyiLCsQlhX3NHreHT/g1VlRbSQD6kvgy1vzoobs/bJr1rKGxcOVP11wKGKRAnv6E+3Ah49j2mEry08HOMP058/fpb75uF6zKbvQvSdFRHuu9t2+7IvskpmrhJpgg+mPK8ee4is3yksgStjocL2oe3h91eZq1706uJfatpP4TZac6WfRCkedpwLbSCGeaYN9/HxB+4zoy3fuQVRfKFi2dEhuBv6kAo8yjBYLWdmRY3kZg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS1PR04MB9429.eurprd04.prod.outlook.com (2603:10a6:20b:4db::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.25; Thu, 10 Jul
+ 2025 16:25:02 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8901.023; Thu, 10 Jul 2025
+ 16:25:02 +0000
+Date: Thu, 10 Jul 2025 12:24:55 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, chester62515@gmail.com,
+	mbrugger@suse.com, Ghennadi.Procopciuc@nxp.com,
+	larisa.grigore@nxp.com, lee@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+	ping.bai@nxp.com, gregkh@linuxfoundation.org, rafael@kernel.org,
+	srini@kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, s32@nxp.com,
+	clizzi@redhat.com, aruizrui@redhat.com, eballetb@redhat.com,
+	echanude@redhat.com, kernel@pengutronix.de, imx@lists.linux.dev,
+	vincent.guittot@linaro.org
+Subject: Re: [PATCH v7 05/12] pinctrl: s32cc: change to
+ "devm_pinctrl_register_and_init"
+Message-ID: <aG/pV0m8vNJ9isGu@lizhi-Precision-Tower-5810>
+References: <20250710142038.1986052-1-andrei.stefanescu@oss.nxp.com>
+ <20250710142038.1986052-6-andrei.stefanescu@oss.nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710142038.1986052-6-andrei.stefanescu@oss.nxp.com>
+X-ClientProxiedBy: AS4P250CA0008.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5df::9) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250703062641.3247-1-yan.y.zhao@intel.com> <20250709232103.zwmufocd3l7sqk7y@amd.com>
-Message-ID: <aG_pLUlHdYIZ2luh@google.com>
-Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
-From: Sean Christopherson <seanjc@google.com>
-To: Michael Roth <michael.roth@amd.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
-	adrian.hunter@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
-	tony.lindgren@intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
-	isaku.yamahata@intel.com, ira.weiny@intel.com, vannapurve@google.com, 
-	david@redhat.com, ackerleytng@google.com, tabba@google.com, 
-	chao.p.peng@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS1PR04MB9429:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e18e561-b7ab-42db-38b8-08ddbfce523f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|19092799006|7416014|52116014|376014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HC2jawFrxZ8KfnhEUg5yhlJuWM7lMywPpU05be7qV+EyKBjCc59RBBtNGbYC?=
+ =?us-ascii?Q?QxIxvkrQbwCXGUuhSv5W+BRLXYpSxRLVRFvzopgLsHw3xUqf/4AzwPQzVgEE?=
+ =?us-ascii?Q?2wFi+KPz7k0cLddzJV8dCXhdvIflhCbxoiQBEfFB5CGvjuv45eiaIcbAaztB?=
+ =?us-ascii?Q?dp/Ii2u4v6Uo486K8qjroUucTCn8myfiL9BptidZSJgPd0ERz+yKbszlz5vW?=
+ =?us-ascii?Q?7BBnOyRH1umjZhO3M51STGzmS2p+WgHkwMhWvIZv2LILwxHYrEDi9kauVJg3?=
+ =?us-ascii?Q?h3lbhqsz920oQ3N+q71tNL9FxEGSVJTH80ebjAE7crGFCmbN+Voy3qQz63LU?=
+ =?us-ascii?Q?kx1kNsrEaeGYNq0A/Ro9QYbZeN8cOSV7o1I2q9TiG6C1YkOapZhaS9nBt6lf?=
+ =?us-ascii?Q?ajOR7VL72jUvbESJ421bjDev4CdVVoFMCqldntYZlc6Ol5fqvHP1LMRagbUd?=
+ =?us-ascii?Q?aNqc941HESCBGh3ccTvQHSYcEEfCABPR6xqOA/o7NzcayB9S7nT6RCos9Cko?=
+ =?us-ascii?Q?1G+4OORSNmQJhJ+3mxa8BwqEc0DQmLzOfbAPBe+dbEb09qjpzswUQt9gakpK?=
+ =?us-ascii?Q?I3B7xoA5nTjf3rd0Xi8pQKxdd3enUQZR6APqC88gDpjDQ4IyWo72NM1Sa5lg?=
+ =?us-ascii?Q?ktZ+onAwBuSKsMnVa+jQFqK/LkdJRoJx3eYwjYlobaiN/Jh2WqxNRokdJfCD?=
+ =?us-ascii?Q?TTY5yYVgkJC58t0BFPg9UETp8OpnaO9xzlrfEzrP7qOSFM13q/egsvTSuX/q?=
+ =?us-ascii?Q?mInMzjSHx7TRy5TiZvxOpz39TsZUVHdkynK3TifIRjFem31xQpRLgvUPYEsu?=
+ =?us-ascii?Q?sX1zr5JelZSR4h0PTWXxMCFWE2G/kspUzi1XCZi9N7yOkgZZQgVgbbG9zHvt?=
+ =?us-ascii?Q?r33KGeHRPgKd3g5dHUwJLCms/Tgom386u2Gwt+Z6CLvDC9s5oAFannWHAYkP?=
+ =?us-ascii?Q?Vk7r0djWQThfOFO9qvNd1+9dLu4nbYm9f+6Bv9S+Bw8kLgxd/bipJANHYlkk?=
+ =?us-ascii?Q?Uyp8piukTpPRiJ1nQ3rNYbg+P2pYVafPWMaDzmStiAuKgSgh6Q+9ddCgB/Fu?=
+ =?us-ascii?Q?qIkQP+NYH/10VVNpKzl82asTpw15Fdkdvb6VmWp/05xucOFA8uJYF+2XKH0M?=
+ =?us-ascii?Q?VGGgMp/PLEkLDAFxdk/jox4i0hcOIV1EPmNnH1FJb5AVQxO7GZTEsDVIi3xZ?=
+ =?us-ascii?Q?vkANGUwgRupjz/tmOZ6Oo+jhecMoaBtzVtnQr3vL1wiykwQgbT64MHyyynAn?=
+ =?us-ascii?Q?2x3Au90sfi7OxjnFSDmRxY29v0a5EVDr9XCIALBwQasFOJYJoCVQCYAKptca?=
+ =?us-ascii?Q?TbTnr2KpqRF+joatHKTo+pPGVkhYzZoDsVEjRJkJFpqUdDltifIEixJpGVN7?=
+ =?us-ascii?Q?97HUkxyvfqyxOvTYGFhwRj/rFFZw760zp6sQRCL6BUufn6VPDwi+SDHfSTJ4?=
+ =?us-ascii?Q?sKcnsG3WQOl1Mw3rYmIQOw+F/Nk2J1R2VD89lthuT0uwWfF34P9KKQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(7416014)(52116014)(376014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?573qNlmElogmy+n+tKDTicg9wtxQBQtCmuRuTUYb+S7FZeLZv/9bMkmMVFaS?=
+ =?us-ascii?Q?Y1D5oEM7akbzJR6GSBK0qxMIb4vINWsh6oKTer3VGrxnMqN4KND48/JoR4nr?=
+ =?us-ascii?Q?xgcxN1L1JzZRnHLJWRg9CSTbS7DZ8t3juYccOuGjAA2c/9/C0m2DDARNWM7E?=
+ =?us-ascii?Q?XJGO14in14APznrC3ZgjZoUh2eXpPGUuQzYU3EAPUFwDeU2cfo6NrjHY+HW2?=
+ =?us-ascii?Q?1pRnFUfIJp+15zP0mXPKKPN9XOuJqJlVthb8eUstPjwzDxTcNiNAa3kss691?=
+ =?us-ascii?Q?TcNz3rZFB60QDFDiAJdV++1G6fVqNoqNzGWC3DYvpMcOPpdXdfnbjAwL3cHI?=
+ =?us-ascii?Q?NOYYrmj0+n20TlJsNrTYOxopF31MW0JOxJzSlZi5arZdtsRWNis0g3RUblfS?=
+ =?us-ascii?Q?J3fslt8HS/NiQ3OxqLk6HIm8NqSs8g4B/wCPYTonyBmZN2i6QS5Cnhu3XXNr?=
+ =?us-ascii?Q?6iB0Yud9M2UyQpKbia7kqSB0usEnxmyTrd2FXRiCeDjOGAi0XnRa7HXWpg1u?=
+ =?us-ascii?Q?89IM/HQnKbIsslpQ9LARAV3mSZSYJUTFDrUS1FprLRmp3M842wnpiS6glJpG?=
+ =?us-ascii?Q?TxWi1syM2b2KE3wxKbLaDdr9vrJGHB1QZWLHMvOiUwbMWrsvLK8tiP8W01BY?=
+ =?us-ascii?Q?0kvuZKieKIATXT/jrdIVHLP6ugxtMW4pfKlh7LzI9ES0mAaYcDlNvcsKlrv9?=
+ =?us-ascii?Q?GdJibS+9YlqDkw7aRH4efBJg8MLYvlMI1DSqvrpgRcPxppGiPB/g4Ld9uAex?=
+ =?us-ascii?Q?JIKui7TwtYeDGhUQh+YyUzr4FnJkRNDNmARiRqDGZdzYN5pq/dcdpBfPuOHv?=
+ =?us-ascii?Q?96Fu2g3jftaGKG3SUh/cT1Z5HNz55CnXeIyF4bn2PsWTrcSsK4MMrLwxZBZS?=
+ =?us-ascii?Q?oXOnOJgTA3LVW3k2j2Ma9emm68GxzJUBztAXtGeeJBbOZ+Hx/PjJocA6Okxz?=
+ =?us-ascii?Q?MtlXytS10wX25fBN4y/Syxb5gJ13MLV+TrYg9uDhedDopzBOnPNF0MxB7KOV?=
+ =?us-ascii?Q?3JghjNp0dp7b+Ta6QsKWugdFV1WvHZ2L7iL7XUTMLGkH1C+LiFg/3bMVootV?=
+ =?us-ascii?Q?xJJsa98uVpIjiI7jmoeZk8ODZ9UcX3PXqIKjWLDeaoqutfHWn/i5wTBzaAYQ?=
+ =?us-ascii?Q?joPpPJCTO4/Hl4mcsPoUvKMIm13c2VpwWPbT/51rJSjQHsPiPBRpoPx/qCMd?=
+ =?us-ascii?Q?6Dt2FF9auux6wh751SkDrYeDdi1lPqcMsQvsxZ0Q+wKUfVSEzx95Ki0X5VI5?=
+ =?us-ascii?Q?Li7gxDrswdiUKKSpqZeWsggwxXYriQEUg4qlQE9opPQfj7mAdp1wiI34qwpI?=
+ =?us-ascii?Q?A7fLA1VCGjUcCajWqN/7VdLTWKz+aAgCPeGCmN9Vi9+c/QEKt+cOHB5eyaLY?=
+ =?us-ascii?Q?BU0HwIQ6z1lqJv8eMlXb/4Tw0fD5Sz10escpCz6esEoBZbC8YvqfljVdhFkh?=
+ =?us-ascii?Q?Cc8VxjJuk1M6drobPdWkq+g7k7pcmcC/9YUh8Vq93OKl5sG7JzAes1EQTj/Z?=
+ =?us-ascii?Q?vacpKqM93uq5JC9KAA5QaGj0SKx2hdqIXa3HG0QyKFz/ifrOJvWPDr1SH7Kr?=
+ =?us-ascii?Q?zYhEkjxdVUySw1mgoJxnZY94aNBH3u4DCHawTqfh?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e18e561-b7ab-42db-38b8-08ddbfce523f
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 16:25:02.1897
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q7jD8I5yHxN6gm7H1MwgAZXwpkC3HHRHEt7YJxyaHJjcMv16a3SiZwF6+osCV3eLq925PaAOGiv26uI2s7BUHA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9429
 
-On Wed, Jul 09, 2025, Michael Roth wrote:
-> On Thu, Jul 03, 2025 at 02:26:41PM +0800, Yan Zhao wrote:
-> > Rather than invoking kvm_gmem_populate(), allow tdx_vcpu_init_mem_region()
-> > to use open code to populate the initial memory region into the mirror page
-> > table, and add the region to S-EPT.
-> > 
-> > Background
-> > ===
-> > Sean initially suggested TDX to populate initial memory region in a 4-step
-> > way [1]. Paolo refactored guest_memfd and introduced kvm_gmem_populate()
-> > interface [2] to help TDX populate init memory region.
+On Thu, Jul 10, 2025 at 05:20:28PM +0300, Andrei Stefanescu wrote:
+> Switch from "devm_pinctrl_register" to "devm_pinctrl_register_and_init"
+> and "pinctrl_enable" since this is the recommended way.
+>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
 
-I wouldn't give my suggestion too much weight; I did qualify it with "Crazy idea."
-after all :-)
-
-> > tdx_vcpu_init_mem_region
-> >     guard(mutex)(&kvm->slots_lock)
-> >     kvm_gmem_populate
-> >         filemap_invalidate_lock(file->f_mapping)
-> >             __kvm_gmem_get_pfn      //1. get private PFN
-> >             post_populate           //tdx_gmem_post_populate
-> >                 get_user_pages_fast //2. get source page
-> >                 kvm_tdp_map_page    //3. map private PFN to mirror root
-> >                 tdh_mem_page_add    //4. add private PFN to S-EPT and copy
-> >                                          source page to it.
-> > 
-> > kvm_gmem_populate() helps TDX to "get private PFN" in step 1. Its file
-> > invalidate lock also helps ensure the private PFN remains valid when
-> > tdh_mem_page_add() is invoked in TDX's post_populate hook.
-> > 
-> > Though TDX does not need the folio prepration code, kvm_gmem_populate()
-> > helps on sharing common code between SEV-SNP and TDX.
-> > 
-> > Problem
-> > ===
-> > (1)
-> > In Michael's series "KVM: gmem: 2MB THP support and preparedness tracking
-> > changes" [4], kvm_gmem_get_pfn() was modified to rely on the filemap
-> > invalidation lock for protecting its preparedness tracking. Similarly, the
-> > in-place conversion version of guest_memfd series by Ackerly also requires
-> > kvm_gmem_get_pfn() to acquire filemap invalidation lock [5].
-> > 
-> > kvm_gmem_get_pfn
-> >     filemap_invalidate_lock_shared(file_inode(file)->i_mapping);
-> > 
-> > However, since kvm_gmem_get_pfn() is called by kvm_tdp_map_page(), which is
-> > in turn invoked within kvm_gmem_populate() in TDX, a deadlock occurs on the
-> > filemap invalidation lock.
-> 
-> Bringing the prior discussion over to here: it seems wrong that
-> kvm_gmem_get_pfn() is getting called within the kvm_gmem_populate()
-> chain, because:
-> 
-> 1) kvm_gmem_populate() is specifically passing the gmem PFN down to
->    tdx_gmem_post_populate(), but we are throwing it away to grab it
->    again kvm_gmem_get_pfn(), which is then creating these locking issues
->    that we are trying to work around. If we could simply pass that PFN down
->    to kvm_tdp_map_page() (or some variant), then we would not trigger any
->    deadlocks in the first place.
-
-Yes, doing kvm_mmu_faultin_pfn() in tdx_gmem_post_populate() is a major flaw.
-
-> 2) kvm_gmem_populate() is intended for pre-boot population of guest
->    memory, and allows the post_populate callback to handle setting
->    up the architecture-specific preparation, whereas kvm_gmem_get_pfn()
->    calls kvm_arch_gmem_prepare(), which is intended to handle post-boot
->    setup of private memory. Having kvm_gmem_get_pfn() called as part of
->    kvm_gmem_populate() chain brings things 2 things in conflict with
->    each other, and TDX seems to be relying on that fact that it doesn't
->    implement a handler for kvm_arch_gmem_prepare(). 
-> 
-> I don't think this hurts anything in the current code, and I don't
-> personally see any issue with open-coding the population path if it doesn't
-> fit TDX very well, but there was some effort put into making
-> kvm_gmem_populate() usable for both TDX/SNP, and if the real issue isn't the
-> design of the interface itself, but instead just some inflexibility on the
-> KVM MMU mapping side, then it seems more robust to address the latter if
-> possible.
-> 
-> Would something like the below be reasonable? 
-
-No, polluting the page fault paths is a non-starter for me.  TDX really shouldn't
-be synthesizing a page fault when it has the PFN in hand.  And some of the behavior
-that's desirable for pre-faults looks flat out wrong for TDX.  E.g. returning '0'
-on RET_PF_WRITE_PROTECTED and RET_PF_SPURIOUS (though maybe spurious is fine?).
-
-I would much rather special case this path, because it absolutely is a special
-snowflake.  This even eliminates several exports of low level helpers that frankly
-have no business being used by TDX, e.g. kvm_mmu_reload().
-
----
- arch/x86/kvm/mmu.h         |  2 +-
- arch/x86/kvm/mmu/mmu.c     | 78 ++++++++++++++++++++++++++++++++++++--
- arch/x86/kvm/mmu/tdp_mmu.c |  1 -
- arch/x86/kvm/vmx/tdx.c     | 24 ++----------
- 4 files changed, 78 insertions(+), 27 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-index b4b6860ab971..9cd7a34333af 100644
---- a/arch/x86/kvm/mmu.h
-+++ b/arch/x86/kvm/mmu.h
-@@ -258,7 +258,7 @@ extern bool tdp_mmu_enabled;
- #endif
- 
- bool kvm_tdp_mmu_gpa_is_mapped(struct kvm_vcpu *vcpu, u64 gpa);
--int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level);
-+int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn);
- 
- static inline bool kvm_memslots_have_rmaps(struct kvm *kvm)
- {
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 6e838cb6c9e1..bc937f8ed5a0 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4900,7 +4900,8 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
- 	return direct_page_fault(vcpu, fault);
- }
- 
--int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level)
-+static int kvm_tdp_prefault_page(struct kvm_vcpu *vcpu, gpa_t gpa,
-+				 u64 error_code, u8 *level)
- {
- 	int r;
- 
-@@ -4942,7 +4943,6 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level
- 		return -EIO;
- 	}
- }
--EXPORT_SYMBOL_GPL(kvm_tdp_map_page);
- 
- long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
- 				    struct kvm_pre_fault_memory *range)
-@@ -4978,7 +4978,7 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
- 	 * Shadow paging uses GVA for kvm page fault, so restrict to
- 	 * two-dimensional paging.
- 	 */
--	r = kvm_tdp_map_page(vcpu, range->gpa | direct_bits, error_code, &level);
-+	r = kvm_tdp_prefault_page(vcpu, range->gpa | direct_bits, error_code, &level);
- 	if (r < 0)
- 		return r;
- 
-@@ -4990,6 +4990,77 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
- 	return min(range->size, end - range->gpa);
- }
- 
-+int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
-+{
-+	struct kvm_page_fault fault = {
-+		.addr = gfn_to_gpa(gfn),
-+		.error_code = PFERR_GUEST_FINAL_MASK | PFERR_PRIVATE_ACCESS,
-+		.prefetch = true,
-+		.is_tdp = true,
-+		.nx_huge_page_workaround_enabled = is_nx_huge_page_enabled(vcpu->kvm),
-+
-+		.max_level = KVM_MAX_HUGEPAGE_LEVEL,
-+		.req_level = PG_LEVEL_4K,
-+		.goal_level = PG_LEVEL_4K,
-+		.is_private = true,
-+
-+		.gfn = gfn,
-+		.slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn),
-+		.pfn = pfn,
-+		.map_writable = true,
-+	};
-+	struct kvm *kvm = vcpu->kvm;
-+	int r;
-+
-+	lockdep_assert_held(&kvm->slots_lock);
-+
-+	if (KVM_BUG_ON(!tdp_mmu_enabled, kvm))
-+		return -EIO;
-+
-+	if (kvm_gfn_is_write_tracked(kvm, fault.slot, fault.gfn))
-+		return -EPERM;
-+
-+	r = kvm_mmu_reload(vcpu);
-+	if (r)
-+		return r;
-+
-+	r = mmu_topup_memory_caches(vcpu, false);
-+	if (r)
-+		return r;
-+
-+	do {
-+		if (signal_pending(current))
-+			return -EINTR;
-+
-+		if (kvm_test_request(KVM_REQ_VM_DEAD, vcpu))
-+			return -EIO;
-+
-+		cond_resched();
-+
-+		guard(read_lock)(&kvm->mmu_lock);
-+
-+		r = kvm_tdp_mmu_map(vcpu, &fault);
-+	} while (r == RET_PF_RETRY);
-+
-+	if (r != RET_PF_FIXED)
-+		return -EIO;
-+
-+	/*
-+	 * The caller is responsible for ensuring that no MMU invalidations can
-+	 * occur.  Sanity check that the mapping hasn't been zapped.
-+	 */
-+	if (IS_ENABLED(CONFIG_KVM_PROVE_MMU)) {
-+		cond_resched();
-+
-+		scoped_guard(read_lock, &kvm->mmu_lock) {
-+			if (KVM_BUG_ON(!kvm_tdp_mmu_gpa_is_mapped(vcpu, fault.addr), kvm))
-+				return -EIO;
-+		}
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(kvm_tdp_mmu_map_private_pfn);
-+
- static void nonpaging_init_context(struct kvm_mmu *context)
- {
- 	context->page_fault = nonpaging_page_fault;
-@@ -5973,7 +6044,6 @@ int kvm_mmu_load(struct kvm_vcpu *vcpu)
- out:
- 	return r;
- }
--EXPORT_SYMBOL_GPL(kvm_mmu_load);
- 
- void kvm_mmu_unload(struct kvm_vcpu *vcpu)
- {
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index 7f3d7229b2c1..4f73d5341ebe 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -1953,7 +1953,6 @@ bool kvm_tdp_mmu_gpa_is_mapped(struct kvm_vcpu *vcpu, u64 gpa)
- 	spte = sptes[leaf];
- 	return is_shadow_present_pte(spte) && is_last_spte(spte, leaf);
- }
--EXPORT_SYMBOL_GPL(kvm_tdp_mmu_gpa_is_mapped);
- 
- /*
-  * Returns the last level spte pointer of the shadow page walk for the given
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index f4d4fd5cc6e8..02142496754f 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -3170,15 +3170,12 @@ struct tdx_gmem_post_populate_arg {
- static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
- 				  void __user *src, int order, void *_arg)
- {
--	u64 error_code = PFERR_GUEST_FINAL_MASK | PFERR_PRIVATE_ACCESS;
--	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
- 	struct tdx_gmem_post_populate_arg *arg = _arg;
--	struct kvm_vcpu *vcpu = arg->vcpu;
-+	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-+	u64 err, entry, level_state;
- 	gpa_t gpa = gfn_to_gpa(gfn);
--	u8 level = PG_LEVEL_4K;
- 	struct page *src_page;
- 	int ret, i;
--	u64 err, entry, level_state;
- 
- 	/*
- 	 * Get the source page if it has been faulted in. Return failure if the
-@@ -3190,24 +3187,10 @@ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
- 	if (ret != 1)
- 		return -ENOMEM;
- 
--	ret = kvm_tdp_map_page(vcpu, gpa, error_code, &level);
-+	ret = kvm_tdp_mmu_map_private_pfn(arg->vcpu, gfn, pfn);
- 	if (ret < 0)
- 		goto out;
- 
--	/*
--	 * The private mem cannot be zapped after kvm_tdp_map_page()
--	 * because all paths are covered by slots_lock and the
--	 * filemap invalidate lock.  Check that they are indeed enough.
--	 */
--	if (IS_ENABLED(CONFIG_KVM_PROVE_MMU)) {
--		scoped_guard(read_lock, &kvm->mmu_lock) {
--			if (KVM_BUG_ON(!kvm_tdp_mmu_gpa_is_mapped(vcpu, gpa), kvm)) {
--				ret = -EIO;
--				goto out;
--			}
--		}
--	}
--
- 	ret = 0;
- 	err = tdh_mem_page_add(&kvm_tdx->td, gpa, pfn_to_page(pfn),
- 			       src_page, &entry, &level_state);
-@@ -3267,7 +3250,6 @@ static int tdx_vcpu_init_mem_region(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *c
- 	    !vt_is_tdx_private_gpa(kvm, region.gpa + (region.nr_pages << PAGE_SHIFT) - 1))
- 		return -EINVAL;
- 
--	kvm_mmu_reload(vcpu);
- 	ret = 0;
- 	while (region.nr_pages) {
- 		if (signal_pending(current)) {
-
-base-commit: 6c7ecd725e503bf2ca69ff52c6cc48bb650b1f11
---
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pinctrl/nxp/pinctrl-s32cc.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/pinctrl/nxp/pinctrl-s32cc.c b/drivers/pinctrl/nxp/pinctrl-s32cc.c
+> index c90cd96a9dc4..c03dac643cb3 100644
+> --- a/drivers/pinctrl/nxp/pinctrl-s32cc.c
+> +++ b/drivers/pinctrl/nxp/pinctrl-s32cc.c
+> @@ -973,10 +973,10 @@ int s32_pinctrl_probe(struct platform_device *pdev,
+>  		return dev_err_probe(&pdev->dev, ret,
+>  				     "Fail to probe dt properties\n");
+>
+> -	ipctl->pctl = devm_pinctrl_register(&pdev->dev, s32_pinctrl_desc,
+> -					    ipctl);
+> -	if (IS_ERR(ipctl->pctl))
+> -		return dev_err_probe(&pdev->dev, PTR_ERR(ipctl->pctl),
+> +	ret = devm_pinctrl_register_and_init(&pdev->dev, s32_pinctrl_desc,
+> +					     ipctl, &ipctl->pctl);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret,
+>  				     "Could not register s32 pinctrl driver\n");
+>
+>  #ifdef CONFIG_PM_SLEEP
+> @@ -989,7 +989,12 @@ int s32_pinctrl_probe(struct platform_device *pdev,
+>  		return -ENOMEM;
+>  #endif
+>
+> -	dev_info(&pdev->dev, "initialized s32 pinctrl driver\n");
+> +	ret = pinctrl_enable(ipctl->pctl);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "Failed to enable pinctrl\n");
+> +
+> +	dev_info(&pdev->dev, "Initialized S32 pinctrl driver\n");
+>
+>  	return 0;
+>  }
+> --
+> 2.45.2
+>
 
