@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-724849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A5BAFF797
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:36:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D28AFF796
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 05:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116063B2E80
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:36:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97CCF3B2125
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179AB28469F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1787B28469D;
 	Thu, 10 Jul 2025 03:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5hSEqGT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkrnOAxX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6F627F18C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F600748F;
 	Thu, 10 Jul 2025 03:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752118572; cv=none; b=OSjUf3Td91pBKV1mrMUTOfCuCJnnGkJvFsrIaICoLBYCKQSTNG+FbHApJ5HK5JWFO8ibfyXZeOoy+DqaKRZUB2Ov1zwb0zMc0kbi5cwIvTOPyEYu8vaiHtBNfx/LiIEtoROr4p3Iweoigh6MRki0fTrf3m6CKYYv71XFJuKB60E=
+	t=1752118572; cv=none; b=B0Z4TDZkDJEAVbqwSCpm7U8PhX/BpAfqrsJXxMhruoPsyDcTgfwwoqPURDePchDub0DL9HSwU+NSt4X9JHPjq4R6Xksf7zp6bpRZxZMc4S2dMdBbqkl7h5RnPgDM/KXqW2fx/Ru0V2ShLGkIc5DuZwVizk5OkVgHFmxR5V+1CME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752118572; c=relaxed/simple;
-	bh=J9IHr1KctOiK5uQHZbL/z3dzePJcspSYALMm97MYSQ4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KNL03EwOUHoRyBJsTCUhpwtrQmsB3rN/X+x0qTujbtOInucAmihWWd6Un4GgWrNPrn7eT+ie7FTB7ra8iyPaQ1yikUK2aTuR7vRg0YscoXiUjq+bse1REPiZv6aiOPCCiX1WxWWIaDUb23q4G1Te1NFx2FUSQgeDGxOme/0W1VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5hSEqGT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CDAAEC4CEEF;
+	bh=//XINryxTmCrNyFb/Ct61hIPybf0yNjBvdelFx7bQ14=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=uBJP+5Nnl6/d9Zs9kjrZO+4VvSVCkByxEp9WWw4msQHRO/YgGDUH5QF7eE30A2PWGXl3w2FNCZVyUyLf1nZmB7coio06FFHvpQHY5FXV/gzGq/fIIalI/2TX4+AQf5JQXFy3h2gQyZBh7VxkGg/O2H/K5B1HCwKEF+JXNohwNOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kkrnOAxX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DB9B4C4CEF5;
 	Thu, 10 Jul 2025 03:36:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1752118571;
-	bh=J9IHr1KctOiK5uQHZbL/z3dzePJcspSYALMm97MYSQ4=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=Y5hSEqGTXu/Pj3yyA4uWS0LpBDCYQuOGTxum+FvU6lh+QU+0iRrgASLXoH8nCmxVD
-	 Sexi7U27kS355BYYEQVuJb18uGpgGEoSf/Ne3MghxggY+1RHKU8nmkkIuPsCCVitET
-	 UzjAHhC4vSkVMjaKGstgMX3QK9ymKfXBEhIRNaQTrLt8BF54F7dl95H0Qt918XzEtI
-	 0HB69onL0ZDh/sWchE6WSSfnpYFyvvltuHb4Z9anqALLGfRmdhiMfYyv+kNmfFhhdN
-	 q0y3SdSytqVo+uflv/Uv97avlpJzLzPitppHMTWN3UoOFIystTvykHZHRagTUUUsVO
-	 bmmM/xpWo1w1Q==
+	bh=//XINryxTmCrNyFb/Ct61hIPybf0yNjBvdelFx7bQ14=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=kkrnOAxXTMSlLFNg6v0c+xTV5qRyIWAEA9MGwPRXxA7ryjseHdNkQ00odvaGGcJoV
+	 /oXAYn1FXDUTaLMa3rgqUokmYfVuWCYaoiu4k6jKMIcKLRRJRZge6Z/8Chi1ImrPqI
+	 Lw7XcWMHpDZ7W2BpPjXfqMLv/KbcoM488eMPzDF2syhj7A7kp4JK+1bIte+j8b8h8D
+	 rsswUExVHhJlAnhQelcqbzoWtq6WvuAjOXaPmydybBLJC8byFze0UKwtw0vlZ+MXd/
+	 PpKUXOCYzLqMIM9XGo2n24fgxqHo0YXT491zH6/8z2Nlzk8s3/i3hB5hmYZclSpnPs
+	 d/o1aFdC5jxdw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B920AC83F09;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA1D2C83030;
 	Thu, 10 Jul 2025 03:36:11 +0000 (UTC)
 From: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
-Subject: [PATCH v5 0/6] Add support for S4 audio
-Date: Thu, 10 Jul 2025 11:35:36 +0800
-Message-Id: <20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com>
+Date: Thu, 10 Jul 2025 11:35:37 +0800
+Subject: [PATCH v5 1/6] dt-bindings: clock: meson: Add audio power domain
+ for s4 soc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,12 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAk1b2gC/2XM3WoCMRCG4VuRHDdlJpM1WY96HyIl5kcH6qZkN
- Siy994oFHVljr6B572KMRaOo1gtrqLEyiPnoY3uYyH83g27KDm0LRSoDhBBulPg/B1K5VgkGNe
- RRa97vRWN/JaY+HzPrTdt73k85nK51yvevv8heg1VlCCtR20MJLIOvtzhJ+/Yf/p8ELdUVQ+uU
- M+4apyMtZgcGd/Hd05PXNkZp8bDNgWCDkzU/p3rByfsZ1w3vrTtTHLBYP/Kp2n6A3i68TRnAQA
- A
-X-Change-ID: 20250110-audio_drvier-07a5381c494b
+Message-Id: <20250710-audio_drvier-v5-1-d4155f1e7464@amlogic.com>
+References: <20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com>
+In-Reply-To: <20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com>
 To: Jerome Brunet <jbrunet@baylibre.com>, 
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -75,11 +73,11 @@ Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com, 
  jiebing chen <jiebing.chen@amlogic.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752118569; l=2849;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752118569; l=3341;
  i=jiebing.chen@amlogic.com; s=20250110; h=from:subject:message-id;
- bh=J9IHr1KctOiK5uQHZbL/z3dzePJcspSYALMm97MYSQ4=;
- b=rqiq0Hm8pHRGBFSUb4QfYzyj05BRkcTHYujviz7z7Z/l5KLn0NWIymzBLMeVCmcJ3cqtxuVOm
- LGEhApJJnhPD/vCifRnMFRD2RT6AyICY0sQw5MuzIpTVJl80EgjXfNv
+ bh=yhsDXY7MMuP9ySNiIHj39Bbbf6ifv82AD9aG95a7FPY=;
+ b=HRzZrpgSyMnpl/g7RHqIYGPk+EWvIzv1UFfvZEX3wevTxrCDzEyWmeD2hjyeoTXBQkF3x/u9Z
+ HDXGEqCWaujBJZeKMnPNwhyn0alcJBgFA9a3avMZjC+jNYSXuybdFDI
 X-Developer-Key: i=jiebing.chen@amlogic.com; a=ed25519;
  pk=6rFvvF45A84pLNRy03hfUHeROxHCnZ+1KAGw/DoqKic=
 X-Endpoint-Received: by B4 Relay for jiebing.chen@amlogic.com/20250110 with
@@ -87,73 +85,123 @@ X-Endpoint-Received: by B4 Relay for jiebing.chen@amlogic.com/20250110 with
 X-Original-From: jiebing chen <jiebing.chen@amlogic.com>
 Reply-To: jiebing.chen@amlogic.com
 
-This series completes the end-to-end audio support
-for S4 SoC from hardware bindings to driver implementation
-and system integration.
+From: jiebing chen <jiebing.chen@amlogic.com>
 
-1 Device Tree Bindings Updates 
-Added audio power domain support for S4 SoC.Defined mclk/sclk pad clock IDs in AXG audio bindings.
-Add S4 audio tocodec binding support.
-
-2 Driver Implementation
-Implemented S4 tocodec driver for G12A architecture.
-Add mclk pad divider support for S4 in AXG audio clock.
-
-3 Device Tree Integration
-Add Amlogic S4 audio subsystem support in arm64 DTS.
+The audio power domain has been detected on S4 device.
+It must be enabled prior to audio operations.
 
 Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
 ---
-Changes in v5:
-- Fix warning Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yam when make dt_binding_check
-- The audio reg is mounted below the APB bus in dts file.
-- Deal with pad clock in a distinct controller.
-- Fix warning for sound/soc/meson/g12a-toacodec.c
-- Link to v4: https://lore.kernel.org/r/20250319-audio_drvier-v4-0-686867fad719@amlogic.com
+ .../bindings/clock/amlogic,axg-audio-clkc.yaml     | 55 +++++++++++++++++++++-
+ 1 file changed, 54 insertions(+), 1 deletion(-)
 
-Changes in v4:
-- fix dtb check warning 
-- add maxItems of power domain for dt-bindings
-- fixed audio clock pads regmap base and reg offset 
-- use dapm widget to control tocodec bclk and mclk enable
-- Link to v3: https://lore.kernel.org/r/20250228-audio_drvier-v3-0-dbfd30507e4c@amlogic.com
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+index fd7982dd4ceab82389167079c2258a9acff51a76..c3f0bb9b2ff050394828ba339a7be0c9c48e9a76 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
++++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+@@ -21,6 +21,8 @@ properties:
+       - amlogic,axg-audio-clkc
+       - amlogic,g12a-audio-clkc
+       - amlogic,sm1-audio-clkc
++      - amlogic,s4-audio-clkc
++      - amlogic,clock-pads-clkc
+ 
+   '#clock-cells':
+     const: 1
+@@ -100,13 +102,15 @@ properties:
+   resets:
+     description: internal reset line
+ 
++  power-domains:
++    maxItems: 1
++
+ required:
+   - compatible
+   - '#clock-cells'
+   - reg
+   - clocks
+   - clock-names
+-  - resets
+ 
+ allOf:
+   - if:
+@@ -116,12 +120,37 @@ allOf:
+             enum:
+               - amlogic,g12a-audio-clkc
+               - amlogic,sm1-audio-clkc
++              - amlogic,s4-audio-clkc
+     then:
+       required:
+         - '#reset-cells'
+     else:
+       properties:
+         '#reset-cells': false
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - amlogic,s4-audio-clkc
++    then:
++      required:
++        - power-domains
++    else:
++      properties:
++        power-domains: false
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - amlogic,clock-pads-clkc
++    then:
++      properties:
++        resets: false
++    else:
++      required:
++        - resets
+ 
+ additionalProperties: false
+ 
+@@ -129,6 +158,7 @@ examples:
+   - |
+     #include <dt-bindings/clock/axg-clkc.h>
+     #include <dt-bindings/reset/amlogic,meson-axg-reset.h>
++    #include <dt-bindings/power/meson-s4-power.h>
+     apb {
+         #address-cells = <2>;
+         #size-cells = <2>;
+@@ -198,4 +228,27 @@ examples:
+                           "slv_lrclk9";
+             resets = <&reset RESET_AUDIO>;
+         };
++      clk_pad: clock-controller@330e80 {
++        compatible = "amlogic,clock-pads-clkc";
++        reg = <0x0 0x330e80 0x0 0x10>;
++        #clock-cells = <1>;
++        clocks = <&clkc_periphs CLKID_AUDIO>,
++                 <&clkc_pll CLKID_MPLL0>,
++                 <&clkc_pll CLKID_MPLL1>,
++                 <&clkc_pll CLKID_MPLL2>,
++                 <&clkc_pll CLKID_MPLL3>,
++                 <&clkc_pll CLKID_HIFI_PLL>,
++                 <&clkc_pll CLKID_FCLK_DIV3>,
++                 <&clkc_pll CLKID_FCLK_DIV4>,
++                 <&clkc_pll CLKID_FCLK_DIV5>;
++        clock-names = "pclk",
++                      "mst_in0",
++                      "mst_in1",
++                      "mst_in2",
++                      "mst_in3",
++                      "mst_in4",
++                      "mst_in5",
++                      "mst_in6",
++                      "mst_in7";
++      };
+     };
 
-Changes in v3:
-- remove g12a tocodec switch event
-- Modify the incorrect title for dt-bindings
-- Link to v2: https://lore.kernel.org/r/20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com
-
-Changes in v2:
-- remove tdm pad control and change tocodec base on g12a
-- change hifipll rate to support 24bit
-- add s4 audio clock
-- Link to v1: https://lore.kernel.org/r/20250113-audio_drvier-v1-0-8c14770f38a0@amlogic.com
-
----
-jiebing chen (6):
-      dt-bindings: clock: meson: Add audio power domain for s4 soc
-      dt-bindings: clock: axg-audio: Add mclk and sclk pad clock ids
-      dt-bindings: Asoc: axg-audio: Add s4 audio tocodec
-      ASoC: meson: g12a-toacodec: Add s4 tocodec driver
-      clk: meson: axg-audio: Add the mclk pad div for s4 chip
-      arm64: dts: amlogic: Add Amlogic S4 Audio
-
- .../bindings/clock/amlogic,axg-audio-clkc.yaml     |  55 ++-
- .../bindings/sound/amlogic,g12a-toacodec.yaml      |   1 +
- .../boot/dts/amlogic/meson-s4-s805x2-aq222.dts     | 218 +++++++++++
- arch/arm64/boot/dts/amlogic/meson-s4.dtsi          | 387 ++++++++++++++++++
- drivers/clk/meson/axg-audio.c                      | 435 ++++++++++++++++++++-
- drivers/clk/meson/axg-audio.h                      |   6 +
- include/dt-bindings/clock/axg-audio-clkc.h         |  11 +
- sound/soc/meson/g12a-toacodec.c                    |  42 ++
- 8 files changed, 1152 insertions(+), 3 deletions(-)
----
-base-commit: 6ecd20965bdc21b265a0671ccf36d9ad8043f5ab
-change-id: 20250110-audio_drvier-07a5381c494b
-
-Best regards,
 -- 
-Jiebing Chen <jiebing.chen@amlogic.com>
+2.43.0
 
 
 
