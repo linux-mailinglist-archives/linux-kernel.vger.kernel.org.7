@@ -1,143 +1,138 @@
-Return-Path: <linux-kernel+bounces-725024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A2BAFF9E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:33:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F53BAFF9E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D348A1C4294B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:34:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8E36580EDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B3128725D;
-	Thu, 10 Jul 2025 06:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EC6286D55;
+	Thu, 10 Jul 2025 06:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="kCwIMIX0"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="X+0uBzm3"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F276622CBC0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B68F22CBC0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752129234; cv=none; b=UY0JiZTq/Q5v7JBy298/zCgmcG3pKIfyU6O0IdxTQUqCD1ImMjFYFrmmId/lGhk1eEh7Ytaf2VHpVK/szlI9B/+PudEm66EY8sbh7MKf2QDUXvyY/POInVExZnU65TBQUNyMoEUBPMiRFMQvFUc1IH11hY33qN5n9Wcx6B2kwqg=
+	t=1752129320; cv=none; b=DF6gUOUBCuuzDa0LSBuBe0qYKeF6mtuhhjQDtWQJtL5k2m0a9ifzfEFkP4m/58p7wTmZPOtqSOaQjnZRZ2hrbytRUSEu7LA4qCuMMoev1swdYj5eDKLL24aqBWqe3rxQu3Te8JML8qc3mhwvK+otQOidKHOPyeZYsQMD+FgDots=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752129234; c=relaxed/simple;
-	bh=fj6W66sPr7Ji9329jAkLIL1CrVKPhluEPji8nUmmCag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ekwIXghug0tQnQdcSjJemyED/hmLTC6XMMma9ryrADwy/JXqQWM7O274m1RuMz8S0VglxO/pd2pyQqSi33t0X8bD6B/4qlGXGTAxBBNhwl05Ycr2nCYU4uSycdQjADYllwod4uIjo6vXN1jEkd+fj7w26ZSMqUgyfXSXmzs2KJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=kCwIMIX0; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e87c86845d9so477076276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 23:33:50 -0700 (PDT)
+	s=arc-20240116; t=1752129320; c=relaxed/simple;
+	bh=ElqAfZh2BVgxfhGm74ckQk9GyfGSk4GuN3P5xEeR6vI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=Q8stPDNsdgCyeZDSa8pVQp/bIpdmpbVvV3CaKcMU4yyGUk58JueFjs+wR0wn8eY5KLb5nqMso5GIqgz+9Ofjf8LRu79i1YtN/+kPduC6bxb3wMIk721NE2FzsAxc/l3RWtcdnOUEuBvmC0apgi5fNlubrp4l3acisjgbwPfYgQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=X+0uBzm3; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4f64cdc2dso86264f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 23:35:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1752129230; x=1752734030; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=ventanamicro.com; s=google; t=1752129317; x=1752734117; darn=vger.kernel.org;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LOfKyTSrKEeE5mRVGbOkpddwy61Hvu8Xrql9GC0LhTY=;
-        b=kCwIMIX0xI+FF4eyIrZKYmYLyUmzCNhlOe0IvNyklrooYhLtDrAxlbm5hlLdUagTrs
-         szRok5kM5ROl3FWGYSBIQrA1CVZvKpqAMKvCeTKvm4bJ/qqAQWis9OT3yIu3cq68y+GS
-         D3c6xDvvN/n5S8sAnEQZy4FGrNnKj1jWJVgfOKhpTJqa1qXM9gPcZhUi8aOcELee5LkM
-         VnAHdnllVtJ8IEfO2FZ1fcqvV2oqgj/JvlrYbRPASCQcaMoH+zbbeQzYpBTmGaYl89uH
-         0QCftfGvgIQvsA1Gt8eXf86EiqtIeVDeOxUXAqDmQcoBsqhLztsiVemdjl4o8PmyfOVB
-         eXLQ==
+        bh=kyhfcIGHykgvkrP2e/H7VmjAsjt0CsIijqEuhYmyjZA=;
+        b=X+0uBzm3bi+AK1j8teGJm62HTgg3xswH/ObRCwbigjCBub6q31LIs/ErO+9bVytq0L
+         V9UCRLl79uiw7COf3DiGJBbUvfGByyNGZPUGiaicMVFsFQ5eXV1EyTpfXUwH9WmKbSeM
+         nh703dBsvxKH3lTYadSAcWn0ASS+7t3ObCUB71PlKHVTsaDw+49Syah/59cHUfUfcl2D
+         uR40EpftrwRos70HsLyOA+iTOdWsNfoDmnLPzSbYLRSrNVr5j9RzeoW3OUbMVFK0u4t8
+         oRq/mzhJtHedOdhZYlWanarZid56shttN2rcHTjcmfu62l9w1JzPl1B2aV4KgNRznX2m
+         HUAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752129230; x=1752734030;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LOfKyTSrKEeE5mRVGbOkpddwy61Hvu8Xrql9GC0LhTY=;
-        b=ZSP0yIxgzPp2G1KLI9yzg7+UbTOif9il62tOxngLnZ2sBY9U2uDGkiR2FbJLGw60W/
-         V1G+1eqhWYTuZunSmGR01YUGxjQNk/TDulMgJ6ZRS903bk475Pq351PDd2E3eUwgE4xo
-         d6VBwE4BwNlEwczdTwM2ygpCkENuzppIzcuX2Qfr5PmnJApSYegQ+4u2n1CyZvwhOd18
-         Ws6zXtE4yO1EGTFmTYo5qN3ZRV3R21/YPSb6mrHdIDA9N+BSUqdXf1IkorypliLuDsGj
-         KA0V+SdrzPPWkYxJ3qi+Sp+iYk1Ge9q/gsT/yopTdcygFy4K16an2vNVwhalWdOYJ4hA
-         TcYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ7UQLnP1JUSjQjpAjlLJzJgrpQNauv+4m8FdSpLIjauPxPLTgFJF63lYSC6G/QjtkBl0lxmEMu6ZNRsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCQgxTfFQi8mMAhsWxY5EAWMcJI33XrClwa4FaIS/lBO9zdR1D
-	VchRMgQ+hiVfqUT9GitzRTUnsOO7Luy9rJkX6E+7ZKa0G3ZQVWX4CjqJDzMM3lxApZhxhK0T35F
-	7Iu65SjsjRScvGYQPvkoYBVYCaiDPo70M0GZZ+EU8/w==
-X-Gm-Gg: ASbGnctS7FIJ6Y0EvCzo/3BCeVuGQa0PyB3AoHNceQvzwsKQDXlFvtgCcIlOXcJurMg
-	RcL9jvHgQXdFQ3FwoI82cAUTleorWOIov8oZkH8Y52kaGmLffAOepwIKr0hUpFCmQ9OrLpu6Cl5
-	P2YFgwbdnFaHqFkxHKQ0vJb+qDYI2M02XQlJf8oVfEF7WM7PIuaWsLw41o6GdzWEo0
-X-Google-Smtp-Source: AGHT+IEUEuXYe+AiRoP9sKK+Q2LJ7hkbYYZRPRjU65Kj1Wu6nsLtbs1bxTc1Gn9tJMDj6XgH3uwUSmTRPbmjpClz12M=
-X-Received: by 2002:a05:690c:7405:b0:708:16b0:59c3 with SMTP id
- 00721157ae682-717b1a8aa20mr78370367b3.33.1752129229913; Wed, 09 Jul 2025
- 23:33:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752129317; x=1752734117;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kyhfcIGHykgvkrP2e/H7VmjAsjt0CsIijqEuhYmyjZA=;
+        b=a19PKSD60LzN7PoxNH7wuRQ2EYY8t8mdwwXT4ez2bNh/6AlpvZgVuRkta0bcPj7Wcy
+         HKyp+N82czgWWMMsT2gddQAoRGeg91e9XISYoP9m4kGlEjj8uyYKu671j36Kkjbsath7
+         3BEfT4OjcfZVPOqEvbY3R4OTecneui7BGroot2IWaFVDbMyJCzuZR5rZMfK1z3cQ1LxA
+         UmaYDCj4HDd8agFqXceR3uKP6e/E0GuhNMdv1fYaVYyolPg8rKJ94tzsAdg/F5fNmnw9
+         Pfmn1nPNZrajmZZHqawESJVxJqhKuA5q2fimRm5UBXLcVxc71yliotAs7gAl5Vhm/Zj2
+         YBMA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6MB4z9lsTdFUkwFQAsWRPd8Z0V/jRu6klnOA3GjWSjbcZZmG1q0cN1gvVAtcEzALsRsNjPPOj/mkal4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNYoLbpKD8jkaqmYcAD8T+9vHFJtrQQqNZ+j+e8L3Cmp1AaFJh
+	CxUn7MYIya1WtSj9Au440SZnu2QrnY11vufVgBLgtUnvl5I9lqvmqC7TMYmPERhCorU=
+X-Gm-Gg: ASbGncsY9dpdJCyvYBn9A/0tQOJYzzPWgjqcZa/61RL2ISOzq007g5bWd3SvWxNFjT/
+	Z4p0N//l06Eg86+UhqOaE1XHzM2H79048VLMDobhcGzFUXQo5m2E89zf8pQn03M3w7qAW5A9FOB
+	GJ8BhTme8NpoNFTW4cifWF2S0NoRBeg5+o/17VgT03zzEA1iFLCGmTtQYBS47g/n8GH36KlXp3e
+	Md+fgoy69MVAZsMDOmVLfYb/Nb9jsORFGacLCN3SWvRviBufSe37m+nmLMUxoZBXD9cccLs2QE0
+	qMFFqKt65mfw9UvdrnrejI1YWO7uPS2FGJbjPYJbrtFpya3K0mGHfEWxIYtxZzDo7aOR9fU9+H4
+	JQKbuJX7yBlkbp0Rb1VMYUA==
+X-Google-Smtp-Source: AGHT+IEqEitaMgB8tObGyqBHxc/XW6tkIZ1LssQgO+WUWZXRaXyhTeRPn6KcRlFtzKo7i/2kYbIvaw==
+X-Received: by 2002:a05:600c:3584:b0:453:76e2:5b16 with SMTP id 5b1f17b1804b1-454db9090c3mr7110435e9.0.1752129316466;
+        Wed, 09 Jul 2025 23:35:16 -0700 (PDT)
+Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cdb381a6sm57354855e9.1.2025.07.09.23.35.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 23:35:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250429085048.1310409-1-guodong@riscstar.com>
- <175198458423.86859.5882458274157023095.b4-ty@gentoo.org> <20250709063738-GYA488894@gentoo>
-In-Reply-To: <20250709063738-GYA488894@gentoo>
-From: Guodong Xu <guodong@riscstar.com>
-Date: Thu, 10 Jul 2025 14:33:37 +0800
-X-Gm-Features: Ac12FXzWKaYp6y1oSJwNCeBf8VLK9_pLF6KbvY2LESuIM6jHvBvBU0Xdd6tceRA
-Message-ID: <CAH1PCMaZYaRgUoaMfDLyqwTv3n3NUaUL8tHr8SoTq=4ayuvyhA@mail.gmail.com>
-Subject: Re: (subset) [PATCH v3 0/6] pwm: Update PWM_PXA driver for SpacemiT K1
-To: Yixun Lan <dlan@gentoo.org>
-Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de, drew@pdp7.com, 
-	inochiama@gmail.com, geert+renesas@glider.be, heylenay@4d2.org, 
-	tglx@linutronix.de, hal.feng@starfivetech.com, unicorn_wang@outlook.com, 
-	duje.mihanovic@skole.hr, heikki.krogerus@linux.intel.com, elder@riscstar.com, 
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	spacemit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Jul 2025 08:35:15 +0200
+Message-Id: <DB8607ITP9UR.2LOW61O3OVJ2F@ventanamicro.com>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [External] [PATCH] RISC-V: store percpu offset in CSR_SCRATCH
+Cc: <masahiroy@kernel.org>, <nathan@kernel.org>, <nicolas.schier@linux.dev>,
+ <dennis@kernel.org>, <tj@kernel.org>, <cl@gentwo.org>,
+ <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+ <alex@ghiti.fr>, <andybnac@gmail.com>, <bjorn@rivosinc.com>,
+ <cyrilbur@tenstorrent.com>, <rostedt@goodmis.org>, <puranjay@kernel.org>,
+ <ben.dooks@codethink.co.uk>, <zhangchunyan@iscas.ac.cn>,
+ <ruanjinjie@huawei.com>, <jszhang@kernel.org>, <charlie@rivosinc.com>,
+ <cleger@rivosinc.com>, <antonb@tenstorrent.com>, <ajones@ventanamicro.com>,
+ <debug@rivosinc.com>, <haibo1.xu@intel.com>, <samuel.holland@sifive.com>,
+ <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>, <wangziang.ok@bytedance.com>
+To: "yunhui cui" <cuiyunhui@bytedance.com>
+References: <20250704084500.62688-1-cuiyunhui@bytedance.com>
+ <DB5U402ARSEO.4H4PE19LGCR7@ventanamicro.com>
+ <CAEEQ3w=V6-d+YSWP=0WMt6UAZexrazq0UQjdyUmS3AnMtkdoKQ@mail.gmail.com>
+ <DB6MLPA3BJ75.2U5FP5JSJD2LO@ventanamicro.com>
+ <CAEEQ3wkoy3Jr0vZk=X4U56KYPq3=5t7Wr4RE6uNby3MS5qzh-g@mail.gmail.com>
+ <DB7L9ZHZI3AI.36SXWX2SO9OS7@ventanamicro.com>
+ <CAEEQ3wnaL5X_jXEmbbWFp3jx1Aq=02Gf7kDNBS=wcPyfEq7yBw@mail.gmail.com>
+In-Reply-To: <CAEEQ3wnaL5X_jXEmbbWFp3jx1Aq=02Gf7kDNBS=wcPyfEq7yBw@mail.gmail.com>
 
-On Wed, Jul 9, 2025 at 2:37=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wrote:
+2025-07-10T11:45:06+08:00, yunhui cui <cuiyunhui@bytedance.com>:
+> On Wed, Jul 9, 2025 at 10:20=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrc=
+mar@ventanamicro.com> wrote:
+>> Is the overhead above with this patch?  And when we then use the
+>> CSR_SCRATCH for percpu, does it degrade even further?
 >
-> Hi Guodong,
+> We can see that the percpu optimization is around 2.5% through the
+> method of fixing registers, and we can consider that the percpu
+> optimization can bring a 2.5% gain. Is there no need to add the percpu
+> optimization logic on the basis of the scratch patch for testing?
 >
-> On 22:33 Tue 08 Jul     , Yixun Lan wrote:
-> >
-> > On Tue, 29 Apr 2025 16:50:42 +0800, Guodong Xu wrote:
-> > > This patchset adds support for the SpacemiT K1 SoC in the PWM_PXA dri=
-ver
-> > > and updates related device tree bindings. The changes enable PWM
-> > > functionality on the K1 platform through driver enhancements,
-> > > configuration updates, and device tree additions.
-> > >
-> > > Functionality has been verified on the Banana Pi BPI-F3 board using P=
-WM14,
-> > > configured as a pwm-backlight. Per community feedback, the actual
-> > > pwm-backlight node is not included in this patchset but can be found =
-in
-> > > patch 7 of the v1 series, with modification of pwms property to 4-cel=
-l
-> > > format to match updated binding (#pwm-cells =3D <3>) since v3.
-> > >
-> > > [...]
-> >
-> > Applied, thanks!
-> >
-> > [3/6] riscv: dts: spacemit: add PWM support for K1 SoC
-> >       https://github.com/spacemit-com/linux/commit/9aebdfc21f755e0d2766=
-683aa251435fb656ea47
->
-> found have to re-arrange the nodes according to ascending order of unit a=
-ddress,
-> so here is new version I've pushed, just FYI, please check (should have
-> no functionality changes)
->        https://github.com/spacemit-com/linux/commit/66f56c7a6421394834152=
-1b5310064586a05c80e
+> Reference: https://lists.riscv.org/g/tech-privileged/message/2485
 
-Looks good. Thanks Yixun.
+That is when the value is in a GPR, though, and we don't know the
+performance of a CSR_SCRATCH access.
+We can hope that it's not much worse than a GPR, but an implementation
+might choose to be very slow with CSR_SCRATCH.
 
->
-> > [4/6] riscv: dts: spacemit: add pwm14_1 pinctrl setting
-> >       https://github.com/spacemit-com/linux/commit/8709d51024068d4c81dc=
-785d63169d283d147cf3
->
-> --
-> Yixun Lan (dlan)
+I have in mind another method where we can use the current CSR_SCRATCH
+without changing CSR_TVAL, but I don't really want to spend time on it
+if reading the CSR doesn't give any benefit.
+
+It would be to store the percpu offset in CSR_SCRATCH permanently, do
+the early exception register shuffling with a percpu area storage, and
+load the thread pointer from there as well.
+That method would also eliminate writing CSR_SCRATCH on every exception
+entry+exit, so maybe it makes sense to try it even if CSRs are slow...
+
+Thanks.
 
