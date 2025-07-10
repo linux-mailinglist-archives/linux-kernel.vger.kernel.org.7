@@ -1,151 +1,134 @@
-Return-Path: <linux-kernel+bounces-726472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8D3B00D6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:52:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FBAB00D6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7670A483BD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCC6E4A7936
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E382FD586;
-	Thu, 10 Jul 2025 20:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0342A2FD586;
+	Thu, 10 Jul 2025 20:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DORON7vg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="T0cVzz0Y"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E90F510;
-	Thu, 10 Jul 2025 20:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01F32FCE11;
+	Thu, 10 Jul 2025 20:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752180769; cv=none; b=gq66Tx5OK6lkEOnmQWqaaJwXQ9uI36CdwLqZut7apAjSWRQzTlD2yCXPVihh4SZAzFGozSLEs6OeZzecMNoMBm5xrDn+zN3zG/7BJ3glbNH9Ci3XAPJJkDViW6AbNd5AIl8RV0VDn1nsxS85fNI7hQhyh9JJwkTWt28UzKKLPvo=
+	t=1752180908; cv=none; b=SMyXUmMyZh28jmkeSKPnKXYy9Ic3l074zHFpNo3ykw1KBsergtbuuKRP8/aQuMop6EdBpErMB3CaqF70QdJfZhVsy5xwhNxB23wFqpOkBXZF58GA7o475/51QJmvOFBtpjuXJTqRVg/bJUkzBlTvqZiRsVNEUGlP4OJgWj7jxrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752180769; c=relaxed/simple;
-	bh=Mglw2ksv6p0jmkNc6ppoxSBvG/wPI1OuhGnfRBEN8og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AesSaMoQEuGlrA436coasItoRjECTie2ulRDVnYyRhwvCkAawMS1G1PUULDHjAbCXC9OSp2ISvmy7ZXNPiizRsK5WUKQVyuJEF3PmZkIBdfZEbghr3UP2vpkH1c4TjqzUgnM/vmbiRtO1xL2dkXDJ/W5k1g5960C2nFCEq6UEfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DORON7vg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC609C4CEE3;
-	Thu, 10 Jul 2025 20:52:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752180768;
-	bh=Mglw2ksv6p0jmkNc6ppoxSBvG/wPI1OuhGnfRBEN8og=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DORON7vgn8ny5uJ0L+QkdObMERtukYD5htopGHQZ3hHzt2UVpAtAvylvK9HNubGh8
-	 lO8TkEc0vxQ1jLydCGrkdTklJgguo2YcLxyPDASsimPQoP+oYSihcdXks+cjwti4Yw
-	 S0lxYVKFH79tz84Qnnv4VCm5d4w3xFiWHR3ode/fv+wpS5NTeK+mozGPykVAuYoMzy
-	 b4U9vDkhwdXjwQVqeXjAzJW6kepyG6g2eq/Fg8jYjj4ah/4OecNk2qirhKh/EqUeFe
-	 jET2nhXRgHjQjtzRt8mOjrl3XBy+FNFrQ4EzmFGAsfrPcD45tk0ukc1sjxB7EhoNxA
-	 CcB0ybi7BPCXw==
-Date: Thu, 10 Jul 2025 22:52:45 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Drew Fustini <fustini@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v11 1/3] pwm: Export `pwmchip_release` for external use
-Message-ID: <tepvopkizn4jezpqcbhwrcsnsrjacztv6kuv53hidcjbrnrs3c@pfcp45jarcoy>
-References: <20250710-rust-next-pwm-working-fan-for-sending-v11-0-93824a16f9ec@samsung.com>
- <CGME20250710185439eucas1p2684255d83d807dfd6f8b9b3caea65df6@eucas1p2.samsung.com>
- <20250710-rust-next-pwm-working-fan-for-sending-v11-1-93824a16f9ec@samsung.com>
+	s=arc-20240116; t=1752180908; c=relaxed/simple;
+	bh=CRx4HESfp5IH1jxIqKZ880FXR29NeZiQcNKgbb5903Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YBQc+8XzJ2VE2GLvq20e7P3fCggWdNczTE5rwa97dUkWElvMftKSZcNH7+weEB1/47TJaN3qGGqREnLsRmaat5Q2QrQdvVGNtCVj5EY6QhuELiqkXzcgd3hEGrlIUHZcQRnkxSti30xi8iw7X8rTLDq284VTwh+OmM4u/k+q3F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=T0cVzz0Y; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=AGcfY8RgH0CT7Il3x69mF4dX1UtEs3VW9Dl2QfSdGgo=; b=T0cVzz0YU8wc2LGCtjvwfgtQSU
+	uIje5PDNPdVnF8RKy/Sjiiqtoi2j01T1dkgfGJvimWwhMTOZMFh0cuiBhWH2hEd38tmADjt41Q4I4
+	sLpxUQPryu86FIUjQwmdEDa1xqn8XbfCi1S0EaWDUzsMN9xRJ3FZHQfmnVkcjfwXFd7IhEn4BnXeG
+	w2tAdmdZD4RT8ziM1YMvQ39ivmQzlyJLTlqdMpv61jP2b93h08JmQoLwTVV7OZRWjhbc7vg/urOGA
+	AnFYCofqgmIWKadox5yA7nAUqdEBlZPNSkogRLw6tImLDt9t/xXjD7PswB289kOEGMxb7VhsgXXUs
+	eG9P4wSg==;
+Received: from [179.118.186.174] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uZyIB-00F6AY-DS; Thu, 10 Jul 2025 22:54:55 +0200
+Message-ID: <00854dc3-538b-4b62-953a-68d0b9ff2295@igalia.com>
+Date: Thu, 10 Jul 2025 17:54:49 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="52heviwukb62zeme"
-Content-Disposition: inline
-In-Reply-To: <20250710-rust-next-pwm-working-fan-for-sending-v11-1-93824a16f9ec@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] ovl: Enable support for casefold filesystems
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
+ Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ kernel-dev@igalia.com
+References: <20250409-tonyk-overlayfs-v1-0-3991616fe9a3@igalia.com>
+ <CAOQ4uxiwv8F9p8L98BiX8fPBS-HSpNhJ_dtcZAkqM02RA0LuVQ@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <CAOQ4uxiwv8F9p8L98BiX8fPBS-HSpNhJ_dtcZAkqM02RA0LuVQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Hi Amir,
+
+Sorry for my delay.
+
+Em 09/04/2025 14:17, Amir Goldstein escreveu:
+> On Wed, Apr 9, 2025 at 5:01 PM André Almeida <andrealmeid@igalia.com> wrote:
+>>
+>> Hi all,
+>>
+>> We would like to support the usage of casefold filesystems with
+>> overlayfs. This patchset do some of the work needed for that, but I'm
+>> sure there are more places that need to be tweaked so please share your
+>> feedback for this work.
+>>
+>> * Implementation
+>>
+>> The most obvious place that required change was the strncmp() inside of
+>> ovl_cache_entry_find(), that I managed to convert to use d_same_name(),
+> 
+> That's a very niche part of overlayfs where comparison of names matter.
+> 
+> Please look very closely at ovl_lookup() and how an overlay entry stack is
+> composed from several layers including the option to redirect to different names
+> via redirect xattr, so there is really very much to deal with other
+> than readdir.
+> 
+> I suggest that you start with a design proposal of how you intend to tackle this
+> task and what are your requirements?
+> Any combination of casefold supported layers?
+> 
+
+The intended use case here is to use overlayfs as a container layer for 
+games. The lower layer will have the common libraries required for 
+games, and the upper layer will be a container for the running game, so 
+the game will be able to have write permission and even change the 
+common libraries if needed without impacting the original libraries. For 
+that, we would use case-folded enable ext4 mounting points.
+
+This use case doesn't need layers redirection, or to combine different 
+layers of enabled/disable case-fold. We would have just two layers, 
+upper and lower, both with case-fold enabled prior to mounting. If the 
+layers doesn't agree on the casefold flags/version/status, we can refuse 
+mounting it.
+
+To avoid complexity and corner cases, I propose to have this feature 
+enabled only for the layout described above: one upper and one lower 
+layer, with both layers with the same casefold status and to refuse 
+otherwise.
+
+The implementation would be, on top of this patchset, to create 
+restrictions on the mounting options if casefold is enabled in a 
+mounting point.
+
+Thoughts?
+
+> Thanks,
+> Amir.
+> 
 
 
---52heviwukb62zeme
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v11 1/3] pwm: Export `pwmchip_release` for external use
-MIME-Version: 1.0
-
-Hello Michal,
-
-On Thu, Jul 10, 2025 at 08:54:28PM +0200, Michal Wilczynski wrote:
-> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> index 8cafc483db53addf95591d1ac74287532c0fa0ee..8f0698c09e62b893d63fc258d=
-a3c34781183056f 100644
-> --- a/include/linux/pwm.h
-> +++ b/include/linux/pwm.h
-> @@ -478,6 +478,7 @@ static inline bool pwm_might_sleep(struct pwm_device =
-*pwm)
-> =20
->  /* PWM provider APIs */
->  void pwmchip_put(struct pwm_chip *chip);
-> +void pwmchip_release(struct device *dev);
-
-I want this in a separate section because "normal" provider don't need
-that. Please add a comment that this is only public for technical
-reasons for the Rust wrappers.
-
-I understand you are eager to get this merged, but still I'd ask you to
-slow down your patch sending frequency. Currently I tend to not apply it
-for v6.17-rc1 as I'd like to have that in next for some time.
-
-With you waiting a bit longer before v11 I would have written that in
-reply to the explanation in the v10 thread and we might have saved
-one iteration ...
-
->  struct pwm_chip *pwmchip_alloc(struct device *parent, unsigned int npwm,=
- size_t sizeof_priv);
->  struct pwm_chip *devm_pwmchip_alloc(struct device *parent, unsigned int =
-npwm, size_t sizeof_priv);
-> =20
-> @@ -551,6 +552,10 @@ static inline void pwmchip_put(struct pwm_chip *chip)
->  {
->  }
-> =20
-> +static inline void pwmchip_release(struct device *dev)
-> +{
-> +}
-> +
-
-Is this needed? There is no user of this function that doesn't depend
-on CONFIG_PWM?!
-
->  static inline struct pwm_chip *pwmchip_alloc(struct device *parent,
->  					     unsigned int npwm,
->  					     size_t sizeof_priv)
->=20
-
-Best regards
-Uwe
-
---52heviwukb62zeme
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhwKBoACgkQj4D7WH0S
-/k7Blwf+LeGyU+ZX3f7XS0pHm8zBWkJ0woOP+GYaAZLba3sufqsqBh90rQuPvYFG
-yfOmrF9i/IpGim42booPz1OZD+PGe17Wx6+iQ57RuLkXxKfIwqAGfQnBW5BunJWL
-b7xkg1vRjmnZdQgixsTRSZoE/QjqSzKYzooogPg/bAtUy92n5vzpafgxy9zqsfZ/
-6wtM1Kc/nRir2TbVMFBNlu2ZzjNd9gyTk42gxQBgXqzG7PzA+gdaN1A2n58tdzUd
-44aN7WhPOEUPT3GJwyLrkwcKulGPyGY8Do3sYujEV98E5HbRdy5K/Ctsrm3ixD+A
-X994v6aaOHQQA0XiVBE695HLVVwLCQ==
-=vBNR
------END PGP SIGNATURE-----
-
---52heviwukb62zeme--
 
