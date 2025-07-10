@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-725211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4776AFFC09
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:20:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF01AFFC0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95F6A1C4410E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CC1E1C4478B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EDB28C5B4;
-	Thu, 10 Jul 2025 08:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B0E28CF4A;
+	Thu, 10 Jul 2025 08:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4FY+TLE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ti6DJ4Fs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8093A28C2CE;
-	Thu, 10 Jul 2025 08:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D9728C5D9;
+	Thu, 10 Jul 2025 08:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752135630; cv=none; b=ueoG7BDjwFRv8/14/1wgheaG76BIVvLQai6ZGo12GxGkxHL7B32Wln+XwKuf9LOMHYp0KIFpzmBcMZyfXvdihq3j24JIjlRJ8PwpjpPoqUzfx07+13yqaSP07qub9f3GxNIS7yCXqJYmHleI20vpB8xcgFpcD28WYgiNx7U5fNs=
+	t=1752135634; cv=none; b=rcQ0mOE/KVNM0NuJKpmyRJByaajcTHv0B8USVnvJto3qJmwK2tdFDGM7DfE/BqeAq9OzS7Me6Dd/lYPfRywDGW9eP22ycag5CuK8YI+7vWF2H7KCzDlxVBAcG9R0cBIcunF2ldkFQ54EYanW/1NyjPDbNKnphQkax+RMGzstHXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752135630; c=relaxed/simple;
-	bh=SckAq/8ZglkacbCo8M+wv0IWE/KtktVB3KLwWlZPwas=;
+	s=arc-20240116; t=1752135634; c=relaxed/simple;
+	bh=SqtRfeiUXcib0SH8ipAhyDaU+0NUvYEUF7Xt1ugMyns=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sB6avsoUr5fRTmdK4n23M9cUaGiufjqdR6tHAOJneHVVs+rAIRIzmqrrwGCTPyB/HlY2PAjT2SQDOuYxV6quq37S7NaqOZpXUnZYqhwOvhHVATfWa8AdNV1YWPDG+ovpnYvYI1ODhi/pAVaIHfDxIir/u+CfdzjG3i/oZY0klMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4FY+TLE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7076C4CEF1;
-	Thu, 10 Jul 2025 08:20:25 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Gjc+BcFdKOV10oQaYTfbjCAdrM5FKmYsAgLfbaY9HZEJDV4onsJj+Hu3XzZmseF6n1toLdVmTxkYwDGxv5KmGcFCGHmSbKx6GJRXuR+0Em/tNTD70Q03JAihR3QcyPLzAglWTUOgyFGDtR1sSygauU4SVep+dKcZBaWNi91ZXDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ti6DJ4Fs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAF10C4CEE3;
+	Thu, 10 Jul 2025 08:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752135630;
-	bh=SckAq/8ZglkacbCo8M+wv0IWE/KtktVB3KLwWlZPwas=;
+	s=k20201202; t=1752135634;
+	bh=SqtRfeiUXcib0SH8ipAhyDaU+0NUvYEUF7Xt1ugMyns=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=E4FY+TLEWIFoEaGzwjpECluLSQHL2YPWu645O2oI2OUSosnp5a8qs5JgUouQRWIgO
-	 VmzrOv4ufLRoftNmDfWULJjpqCncmXr15nGqPnHg+98fkA9yQCOPOZy3+6luiatJU6
-	 ODVteh5wadsSGXBncHoSo2HHZy/RH5O9QkzfulHn9I11uJSSsa5SyLGHQn14dy7sfj
-	 e2Vv/KLgUowgsyeJ0OFuKc+lXyFWkG/kUxboyqjI9ViOtoKy94/jBJw93C3xchjkQ0
-	 qjWXNRWsUY6aStFpZ4cP00kR6SM4n/xEKvxlujd96tIbnR4cQJxRAE37xo6CJncfK+
-	 azen7rLJ6zr9g==
+	b=ti6DJ4FspcZcJJJ4Rmyv73TOHLxdaNHaKYr6MAxY2IsjGTI5Eic79rauHUkaQe71I
+	 9qQd0iGUypZ1gtxC2/VwT3u/gkgnwAGBf78Bv2ztdanUAFMdEstN0uh5mmbIQ9Faon
+	 WeUk83vxurZiSoRTuQsObS9ilrzX2a3KTCDyGcEo4YYMvjNfKl9SOlFGW/1vuqo8Pw
+	 Gu3+qrzKr25YfzVhOeZ1i+Hy71DoZJ1K23clt14L+YBX+nCSj1P02Tc9PwSAQ8mknu
+	 zdrXFfsp5OUi9UkwKU9ybMuA24inOxd+/aqT6b6JQOOjC53REQ9Pc8FhZH6z+EvHMq
+	 LIomg0NS8khKw==
 From: Mark Brown <broonie@kernel.org>
 To: Charles Keepax <ckeepax@opensource.cirrus.com>, 
  Maciej Strozek <mstrozek@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Shuming Fan <shumingf@realtek.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Shuming Fan <shumingf@realtek.com>, 
  Arnd Bergmann <arnd@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>, 
  Bard Liao <yung-chuan.liao@linux.intel.com>, 
  Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
  =?utf-8?q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>, 
  Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
  linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250708184618.3585473-1-arnd@kernel.org>
-References: <20250708184618.3585473-1-arnd@kernel.org>
-Subject: Re: [PATCH] ASoC: SDCA: fix HID dependency
-Message-Id: <175213562507.707140.12664573653794440974.b4-ty@kernel.org>
-Date: Thu, 10 Jul 2025 09:20:25 +0100
+In-Reply-To: <20250709152430.1498427-1-arnd@kernel.org>
+References: <20250709152430.1498427-1-arnd@kernel.org>
+Subject: Re: [PATCH] [v2] ASoC: SDCA: fix HID dependency
+Message-Id: <175213563013.707140.7674050291151836280.b4-ty@kernel.org>
+Date: Thu, 10 Jul 2025 09:20:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,7 +68,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-07fe9
 
-On Tue, 08 Jul 2025 20:46:06 +0200, Arnd Bergmann wrote:
+On Wed, 09 Jul 2025 17:24:17 +0200, Arnd Bergmann wrote:
 > It is not possible to enable SND_SOC_SDCA_HID when SND_SOC_SDCA is built-in
 > but HID is in a loadable module, as that results in a link failure:
 > 
