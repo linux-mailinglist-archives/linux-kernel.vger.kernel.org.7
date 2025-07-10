@@ -1,186 +1,148 @@
-Return-Path: <linux-kernel+bounces-724995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8AF0AFF994
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:18:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95315AFF98D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D7416CD45
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63CD83A6FC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B8D287500;
-	Thu, 10 Jul 2025 06:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F732857FF;
+	Thu, 10 Jul 2025 06:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="j38hk03L";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="25EqmBEl"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="V1Ecq2ad"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81B522425E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3C95383;
+	Thu, 10 Jul 2025 06:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752128199; cv=none; b=gJ+aGqQm3qh0vNWVVyu49+ywIgGKoBM/XsQpblDRSVkgXMseiup8c7j4Xq7l/uKTY8WsC1yEkkUPmgU8Ac96uoqyh350WlsSy19Ih3KCuMBONQd0u1rkw7JhgAEvblyM6SqC76Zcl1BGzA48mhDew4Az3VFjVE9t2ueTu1Sr+M8=
+	t=1752128255; cv=none; b=o7UJ1EFrc0HkKl5lId4JVtnzRWksXWCznYC0WaWxfRNaMpZ/yF8X+fMv1dGz+5fokzv4lC2CSNA4yzlI97DE6Bq66qc20kfnrk3iWjZHX4IGbfWmYzYwQWPJx+AIpzudiftPvk3P9xyvpPdoN9ExVHQG3ti3VXoj1lmyXne3/AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752128199; c=relaxed/simple;
-	bh=H8ClmTjjEb9bsVONNg4zE004ClDGd+aXBH4tHScxEms=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=YFF88L8yYb7R25fNdFlzN96thWZVEUvPAE2paXArfyI+Flj9d3HMyUDU5mnjLkGeaF3UQzysjGwN90k9uU6jr2LhWqTvYYsTPQPqISoYwX6nHXdO870bVzPIEtoSRf2wnCXtDVCaaRWuQibmiOLQsh8Op444dolqBvHnrjMhHd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=j38hk03L; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=25EqmBEl; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752128194; x=1752732994;
-	d=konsulko.se; s=rsa1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=bbG2eOYm0nVPoiyoh0kqZFxhcAwfAfhJmOsqqTLYURg=;
-	b=j38hk03LBQ49WWec0sDiZUsKSxLsQrfrEaZMs1r573dhGXIx+sVrsXxu/HgQlR7k0yJSRB4ON1Ice
-	 tG0FJEY2wjQbCIUE4gv4IohxNaKPGMHh+F/2lzjaBJKHS0mg4Kn7Mj9HQ53w3Zur6DelJBbQXiTI+U
-	 BQRIvFJEnohGKdB5mrpRP6EgiC+LMzfOgLUlEaNlBkCAd9cujAPvnz8yjNg7+0Zn2g1JxNxWqyfIW3
-	 oN0jo/sjn6fZjtmkBaLvQOZTBqheYe/wI4NN2w2BLVGqj74qypbRrmwR54e0wlcpIZqoKdxrm8c+5x
-	 zJfPhXRb//Kze4IWNZpY7y7Rr1hujUQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752128194; x=1752732994;
-	d=konsulko.se; s=ed1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=bbG2eOYm0nVPoiyoh0kqZFxhcAwfAfhJmOsqqTLYURg=;
-	b=25EqmBEl3UcQ3f9/U1QLHscuEdIF/PGEea91SZXE194mrLPt5Tl4+oxQwNJYCjyaqeBF95E9WOm64
-	 lcFHs7eAg==
-X-HalOne-ID: 6c6be782-5d55-11f0-8215-f7376af24660
-Received: from smtpclient.apple (c188-150-224-8.bredband.tele2.se [188.150.224.8])
-	by mailrelay6.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 6c6be782-5d55-11f0-8215-f7376af24660;
-	Thu, 10 Jul 2025 06:16:34 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1752128255; c=relaxed/simple;
+	bh=IDCLCBRvGHvWye9rDgOHSsCJGzvchumYRBq9vqI6k+4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MeFSrIQMD8QYOH3YaLjYzkd/UvYnj6yJV2S+11/CmWG4s1RkxjDK8IlmDYDG7MX5upqTmGl2tBYEVSN8ycJL/2LHnvROvV6yfsuNZ6mFWagiGXBpuoix2TCUHd8n7bDlwDhZfb2fLjFLUQmQp5LW9wEER0cGq6xHhKxrx226w/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=V1Ecq2ad; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56A6HPNa1412531;
+	Thu, 10 Jul 2025 01:17:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752128245;
+	bh=uCA1XYApjMEEpODseSN2C0Imh7avIdauzB9lovWH7D8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=V1Ecq2adzQdiCtJ51W9p8YwStuYvbx3qyLwDUTIblofKbmio3+NITDw44ZxommKjr
+	 mgFPq1+c08aB+jKJwx7+V4BFzEXWS1P4vQ7syTd/8XRuk6EdznkEd+sqqpdnlmmWYE
+	 bZ9Rwuj7amw9RXKC7hCSB3RVvtMpmWzjOsx3lFyU=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56A6HP3T4096293
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 10 Jul 2025 01:17:25 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 10
+ Jul 2025 01:17:25 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 10 Jul 2025 01:17:25 -0500
+Received: from [172.24.227.245] (uda0132425.dhcp.ti.com [172.24.227.245])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56A6HLTl1155423;
+	Thu, 10 Jul 2025 01:17:22 -0500
+Message-ID: <1fcf5d59-02f0-4b99-aeb0-bf555730cefa@ti.com>
+Date: Thu, 10 Jul 2025 11:47:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v12 1/4] mm/vmalloc: allow to set node and align in
- vrealloc
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <CAADnVQ+iZbKzx8bje=CLO=OnpmGHmQHpDNC=UjWYfN59bWoN3A@mail.gmail.com>
-Date: Thu, 10 Jul 2025 08:16:23 +0200
-Cc: Danilo Krummrich <dakr@kernel.org>,
- linux-mm <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Uladzislau Rezki <urezki@gmail.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- rust-for-linux <rust-for-linux@vger.kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- linux-bcachefs@vger.kernel.org,
- bpf <bpf@vger.kernel.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9F14B44F-6073-4F12-875A-9E07EFC16E20@konsulko.se>
-References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
- <20250709172416.1031970-1-vitaly.wool@konsulko.se>
- <CAADnVQ+bikqCO7D+5_rAtiJXv3F6xn=0_hgGH5CkoTPpdi8j6Q@mail.gmail.com>
- <14b08e7c-c2e8-435c-a1dd-bd51cfb42060@kernel.org>
- <CAADnVQ+qCNfm3aucBrkXRXrUjjYeYQb09Oobx+pgOXNDny4s8w@mail.gmail.com>
- <DB7WW886UVAJ.I58517CYL8G7@kernel.org>
- <CAADnVQ+iZbKzx8bje=CLO=OnpmGHmQHpDNC=UjWYfN59bWoN3A@mail.gmail.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-X-Mailer: Apple Mail (2.3826.200.121)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] arm64: dts: ti: Add support for Variscite
+ VAR-SOM-AM62P
+To: Stefano Radaelli <stefano.radaelli21@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250709220714.85697-1-stefano.radaelli21@gmail.com>
+ <20250709220714.85697-3-stefano.radaelli21@gmail.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20250709220714.85697-3-stefano.radaelli21@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+[...]
 
+On 10/07/25 03:37, Stefano Radaelli wrote:
+> +&main_pmx0 {
+> +	pinctrl_mmc_pwrseq: main-emmc-pwrseq-pins {
+> +		pinctrl-single,pins = <
+> +			AM62PX_IOPAD(0x00c8, PIN_OUTPUT, 7) /* (AB23) VOUT0_DATA4.GPIO0_49 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c2: main-i2c2-default-pins {
+> +		pinctrl-single,pins = <
+> +			AM62PX_IOPAD(0x00b0, PIN_INPUT_PULLUP, 1) /* (T22) GPMC0_CSn2.I2C2_SCL */
+> +			AM62PX_IOPAD(0x00b4, PIN_INPUT_PULLUP, 1) /* (U25) GPMC0_CSn3.I2C2_SDA */
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c3: main-i2c3-default-pins {
+> +		pinctrl-single,pins = <
+> +			AM62PX_IOPAD(0x01d0, PIN_INPUT_PULLUP, 2) /* (A23) UART0_CTSn.I2C3_SCL */
+> +			AM62PX_IOPAD(0x01d4, PIN_INPUT_PULLUP, 2) /* (C22) UART0_RTSn.I2C3_SDA */
+> +		>;
+> +	};
+> +
+> +	pinctrl_mcasp1: main-mcasp1-default-pins {
+> +		pinctrl-single,pins = <
+> +			AM62PX_IOPAD(0x0090, PIN_INPUT, 2) /* (U24) GPMC0_BE0n_CLE.MCASP1_ACLKX */
+> +			AM62PX_IOPAD(0x0098, PIN_INPUT, 2) /* (AA24) GPMC0_WAIT0.MCASP1_AFSX */
+> +			AM62PX_IOPAD(0x008c, PIN_OUTPUT, 2) /* (T25) GPMC0_WEn.MCASP1_AXR0 */
+> +			AM62PX_IOPAD(0x0084, PIN_INPUT, 2) /* (R25) GPMC0_ADVn_ALE.MCASP1_AXR2 */
+> +			AM62PX_IOPAD(0x00a0, PIN_OUTPUT, 1) /* (P24) GPMC0_WPn.AUDIO_EXT_REFCLK1 */
+> +		>;
+> +	};
+> +
+> +	pinctrl_mdio1: main-mdio1-default-pins {
+> +		pinctrl-single,pins = <
+> +			AM62PX_IOPAD(0x0160, PIN_OUTPUT, 0) /* (F17) MDIO0_MDC */
+> +			AM62PX_IOPAD(0x015c, PIN_INPUT, 0) /* (F16) MDIO0_MDIO */
+> +		>;
+> +	};
+> +
+> +	pinctrl_mmc2: main-mmc2-default-pins {
+> +		pinctrl-single,pins = <
+> +			AM62PX_IOPAD(0x0120, PIN_INPUT_PULLUP, 0) /* (K24) MMC2_CMD */
+> +			AM62PX_IOPAD(0x0118, PIN_INPUT_PULLDOWN, 0) /* (K21) MMC2_CLK */
+> +			AM62PX_IOPAD(0x011C, PIN_INPUT_PULLUP, 0) /* () MMC2_CLKLB */
 
-> On Jul 10, 2025, at 2:39=E2=80=AFAM, Alexei Starovoitov =
-<alexei.starovoitov@gmail.com> wrote:
->=20
-> On Wed, Jul 9, 2025 at 4:26=E2=80=AFPM Danilo Krummrich =
-<dakr@kernel.org> wrote:
->>=20
->> On Thu Jul 10, 2025 at 1:14 AM CEST, Alexei Starovoitov wrote:
->>> On Wed, Jul 9, 2025 at 3:57=E2=80=AFPM Danilo Krummrich =
-<dakr@kernel.org> wrote:
->>>>=20
->>>> On 7/10/25 12:53 AM, Alexei Starovoitov wrote:
->>>>> On Wed, Jul 9, 2025 at 10:25=E2=80=AFAM Vitaly Wool =
-<vitaly.wool@konsulko.se> wrote:
->>>>>>=20
->>>>>>=20
->>>>>> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
->>>>>> +void *vrealloc_node_align_noprof(const void *p, size_t size, =
-unsigned long align,
->>>>>> +                                gfp_t flags, int node)
->>>>>>  {
->>>>>=20
->>>>> imo this is a silly pattern to rename functions because they
->>>>> got new arguments.
->>>>> The names of the args are clear enough "align" and "node".
->>>>> I see no point in adding the same suffixes to a function name.
->>>>> In the future this function will receive another argument and
->>>>> the function would be renamed again?!
->>>>> "_noprof" suffix makes sense, since it's there for alloc_hooks,
->>>>> but "_node_align_" is unnecessary.
->>>>=20
->>>> Do you have an alternative proposal given that we also have =
-vrealloc() and
->>>> vrealloc_node()?
->>>=20
->>> vrealloc_node()?! There is no such thing in the tree.
->>> There are various k[zm]alloc_node() which are artifacts of the past
->>> when NUMA just appeared and people cared about CONFIG_NUMA vs not.
->>> Nowadays NUMA is everywhere and any new code must support NUMA
->>> from the start. Hence no point in carrying old baggage and obsolete =
-names.
->>=20
->> This patch adds it; do you suggest to redefine vrealloc_noprof() to =
-take align
->> and nid? If we don't mind being inconsistent with krealloc_noprof() =
-and
->> kvrealloc_noprof() that's fine I guess.
->>=20
->> FWIW, I prefer consistency.
->=20
-> What inconsistency are you talking about? That
-> krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
-> and
-> vrealloc_noprof(const void *p, size_t size, unsigned long align,
->                gfp_t flags, int node)
-> have different number of arguments?!
->=20
-> See:
-> alloc_pages_noprof(gfp_t gfp, unsigned int order);
-> __alloc_pages_noprof(gfp_t gfp, unsigned int order, int preferred_nid,
->                nodemask_t *nodemask);
->=20
-> Adding double underscore to keep all existing callers of
-> vrealloc_noprof() without changes and do:
->=20
-> vrealloc_noprof(const void *p, size_t size, gfp_t flags);
-> __vrealloc_noprof(const void *p, size_t size, unsigned long align,
-> gfp_t flags, int node);
->=20
-> is fine and consistent with how things were done in the past,
-> but adding "_node_align_" to the function name and code churn to all
-> callsites is a cargo cult.
->=20
+Lower case for hex digits: 0x11c
 
-I see your point but your approach is currently only applicable to =
-vmalloc and it will not work for slub because the latter already has =
-__kmalloc_node, __kvmalloc_node etc. and we want to keep at least some =
-naming consistency between k[v]* and v* functions.
+> +			AM62PX_IOPAD(0x0114, PIN_INPUT_PULLUP, 0) /* (K23) MMC2_DAT0 */
+> +			AM62PX_IOPAD(0x0110, PIN_INPUT_PULLUP, 0) /* (K22) MMC2_DAT1 */
+> +			AM62PX_IOPAD(0x010c, PIN_INPUT_PULLUP, 0) /* (L20) MMC2_DAT2 */
+> +			AM62PX_IOPAD(0x0108, PIN_INPUT_PULLUP, 0) /* (L21) MMC2_DAT3 */
+> +		>;
+> +	};
 
-This whole patchset is only intended to add the capability to set node =
-and properly handle alignment requests in Rust allocators, and is thus =
-well aligned with your idea that the new code must support NUMA (which I =
-do share). I would suggest that we get this in as it is, and then I can =
-take the burden of straightening out the naming which will inevitably =
-lead to many modifications in other parts of the kernel. The latter I am =
-fine with, too, but not in this series.
+-- 
+Regards
+Vignesh
+https://ti.com/opensource
 
-~Vitaly=
 
