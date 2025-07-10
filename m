@@ -1,104 +1,161 @@
-Return-Path: <linux-kernel+bounces-725468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08566AFFF81
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:44:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 672C9AFFF84
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 593FE16F2EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:44:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8735176A8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7512DC339;
-	Thu, 10 Jul 2025 10:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D869D2DAFD7;
+	Thu, 10 Jul 2025 10:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8BjSbPe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N1vOlFVJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4A51FC109;
-	Thu, 10 Jul 2025 10:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA162D8DBE
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752144250; cv=none; b=VNmpA1vEXh3Uyx3vt9v85ZA9n74wqQ4kMPY4lngDw7MYiT/uaommN+LF+FMIvTk3XWC/wJEYB6E7UnBJF3+OkZBOB/iF4McXcz4NkU/RbFHsBocj1mIRuIJWut6uDDKs1lEtNriwlPKZ61YSTEd2vFkcGiAfzVfX4LOV/nGXll4=
+	t=1752144260; cv=none; b=RumWo89FXqrK3DhfNu4vij46jfAH4nMGELyWvc3WyCjzxeFGXbhCRES7AU9UmVBVCMfFqdrTauxNPHzOce81W8rAgAnbyaL5zZA3M45fX8tQTaj0EmPlFg4fpM8fZW9E2e3kHOY21jQGF3eCMR4bMqCKr/WSJX1ttkOeJ3xc4PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752144250; c=relaxed/simple;
-	bh=U76VKBh/7GQv+j5gpHmYAGV6Z/RI8ugyAsaX8iKw2u0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=itViB9jmKloGH7CY9bjDv9JBqPhpiv/TbbVaQm9vwQjTW+cSH9DlaQoUKOPwHz/xz7zaoE8DuxNfivw1Ovv04n1WX4v+JfuU1ROLOELEN6Uz9+Jq3R/QqKvcZBndvo3ofl4UPsPfiyzGZFTp2W0M091EXdjIIijxhdf3XFNB4lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8BjSbPe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C862BC4CEE3;
-	Thu, 10 Jul 2025 10:44:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752144249;
-	bh=U76VKBh/7GQv+j5gpHmYAGV6Z/RI8ugyAsaX8iKw2u0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i8BjSbPexN3Pw3J/0hr69DDRXMjEsyoRw7xtQcuO83Y/21Fh8KGc0i2H1oh/s6Eai
-	 sF9TPOHJoRBUPT1booxVByBHXGf8ghAfsIcWmhjdc4M+bKjbvyqGJGmG/9iPUd7aUF
-	 Zr+p9zeH6XnUv+8RsTTqB5xd9tkZVlu/gN8enDulVMiD9MrmCPqIumzly4ibm57WZb
-	 +eQMYAMwBVa84JaW4PQlcvDgjqrJmtQh9anm3kD12LWftUBJWjS8Jb1B/+iFZ6fy7L
-	 bYMTHi8+zNzQysY3sA1Q7WGXQe9KUfLIvfavIQGNPvcbLfwBKr6m4LdO9FctX+QxN7
-	 N52eelHZaKM7Q==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uZol0-000000008Ko-0AXu;
-	Thu, 10 Jul 2025 12:44:02 +0200
-Date: Thu, 10 Jul 2025 12:44:02 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, andersson@kernel.org,
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, jingoohan1@gmail.com, mani@kernel.org,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
-	johan+linaro@kernel.org, vkoul@kernel.org, kishon@kernel.org,
-	neil.armstrong@linaro.org, abel.vesa@linaro.org, kw@linux.com,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-	quic_krichai@quicinc.com, quic_vbadigan@quicinc.com
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: sa8775p: remove aux clock from
- pcie phy
-Message-ID: <aG-ZcuJXISyIZavv@hovoldconsulting.com>
-References: <20250625090048.624399-1-quic_ziyuzhan@quicinc.com>
- <20250625090048.624399-4-quic_ziyuzhan@quicinc.com>
- <25ddb70a-7442-4d63-9eff-d4c3ac509bbb@oss.qualcomm.com>
- <aG-LWxKE11Ah_GS0@hovoldconsulting.com>
- <4f963fcc-2b92-4a01-93a4-f0ae942c1b6f@quicinc.com>
+	s=arc-20240116; t=1752144260; c=relaxed/simple;
+	bh=eT95pxhU8RtV8vghCj7CgQHgVurXwFlZ6cSoxK076RE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VQgY5x9xj5SvfFDZyqyHXx25hjfacXb8WxL1rwT0cw3L/amvaKoqsrQu0FvoTQVvf1aPV1r16l0UasCjVu9/f7T5jSuocJsFKgx+oTxunVFb0Gl7ybv14eSeo2TbthlpqUiRoHcTl50EyQzZa/cA8kN+EFXIHQTDcGHOa+MiAPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N1vOlFVJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752144257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8CuYLuo/2Mbdt10kaLMIma7+VZaAp4h5ieIlEmZoMkg=;
+	b=N1vOlFVJYJNoZ2wuls9oMYn2YLPvdYkxRqmITIH03uQSy8d6txO2AyHeukh72ftS4y0CMs
+	ffBO14oHkI064yuLAqdQmte58oHG3EH5lLNqRzS/Ukz9Oy1olcHhx+7eKZV/dvqSV3qkSL
+	8p99EvdNbx5k6YnhBmkTnVrgVlgO0s8=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-96-kWSbvcNXORqicNAV56UEvw-1; Thu, 10 Jul 2025 06:44:16 -0400
+X-MC-Unique: kWSbvcNXORqicNAV56UEvw-1
+X-Mimecast-MFC-AGG-ID: kWSbvcNXORqicNAV56UEvw_1752144255
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-315af0857f2so1064738a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 03:44:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752144255; x=1752749055;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8CuYLuo/2Mbdt10kaLMIma7+VZaAp4h5ieIlEmZoMkg=;
+        b=bOlLvvZnEZbSXKi9ge0Mnbk3yYL9ypcuS0GGw6WbeghhdURy6BkUhaCVCIIQYOq2N8
+         9BJ789HwTSTQJrgBuND0YIg2Hfa8leMM4ctnX/L7qu8+4Efx7IR7pr1ayytPNq2AvYjF
+         aSr09uO0k/y+MVzgPpIzgiRhFwzdg4PVBh/ZL2ZxLMj/ENXt9n1sWY3fYf3eMWt3/R3A
+         YxNjzMT2LcycFA7FfGW8Su1vGr6Wnt26HvuvgqIc9ruB+z5pcS3p5yUGTjxjGVJAcqra
+         RAqw2h0X51Zjlg3au0sFmgph5hu0G4jm5/SzQf3UAhUjhzEHGUCarW2aDynA8KfkS/li
+         ed5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVRe65mfUOQJYwDqZGB6Q1yG9+pH8gGqjH+M3455KdMaIF/CChLSNlsSzOYHvqDXjZ1aVhO1hi2rnLZlWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9a8DxM8c3eKPgN9l5OyAISx/YcnldlZFNgiagvkxeKbo+gUs5
+	zc4zf31GGFZrpXoBJSdL1/AE0I4jLGIGSztaX824bVm3WY9P6MidbR6E0VCwp5E2XC4XXto1yZA
+	hQr4+ozoxaNjiPd5F58rqnXRhHQgYghxz8e5Ss94mKv5uSeuYuWGl+Owd2DryujcZCTu08UwN2b
+	dW7Haval6EQQrD3/0HKAJnBUJb2rX9RZpYVoqWka/O
+X-Gm-Gg: ASbGncsYq/QhPm6BqeahZYMWvCQg7qdNa/d8fMRocXkKsvOuf+4rAPb1U2DUA8SHllV
+	MOlFA3ucPWC49wTFk3KnKl84psWBDDzYcWNk0JR/GfyTeMnNG9MwVIwpI2J1BnGsip09fz8lLU9
+	INlA2C
+X-Received: by 2002:a17:90b:2d8d:b0:314:2bae:97d7 with SMTP id 98e67ed59e1d1-31c3ef8f4d2mr3609369a91.15.1752144255292;
+        Thu, 10 Jul 2025 03:44:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFwezNPSDR0OY8bEu9AM3jw2WPYc03gF+OPZi3VVVXopaM3IyuhrTf09fnMSDK2SfqLHqjjnRxLMCIC+bfanw=
+X-Received: by 2002:a17:90b:2d8d:b0:314:2bae:97d7 with SMTP id
+ 98e67ed59e1d1-31c3ef8f4d2mr3609334a91.15.1752144254874; Thu, 10 Jul 2025
+ 03:44:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f963fcc-2b92-4a01-93a4-f0ae942c1b6f@quicinc.com>
+References: <20250708144206.95091-1-minhquangbui99@gmail.com> <d808395d-2aad-47a3-a43a-cf2138d1d2b1@redhat.com>
+In-Reply-To: <d808395d-2aad-47a3-a43a-cf2138d1d2b1@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 10 Jul 2025 18:44:03 +0800
+X-Gm-Features: Ac12FXxPNEYS_Ei4p2IcT1GM3jGceeSfmUh4auJlrYXPw23N2AtGMVltUTswdZo
+Message-ID: <CACGkMEs01gmjEa+WyWZ+MspuRBjGcj8N+4ZQs5XCp+rYqZqB6Q@mail.gmail.com>
+Subject: Re: [PATCH net v2] virtio-net: fix received length check in big packets
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Bui Quang Minh <minhquangbui99@gmail.com>, netdev@vger.kernel.org, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Gavin Li <gavinl@nvidia.com>, 
+	Gavi Teitz <gavi@nvidia.com>, Parav Pandit <parav@nvidia.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 10, 2025 at 06:24:57PM +0800, Ziyue Zhang wrote:
-> 
-> On 7/10/2025 5:43 PM, Johan Hovold wrote:
-> > On Fri, Jun 27, 2025 at 04:50:57PM +0200, Konrad Dybcio wrote:
-> >> On 6/25/25 11:00 AM, Ziyue Zhang wrote:
-> >>> gcc_aux_clk is used in PCIe RC and it is not required in pcie phy, in
-> >>> pcie phy it should be gcc_phy_aux_clk, so remove gcc_aux_clk and
-> >>> replace it with gcc_phy_aux_clk.
-> >> GCC_PCIE_n_PHY_AUX_CLK is a downstream of the PHY's output..
-> >> are you sure the PHY should be **consuming** it too?
-> > Could we get a reply here, please?
+On Thu, Jul 10, 2025 at 5:57=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wro=
+te:
+>
+> On 7/8/25 4:42 PM, Bui Quang Minh wrote:
+> > Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length
+> > for big packets"), the allocated size for big packets is not
+> > MAX_SKB_FRAGS * PAGE_SIZE anymore but depends on negotiated MTU. The
+> > number of allocated frags for big packets is stored in
+> > vi->big_packets_num_skbfrags. This commit fixes the received length
+> > check corresponding to that change. The current incorrect check can lea=
+d
+> > to NULL page pointer dereference in the below while loop when erroneous
+> > length is received.
 > >
-> > A bunch of Qualcomm SoCs in mainline do exactly this currently even
-> > though it may not be correct (and some downstream dts do not use these
-> > clocks).
+> > Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big=
+ packets")
+> > Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+> > ---
+> > Changes in v2:
+> > - Remove incorrect give_pages call
+> > ---
+> >  drivers/net/virtio_net.c | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > index 5d674eb9a0f2..3a7f435c95ae 100644
+> > --- a/drivers/net/virtio_net.c
+> > +++ b/drivers/net/virtio_net.c
+> > @@ -823,7 +823,7 @@ static struct sk_buff *page_to_skb(struct virtnet_i=
+nfo *vi,
+> >  {
+> >       struct sk_buff *skb;
+> >       struct virtio_net_common_hdr *hdr;
+> > -     unsigned int copy, hdr_len, hdr_padded_len;
+> > +     unsigned int copy, hdr_len, hdr_padded_len, max_remaining_len;
+> >       struct page *page_to_free =3D NULL;
+> >       int tailroom, shinfo_size;
+> >       char *p, *hdr_p, *buf;
+> > @@ -887,12 +887,15 @@ static struct sk_buff *page_to_skb(struct virtnet=
+_info *vi,
+> >        * tries to receive more than is possible. This is usually
+> >        * the case of a broken device.
+> >        */
+> > -     if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
+> > +     BUG_ON(offset >=3D PAGE_SIZE);
+>
+> Minor nit (not intended to block this patch): since you are touching
+> this, you could consider replacing the BUG_ON() with a:
+>
+>  if (WARN_ON_ONCE()) <goto error path>.
 
-> After reviewing the downstream platforms, it seems that GCC_PCIE_n_PHY_AUX_CLK
-> is generally needed. Would you mind letting us know if there are any platforms
-> where this clock is not required?
+I'm not sure I get this, but using BUG_ON() can help to prevent bugs
+from being explored.
 
-Thanks for clarifying. I was think of sc8280xp where the downstream dt
-did not use this clock (and therefore neither is the dt in mainline
-currently). Looking again now it seems that clock may not even exist on
-this platform?
+Thanks
 
-Johan
+>
+> /P
+>
+
 
