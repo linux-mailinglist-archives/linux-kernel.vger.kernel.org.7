@@ -1,266 +1,158 @@
-Return-Path: <linux-kernel+bounces-725013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D40AFF9C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:25:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02F7AFF9C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE9FE546DAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:25:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B333F164090
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DB1287278;
-	Thu, 10 Jul 2025 06:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFEB2877CA;
+	Thu, 10 Jul 2025 06:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="n+t7K+9K"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC343287258;
-	Thu, 10 Jul 2025 06:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="lgWrsKs4"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E141C1F948;
+	Thu, 10 Jul 2025 06:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752128665; cv=none; b=cAkSXO2h0dJpL6K7fIx7iJ54pVk8dWX0gBQAJkeuhJXUTLAHGESndC2mvx6CQus/OJilGd8D5TDdCLzMrQIuVbLgINgZnvf32ond4AIB6hDlVbjS24/coGD4Oe9X0BAdR121CLBWHqIYX+KdHE3zJ5Y0B3I2XfjnZZAa5h1yoog=
+	t=1752128705; cv=none; b=HF5m05bcSsFWy871596c79XMQIGug848SUROtfatgoutYhRlLi7Dbnhtsu15MxbuWr+QjD5V5X3Ws6NbmpDeD0eS5UPRSF1ohU03MOU5KSVS98MOKx/zvX5S//Sgt/SUobsoO5/9rEMqu1wvW254psEDkl6v6dZxBIIikzbZpCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752128665; c=relaxed/simple;
-	bh=ymwPWNJJsgZ6RW0m+vOuRlvr+kPdRXWSpovz0vsAdyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=snTswT29047aS/hWTc7Uhmg5B6hwrnME0/ndfmo4IBT8boIa2f9PCfBnkiN9LQktgGVzXVAY/xT/XpHTT+kkO9DROkB/kvVXXlQY31fH1KcwhIEXNaowNI5mnREkkhj4URy0ghtH6D6ZIbmTws+Qpvsge26v+VBZvL6gKvPUmqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=n+t7K+9K; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.160.22] (unknown [4.194.122.136])
-	by linux.microsoft.com (Postfix) with ESMTPSA id AAE0A21130B9;
-	Wed,  9 Jul 2025 23:24:20 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AAE0A21130B9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1752128663;
-	bh=EHJa5emz5zqIQxcHSm5z73ZxuksS20iqAv6kSHAYKU8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n+t7K+9Kjr0jsWiUvRXMXizL3IjcMh9QXCOnccJhsWxWv31LVuiwhM9CRlvxDXXg1
-	 9bcm8tzX3bjWCZt655btka10Wr/w6Z6p+VlWwwKBklCqCHaMURsTWUagyBn4rLU4na
-	 fCeBrXKex+Od8ZjzdGzueaVbkS2vQktpO9UYA39Y=
-Message-ID: <89ff0e52-377c-4c9f-a61e-f73639304767@linux.microsoft.com>
-Date: Thu, 10 Jul 2025 11:54:16 +0530
+	s=arc-20240116; t=1752128705; c=relaxed/simple;
+	bh=nqCX549RmOOq8cria/HxkBcTUqmp4kRW8eldhJ0wq+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IvZ0iolcIQD85ckFq7EKaD0qwhNOKE74gGPzRPbBrlsN7esFP2Be6nunogL2UBKaoROeME/eN49ng0znc5n3ql/TpFPjhvJxa/FfKcHNMHt85KkBzAq0fsWsatzBPkjzIHlIs2iHQ2KwpmR5nSCY+JbTFGwYvw7t/mRMHU9KCw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=lgWrsKs4; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 929F21C00AE; Thu, 10 Jul 2025 08:24:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1752128689;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8t9PLmIR7SS6vrRKwi1Pocurl0uTAGeiC9i7x9ZcKWQ=;
+	b=lgWrsKs4nLpyZk/sCP0/UPuXSrSbDQzbUaNl7mYZCABfzCFRkZzKBZ9WEqFgcPbTDcNpsk
+	diKOnmKzZ31FBXYAPkAU7QVqRQ9FlPBV+f2dpmYeA+eLawWAtqp5wqbQLF1fHsuR8+tb4+
+	SJ7BD0ddJTONtYTtys3T2kPFfQZRsVE=
+Date: Thu, 10 Jul 2025 08:24:49 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Shuah <shuah@kernel.org>
+Cc: sashal@kernel.org, stable@vger.kernel.org,
+	kernel list <linux-kernel@vger.kernel.org>, conduct@kernel.org,
+	ebiederm@xmission.com
+Subject: Re: Sasha Levin is halucinating, non human entity, has no ethics and
+ no memory
+Message-ID: <aG9csaJGTdOiBnl3@duo.ucw.cz>
+References: <aG2B6UDvk2WB7RWx@duo.ucw.cz>
+ <46f581c6-bb61-4163-91a5-27b90838dca8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] tools/hv: fcopy: Fix irregularities with size of ring
- buffer
-To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Long Li <longli@microsoft.com>,
- Michael Kelley <mhklinux@outlook.com>, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, Olaf Hering <olaf@aepfle.de>
-References: <20250708080319.3904-1-namjain@linux.microsoft.com>
- <20250709112201.GA26241@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <20250709112201.GA26241@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7NKn0rfxX1P/x+1d"
+Content-Disposition: inline
+In-Reply-To: <46f581c6-bb61-4163-91a5-27b90838dca8@kernel.org>
 
 
+--7NKn0rfxX1P/x+1d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 7/9/2025 4:52 PM, Saurabh Singh Sengar wrote:
-> On Tue, Jul 08, 2025 at 01:33:19PM +0530, Naman Jain wrote:
->> Size of ring buffer, as defined in uio_hv_generic driver, is no longer
->> fixed to 16 KB. This creates a problem in fcopy, since this size was
->> hardcoded. With the change in place to make ring sysfs node actually
->> reflect the size of underlying ring buffer, it is safe to get the size
->> of ring sysfs file and use it for ring buffer size in fcopy daemon.
->> Fix the issue of disparity in ring buffer size, by making it dynamic
->> in fcopy uio daemon.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 0315fef2aff9 ("uio_hv_generic: Align ring size to system page")
->> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->> ---
->>   tools/hv/hv_fcopy_uio_daemon.c | 82 +++++++++++++++++++++++++++++++---
->>   1 file changed, 75 insertions(+), 7 deletions(-)
->>
->> diff --git a/tools/hv/hv_fcopy_uio_daemon.c b/tools/hv/hv_fcopy_uio_daemon.c
->> index 0198321d14a2..5388ee1ebf4d 100644
->> --- a/tools/hv/hv_fcopy_uio_daemon.c
->> +++ b/tools/hv/hv_fcopy_uio_daemon.c
->> @@ -36,6 +36,7 @@
->>   #define WIN8_SRV_VERSION	(WIN8_SRV_MAJOR << 16 | WIN8_SRV_MINOR)
->>   
->>   #define FCOPY_UIO		"/sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/uio"
->> +#define FCOPY_CHANNELS_PATH	"/sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/channels"
-> 
-> We can use a single path up to the device ID and then append either 'uio' or 'channels' using
-> two separate variables.
+On Wed 2025-07-09 15:14:38, Shuah wrote:
+> On 7/8/25 14:39, Pavel Machek wrote:
+> > Hi!
+> >=20
+> > So... I'm afraid subject is pretty accurate. I assume there's actual
+> > human being called "Sasha Levin" somewhere, but I interact with him
+> > via email, and while some interactions may be by human, some are
+> > written by LLM but not clearly marked as such.
+> >=20
+> > And that's not okay -- because LLMs lie, have no ethics, and no
+> > memory, so there's no point arguing with them. Its just wasting
+> > everyone's time. People are not very thrilled by 'Markus Elfring' on
+> > the lists, as he seems to ignore feedback, but at least that's actual
+> > human, not a damn LLM that interacts as human but then ignores
+> > everything.
+> >=20
+>=20
+> You aren't talking to an LLM - My understanding is that Sasha is sending
+> these patches (generated with LLM assist) and discussing them on mailing
+> lists.
 
-I am planning to use it like this, please let me know if it is OK.
+Please discuss this with Sasha. My understanding is that he is not
+checking the output of the LLM before sending it out, leading to crazy
+halucinations being sent from his email address, leading to situations
+like this:
 
-+#define FCOPY_DEVICE_PATH(subdir) 
-"/sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/"#subdir
-+#define FCOPY_UIO_PATH          FCOPY_DEVICE_PATH(uio)
-+#define FCOPY_CHANNELS_PATH     FCOPY_DEVICE_PATH(channels)
+Date: Tue, 08 Jul 2025 14:32:02 -0500
+# Wow!
 
-> 
->>   
->>   #define FCOPY_VER_COUNT		1
->>   static const int fcopy_versions[] = {
->> @@ -47,9 +48,62 @@ static const int fw_versions[] = {
->>   	UTIL_FW_VERSION
->>   };
->>   
->> -#define HV_RING_SIZE		0x4000 /* 16KB ring buffer size */
->> +static uint32_t get_ring_buffer_size(void)
->> +{
->> +	char ring_path[PATH_MAX];
->> +	DIR *dir;
->> +	struct dirent *entry;
->> +	struct stat st;
->> +	uint32_t ring_size = 0;
->> +	int retry_count = 0;
->>   
->> -static unsigned char desc[HV_RING_SIZE];
->> +	/* Find the channel directory */
->> +	dir = opendir(FCOPY_CHANNELS_PATH);
->> +	if (!dir) {
->> +		usleep(100 * 1000); /* Avoid race with kernel, wait 100ms and retry once */
->> +		dir = opendir(FCOPY_CHANNELS_PATH);
->> +		if (!dir) {
->> +			syslog(LOG_ERR, "Failed to open channels directory: %s", strerror(errno));
->> +			return 0;
->> +		}
->> +	}
->> +
->> +retry_once:
->> +	while ((entry = readdir(dir)) != NULL) {
->> +		if (entry->d_type == DT_DIR && strcmp(entry->d_name, ".") != 0 &&
->> +		    strcmp(entry->d_name, "..") != 0) {
->> +			snprintf(ring_path, sizeof(ring_path), "%s/%s/ring",
->> +				 FCOPY_CHANNELS_PATH, entry->d_name);
->> +
->> +			if (stat(ring_path, &st) == 0) {
->> +				/*
->> +				 * stat returns size of Tx, Rx rings combined,
->> +				 * so take half of it for individual ring size.
->> +				 */
->> +				ring_size = (uint32_t)st.st_size / 2;
->> +				syslog(LOG_INFO, "Ring buffer size from %s: %u bytes",
->> +				       ring_path, ring_size);
->> +				break;
->> +			}
->> +		}
->> +	}
->> +
->> +	if (!ring_size && retry_count == 0) {
->> +		retry_count = 1;
->> +		rewinddir(dir);
->> +		usleep(100 * 1000); /* Wait 100ms and retry once */
->> +		goto retry_once;
-> 
-> 		Is this retry solving any real problem ?
+# Sasha I think an impersonator has gotten into your account, and
+# is just making nonsense up.
 
-Yes, these two retry mechanism are added to avoid race conditions with 
-creation of channels dir, numbered channels inside channels directory.
-More in patch 1 comment by Michael.
-https://lore.kernel.org/all/SN6PR02MB41574C54FFDE0D3F3B7A5649D47CA@SN6PR02MB4157.namprd02.prod.outlook.com/
+# At first glance this reads like an impassioned plea to backport this
+# change, from someone who has actually dealt with it.
 
-> 
->> +	}
->> +
->> +	closedir(dir);
->> +
->> +	if (!ring_size)
->> +		syslog(LOG_ERR, "Could not determine ring size");
->> +
->> +	return ring_size;
->> +}
->> +
->> +static unsigned char *desc;
->>   
->>   static int target_fd;
->>   static char target_fname[PATH_MAX];
->> @@ -406,7 +460,7 @@ int main(int argc, char *argv[])
->>   	int daemonize = 1, long_index = 0, opt, ret = -EINVAL;
->>   	struct vmbus_br txbr, rxbr;
->>   	void *ring;
->> -	uint32_t len = HV_RING_SIZE;
->> +	uint32_t ring_size, len;
->>   	char uio_name[NAME_MAX] = {0};
->>   	char uio_dev_path[PATH_MAX] = {0};
->>   
->> @@ -437,6 +491,20 @@ int main(int argc, char *argv[])
->>   	openlog("HV_UIO_FCOPY", 0, LOG_USER);
->>   	syslog(LOG_INFO, "starting; pid is:%d", getpid());
->>   
->> +	ring_size = get_ring_buffer_size();
->> +	if (!ring_size) {
->> +		ret = -ENODEV;
->> +		goto exit;
->> +	}
->> +
->> +	len = ring_size;
-> 
-> 	Do we need this ?
+# Unfortunately reading the justification in detail is an exercise
+# in reading falsehoods.
 
-Yes, because len is being used as a temporary variable for storing
-ring_size, and it is modified when we pass it with reference in
-rte_vmbus_chan_recv_raw. In order to avoid calculating ring sizes again,
-we need to keep ring_size separate.
+> Do you have links/threads you can share to show how feedback is being
+> ignored?
 
-> 
->> +	desc = malloc(ring_size * sizeof(unsigned char));
->> +	if (!desc) {
->> +		syslog(LOG_ERR, "malloc failed for desc buffer");
->> +		ret = -ENOMEM;
->> +		goto exit;
->> +	}
-> 
-> 	This memory is not being freed anywhere. While I agree that freeing memory at
-> 	program exit may not have much practical value, we can easily address
-> 	this by adding a goto label for cleanup, this will keep all the static code
-> 	analyzers happy.
-> 
+And you can see how he dealt with the feedback: Not by fixing the LLM,
+not by checking it more, simply by "oh well, I'll stop Cc ing you".
 
-Sure. Will add it.
+Of course, other problem is that LLM output is not marked as such, and
+even bigger problem is that decisions are taken on basis of
+halucinating model. Patches are applied, Signed-off-by: Sasha Levin,
+without Sasha Levin checking them.
 
->> +
->>   	fcopy_get_first_folder(FCOPY_UIO, uio_name);
->>   	snprintf(uio_dev_path, sizeof(uio_dev_path), "/dev/%s", uio_name);
->>   	fcopy_fd = open(uio_dev_path, O_RDWR);
->> @@ -448,14 +516,14 @@ int main(int argc, char *argv[])
->>   		goto exit;
->>   	}
->>   
->> -	ring = vmbus_uio_map(&fcopy_fd, HV_RING_SIZE);
->> +	ring = vmbus_uio_map(&fcopy_fd, ring_size);
->>   	if (!ring) {
->>   		ret = errno;
->>   		syslog(LOG_ERR, "mmap ringbuffer failed; error: %d %s", ret, strerror(ret));
->>   		goto close;
->>   	}
->> -	vmbus_br_setup(&txbr, ring, HV_RING_SIZE);
->> -	vmbus_br_setup(&rxbr, (char *)ring + HV_RING_SIZE, HV_RING_SIZE);
->> +	vmbus_br_setup(&txbr, ring, ring_size);
->> +	vmbus_br_setup(&rxbr, (char *)ring + ring_size, ring_size);
->>   
->>   	rxbr.vbr->imask = 0;
->>   
->> @@ -472,7 +540,7 @@ int main(int argc, char *argv[])
->>   			goto close;
->>   		}
->>   
->> -		len = HV_RING_SIZE;
->> +		len = ring_size;
->>   		ret = rte_vmbus_chan_recv_raw(&rxbr, desc, &len);
->>   		if (unlikely(ret <= 0)) {
->>   			/* This indicates a failure to communicate (or worse) */
->>
->> base-commit: 26ffb3d6f02cd0935fb9fa3db897767beee1cb2a
->> -- 
->> 2.34.1
+Here are other examples where feedback was ignored:
 
-Regards,
-Naman
+Date: Sat, 29 Aug 2020 14:10:20 +0200
+Subject: Re: [PATCH AUTOSEL 4.19 08/38] media: pci: ttpci: av7110: fix
+possible buffer overflow caused by bad DMA value in debiirq()
+Date: Sat, 29 Aug 2020 14:11:23 +0200
+Subject: Re: [PATCH AUTOSEL 4.19 34/38] btrfs: file: reserve qgroup
+space after the hole punch range is locked
+Date: Mon, 10 May 2021 14:03:18 +0200
+Subject: Re: [PATCH AUTOSEL 4.19 06/21] usb: dwc3: gadget: Ignore EP
+queue requests during bus reset
+
+> > Do we need bot rules on the list?
+>=20
+> We have to get humans to follow agreed upon rules of conduct before
+> coming up with bot rules.
+
+We did not agree on rules with dealing with bots, and those bots are
+spreading harmful halucinations; that's what I'm trying to solve.
+
+BR,
+							Pavel
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, and Musk!
+
+--7NKn0rfxX1P/x+1d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaG9csQAKCRAw5/Bqldv6
+8r1MAJ9xvt+80VijeF3ER7NfrKbtR2P7uACfdVNRYATSw2kV1VAJPV4JDVGuexE=
+=7V0F
+-----END PGP SIGNATURE-----
+
+--7NKn0rfxX1P/x+1d--
 
