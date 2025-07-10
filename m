@@ -1,221 +1,312 @@
-Return-Path: <linux-kernel+bounces-725852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C711DB004A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:06:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B940BB004B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB1A189A246
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:03:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074375437B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D08627057C;
-	Thu, 10 Jul 2025 14:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468562727F2;
+	Thu, 10 Jul 2025 14:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GPvdbf+d"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2053.outbound.protection.outlook.com [40.107.243.53])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WUaA9xLW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B165263C92
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752156180; cv=fail; b=QYq735bEDBEwtmje0fmiHp8ws7m3xrVR1E9pHsRcF/Y7qud3thXV5FmXtZDRI1H1/0dF3UHJp2df/u3FUwAQRWshfqwvyd/VKgHpypYRy+5AowaUPB9orFW5OmM3gZwdBTNCWy+dppi2DYUD9GCsVFjbSFiucM9E4NrMXHxWAm0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752156180; c=relaxed/simple;
-	bh=t7OXPCqOll4iISOQQ1XTMXs/Vl0Y0R2H8KT7UYBOgFk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=anpZo60+PnHA8OUGpMAKlf2JlPUKF6qQx5A7+VlMT/yquxdk6USooxfwgbU2NWF+czptC03mIBiF3S9rYwC1Hv6V/HnANc06uYrLMjhkVaXUUaoNNi1DmAfbJ7N/w8qoT2IQKQPFJi9pEsUepwO3lbv8OJV5+OG1BPOmtvmrDmk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GPvdbf+d; arc=fail smtp.client-ip=40.107.243.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GjbiFAJIRh+IBJv7ntFXQ+dFyHxbKBoCVf7jwrBysZGhS8qkIaX+U58bz4QlHFyKxls46xiG8R6Wexzd+yIrnyniZMqz+JhR9RICoyCYu2SDi6vlutL/G6ikYR/mP8oAnMJOH94AeTPWz5hs63eoFGa6JJpUn720v7YyeencMxQ5sAlQFjJsPJB40gi6sVkH6qbM1nXgUs2kez7qnVfGZZkxoaXvljAMW4zJB+RB+xO3KEfL9KYs3q71JohcpWDC0oqhisvbueNBAiXs3Xst2LZtQOmuztd1FZ9QP3LHqPPjodeasUBl4cM4r23YYSWfj7zriAnieyRF+Dr0PFuh9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t7OXPCqOll4iISOQQ1XTMXs/Vl0Y0R2H8KT7UYBOgFk=;
- b=gpm/yDP0eY+Af7UTRmuRRnxlTpt1G4F4Td77KCk7v/jUsMKi5sb0JsUTYpDq/CoHePMAZfVK18MiJbefYcvywbVhuVOVrvPgd4KDzPN61nTqpAqXuKvSr0ztrk8yUbX9GSvX2LLdE9OmFnT1EQdYJgTybJmLmDFdFUp05H+RxRq/odaypQjlfDM4Ej86DsNNRzb+N0S/94BEo4o1mq7+33UCIGXoYTLhqkhzl3GuwK4NpE3vnhtdZgqTi+3vM7QJ9gV5SGG8vk49m0Jx9ywL0VzoAjYD1taN10wDWxNzephVnUjiip/Ri/r3ftPNvXqsDvVe8jk/LEtaY/hLmbXU0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t7OXPCqOll4iISOQQ1XTMXs/Vl0Y0R2H8KT7UYBOgFk=;
- b=GPvdbf+dWd8qaS424iv6wls3x7WL8L7W+mXkfGEptPD6SyZqXPtivP6xNEHBvRDBmmYxFByUqZXosYLeiHAdVkMMZgJBuLWn4Pa+bkptNK3L72DlRf8m9zDYTolK1FNuM3vNu55itKVY8gpZOBv3idvaO8QVa6aLuMWFIICGxd8=
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com (2603:10b6:408:215::14)
- by DM3PR12MB9327.namprd12.prod.outlook.com (2603:10b6:0:42::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Thu, 10 Jul
- 2025 14:02:56 +0000
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::2202:1a7e:2dd:ad1d]) by LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::2202:1a7e:2dd:ad1d%5]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
- 14:02:56 +0000
-From: "Kaplan, David" <David.Kaplan@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra
-	<peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Pawan Gupta
-	<pawan.kumar.gupta@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, "H .
- Peter Anvin" <hpa@zytor.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v6 02/21] cpu: Define attack vectors
-Thread-Topic: [PATCH v6 02/21] cpu: Define attack vectors
-Thread-Index: AQHb8Yd0Aa2smvaeMkOjZr6TRuOzMLQrYrkw
-Date: Thu, 10 Jul 2025 14:02:56 +0000
-Message-ID:
- <LV3PR12MB9265E7C013D6BBA5E6FB586C9448A@LV3PR12MB9265.namprd12.prod.outlook.com>
-References: <20250707183316.1349127-1-david.kaplan@amd.com>
- <20250707183316.1349127-3-david.kaplan@amd.com>
- <20250710104252.GBaG-ZLG7p_LsNCjBm@fat_crate.local>
-In-Reply-To: <20250710104252.GBaG-ZLG7p_LsNCjBm@fat_crate.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-07-10T13:59:45.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9265:EE_|DM3PR12MB9327:EE_
-x-ms-office365-filtering-correlation-id: 8d121e2f-2619-41db-6fef-08ddbfba7898
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?WnBjSmkxd3pOTHZ5dE9TZnRPcElsc2ZPQ2wwMWVIaWQ5L1hlQVZZaTZSNjJw?=
- =?utf-8?B?WEFra2VKb3V6QTRDbndMeU0xMCtYNFJUUzRZRmYxTHdVNXRXQnJUem5NUXZO?=
- =?utf-8?B?VnB6eGwzaVVIaElnaEJwUnhDa0pSUkxUdDBhTC9ncW85OStSOEI5TGdHbkNX?=
- =?utf-8?B?WW52b2h6SnlwRXdsTnFxcWRBZmRhNnBIR0xNeHEvRHlUbnVTUjZYdUdxZXdH?=
- =?utf-8?B?NUcvaURqam02VE44OXNkLy9hZkc3V0hKYUFzS2hocHBDTUo0Qkw5U0RraUs5?=
- =?utf-8?B?b21YQ1Fkb3djM0RZbGl6SFp6Y2xkcEM2QnJIdXA0TlN1KzlaR1pxMjlpQlJl?=
- =?utf-8?B?SndWZGx0ZEYvdkdIU0hBMVBrTTVTY3J4enFJdGY0dXJwbkgxblFkejA2QVJX?=
- =?utf-8?B?dzN2dTJLQmI3VC9kbHpsK1dCcjF6YWlFQk8wc01SV0M3RHlYM3dmaHZxMDBj?=
- =?utf-8?B?cDNMUjJiYk5Oam5Xdmx1SkxaQjcvaVMrYlIxOFJyK3d5dW1SUU1XbGFub3FF?=
- =?utf-8?B?TGxIMEFHcTlqNmt5Ui9nVzhpTUhxODUvVWh0UFI4ME51WDgyWk1jcHFBNk50?=
- =?utf-8?B?di9NYlF2MFZBMXVPdEloK0FicGpqSmdyQU0zLy8vZStwYUhyZGREVjhCM2JO?=
- =?utf-8?B?M1pqNnNvUm43Yk12djI3MlNTdHNYZ3ZtUTREdTJvTWZCbFp3SFNPRHhKSldn?=
- =?utf-8?B?YVhYMi95cE5vSCt2YnNhVmYyamlOcWJIQWJaaXZ4Z3ZhZEx6Zml0RlROUkhr?=
- =?utf-8?B?SGUxLzJFQVVJdDZ0ejFUdmUrL0FJcDdDbDYvV3NVZXA1VWhFMWpLTGxYZldi?=
- =?utf-8?B?NXNRRHVLRzJ4TnZrQzhpamR2R09iaFhwNXUybjBFMlBTMmFuOEpTMjJCSWE4?=
- =?utf-8?B?c0lBdTZtVzBRcW5NL3Fjc3NEVGlLNVdFZklPWE03OGZDS3FLcGNpNEp4OWRS?=
- =?utf-8?B?VXlNL0hlcXBtdG45VEk4bWZyREhybEFPU1dDSHZ1SGtaTTNuVTk3bVVvUEtm?=
- =?utf-8?B?NkY0eVhxVDlNd29Jem55TDRPR1U0K2JtVnluRlZ5L0JaK25ha2tlTDVpV2J4?=
- =?utf-8?B?TlNuNUdEUjhLZUp3RThaRDB3OFY3b3piMm9rVFo3MDNlZCt6c2N0M1c2TWc1?=
- =?utf-8?B?NVZvWVF4SU1yeEZtRWszY1JxUFZZOTcrTnhrTUxJL3J1VzZoU3h0clRGVzRm?=
- =?utf-8?B?WnFWM2dQZVpUS0ZaTWo3TmFZenhodXlyRGdYZG5tbFJkcHN1bFJTZmJISHNS?=
- =?utf-8?B?cTF1NWlzbmRmeFF5WG5DYkkzQTdlMVpEUWhYd0hzK0x4ekhDRC92cXNDWG5h?=
- =?utf-8?B?OE50MTFpV3NrL2toN0ZrVEpmR3ZrL3hvL2NaT1RPYlZFYkljMFkzZjRCR3F5?=
- =?utf-8?B?V0V2bnVaOXVodWpNMGR2M1BWdFJBa2tHTWJtRDk2VmxUUm51TVl0ZHAyTysy?=
- =?utf-8?B?NFFKS24wbmhucHlmUVRXWWt0eVJaNWI4eUNldU1pL3I4clQzNFRtelM4VlZ2?=
- =?utf-8?B?ME9wRlVlWG00akJXb3N1MWdaaUpNVTE0UDczcGxGQ3BZVUtaektIQ01la3dJ?=
- =?utf-8?B?OG5lWlFKeUlnWDNHdXhzdExxcXFQNjB4eHZObmoyaGszWElkSDhJNTdCaHZR?=
- =?utf-8?B?QkR6enA2YXZseGhiaGgrOUF6OGJRZk1MTW5XUlVvdlRSQTYzM2ZWcTNKOFJP?=
- =?utf-8?B?UzE5RU84STRndmpEZ253T0pZNGRqVUdGRGI0aVlFbDhHakRXOWQ4VEFJd0xB?=
- =?utf-8?B?eEl1c1dlbUllYUVXOVg0cTc1dk4rTzBYVXZOWU00Nk5zU3I0b0Jia2MwRjVV?=
- =?utf-8?B?Qy92aXlhUStGMEExV05acklySTI3U29RVkF4Vlk1bCs1a2NNbFpsOHhEelhk?=
- =?utf-8?B?cGh0Ny84THlmdUZiWFhsZnhkbTMrbDliMlFnQVdleDk4dVJWMUp2TWVwZzlN?=
- =?utf-8?B?QjNmc3A2dHJuSkM5aUQzRE52K05rZkxkdlVUc1BIdU9seHk5V0FkZTgzaUV4?=
- =?utf-8?B?c2xqQmEzOENBPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9265.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?ejZYdGNxaGgyK3NEUXI3RmVKOFhUWStQazd0WGRYVktSbkltVFg1M0ZPYXlN?=
- =?utf-8?B?bFcvcHgraE9TeFo1blZmK3FsaG56YXhmUGNHVGUrSDc5dUpPZHFpWFJEV0xZ?=
- =?utf-8?B?YkRQYTZIcVVHNG9MUWdnNzFLWldCSDJvU0hrN2dNMmtBZmRxOUkrek55Ny85?=
- =?utf-8?B?N2lrZnJ3aUloQWFVdnRQc2RBKzRCaGRuMHU5Y1hQbFQrNlFyY2svSmRtb3ht?=
- =?utf-8?B?TCswMHFMQ0diNkVZSHFidGVuTUt2TlBkQXU0aGhoOTBOeTZOMzdaR1NQY0dH?=
- =?utf-8?B?dnZVNmpkbTdkamlpUGgwUDVYMWZiSDV1MzgxbmNrbEtxMTN1V1pqNlRjZFpD?=
- =?utf-8?B?bWtOdFA0bjYwaVFIU3dKSUllZzF6Qjd2VmhpRnJDbzZhOW1ESCtaVGlhM3la?=
- =?utf-8?B?STRMdzEyTmk5bW5SN092b0NjR2J5NTlpMnFDTVd3NE45a0luSXptc2FYbUtp?=
- =?utf-8?B?bFpQMGw4V2pWOXRlbVBYMEd4dDcybDN1YTRwNTlvL21rNFpoOUowb1BqUTRk?=
- =?utf-8?B?REFmbllZSDY2NjR0UXNQT1llMXBaWXpnc3QyT3hma3dOdTlsOUxzcjRqcm52?=
- =?utf-8?B?WGVrdFVDL1hKL3VLQVQvc2M4emNIdDd1MTNzWkMwUC9vdTN5U0g2N2lmWjY1?=
- =?utf-8?B?cTErb2I4OHJLTFBxN29aWUZzejdPOXNlYWZkWnRRNVM2RUJPK2l3WDFJMDRZ?=
- =?utf-8?B?QmpRQnU4ZWtVY2RhVHFLS0hDNEp0d0NVL2txdDdwcVVFWTB3NCthcDYzaE5P?=
- =?utf-8?B?ZTNJL3RFWE1tZExLOE8zaVBGcjBVUlM4YkZseGdKN2o5WFAvY0R6eTNsWnFa?=
- =?utf-8?B?M0l3RGkvWGRkTU43N2xnbk5uQnBCZDZRV2dDeXhQVDBFcVVGUzhpV0pmeTBa?=
- =?utf-8?B?TXFEWU9tRTVrcUhTSUFkVVMzZVI5bHRUaVVFYzJURU12Vk90bWVibGcxandp?=
- =?utf-8?B?dnhkT1paZ0F1S0ZYcEp6V2ViSXNoTTZ4aWY3WS9TZFJaeWJBeURCeDJsUVoy?=
- =?utf-8?B?SCtrUXg4NHEySnRQMG41VHZrcTR0ODM3c0hkWU9HV3pRZllpNWg1eTU4KzFF?=
- =?utf-8?B?RnJ0dHlUb0U2cjRYaHRYVWZmVU1UOGN4NmtjZDZSTE5BdzdpMjc2UHhDRTZn?=
- =?utf-8?B?TTAySFcvbFYyU2lTTHpuVWZqUlF3SG1nQzlmaWxHTUozZ28xbnJpcXlGb0NP?=
- =?utf-8?B?R2EvdC9NY1R1YXRuZiswai9mb0svZWM2N0xkMVJLM2R1YzlqWVM1TTVyOGJ3?=
- =?utf-8?B?UnZjay9BSkljOHBaU2xGY2ZXTmRmNDhzSXNVTTBqa2RrM21UcTJQWFYrWVVP?=
- =?utf-8?B?cGwyMGV0SWR4UEs0RU9CRVFqRmwxUnhWMWV5emR1VFhHMUxzS2pEN2VNRVF1?=
- =?utf-8?B?NXBPSkxHdVVNS3VVazFONHh5Z1JxTm1UNkV4OEJWZ2JYcEY4bHBMdnNWaWR1?=
- =?utf-8?B?VGZJa2x3Nko2K3BBN1lndWtZOXNyUmdSNUxyZ0dUVHJxem1QQjlLYVlkekY4?=
- =?utf-8?B?RGdXZ2Zwa0w0UVJxSFMwYVJmNFBPV1kzRThxYUhmdTFBU0JYMnRXbFo5USt5?=
- =?utf-8?B?SklvRTZOYWdGQkFLakZXZUpITk9Qa1lHNHR4S1ViT3RTaGQzVjNPRGducVJ5?=
- =?utf-8?B?bjVWTkcyckZRNTJ4Nkx5bExDTzA1YXdBTFFkWERCMmFpcW1BSTA0NTN2alFE?=
- =?utf-8?B?N3F1SGFYelV0VnFGS2JmQUM3eEVEMTlZMXY5WjJJWS9qcnFkYXBHZUpjWmJS?=
- =?utf-8?B?Y1RmVVFoQTVvTlFiVWFDUStXVHVubnZtZDk5ZG1FWU9mRmZ6WXRYVTh3ZXFp?=
- =?utf-8?B?SnVMSDh6aVJKUFRQTUlmaGlxUUhvaWNJbnFvZ0xoZDJsdTduNmgySE9lekcx?=
- =?utf-8?B?dnVFNUdmL0QvSUJCaFh0aW15MytCSHJhVWcxL2o2clJuYlRQOU1VV1llUlVz?=
- =?utf-8?B?aFZyNzhKenJQZFlpQVZPSDZRdk1ReVBHYkRVemtaNy9NaEx6dWVtSVpyMk1G?=
- =?utf-8?B?Ly9ST3B4elVYYXA0WGZSVXE3TXBuWVpCZW15eEhrU1NrZ25KNVRBVytzUVRV?=
- =?utf-8?B?eGYzK3lBcXBGU1R1eE1BNWJMakhaTHp1dTRYNHh2aFRsbWhKRkFJTWZRZDYz?=
- =?utf-8?Q?zVXI=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B890263C92;
+	Thu, 10 Jul 2025 14:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752156187; cv=none; b=q8fLJMZdc2lqqDfrvErxU5TwoxBDJNmb5afa2LL6cM17TryU6VDSZZaEvyUMcUozivJbYMM2H1j8y3TrZ1nK5tb/XSTkkA8i1hSJuX9mWY9EWDGYxaJAx5JOyjy5savDKcgfiyLguO5gIJtuxL42CdV16RYoI8U0fab7LdtLI9Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752156187; c=relaxed/simple;
+	bh=xxgyYy8voCOQBGC85r6GJhF+5zgq25385Rsym1qSLcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HLbly3fuArQN/Cwz1spf645ati48A9ftjEKglKrDn6LGms9M9NYIFMCjcpkq1jbrV5c/mHqqv9WmsHuLRVOCg6zdNi2Wg9Cw5hQjEzPFj+YgtQuLE7iFRea1rPSGt7A11mNC1AoLFNG6LZSfxZQpqKg28u0u6jnhnnt5fxSiiqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WUaA9xLW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 280DFB2B;
+	Thu, 10 Jul 2025 16:02:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752156154;
+	bh=xxgyYy8voCOQBGC85r6GJhF+5zgq25385Rsym1qSLcQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WUaA9xLWJJzHOqVYmF8i4EPY7434mHYFa6D8PFaZKWhRnTasFdlZp5pmWSw4+Osh+
+	 sOYpOB5IXkOSZmhkRIAqnSD5S1LaWtdeYbEGK0yCzoeUYk7ettWU2fZInPlyJBtgYh
+	 GSYtaULAbtXUCFKarxH2Hg4nRLQc+/SNZsRfzNBk=
+Message-ID: <0cea12d8-4c03-48a2-9f9d-af03590f72e0@ideasonboard.com>
+Date: Thu, 10 Jul 2025 15:02:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9265.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d121e2f-2619-41db-6fef-08ddbfba7898
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2025 14:02:56.4485
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RTtp70N0wmqT8ITIylHdNmQylCBdM2l0Uts6ciapm41LVFeBv4cvzatl17nsjjK3
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9327
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] media: uapi: Introduce V4L2 extensible params
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Dafna Hirschfeld <dafna@fastmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <20250710-extensible-parameters-validation-v2-0-7ec8918ec443@ideasonboard.com>
+ <20250710-extensible-parameters-validation-v2-1-7ec8918ec443@ideasonboard.com>
+Content-Language: en-US
+From: Dan Scally <dan.scally@ideasonboard.com>
+Autocrypt: addr=dan.scally@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250710-extensible-parameters-validation-v2-1-7ec8918ec443@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCb3Jpc2xhdiBQZXRrb3Yg
-PGJwQGFsaWVuOC5kZT4NCj4gU2VudDogVGh1cnNkYXksIEp1bHkgMTAsIDIwMjUgNTo0MyBBTQ0K
-PiBUbzogS2FwbGFuLCBEYXZpZCA8RGF2aWQuS2FwbGFuQGFtZC5jb20+DQo+IENjOiBUaG9tYXMg
-R2xlaXhuZXIgPHRnbHhAbGludXRyb25peC5kZT47IFBldGVyIFppamxzdHJhIDxwZXRlcnpAaW5m
-cmFkZWFkLm9yZz47DQo+IEpvc2ggUG9pbWJvZXVmIDxqcG9pbWJvZUBrZXJuZWwub3JnPjsgUGF3
-YW4gR3VwdGENCj4gPHBhd2FuLmt1bWFyLmd1cHRhQGxpbnV4LmludGVsLmNvbT47IEluZ28gTW9s
-bmFyIDxtaW5nb0ByZWRoYXQuY29tPjsgRGF2ZQ0KPiBIYW5zZW4gPGRhdmUuaGFuc2VuQGxpbnV4
-LmludGVsLmNvbT47IHg4NkBrZXJuZWwub3JnOyBIIC4gUGV0ZXIgQW52aW4NCj4gPGhwYUB6eXRv
-ci5jb20+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFU
-Q0ggdjYgMDIvMjFdIGNwdTogRGVmaW5lIGF0dGFjayB2ZWN0b3JzDQo+DQo+IENhdXRpb246IFRo
-aXMgbWVzc2FnZSBvcmlnaW5hdGVkIGZyb20gYW4gRXh0ZXJuYWwgU291cmNlLiBVc2UgcHJvcGVy
-IGNhdXRpb24NCj4gd2hlbiBvcGVuaW5nIGF0dGFjaG1lbnRzLCBjbGlja2luZyBsaW5rcywgb3Ig
-cmVzcG9uZGluZy4NCj4NCj4NCj4gT24gTW9uLCBKdWwgMDcsIDIwMjUgYXQgMDE6MzI6NTdQTSAt
-MDUwMCwgRGF2aWQgS2FwbGFuIHdyb3RlOg0KPiA+ICsgICAgIC8qIEF0dGFjayB2ZWN0b3IgY29u
-dHJvbHMgbWF5IGNvbWUgYWZ0ZXIgYSAnOycgKi8NCj4gPiArICAgICBpZiAoKnArKyAhPSAnOycg
-fHwNCj4gIUlTX0VOQUJMRUQoQ09ORklHX0FSQ0hfSEFTX0NQVV9BVFRBQ0tfVkVDVE9SUykpIHsN
-Cj4NCj4gUmlnaHQsIHNvIHRoZSA7IHNlcGFyYXRvciBjYXVzZXMgcHJvYmxlbXMgd2l0aCBncnVi
-IGFuZCBpdHMgc2hlbGwtbGlrZQ0KPiBncnViLmNmZyBmaWxlLiBJZiBJIHB1dCB0aGVyZToNCj4N
-Cj4gICAgICAgICAuLi4gbWl0aWdhdGlvbnM9YXV0bztub19ndWVzdF9ob3N0DQo+DQo+IGl0IHNh
-eXMNCj4NCj4gICAgICAgICBlcnJvcjogY2FuJ3QgZmluZCBjb21tYW5kIGBub19ndWVzdF9ob3N0
-Jy4NCj4NCj4gYmVjYXVzZSBpdCB0aGlua3MgaXQgaXMgYSBiYXNoIGNvbW1hbmQuDQo+DQo+IFdl
-IGNvdWxkIGRvDQo+DQo+ICAgICAgICAgLi4uICdtaXRpZ2F0aW9ucz1hdXRvO25vX2d1ZXN0X2hv
-c3QnDQo+DQo+IGJ1dCB0aGF0J3Mgbm9uLWludHVpdGl2ZSBhbmQgaXQnbGwgY2F1c2UgcHJvYmxl
-bXMgbGVmdCduJ3JpZ2h0Lg0KPg0KPiBVc2luZyAnOicgYXMgYSBzZXBhcmF0b3IgaW5zdGVhZCBz
-ZWVtcyB0byB3b3JrIHNvIGlmIHBlb3BsZSBhZ3JlZSwgSSdkIHN3aXRjaA0KPiB0byAnOicuLi4N
-Cj4NCg0KSW50ZXJlc3RpbmcuICBJIHdvdWxkIHN1Z2dlc3QgYSBjb21tYSBpbnN0ZWFkLCBzbyB5
-b3UgaGF2ZSB0aGluZ3MgbGlrZSAibWl0aWdhdGlvbnM9YXV0byxub191c2VyX2tlcm5lbCIuICBU
-aGF0J3Mgc29tZXdoYXQgY29uc2lzdGVudCB3aXRoIHRoZSBleGlzdGluZyAnYXV0byxub3NtdCcg
-b3B0aW9uIGFzIHdlbGwuDQoNClN0aWxsIHlvdSB3b3VsZCBoYXZlIGdsb2JhbCBvcHRpb25zIGNv
-bWUgZmlyc3QsIGFuZCB0aGVuIHRoZSBhdHRhY2sgdmVjdG9yIG9wdGlvbnMuICBCdXQgc2luY2Ug
-Y29tbWFzIGFyZSBhbHJlYWR5IHVzZWQgdG8gc2VwYXJhdGUgdG9rZW5zLCB0aGF0IHNlZW1zIGNs
-ZWFuZXIgdG8gbWUuDQoNCklmIHlvdSdyZSBnb2luZyB0byBlZGl0IHRoZSBwYXRjaCBkaXJlY3Rs
-eSwganVzdCBwbGVhc2UgcmVtZW1iZXIgdG8gdXBkYXRlIHRoZSBkb2N1bWVudGF0aW9uIGZpbGUg
-YWNjb3JkaW5nbHkgdG9vLg0KDQpUaGFua3MNCi0tRGF2aWQgS2FwbGFuDQo=
+Hi Jacopo, thanks for the revision
+
+On 10/07/2025 14:52, Jacopo Mondi wrote:
+> Introduce v4l2-extensible-params.h in the Linux kernel uAPI.
+>
+> The header defines two types that all drivers that use the extensible
+> parameters format for ISP configuration shall use to build their own
+> format versions.
+>
+> The newly introduce type v4l2_params_block represent the
+> header to be prepend to each ISP configuration block and the
+> v4l2_params_buffer type represent the base type for the configuration
+> parameters buffer.
+>
+> The v4l2_params_buffer represents the container for the ISP
+> configuration data block. The generic type is defined with a 0-sized
+> data block that specific ISP implementation shall properly size
+> according to their capabilities.
+>
+> [Add v4l2_params_buffer_size()]
+> Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> ---
+
+Looks good to me:
+
+
+Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+
+>   MAINTAINERS                                       |   6 +
+>   include/uapi/linux/media/v4l2-extensible-params.h | 144 ++++++++++++++++++++++
+>   2 files changed, 150 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 658543062bba3b7e600699d7271ffc89250ba7e5..49a9329e5fe8874bdbaca13946ea28bd80134cb3 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -25968,6 +25968,12 @@ F:	drivers/media/i2c/vd55g1.c
+>   F:	drivers/media/i2c/vd56g3.c
+>   F:	drivers/media/i2c/vgxy61.c
+>   
+> +V4L2 EXTENSIBLE PARAMETERS FORMAT
+> +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> +L:	linux-media@vger.kernel.org
+> +S:	Maintained
+> +F:	include/uapi/linux/media/v4l2-extensible-params.h
+> +
+>   VF610 NAND DRIVER
+>   M:	Stefan Agner <stefan@agner.ch>
+>   L:	linux-mtd@lists.infradead.org
+> diff --git a/include/uapi/linux/media/v4l2-extensible-params.h b/include/uapi/linux/media/v4l2-extensible-params.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ace89299a4b37e428c0bc9a72fbc079b1dcda91a
+> --- /dev/null
+> +++ b/include/uapi/linux/media/v4l2-extensible-params.h
+> @@ -0,0 +1,144 @@
+> +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR MIT) */
+> +/*
+> + * Video4Linux2 extensible configuration parameters base types
+> + *
+> + * Copyright (C) 2025 Ideas On Board Oy
+> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> + */
+> +
+> +#ifndef _UAPI_V4L2_PARAMS_H_
+> +#define _UAPI_V4L2_PARAMS_H_
+> +
+> +#include <linux/types.h>
+> +
+> +#define V4L2_PARAMS_FL_BLOCK_DISABLE	(1U << 0)
+> +#define V4L2_PARAMS_FL_BLOCK_ENABLE	(1U << 1)
+> +
+> +/*
+> + * Reserve the first 8 bits for V4L2_PARAMS_FL_* flag. Platform-specific flags
+> + * should be defined as:
+> + * #define PLATFORM_SPECIFIC_FLAG0	((1U << V4L2_PARAMS_FL_PLATFORM_FLAGS(0))
+> + * #define PLATFORM_SPECIFIC_FLAG1	((1U << V4L2_PARAMS_FL_PLATFORM_FLAGS(1))
+> + */
+> +#define V4L2_PARAMS_FL_PLATFORM_FLAGS(n)	((n) << 8)
+> +
+> +/**
+> + * struct v4l2_params_block_header - V4L2 extensible parameters block header
+> + *
+> + * This structure represents the common part of all the ISP configuration
+> + * blocks. Each parameters block shall embed an instance of this structure type
+> + * as its first member, followed by the block-specific configuration data. The
+> + * driver inspects this common header to discern the block type and its size and
+> + * properly handle the block content by casting it to the correct block-specific
+> + * type.
+> + *
+> + * The @type field is one of the values enumerated by each platform-specific ISP
+> + * block types which specifies how the data should be interpreted by the driver.
+> + * The @size field specifies the size of the parameters block and is used by the
+> + * driver for validation purposes.
+> + *
+> + * The @flags field is a bitmask of per-block flags V4L2_PARAMS_FL_* and
+> + * platform-specific flags specified by the platform-specific header.
+> + *
+> + * Documentation of the platform-specific flags handling is specified by the
+> + * platform-specific block header type:
+> + *
+> + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_block_type`
+> + * - Amlogic C3: :c:type:`c3_isp_params_block_type`
+> + *
+> + * Userspace is responsible for correctly populating the parameters block header
+> + * fields (@type, @flags and @size) and the block-specific parameters.
+> + *
+> + * @type: The parameters block type (platform-specific)
+> + * @flags: A bitmask of block flags (platform-specific)
+> + * @size: Size (in bytes) of the parameters block, including this header
+> + */
+> +struct v4l2_params_block_header {
+> +	__u16 type;
+> +	__u16 flags;
+> +	__u32 size;
+> +} __attribute__((aligned(8)));
+> +
+> +/**
+> + * v4l2_params_buffer_size - Calculate size of v4l2_params_buffer for a platform
+> + *
+> + * Users of the v4l2 extensible parameters will have differing sized data arrays
+> + * depending on their specific parameter buffers. Drivers and userspace will
+> + * need to be able to calculate the appropriate size of the struct to
+> + * accommodate all ISP configuration blocks provided by the platform.
+> + * This macro provides a convenient tool for the calculation.
+> + *
+> + * Each driver shall provide a definition of their extensible parameters
+> + * implementation data buffer size. As an example:
+> + *
+> + * #define PLATFORM_BLOCKS_MAX_SIZE		\
+> + *	sizeof(platform_block_0)	+	\
+> + *	sizeof(platform_block_1)
+> + *
+> + * #define PLATFORM_BUFFER_SIZE			\
+> + *	v4l2_params_buffer_size(PLATFORM_BLOCKS_MAX_SIZE)
+> + *
+> + * Drivers are then responsible for allocating buffers of the proper size
+> + * by assigning PLATFORM_BUFFER_SIZE to the per-plane size of the videobuf2
+> + * .queue_setup() operation and userspace shall use PLATFORM_BUFFER_SIZE
+> + * when populating the ISP configuration data buffer.
+> + *
+> + * @max_params_size: The total size of the ISP configuration blocks
+> + */
+> +#define v4l2_params_buffer_size(max_params_size) \
+> +	(offsetof(struct v4l2_params_buffer, data) + (max_params_size))
+> +
+> +/**
+> + * struct v4l2_params_buffer - V4L2 extensible parameters configuration
+> + *
+> + * This struct contains the configuration parameters of the ISP algorithms,
+> + * serialized by userspace into a data buffer. Each configuration parameter
+> + * block is represented by a block-specific structure which contains a
+> + * :c:type:`v4l2_params_block_header` entry as first member. Userspace populates
+> + * the @data buffer with configuration parameters for the blocks that it intends
+> + * to configure. As a consequence, the data buffer effective size changes
+> + * according to the number of ISP blocks that userspace intends to configure and
+> + * is set by userspace in the @data_size field.
+> + *
+> + * The parameters buffer is versioned by the @version field to allow modifying
+> + * and extending its definition. Userspace shall populate the @version field to
+> + * inform the driver about the version it intends to use. The driver will parse
+> + * and handle the @data buffer according to the data layout specific to the
+> + * indicated version and return an error if the desired version is not
+> + * supported.
+> + *
+> + * For each ISP block that userspace wants to configure, a block-specific
+> + * structure is appended to the @data buffer, one after the other without gaps
+> + * in between nor overlaps. Userspace shall populate the @data_size field with
+> + * the effective size, in bytes, of the @data buffer.
+> + *
+> + * Drivers shall take care of properly sizing of the extensible parameters
+> + * buffer @data array. The v4l2_params_buffer type is defined with a
+> + * flexible-array-member at the end, which resolves to a size of 0 bytes when
+> + * inspected with sizeof(struct v4l2_params_buffer). This of course is not
+> + * suitable for neither buffer allocation in the kernel driver nor for proper
+> + * handling in userspace of the @data buffer it has to populate.
+> + *
+> + * Drivers using this type in their userspace API definition are responsible
+> + * for providing the exact definition of the @data buffer size using the
+> + * v4l2_params_buffer_size() macro. The size shall be used
+> + * by the driver for buffers allocation and by userspace for populating the
+> + * @data buffer before queueing it to the driver
+> + *
+> + * Drivers that were already using extensible-parameters before the introduction
+> + * of this file define their own type-convertible implementation of this
+> + * type, see:
+> + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_cfg`
+> + * - Amlogic C3: :c:type:`c3_isp_params_cfg`
+> + *
+> + * @version: The parameters buffer version (platform-specific)
+> + * @data_size: The configuration data effective size, excluding this header
+> + * @data: The configuration data
+> + */
+> +struct v4l2_params_buffer {
+> +	__u32 version;
+> +	__u32 data_size;
+> +	__u8 data[];
+> +};
+> +
+> +#endif /* _UAPI_V4L2_PARAMS_H_ */
+>
 
