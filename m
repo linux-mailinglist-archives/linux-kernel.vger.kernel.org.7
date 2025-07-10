@@ -1,274 +1,1261 @@
-Return-Path: <linux-kernel+bounces-726086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA62B007FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:02:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F846B00800
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70F45176360
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:58:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410FD1BC5BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD16279DA0;
-	Thu, 10 Jul 2025 15:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63D127A93F;
+	Thu, 10 Jul 2025 15:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CWlxzgfk"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2074.outbound.protection.outlook.com [40.107.94.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ig+742tP"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695F2279DB6;
-	Thu, 10 Jul 2025 15:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752163065; cv=fail; b=BNafMN0hvfNIhFE5yRVuZ65LYFuaLHV4U4QnPCB8+i1cNZ4KqhzjLmvEEjxaIxEiHWVJMwNVtU1vcfm+2F/cCLEs0GWvAJXW+/M5VTNAI+cCdiMYTRO/wyKsWALRzuqeYKcl5fKDNmuz/lozLErjHDbVkILYGImZLUeQyp6zK14=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752163065; c=relaxed/simple;
-	bh=JXimizUE1NRNJtJPtejsYcgD2wChpvYMM4uzfGEX/LU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lNUaCuRDGG6yqmOBRPcP/LbMQ+lpvIUvOBSt21CRO48oLRslbadH+wAtYMJLz9R5SPOyCaItTXuyRvV4cOlXnTD81bL26MpzPeJHvqKqJmJojqBuUT3uQ4K4QT5dcsT39T1CozVwl4hhIpazdAsL5h8Np/ovuS7RPKEpyCz9U18=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CWlxzgfk; arc=fail smtp.client-ip=40.107.94.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=akH3sHFe+RptBy2v7NpBxWEOU4afAfXC1mMil2qejjxC09Fua5bwscSetYdkQ3iRkkpvVrLBYdrjulOktyeoGPZAkv+Z2s3bgB9xnLZqD1h4tnYFq6YmHCfliasvRjmc2hY2wxP1tiyHP9gFnxOYFmrzgUIJxgdHkIDPFJVtQ1SZU1kElAblw/zOVisVU5MvVXjrBGScZlDmC5Xr+UYih+mCgWxGF7NaKkEk2BC08aTRG9icKdPr/WIBFUYr1lq9dK8gpyOJ5BXsExXjKi/zT2Ulz2H3dBBshfju7fJnU6+6DpqQTaoWbHYyLWsbmh0cAliHD60uo1lqJzNPm4ucng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JTn+QZkh/ySjvl+HBNEX7BtilHcxzZ0r/6xlxKOqvbw=;
- b=hB8B1Q7agvib0YLuvFHPoHMMDn/dHACENew9y5xbxHYtP8sJ9L5fa4LtMyr4ZyAVhySY8dt7gm7LRpoxNJGAozL42ekfI/RQVeiwBaTBqhEy5BMfTPUkLn9A1P/XdbUMfpzniXdqz7YzS6uvHD8LGzex81+kDOCEkZmpDIIf5H49BTIieu10b8qazInb7LSF+1/yRoC+pVUUdO77J8lbXgHKGQzMEd/lSf60Y2sW5F9dXqIiYW6cLd//9Kn/fYyCzLL9d8wkmfK9x33lRpn7RzIDMk0HUFULO19EcaNCsAmgMhlHA9FsPhN5otyFAUSN7sH6Bpff6p3yFZo0oXfzog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JTn+QZkh/ySjvl+HBNEX7BtilHcxzZ0r/6xlxKOqvbw=;
- b=CWlxzgfkNuOubnnLmKS/WHA1l3bWhknd2SaCYGvKy6yifNECArFJ+etmImmI9GvTO/owT7vroT0l+tH+vPu5UPfwxGlE4FaN71ro0TB35XRTcS6WelR6wdTekljBIyn/vbkfW6nEDs/n4CILqnzWt2d7VugxO+SB7NRgbcpyodY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by CH1PPF931B95D07.namprd12.prod.outlook.com (2603:10b6:61f:fc00::619) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Thu, 10 Jul
- 2025 15:57:40 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%3]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
- 15:57:39 +0000
-Message-ID: <b6a83977-eeb7-494c-8e1e-1b11b25fd61e@amd.com>
-Date: Thu, 10 Jul 2025 11:57:37 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/5] reduce system memory requirement for hibernation
-To: Samuel Zhang <guoqing.zhang@amd.com>, alexander.deucher@amd.com,
- christian.koenig@amd.com, rafael@kernel.org, len.brown@intel.com,
- pavel@kernel.org, gregkh@linuxfoundation.org, dakr@kernel.org,
- airlied@gmail.com, simona@ffwll.ch, ray.huang@amd.com,
- matthew.auld@intel.com, matthew.brost@intel.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de
-Cc: lijo.lazar@amd.com, victor.zhao@amd.com, haijun.chang@amd.com,
- Qing.Ma@amd.com, Owen.Zhang2@amd.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-References: <20250710062313.3226149-1-guoqing.zhang@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20250710062313.3226149-1-guoqing.zhang@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YT3PR01CA0086.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:84::34) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474F727A112;
+	Thu, 10 Jul 2025 15:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752163103; cv=none; b=BACIegAou+ozHj6pDuN5a4CpYJ8iLuL6MbsxwhTISdBm93c68arlZms3Xcrg0MOUuSfqSF5+Wu3HTdHJckmddnfIShs4NUM5Sz9Ynx+fJgffef2NfJcca2duEFYL00wwGHIdrxuTf5t0Km8pyBx4P7OEVQWlGd0sSJeZxLQE+nA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752163103; c=relaxed/simple;
+	bh=rik6+uWEIEs048SBfPwZy3acGuuYSqmlCRdFdfWkKbU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kg4nxAbxVm6HMMmU22rA6spf18N16Kl556Q+kS6aYpr0z0p4v74tTJomVi5wSfRV6/xulua7gmziu/wVD79UH+q6gKHhWWqu7mmSjJJCaYxTjAG3niwgNUSP8dxuuZ+BtKTOQzth6Cm5IZDNL33DtkkRYIHRocxMiFLpVlBKwnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ig+742tP; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32f1763673cso14810161fa.3;
+        Thu, 10 Jul 2025 08:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752163098; x=1752767898; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sAYtkMAVE0egdHhQfg2aZBOtnuYta5iU24Ca9Csv8Qo=;
+        b=Ig+742tPU9BMzy7Xb6cYSSzYVSCvztqP5quQiLDIoX9/AgXc8XDnahZk6yGEr91i4e
+         KMHtCZrFiPIavdZr+xdX3q1g+hhtMJq2Ntx9YsEdh/OCC1+E1EcPa1hb0/YIumH1EVFl
+         YJwzjBxpau6Yu6ZgQ+RK9+dKR/HVmwjt9jg+sN6XuaNdoX1v8LSojVxmO+6VcD1UIHQA
+         gWDOfmMPYnkg4UsvE+AtuCP2qda/W7DzYrGQXInzp3+jiBOUb6WRjtlrFvg3JOBa64Oz
+         ilupLJDgdjy7GhiKgOYeUg3YdynrHPKMt2BSS1e0tvtUkRgHwVLIkAH6JK+rlxE2AJp9
+         tk1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752163098; x=1752767898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sAYtkMAVE0egdHhQfg2aZBOtnuYta5iU24Ca9Csv8Qo=;
+        b=f7BEODjsI9NrF5wAGFMkaRQAXXr0fH0dX5rDtcRG7It194eNAU9OC+lppqk1jjIHwv
+         WX7hFSlKs1Uyhf2+DlxvAdevV0qKbHTwq+ZxVMmVQikTFdGFW+5hGypyO1bzmQu8p2op
+         emCo+im+EZDVqcIbOhxZqpqF0d+l+sqERXL86q7oJZeXqIOWQydum07F6oVmCCbn5/jR
+         h9e4uh124b9XWLSHHWPxYYAkmP0ltaLAtCdh6t/FmoXlLNzxwPohjmBXKiLc+XEAPDbG
+         ymka8cJVBEZ/60vVofpIv8d9rB7m3aMxfZvQC7TKMy4TtNzAFxWn3eJg7Whd4fE6r93i
+         DQqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAfrrUhXn75L7dMO30SrL0sO2+VcCiGGxhio5tu78JUMJgTLGfHf35C9UxFo0XwHEGnWwXaybhuRIq40q18u8=@vger.kernel.org, AJvYcCXAxVoah0GHjJyMICx9hQqU/ad+f1ceOxTTJHDlwN70v3OUqN9XlJiHwRGGc4ORkNS6vLgvWh2KvJV+jBAt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBQs9Ee5dMqMh/8ikGXIMe5SxkFSojI6FR1XlZFKCOysROkBhV
+	vxwNRwqecIsQLfNsaWxY3joa2B6iX04NS48SJpDwhRmud46Ycnmlz6TOuhGzc3o9aEIcI3Is3Mv
+	co3rmm/m+QpzpQzYhaod0pIAfYFxKnmk=
+X-Gm-Gg: ASbGncsD9gVgKnl2nseB9rP/y+O7XN3igPaR2WLBW9SGPN0e8d9se2XBM7g9eBL14Oo
+	sCWDIUiRMc/Q+p/fjSbNY9BhJ6UNCGRLq9QyGiSxDMQ9DN9597YlusQhlhiBoXn4lbnvm4GuCIL
+	RrfqM8+XRfkEP+u+ohlU4kFbhe86Xr4ReFt3VJ0jzfgg==
+X-Google-Smtp-Source: AGHT+IFF93635vR1XqaYRJGacTMy6DHiUIEqjGPmR5KKVJk2crgzEiklGvygYbnIhODvOxPqn09wNhlPL22RXXkHEHo=
+X-Received: by 2002:a2e:ae18:0:10b0:32c:a771:9899 with SMTP id
+ 38308e7fff4ca-32fab95f137mr9718771fa.9.1752163097985; Thu, 10 Jul 2025
+ 08:58:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CH1PPF931B95D07:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0533cf53-667d-4618-bd3f-08ddbfca7f2d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|366016|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Um52bUVpT1FaZnV2bWU0dmVVNHdIMElXVGJRaWNHOFBqaFo5QytJMUp0dW1R?=
- =?utf-8?B?bVFYWUFSdXEwS041TDREYTQ5NEduT0RjQ1pJd2pmeUdDVitIWllMNHRWQm1p?=
- =?utf-8?B?ZTRoSmtGZzRreWREazBaQ21Cc2dsek5CRGxzbnJCelkyQk85dU1rRUZZTGJs?=
- =?utf-8?B?Q040WnF0WGtUVnExYlliWUNzaVo4OXM1dGhENVIrYTAyWCtrOUJQYzNLa1E5?=
- =?utf-8?B?M3U1NmxJNEJ2dDJSWU5Md2F3ZTN2bVN5K1VLeDB4MVFRYzJYYThlQmU1dlUx?=
- =?utf-8?B?RjRqZFptQmszQ0Rwbm1CVzVMS1BRdEo2UTk3RUxVNGJWblZHVVZ0ZG4yTGZV?=
- =?utf-8?B?VDRlSFFHK1hkNjg2NjRxQjRQclQrNGR6NFB2SkxucktqY29rc1E3RlR1V1M3?=
- =?utf-8?B?Q28wWnZiV3A0cjJoUWJsS0xzellZVkR6ZzRvZGRCYjRIdWV0aHplYXVUUnc5?=
- =?utf-8?B?ZEEvb09VeDB3Z1l3bVhLSWh5L05aWWY5M0xUVDhVd1dkVVQ4YklHcVJpWklZ?=
- =?utf-8?B?dTdBeUhjUWxONEErYU0yQ2JUZFpQeUhheE1odG1JSXROek9DOW0zSFcxVnIz?=
- =?utf-8?B?M3VpeEZpS2VLUlcrVTBCeDAwOGtFZUhHK3IvOWZ5TEhZdEU3elU1dUN3aHRW?=
- =?utf-8?B?bU03bkNXUDU4RE8xd3Z4dDJKU0xKL24wejZSR09yaEl4SWs0OFphUXJlMnZV?=
- =?utf-8?B?aXU1bnZORGg4bmVvYVd5NzhwZW5UaGxhNXhXRUtTKzl1akRwbUVHcG1xU0Jj?=
- =?utf-8?B?cjZuNkRvVzhZU1MxeDZRaXllT21JcG5DSmZwUFhvZDBWSmZoclByZGJBWHR3?=
- =?utf-8?B?N1krSnc1L0JCN1NBakhQK2lOdFB1aUF6c2pzbUNMUTErYkNObVpjMlRrQVhL?=
- =?utf-8?B?U3Z3MXBMbTkxMUc0clBUWjBzWVlac3hPTVFVTmNkNWNXMHc5UkNvYzFBTTlI?=
- =?utf-8?B?d1hlL2VEaEMrT3pTUVkyNjJQemJ4dkNxaDl1S0JjSTVYcHRZMElrcXFMdExy?=
- =?utf-8?B?bHR0b0Y4SW45ekRkYWVZQ0J4UVhXQk1UTE41ejk3QjFMVUhNdTBBMWU4a1Bk?=
- =?utf-8?B?Tmljd3JjOUxLYWgxKzlBVThFdWhYQ3N5cy8wWENqejRLZGF3UXlwQ3V2dUtj?=
- =?utf-8?B?SVF6blFrNE9hYXlGbmExNnZQaUFPN3E3SW1PTUtsU1NZRWFrckVtRVJ1czlu?=
- =?utf-8?B?MlpJZnVTSG1oWklBZ0p4cDZRam9sRlNDZUpOaWFhS24wVDJXckRGYXlESzJK?=
- =?utf-8?B?OG1JNllVZHdqMFlFM0FkeHgyR1JRbWFKSFhCdDB2Q2ZJVGROMkROMU9WTjVF?=
- =?utf-8?B?dDdTbkVDZ3g0TmN3K3BweHVDbTE0dm5hOC9LMEt5MTVqelIwNUF6NW55UERO?=
- =?utf-8?B?Rm5rRnhETHVaTFpBTEpUc0VtZDJFU1dCKzNMZVBYU2pwN3crUzBEZ0xGUFM4?=
- =?utf-8?B?ZG9vemxnaW1mcSs5eXlTRTZvZ1dHU0k2YWlZV0hJVEpwR25nSjF4aVZaVjFt?=
- =?utf-8?B?UHNZbytOYlpGaUhyQ1RYdFljQU16T0dTNXJYdVE4dGpzM0d2S2pMMVQxNTFH?=
- =?utf-8?B?R2M0bHRmZEpjR3M5S2dsMnljSWZ6L2JwTkNnWWM1YzdVSDdxWWh0OXp4dVYv?=
- =?utf-8?B?UlJrQVdQT0RVK0NPT3d2dytYMnNud2NacEFXS3lGUTFmQlhJYWdtdzdYa3po?=
- =?utf-8?B?bERlZmQ5TlU1a3BSaG1wOExSRWNXL3o2U21mNDAyOVlORTRpY0toTzgxSjI3?=
- =?utf-8?B?L1VDWTBQejlCb2IxNjBMSG9hbWxMYmxDOWROVE1GcHdQVjZmNm1zUVd1UjJ1?=
- =?utf-8?B?U0pNOEZjQXlEMXhRcG1kang3T0dPNHlzUUEvUUVFcExvRWx0WEM3YmtkK21z?=
- =?utf-8?B?T3dpVTd6WHFOOUgrOEgzTWhmczg0VHR2bnVIOWF0VjBvYnVnNmgrSk1xZmdt?=
- =?utf-8?B?M0d5YkI1bUxkYVl5SkNhM3JnOFB2STV0Unc4WDdSYVQwbktXSDU4NWNXdmhp?=
- =?utf-8?B?R2srME1rVGhRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UlNKbEJOMURQaVUwUEYrVGk2azJwcFhLNmhjUWYzditTT0xSc2VRdWxxYk5q?=
- =?utf-8?B?allQWU4rcldWY0pGaGFXNUR0TGxpOHQyRk01ZVFLZVpoK1YzK3RIdzdQYkJ4?=
- =?utf-8?B?NWE2R2lwREhHWWpLMWhuVUw4Qm95bGlZOVFxRUxObUpWUHcxYms2dWc2aUgz?=
- =?utf-8?B?c3ZnR1pic2cwbi9DSkZXeUZNb3hOdjF0WGhBeG5CUjR0Sm1oS2JZbS9XM3dK?=
- =?utf-8?B?N3dOc2J3YmtuV1ZkaVEzb3lLbmFKS0VqekljU1diYkpGc1p2cmNpM3lFZmFn?=
- =?utf-8?B?Sk9mY3drUGppYkErR2ltd0d0anl3TWpibHMyamRJNEZyL3BmS1ZSeGRsZzhv?=
- =?utf-8?B?RWRSRXpQaEppMG1rN1lBZ0FpeWZCelRwY1RyRzZROVZYbVFlU0lRSG9JYkZ6?=
- =?utf-8?B?MGZYUlBmM3haYXhZZmJPQ01EdFBJL3hXTXRXcVZ0UnBjS1VVeE83cHhndXNj?=
- =?utf-8?B?ZFJSVkk1bTMwdThRdFpNMFhGb0djWWNwckV3Rm5OSk44Y0UwSm41bkNPbFc5?=
- =?utf-8?B?RlZFZ0diaWd4NnlWV3E5RnhWc0k5WmRrdzNWa3NRbmtpZXFKZ1NDRWtQUUVO?=
- =?utf-8?B?ZkR3MjRPYlpsbnJraHlFdkxEajRZMm1tblNPeExiWm1sSFpBRzR4YnhKYVdN?=
- =?utf-8?B?dHhGSW5CSjFRdThBSXd3QWFySW1LNXVYd3FRbG5yNDVjOVZFbWZOK2ZPaG1h?=
- =?utf-8?B?UDdVY3JLWHVkNXk0cy9IcXMwWEZjUm1neUdGdmdVVUE2NFZSYitsUlB5aE5R?=
- =?utf-8?B?VEJWQjRoc3hCR0xOR3BacVgyOUZPWmh5ZmpwSUFLZlNOOWhBWHQrc1BGQ1Rn?=
- =?utf-8?B?VWtGYUpLT1VjWkJPaVZFdWtEcnVzZnU1RXRhNktDM094VkwrYjdhU2NKNFQ5?=
- =?utf-8?B?VGg1R2lMNGtsM25EQjA0YWFpQlFndHhRcVRZR0hFWlFoOHcxOGM0K2JKUHhX?=
- =?utf-8?B?am9JMXVQTFZpUW1QcGE2UHFReTF0SmlNUnVRcngxNE5KRTR2cTlRcVA3TFBy?=
- =?utf-8?B?T2JLK2R0SDdpZ2VXcGE3aUFCdWxPYXFGVlcvMm5mREZBazJINWNGYldraEl0?=
- =?utf-8?B?U3h1am1wUElOZXR6UHhKM29jOW5IVG51QkVFUytlODZicVVId2ZHQ09sRksv?=
- =?utf-8?B?V3o3R0E4UkpSNFFudXRSWWtHZThZeHl1czNoOEhYb2lnNXcwZVRJdVBXTmZM?=
- =?utf-8?B?UmEvWUlVSzkxNUVUYXl3OGpQQzlrZmozaHJuUG1yRzltUWRHS2pQWTc4RllL?=
- =?utf-8?B?RFhNb2JSR3FNb0VZZmk3SWx5VTJIejV4allPNkxhbzkrUlYrK1ZvbmNiTTA4?=
- =?utf-8?B?c01nallreGhWRWdlaDNwSHBCVGo3Rk50RE5jYUM4QjZ1c3NmdW4vUi9WamdW?=
- =?utf-8?B?TUdUa2JUY0tqcVdyQ2dudGxHNVA4WFNaQWJ0cjRPMEUxU0RLZGNxdkVrMFVv?=
- =?utf-8?B?dHg2dUt0UGRJa0t2Wk1qWUcyZTFPdWtvU3VSZm1LZUs4aGNHQjJGNGJ1MTQ2?=
- =?utf-8?B?TWVrU3gzbko1RnpGVTE0b1BrcXdYYW9PNGdIdEdqeU9zdmExK0J4OTVVelJq?=
- =?utf-8?B?eXlEZk5HS0h0YWc2R2tyL3ZKcjdZUlFMQVF1WDVsQis3SmRrSmIxUEFXZENG?=
- =?utf-8?B?b0dFa0o2eVp4cmpYVFpaWEsrNGF2WXdLTzBRcE51THlzU2wxUGdjOFFWN3ZT?=
- =?utf-8?B?VUJrbnE3RkloVkJPZGIzWVJUL1U0VE0ySmUzRlVyRFRKQjFRVnBmbzMzTjli?=
- =?utf-8?B?VEpHU2MzUkZXcjBobERFQzRPQkVOUjQ1THUxZ056a2wrQ1d6a3orK0RVaTM4?=
- =?utf-8?B?MWRwUHhaZkV4emRZZ3RIR1lmaFIvRTVwNVIxcURWcWl0ZEEwNTFidWtQNE8x?=
- =?utf-8?B?c0FmK2JCNXpRSXlpT0l5K2tBd1Q5bDBET1dXNm9PazhMOWdoWkxJeC9LK3p5?=
- =?utf-8?B?NWZzZzR5Vmo1dUF3ZEl0WWpHazExcVhQenU2dXVlVVY5bDRKVWRjUjVuNVN0?=
- =?utf-8?B?aWM5djl4VzRtQXkya0xxT2pmdkxEUmFJZGxMSWdNVDcwUFB6eW1uQ0RXQUFP?=
- =?utf-8?B?ZVpqQTVrcmhlajlYaUgxNzJ1bDVjT1pmYXk2Uko1T2VFOE5aWlJmWkg5WGJo?=
- =?utf-8?Q?7a8GATIA3LfYMsARlGIuWmebp?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0533cf53-667d-4618-bd3f-08ddbfca7f2d
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 15:57:39.6736
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uefM7HDL1C0OcUITouOJi97r0rlhXDC9AEU0Yi1rhhnnOYSRpORhxLUHKLrvLHnqcOD/ILKU0GYyre3P3cQPGg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF931B95D07
+References: <20250708124516.2836881-1-hildawu@realtek.com>
+In-Reply-To: <20250708124516.2836881-1-hildawu@realtek.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Thu, 10 Jul 2025 11:58:02 -0400
+X-Gm-Features: Ac12FXwUQCNs5xJ0oBEC2zZaVR_66uzTghQ_gSdfVE6VLhGu_Up3msAPRpGKqx4
+Message-ID: <CABBYNZ+_aocMGOdugwF3uP9h3NN4Dv5XYRyiN50W0AJ3rSETTA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] Bluetooth: btrtl: Firmware format v3 support
+To: Hilda Wu <hildawu@realtek.com>
+Cc: marcel@holtmann.org, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, alex_lu@realsil.com.cn, max.chou@realtek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/10/2025 2:23 AM, Samuel Zhang wrote:
-> 
-> Modern data center dGPUs are usually equipped with very large VRAM. On
-> server with such dGPUs(192GB VRAM * 8) and 2TB system memory, hibernate
-> will fail due to no enough free memory.
-> 
-> The root cause is that during hibernation all VRAM memory get evicted to
-> GTT or shmem. In both case, it is in system memory and kernel will try to
-> copy the pages to hibernation image. In the worst case, this causes 2
-> copies of VRAM memory in system memory, 2TB is not enough for the
-> hibernation image. 192GB * 8 * 2 = 3TB > 2TB.
-> 
-> The fix includes following changes. With these changes, there's much less
-> pages needed to be copied to hibernate image and hibernation can succeed.
-> * patch 1 and 2: move GTT to shmem after evicting VRAM. so that the GTT
->    pages can be freed.
-> * patch 3: force write shmem pages to swap disk and free shmem pages.
-> 
-> 
-> After swapout GTT to shmem in hibernation prepare stage, the GPU will be
-> resumed again in thaw stage. The swapin and restore BOs of resume takes
-> lots of time (50 mintues observed for 8 dGPUs). And it's unnecessary since
-> writing hibernation image do not need GPU for hibernate successful case.
-> * patch 4 and 5: skip resume of device in thaw stage for successful
->    hibernation case to reduce the hibernation time.
-> 
-> 
-> v2:
-> * split first patch to 2 patches, 1 for ttm, 1 for amdgpu
-> * refined the new ttm api
-> * add more comments for shrink_shmem_memory() and its callsite
-> * export variable pm_transition in kernel
-> * skip resume in thaw() for successful hibernation case
-> v3:
-> * refined ttm_device_prepare_hibernation() to accept device argument
-> * use guard(mutex) to replace mutex_lock and mutex_unlock
-> * move ttm_device_prepare_hibernation call to amdgpu_device_evict_resources()
-> * add pm_transition_event(), instead of exporting pm_transition variable
-> * refined amdgpu_pmops_thaw(), use switch-case for more clarity
-> v4:
-> * remove guard(mutex) and fix kdoc for ttm_device_prepare_hibernation
-> * refined kdoc for pm_transition_event() and PM_EVENT_ messages
-> * use dev_err in amdgpu_pmops_thaw()
-> * add Reviewed-by and Acked-by for patch 2 3 and 5
-> v5:
-> * add Reviewed-by for patch 1
-> * use pm_hibernate_is_recovering() to replace pm_transition_event()
-> * check in_suspend in amdgpu_pmops_prepare() and amdgpu_pmops_poweroff()
-> v6:
-> * move pm_hibernate_is_recovering() from pm.h to suspend.h
-> * rebase to next-20250709 tag of linux-next
-> * add Tested-by for patch 5
-> 
-> 
-> The merge options are either:
-> * the linux-pm changes go to linux-pm and an immutable branch for drm to
->    merge
-> * everything goes through amd-staging-drm-next (and an amdgpu PR to drm
->    later)
-> * everything goes through drm-misc-next
-> 
-> Mario Limonciello think everything through drm-misc-next makes most sense
-> if everyone is amenable.
-> 
+Hi Hilda,
 
-Applied, thanks.
+On Tue, Jul 8, 2025 at 8:45=E2=80=AFAM Hilda Wu <hildawu@realtek.com> wrote=
+:
+>
+> Realtek changed the format of the firmware file as v3. The driver
+> should implement the patch to extract the firmware data from the
+> firmware file. The future chips must apply this patch for firmware loadin=
+g.
+> This patch is compatible with the both previous format, v2 and v3 as well=
+.
 
-530694f54dd5e (HEAD -> drm-misc-next, drm-misc/for-linux-next, 
-drm-misc/drm-misc-next) drm/amdgpu: do not resume device in thaw for 
-normal hibernation
-c2aaddbd2dede PM: hibernate: add new api pm_hibernate_is_recovering()
-2640e819474f4 PM: hibernate: shrink shmem pages after dev_pm_ops.prepare()
-924dda024f3be drm/amdgpu: move GTT to shmem after eviction for hibernation
-40b6a946d21ee drm/ttm: add new api ttm_device_prepare_hibernation()
+Can you please add the expected output, there seems to be a lot of
+info being added. Is this really necessary for regular users to see
+these messages? Also please review all the access to skb->data without
+first checking its boundaries with skb->len, I catch of few of them
+but there might be more.
 
-> 
-> Samuel Zhang (5):
-> 1. drm/ttm: add new api ttm_device_prepare_hibernation()
-> 2. drm/amdgpu: move GTT to shmem after eviction for hibernation
-> 3. PM: hibernate: shrink shmem pages after dev_pm_ops.prepare()
-> 4. PM: hibernate: add new api pm_hibernate_is_recovering()
-> 5. drm/amdgpu: do not resume device in thaw for normal hibernation
-> 
->   drivers/base/power/main.c                  | 14 ++++++++++++
->   drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 10 ++++++++-
->   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    | 17 ++++++++++++++
->   drivers/gpu/drm/ttm/ttm_device.c           | 23 +++++++++++++++++++
->   include/drm/ttm/ttm_device.h               |  1 +
->   include/linux/suspend.h                    |  2 ++
->   kernel/power/hibernate.c                   | 26 ++++++++++++++++++++++
->   7 files changed, 92 insertions(+), 1 deletion(-)
-> 
+> Signed-off-by: Alex Lu <alex_lu@realsil.com.cn>
+> Signed-off-by: Hilda Wu <hildawu@realtek.com>
+> ---
+> Change in V3:
+> - Fixed cocci warning
+>
+> Change in V2:
+> - Fill in the missing symbols
+> - Fix build warnings
+> ---
+> ---
+>  drivers/bluetooth/btrtl.c | 669 +++++++++++++++++++++++++++++++++++++-
+>  drivers/bluetooth/btrtl.h | 102 ++++++
+>  drivers/bluetooth/btusb.c |   3 +
+>  3 files changed, 766 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+> index 7838c89e529e..af28f5355aa1 100644
+> --- a/drivers/bluetooth/btrtl.c
+> +++ b/drivers/bluetooth/btrtl.c
+> @@ -22,6 +22,12 @@
+>  #define RTL_CHIP_8723CS_XX     5
+>  #define RTL_EPATCH_SIGNATURE   "Realtech"
+>  #define RTL_EPATCH_SIGNATURE_V2        "RTBTCore"
+> +#define RTL_EPATCH_SIGNATURE_V3        "BTNIC003"
+> +#define RTL_PATCH_V3_1                 0x01
+> +#define RTL_PATCH_V3_PATCH_IMAGE       0x02
+> +#define IMAGE_ID_F000          0xf000
+> +#define IMAGE_ID_F001          0xf001
+> +#define IMAGE_ID_F002          0xf002
+>  #define RTL_ROM_LMP_8703B      0x8703
+>  #define RTL_ROM_LMP_8723A      0x1200
+>  #define RTL_ROM_LMP_8723B      0x8723
+> @@ -72,6 +78,7 @@ enum btrtl_chip_id {
+>         CHIP_ID_8851B =3D 36,
+>         CHIP_ID_8922A =3D 44,
+>         CHIP_ID_8852BT =3D 47,
+> +       CHIP_ID_8922D =3D 55,
+>  };
+>
+>  struct id_table {
+> @@ -98,8 +105,11 @@ struct btrtl_device_info {
+>         int cfg_len;
+>         bool drop_fw;
+>         int project_id;
+> +       u32 opcode;
+> +       u8 fw_type;
+>         u8 key_id;
+>         struct list_head patch_subsecs;
+> +       struct list_head patch_images;
+>  };
+>
+>  static const struct id_table ic_id_table[] =3D {
+> @@ -328,6 +338,15 @@ static const struct id_table ic_id_table[] =3D {
+>           .fw_name  =3D "rtl_bt/rtl8852btu_fw",
+>           .cfg_name =3D "rtl_bt/rtl8852btu_config",
+>           .hw_info  =3D "rtl8852btu" },
+> +
+> +       /* 8922DU */
+> +       { IC_INFO(RTL_ROM_LMP_8922A, 0xd, 0xe, HCI_USB),
+> +         .config_needed =3D false,
+> +         .has_rom_version =3D true,
+> +         .has_msft_ext =3D true,
+> +         .fw_name  =3D "rtl_bt/rtl8922du_fw",
+> +         .cfg_name =3D "rtl_bt/rtl8922du_config",
+> +         .hw_info  =3D "rtl8922du" },
+>         };
+>
+>  static const struct id_table *btrtl_match_ic(u16 lmp_subver, u16 hci_rev=
+,
+> @@ -361,6 +380,33 @@ static const struct id_table *btrtl_match_ic(u16 lmp=
+_subver, u16 hci_rev,
+>         return &ic_id_table[i];
+>  }
+>
+> +static int btrtl_read_chip_id(struct hci_dev *hdev, u8 *chip_id)
+> +{
+> +       struct rtl_rp_read_chip_id *rp;
+> +       struct sk_buff *skb;
+> +
+> +       /* Read RTL chip id command */
+> +       skb =3D __hci_cmd_sync(hdev, 0xfc6f, 0, NULL, HCI_INIT_TIMEOUT);
+> +       if (IS_ERR(skb))
+> +               return PTR_ERR(skb);
+> +
+> +       if (skb->len !=3D sizeof(*rp)) {
+> +               rtl_dev_err(hdev, "read chip id event length mismatch");
+> +               kfree_skb(skb);
+> +               return -EIO;
+> +       }
+> +
+> +       rp =3D (struct rtl_rp_read_chip_id *)skb->data;
 
+You don't need to do checks for the size and casts if you use skb_pull_data=
+.
+
+> +       rtl_dev_info(hdev, "chip_id status=3D0x%02x id=3D0x%02x",
+> +                    rp->status, rp->chip_id);
+> +
+> +       if (chip_id)
+> +               *chip_id =3D rp->chip_id;
+> +
+> +       kfree_skb(skb);
+> +       return 0;
+> +}
+> +
+>  static struct sk_buff *btrtl_read_local_version(struct hci_dev *hdev)
+>  {
+>         struct sk_buff *skb;
+> @@ -439,6 +485,26 @@ static int btrtl_vendor_read_reg16(struct hci_dev *h=
+dev,
+>         return 0;
+>  }
+>
+> +static int btrtl_vendor_write_mem(struct hci_dev *hdev, u32 addr, u32 va=
+l)
+> +{
+> +       struct rtl_vendor_write_cmd cp;
+> +       struct sk_buff *skb;
+> +       int err =3D 0;
+> +
+> +       cp.type =3D 0x21;
+> +       cp.addr =3D cpu_to_le32(addr);
+> +       cp.val =3D cpu_to_le32(val);
+> +       skb =3D __hci_cmd_sync(hdev, 0xfc62, sizeof(cp), &cp, HCI_INIT_TI=
+MEOUT);
+> +       if (IS_ERR(skb)) {
+> +               err =3D PTR_ERR(skb);
+> +               bt_dev_err(hdev, "RTL: Write mem32 failed (%d)", err);
+> +               return err;
+> +       }
+> +
+> +       kfree_skb(skb);
+> +       return 0;
+> +}
+> +
+>  static void *rtl_iov_pull_data(struct rtl_iovec *iov, u32 len)
+>  {
+>         void *data =3D iov->data;
+> @@ -452,6 +518,30 @@ static void *rtl_iov_pull_data(struct rtl_iovec *iov=
+, u32 len)
+>         return data;
+>  }
+>
+> +static void btrtl_insert_ordered_patch_image(struct rtl_section_patch_im=
+age *image,
+> +                                            struct btrtl_device_info *bt=
+rtl_dev)
+> +{
+> +       struct list_head *pos;
+> +       struct list_head *next;
+> +       struct rtl_section_patch_image *node;
+> +
+> +       list_for_each_safe(pos, next, &btrtl_dev->patch_images) {
+> +               node =3D list_entry(pos, struct rtl_section_patch_image, =
+list);
+> +
+> +               if (node->image_id > image->image_id) {
+> +                       __list_add(&image->list, pos->prev, pos);
+> +                       return;
+> +               }
+> +
+> +               if (node->image_id =3D=3D image->image_id &&
+> +                   node->index > image->index) {
+> +                       __list_add(&image->list, pos->prev, pos);
+> +                       return;
+> +               }
+> +       }
+> +       __list_add(&image->list, pos->prev, pos);
+> +}
+> +
+>  static void btrtl_insert_ordered_subsec(struct rtl_subsection *node,
+>                                         struct btrtl_device_info *btrtl_d=
+ev)
+>  {
+> @@ -629,6 +719,295 @@ static int rtlbt_parse_firmware_v2(struct hci_dev *=
+hdev,
+>                 return -EPERM;
+>
+>         *_buf =3D ptr;
+> +       btrtl_dev->fw_type =3D FW_TYPE_V2;
+> +       return len;
+> +}
+> +
+> +static int rtlbt_parse_config(struct hci_dev *hdev,
+> +                             struct rtl_section_patch_image *patch_image=
+,
+> +                             struct btrtl_device_info *btrtl_dev)
+> +{
+> +       const struct id_table *ic_info =3D NULL;
+> +       const struct firmware *fw;
+> +       char tmp_name[32];
+> +       char filename[64];
+> +       u8 *cfg_buf;
+> +       char *str;
+> +       char *p;
+> +       int len;
+> +       int ret;
+> +
+> +       if (btrtl_dev && btrtl_dev->ic_info)
+> +               ic_info =3D btrtl_dev->ic_info;
+> +
+> +       if (!ic_info)
+> +               return -EINVAL;
+> +
+> +       str =3D ic_info->cfg_name;
+> +       if (btrtl_dev->fw_type =3D=3D FW_TYPE_V3_1) {
+> +               if (!patch_image->image_id && !patch_image->index) {
+> +                       snprintf(filename, sizeof(filename), "%s.bin", st=
+r);
+> +                       goto load_fw;
+> +               }
+> +               goto done;
+> +       }
+> +
+> +       len =3D strlen(str);
+> +       if (len > sizeof(tmp_name) - 1)
+> +               len =3D sizeof(tmp_name) - 1;
+> +       memcpy(tmp_name, str, len);
+> +       tmp_name[len] =3D '\0';
+> +
+> +       str =3D tmp_name;
+> +       p =3D strsep(&str, ".");
+> +
+> +       ret =3D snprintf(filename, sizeof(filename), "%s", p);
+> +       if (patch_image->config_rule && patch_image->need_config) {
+> +               switch (patch_image->image_id) {
+> +               case IMAGE_ID_F000:
+> +               case IMAGE_ID_F001:
+> +               case IMAGE_ID_F002:
+> +                       ret +=3D snprintf(filename + ret, sizeof(filename=
+) - ret,
+> +                                       "_%04x", patch_image->image_id);
+> +                       break;
+> +               default:
+> +                       goto done;
+> +               }
+> +       } else {
+> +               goto done;
+> +       }
+> +
+> +       if (str)
+> +               snprintf(filename + ret, sizeof(filename) - ret, ".%s", s=
+tr);
+> +       else
+> +               snprintf(filename + ret, sizeof(filename) - ret, ".bin");
+> +load_fw:
+> +       rtl_dev_info(hdev, "config file: %s", filename);
+> +       ret =3D request_firmware(&fw, filename, &hdev->dev);
+> +       if (ret < 0) {
+> +               rtl_dev_err(hdev, "request_firmware [%s] error", filename=
+);
+> +               if (btrtl_dev->fw_type =3D=3D FW_TYPE_V3_2) {
+> +                       len =3D 4;
+> +                       cfg_buf =3D kvmalloc(len, GFP_KERNEL);
+> +                       if (!cfg_buf)
+> +                               return -ENOMEM;
+> +
+> +                       memset(cfg_buf, 0xff, len);
+> +                       patch_image->cfg_buf =3D cfg_buf;
+> +                       patch_image->cfg_len =3D len;
+> +                       return 0;
+> +               }
+> +               goto err_req_fw;
+> +       }
+> +       cfg_buf =3D kvmalloc(fw->size, GFP_KERNEL);
+> +       if (!cfg_buf) {
+> +               ret =3D -ENOMEM;
+> +               goto err;
+> +       }
+> +       memcpy(cfg_buf, fw->data, fw->size);
+> +       len =3D fw->size;
+> +       release_firmware(fw);
+> +
+> +       patch_image->cfg_buf =3D cfg_buf;
+> +       patch_image->cfg_len =3D len;
+> +done:
+> +       return 0;
+> +err:
+> +       release_firmware(fw);
+> +err_req_fw:
+> +       return ret;
+> +}
+> +
+> +static int rtlbt_parse_section_v3(struct hci_dev *hdev,
+> +                                 struct btrtl_device_info *btrtl_dev,
+> +                                 u32 opcode, u8 *data, u32 len)
+> +{
+> +       struct rtl_section_patch_image *patch_image;
+> +       struct rtl_patch_image_hdr *hdr;
+> +       u16 image_id;
+> +       u16 chip_id;
+> +       u32 patch_image_len;
+> +       u8 *ptr;
+> +       int ret =3D 0;
+> +       u8 i;
+> +       struct rtl_iovec iov =3D {
+> +               .data =3D data,
+> +               .len  =3D len,
+> +       };
+> +
+> +       hdr =3D rtl_iov_pull_data(&iov, sizeof(*hdr));
+> +       if (!hdr)
+> +               return -EINVAL;
+> +
+> +       if (btrtl_dev->opcode && btrtl_dev->opcode !=3D opcode) {
+> +               rtl_dev_err(hdev, "invalid opcode 0x%02x", opcode);
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (!btrtl_dev->opcode) {
+> +               btrtl_dev->opcode =3D opcode;
+> +               switch (btrtl_dev->opcode) {
+> +               case RTL_PATCH_V3_1:
+> +                       btrtl_dev->fw_type =3D FW_TYPE_V3_1;
+> +                       break;
+> +               case RTL_PATCH_V3_PATCH_IMAGE:
+> +                       btrtl_dev->fw_type =3D FW_TYPE_V3_2;
+> +                       break;
+> +               default:
+> +                       return -EINVAL;
+> +               }
+> +       }
+> +
+> +       patch_image_len =3D (u32)le64_to_cpu(hdr->patch_image_len);
+> +       chip_id =3D le16_to_cpu(hdr->chip_id);
+> +       image_id =3D le16_to_cpu(hdr->image_id);
+> +       rtl_dev_info(hdev, "image (%04x:%02x), chip id %u, cut 0x%02x, le=
+n %08x"
+> +                    , image_id, hdr->index, chip_id, hdr->ic_cut,
+> +                    patch_image_len);
+> +
+> +       if (btrtl_dev->key_id && btrtl_dev->key_id !=3D hdr->key_id) {
+> +               rtl_dev_err(hdev, "invalid key_id (%u, %u)", hdr->key_id,
+> +                           btrtl_dev->key_id);
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (hdr->ic_cut !=3D btrtl_dev->rom_version + 1) {
+> +               rtl_dev_info(hdev, "unused ic_cut (%u, %u)", hdr->ic_cut,
+> +                           btrtl_dev->rom_version + 1);
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (btrtl_dev->fw_type =3D=3D FW_TYPE_V3_1 && !btrtl_dev->project=
+_id)
+> +               btrtl_dev->project_id =3D chip_id;
+> +
+> +       if (btrtl_dev->fw_type =3D=3D FW_TYPE_V3_2 &&
+> +           chip_id !=3D btrtl_dev->project_id) {
+> +               rtl_dev_err(hdev, "invalid chip_id (%u, %d)", chip_id,
+> +                           btrtl_dev->project_id);
+> +               return -EINVAL;
+> +       }
+> +
+> +       ptr =3D rtl_iov_pull_data(&iov, patch_image_len);
+> +       if (!ptr)
+> +               return -ENODATA;
+> +
+> +       patch_image =3D kzalloc(sizeof(*patch_image), GFP_KERNEL);
+> +       if (!patch_image)
+> +               return -ENOMEM;
+> +       patch_image->index =3D hdr->index;
+> +       patch_image->image_id =3D image_id;
+> +       patch_image->config_rule =3D hdr->config_rule;
+> +       patch_image->need_config =3D hdr->need_config;
+> +
+> +       for (i =3D 0; i < DL_FIX_ADDR_MAX; i++) {
+> +               patch_image->fix[i].addr =3D
+> +                       (u32)le64_to_cpu(hdr->addr_fix[i * 2]);
+> +               patch_image->fix[i].value =3D
+> +                       (u32)le64_to_cpu(hdr->addr_fix[i * 2 + 1]);
+> +       }
+> +
+> +       patch_image->image_len =3D patch_image_len;
+> +       patch_image->image_data =3D kvmalloc(patch_image_len, GFP_KERNEL)=
+;
+> +       if (!patch_image->image_data) {
+> +               ret =3D -ENOMEM;
+> +               goto err;
+> +       }
+> +       memcpy(patch_image->image_data, ptr, patch_image_len);
+> +       patch_image->image_ver =3D
+> +               get_unaligned_le32(ptr + patch_image->image_len - 4);
+> +       rtl_dev_info(hdev, "image version: %08x", patch_image->image_ver)=
+;
+> +
+> +       rtlbt_parse_config(hdev, patch_image, btrtl_dev);
+> +
+> +       ret =3D patch_image->image_len;
+> +
+> +       btrtl_insert_ordered_patch_image(patch_image, btrtl_dev);
+> +
+> +       return ret;
+> +err:
+> +       kfree(patch_image);
+> +       return ret;
+> +}
+> +
+> +static int rtlbt_parse_firmware_v3(struct hci_dev *hdev,
+> +                                  struct btrtl_device_info *btrtl_dev)
+> +{
+> +       struct rtl_epatch_header_v3 *hdr;
+> +       int rc;
+> +       u32 num_sections;
+> +       struct rtl_section_v3 *section;
+> +       u32 section_len;
+> +       u32 opcode;
+> +       int len =3D 0;
+> +       int i;
+> +       u8 *ptr;
+> +       struct rtl_iovec iov =3D {
+> +               .data =3D btrtl_dev->fw_data,
+> +               .len  =3D btrtl_dev->fw_len,
+> +       };
+> +       struct rtl_vendor_cmd cmd_data =3D { {0x10, 0xa4, 0xad, 0x00, 0xb=
+0} };
+> +       u8 reg_val[2];
+> +
+> +       if (btrtl_dev->project_id >=3D CHIP_ID_8922D) {
+> +               /* A0010DA4 */
+> +               cmd_data.param[2] =3D 0x0d;
+> +               cmd_data.param[3] =3D 0x01;
+> +               cmd_data.param[4] =3D 0xa0;
+> +       }
+> +
+> +       rc =3D btrtl_vendor_read_reg16(hdev, &cmd_data, reg_val);
+> +       if (rc < 0)
+> +               return -EIO;
+> +
+> +       rtl_dev_info(hdev, "key id %u", reg_val[0]);
+> +
+> +       btrtl_dev->key_id =3D reg_val[0];
+> +
+> +       hdr =3D rtl_iov_pull_data(&iov, sizeof(*hdr));
+> +       if (!hdr)
+> +               return -EINVAL;
+> +       num_sections =3D le32_to_cpu(hdr->num_sections);
+> +
+> +       rtl_dev_dbg(hdev, "timpstamp %08x-%08x", *((u32 *)hdr->timestamp)=
+,
+> +                   *((u32 *)(hdr->timestamp + 4)));
+> +
+> +       for (i =3D 0; i < num_sections; i++) {
+> +               section =3D rtl_iov_pull_data(&iov, sizeof(*section));
+> +               if (!section)
+> +                       break;
+> +
+> +               section_len =3D (u32)le64_to_cpu(section->len);
+> +               opcode =3D le32_to_cpu(section->opcode);
+> +
+> +               rtl_dev_dbg(hdev, "opcode 0x%04x", section->opcode);
+> +
+> +               ptr =3D rtl_iov_pull_data(&iov, section_len);
+> +               if (!ptr)
+> +                       break;
+> +
+> +               rc =3D 0;
+> +               switch (opcode) {
+> +               case RTL_PATCH_V3_1:
+> +               case RTL_PATCH_V3_PATCH_IMAGE:
+> +                       rc =3D rtlbt_parse_section_v3(hdev, btrtl_dev, op=
+code,
+> +                                                   ptr, section_len);
+> +                       break;
+> +               default:
+> +                       rtl_dev_warn(hdev, "Unknown opcode %08x", opcode)=
+;
+> +                       break;
+> +               }
+> +               if (rc < 0) {
+> +                       rtl_dev_err(hdev, "Parse section (%u) err (%d)",
+> +                                   opcode, rc);
+> +                       continue;
+> +               }
+> +               len +=3D rc;
+> +       }
+> +
+> +       rtl_dev_info(hdev, "image payload total len: 0x%08x", len);
+> +       if (!len)
+> +               return -ENODATA;
+> +
+>         return len;
+>  }
+>
+> @@ -673,6 +1052,9 @@ static int rtlbt_parse_firmware(struct hci_dev *hdev=
+,
+>         if (btrtl_dev->fw_len <=3D 8)
+>                 return -EINVAL;
+>
+> +       if (!memcmp(btrtl_dev->fw_data, RTL_EPATCH_SIGNATURE_V3, 8))
+> +               return rtlbt_parse_firmware_v3(hdev, btrtl_dev);
+> +
+>         if (!memcmp(btrtl_dev->fw_data, RTL_EPATCH_SIGNATURE, 8))
+>                 min_size =3D sizeof(struct rtl_epatch_header) +
+>                                 sizeof(extension_sig) + 3;
+> @@ -808,10 +1190,11 @@ static int rtlbt_parse_firmware(struct hci_dev *hd=
+ev,
+>         memcpy(buf + patch_length - 4, &epatch_info->fw_version, 4);
+>
+>         *_buf =3D buf;
+> +       btrtl_dev->fw_type =3D FW_TYPE_V1;
+>         return len;
+>  }
+>
+> -static int rtl_download_firmware(struct hci_dev *hdev,
+> +static int rtl_download_firmware(struct hci_dev *hdev, u8 fw_type,
+>                                  const unsigned char *data, int fw_len)
+>  {
+>         struct rtl_download_cmd *dl_cmd;
+> @@ -822,6 +1205,13 @@ static int rtl_download_firmware(struct hci_dev *hd=
+ev,
+>         int j =3D 0;
+>         struct sk_buff *skb;
+>         struct hci_rp_read_local_version *rp;
+> +       u8 dl_rp_len =3D sizeof(struct rtl_download_response);
+> +
+> +       if (is_v3_fw(fw_type)) {
+> +               j =3D 1;
+> +               if (fw_type =3D=3D FW_TYPE_V3_2)
+> +                       dl_rp_len++;
+> +       }
+>
+>         dl_cmd =3D kmalloc(sizeof(*dl_cmd), GFP_KERNEL);
+>         if (!dl_cmd)
+> @@ -834,7 +1224,7 @@ static int rtl_download_firmware(struct hci_dev *hde=
+v,
+>                 if (dl_cmd->index =3D=3D 0x7f)
+>                         j =3D 1;
+>
+> -               if (i =3D=3D (frag_num - 1)) {
+> +               if (i =3D=3D (frag_num - 1) && !is_v3_fw(fw_type)) {
+>                         dl_cmd->index |=3D 0x80; /* data end */
+>                         frag_len =3D fw_len % RTL_FRAG_LEN;
+>                 }
+> @@ -852,7 +1242,7 @@ static int rtl_download_firmware(struct hci_dev *hde=
+v,
+>                         goto out;
+>                 }
+>
+> -               if (skb->len !=3D sizeof(struct rtl_download_response)) {
+> +               if (skb->len !=3D dl_rp_len) {
+>                         rtl_dev_err(hdev, "download fw event length misma=
+tch");
+>                         kfree_skb(skb);
+>                         ret =3D -EIO;
+> @@ -863,6 +1253,9 @@ static int rtl_download_firmware(struct hci_dev *hde=
+v,
+>                 data +=3D RTL_FRAG_LEN;
+>         }
+>
+> +       if (is_v3_fw(fw_type))
+> +               goto out;
+> +
+>         skb =3D btrtl_read_local_version(hdev);
+>         if (IS_ERR(skb)) {
+>                 ret =3D PTR_ERR(skb);
+> @@ -880,6 +1273,226 @@ static int rtl_download_firmware(struct hci_dev *h=
+dev,
+>         return ret;
+>  }
+>
+> +static int rtl_check_download_state(struct hci_dev *hdev,
+> +                                   struct btrtl_device_info *btrtl_dev)
+> +{
+> +       struct sk_buff *skb;
+> +       int ret =3D 0;
+> +       u8 state;
+> +
+> +       skb =3D __hci_cmd_sync(hdev, 0xfdcf, 0, NULL, HCI_CMD_TIMEOUT);
+> +       if (IS_ERR(skb)) {
+> +               rtl_dev_err(hdev, "write tb error %lu", PTR_ERR(skb));
+> +               return -EIO;
+> +       }
+> +
+> +       /* Other driver might be downloading the combined firmware. */
+> +       state =3D skb->data[0];
+
+skb->len can be zero so accessing data[0] is not safe above, then
+again there is the likes of skb_pull_data to ensure there is enough
+data under the skb.
+
+> +       kfree_skb(skb);
+> +       if (state =3D=3D 0x03) {
+> +               btrealtek_set_flag(hdev, REALTEK_DOWNLOADING);
+> +               ret =3D btrealtek_wait_on_flag_timeout(hdev, REALTEK_DOWN=
+LOADING,
+> +                                                    TASK_INTERRUPTIBLE,
+> +                                                    msecs_to_jiffies(500=
+0));
+> +               if (ret =3D=3D -EINTR) {
+> +                       bt_dev_err(hdev, "Firmware loading interrupted");
+> +                       return ret;
+> +               }
+> +
+> +               if (ret) {
+> +                       bt_dev_err(hdev, "Firmware loading timeout");
+> +                       return -ETIMEDOUT;
+> +               }
+> +
+> +               ret =3D -EALREADY;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int rtl_finalize_download(struct hci_dev *hdev,
+> +                                struct btrtl_device_info *btrtl_dev)
+> +{
+> +       struct hci_rp_read_local_version *rp_ver;
+> +       u8 params[2] =3D { 0x03, 0xb2 };
+> +       struct sk_buff *skb;
+> +       u16 opcode;
+> +       u32 len;
+> +       int ret;
+> +
+> +       opcode =3D 0xfc8e;
+> +       len =3D 2;
+> +       if (btrtl_dev->opcode =3D=3D RTL_PATCH_V3_1) {
+> +               opcode =3D 0xfc20;
+> +               params[0] =3D 0x80;
+> +               len =3D 1;
+> +       }
+> +       skb =3D __hci_cmd_sync(hdev, opcode, len, params, HCI_CMD_TIMEOUT=
+);
+> +       if (IS_ERR(skb)) {
+> +               rtl_dev_err(hdev, "Watchdog reset err (%ld)", PTR_ERR(skb=
+));
+> +               return -EIO;
+> +       }
+> +       rtl_dev_info(hdev, "Watchdog reset status %02x", skb->data[0]);
+
+Ditto.
+
+> +       kfree_skb(skb);
+> +
+> +       skb =3D btrtl_read_local_version(hdev);
+> +       if (IS_ERR(skb)) {
+> +               ret =3D PTR_ERR(skb);
+> +               rtl_dev_err(hdev, "read local version failed (%d)", ret);
+> +               return ret;
+> +       }
+> +
+> +       rp_ver =3D (struct hci_rp_read_local_version *)skb->data;
+> +       rtl_dev_info(hdev, "fw version 0x%04x%04x",
+> +                    __le16_to_cpu(rp_ver->hci_rev),
+> +                    __le16_to_cpu(rp_ver->lmp_subver));
+> +       kfree_skb(skb);
+> +
+> +       return 0;
+> +}
+> +
+> +static int rtl_security_check(struct hci_dev *hdev,
+> +                             struct btrtl_device_info *btrtl_dev)
+> +{
+> +       struct rtl_section_patch_image *tmp =3D NULL;
+> +       struct rtl_section_patch_image *image =3D NULL;
+> +       u32 val;
+> +       int ret;
+> +
+> +       list_for_each_entry_reverse(tmp, &btrtl_dev->patch_images, list) =
+{
+> +               /* Check security hdr */
+> +               if (!tmp->fix[DL_FIX_SEC_HDR_ADDR].value ||
+> +                   !tmp->fix[DL_FIX_SEC_HDR_ADDR].addr ||
+> +                   tmp->fix[DL_FIX_SEC_HDR_ADDR].addr =3D=3D 0xffffffff)
+> +                       continue;
+> +               rtl_dev_info(hdev, "addr 0x%08x, value 0x%08x",
+> +                            tmp->fix[DL_FIX_SEC_HDR_ADDR].addr,
+> +                            tmp->fix[DL_FIX_SEC_HDR_ADDR].value);
+> +               image =3D tmp;
+> +               break;
+> +       }
+> +
+> +       if (!image)
+> +               return 0;
+> +
+> +       rtl_dev_info(hdev, "sec image (%04x:%02x)", image->image_id,
+> +                    image->index);
+> +       val =3D image->fix[DL_FIX_PATCH_ADDR].value + image->image_len -
+> +                                       image->fix[DL_FIX_SEC_HDR_ADDR].v=
+alue;
+> +       ret =3D btrtl_vendor_write_mem(hdev, image->fix[DL_FIX_PATCH_ADDR=
+].addr,
+> +                                    val);
+> +       if (ret) {
+> +               rtl_dev_err(hdev, "write sec reg failed (%d)", ret);
+> +               return ret;
+> +       }
+> +       return 0;
+> +}
+> +
+> +static int rtl_download_firmware_v3(struct hci_dev *hdev,
+> +                                   struct btrtl_device_info *btrtl_dev)
+> +{
+> +       struct rtl_section_patch_image *image, *tmp;
+> +       struct rtl_rp_dl_v3 *rp;
+> +       struct sk_buff *skb;
+> +       u8 *fw_data;
+> +       int fw_len;
+> +       int ret =3D 0;
+> +       u8 i;
+> +
+> +       if (btrtl_dev->fw_type =3D=3D FW_TYPE_V3_2) {
+> +               ret =3D rtl_check_download_state(hdev, btrtl_dev);
+> +               if (ret) {
+> +                       if (ret =3D=3D -EALREADY)
+> +                               return 0;
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       list_for_each_entry_safe(image, tmp, &btrtl_dev->patch_images, li=
+st) {
+> +               rtl_dev_dbg(hdev, "image (%04x:%02x)", image->image_id,
+> +                           image->index);
+> +
+> +               for (i =3D DL_FIX_CI_ID; i < DL_FIX_ADDR_MAX; i++) {
+> +                       if (!image->fix[i].addr ||
+> +                           image->fix[i].addr =3D=3D 0xffffffff) {
+> +                               rtl_dev_dbg(hdev, "no need to write addr =
+%08x",
+> +                                           image->fix[i].addr);
+> +                               continue;
+> +                       }
+> +                       rtl_dev_dbg(hdev, "write addr and val, 0x%08x, 0x=
+%08x",
+> +                                   image->fix[i].addr, image->fix[i].val=
+ue);
+> +                       if (btrtl_vendor_write_mem(hdev, image->fix[i].ad=
+dr,
+> +                                                  image->fix[i].value)) =
+{
+> +                               rtl_dev_err(hdev, "write reg failed");
+> +                               ret =3D -EIO;
+> +                               goto done;
+> +                       }
+> +               }
+> +
+> +               fw_len =3D image->image_len + image->cfg_len;
+> +               fw_data =3D kvmalloc(fw_len, GFP_KERNEL);
+> +               if (!fw_data) {
+> +                       rtl_dev_err(hdev, "Couldn't alloc buf for image d=
+ata");
+> +                       ret =3D -ENOMEM;
+> +                       goto done;
+> +               }
+> +               memcpy(fw_data, image->image_data, image->image_len);
+> +               if (image->cfg_len > 0)
+> +                       memcpy(fw_data + image->image_len, image->cfg_buf=
+,
+> +                              image->cfg_len);
+> +
+> +               rtl_dev_dbg(hdev, "patch image (%04x:%02x). len: %d",
+> +                           image->image_id, image->index, fw_len);
+> +               rtl_dev_dbg(hdev, "fw_data %p, image buf %p, len %u", fw_=
+data,
+> +                           image->image_data, image->image_len);
+> +
+> +               ret =3D rtl_download_firmware(hdev, btrtl_dev->fw_type, f=
+w_data,
+> +                                           fw_len);
+> +               kvfree(fw_data);
+> +               if (ret < 0) {
+> +                       rtl_dev_err(hdev, "download firmware failed (%d)"=
+, ret);
+> +                       goto done;
+> +               }
+> +
+> +               if (image->list.next !=3D &btrtl_dev->patch_images &&
+> +                   image->image_id =3D=3D tmp->image_id)
+> +                       continue;
+> +
+> +               if (btrtl_dev->fw_type =3D=3D FW_TYPE_V3_1)
+> +                       continue;
+> +
+> +               i =3D 0x80;
+> +               skb =3D __hci_cmd_sync(hdev, 0xfc20, 1, &i, HCI_CMD_TIMEO=
+UT);
+> +               if (IS_ERR(skb)) {
+> +                       ret =3D -EIO;
+> +                       rtl_dev_err(hdev, "Failed to issue last cmd fc20,=
+ %ld",
+> +                                   PTR_ERR(skb));
+> +                       goto done;
+> +               }
+> +               rp =3D (void *)skb->data;
+
+Again unsafe access, use skb_pull_data.
+
+> +               ret =3D rp->err;
+> +               kfree_skb(skb);
+> +               if (ret =3D=3D 2) {
+> +                       /* Verification failure */
+> +                       ret =3D -EFAULT;
+> +                       goto done;
+> +               }
+> +       }
+> +
+> +       if (btrtl_dev->fw_type =3D=3D FW_TYPE_V3_1) {
+> +               ret =3D rtl_security_check(hdev, btrtl_dev);
+> +               if (ret) {
+> +                       rtl_dev_err(hdev, "Security check failed (%d)", r=
+et);
+> +                       goto done;
+> +               }
+> +       }
+> +
+> +       ret =3D rtl_finalize_download(hdev, btrtl_dev);
+> +
+> +done:
+> +       return ret;
+> +}
+> +
+>  static int rtl_load_file(struct hci_dev *hdev, const char *name, u8 **bu=
+ff)
+>  {
+>         const struct firmware *fw;
+> @@ -913,7 +1526,7 @@ static int btrtl_setup_rtl8723a(struct hci_dev *hdev=
+,
+>                 return -EINVAL;
+>         }
+>
+> -       return rtl_download_firmware(hdev, btrtl_dev->fw_data,
+> +       return rtl_download_firmware(hdev, FW_TYPE_V0, btrtl_dev->fw_data=
+,
+>                                      btrtl_dev->fw_len);
+>  }
+>
+> @@ -928,7 +1541,7 @@ static int btrtl_setup_rtl8723b(struct hci_dev *hdev=
+,
+>         if (ret < 0)
+>                 goto out;
+>
+> -       if (btrtl_dev->cfg_len > 0) {
+> +       if (!is_v3_fw(btrtl_dev->fw_type) && btrtl_dev->cfg_len > 0) {
+>                 tbuff =3D kvzalloc(ret + btrtl_dev->cfg_len, GFP_KERNEL);
+>                 if (!tbuff) {
+>                         ret =3D -ENOMEM;
+> @@ -944,9 +1557,14 @@ static int btrtl_setup_rtl8723b(struct hci_dev *hde=
+v,
+>                 fw_data =3D tbuff;
+>         }
+>
+> +       if (is_v3_fw(btrtl_dev->fw_type)) {
+> +               ret =3D rtl_download_firmware_v3(hdev, btrtl_dev);
+> +               goto out;
+> +       }
+> +
+>         rtl_dev_info(hdev, "cfg_sz %d, total sz %d", btrtl_dev->cfg_len, =
+ret);
+>
+> -       ret =3D rtl_download_firmware(hdev, fw_data, ret);
+> +       ret =3D rtl_download_firmware(hdev, btrtl_dev->fw_type, fw_data, =
+ret);
+>
+>  out:
+>         kvfree(fw_data);
+> @@ -1042,6 +1660,7 @@ static int rtl_read_chip_type(struct hci_dev *hdev,=
+ u8 *type)
+>  void btrtl_free(struct btrtl_device_info *btrtl_dev)
+>  {
+>         struct rtl_subsection *entry, *tmp;
+> +       struct rtl_section_patch_image *image, *next;
+>
+>         kvfree(btrtl_dev->fw_data);
+>         kvfree(btrtl_dev->cfg_data);
+> @@ -1051,6 +1670,13 @@ void btrtl_free(struct btrtl_device_info *btrtl_de=
+v)
+>                 kfree(entry);
+>         }
+>
+> +       list_for_each_entry_safe(image, next, &btrtl_dev->patch_images, l=
+ist) {
+> +               list_del(&image->list);
+> +               kvfree(image->image_data);
+> +               kvfree(image->cfg_buf);
+> +               kfree(image);
+> +       }
+> +
+>         kfree(btrtl_dev);
+>  }
+>  EXPORT_SYMBOL_GPL(btrtl_free);
+> @@ -1058,7 +1684,7 @@ EXPORT_SYMBOL_GPL(btrtl_free);
+>  struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+>                                            const char *postfix)
+>  {
+> -       struct btrealtek_data *coredump_info =3D hci_get_priv(hdev);
+> +       struct btrealtek_data *btrtl_data =3D hci_get_priv(hdev);
+>         struct btrtl_device_info *btrtl_dev;
+>         struct sk_buff *skb;
+>         struct hci_rp_read_local_version *resp;
+> @@ -1069,6 +1695,7 @@ struct btrtl_device_info *btrtl_initialize(struct h=
+ci_dev *hdev,
+>         u8 hci_ver, lmp_ver, chip_type =3D 0;
+>         int ret;
+>         u8 reg_val[2];
+> +       u8 chip_id =3D 0;
+>
+>         btrtl_dev =3D kzalloc(sizeof(*btrtl_dev), GFP_KERNEL);
+>         if (!btrtl_dev) {
+> @@ -1077,8 +1704,15 @@ struct btrtl_device_info *btrtl_initialize(struct =
+hci_dev *hdev,
+>         }
+>
+>         INIT_LIST_HEAD(&btrtl_dev->patch_subsecs);
+> +       INIT_LIST_HEAD(&btrtl_dev->patch_images);
+>
+>  check_version:
+> +       ret =3D btrtl_read_chip_id(hdev, &chip_id);
+> +       if (!ret && chip_id =3D=3D CHIP_ID_8922D) {
+> +               btrtl_dev->project_id =3D chip_id;
+> +               goto read_local_ver;
+> +       }
+> +
+>         ret =3D btrtl_vendor_read_reg16(hdev, RTL_CHIP_SUBVER, reg_val);
+>         if (ret < 0)
+>                 goto err_free;
+> @@ -1101,6 +1735,7 @@ struct btrtl_device_info *btrtl_initialize(struct h=
+ci_dev *hdev,
+>                 }
+>         }
+>
+> +read_local_ver:
+>         skb =3D btrtl_read_local_version(hdev);
+>         if (IS_ERR(skb)) {
+>                 ret =3D PTR_ERR(skb);
+> @@ -1228,7 +1863,7 @@ struct btrtl_device_info *btrtl_initialize(struct h=
+ci_dev *hdev,
+>                 hci_set_msft_opcode(hdev, 0xFCF0);
+>
+>         if (btrtl_dev->ic_info)
+> -               coredump_info->rtl_dump.controller =3D btrtl_dev->ic_info=
+->hw_info;
+> +               btrtl_data->rtl_dump.controller =3D btrtl_dev->ic_info->h=
+w_info;
+>
+>         return btrtl_dev;
+>
+> @@ -1301,6 +1936,7 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct =
+btrtl_device_info *btrtl_dev)
+>         case CHIP_ID_8851B:
+>         case CHIP_ID_8922A:
+>         case CHIP_ID_8852BT:
+> +       case CHIP_ID_8922D:
+>                 set_bit(HCI_QUIRK_WIDEBAND_SPEECH_SUPPORTED, &hdev->quirk=
+s);
+>
+>                 /* RTL8852C needs to transmit mSBC data continuously with=
+out
+> @@ -1387,6 +2023,23 @@ int btrtl_shutdown_realtek(struct hci_dev *hdev)
+>  }
+>  EXPORT_SYMBOL_GPL(btrtl_shutdown_realtek);
+>
+> +int btrtl_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
+> +{
+> +       struct hci_event_hdr *hdr =3D (void *)skb->data;
+
+Unsafe access, use skb_pull_data and check that it doesn't return NULL.
+
+> +
+> +       if (skb->len > HCI_EVENT_HDR_SIZE && hdr->evt =3D=3D 0xff &&
+> +           hdr->plen > 0) {
+> +               if (skb->data[2] =3D=3D 0x77 &&
+> +                   btrealtek_test_and_clear_flag(hdev, REALTEK_DOWNLOADI=
+NG)) {
+> +                       btrealtek_wake_up_flag(hdev, REALTEK_DOWNLOADING)=
+;
+> +                       return 0;
+> +               }
+> +       }
+> +
+> +       return hci_recv_frame(hdev, skb);
+> +}
+> +EXPORT_SYMBOL_GPL(btrtl_recv_event);
+> +
+>  static unsigned int btrtl_convert_baudrate(u32 device_baudrate)
+>  {
+>         switch (device_baudrate) {
+> diff --git a/drivers/bluetooth/btrtl.h b/drivers/bluetooth/btrtl.h
+> index a2d9d34f9fb0..f6f03a5fefba 100644
+> --- a/drivers/bluetooth/btrtl.h
+> +++ b/drivers/bluetooth/btrtl.h
+> @@ -12,6 +12,19 @@
+>  #define rtl_dev_info(dev, fmt, ...) bt_dev_info(dev, "RTL: " fmt, ##__VA=
+_ARGS__)
+>  #define rtl_dev_dbg(dev, fmt, ...) bt_dev_dbg(dev, "RTL: " fmt, ##__VA_A=
+RGS__)
+>
+> +#define FW_TYPE_V0             0
+> +#define FW_TYPE_V1             1
+> +#define FW_TYPE_V2             2
+> +#define FW_TYPE_V3_1           3
+> +#define FW_TYPE_V3_2           4
+> +#define is_v3_fw(type) (type =3D=3D FW_TYPE_V3_1 || type =3D=3D FW_TYPE_=
+V3_2)
+> +
+> +#define DL_FIX_CI_ID           0
+> +#define DL_FIX_CI_ADDR         1
+> +#define DL_FIX_PATCH_ADDR      2
+> +#define DL_FIX_SEC_HDR_ADDR    3
+> +#define DL_FIX_ADDR_MAX                4
+> +
+>  struct btrtl_device_info;
+>
+>  struct rtl_chip_type_evt {
+> @@ -103,8 +116,79 @@ struct rtl_vendor_cmd {
+>         __u8 param[5];
+>  } __packed;
+>
+> +struct rtl_vendor_write_cmd {
+> +       u8 type;
+> +       __le32 addr;
+> +       __le32 val;
+> +} __packed;
+> +
+> +struct rtl_rp_read_chip_id {
+> +       __u8 status;
+> +       __u8 chip_id;
+> +} __packed;
+> +
+> +struct rtl_rp_dl_v3 {
+> +       __u8 status;
+> +       __u8 index;
+> +       __u8 err;
+> +} __packed;
+> +
+> +struct rtl_epatch_header_v3 {
+> +       __u8 signature[8];
+> +       __u8 timestamp[8];
+> +       __le32 ver_rsvd;
+> +       __le32 num_sections;
+> +} __packed;
+> +
+> +struct rtl_section_v3 {
+> +       __le32 opcode;
+> +       __le64 len;
+> +       u8 data[];
+> +} __packed;
+> +
+> +struct rtl_addr_fix {
+> +       u32 addr;
+> +       u32 value;
+> +};
+> +
+> +struct rtl_section_patch_image {
+> +       u16 image_id;
+> +       u8 index;
+> +       u8 config_rule;
+> +       u8 need_config;
+> +
+> +       struct rtl_addr_fix fix[DL_FIX_ADDR_MAX];
+> +
+> +       u32 image_len;
+> +       u8 *image_data;
+> +       u32 image_ver;
+> +
+> +       u8  *cfg_buf;
+> +       u16 cfg_len;
+> +
+> +       struct list_head list;
+> +};
+> +
+> +struct rtl_patch_image_hdr {
+> +       __le16 chip_id;
+> +       u8 ic_cut;
+> +       u8 key_id;
+> +       u8 enable_ota;
+> +       __le16 image_id;
+> +       u8 config_rule;
+> +       u8 need_config;
+> +       u8 rsv[950];
+> +
+> +       __le64 addr_fix[DL_FIX_ADDR_MAX * 2];
+> +       u8 index;
+> +
+> +       __le64 patch_image_len;
+> +       __u8 data[];
+> +} __packed;
+> +
+>  enum {
+>         REALTEK_ALT6_CONTINUOUS_TX_CHIP,
+> +       REALTEK_DOWNLOADING,
+>
+>         __REALTEK_NUM_FLAGS,
+>  };
+> @@ -130,8 +214,20 @@ struct btrealtek_data {
+>  #define btrealtek_get_flag(hdev)                                       \
+>         (((struct btrealtek_data *)hci_get_priv(hdev))->flags)
+>
+> +#define btrealtek_wake_up_flag(hdev, nr)                               \
+> +       do {                                                            \
+> +               struct btrealtek_data *rtl =3D hci_get_priv((hdev));     =
+ \
+> +               wake_up_bit(rtl->flags, (nr));                          \
+> +       } while (0)
+> +
+>  #define btrealtek_test_flag(hdev, nr)  test_bit((nr), btrealtek_get_flag=
+(hdev))
+>
+> +#define btrealtek_test_and_clear_flag(hdev, nr)                         =
+       \
+> +       test_and_clear_bit((nr), btrealtek_get_flag(hdev))
+> +
+> +#define btrealtek_wait_on_flag_timeout(hdev, nr, m, to)                 =
+       \
+> +       wait_on_bit_timeout(btrealtek_get_flag(hdev), (nr), m, to)
+> +
+>  #if IS_ENABLED(CONFIG_BT_RTL)
+>
+>  struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+> @@ -148,6 +244,7 @@ int btrtl_get_uart_settings(struct hci_dev *hdev,
+>                             unsigned int *controller_baudrate,
+>                             u32 *device_baudrate, bool *flow_control);
+>  void btrtl_set_driver_name(struct hci_dev *hdev, const char *driver_name=
+);
+> +int btrtl_recv_event(struct hci_dev *hdev, struct sk_buff *skb);
+>
+>  #else
+>
+> @@ -195,4 +292,9 @@ static inline void btrtl_set_driver_name(struct hci_d=
+ev *hdev, const char *drive
+>  {
+>  }
+>
+> +static inline int btrtl_recv_event(struct hci_dev *hdev, struct sk_buff =
+*skb)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +
+>  #endif
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index f8f256ff79a3..a87ea836d730 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -2677,6 +2677,9 @@ static int btusb_recv_event_realtek(struct hci_dev =
+*hdev, struct sk_buff *skb)
+>                 return 0;
+>         }
+>
+> +       if (skb->data[0] =3D=3D HCI_VENDOR_PKT)
+> +               return btrtl_recv_event(hdev, skb);
+> +
+>         return hci_recv_frame(hdev, skb);
+>  }
+>
+> --
+> 2.34.1
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
