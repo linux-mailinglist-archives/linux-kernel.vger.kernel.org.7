@@ -1,113 +1,81 @@
-Return-Path: <linux-kernel+bounces-725514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D36B00028
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:09:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7EBB0001A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72EEDB41B94
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:06:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92A37161F78
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A6D28DB45;
-	Thu, 10 Jul 2025 11:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFFD2E0934;
+	Thu, 10 Jul 2025 11:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LdlKtGkd"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ch1fvGcz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74E523DEAD;
-	Thu, 10 Jul 2025 11:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A976013A3F7;
+	Thu, 10 Jul 2025 11:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145639; cv=none; b=Gtdr8tW2RIFiaZCUtNzy/APn5kAJLaW2IrfDHio8dFJDad/b/DFSK3dykzkyszefa4+dOY62X9dFcv0ovQ2qs7XsRsofdW8Hx83QCuUUAo62kZeOSeM4TvL2RRY2Ku5Yd6pPBXQDPPBn3FH4Zvr+BRDjjqP+RQUdNXGCDyrs5vI=
+	t=1752145629; cv=none; b=QW3XQV6RrP90Q7yK7aSj8+2VFwvuAPVh7rdZjbaK2qfDgLsoTLnAtVPYOnCYQTwDOa6V/P+0+Ww7kDKqWi7eROw4AL+hH0+YgyxQobau9DliHIUQrmrUAHt1a80nQIjsyaocMA85ZnS3qt6zEkHDKS60msqQiIcbP0UF+OPDCMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145639; c=relaxed/simple;
-	bh=r6B/XVLZcf7RylzWNGBO2ESniGh9W1OISbM2kiqHX/A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d/8RpU+K9rYjNUdxJ0J/bp7fHeZ2E+uWqyvZdnqVKGU+XQj8xify44/V9Li1sAhyf6D6tS1WIRBhMxuWHy1QRlPddTV6S7Y1s4jrt/vtVKqUA1OtvJDEo3eLrj1DCYR5uev5X9ez5h33lbt6plgPSx5/ranLHBuZb2j9tW7ogzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LdlKtGkd; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56AB75jO1487548;
-	Thu, 10 Jul 2025 06:07:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752145625;
-	bh=Uabhp1OFgeoc1G7fSq5ppr9KBFz81UoMCS0Yf9xgX3I=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=LdlKtGkdZBQzNhp553vr8DtO7DF04BD9gHnlF2o6wbMi9fZXPUTfAmDg9C2mQ81VX
-	 E0mbxa/N23YWYqc9PGGjb7LOCeoByE/8aRu0w1Wif8Ka9ASWZIUGJWuBqUOrOoYxiV
-	 wOfVEoWj+hBx8ckm7j4mKN0YOO71eLZcqPszXeeU=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56AB75Kx1163561
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 10 Jul 2025 06:07:05 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 10
- Jul 2025 06:07:05 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 10 Jul 2025 06:07:05 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56AB75eb1530947;
-	Thu, 10 Jul 2025 06:07:05 -0500
-Date: Thu, 10 Jul 2025 06:07:05 -0500
-From: Bryan Brattlof <bb@ti.com>
-To: Vignesh Raghavendra <vigneshr@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am62a7-sk: add boot phase tags
-Message-ID: <20250710110705.ah65r5nathlpqzhz@bryanbrattlof.com>
-X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
-References: <20250709-62a-uboot-cleanup-v1-1-70f8e6cde719@ti.com>
- <4d531a8b-1d32-4618-a984-6f4435f6a676@ti.com>
+	s=arc-20240116; t=1752145629; c=relaxed/simple;
+	bh=D4lW8+tE2ipIuH3PD2qdcekKDJKUgOBIQK0QukPhuGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sO0foaM767ZYzBHMo1w3jM6rE0WSnK7tNlkWwZC0Ye6AI41zpns8RHolB8WCk78nBxyLdN0QgXFkJn+eYqxCNWJ+Fz7cCIhg4jaq87OURoIuQOibnk4EDpyhDRKujf4azrf35mTBbRVNBv9AHHD3q2iLfQlDPeoDSIkMLa6fSBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ch1fvGcz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2D8C4CEE3;
+	Thu, 10 Jul 2025 11:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752145629;
+	bh=D4lW8+tE2ipIuH3PD2qdcekKDJKUgOBIQK0QukPhuGY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ch1fvGcz4B7amDJKIGLXoAxtcXhvsfOBsMZWJ5xA+gpkC0RCmOxJMatEJHAn6fzEu
+	 AxuefiheP107MUGJUxhU+yLqGOo12Krd5eS21JOVnut195ryd8f3Ak3udFTsEW8ki9
+	 QLCPnzUo2gtQBCHLW5Rv6DX/hn8kGSiYJumiwdGVE5TaGLj3VpVEi3J8PwLsjhC8sC
+	 1AzAOIcjCQHgy7TXVSvqD4Mrc5W6cUeaaDzDlCHZ1rDocdUyVW6SrQdhehwDeT9aaM
+	 U/EH6I536WE6TmAxkG+40dG9qh0XAHCfJo44dnk/Fa9Rt5flkFuWfNQnR91CE0khhv
+	 oRPfAd0zkjcZQ==
+Date: Thu, 10 Jul 2025 13:07:06 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: usb: qcom,snps-dwc3: Add Milos
+ compatible
+Message-ID: <20250710-inchworm-of-subtle-endeavor-af71ee@krzk-bin>
+References: <20250709-sm7635-eusb-phy-v2-0-4790eeee7ae0@fairphone.com>
+ <20250709-sm7635-eusb-phy-v2-1-4790eeee7ae0@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4d531a8b-1d32-4618-a984-6f4435f6a676@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <20250709-sm7635-eusb-phy-v2-1-4790eeee7ae0@fairphone.com>
 
-On July 10, 2025 thus sayeth Vignesh Raghavendra:
-> [...]
+On Wed, Jul 09, 2025 at 11:18:15AM +0200, Luca Weiss wrote:
+> Document the Milos dwc3 compatible.
 > 
-> On 10/07/25 05:38, Bryan Brattlof wrote:
-> >  &main_gpio1 {
-> > @@ -693,6 +703,7 @@ &main_uart0 {
-> >  	status = "okay";
-> >  	pinctrl-names = "default";
-> >  	pinctrl-0 = <&main_uart0_pins_default>;
-> > +	bootph-all;
-> >  };
-> >  
-> >  /* Main UART1 is used for TIFS firmware logs */
-> > @@ -737,12 +748,21 @@ &cpsw3g {
-> >  	status = "okay";
-> >  	pinctrl-names = "default";
-> >  	pinctrl-0 = <&main_rgmii1_pins_default>;
-> > +
-> > +	ethernet-ports {
-> > +		bootph-all;
-> 
-> 
-> This is redundant as child node cpsw_port1 has the flag below?
-> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Ah yeah you're right. I'll fix this up.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-~Bryan
+Best regards,
+Krzysztof
+
 
