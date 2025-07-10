@@ -1,142 +1,106 @@
-Return-Path: <linux-kernel+bounces-725523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 782C7B00037
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:11:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B701B0003B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81AD3A4B36
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:11:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624711C877BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB072D63E7;
-	Thu, 10 Jul 2025 11:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E472E4252;
+	Thu, 10 Jul 2025 11:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLF1Vq9K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i67cN5Zb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D95219E8D;
-	Thu, 10 Jul 2025 11:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2D4219E8D;
+	Thu, 10 Jul 2025 11:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145892; cv=none; b=FOgnCPHbobsmX678F9S/SIitlcCDGT6XvUZs32LxtFf1aHZi6pgpqW1GygnmKG/rpHpunseeGAOTWXC5Z7dTTQgoCIBi0X2zLrE4erAfIVjoRytE7uQsKfj3Y9TdEyKQrTmrCIAuRNqE59h8IBJeXf4EIrJQeuELaCpgKTlXLhg=
+	t=1752145997; cv=none; b=ujsGQshCQpj2R0jOJdgo7cbVcLjB5ssXaFI3LOFoo2ryj/ipB4qp9gXXjU5ne7D4wVQcW38cMdjBFeTvP2kJNaHnN3kBh+hHe7s1bxunmQVJ9lI/QNZexg51tzk3vgyFARFgY47IZH7swAtJRqL866tOXFIIS/B9Q6yjlDwNaIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145892; c=relaxed/simple;
-	bh=TMZWOnSmjSdk9YHVst53o79sncIxUMvkU8tLCD3rYZc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=dwZ+Y5gQAxvyJhGruEUOkBAzF5JmHx9KgIJKMVbacth47hiZsstwgMrORKNmc1J4TiaDoqz+176yX1gPkft0Smppl6nsKPRniaelmDRPjh5IQ1rmhhPFyxXBLSEtWX9iwS7EYTpjN2PfZZtaLGckEpVzedVH1x+R3bhzJeuuTCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLF1Vq9K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B463C4CEE3;
-	Thu, 10 Jul 2025 11:11:29 +0000 (UTC)
+	s=arc-20240116; t=1752145997; c=relaxed/simple;
+	bh=fCMFwl6Oa7Wwc2XvpmzD1mwe0tkqTEL6NM+Z25HU34w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fXcOXMoADYd9nDO4z3E/cEkvBRFw1GRh0dxyJwuU8SjTDorRzhgwxyqERtxLSgRl7j/m0d9TUZjNVnD++jtKCypBKPSjgEKgQq7DXgslTDKyvJNpiiJxF4HbLIm0YUpTTlh6z1KrJYa7wEomZKwEqZctOE/r3b5pyz4m8uNmCos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i67cN5Zb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2C53C4CEF5;
+	Thu, 10 Jul 2025 11:13:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752145892;
-	bh=TMZWOnSmjSdk9YHVst53o79sncIxUMvkU8tLCD3rYZc=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=oLF1Vq9KNmhaRndTqN690GtnqErDToecQacnKoLk7brnR9YyftnHBD3iiXOE1K7tO
-	 mVBEAmsPRtBWn+8TRpepDAMCfxgI12wEU0/iftKxkRUphKrMk96cUNP8tARwPjySGm
-	 DsjuhyQ5xd4XBEcif/2G2JFWxEoNuxoFqlXvy5O0DkAsaRD3RXHWyck2rW03oT0zHc
-	 zhlpUstnqoxrMG4SJmR9TdaACuJWDtxfSMc9cLN3ma3bamikE9dIspcR30CbnvGCYw
-	 R0/1Sj3m6GcNBl4zjVTTXrm61aP8vRQ9h9QlshbXHdzqQslcjdZr8KgSmmqb18e1uX
-	 +Y6QLk7+YVtVQ==
+	s=k20201202; t=1752145997;
+	bh=fCMFwl6Oa7Wwc2XvpmzD1mwe0tkqTEL6NM+Z25HU34w=;
+	h=From:Date:Subject:To:Cc:From;
+	b=i67cN5ZbNoDe/jqjQnZYTWyFqQH50gksbF036qEU3JKLHZ2KAD2ErKmJgIjqev+VV
+	 29cbgSrYABAOXv42x+s+0GNKXLVw5lKu2kpTGSAohZZl7i4G3EtRjiEfMZHR/ofjH5
+	 vHO9g7cQ0pyryGPqD61AfRUNmoHTbbq8zoqjvmyf+oZxL/CSJaV6K51yic92/Qeh0m
+	 HS/VcYGMEeJYNXBE4GixHapnsaC/U3eFsMIpdwmcnBZ1yQLpGD/WHusFtpOh+Q8AgS
+	 5Fd2P9UGpRtHB5HOSOlfPyWTAFcZEdfHYOO9ygdArQ5lCBAbfGFn2jtRasxpHN1GIS
+	 DM68A1yvraTOA==
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 10 Jul 2025 12:12:20 +0100
+Subject: [PATCH] KVM: selftests: Add CONFIG_EVENTFD for irqfd selftest
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 13:11:27 +0200
-Message-Id: <DB8BVOLRNDQU.SMTSAMKQ6WVH@kernel.org>
-Cc: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v9 0/5] rust: DebugFS Bindings
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>
-X-Mailer: aerc 0.20.1
-References: <20250709-debugfs-rust-v9-0-92b9eab5a951@google.com>
- <DB7US8G7ISG0.20430M3P7I0K0@kernel.org>
- <CAGSQo01hORWAtrGaYp-_xxrAiN47JkJg=jiqnqdpw87QKzt9jg@mail.gmail.com>
- <DB7V19QE6KFB.3MR0BAOWXT7M7@kernel.org>
- <CAGSQo01drZoy1-j-+Y-BHHOX5AzCG4A5KiUOu5TJ40JOdfcB0g@mail.gmail.com>
- <aG7pP1BTLQKInFrl@cassiopeiae> <2025071014-radiantly-dreamland-4017@gregkh>
- <DB89V15HIG8C.2HL9JVKFNEDTK@kernel.org>
- <DB8BUDZQJOM5.2WS6MCW6I0XES@kernel.org>
-In-Reply-To: <DB8BUDZQJOM5.2WS6MCW6I0XES@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250710-kvm-selftests-eventfd-config-v1-1-78c276e4b80f@kernel.org>
+X-B4-Tracking: v=1; b=H4sIABOgb2gC/x3MSwqDQAwA0KtI1g3EVJH2KqULP4kG27FMhkEQ7
+ 97B5du8A1yiicOzOiBKNrctFNS3CsalD7OgTcXAxC119MA1f9Hlo0k8OUqWkHTCcQtqM9Z8HwZ
+ i1p4aKMUvitp+9a/3ef4Bpycq6G4AAAA=
+X-Change-ID: 20250709-kvm-selftests-eventfd-config-123bb022fa04
+To: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-07fe9
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1001; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=fCMFwl6Oa7Wwc2XvpmzD1mwe0tkqTEL6NM+Z25HU34w=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBob6BLebvS2hzgRttjOHmgmDaPDjFiJuGaolRni
+ SApdh0D+0uJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaG+gSwAKCRAk1otyXVSH
+ 0JJEB/9/0Zr9vUk2isLoTJ42gYIKHIod1FJ9lnc334JElWb5/rhVM65dOb58xb1Tpf5UUdXh13I
+ I1uWo5raNoM5QB5KMfYLgrHqbLih1w8B5T66ZDoncwUNFNRnYsdgyRhnQQeJzIU4J6Ce/LUKpZ+
+ yjjosFgrjatnNNCRnAoq2Zlg5XbM2sCs+9bSAVn8xIArJfIEKa1g5ZHhYwSXQUOrsA0GH50WT/F
+ 468nnOizUpRjwM1K+rq84Cgc2sPO+WdLLKsBPsWiWwULRzgYwoZQhNHfSx4bmxJMAkIWwc7ffeW
+ PeV8+f51XaF6RdUfJbF2L9VyHtKu8T1qNJdx6pcsah+DpuSw
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Thu Jul 10, 2025 at 1:09 PM CEST, Benno Lossin wrote:
-> On Thu Jul 10, 2025 at 11:36 AM CEST, Danilo Krummrich wrote:
->> On Thu Jul 10, 2025 at 7:27 AM CEST, Greg Kroah-Hartman wrote:
->>> Ugh.
->>>
->>> Yes we need write.  And read, and custom file-ops, and the like as
->>> that's what debugfs is doing today for C code!  We need this to be as
->>> simple as, or almost as simple as, what we have today in C or no one is
->>> going to use this stuff and go off and attempt to write their own mess.
->>
->> I agree, we really want the helpers you're referring to below. I think w=
-e
->> discussed this in previous iterations already.
->>
->>> While I would love to have something as simple as:
->>> 	void debugfs_create_u8(const char *name, umode_t mode, struct dentry *=
-parent, u8 *value);
->>> like we do today.  I understand that this makes all sorts of
->>> "assumptions" that Rust really doesn't like (i.e. lifetime of *value an=
-d
->>> the like), BUT we MUST have something like this for Rust users, as
->>> that's going to ensure that people actually use this api.
->>
->> I think it can be as simple as
->>
->> 	void debugfs_create_u8(const char *name, umode_t mode, struct dentry *p=
-arent, u8 *value);
->>
->> in Rust as well. Declaring this in a structure looks like this.
->>
->> 	struct Data {
->> 	   counter: File<u8>,
->> 	}
->>
->> Given that we have some Dir instance, this can be as simple as:
->>
->> 	dir.create_file_u8(...);
->>
->> Which uses default callbacks for read(), write(), etc.
->>
->>> Look at an in-kernel function today, like ath9k_init_debug() that
->>> creates a metric-ton of debugfs files and binds them to different
->>> variables that are owned by a structure and more complex data structure=
-s
->>> and memory dumps and other random file interactions.  We need, in Rust,
->>> a way to do everything that that function can do today, in a SIMPLE
->>> manner that reads just as easily as ath9k_init_debug() does.
->>
->> That's possible with the current design and code, it misses the helpers,=
- such as
->> create_file_u8() above, to reduce the boilerplate though. With that, it =
-should
->> look pretty similar.
->
-> Can't you just implement the traits directly on `u8` and then just call
-> `create_file`?
+In 7e9b231c402a ("KVM: selftests: Add a KVM_IRQFD test to verify
+uniqueness requirements") we added a test for the newly added irqfd
+support but since this feature works with eventfds it won't work unless
+the kernel has been built wth eventfd support.  Add CONFIG_EVENTFD to
+the list of required options for the KVM selftests.
 
-Ah I guess for write support you need `Atomic<u8>` and that doesn't
-implement `Display`...
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/kvm/config | 1 +
+ 1 file changed, 1 insertion(+)
 
-Maybe `Display` is the wrong trait for this...
+diff --git a/tools/testing/selftests/kvm/config b/tools/testing/selftests/kvm/config
+index 8835fed09e9f..96d874b239eb 100644
+--- a/tools/testing/selftests/kvm/config
++++ b/tools/testing/selftests/kvm/config
+@@ -1,5 +1,6 @@
+ CONFIG_KVM=y
+ CONFIG_KVM_INTEL=y
+ CONFIG_KVM_AMD=y
++CONFIG_EVENTFD=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_IDLE_PAGE_TRACKING=y
 
 ---
-Cheers,
-Benno
+base-commit: 7e9b231c402a297251b3e6e0f5cc16cef7dd3ce5
+change-id: 20250709-kvm-selftests-eventfd-config-123bb022fa04
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
+
 
