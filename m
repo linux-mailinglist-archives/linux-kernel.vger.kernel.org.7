@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-726513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03767B00DF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:38:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681FEB00DF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 23:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D68E01C272EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:38:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3885B3AE87C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 21:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B258C1E520B;
-	Thu, 10 Jul 2025 21:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8189F28EA4B;
+	Thu, 10 Jul 2025 21:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XyWvPxWp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dnjx6TdI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFA5242D73;
-	Thu, 10 Jul 2025 21:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F811E520B;
+	Thu, 10 Jul 2025 21:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752183511; cv=none; b=rEAhOHnTraL/vIk264N62vArCZmJapvHhTqNuNhCgi5bM13xZoQXiUbL/i+EqwJItxc2JOW0jbMMjqu1NRu8CEmlQKY137BgSQS8FDV8CxCx1FVvX/OLcPSdkzbO4Qz096mUKVSeSJE7TtuS3ku5WnzhW1vSYHO9fKpFIBhoYjQ=
+	t=1752183604; cv=none; b=HUOjfu9EQgdpOC9le/kA5jdSHnZDq68XKNUgS1WUi1ROGge6n6C4RRul/82jmS27T9c9s/apYHEgAJo7ghhLlqveTQpU4iaCD7GmxZr16ua8R5RvPIIBywAKaK6JcFCUWxHluoFnpUMdMm1Bh8EvihQUpJHTOI32GhmAWGL/Ydc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752183511; c=relaxed/simple;
-	bh=D1bZ/Il7ClQbNgydrqEk47MOWGKSp56gk3dIrmpod44=;
+	s=arc-20240116; t=1752183604; c=relaxed/simple;
+	bh=SBkK1rGeuLP08x314M8mYiMkN0SFKYZEh/eAuabb4Z8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XVNzN6mLwlMblCOJnEzNP9EY7HuPbSjncuPTTRJveAcRSulnJRP0Iqcv2AvwGhTFpJd6CR4agTdSnVeam/47mO213gPGJkGgXvHI0jy+nUwUCoxtYdToo2rEYBKYI8sA6xecc09OYrseQTmjAd2c+p3pUQwdlCNLV2i8B0gFTu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XyWvPxWp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49943C4CEE3;
-	Thu, 10 Jul 2025 21:38:28 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=EiKQzYb0whDjNHLKfjzxUBwDrOLA2qwwbsNvybAKF8POotHgAxKVsd0xNwscSa1w6DrhNv/Z60kFra+QTCqNdeZkUCesaN9NnvG8YHjCbug4KJv741wkxZhuujxIDhaty3t9wEehLKj3l1HMYTu32nzgRoNI5zwApOC7q1sBoso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dnjx6TdI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D82C0C4CEE3;
+	Thu, 10 Jul 2025 21:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752183510;
-	bh=D1bZ/Il7ClQbNgydrqEk47MOWGKSp56gk3dIrmpod44=;
+	s=k20201202; t=1752183604;
+	bh=SBkK1rGeuLP08x314M8mYiMkN0SFKYZEh/eAuabb4Z8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XyWvPxWpzr3Y27zk/fyu3o7TM1kx++cAl6ZeITndjwQxP9dwrOL+P1pc3HdcvLSLD
-	 RoCuBNlTT8gzXDzNWZhQ9g+IifLoKN3omRdOO5yJ15erOgy1xFz65e9BY7CK03O/Jr
-	 a6FDmtWrZ7Z9UgJBFSAEIQOwhI+/OAWHDf6BSCnErvpoPihXDBX3GHSLEnrrcEDQVj
-	 QqBcIAzjfg54w5PCL/tGdJScxepBu8JYz3JS9vvI6LIn6FSn3t/K8dAu71U8MnbTmN
-	 kyGhdkBFyE4G3r+tzLkn4Ta9K3J2ZFwZuuC3FTY+sYb4IxE55a7hzvKbM76vbIAurT
-	 pXccyGvEvgK9w==
-Message-ID: <504f6660-4938-47b4-b1db-0a6fe0214e5f@kernel.org>
-Date: Thu, 10 Jul 2025 23:38:26 +0200
+	b=Dnjx6TdIACmG57PtS2gCl0f6rn+0h8ead2EGjXAwqcpPfO1UgHm9gtmbY1ZYaYTOW
+	 eaceEBefNCUqk4pV74bBC1fti1eSWmbuJ0BI8ocrTQ/bmz882KDGNF63pbcgWZuW49
+	 TwWqq3V98YZxgi7YMvTf4+T8Hgqekuenps69uBwEx/Ndo/PPcBKi9oBK51Yz5KkjRE
+	 Tp3qD3ZHUekgcGSjTnxh0oC1csAvbjWkuhjpv+53mGeD9UY+UFG3dFiJuegSQoB45N
+	 XB/EVCyjnEeiSGVuDA4OzGjhm3OzbJVFPRZvsQFXCeIMu+cz1AHj87LbjzJGrq4qVF
+	 KEUqmGakT7EJg==
+Message-ID: <d8b0abb2-1a12-42bf-aafd-4cd1e21babd6@kernel.org>
+Date: Thu, 10 Jul 2025 23:39:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 4/9] dt-bindings: soc: xilinx: Add AI engine DT binding
-To: "Williams, Gregory" <gregoryw@amd.com>,
- Gregory Williams <gregory.williams@amd.com>, ogabbay@kernel.org,
- michal.simek@amd.com, robh@kernel.org
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250702155630.1737227-1-gregory.williams@amd.com>
- <20250702155630.1737227-5-gregory.williams@amd.com>
- <7533fd56-aeef-4685-a25f-d64b3f6a2d78@kernel.org>
- <eb3c843a-6762-4ac0-b863-3f500fb15b6f@amd.com>
+Subject: Re: [PATCHv3 wireless-next 7/7] dt-bindings: net: wireless: rt2800:
+ add
+To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
+Cc: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Stanislaw Gruszka <stf_xl@wp.pl>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:MIPS" <linux-mips@vger.kernel.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-mediatek@lists.infradead.org>
+References: <20250710200820.262295-1-rosenp@gmail.com>
+ <20250710200820.262295-8-rosenp@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,141 +112,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <eb3c843a-6762-4ac0-b863-3f500fb15b6f@amd.com>
+In-Reply-To: <20250710200820.262295-8-rosenp@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/07/2025 21:03, Williams, Gregory wrote:
-> On 7/3/2025 12:48 AM, Krzysztof Kozlowski wrote:
->> On 02/07/2025 17:56, Gregory Williams wrote:
->>> In the device tree, there will be device node for the AI engine device,
->>> and device nodes for the statically configured AI engine apertures.
->>
->> No, describe the hardware, not DTS.
->>
->>> Apertures are an isolated set of columns with in the AI engine device
->>> with their own address space and interrupt.
->>>
->>> Signed-off-by: Gregory Williams <gregory.williams@amd.com>
->>> ---
->>>  .../bindings/soc/xilinx/xlnx,ai-engine.yaml   | 151 ++++++++++++++++++
->>>  1 file changed, 151 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml b/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
->>> new file mode 100644
->>> index 000000000000..7d9a36c56366
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
->>
->> Filename matching compatible.
->>
->>> @@ -0,0 +1,151 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/soc/xilinx/xlnx,ai-engine.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: AMD AI Engine
->>
->> That's really too generic...
-
-You did not answer to other comments here and other patches, so I just
-assume you did not ignore them.
-
->>
->>> +
->>> +maintainers:
->>> +  - Gregory Williams <gregory.williams@amd.com>
->>> +
->>> +description:
->>> +  The AMD AI Engine is a tile processor with many cores (up to 400) that
->>> +  can run in parallel. The data routing between cores is configured through
->>> +  internal switches, and shim tiles interface with external interconnect, such
->>> +  as memory or PL. One AI engine device can have multiple apertures, each
->>> +  has its own address space and interrupt. At runtime application can create
->>> +  multiple partitions within an aperture which are groups of columns of AI
->>> +  engine tiles. Each AI engine partition is the minimum resetable unit for an
->>> +  AI engine application.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: xlnx,ai-engine-v2.0
->>
->> What does v2.0 stands for? Versioning is discouraged, unless mapping is
->> well documented.
+On 10/07/2025 22:08, Rosen Penev wrote:
+> Add device-tree bindings for the RT2800 SOC wifi device found in older
+> Ralink/Mediatek devices.
 > 
-> Sure, I will remove the versioning in V2 patch.
-
-This should be specific to product, so use the actual product/model name.
-
-Is this part of a Soc? Then standard rules apply... but I could not
-deduce it from the descriptions or commit msgs.
-
-
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  .../bindings/net/wireless/ralink,rt2800.yaml  | 47 +++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
 > 
->>
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  '#address-cells':
->>> +    const: 2
->>> +
->>> +  '#size-cells':
->>> +    const: 2
->>> +
->>> +  power-domains:
->>
->> Missing constraints.
->>
->>> +    description:
->>> +      Platform management node id used to request power management services
->>> +      from the firmware driver.
->>
->> Drop description, redundant.
->>
->>> +
->>> +  xlnx,aie-gen:
->>> +    $ref: /schemas/types.yaml#/definitions/uint8
->>
->> Why uint8?
->>
->>> +    description:
->>> +      Hardware generation of AI engine device. E.g. the current values supported
->>> +      are 1 (AIE) and 2 (AIEML).
->>
->> No clue what's that, but it is implied by compatible, isn't it?
-> 
-> The driver supports multiple hardware generations. During driver probe, this value is read from the device tree and hardware generation specific
+> diff --git a/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
+> new file mode 100644
+> index 000000000000..8c13b25bd8b4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
 
-Bindings are about hardware, not driver, so your driver arguments are
-not valid.
-
-> data structures are loaded based on this value. The compatible string is the same between devices.
-
-No. See writing bindings.
-
-> 
->>
->> Missing constraints.
->>
->>> +
->>> +  xlnx,shim-rows:
->>> +    $ref: /schemas/types.yaml#/definitions/uint8-array
->>> +    description:
->>> +      start row and the number of rows of SHIM tiles of the AI engine device
->>
->> Implied by compatible.
-> 
-> The AI Engine device can have different configurations for number of rows and column (even if it is the same hardware generation). This property
-> tells the driver the size and layout of the array, this is not implied by compatible.
-
-Wrap your emails correctly.
-
-Again driver.. no, please describe the hardware, not your drivers.
-
+Filename should match compatible. You were already changing something
+here...
 
 Best regards,
 Krzysztof
