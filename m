@@ -1,87 +1,97 @@
-Return-Path: <linux-kernel+bounces-725531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C567B0005B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:17:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F447B00063
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F68C3B71D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:16:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 303083BB15F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7832E267A;
-	Thu, 10 Jul 2025 11:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A302E54AF;
+	Thu, 10 Jul 2025 11:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="BzgOQ4wH"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OuLeM8t3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A4620FA9C;
-	Thu, 10 Jul 2025 11:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06F92D9EEF
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752146234; cv=none; b=GRbfUy3aD9/rZAXtsINVWHQ2rV7OSqPgo8FX/xvZfwIqvK5aCkSRDfGdgMaXgYoEASjefApunK7He4HzPFGJda93yKDafnAjRLprJU5dTePepRyr+WFoy4+UJSu71U3xsQZpDRLItnQUUFarUGLKmcNwhr9dReALYSNe+ICKlx0=
+	t=1752146251; cv=none; b=LjVIk/oOqwlE8KvOJnsqU5TpdlKOdc4fMEUxuatUNPMnQqkqx8lhS8wJRRHNAGvZY+sDM5J4War4oihFejkhwQZC6qN6n0DILX1GgRNAVwHI1OlMb0CZcBbk2RbBlGbWpgWw4qOKw4B1W8eOZa7iGQqeKZds1/xyj6b4pKxLLB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752146234; c=relaxed/simple;
-	bh=QvwwnPsW3knLIltBIEoiitBnipa0SwOi009wD+wqp4Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dRj66xxLm91S/8T/xwCb0lniy/05Q7yHogyEgV/MJUAyX29nRXRMRIEQ1fEhiE4BItOID/W7PfAKfEw97zWb9YKhiK9/5b0geFKlU1nQkY3VtZC/mUDYgMmDBkiIvQFiLohejDcQwcVJWRNipMDo5gw2uU9q7v+raTfLQS7LQj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=BzgOQ4wH; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=QvwwnPsW3knLIltBIEoiitBnipa0SwOi009wD+wqp4Y=; b=BzgOQ4wH9LxFHFXobmsfZMf6m5
-	Baa4elG56mrwz+nWPNi4kTSrOuSdhD/tW1ICcxbzClt5fiGocQj2RDWwHETI9eHJJE3ofyDGDu4mx
-	xOTaWyL49oBdUUZ9X0ojAD997KZGLalsYIMG1m8BFVwvzUBMB1AGJFiSVa3OVbGCJ4KlkqJijKuxO
-	h7hbRCJitCLvy+AL9rpKHc8QmMDu9RbY3gUhkk0zXTP9oDFcR1E2447W5S1MJcomFgdbOlYHP8HOm
-	IXWiaeNqH89hCyM2aB4EF+JXX5hYpScQxft1pvZKcLaCbXw5q42jT2S9wbfMtHyioywKZwMwg3xFY
-	d2verbrw==;
-Received: from [194.95.143.137] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uZpGv-0004Ql-5M; Thu, 10 Jul 2025 13:17:01 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Alexey Charkov <alchark@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Subject:
- Re: [PATCH v6 2/7] dt-bindings: rockchip-thermal: Add RK3576 compatible
-Date: Thu, 10 Jul 2025 13:17:00 +0200
-Message-ID: <6689502.31r3eYUQgx@phil>
-In-Reply-To: <20250610-rk3576-tsadc-upstream-v6-2-b6e9efbf1015@collabora.com>
-References:
- <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
- <20250610-rk3576-tsadc-upstream-v6-2-b6e9efbf1015@collabora.com>
+	s=arc-20240116; t=1752146251; c=relaxed/simple;
+	bh=NAjPhCMTcRKqpq6hV7XgsKxibbrVUUtCrEogQBqfDuY=;
+	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
+	 Date:Message-ID; b=GLMTHpQDbmu+IScgCR+AdjvNvVna7/rlnuAR/VXXw1YZBf7r6jD2IcfBtCp+PFS2G4tM2psa47cVQd94tIV8ztNVC6l0heSkOI8kRz9ZwSbFBPmOPhUq3uSLKUyHJDqpzXV3OpgSBVZV8sojKt9AuYwpdm2/OZv7Dl6tdodFmKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OuLeM8t3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752146249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+o3ywtcCI2GACuBhI4aVWCkSd8fJwvm6rbRb1axiSEk=;
+	b=OuLeM8t3Zyb2dEFqgGi357Y1cycMlVLsfXDINtLASLZwRtWyO8c4oZHeBAJzGitwEueyEm
+	h1zpfUpPa/n/4KQbjQBtXT1VVakJRtgrITor2eQBd7XR5207AeRqLZCP6HQT56WbWdIgYc
+	8MwmDesEk0TaYkX08aZ1ifPjIVPcGYE=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-115-4qOVVfThPz2ylueXkhPf9g-1; Thu,
+ 10 Jul 2025 07:17:25 -0400
+X-MC-Unique: 4qOVVfThPz2ylueXkhPf9g-1
+X-Mimecast-MFC-AGG-ID: 4qOVVfThPz2ylueXkhPf9g_1752146243
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7ADCC19560B0;
+	Thu, 10 Jul 2025 11:17:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 71A4A19373D8;
+	Thu, 10 Jul 2025 11:17:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <2807750.1752144428@warthog.procyon.org.uk>
+References: <2807750.1752144428@warthog.procyon.org.uk> <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com> <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com> <2724318.1752066097@warthog.procyon.org.uk> <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com> <2738562.1752092552@warthog.procyon.org.uk>
+Cc: dhowells@redhat.com, Max Kellermann <max.kellermann@ionos.com>,
+    Christian Brauner <christian@brauner.io>,
+    Viacheslav Dubeyko <slava@dubeyko.com>,
+    Alex Markuze <amarkuze@redhat.com>, Steve French <sfrench@samba.org>,
+    Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2808911.1752146237.1@warthog.procyon.org.uk>
+Date: Thu, 10 Jul 2025 12:17:17 +0100
+Message-ID: <2808912.1752146237@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Am Dienstag, 10. Juni 2025, 14:32:38 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb Nicolas Frattaroli:
-> Add a new compatible for the thermal sensor device on the RK3576 SoC.
->=20
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+David Howells <dhowells@redhat.com> wrote:
 
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+> I managed to reproduce it on my test machine with ceph + fscache.
+> 
+> Does this fix the problem for you?
 
+There's at least one more bug in there, so this won't fix all of the cases.
+
+David
 
 
