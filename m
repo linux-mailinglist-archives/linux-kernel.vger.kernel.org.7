@@ -1,123 +1,158 @@
-Return-Path: <linux-kernel+bounces-724748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3885DAFF67E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:47:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49057AFF68F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 03:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D21C1C42014
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 939D25A5E13
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37B427E07F;
-	Thu, 10 Jul 2025 01:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E0A27EFF8;
+	Thu, 10 Jul 2025 01:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="InfpT0wU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s36gQ67r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FDA2D78A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 01:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C5A846C;
+	Thu, 10 Jul 2025 01:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752112072; cv=none; b=Q+f+LUA1+BERqUt+y4q/Covn6+v/qp3ZfwR3h2QTGiIWyc8QIh7Ie+LrjcfDUxlKUk3EuXZK71Goxnq4xbhiiF9T6/35KSTSoVYvLbuDN5y+M9L5MtFb3kpxHVCWSg+6W3Erz+vZWBoN/yjBu2xz8K6eW0rvso7WMTavjwaApCY=
+	t=1752112622; cv=none; b=TIeD5c50jmuF0uKXJ+D63N4yxfI//3XthxMTfEb+oMEqPR5pdOKTf7EONnMPIXLBh3uywfypaWPiDpDZbW9YO9DnSgU+re4gNwirWirDP5nR3xa2f4vtkxh7rfH3uUoNp2GTJ6pf6F5sDjMtDHADk1DTRe81eiuSZXQhVHemxlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752112072; c=relaxed/simple;
-	bh=DQTD7y7cv7owoVXkdUip8vQLTuU6DMRTruw/sxIFpJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=djuZ/WGuv4zdAc9eGhUgtLVTDOly/5jX+twVu9ktqWf5sA4M6fSsEFQxV9hcdb7+WkDOmXHi1+dmnI4aZZo286bZ/jJZE1+MvHeb9hnLET1DxedDPrzkPZlhfBYlwqW/zqpftm74gIDqHM9a5qB7XeougVUCjxe2P/5mNIB4Cvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=InfpT0wU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752112069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Jh0rx+XXfIHWexmg7+WdmaTwcOzgWBvsa/tZ8r1I2KA=;
-	b=InfpT0wUM5vz3HpfrnxgJcwe7BJzjYe8Dr0jNu9EFgYPPkPm7MnVCz+NiI6za4OLfkVYSc
-	+uoL8Njp6OpqxKZmPIywW0V13uc4zXw220Zg/LQkntMem9Twu96X81pVOnuE21mR9fuW4/
-	8pTQb/HlWT5xzbj6lvC87vnP6lBpNKM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-590-IUdYY6naM1mIRWJqS1IxGQ-1; Wed,
- 09 Jul 2025 21:47:47 -0400
-X-MC-Unique: IUdYY6naM1mIRWJqS1IxGQ-1
-X-Mimecast-MFC-AGG-ID: IUdYY6naM1mIRWJqS1IxGQ_1752112066
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 787051944A82;
-	Thu, 10 Jul 2025 01:47:46 +0000 (UTC)
-Received: from bcodding.csb.redhat.com (unknown [10.22.74.5])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E52F6195608F;
-	Thu, 10 Jul 2025 01:47:44 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Laurence Oberman <loberman@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v3] NFS: Fixup allocation flags for nfsiod's __GFP_NORETRY
-Date: Wed,  9 Jul 2025 21:47:43 -0400
-Message-ID: <f83ac1155a4bc670f2663959a7a068571e06afd9.1752111622.git.bcodding@redhat.com>
+	s=arc-20240116; t=1752112622; c=relaxed/simple;
+	bh=V5+0JeybGuGj3hNbNrffhOaKN4FNKIUQicNKhhV6M9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=omIPSsBs5r7iLg7+sjAVJY9UtCGN9PHUC5gc9uws4aUuGSXXfoAJLKaBa0+DZBMjISWhj0ClhBa3rQ44AlTN0nVkGfO1mDLqwg84gQUwhgcGc70ICfVkH4V0nJYGRKLvvUzm5DX8zGe9+bIYfwvt1qNDMRnY+Hq6beGvjC/DtSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s36gQ67r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B5A6C4CEEF;
+	Thu, 10 Jul 2025 01:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752112621;
+	bh=V5+0JeybGuGj3hNbNrffhOaKN4FNKIUQicNKhhV6M9M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s36gQ67r+HzmWOakvqjLN2Bi+cxAqgCf9b1jm8CeVANKXagOyi4qRCxno997vOt7I
+	 npTW9Sqm4fAIHoISBPWcX7vjQIgal5suR6GEB+4EiYf2hwAgwibu53TlZdekzLZBEQ
+	 9ABBQhGaRUZwnPIix2Qtgh30B7PYqrpPimSO1KfrR0HfIEongwbMYk/1onz4hpDV26
+	 GuIsiO8b8UJiiZ9KWrmQ80LhTJRWiOT9thCwXfahXz+KypMzoUnp19aAp8cABbtMDx
+	 gSq60cIssEQ+9AYdxjTLFvnKp8xU42OaucaV/Fz2aUcFFHry0HoCkWdrBfNWJs8YVU
+	 kLmHPK8kS1RBw==
+Date: Wed, 9 Jul 2025 18:57:00 -0700
+From: Kees Cook <kees@kernel.org>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linuxppc-dev@lists.ozlabs.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, kasan-dev@googlegroups.com,
+	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v2 08/14] powerpc: Handle KCOV __init vs inline mismatches
+Message-ID: <202507091856.C6510D809A@keescook>
+References: <20250523043251.it.550-kees@kernel.org>
+ <20250523043935.2009972-8-kees@kernel.org>
+ <87jz662ssp.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jz662ssp.fsf@gmail.com>
 
-If the NFS client is doing writeback from a workqueue context, avoid using
-__GFP_NORETRY for allocations if the task has set PF_MEMALLOC_NOIO or
-PF_MEMALLOC_NOFS.  The combination of these flags makes memory allocation
-failures much more likely.
+On Sat, May 24, 2025 at 04:13:02PM +0530, Ritesh Harjani wrote:
+> Kees Cook <kees@kernel.org> writes:
+> 
+> > When KCOV is enabled all functions get instrumented, unless
+> > the __no_sanitize_coverage attribute is used. To prepare for
+> > __no_sanitize_coverage being applied to __init functions, we have to
+> > handle differences in how GCC's inline optimizations get resolved. For
+> > s390 this requires forcing a couple functions to be inline with
+> > __always_inline.
+> >
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> > ---
+> > Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> > Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > Cc: Nicholas Piggin <npiggin@gmail.com>
+> > Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > Cc: Naveen N Rao <naveen@kernel.org>
+> > Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+> > Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: <linuxppc-dev@lists.ozlabs.org>
+> > ---
+> >  arch/powerpc/mm/book3s64/hash_utils.c    | 2 +-
+> >  arch/powerpc/mm/book3s64/radix_pgtable.c | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
+> > index 5158aefe4873..93f1e1eb5ea6 100644
+> > --- a/arch/powerpc/mm/book3s64/hash_utils.c
+> > +++ b/arch/powerpc/mm/book3s64/hash_utils.c
+> > @@ -409,7 +409,7 @@ static DEFINE_RAW_SPINLOCK(linear_map_kf_hash_lock);
+> >  
+> >  static phys_addr_t kfence_pool;
+> >  
+> > -static inline void hash_kfence_alloc_pool(void)
+> > +static __always_inline void hash_kfence_alloc_pool(void)
+> >  {
+> >  	if (!kfence_early_init_enabled())
+> >  		goto err;
+> > diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
+> > index 9f764bc42b8c..3238e9ed46b5 100644
+> > --- a/arch/powerpc/mm/book3s64/radix_pgtable.c
+> > +++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
+> > @@ -363,7 +363,7 @@ static int __meminit create_physical_mapping(unsigned long start,
+> >  }
+> >  
+> >  #ifdef CONFIG_KFENCE
+> > -static inline phys_addr_t alloc_kfence_pool(void)
+> > +static __always_inline phys_addr_t alloc_kfence_pool(void)
+> >  {
+> >  	phys_addr_t kfence_pool;
+> >  
+> 
+> I remember seeing a warning msg around .init.text section. Let me dig
+> that...
+> 
+> ... Here it is: https://lore.kernel.org/oe-kbuild-all/202504190552.mnFGs5sj-lkp@intel.com/
+> 
+> I am not sure why it only complains for hash_debug_pagealloc_alloc_slots().
+> I believe there should me more functions to mark with __init here.
+> Anyways, here is the patch of what I had in mind.. I am not a compiler expert,
+> so please let me know your thoughts on this.
 
-We've seen those allocation failures show up when the loopback driver is
-doing writeback from a workqueue to a file on NFS, where memory allocation
-failure results in errors or corruption within the loopback device's
-filesystem.
+Yeah, this looks good. I'll snag your patch and drop mine. :)
 
-Suggested-by: Trond Myklebust <trondmy@kernel.org>
-Fixes: 0bae835b63c5 ("NFS: Avoid writeback threads getting stuck in mempool_alloc()")
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
-Tested-by: Laurence Oberman <loberman@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
----
+-Kees
 
-	On V3: fix ugly return (Thanks Paulo), add Jeff's R-b
-	On V2: add missing 'Fixes' and Laurence's R-b T-b
-
- fs/nfs/internal.h | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index 69c2c10ee658..d8f768254f16 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -671,9 +671,12 @@ nfs_write_match_verf(const struct nfs_writeverf *verf,
- 
- static inline gfp_t nfs_io_gfp_mask(void)
- {
--	if (current->flags & PF_WQ_WORKER)
--		return GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN;
--	return GFP_KERNEL;
-+	gfp_t ret = current_gfp_context(GFP_KERNEL);
-+
-+	/* For workers __GFP_NORETRY only with __GFP_IO or __GFP_FS */
-+	if ((current->flags & PF_WQ_WORKER) && ret == GFP_KERNEL)
-+		ret |= __GFP_NORETRY | __GFP_NOWARN;
-+	return ret;
- }
- 
- /*
 -- 
-2.47.0
-
+Kees Cook
 
