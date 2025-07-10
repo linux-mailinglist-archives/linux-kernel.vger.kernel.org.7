@@ -1,174 +1,151 @@
-Return-Path: <linux-kernel+bounces-726014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04878B006AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:31:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E19B006A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AB061C21E57
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:30:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F376E7A7797
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D8D274B36;
-	Thu, 10 Jul 2025 15:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4A62749C6;
+	Thu, 10 Jul 2025 15:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="K5IayD9K";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IgqoPP0F"
-Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TghXF2Vp"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C9351022;
-	Thu, 10 Jul 2025 15:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E19F22E3FA
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752161419; cv=none; b=fy2INEodJlThGZgPigvkYymaTYGPFzv2JPT2AhT7Mec3Ulo7Mf8DXcnkoKBOyzKn0Q0cJx+Udqqkb5RzhoUWGPdMp6Cn8N54YMP5kUEbk1cNi+3fjfBzM5CphXhWRZOeZfTZUFRswhXX1sbjatamSCtmGnKY+BfRzCFjAzo0WZQ=
+	t=1752161396; cv=none; b=l0MzVmKShwu0KCZEnjv+2l9Xs/L/I/DxopB1ddSXIEz8Z0j4laTrUc1ik6DkmHPulpPcdRwrgVvXpRATivDbeXm1Rv1SsjknxKGaBwprjBurLajDcSXn12KmoLmObppu+IQTUgaR6k2AQWaa26MgS6B+kfKrwI8TsxHGpC+HGpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752161419; c=relaxed/simple;
-	bh=Hx5gJn2ZSzuiEXr2+guVv+VH2sDXh3KjJ4gfQXoVnu0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=uAKVa5QyUxQtfrrOTmzRSOgCNgrC92rC2Z1+I6EDy1XloJcRrgxmsKRt2f0Qa11YjEHP2m/u50mje3qTwe4ZbPeVtQs3mRfOBMDQKamgt+yfc/WXa8fxwa8632F1eNUrCWn0B/UuWxfrBwHVBfS71njfel9tHDYJ/hLGg8wGr7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=K5IayD9K; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IgqoPP0F; arc=none smtp.client-ip=103.168.172.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailflow.phl.internal (Postfix) with ESMTP id 381A81380AE6;
-	Thu, 10 Jul 2025 11:30:15 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 10 Jul 2025 11:30:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752161415;
-	 x=1752168615; bh=AYtsN1wjDw19ZCXecXpxbhgdbQXxdI7F+9XO8m7p4xo=; b=
-	K5IayD9KBwVg1gILQlSHYjf3udls02vXkLBpptYge5R+R+Moivx7JYjl22TYks76
-	MJH8LbhDcOvzsXHLaH85qaQHcqY0f6SKi4ujBYQGy4grm/wrr8E1uukFfTUvsCx7
-	oPoshtq8kYgxKCx2jpvviQzA+BOtLvWSzl0/TFsmOoFmlUOYpgMVZSTdO/9Egv6g
-	5H3Ts+my98W9tTSPwVOy8lpK1KcGMrhrJMjcNAaS8+JeBye5rYpvv8jwE4IoKtuM
-	XhhrmHSFQtTrc2u/JTvdANK9onwYdaVuf3y5vQhTFrDGJHXAKxCs1ooAZNisUVMl
-	tndsI+Stljm31W/4Xva6Lg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752161415; x=
-	1752168615; bh=AYtsN1wjDw19ZCXecXpxbhgdbQXxdI7F+9XO8m7p4xo=; b=I
-	gqoPP0FBDqcwRSh6zLWTt/Z9BnBvNur3PAewb6oFv36a9jh72PICHYk9wxH2eKrF
-	XjxUIlP+0KJncy+Enab0Ew2aFOKt+biVNHRGnw+eBQhVHSXZ+35PKxBdkj9tRALN
-	HYZ3gIYEaWptzFjZeM8FAaY0Y8AZ3zcG7zuhTtfC2gDcbMQGlv4UDeMy5wJyrB8K
-	nATDeSL1ZVsNMRITcODUQseF5pxaAv58JsFc34HNi89sxrk8YZ/9HhZXqMdkld8C
-	9lCrmBM0g7M3Q2Jvt37Mzqu8RlMo9CO1wtfNaz0Z7n0RPhQqywCOS/+IcUIv36Xe
-	E0ByL9bZvLnNDk98Dv4rQ==
-X-ME-Sender: <xms:hNxvaP5PqC6uCz7DJF3Lf-he7nvOHA0FEA0lrKjfK2VEP1AopHSxew>
-    <xme:hNxvaE5fpl_KeVc_G6wPTalZ8ewClXZijQQuODRJLAqp0tcTf-G2ovY-a4NNobMiy
-    PhHRIep95lV-GAIrbw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdekudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeegfedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepshhouhhvihhkrdgthhgrkhhrrghvrghrthihsegrrhhmrdgtohhmpd
-    hrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphht
-    thhopehmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopehsuhguvg
-    gvphdrhhholhhlrgesrghrmhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgs
-    vghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepsggtmhdqkhgvrhhnvg
-    hlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthho
-    pehflhhorhhirghnrdhfrghinhgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpth
-    htoheprhhjuhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopehssghrrghnuggv
-    nhessghrohgruggtohhmrdgtohhm
-X-ME-Proxy: <xmx:hNxvaMVwMJ0kPtzMweGlqJFxtR32fCcqUjL93mxuIoFwYXvrvnK2-Q>
-    <xmx:hNxvaMQ4vAzsbERXmbYESjJdniu1wS8rDqBkbmHGY2L4P478HeYn2w>
-    <xmx:hNxvaIY3hERQ_hAy6KJIT2EFKx6z6XywTN0s7LmuU9zrS1399KoI_A>
-    <xmx:hNxvaJeXcJ6YZPcxekqGAUX2QhMHZOy96w_vkJJZnkICTsn0o7RYyg>
-    <xmx:h9xvaDX66XzA7KOwRJMm5KxJ8ZoExCuGvUSKgaK-nhr9G3NxT5ubYWGd>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 80820700068; Thu, 10 Jul 2025 11:30:12 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752161396; c=relaxed/simple;
+	bh=uXJ+Su3o1PPVQEWJgsrtc7LhMk7UVVMuONL6hP2mVEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKYEg//Pg3WkL38c5vz+p3+wodzfcRwldco3Onflz+HAKp51ste/GDRS0dDDWNU18vns/Juw4kIaz/kD2EPPpBrQXP4NgkPdXACy69HdCD7EwtnJf3Gia9+vWdBL8JAlS0B3Ky/Y8V8bpi/t5s5H7JrWkbdUAvzEhaDXH0Kb4OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TghXF2Vp; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so1440961f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:29:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1752161393; x=1752766193; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lSMS5g0FtH2qkHkZ1jt4pZS7KJcBgB7lox3WtRiFnhw=;
+        b=TghXF2VpNrDmLhksrMjT1MBzMUWYHez4Nx2SFdab9OTP0Dk7QBwVTJ+DwO3Suvn7d5
+         jZd3PFzoPLKeHKpeX+jnvfMDcbJTF/Y3DK+hE+A7FiBX0roZbRFrQOhnYYrNUbBNDo6P
+         kg8uITPqaIPsepc9/6OAfHI9THkxH0ajKjabWr+RV9wa5WZwW9pWDxLSrZXNEfcGjy5F
+         PPo43ZZ/9AEcAF34q9tkSmMNrnZYRMPnlRfVsj+lBy+hVzmiG0EKl3Rz0ZP0ykiL3cm/
+         h2J5qoIWr3WdorgNfVlJCVTdOsB+o3jXrwvxV3Do4PaLv2gz8aPy3aMCugfMJ7lTv/Ah
+         EccQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752161393; x=1752766193;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lSMS5g0FtH2qkHkZ1jt4pZS7KJcBgB7lox3WtRiFnhw=;
+        b=NTZCD7X72Zvrs4/xywDUZXlX1bgO0feUJwNz8oEcTSj7zKvzRG51r6UpDZt+Q7HyNB
+         htS8Tj3bv+FwiukbhItEygLxdt+YFoQ/QQ8s4iPmxVXkQ8QuBhiqpoEo7rv9Lltc+QBI
+         9zLZWb81WqXQEsJsogMB3y6ltpZ/LsSyq7vjHEcBP+EdhbqnJt9Y3cVfJIdzQjvNosEU
+         jugJd12L+Le5XMutTX56P4kKolWW0sHnKZ7EcMlFEDrKT27T8Yk3l33QJp1UtsMyPwzm
+         +OXjTgfMLp2yODZKAXZn4FYypMjXHP/Tz+6tSDVf08mZtETb5weaP/2K0QfpxIWJOUrr
+         nDQw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5HL1b5jwIlYi6tqHXsy4FSnQiRd/dZn/Xp6gKZwQVkKan9QlPE6jR6Rs3ssxSu+jSGivoRXrqpDFtK6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZmnVlNUWE7H4cKSJ6JZZ4DnR2Y9LiPJSjmT3MTnE1bvgDdb0o
+	Y8l/R2zQ5oQam1CS+vGxwcEH2QZte0NGXoIm/VU8l1Jy1ajcTv3KhoP2Isf31/zxmvs=
+X-Gm-Gg: ASbGncvA0j0oBOqnXdizhUDCaPMbBdk+EPESKAZwbvkRb+vFclhSkM19BVzOw0X6pSZ
+	CDvNxq/uyhZn01CIsd0eBBsE5iOJBXmMSnOvo8PIPE36WZnObXRHZe6MqXxS3c0IkMuOP2TkRFH
+	6Qpm5r46kqBx/XeDkm8v4EVvj2iJjCeqnbBypQYLPkuF+gPquhYBHJfujIBHf53Qb9fhRx9bDHj
+	TPIK/ciZCrr/KpCSDeV6PIwfIfKa17UcZGYTwJWNqkNtEPgPBQd3/ZF5wezjTsowIaMFP43xpO/
+	oyMWmHYQyByRbZNjUD32ZCZZjYxRK/tWHIgus7RSIVrhC+Vmx2DMQCgs34ynhHz9tLGfi4SyZR0
+	=
+X-Google-Smtp-Source: AGHT+IGk8jb4Q5+TtKQe7i5KrsnU2L8JxV8a+7deRG1vITo0uj9HDseycRwujjfxpSFT3oO40oNjMw==
+X-Received: by 2002:a5d:64e4:0:b0:3a4:e1f5:41f4 with SMTP id ffacd0b85a97d-3b5e7f2e929mr3675711f8f.17.1752161392588;
+        Thu, 10 Jul 2025 08:29:52 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd5ac0sm2649648b3a.22.2025.07.10.08.29.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 08:29:52 -0700 (PDT)
+Date: Thu, 10 Jul 2025 17:29:37 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	David Gow <davidgow@google.com>, Arnd Bergmann <arnd@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 0/3] printk: KUnit: Followup fixes for the new KUnit test
+Message-ID: <aG_cYSfhXfxQoKco@pathway.suse.cz>
+References: <20250702095157.110916-1-pmladek@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T1700ebcd39f54138
-Date: Thu, 10 Jul 2025 17:29:36 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Shivendra Pratap" <shivendra.pratap@oss.qualcomm.com>,
- "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
- "Bjorn Andersson" <andersson@kernel.org>,
- "Sebastian Reichel" <sre@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Sudeep Holla" <sudeep.holla@arm.com>,
- "Souvik Chakravarty" <Souvik.Chakravarty@arm.com>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Andy Yan" <andy.yan@rock-chips.com>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- "Olof Johansson" <olof@lixom.net>, "Konrad Dybcio" <konradybcio@kernel.org>,
- cros-qcom-dts-watchers@chromium.org, "Vinod Koul" <vkoul@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- "Florian Fainelli" <florian.fainelli@broadcom.com>,
- "Elliot Berman" <elliotb317@gmail.com>
-Cc: "Stephen Boyd" <swboyd@chromium.org>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- "Alim Akhtar" <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org,
- "Wei Xu" <xuwei5@hisilicon.com>, linux-rockchip@lists.infradead.org,
- "Baolin Wang" <baolin.wang@linux.alibaba.com>,
- "Sen Chu" <sen.chu@mediatek.com>, "Sean Wang" <sean.wang@mediatek.com>,
- "Macpaul Lin" <macpaul.lin@mediatek.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Ray Jui" <rjui@broadcom.com>, "Scott Branden" <sbranden@broadcom.com>,
- bcm-kernel-feedback-list@broadcom.com,
- "Nicolas Ferre" <nicolas.ferre@microchip.com>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Elliot Berman" <quic_eberman@quicinc.com>,
- "Srinivas Kandagatla" <srini@kernel.org>
-Message-Id: <12c9a69c-7e27-4d43-9b1b-542e735176ec@app.fastmail.com>
-In-Reply-To: 
- <20250710-arm-psci-system_reset2-vendor-reboots-v10-3-b2d3b882be85@oss.qualcomm.com>
-References: 
- <20250710-arm-psci-system_reset2-vendor-reboots-v10-0-b2d3b882be85@oss.qualcomm.com>
- <20250710-arm-psci-system_reset2-vendor-reboots-v10-3-b2d3b882be85@oss.qualcomm.com>
-Subject: Re: [PATCH v10 03/10] power: reset: reboot-mode: Add optional cookie argument
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250702095157.110916-1-pmladek@suse.com>
 
-On Thu, Jul 10, 2025, at 11:15, Shivendra Pratap wrote:
-
->  static int reboot_mode_notify(struct notifier_block *this,
->  			      unsigned long mode, void *cmd)
->  {
->  	struct reboot_mode_driver *reboot;
-> -	unsigned int magic;
-> +	struct mode_info *info;
+On Wed 2025-07-02 11:51:54, Petr Mladek wrote:
+> Hi,
 > 
->  	reboot = container_of(this, struct reboot_mode_driver, reboot_notifier);
-> -	magic = get_reboot_mode_magic(reboot, cmd);
-> -	if (magic)
-> -		reboot->write(reboot, magic);
-> +	info = get_reboot_mode_info(reboot, cmd);
-> +	if (info) {
-> +		if (info->is_cookie_valid) {
-> +			reboot->write_with_cookie(reboot, info->magic, info->cookie);
-> +		} else {
-> +			if (info->magic)
-> +				reboot->write(reboot, info->magic);
-> +		}
-> +	}
+> this patchset puts together some followup fixes for the new KUnit test
+> which were discussed on several locations.
+> 
+> 1st patch:
+> 
+>   + adds a comment exaplaing why the test ignores pr_reserve() failures.
+> 
+>   + was proposed at https://lore.kernel.org/r/aFUiQESkXjFIGqez@pathway.suse.cz
+> 
+>   + Thomas Weißschuh added into v4 of the original patch but I have already
+>     comitted v3 in the meantime, see
+>     https://lore.kernel.org/r/20250620-printk-ringbuffer-test-v4-1-8df873f1f3e0@linutronix.de
+> 
+> 
+> 2nd patch:
+> 
+>   + dynamically allocates a cpu bitmap to make the code safe even on systems
+>     with many CPUs.
+> 
+>   + v1 was set by Arnd Bergmann but it had some problems, see
+>     https://lore.kernel.org/r/20250620192554.2234184-1-arnd@kernel.org
+> 
+>   + This version just integreates the proposed fixes from
+>     https://lore.kernel.org/r/aFkuqaFn3BOvsPT-@pathway.suse.cz
+> 
+> 
+> 3rd patch:
+> 
+>   + stores "size" instead on "len" in struct prbtest_rbdata so that
+>     is can be used to check code sanity by __counted_by(size).
+> 
+>   + fixes https://lore.kernel.org/r/eaea66b9-266a-46e7-980d-33f40ad4b215@sabinyo.mountain
+> 
+>   + it is based on the idea from Thomas Weißschuh, see
+>     20250626082605-c5fbbb88-f6cc-4659-bea0-a283cdb58e81@linutronix.de
 
-I don't quite see why we need two possible callbacks here, could
-this be done with a single '->write' callback when you either
-add another argument, or extend the existing 'magic' value
-to 64 bit?
 
-There are only a couple of drivers that provide this callback,
-so it should be easy to just change them all at once.
+JFYI, the 1st and 3rd patch has been committed into printk/linux.git,
+branch rework/ringbuffer-kunit-test.
 
-     Arnd
+These two patches were reviewed by Thomas and John and were accepted.
+
+The 2nd patch is independent and has an issue. I am going to send
+an update separately.
+
+Best Regards,
+Petr
 
