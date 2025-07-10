@@ -1,135 +1,162 @@
-Return-Path: <linux-kernel+bounces-725379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F178DAFFE43
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:36:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08262AFFE4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 11:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9C793A89BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:36:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41FCE582120
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4120F2D3ED1;
-	Thu, 10 Jul 2025 09:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897712D3ED2;
+	Thu, 10 Jul 2025 09:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2TSpPXp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7M568p0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F51420B80A;
-	Thu, 10 Jul 2025 09:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E141820B80A;
+	Thu, 10 Jul 2025 09:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752140199; cv=none; b=pdoS16I5JKw9KpjYSdyIkvR+OiL4xYpc6X+6UBEwKU4X/RIKjv3raFdZCw3521p2rdjtbwLNwoT8KMEwFJBApFFQgjfMxG3FG/CHywWpSQZMITlCoGco7fR0XTy7G2tdQnnqFcBNOJgfVeGgXdoCoBjxkS/ASGDSBEbuJb6qzFQ=
+	t=1752140252; cv=none; b=jlfoAclBM+06xcsT1kwh0dQ5LQlUOzcDw6+SOUJMefVQzfj/AK2wcrUHThXSD7yGfyZYn2/gTlHfYcz/bUCuAxFlbrePhPinrgJPsFkxBPK6UznueuuQk/JoonnTB2aXfhQvgA9pCmmE2ftEkD4gpp1ZzqkruLJr1U1WkGCtvuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752140199; c=relaxed/simple;
-	bh=ySXE5TVVhZ8eOfELibVbDSdW7abDUxlv6vdaZRzNTe4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=L47NiQHPd+FzVUmBdBjd9khnU4zQPnWwrUQ87p7fc6WyGXcpriHDGYJtd3FdsYNjJvDjqSeNZroME+WEkRAI3VugCUuLMhevSZIq7YSpPPdcEkbN3iVu3Ru/UdJxojkJdIO9Ou87CNovznL/Oom/w0W4kEEQxheCWOqZBnJnhwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2TSpPXp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22F28C4CEE3;
-	Thu, 10 Jul 2025 09:36:35 +0000 (UTC)
+	s=arc-20240116; t=1752140252; c=relaxed/simple;
+	bh=7JOq7FOv5bTpMZUieiLhS8U+rK+/XC/emjowf7BbJQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YHTS3HMsxfS/8o1nnBnK5tvzDRAPBhH/xTR4RSByGbhrpcLujHseuqImStC1F75ZI96QSpoXxKoaJqQqpApH3P9we5x5UpD5XAgMVAd/QMSV4IV+TdzbP85t8x2O78KRzHmlGnyQtGA/mAmYV6wtHhfkW6Md/r9rBXJfR9yMUws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7M568p0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBAFFC4CEE3;
+	Thu, 10 Jul 2025 09:37:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752140199;
-	bh=ySXE5TVVhZ8eOfELibVbDSdW7abDUxlv6vdaZRzNTe4=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=B2TSpPXp+EQ02I4bQ6KzteqI41zNuaGDzzLIfCNPB4LuzSe1XZwzTC0IjandSNqgl
-	 MEtdDuxM9/GgyyO2YXWbOvffpp2RyvVJF/u0pnlWiv7Pvq7pqw5tFWDBboyPxA09qY
-	 toBRtqMeTPYQ9oPU01n0B+l2jZ67e+ywrtvf1IjIAhGstI731PhPBD4cyWEYB9faKR
-	 Aj3YEhiEOvjwJhENcKFgQFPv40P0G/W7Yi+OMDe+8L8H/W+H+RsInKepCe0x5FN+Ww
-	 QkcvU4YofZI+IDWnnYc1U0zzN4SonZPwS0a3pbysCSLxao+EU50n95OShsHCGZTBAy
-	 YymlZj44tpcUw==
+	s=k20201202; t=1752140251;
+	bh=7JOq7FOv5bTpMZUieiLhS8U+rK+/XC/emjowf7BbJQs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l7M568p0jgUK7gJCDH7RzHUjJGHy9Fbq15HebTAhQ3RZpyCUhW+2+G8kcJZ3J/qK4
+	 vPDOGrJRfe0873OrgePF4AePyjk88yyR6Wl5OvZ9QvrhE+ksBYWQbDIQlcKCYTUVqA
+	 qcW7DNqAwmLhdYn5lTehSjOdF6C0gW0bQvQ7u0BptIM36Bc4NWlpdcKmqd5R5TJPC3
+	 6b4p/nfLtSo1KasZlGXDRrt0UqRBj0e9mZqdZvPO/sPmXt6AalS7zQkgkwLqpvJ3LX
+	 mvkYEQYFPXuwIuecH6khI1bPfD+fm9Grk+G8T+gxS7hf3CUkmI9O1txBgLVac6noFw
+	 WtnXHUzah+CPA==
+Date: Thu, 10 Jul 2025 10:37:26 +0100
+From: Lee Jones <lee@kernel.org>
+To: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+Cc: pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH V3 2/2] leds: pwm: Add optional GPIO enable pin support
+Message-ID: <20250710093726.GD1431498@google.com>
+References: <20250703035256.225289-1-Qing-wu.Li@leica-geosystems.com.cn>
+ <20250703035256.225289-2-Qing-wu.Li@leica-geosystems.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 11:36:34 +0200
-Message-Id: <DB89V15HIG8C.2HL9JVKFNEDTK@kernel.org>
-Subject: Re: [PATCH v9 0/5] rust: DebugFS Bindings
-Cc: "Matthew Maurer" <mmaurer@google.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250709-debugfs-rust-v9-0-92b9eab5a951@google.com>
- <DB7US8G7ISG0.20430M3P7I0K0@kernel.org>
- <CAGSQo01hORWAtrGaYp-_xxrAiN47JkJg=jiqnqdpw87QKzt9jg@mail.gmail.com>
- <DB7V19QE6KFB.3MR0BAOWXT7M7@kernel.org>
- <CAGSQo01drZoy1-j-+Y-BHHOX5AzCG4A5KiUOu5TJ40JOdfcB0g@mail.gmail.com>
- <aG7pP1BTLQKInFrl@cassiopeiae> <2025071014-radiantly-dreamland-4017@gregkh>
-In-Reply-To: <2025071014-radiantly-dreamland-4017@gregkh>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250703035256.225289-2-Qing-wu.Li@leica-geosystems.com.cn>
 
-On Thu Jul 10, 2025 at 7:27 AM CEST, Greg Kroah-Hartman wrote:
-> Ugh.
->
-> Yes we need write.  And read, and custom file-ops, and the like as
-> that's what debugfs is doing today for C code!  We need this to be as
-> simple as, or almost as simple as, what we have today in C or no one is
-> going to use this stuff and go off and attempt to write their own mess.
+On Thu, 03 Jul 2025, LI Qingwu wrote:
 
-I agree, we really want the helpers you're referring to below. I think we
-discussed this in previous iterations already.
+> add support for optional GPIO-based enable pin control to PWM LED driver.
+> some PWM LED chips have a dedicated enable GPIO. This commit adds the
+> support to specify such GPIO, activating the pin when LED brightness
+> is non-zero and deactivating it when off.
+> 
+> Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+> ---
+>  drivers/leds/leds-pwm.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 
-> While I would love to have something as simple as:
-> 	void debugfs_create_u8(const char *name, umode_t mode, struct dentry *pa=
-rent, u8 *value);
-> like we do today.  I understand that this makes all sorts of
-> "assumptions" that Rust really doesn't like (i.e. lifetime of *value and
-> the like), BUT we MUST have something like this for Rust users, as
-> that's going to ensure that people actually use this api.
+Couple of nits.
 
-I think it can be as simple as
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index c73134e7b9514..1397149464b35 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/err.h>
+>  #include <linux/pwm.h>
+>  #include <linux/slab.h>
+> +#include <linux/gpio/consumer.h>
+>  
+>  struct led_pwm {
+>  	const char	*name;
+> @@ -29,6 +30,7 @@ struct led_pwm_data {
+>  	struct led_classdev	cdev;
+>  	struct pwm_device	*pwm;
+>  	struct pwm_state	pwmstate;
+> +	struct gpio_desc	*enable_gpio;
+>  	unsigned int		active_low;
+>  };
+>  
+> @@ -51,6 +53,9 @@ static int led_pwm_set(struct led_classdev *led_cdev,
+>  	if (led_dat->active_low)
+>  		duty = led_dat->pwmstate.period - duty;
+>  
+> +	gpiod_set_value_cansleep(led_dat->enable_gpio,
+> +				 brightness == LED_OFF ? 0 : 1);
 
-	void debugfs_create_u8(const char *name, umode_t mode, struct dentry *pare=
-nt, u8 *value);
+Put this on one line.
 
-in Rust as well. Declaring this in a structure looks like this.
+> +
+>  	led_dat->pwmstate.duty_cycle = duty;
+>  	/*
+>  	 * Disabling a PWM doesn't guarantee that it emits the inactive level.
+> @@ -132,6 +137,23 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+>  		break;
+>  	}
+>  
+> +	/* Claim the GPIO as ASIS and set the value
 
-	struct Data {
-	   counter: File<u8>,
-	}
+Explain what ASIS is please.
 
-Given that we have some Dir instance, this can be as simple as:
+> +	 * later on to honor the different default states
+> +	 */
 
-	dir.create_file_u8(...);
+Use proper multi-line comments please.
 
-Which uses default callbacks for read(), write(), etc.
+> +	led_data->enable_gpio =
+> +		devm_fwnode_gpiod_get(dev, fwnode, "enable", GPIOD_ASIS, NULL);
 
-> Look at an in-kernel function today, like ath9k_init_debug() that
-> creates a metric-ton of debugfs files and binds them to different
-> variables that are owned by a structure and more complex data structures
-> and memory dumps and other random file interactions.  We need, in Rust,
-> a way to do everything that that function can do today, in a SIMPLE
-> manner that reads just as easily as ath9k_init_debug() does.
+One line please.
 
-That's possible with the current design and code, it misses the helpers, su=
-ch as
-create_file_u8() above, to reduce the boilerplate though. With that, it sho=
-uld
-look pretty similar.
+> +
 
-> So no "we will add write support later" stuff, sorry, real drivers
-> require write support in debugfs.
+Drop this line.
 
-Adding the write callback seems rather simple, so it should also be fine to=
- add
-it right away.
+> +	/* enable_gpio is optional */
 
-From a design point of view the things above basically come down to differe=
-nt
-variants of create_file().
+Comments start with a capital letter.
 
-So, it should mostly be sufficient to add subsequent patches to this series
-implementing those.
+Place this comment inside the second if () statement.
+
+> +	if (IS_ERR(led_data->enable_gpio)) {
+> +		if (PTR_ERR(led_data->enable_gpio) == -ENOENT)
+> +			led_data->enable_gpio = NULL;
+> +		else
+> +			return PTR_ERR(led_data->enable_gpio);
+> +	}
+> +
+> +	gpiod_direction_output(led_data->enable_gpio,
+> +			       !!led_data->cdev.brightness);
+
+One line.
+
+> +
+>  	ret = devm_led_classdev_register_ext(dev, &led_data->cdev, &init_data);
+>  	if (ret) {
+>  		dev_err(dev, "failed to register PWM led for %s: %d\n",
+> -- 
+> 2.43.0
+> 
+
+-- 
+Lee Jones [李琼斯]
 
