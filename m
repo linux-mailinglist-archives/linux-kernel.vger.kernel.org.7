@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-726007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E1AB0068B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:25:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9697B00695
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78C197BA870
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:23:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B41D35C4E85
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1098C275B16;
-	Thu, 10 Jul 2025 15:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BE3277027;
+	Thu, 10 Jul 2025 15:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b="M/WeUJqT"
+	dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b="Xg7uVNUE"
 Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2136.outbound.protection.outlook.com [40.107.237.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F46E274B29;
-	Thu, 10 Jul 2025 15:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637CB27587F;
+	Thu, 10 Jul 2025 15:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.136
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752160996; cv=fail; b=qwDUb98HHe3OfvwffsltKYr1KytsDNyvHPCvuag0sCKkFxtu3EICqIWnOLuUb6dN+l4cg8+QVOa/1gcKk7Idr9NeXTXgJ1O/7OHBasxP499lHojexvuzBlKfEG9Bz7O+2fhxb6TWPMZj6QqNuFiQvt0fp6KgD09/+/Inzkay3zg=
+	t=1752160998; cv=fail; b=NR1WQl3YjR5i46CcVYpUWhjAzpABgvUccRU/AM8sUOa6tCtc/a3E15yOb0k26auGskc5I8PmQ9oCEFEpnVGOQF/4Sp/v5ZVWpe99aXdA9v9wfFZPalqWBiDnTgk90PCO66uAihz/mzdi9y1+FCP8A9kZ8E002Me9Tpa6uOuXvYk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752160996; c=relaxed/simple;
-	bh=njQMyIQb21/8PBLu3navFHJfmozUQPu2MynsYdoZt5c=;
+	s=arc-20240116; t=1752160998; c=relaxed/simple;
+	bh=6SDlrw698N7XUsheRp5bRi8E8HuP0Z/y9sPpc0j9DdQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gAbYI0/T5A0Ws8h9R03Q0VG6u6l9BgvD6o6YU15lrzkOaGsGUO8nR/q3BEkQV0BN/cUM+7dwFvUS4TU12Qkq6OZQqhCqTjYuz078+mCERnVkujnK7/FLejn6L221ULqpqclX0RwtxTegm8kwHdDEoo4bnUxWkBAGSX4fTe4JONI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com; spf=pass smtp.mailfrom=inmusicbrands.com; dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b=M/WeUJqT; arc=fail smtp.client-ip=40.107.237.136
+	 Content-Type:MIME-Version; b=nYZbri38jUJR2Rp0zVxt8ESC586dT0a2Y6ddAkd8qLV5IJENVP5jnmmhjtAQPwifSF8bNDqyp+gncvSuwlh0PlKSmbIbFpeIZ6vn1lTWK1B4UeWNmhbXGVAKTwliyNkYRCeQ0IMslSXQP/wa043yZywu9UgUdpmeWI3ApUaqMq0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com; spf=pass smtp.mailfrom=inmusicbrands.com; dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b=Xg7uVNUE; arc=fail smtp.client-ip=40.107.237.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inmusicbrands.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zIBLhNMe+qjcj3OYVq2q8yeNIasjc8PdVM3xkoTlV8FG9PIJP/LPHYN9aIz7GlXOQINmsaezuJ1JoP5TDJC0zF1XHD/pm/Lx5zehy1Y/909295pzcRWYvGIeq29bKJPg9Ao/5BasBl8eYgeaBrQ8zzbLbPZjXa9nsZO+EGOqiIk27p/4j46mKGEA0gBp0RdhCSr/lJ4GkWLgUa1bUSWT1CMCwjlHhO8WChXXTPt5RYvCPLjudancychgfkFBy/hT7AdSkNjB8Yk/ySR90D7urOnCjY+6Lj7HUUBAGvQoCYTMYSkOwqLQEpFPD5PHLEfXkkx6KbuJFspYTyCZPZz5Bw==
+ b=KiWrWHW2IfA01lzGsoRWKKP502xc7mZu29oDYAz8hc6c8PWUYMA0QCpJkkqe+D13Gb2YNXdbMM0WqQ/gJ/tfO3emaAExI7BikGOWXCL/4TItLoBrg3pt7rdz2ofb5+01N9L2L+IkxNFJgVlnQS3zDiJTC9YQ2nj6E+JISt5aK6eO97wQjKzhjqo2ZUUlOXmaQRIoyGW75thz9pi9ZAm6kzwMquPChKixQiXkpJNTttK0NvRJtDw/TklQhSp+satzJg0BA55NOusBx3BVhwAxWa1M5394o2UJRnexdPns8a7/KdFlHykxAE07lKUkh9GzZ4c/c2zHOjUeaiAjI/3vRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LuOexVFBFQxHoI9x0UEwd5VAzvbKMb6/1/oBDm3GLyU=;
- b=Wb8Bq+6c0aladNECOXLH2AOzdLdxSGDeXGqjk++O3FnlwzFEzOJrXwPYrMX8VlenZypdizs+NSNjLl7Digr9O8GSbDboOyjnogqXUgXTHUxOEfXrUonOsvFryii2mo1Wr39dIDQrJiVLrxRDGWEKQjnv4bb/YKDghHZfRIvY/2zCwtRJNSdY+/DPf9Jh9/4lNeAPEepueUcAzDMSM0QJ1R4KgeVp37btk8vZUY3l/eY2AQUxlFBaX/0MTVbIILmM8qHnKQDOZrqjPrWXhFB0fnqxtE5R0phu5rGV9/6z4s7EKhwYlQ8kCPnsPfY5p+J7mOkBxekemYmUjCJHTddKug==
+ bh=sFgfYgelPFWu10+orQ/pP3pc8XDCsaez4z9Zz3a1F6c=;
+ b=OiJZRnA/jaIgJTHV0LCj9oyF1Yhd0lYmS9qpg8Tz1UqjutYY4wUlTBQhgHJpcFCl5ntmIJdtRrTjBKRDKdlDaSawvreI4eeFEqCE8Q+1aoaCQZRrPTwxsZByZ7p2p4pODb+tYGVAYaSzdcaaeWkRJjC9RxiBszhsoQB2te54nD+MLkUJOZdtJsIMiLhDcMkzv+2O/vXqSbPzz8GofylFtRJG42WMn5NCcU5xVLS4USHYtibUgCf0Wifg73O+YcI9nsKzo4ba7W3wnUyIYxrFwo8spMR9NZF0R30D4GrcmyDag+Fn2H9uYaTfwKRcmhS3lptfnCiRZoRWQt15Py7jEw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=inmusicbrands.com; dmarc=pass action=none
  header.from=inmusicbrands.com; dkim=pass header.d=inmusicbrands.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=inmusicbrands.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LuOexVFBFQxHoI9x0UEwd5VAzvbKMb6/1/oBDm3GLyU=;
- b=M/WeUJqTq2AlP4T2I/7bGynPnWMbZZBxW/qKsA2yPclRovrr+eEiCukYoYhbJoqxmPDc9cVmt1YvvqMRM7WtEX63mBCUg1dc/96enSqZToJsNMEPkni0wVgQ+dmaAWb7UyEq3r+lszQx+DZwecbappvALEHI2kqe3NPthFhFoMk=
+ bh=sFgfYgelPFWu10+orQ/pP3pc8XDCsaez4z9Zz3a1F6c=;
+ b=Xg7uVNUEgIRz0VvpoZj6V60iOF1WYTL67M9rlFMouOjlsoXWTRH7xy5YqXddVlC90U8jBnzCXybhE162IK7wxaW1YNuv8O2H2lrJkXaO4pqPYc8M2WLgloSFZW48H2aavBj9mMKqRR+zcABS9mTEpWV0httzyPawL2RHnYo9h2o=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=inmusicbrands.com;
 Received: from MW4PR08MB8282.namprd08.prod.outlook.com (2603:10b6:303:1bd::18)
  by PH8PR08MB8487.namprd08.prod.outlook.com (2603:10b6:510:25a::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Thu, 10 Jul
- 2025 15:23:10 +0000
+ 2025 15:23:12 +0000
 Received: from MW4PR08MB8282.namprd08.prod.outlook.com
  ([fe80::55b3:31f1:11c0:4401]) by MW4PR08MB8282.namprd08.prod.outlook.com
  ([fe80::55b3:31f1:11c0:4401%7]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
- 15:23:09 +0000
+ 15:23:12 +0000
 From: John Keeping <jkeeping@inmusicbrands.com>
 To: linux-rockchip@lists.infradead.org
 Cc: John Keeping <jkeeping@inmusicbrands.com>,
@@ -71,9 +71,9 @@ Cc: John Keeping <jkeeping@inmusicbrands.com>,
 	linux-phy@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC/PATCH 1/2] usb: dwc3: disable for USB_ROLE_NONE
-Date: Thu, 10 Jul 2025 16:22:49 +0100
-Message-ID: <20250710152252.2532020-2-jkeeping@inmusicbrands.com>
+Subject: [RFC/PATCH 2/2] phy: rockchip: usbdp: implement .set_mode
+Date: Thu, 10 Jul 2025 16:22:50 +0100
+Message-ID: <20250710152252.2532020-3-jkeeping@inmusicbrands.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250710152252.2532020-1-jkeeping@inmusicbrands.com>
 References: <20250710152252.2532020-1-jkeeping@inmusicbrands.com>
@@ -90,139 +90,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: MW4PR08MB8282:EE_|PH8PR08MB8487:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9da4dc37-2a02-4079-7360-08ddbfc5ad4a
+X-MS-Office365-Filtering-Correlation-Id: 1c55ccdc-78c4-4719-4d4e-08ddbfc5af07
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BIm5CJxcBRmzYlBQBmei0YasTX7KKe7VDeEuzQFp6K2nipqPGd2jB0FuPT/B?=
- =?us-ascii?Q?ApViU0bL9ss4IM75v1zm7bFCEMLlAlgj0mf28EIIESb9U4o1fec2PGGUUJ8g?=
- =?us-ascii?Q?lk5v6WGJ/NuyWF/gqB1ItU1nl/J46K+rvMnO6R9JrczjH0s9LiTcAmFpdgs1?=
- =?us-ascii?Q?rhcIrEMg84JSvPXdzPVz9C3uwYkcJa8enIGfPNA6WHcWYFARiBLJF8R0RKkO?=
- =?us-ascii?Q?epKiduNmIjlw2gqWtEmKdXKW4wMwx3r9WtvTGeqJ/PJ+5G4q8F7MdVSjC9kj?=
- =?us-ascii?Q?ufjFWI5+rNUwGASjGCtKvxauhJlILnxP2L5BrTvDFGNKx45qA8Q3c6SwERBs?=
- =?us-ascii?Q?99BMaEHEw+L4KGJRDiwHgRK3jOaa6x5R/i3YlEW7vM5YrvAaYDJoAKj3HMrD?=
- =?us-ascii?Q?XRrqh42t1pMsYUL2ovN6aPXlOzT4Xhv3vhYbIYheRbnjivjN60eKCmsMMbLY?=
- =?us-ascii?Q?JjQoAUdtAX1AZRFKd1X85n0Y8gKl/KHybmeeMuJThMHXdXxTj6GqkRiTngMU?=
- =?us-ascii?Q?MDc9cX81O1wrvcrATVxZp8TefLkCa++vbclWpXVa6cEREPyZxN+uTe7qt4ZP?=
- =?us-ascii?Q?6QhF0xR2YIkJXDvWq6EtE38cQCD3EJ5kaQ6Hs5b2kUzSHaCwmj7M8Rne4zrc?=
- =?us-ascii?Q?B0eDMUI0eCCDjiIlo/vuSaS4mzfRe1cvbo5SufDajlpQbHsqCofRle6B0HI3?=
- =?us-ascii?Q?WixwdU5EgC7wsrAJG2LPzUEdw6o2rOHmpjultvPOppvXORL6fLKvFEk/a8Cr?=
- =?us-ascii?Q?P1hMj3BLP+843By+bwK02sHBd5563T8ZZpeXfcMtr+TlqKaU0IhkSyZbxdKv?=
- =?us-ascii?Q?ZVxy673zqvUBoJ6ndAaze3nthQw+zUa7kK4qSO3Ok3VMfLIvwNNg+srm6qXi?=
- =?us-ascii?Q?hARhTTy0C0Kr+9aVn5x1swHdKjnOw7PtffawCSDK+roS2O9E1VXi3NkbDgu9?=
- =?us-ascii?Q?RPN2W2JTZuUSVALmPz2ohMVIjCG+XYb/Jxc8G2W+8ylzSSxz3DmQ6isogQ4X?=
- =?us-ascii?Q?6CLz4cHBtKA7NABOJpT6VBq7b6mD7rPZECQfRTr7nnwPwV7CF06Kpv60aL8Z?=
- =?us-ascii?Q?3mJ8hRg7gVqMWh2nUoqV3nE3p8IrVFsna2HMiFP9i5BRsK5O7iKPSt6mD/Ki?=
- =?us-ascii?Q?L4bGmTdAXdkteMmxFSQavkFVa1mfceO/OSnizJIyGgGbwFKEnF7L8NkYWLox?=
- =?us-ascii?Q?cTrjxsE4GNu8agb23XeaZsnvfBPgzPnL+e2OwUMxNX3qUJP3uGyjDz9rpckA?=
- =?us-ascii?Q?BfIdNohs4Q/fxIN2gGtm8KO+xxKLhSaJVWXNp5SrEgP7omsPGg3ah3yUCJlE?=
- =?us-ascii?Q?SDK4Oc1cpa+VeLSvqxWew1oqFbOjfSBMEJKindZyNyShjC/zA8tCZk62HoNb?=
- =?us-ascii?Q?czPA3tdWnv+7wwJxKDI1UzqXQE5/BDnX3ywcBKqaUrAF6k5WsF8ydX+EYvo6?=
- =?us-ascii?Q?TmQcnxBC9eStARoNw18VDF18CccG9Y4fHMZyOrfIbNFTiAiMAMNYEA=3D=3D?=
+	=?us-ascii?Q?k6vjpUasFN1qWzI8br+G4SVg9y1qJSWZtqxAK2ilL/3hpZ9xETdGsjSVd78b?=
+ =?us-ascii?Q?73fuEyADGluVnuFlo/CVWZ6HVGDEgEn2IJnf7300T8OKYHoYi/3TY/yNuqnt?=
+ =?us-ascii?Q?++3YYMkPEN0FV8WH+xj+akoSFSYfM7GTCA7fST99jOiaNn4kDDqMJMRmNRqh?=
+ =?us-ascii?Q?7qt2sgZntkhlmY9b55KIt+EIvTynv1qenu4LxScZhQuhgNO2ff31r78pUcpp?=
+ =?us-ascii?Q?CkFIzGGkKyqVQzqw7QrSXIz/bNjFaoZi9nQpCtK/G1B+tW0iqc9T1zwzsjVP?=
+ =?us-ascii?Q?AEh0QlyEwg/6qx0XxnJUE2g2LLmKgXBed6QvC+29Z3m+KaJX9MSh5EUsAuVy?=
+ =?us-ascii?Q?lBXDzxoKAcDoHmNTSJOX9UJUjeDREN1PmapO2Jx9ohPPIzRq7tuqQP5tW2XK?=
+ =?us-ascii?Q?u92gmxIRCLnMDZdaASc1Z9Nf+tRV/ShzlSy8TpShpZIbkXIHzCJDkYKJ2Uzo?=
+ =?us-ascii?Q?CfYu/w29UV3pnvwvUqBLPXyXF7xMEv3S40a8ME/TfBuy/btphU5dve4azhRe?=
+ =?us-ascii?Q?Ht275RUeM4byZq/GQhLWgAKWRlj5rm0XKjxgdEl4Mc7KUuQcQIHLdlfXcr9U?=
+ =?us-ascii?Q?J6pfdoj/OlzjHJIJMuGEebHfUzyYdUKjJVlio6yCvP4tDLY7U1+aprhnWbZb?=
+ =?us-ascii?Q?P84BSXupaDJZcVHr5xYprU5f5ORIcsjxep+RdWi4qggoUeGREjLFmwoFjc71?=
+ =?us-ascii?Q?uVubQy9cy+MCy3css4cURkio+cNqgOVfmZObfhZQyZ1smgXZoCrgUmTE3uTn?=
+ =?us-ascii?Q?nxposXdmMfc3z8qrg+9VfwOEC1VVVR/L/8myeZEBjnec31XC5PobvuDQkiCC?=
+ =?us-ascii?Q?tmE+4UD7BE7tuBrC1VPkW5QbAiPhVyaGzQQBVphTNZ5n94rkGrC8XENLfYZs?=
+ =?us-ascii?Q?tA7HFJm51BoDhLfY8zoBLU3/a+JQM1m7B9OATKhbl2ygPGCKBGWjSBaCOCOD?=
+ =?us-ascii?Q?dgMSHEQDehd2ZJbe4e5JMZeBG+GDke+MS/Dw6yNRdzaL6tkpjqD/KBCPh4nt?=
+ =?us-ascii?Q?MYKZas3sTsX/buXwzU9UDV6exuvRxkDkdsF964vvAGwykQqjv4PW8FTle86r?=
+ =?us-ascii?Q?t+MSDoA6QGqVQdy2tuy4uYERDxxm+2VqNGs1dt4fmtNMkvm/0eJdAb7pCCsC?=
+ =?us-ascii?Q?edGmLudMRx1SKH7xyckF3ZAAQjtuj5QOtpP9bTv4+JNcBuIerihFxyRJ6YLg?=
+ =?us-ascii?Q?dDJhoR9OCpsf0E12dTCu2wUtQ2yN/DYRfYqnMyTKzmJacP+R6pcbxxa6TL2x?=
+ =?us-ascii?Q?Hfekf0lBodPF3ROb5Cof7H6F0n/JXwj5wbHdAiUtwA31Ap1YRAObHzA6hRLs?=
+ =?us-ascii?Q?e8MrMaHzYnjWRx62NC3K1VyDQ1uv4hbn/tt9xjU1du29vQTCCZO6eMopss3S?=
+ =?us-ascii?Q?nJCLGbTYleK8ZUSwxqTeKOVCzoTmwN5+vQ2Agmx2oqpzw0qibbtQ2yM0WwxK?=
+ =?us-ascii?Q?AI9PgeQKYwsgHHLtPlKzymbhCp0+ZiiYgvf114RdVDz96AuPfuRrsQ=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR08MB8282.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?TMdosDCOU/JrT4UqlJiAJaw1rdBGZvo20OOFsgptbDUSq/xeAauZd/bm3zog?=
- =?us-ascii?Q?zybR334iNRpMurMvie0+OfWe34QJNRk+Pnj+E5++JqnWW3Aq2nl6NedMYL6G?=
- =?us-ascii?Q?TObAbM15GDBb5VwEbfS7KKXy6DZBx+KoAQJnbUiU6zy73Cp/BsRRkkiOn7Ki?=
- =?us-ascii?Q?3d7upQ/saRYDgFOIBr4GAO6BaAsjvgQSBhr5gyevNVq1tgePHe98+KZ7X9tP?=
- =?us-ascii?Q?E1qWPIH4LLcEG3Nccc1lgClqF14lFZ5BTzP3cPa4Nh2yRaTEEdE/3sJ4Xrvs?=
- =?us-ascii?Q?O9wdUecogLb5F08IPaJEwlDlHQD/Jwuhc5f2h1oJYvavfRI6SLOBszJEHP1z?=
- =?us-ascii?Q?1yJF+Xo2RAStFz1MhQWn+zqD6RAhk2oZPHx1r8dnmvaVlJCwoLwicriJa1Mm?=
- =?us-ascii?Q?fXiHzuBCbAYYzVeBgGeKXIvS6Hhl1uQWPPy6qWej0uj4pqYisiR5kd5EyumM?=
- =?us-ascii?Q?AQ4ZG7RBKi7A5HZQXLLOFlZYhoLBhbpB5h66ZmIVirejQs8+9Uo4+DN5U4ho?=
- =?us-ascii?Q?6rCBgj3o2+mf7AIhrpc8c6xTzWtfHRIVKmOajh0vbAOnYnIMZFFhxVr9D62d?=
- =?us-ascii?Q?m1yt4U/kfRhQAt7ojNrZOObz1V2FeFV71irlT5jPbaxeWhVn2QvZ0qF7WDGL?=
- =?us-ascii?Q?HD/b5YmxBJJvFIrq0uRmZdQofVemknzMyXMxa2apSS77qDEia8T7Oni4UisS?=
- =?us-ascii?Q?dNJI3PouaaTVVr2Nk7LreqAuM6iTAO/htKgNa8+Gf6fAdulw+G06Gr2B4Big?=
- =?us-ascii?Q?YSEvmvKdVKWi8V+iUojIbTWqxDGYpmQ5dc0pH8RMzetBPCMNceN4qBkEca4M?=
- =?us-ascii?Q?hel/+abrwNW/PKRoeWqzCs1v4of47XMzWVJ+E4xEnVblYB8FZ9ClUFWTdJ3d?=
- =?us-ascii?Q?QHERXvnUAr+vCw4Ln9GeamhKC/uKtznInKsjCYooDB5GHcniM8LEPxLnibmN?=
- =?us-ascii?Q?FkBbz1Ger+B6RKyX3mFLnbBD1yxmt9RSFc77uaH+i0o2S6SOT+ZWIGZudmPa?=
- =?us-ascii?Q?bX7CtTI1ZixcGgtQ0Yxu7qSYoD8T8+r3Ebe5f6YZOp5mrz8dkTDSTuozlGWi?=
- =?us-ascii?Q?lt8sqLJurC3y/clhCgMiHaPMfxnFd2nQhKn0RkImP6VvMJmsIZlRz44aG5JI?=
- =?us-ascii?Q?7w3+5PER6BXEh2W+f8t2QB2fLJ3B9MZ0QNS7a4AEaV8tn003rAgZmLj5mPhm?=
- =?us-ascii?Q?44B/U3yoXHW/fThxhn/YmGEGRJ/5R389jxRH+YXKqCm9ThypTpsbHnKwBe5i?=
- =?us-ascii?Q?Rl1bsUSuh7P73Vw/tdErr0fW49mE5sCrDwUkdtf6nkFhBznduEIXLAnH83ZG?=
- =?us-ascii?Q?RSm1BS2wZQ1SVT9fqW9b+FM+LviN13qPxzAm5KsGT0sHDvFY32JarJjY5Ev/?=
- =?us-ascii?Q?N0ncnxXVv9/qEcDyxkce1NMKybq4jokvF8YmKnMSssKJtYWwrtvtZwnHyiA4?=
- =?us-ascii?Q?1AxBf5Vb5SSr6SmPoGh2ZD2tMg5oX2jHMRCPkKV3+EypHW4hdpiI8KrYzwgw?=
- =?us-ascii?Q?5D0K+hwFXJi55DsP7i08IoK6TrIcRL4H5pGH4buGRaFx4L/NgBJCjJBuiPHP?=
- =?us-ascii?Q?8DpxnVcmBih23UyucfMHx5N/FqWkkJJqM5n1ylgJaIsVAQUXGRAjZpavjZ89?=
- =?us-ascii?Q?Dw=3D=3D?=
+	=?us-ascii?Q?LmCiaT8iTyzEf6ooSf5R9yRhud4KDh9Ur4LW/3fghEhvCeJGBie9eYKESFUi?=
+ =?us-ascii?Q?eFWCEMo4Qg7AThKzk22A4CaEOBT2yw1xyId6ZBrtkwrcdv3O7jFrSEYNB/Es?=
+ =?us-ascii?Q?vgpM4S3s8ay/rKGUrqMZtYfyO54v43WyLq8DL36SaNIFJ0Xu2JrUYVtCA/zR?=
+ =?us-ascii?Q?EyQaW1Dw/r5Iy5yRTYFMO1t7EHZQxppl6yqHDD48goiLiacpWl3kNPK0adFE?=
+ =?us-ascii?Q?RDHceI/Bc6dXTJSoW+v5CvC1e56IytSNcwktAL+YutecwDnlciBqvB2GIODs?=
+ =?us-ascii?Q?7yKP3CNGUH0IaD1ELLtiVvSwch9d3Z7gBK5lS5tibQ9tVDdrJy2E4akMGV4O?=
+ =?us-ascii?Q?PcupqziYq4XUwJETJa7xKDqP8aPp1PLqIzX+ig7dcu+9mCEnQw18sbq2YpLm?=
+ =?us-ascii?Q?b0pByT3XjDViFN0cVWVfjNB9TA96mHLOgL+rfFn9VFHeJ6jLRqS0ArgnXrSm?=
+ =?us-ascii?Q?9b9DmjYaxZfStIfSzYqvs+whWiK3wrAZhg+koPQi4dVjKgQx0bIVuvT/pIuC?=
+ =?us-ascii?Q?EK0Q4EbEiZAWBh7o4/DkYbyyzILkTLRTASK+ZGctpEK8MNXDuJeOCauFnrO8?=
+ =?us-ascii?Q?jrPXHT9BfAEjxOGjVrs371viKdzb2BhbCWxwDF8sQOiVrJ4jZWsmcju6TPhM?=
+ =?us-ascii?Q?NkmKOEsk8Ke43jgMro86Dm3bOfRP96HsuIlqPVoUNVrmgThlcgPnS/jjYxSu?=
+ =?us-ascii?Q?pNClBUjZ0/4gbnQWZhu01ynoLfPq/y+3XBI9Btf0Bzke5iB1n3NGmFOARwO9?=
+ =?us-ascii?Q?buqbxSu83pdLRV08TT1DLfFJSK1h7kGszva4U1GfD/6k2ytdaMhGK/mepZ3u?=
+ =?us-ascii?Q?ad861Rq5+Ash5aLeVw7O4oQNU478ucYuKKoW6UrEBlF/WfkTBGWJr/9u+b8A?=
+ =?us-ascii?Q?cNPYzFzyMKpbP5D6oqzFfgeRchGDtku2lPfQxgM03Dx4Au5He4W5NGv7p5Pm?=
+ =?us-ascii?Q?ujYO33ejvF7cpnPkc+X686oRNkjD2HPlC3MqTg9SneHvbaH8QSGwwkzfcyJk?=
+ =?us-ascii?Q?sW3ZwnTxo8lwrIpA+vQcWy4zbCJZUVUMGuplylglWEKrwFAcDFXvBapNv63K?=
+ =?us-ascii?Q?l50Oj+T8bX5nrC2RpK2w5B8NkLJI7pSWQsaISzfB7Iwcvn5pZHt75BgUqkEz?=
+ =?us-ascii?Q?pd6qrmCp1UA5mGOM2xx8xmC1xLrP+X68y0jlM2rctLzD/W6TMnS+caR8VR3g?=
+ =?us-ascii?Q?XQi58K97ct/eyWmI5aCYxPZSjjQSktMTHERaT0uArajWwTU2yTjCKm4q6DBf?=
+ =?us-ascii?Q?FWPGZ2UY8e0lG1vRtaSMqDrnRZ4Lbl2fjoGjqfc+IrAnqQvM5BgWZZudmtt0?=
+ =?us-ascii?Q?upto7ZsLOcKQl23loSY6YqmzUBwhJvnGrlciy870lhfQsuO1Gwdzm7DfpHQU?=
+ =?us-ascii?Q?1qPS8od4IKak4Q5CBZ7jjAfjZoL+g30MTKdYurwI+ruYIOL61+W2U3fCT6hc?=
+ =?us-ascii?Q?D0hNd8A1+Ku4kVbkmZw1Y8JIK6XXpWBLOQCwf3BN9wjXcDLIUvVBUMVCCRwY?=
+ =?us-ascii?Q?26OFwIJDXEMdga+PSJqBZm3vTAJyWEy6lGBZMUSGsrp+4wtnpVRKIDkfvi49?=
+ =?us-ascii?Q?MCOftOTF2vzB+afMS8X0uXlpWknCBZLsMKhF0JxN01TlZahaFxw8S+ToHoKc?=
+ =?us-ascii?Q?mg=3D=3D?=
 X-OriginatorOrg: inmusicbrands.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9da4dc37-2a02-4079-7360-08ddbfc5ad4a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c55ccdc-78c4-4719-4d4e-08ddbfc5af07
 X-MS-Exchange-CrossTenant-AuthSource: MW4PR08MB8282.namprd08.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 15:23:09.4882
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2025 15:23:12.3877
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 24507e43-fb7c-4b60-ab03-f78fafaf0a65
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xP3bqSRRcqvqvYY3Mm5qEFVDNiBIEQSKeMQsroFYuLJxPytXRg7K+0MmMkO1hMOe8Qu1Znq3pHICaEfTCXt6qSY/XNxAzVkMlbbgnAhWMcI=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7Fb9n8FZwHBpRwDDRLwjBQMrSVLrJvjvWsrQvFMwCJk/OZRiqso2Wtj5CQQgKaUTGQwgQicM/0Z0RWSKjw/aXZunJzN+3/OSWA5QSVPZXKg=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR08MB8487
 
-When the phy is acting as a Type C mux, it may need to reset when the
-cable direction changes.  But this should not happen while DWC3 is
-trying to use the USB connection.
+When the orientation of a type C cable changes, usbdp set the new
+configuration in its internal state but does not write this to the
+hardware.
 
-In this case, there must be a connection manager to notify the phy of
-the orientation change and tcpm_mux_set() ensures this happens before
-DWC3's role switch is informed of a change.
-
-It should not be possible to go directly from device->device or
-host->host with a change in orientation without transitioning through
-the "none" role as the cable is unplugged.  So ensuring that DWC3 always
-informs the phy of the new mode whenever a plug is detected should be
-sufficient for the phy to safely reset itself at a time that is safe for
-DWC3.
-
-Lifting the special-case for desired_dr_mode==0 in __dwc3_set_mode() is
-sufficient to allow using the unset mode for USB_ROLE_NONE.  The
-handling already disables the old mode and then simply does not enable a
-new one.
-
-If an external device is notifying USB role switches, then it is not
-necessary to set the default role when USB_ROLE_NONE is passed.
+Make use of phy_ops::set_mode to write this new state.  This should be
+called by the USB controller when it is notified of a role change
+(assuming it is acting as the role switch) and will be called at a point
+when the controller does not expect the phy to be operating normally.
 
 Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
 ---
- drivers/usb/dwc3/core.c | 3 ---
- drivers/usb/dwc3/drd.c  | 5 +----
- 2 files changed, 1 insertion(+), 7 deletions(-)
+ drivers/phy/rockchip/phy-rockchip-usbdp.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 8002c23a5a02a..6573cca0eeaf5 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -177,9 +177,6 @@ static void __dwc3_set_mode(struct work_struct *work)
- 	if (dwc->current_dr_role == DWC3_GCTL_PRTCAP_OTG)
- 		dwc3_otg_update(dwc, 0);
+diff --git a/drivers/phy/rockchip/phy-rockchip-usbdp.c b/drivers/phy/rockchip/phy-rockchip-usbdp.c
+index c066cc0a7b4f1..00368fb09307a 100644
+--- a/drivers/phy/rockchip/phy-rockchip-usbdp.c
++++ b/drivers/phy/rockchip/phy-rockchip-usbdp.c
+@@ -1335,9 +1335,23 @@ static int rk_udphy_usb3_phy_exit(struct phy *phy)
+ 	return 0;
+ }
  
--	if (!desired_dr_role)
--		goto out;
--
- 	if (desired_dr_role == dwc->current_dr_role)
- 		goto out;
- 
-diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
-index 7977860932b14..8f427afa8eb93 100644
---- a/drivers/usb/dwc3/drd.c
-+++ b/drivers/usb/dwc3/drd.c
-@@ -457,10 +457,7 @@ static int dwc3_usb_role_switch_set(struct usb_role_switch *sw,
- 		mode = DWC3_GCTL_PRTCAP_DEVICE;
- 		break;
- 	default:
--		if (dwc->role_switch_default_mode == USB_DR_MODE_HOST)
--			mode = DWC3_GCTL_PRTCAP_HOST;
--		else
--			mode = DWC3_GCTL_PRTCAP_DEVICE;
-+		mode = 0;
- 		break;
- 	}
++static int rk_udphy_usb3_phy_set_mode(struct phy *phy, enum phy_mode mode, int submode)
++{
++	struct rk_udphy *udphy = phy_get_drvdata(phy);
++	int ret = 0;
++
++	mutex_lock(&udphy->mutex);
++	if (udphy->mode != UDPHY_MODE_NONE)
++		ret = rk_udphy_init(udphy);
++	mutex_unlock(&udphy->mutex);
++
++	return ret;
++}
++
+ static const struct phy_ops rk_udphy_usb3_phy_ops = {
+ 	.init		= rk_udphy_usb3_phy_init,
+ 	.exit		= rk_udphy_usb3_phy_exit,
++	.set_mode	= rk_udphy_usb3_phy_set_mode,
+ 	.owner		= THIS_MODULE,
+ };
  
 -- 
 2.50.0
