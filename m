@@ -1,137 +1,227 @@
-Return-Path: <linux-kernel+bounces-725918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C94B0057A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:42:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B8DB0057D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3C611C85F9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:42:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FBD3167356
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FE2273D93;
-	Thu, 10 Jul 2025 14:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F342741A4;
+	Thu, 10 Jul 2025 14:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOGaIGFe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhqrnv+6"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526E71B78F3;
-	Thu, 10 Jul 2025 14:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E187E27056F;
+	Thu, 10 Jul 2025 14:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752158541; cv=none; b=PxFpgKOeI4WnX0r2coDi8QDARckxQ2WFP2iNQ818ErwdqEhbidwfSwC+wa76Tfv9Z2i4Lcmsb6S1zXCfvc6EvwQpoAR37ba0w7wya0uUEBM69n47/FsMDwBjXBvNZ9Nm3xXnwG1bO84y/0bqn8BZfdom2ar4igxIuQp092bcbJs=
+	t=1752158582; cv=none; b=BzHSMm2Eg4KgCi16EE5AlyQEAeaEC+e9uCjKFmDHNsyj3nKh2qPPOOQvvkHkm/e5CxnX4HnCg1g5/On8nf4muhWAoXir1tKZa+lPRBqNILRuv06n5Y9fsa6frzORjpQ5kYA4yLlJEToxFI8cjdbr4gmzSzZYfZilT/HYQrDOF+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752158541; c=relaxed/simple;
-	bh=cGsJFEUNnvKczNc3UG/ZDVjX4WuRlfzWnHuYaO16hag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nhGPbk4Yu+uWkmvFXtMPLw3Ql+A11covSWBg9Ugzey9ff7QLKcsikbj/LBlBuG+Szv3wLTt4Hl9cV8dHbBadbps7bMVg8cFd3xmyfMjN1bv3hH8VLpIQdRN5HZR/2re6Teyb7EKBafMJ2zGWhJFQGTmC9C7Wey1hJw/QDpzRlpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IOGaIGFe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 556F8C4CEE3;
-	Thu, 10 Jul 2025 14:42:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752158540;
-	bh=cGsJFEUNnvKczNc3UG/ZDVjX4WuRlfzWnHuYaO16hag=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IOGaIGFeaJ5ie2nPG2D1IXJK1pghqjbFqmYLOUcS8UNhHaLNWbzDdZQltnacZIZpJ
-	 pta2YMAx5b8HxAdS0vaYYjvD75Gu2Lrl465IOL8sfwggpQ+9xyYaXGBYFxtpXCtuDA
-	 JXTwWeuGywUtBTUMPBtTapwnnYm/PxOzTNRrEVhRLaPUYp1+avmUIXoWqDwLAIRD6u
-	 4n+7xZ+ag0yjWXFdyACLh/apnyuaULPxxbimhMLKrLvah21gfPm+nVENXKxvZ7AwpD
-	 AXQ8xvruLLzV0X3TmmcTCU91WS/e9UrZXa8VYm6bnFkvVkjlnUo0rrqE6lS7U5Ahjv
-	 dxrIi9aTZ27aA==
-Message-ID: <bb6bc232-cc3e-4689-952f-88cf580604fb@kernel.org>
-Date: Thu, 10 Jul 2025 16:42:16 +0200
+	s=arc-20240116; t=1752158582; c=relaxed/simple;
+	bh=5szyi6yH0oGGrfKIg9Xi5xiZ5wKO/TDCmsZjQgVklsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rT7mKNZssvShnCQzYuYin1tTJEAZvBksjuHXufTdxiNxYX/FP/HlPtCsbp7zLSkZ06Dl40MLGFjfOjxEKsa0KqcoCPt0IPloEUS4IhBetMJ9nuivlXSPrOiklMFEkQmOYGnB9xQhjEpg7lZ8zCvQ/RkvDK/oE7iH6NUyyVUUg00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dhqrnv+6; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6fadb9a0325so8812276d6.2;
+        Thu, 10 Jul 2025 07:43:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752158580; x=1752763380; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z4R+5ty4AWv2gsK8CU8Hv/60eryRGjAiYmsZeghCD00=;
+        b=dhqrnv+6RRWhQ0go3+hNNlLLLEJsKgIAJvKXtYK/MhCRhCymFAQHlox0ulxFW4+J+Z
+         ybuQLBN0bRC/c0A4GUWmO+RO/giS1KFcIo7sePOl63k0WMrZU/S1FPFKngNVgUm91KgY
+         cw8iQjGplZjMoNk6bCBHXcPup7OosYaQfjYm9i9WJAz7GWOVEydtcyn7ZqzPkKoCM9Lt
+         MR85WWQ3/MFaHsTMCWXlVWpDX+fDYAhhXno9gvLEt4IrbPVzzDEGHG6fjT3qAJNH+wL3
+         RDetdf0OBYb5yQcqVDzzRI1JLlr/6ysecjqEoFYOLncR9V57LLhB6lPDSMwxoNy5F/nE
+         RWCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752158580; x=1752763380;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z4R+5ty4AWv2gsK8CU8Hv/60eryRGjAiYmsZeghCD00=;
+        b=KHQZo8qLjxIlKOtyHpKlP4MBCMYMupY/cB7v7Sq+zpDBZ9ryNbKfFfIW3pmmfaZN29
+         yb5ML5i5H0LyHHtmhtrJtg2WsegMbIy9J8hzYCf9mT2D7sSRgXMtdpZ9l8o43iO6twJe
+         nwg/84RGibA7/qcu23gqFhSzLAUR/+aT4gQIbXpWcWv/0cqq4HZ9Y6W8bR6EWLocWVA5
+         hnNg8f4J6ejjPjmsNYA0idteINGtoIzeJOTAGF+FtDiVxF6yN8bAtH5Lvf+wBTfd0UHo
+         GPOimvFWBLYTrDg/6CUPkuSVPVnmCGiQxMT5uncEjWgraxAhAhTf+CpXjDHmIJPpE+bl
+         K9bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUlPSxAMwsN7kFUTxhXl+63rIbnssTtm8oZYbfurtGsFVbKuCym1cZs+BJ6qqRfam8log4b8kSQQy2N+hA@vger.kernel.org, AJvYcCW7ffr7NqktxGhhoLJOuzbxCzWSQVFXOwFPkUljCzbdgdOT76aw2foLABqQ45B4INNjQQrsM8Me1vSu@vger.kernel.org, AJvYcCXcjNOG6BdLPiPE4B8qMCa++FkOFcatCFuN6w6jt+fdDjE3jI3pK8q+BLwz94C3vkOAsDaIa6H82oOWl9l4x/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDog4bcq5ZU/zbMEBqA3D1Zsx5yJScxUpPnOkZlP7rDNSN5v8g
+	wYpMklcXaY9mP8HKPLuB9CeGYxETNCiX2EjquRdUd9224LKC0y0knBPn
+X-Gm-Gg: ASbGncuPQE0AcTREvfHewQEl/mFwhUEo+cO54Q1CHTUiNhd/J9jtCJ61JaAXbnDun5H
+	cupR77ABNwDVFQ+l+dlTEri+gbDPoyJac3XzSV20aLfuWQ+BiYfPEv+VFB0ZrdEIemWNpJ8goIZ
+	xBO1DezFRBg9VQ5qYGwySBJwVlgp0Hy63TwvA3pj4qwx+Md+H533FIyaZ0xSwGuY5vRb4dkVk9k
+	IN2gFFX4h8xeIMiI3zAtm6tyU2wtWOqunmY4wRTF2ou4StqkzKj2zqc4BXv7q5m/vjwilApLJub
+	3G5or+jiZvMwsBLe88qe5lH0AeJNMti04duJFXLVMmmbmIB4IhAiL1FrMRBVQ+zAHx2ncv/t7oK
+	SoZe5an8HHTqKLbllO4VqB4nT73UWX2pQS+p/nkhSMSaoAe3Uuzab
+X-Google-Smtp-Source: AGHT+IGI9wrJlk/EdUfzrnlCQdEcpgrX6ATeWyNj8eMASX/i9ZN1VLo/n+ONfa1cHmdrIXJcsnr9cg==
+X-Received: by 2002:a05:6214:4015:b0:6fb:5f97:510f with SMTP id 6a1803df08f44-7049506ab79mr54563026d6.44.1752158579491;
+        Thu, 10 Jul 2025 07:42:59 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497dcfc37sm8761616d6.115.2025.07.10.07.42.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 07:42:59 -0700 (PDT)
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 524EFF40067;
+	Thu, 10 Jul 2025 10:42:58 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Thu, 10 Jul 2025 10:42:58 -0400
+X-ME-Sender: <xms:ctFvaAcE0iyTokvcj511T3GmrdPd12ZhuaIp6jzMZ4lL4EI73Vsa3w>
+    <xme:ctFvaDtqT9dkquEesECpobe1DIsR3AMO4gzuMpqX4BF5DaGpvuHO680seBbsUow1T
+    k-Xx6HPw13mXOmE3A>
+X-ME-Received: <xmr:ctFvaGGctGKiFLg56nZeqHmXGhiSenZf9gEPnMEs0LX_inggxd56PBRFww>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdejudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehloh
+    hsshhinheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlih
+    hnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhkmhhmsehlihhs
+    thhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrh
+    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtth
+    hopehgrghrhiesghgrrhihghhuohdrnhgvth
+X-ME-Proxy: <xmx:ctFvaFdlwzav-bMXb6DU3p5OMDDaBu6zYT4n09Dg6KyC6BpaTQ2ufw>
+    <xmx:ctFvaKunaXRztOHCjPKQIQUqTpzdkw05qe7fEqzODp_3hlqV1ZZewg>
+    <xmx:ctFvaEkc6OKIzkTs6cP7sNAmZxzY7Z0pXF-QEFBAmzJ1kmHM_pgncw>
+    <xmx:ctFvaNCqOtcdGugFVUn0bTcYLYGE5JfFgr9eNYz5Kp7SwJ3B0ntc7A>
+    <xmx:ctFvaMx73y5lXNEzdvWTfjWGV9hlBQSccSHDi-o4dFNhhkoabp-dwiRQ>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 10 Jul 2025 10:42:57 -0400 (EDT)
+Date: Thu, 10 Jul 2025 07:42:56 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, lkmm@lists.linux.dev,
+	linux-arch@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 3/9] rust: sync: atomic: Add ordering annotation types
+Message-ID: <aG_RcB0tcdnkE_v4@Mac.home>
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-4-boqun.feng@gmail.com>
+ <4Ql5DIvfmXBHoUA428q2PelaaLNBI5Mi0jE3y3YPObJLRgY73zNZzQ8Pdl2qq25VWsMQFKUpYRHHQ1e7wFaGUw==@protonmail.internalid>
+ <DB8BTA477Z2V.1J7XFLDXHMN2S@kernel.org>
+ <87v7o0i7b8.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: ti: Add bindings for Variscite
- VAR-SOM-AM62P
-To: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
-References: <20250709220714.85697-1-stefano.radaelli21@gmail.com>
- <20250709220714.85697-2-stefano.radaelli21@gmail.com>
- <9b503f65-5c8c-4f04-a1b1-40d7a1202e8b@kernel.org>
- <CAK+owohgk3CkQRv_PBDWXh44X2uN3p8FWBU2t9VtmO-xzOKTow@mail.gmail.com>
- <6656b2f0-5258-4f23-8988-567a7b598497@kernel.org>
- <CAK+owogfXDNpjT5Ywcvjaegf0H8-pS109039WadhxHXHbe3GSA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAK+owogfXDNpjT5Ywcvjaegf0H8-pS109039WadhxHXHbe3GSA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87v7o0i7b8.fsf@kernel.org>
 
-On 10/07/2025 15:53, Stefano Radaelli wrote:
->> Then why do you define it reversed here? How this som-factor-processor
->> is an argument to my request to use som-factor-processor?
+On Thu, Jul 10, 2025 at 02:00:59PM +0200, Andreas Hindborg wrote:
+> "Benno Lossin" <lossin@kernel.org> writes:
 > 
-> I apologize for the confusion in my previous email. I made an error in
-> my explanation - our compatible strings actually follow the format
-> "processor"-"som-factor", not "som-factor"-"processor" as I
-> incorrectly stated. That's why our compatible string is
-> "variscite,am62p-var-som" (processor-som-factor), consistent with the
-> examples I provided of Variscite kernel like
-> "variscite,imx93-var-som", "variscite,imx8mp-var-som", and
-> "variscite,imx91-var-som".
+> > On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
+> >> Preparation for atomic primitives. Instead of a suffix like _acquire, a
+> >> method parameter along with the corresponding generic parameter will be
+> >> used to specify the ordering of an atomic operations. For example,
+> >> atomic load() can be defined as:
+> >>
+> >> 	impl<T: ...> Atomic<T> {
+> >> 	    pub fn load<O: AcquireOrRelaxed>(&self, _o: O) -> T { ... }
+> >> 	}
+> >>
+> >> and acquire users would do:
+> >>
+> >> 	let r = x.load(Acquire);
+> >>
+> >> relaxed users:
+> >>
+> >> 	let r = x.load(Relaxed);
+> >>
+> >> doing the following:
+> >>
+> >> 	let r = x.load(Release);
+> >>
+> >> will cause a compiler error.
+> >>
+> >> Compared to suffixes, it's easier to tell what ordering variants an
+> >> operation has, and it also make it easier to unify the implementation of
+> >> all ordering variants in one method via generic. The `TYPE` associate
+> >> const is for generic function to pick up the particular implementation
+> >> specified by an ordering annotation.
+> >>
+> >> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> >> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> >
+> > One naming comment below, with that fixed:
+> >
+> > Reviewed-by: Benno Lossin <lossin@kernel.org>
+> >
+> >> ---
+> >>  rust/kernel/sync/atomic.rs          |  3 +
+> >>  rust/kernel/sync/atomic/ordering.rs | 97 +++++++++++++++++++++++++++++
+> >>  2 files changed, 100 insertions(+)
+> >>  create mode 100644 rust/kernel/sync/atomic/ordering.rs
+> >
+> >> +/// The trait bound for annotating operations that support any ordering.
+> >> +pub trait Any: internal::Sealed {
+> >
+> > I don't like the name `Any`, how about `AnyOrdering`? Otherwise we
+> > should require people to write `ordering::Any` because otherwise it's
+> > pretty confusing.
+> 
+> I agree with this observation.
+> 
 
-There are no such compatibles. There are:
+I'm OK to do the change, but let me show my arguments ;-)
 
-variscite,var-som-mx93
-variscite,var-som-mx8mn
+* First, we are using a language that supports namespaces,
+  so I feel it's a bit unnecessary to use a different name just because
+  it conflicts with `core::any::Any`. Doing so kinda undermines the
+  namespace concepts. And we may have other `Any`s in the future, are we
+  sure at the moment we should keyword `Any`?
 
-and others with exact format how I asked - var-som-<processor>.
+* Another thing is that this trait won't be used very often outside
+  definition of functions that having ordering variants, currently the
+  only users are all inside atomic/generic.rs.
 
-Best regards,
-Krzysztof
+I probably choose the `ordering::Any` approach if you guys insist.
+
+Regards,
+Boqun
+
+> 
+> Best regards,
+> Andreas Hindborg
+> 
+> 
+> 
 
