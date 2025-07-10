@@ -1,98 +1,71 @@
-Return-Path: <linux-kernel+bounces-726604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE06B00F28
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:56:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93620B00F22
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3E6B7BD9EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB9E83B4CC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C342C08C8;
-	Thu, 10 Jul 2025 22:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5212BEC4A;
+	Thu, 10 Jul 2025 22:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l+bH0MD1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyUBK/XF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC872C0323
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F0128FFC6;
+	Thu, 10 Jul 2025 22:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752188175; cv=none; b=pBoh54sAWCF243XdQ9JPrHHHJjdtQUJMjBEIxLO3J0K6kWJSS3xFDdJT9BsYbVyr2wLWicbYhNmLRtX9jmhGiln9TYaWV1e535Nfce/KNYfoGcp7H42EeB893G5q5UpWP307Mf1cl94BuIAd1+8+jiM98oTkzrSeQGabzoNkAIY=
+	t=1752188141; cv=none; b=Lm+B3onlcPehAi6FdoqfiA8SK3i7RBhftWWgbfVPQohITrWfVRN2QVn+K193hycNcXkIwkzd4/tQ58Y4RNZ/vR8oWTlAEw/7DvW0JnqBowfq/117utnKZs+NzjUOSKMOzAGY+UeSdItgBpfEhjMfOJI90XS9AHstRvAovV5XD7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752188175; c=relaxed/simple;
-	bh=DtBCnSmhIL5QlVvXed3zGCyfHWHT1jsOpnFz7W+i8ZU=;
+	s=arc-20240116; t=1752188141; c=relaxed/simple;
+	bh=ppem5ioqyvvNaJrxZ8a+k8hXOxE1osk+Jas8tjtD+SA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b24YQwgE4eZcSmt14PXbwCjw4YXDSfESzxje4Ep57kkxWAEYfGUoO8RnuKwGyv06uqtRLeBDK7bFWuoztF2u+NVDzT64jhIlAx+jpmwonQnkQExRYpcAGHFjJvlsxCaRT/QfzHC1LqpFaRdgGu3wzIhIdEKb9m/t2eSHnj0dLnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l+bH0MD1; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752188175; x=1783724175;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DtBCnSmhIL5QlVvXed3zGCyfHWHT1jsOpnFz7W+i8ZU=;
-  b=l+bH0MD1RrnqKwbOOeJy9nc7LnMRrSzBG3p5rI91nfl0hJ4M3DHWPm4Q
-   GDvogTCPv3BYuIsPBUeGjbMquIXFy9UbdD8vTMDvaeca3RiL7xNd5c+s5
-   +AKfJCDKpzCDRu+/5lQsYRpN+fCkbvqRhKzNLeo9IXZDr4AAyKyfB1ku/
-   ktqVvQ+Xn1Bd49IPY18grEfHIGXvzNl0hDb9uUClKNrDpyW3tAdpgBn1E
-   0TFlkPeOkVHN30fTyzpwA6Ql+CDF48QM02UVMuHlILa3Hu7xmYAri3NeK
-   uKntmUIeaFJIKLhbdhuzXa3l3GfQ2ZriGLBmGhISTxP/LTGLwUbKuB4OS
-   A==;
-X-CSE-ConnectionGUID: avUjMve8QbOV/Wgr7D+v4w==
-X-CSE-MsgGUID: 2oy1FmjgQzqMNeRsu67nFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="71930990"
-X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
-   d="scan'208";a="71930990"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 15:56:14 -0700
-X-CSE-ConnectionGUID: 5cB1inXeQUu1peA9zbTvNw==
-X-CSE-MsgGUID: 3jPQiPwBQWq/5zJ1RdER0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,301,1744095600"; 
-   d="scan'208";a="156702190"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 10 Jul 2025 15:56:07 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ua0BQ-0005Yt-1l;
-	Thu, 10 Jul 2025 22:56:04 +0000
-Date: Fri, 11 Jul 2025 06:55:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: ksk4725@coasia.com, Jesper Nilsson <jesper.nilsson@axis.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=LnaHS/mSMmKJhNa1IRyBwFZqZ37pDxrPlv8ITN2gwQQxtbvdt7/8ReDMpm4jFmzPbEkOhWXOBppFdLjHFzMRuREMgksY/M1DBs9D16NH64yrozs+rmYkQk7Wi3nYNtVb+E6fjxwwfEHsM+LRY02tz/F/orAhUjXyD3JZvyEStHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyUBK/XF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 783CBC4CEE3;
+	Thu, 10 Jul 2025 22:55:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752188140;
+	bh=ppem5ioqyvvNaJrxZ8a+k8hXOxE1osk+Jas8tjtD+SA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TyUBK/XFn69FTeUCpolhOAcM1/eKSNtWfNsBiof5Re4WgKIBMc+ezRzYD/f1j88QQ
+	 QlNQNbH+y69lo3i5alT1C98xkkE0IPkrx8k1mdcPUzWWAaVAkWI6zFse05FksFE1EX
+	 FRGGrP9IHrQkrExSII5t3vYNMS4rgB/NsS943z9EDc26KZs1rW00Uf0H6ExYmBqPRy
+	 4XtDv01EiIRVaHyO/Yn7L/HjR4v+ytyU2Zhx1Vdp/Nulk5+Xs1pKETGpyk8yJ4/ZQn
+	 1li0U1hp1JEZsSTJ2uD60z4QlwZFZqKzK0xBpUtVej03CiMcj4vyigyqyjvLnHUe1H
+	 QSzLVTXZTS6rw==
+Date: Thu, 10 Jul 2025 17:55:39 -0500
+From: Rob Herring <robh@kernel.org>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Anusha Rao <quic_anusha@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Richard Cochran <richardcochran@gmail.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Ravi Patel <ravi.patel@samsung.com>,
-	SungMin Park <smn1196@coasia.com>
-Cc: oe-kbuild-all@lists.linux.dev, kenkim <kenkim@coasia.com>,
-	Jongshin Park <pjsin865@coasia.com>,
-	GunWoo Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>,
-	GyoungBo Min <mingyoungbo@coasia.com>,
-	Pankaj Dubey <pankaj.dubey@samsung.com>,
-	Shradha Todi <shradha.t@samsung.com>,
-	Inbaraj E <inbaraj.e@samsung.com>,
-	Swathi K S <swathi.ks@samsung.com>,
-	Hrishikesh <hrishikesh.d@samsung.com>,
-	Dongjin Yang <dj76.yang@samsung.com>,
-	Sang Min Kim <hypmean.kim@samsung.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/16] clk: samsung: artpec-8: Add clock support for
- CMU_CMU block
-Message-ID: <202507110637.uCFXqy3U-lkp@intel.com>
-References: <20250710002047.1573841-6-ksk4725@coasia.com>
+	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+	quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+	quic_suruchia@quicinc.com
+Subject: Re: [PATCH v3 07/10] dt-bindings: clock: qcom: Add NSS clock
+ controller for IPQ5424 SoC
+Message-ID: <20250710225539.GA29510-robh@kernel.org>
+References: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
+ <20250710-qcom_ipq5424_nsscc-v3-7-f149dc461212@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,130 +74,231 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250710002047.1573841-6-ksk4725@coasia.com>
+In-Reply-To: <20250710-qcom_ipq5424_nsscc-v3-7-f149dc461212@quicinc.com>
 
-Hi,
+On Thu, Jul 10, 2025 at 08:28:15PM +0800, Luo Jie wrote:
+> NSS clock controller provides the clocks and resets to the networking
+> blocks such as PPE (Packet Process Engine) and UNIPHY (PCS) on IPQ5424
+> devices.
+> 
+> Add the compatible "qcom,ipq5424-nsscc" support based on the current
+> IPQ9574 NSS clock controller DT binding file. ICC clocks are always
+> provided by the NSS clock controller of IPQ9574 and IPQ5424, so add
+> interconnect-cells as required DT property.
+> 
+> Also add master/slave ids for IPQ5424 networking interfaces, which is
+> used by nss-ipq5424 driver for providing interconnect services using
+> icc-clk framework.
+> 
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
+>  .../bindings/clock/qcom,ipq9574-nsscc.yaml         | 14 +++--
+>  include/dt-bindings/clock/qcom,ipq5424-nsscc.h     | 65 ++++++++++++++++++++++
+>  include/dt-bindings/interconnect/qcom,ipq5424.h    | 13 +++++
+>  include/dt-bindings/reset/qcom,ipq5424-nsscc.h     | 46 +++++++++++++++
+>  4 files changed, 134 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+> index b9ca69172adc..86ee9ffb2eda 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/clock/qcom,ipq9574-nsscc.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ9574
+> +title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ9574 and IPQ5424
+>  
+>  maintainers:
+>    - Bjorn Andersson <andersson@kernel.org>
+> @@ -12,15 +12,19 @@ maintainers:
+>  
+>  description: |
+>    Qualcomm networking sub system clock control module provides the clocks,
+> -  resets on IPQ9574
+> +  resets on IPQ9574 and IPQ5424
+>  
+> -  See also::
+> +  See also:
+> +    include/dt-bindings/clock/qcom,ipq5424-nsscc.h
+>      include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+> +    include/dt-bindings/reset/qcom,ipq5424-nsscc.h
+>      include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+>  
+>  properties:
+>    compatible:
+> -    const: qcom,ipq9574-nsscc
+> +    enum:
+> +      - qcom,ipq5424-nsscc
+> +      - qcom,ipq9574-nsscc
+>  
+>    clocks:
+>      items:
+> @@ -57,6 +61,7 @@ required:
+>    - compatible
+>    - clocks
+>    - clock-names
+> +  - '#interconnect-cells'
 
-kernel test robot noticed the following build warnings:
+You just made this required for everyone. Again, that's an ABI change.
 
-[auto build test WARNING on krzk/for-next]
-[also build test WARNING on robh/for-next pinctrl-samsung/for-next linus/master v6.16-rc5 next-20250710]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/ksk4725-coasia-com/dt-bindings-clock-Add-CMU-bindings-definitions-for-ARTPEC-8-platform/20250710-082940
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250710002047.1573841-6-ksk4725%40coasia.com
-patch subject: [PATCH 05/16] clk: samsung: artpec-8: Add clock support for CMU_CMU block
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250711/202507110637.uCFXqy3U-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 01c97b4953e87ae455bd4c41e3de3f0f0f29c61c)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250711/202507110637.uCFXqy3U-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507110637.uCFXqy3U-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/clk/samsung/clk-artpec8.c:201:7: warning: unused variable 'mout_clkcmu_fsys_sfmc_p' [-Wunused-const-variable]
-     201 | PNAME(mout_clkcmu_fsys_sfmc_p) = {
-         |       ^~~~~~~~~~~~~~~~~~~~~~~
-   1 warning generated.
-
-
-vim +/mout_clkcmu_fsys_sfmc_p +201 drivers/clk/samsung/clk-artpec8.c
-
-   179	
-   180	PNAME(mout_clkcmu_bus_bus_p) = {
-   181		"dout_pll_shared1_div2", "dout_pll_shared0_div3",
-   182		"dout_pll_shared1_div3", "dout_pll_shared1_div4" };
-   183	PNAME(mout_clkcmu_bus_dlp_p) = {
-   184		"dout_pll_shared0_div2", "dout_pll_shared0_div4",
-   185		"dout_pll_shared1_div2", "dout_pll_shared1_div4" };
-   186	PNAME(mout_clkcmu_core_bus_p) = {
-   187		"dout_pll_shared1_div2", "dout_pll_shared0_div3",
-   188		"dout_pll_shared0_div4", "dout_pll_shared1_div3" };
-   189	PNAME(mout_clkcmu_core_dlp_p) = {
-   190		"dout_pll_shared0_div2", "dout_pll_sahred1_div2",
-   191		"dout_pll_shared0_div3", "dout_pll_shared1_div3" };
-   192	PNAME(mout_clkcmu_cpucl_switch_p) = {
-   193		"dout_pll_shared0_div2", "dout_pll_shared1_div2",
-   194		"dout_pll_shared0_div3", "dout_pll_shared1_div3" };
-   195	PNAME(mout_clkcmu_fsys_bus_p) = {
-   196		"dout_pll_shared1_div2", "dout_pll_shared0_div2",
-   197		"dout_pll_shared1_div4", "dout_pll_shared1_div3" };
-   198	PNAME(mout_clkcmu_fsys_ip_p) = {
-   199		"dout_pll_shared0_div2", "dout_pll_shared1_div3",
-   200		"dout_pll_shared1_div2", "dout_pll_shared0_div3" };
- > 201	PNAME(mout_clkcmu_fsys_sfmc_p) = {
-   202		"dout_pll_shared1_div3", "dout_pll_shared0_div2",
-   203		"dout_pll_shared1_div2", "dout_pll_shared0_div3" };
-   204	PNAME(mout_clkcmu_fsys_scan0_p) = {
-   205		"dout_pll_shared0_div4", "dout_pll_shared1_div4" };
-   206	PNAME(mout_clkcmu_fsys_scan1_p) = {
-   207		"dout_pll_shared0_div4", "dout_pll_shared1_div4" };
-   208	PNAME(mout_clkcmu_imem_imem_p) = {
-   209		"dout_pll_shared1_div4", "dout_pll_shared0_div3",
-   210		"dout_pll_shared1_div3", "dout_pll_shared1_div2" };
-   211	PNAME(mout_clkcmu_imem_jpeg_p) = {
-   212		"dout_pll_shared0_div2", "dout_pll_shared0_div3",
-   213		"dout_pll_shared1_div2", "dout_pll_shared1_div3" };
-   214	PNAME(mout_clkcmu_cdc_core_p) = {
-   215		"dout_pll_shared1_div2", "dout_pll_shared0_div3",
-   216		"dout_pll_shared1_div3", "dout_pll_shared1_div4" };
-   217	PNAME(mout_clkcmu_dlp_core_p) = {
-   218		"dout_pll_shared0_div2", "dout_pll_shared1_div2",
-   219		"dout_pll_shared0_div3", "dout_pll_shared1_div3" };
-   220	PNAME(mout_clkcmu_3d_p) = {
-   221		"dout_pll_shared0_div2", "dout_pll_shared1_div2",
-   222		"dout_pll_shared0_div3", "dout_pll_shared1_div3" };
-   223	PNAME(mout_clkcmu_2d_p) = {
-   224		"dout_pll_shared0_div2", "dout_pll_shared1_div2",
-   225		"dout_pll_shared0_div3", "dout_pll_shared1_div3" };
-   226	PNAME(mout_clkcmu_mif_switch_p) = {
-   227		"dout_pll_shared0", "dout_pll_shared1",
-   228		"dout_pll_shared0_div2", "dout_pll_shared0_div3" };
-   229	PNAME(mout_clkcmu_mif_busp_p) = {
-   230		"dout_pll_shared0_div3", "dout_pll_shared1_div4",
-   231		"dout_pll_shared0_div4", "dout_pll_shared0_div2" };
-   232	PNAME(mout_clkcmu_peri_disp_p) = {
-   233		"dout_pll_shared1_div2", "dout_pll_shared0_div2",
-   234		"dout_pll_shared1_div4", "dout_pll_shared1_div3" };
-   235	PNAME(mout_clkcmu_peri_ip_p) = {
-   236		"dout_pll_shared1_div2", "dout_pll_shared0_div4",
-   237		"dout_pll_shared1_div4", "dout_pll_shared0_div2" };
-   238	PNAME(mout_clkcmu_rsp_core_p) = {
-   239		"dout_pll_shared1_div2", "dout_pll_shared0_div3",
-   240		"dout_pll_shared1_div3", "dout_pll_shared1_div4" };
-   241	PNAME(mout_clkcmu_trfm_core_p) = {
-   242		"dout_pll_shared1_div2", "dout_pll_shared0_div3",
-   243		"dout_pll_shared1_div3", "dout_pll_shared1_div4" };
-   244	PNAME(mout_clkcmu_vca_ace_p) = {
-   245		"dout_pll_shared1_div2", "dout_pll_shared0_div3",
-   246		"dout_pll_shared1_div3", "dout_pll_shared1_div4" };
-   247	PNAME(mout_clkcmu_vca_od_p) = {
-   248		"dout_pll_shared1_div2", "dout_pll_shared0_div3",
-   249		"dout_pll_shared1_div3", "dout_pll_shared1_div4" };
-   250	PNAME(mout_clkcmu_vio_core_p) = {
-   251		"dout_pll_shared0_div3", "dout_pll_shared0_div2",
-   252		"dout_pll_shared1_div2", "dout_pll_shared1_div3" };
-   253	PNAME(mout_clkcmu_vip0_core_p) = {
-   254		"dout_pll_shared1_div2", "dout_pll_shared0_div3",
-   255		"dout_pll_shared1_div3", "dout_pll_shared1_div4" };
-   256	PNAME(mout_clkcmu_vip1_core_p) = {
-   257		"dout_pll_shared1_div2", "dout_pll_shared0_div3",
-   258		"dout_pll_shared1_div3", "dout_pll_shared1_div4" };
-   259	PNAME(mout_clkcmu_vpp_core_p) = {
-   260		"dout_pll_shared1_div2", "dout_pll_shared0_div3",
-   261		"dout_pll_shared1_div3", "dout_pll_shared1_div4" };
-   262	PNAME(mout_clkcmu_pll_shared0_p) = { "fin_pll", "fout_pll_shared0" };
-   263	PNAME(mout_clkcmu_pll_shared1_p) = { "fin_pll", "fout_pll_shared1" };
-   264	PNAME(mout_clkcmu_pll_audio_p) = { "fin_pll", "fout_pll_audio" };
-   265	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  
+>  allOf:
+>    - $ref: qcom,gcc.yaml#
+> @@ -94,5 +99,6 @@ examples:
+>                      "bus";
+>        #clock-cells = <1>;
+>        #reset-cells = <1>;
+> +      #interconnect-cells = <1>;
+>      };
+>  ...
+> diff --git a/include/dt-bindings/clock/qcom,ipq5424-nsscc.h b/include/dt-bindings/clock/qcom,ipq5424-nsscc.h
+> new file mode 100644
+> index 000000000000..59ce056ead93
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,ipq5424-nsscc.h
+> @@ -0,0 +1,65 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2025, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLOCK_QCOM_IPQ5424_NSSCC_H
+> +#define _DT_BINDINGS_CLOCK_QCOM_IPQ5424_NSSCC_H
+> +
+> +/* NSS_CC clocks */
+> +#define NSS_CC_CE_APB_CLK					0
+> +#define NSS_CC_CE_AXI_CLK					1
+> +#define NSS_CC_CE_CLK_SRC					2
+> +#define NSS_CC_CFG_CLK_SRC					3
+> +#define NSS_CC_DEBUG_CLK					4
+> +#define NSS_CC_EIP_BFDCD_CLK_SRC				5
+> +#define NSS_CC_EIP_CLK						6
+> +#define NSS_CC_NSS_CSR_CLK					7
+> +#define NSS_CC_NSSNOC_CE_APB_CLK				8
+> +#define NSS_CC_NSSNOC_CE_AXI_CLK				9
+> +#define NSS_CC_NSSNOC_EIP_CLK					10
+> +#define NSS_CC_NSSNOC_NSS_CSR_CLK				11
+> +#define NSS_CC_NSSNOC_PPE_CFG_CLK				12
+> +#define NSS_CC_NSSNOC_PPE_CLK					13
+> +#define NSS_CC_PORT1_MAC_CLK					14
+> +#define NSS_CC_PORT1_RX_CLK					15
+> +#define NSS_CC_PORT1_RX_CLK_SRC					16
+> +#define NSS_CC_PORT1_RX_DIV_CLK_SRC				17
+> +#define NSS_CC_PORT1_TX_CLK					18
+> +#define NSS_CC_PORT1_TX_CLK_SRC					19
+> +#define NSS_CC_PORT1_TX_DIV_CLK_SRC				20
+> +#define NSS_CC_PORT2_MAC_CLK					21
+> +#define NSS_CC_PORT2_RX_CLK					22
+> +#define NSS_CC_PORT2_RX_CLK_SRC					23
+> +#define NSS_CC_PORT2_RX_DIV_CLK_SRC				24
+> +#define NSS_CC_PORT2_TX_CLK					25
+> +#define NSS_CC_PORT2_TX_CLK_SRC					26
+> +#define NSS_CC_PORT2_TX_DIV_CLK_SRC				27
+> +#define NSS_CC_PORT3_MAC_CLK					28
+> +#define NSS_CC_PORT3_RX_CLK					29
+> +#define NSS_CC_PORT3_RX_CLK_SRC					30
+> +#define NSS_CC_PORT3_RX_DIV_CLK_SRC				31
+> +#define NSS_CC_PORT3_TX_CLK					32
+> +#define NSS_CC_PORT3_TX_CLK_SRC					33
+> +#define NSS_CC_PORT3_TX_DIV_CLK_SRC				34
+> +#define NSS_CC_PPE_CLK_SRC					35
+> +#define NSS_CC_PPE_EDMA_CFG_CLK					36
+> +#define NSS_CC_PPE_EDMA_CLK					37
+> +#define NSS_CC_PPE_SWITCH_BTQ_CLK				38
+> +#define NSS_CC_PPE_SWITCH_CFG_CLK				39
+> +#define NSS_CC_PPE_SWITCH_CLK					40
+> +#define NSS_CC_PPE_SWITCH_IPE_CLK				41
+> +#define NSS_CC_UNIPHY_PORT1_RX_CLK				42
+> +#define NSS_CC_UNIPHY_PORT1_TX_CLK				43
+> +#define NSS_CC_UNIPHY_PORT2_RX_CLK				44
+> +#define NSS_CC_UNIPHY_PORT2_TX_CLK				45
+> +#define NSS_CC_UNIPHY_PORT3_RX_CLK				46
+> +#define NSS_CC_UNIPHY_PORT3_TX_CLK				47
+> +#define NSS_CC_XGMAC0_PTP_REF_CLK				48
+> +#define NSS_CC_XGMAC0_PTP_REF_DIV_CLK_SRC			49
+> +#define NSS_CC_XGMAC1_PTP_REF_CLK				50
+> +#define NSS_CC_XGMAC1_PTP_REF_DIV_CLK_SRC			51
+> +#define NSS_CC_XGMAC2_PTP_REF_CLK				52
+> +#define NSS_CC_XGMAC2_PTP_REF_DIV_CLK_SRC			53
+> +
+> +#endif
+> diff --git a/include/dt-bindings/interconnect/qcom,ipq5424.h b/include/dt-bindings/interconnect/qcom,ipq5424.h
+> index 66cd9a9ece03..a78604beff99 100644
+> --- a/include/dt-bindings/interconnect/qcom,ipq5424.h
+> +++ b/include/dt-bindings/interconnect/qcom,ipq5424.h
+> @@ -27,4 +27,17 @@
+>  #define MASTER_NSSNOC_SNOC_1		22
+>  #define SLAVE_NSSNOC_SNOC_1		23
+>  
+> +#define MASTER_NSSNOC_PPE		0
+> +#define SLAVE_NSSNOC_PPE		1
+> +#define MASTER_NSSNOC_PPE_CFG		2
+> +#define SLAVE_NSSNOC_PPE_CFG		3
+> +#define MASTER_NSSNOC_NSS_CSR		4
+> +#define SLAVE_NSSNOC_NSS_CSR		5
+> +#define MASTER_NSSNOC_CE_AXI		6
+> +#define SLAVE_NSSNOC_CE_AXI		7
+> +#define MASTER_NSSNOC_CE_APB		8
+> +#define SLAVE_NSSNOC_CE_APB		9
+> +#define MASTER_NSSNOC_EIP		10
+> +#define SLAVE_NSSNOC_EIP		11
+> +
+>  #endif /* INTERCONNECT_QCOM_IPQ5424_H */
+> diff --git a/include/dt-bindings/reset/qcom,ipq5424-nsscc.h b/include/dt-bindings/reset/qcom,ipq5424-nsscc.h
+> new file mode 100644
+> index 000000000000..f2f7eaa28b21
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/qcom,ipq5424-nsscc.h
+> @@ -0,0 +1,46 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2025, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_RESET_QCOM_IPQ5424_NSSCC_H
+> +#define _DT_BINDINGS_RESET_QCOM_IPQ5424_NSSCC_H
+> +
+> +#define NSS_CC_CE_APB_CLK_ARES					0
+> +#define NSS_CC_CE_AXI_CLK_ARES					1
+> +#define NSS_CC_DEBUG_CLK_ARES					2
+> +#define NSS_CC_EIP_CLK_ARES					3
+> +#define NSS_CC_NSS_CSR_CLK_ARES					4
+> +#define NSS_CC_NSSNOC_CE_APB_CLK_ARES				5
+> +#define NSS_CC_NSSNOC_CE_AXI_CLK_ARES				6
+> +#define NSS_CC_NSSNOC_EIP_CLK_ARES				7
+> +#define NSS_CC_NSSNOC_NSS_CSR_CLK_ARES				8
+> +#define NSS_CC_NSSNOC_PPE_CLK_ARES				9
+> +#define NSS_CC_NSSNOC_PPE_CFG_CLK_ARES				10
+> +#define NSS_CC_PORT1_MAC_CLK_ARES				11
+> +#define NSS_CC_PORT1_RX_CLK_ARES				12
+> +#define NSS_CC_PORT1_TX_CLK_ARES				13
+> +#define NSS_CC_PORT2_MAC_CLK_ARES				14
+> +#define NSS_CC_PORT2_RX_CLK_ARES				15
+> +#define NSS_CC_PORT2_TX_CLK_ARES				16
+> +#define NSS_CC_PORT3_MAC_CLK_ARES				17
+> +#define NSS_CC_PORT3_RX_CLK_ARES				18
+> +#define NSS_CC_PORT3_TX_CLK_ARES				19
+> +#define NSS_CC_PPE_BCR						20
+> +#define NSS_CC_PPE_EDMA_CLK_ARES				21
+> +#define NSS_CC_PPE_EDMA_CFG_CLK_ARES				22
+> +#define NSS_CC_PPE_SWITCH_BTQ_CLK_ARES				23
+> +#define NSS_CC_PPE_SWITCH_CLK_ARES				24
+> +#define NSS_CC_PPE_SWITCH_CFG_CLK_ARES				25
+> +#define NSS_CC_PPE_SWITCH_IPE_CLK_ARES				26
+> +#define NSS_CC_UNIPHY_PORT1_RX_CLK_ARES				27
+> +#define NSS_CC_UNIPHY_PORT1_TX_CLK_ARES				28
+> +#define NSS_CC_UNIPHY_PORT2_RX_CLK_ARES				29
+> +#define NSS_CC_UNIPHY_PORT2_TX_CLK_ARES				30
+> +#define NSS_CC_UNIPHY_PORT3_RX_CLK_ARES				31
+> +#define NSS_CC_UNIPHY_PORT3_TX_CLK_ARES				32
+> +#define NSS_CC_XGMAC0_PTP_REF_CLK_ARES				33
+> +#define NSS_CC_XGMAC1_PTP_REF_CLK_ARES				34
+> +#define NSS_CC_XGMAC2_PTP_REF_CLK_ARES				35
+> +
+> +#endif
+> 
+> -- 
+> 2.34.1
+> 
 
