@@ -1,202 +1,108 @@
-Return-Path: <linux-kernel+bounces-725101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972EAAFFACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:27:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CD2DAFFAD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FD721C82174
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:27:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49129641F19
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9877C288C2A;
-	Thu, 10 Jul 2025 07:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A886B28A1E6;
+	Thu, 10 Jul 2025 07:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sv22hU7e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CcOZGnCI"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E961A8F5E;
-	Thu, 10 Jul 2025 07:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224AD28981F
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752132428; cv=none; b=AuWQlqTwaVrfJe/tqN7QQjVlua7fOSmaFHLZ9yYPZ7EdJQnse0mw87fQ8IE4+w0fY6TVpNGGJTOFQQ3dU8aMseGolZhKUtAA1i74bWbnguAB04nYBpEKu2dLBlqJeq7Q5KVh0EFbRGI2YjbawtiCmTzgfmUkJQWxyDdm7LULZnw=
+	t=1752132434; cv=none; b=fDL1b3yWltEYBNM1jJpgFLNonQioANRuIjkJvR9QJDoKoPT7bsQaZu34KJdPDPC45lLkuCZkDGWSNsZ7MNvXsr10UsNxq83agEnyrGXMz1nbdsZ5dE2aFzn5UMtMYeSKUxsHVjGb7HgLQXao9beazMocXoS3/bSxSWNIesEewZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752132428; c=relaxed/simple;
-	bh=q8eQa8h3G+1BUbeKwUG/+c6FzsMMOTsEwlY/U/VRJq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EbNHm5ZJRXKKau8z+t/KZiPS0EOCq0R8+4PhUNbfysTCVtkdMnIh0J0bdDtGe1W0FWiDvex/gNUuIcOFr43+wXccyNz2Eq0jROFa3MSGbq8oUOw+viYQjJMb9qQXfIAyXRD5rI3gSM+nu7qJbsymMyQLsqWWejBFZkIqHam4pMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sv22hU7e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2A35C4CEE3;
-	Thu, 10 Jul 2025 07:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752132427;
-	bh=q8eQa8h3G+1BUbeKwUG/+c6FzsMMOTsEwlY/U/VRJq4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sv22hU7eDntyWDea+W8G3nJxqHVDscPWMcXGvQKTcjjDvycY9Iaf68KLjGlBWxIGQ
-	 U6ijuHlmSsfE6qNOLSBDpOojSUWJwJR81oMSU2OfqhKEQalv2rvOI7klGpoL48gs37
-	 owl8tKt1gY5jqUaFfYfMiFpNcSeAeNgTixi18OeLlfRCHGU2hmoixdpCjtPKve6VAZ
-	 9XikS4R7HWWG236SnW9XShLGB1tP1667qhMKBlwiKBubK4DkgHVAfZBc3iDeOwmeJ+
-	 AMUUNt4tENX6pAtuXdWSD2E91l74cj/o7pg97QLRsHZLBICdBqNj3XIPOP+r6KT/pJ
-	 ND44JKhgqtDsQ==
-Date: Thu, 10 Jul 2025 10:26:45 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, jasonmiu@google.com,
-	graf@amazon.com, changyuanl@google.com, dmatlack@google.com,
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
-	vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com
-Subject: Re: [RFC v2 10/16] luo: luo_ioctl: add ioctl interface
-Message-ID: <aG9rNQ277weSR_dl@kernel.org>
-References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
- <20250515182322.117840-11-pasha.tatashin@soleen.com>
- <20250624-akzeptabel-angreifbar-9095f4717ca4@brauner>
- <aGqHFkPWOrD6whv6@kernel.org>
- <mafs0qzypys0j.fsf@kernel.org>
+	s=arc-20240116; t=1752132434; c=relaxed/simple;
+	bh=rGPXOLhW/ZBDbbSbCr7CIPthOkxpIALUagVApnO451Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=c7VSIX7h9e3IIz22EwGEKhnzWkIy7Z0egLz6LTZAPeUaXhT6JbGngEvS1gyJIY97QWnAPmTiE34KefIBUYWBOwrtMYa2cI4Ymn4OBkrFiOFELAe9danqzF9x2zzOf+qoyEl2Qji7vzwzoIJI0Zel4mv2EduYJ1J3iP26OxEp69c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CcOZGnCI; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250710072710euoutp0216e799768d5a040ae707327b0f97748d~Q0ymMcYli2812428124euoutp02L
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:27:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250710072710euoutp0216e799768d5a040ae707327b0f97748d~Q0ymMcYli2812428124euoutp02L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752132430;
+	bh=oTRMdhpVvZM6ziaWR/olIUECYo38sNOd9KGNsVaVt6E=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=CcOZGnCIrleveyg8c3rkylM7kODEMB5dkcxXKpnsK3/cQ1kRBQw9dpILw/FQNL9oJ
+	 Rm1aIO1o0WVqOaHokijac1CY8O88tWqLgURm4u7q03g5DZ69X1vt8GyKt7XlgIn00M
+	 soKB7QH7o1C0LjMpaNIfza92/e0ozGgtdAkaENes=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250710072709eucas1p2631d5fe8d35d10f7de05bd5ceb8ce5bd~Q0ylbGids2385423854eucas1p2Z;
+	Thu, 10 Jul 2025 07:27:09 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250710072707eusmtip2c499c55105ba1e1cb1cd664e35fedc38~Q0yj0B6or0472904729eusmtip2T;
+	Thu, 10 Jul 2025 07:27:07 +0000 (GMT)
+Message-ID: <e0f09c5a-1039-4d16-93c4-ada79929b8e4@samsung.com>
+Date: Thu, 10 Jul 2025 09:27:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mafs0qzypys0j.fsf@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] vdso/gettimeofday: Fix code refactoring
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arch@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Vincenzo
+	Frascino <vincenzo.frascino@arm.com>, Shuah Khan <shuah@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+	<frederic@kernel.org>, John Stultz <jstultz@google.com>, Stephen Boyd
+	<sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+	<will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Richard Cochran
+	<richardcochran@gmail.com>, Christopher Hall <christopher.s.hall@intel.com>,
+	Miroslav Lichvar <mlichvar@redhat.com>, Werner Abt
+	<werner.abt@meinberg-usa.com>, David Woodhouse <dwmw2@infradead.org>, Kurt
+	Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, Antoine
+	Tenart <atenart@kernel.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250710084337-0c82b93c-85f2-4305-95ba-8cb14042aed2@linutronix.de>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250710072709eucas1p2631d5fe8d35d10f7de05bd5ceb8ce5bd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250710062301eucas1p1b61431dc31a5933087b45c246866fb17
+X-EPHeader: CA
+X-CMS-RootMailID: 20250710062301eucas1p1b61431dc31a5933087b45c246866fb17
+References: <CGME20250710062301eucas1p1b61431dc31a5933087b45c246866fb17@eucas1p1.samsung.com>
+	<20250710062249.3533485-1-m.szyprowski@samsung.com>
+	<20250710084337-0c82b93c-85f2-4305-95ba-8cb14042aed2@linutronix.de>
 
-On Wed, Jul 09, 2025 at 11:27:08PM +0200, Pratyush Yadav wrote:
-> On Sun, Jul 06 2025, Mike Rapoport wrote:
-> 
-> > On Tue, Jun 24, 2025 at 11:50:49AM +0200, Christian Brauner wrote:
-> >> On Thu, May 15, 2025 at 06:23:14PM +0000, Pasha Tatashin wrote:
-> >> > Introduce the user-space interface for the Live Update Orchestrator
-> >> > via ioctl commands, enabling external control over the live update
-> >> > process and management of preserved resources.
-> >> > 
-> >> > Create a misc character device at /dev/liveupdate. Access
-> >> > to this device requires the CAP_SYS_ADMIN capability.
-> >> > 
-> >> > A new UAPI header, <uapi/linux/liveupdate.h>, defines the necessary
-> >> > structures. The magic number is registered in
-> >> > Documentation/userspace-api/ioctl/ioctl-number.rst.
-> >> > 
-> >> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> >> > ---
-> >> >  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
-> >> >  drivers/misc/liveupdate/Makefile              |   1 +
-> >> >  drivers/misc/liveupdate/luo_ioctl.c           | 199 ++++++++++++
-> >> >  include/linux/liveupdate.h                    |  34 +-
-> >> >  include/uapi/linux/liveupdate.h               | 300 ++++++++++++++++++
-> >> >  5 files changed, 502 insertions(+), 33 deletions(-)
-> >> >  create mode 100644 drivers/misc/liveupdate/luo_ioctl.c
-> >> >  create mode 100644 include/uapi/linux/liveupdate.h
-> >
-> > ...
-> >
-> >> > +static const struct file_operations fops = {
-> >> > +	.owner          = THIS_MODULE,
-> >> > +	.open           = luo_open,
-> >> > +	.unlocked_ioctl = luo_ioctl,
-> >> > +};
-> >> > +
-> >> > +static struct miscdevice liveupdate_miscdev = {
-> >> > +	.minor = MISC_DYNAMIC_MINOR,
-> >> > +	.name  = "liveupdate",
-> >> > +	.fops  = &fops,
-> >> > +};
-> >> 
-> >> I'm not sure why people are so in love with character device based apis.
-> >> It's terrible. It glues everything to devtmpfs which isn't namespacable
-> >> in any way. It's terrible to delegate and extremely restrictive in terms
-> >> of extensiblity if you need additional device entries (aka the loop
-> >> driver folly).
-> >> 
-> >> One stupid question: I probably have asked this before and just swapped
-> >> out that I a) asked this already and b) received an explanation. But why
-> >> isn't this a singleton simple in-memory filesystem with a flat
-> >> hierarchy?
-> >> 
-> >> mount -t kexecfs kexecfs /kexecfs
-> >> 
-> >> So userspace mounts kexecfs (or the kernel does it automagically) and
-> >> then to add fds into that thing you do the following:
-> >> 
-> >> linkat(fd_my_anon_inode_memfd, "", -EBADF, "kexecfs/my_serialized_memfd", AT_EMPTY_PATH)
-> >
-> > Having an ability to link a file descriptor to kexecfs would have been
-> > nice. We could even create a dependency hierarchy there, e.g.
-> >
-> > mkdir -p kexecfs/vm1/kvm/{iommu,memfd}
-> >
-> > linkat(kvmfd, "", -EBADF, "kexecfs/vm1/kvm/kvmfd", AT_EMPTY_PATH)
-> > linkat(iommufd, "", -EBADF, "kexecfs/vm1/kvm/iommu/iommufd", AT_EMPTY_PATH)
-> > linkat(memfd, "", -EBADF, "kexecfs/vm1/kvm/memfd/memfd", AT_EMPTY_PATH)
-> >
-> > But unfortunately this won't work because VFS checks that new and old paths
-> > are on the same mount. And even if cross-mount links were allowed, VFS does
-> > not pass the file objects to link* APIs, so preserving a file backed by
-> > anon_inode is another issue.
-> 
-> Yep, I was poking around the VFS code last week and saw the same
-> problem.
-> 
-> >
-> >> which will serialize the fd_my_anon_inode_memfd. You can also do this
-> >> with ioctls on the kexecfs filesystem of course.
-> >
-> > ioctls seem to be the only option, but I agree they don't have to be bound
-> > to a miscdev.
-> 
-> I suppose you can have a special file, say "preserve_fd", where you can
-> write() the FD number.
-> 
-> This is in some ways similar to how you would write it to the ioctl()
-> via the arg buffer/struct. And I suppose you can have other special
-> files to do the things that other ioctls would do.
-> 
-> That is one way to do it, although I dunno if it classifies as a
-> "proper" use of the VFS APIs...
+On 10.07.2025 08:45, Thomas Weißschuh wrote:
+> On Thu, Jul 10, 2025 at 08:22:49AM +0200, Marek Szyprowski wrote:
+>> Commit fcc8e46f768f ("vdso/gettimeofday: Return bool from clock_gettime()
+>> helpers") changed the return value from clock_gettime() helpers, but it
+>> missed updating the one call to the do_hres() function, what breaks VDSO
+>> operation on some of my ARM 32bit based test boards. Fix this.
+> Thanks again for the report and fix.
+> This change has already been folded into the original commit by tglx.
+> It should show up in todays -next tree.
 
-IIUC Christian's point was mostly not about using VFS APIs (i.e.
-read/write) but about using a special pseudo fs rather than devtmpfs to
-drive ioctls.
- 
-So instead of 
+Okay. I got no information about that, so I decided to send a patch just 
+in case.
 
-	fd = open("/dev/liveupdate", ...);
-	ioctl(fd, ...);
-
-we'd use
-
-	fd = open("/sys/fs/kexec/control", ...);
-	ioctl(fd, ...);
-
-> -- 
-> Regards,
-> Pratyush Yadav
-
+Best regards
 -- 
-Sincerely yours,
-Mike.
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
