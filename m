@@ -1,116 +1,122 @@
-Return-Path: <linux-kernel+bounces-725263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F52FAFFC99
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:42:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4120FAFFC9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B2111C861F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:42:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 006D13A6D04
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F2128CF5F;
-	Thu, 10 Jul 2025 08:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XBjU60O1"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D79E28373;
-	Thu, 10 Jul 2025 08:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B2228C840;
+	Thu, 10 Jul 2025 08:42:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C71285C89
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 08:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752136919; cv=none; b=q0x6l1sBt8ODLnn8D1Pvsfb9dOEy8Pw+g0hk/tSOW57VepMGaa3mBJokWnDdTCDyqwI41RzNDN3qe4aVbNduT53l+JFgpJMNfOU8ZfE6vgFQKFIsvzQyCfkcBoZt3DN7+CfbHTpWNA67HZVxZBEnf7JI4eJGMuyXMx+UFMDocBc=
+	t=1752136932; cv=none; b=SbuazwvVyaUbyvBR88ApnrKimhyXT/63FqXGfVAbEI01qVYhjlCnNUQPW21nQWGFPKfShEsMYadQk32Iem8TUxjsszuZD6ZrAqJ0KpR96Zy1x8GuGJ5oKhARds9IVKldLlqnPFshax2ZCfMOkca/Ixbda111dEtx/MB8oUD/qg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752136919; c=relaxed/simple;
-	bh=AA4Ywq7KY2+V+Zzfmm2hAUDAzJGZoYY6D0W4ynbHcw8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KfuwNbsP31XJE8l9L3PAgACdhOdOLczLmveQEIUcb+Nm4kNu9hWGond/wGFfKAHCOzPf7dzJeRClOhnNpuOFcS6uO+IENYq6Iyi6hbu6L2oyWCaWYMNaTSm3OR0557j5XG3indivfgKVF9tDXGXZvXTlE/te/2+7iwgDQ9XhyK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XBjU60O1; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752136912; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=fOwodtsOCTSdpblsnNXl1eGkH4855D/djDIb5y7d688=;
-	b=XBjU60O1NQtFt26U9eHzOtoAYVLIkxfwY410KaOr43MU9GPnsOmsprKGIexVnY5AqMIjzjhvrWbc68+dIeMdDmHbvfDIfItcCT0viZt0+p8g3jNo4a+E3ccKLxrLsWMrdpxiTI9WLi3MgP0LU4NnH5v2EPZ8me2NfwN45P0brzE=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WicApMn_1752136911 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 10 Jul 2025 16:41:52 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-rtc@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Feng Tang <feng.tang@linux.alibaba.com>
-Subject: [PATCH] rtc: efi: Add runtime check for the wakeup service capability
-Date: Thu, 10 Jul 2025 16:41:51 +0800
-Message-Id: <20250710084151.55003-1-feng.tang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1752136932; c=relaxed/simple;
+	bh=jlaQKK2eUFw82DLpzWcK3zH7m/um69ZY8vEnM3PCR+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tHzmMA9+ab5NhKrJ/Juqf6udjXZdPD6tRj0EWpnyg0YjCRQTt9EndRaZUU+7yzcBw7UBZrFIzAPNgiA7Ii9EfGKqL6c4SLH5vpVkSfs/4wMAnk8YZ6NNIl4FSU9JRZiRjYeT0OI+t++qXP6OsccshzSxFMmcRRzCKla/vMCxnVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A969B1EA6;
+	Thu, 10 Jul 2025 01:41:57 -0700 (PDT)
+Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CF243F738;
+	Thu, 10 Jul 2025 01:42:04 -0700 (PDT)
+Message-ID: <21236218-b1a3-4333-aaef-cace303288b3@arm.com>
+Date: Thu, 10 Jul 2025 09:41:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] sched/uclamp: Exclude kernel threads from uclamp logic
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>, xuewen.yan@unisoc.com,
+ vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com
+Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, hongyan.xia2@arm.com, linux-kernel@vger.kernel.org,
+ ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com,
+ kprateek.nayak@amd.com, kuyo.chang@mediatek.com, juju.sung@mediatek.com,
+ qyousef@layalina.io
+References: <20250703091437.79861-1-zhangzihuan@kylinos.cn>
+ <675563a5-8f1d-4249-9828-9fb353dd7dd1@arm.com>
+ <6414cb05-11d3-4b2a-ae97-7bb0ca0ea898@kylinos.cn>
+ <8a64cb22-24f7-4ca7-8e4e-22e1612124d9@arm.com>
+ <386d99d3-aa97-4069-8d63-d197262832bf@kylinos.cn>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <386d99d3-aa97-4069-8d63-d197262832bf@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The kernel selftest of rtc reported a error on an ARM server which
-use rtc-efi device:
+On 7/10/25 01:47, Zihuan Zhang wrote:
+> Hi Christian,
+> Apologies for the late reply, and thanks for raising the concerns.
+> 
+> 在 2025/7/3 18:17, Christian Loehle 写道:
+>> On 7/3/25 11:07, Zihuan Zhang wrote:
+>>> Hi Christian,
+>>>
+>>> Thanks for the question!
+>>>
+>>> 在 2025/7/3 17:22, Christian Loehle 写道:
+>>>> On 7/3/25 10:14, Zihuan Zhang wrote:
+>>>>> Kernel threads (PF_KTHREAD) are not subject to user-defined utilization
+>>>>> clamping. They do not represent user workloads and should not participate
+>>>>> in any uclamp logic, including:
+>>>> Why not?
+>>>>
+>>> As Xuewen mentioned, some kernel threads may intentionally set scheduling attributes for performance. So instead of unconditionally excluding all kernel threads, I’m now considering a more conservative approach:
+>>> skip only those kthreads that haven’t explicitly set any clamp values.
+>>>
+>>> This should help avoid unintended clamp aggregation while still supporting performance-tuned kthreads.
+>> I'm skeptical, fundamentally you cannot exclude some fair tasks from uclamp logic.
+>> At least the cpufreq part they will be affected by, so if you 'exclude' some
+>> kthread that doesn't have clamps set (i.e. has min=0, max=1024) its
+>> utilization may not contribute to sugov frequency selection by being
+>> clamped by other task(s) (let's say you only have one other task with
+>> max=0, excluding the unclamped kthread now leads to sugov requesting
+>> the lowest OPP? Is that always correct/desired?)
+>>
+>> Is there a specific issue you're trying to solve?
+>> FYI there has been discussion around reworking the uclamp mechanism to solve
+>> some issues you may have been facing, but so far they haven't lead anywhere:
+>> https://lore.kernel.org/lkml/cover.1741091349.git.hongyan.xia2@arm.com/
+> Our original motivation stems from the observation that uclamp is primarily designed to manage frequency selection based on user-space task behavior. Kernel threads typically do not represent user workloads and are often not considered meaningful participants in uclamp-driven decisions.
 
-	RUN           rtc.alarm_alm_set ...
-	rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
-	rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
-	alarm_alm_set: Test terminated by assertion
-		 FAIL  rtc.alarm_alm_set
-	not ok 5 rtc.alarm_alm_set
+Two comments to that:
+- It's also used to drive task placement, not just frequency selection.
+- There can be cases where a kthread is fundamentally part of a user workload,
+thinking about io_uring here, but others exist too.
 
-The root cause is, the underlying EFI firmware doesn't support wakeup
-service (get/set alarm), while it doesn't have the EFI RT_PROP table
-either. As Ard Biesheuvel clarified [1], this breaks the UEFI spec,
-which requires EFI firmware to provide a 'RT_PROP' table if it doesn't
-support all runtime services (Section 4.6.2, UEFI spec 2.10).
+> To be clear, we are not aiming to exclude all kthreads from affecting frequency, but rather to explore ways to avoid unnecessary uclamp aggregation overhead from kernel threads that have no explicit clamp values set (i.e. uclamp.min=0, max=1024).
+> As you pointed out, fully excluding these tasks might interfere with sugov behavior in certain edge cases. So a more balanced approach might be:
+> 
+> - For kernel threads that do not set any clamp values, skip the clamp aggregation step
+> 
+> - If a kernel thread explicitly sets clamp attributes, it should of course remain fully visible to uclamp logic.
+> 
+> This would preserve correctness while reducing unnecessary overhead in the hot path, especially on systems with many runnable tasks.
 
-This issue was also reproduced on ARM server from another vendor, which
-doesn't have RT_PROP table either. This means, in real world, there are
-quite some platforms having this issue, that it doesn't support wakeup
-service while not providing a correct RT_PROP table, which makes it
-wrongly claimed to support it.
+So an unclamped task not being part of uclamp will definitely affect the UCLAMP_MAX
+result, as I've mentioned above, you'll apply (other tasks) UCLAMP_MAX restrictions
+even if the kthread has UCLAMP_MAX==1024. That is not always desirable.
+Or would you let it take part in uclamp if the user explicitly set UCLAMP_MAX==1024
+instead of relying on the default? That wouldn't be consistent IMO.
 
-Add a runtime check for the wakeup service to detect and correct this
-kind of cases.
-
-[1]. https://lore.kernel.org/lkml/CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com/
-
-Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
----
- drivers/rtc/rtc-efi.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-efi.c b/drivers/rtc/rtc-efi.c
-index fa8bf82df948..8d1b9bde6f66 100644
---- a/drivers/rtc/rtc-efi.c
-+++ b/drivers/rtc/rtc-efi.c
-@@ -259,6 +259,7 @@ static int __init efi_rtc_probe(struct platform_device *dev)
- 	struct rtc_device *rtc;
- 	efi_time_t eft;
- 	efi_time_cap_t cap;
-+	efi_bool_t enabled, pending;
- 
- 	/* First check if the RTC is usable */
- 	if (efi.get_time(&eft, &cap) != EFI_SUCCESS)
-@@ -272,7 +273,8 @@ static int __init efi_rtc_probe(struct platform_device *dev)
- 
- 	rtc->ops = &efi_rtc_ops;
- 	clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->features);
--	if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES))
-+	if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES) &&
-+		efi.get_wakeup_time(&enabled, &pending, &eft) == EFI_SUCCESS)
- 		set_bit(RTC_FEATURE_ALARM_WAKEUP_ONLY, rtc->features);
- 	else
- 		clear_bit(RTC_FEATURE_ALARM, rtc->features);
--- 
-2.39.5 (Apple Git-154)
-
+Regarding the optimization part:
+Is there a specific workload where the overhead is an issue? It should
+be rather small. Some numbers should help.
 
