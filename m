@@ -1,47 +1,85 @@
-Return-Path: <linux-kernel+bounces-725754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FA8B0034A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:26:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C238DB00350
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4174A028C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C4583BE44F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401F622DFA3;
-	Thu, 10 Jul 2025 13:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62432253F2;
+	Thu, 10 Jul 2025 13:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O/deECGy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yr+R6NcT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4E52253F2;
-	Thu, 10 Jul 2025 13:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F73E22FE08
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 13:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752153963; cv=none; b=oij2EHYwdJ1P1wrI5Il1wryS+8qJErLlUx8TcrD0Qbkd0tQ48yHUep6nMGyWuypvIa9B9Rv6Nn8WG50nS26uvoxeqwztOqsSi6tNucWgy5H+7nov0i/spQovEFR/xrasG2KQfmWgUwr+R8e5+6RWkGazo8f4AD3W8txfEpQQXcw=
+	t=1752154015; cv=none; b=FjvBXTMQn2Txd/uBotaGq+5yPsYFItfXezeMV/WbtdF7JceIFFgWxUGEPhx2UOdmlTKSEdNvj1P6Q+qG0P8e6iLF+CIswfyMo/LOjw3l7OwycUnrNIMmK33JqTxMDe1+9fE0ehvqAP5LRnguSAkUyb3uSLmlWEboTpDCh8mYyVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752153963; c=relaxed/simple;
-	bh=eUxP26hw7E5IC50cdeq3HQ9aa8Xut6XJM8PdoOMtSik=;
+	s=arc-20240116; t=1752154015; c=relaxed/simple;
+	bh=5Ctz6ppoPsVw1Hlr5w+/REjzLp+GdUhfHuyLu7DoLUE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dBAp/VwXBkr8bH5Gc8KlLl8YouspGKNoO3UngcqFCvx8XnmyuE5BpO8+uWLDJl0d7H7kQvbxL6m9VFqyGnMM/oeSUKPnaeJKgoyoklHGR73tEqwKfG0XnkVBWPzbG4CZ/tM2qijT9MEVPosuZyxB8B2GWx5xTOoyj3xmYYkKakc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O/deECGy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A779EC4CEED;
-	Thu, 10 Jul 2025 13:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752153963;
-	bh=eUxP26hw7E5IC50cdeq3HQ9aa8Xut6XJM8PdoOMtSik=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O/deECGySK26OwpCK67s02BwjAP0iIVP4dfJJBDQ7BxuIg9wE5JhCQwG1TcLoMwhR
-	 E51sdeBHTIXELt2bvRgJchbPYWP5FCYPu0C1caaQMAFWbDxs7iexrHXbE7+PEZEtaY
-	 20dE4oaf84qs7E8mCL//hdKQk3hfQ8W15KnUSbyJxN6nU5vet3l5nfH3T5n5B3baUi
-	 4MTvcb2K4wW7oDAkB3/xVGEfRoZyCbNI3AlYS6lTIZMY9JVMmGkhcs4O6di0UbHrAd
-	 FHhpaMq9xnFAiTg50ajLjTc5Ko4gGnVLaw8ausQlbPFCDjLDOOXr98HHSmuj7yB+Wv
-	 lDBhctgelTSjA==
-Message-ID: <aa94dcb8-8a9a-407e-9bab-39a321a7136b@kernel.org>
-Date: Thu, 10 Jul 2025 15:25:58 +0200
+	 In-Reply-To:Content-Type; b=eUV77GvFr+kGn5qQtok4OTKsnNRL4JfYaepSBXsKnbJwSeJxbrw1lA81cBWZdmPh1YmXOS4dlvxWx740dpKcmFZUFfb/gMQYY8s6bT+0pNqZwVVbs/b94mvkKKziGJdrroiuhIgk4IT3u9I3TGWY2r99Md4vNeK08kI06TUGlpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yr+R6NcT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752154012;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y8QnPx5eDjL+C/vFsdijabx9GM1KyxSUkFZ98UfXhuc=;
+	b=Yr+R6NcT35BHmQ1wccuvHyxvRaowIPgnyyl/383gqpOH7FxmrJefexxyli8srtGbaco78G
+	xfZImoTmD6j9c7TwOsZy308xOpnhHbomcyXqaZQZMkjHmg3kx91ZptMcXg26OFVsWvfxkI
+	VF2aDhNLV0LYIoF0wv80VtkkN0kF7Qo=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-687-3nESyTwBN4a6FeJsbXsz8w-1; Thu, 10 Jul 2025 09:26:51 -0400
+X-MC-Unique: 3nESyTwBN4a6FeJsbXsz8w-1
+X-Mimecast-MFC-AGG-ID: 3nESyTwBN4a6FeJsbXsz8w_1752154010
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4e9252ba0so622613f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:26:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752154010; x=1752758810;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y8QnPx5eDjL+C/vFsdijabx9GM1KyxSUkFZ98UfXhuc=;
+        b=W0FkMITdPVMjCwQhXOfZo0uw4BvRn1PjpweEIGsZWWs1Wvf6T4MkZs+REe1fANxHX9
+         LzUVJ7DMSgoHoNQU/lxfZ7D1UhW5dl+MAlWwmaKE/ZhQLJQQ7soK0elYbMR2zi3mB3rL
+         PnGAq87e4rsRQz0b4bkboQqIYGYgKx4feUyQtE0i/SLc1YBAmkExH98OdJ2+S4NkAeW/
+         PZcYAt+/BUJRynm+nd5I/4e2fGlX7rEs9vmXMycRZZD3pL1kO/IpodkIuWN6c7WVg/kf
+         ZQUJcFNn202wVY6OEx2/YmnvyhYV1Wjnw1UR49WLL3dSePBci5x8nkVKp6iBzBnJWWb4
+         lDuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfJpKxmRGHjCcHCSrzwmdt2yBHIy92vImMsddayAPwS71u9YJpHnzqIwlWe3l+INvoc7+LKxhMJf6i5VY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+beNFV7y+CB7gvuO56ij4DBJofkiGnCYt111RGvYT/pUTBtY4
+	kH20Ls9Iphw4uWhX0V50gyv7yT3yGqP6H5kzFDa/L+nsv1WTWeX9fO4S6DdgHq5osfGSW9Mh/dv
+	zZdZWWRCqh38LITW/xTR/cl3SzIKcmcMucoCoxxf1eTSGANMUIqr3DYXzGWUClaS9+g==
+X-Gm-Gg: ASbGncuDUxzTMTYN6o4fAHIwExqYPmiiViaNXrN+AQmAJdxG1pN0DmbO+/4SdfHVtQH
+	yMBvZA3/j77yHCayTFyTiJ/XImU4cOz/HCkYzjQ3D+HOMWqlPTjWkJSqqHSWDZshJt4Gz+2wpQy
+	lLc6lP+NGvBGeBF/SjcNpN2G8dE4IE6/rxVimf299jSuL+Vj2DdLs2tnITsFVu6yDCh2ek6e0/0
+	IbvMDxyyg1hjWE19PPTIXUj6wF748JVRsf58Fr1Mro1g3H7Vehe+j5w2QZ/63W7FA2vIn5H4t4h
+	l1MOAvBF5ml7u69c3mdkycoNb43i+nDCkqjv0ElW1hWsc/nlylVJHomnBm1hFVcBi6j0sg==
+X-Received: by 2002:a05:6000:4904:b0:3b5:e714:9770 with SMTP id ffacd0b85a97d-3b5e7898fbdmr3803989f8f.14.1752154010122;
+        Thu, 10 Jul 2025 06:26:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFw62oeN5118S4VaFp3Hi2Tc5jqVMHx5Yz94QXI2Hu1g3A0gaINAjD2QNl5LE24mj7d4HIAgg==
+X-Received: by 2002:a05:6000:4904:b0:3b5:e714:9770 with SMTP id ffacd0b85a97d-3b5e7898fbdmr3803943f8f.14.1752154009302;
+        Thu, 10 Jul 2025 06:26:49 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:271f:bc10:144e:d87a:be22:d005? ([2a0d:3344:271f:bc10:144e:d87a:be22:d005])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e269a0sm1843225f8f.86.2025.07.10.06.26.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 06:26:48 -0700 (PDT)
+Message-ID: <858eb643-bf0a-480e-b7f7-103b7bd94707@redhat.com>
+Date: Thu, 10 Jul 2025 15:26:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,94 +87,195 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/3] arm64: dts: qcom: x1-hp-x14: Unify HP Omnibook X14
- device tree structure
-To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-References: <20250710-hp-x14-x1p-v7-0-19c10c81713a@oldschoolsolutions.biz>
- <20250710-hp-x14-x1p-v7-2-19c10c81713a@oldschoolsolutions.biz>
- <aac2a4fb-c9e8-4e1d-b0cd-d6481dc27252@kernel.org>
- <056c3569-02d7-4668-89d0-91a8d92814ef@oldschoolsolutions.biz>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH net-next v5] ipv6: add `force_forwarding` sysctl to enable
+ per-interface forwarding
+To: Gabriel Goller <g.goller@proxmox.com>,
+ Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, David Ahern <dsahern@kernel.org>,
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250707094307.223975-1-g.goller@proxmox.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <056c3569-02d7-4668-89d0-91a8d92814ef@oldschoolsolutions.biz>
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250707094307.223975-1-g.goller@proxmox.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 10/07/2025 13:31, Jens Glathe wrote:
-> On 10.07.25 12:55, Krzysztof Kozlowski wrote:
->> Why am I bothering to review if you keep changing and eventually
->> dropping the tag.
+On 7/7/25 11:43 AM, Gabriel Goller wrote:
+> It is currently impossible to enable ipv6 forwarding on a per-interface
+> basis like in ipv4. To enable forwarding on an ipv6 interface we need to
+> enable it on all interfaces and disable it on the other interfaces using
+> a netfilter rule. This is especially cumbersome if you have lots of
+> interface and only want to enable forwarding on a few. According to the
+> sysctl docs [0] the `net.ipv6.conf.all.forwarding` enables forwarding
+> for all interfaces, while the interface-specific
+> `net.ipv6.conf.<interface>.forwarding` configures the interface
+> Host/Router configuration.
 > 
-> Sorry about that. b4 didn't take it, and since I changed the commit 
-> message after Bryan made the suggestion, didn't know if it was still 
-> justified.
+> Introduce a new sysctl flag `force_forwarding`, which can be set on every
+> interface. The ip6_forwarding function will then check if the global
+> forwarding flag OR the force_forwarding flag is active and forward the
+> packet.
 > 
-It takes for me. b4 shazam -v6:
+> To preserver backwards-compatibility reset the flag (on all interfaces)
+> to 0 if the net.ipv6.conf.all.forwarding flag is set to 0.
+> 
+> Add a short selftest that checks if a packet gets forwarded with and
+> without `force_forwarding`.
+> 
+> [0]: https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt
+> 
+> Signed-off-by: Gabriel Goller <g.goller@proxmox.com>
 
+Does not apply cleanly anymore, please rebase and repost.
 
-  [PATCH v6 1/3] dt-bindings: arm: qcom: Add HP Omnibook X14 AI X1P4200 variant
-    + Link: https://lore.kernel.org/r/20250709-hp-x14-x1p-v6-1-f45cc186a62d@oldschoolsolutions.biz
-  [PATCH v6 2/3] arm64: dts: qcom: x1-hp-x14: Commonalize HP Omnibook X14 device tree
-    + Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> (✓ DKIM/kernel.org)
-    + Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> (✓ DKIM/qualcomm.com)
-    + Link: https://lore.kernel.org/r/20250709-hp-x14-x1p-v6-2-f45cc186a62d@oldschoolsolutions.biz
-  [PATCH v6 3/3] arm64: dts: qcom: x1-hp-x14: Add support for X1P42100 HP Omnibook X14
-    + Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> (✓ DKIM/kernel.org)
-    + Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> (✓ DKIM/qualcomm.com)
-    + Link: https://lore.kernel.org/r/20250709-hp-x14-x1p-v6-3-f45cc186a62d@oldschoolsolutions.biz
+Also a few nits below...
 
-All tags are there.
+> @@ -857,6 +859,9 @@ static void addrconf_forward_change(struct net *net, __s32 newf)
+>  		idev = __in6_dev_get_rtnl_net(dev);
+>  		if (idev) {
+>  			int changed = (!idev->cnf.forwarding) ^ (!newf);
+> +			/* Disabling all.forwarding sets 0 to force_forwarding for all interfaces */
+> +			if (newf == 0)
+> +				WRITE_ONCE(idev->cnf.force_forwarding, newf);
 
-If b4 misses it, you should add it.
+You could use:
 
-Best regards,
-Krzysztof
+			WRITE_ONCE(idev->cnf.force_forwarding, 0);
+				
+
+>  
+>  			WRITE_ONCE(idev->cnf.forwarding, newf);
+>  			if (changed)
+> @@ -5719,6 +5724,7 @@ static void ipv6_store_devconf(const struct ipv6_devconf *cnf,
+>  	array[DEVCONF_ACCEPT_UNTRACKED_NA] =
+>  		READ_ONCE(cnf->accept_untracked_na);
+>  	array[DEVCONF_ACCEPT_RA_MIN_LFT] = READ_ONCE(cnf->accept_ra_min_lft);
+> +	array[DEVCONF_FORCE_FORWARDING] = READ_ONCE(cnf->force_forwarding);
+>  }
+>  
+>  static inline size_t inet6_ifla6_size(void)
+> @@ -6747,6 +6753,76 @@ static int addrconf_sysctl_disable_policy(const struct ctl_table *ctl, int write
+>  	return ret;
+>  }
+>  
+> +static void addrconf_force_forward_change(struct net *net, __s32 newf)
+> +{
+> +	struct net_device *dev;
+> +	struct inet6_dev *idev;
+> +
+> +	for_each_netdev(net, dev) {
+> +		idev = __in6_dev_get_rtnl_net(dev);
+> +		if (idev) {
+> +			int changed = (!idev->cnf.force_forwarding) ^ (!newf);
+> +
+> +			WRITE_ONCE(idev->cnf.force_forwarding, newf);
+> +			if (changed) {
+> +				inet6_netconf_notify_devconf(dev_net(dev), RTM_NEWNETCONF,
+> +							     NETCONFA_FORCE_FORWARDING,
+> +							     dev->ifindex, &idev->cnf);
+> +			}
+
+Brakets not needed for the above statement. Either drop them or move the
+WRITE_ONCE() inside the if ()
+
+> diff --git a/tools/testing/selftests/net/ipv6_force_forwarding.sh b/tools/testing/selftests/net/ipv6_force_forwarding.sh
+> new file mode 100644
+> index 000000000000..62adc9d4afc9
+> --- /dev/null
+> +++ b/tools/testing/selftests/net/ipv6_force_forwarding.sh
+> @@ -0,0 +1,105 @@
+> +#!/bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Test IPv6 force_forwarding interface property
+> +#
+> +# This test verifies that the force_forwarding property works correctly:
+> +# - When global forwarding is disabled, packets are not forwarded normally
+> +# - When force_forwarding is enabled on an interface, packets are forwarded
+> +#   regardless of the global forwarding setting
+> +
+> +source lib.sh
+> +
+> +cleanup() {
+> +    cleanup_ns $ns1 $ns2 $ns3
+> +}
+> +
+> +trap cleanup EXIT
+> +
+> +setup_test() {
+> +    # Create three namespaces: sender, router, receiver
+> +    setup_ns ns1 ns2 ns3
+> +
+> +    # Create veth pairs: ns1 <-> ns2 <-> ns3
+> +    ip link add name veth12 type veth peer name veth21
+> +    ip link add name veth23 type veth peer name veth32
+> +
+> +    # Move interfaces to namespaces
+> +    ip link set veth12 netns $ns1
+> +    ip link set veth21 netns $ns2
+> +    ip link set veth23 netns $ns2
+> +    ip link set veth32 netns $ns3
+> +
+> +    # Configure interfaces
+> +    ip -n $ns1 addr add 2001:db8:1::1/64 dev veth12
+> +    ip -n $ns2 addr add 2001:db8:1::2/64 dev veth21
+> +    ip -n $ns2 addr add 2001:db8:2::1/64 dev veth23
+> +    ip -n $ns3 addr add 2001:db8:2::2/64 dev veth32
+
+The above will trigger DaD...
+
+> +
+> +    # Bring up interfaces
+> +    ip -n $ns1 link set veth12 up
+> +    ip -n $ns2 link set veth21 up
+> +    ip -n $ns2 link set veth23 up
+> +    ip -n $ns3 link set veth32 up
+> +
+> +    # Add routes
+> +    ip -n $ns1 route add 2001:db8:2::/64 via 2001:db8:1::2
+> +    ip -n $ns3 route add 2001:db8:1::/64 via 2001:db8:2::1
+> +
+> +    # Disable global forwarding
+> +    ip netns exec $ns2 sysctl -qw net.ipv6.conf.all.forwarding=0
+> +}
+> +
+> +test_force_forwarding() {
+> +    local ret=0
+> +
+> +    echo "TEST: force_forwarding functionality"
+> +
+> +    # Check if force_forwarding sysctl exists
+> +    if ! ip netns exec $ns2 test -f /proc/sys/net/ipv6/conf/veth21/force_forwarding; then
+> +        echo "SKIP: force_forwarding not available"
+> +        return $ksft_skip
+> +    fi
+> +
+> +    # Test 1: Without force_forwarding, ping should fail
+> +    ip netns exec $ns2 sysctl -qw net.ipv6.conf.veth21.force_forwarding=0
+> +    ip netns exec $ns2 sysctl -qw net.ipv6.conf.veth23.force_forwarding=0
+> +
+> +    if ip netns exec $ns1 ping -6 -c 1 -W 2 2001:db8:2::2 &>/dev/null; then
+> +        echo "FAIL: ping succeeded when forwarding disabled"
+> +        ret=1
+> +    else
+> +        echo "PASS: forwarding disabled correctly"
+> +    fi
+> +
+> +    # Test 2: With force_forwarding enabled, ping should succeed
+> +    ip netns exec $ns2 sysctl -qw net.ipv6.conf.veth21.force_forwarding=1
+> +    ip netns exec $ns2 sysctl -qw net.ipv6.conf.veth23.force_forwarding=1
+> +
+> +    if ip netns exec $ns1 ping -6 -c 1 -W 2 2001:db8:2::2 &>/dev/null; then
+> +        echo "PASS: force_forwarding enabled forwarding"
+
+... I'm wondering if it could sometimes race with the ping and cause
+sporadic failures? Possible using 'nodad' option for address creation
+could help.
+
+/P
+
 
