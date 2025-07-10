@@ -1,149 +1,201 @@
-Return-Path: <linux-kernel+bounces-725909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA546B00560
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:36:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30629B00564
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 16:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9AE4E5FE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:36:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4F316E25F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 14:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3073F2741D4;
-	Thu, 10 Jul 2025 14:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5916273D94;
+	Thu, 10 Jul 2025 14:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BASj/fjA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pAdfwOwa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ep8aBKJ8";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xraZaYP7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pdQKNJ0k"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1256122E3FA
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EAD27056F
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752158177; cv=none; b=PPXOk2ErQIMjsv2cYPhqFouCZda45t0llnpoqw4U6KHtRTFGoR9ouO7thnRALs/Gzh53jLqUHf8M8uujCtt8axfIhceZKNqvNfX/Wk4WGMufdVKxo6DPWLTjS/EBkGblpSAVCS5dUMubZldsWnI6pVJI0eA9OtnsNk5nVUA1MZY=
+	t=1752158206; cv=none; b=jtY4piC8ybBOHdLcVqx5ivedKZI/KiARSAmR+EBa53cJtM2gyHCafGABqyezZslQVD6fx3MxUJHDjjPHrmkS3SBGn1CEioYnlPxfPJKMHTqnAEj4cZIna8/wiYwW/RlBXuXCYljm+0pTS2+1Pv8MryidDuZIn+IxEX/544qBD00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752158177; c=relaxed/simple;
-	bh=Ytx25GY/nU2VdOgti3tVVr3OQnWg7YcdFoOvC8ch0v0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pcTcR+KErcu9pc7qK2HTsFFQYfZ7SRKWhi/WdcTm/X9sy9thwWu7NZg0tB+N/t3P7E9LBvQUYH8njfyU3Q/j/4Uem6CMmO4KBbulNVITNMzSHsex2dKasGlag13YYZBDkT8iUBoNLT0bB06aX2fYXyNhHDuvFcALp69owMfA0ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BASj/fjA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56A9FN3J011560
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:36:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Dg7JRVt95il8s/jz7TuZQeqrrUbBN3RXqv3GEYrwXmg=; b=BASj/fjA2/M3JW1H
-	Jjzwo7BNCShSOzIgYCtHAkZcjMTlcqsowPg7g4GiX+ES/LbqfBtw/eHMYr6PH7E+
-	SnCxpFMNGak4XtwuQegrknF2rmDVrCVX/NSa53kTm1wMntgsbrHwAHV/S6EBh39F
-	GY2ZV2+cPFsjBhBDnPdg3fYc9kh5GV+Pca77/sgmOmtrmvIVXsfiWOMtdfrXyyrq
-	uljgQgO5HKl+aHGddRgCTtopYdi1Kb5yfOfITvts9Cg0Pcvmz+Kg8NxhhHCu18eo
-	W5dH0tF81N5Bb26kpH9ATYQBos9pdOWfyuqtKpwI3gzafjGsVtxT1TGhd8cGHicB
-	+jZZFQ==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smafn7bw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 14:36:14 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-235089528a0so19201635ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:36:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752158173; x=1752762973;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dg7JRVt95il8s/jz7TuZQeqrrUbBN3RXqv3GEYrwXmg=;
-        b=bzplGPkJcVhha0ucf1bkBOmIHK7PgvW5OnwMxLNLBi7xPdvJoS3kEz1hX+XHfK0BAa
-         tWL7otyVQpSbJFcKNnkSFCwgEZb9pfga4LCTW0P/fMvqR1mMtDbtBAIqmVyGdd83L3aL
-         tUXb/oPwLsn4ojtxUYF7uLW3jcsN+P63oYCBsdNtHWfipBiIyUW6De1DCGf22WsIYQD5
-         gGYWDWUh8ucc/AoTtsuB8ve4itNz0YJM661k8TrNALQW7FmUb8Uh6GowU3m2dP5X15uE
-         7g4vIAJB1h18mDV+7PRyN+aw8jQKNivzXQl8rUqgd8Wqh0R8VGmyCMx7mqSOyNXFSzBF
-         aCSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsmAHEtuBirP/ghzkzEkNeqruNRCEsSjK2O6fD9SSgLfcXJCBTCn3+feh3XA91FhP0/RAYa8BNLlSO17Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCaWR27DK++Qx+ieqroUPRppsSZXHTWZG0TMfTtXFeJu5qVePy
-	Z+6TyaW5KfOGF9awSkQBrdkIjx8c++X42cQA9JMt3ToaNduFnMEjW8WFTJ30up/OxX7q+PYYCwt
-	CFJ50vngx6xpHCCCyKa/qIQpR7dw+hWUV4B2WL8fp9iDsFyVQd9E8Y9D2BgyP/zp6b5Axle5tb9
-	8=
-X-Gm-Gg: ASbGncvFZGuabT9i+VpokFVTcu2152LZnuPG3IdcOjpcurvaFTIAO/KZVJHihHHzHTw
-	03zCvqgdt7Euy7IUR2vyftznbACAvpHmGc0AWFPCgU1ChdLI8GK5M2mTkEBmfLCO5wOu3CFNygy
-	5pyw21xH76fZ6bCnvtwkTtYJF7fM1lUZl61dOIqJxkIbTrfHMPMX+Y83DdBmV5or8i8/oU1+JoM
-	uiX1SzV0/1BheUQoKwxVXAs86VWJB0Xlnwz67I0T453M4TWeGEN+Ls9d3ZWLQ2ZWIBgtPd1uDpT
-	W4iVHgwk58j3L2CWdFaCf9NVoTo4wvOy/1L7Dm8Z5XwKBxPFWNtA5cbNGZI=
-X-Received: by 2002:a17:903:b50:b0:234:adce:3eb8 with SMTP id d9443c01a7336-23de2f7dcb5mr61822975ad.12.1752158173439;
-        Thu, 10 Jul 2025 07:36:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7OiZudC6nBSVY2ndwLIYd90vpOrAhe8RwjSa8EPgDYPyCW0TtT34tHP6hcM40vgh3hSHMbw==
-X-Received: by 2002:a17:903:b50:b0:234:adce:3eb8 with SMTP id d9443c01a7336-23de2f7dcb5mr61822465ad.12.1752158173010;
-        Thu, 10 Jul 2025 07:36:13 -0700 (PDT)
-Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4359a86sm23758055ad.210.2025.07.10.07.36.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 07:36:12 -0700 (PDT)
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-To: Jeff Johnson <jjohnson@kernel.org>,
-        Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>,
-        Lingbo Kong <quic_lingbok@quicinc.com>,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20250702-debugfs_htt_packed-v1-1-07bd18b31e79@oss.qualcomm.com>
-References: <20250702-debugfs_htt_packed-v1-1-07bd18b31e79@oss.qualcomm.com>
-Subject: Re: [PATCH ath-next] wifi: ath12k: pack HTT pdev rate stats
- structs
-Message-Id: <175215817183.507672.13750771482128165327.b4-ty@oss.qualcomm.com>
-Date: Thu, 10 Jul 2025 07:36:11 -0700
+	s=arc-20240116; t=1752158206; c=relaxed/simple;
+	bh=IR2P/D6ooKo2m7WLHUtwQgJ29K62qY0ALNJXBEsEacY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qEInE90DkG4NqzPB3MeveS90T60ZseD1jfDY2BhnArnD+YCn5cfjT36n0IB5OJauEGegoBLqxEgQnO6urzcSChrI/dnSVnnZhXNqFSEM5WXqK1JHjcgTVPVou11X8cX3qjpQw0UBsQerGaPFdkwdGxBwlpR99xS9FzeC56on2lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pAdfwOwa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ep8aBKJ8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xraZaYP7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pdQKNJ0k; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D0D5A1F7F3;
+	Thu, 10 Jul 2025 14:36:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752158203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VNbVqyxzglfjWd/zQh3eePfFjpFE0YgPCbGI1XpQ/C4=;
+	b=pAdfwOwaQDBiNo7mYiR7+kAnycYgOopY10VW8fcrvxY5j2/6m7h4ow5fwmPzjl4W6jm+jq
+	WKfEOVwC2kw2iGGQHU1tVLtgfW9wEh/KCv/SHZtukDrZExbzf73Gcgw69oMjKRw6Wlj4So
+	1PyKAnbse4J9dPhOOaW3tlxdMaW2OIg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752158203;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VNbVqyxzglfjWd/zQh3eePfFjpFE0YgPCbGI1XpQ/C4=;
+	b=Ep8aBKJ8YlwDcLfYYBRaJwkf1SPzSu/QYZ7C6nSeWy4UzeFeEAEODVwexbcF64+F0m3Wxt
+	o7hKYolCMzKxq6CA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xraZaYP7;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=pdQKNJ0k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752158202; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VNbVqyxzglfjWd/zQh3eePfFjpFE0YgPCbGI1XpQ/C4=;
+	b=xraZaYP7xUMFER79cMyhEOxdzSHh48Jgzde9D5tA4mbHMwmzr0aUaJovd4TGZfE96qwSEs
+	NjUWYrepPLsRHoc5T9O4dvOTq2fIF2dYNhkriMMrto4WOzJ0+7SwmfmuMD+Ik17seF/J2L
+	wfVGlD7XADD+SkZRI87WqiC3hZI4DAc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752158202;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VNbVqyxzglfjWd/zQh3eePfFjpFE0YgPCbGI1XpQ/C4=;
+	b=pdQKNJ0kuNczJCAnBEiiBVwpL//PWSit+U6CXCkQHhiUu+j/+iMtn+up6jWUbmJUVIHWj4
+	LbdBKZe+hoZfp5CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B052D136DC;
+	Thu, 10 Jul 2025 14:36:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id V83rKfrPb2jrNwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 10 Jul 2025 14:36:42 +0000
+Message-ID: <061bfccf-6828-424c-8fca-2498c48c97e7@suse.cz>
+Date: Thu, 10 Jul 2025 16:36:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/10] mm/mremap: check remap conditions earlier
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <cover.1751865330.git.lorenzo.stoakes@oracle.com>
+ <3a24bca518001fea3a5f2733c55cf727e566b438.1751865330.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <3a24bca518001fea3a5f2733c55cf727e566b438.1751865330.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
-X-Authority-Analysis: v=2.4 cv=ZJ/XmW7b c=1 sm=1 tr=0 ts=686fcfde cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=UczwlVCNLZ8JH68BmIEA:9
- a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-ORIG-GUID: BKtFDOBPnHojO7C-bMGo4UOMBrhqiMAK
-X-Proofpoint-GUID: BKtFDOBPnHojO7C-bMGo4UOMBrhqiMAK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzEwMDEyNSBTYWx0ZWRfXw8bjVKJxL9vM
- 6lGVbkrPTl0phKHecWfSvgrF3Ump44zHpFer0hX9SNPysCLWidgVExD8JPBfeptCWWguF8KaZH8
- zHuyJli9jIWO0QEMnoCKw0PbnJNMq8ryFs3eJbH7m9Q3hoW8bKvnobG3pNYLRmurNUH6XauDaXz
- h24ui7+dMwtVJg7uSJpoP6uQcqWoGQtauvOpjp6QPrYmK0ZotHf0IjSdAOtpnjlBsalmbd28aJR
- lMiWsKFHR/ZxChumjPCXARHKMN81FSO8eG8boaDK2bsF6V3YQv+fetij/nOnbc7NsiHgx62mLe4
- 2orFT5+KXMtcjS9TyHQEXuzUCkh0IsNSk16HvZhEPYHfCVMawkzqWQQzgFv3S8JJEtO0g9lpjeA
- +UKUronCAomfFibdkm8lvHt/c0E+5OLnmqhqA/NNcYjyJRkUN5K+B6945S1ssfcFjto9pcCq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-10_03,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=819 impostorscore=0 spamscore=0 adultscore=0 clxscore=1015
- bulkscore=0 phishscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507100125
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: D0D5A1F7F3
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-
-On Wed, 02 Jul 2025 14:29:12 -0700, Jeff Johnson wrote:
-> In order to ensure the HTT DebugFS structs shared with firmware have
-> matching alignment, the structs should be packed. Most of the structs
-> are correctly packed, however the following are not:
+On 7/7/25 07:27, Lorenzo Stoakes wrote:
+> When we expand or move a VMA, this requires a number of additional checks
+> to be performed.
 > 
-> ath12k_htt_tx_pdev_rate_stats_tlv
-> ath12k_htt_rx_pdev_rate_stats_tlv
-> ath12k_htt_rx_pdev_rate_ext_stats_tlv
+> Make it really obvious under what circumstances these checks must be
+> performed and aggregate all the checks in one place by invoking this in
+> check_prep_vma().
 > 
-> [...]
+> We have to adjust the checks to account for shrink + move operations by
+> checking new_len <= old_len rather than new_len == old_len.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Applied, thanks!
-
-[1/1] wifi: ath12k: pack HTT pdev rate stats structs
-      commit: fee9b1f6691120182136edacf590f52d62d9de7f
-
-Best regards,
--- 
-Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
 
