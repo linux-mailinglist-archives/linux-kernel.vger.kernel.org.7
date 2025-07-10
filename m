@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-725488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E665AFFFDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:58:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79C4AFFFE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 12:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A58B7B334A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:56:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA7C95A4EBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 10:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89A82E0939;
-	Thu, 10 Jul 2025 10:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5AA24501E;
+	Thu, 10 Jul 2025 10:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="Y2amTz0t"
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="XG/EuUFr"
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F8624501E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 10:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703052E4248;
+	Thu, 10 Jul 2025 10:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752145087; cv=pass; b=jONXU0F0agq34/Zca6/9NW0KFxup6gpzv7TN/oz8qCGDe6BhDWZXNpGZhcm0Co35PiK5i1BhElXXrFJNOsSluh+kyyyyaUwItG5O4Mw2bdIOF1oG5TkTG3uEmzjzjyxoDTnIs7/ui5DLxGS1ZLhK7qSC0wfT+cndZ30Sl6CtRow=
+	t=1752145164; cv=pass; b=VwNtIapGRRUk7hcI1Ev8eG/8soTd55zcsbXrVHAwkNTKseTwliLlmJlj1GuD8On42LkqBwcY4G/+dwmFJVrbBlvEpsdnS4v4SMVxte80lGFjE98hVT8CVmKSg1ibNLwbg6BSUyJp73fUwZtn/IwWwumb06G1qwGZTTpJbCuqBKA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752145087; c=relaxed/simple;
-	bh=JzOEzQ4u4rtw2NIBLOcRDtDefM3sgL3nRVZ/m4mk2yc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ulyX8Kje7imuyQ3tgCEFg4kPScU6pg2Q5NmzpXW1GJtcDo63rdOyMjplQGy5hQoK2f03vZRn1yQHPDnvLUxJVz7l/Vxh+VHXDQ4k/DTCxZFRjREGtzYOO+R2Y55ModKzyigYABHW9AKQZrXVgSXjHBRu26IaTsaZ6xo79LBPMdQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=Y2amTz0t; arc=pass smtp.client-ip=136.143.188.15
+	s=arc-20240116; t=1752145164; c=relaxed/simple;
+	bh=oNtAYai84O7Ncz6uzZ8RkEZayoUac4hgAsSQiW5DxeM=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WHrC9JxbSdhy1/COEFj9lS029pU5JJDr3EfG3bCUxZxgg4D55hEJElZegXK6SqtKQyCZay2NWGTWL6SGXFKOWD1O67PzZraMMLXTQJVXX1DvT0Dk+b9Cu4sAWpQVRDRU8AzAh5TEf6V5TR28wvJqcMcpJNSyJFsr+xaJE9Nj1is=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=XG/EuUFr; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1752145042; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1752145052; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=C7R/uEgzS8DBaItptc8pmQ/N4XdTC9BtVmSrxUSFnurBo3Sx8VY9jI3eQstJ4XxE4V63oX6AzD1BnsnQCZItvMBIICSVHmEbj3iyX3uxsGQvs4mDQKegxr+qND0yKObhqQXpSBgUtR89uhUsVK9hhd5HkTKVHVWe7LZAfMMHBrM=
+	b=ZBGAHjspqPm4xCjCCo138Zi9x3j/3l1KpbRRGtuh4JEiWlqzVu2tAkirgwQBSb4wXy2vFcXnlthtxBSroK8ovXg6uOjLK9ZP7OWGn/BxxksB9rO5lW7yz213Te8uyly/jfCAuZYo9tmJXjr4HrDvOdE0bvfVW0lD9UkZSUU5jok=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752145042; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=yiEYKiYWi9lfEelzgS689BygDZKCSEUDoT6dG+OBGmU=; 
-	b=U/bnAvbtIfwE1blvERtTfUL+ZMXe36eRgIzSyTGqCbcT8R1lbhqZtIWFQ7uXDXvAa4x3/l+VWGt/aHal7XlneKHg7d1LityuLX3oFGdg7aXAzT4JcEaNbL0hZunTkmJSOoBwzA5P3lYM/VpnO0FrZ8QS5HQtQTPpn/DfxBUiwH4=
+	t=1752145052; h=Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
+	bh=fovm6MYKiboCe5FxyWaHfC+A2oY5VAqlOylsUIo+kbo=; 
+	b=HiYjxHRpCQmXGSXVqRWXAdSk0tmJhrIgD5hqIaOWPznJimODP5H3U6hMr3AytUzbX5y8xzzpWmGhrW/zYm6z8U5S+obDwLvDk4EiCEQfuHzczNnzhXyXWRtAtACppzYv6/tQYNLe/O1FqNWU1AlmlNpuoQIHjJHzCfBpDEf+5S4=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=linux.beauty;
 	spf=pass  smtp.mailfrom=me@linux.beauty;
 	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752145042;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752145052;
 	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=From:From:To:To:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
-	bh=yiEYKiYWi9lfEelzgS689BygDZKCSEUDoT6dG+OBGmU=;
-	b=Y2amTz0tziV140SrHvT24YTRFZsci/hGRpokwl7qkJ3dGbwNKqkEmjfgKaoiQ9mG
-	nt1IOua+FpOfW0XDBNB3cbXLCJPjjIye8RgZ+VfIxK6HaPDrSPRoRRQdVXVtEHXOoMM
-	Phxf8//u3GA64BoPaBrnyaCr2P5e1oNUhuP6Kxy0=
-Received: by mx.zohomail.com with SMTPS id 1752145040240481.87790057866744;
-	Thu, 10 Jul 2025 03:57:20 -0700 (PDT)
+	h=From:From:To:To:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
+	bh=fovm6MYKiboCe5FxyWaHfC+A2oY5VAqlOylsUIo+kbo=;
+	b=XG/EuUFr+Dd3e5Kj/dqUEReF1ky87KXHsTziwAlxhnoYtxCWLbqWQYg1nWdAsQRs
+	W3YcXaSCPPKz0C9Dzaro97Wf68bHl12Ulkxktc8R6yLHUxYCQagpjD5oistX7CGArDR
+	5BdlAHAKtIJsRS3X22wefieFt+q1DMj2TvTxVfpM=
+Received: by mx.zohomail.com with SMTPS id 1752145051054917.4579948465466;
+	Thu, 10 Jul 2025 03:57:31 -0700 (PDT)
 From: Li Chen <me@linux.beauty>
 To: "Thomas Gleixner" <tglx@linutronix.de>,
 	"Ingo Molnar" <mingo@redhat.com>,
@@ -61,62 +62,248 @@ To: "Thomas Gleixner" <tglx@linutronix.de>,
 	"Sohil Mehta" <sohil.mehta@intel.com>,
 	"Brian Gerst" <brgerst@gmail.com>,
 	"Patryk Wlazlyn" <patryk.wlazlyn@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 0/4] x86/smpboot: tidy sched-topology and drop useless SMT level
-Date: Thu, 10 Jul 2025 18:57:06 +0800
-Message-ID: <20250710105715.66594-1-me@linux.beauty>
+	linux-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Li Chen <chenl311@chinatelecom.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Bibo Mao <maobibo@loongson.cn>,
+	Tobias Huschle <huschle@linux.ibm.com>,
+	Mete Durlu <meted@linux.ibm.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Guo Weikang <guoweikang.kernel@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org
+Subject: [PATCH v5 1/4] smpboot: introduce SDTL_INIT() helper to tidy sched topology setup
+Date: Thu, 10 Jul 2025 18:57:07 +0800
+Message-ID: <20250710105715.66594-2-me@linux.beauty>
 X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250710105715.66594-1-me@linux.beauty>
+References: <20250710105715.66594-1-me@linux.beauty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
 From: Li Chen <chenl311@chinatelecom.cn>
 
-This series cleans up sched-domain topology handling and
-eliminates hundreds of pointless attach/destroy cycles for large
-machines when SMT is not available.
+Define a small SDTL_INIT(maskfn, flagsfn, name) macro and use it to build the
+sched_domain_topology_level array. Purely a cleanup; behaviour is unchanged.
 
-Patch 1, 2, and 3 do some cleanup and refactor.
+Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+---
+ arch/powerpc/kernel/smp.c      | 34 +++++++++++++---------------------
+ arch/s390/kernel/topology.c    | 10 +++++-----
+ arch/x86/kernel/smpboot.c      | 21 ++++++---------------
+ include/linux/sched/topology.h |  4 ++--
+ kernel/sched/topology.c        | 24 ++++++++----------------
+ 5 files changed, 34 insertions(+), 59 deletions(-)
 
-Patch 4 is a follow-up that simply skip SMT domain when
-cpu_smt_num_threads <= 1, so the SMT level never gets created.
-
-Tested on Qemu.
-
-changelog:
-v2: fix wording issue as suggested by Thomas [1]
-v3: remove pointless memset and adjust PKG index accordingly, as
-    suggested by Thomas [2], and refine some other wording issues.
-v4: v4: Split refactor patche into three parts (as suggested by Peter [3])
-    and refined patch 4 logic (as done by K. [4]).
-v5: fix some style issues and do some improvements as pointed out by K. [5][6]
-
-[1]: https://lore.kernel.org/all/87msa2r018.ffs@tglx/
-[2]: https://lore.kernel.org/all/875xglntx1.ffs@tglx/
-[3]: https://lkml.org/lkml/2025/6/25/584
-[4]: https://lore.kernel.org/lkml/1b706790-2fec-4582-a425-55eeff36c32e@amd.com/
-[5]: https://lore.kernel.org/all/f391491d-f886-4579-9b40-78a57f2ed1b5@amd.com/
-[6]: https://lore.kernel.org/all/7e7f686b-1f5a-46dc-8b16-c6d491160d1c@amd.com/
-
-Li Chen (4):
-  smpboot: introduce SDTL() helper to tidy sched topology setup
-  x86/smpboot: remove redundant CONFIG_SCHED_SMT
-  x86/smpboot: moves x86_topology to static initialize and truncate
-  x86/smpboot: avoid SMT domain attach/destroy if SMT is not enabled
-
- arch/powerpc/kernel/smp.c      | 34 +++++++++--------------
- arch/s390/kernel/topology.c    | 10 +++----
- arch/x86/kernel/smpboot.c      | 51 ++++++++++++++++------------------
- include/linux/sched/topology.h |  4 +--
- kernel/sched/topology.c        | 24 ++++++----------
- 5 files changed, 52 insertions(+), 71 deletions(-)
-
+diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+index 5ac7084eebc0b..0b7ab7d2eb142 100644
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -1700,28 +1700,20 @@ static void __init build_sched_topology(void)
+ #ifdef CONFIG_SCHED_SMT
+ 	if (has_big_cores) {
+ 		pr_info("Big cores detected but using small core scheduling\n");
+-		powerpc_topology[i++] = (struct sched_domain_topology_level){
+-			smallcore_smt_mask, powerpc_smt_flags, SD_INIT_NAME(SMT)
+-		};
+-	} else {
+-		powerpc_topology[i++] = (struct sched_domain_topology_level){
+-			cpu_smt_mask, powerpc_smt_flags, SD_INIT_NAME(SMT)
+-		};
+-	}
++		powerpc_topology[i++] =
++			SDTL_INIT(smallcore_smt_mask, powerpc_smt_flags, SMT);
++	} else
++		powerpc_topology[i++] = SDTL_INIT(cpu_smt_mask, powerpc_smt_flags, SMT);
+ #endif
+-	if (shared_caches) {
+-		powerpc_topology[i++] = (struct sched_domain_topology_level){
+-			shared_cache_mask, powerpc_shared_cache_flags, SD_INIT_NAME(CACHE)
+-		};
+-	}
+-	if (has_coregroup_support()) {
+-		powerpc_topology[i++] = (struct sched_domain_topology_level){
+-			cpu_mc_mask, powerpc_shared_proc_flags, SD_INIT_NAME(MC)
+-		};
+-	}
+-	powerpc_topology[i++] = (struct sched_domain_topology_level){
+-		cpu_cpu_mask, powerpc_shared_proc_flags, SD_INIT_NAME(PKG)
+-	};
++	if (shared_caches)
++		powerpc_topology[i++] =
++			SDTL_INIT(shared_cache_mask, powerpc_shared_cache_flags, CACHE);
++
++	if (has_coregroup_support())
++		powerpc_topology[i++] =
++			SDTL_INIT(cpu_mc_mask, powerpc_shared_proc_flags, MC);
++
++	powerpc_topology[i++] = SDTL_INIT(cpu_cpu_mask, powerpc_shared_proc_flags, PKG);
+ 
+ 	/* There must be one trailing NULL entry left.  */
+ 	BUG_ON(i >= ARRAY_SIZE(powerpc_topology) - 1);
+diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+index 3df048e190b11..46569b8e47dde 100644
+--- a/arch/s390/kernel/topology.c
++++ b/arch/s390/kernel/topology.c
+@@ -531,11 +531,11 @@ static const struct cpumask *cpu_drawer_mask(int cpu)
+ }
+ 
+ static struct sched_domain_topology_level s390_topology[] = {
+-	{ cpu_thread_mask, cpu_smt_flags, SD_INIT_NAME(SMT) },
+-	{ cpu_coregroup_mask, cpu_core_flags, SD_INIT_NAME(MC) },
+-	{ cpu_book_mask, SD_INIT_NAME(BOOK) },
+-	{ cpu_drawer_mask, SD_INIT_NAME(DRAWER) },
+-	{ cpu_cpu_mask, SD_INIT_NAME(PKG) },
++	SDTL_INIT(cpu_thread_mask, cpu_smt_flags, SMT),
++	SDTL_INIT(cpu_coregroup_mask, cpu_core_flags, MC),
++	SDTL_INIT(cpu_book_mask, NULL, BOOK),
++	SDTL_INIT(cpu_drawer_mask, NULL, DRAWER),
++	SDTL_INIT(cpu_cpu_mask, NULL, PKG),
+ 	{ NULL, },
+ };
+ 
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 58ede3fa6a75b..445127df2cb19 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -485,35 +485,26 @@ static void __init build_sched_topology(void)
+ 	int i = 0;
+ 
+ #ifdef CONFIG_SCHED_SMT
+-	x86_topology[i++] = (struct sched_domain_topology_level){
+-		cpu_smt_mask, cpu_smt_flags, SD_INIT_NAME(SMT)
+-	};
++	x86_topology[i++] = SDTL_INIT(cpu_smt_mask, cpu_smt_flags, SMT);
+ #endif
+ #ifdef CONFIG_SCHED_CLUSTER
+-	x86_topology[i++] = (struct sched_domain_topology_level){
+-		cpu_clustergroup_mask, x86_cluster_flags, SD_INIT_NAME(CLS)
+-	};
++	x86_topology[i++] = SDTL_INIT(cpu_clustergroup_mask, x86_cluster_flags, CLS);
+ #endif
+ #ifdef CONFIG_SCHED_MC
+-	x86_topology[i++] = (struct sched_domain_topology_level){
+-		cpu_coregroup_mask, x86_core_flags, SD_INIT_NAME(MC)
+-	};
++	x86_topology[i++] = SDTL_INIT(cpu_coregroup_mask, x86_core_flags, MC);
+ #endif
+ 	/*
+ 	 * When there is NUMA topology inside the package skip the PKG domain
+ 	 * since the NUMA domains will auto-magically create the right spanning
+ 	 * domains based on the SLIT.
+ 	 */
+-	if (!x86_has_numa_in_package) {
+-		x86_topology[i++] = (struct sched_domain_topology_level){
+-			cpu_cpu_mask, x86_sched_itmt_flags, SD_INIT_NAME(PKG)
+-		};
+-	}
++	if (!x86_has_numa_in_package)
++		x86_topology[i++] = SDTL_INIT(cpu_cpu_mask, x86_sched_itmt_flags, PKG);
+ 
+ 	/*
+ 	 * There must be one trailing NULL entry left.
+ 	 */
+-	BUG_ON(i >= ARRAY_SIZE(x86_topology)-1);
++	BUG_ON(i >= ARRAY_SIZE(x86_topology) - 1);
+ 
+ 	set_sched_topology(x86_topology);
+ }
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index e54e7fa76ba63..0d5daaa277b75 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -196,8 +196,8 @@ struct sched_domain_topology_level {
+ extern void __init set_sched_topology(struct sched_domain_topology_level *tl);
+ extern void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio);
+ 
+-
+-# define SD_INIT_NAME(type)		.name = #type
++#define SDTL_INIT(maskfn, flagsfn, dname) ((struct sched_domain_topology_level) \
++	    { .mask = maskfn, .sd_flags = flagsfn, .name = #dname })
+ 
+ #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+ extern void rebuild_sched_domains_energy(void);
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 8e06b1d22e91e..d01f5a49f2e7a 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1737,17 +1737,17 @@ sd_init(struct sched_domain_topology_level *tl,
+  */
+ static struct sched_domain_topology_level default_topology[] = {
+ #ifdef CONFIG_SCHED_SMT
+-	{ cpu_smt_mask, cpu_smt_flags, SD_INIT_NAME(SMT) },
++	SDTL_INIT(cpu_smt_mask, cpu_smt_flags, SMT),
+ #endif
+ 
+ #ifdef CONFIG_SCHED_CLUSTER
+-	{ cpu_clustergroup_mask, cpu_cluster_flags, SD_INIT_NAME(CLS) },
++	SDTL_INIT(cpu_clustergroup_mask, cpu_cluster_flags, CLS),
+ #endif
+ 
+ #ifdef CONFIG_SCHED_MC
+-	{ cpu_coregroup_mask, cpu_core_flags, SD_INIT_NAME(MC) },
++	SDTL_INIT(cpu_coregroup_mask, cpu_core_flags, MC),
+ #endif
+-	{ cpu_cpu_mask, SD_INIT_NAME(PKG) },
++	SDTL_INIT(cpu_cpu_mask, NULL, PKG),
+ 	{ NULL, },
+ };
+ 
+@@ -2008,23 +2008,15 @@ void sched_init_numa(int offline_node)
+ 	/*
+ 	 * Add the NUMA identity distance, aka single NODE.
+ 	 */
+-	tl[i++] = (struct sched_domain_topology_level){
+-		.mask = sd_numa_mask,
+-		.numa_level = 0,
+-		SD_INIT_NAME(NODE)
+-	};
++	tl[i++] = SDTL_INIT(sd_numa_mask, NULL, NODE);
+ 
+ 	/*
+ 	 * .. and append 'j' levels of NUMA goodness.
+ 	 */
+ 	for (j = 1; j < nr_levels; i++, j++) {
+-		tl[i] = (struct sched_domain_topology_level){
+-			.mask = sd_numa_mask,
+-			.sd_flags = cpu_numa_flags,
+-			.flags = SDTL_OVERLAP,
+-			.numa_level = j,
+-			SD_INIT_NAME(NUMA)
+-		};
++		tl[i] = SDTL_INIT(sd_numa_mask, cpu_numa_flags, NUMA);
++		tl[i].numa_level = j;
++		tl[i].flags = SDTL_OVERLAP;
+ 	}
+ 
+ 	sched_domain_topology_saved = sched_domain_topology;
 -- 
 2.50.0
 
