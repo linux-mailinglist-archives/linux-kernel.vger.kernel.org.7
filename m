@@ -1,209 +1,168 @@
-Return-Path: <linux-kernel+bounces-725111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABF0AFFAEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:32:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF94AFFAEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18CB6487685
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:32:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19404E34AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19E928853D;
-	Thu, 10 Jul 2025 07:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FAC288C30;
+	Thu, 10 Jul 2025 07:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IkepUfS/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnPUXsw7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D6422D7A5
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752132753; cv=fail; b=AJjdoJB7lNS2Pqyeo+2+7NVdYQN4ywim/MG1milF1tP+P+r3FNhcWSq2XN8WTxPYebPJS8+oOMjESph31OaZTvJDYXNDVOkMDXQ8ds0d/pSUzcfHVHuq9AFpwfUGU13EgqTqUu41inbgds3/1HsGj3p5cohXW/TK97kdvNKsY3w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752132753; c=relaxed/simple;
-	bh=Jpi+beuX24BhHFoxz2C8XTlmdTIsU+nx7fiSD6zoIfs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HlZwJe1dsgqydbc8koRW6Wm/KTpYdqCBdaSYvJsQfw7RDo6KFTrXtnYz+YsE0KTBD+DXNtXpb9ikvtBZMLldjLm+zj5uiAB0mT6JyEu0x9D/CQy+f8VOayYMrjlRiHzkGKBcj1O3FeP6DXvJhCZg2JQy/RJ545kv+k53oyvQla0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IkepUfS/; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752132753; x=1783668753;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Jpi+beuX24BhHFoxz2C8XTlmdTIsU+nx7fiSD6zoIfs=;
-  b=IkepUfS/hR2wiMy+Ae2Mmk4mgiuqlsM+Udf1+BJUa9Sp+i5NLlT0ayXH
-   DgVMK6xC6xtvcUvmDzF1Ua6778YAPjglOerWQ1cCdb0rhlHOVu2ykiavW
-   R7vv/+fp7sPDgrFEARB4CUMKT0rbaDtymJoDIy5/0lRs80z3iZGaZbbTe
-   EaLzbeEVr3c6V5S5MW5lKYG3T371R+YHuwDu9uzEUjpAQsdNn/S/6Cjvp
-   DYeDvkKNhl59nVpDt09K+2Pp98qHg/5Mrgmu9BfdnjT9HxEsVg+RbPWat
-   Hwawt3TMKdtRAcN5suvw3tEJExTgkLUcawkrTUSbg6nR5FSigEPzSuk3M
-   g==;
-X-CSE-ConnectionGUID: UJ5OrUGhSrWNwMcjMxIQVw==
-X-CSE-MsgGUID: CBM2Z089Q7ySNfQGFkpT6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54258440"
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="54258440"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 00:32:29 -0700
-X-CSE-ConnectionGUID: j+eiw06wQrSN9YSAhSGOZw==
-X-CSE-MsgGUID: rEAO0kIZRmWBw3nqzLy4Ww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
-   d="scan'208";a="186998419"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 00:32:29 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 10 Jul 2025 00:32:27 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 10 Jul 2025 00:32:27 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.44)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 10 Jul 2025 00:32:27 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xRmZuKexOLypPK2/oHI4RzJp0dQSZujzGoHQN1rJP9sgjPA9CeK0/bTGpl4bmLtPcLBfbE+alGxpFrdjOU33CDB6SXcCbQzX+ZOQWT/MpMF8JziiYLa9ACJPQGiMMCBFPJY0lXSRJo3vaNEt71+8wgoAVFgUxqkgfkHmt1NvUUd3tTYxmtguXMHZpxTiqL8wuQoMoygyLTx5cPlLF44gIOOhAs/nLXDS2IQOCE8J0TV8yZELCQ4SuSP1k+ZG7LPlgrZVLC6KXqE+9pb9PazYPcRADiahHuKgkrJ0Mr6/4GjxzNW6dLfKm3e5NBxoH5K3t/MMhPNnhfkXXEEPvVn2RQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jpi+beuX24BhHFoxz2C8XTlmdTIsU+nx7fiSD6zoIfs=;
- b=nnh/pk3WIpqIsDMEgHyntOBykIVBf+1rSGnB3cIt86kHy85KWObuMjN8+8HXsj5UCPwHmf/NhHYnMBX/bMHIXAQawxyGmymXwc2B/nPGhzPAnHNCN4KvdpixCPv/6xXxKpSgIo7C5hV0xFQHQBu/uQ35VhKK8jBVw5hR+UB/vU1hTKQpCtzrNwcOwi7vPDslIqMZauAnBjiqUlKkjTk3+pPmYoPBArl5OKNxK3vMzZABa24QIeDnudqvZ7uVzCLcr7rW/DL1+BsQjOjp0xJZBjiBUJ6ft8PUdi3ihzvk2Topeh4vSt65zf3J9fpjnUNYnqBDbmlWII7sZC5PtqKahg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by DS0PR11MB9503.namprd11.prod.outlook.com (2603:10b6:8:297::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Thu, 10 Jul
- 2025 07:32:26 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.8901.024; Thu, 10 Jul 2025
- 07:32:25 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Xu Yilun <yilun.xu@linux.intel.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>, "will@kernel.org" <will@kernel.org>,
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>
-CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"joro@8bytes.org" <joro@8bytes.org>, "robin.murphy@arm.com"
-	<robin.murphy@arm.com>, "shuah@kernel.org" <shuah@kernel.org>,
-	"nicolinc@nvidia.com" <nicolinc@nvidia.com>, "aik@amd.com" <aik@amd.com>,
-	"Williams, Dan J" <dan.j.williams@intel.com>, "baolu.lu@linux.intel.com"
-	<baolu.lu@linux.intel.com>, "Xu, Yilun" <yilun.xu@intel.com>
-Subject: RE: [PATCH v4 1/7] iommufd/viommu: Roll back to use
- iommufd_object_alloc() for vdevice
-Thread-Topic: [PATCH v4 1/7] iommufd/viommu: Roll back to use
- iommufd_object_alloc() for vdevice
-Thread-Index: AQHb8IeBHfAI2AdBW0mcvgQ96XMy0LQq+AGA
-Date: Thu, 10 Jul 2025 07:32:25 +0000
-Message-ID: <BN9PR11MB52768CA161530E711579E0C58C48A@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20250709040234.1773573-1-yilun.xu@linux.intel.com>
- <20250709040234.1773573-2-yilun.xu@linux.intel.com>
-In-Reply-To: <20250709040234.1773573-2-yilun.xu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|DS0PR11MB9503:EE_
-x-ms-office365-filtering-correlation-id: e2c19748-da28-4ab7-353c-08ddbf83eac9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?iDgSb/XA1WjF6vgrojZmuPSnIO/cB0Qpa0XDu04UUg384BndLjBLDeLoX896?=
- =?us-ascii?Q?9WA8Lfq/Taenot6xIA456HKc0y/gf3mUerqJHgIHWdF0SRvbN2ybdbib3jra?=
- =?us-ascii?Q?At0agpxg5zbEtSLojytAKdYB9+bEw+VXGv0GE45i/S+8yJN25iNfoxMUTMI7?=
- =?us-ascii?Q?VhlJCFXt1kXkA5M5MAn+8ISHvWJQPlzkDQxvwSvH1g8fgCtWOmH69m03Jnc/?=
- =?us-ascii?Q?fzcaQZhoLJW4nTttsInkaB/5XzpILFby44X05oaw9olQfLXkLTUidgllsp4G?=
- =?us-ascii?Q?T9V2slTBzsAmwPukj7s7l/a5DqAZm+P1J/z3Ws/86LBWaw0TvAKN2w9v+2mo?=
- =?us-ascii?Q?IUdquW9yOCIdgyuiYlHWDGuyrgaWkrnttw8nCl/p+pqunpJKuzeyvZEx3GBa?=
- =?us-ascii?Q?1jZqFaoZ/YorD2MElMzqd6zoJPfPqu0m/ShFQV0FylWsoVA2lCCjtLaKjFTR?=
- =?us-ascii?Q?Ecnui8RR80IYmO86jBWi1OXEqag0SS8Xmb+zQ4Nq2MyR3/cm+7Q6vAyym35Z?=
- =?us-ascii?Q?SSxr1uNwGsM5Us2gKBZ9c6A07zgJsa4F8dx6+MTL0QO/V6q4nzjcvNYmhotK?=
- =?us-ascii?Q?GL87U3Wij7ngPXC4t18oo3cVa5/Nkd0bB5YDaUhiIijUqb9RtFZn2ZgLvMJg?=
- =?us-ascii?Q?+TIe7LU5Bv8Mr0XgCjaJg+E/VX5fP4AYJC3VImthqBstIIxkQ7mbHEEGZKTc?=
- =?us-ascii?Q?u3M4ZwV3pLg5ufhmVdRNrEGTi/pKY8t2nxIGv0PXgctLq+cQ2+Qs6z4Yf0oe?=
- =?us-ascii?Q?0EW3Amd360CJFjbFMAaEFLFRS/xbMN62nurtbkt4/h5ZK2NBta1JEnzfotMC?=
- =?us-ascii?Q?oH0pZZJCP3z5Tg7qVLZMXRAud5w4aSeY6EHtATtDKb8ufM5ksJEMaskvr3y9?=
- =?us-ascii?Q?vrmR3gwM7KIVH6MZUR6PVQB7zXY567JqcNURjqbb4RFUcbwthX5cmdgjqyS2?=
- =?us-ascii?Q?JnUIelzeBvaVfQWECsx0gHQ1cVWPmBnQXExVui21eyoLpVac8RSRFbbJM8ws?=
- =?us-ascii?Q?D2exyUKQRkq3eAxyE5bNhr97EcMW2a2lE3kVKi3Nvs4kehBRkoKgFAXuK8VJ?=
- =?us-ascii?Q?LAuVnf1Ev2uuAVNqZjLRDbTamlGmWkfdQ/6pFVVe0Pluu7T3yyqAMjUKh82p?=
- =?us-ascii?Q?oC+a5f3PZBNtZJLZihY8oUiF82ejsMsXj95lpUG8PvQM9s9b4VaBOsZSEdP9?=
- =?us-ascii?Q?+hlAfjZv6c/Fr98evgsLvhEtWiNU9CENkBESf3FSS+/MOx7f2Svr6gZQwmRn?=
- =?us-ascii?Q?w08qHLHHeFsh+pFFK85/gmATCje0KZoFdmuZ2jS2JFut9tPu1dM0DDaFLuUP?=
- =?us-ascii?Q?T+VNY2qlWROYRyd7KsNLtOmbAPmTqb23UBcMXMs07tbwOSn2rAX+dJLYExr2?=
- =?us-ascii?Q?VF6MeUql51MKMVQd0I1Butyk8V+qw8sXYxI3vQ0zVqfM7nc2l1QF+3gHV/i4?=
- =?us-ascii?Q?6TqrmUpBAGwMixB2ltDKEWdGZ9j8ej9ztho10xDqo/ogw4uYNCqEHA=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?l4hKkm5setFUxMXhsgegYBDh2wGOzjJcK8rmCaycf2Q+Ku0Pdr+Uo5yMKraE?=
- =?us-ascii?Q?4zc8PwquRtY7/kCXGOUBEtEWxbz/i8W1Fp/co6WUyocYEifmX7bRXmx1L3TM?=
- =?us-ascii?Q?xx0GQ61kQz1oyYEq6Hcr1abjU/7pVJ6pv4WUIN0ZoQ//vfz0/RFz2IdZk7dQ?=
- =?us-ascii?Q?ZxWQNI3mOzRkCB9Imfo3uKWIYB/f1uqdNcthaxS1eg/RzoQCGGBev8TN0m72?=
- =?us-ascii?Q?8SYcWgKuSugCVwf1RI9u8Pj25B2rT5d8QE4dJrL5aBoERlMyknoYcAN4cLVn?=
- =?us-ascii?Q?/AjkJwQm/fVQl/px8w1NExl/vgxjHLUWdGUe+Vp0g3RA0TsQ7nti44tQ7K8y?=
- =?us-ascii?Q?XnlX+Q2NyvJvOZ+4dnUs2ToduCNSc7CjocV3XZMXWgmOOqhtz0VL/u4AN7VV?=
- =?us-ascii?Q?DLNNtmlQ+oQ55EJleyXh4hEr2l0xke7+uvABdfdIIlgMdooMfLQqJw74TGL1?=
- =?us-ascii?Q?ljKirzK6m+0b60R4hxGAzwUuDj4dktv42Sy0jCsoVPp1TaTrANw1aMDg+ybb?=
- =?us-ascii?Q?mU/Q8QJnA11IigPesOyGknuYgmNpBgtel7x9Tar9SHgQrGi52+yK2d2wXegV?=
- =?us-ascii?Q?a6foFDu2RICZ5ycbjnyEZcLL0ZB0X8iHssDr7F/95ptG8Ft+Mor6AhILbVM+?=
- =?us-ascii?Q?LE6Oq+d+aTqMvnc/IRoPO8gxYUqf//azgXKTpvkDdpJx38NFaYoO7ORUNh7/?=
- =?us-ascii?Q?0oIxwT9Y758rVueSVKFwCFYvAB9HxuldA4icTN8jabWS12w72xX0EMDT27cK?=
- =?us-ascii?Q?o7bP5jqgAQKJ4qmtuMZGYX6wc0UErsLqy+yCk75audRUydFGZUdPEsmcjRJy?=
- =?us-ascii?Q?b6K8Ip4mzvJQ7YXes9UchOpPFnLY9vbn94wmyK2qy72uORTlrhepkW5sfas0?=
- =?us-ascii?Q?BPygddSMuJjjfr0vQ3mCyAI0m84M5tFWyD55tg3YU/zNFlohPaFecyMmY/we?=
- =?us-ascii?Q?6o69qjqTA5GdxKSq+qCTjmWNV0fxx3wa9wr4cAJDDzLJD9+nGf++SWtBVfbu?=
- =?us-ascii?Q?oDegXGA3n2DB81CSX/yNeywsDbSP0ga/4WAzDpSZhiw7SwvxIhSKcLHUOSCi?=
- =?us-ascii?Q?lHurkACnwBp9eL6rZMWPJzN/XUuCgpuyGIBkoJD0dXgrmvWy+STTeLy3IHdz?=
- =?us-ascii?Q?JpxV0wdRZxBBblZ/BYUXgPanKsJ7egA2kMldXMhhDdpLQjsiWijGfJEkdn8E?=
- =?us-ascii?Q?IB602DTYEPk1793LFV/cZEVsCM+LZYxaGoRcGep1Ws/YVh4PalPPy1E9nKAi?=
- =?us-ascii?Q?SMOn3UJTvxGyJz0H2s6obIEbgR0iC7wsGt6St+cmiRF2u5odSvTHzN+5UUfm?=
- =?us-ascii?Q?qoDYWxrI9qGpGc2fF6o6YN/7uMzHypVEbqZLIIpWav0KYAuZ+SQ8irCNqG8k?=
- =?us-ascii?Q?9hLSayMHfzszlpD925Fl65J5yg4c1/FQVnLxKfnaGEOlhxjnSxj+NJL23Akq?=
- =?us-ascii?Q?P952h5bwE3ZNata9avy6TrJHv37LlJeDKDUgMp+MY9j6K75xJvVylq6Y6zvB?=
- =?us-ascii?Q?8mmpnT31LqC/mYPUryE2HckGXpgzWr6tk2UPUqXnPxu1CymqAhqOcFe3a6Jf?=
- =?us-ascii?Q?at7z+qb9/KubCMV5CKgjsrJLZcAz/5//JNhL4cPe?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92361227EB9;
+	Thu, 10 Jul 2025 07:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752132763; cv=none; b=eMyqyM9c/UxBFfe7qmqZ//dzwZr5mdyAmqFkwOKgtXm8+V5ioYnt8FMfyYrpU+A5oNL7zUTvjLMfoXXsQfYJcUrR+7nPOzp5Gwm8PbTfHmFjrkTwFhOn7IB4uHQLkZtqyIKqeDZsqiRQXjz1ULl9bzqNDiexv2sTPZdZ1CNDMlY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752132763; c=relaxed/simple;
+	bh=ESvz/aMQ45s+6/z/6QsQGCVI/B73/273Qyl466OeL1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sOXHNeltXjipRJQfl6apDi6aocrC8cH2FmEvA+cR7arXEtbqi2K8jX8KahbhO8EToEo3xCPJwro+jJhL6izVXHMVp5cIglxFuRU5vdbNn1Zv0lgExOGrouCPbSx0bG9nn2GknSsY+Mfs8A8YvssR9qu9cTCUpDkjj4imGhmKmgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnPUXsw7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67CF5C4CEF5;
+	Thu, 10 Jul 2025 07:32:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752132763;
+	bh=ESvz/aMQ45s+6/z/6QsQGCVI/B73/273Qyl466OeL1U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GnPUXsw7OJQlyWo6uBqnUBdiNaLRn8lWrqFsE7r86UzusxTd3mRXl2poex8UUxJ3e
+	 R4dq1hp1aEeMDta4GqahpX6ycaGiT02CKjQECgOZOgEAanDUXpuM95rYL5kCgXUkx0
+	 XWB7CS3vnFLmUNR47RDjFJkRmo3/6uUHwQO7SmVZ08TPHECiDISUv1icdQpf3420OZ
+	 ZSCehca3ebFKSMMI5YDH5ivV1HzfxWAUIp8t5Gb85WOTiANqVV+0xIpO/Q9vc91nCK
+	 /HGsx1AwoI9rL+R4ArEj78OnBaFrHLgPqf+4UM9Qbu9iwf/5OlFgWfxR4msvFE+D2E
+	 Dii0CISHIyWSw==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-553c31542b1so620156e87.2;
+        Thu, 10 Jul 2025 00:32:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBm+xczxuhobLQiX+YCegwbC/3WjtZCIfE1g/saVKew3ZtLT7IK5tfg9azT84TI2M37D1lFQljihjprLea@vger.kernel.org, AJvYcCXe3Afc4oOgBBGR7tUwoQhym0rVsdQA+wx0fA8c6I7YxjKTNLiVkY2+9uXoqFDfEmOoEQxa31Tmlj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwJARkW8aeGMoGRnRlb8gR2AtgfUAB32WDjabwsNQeyerN5zeO
+	kB8ISUiwqjgVRBXwUhJCO82ZaE6vJnma3vF8irCuH86vS/szzlTi8gN78Z6IWJLH+INnZBYPwGZ
+	tlJfSbyT2/mwIODiLFPbedei09QJdc1k=
+X-Google-Smtp-Source: AGHT+IEtVwAV9djQfFwoA1IBeLCVCay0CkhTeGJoYyUKB09pexaqDJ1lrfGjS0A4D8sMH88d3zURnxyLFVnl3sWz7E4=
+X-Received: by 2002:ac2:4e13:0:b0:553:3407:eee0 with SMTP id
+ 2adb3069b0e04-5592e2ecd7fmr605344e87.4.1752132761717; Thu, 10 Jul 2025
+ 00:32:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2c19748-da28-4ab7-353c-08ddbf83eac9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2025 07:32:25.6746
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZXjDLLIUxzmr4TasFbUlj+87uqjVk/UIV4LrAqtU4zbXMYE+LH/An+9WLwVSEIJY8p/+tyzJQtfVTo4T14EQUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB9503
-X-OriginatorOrg: intel.com
+References: <20250709103541.7268-1-feng.tang@linux.alibaba.com>
+ <CAMj1kXEvxPjFsqoMzZnb2zxSf9uyLVzuzKEeKD4fLEux3NbUhw@mail.gmail.com>
+ <aG5Lod-McOlBmt7_@U-2FWC9VHC-2323.local> <CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com>
+ <aG9qmV-wzFr7I-Tb@U-2FWC9VHC-2323.local>
+In-Reply-To: <aG9qmV-wzFr7I-Tb@U-2FWC9VHC-2323.local>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 10 Jul 2025 17:32:30 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXG+0hjhNziKMnhKY-uX4V=OBFuS1mUCdZs7VW2DjAsjyg@mail.gmail.com>
+X-Gm-Features: Ac12FXzcrwS81h_2LOgE93cGgRkIBJTXEvdRPyKl1GdAjQZ-aeSlCrcwBahhZOg
+Message-ID: <CAMj1kXG+0hjhNziKMnhKY-uX4V=OBFuS1mUCdZs7VW2DjAsjyg@mail.gmail.com>
+Subject: Re: [PATCH] efi: remove the rtc-wakeup capability from default value
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-> From: Xu Yilun <yilun.xu@linux.intel.com>
-> Sent: Wednesday, July 9, 2025 12:02 PM
->=20
-> To solve the vdevice lifecycle issue, future patches make the vdevice
-> allocation protected by lock. That will make
-> iommufd_object_alloc_ucmd() not applicable for vdevice. Roll back to
-> use iommufd_object_alloc() for preparation.
->=20
-> Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
+On Thu, 10 Jul 2025 at 17:24, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+>
+> Add Alexandre Belloni for his view on rtc-efi driver
+>
+> On Thu, Jul 10, 2025 at 09:33:19AM +1000, Ard Biesheuvel wrote:
+> > On Wed, 9 Jul 2025 at 21:00, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+> > >
+> > > On Wed, Jul 09, 2025 at 08:42:24PM +1000, Ard Biesheuvel wrote:
+> > > > On Wed, 9 Jul 2025 at 20:35, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+> > > > >
+> > > > > The kernel selftest of rtc reported a error on an ARM server:
+> > > > >
+> > > > >         RUN           rtc.alarm_alm_set ...
+> > > > >         rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
+> > > > >         rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
+> > > > >         alarm_alm_set: Test terminated by assertion
+> > > > >                  FAIL  rtc.alarm_alm_set
+> > > > >         not ok 5 rtc.alarm_alm_set
+> > > > >
+> > > > > The root cause is, the unerlying EFI firmware doesn't support wakeup
+> > > > > service (get/set alarm), while it doesn't have the efi 'RT_PROP'
+> > > > > table either. The current code logic will claim efi supports these
+> > > > > runtime service capability by default, and let following 'RT_PROP'
+> > > > > table parsing to correct it, if that table exists.
+> > > > >
+> > > > > This issue was reproduced on ARM server from another verndor, and not
+> > > > > reproudce on one x86 server (Icelake). All these 3 platforms don't have
+> > > > > 'RT_PROP' tables, so they are all claimed to support alarm service,
+> > > > > but x86 server uses real CMOS RTC device instead rtc-efi device, and
+> > > > > passes the test.
+> > > > >
+> > > > > So remove the wakeup/alarm capability from default value, and setup
+> > > > > the capability bits according to the 'RT_PROP' table parsing.
+> > > > >
+> > > >
+> > > > What does this achieve? The test result is accurate, as the platform
+> > > > violates the spec by not implementing the RTC wakeup services, and not
+> > > > setting the RT_PROP table bits accordingly.
+> > > >
+> > > > What do we gain by pretending that the platform is not broken, and
+> > > > lying about it?
+> > >
+> > > I don't have much experience with EFI, so I might be totally wrong. I
+> > > don't think not providing the RT_PROP table is 'broken', that's why I
+> > > tried to borrow platforms from different vendors to do the check, which
+> > > all have no this table.
+> > >
+> > > For platform which have no 'RT_PROP' tables (seems to be not a rare case),
+> > > claiming them support all efi runtime service may be kind of risky.
+> > >
+> >
+> > It is the other way around. The UEFI spec mandates that all runtime
+> > services are implemented, unless a RT_PROP table is provided.
+>
+> Thanks for the explaination! Yes, it's fair to claim the uefi implementation
+> on the 2 ARM servers 'broken' :)
+>
+> I talked with some firmware developers. They said the rtc-alarm service could
+> be implemented, while the difficult part is how to notify OS. I submitted a
+> request for a correct RT_PROP table.
+>
+> Meanwhile, given there are quite some platforms (All ARM server I can access)
+> don't have the table and not support rtc wakeup service, I'm thinking of adding
+> some runtime check for the service in rtc-efi driver, something like:
+>
+> ---
+> diff --git a/drivers/rtc/rtc-efi.c b/drivers/rtc/rtc-efi.c
+> index fa8bf82df948..7ae948aebd11 100644
+> --- a/drivers/rtc/rtc-efi.c
+> +++ b/drivers/rtc/rtc-efi.c
+> @@ -259,6 +259,7 @@ static int __init efi_rtc_probe(struct platform_device *dev)
+>         struct rtc_device *rtc;
+>         efi_time_t eft;
+>         efi_time_cap_t cap;
+> +       efi_bool_t enabled, pending;
+>
+>         /* First check if the RTC is usable */
+>         if (efi.get_time(&eft, &cap) != EFI_SUCCESS)
+> @@ -272,7 +273,8 @@ static int __init efi_rtc_probe(struct platform_device *dev)
+>
+>         rtc->ops = &efi_rtc_ops;
+>         clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->features);
+> -       if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES))
+> +       if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES) &&
+> +               efi.get_wakeup_time(&enabled, &pending, &eft) == EFI_SUCCESS)
+>                 set_bit(RTC_FEATURE_ALARM_WAKEUP_ONLY, rtc->features);
+>         else
+>                 clear_bit(RTC_FEATURE_ALARM, rtc->features);
+>
+> This works on one ARM server I can test kernel with. Any suggestions?
+>
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+I think this is fine - please send it as a proper patch with commit log etc.
 
