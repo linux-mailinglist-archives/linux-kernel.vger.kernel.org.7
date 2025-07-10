@@ -1,65 +1,60 @@
-Return-Path: <linux-kernel+bounces-726554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14DEB00EA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:19:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1246AB00EA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4B981888D0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:19:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18DF618887B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 22:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF29D295D99;
-	Thu, 10 Jul 2025 22:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE902980D6;
+	Thu, 10 Jul 2025 22:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qa6aYs06"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uSEkg1r5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED5814884C;
-	Thu, 10 Jul 2025 22:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D9414884C;
+	Thu, 10 Jul 2025 22:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752185939; cv=none; b=qdAQfclRTh9qlMz8uWPAJmGP8LdcLQ5pM33biX/pU3+tnAIGo/ItjRWIalR3SMeyOtwzCA3C8SGS7e2A8+wsOvKOiOLEFAGIGiNYfrV4/TNbxltfLHy/0FD9aZfttD51x6LktjUHC0XDNQreQTAXfglDJkcwuZQqLvhCQOZkAFQ=
+	t=1752185978; cv=none; b=kRFaTGHpbOK3iV6kHgDMfS+0Tu0itsOy1/wIz1uJVo1BJZCnMP5oYtdNjXEey+247YWA6wpAS9f6y7FdVvCjCHdp+f0x1H+YpPicqlWi0vzfiDUPhzxzH9TkWXrNengAaL3O+mjq5wNS1o6crWYKusgaFgwk2WRAWdVUmczP/7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752185939; c=relaxed/simple;
-	bh=RxVBwyXBv5LWziR/6/tS4iFFqMsUTBajjCGOPP5GU5w=;
+	s=arc-20240116; t=1752185978; c=relaxed/simple;
+	bh=qWJ9OuQImauUF3Zjux87h1FusUr34Lwz8v8vuFD8Z9o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPwsIVBDk+ghHYHsbZtaz3Ui+S8jeC295atNC075tlAphWQkFAwYlsOyyX4QaQfcnDH0lnI438LeOM8SxKy0OrP+unb43uqeCPtnUpLHH1nz6bvrZpVyBIQTfMHc2m1gJQHIhdaSKzzRqlnmcAumBsBwLpTpk6K5BQkneigsvTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qa6aYs06; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B35C4CEE3;
-	Thu, 10 Jul 2025 22:18:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kk9W+5j5+tFpersmdwUUtF+bd0liZNxwyDqc7wa1wTJTIpJxx3aCD21aJz9swqDM7CgkKgos2WfbjnU3OiUcZPVuxh+6/S8h09meBwt0d3ymZLQg0HkR5fc/j3H3JY2xL63Yw9YpkOek/6EWXGn8q55LlVUJzPOKLTRQbaV8HMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uSEkg1r5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A0FC4CEE3;
+	Thu, 10 Jul 2025 22:19:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752185938;
-	bh=RxVBwyXBv5LWziR/6/tS4iFFqMsUTBajjCGOPP5GU5w=;
+	s=k20201202; t=1752185978;
+	bh=qWJ9OuQImauUF3Zjux87h1FusUr34Lwz8v8vuFD8Z9o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qa6aYs06ohrcMbMTOjTn2wKTdl/OLauQ6W1uuk6tcOhc/BzKbdCpMfuwzcJbPXGvz
-	 P70J1etQPpq76UkNWWKPVIKYg259eOEdLiuqqWDn+teo3D1j2qLpziXm0g6CxYO+j2
-	 Oli1odsGQatjX0+3xt5fsJdbkCJ66eIUc4IXqQQzxgMvDcjlOOYk5s+01tosaHUdCO
-	 6WpwAhy3v6gZ3+L6vzB8RqjQ6a0K//jzWxb1pK/GwQnO1+5hYNtW0f+bWjQGtu2SV8
-	 Ee1Zzmar2RDnXFfwBe9NrKV0nkjJM7CT2+1yBqlZAHLBsmYejYBfWfHGkHcZieUkkP
-	 zA/U6VhCqVUeQ==
-Date: Thu, 10 Jul 2025 17:18:55 -0500
-From: Rob Herring <robh@kernel.org>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: imx@lists.linux.dev, Philipp Zabel <p.zabel@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
+	b=uSEkg1r5k9u8Rf86Fq+1vnxiZw+blZLEXki4fYuI3RS566yZT0ufwm0d0dpuhAoro
+	 fWOGdRFPA77cKUV6mh/hRDw2xSvXAaqoDXF4pGkEEDxYFVtJ12f/uAcDSiAw+KIx36
+	 jmAS4UlN9Td6wVH1XwEr9g5bgxQR0qCxkCnn4SQIxJasEQyk/sZvCALU/uD7hWCXpi
+	 uOEmoF9QIrewUGnT3IpBRkzKE0g3W7r+xUeHeca7wcDxIUJCpYq9oxFmzlDkjy2uYG
+	 6TDoRUSAKCizYzzSDS7KktmfGOztHwjF54DFqCQ9l93ZDZtVYC2RDuWqPmnyaiYcqP
+	 XWdcgv7D+RQRA==
+Date: Thu, 10 Jul 2025 17:19:37 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Johan Jonker <jbx6244@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/8] dt-bindings: display: imx: Add bindings for i.MX94
- DCIF
-Message-ID: <20250710221855.GA4126646-robh@kernel.org>
-References: <20250709122332.2874632-1-laurentiu.palcu@oss.nxp.com>
- <20250709122332.2874632-6-laurentiu.palcu@oss.nxp.com>
+	Quentin Schulz <quentin.schulz@cherry.de>,
+	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	Dragan Simic <dsimic@manjaro.org>, Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v4 03/10] dt-bindings: display: rockchip,dw-mipi-dsi:
+ Drop address/size cells
+Message-ID: <175218597662.4163951.14813766986445272508.robh@kernel.org>
+References: <20250709132323.128757-1-didi.debian@cknow.org>
+ <20250709132323.128757-4-didi.debian@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,134 +63,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250709122332.2874632-6-laurentiu.palcu@oss.nxp.com>
+In-Reply-To: <20250709132323.128757-4-didi.debian@cknow.org>
 
-On Wed, Jul 09, 2025 at 03:23:24PM +0300, Laurentiu Palcu wrote:
-> DCIF is the i.MX94 Display Controller Interface which is used to
-> drive a TFT LCD panel or connects to a display interface depending
-> on the chip configuration.
 
-Drop 'bindings for' in the subject. You already said 'bindings' once.
-
+On Wed, 09 Jul 2025 15:15:16 +0200, Diederik de Haas wrote:
+> The "rockchip,dw-mipi-dsi" binding has allOf "snps,dw-mipi-dsi.yaml"
+> which has allOf "dsi-controller.yaml", which already has #address-cells
+> and #size-cells defined as '1' and '0' respectively.
+> So drop this re-definition.
 > 
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
 > ---
->  .../bindings/display/imx/nxp,imx94-dcif.yaml  | 101 ++++++++++++++++++
->  1 file changed, 101 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/imx/nxp,imx94-dcif.yaml
+>  .../bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml     | 6 ------
+>  1 file changed, 6 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/imx/nxp,imx94-dcif.yaml b/Documentation/devicetree/bindings/display/imx/nxp,imx94-dcif.yaml
-> new file mode 100644
-> index 0000000000000..e4cab43c77ebc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/imx/nxp,imx94-dcif.yaml
-> @@ -0,0 +1,101 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright 2025 NXP
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/imx/nxp,imx94-dcif.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: i.MX94 Display Control Interface (DCIF)
-> +
-> +maintainers:
-> +  - Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> +
-> +description:
-> +  The Display Control Interface(DCIF) is a system master that fetches graphics
-> +  stored in memory and displays them on a TFT LCD panel or connects to a
-> +  display interface depending on the chip configuration.
-> +
-> +properties:
-> +  compatible:
-> +    const: nxp,imx94-dcif
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    items:
-> +      - description:
-> +          Interrupt output for CPU domain 0 (controlled by common registers group).
-> +      - description:
-> +          Interrupt output for CPU domain 1 (controlled by background layer registers group).
-> +      - description:
-> +          Interrupt output for CPU domain 2 (controlled by foreground layer registers group).
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: common
-> +      - const: bg_layer
-> +      - const: fg_layer
-> +
-> +  clocks:
-> +    items:
-> +      - description: APB bus clock
-> +      - description: AXI bus clock
-> +      - description: Pixel clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: apb
-> +      - const: axi
-> +      - const: pix
-> +
-> +  assigned-clocks:
-> +    description: Reference to DISPLAYMIX CSR clock mux.
-> +    maxItems: 1
-> +
-> +  assigned-clock-parents:
-> +    description: Parent of the clock mux.
-> +    maxItems: 1
 
-You don't have to document assigned-clocks. Allowed anywhere with 
-'clocks'.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  nxp,blk-ctrl:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: A phandle which points to NXP displaymix blk-ctrl.
-> +
-> +  port:
-> +    $ref: /schemas/graph.yaml#/properties/port
-> +    description: Display Pixel Interface(DPI) output port
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        display-controller@4b120000 {
-> +            compatible = "nxp,imx94-dcif";
-> +            reg = <0x0 0x4b120000 0x0 0x300000>;
-> +            interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
-> +            interrupt-names = "common", "bg_layer", "fg_layer";
-> +            clocks = <&scmi_clk 69>, <&scmi_clk 70>, <&dispmix_csr 0>;
-> +            clock-names = "apb", "axi", "pix";
-> +            assigned-clocks = <&dispmix_csr 0>;
-> +            assigned-clock-parents = <&ldb_pll_pixel>;
-> +            power-domains = <&scmi_devpd 11>;
-> +            nxp,blk-ctrl = <&dispmix_csr>;
-> +
-> +            port {
-> +                dcif_out: endpoint {
-> +                    remote-endpoint = <&ldb_in>;
-> +                };
-> +            };
-> +        };
-> +    };
-> -- 
-> 2.46.1
-> 
 
