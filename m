@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-725115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2007EAFFAF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:34:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF33CAFFAF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 09:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14A564281A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:33:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B598C1C2746C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 07:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C5828A3EC;
-	Thu, 10 Jul 2025 07:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD49928853D;
+	Thu, 10 Jul 2025 07:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="l3HtWAI9"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="IQynHqge"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAD6289E2E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F743288512
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 07:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752132823; cv=none; b=F2bxl6X88Kbo7HzeoX3t00RUX7I8SqqBeEc0k7KVHYe6BfR8S0xBYRo2TTklbxZsvYO82/6eR0844NbxeIJUpFV3M/rBW+BGwJ+GF/ktKyh7DXjBOzWdjSXguVn49LFbHRxUB/REolwNEvKrabMot/dB3KXtOiMiDRsShaq+iG0=
+	t=1752132848; cv=none; b=lAd8RIRjnYBhLgW47Ok/q95FNPdRjuOs6XjHgTlDaJ47Bi45PnT/5pmLHvIZBazxaUbiUQaJUkG9L4P7sK5sG0tob9/FvmXP1cUXSrh+JMkL/Fwg7LrO8HRt81A8qGtToyqWVkRc2EIyFJJgWaMCkq5jK4GQ/L0YrHiuao12g30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752132823; c=relaxed/simple;
-	bh=+cjQnk++1bzGkpqMFN4wt4PyunkBLE0VE5bOPYI5+EY=;
+	s=arc-20240116; t=1752132848; c=relaxed/simple;
+	bh=vHRxZ7iR9VbaXp7pjVioRMGXRK5cXAtuCkY7JdlvtY4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=STcHHUmM4SPAb71c4065BWW8CbKbC8qzuXYj8eiX9E1rWOuI16UEmL1L6W/HnxSKSpieoNFbv4wCYQTPidg+nybdJja/t3nwpcFKHu3ggbv3ZEgxPcs4WQ3Wf6AE+10lDlqiwbazHQgQQNIEnHMU0Oej+39f4IhtGhSF5G0c8lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=l3HtWAI9; arc=none smtp.client-ip=209.85.208.42
+	 In-Reply-To:Content-Type; b=ibVQWFProbEViXhbKiivqrmnW3oWysblczikHSDJFogP0/bDVPlWyA0+bDbR7PSiq7nKNR7/Sjtmdacdq8z8l2tHBZgcvGDl8q4/tTtrQEXStfc/a4vEMJOYJSnuFTVOhHAJ48hBTu7rKtwTqDtLfh8tvcqo3v8d5lTkxnRh4EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=IQynHqge; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60c3aafae23so3869928a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:33:41 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae35f36da9dso123051566b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 00:34:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1752132820; x=1752737620; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1752132845; x=1752737645; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Dc3P5Oeg2bmqCJNQbYoEMD7h352Kk7u8cbR4u9q01PQ=;
-        b=l3HtWAI907PF2MtzWugEjsOEFkLy9glYCb7hhMExDJseRo4UKTwHugeZ7m+eDnlYQ4
-         FuM0FhunTmEvUw1FOeMGryU14iVA4OxKe9JGc45q2tMeoMS9fIaHuQRxHyEeVWsQvGyr
-         saEDZidxexBF5yGCAFRIFzMhmMmqK0JwyNkpMhqsKh1eNP77YLYDeN5kR2Gxu2piYACg
-         ZiHAHoVPhiBcyaFPgyzNdbu36zQZChYS2JPbbFwZLXivWoro9X7HiUe7ecDs9oj+f2bx
-         bgagzzJrSxEkpvJUn2lE4yKV5e0fxZ0OKqqugu6vWb3OyBq+GT5INouMH4+n4Isx4jhs
-         dcnA==
+        bh=JawF4TGF1j57LNBqwF7f46NzGiGmOvF3HoWhyY7xlVw=;
+        b=IQynHqgemBYN/P4qlpKmd79Bj5ITfLKyGAdNOAcJJLmTwhEoXTLrCQVCgE+Esgfap+
+         RSiEs6SbTe6C8xNt+WgX9PpydLmnbh5LFNAKhzpLceeKYlRYv2r/iYGsqXBDtEVBfIwV
+         GJRFWWakY2JqvE7o0fVGec0Sy1xpC2fNUwrElCtYPbj/ID+5ZsD2C5pfhjobBRBPC4e4
+         JSnMk1WDRCpE9rxbjj2QS49FFccEkY7q5ElyVPb1ltRx3DUvDvap/hCURdAzpWMelyf3
+         qWQDxpRFpWjxcl6z5QG0Dz0KnN/B7ruz1/zk/mA0bmk7guqNvypwk5008FjzuzRSZiZq
+         YDwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752132820; x=1752737620;
+        d=1e100.net; s=20230601; t=1752132845; x=1752737645;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dc3P5Oeg2bmqCJNQbYoEMD7h352Kk7u8cbR4u9q01PQ=;
-        b=NfivRyhHSeD7GzqD8zZLiFX5SvAqbOsoRx1aSG9VNZ6quoOP23N0PikWswSBo4bMdO
-         w2WDY61VzH+5o6F6Jl/MZqqje/9GG9IF/kZ6K8c9IYAFG/mXN+sMCoAkGMjs2urfHKOM
-         szListAuBin8iOkiHvwUpZnRT65jpzgyy/gETBcwP4VcJdo7xYSz/F4V3kUOFkiejeY0
-         ZfP5Zes/FlSUraA+jp7yQS95J4XgvR2YTDJwwIF4DuV8vIwbJia3v4PEoCCh+LfqVlJ9
-         ZfImT4d4ay1ScyfIFU0B72GPLPjkIBwIpTOaUNDImpL/bGQYxSLWKmzpnUjqDFqZ7oco
-         Da3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVaI/WrRosm942wwhj7vMJErUtFF/rsULZ3S7fDrQxlDRRBulU3y5dCajWMXcpqCz4tJK/N6lL+xBezIHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGvXHbnG1kT1R2rVzVE2rnLm1EimiaUx7a5IBi9qKVKfcUkzGp
-	K+d43V0Wqd5MVhy4iNgeysjfU89stMAkxEWS/NflVhKNxD8JEjmqvHHf7COCZTshPv8=
-X-Gm-Gg: ASbGncsVIlOCnzwmEH+6oMx+veE7w0BCLDg1oJfYZMVb7/Rg0GFYSYCfGSiLZNGPWAR
-	ZFZNwlQgetIJKW8o3TplHTT12qwBFA0bV6u7jre4fYm2iiYIPZR8SR00oBs9Oz2oxrCJfbWNgXA
-	1nAnRWlrLlHDLlgS/74TKBQArObAn3Kkq1YmBWfSqKWTivj9CsH6Kp4zg6cqCY2naLv16JDQjn+
-	avolqv9Xp05sfOXyMmvyjtxE0uiycRGRC1LQ2nGOMQwJxvcqpXYdOwkQkEpHH212kVypCaUszG8
-	sYsSldsgLzgH1sLxLDU5edkz4Ek8caJ6pr0SG0MEtB1PmCUosnOX9DgqPqYP1cadiTqDLA==
-X-Google-Smtp-Source: AGHT+IFP44qvVL01Qb6g5roOyXaKEqhnKPzl7FYoVy33V/zCBqQ1uZivmGf2cxu6nX3jQYwA8oqa8w==
-X-Received: by 2002:a17:907:c88a:b0:ad5:6174:f947 with SMTP id a640c23a62f3a-ae6e24bbf63mr210305366b.22.1752132819879;
-        Thu, 10 Jul 2025 00:33:39 -0700 (PDT)
+        bh=JawF4TGF1j57LNBqwF7f46NzGiGmOvF3HoWhyY7xlVw=;
+        b=Iy+rKvXAnJb6INHy7gfiQmbO0Ab5jmPy03bu9Cpt28PNpqRQRXi6RYgaDy1fRTLG1L
+         7j8Jbc/B8jPvV7VsnGPOeJM9duOGAty5FWqYnkHTXozMFzctPIHpeocpe/5BZXuuKpMh
+         yeBunMipggu0owryrrBAackD9z2IZoOWc8Udeg9PpMEtYFDH+F0scoU8W4P7fB7jZ8P2
+         KpXrII2lfz2pAWPnCAT2yEDdUFqd8wS9Mx2PuQxoRn3aRGESmRBDICaHf8eJBm6P2frQ
+         qzDeSvRN+Afx4acwcv1av2Ox4odnQ4WKdqQvE/iaDrDeHu3K35mUAZWuE9TZVV3uS85X
+         V8dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXre+ExSnnpw8m3dGn40yXNuiRw1XmsHb0gzk5KOxI/9S49fzPkhFrQM81rdzknzVKX1R3CWsg/43jZPxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAFNuND7eOI1X8Wrrl41E1SiRkj9lh0ZCIK6FFs4XasgKiGKvy
+	eBV17FEPxnx7d0qPJj+x0Jpxfxa3NaR17duyYgRl9zP99gl9iUfnu5jwnGOZiVVld1s=
+X-Gm-Gg: ASbGncvCCjpi+nIkZWfgtBf8x9wgNtyIv1N9xPosb197fhuiFLF+t/er0dJHZyaZWW8
+	4im5FJi7HCUoJ+u+ayS4ul1oOtRdVWc44RcL9AFQRXHuOT7pzUc1uh/yqKfTVuMJjkkH/g5NqTp
+	YJ/eigr48/2kS0Txe5aKKOC6P0tkc+RktPUYIfB3rqZHLuQZEDgF53KQq7TxXtPqpZ7rIpB2BuE
+	hdLVZk8TesUkLhz7rKyKbc2cdquffOucz4gnaehtqyZUx8XShdEee0gcISvLq7CYmw5oRBNFsT+
+	slW48KBFSjT6cbHJ2IA8PQXLCyiiZCRYyZffrQUTbIVPa2yzuXwIkjZosNM1Y8lkEk/J0vpMeYz
+	k0aQh
+X-Google-Smtp-Source: AGHT+IGPe11W59uO1omcl8GyG58pyhcK7ZXWq168g/SLScHSinvdniJYkRnoIhmYDGQWOP0mBpiX6A==
+X-Received: by 2002:a17:907:3e24:b0:ade:35fc:1a73 with SMTP id a640c23a62f3a-ae6e70f48ffmr163003566b.55.1752132844772;
+        Thu, 10 Jul 2025 00:34:04 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82df311sm80484166b.165.2025.07.10.00.33.38
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e82dedd3sm81643566b.150.2025.07.10.00.34.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 00:33:39 -0700 (PDT)
-Message-ID: <47a9830f-e0cf-46d7-8f8d-344901bb6236@tuxon.dev>
-Date: Thu, 10 Jul 2025 10:33:38 +0300
+        Thu, 10 Jul 2025 00:34:04 -0700 (PDT)
+Message-ID: <31ee6752-a898-4cef-b339-9991d9df1580@tuxon.dev>
+Date: Thu, 10 Jul 2025 10:34:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,26 +81,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Update the cache configuration for Microchip SAMA5D
- MPUs
+Subject: Re: [PATCH v3 0/2] Add cache configuration for Microchip SAMA7D and
+ SAMA7G MPUs
 To: Mihai Sain <mihai.sain@microchip.com>, nicolas.ferre@microchip.com,
  alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
  conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250625064934.4828-1-mihai.sain@microchip.com>
+References: <20250619070636.8844-1-mihai.sain@microchip.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-In-Reply-To: <20250625064934.4828-1-mihai.sain@microchip.com>
+In-Reply-To: <20250619070636.8844-1-mihai.sain@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 25.06.2025 09:49, Mihai Sain wrote:
-> Mihai Sain (3):
->   ARM: dts: microchip: sama5d2: Update the cache configuration for CPU
->   ARM: dts: microchip: sama5d3: Update the cache configuration for CPU
->   ARM: dts: microchip: sama5d4: Update the cache configuration for CPU
+On 19.06.2025 10:06, Mihai Sain wrote:
+> Mihai Sain (2):
+>   ARM: dts: microchip: sama7d65: Add cache configuration for cpu node
+>   ARM: dts: microchip: sama7g5: Add cache configuration for cpu node
 
-Applied to at9-dt, thanks!
+Applied to at91-dt, thanks!
 
