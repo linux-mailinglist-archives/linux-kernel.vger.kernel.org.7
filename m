@@ -1,87 +1,135 @@
-Return-Path: <linux-kernel+bounces-725824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154CFB0045A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:55:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A366B00478
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E41E188E075
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:55:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7493F5A3110
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FC72727FF;
-	Thu, 10 Jul 2025 13:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34892741A4;
+	Thu, 10 Jul 2025 13:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QoRkk9ck"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dprSP3bJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996F027056B;
-	Thu, 10 Jul 2025 13:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B32E2741D5;
+	Thu, 10 Jul 2025 13:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752155569; cv=none; b=KIP9O5Y2N7DHE1+5v21tvaAHHSwfS7DoRlN5SGA+O3COkXGbwhbrW4jjPvQA/kOpo5jaT57K/GmUHQPDsC5ysB16yBUPqTbxVoygsu4Rcc7weT9pg5uo02ovHrRXyCRw6km1AwOTG/9Hiead9YI1yCkvimFxmrSEEuZ3I0xXkKk=
+	t=1752155592; cv=none; b=Bt2+BgxjBD98gWWiEfsDYmp/UDlItrqCi5V3NXTasMSuW2zNAfIs/jumSHXzIJ266WpQ47Ta4BWic1fpmyabWzVw7DVvkBS2VncvyEy5LTWMzsLKQ82z3u9FZ+quh4J6mDMiNaRumUJ4hYXSzt/kreMSuzBFBnl1Ksjo2AQUKZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752155569; c=relaxed/simple;
-	bh=IUOgLyE0XPCQkDQ5QcbdjweqeX7iT7gt/pUXhtCiq7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RzKulb3RC3DMPVFp8eMO49B7WOrX4TW1OBZjxiDaCOGduyxnQ1dceLMeUxDCeHlkRJEU5j0emNrdRGEKR7yvLTk2d+pToMAbRylOMMYyM9QbVDdZx6UJJqfra9GZdgRk30Ad3/VR5+W+NQ7nB3w7n7uRXW6gKEh813YCMPNzff0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QoRkk9ck; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B7AAB205B3;
-	Thu, 10 Jul 2025 13:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752155560;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=stHEMGeNbz5JRq98cdiCOEgRTGMVYPBq1E2sda8J0wM=;
-	b=QoRkk9ckZddQXHpm4Pbx/E35t4hx1dgASlUABvMZyYL/m2GHgCZEIGqsG3pgFlv6wFRm/M
-	4BPtnjQV/sUokpUVF5VOsNsct6YyBj/ryQKtjHaVYMsMDCbbDgCQu4QakiF20Ea4PDhgJk
-	k+8+un8SMKRyeBjLeAh8oFllcRHLqVSgZtkw94NtE8Er6X7Fu2pyGzgIoifP7ZAys5RFC9
-	JUWTM6JcdVgzOX3DtVKuPR4f/O7A3CC7dUCGrnaWZS/ePOxx0RshfqzMWCS2IC9yYJvNlB
-	K9IvwYFYwLWhEf3i9DFYS6DLkMncCXZRyvwa9Wqi54/9UeJyfNy7iDgdaDXPPQ==
-Date: Thu, 10 Jul 2025 15:52:37 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: shenwei.wang@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev
-Subject: Re: [PATCH net-next 1/3] net: fec: use
- phy_interface_mode_is_rgmii() to check RGMII mode
-Message-ID: <20250710155237.2975031f@fedora>
-In-Reply-To: <20250710090902.1171180-2-wei.fang@nxp.com>
-References: <20250710090902.1171180-1-wei.fang@nxp.com>
-	<20250710090902.1171180-2-wei.fang@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752155592; c=relaxed/simple;
+	bh=U9guwqJci8NP6a0yfqpBMd5Vn2SbFy+CrvHcPob9HAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DUXwoGto4RO1q0V5ylBgF3OiE7UUe1YQqjIFhLMVWvpZ9k3J8MhCcnTjvIitZulRQkwpCSyjXyz6YQfgZ1bcrhEfawomwBG8t/+cNeGIKBeah8YufnvvBVJ7COMEjFcq4ygVV2hDIEeXJ4dF2HC1de07ITeGXgGAm0C/LLvnFcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dprSP3bJ; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752155591; x=1783691591;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U9guwqJci8NP6a0yfqpBMd5Vn2SbFy+CrvHcPob9HAg=;
+  b=dprSP3bJgcHsWfIGPLN4PT5bKRxJpkg3oA5SOOk5p4CoTcwJXxK1HSWI
+   Xi+NrZOxlDifx/8khontUX2O08g9z9fnRRdjxVvvFnPamiT3gYzA8dmDb
+   GhWHtdBGnCyZC0BuZk64M1j9bSeaTqCxeRA/iylzaXKRJ1va6rZSeSDWh
+   s0e60r/h12LXxK9Em3EaM+PQHJdBE+Vv+j6+dvugTOHsZxrYiqTHRcRrw
+   pVV1R9ZVmZVjAKdQUET1t5UBiXfIZQcxs4prC+Dl+hZwHzot7P7tC26FU
+   p6pWvwmOWzMlIGqOpV2PcO8o8WUbiy2kVSR8u7yTvza7X2bKdSlpjYZ1G
+   g==;
+X-CSE-ConnectionGUID: 4/qqkiL0QyKdPr7R48KKcg==
+X-CSE-MsgGUID: DSFARMWqRCm2YpKoFT5jLw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="58243504"
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="58243504"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 06:53:09 -0700
+X-CSE-ConnectionGUID: 3G5UpA1+RWGAI3qLJGBvRw==
+X-CSE-MsgGUID: 5LPmWD7vQ06paQ6dFGhjXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,300,1744095600"; 
+   d="scan'208";a="193300156"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 06:53:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uZrhu-0000000EDXo-0n5v;
+	Thu, 10 Jul 2025 16:53:02 +0300
+Date: Thu, 10 Jul 2025 16:53:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: andi.shyti@kernel.org, digetx@gmail.com, jonathanh@nvidia.com,
+	ldewangan@nvidia.com, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	p.zabel@pengutronix.de, thierry.reding@gmail.com,
+	conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH v6 2/3] i2c: tegra: Use internal reset when reset
+ property is not available
+Message-ID: <aG_FvfN6xXuULolK@smile.fi.intel.com>
+References: <20250710131206.2316-1-akhilrajeev@nvidia.com>
+ <20250710131206.2316-3-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegtdeitdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddupdhrtghpthhtohepfigvihdrfhgrnhhgsehngihprdgtohhmpdhrtghpthhtohepshhhvghnfigvihdrfigrnhhgsehngihprdgtohhmpdhrtghpthhtohepgihirghonhhinhhgrdifrghnghesnhigphdrtghomhdprhgtphhtthhop
- egrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhm
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710131206.2316-3-akhilrajeev@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, 10 Jul 2025 17:09:00 +0800
-Wei Fang <wei.fang@nxp.com> wrote:
-
-> Use the generic helper function phy_interface_mode_is_rgmii() to check
-> RGMII mode.
+On Thu, Jul 10, 2025 at 06:42:05PM +0530, Akhil R wrote:
+> For controllers that has an internal software reset, make the reset
+> property optional. This provides and option to use I2C in systems
+> that choose to restrict reset control from Linux or not to implement
+> the ACPI _RST method.
 > 
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> Internal reset was not required when the reset control was mandatory.
+> But on platforms where the resets are outside the control of Linux,
+> this had to be implemented by just returning success from BPMP or with
+> an empty _RST method in the ACPI table, basically ignoring the reset.
+> 
+> While the internal reset is not identical to the hard reset of the
+> controller, this will reset all the internal state of the controller
+> including FIFOs. This may slightly alter the behaviour in systems
+> which were ignoring the reset but it should not cause any functional
+> difference since all the required I2C registers are configured after
+> this reset, just as in boot. Considering that this sequence is hit
+> during the boot or during the I2C recovery path from an error, the
+> internal reset provides a better alternative than just ignoring the
+> reset.
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+...
 
-Maxime
+I would perhaps expand the comment here to explain ENOENT check and what do we
+do in this case. (Note, no rewriting of the existing, just adding a paragraph)
+
+	*
+	* In case ... we compare with -ENOENT ...
+	* ...
+	*/
+
+>  	err = device_reset(i2c_dev->dev);
+> +	if (err == -ENOENT)
+> +		err = tegra_i2c_master_reset(i2c_dev);
+
+>  	WARN_ON_ONCE(err);
+
+Other that that, LGTM,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
