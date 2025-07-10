@@ -1,201 +1,137 @@
-Return-Path: <linux-kernel+bounces-726309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C97B00B7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:35:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7378B00B8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 20:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28519483091
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:35:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BCB44A6F09
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 18:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28412FCFD2;
-	Thu, 10 Jul 2025 18:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404C02FCFCC;
+	Thu, 10 Jul 2025 18:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V5VgZnHB"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75E92FCE07
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IIAJzycP"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A322FCE3D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752172549; cv=none; b=Icg6y9W07EDSEZ3x/gRXO22NpHUg8Wn/D/pRmRpBwASLrzpH4hBmFFnFAWTG2uCvinJLmyH5YQeefhlb1Wqqnzn1MB4JfWNyKDgb6M5OpnhzquXc+wc1c4Zanki0L1/8HxlWSKIUGICnwISacp9UPRv7yRlPwUsJl3uc5sAUIYk=
+	t=1752172828; cv=none; b=lWRYS/riPoc4fNUvoLcyCoLBHfGdDQ88hnfPTSDz6m4ZpL2MfDUr9tf9F4NnUz1usNqYNIj5So9YbJpKK+9aqYw+krK2nQYTQC/Y4tuJOI4UphmdzmZ5m530tgbYhfyBOVt8AoSrjn1SFbL9Hcs9QYuO6Gxpsv3IMQuuN16A0RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752172549; c=relaxed/simple;
-	bh=BQi/oAxmvttoMCkmYmgHMY9tc5kt6YdUCM6RxGff5II=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MKSnW30g8Ep+Xjzpy63tVMAsVDnn5CIyde5WiQyMfhYvKAAMnbSqVdwQ5HgG/PDINamjDcFwgPinQ53YOfjHl6xKcH8ow2aNzmzRf11jk++/SBn71OYnVCHteLi1ZqA3JTWHGcQeURTmJPzahu6Uxh/pmF0+D8U4Py8GHvDz114=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V5VgZnHB; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23dd9ae5aacso25935ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 11:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752172547; x=1752777347; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sUFyFG64jchMDy9nJZhwnx6mFvVO2+1zDBN4KcsNtGQ=;
-        b=V5VgZnHBUAwpIKTq3Kone9pNEIxn1KsfehINSGQXDEJfYnBfLnPl21en0eF6+49Qfs
-         IPEJOc8dP9hY6i4PbXLFaSWPpd4u/BMAuR8BV3qOcZuLxkYayCSzAwwTQX4zu9nf5vBp
-         r1kGNnpX6l1kYIdXy9XwnzsZvOrOMSuK1VNBw6KJbTceShJ1ZD/VRlIyTrsVYcw0R5eJ
-         a5xbvLIeqGPZs3bORCV26MrxNxkd/QG2JikR04f4cA66sAmjo0xfQxvVduEcfrGgaq9m
-         a8wbPnuILhBPwzAg+1iqeYBopGM5PoqkBRdJ41S1Ybp7lD6+mFpxx5MI7QLb3FBLVv4t
-         03tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752172547; x=1752777347;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sUFyFG64jchMDy9nJZhwnx6mFvVO2+1zDBN4KcsNtGQ=;
-        b=fYsmOkz1IddJsjSpgIyVR88jyqkVmRETiRgM8//iNWG6PnZ+YQUMto8CO8WRmiCPEf
-         xugBqwbaQvliOp5RDMDU/2H4DSZ/k9nga2HXEtFjJbqc8bwahifwo1bzSNwLik/CI0yL
-         vDfN6cfVUcF+KO5prSsep03fKalQmJE925aEHKDk8IsLZg1bHQED1q8AXQ3pXWs2vGa/
-         FWRO1OvJoTujSOXQDId1GxbeiJ6C9dtKtPd9SgSiu2EbaATHrqrF0bl8O1k24PjUrE/u
-         LoLbmlDInuDvoNL/T62MaWQtTMrhJwBHT9yywYrUNHxDE9qOVqV+N7HtYxVJVivmb7ll
-         Q/cA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9vN3li0QOTfSZm1B/stpA6DBfKE0JsWcM7AsP+fBDaSRJjaZtL18/y66/aIsL7686wv8jfkPcwcbBKf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq5PEp2AeDEBMCa99zXoXhKOVE4rISyD+fJn+WXjsJTj8QJ7RU
-	nNl9JPPhSQKc6GKENxg8J006hnXdr5pSKJ/zvq3CdIanJ0xdHEhDBO0gWtPHQh7HlSS9eaf2zsZ
-	eIO3VMLZ4MocRJjRphUltuTBWRVBRX12X21Hj8LtJ
-X-Gm-Gg: ASbGncv2Q0gUchgcxhRBxS3k1LZpUmpGIyBleTnkcWzhwxXg2Jy7NdMs0t2zEhzXKf/
-	iIq8T3/fPtAPN8gpkEG1rffCfMDFyxmjh2Bw89D7abpQDpxbzbRCC5mv39gGEkNblD4MB6Lp7br
-	ELxSNLDKGm3DdkcWUb6HR7rWyxigRPkIgua4e2SkoO9HdiO+qG+lhN4QLiTPQPu7xJkBrzEoQ=
-X-Google-Smtp-Source: AGHT+IEzZmw78/OSXjJWOTZycozUs1vUEUMKIB/o/lKBX8kmUgnw2fbBaI4EEfFVqfugsZvpbjLQdKz5IhYTiVxWNgo=
-X-Received: by 2002:a17:902:b095:b0:231:f6bc:5c84 with SMTP id
- d9443c01a7336-23dee18a914mr236695ad.8.1752172546684; Thu, 10 Jul 2025
- 11:35:46 -0700 (PDT)
+	s=arc-20240116; t=1752172828; c=relaxed/simple;
+	bh=cbzc4DY0erk9H+IqggzndGyNYcKfTl0/PrlvEOS6xzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mYxAWGaK0VOvfekRwxx0DstvFDe+Xf5UHMDFgwfyr3bNHDkmeYNcy0nq12fFzwy9gj32/Y/tBtIPdITwXy2fPMsh0Qi710/YD3EKHITAEHsApjs7CSTg+zRb7xKw0TcztmL4obrH/0kFEkF2jVjAWDQRV5/4HRudl/0/CSUucts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=IIAJzycP; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from DESKTOP-0403QTC. (unknown [52.148.171.5])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6CB862016599;
+	Thu, 10 Jul 2025 11:40:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6CB862016599
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752172826;
+	bh=oRpUJ7H7KpE7ZaqAbd3XK00114roFBFMbOzlTE97RIo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Reply-To:From;
+	b=IIAJzycPZLzjgvxyJ8xmwt954+EEqzUUAMuQiG8XuowILxDhBVOmXVRuZfwC/52+M
+	 yUITfmNDZsNGi8cRUbhb3+ziWgPci4GivwjKbQA48It0VlD3r8auAlNWHZmtbL4KuP
+	 1BR+t6OqzrBSQHLYJLIKbd7tJHQIzy/BkrJSlYJo=
+Date: Thu, 10 Jul 2025 11:40:25 -0700
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: linux-kernel@vger.kernel.org, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>, Alex Williamson <alex.williamson@redhat.com>,
+ "Liu, Yi L" <yi.l.liu@intel.com>, "jgg@nvidia.com" <jgg@nvidia.com>, Jacob
+ Pan <jacob.pan@linux.microsoft.com>
+Cc: Zhang Yu <zhangyu1@microsoft.com>, Easwar Hariharan
+ <eahariha@linux.microsoft.com>, Saurabh Sengar
+ <ssengar@linux.microsoft.com>
+Subject: Re: [PATCH v3 1/2] vfio: Fix unbalanced vfio_df_close call in
+ no-iommu mode
+Message-ID: <20250710114025.513b0af4@DESKTOP-0403QTC.>
+In-Reply-To: <20250618234618.1910456-1-jacob.pan@linux.microsoft.com>
+References: <20250618234618.1910456-1-jacob.pan@linux.microsoft.com>
+Reply-To: jacob.pan@linux.microsoft.com
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710082807.27402-1-byungchul@sk.com>
-In-Reply-To: <20250710082807.27402-1-byungchul@sk.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 10 Jul 2025 11:35:33 -0700
-X-Gm-Features: Ac12FXzCBZV3mzo5-D0lWEghMlDgKwI9NFBNKAUpNVy6DriBk8SQ-mKMDpELnTI
-Message-ID: <CAHS8izMie=XQcVUhW9CmydTqYEscp5soeOT4nwvFj2T+8X1ypA@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 0/8] Split netmem from struct page
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
-	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com, 
-	hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 1:28=E2=80=AFAM Byungchul Park <byungchul@sk.com> w=
-rote:
->
-> Hi all,
->
-> The MM subsystem is trying to reduce struct page to a single pointer.
-> See the following link for your information:
->
->    https://kernelnewbies.org/MatthewWilcox/Memdescs/Path
->
-> The first step towards that is splitting struct page by its individual
-> users, as has already been done with folio and slab.  This patchset does
-> that for page pool.
->
-> Matthew Wilcox tried and stopped the same work, you can see in:
->
->    https://lore.kernel.org/linux-mm/20230111042214.907030-1-willy@infrade=
-ad.org/
->
-> I focused on removing the page pool members in struct page this time,
-> not moving the allocation code of page pool from net to mm.  It can be
-> done later if needed.
->
-> The final patch removing the page pool fields will be posted once all
-> the converting of page to netmem are done:
->
->    1. converting use of the pp fields in struct page in prueth_swdata.
->    2. converting use of the pp fields in struct page in freescale driver.
->
-> For our discussion, I'm sharing what the final patch looks like, in this
-> cover letter.
->
->         Byungchul
-> --8<--
-> commit 1847d9890f798456b21ccb27aac7545303048492
-> Author: Byungchul Park <byungchul@sk.com>
-> Date:   Wed May 28 20:44:55 2025 +0900
->
->     mm, netmem: remove the page pool members in struct page
->
->     Now that all the users of the page pool members in struct page have b=
-een
->     gone, the members can be removed from struct page.
->
->     However, since struct netmem_desc still uses the space in struct page=
-,
->     the important offsets should be checked properly, until struct
->     netmem_desc has its own instance from slab.
->
->     Remove the page pool members in struct page and modify static checker=
-s
->     for the offsets.
->
->     Signed-off-by: Byungchul Park <byungchul@sk.com>
->
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 32ba5126e221..db2fe0d0ebbf 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -120,17 +120,6 @@ struct page {
->                          */
->                         unsigned long private;
->                 };
-> -               struct {        /* page_pool used by netstack */
-> -                       /**
-> -                        * @pp_magic: magic value to avoid recycling non
-> -                        * page_pool allocated pages.
-> -                        */
-> -                       unsigned long pp_magic;
-> -                       struct page_pool *pp;
-> -                       unsigned long _pp_mapping_pad;
-> -                       unsigned long dma_addr;
-> -                       atomic_long_t pp_ref_count;
-> -               };
->                 struct {        /* Tail pages of compound page */
->                         unsigned long compound_head;    /* Bit zero is se=
-t */
->                 };
-> diff --git a/include/net/netmem.h b/include/net/netmem.h
-> index 8f354ae7d5c3..3414f184d018 100644
-> --- a/include/net/netmem.h
-> +++ b/include/net/netmem.h
-> @@ -42,11 +42,8 @@ struct netmem_desc {
->         static_assert(offsetof(struct page, pg) =3D=3D \
->                       offsetof(struct netmem_desc, desc))
->  NETMEM_DESC_ASSERT_OFFSET(flags, _flags);
-> -NETMEM_DESC_ASSERT_OFFSET(pp_magic, pp_magic);
-> -NETMEM_DESC_ASSERT_OFFSET(pp, pp);
-> -NETMEM_DESC_ASSERT_OFFSET(_pp_mapping_pad, _pp_mapping_pad);
-> -NETMEM_DESC_ASSERT_OFFSET(dma_addr, dma_addr);
-> -NETMEM_DESC_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
-> +NETMEM_DESC_ASSERT_OFFSET(lru, pp_magic);
-> +NETMEM_DESC_ASSERT_OFFSET(mapping, _pp_mapping_pad);
->  #undef NETMEM_DESC_ASSERT_OFFSET
->
->  /*
+Hi Alex et al,
 
+Just wondering if there are more comments?
 
-Can you remove the above patch/diff from the cover letter?
-
---=20
 Thanks,
-Mina
+
+Jacob
+
+On Wed, 18 Jun 2025 16:46:17 -0700
+Jacob Pan <jacob.pan@linux.microsoft.com> wrote:
+
+> For devices with no-iommu enabled in IOMMUFD VFIO compat mode, the
+> group open path skips vfio_df_open(), leaving open_count at 0. This
+> causes a warning in vfio_assert_device_open(device) when
+> vfio_df_close() is called during group close.
+> 
+> The correct behavior is to skip only the IOMMUFD bind in the device
+> open path for no-iommu devices. Commit 6086efe73498 omitted
+> vfio_df_open(), which was too broad. This patch restores the previous
+> behavior, ensuring the vfio_df_open is called in the group open path.
+> 
+> Fixes: 6086efe73498 ("vfio-iommufd: Move noiommu compat validation
+> out of vfio_iommufd_bind()") Suggested-by: Alex Williamson
+> <alex.williamson@redhat.com> Suggested-by: Jason Gunthorpe
+> <jgg@nvidia.com> Signed-off-by: Jacob Pan
+> <jacob.pan@linux.microsoft.com> ---
+> v3: Apply a concise fix from Alex
+> v2: Use a fix from Jason
+> ---
+>  drivers/vfio/group.c   | 7 +++----
+>  drivers/vfio/iommufd.c | 4 ++++
+>  2 files changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/vfio/group.c b/drivers/vfio/group.c
+> index c321d442f0da..c376a6279de0 100644
+> --- a/drivers/vfio/group.c
+> +++ b/drivers/vfio/group.c
+> @@ -192,11 +192,10 @@ static int vfio_df_group_open(struct
+> vfio_device_file *df)
+>  		 * implies they expected translation to exist
+>  		 */
+>  		if (!capable(CAP_SYS_RAWIO) ||
+> -		    vfio_iommufd_device_has_compat_ioas(device,
+> df->iommufd))
+> +		    vfio_iommufd_device_has_compat_ioas(device,
+> df->iommufd)) { ret = -EPERM;
+> -		else
+> -			ret = 0;
+> -		goto out_put_kvm;
+> +			goto out_put_kvm;
+> +		}
+>  	}
+>  
+>  	ret = vfio_df_open(df);
+> diff --git a/drivers/vfio/iommufd.c b/drivers/vfio/iommufd.c
+> index c8c3a2d53f86..a38d262c6028 100644
+> --- a/drivers/vfio/iommufd.c
+> +++ b/drivers/vfio/iommufd.c
+> @@ -25,6 +25,10 @@ int vfio_df_iommufd_bind(struct vfio_device_file
+> *df) 
+>  	lockdep_assert_held(&vdev->dev_set->lock);
+>  
+> +	/* Returns 0 to permit device opening under noiommu mode */
+> +	if (vfio_device_is_noiommu(vdev))
+> +		return 0;
+> +
+>  	return vdev->ops->bind_iommufd(vdev, ictx, &df->devid);
+>  }
+>  
+
 
