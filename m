@@ -1,99 +1,120 @@
-Return-Path: <linux-kernel+bounces-724786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6253AFF6E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:40:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7728AFF6ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 04:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E31C7ABFD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:38:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BACB1C84239
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 02:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252DF27FD74;
-	Thu, 10 Jul 2025 02:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D9A27FB28;
+	Thu, 10 Jul 2025 02:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q++L3HvK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnIcmjWa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F80527FB3B;
-	Thu, 10 Jul 2025 02:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D33325BF14;
+	Thu, 10 Jul 2025 02:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752115192; cv=none; b=JyiXIzaHMVxAt8lHC7m8omLDNt+rR2kYrmbH1lH3IuAnN7SYoUkwQYKq3yCKM+tuC7lT2cFTSbKjtooQXD8O05jdaRK6yn7xzjEwwSE8WvJyB5StL96xLEfe1kRVUlGHM5+hMnlm+gj6VPbnsHu47AXMpP3MsZyu38k+nL58US8=
+	t=1752115241; cv=none; b=UOX210H6CqJubMINaF3lJaW6hqIK2lqGZR6CcaNpye1Zdq4Lg+8JpXZ+jIMeHGaRiacF2Iltd/0XiuoR3Y02YmmfHhCtwE8v2T554s1nvrYn7evchhfr9rIOwEUFCHE3W1fxQoF/h43FPX9aMITxOrI4IO9uvkRVfpqFQ6bOC00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752115192; c=relaxed/simple;
-	bh=XlIm7sMWC74eV76KTvuApJR0mWflLtRpZOV17D85BBE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=TfPEvullgdofx/KDyag+Ugg2IzUt1HeXm5tSyWupjJR1wE8PBBL/Qmg9W+xWvzT6HMPx0nX++AW34wHw4vdShNP+rCv1byA5XR3FNYUTXGitTHbVw0tRSTbTqDfn3ciF66M0Z6J9RQA/OqUcZnAQLaUqO5HwscFgnnua0E5p66g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q++L3HvK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52AF1C4CEF5;
-	Thu, 10 Jul 2025 02:39:52 +0000 (UTC)
+	s=arc-20240116; t=1752115241; c=relaxed/simple;
+	bh=SbXUiYCtMWlpHCV2pzP17uIzAf874pHFFFrd6zNJLHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LXt/i44F/Z55xE+nW1TZWbps0fE11ltXlyvVC8oARJ3PoZBqxIReOneflXjF4RM+YyRISkxszsuUq8UyUQcfDNqXHJCVHhTJGVpqGCph9UR6S1I9IX+ndX5fgPSN7cHYd55/y1rSw2wwLjVKJ8XAQ5k0jJ/blRS8HbQ22oBDvIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CnIcmjWa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CE1EC4CEEF;
+	Thu, 10 Jul 2025 02:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752115192;
-	bh=XlIm7sMWC74eV76KTvuApJR0mWflLtRpZOV17D85BBE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Q++L3HvKYEuOnz+C4PIXTE1SU/1UkwyjCPpTRC1NLH8BQP04BXGsbRUx3OEYoEVHy
-	 zBTCV/CW5U9dtMxMOgLkLxU/y1KjX/l64Td5IKywnYPBZ3XOQkQPEj9vbGW7sW/gg4
-	 6p0xnND+B3V7d3BZS7bIcjQC0MySyQ/8N2EyVApz03SCGkVMjwHuM8NQVBtsjpnJLb
-	 bpAVXQRqk6XHoPa6xzwABWZ+OO2dOO+Bq06ok/7yifoANvt+8LnDIR7hefQNnTHHbf
-	 003UIry1KnWDCn5os73ySNde4zx5XfSjzPEso4Z+JA9XgxZDRVThYui/cTPs3CzjhW
-	 GKypERNEeh1Lw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAED6383B261;
-	Thu, 10 Jul 2025 02:40:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1752115240;
+	bh=SbXUiYCtMWlpHCV2pzP17uIzAf874pHFFFrd6zNJLHc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CnIcmjWawEkECd7KPbCiN3OQ+p6HKq5Wuwb9+DVcJimaUCswv5Z+DOMJZljVYEMAY
+	 OkdDIKp0YK7Rpomq40HYzMOEJkzAyjtrrzbhxARSN0wP4Qi2JlnvRpL8W8KmZThEBb
+	 PVS402BTTrfkypwv+71HT7rk1OWsMSqvmt8erBGhaqvARDyh6tkvU8zyp+D5/l08z0
+	 YdRInM7ZjgaYIXP4p4ielp1yFTSi2b7K7nWeX2tO2xugvr01AHLcY37MT18ItbJwEW
+	 U5K/1R2+dnpICaSC0oDy1pRqvSD9rpTq2YsXH7+WWI+7HZ6kpXby4ewHKjf5ekercL
+	 /G3zNYAvYG7HA==
+Date: Wed, 9 Jul 2025 19:40:39 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next v1 1/1] net: selftests: add PHY-loopback test
+ for bad TCP checksums
+Message-ID: <20250709194039.72202043@kernel.org>
+In-Reply-To: <20250708122823.2435505-1-o.rempel@pengutronix.de>
+References: <20250708122823.2435505-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4] skbuff: Add MSG_MORE flag to optimize tcp large packet
- transmission
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175211521451.965283.8119309405484666271.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Jul 2025 02:40:14 +0000
-References: <20250708054053.39551-1-yangfeng59949@163.com>
-In-Reply-To: <20250708054053.39551-1-yangfeng59949@163.com>
-To: Feng Yang <yangfeng59949@163.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, willemb@google.com,
- almasrymina@google.com, kerneljasonxing@gmail.com, ebiggers@google.com,
- asml.silence@gmail.com, aleksander.lobakin@intel.com, stfomichev@gmail.com,
- david.laight.linux@gmail.com, yangfeng@kylinos.cn, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Tue,  8 Jul 2025 14:28:23 +0200 Oleksij Rempel wrote:
+>  	if (attr->tcp) {
+>  		int l4len = skb->len - skb_transport_offset(skb);
+>  
+> -		thdr->check = ~tcp_v4_check(l4len, ihdr->saddr, ihdr->daddr, 0);
+> -		skb->csum_start = skb_transport_header(skb) - skb->head;
+> -		skb->csum_offset = offsetof(struct tcphdr, check);
+> +		if (attr->bad_csum) {
+> +			__sum16 good_csum;
+> +			u16 bad_csum;
+> +
+> +			skb->ip_summed = CHECKSUM_NONE;
+> +			thdr->check = 0;
+> +			skb->csum = skb_checksum(skb, skb_transport_offset(skb),
+> +						 l4len, 0);
+> +			good_csum = csum_tcpudp_magic(ihdr->saddr, ihdr->daddr,
+> +						      l4len, IPPROTO_TCP,
+> +						      skb->csum);
+> +
+> +			/* Flip the least-significant bit.  This is fast,
+> +			 * deterministic, and cannot accidentally turn the
+> +			 * checksum back into a value the stack treats as valid
+> +			 * (0 or 0xFFFF).
+> +			 */
+> +			bad_csum = (__force u16)good_csum ^ 0x0001;
+> +			if (bad_csum == 0 || bad_csum == 0xFFFF) {
+> +				/* If the checksum is 0 or 0xFFFF, flip another
+> +				 * bit to ensure it is not valid.
+> +				 */
+> +				bad_csum ^= 0x0002;
+> +			}
+> +
+> +			thdr->check = (__force __sum16)bad_csum;
+> +		} else {
+> +			skb->csum = 0;
+> +			skb->ip_summed = CHECKSUM_PARTIAL;
+> +			thdr->check = ~tcp_v4_check(l4len, ihdr->saddr,
+> +						    ihdr->daddr, 0);
+> +			skb->csum_start = skb_transport_header(skb) - skb->head;
+> +			skb->csum_offset = offsetof(struct tcphdr, check);
+> +		}
+>  	} else {
+> +		skb->csum = 0;
+> +		skb->ip_summed = CHECKSUM_PARTIAL;
+>  		udp4_hwcsum(skb, ihdr->saddr, ihdr->daddr);
+>  	}
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+I think it'd be simpler if - after setting up CHECKSUM_PARTIAL
+we called skb_checksum_help() to get the correct checksum filled in
+and then did the bad checksum mangling.
 
-On Tue,  8 Jul 2025 13:40:53 +0800 you wrote:
-> From: Feng Yang <yangfeng@kylinos.cn>
-> 
-> When using sockmap for forwarding, the average latency for different packet sizes
-> after sending 10,000 packets is as follows:
-> size    old(us)         new(us)
-> 512     56              55
-> 1472    58              58
-> 1600    106             81
-> 3000    145             105
-> 5000    182             125
-> 
-> [...]
+BTW mangling like this should be idiomatic enough to avoid the comment:
 
-Here is the summary with links:
-  - [v4] skbuff: Add MSG_MORE flag to optimize tcp large packet transmission
-    https://git.kernel.org/netdev/net-next/c/76d727ae02b5
-
-You are awesome, thank you!
+	thdr->check = thdr->check ^ 1 ?: CSUM_MANGLED_0;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+pw-bot: cr
 
