@@ -1,158 +1,117 @@
-Return-Path: <linux-kernel+bounces-725014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B02F7AFF9C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:25:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA56AFF9CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 08:26:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B333F164090
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 747061C82F2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 06:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFEB2877CA;
-	Thu, 10 Jul 2025 06:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1842882BF;
+	Thu, 10 Jul 2025 06:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="lgWrsKs4"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bz8JoEF2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Nn48+kOr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E141C1F948;
-	Thu, 10 Jul 2025 06:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AC5283CA2
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 06:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752128705; cv=none; b=HF5m05bcSsFWy871596c79XMQIGug848SUROtfatgoutYhRlLi7Dbnhtsu15MxbuWr+QjD5V5X3Ws6NbmpDeD0eS5UPRSF1ohU03MOU5KSVS98MOKx/zvX5S//Sgt/SUobsoO5/9rEMqu1wvW254psEDkl6v6dZxBIIikzbZpCI=
+	t=1752128734; cv=none; b=O2jdD0UVb7ZGo8Oo9p6AJXndXQkUHW8DO/ICKiu+eCo2x4Te4hhMAAlRNWKEGZx5mCSX/f4JGYcND32UpTLDphwRc+PGvgG5pYlLNZQwWd0TyarF7lcelyVy+6RIo+zzfeV9D/kxhsMu8lWtc0GkrsYvDct+KGRajFVgk5W4YUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752128705; c=relaxed/simple;
-	bh=nqCX549RmOOq8cria/HxkBcTUqmp4kRW8eldhJ0wq+E=;
+	s=arc-20240116; t=1752128734; c=relaxed/simple;
+	bh=fyn8/DNWLIsd9t0oMmW8J9l8ppoI1NlcSDmv2mq3kPc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IvZ0iolcIQD85ckFq7EKaD0qwhNOKE74gGPzRPbBrlsN7esFP2Be6nunogL2UBKaoROeME/eN49ng0znc5n3ql/TpFPjhvJxa/FfKcHNMHt85KkBzAq0fsWsatzBPkjzIHlIs2iHQ2KwpmR5nSCY+JbTFGwYvw7t/mRMHU9KCw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=lgWrsKs4; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 929F21C00AE; Thu, 10 Jul 2025 08:24:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1752128689;
+	 Content-Type:Content-Disposition:In-Reply-To; b=RFOO3m3NEkGpz1Oa+qtberERBr1tNhXPwqUAxlsQkW1yv603o7qFquSJR7hwgJzs/jYtKkAuspAfxpcJaC0d+AEWrqAoddiaaZLPEg1HsPzghMoAVrTSbueopxDwz9E5qBqqifMDWkpikNecgTGS+v580UBD4bYgTL4fmy/Xqx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bz8JoEF2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Nn48+kOr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 10 Jul 2025 08:25:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752128730;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8t9PLmIR7SS6vrRKwi1Pocurl0uTAGeiC9i7x9ZcKWQ=;
-	b=lgWrsKs4nLpyZk/sCP0/UPuXSrSbDQzbUaNl7mYZCABfzCFRkZzKBZ9WEqFgcPbTDcNpsk
-	diKOnmKzZ31FBXYAPkAU7QVqRQ9FlPBV+f2dpmYeA+eLawWAtqp5wqbQLF1fHsuR8+tb4+
-	SJ7BD0ddJTONtYTtys3T2kPFfQZRsVE=
-Date: Thu, 10 Jul 2025 08:24:49 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Shuah <shuah@kernel.org>
-Cc: sashal@kernel.org, stable@vger.kernel.org,
-	kernel list <linux-kernel@vger.kernel.org>, conduct@kernel.org,
-	ebiederm@xmission.com
-Subject: Re: Sasha Levin is halucinating, non human entity, has no ethics and
- no memory
-Message-ID: <aG9csaJGTdOiBnl3@duo.ucw.cz>
-References: <aG2B6UDvk2WB7RWx@duo.ucw.cz>
- <46f581c6-bb61-4163-91a5-27b90838dca8@kernel.org>
+	bh=KbCDcUtVqOAXFKXfBLbknC1kvlUvsHQ3VNEwGZ+wbhM=;
+	b=Bz8JoEF2U3woWtE1IHbzOcZD9RC3cPv6DG0QHcflDajJep+yyZX/uyrxk3dCRT5HwZ7Wvh
+	/gA4H2TL4c31KDTuIEwBQIMRzKNyOqDDYI1YTptgpvzrf8LOVxbriTa0zwVhsNlWTbu8Ln
+	Ibs5hWlI1aVxYKGXzWgTWPmf03Dgjq+WoFTqgaFStq8nCIbYkeLubWBCDytgr762vu2Omp
+	dF/0CLkWqYkZ8wnzSOWQvgfVOLpp/aQJbxf3IbtbmatLk/G9lMcrGA74vUmQn7hPhetgXa
+	Ws5LTsRXsse/QfLO4NNnodBYHSO49PEGBR7eyjlw92s4uSNYs9V+KgoQkqbfIg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752128730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KbCDcUtVqOAXFKXfBLbknC1kvlUvsHQ3VNEwGZ+wbhM=;
+	b=Nn48+kOrSGm0FtyUL2v6xLIqd1o7KcREIFqvLENmM46rhXQuXcVqTzIsZL+YCIfPIf4sKR
+	CvQ2oMpsVcpy2hAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: "Chen, Yu C" <yu.c.chen@intel.com>
+Cc: kernel test robot <oliver.sang@intel.com>,
+	Ingo Molnar <mingo@kernel.org>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mel Gorman <mgorman@suse.de>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	aubrey.li@linux.intel.com
+Subject: Re: [tip:sched/core] [sched/smp] 06ddd17521:
+ BUG:using_smp_processor_id()in_preemptible
+Message-ID: <20250710062528.T-Obm39T@linutronix.de>
+References: <202507100448.6b88d6f1-lkp@intel.com>
+ <6cf071f3-ff5b-4025-8ce7-2f2cceb03984@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7NKn0rfxX1P/x+1d"
-Content-Disposition: inline
-In-Reply-To: <46f581c6-bb61-4163-91a5-27b90838dca8@kernel.org>
-
-
---7NKn0rfxX1P/x+1d
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <6cf071f3-ff5b-4025-8ce7-2f2cceb03984@intel.com>
 
-On Wed 2025-07-09 15:14:38, Shuah wrote:
-> On 7/8/25 14:39, Pavel Machek wrote:
-> > Hi!
-> >=20
-> > So... I'm afraid subject is pretty accurate. I assume there's actual
-> > human being called "Sasha Levin" somewhere, but I interact with him
-> > via email, and while some interactions may be by human, some are
-> > written by LLM but not clearly marked as such.
-> >=20
-> > And that's not okay -- because LLMs lie, have no ethics, and no
-> > memory, so there's no point arguing with them. Its just wasting
-> > everyone's time. People are not very thrilled by 'Markus Elfring' on
-> > the lists, as he seems to ignore feedback, but at least that's actual
-> > human, not a damn LLM that interacts as human but then ignores
-> > everything.
-> >=20
+On 2025-07-10 11:18:29 [+0800], Chen, Yu C wrote:
+> > [ 25.235357][ T1] dump_stack_lvl (lib/dump_stack.c:123 (discriminator 1=
+))
+> > [ 25.235357][ T1] check_preemption_disabled (arch/x86/include/asm/preem=
+pt.h:85 lib/smp_processor_id.c:53)
+> > [ 25.235357][ T1] __kvm_is_vmx_supported (arch/x86/include/asm/cpuid/ap=
+i.h:74 arch/x86/include/asm/cpuid/api.h:113 arch/x86/kvm/vmx/vmx.c:2789)
+> > [ 25.235357][ T1] vmx_init (arch/x86/kvm/vmx/vmx.c:2808 arch/x86/kvm/vm=
+x/vmx.c:8653)
+> > [ 25.235357][ T1] vt_init (arch/x86/kvm/vmx/main.c:1072)
+=E2=80=A6
+> I took a glance at the warning, before this patch,
+> is_percpu_thread() always return true when CONFIG_SMP is not set.
+> After this patch,
+> is_percpu_thread() checks the current task's CPU affinity.
+> So debug_smp_processor_id() -> check_preemption_disabled() ->
+> is_percpu_thread() might not always return true anymore, which caused
+> the warning.
 >=20
-> You aren't talking to an LLM - My understanding is that Sasha is sending
-> these patches (generated with LLM assist) and discussing them on mailing
-> lists.
+> Actually the issue is in __kvm_is_vmx_supported(), should
+> we use something like this below:
 
-Please discuss this with Sasha. My understanding is that he is not
-checking the output of the LLM before sending it out, leading to crazy
-halucinations being sent from his email address, leading to situations
-like this:
+No, it should not. If you look closely you will see that the call chains
+is
+   vmx_init() -> kvm_is_vmx_supported() -> __kvm_is_vmx_supported()
 
-Date: Tue, 08 Jul 2025 14:32:02 -0500
-# Wow!
+There is a migrate_disable() around __kvm_is_vmx_supported(). So why
+does this warning trigger then?
 
-# Sasha I think an impersonator has gotten into your account, and
-# is just making nonsense up.
-
-# At first glance this reads like an impassioned plea to backport this
-# change, from someone who has actually dealt with it.
-
-# Unfortunately reading the justification in detail is an exercise
-# in reading falsehoods.
-
-> Do you have links/threads you can share to show how feedback is being
-> ignored?
-
-And you can see how he dealt with the feedback: Not by fixing the LLM,
-not by checking it more, simply by "oh well, I'll stop Cc ing you".
-
-Of course, other problem is that LLM output is not marked as such, and
-even bigger problem is that decisions are taken on basis of
-halucinating model. Patches are applied, Signed-off-by: Sasha Levin,
-without Sasha Levin checking them.
-
-Here are other examples where feedback was ignored:
-
-Date: Sat, 29 Aug 2020 14:10:20 +0200
-Subject: Re: [PATCH AUTOSEL 4.19 08/38] media: pci: ttpci: av7110: fix
-possible buffer overflow caused by bad DMA value in debiirq()
-Date: Sat, 29 Aug 2020 14:11:23 +0200
-Subject: Re: [PATCH AUTOSEL 4.19 34/38] btrfs: file: reserve qgroup
-space after the hole punch range is locked
-Date: Mon, 10 May 2021 14:03:18 +0200
-Subject: Re: [PATCH AUTOSEL 4.19 06/21] usb: dwc3: gadget: Ignore EP
-queue requests during bus reset
-
-> > Do we need bot rules on the list?
->=20
-> We have to get humans to follow agreed upon rules of conduct before
-> coming up with bot rules.
-
-We did not agree on rules with dealing with bots, and those bots are
-spreading harmful halucinations; that's what I'm trying to solve.
-
-BR,
-							Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
-
---7NKn0rfxX1P/x+1d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaG9csQAKCRAw5/Bqldv6
-8r1MAJ9xvt+80VijeF3ER7NfrKbtR2P7uACfdVNRYATSw2kV1VAJPV4JDVGuexE=
-=7V0F
------END PGP SIGNATURE-----
-
---7NKn0rfxX1P/x+1d--
+Sebastian
 
