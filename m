@@ -1,304 +1,165 @@
-Return-Path: <linux-kernel+bounces-725983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC851B00640
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:17:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9983FB00641
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 17:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45887641EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:15:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BF503A8F00
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC3227466E;
-	Thu, 10 Jul 2025 15:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DB7272E57;
+	Thu, 10 Jul 2025 15:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaW19AsV"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PAU66A2V"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961F922425E;
-	Thu, 10 Jul 2025 15:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB602F56
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 15:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752160554; cv=none; b=fnW+Xfh3c0MJBaMYmBlFtDKK4y4aMWcQgp9fyxWdn/TXL7TqeWco6c73KcTbTgnNJ4qHyCSUXuZojqZaJRSUrTREDhtNt3f1XFpUzDBfqmMCPO5YU63Iw6XlUpgN/Pxd7PMIsdVbM6usXqnDabWjCzz+REjZWo5cR8FEaYLy1Y0=
+	t=1752160646; cv=none; b=eXJrpYrMiuowBqadyeGXXpmNLJKnPewW5stlvguMwWVoYa4vqCwVlcjtJgr5M4Svl29BBvYjniMMDTNmzrVEQuov0lmWI+o0LuFF5oVrRm/lfdVKJ6xXQROkKyXsD7cWf/31Iy67bkxf/Sy+CCv5h/MH3+Ka0QnxQNSzKRecJEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752160554; c=relaxed/simple;
-	bh=cP2XdFEmvXS0OKxHIMqQZXRB1hVTr99YjAXWGN4d8uI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ZpqjbioVo403nfllDpHhLdBP0+8nWeVErpbsShFdMxsjvvGXKvtAtq05QREqe66HEe1PoNPqLAfzdocTushRrYB3XlhuozLiyCcE0f4cYUYL/Kp2FpL8ULDQf82SB4RcmCOOtQw/i2/8szMqemqivvaJlX32fXF+qR0//JMXReY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eaW19AsV; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-313cde344d4so1326077a91.0;
-        Thu, 10 Jul 2025 08:15:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752160552; x=1752765352; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=k2Ut5zqrT/gFfDOz4SYZ4KaqF0Yng+eUvKdctMowZis=;
-        b=eaW19AsV/bBm/VHvFuY+3nX7zQ38DqMxLSwIsn38KzqO0kjelNfobyOkhey3JxJ8Uv
-         Cj7B4+5sQZtUsLe2uOXRE1GquEWpbSBQQa7bohHD+Ws1r8n/3fLFgZ2rlwVSoPastA00
-         Bvbr+kjecbIk3RQgwfJKLofVWK+6zi4rqOYIIzZBK60vHXiEgqxvzMX/bLEUuTqAZsZn
-         8lpATbaXHXjpaA/o/rKDC0s8eXQFBo33FH5Gp4dUMRKudb8Ud1vlND2UrHLIjpOJMSYy
-         bk+gau338z7FASJH1TtUzRF8geSKADc1lgR3ITMPXoQPk0Mk7FsRJcuoG27tEBpeuXFr
-         DVoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752160552; x=1752765352;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k2Ut5zqrT/gFfDOz4SYZ4KaqF0Yng+eUvKdctMowZis=;
-        b=d+qOQhMvEUo4IJOOes42iaPC5CKE6gSBEK0GShUD5QIdE1Oo+ffvML1X0bzmAH5W7U
-         ybpIUWx9gn/YpuKFriACTwV+zYHHKuE6oFvyosMlro1vA9TpkZ/y8oqeJbrZlV+zUaWd
-         dEcpMEPVv8aiSBA/LBfqfwqtkYE+sRyCDIglRChNkwg2dfGAPzGWoDcuaIjwjRY+AjGI
-         JVr7gB5BJUlccuza5xkmW6nl/171nsbZ8lDEeN7J3xxlhQDm2Vn5yqFt8KGyAM1cMJMl
-         Xjo9ZecyB6xQkWJvZO2qojr3HHipQmpL7xPhBxHEsTbU0bWshYsaK0a28R1I1RItVWcn
-         O9Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmBQLmRaCBG8yIPmfiXZbjBB8C2Jjhvb+C/26iHePRebVLndReZ62wYCFjwX5AzIBcZ81BDWQ6IU4=@vger.kernel.org, AJvYcCWIwuwTlz+dPjaHGgfCKXBNAQYUstCnbdUONlLBPKf4hNudiYJ9Id0YiPP4zRTtYvjf3q4XFILogng7LkdJ@vger.kernel.org, AJvYcCWNfstO1qoXUrFrgE1gbhM/k6Q/GC4Eua5k47AUHPsBMriVyamhCi1PYvzJ/DQzDsEEz6JHi75hk/K5L8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSTLNENLeOhfiVTasddbB4pWguBJHWw5JPr+vr8NMQwz1povk6
-	p6XXHRNdxMh+AAhJjF/5qfaZOmxS2qq72BqHkfDfZLOaFj85Vv9rJBVSaJLg2A==
-X-Gm-Gg: ASbGncu7dF8K4VEneCp+h6ZTlY8drb23t9NzYppgeJQmXxxIy4vDPWyRpqk3ggdDaTi
-	YBTu4EooAhoGOFqROxxWHinxfn9Nhf6OXGB0klvLFT2Dyii+/o0Lzp7CbpmR7i6zBLZnb8xBGkv
-	Pun5+0YsUxlTaYmZ9EQaxjsOgieIuO+RvhBhHXVTPnV2h5FqSnBS6QTPh6qkn/cyzv8+LH4/AdL
-	/GCtA3cIaM43mXTr+ws45m24eztSR+RrNTGQDtq9DwB0uoCDVpVQ2FUSpo0s1VbFx0V+IdYpJea
-	waNbFLHnTJAofdA1YgHGcvcp6z1KEGiD625wJ6t/8l5lzZ3fpeEezsCeNhy8imrduLvtRYvn+iD
-	LgzXIFx2B
-X-Google-Smtp-Source: AGHT+IFpSknIX5oQ3t+hSQemLFiY5TGbNbhPCpiXc0cVzMXY7k38QDCJh161Fl99D1arZbVAY4cPnA==
-X-Received: by 2002:a17:90b:1a91:b0:313:28f1:fc33 with SMTP id 98e67ed59e1d1-31c3ef23af9mr4987342a91.10.1752160551522;
-        Thu, 10 Jul 2025 08:15:51 -0700 (PDT)
-Received: from ehlo.thunderbird.net ([2607:fb91:1be0:77b7:ac39:c338:9a9b:5f99])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3e973e75sm2656739a91.16.2025.07.10.08.15.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 08:15:51 -0700 (PDT)
-Date: Thu, 10 Jul 2025 08:15:49 -0700
-From: "Derek J. Clark" <derekjohn.clark@gmail.com>
-To: Benjamin Tissoires <bentiss@kernel.org>
-CC: Jiri Kosina <jikos@kernel.org>, Mario Limonciello <superm1@kernel.org>,
- Xino Ni <nijs1@lenovo.com>, Zhixin Zhang <zhangzx36@lenovo.com>,
- Mia Shao <shaohz1@lenovo.com>, Mark Pearson <mpearson-lenovo@squebb.ca>,
- "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
- linux-input@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] HID: Add Legion Go S Driver
-User-Agent: Thunderbird for Android
-In-Reply-To: <j3isljjyd6rlddlhpp7knxgss2mpr4ft3pcx5lc7r5r4bnnzpw@wjr6brfv2hsf>
-References: <20250703004943.515919-1-derekjohn.clark@gmail.com> <j3isljjyd6rlddlhpp7knxgss2mpr4ft3pcx5lc7r5r4bnnzpw@wjr6brfv2hsf>
-Message-ID: <3690C9ED-FC73-4783-8EB4-2CFA148E8573@gmail.com>
+	s=arc-20240116; t=1752160646; c=relaxed/simple;
+	bh=PmLNRRqqfi+6nUAh8sDWXo0YvlyTgCdrC6js2PxgPaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NCLFk+8KotUMSN33IfJhMdm6ohNj6X18UVXQ9mXkwMv/SRQbh0jIikkWAK4Ta91BZhma3IfJGQmktMB1PwN5RIMOQu5vIOwbNNzMwykLwn336AMnr9pgwrEFBdjBvyPeE9gwGjb4X7R9rtdPYXF1pcjQOWi2SSQkZf5jFYmDGQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PAU66A2V; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 80AC740E0218;
+	Thu, 10 Jul 2025 15:17:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id KQ_WOBrk3L96; Thu, 10 Jul 2025 15:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752160638; bh=LnxUmCf47hqiBieumciAui5/Q+y16ggub1NBhnpTlPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PAU66A2VU1wU/8qGKbYoJUW2HlLw5/ICbsOZfnHI0T1hKdgHHf6VkhK/0msyYpXUO
+	 G/jN9kfkgiUMXqV6eB7FJ+Zh8q0lzgnrYvoiQW34ap5P9Dpi5HmDPL7kXSqGulXOsR
+	 yNhTeuS+XmYHDngtIyd5RimMEhppT3E1BDr7rV1gJiDG6Ik7cTboCTEMK+ib8xtGNL
+	 DBM7b77j06bFO6pE+QwbkSOz9A+avacHhEVG6b4x0oIGlBOK2i12j2hj+E6N0PUfdd
+	 bNRqFwtOVeyLOKUlog5xsctHLmeWVwXHTEA44oT7CRuiXc3W9LbXDifrp594wMSiRh
+	 6FcdQIB41G8wkhDEkq4UwdKXUBnrwik0EBf9giVjAuae0ghvsaYbGbr4BT4BGSkj1R
+	 ncMNZJkfhglWqZirivQhgxS9luO0RmHPrCYJDpKGISlqA6ndbwGxXh6vo9Tm04DaWW
+	 liTmJ7CJAs7345IU2a6GTj+vVoWJRkt98tXx0tgYRhpzesdYkcCXNpaNTZAF0u8vgO
+	 mxm9UJ80Z8wmwH/0+6Woy8hTslSQ+mC2aTAlzlG/sAmUCYuZkjDAD3R0948loxNB7m
+	 nYAAyiRUyWRvP5fmRY3gmOIMuR88Slb5/OWz6r8c1LlVKc7jXFq+KegflDVhI1tHid
+	 4w30yuqNK73Na3wVUWZkt7kA=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F150140E01FC;
+	Thu, 10 Jul 2025 15:17:07 +0000 (UTC)
+Date: Thu, 10 Jul 2025 17:17:02 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 02/21] cpu: Define attack vectors
+Message-ID: <20250710151702.GCaG_Zbjo1sqZ6NB2g@fat_crate.local>
+References: <20250707183316.1349127-1-david.kaplan@amd.com>
+ <20250707183316.1349127-3-david.kaplan@amd.com>
+ <20250710104252.GBaG-ZLG7p_LsNCjBm@fat_crate.local>
+ <LV3PR12MB9265E7C013D6BBA5E6FB586C9448A@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB9265E7C013D6BBA5E6FB586C9448A@LV3PR12MB9265.namprd12.prod.outlook.com>
 
+On Thu, Jul 10, 2025 at 02:02:56PM +0000, Kaplan, David wrote:
+> Interesting.  I would suggest a comma instead, so you have things like
+> "mitigations=auto,no_user_kernel".  That's somewhat consistent with the
+> existing 'auto,nosmt' option as well.
 
+Ack, see below.
 
-On July 3, 2025 6:48:00 AM PDT, Benjamin Tissoires <bentiss@kernel=2Eorg> =
-wrote:
->Hi Derek,
->
->[I'll answer to this email with a very high level overview of it, as I'm
->not sure I'll have time to dig much deeper in 6/6 today=2E]
->
->On Jul 02 2025, Derek J=2E Clark wrote:
->> This series adds initial support for the Legion Go S's built-in
->> controller HID configuration interface=2E In the first patch a new HID
->> uevent property is added, HID_FIRMWARE_VERSION, so as to permit fwupd
->> to read the firmware version of the HID interface without detaching the
->> kernel driver=2E
->
->That immediately raise red flags on my side=2E HID_FIRMWARE_VERSION will
->likely be used only for this new driver, and that means a special case
->in each and every client=2E
->
->We had to deal with firmware versions in the past in the HID drivers,
->and we ended up relying on the uniq field of the hid_device (because the
->serial+firmware version uniquely identify the device)=2E
->
+> Still you would have global options come first, and then the attack vector
+> options.  But since commas are already used to separate tokens, that seems
+> cleaner to me.
+> 
+> If you're going to edit the patch directly, just please remember to update
+> the documentation file accordingly too.
 
->> The second patch adds the ability for an hid_driver to
->> assign new/arbitrary uevent properties for static data that doesn't
->> benefit from having a sysfs entry=2E
->
->That, in my mind, is even worse (for the reasons above)=2E
->
-Hi Benjamin,
+Yeah, and the commit messages. 
 
-Sorry abtthe late reply=2E Travel & holidays have me a bit behind=2E
+This is just the patche(es), I'll go over the commit messages too.
 
-I'll let Mario and Richard hash out the specifics on these points=2E I'll =
-just add a bit of context to why they're in this series=2E Prior to this, t=
-he fwupd plugin would disconnect this driver to query this information to s=
-ee if there was an available update=2E As this can be triggered by a system=
- daemon during gameplay that's not a reasonable expectation=2E Originally w=
-e had these as sysfs entries, and returning to them, would be simple enough=
-, but we felt like this is a fairly standard piece of information that shou=
-ld be available=2E I wasn't aware of the uniq property being used for this =
-historically, but from an outside looking in perspective this seems a bit c=
-onvoluted=2E Apart from just being unintuitive if you're not familiar, user=
-space is going to need bespoke ways to interpret this anyway as serial numb=
-ers and firmware formatting are not consistent between manufacturers=2E
+---
 
-I'll wait to adjust this until a more thorough discussion has taken place=
-=2E
+diff --git a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
+index ee56e849616f..b4de16f5ec44 100644
+--- a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
++++ b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
+@@ -137,7 +137,7 @@ or more options to disable various attack vectors.
+ 
+ Format:
+ 	| ``mitigations=[global]``
+-	| ``mitigations=[global];[attack vectors]``
++	| ``mitigations=[global],[attack vectors]``
+ 
+ Global options:
+ 
+@@ -166,17 +166,17 @@ the global option is not specified, it defaults to 'auto'.  The global option
+ 'off' is equivalent to disabling all attack vectors.
+ 
+ Examples:
+-	| ``mitigations=auto;no_user_kernel``
++	| ``mitigations=auto,no_user_kernel``
+ 
+ 	Enable all attack vectors except user-to-kernel.  Partial cross-thread
+ 	mitigations.
+ 
+-	| ``mitigations=auto,nosmt;no_guest_host,no_guest_guest``
++	| ``mitigations=auto,nosmt,no_guest_host,no_guest_guest``
+ 
+ 	Enable all attack vectors and cross-thread mitigations except for
+ 	guest-to-host and guest-to-guest mitigations.
+ 
+-	| ``mitigations=;no_cross_thread``
++	| ``mitigations=,no_cross_thread``
+ 
+ 	Enable all attack vectors but not cross-thread mitigations.
+ 
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index be25543567c0..c976a6686d8b 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -3276,8 +3276,8 @@ static int __init mitigations_parse_cmdline(char *arg)
+ 	if (!*p)
+ 		return 0;
+ 
+-	/* Attack vector controls may come after a ';' */
+-	if (*p++ != ';' || !IS_ENABLED(CONFIG_ARCH_HAS_CPU_ATTACK_VECTORS)) {
++	/* Attack vector controls may come after the ',' */
++	if (*p++ != ',' || !IS_ENABLED(CONFIG_ARCH_HAS_CPU_ATTACK_VECTORS)) {
+ 		pr_crit("Unsupported mitigations=%s, system may still be vulnerable\n",	arg);
+ 		return 0;
+ 	}
 
->> The third patch adds the VID and PID
->> for the Lenovo Legion Go S MCU=2E=20
->
->Which shouldn't be in its own patch, but part of the driver initial
->patch=2E
+-- 
+Regards/Gruss,
+    Boris.
 
-I can do that=2E My reasoning was simply that if another patch becomes rel=
-iant on the VID and you needed to revert the other patches for any reason t=
-here would be a conflict=2E
-
->> The fourth patch adds ABI documentation
->> for the config interface introduced in the final patch=2E The fifth pat=
-ch
->> introduces the core lenovo-legos-hid driver which acts as a routing
->> interface for the different endpoints=2E=20
->
->That "core" patch is IMO useless=2E All it does is:
->- check for the USB endpoint (but in the wrong way, because if you
->	insert a device through uhid with the same PID/VID it will crash)
->- replace the HID-core core functions with the same code
-
-Can you point me to a better way?
-
-This series only implements the config endpoint=2E ATM the gamepad, touchp=
-ad, and IMU are combined into a single Steam Deck like interface in root le=
-vel userspace as a uhid device=2E I do have some plans for how to do this i=
-n the kernel instead, but the proposal isn't ready yet so I need to keep th=
-e hidraw devices available to userspace that aren't implemented yet for bac=
-kwards compatibility=2E
-
->Really, this should be squashed into the next patch (with 3/6 then)=2E
->
->Also, why adding a new subdirectory? All the hid drivers are flat in the
->drivers/hid/ directory, and the subdirs are for transport layers=2E There
->is one exception for the surface driver but I don't see why you need
->such an exception (yeah, the code is big, but what's the difference in
->having a 1500 lines of code source in its own subdir vs at the root?)
-
-Sure, I can change it to a single file if that's preferable in this subsys=
-tem=2E This is my first foray into kernel HID drivers so I'm not super fami=
-liar with the style preferences yet=2E Breaking everything up by logical su=
-bset made sense to me but I'm not married to it=2E There
-
->> The sixth path introduces the=20
->> config lenovo-legos-hid driver wich uses both the HID_FIRMWARE_VERSION
->> as well as arbitrary uevent properties=2E Additional interfaces and con=
-fig
->> properties are planned to be added in a future series=2E
->
->That one is too big for my liking=2E Generally speaking, a commit
->descrition which says "this does this and that" can be split into 2
->patches at least :)
-
-I figured, but I wasn't sure how you'd prefer I break it up=2E I was think=
-ing that one patch per attribute group would make sense but wanted some fee=
-dback before I did that to avoid going down the wrong path with them=2E
-
->What kind of future interfaces and config properties are you planning?
-
-The MCU has a gamepad interface that is more complete than what the xpad d=
-river uses, which includes some back paddles as well as native gyro data wh=
-ich is passed through from the IMU=2E There's also a separate IMU endpoint =
-so there are a couple options how this can be used=2E My thoughts are that =
-a sysfs attribute could toggle if gyro is added to one of the joysticks usi=
-ng the IMU data included in the gamepad report, and the external one could =
-be exposed as a motion sensor with the same uniq=2E Then userspace can dete=
-rmine how to use it=2E
-
-The touchpad works in both abs and rel modes with the default kernel imple=
-mentations but additional functionality can be gained through Steam Input i=
-f this is integrated into the gamepad=2E
-
-As far as additional attributes for the config interface, there is hardwar=
-e level button remapping and calibration for all axes that need to be added=
- but weren't considered critical for initial support from Lenovo=2E
-
->>=20
->> Patch 6 introduces a checkpatch WARNING that I'm unable to resolve:
->> WARNING: ENOSYS means 'invalid syscall nr' and nothing else
->> 1292: FILE: drivers/hid/lenovo-legos-hid/lenovo-legos-hid-config=2Ec:10=
-85:
->> +       case -ENOSYS: /* during rmmod -ENOSYS is expected */
->
->We can losely waive those while merging=2E We do it quite often actually=
-=2E
->
->But trying to minimize checkpatch warnings is a good thing, so thanks
->for that=2E
-
-Cool, I'll keep a brief note for posterity=2E=20
-
-Thanks,
-Derek
-
->>=20
->> This error handling case was added as it is experienced in the real wor=
-ld
->> when the driver is rmmod=2E The LED subsystem produces this error code =
-in
->> its legacy code and this is not a new novel use of -ENOSYS, we are simp=
-ly
->> catching the case to avoid spurious errors in dmesg when the driver is
->> removed=2E If there is a way to prevent this error from being triggered=
- by
->> checkpatch in the first place, that would be an ideal remedy, but I'm n=
-ot
->> aware how that can be done at this time=2E
->
->Again, nothing to worry about=2E
->
->Cheers,
->Benjamin
->
->>=20
->> Signed-off-by: Derek J=2E Clark <derekjohn=2Eclark@gmail=2Ecom>
->>=20
->>=20
->> Derek J=2E Clark (4):
->>   HID: Add Legion Go S ID's
->>   HID: Add documentation for lenovo-legos-hid driver
->>   HID: Add lenovo-legos-hid core
->>   HID: Add lenovo-legos-hid configuration endpoint interface
->>=20
->> Mario Limonciello (2):
->>   HID: Include firmware version in the uevent
->>   HID: Allow HID drivers to add more uevent variables
->>=20
->>  =2E=2E=2E/ABI/testing/sysfs-driver-lenovo-legos-hid |  269 +++
->>  MAINTAINERS                                   |    7 +
->>  drivers/hid/Kconfig                           |    2 +
->>  drivers/hid/Makefile                          |    2 +
->>  drivers/hid/hid-core=2Ec                        |   11 +
->>  drivers/hid/hid-ids=2Eh                         |    4 +
->>  drivers/hid/lenovo-legos-hid/Kconfig          |   11 +
->>  drivers/hid/lenovo-legos-hid/Makefile         |    6 +
->>  drivers/hid/lenovo-legos-hid/config=2Ec         | 1518 +++++++++++++++=
-++
->>  drivers/hid/lenovo-legos-hid/config=2Eh         |   19 +
->>  drivers/hid/lenovo-legos-hid/core=2Ec           |  122 ++
->>  drivers/hid/lenovo-legos-hid/core=2Eh           |   25 +
->>  include/linux/hid=2Eh                           |    2 +
->>  13 files changed, 1998 insertions(+)
->>  create mode 100644 Documentation/ABI/testing/sysfs-driver-lenovo-legos=
--hid
->>  create mode 100644 drivers/hid/lenovo-legos-hid/Kconfig
->>  create mode 100644 drivers/hid/lenovo-legos-hid/Makefile
->>  create mode 100644 drivers/hid/lenovo-legos-hid/config=2Ec
->>  create mode 100644 drivers/hid/lenovo-legos-hid/config=2Eh
->>  create mode 100644 drivers/hid/lenovo-legos-hid/core=2Ec
->>  create mode 100644 drivers/hid/lenovo-legos-hid/core=2Eh
->>=20
->> --=20
->> 2=2E50=2E0
->>=20
+https://people.kernel.org/tglx/notes-about-netiquette
 
