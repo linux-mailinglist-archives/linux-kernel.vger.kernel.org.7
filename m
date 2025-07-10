@@ -1,115 +1,178 @@
-Return-Path: <linux-kernel+bounces-725836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-725837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F57B0047E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:59:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB334B0047C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 15:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63AC55C57F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE151881FC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 13:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC882749F6;
-	Thu, 10 Jul 2025 13:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E426270EB3;
+	Thu, 10 Jul 2025 13:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hd36/yZu"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Q9vefEVO"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066682727F9;
-	Thu, 10 Jul 2025 13:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DBC28373;
+	Thu, 10 Jul 2025 13:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752155653; cv=none; b=IrXSdn+7Gy1POAXUZ9J3zkyVD5fqikERErsy69tqmNf9La4bkiAEeBJ+r/pPdBu7wCJy4q/Z8844UuuxqH11xDufb2+/GMoF/3FiOabc9/fKgVoAzTpWRgI7voWB46Wz/D6HgMOerLxzTVCdZ4A3WCPhPhqBPyZHlUfx8WqDbd4=
+	t=1752155686; cv=none; b=GWTguGHREk7MTTaj713X7ZmPaULMtXyhloNcSQ2fYxnEwHJn6T8vJG12lGSjUPbd9WWeZ0WgQzkMLAoVxm0RrYuWZCtKQ/K4YjLtva/Yls6mrYXl0xl6UAce6kh8bMD964lA67vYD4Z4ROBpKXtYHYaNS0MOa4kCuNrOWK3ZEM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752155653; c=relaxed/simple;
-	bh=ucvdGfSAD6BNiqV/MexDFRF6BGv69Ix8outD2J2Fl5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GXFIbwTS1XeY4zQhhaBbF0w5p18YQ8UFq9U2689RYWTR8Ps/LoBbxNAVT53WLlMMLacjz8bKAzc7xiXYE/AiXGnp8YMBdO+ug5xMNXOs94PPOndlmBp0AhciO3m7FxjrQGV9WE7hohA5zMjIXE5iBH2ZW0ZAozWfMQt0GIRw++s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hd36/yZu; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-710f39f5cb9so9827937b3.3;
-        Thu, 10 Jul 2025 06:54:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752155651; x=1752760451; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ucvdGfSAD6BNiqV/MexDFRF6BGv69Ix8outD2J2Fl5c=;
-        b=Hd36/yZu1r8xEfG1tYV27AWIdD4UxvZb8qKnIxSiyTRJ7ARdNNtccxVGk0jQv7sJ3G
-         uU/JhRCH0DxlikYvt/wtq3v20zWIlJ1Gim+gQpiV0odCIn/Qpf1eBX330IWuhdW+JJfW
-         /JrDvuNmFo40LjAOPaB1P1NvmJlDF/v+Q6wxqpYIoBAjp+diXsY7uR7KJoTQpJ+boCBR
-         Ai4xWcjryC3cTMhZH5dr+rV79odHDthVTvb+ixCMT/jKvC5K2Q36O3z9uzjFO3YKrcn5
-         1uAPsrqFe6krV70vUOgGxk5vWxlZi/3kbVrpesdaPpRzm3yWb/z8V9LdKpiV+yVjPiqD
-         2QoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752155651; x=1752760451;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ucvdGfSAD6BNiqV/MexDFRF6BGv69Ix8outD2J2Fl5c=;
-        b=QvvcCRrfl8qXtiAwGY6L8sg4G0/7shkQ1P+FXAdPUYHDbUu5I1H16z7NvNA9PPky5A
-         khuOl8XDnOEag+NovItmtkNdArB+UE1Xu/SmgpynIYiIOyuxLdSZzy8aU8eTj9Wa8JrU
-         BHeERNCCbNJskG39nsu5ZjY1B1O9xfB/q7nyCfWGzBZjZWzxW76uLJhfUfoBkIfjmVZG
-         SgVkVasG5ib7BMc7iKs6PaPGqLqv2Yjtf3vPSomgncPU8kZl5JuDra1Y31Iujl+law0n
-         8o+OBzTPveAOOdSWFAQQUD/0goYEyrJdiyqrcsxJBKp5BXat7omtB93+2t3wiuqkDLdN
-         IU8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVw9agdHPJkU52pwe8X6O42fDCV7wIukL9WZ58VtNQic2FaUylG4uNOkURqlTZ0AUPLVs3C5TxBkdonBjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0BKTxii6ce6UL0YNEIEk+CwR8K265lwateIAAR5NitosrTs2Y
-	c4POra8wYllktYWCnDsdlo4DwabY0LS1U6e9bl7x9U650Zr492atrcyE2YcvL2M5ZIUuHoqFuTu
-	yTJfHurYJg91hj2+RCV14eRRLXum+PGw=
-X-Gm-Gg: ASbGncsvYI8pqjYgSXWF6G1QOq40IirXyIsWC4ALGoWY1uNPGQ+zMRTdcfvLJzVb8sz
-	pydpWtDzk0mjAUBg6urfzSVf+8k5zsDcRJKuz5FsF3jpd4/OPhYRkFJCrofESEVVSmK6kw1OBXT
-	hrTworljiDIMlB73KI+3uh71lN6ROHT/7OtFyA+KvBjA==
-X-Google-Smtp-Source: AGHT+IGEs6mjRSoRv4DuwjhMRI12lBJa8IqS+/Fzcgdccj93qN1nI3jcEoogDoLBGHOtc2jgXEbMvX49hnrkdMtBpEc=
-X-Received: by 2002:a05:690c:6103:b0:70e:7ae4:5a21 with SMTP id
- 00721157ae682-717b16a5e4amr91278037b3.4.1752155650931; Thu, 10 Jul 2025
- 06:54:10 -0700 (PDT)
+	s=arc-20240116; t=1752155686; c=relaxed/simple;
+	bh=vzDzTu3wYXCAVPoqRRfXS0PLk58brc7izPX2nCVGDxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FFboiMRV573SOfz28Im1cjOvBRmWfjdwuMaXO8xRa5ShCasVsJQ9SyonX+vWF27RdYLNNvEhf7kP/kjbkcwTvViVB/EVMLzqfF0aW0cj7IVg6p/2zr1q0HbPnsJeMqpDKaGsGEx5wmmGheqKk0Yw77VyHox1NFxwnMMoEjrxlsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Q9vefEVO; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ukfpWO8KD6YeVMsUvRS88Tmw525WloSkaszXd9ES9Ac=; b=Q9vefEVOYiPxaq/DIq4ALZrpaa
+	Nv/CuUSH45+Hokqf8nj/t4ICwtfmq/w+wDUCEvTLdzB5Zm1WWeFOqjPz1BzqCS4KzeZtwmULeWctQ
+	X5aZQK/TUoFofj6SWV5sjIOj+wUhKujapMKnqvln9P7ZpHsIgdbTYK6FKwjCyrAKv4XHj9NCvqqJO
+	zvIfs7N77nV4t4Uo0SN4hbLyid/jydiQjd2vqxXpgZRxBruQiU8E8igBn88BU6HrWL7KHeQmIJNaO
+	umNwH5ZC57Eds9of4hdIUagPq9WsDpYsVR0/duiAh7AEFKHBBG3Yqcxmx1Ctw+Ijt2cSZHOGxOKIp
+	jxHM8I7w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZrjN-000000091Tj-34Pw;
+	Thu, 10 Jul 2025 13:54:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 81088300158; Thu, 10 Jul 2025 15:54:32 +0200 (CEST)
+Date: Thu, 10 Jul 2025 15:54:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Tested-by : Yi Lai" <yi1.lai@intel.com>, iommu@lists.linux.dev,
+	security@kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+Message-ID: <20250710135432.GO1613376@noisy.programming.kicks-ass.net>
+References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709220714.85697-1-stefano.radaelli21@gmail.com>
- <20250709220714.85697-2-stefano.radaelli21@gmail.com> <9b503f65-5c8c-4f04-a1b1-40d7a1202e8b@kernel.org>
- <CAK+owohgk3CkQRv_PBDWXh44X2uN3p8FWBU2t9VtmO-xzOKTow@mail.gmail.com> <6656b2f0-5258-4f23-8988-567a7b598497@kernel.org>
-In-Reply-To: <6656b2f0-5258-4f23-8988-567a7b598497@kernel.org>
-From: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Date: Thu, 10 Jul 2025 15:53:55 +0200
-X-Gm-Features: Ac12FXyh1DZvJM7tmmJAkdYGtcey-gUnTnYuleZqhE3wLHbYgj5zc8qvxVjp4t4
-Message-ID: <CAK+owogfXDNpjT5Ywcvjaegf0H8-pS109039WadhxHXHbe3GSA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: ti: Add bindings for Variscite VAR-SOM-AM62P
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709062800.651521-1-baolu.lu@linux.intel.com>
 
-> Then why do you define it reversed here? How this som-factor-processor
-> is an argument to my request to use som-factor-processor?
+On Wed, Jul 09, 2025 at 02:28:00PM +0800, Lu Baolu wrote:
+> The vmalloc() and vfree() functions manage virtually contiguous, but not
+> necessarily physically contiguous, kernel memory regions. When vfree()
+> unmaps such a region, it tears down the associated kernel page table
+> entries and frees the physical pages.
+> 
+> In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
+> shares and walks the CPU's page tables. Architectures like x86 share
+> static kernel address mappings across all user page tables, allowing the
+> IOMMU to access the kernel portion of these tables.
+> 
+> Modern IOMMUs often cache page table entries to optimize walk performance,
+> even for intermediate page table levels. If kernel page table mappings are
+> changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
+> entries, Use-After-Free (UAF) vulnerability condition arises. If these
+> freed page table pages are reallocated for a different purpose, potentially
+> by an attacker, the IOMMU could misinterpret the new data as valid page
+> table entries. This allows the IOMMU to walk into attacker-controlled
+> memory, leading to arbitrary physical memory DMA access or privilege
+> escalation.
+> 
+> To mitigate this, introduce a new iommu interface to flush IOMMU caches
+> and fence pending page table walks when kernel page mappings are updated.
+> This interface should be invoked from architecture-specific code that
+> manages combined user and kernel page tables.
 
-I apologize for the confusion in my previous email. I made an error in
-my explanation - our compatible strings actually follow the format
-"processor"-"som-factor", not "som-factor"-"processor" as I
-incorrectly stated. That's why our compatible string is
-"variscite,am62p-var-som" (processor-som-factor), consistent with the
-examples I provided of Variscite kernel like
-"variscite,imx93-var-som", "variscite,imx8mp-var-som", and
-"variscite,imx91-var-som".
+I must say I liked the kPTI based idea better. Having to iterate and
+invalidate an unspecified number of IOMMUs from non-preemptible context
+seems 'unfortunate'.
 
->
-> I asked to reply with mailing list style already. Why are you still
-> top-posting? It makes the discussion difficult.
->
-> https://people.kernel.org/tglx/notes-about-netiquette
->
+Why was this approach chosen over the kPTI one, where we keep a
+page-table root that simply does not include the kernel bits, and
+therefore the IOMMU will never see them (change) and we'll never have to
+invalidate?
 
-I apologize for the top-posting. I didn't realize I was doing it and
-will ensure to follow proper mailing list etiquette going forward.
+> @@ -132,8 +136,15 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
+>  	if (ret)
+>  		goto out_free_domain;
+>  	domain->users = 1;
+> -	list_add(&domain->next, &mm->iommu_mm->sva_domains);
+>  
+> +	if (list_empty(&iommu_mm->sva_domains)) {
+> +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
+> +			if (list_empty(&iommu_sva_mms))
+> +				static_branch_enable(&iommu_sva_present);
+> +			list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
+> +		}
+> +	}
+> +	list_add(&domain->next, &iommu_mm->sva_domains);
+>  out:
+>  	refcount_set(&handle->users, 1);
+>  	mutex_unlock(&iommu_sva_lock);
+> @@ -175,6 +186,15 @@ void iommu_sva_unbind_device(struct iommu_sva *handle)
+>  		list_del(&domain->next);
+>  		iommu_domain_free(domain);
+>  	}
+> +
+> +	if (list_empty(&iommu_mm->sva_domains)) {
+> +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
+> +			list_del(&iommu_mm->mm_list_elm);
+> +			if (list_empty(&iommu_sva_mms))
+> +				static_branch_disable(&iommu_sva_present);
+> +		}
+> +	}
+> +
+>  	mutex_unlock(&iommu_sva_lock);
+>  	kfree(handle);
+>  }
 
-Best Regards,
-Stefano
+This seems an odd coding style choice; why the extra unneeded
+indentation? That is, what's wrong with:
+
+	if (list_empty()) {
+		guard(spinlock_irqsave)(&iommu_mms_lock);
+		list_del();
+		if (list_empty()
+			static_branch_disable();
+	}
+
+> @@ -312,3 +332,15 @@ static struct iommu_domain *iommu_sva_domain_alloc(struct device *dev,
+>  
+>  	return domain;
+>  }
+> +
+> +void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end)
+> +{
+> +	struct iommu_mm_data *iommu_mm;
+> +
+> +	if (!static_branch_unlikely(&iommu_sva_present))
+> +		return;
+> +
+> +	guard(spinlock_irqsave)(&iommu_mms_lock);
+> +	list_for_each_entry(iommu_mm, &iommu_sva_mms, mm_list_elm)
+> +		mmu_notifier_arch_invalidate_secondary_tlbs(iommu_mm->mm, start, end);
+> +}
+
+This is absolutely the wrong way to use static_branch. You want them in
+inline functions guarding the function call, not inside the function
+call.
+
 
