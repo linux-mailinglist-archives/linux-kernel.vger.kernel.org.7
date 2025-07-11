@@ -1,91 +1,171 @@
-Return-Path: <linux-kernel+bounces-728022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24FFBB022A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:30:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BC9B022A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD391CC1AF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:30:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D233B5C2CD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E8B2F198E;
-	Fri, 11 Jul 2025 17:30:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB51219A91;
+	Fri, 11 Jul 2025 17:32:52 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1782A2F0C78
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AB12AE66
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752255004; cv=none; b=amLcVlmjS6QkE5nYeU5dTZnqfyPjBTlp2DIbwrCWjklVhlu3KVMFsF7ceOsaesaCWxUEnKKYVOvwCGIO0vvC1tURV9pc5Q1+NQ9CK8nW+UOQQRgCs6jFBqIDvDeDD130EaW+9Q2tZFy0L9US6SrS9GWKewjtgKPjZgXxMnaQzyg=
+	t=1752255172; cv=none; b=NOmBr/J7X0y7W/pxbby2B5pvWj0UAUWZXuV8Mueha/Ko5CiT/5CkMBjcuBuc1Jxo5Y4Iy21ymWnHIRJgP4l3h8jDsWByCyEUmy+GsjMATVVVRO2zDTAxdKE10qbd6GQqoLfDCk/G7YHu5Bq/DGjUqAzsHLaNTPoJ3UKwh3W3Ny4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752255004; c=relaxed/simple;
-	bh=5wIUFH3p3hc8B6Ka7CMxGym9Tziz+cragojfTnvgQOc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ftcZ28dYu/+F3Unkt8vDGFcWhK5/R76OHzMQgwec9OY6MJHJH7NfWjL5XpT8tqA1Dfaht7czywkqK+zPz3Vi5BhGNAH/fUfuFhmCJlG1gkuqvq570FTmFFxIv18jCsF8dVHvQguyeAWqiUT0YyoNLoabyEuma7NjHMN8OozoqH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e05997f731so47204795ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:30:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752255002; x=1752859802;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KtYj5NrUJYfCiYvUPXTxIhWupGeSnswC1vMADMD4/6E=;
-        b=hc02JN1BEMaFVt19CSKVm8+HKxyGbLq8/4s2guAblwjTiliy8cZvgeqiSpS9WMUXwL
-         6rzA29uDopd8C9Byde+ldk3cGuAQm4w67u/XbtGO1VdpYpTCjK5R0XrPsC7aAQooA2PX
-         /8J+P89AqTNME82GgAV55uKsNg+Kg+TwW45ioliIVtmB7LCtUDRuF6DLjmYbRttfNU/T
-         cEHLS74L2LpS+V4VBnQEj8ReVCd24febfQ0weLkkuZRrPTAqgEyequ4eVjooqqGPTJJO
-         kaC8YvSe9AjCkuf3vIAwBtWnmHxWR9/WzqA8C+FyzdCwf9WlrH0GXnT+bgqTKH5HYJ7T
-         mZkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXeP5GQWi+ROVLH7BQVgaRrN/7jjbpcQsV4DEfyu9cKjOBaHMYyAom05nIWWWiA9abFeHMJ0niZZ2maKaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmFljGNETxgAFdHTWz637iNiRcis3blF7nWbgObDBRs3nI+tBI
-	8FIAcVrUtAy/D4ahS2nTBr+nRgExvqlpSNTVi1Xz8ume8NPIMnJ5Y4UrmGd5fFdldOogPliwy3N
-	+/b3knFVrhISQSNo45jfOzAj4Vib/ldLfjShPYMoRE7xjH1kLxjHK9oX2WOI=
-X-Google-Smtp-Source: AGHT+IHzRB2BUsrViLN0NCJNyjkK8/XfSLHMn0mIEK6+ILPjJzMMqz5TTV41Eh8cSECo1M/2sndo3Feu2SABg0xx1Qq2f1RrQxs5
+	s=arc-20240116; t=1752255172; c=relaxed/simple;
+	bh=Wm+P0tKWxx0Pps707CafIvsZ2e7oH73pHA0GGHCL0dc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BN04mDr0+6lP7xCvdorw3j5gIyUxgbiAOt0l12jA/5GvI1geQ0zEHUwstPZj6r8gpj4zLGiJkI3ESAkY2vXbvQt8J7zh50b5KezxZRizrdaSq+hQ/caZXMo63fP37ETI0az6+QMMP8iUs5VNjCUjMWTq0D91ryQCV+WLLKXyvbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 2560D81269;
+	Fri, 11 Jul 2025 17:32:46 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id E714B20010;
+	Fri, 11 Jul 2025 17:32:41 +0000 (UTC)
+Date: Fri, 11 Jul 2025 13:32:40 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, Josh
+ Poimboeuf <jpoimboe@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
+ Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, tech-board-discuss@lists.linuxfoundation.org
+Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL
+ modules
+Message-ID: <20250711133240.0d5b6de8@batman.local.home>
+In-Reply-To: <2025071127-reunion-residence-c0f2@gregkh>
+References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
+	<20250709212556.32777-3-mathieu.desnoyers@efficios.com>
+	<aHC-_HWR2L5kTYU5@infradead.org>
+	<20250711065742.00d6668b@gandalf.local.home>
+	<2025071124-cola-slouching-9dd2@gregkh>
+	<20250711091734.5632dcf7@gandalf.local.home>
+	<2025071127-reunion-residence-c0f2@gregkh>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2163:b0:3e0:51bb:6e42 with SMTP id
- e9e14a558f8ab-3e254313c42mr45683925ab.6.1752255002208; Fri, 11 Jul 2025
- 10:30:02 -0700 (PDT)
-Date: Fri, 11 Jul 2025 10:30:02 -0700
-In-Reply-To: <okx6a3ngonajh7jrzc65ybd4i6bcnkc7gm4mggyo3jlm6s2ojx@yy5jcipsnd3l>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68714a1a.a00a0220.26a83e.005a.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in bdev_getblk
-From: syzbot <syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, anna.luese@v-bien.de, brauner@kernel.org, 
-	jack@suse.cz, jfs-discussion@lists.sourceforge.net, libaokun1@huawei.com, 
-	linkinjeon@kernel.org, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	p.raghav@samsung.com, shaggy@kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 18adtu5u8ur8tnbm9raqssehis49hibx
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: E714B20010
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19s6TWKO0QxzcI2vgZ4MDUlJVv/wA2P5cc=
+X-HE-Tag: 1752255161-399294
+X-HE-Meta: U2FsdGVkX1/O+ZEOZRiNmL7u0sMWsv636j9dUP/r1UllCQYwe05OB0tZE3WUTF/+wv+0cETMgXaJwoYKM2SANiYzNy9GBV71QeTIQBPGVMys60k8Xx+N+WzT3IUZExXSt2f1sSE7aekCb1hmXDAnfL6qQFcmU5RVBGGb9/o+RnBy0Z1WdB7hmYhwzPag+hyV/fMXnR9k2FM59DiA1mYgg5smK2l0hQhGLFku8HtO270L/gorDEbsT+yX9+ScZyd8hvhjDY20xtlBe0erQhxWuD/C8HyTFD1CK3w1bR62YEc4Cc/9ZkcmNGQiOWEd0+eXdYxS921yVi8RN9Pk7NjmE6XLrMR1E1GX/GYMd1elgupGyVPPVAa5vAo6+slFueuu
 
-Hello,
+On Fri, 11 Jul 2025 18:39:40 +0200
+Greg KH <gregkh@linuxfoundation.org> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> > Yes, but you mostly see drivers and side functions that really do nothing
+> > for the kernel. LTTng has contributed tracepoints, several RCU
+> > enhancements, restartable sequences and more.  
+> 
+> Somehow those little drivers are "doing something" for the kernel by
+> virtue of you being able to use your keyboard and network card :)
 
-Reported-by: syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com
-Tested-by: syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com
+I meant contributions to other parts of the kernel than just tracing.
+This is more like PREEMPT_RT, where improvements to the core kernel was
+made to help both LTTng and the kernel proper.
 
-Tested on:
+If you want to talk about precedent, we have it. raw_spin_lock() was
+used *only* for PREEMPT_RT years before it was ever added to the kernel.
 
-commit:         a62b7a37 Add linux-next specific files for 20250711
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b87a8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bb4e3ec360fcbd0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=01ef7a8da81a975e1ccd
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14c6c68c580000
+> 
+> Seriously, don't conflate tracing core code as some how being more
+> "important" than any existing driver in the tree, when both, in the end,
+> are necessary for a user to get their job done.  One could even say that
+> the tracing stuff is NOT needed, as if code works properly, no one
+> should be needing to use it...
 
-Note: testing is done by a robot and is best-effort only.
+I'll even argue that this is fine for EXPORT_SYMBOL_GPL() because it
+*isn't important*! I'm not saying it's more important. I'll agree with
+you and say its less important. The point that the function I want to
+export gives you information only and doesn't give you any operational
+hooks into the kernel, means it's just a outside observer of the
+system. It's not changing how the system works in any way.
+
+I always tell people that tracing is a second class citizen when it
+comes to the kernel. It should try it's damn best to not effect the
+system it is trying to observe. If there's a decision to be made that
+can improve tracing with the cost of hurting the system performance
+when tracing is off, I'll make the decision not to do it. This is why
+we have jump_label. To have nops when tracing is disabled and jmps when
+it is, so that tracing doesn't affect normal operations. Not to mention
+all the hacks done for function tracing to keep its overhead down to a
+bare minimum.
+
+> 
+> Anyway, I see stuff all over the place, not just drivers, for "real"
+> things on a weekly basis.  Go poke in the Android kernel tree if you
+> want to see loads of examples of where vendors feel they can export/hook
+> into core parts of Linux just to get their work done.  I would argue
+> that most of them are NOT needed and are doing crazy things, but as
+> users have real hardware that sometimes requires it, it's a hard thing
+> to argue against.
+
+I know you see real things. I think you misunderstood my comment. I
+didn't mean to say what you see is anyway less than what happens in
+core kernel. I find drivers are a key part of the kernel. The core
+kernel is just a tool to have applications interact with the hardware,
+and without drivers, the kernel is useless. My point was merely stating
+that you and I have different view points of the kernel. I in no way
+was saying mine was more important. In fact, I would say it's less
+important.
+
+> 
+> I'll show one real-world example, the USB offload path code, that you
+> are using today on your Android phones that saves loads of battery life.
+> In older kernels, the hooks/exports needed for that were all over the
+> place, it took an engineer years to get this all working for lots of
+> different hardware types and merged upstream properly.  They knew that
+> they could not just get the upstream developers to export the needed
+> functions, they had to get their working code merged in order to be able
+> to have it happen.  And they did!
+
+I'm not sure how that is comparable? It sounds like they needed to
+clean up a bunch of other code for other hardware so they could use
+this feature.
+
+The feature I'm talking about is fully available. It's just a way to
+get a user space stack trace from the kernel. Nothing more. The work
+being done is to make it generic so all the tracers could use it. All
+that's upstream. The two functions I would like to export is "give me a
+user space stack trace now" and "defer the user space stack trace
+from NMI to when the task goes back to user space".
+
+> 
+> That was a non-trivial task, and while you might not feel it "does
+> nothing", the power savings you rely on daily would beg to differ.
+> 
+> So get the lttng code merged into the tree please, it seems that you are
+> the one objecting to the merge, not me :)
+
+It was actually others, and it was years ago. Perhaps we could just
+accept the LTTng kernel module as is, as a module, and leave it at that?
+
+Then these functions would still have to be EXPORT_SYMBOL_GPL() but at
+least it would be for an in-tree module.
+
+-- Steve
 
