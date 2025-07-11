@@ -1,93 +1,118 @@
-Return-Path: <linux-kernel+bounces-728369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0197B02788
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:12:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB07B0278C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9781CC0E6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:13:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09AAC1CA5CFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98AC222594;
-	Fri, 11 Jul 2025 23:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEHYTxj/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECF0220698;
-	Fri, 11 Jul 2025 23:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0844E222590;
+	Fri, 11 Jul 2025 23:14:21 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6926A1F2BAB;
+	Fri, 11 Jul 2025 23:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752275565; cv=none; b=pCA7YP3RQ0haZ2awWVbsQORRFZyE9+WYGvE/GLSYsV2AXVDT2TnmnK7rzXRDUIgt6gC85e7tPkKJPGPeGIG2pPpu6b1hln4hUdJcxAPKIzu28xqCLXUm26e6frVTKSgqbIJNFGqlffZK1vM7tWas5ma5U3l7hPmuk3OOzrV1Wx8=
+	t=1752275660; cv=none; b=jTo8lY3JM6JEiyUh1cplp6QhPG6dU1/9QIcEfpt5y9EZYvVBqq+/OjAF4Jh1S9JS2Khy8FryI4WjTOpinywrnS+ZaspazZ3WGPgi3nvj9nQzNxptGOw8Z8Pn1UT3B2oEGdAEtBg5VOqqzgfOb7shPd3uw4Lc3BXD+spEct4JcZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752275565; c=relaxed/simple;
-	bh=rcEM94qudE/5/XmhjCGjmRJ8GIDM6gxglpKOGagwb3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TWZqsHc5/iLLtd+TlJYyGx78qVr2jwpJInYCzAcDNCCBzcuJpaPm7OmG+/c//4DWNCRc87sKoLdoMWD2F/9yXzBRHAESCEFODzpTnMD18QYy6bEwlUB+pRg4O2adxAlm/GTOb6+BBJAU5cmcn/Q70vZSTufYneHdnG78rZmyDWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pEHYTxj/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F161C4CEED;
-	Fri, 11 Jul 2025 23:12:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752275563;
-	bh=rcEM94qudE/5/XmhjCGjmRJ8GIDM6gxglpKOGagwb3w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pEHYTxj/qkhDlunyOLB2QsgZw+7+UDz6a24OdaGsE+9eskvxd1tIazSaQf3cKQKKk
-	 TVpmy5xo6jwTK3L0ndTNk0HtYd75xehavALa8bl5OIS4Cp8EMFFV61/Z8DJZ13oxC+
-	 Dy/wHWBdiBdNIMJ9qitIStQ4rHhyKYDvj3BUV92SUpdiv05byQq8O92VOD3wJu11Sm
-	 hCETeq+z3mGKL4lLjHmuEAk9RbGrzMTyVov7S6fykdVIdsLSoGEnBNdvY7oOeHbWuf
-	 97d5H4XeWoKcoLmmxA8BMHDq0YGM90oUXm988OSGsx+CVEfqmVKrFbgwa9QWTiwnBj
-	 p4PzM/YaJnopQ==
-Date: Fri, 11 Jul 2025 16:12:41 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Li Tian <litian@redhat.com>
-Cc: netdev@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>,
- Dexuan Cui <decui@microsoft.com>, Stephen Hemminger
- <stephen@networkplumber.org>, Long Li <longli@microsoft.com>
-Subject: Re: [PATCH v2] hv_netvsc: Set VF priv_flags to IFF_NO_ADDRCONF
- before open to prevent IPv6 addrconf
-Message-ID: <20250711161241.772af0eb@kernel.org>
-In-Reply-To: <20250711041700.13103-1-litian@redhat.com>
-References: <20250710024603.10162-1-litian@redhat.com>
-	<20250711041700.13103-1-litian@redhat.com>
+	s=arc-20240116; t=1752275660; c=relaxed/simple;
+	bh=bFbJVZY43Jpn39tYWKXR9nU1JbUGappWLcKOMLT4sl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWZ8UP0C7F7knLR+UEIvMMhyNfxRcIkIeJ5S/8ElBLzX6VhPtyqaJiaIv/vkow51nqeF+CdUeqE2H/CfW4WxXLNKtZOBIeslXr1AjYMws4niLRZUhc+P2FPonojp6fZktk7EqomY2Hmc4kdGYUiPlgzrVR7KXGqc3miD0U+83ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost [127.0.0.1])
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 56BND41k624388;
+	Fri, 11 Jul 2025 18:13:04 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.18.1/8.18.1/Submit) id 56BND1e0624384;
+	Fri, 11 Jul 2025 18:13:01 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Fri, 11 Jul 2025 18:13:01 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Richard Fontana <rfontana@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>, Thomas Huth <thuth@redhat.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-spdx@vger.kernel.org,
+        J Lovejoy <opensource@jilayne.com>
+Subject: Re: [PATCH v2] powerpc: Replace the obsolete address of the FSF
+Message-ID: <aHGafTZTcdlpw1gN@gate>
+References: <20250711053509.194751-1-thuth@redhat.com>
+ <2025071125-talon-clammy-4971@gregkh>
+ <9f7242e8-1082-4a5d-bb6e-a80106d1b1f9@redhat.com>
+ <2025071152-name-spoon-88e8@gregkh>
+ <aHC-Ke2oLri_m7p6@infradead.org>
+ <2025071119-important-convene-ab85@gregkh>
+ <CAC1cPGx0Chmz3s+rd5AJAPNCuoyZX-AGC=hfp9JPAG_-H_J6vw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAC1cPGx0Chmz3s+rd5AJAPNCuoyZX-AGC=hfp9JPAG_-H_J6vw@mail.gmail.com>
 
-On Fri, 11 Jul 2025 12:17:00 +0800 Li Tian wrote:
-> Commit 8a321cf7becc6c065ae595b837b826a2a81036b9
-> ("net: add IFF_NO_ADDRCONF and use it in bonding to prevent ipv6 addrconf")
-
-Please trim the hash to the same length as in the Fixes tag.
- 
-> This new flag change was not made to hv_netvsc resulting in the VF being
-> assinged an IPv6.
+On Fri, Jul 11, 2025 at 05:02:18PM -0400, Richard Fontana wrote:
+> On Fri, Jul 11, 2025 at 3:38 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Fri, Jul 11, 2025 at 12:32:57AM -0700, Christoph Hellwig wrote:
+> > > On Fri, Jul 11, 2025 at 09:30:31AM +0200, Greg Kroah-Hartman wrote:
+> > > > That's a crazy exception, and one that should probably be talked about
+> > > > with the FSF to determine exactly what the SPDX lines should be.
+> > >
+> > > It is called the libgcc exception and has been around forever for the
+> > > files in libgcc.a that a lot of these low-level kernel helpers were
+> > > copied from as the kernel doesn't link libgcc.
+> >
+> > Ah, so it would be something like this exception:
+> >         https://spdx.org/licenses/GCC-exception-2.0.html
+> > but the wording doesn't seem to match.
+> >
+> > I'll let the license lawyers figure this out, thanks for the hint!
 > 
-> Fixes: 8a321cf7becc ("net: add IFF_NO_ADDRCONF and use it in bonding to prevent ipv6 addrconf")
+> This one
 > 
-> Suggested-by: Cathy Avery <cavery@redhat.com>
+>  * In addition to the permissions in the GNU General Public License, the
+>  * Free Software Foundation gives you unlimited permission to link the
+>  * compiled version of this file with other programs, and to distribute
+>  * those programs without any restriction coming from the use of this
+>  * file.  (The General Public License restrictions do apply in other
+>  * respects; for example, they cover modification of the file, and
+>  * distribution when not linked into another program.)
 > 
-> Signed-off-by: Li Tian <litian@redhat.com>
+> is `GCC-exception-2.0`
+> 
+> while this one:
+> 
+>  *    As a special exception, if you link this library with files
+>  *    compiled with GCC to produce an executable, this does not cause
+>  *    the resulting executable to be covered by the GNU General Public License.
+>  *    This exception does not however invalidate any other reasons why
+>  *    the executable file might be covered by the GNU General Public License.
+> 
+> does not seem to be in the SPDX exception list. It is very similar to
+> `GNU-compiler-exception` except it specifically mentions GCC instead
+> of saying "a GNU compiler".
 
-Please remove the empty lines between the Fixes tag, and the ...-by:
-tags.
+https://spdx.org/licenses/GNU-compiler-exception.html
 
-Please remember to increase the patch version between revisions.
+is exactly this.
 
-Please don't post the new versions in reply to old versions.
 
-Please don't post new versions within 24 of the previous one.
-
-Please read:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
--- 
-pw-bot: cr
+Segher
 
