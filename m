@@ -1,135 +1,153 @@
-Return-Path: <linux-kernel+bounces-728439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C774CB02818
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E5FB02819
 	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 02:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C19467BF287
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:58:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17403B40636
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21AA2356C6;
-	Fri, 11 Jul 2025 23:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318BC23817A;
+	Fri, 11 Jul 2025 23:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FDGJe12W";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W7kso2If"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zthKH4Jx"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C276A22A801;
-	Fri, 11 Jul 2025 23:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A1B236A73
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 23:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752278339; cv=none; b=sEJV49lXX7QU0v7UORBwI7QrxA8VmjW6wgnCXHa0NDZZlua34n/n4MX40ubNrxqvbwIhhhJnXINGXUUTiQR5w5MdRwGhqCgJjJKCAzwOZPLDIUZRC0exosz7i9CFP/KkUSB/jlq7RkP9ozDcFP73ws4yFZzOM7JJChYCGhe5DT4=
+	t=1752278354; cv=none; b=df+8D3OVe3c1cEsOOVt9naX8VyRKf9DHbdgJL5XjBBz28FvCFQgFx7ttN55XUNO/2x8Fye2KkTyDQomr66oO97zU629D3HAXTxQueWaXt6EM6+yZQFu/fDzlwuJDj34W0kF9Ca2H8lZSMXECf4CMN3XAVgHeos3RYqLzVdKgE4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752278339; c=relaxed/simple;
-	bh=/5hS7jwAB0F42rvVLLlXskkWnYfakJs6Bk5EEuedoho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=epzzDdgPuqPVp/fxQ7A+QzNfL0iWMh4J0xEMF0GN1offOqs4Qul5QiJaypMjC+F2NODcaD9oEKUIOr0aJBfm28IqZchorSOhmKMyJQ2f37b3sjpARf2eykrMJ2/bQrwUG8RSNmhtLHpuGzChfZNVK/VKB3aN75T90PTu3LWudH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FDGJe12W; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W7kso2If; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 12 Jul 2025 01:58:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752278335;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=imT5HqEkRSNprP7W6NEIrAdL8HwowAu3v+5Es6PMFwM=;
-	b=FDGJe12WV9YV6S3fOxMQ+q4kz9C+xvc9/5227EAJ793/L4hXgNzPtri4QIAKKLFHbVO8RT
-	uW6B9B05weML4Vz4LU0D3IjvnvYmFpD7BweyRpEGBbQ9ASPi38tPIZusebyM26b1dUzau4
-	brQSyBwmjYDNOqfrE7eYeeRvMSFs0YxpAdHh7rppoY71nJXYqDfhFObtnbtqP+L1kY93jf
-	9b4OokjKzeM1KDIhVuehERYguwk4E9xu5Psh1sE/ZOuOXxSnvKRyDADdOWnov36ibGbqLX
-	xzn5096FQq7D3q30RjJ35gwY0pWI/19ITsKGatekP02CfRQeVtTXKYlkG2sDow==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752278335;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=imT5HqEkRSNprP7W6NEIrAdL8HwowAu3v+5Es6PMFwM=;
-	b=W7kso2IfTKsUrGr4a0eZJAEAENj+pddcsr3DyvSVsWDnogvCKgOeudCbk4HPfVsHOG/80i
-	4W9bLePA2Sc7K1AA==
-From: Nam Cao <namcao@linutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Simona Vetter <simona@ffwll.ch>, Dave Airlie <airlied@gmail.com>,
-	davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, pabeni@redhat.com,
-	dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [GIT PULL] Networking for v6.16-rc6 (follow up)
-Message-ID: <20250711235854.c7rIj1Ix@linutronix.de>
-References: <20250711114642.2664f28a@kernel.org>
- <CAHk-=wjb_8B85uKhr1xuQSei_85u=UzejphRGk2QFiByP+8Brw@mail.gmail.com>
- <CAHk-=wiwVkGyDngsNR1Hv5ZUqvmc-x0NUD9aRTOcK3=8fTUO=Q@mail.gmail.com>
- <CAHk-=whMyX44=Ga_nK-XUffhFH47cgVd2M_Buhi_b+Lz1jV5oQ@mail.gmail.com>
- <CAHk-=whxjOfjufO8hS27NGnRhfkZfXWTXp1ki=xZz3VPWikMgQ@mail.gmail.com>
- <20250711125349.0ccc4ac0@kernel.org>
- <CAHk-=wjp9vnw46tJ_7r-+Q73EWABHsO0EBvBM2ww8ibK9XfSZg@mail.gmail.com>
- <CAHk-=wjv_uCzWGFoYZVg0_A--jOBSPMWCvdpFo0rW2NnZ=QyLQ@mail.gmail.com>
- <CAHk-=wi8+Ecn9VJH8WYPb7BR4ECYRZGKiiWdhcCjTKZbNkbTkQ@mail.gmail.com>
- <CAHk-=wiMJWwgJ4HYsLzJ4_OkhzJ75ah0HrfBBk+W-RGjk4-h2g@mail.gmail.com>
+	s=arc-20240116; t=1752278354; c=relaxed/simple;
+	bh=TQJvcadu4ytpBW1WlcQqcacJL5F7BEX/XlwUQ3jSJG4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P2ANq4ch3Cpmp1g22Eydzt+qW4Ll7o60c01zqVAh+P3syoHRbF8tFjJxOu/0NORJiW9QeOhzNVv3RCndXgaQMqXCQgvPZkPXEXFOSb05n9bXeTmvO2397lS2dExbSzM68ZTFPOV7xA/Oh9K0LuzHYW0JqO1kFtJVMdHDlDabEDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zthKH4Jx; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-456007cfcd7so25945e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:59:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752278350; x=1752883150; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G0HSRL4HugeXUFVF2xbav3ajCDx1kDmGqq3aBhMDxm4=;
+        b=zthKH4JxFu1xNe2htcv1NgFDGPKnovp7R70eC8ROmYf7QZ/JqFoVpuDz/L1ookuLpS
+         MFECFKOapQqOx+xFJMDzxmtyzOB6yWo8uaImIvLrS/wrANXJLH2eo8t/zAJA02otAkGS
+         Pv4X8O4bWAWOGaRZOaR7lGEP/IFZpko/qJ+svHsXCb79vDMvuxZAtFAWOb6mj+Ip3E4t
+         wrKlyeMj5iXNDDBbWkmv9bqikfnLGVrzrDO6fB8lL4CLis87ZocRwwf+9HjzOrDWCCbP
+         QHEnUp1acgULJ2KLoHREIxtbUCloIFrLBZMzH35pabb/l19qyDY9HfR5zEggfxwHnMAT
+         pxfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752278350; x=1752883150;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G0HSRL4HugeXUFVF2xbav3ajCDx1kDmGqq3aBhMDxm4=;
+        b=RaO214t+UJIThhD1EEjitcAd3xJumziLt+XPBjse9HQToCU4ji89lVo/jCXu0Ta/fc
+         bEdKTs8Yxrt0TuRRHgcJEEF5uPtS9YKatiikiRNZVgc9ma8NF2a3DEn6Ccx9iIVdABej
+         Z0ULaUreW9XPfU6mOWXlhLhgIwLsf5BjCpTUwtBJc3NnZi9fKmPXk/tSVYpjAyVJLlYS
+         ngzPZ+j+qCKXCv3XmmcKScCasyZdQr8w1UhA7MoWKtxz0GDxzuX0PrJpcvxoGThtO+j9
+         v1oD+Ym8iyTRkQwgtETFLI1WXFaNCp3wMJxg6ovazp//dg2fIECfbQbzzn48IEreEB+Z
+         Ul8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJy5zXqMN16OEzgfDCTnDct4Vblb72WPqUh6Dj1SRfHF1x7AkX+1dhWizzBUX8VYI5IPhW3733gdALdzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyx+iWkuMzloUMnymXt6IywuWJ48/AnZTLOMMONvRxbRN3KRfp
+	12/Jbp9dVM70lRZZXn8NBBfPElQ23rxYQ3aZLsYgsb6ThVwAea4elxOmneFKRgY0Gs1LbvGmIV8
+	vx38Nk8UAYtos6p83OZvBj2tNfc0dXXmVZtHLuoxU
+X-Gm-Gg: ASbGnctuGyuKo8ANpyPDoWcT/v9Nkn1Q4Koaz7Ud5i36BqoVgCc+iBHn7P0HJ+Gkc0T
+	ey4f+65YmefFyir91WiO0aRhlhi9ddZb3zCO8BO8bws6Pg++JNYdldaYfBJqHJfgoOZUZ8Y+nkH
+	9SbxPCPZIQUox/YR9fBL38LMcGJw32rdz0FDcnm3fkqpEEMiCY2AjsYeu9+hfvYz774gPLWuUOH
+	63c8cdW8apxwbinvKk8cMlh/35UdxfDHQIqhg==
+X-Google-Smtp-Source: AGHT+IH0Yb8i1HbshEYkUfB7pKBzNAZY2a47ozdMS6Ea9eu6/2JNmyxFqwJwxTVebnT7h+QOEYO+783uFnTjwj1f5T4=
+X-Received: by 2002:a05:600c:4302:b0:442:feea:622d with SMTP id
+ 5b1f17b1804b1-45604731777mr157355e9.1.1752278349565; Fri, 11 Jul 2025
+ 16:59:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiMJWwgJ4HYsLzJ4_OkhzJ75ah0HrfBBk+W-RGjk4-h2g@mail.gmail.com>
+References: <20250604050902.3944054-1-jiaqiyan@google.com> <20250604050902.3944054-4-jiaqiyan@google.com>
+ <aHFpIpIfqVCQZVgG@linux.dev>
+In-Reply-To: <aHFpIpIfqVCQZVgG@linux.dev>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Fri, 11 Jul 2025 16:58:57 -0700
+X-Gm-Features: Ac12FXws7N7R5NhC74hDyERmsam_JiCP8QqW0Zl8h8Z88cj84PQ3Wo91uK-jnvY
+Message-ID: <CACw3F51xRWr5LXz4-JhK+mjizY7D7Oa+GrJ-OZHktfPzFGKeiw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] KVM: arm64: Allow userspace to inject external
+ instruction aborts
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: maz@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, 
+	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, 
+	pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org, kvm@vger.kernel.org, 
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, duenwen@google.com, rananta@google.com, 
+	jthoughton@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 03:19:00PM -0700, Linus Torvalds wrote:
-> On Fri, 11 Jul 2025 at 14:46, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
+On Fri, Jul 11, 2025 at 12:42=E2=80=AFPM Oliver Upton <oliver.upton@linux.d=
+ev> wrote:
+>
+> On Wed, Jun 04, 2025 at 05:08:58AM +0000, Jiaqi Yan wrote:
+> > From: Raghavendra Rao Ananta <rananta@google.com>
 > >
-> > I've only tested the previous commit being good twice now, but I'll go
-> > back to the head of tree and try a revert to verify that this is
-> > really it. Because maybe it's the now Nth time I found something that
-> > hides the problem, not the real issue.
+> > When KVM returns to userspace for KVM_EXIT_ARM_SEA, the userspace is
+> > encouraged to inject the abort into the guest via KVM_SET_VCPU_EVENTS.
 > >
-> > Fingers crossed that this very timing-dependent odd problem really did
-> > bisect right finally, after many false starts.
-> 
-> Ok, verified. Finally.
-> 
-> I've rebooted this machine five times now with the revert in place,
-> and now that I know to recognize all the subtler signs of breakage,
-> I'm pretty sure I finally got the right culprit.
-> 
-> Sometimes the breakage is literally just something like "it takes an
-> extra ten or fifteen seconds to start up some app" and then everything
-> ends up working, which is why it was so easy to overlook, and why my
-> other bisection attempts were such abject failures.
-> 
-> But that last bisection when I was more careful and knew what to look
-> for ended up laser-guided to that thing.
-> 
-> And apologies to the drm and netlink people who I initially blamed
-> just because there were unrelated bugs that just got merged in the
-> timeframe when I started noticing oddities. You may have had your own
-> bugs, but you were blameless on this issue that I basically spent the
-> last day on (I'd say "wasted" the last day on, but right now I feel
-> good about finding it, so I guess it wasn't wasted time after all).
-> 
-> Anyway, I think reverting that commit 8c44dac8add7 ("eventpoll: Fix
-> priority inversion problem") is the right thing for 6.16, and
-> hopefully Nam Cao & co can figure out what went wrong and we'll
-> revisit this in the future.
+> > KVM_SET_VCPU_EVENTS currently only allows injecting external data abort=
+s.
+> > However, the synchronous external abort that caused KVM_EXIT_ARM_SEA
+> > is possible to be an instruction abort. Userspace is already able to
+> > tell if an abort is due to data or instruction via kvm_run.arm_sea.esr,
+> > by checking its Exception Class value.
+> >
+> > Extend the KVM_SET_VCPU_EVENTS ioctl to allow injecting instruction
+> > abort into the guest.
+> >
+> > Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
+> > Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
+>
+> Hmm. Since we expose an ESR value to userspace I get the feeling that we
+> should allow the user to supply an ISS for the external abort, similar
+> to what we already do for SErrors.
 
-Yes, please revert it. I had another person reported to me earlier today
-about a breakage. We also think that reverting this commit for 6.16 is the
-right thing.
+Oh, I will create something in v3, by extending kvm_vcpu_events to
+something like:
 
-Sorry for causing trouble. Strangely my laptop has been running with this
-commit for ~6 weeks now without any trouble. Maybe I shouldn't have touched
-this lockless business in the first place.
+struct {
+  __u8 serror_pending;
+  __u8 serror_has_esr;
+  __u8 ext_dabt_pending;
+  __u8 ext_iabt_pending;
+  __u8 ext_abt_has_esr;  // <=3D new
+  /* Align it to 8 bytes */
+  __u8 pad[3];
+  union {
+    __u64 serror_esr;
+    __u64 ext_abt_esr;  // <=3D new
+  };
+} exception;
 
-Best regards,
-Nam
+One question about the naming since we cannot change it once
+committed. Taking the existing SError injection as example, although
+the name in kvm_vcpu_events is serror_has_esr, it is essentially just
+the ISS fields of the ESR (which is also written in virt/kvm/api.rst).
+Why named after "esr" instead of "iss"? The only reason I can think of
+is, KVM wants to leave the room to accept more fields than ISS from
+userspace. Does this reason apply to external aborts? Asking in case
+if "iss" is a better name in kvm_vcpu_events, maybe for external
+aborts, we should use ext_abt_has_iss?
+
+>
+> Thanks,
+> Oliver
 
