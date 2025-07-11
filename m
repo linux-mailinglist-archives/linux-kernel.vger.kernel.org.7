@@ -1,258 +1,155 @@
-Return-Path: <linux-kernel+bounces-728326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9038AB026D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 00:12:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31949B026D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 00:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102033B03D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:11:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D235C1E59
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623E521FF4D;
-	Fri, 11 Jul 2025 22:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4E0220F23;
+	Fri, 11 Jul 2025 22:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="RpcvX3Ov"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRIJEror"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FAF21B9E5
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 22:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C973F13B590;
+	Fri, 11 Jul 2025 22:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752271891; cv=none; b=AVxJeC+vUbGMZNyx4JXBUU7D/XX9uw7ioVsbz1maxTmJnvp9hkgA0J/L7vBhh38BXtLyTbatyUwRehAZKw+KZBIeMYqA2RSBUvrG1QMvjhNhGxBTb6OA8qA/ZGDOUp/bRvKOoK4jVs3eULEoXTG2JyXJvReOeD72/gGSwrytVGw=
+	t=1752271963; cv=none; b=BWg1tYf+c8PZkJOzEALem5qiEfs8CEcvPMBg4v8/7GO6ACn6htuF/3lt5+EmBUPttZdc5JYPmHClBGe8XttuPSvnGeCw6OdqO69+nexovzVdj/bYPI4rEwmgJbmtjD9sQt8FfntfUNQUimpkB1roLIb1zl0cDrxPJCiFQNN9gQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752271891; c=relaxed/simple;
-	bh=IDNGjPZveu23hK/BMruXaxasRSZ6QyyDaqQBL3h2TNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rSRrt2jSDnQVnhZXGzumRWmcuyAyx/aivhUjaIXGpPM8b7cge0gGjz6ejRxgoaQONt3gniHgUeGPJbUpfoGJl4zpwm7/1psMpu5oIF80/Yk0gxcZ0XaZP/15Oo4OQHYLr6MqQxNiue2ARjjHnAUUj/ddXxhgwdPFTIU+gQAYFuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=RpcvX3Ov; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a4f379662cso2186005f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:11:29 -0700 (PDT)
+	s=arc-20240116; t=1752271963; c=relaxed/simple;
+	bh=j1aeCEllDPAkyDpyRZWGkM8NtpEx56OXqtwil4CfQ3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OA5JrPLmpZKJwkYsGoUoQAzt7SzIYD8CVEFzeByoBhDQ9PJXOXLsX33Nsd9guywBXI8OTch/FZrgqrRz9yv3Q8+78V7uRBd9We2eSs/ZOnnQej5VoGvdA9PtdRLJxoHia4omw1LYCxxSX06CNID9ka77jBeNvqZqnHj5T3PujGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRIJEror; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7db39af4d22so269047285a.0;
+        Fri, 11 Jul 2025 15:12:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1752271888; x=1752876688; darn=vger.kernel.org;
-        h=content-disposition:mime-version:mail-followup-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZMZOK0zGE3QkqzeUwZ/9p4zQ/N/Yvn8raXUpAZ5Ygfs=;
-        b=RpcvX3OvO3nyFixG4uTnzir09Y68SaZHuC/+gxD2jZy6eoyK/aSxwORJC6/I3sD4R/
-         Qw7ZY5HqqHaASlpaPRYR3jHxLMK6HtcWq91p7cpNO0VgRWgA1oUX+Mt5VqMecEeqTIEo
-         /YdPuK7gJdGqywMZ0wHCnJKJhoPF4eY4X7n7E=
+        d=gmail.com; s=20230601; t=1752271961; x=1752876761; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=H3rTJuQRKWnARVRuNlp/ecDlvgAUoyYM9idM5xq25UQ=;
+        b=VRIJErorPXuEdE90iRDHVClZMfQpKEMPpUumBYbzbzNVIxCV4bsFZnZj3tbbttRjJk
+         087Wr92QDyRrnRHZqxf0WR8z0YN/Nh9Gk4GGFxIYRmw+kF5WqsNUkFut/ZvYcZGTmgrM
+         /FRaFqNIc2Npn+/ve00/vv4Tgmeg0la1FTIErAgAX/JBBZiEiH0aqzCWzHYxw/rIf9RE
+         6qtNOrarJFbiDsk14lPBjS+DZVyWvasLM1NU9pWpZqiEzMCe3YaJKWDRONdm71NSMiON
+         fKdQv6urlm/EYaA7oBqHwRlM3k/NCSMZO4WegHAbTmxP3mC3CeeAhTin1uPzr3TgmC2i
+         wg6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752271888; x=1752876688;
-        h=content-disposition:mime-version:mail-followup-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZMZOK0zGE3QkqzeUwZ/9p4zQ/N/Yvn8raXUpAZ5Ygfs=;
-        b=H0ckrFEOzO/ZHXu9eCkUid6AZgr95rI5Zn8rLPVk6/4UR1xUMkDCOKmbbtPyt8PL7b
-         GUXClC42ueKRuWTWs881usB5hm9bt1QPQAeSeJ24CHE2zwTReqcUnQIa7JUPqC7amJ14
-         3gzFOS2dGEO5v3gl9JWTkkp1XuVpLLmAdB9bvGymRRIvK/ZqKveYH3QL/OLky78PJiZG
-         WFpnaIaaVb3wiD4LyWOSRXxUJhatMbZ16sIV+ky3puxxC/0S/xQaO9W+9MjzwgTmFUxS
-         cd5sCwglcN3i/LuBvd55Eqi50uiQe8bHyLV2idzf4PVS40Ge1+tJo3rKoHvkyWYNL608
-         sRAw==
-X-Gm-Message-State: AOJu0Yw8h6byCxxsDelNrLGbZOmV0DjJUwoI6k4bwVA/4OyyfkDAmc3z
-	O6vFUpUm9Ix0QO/O95AscZIAUBvGIVtv2Lat62QJ/ypInTr1sUqfGt0SdcCaxMxUlQo=
-X-Gm-Gg: ASbGncsv3KrPpr/1QKWFOMmNY04UXJ3UnjJrzZ2f6rKkELdXX6Fl7Sn0X2siONKVWVB
-	hcqIs1PnuWcwVUcCeP2vz1euH1kQIzQEYvfpPR1Ioxju1nSC0HPMziUS+dp/0l1rsr9gyUyqnik
-	syztbu/zlXlICZcXxw1t+W5zsYGWgc5OI6LkULW8rdugwi4FUao/INKUchpbz7gqrT0lGQtCgKM
-	yrN6ZA1hAR0cOSLLAzUV+R//ooxBs7rH5Kxow/7kdGrIqTGpRtxSi4W3jIa9M7zbmRHQPmpIoCJ
-	lD6oJ+JYf8/cn7cDQJaIrm5XyEUXy+Uz2H6NmoSEcw+uRnDbZnWhXtrvaawlHtSf7kksw3OAWU7
-	1VHaufz6r+slNUK9tq6bGp4+jqdbOWaYFfEGFBlDmnugd
-X-Google-Smtp-Source: AGHT+IENs36yvqEFOzAaZMmMAzahdZcvrKbkWM9wENAz8j26+W7id5gTIuIu7J6ieHmuNJ8X1FqSxA==
-X-Received: by 2002:a5d:5f88:0:b0:3b5:e077:af24 with SMTP id ffacd0b85a97d-3b5f2dc21famr4032648f8f.14.1752271887721;
-        Fri, 11 Jul 2025 15:11:27 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd4b32d8sm58626325e9.17.2025.07.11.15.11.26
+        d=1e100.net; s=20230601; t=1752271961; x=1752876761;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H3rTJuQRKWnARVRuNlp/ecDlvgAUoyYM9idM5xq25UQ=;
+        b=q+02pHTzJ3lab8Fxfkrq37hqLls8WT4poW5/hqJRAYRk2JzHdfb42abR3G2JAXjoal
+         Iq6u63mRnGGWkabsJ2maBZ3twgQm2lTA5418UB3B2IhTJWDV2Es7c9WJN3JT74Panj6F
+         G0dAqZ60GxEcrls5oP+hhIL7KZDuCtQL0RV2aGD4CiDk7F3c//5slmggNN9I7VhvbuHX
+         5ta/PDzYe9S27Bs0fLEIWhO+3Auh+jncHnnQ9Hwz1USt5NsfdWIBPxDMJwfK9nLvTIeL
+         22MwHRRHvIq0FwRYgM2dWMsXBgovGFAXFVWtvve6XassVjadIvQCtsUvfqfu/F6a7TzA
+         o6NA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0UnizwK2W/SuVfiGd/70LB87Ji4iWjjztVReaI6HCa2YVhKpVoHHHdnQkI9h+a2JdjnR7cHS52BnBNz0=@vger.kernel.org, AJvYcCUuvOEsPLkDRnS4RZ9mr/xa5YVoF96bmUD9SvRlBu6+rhKiqVersc/OhmE72ZaIJWLPx2c0CnkxuLbP@vger.kernel.org, AJvYcCUw1zL8e2+MbaCAa3th71AuUr1pums+R5fS2E16Vfpf8rb+IkMNoSowxham081F4PyCo81661rU8Jj63A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHLaDyGIIejY/cq9LaXvOSc73hKmOHb4rpPROmbbi3/lZXBtbI
+	tUu9vLRaH9gNHsQDTy9dW9JkSCdJOtb9gw+REfTLdHbiVn8qXoVp9ytH
+X-Gm-Gg: ASbGncuB9NbnCwMftxjfIF/lAwqcGRvlRP4veXy39je+c8gYJeggJXpWlp4j1DkofAn
+	LJIWuwQn3x9zOSQ22LYMDJfebk2ytYHIbINC5wQKKzS2GnOro2G0si+rn/B6hspa6J1nrYeiGiP
+	Zephb5xpz/OJ41Gu2pV4L23iaLTiSY/DUOuOL3zFmVSRXcMCmwSCHWLUq5H0TsQO3DNMMfeIkoI
+	nGEV9DHhFUzB0jSf5eQiSHDaciyb+2Z3+xSZ7kvDro9kYDg0kRaKdMqQTTn/0OsjHltCR4UxgZO
+	488yk7+ie/I22BJqWlErCEK6K2YsIKX6AmitzEaRWQbqMa+uaCfjEheWT2nu5hxCKPH3wZb09+W
+	0GspR/IzxLgzsJ8bA+XB8J+G18q66ihRp6SJr7wRtl3JMCLE65aNF5AgXAXOC3eh7DHWOCCEU74
+	4ceV7OEbenuCbA
+X-Google-Smtp-Source: AGHT+IF8bfHLFaE/so1vau2El37QujHD18gZE7VogT8DXaFcCCFNNZlIE4JZh87T1EP17999R+OaNw==
+X-Received: by 2002:a05:620a:2985:b0:7d5:d144:87dc with SMTP id af79cd13be357-7de07286387mr755691385a.43.1752271958083;
+        Fri, 11 Jul 2025 15:12:38 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcdbb2580fsm265906685a.1.2025.07.11.15.12.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 15:11:27 -0700 (PDT)
-Date: Sat, 12 Jul 2025 00:11:25 +0200
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	DRI Development <dri-devel@lists.freedesktop.org>,
-	Dave Airlie <airlied@gmail.com>
-Subject: [PULL] drm-fixes for 6.16-rc6
-Message-ID: <aHGMDdZNDhjND0iT@phenom.ffwll.local>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	DRI Development <dri-devel@lists.freedesktop.org>,
-	Dave Airlie <airlied@gmail.com>
+        Fri, 11 Jul 2025 15:12:37 -0700 (PDT)
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id B6D71F40066;
+	Fri, 11 Jul 2025 18:12:36 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Fri, 11 Jul 2025 18:12:36 -0400
+X-ME-Sender: <xms:VIxxaGY93nSoBBDP4pJ6sGe_hZQNmEQ2kajN6-EkehDwYcPljhvVAA>
+    <xme:VIxxaOZl98EUuqQRj668_VYPHmug9yW-No4DBQ8yv_g7gG6sN4m8VF1aru-l_-dO7
+    gnDxIkNWCOkRsbA5g>
+X-ME-Received: <xmr:VIxxaB3OV1v9ieDYRjVjeegiSEh0LcYMHoZolJJuIIhkRpHO1gHIonOAjiP9>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeggeegkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtudenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpedtgeehleevffdujeffgedvlefghffhleekieeifeegveetjedvgeevueffieeh
+    hfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsoh
+    hquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedq
+    udejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmh
+    gvrdhnrghmvgdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehlihhnuhigseifvghishhsshgthhhuhhdrnhgvthdprhgtphhtthhopehpvg
+    htvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehrvggu
+    hhgrthdrtghomhdprhgtphhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtghomhdprh
+    gtphhtthhopehvihgtvghnthhiuhdrghgrlhgrnhhophhulhhosehrvghmohhtvgdqthgv
+    tghhrdgtohdruhhkpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehhrghnrdiguhesnhigphdrtghomhdprhgtphhtthhopehhrghisghordgthhgv
+    nhesnhigphdrtghomhdprhgtphhtthhopeihohhgvghshhhgrghurhdrkeefsehgmhgrih
+    hlrdgtohhm
+X-ME-Proxy: <xmx:VIxxaOYTC8XPYjociUNzD0wtW8abgp--rFJT1iPncq351S5xO72E5A>
+    <xmx:VIxxaOlz2Lv4zXawcqYT8E-f2bQ88Kn5N_Tz5eQ5n78bNxEbyB_chA>
+    <xmx:VIxxaNco0FNWuyniI8wr87p8XKHoG9BzKXVNazY5IDBrSXnV-aeHYA>
+    <xmx:VIxxaM2UT-LfSYzCe69AOmSeSizggSqIdnebJtCAKm9emIOWRZ9JaQ>
+    <xmx:VIxxaKluUDUJEb2NY7TYJq_nxNlO9-5tiYzavw5NYkjF3xRKdeXwFnGU>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Jul 2025 18:12:36 -0400 (EDT)
+Date: Fri, 11 Jul 2025 15:12:35 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>,
+	Will Deacon <will@kernel.org>, Han Xu <han.xu@nxp.com>,
+	Haibo Chen <haibo.chen@nxp.com>,
+	Yogesh Gaur <yogeshgaur.83@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>, Andrew Davis <afd@ti.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-spi@vger.kernel.org, imx@lists.linux.dev,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v7 0/3] locking/mutex: Mark devm_mutex_init() as
+ __must_check
+Message-ID: <aHGMUxA8w3-ixLeA@tardis-2.local>
+References: <20250617-must_check-devm_mutex_init-v7-0-d9e449f4d224@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-X-Operating-System: Linux phenom 6.12.30-amd64 
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250617-must_check-devm_mutex_init-v7-0-d9e449f4d224@weissschuh.net>
 
-Hi Linus,
+On Tue, Jun 17, 2025 at 07:08:11PM +0200, Thomas Weiﬂschuh wrote:
+> devm_mutex_init() can fail. Make sure everybody checks the return value.
+> All patches should go through the mutex tree together.
+> 
+> It would be great if this could go in through a single tree at once.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
 
-The much-anticipated handle_count regression fix from -rc5, but as
-discussed, not the pile of reverts - we'll go with what we have for at
-least this rc to not rush into yet another issue. The
-gem_handle_create_tail fix is another one that's a bit more tricky, but
-not something legit userspace will ever hit. Otherwise just the usual pile
-of small driver fixes as expected.
+Queued for v6.17, thank you all!
 
-Next week should be back to Dave.
-
-drm-fixes-2025-07-12:
-drm-fixes for 6.16-rc6
-
-Cross-subsystem Changes:
-- agp/amd64 binding dmesg noise regression fix
-
-Core Changes:
-- fix race in gem_handle_create_tail
-- fixup handle_count fb refcount regression from -rc5, popular with
-  reports ...
-- call rust dtor for drm_device release
-
-Driver Changes:
-- nouveau: magic 50ms suspend fix, acpi leak fix
-- tegra: dma api error in nvdec
-- pvr: fix device reset
-- habanalbs maintainer update
-
-- intel display: fix some dsi mipi sequences
-
-- xe fixes: SRIOV fixes, small GuC fixes, disable indirect ring due to
-  issues, compression fix for fragmented BO, doc update
-
-Cheers, Sima
-
-The following changes since commit d7b8f8e20813f0179d8ef519541a3527e7661d3a:
-
-  Linux 6.16-rc5 (2025-07-06 14:10:26 -0700)
-
-are available in the Git repository at:
-
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-07-12
-
-for you to fetch changes up to b7dc79a6332fe6f58f2e6b2a631bad101dc79107:
-
-  Merge tag 'drm-misc-fixes-2025-07-10' of https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes (2025-07-11 14:11:19 +0200)
-
-----------------------------------------------------------------
-drm-fixes for 6.16-rc6
-
-Cross-subsystem Changes:
-- agp/amd64 binding dmesg noise regression fix
-
-Core Changes:
-- fix race in gem_handle_create_tail
-- fixup handle_count fb refcount regression from -rc5, popular with
-  reports ...
-- call rust dtor for drm_device release
-
-Driver Changes:
-- nouveau: magic 50ms suspend fix, acpi leak fix
-- tegra: dma api error in nvdec
-- pvr: fix device reset
-- habanalbs maintainer update
-
-- intel display: fix some dsi mipi sequences
-
-- xe fixes: SRIOV fixes, small GuC fixes, disable indirect ring due to
-  issues, compression fix for fragmented BO, doc update
-
-----------------------------------------------------------------
-Aaron Thompson (1):
-      drm/nouveau: Do not fail module init on debugfs errors
-
-Alessio Belle (1):
-      drm/imagination: Fix kernel crash when hard resetting the GPU
-
-Ben Skeggs (1):
-      drm/nouveau/gsp: fix potential leak of memory used during acpi init
-
-Danilo Krummrich (1):
-      rust: drm: device: drop_in_place() the drm::Device in release()
-
-Dave Airlie (1):
-      nouveau/gsp: add a 50ms delay between fbsr and driver unload rpcs
-
-Hans de Goede (1):
-      drm/i915/bios: Apply vlv_fixup_mipi_sequences() to v2 mipi-sequences too
-
-Julia Filipchuk (1):
-      drm/xe/guc: Recommend GuC v70.46.2 for BMG, LNL, DG2
-
-Lucas De Marchi (1):
-      drm/xe/guc: Default log level to non-verbose
-
-Lukas Wunner (1):
-      agp/amd64: Check AGP Capability before binding to unsupported devices
-
-Matthew Auld (1):
-      drm/xe/bmg: fix compressed VRAM handling
-
-Matthew Brost (2):
-      drm/xe: Allocate PF queue size on pow2 boundary
-      Revert "drm/xe/xe2: Enable Indirect Ring State support for Xe2"
-
-Michal Wajdeczko (2):
-      drm/xe/pf: Clear all LMTT pages on alloc
-      drm/xe/bmg: Don't use WA 16023588340 and 22019338487 on VF
-
-Mikko Perttunen (1):
-      drm/tegra: nvdec: Fix dma_alloc_coherent error check
-
-Ofir Bitton (1):
-      MAINTAINERS: Change habanalabs maintainer
-
-Shuicheng Lin (3):
-      drm/xe/pm: Restore display pm if there is error after display suspend
-      drm/xe: Release runtime pm for error path of xe_devcoredump_read()
-      drm/xe/pm: Correct comment of xe_pm_set_vram_threshold()
-
-Simona Vetter (4):
-      drm/gem: Fix race in drm_gem_handle_create_tail()
-      Merge tag 'drm-intel-fixes-2025-07-10' of https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
-      Merge tag 'drm-xe-fixes-2025-07-11' of https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-      Merge tag 'drm-misc-fixes-2025-07-10' of https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
-
-Tamir Duberstein (1):
-      rust: drm: remove unnecessary imports
-
-Thomas Zimmermann (1):
-      drm/framebuffer: Acquire internal references on GEM handles
-
- MAINTAINERS                                        |  2 +-
- drivers/char/agp/amd64-agp.c                       | 16 ++++----
- drivers/gpu/drm/drm_framebuffer.c                  | 31 +++++++++++++-
- drivers/gpu/drm/drm_gem.c                          | 48 +++++++++++++++-------
- drivers/gpu/drm/drm_gem_framebuffer_helper.c       | 16 ++++----
- drivers/gpu/drm/drm_internal.h                     |  2 +-
- drivers/gpu/drm/drm_panic_qr.rs                    |  2 +-
- drivers/gpu/drm/i915/display/intel_bios.c          |  8 ++--
- drivers/gpu/drm/imagination/pvr_power.c            |  4 +-
- drivers/gpu/drm/nouveau/nouveau_debugfs.c          |  6 +--
- drivers/gpu/drm/nouveau/nouveau_debugfs.h          |  5 +--
- drivers/gpu/drm/nouveau/nouveau_drm.c              |  4 +-
- .../gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/gsp.c  | 27 +++++++++---
- drivers/gpu/drm/tegra/nvdec.c                      |  6 +--
- drivers/gpu/drm/xe/xe_devcoredump.c                | 38 ++++++++++++-----
- drivers/gpu/drm/xe/xe_gt_pagefault.c               |  1 +
- drivers/gpu/drm/xe/xe_lmtt.c                       | 11 +++++
- drivers/gpu/drm/xe/xe_migrate.c                    |  2 +-
- drivers/gpu/drm/xe/xe_module.c                     |  2 +-
- drivers/gpu/drm/xe/xe_pci.c                        |  1 -
- drivers/gpu/drm/xe/xe_pm.c                         | 11 ++---
- drivers/gpu/drm/xe/xe_uc_fw.c                      |  6 +--
- drivers/gpu/drm/xe/xe_wa_oob.rules                 |  4 +-
- include/drm/drm_file.h                             |  3 ++
- include/drm/drm_framebuffer.h                      |  7 ++++
- rust/kernel/drm/device.rs                          | 12 +++++-
- rust/kernel/drm/driver.rs                          |  1 -
- 27 files changed, 187 insertions(+), 89 deletions(-)
-
--- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Regards,
+Boqun
 
