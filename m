@@ -1,328 +1,184 @@
-Return-Path: <linux-kernel+bounces-727717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16769B01E90
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:03:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D41AAB01E9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A38816A817
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:03:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A0DD7BE1B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9212DCF6C;
-	Fri, 11 Jul 2025 14:03:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBA62882AA
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253582DCF6C;
+	Fri, 11 Jul 2025 14:04:07 +0000 (UTC)
+Received: from hrbeu.edu.cn (mx1.hrbeu.edu.cn [202.118.176.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C60C3C0C
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.118.176.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752242615; cv=none; b=jjA7RfMKokBD0qHfYaK9uNogllX0+E/5kTsj6YpZViHhscn6KpqduiqRpXD+waP1tgnsWXoXJgZK+PQt5vjkUJBndts6uOOrMPLo1t/QnVhYH1dixrj2SPcCJWkQkYQQgLMCsr4+Rk7uQ9aNFtOus0+JLjnvAAu53r9wHj8B2Gk=
+	t=1752242646; cv=none; b=Y9NTOsU2qF/qf6xiVbJkbmcD4qNrqWcm14VdG7l4lMyYi+y3sIobicmtRkBdsTsynbaiaMBXqec9HPKU3oqKTjoonzcVESSavwkQ1Z5cPc+ca0hl8Rh/+vi4zWkng4uAGoti2kcjMy6FHJqvr4F50g6p0/VcDEdhqQmar1C95Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752242615; c=relaxed/simple;
-	bh=IJqWh8HSZBCYCQ/DVW0pZcdk4YdxVWXfWskl4WHeRXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iUiJbSPVj09m0CS+B4yckjT1DDVHPoxYWnogSvRTxgMxPBfbBPRLAJIiiBHAWL0cDZUrhSpBQvYa6qG8KZoYCy7Q0tB4aCZFvwn6ahzaPsMz6z6Zfl+dF2FLP8UZoh7Kfg9SilqA7UN99PWazcWSSOPc5EmlFOj+ur9NhxMlw2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F21851007;
-	Fri, 11 Jul 2025 07:03:21 -0700 (PDT)
-Received: from [10.1.33.14] (e122027.cambridge.arm.com [10.1.33.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B1EB3F738;
-	Fri, 11 Jul 2025 07:03:28 -0700 (PDT)
-Message-ID: <414aabbe-763b-4786-a85c-a2670475ece5@arm.com>
-Date: Fri, 11 Jul 2025 15:03:26 +0100
+	s=arc-20240116; t=1752242646; c=relaxed/simple;
+	bh=2yGcqrn42H98k47OcHeYxeT5sXkhkPHZsiszdgtMlfM=;
+	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=PfY7fNQ8k0+aqhry1AWX2C7UX7mXgUoV76gF+ZQCmr626XPP0GVM9Pd7gEeEmyMRTZzHaX7AK3X/fRD8/f4ksCb+aMlMCOviQH2iLEoBjx/Fpp3wq/g0MPK0uMTHSV1flyhndWefel0UfAmPcB7OEzj3D5sDGxrdWh4c402gdlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn; spf=pass smtp.mailfrom=hrbeu.edu.cn; arc=none smtp.client-ip=202.118.176.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hrbeu.edu.cn
+Received: from baishuoran$hrbeu.edu.cn ( [118.74.220.243] ) by
+ ajax-webmail-Front (Coremail) ; Fri, 11 Jul 2025 22:03:58 +0800 (GMT+08:00)
+Date: Fri, 11 Jul 2025 22:03:58 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>
+To: "Peter Zijlstra" <peterz@infradead.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>
+Cc: "Kun Hu" <huk23@m.fudan.edu.cn>, "Jiaji Qin" <jjtan24@m.fudan.edu.cn>,
+	linux-kernel@vger.kernel.org
+Subject: possible deadlock in smp_call_function_many_cond
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT5 build
+ 20241202(ebbd5d74) Copyright (c) 2002-2025 www.mailtech.cn hrbeu.edu.cn
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/7] drm/panthor: Add support for repeated mappings
-To: Caterina Shablia <caterina.shablia@collabora.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
- Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Lucas De Marchi
- <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- asahi@lists.linux.dev, Asahi Lina <lina@asahilina.net>
-References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
- <20250707170442.1437009-8-caterina.shablia@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250707170442.1437009-8-caterina.shablia@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <758991c1.13f67.197f9cccf9b.Coremail.baishuoran@hrbeu.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:CbB2ygAnIWjOGXFo+g0oAA--.6620W
+X-CM-SenderInfo: pedl2xpxrut0w6kuuvvxohv3gofq/1tbiAQIACmhw4OYBjwABsY
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWDJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On 07/07/2025 18:04, Caterina Shablia wrote:
-> From: Boris Brezillon <boris.brezillon@collabora.com>
-> 
-> This allows us to optimize mapping of a relatively small
-> portion of a BO over and over in a large VA range, which
-> is useful to support Vulkan sparse bindings in an efficient
-> way.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-> Co-developed-by: Caterina Shablia <caterina.shablia@collabora.com>
-> Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
-
-This looks like the right sort of shape. From an uAPI perspective I'm
-not sure whether u32 is the right type for bo_repeat_range. While I
-can't immediately see a use for having a large repeat range it seems a
-little silly to close it off when we're going to have padding afterwards
-anyway. Obviously the kernel would reject large values because the
-internal APIs are only u32. But it would enable this to be fixed if we
-ever discover a usecase without a uAPI change.
-
-> ---
->  drivers/gpu/drm/panthor/panthor_drv.c |  3 +-
->  drivers/gpu/drm/panthor/panthor_mmu.c | 78 ++++++++++++++++++++++++---
->  include/uapi/drm/panthor_drm.h        | 23 ++++++++
->  3 files changed, 95 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index 1116f2d2826e..585c07b07c42 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -1608,6 +1608,7 @@ static void panthor_debugfs_init(struct drm_minor *minor)
->   * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
->   * - 1.4 - adds DRM_IOCTL_PANTHOR_BO_SET_LABEL ioctl
->   * - 1.5 - adds DRM_PANTHOR_SET_USER_MMIO_OFFSET ioctl
-> + * - 1.6 - adds DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT flag
->   */
->  static const struct drm_driver panthor_drm_driver = {
->  	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-> @@ -1621,7 +1622,7 @@ static const struct drm_driver panthor_drm_driver = {
->  	.name = "panthor",
->  	.desc = "Panthor DRM driver",
->  	.major = 1,
-> -	.minor = 5,
-> +	.minor = 6,
->  
->  	.gem_create_object = panthor_gem_create_object,
->  	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
-> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> index f0a22b775958..4ce9fff67d69 100644
-> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> @@ -202,6 +202,9 @@ struct panthor_vm_op_ctx {
->  		/** @map.bo_offset: Offset in the buffer object. */
->  		u64 bo_offset;
->  
-> +		/** @map.bo_repeat_range: Repeated BO range. */
-> +		u32 bo_repeat_range;
-> +
->  		/**
->  		 * @map.sgt: sg-table pointing to pages backing the GEM object.
->  		 *
-> @@ -1007,6 +1010,26 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
->  	return 0;
->  }
->  
-> +static int
-> +panthor_vm_repeated_map_pages(struct panthor_vm *vm, u64 iova, int prot,
-> +			      struct sg_table *sgt, u64 offset, u64 size,
-> +			      u64 count)
-> +{
-> +	/* FIXME: we really need to optimize this at the io_pgtable level. */
-
-Do you have plans for optimizing this? How bad is the performance
-without optimizing?
-
-> +	for (u64 i = 0; i < count; i++) {
-> +		int ret;
-> +
-> +		ret = panthor_vm_map_pages(vm, iova + (size * i), prot,
-> +					   sgt, offset, size);
-> +		if (ret) {
-> +			panthor_vm_unmap_pages(vm, iova, size * (i - 1));
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int flags_to_prot(u32 flags)
->  {
->  	int prot = 0;
-> @@ -1203,12 +1226,14 @@ panthor_vm_op_ctx_prealloc_vmas(struct panthor_vm_op_ctx *op_ctx)
->  	(DRM_PANTHOR_VM_BIND_OP_MAP_READONLY | \
->  	 DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC | \
->  	 DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED | \
-> +	 DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT | \
->  	 DRM_PANTHOR_VM_BIND_OP_TYPE_MASK)
->  
->  static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
->  					 struct panthor_vm *vm,
->  					 struct panthor_gem_object *bo,
->  					 u64 offset,
-> +					 u32 repeat_range,
->  					 u64 size, u64 va,
->  					 u32 flags)
->  {
-> @@ -1224,9 +1249,22 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
->  	    (flags & DRM_PANTHOR_VM_BIND_OP_TYPE_MASK) != DRM_PANTHOR_VM_BIND_OP_TYPE_MAP)
->  		return -EINVAL;
->  
-> -	/* Make sure the VA and size are aligned and in-bounds. */
-> -	if (size > bo->base.base.size || offset > bo->base.base.size - size)
-> -		return -EINVAL;
-> +	if (!(flags & DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT)) {
-> +		/* Make sure the VA and size are in-bounds. */
-> +		if (size > bo->base.base.size || offset > bo->base.base.size - size)
-> +			return -EINVAL;
-> +	} else {
-> +		/* Make sure the repeat_range is in-bounds. */
-> +		if (repeat_range > bo->base.base.size || offset > bo->base.base.size - repeat_range)
-> +			return -EINVAL;
-> +
-> +		/* Make sure size is a multiple of repeat_range */
-> +
-> +		u64 repeat_count = size;
-> +
-> +		if (do_div(repeat_count, repeat_range))
-> +			return -EINVAL;
-> +	}
->  
->  	/* If the BO has an exclusive VM attached, it can't be mapped to other VMs. */
->  	if (bo->exclusive_vm_root_gem &&
-> @@ -1295,6 +1333,7 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
->  		drm_gem_shmem_unpin(&bo->base);
->  
->  	op_ctx->map.bo_offset = offset;
-> +	op_ctx->map.bo_repeat_range = repeat_range;
->  
->  	/* L1, L2 and L3 page tables.
->  	 * We could optimize L3 allocation by iterating over the sgt and merging
-> @@ -2112,9 +2151,22 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
->  
->  	panthor_vma_init(vma, op_ctx->flags & PANTHOR_VM_MAP_FLAGS);
->  
-> -	ret = panthor_vm_map_pages(vm, op->map.va.addr, flags_to_prot(vma->flags),
-> -				   op_ctx->map.sgt, op->map.gem.offset,
-> -				   op->map.va.range);
-> +	if (op_ctx->flags & DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT) {
-> +		u64 repeat_count = op->map.va.range;
-> +
-> +		do_div(repeat_count, op->map.gem.range);
-> +		ret = panthor_vm_repeated_map_pages(vm, op->map.va.addr,
-> +						    flags_to_prot(vma->flags),
-> +						    op_ctx->map.sgt,
-> +						    op->map.gem.offset,
-> +						    op->map.gem.range,
-> +						    repeat_count);
-> +	} else {
-> +		ret = panthor_vm_map_pages(vm, op->map.va.addr,
-> +					   flags_to_prot(vma->flags),
-> +					   op_ctx->map.sgt, op->map.gem.offset,
-> +					   op->map.va.range);
-> +	}
->  	if (ret)
->  		return ret;
->  
-> @@ -2237,7 +2289,7 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
->  
->  	switch (op_type) {
->  	case DRM_PANTHOR_VM_BIND_OP_TYPE_MAP: {
-> -		const struct drm_gpuvm_map_req map_req = {
-> +		struct drm_gpuvm_map_req map_req = {
->  			.va.addr = op->va.addr,
->  			.va.range = op->va.range,
->  			.gem.obj = op->map.vm_bo->obj,
-> @@ -2249,6 +2301,11 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
->  			break;
->  		}
->  
-> +		if (op->flags & DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT) {
-> +			map_req.flags |= DRM_GPUVA_REPEAT;
-> +			map_req.gem.range = op->map.bo_repeat_range;
-> +		}
-> +
->  		ret = drm_gpuvm_sm_map(&vm->base, vm, &map_req);
->  		break;
->  	}
-> @@ -2497,6 +2554,7 @@ panthor_vm_bind_prepare_op_ctx(struct drm_file *file,
->  		ret = panthor_vm_prepare_map_op_ctx(op_ctx, vm,
->  						    gem ? to_panthor_bo(gem) : NULL,
->  						    op->bo_offset,
-> +						    op->bo_repeat_range,
->  						    op->size,
->  						    op->va,
->  						    op->flags);
-> @@ -2698,7 +2756,11 @@ int panthor_vm_map_bo_range(struct panthor_vm *vm, struct panthor_gem_object *bo
->  	struct panthor_vm_op_ctx op_ctx;
->  	int ret;
->  
-> -	ret = panthor_vm_prepare_map_op_ctx(&op_ctx, vm, bo, offset, size, va, flags);
-> +	/* TODO: would be nice to replace with assert instead */
-
-If you don't expect this to happen then this can be a "if (WARN_ON(...))".
-
-> +	if (flags & DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT)
-> +		return -EINVAL;
-> +
-> +	ret = panthor_vm_prepare_map_op_ctx(&op_ctx, vm, bo, offset, 0, size, va, flags);
->  	if (ret)
->  		return ret;
->  
-> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-> index e1f43deb7eca..ad278bc234b0 100644
-> --- a/include/uapi/drm/panthor_drm.h
-> +++ b/include/uapi/drm/panthor_drm.h
-> @@ -496,6 +496,17 @@ enum drm_panthor_vm_bind_op_flags {
->  	 */
->  	DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED = 1 << 2,
->  
-> +	/**
-> +	 * @DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT: Repeat a BO range
-> +	 *
-> +	 * Only valid with DRM_PANTHOR_VM_BIND_OP_TYPE_MAP.
-> +	 *
-> +	 * When this is set, a BO range is repeated over the VA range.
-> +	 * drm_panthor_vm_bind_op::bo_repeat_range defines the size of the
-> +	 * BO range to repeat.
-> +	 */
-> +	DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT = 1 << 3,
-> +
->  	/**
->  	 * @DRM_PANTHOR_VM_BIND_OP_TYPE_MASK: Mask used to determine the type of operation.
->  	 */
-> @@ -560,6 +571,18 @@ struct drm_panthor_vm_bind_op {
->  	 */
->  	struct drm_panthor_obj_array syncs;
->  
-> +	/**
-> +	 * @bo_repeat_range: The size of the range to be repeated.
-> +	 *
-> +	 * Must be zero if DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT is not set in
-> +	 * flags.
-> +	 *
-> +	 * Size must be a multiple of bo_repeat_range.
-> +	 */
-> +	__u32 bo_repeat_range;
-> +
-> +	/** @pad: Padding field. MBZ. */
-> +	__u32 pad;
-
-If we're going to have the padding then the kernel needs to check that
-this padding is zero, so that it can be available for future use.
-
-Steve
-
->  };
->  
->  /**
-
+RGVhciBNYWludGFpbmVycywKCgpXaGVuIHVzaW5nIG91ciBjdXN0b21pemVkIFN5emthbGxlciB0
+byBmdXp6IHRoZSBsYXRlc3QgTGludXgga2VybmVsLCB0aGUgZm9sbG93aW5nIGNyYXNoICgxMjJ0
+aCl3YXMgdHJpZ2dlcmVkLgoKCgoKSEVBRCBjb21taXQ6IDY1MzdjZmIzOTVmMzUyNzgyOTE4ZDhl
+ZTdiN2YxMGJhMmNjM2NiZjIKZ2l0IHRyZWU6IHVwc3RyZWFtCk91dHB1dDpodHRwczovL2dpdGh1
+Yi5jb20vcGdoazEzL0tlcm5lbC1CdWcvYmxvYi9tYWluLzA3MDJfNi4xNC9JTkZPJTNBJTIwcmN1
+JTIwZGV0ZWN0ZWQlMjBzdGFsbCUyMGluJTIwc3lzX3NlbGVjdC8xMjJyZXBvcnQudHh0Cktlcm5l
+bCBjb25maWc6aHR0cHM6Ly9naXRodWIuY29tL3BnaGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8w
+MzA1XzYuMTRyYzMvY29uZmlnLnR4dApDIHJlcHJvZHVjZXI6aHR0cHM6aHR0cHM6Ly9naXRodWIu
+Y29tL3BnaGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8wNzAyXzYuMTQvSU5GTyUzQSUyMHJjdSUy
+MGRldGVjdGVkJTIwc3RhbGwlMjBpbiUyMHN5c19zZWxlY3QvMTIycmVwcm8uYwpTeXpsYW5nIHJl
+cHJvZHVjZXI6IGh0dHBzOi8vZ2l0aHViLmNvbS9wZ2hrMTMvS2VybmVsLUJ1Zy9ibG9iL21haW4v
+MDcwMl82LjE0L0lORk8lM0ElMjByY3UlMjBkZXRlY3RlZCUyMHN0YWxsJTIwaW4lMjBzeXNfc2Vs
+ZWN0LzEyMnJlcHJvLnR4dAoKCgoKT3VyIHJlcHJvZHVjZXIgdXNlcyBtb3VudHMgYSBjb25zdHJ1
+Y3RlZCBmaWxlc3lzdGVtIGltYWdlLgpUaGUgZXJyb3Igb2NjdXJyZWQgYXJvdW5kIGxpbmUgODgw
+IG9mIHRoZSBjb2RlLCBzcGVjaWZpY2FsbHkgZHVyaW5nIHRoZSBjYWxsIHRvIGNzZF9sb2NrX3dh
+aXQuIFRoZSBzdGF0dXMgb2YgQ1BVIDEgKFJDVSBHUCBrdGhyZWFkKTogZXhlY3V0aW5nIHRoZSBw
+ZXJmX2V2ZW50X29wZW4gc3lzdGVtIGNhbGwsIG5lZWRzIHRvIHVwZGF0ZSB0cmFjZXBvaW50IGNh
+bGxzIG9uIGFsbCBDUFVzLCBhbmQgc21wX2NhbGxfZnVuY3Rpb25fbWFueV9jb25kIGlzIHN0dWNr
+IHdhaXRpbmcgZm9yIENQVSAyIHRvIHJlc3BvbmQgdG8gdGhlIElQSS4KV2UgaGF2ZSByZXByb2R1
+Y2VkIHRoaXMgaXNzdWUgc2V2ZXJhbCB0aW1lcyBvbiA2LjE0IGFnYWluLgoKCgoKCklmIHlvdSBm
+aXggdGhpcyBpc3N1ZSwgcGxlYXNlIGFkZCB0aGUgZm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0
+OgpSZXBvcnRlZC1ieTogS3VuIEh1IDxodWsyM0BtLmZ1ZGFuLmVkdS5jbj4sIEppYWppIFFpbiA8
+amp0YW4yNEBtLmZ1ZGFuLmVkdS5jbj4sIFNodW9yYW4gQmFpIDxiYWlzaHVvcmFuQGhyYmV1LmVk
+dS5jbj4KCgoKcmN1OiBJTkZPOiByY3VfcHJlZW1wdCBkZXRlY3RlZCBzdGFsbHMgb24gQ1BVcy90
+YXNrczoKcmN1OiAJMi0uLi4hOiAoMyBHUHMgYmVoaW5kKSBpZGxlPWI4MzQvMS8weDQwMDAwMDAw
+MDAwMDAwMDAgc29mdGlycT0yMzU3NC8yMzU3NCBmcXM9NQpyY3U6IAkoZGV0ZWN0ZWQgYnkgMSwg
+dD0xMDUwMiBqaWZmaWVzLCBnPTE5OTU3LCBxPTU5NCBuY3B1cz00KQpTZW5kaW5nIE5NSSBmcm9t
+IENQVSAxIHRvIENQVXMgMjoKTk1JIGJhY2t0cmFjZSBmb3IgY3B1IDIKQ1BVOiAyIFVJRDogMCBQ
+SUQ6IDk0NjEgQ29tbTogc3NoZCBOb3QgdGFpbnRlZCA2LjE0LjAgIzEKSGFyZHdhcmUgbmFtZTog
+UUVNVSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1MgMS4xMy4wLTF1YnVu
+dHUxLjEgMDQvMDEvMjAxNApSSVA6IDAwMTA6X19sb2NrX2FjcXVpcmUrMHgxMDYvMHg0NmIwCkNv
+ZGU6IGZmIGRmIDRjIDg5IGVhIDQ4IGMxIGVhIDAzIDgwIDNjIDAyIDAwIDBmIDg1IGVjIDM1IDAw
+IDAwIDQ5IDhiIDQ1IDAwIDQ4IDNkIGEwIGM3IDhhIDkzIDBmIDg0IDI5IDBmIDAwIDAwIDQ0IDhi
+IDA1IDJhIGRjIDc0IDBjIDw0NT4gODUgYzAgMGYgODQgYWQgMDYgMDAgMDAgNDggM2QgZTAgYzcg
+OGEgOTMgMGYgODQgYTEgMDYgMDAgMDAgNDEKUlNQOiAwMDE4OmZmZmZjOTAwMDA1NjhhYzggRUZM
+QUdTOiAwMDAwMDAwMgpSQVg6IGZmZmZmZmZmOWFhYjlhMjAgUkJYOiAwMDAwMDAwMDAwMDAwMDAw
+IFJDWDogMWZmZmY5MjAwMDBhZDE2YwpSRFg6IDFmZmZmZmZmZjM1NjkyY2YgUlNJOiAwMDAwMDAw
+MDAwMDAwMDAwIFJESTogZmZmZmZmZmY5YWI0OTY3OApSQlA6IGZmZmY4ODgwMjAxYWE0ODAgUjA4
+OiAwMDAwMDAwMDAwMDAwMDAxIFIwOTogMDAwMDAwMDAwMDAwMDAwMQpSMTA6IDAwMDAwMDAwMDAw
+MDAwMDEgUjExOiBmZmZmZmZmZjkwNjE3ZDE3IFIxMjogMDAwMDAwMDAwMDAwMDAwMApSMTM6IGZm
+ZmZmZmZmOWFiNDk2NzggUjE0OiAwMDAwMDAwMDAwMDAwMDAwIFIxNTogMDAwMDAwMDAwMDAwMDAw
+MApGUzogIDAwMDA3ZmE2NDQ2NTc5MDAoMDAwMCkgR1M6ZmZmZjg4ODAyYjkwMDAwMCgwMDAwKSBr
+bmxHUzowMDAwMDAwMDAwMDAwMDAwCkNTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAwMCBDUjA6IDAw
+MDAwMDAwODAwNTAwMzMKQ1IyOiAwMDAwN2YwZmE5MjE3OGE5IENSMzogMDAwMDAwMDAwMGU5MDAw
+MCBDUjQ6IDAwMDAwMDAwMDA3NTBlZjAKUEtSVTogNTU1NTU1NTQKQ2FsbCBUcmFjZToKIDxOTUk+
+CiA8L05NST4KIDxJUlE+CiBsb2NrX2FjcXVpcmUrMHgxYjYvMHg1NzAKIF9yYXdfc3Bpbl9sb2Nr
+X2lycXNhdmUrMHgzZC8weDYwCiBkZWJ1Z19vYmplY3RfZGVhY3RpdmF0ZSsweDEzOS8weDM5MAog
+X19ocnRpbWVyX3J1bl9xdWV1ZXMrMHg0MTYvMHhjMzAKIGhydGltZXJfaW50ZXJydXB0KzB4Mzk4
+LzB4ODkwCiBfX3N5c3ZlY19hcGljX3RpbWVyX2ludGVycnVwdCsweDExNC8weDQwMAogc3lzdmVj
+X2FwaWNfdGltZXJfaW50ZXJydXB0KzB4YTMvMHhjMAogPC9JUlE+CiA8VEFTSz4KIGFzbV9zeXN2
+ZWNfYXBpY190aW1lcl9pbnRlcnJ1cHQrMHgxYS8weDIwClJJUDogMDAxMDpsb2NrX2FjcXVpcmUr
+MHgxZjcvMHg1NzAKQ29kZTogYzEgMDUgOTUgYzAgNmIgN2UgODMgZjggMDEgMGYgODUgZmQgMDIg
+MDAgMDAgOWMgNTggZjYgYzQgMDIgMGYgODUgZTggMDIgMDAgMDAgNGQgODUgZTQgNzQgMDEgZmIg
+NDggYjggMDAgMDAgMDAgMDAgMDAgZmMgZmYgZGYgPDQ4PiAwMSBjMyA0OCBjNyAwMyAwMCAwMCAw
+MCAwMCA0OCBjNyA0MyAwOCAwMCAwMCAwMCAwMCA0OCA4YiA4NCAyNApSU1A6IDAwMTg6ZmZmZmM5
+MDAwOTFkZmFkOCBFRkxBR1M6IDAwMDAwMjA2ClJBWDogZGZmZmZjMDAwMDAwMDAwMCBSQlg6IDFm
+ZmZmOTIwMDEyM2JmNWUgUkNYOiBmZmZmZmZmZjgxOTU5OGZlClJEWDogMWZmZmYxMTAwNDAzNTVl
+ZCBSU0k6IDAwMDAwMDAwMDAwMDAwMDAgUkRJOiAwMDAwMDAwMDAwMDAwMDAwClJCUDogMDAwMDAw
+MDAwMDAwMDAwMSBSMDg6IDAwMDAwMDAwMDAwMDAwMDEgUjA5OiBmZmZmZmJmZmYyZGU3OWEwClIx
+MDogZmZmZmZiZmZmMmRlNzk5ZiBSMTE6IGZmZmZmZmZmOTZmM2NjZmYgUjEyOiAwMDAwMDAwMDAw
+MDAwMjAwClIxMzogZmZmZjg4ODA0YjM3ZDFlMCBSMTQ6IDAwMDAwMDAwMDAwMDAwMDAgUjE1OiAw
+MDAwMDAwMDAwMDAwMDAwCiBfX21pZ2h0X2ZhdWx0KzB4MTE4LzB4MTkwCiBjb3JlX3N5c19zZWxl
+Y3QrMHg4MmMvMHhhOTAKIGtlcm5fc2VsZWN0KzB4MTQwLzB4MWMwCiBfX3g2NF9zeXNfc2VsZWN0
+KzB4YmUvMHgxNjAKIGRvX3N5c2NhbGxfNjQrMHhjZi8weDI1MAogZW50cnlfU1lTQ0FMTF82NF9h
+ZnRlcl9od2ZyYW1lKzB4NzcvMHg3ZgpSSVA6IDAwMzM6MHg3ZmE2NDRiMWRlNzYKQ29kZTogNDgg
+ODMgYzggZmYgYzMgNjYgMmUgMGYgMWYgODQgMDAgMDAgMDAgMDAgMDAgMGYgMWYgNDQgMDAgMDAg
+NDkgODkgY2EgNjQgOGIgMDQgMjUgMTggMDAgMDAgMDAgODUgYzAgNzUgMTEgYjggMTcgMDAgMDAg
+MDAgMGYgMDUgPDQ4PiAzZCAwMCBmMCBmZiBmZiA3NyA2MiBjMyA5MCA0OCA4MyBlYyAzOCA0YyA4
+OSA0NCAyNCAyOCA0OCA4OSA1NApSU1A6IDAwMmI6MDAwMDdmZmUzNzJjZjg0OCBFRkxBR1M6IDAw
+MDAwMjQ2IE9SSUdfUkFYOiAwMDAwMDAwMDAwMDAwMDE3ClJBWDogZmZmZmZmZmZmZmZmZmZkYSBS
+Qlg6IDAwMDAwMDAwMDAwMDAwMDAgUkNYOiAwMDAwN2ZhNjQ0YjFkZTc2ClJEWDogMDAwMDU1Y2Nl
+YWYwODI0MCBSU0k6IDAwMDA1NWNjZWFmMGRhNzAgUkRJOiAwMDAwMDAwMDAwMDAwMDBmClJCUDog
+MDAwMDU1Y2NlYWVmODI5MCBSMDg6IDAwMDAwMDAwMDAwMDAwMDAgUjA5OiAwMDAwMDAwMDAwMmYw
+MDAwClIxMDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAyNDYgUjEyOiAwMDAw
+NTVjY2MyZDk5NzY4ClIxMzogMDAwMDAwMDAwMDAwMDAwMCBSMTQ6IDAwMDAwMDAwMDAwMDAwMDQg
+UjE1OiAwMDAwNTVjY2MyZDRlYWMwCiA8L1RBU0s+CnJjdTogcmN1X3ByZWVtcHQga3RocmVhZCBz
+dGFydmVkIGZvciAxMDQ5MiBqaWZmaWVzISBnMTk5NTcgZjB4MCBSQ1VfR1BfV0FJVF9GUVMoNSkg
+LT5zdGF0ZT0weDAgLT5jcHU9MQpyY3U6IAlVbmxlc3MgcmN1X3ByZWVtcHQga3RocmVhZCBnZXRz
+IHN1ZmZpY2llbnQgQ1BVIHRpbWUsIE9PTSBpcyBub3cgZXhwZWN0ZWQgYmVoYXZpb3IuCnJjdTog
+UkNVIGdyYWNlLXBlcmlvZCBrdGhyZWFkIHN0YWNrIGR1bXA6CnRhc2s6cmN1X3ByZWVtcHQgICAg
+IHN0YXRlOlIgIHJ1bm5pbmcgdGFzayAgICAgc3RhY2s6MjY3OTIgcGlkOjE4ICAgIHRnaWQ6MTgg
+ICAgcHBpZDoyICAgICAgdGFza19mbGFnczoweDIwODA0MCBmbGFnczoweDAwMDA0MDAwCkNhbGwg
+VHJhY2U6CiA8VEFTSz4KIF9fc2NoZWR1bGUrMHgxMDc0LzB4NGQzMAogc2NoZWR1bGUrMHhkNC8w
+eDIxMAogc2NoZWR1bGVfdGltZW91dCsweDExYi8weDI4MAogcmN1X2dwX2Zxc19sb29wKzB4NjI0
+LzB4YTMwCiByY3VfZ3Bfa3RocmVhZCsweDI1OC8weDM2MAoga3RocmVhZCsweDQyYS8weDg4MAog
+cmV0X2Zyb21fZm9yaysweDQ4LzB4ODAKIHJldF9mcm9tX2ZvcmtfYXNtKzB4MWEvMHgzMAogPC9U
+QVNLPgpyY3U6IFN0YWNrIGR1bXAgd2hlcmUgUkNVIEdQIGt0aHJlYWQgbGFzdCByYW46CkNQVTog
+MSBVSUQ6IDAgUElEOiAxNjY3NCBDb21tOiBzeXouMS4xMTAgTm90IHRhaW50ZWQgNi4xNC4wICMx
+CkhhcmR3YXJlIG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKGk0NDBGWCArIFBJSVgsIDE5OTYpLCBC
+SU9TIDEuMTMuMC0xdWJ1bnR1MS4xIDA0LzAxLzIwMTQKUklQOiAwMDEwOnNtcF9jYWxsX2Z1bmN0
+aW9uX21hbnlfY29uZCsweDY1ZC8weDE5ZDAKQ29kZTogZTYgZTggMDcgMjkgMGMgMDAgNDUgODUg
+ZTQgNzQgNDggNDggOGIgMDQgMjQgNDkgODkgYzUgODMgZTAgMDcgNDkgYzEgZWQgMDMgNDkgODkg
+YzQgNGQgMDEgZjUgNDEgODMgYzQgMDMgZTggZDUgMjYgMGMgMDAgZjMgOTAgPDQxPiAwZiBiNiA0
+NSAwMCA0MSAzOCBjNCA3YyAwOCA4NCBjMCAwZiA4NSBhZiAxMCAwMCAwMCA4YiA0NSAwOCAzMQpS
+U1A6IDAwMTg6ZmZmZmM5MDAwYTlhZjYxMCBFRkxBR1M6IDAwMDAwMjQ2ClJBWDogMDAwMDAwMDAw
+MDA4MDAwMCBSQlg6IDAwMDAwMDAwMDAwMDAwMDIgUkNYOiAwMDAwMDAwMDAwMDgwMDAwClJEWDog
+ZmZmZmM5MDAyMTNhMTAwMCBSU0k6IGZmZmY4ODgwNzFhYmE0ODAgUkRJOiAwMDAwMDAwMDAwMDAw
+MDAyClJCUDogZmZmZjg4ODAyYjk0NjljMCBSMDg6IDAwMDAwMDAwMDAwMDAwMDEgUjA5OiBmZmZm
+ZmJmZmYyZGU3OTk5ClIxMDogZmZmZmZiZmZmMmRlNzk5OCBSMTE6IDAwMDAwMDAwMDAwMDAwMDEg
+UjEyOiAwMDAwMDAwMDAwMDAwMDAzClIxMzogZmZmZmVkMTAwNTcyOGQzOSBSMTQ6IGRmZmZmYzAw
+MDAwMDAwMDAgUjE1OiAwMDAwMDAwMDAwMDAwMDAxCkZTOiAgMDAwMDdmYWFkMjE4OTcwMCgwMDAw
+KSBHUzpmZmZmODg4MDdlZTAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDAKQ1M6ICAw
+MDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMwpDUjI6IDAwMDA3ZmFh
+ZDE1NjAzODAgQ1IzOiAwMDAwMDAwMDJhNGJhMDAwIENSNDogMDAwMDAwMDAwMDc1MGVmMApQS1JV
+OiA4MDAwMDAwMApDYWxsIFRyYWNlOgogPElSUT4KIDwvSVJRPgogPFRBU0s+CiBvbl9lYWNoX2Nw
+dV9jb25kX21hc2srMHg1YS8weGEwCiB0ZXh0X3Bva2VfYnBfYmF0Y2grMHgyMTYvMHg3MzAKIHRl
+eHRfcG9rZV9icCsweDkxLzB4YzAKIF9fc3RhdGljX2NhbGxfdHJhbnNmb3JtKzB4MzM0LzB4NzIw
+CiBhcmNoX3N0YXRpY19jYWxsX3RyYW5zZm9ybSsweDVkLzB4YjAKIF9fc3RhdGljX2NhbGxfdXBk
+YXRlKzB4ZDUvMHg2MTAKIHRyYWNlcG9pbnRfdXBkYXRlX2NhbGwrMHhjMC8weDEyMAogdHJhY2Vw
+b2ludF9hZGRfZnVuYysweDk1MC8weGNhMAogdHJhY2Vwb2ludF9wcm9iZV9yZWdpc3Rlcl9wcmlv
+KzB4YTUvMHhmMAogdHJhY2VfZXZlbnRfcmVnKzB4Mjk3LzB4MzUwCiBwZXJmX3RyYWNlX2V2ZW50
+X2luaXQrMHg1M2YvMHhhYzAKIHBlcmZfdHJhY2VfaW5pdCsweDFhNC8weDJmMAogcGVyZl90cF9l
+dmVudF9pbml0KzB4YTYvMHgxMjAKIHBlcmZfdHJ5X2luaXRfZXZlbnQrMHgxM2EvMHhjYjAKIHBl
+cmZfZXZlbnRfYWxsb2MrMHgxMDU2LzB4M2U4MAogX19kb19zeXNfcGVyZl9ldmVudF9vcGVuKzB4
+NWM3LzB4MjllMAogZG9fc3lzY2FsbF82NCsweGNmLzB4MjUwCiBlbnRyeV9TWVNDQUxMXzY0X2Fm
+dGVyX2h3ZnJhbWUrMHg3Ny8weDdmClJJUDogMDAzMzoweDdmYWFkMTNhY2FkZApDb2RlOiAwMiBi
+OCBmZiBmZiBmZiBmZiBjMyA2NiAwZiAxZiA0NCAwMCAwMCBmMyAwZiAxZSBmYSA0OCA4OSBmOCA0
+OCA4OSBmNyA0OCA4OSBkNiA0OCA4OSBjYSA0ZCA4OSBjMiA0ZCA4OSBjOCA0YyA4YiA0YyAyNCAw
+OCAwZiAwNSA8NDg+IDNkIDAxIGYwIGZmIGZmIDczIDAxIGMzIDQ4IGM3IGMxIGIwIGZmIGZmIGZm
+IGY3IGQ4IDY0IDg5IDAxIDQ4ClJTUDogMDAyYjowMDAwN2ZhYWQyMTg4YmE4IEVGTEFHUzogMDAw
+MDAyNDYgT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAxMmEKUkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJC
+WDogMDAwMDdmYWFkMTVhNjA4MCBSQ1g6IDAwMDA3ZmFhZDEzYWNhZGQKUkRYOiBmZmZmZmZmZmZm
+ZmZmZmZmIFJTSTogMDAwMDAwMDAwMDAwMDAwMCBSREk6IDAwMDAwMDAwMjAwMDAwNDAKUkJQOiAw
+MDAwN2ZhYWQxNDJhYjhmIFIwODogMDAwMDAwMDAwMDAwMDAwMCBSMDk6IDAwMDAwMDAwMDAwMDAw
+MDAKUjEwOiBmZmZmZmZmZmZmZmZmZmZmIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAwMDAw
+MDAwMDAwMDAwMDAKUjEzOiAwMDAwN2ZhYWQxNWE2MDhjIFIxNDogMDAwMDdmYWFkMTVhNjExOCBS
+MTU6IDAwMDA3ZmFhZDIxODhkNDAKIDwvVEFTSz4KCgp0aGFua3MsCkt1biBIdQo=
 
