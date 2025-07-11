@@ -1,113 +1,105 @@
-Return-Path: <linux-kernel+bounces-727182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE7CB01615
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:30:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F21B01638
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69EB77BDE1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB0573B3A04
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F4221B9F0;
-	Fri, 11 Jul 2025 08:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC11221552;
+	Fri, 11 Jul 2025 08:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAqIpT64"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aqbN/LGS"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A375D218EBF;
-	Fri, 11 Jul 2025 08:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC525202F9C;
+	Fri, 11 Jul 2025 08:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752222595; cv=none; b=InOv7eMRSXMSUPHAhcGXbQeB4hj0rf1fkVppFeGqb3nWZU9Z3oybU0G9R5sKC6z9iVXQRu/xiFgrw24zcuZTsxszdjaJppl2SLp+TegVSkCTPAhT2LPk6+IqLaEQnj0IVCQ93pXYHHlibMjwwgwdubV5eJt9Qy11dhRnUDh3Uig=
+	t=1752222695; cv=none; b=Ks6dh1jbQKLATnrF4onGn1fezn8dcjaNKdrzX6J37JO2avcdMb9w6n0ryO+59GHpFWrtgMla/MXupBDsOA+K+hCBDzLpBgtcgVZg9gXXWfJoAz1QJ13AWidp1ZffgGfxzIk+vkwaweUvFkNh2P+T+PhdbfPXpi5jBM2S7PYRtqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752222595; c=relaxed/simple;
-	bh=usCoWtM/BA5Tp7eMWEeP0VimmZV5A8YJgjPE8S5Etqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z9x9+MnFAwjlzEfYZxgiqK1fKYa/HtouXhHFlF3aWTqOToWnxpy5TXClYMxVGiCmnViiR+R32/o0lGdPj26jxF9YlNsUnOAhc1e421tL7PF/g015MekkKs/w7Shm9Mle49Q0YTb1VZQXP3CtIj4UZhrYNFHljyqhV/aXNLoWGv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAqIpT64; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24DD7C4CEF5;
-	Fri, 11 Jul 2025 08:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752222595;
-	bh=usCoWtM/BA5Tp7eMWEeP0VimmZV5A8YJgjPE8S5Etqs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hAqIpT64fc1EFOVcy2Heq48ZrGKSDp2OUb+eusISH2kLcWmSs2eJar3dJIENlDJSt
-	 ONijokvZJCyZD/kBVbUIyGxebGTWzIIFfUZF9nJi8H1NiVfgkefxUts/PQXhsrgoFR
-	 LY1eXF0yfL+d/JPXlpJzS0VKm3alymiQqrYrZCC/lRnTzekACPiQ/+omrk+NVLNx+/
-	 oIzexw4gofjx3Pp7MBm2vmufzwgyUv/J2srozCquwNf2kJsll+m6dAD3aa1vCqD0HH
-	 /E3bPleeWaorbqOpUZAJksdKqdEhIoBgXelQUvH4dHsDc/GgmnRjPGWHXO+fClm/oV
-	 YM89EuCVuzoJw==
-Date: Fri, 11 Jul 2025 10:29:51 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Subject: Re: [PATCH v2 2/3] ASoC: codecs: add new pm4125 audio codec driver
-Message-ID: <20250711-hungry-uppish-taipan-a0a35a@krzk-bin>
-References: <20250711-pm4125_audio_codec_v1-v2-0-13e6f835677a@linaro.org>
- <20250711-pm4125_audio_codec_v1-v2-2-13e6f835677a@linaro.org>
+	s=arc-20240116; t=1752222695; c=relaxed/simple;
+	bh=WPmleFdtdKTIKdhULXSgArC2h6usigBTjPtsYch8FdY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Xzog2Pz53VDuejumF3OCwbGCRqLBHCtmX9i44ePXd6XolM68vdNQwrzhFddZfLsRIbsWTDEAqMGigAIQ9DJL+CJNk5RvLEnvZu3Vxw1ZmPT3JgyTw+W+A2PvWWGDHvsrm3emEx/e0sPx3paDnMFeaU3KFN3JDCtoBCVZ0jcKHDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aqbN/LGS; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752222611;
+	bh=FdRxDMtdQ1wOiEozvAT8/L1xuCJ14lpYgNT8EUKvRJQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aqbN/LGSuJp97Sg87NzDCGEL22r0tMBwCPEXag4OyJYhvT3T/EAM0j26Hb4ymfgY0
+	 KpU3yvrNaby4xg4UQ43tud8PKGL7PHvStiKHSxlk2JW+0y7QcEyYUBHhbN1Lfgs6vz
+	 T7pSAJfI93hGCBld0cEK60G+48ciQ/wm+vLxBmeeCuOZJr1UAm8p9qDm9bP1j/xPQv
+	 fFk6scJJCxloFmBIZNZrTGZ92RHPZbd2qJN8kCB6jMnGaFgAWhzC4x00u8zgAkHbFu
+	 09d0bWF5wZjUaXlsoqTQ+AWQNCkQYuHLy78o/y7DCifCgZ0UHIQWUVLJUltxZl5176
+	 CPI7xEGjruLQQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bdlJg0mPjz4wb0;
+	Fri, 11 Jul 2025 18:30:09 +1000 (AEST)
+Date: Fri, 11 Jul 2025 18:31:29 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the net-next tree
+Message-ID: <20250711183129.2cf66d32@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250711-pm4125_audio_codec_v1-v2-2-13e6f835677a@linaro.org>
+Content-Type: multipart/signed; boundary="Sig_/le8ANdbD5Tpqv=KFytA4LBp";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Jul 11, 2025 at 04:00:11AM +0100, Alexey Klimov wrote:
-> +static void pm4125_unbind(struct device *dev)
-> +{
-> +	struct pm4125_priv *pm4125 = dev_get_drvdata(dev);
-> +
-> +	snd_soc_unregister_component(dev);
-> +	device_link_remove(dev, pm4125->txdev);
-> +	device_link_remove(dev, pm4125->rxdev);
-> +	device_link_remove(pm4125->rxdev, pm4125->txdev);
-> +	component_unbind_all(dev, pm4125);
-> +}
-> +
-> +static const struct component_master_ops pm4125_comp_ops = {
-> +	.bind = pm4125_bind,
-> +	.unbind = pm4125_unbind,
-> +};
-> +
-> +static int pm4125_add_slave_components(struct pm4125_priv *pm4125, struct device *dev,
-> +				       struct component_match **matchptr)
-> +{
-> +	struct device_node *np = dev->of_node;
-> +
-> +	pm4125->rxnode = of_parse_phandle(np, "qcom,rx-device", 0);
-> +	if (!pm4125->rxnode)
-> +		return dev_err_probe(dev, -ENODEV, "Couldn't parse phandle to qcom,rx-device\n");
-> +	component_match_add_release(dev, matchptr, component_release_of, component_compare_of,
-> +				    pm4125->rxnode);
-> +	of_node_put(pm4125->rxnode);
+--Sig_/le8ANdbD5Tpqv=KFytA4LBp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If you drop it here, then you do not need to keep it in pm4125 in the
-first place. But this will point you to the problem - what if
-pm4125_bind() is called after you dropped the reference?
+Hi all,
 
-> +
-> +	pm4125->txnode = of_parse_phandle(np, "qcom,tx-device", 0);
-> +	if (!pm4125->txnode)
-> +		return dev_err_probe(dev, -ENODEV, "Couldn't parse phandle to qcom,tx-device\n");
-> +	component_match_add_release(dev, matchptr, component_release_of, component_compare_of,
-> +				    pm4125->txnode);
-> +	of_node_put(pm4125->txnode);
+After merging the net-next tree, today's linux-next build (htmldocs)
+produced these warnings:
 
-Same problem here.
+include/linux/virtio.h:172: warning: Excess struct member 'features' descri=
+ption in 'virtio_device'
+include/linux/virtio.h:172: warning: Excess struct member 'features_array' =
+description in 'virtio_device'
 
-Best regards,
-Krzysztof
+Introduced by commit
 
+  e7d4c1c5a546 ("virtio: introduce extended features")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/le8ANdbD5Tpqv=KFytA4LBp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhwy+EACgkQAVBC80lX
+0GwhUQf8C+Zm1KZesFZidw/UKyrxc5UxztxHYaIPL1UmRiE6CtxgwVztjORHNR5j
+XnGnRiFcEdiH9k4d5WCMXN6nO6OypoSxbau+8ShXVRnpb8Et3OpA+/WcKK0N+Ej0
+eK4qEoANZflY/trHdDEDZb1x+PRnp0bwveJn+IPjasc37X6CV3o9ikKMrNyDZUSa
+N4FwA5h92WvCpmyf5Y7RFGGyNModwsB2ErokaVopFFnajZEQ72evOP/njvl2/H5M
+OvIN4dGpdBgsTSxjSrv5FUCTHPPDcK7uPlyfsJIoGkb93YJ+ITrXETpHXWqrpjsy
+oseIke22QKyFQ8JZc4L/DvEwa6XcXA==
+=eXTB
+-----END PGP SIGNATURE-----
+
+--Sig_/le8ANdbD5Tpqv=KFytA4LBp--
 
