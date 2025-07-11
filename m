@@ -1,104 +1,91 @@
-Return-Path: <linux-kernel+bounces-727209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E83B0167B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:38:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82827B01685
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B89B5C1D7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:37:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F341CA37E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0D422DFA5;
-	Fri, 11 Jul 2025 08:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB32621CC43;
+	Fri, 11 Jul 2025 08:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mSxsGg8Q"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403F622331C;
-	Fri, 11 Jul 2025 08:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kDPAIK2d"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5265F21A457;
+	Fri, 11 Jul 2025 08:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752222931; cv=none; b=pU0qS1MsNOIfqosXYHPfr7Ic8SpU0aSrHbFMkMdjEFpyKwLLaEiOmjxmiEkQ6VNzY5EcUQuUbabbACasm3cfK/YnUeYQSB0bi/ME6JptxVJvv5aHjVOLHlYCz644WViVxPkV+p15JHiBZoDRwbHjpnaPCJ+EHWW4UYP7hB2k7jw=
+	t=1752222989; cv=none; b=TARa9q0NpfJmqRmUelHRjhXbvoS0WFbgFCXz+DnBR9B9SDXv9YrdXzLjKj6iGNqltPey07Bs4+Ao/FgCPxzGK1iswL/1LkGjHwZclmlwekHl90IYrNNGTZ7ExxY/tThQ1jxdE/O3QDNZIzqN/tpoNrtzplXvlknUcmQQwciiVbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752222931; c=relaxed/simple;
-	bh=6Y6S05PzQUKs+xhBM9Z68i8/1ah7poZCl9q6QkKjpnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BU3wDZSQuySPefaImQiuKGYChMPyAEOvqym+tR5199efU6G0ueVIQ+RnsPlYGzbXPL++AaLcEMeA7MzKnV2kBH2qAO9Laeq1bFatOXaLvDMiWSPXLRDm+nMXZyYobZkVSI+a0ZVoKtYemAR8haBxpr1QnqpulRTlFOfiuLLYugI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mSxsGg8Q; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752222847;
-	bh=40uLoAwD1ciV3Bm0n9OC4h0EC1rxr1MUi/34S+ZuYkk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=mSxsGg8QFqFU8R6qXwhif+DRS+addAQt+n0VAYNl2aTfjiDnsqlWFipnTSQ89sS4S
-	 hSP9qMDPrccg5U3vhOmvHBJGDL9eJM531wIy46pyQsH5wOKzM9+2tHfkqAIYBOd3DI
-	 94mMiUPdaF0xrmGIcckj5jjZAxZzgHVs8N5VyDWOWgpTMfqjVnvypub9Qfzsgx9dSZ
-	 91XHPjxxtl4+U0qHWES0ILlvySm9Wl7oHL1mIpTikVVlkBJiXxyuvfmZB9pl++D5KT
-	 7IrQLgQJPzpE7wuNK9E5ZQ4/dMOX7f6lf9VoPwB4A1h7K8lueCTXMAOQa0ZQCO4ore
-	 gaUVLaGZTEOrQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bdlPC3zjbz4x3d;
-	Fri, 11 Jul 2025 18:34:07 +1000 (AEST)
-Date: Fri, 11 Jul 2025 18:35:26 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Nicolin Chen <nicolinc@nvidia.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the iommufd tree
-Message-ID: <20250711183526.5c9df5ea@canb.auug.org.au>
+	s=arc-20240116; t=1752222989; c=relaxed/simple;
+	bh=bwj8bQCQTSix0tFd7qc0EZ2our6zfTa68jiiExDYk5c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gSlJchn02szLk/QfITRMvNZwE9spCy20VqQaB6FWsGRIfO0TtUiAqjwxSs5D+O9sBwENq1S6KyEo5PfddugT2QNyDllnO55avl+i9KJIyRJaw5br4YdzAF0zl3GVDIx8brPc8Zg3Q3JUTfsT8xy5EZFA4IxggdAZaVPmEBIJxtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kDPAIK2d; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=dK
+	+nduMdCKOu9mKYc1GxziLAjiaoIfvFOt6yIdLSkqk=; b=kDPAIK2dqi/6SNrtak
+	Pi0Li9ETZkO9gcB7ymgeqv5A5Am5U3Dv/A6rFH3Mn57RzJpIWL5x39vZOf/pt2Pa
+	cmpIZQntpU1H1u3WrRDAXCfHQ50yrhy7L5hM2qw+LCmn1NwcWM8WJLQ/OqqsxZLp
+	S8imV7WGjULK72GYHxfcQQ0fs=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wCHLA3nzHBoQrP2Dw--.36013S2;
+	Fri, 11 Jul 2025 16:35:52 +0800 (CST)
+From: oushixiong1025@163.com
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xu Yang <xu.yang_2@nxp.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] usb: gadget: uvc: destroy worker when function is unbound
+Date: Fri, 11 Jul 2025 16:35:50 +0800
+Message-Id: <20250711083550.425714-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/=AjIvQKWb8=szTG3sS3ttg4";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHLA3nzHBoQrP2Dw--.36013S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZFWDJw1fArWrXr1UGw18uFg_yoW3WFg_CF
+	y2qrZ7Gr9rG34DK3yI9a9xuFW2k3Z8Xry0gF1qgry5t34jqw17uw1vvr4vy3Wj9r1xCFnI
+	k345JF9xAwn3ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8x9N7UUUUU==
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXR+HD2hwyJlhVwAAs1
 
---Sig_/=AjIvQKWb8=szTG3sS3ttg4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-Hi all,
+Destroy worker when function is unbound.
 
-After merging the iommufd tree, today's linux-next build (htmldocs)
-produced this warning:
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+---
+ drivers/usb/gadget/function/f_uvc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-include/uapi/linux/iommufd.h:607: warning: cannot understand function proto=
-type: 'struct iommu_hw_info_tegra241_cmdqv '
+diff --git a/drivers/usb/gadget/function/f_uvc.c b/drivers/usb/gadget/function/f_uvc.c
+index aa6ab666741a..e38477751894 100644
+--- a/drivers/usb/gadget/function/f_uvc.c
++++ b/drivers/usb/gadget/function/f_uvc.c
+@@ -992,6 +992,7 @@ static void uvc_function_unbind(struct usb_configuration *c,
+ 	uvcg_info(f, "%s()\n", __func__);
+ 
+ 	kthread_cancel_work_sync(&video->hw_submit);
++	kthread_destroy_worker(video->kworker);
+ 
+ 	if (video->async_wq)
+ 		destroy_workqueue(video->async_wq);
+-- 
+2.25.1
 
-Introduced by commit
-
-  b135de24cfc0 ("iommu/tegra241-cmdqv: Add user-space use support")
-
-You forgot the "struct" in the kerneldoc comment.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/=AjIvQKWb8=szTG3sS3ttg4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhwzM4ACgkQAVBC80lX
-0GxMVQf9F/VDJ5UjyaEOjowJ3Sh1W7tJdnTHvoyrWEZWZHDPuIq3PXOj3iVCQP+2
-VZExkDG14m3tGRaEUHgHw4PCncANcdtUKq5uUcQwIV760We4IRKndH08+Fc0BbML
-enj/efJXg3ljcH5OoqEsHevlkAcwixLDNLO44HaRorlGu4zSVILdnwNzVeD5gg76
-lqRILzOXZJojehHcDzO3Syyk5D/Xxaq7IRNP85/DCJ2vLVslWcaucMM4WPR5aD6O
-uTi+JFB4f/3mvfMrExnS7SqWQBMY62Yhi0zfw9+49rlCzKe4RfN2Jd0WEZ5cgsmZ
-sYOPiWQR+S/uhtnmpBXjrqCgqSWn6g==
-=Epzn
------END PGP SIGNATURE-----
-
---Sig_/=AjIvQKWb8=szTG3sS3ttg4--
 
