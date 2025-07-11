@@ -1,173 +1,144 @@
-Return-Path: <linux-kernel+bounces-727876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BA1B020EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:55:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A769B020F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 169593AC8D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:54:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 942363AE53F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5E62ED172;
-	Fri, 11 Jul 2025 15:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2A32ED85F;
+	Fri, 11 Jul 2025 15:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YxBo7v3g"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hGfd1c3B"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4C718DF8D
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E372ED877
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752249320; cv=none; b=a406oyI4VbZVP7KbBwCxx85YAH4hDQOQwiE7QPu6IpZp5JK2fjrNmRQIRbOGlRYD+KVpADJB9uWnvUZmAvXnvPGe438Cv6AzgWdQRNv5FWktD2Y/ZZVqm9l4fv44MHHlFy8XQ5KD/eipKekXKpMLORJodM7PimAR0nGC5E7lays=
+	t=1752249330; cv=none; b=ivu9I8zdm8qzyj0grC4ZWjEFiwF05h5xlaZ6lKJz7eOASOQnFhCTZrDu6SdkhCjmB9g7UvWhgR0QhMfhQ/Fzf/XwI8QoNxS4+pWCUCBk25Usldb4+y6VPQmLjvxc+Wx1s3ONYqvkhTabQRt+i2w0A+XtgOm0IZuYc559ZP3BWqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752249320; c=relaxed/simple;
-	bh=p1Ot7fwFyp3rNeiGKP2Pf6ZoMkbKz4ivHLt6owO8qOA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=e8McLRXIVf0FTAeiOkTVC5WKMDZmaUwqqKZoNs8Dn3KdfeVaz3lkg6xnA9YkZC8cnExovcCZAmqGqIrEOCkWayVgNAh3NwkTJE7HpG4rR+3XwikTcToBzLFdj2GGbeI5VREcG8CDEyHFpHpO8Xa1fMji95I07URAXFB6giynOQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YxBo7v3g; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-735ae68cc78so1306432a34.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:55:17 -0700 (PDT)
+	s=arc-20240116; t=1752249330; c=relaxed/simple;
+	bh=ZJmv2kGsngYQ0j91GkPhYp/ZYB34ERAIc1y7RI+IQLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CBuXZxQxGUmtC96B5xTFEWKmXt4qskl+nrp/Usyl1i3Lox0IecNMAvW67Bfrz1HD7Hu5zeHyDDRGdjKwDNWgB5lI1UPSokDsgwvRZ9vDZXdRoeKSmVd2hcwJvASFOURhJIT8So4JIChGqCw15qSeRLs5J85cwdPQstxUI3bG1pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hGfd1c3B; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7fd35b301bdso2707726a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:55:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752249317; x=1752854117; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ALf1X7Rod+QmNvsPsp443TiwKUm1nvu6GsJBGeigeFI=;
-        b=YxBo7v3giUsnlBnEkHqEGJkxpEHyrUq8uV3w7TdZP3QCFWaubJSLMiZupk/SYLko9h
-         +K6P7OidnQKhmwjEkuiVv00VBge1Wif9C165lXaXO6ifZJuDgWvyLaDpowufiUyS9Sjy
-         wiKEKdhH5mLfFnRjUTekELvmyJmkxX8YK+bqj4/sW8avsrtjCPTqOCSAPDtS1YhS2K5C
-         8r8bE3aau3Lif4HZL6piC7E+m5VaFHJWJfmzrZuQq/Zq7Qhj4HeOW67qeyVFuihK41nh
-         NrfNuQdiWf3/fQv8twKeodT5V2hNJxbz2a077zv3TNRzp8wOpdscq99syEMrwme8GylN
-         I46A==
+        d=linaro.org; s=google; t=1752249328; x=1752854128; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BSUEvMdfd3OtQjcJtnT8MNHYb+tPfeWYuWYxCvun5Ec=;
+        b=hGfd1c3Bmfs+N0Q6OIahJD/ljkhLyGSm5/VGuW7O7gWMM5pH9pt3Ez+dI1bRb4YxW+
+         n5v+S44yuDC7Kf7cTgmJB3Lvl8mPPJgZyCe4P2GtZRgWMzHo6g9fOc1M/fhbo2v0mYKr
+         2WdMC98Sy6TuWBe0mFGqj8HmVg/3LugMc+NZmOSggcb8kk1vaIE8G66+1e/c/izjec4f
+         QtYd+vkEzmnTJTcJV0AwCqCWv4Z6BaHLpvNAf0Sb8DWxHCm6l1yD2QWDGd7HPje2Qffw
+         CAB/y2uox31k7/3FAyMiOh9Sh5w0AORpHsQddsO1/q+pYLs6lEZhhaxrK7xeF9AIZB6s
+         4L6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752249317; x=1752854117;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1752249328; x=1752854128;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ALf1X7Rod+QmNvsPsp443TiwKUm1nvu6GsJBGeigeFI=;
-        b=ZyI6kAOVHsTiVi9AOtvgPd5MOl70LOnaumWB80ax7ruJxfpx3VsNVg57zeXgGZIi83
-         dhO5kuTgA1G6izXdqmEEY09dhS/HNR0IPl/+gh49yvQJxidtkP1a1CoSl2upX9l6A8aU
-         1T/e0E4bzvS1OGWDAMFx/X7UC6gkBImxDeZbZgtbkawBmuIcrCBI9GH1xq9HW+OFa09j
-         FAC+rENNMqGRtuZT+f0F2aLi9//7g+tRnM610J3dZONP/ruqz1t2tc+2YGUiA0peUqcg
-         DuDa52QSBpByiVytwc2aDRnxixe4viWtIII2D+SHzDiTXVLqFIq64nkNvsa/RiN8eiQZ
-         YtDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUM3r+uBPN7x5ScOrTvarcRKCIIdkyo1C5O6zrhKlCYXQMAOwTMU9hA8wqsSnmYVP1wxdDkb/z8VoPZsKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMtX/0xuvYLn/pLIzAxVy2LK96dQoxRUiUhMHXvaquU9T+uRcx
-	x1qQlbAjKabGJVhEKKI3l42IqS/C0q/+v5EIgEGdPJRcrpO1rEyLiozxlQACGNRmmWPcJtljwTz
-	HazNT+B4=
-X-Gm-Gg: ASbGncvT0rXzeIcZOMqDP//sueYwYIsXSo8+S+WRjdj2q9fUkYmd7FSL3oQacHVRaE7
-	LZXYZjiqUvRtOxdK9PZ8OgIf6ENDN0vyehkSze6nh+XWdlhtG02s2feZO7PYnFG5Ts5rbc8Svev
-	Gu11bmPJNOWP/Ln386XndoKjPjXA5Fxn9UBROGQAeixQNT/4ejOZDXgnXFKyZ1Fjv2TaiZ82iZw
-	1Lz5sGG7Vp3/fhbsULXlj1clyLDJ3wJJpM6Kc8Psl5qKOrbRNAG2shHKsa/OJApkOBupHDLUNiY
-	NhvJdUm4t8XSdOaiwmGkN+2oJWGgh+E/oLs3TmBmr9YClA61k1DbvrkQo6pWX0ZxWF3mAe87YaK
-	M+0vTQoYrv9P3RCSTST+sT/Z/m9avHxmPp5N1ICM=
-X-Google-Smtp-Source: AGHT+IHX/K76Zdq7pRcux0W/uzxRZwqWhKse0oq12O+uTQoErsfsBRX+nj7saE6UtNfnD2iOJDkNrw==
-X-Received: by 2002:a05:6808:15a5:b0:40b:1c78:f5f5 with SMTP id 5614622812f47-41567c4bd38mr1897734b6e.27.1752249316750;
-        Fri, 11 Jul 2025 08:55:16 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:4601:15f9:b923:d487])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-613d9d820e8sm522402eaf.10.2025.07.11.08.55.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 08:55:16 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 11 Jul 2025 10:55:07 -0500
-Subject: [PATCH] iio: proximity: sx_common: use stack allocated buffer for
- scan data
+        bh=BSUEvMdfd3OtQjcJtnT8MNHYb+tPfeWYuWYxCvun5Ec=;
+        b=QUqUAWyBGI+NJKP4EfFN2uPV+p3sQA3uNkYyUizgLvXpGBZ3o1buENKl3PeoIE7cwp
+         43t39TXy2aZk/NBOJ4jHKqdl5viLbZLVFKyATyWHm81CBJueO+R7DC/1bGMBbI27kL45
+         vay7DY026aPIfk9m5nOsvQTjImcq5RspS6W9gA6qdTKxlsbw0qvdhK/aVRs+X2RQ2WDh
+         dLqtEF05ZzTD2HTw1bSls62AcnOHIquJZ3DRWmKX26B13rdOBVPLHsH1oV5AR9HNdbne
+         8IsljWVmRbVwdno7AB396xBTq5KiV59CiO3dScQDwSiVu+TgcjgsBBneTwdjGwTziM7l
+         Jh+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXOuL+ZpncRwWna0b+S87GBnawbLGY8++yenMyIID7SkNQwrPNrDJZ4qzv8QK6MJlIgE1vjrTdW/rxRiYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6JsXMF6emB0OXWevmTwCyoq4dFf3yB9Le+sTvq3vhJ3K3NuxJ
+	meq9HR97XewuEbAAh8wrSpH6mQmTnTGx/VqY8q5NGcI/PiM9VxBwhlUmHYeFDn+LEBnTiU48y/Q
+	xS7xhAd1M/VIn0WJ2L044JN4pGWv2hK/vuC3/4fOg1g==
+X-Gm-Gg: ASbGncuOJmAmONf+gTkICmA7JfN6bAoKYumzD/nfLdf035zKXFLNNrdQ6KLyKfuMOa/
+	wRY+/kXgI2kStvnLiO8m98JYCJvlsQOZhdi6ZNyI9b02MafH1OeCeZygKZ9DQeA3fGzmHpaYMe+
+	dxKnWTCHhjQ8gUWhLIUa4FlKphrDidET1VUZVYCqE84WAvP8/QJzfLA4u5VZRHx9OQt/YAWnk3x
+	lk5gTDdueVIpb+EXpUU7QOxT7Ne/SPK43/FdVVt
+X-Google-Smtp-Source: AGHT+IH2f1kHKtkhmbSDnFwU9FsRvu0+CvMkmIgA/3wZF988KeEXY1isz3v5NjcaxVFtljjYa3Rl3Y2Bu4pS6enpzQo=
+X-Received: by 2002:a05:6a20:244a:b0:230:f847:6586 with SMTP id
+ adf61e73a8af0-2311f4315fcmr6577705637.29.1752249327964; Fri, 11 Jul 2025
+ 08:55:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250711-iio-use-more-iio_declare_buffer_with_ts-5-v1-1-4209f54e010f@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIANozcWgC/x3NQQrCMBBG4auUWTuQtJagVxEJNfljB7SRSVuF0
- rsbXX6b9zYqUEGhc7ORYpUieaqwh4bCOEx3sMRqak3bG2cti2ReCviZFT/4iPAYFP62pAT1b5l
- HPxfuOR3DyUbXmc5Fqr2XIsnn/7pc9/0Lf30rK3sAAAA=
-X-Change-ID: 20250711-iio-use-more-iio_declare_buffer_with_ts-5-f4c91d73037d
-To: Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2345; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=p1Ot7fwFyp3rNeiGKP2Pf6ZoMkbKz4ivHLt6owO8qOA=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBocTPcQAlCrmKq9hNUJl4Kw1D57FHXb41y7wDMG
- 9e6SK3gwa6JATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaHEz3AAKCRDCzCAB/wGP
- wDkHB/0R8VoVxieBp9t+2WtlakC8LYp7TwVU2vpMN4VHE7qlhaPwavjM3pG7+GXQIxFLSJhVRDH
- OlUaS7ozUAoVDyXber96l+oXQUuBmMjpya2q7UTNVrPTX9mFHuhMtAjai7t2sUzt/2WiTbfJM9X
- i06AlLqqUC9Ka7dQq0h0nxA+P+c2zy0T1/nxliN3p0C/3svkGBUBcfbCvJuPQrxmO0rm1vDhkII
- ZJea/1lbreTdsrlTC2GRE7QH1mn4JlR0O/kQ41SvlkVezSIsVhkMq2SiSmuG3pc18MzaqXeOulH
- O1/lH32lhusjgG7aJ9VOx/RVvxXMGTQfK34JoQzqvCcl5uqH
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+References: <20250708151502.561-1-alireza.sanaee@huawei.com> <20250708151502.561-4-alireza.sanaee@huawei.com>
+In-Reply-To: <20250708151502.561-4-alireza.sanaee@huawei.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Fri, 11 Jul 2025 16:55:15 +0100
+X-Gm-Features: Ac12FXy6OFHr0HcNSbuwxmKfYiD99i1dpKvfe3JL9VMIP9NGMICwwAp3JOTw9ag
+Message-ID: <CAJ9a7VhfW2RYXv6ZO28m65C75iyJUqTYos1tFXs8gAG5gx9yDA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] coresight: cti: Use of_cpu_phandle_to_id for
+ grabbing CPU id
+To: Alireza Sanaee <alireza.sanaee@huawei.com>
+Cc: krzk@kernel.org, robh@kernel.org, coresight@lists.linaro.org, 
+	devicetree@vger.kernel.org, dianders@chromium.org, james.clark@linaro.org, 
+	jonathan.cameron@huawei.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linuxarm@huawei.com, mark.rutland@arm.com, ruanjinjie@huawei.com, 
+	saravanak@google.com, shameerali.kolothum.thodi@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-Use IIO_DECLARE_BUFFER_WITH_TS() to declare a stack allocated buffer
-in sx_common_trigger_handler(). Since the scan buffer isn't used outside
-of this function and doesn't need to be DMA-safe, it doesn't need to be
-in struct sx_common_data.
+Hi,
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/proximity/sx_common.c | 7 ++++---
- drivers/iio/proximity/sx_common.h | 6 ------
- 2 files changed, 4 insertions(+), 9 deletions(-)
+On Tue, 8 Jul 2025 at 16:16, Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
+>
+> Use the newly created API to grab CPU id.
+>
+> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
+> ---
+>  .../hwtracing/coresight/coresight-cti-platform.c   | 14 +-------------
+>  1 file changed, 1 insertion(+), 13 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-cti-platform.c b/drivers/hwtracing/coresight/coresight-cti-platform.c
+> index d0ae10bf6128..e1dc559d54aa 100644
+> --- a/drivers/hwtracing/coresight/coresight-cti-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-cti-platform.c
+> @@ -41,20 +41,8 @@
+>   */
+>  static int of_cti_get_cpu_at_node(const struct device_node *node)
+>  {
+> -       int cpu;
+> -       struct device_node *dn;
+> +       int cpu = of_cpu_phandle_to_id(node, NULL, 0);
+>
+> -       if (node == NULL)
+> -               return -1;
+> -
+> -       dn = of_parse_phandle(node, "cpu", 0);
+> -       /* CTI affinity defaults to no cpu */
+> -       if (!dn)
+> -               return -1;
+> -       cpu = of_cpu_node_to_id(dn);
+> -       of_node_put(dn);
+> -
+> -       /* No Affinity  if no cpu nodes are found */
 
-diff --git a/drivers/iio/proximity/sx_common.c b/drivers/iio/proximity/sx_common.c
-index 59b35e40739b0d931dbac076ca5c83ba421ba766..fae035e8d2f5a40ed7379dd6e306f84878a9bef0 100644
---- a/drivers/iio/proximity/sx_common.c
-+++ b/drivers/iio/proximity/sx_common.c
-@@ -361,6 +361,7 @@ static irqreturn_t sx_common_irq_thread_handler(int irq, void *private)
- 
- static irqreturn_t sx_common_trigger_handler(int irq, void *private)
- {
-+	IIO_DECLARE_BUFFER_WITH_TS(__be16, buffer, SX_COMMON_MAX_NUM_CHANNELS);
- 	struct iio_poll_func *pf = private;
- 	struct iio_dev *indio_dev = pf->indio_dev;
- 	struct sx_common_data *data = iio_priv(indio_dev);
-@@ -376,11 +377,11 @@ static irqreturn_t sx_common_trigger_handler(int irq, void *private)
- 		if (ret)
- 			goto out;
- 
--		data->buffer.channels[i++] = val;
-+		buffer[i++] = val;
- 	}
- 
--	iio_push_to_buffers_with_ts(indio_dev, &data->buffer,
--				    sizeof(data->buffer), pf->timestamp);
-+	iio_push_to_buffers_with_ts(indio_dev, buffer, sizeof(buffer),
-+				    pf->timestamp);
- 
- out:
- 	mutex_unlock(&data->mutex);
-diff --git a/drivers/iio/proximity/sx_common.h b/drivers/iio/proximity/sx_common.h
-index 259b5c695233b4e295ad8ae2b05fceeaa4a7ae61..97b264aa50b0c9811ce6b42be34eace03eae2627 100644
---- a/drivers/iio/proximity/sx_common.h
-+++ b/drivers/iio/proximity/sx_common.h
-@@ -122,12 +122,6 @@ struct sx_common_data {
- 	unsigned long chan_prox_stat;
- 	bool trigger_enabled;
- 
--	/* Ensure correct alignment of timestamp when present. */
--	struct {
--		__be16 channels[SX_COMMON_MAX_NUM_CHANNELS];
--		aligned_s64 ts;
--	} buffer;
--
- 	unsigned int suspend_ctrl;
- 	unsigned long chan_read;
- 	unsigned long chan_event;
+Leave the above comment in place.
 
----
-base-commit: f8f559752d573a051a984adda8d2d1464f92f954
-change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-5-f4c91d73037d
+>         return (cpu < 0) ? -1 : cpu;
+>  }
+>
+> --
+> 2.43.0
+>
 
-Best regards,
+With that
+
+Reviewed-by: Mike Leach <mike.leach@linro.org>
 -- 
-David Lechner <dlechner@baylibre.com>
-
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
