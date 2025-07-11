@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-727256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E983B01735
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:07:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0622FB01733
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5EE75850ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:07:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B622F3B0CA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D46221F20;
-	Fri, 11 Jul 2025 09:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8337F221561;
+	Fri, 11 Jul 2025 09:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="O1zj9ujP"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="Uf7bTIoB"
 Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1558D1B3925;
-	Fri, 11 Jul 2025 09:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1110521FF39;
+	Fri, 11 Jul 2025 09:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752224827; cv=none; b=F97jfnRN6BQBkEnwKuOUg9QcHFFGGpLxZWuyecpN4qIDSfCZSqZTiYqY/O0m4rEh+3NkKBDwk5J2CYaBanYPGkZg9522zPIyckA8u4zlguJoswZhWovb5t30klv40R4FvlZxm/6MZuGTXe99fCeEgAbTZvrm0/QPbzLVE7kPyrU=
+	t=1752224823; cv=none; b=BLLlyITh4fjVMVjdgGKKrxDR1Uj31ETFCo7DJFrgq/IN0JTJsGDPeEA/Gq00ltbUpRmQm9ZMOkIIB373NIz6cMMIb5HxiTNDnRu09meQo4ZzXtaiPiHCMxcr47yu6gVt3CTWu+a77ZWj32OCQ+2VQUxkoK6hISrB6QP3uFYuoxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752224827; c=relaxed/simple;
-	bh=1HDhUj5Gs+V3WBDvXWgWv6ZjW/qY+qR9S83ZiCyVRzs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YzlbKDOotv3eJUu9vBAVEkBba6xFFXAvHsZYIL9ZJ//5Xl6Sf7I7+ksI0s3jhD+F3pmq23l+KA3xg0TmeMP97phgaebOpFXZgv/LNwv+bAWwk482u28bizOKsikl6swo1Fk5dBoX51q31TG4oTfGI8Weq4pIioP2IoeduHMHMDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=O1zj9ujP; arc=none smtp.client-ip=51.159.173.17
+	s=arc-20240116; t=1752224823; c=relaxed/simple;
+	bh=ajhQOe2zRb52yuHwP8gbqFRP5X4zdlzOC0dbzNSJvQ8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=luCIRQRVHm77P/QhxTJAhzMYDmKjuHUBwqfOOeG+SaOh3t7OXl99zbtaMxQwc1zFKMJdSOj+4fMFYkYRoYhKMk5k/oyXpuSeeiZKP8G47pK5Jhj79abvZiLgIOFVMZ03JobniTljJUepgghHsA3exmnKcwzzKOuC+WafKDkL42o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=Uf7bTIoB; arc=none smtp.client-ip=51.159.173.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=Cc:To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Message-Id:Date:Subject:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Iy37ilPtEsuezKoNTWgSAeMqThjsKLbuOmc0oPVA/RM=; b=O1zj9ujPJUMsQ5p7KsSUFwnP2z
-	5WtJeJEaL9BThDKV/+lo+ArrzaEYUkJwGIxyqY381PIdwvyKbcrKdiOLrR/uZJkUuow3eAxfdbijN
-	NZYTn8PyU07YrKMiZeZVVbfJd5BJ8voIoNS+Jeel5N8yM7N0XcHCbRVW74l0bt9TMAu5Ll2M8VTwL
-	7FSSff3YyihFSPg+zEBtLNDWFnLD6z8fERfHXcp1cnI/sEhc8nz6XLf51kcjcFH3ofuwFB45GJWuA
-	DEc0auWH50IcQNRiE8wHmhloWDstfBny8yLwz1OJW9uZgfgjJLTDNIZZfCAXpYbo7/GAP1JopQdRx
-	fluyDuNw==;
+	d=oss.cyber.gouv.fr; s=default; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1WfNKNhYv/UCA5BP7FU4Nwnn3iz/WP77bbs0m8XXzlc=; b=Uf7bTIoBRlv6QyqE7Oo9o6/AJB
+	1ZqI7gXfYB4XktlRoQma7lorb4bD+ZhA2mp3h9WNmqi4R8msTgcQYDidlZzdRAfHyZmKdh3IJPj4h
+	FCaTaqRnSO+ZXlQt/Xts7dXRhRalxiFnUeJFxE0AZTZaAflXFDw+4xdiRXeO0JUA0KYEDnvqcgbEY
+	0mCtO7luOlnYPrsgeAf3/JSCw7OItR0g/lOE/zyQRDd81EMPWEgnr8/M4J6HNhTdhCA6QFBLIpZlt
+	DRL3sdyTQ/j2lG5LKABUG/RhUMsm0YNqBLQS/b6LIGYPYluqLdBSLB4M0EQDN/lDAPu9ONK3VIg0a
+	AmlbgDkw==;
 Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:16749 helo=[10.224.9.2])
 	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.98.2)
 	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
-	id 1ua9K4-0000000DVFH-3WrT;
-	Fri, 11 Jul 2025 10:41:34 +0200
+	id 1ua9K5-0000000DVFH-37sU;
+	Fri, 11 Jul 2025 10:41:36 +0200
 From: nicolas.bouchinet@oss.cyber.gouv.fr
-Subject: [RFC PATCH v2 0/4] Support for usb authentication
-Date: Fri, 11 Jul 2025 10:41:21 +0200
-Message-Id: <20250711-usb_authentication-v2-0-2878690e6b6d@ssi.gouv.fr>
+Date: Fri, 11 Jul 2025 10:41:22 +0200
+Subject: [RFC PATCH v2 1/4] usb: core: Introduce netlink usb authentication
+ policy engine
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,12 +59,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIADHOcGgC/32NQQ6DIBBFr2JmXQxC1NhV72FMgzrIbLBhgLQx3
- r3UA3T5fv5//wDGQMhwrw4ImIlp9wXUrYLFGb+hoLUwKKla2SkpEs9Pk6JDH2kxsdSF1npeTWe
- 1tghl+Apo6X1Jx6mwI457+Fwfufmlf3W5EVLIdVCqa0zb98ODmeptT7m2AabzPL/RJpyytgAAA
- A==
-X-Change-ID: 20250620-usb_authentication-333bda6f33fe
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250711-usb_authentication-v2-1-2878690e6b6d@ssi.gouv.fr>
+References: <20250711-usb_authentication-v2-0-2878690e6b6d@ssi.gouv.fr>
+In-Reply-To: <20250711-usb_authentication-v2-0-2878690e6b6d@ssi.gouv.fr>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>, 
  Alan Stern <stern@rowland.harvard.edu>, Kannappan R <r.kannappan@intel.com>, 
@@ -87,299 +86,1242 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-We have been working on the implementation of the USB authentication
-protocol in the kernel.
+From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-You can find our work here https://github.com/ANSSI-FR/usb_authentication.
+The usb authentication feature needs a policy engine in order to
+authorize or deny usb devices based on a user defined policy.
 
-It is still work in progress but we would like to start discussions
-about the implementation design and its possible integration to the
-Linux kernel.
+In order to reduce the attack surface and in-kernel complexity, policy
+management, crypto operations and complex parsing have been implemented
+in userspace using the generic netlink API. The full authentication
+protocol is kernel driven.
 
-Best regards,
+The following unicast netlink commands have been defined in order to
+fulfill device authentication :
 
-Nicolas and Luc
+- USBAUTH_CMD_REGISTER
 
----
-USB peripheral authentication
-=============================
+This is the beginning of any authentication. The kernel first wait for
+the userspace service to connect to the socket using the
+`USBAUTH_CMD_REGISTER` netlink command.
+Upon connection, the kernel check that the userspace service has the
+`CAP_SYS_ADMIN` capability beforing enrolling the service. Only one
+userspace service can be registered.
 
-USB peripherals are an important attack vector in personal computers and
-pose a risk to the cyber security of companies and organizations.
+- USBAUTH_CMD_CHECK_DIGEST
 
-The USB foundation has published a standard to allow the authentication
-of USB peripherals ([1] and [2]). It defines a mechanism for the host to
-request credentials and issue an authentication challenge to USB-2 or
-USB-3 peripherals, either upon connection or later during the use of the
-peripheral.
+The kernel then sends a `USBAUTH_CMD_CHECK_DIGEST` netlink command to
+the policy engine to be verified. The policy engine checks if the device
+ceritificates has already been encountered.
 
-We currently envision the following use cases for USB authentication:
+- USBAUTH_CMD_RESP_DIGEST
 
-- company networks where computers and peripherals can be privately
-  controlled and administered;
-- USB cleaning or decontamination stations;
-- individuals who want to prevent unauthorized device plug-in into their
-  machine.
+After the policy engine has received an usb device certificate digest
+list from kernel, it needs to reply if it knows one of them using the
+`USBAUTH_CMD_RESP_DIGEST` netlink command.
 
-The implementation of this feature will obviously necessitate efforts
-from both the kernel community and peripherals vendors. We believe that
-providing an implementation of the host side of the protocol in the
-Linux kernel will encourage constructors to include this feature in
-their devices. On the other hand, we are working on implementing
-reference code for embedded devices, notably for Zephyr OS.
+- USBAUTH_CMD_CHECK_CERTIFICATE
 
-Design
-======
+The kernel then sends a `USBAUTH_CMD_CHECK_CERTIFICATE` netlink command
+to the policy engine. Each command contains one certificate chain. The
+policy engine verifies if the device certificate chain is trusted.
 
-The USB authentication protocol is based on a simple signature
-challenge. Devices hold between 1 and 8 pairs of private signing key and
-x509 certificate. Hosts must possess a store of root Certificate
-Authority certificates provided by device vendors.
+- USBAUTH_CMD_RESP_CERTIFICATE
 
-The protocol exchange is driven by the host and can be decomposed into
-three, mostly independent, phases:
+After checking the certificate chain, the policy engine sends a
+`USBAUTH_CMD_RESP_CERTIFICATE` response. It tells the kernel if the
+device certificate chain is trusted and thus if the device
+authentication should continue.
 
-- The Host can request a digest of each certificate owned by the
-  peripheral.
-- If the Host does not recognize the peripheral from one of its digests,
-  it can read one or more certificates from the device until a valid one
-  is found.
-- The Host can issue an authentication challenge to the peripheral.
+Once device has been validated either through the digest or certificate
+chain validation, an authentication session is started and a device ID
+is associated for this session. The ID will then be used in all the
+following commands.
 
-On the host side, this requires the following functions:
+- USBAUTH_CMD_GEN_NONCE
 
-- handling the protocol exchange with the peripheral;
-- X509 certificates validation and administration (root CA loading,
-  certificate revocation…);
-- cryptographic functions for the challenge (random number generation
-  and ECDSA with the NIST P256 -secp256r1- curve);
-- security policy management;
-- authorization decision enforcement.
+Kernel then asks for a nonce generation in order to challenge the device
+using the `USBAUTH_GEN_NONCE` netlink command.
 
-We chose to implement the authentication protocol exchange directly in
-the kernel USB stack during the device enumeration. This is done by
-first requesting the device BOS to detect its capacity at handling
-authentication, then if supported starting the authentication sequence
-with a digest request.
+- USBAUTH_CMD_RESP_GEN_NONCE
 
-The implementation of the other functions is open to several design
-alternatives, mainly based on their distribution between kernel and user
-space. In this first implementation, we chose to implement most (all) of
-the cryptographic functions, certificate management and security policy
-management in user space in order to limit impact on the kernel side.
-This allows for more personalization later on. The communication between
-the kernel USB stack authentication function and user space is done via
-a generic netlink socket.
+When the nonce has been generated by the policy engine it is sent back
+to the kernel using the `USBAUTH_CMD_RESP_GEN_NONCE` netlink command.
 
-Once a device has been authenticated, a per-device authenticated field
-is update with the result of the authentication. The authenticated field
-can be used to track the result of the authentication process in
-userspace thanks to a sysfs exposed file.
+- USBAUTH_CMD_CHECK_CHALL
 
-The device enforcement point is done in the usb_probe_interface()
-function. This allows for more complex security policy in userspace: the
-user could manually authorize a device that failed the authentication or
-manually deauthorize a device that was previously authenticated.
+Once the kernel has received a device challenge response, it forwards
+the response to the policy engine for validation using the
+`USBAUTH_CMD_CHECK_CHALL` netlink command.
 
-+----------+------------+-------------+
-|          | authorized | !authorized |
-+----------+------------+-------------+
-| authent  |     OK     |     NOK     |
-+----------+------------+-------------+
-| !authent |     OK     |     NOK     |
-+----------+------------+-------------+
+- USBAUTH_CMD_RESP_CHECK_CHALL
 
-If set to true, the authentication decision is enforced, the following
-decision is made:
+The policy engine then verifies the challenge and replies its decision
+to the kernel using the `USBAUTH_CMD_RESP_CHECK_CHALL` netlink command.
 
-+----------+------------+-------------+
-|          | authorized | !authorized |
-+----------+------------+-------------+
-| authent  |     OK     |     NOK     |
-+----------+------------+-------------+
-| !authent |    NOK     |     NOK     |
-+----------+------------+-------------+
-
-Note that combined with the CONFIG_USB_DEFAULT_AUTHORIZATION_MODE=2:
- - internal devices should be authorized and !authenticated => OK
- - external qemu dev-auth is !authorized and authenticated  => NOK at
-   first but then authorization can be granted via sysfs.
- - external qemu non auth dev is !authorized and !authenticated => NOK
-   and authorization can be granted via sysfs
-
-The default enforcement decision can be configured thanks to the new
-USB_AUTHENTICATION_ENFORCE configuration option and can be overridden
-using the usbcore.enforce_authentication command line or module
-parameter.
-
-Limitations
-===========
-
-The USB authentication protocol come with some inherent limitations, [3]
-does a good job at describing most of them. During the implementation,
-we also found that the value encoding of the Validity field in the x509
-certificate differs from the RFC5280 [4]. This has prevented us from
-using the x509 parser included in the Linux kernel or OpenSSL, we chose
-to use the mbedtls library instead [5]. This obviously does not prevent
-others to replace it with their preferred implementation. It will also
-open discussions on the protocol enhancement.
-
-The architectural choice to place most of the cryptographic and security
-management functions in user space comes with its own limitations.
-
-First it introduces a dependency on the user space program availability.
-It will probably be necessary to introduce a fail-safe mechanism if the
-authentication can not be completed. Also, during early boot stages the
-user space service will be needed in one form or another in the
-initramfs.
-
-The second limitation is that the device initialization process is
-paused multiple times. Each time, the hub lock is released in order not
-to block the rest of the stack; and then reacquired when a response has
-been received from user space. The resuming of the operation on the
-device must be done with great care.
-
-Last, we do not yet interface properly with the rest of the usb stack
-and thus do not enforce a strict control of the two authenticated and
-authorized fields. Other sections of the kernel or userspace are able to
-overwrite those fields using the sysfs exposed files for example.
-
-Status
-======
-
-The current kernel implementation of the USB authentication protocol is
-experimental and has the following limitations:
-
-- It does not yet handle all possible protocol errors.
-- It has been tested with a QEMU mock device, but tests with real
-  hardware are still in progress. As such, the over-the-wire protocol
-  has not yet been fully validated.
-- The kernel/user space communication has not yet been completely
-  validated, including the interruption of the worker thread and its
-  resuming.
-- Device authorization and deauthorization has not been completely
-  implemented.
-- It lacks an overall documentation and test suite.
-
-Upstreaming plans
-=================
-
-Our current kernel patch is obviously a work-in-progress and not yet
-ready for merging. We feel it is best to start a discussion on the
-architectural choices and gather early comments that could be used to
-improve the design.
-
-Concerning the user space functions, they are currently implemented in a
-small independent executable as a proof-of-concept. In the future,
-integrating it in existing larger projects, like USBGuard [6], would
-allow presenting a homogeneous USB administration interface to the user.
-
-Reviewing this RFC
-==================
-
-We would like to get comments on the proposed architectural choices
-regarding the repartition of functions between kernel and user space and
-on the implementation in the USB stack, mostly concerning the releasing
-and reacquiring the hub lock multiple times during the authentication
-process.
-
-Testing this RFC
-================
-
-You can find in the following repository [7] the necessary code for
-creating a test environment:
-
-- the Linux kernel patches;
-- a python utility to generate a small PKI for device enrollment;
-- a C minimalist service to implement the USB policy engine;
-- patches for QEMU to implement a mock USB device with the
-  authentication capability;
-- a testbed to compile and test the project.
-
-References
-==========
-
-- [1] “Universal Serial Bus Security Foundation Specification”, Revision
-  1.0 with ECN and Errata through January 7, 2019
-- [2] “Universal Serial Bus Type-C Authentication Specification”,
-  Revision 1.0 with ECN and Errata through January 7, 2019
-- [3] J. Tian, N. Scaife, D. Kumar, M. Bailey, A. Bates and K. Butler,
-  "SoK: "Plug & Pray" Today – Understanding USB Insecurity in Versions 1
-  Through C," 2018 IEEE Symposium on Security and Privacy (SP), San
-  Francisco, CA, USA, 2018, pp. 1032-1047, doi: 10.1109/SP.2018.00037
-- [4] RFC 5280, Internet X.509 Public Key Infrastructure Certificate and
-  Certificate Revocation List (CRL) Profile, May 2008
-- [5] https://www.trustedfirmware.org/projects/mbed-tls/
-- [6] https://usbguard.github.io/
-- [7] https://github.com/ANSSI-FR/usb_authentication
-
+Co-developed-by: Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>
 Signed-off-by: Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Kannappan R <r.kannappan@intel.com>
-Cc: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Pawel Laszczak <pawell@cadence.com>
-Cc: Ma Ke <make_ruc2021@163.com>
-Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>
-Cc: Luc Bonnafoux <luc.bonnafoux@oss.cyber.gouv.fr>
-Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
 Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-
 ---
-Changes in v2:
-- Fix code documentation to match kernel-doc format
-- General coding style fixes as suggested in v1
-- Added netlink socket configuration checks when receiving messages from
-  userspace.
-- Moved usb_authenticate_device() after device enumeration
-- Changed the way authentication enforcement is handled.
-  - If the device is authenticated, the device authenticated field is
-    set to 1.
-  - Added an authenticated file in sysfs that reflects the device
-    authenticated field.
-  - Enforcement Kconfig and cmdline configurations has been added.
-  - Sysctls has been added to permit timeouts values.
-- Removed USBAUTH_CMD_RESP_REMOVE_DEV netlink command
-- The Kconfig commit has been squashed in the commit that plugs of the
-  authentication in the usb stack.
-- Link to v1: https://lore.kernel.org/r/20250620-usb_authentication-v1-0-0d92261a5779@ssi.gouv.fr
-
----
-Nicolas Bouchinet (4):
-      usb: core: Introduce netlink usb authentication policy engine
-      usb: core: Introduce usb authentication feature
-      usb: core: Plug the usb authentication capability
-      usb: core: Add sysctl to configure authentication timeouts
-
- Documentation/usb/authentication.rst      |   15 +
- Documentation/usb/index.rst               |    1 +
- drivers/usb/core/Kconfig                  |   26 +
- drivers/usb/core/Makefile                 |    5 +
- drivers/usb/core/authent.c                |  586 ++++++++++++++++
- drivers/usb/core/authent.h                |  192 ++++++
- drivers/usb/core/authent_netlink.c        | 1039 +++++++++++++++++++++++++++++
+ drivers/usb/core/authent_netlink.c        | 1031 +++++++++++++++++++++++++++++
  drivers/usb/core/authent_netlink.h        |   33 +
- drivers/usb/core/config.c                 |   22 +-
- drivers/usb/core/driver.c                 |   31 +
- drivers/usb/core/hub.c                    |    5 +
- drivers/usb/core/sysctl.c                 |   55 ++
- drivers/usb/core/sysfs.c                  |   16 +
- drivers/usb/core/usb.c                    |   16 +
- include/linux/usb.h                       |   11 +
  include/uapi/linux/usb/usb_auth_netlink.h |   70 ++
- 16 files changed, 2121 insertions(+), 2 deletions(-)
----
-base-commit: fc85704c3dae5ac1cb3c94045727241cd72871ff
-change-id: 20250620-usb_authentication-333bda6f33fe
+ 3 files changed, 1134 insertions(+)
 
-Best regards,
+diff --git a/drivers/usb/core/authent_netlink.c b/drivers/usb/core/authent_netlink.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..9848f219e0e4807563f0f0432a0f1108cd6a0454
+--- /dev/null
++++ b/drivers/usb/core/authent_netlink.c
+@@ -0,0 +1,1031 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * SPDX-FileCopyrightText: (C) 2025 ANSSI
++ *
++ * USB Authentication netlink interface
++ *
++ * Author: Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>
++ * Author: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
++ *
++ */
++
++#include <linux/usb/ch11.h>
++#include <linux/sched.h>
++#include <linux/time.h>
++#include <linux/delay.h>
++#include <linux/slab.h>
++#include <linux/mutex.h>
++#include <linux/err.h>
++#include <linux/capability.h>
++#include <net/genetlink.h>
++#include <uapi/linux/usb/usb_auth_netlink.h>
++#include "authent.h"
++#include "authent_netlink.h"
++
++#define WAIT_USERSPACE_TIMEOUT 30
++#define WAIT_RESPONSE_TIMEOUT 300
++#define USBAUTH_MAX_RESP_SIZE 128
++
++/**
++ * struct usb_auth_req - Define an outstanding request between the kernel and userspace
++ *
++ * @used:	1 if the slot is currently used, access must be protected.
++ * @done:	1 if the response has been received, used as wait condition.
++ * @error:	userspace response error code.
++ * @resp:	arbitrary response buffer.
++ */
++struct usb_auth_req {
++	u8 used;
++	u8 done;
++	u8 error;
++	u8 resp[USBAUTH_MAX_RESP_SIZE];
++};
++
++static struct genl_family usbauth_genl_fam;
++
++/* TODO: add mutex for PID access */
++static u32 pol_eng_pid;
++static struct net *pol_eng_net;
++
++static wait_queue_head_t usb_req_wq;
++
++#define USBAUTH_MAX_OUTSTANDING_REQS USB_MAXCHILDREN
++/* Mutex is used to protect access to the `used` field */
++DEFINE_MUTEX(usb_auth_reqs_mutex);
++static struct usb_auth_req usb_auth_outstanding_reqs[USBAUTH_MAX_OUTSTANDING_REQS];
++
++////////////////////////////////////////////////////////////////////////////////
++// USB request utilities
++
++/**
++ * usb_auth_get_reqs_slot() - Find the first available slot in the outstanding requests array and
++ * reserve it.
++ *
++ * @index: [out] reserved slot index, valid if return equals 0
++ *
++ * Context: this function will block on the request list mutex
++ *
++ * Returns:
++ * * %0		- OK
++ * * %-EXFULL	- too many outstanding requests
++ *
++ */
++static int usb_auth_get_reqs_slot(u32 *index)
++{
++	int ret = -EXFULL;
++	u32 i = 0;
++
++	mutex_lock(&usb_auth_reqs_mutex);
++
++	/* Take the first available slot */
++	for (i = 0; i < USBAUTH_MAX_OUTSTANDING_REQS; i++) {
++		if (usb_auth_outstanding_reqs[i].used == 0) {
++			usb_auth_outstanding_reqs[i].used = 1;
++			usb_auth_outstanding_reqs[i].done = 0;
++			usb_auth_outstanding_reqs[i].error = USBAUTH_OK;
++			memset(usb_auth_outstanding_reqs[i].resp, 0,
++			       USBAUTH_MAX_RESP_SIZE);
++			*index = i;
++			ret = 0;
++			break;
++		}
++	}
++
++	mutex_unlock(&usb_auth_reqs_mutex);
++
++	return ret;
++}
++
++/**
++ * usb_auth_release_reqs_slot() - release a request slot
++ *
++ * @index : [in] slot index to be released
++ *
++ * context: this function will block on the request list mutex
++ */
++static void usb_auth_release_reqs_slot(const u32 index)
++{
++	mutex_lock(&usb_auth_reqs_mutex);
++
++	usb_auth_outstanding_reqs[index].used = 0;
++
++	mutex_unlock(&usb_auth_reqs_mutex);
++}
++
++////////////////////////////////////////////////////////////////////////////////
++// Generic netlink socket utilities
++
++/**
++ * usb_auth_register_req_doit() - Handle a registration request from userspace
++ *
++ * @skb:	[in] Netlink socket buffer
++ * @info:	[in] Generic Netlink receiving information
++ *
++ * It will overwrite the current userspace registered PID with the one provided
++ * in the request.
++ *
++ * Returns:
++ * * %0		- OK
++ * * %-EPERM	- Permission denied for netlink usage
++ * * %-ENOMEM	- if message creation failed
++ * * %-EMSGSIZE	- if message creation failed
++ */
++static int usb_auth_register_req_doit(struct sk_buff *skb, struct genl_info *info)
++{
++	int ret = 0;
++	void *hdr = NULL;
++	struct sk_buff *msg = NULL;
++
++	if (!netlink_capable(skb, CAP_SYS_ADMIN)) {
++		pr_err("%s: invalid permissions\n", __func__);
++		return -EPERM;
++	}
++
++	pol_eng_pid = info->snd_portid;
++	pol_eng_net = genl_info_net(info);
++
++	wake_up_all(&usb_req_wq);
++
++	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
++	if (msg == NULL) {
++		pr_err("%s: failed to allocate message buffer\n", __func__);
++		return -ENOMEM;
++	}
++
++	hdr = genlmsg_put(msg, info->snd_portid, info->snd_seq,
++			  &usbauth_genl_fam, 0, USBAUTH_CMD_REGISTER);
++	if (hdr == NULL) {
++		pr_err("%s: failed to create genetlink header\n", __func__);
++		nlmsg_free(msg);
++		return -EMSGSIZE;
++	}
++
++	genlmsg_end(msg, hdr);
++
++	ret = genlmsg_reply(msg, info);
++
++	return ret;
++}
++
++/**
++ * usb_auth_digest_resp_doit() - Handle a CHECK_DIGEST response from userspace
++ *
++ * @skb:	[in] Netlink socket buffer
++ * @info:	[in] Generic Netlink receiving information
++ *
++ * The response must contain:
++ *  - USBAUTH_A_REQ_ID
++ *  - USBAUTH_A_ERROR_CODE
++ *  - USBAUTH_A_DEV_ID
++ *  - USBAUTH_A_KNOWN
++ *  - USBAUTH_A_BLOCKED
++ *
++ * Returns:
++ * * %0		- OK
++ * * %-EPERM	- Permission denied for netlink usage.
++ * * %-ECOMM	- Netlink communication failure
++ * * %-EINVAL	- Invalid value in messages
++ */
++static int usb_auth_digest_resp_doit(struct sk_buff *skb, struct genl_info *info)
++{
++	u32 index = 0;
++
++	if (!netlink_capable(skb, CAP_SYS_ADMIN)) {
++		pr_err("%s: invalid permissions\n", __func__);
++		return -EPERM;
++	}
++
++	if (!pol_eng_pid || !pol_eng_net) {
++		pr_err("%s: No policy engine registered\n", __func__);
++		return -ECOMM;
++	}
++
++	if (info->snd_portid != pol_eng_pid) {
++		pr_err("Sender id differ from registered policy engine\n");
++		return -EPERM;
++	}
++
++	if (!info->attrs[USBAUTH_A_REQ_ID]) {
++		pr_err("%s: invalid response: no req ID\n", __func__);
++		return -EINVAL;
++	}
++
++	index = nla_get_u32(info->attrs[USBAUTH_A_REQ_ID]);
++
++	if (!info->attrs[USBAUTH_A_ERROR_CODE]) {
++		pr_err("%s: invalid response: missing attributes\n", __func__);
++		usb_auth_outstanding_reqs[index].error = USBAUTH_INVRESP;
++		usb_auth_outstanding_reqs[index].done = 1;
++		return -EINVAL;
++	}
++
++	usb_auth_outstanding_reqs[index].error =
++		nla_get_u8(info->attrs[USBAUTH_A_ERROR_CODE]);
++
++	if (usb_auth_outstanding_reqs[index].error != USBAUTH_OK) {
++		pr_err("%s: response error\n", __func__);
++		usb_auth_outstanding_reqs[index].done = 1;
++		return -EINVAL;
++	}
++
++	if (!info->attrs[USBAUTH_A_DEV_ID] || !info->attrs[USBAUTH_A_KNOWN] ||
++	    !info->attrs[USBAUTH_A_BLOCKED]) {
++		pr_err("%s: invalid response: missing attributes\n", __func__);
++		usb_auth_outstanding_reqs[index].error = USBAUTH_INVRESP;
++		usb_auth_outstanding_reqs[index].done = 1;
++		return -EINVAL;
++	}
++
++	usb_auth_outstanding_reqs[index].resp[0] =
++		nla_get_u8(info->attrs[USBAUTH_A_KNOWN]);
++	usb_auth_outstanding_reqs[index].resp[1] =
++		nla_get_u8(info->attrs[USBAUTH_A_BLOCKED]);
++	((u32 *)usb_auth_outstanding_reqs[index].resp + 2)[0] =
++		nla_get_u32(info->attrs[USBAUTH_A_DEV_ID]);
++
++	usb_auth_outstanding_reqs[index].done = 1;
++
++	wake_up_all(&usb_req_wq);
++
++	return 0;
++}
++
++/**
++ * usb_auth_cert_resp_doit() - Handle a CHECK_CERTIFICATE response from userspace
++ *
++ * @skb:	[in] Netlink socket buffer
++ * @info:	[in] Generic Netlink receiving information
++ *
++ * The response must contain:
++ *  - USBAUTH_A_REQ_ID
++ *  - USBAUTH_A_ERROR_CODE
++ *  - USBAUTH_A_VALID
++ *  - USBAUTH_A_BLOCKED
++ *  - USBAUTH_A_DEV_ID
++ *
++ * Returns:
++ * * %0		- OK
++ * * %-EPERM	- Permission denied for netlink usage
++ * * %-ECOMM	- Netlink communication failure
++ * * %-EINVAL	- Invalid value in messages
++ *
++ */
++static int usb_auth_cert_resp_doit(struct sk_buff *skb, struct genl_info *info)
++{
++	u32 index = 0;
++
++	if (!netlink_capable(skb, CAP_SYS_ADMIN)) {
++		pr_err("%s: invalid permissions\n", __func__);
++		return -EPERM;
++	}
++
++	if (!pol_eng_pid || !pol_eng_net) {
++		pr_err("%s: No policy engine registered", __func__);
++		return -ECOMM;
++	}
++
++	if (info->snd_portid != pol_eng_pid) {
++		pr_err("Sender id differ from registered policy engine\n");
++		return -EPERM;
++	}
++
++	if (!info->attrs[USBAUTH_A_REQ_ID]) {
++		pr_err("%s: invalid response: no req ID\n", __func__);
++		return -EINVAL;
++	}
++
++	index = nla_get_u32(info->attrs[USBAUTH_A_REQ_ID]);
++
++	if (!info->attrs[USBAUTH_A_ERROR_CODE]) {
++		pr_err("%s: invalid response: missing attributes\n", __func__);
++		usb_auth_outstanding_reqs[index].error = USBAUTH_INVRESP;
++		usb_auth_outstanding_reqs[index].done = 1;
++		return -EINVAL;
++	}
++
++	usb_auth_outstanding_reqs[index].error =
++		nla_get_u8(info->attrs[USBAUTH_A_ERROR_CODE]);
++
++	if (usb_auth_outstanding_reqs[index].error != USBAUTH_OK) {
++		pr_err("%s: response error\n", __func__);
++		usb_auth_outstanding_reqs[index].done = 1;
++		return -EINVAL;
++	}
++
++	if (!info->attrs[USBAUTH_A_DEV_ID] || !info->attrs[USBAUTH_A_VALID] ||
++	    !info->attrs[USBAUTH_A_BLOCKED]) {
++		pr_err("%s: invalid response: missing attributes\n", __func__);
++		usb_auth_outstanding_reqs[index].done = 1;
++		usb_auth_outstanding_reqs[index].error = USBAUTH_INVRESP;
++		return -EINVAL;
++	}
++
++	usb_auth_outstanding_reqs[index].resp[0] =
++		nla_get_u8(info->attrs[USBAUTH_A_VALID]);
++	usb_auth_outstanding_reqs[index].resp[1] =
++		nla_get_u8(info->attrs[USBAUTH_A_BLOCKED]);
++	((u32 *)usb_auth_outstanding_reqs[index].resp + 2)[0] =
++		nla_get_u32(info->attrs[USBAUTH_A_DEV_ID]);
++
++	usb_auth_outstanding_reqs[index].done = 1;
++
++	wake_up_all(&usb_req_wq);
++
++	return 0;
++}
++
++/**
++ * usb_auth_gen_nonce_doit() - Handle a GEN_NONCE response from userspace
++ *
++ * @skb:	[in] Netlink socket buffer
++ * @info:	[in] Generic Netlink receiving information
++ *
++ * The response must contain:
++ *  - USBAUTH_A_REQ_ID
++ *  - USBAUTH_A_ERROR_CODE
++ *  - USBAUTH_A_NONCE
++ *
++ * Returns:
++ * * %0		- OK
++ * * %-EPERM	- Permission denied for netlink usage
++ * * %-ECOMM	- Netlink communication failure
++ * * %-EINVAL	- Invalid value in messages
++ */
++static int usb_auth_gen_nonce_doit(struct sk_buff *skb, struct genl_info *info)
++{
++	u32 index = 0;
++
++	if (!netlink_capable(skb, CAP_SYS_ADMIN)) {
++		pr_err("%s: invalid permissions\n", __func__);
++		return -EPERM;
++	}
++
++	if (!pol_eng_pid || !pol_eng_net) {
++		pr_err("%s: No policy engine registered", __func__);
++		return -ECOMM;
++	}
++
++	if (info->snd_portid != pol_eng_pid) {
++		pr_err("Sender id differ from registered policy engine\n");
++		return -EPERM;
++	}
++
++	if (!info->attrs[USBAUTH_A_REQ_ID]) {
++		pr_err("%s: invalid response: no req ID\n", __func__);
++		return -EINVAL;
++	}
++
++	index = nla_get_u32(info->attrs[USBAUTH_A_REQ_ID]);
++
++	if (!info->attrs[USBAUTH_A_ERROR_CODE]) {
++		pr_err("%s: invalid response: missing attributes\n", __func__);
++		usb_auth_outstanding_reqs[index].error = USBAUTH_INVRESP;
++		usb_auth_outstanding_reqs[index].done = 1;
++		return -EINVAL;
++	}
++
++	usb_auth_outstanding_reqs[index].error =
++		nla_get_u8(info->attrs[USBAUTH_A_ERROR_CODE]);
++
++	if (usb_auth_outstanding_reqs[index].error != USBAUTH_OK) {
++		pr_err("%s: response error\n", __func__);
++		usb_auth_outstanding_reqs[index].done = 1;
++		return -EINVAL;
++	}
++
++	if (!info->attrs[USBAUTH_A_NONCE]) {
++		pr_err("%s: invalid response: missing attributes\n", __func__);
++		usb_auth_outstanding_reqs[index].error = USBAUTH_INVRESP;
++		usb_auth_outstanding_reqs[index].done = 1;
++		return -EINVAL;
++	}
++
++	nla_memcpy(usb_auth_outstanding_reqs[index].resp,
++				info->attrs[USBAUTH_A_NONCE],
++				USBAUTH_NONCE_SIZE);
++	usb_auth_outstanding_reqs[index].done = 1;
++	wake_up_all(&usb_req_wq);
++
++	return 0;
++}
++
++/**
++ * usb_auth_check_chall_doit() - Handle a CHECK_CHALL response from userspace
++ *
++ * @skb:	[in] Netlink socket buffer
++ * @info:	[in] Generic Netlink receiving information
++ *
++ * The response must contain:
++ *  - USBAUTH_A_REQ_ID
++ *  - USBAUTH_A_ERROR_CODE
++ *  - USBAUTH_A_VALID
++ *
++ * Returns:
++ * * %0		- OK
++ * * %-EPERM	- Permission denied for netlink usage
++ * * %-ECOMM	- Netlink communication failure
++ * * %-EINVAL	- Invalid value in messages
++ */
++static int usb_auth_check_chall_doit(struct sk_buff *skb, struct genl_info *info)
++{
++	u32 index = 0;
++
++	if (!netlink_capable(skb, CAP_SYS_ADMIN)) {
++		pr_err("%s: invalid permissions\n", __func__);
++		return -EPERM;
++	}
++
++	if (!pol_eng_pid || !pol_eng_net) {
++		pr_err("%s: No policy engine registered", __func__);
++		return -ECOMM;
++	}
++
++	if (info->snd_portid != pol_eng_pid) {
++		pr_err("Sender id differ from registered policy engine\n");
++		return -EPERM;
++	}
++
++	if (!info->attrs[USBAUTH_A_REQ_ID]) {
++		pr_err("%s: invalid response: no req ID\n", __func__);
++		return -EINVAL;
++	}
++
++	index = nla_get_u32(info->attrs[USBAUTH_A_REQ_ID]);
++
++	if (!info->attrs[USBAUTH_A_ERROR_CODE]) {
++		pr_err("%s: invalid response: missing attributes\n", __func__);
++		usb_auth_outstanding_reqs[index].error = USBAUTH_INVRESP;
++		usb_auth_outstanding_reqs[index].done = 1;
++		return -EINVAL;
++	}
++
++	usb_auth_outstanding_reqs[index].error =
++		nla_get_u8(info->attrs[USBAUTH_A_ERROR_CODE]);
++
++	if (usb_auth_outstanding_reqs[index].error != USBAUTH_OK) {
++		pr_err("%s: response error\n", __func__);
++		usb_auth_outstanding_reqs[index].done = 1;
++		return -EINVAL;
++	}
++
++	if (!info->attrs[USBAUTH_A_VALID]) {
++		pr_err("%s: invalid response: missing attributes\n", __func__);
++		usb_auth_outstanding_reqs[index].error = USBAUTH_INVRESP;
++		usb_auth_outstanding_reqs[index].done = 1;
++		return -EINVAL;
++	}
++
++	usb_auth_outstanding_reqs[index].resp[0] =
++		nla_get_u8(info->attrs[USBAUTH_A_VALID]);
++	usb_auth_outstanding_reqs[index].done = 1;
++	wake_up_all(&usb_req_wq);
++
++	return 0;
++}
++
++static struct nla_policy usbauth_attr_pol[USBAUTH_A_MAX + 1] = {
++	[USBAUTH_A_REQ_ID]  = {.type = NLA_U32,},
++	[USBAUTH_A_DEV_ID]  = {.type = NLA_U32,},
++	[USBAUTH_A_DIGEST] = {.type = NLA_UNSPEC, .len = USBAUTH_DIGEST_SIZE,},
++	[USBAUTH_A_DIGESTS] = {.type = NLA_UNSPEC, .len = USBAUTH_DIGESTS_SIZE,},
++	[USBAUTH_A_SLOT_MASK]  = {.type = NLA_U8,},
++	[USBAUTH_A_KNOWN]  = {.type = NLA_U8,},
++	[USBAUTH_A_BLOCKED]  = {.type = NLA_U8,},
++	[USBAUTH_A_VALID]  = {.type = NLA_U8,},
++	[USBAUTH_A_CERTIFICATE] = {.type = NLA_UNSPEC, .max = USBAUTH_MAX_CERT_SIZE,},
++	[USBAUTH_A_CERT_LEN] = {.type = NLA_U32},
++	[USBAUTH_A_ROUTE] = {.type = NLA_U32},
++	[USBAUTH_A_NONCE] = {.type = NLA_BINARY, .len = USBAUTH_NONCE_SIZE,},
++	[USBAUTH_A_CHALL] = {.type = NLA_UNSPEC, .len = USBAUTH_CHALL_SIZE,},
++	[USBAUTH_A_DESCRIPTOR] = {.type = NLA_UNSPEC, .len = USBAUTH_MAX_DESC_SIZE},
++	[USBAUTH_A_BOS] = {.type = NLA_UNSPEC, .len = USBAUTH_MAX_BOS_SIZE},
++	[USBAUTH_A_ERROR_CODE] = {.type = NLA_U8},
++};
++
++static struct genl_ops usbauth_genl_ops[] = {
++	{
++		.cmd = USBAUTH_CMD_REGISTER,
++		.policy = usbauth_attr_pol,
++		.doit = usb_auth_register_req_doit,
++	},
++	{
++		.cmd = USBAUTH_CMD_RESP_DIGEST,
++		.policy = usbauth_attr_pol,
++		.doit = usb_auth_digest_resp_doit,
++	},
++	{
++		.cmd = USBAUTH_CMD_RESP_CERTIFICATE,
++		.policy = usbauth_attr_pol,
++		.doit = usb_auth_cert_resp_doit,
++	},
++	{
++		.cmd = USBAUTH_CMD_RESP_GEN_NONCE,
++		.policy = usbauth_attr_pol,
++		.doit = usb_auth_gen_nonce_doit,
++	},
++	{
++		.cmd = USBAUTH_CMD_RESP_CHECK_CHALL,
++		.policy = usbauth_attr_pol,
++		.doit = usb_auth_check_chall_doit,
++	}
++};
++
++static struct genl_family usbauth_genl_fam = {
++	.name = USBAUTH_GENL_NAME,
++	.version = USBAUTH_GENL_VERSION,
++	.maxattr = USBAUTH_A_MAX,
++	.ops = usbauth_genl_ops,
++	.n_ops = ARRAY_SIZE(usbauth_genl_ops),
++	.mcgrps = NULL,
++	.n_mcgrps = 0,
++};
++
++/**
++ * usb_auth_init_netlink() - Initialises the netlink socket for userspace usb
++ * authentication policy engine to register.
++ *
++ * Returns:
++ * * %0 - OK
++ */
++
++int usb_auth_init_netlink(void)
++{
++	int ret = 0;
++	u8 i = 0;
++
++	for (i = 0; i < USBAUTH_MAX_OUTSTANDING_REQS; i++)
++		usb_auth_outstanding_reqs[i].used = 0;
++
++	init_waitqueue_head(&usb_req_wq);
++	ret = genl_register_family(&usbauth_genl_fam);
++	if (ret) {
++		pr_err("%s: failed to init netlink: %d\n",
++		       __func__, ret);
++		return ret;
++	}
++
++	return ret;
++}
++
++////////////////////////////////////////////////////////////////////////////////
++// Policy engine API
++
++/**
++ * usb_policy_engine_check_digest - Check if a digest match a device
++ *
++ * @route:	[in]	Information on the device to construct the ID
++ * @digests:	[in]	USB Authentication digest, must be 256 B
++ * @mask:	[in]	USB Authentication slot mask
++ * @is_known:	[out]	1 at each index with a known digest, 0 otherwise
++ * @is_blocked: [out]	1 if the device is known and banned, 0 otherwise
++ * @id:		[out]	if is_known and !is_blocked then contains the device handle
++ *
++ * This function blocks until a response has been received from userspace or in
++ * case of timeout.
++ * The function blocks if no policy engine is registered with a timeout.
++ *
++ * Context: task context, might sleep.
++ *
++ * Returns:
++ * * %0		- OK
++ * * %-EINVAL	- if digest is NULL
++ * * %-ECOMM	- if userspace policy engine is not available or busy
++ *		  or message transmission failed
++ * * %-ENOMEM	- if message creation failed
++ * * %-EMSGSIZE	- if message creation failed
++ *
++ *
++ */
++int usb_policy_engine_check_digest(const u32 route, const u8 *const digests,
++	const u8 mask, u8 *is_known, u8 *is_blocked, u32 *id)
++{
++	int ret = -1;
++	void *hdr = NULL;
++	struct sk_buff *skb = NULL;
++	u32 index = 0;
++
++	if (digests == NULL) {
++		pr_err("%s: invalid inputs\n", __func__);
++		return -EINVAL;
++	}
++
++	if (!wait_event_timeout(usb_req_wq, pol_eng_pid != 0, HZ * WAIT_USERSPACE_TIMEOUT)) {
++		pr_err("%s: userspace not available\n", __func__);
++		return -ECOMM;
++	}
++
++	if (usb_auth_get_reqs_slot(&index)) {
++		pr_err("%s: failed to get request slot\n", __func__);
++		return -ECOMM;
++	}
++	skb = genlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
++	if (skb == NULL) {
++		pr_err("%s: failed to allocated buffer\n", __func__);
++		return -ENOMEM;
++	}
++
++	hdr = genlmsg_put(skb, 0, 0, &usbauth_genl_fam, 0,
++			  USBAUTH_CMD_CHECK_DIGEST);
++	if (hdr == NULL) {
++		pr_err("%s: failed to place header\n", __func__);
++		nlmsg_free(skb);
++		return -ENOMEM;
++	}
++
++	ret = nla_put_u32(skb, USBAUTH_A_REQ_ID, index);
++	if (ret) {
++		pr_err("%s: failed to place req ID\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	ret = nla_put_u32(skb, USBAUTH_A_ROUTE, route);
++	if (ret) {
++		pr_err("%s: failed to place route\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	ret = nla_put(skb, USBAUTH_A_DIGESTS, USBAUTH_DIGESTS_SIZE, digests);
++	if (ret) {
++		pr_err("%s: failed to place digests\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	ret = nla_put_u8(skb, USBAUTH_A_SLOT_MASK, mask);
++	if (ret) {
++		pr_err("%s: failed to place slot mask\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	genlmsg_end(skb, hdr);
++
++	ret = genlmsg_unicast(pol_eng_net, skb, pol_eng_pid);
++	if (ret != 0) {
++		pr_err("%s: failed to send message: %d\n",
++		       __func__, ret);
++		return -ECOMM;
++	}
++
++	if (!wait_event_timeout(usb_req_wq,
++				usb_auth_outstanding_reqs[index].done == 1,
++				HZ * WAIT_RESPONSE_TIMEOUT)) {
++		pr_err("%s: userspace response not available\n", __func__);
++		usb_auth_release_reqs_slot(index);
++		return -ECOMM;
++	}
++
++
++	if (usb_auth_outstanding_reqs[index].error == USBAUTH_INVRESP) {
++		pr_err("%s: userspace response error: %d\n",
++			__func__, usb_auth_outstanding_reqs[index].error);
++		usb_auth_release_reqs_slot(index);
++		return -ECOMM;
++	}
++
++	*is_known = usb_auth_outstanding_reqs[index].resp[0];
++	*is_blocked = usb_auth_outstanding_reqs[index].resp[1];
++	*id = ((u32 *)usb_auth_outstanding_reqs[index].resp + 2)[0];
++
++	usb_auth_release_reqs_slot(index);
++
++	return 0;
++}
++
++/**
++ * usb_policy_engine_check_cert_chain() - Check if a certificate chain is valid and authorized
++ *
++ * @route:	[in]	Information on the device to construct the ID
++ * @digest:	[in]	Digest corresponding to the certificate chain
++ * @chain:	[in]	Certificate chain to check, at most 4096 bytes
++ * @chain_len:	[in]	Certificate chain length
++ * @is_valid:	[out]	1 if the certificate chain can be validated
++ * @is_blocked:	[out]	1 if the chain is valid but one of the certificate is blocked
++ * @id:		[out]	If is_known and !is_blocked then contains the device handle
++ *
++ * A certificate chain is valid if it can be successfully verified with one of the
++ *  root CA in store.
++ * A certificate chain is blocked if one of the certificate of chain is blocked,
++ *  due to revocation, blacklist...
++ *
++ * Context: task context, might sleep.
++ *
++ * Returns:
++ * * %0		- OK
++ * * %-EINVAL	- if digest is NULL
++ * * %-ECOMM	- if userspace policy engine is not available or busy
++ *		  or message transmission failed
++ * * %-ENOMEM	- if message creation failed
++ * * %-EMSGSIZE	- if message creation failed
++ *
++ */
++
++int usb_policy_engine_check_cert_chain(const u32 route,
++	const u8 *const digest, const u8 *const chain,
++	const size_t chain_len, u8 *is_valid, u8 *is_blocked, u32 *id)
++{
++	int ret = -1;
++	void *hdr = NULL;
++	struct sk_buff *skb = NULL;
++	u32 index = 0;
++
++	if (chain == NULL || chain_len > USBAUTH_MAX_CERT_SIZE || digest == NULL) {
++		pr_err("%s: invalid inputs\n", __func__);
++		return -EINVAL;
++	}
++
++	if (!wait_event_timeout(usb_req_wq, pol_eng_pid != 0, HZ * WAIT_USERSPACE_TIMEOUT)) {
++		pr_err("%s: userspace not available\n", __func__);
++		return -ECOMM;
++	}
++
++	if (usb_auth_get_reqs_slot(&index)) {
++		pr_err("%s: failed to get request slot\n", __func__);
++		return -ECOMM;
++	}
++	skb = genlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
++	if (skb == NULL) {
++		pr_err("%s: failed to allocated buffer\n", __func__);
++		return -ENOMEM;
++	}
++
++	hdr = genlmsg_put(skb, 0, 0, &usbauth_genl_fam, 0,
++		USBAUTH_CMD_CHECK_CERTIFICATE);
++	if (hdr == NULL) {
++		pr_err("%s: failed to place header\n", __func__);
++		nlmsg_free(skb);
++		return -ENOMEM;
++	}
++
++	ret = nla_put_u32(skb, USBAUTH_A_REQ_ID, index);
++	if (ret) {
++		pr_err("%s: failed to place req ID\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	ret = nla_put_u32(skb, USBAUTH_A_ROUTE, route);
++	if (ret) {
++		pr_err("%s: failed to place route\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	ret = nla_put(skb, USBAUTH_A_DIGEST, USBAUTH_DIGEST_SIZE, digest);
++	if (ret) {
++		pr_err("%s: failed to place digest\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	ret = nla_put(skb, USBAUTH_A_CERTIFICATE, chain_len, chain);
++	if (ret) {
++		pr_err("%s: failed to place certificate\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	ret = nla_put_u32(skb, USBAUTH_A_CERT_LEN, chain_len);
++	if (ret) {
++		pr_err("%s: failed to place chain length\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	genlmsg_end(skb, hdr);
++
++	ret = genlmsg_unicast(pol_eng_net, skb, pol_eng_pid);
++	if (ret != 0) {
++		pr_err("%s: failed to send message: %d\n",
++		       __func__, ret);
++		return -ECOMM;
++	}
++
++	if (!wait_event_timeout(usb_req_wq,
++				usb_auth_outstanding_reqs[index].done == 1,
++				HZ * WAIT_RESPONSE_TIMEOUT)) {
++		pr_err("%s: userspace response not available\n", __func__);
++		usb_auth_release_reqs_slot(index);
++		return -ECOMM;
++	}
++
++	*is_valid = usb_auth_outstanding_reqs[index].resp[0];
++	*is_blocked = usb_auth_outstanding_reqs[index].resp[1];
++	*id = ((u32 *)usb_auth_outstanding_reqs[index].resp + 2)[0];
++
++	usb_auth_release_reqs_slot(index);
++
++	return 0;
++}
++
++/**
++ * usb_policy_engine_generate_challenge() - Generate a nonce for the authentication challenge
++ *
++ * @id:		[in]	Device ID
++ * @nonce:	[out]	32 bytes nonce buffer, caller allocated
++ *
++ * Context: task context, might sleep.
++ *
++ * Returns:
++ * * %0		- OK
++ * * %-EINVAL	- if digest is NULL
++ * * %-ECOMM	- if userspace policy engine is not available or busy
++ *                or message transmission failed
++ * * %-ENOMEM	- if message creation failed
++ * * %-EMSGSIZE	- if message creation failed
++ */
++int usb_policy_engine_generate_challenge(const u32 id, u8 *nonce)
++{
++	int ret = -1;
++	void *hdr = NULL;
++	struct sk_buff *skb = NULL;
++	u32 index = 0;
++
++	/* Arbitrary 30s wait before giving up */
++	if (!wait_event_timeout(usb_req_wq, pol_eng_pid != 0, HZ * WAIT_USERSPACE_TIMEOUT)) {
++		pr_err("%s: userspace not available\n", __func__);
++		return -ECOMM;
++	}
++
++	if (usb_auth_get_reqs_slot(&index)) {
++		pr_err("%s: failed to get request slot\n", __func__);
++		return -ECOMM;
++	}
++	skb = genlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
++	if (skb == NULL) {
++		pr_err("%s: failed to allocated buffer\n", __func__);
++		return -ENOMEM;
++	}
++
++	hdr = genlmsg_put(skb, 0, 0, &usbauth_genl_fam, 0,
++		USBAUTH_CMD_GEN_NONCE);
++	if (hdr == NULL) {
++		pr_err("%s: failed to place header\n", __func__);
++		nlmsg_free(skb);
++		return -ENOMEM;
++	}
++
++	ret = nla_put_u32(skb, USBAUTH_A_REQ_ID, index);
++	if (ret) {
++		pr_err("%s: failed to place req ID\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	ret = nla_put_u32(skb, USBAUTH_A_DEV_ID, id);
++	if (ret) {
++		pr_err("%s: failed to place dev ID\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	genlmsg_end(skb, hdr);
++
++	ret = genlmsg_unicast(pol_eng_net, skb, pol_eng_pid);
++	if (ret != 0) {
++		pr_err("%s: failed to send message: %d\n", __func__, ret);
++		return -ECOMM;
++	}
++
++	if (!wait_event_timeout(usb_req_wq,
++				usb_auth_outstanding_reqs[index].done == 1,
++				HZ * WAIT_RESPONSE_TIMEOUT)) {
++		pr_err("%s: userspace response not available\n", __func__);
++		usb_auth_release_reqs_slot(index);
++		return -ECOMM;
++	}
++
++	memcpy(nonce, usb_auth_outstanding_reqs[index].resp, USBAUTH_NONCE_SIZE);
++	usb_auth_release_reqs_slot(index);
++
++	return 0;
++}
++
++/**
++ * usb_policy_engine_check_challenge() - Validate the authentication challenge
++ *
++ * @id:			[in]	device handle
++ * @challenge:		[in]	challenge response, must be 204 bytes.
++ *				@challenge is the concatenation of :
++ *				message (140B) | signature (64B)
++ * @context:		[in]	usb device context
++ * @context_size:	[in]	usb device context size
++ * @is_valid:		[out]	1 if the signature is valid, 0 otherwise
++ *
++ * Check that the response challenge contains the right nonce
++ * Check that the device signature is valid
++ *
++ * Context: task context, might sleep.
++ *
++ * Returns:
++ * * %0		- OK
++ * * %-EINVAL	- if challenge, desc or bos is NULL or invalid parameter size
++ * * %-ECOMM	- if userspace policy engine is not available or busy
++ *		  or message transmission failed
++ * * %-ENOMEM	- if message creation failed
++ * * %-EMSGSIZE	- if message creation failed
++ */
++int usb_policy_engine_check_challenge(const u32 id,
++	const u8 *const challenge, const u8 *const context,
++	const size_t context_size, u8 *is_valid)
++{
++	int ret = -1;
++	void *hdr = NULL;
++	struct sk_buff *skb = NULL;
++	u32 index = 0;
++
++	if (challenge == NULL || context == NULL ||
++	      context_size > USBAUTH_MAX_BOS_SIZE) {
++		pr_err("%s: invalid inputs\n", __func__);
++		return -EINVAL;
++	}
++
++	if (!wait_event_timeout(usb_req_wq, pol_eng_pid != 0, HZ * WAIT_USERSPACE_TIMEOUT)) {
++		pr_err("%s: userspace not available\n", __func__);
++		return -ECOMM;
++	}
++
++	if (usb_auth_get_reqs_slot(&index)) {
++		pr_err("%s: failed to get request slot\n", __func__);
++		return -ECOMM;
++	}
++	skb = genlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
++	if (skb == NULL) {
++		pr_err("%s: failed to allocated buffer\n", __func__);
++		return -ENOMEM;
++	}
++
++	hdr = genlmsg_put(skb, 0, 0, &usbauth_genl_fam, 0,
++		USBAUTH_CMD_CHECK_CHALL);
++	if (hdr == NULL) {
++		pr_err("%s: failed to place header\n", __func__);
++		nlmsg_free(skb);
++		return -ENOMEM;
++	}
++
++	ret = nla_put_u32(skb, USBAUTH_A_REQ_ID, index);
++	if (ret) {
++		pr_err("%s: failed to place req ID\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	ret = nla_put(skb, USBAUTH_A_CHALL, USBAUTH_CHALL_SIZE, challenge);
++	if (ret) {
++		pr_err("%s: failed to place challenge\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	ret = nla_put(skb, USBAUTH_A_DESCRIPTOR, context_size, context);
++	if (ret) {
++		pr_err("%s: failed to place descriptor\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	ret = nla_put_u32(skb, USBAUTH_A_DEV_ID, id);
++	if (ret) {
++		pr_err("%s: failed to place dev ID\n", __func__);
++		genlmsg_cancel(skb, hdr);
++		nlmsg_free(skb);
++		return ret;
++	}
++
++	genlmsg_end(skb, hdr);
++
++	ret = genlmsg_unicast(pol_eng_net, skb, pol_eng_pid);
++	if (ret != 0) {
++		pr_err("%s: failed to send message: %d\n",
++		       __func__, ret);
++		return -ECOMM;
++	}
++	if (!wait_event_timeout(usb_req_wq,
++				usb_auth_outstanding_reqs[index].done == 1,
++				HZ * WAIT_RESPONSE_TIMEOUT)) {
++		pr_err("%s: userspace response not available\n", __func__);
++		usb_auth_release_reqs_slot(index);
++		return -ECOMM;
++	}
++
++	*is_valid = usb_auth_outstanding_reqs[index].resp[0];
++	usb_auth_release_reqs_slot(index);
++
++	return 0;
++}
+diff --git a/drivers/usb/core/authent_netlink.h b/drivers/usb/core/authent_netlink.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..d458fcf620f2de9a00896d2c09babcdcc843d3f0
+--- /dev/null
++++ b/drivers/usb/core/authent_netlink.h
+@@ -0,0 +1,33 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * SPDX-FileCopyrightText: (C) 2025 ANSSI
++ *
++ * USB Authentication netlink interface
++ *
++ * Author: Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>
++ * Author: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
++ *
++ */
++
++#ifndef __USB_CORE_AUTHENT_NETLINK_H_
++#define __USB_CORE_AUTHENT_NETLINK_H_
++
++int usb_auth_init_netlink(void);
++int usb_policy_engine_check_digest(const u32 route,
++				   const u8 *const digests,
++				   const u8 mask, u8 *is_known,
++				   u8 *is_blocked, u32 *id);
++int usb_policy_engine_check_cert_chain(const u32 route,
++				       const u8 *const digest,
++				       const u8 *const chain,
++				       const size_t chain_len,
++				       u8 *is_valid, u8 *is_blocked,
++				       u32 *id);
++int usb_policy_engine_generate_challenge(const u32 id, u8 *nonce);
++int usb_policy_engine_check_challenge(const u32 id,
++				      const u8 *const challenge,
++				      const u8 *const context,
++				      const size_t context_size,
++				      u8 *is_valid);
++
++#endif /* __USB_CORE_AUTHENT_NETLINK_H_ */
+diff --git a/include/uapi/linux/usb/usb_auth_netlink.h b/include/uapi/linux/usb/usb_auth_netlink.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..7ca49ebf6612f99742947c38903039d74a770e79
+--- /dev/null
++++ b/include/uapi/linux/usb/usb_auth_netlink.h
+@@ -0,0 +1,70 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * SPDX-FileCopyrightText: (C) 2025 ANSSI
++ *
++ * USB Authentication netlink interface definitions shared with userspace
++ *
++ * Author: Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>
++ * Author: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
++ *
++ */
++
++#ifndef __USB_AUTHENT_NETLINK_H_
++#define __USB_AUTHENT_NETLINK_H_
++
++#define USBAUTH_GENL_NAME "usb_auth_genl"
++#define USBAUTH_GENL_VERSION 1
++
++/* Attributes */
++enum usbauth_genl_attrs {
++	USBAUTH_A_REQ_ID = 1,
++	USBAUTH_A_DEV_ID,
++	USBAUTH_A_DIGEST,
++	USBAUTH_A_DIGESTS,
++	USBAUTH_A_SLOT_MASK,
++	USBAUTH_A_KNOWN,
++	USBAUTH_A_BLOCKED,
++	USBAUTH_A_VALID,
++	USBAUTH_A_CERTIFICATE,
++	USBAUTH_A_CERT_LEN,
++	USBAUTH_A_ROUTE,
++	USBAUTH_A_NONCE,
++	USBAUTH_A_CHALL,
++	USBAUTH_A_DESCRIPTOR,
++	USBAUTH_A_BOS,
++	USBAUTH_A_ERROR_CODE,
++	__USBAUTH_A_MAX,
++};
++
++#define USBAUTH_MAX_DESC_SIZE 1024
++#define USBAUTH_MAX_BOS_SIZE  1024
++#define USBAUTH_DIGEST_SIZE   32
++#define USBAUTH_NONCE_SIZE    32
++#define USBAUTH_CHALL_SIZE    204
++#define USBAUTH_DIGESTS_SIZE  256
++#define USBAUTH_MAX_CERT_SIZE 4096
++
++#define USBAUTH_A_MAX (__USBAUTH_A_MAX - 1)
++
++/* Commands */
++enum usbauth_genl_cmds {
++	USBAUTH_CMD_REGISTER,
++	USBAUTH_CMD_CHECK_DIGEST,
++	USBAUTH_CMD_CHECK_CERTIFICATE,
++	USBAUTH_CMD_GEN_NONCE,
++	USBAUTH_CMD_CHECK_CHALL,
++	USBAUTH_CMD_RESP_DIGEST,
++	USBAUTH_CMD_RESP_CERTIFICATE,
++	USBAUTH_CMD_RESP_CREATE_DEV,
++	USBAUTH_CMD_RESP_GEN_NONCE,
++	USBAUTH_CMD_RESP_CHECK_CHALL,
++	__USBAUTH_CMD_MAX,
++};
++
++#define USBAUTH_CMD_MAX (__USBAUTH_CMD_MAX - 1)
++
++/* Error codes */
++#define USBAUTH_OK 0
++#define USBAUTH_INVRESP 1
++
++#endif /* __USB_AUTHENT_NETLINK_H_ */
+
 -- 
-Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+2.50.0
 
 
