@@ -1,121 +1,115 @@
-Return-Path: <linux-kernel+bounces-727279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E32B017A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:27:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A4F3B017AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DEB41C28054
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:28:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6619B171085
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517DE279DD7;
-	Fri, 11 Jul 2025 09:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kO8LcmVc"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B681A27A127;
+	Fri, 11 Jul 2025 09:28:50 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D5026D4F1;
-	Fri, 11 Jul 2025 09:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5561C20C010;
+	Fri, 11 Jul 2025 09:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752226071; cv=none; b=o9QG8rcb7FRKT8QotHf04n7VQL5SUqRbwgLg5jvq7pxj4mdArTj4nL+DkOyOf6Sr4fQroz1qYBXGcZ1NXxynlbR2t4PPKR18gf99Wf0hKAzy4KnSPNyu9AulY5JLspk3Ceiv022hyuAXlWmfp2kW005oClNrl/QKmb9YsdMA9b0=
+	t=1752226130; cv=none; b=aJG8St9Ss8fJkGCqEh0uiJ/cStfdJbxFKyEQTBWW+izQsrGQKBPKmroAhP/Ot7dKlJrHRc5zRpg+TeS/TTS1XUOujlRD+IRsCLJqOpEcYbg+RlouMFVcxKKFG5iXf3tNNoRWDvnrb8R3+J/K7vqjdJyus/WId58y9slE9Uw/WYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752226071; c=relaxed/simple;
-	bh=2LD8FhdgOCGX/EQR3ZVwnB9BDw3R3QRoGfmA4kM76JY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GVRd/yfIyHRKX2T85ktm9qXvTMUH7UwS5IAmuZwbLE7n07XOso9s//GxG36u/zOOcpVnhUJGRwfqZ6yHFg0hsR9VvTjR8duVy9ekYOrVALLV8nCVusVYx15Sxc3Dple3yqm8GLvhCoqR51pRC/Ooaun5bCcU9NRHeFnu0AlYAcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kO8LcmVc; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-553be4d2fbfso2120071e87.0;
-        Fri, 11 Jul 2025 02:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752226068; x=1752830868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IMvC4H7Uqext4ur1pwN9VfNslmOV4H4kdne9+9ptZbs=;
-        b=kO8LcmVc5eoWp5TzwyA6AM9ardQyhnoUmaaNTqonuAWEpMbt/FMmDZxv6I4ggZXShx
-         tLpyWT5/LijGvhTrjX9/derKQwnBW+6W6TYP0qs5z+q1elCWc7bgVhBDF15/7xEatXE3
-         vjvfyn0HIYtLhlwxGyUyXZ/ouXG/tPdFvOSD63NHWB8+hakTHKy6voJD4bUJP2+Iy7s7
-         uSMWUYKbyb1fwIXE9mSSaa/MmD3HscZLlW6QCVlxdE6VA5QtLfnKVdynRh6ObC8N+0lX
-         w+Pi9GXs+QBRP2v8vJEoWW40+SCs/d9BIoMQLCZ+OlHg8XygGXhtMEvEf0gNDCmsJE6+
-         ugXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752226068; x=1752830868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IMvC4H7Uqext4ur1pwN9VfNslmOV4H4kdne9+9ptZbs=;
-        b=pQ8rq+bHWCSRJxAl7ChARVtN2hsu8+0EHMb1B2I0cyd4VRonB3PFZ0VQUD1iu24BZn
-         38pMgkT/Fs6+wIg2rglhhIvXT7uOnXnqvwXt6JDFcEbTkcQgfqK5WgOrl9T3+MmcpD8u
-         PEjdhI3v6EM65v4mcvChnwuTiZOvbWVMKeiXfWWdr+emAloP/BLtQ0M6gGUyhDZDmfzU
-         URsMUjKBWOuQFxNEDaMO7KuuswMPV78gb8WQDiWfXIRaqkpGDnPzQ4O2VNrljY9ypmzT
-         VAkuUFrRxCqfzS11UFLIm9/4cV9zwlqjw+zJevpJNgr8wZWDKZ8UZ+dKIag+5OHtmnor
-         YN/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXNDnkhsIwNj6IXcgKQUlus5T34mrLQrMswQxv/tp4Tm6xMuINO9D25yxJL4IE3URLQBsvAyaPIrgq45A==@vger.kernel.org, AJvYcCXnFE1jCmBejYNPhU3j16QAg86RDFEQgvBch0X9uCR0KCSSQKSFaNl5VUSxonoxsN+zRnVny+y58KQqg+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwztZhmY3tt4aa4tuSuRqrADn2gA7MzALPDS2LFoeGIHyFFbWCs
-	vt/lapyTO3pZt58LTv1tG4jEPbsJEZtkjUVaVgy0xd+R5BAWdjyQM/HSJGg5B036UuSCJSOIm38
-	4MR8lq0A3RDOTikuUL0N5N2ZFUUlnqobeYUEkl8fwD3fk
-X-Gm-Gg: ASbGncvAmmkMcP62fx8/PjUHOWtwmv8qPvA2gZUxe14fabyi43n2JINxHl/wXMe9Qfs
-	bprTlwY6gQoLONU9N5znxRbraGyE1bXAENdmv8VyoHRpXTNIVtIjpOe+wRcFD/MW2BbX9eJtFtz
-	C7MA51QH/TaJVOL66lw5y5fv0nsyveBLwcOH6xNw84SPNzbRDxBzlQ5XCrnUQKKTXEgWSA9nbR8
-	aifUG6Mn6gOPxJMfvmSt+M/Hw2QMkH7pj+2vq8v
-X-Google-Smtp-Source: AGHT+IHQMtG3d06n4FdVj2wWxUI9EEG4eiUHR9Qywxw/18UaJS+v36uNM06HwJlJwVAU14njOm0wzeuJjIW1R2OOSOs=
-X-Received: by 2002:a05:6512:1586:b0:553:adf7:e740 with SMTP id
- 2adb3069b0e04-55a046094f4mr538857e87.28.1752226067863; Fri, 11 Jul 2025
- 02:27:47 -0700 (PDT)
+	s=arc-20240116; t=1752226130; c=relaxed/simple;
+	bh=rSprIdGWjTHC6TnfIZNhTFnPYKw6H5+iYgR4s9jbKWo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oNhJyHLlllY0Whp7BDg+C77dlY7bLn8LckC8GEI4qam53wI1L8aIQhshKcYDAxmJuaeuBY+chYMG+D8UaCpaFu7JpocG0PdmlQ17nkQWxm7HTo95CsUJSLCHiAdwpz6BhkkbWziMg4ch2wqOlFEdah72JC1TKf0NnGJaVjVmKSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bdmXS37K6z6L4yR;
+	Fri, 11 Jul 2025 17:25:28 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2177D14020C;
+	Fri, 11 Jul 2025 17:28:46 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Jul
+ 2025 11:28:45 +0200
+Date: Fri, 11 Jul 2025 10:28:43 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Alireza Sanaee <alireza.sanaee@huawei.com>
+CC: <krzk@kernel.org>, <robh@kernel.org>, <coresight@lists.linaro.org>,
+	<devicetree@vger.kernel.org>, <dianders@chromium.org>,
+	<james.clark@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <mike.leach@linaro.org>,
+	<ruanjinjie@huawei.com>, <saravanak@google.com>,
+	<shameerali.kolothum.thodi@huawei.com>, Suzuki K Poulose
+	<suzuki.poulose@arm.com>
+Subject: Re: [PATCH v2 3/5] coresight: cti: Use of_cpu_phandle_to_id for
+ grabbing CPU id
+Message-ID: <20250711102843.000003e6@huawei.com>
+In-Reply-To: <20250708151502.561-4-alireza.sanaee@huawei.com>
+References: <20250708151502.561-1-alireza.sanaee@huawei.com>
+	<20250708151502.561-4-alireza.sanaee@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711180410.49f64e9d@canb.auug.org.au>
-In-Reply-To: <20250711180410.49f64e9d@canb.auug.org.au>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 11 Jul 2025 05:27:11 -0400
-X-Gm-Features: Ac12FXwTg5dkNdzpko5KekhsTGMfR8-p-_MbiXVD8QcgFlswrjeoFxL1JYFOlk0
-Message-ID: <CAJ-ks9nqyLJrqPYDJme2tFDY9HJNyg-x8LA0HPY653rCN7EkbQ@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the rust tree with the driver-core tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Jul 11, 2025 at 4:04=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the rust tree got a conflict in:
->
->   rust/kernel/platform.rs
->
-> between commit:
->
->   f0a68a912c67 ("rust: platform: use generic device drvdata accessors")
->
-> from the driver-core tree and commit:
->
->   fcad9bbf9e1a ("rust: enable `clippy::ptr_as_ptr` lint")
->
-> from the rust tree.
->
-> I fixed it up (I just used the former) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+On Tue, 8 Jul 2025 16:15:00 +0100
+Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
 
-The former version looks correct as it removed the line modified by
-the latter version.
+> Use the newly created API to grab CPU id.
+> 
+> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
+> ---
+>  .../hwtracing/coresight/coresight-cti-platform.c   | 14 +-------------
+>  1 file changed, 1 insertion(+), 13 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-cti-platform.c b/drivers/hwtracing/coresight/coresight-cti-platform.c
+> index d0ae10bf6128..e1dc559d54aa 100644
+> --- a/drivers/hwtracing/coresight/coresight-cti-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-cti-platform.c
+> @@ -41,20 +41,8 @@
+>   */
+>  static int of_cti_get_cpu_at_node(const struct device_node *node)
+>  {
+> -	int cpu;
+> -	struct device_node *dn;
+> +	int cpu = of_cpu_phandle_to_id(node, NULL, 0);
 
-Thank you Stephen.
+Could do a single line - kind of down to coresight maintainers preference though!
+
+	return (of_cpu_phandle_to_id(node, NULL, 0) < 0) ? -1; cpu;
+
++CC Suzuki (you got the two reviewers in the +CC but not the maintainer)
+
+
+>  
+> -	if (node == NULL)
+> -		return -1;
+> -
+> -	dn = of_parse_phandle(node, "cpu", 0);
+> -	/* CTI affinity defaults to no cpu */
+> -	if (!dn)
+> -		return -1;
+> -	cpu = of_cpu_node_to_id(dn);
+> -	of_node_put(dn);
+> -
+> -	/* No Affinity  if no cpu nodes are found */
+>  	return (cpu < 0) ? -1 : cpu;
+>  }
+>  
+
 
