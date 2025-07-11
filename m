@@ -1,167 +1,108 @@
-Return-Path: <linux-kernel+bounces-727144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5ECFB015C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:23:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75EE3B015C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B986546F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:22:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721EC1C85928
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960EF20E702;
-	Fri, 11 Jul 2025 08:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB96221420F;
+	Fri, 11 Jul 2025 08:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTTboOzr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRh9y3+E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A7E1FE470;
-	Fri, 11 Jul 2025 08:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F8C1FE470;
+	Fri, 11 Jul 2025 08:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752221498; cv=none; b=lx2+sHbGrSxWFax204Di1PWdTd4Et3G2LPTkX+YSbOZYmSbi+GNtyStTTaz2WUdjcwwqeAp5FAbNsxKQkCHVj/skU0Q+FYf6MdyT3irRYioP5c8FbDfa3FGyFzSxRnFj8yYtEPf9Zz9M3bSS3Vg9GS863IFtw3dRjbq7BGrTCxw=
+	t=1752221512; cv=none; b=SMpD/TZyH3ILmX5uzbV97bLlA56mVrmU/OuXaHds6O+8mFlR2cn5gUnnMgtNxONyUPUXkr37V2xZn2t/LL+vv5Mvfo7IZ7hgRqtJ+/j6JM9bMcdCAYmEAH0HKN6aL6vGegXDrPfUB8uVPnqJL1KoN4BV0cBpfQ6K4qPmW5Fbabc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752221498; c=relaxed/simple;
-	bh=NYMZKphf96SaACDAe3JOHuWxhHs54wMKot7UA1Cf+W4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=sjEIvLNMQ51BfbXeH1ZmIX+wDNZW6MjLS+aYd3tUJuH+NvPyQf3ynUqSXw5uTOEDFv1oF2bCFeLRyKhissJ/agVn9BjvAz7G5Tl1xvrOinrOADPqzZ2WeQVEFEcg1ASaQk1f8+K7xR7FQ5kFVUOmttk4p3jwkfe2Z4vBWWrp/o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTTboOzr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E026CC4CEED;
-	Fri, 11 Jul 2025 08:11:34 +0000 (UTC)
+	s=arc-20240116; t=1752221512; c=relaxed/simple;
+	bh=hBats0wOEkeXVrWJcZXz4Tib1MVX0DvTh0e9YuBEi/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BjrQj9ZC1EUFKWYd8q5ZHX+ye7M5WKhuC5WVA49t9NVUipMI87ZdELDAAKxaAnQrKw3iEEErPm9Vr8SinMjuQHVOnv5b35qe+RvOpFAIUJZqsAQ31WhvR8ddeIjmSyc1LrHbLIiUpm1ldO8vCRkZZLcOwedhzzCoADEAWqA2KsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRh9y3+E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8952C4CEED;
+	Fri, 11 Jul 2025 08:11:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752221498;
-	bh=NYMZKphf96SaACDAe3JOHuWxhHs54wMKot7UA1Cf+W4=;
+	s=k20201202; t=1752221511;
+	bh=hBats0wOEkeXVrWJcZXz4Tib1MVX0DvTh0e9YuBEi/8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KTTboOzrT3xIHW5CFqTcS3I3Y8Xc9QzbyfTOEl4EvtSCpkHjNr9HlgNA892bGsKaP
-	 n3t+tF++oeVpoTnNrOgzJuB9MZNF8EfMKQbF2bIVqUJcuQ1vDqYOYMAQh/PgPzQNG4
-	 WT17cS1K8u718+Lq83ypLsod06qp2yflWGZxwgJMF77NIa/RSnBss44o+mYvOK7mTA
-	 r3ykAd4trXpDRbsJccxrWBtTi3Ftwds2MMzZ50WGqfP0lfxlmQ5X3pDSsku6XVK11S
-	 vJOPe0C/RmNAvTTHONMvOOkCV1Z5LBFz3O97DMmoc92LKpmqHmuRtSMIWjI9ROBrH8
-	 up0C6d1SYFXFw==
+	b=kRh9y3+EuV+xzIfX2kJSHk/AZ/GwgX1guRRSw5leHLz7M8Muup3jJQ1ZXYiU7ahn1
+	 CTjJmJlogTLdSvA+SM3VUFmtc1J1OIYAgSqbZWbxiPFYRVRzMKu+LjhSQKRnI/Bqov
+	 tlQRoA1u4v/UrWVUuhZ0oblxYdWxlJcfZiH6qyJGFzwGIRfAmkVR87fwwxR/bHF0dy
+	 /uspO+GVHrjXg7eyK77PmOga29jUtJp5CI+vsmvAPBRYEtfYRp4sbMGOCihcO9Gqy6
+	 XJgn5MW+F6lpuuhgttqhaE5YyFTuvHoTqFfXSctImFwf0BWdHmbbdkKaDvqsmD4hKs
+	 gVCykGhzf2eFQ==
+Date: Fri, 11 Jul 2025 09:11:47 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: wang lian <lianux.mm@gmail.com>, akpm@linux-foundation.org,
+	ziy@nvidia.com, david@redhat.com, sj@kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, shuah@kernel.org,
+	Liam.Howlett@oracle.com, brauner@kernel.org, gkwang@linx-info.com,
+	jannh@google.com, p1ucky0923@gmail.com, ryncsn@gmail.com,
+	vbabka@suse.cz, zijing.zhang@proton.me
+Subject: Re: [PATCH v4] selftests/mm: add process_madvise() tests
+Message-ID: <aHDHQzzbtgCh6Ox3@finisterre.sirena.org.uk>
+References: <20250710112249.58722-1-lianux.mm@gmail.com>
+ <81f9a104-6d7d-4552-851e-8690d4a1b723@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 11 Jul 2025 10:11:33 +0200
-Message-Id: <DB92OHEUBB06.2VTHW9KQVV52X@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Alistair Popple" <apopple@nvidia.com>
-Cc: <rust-for-linux@vger.kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: Update PCI binding safety comments and add
- inline compiler hint
-X-Mailer: aerc 0.20.1
-References: <20250710022415.923972-1-apopple@nvidia.com>
- <DB87TX9Y5018.N1WDM8XRN74K@kernel.org>
- <cgh5cj42vkxc66f2utpa3eznvqaqtdo3gszahfhempujj3kxdc@zaor2sx4cosp>
-In-Reply-To: <cgh5cj42vkxc66f2utpa3eznvqaqtdo3gszahfhempujj3kxdc@zaor2sx4cosp>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+/IoXd4HsyHrPrR4"
+Content-Disposition: inline
+In-Reply-To: <81f9a104-6d7d-4552-851e-8690d4a1b723@lucifer.local>
+X-Cookie: Do not cut switchbacks.
 
-On Fri Jul 11, 2025 at 1:22 AM CEST, Alistair Popple wrote:
-> On Thu, Jul 10, 2025 at 10:01:05AM +0200, Benno Lossin wrote:
->> On Thu Jul 10, 2025 at 4:24 AM CEST, Alistair Popple wrote:
->> > diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
->> > index 8435f8132e38..5c35a66a5251 100644
->> > --- a/rust/kernel/pci.rs
->> > +++ b/rust/kernel/pci.rs
->> > @@ -371,14 +371,18 @@ fn as_raw(&self) -> *mut bindings::pci_dev {
->> > =20
->> >  impl Device {
->> >      /// Returns the PCI vendor ID.
->> > +    #[inline]
->> >      pub fn vendor_id(&self) -> u16 {
->> > -        // SAFETY: `self.as_raw` is a valid pointer to a `struct pci_=
-dev`.
->> > +        // SAFETY: by its type invariant `self.as_raw` is always a va=
-lid pointer to a
->>=20
->> s/by its type invariant/by the type invariants of `Self`,/
->> s/always//
->>=20
->> Also, which invariant does this refer to? The only one that I can see
->> is:
->>=20
->>     /// A [`Device`] instance represents a valid `struct device` created=
- by the C portion of the kernel.
->
-> Actually isn't that wrong? Shouldn't that read for "a valid `struct pci_d=
-ev`"?
 
-Yeah it should probably be changed, I'm not sure what exactly is
-required here, but this already would be an improvement:
+--+/IoXd4HsyHrPrR4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-    /// `self.0` is a valid `struct pci_dev`.
+On Thu, Jul 10, 2025 at 05:57:23PM +0100, Lorenzo Stoakes wrote:
+> On Thu, Jul 10, 2025 at 07:22:49PM +0800, wang lian wrote:
 
->> And this doesn't say anything about the validity of `self.as_raw()`...
->
-> Isn't it up to whatever created this pci::Device to ensure the underlying=
- struct
-> pci_dev remains valid for at least the lifetime of `Self`?
+> > +#include <linux/pidfd.h>
 
-Well yes and no. It is up to the creator of this specific `pci::Device`
-to ensure that it is valid, but that is true for all creators of
-`pci::Device`. In other words this property doesn't change while the
-`pci::Device` is alive so we call it an "invariant".
+> However, the pidfd tests already have a stub in so you can alternatively
+> use:
 
-When creating a `pci::Device`, you have to ensure all invariants are met
-and then anyone using it can rely on them being true.
+> #include "../pidfd/pidfd.h"
 
-Now in this particular instance the `as_raw` function is just calling
-`self.0.get()`. I'm not sure that's worth it, since it isn't even
-shorter and it makes the safety docs a bit worse. So my suggestion would
-be to remove it.
+> As is done in guard-regions.c.
 
-> Sorry I'm quite new to Rust (and especially Rust in the kernel), so
-> not sure what the best way to express that in a SAFETY style comment
-> would be. Are you saying the list of invariants for pci::Device also
-> needs expanding?
+One thing to watch out for with peering into the private header files of
+other selftests is that it's a routine source of build and sometimes
+runtime failures, people have a tendency to update one selftest without
+thinking that other selftests might be peering at their code.  The cross
+tree aspect can make it painful to deal with the resulting issues.
 
-No worries, safety documentation is pretty hard :)
+--+/IoXd4HsyHrPrR4
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
-Cheers,
-Benno
+-----BEGIN PGP SIGNATURE-----
 
->
-> Thanks.
->
->> > +        // `struct pci_dev`.
->> >          unsafe { (*self.as_raw()).vendor }
->> >      }
->> > =20
->> >      /// Returns the PCI device ID.
->> > +    #[inline]
->> >      pub fn device_id(&self) -> u16 {
->> > -        // SAFETY: `self.as_raw` is a valid pointer to a `struct pci_=
-dev`.
->> > +        // SAFETY: by its type invariant `self.as_raw` is always a va=
-lid pointer to a
->> > +        // `struct pci_dev`.
->>=20
->> Ditto here.
->>=20
->> ---
->> Cheers,
->> Benno
->>=20
->> >          unsafe { (*self.as_raw()).device }
->> >      }
->> > =20
->>=20
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhwx0MACgkQJNaLcl1U
+h9A/uAf+MIGVFcilIba7icBSDcbAcHzzgAbmbJUq82ekRCx2smLjWfU6ypbcQh1M
+iK9OzYaU2ecoHTIEHgaFK0j+jn4y1dENcKs24bYk/1mOeOaV3neipktCUO85wRFQ
+mBfyAUgBQAUVozPBB9B8idWIlPE3NeYCFEMQxg6qu9v/bhBVJQzantwXQwWCM7eO
+f8bbyeopLKHx4XYzZTIJoPbiZDK0TlzxLEU8WIa9/yKeL4VkkiUPVgDvbulIW91A
+F0cJFWm2hdbMY6hr21WmrFV4vkTcFKLmXnKVGUcQ33hCzXhRXVaA/7gICQrCio4J
+jVcdZTOenc/2hGO2abDiB2daXoz2nw==
+=rGrn
+-----END PGP SIGNATURE-----
 
+--+/IoXd4HsyHrPrR4--
 
