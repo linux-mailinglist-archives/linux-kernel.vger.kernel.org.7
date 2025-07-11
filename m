@@ -1,118 +1,105 @@
-Return-Path: <linux-kernel+bounces-727952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EAAB021B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A46B021B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF7F5545442
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:27:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 383245465AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0517E2F0E42;
-	Fri, 11 Jul 2025 16:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C502F198D;
+	Fri, 11 Jul 2025 16:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IwL9UHJl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Utqmyygu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDB52F0C55
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5026C2F1987;
+	Fri, 11 Jul 2025 16:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752251212; cv=none; b=sLu9kJU4oihz5YZpg7mOuoX4+KkczKsnuoiJn/eFcag3sQHIcy/WPfpeH1bFRRTdg6wsaG90CjgVX9qWKhzt22mUJp4O8AAh/ySc3EvnVAB/xNsNrKQ001zZo6iYA7BhFVBqfrf+20fLnq4Ch8u/eTWW6t9/CXnArWTxbIfGvj4=
+	t=1752251216; cv=none; b=tC4tm42QDRc/XZnUIC972U/kGbxwz+DmwgpMxA2kz94MpHYIwQMnoFMNLiwLNeXwhx9b4U0EFGHMr3FcTV7HnsY6b1f8FWR7o4xSsW11SHVRt4Y7ZvnWSJTQCJctfN/KobiYy1/w2oB18uTOwN2tLbPdj5oFuOXTGr0e6ehJGMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752251212; c=relaxed/simple;
-	bh=ps7kQ6rczBKh7tRIYxrze2SFwB5jLge2FmHNWfri1nE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GJDzxM+9nfz1j+gzysb/ryJVl+WdYWHJpJAGP4p+2rrvgHkbxYp8AjFpwaIf+OgjZBzW401DVXIONwHHGyU5NEMLEMWnhdZ0YLij3INbD1mplm++CYdZsr98J/3Y+Tnn5RlOZarOAtcW9N0pDSqViyMhhjKmyO4kl7yfF0ewg6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IwL9UHJl; arc=none smtp.client-ip=192.198.163.18
+	s=arc-20240116; t=1752251216; c=relaxed/simple;
+	bh=a7BM8wgwmFL0JatFqoMOdr1GJsje0RBxeL/3HCZU078=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=b6pwcyZ/thP5i/VoNnRyKRUCZErZep+3Cfu+koDjHdnHYcIgDdyeLUNapuEnuNwBQE3KxTMkbZ3ju8JLs3e/nN/nEXr5g0T/kWvqoSGeAXMFck7YC0NtnOg3xiPPOfhcuHv+eQaVtJmrzrPlKYXn18C2zTAg/PhizC5pK462x4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Utqmyygu; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752251211; x=1783787211;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ps7kQ6rczBKh7tRIYxrze2SFwB5jLge2FmHNWfri1nE=;
-  b=IwL9UHJlkykPmJ74EjAW46I4p9F2VUhr2FZ9HEPZddx2FUtvMgVDI4n2
-   Gqp1MT7pzUr1/PAoVjrrN33/2a7aG6jQcVLD0JnbfcQtYHulvpE7kw1fc
-   Jtf8vRFyWTe3X9+Ku4qXcinSilO1VlXU/B4L3bEEnRPt4rGFmiR5vqZPh
-   X/KvFchsnRa6BPBSSbJwzI5iaPvDk9U4CVnVRAfgFPDxMkz25jfymR0ni
-   bCK77gElpPt7RCozmtkRB7xwcQ2vS6aGbHchA3dUUmG6IZRmB/OR+GJ8J
-   EHCHLPwfwNniPuNMNxK2wepKmXp11U6gJ1WlDcMxBXKyrS12pJw3Bn8/x
-   g==;
-X-CSE-ConnectionGUID: CQ+lIyjpTA+VCrFa+D57CA==
-X-CSE-MsgGUID: QzMrpO0SSf2pC+cr2BknuA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="53773897"
+  t=1752251215; x=1783787215;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=a7BM8wgwmFL0JatFqoMOdr1GJsje0RBxeL/3HCZU078=;
+  b=UtqmyyguVy0mzzpeHnJ+J/TBRWIlSg5bDx1IN0Xa3VghHg9nI+BXXzbO
+   Rb4wJCTFYwP8WP8vb7inzLPs2iy6nF3U1kZbB7aFeUPuuQMuaRjf5czz9
+   LoUjqYRKRaMl6Vl6yCs4bPUh8lF7byZKoVRzc4pPNISdXTGdnu8I58LeA
+   FFUqCKjYicj1keu9ghOIdST9rQEM0MCYfcskZtgbLNroUcInfn5Di0Fvi
+   U8ftAErIg7ZVX2QTsCHvwT4hsJ9hIGytbNFFqjRt2tcKhO05OOKZQlkpO
+   nP/6CqZF7F++xL946Ywn/GOXKcdzoxA85R9cE9BBHxYO/nD8IPdNoUsgy
+   A==;
+X-CSE-ConnectionGUID: j8nj9JTuTG+61vfuR/fomA==
+X-CSE-MsgGUID: 86kG76VCQk2seKVkjVcJcA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="42184051"
 X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
-   d="scan'208";a="53773897"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:26:50 -0700
-X-CSE-ConnectionGUID: VStXBdpUQAOvwh3slveaTQ==
-X-CSE-MsgGUID: CfN9kn3WQSukLDsLsDVA7A==
+   d="scan'208";a="42184051"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:26:55 -0700
+X-CSE-ConnectionGUID: gPztrH3oTtmCnDC26XyJvA==
+X-CSE-MsgGUID: MMvG4Fl/T4aqPGVwr6q2Fg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
-   d="scan'208";a="156896665"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:26:48 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uaGaD-0000000Ea45-2Jrb;
-	Fri, 11 Jul 2025 19:26:45 +0300
-Date: Fri, 11 Jul 2025 19:26:45 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH v1 4/7] panic: sys_info: Replace struct sys_info_name
- with plain array of strings
-Message-ID: <aHE7RfMy2St7kPma@smile.fi.intel.com>
-References: <20250711095413.1472448-1-andriy.shevchenko@linux.intel.com>
- <20250711095413.1472448-5-andriy.shevchenko@linux.intel.com>
- <aHEr8NO4xHGPNjJo@U-2FWC9VHC-2323.local>
+   d="scan'208";a="160742542"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.249])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:26:52 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, Jan-Niklas Burfeind <kernel@aiyionpri.me>
+Cc: platform-driver-x86@vger.kernel.org, Hans de Goede <hansg@kernel.org>, 
+ Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250710190919.37842-1-kernel@aiyionpri.me>
+References: <20250710190919.37842-1-kernel@aiyionpri.me>
+Subject: Re: [PATCH] platform/x86: dell-lis3lv02d: Add Precision 3551
+Message-Id: <175225120779.19602.4440321847761795142.b4-ty@linux.intel.com>
+Date: Fri, 11 Jul 2025 19:26:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHEr8NO4xHGPNjJo@U-2FWC9VHC-2323.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Fri, Jul 11, 2025 at 11:21:20PM +0800, Feng Tang wrote:
-> On Fri, Jul 11, 2025 at 12:51:10PM +0300, Andy Shevchenko wrote:
-> > There is no need to keep a custom structure just for the need of
-> > a plain array of strings. Replace struct sys_info_name with plain
-> > array of strings.
-> > 
-> > With that done, simplify the code, in particular, naturally use
-> > for_each_set_bit() when iterating over si_bits_global bitmap.
-> 
-> IIUC, this will not work.
-> 
-> Actually there is a hole in the bitmap definition:
-> 
-> #define SYS_INFO_PANIC_CONSOLE_REPLAY	0x00000020
-> 
-> Ad Petr pointed in his review, it's only for panic use, that's why
-> we make it invisible in sys_info.c. Eventually, we plan to deprecate
-> 'panic_print', and use 'panic_sys_info' and 'panic_console_replay' to
-> replace it. After that happens that user only see string interface,
-> we can change these bitmap definition and remove the hole, and use
-> your cleanup here.
+On Thu, 10 Jul 2025 21:09:19 +0200, Jan-Niklas Burfeind wrote:
 
-Yeah, the hole should be move to the end of the bitmap, so we can have all
-visible entries be sequential.
+> This marks 0x29 as accelerometer address on Dell Precision 3551.
+> 
+> I followed previous works of Paul Menzel and Hans de Goede to verify it:
+> 
+> $ cd /sys/bus/pci/drivers/i801_smbus/0000\:00\:1f.4
+> 
+> $ ls -d i2c-?
+> i2c-0
+> 
+> [...]
 
--- 
-With Best Regards,
-Andy Shevchenko
 
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform/x86: dell-lis3lv02d: Add Precision 3551
+      commit: aef9da333823f70b074e36a94c6e85f5c55e5477
+
+--
+ i.
 
 
