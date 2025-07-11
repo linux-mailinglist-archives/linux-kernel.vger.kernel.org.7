@@ -1,252 +1,374 @@
-Return-Path: <linux-kernel+bounces-727002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1BFB013D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:41:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4F8B013D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FCAB1897014
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE3E916A4DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858161DE8A8;
-	Fri, 11 Jul 2025 06:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4351D5CD9;
+	Fri, 11 Jul 2025 06:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FyjQxWJy"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZDJfPv0P"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEFD1C84D5
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0B51A08A3
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752216072; cv=none; b=kkRhoH3iy4O4Hq7YDtj+b8hU/KvDm3vh3y4B7QtQXQXtz3aeoJ0YiVW5MJjsJiugeb0aBLMke+pdWapXUBYUqKktvgTYsQ3Atwo8pRT6GJf0A8/Yo4muIDMzN67RAZsdCgH/pNCyORwNGaIzNM304MHZu3lKatzZvM5HR3rw5nU=
+	t=1752216114; cv=none; b=gNo6Fqj3OoBQVTgz+eQMZl8hszYtrcEfAZcMOoxqQxi6rGl9MIuE4GHn5nXikvbGUYSNXPZZxaIZTGWKan2UP3D9A85aHVph1GuXi+2SY5Ef3JOKiTneJkNraNg3FSAz6iqOoqi3/GYJ14ZizDYo1eMpDnpDbm3QbZorNiF8xfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752216072; c=relaxed/simple;
-	bh=mbg12yKXR3s+iNdgOpoNfasVa+8qpiZXy3G6e3D1HYg=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=aXS73Vv1VQbGUgxTfSo7YB9RyipSm40g28fNjXqM37F6Vi/C9J/CWX+IpNpl/2K1EPpBAdNq0iB92TZ1S8MhRclUM/N3CjHtUn6KgkODATCWtcBH6aKhBHK6eZNNnAl8rMzzJDUJYUvT4IeLc52M2Ag86A+JwOSiHiJP6+Z0evs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FyjQxWJy; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-315cd33fa79so1387924a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:41:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752216070; x=1752820870; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mqQNmUQfn56mvxov71wQtdff180LenbJGhdViVlgjvQ=;
-        b=FyjQxWJy4Ov8Dc8/X0VtA/5ajXp3+v22k/qYK+kOVHeBKBzfm+lFMQcI9qpJJ4y/t5
-         4BBtzWpumdbkNU/YmCyjpT5mIvrQ4MmvB9HVviY7+7a79YzaYKR9Q+csc3KHT2f27JEs
-         +9XokxU9i/YC1UrHpboVjimAzn32SPJOLslRIcQpyvq5DWXzgbBdETp+WXDfq1CnXU9a
-         Ds461e7iWSvvx336T1yXkJGirBrxSK9vbBHNAuiKfQcvdIvChbH96XKp1DHpxsqF8Nr3
-         qt3Aanfsm95Qhj6tCN1PXEzrdvbruBqopkWWI/I4XxserGnYs8VaY6gFvlzDQPX4E5+d
-         Ovjg==
+	s=arc-20240116; t=1752216114; c=relaxed/simple;
+	bh=m/qAZwwHGh51VdMhGJW+nDWXaPZVeuYvQs5Kp3Wv0iA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DAfQcL9DtpVuEwidOsv5G8Ute2zbl7GeZjWefD0boq5JKEgaSpRnzAmV1t+LnegTtqbyXpE2z5hBo8hALZHCrCQz7cohPYZqqEXdO/YzIWCrPASTFm/WnDf59rMJGS0tk6PBlqH5BNShSXQq1jcgxoeCfK5XvEPqAlCq5FVoN0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZDJfPv0P; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752216111;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3FR2xB4npnSVLG8AYYoxX/lgq1uMqJ/uW23WAzyMg/g=;
+	b=ZDJfPv0PQp9loV4bGsIx/aqfQtpU33D4+CVRQThvgg6IVVmRrd/xXZOYYnOlQv4mTMawcp
+	zAUQIRsbXrC6s6+Jz0IcUhtNwj/tqHY1UDyQ68BcyM2eJbmip+HeJgF6KHAHzmzaO6FWgs
+	gbd8lsdpiCH4BTeraYZu1upyKdNK0ik=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-296-HyElN7hKMZiPVxl4sOPOOQ-1; Fri, 11 Jul 2025 02:41:50 -0400
+X-MC-Unique: HyElN7hKMZiPVxl4sOPOOQ-1
+X-Mimecast-MFC-AGG-ID: HyElN7hKMZiPVxl4sOPOOQ_1752216109
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-454dee17a91so10730265e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:41:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752216070; x=1752820870;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mqQNmUQfn56mvxov71wQtdff180LenbJGhdViVlgjvQ=;
-        b=Y0TDhk/uG4xcNglFW05lPJ1moaZeCMAS1pgCXjfWPsq2NztgOoAVWDcOGnFvvYCKKO
-         LhsMvvKwzPSZ1lvp4VB7A+6wzq93w7bW2Kv+KOL0osUBler2sa06GxGJc73b4sNpivH/
-         lf3fY3Y2JIm0AFrDuXPZSuYok9NVQJWxIciySBCpAnSkqNg20q9m6GPIKZj/sBilRBlH
-         OtfJ8hVoPEYkSwgJ6b1YPwi3W9aNen2Uy45XfWFpqmDBHEJYcT8Zc7novufWNK/qVJBx
-         pWqQ78KOyTzXK10FkzV1mXKd6NHtMqPK6NZVBqTbK+P7xSQmlk7VoFVmXNEaIXhG/cny
-         MZsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrw1cWeB5lsBJonLGBdRQP6G4qpbljmp+F2qWbAjybLshZ7avSojz6jXp2WbE8jU54WNL/x+hA1TDpPIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWIpGZZ5XodFtllxEkEEniLwUW7trBd6BjdbgX01Ppck4YXbjx
-	NcNzPgx3tw77AdHGmD5qKOM/VYCn0Jeigb1NdYMDZEF1QNWAvJLPiVO7mthW1h8BG58L8rl+MKD
-	t8z8Qq1949cYASTDgsbiJ3ThpbIRLL7QkuEnuLmVZiQ==
-X-Gm-Gg: ASbGncuruhFNiIgPPevRum0u0PSCUukaZx5DhJVdvHFY8W6c8g+TllObzLQDWOa4Guc
-	NG85sDBKCnbSCGXQYzADHH1N7pC0StooH+uE/jqFE2rVrEOicbU3R6++uTXO5TIHHMewP8jnrcS
-	67bHfCCG6LpbXpt95lZ+YbJzFN7CLmcpObnT2DsDLiZUWC437JSCuMlRWN6JzVxMBOYwgOOMZHN
-	ajlBfOBs56k/zKqxjyb+DSTvjZByDUWiZNNCALQ
-X-Google-Smtp-Source: AGHT+IEKFZswwVLQAWHvjIhLdko+AnHsaWL90l3tdWBPIajeJUPhBeg+Kx39JnSXwjuhrRALb1kcVMkkypJenlZ34is=
-X-Received: by 2002:a17:90b:5804:b0:311:b005:93d4 with SMTP id
- 98e67ed59e1d1-31c50e2c50dmr1722297a91.25.1752216070024; Thu, 10 Jul 2025
- 23:41:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752216109; x=1752820909;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3FR2xB4npnSVLG8AYYoxX/lgq1uMqJ/uW23WAzyMg/g=;
+        b=u/T4riatDF2aONObXfQzomwhcTcdnuNd4NFFggxzEXckrzDCXR+m4DxVTGdsfrf+vV
+         /zvo49gBWRIoKujas6AamattAjtN8d9HKuj8+v965yrTe4xPbdyLX1UwlvahAem+w/o0
+         AKJ4bKr+uExKegXMD153hM39G6m07tamgGqzLzPDAjQgWI2Zx3BV0sXF7kxZJ5+FlJEo
+         44jO/oxXQLKJV4IT0FoXn1HsWv1AwZwbmXesVJf82Tjkx9WermptahfYzOHeL4S9cigb
+         ACDF4rYUzqwKPGj/eKRboWsA2aAOWmZFHqHO+kztCNb9JFS2ug+Kc73W+Hd43lCb/HdW
+         I3lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXuDTrSSEjD6N0IL6/Ay5dcxc6TQ/GpXYW2O9AHD4RS7KW79nIqRDiA/zbyXxlVe/HUrKmsY6cFlhQm2R4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzee1a5STrX7X7tFWtUIBEqyyUjt3iAXkHZmFI1OH2tC2pbYn9i
+	khX02/DtiDVWwihb+XTRw2IqkB5j39GcIntpygw2Qst+SBf9gOg0t41kC6kajVdcg2W205RZlOi
+	WC9hCAMllCTAEatpmBx2/Ev2xw548iHL/I32OL412XoliOyyYUB+jBv00WF2FqlT1hg==
+X-Gm-Gg: ASbGncvm8aakqJ1j2+6qwBUpIowifS4OVH3DKIc3Qke+SQj7g100YJJLJXx6zhSXmOE
+	fGnN3FOq5/GRQFO4E99twERH20ZhHnkdJmtVZsyGFHvhfMtp4Xgs7SkPhOgZYddvk45PJHGhgCe
+	GE59/4nfg7MGow4BEkPRX6Yb+xklN4nX9SmwbLzwYKvq31Tvx7cN1ZrA6RfAdZV7Wj/HgOTw7+Q
+	sWB34xJeGrguaY4EtKYAvjo1iB1B7+MEJNW7ygIpRO8egWULTLMOI14bqC767+7J2Ux1Pn+Vipg
+	XxPiuXwX+xq1ttEGMKeVJ1tNJMj09BSyEQO2IYZ8SGJT++aOQ0q1B/50VIqfiO8aa9e0RrifxIY
+	ER8caZ/fTzmj4i33rTgzIXP7lVEkVSr7qxk/jxrNkooO8aWKIL96+2HvQG1wSFA2E
+X-Received: by 2002:a05:600c:8289:b0:453:b44:eb69 with SMTP id 5b1f17b1804b1-454ec15eb7bmr15205525e9.13.1752216108676;
+        Thu, 10 Jul 2025 23:41:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH73ZggLTZnJYNntkb8XTnyjaAWggJMpQc9c6LSYaGeZV2+xeQK5Ri5qYDvOIhS8m1kT76R8Q==
+X-Received: by 2002:a05:600c:8289:b0:453:b44:eb69 with SMTP id 5b1f17b1804b1-454ec15eb7bmr15205165e9.13.1752216108130;
+        Thu, 10 Jul 2025 23:41:48 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f23:a200:bee7:8245:bf4:2c78? (p200300d82f23a200bee782450bf42c78.dip0.t-ipconnect.de. [2003:d8:2f23:a200:bee7:8245:bf4:2c78])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd54c512sm38402825e9.37.2025.07.10.23.41.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Jul 2025 23:41:47 -0700 (PDT)
+Message-ID: <c7e82a13-aa93-4eb3-8679-29cd32692bd0@redhat.com>
+Date: Fri, 11 Jul 2025 08:41:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 11 Jul 2025 12:10:57 +0530
-X-Gm-Features: Ac12FXygO_zUkoGGWRK3NshxVmCFcyPjGdNuZIOJbPbgB0u-MP7JaQRj38GlGWM
-Message-ID: <CA+G9fYvcb-BAreFW=QS=DnWnXX1gK1EAX09tBQzopwH1Jd1d=w@mail.gmail.com>
-Subject: next-20250710: PREEMPT_RT: rcu_preempt self-detected stall on CPU rcu_preempt_deferred_qs_handler
-To: rcu <rcu@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, neeraj.upadhyay@kernel.org, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Qi Xi <xiqi2@huawei.com>, 
-	Xiongfeng Wang <wangxiongfeng2@huawei.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/huge_memory: move unrelated code out of
+ __split_unmapped_folio()
+To: Zi Yan <ziy@nvidia.com>, Balbir Singh <balbirs@nvidia.com>,
+ linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
+References: <20250711030259.3574392-1-ziy@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250711030259.3574392-1-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Regressions on boot failure observed in builds with CONFIG_PREEMPT_RT=y
-and CONFIG_LAZY_PREEMPT=y enabled on multiple platforms running the
-Linux next-20250710.
+On 11.07.25 05:02, Zi Yan wrote:
+> remap(), folio_ref_unfreeze(), lru_add_split_folio() are not related to
+> splitting unmapped folio operations. Move them out to the caller, so that
+> __split_unmapped_folio() only splits unmapped folios. This makes
+> __split_unmapped_folio() reusable.
+> 
+> Convert VM_BUG_ON(mapping) to use VM_WARN_ON_ONCE_FOLIO().
+> 
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+> Based on the prior discussion[1], this patch makes
+> __split_unmapped_folio() reusable for splitting unmapped folios without
+> adding a new boolean unmapped parameter to guard mapping related code.
+> 
+> Another potential benefit is that __split_unmapped_folio() could be
+> called on after-split folios by __folio_split() to perform new split
+> methods. For example, at deferred split time, unmapped subpages can
+> scatter arbitrarily within a large folio, neither uniform nor non-uniform
+> split can maximize after-split folio orders for mapped subpages.
+> Hopefully, performing __split_unmapped_folio() multiple times can
+> achieve the optimal split result.
+> 
+> It passed mm selftests.
+> 
+> [1] https://lore.kernel.org/linux-mm/94D8C1A4-780C-4BEC-A336-7D3613B54845@nvidia.com/
+> ---
+> 
+>   mm/huge_memory.c | 275 ++++++++++++++++++++++++-----------------------
+>   1 file changed, 139 insertions(+), 136 deletions(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 3eb1c34be601..d97145dfa6c8 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3396,10 +3396,6 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
+>    *             order - 1 to new_order).
+>    * @split_at: in buddy allocator like split, the folio containing @split_at
+>    *            will be split until its order becomes @new_order.
+> - * @lock_at: the folio containing @lock_at is left locked for caller.
+> - * @list: the after split folios will be added to @list if it is not NULL,
+> - *        otherwise to LRU lists.
+> - * @end: the end of the file @folio maps to. -1 if @folio is anonymous memory.
+>    * @xas: xa_state pointing to folio->mapping->i_pages and locked by caller
+>    * @mapping: @folio->mapping
+>    * @uniform_split: if the split is uniform or not (buddy allocator like split)
+> @@ -3425,51 +3421,27 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
+>    *    @page, which is split in next for loop.
+>    *
+>    * After splitting, the caller's folio reference will be transferred to the
+> - * folio containing @page. The other folios may be freed if they are not mapped.
+> - *
+> - * In terms of locking, after splitting,
+> - * 1. uniform split leaves @page (or the folio contains it) locked;
+> - * 2. buddy allocator like (non-uniform) split leaves @folio locked.
+> - *
+> + * folio containing @page. The caller needs to unlock and/or free after-split
+> + * folios if necessary.
+>    *
+>    * For !uniform_split, when -ENOMEM is returned, the original folio might be
+>    * split. The caller needs to check the input folio.
+>    */
+>   static int __split_unmapped_folio(struct folio *folio, int new_order,
+> -		struct page *split_at, struct page *lock_at,
+> -		struct list_head *list, pgoff_t end,
+> -		struct xa_state *xas, struct address_space *mapping,
+> -		bool uniform_split)
+> +				  struct page *split_at, struct xa_state *xas,
+> +				  struct address_space *mapping,
+> +				  bool uniform_split)
 
-Kernel stalls and RCU preempt self-detected stalls reported.
-Boot log shows CPU stalls and failure as below.
+Use two-tabs indent please (like we already do, I assume).
 
-Test environments:
-- Ampere Altra
-- rk3399-rock-pi-4b
-- x86_64
+[...]
 
-Regression Analysis:
-- New regression? Yes
-- Reproducibility? Yes
+> @@ -3706,11 +3599,14 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>   {
+>   	struct deferred_split *ds_queue = get_deferred_split_queue(folio);
+>   	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
+> +	struct folio *next_folio = folio_next(folio);
+>   	bool is_anon = folio_test_anon(folio);
+>   	struct address_space *mapping = NULL;
+>   	struct anon_vma *anon_vma = NULL;
+>   	int order = folio_order(folio);
+> +	struct folio *new_folio, *next;
+>   	int extra_pins, ret;
+> +	int nr_shmem_dropped = 0;
+>   	pgoff_t end;
+>   	bool is_hzp;
+>   
+> @@ -3833,13 +3729,18 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>   		 */
+>   		xas_lock(&xas);
+>   		xas_reset(&xas);
+> -		if (xas_load(&xas) != folio)
+> +		if (xas_load(&xas) != folio) {
+> +			ret = -EAGAIN;
+>   			goto fail;
+> +		}
+>   	}
+>   
+>   	/* Prevent deferred_split_scan() touching ->_refcount */
+>   	spin_lock(&ds_queue->split_queue_lock);
+>   	if (folio_ref_freeze(folio, 1 + extra_pins)) {
+> +		struct address_space *swap_cache = NULL;
+> +		struct lruvec *lruvec;
+> +
+>   		if (folio_order(folio) > 1 &&
+>   		    !list_empty(&folio->_deferred_list)) {
+>   			ds_queue->split_queue_len--;
+> @@ -3873,18 +3774,120 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>   			}
+>   		}
+>   
+> -		ret = __split_unmapped_folio(folio, new_order,
+> -				split_at, lock_at, list, end, &xas, mapping,
+> -				uniform_split);
+> +		if (folio_test_swapcache(folio)) {
+> +			if (mapping) {
+> +				VM_WARN_ON_ONCE_FOLIO(mapping, folio);
+> +				ret = -EINVAL;
+> +				goto fail;
+> +			}
+> +
+> +			/*
+> +			 * a swapcache folio can only be uniformly split to
+> +			 * order-0
+> +			 */
+> +			if (!uniform_split || new_order != 0) {
+> +				ret = -EINVAL;
+> +				goto fail;
+> +			}
+> +
+> +			swap_cache = swap_address_space(folio->swap);
+> +			xa_lock(&swap_cache->i_pages);
+> +		}
+> +
+> +		/* lock lru list/PageCompound, ref frozen by page_ref_freeze */
+> +		lruvec = folio_lruvec_lock(folio);
+> +
+> +		ret = __split_unmapped_folio(folio, new_order, split_at, &xas,
+> +					     mapping, uniform_split);
+> +
+> +		/*
+> +		 * Unfreeze after-split folios and put them back to the right
+> +		 * list. @folio should be kept frozon until page cache entries
+> +		 * are updated with all the other after-split folios to prevent
+> +		 * others seeing stale page cache entries.
+> +		 */
+> +		for (new_folio = folio_next(folio); new_folio != next_folio;
+> +		     new_folio = next) {
+> +			next = folio_next(new_folio);
+> +
+> +			folio_ref_unfreeze(
+> +				new_folio,
+> +				1 + ((mapping || swap_cache) ?
+> +					     folio_nr_pages(new_folio) :
+> +					     0));
 
-Boot regression: next-20250710 rcu_preempt self-detected stall on CPU
-rcu_preempt_deferred_qs_handler
+While we are at it, is a way to make this look less than an artistic 
+masterpiece? :)
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+expected_refs = ...
+folio_ref_unfreeze(new_folio, expected_refs).
 
-Anders bisected this down to,
-  first bad commit:
-    [3284e4adca9b5b5a9f58dd071b848629e3bbecf8]
-    rcu: Fix rcu_read_unlock() deadloop due to IRQ work
 
-## Boot log
-[ 12.001815] check access for rdinit=/init failed: -2, ignoring
-[   22.252627] platform sdio-pwrseq: deferred probe pending:
-pwrseq_simple: reset control not ready
-[   22.252653] rockchip-pm-domain
-ff310000.power-management:power-controller: sync_state() pending due
-to fe310000.mmc
-[   22.252663] rockchip-pm-domain
-ff310000.power-management:power-controller: sync_state() pending due
-to ff650000.video-codec
-[   22.252672] rockchip-pm-domain
-ff310000.power-management:power-controller: sync_state() pending due
-to ff660000.video-codec
-[   22.252681] rockchip-pm-domain
-ff310000.power-management:power-controller: sync_state() pending due
-to ff680000.rga
-[   22.252696] rockchip-pm-domain
-ff310000.power-management:power-controller: sync_state() pending due
-to ff880000.i2s
-[   22.252704] rockchip-pm-domain
-ff310000.power-management:power-controller: sync_state() pending due
-to ff8a0000.i2s
-[   22.252712] rockchip-pm-domain
-ff310000.power-management:power-controller: sync_state() pending due
-to ff8f0000.vop
-[   22.252721] rockchip-pm-domain
-ff310000.power-management:power-controller: sync_state() pending due
-to ff900000.vop
-[   22.252735] rockchip-pm-domain
-ff310000.power-management:power-controller: sync_state() pending due
-to ff940000.hdmi
-[   22.252743] rockchip-pm-domain
-ff310000.power-management:power-controller: sync_state() pending due
-to ff9a0000.gpu
-[   22.257625] dwmmc_rockchip fe310000.mmc: IDMAC supports 32-bit address mode.
-[   22.257666] dwmmc_rockchip fe310000.mmc: Using internal DMA controller.
-[   22.257678] dwmmc_rockchip fe310000.mmc: Version ID is 270a
-[   22.258153] dwmmc_rockchip fe310000.mmc: DW MMC controller at irq
-49,32 bit host data width,256 deep fifo
-[   23.142949] rcu: INFO: rcu_preempt self-detected stall on CPU
-[   23.142962] rcu: t0-....: (5196 ticks this GP)
-idle=195c/1/0x4000000000000000 softirq=0/0 fqs=2620 rcuc=5196
-jiffies(starved)
-[   23.142973] rcu: t(t=5250 jiffies g=-887 q=360 ncpus=6)
-[   23.142984] CPU: 0 UID: 0 PID: 24 Comm: irq_work/0 Not tainted
-6.16.0-rc5-next-20250710 #1 PREEMPT_RT
-[   23.142991] Hardware name: Radxa ROCK Pi 4B (DT)
-[   23.142995] pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   23.143002] pc : rcu_preempt_deferred_qs_handler
-(kernel/rcu/tree_plugin.h:647)
-[   23.143020] lr : rcu_preempt_deferred_qs_handler
-(arch/arm64/include/asm/irqflags.h:175
-arch/arm64/include/asm/irqflags.h:195 kernel/rcu/tree_plugin.h:646)
-[   23.143029] sp : ffff80008329bda0
-[   23.143031] x29: ffff80008329bda0 x28: 0000000000000000 x27: 0000000000000000
-[   23.143043] x26: 0000000000000000 x25: 0000000000000000 x24: ffff00000061e320
-[   23.143052] x23: ffff000000cd5f00 x22: ffff000000cd5f00 x21: 0000000000000020
-[   23.143061] x20: 0000000000000000 x19: ffff0000f750f078 x18: 0000000000000000
-[   23.143069] x17: 0000000000000000 x16: ffff800081cea140 x15: 0000000000000033
-[   23.143078] x14: 0000000000000000 x13: e800521362c92235 x12: aa42a37f93df442b
-[   23.143087] x11: ffff800083e2b730 x10: 0000000000000c40 x9 : ffff8000815d24dc
-[   23.143096] x8 : ffff80008329bc88 x7 : 0000000000000000 x6 : ffff8000828ce000
-[   23.143105] x5 : ffff000000cd5f00 x4 : ffff8000828ce3a0 x3 : 0000000000000000
-[   23.143113] x2 : 0000000000000000 x1 : 0000000100000000 x0 : 0000000100000000
-[   23.143122] Call trace:
-[   23.143126] rcu_preempt_deferred_qs_handler
-(kernel/rcu/tree_plugin.h:647) (P)
-[   23.143137] irq_work_single (kernel/irq_work.c:222 (discriminator 1))
-[   23.143149] irq_work_run_list.part.0 (kernel/irq_work.c:251
-(discriminator 1))
-[   23.143159] run_irq_workd (kernel/irq_work.c:306)
-[   23.143168] smpboot_thread_fn (kernel/smpboot.c:160)
-[   23.143179] kthread (kernel/kthread.c:463)
-[   23.143189] ret_from_fork (arch/arm64/kernel/entry.S:859)
-[   28.908093] VFS: Mounted root (nfs filesystem) on device 0:23.
-[   28.908665] devtmpfs: mounted
-[   28.923586] Freeing unused kernel memory: 4160K
-[   28.923786] Run /sbin/init as init process
-[   49.938947] rcu: INFO: rcu_preempt self-detected stall on CPU
-[   49.938955] rcu: t4-....: (1 GPs behind)
-idle=0aec/1/0x4000000000000000 softirq=0/0 fqs=2617 rcuc=11947
-jiffies(starved)
-[   49.938963] rcu: t(t=5251 jiffies g=-883 q=3276 ncpus=6)
-[   49.938971] CPU: 4 UID: 0 PID: 51 Comm: irq_work/4 Not tainted
-6.16.0-rc5-next-20250710 #1 PREEMPT_RT
-[   49.938976] Hardware name: Radxa ROCK Pi 4B (DT)
-[   49.938978] pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   49.938982] pc : rcu_preempt_deferred_qs_handler
-(kernel/rcu/tree_plugin.h:647)
-[   49.938998] lr : rcu_preempt_deferred_qs_handler
-(arch/arm64/include/asm/irqflags.h:175
-arch/arm64/include/asm/irqflags.h:195 kernel/rcu/tree_plugin.h:646)
-[   49.939003] sp : ffff80008339bda0
-[   49.939004] x29: ffff80008339bda0 x28: 0000000000000000 x27: 0000000000000000
-[   49.939012] x26: 0000000000000000 x25: 0000000000000000 x24: ffff00000061e5a0
-[   49.939017] x23: ffff000000ed9300 x22: ffff000000ed9300 x21: 0000000000000020
-[   49.939023] x20: 0000000000000000 x19: ffff0000f7597078 x18: ffff8000837fb388
-[   49.939028] x17: ffff800082d35920 x16: 0000000000000000 x15: 000000007794abb1
-[   49.939033] x14: 0000000000000001 x13: 6463682d69636878 x12: 0000000000000001
-[   49.939038] x11: ffff0000f75961c0 x10: 0000000000000c40 x9 : ffff8000815d24dc
-[   49.939043] x8 : ffff80008339bc88 x7 : 0000000000000000 x6 : ffff8000828ce000
-[   49.939048] x5 : ffff000000ed9300 x4 : ffff8000828ce3a0 x3 : 0000000000000000
-[   49.939053] x2 : 0000000000000000 x1 : 0000000100000000 x0 : 0000000100000000
-[   49.939059] Call trace:
-[   49.939061] rcu_preempt_deferred_qs_handler
-(kernel/rcu/tree_plugin.h:647) (P)
-[   49.939068] irq_work_single (kernel/irq_work.c:222 (discriminator 1))
-[   49.939076] irq_work_run_list.part.0 (kernel/irq_work.c:251
-(discriminator 1))
-[   49.939082] run_irq_workd (kernel/irq_work.c:306)
-[   49.939087] smpboot_thread_fn (kernel/smpboot.c:160)
-[   49.939094] kthread (kernel/kthread.c:463)
-[   49.939101] ret_from_fork (arch/arm64/kernel/entry.S:859)
-[   65.639064] random: crng init done
+Can we already make use of folio_expected_ref_count() at that point? 
+Mapcount should be 0 and the folio should be properly setup (e.g., anon, 
+swapcache) IIRC.
 
-## Source
-* Kernel version: 6.16.0-rc5-next-20250710
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git sha: b551c4e2a98a177a06148cf16505643cd2108386
-* Git describe: next-20250710
-* Project: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250710
-* Architectures: arm64
-* Toolchains: gcc-13
-* Kconfigs: gcc-13-defconfig-preempt_rt
+So maybe
 
-## Build
-* Test log: https://qa-reports.linaro.org/api/testruns/29088924/log_file/
-* Test LAVA log 1: https://lkft.validation.linaro.org/scheduler/job/8351708#L947
-* Test details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250710/boot/gcc-13-defconfig-preempt_rt/
-* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2zg2ZkIKDYPorIm1qfg2NEzlIkR
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2zg2YGdS8dEcQIkEuzXik2IqIss/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2zg2YGdS8dEcQIkEuzXik2IqIss/config
+expected_refs = folio_expected_ref_count(new_folio) + 1;
+folio_ref_unfreeze(new_folio, expected_refs).
 
---
-Linaro LKFT
-https://lkft.linaro.org
+Would do?
+
+> +
+> +			lru_add_split_folio(folio, new_folio, lruvec, list);
+> +
+> +			/* Some pages can be beyond EOF: drop them from cache */
+> +			if (new_folio->index >= end) {
+> +				if (shmem_mapping(mapping))
+> +					nr_shmem_dropped +=
+> +						folio_nr_pages(new_folio);
+
+Keep that on a single line.
+
+> +				else if (folio_test_clear_dirty(new_folio))
+> +					folio_account_cleaned(
+> +						new_folio,
+> +						inode_to_wb(mapping->host));
+> +				__filemap_remove_folio(new_folio, NULL);
+> +				folio_put_refs(new_folio,
+> +					       folio_nr_pages(new_folio));
+> +			} else if (mapping) {
+> +				__xa_store(&mapping->i_pages, new_folio->index,
+> +					   new_folio, 0);
+> +			} else if (swap_cache) {
+> +				__xa_store(&swap_cache->i_pages,
+> +					   swap_cache_index(new_folio->swap),
+> +					   new_folio, 0);
+> +			}
+> +		}
+> +		/*
+> +		 * Unfreeze @folio only after all page cache entries, which
+> +		 * used to point to it, have been updated with new folios.
+> +		 * Otherwise, a parallel folio_try_get() can grab origin_folio
+> +		 * and its caller can see stale page cache entries.
+> +		 */
+> +		folio_ref_unfreeze(folio, 1 +
+> +			((mapping || swap_cache) ? folio_nr_pages(folio) : 0));
+
+Same as above probably.
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
