@@ -1,157 +1,320 @@
-Return-Path: <linux-kernel+bounces-728254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD06B0257D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:58:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F65FB02581
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A72D45C43AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:58:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8440583686
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A10B1E47A8;
-	Fri, 11 Jul 2025 19:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169661F2B90;
+	Fri, 11 Jul 2025 19:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FydgbDSH"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="hJJpuz9Z"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECF02110E
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C941DF270
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752263920; cv=none; b=WQg+O3cnV75oq20fjG8Ri5kTnAWLPlpGcn/yK262u5h/0DsqTHWB6fIWHSGQXm0WWcORZoLDth95EP83ItojYzQrx6Z5OchfOha7miG54lIx6nIH7+OBxC9cXZGBupYXA+inbNyaJmeyUYyTRZGOQ+HuQoNAqRgIex7mucGoHAY=
+	t=1752263948; cv=none; b=rvk2uiZKYWhfWoExp6QFw0qW3bdgpjcvu4C0iojxMozlynL1lUNPGGaLlLypBNF14ktye8vxYg0CkKGtl1Eo/ZJcj+cCPmB8LfmhxNNV2FZDqn4cxVrKORDWyq+M/Lhb7Q9VPqophpezqOspqOIp0qV5+Q1lMDMOfF+IebCoQMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752263920; c=relaxed/simple;
-	bh=AEr3GF5lSzNyqshXmGedkybJgaW/fKfj5uVB5kCYrnc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ym2fC9FyMh8BimPvicW/ZrobFFUmDOG0QChLuOVc7psu5oHHLqosFPkVBsxHcFKjf5b/f6AYSjmAiRrjRDJFF+MHPcptwNpNe0bQjyvnfuesQYkNRiHSbWqOeyNr3lQ5tDpDFgoJ1fwt8pd3Cb6ZwvnzK5MZ1VNe8v2Hbi7S//Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FydgbDSH; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752263913; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=odfWDvqu6DkbM3v/1M/WfbIdcwX+3SShHCrXamf+WSc=;
-	b=FydgbDSH/qomYIepCytcSZ2PiMTGJwWeqRa8P12dig4I5j7+zsEsfvFaclw9xv3Mdj0zHfKnylmYfQihk7VgtumDj7F4I5C5xqVnTyjVqp3miwtmlWSXcvVRUfuaHxkZTWd2a4BP8qeOvhZIP3DoNegdIiG31NO4Fk3qITiciDk=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wihw24S_1752263907 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 12 Jul 2025 03:58:32 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Axel Fontaine <axel@axelfontaine.com>
-Subject: [PATCH v2] erofs: fix large fragment handling
-Date: Sat, 12 Jul 2025 03:58:26 +0800
-Message-ID: <20250711195826.3601157-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250711174257.3427562-1-hsiangkao@linux.alibaba.com>
-References: <20250711174257.3427562-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1752263948; c=relaxed/simple;
+	bh=fNFTzgqdHk1FTXy3FdlifGdIkM/F9F6z1PqgTNcZdmM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Y2YpKy4nOCycE0rCjaFWYWwNSifyEghviQQZpNs+YhWcv6H1r6XxM3uZHTrAYHM7UQeNfGVKI31HsYG46rfa7GJmfonOSVP3nn1P0Cqwa30iEyFsXkR/5yyZAs+Cqp2nymn0v+nqiZrwHvzA4seYO+Ttaja5U8vRMcuhfaLoVHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=hJJpuz9Z; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e0bb4a2c04so7580285a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:59:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1752263945; x=1752868745; darn=vger.kernel.org;
+        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
+         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=KggEA/YDHTi+B94iHR0d5HwR3sGfFH/eH/dYBbqHvU0=;
+        b=hJJpuz9ZKNqG1gsbWUiVri5XavO69fnewt0hXwCWgeMZ4FQutGfH4XjtmEaZlp0vot
+         ruplIge60Npw0dsVGzECKQcmhD81C3ehplLfpEwDkgbXs6z9kzPbv/G7ZV0NVABxUpbL
+         DN5JH2MzifTOgHXrrvsKYGWMe5HJFB2Egv2ry4YG9ySZQfOuho/vQ33/8gKR4M1xTeml
+         jW7Re3cNJZzxgXVW1NQRsQDcoTGzXVaFx/Odm0q0KukAK0de3WgsitD+nvD+f/VPGtBp
+         u7YGgSau7k+JtGRO2OT3HDbsjTq+oXPGzkwJc4SusYvdvGyGHmOnx7MTXl73kZgTBYDi
+         Odwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752263945; x=1752868745;
+        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
+         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KggEA/YDHTi+B94iHR0d5HwR3sGfFH/eH/dYBbqHvU0=;
+        b=Bh2+Z9BAIMAhO7Y9BfbCAwyc43MYB7Jl8CqOmhcSpXlcVf16XRexe97dkC6cGKy7dJ
+         UIsjgA0GpqFxFZIDvo68Mow3/xMNoToDj7mPQ2ZuJfF6H0YlrMksUWcvePT/g5kxNvrf
+         437fRlWLgNX54RO8kUb7Sd1DTBK5a6vGSGHP/j637cfpohbpihlx/f2ziEW551v+4x5G
+         2N0FoY1e6grIhzYAul/i3z9Ny0GgYf8iQnWMAX4LYHLogyxErxPmOCgpUQBfcgEktjD4
+         y3O5ne/CZ2AyKfc2JL6lGpLQfKpinb0IChKB8VwBDNwv+g4oeuzORAQqKaJcKZPi7h96
+         u0LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHvuC3I5WqWLt1XBF8nUSvk2UpfkAd0yzlgi7ZRfCPIFDPI3Id8wJBiLKJHfN8zujO/5K7EvLELvUup7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLk0V4Kmmj16pmT/79qnCFHjfmLFHSlYuRvNAZs1q3LgnFi266
+	zSrVk09NaVp9ygdidK349o0+qJ7wQrRu7uXlNpfMcoRJja/+JrPhWIhzyxcgyLdpsgOwND9uWOB
+	zpw0naMPkaQ==
+X-Gm-Gg: ASbGncuz1ZJODXSgj0DK80GD7iu9CMJYmCFergTNL1LXoFnCvtls7BqGl8NHtBniLmO
+	YMr9JGAWAooDnls8Y7/zI8X0lEv6DZ4Kdz2l9tywWz+GeXHqEDGsUcnoWOI9cmUI2MZNlXeI1qX
+	XjD+IomGrnBxs3O+xd+UJrnJU4VmHaJsI/Ji+QHBu6pBOp7/tRIfiNn+tS7ymhfJwxoc+AOsoBQ
+	lWzAySXZz5BEM7Tct/aF/jW2YA+z7kL1XwRsVyQS8DvXFW4oxp4A4RxnvlYjU1L/KSS2iOfExXt
+	Eu8Uw/gXVW1w+pLepE1ZM9Cg+xtQBsusS1oF0DdhFbyfNrLKpSM6+o6LmCKCk0pLMeW8wM1nSt4
+	r2pRrgGuPn4BDQjgu81Ux1N3EgrI=
+X-Google-Smtp-Source: AGHT+IEMN28GIL2fj0mSdcwNMNRsi58DvX91WQKhdFH3bBY+HPq8y10Ik8GGOtDgnbxn+L/FmEEnxg==
+X-Received: by 2002:a05:620a:6590:b0:7e0:892b:e447 with SMTP id af79cd13be357-7e0892bec92mr129076085a.22.1752263944593;
+        Fri, 11 Jul 2025 12:59:04 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:17:b699::5ac? ([2606:6d00:17:b699::5ac])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcde80650asm252765185a.90.2025.07.11.12.59.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 12:59:03 -0700 (PDT)
+Message-ID: <9f4a00b3a0b6491b1f50c878cb18569009a4441e.camel@ndufresne.ca>
+Subject: Re: [PATCH 5/8] media: uapi: HEVC: Add v4l2_ctrl_hevc_ext_sps_rps
+ control
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Detlev Casanova <detlev.casanova@collabora.com>, 
+	linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Sebastian Reichel	 <sebastian.reichel@collabora.com>, Cristian Ciocaltea	
+ <cristian.ciocaltea@collabora.com>, Alexey Charkov <alchark@gmail.com>, 
+ Dragan Simic <dsimic@manjaro.org>, Jianfeng Liu
+ <liujianfeng1994@gmail.com>, Nicolas Frattaroli	
+ <nicolas.frattaroli@collabora.com>, Kever Yang <kever.yang@rock-chips.com>,
+  Andy Yan <andy.yan@rock-chips.com>, Frank Wang
+ <frank.wang@rock-chips.com>, 	devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, 	linux-rockchip@lists.infradead.org,
+ Ezequiel Garcia	 <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda
+ <ribalda@chromium.org>, Hans de Goede <hansg@kernel.org>,  Yunke Cao
+ <yunkec@google.com>, linux-media@vger.kernel.org, kernel@collabora.com
+Date: Fri, 11 Jul 2025 15:59:01 -0400
+In-Reply-To: <20250623160722.55938-6-detlev.casanova@collabora.com>
+References: <20250623160722.55938-1-detlev.casanova@collabora.com>
+	 <20250623160722.55938-6-detlev.casanova@collabora.com>
+Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0MU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAY29sbGFib3JhLmNvbT6ImQQTFg
+ oAQQIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBO8NUoEVxMPCGgRvEtlBlFEpYHL0BQJ
+ oLLLGBQkJZfd1AAoJENlBlFEpYHL0BEkA/3qkWYt99myYFSmTJUF8UB/7OroEm3vr1HRqXeQe9Qp2
+ AP0bsoAe6KjEPa/pJfuJ2khrOPPHxvyt/PBNbI5BYcIABLQnTmljb2xhcyBEdWZyZXNuZSA8bmljb
+ 2xhc0BuZHVmcmVzbmUuY2E+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQ
+ TvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyy+AUJCWX3dQAKCRDZQZRRKWBy9FJ5AQCNy8SX8DpHbLa
+ cy58vgDwyIpB89mok9eWGGejY9mqpRwEAhHzs+/n5xlVlM3bqy1yHnAzJqVwqBE1D0jG0a9V6VQI=
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-QFZNUyCQD9CH6UQ+5gcH"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Fragments aren't limited by Z_EROFS_PCLUSTER_MAX_DSIZE. However, if
-a fragment's logical length is larger than Z_EROFS_PCLUSTER_MAX_DSIZE
-but the fragment is not the whole inode, it currently returns
--EOPNOTSUPP because m_flags has the wrong EROFS_MAP_ENCODED flag set.
-It is not intended by design but should be rare, as it can only be
-reproduced by mkfs with `-Eall-fragments` in a specific case.
 
-Let's normalize fragment m_flags using the new EROFS_MAP_FRAGMENT.
+--=-QFZNUyCQD9CH6UQ+5gcH
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: Axel Fontaine <axel@axelfontaine.com>
-Closes: https://github.com/erofs/erofs-utils/issues/23
-Fixes: 7c3ca1838a78 ("erofs: restrict pcluster size limitations")
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
-changes since v1:
- - should replace the old EROFS_MAP_FRAGMENT checks too.
+Hi,
 
- fs/erofs/internal.h | 4 +++-
- fs/erofs/zdata.c    | 2 +-
- fs/erofs/zmap.c     | 9 ++++-----
- 3 files changed, 8 insertions(+), 7 deletions(-)
+Le lundi 23 juin 2025 =C3=A0 12:07 -0400, Detlev Casanova a =C3=A9crit=C2=
+=A0:
+> Some hardware (e.g.: Rockchip's rk3588 hevc decoder) need the parsed
+> long and short term reference information for HEVC decoding.
+>=20
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+> =C2=A0.../media/v4l/ext-ctrls-codec-stateless.rst=C2=A0=C2=A0 | 73 ++++++=
++++++++++++++
+> =C2=A0.../media/v4l/vidioc-queryctrl.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 ++
+> =C2=A02 files changed, 79 insertions(+)
+>=20
+> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-statel=
+ess.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.r=
+st
+> index 0da635691fdcb..745f38a8fe69c 100644
+> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
+> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
+> @@ -2958,6 +2958,79 @@ This structure contains all loop filter related pa=
+rameters. See sections
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0x00000004
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -
+> =C2=A0
+> +.. c:type:: v4l2_ctrl_hevc_ext_sps_rps
+> +
+> +.. cssclass:: longtable
+> +
+> +.. flat-table:: struct v4l2_ctrl_hevc_ext_sps_rps
+> +=C2=A0=C2=A0=C2=A0 :header-rows:=C2=A0 0
+> +=C2=A0=C2=A0=C2=A0 :stub-columns: 0
+> +=C2=A0=C2=A0=C2=A0 :widths:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1 1 2
 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 0d19bde8c094..06b867d2fc3b 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -315,10 +315,12 @@ static inline struct folio *erofs_grab_folio_nowait(struct address_space *as,
- /* The length of extent is full */
- #define EROFS_MAP_FULL_MAPPED	0x0008
- /* Located in the special packed inode */
--#define EROFS_MAP_FRAGMENT	0x0010
-+#define __EROFS_MAP_FRAGMENT	0x0010
- /* The extent refers to partial decompressed data */
- #define EROFS_MAP_PARTIAL_REF	0x0020
- 
-+#define EROFS_MAP_FRAGMENT	(EROFS_MAP_MAPPED | __EROFS_MAP_FRAGMENT)
-+
- struct erofs_map_blocks {
- 	struct erofs_buf buf;
- 
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 6f8402ed5b28..5e0240b7b7db 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -1033,7 +1033,7 @@ static int z_erofs_scan_folio(struct z_erofs_frontend *f,
- 		if (!(map->m_flags & EROFS_MAP_MAPPED)) {
- 			folio_zero_segment(folio, cur, end);
- 			tight = false;
--		} else if (map->m_flags & EROFS_MAP_FRAGMENT) {
-+		} else if (map->m_flags & __EROFS_MAP_FRAGMENT) {
- 			erofs_off_t fpos = offset + cur - map->m_la;
- 
- 			err = z_erofs_read_fragment(inode->i_sb, folio, cur,
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index 431199452542..312ec54668aa 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -403,8 +403,7 @@ static int z_erofs_map_blocks_fo(struct inode *inode,
- 	    !vi->z_tailextent_headlcn) {
- 		map->m_la = 0;
- 		map->m_llen = inode->i_size;
--		map->m_flags = EROFS_MAP_MAPPED |
--			EROFS_MAP_FULL_MAPPED | EROFS_MAP_FRAGMENT;
-+		map->m_flags = EROFS_MAP_FRAGMENT;
- 		return 0;
- 	}
- 	initial_lcn = ofs >> lclusterbits;
-@@ -468,7 +467,7 @@ static int z_erofs_map_blocks_fo(struct inode *inode,
- 			goto unmap_out;
- 		}
- 	} else if (fragment && m.lcn == vi->z_tailextent_headlcn) {
--		map->m_flags |= EROFS_MAP_FRAGMENT;
-+		map->m_flags = EROFS_MAP_FRAGMENT;
- 	} else {
- 		map->m_pa = erofs_pos(sb, m.pblk);
- 		err = z_erofs_get_extent_compressedlen(&m, initial_lcn);
-@@ -596,7 +595,7 @@ static int z_erofs_map_blocks_ext(struct inode *inode,
- 	if (lstart < lend) {
- 		map->m_la = lstart;
- 		if (last && (vi->z_advise & Z_EROFS_ADVISE_FRAGMENT_PCLUSTER)) {
--			map->m_flags |= EROFS_MAP_MAPPED | EROFS_MAP_FRAGMENT;
-+			map->m_flags = EROFS_MAP_FRAGMENT;
- 			vi->z_fragmentoff = map->m_plen;
- 			if (recsz > offsetof(struct z_erofs_extent, pstart_lo))
- 				vi->z_fragmentoff |= map->m_pa << 32;
-@@ -776,7 +775,7 @@ static int z_erofs_iomap_begin_report(struct inode *inode, loff_t offset,
- 	iomap->length = map.m_llen;
- 	if (map.m_flags & EROFS_MAP_MAPPED) {
- 		iomap->type = IOMAP_MAPPED;
--		iomap->addr = map.m_flags & EROFS_MAP_FRAGMENT ?
-+		iomap->addr = map.m_flags & __EROFS_MAP_FRAGMENT ?
- 			      IOMAP_NULL_ADDR : map.m_pa;
- 	} else {
- 		iomap->type = IOMAP_HOLE;
--- 
-2.43.5
 
+Something, somewhere should say this is an array.
+
+> +
+> +=C2=A0=C2=A0=C2=A0 * - __u16
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``lt_ref_pic_poc_lsb_sps``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Long term reference picture order count=
+ as described in section 7.4.3.2.1
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "General sequence parameter s=
+et RBSP semantics" of the specification.
+
+Each LONG term reference have one of these.
+
+> +=C2=A0=C2=A0=C2=A0 * - __u8
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``delta_idx_minus1``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies the delta compare to the inde=
+x. See details in section 7.4.8 "Short-term
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reference picture set semanti=
+cs" of the specification.
+
+
+And each SHORT term have one of these. How can both be int he same control =
+? For
+me this could make a bit more sense with two structures:
+
+	v4l2_ctrl_hevc_ext_sps_st_rps[]
+	v4l2_ctrl_hevc_ext_sps_lt_rps[]
+
+Did I miss something ?
+
+> +=C2=A0=C2=A0=C2=A0 * - __u8
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``delta_rps_sign``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Sign of the delta as specified in secti=
+on 7.4.8 "Short-term reference picture set
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 semantics" of the specificati=
+on.
+> +=C2=A0=C2=A0=C2=A0 * - __u16
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``abs_delta_rps_minus1``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Absolute delta RPS as specified in sect=
+ion 7.4.8 "Short-term reference picture set
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 semantics" of the specificati=
+on.
+> +=C2=A0=C2=A0=C2=A0 * - __u8
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``num_negative_pics``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Number of short-term RPS entries that h=
+ave picture order count values less than the
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 picture order count value of =
+the current picture.
+> +=C2=A0=C2=A0=C2=A0 * - __u8
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``num_positive_pics``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Number of short-term RPS entries that h=
+ave picture order count values greater than the
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 picture order count value of =
+the current picture.
+> +=C2=A0=C2=A0=C2=A0 * - __u8
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``used_by_curr_pic_s0[16]``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies if short-term RPS i (that has=
+ a negative POC) is used by the current picture.
+
+Use bit field for that, a __u16 works, and one per ST.
+
+>=20
+> +=C2=A0=C2=A0=C2=A0 * - __u8
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``used_by_curr_pic_s1[16]``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies if short-term RPS i (that has=
+ a positive POC) is used by the current picture.
+>=20
+
+Same.
+
+> +=C2=A0=C2=A0=C2=A0 * - __s32
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``delta_poc_s0[16]``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies the negative picture order co=
+unt delta for the i-th entry in the short-term RPS.
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 See details in section 7.4.8 =
+"Short-term reference picture set semantics" of the
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 specification.
+
+Keep it delta_poc_s0_minus1 like int he spec, and then you can go back so u=
+16.
+
+> +=C2=A0=C2=A0=C2=A0 * - __s32
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``delta_poc_s1[16]``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies the positive picture order co=
+unt delta for the i-th entry in the short-term RPS.
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 See details in section 7.4.8 =
+"Short-term reference picture set semantics" of the
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 specification.
+
+Same.
+
+
+regards,
+Nicolas
+
+> +=C2=A0=C2=A0=C2=A0 * - __u8
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ``flags``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - See :ref:`Extended RPS Flags <hevc_ext_=
+sps_rps_flags>`
+> +
+> +.. _hevc_ext_sps_rps_flags:
+> +
+> +``Extended SPS RPS Flags``
+> +
+> +.. cssclass:: longtable
+> +
+> +.. flat-table::
+> +=C2=A0=C2=A0=C2=A0 :header-rows:=C2=A0 0
+> +=C2=A0=C2=A0=C2=A0 :stub-columns: 0
+> +=C2=A0=C2=A0=C2=A0 :widths:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1 1 2
+> +
+> +=C2=A0=C2=A0=C2=A0 * - ``V4L2_HEVC_EXT_SPS_RPS_FLAG_USED_LT``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0x00000001
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies if the long-term reference pi=
+cture is used 7.4.3.2.1 "General sequence parameter
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set RBSP semantics" of the sp=
+ecification.
+> +=C2=A0=C2=A0=C2=A0 * - ``V4L2_HEVC_EXT_SPS_RPS_FLAG_INTER_REF_PIC_SET_PR=
+ED``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0x00000002
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Specifies if the short-term RPS is pred=
+icted from another short term RPS. See details in
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 section 7.4.8 "Short-term ref=
+erence picture set semantics" of the specification.
+> +
+> =C2=A0.. _v4l2-codec-stateless-av1:
+> =C2=A0
+> =C2=A0``V4L2_CID_STATELESS_AV1_SEQUENCE (struct)``
+> diff --git a/Documentation/userspace-api/media/v4l/vidioc-queryctrl.rst b=
+/Documentation/userspace-api/media/v4l/vidioc-queryctrl.rst
+> index 3549417c7febb..dc7caf4bf6208 100644
+> --- a/Documentation/userspace-api/media/v4l/vidioc-queryctrl.rst
+> +++ b/Documentation/userspace-api/media/v4l/vidioc-queryctrl.rst
+> @@ -523,6 +523,12 @@ See also the examples in :ref:`control`.
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - A struct :c:type:`v4l2_ctrl_hevc_d=
+ecode_params`, containing HEVC
+> =C2=A0	decoding parameters for stateless video decoders.
+> +=C2=A0=C2=A0=C2=A0 * - ``V4L2_CTRL_TYPE_HEVC_EXT_SPS_RPS``
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - A struct :c:type:`v4l2_ctrl_hevc_ext_sp=
+s_rps`, containing HEVC
+> +	extended RPS for stateless video decoders.
+> =C2=A0=C2=A0=C2=A0=C2=A0 * - ``V4L2_CTRL_TYPE_VP9_COMPRESSED_HDR``
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - n/a
+
+--=-QFZNUyCQD9CH6UQ+5gcH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHQEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaHFtBQAKCRDZQZRRKWBy
+9ISzAPidxCwdhetQDnozQ9rkv6zHmwuNG2/63/iuwoWBzkyQAQD7SLIPvi5xterW
+wf+MjUZIrzLCUQ4C8voHcQLpGbHPCA==
+=sK20
+-----END PGP SIGNATURE-----
+
+--=-QFZNUyCQD9CH6UQ+5gcH--
 
