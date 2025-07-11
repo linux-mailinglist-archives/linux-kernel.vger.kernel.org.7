@@ -1,129 +1,179 @@
-Return-Path: <linux-kernel+bounces-727210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187D9B0167D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:39:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF66CB01688
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64DBB3B69E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:37:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38921CA41C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B0D217736;
-	Fri, 11 Jul 2025 08:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C79212FB3;
+	Fri, 11 Jul 2025 08:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJN/yZ1B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThKvuZwq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F94111BF;
-	Fri, 11 Jul 2025 08:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A9518D;
+	Fri, 11 Jul 2025 08:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752222969; cv=none; b=Y6p+cIUFh4sJPGqnSd4s1I9QMiwVgay/KqlfOqX0UfINBJDOPgk6rAvUj8ypV14j3ZGIBqf/Z6tELbovXL8G2RKgDEGa8QbRVEbRV08IHX6JVN1FC6qaLuyzdGWNwKqCyLVfD7Vyaq2D9WWrNUAwhOyrKnDMZqoScC1FL6RGJCE=
+	t=1752223049; cv=none; b=ATdC5B8f9fjSR4Z/oEzI4EqbJ+yPLIKXIxycKfp71vW/Hptc+W5bYQ9GvzHvzoddTU9uQBZxXMCPU5AAIakF1AIJEqh+OlyBRysbCgLgvoFVXqnZ6AiK70O/49EODP5XHH8NBodcprDQ81aoBE9f+nOJgXIBUkJ3BAY3gPQYjS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752222969; c=relaxed/simple;
-	bh=WqaMVMtIl2BY0yJd5CvxPYfpxaVADTlSmJgSDpmxLE0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=odvLauZGu0ZLZuenbcWGoYinX/mbLlhvckLf/pv67eYmqW12AaPaiCrDsqZMKczk5Wa0RZfIUqyNdnKu6C97fRUwW7A2E/aAHJbJBJw3WTpBB5AelnS4EpsAkk5PPnvJVwkNKuqw77A5cIWhXBgtgrKsRxb0e2YeT9kl+yGUaCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJN/yZ1B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2B9CC4CEED;
-	Fri, 11 Jul 2025 08:36:08 +0000 (UTC)
+	s=arc-20240116; t=1752223049; c=relaxed/simple;
+	bh=OHCIgiPuGTOLfp8ArVy61aLbLOSN/ySRGK+gWTBkLBU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CEivNZbl4eyYC8HoDhlmpsfkhplal+htTtXDOKWBcQPV02qbTYFEYfMWrxiRLygHvAhLaztfgN+K3GUgfJS64DP2kEYKHq3xUxMSd60Tm5+cD7VkmMboJ4AG/vXWtZvUaT8KiS3ZUh4aK0O1LStBV7lhS7FeZ9x9HlaUkjJWdek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThKvuZwq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 118FDC4CEED;
+	Fri, 11 Jul 2025 08:37:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752222969;
-	bh=WqaMVMtIl2BY0yJd5CvxPYfpxaVADTlSmJgSDpmxLE0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bJN/yZ1B7JH5u2g8tysgTDGGgHkuqdBey4fIkeux/UL66WXv21R+ybSxjeYhj2pwU
-	 DG6JoRCsZ5f3A16iQ3h/Ba+V4IpC9UzqDoTI154bM6kzmH9k+tb7yjqTbd0YFAAJLN
-	 q+YeSY2DbCp4PTrVilZhsVaWVd6JXR2+gkyq4ZPWfZVeYi41esCQI2gQpqHvF5thYc
-	 8OFuiSeO7+AM+ROcdLYFenKVxbtXrrKp+YMBwjw2EKKLHpngqypRmdGjdinldKf5pP
-	 7N2vHN9bo6QfArtVfxfQSQL/M7veeObctrfQR3xtkQL+1GMUtynJb2LZO1Gkczy5zp
-	 muOlwXGK6Rr/A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ua9Ei-00Enn5-El;
-	Fri, 11 Jul 2025 09:36:05 +0100
-Date: Fri, 11 Jul 2025 09:36:04 +0100
-Message-ID: <86h5zj9laj.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mark Brown <broonie@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Sebastian Ott <sebott@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: fix u64_replace_bits() usage
-In-Reply-To: <20250711072752.2781647-1-arnd@kernel.org>
-References: <20250711072752.2781647-1-arnd@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1752223049;
+	bh=OHCIgiPuGTOLfp8ArVy61aLbLOSN/ySRGK+gWTBkLBU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ThKvuZwqdhuC5eWcMREi5ebn4Hmn8EDthtu/b4le/mSaNIBuNYYylhL6n4PDhDmwr
+	 pZFAawYh3d/ut4Qn1EMA3rLfjFwZilVks1Cy1aoRcPGg86XlABdrTbwOzA7tgqYaI5
+	 KR3mnMI6irZwn3I6+9LKtn4rQfiMPqxmiBI7sWTEhg0uFl3HYenoT2vT+9d7n92RyX
+	 6A1Gaeah2C+NOV3jPlZGcwB15BM89zYPBsGwby2yvWiDUkINI/u8OLWJqpB3JfXkOL
+	 WkDSFMf57nXRT/JkfsOMM25KTIEXZJBYj/+fH4hGGGcdrk9+sHU2Wn6QvYBA0r0Gl5
+	 gfKjee6RjqbYg==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1ua9G3-0000000FXSq-0eVb;
+	Fri, 11 Jul 2025 10:37:27 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Akira Yokosawa" <akiyks@gmail.com>,
+	"Breno Leitao" <leitao@debian.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	"Donald Hunter" <donald.hunter@gmail.com>,
+	"Eric Dumazet" <edumazet@google.com>,
+	"Ignacio Encinas Rubio" <ignacio@iencinas.com>,
+	"Jan Stancek" <jstancek@redhat.com>,
+	"Marco Elver" <elver@google.com>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	"Paolo Abeni" <pabeni@redhat.com>,
+	"Randy Dunlap" <rdunlap@infradead.org>,
+	"Ruben Wauters" <rubenru09@aol.com>,
+	"Shuah Khan" <skhan@linuxfoundation.org>,
+	joel@joelfernandes.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	lkmm@lists.linux.dev,
+	netdev@vger.kernel.org,
+	peterz@infradead.org,
+	stern@rowland.harvard.edu
+Subject: [PATCH v9 14/13] sphinx: parser_yaml.py: fix line numbers information
+Date: Fri, 11 Jul 2025 10:36:23 +0200
+Message-ID: <4d1e0f5283ae1c6874cef272c5760035eb51278a.1752222934.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <cover.1752076293.git.mchehab+huawei@kernel.org>
+References: <cover.1752076293.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: arnd@kernel.org, oliver.upton@linux.dev, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, broonie@kernel.org, james.morse@arm.com, sebott@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Fri, 11 Jul 2025 08:27:47 +0100,
-Arnd Bergmann <arnd@kernel.org> wrote:
-> 
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> u64_replace_bits() returns a modified word but does not actually modify
-> its argument, as pointed out by this new warning:
-> 
-> arch/arm64/kvm/sys_regs.c: In function 'access_mdcr':
-> arch/arm64/kvm/sys_regs.c:2654:17: error: ignoring return value of 'u64_replace_bits' declared with attribute 'warn_unused_result' [-Werror=unused-result]
->  2654 |                 u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
-> 
-> The intention here must have been to update 'val', so do that instead.
-> 
-> Fixes: efff9dd2fee7 ("KVM: arm64: Handle out-of-bound write to MDCR_EL2.HPMN")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm64/kvm/sys_regs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 33aa4f5071b8..793fb19bebd6 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -2651,7 +2651,7 @@ static bool access_mdcr(struct kvm_vcpu *vcpu,
->  	 */
->  	if (hpmn > vcpu->kvm->arch.nr_pmu_counters) {
->  		hpmn = vcpu->kvm->arch.nr_pmu_counters;
-> -		u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
-> +		val = u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
->  	}
->  
->  	__vcpu_assign_sys_reg(vcpu, MDCR_EL2, val);
+As reported by Donald, this code:
 
-This is only in -next, right? Because I have a fix for this already
-queued for 6.16, as per [1].
+	rst_parser = RSTParser()
+	rst_parser.parse('\n'.join(result), document)
 
-Thanks,
+breaks line parsing. As an alternative, I tested a variant of it:
 
-	M.
+	rst_parser.parse(result, document)
 
-[1] https://lore.kernel.org/r/20250709093808.920284-2-ben.horgan@arm.com
+but still line number was not preserved. As Donald noted,
+standard Parser classes don't have a direct mechanism to preserve
+line numbers from ViewList().
 
+So, instead, let's use a mechanism similar to what we do already at
+kerneldoc.py: call the statemachine mechanism directly there.
+
+I double-checked when states and statemachine were introduced:
+both were back in 2002. I also tested doc build with docutils 0.16
+and 0.21.2. It worked with both, so it seems to be stable enough
+for our needs.
+
+Reported-by: Donald Hunter <donald.hunter@gmail.com>
+Closes: https://lore.kernel.org/linux-doc/m24ivk78ng.fsf@gmail.com/T/#u
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+
+PS.: I'm opting to send this as 14/13 to avoid respanning the entire
+series again just due to this extra change.
+
+ Documentation/sphinx/parser_yaml.py | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/sphinx/parser_yaml.py b/Documentation/sphinx/parser_yaml.py
+index 1602b31f448e..634d84a202fc 100755
+--- a/Documentation/sphinx/parser_yaml.py
++++ b/Documentation/sphinx/parser_yaml.py
+@@ -11,7 +11,9 @@ import sys
+ 
+ from pprint import pformat
+ 
++from docutils import statemachine
+ from docutils.parsers.rst import Parser as RSTParser
++from docutils.parsers.rst import states
+ from docutils.statemachine import ViewList
+ 
+ from sphinx.util import logging
+@@ -56,6 +58,8 @@ class YamlParser(Parser):
+ 
+     re_lineno = re.compile(r"\.\. LINENO ([0-9]+)$")
+ 
++    tab_width = 8
++
+     def rst_parse(self, inputstring, document, msg):
+         """
+         Receives a ReST content that was previously converted by the
+@@ -66,10 +70,18 @@ class YamlParser(Parser):
+ 
+         result = ViewList()
+ 
++        self.statemachine = states.RSTStateMachine(state_classes=states.state_classes,
++                                                   initial_state='Body',
++                                                   debug=document.reporter.debug_flag)
++
+         try:
+             # Parse message with RSTParser
+             lineoffset = 0;
+-            for line in msg.split('\n'):
++
++            lines = statemachine.string2lines(msg, self.tab_width,
++                                              convert_whitespace=True)
++
++            for line in lines:
+                 match = self.re_lineno.match(line)
+                 if match:
+                     lineoffset = int(match.group(1))
+@@ -77,12 +89,7 @@ class YamlParser(Parser):
+ 
+                 result.append(line, document.current_source, lineoffset)
+ 
+-            # Fix backward compatibility with docutils < 0.17.1
+-            if "tab_width" not in vars(document.settings):
+-                document.settings.tab_width = 8
+-
+-            rst_parser = RSTParser()
+-            rst_parser.parse('\n'.join(result), document)
++            self.statemachine.run(result, document)
+ 
+         except Exception as e:
+             document.reporter.error("YAML parsing error: %s" % pformat(e))
 -- 
-Without deviation from the norm, progress is not possible.
+2.50.0
+
+
 
