@@ -1,87 +1,137 @@
-Return-Path: <linux-kernel+bounces-727992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E039EB02234
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:54:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB100B0223F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A33FA482FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:53:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8185A786A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D48D2EF654;
-	Fri, 11 Jul 2025 16:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBBC2EF654;
+	Fri, 11 Jul 2025 16:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YP2JaB1Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UOkvV9jk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26EF18A93F;
-	Fri, 11 Jul 2025 16:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB3780B;
+	Fri, 11 Jul 2025 16:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752252834; cv=none; b=ReFERaS8gg2AlStYtr31t2iy4xUY22lE3nxLYvvTZOCU3iGgAhGftK5PS6p7kFo4gnPU6o2HOIUCKJhZ+YjO64Cc1mGUokX0wvO3MSbrF3PlKFN5doib+b38el6OD0Dy4vnvY0DXmj2ZTV1me7kKuG5pikWteBsmZbp/X2it5Ww=
+	t=1752253063; cv=none; b=M9Vm1RXzl0XWsG7M/EqBH7iO6Qy/aLQqBrWL2NWPs/S7l2Uxil9oGjahKw8Wk+Ki7b0DX4GEJpuPfHYwXIUUG5f21riXlFxooxrTi8prouAvbh0qVyARn1JVjtHH5HTTXuu7CbNkLsEsSGmIB5IpjYiF4nPjfp/fPL6fzaeVlbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752252834; c=relaxed/simple;
-	bh=SNoKIrx3JZ8VOFI7r129Z7RFa6ucn+juakq19EGnPR8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sl8bYSUqDploq514rwZLnhW8haM+v0eiZo2Rt4FSmhGDY0aC+x4m2heHnN0HiD+wa39g7/EMG6V4d6Ewn1Ph+AIHHyFTD7OCR7cxlkt7xSj+y1StUl8d/rgs1EDmNGRq5jz6VeyxFneP5Jq2XuVvk0pS24LnR2FAUkRXQHW3bew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YP2JaB1Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00E4FC4CEED;
-	Fri, 11 Jul 2025 16:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752252834;
-	bh=SNoKIrx3JZ8VOFI7r129Z7RFa6ucn+juakq19EGnPR8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YP2JaB1Y3L+ay1EqJUrdhvwvBnVps4auY2lIY/aND5R6+U0hPL0/axRccnGgrK3+t
-	 eGGFci4Ijv3k5WtVDy5jMRwiPYG3CHzASIUFwgFm0hra8DfvTebA+zhhrGd8fh6tIL
-	 aY2be70NXOu+NfI3Edx5baAij4C1urStnmFsRdPQQBirnMtyIMLiaqRJHKPVzQS933
-	 V3xMgqoP5lEOHnR3kNqfWAzdWCJN5nEYqPw8p/0YmT4TotXgKiFIQdZexk6H1AsnXP
-	 L1UK9JgYSGm4IrzIFqHnEymTybsqwcL/FQ+alUM8hj0z4G7f0qKMf4O0N4do5Gtu1B
-	 c67kdSQmVYmww==
-From: Srinivas Kandagatla <srini@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-Cc: imx@lists.linux.dev
-In-Reply-To: <20250521164031.306481-1-Frank.Li@nxp.com>
-References: <20250521164031.306481-1-Frank.Li@nxp.com>
-Subject: Re: [PATCH v2 1/1] dt-bindings: nvmem: convert vf610-ocotp.txt to
- yaml format
-Message-Id: <175225283274.24522.4728093221572696111.b4-ty@kernel.org>
-Date: Fri, 11 Jul 2025 17:53:52 +0100
+	s=arc-20240116; t=1752253063; c=relaxed/simple;
+	bh=oo/M3QHRjzFLrs7NsW4bHVeUgwGKrq+xYEyNUQ+3qek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KWkbUMgXOo7RcYxcyDX+VTKlSdMQ3dln7/3VxKcuor1CDnp4/YbcbSgvd8y+9YCmsAyzUJ2f6hf9Q9CHQbEVCKYaT3SCx0bsMs3OW9FSgvy8IYT3GZdS1ASCOh767auaTXzGt0v4rArd8kQvGela/Of55zdpZKOXfgBMHvyBNdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UOkvV9jk; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752253062; x=1783789062;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=oo/M3QHRjzFLrs7NsW4bHVeUgwGKrq+xYEyNUQ+3qek=;
+  b=UOkvV9jkMdFgoVzCnkKV0Is0dxXTYRjb/XBX2YoOgoO+XZYl4R4elUKK
+   dP0PcRT0MJz2n7HafwzeYSapfaWEr6lSzMP2Rq/buH/9DD8BO0dQ26VEq
+   mL1MKU+Ztyw8E4qVNjTOnt1p/wY32/m6+RFDzeGQIuedbaAweiRDde9Fl
+   14U9vwjq1JuQvHTwn/2S77ecGsUAHps93KNwA3HrB0Yf+67vZoWtrcUj1
+   M+w7oRodTq5DZjiytFzWrxjOcXYMhd9ycUNoAR0PK/vS34OIFK+L+2hfz
+   +Y1RVAS2TprTmsinq+Cc74g5wXBP8J5SKE/FpaBPhJ3QhHD4SCEosYf5G
+   Q==;
+X-CSE-ConnectionGUID: 96Bvk9bWQrqrnmtHnoJU2w==
+X-CSE-MsgGUID: wLfZIzbcRAu76M5bVRVRug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65620273"
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="65620273"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:57:41 -0700
+X-CSE-ConnectionGUID: bY6+wjn6RD+LsQF80L5fNQ==
+X-CSE-MsgGUID: D7sA57oRRQm5OarrscJTRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="157131239"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.35]) ([10.125.111.35])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:57:39 -0700
+Message-ID: <221d5666-a860-40c0-8cab-9c8086c1a597@intel.com>
+Date: Fri, 11 Jul 2025 09:57:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/3] Fix wrong dpa checking in PPR operation
+To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ shiju.jose@huawei.com
+Cc: andriy.shevchenko@linux.intel.com, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250711032357.127355-1-ming.li@zohomail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250711032357.127355-1-ming.li@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
 
-On Wed, 21 May 2025 12:40:30 -0400, Frank Li wrote:
-> Convert vf610-ocotp.txt to yaml format.
+
+On 7/10/25 8:23 PM, Li Ming wrote:
+> In cxl_do_ppr(), there is a checking to check if a DPA is valid, the
+> implementation of the checking is check if the DPA is 0, if yes,
+> consider that DPA is valid. the checking is not right, the correct
+> implementation is checking if the DPA is in the CXL device DPA range, if
+> yes, it is valid.
 > 
-> Additional changes:
-> - Remove label in examples.
-> - Add include file in examples.
-> - Move reg just after compatible in examples.
-> - Add ref: nvmem.yaml and nvmem-deprecated-cells.yaml
-> - Remove #address-cells and #size-cells from required list to match existed
-> dts file.
+> The patchset also includes another part implementing a general helper
+> function cxl_resource_contains_addr() in cxl core so that cxl drivers
+> can use it for all DPA/HPA/SPA availability checking.
+
+applied to cxl/next
+bdf2d9fd3a86 cxl/core: Using cxl_resource_contains_addr() to check address availability
+03ff65c02559 cxl/edac: Fix wrong dpa checking for PPR operation
+5b6031c832c2 cxl/core: Introduce a new helper cxl_resource_contains_addr()
+
 > 
-> [...]
-
-Applied, thanks!
-
-[1/1] dt-bindings: nvmem: convert vf610-ocotp.txt to yaml format
-      commit: fe5df28647e2941db393e376e545f8811cc4f4ec
-
-Best regards,
--- 
-Srinivas Kandagatla <srini@kernel.org>
+> v6:
+> - Fix reviewed-by tag mistake.
+> 
+> v5:
+> - Reverse checkings order in cxl_do_ppr(). (Alison)
+> 
+> v4:
+> - Add cxl_ prefix to resource_contains_addr().	(Andy & Alison)
+> - Add impact statement to the commit log of Patch #2. (Alison)
+> - Add review tags.
+> 
+> v3:
+> - Move resource_contains_addr() from include/linux/ioport.h to
+> cxl/core/hdm.c. (Andy)
+> 
+> v2:
+> - Implement a general helper resource_contains_addr() for DPA/HPA
+> resource. (Alison)
+> 
+> base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af cxl/fixes
+> 
+> Li Ming (3):
+>   cxl/core: Introduce a new helper cxl_resource_contains_addr()
+>   cxl/edac: Fix wrong dpa checking for PPR operation
+>   cxl/core: Using cxl_resource_contains_addr() to check address
+>     availability
+> 
+>  drivers/cxl/core/core.h   | 1 +
+>  drivers/cxl/core/edac.c   | 9 ++++++---
+>  drivers/cxl/core/hdm.c    | 7 +++++++
+>  drivers/cxl/core/memdev.c | 2 +-
+>  drivers/cxl/core/region.c | 6 +++---
+>  5 files changed, 18 insertions(+), 7 deletions(-)
+> 
 
 
