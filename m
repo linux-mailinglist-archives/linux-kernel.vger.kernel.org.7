@@ -1,119 +1,89 @@
-Return-Path: <linux-kernel+bounces-727160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758DFB015D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:24:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C462B015DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1647D3ABC56
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56220765620
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028F0200BA1;
-	Fri, 11 Jul 2025 08:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0026E204C0F;
+	Fri, 11 Jul 2025 08:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zhc5JWcy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="kcMqUPmh"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD6A10E9;
-	Fri, 11 Jul 2025 08:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D191FECB4;
+	Fri, 11 Jul 2025 08:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752222225; cv=none; b=N/qJW17VUWkG4MzmetmnJqihqvJw55pTY20AglAWAB6zOveTOeoZeW5N/vdInpj2fiMosKvq1SsIgFq2UeYvB66MGCZY9uPcl6lIJmn+KDhkDuV8f1d6CroHQ6R5eWUD6haucC/K7qNYveTKY617DUjY7OdQVaVD5jbZFmFTDfg=
+	t=1752222282; cv=none; b=AN8U7bNzIpvV6vNmUdfLvmPpSkz1iji+6FdQOo3w/LaUlPi5Q8VqFkfh0RcNStmpQcP7HA0rG1SPnaoen5O4oK0ohSQS96o0fgdJXCWFcmTwdZvwxO0XVxT6vtry0ADzR1toze4hwhlIBdROymD0mXnoL25Xz1ZYnZ1D4/bdDrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752222225; c=relaxed/simple;
-	bh=d5N2pwASiyaWwDVUeAu0nyMy5rXmcg51QshWHV3PQso=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kEu0AiHdJaGbhKcmT4CXyy5x/I/pDMGh056IcaT7xzH/dmXMsie5px+mJJdilDbvZZwISrQtmHzWzrWo8ktWp8BBq53ZtJZQ8SCORBrndMiMzwiI0C9max/82jNaBIzkFvgN15pwc1R0nL7nAhHZci+lW/efHy2EQgAv33cfNwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zhc5JWcy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1481AC4CEED;
-	Fri, 11 Jul 2025 08:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752222224;
-	bh=d5N2pwASiyaWwDVUeAu0nyMy5rXmcg51QshWHV3PQso=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Zhc5JWcys7XTBS0CBsqPcSU58cc3NI43qYAHQFDCM5nPLDfAvV0EIX1kjb6EIRNUM
-	 QFxREoJmgNJnIP9CaaRTI1zKF6BDyXhPTnLKLAkmgv/PHv10PhtnnBXg5lsBuJRhwr
-	 hB0u6JfYtb2IUcghvOTdedjCQGRCPnQWuLPZutJkqJqioONkhJOjlJy/lJMyy3JFVd
-	 57nfNCIa+RJad8NCBcJTG52F94jmkavBI6NLUpy6sunrVURUY+qzAClSVbwYgicGq6
-	 Ielv4IbOkD/CJ9O41JGlM3Y7BNbS1sKiNMpfeqSFECZAPmrR86tlQx1RjrduFg5Jpx
-	 1HhKoelRXcTNA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Jiawen Wu <jiawenwu@trustnetic.com>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: wangxun: fix LIBWX dependencies again
-Date: Fri, 11 Jul 2025 10:23:34 +0200
-Message-Id: <20250711082339.1372821-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752222282; c=relaxed/simple;
+	bh=oe4lhkLGr8IVFpNtn+zfgMZ6IZRAf5sC+irhj7PnqPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QLevWJH+btKUEYlRSNko2C/vO4ZRxq30jlap3c+HFDn+GcuocNDgBBnhtO2+7KOYely/Z3Uys/P0PGQ2UOFhNpp3uqSZpn8W6ALCT3mVomPjooMnQee1748H5NEQ2A5qLQC1Y1+U7TLDY8sJB8WQhgSBeI+8uMSXNV+v4iz68ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=kcMqUPmh; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=M8HMI4dBSHOZzYxtls69B2jOiIgFLybmVcuOyVJM9LE=;
+	b=kcMqUPmh/qagFxTfJHasI3aSRZlobqClH28SagoqLkvIgkq4ih8ujofBHK1JMe
+	MRsQwq7V2CuHrl7nntwpxJwZUP+u7tfgQsIOsXyAu1s51sCbYOm66k0+yP3+/tkr
+	Pf+A7uK0HwDdqYKceOGcGzj8oJRuFNM638KyKV2lnpotA=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgD3d6YJynBoKCtSAA--.9983S3;
+	Fri, 11 Jul 2025 16:23:39 +0800 (CST)
+Date: Fri, 11 Jul 2025 16:23:37 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Bence =?iso-8859-1?B?Q3Pza+Fz?= <csokas.bence@prolan.hu>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Tim Harvey <tharvey@gateworks.com>
+Subject: Re: [PATCH v2] ARM: dts: imx6-gw: Replace license text comment with
+ SPDX identifier
+Message-ID: <aHDKCWFd9oOZu6NC@dragon>
+References: <20250709-gw-dts-lic-v2-1-ac3b697f65d5@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250709-gw-dts-lic-v2-1-ac3b697f65d5@prolan.hu>
+X-CM-TRANSID:M88vCgD3d6YJynBoKCtSAA--.9983S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JryDAF1rtF47GF45GF1rWFg_yoWxKFXE9F
+	W8Ww15JrWSgFW0k3ySkF1avasrKFWDZr12qwnYqFZxJF98KrZ8WFn8Wryqvrn8Xw4xtrnr
+	CF15Way7C3sxujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUb9NVDUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRqHZWhwiwXXmQAAsp
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Jul 09, 2025 at 09:26:41AM +0200, Bence Csókás wrote:
+> Replace verbatim license text with a `SPDX-License-Identifier`.
+> 
+> The comment header mis-attributes this license to be "X11", but the
+> license text does not include the last line "Except as contained in this
+> notice, the name of the X Consortium shall not be used in advertising or
+> otherwise to promote the sale, use or other dealings in this Software
+> without prior written authorization from the X Consortium.". Therefore,
+> this license is actually equivalent to the SPDX "MIT" license (confirmed
+> by text diffing).
+> 
+> Cc: Tim Harvey <tharvey@gateworks.com>
+> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
 
-Two more drivers got added that use LIBWX and cause a build warning
-
-WARNING: unmet direct dependencies detected for LIBWX
-  Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
-  Selected by [y]:
-  - NGBEVF [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI_MSI [=y]
-  Selected by [m]:
-  - NGBE [=m] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
-
-ld: drivers/net/ethernet/wangxun/libwx/wx_lib.o: in function `wx_clean_tx_irq':
-wx_lib.c:(.text+0x5a68): undefined reference to `ptp_schedule_worker'
-ld: drivers/net/ethernet/wangxun/libwx/wx_ethtool.o: in function `wx_nway_reset':
-wx_ethtool.c:(.text+0x880): undefined reference to `phylink_ethtool_nway_reset'
-
-Add the same dependency on PTP_1588_CLOCK_OPTIONAL to the two driver
-using this library module, following the pattern from commit
-8fa19c2c69fb ("net: wangxun: fix LIBWX dependencies").
-
-Fixes: 377d180bd71c ("net: wangxun: add txgbevf build")
-Fixes: a0008a3658a3 ("net: wangxun: add ngbevf build")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/ethernet/wangxun/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/wangxun/Kconfig b/drivers/net/ethernet/wangxun/Kconfig
-index c548f4e80565..424ec3212128 100644
---- a/drivers/net/ethernet/wangxun/Kconfig
-+++ b/drivers/net/ethernet/wangxun/Kconfig
-@@ -68,6 +68,7 @@ config TXGBEVF
- 	tristate "Wangxun(R) 10/25/40G Virtual Function Ethernet support"
- 	depends on PCI
- 	depends on PCI_MSI
-+	depends on PTP_1588_CLOCK_OPTIONAL
- 	select LIBWX
- 	select PHYLINK
- 	help
-@@ -85,6 +86,7 @@ config TXGBEVF
- config NGBEVF
- 	tristate "Wangxun(R) GbE Virtual Function Ethernet support"
- 	depends on PCI_MSI
-+	depends on PTP_1588_CLOCK_OPTIONAL
- 	select LIBWX
- 	help
- 	  This driver supports virtual functions for WX1860, WX1860AL.
--- 
-2.39.5
+Applied, thanks!
 
 
