@@ -1,79 +1,136 @@
-Return-Path: <linux-kernel+bounces-727635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D488EB01D5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2B8B01DAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27DB1584E9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF417164258
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04FF2D781D;
-	Fri, 11 Jul 2025 13:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F662E03E7;
+	Fri, 11 Jul 2025 13:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fl0L0ViY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f8k9Hj+t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E66225409;
-	Fri, 11 Jul 2025 13:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC482D8385;
+	Fri, 11 Jul 2025 13:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752240320; cv=none; b=PNrAANv+XUtuVfs5eThLj04E/t6RdqV2OP5nsvPl4q4rx1Iu/JICuwUKLtq+sCJrIA/j4yEJOF9Mqqx/Uvoo99+/WgdJxVBQFn3QP6siufJ4bmI4nT+tZ5T7/4uVkBYTeKCXB+YdgsyQCmQlQAkUJ4FWLFowAKOnYG3D4F8qDHA=
+	t=1752240864; cv=none; b=ecjWps1FAtR16OChmiTvfSm19FejbBEmkg9gJS8PHGaHELNqhL9jGOrH7C97VeMiSiVeK3mbNH2iN5VXrxcO6tzT06OYk3gC8iB/rJIDAzVoMf7lmxVDSZIjTwZe9pofg1Ox/hifYgo911rn0zCtYxIY7+0IyMdFIvOMZ2d6XQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752240320; c=relaxed/simple;
-	bh=eJtjrH8gy0v1B2l/1NsY9jCmHSjHw/XmPbkiPv2G4+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qpg5nidGxMk5EDegZ53lSpCz9FEIXBxbdTVdcu0ufEt+jLCSIt733Pad9inaSE7WU8tNLnkxsTFxN5HxvP/Iqa2Tx6odgwFask6oM93SetvNoGGpAKwQ5QEjlI6Hdb485W3uQrzIncaRuiq4Emti28UryqB2rNQSm7XCoTuvtaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fl0L0ViY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9530DC4CEED;
-	Fri, 11 Jul 2025 13:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752240319;
-	bh=eJtjrH8gy0v1B2l/1NsY9jCmHSjHw/XmPbkiPv2G4+A=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Fl0L0ViYW0bNk2kp3CRVmXI4gOiTl/4+o/XGQu6lmjMyGfElPjol3aSh/aWxHMKGe
-	 limKlmHFPM5T3Nf0/smGl8K4CA1mTHyXU2JtFdFAr/xdxqUTPXFPYa9lRoGcSOkkQ2
-	 YIhq1jHrHpQh+W9byUk34rDsKUS7Ug/Y364QcQFOcW6eBVNXY+IjEp1XZ7yql1VSqL
-	 7M35mUCndMRKwzbpf1/NC9wmKxrmYF1sZMAFlbM1BAm9IXgDcyl4z5Ts4F+u9rWZtU
-	 yvd70rgvkC59vLTs6iyMGJJCQTbM1W2ZIxof7Ui2GR+WUNzeqhNfO4eiIgK5S7iKw/
-	 lXcpD+zsICNbA==
-Message-ID: <00cfae5d-1e96-484b-b294-2fd54f5ad2b8@kernel.org>
-Date: Fri, 11 Jul 2025 15:25:15 +0200
+	s=arc-20240116; t=1752240864; c=relaxed/simple;
+	bh=hIuaHIUW/2tBZyLHxK7pwAlBg9QJ/ynlLfhkCZird+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S1ME/YDoATAhPmtqfNgBJ7/ibsIlNGCLzML09JxN8dMqmM5dW90l3xTEG18KkMhFV+3oAmSu382QO04cj8z87rd7+21yXoHxplv88lWAIgcilwwN3iAO6Psb7Zw7aRbs4yRbbAp2YkmYYMhsnoediO5VRYVfNnjgWe9fD8h2SKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f8k9Hj+t; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752240862; x=1783776862;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hIuaHIUW/2tBZyLHxK7pwAlBg9QJ/ynlLfhkCZird+Q=;
+  b=f8k9Hj+tMTBIIUMCQ67XKhoNJMIIBd4uVgESGvgynITO3y/wL/vaHJJX
+   xfZae5GiIRpPWuwZo2hOvaz8Uw7ppbvlhguW7rqFqqHmyU8QIHJsJrCQF
+   HuOXR/cqR2AXnhH+AzrFEpjnk4rqKKFxo5rPL//p+hiRQvrwRpcPRJEOQ
+   JfYgKX6d0GsMVTFUOTITjmGSf073cm5hMeJcDbpQ0mSRE/OHP64bw9o3t
+   IaeTvMgTwFDlNBuSv0h2GwYv1VALWYjPI2yRR33+wbRUnZ/MPQDy93mgW
+   NqxdGHkH0uKcllLt/YZKVCrPWqXH56Iu3P+mKnwdL+Af0B3reYtEex2x9
+   g==;
+X-CSE-ConnectionGUID: U2a9H2PuSquC8vuPOHDInA==
+X-CSE-MsgGUID: 7zG92DFYSfqfGSpUV2AQxA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65603392"
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="65603392"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 06:34:21 -0700
+X-CSE-ConnectionGUID: afqFL2hwTwOMOffUEbd4AA==
+X-CSE-MsgGUID: NzGjN/0zS6+L/6GWYO+RQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="187349197"
+Received: from lxy-clx-4s.sh.intel.com ([10.239.48.52])
+  by fmviesa001.fm.intel.com with ESMTP; 11 Jul 2025 06:34:17 -0700
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-coco@lists.linux.dev,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Kai Huang <kai.huang@intel.com>,
+	binbin.wu@linux.intel.com,
+	yan.y.zhao@intel.com,
+	reinette.chatre@intel.com,
+	isaku.yamahata@intel.com,
+	adrian.hunter@intel.com,
+	tony.lindgren@intel.com,
+	xiaoyao.li@intel.com,
+	rick.p.edgecombe@intel.com
+Subject: [PATCH v2 0/3] TDX: Clean up the definitions of TDX ATTRIBUTES
+Date: Fri, 11 Jul 2025 21:26:17 +0800
+Message-ID: <20250711132620.262334-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH 3/3] kunit: test: Drop CONFIG_MODULE ifdeffery
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Brendan Higgins <brendan.higgins@linux.dev>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-References: <20250612-kunit-ifdef-modules-v1-0-fdccd42dcff8@linutronix.de>
- <20250612-kunit-ifdef-modules-v1-3-fdccd42dcff8@linutronix.de>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20250612-kunit-ifdef-modules-v1-3-fdccd42dcff8@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 12/06/2025 16.53, Thomas WeiÃschuh wrote:
-> The function stubs exposed by module.h allow the code to compile properly
-> without the ifdeffery. The generated object code stays the same, as the
-> compiler can optimize away all the dead code.
-> As the code is still typechecked developer errors can be detected faster.
-> 
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Although some duplications were identified during the community review
+of TDX KVM base support[1][2], a few slipped through unnoticed due to
+the simultaneous evolution of the TD guest part.
 
-Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
+Patch 1 fixes the typo. Patch 2 removes the redundant definitions of
+TD ATTRIBUTES bits. Patch 3 rename KVM_SUPPORTED_TD_ATTRS to include
+"TDX" in it, based on Sean's preference[3].
+
+Note, this series doesn't rename TDX_ATTR_* in asm/shared/tdx.h to
+TDX_TD_ATTR_*, so that KVM_SUPPORTED_TDX_TD_ATTRS in patch 3 looks
+a little inconsistent. Because I'm not sure what the preference of tip
+maintainers on the name is. So I only honor KVM maintainer's preference
+and leave the stuff outside KVM unchanged.
+
+[1] https://lore.kernel.org/all/e5387c7c-9df8-4e39-bbe9-23e8bb09e527@intel.com/
+[2] https://lore.kernel.org/all/25bf543723a176bf910f27ede288f3d20f20aed1.camel@intel.com/
+[3] https://lore.kernel.org/all/aG0uyLwxqfKSX72s@google.com/
+
+
+Changes in v2:
+ - collect Reviewed-by;
+ - Explains the impact of the change in patch 1 changelog;
+ - Add patch 3.
+
+v1: https://lore.kernel.org/all/20250708080314.43081-1-xiaoyao.li@intel.com/ 
+
+Xiaoyao Li (3):
+  x86/tdx: Fix the typo of TDX_ATTR_MIGRTABLE
+  KVM: TDX: Remove redundant definitions of TDX_TD_ATTR_*
+  KVM: TDX: Rename KVM_SUPPORTED_TD_ATTRS to KVM_SUPPORTED_TDX_TD_ATTRS
+
+ arch/x86/coco/tdx/debug.c         | 2 +-
+ arch/x86/include/asm/shared/tdx.h | 4 ++--
+ arch/x86/kvm/vmx/tdx.c            | 6 +++---
+ arch/x86/kvm/vmx/tdx_arch.h       | 6 ------
+ 4 files changed, 6 insertions(+), 12 deletions(-)
+
+
+base-commit: e4775f57ad51a5a7f1646ac058a3d00c8eec1e98
+prerequisite-patch-id: 96c55dfc551bf62e0b18e75547ba3bf671e30ee8
+-- 
+2.43.0
+
 
