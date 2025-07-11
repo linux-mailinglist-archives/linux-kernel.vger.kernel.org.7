@@ -1,206 +1,131 @@
-Return-Path: <linux-kernel+bounces-728304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50834B0265D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:25:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 983A9B02661
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97DF4E32C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC3A81C47B07
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3952F2704;
-	Fri, 11 Jul 2025 21:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6958722DA0C;
+	Fri, 11 Jul 2025 21:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gSo7GwuY"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YdqyT2bL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2021C84A1;
-	Fri, 11 Jul 2025 21:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37861C84A1;
+	Fri, 11 Jul 2025 21:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752269125; cv=none; b=N0RjPAfZs8MQmOI+BZTbL44OgPnmBPaj0HghwKi7fqpkQ5bpy77UJ2iL9/tANVtmkQvpJVq9nQoN7UEng/F3/pFcDbeusRSnK6XPnR7HwllpwYzMTN9BD+FzVxvbY+CIvwiIZoIO6M30HZHOyoigqm28ix9bvUzp4b9B78wHSQo=
+	t=1752269319; cv=none; b=D213f2TQtpkL3yEoIXiwqNwmWJ873TqijtRwxLO5k0yZgwW8aIpCP/cdG+1l1psXVB2HFLJ+C+3P2IlOFCXKT81EBDPs3kEylkNsmSUJGuyk+C3pYoCxUV0kh4nzIDvdIOQtH8M6WV8HxhwavbZMOK3sVaX4ixh78hZigoOcamw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752269125; c=relaxed/simple;
-	bh=vC3PVXTJBIz2jeZWSCWKN0Xnoj9RurMpRQ9hz73geyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S2yWdcs8PkVes8WoLaAx9UXehDX8dYtDzTFJLFghv3wqSsj8om0Z9k/2KPFaj2eEksdcvwrVPuKdJENNuHPWOFBIjG9ZrNJYoMHRWnpRZ1qUJ6i7SkIMQOO2G0DVFgmrj+g5Q6xM3BUecnDRPb7qhLcIwjOXxuBrI9E+7kdDgtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gSo7GwuY; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7d20f79a00dso352915885a.0;
-        Fri, 11 Jul 2025 14:25:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752269123; x=1752873923; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=81AF1UakxRffZTLQAg4yaS1lBgs+aKnzFImbGXcyFbg=;
-        b=gSo7GwuYueIVJcP73eNhk7a2JTqsg1wPODqM54cHUCFG3uZdBJEOrijPwPz283nPwJ
-         L4MrdTo76Veu6NACCeH2Jc+l0E8xy5QxlUECb1+1+36i6VZMbI5PLBTpRS5TUZgt23dy
-         f6onml/7SE9hfpvc61r34VGl/mYhezH7BSllZdK+CUKBn5XRD3wq4jVxBHZpu02k5cZ9
-         xrbd0VL3kaBX4vbzz7d3uG1smp3djze+4uu5ME1AzaKYiC8Sbq+nt1t9nJ82EXeH1QQt
-         iDx9ZNYYt6PYcs4/o5/4L2cH2bMhyugkp1FgmUE1wb40euUW2WpsYIb6Y4rUnUnT+Qdd
-         7LSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752269123; x=1752873923;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=81AF1UakxRffZTLQAg4yaS1lBgs+aKnzFImbGXcyFbg=;
-        b=HAID6snOLm6OykIl8H7yL7BswnDHh9GxVJJwM6vtftUmtvpyX/eNIivSsxGw93Je7U
-         fl4PUAd/2l4bHr6V6ELiAed/5YrngfGOIIODvyVoUOHwMpSPMB8xDGvJIcMPuGNXedPl
-         hoWq9vRU9/oAzTrKmqO9lJI/FPlT+zuFXqNqnqu4wjLPIRKR+Ib6Nvat/43igK7o0H/K
-         CnlSV1HChD12o67Cje2tzIPa/HUT4QKkw42bnNXWo6JWcsCxVZX5A2YRiVudJrFw1hnx
-         p1E6PXtBTDraIY0qHRJD7j213dQliZLKTZvcDjdI8IGr6gPNjlZobnE3PJ8N7N76L5T0
-         uiMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrS4xuCyhQsNsFNn4lWx5qh3H8Z9UxnfOzGP0in8E4HiLObN8WUuqx1KMIm0pt6Ug42dpnB1bT7gCu@vger.kernel.org, AJvYcCXe5FfO0t6j2bxVf4USq5JWYQlhq/qyT5FhpK7FR/WiYAMeCcPZ43QRou5ZlCj//SGKEYcw1Qkb7OGRwHTi9iQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1uS87buQ3ALutgtCMQYZlfxt+tGNU41rytasybvuNcSizzVo9
-	roN4eQ8ZokiEz8+RzbMnjdZLiA4iiSNvaT4j5b3oYVqRDi/N8RQ/iOja
-X-Gm-Gg: ASbGncuUGaqJuNGc9VdlyjkpcWfn2E9x73bzDoQBKbzzxd15N/6/NwuybQFfwLOjDzJ
-	wIlIVzAeTTHvQDL/KrgjweJshgzWfjMT0EqSIr5Tz56+pzOO9UJacvVcTyr8knMjXYMpL0+udn/
-	maE4UuSzJNY2xDMFXf8Q118pmg4ufYL+imtNMAJYhws5M5Nvhu1WO59R2SC6LmX9M0s0sZvovtF
-	e8orq5ntfJGhhp1GeVXp9eI+CCfIjXhy/7ATKQ58T1v9/QEftbStimiKOrDaICD4kbAkR+DRopA
-	ZbfyMtG17Gwd5sgmsHyVKTRd2B0pyR0qFP2wlIMx7wgHT/2C/zsjnDA5Y3Q/umfcGh7vMpT/Huk
-	5B405NxQgfrKQPGCm+OkO2p728jgV60TGV7+A1IaRAqQxmToF0/GYSw6z6t1tyv7MIXXcarhKQS
-	UGyzUBa0q33EeUZ2farxd5Ubs=
-X-Google-Smtp-Source: AGHT+IFSKRxEte1QaA1H5Go9CtUQyuCEC2zrhMa8WdRw87GMAgfHqEdwaEhwf2VDl2HqfCn3z93Kjw==
-X-Received: by 2002:a05:6214:262c:b0:704:9596:b894 with SMTP id 6a1803df08f44-704a36062c0mr77709596d6.13.1752269123167;
-        Fri, 11 Jul 2025 14:25:23 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497db3253sm23591726d6.105.2025.07.11.14.25.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 14:25:22 -0700 (PDT)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 2AC2AF40066;
-	Fri, 11 Jul 2025 17:25:22 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Fri, 11 Jul 2025 17:25:22 -0400
-X-ME-Sender: <xms:QoFxaGwKm046rbKSuTkGGogiy9YUqj9OJE1_fBcFbAytVTIMMFTrQQ>
-    <xme:QoFxaDzhwVBkNIcPleebQ6eIT4bxDIHvuNo1FfDib9ZInX9KrWD4tsKSQl4CJEUrc
-    Pg9VaJ_XrpuMHkypw>
-X-ME-Received: <xmr:QoFxaM4tSIJz5h9Py6xa8pkPe5lBfuQeyEtjXWjiPmXd1Qtit_bhu09QOvuM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeggeegtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepffdtiefhieegtddvueeuffeiteevtdegjeeuhffhgfdugfefgefgfedtieeghedv
-    necuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghr
-    shhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvg
-    hngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohep
-    vdejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlohhsshhinheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhkmhhmsehlihhsthhsrdhlihhnuhigrdgu
-    vghvpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghl
-    vgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrh
-    ihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghi
-    lhdrtghomh
-X-ME-Proxy: <xmx:QoFxaMA-vNNviVajjsoHRzvMKL6dJv8QvCh1W_ApA08cHRoB7cAZPQ>
-    <xmx:QoFxaGCPflidngcM2V3-EEQ07cX8Lm2eAHnexAs-GkS_Gro0f5Gmfw>
-    <xmx:QoFxaFpi11gKItmo9z72GHFLox-qBRNNJh8uzc39jDp7DuFHmPl_ew>
-    <xmx:QoFxaA3GulzrE8l2u55pNr-1wTSLO1IF_52K1NcNd9j57V4N_OsjRg>
-    <xmx:QoFxaMXiHyGYfY5LkpsW1UmvWH3deTChwLzTVgTAOZAzYkXGCjZH8F10>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 11 Jul 2025 17:25:21 -0400 (EDT)
-Date: Fri, 11 Jul 2025 14:25:20 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v6 4/9] rust: sync: atomic: Add generic atomics
-Message-ID: <aHGBQLSzOq6RsqKt@tardis-2.local>
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-5-boqun.feng@gmail.com>
- <DB92I10114UN.33MAFJVWIX4AB@kernel.org>
- <aHEQKBT68xvqIIjW@Mac.home>
- <DB99JZ3XMHZS.3N0GLG94JJSA9@kernel.org>
- <aHEWze8p40qeNBr_@Mac.home>
- <DB9FX5XAK4JJ.3GTCC6Z5EHARV@kernel.org>
+	s=arc-20240116; t=1752269319; c=relaxed/simple;
+	bh=mgTFc9Ih57nI00XG3MdTUbxlxI73VXPHE562WpIzZ6w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dbcjPCg3+G1fjn0lf3Lo+QVjZdfp0tdJSWmem4wMWgzI7i3VGhMok5iWxcRSMZuKPFm1bexNzQLMauXraz5hPIZg4XnHO5Lc2ktABOwaWtZJNNffAv6e6L3XO2RgsPRdj5efTWVWCUOvQ+pqhA9wg+TKvlvEIfHPoimQpDboq2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YdqyT2bL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D42E6C4CEED;
+	Fri, 11 Jul 2025 21:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752269319;
+	bh=mgTFc9Ih57nI00XG3MdTUbxlxI73VXPHE562WpIzZ6w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YdqyT2bLFSoqRKKLyy+oKI0+QiaZ7ntkAP684LSrI0CT9ydHdbREd3ve1gIcFZQyL
+	 SNDwM0v4hZ+rEFq9Zp/qqCUJm5FBTIGNRWp4iYIEXteRVJ86ikhQ1+uRdvoToqJD1u
+	 mN8i91sQ3pdVVOc5eJ4ZWJftdAuc1uXxMsV+p/K8OCXS83joqb2PdPC4R2ic29RWvc
+	 ZASkAi2H+wu8Y1qgKfJqRa1XBTns230biniXdzBv3WqbXsQI2sFl+eXHCoqt6za7XS
+	 vIBtRYplwHIE9xtwevn1pbmJ2JRghzm/Cy/SSiNCvQCoPSyCaMS0wmQSlRbyW60A29
+	 GUDD2JBR0LJbw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Arnd Bergmann <arnd@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v2] lib/crypto: arm/poly1305: Remove unneeded empty weak function
+Date: Fri, 11 Jul 2025 14:28:22 -0700
+Message-ID: <20250711212822.6372-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB9FX5XAK4JJ.3GTCC6Z5EHARV@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 11, 2025 at 08:34:07PM +0200, Benno Lossin wrote:
-[...]
-> >
-> > So all your disagreement is about the "extra safety requirement" part?
-> > How about I drop that:
-> >
-> >     /// Returns a pointer to the underlying atomic `T`.
-> >     pub const fn as_ptr(&self) -> *mut T {
-> >         self.0.get()
-> >     }
-> 
-> Yes that's what I had in mind.
-> 
-> > ? I tried to add something additional information:
-> >
-> > /// Note that non-atomic reads and writes via the returned pointer may
-> > /// cause data races if racing with atomic reads and writes per [LKMM].
-> >
-> > but that seems redundant, because as you said, data races are UB anyway.
-> 
-> Yeah... I don't think the stdlib docs are too useful on this function:
-> 
->     Doing non-atomic reads and writes on the resulting integer can be a data
->     race. This method is mostly useful for FFI, where the function signature
->     may use *mut i32 instead of &AtomicI32.
->     
->     Returning an *mut pointer from a shared reference to this atomic is safe
->     because the atomic types work with interior mutability. All
->     modifications of an atomic change the value through a shared reference,
->     and can do so safely as long as they use atomic operations. Any use of
->     the returned raw pointer requires an unsafe block and still has to
->     uphold the same restriction: operations on it must be atomic.
-> 
-> You can mention the use of this function for FFI. People might then be
-> discouraged from using it for other things where it doesn't make sense.
-> 
+Fix poly1305-armv4.pl to not do '.globl poly1305_blocks_neon' when
+poly1305_blocks_neon() is not defined.  Then, remove the empty __weak
+definition of poly1305_blocks_neon(), which was still needed only
+because of that unnecessary globl statement.  (It also used to be needed
+because the compiler could generate calls to it when
+CONFIG_KERNEL_MODE_NEON=n, but that has been fixed.)
 
-I'm going to keep it simple at the beginning (i.e. using the one-line
-doc comment above). I added it in an issue so that we can revisit it
-later:
-	
-	https://github.com/Rust-for-Linux/linux/issues/1180
+Thanks to Arnd Bergmann for reporting that the globl statement in the
+asm file was still depending on the weak symbol.
 
-For your other feebacks on patch #4, I think they are reasonable and I'm
-going to apply them, except I may need an extra review on the doc
-comment of Atomic<T> when I have it. Thanks!
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+---
+ lib/crypto/arm/poly1305-armv4.pl | 2 +-
+ lib/crypto/arm/poly1305-glue.c   | 5 -----
+ 2 files changed, 1 insertion(+), 6 deletions(-)
 
-Regards,
-Boqun
+diff --git a/lib/crypto/arm/poly1305-armv4.pl b/lib/crypto/arm/poly1305-armv4.pl
+index d57c6e2fc84a5..dd7a996361a71 100644
+--- a/lib/crypto/arm/poly1305-armv4.pl
++++ b/lib/crypto/arm/poly1305-armv4.pl
+@@ -44,11 +44,10 @@ $code.=<<___;
+ # define __ARM_ARCH__ __LINUX_ARM_ARCH__
+ # define __ARM_MAX_ARCH__ __LINUX_ARM_ARCH__
+ # define poly1305_init   poly1305_block_init_arch
+ # define poly1305_blocks poly1305_blocks_arm
+ # define poly1305_emit   poly1305_emit_arch
+-.globl	poly1305_blocks_neon
+ #endif
+ 
+ #if defined(__thumb2__)
+ .syntax	unified
+ .thumb
+@@ -720,10 +719,11 @@ poly1305_init_neon:
+ 
+ .Lno_init_neon:
+ 	ret				@ bx	lr
+ .size	poly1305_init_neon,.-poly1305_init_neon
+ 
++.globl	poly1305_blocks_neon
+ .type	poly1305_blocks_neon,%function
+ .align	5
+ poly1305_blocks_neon:
+ .Lpoly1305_blocks_neon:
+ 	ldr	ip,[$ctx,#36]		@ is_base2_26
+diff --git a/lib/crypto/arm/poly1305-glue.c b/lib/crypto/arm/poly1305-glue.c
+index 2603b0771f2c4..5b65b840c1666 100644
+--- a/lib/crypto/arm/poly1305-glue.c
++++ b/lib/crypto/arm/poly1305-glue.c
+@@ -25,15 +25,10 @@ asmlinkage void poly1305_blocks_neon(struct poly1305_block_state *state,
+ asmlinkage void poly1305_emit_arch(const struct poly1305_state *state,
+ 				   u8 digest[POLY1305_DIGEST_SIZE],
+ 				   const u32 nonce[4]);
+ EXPORT_SYMBOL_GPL(poly1305_emit_arch);
+ 
+-void __weak poly1305_blocks_neon(struct poly1305_block_state *state,
+-				 const u8 *src, u32 len, u32 hibit)
+-{
+-}
+-
+ static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_neon);
+ 
+ void poly1305_blocks_arch(struct poly1305_block_state *state, const u8 *src,
+ 			  unsigned int len, u32 padbit)
+ {
 
-> ---
-> Cheers,
-> Benno
+base-commit: 57b15e9260a31438e91cf83dbfcb63333b24c684
+-- 
+2.50.1
+
 
