@@ -1,124 +1,142 @@
-Return-Path: <linux-kernel+bounces-727169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B85B015EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:27:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96762B015FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D69B41C87430
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E783AB98A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33F2201004;
-	Fri, 11 Jul 2025 08:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87970219A91;
+	Fri, 11 Jul 2025 08:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KEfBDueQ"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TbTHVDSl"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6189D212FAA
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458DC201033;
+	Fri, 11 Jul 2025 08:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752222363; cv=none; b=eMLIGySrjE6FEnkPjQcERKhIQEQQ7j6i0HqvQlObcSRVpBf8oRoCVqWla9xjsWRC98vk3LYelPRc/UutOmITunFfPoMRWO2oLxZ7VVR4V0c22pWl+mGmoDd7gqjKvTYcZJ9sHqh4fHFkD3SrsE6J6GwmZUuJgiG1jAzJXHp5nCw=
+	t=1752222395; cv=none; b=DhGU2GTutGR+TWitOoSrqMdWM6utgNyc8K8EFHq9uskBWHB6pJYZUqllT9Wq1j/uExy1hi82j9LW1OYKj4XENfGbfYYuoGdJywzjwREstfvYA+C876eZODB6SmNZg7x+CKaMnN4sD9nVgWQeLKNxLftoDho+xKQXLJx2aaQvWUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752222363; c=relaxed/simple;
-	bh=0bP+GByP/BRW1kn9Hg79IzJwx8Y/oExKL7f3IGwumNs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UEH135Y4z2hW2xTs1yTKAHrETXyA0ph0SdAi+FC/uXdvrDFSvaVAZaXGyAnj230jk22fbNiyWOFXh13DA9g14/bBE/0jDCmSCzi7PuMuyAq5fW2rx1nqt7DhN6hgSOZCYwE9X5E64COFgbgVNnRcKInhZtZbgSspnT8hrpBicdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KEfBDueQ; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3122368d7cfso1638457a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 01:26:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1752222359; x=1752827159; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/A2fAk/hY+VXgln3RIT8cl3wcMIkArGIQeZSyy9BGEA=;
-        b=KEfBDueQbSoC4ezji2EHMb8tSOD/FxNAa8e8LZykAc84CM+6tSHfPtn07kh1z/kWLk
-         SHSwrVDm10L2e5ZHLhfrq7ovQA1ZMvr9hx8vmBipmoVIivEAmJ3wcOrwiE05VEiLd2Of
-         +3JakFla9Qwl6F0LrbX4Ayszwpzs69vTAWdd3NMU+NPZokpf2ahp18om+8fzHZ42kKA4
-         7xLJbvDxtZ3WdOeRAEpDog3EeOOySsW+87B4vLddDM7dlnPTkL38diDRUiILvnp+2LYq
-         hX+3EE9ElUawcgkHGW82QDCrCgbaBcEVTTQCdVi4JD5aBiHezv8ZUxHF2tIpFaSSHWc2
-         BwiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752222359; x=1752827159;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/A2fAk/hY+VXgln3RIT8cl3wcMIkArGIQeZSyy9BGEA=;
-        b=ENxyhj3fpbFkdtY6c6Rf7+uA6M+zzVu2QDgVh+hX+EuYRe8kDTYDGaawkEX8u48Acn
-         xuxFCLzKMz4jYdLSHnAkRGkU0D7hSG+thrRRbWA4jMSQwwzvJs3MNu8DNIua7jFq0m/T
-         60VRp2gpoUpJtfc+YlY6t2XJTUMHSPJoRcZdouTSxTenOk+eLOeTdxK+QjkSGNH/jctB
-         J/JIT9e2wqwvt/Tbyqkc3e+DLITHJ1vP/72hceAiDFJSCUQVu2yXs7QtyHK4CxrLOMUa
-         bub+CRRtO7anQqFTaWOifwNf4ncE5FLqSmWX62d+OrPULRevRJjcIvqpniQUFzHcWaY5
-         2A4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXaJXdncIFJZQiksxY2EqtUhtNuMqzfPZhvsBM19dwhqxOtd0tyG3b6QCIqK5iBcdeyOFnepZhJL6C01X8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP0yKwNLDUalPobeYslfzvPcAJrpB27DI6tD+FN1bRtzdDQ+DO
-	ZFkBck9hveS4UTlvO3OTltXXiIBuiua+TjizIqni9vwZrM+Qb/jefZY6MCRGQxqFqMfoCdEM2RQ
-	WxkyLmjB3x9eWcAdQfNb/tHvbNJ2H13GEPDtMfF40Hg==
-X-Gm-Gg: ASbGncucaFCldb3PWdiWkPYoJziEwyz4Ylu8rhv/S9N/1TQmo5IqkhGzcQtPyCwzcdF
-	UVjspPUSj3e0SmOXpcBUzclQKZ/a3aBT5svZK39KN+a2N76EiptE3+QqF47gwwS0WUgjFjb2G+y
-	xjzpFAqSy1apaNm3VYjrhD2/X4ji1CKZfBCX50yJjHwAsMZ5Z+kys6ZZS9cCwUIXmF4dArRIfrs
-	DzkrQ7GEgU2e4oEL8s0
-X-Google-Smtp-Source: AGHT+IFCp1pcD9GmdtCsf5iRMPFHSbp9FsiGavSusUMyRrFKZGE3x/NS3PMLeRJnScYqO8frgAwfK8U/bj7U7Muxpzw=
-X-Received: by 2002:a17:90a:d88e:b0:312:959:dc4f with SMTP id
- 98e67ed59e1d1-31c4cc9d4f4mr3742093a91.5.1752222359484; Fri, 11 Jul 2025
- 01:25:59 -0700 (PDT)
+	s=arc-20240116; t=1752222395; c=relaxed/simple;
+	bh=kxzoflC2PyKGhcEfEIOuEh5rgftPwliDdjfw5NgFuU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JuerB3jquLGUI1f3Wh1aPCautEx2znOIXLPGKqO3uAk6m/9WTCpcyTFu3UG6EEEJi+ZFrrdywW5RlwTNWGKXyEXsldmvT9lTfZ1qA1hNsIUBTrOxsdD56iKcrgUmkmT3Mw8O3ddoGeN7W4mLsh9JTqsHt5Cka8SIwkpoONIE104=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TbTHVDSl; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B1XMje030881;
+	Fri, 11 Jul 2025 08:26:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kxzoflC2PyKGhcEfEIOuEh5rgftPwliDdjfw5NgFuU4=; b=TbTHVDSlVIdL0pOS
+	A1tajtm+R98duCnbPURH8uGzs0Pdylf8dGmzrCMxjFOQzH71IzKhEY/Pv5bRLgMq
+	bceHEsRdAj10hgLelKdc6Aaj8itTfuFn3ePvBcOLFudR+fFJkBr0OUAO6kJFrl8G
+	4DHzfHxfq4GcpgVzeJdvDt9J+bQUTHojYnBeSJPD1ibLvlHBS7v8Sf9jqlwFfnXk
+	IxcwrZ6xui0y7bt0Uyf2HvZlMoy1KjRmc52O3UkQXWeY/YoB4xpOHGyK7/CEpR/8
+	bJHzQ2ZbF3bim/t+gS1hV5WXuEZMZc7KIOCWg7QFHreJHSvmm8frxAuhX0Ja6yPo
+	39vHig==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smbeqwh1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 08:26:25 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56B8QOIR030866
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 08:26:24 GMT
+Received: from [10.253.32.112] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 11 Jul
+ 2025 01:26:17 -0700
+Message-ID: <ff2fb737-a833-474d-b402-120d4ed68d39@quicinc.com>
+Date: Fri, 11 Jul 2025 16:26:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710133030.88940-1-luxu.kernel@bytedance.com> <DB908AUW6N76.3SYAGIFGCDJ27@ventanamicro.com>
-In-Reply-To: <DB908AUW6N76.3SYAGIFGCDJ27@ventanamicro.com>
-From: Xu Lu <luxu.kernel@bytedance.com>
-Date: Fri, 11 Jul 2025 16:25:48 +0800
-X-Gm-Features: Ac12FXyVj12e58tShQlG7C9K_6PvavwmURsMwnmPFZyguWbVaWs8xpiRLy86iqI
-Message-ID: <CAPYmKFu2Ggu7_SFkrhfKX9rT7Pdas+jSjksGMFAhHf7Wa83Y8g@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v2] RISC-V: KVM: Delegate kvm unhandled
- faults to VS mode
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Cc: cleger@rivosinc.com, anup@brainfault.org, atish.patra@linux.dev, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] dt-bindings: PCI: qcom,pcie-sa8775p: document
+ link_down reset
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <jingoohan1@gmail.com>,
+        <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+        <bhelgaas@google.com>, <johan+linaro@kernel.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <neil.armstrong@linaro.org>,
+        <abel.vesa@linaro.org>, <kw@linux.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <qiang.yu@oss.qualcomm.com>,
+        <quic_krichai@quicinc.com>, <quic_vbadigan@quicinc.com>
+References: <20250625090048.624399-1-quic_ziyuzhan@quicinc.com>
+ <20250625090048.624399-3-quic_ziyuzhan@quicinc.com>
+ <20250627-flashy-flounder-of-hurricane-d4c8d8@krzk-bin>
+From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+In-Reply-To: <20250627-flashy-flounder-of-hurricane-d4c8d8@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA1OCBTYWx0ZWRfX+z+r8++6epTR
+ gw99rxcdGSc64xZ+vTz1TjkJ8/bMBlMR8RtYJV9glCN8JaGMcFNpxYiRE/cGXzSuNOYL271vkr9
+ 6l32XhIM2SZrS1i1cDEjrs8LPgTOOdQrEY6NfxOHC7n6MNBKNiguGzSr+Uy7jY68YgQAQDoNaAu
+ UL+qOZIdqZ3joE9rh2T28dJlGE2Hzoid0MVomtBPikdH4GY1U/vQG9qwdvKP0XKIuGbBtGwpBPw
+ 5hCCvrJjgOiuWgNzsWK8HiT1UDbZY5fhmdREzp/9EEzBeYWx6pbUfBsv1UG9z4oeEkfr3r9brTV
+ JQrkA7ZzssGzP8saM47QMJD3/OscFocDJdThKDu58UHSzH5la3CFWhvuxW44kWrHsbkrqsjaUNE
+ JxF0CQpIT1ZIQJbN0jTnyBqXUNgCIky3ZNHV3PzWQ6jUQOcEmEE3ZYMZf4KGdj8FUnPQqhjo
+X-Proofpoint-GUID: SSkEo2SFQtZoMRhJ0ZK5FHDxqCxz770l
+X-Proofpoint-ORIG-GUID: SSkEo2SFQtZoMRhJ0ZK5FHDxqCxz770l
+X-Authority-Analysis: v=2.4 cv=VpQjA/2n c=1 sm=1 tr=0 ts=6870cab1 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=u5fknsGAV_5u-2U6WwMA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_02,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 mlxlogscore=678 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507110058
 
-On Fri, Jul 11, 2025 at 2:16=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcma=
-r@ventanamicro.com> wrote:
->
-> 2025-07-10T21:30:30+08:00, Xu Lu <luxu.kernel@bytedance.com>:
-> > Delegate faults which are not handled by kvm to VS mode to avoid
-> > unnecessary traps to HS mode. These faults include illegal instruction
-> > fault, instruction access fault, load access fault and store access
-> > fault.
-> >
-> > The delegation of illegal instruction fault is particularly important
-> > to guest applications that use vector instructions frequently. In such
-> > cases, an illegal instruction fault will be raised when guest user thre=
-ad
-> > uses vector instruction the first time and then guest kernel will enabl=
-e
-> > user thread to execute following vector instructions.
->
-> (This optimization will be even more significant when nesting, where it
->  would currently go -> HS0 -> HS1 -> HS0 -> VS1, instead of -> VS1.)
 
-Nice supplement! Thanks.
+On 6/27/2025 3:08 PM, Krzysztof Kozlowski wrote:
+> On Wed, Jun 25, 2025 at 05:00:46PM +0800, Ziyue Zhang wrote:
+>> Each PCIe controller on sa8775p includes 'link_down'reset on hardware,
+>> document it.
+> This is an ABI break, so you need to clearly express it and explain the
+> impact. Following previous Qualcomm feedback we cannot give review to
+> imperfect commits, because this would be precedent to accept such
+> imperfectness in the future.
+>
+> Therefore follow all standard rules about ABI.
+>
+> Best regards,
+> Krzysztof
 
->
-> > The fw pmu event counters remain undeleted so that guest can still get
-> > these events via sbi call. Guest will only see zero count on these
-> > events and know 'firmware' has delegated these faults.
-> >
-> > Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
-> > ---
->
-> Reviewed-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.com>
+Hi Krzysztof
+
+
+This does not break the ABI. In the Qualcomm PCIe driver, we use the APIs
+devm_reset_control_array_get_exclusive, reset_control_assert, and
+reset_control_deassert to handle the resets defined in the device tree.
+Regardless of how many resets are provided in the DTS, these three APIs
+treat them as an array and operate on all of them collectively.
+Therefore, adding a new reset does not affect the existing ABI behavior.
+
+BRs
+Ziyue
+
 
