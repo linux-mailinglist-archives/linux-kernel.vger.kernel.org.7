@@ -1,193 +1,138 @@
-Return-Path: <linux-kernel+bounces-727106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C056CB01513
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:46:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E0CDB0151C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 783267B3F5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:45:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84DB63B13DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5951FC7CB;
-	Fri, 11 Jul 2025 07:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1DE1FCFE7;
+	Fri, 11 Jul 2025 07:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1qqtH2DW"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pnEUvQIm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0801F8733
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D9B611E;
+	Fri, 11 Jul 2025 07:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752219907; cv=none; b=rrjKM+e1+ZAUFrfxbSo35+YtWMtTyLlVDoy+Nl0CuVuVDsO5WREUK4jUPLGvJW+WPB/M7S/xIe+vuUIMsjq/J9ex5FcbxDpnnrNu+E587qoQqxzoyOR7u3mf0koyJNdYudlSgvoFdc2zS3DDMoH5JLBgBsqSsS2S1keR/yzrits=
+	t=1752219927; cv=none; b=G3t+ScbXyjj7x5UeNfFJJahVfrfQtQXq2kFU7NMlWeO2EctnoPuMW3QHHZhBDBgujJg9oVl/VYNwCKd3fdpxl3vogeMMLWRstMyC5xDTC6aZI2WcC/Y61QE/xd3LmQnEk1P0IfJL86cJmyAe6aW8w75YuSuORTN3pXjbH88GjTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752219907; c=relaxed/simple;
-	bh=6YXSkR7x41tUzWJTiYuqbyQTbRPpk6TxwCucKDJ4j94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RLVJSRa5u2I1xmN5K3BxIlM/Ginn6/HnvEmf9R2d45sMm/2Pkg/jnoQzEDTKlmQBC988uApHEOw6lmiJia4duHCdJOdq94BnyrT7HCwHf3mLLK09stJsl/K7MlPpmIOgP6VXwV1IxVvl723k+77v+GyeJ8vp3abOGp0VlxZ8unE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1qqtH2DW; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-315b0050bb5so1461557a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 00:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752219905; x=1752824705; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KR0//uo+QHOMXG7k4LZ8s28q+1ZtuSoHzyRGpR1E+vA=;
-        b=1qqtH2DW1rg+3qcyV/Cuvmbi73DsRhOJ6EBvqnry5OZBb3Hp7M6YTTHmDwdY1yKxT9
-         4+jcR1Ip0EfeD+xbrjFUBwR67uKptYcl4lQ5QP/RTKyWkNjalBUivd/pOibSLKfbi3si
-         kQVUFSpniyqDhUZmEQVr0nRquIdxJ2ZGL+be02JFbDXXQkcYm4bFJ1SzsH8+HZOHpYPb
-         6E9KJQzYejj09cdOu03gxGW7+fUa/lmlnNiv7f8mFMV6iPBn/rve/3LVDRMdHKXvIiIO
-         /tIBbNHgyBOqFoXmSr4a3vaVSNC90UYoMCEuy9YCJUKF6Y/1kfJJWH5U8ZsktkUmZr7U
-         vQ0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752219905; x=1752824705;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KR0//uo+QHOMXG7k4LZ8s28q+1ZtuSoHzyRGpR1E+vA=;
-        b=NXbEHC99bKXcwWp61hbVTt9DBAiXRAdPSRW5qZIugO3kB9UkqRqib9UfZHYF+8/5fF
-         sw+NNZTtYomoKNoREInn1ngtjYeyig7adfcdK0IQTya3G1P/2k+0ydiOD+D8IHhFX9Vt
-         VLyHYW5NY9QdFV87mm8px7dxgToMG/ywWkpZl5ygOxdA7u1C8h5XV4AFUZjlZpBXFwoY
-         +HZAouUPMbVh0v0LBuATqOWQ5/JfRzxFUHHYWTD6BbjqYa8M56CZy78J+/7QXENM3KNk
-         CF5CHR4mqeaa5dISPWVVPL4Q7NTSqCkewAWDPB58UbMXSs8kdlphxZ0KwSnHzkSQBzv3
-         SbZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRu7BSQogeaKAA39EchhJUgGDTECv1CRNyenJ7qD9EJdA9DUbrCDv2VL0khZaMRLwQCNN8lYO0Q15+hDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF5Hev+XmpbTQ9+691samQhYeJuL4QR8yQiawcP3hYjZGehAeV
-	hc+syXuW2rYvJp3FECo84zJ/G4Z8iVLJBbFbH2A4Gh5p8hwGZWm+mkD1C5xnsfXnokGVcB4pX6d
-	JwB6pHcQEOAiNmnKR9XJLmWr84n8rqCyUe4HaEOhT
-X-Gm-Gg: ASbGncv10sACJROjGQG/i2+oLLraYM3996QO++Bqqn+0ZqMpTAAkavPBBnI0mzz+llC
-	WbqNhw/4u177zzQN6SokedW5CX5Z9reastvNGVm2Z1Snq3NmYZQoSdW8Bj7nOnGTgwx795YovL6
-	7E7SJpmQdxhi+WxsdgURzPaELuCX6pz/cOBxMukeBL0589wemJegvn4c6W4hrYgrfBxTbEaMJi9
-	kZWLAHK0y/yp+aptYLk34kT/GA2qDKC7Nt/Xg==
-X-Google-Smtp-Source: AGHT+IFfufbHiwTokFo9H8Ko+8ik8lnHGpAzzynncKYY39zU1wFtJxNOc2bDnxAx/hHH089ymjTSpkdbMyD5mHaXKEM=
-X-Received: by 2002:a17:90b:5868:b0:312:29e:9ed5 with SMTP id
- 98e67ed59e1d1-31c4cd9c12cmr3380834a91.23.1752219904418; Fri, 11 Jul 2025
- 00:45:04 -0700 (PDT)
+	s=arc-20240116; t=1752219927; c=relaxed/simple;
+	bh=lQfAQrErVlYmviGf06gUB8Jq9ByCanY63CTSQwHOZ3E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VU+zhrireNBfb1XkctG+QUcZR+HbYbra2Sy+yDYIeFChfjupWnVR8r3FpQkr10HEmT54hnIlNDuLIdA42WC2M3+lPigNTcQYgX5Fkzr1cxqhqkNp35Jab8yUEOHLmPrDABu7ygsvswKGGz9VAak/BVYxayLzAD9iMPnPXBA5Uaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pnEUvQIm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE3F5C4CEED;
+	Fri, 11 Jul 2025 07:45:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752219926;
+	bh=lQfAQrErVlYmviGf06gUB8Jq9ByCanY63CTSQwHOZ3E=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=pnEUvQIm6mQRJlnOgpuTBkDDVUatJ5POMr1xGSBTB6F7GL1xVfkEM7Ff1uCLVFmQr
+	 XaaApsXHcKRzJ7dhkEhPyexYe2nHO/jWb6qKk+JyuDGdSPFqd0FqSh7W3fAD19XnVm
+	 7ATjW/VEFQx7d0TpXTxF5jrZmNoNHt+fVCkYhzpuoZn84N9Cp9SdMjE53Cix0xmmuh
+	 jLzF3Jmdqv4BnMxrH0zPI653cJy5Nu9HPCXxp6aiKeSXxVC7ZqvRmwa2C2X33Eol4y
+	 7VXA2QCgRlN6FoIa6JOYZSaoKHIHRGSmEfKgtt+8ZCoMHVvFE50bbJXXVVwBhf2HOg
+	 ojROKBKJW+RPw==
+Message-ID: <c21b1f12-e00e-4b30-89d3-049bc6bf471a@kernel.org>
+Date: Fri, 11 Jul 2025 09:45:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <88961a5.13de8.197f869374b.Coremail.baishuoran@hrbeu.edu.cn>
-In-Reply-To: <88961a5.13de8.197f869374b.Coremail.baishuoran@hrbeu.edu.cn>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Fri, 11 Jul 2025 09:44:52 +0200
-X-Gm-Features: Ac12FXwiAUvtlC_5Gf-_4rwi2asNx2efaLAiI_4DnmWKw6XsIN1cXSyNaxvhDh8
-Message-ID: <CANp29Y565yMhy2aGo4d1sX0XL8VrmSuNgFTsL47ARxsUhkb5zw@mail.gmail.com>
-Subject: Re: WARNING in btrfs_remove_chunk
-To: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>
-Cc: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin <jjtan24@m.fudan.edu.cn>, 
-	syzkaller@googlegroups.com, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 01/12] dt-bindings: mfd: add support for the NXP SIUL2
+ module
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, chester62515@gmail.com,
+ mbrugger@suse.com, Ghennadi.Procopciuc@nxp.com, larisa.grigore@nxp.com,
+ lee@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+ festevam@gmail.com, aisheng.dong@nxp.com, ping.bai@nxp.com,
+ gregkh@linuxfoundation.org, rafael@kernel.org, srini@kernel.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ s32@nxp.com, clizzi@redhat.com, aruizrui@redhat.com, eballetb@redhat.com,
+ echanude@redhat.com, kernel@pengutronix.de, imx@lists.linux.dev,
+ vincent.guittot@linaro.org
+References: <20250710142038.1986052-1-andrei.stefanescu@oss.nxp.com>
+ <20250710142038.1986052-2-andrei.stefanescu@oss.nxp.com>
+ <20250711-fluorescent-malamute-of-glory-b1c585@krzk-bin>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250711-fluorescent-malamute-of-glory-b1c585@krzk-bin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Kun Hu,
+On 11/07/2025 09:36, Krzysztof Kozlowski wrote:
+> On Thu, Jul 10, 2025 at 05:20:24PM +0300, Andrei Stefanescu wrote:
+>> Add the dt-bindings for the NXP SIUL2 module which is a multi
+>> function device. It can export information about the SoC, configure
+>> the pinmux&pinconf for pins and it is also a GPIO controller with
+>> interrupt capability.
+>>
+>> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+>> ---
+>>  .../bindings/mfd/nxp,s32g2-siul2.yaml         | 163 ++++++++++++++++++
+>>  1 file changed, 163 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/nxp,s32g2-siul2.yaml
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+Unreviewed. I missed that there were some random changes in the binding
+not coming from review, not explained in changelog.
 
-Please note that the bug has already been reported to the mailing
-lists by syzbot ~ 2 years ago:
-
-https://syzkaller.appspot.com/bug?extid=3De8582cc16881ec70a430
-https://lore.kernel.org/all/00000000000089839605eeabb948@google.com/T/
-
-On Fri, Jul 11, 2025 at 9:35=E2=80=AFAM =E7=99=BD=E7=83=81=E5=86=89 <baishu=
-oran@hrbeu.edu.cn> wrote:
->
-> Dear Maintainers,
->
-> When using our customized Syzkaller to fuzz the latest Linux kernel, the =
-following crash (120th)was triggered.
->
->
-> HEAD commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
-> git tree: upstream
-> Output:https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.14/WARNING%2=
-0in%20btrfs_remove_chunk/120report.txt
-> Kernel config:https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.14/co=
-nfig.txt
-> C reproducer:https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.14/WAR=
-NING%20in%20btrfs_remove_chunk/120repro.c
-> Syzlang reproducer:https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.=
-14/WARNING%20in%20btrfs_remove_chunk/120repro.txt
->
-> Our reproducer uses mounts a constructed filesystem image.
->
->
-> The error occurred in line 3426 of volumes. c, in the error handling path=
- of the btrfs_remove_chunk function. This may be because in the process of =
-calling btrfs_remove_chunk to remove chunks during the balance operation, t=
-he first call to remove_chunk_item fails, returns - ENOSPC, and then enters=
- the ENOSPC error recovery logic to try to allocate a new system chunk. And=
- the system chunk space is exhausted, and the creation of a new system chun=
-k fails.
->
->
->
-> If you fix this issue, please add the following tag to the commit:
-> Reported-by: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin <jjtan24@m.fudan.ed=
-u.cn>, Shuoran Bai <baishuoran@hrbeu.edu.cn>
->
->
->
-> ------------[ cut here ]------------
-> BTRFS: Transaction aborted (error -28)
-> WARNING: CPU: 2 PID: 14048 at fs/btrfs/volumes.c:3426 btrfs_remove_chunk+=
-0x1667/0x1a20
-> Modules linked in:
-> CPU: 2 UID: 0 PID: 14048 Comm: syz.1.10 Not tainted 6.14.0 #1
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubunt=
-u1.1 04/01/2014
-> RIP: 0010:btrfs_remove_chunk+0x1667/0x1a20
-> Code: 83 f9 19 77 0f b8 01 00 00 00 48 d3 e0 a9 01 00 04 02 75 49 e8 ca 7=
-1 e4 fd 90 48 c7 c7 20 5a ba 8b 44 89 e6 e8 ca 6b a4 fd 90 <0f> 0b 90 90 bb=
- 01 00 00 00 e8 ab 71 e4 fd 48 8b 7c 24 08 41 89 d8
-> RSP: 0018:ffffc90002da7830 EFLAGS: 00010282
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000080000
-> RDX: ffffc90003169000 RSI: ffff8880234e2480 RDI: 0000000000000002
-> RBP: ffff88804477cd00 R08: fffffbfff1c0b901 R09: ffffed1005725182
-> R10: ffffed1005725181 R11: ffff88802b928c0b R12: ffffffffffffffe4
-> R13: 00000000ffffffe4 R14: ffff88807830abec R15: ffff888078c48878
-> FS:  00007f09099aa700(0000) GS:ffff88802b900000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000001b2d610ff8 CR3: 0000000053082000 CR4: 0000000000750ef0
-> PKRU: 80000000
-> Call Trace:
->  <TASK>
->  btrfs_relocate_chunk+0x2bb/0x440
->  btrfs_balance+0x201a/0x3f80
->  btrfs_ioctl_balance+0x43f/0x6f0
->  btrfs_ioctl+0x2c57/0x6230
->  __x64_sys_ioctl+0x19e/0x210
->  do_syscall_64+0xcf/0x250
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f0908bacadd
-> Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f09099a9ba8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007f0908da5fa0 RCX: 00007f0908bacadd
-> RDX: 0000000020000480 RSI: 00000000c4009420 RDI: 0000000000000004
-> RBP: 00007f0908c2ab8f R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f0908da5fac R14: 00007f0908da6038 R15: 00007f09099a9d40
->  </TASK>
->
->
->
->
->
->
-> thanks,
-> Kun Hu
->
-
---=20
-Aleksandr
+Best regards,
+Krzysztof
 
