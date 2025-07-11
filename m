@@ -1,150 +1,119 @@
-Return-Path: <linux-kernel+bounces-728280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB245B025D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:33:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE78BB025D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911203AD8AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:33:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2232316EFAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A96F1FF61E;
-	Fri, 11 Jul 2025 20:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35DC1FF61E;
+	Fri, 11 Jul 2025 20:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZvPPO867"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cz+K4ptW"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2523D1E1A3F;
-	Fri, 11 Jul 2025 20:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1F41B0420
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752266021; cv=none; b=WNl/mWeh4Qm4k1bJSJz5Rcik5/ryBY080XrpFRdwmbQ9f1bT0aEnzuZY/vblqChCayTevbAvtf5GiO3fe02g7nAncL5d7NBDdG8TjbiT0ZldPeDndq1wQcmush1MQjNi3wixV6e3PISeQxwLmNv6jUTcV1v7PQs7aFINm20wA8o=
+	t=1752266126; cv=none; b=BkM0QfroUkLPtgUhmFBO/AJLVJv/JNy9gmcedQVwNiNoKMyy0gotmYeSRRytov4NWujT6E5YB2L0f06/CVAHiSKkADiBPva0dG+bDu6HbubU94IDjtJ8Q7vTLdpFBbC0BzPcT52EcGpgJyDwVkephzX1QhsfAzgoZD+6c4TYy+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752266021; c=relaxed/simple;
-	bh=NrMXrrO1fDdf1kb6QY2CgRjqtOqdyEvHplWcXmAzEig=;
+	s=arc-20240116; t=1752266126; c=relaxed/simple;
+	bh=b1VDAFqxBEw3uXSyuwPQh26CLi4QbJOh8mtJ/aaAzlQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=crSQ0KSa0oqJkVJguG+IKONcjD8tWGqK6KhFHLQSHdBTZChnsJvHTuGNQk03kBcFrHnvN+F7FcpuqbVMT3nS7Uy7Upu7eVIMh9RcNkGtu7WhRWbfisdH91VpqwYPRDwh0iBMkSP2mnk2dBG/7YaxITyY13P5yiADS0Jbndj/2/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZvPPO867; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e819ebc3144so2435707276.0;
-        Fri, 11 Jul 2025 13:33:39 -0700 (PDT)
+	 To:Cc:Content-Type; b=Y7X50PhcLZtiq0yxYD1Kk2J51rGZxKZgiC04t5bfl47tnqQ4K303YgXubFg4MciFr+7864MGH9/RyAtTXQv/3hsR15sjV7zEaivqUtLXygYOnM+O2MPO9K8zoNchNOhPLXxvUBTaCxEa3CGuOWoirv4WV6aFqS5so5ojF+VDbTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cz+K4ptW; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60dffae17f3so3690340a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:35:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752266019; x=1752870819; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=68zxtYLTKBpsqGG1ojSx4GWgoXoxkdYc8QUb/iTWC04=;
-        b=ZvPPO867vrkXUQzC0xvCMD9jKcOOioi+mYff6gTUkOVmWM428cJJieBmneALxORRhm
-         cINxDPcARX8HTOCstblsYWajdnLYO52NQb5b1eQp1KyAcx3Lol1p9/4C36WJfP8WQrzO
-         TLEvGJGIJewRzc5jsGXQvOjtUQ9/Idd7mhwXTPN+dAVsMVdZ+dLKs755BZw9YkRpqFu0
-         BczunCtcTaNcUMq5plB9cmIj1okjczejak6bFFart4ZYrbE6b/e2FqwYhiCKgCBjm6pa
-         3eeLnhtbgBV4zCqPZPTF8onI4ztJCdq22EP/348ZdevuFitqhNhrRHyuzBTXC5OaO55e
-         Q1ng==
+        d=linux-foundation.org; s=google; t=1752266122; x=1752870922; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3WSd1C2YEpBcSCAUHObR5B794dxVqLICPHfsBmrzbCQ=;
+        b=cz+K4ptW7cbxEQIlLUQUsoEyRR1uagl+ENxKM9xCurN7IR7hmd42w/GoMzuCjUuAeV
+         eRBSiydjiexIWIDahmxFfNLPROyN5BbNNgQvBnDa0BdXGUdBDaZUaYSMBmXjA9Td3zCF
+         0V29Cd911kIcTDMHPYuB0+Nx1twZS8iIaw21c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752266019; x=1752870819;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=68zxtYLTKBpsqGG1ojSx4GWgoXoxkdYc8QUb/iTWC04=;
-        b=P0vTZ4CAlmL/6w+7Gr7qU8Rotowt6qZ+shORv/4euWRLamq0o9zkut86cU3ds5tm0p
-         qD+yzaBwwVY1VS++b1GdtHDj0kDFNFG4SMAvCmaOBWYgOYa7i4l+3y3FGdRLKHIPn4d5
-         dBG+iFnoLyXiV52ywp3eEQYZTkPweMhzT9WxJLs1soKebZQELxOVQ4AZ2W9hxI4/DmSP
-         era3wjPv1RSVYfaKSDtTZ6XPw1Gmvqh15muK9YzfIdEoqsR/RXibm/u6TezicyauYkHK
-         5ur8uaMTYeSXu0unZqaN7fQfroB5rAXca+vRMbMl4jw5jbjYys+/8DQdFyLESQmPWxl5
-         I+VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/JMtZTXiGF7+vbSfveVo1Etw16YJvZOmkia+lmzfktrbSxMmZibgw63fG4BWG7SCH7nklOtUVdVKA@vger.kernel.org, AJvYcCVSq3VEpZF64NH5GNGYIjbAuWYx6Ab05BQtSfhFfPCCUc/TPmwDJ4vyYLzdSGrgp05oERfzLk65F88pTEijiMs=@vger.kernel.org, AJvYcCWpWfspHg+QBVOpH/7i3U2VKD2yeJDMq37vtFPctWBZKoMEJg5P2GLPu8RaGBFCQTRB7C4s7jHOMp1PSA==@vger.kernel.org, AJvYcCWqwEtiF8L4fB5Idw/l7gAeIDk3HF1WAJ4q2VNGMG00M/A4DBhNzZy0IZIZz3N/fw6t64lW5eDAsbwhBZjG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwLhTp8GDi3+6L0H3ZqTZTYzkERq1/cA4QKYniztKfbd7k5ovJ
-	aAy74efoRzPJEalT/G2sfLFc3oPbx3nUP9kAy72Ocak0Hu5pRVRwCadArRiGTOit1ZdjGTBm0eZ
-	x4J+e+uw2vwLFfGUiC4OnLZgyk/s/GMs=
-X-Gm-Gg: ASbGncucjP4aOhAzjlcanbyk1w8zOmsT3CVJ+ppgQdWKIQesCox7kHcHdTmOjimnka2
-	uYPhDgl3kMZHo8n0DzIFZ4r06ltgAJ9VW1WUfDinMuC8KiW6WaASxCEL0ly+aI98Pd+SlhOBTgB
-	nyEOZKGaPFjtIb/AKaDcPGqG5x2XbeEF/okHcg41onmXbSyMoUNdT6XU39edOcoKqiffYkDU9QY
-	XeQnJTOnizu/oSS1IV6
-X-Google-Smtp-Source: AGHT+IFg+WUq3I+LgojCtWQCG1ohGsNvGS0P6Am8moryAkN0ougdp4dlLradnGh+qIDN3ZBugeMbcm99Mg21Si+jSDc=
-X-Received: by 2002:a05:690c:d18:b0:710:e7ad:9d52 with SMTP id
- 00721157ae682-717dad97268mr58784337b3.14.1752266019055; Fri, 11 Jul 2025
- 13:33:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752266122; x=1752870922;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3WSd1C2YEpBcSCAUHObR5B794dxVqLICPHfsBmrzbCQ=;
+        b=Jd4xlSU2zzmBUSHSxbmZpOvyN1im10emz3C+fz3PUl04WoZJGcou8TpvIgDeLXiKEa
+         Iuu4s5yw294RVLbWyju6N+qSU1+NPxkEewQT4QdPBgyQDiLTi32BmPCnKi1hSxm2lO+q
+         gSximHDamrbPNgCvZPutRUrugNpU8R1EmETbsKoqGD7Ub+r+g9nES/LjNN1PBdGSXheI
+         vb2fm4IHXVR3lzcxbkErCIMpS2JIs3cH8XjfbVz2RUoheDHSGPeQz+aSfF3VfqogTt55
+         dbG8lQHVSZ8fL1TftQPbwXN/Zd4I+mxX8CKbVfYEfxxyCDyVW9Ohn/pF53tnl2glledJ
+         jP/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWl/TObx5Ztt0qPEEZmDtnOMEa3ZQ4J7pFh+bWAiye4jZrzW5ooSzyzvsQspXtePSplMyHCHu3OG8FO0gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2qpeDYPRVwoqIGSUPSKZlqrTbbDIcvMvGFNhKfqEHN35hoppo
+	2xxzRV5J0VKC0tXDG94gmc1Lrg/qp/XENBhiWTxFhpYUK+YC2ulVU+SsPYqfpTEpi1jt0RTGwnF
+	0TieE6668Yw==
+X-Gm-Gg: ASbGnctQQTBkmDJOOs7FlTmedVcOuyUTUtOKIfSLglsTujU9QFPRShmueee2A/H3Dx4
+	cjCE+hOIDGKXqpa5hS++dJ98nxj/VHjdrPflknTLsTLtFSagWUqZx1uRwOR02TqN6A2+qYhOgw3
+	F1+0LkguHo5xnH8vngmlYY+6dGvJAbiv/dX3VnGuEQVGxkcgX/jeDiHl8WOKnF3cOFCEVbbtDqr
+	mvzKPWroYMD0qq+8nM/KAKRerbnptFLoZonFThgEk/A0MG/CikdYMrg8Er6xi+LQ1PVZJskVvp5
+	QzBFBccqgmEnqzuty04v+RPPRq4hKAzSOed3abOEVfcK0QZJR5YIUj6KR1eV1NQkuPYW7dvIV/d
+	oDw6rDwEgZy467ASJni4+0t0jQBYsei9cazwwQvxT7uI5lZCQ4Mi3ojFswn3sgcJ5RsEkBfS8
+X-Google-Smtp-Source: AGHT+IHAqSUi7zxaTsv2Y2S47r5V8DgWRuSjsk6//9ER1lwPZltdVBr8VdNfIKqr82KkRpEQrFnTsw==
+X-Received: by 2002:a05:6402:5291:b0:604:bbd2:7c88 with SMTP id 4fb4d7f45d1cf-611e84cd12fmr4199915a12.26.1752266122419;
+        Fri, 11 Jul 2025 13:35:22 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c95282ccsm2661652a12.28.2025.07.11.13.35.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 13:35:21 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae0c4945c76so399930266b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:35:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWnWniaktMYioc3L/pgz03iTlODOX/5fdCa7xjw95INC6q98QmyuMQzRAbA/OreauQwTqVdW08kVwaOIcI=@vger.kernel.org
+X-Received: by 2002:a17:906:9fd1:b0:ae6:e1ba:30a with SMTP id
+ a640c23a62f3a-ae6fc3d7e07mr437795566b.54.1752266120408; Fri, 11 Jul 2025
+ 13:35:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710200820.262295-6-rosenp@gmail.com> <20250711140130.378067-1-oleksandr.savchenko.dn@bp.renesas.com>
-In-Reply-To: <20250711140130.378067-1-oleksandr.savchenko.dn@bp.renesas.com>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Fri, 11 Jul 2025 13:33:27 -0700
-X-Gm-Features: Ac12FXwXTVmcvlOTDwwKq18nH8e2J52S9X6I5huP6K-iIbpG3IV0HKFlWIK1Dro
-Message-ID: <CAKxU2N9bjn5ybyTpk9Cc4B_GcLYdbEwPtzoxQkuEKH=MeTi-dQ@mail.gmail.com>
-Subject: Re: [PATCHv3 wireless-next 5/7] wifi: rt2x00: soc: modernize probe
-To: Alexander Savchenko <oleksandr.savchenko.dn@bp.renesas.com>
-Cc: angelogioacchino.delregno@collabora.com, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, johannes@sipsolutions.net, krzk+dt@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, matthias.bgg@gmail.com, robh@kernel.org, 
-	stf_xl@wp.pl, tsbogend@alpha.franken.de
+References: <20250711151002.3228710-1-kuba@kernel.org> <CAHk-=wj1Y3LfREoHvT4baucVJ5jvy0cMydcPVQNXhprdhuE2AA@mail.gmail.com>
+ <20250711114642.2664f28a@kernel.org> <CAHk-=wjb_8B85uKhr1xuQSei_85u=UzejphRGk2QFiByP+8Brw@mail.gmail.com>
+ <CAHk-=wiwVkGyDngsNR1Hv5ZUqvmc-x0NUD9aRTOcK3=8fTUO=Q@mail.gmail.com>
+ <CAHk-=whMyX44=Ga_nK-XUffhFH47cgVd2M_Buhi_b+Lz1jV5oQ@mail.gmail.com>
+ <CAHk-=whxjOfjufO8hS27NGnRhfkZfXWTXp1ki=xZz3VPWikMgQ@mail.gmail.com>
+ <20250711125349.0ccc4ac0@kernel.org> <CAHk-=wjp9vnw46tJ_7r-+Q73EWABHsO0EBvBM2ww8ibK9XfSZg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjp9vnw46tJ_7r-+Q73EWABHsO0EBvBM2ww8ibK9XfSZg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 11 Jul 2025 13:35:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjv_uCzWGFoYZVg0_A--jOBSPMWCvdpFo0rW2NnZ=QyLQ@mail.gmail.com>
+X-Gm-Features: Ac12FXw06ng89sgg6lACD8raxtg8tIsOj2V4Q2Quo5hdT7JGF5RzQP8YU9BhymY
+Message-ID: <CAHk-=wjv_uCzWGFoYZVg0_A--jOBSPMWCvdpFo0rW2NnZ=QyLQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Networking for v6.16-rc6 (follow up)
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, 
+	Dave Airlie <airlied@gmail.com>, davem@davemloft.net, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pabeni@redhat.com, 
+	dri-devel <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 7:01=E2=80=AFAM Alexander Savchenko
-<oleksandr.savchenko.dn@bp.renesas.com> wrote:
+On Fri, 11 Jul 2025 at 13:07, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Hi Rosen,
->
-> looks like here are memory leaks in the patch, PSB.
->
-> > +     eeprom =3D devm_kzalloc(&pdev->dev, ops->eeprom_size, GFP_KERNEL)=
-;
-> > +     if (!eeprom)
-> > +             return -ENOMEM;
-> > +
-> > +     rf =3D devm_kzalloc(&pdev->dev, ops->rf_size, GFP_KERNEL);
-> > +     if (!rf)
-> Here driver must freed eeprom memory resource.
-> > +             return -ENOMEM;
-> > +
-> > +     hw =3D ieee80211_alloc_hw(sizeof(struct rt2x00_dev), ops->hw);
-> > +     if (!hw)
-> Here driver must freed rf and eeprom resources.
-> > +             return dev_err_probe(&pdev->dev, -ENOMEM, "Failed to allo=
-cate hardware");
-> > +
-> > +     platform_set_drvdata(pdev, hw);
-> > +
-> > +     rt2x00dev =3D hw->priv;
-> > +     rt2x00dev->dev =3D &pdev->dev;
-> > +     rt2x00dev->ops =3D ops;
-> > +     rt2x00dev->hw =3D hw;
-> > +     rt2x00dev->irq =3D irq;
-> > +     rt2x00dev->clk =3D clk;
-> > +     rt2x00dev->eeprom =3D eeprom;
-> > +     rt2x00dev->rf =3D rf;
-> > +     rt2x00dev->name =3D pdev->dev.driver->name;
-> > +     rt2x00dev->csr.base =3D mem;
-> > +
-> > +     rt2x00_set_chip_intf(rt2x00dev, RT2X00_CHIP_INTF_SOC);
-> > +
-> > +     retval =3D rt2x00lib_probe_dev(rt2x00dev);
-> > +     if (retval)
-> > +             goto exit_free_device;
-> > +
-> > +     return 0;
-> > +
-> > +exit_free_device:
-> > +     ieee80211_free_hw(hw);
-> > +
-> Here driver must freed rf and eeprom resources.
-> > +     return retval;
-> > +}
->
-> Also need to check the rest of allocated resources: mem, irq, clk.
-The point of devm is to not have to...
->
-> BR,
-> Alexander
+> Oh well. I think I'll just have to go back to bisecting this thing.
+> I've tried to do that several times, and it has failed due to being
+> too flaky, but I think I've learnt the signs to look out for better
+> too.
+
+Indeed. It turns out that the problem actually started somewhere
+between rc4 and rc5, and all my previous bisections never even came
+close, because kernels usually work well enough that I never realized
+that it went back that far.
+
+                Linus
 
