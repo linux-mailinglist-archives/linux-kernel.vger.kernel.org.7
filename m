@@ -1,206 +1,226 @@
-Return-Path: <linux-kernel+bounces-728308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03E7B02669
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:33:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B005FB0266C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 286DBA44183
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 002EE4A0876
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584251E1DFE;
-	Fri, 11 Jul 2025 21:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4542821C9FD;
+	Fri, 11 Jul 2025 21:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LgUtS2S0"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2068.outbound.protection.outlook.com [40.107.96.68])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cZwXXlej"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FCC18D
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 21:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752269610; cv=fail; b=AWRyTC3xRMs9dI+a6sGx8nBTCAj+9ihLpRGeHRWF+HrCFDrK3u4WuO46rsuaH7lBJFbZ39foQZiQRC0kNuDvLg/p8i1ut2498GIAgIYBXkRzCIBIEHtbjhlImanw7ITGVCFnWFlAUJoeAk5aD/mN6nfME5FJmXZdKOM7dZAGz4g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752269610; c=relaxed/simple;
-	bh=1ihbJ6T2EGyAw8ckvcILWBu4adlu7G4DU3xMatCCJlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WSt7lMdIi17YySTCViIwTjJInfz77jnpksmnftCxgsWoPYY5iP9RiC0KQJcA9gaaaOXPYYbUjRoA8pbZISDalOljyQe7/z7SoatGfMyhf/tZ76b7ctAfygsrAJOmzMeTOKlzth3Vtz/LOn71YbO0fJBkHVl0cs+X3SFnvQ4BHLQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LgUtS2S0; arc=fail smtp.client-ip=40.107.96.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uUGA9mzafDoCijAknh+4nBXJPfrjPEAliOB43/JNBn4eWzUjPhJJBX/WUJIKKswVPuvoYsl6Po0rZzYjgwLZ2wrcjR+Axp5U0BH4o6fMwFdY5yydFbu8qYEGMyCcLyDEPe192iSryAHtTfJeh9hwz4o+JJbyEABUllcEvwNVDrlss2wZh69fZwC76KX2uPJND+T6EfTNqCQf0egq6RlR6JX1u89LPrc8METgiAp6Ji9StZYMlfjKQCliGyxn2DXsfmUpZvy867rOVNrzlOQfD3Up4CIpDQgdpPPxxIru92mFpWEkjgVmCLqCY6o0hiitQrRfqjsFqHBWNUxaVO7VdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xHjMazZvPfH+y1y6YSHC1F3t2a0nEtLfdwUedNdUy9w=;
- b=tKzMyRRLnvnSbEUeVsrG65g1v6F0HiFrhSG62b1F+5e5x5MuimW/tHOzcMO5C9lf4zQT9PSQvOuscCTSWmCH7TYFeM580JLZqwb+x/oJVn60dTW0G8PeXCXp74hFOTxEifSU43P105K4H0EHEZjzhYzmFP+YDV4K9NQ8eDjew2+PqV8cUej40x7dZp/aWhz3ZnVAgngtzcBKy50Jv3vZ1WA9H7E9ETSD4fILEzKZgE0NkL4xwB2Vp0athbsFAWS2tptR0UAzEXB8C3GAa3k1ApnDt9+2NdiAUog09Am4PhFZaLnadQyhF8exMzMiUuS5I9iPqoQGPyZLDa63Tx/w+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xHjMazZvPfH+y1y6YSHC1F3t2a0nEtLfdwUedNdUy9w=;
- b=LgUtS2S0WlouDBEGjZVfQlDLLYKMjzLIhfQfJTbUDohCCLOCiReaFj4eZN7tlJ+sf9avmQhp59/2CGgs0HI8/9BnbMnGzLTkGEPC8jQfM0k+M2LYS7E6UBba8704a1cs3yI6jJpDSn6Xho9OqYs6AO1To0D3q4zQ9bpjmBJTc9pu0Tx4avWBmqdMTNvfYiWxIfXTnppeyx25NTnT/y1R9ePI6Cyov40mS+AXbUopSqrxK064qqvRnYBqkDLZqUbdS9HdDxz31FW3eL4DMYuixswcQ9nSCt0dcCD56LsgGm45wUJdwGRUXTwd4/5lgIhQT7Nbx1ZJsDJNvjphMiq1WQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by BL1PR12MB5849.namprd12.prod.outlook.com (2603:10b6:208:384::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Fri, 11 Jul
- 2025 21:33:26 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
- 21:33:25 +0000
-Date: Fri, 11 Jul 2025 18:33:23 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Xu Yilun <yilun.xu@linux.intel.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
-	will@kernel.org, aneesh.kumar@kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, joro@8bytes.org, robin.murphy@arm.com,
-	shuah@kernel.org, aik@amd.com, dan.j.williams@intel.com,
-	baolu.lu@linux.intel.com, yilun.xu@intel.com
-Subject: Re: [PATCH v4 2/7] iommufd: Add iommufd_object_tombstone_user()
- helper
-Message-ID: <20250711213323.GH1951027@nvidia.com>
-References: <20250709040234.1773573-1-yilun.xu@linux.intel.com>
- <20250709040234.1773573-3-yilun.xu@linux.intel.com>
- <aHAPqdZKfdeEMDs2@Asurada-Nvidia>
- <aHEnnesvLL5te5rf@yilunxu-OptiPlex-7050>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHEnnesvLL5te5rf@yilunxu-OptiPlex-7050>
-X-ClientProxiedBy: MN0PR02CA0016.namprd02.prod.outlook.com
- (2603:10b6:208:530::14) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DBC1D432D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 21:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752269683; cv=none; b=H8bw5zT3+MBY+J4fDLQXcjglFhznshXSNa8wEcepXUGb0MZ5d9k+cmr/KpOJr+EbyG6yHj5QiKzXk0ZIvy+03TPxFZ0BhGy4BQ34tUd5fPmXTbaGtBRbWyRoQIgWFqL0nSUsJvd4NVgmOWcy6ankrKN2BCJO3l5HhYHi2zxF7Qo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752269683; c=relaxed/simple;
+	bh=8AjCjaMYARnEByKZpVvwMo5DXE/N8Yd0be8Q3U8qNLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OmaIQDM1D1lati9hRrUtdw77xTz5PPqPN6dveHwvmoCjEH6mW2Et0IWHCITHUDLJ48iCZcsaTuBm6oW8G9+qGr4KprF8E0/6rX8akJb3Fl+6CFXOnRIgLO/kMFTTUqmjcYw7Zs7JoaW9eQHEqRwYIAVQ4vcxVRdqcQ2Faqv2Dws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cZwXXlej; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752269679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XyJwCW5qacALhF010Xai575cjd1JXXA08eizMKVZEV8=;
+	b=cZwXXlej8guqXyj0+iF00sKRrLqbcSvevy3OPyyzl+RRzSvhzzo7dKmGD8yC9+/RMczWg0
+	4FAr0mpY5mRAOD2Sgzk6xtaEM5O+pEO/SyXq6Nvi7/N/iQZSW+sY0Pm+51B+rUSSWdNPGs
+	HNH9RJ6vskhpQqJjo9GOBW6bsolzBsU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-689-_stFwnKrPw2JNOp_MZiyXg-1; Fri, 11 Jul 2025 17:34:38 -0400
+X-MC-Unique: _stFwnKrPw2JNOp_MZiyXg-1
+X-Mimecast-MFC-AGG-ID: _stFwnKrPw2JNOp_MZiyXg_1752269677
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-451d30992bcso18836225e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:34:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752269677; x=1752874477;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XyJwCW5qacALhF010Xai575cjd1JXXA08eizMKVZEV8=;
+        b=u6OSvMBvwhuYrZKKAjLxu9T+C7zt0z97re3xPw3Ygpp7aNsEWqdwWRIA7jKP0dD+DX
+         6DNdL4HjQhzUb+h8h5/w8L+spA0bu2tFcCCL2NaDAuUmT4+859z4u0D48cFIlc3C4XjI
+         E3dprxu6yRzhb0oqLssba9MA6NS1kh4MpyLhBj2x1bdK814/rTFaObqCp9KS2wAUwhZr
+         1h5w7GNeZwUnUKSK2nLwIba+ed9+lC0EeoRBni3zR5yUqFOy9BMEEaitZ4cTsCO7AS9Q
+         rPtBZ5UqQVkvuOU0zJOrDY4AdoZpDiBNjkHv9CKV8wRi76FEfIBZUdLEnQuLZG9Wckgi
+         moeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTBPddDFjQuY0cJkk9syWNiiaHl1bap2i5ZvaTXeDE/gDnV9PEwEzHcyrXuyfOF0JVcii6v2oZCrFWbOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaTiMlg+iCYrSqVTHgIaWdI8nwQjjl/NL2e0oZrXbEAuZIZ0R2
+	6dVdt5s4HRgN/+E2txNVwRhyEnkE0sWnvavqAzCAAU/0DK9eg7A2PsnB8qgVEyJuKg3AcShjl6S
+	u3+Ic2cwd8dKHIU7SF3jTVmH4KoKtNJGE6OH6ttaxp5sUmn7/09iZ8a9/EpFl8JFKlQ==
+X-Gm-Gg: ASbGnctFqWoCvAhvkEY+ei+tISxScGJlc2q0a8G6CGh4L4QsXFrWaUQHziKzPQIuXuC
+	dZXjzj8dUFaKQpHU1gcKQupsSXAJBNL81AisCdwui5gOUNOb6Sa+wErePtVhZ/r1W3HWE/1VYyB
+	6P8dTJA0BmSfDPsoLGRy7NUzV0mzdh4/aIKd/hk3Wqvq3pe9S07Yl5N6U72VTga0ccIc+B3qXK/
+	k3CFpXl03oS2XtVLVowzi1UasHcd+jSdK33hnQJdp+CBLf66M8Jce53sMDTA3TiKM9OvJFzTLvt
+	bPkCPxsXpqionJNasbhtGpwGwvjeBXMm9KvL/zG45ibIT13+/+Hp/1y6ZFg9aGI8rXlX1GCLZ1u
+	nHd9e/czrv08awVhAyozdKAeyP3Xg1Sdr3TaTf1WOZXpuTuBamZbVkQOsVC3rVYpnmAE=
+X-Received: by 2002:a05:6000:1884:b0:3a4:ee3f:e9a6 with SMTP id ffacd0b85a97d-3b5f2e45e0fmr3961961f8f.54.1752269676954;
+        Fri, 11 Jul 2025 14:34:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEn0FKI6OJnOe1nIxhGrRZV7H09iyXwP6aorwn7zO9Lk+mD3VCffznBjXhQb/C7M1wcVnqfdw==
+X-Received: by 2002:a05:6000:1884:b0:3a4:ee3f:e9a6 with SMTP id ffacd0b85a97d-3b5f2e45e0fmr3961949f8f.54.1752269676517;
+        Fri, 11 Jul 2025 14:34:36 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0a:2e00:89cb:c7f0:82f2:e43c? (p200300d82f0a2e0089cbc7f082f2e43c.dip0.t-ipconnect.de. [2003:d8:2f0a:2e00:89cb:c7f0:82f2:e43c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50fb874sm98500685e9.28.2025.07.11.14.34.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 14:34:35 -0700 (PDT)
+Message-ID: <a1340d2e-7ea6-4fc6-a107-41a857e1d27d@redhat.com>
+Date: Fri, 11 Jul 2025 23:34:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BL1PR12MB5849:EE_
-X-MS-Office365-Filtering-Correlation-Id: c58fae97-898a-47b0-cb9f-08ddc0c29179
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EIEHyq8XqR8mKNl2X0iSqebMckPlTX/Iu0RuiXM2/cg+ppuyYRwaDx9LUE0U?=
- =?us-ascii?Q?2+W2Sf3l0iLqDqy3BTYv/CArBeHMbiAXWuN+4JeDmJa3Q+lt7PSo1Kb6Ja7A?=
- =?us-ascii?Q?iLxOl6okplm6Bu5gew8T8ite7DQ+KUNHc6OJlAemy7RlC0NqK+X+ZgpQ3JaT?=
- =?us-ascii?Q?ANDK/6Mv8D+ATx3aS8aprEBxa2LIEZEPn+6SzNHn11fv1t3D68AnunK2/30S?=
- =?us-ascii?Q?NJhpYYmIad0gwncmFHnSKABgixeHJTHtAFj60OemQ0r05cGBG87XHKGqV5R0?=
- =?us-ascii?Q?hy9e7jlbcYWbA4eDqPozX+WabSyk3lxjXSJ5hthiG2Pklw6eWWSvp/spxtHk?=
- =?us-ascii?Q?Eih4tevYcf+rznPHBZsg27EgD2qcxblyT+CAIj/mRf7pr8bzEw7oe0wph4we?=
- =?us-ascii?Q?93jvfW6xfOsvYuXCjYqIq07c4s0E1fwMZZUYqGN7nUcc9Y4V3847NJRvfc2y?=
- =?us-ascii?Q?rfYTKF2YAzAaVFOgKXYZNKLUZmJo9Hv3FlcVwkoQK22vo0TjFnfrYZlufqET?=
- =?us-ascii?Q?xDh1ucIJHP1dDeeipet/qGuYK1w7WhXityS2TAFf+QBNutijpHEvJAnydmMu?=
- =?us-ascii?Q?ZgUl/FjkzuCF+akybXfT2hutUQ6rOkOrRNktlNFhQr2ohGNq4m6MELkaIACk?=
- =?us-ascii?Q?oHWRLX9eK8f5Zyl2NPqxOfCa7POWS1CFe37BgCgxsdQqtG5Zvnpb5GenSVrL?=
- =?us-ascii?Q?sW6TAO6HoyAG6GhqpW2GppkO3aUhoYYHS9Zb56kx/Wjed2z/2YvgSMdEzkVv?=
- =?us-ascii?Q?oboFQPHz7GX/tihjg9c3R8ltVbO75Cgm3OaxKGB1Ov5fyHZnwaNxgdmdFLyg?=
- =?us-ascii?Q?/RJPKSHl/8+G3gtbB85dM7M2hv9NBSwr4IJkCijdqmo650plxfdVyRzqflU8?=
- =?us-ascii?Q?vC+6k1op4KxB3iz5SNwyw+cVo4wSNdWts5PLvpcPgnwx0Jfada+/iZOnS7FX?=
- =?us-ascii?Q?MDFSCPedaG1vLzwjQCAzU75H7YggyVo4r1an5dR0sHMQZgcslehYwSvG0xGM?=
- =?us-ascii?Q?T+rqyflUld1ogSmg0gqLCqcbkwZKbUPxUlVmTnZfNzHGMqCCJIdyJeTsk/4g?=
- =?us-ascii?Q?3l1Ux8kElHXjfE2SBPrEu6moySsXLbnzojozd3h7HslhSGe3EoANruGc5SV8?=
- =?us-ascii?Q?WklodJvppVGOgXEJI2hRyYyO4Itu+EfIw/S4swQ//jIV2mMbE2eB0Rl+IuqM?=
- =?us-ascii?Q?TmIAu9DEZDBF/InQFzLu0AHch4o/ldtxXeBM9HC9MiiKb4uija61cb6dWJjO?=
- =?us-ascii?Q?AqWAyhY0t9TrJCBmB1M0ubSMMIUsU91T4NJZYsEBY/fOsJOj92W/EP7O20u4?=
- =?us-ascii?Q?bHQv28NnFJQuKKtieUAZR+XudVnJxwo9uX23vSdijSPplBapQY5gkTTf0cyo?=
- =?us-ascii?Q?Yd9hFjEoppkpVe9J79RSjRrwi4enYJSvYvtZ4LVcr90zS53MQ8/Y7tJvt4Tj?=
- =?us-ascii?Q?vswkw8B/hCc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?K3FbpztisyXWJ1F66IEq8TA5CDBQUwnVfj3jouv9cnXEtlR4wPei92+16ASP?=
- =?us-ascii?Q?DPVyCyo7Ch8pN1g8Ajn1lO0M09sJjrYgw0lTevg/bZlultXo1fPzu3kzeiUd?=
- =?us-ascii?Q?9DbMYTXUYzXndUk5wh5sIkrjhRDlstQX20yA1YnesL1MppONmjztLZpcFFy2?=
- =?us-ascii?Q?RMMfhKKjNa6b4IXT9BwgVy2NCdl8aRGq/Dglhxzz4KnKjOTCC+J/bj/ydJkE?=
- =?us-ascii?Q?a34HJHjC3M8FotRYhfCTB+QuUX/moSCXS4jaIzbvZHLUGHxqDuWgHsFPEnr9?=
- =?us-ascii?Q?NtvkEPUIYsHJNtcHGLykYthvdXUbcu3PC5WqRrDp+VH/NO0sJ6jlwCUldgZT?=
- =?us-ascii?Q?Oy2alufrJA52mREywsUkNjUrI2KNHvlsqecBLpZ6ttrWgZ8VxT8M7kNfQyib?=
- =?us-ascii?Q?An5zsnlWf6zesFB0AzZzF85XdvH0D9L5e6c7/BKxX3eTlzXCODtdlUiDamW/?=
- =?us-ascii?Q?eQmE6QMv7iLMfbKqCbKULnJBzqsPlD9EmmSwJv3vBhRamYdtKk3OFRfdTcPb?=
- =?us-ascii?Q?Y3y0dTAp8b3NXNY6a/t2cVoolM0ahgRU4JOcQJw51dNgqyvY+BLHjwfJ14hK?=
- =?us-ascii?Q?iiG8DBFz+h0VEMXCOXOW5GHkbwxZeS4LYYT9BHfi/OpyNCQtOcPKcHQpJ1Dd?=
- =?us-ascii?Q?QWdvWJqenWpSISDwywbe4XssNTFdARsdALN599phyTYiuL7D7vBdP+fbcGPa?=
- =?us-ascii?Q?8MX4fJQjIPQjSYCWcP8ZJbLZ7uUKjZGU3tba4YPpkx5rlRPKZCYqYHBr1CU/?=
- =?us-ascii?Q?Ylanf02uRIBDoUunUQ3cdADpKpexvB9RicHc8BFR8ZTth1WSJiRtyq4HAj5O?=
- =?us-ascii?Q?ya+Wg+u8k7CI5QcRO6AzuT9mEWyb94WHcqIAWYdnfJgTMY26OHjCMpzrjVnJ?=
- =?us-ascii?Q?oZtvqzRHgBsHEtWs3jY04FGWgiMKmchNoaDFESn3WZ3EXDzrVyZUcA1F0Uqn?=
- =?us-ascii?Q?LucLVubWybzA0qQnKKnTReJYh58JMlv+Duiz9TB/xvt5WqffFBFkvnudk5hT?=
- =?us-ascii?Q?G7jgor1yR1lNVLk44m7X/s8lhK7Dzq3d4SgzFfrVL9WvUg7kB99xCs9zxZCQ?=
- =?us-ascii?Q?Uw79qvOJe6qUM9PhYTrNg1VH3EiVvCC97NGeDJ224pybf5v4I0lxRwwiD4eb?=
- =?us-ascii?Q?H57HzIwLeFv+8eTcSUwEpAHMjUpr9J+qPgGf/SdMtyjtSaq222MiNchXl6lA?=
- =?us-ascii?Q?vIeMzbo/fwviv6ijR/UTu+YlsvJP45WCo1f1YiLYEmb2YZ7O3a5HGuuaZMmx?=
- =?us-ascii?Q?TWln0RW4HT/kr2ffKQMf4cx8G0jc0b1NIPMbVUUkaKWGnAL0uWYkMyRbbJlW?=
- =?us-ascii?Q?GOdwJHx8m58BnsMa17qqBqnOSWYORKHxI8/X6bTQMuz/Tgoi/L00T6KDyw9m?=
- =?us-ascii?Q?6UpOUucB8r3oJ0cdyVgzeQFLoSWGylQHRmRbiDIKxhzaqO5R601eDNJgIFIW?=
- =?us-ascii?Q?ID86cuFqHBDxaTlnDxnHQU65MI5EI5JJgn9b/2Hqv9p5iUa0rjyDcoqr6pbe?=
- =?us-ascii?Q?AK3aJmPULW5oV1DO0On8l1Q/cgqMaRPIm97kcJSoVu//pk3daJxE1xYqxBs4?=
- =?us-ascii?Q?dHnZxEAKX0tCz35d7PJB1+DKqgl+SqJHWzsF5evW?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c58fae97-898a-47b0-cb9f-08ddc0c29179
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 21:33:25.4899
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 17MlOPl9vyLLCdV1G6lmkoKbed3KGqhk7ixGCgTSMTMSyTFcAEIf+sfTz8QhD2dj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5849
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] uprobes: relax valid_vma check for VM_MAYSHARE
+To: Matt Gilbride <mattgilbride@google.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andrii Nakryiko <andrii@kernel.org>
+References: <20250711200705.1545447-1-mattgilbride@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250711200705.1545447-1-mattgilbride@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 11:02:53PM +0800, Xu Yilun wrote:
-> > With one nit:
-> > 
-> > > -	while (!xa_empty(&ictx->objects)) {
-> > > +	for (;;) {
+On 11.07.25 22:07, Matt Gilbride wrote:
+> `valid_vma` returns false when registering a uprobe if the provided VMA
+> is writable (`VM_WRITE`) or sharable (`VM_MAYSHARE`). This causes
+> `perf_event_open` [1] sys calls to fail silently. A successful return
+> code is delivered to the caller even though the uprobe wasn't actually
+> attached [2][3].
+> 
+> Remove the latter restriction (`VM_MAYSHARE`) from this check to allow
+> registering uprobes on code that has been "dual mapped" into a
+> process' memory space. This is helpful when instrumenting just-in-time
+> compiled code such as that of Android Runtime (ART) [4]. ART maps a
+> memfd twice, once as RW and once as RX, to uphold W^X for security
+> (defense in depth), and also to provide better performance (no need to
+> call `mprotect` before and after writing) [5].
+> 
+> uprobes already work for code that is ahead-of-time (AOT) compiled by
+> the Android Runtime (ART), as it resides in a static ELF file [6]. In
+> order to attach to just-in-time (JIT) compiled code, the Android OS itself
+> can coordinate with ART to isolate to-be-instrumented code in a separate
+> memfd, which will be left untouched for the duration of a uprobe being
+> attached. Thus, while the VMAs inside the memfd will *technically* have
+> the `VM_MAYSHARE` flag, the system will ensure that they will not be
+> written to again until after any uprobe as been detached.
+> 
+> Link: https://man7.org/linux/man-pages/man2/perf_event_open.2.html [1]
+> Link: https://github.com/torvalds/linux/blob/088d13246a4672bc03aec664675138e3f5bff68c/kernel/events/uprobes.c#L1197-L1199 [2]
+> Link: https://github.com/torvalds/linux/blob/088d13246a4672bc03aec664675138e3f5bff68c/kernel/events/uprobes.c#L1256-L1268 [3]
+> Link: https://source.android.com/docs/core/runtime/jit-compiler [4]
+> Link: http://cs.android.com/android/platform/superproject/main/+/main:art/runtime/jit/jit_memory_region.cc;l=111-137?q=jit_memory_region.cc [5]
+> Link: https://source.android.com/docs/core/runtime#AOT_compilation [6]
+> Signed-off-by: Matt Gilbride <mattgilbride@google.com>
+> ---
+> We've created a working proof-of-concept in Android that demonstrates
+> what is described in the last paragraph of the commit message. Thus, we
+> introduce this patch to understand the reasoning behind the original
+> `VM_SHARED` (later converted to `VM_MAYSHARE`) restriction, and the risks
+> that may be associated with relaxing it. It's not clear to me why the
+> restriction is there, and we'd like to get feedback on why it is or is
+> not still relevant.
+> 
+>   kernel/events/uprobes.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index a8caaea07ac37..1ecb3fdb853b9 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -123,7 +123,7 @@ struct xol_area {
+>    */
+>   static bool valid_vma(struct vm_area_struct *vma, bool is_register)
+>   {
+> -	vm_flags_t flags = VM_HUGETLB | VM_MAYEXEC | VM_MAYSHARE;
+> +	vm_flags_t flags = VM_HUGETLB | VM_MAYEXEC;
+>   
+>   	if (is_register)
+>   		flags |= VM_WRITE;
 
-Actually just leave this, if xa_empty does work out then the loop
-exits quickly, otherwise the break will deal with the tombstones
- it.
+It cannot possibly work, unless I am missing something important.
 
-> > >  		unsigned int destroyed = 0;
-> > >  		unsigned long index;
-> > > +		bool empty = true;
-> > >  
-> > > +		/*
-> > > +		 * xa_for_each() will not return tomestones (zeroed entries),
-> > > +		 * which prevent the xarray being empty. So use an empty flags
-> > 
-> > Since the first "empty" and the second "empty" are different things,
-> > 
-> > > +		 * instead of xa_empty() to indicate all entries are either
-> > > +		 * NULLed or tomestoned.
-> > > +		 */
-> > 
-> > let's write something like this (correcting typos too):
-> > 
-> > 		/*
-> > 		 * We can't use xa_empty(), as a tombstone (NULLed entry) would
->                                                             ^
-> > 		 * prevent it returning true, unlike xa_for_each() ignoring the
-> > 		 * NULLed entries. So use an empty flag instead of xa_empty() to
->                    ^
-> s/NULLed/zeroed, are they?
+You probably tested this against a kernel 
+pre-6e3092d788be1de0aac56b81fc17551c76645cdf.
 
-Maybe:
+Before that rework, you would be inserting anonymous pages in shared 
+mappings, which is pretty much broken.
 
- We can't use xa_empty() to end the loop as the tombstones are stored
- as XA_ZERO_ENTRY in the xarray. However xa_for_each() automatically
- converts them to NULL and skips them causing xa_empty() to be kept
- false. Thus once xa_for_each() finds no further !NULL entries the
- loop is done.
+If you want a double RX mapping where you can have anon pages in it, 
+create that one as MAP_PRIVATE.
 
-?
+-- 
+Cheers,
 
-Jason
+David / dhildenb
+
 
