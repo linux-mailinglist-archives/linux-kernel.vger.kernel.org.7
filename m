@@ -1,98 +1,114 @@
-Return-Path: <linux-kernel+bounces-727797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BBC8B01FE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:58:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5DBB01FE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:58:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 039AF171486
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BEE5A4400F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20FA2E9EDC;
-	Fri, 11 Jul 2025 14:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC00B2EA14A;
+	Fri, 11 Jul 2025 14:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SS65MYjh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="Ejmyyd4r"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E20B2E9EB1
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752245805; cv=none; b=bZdAI/1Qev89cUQ0SVKqzi+0R/rUUUZUb1g2atr+d9sfh34duADWYld2eZw6PsL+Wp7uhJ8gu73acGajaEn+1QF+NOZL3nSwEBhO5oXkGIVWbylxIm0hFj6oNAbGS4dp7V5M6SF+EV3LJ9TwTXp7jTUHx6r0gu50iYoff5eJMbg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752245805; c=relaxed/simple;
-	bh=zNp9EER2UQJ65Qwe/j75010fnZ8pc0YCPc+AdF0Qpl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cNVJe/ZVPNln/EYMam4R9T7ZQT0DpWHrkGHP6tkIkdVs+8FtBFONnYpc42WWTckgtMdpCn0yxnwmDXXWLHt3J0T7/DtYgqnmGsobMZrlAc0WyNMAdDF/O9eUzB7UVXQPFIt2owBHFzk2qpORdplob013gYc5PlXdYKUUn5YHobk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SS65MYjh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B01CC4CEF0;
-	Fri, 11 Jul 2025 14:56:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752245804;
-	bh=zNp9EER2UQJ65Qwe/j75010fnZ8pc0YCPc+AdF0Qpl8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SS65MYjhvk+m+L4KXVaOaTAoGT4WO6qUzscxC0a723+W5hmjYg7yU+TGIkuRrl5SY
-	 5Qhl3Sy/vD4C46h4nnndx1HCMyigEIkH6/yDVODbRjDOSEAUjWjjIN5wS1SCw580DK
-	 kDF5VkX67AogDxd5HkZnYFK74byT7afmfh7FZVGKdAM5BHGzxhum3QaboioSKdxsPr
-	 c9BN6C4AFys9xulwK1tdsEP8tfbKd3PqRqfm3pH7v3atY3gXLO6JdLq4QG5HCDBZn3
-	 gluHXzbBa88TgRsOBtr2gn28lO1F3kVW9hRMnK/4UdMkejCwSbEdqt+/P/V6C4lC25
-	 oMKxXFfleqRQg==
-Date: Fri, 11 Jul 2025 15:56:38 +0100
-From: Will Deacon <will@kernel.org>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, maddy@linux.ibm.com, tglx@linutronix.de,
-	bigeasy@linutronix.de, vschneid@redhat.com,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org,
-	linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-	linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com
-Subject: Re: [PATCH 1/1] sched: preempt: Move dynamic keys into kernel/sched
-Message-ID: <aHEmJvhUVG_x1FZx@willie-the-truck>
-References: <20250610075344.1379597-1-sshegde@linux.ibm.com>
- <20250610075344.1379597-2-sshegde@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC152E9EC4;
+	Fri, 11 Jul 2025 14:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752245882; cv=pass; b=alRd8trqVP5ZuYRMfF1LMz8XnordO3xQFkeInmIn9UPgupTDE0Z+YzbgqfYTSoz74Kr2FFvZbQDeSoi6Pu5Y0QrpOH53VbH0D59GRtP+6fH+CdM1CKMOgxn8xv2AwkREXCCUK6kuRZlDhDU/x6vEHxUAqLI8PrPUu1SWEZ2N3qg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752245882; c=relaxed/simple;
+	bh=SI7hIy6WcNZ6BFnKCV9ckXzmL0w3hUeYiacSsLeT+70=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ocTqpgG7W37mFR7TMmCjGoWLlwv3F39MMepkJnXjrZxV+ZI6HN6LL2TmdVcyePsloy4LmQQxUrkyA4Yz0bNSHoigfcueAU4BmnoOWJkQaLimOxj2rt9hPnh9zlUuu/d7QheN6/SMgwXePtTqztG0nPWFsz5ztLEobWBcDAAipnU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=Ejmyyd4r; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752245865; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BKXSQmTRtZE4n/PLG40EzPKN3e2ZCFPV2jt/BgYTlrlobqCUMqYt9hdAOlPNsgpGjPGSrG8izWIOy4L1yb4k7MGlLsYD5keiHPQUIdWp1xDXHTKpjiEJFciYqBjqh7yU5G/YKhfVbMBG5yA2ceRzXJlIJSyW2ZYG944CCpbbCw8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752245865; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=t0chg3P4XqvgAZUIms8Yq5sWYUihi9BDdnPNYfdKkT4=; 
+	b=OBlXM7syQnZanUMLqHGxwSEkqXDEB38Obj7ERRSuZ0idi08ZmGycssqqGQ/7wjXWmjUtH8QPNpUUQMSCstJbZD0KjeL4ztqc+9lgp060KH/hjS4SRFuBR95SULi/XmSqn64KyEyhoOpV8jrLk2hBvge7FRzkQSu4lh2hTAeeUYc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752245865;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=t0chg3P4XqvgAZUIms8Yq5sWYUihi9BDdnPNYfdKkT4=;
+	b=Ejmyyd4r2PfMQXooQj/iEZ7wQ49PnjK4PrYSt8mit6FbtiEgEIUj16e+FcwdRN5E
+	ukMbsM6eWIwnMgA7xGah1DRYgBMgoS4z/IYJu8tge1Sbqm1co/WvJG3ewqir8VfsutB
+	G29v0IV6azuNyNKIer6rI3MBCjioGglFyK1weBWs=
+Received: by mx.zohomail.com with SMTPS id 1752245863784678.2744682613209;
+	Fri, 11 Jul 2025 07:57:43 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH 0/5] MT8196 CPUFreq Support
+Date: Fri, 11 Jul 2025 16:57:32 +0200
+Message-Id: <20250711-mt8196-cpufreq-v1-0-e1b0a3b4ac61@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250610075344.1379597-2-sshegde@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFwmcWgC/zWMQQqDMBBFrxJm3YEkpal6leJC41hnkahJLIJ49
+ w6VLt/nv3dApsSUoVEHJPpw5jkKmJsCP3XxTciDMFhtH/ppDIZSmdqhX7Yx0YqVG2pnyN617kG
+ kJdHI+y/4ai+W2ybdco3Qd5nQzyFwaVSkveC/De15fgFkX5LDkQAAAA==
+X-Change-ID: 20250711-mt8196-cpufreq-86d961e2300b
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Hector Yuan <hector.yuan@mediatek.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Jun 10, 2025 at 01:23:44PM +0530, Shrikanth Hegde wrote:
-> Dynamic preemption can be static key or static call based.
-> Static key is used to check kernel preemption depending on
-> the current preemption model. i.e enable for lazy, full. 
-> 
-> Code is spread currently across entry/common.c, arm64 and latest being
-> powerpc. There is little arch specific to it. For example, arm64,
-> powerpc does the same thing. It is better to move it into kernel/sched 
-> since preemption is more closely associated with scheduler.  
-> 
-> Plus, Any new arch that wants dynamic preemption enabled need to have 
-> only HAVE_PREEMPT_DYNAMIC_KEY. 
-> 
-> This is more of code movement. No functional change. 
-> 
-> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-> ---
->  arch/arm64/include/asm/preempt.h   |  1 -
->  arch/arm64/kernel/entry-common.c   |  8 --------
->  arch/powerpc/include/asm/preempt.h | 16 ----------------
->  arch/powerpc/kernel/interrupt.c    |  4 ----
->  include/linux/entry-common.h       |  1 -
->  include/linux/sched.h              |  8 ++++++++
->  kernel/entry/common.c              |  1 -
->  kernel/sched/core.c                |  4 ++++
->  8 files changed, 12 insertions(+), 31 deletions(-)
->  delete mode 100644 arch/powerpc/include/asm/preempt.h
+This series adds the necessary bindings and driver changes to integrate
+MT8196 CPUFreq into the existing mediatek-cpufreq-hw driver. This
+necessitated two preparatory cleanup patches to the driver.
 
-Acked-by: Will Deacon <will@kernel.org>
+The CPU frequency was verified to actually be changing by comparing
+sysbench cpu numbers between fdvfs being enabled and it not being
+enabled.
 
-Will
+Enablement in the DT will be done once the MT8196 DT lands, so don't be
+surprised that no node uses these new compatibles so far.
+
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Nicolas Frattaroli (5):
+      dt-bindings: mfd: syscon: Add mt8196 fdvfs syscons
+      dt-bindings: cpufreq: mediatek-hw: add mt8196 cpufreq binding
+      cpufreq: mediatek-hw: Refactor match data into struct
+      cpufreq: mediatek-hw: Separate per-domain and per-instance data
+      cpufreq: mediatek-hw: Add support for MT8196
+
+ .../bindings/cpufreq/cpufreq-mediatek-hw.yaml      |  64 +++++++++-
+ Documentation/devicetree/bindings/mfd/syscon.yaml  |   4 +
+ drivers/cpufreq/mediatek-cpufreq-hw.c              | 140 +++++++++++++++++----
+ 3 files changed, 184 insertions(+), 24 deletions(-)
+---
+base-commit: 42f78243e0c6fe42f2710f98513a55c102347ff0
+change-id: 20250711-mt8196-cpufreq-86d961e2300b
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
 
