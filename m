@@ -1,142 +1,149 @@
-Return-Path: <linux-kernel+bounces-727172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96762B015FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0727FB01603
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E783AB98A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:27:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52503B191F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87970219A91;
-	Fri, 11 Jul 2025 08:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ABA202F8B;
+	Fri, 11 Jul 2025 08:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TbTHVDSl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SP0WPQrM"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458DC201033;
-	Fri, 11 Jul 2025 08:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04B81FF61E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752222395; cv=none; b=DhGU2GTutGR+TWitOoSrqMdWM6utgNyc8K8EFHq9uskBWHB6pJYZUqllT9Wq1j/uExy1hi82j9LW1OYKj4XENfGbfYYuoGdJywzjwREstfvYA+C876eZODB6SmNZg7x+CKaMnN4sD9nVgWQeLKNxLftoDho+xKQXLJx2aaQvWUk=
+	t=1752222437; cv=none; b=NnY6Gda5aRjYZWfRAoT/JFb/rtnse28er6a4cFiCm3aDGl7isPASoMojSLNJkie8LhBHO7RifpySMhXa7OHXij681UGK99Hsrgz4OBoxklOqRWEv04h596igE3cEQ/Sc2PJ2sn4DEv/8gLwP0h/Uv5qjeVudI7r5AchOuorbln8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752222395; c=relaxed/simple;
-	bh=kxzoflC2PyKGhcEfEIOuEh5rgftPwliDdjfw5NgFuU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JuerB3jquLGUI1f3Wh1aPCautEx2znOIXLPGKqO3uAk6m/9WTCpcyTFu3UG6EEEJi+ZFrrdywW5RlwTNWGKXyEXsldmvT9lTfZ1qA1hNsIUBTrOxsdD56iKcrgUmkmT3Mw8O3ddoGeN7W4mLsh9JTqsHt5Cka8SIwkpoONIE104=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TbTHVDSl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B1XMje030881;
-	Fri, 11 Jul 2025 08:26:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kxzoflC2PyKGhcEfEIOuEh5rgftPwliDdjfw5NgFuU4=; b=TbTHVDSlVIdL0pOS
-	A1tajtm+R98duCnbPURH8uGzs0Pdylf8dGmzrCMxjFOQzH71IzKhEY/Pv5bRLgMq
-	bceHEsRdAj10hgLelKdc6Aaj8itTfuFn3ePvBcOLFudR+fFJkBr0OUAO6kJFrl8G
-	4DHzfHxfq4GcpgVzeJdvDt9J+bQUTHojYnBeSJPD1ibLvlHBS7v8Sf9jqlwFfnXk
-	IxcwrZ6xui0y7bt0Uyf2HvZlMoy1KjRmc52O3UkQXWeY/YoB4xpOHGyK7/CEpR/8
-	bJHzQ2ZbF3bim/t+gS1hV5WXuEZMZc7KIOCWg7QFHreJHSvmm8frxAuhX0Ja6yPo
-	39vHig==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smbeqwh1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 08:26:25 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56B8QOIR030866
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 08:26:24 GMT
-Received: from [10.253.32.112] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 11 Jul
- 2025 01:26:17 -0700
-Message-ID: <ff2fb737-a833-474d-b402-120d4ed68d39@quicinc.com>
-Date: Fri, 11 Jul 2025 16:26:14 +0800
+	s=arc-20240116; t=1752222437; c=relaxed/simple;
+	bh=frSrt/16VypNMrhlklfbIhGb02n3jTIlRwU6eokGfkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFafhIKDdY4QD5Zd8eFLfRx6VQUcnO9jBZYjDxvhYZwYTD2IN284d0B+fQjPDqxMyG/dBb3kwY2Mrx/1wMqJ1Vw1h50OWMvyS6eZWGqiD0jp81MSHu9p9dqxe2YL3dBA2/whSKkfuhLTjCoAvoU5ADcqJ/CtuWD3UuWUpi6Y6Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SP0WPQrM; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2357c61cda7so86925ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 01:27:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752222435; x=1752827235; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3wb1oowbSA1sVzCsjHghmLIDKPJGVzvuDr0F84v8tpM=;
+        b=SP0WPQrMPk5sSzKG6XZczhujz3a+35Gp19e8iAzXCEUTIxw/EDwYOhOblT6TsaGVvv
+         QHotLpOFlhtRtDgi+LBZYokmemFoGTaVKt1d5IWaG7XzlZsIeQQLU/n8/STav01qFW5L
+         quO84rkVKT/xpsIe/75g2hbrXeO3kPJdUtjjlSJQNdY5RI6R1I4lOc4QAM8CTDnuGu5l
+         O3B2PdyFikp+KrhDHzudZT2njZVw7pBHN1vP4LuhkzUroRUFX5fLgOmhuDJYDBOivgeu
+         KPfP8f8vu9sAw3YtRsISIn0b567vH6N/FOhlOO+pgj3H7hpNmqg+qRfPUseNKgBH14fU
+         PH/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752222435; x=1752827235;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3wb1oowbSA1sVzCsjHghmLIDKPJGVzvuDr0F84v8tpM=;
+        b=JvWLSxhio+nNF74nHsEnPbMv6NisuNUd1JMOEu2DW4+8iaN/TmNVLvSfDDpG+oQFp6
+         gcLsf/Y4a+xIEFXcaKHZMiyBqWbVHzQs0X6CYNIuHRSqlTE5+yNgrSHEaJkaFI8zuDfs
+         P08s8EL2gbJeCc7/vYDHi346MriyaL63C5CeuBaiPmPOOXU+nxXUY3dNeLgklJHgt+DM
+         W57HCWbf1ODAEG9CCPlNC9Al3EydxMuD8Xep5Mk6bxP9UlFCiAEF/IlFezI3/cy9KdXF
+         cgsIlBeMDjNh+e9S0MOobZoMCWOYima2eOHSp8fa/kAhVVv0efLOvi8xyr8IYqOEvlJf
+         ZnMA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9o3K1xJ2ZNQvERdkBmjZ1pSaOaqXz0T+hNsfEZx/Fb8p7+U3a7tjKOED6XoM6i5BPep6pfMEqYbErAYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnuTL4iALX6tz0SNw+ZODqg8NBm7DhanrMpwQj4s5qmEvF1RDM
+	PotBASNsCOWWPrTJqF9J4XUWcYUV2rJ/PIm19nIiLK1a8CHYks/JLXKsZHD884/4cQ==
+X-Gm-Gg: ASbGnctPF7BvDXfNr/Xvo0aQSdfGXpgwzv0HlF/uiw4CeRIDZPxk1yCv5Ps+IPYuOJQ
+	5Xqf0oCL/jmuPaYGv64i9bZFeis2nuCtuUSSr3onHukgkmuXGVX2jfg0epDMa3mwKYK6DasAiJa
+	bV3J7h0vzsMLqBjaatN9IVzrELNFncWcFZbMJYLZDsXUvv4qUivJf8D4AAGDnQIKcpHfYjOnD6R
+	k9uVa8su6nAwrx11fz4/9D121ijwp5E25bapF6LQqZV4/daevndPPeUqvL8FKNMNgVQx3PCRJrx
+	kUKl2j5MghS+37ZOxHlLVR/rnz9uhVXbu4lm9/R9NFi2EqVvVuXtyVR6djvpjdWzy6r3dkGMonA
+	s+kPFnQbnElT8ieGrzS7oU5FcRnONW21qjwQUARxdOEtXfO7817f+cExT
+X-Google-Smtp-Source: AGHT+IGeQ9pS0bpSEY5lDbAotdJ5VOyrB44rPnDqbo9ssdh5gUYxMq4qPQG8JgMf7SMyjdyq4iZMZg==
+X-Received: by 2002:a17:903:2b0b:b0:237:ef9c:ffd9 with SMTP id d9443c01a7336-23dee1c636bmr2323505ad.2.1752222434466;
+        Fri, 11 Jul 2025 01:27:14 -0700 (PDT)
+Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42aefe2sm42788465ad.65.2025.07.11.01.27.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 01:27:13 -0700 (PDT)
+Date: Fri, 11 Jul 2025 08:27:08 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, joro@8bytes.org, jgg@nvidia.com, kevin.tian@intel.com,
+	baolu.lu@linux.intel.com, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH rc] iommu/arm-smmu-v3: Revert vmaster in the error path
+Message-ID: <aHDK3PIpwWvkwJtB@google.com>
+References: <20250710233003.1662029-1-nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] dt-bindings: PCI: qcom,pcie-sa8775p: document
- link_down reset
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <jingoohan1@gmail.com>,
-        <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-        <bhelgaas@google.com>, <johan+linaro@kernel.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <neil.armstrong@linaro.org>,
-        <abel.vesa@linaro.org>, <kw@linux.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <qiang.yu@oss.qualcomm.com>,
-        <quic_krichai@quicinc.com>, <quic_vbadigan@quicinc.com>
-References: <20250625090048.624399-1-quic_ziyuzhan@quicinc.com>
- <20250625090048.624399-3-quic_ziyuzhan@quicinc.com>
- <20250627-flashy-flounder-of-hurricane-d4c8d8@krzk-bin>
-From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-In-Reply-To: <20250627-flashy-flounder-of-hurricane-d4c8d8@krzk-bin>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA1OCBTYWx0ZWRfX+z+r8++6epTR
- gw99rxcdGSc64xZ+vTz1TjkJ8/bMBlMR8RtYJV9glCN8JaGMcFNpxYiRE/cGXzSuNOYL271vkr9
- 6l32XhIM2SZrS1i1cDEjrs8LPgTOOdQrEY6NfxOHC7n6MNBKNiguGzSr+Uy7jY68YgQAQDoNaAu
- UL+qOZIdqZ3joE9rh2T28dJlGE2Hzoid0MVomtBPikdH4GY1U/vQG9qwdvKP0XKIuGbBtGwpBPw
- 5hCCvrJjgOiuWgNzsWK8HiT1UDbZY5fhmdREzp/9EEzBeYWx6pbUfBsv1UG9z4oeEkfr3r9brTV
- JQrkA7ZzssGzP8saM47QMJD3/OscFocDJdThKDu58UHSzH5la3CFWhvuxW44kWrHsbkrqsjaUNE
- JxF0CQpIT1ZIQJbN0jTnyBqXUNgCIky3ZNHV3PzWQ6jUQOcEmEE3ZYMZf4KGdj8FUnPQqhjo
-X-Proofpoint-GUID: SSkEo2SFQtZoMRhJ0ZK5FHDxqCxz770l
-X-Proofpoint-ORIG-GUID: SSkEo2SFQtZoMRhJ0ZK5FHDxqCxz770l
-X-Authority-Analysis: v=2.4 cv=VpQjA/2n c=1 sm=1 tr=0 ts=6870cab1 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
- a=u5fknsGAV_5u-2U6WwMA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_02,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 suspectscore=0 clxscore=1015 impostorscore=0
- phishscore=0 mlxlogscore=678 lowpriorityscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507110058
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710233003.1662029-1-nicolinc@nvidia.com>
 
+On Thu, Jul 10, 2025 at 04:30:03PM -0700, Nicolin Chen wrote:
+> The error path in the arm_smmu_attach_prepare() was introduced with the
+> arm_smmu_enable_iopf(). Due to a rebase issue, it forgot to include the
+> revert of the vmaster.
+> 
+> Move kfree(state->vmaster) to the error path, to prevent memory leak.
+> 
+> Fixes: cfea71aea921 ("iommu/arm-smmu-v3: Put iopf enablement in the domain attach path")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 
-On 6/27/2025 3:08 PM, Krzysztof Kozlowski wrote:
-> On Wed, Jun 25, 2025 at 05:00:46PM +0800, Ziyue Zhang wrote:
->> Each PCIe controller on sa8775p includes 'link_down'reset on hardware,
->> document it.
-> This is an ABI break, so you need to clearly express it and explain the
-> impact. Following previous Qualcomm feedback we cannot give review to
-> imperfect commits, because this would be precedent to accept such
-> imperfectness in the future.
->
-> Therefore follow all standard rules about ABI.
->
-> Best regards,
-> Krzysztof
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
-Hi Krzysztof
+Thanks!
+Praan
 
-
-This does not break the ABI. In the Qualcomm PCIe driver, we use the APIs
-devm_reset_control_array_get_exclusive, reset_control_assert, and
-reset_control_deassert to handle the resets defined in the device tree.
-Regardless of how many resets are provided in the DTS, these three APIs
-treat them as an array and operate on all of them collectively.
-Therefore, adding a new reset does not affect the existing ABI behavior.
-
-BRs
-Ziyue
-
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> index 181d07bc1a9d..3c79cdbbd9e7 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> @@ -2906,8 +2906,8 @@ int arm_smmu_attach_prepare(struct arm_smmu_attach_state *state,
+>  
+>  		master_domain = kzalloc(sizeof(*master_domain), GFP_KERNEL);
+>  		if (!master_domain) {
+> -			kfree(state->vmaster);
+> -			return -ENOMEM;
+> +			ret = -ENOMEM;
+> +			goto err_free_vmaster;
+>  		}
+>  		master_domain->domain = new_domain;
+>  		master_domain->master = master;
+> @@ -2941,7 +2941,6 @@ int arm_smmu_attach_prepare(struct arm_smmu_attach_state *state,
+>  		    !arm_smmu_master_canwbs(master)) {
+>  			spin_unlock_irqrestore(&smmu_domain->devices_lock,
+>  					       flags);
+> -			kfree(state->vmaster);
+>  			ret = -EINVAL;
+>  			goto err_iopf;
+>  		}
+> @@ -2967,6 +2966,8 @@ int arm_smmu_attach_prepare(struct arm_smmu_attach_state *state,
+>  	arm_smmu_disable_iopf(master, master_domain);
+>  err_free_master_domain:
+>  	kfree(master_domain);
+> +err_free_vmaster:
+> +	kfree(state->vmaster);
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.43.0
+> 
+> 
 
