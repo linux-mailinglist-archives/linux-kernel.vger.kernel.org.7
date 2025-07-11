@@ -1,127 +1,111 @@
-Return-Path: <linux-kernel+bounces-727295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BCB8B017E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:32:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0437B017ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5995A2182
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:32:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE54D1C86C47
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DECE283FD8;
-	Fri, 11 Jul 2025 09:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g17GWOvo"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E47728853C;
+	Fri, 11 Jul 2025 09:30:50 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFDE27E7DA;
-	Fri, 11 Jul 2025 09:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72C227A461;
+	Fri, 11 Jul 2025 09:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752226242; cv=none; b=iNHgXrowk3FLvzr8k0nEisPg85us0tiIoKZjCdZce5AOd+kbh37bxc3Xv+SSHZQHQcdYkmUf6qlU+VNzQxdvzP3u1DOHf9ZLAY54jk1Ychr/J9TzRc2i7dKiFvPzFj9ZtPDKdKi4fENRHVkl/r17go23jk5o1pEgFvfaUloqUyk=
+	t=1752226250; cv=none; b=dE4bKL8ig1i9UsZNXfxv+itUm5KuoYXfigMc5UBhDyQJNRpBIbsSISmH7rsNqc0+DEEiWsi93leWwMSyEQUvjU5ilh0x88SOiRH9E+VhqspiurueHAy9B2MGSmZeSlqeOOyd/ZI5ZGN2lazQXgflPI10N/7WjThlYbfAKHcGxvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752226242; c=relaxed/simple;
-	bh=jlaQE+mBCVIwqEguA1eCJbvaVXOs/PTbp4pNB9rSZPg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VN26NsLK6M/AzrWPHOKqaGniDFgq8KGo3OiYp14x3Dot1LttWJkgXqsYQNj864ItWEifR7xwe6nDQcpUvIEHD1phJSd87Vrc+MiXbdR2oXMjK3OHZnxG5987UzJgYy7/fjWQopQhs01DqjlqLxCE7p82ynlVgvRYYI18/CWs40M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g17GWOvo; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D014743A23;
-	Fri, 11 Jul 2025 09:30:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752226234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YX1y/TAYW9gFFD0bPjtqpqJsDxZpj/LtkE9fuNee9O4=;
-	b=g17GWOvob+l+fMiYzsflIPvis2t9E3uAFZjYSD+PyfSr2O3VRI5jLUCf6iCS0GEdNc1wbE
-	OioT8ScpQWW6wCql42FcOygHcQUPqiozhaLdR8TLRjKIBRGbUyy8HVvoPh9smC0tdp1Y2M
-	VIhI6ryxU57PA5OSd6M+1wWlBHI6ClcFXUr3j4xwH+YOwSbEB95vkAXafGgHZNT+gp9sd5
-	nYK430FawaG63hStQquDsUs58KD/0nfz+QlF4F3XJTZE+h2ugj3H31DdtuK5izROVfH8YG
-	zbsjdMPVp9qWSf+Hn0wZEmZnvTRnFCGFiTRJuBLCyymLHOVIZrUGLo5QDyKStA==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Fri, 11 Jul 2025 11:29:50 +0200
-Subject: [PATCH v11 10/10] MAINTAINERS: Add entry on MAX7360 driver
+	s=arc-20240116; t=1752226250; c=relaxed/simple;
+	bh=oHSkqonOAsDtx1SKkt+1nQIG/xW65Zx1yJ6/UVVszXE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CUl/HUcBSyYqA+AkWxpEtaNLEF1KwKedQinycgFm+2gNCWMJYa9L1BdP9MFei7AiV0EGHMnc2cPJsD0hhQvOz6n3fjjKSq340jQ6o7GJxeoruCfltbNQ9FXqTyKQcsmRv+aDV4vTQJJIf+61PI9rOJtJ2oAJR+dTCTlGgU7OVEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bdmdX0nZxz6GBQk;
+	Fri, 11 Jul 2025 17:29:52 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 970991402EF;
+	Fri, 11 Jul 2025 17:30:46 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Jul
+ 2025 11:30:45 +0200
+Date: Fri, 11 Jul 2025 10:30:44 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Alireza Sanaee <alireza.sanaee@huawei.com>
+CC: <krzk@kernel.org>, <robh@kernel.org>, <coresight@lists.linaro.org>,
+	<devicetree@vger.kernel.org>, <dianders@chromium.org>,
+	<james.clark@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <mike.leach@linaro.org>,
+	<ruanjinjie@huawei.com>, <saravanak@google.com>,
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH v2 4/5] coresight: Use of_cpu_phandle_to_id for grabbing
+ CPU id
+Message-ID: <20250711103044.000024f0@huawei.com>
+In-Reply-To: <20250708151502.561-5-alireza.sanaee@huawei.com>
+References: <20250708151502.561-1-alireza.sanaee@huawei.com>
+	<20250708151502.561-5-alireza.sanaee@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250711-mdb-max7360-support-v11-10-cf1dee2a7d4c@bootlin.com>
-References: <20250711-mdb-max7360-support-v11-0-cf1dee2a7d4c@bootlin.com>
-In-Reply-To: <20250711-mdb-max7360-support-v11-0-cf1dee2a7d4c@bootlin.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Kamel Bouhara <kamel.bouhara@bootlin.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-pwm@vger.kernel.org, andriy.shevchenko@intel.com, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752226224; l=1082;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=jlaQE+mBCVIwqEguA1eCJbvaVXOs/PTbp4pNB9rSZPg=;
- b=xkAWR+f0YXCFa50KQg3Nk/PGiSNumgMki5xODJj6nQGqhVoLYou6LWCqArUOrAvc7W8cWQcjM
- m5LiI84ZM8FCB+TwFh4VMKr28WMAwycRDTRS9ZT+MV53YzzrINy7681
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegvdeliecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeforghthhhivghuucffuhgsohhishdquehrihgrnhguuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdfhgeetvddvheejieehheehueetjeelkedtfeehhefgfeeglefhteegtddthfetnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpeegnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdefpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpfihmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvl
- hdrohhrghdprhgtphhtthhopehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Add myself as maintainer of Maxim MAX7360 driver and device-tree bindings.
+On Tue, 8 Jul 2025 16:15:01 +0100
+Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
 
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
----
- MAINTAINERS | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+> Use the newly created API to grab CPU id.
+> 
+> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fad6cb025a19..81423ac75720 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14806,6 +14806,19 @@ L:	linux-iio@vger.kernel.org
- S:	Maintained
- F:	drivers/iio/temperature/max30208.c
- 
-+MAXIM MAX7360 KEYPAD LED MFD DRIVER
-+M:	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/gpio/maxim,max7360-gpio.yaml
-+F:	Documentation/devicetree/bindings/mfd/maxim,max7360.yaml
-+F:	drivers/gpio/gpio-max7360.c
-+F:	drivers/input/keyboard/max7360-keypad.c
-+F:	drivers/input/misc/max7360-rotary.c
-+F:	drivers/mfd/max7360.c
-+F:	drivers/pinctrl/pinctrl-max7360.c
-+F:	drivers/pwm/pwm-max7360.c
-+F:	include/linux/mfd/max7360.h
-+
- MAXIM MAX77650 PMIC MFD DRIVER
- M:	Bartosz Golaszewski <brgl@bgdev.pl>
- L:	linux-kernel@vger.kernel.org
-
--- 
-2.39.5
+We could just squash this to the call site, however it is in
+an if / else if with the much larger acpi equivalent call so
+probably worth keeping this trivial helper.
+> ---
+>  drivers/hwtracing/coresight/coresight-platform.c | 15 +--------------
+>  1 file changed, 1 insertion(+), 14 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> index 0db64c5f4995..95d46ea08936 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -167,20 +167,7 @@ of_coresight_get_output_ports_node(const struct device_node *node)
+>  
+>  static int of_coresight_get_cpu(struct device *dev)
+>  {
+> -	int cpu;
+> -	struct device_node *dn;
+> -
+> -	if (!dev->of_node)
+> -		return -ENODEV;
+> -
+> -	dn = of_parse_phandle(dev->of_node, "cpu", 0);
+> -	if (!dn)
+> -		return -ENODEV;
+> -
+> -	cpu = of_cpu_node_to_id(dn);
+> -	of_node_put(dn);
+> -
+> -	return cpu;
+> +	return of_cpu_phandle_to_id(dev->of_node, NULL, 0);
+>  }
+>  
+>  /*
 
 
