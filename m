@@ -1,81 +1,109 @@
-Return-Path: <linux-kernel+bounces-728355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4E5B02753
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:02:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06AF6B02755
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2198E5647DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:02:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744BE1C841CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90AA222564;
-	Fri, 11 Jul 2025 23:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72B7221540;
+	Fri, 11 Jul 2025 23:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syeIDBXD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="s7p0JKBA"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D54EEBD;
-	Fri, 11 Jul 2025 23:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20FCEEBD;
+	Fri, 11 Jul 2025 23:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752274962; cv=none; b=PXRrseuS0+e/PuAOhYgo9DHYK+M41CycP7aHYJMCIADxyEuh8+NfggU5osWvHniMP2VfIui3B86vJk6LiuoZFJoS2E1S/wfFaBjo8LLYB+UdBQ6YJ9pksC/6u3mZLStFD3WK5pVDifYwhV5tXTKAeXKcJ3NBiD6yqaafbOLeyoc=
+	t=1752275063; cv=none; b=IGZP/5dtv1ZF1th/W/0Iq8/mtIjfk7Un8/AiOEuCRJWxmUdQFf0J1rq0bGMyRXoHJWuOnuelEQcV8Gq+DQ44ygr7WAYqkj7S5erfobJSnKgQiH0RebxGwAILtoQmTpKf+HwPU+D/BAq1GVorZwNoRWlq1amF2yg53wprNDoE1go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752274962; c=relaxed/simple;
-	bh=oG+Ngb+WGCiXRiz5YGhrfgqAzOddD81UypLXPgQCJMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=WIaulZ1iuzXzCL4r9edzho9Ox2KZX89RYfFEXM+iKnwaij5Azn7K/UpSE3YlXKNekPM7XQ5NlrLyQx+Wuy7dNYGm9n/0/SM1xv6aCUP49uzQF0dpTKwYTJKXwmB+wl7DHKf3FhHnP55HSWj0ZdeSgBwqD1i533LccgFYgEWfZ6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syeIDBXD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80D71C4CEED;
-	Fri, 11 Jul 2025 23:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752274961;
-	bh=oG+Ngb+WGCiXRiz5YGhrfgqAzOddD81UypLXPgQCJMk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=syeIDBXDaffdmA7DcgwtYj459mfbugF3AgwlYikU4fCoh31or8C+UvfUZYDvCEmfj
-	 qxC5IuuzwC8G5TelfaAkL8b1lOGR0BPcvufaE8zpoI4U7vtxK7Jk3LpzHbZH26yfjg
-	 lmp+Eq9Q4YB7eX6U2+DotTGTvDVHtZCvs4yt7BAAlCWajWwlPQdd6z2ChcBMWABQx0
-	 4gAdztszDkCoSl0yGRLPqmTw2BZC2Mnw9HkUabLj39j7VQVQ6ep052CrE95p9ebHWb
-	 HsWFVtVaiOe7LnYRVhKMufdpgD+yuxCF4GeqINz1IxGiTyJn4ZPAHW6hLPtpxqs/6N
-	 kOASnkUPg2i0w==
-Date: Fri, 11 Jul 2025 18:02:40 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
-	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-	qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
-	quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Subject: Re: [PATCH v4 06/11] PCI/ASPM: Clear aspm_disable as part of
- __pci_enable_link_state()
-Message-ID: <20250711230240.GA2312867@bhelgaas>
+	s=arc-20240116; t=1752275063; c=relaxed/simple;
+	bh=wNvfBX4TR767dMxXw25YCG4yyWMISCgR+M2tEP4Rohw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iJac9uflb4RO5bdQelzuARRJYvzJ09scfpOVOvqd8ATsVZxH7KI5djJsbGrTpJPffBvs9aqVRTw/eNFsU0mW5pcC1xNQApo+ebab0lBCNIsWH6N9dSRdYL+ltb1ioHVmNYXbrc6T/kjGyaLVpdW2DBJC6r1cqq52QYoxpfdiUlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=s7p0JKBA; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bf6j71fvDz9swN;
+	Sat, 12 Jul 2025 01:04:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
+	t=1752275051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=G0dq+6kLOG7lWO2uQdL8frB6adBZ2iahZjar3rc9ltw=;
+	b=s7p0JKBAzdzMtlvlqJCA3sH51mnc8Cs9q37D9Un7QudaQeeM8DKJeIlg+KAmPftPQJvyxb
+	AcwUkBCxzfMFwezfVpKMy0hoU+C8niY524mAN7QK2lAat9ofBUDKnVvqy1auAucaBt3l/6
+	JNYHP4pOr/ePYUgWGU2kB/iIysmJQldUg3vBwZ4cCTnyjz0azvhVBg6Ptgfom4tdtbw/fM
+	Uzypuzd3lsVBe+6B4nHFmIVK5lYmfBHT0rv7qFH/coLw7VFg60lt3TnLRem6t5UsMD3KS6
+	hkS5LXQ/Q1mWfbJfAbAMd7bk/01Ur+b92BNuo9ZvmySPwJiSGBa/MhO0biXQRA==
+From: Hauke Mehrtens <hauke@hauke-m.de>
+To: sashal@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: frederic@kernel.org,
+	david@redhat.com,
+	viro@zeniv.linux.org.uk,
+	paulmck@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Hauke Mehrtens <hauke@hauke-m.de>
+Subject: [PATCH] kernel/fork: Increase minimum number of allowed threads
+Date: Sat, 12 Jul 2025 01:03:48 +0200
+Message-ID: <20250711230348.213841-1-hauke@hauke-m.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609-mhi_bw_up-v4-6-3faa8fe92b05@qti.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 09, 2025 at 04:21:27PM +0530, Krishna Chaitanya Chundru wrote:
-> ASPM states are not being enabled back with pci_enable_link_state() when
-> they are disabled by pci_disable_link_state(). This is because of the
-> aspm_disable flag is not getting cleared in pci_enable_link_state(), this
-> flag is being properly cleared when ASPM is controlled by sysfs.
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Mention the name of the function where this happens for sysfs so we
-can easily compare them.
+A modern Linux system creates much more than 20 threads at bootup.
+When I booted up OpenWrt in qemu the system sometimes failed to boot up
+when it wanted to create the 419th thread. The VM had 128MB RAM and the
+calculation in set_max_threads() calculated that max_threads should be
+set to 419. When the system booted up it tried to notify the user space
+about every device it created because CONFIG_UEVENT_HELPER was set and
+used. I counted 1299 calles to call_usermodehelper_setup(), all of
+them try to create a new thread and call the userspace hotplug script in
+it.
+
+This fixes bootup of Linux on systems with low memory.
+
+I saw the problem with qemu 10.0.2 using these commands:
+qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+---
+ kernel/fork.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 7966c9a1c163..388299525f3c 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -115,7 +115,7 @@
+ /*
+  * Minimum number of threads to boot the kernel
+  */
+-#define MIN_THREADS 20
++#define MIN_THREADS 600
+ 
+ /*
+  * Maximum number of threads
+-- 
+2.50.1
+
 
