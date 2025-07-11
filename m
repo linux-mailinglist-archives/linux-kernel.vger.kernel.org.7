@@ -1,183 +1,182 @@
-Return-Path: <linux-kernel+bounces-727314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40D9B01840
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:40:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CBFB01873
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4997E1718AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:40:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C8EF7AB5CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D4727CCEB;
-	Fri, 11 Jul 2025 09:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0175227EFF3;
+	Fri, 11 Jul 2025 09:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yIbaaZlZ"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AWYfEiBU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B477223535C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860B527BF7C;
+	Fri, 11 Jul 2025 09:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752226827; cv=none; b=uQgi9O1x7HgKFRmTOXVNJMy4pG/XYDXO3dlzaVm7PcC+vQwx3Xlx0pmuAkZEi7iWx6ky0v9nrNU5vekK5K/ym2BXU+gkFV5+9qV90Q0CIjJ/P2EspUUcOwxgz1pFN+UUL7absLQuWD1ZJGl8sokYGtAC2+wBV62oPWPAHwdvjNI=
+	t=1752226862; cv=none; b=EU0F6TQgzUu3ODY9Y+dMD5CGM9mWcB1pGnstNzziy5ValuB3/OObzKW2N06THYc4rJizZR7QkjyY4D1uyKvqtCtmVBRoUaLGuhxCCPbLzG7/cONCQ7tkC8J0KMHoCBmRho8rI3lC4FqxiFnbXFe0G2SxEH/sEqkV0/Ge1b/lWEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752226827; c=relaxed/simple;
-	bh=hPqqT4/tdZjpo59sRnSJlzrkOv3hNmONJhZos3vk2rk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FAiDkT82aqikAT0xvQbPjSy/58cQyNjM9IJOmQfICHitrjJXDXHPOi/kdxG85jQitG78z0EDnnhzrFffor85+YMpZh+5/HmJhCkHkEebacHix7UN+20irX8OR+XXYSbRIWVJP6IvC0A7gAFbbR+qwGq2nVvffN1EB7ETrGkvf7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yIbaaZlZ; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab1abfe312so254651cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 02:40:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752226824; x=1752831624; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EiToprrY2vSG7wDWswnp6OahCh2Aw5GevBEnK+p/NMU=;
-        b=yIbaaZlZm1ESG/lmxmbJkgFqisMeie4SIoiJSaCAAkiyXPG6wqP3TEalJAFRRrjTIl
-         O9d/RrbEvp0Httob9npX5zrW8jerKIJKQytdmYYVpA9fCQ3TUACaz5RmGs//lOGts444
-         a0ZTPhKlpBc+3c6mSzxcgTrz5PeHppC1ktT4xSoSny7sObgpsgxuf8HQ6k7BOpU2lBEZ
-         9NxZDC7vxcH9gP5gWal8b614k17oBWy2uss3xRhhbmmQ3UMOtqxAVfdMOYGMNxB20yi8
-         xHtqbrqDseaG5hTxx0xuIdTau02mLQNFTfi5BtXsBbTXvLMIdneV50SP3RbtY66Cbns7
-         a1Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752226824; x=1752831624;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EiToprrY2vSG7wDWswnp6OahCh2Aw5GevBEnK+p/NMU=;
-        b=KybzKYn0MP4HHgnK701gP/89kk6+qLkCeBS3Jrh0VeQTkNFFy/7AQGacF+m0AV8Xlp
-         rWqibZUtpMuy3/doLMZmmLOn2j720Szp6utUj6xegNSPp3x1OPDAkPVkZZ+VxtgZdbPn
-         xtifLbeeIG3K6Ve2BR5KKjXgMI7rcJedCWqOsfl4hrfeaHENsAFYXvT/LqxagPf+IyCO
-         IrBvCOsmR0JIcOFqvDoLeIkp11OvnLWimLKMYwBzOwNoIgO6dLo9UsTZg5r++77jCZpB
-         nOJO94vMnE2tYTYbM3XRUr96GkitsDkBmYI9trdC9B7RBsVGaGzn3SYQ5iO4MXa4TNwx
-         FU0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXc4GNGAuX2ZC1o4iJwdh1eqytkwPLX7tEt6HP3b9m26QYUFLqtrboZNIlxbVkB0XkW0UrQdJNMpL0pTB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/pNlB3HZeLAQ+GOmQPbcwVSU8ybb+BA/BtVLN+GzcYGxOxzUm
-	FaMusMxZkTamIxJ4MGtIRXXi9eKMQ9U5jHdHQI4lrg4IlrQjcoL4HcuDQPXAI/4GcBLd4tZ09LR
-	z4orxRSGIDrn6yw4u+8LM7izgZt5b2qQwJ/fQuZKnTw==
-X-Gm-Gg: ASbGnculG0TBJE4m+Ksc7Xle93G/B82Q97dTCHv0Ewy0SfyHLD3MflRH4plJZsqOITP
-	BSRAys7Tr4cQvigshcj/kmN7HcdoUa5b7ejOH/SD3z4EvcOPXj3gpazvEHH79BrQ9hxBigtUo3B
-	ql7CsVFnf/aj2O3lYRO6cU8shzhO0bSa2DbhUpZKW2QgnvfQjqU7J6FVeuDt55eysllxPX8/qy8
-	Pgdgg==
-X-Google-Smtp-Source: AGHT+IGt7Q2UqhjAv5rvjGTqWJkmfPMxEWXDaNMoSAqadHSOVa3yKAj/RGQ5pNmYTvcFx6kGvI49Wq9aML1dz+RFIak=
-X-Received: by 2002:a05:622a:d13:b0:4a9:d98b:78b0 with SMTP id
- d75a77b69052e-4a9fbebcb05mr15398421cf.7.1752226824464; Fri, 11 Jul 2025
- 02:40:24 -0700 (PDT)
+	s=arc-20240116; t=1752226862; c=relaxed/simple;
+	bh=BSdkDWu43+UVOap9ka/dvJ0oQpyuDATvTPk0vOlfLl4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HK5LWt+S626jTbusSegZTDrbO+ZKIRM1s4XjDvvcmVHJGQSsEyzOzISVral8wgtbl61XFfK3iXn5/nO/acmk+Ezuxf5QulLwar99v4gVZUbqCAc8SpW2mXq72hf1JGPWaSc4Cq/WFEA6dZfgaqeqet7d71rlWDZGNnnY+7U6u3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AWYfEiBU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B1X3MD012022;
+	Fri, 11 Jul 2025 09:40:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=MA07l9FmpGczpoSTMauVWq
+	0Uzfsbk2Ip1qlrg9BU980=; b=AWYfEiBUFJYXUnc2auC4uhsRy8WHMCCpgARYt4
+	2i8kZGnLmg67tA3TJzx7Gc2NTzO5s+S/phXo1cySuAh1U7Ea50EjKDLsbqFWrS50
+	LuzSKyrWy6gZvB+Vb/JHG6798sEY0L5eyai6TXsVOzY84BYIgbD3rs0XyeCissbg
+	gcT6WWTefG5RaCtYf1zOFqWyiQzcH5+wm9nv94s6iintwY28KIiorIBh6Iv1zzc0
+	+hpeAwIhjfDwSztIVtCSIoW6AgtoAqZiqJqrghPYhQtmewvTQBmQmwpYGcdmZ330
+	pUDFt4Up13MaetOGqeMe+oWRAKOGDcIH4Ex0wxrqeHM3/ezA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47sm9e01v8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 09:40:47 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56B9ek8A010472
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 09:40:46 GMT
+Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 11 Jul 2025 02:40:45 -0700
+From: Mao Jinlong <quic_jinlmao@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mao Jinlong <quic_jinlmao@quicinc.com>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 0/5] coresight: Add remote etm support
+Date: Fri, 11 Jul 2025 02:40:26 -0700
+Message-ID: <20250711094031.4171091-1-quic_jinlmao@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711084708.2714436-1-arnd@kernel.org>
-In-Reply-To: <20250711084708.2714436-1-arnd@kernel.org>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Fri, 11 Jul 2025 11:40:13 +0200
-X-Gm-Features: Ac12FXz2oo9QpWwn_wXugwUdwMkaTK7Q-py-EyqBK4mF-NG0Nl0JpgY506ozzxA
-Message-ID: <CADYN=9KHYSQRLk00RZUygSD28CwfmbpjWa+W+P7B5xgB9vPCsQ@mail.gmail.com>
-Subject: Re: [PATCH] [v2] block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Anuj Gupta <anuj20.g@samsung.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Kanchan Joshi <joshi.k@samsung.com>, Christian Brauner <brauner@kernel.org>, 
-	Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>, Jens Axboe <axboe@kernel.dk>, 
-	Keith Busch <kbusch@kernel.org>, Caleb Sander Mateos <csander@purestorage.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, Alexey Dobriyan <adobriyan@gmail.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jG5-B5-Sc7km8FmPZAf7znFYe5jKPfuI
+X-Authority-Analysis: v=2.4 cv=W7k4VQWk c=1 sm=1 tr=0 ts=6870dc1f cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=3H110R4YSZwA:10 a=Wb1JkmetP80A:10 a=07d9gI8wAAAA:8 a=COk6AnOGAAAA:8
+ a=Kq4fDhYDckEUxlu27kcA:9 a=e2CUPOnPG4QKp8I52DXD:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: jG5-B5-Sc7km8FmPZAf7znFYe5jKPfuI
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA2OCBTYWx0ZWRfX6BEVW175zuaD
+ lnxY4ctxY9TQTwS0Tc7ph0llP4eVFjuB37Ak7NmF7UBy8VD4dl4hRqXcnR4LFdbzP4fMjuXQs6z
+ Z4h4AWazBoRcHy63a6evU4ATnpn/IPviSxCFHiP3Bjb9QhLOjGvR9UJzMtmec9y3GTTOwgsJtxi
+ GdfWUPYO+AcoT/9/s4RhM0s1dj9JHL/SZdmIOLlh+KLoehtnBSOojVGpoIYMU4w+OUzElGGckg3
+ djr/BryvYwj9JJ09IiNZf1UFEZYomf2ELbOg9VU/483SKelWsBMI4cRAw82pF0A0w3JLavCfL9B
+ 82kz50ZOGVQxKWEfPgzogp4IAqxzQMYuT/U/hXK9GjXrkyhcIsCusrBEAfZd7PZeAGELJ/1wJUN
+ 1ekGYtO0yMcJ/xC6oe6XiEiuMfaejtOMoLY4CVwq5ddJBOXA/HpQ5sYKB0FFW1av9gk9PN9W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 phishscore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507110068
 
-On Fri, 11 Jul 2025 at 10:47, Arnd Bergmann <arnd@kernel.org> wrote:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Anders and Naresh found that the addition of the FS_IOC_GETLBMD_CAP
-> handling in the blockdev ioctl handler breaks all ioctls with
-> _IOC_NR==2, as the new command is not added to the switch but only
-> a few of the command bits are check.
->
-> Move the check into the blk_get_meta_cap() function itself and make
-> it return -ENOIOCTLCMD for any unsupported command code, including
-> those with a smaller size that previously returned -EINVAL.
->
-> For consistency this also drops the check for NULL 'arg' that
-> is really useless, as any invalid pointer should return -EFAULT.
->
-> Fixes: 9eb22f7fedfc ("fs: add ioctl to query metadata and protection info capabilities")
-> Link: https://lore.kernel.org/all/CA+G9fYvk9HHE5UJ7cdJHTcY6P5JKnp+_e+sdC5U-ZQFTP9_hqQ@mail.gmail.com/
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The system on chip (SoC) consists of main APSS(Applications processor
+subsytem) and additional processors like modem, lpass. There is
+coresight-etm driver for etm trace of APSS. Coresight remote etm driver
+is for enabling and disabling the etm trace of remote processors.
+It uses QMI interface to communicate with remote processors' software
+and uses coresight framework to configure the connection from remote
+etm source to TMC sinks.
 
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Example to capture the remote etm trace:
 
-Tested it in qemu-aarch64, it now ran the ltp-smoke test fine.
+Enable source:
+echo 1 > /sys/bus/coresight/devices/tmc_etf0/enable_sink
+echo 1 > /sys/bus/coresight/devices/remote_etm0/enable_source
 
-Cheers,
-Anders
+Capture the trace:
+cat /dev/tmc_etf0 > /data/remote_etm.bin
 
-> ---
-> v2: add the check in blk-integrity.c instead of ioctl.c
->
-> I've left out the maximum-size check this time, as there was no
-> consensus on whether there should be one, or what value.
->
-> We still need to come up with a better way of handling these in
-> general, for now the patch just addresses the immediate regression
-> that Naresh found.
->
-> I have also sent a handful of patches for other drivers that have
-> variations of the same bug.
-> ---
->  block/blk-integrity.c | 10 ++++++----
->  block/ioctl.c         |  6 ++++--
->  2 files changed, 10 insertions(+), 6 deletions(-)
->
-> diff --git a/block/blk-integrity.c b/block/blk-integrity.c
-> index 9d9dc9c32083..61a79e19c78f 100644
-> --- a/block/blk-integrity.c
-> +++ b/block/blk-integrity.c
-> @@ -62,10 +62,12 @@ int blk_get_meta_cap(struct block_device *bdev, unsigned int cmd,
->         struct logical_block_metadata_cap meta_cap = {};
->         size_t usize = _IOC_SIZE(cmd);
->
-> -       if (!argp)
-> -               return -EINVAL;
-> -       if (usize < LBMD_SIZE_VER0)
-> -               return -EINVAL;
-> +       if (_IOC_DIR(cmd)  != _IOC_DIR(FS_IOC_GETLBMD_CAP) ||
-> +           _IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_GETLBMD_CAP) ||
-> +           _IOC_NR(cmd)   != _IOC_NR(FS_IOC_GETLBMD_CAP) ||
-> +           _IOC_SIZE(cmd) < LBMD_SIZE_VER0)
-> +               return -ENOIOCTLCMD;
-> +
->         if (!bi)
->                 goto out;
->
-> diff --git a/block/ioctl.c b/block/ioctl.c
-> index 9ad403733e19..af2e22e5533c 100644
-> --- a/block/ioctl.c
-> +++ b/block/ioctl.c
-> @@ -566,9 +566,11 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
->                                void __user *argp)
->  {
->         unsigned int max_sectors;
-> +       int ret;
->
-> -       if (_IOC_NR(cmd) == _IOC_NR(FS_IOC_GETLBMD_CAP))
-> -               return blk_get_meta_cap(bdev, cmd, argp);
-> +       ret = blk_get_meta_cap(bdev, cmd, argp);
-> +       if (ret != -ENOIOCTLCMD)
-> +               return ret;
->
->         switch (cmd) {
->         case BLKFLSBUF:
-> --
-> 2.39.5
->
+Disable source:
+echo 0 > /sys/bus/coresight/devices/remote_etm0/enable_source
+
+Changes since V5:
+1. Fix the warning and error when compile.
+2. Add traceid for remote etm.
+3. Change qcom,qmi-id tp qcom,qmi-instance-id.
+
+Changes since V4:
+1. Add coresight QMI driver
+2. Add coresight qmi node and qcom,qmi-id of modem-etm in msm8996 dtsi
+V5: https://lwn.net/ml/all/20250424115854.2328190-1-quic_jinlmao@quicinc.com/
+
+Changes since V3:
+1. Use different compatible for different remote etms in dt.
+2. Get qmi instance id from the match table data in driver.
+
+Change since V2:
+1. Change qcom,inst-id to qcom,qmi-id
+2. Fix the error in code for type of remote_etm_remove
+3. Depend on QMI helper in Kconfig
+
+Changes since V1:
+1. Remove unused content
+2. Use CORESIGHT_DEV_SUBTYPE_SOURCE_OTHERS as remote etm source type.
+3. Use enabled instead of enable in driver data.
+4. Validate instance id value where it's read from the DT.
+
+Mao Jinlong (5):
+  dt-bindings: arm: Add CoreSight QMI component description
+  coresight: Add coresight QMI driver
+  dt-bindings: arm: Add qcom,qmi-id for remote etm
+  coresight: Add remote etm support
+  arm64: dts: qcom: msm8996: Add coresight qmi node
+
+ .../bindings/arm/qcom,coresight-qmi.yaml      |  65 +++++
+ .../arm/qcom,coresight-remote-etm.yaml        |   9 +
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |  11 +
+ drivers/hwtracing/coresight/Kconfig           |  23 ++
+ drivers/hwtracing/coresight/Makefile          |   2 +
+ drivers/hwtracing/coresight/coresight-qmi.c   | 198 +++++++++++++
+ drivers/hwtracing/coresight/coresight-qmi.h   | 101 +++++++
+ .../coresight/coresight-remote-etm.c          | 262 ++++++++++++++++++
+ 8 files changed, 671 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-qmi.yaml
+ create mode 100644 drivers/hwtracing/coresight/coresight-qmi.c
+ create mode 100644 drivers/hwtracing/coresight/coresight-qmi.h
+ create mode 100644 drivers/hwtracing/coresight/coresight-remote-etm.c
+
+-- 
+2.25.1
+
 
