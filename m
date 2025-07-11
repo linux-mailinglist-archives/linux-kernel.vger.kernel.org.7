@@ -1,303 +1,252 @@
-Return-Path: <linux-kernel+bounces-728258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3896AB0258C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:02:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CBFB0258E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24D091C203AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCC625A12AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A1A1EFF9B;
-	Fri, 11 Jul 2025 20:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E20B1EFF8E;
+	Fri, 11 Jul 2025 20:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="gPPoXjWd"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="lJhylWDx"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11022129.outbound.protection.outlook.com [52.101.43.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5F1A32
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752264139; cv=none; b=QvmkJjlk8NBR9ycn7Nbd8vitk42folybcsBzcBTl3d56kZ22+rpOvFe0ZFgmE9k7413BmHFcsF8mjMnZ4hRQ/+NSqTI/LfhYoIzEC6dZl615JNmEP/8HeOHhTgH/69K2AfwFLdTk19Wq5zq1WxHGIoUx7q5TRNMptxJ+Oi2yWVI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752264139; c=relaxed/simple;
-	bh=zKywbrbbA5eqISP3tLnGOY+FB7tTc2FyEfuH/fp7gzo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IKIYdO1jifZbhvSI6E/4SvQtlXNBV+GXzPgHyUVCwcDa6j+aMo4C0RMtUmoCaYbtsy+ywIF+OMlHG4ZBNqBQIF9rLn5XNZyIsGAeT5drKsZAJdKU099pqoDhKgY43LY5pdBMXnCGiksKxZ/PCCphlijBwBCdIuSfSxmMpHmzEiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=gPPoXjWd; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4a58d95ea53so31203111cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:02:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2C7A32;
+	Fri, 11 Jul 2025 20:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.129
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752264241; cv=fail; b=YyIxByXu8L3vzq3WdHz+jYqRk5SL1pO0PR+AJB5K+hfOPh9gtsheEZjihEoyg50S/UOJpH5HfAId3MC35LztSPVHeOtR7Y7zFEg3Lnl/MklOn0js49BxSuQB88gfFaL//9UzHyzF3PY589sClrH9KHVsvjXRz8L2/Biw84Iq5AY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752264241; c=relaxed/simple;
+	bh=DFvMAXA9msfjV8ijrqgPeg+R+UeTQIKoZ6SOfq6+Bw0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ffhmZJSZVTV9MXE1kKHIldy1jC0tOkYi9GeRUuBR55xoEsneEbcReDvIaKb6cBU735JKJJQPpZwd4Q908YgaIGlnekS7d4ZbwqhjNZkSJE3WJVMOE9fZr7pw8+0JLsF37vn3siy/CeA5975lrTG16w2ZlFHe23fjflS5te6kYjE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=lJhylWDx reason="key not found in DNS"; arc=fail smtp.client-ip=52.101.43.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JcrbOmTQOksLly+8EhIgn5VW/21YBjEqJEi1dUpTnhW/jPfIniVulaVv3DhQtlNmUxGBjToCpttIwPX+AgHXPcd4fyMOjYDN9v2P8QL0C30IIZTLcLIFtDntoIfV9DjP9bkh3JA1h1vrGzuQW+o+Yk0JMYIAyiMqb2zXoQdcODflVRTbXsGPy+Gr0mN1LecCDnA73h7gKwJzdoQ1GSoY23Oi7guBVmp0NjmropIhRVqzR74K/nZ9SoDpbEHKJPBWWIZ5c8YLGDH31AZtHqkMWYjcnrXSGEBgl8rC7eWgkFsXLe9zCQUZ6T3pnS5ZsTLR1s6EyZdHOC4AzOVRSsIP+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y/ksV3ZTbai/dOJ5zGicsrPbFs7dwly7VSrJN/snTLc=;
+ b=MFEi5utdnsmmmzg2PR04gQBzW05aSkdJHO1VTRG3ZY/0NODNy5EFw31RkBF9K9tenW53E1h3qQ2uks5L0HnCKS8+l/8noIOPJbze/YYpee1fdR2n7MXIoAcp03mAcYrtEeSAyrRjZnVP/fkGg4nCRVS63+s1mx8+hR9u1fh0cdGUWUd62QVy7l8z2BMh1Xf3v/vPddqMOrQqUbGjZZCEkXwltWBBJVeEgKQq0uNfflwqzw7+MzwsbV8RjB0DHhpB9wgtBTsQzj9YTF90a2ADrV7e2ceK7H6PbqgXjv2HMsiHLoV1SeQFIJdPD/qet85XgCP/rSAfYVpAJ62NsPyb0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=amperemail.onmicrosoft.com; dkim=pass
+ header.d=amperemail.onmicrosoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1752264135; x=1752868935; darn=vger.kernel.org;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CnoRRDhtGSOPAPWiKhq8LlJyfNIEUB0lnKlvZ+LO7jU=;
-        b=gPPoXjWdsztlmCjAu9eXOioV3u7z1TwU2EJ+pE7y5CRtc9t2gKm+i3QRgjzbRY0UQC
-         prm3QGdf1HxjilO7HkrZFvyWoBayDgFJY0kAmN5DJK4BuDQlQSrJwWNeQWp6ix7Dnjqy
-         IpHx/O/SuDfx22eoEnfM60PEjsZN+MalWw4DFFvQ589YSVU2c62wrlAVRvdz+Xip9Xr6
-         VpcQRwPFcSgdmxGb3wZzBC3B/5wHs1nIQc2OUKm9YbZ8UbC2xPYepe/KFMwvmPbNcG72
-         wNbAiy/MDWZ0Ko1atD2OH1qoaXoCmGI+e6NtoiwdndjIHxtgijVsQ6XODvXUwX7sJbxj
-         iWHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752264135; x=1752868935;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CnoRRDhtGSOPAPWiKhq8LlJyfNIEUB0lnKlvZ+LO7jU=;
-        b=hRqWXQY0ZZWsBcWpwFeBdMHtnpcwdBoHGLTYVU0TwhzpbtfFLdEsyErJeTOhbqBNWZ
-         XWWDinbJjc0mnOVP8/XtaITMTTB/NqQpbd8PPottKCwKWhtMwaQDVQQ170G0mH79KX9K
-         8yGFTHBmYOSwtmamWfk5zC2h8oiqzjVhMwt6AClAaNsKxp7u7uB3ICEgKLTyvBQxgzN+
-         WA5+FH+bMfrhaEpwecU1cEZaccA0tVSvpn5Epg+fbFGJklebvmzxQE/gBNkLW+PE+POo
-         Cj19adDduNVIS50vU+oqwDdeJn4i5EP9rmynjCbNfQNgsjMhfnKlVzctz7m4cLep53Yn
-         AK/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWxEADHEkfEv6k3d8qUdfhSL7fz++QVAbSnxtEZ2I10TDoREqWq/5Fjj/orZwDwQh74BC9bMsy5eah35Zw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt9+ipEwnXC4kkqskhHgWl7ctxImU8hpQvadC21ujKxqRtIUBR
-	qshZ5EuT05FysxT6eZg+4Ka0t5mDDxYhi82W6I7yPBJ/pei0J5UpFDv1nUVDXl8ndlM=
-X-Gm-Gg: ASbGncu1QMnvw5AvaxfT6yKZkgCo+TVQpbhQ0QvS+xfroFbASMDsOHrdrsIHcuE7Amq
-	1zRgHcB3PezrnvnAXYhG9ABmAVR9nmNT0fc/Bd1/1zxT4OtBQR8HsieGXSBOViLglUbx/yJrBSN
-	DBjdMwU73KbXlEHk7Q16nkr/JzS3QMsoklHg7u43ix3RPZ3599Bhv4ieJ3gUR+3i5vHBtD60LOb
-	Vui0hVhPWS15WEBOX9Uw1+f8jNCdVOPgzsBnHSAU5edO+RZlH/vf4aaQ5M0JnCpTcnupSvsrTS7
-	7Yr5lYR9w2cjtX0ybMCWZ14JxFjcVlABs3jStsdDgWogMkiVVumgfrQt6EDqJeFNnrgH5TH+LZy
-	yHA7+zvhCCJt2UcMsu8vp/kQHoSvSWoS1RJmRLg==
-X-Google-Smtp-Source: AGHT+IEuLOxF/UAqwKLexQXJclEkYrpc7aYrRvWVeUsA+st+Tdi3sBUDzBI9yFbWLfbip40hyoxWTg==
-X-Received: by 2002:a05:622a:a38c:b0:4ab:37d7:c3c2 with SMTP id d75a77b69052e-4ab37d7c5b1mr34888811cf.14.1752264135009;
-        Fri, 11 Jul 2025 13:02:15 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:17:b699::5ac? ([2606:6d00:17:b699::5ac])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9edefb923sm24313601cf.75.2025.07.11.13.02.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 13:02:13 -0700 (PDT)
-Message-ID: <447205bfe4089eb6231fa17a1fff3d58806ec7d3.camel@ndufresne.ca>
-Subject: Re: [PATCH 8/8] media: rkvdec: Unstage the driver
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Detlev Casanova <detlev.casanova@collabora.com>, 
-	linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Sebastian Reichel	 <sebastian.reichel@collabora.com>, Cristian Ciocaltea	
- <cristian.ciocaltea@collabora.com>, Alexey Charkov <alchark@gmail.com>, 
- Dragan Simic <dsimic@manjaro.org>, Jianfeng Liu
- <liujianfeng1994@gmail.com>, Nicolas Frattaroli	
- <nicolas.frattaroli@collabora.com>, Kever Yang <kever.yang@rock-chips.com>,
-  Andy Yan <andy.yan@rock-chips.com>, Frank Wang
- <frank.wang@rock-chips.com>, 	devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, 	linux-rockchip@lists.infradead.org,
- Ezequiel Garcia	 <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda
- <ribalda@chromium.org>, Hans de Goede <hansg@kernel.org>,  Yunke Cao
- <yunkec@google.com>, linux-media@vger.kernel.org, kernel@collabora.com
-Date: Fri, 11 Jul 2025 16:02:11 -0400
-In-Reply-To: <20250623160722.55938-9-detlev.casanova@collabora.com>
-References: <20250623160722.55938-1-detlev.casanova@collabora.com>
-	 <20250623160722.55938-9-detlev.casanova@collabora.com>
-Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0MU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAY29sbGFib3JhLmNvbT6ImQQTFg
- oAQQIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBO8NUoEVxMPCGgRvEtlBlFEpYHL0BQJ
- oLLLGBQkJZfd1AAoJENlBlFEpYHL0BEkA/3qkWYt99myYFSmTJUF8UB/7OroEm3vr1HRqXeQe9Qp2
- AP0bsoAe6KjEPa/pJfuJ2khrOPPHxvyt/PBNbI5BYcIABLQnTmljb2xhcyBEdWZyZXNuZSA8bmljb
- 2xhc0BuZHVmcmVzbmUuY2E+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQ
- TvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyy+AUJCWX3dQAKCRDZQZRRKWBy9FJ5AQCNy8SX8DpHbLa
- cy58vgDwyIpB89mok9eWGGejY9mqpRwEAhHzs+/n5xlVlM3bqy1yHnAzJqVwqBE1D0jG0a9V6VQI=
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-TRLqz3hiMlUTgCc1wc3h"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+ d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y/ksV3ZTbai/dOJ5zGicsrPbFs7dwly7VSrJN/snTLc=;
+ b=lJhylWDxHrSvIfiIUEkIfMWXf0Wl1gY6A7ctVOJ0SeYqnNsclP59SznxM0XmiZqh8jasQkaNo4swLjam3XF7pWuVNpvRBY/KjiW3io5Qn2CErw4wnbdxRhEOoU7o9mUQogieUUIgrhwDEMBj0iv2xsuK5kvH017Qa1QBNfBvJNA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
+Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
+ BY1PR01MB8681.prod.exchangelabs.com (2603:10b6:a03:5aa::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8880.21; Fri, 11 Jul 2025 20:03:54 +0000
+Received: from BN3PR01MB9212.prod.exchangelabs.com
+ ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
+ ([fe80::3513:ad6e:208c:5dbd%3]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
+ 20:03:54 +0000
+Message-ID: <30bcce6d-9a50-4fb8-ab7c-8ae36eb99d74@amperemail.onmicrosoft.com>
+Date: Fri, 11 Jul 2025 16:03:51 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v22 2/2] mctp pcc: Implement MCTP over PCC
+ Transport
+To: Jeremy Kerr <jk@codeconstruct.com.au>, admiyo@os.amperecomputing.com,
+ Matt Johnston <matt@codeconstruct.com.au>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Huisong Li <lihuisong@huawei.com>
+References: <20250710191209.737167-1-admiyo@os.amperecomputing.com>
+ <20250710191209.737167-3-admiyo@os.amperecomputing.com>
+ <e64da89fdd2c72afaa62f02449db9b144e02b743.camel@codeconstruct.com.au>
+Content-Language: en-US
+From: Adam Young <admiyo@amperemail.onmicrosoft.com>
+In-Reply-To: <e64da89fdd2c72afaa62f02449db9b144e02b743.camel@codeconstruct.com.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN1PR12CA0088.namprd12.prod.outlook.com
+ (2603:10b6:802:21::23) To BN3PR01MB9212.prod.exchangelabs.com
+ (2603:10b6:408:2cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|BY1PR01MB8681:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0fdf9067-7f87-434a-ee2c-08ddc0b61031
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bExZOXhvVEpDWkZDMVZIejVDamN4K0hYWUZrZXBoQmtGQlR4TFAwWVo4RGxz?=
+ =?utf-8?B?YzZKTkd2WGduT0MySXkrbXZMUXgxSWxaNExsZmN0bDl0bm1YWUg0WnNaQ2ti?=
+ =?utf-8?B?V1JwTjlWMEVwTWM3dEhvNkdSclJpRmpOckQ5bUpCZEh0NndTL1VGNHBCNzJz?=
+ =?utf-8?B?QXVHOGpZZytHQkZ3V214ZlQxL2dyK2tlbnI5TkRxc0VYeVZJT2hCb3BJQXFO?=
+ =?utf-8?B?SFZVKzBMa0JaVmFkRWU5NWRIRkQrU0pKMkJnM1BGSGt5dThYWnZBRCtMUUQv?=
+ =?utf-8?B?Qmt1TGplT1JBYmRKdERvcFNRc3lvYVRobGJJSnVFZFA2SkQxVkVkVm1tUVJo?=
+ =?utf-8?B?V3JzTGhWeGdsSWNQYTUwTjc4OFpmVlRLbmUvaEh6d2xWdkV5MGlINjRCTi9z?=
+ =?utf-8?B?WFdHMmxiVk85ZjcxYUNxZ0lqVzd2QUVkN3RLMTJINzZqSk5QWFlQK09KRUNK?=
+ =?utf-8?B?OVJpK3JZNDk1UEtjeDY2MTRuOHdlVlROYVlqT080b1gxYmdIbUg0dEFwblN5?=
+ =?utf-8?B?cXgzOEZ4ZDlPUHZLUFM5VUZ5UkN3UXVlU2w1bDhHM2N2U254c2NKaDFtZVFJ?=
+ =?utf-8?B?ektlOSt3TVdNWEFIZDFHOUFvVUpSaG1pSHNSU0dERFNtKzhzUGFMdVJaTGxi?=
+ =?utf-8?B?REsxWlRPNXFSQkdzckZXdWNmeVlMclNQbEp6d3dYUXdZV200ZVdxYVh5YWNq?=
+ =?utf-8?B?RXZuZ3NrODhsME9oaEwrU3lNdkphZTBvT2RJa0kwcEpQMVJ1ZXVTeENiNC9V?=
+ =?utf-8?B?dEl5ZkZqNm9BTTNrbGpHRk40bEVNVFdubGtVc3hIemU0Y3lWWXFvRmw1b0VW?=
+ =?utf-8?B?V09qakkwMlJZNm5EajZsZEJ6WUJjRFYyYk1JV2hSbFRjaU11TTRoNDJNdStl?=
+ =?utf-8?B?VDhWU1NmcUFsTTFaVUYxenM2VkQ5RG9jS3lKOTB4Q09IdGVTT0t3NFgvZTdv?=
+ =?utf-8?B?T0ZSVjZaY2xkeXh1eUFtK1BUa2ViMnhQdFozZTJPVThvZGxtUGNaWTRCQm9I?=
+ =?utf-8?B?TldOMUlndGJTeVlveG03aTdObjdPQTg0SzFOYzFrR0NFeW9EbVlaelBhQW80?=
+ =?utf-8?B?T25XdHpmWktZQzFUVnVmclVvUUhTUktzVEhhZFBsd2wwRElNUzJ5VDk3OTlq?=
+ =?utf-8?B?cEVQZjVndHBoSUh1K0dWMy8vNmVGSFBUcVM3eVFraUZOcUdrTmVZOUh2eTNl?=
+ =?utf-8?B?NmFTa3hGNzRPY29ZZzB4SDNpNFdxa2xTVytmVE95ZHcweitYTkJlMVRJdDR4?=
+ =?utf-8?B?My9kNVZOelo5QVBLaTNqeGo5Yi9YeStzRXFZTnlwMFJuZEF1QkhsWEhLUXkz?=
+ =?utf-8?B?cGhXejBJZnZXWHB6K3B2QU5JTmplSERiV1ZGalNIYkk2Z2dsaFJYUHpLdXVo?=
+ =?utf-8?B?Z25mdXEwK2Z0eCt4N3lsdWdPMFBkemxwb2dRVnRHazFVQmlXbkJCRVk5akNS?=
+ =?utf-8?B?bm9NTU5Oa1lwNlg5ekkxc1d0ZS9wTkxPQTFBOCtUMFQvWmxId3BReklzZUtJ?=
+ =?utf-8?B?REo2WmZJK2VORTg4T21CN2Fia0xCSjZNQVlsMmlCQ1dFdmN1L2NRNUdDNERY?=
+ =?utf-8?B?SFd2NksydFpIUWdjQXhJSmVLRVFhMUY0WSttN2xQbXhxZ01FZVZDNFlOTXIw?=
+ =?utf-8?B?azNzRE93bm83cW1GY2dJYnU3ZFdhclpxUVVHUjMrZXY5NEF0dWJhclhtNnpM?=
+ =?utf-8?B?QjUrYW1GYlgycmVsZjJYK1gvd2dCVjdQWGErd1BQa1NiWWR6R3phRVNVYU9M?=
+ =?utf-8?B?Tk1FZDdJNGxiYUVURytZMVRxZGh2b2h5eWVUNjFDdnhhQ2d2QXQ3enkrb3BP?=
+ =?utf-8?B?aXg0L2lib2UvYzhyQVVYUXZKTG1TWVFMRHFxeFVWL0FmMHJhTlZjdVFaZGIz?=
+ =?utf-8?B?OWJRSmhWZ1VpK3RzZWlndmRRMnpsZDFRYlpXOFNIeFl3REhGZ3E4M3duL3gw?=
+ =?utf-8?Q?wMyCjg5unds=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ejJnSkwzMzlIb2Zrdzc2UTIxdVZuV1dDZDdZbEJCZFhkdHhxNmV2dW4ydVJn?=
+ =?utf-8?B?SDB1L3pKSEhmdVprSVEyUEw5U0loY01QWE5EM0F3T01XRllQaGlIYWZhNmNQ?=
+ =?utf-8?B?ZjlCamEza25peHZ1OWdXaVh3eU5KZk5QcjJFVVVmNDc1R2paNzhjSlprdUt1?=
+ =?utf-8?B?WjNlNXJSM2xtVWh6elNsRktuVjRhOEdiZkhqK2lMQ3NuVktWcXkvSXh4M1RK?=
+ =?utf-8?B?VWd6S0VnM1B1bDFHeWhUeFVUYzd3czRweFI0SVdiR09oNi9rRFZqZTJCRTdt?=
+ =?utf-8?B?VjRSU1NWelgxcFpwK09qdmhoOVdhNTF5UGlGVTVVMDAyNnRXcnFOaWJCQkVl?=
+ =?utf-8?B?MEVOeklZbE9Lb0ZIWExOdlhyMmxvMmIzd3dzblF4ZXVDVERSOWJhbHpTSTg4?=
+ =?utf-8?B?OURDTk1WRDQ0V21oVUNtU2d6cWdDb2JhWmEwUjFzYVFuMEh3bVBnOGp2QjJ4?=
+ =?utf-8?B?d1hzbDVrTGprWUJLdUxPelhadjJQR0hQT3Uwak1BZis1MmZmK2diYXUzdk9l?=
+ =?utf-8?B?TU5ZdWNDcVFKNXlNc3VtRytWUFFzd0NkNFRZMXQyNkJ0ZHdGaWxDL3IvUHBv?=
+ =?utf-8?B?QlArR1htdW1OV1hHZHZCRUpuT3NBejFLdmJoZVd4Z01hZUg1dFd3bXNpYWlt?=
+ =?utf-8?B?L0x6N0xoOHFHOGxKZlNjYjh5ZlZwRUg0RU9CbWtKMXFVWlRyRlFtSm8zS0Fu?=
+ =?utf-8?B?V29uQTlpYU4zRXBUZ2JLVlBzTTFyWnJDeU9LWlI0cDFpczN5bHR5Um10MzJJ?=
+ =?utf-8?B?dnBMYlRZZ0tMWHc5ZU45WHIwL0RicVplREI0TjdvTi9XanI0OHBwR0F5Q2ho?=
+ =?utf-8?B?SnR4dDM0RmY2TlIwMzdFNFJHY2xMbzhnNDM5dmJWd2srcVh2eTBoYVZXRGtu?=
+ =?utf-8?B?ODh4cmRHU3Z2b2J1M2t4VWhlOFNPSWtERWZJajFxMWxxc2s4dnprZHpvZlgx?=
+ =?utf-8?B?NUI0RzlTdFcySThwYjM4S3pBZHhDMG1TdEFnMHR5S1oyWkt2bzBRRUQ1cUEw?=
+ =?utf-8?B?ZmVkZjg1d1FBNlphcmtmcjFrS3M0dWdrUC9KT3Y2L1dJbUtXVUFHVkJXWHZa?=
+ =?utf-8?B?bE9NQ3dUVWhmRGVRdHJJSlFXTUdFbG4zTXE2N2o4NkVZUGQvVFhaZDFSa0tq?=
+ =?utf-8?B?YWVTZnpHblFMQ1g3WThmYWVTcDFWazFmTGgrTWhNQ212Nk9KeURWaGhLSkFt?=
+ =?utf-8?B?cFo1MUJrN0dvZHpDdm5pUkF1cmRIdm9tVEZoZ3RUb2ZzeDlGaHRNM0xicXd6?=
+ =?utf-8?B?SDVKeFJiQWc4UGZLQ1FON3MvSVNUaFBvdlo3eUE5cWFTSGV6b0crV2pRQ3Br?=
+ =?utf-8?B?ZVNpT2UzcG1QaGdPSlBYYnBZeFFHcmlSeWNhWjZ4NHdoaEliQnFrTTlBekF0?=
+ =?utf-8?B?RXRDZlRYQ3J5eUJ2SDBQWjZPTjJiWVJqSWc4TWZUMmx6NUtaN1FLUUg1U1hG?=
+ =?utf-8?B?WWJkSjdHUVBYaE9KUXdyVUdRaUQ5RDY2TG1waDlEMmErSC9lUEdNb3lSNFh0?=
+ =?utf-8?B?bVFyVEJjeWVzSHY2WFBDMExTU2Y0R212MGlaZFlPNndtaWc5eTJGVVZLQloy?=
+ =?utf-8?B?NHl1aGptZ3BOcndSd281SkxvNDkxeHIrTml0bnMrTFZnOGxwMFN6STBHMDFq?=
+ =?utf-8?B?dCtDa0xWNU1XellUd015Mzd2MTh1SWJoTHlNcWx6dW0rOWJiZEhjUHYybzE5?=
+ =?utf-8?B?Vk0wWTcvY2hDejJTZ1RsUmFWR3FVekdidUJnRzNyMFVVMnFoNXMxTXBmMUx4?=
+ =?utf-8?B?UmFEVWw2SGxPbzlsTGtwWmpWelFoMHo1OWpnMXdTcHhKM0ZMdTZPQXE5alFW?=
+ =?utf-8?B?NndoZXd3d0RQU1d5NXlyUVNWVWZTNFpnK2hnT0gweDhvR1h1V3BUTFV4cWRC?=
+ =?utf-8?B?NnFWY0RKRG5GSTVJRTY5ZWxUZlM4M1YzT3BrQTdyZ0pMbUE3dWg4dFJTK0Zl?=
+ =?utf-8?B?bUFBaUxwbFVCOG8rR0hPRm5pc3dMUjNzYlFWWXlYRk4yNVVvczF1OTUrNk9G?=
+ =?utf-8?B?RmZhYzNZanF2UjZtK3hvVFV1aExKeU9Bd2o1REY4OVdHcVphL2xZWExPd1FZ?=
+ =?utf-8?B?KzYydjR0N2VDWFIwbEVNK01rcC9FQmFBcFZRU3lhcGhPanlldzBvVkVMcEoz?=
+ =?utf-8?B?L2xWNDhOdkJUSTd3YTV4Kzl2KzlJZ2VsSEEzWjA3L2QySEVxcG9aZEdJKzE5?=
+ =?utf-8?B?N0NzS0ZCdi9oSXR1dkpKTlZHVkV6bkFrcVRzSGRSaUh3aXFUTXBJZldyOG1W?=
+ =?utf-8?Q?OPRLXBasxqPe8jXE7ueGJegLyXl7EcWPkEDCdpxHGA=3D?=
+X-OriginatorOrg: amperemail.onmicrosoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fdf9067-7f87-434a-ee2c-08ddc0b61031
+X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 20:03:54.6073
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: v3nD3u6/eDMhv1Nx9YUgqGN0LDFma/83zWXnutzJbJFC7/A0LCDi7OzK1yOxNvyrO9J6bHqF12p8M+S4VYbGs+oKau9MDxNTMlloL1EaaBp/+AT0X+4N9m/nKgxysd6L
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR01MB8681
+
+All Changes are accepted.  I have attempted to answer your questions here.
 
 
---=-TRLqz3hiMlUTgCc1wc3h
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+>> +static void mctp_pcc_client_rx_callback(struct mbox_client *c, void *buffer)
+>> +{
+>> +       struct mctp_pcc_ndev *mctp_pcc_ndev;
+>> +       struct pcc_header pcc_header;
+>> +       struct mctp_skb_cb *cb;
+>> +       struct sk_buff *skb;
+>> +
+>> +       mctp_pcc_ndev = container_of(c, struct mctp_pcc_ndev, inbox.client);
+>> +       if (!buffer) {
+>> +               dev_dstats_rx_dropped(mctp_pcc_ndev->mdev.dev);
+>> +               return;
+>> +       }
+> Mainly out of curiosity: how does this happen? How do we get a
+> completion where there is no original buffer?
 
-Le lundi 23 juin 2025 =C3=A0 12:07 -0400, Detlev Casanova a =C3=A9crit=C2=
-=A0:
-> The TODO list for unstaging being empty, the driver can now be moved to t=
-he
-> main media folder.
->=20
-> Also add myself as maintainer.
->=20
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+If the sk_buff allocation fails, the logic falls back to the old code, 
+which passes on a null buffer. There is logic there with notifying the 
+sender that I don't want to skip or modify.
 
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+See the other patch, in the change to the irq handler.
 
-> ---
-> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | =
-8 ++++++++
-> =C2=A0drivers/media/platform/rockchip/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 1 +
-> =C2=A0drivers/media/platform/rockchip/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- | 1 +
-> =C2=A0.../media =3D> media/platform/rockchip}/rkvdec/Kconfig=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 0
-> =C2=A0.../media =3D> media/platform/rockchip}/rkvdec/Makefile=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 0
-> =C2=A0.../platform/rockchip}/rkvdec/rkvdec-h264.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 0
-> =C2=A0.../platform/rockchip}/rkvdec/rkvdec-regs.h=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 0
-> =C2=A0.../media =3D> media/platform/rockchip}/rkvdec/rkvdec-vp9.c | 0
-> =C2=A0.../media =3D> media/platform/rockchip}/rkvdec/rkvdec.c=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 0
-> =C2=A0.../media =3D> media/platform/rockchip}/rkvdec/rkvdec.h=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 0
-> =C2=A0drivers/staging/media/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 --
-> =C2=A0drivers/staging/media/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 -
-> =C2=A012 files changed, 10 insertions(+), 3 deletions(-)
-> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
-Kconfig
-> (100%)
-> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
-Makefile
-> (100%)
-> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
-rkvdec-
-> h264.c (100%)
-> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
-rkvdec-
-> regs.h (100%)
-> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
-rkvdec-vp9.c
-> (100%)
-> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
-rkvdec.c
-> (100%)
-> =C2=A0rename drivers/{staging/media =3D> media/platform/rockchip}/rkvdec/=
-rkvdec.h
-> (100%)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c3f7fbd0d67af..d05a153c21526 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21466,6 +21466,14 @@ S:	Maintained
-> =C2=A0F:	Documentation/devicetree/bindings/media/rockchip-rga.yaml
-> =C2=A0F:	drivers/media/platform/rockchip/rga/
-> =C2=A0
-> +ROCKCHIP RKVDEC VIDEO DECODER DRIVER
-> +M:	Detlev Casanova <detlev.casanova@collabora.com>
-> +L:	linux-media@vger.kernel.org
-> +L:	linux-rockchip@lists.infradead.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/media/rockchip,vdec.yaml
-> +F:	drivers/media/platform/rockchip/rkvdec/
-> +
-> =C2=A0ROCKCHIP RK3308 INTERNAL AUDIO CODEC
-> =C2=A0M:	Luca Ceresoli <luca.ceresoli@bootlin.com>
-> =C2=A0S:	Maintained
-> diff --git a/drivers/media/platform/rockchip/Kconfig
-> b/drivers/media/platform/rockchip/Kconfig
-> index b41d3960c1b41..9bbeec4996aa2 100644
-> --- a/drivers/media/platform/rockchip/Kconfig
-> +++ b/drivers/media/platform/rockchip/Kconfig
-> @@ -4,3 +4,4 @@ comment "Rockchip media platform drivers"
-> =C2=A0
-> =C2=A0source "drivers/media/platform/rockchip/rga/Kconfig"
-> =C2=A0source "drivers/media/platform/rockchip/rkisp1/Kconfig"
-> +source "drivers/media/platform/rockchip/rkvdec/Kconfig"
-> diff --git a/drivers/media/platform/rockchip/Makefile
-> b/drivers/media/platform/rockchip/Makefile
-> index 4f782b876ac9b..286dc5c53f7e1 100644
-> --- a/drivers/media/platform/rockchip/Makefile
-> +++ b/drivers/media/platform/rockchip/Makefile
-> @@ -1,3 +1,4 @@
-> =C2=A0# SPDX-License-Identifier: GPL-2.0-only
-> =C2=A0obj-y +=3D rga/
-> =C2=A0obj-y +=3D rkisp1/
-> +obj-y +=3D rkvdec/
-> diff --git a/drivers/staging/media/rkvdec/Kconfig
-> b/drivers/media/platform/rockchip/rkvdec/Kconfig
-> similarity index 100%
-> rename from drivers/staging/media/rkvdec/Kconfig
-> rename to drivers/media/platform/rockchip/rkvdec/Kconfig
-> diff --git a/drivers/staging/media/rkvdec/Makefile
-> b/drivers/media/platform/rockchip/rkvdec/Makefile
-> similarity index 100%
-> rename from drivers/staging/media/rkvdec/Makefile
-> rename to drivers/media/platform/rockchip/rkvdec/Makefile
-> diff --git a/drivers/staging/media/rkvdec/rkvdec-h264.c
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec-h264.c
-> similarity index 100%
-> rename from drivers/staging/media/rkvdec/rkvdec-h264.c
-> rename to drivers/media/platform/rockchip/rkvdec/rkvdec-h264.c
-> diff --git a/drivers/staging/media/rkvdec/rkvdec-regs.h
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
-> similarity index 100%
-> rename from drivers/staging/media/rkvdec/rkvdec-regs.h
-> rename to drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
-> diff --git a/drivers/staging/media/rkvdec/rkvdec-vp9.c
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
-> similarity index 100%
-> rename from drivers/staging/media/rkvdec/rkvdec-vp9.c
-> rename to drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
-> diff --git a/drivers/staging/media/rkvdec/rkvdec.c
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> similarity index 100%
-> rename from drivers/staging/media/rkvdec/rkvdec.c
-> rename to drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> diff --git a/drivers/staging/media/rkvdec/rkvdec.h
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> similarity index 100%
-> rename from drivers/staging/media/rkvdec/rkvdec.h
-> rename to drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfi=
-g
-> index b442148543995..b9d52a51841b5 100644
-> --- a/drivers/staging/media/Kconfig
-> +++ b/drivers/staging/media/Kconfig
-> @@ -32,8 +32,6 @@ source "drivers/staging/media/max96712/Kconfig"
-> =C2=A0
-> =C2=A0source "drivers/staging/media/meson/vdec/Kconfig"
-> =C2=A0
-> -source "drivers/staging/media/rkvdec/Kconfig"
-> -
-> =C2=A0source "drivers/staging/media/starfive/Kconfig"
-> =C2=A0
-> =C2=A0source "drivers/staging/media/sunxi/Kconfig"
-> diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makef=
-ile
-> index ad4e9619a9e07..102ca632ddf5c 100644
-> --- a/drivers/staging/media/Makefile
-> +++ b/drivers/staging/media/Makefile
-> @@ -4,7 +4,6 @@ obj-$(CONFIG_INTEL_ATOMISP)=C2=A0=C2=A0=C2=A0=C2=A0 +=3D =
-atomisp/
-> =C2=A0obj-$(CONFIG_VIDEO_IMX_MEDIA)	+=3D imx/
-> =C2=A0obj-$(CONFIG_VIDEO_MAX96712)	+=3D max96712/
-> =C2=A0obj-$(CONFIG_VIDEO_MESON_VDEC)	+=3D meson/vdec/
-> -obj-$(CONFIG_VIDEO_ROCKCHIP_VDEC)	+=3D rkvdec/
-> =C2=A0obj-$(CONFIG_VIDEO_STARFIVE_CAMSS)	+=3D starfive/
-> =C2=A0obj-$(CONFIG_VIDEO_SUNXI)	+=3D sunxi/
-> =C2=A0obj-$(CONFIG_VIDEO_TEGRA)	+=3D tegra-video/
+> I figure we're restricted to what the mailbox API provides, but is there
+> any way we can access the skb through a pointer, rather than having to
+> dig through these lists?
+>
+> I think the issue is that the mbox API is using the void * buffer as
+> both the data to transfer, and the callback context, so we can't stash
+> useful context across the completion?
 
---=-TRLqz3hiMlUTgCc1wc3h
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Correct, the SK_buff is a structure  that points to a buffer, and what 
+gets to the send_data function is the buffer itself. That buffer has no 
+pointer back to the sk_buff.
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaHFtwwAKCRDZQZRRKWBy
-9D0OAQDCzPQPG7xg4OYY8o6mQuA7YYMPvLnXfsqOsELbI81nggEAn4NKzS6Zv5SL
-gInU8ELc0LBcICoE9Vc3ZGnrhMUvzQo=
-=TPsc
------END PGP SIGNATURE-----
+>> +
+>> +       rc = mbox_send_message(mpnd->outbox.chan->mchan, skb->data);
+>> +
+>> +       if (rc < 0) {
+>> +               pr_info("%s fail, rc = %d", __func__, rc);
+>> +               return NETDEV_TX_BUSY;
+>> +       }
+> What happens on mbox_send_message failure? The skb will still be present
+> in the outbox.packets queue - I assume we don't see a completion
+> callback in that case, and so the skb will be in the outbox.packets
+> queue forever?
 
---=-TRLqz3hiMlUTgCc1wc3h--
+>
+> Are you sure you want to return NETDEV_TX_BUSY here?
+>
+> Is there any situation where the mbox_send_message will continually
+> fail? Should we ratelimit the pr_info() message there (and regardless,
+> better to use one of netdev_info / netdev_warn / etc functions, since we
+> are dealing with netdevs here).
+
+The fail will happen if the ring buffer is full, so, yes, it makes sense 
+not to queue the packet. I can move that to after the mbox_send_message.
+
+The NETDEV_TX_BUSY is correct, as it means resend the packet, and we 
+don't have any reference to it.
+
+The only other failure path on the mbox_send_message code is due to 
+timeouts, which we do not use from this driver. That is a recent change, 
+and that was the case I was handling before.
+
 
