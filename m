@@ -1,219 +1,189 @@
-Return-Path: <linux-kernel+bounces-726910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85ADDB012AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E17FB012B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 655611C40322
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:28:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E841C452D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1251C4A17;
-	Fri, 11 Jul 2025 05:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D829B1C6FF9;
+	Fri, 11 Jul 2025 05:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHOzUjeM"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZDk4x4WP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BA214A60F
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF58625;
+	Fri, 11 Jul 2025 05:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752211662; cv=none; b=hEnLuLTeHxBAIEa9SnTrBVNNs8T7sfPPjv25JDfQpXT+35c+sflfnmL4y0gJopx/pnVm9/pwGXPrPKZoQIVWuQ+MOM63BmmPsv/Af5hAWe7YGizJUD5MiRDsR1wiJW+1cWpd2+4yVVgdoIq5omOS66bpN3mO+ec7as5MtMaqG8Q=
+	t=1752211866; cv=none; b=RbljmOCJKGzvu8cgaxrJmgz1jRzvbAohSn3HU6K7CMvC3Ot0RAgUVT0+phjvSoDwnMIIPTsB8IZypnPYigM6SQLvzK/U6Fv6qgTCTPSvcVunZJd+T+Qz9krv8hBYQ68Zd6zatRmbEzL8bzB/kf/xkZ234mHQ/PrwMaPRqdEgsC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752211662; c=relaxed/simple;
-	bh=AC51WPFHbWvC28PVORv0zti0mOgNGlDfQicmKj6+9ys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OCW/a6j2Lsu2xedCTie2+wPoisBi9VSbcC8NHdA1SwqjYF/CgH9jYAxKsMCeS/1dv7mQ17SgWNiwrQpd/aNOOm1loKIfvpo3pb6EdfgCugQefzMEIHUJx97YcVdUnmwuXfAXFIUvTW3QFzlu7tkOY3KwSdmH6gwfUTNfWq56lKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHOzUjeM; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-23636167afeso14970325ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:27:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752211660; x=1752816460; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TEGAwmchIcAI8RRmUq1fpR/mb7uxORFOkM7RcXyqrs4=;
-        b=IHOzUjeMAV/A3SbfmHhmgo7wOTtwsrfBx/qxn6u14YqXqurJjEF+TOutFD+46GGkIS
-         oDxpIE6MdzQBjN8icKi5s6yPKzgMc3pAjS0aLgD7J7p17p7iZLJMU+eg3kiNyBHtew0O
-         vCrWtv9QyWgQhu3nXNDNBFOQdWE351f84OfDQglPC+bbxvwAAH21wft4TwzekkZDCiFI
-         KRmtk+5NBRZ5O3axHD1BhUhSDumrg4hmzOzd7+S7WzMIFtNOdeWq6mpbG+CRfmKNYlq0
-         UGNH9jdnMiJiRF/7zZq/XVsPBw4ubs7wPRziXq0RAtLBwN2aEDcBXobqnMt44fB6+uQC
-         3pWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752211660; x=1752816460;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TEGAwmchIcAI8RRmUq1fpR/mb7uxORFOkM7RcXyqrs4=;
-        b=R5C/7i+fU5n2xsJgaOAz8cJDR9NDFsjHXQdXt0FMdSrVPAhg0PZfpGALoDGMhmhNtF
-         56uxbGTGr8AvTUayBTZgBjovt4pd/OX4zOfRnArMCtZyb62dXoGlzaU6uBJ1D6wvgO8L
-         srp4zyIbZ0jL/zJIW7pp3JDfRG+IjaSgvvNCMMp8gFyXYLXhKsK97wpc3Ul28BCroIwH
-         p6Dntgt5TtitFjpfy1XGPXDDv11s3O3azXX7SkTrArhaGeCEbITRKZTiUDvrXBWx6DWv
-         JFzM1hWSpwcLR9kDxNWKucz35g+Uj3L3pwqr7eF2jwggbwLjtafD3bVXNXAob6dexbHn
-         u8Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4fk5dZGihgGj4RwF7CqflVH+aBtHY+ngOOzlf+9Z+AmTakQxLRxH0ZsXKmKukQmbx6opnK0Ic2btDnSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYFr+kDdG4Axjxuy3XwPPI3yOo53dg9I7A6hGGDveyNRS6FT2D
-	ua7SXLdRO2ac3HI9Rg/4KXNXJz3ui0kErd+K5GJUJ1Zz5uaRfdl+sj2h
-X-Gm-Gg: ASbGnct7LV3PGAsC3BPKCjMwi7H6wPqavnZzMK4NDJcoXt89i6EkymBCBrZeJ7XpnFh
-	fUwMdp+VVyL4/e2epG5LSwwLDok9Y9sYiEXgzHmJkNLMufGeHjQR2ovzohC7kAqdlnoQz+umyEM
-	6evvFGYuWNiZRBweuNXZI2LduRBI4qvc/nUw31BgqIAcFkr+1tJSoKxrXszMashZDXswCe9pIAz
-	979tB03dntwXVczNLMm45hN1EXU9cChzOppBp3xzcFY+BULxtqRShUv3Q+fKozRkGGJ7R1rjuDE
-	xKXjjKOg8glpNX7DByIISDzRNbJTh5TC7OEUht2HsIMnjyfOjFTNy0xKJpZtYszCpt+o+tDFky0
-	XF5yF6B6I5MBliup8iANktsxhLpzI5YC1g3wyt3DYdnrOdc80DGnE0+U=
-X-Google-Smtp-Source: AGHT+IEmtUKg1mllhmFUS5+13NYo4pEn9kSfQjbzR6Ad9DGhMQuXzMOVxx4xpdsZRvDRWjC+6n0cUQ==
-X-Received: by 2002:a17:903:11c3:b0:234:98eb:8eda with SMTP id d9443c01a7336-23dee26dd48mr27454625ad.28.1752211659840;
-        Thu, 10 Jul 2025 22:27:39 -0700 (PDT)
-Received: from [10.127.192.248] ([210.184.73.204])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de435f371sm35675855ad.237.2025.07.10.22.27.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 22:27:39 -0700 (PDT)
-Message-ID: <e065c6df-f0e2-e9e6-bf20-959b809d2c7e@gmail.com>
-Date: Fri, 11 Jul 2025 13:27:30 +0800
+	s=arc-20240116; t=1752211866; c=relaxed/simple;
+	bh=bxhhsYwdnmaeDB2B9KaP+DVLndj+FDu2bBuVHV+YbN4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jyEwnFv7HDgpXzxlrmeuOD2Csto0KAsRpt2+m6df/Bmpk6YkQDT9gn57qAz93emx/I0MmqsjlyklqYdmbS+2akKq4pa8batm6yN3xGfaVCz6X9s7trp+Fhf4Adp5ndtsSg6gJaGBxBoby6F0i5kkXSLyji1QmGtCiCALzmbQnVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZDk4x4WP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B1XUHC023233;
+	Fri, 11 Jul 2025 05:30:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rK5U51orc+S23BlwipdLeLzAr4JgT/RfGpjhEpw0e7o=; b=ZDk4x4WPWPgatB+4
+	TQde96VtzeZM54j8aDk3S1mnbxg+vliVnvJix7KA4Mm3OdVYGJCdInq2S0mxeU6a
+	8C91XppvnsjPzaSJdKZMXE1jcwemW43NbEZilawFI8DDR2D92y7yTUZcKPaK4LbQ
+	StPbTk8/BhwCv2BJ7QtEmpoRRZBCnwR3RCiEtrRkfIhAhxnqui4ZRtBT8bmXEDj8
+	sQtRpx3iW3czoER9XdvAP7ikcaMf7AODrfLp2ATh55GamRVUSiLBs4MOpVzpHFAl
+	wZjIXUYorGoDWD30ew9L5fm+N/5fPkFV42+yvTIeOSYbmO3U0WNuL8/eFrqV963a
+	w9qaMg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47r9b18bmn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 05:30:54 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56B5UriR003652
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 05:30:53 GMT
+Received: from [10.50.36.189] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 10 Jul
+ 2025 22:30:51 -0700
+Message-ID: <ecbb7ea8-11f6-30c1-ad77-bd984c52ca33@quicinc.com>
+Date: Fri, 11 Jul 2025 11:00:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.15.0
-Subject: Re: [PATCH v2] mm/mglru: Stop try_to_inc_min_seq() if min_seq[type]
- has not increased
-To: akpm@linux-foundation.org
-Cc: yuzhao@google.com, yuanchu@google.com, shakeel.butt@linux.dev,
- mhocko@kernel.org, lorenzo.stoakes@oracle.com, kinseyho@google.com,
- hannes@cmpxchg.org, gthelen@google.com, david@redhat.com,
- zhengqi.arch@bytedance.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hao Jia <jiahao1@lixiang.com>,
- Axel Rasmussen <axelrasmussen@google.com>
-References: <20250703023946.65315-1-jiahao.kernel@gmail.com>
- <CAJHvVcgoGwnk4TdZxj=Lvhny4sus0eZ=MbuWEVK0m6fACLFRow@mail.gmail.com>
-From: Hao Jia <jiahao.kernel@gmail.com>
-In-Reply-To: <CAJHvVcgoGwnk4TdZxj=Lvhny4sus0eZ=MbuWEVK0m6fACLFRow@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [RFC PATCH v2 2/2] dm-inlinecrypt: add target for inline block
+ device encryption
+Content-Language: en-US
+To: Adrian Vovk <adrianvovk@gmail.com>, Eric Biggers <ebiggers@kernel.org>,
+        <dm-devel@lists.linux.dev>
+CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Israel
+ Rukshin <israelr@nvidia.com>, Milan Broz <gmazyland@gmail.com>,
+        Mikulas
+ Patocka <mpatocka@redhat.com>
+References: <20241016232748.134211-1-ebiggers@kernel.org>
+ <20241016232748.134211-3-ebiggers@kernel.org>
+ <681a6d2e-a80a-4e81-a049-841d7e8582ba@gmail.com>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <681a6d2e-a80a-4e81-a049-841d7e8582ba@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=dYuA3WXe c=1 sm=1 tr=0 ts=6870a18e cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=1XWaLZrsAAAA:8
+ a=AcQ4Ai9qnt-bWPWtfq8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDAzNiBTYWx0ZWRfX88SA32wYyUgq
+ gD6XQG2EzcG86bunBTsfNX+Y1AhAkU+CnImkOPWa5YpcxGaOcB1LfF1SAGSGkXpLRyXQIkcaxqy
+ Lb0kK2uEcsMZopJBwlaFmnwsZPl8SbhtLtxNeNxUcXPr4FLnAZZIH0BO3FwLQ1Gy7wTGjtlAfBN
+ qVJToqMqKnLW37xEE6LHQSkr9q7JTfht7GgYhRINE6rAz53pahWOpxWz/7RMGDF9+y8u21FX9JN
+ bESFwWmYVj+cAjsmb1v54xJf9kJbwb6JofYTLTnPMkNERGN+eCQAu0qmJutvecOhH8stgX9GREF
+ Iw41wQ5GBZu2zmd2QV6qL3rnP8lxWzgYZR/dKZASwDxos79Slaoz9Rr8Guw9Ou65tFrxM8FfJsU
+ nQ+3Y/mNFbQbORmyGquWli2gzQ/XdwgR4lo1/nnHgLLsekXQdMirdUuLH0P2so7t0Hi2Ubuj
+X-Proofpoint-GUID: 4FDLsZ_3FqT8GIpXPwDludjAVtljVtHj
+X-Proofpoint-ORIG-GUID: 4FDLsZ_3FqT8GIpXPwDludjAVtljVtHj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_01,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 suspectscore=0 clxscore=1011 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
+ mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507110036
 
+Hi Eric,
 
-
-On 2025/7/11 06:49, Axel Rasmussen wrote:
-> On Wed, Jul 2, 2025 at 7:40 PM Hao Jia <jiahao.kernel@gmail.com> wrote:
->>
->> From: Hao Jia <jiahao1@lixiang.com>
->>
->> In try_to_inc_min_seq(), if min_seq[type] has not increased. In other
->> words, min_seq[type] == lrugen->min_seq[type]. Then we should return
->> directly to avoid unnecessary overhead later.
->>
->> Corollary: If min_seq[type] of both anonymous and file is not increased,
->> try_to_inc_min_seq() will fail.
->>
->> Proof:
->> It is known that min_seq[type] has not increased, that is, min_seq[type]
->> is equal to lrugen->min_seq[type], then the following:
->>
->> case 1: min_seq[type] has not been reassigned and changed before
->> judgment min_seq[type] <= lrugen->min_seq[type].
->> Then the subsequent min_seq[type] <= lrugen->min_seq[type] judgment
->> will always be true.
->>
->> case 2: min_seq[type] is reassigned to seq, before judgment
->> min_seq[type] <= lrugen->min_seq[type].
->> Then at least the condition of min_seq[type] > seq must be met
->> before min_seq[type] will be reassigned to seq.
->> That is to say, before the reassignment, lrugen->min_seq[type] > seq
->> is met, and then min_seq[type] = seq.
->> Then the following min_seq[type](seq) <= lrugen->min_seq[type] judgment
->> is always true.
->>
->> Therefore, in try_to_inc_min_seq(), If min_seq[type] of both anonymous
->> and file is not increased, we can return false directly to avoid
->> unnecessary overhead.
->>
->> Suggested-by: Yuanchu Xie <yuanchu@google.com>
->> Signed-off-by: Hao Jia <jiahao1@lixiang.com>
->> ---
->> v1 to v2:
->>   - Modify commit message to make proof clearer.
->>   - Use one bool to detect any increments in min_seq[type], suggested by Yuanchu Xie.
->>
->> Link to v1: https://lore.kernel.org/all/20250630080603.36171-1-jiahao.kernel@gmail.com
->>
->>   mm/vmscan.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index d48e8d365502..d5b6924aeb8f 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -3919,6 +3919,7 @@ static bool try_to_inc_min_seq(struct lruvec *lruvec, int swappiness)
->>   {
->>          int gen, type, zone;
->>          bool success = false;
->> +       bool seq_inc_flag = false;
->>          struct lru_gen_folio *lrugen = &lruvec->lrugen;
->>          DEFINE_MIN_SEQ(lruvec);
->>
->> @@ -3935,11 +3936,20 @@ static bool try_to_inc_min_seq(struct lruvec *lruvec, int swappiness)
->>                          }
->>
->>                          min_seq[type]++;
->> +                       seq_inc_flag = true;
->>                  }
->>   next:
->>                  ;
->>          }
->>
->> +       /*
->> +        * If min_seq[type] of both anonymous and file is not increased,
->> +        * we can directly return false to avoid unnecessary checking
->> +        * overhead later.
->> +        */
+On 10/18/2024 8:22 AM, Adrian Vovk wrote:
+> Hello,
 > 
-> I think we can make this comment (and probably the commit message) even simpler.
+> On 10/16/24 19:27, Eric Biggers wrote:
+>> From: Eric Biggers <ebiggers@google.com>
+>>
+>> Add a new device-mapper target "dm-inlinecrypt" that is similar to
+>> dm-crypt but uses the blk-crypto API instead of the regular crypto API.
+>> This allows it to take advantage of inline encryption hardware such as
+>> that commonly built into UFS host controllers.
 > 
-> try_to_inc_min_seq (and inc_min_seq) are both called under lru_lock,
-> so I don't think there can be any concurrent modifications going on.
-> (Note readers don't necessarily take the lock though.) So I think we
-> can simply state it like:
+> Wow! Thank you for this patch! This is something we really want in 
+> systemd and in GNOME, and I came across this patchset on accident while 
+> trying to find a way to get someone to work on it for us.
 > 
-> "If we didn't change any min_seq, we can return immediately."
+>> The table syntax matches dm-crypt's, but for now only a stripped-down
+>> set of parameters is supported.  For example, for now AES-256-XTS is the
+>> only supported cipher.
+>>
+>> dm-inlinecrypt is based on Android's dm-default-key with the
+>> controversial passthrough support removed.
 > 
-> This patch had caused me to think we can do even more to make this
-> function simpler, but I spent an hour fiddling with it and I don't
-> have any concrete suggestions. So, I see no reason to hold up this
-> patch, it seems straightforwardly correct to me. Any further
-> simplification could just be a follow up patch later.
+> That's quite unfortunate. I'd say this passthrough support is probably 
+> the most powerful thing about dm-default-key.
 > 
-> You can take:
-> Reviewed-by: Axel Rasmussen <axelrasmussen@google.com>
+> Could you elaborate on why you removed it? I think it's a necessary 
+> feature. Enabling multiple layers of encryption stacked on top of each 
+> other, without paying the cost of double (or more...) encryption, is 
+> something we really want over in userspace. It'll enable us to stack 
+> full-disk encryption with encrypted /home directories for each user and 
+> then stack encrypted per-app data dirs on top of that. I'd say that the 
+> passthrough support is more important for us than the performance 
+> benefit of using inline encryption hardware.
 > 
+> Without a solution to layer encryption we can't do a lot of good things 
+> we want to do in userspace.
+> 
+> As far as I understand, the passthrough support was controversial only 
+> because previous upstreaming attempts tried to punch holes into dm-crypt 
+> to make this work. I don't know of an attempt to upstream dm-default-key 
+> as-is, with passthrough support. As far as I can tell, people even 
+> seemed open to that idea...
+> 
+> Is there some context I'm missing? Information would be appreciated.
+> 
+>> Note that due to the removal
+>> of passthrough support, use of dm-inlinecrypt in combination with
+>> fscrypt causes double encryption of file contents (similar to dm-crypt +
+>> fscrypt), with the fscrypt layer not being able to use the inline
+>> encryption hardware.  This makes dm-inlinecrypt unusable on systems such
+>> as Android that use fscrypt and where a more optimized approach is
+>> needed.
+> 
+> Yeah, sadly you've removed the use-case we're very interested in. 
+> Generic PC hardware doesn't have blk-crypto hardware as far as I can 
+> tell, so we don't get the performance benefit of replacing dm-crypt with 
+> dm-inlinecrypt. However, we do get the performance benefit of the 
+> passthrough support (if we run this on top of the blk-crypto software 
+> emulation mode, for instance)
+> 
+> 
+> Best,
+> 
+> Adrian Vovk
+> 
+>> It is however suitable as a replacement for dm-crypt.
+>>
+>> Signed-off-by: Eric Biggers <ebiggers@google.com>
+>>
 
-Hi, Andrew
-
-Could you please replace the V1 version in mm-unstable branch with this 
-patch v2?
-
-https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=mm-unstable&id=0163463f9dcc965060c5f51de69727d1b21d2b2b
-
-Patch v2 looks more reasonable.
+Is there any plan to update this series ? IPQ9574 needs this 
+dm-inlinecrypt driver for secure eMMC feature.
 
 Thanks,
-Hao
-
-
-
->> +       if (!seq_inc_flag)
->> +               return success;
->> +
->>          /* see the comment on lru_gen_folio */
->>          if (swappiness && swappiness <= MAX_SWAPPINESS) {
->>                  unsigned long seq = lrugen->max_seq - MIN_NR_GENS;
->> --
->> 2.34.1
->>
+Alam.
 
