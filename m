@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-727307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C7AB01824
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:38:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C003B01829
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AAFE1CA3BE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:38:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78CD5B44FBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E82127E1C0;
-	Fri, 11 Jul 2025 09:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AF727EC76;
+	Fri, 11 Jul 2025 09:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kc9uqdnH"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ncTRiXyH"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2695C27BF7C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DB927CCEB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752226643; cv=none; b=I78CaDUm2tcum33scfCDKSYP/SRUtXMqEQofstLEx5ZKh9B/vUs/V8VfFyK53k5RcVMAl1OGNAihVc3Uro7ChS90AeoDNpCsE073JkXDAj2mW/RhubBSNSf9jL+sWXZkFN2idxfXP3cYqENsjsojrVs6O2qzxgmkBk0VbIvhmQM=
+	t=1752226651; cv=none; b=jnkOtNCFmTp0PedyhL+RBii07KBrzTJePAhc1U6YNmXR3vbY+tsDztdtfNyCxWvs2+5fXI1H0iuHyIsQURAP/Bt+VMtptTHkSnz0ayP+W3BVSxO14co02DRudzfGEU9VgFao84fOj8jJiAQHr0h3f4wxo8bQ7En9sTaReoqBM3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752226643; c=relaxed/simple;
-	bh=atnTHiewC1xCmy/qyvfr5dfWTSiO6aJ9sJe0l5ek+ro=;
+	s=arc-20240116; t=1752226651; c=relaxed/simple;
+	bh=M1dujzqlrViBX5eAVMXNVdNoKPO5BUR0diMllLgPzjc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FSBDZRsMqQ+z0/LHOX1VpeFp4gfOOEhatdsIGFLfpPsI2BpDxjhpyr5aQ0NXaM8Jr21QowRbIloyV1jcqWZr/qJurPWCD3fLjbPLJFMuMoLMBlW4HHnV70YS4O/yzJHzDl/84xbUzvys1QOUYfaLWzihZdjCXTzfJVhACL+2U9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--verhaegen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kc9uqdnH; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=JsnBFjaQZpqv9RXZm+1xIGaqSAOwfOWFkCAGdHlxbw7pLSSJyzdTkdB+6lye3CTZ5cqfi4fiu1t/UiUPjlqZzTxV9Ob8qDFpZI3TFRlkqtYZdStiQ9KkY+ckT/0TLgEAxbdXRPn8Bm4q3g0xPXflol0hyn7WdH4YfupnI1zw6pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--verhaegen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ncTRiXyH; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--verhaegen.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-451ac1b43c4so10541005e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 02:37:21 -0700 (PDT)
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3a4eb6fcd88so1336237f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 02:37:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752226640; x=1752831440; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1752226648; x=1752831448; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MyMo9zKfU1sUBA0BOjzI2p8EGc7Cd9FXwBdhaBOmmwY=;
-        b=kc9uqdnHdA2TWjwCvrJI/3gHSyLP2JqdO01j7n8tfiB1eFe85bXsXvCTxHOH5/jAgg
-         pFTgsOgL9cZeDW58YMy0kBPzowK/T6QDd1dmLKhNW6a/aGAnx0+ougUstogenbPh3yth
-         whOvzwkx5KZJFq+pyb2jnAeePxLAMF4cgD0ND1W55QxwxL9u1oWD5LcqzDouPH2xDem0
-         mw29uZUpB1JzRp4fvj1dRhNwC9vTDgqmNOU1e03M8hFss3BGWd+6NfSM5wo/vsJvOL1g
-         07yLU72l0uHN6EOiX1Ws27EUM6lReGLK75cRsLFKmuEQQpVnKQxLeZazGCJqAgY+n7TA
-         Ss9g==
+        bh=WywIvLAv4IB9b6g8T96e6Qsk8BIfajnf2gbyC1P4AZo=;
+        b=ncTRiXyH73I23H8AxSM5gLuUsBLk5YgNBE9QIYBtHQOjs5Dbt5ya03CH/Pucbmcy2+
+         uTWjNXMTQFwUfkpI7wgUcLm0BUfhTpAHEpFH3ANNky4KbfTgs/P2Tkj1SLeiYRYX9/tM
+         LgSU5fHoZwLaz6Vkk1foZ7Cbdh6iz5mPNeQLSHqCMFf5vX6RMuzMY1vtn1k1c5Yl1UBA
+         Ith/8IS1KKCPjApt0t+7rifg0YoSbRa3NXQIA3YtTgcfaKpoRnNHkzGXjW97mfRGSLf8
+         KkQCfymQUhsaTAmbFFY0KUwKPDQWej8c8QCKCSIBm9N7ssdmtkBfqLtV7kVmQqP90seL
+         MWTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752226640; x=1752831440;
+        d=1e100.net; s=20230601; t=1752226648; x=1752831448;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MyMo9zKfU1sUBA0BOjzI2p8EGc7Cd9FXwBdhaBOmmwY=;
-        b=CaHlw+/0RJYCaXkT4oFTi8mlHaiE9VB/23UcphN/RnVYQnLlnznDsTXT68WkqwA8CR
-         O77JArDFVIDxhma/ivj6QBQ/6hxsBiiCQxqrxZHCAD6bjRdh/cTOcYM8282nEEJsN9fX
-         ct6KGH7YWLulyDZeUGlwkkFkyK2C23LCaLYEEXAWFWR+FB+FcfQqtSgbn3fEIQjOmAld
-         DPn9LmNsk0CIq1DVv0nlGbEjSvrX2hdfN3WEWgRkUbwcMvIrqEkPYFOYtKY+DL5Zq0gA
-         K9SrzYNAxTjFWLbf6UAHr5ym4vCVjQjE3gYX+ePqdnuVlxc8r2uRvMhN2OncFKj32yew
-         Cj/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXFOl+u0q2fbJRg9rO/+S1etp5QR8gl4NYt0u1fKPP1IC+Tud55vZgCkrth/h5wkOge07NHGa5nic6Liq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNyeYodic3IYMtiPiOPKMqJrc1gGpcWslJCF0Rn6i3JbJ4Q6RQ
-	V1Hzoa4gk4AyVako+hFm09yawl7B/AqaqLX7PZ4mzdW01qbN1Xc+XpBJttF+p2sOo7HjJxPH9yu
-	nyn0lGRpFJyWS1ePU8w==
-X-Google-Smtp-Source: AGHT+IGkFa1awjG9LOYkbAB1rrv/t1xS4FURqpEoi3ZhrWLDYJ7bMjZ3iWrbqN63RoLLbaFSUEG6qVEShxpv5T8=
-X-Received: from wmth6.prod.google.com ([2002:a05:600c:8b66:b0:442:f4a3:b8f5])
+        bh=WywIvLAv4IB9b6g8T96e6Qsk8BIfajnf2gbyC1P4AZo=;
+        b=UNndNYujYjoqFd5Bwee5G99T2g8c1QqxZ9rmaXW/wOUXpUPzdFToohEybACbCNq3o1
+         wRvvQtPxVZIwFDk2rUQORQwslxGsZh5/l9qux5j3dmELymvSfzdRD+WbX/JHPMpznHlQ
+         a0vINRIUqGjXYxymho3HexWiG9DO0KNwm8+kXuCeBSantJKGfscweuXekOXmUk771XZ+
+         XfA8PX1z5GR2xgCLzUSe3dlrhfcvaIdFZo+4J1AIIobgg5KrzsEzsDxItQq1lOhv3zwS
+         k0ADWGjwdvXFB9+AofRzmRu6mXtEw6BBqErC6aMAKoihZWRMjD/UZnEOcpf5xhgnS/5w
+         BNPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUM4tsfzo8LBn9M4H1lQpL4qa9uuRYtkehDNMfBbSOMnmbcCYagfnjI78aD7/73+QIEaJxbtHpL78+WuMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVIbvdjM0XQy9zAtyNronsd7I1zmq9pHSsf3QuhlVXzjt85jBT
+	E+d6AZ2P7nuhmb8IX+YmnsFxKYs3h+G2tQEgBaFCsX2NkcIbP2L611J3WJRjLpDpnUlCnkFXFAD
+	QMqW9QZhi6LhuTha+Ag==
+X-Google-Smtp-Source: AGHT+IEmEE9dNv4iiepa6OEju/MJzJFG2hiRPgxw7iu3SiyhF7OruOUvPAPmCsUrMtbUZ8nFQRE0HzcU37l0TXw=
+X-Received: from wmbea14.prod.google.com ([2002:a05:600c:674e:b0:43d:9035:df36])
  (user=verhaegen job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:6305:b0:450:cfcb:5c9b with SMTP id 5b1f17b1804b1-454ec15a964mr20354655e9.1.1752226640523;
- Fri, 11 Jul 2025 02:37:20 -0700 (PDT)
-Date: Fri, 11 Jul 2025 10:36:28 +0100
+ 2002:a05:6000:18a3:b0:3a8:6262:6ef5 with SMTP id ffacd0b85a97d-3b5f2db15bemr1466223f8f.10.1752226648115;
+ Fri, 11 Jul 2025 02:37:28 -0700 (PDT)
+Date: Fri, 11 Jul 2025 10:36:29 +0100
 In-Reply-To: <20250711093636.28204-1-verhaegen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250711093636.28204-1-verhaegen@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250711093636.28204-3-verhaegen@google.com>
-Subject: [PATCH v2 2/4] ALSA: compress_offload: Add SNDRV_COMPRESS_TSTAMP64 ioctl
+Message-ID: <20250711093636.28204-4-verhaegen@google.com>
+Subject: [PATCH v2 3/4] ALSA: compress_offload: Add SNDRV_COMPRESS_AVAIL64 ioctl
 From: Joris Verhaegen <verhaegen@google.com>
 To: Vinod Koul <vkoul@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
 	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -95,141 +95,192 @@ Cc: Joris Verhaegen <verhaegen@google.com>, kernel-team@android.com,
 	David Li <dvdli@google.com>, Miller Liang <millerliang@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The previous patch introduced the internal infrastructure for handling
-64-bit timestamps. This patch exposes this capability to user-space.
+Previous patches introduced ioctl for fetching a 64-bit timestamp via
+SNDRV_COMPRESS_TSTAMP64. To provide a consistent API, a 64-bit
+version of SNDRV_COMPRESS_AVAIL ioctl is required.
 
-Define the new ioctl command SNDRV_COMPRESS_TSTAMP64, which allows
-applications to fetch the overflow-safe struct snd_compr_tstamp64.
-
-The ioctl dispatch table is updated to handle the new command by
-calling a new snd_compr_tstamp64 handler, while the legacy path is
-renamed to snd_compr_tstamp32 for clarity.
+Define a new struct snd_compr_avail64, which embeds the 64-bit
+timestamp struct, and define the corresponding SNDRV_COMPRESS_AVAIL64
+ioctl command in the UAPI header.
 
 Signed-off-by: Joris Verhaegen <verhaegen@google.com>
 Tested-by: Joris Verhaegen <verhaegen@google.com>
 Reviewed-by: David Li <dvdli@google.com>
 Reviewed-by: Miller Liang <millerliang@google.com>
 ---
- include/uapi/sound/compress_offload.h |  2 ++
- sound/core/compress_offload.c         | 50 +++++++++++++++++++++++----
- 2 files changed, 45 insertions(+), 7 deletions(-)
+ include/uapi/sound/compress_offload.h | 11 ++++
+ sound/core/compress_offload.c         | 88 +++++++++++++++++++++------
+ 2 files changed, 79 insertions(+), 20 deletions(-)
 
 diff --git a/include/uapi/sound/compress_offload.h b/include/uapi/sound/compress_offload.h
-index abd0ea3f86ee..2758d9ee3d91 100644
+index 2758d9ee3d91..48525a87d98f 100644
 --- a/include/uapi/sound/compress_offload.h
 +++ b/include/uapi/sound/compress_offload.h
-@@ -208,6 +208,7 @@ struct snd_compr_task_status {
-  * Note: only codec params can be changed runtime and stream params cant be
-  * SNDRV_COMPRESS_GET_PARAMS: Query codec params
-  * SNDRV_COMPRESS_TSTAMP: get the current timestamp value
-+ * SNDRV_COMPRESS_TSTAMP64: get the current timestamp value in 64 bit format
-  * SNDRV_COMPRESS_AVAIL: get the current buffer avail value.
-  * This also queries the tstamp properties
-  * SNDRV_COMPRESS_PAUSE: Pause the running stream
-@@ -230,6 +231,7 @@ struct snd_compr_task_status {
- 						 struct snd_compr_metadata)
+@@ -85,6 +85,16 @@ struct snd_compr_avail {
+ 	struct snd_compr_tstamp tstamp;
+ } __attribute__((packed, aligned(4)));
+ 
++/**
++ * struct snd_compr_avail64 - avail descriptor with tstamp in 64 bit format
++ * @avail: Number of bytes available in ring buffer for writing/reading
++ * @tstamp: timestamp information
++ */
++struct snd_compr_avail64 {
++	__u64 avail;
++	struct snd_compr_tstamp64 tstamp;
++} __attribute__((packed, aligned(4)));
++
+ enum snd_compr_direction {
+ 	SND_COMPRESS_PLAYBACK = 0,
+ 	SND_COMPRESS_CAPTURE,
+@@ -232,6 +242,7 @@ struct snd_compr_task_status {
  #define SNDRV_COMPRESS_TSTAMP		_IOR('C', 0x20, struct snd_compr_tstamp)
  #define SNDRV_COMPRESS_AVAIL		_IOR('C', 0x21, struct snd_compr_avail)
-+#define SNDRV_COMPRESS_TSTAMP64		_IOR('C', 0x22, struct snd_compr_tstamp64)
+ #define SNDRV_COMPRESS_TSTAMP64		_IOR('C', 0x22, struct snd_compr_tstamp64)
++#define SNDRV_COMPRESS_AVAIL64		_IOR('C', 0x23, struct snd_compr_avail64)
  #define SNDRV_COMPRESS_PAUSE		_IO('C', 0x30)
  #define SNDRV_COMPRESS_RESUME		_IO('C', 0x31)
  #define SNDRV_COMPRESS_START		_IO('C', 0x32)
 diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-index 6a8873bd62ae..40c1e69961b7 100644
+index 40c1e69961b7..78ba86e0d74f 100644
 --- a/sound/core/compress_offload.c
 +++ b/sound/core/compress_offload.c
-@@ -211,8 +211,8 @@ snd_compr_tstamp32_from_64(struct snd_compr_tstamp *tstamp32,
- 	tstamp32->sampling_rate = tstamp64->sampling_rate;
- }
- 
--static int snd_compr_update_tstamp(struct snd_compr_stream *stream,
--		struct snd_compr_tstamp *tstamp)
-+static int snd_compr_update_tstamp32(struct snd_compr_stream *stream,
-+				     struct snd_compr_tstamp *tstamp)
- {
- 	u64 copied_total64;
- 	struct snd_compr_tstamp64 tstamp64;
-@@ -238,11 +238,30 @@ static int snd_compr_update_tstamp(struct snd_compr_stream *stream,
+@@ -257,12 +257,11 @@ static int snd_compr_update_tstamp64(struct snd_compr_stream *stream,
  	return 0;
  }
  
-+static int snd_compr_update_tstamp64(struct snd_compr_stream *stream,
-+				     struct snd_compr_tstamp64 *tstamp)
-+{
-+	int retval = snd_compr_get_tstamp64(stream, tstamp);
-+
-+	if (retval != 0)
-+		return retval;
-+
-+	pr_debug("dsp consumed till %u total %llu bytes\n", tstamp->byte_offset,
-+		 tstamp->copied_total);
-+
-+	if (stream->direction == SND_COMPRESS_PLAYBACK)
-+		stream->runtime->total_bytes_transferred = tstamp->copied_total;
-+	else
-+		stream->runtime->total_bytes_available = tstamp->copied_total;
-+
-+	return 0;
-+}
-+
- static size_t snd_compr_calc_avail(struct snd_compr_stream *stream,
- 		struct snd_compr_avail *avail)
+-static size_t snd_compr_calc_avail(struct snd_compr_stream *stream,
+-		struct snd_compr_avail *avail)
++static size_t snd_compr_calc_avail_internal(struct snd_compr_stream *stream,
++					    struct snd_compr_avail *avail32,
++					    struct snd_compr_avail64 *avail64)
  {
- 	memset(avail, 0, sizeof(*avail));
--	snd_compr_update_tstamp(stream, &avail->tstamp);
-+	snd_compr_update_tstamp32(stream, &avail->tstamp);
- 	/* Still need to return avail even if tstamp can't be filled in */
+-	memset(avail, 0, sizeof(*avail));
+-	snd_compr_update_tstamp32(stream, &avail->tstamp);
+-	/* Still need to return avail even if tstamp can't be filled in */
++	u64 avail;
  
  	if (stream->runtime->total_bytes_available == 0 &&
-@@ -769,19 +788,34 @@ snd_compr_set_metadata(struct snd_compr_stream *stream, unsigned long arg)
- 	return retval;
- }
+ 			stream->runtime->state == SNDRV_PCM_STATE_SETUP &&
+@@ -284,33 +283,68 @@ static size_t snd_compr_calc_avail(struct snd_compr_stream *stream,
+ 		}
+ 	}
  
--static inline int
--snd_compr_tstamp(struct snd_compr_stream *stream, unsigned long arg)
-+static inline int snd_compr_tstamp32(struct snd_compr_stream *stream,
-+				     unsigned long arg)
- {
- 	struct snd_compr_tstamp tstamp = {0};
- 	int ret;
- 
--	ret = snd_compr_update_tstamp(stream, &tstamp);
-+	ret = snd_compr_update_tstamp32(stream, &tstamp);
- 	if (ret == 0)
- 		ret = copy_to_user((struct snd_compr_tstamp __user *)arg,
- 			&tstamp, sizeof(tstamp)) ? -EFAULT : 0;
- 	return ret;
- }
- 
-+static inline int snd_compr_tstamp64(struct snd_compr_stream *stream,
-+				     unsigned long arg)
-+{
-+	struct snd_compr_tstamp64 tstamp = { 0 };
-+	int ret;
+-	avail->avail = stream->runtime->total_bytes_available -
+-			stream->runtime->total_bytes_transferred;
++	avail = stream->runtime->total_bytes_available -
++		stream->runtime->total_bytes_transferred;
+ 	if (stream->direction == SND_COMPRESS_PLAYBACK)
+-		avail->avail = stream->runtime->buffer_size - avail->avail;
++		avail = stream->runtime->buffer_size - avail;
 +
-+	ret = snd_compr_update_tstamp64(stream, &tstamp);
-+	if (ret == 0)
-+		ret = copy_to_user((struct snd_compr_tstamp64 __user *)arg,
-+				   &tstamp, sizeof(tstamp)) ?
-+			      -EFAULT :
-+			      0;
-+	return ret;
++	if (avail32)
++		avail32->avail = avail;
++	if (avail64)
++		avail64->avail = avail;
++
++	pr_debug("ret avail %llu as %zu\n", avail, (size_t)avail);
++	return avail;
 +}
 +
- static int snd_compr_pause(struct snd_compr_stream *stream)
- {
- 	int retval;
-@@ -1355,7 +1389,9 @@ static long snd_compr_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
++static size_t snd_compr_calc_avail32(struct snd_compr_stream *stream,
++				     struct snd_compr_avail *avail)
++{
++	memset(avail, 0, sizeof(*avail));
++	snd_compr_update_tstamp32(stream, &avail->tstamp);
++	/* Still need to return avail even if tstamp can't be filled in */
  
- 	switch (_IOC_NR(cmd)) {
- 	case _IOC_NR(SNDRV_COMPRESS_TSTAMP):
--		return snd_compr_tstamp(stream, arg);
-+		return snd_compr_tstamp32(stream, arg);
-+	case _IOC_NR(SNDRV_COMPRESS_TSTAMP64):
-+		return snd_compr_tstamp64(stream, arg);
+-	pr_debug("ret avail as %llu\n", avail->avail);
+-	return avail->avail;
++	return snd_compr_calc_avail_internal(stream, avail, NULL);
++}
++
++static size_t snd_compr_calc_avail64(struct snd_compr_stream *stream,
++				     struct snd_compr_avail64 *avail)
++{
++	memset(avail, 0, sizeof(*avail));
++	snd_compr_update_tstamp64(stream, &avail->tstamp);
++	/* Still need to return avail even if tstamp can't be filled in */
++
++	return snd_compr_calc_avail_internal(stream, NULL, avail);
+ }
+ 
+ static inline size_t snd_compr_get_avail(struct snd_compr_stream *stream)
+ {
+ 	struct snd_compr_avail avail;
+ 
+-	return snd_compr_calc_avail(stream, &avail);
++	return snd_compr_calc_avail32(stream, &avail);
+ }
+ 
+-static int
+-snd_compr_ioctl_avail(struct snd_compr_stream *stream, unsigned long arg)
++static int snd_compr_ioctl_avail(struct snd_compr_stream *stream,
++				 unsigned long arg, bool is_64bit)
+ {
+-	struct snd_compr_avail ioctl_avail;
+-	size_t avail;
++	union {
++		struct snd_compr_avail avail32;
++		struct snd_compr_avail64 avail64;
++	} ioctrl_avail_u;
++	size_t avail, ioctrl_avail_size;
+ 
+ 	if (stream->direction == SND_COMPRESS_ACCEL)
+ 		return -EBADFD;
+ 
+-	avail = snd_compr_calc_avail(stream, &ioctl_avail);
+-	ioctl_avail.avail = avail;
++	if (is_64bit) {
++		avail = snd_compr_calc_avail64(stream, &ioctrl_avail_u.avail64);
++		ioctrl_avail_u.avail64.avail = avail;
++		ioctrl_avail_size = sizeof(ioctrl_avail_u.avail64);
++	} else {
++		avail = snd_compr_calc_avail32(stream, &ioctrl_avail_u.avail32);
++		ioctrl_avail_u.avail32.avail = avail;
++		ioctrl_avail_size = sizeof(ioctrl_avail_u.avail32);
++	}
+ 
+ 	switch (stream->runtime->state) {
+ 	case SNDRV_PCM_STATE_OPEN:
+@@ -321,12 +355,24 @@ snd_compr_ioctl_avail(struct snd_compr_stream *stream, unsigned long arg)
+ 		break;
+ 	}
+ 
+-	if (copy_to_user((__u64 __user *)arg,
+-				&ioctl_avail, sizeof(ioctl_avail)))
++	if (copy_to_user((__u64 __user *)arg, &ioctrl_avail_u,
++			 ioctrl_avail_size))
+ 		return -EFAULT;
+ 	return 0;
+ }
+ 
++static int snd_compr_ioctl_avail32(struct snd_compr_stream *stream,
++				   unsigned long arg)
++{
++	return snd_compr_ioctl_avail(stream, arg, false);
++}
++
++static int snd_compr_ioctl_avail64(struct snd_compr_stream *stream,
++				   unsigned long arg)
++{
++	return snd_compr_ioctl_avail(stream, arg, true);
++}
++
+ static int snd_compr_write_data(struct snd_compr_stream *stream,
+ 	       const char __user *buf, size_t count)
+ {
+@@ -1393,7 +1439,9 @@ static long snd_compr_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
+ 	case _IOC_NR(SNDRV_COMPRESS_TSTAMP64):
+ 		return snd_compr_tstamp64(stream, arg);
  	case _IOC_NR(SNDRV_COMPRESS_AVAIL):
- 		return snd_compr_ioctl_avail(stream, arg);
+-		return snd_compr_ioctl_avail(stream, arg);
++		return snd_compr_ioctl_avail32(stream, arg);
++	case _IOC_NR(SNDRV_COMPRESS_AVAIL64):
++		return snd_compr_ioctl_avail64(stream, arg);
  	case _IOC_NR(SNDRV_COMPRESS_PAUSE):
+ 		return snd_compr_pause(stream);
+ 	case _IOC_NR(SNDRV_COMPRESS_RESUME):
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
