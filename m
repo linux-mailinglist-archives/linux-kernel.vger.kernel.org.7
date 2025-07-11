@@ -1,234 +1,160 @@
-Return-Path: <linux-kernel+bounces-727700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB8FB01E4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:51:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 490EDB01E51
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFD53541731
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7655F3A58B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9932DCF5D;
-	Fri, 11 Jul 2025 13:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085512DCF6C;
+	Fri, 11 Jul 2025 13:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5P39ZtC"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAqmAmbl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021912D97AF;
-	Fri, 11 Jul 2025 13:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596EF2D8385;
+	Fri, 11 Jul 2025 13:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752241875; cv=none; b=epkB9e9ws0+ida4RkNf8HzJ/KotUXAZPGOMmeZ6HTjP0LwvafN24RlKieu6xaSQy37GV7p1iZtJgDf6NA6IixhRESu/FG8DqwjBu6U3NOlbxUBT+GjGX/Ffzx5UDLWBN4AQofaXxmdlEIaCu5AWEoFV7lqNm948ACkkOLmkqcas=
+	t=1752241890; cv=none; b=LbR4JJYr0SZjIB54/eeCglDzzUcyTTviZTvdQcpNjbR5f8LPWrdAOKn5B8YvKtMaR7eDN0YxUNdilW8xD183vof1HjiGAEfJiyi2wn+CJMbFvWo5p16lv26Hklri7cxiPN1mzIJMJ9JSElDF5xtUDvLRKEQqbe72CW/cOSOLCZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752241875; c=relaxed/simple;
-	bh=VhA4dbbRgYBOcUaTz+c7NrVJIROm/R3rHh4CcKNyzi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dUWIibbTp2Hxv/14QpoPhB4UPY867K+jAUbdyQvfZmOF9AV5DQnXi+7J8Lcl5yuSNZDGnLT5hqikLRe1TBZn5wCRFq7gy4Sap8+SAMgT5cMFCIKHCmLSZY7rmz4P1DKEwTzqquYwLZWk+orirjKr0YVC3FTJFV+A4AgqHpJZ3r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5P39ZtC; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4a6f0bcdf45so25463801cf.0;
-        Fri, 11 Jul 2025 06:51:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752241873; x=1752846673; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TsPSR2XmtkCGfmNXHOX1skWOOfQss8KuN6l1/rksPTs=;
-        b=G5P39ZtC1O/ys6GKXj/HEIR4wpjCBJOWpBN9X7BKANTik6nHqUBIgdQqoS2sDz3+Iu
-         zh364Pzah4swsRDJRTSlmwrCv2XPCYss+HmQkgoRGx9eVth/uYjWTfcEalUpm0EcEi+9
-         S6aV6utbTenJDh2bUVfymhsmQDeB7rfWbx546tvKPBX8Pfyq5z9N4eiLiX9FBzU/sZVX
-         SoVj0SJcYqCxjNJfsFbK3z1BsfBz3ZRmTZsYcQaoHzvzFWhm6+rRZAfoGuckwvTw6ghy
-         M76KdmrhivM6gPVZmgNOeuGoO/t3HJlRlIfSzTIM9lQ+eHWg+lbrGAdEsz2xLZrDx6at
-         Ll7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752241873; x=1752846673;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TsPSR2XmtkCGfmNXHOX1skWOOfQss8KuN6l1/rksPTs=;
-        b=wl1/iPrMtdZowYOP5je9Nk66WlZsMdrJW1mdALbe5g458qO+xpHoT4BlM+BVlv4Dxl
-         HuZwd0xEUwdAdXEjKD8FmpIz7yq9Q0Cr5GssIezzj7E/M7goJ3XvbjXE5RnBouo0+/jq
-         bGbN3jiZ8CC9HcRCwSkoOqfexm+ur/dO11ih9he460jtZrWVXvvD0Ur/L42wllTha3IL
-         x7wFAwTh2PZQaDIIar7iWv3iU4pxk3/SMvALUvj0n/N9bYALPQKi44tBp+7OIp6HNo5m
-         IBuxWmewWTu5Y9FUdLrVHWyCkl8uoxIPsjbe3Vl+9ARHu9n50UtPqxa3FBleyISTkRup
-         DJ3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUFep+LJ7vAICaFsjBfgOFg634GbGBya8WJGxJD1DxPPJ9DyBrKqi/3Nj0Bo4ewgLM4vEiduwhhuoZQjU0QLC4=@vger.kernel.org, AJvYcCWwlqT+6o+u+boVqPlENQw2in9K6Cx76OEvI4cx1sE4LSPzoTxy7xtHPVuZZwTLPCk3LniRPXxCqaMw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFwYjv5if0UipygSDtpQM8D4LzY0StmhguHbFIR8dLe9AYFkPa
-	vCkXpgBeT83eHmWZBn09AFsFr3Q9yZrac94sgkjuAB0BbeKZZC3/H0wd
-X-Gm-Gg: ASbGncu2NZDHE5ezlHFj+RuXDTBssyl6Bz81d5hQo+E43fN09cztSwwx4g967muYVHa
-	CHCWnaXAdhy5iZbg5WtyrlumlKbuUv9Ehqqp+YZ04RQrgdGVNW6cXYyapVPyD7qa5okhRjHVpfE
-	+6miTC9zzGYxQqYCNMNO3YVWd/sCwFW0NqdsLdEpqQN1wqfsx5hw+6BM4o1C3RkgYqjUjXK3M7e
-	VEAwF1LrHh/h5uNHtJ/0fHAFvfng0KnmGZam0XIbagiis9owcfeEySg+S7ZlPaopLO6ILlVbt8Y
-	RaYpz9SkMTnQqFwN+2jxVwu8HWXAtf9Vqlppxs957551doCo8XPEZFC9I8r8EZZDqr6BzZpWXW/
-	rf1LaIKWhfLnmigJIW21ybzScE9GO9EJWZH2CU6Pv6Hc6zOoGXA84EtHAtdYWf1YilbW1l+dH1h
-	VqqAmFG0EXwrRQ
-X-Google-Smtp-Source: AGHT+IG3j/mYxUHwTH0mxjQzJmi5wM/B/2jJ7NoKNHSKvwfZfcpJKZZ0N//i1HDkgCQ/ZVvMkY8kaQ==
-X-Received: by 2002:a05:622a:15d5:b0:4a7:f9ab:7895 with SMTP id d75a77b69052e-4a9fb85a364mr59155491cf.4.1752241872555;
-        Fri, 11 Jul 2025 06:51:12 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ab04d910desm6281831cf.9.2025.07.11.06.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 06:51:11 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id E4103F40066;
-	Fri, 11 Jul 2025 09:51:10 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Fri, 11 Jul 2025 09:51:10 -0400
-X-ME-Sender: <xms:zhZxaKTEY5U6c6-_3YyteOJniubYemra0aIgWHSprXHT3_pZzke0aw>
-    <xme:zhZxaBR7JwdG7QGEZOBQI4QeI9TSQ3VKT4i9MVx9JGDDrq0MbjsFxfUgnOXTO8AcL
-    5MNKyRYtqHSvDSqiA>
-X-ME-Received: <xmr:zhZxaMa-4paHWzWkXrjNawC6kruDLPCCMKQJhprkgO3ptlwOjTdGkobVFQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfeeglecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepjeeihfdtuedvgedvtddufffggeefhefgtdeivdevveelvefhkeehffdtkeeihedv
-    necuffhomhgrihhnpehruhhsthdqlhgrnhhgrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
-    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphht
-    thhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhoshhsihhnsehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkhhmmheslhhishhtshdrlhhinhhu
-    gidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihse
-    hgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhn
-    mhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:zhZxaFjIaiy3xPKeX89dY2CnVso02CcRHAZ6H-bY4j5chU29C0n1Fg>
-    <xmx:zhZxaBi1jZJ7WSKFHml3JNgnciAGNRFFk0_a2NGpKqyJNE1l5Pm_Vg>
-    <xmx:zhZxaLLBzQItEUnD5qoXsWMEqjwIuNI7l76Sj1l9YNPFmYb_9ySjgg>
-    <xmx:zhZxaIVuakmfosevnFBxyDrY9TH7fm6Jz4CqAjyqJ8JD62rYJZq2zg>
-    <xmx:zhZxaN1t5hd4nS0wzZcm9R61A2WLCP-yZjx72mnuzcXa9yl5_uellnkB>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 11 Jul 2025 09:51:10 -0400 (EDT)
-Date: Fri, 11 Jul 2025 06:51:09 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v6 4/9] rust: sync: atomic: Add generic atomics
-Message-ID: <aHEWze8p40qeNBr_@Mac.home>
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-5-boqun.feng@gmail.com>
- <DB92I10114UN.33MAFJVWIX4AB@kernel.org>
- <aHEQKBT68xvqIIjW@Mac.home>
- <DB99JZ3XMHZS.3N0GLG94JJSA9@kernel.org>
+	s=arc-20240116; t=1752241890; c=relaxed/simple;
+	bh=NAKjhcJKzyyWi+wlFJ2CIQX8x2RqA9HiGd+jittBrO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JrA/W+4P+prkdB5njjCbs35HSBwLvGMrTLEaFVaoBEuIySFeTTLdyrkbOSpk1CLWz80htrQknBDJm2xNKc7L570SZR7fIJ/POI7XXkw1VRZ5LtI6lJCPRtJrseRWvH7EQzahrQ63m3hJheVSDLgg+aEvz7kmkgSG2wAU6p3LZzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAqmAmbl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9126DC4CEF5;
+	Fri, 11 Jul 2025 13:51:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752241889;
+	bh=NAKjhcJKzyyWi+wlFJ2CIQX8x2RqA9HiGd+jittBrO0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KAqmAmblX/OFi57pXfXidPcG2gottcwISiCi5ztoJipo1yBFieR7qbe8hTBQWfM0a
+	 O5BfIM7p8gKEEu8feNVYcud9f9f577kkUGYKQXGdpVSOaQtSUcLOKKTmhYKuDywPBt
+	 CTK1Jr2iKgS7B6xZrcjVyLoPiBFrvTe2iCpKlGVmOrnJFoOmiryXcEAZ6PqDiED7mQ
+	 BM0O7ofHhbcaW+qullzrAUJFqlhaiZ9L37ZYeaVOfZ0NkYeWnN7//n+b3fXNmRiSCQ
+	 a18qO1HOGERwP0wjZzE+rSYZCAj5QpTpFgzW2mm3ZqvuPZKKDmofB6Q4C+7qv8TbGa
+	 dvHCMQj4bozvA==
+Message-ID: <7dffc2a4-c657-441b-86e5-b3869a72a800@kernel.org>
+Date: Fri, 11 Jul 2025 15:51:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB99JZ3XMHZS.3N0GLG94JJSA9@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64/dts/blaize: Enable Ethernet on CB2 board
+To: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>,
+ James Cowgill <james.cowgill@blaize.com>,
+ Matt Redfearn <matthew.redfearn@blaize.com>,
+ Neil Jones <neil.jones@blaize.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250711-kernel-upstreaming-add_network_support-v1-0-4a66a17c94b3@blaize.com>
+ <20250711-kernel-upstreaming-add_network_support-v1-2-4a66a17c94b3@blaize.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250711-kernel-upstreaming-add_network_support-v1-2-4a66a17c94b3@blaize.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 03:34:47PM +0200, Benno Lossin wrote:
-> On Fri Jul 11, 2025 at 3:22 PM CEST, Boqun Feng wrote:
-> > On Fri, Jul 11, 2025 at 10:03:07AM +0200, Benno Lossin wrote:
-> > [...]
-> >> > +
-> >> > +    /// Returns a pointer to the underlying atomic variable.
-> >> > +    ///
-> >> > +    /// Extra safety requirement on using the return pointer: the operations done via the pointer
-> >> > +    /// cannot cause data races defined by [`LKMM`].
-> >> 
-> >> I don't think this is correct. I could create an atomic and then share
-> >> it with the C side via this function, since I have exclusive access, the
-> >> writes to this pointer don't need to be atomic.
-> >> 
-> >
-> > that's why it says "the operations done via the pointer cannot cause
-> > data races .." instead of saying "it must be atomic".
+On 11/07/2025 15:36, Nikolaos Pasaloukos wrote:
+> Use the Synopsys gigabit Ethernet controller on the Blaize BLZP1600
+> SoC to provide Ethernet connectivity using the TI DP83867 PHY which is
+> available on the CB2 board via an RJ45 connector.
 > 
-> Ah right I misread... But then the safety requirement is redundant? Data
-> races are already UB...
-> 
-> >> We also don't document additional postconditions like this... If you
-> >
-> > Please see how Rust std document their `as_ptr()`:
-> >
-> > 	https://doc.rust-lang.org/std/sync/atomic/struct.AtomicI32.html#method.as_ptr
-> >
-> > It mentions that "Doing non-atomic reads and writes on the resulting
-> > integer can be a data race." (although the document is a bit out of
-> > date, since non-atomic read and atomic read are no longer data race now,
-> > see [1])
-> 
-> That's very different from the comment you wrote though. It's not an
-> additional safety requirement, but rather a note to users of the API
-> that they should be careful with the returned pointer.
-> 
-> > I think we can use the similar document structure here: providing more
-> > safety requirement on the returning pointers, and...
-> >
-> >> really would have to do it like this (which you shouldn't given the
-> >> example above), you would have to make this function `unsafe`, otherwise
-> >> there is no way to ensure that people adhere to it (since it isn't part
-> >> of the safety docs).
-> >> 
-> >
-> > ...since dereferencing pointers is always `unsafe`, users need to avoid
-> > data races anyway, hence this is just additional information that helps
-> > reasoning.
-> 
-> I disagree.
-> 
-> As mentioned above, data races are already forbidden for raw pointers.
-> We should indeed add a note that says that non-atomic operations might
-> result in data races. But that's very different from adding an
-> additional safety requirement for using the pointer.
-> 
-> And I don't think that we can add additional safety requirements to
-> dereferencing a raw pointer without an additional `unsafe` block.
-> 
-
-So all your disagreement is about the "extra safety requirement" part?
-How about I drop that:
-
-    /// Returns a pointer to the underlying atomic `T`.
-    pub const fn as_ptr(&self) -> *mut T {
-        self.0.get()
-    }
-
-? I tried to add something additional information:
-
-/// Note that non-atomic reads and writes via the returned pointer may
-/// cause data races if racing with atomic reads and writes per [LKMM].
-
-but that seems redundant, because as you said, data races are UB anyway.
-
-Thoughts?
-
-Regards,
-Boqun
-
+> Signed-off-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
 > ---
-> Cheers,
-> Benno
+>  arch/arm64/boot/dts/blaize/blaize-blzp1600-cb2.dts | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/blaize/blaize-blzp1600-cb2.dts b/arch/arm64/boot/dts/blaize/blaize-blzp1600-cb2.dts
+> index fb5415eb347a028fc65090027a4c4fc89c8280f5..cbe8f0930ad3741b0e770dd7d494931e3b939815 100644
+> --- a/arch/arm64/boot/dts/blaize/blaize-blzp1600-cb2.dts
+> +++ b/arch/arm64/boot/dts/blaize/blaize-blzp1600-cb2.dts
+> @@ -6,6 +6,7 @@
+>  /dts-v1/;
+>  
+>  #include "blaize-blzp1600-som.dtsi"
+> +#include <dt-bindings/net/ti-dp83867.h>
+>  
+>  / {
+>  	model = "Blaize BLZP1600 SoM1600P CB2 Development Board";
+> @@ -14,6 +15,7 @@ / {
+>  
+>  	aliases {
+>  		serial0 = &uart0;
+> +		ethernet = &gmac;
+>  	};
+>  
+>  	chosen {
+> @@ -117,3 +119,23 @@ &gpio0 {
+>  			  "BOARD_ID_1",		/* GPIO_30 */
+>  			  "BOARD_ID_2";		/* GPIO_31 */
+>  };
+> +
+> +&gmac {
+
+Are you sure you follow DTS coding style? Which sorting rule is used by
+Blaize?
+
+> +	status = "okay";
+> +	snps,reset-delays-us = <0 10000 50000>;
+> +	snps,reset-gpio = <&gpio0 12 GPIO_ACTIVE_LOW>;
+
+Do not use deprecated properties. This is new code, not legacy.
+
+
+Best regards,
+Krzysztof
 
