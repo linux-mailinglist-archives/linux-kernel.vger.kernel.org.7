@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-728402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3923B027E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:51:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52034B027E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CBDE56848C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39B10A484BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5D722D4FF;
-	Fri, 11 Jul 2025 23:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A81225A40;
+	Fri, 11 Jul 2025 23:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CfMNusvZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EcZzvX01"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C3923505F;
-	Fri, 11 Jul 2025 23:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABB622D4DD;
+	Fri, 11 Jul 2025 23:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752277814; cv=fail; b=UuTaX4A8jEec44wnmTAe4PK2i9upGKMBbCPtC7cFwTPxiwAbPxe2MJxMefwxFBcpEktudPI4xX/H01YlGmDrPJQSJX5nAOAKD1a6LVCWc0vKbRArhw9PG3l8PM2bhfNVIthMixFTGS/5RRxi5bPIHA00ieAyKHNgcp2igEtmf/g=
+	t=1752277797; cv=fail; b=EjYGUKnDXxre/qX2eiKxRca0XVY7XZFdBEsrcBw27Mylxo3J9zylcjmVrQWNo8xpv+nei+uzitBYmwzaSWgSaK79rKIg4/PIAxHOZxlybuiMWLDyCGZ8TQ1e8yXMY9IjYkr68ZfE0RIJNrVbNWULj3PZn36ekKghMu4RK/hUaEk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752277814; c=relaxed/simple;
-	bh=nx7c1fMXZmSjzwcHFq0kQJBRI26ZHWzH6MHagX3/4qM=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Q7WOjS3eq2qxCtSoR25mjFHe0zvvBnG+csAKpiQSLNFy3NKwnIVg70vICw1vFllQ9EueJb5uNFzBnVtGGFxIXHcC3VeH/Efo6NjiwlAqnSJj76H0CamQ606EOJTz4CdBOGM1/nJS9LWq/gVlg/TKQR9AqXikbdcT5H7CbObAXB0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CfMNusvZ; arc=fail smtp.client-ip=198.175.65.17
+	s=arc-20240116; t=1752277797; c=relaxed/simple;
+	bh=6EqswWVMdwnerB8eA/d3IwYal7GVA54Z+vPuOBLxC54=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uNxE1aT7bnHfDuMlZ7IQZnLGDYlGkRSQbZI2KsBjRKSbw/Bw9ofnjXQNE8OZX192V7wmsOreYjnYoBWmaP7hshyrckj/ZEEEhelfkP7bq7vNkl71YBVhyBeDQPOOPn02vzxd2kdqN0DlsxCAvSirkqpgFWtSMH7EjVtcFLU4DJc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EcZzvX01; arc=fail smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752277813; x=1783813813;
-  h=from:to:cc:subject:date:message-id:
-   content-transfer-encoding:mime-version;
-  bh=nx7c1fMXZmSjzwcHFq0kQJBRI26ZHWzH6MHagX3/4qM=;
-  b=CfMNusvZuvqUq2ewV7K6mhFUSr2BgvzpbObJ+hyapF6eTRssLfUOTwKD
-   zE4tjYAkBq3jC13KRqNNPziIh0S7tuBGc/PoxSPCqh4dW2ZsCeBPMa94P
-   hOULkWhO5mApcc2ANDpIZhIM1gZUdhwXlnELyC9S7/JOMA+r5mMY6/5mS
-   DxksLclhr2Y6jvmwPlgw7JjVwdpvbfpcMgtbbCUpU2Mw7kDKn5Wv+Hk2F
-   Ogico4UINlvPpD6/M+eh/Izxl1xZaU0cNHw35+/mDGyhz3oDL75Q52VpG
-   YaGWI69mCLcOCIJKmTtPaNaa11Zg/NfgcaST/ZjCSNkizpr0mE1yvUA0m
-   Q==;
-X-CSE-ConnectionGUID: Ro6MYE3QTQWfQO+vDwB2Bg==
-X-CSE-MsgGUID: 7fthGdd1SniZRgs6U1ZtJw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54547718"
+  t=1752277796; x=1783813796;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=6EqswWVMdwnerB8eA/d3IwYal7GVA54Z+vPuOBLxC54=;
+  b=EcZzvX01P1q6wV5h0lEbkvUeSx2K0s22TXla23S0/ZjZP8VlBcslg3pE
+   T/E8ItR1tXlTFR7dRcJgj8wtaPRRB30OiuDUCwMP67hH0Bq/WwK+fJFJo
+   MEdhGIQVE148xyHrCMbfRvHsSoMUWS2Grh3eWnq+tOVSxisvORR1JjNpH
+   4VUD7IK9CJyxrr9ZDZDf+9/FBeLULz1u0+ToycjOefi01sJi2kYeNjlyj
+   dPtiYjGYbDSnAgpPmfR+C6+ohxE5VPkqKmVGpu9VRBhb7xwsADh/PaUB6
+   yRs/kYaSe4DyuQNrllqdFWJU+vz6Hy3xgXVw729ZwAHONREzPa/QE1pZu
+   w==;
+X-CSE-ConnectionGUID: OZNtFQKrSvyDM7zHkp+x5A==
+X-CSE-MsgGUID: WNLfIuLWQfut9jqmfKupnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54448311"
 X-IronPort-AV: E=Sophos;i="6.16,305,1744095600"; 
-   d="scan'208";a="54547718"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 16:50:10 -0700
-X-CSE-ConnectionGUID: 1j0vIQ0zQs68lSPX4UHS5Q==
-X-CSE-MsgGUID: sAfHV8g4QQOQzqt1oJ1SMQ==
+   d="scan'208";a="54448311"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 16:49:55 -0700
+X-CSE-ConnectionGUID: pagHV7NqTFGesmKiIBSIZw==
+X-CSE-MsgGUID: 8CuE706RSsyqwwkAmWJbuw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,305,1744095600"; 
-   d="scan'208";a="162048671"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 16:50:10 -0700
+   d="scan'208";a="162160566"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 16:49:55 -0700
 Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 11 Jul 2025 16:50:08 -0700
+ 15.2.1544.25; Fri, 11 Jul 2025 16:49:54 -0700
 Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
  ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Fri, 11 Jul 2025 16:50:08 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.53)
+ 15.2.1544.25 via Frontend Transport; Fri, 11 Jul 2025 16:49:54 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.82)
  by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 11 Jul 2025 16:50:08 -0700
+ 15.2.1544.25; Fri, 11 Jul 2025 16:49:54 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t/w2oRVV7Yy+cvQ9OjES9o6bAK2jI+LlJkH3l0Mx9pM1dt3blxFmgtQ/pXCKSgBqpSjcDAAs5K7Z7ItJHC/FmBF1qug9xzKvxnQ2S0qcjI0j06ER2YX0Wgq12WFxXKvhRZxiZmJIwQEW5yEe6cxdHLng1IGYkHZ6dlvK3jn0LCRyn6FzOknPxE22eYPGMj2LN0pBWMZLvEpiBeOqcdj+aLwkqtDFwN0F5/tSDPnmG3akQpe3GnC3Y7dOdTVVRIKIQTdn2F+LNB2qQK6hImt6XrGAPQzZ4AzXPWBd/wEAD1QErDxG4Q9dkGm/6aml+kKdpsx7ek7+dofo6A7CNsBLxg==
+ b=JlImjkUEyEf9RC/Kd2XbDZK2M0uXlekZQp2Q6QKZfARkhMCm1g57l0Litg8xeS5rB6gju6TuQBqJBx0nvLkL6uG0G2h+GUxKg8aotLUiQYbvp9EpNkxpratTEFtO9gSJWRFBpjJUXMA2wuryavphhMNLDD3L18lV0O1aWQpaUcLQ2FslYeLhf58qCALvvEICcLRuFv44joqxewJUQP0EimTT/T6EWbwVcxPJWJlJA3qJ1/E/lALe+8PN/ThMlXW9LC7RgRqh3DUw/hiGMMWhGX7h9GG49zGBSaLh95vs9pT2NGRCAqfGW4GueLiGG742Fw4D63zOsgI1W/Jv3INl0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MPBmEfxz+d9zW57nu4D4EKGIkqIwWLLdj5xVBpVSyNo=;
- b=J2Fa3uEALo8cwh7ansDl6L472/58winz0DQrg1U1ihVh5UCEG9TKwRmEpT+dc5N5a5RL0Qy28fd6qCyOm3C/804tPfh/1NV9+61hPhz6f4Vrfe80uRo4o3a9OJZ90OEp9dHcq3QUH5XQ7yhEVT6yKfT3S0DcW0TXYA0SQIMzhf+rCxxx9moebDhVtlrXEGXGBkjMUUpWsQDH/qruk2FvyHpY7BA1QirNmfQrdrqz8n+IYYdMiTIgyLxQP1aXWnzrV5luFJ9feS8/ROY0/au7GS7HNvS6hY/JYJqgGyrZOwhh20sQ+aDDs0eL2r06c30Ju6iumZ7CvcuMnYnuFCEZDg==
+ bh=cJ6nLMtUugtT3IpiilcdtuOrDbZmx4UbrbE8fHFqjt4=;
+ b=xwWKBAriamR5Bh2MX1+FLpoQkEYyU1xPLL7Ww0hPhp1GfOc7ecwd0+ErskPJYwlo4EX19jfw1ZTQOo3tUtV8y3oBeLXojkJQ/UZ0wLSBNMloyDStCbEfPDWmGEWgbo66YNXweiIbabmWKmkzYeP5kEk0TbRkbzw1z87iBd+hk8ysbnCPxKGa1MqPJwG+s9uGLTURYVD5ffL8uX7UBJPDMrHTQDxgTslI0b2wAPLeY3O2ISrD3T3J7pqY2V6RiAqHd7Bl2NbLbjXR+IXdjElioDixKIZDiezzyGoBJb9JQ/PzqULFITHJFqW8lsrMU+R/AKL6jrDiE+wbs0Z7Ja0STA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -84,26 +85,23 @@ Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
  by SN7PR11MB7019.namprd11.prod.outlook.com (2603:10b6:806:2ae::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Fri, 11 Jul
- 2025 23:49:35 +0000
+ 2025 23:49:36 +0000
 Received: from PH8PR11MB8107.namprd11.prod.outlook.com
  ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
  ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
- 23:49:35 +0000
+ 23:49:36 +0000
 From: Dan Williams <dan.j.williams@intel.com>
 To: <linux-cxl@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Alison Schofield
-	<alison.schofield@intel.com>, Dave Jiang <dave.jiang@intel.com>, "David
- Lechner" <dlechner@baylibre.com>, Davidlohr Bueso <dave@stgolabs.net>, "Fabio
- M. De Francesco" <fabio.m.de.francesco@linux.intel.com>, Ingo Molnar
-	<mingo@kernel.org>, Ira Weiny <ira.weiny@intel.com>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, "Peter Zijlstra (Intel)"
-	<peterz@infradead.org>, Shiju Jose <shiju.jose@huawei.com>, Vishal Verma
-	<vishal.l.verma@intel.com>
-Subject: [PATCH v3 0/8] cleanup: Introduce ACQUIRE(), a guard() for conditional locks
-Date: Fri, 11 Jul 2025 16:49:24 -0700
-Message-ID: <20250711234932.671292-1-dan.j.williams@intel.com>
+CC: <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>, David Lechner <dlechner@baylibre.com>,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Subject: [PATCH v3 1/8] cleanup: Introduce ACQUIRE() and ACQUIRE_ERR() for conditional locks
+Date: Fri, 11 Jul 2025 16:49:25 -0700
+Message-ID: <20250711234932.671292-2-dan.j.williams@intel.com>
 X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250711234932.671292-1-dan.j.williams@intel.com>
+References: <20250711234932.671292-1-dan.j.williams@intel.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: BY5PR16CA0011.namprd16.prod.outlook.com
@@ -117,144 +115,306 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SN7PR11MB7019:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c65d7b9-3a6e-4d3f-7d29-08ddc0d59726
+X-MS-Office365-Filtering-Correlation-Id: 2d2cb777-1992-428f-5283-08ddc0d597a9
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?jQUCZQivgJrWL6Bs7Z/JKltlXY2Njq5CEey5AX/M0cyq1PN0aARWCtrNJUDw?=
- =?us-ascii?Q?3TjkZtZYyjTWuL1kJ504RH1/gDgfYFS4EYSbFh40U+2IGVab1iKgjKFTeOU+?=
- =?us-ascii?Q?etXtTrDSbXvEeYuiLFmTav9p8bI9lnFmwypWLiQDLoH5NUJ1v5eVFRvopSml?=
- =?us-ascii?Q?vOLlFwVOnu6VFGVVxzzaXz5XP48c/SkF/c+oxzGEOo5fhrFDyvKLK17XYViG?=
- =?us-ascii?Q?7k7UlCMVSpkHlgpaFYA/WrLiVmJMUz09mF2ZWXYQ2URr0HoHLqGhgsSlFcbn?=
- =?us-ascii?Q?KbW3+YIB3418dnhoUyKOaO87AdTJBSwUJwS2M2wMPJ2MlYrvkSAhWfPUGRn4?=
- =?us-ascii?Q?+Rj8tN6gIDD6jEdhsKbRyUwFgFzGPL1YCnonhYRGUYffHfhvPLpusqEz3bBO?=
- =?us-ascii?Q?malCoXZb0xtJS1lGCA0bCGEJhOlPJhLDGxbyQIrYJB4u2kbVMiOLCc5VGSMs?=
- =?us-ascii?Q?pUZqiMukLblTR/RVEcKYV1399dcZei3p1l1EtywqgVrli/M5sMnSBa27enFd?=
- =?us-ascii?Q?upM0fO6cdMJ+V8U8fyMX1ITKpQZBIDt3L/ZFlMuByNmfaxND8tSA0PToLLwn?=
- =?us-ascii?Q?LH2YpZpHN1iU1vb2VWecsqr60mGWgEy/NKXiuDrc52dJ5W4rR40Pu3CnrbHd?=
- =?us-ascii?Q?FpY+L+2I7qmyxBjvI31fmaNGiCrP5jWb5kriaCV3PIXRU9+/IyG8CxHewXov?=
- =?us-ascii?Q?3OnplIC+aZqmUo8iuyHBST2cMre5HY6Ix3GoSJXfaoKUMk+IdJq5QDDYQTeJ?=
- =?us-ascii?Q?e02+jRFH40Jv80ljDJtFSHMGdXnJ0uyVivtsoQ2+4seI7bzEQOXS05YpYu/r?=
- =?us-ascii?Q?79K/KIYemaDulItJ8FHlkWxgwVejzHlV2nzjoOXcu4dHbAzwUzTqIxZB35q0?=
- =?us-ascii?Q?7oAGXPC+nWV3FFFXV8CVi8Yi7VI/mQSOXigBIcsH/y0K3lyWo8yyk7NC7z2e?=
- =?us-ascii?Q?ClrUv/Ed3Nvb3ROydZCJjO/cH+T0lcwHTHGy5xoYf2zOmgHL7DV+q8YE8aQw?=
- =?us-ascii?Q?CSynSHwNLbPxLsB1KfAVb+uMfvr1HFB2mYLdsKgPK20cJsao2qetjnGB8pSW?=
- =?us-ascii?Q?49+kjhWvY8HFlepaZuL0mk8YQIiapJkJcQGsjMPx0dcK1rfuOF2dCUA8ah3Q?=
- =?us-ascii?Q?7DAh/+g0q6jdDaa94ELlPqXsqkQxMxpfpWJKXfzlCcITU7xNxCVUjEQdJRIN?=
- =?us-ascii?Q?wgsfI7btNQxuuPoMqAfvUtM9d6RtF2LDoTD0ZxvnepQRUBlWNV1sVjOwBmEv?=
- =?us-ascii?Q?Dh5NuTqJtRYL/O1m5LMP1P2Q2Zt9pk6Hz3tlm2GsQA3XC3csw0ORt+VM7vGQ?=
- =?us-ascii?Q?QnkSllKMYGQ+Bawn1hqh/zsnjft/SY/+0xUySlKeiFhWwLLITvxYNWTGFTCK?=
- =?us-ascii?Q?9NLyoE/TB+3qLI4lICDs7kNjalPZVLawuBajPlewILT9B4rtHMTBcVTP40vA?=
- =?us-ascii?Q?HWUEQLhWbRk=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?vpAg8NXkJMr6n96SnJhwNoKgkckiT90Wc4BUYNFgeucUVbk2hexXqUsaSQyb?=
+ =?us-ascii?Q?UYSEAjvgst1hy9+pwi6eobb9gTFk7v/rOSrSozcva9mUPaRyZzkJHRpvyMkQ?=
+ =?us-ascii?Q?sULNGARJGBGTamKXRyk5m5KPdHB+AAT0cyRE2LhZh/8v8o/VC6k4SCWm0Ci3?=
+ =?us-ascii?Q?kX5wiEBghvqv6CHTE9j59jrX52wy6vaBdg6rVyEywx35CJNd5ohzLlaajmaF?=
+ =?us-ascii?Q?bLof4lQ1Ecceh8xXI9Ad/RFy/5dlSSJyK4dkcyKW50JFzqS182MsYJcsLoCV?=
+ =?us-ascii?Q?JODbBlkJ2Lx8TawSUy9n7Ql23IIQRi27U4prQgKxXzmBDXJjrsalNtZJPVCj?=
+ =?us-ascii?Q?a+XuLPd8dVQkgYIrPQ0mk7BE2XsCxmYfMZUK1Ub5+pZe1LByaBTtJvMgqauN?=
+ =?us-ascii?Q?khOhun8ZhmlOVUek4Mi6SY5XuRAJeAA4IdUr5xjwvyNcFsVO6c0mKlPIVbMB?=
+ =?us-ascii?Q?MKzCVdsamm+v20q5ap82c5kpDUmYDwniswBDs7onq6LkdfFpeNxzN4Pjb3y5?=
+ =?us-ascii?Q?x13UdjbTXU2qUny4OiSIIF7ZwqHK8pnYJtItF1S0v5fQmlWCjGS5O6F68ARh?=
+ =?us-ascii?Q?nnunsKuCvHHYBJAOmfC+Q19MwEpUzmYQCBTA/Cl6iBlCQuxUPdXbLft67b5v?=
+ =?us-ascii?Q?8nxCLbgAtNhSc5/XqtBpV0AlRLsTdltdFfOwhdN2EO01k+s2Ao5nWlN0d6Vu?=
+ =?us-ascii?Q?EIcwHA/p7fW7eVwTb1fdKttcSLOP9FcbptfZQwNYGNrY/6JWxAe6p+U7T6UX?=
+ =?us-ascii?Q?MNZXkJLgobrV5eRqSyLBUMtGSdBtoCXhfirMFEQQq38XgmNP9Q4nil3+PbJU?=
+ =?us-ascii?Q?1oZ1i+K6qpaZXfts6s0xQCuv0hFQpS8GqTyFgH77x8/g2kADCRX6lpvJJaUJ?=
+ =?us-ascii?Q?PXzHcIsgGZsb6D5pDnZApAF9dKhSBDlYh8Yw+O36rX//dR5N1R9TbQpO/7UA?=
+ =?us-ascii?Q?0NS5LrbN0eACDvSk14xadFvpTh1GpG8njv+k+b7ffoeLmX161FFv07bSuuOY?=
+ =?us-ascii?Q?jtcw9OXIt7anfSwbnXMq0uK86KrECWqUgrWhNDunjWgA6D0DiiQY/wLaGCWC?=
+ =?us-ascii?Q?wVw04B94PfKMwu0hIK/zuaRB+V7RXKbZ1B1NnF5kJmyyuNXLv7Ru3UOuxMj7?=
+ =?us-ascii?Q?uTQQ/CsfK/YvaycN6ed1X3rKW3zo8s3snM2KvefYZJVmdlfX61o2dyqocdPZ?=
+ =?us-ascii?Q?5HsBBu0xu+EkCwE0N41NuC+Q5dcbM6B+hWUy/IN7NCNnT408qC76YM9cUBxK?=
+ =?us-ascii?Q?GbtgJ0KoJNZ8+Mn61K2TB5RbKZVUq4yXq4ZsQK3pcGbbDLdsBCyGwLsKlGrY?=
+ =?us-ascii?Q?hv5EBSqta8Er0z0eIigeSHQJd7jMEZLBFr33ynfPWty0VG5VPDWL2xY7Pnw3?=
+ =?us-ascii?Q?EAuv36Y40W8gGIQbhUimSOeoPiQa?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KQUq330em0Q+cPf6D2YQFL5OzCL5EPnYpXwKWLY2F75nrkQ8GasJfHGajYjH?=
- =?us-ascii?Q?HbDRHm1X+YEWposMm9cMjih7H5rlGWPhUG/VlL62J06k+/cbe9xALKptEJlK?=
- =?us-ascii?Q?j6Mhkr9wpAHj3eM9C8UnrOOg8DFCd0PZc+GzLThybefanNqi0h/x0OYkUx69?=
- =?us-ascii?Q?M6tkr1TS3M7yK9jp7TYd/WOI4jMdiFbvM2/RE73Z118XCIA3au8GE0UXQv0/?=
- =?us-ascii?Q?urTs+2OSqpVAj9QArX6JP7jO6aiEsMXArXX2HLN0x8SBIjPUAV+Zhf3Dx3g8?=
- =?us-ascii?Q?MlasRNMBd0Qz0nRO1pPtfp0G/fqt4Sv3FWp4x7PLSV/zn+s/v9caJ9ws0C9S?=
- =?us-ascii?Q?fhTTbRkyEAA1z5LHtvOXQ5JIAprCX5O37coaFe9f1hC49YKpx5pM7XcjaJR7?=
- =?us-ascii?Q?nbZEfL+LmhVIJBmpUPCJ/VxYVjGSw6s6jQxThxqGDbbqE9ZRkmTpy0POq3jl?=
- =?us-ascii?Q?vB48Mp6zEsFhiJMVMYL180MTe/zSazWfzbEXFR/8VWyIAGi3gR4JtlU/mkT+?=
- =?us-ascii?Q?+Txl5kJxaGxwkqpFMT70OUIT44YB7lnM8VwbAWMu7W8EFgwvpk9b5GEdBzMc?=
- =?us-ascii?Q?rr80s0/bRIp436UtdzaDk8Ui88LMwI4alA1mkrFeaU90jdSyLyyr+ZYCeaNc?=
- =?us-ascii?Q?lYRsWeMah6LufNkFJBBRf6wmvagdGT7FhsoJ1k4NBDRPTop+DM1zGTCl6mKu?=
- =?us-ascii?Q?BuuesHXDmZW20ixYD3r/QHdT2BeO+gdLJ7TjGqTV0AthPgT39KTmqgbkxnzL?=
- =?us-ascii?Q?b6QPx5irbu+UgEx+GpTMUSFY3/AzYueusGc1iJA6RlS8N1tF+o2z6WVRxfEf?=
- =?us-ascii?Q?+Nxc94TTQ9sdKDR7+JiOn+MDpgObwtWdZ8G4ljfevSIh33zuYhGAiuWT9e2I?=
- =?us-ascii?Q?aRxip4jPwrfENdh+xgOoNdHmFfllyBpUM31ILQEpnqmcxOn/7VWrBG8LBC4U?=
- =?us-ascii?Q?ESB6S0V9TOrNbcupfMdp97UXR139fSPfvtMYGYydSVSv4ctyuesqSB/t8xe1?=
- =?us-ascii?Q?nEalh4BqEjzNgmIoH2mJlulavhm1o8jNgNo4sDPBsoLcFVcJ1KoPfqwuFaSR?=
- =?us-ascii?Q?tNBRXqiE52WKC5y9paoCXhyTCIKlTS2WG1M1xVMdiqX4DszpQIsPc40chtgy?=
- =?us-ascii?Q?wPkGbXG/PBMw1A7nuiFXEx09EHXhFFdyWa6MenTI/oHMX3C+vQHHhwHEvnf4?=
- =?us-ascii?Q?xEZAFPlUsnOG74uKxMeBJJDHFEOwbs4vILCp7nuaI7cXun27zqb/YU/wpDNo?=
- =?us-ascii?Q?n0AS3z9ISPZyUXpQe99XmTMrcgfeNZFyl1+EQPiEmILPzBA870GM0e9Esnn3?=
- =?us-ascii?Q?xiE0owe7unOsWupuXssEYi5GixLQXKvH2xsF1HKrcMqyjK8aAbQ8r3rDRI7r?=
- =?us-ascii?Q?OKjmskaxexIPCiDpKkd+PswQJYtru5CR7dUtlh+2lJcn0ikAzui2D+3D1sEP?=
- =?us-ascii?Q?VLbBSfqMK7Tb3K9+PXC3Lj703Me3taOq/ArZ/4Wk9szA2Rrzi5zpG9CBnV6N?=
- =?us-ascii?Q?9XHL3qZccUmOeBvFe01VLBuhWnVQuv8d3SkrbFMAneypTpvcWFP1DiL5ejQS?=
- =?us-ascii?Q?qOfD/NvZGyvaYjZhSD87L41KX3knjWGrsymwO5ABkxNForJquFw2YvxG2tuf?=
- =?us-ascii?Q?gg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c65d7b9-3a6e-4d3f-7d29-08ddc0d59726
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XbEPQOL/Ey2NQhR1Ipv3/sXSFq36scfdhgz3Y7ZJf34FPRvfAQbmkbMETRVs?=
+ =?us-ascii?Q?ftz3IkLRgR3sTRyDcme7cX/sgJijUQ0EhXj2l0mJ87lYHJtCgGicrefNn59k?=
+ =?us-ascii?Q?zYd9qEeN8VLLIXaS7ubuyavNsGDLUQrNFrv7NqXmXZXAferTxRosNMayyyx0?=
+ =?us-ascii?Q?wld2OkVxJxHWm5gTRfog6LAXWVpdAIm8Zsl9OPF28JR5aPq3knNkDXfKlumV?=
+ =?us-ascii?Q?jLkm/c2nEpMihci5qrcQDH/bcpKMB+XvQ3tVHC3iksStCivc3N5qrzUtsW0B?=
+ =?us-ascii?Q?qzeAw/f4LaFTMp2u1o6Oy9bv8Dri4r3Uaje4i86o5cm+ownMQWZlW1A50rKw?=
+ =?us-ascii?Q?eeqhFLSZrwcy32z86Bxk/++A5t2geGyZookrGmtBqu6F1hHI4uuo41FIYK1k?=
+ =?us-ascii?Q?eI+cumPY7Mjf0ne1TL2XrZXCU/VfpD76IYxXRLKAgXmg4Nai7fd6Qm/ZyurV?=
+ =?us-ascii?Q?fdEij+MC9Hljjyol4n2qAVyTBDw3FXKzHhMC5rD6Qng3bHUuz41SiAlBskCb?=
+ =?us-ascii?Q?tGj7nMRyfotDIpa3ClGDElO6xwz1nIOMuwZI5xiaUePKXjkv1ZLuIBmkjpQk?=
+ =?us-ascii?Q?PlQ25TWyUO6BmdkSjMWyY+uSTf6MHm5XhR0CDj6W2+raNw0cyrJh+kn19M/T?=
+ =?us-ascii?Q?hkoa0aAR1j9soxIetEvfM1yYevXISMhe6qcYRUTdx4TSgEeb6rG5xD8c/t3h?=
+ =?us-ascii?Q?g1BZc1dd3BJPEA4UyxM6iFpenB6fvNwuGqZXOkzBqNZc9shXcuv+ylXo4gTC?=
+ =?us-ascii?Q?fH0nGoVP8A6YK9SRB6SoijfS6C9Xz3EzGaZMajH/1Anfr/f+d/GSwyySKfrs?=
+ =?us-ascii?Q?pUyUlFgRyHGRvmTTk+cLxB136oBqGxYJC7z13+xTClw5DSAnU0JR3Wb0vd4z?=
+ =?us-ascii?Q?oWl6oDgQ7+07A9POvljhXtpx9aGkQHZRrEtErVIe6kouUk5Zh2eLNjFqT+mh?=
+ =?us-ascii?Q?UsrWFEeeBw6t6KyyPvFFrevI0BVlTTc+ZnQxwIS8AzyjaMXxg0qOLwV7JMEN?=
+ =?us-ascii?Q?ORXMuUr1AXg1AYzBL/WSUQrRm/CuWwrSFe5r1vkGg6aKFos7ZkOoBNYDXVP2?=
+ =?us-ascii?Q?h0tI1p+cyhEAiM1at4y5vmjSxKgtZ49GgnHKro4cKvrST/r/5wQB/x64irgO?=
+ =?us-ascii?Q?4aRohdhG/PldFkQWxTAAM36EJr8ImQ0+yJyFvbrO+0Kd0gS0UGWd5RgqAvBs?=
+ =?us-ascii?Q?OGbj91URagdbXsO33MB9gWu2E4Kpc5wNeLjnrhtFAyGWSYokYs8YTCaWZWVG?=
+ =?us-ascii?Q?rYkf+dTVMcY2nDOL6cVf/4YN5i/KIUbWT+zAnXjanYFulTCPz6MG+JyhhMFZ?=
+ =?us-ascii?Q?VH9dIcT3OAS5uGrwm2EqaAqF2bk7ybS7mtItodOiAXg1NQLK6OBOrMzhDINv?=
+ =?us-ascii?Q?WBjtKIqVYAa9HAhAfLCRN46fYpkHOQw8ghr3MHw7Yi2k9ZBcM8duCpRKEXox?=
+ =?us-ascii?Q?6PPFCtSzKI9tpffJyX1hCOo68XNox2lrBurqObtDfYMWXwrBXTk9A8NbSrv/?=
+ =?us-ascii?Q?QyK3vTzU0J+csZEY+8UaeAy7qneIxLBvfx1ZovLCIgNMWYNFx57kT+/Psxjt?=
+ =?us-ascii?Q?Kf+TUJ7Q3ewTv5qF3zbWAAH8pN4AZSRkqfhlAnDRklarZXe0hm8bN9H8GdQ5?=
+ =?us-ascii?Q?1g=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d2cb777-1992-428f-5283-08ddc0d597a9
 X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 23:49:35.5066
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 23:49:36.3553
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Rvm+1F0yYTL19VkMe7rbGce59fnRt4vcEwi4SH1ISwxWbjpp2oVPf0xf96uP2aEUec6KKzpwXYfmvGLQ7HVCs2q3LqlmmPQ3uzqZCp5e9ZY=
+X-MS-Exchange-CrossTenant-UserPrincipalName: b2jIJNLsNkgGK13RdL8PFZKbpUTXZigemgtQnyELgbDAEpBh6HyYCMRZL8BbK/s4Kg8CQ9AFLUSv+yeD13MSR3UEWDE+PTy9dynF7qwoCG0=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7019
 X-OriginatorOrg: intel.com
 
-Changes since v2 [1]:
-- Pick up Acks and Reviews
-- Whitespace fixups for cleanup.h changes (Jonathan)
-- Use consistent local variable style for ACQUIRE_ERR() (Jonathan)
-  - Not addressed: switch to less compact style ACQUIRE_ERR()
-- Not addressed: pickup checkpatch change for ACQUIRE_ERR() style in
-  this series (Alison)
-- Drop the cxl_decoder_detach() CLASS() and convert to a helper function (Jonathan)
-- Refactor attach_target() to make it easier to read (Jonathan)
+From: Peter Zijlstra <peterz@infradead.org>
 
-[1]: http://lore.kernel.org/20250619050416.782871-1-dan.j.williams@intel.com
+scoped_cond_guard(), automatic cleanup for conditional locks, has a couple
+pain points:
 
-For those new to this set, the motivation for this work is that the CXL
-subsystem adopted scope-based-cleanup helpers and achieved some decent
-cleanups. However, that work stalled with conditional locks. It stalled
-due to the pain points of scoped_cond_guard(). See patch1.
+* It causes existing straight-line code to be re-indented into a new
+  bracketed scope. While this can be mitigated by a new helper function
+  to contain the scope, that is not always a comfortable conversion.
 
-In the interim, approaches like rwsem_read_intr_acquire() attempted to
-workaround the pain points, but started a "parallel universe" of helpers
-that is not sustainable.
+* The return code from the conditional lock is tossed in favor of a scheme
+  to pass a 'return err;' statement to the macro.
 
-    0c6e6f1357cb cxl/edac: Add CXL memory device patrol scrub control feature
+Other attempts to clean this up, to behave more like guard() [1], got hung
+up trying to both establish and evaluate the conditional lock in one
+statement.
 
-Peter fixed all of this up in a manner consistent with existing guards.
-Take that proposal and run with it to unblock further cleanups of "goto"
-in unwind paths in the CXL subsystem.
+ACQUIRE() solves this by reflecting the result of the condition in the
+automatic variable established by the lock CLASS(). The result is
+separately retrieved with the ACQUIRE_ERR() helper, effectively a PTR_ERR()
+operation.
 
-Potential follow-on work identified by this effort:
+Link: http://lore.kernel.org/all/Z1LBnX9TpZLR5Dkf@gmail.com [1]
+Link: http://patch.msgid.link/20250512105026.GP4439@noisy.programming.kicks-ass.net
+Link: http://patch.msgid.link/20250512185817.GA1808@noisy.programming.kicks-ass.net
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Lechner <dlechner@baylibre.com>
+Cc: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Signed-off-by: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+[djbw: wrap Peter's proposal with changelog and comments]
+Co-developed-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ include/linux/cleanup.h | 95 +++++++++++++++++++++++++++++++++++------
+ include/linux/mutex.h   |  2 +-
+ include/linux/rwsem.h   |  2 +-
+ 3 files changed, 83 insertions(+), 16 deletions(-)
 
-- __GUARD_IS_ERR() asm helper [2]
-- Checkpatch fixups for proposed ACQUIRE_ERR() style [3]
-
-[2]: http://lore.kernel.org/20250514064624.GA24938@noisy.programming.kicks-ass.net
-[3]: http://lore.kernel.org/aGXDMZB6omShJpoj@aschofie-mobl2.lan
-
-Dan Williams (7):
-  cxl/mbox: Convert poison list mutex to ACQUIRE()
-  cxl/decoder: Move decoder register programming to a helper
-  cxl/decoder: Drop pointless locking
-  cxl/region: Split commit_store() into __commit() and queue_reset()
-    helpers
-  cxl/region: Move ready-to-probe state check to a helper
-  cxl/region: Consolidate cxl_decoder_kill_region() and
-    cxl_region_detach()
-  cxl: Convert to ACQUIRE() for conditional rwsem locking
-
-Peter Zijlstra (1):
-  cleanup: Introduce ACQUIRE() and ACQUIRE_ERR() for conditional locks
-
- drivers/cxl/core/cdat.c   |   6 +-
- drivers/cxl/core/core.h   |  32 ++-
- drivers/cxl/core/edac.c   |  44 ++--
- drivers/cxl/core/hdm.c    | 118 +++++-----
- drivers/cxl/core/mbox.c   |  13 +-
- drivers/cxl/core/memdev.c |  50 ++--
- drivers/cxl/core/port.c   |  27 +--
- drivers/cxl/core/region.c | 473 ++++++++++++++++++++------------------
- drivers/cxl/cxl.h         |  13 +-
- drivers/cxl/cxlmem.h      |   4 +-
- include/linux/cleanup.h   |  95 ++++++--
- include/linux/mutex.h     |   2 +-
- include/linux/rwsem.h     |   3 +-
- 13 files changed, 480 insertions(+), 400 deletions(-)
-
-
-base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
+diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+index 7093e1d08af0..4eb83dd71cfe 100644
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -3,6 +3,8 @@
+ #define _LINUX_CLEANUP_H
+ 
+ #include <linux/compiler.h>
++#include <linux/err.h>
++#include <linux/args.h>
+ 
+ /**
+  * DOC: scope-based cleanup helpers
+@@ -61,9 +63,21 @@
+  * Observe the lock is held for the remainder of the "if ()" block not
+  * the remainder of "func()".
+  *
+- * Now, when a function uses both __free() and guard(), or multiple
+- * instances of __free(), the LIFO order of variable definition order
+- * matters. GCC documentation says:
++ * The ACQUIRE() macro can be used in all places that guard() can be
++ * used and additionally support conditional locks
++ *
++ *
++ *	DEFINE_GUARD_COND(pci_dev, _try, pci_dev_trylock(_T))
++ *	...
++ *	ACQUIRE(pci_dev_try, lock)(dev);
++ *	rc = ACQUIRE_ERR(pci_dev_try, &lock);
++ *	if (rc)
++ *		return rc;
++ *	// @lock is held
++ *
++ * Now, when a function uses both __free() and guard()/ACQUIRE(), or
++ * multiple instances of __free(), the LIFO order of variable definition
++ * order matters. GCC documentation says:
+  *
+  * "When multiple variables in the same scope have cleanup attributes,
+  * at exit from the scope their associated cleanup functions are run in
+@@ -305,14 +319,46 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+  *      acquire fails.
+  *
+  *      Only for conditional locks.
++ *
++ * ACQUIRE(name, var):
++ *	a named instance of the (guard) class, suitable for conditional
++ *	locks when paired with ACQUIRE_ERR().
++ *
++ * ACQUIRE_ERR(name, &var):
++ *	a helper that is effectively a PTR_ERR() conversion of the guard
++ *	pointer. Returns 0 when the lock was acquired and a negative
++ *	error code otherwise.
+  */
+ 
+ #define __DEFINE_CLASS_IS_CONDITIONAL(_name, _is_cond)	\
+ static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
+ 
+-#define __DEFINE_GUARD_LOCK_PTR(_name, _exp) \
+-	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
+-	{ return (void *)(__force unsigned long)*(_exp); }
++#define __GUARD_IS_ERR(_ptr)                                       \
++	({                                                         \
++		unsigned long _rc = (__force unsigned long)(_ptr); \
++		unlikely((_rc - 1) >= -MAX_ERRNO - 1);             \
++	})
++
++#define __DEFINE_GUARD_LOCK_PTR(_name, _exp)                                \
++	static inline void *class_##_name##_lock_ptr(class_##_name##_t *_T) \
++	{                                                                   \
++		void *_ptr = (void *)(__force unsigned long)*(_exp);        \
++		if (IS_ERR(_ptr)) {                                         \
++			_ptr = NULL;                                        \
++		}                                                           \
++		return _ptr;                                                \
++	}                                                                   \
++	static inline int class_##_name##_lock_err(class_##_name##_t *_T)   \
++	{                                                                   \
++		long _rc = (__force unsigned long)*(_exp);                  \
++		if (!_rc) {                                                 \
++			_rc = -EBUSY;                                       \
++		}                                                           \
++		if (!IS_ERR_VALUE(_rc)) {                                   \
++			_rc = 0;                                            \
++		}                                                           \
++		return _rc;                                                 \
++	}
+ 
+ #define DEFINE_CLASS_IS_GUARD(_name) \
+ 	__DEFINE_CLASS_IS_CONDITIONAL(_name, false); \
+@@ -323,23 +369,37 @@ static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
+ 	__DEFINE_GUARD_LOCK_PTR(_name, _T)
+ 
+ #define DEFINE_GUARD(_name, _type, _lock, _unlock) \
+-	DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
++	DEFINE_CLASS(_name, _type, if (!__GUARD_IS_ERR(_T)) { _unlock; }, ({ _lock; _T; }), _type _T); \
+ 	DEFINE_CLASS_IS_GUARD(_name)
+ 
+-#define DEFINE_GUARD_COND(_name, _ext, _condlock) \
++#define DEFINE_GUARD_COND_4(_name, _ext, _lock, _cond) \
+ 	__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true); \
+ 	EXTEND_CLASS(_name, _ext, \
+-		     ({ void *_t = _T; if (_T && !(_condlock)) _t = NULL; _t; }), \
++		     ({ void *_t = _T; int _RET = (_lock); if (_T && !(_cond)) _t = ERR_PTR(_RET); _t; }), \
+ 		     class_##_name##_t _T) \
+ 	static inline void * class_##_name##_ext##_lock_ptr(class_##_name##_t *_T) \
+-	{ return class_##_name##_lock_ptr(_T); }
++	{ return class_##_name##_lock_ptr(_T); } \
++	static inline int class_##_name##_ext##_lock_err(class_##_name##_t *_T) \
++	{ return class_##_name##_lock_err(_T); }
++
++/*
++ * Default binary condition; success on 'true'.
++ */
++#define DEFINE_GUARD_COND_3(_name, _ext, _lock) \
++	DEFINE_GUARD_COND_4(_name, _ext, _lock, _RET)
++
++#define DEFINE_GUARD_COND(X...) CONCATENATE(DEFINE_GUARD_COND_, COUNT_ARGS(X))(X)
+ 
+ #define guard(_name) \
+ 	CLASS(_name, __UNIQUE_ID(guard))
+ 
+ #define __guard_ptr(_name) class_##_name##_lock_ptr
++#define __guard_err(_name) class_##_name##_lock_err
+ #define __is_cond_ptr(_name) class_##_name##_is_conditional
+ 
++#define ACQUIRE(_name, _var)     CLASS(_name, _var)
++#define ACQUIRE_ERR(_name, _var) __guard_err(_name)(_var)
++
+ /*
+  * Helper macro for scoped_guard().
+  *
+@@ -401,7 +461,7 @@ typedef struct {							\
+ 									\
+ static inline void class_##_name##_destructor(class_##_name##_t *_T)	\
+ {									\
+-	if (_T->lock) { _unlock; }					\
++	if (!__GUARD_IS_ERR(_T->lock)) { _unlock; }			\
+ }									\
+ 									\
+ __DEFINE_GUARD_LOCK_PTR(_name, &_T->lock)
+@@ -433,15 +493,22 @@ __DEFINE_CLASS_IS_CONDITIONAL(_name, false);				\
+ __DEFINE_UNLOCK_GUARD(_name, void, _unlock, __VA_ARGS__)		\
+ __DEFINE_LOCK_GUARD_0(_name, _lock)
+ 
+-#define DEFINE_LOCK_GUARD_1_COND(_name, _ext, _condlock)		\
++#define DEFINE_LOCK_GUARD_1_COND_4(_name, _ext, _lock, _cond)		\
+ 	__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true);		\
+ 	EXTEND_CLASS(_name, _ext,					\
+ 		     ({ class_##_name##_t _t = { .lock = l }, *_T = &_t;\
+-		        if (_T->lock && !(_condlock)) _T->lock = NULL;	\
++		        int _RET = (_lock);                             \
++		        if (_T->lock && !(_cond)) _T->lock = ERR_PTR(_RET);\
+ 			_t; }),						\
+ 		     typeof_member(class_##_name##_t, lock) l)		\
+ 	static inline void * class_##_name##_ext##_lock_ptr(class_##_name##_t *_T) \
+-	{ return class_##_name##_lock_ptr(_T); }
++	{ return class_##_name##_lock_ptr(_T); } \
++	static inline int class_##_name##_ext##_lock_err(class_##_name##_t *_T) \
++	{ return class_##_name##_lock_err(_T); }
++
++#define DEFINE_LOCK_GUARD_1_COND_3(_name, _ext, _lock) \
++	DEFINE_LOCK_GUARD_1_COND_4(_name, _ext, _lock, _RET)
+ 
++#define DEFINE_LOCK_GUARD_1_COND(X...) CONCATENATE(DEFINE_LOCK_GUARD_1_COND_, COUNT_ARGS(X))(X)
+ 
+ #endif /* _LINUX_CLEANUP_H */
+diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+index a039fa8c1780..9d5d7ed5c101 100644
+--- a/include/linux/mutex.h
++++ b/include/linux/mutex.h
+@@ -224,7 +224,7 @@ extern int atomic_dec_and_mutex_lock(atomic_t *cnt, struct mutex *lock);
+ 
+ DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
+ DEFINE_GUARD_COND(mutex, _try, mutex_trylock(_T))
+-DEFINE_GUARD_COND(mutex, _intr, mutex_lock_interruptible(_T) == 0)
++DEFINE_GUARD_COND(mutex, _intr, mutex_lock_interruptible(_T), _RET == 0)
+ 
+ extern unsigned long mutex_get_owner(struct mutex *lock);
+ 
+diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+index c8b543d428b0..c810deb88d13 100644
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -240,7 +240,7 @@ extern void up_write(struct rw_semaphore *sem);
+ 
+ DEFINE_GUARD(rwsem_read, struct rw_semaphore *, down_read(_T), up_read(_T))
+ DEFINE_GUARD_COND(rwsem_read, _try, down_read_trylock(_T))
+-DEFINE_GUARD_COND(rwsem_read, _intr, down_read_interruptible(_T) == 0)
++DEFINE_GUARD_COND(rwsem_read, _intr, down_read_interruptible(_T), _RET == 0)
+ 
+ DEFINE_GUARD(rwsem_write, struct rw_semaphore *, down_write(_T), up_write(_T))
+ DEFINE_GUARD_COND(rwsem_write, _try, down_write_trylock(_T))
 -- 
 2.50.0
 
