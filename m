@@ -1,193 +1,667 @@
-Return-Path: <linux-kernel+bounces-727411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9454AB019D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:32:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7849B019DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73CD51CA84D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:32:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794BF1CA84C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D9E286439;
-	Fri, 11 Jul 2025 10:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8331C28640E;
+	Fri, 11 Jul 2025 10:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fZEATfmY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oEFEDgOa"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="W9z6/6gk"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEDF1C4A13;
-	Fri, 11 Jul 2025 10:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370CF1C4A13
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752229930; cv=none; b=ETtGclO6GrnthLyS0Ag6cNlK3D7QhKOlP+pp+Bk/5IP0ShzZ1sGGlRnO1lSGItg1UzGhuOkZ2g3Dl3CKqRQr/cSoUlAvkQK2c0ZEYuZ+fW49YDGAzZUaco7ugPbLymTMSiotFi5sFs21LzdYN0lDTY8ltP08pDu07DfeGVXpos8=
+	t=1752229979; cv=none; b=dlvNPGCCFFHd+8LD6O220zgF3UaojZR768u9IcTqOP6wU1sjJne+LLMRghctgcol7M8A/Dd/mEK+UBMI8Fk8lcehbEz8fPyigKec//OwRXSPnrMNSnVdELdXJCbT4U/Y4MmDKSulfNJu0SRqQ8YES81vYg11MZreQm1Dg75BESQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752229930; c=relaxed/simple;
-	bh=dIQn2pv7EN6SkOG9ve2T2rjY4pjxpvg/oC0ABrkmK9M=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=uMYe+pLrmXgskMchYOCLe5jW3LUz3+5Mjjnn/FF6MYNFbiYRHvqfURr8JHeCQTU+YOFWGNjTEH7ztP6ZpqY4RN6xHk+hkKDd2s8gJJAD+nEMa8iQyP6rjcMhFrYqlKl8VUTclDAmwbVXjIRmr/xdJbOkwoncU2kxYmIBuSS9g4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fZEATfmY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oEFEDgOa; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id EC03A7A01C5;
-	Fri, 11 Jul 2025 06:32:06 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 11 Jul 2025 06:32:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752229926;
-	 x=1752316326; bh=07dLlqwr6Zm9+s/ZNinIfLXqKr7NYvxJ3Yp+RgA+Heg=; b=
-	fZEATfmY7vvL7eElXg5Uuy6eZI4b5zQ5jR2CtaT946Uk5OevF0Gfs9UPCT/iYg8a
-	YeW4nQL4NfmVYrhx1pTZ59bkBijlgDUpLe+yWsSV7OnTUhw+AEIL5WagpVftaHhV
-	nw3Y6FiSgr9IXFkuzzV6juNhh5aALre2e1wmcNlsvyvINpkfw/ybGiDpM+kG5/i+
-	mD8XDwPpDKNrawguR8duzQ3sDb/ref9hV8nb14HZ21lfanLRosy30r3lowXGS3CD
-	ewR2Up4jK0KjJQvcDfWQT1HWofXAAxTu5wEkvW69q1y27pW9wQuIdiv4u7VCiWzo
-	jtt6oznFIWLCD8BHmQ0tlw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752229926; x=
-	1752316326; bh=07dLlqwr6Zm9+s/ZNinIfLXqKr7NYvxJ3Yp+RgA+Heg=; b=o
-	EFEDgOaXebBzfvd5ZHG8MA+itVhxi4N0s4VSEpvy9McStgSeQ5ZJyK7s2iIPsL3+
-	PyH99hACuuaDQMYCG0Vcu2y/lVmufVnH778k8ylPX5r5GuNI8NBQ6lZD7rCOd8j2
-	I329ZU2qfMQ/sXmYzp8yU99QARGswP8zLchhVx74NHz7whuo1oK4Wph/Ylwb0UaF
-	O0STAswTNXN6osoqvneqjUh1FEQQ2OFeh6w2VBDrgMt3RUEhA1uLTl1oM7XjwHpB
-	noNk44JItPJVVS8QYXNhSp+g0KAkdZhW3THsLlZnLl/iDLYqcmhu5S7BFuxwnqNA
-	N/M5ie0aPUWYQSrHxS/ig==
-X-ME-Sender: <xms:JuhwaHoKIHF6CkA-U8WqJbp9aZ_bXNpQtpKWrJc48k19k2SZ-NaT6Q>
-    <xme:JuhwaBoufLARoGKmLivTCfDYFE6Z1E6KlBtE8rEnBYvL1oxvxMxZlZxJ_LDKnJuUU
-    2lj2gL6ess32jnyvEg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfedtlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtph
-    htthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtohhmpdhrtghpthht
-    ohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvrg
-    hssehgrghishhlvghrrdgtohhmpdhrtghpthhtohepvggsihhgghgvrhhssehgohhoghhl
-    vgdrtghomhdprhgtphhtthhopehjshhtuhhlthiisehgohhoghhlvgdrtghomhdprhgtph
-    htthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhrvgguvghrihgt
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:JuhwaIYjiziD3DuUx8O-oWdPHj-M318q7n_fe_EeJ0isILuf06YDsg>
-    <xmx:JuhwaEwby2rYZl2kauJlfb0p5oWzyEv_Mq37mA8qHhT9d_-PmxM1HQ>
-    <xmx:JuhwaMOmx6DkP2lMbmqKKxGJ6AQbS1IYf5ZLIV-CQsLU_Vdmpqq_5g>
-    <xmx:JuhwaK7pj672cK8NebTY1CHgaCb7z_dDUA4jg113R2kuKANP_eNZXA>
-    <xmx:JuhwaLcx8w-Jusuz4vYVZJ7nqP26aK9Sne6oD3JrsjjxSdqS6cIF4F0E>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 394E4700065; Fri, 11 Jul 2025 06:32:06 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752229979; c=relaxed/simple;
+	bh=EYsnUZvXKqixLdNtpQXRuHbwMaFGp7XqoJcij1fEfDI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iGLGxUymshgTWJHKyJxbym8ufcN8OaYdTzlRLTQSWmSYW8SSeDMswV7rFBRe9AJii8yLcseSS1ET4rftfkCNqp1w3jdP0Lx31FJsFxWmszaYkNl3pTacJMR2ozmCCEuO7KAhD8llga3pnC0r38b6emZ9KIqj4WFU55UV2KRK4wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=W9z6/6gk; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32b43846e8cso14066911fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 03:32:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1752229974; x=1752834774; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YWklfKfI2c2Q2l8EQ9Rs06n0gGXaPY2jeCF6Qda2Tic=;
+        b=W9z6/6gkQkON4+ZH8a1Iszjyj14NYWOFvP9fbqITfgHQyBq4UIgeXj0AX8E5OUuahr
+         znSWTz7rfYx987d6KWi6HK5/OBct3CCKgwnK4Y2/3AD2ZkloPZiZvRXYOpQh3fc7AGBj
+         T/N8BT8LDYh7zJTuvK5Uf1k9Q8tBWwq6oL7aPh1NHKHiWqNhnrVr0NqW8F5jY3LooExv
+         VxVOVUxT9n9Ik8pxR8CBPrzAnPIJDnD2UqQJc9OslFWl0L/nYztIQE7b58X1QLuZIn2x
+         9bxBSIFTxr7tF9Y63jJpbMx5yfFexxgB2IHm1oIoFJawM9YeDaJK1HEyjmAV5Bo9EHhH
+         aSIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752229974; x=1752834774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YWklfKfI2c2Q2l8EQ9Rs06n0gGXaPY2jeCF6Qda2Tic=;
+        b=uCqpSNEUGdvk0mcKv2pD6TPLgur3SOIjlh6yEu6fXJ2VZ+eb4QNY1AeopsApT/XaNd
+         oNstgpabjWkub92Ye9nH0WQfOs4yXYVWUGr6k6/YUvqyKmGr4/3wkA7z6gttQrA8tM8F
+         arqsxbi8jRVOwYgL2AJZZdTniS49jy0SkeMXxvABibWpEACl7tK5YiEgaf2JnR6Zz8dP
+         rkPW0346GbzuU8UZE7lPq0nwiK9mUsqpLhyLUPfVdAvl8EXi4qOxKkFoPzLyOpCu+QDt
+         bfrHpSvpoH0u2NvmQC4q5civNuj+3/1NSiCP4im/MhdaWoG/waRdOJFHas3AyKslHqHI
+         3lfA==
+X-Gm-Message-State: AOJu0Yy6SE3wDi6MZdgQKAjThqRKUqWxsiY4fBM+i1VmpodXG1olCzdk
+	UMq/6JPRBh8pGwkffqE6SeYzH41NipUqUIBTF2+zvktdCqdQt1SD3pRB7E6dYIbtGAkUGozyjhr
+	L7vKY42IEOT8GwrJFu90mv+uTE1n1+A5AcHwYxRRar7HbMGeDrNT/smY=
+X-Gm-Gg: ASbGncsxkL+OSLs7MzyUJjvpUWjzoLhMpvXGaDyNRzkDTkeZy3jePl4gcmNY7oAQNeD
+	gS9LQohmV2kav29ByYGyAMuErDMloeWT1ZvIHtEUo6qsrvbasmljdzHNde1QYwR00oXQoDM87Ou
+	MKChfdhUkXPN0kWdChRo/Rwc0/c/qZnlvveNktZzv7tU35OJ3hzj92/0uvAXduVE+h6SH2nm4NJ
+	NAoSsn22XY7ivF6f+FxmTQl9d7mo8HxCnNzUSQF
+X-Google-Smtp-Source: AGHT+IH6OB5vvVaK8iEKOv18AKA/XXgb7sVt3iZ6wpuvjFyO+x+VSg3Y0gxFIMiyyC3l2GDF1QGqOMdmgJqUbJY+Xuo=
+X-Received: by 2002:a05:651c:315:b0:32b:7389:582 with SMTP id
+ 38308e7fff4ca-3305341bb40mr6090681fa.19.1752229973890; Fri, 11 Jul 2025
+ 03:32:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T47b27644593db411
-Date: Fri, 11 Jul 2025 12:31:44 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andreas Larsson" <andreas@gaisler.com>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Arnd Bergmann" <arnd@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- "David S . Miller" <davem@davemloft.net>
-Cc: "Andy Lutomirski" <luto@kernel.org>,
- "Vincenzo Frascino" <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>,
- "Anna-Maria Gleixner" <anna-maria@linutronix.de>,
- "Frederic Weisbecker" <frederic@kernel.org>,
- "John Stultz" <jstultz@google.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- "Eric Biggers" <ebiggers@google.com>, sparclinux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <ba62bc7b-fa3e-4f34-a966-cc734468b8ef@app.fastmail.com>
-In-Reply-To: <7e29bcc1-3dc7-40f8-84f0-fbe497fb01bf@gaisler.com>
-References: <20250707144726.4008707-1-arnd@kernel.org>
- <a2cfee1a725f24f90937f070eacdedd2716ef307.camel@physik.fu-berlin.de>
- <5c479b4d-65f1-466e-a79e-43f6dfc9345c@app.fastmail.com>
- <6b77e7da8c0bd6f211685bda9f624f8db971bbe1.camel@physik.fu-berlin.de>
- <7e29bcc1-3dc7-40f8-84f0-fbe497fb01bf@gaisler.com>
-Subject: Re: [PATCH 1/2] vdso: sparc: stub out custom vdso implementation
-Content-Type: text/plain; charset=utf-8
+References: <20250625104934.184753-1-marco.crivellari@suse.com>
+In-Reply-To: <20250625104934.184753-1-marco.crivellari@suse.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Fri, 11 Jul 2025 12:32:42 +0200
+X-Gm-Features: Ac12FXxJHCt-OSIjC-_y22_f5nQ7ZH6Wt1mcYMkDuzi5-gdZGUPIz8nBR2xTT_A
+Message-ID: <CAAofZF75naYogH3PX401coVKmeqcpzWZHjB4F8MOycY5Ug6-qg@mail.gmail.com>
+Subject: Re: [PATCH v1 00/10] Workqueue: replace system wq and change
+ alloc_workqueue callers
+To: linux-kernel@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christian Brauner <brauner@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 10, 2025, at 18:22, Andreas Larsson wrote:
-> On 2025-07-07 18:05, John Paul Adrian Glaubitz wrote:
->> On Mon, 2025-07-07 at 17:45 +0200, Arnd Bergmann wrote:
->>> On Mon, Jul 7, 2025, at 17:22, John Paul Adrian Glaubitz wrote:
->>>>
->>>> On Mon, 2025-07-07 at 16:46 +0200, Arnd Bergmann wrote:
->>>>> Rip out the whole thing and replace it with a minimal stub as we do
->>>>> on parisc and uml. This introduces a small performance regression =
-when
->>>>> using a libc that is aware of the vdso (glibc-2.29 or higher).
->>>>
->>>> Can this performance hit quantified in any way?
->>>
->>> It's trivial to test calling glibc clock_gettime() in a loop
->>> on a specific piece of hardware, the difference should largely
->>> depend on how long the timer hardware access takes compared
->>> to the syscall overhead.
->>>
->>> On machines that have neither TICK nor STICK clocksource, the
->>> simpler version should even be minimally faster, on those that
->>> have one of the two, there is an added cost for entering the
->>> syscall on every clock_gettime() as we do on architectures without
->>> vdso.
->>=20
->> OK, thanks. Since Andreas has access to a SPARC T4 as of recently, he=
- should
->> be able to test this. Please allow some time for him to review and te=
-st the
->> changes, so we can be sure this doesn't cause any serious regressions.
+Hi,
+
+Gentle ping.
+
+
+
+On Wed, Jun 25, 2025 at 12:49=E2=80=AFPM Marco Crivellari
+<marco.crivellari@suse.com> wrote:
 >
-> I tested this patch (running Linux in an LDOM under Solaris) and
-> measuring the cost of clock_gettime(), running millions of calls. The
-> calls takes around 13-15 times as long (from around 82-94 nanoseconds
-> per call to around 1220 nanoseconds per call) with this patch compared
-> to without, so not an insignificant performance regression in this
-> environment.
+> Hi!
+>
+> Below is a summary of a discussion about the Workqueue API and cpu isolat=
+ion
+> considerations. Details and more information are available here:
+>
+>         "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOU=
+ND."
+>         https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de=
+/
+>
+> =3D=3D=3D Current situation: problems =3D=3D=3D
+>
+> Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask =
+is
+> set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+>
+> This leads to different scenarios if a work item is scheduled on an isola=
+ted
+> CPU where "delay" value is 0 or greater then 0:
+>                 schedule_delayed_work(, 0);
+>
+> This will be handled by __queue_work() that will queue the work item on t=
+he
+> current local (isolated) CPU, while:
+>
+>                 schedule_delayed_work(, 1);
+>
+> Will move the timer on an housekeeping CPU, and schedule the work there.
+>
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+>
+> This lack of consistentcy cannot be addressed without refactoring the API=
+.
+>
+> =3D=3D=3D Plan and future plans =3D=3D=3D
+>
+> This patchset is the first stone on a refactoring needed in order to
+> address the points aforementioned; it will have a positive impact also
+> on the cpu isolation, in the long term, moving away percpu workqueue in
+> favor to an unbound model.
+>
+> These are the main steps:
+> 1)  API refactoring (that this patch is introducing)
+>         -       Make more clear and uniform the system wq names, both per=
+-cpu and
+>                 unbound. This to avoid any possible confusion on what sho=
+uld be
+>                 used.
+>
+>         -       Introduction of WQ_PERCPU: this flag is the complement of=
+ WQ_UNBOUND,
+>                 introduced in this patchset and used on all the callers t=
+hat are not
+>                 currently using WQ_UNBOUND.
+>
+>                 WQ_UNBOUND will be removed in a future release cycle.
+>
+>                 Most users don't need to be per-cpu, because they don't h=
+ave
+>                 locality requirements, because of that, a next future ste=
+p will be
+>                 make "unbound" the default behavior.
+>
+> 2)  Check who really needs to be per-cpu
+>         -       Remove the WQ_PERCPU flag when is not strictly required.
+>
+> 3)  Add a new API (prefer local cpu)
+>         -       There are users that don't require a local execution, lik=
+e mentioned
+>                 above; despite that, local execution yeld to performance =
+gain.
+>
+>                 This new API will prefer the local execution, without req=
+uiring it.
+>
+> =3D=3D=3D Introduced Changes by this patchset =3D=3D=3D
+>
+> 1)      [P 1-2-3] replace use of system_wq with system_percpu_wq per subs=
+ys:
+>
+>                 system_wq is a per-CPU workqueue, but his name is not cle=
+ar.
+>                 system_unbound_wq is to be used when locality is not requ=
+ired.
+>
+>                 Because of that, system_wq has been renamed in system_per=
+cpu_wq in the
+>                 following subsystem: mm, net, fs (details on the next sec=
+tion).
+>
+> 2)      [P 4-5] replace remaining system_wq and system_unbound_wq
+>
+>                 system_unbound_wq is to be used when locality is not requ=
+ired.
+>                 Because of that, system_unbound_wq has been renamed in sy=
+stem_dfl_wq.
+>
+>         The old wq are still around, but if used in queue_work(), queue_d=
+elayed_work(),
+>                 mod_delayed_work(), a pr_warn_once() will be printed and =
+the wq used is
+>                 automatically assigned to the new default (system_dfl_wq =
+or system_percpu_wq).
+>
+> 3)      [P 6-7-8] add WQ_PERCPU to alloc_workqueue() users (per subsystem=
+)
+>
+>                 Every alloc_workqueue() caller should use one among WQ_PE=
+RCPU or
+>                 WQ_UNBOUND. This is actually enforced warning if both or =
+none of them
+>                 are present at the same time.
+>
+>                 These patches introduce WQ_PERCPU in the following subsys=
+tems:
+>                 fs, net, mm (details on the next section).
+>
+>                 WQ_UNBOUND will be removed in a next release cycle.
+>
+> 4)      [P 9] add WQ_PERCPU to remaining alloc_workqueue() users
+>
+>                 Every alloc_workqueue() caller should use one among WQ_PE=
+RCPU or
+>                 WQ_UNBOUND. This is actually enforced warning if both or =
+none of them
+>                 are present at the same time.
+>
+>                 WQ_UNBOUND will be removed in a next release cycle.
+>
+> 5)      [P 10] upgraded WQ_UNBOUND documentation
+>
+>                 Added a note about the WQ_UNBOUND removal in a next relea=
+se cycle.
+>
+> =3D=3D=3D For fs, mm, net Maintainers =3D=3D=3D
+>
+> If you agree with these changes, one option is pull the preparation chang=
+es from
+> Tejun's wq branch [1].
+>
+> As an alternative, the patches can be routed through a wq branch.
+>
+> The preparation changes are described in the present cover letter, under =
+the
+> "main steps" section. The changes done in summary are:
+>
+> - add system_percpu_wq and system_dfl_wq, for now without replace the old=
+er wq(s)
+>   (system_unbound_wq and system_wq).
+> - add WQ_PERCPU flag, currently without removing WQ_UNBOUND; it will be r=
+emoved
+>   in a future release cycle.
+>
+> You can find the aforementioned changes reading:
+>
+> ("Workqueue: add WQ_PERCPU, system_dfl_wq and system_percpu_wq")
+> https://lore.kernel.org/all/20250614133531.76742-1-marco.crivellari@suse.=
+com/
+>
+>
+> - [1] git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git WQ_PERCPU
+>
+>
+> Marco Crivellari (10):
+>   Workqueue: net: replace use of system_wq with system_percpu_wq
+>   Workqueue: mm: replace use of system_wq with system_percpu_wq
+>   Workqueue: fs: replace use of system_wq with system_percpu_wq
+>   Workqueue: replace use of system_wq with system_percpu_wq
+>   Workqueue: replace use of system_unbound_wq with system_dfl_wq
+>   Workqueue: net: WQ_PERCPU added to alloc_workqueue users
+>   Workqueue: mm: WQ_PERCPU added to alloc_workqueue users
+>   Workqueue: fs: WQ_PERCPU added to alloc_workqueue users
+>   Workqueue: WQ_PERCPU added to all the remaining users
+>   [Doc] Workqueue: WQ_UNBOUND doc upgraded
+>
+>  Documentation/core-api/workqueue.rst          |  4 ++
+>  arch/s390/kernel/diag/diag324.c               |  4 +-
+>  arch/s390/kernel/hiperdispatch.c              |  2 +-
+>  block/bio-integrity-auto.c                    |  5 +-
+>  block/bio.c                                   |  3 +-
+>  block/blk-core.c                              |  3 +-
+>  block/blk-throttle.c                          |  3 +-
+>  block/blk-zoned.c                             |  3 +-
+>  crypto/cryptd.c                               |  3 +-
+>  drivers/accel/ivpu/ivpu_hw_btrs.c             |  2 +-
+>  drivers/accel/ivpu/ivpu_ipc.c                 |  2 +-
+>  drivers/accel/ivpu/ivpu_job.c                 |  2 +-
+>  drivers/accel/ivpu/ivpu_mmu.c                 |  2 +-
+>  drivers/accel/ivpu/ivpu_pm.c                  |  4 +-
+>  drivers/acpi/ec.c                             |  3 +-
+>  drivers/acpi/osl.c                            |  6 +-
+>  drivers/acpi/scan.c                           |  2 +-
+>  drivers/acpi/thermal.c                        |  3 +-
+>  drivers/ata/libata-sff.c                      |  3 +-
+>  drivers/base/core.c                           |  2 +-
+>  drivers/base/dd.c                             |  2 +-
+>  drivers/base/devcoredump.c                    |  2 +-
+>  drivers/block/aoe/aoemain.c                   |  2 +-
+>  drivers/block/nbd.c                           |  2 +-
+>  drivers/block/rbd.c                           |  2 +-
+>  drivers/block/rnbd/rnbd-clt.c                 |  2 +-
+>  drivers/block/sunvdc.c                        |  4 +-
+>  drivers/block/virtio_blk.c                    |  2 +-
+>  drivers/block/zram/zram_drv.c                 |  2 +-
+>  drivers/bus/mhi/ep/main.c                     |  2 +-
+>  drivers/char/random.c                         |  8 +--
+>  drivers/char/tpm/tpm-dev-common.c             |  3 +-
+>  drivers/char/xillybus/xillybus_core.c         |  2 +-
+>  drivers/char/xillybus/xillyusb.c              |  4 +-
+>  drivers/cpufreq/tegra194-cpufreq.c            |  3 +-
+>  drivers/crypto/atmel-i2c.c                    |  2 +-
+>  drivers/crypto/cavium/nitrox/nitrox_mbx.c     |  2 +-
+>  drivers/crypto/intel/qat/qat_common/adf_aer.c |  4 +-
+>  drivers/crypto/intel/qat/qat_common/adf_isr.c |  3 +-
+>  .../crypto/intel/qat/qat_common/adf_sriov.c   |  3 +-
+>  .../crypto/intel/qat/qat_common/adf_vf_isr.c  |  3 +-
+>  drivers/cxl/pci.c                             |  2 +-
+>  drivers/extcon/extcon-intel-int3496.c         |  4 +-
+>  drivers/firewire/core-transaction.c           |  3 +-
+>  drivers/firewire/ohci.c                       |  3 +-
+>  drivers/gpio/gpiolib-cdev.c                   |  4 +-
+>  drivers/gpu/drm/amd/amdgpu/aldebaran.c        |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c    |  6 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c     |  2 +-
+>  drivers/gpu/drm/amd/amdkfd/kfd_process.c      |  3 +-
+>  drivers/gpu/drm/bridge/analogix/anx7625.c     |  3 +-
+>  drivers/gpu/drm/bridge/ite-it6505.c           |  2 +-
+>  drivers/gpu/drm/bridge/ti-tfp410.c            |  2 +-
+>  drivers/gpu/drm/drm_atomic_helper.c           |  6 +-
+>  drivers/gpu/drm/drm_probe_helper.c            |  2 +-
+>  drivers/gpu/drm/drm_self_refresh_helper.c     |  2 +-
+>  drivers/gpu/drm/exynos/exynos_hdmi.c          |  2 +-
+>  .../drm/i915/display/intel_display_driver.c   |  3 +-
+>  .../drm/i915/display/intel_display_power.c    |  2 +-
+>  drivers/gpu/drm/i915/display/intel_tc.c       |  4 +-
+>  drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c  |  2 +-
+>  drivers/gpu/drm/i915/gt/uc/intel_guc.c        |  4 +-
+>  drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c     |  4 +-
+>  .../gpu/drm/i915/gt/uc/intel_guc_submission.c |  6 +-
+>  drivers/gpu/drm/i915/i915_active.c            |  2 +-
+>  drivers/gpu/drm/i915/i915_driver.c            |  5 +-
+>  drivers/gpu/drm/i915/i915_drv.h               |  2 +-
+>  drivers/gpu/drm/i915/i915_sw_fence_work.c     |  2 +-
+>  drivers/gpu/drm/i915/i915_vma_resource.c      |  2 +-
+>  drivers/gpu/drm/i915/pxp/intel_pxp.c          |  2 +-
+>  drivers/gpu/drm/i915/pxp/intel_pxp_irq.c      |  2 +-
+>  .../gpu/drm/i915/selftests/i915_sw_fence.c    |  2 +-
+>  .../gpu/drm/i915/selftests/mock_gem_device.c  |  2 +-
+>  drivers/gpu/drm/nouveau/dispnv50/disp.c       |  2 +-
+>  drivers/gpu/drm/nouveau/nouveau_drm.c         |  2 +-
+>  drivers/gpu/drm/nouveau/nouveau_sched.c       |  3 +-
+>  drivers/gpu/drm/radeon/radeon_display.c       |  3 +-
+>  .../gpu/drm/rockchip/dw_hdmi_qp-rockchip.c    |  4 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c   |  2 +-
+>  drivers/gpu/drm/scheduler/sched_main.c        |  2 +-
+>  drivers/gpu/drm/tilcdc/tilcdc_crtc.c          |  2 +-
+>  drivers/gpu/drm/vc4/vc4_hdmi.c                |  4 +-
+>  drivers/gpu/drm/xe/xe_devcoredump.c           |  2 +-
+>  drivers/gpu/drm/xe/xe_device.c                |  4 +-
+>  drivers/gpu/drm/xe/xe_execlist.c              |  2 +-
+>  drivers/gpu/drm/xe/xe_ggtt.c                  |  2 +-
+>  drivers/gpu/drm/xe/xe_gt_tlb_invalidation.c   |  6 +-
+>  drivers/gpu/drm/xe/xe_guc_ct.c                |  4 +-
+>  drivers/gpu/drm/xe/xe_hw_engine_group.c       |  3 +-
+>  drivers/gpu/drm/xe/xe_oa.c                    |  2 +-
+>  drivers/gpu/drm/xe/xe_pt.c                    |  2 +-
+>  drivers/gpu/drm/xe/xe_sriov.c                 |  2 +-
+>  drivers/gpu/drm/xe/xe_vm.c                    |  4 +-
+>  drivers/greybus/operation.c                   |  2 +-
+>  drivers/hid/hid-nintendo.c                    |  3 +-
+>  drivers/hte/hte.c                             |  2 +-
+>  drivers/hv/mshv_eventfd.c                     |  2 +-
+>  drivers/i3c/master.c                          |  2 +-
+>  drivers/iio/adc/pac1934.c                     |  2 +-
+>  drivers/infiniband/core/cm.c                  |  2 +-
+>  drivers/infiniband/core/device.c              |  4 +-
+>  drivers/infiniband/core/ucma.c                |  2 +-
+>  drivers/infiniband/hw/hfi1/init.c             |  3 +-
+>  drivers/infiniband/hw/hfi1/opfn.c             |  3 +-
+>  drivers/infiniband/hw/mlx4/cm.c               |  2 +-
+>  drivers/infiniband/hw/mlx5/odp.c              |  4 +-
+>  drivers/infiniband/sw/rdmavt/cq.c             |  3 +-
+>  drivers/infiniband/ulp/iser/iscsi_iser.c      |  2 +-
+>  drivers/infiniband/ulp/isert/ib_isert.c       |  2 +-
+>  drivers/infiniband/ulp/rtrs/rtrs-clt.c        |  2 +-
+>  drivers/infiniband/ulp/rtrs/rtrs-srv.c        |  2 +-
+>  drivers/input/keyboard/gpio_keys.c            |  2 +-
+>  drivers/input/misc/palmas-pwrbutton.c         |  2 +-
+>  drivers/input/mouse/psmouse-smbus.c           |  2 +-
+>  drivers/input/mouse/synaptics_i2c.c           |  8 +--
+>  drivers/isdn/capi/kcapi.c                     |  2 +-
+>  drivers/leds/trigger/ledtrig-input-events.c   |  2 +-
+>  drivers/md/bcache/btree.c                     |  3 +-
+>  drivers/md/bcache/super.c                     | 30 +++++-----
+>  drivers/md/bcache/writeback.c                 |  2 +-
+>  drivers/md/dm-bufio.c                         |  3 +-
+>  drivers/md/dm-cache-target.c                  |  3 +-
+>  drivers/md/dm-clone-target.c                  |  3 +-
+>  drivers/md/dm-crypt.c                         |  6 +-
+>  drivers/md/dm-delay.c                         |  4 +-
+>  drivers/md/dm-integrity.c                     | 15 +++--
+>  drivers/md/dm-kcopyd.c                        |  3 +-
+>  drivers/md/dm-log-userspace-base.c            |  3 +-
+>  drivers/md/dm-mpath.c                         |  5 +-
+>  drivers/md/dm-raid1.c                         |  5 +-
+>  drivers/md/dm-snap-persistent.c               |  3 +-
+>  drivers/md/dm-stripe.c                        |  2 +-
+>  drivers/md/dm-verity-target.c                 |  4 +-
+>  drivers/md/dm-writecache.c                    |  3 +-
+>  drivers/md/dm.c                               |  3 +-
+>  drivers/md/md.c                               |  4 +-
+>  drivers/media/pci/ddbridge/ddbridge-core.c    |  2 +-
+>  .../platform/mediatek/mdp3/mtk-mdp3-core.c    |  6 +-
+>  .../platform/synopsys/hdmirx/snps_hdmirx.c    |  8 +--
+>  drivers/message/fusion/mptbase.c              |  7 ++-
+>  drivers/mmc/core/block.c                      |  3 +-
+>  drivers/mmc/host/mtk-sd.c                     |  4 +-
+>  drivers/mmc/host/omap.c                       |  2 +-
+>  drivers/net/can/spi/hi311x.c                  |  3 +-
+>  drivers/net/can/spi/mcp251x.c                 |  3 +-
+>  .../net/ethernet/cavium/liquidio/lio_core.c   |  2 +-
+>  .../net/ethernet/cavium/liquidio/lio_main.c   |  8 ++-
+>  .../ethernet/cavium/liquidio/lio_vf_main.c    |  3 +-
+>  .../cavium/liquidio/request_manager.c         |  2 +-
+>  .../cavium/liquidio/response_manager.c        |  3 +-
+>  .../net/ethernet/freescale/dpaa2/dpaa2-eth.c  |  2 +-
+>  .../hisilicon/hns3/hns3pf/hclge_main.c        |  3 +-
+>  drivers/net/ethernet/intel/fm10k/fm10k_main.c |  2 +-
+>  drivers/net/ethernet/intel/i40e/i40e_main.c   |  2 +-
+>  .../net/ethernet/marvell/octeontx2/af/cgx.c   |  2 +-
+>  .../marvell/octeontx2/af/mcs_rvu_if.c         |  2 +-
+>  .../ethernet/marvell/octeontx2/af/rvu_cgx.c   |  2 +-
+>  .../ethernet/marvell/octeontx2/af/rvu_rep.c   |  2 +-
+>  .../marvell/octeontx2/nic/cn10k_ipsec.c       |  3 +-
+>  .../ethernet/marvell/prestera/prestera_main.c |  2 +-
+>  .../ethernet/marvell/prestera/prestera_pci.c  |  2 +-
+>  drivers/net/ethernet/mellanox/mlxsw/core.c    |  4 +-
+>  drivers/net/ethernet/netronome/nfp/nfp_main.c |  2 +-
+>  drivers/net/ethernet/qlogic/qed/qed_main.c    |  3 +-
+>  drivers/net/ethernet/sfc/efx_channels.c       |  2 +-
+>  drivers/net/ethernet/sfc/siena/efx_channels.c |  2 +-
+>  drivers/net/ethernet/wiznet/w5100.c           |  2 +-
+>  drivers/net/fjes/fjes_main.c                  |  5 +-
+>  drivers/net/macvlan.c                         |  2 +-
+>  drivers/net/netdevsim/dev.c                   |  6 +-
+>  drivers/net/phy/sfp.c                         | 12 ++--
+>  drivers/net/wireguard/device.c                |  6 +-
+>  drivers/net/wireless/ath/ath6kl/usb.c         |  2 +-
+>  drivers/net/wireless/intel/ipw2x00/ipw2100.c  |  6 +-
+>  drivers/net/wireless/intel/ipw2x00/ipw2200.c  |  2 +-
+>  drivers/net/wireless/intel/iwlwifi/fw/dbg.c   |  4 +-
+>  .../net/wireless/intel/iwlwifi/iwl-trans.h    |  2 +-
+>  drivers/net/wireless/intel/iwlwifi/mvm/tdls.c |  6 +-
+>  .../net/wireless/marvell/libertas/if_sdio.c   |  3 +-
+>  .../net/wireless/marvell/libertas/if_spi.c    |  3 +-
+>  .../net/wireless/marvell/libertas_tf/main.c   |  2 +-
+>  .../net/wireless/mediatek/mt76/mt7921/init.c  |  2 +-
+>  .../net/wireless/mediatek/mt76/mt7925/init.c  |  2 +-
+>  drivers/net/wireless/quantenna/qtnfmac/core.c |  3 +-
+>  drivers/net/wireless/realtek/rtlwifi/base.c   |  2 +-
+>  drivers/net/wireless/realtek/rtw88/usb.c      |  3 +-
+>  drivers/net/wireless/silabs/wfx/main.c        |  2 +-
+>  drivers/net/wireless/st/cw1200/bh.c           |  4 +-
+>  drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c    |  3 +-
+>  drivers/net/wwan/wwan_hwsim.c                 |  2 +-
+>  drivers/nvdimm/security.c                     |  4 +-
+>  drivers/nvme/host/tcp.c                       |  2 +
+>  drivers/nvme/target/admin-cmd.c               |  2 +-
+>  drivers/nvme/target/core.c                    |  5 +-
+>  drivers/nvme/target/fabrics-cmd-auth.c        |  2 +-
+>  drivers/nvme/target/fc.c                      |  6 +-
+>  drivers/nvme/target/tcp.c                     |  2 +-
+>  drivers/pci/endpoint/functions/pci-epf-mhi.c  |  2 +-
+>  drivers/pci/endpoint/functions/pci-epf-ntb.c  |  5 +-
+>  drivers/pci/endpoint/functions/pci-epf-test.c |  3 +-
+>  drivers/pci/endpoint/functions/pci-epf-vntb.c |  5 +-
+>  drivers/pci/endpoint/pci-ep-cfs.c             |  2 +-
+>  drivers/pci/hotplug/pnv_php.c                 |  3 +-
+>  drivers/pci/hotplug/shpchp_core.c             |  3 +-
+>  drivers/phy/allwinner/phy-sun4i-usb.c         | 14 ++---
+>  .../platform/cznic/turris-omnia-mcu-gpio.c    |  2 +-
+>  .../surface/aggregator/ssh_packet_layer.c     |  2 +-
+>  .../surface/aggregator/ssh_request_layer.c    |  2 +-
+>  .../platform/surface/surface_acpi_notify.c    |  2 +-
+>  drivers/platform/x86/gpd-pocket-fan.c         |  4 +-
+>  .../x86/x86-android-tablets/vexia_atla10_ec.c |  2 +-
+>  drivers/power/supply/ab8500_btemp.c           |  3 +-
+>  drivers/power/supply/bq2415x_charger.c        |  2 +-
+>  drivers/power/supply/bq24190_charger.c        |  2 +-
+>  drivers/power/supply/bq27xxx_battery.c        |  6 +-
+>  drivers/power/supply/ipaq_micro_battery.c     |  3 +-
+>  drivers/power/supply/rk817_charger.c          |  6 +-
+>  drivers/power/supply/ucs1002_power.c          |  2 +-
+>  drivers/power/supply/ug3105_battery.c         |  6 +-
+>  drivers/rapidio/rio.c                         |  2 +-
+>  drivers/ras/cec.c                             |  2 +-
+>  drivers/regulator/irq_helpers.c               |  2 +-
+>  drivers/regulator/qcom-labibb-regulator.c     |  4 +-
+>  drivers/s390/char/tape_3590.c                 |  2 +-
+>  drivers/scsi/be2iscsi/be_main.c               |  3 +-
+>  drivers/scsi/bnx2fc/bnx2fc_fcoe.c             |  2 +-
+>  drivers/scsi/device_handler/scsi_dh_alua.c    |  2 +-
+>  drivers/scsi/fcoe/fcoe.c                      |  2 +-
+>  drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c      |  3 +-
+>  drivers/scsi/lpfc/lpfc_init.c                 |  2 +-
+>  drivers/scsi/pm8001/pm8001_init.c             |  2 +-
+>  drivers/scsi/qedf/qedf_main.c                 | 15 +++--
+>  drivers/scsi/qedi/qedi_main.c                 |  2 +-
+>  drivers/scsi/qla2xxx/qla_os.c                 |  4 +-
+>  drivers/scsi/qla2xxx/qla_target.c             |  2 +-
+>  drivers/scsi/qla2xxx/tcm_qla2xxx.c            |  2 +-
+>  drivers/scsi/qla4xxx/ql4_os.c                 |  3 +-
+>  drivers/scsi/scsi_transport_fc.c              |  7 ++-
+>  drivers/scsi/scsi_transport_iscsi.c           |  2 +-
+>  drivers/soc/fsl/qbman/qman.c                  |  2 +-
+>  drivers/soc/xilinx/zynqmp_power.c             |  6 +-
+>  drivers/staging/greybus/sdio.c                |  2 +-
+>  drivers/target/sbp/sbp_target.c               |  8 +--
+>  drivers/target/target_core_transport.c        |  4 +-
+>  drivers/target/target_core_xcopy.c            |  2 +-
+>  drivers/target/tcm_fc/tfc_conf.c              |  2 +-
+>  drivers/thunderbolt/tb.c                      |  2 +-
+>  drivers/tty/serial/8250/8250_dw.c             |  4 +-
+>  drivers/tty/tty_buffer.c                      |  8 +--
+>  drivers/usb/core/hub.c                        |  2 +-
+>  drivers/usb/dwc3/gadget.c                     |  2 +-
+>  drivers/usb/gadget/function/f_hid.c           |  3 +-
+>  drivers/usb/host/xhci-dbgcap.c                |  8 +--
+>  drivers/usb/host/xhci-ring.c                  |  2 +-
+>  drivers/usb/storage/uas.c                     |  2 +-
+>  drivers/usb/typec/anx7411.c                   |  3 +-
+>  drivers/vdpa/vdpa_user/vduse_dev.c            |  3 +-
+>  drivers/virt/acrn/irqfd.c                     |  3 +-
+>  drivers/virtio/virtio_balloon.c               |  3 +-
+>  drivers/xen/events/events_base.c              |  6 +-
+>  drivers/xen/privcmd.c                         |  3 +-
+>  fs/afs/callback.c                             |  4 +-
+>  fs/afs/main.c                                 |  4 +-
+>  fs/afs/write.c                                |  2 +-
+>  fs/aio.c                                      |  2 +-
+>  fs/bcachefs/btree_write_buffer.c              |  2 +-
+>  fs/bcachefs/io_read.c                         | 12 ++--
+>  fs/bcachefs/journal_io.c                      |  2 +-
+>  fs/bcachefs/super.c                           | 10 ++--
+>  fs/btrfs/async-thread.c                       |  3 +-
+>  fs/btrfs/block-group.c                        |  2 +-
+>  fs/btrfs/disk-io.c                            |  2 +-
+>  fs/btrfs/extent_map.c                         |  2 +-
+>  fs/btrfs/space-info.c                         |  4 +-
+>  fs/btrfs/zoned.c                              |  2 +-
+>  fs/ceph/super.c                               |  2 +-
+>  fs/dlm/lowcomms.c                             |  2 +-
+>  fs/dlm/main.c                                 |  2 +-
+>  fs/ext4/mballoc.c                             |  2 +-
+>  fs/fs-writeback.c                             |  4 +-
+>  fs/fuse/dev.c                                 |  2 +-
+>  fs/fuse/inode.c                               |  2 +-
+>  fs/gfs2/main.c                                |  5 +-
+>  fs/gfs2/ops_fstype.c                          |  6 +-
+>  fs/netfs/objects.c                            |  2 +-
+>  fs/netfs/read_collect.c                       |  2 +-
+>  fs/netfs/write_collect.c                      |  2 +-
+>  fs/nfs/namespace.c                            |  2 +-
+>  fs/nfs/nfs4renewd.c                           |  2 +-
+>  fs/nfsd/filecache.c                           |  2 +-
+>  fs/notify/mark.c                              |  4 +-
+>  fs/ocfs2/dlm/dlmdomain.c                      |  3 +-
+>  fs/ocfs2/dlmfs/dlmfs.c                        |  3 +-
+>  fs/quota/dquot.c                              |  2 +-
+>  fs/smb/client/cifsfs.c                        | 16 +++--
+>  fs/smb/server/ksmbd_work.c                    |  2 +-
+>  fs/smb/server/transport_rdma.c                |  3 +-
+>  fs/super.c                                    |  3 +-
+>  fs/verity/verify.c                            |  2 +-
+>  fs/xfs/xfs_log.c                              |  3 +-
+>  fs/xfs/xfs_mru_cache.c                        |  3 +-
+>  fs/xfs/xfs_super.c                            | 15 ++---
+>  include/drm/gpu_scheduler.h                   |  2 +-
+>  include/linux/closure.h                       |  2 +-
+>  include/linux/workqueue.h                     | 60 ++++++++++++++-----
+>  io_uring/io_uring.c                           |  4 +-
+>  kernel/bpf/cgroup.c                           |  5 +-
+>  kernel/bpf/cpumap.c                           |  2 +-
+>  kernel/bpf/helpers.c                          |  4 +-
+>  kernel/bpf/memalloc.c                         |  2 +-
+>  kernel/bpf/syscall.c                          |  2 +-
+>  kernel/cgroup/cgroup-v1.c                     |  2 +-
+>  kernel/cgroup/cgroup.c                        |  4 +-
+>  kernel/module/dups.c                          |  4 +-
+>  kernel/padata.c                               |  9 +--
+>  kernel/power/main.c                           |  2 +-
+>  kernel/rcu/tasks.h                            |  4 +-
+>  kernel/rcu/tree.c                             |  4 +-
+>  kernel/sched/core.c                           |  4 +-
+>  kernel/sched/ext.c                            |  4 +-
+>  kernel/smp.c                                  |  2 +-
+>  kernel/trace/trace_events_user.c              |  2 +-
+>  kernel/umh.c                                  |  2 +-
+>  kernel/workqueue.c                            | 45 ++++++++++----
+>  mm/backing-dev.c                              |  6 +-
+>  mm/kfence/core.c                              |  6 +-
+>  mm/memcontrol.c                               |  4 +-
+>  mm/slub.c                                     |  3 +-
+>  mm/vmstat.c                                   |  3 +-
+>  net/bridge/br_cfm.c                           |  6 +-
+>  net/bridge/br_mrp.c                           |  8 +--
+>  net/ceph/messenger.c                          |  3 +-
+>  net/ceph/mon_client.c                         |  2 +-
+>  net/core/link_watch.c                         |  4 +-
+>  net/core/skmsg.c                              |  2 +-
+>  net/core/sock_diag.c                          |  2 +-
+>  net/devlink/core.c                            |  2 +-
+>  net/ipv4/inet_fragment.c                      |  2 +-
+>  net/netfilter/nf_conntrack_ecache.c           |  2 +-
+>  net/openvswitch/dp_notify.c                   |  2 +-
+>  net/rds/ib_rdma.c                             |  3 +-
+>  net/rfkill/input.c                            |  2 +-
+>  net/rxrpc/rxperf.c                            |  2 +-
+>  net/smc/af_smc.c                              |  6 +-
+>  net/smc/smc_core.c                            |  4 +-
+>  net/tls/tls_device.c                          |  2 +-
+>  net/unix/garbage.c                            |  2 +-
+>  net/vmw_vsock/af_vsock.c                      |  2 +-
+>  net/vmw_vsock/virtio_transport.c              |  2 +-
+>  net/vmw_vsock/vsock_loopback.c                |  2 +-
+>  net/wireless/core.c                           |  4 +-
+>  net/wireless/sysfs.c                          |  2 +-
+>  rust/kernel/workqueue.rs                      | 12 ++--
+>  sound/soc/codecs/aw88081.c                    |  2 +-
+>  sound/soc/codecs/aw88166.c                    |  2 +-
+>  sound/soc/codecs/aw88261.c                    |  2 +-
+>  sound/soc/codecs/aw88395/aw88395.c            |  2 +-
+>  sound/soc/codecs/aw88399.c                    |  2 +-
+>  sound/soc/codecs/cs42l43-jack.c               |  6 +-
+>  sound/soc/codecs/cs42l43.c                    |  4 +-
+>  sound/soc/codecs/es8326.c                     | 12 ++--
+>  sound/soc/codecs/rt5663.c                     |  6 +-
+>  sound/soc/codecs/wm_adsp.c                    |  2 +-
+>  sound/soc/intel/boards/sof_es8336.c           |  2 +-
+>  sound/soc/sof/intel/cnl.c                     |  2 +-
+>  sound/soc/sof/intel/hda-ipc.c                 |  2 +-
+>  virt/kvm/eventfd.c                            |  2 +-
+>  367 files changed, 750 insertions(+), 587 deletions(-)
+>
+> --
+> 2.49.0
+>
 
-Ok, thanks a lot for testing! I guess the good news is that I didn't
-break functionality here.
 
-Obviously 15x slowdown sounds like a lot, but what I don't know is
-whether 1.2=C2=B5s is actually too slow. Is this CLOCK_REALTIME or some
-other clock? I would expect to see a larger difference for the
-COARSE version since that saves the hardware access as well.
+--
 
-From what I remember, the original driver for having a VDSO
-clock_gettime/gettimeofday was Java applications that call it
-too often. Do you know of anyone using Java on performance-critical
-sparc64 servers any more, or any other type of workload that
-depends on these functions being small?
+Marco Crivellari
 
-It is probably not all that hard to convert the VDSO to use the
-generic implementation if you remove the runtime patching between
-TICK and STICK mode. From the code and the documentation, it
-seems that any JPS1 compatible CPU (or newer) uses STICK,
-this would be UltraSPARC III (Cheetah), SPARC64 V (Zeus)
-and all UltraSPARC T. If you want to give it a try to do the
-conversion to the generic VDSO, I could respin my patch to only
-remove the older TICK version and the runtime patching but leave
-the STICK one. I don't think it's worth my time trying to convert
-STICK myself since I have no way of testing it.
+L3 Support Engineer, Technology & Product
 
-Another option would be to start by adding a VDSO for LEON
-CPUs using the ASR22:23 upcounter register. This should be
-fairly easy to do if you copy the CSR_TIME code from riscv
-and replace their __arch_get_hw_counter(), and this is probably more
-relevant than the sparc64 version. Once that works, you
-can extend it to use STICK on JPS1.
 
-     Arnd
+
+
+marco.crivellari@suse.com
 
