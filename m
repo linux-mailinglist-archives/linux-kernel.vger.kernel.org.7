@@ -1,148 +1,220 @@
-Return-Path: <linux-kernel+bounces-727249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F8AB01712
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:01:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4B4B0171E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84984763FCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:00:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE3C3A6017
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222C021B9E5;
-	Fri, 11 Jul 2025 09:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773F021883C;
+	Fri, 11 Jul 2025 09:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="IOt8Jjep"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="pvYjKxg+"
+Received: from mail-10627.protonmail.ch (mail-10627.protonmail.ch [79.135.106.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B051FE45B;
-	Fri, 11 Jul 2025 09:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EF81B87F2
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752224467; cv=none; b=U6/Ox3ASVz8SLPa+pby3tKWiLaM3NfutXwmUszZjDB9zlyIOELYbMM5nOIYhuhNOzha6zoNHbS+axqJrctJwcTDnsRX2EoQNurkqEwOWgfJmv0sjglNXPSanKnZQQ4Nwmr+9M0EoEiTpWQLs1M1LKJldykPL09HM6lJx2sRIuEE=
+	t=1752224559; cv=none; b=P/PM96uOeCEJSGQPvo1LBLmCHHgKJTsxPHTm3uYKerioLSGdhDy2ntth2NJP+g0pMasB0uEWQMra7OJxMLiVaDlK4N1KtZYWal+bIwjgvHMDQcPzgdmGcdnfeG7NDoTSWMbL4t/4peSoRONg09jaAgN8pgnRy6ksgm/tZrIcuUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752224467; c=relaxed/simple;
-	bh=YpQaW6Q+LrADB4lXS5nz6IxnIoQPHJzVnqRq7V4UyOE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qQWUXr14rfP2cuPKnIdHabSHq1nKkd1/tOR11cW4OQrY7yMReOPh+e1q3Thmcj8C0IV93rIpLh0xyW0HvvvBzjbeda4ejfX2oOyg1W9nam26BB+oC3pljqGS/Vu06UVzbiP2mLdSxbICArHDxQ1/Tvvm92RNNvQozeYXbzZdk60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=IOt8Jjep; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56B90haE6756266, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1752224444; bh=YpQaW6Q+LrADB4lXS5nz6IxnIoQPHJzVnqRq7V4UyOE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=IOt8JjepXiUTvjsWLwTcdkswSM+sogoyMkkpcg7o9yIpODn2hqz6KYSOG+15b6IHm
-	 V7FZ00mVws65nqS63mp9Q1LKKAn8jX/fP2Eoj3/1wTmL/0QDOdN59RNy2Jp6ZG4ksM
-	 3m8V+mgDMtED+x3n3tyU6WmOnpsVs+gLpR+HFkFz9grJfO2+Y+trvsm6Qdx/vBsOpe
-	 4OlGYDDIThtYBviy0vqxXMTXaOoQxqjYh4RYgDm5OuHYTPM9cgYgc3bAqhnT4sX7T2
-	 5LClBy5Pcrvze6hTUtZovdcai5zjrlV3Apb1vtieTzaXIGpV3HwYeFjLfQT7OkEfEd
-	 2uYYn6H8JUzIw==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56B90haE6756266
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 17:00:44 +0800
-Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 11 Jul 2025 17:00:44 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 11 Jul 2025 17:00:43 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
- RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
- 15.01.2507.035; Fri, 11 Jul 2025 17:00:43 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-CC: Kalle Valo <kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Bitterblue Smith <rtl8821cerfe2@gmail.com>,
-        Fiona Klute <fiona.klute@gmx.de>
-Subject: RE: [PATCH v3] wifi: rtw88: enable TX reports for the management queue
-Thread-Topic: [PATCH v3] wifi: rtw88: enable TX reports for the management
- queue
-Thread-Index: AQHb8enPOUIDreW220yczxSl7U1tKbQsC/OAgAAMeICAAIf9YA==
-Date: Fri, 11 Jul 2025 09:00:43 +0000
-Message-ID: <af19b6fff6e248cf89500989931ff4f4@realtek.com>
-References: <20250710222432.3088622-1-andrej.skvortzov@gmail.com>
- <7e7a3532816b48ef94c18e735a0f7a3f@realtek.com> <aHDQ4ah-UpJ7ADvJ@skv.local>
-In-Reply-To: <aHDQ4ah-UpJ7ADvJ@skv.local>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1752224559; c=relaxed/simple;
+	bh=5hfsErzK8U6eSfuwK4siKcG5sl3MlW6guRBomqwJNSk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FSXsB+schLRifNFgQBHYGK7RBkQkU0jbvU8BttDPfQ2yi/3ec5AgN7Qiwv+34al736OsdqFZtW99T83Qkf9Z8WYCXPXO440WWSZ7Bv3C+pHjwpfAZkDWSeCACJuDN/fwyVGemoOPyXySDVGdk7rxfEU9cYD/cAdsASeJahBut2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=pvYjKxg+; arc=none smtp.client-ip=79.135.106.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1752224545; x=1752483745;
+	bh=Tg8aOMQgSF6YM5PlWDpcJQLYft5zXTyVat8RUlVrpKw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=pvYjKxg+twOgyt8Gd11RZkN46LUq/vcNdz+VJNLdIhPNUk8jW8rLrZ9elL9Jk5tVr
+	 gJZOIwc3mWNqT1BXJCbD3WeF97oGiLwK0wSFpPQCbDgeMDp5i+AcGDqWsMy+ciFy2B
+	 hqBRwRtRCtfjq6sTBpQv8oILCY9PPRcHkgFKV8WtgxlijSyUiyqW4HZjDcotJ87mKm
+	 8NlwtLVFXpsmwR6xXkvCzEMYunKbwXTwo0Eoc3dMAQG98JQB8fPcaaon3ChmsPQaTC
+	 Iqk2EnOSjzHY9rVAFqxb2Mfsh8wr3LHX+9PXUpo4a34hMUOvSQybCDn2QWadpL8Z/t
+	 9rxiueNtV4oAQ==
+Date: Fri, 11 Jul 2025 09:02:18 +0000
+To: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+From: Sean Nyekjaer <sean@geanix.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>, imx@lists.linux.dev, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>, Robin Gong <yibin.gong@nxp.com>, Enric Balletbo i Serra <eballetbo@gmail.com>
+Subject: Re: [PATCH v8 5/6] power: supply: pf1550: add battery charger support
+Message-ID: <e2veigexln4ma5meguxqh6jh2r2fhj2d47pv4exjzwrhlazn7d@raknfsiucqls>
+In-Reply-To: <20250707-pf1550-v8-5-6b6eb67c03a0@savoirfairelinux.com>
+References: <20250707-pf1550-v8-0-6b6eb67c03a0@savoirfairelinux.com> <20250707-pf1550-v8-5-6b6eb67c03a0@savoirfairelinux.com>
+Feedback-ID: 134068486:user:proton
+X-Pm-Message-ID: e22eee3c66a526c8ffff06f5cd1ab1c871b3bad9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-QW5kcmV5IFNrdm9ydHNvdiA8YW5kcmVqLnNrdm9ydHpvdkBnbWFpbC5jb20+IHdyb3RlOg0KPiAN
-Cj4gT24gMjUtMDctMTEgMDA6MTEsIFBpbmctS2UgU2hpaCB3cm90ZToNCj4gPiBBbmRyZXkgU2t2
-b3J0c292IDxhbmRyZWouc2t2b3J0em92QGdtYWlsLmNvbT4gd3JvdGU6DQo+ID4gPiBUaGlzIGlz
-IG5lZWRlZCBmb3IgQVAgbW9kZS4gT3RoZXJ3aXNlIGNsaWVudCBzZWVzIHRoZSBuZXR3b3JrLCBi
-dXQNCj4gPiA+IGNhbid0IGNvbm5lY3QgdG8gaXQuDQo+ID4gPg0KPiA+ID4gUkVHX0ZXSFdfVFhR
-X0NUUkwrMSBpcyBzZXQgdG8gV0xBTl9UWFFfUlBUX0VOICgweDFGKSBpbiBjb21tb24gbWFjDQo+
-ID4gPiBpbml0IGZ1bmN0aW9uIChfX3J0dzg3MjN4X21hY19pbml0KSwgYnV0IHRoZSB2YWx1ZSB3
-YXMgb3ZlcndyaXR0ZW4NCj4gPiA+IGZyb20gbWFjIHRhYmxlIGxhdGVyLg0KPiA+ID4NCj4gPiA+
-IFRhYmxlcyB3aXRoIHJlZ2lzdGVyIHZhbHVlcyBmb3IgcGh5IHBhcmFtZXRlcnMgaW5pdGlhbGl6
-YXRpb24gYXJlDQo+ID4gPiBjb3BpZWQgZnJvbSB2ZW5kb3IgZHJpdmVyIHVzdWFsbHkuIFdoZW4g
-dGFibGUgd2lsbCBiZSByZWdlbmVyYXRlZCwNCj4gPiA+IG1hbnVhbCBtb2RpZmljYXRpb25zIHRv
-IGl0IG1heSBiZSBsb3N0LiBUbyBhdm9pZCByZWdyZXNzaW9ucyBpbiB0aGlzDQo+ID4gPiBjYXNl
-IG5ldyBjYWxsYmFjayBtYWNfcG9zdGluaXQgaXMgaW50cm9kdWNlZCwgdGhhdCBpcyBjYWxsZWQg
-YWZ0ZXINCj4gPiA+IHBhcmFtZXRlcnMgZnJvbSB0YWJsZSBhcmUgc2V0Lg0KPiA+ID4NCj4gPiA+
-IFRlc3RlZCBvbiBydGw4NzIzY3MsIHRoYXQgcmV1c2VzIHJ0dzg3MDNiIGRyaXZlci4NCj4gPiA+
-DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBBbmRyZXkgU2t2b3J0c292IDxhbmRyZWouc2t2b3J0em92
-QGdtYWlsLmNvbT4NCj4gPiA+IC0tLQ0KPiA+ID4NCj4gPiA+IENoYW5nZXMgaW4gdjI6DQo+ID4g
-PiAgLSBpbnRyb2R1Y2UgbWFjX3Bvc3Rpbml0IGNhbGxiYWNrIHRvIGF2b2lkIGNoYW5naW5nIHJl
-Z2lzdGVyIHRhYmxlcw0KPiA+ID4NCj4gPiA+IENoYW5nZXMgaW4gdjM6DQo+ID4gPiAgLSBtZXJn
-ZSB0d28gcGF0Y2hlcyBiYWNrIHRvZ2V0aGVyDQo+ID4gPiAgLSByZW1vdmUgdW51c2VkIGluaXRp
-YWxpemF0aW9uIGluIHJ0d19tYWNfcG9zdGluaXQNCj4gPiA+ICAtIGluaXQgdW51c2VkIC5tYWNf
-cG9zdGluaXQgZmllbGRzIGluIGRyaXZlcnMgd2l0aCBOVUxMDQo+ID4gPg0KPiA+ID4gIGRyaXZl
-cnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODgvbWFjLmMgICAgICB8IDExICsrKysrKysrKysr
-DQo+ID4gPiAgZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OC9tYWMuaCAgICAgIHwg
-IDEgKw0KPiA+ID4gIGRyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODgvbWFpbi5jICAg
-ICB8ICA2ICsrKysrKw0KPiA+ID4gIGRyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODgv
-bWFpbi5oICAgICB8ICAxICsNCj4gPiA+ICBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0
-dzg4L3J0dzg3MDNiLmMgfCAgMSArDQo+ID4gPiAgZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRl
-ay9ydHc4OC9ydHc4NzIzZC5jIHwgIDEgKw0KPiA+ID4gIGRyaXZlcnMvbmV0L3dpcmVsZXNzL3Jl
-YWx0ZWsvcnR3ODgvcnR3ODcyM3guYyB8ICA5ICsrKysrKysrLQ0KPiA+ID4gIGRyaXZlcnMvbmV0
-L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODgvcnR3ODcyM3guaCB8ICA2ICsrKysrKw0KPiA+ID4gIGRy
-aXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODgvcnR3ODgxMmEuYyB8ICAxICsNCj4gPiA+
-ICBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg4L3J0dzg4MTRhLmMgfCAgMSArDQo+
-ID4gPiAgZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OC9ydHc4ODIxYS5jIHwgIDEg
-Kw0KPiA+ID4gIGRyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODgvcnR3ODgyMWMuYyB8
-ICAxICsNCj4gPiA+ICBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg4L3J0dzg4MjJi
-LmMgfCAgMSArDQo+ID4gPiAgZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OC9ydHc4
-ODIyYy5jIHwgIDEgKw0KPiA+ID4gIDE0IGZpbGVzIGNoYW5nZWQsIDQxIGluc2VydGlvbnMoKyks
-IDEgZGVsZXRpb24oLSkNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2ly
-ZWxlc3MvcmVhbHRlay9ydHc4OC9tYWMuYyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsv
-cnR3ODgvbWFjLmMNCj4gPiA+IGluZGV4IDAxMWI4MWM4MmYzYmEuLmUxZWM5YWE0MDFmYTAgMTAw
-NjQ0DQo+ID4gPiAtLS0gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg4L21hYy5j
-DQo+ID4gPiArKysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg4L21hYy5jDQo+
-ID4gPiBAQCAtMTQwOSwzICsxNDA5LDE0IEBAIGludCBydHdfbWFjX2luaXQoc3RydWN0IHJ0d19k
-ZXYgKnJ0d2RldikNCj4gPiA+DQo+ID4gPiAgICAgICAgIHJldHVybiAwOw0KPiA+ID4gIH0NCj4g
-PiA+ICsNCj4gPiA+ICtpbnQgcnR3X21hY19wb3N0aW5pdChzdHJ1Y3QgcnR3X2RldiAqcnR3ZGV2
-KQ0KPiA+ID4gK3sNCj4gPiA+ICsgICAgICAgY29uc3Qgc3RydWN0IHJ0d19jaGlwX2luZm8gKmNo
-aXAgPSBydHdkZXYtPmNoaXA7DQo+ID4gPiArICAgICAgIGludCByZXQ7DQo+ID4gPiArDQo+ID4g
-PiArICAgICAgIGlmIChjaGlwLT5vcHMtPm1hY19wb3N0aW5pdCkNCj4gPiA+ICsgICAgICAgICAg
-ICAgICByZXQgPSBjaGlwLT5vcHMtPm1hY19wb3N0aW5pdChydHdkZXYpOw0KPiA+ID4gKw0KPiA+
-DQo+ID4gJ3JldCcgaXMgbm90IHVzZWQgWzFdLg0KPiA+DQo+ID4gUHJlZmVyOg0KPiA+DQo+ID4g
-aWYgKCFjaGlwLT5vcHMtPm1hY19wb3N0aW5pdCkNCj4gPiAgICAgcmV0dXJuIDA7DQo+ID4NCj4g
-PiByZXR1cm4gY2hpcC0+b3BzLT5tYWNfcG9zdGluaXQocnR3ZGV2KTsNCj4gPg0KPiA+IFsxXSBo
-dHRwOi8vd2lmaWJvdC5zaXBzb2x1dGlvbnMubmV0L3Jlc3VsdHMvOTgxMjcyLzE0MTUyNTEzL2J1
-aWxkX2NsYW5nL3N0ZGVycg0KPiA+DQo+IA0KPiBUaGFua3MsIHNvcnJ5IEkndmUgbWlzc2VkIHdh
-cm5pbmcuDQo+IEknbGwgdXNlIENPTkZJR19XRVJST1IgYW5kIGNoYW5nZSBteSBidWlsZCBwaXBl
-bGluZSwgc28gdGhpcyB3aWxsIG5vdCBoYXBwZW4gaW4gdGhlIGZ1dHVyZS4NCj4gDQoNCllvdSBj
-YW4gYWxzbyBjaGVjayB0aGUgcmVzdWx0IGluIHBhdGNod29yayBbMV0gYWZ0ZXIgYSB3aGlsZSB5
-b3Ugc2VudCBwYXRjaC4NCg0KWzFdIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVj
-dC9saW51eC13aXJlbGVzcy9saXN0Lw0KDQo=
+Hi,
+
+On Mon, Jul 07, 2025 at 05:37:24PM +0100, Samuel Kayode wrote:
+> Add support for the battery charger for pf1550 PMIC.
+>=20
+> Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+> ---
+
+[...]
+
+> diff --git a/drivers/power/supply/pf1550-charger.c b/drivers/power/supply=
+/pf1550-charger.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..7a6bd9c30d60280f1e1c50d4e=
+1ddaf0a4998b9f0
+> --- /dev/null
+> +++ b/drivers/power/supply/pf1550-charger.c
+> @@ -0,0 +1,632 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * charger driver for the PF1550
+> + *
+> + * Copyright (C) 2016 Freescale Semiconductor, Inc.
+> + * Robin Gong <yibin.gong@freescale.com>
+> + *
+> + * Portions Copyright (c) 2025 Savoir-faire Linux Inc.
+> + * Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+> + */
+> +
+> +#include <linux/devm-helpers.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/pf1550.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/power_supply.h>
+> +
+> +#define PF1550_DEFAULT_CONSTANT_VOLT=094200000
+> +#define PF1550_DEFAULT_MIN_SYSTEM_VOLT=093500000
+> +#define PF1550_DEFAULT_THERMAL_TEMP=0975
+
+Default is 95
+
+> +#define PF1550_CHARGER_IRQ_NR=09=095
+> +
+> +struct pf1550_charger {
+> +=09struct device *dev;
+> +=09const struct pf1550_ddata *pf1550;
+> +=09struct power_supply *charger;
+> +=09struct power_supply *battery;
+> +=09struct delayed_work vbus_sense_work;
+> +=09struct delayed_work chg_sense_work;
+> +=09struct delayed_work bat_sense_work;
+> +=09int virqs[PF1550_CHARGER_IRQ_NR];
+> +
+
+[...]
+
+> +
+> +static int pf1550_set_thermal_regulation_temp(struct pf1550_charger *chg=
+,
+> +=09=09=09=09=09      unsigned int cells)
+> +{
+> +=09unsigned int data;
+> +
+> +=09switch (cells) {
+> +=09case 60:
+> +=09=09data =3D 0x0;
+> +=09=09break;
+> +=09case 75:
+> +=09=09data =3D 0x1;
+> +=09=09break;
+> +=09case 90:
+> +=09=09data =3D 0x2;
+> +=09=09break;
+> +=09case 105:
+> +=09=09data =3D 0x3;
+> +=09=09break;
+
+From the datasheet 80, 95, 110 and 125c is supported
+
+> +=09default:
+> +=09=09return dev_err_probe(chg->dev, -EINVAL,
+> +=09=09=09=09     "Wrong value for thermal temperature\n");
+> +=09}
+> +
+> +=09data <<=3D PF1550_CHARG_REG_THM_REG_CNFG_REGTEMP_SHIFT;
+> +
+> +=09dev_dbg(chg->dev, "Thermal regulation loop temperature: %u (0x%x)\n",
+> +=09=09cells, data);
+> +
+> +=09return regmap_update_bits(chg->pf1550->regmap,
+> +=09=09=09=09  PF1550_CHARG_REG_THM_REG_CNFG,
+> +=09=09=09=09  PF1550_CHARG_REG_THM_REG_CNFG_REGTEMP_MASK,
+> +=09=09=09=09  data);
+> +}
+> +
+> +/*
+> + * Sets charger registers to proper and safe default values.
+> + */
+> +static int pf1550_reg_init(struct pf1550_charger *chg)
+> +{
+> +=09struct device *dev =3D chg->dev;
+> +=09unsigned int data;
+> +=09int ret;
+> +
+> +=09/* Unmask charger interrupt, mask DPMI and reserved bit */
+> +=09ret =3D  regmap_write(chg->pf1550->regmap, PF1550_CHARG_REG_CHG_INT_M=
+ASK,
+> +=09=09=09    PF1550_CHG_INT_MASK);
+> +=09if (ret)
+> +=09=09return dev_err_probe(dev, ret,
+> +=09=09=09=09     "Error unmask charger interrupt\n");
+> +
+> +=09ret =3D regmap_read(chg->pf1550->regmap, PF1550_CHARG_REG_VBUS_SNS,
+> +=09=09=09  &data);
+> +=09if (ret)
+> +=09=09return dev_err_probe(dev, ret, "Read charg vbus_sns error\n");
+
+data is unused here :/
+
+> +
+> +=09ret =3D pf1550_set_constant_volt(chg, chg->constant_volt);
+> +=09if (ret)
+> +=09=09return ret;
+> +
+> +=09ret =3D pf1550_set_min_system_volt(chg, chg->min_system_volt);
+> +=09if (ret)
+> +=09=09return ret;
+> +
+> +=09ret =3D pf1550_set_thermal_regulation_temp(chg,
+> +=09=09=09=09=09=09 chg->thermal_regulation_temp);
+> +=09if (ret)
+> +=09=09return ret;
+> +
+> +=09/* Turn on charger */
+> +=09ret =3D regmap_write(chg->pf1550->regmap, PF1550_CHARG_REG_CHG_OPER,
+> +=09=09=09   PF1550_CHG_TURNON);
+> +=09if (ret)
+> +=09=09return dev_err_probe(dev, ret, "Error turn on charger\n");
+
+There are 3 modes for the charger operation:
+0: charger =3D off, linear =3D off
+1: charger =3D off, linear =3D on
+2: charger =3D on, linear =3D on
+
+The driver is hardcoded to use no. 2.
+
+We are using the mode 1, and setting it to 2 causes my system to boot loop.
+
+I don't know how we should select mode, maybe it could be an option from
+the devicetree or use power_supply_get_battery_info() to look for a
+battery and the only select between 1 or 2, but 0 would also be a valid
+option.
+
+/Sean
+
 
