@@ -1,312 +1,173 @@
-Return-Path: <linux-kernel+bounces-727738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E423B01EDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:18:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D7BB01ED7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC8EA4A3406
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:18:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F093646BB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF222E49B9;
-	Fri, 11 Jul 2025 14:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F552E4981;
+	Fri, 11 Jul 2025 14:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="dm1lniAd";
-	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="fO5YZ8bs"
-Received: from mx0a-000eb902.pphosted.com (mx0a-000eb902.pphosted.com [205.220.165.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KIqyLd+F"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9D22D0C84;
-	Fri, 11 Jul 2025 14:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.212
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752243484; cv=fail; b=swXDjmCZHU1mbt6zUHE2FX+X7lPdJ6rqrvdxXTLWY/IVLGAFb43b5eOv37wj/5NtqIVN1BUIEqPkrlrK8hwj24FoKczgHHTtYoprH07nv2jd/x0XQjM6jhpvmfRjB5qug6HzHO3A5jQJDsFAp/EL2wRJKP3uoQ4efQB8XAEwbBw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752243484; c=relaxed/simple;
-	bh=S0NLZaLCN4c0EmfdZWjglSb3g5RloRN8OZL/RLPHeX8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E8v4j0cr88UV0UNbLP6EkeMpuvphoi87VCnxJRTt+QRAq9SrcWAkVJMCkSajc3fLlvRlAxgE8sHFTh47vOxXSw1E+lxJwzXtTb3WrDMImG2G5UnzygQxHsWWYOXO25HxFa+6LY2gwcoHnmetfBMdvNnYjeDDR79p+sBNaQelQ58=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=garmin.com; spf=pass smtp.mailfrom=garmin.com; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=dm1lniAd; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=fO5YZ8bs; arc=fail smtp.client-ip=205.220.165.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=garmin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garmin.com
-Received: from pps.filterd (m0220295.ppops.net [127.0.0.1])
-	by mx0a-000eb902.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B8NFAJ025526;
-	Fri, 11 Jul 2025 09:17:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pps1; bh=uGbqe
-	wZiK47Mz1A1RYmKo6WVBU4AegWA8I6vKAThXBE=; b=dm1lniAdDQLbmMpJ3m4nq
-	rcgkbxRoIn0hC2rkO0KvJ99/4H2nwtbcoz6X3BtM2YhV+yTK7a/kbXEb19AmaOpA
-	O3qKvC1hF36h0Rt4/Xw2BUbHE/1DNYzFXHQD62h2XgGY/w9ZNntsdVgiLKelJhAG
-	1zAizkmLRplgUHoHYQGSJ4io/ED9kpU0DRAUiwfd49+LeZ+nUNFtVa/f/Ph4G1fy
-	816OqWirXuqIAqT50BOKUHVeNsqzXVq9kJrhGNmdm6rpzIE6mslsrhQf284GRJS0
-	26SBBJl+hsJ4yVJx9tNMcsD+oH989K/GYi2pOAl3bGAaS5MmAL+sB1dMnjNslPK2
-	g==
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04on2135.outbound.protection.outlook.com [40.107.101.135])
-	by mx0a-000eb902.pphosted.com (PPS) with ESMTPS id 47ty1srm9h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 09:17:48 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ebERa/6Yyq8OiePbfpKbmUyN4UW1p9o4dnQ1UpgExDN/5mKwcZF2I/ilRufTM7RJ3JJ0Nj+7oMh8k13JdzcCgpUQGxCRXEnjrZCnbRa5W3AOqvSLow3xJR/U03VO8pdHnkx4wE2nLRlgfoh36Y1/GnTukb7gJk6A1muFQUi/bmjXWCKi2v3es4MmQV5uhfzgTgf1i7MmxDj8kMT8M+oi/5FQc9Knb7T/1wehND3bmPcJmI09HZ/f1BUroBEklV06bwxPKR95FrmMrDHF1SyxBAhPub6/PxPeofeZYdu3++Psgxa+h/z8Ie0RQXS60XaFF8J6iuMGKIBlf2jQ9R7FGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uGbqewZiK47Mz1A1RYmKo6WVBU4AegWA8I6vKAThXBE=;
- b=pY1ZL1tMAcbW+kkhYQ/AeO+ktjOeXtEcYWz3dClSp76V9eRAGNrhE0G4i/tvbDx487b9nmRvNpETUgzDXVb97qyXVjjz2IpXNNUBHT8rDV5Vl4v55aPk0eZfrZQedQQqdr+ecccJHQXJLXRn1TJsngK6efjD/IKH7riOzgBazAYykfgPi99s3dvWxRr5/Ue5bBlKf6yPwKJb+Z9IBtvtre38hWkeXgscQFdSiOXrY9qfbBC4X7Gyc4L1zr35tYUKFxYVeSbZ1qJrE/GSHNGk4gmyuMvtLztGhe8btIRGbNsT8ZAdXUo5LSg+yQGBAesBuTnk8g3FbUGqH0j4pNxoKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 204.77.163.244) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=garmin.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=garmin.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uGbqewZiK47Mz1A1RYmKo6WVBU4AegWA8I6vKAThXBE=;
- b=fO5YZ8bsgSH00B/lj2lsH6I7AM3hnbc4TE2voqZkybpM9u25IhUgt858SqqxQSF6CFA29CdECveXBkjVY41mOuH1b9zuK2xtteKyAZ+EvPT2e/RVnt4suUX5d3EfuiElPiMJKYRl8IxI62uyoQeSuuRpjhFAI1npy6JUPv1B2IaI2cMdh2YJwmc13slz773+7d+V2cs2k1fSO8KfhQITuNlLFtCKWUgAXOoAulCXeofYXkgGHVRSYm28xp77ISmHeZ8IAYbLsTWoVIzWfHQAwFs0CJQBK36UPEY3BlTgrC58DyNhXp2zR6EBFJIFaQ/0b+5M/P5Ibe43qZLfbVTOVQ==
-Received: from CH5PR05CA0022.namprd05.prod.outlook.com (2603:10b6:610:1f0::14)
- by BY5PR04MB6550.namprd04.prod.outlook.com (2603:10b6:a03:1db::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.31; Fri, 11 Jul
- 2025 14:17:44 +0000
-Received: from CH3PEPF0000000A.namprd04.prod.outlook.com
- (2603:10b6:610:1f0:cafe::99) by CH5PR05CA0022.outlook.office365.com
- (2603:10b6:610:1f0::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.11 via Frontend Transport; Fri,
- 11 Jul 2025 14:17:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 204.77.163.244)
- smtp.mailfrom=garmin.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=garmin.com;
-Received-SPF: Pass (protection.outlook.com: domain of garmin.com designates
- 204.77.163.244 as permitted sender) receiver=protection.outlook.com;
- client-ip=204.77.163.244; helo=edgetransport.garmin.com; pr=C
-Received: from edgetransport.garmin.com (204.77.163.244) by
- CH3PEPF0000000A.mail.protection.outlook.com (10.167.244.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8922.22 via Frontend Transport; Fri, 11 Jul 2025 14:17:43 +0000
-Received: from OLAWPA-EXMB2.ad.garmin.com (10.5.144.14) by cv1wpa-edge3
- (10.60.4.253) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 11 Jul
- 2025 09:17:29 -0500
-Received: from cv1wpa-exmb1.ad.garmin.com (10.5.144.71) by
- OLAWPA-EXMB2.ad.garmin.com (10.5.144.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 11 Jul 2025 09:17:30 -0500
-Received: from cv1wpa-exmb2.ad.garmin.com (10.5.144.72) by
- CV1WPA-EXMB1.ad.garmin.com (10.5.144.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 11 Jul 2025 09:17:30 -0500
-Received: from OLA-JW4GN34.ad.garmin.com (10.5.209.17) by smtp.garmin.com
- (10.5.144.72) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 11 Jul 2025 09:17:30 -0500
-From: Brett Werling <brett.werling@garmin.com>
-To: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Marc Kleine-Budde <mkl@pengutronix.de>,
-        Vincent Mailhol
-	<mailhol.vincent@wanadoo.fr>,
-        <brett.werling@garmin.com>, <bwerl.dev@gmail.com>
-Subject: [PATCH v2] can: tcan4x5x: fix reset gpio usage during probe
-Date: Fri, 11 Jul 2025 09:17:28 -0500
-Message-ID: <20250711141728.1826073-1-brett.werling@garmin.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250708181154.2987123-1-brett.werling@garmin.com>
-References: <20250708181154.2987123-1-brett.werling@garmin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6FD2E0939;
+	Fri, 11 Jul 2025 14:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752243463; cv=none; b=Q0KkTFdMFrwDvcPGifLCcMbo21pFJLpPPfcMoG0zObBy/W4rsBRtVlkio9NFF7wksmenoVIZh9dy8oN3CbvUety40xzSbenxidlu8A2qM03is5LOyoslbtI+ldU1Js+zJsraFSrry+YYN/qgTxgCCF21KNIDGCmUNQOdJRz2Zdg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752243463; c=relaxed/simple;
+	bh=drETIl/jROPzXvjFx0KylH8snG1xWmuuvGKx2AVrXwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E4Kr7yfFk8kFEeFDV9eeoBoucbB0EZY4EXlWxJCNtpDtyyxQ91F9ipBziwwcJplsvHuMa11w0tbnsauaiMJkOBSlGsJVqu8t9k1fptPZR8H7giBfihFb3WMNFIir8mk4T33OGUBZPwqpsoX05iRmDCuVJmMhz8GlpSt9/1xmogY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KIqyLd+F; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4a77ffcb795so20357761cf.0;
+        Fri, 11 Jul 2025 07:17:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752243460; x=1752848260; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N++RXEHjieQM0ci6ZaOLIBjfnKPwlA53QT2R6OroCSc=;
+        b=KIqyLd+F/DGMsgdInhWCcaRPe5Y9+E9lq0ay+w45rhWPnZrTUhzMk0QiEzHV387wxn
+         IPobTzTg039mW/jyqD2K3X2JYAR2SxMLNBdFUpdFx5/ybLThJ9JpJcb1DK3lcCJw+vXY
+         nT8lSNHzj7RnLmMtm6Df/559l4HlRDnXCKX/sGcBTLCnK7wsUEdJWxT1SQTi9EXidgmP
+         HghwWJh7QXiBb++cP4dAc14Qa4r6A4G1pW/8/kHgbIXeMNqUAlUrcrA4VeHt2oE+NHdF
+         jDMD+1YjS9BPiETLrJxgHY/hq1ty7NAHMP9QHgUbzeW1rO/q1hqQTdX8emTkwVagcz+D
+         OWgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752243460; x=1752848260;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N++RXEHjieQM0ci6ZaOLIBjfnKPwlA53QT2R6OroCSc=;
+        b=T8/g7rTTR3aKBdjq0OKhLVjwumuRn2bLLtNAAGn/S7whKkvr3dAfA6AnLT/vZW6qio
+         Cg7A0DXwLVNP+2x5Y+siCSHTvvK9R1rPTuySg7ZKlveXc7UAiWu3ROG7AeSq9po+Y9Hb
+         wbsh/uLyiaujC44y7xnOUY2/etngvMQYuJwuHFjJBG8cTjqWTryzbCjmMH2fOPFbQtBZ
+         Py5YAfd+rJTkFxTlLg/crz9G/exYrrLL0PTMDhbG8tG5a9oeIfcY0P+i5y9YhD750MHR
+         PfpNESYfGiW4j8JvYC1EevZqQeOizF6lKSCmixtfsSJ3P0aba6uIt2I9bK6oK6uXGSrn
+         jH7w==
+X-Forwarded-Encrypted: i=1; AJvYcCXOC0QjrVVxHOfUnqgld1VgRji+VokeG0pXV9f2nvpXtihcFHEvimn5rYHHSRMPm8Bc8/XpU6ypqZulLCw=@vger.kernel.org, AJvYcCXkiH/3tSpboGWbRA3eIm3j+XQJ52n7y2BkjE1cAe19wBVOZfL6LpoaBFnzK+YfhKSW69uQmyuywrTkvHRzAU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza8LbctXUikqG8IjCISNQkdtGoGjBziUKSj4YoO9/F1uBe/f0g
+	iaOV3CYl9xK6hvAiuyRA7pAxDIzTe7Cvmd5qWbZwWAZG1CyFaRhysVKP
+X-Gm-Gg: ASbGnctardwrPwlVbtzO3FatTFlU4nQX5XIvTM2Dsd6aCIJAescz9/NozRFAmBie4gO
+	QBzQggNkRyjZHG5anA1WdXPGoS5khch9HOmyTS1ET3Xopf63IxKUaq0d1TGZ8QLGcJ3gfejUykg
+	BJDK2jmGl8mN8xVuCA57U5GK02613aPN2sTEr2s/gHSVrXG+lg/GGe8n6tm9svdAQ0DUsx60cn5
+	0sl4+9x31RwlJFuO47CVX50LHjglKxGmz0xM+W7aWkClPOqL4DCJCfqCG3GhtVqgXlQqp5onGpi
+	Gw1dcXaHHuP2xNtr+LoSzyZFj2rJSf0pMQiDYQMkqteBf4CdaUhXv+hMxZumFJYsQ8Fx/S7fgrs
+	z/iRtCRTLLLD+XpsK+WxQCfoCK/l9b1TRgHxYZEiYDIoYGjuE+e7o4Es3tEmGAbD+NhpOiIQmfi
+	mT+3uYPqkoaxuR
+X-Google-Smtp-Source: AGHT+IHammHLjvAPSw5xRi4x+C3i99yFaWtFpkdnYjYGTd5oidZ1HIjVht49awOE5Bre9ZGo82z5mA==
+X-Received: by 2002:a05:6214:4587:b0:702:d83a:7148 with SMTP id 6a1803df08f44-704a70161d8mr57818256d6.23.1752243460121;
+        Fri, 11 Jul 2025 07:17:40 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcde32bfcasm225548885a.65.2025.07.11.07.17.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 07:17:38 -0700 (PDT)
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfauth.phl.internal (Postfix) with ESMTP id A4EA4F40066;
+	Fri, 11 Jul 2025 10:17:37 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Fri, 11 Jul 2025 10:17:37 -0400
+X-ME-Sender: <xms:AR1xaLXCwOVWOEdpV4lGyqJk0D3LRKT2Q3nkLnzvhNTbxL7h4w0U6A>
+    <xme:AR1xaPYML4v8uFO4TOWa3kkqFDLgWWxCBrazU1Ej9lwBncxgyMmyjNwVhencw2MeO
+    jOvlJnsZwRhhV1q1A>
+X-ME-Received: <xmr:AR1xaM7G-67UOtBAQFaFpCcx6mW7OuyljK5nZHyiaUXB9ted_U6M6gf-CQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfeehgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhhitggvrhihhh
+    hlsehgohhoghhlvgdrtghomhdprhgtphhtthhopehtjheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhirghngh
+    hshhgrnhhlrghisehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihg
+    uhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrd
+    gtohhmpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehtmhhgrhhoshhssehumhhitghhrdgvughu
+X-ME-Proxy: <xmx:AR1xaIzVtBXbniCSkA0lDSmvHdbamgOtT-pje6rpSUfS_9eZVAiluA>
+    <xmx:AR1xaFoAUcwJe0xgkWJL633vk3pMnVuH0_imm4fEIfHTO-tMwRkmbA>
+    <xmx:AR1xaC1AxfPQ2sJwzETsqnIP1dZqXXZZSYfpGXqLvzRxHUyqnwCO5A>
+    <xmx:AR1xaGA_WW4pxsyhp51qlS3VajqA83J5rbtVjOLSr6KQciuvwjCmtw>
+    <xmx:AR1xaLNBHbZBfDaR8vZKSYXCVOz5yJmF18MEij2h14oV1X5nZA88V4SD>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Jul 2025 10:17:37 -0400 (EDT)
+Date: Fri, 11 Jul 2025 07:17:36 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Tejun Heo <tj@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Benno Lossin <lossin@kernel.org>,
+	Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+Subject: Re: [PATCH v3] workqueue: rust: add delayed work items
+Message-ID: <aHEdAPFNId2bgoKu@Mac.home>
+References: <20250711-workqueue-delay-v3-1-3fe17b18b9d1@google.com>
+ <DB9A8OPZK3DZ.YVQPQQSD12MU@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF0000000A:EE_|BY5PR04MB6550:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66221016-fd79-4599-f869-08ddc085b3e3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RufeVU08fMlxqBFgf7sb4Z7EB0aNN7jaCVwJedPm7UImrtox/WFs+0P3DsT7?=
- =?us-ascii?Q?G6oDeQgnnSl6vIW+/CFb7SVJR8mawJSUz7n3vRhtv6iuw4PUNuFAfAv7PaTt?=
- =?us-ascii?Q?eWOk4vivmHv19MuDGsNHQxRgwNLa0g8X7LYl17YEyL4AjOp7gaQAxDJKYP5q?=
- =?us-ascii?Q?vRal/khveCFnqzU8dMb594X7rMnae56slM16aFGF//5IvKI2amltIVorx/kD?=
- =?us-ascii?Q?z6UMnCtu4fzUPc5LMzB5YqilcZWDTcqBwSr4+ueTDhUZ3vG56dipeN89OzMz?=
- =?us-ascii?Q?E/QHyfsNfuF0Ab5xzGRGQpJrNqnQp7xxWtqH9K8UkhLmfGGXuy82M8MFqWcv?=
- =?us-ascii?Q?GEd/KfFUm00364hEsIu6u13DjEh0EsXSPwsa4SidmYoK1jxUELVsZU8egXbJ?=
- =?us-ascii?Q?WDTYc0dKRAHT8BYfdivrG3Z1qjW0qsXFyrWizc8O2127bi9VV/zaOyA65nVG?=
- =?us-ascii?Q?gZ125j5UEcvWhB6QWApTCXq/JCb1Zhgy4tZ0O3Gm8IY32835XXlTeytWEAMm?=
- =?us-ascii?Q?SMeAoho3wKk3qn6lfmmyXcGgaGehAp65ZzsUSCVGBGCXkOaO8BJNod9A+KlH?=
- =?us-ascii?Q?5n3oVZWWj7R92YUA2JbrmZcH45Ll7JnskF6e/UhZz7etGWqk/gcBTrhOGQ08?=
- =?us-ascii?Q?T/cR1lMUwYwFZQTFv+Q50EVlVtQi3RY49twOM88963Uf7nI89fNbKR+jroqB?=
- =?us-ascii?Q?MpGX9ehuEPnV2HlMmlfR4EXTz+dw4yZQhSbqskydZZaD4GUH1grZDWJpbLP9?=
- =?us-ascii?Q?I/Gq85zB1uGh585X8QtFm9XBzKIJWpgOgccUQK9ha904xSNkq17Myk7YIc9s?=
- =?us-ascii?Q?c2kkUqFkLA+Jmbo1t0FGOTXBRa61dO0e904R+H0p1lJ0Xs1shXblMSIrZlp0?=
- =?us-ascii?Q?a5v1ovl7F2eZ7el5ZJsdYud8tP3TxlDvgFBkPTThx5YUpYSlaXwJRxhkCa40?=
- =?us-ascii?Q?vftUJ5dG7pRgfgnZu6u12/HjJo2XjRvuXKKerKusm/VP5s9hc7gUcJG87mXB?=
- =?us-ascii?Q?gpUeeZJA3DLKf/k1zd7WfiCgA/agxEhAwCeapkVBJW4kZGlXLhQamOgSDL/K?=
- =?us-ascii?Q?DIKJ2O6UCEtu/9wy8+8xpWn49EC0+cg58wID5Ekdo4YFmhPecfUwsP4m4gu3?=
- =?us-ascii?Q?oQXndTTYcHybWuxT8zUvBpACqWZiOGvzgU8lSHNgMDQAsfkn3g6W9cyHkGY7?=
- =?us-ascii?Q?P7NJNHSEHME85+6sjsnei3aWg63MBdxdjoTgW7XTyjDHicRfigaKWALBKQEZ?=
- =?us-ascii?Q?oLDquyEnnOxd94dvVsBMKhAizaKRANj8o2yG+hrGTSqv8rKuS85+QC7SzWu2?=
- =?us-ascii?Q?l+bbf9atpMSZ+A6UKi5hNLpGy+JRq93BwQ1zW/zKM4EaH8sqwOU00xlqMJWT?=
- =?us-ascii?Q?WMmBfor3JQQXis0txeM7CsILDGgB29PMwWMMhCYtfSXeqSruZVhUyr/iWZBe?=
- =?us-ascii?Q?GtUUT0JtjRAuNbmWdQ1rpzPXwZmTurvO/UZhoYYlAUBCUbPTYC67b/M+LZZu?=
- =?us-ascii?Q?4fDiIAev2XA+GHoz1/CKX0RtPaP45sE68f28?=
-X-Forefront-Antispam-Report:
-	CIP:204.77.163.244;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:edgetransport.garmin.com;PTR:extedge.garmin.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1102;
-X-OriginatorOrg: garmin.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 14:17:43.6985
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66221016-fd79-4599-f869-08ddc085b3e3
-X-MS-Exchange-CrossTenant-Id: 38d0d425-ba52-4c0a-a03e-2a65c8e82e2d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38d0d425-ba52-4c0a-a03e-2a65c8e82e2d;Ip=[204.77.163.244];Helo=[edgetransport.garmin.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF0000000A.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR04MB6550
-X-Authority-Analysis: v=2.4 cv=NdXm13D4 c=1 sm=1 tr=0 ts=68711d0c cx=c_pps a=cK+zxNpI8eKIrDTBxIddkg==:117 a=YA0UzX50FYCGjWi3QxTvkg==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=h8e1o3o8w34MuCiiGQrqVE4VwXA=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=Wb1JkmetP80A:10 a=qm69fr9Wx_0A:10 a=NbHB2C0EAAAA:8 a=A8m-6ulFSmVBG3JXLxQA:9 cc=ntf
-X-Proofpoint-GUID: W7ZCsK1gm4xThicScgHzaegefed0ELan
-X-Proofpoint-ORIG-GUID: W7ZCsK1gm4xThicScgHzaegefed0ELan
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDEwMSBTYWx0ZWRfX8ifpvHgkrfVO EWBjQbt1jiU3EeAs4gCKKCoQGefLo77iPlA25xXDdspTF735t1T61EfH/xuTXX+zFZeD/8F8aaf VyYcz1v6eB+xARoLcnPpiE3PrSwktmFqQxLExhgrVu1OuOxDPdw96R0Hcuex4RpBz1kxkoRc5gF
- vaF1tdVDG0o6PKIcSZ7zzb4zMIIspSQK0u2kknT/ItKiijif29h5kVndCOsG6dfbngghk7yNCES VG42oYExHePf6weDejuSIR02nuJvEDyir5uI84fMv6vv0iHXsmGoR9MlcQylxvRXhKIu7zbvOVt z8eQBrVUqRmk1GTnfOY3whCmK934yAMGwYI4zgt+eAWue2uHR7pdNIupGe7oW7fau8XwBKSShSx
- t0tDcGmEPBqaqyCummpf8kIGxShPIVgnBZDOs+And/94zLRPVoly+G07hXJUSVoUi4aOrfEA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_04,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- clxscore=1015 mlxscore=0 adultscore=0 suspectscore=0 bulkscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=notification
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2505280000
- definitions=main-2507110101
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB9A8OPZK3DZ.YVQPQQSD12MU@kernel.org>
 
-Fixes reset GPIO usage during probe by ensuring we retrieve the GPIO and
-take the device out of reset (if it defaults to being in reset) before
-we attempt to communicate with the device. This is achieved by moving
-the call to tcan4x5x_get_gpios() before tcan4x5x_find_version() and
-avoiding any device communication while getting the GPIOs. Once we
-determine the version, we can then take the knowledge of which GPIOs we
-obtained and use it to decide whether we need to disable the wake or
-state pin functions within the device.
+[Cc Hamza]
 
-This change is necessary in a situation where the reset GPIO is pulled
-high externally before the CPU takes control of it, meaning we need to
-explicitly bring the device out of reset before we can start
-communicating with it at all.
+On Fri, Jul 11, 2025 at 04:07:04PM +0200, Danilo Krummrich wrote:
+> Hi Alice,
+> 
+> On Fri Jul 11, 2025 at 9:59 AM CEST, Alice Ryhl wrote:
+> > This patch is being sent for use in the various Rust GPU drivers that
+> > are under development. It provides the additional feature of work items
+> > that are executed after a delay.
+> 
+> I thought I commented on this in a previous version already, but apparently I
+> haven't (was it a different thread maybe?).
+> 
+> For drivers, we should also support 'scoped' work items and worqueues, where
+> 'scoped' means limit the lifetime to the driver being bound to a device.
+> 
+> For better understanding, in C one would call this devm_alloc_workqueue(), which
+> would guarantee that the workqueue is terminated on device unbind. Similar for
+> individual work items on shared workqueues (such as the system ones), which
+> would be canceled synchronously on driver unbind.
 
-This also has the effect of fixing an issue where a reset of the device
-would occur after having called tcan4x5x_disable_wake(), making the
-original behavior not actually disable the wake. This patch should now
-disable wake or state pin functions well after the reset occurs.
+When using system workqueue, and at driver unbind time, you want to
+cancel the driver works instead of flushing them (i.e. wait until they
+get executed)? Canceling might be tricky (because currently we give away
+the ownership of the work item), and I think Hamaz has been looking into
+this as well, so add him.
 
-Signed-off-by: Brett Werling <brett.werling@garmin.com>
----
- drivers/net/can/m_can/tcan4x5x-core.c | 61 ++++++++++++++++++---------
- 1 file changed, 41 insertions(+), 20 deletions(-)
+But in general I agree scoped work is very useful.
 
-diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_can/tcan4x5x-core.c
-index 8edaa339d590..39b0b5277b11 100644
---- a/drivers/net/can/m_can/tcan4x5x-core.c
-+++ b/drivers/net/can/m_can/tcan4x5x-core.c
-@@ -343,21 +343,19 @@ static void tcan4x5x_get_dt_data(struct m_can_classdev *cdev)
- 		of_property_read_bool(cdev->dev->of_node, "ti,nwkrq-voltage-vio");
- }
- 
--static int tcan4x5x_get_gpios(struct m_can_classdev *cdev,
--			      const struct tcan4x5x_version_info *version_info)
-+static int tcan4x5x_get_gpios(struct m_can_classdev *cdev)
- {
- 	struct tcan4x5x_priv *tcan4x5x = cdev_to_priv(cdev);
- 	int ret;
- 
--	if (version_info->has_wake_pin) {
--		tcan4x5x->device_wake_gpio = devm_gpiod_get(cdev->dev, "device-wake",
--							    GPIOD_OUT_HIGH);
--		if (IS_ERR(tcan4x5x->device_wake_gpio)) {
--			if (PTR_ERR(tcan4x5x->device_wake_gpio) == -EPROBE_DEFER)
--				return -EPROBE_DEFER;
-+	tcan4x5x->device_wake_gpio = devm_gpiod_get_optional(cdev->dev,
-+							     "device-wake",
-+							     GPIOD_OUT_HIGH);
-+	if (IS_ERR(tcan4x5x->device_wake_gpio)) {
-+		if (PTR_ERR(tcan4x5x->device_wake_gpio) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
- 
--			tcan4x5x_disable_wake(cdev);
--		}
-+		tcan4x5x->device_wake_gpio = NULL;
- 	}
- 
- 	tcan4x5x->reset_gpio = devm_gpiod_get_optional(cdev->dev, "reset",
-@@ -369,14 +367,31 @@ static int tcan4x5x_get_gpios(struct m_can_classdev *cdev,
- 	if (ret)
- 		return ret;
- 
--	if (version_info->has_state_pin) {
--		tcan4x5x->device_state_gpio = devm_gpiod_get_optional(cdev->dev,
--								      "device-state",
--								      GPIOD_IN);
--		if (IS_ERR(tcan4x5x->device_state_gpio)) {
--			tcan4x5x->device_state_gpio = NULL;
--			tcan4x5x_disable_state(cdev);
--		}
-+	tcan4x5x->device_state_gpio = devm_gpiod_get_optional(cdev->dev,
-+							      "device-state",
-+							      GPIOD_IN);
-+	if (IS_ERR(tcan4x5x->device_state_gpio))
-+		tcan4x5x->device_state_gpio = NULL;
-+
-+	return 0;
-+}
-+
-+static int tcan4x5x_check_gpios(struct m_can_classdev *cdev,
-+				const struct tcan4x5x_version_info *version_info)
-+{
-+	struct tcan4x5x_priv *tcan4x5x = cdev_to_priv(cdev);
-+	int ret;
-+
-+	if (version_info->has_wake_pin && !tcan4x5x->device_wake_gpio) {
-+		ret = tcan4x5x_disable_wake(cdev);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (version_info->has_state_pin && !tcan4x5x->device_state_gpio) {
-+		ret = tcan4x5x_disable_state(cdev);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	return 0;
-@@ -468,15 +483,21 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
- 		goto out_m_can_class_free_dev;
- 	}
- 
-+	ret = tcan4x5x_get_gpios(mcan_class);
-+	if (ret) {
-+		dev_err(&spi->dev, "Getting gpios failed %pe\n", ERR_PTR(ret));
-+		goto out_power;
-+	}
-+
- 	version_info = tcan4x5x_find_version(priv);
- 	if (IS_ERR(version_info)) {
- 		ret = PTR_ERR(version_info);
- 		goto out_power;
- 	}
- 
--	ret = tcan4x5x_get_gpios(mcan_class, version_info);
-+	ret = tcan4x5x_check_gpios(mcan_class, version_info);
- 	if (ret) {
--		dev_err(&spi->dev, "Getting gpios failed %pe\n", ERR_PTR(ret));
-+		dev_err(&spi->dev, "Checking gpios failed %pe\n", ERR_PTR(ret));
- 		goto out_power;
- 	}
- 
--- 
-2.50.1
+Regards,
+Boqun
 
+> 
+> This is very useful for drivers, since it allows to provide a &Device<Bound>
+> within the work's callback, which allows drivers to access device resources
+> safely and directly without additional overhead.
 
