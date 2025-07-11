@@ -1,279 +1,450 @@
-Return-Path: <linux-kernel+bounces-727491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E04CB01AF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:46:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527F5B01B20
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A6768E1D49
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B923B2E73
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA1A2D46CF;
-	Fri, 11 Jul 2025 11:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01C42EA73C;
+	Fri, 11 Jul 2025 11:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q6adliW9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SrhJM/yE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7AA28DF04;
-	Fri, 11 Jul 2025 11:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E329B2EA499;
+	Fri, 11 Jul 2025 11:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752234199; cv=none; b=hr/Hl+D4zwRsWMl02QY+Yw7CSbn2RrR1XgFJ6vqpLo8El/MdtVWE3aWsnIx5188yhKVf1NjJVNLj7hGEw/Q+KQwlpz3qD4p5MXNqhcp6ziP1+5ACuQu/vEr0EvFHdVQYDkCvR5gIym6HHe29glvmMdgL9TVqVuJ1rhWNT2AiBI8=
+	t=1752234265; cv=none; b=nSX9LslbNhOvf23JEnDEhvoMEkM5QTOCjU4IM6ykH+/I552FIKL3S5my0hORSFBdmQjzwaHAlLEP3hKn19TVx2tlgPC8mPHrZd7mLOMX0O4/XLgE4MYxlsFAK7nbBRr3nwupB9W6s2Emvk1y11fdj9is2V1h58C8oinK3cgVCrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752234199; c=relaxed/simple;
-	bh=pbORTqZjPACVm8KRmdOHNQU9CwZ29ZHm6z/OwerpFJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JCd5pO7D6Wp4q5jN9Tsj5gtoYtLQE30t/+4PsvN+8zpTl2dyA4EEtBMFxv6IPYmmDHy8ZcUMfyRWtp30o1X/OhHOd2iIPzPfxFagulxQobBn6y7pH1o2JfiP3C+ulQ0K78nTIWgUSWAJa4szu7i84mOQZx6P6KPpbBtxlJJLuKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q6adliW9; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752234198; x=1783770198;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=pbORTqZjPACVm8KRmdOHNQU9CwZ29ZHm6z/OwerpFJk=;
-  b=Q6adliW9rJgIVKPB1mF+2nlHyY3/pq9ZqUgqQq5o1PezjGf/hLRKC270
-   g6jmGaD4bJ1gZ4hg6VLQ312vPTvT2lb6FJEtyXZQOoU/dNVYmVUwGY+4H
-   tYZQwe2G0wVMoLfQtVBsiEkT52OOMDEdsM55lneaytCge3mQ0uNyhWWm1
-   m8T+Fwrjo3IEFTyD7eW0/ehsuQDcWp2rXSG6zhxV3edeouM6MiHmSmuIx
-   6LZ9VkwBZUNrIcUPLZ0C8dSnhrXOE3vdTvwpH2vb8GIRG59oGyeOy8e8W
-   4QHsNhw4LSpkyxzLo60VeYZKzgG7p1zQoL/r1rJ1OgabHTJcgAUTpFK0k
-   g==;
-X-CSE-ConnectionGUID: qJkgD570TQuJvmgKBs0D+g==
-X-CSE-MsgGUID: 8e0xTuh+SzaAHfparjkMSA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="53639604"
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="53639604"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 04:43:16 -0700
-X-CSE-ConnectionGUID: P5zZNmYBRZSw/5+HFozIkw==
-X-CSE-MsgGUID: fGdpqhPzRqm7yf8rdyqA9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="157073391"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 11 Jul 2025 04:43:14 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 340431A1; Fri, 11 Jul 2025 14:43:13 +0300 (EEST)
-Date: Fri, 11 Jul 2025 14:43:13 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Marcos Del Sol Vives <marcos@orca.pet>,
-	William Breathitt Gray <wbg@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2] gpio: vortex: add new GPIO device driver
-Message-ID: <aHD40TD8MLug0C6b@black.fi.intel.com>
-References: <20250709091542.968968-1-marcos@orca.pet>
+	s=arc-20240116; t=1752234265; c=relaxed/simple;
+	bh=kNIg3hkkOzE1843fVUQVqCA9SmYe5SbYcBp0IcJb8eE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=bnOEuJr73JWqj/RcMHjEw6W62aGgClDcug038/R9z+wbKk0+oEpYNElnY215EDJre352XW4ahROFHYiKsSWFfLEzja4KjAh0GTOKTay2zW9Qerth5U1RsLGRz3m7vY5DaiTO7ggtH5CPQAq4ONKxh6wpnQEzjD21Bv3fFSWEius=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SrhJM/yE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE335C4CEF4;
+	Fri, 11 Jul 2025 11:44:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752234264;
+	bh=kNIg3hkkOzE1843fVUQVqCA9SmYe5SbYcBp0IcJb8eE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=SrhJM/yEE4ktjpHGsABvW/G91MYd6vxV7snrc7i9+kCqM+TnhZ9zz667iAl5JNNZi
+	 P5mC9VNWX/Dk97IceOSZY7Rs4t1+T4oeTGCiWV7bndbgYaHwVh4Ad9hmrH1it1tmqe
+	 vP4K+3qcrSSDD7lqFB/RIpaahj1LXmj5LzE6/d43l61zTz4gL1t8pRc1ToFswkqHZM
+	 MLjPTlU5hFwiJ15kgBOQOW6i8FT95dITsj+7mt22EguRq2Hd5rmakzNGsK2iTcP4p8
+	 BLTwDbBJddX/TguSojmjYAj6N1xy3uITiNbgZmaEkDAq59dq3H+0kpQBC+diUA05T3
+	 oP8xO5QJ5dCUw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Date: Fri, 11 Jul 2025 13:43:13 +0200
+Subject: [PATCH v3 12/16] rnull: enable configuration via `configfs`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250709091542.968968-1-marcos@orca.pet>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250711-rnull-up-v6-16-v3-12-3a262b4e2921@kernel.org>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+In-Reply-To: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10886;
+ i=a.hindborg@kernel.org; h=from:subject:message-id;
+ bh=kNIg3hkkOzE1843fVUQVqCA9SmYe5SbYcBp0IcJb8eE=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBocPjUK0FtDzMzsNcedDP78IaboOs5lpCvhB7ol
+ 9aI1ffsl2iJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaHD41AAKCRDhuBo+eShj
+ dxg9EACtZN3kH8xV1R4zdsh5hc1Im/NifutQhHvxiIWpXLi6e6P8s3RevmKZ2gmE8U+6LQIFwC3
+ kGq1vjsLs39qSr9za+R4z8SSGST8iqf4rBQ956hXVybJ24Stqe0Cck5W9td0mMtIna4UglCrhcn
+ s1yMgjZVS4nUDHv4iYuXrzvD48X//mpeyJMY8ip3Oleb/w8UFQPN18aZpz/x6H1twAamK6THwOF
+ +laaxnoi9B90cemvVyxbWrxZxnstIav7w9dbBvLK8J91VJKDR3WlRU9obCiE1Cq1ZMuDZC2kcEv
+ wpsUL1Xis0oymntt1UBk95y6NpJaBbUnNB+eeDINIXtTjQDmDDKzpHIRyvLOqO5yW9m8qcws9Wb
+ /gaXc05KTNqKUznccwMCKhAZCqQDdMI7t3ALdo4lWMwNWFSbksirYo4VxBXF+bLBVCIRxjss9L+
+ nv+XZ9iCsb4T3r9cxJnS6rnGEUrd1nxzoYtvKtO71wsb3Xr+TGM0u8pGwr9kGNBwKSnGROHMhDn
+ xdblVkrVxEW+3bhfbhyETQ+CdYroX0FS6+k7M0kY2B+T0b08kABD4w9Bd8Iz5meQNcK1/uvL3Bz
+ EZz2GFY5ntCK5ikaCS3laogMURlN+2TDm5XhK/JZCWktp8LgM/9mfWRIMOKNuP+CnW5cUS/sy7A
+ FFHTiWQaFqfwFkQ==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-+Cc: William,
-who is an expert in embedded industrial x86 platforms and might help with this.
+Allow rust null block devices to be configured and instantiated via
+`configfs`.
 
-Bart, thanks for Cc'ing me. I have tons of questions and comments regarding this.
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+---
+ drivers/block/rnull/Kconfig      |   2 +-
+ drivers/block/rnull/configfs.rs  | 220 +++++++++++++++++++++++++++++++++++++++
+ drivers/block/rnull/rnull.rs     |  58 ++++++-----
+ rust/kernel/block/mq/gen_disk.rs |   2 +-
+ 4 files changed, 253 insertions(+), 29 deletions(-)
 
-On Wed, Jul 09, 2025 at 11:15:40AM +0200, Marcos Del Sol Vives wrote:
-> Add a new simple GPIO device driver for Vortex86 lines of SoCs,
-> implemented according to their programming reference manual [1].
-> 
-> This is required for detecting the status of the poweroff button and
-> performing the poweroff sequence on ICOP eBox computers.
-> 
-> IRQs are not implemented as they are available for less than half the
-> GPIO pins, and they are not the ones required for the poweroff stuff, so
-> polling will be required anyway.
-
-> [1]: http://www.dmp.com.tw/tech/DMP_Vortex86_Series_Software_Programming_Reference_091216.pdf
-> 
-
-Make this a Link tag by removing a blank line and converting above to
-
-Link: http://www.dmp.com.tw/tech/DMP_Vortex86_Series_Software_Programming_Reference_091216.pdf [1]
-
-> Signed-off-by: Marcos Del Sol Vives <marcos@orca.pet>
-
-But the first question first. Is this not a dead code? I mean I have heard that
-i486SX is not supported in Linux kernel as there is no more FP emu layer. Of
-course it might be not a problem in some cases, but still. Second point is that
-there is an ongoing (still ongoing?) discussion on removal i486 support completely.
-Would it affect these SoCs? (According to the shared manual seems the answer is
-"yes, it will".
-
-...
-
-> +	help
-> +	  Driver to access the five 8-bit bidirectional GPIO ports present on
-> +	  all DM&P Vortex86 SoCs.
-
-...
-
-> + *  Based on the it87xx GPIO driver by Diego Elio Pettenò
-
-Why that driver can't be reused?
-
-> + */
-
-...
-
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-
-Why? The driver should use dev_*() macros which will uniquely define the device
-for what the message is printed.
-
-...
-
-> +#include <linux/types.h>
-> +#include <linux/errno.h>
-> +#include <linux/module.h>
-> +#include <linux/ioport.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/platform_device.h>
-
-This should be sorted alphabetically. Also follow IWYU principle.
-
-...
-
-> +static DEFINE_SPINLOCK(gpio_lock);
-
-Global lock? Why?
-
-...
-
-> +static int vortex_gpio_get(struct gpio_chip *chip, unsigned int gpio_num)
-> +{
-> +	uint8_t port = gpio_num / GPIO_PER_PORT;
-> +	uint8_t bit  = gpio_num % GPIO_PER_PORT;
-> +	uint8_t val;
-
-Use kernel types for kernel. Include types.h (you probably missed it anyway)
-and then convert above to u8.
-
-> +	val = inb(GPIO_DATA_BASE + port);
-
-Better to use ioread8() / iowrite8() and "map" IO ports (see, for example,
-how drivers/pinctrl/intel-pinctrl-lynxpoint.c does).
-
-> +	return !!(val & (1 << bit));
-
-BIT() from bits.h will help a lot.
-
-> +}
-> +
-> +static int vortex_gpio_direction_in(struct gpio_chip *chip, unsigned int gpio_num)
-> +{
-> +	uint8_t port = gpio_num / GPIO_PER_PORT;
-> +	uint8_t bit  = gpio_num % GPIO_PER_PORT;
-> +	unsigned long flags;
-> +	uint8_t dir;
-
-All the same comments, plus...
-
-> +	spin_lock_irqsave(&gpio_lock, flags);
-
-...use APIs from cleanup.h, i.e. guard() in this case.
-
-> +	dir = inb(GPIO_DIRECTION_BASE + port);
-> +	dir &= ~(1 << bit); /* 0 = input */
-> +	outb(dir, GPIO_DIRECTION_BASE + port);
-> +
-> +	spin_unlock_irqrestore(&gpio_lock, flags);
-> +
-> +	return 0;
-> +}
-
-...
-
-So, the above is pretty much simple, why doesn't it use gpio-regmap with the
-respective configuration? Moreover, SX and DX variants are differ since the
-latter one may provide an IRQ chip, for which gpio-regmap also can be used,
-i.o.w. with that done, it will be quite easy to support both.
-
-...
-
-> +static int vortex_gpio_probe(struct platform_device *pdev)
-> +{
-> +	/* Set up GPIO labels */
-> +	for (int i = 0; i < GPIO_COUNT; i++) {
-> +		sprintf(labels[i], "vortex_gp%u%u", i / 8, i % 8);
-> +		labels_table[i] = &labels[i][0];
-
-'&...[0]' is redundant.
-
-> +	}
-
-Why this can't be made static once?
-
-> +	return devm_gpiochip_add_data(&pdev->dev, &gpio_chip, NULL);
-> +}
-> +
-> +static struct platform_driver vortex_gpio_driver = {
-> +	.driver = {
-> +		.name = KBUILD_MODNAME,
-
-> +		.owner = THIS_MODULE,
-
-This field is not needed for ages (15+ years). Is this driver got dusted for this long?
-
-> +	},
-> +	.probe = vortex_gpio_probe,
-> +};
-
-...
-
-> +static struct resource vortex_gpio_resources[] = {
-> +	DEFINE_RES_IO_NAMED(GPIO_DATA_BASE, GPIO_PORTS, KBUILD_MODNAME " data"),
-> +	DEFINE_RES_IO_NAMED(GPIO_DIRECTION_BASE, GPIO_PORTS, KBUILD_MODNAME " dir"),
-
-Named resources? Why?
-
-> +};
-
-...
-
-> +static int __init vortex_gpio_init(void)
-> +{
-> +	if (boot_cpu_data.x86_vendor != X86_VENDOR_VORTEX) {
-> +		pr_err("Not a Vortex86 CPU, refusing to load\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	pdev = platform_create_bundle(&vortex_gpio_driver, vortex_gpio_probe,
-> +			vortex_gpio_resources, ARRAY_SIZE(vortex_gpio_resources),
-> +			NULL, 0);
-> +	return PTR_ERR_OR_ZERO(pdev);
-> +}
-
-Oh my... Can you elaborate more on this ugly hack. Why do we need this at all?
-What's wrong with the BIOS or other firmware that is provided?
-(The documentation mentions BIOS, btw.)
-
-Also, is this anyhow visible as a PCI device? Is it part of LPC (docs suggests
-so for SX, but not so clear in DX diagram)?
-
-...
-
-On top of that the GPIO3 is marked as one with the pin muxing. Where is the driver
-for it? Or what are the plans about it?
-
-GPIO4 seems muxed with UART, so also subject to pin muxing.
+diff --git a/drivers/block/rnull/Kconfig b/drivers/block/rnull/Kconfig
+index 6dc5aff96bf4..7bc5b376c128 100644
+--- a/drivers/block/rnull/Kconfig
++++ b/drivers/block/rnull/Kconfig
+@@ -4,7 +4,7 @@
+ 
+ config BLK_DEV_RUST_NULL
+ 	tristate "Rust null block driver (Experimental)"
+-	depends on RUST
++	depends on RUST && CONFIGFS_FS
+ 	help
+ 	  This is the Rust implementation of the null block driver. Like
+ 	  the C version, the driver allows the user to create virutal block
+diff --git a/drivers/block/rnull/configfs.rs b/drivers/block/rnull/configfs.rs
+new file mode 100644
+index 000000000000..6c0e3bbb36ec
+--- /dev/null
++++ b/drivers/block/rnull/configfs.rs
+@@ -0,0 +1,220 @@
++// SPDX-License-Identifier: GPL-2.0
++
++use super::{NullBlkDevice, THIS_MODULE};
++use core::fmt::Write;
++use kernel::{
++    block::mq::gen_disk::{GenDisk, GenDiskBuilder},
++    c_str,
++    configfs::{self, AttributeOperations},
++    configfs_attrs, new_mutex,
++    page::PAGE_SIZE,
++    prelude::*,
++    str::CString,
++    sync::Mutex,
++};
++use pin_init::PinInit;
++
++pub(crate) fn subsystem() -> impl PinInit<kernel::configfs::Subsystem<Config>, Error> {
++    let item_type = configfs_attrs! {
++        container: configfs::Subsystem<Config>,
++        data: Config,
++        child: DeviceConfig,
++        attributes: [
++            features: 0,
++        ],
++    };
++
++    kernel::configfs::Subsystem::new(c_str!("rnull"), item_type, try_pin_init!(Config {}))
++}
++
++#[pin_data]
++pub(crate) struct Config {}
++
++#[vtable]
++impl AttributeOperations<0> for Config {
++    type Data = Config;
++
++    fn show(_this: &Config, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
++        let mut writer = kernel::str::Formatter::new(page);
++        writer.write_str("blocksize,size,rotational\n")?;
++        Ok(writer.bytes_written())
++    }
++}
++
++#[vtable]
++impl configfs::GroupOperations for Config {
++    type Child = DeviceConfig;
++
++    fn make_group(
++        &self,
++        name: &CStr,
++    ) -> Result<impl PinInit<configfs::Group<DeviceConfig>, Error>> {
++        let item_type = configfs_attrs! {
++            container: configfs::Group<DeviceConfig>,
++            data: DeviceConfig,
++            attributes: [
++                // Named for compatibility with C null_blk
++                power: 0,
++                blocksize: 1,
++                rotational: 2,
++                size: 3,
++            ],
++        };
++
++        Ok(configfs::Group::new(
++            name.try_into()?,
++            item_type,
++            // TODO: cannot coerce new_mutex!() to impl PinInit<_, Error>, so put mutex inside
++            try_pin_init!( DeviceConfig {
++                data <- new_mutex!( DeviceConfigInner {
++                    powered: false,
++                    block_size: 4096,
++                    rotational: false,
++                    disk: None,
++                    capacity_mib: 4096,
++                    name: name.try_into()?,
++                }),
++            }),
++        ))
++    }
++}
++
++#[pin_data]
++pub(crate) struct DeviceConfig {
++    #[pin]
++    data: Mutex<DeviceConfigInner>,
++}
++
++#[pin_data]
++struct DeviceConfigInner {
++    powered: bool,
++    name: CString,
++    block_size: u32,
++    rotational: bool,
++    capacity_mib: u64,
++    disk: Option<GenDisk<NullBlkDevice>>,
++}
++
++#[vtable]
++impl configfs::AttributeOperations<0> for DeviceConfig {
++    type Data = DeviceConfig;
++
++    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
++        let mut writer = kernel::str::Formatter::new(page);
++
++        if this.data.lock().powered {
++            writer.write_fmt(fmt!("1\n"))?;
++        } else {
++            writer.write_fmt(fmt!("0\n"))?;
++        }
++
++        Ok(writer.bytes_written())
++    }
++
++    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
++        let power_op: bool = core::str::from_utf8(page)?
++            .trim()
++            .parse::<u8>()
++            .map_err(|_| kernel::error::code::EINVAL)?
++            != 0;
++
++        let mut guard = this.data.lock();
++
++        if !guard.powered && power_op {
++            guard.disk = Some(NullBlkDevice::new(
++                &guard.name,
++                guard.block_size,
++                guard.rotational,
++                guard.capacity_mib,
++            )?);
++            guard.powered = true;
++        } else if guard.powered && !power_op {
++            drop(guard.disk.take());
++            guard.powered = false;
++        }
++
++        Ok(())
++    }
++}
++
++#[vtable]
++impl configfs::AttributeOperations<1> for DeviceConfig {
++    type Data = DeviceConfig;
++
++    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
++        let mut writer = kernel::str::Formatter::new(page);
++        writer.write_fmt(fmt!("{}\n", this.data.lock().block_size))?;
++        Ok(writer.bytes_written())
++    }
++
++    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
++        if this.data.lock().powered {
++            return Err(EBUSY);
++        }
++
++        let text = core::str::from_utf8(page)?.trim();
++        let value = text
++            .parse::<u32>()
++            .map_err(|_| kernel::error::code::EINVAL)?;
++
++        GenDiskBuilder::validate_block_size(value)?;
++        this.data.lock().block_size = value;
++        Ok(())
++    }
++}
++
++#[vtable]
++impl configfs::AttributeOperations<2> for DeviceConfig {
++    type Data = DeviceConfig;
++
++    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
++        let mut writer = kernel::str::Formatter::new(page);
++
++        if this.data.lock().rotational {
++            writer.write_fmt(fmt!("1\n"))?;
++        } else {
++            writer.write_fmt(fmt!("0\n"))?;
++        }
++
++        Ok(writer.bytes_written())
++    }
++
++    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
++        if this.data.lock().powered {
++            return Err(EBUSY);
++        }
++
++        this.data.lock().rotational = core::str::from_utf8(page)?
++            .trim()
++            .parse::<u8>()
++            .map_err(|_| kernel::error::code::EINVAL)?
++            != 0;
++
++        Ok(())
++    }
++}
++
++#[vtable]
++impl configfs::AttributeOperations<3> for DeviceConfig {
++    type Data = DeviceConfig;
++
++    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
++        let mut writer = kernel::str::Formatter::new(page);
++        writer.write_fmt(fmt!("{}\n", this.data.lock().capacity_mib))?;
++        Ok(writer.bytes_written())
++    }
++
++    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
++        if this.data.lock().powered {
++            return Err(EBUSY);
++        }
++
++        let text = core::str::from_utf8(page)?.trim();
++        let value = text
++            .parse::<u64>()
++            .map_err(|_| kernel::error::code::EINVAL)?;
++
++        this.data.lock().capacity_mib = value;
++        Ok(())
++    }
++}
+diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
+index d07e76ae2c13..d09bc77861e4 100644
+--- a/drivers/block/rnull/rnull.rs
++++ b/drivers/block/rnull/rnull.rs
+@@ -1,28 +1,26 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+ //! This is a Rust implementation of the C null block driver.
+-//!
+-//! Supported features:
+-//!
+-//! - blk-mq interface
+-//! - direct completion
+-//! - block size 4k
+-//!
+-//! The driver is not configurable.
++
++mod configfs;
+ 
+ use kernel::{
+     alloc::flags,
+-    block::mq::{
++    block::{
+         self,
+-        gen_disk::{self, GenDisk},
+-        Operations, TagSet,
++        mq::{
++            self,
++            gen_disk::{self, GenDisk},
++            Operations, TagSet,
++        },
+     },
+     error::Result,
+-    new_mutex, pr_info,
++    pr_info,
+     prelude::*,
+-    sync::{Arc, Mutex},
++    sync::Arc,
+     types::ARef,
+ };
++use pin_init::PinInit;
+ 
+ module! {
+     type: NullBlkModule,
+@@ -35,33 +33,39 @@
+ #[pin_data]
+ struct NullBlkModule {
+     #[pin]
+-    _disk: Mutex<GenDisk<NullBlkDevice>>,
++    configfs_subsystem: kernel::configfs::Subsystem<configfs::Config>,
+ }
+ 
+ impl kernel::InPlaceModule for NullBlkModule {
+     fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> {
+         pr_info!("Rust null_blk loaded\n");
+ 
+-        // Use a immediately-called closure as a stable `try` block
+-        let disk = /* try */ (|| {
+-            let tagset = Arc::pin_init(TagSet::new(1, 256, 1), flags::GFP_KERNEL)?;
+-
+-            gen_disk::GenDiskBuilder::new()
+-                .capacity_sectors(4096 << 11)
+-                .logical_block_size(4096)?
+-                .physical_block_size(4096)?
+-                .rotational(false)
+-                .build(format_args!("rnullb{}", 0), tagset)
+-        })();
+-
+         try_pin_init!(Self {
+-            _disk <- new_mutex!(disk?, "nullb:disk"),
++            configfs_subsystem <- configfs::subsystem(),
+         })
+     }
+ }
+ 
+ struct NullBlkDevice;
+ 
++impl NullBlkDevice {
++    fn new(
++        name: &CStr,
++        block_size: u32,
++        rotational: bool,
++        capacity_mib: u64,
++    ) -> Result<GenDisk<Self>> {
++        let tagset = Arc::pin_init(TagSet::new(1, 256, 1), flags::GFP_KERNEL)?;
++
++        gen_disk::GenDiskBuilder::new()
++            .capacity_sectors(capacity_mib << (20 - block::SECTOR_SHIFT))
++            .logical_block_size(block_size)?
++            .physical_block_size(block_size)?
++            .rotational(rotational)
++            .build(fmt!("{}", name.to_str()?), tagset)
++    }
++}
++
+ #[vtable]
+ impl Operations for NullBlkDevice {
+     #[inline(always)]
+diff --git a/rust/kernel/block/mq/gen_disk.rs b/rust/kernel/block/mq/gen_disk.rs
+index 39be2a31337f..7ab049ec591b 100644
+--- a/rust/kernel/block/mq/gen_disk.rs
++++ b/rust/kernel/block/mq/gen_disk.rs
+@@ -50,7 +50,7 @@ pub fn rotational(mut self, rotational: bool) -> Self {
+ 
+     /// Validate block size by verifying that it is between 512 and `PAGE_SIZE`,
+     /// and that it is a power of two.
+-    fn validate_block_size(size: u32) -> Result {
++    pub fn validate_block_size(size: u32) -> Result {
+         if !(512..=bindings::PAGE_SIZE as u32).contains(&size) || !size.is_power_of_two() {
+             Err(error::code::EINVAL)
+         } else {
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.47.2
 
 
 
