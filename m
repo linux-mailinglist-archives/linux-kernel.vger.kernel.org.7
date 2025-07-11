@@ -1,138 +1,131 @@
-Return-Path: <linux-kernel+bounces-727341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B21B018B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:49:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D2CB018B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F16776615C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:49:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BB0B7662C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5DD27F009;
-	Fri, 11 Jul 2025 09:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="khfDsRpS"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7071A27D781;
+	Fri, 11 Jul 2025 09:49:21 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E5827CCEE;
-	Fri, 11 Jul 2025 09:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DB827C15A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752227361; cv=none; b=BzjxpKLvmMV0sz9GBLmm457skwRUoCGFvsq74K8kOG9iqx+lyM/msUNJhA+6yKy7KQdyyXoifINKQtDaQsE1n+3l4GktYn4xYCIrtU+7mFU8Cjk8quSKVnwWUWbHuhhZVe3qdl+MinOn/IsrC/7NuPkJUBotnDKRM/QUF30o4Ms=
+	t=1752227361; cv=none; b=mbomd4dfokgIyBM18Vau1VXPEzTfEjNCIfdq5Jiytzt/x6R4AsyAP1wbkpsg45OOyYjTYBESjlSEmpGSrlLUyhF87t8e7ofFBrivKk3xcwYHJ5LWmO+Zt3IcLCDFx+lrtZvS6iGh3w/6RzKTXqQfUIH9iVjGj7O+I1SN5lEEunI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752227361; c=relaxed/simple;
-	bh=OFqeW5JZMl9wQNRy6aXIuRDpt7LacH3LfdXBhsVYWcE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=q8lNZ75WRbiTkhS+E0tZs+IumQWeu1wioMYqYeJc1H81+AKrh7qwGdYx55TxURdMW64HQtR4enfTk1kD/v87VA+rarfVBymHfi6xHcpgl2dGjRke3RhxEF0nRY+K6BfEQAnLUeppBENaA8ABqZq00lMe/4i91J4k3bwbaTsKBd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=khfDsRpS; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1752227351;
-	bh=gZBQkqjNAPMPDfAyWwddtLFuhgnMCaqiylfHI707JNs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=khfDsRpSX1FhjrvbPEY/FfqEdlSApy8cs2OjDQSV3kDf4fPG5k6WoUFn62OOGIIe6
-	 D3LzfEyzAX19CHj9QQX+IzkK02ckal6fOrhW94JsPnQieYjwVKWX4uStK0n9IGV6ru
-	 qQbJMZhdMLpzej+trRXvbro1lRrRnTGb45vnF4RY=
-Received: from [IPv6:110::1f] (unknown [IPv6:2409:874d:200:3037::3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id D941A65F62;
-	Fri, 11 Jul 2025 05:49:03 -0400 (EDT)
-Message-ID: <6856a981f0505233726af0301a1fb1331acdce1c.camel@xry111.site>
-Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
-From: Xi Ruoyao <xry111@xry111.site>
-To: Christian Brauner <brauner@kernel.org>, Nam Cao <namcao@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>, Valentin Schneider	
- <vschneid@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara	
- <jack@suse.cz>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, John
- Ogness	 <john.ogness@linutronix.de>, Clark Williams <clrkwllms@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-rt-devel@lists.linux.dev,
- linux-rt-users@vger.kernel.org, Joe Damato	 <jdamato@fastly.com>, Martin
- Karsten <mkarsten@uwaterloo.ca>, Jens Axboe	 <axboe@kernel.dk>
-Date: Fri, 11 Jul 2025 17:48:56 +0800
-In-Reply-To: <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
-References: <20250701-wochen-bespannt-33e745d23ff6@brauner>
-	 <cda3b07998b39b7d46f10394c232b01a778d07a9.camel@xry111.site>
-	 <20250710034805.4FtG7AHC@linutronix.de>
-	 <20250710040607.GdzUE7A0@linutronix.de>
-	 <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
-	 <20250710062127.QnaeZ8c7@linutronix.de>
-	 <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
-	 <20250710083236.V8WA6EFF@linutronix.de>
-	 <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
-	 <20250711050217.OMtx7Cz6@linutronix.de>
-	 <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	bh=y5RotNcW0Y5gIVty/I/E5cUGKRe0IULGdW19fLqEzdo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tGcDc1DoBJYmjZC6ObnNU+Mr6jtxAGgMNfvXpLKHuEzfPqieq21MOONTZfXMXm0g59EwYkV51ylU+ovMXGhTuR1YGpHJncq39der4GeEX5G8eFTgMnn2D2X9MKerFB3NjPbJ0/2gpHIC2mGYAHzkLduClDDJrWbPQhxXphBpydw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uaANU-0007fU-6b; Fri, 11 Jul 2025 11:49:12 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uaANS-007tqG-1E;
+	Fri, 11 Jul 2025 11:49:10 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uaANS-004Yg7-11;
+	Fri, 11 Jul 2025 11:49:10 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	netdev@vger.kernel.org,
+	Andre Edich <andre.edich@microchip.com>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: [PATCH net v3 0/3] net: phy: smsc: use IRQ + relaxed polling to fix missed link-up
+Date: Fri, 11 Jul 2025 11:49:06 +0200
+Message-Id: <20250711094909.1086417-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, 2025-07-11 at 11:44 +0200, Christian Brauner wrote:
-> On Fri, Jul 11, 2025 at 07:02:17AM +0200, Nam Cao wrote:
-> > On Thu, Jul 10, 2025 at 05:47:57PM +0800, Xi Ruoyao wrote:
-> > > It didn't work :(.
-> >=20
-> > Argh :(
-> >=20
-> > Another possibility is that you are running into event starvation probl=
-em.
-> >=20
-> > Can you give the below patch a try? It is not the real fix, the patch h=
-urts
-> > performance badly. But if starvation is really your problem, it should
-> > ameliorate the situation:
-> >=20
-> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > index 895256cd2786..0dcf8e18de0d 100644
-> > --- a/fs/eventpoll.c
-> > +++ b/fs/eventpoll.c
-> > @@ -1764,6 +1764,8 @@ static int ep_send_events(struct eventpoll *ep,
-> > =C2=A0		__llist_add(n, &txlist);
-> > =C2=A0	}
-> > =C2=A0
-> > +	struct llist_node *shuffle =3D llist_del_all(&ep->rdllist);
-> > +
-> > =C2=A0	llist_for_each_entry_safe(epi, tmp, txlist.first, rdllink) {
-> > =C2=A0		init_llist_node(&epi->rdllink);
-> > =C2=A0
-> > @@ -1778,6 +1780,13 @@ static int ep_send_events(struct eventpoll *ep,
-> > =C2=A0		}
-> > =C2=A0	}
-> > =C2=A0
-> > +	if (shuffle) {
-> > +		struct llist_node *last =3D shuffle;
-> > +		while (last->next)
-> > +			last =3D last->next;
-> > +		llist_add_batch(shuffle, last, &ep->rdllist);
-> > +	}
-> > +
+This series makes the SMSC LAN8700 (as used in LAN9512 and similar USB
+adapters) reliable again in configurations where it is forced to 10 Mb/s
+and the link partner still advertises autonegotiation.
 
-Sadly, still no luck.
+In this scenario, the PHY may miss the final link-up interrupt, causing
+the network interface to remain down even though a valid link is
+present.
 
-> > =C2=A0	__pm_relax(ep->ws);
-> > =C2=A0	mutex_unlock(&ep->mtx);
-> > =C2=A0
->=20
-> I think we should revert the fix so we have time to fix it properly
-> during v6.17+. This patch was a bit too adventurous for a fix in the
-> first place tbh.
+To address this:
 
-I tried to understand the code but all the comments seem outdated (they
-still mention the removed rwlock).  IMO we'd at least clean them up...
-and maybe we can notice something erratic.
+Patch 1 – phylib: Enable polling if the driver implements
+get_next_update_time(). This ensures the state machine is active even
+without update_stats().
 
---=20
-Xi Ruoyao <xry111@xry111.site>
+Patch 2 – phylib: Allow drivers to return PHY_STATE_IRQ to explicitly
+disable polling.
+
+Patch 3 – smsc: Implement get_next_update_time() with adaptive 1 Hz
+polling for up to 30 seconds after the last interrupt in the affected
+10M autoneg-off mode.  All other configurations rely on IRQs only.
+
+Testing:
+
+The LAN9512 (LAN8700 core) was tested against an Intel I350 NIC using
+baseline, parallel-detection, and advertisement test suites. All
+relevant tests passed.
+
+Changes in v3:
+- handle conflicting configuration if update_stats are supported
+
+Changes in v2:
+- Introduced explicit disable polling via PHY_STATE_IRQ
+- Changed the workaround logic to apply 1 Hz polling only for 30 seconds
+  after the last IRQ
+- Dropped relaxed 30s polling while link is up
+- Reworded commit messages and comments to reflect updated logic
+- Split core changes into two separate patches for clarity
+
+Thanks,
+Oleksij Rempel
+
+Oleksij Rempel (3):
+  net: phy: enable polling when driver implements get_next_update_time
+  net: phy: allow drivers to disable polling via get_next_update_time()
+  net: phy: smsc: recover missed link-up IRQs on LAN8700 with adaptive
+    polling
+
+ drivers/net/phy/phy.c  | 27 ++++++++++++++++++++-------
+ drivers/net/phy/smsc.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/phy.h    | 17 +++++++++++++++--
+ 3 files changed, 75 insertions(+), 9 deletions(-)
+
+--
+2.39.5
+
 
