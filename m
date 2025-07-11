@@ -1,104 +1,136 @@
-Return-Path: <linux-kernel+bounces-727533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BBCBB01B76
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:06:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6BFB01B78
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A8255A4479
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DAE23BAF68
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085BC28C02C;
-	Fri, 11 Jul 2025 12:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE68628DF16;
+	Fri, 11 Jul 2025 12:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gHeh1jlB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AKJZmfcb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="iUAplJom"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504671F4C8C;
-	Fri, 11 Jul 2025 12:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6EB289806
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752235565; cv=none; b=XAurSeFOXuMF0s4prmXiWDy+nQ3SDPPjbWyuo2Vms+XkLwolLxOhS3eZi2eiNI8zxgT1CwBmKWmFsfwi6RajV3NWhPe5tp14W6jpQJNv7d2x6wetw3ShAEifa9cuDZtkCWC/TGqN/spu29/8Kpyh17IHhNcA+JTtMQOLvvyXTO0=
+	t=1752235573; cv=none; b=sdlplMv7LcNJIBbx00SPChBl7EPz2HY4ibM/VqYSdLDNGlEgCfG8kJu5bsRM47Fx9I4O8YSHYnv1YYjdiDhe17h4gLvlv675vHg31TVR2oo8BzM35h9cI55wUcwwVtEkzGjtG2vCkUTo42mwWw6vY/MKcy3OTZTUFp1oKbO2ENs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752235565; c=relaxed/simple;
-	bh=w+C2sUjQwouIsFCsNgntt7YUSEbg7ZM2AJSFbZgLf/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLdWZz8va+07zGSp+vnLV/Gq8Jgizd4dKJ5yeg7vgUWqjd2UZVI3wy1rUx7pVB9LJg5QEz0uHUculDEgZYGpMEyd11rAVtXihwpkOyBWg1PQ8MoXAa5V0mzlOhOF9r1lFSW3EXw6azlxKKfaCMAHZ8UxMw8QjLBLkw3Q6Fmwydo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gHeh1jlB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AKJZmfcb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 11 Jul 2025 14:06:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752235561;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kvc+RvZAMi5L4w+1ft+c4pN/XBlm8iNMT/0QmnTIUFE=;
-	b=gHeh1jlBff4kNzcrsOcqJqZ3SiBpyWAcDrvMZsk+jj+yeWIBYmehvGrYcgyDzISIyN3Ufd
-	IR5ifz0JlwrGj7xUcMc3EMxo3km7ZT9taFr+/Sv7AnM+/5E+0xgF0G4KZ9N942vAhq38ZY
-	xlwplTL8oVnw87angdq8SIIQ/emP8kz1PgGYHs1g9A5avxBQv4eLOrtlE59q3Kib8PRBfg
-	zlnY2+6lZLL8WxaMMnF4TJ13kisdOUsgk2F+vkPt6l3zDXH8nS36c5JTb+Czol3vV656lg
-	DKAkZbOLpoHuggs/xb7/IsqODKzHSinXTW7D4bhp6atAFt2hwlszmeMTjiOIQQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752235561;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kvc+RvZAMi5L4w+1ft+c4pN/XBlm8iNMT/0QmnTIUFE=;
-	b=AKJZmfcb8nY1cV+rE1kKcc0kFq1uy6tI7obvkMLjs0eBDnvOJWbGTCiBFBLB7vi7mPpw2O
-	6J9f4yHeAWjBTZBA==
-From: Nam Cao <namcao@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Fix up build issues with vpanic
-Message-ID: <20250711120600.fIZo17WG@linutronix.de>
-References: <cover.1752232374.git.namcao@linutronix.de>
- <20250711112844.GG1099709@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1752235573; c=relaxed/simple;
+	bh=iXtRVSFIUUjljA4kn9rwLXFz7FGravzJIwIhjSeRfeg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AS3uaqeYZ3Kn5saFFKT3OmxOFnu73j9RGtZ0/tDi9UTYLGe0NczMmHPuq9Wni23l16xQkNC15evLtm+Pf9LqD/MScnwSdGqJEAtNw2EE94GopuxJfHbjA6scpqAvhrvtpYr2pQYDB+nLIXG4HppdaY/aEXqNceqfTlCLZwGmqQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=iUAplJom; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4550709f2c1so3955645e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:06:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752235570; x=1752840370; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oED7Lfq/NpJ0WUfIln/mD9ee8FsPDCEL3Wuv+V8YXkM=;
+        b=iUAplJomIucPemGwlB6iWiPWU3F44zF0h+ICy7fXdpA1rjz14pHx6ryTGtpOgf+a71
+         2Vy8boR3Rqyg2Tg54Fl1ckJkNbXjGmeRyf6v6dB74i/J2XcEY7MpaFOhv1SAosEHBEDi
+         Kll4VyGkzDQIQ8ZBl7cjYoaHvhWpicXaTbXGV9vsY5D41Hx8OFmm+nLTRAyJjxUhb57N
+         HT5PleSr4pr+IXTztomOhiDNtS2H84PwW6riN8urKNEV54RH/PBdhnajnE2vrE5Ldxr1
+         dQFh1lmMc0kBULgtrZ/6nLR1nS8pyv28hIZBF4rbYD68pBZUckAXhCmX6UkV1ULbybrI
+         gy6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752235570; x=1752840370;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oED7Lfq/NpJ0WUfIln/mD9ee8FsPDCEL3Wuv+V8YXkM=;
+        b=n5bnCzvR45bl0f8WZNBtGjzdicSLTVjwgRNpKqFo4nOtOanNFBWhfsUnpDYPkW8q8t
+         xXcqyOM6iyAfnj3Eebzld4wbMdGJkoK9gQj5zaJl5augt6fZHZ7EHKVaaIlnox5Ij0Wb
+         5fciQwSE7YUJ+5qrTidQzOFalxnqXn9vJcn8IXhw92D9XPmb2jORHA+GnixgS4XX4ybM
+         +vFGFEJ5m3kxRhdc8JN944GPyixYwwqrIwhp55vAVRyiUXYq41Zb7VYVNoAM3ZGVb9hf
+         qUkyRLllZr1/973fl1S3jGwqddQdchXQB0X4RY3XCE6XKcOMZgNoO9REptdKzYuVZinA
+         /u5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXk89wCY1K4gZxdh1bNUyQ9xBLIfYaTegoZ3jZEpMpWS1r2p7XHcW8ZoD+3Jz4juFMqMBDlTZa3QFZXe1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9q9cQX2ubHE/uboNpZZY5Uf3lvDYX8hYjLejKQM5itYqPL9h+
+	RU0Jh92I/qDtJNnnhtvfXV5nYR+lJDdR0gXGmGoB/bpC1/EFru2bvNOk+IktmL/3kmo=
+X-Gm-Gg: ASbGnctSx6SilhL2iQ6e5LzaQyDrcSjPHq/yqxasLiK5Ih7W3g8+VN4S538h8nGlO3v
+	sTciij0GvTC7658qvDtKlnjQWEuq8z4ey2aj/YTJgWEU5UiGsNNZy0ArZoRqI2gal1jrEbooAB6
+	1cqOMblpST7xdUlbwQ1arTmFcJ75/gCVcZNMx2m7k6H7rGLwq9BBEQUZUntkDLiSHbVU6jM4Ik/
+	MkFILQl9kSiPOCWiUopIXtvNQm0yeW/1Gmx217Z1yEH01VbSktZ9PliE6K6WKyOEg33RzKKM9J1
+	4UIb40w+ilbkaEzYyLwibuTfgV9IH0I23/bd9ZkcIw4T6+Lz5WI+fmWB7dxQnALU+O92HFGJxea
+	MkhKwNagF+utomE6KRQDEIULleEtyC7Cb
+X-Google-Smtp-Source: AGHT+IH59o8j32HAN6vi4aVy+86VCRWAaFR6A/Rh0zriGcYaCtlPFOT5R9qF6Arv1QZ5dGltkfqpsA==
+X-Received: by 2002:a05:600c:1e26:b0:43c:f3e4:d6f6 with SMTP id 5b1f17b1804b1-454f42792eamr28892975e9.31.1752235570051;
+        Fri, 11 Jul 2025 05:06:10 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:4de1:8724:bdd:326e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-455f222e4f4sm4910185e9.10.2025.07.11.05.06.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 05:06:09 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio fixes for v6.16-rc6
+Date: Fri, 11 Jul 2025 14:06:07 +0200
+Message-ID: <20250711120607.56044-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711112844.GG1099709@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 11, 2025 at 01:28:44PM +0200, Peter Zijlstra wrote:
-> On Fri, Jul 11, 2025 at 01:20:41PM +0200, Nam Cao wrote:
-> > Hi,
-> > 
-> > The newly introduced vpanic() has some build issues. This series fix them
-> > up.
-> > 
-> > As the vpanic() is only in ftrace tree for now, it is probably best to let
-> > this series goes to ftrace tree, if everyone is okay with that.
-> 
-> Does it make sense to make panic a static inline?
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I think no, code size increases by a few K:
+Linus,
 
-text      data     bss     dec       hex      filename
-12222627  6097658  479669  18799954  11edd52  vmlinux.before
-12226703  6098618  479669  18804990  11ef0fe  vmlinux.after
+Please pull the following set of GPIO core fixes as well as an update to
+MAINTAINERS (drop an entry with a bouncing email address).
 
-(it's riscv64, I had issue converting on x86 because there's another
-definition of panic())
+Thanks,
+Bartosz
 
-Maybe faster? But panic() doesn't need to be fast, it's not called in
-normal circumstances anyway.
+The following changes since commit d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af:
 
-Best regards,
-Nam
+  Linux 6.16-rc4 (2025-06-29 13:09:04 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.16-rc6
+
+for you to fetch changes up to edb471108cf1477c44b95e87e8cec261825eb079:
+
+  MAINTAINERS: remove bouncing address for Nandor Han (2025-07-11 09:18:55 +0200)
+
+----------------------------------------------------------------
+gpio fixes for v6.16-rc6
+
+- fix performance regression when setting values of multiple GPIO lines
+  at once
+- make sure the GPIO OF xlate code doesn't end up passing an
+  uninitialized local variable to GPIO core
+- update MAINTAINERS
+
+----------------------------------------------------------------
+Alexander Stein (1):
+      gpio: of: initialize local variable passed to the .of_xlate() callback
+
+Bartosz Golaszewski (1):
+      MAINTAINERS: remove bouncing address for Nandor Han
+
+Hugo Villeneuve (1):
+      gpiolib: fix performance regression when using gpio_chip_get_multiple()
+
+ MAINTAINERS               | 7 -------
+ drivers/gpio/gpiolib-of.c | 2 +-
+ drivers/gpio/gpiolib.c    | 5 +++--
+ 3 files changed, 4 insertions(+), 10 deletions(-)
 
