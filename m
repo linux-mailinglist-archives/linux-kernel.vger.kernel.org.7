@@ -1,133 +1,161 @@
-Return-Path: <linux-kernel+bounces-726732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12208B0107E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:58:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7165B01080
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9761CA24CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 761A21CA2607
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36FE28691;
-	Fri, 11 Jul 2025 00:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB8C34CDD;
+	Fri, 11 Jul 2025 00:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OSJMllmz"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zcpwcl8/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2C5101E6;
-	Fri, 11 Jul 2025 00:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02A5101E6;
+	Fri, 11 Jul 2025 00:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752195503; cv=none; b=cQdqkuzooQQkKBsxbEeUMno28lgnqfya5gAM1OAJq05c/2OWwdUQdQuLt6jZoRF0SQjCSeDJLpe7oIrOLbJyOvs3vBJQyv//ZvibgFEXpFqyDFTw6vnPlphBNVerlwdniJ86Yt9b4Q6bviswkefh9brQPSF5zztS3cmUFeIuVFk=
+	t=1752195534; cv=none; b=Fp8SuVS56tWu36CcbxZmS5MpRj1jvqoRZ89KlmdgqwzOKDqkC0foaJZaI2kykldMWOsyCrYB15t542JcYfEOlo/R+od6TDfj1uTBrPj4qfoTBCS8w1Ig2GHZCsDKuFeAO0LLaL4VyE82cXu93MhLiSeq+fjH9BGlPHri3HnRS1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752195503; c=relaxed/simple;
-	bh=nQgbCUnHSE1BV+VKX/q2oxRSIF1tWWJbE9oHolY7rX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=fp0GsUWxLziQTeunBQYgt7cJLvw5DX64g3z/DrvY/VxGPYnUMJv8yTgE/4asWshK/+EnbEOnnBxJqRDYWIK3fN9k4EYH9tLkzsJB85wX6JP9b4dmM2yzdcOoKJAqfIoOh0fb1mlE4SbBQC/KvxZPyIbdJfLdjkvgRovkA5Asp1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OSJMllmz; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752195409;
-	bh=4bVSc7zEJGZIxhXRM+75TSeVqKTSEE/z9XkoTfOCYmQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OSJMllmzT5NS+DNSM6VfSD3iaP626/j+j4x5vSV+z2SCGJqiYZk/vr0TLZ3YrP1gq
-	 /mzDVAfzTerpcbRkE764NGWwngSufLoVDiY4y+Va9Kw7WpujDO7dZwdafvBF5UN00g
-	 mfVyGXl78/4GwC1GEgFZRDztuxGu00gXhtb1X/OmiCrUXtcvzPP41cnZhwfaEQNw9q
-	 51DeO/j2aTT2AmrWRIltfgep72SaMLcla4l7irdaUcxfefalFcW3ynPiZsBPylk0eq
-	 EoBPasQfQhqVPydKvWC2DVDUsJGRiTJFENhtubfY3CC1gazltZb0GeWAR6st2Wad2m
-	 EwdSUup/HhIKg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bdYFY2r0vz4wcd;
-	Fri, 11 Jul 2025 10:56:49 +1000 (AEST)
-Date: Fri, 11 Jul 2025 10:58:04 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mm-nonmm-unstable tree
-Message-ID: <20250711105804.3447e832@canb.auug.org.au>
+	s=arc-20240116; t=1752195534; c=relaxed/simple;
+	bh=9fouTm43jiHtRBKygiC6C3rLdluYTMFoMz6wUMkIBkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NtF3tcYkqiaeMs2UO7EhlPMcuLGzbBr66ZJkDTsbkfSuhxVxc3aW+iSSRqa7LLfyz4yoP0jWW/BOihAwpmWLhRJMsilVxO1AKUIGChX1xd+0LzMjaL45KlLoyk57f9p8PmYvQ16m4C15096+NICvqEKWjirbgEMfnmQUK0DnI9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zcpwcl8/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73A11C4CEE3;
+	Fri, 11 Jul 2025 00:58:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752195533;
+	bh=9fouTm43jiHtRBKygiC6C3rLdluYTMFoMz6wUMkIBkI=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Zcpwcl8/Sujvaj4OJ2pjpqMUsAUPOj7WbJmJN+3+yG7EJge2OGGe5DHFLHR+Kbs/U
+	 i8Drq1E2p6mWuU9e1QTBs8HIL+pxPeWCFhPnTZMdackfpUwiND0mZ84vKxMr1yViyV
+	 qKvh0jtigblI2+ULy2V6tDNUj69rEfjBIfy30Zc9c+/w6cS74BZVPyXuv5DKGRIaCh
+	 C40ZEyn+xHrGsSB79LrApYLiIMCQ/PAro9F6KzdAp3qBxGWryIZxsJibI2VEitotEL
+	 l7LFQ8VMXeNZsGierY73JzKpeqMFViOqXNgIB3fsIGu0cSNOX2lfO6MQrXrbm2gYJJ
+	 6IOfGzvCidICA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0768CCE0A44; Thu, 10 Jul 2025 17:58:53 -0700 (PDT)
+Date: Thu, 10 Jul 2025 17:58:52 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Breno Leitao <leitao@debian.org>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, aeh@meta.com,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	edumazet@google.com, jhs@mojatatu.com, kernel-team@meta.com,
+	Erik Lundgren <elundgren@meta.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Uladzislau Rezki <urezki@gmail.com>, rcu@vger.kernel.org
+Subject: Re: [RFC PATCH 5/8] shazptr: Allow skip self scan in
+ synchronize_shaptr()
+Message-ID: <26ae1833-517e-47ea-ae5a-9bd8bdb6b4ec@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250414060055.341516-1-boqun.feng@gmail.com>
+ <20250414060055.341516-6-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/2eue3gnPJ5qC1KmZ.qQmvP4";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414060055.341516-6-boqun.feng@gmail.com>
 
---Sig_/2eue3gnPJ5qC1KmZ.qQmvP4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Apr 13, 2025 at 11:00:52PM -0700, Boqun Feng wrote:
+> Add a module parameter for shazptr to allow skip the self scan in
+> synchronize_shaptr(). This can force every synchronize_shaptr() to use
+> shazptr scan kthread, and help testing the shazptr scan kthread.
+> 
+> Another reason users may want to set this paramter is to reduce the self
+> scan CPU cost in synchronize_shaptr().
+> 
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 
-Hi all,
+One nit below, but nevertheless:
 
-After merging the mm-nonmm-unstable tree, today's linux-next build
-(x86_64 allmodconfig) failed like this:
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
-kernel/kexec_core.c: In function 'kernel_kexec':
-kernel/kexec_core.c:1138:2: error: label 'Resume_console' defined but not u=
-sed [-Werror=3Dunused-label]
- 1138 |  Resume_console:
-      |  ^~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
+> ---
+>  kernel/locking/shazptr.c | 28 +++++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/locking/shazptr.c b/kernel/locking/shazptr.c
+> index a8559cb559f8..b3f7e8390eb2 100644
+> --- a/kernel/locking/shazptr.c
+> +++ b/kernel/locking/shazptr.c
+> @@ -14,11 +14,17 @@
+>  #include <linux/completion.h>
+>  #include <linux/kthread.h>
+>  #include <linux/list.h>
+> +#include <linux/moduleparam.h>
+>  #include <linux/mutex.h>
+>  #include <linux/shazptr.h>
+>  #include <linux/slab.h>
+>  #include <linux/sort.h>
+>  
+> +#ifdef MODULE_PARAM_PREFIX
+> +#undef MODULE_PARAM_PREFIX
+> +#endif
+> +#define MODULE_PARAM_PREFIX "shazptr."
 
-Caused by commit
+I do not believe that you need this when the desired MODULE_PARAM_PREFIX
+matches the name of the file, as it does in this case.  For example,
+kernel/rcu/tree.c needs this to get the "rcutree." prefix, but
+kernel/rcu/refscale.c can do without it.
 
-  fbb5aa47e7b0 ("kexec_core: fix error code path in the KEXEC_JUMP flow")
-
-I have applied the following fix patch.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 11 Jul 2025 10:35:39 +1000
-Subject: [PATCH] fix up for "kexec_core: fix error code path in the KEXEC_J=
-UMP flow"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- kernel/kexec_core.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 842611c0b51a..351cd7d76dfa 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -1135,7 +1135,6 @@ int kernel_kexec(void)
- 		dpm_resume_start(PMSG_RESTORE);
-  Resume_devices:
- 		dpm_resume_end(PMSG_RESTORE);
-- Resume_console:
- 		console_resume_all();
- 		thaw_processes();
-  Restore_console:
---=20
-2.50.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/2eue3gnPJ5qC1KmZ.qQmvP4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhwYZwACgkQAVBC80lX
-0Gwb6QgAkKEZkdCifICMGdanjTPTdnPiTpAN837U80QyUJnn1jOZDCDZ82saC24C
-yvdPXd8iA0TtlATudKRA+V+avzLFywcDYznO7+LLqH53xKIXmHEmWLpzZIFMrUo5
-V015f35IL3yCwzTPpNK6rXKfv1INItLIZNXorrUtEBdPK2M5eSB3emVkzau34c/S
-FAi6mgwRomFbdq3XhUtz9HfcXAQUlL90+0hAWU/52HgZvuDd7D54KJL/W1yUPSbM
-rOJPrkAejrA3V6FRiHDMDx6+Dc00b0ber8rkohNZ5daA6eGGGrnsiecECOW6tl7f
-sAv3yjgjAWpB/VeGOwMlnYxeh7OHCQ==
-=1PxH
------END PGP SIGNATURE-----
-
---Sig_/2eue3gnPJ5qC1KmZ.qQmvP4--
+> +
+>  DEFINE_PER_CPU_SHARED_ALIGNED(void *, shazptr_slots);
+>  EXPORT_PER_CPU_SYMBOL_GPL(shazptr_slots);
+>  
+> @@ -252,6 +258,10 @@ static void synchronize_shazptr_busywait(void *ptr)
+>  	}
+>  }
+>  
+> +/* Disabled by default. */
+> +static int skip_synchronize_self_scan;
+> +module_param(skip_synchronize_self_scan, int, 0644);
+> +
+>  static void synchronize_shazptr_normal(void *ptr)
+>  {
+>  	int cpu;
+> @@ -259,15 +269,19 @@ static void synchronize_shazptr_normal(void *ptr)
+>  
+>  	smp_mb(); /* Synchronize with the smp_mb() in shazptr_acquire(). */
+>  
+> -	for_each_possible_cpu(cpu) {
+> -		void **slot = per_cpu_ptr(&shazptr_slots, cpu);
+> -		void *val;
+> +	if (unlikely(skip_synchronize_self_scan)) {
+> +		blocking_grp_mask = ~0UL;
+> +	} else {
+> +		for_each_possible_cpu(cpu) {
+> +			void **slot = per_cpu_ptr(&shazptr_slots, cpu);
+> +			void *val;
+>  
+> -		/* Pair with smp_store_release() in shazptr_clear(). */
+> -		val = smp_load_acquire(slot);
+> +			/* Pair with smp_store_release() in shazptr_clear(). */
+> +			val = smp_load_acquire(slot);
+>  
+> -		if (val == ptr || val == SHAZPTR_WILDCARD)
+> -			blocking_grp_mask |= 1UL << (cpu / shazptr_scan.cpu_grp_size);
+> +			if (val == ptr || val == SHAZPTR_WILDCARD)
+> +				blocking_grp_mask |= 1UL << (cpu / shazptr_scan.cpu_grp_size);
+> +		}
+>  	}
+>  
+>  	/* Found blocking slots, prepare to wait. */
+> -- 
+> 2.47.1
+> 
 
