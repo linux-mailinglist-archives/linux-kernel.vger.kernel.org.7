@@ -1,151 +1,249 @@
-Return-Path: <linux-kernel+bounces-726832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F43B011B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:45:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9204AB011B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E20C1CA29FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:45:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC2945A621D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD2619C540;
-	Fri, 11 Jul 2025 03:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0750719C540;
+	Fri, 11 Jul 2025 03:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="aS4QgywR"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Htx2lfgE"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A613B29E;
-	Fri, 11 Jul 2025 03:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A80C1474DA
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 03:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752205503; cv=none; b=DFIHncJzpzpYIhnjx3mg/4KlIrBaxHQqzYh9gKX3nUZVzO/7Ip0Y45lciTDIzsuNnHtJSRJ/MCTBCLe8m5w0kGmTDE4bCMC8UgUSEhdW/7g7psewEqOt74Su75A9Ny9PgUlBb/rR1XSmUYItmlXXzliVo+GuRu02Xe72s9/OZ1M=
+	t=1752205593; cv=none; b=E2sCbpxu0PW74H24pb3BvDXJQgTj2CrMf6u7iSLIUXX9EQhCFpWOBQN0CRLbex42qi/h9px7PI8F3Sn+3fq3aTA2wgTX62Koe8op1tRihvMF7dRgubn/T2lnZoopHe8BfDAS90P3wMzF3y8OEbqq0h9Afqdubkhj6ElbFNLcPaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752205503; c=relaxed/simple;
-	bh=fKVaJFpVS+Qu1usQhbWsHzMrlpX3hXV+4426E8tMgVw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UOh/BEk55UbFPRBDXML2rLKQJo+ZZX/y4bCKT8X2HHuRVN49JXEcGdIFmEd2CVGqOC+5C/pWhTeG8vq0bM/hsytG81ntnZa14uKyfp0yh8pwq7ROxqWY0YtMDDtq8mzgjCvBmeO+N7y7sZ5aekU8g84D0dtetPzMfAh6R0Lw/pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=aS4QgywR; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56B3iO291365152, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1752205465; bh=ayZYAbJZg3N2/2F4s0xsPpLo7I6jNpmCnOWQOuwnJ/8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=aS4QgywR7C2KoweS1Ytw9AA6bHc1Xsab000McLkqZatA4kJyzJsNFycBedRvFfYe3
-	 L5n03eVZufWcjyfVD2fB5x4SscytAw6k47lfVuwJD2rT9gKargS7EJHBErGg2lhGp5
-	 YhLfWJAeegCCatjpjsBceR/HYAdK7zwhAZ51AmKtpPw2HnaKOIffqx92a5e8OLMYLY
-	 pW/EaJtZEIulUmB2IcF9f7Ouc44uz8UAp5r1bqa4ouZEhBBOkZGWGwOJW/p0Z3H+eV
-	 /EgwZeGuhIVyQHtm6PsX6YEpxSINmTs1b4INRAxqeGO7Z25c5EguPkVk9IOLfZteBZ
-	 DKuJFz5TNFaCw==
-Received: from RS-EX-MBS2.realsil.com.cn ([172.29.17.102])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56B3iO291365152
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 11 Jul 2025 11:44:24 +0800
-Received: from RS-EX-MBS2.realsil.com.cn (172.29.17.102) by
- RS-EX-MBS2.realsil.com.cn (172.29.17.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 11 Jul 2025 11:44:24 +0800
-Received: from 172.29.32.27 (172.29.32.27) by RS-EX-MBS2.realsil.com.cn
- (172.29.17.102) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Fri, 11 Jul 2025 11:44:24 +0800
-From: ChunHao Lin <hau@realtek.com>
-To: <hkallweit1@gmail.com>, <nic_swsd@realtek.com>, <andrew+netdev@lunn.ch>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        ChunHao Lin
-	<hau@realtek.com>
-Subject: [PATCH net-next] r8169: add quirk for RTL8116af SerDes
-Date: Fri, 11 Jul 2025 11:44:12 +0800
-Message-ID: <20250711034412.17937-1-hau@realtek.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752205593; c=relaxed/simple;
+	bh=dAK18Z/M1Hp5wkRCSWQwhqDaPFZfk6E0afJUIJTtq1E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=C6dVxL8u+1vgarW9u+QYabfVKmyOhAWfwJ4Cl3qlXqpSpfeFumGWkZsmOu3fBLLkFYG929TOjMRvIHmM/uPjZ/jq32bxFAg7QaFQf46QBTtKEFOYdXInkjKzmmAVcYgOE1bPpMICW3x0u/fJ5msIr2yl0684fJ+8nCixfV8/4kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Htx2lfgE; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ffcbe060-a15d-44d7-bf5e-090e74726c31@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752205586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LrXT55bORs0fsD8GQ1AosNWcbgIrC5NreNiYDhdXhZ0=;
+	b=Htx2lfgEVRkDhvtiEdRx6w2YQ5BSlehVUMrC+ObYc+GNq+/KM4sltj1eR5+fyf4Iayv7/J
+	o8exqS5+apdKrwaevDQDn6/JKm0nySuKlVbY6rILGqEBBUjiKxjG1zirZ3wXMByuk60Yd4
+	2K83tvwJK9lA1fwTEw/kiIufyFE3T3c=
+Date: Thu, 10 Jul 2025 20:46:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH bpf-next v3] bpf: make the attach target more accurate
+Content-Language: en-GB
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+To: Menglong Dong <menglong8.dong@gmail.com>, ast@kernel.org,
+ daniel@iogearbox.net
+Cc: john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>
+References: <20250710070835.260831-1-dongml2@chinatelecom.cn>
+ <2f8c792e-9675-4385-b1cb-10266c72bd45@linux.dev>
+In-Reply-To: <2f8c792e-9675-4385-b1cb-10266c72bd45@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-RTL8116af is a variation of RTL8168fp. It uses SerDes instead of PHY.
-But SerDes status will not reflect to PHY. So it needs quirk to help
-to reflect SerDes status during PHY read.
 
-Signed-off-by: ChunHao Lin <hau@realtek.com>
----
- drivers/net/ethernet/realtek/r8169_main.c | 40 ++++++++++++++++++++++-
- 1 file changed, 39 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
-index 9c601f271c02..2f9e9b2e9d49 100644
---- a/drivers/net/ethernet/realtek/r8169_main.c
-+++ b/drivers/net/ethernet/realtek/r8169_main.c
-@@ -1192,6 +1192,34 @@ static int r8168g_mdio_read(struct rtl8169_private *tp, int reg)
- 	return r8168_phy_ocp_read(tp, tp->ocp_base + reg * 2);
- }
- 
-+/* The quirk reflects RTL8116af SerDes status. */
-+static int r8116af_mdio_read_quirk(struct rtl8169_private *tp, int reg)
-+{
-+	u8 phyStatus = RTL_R8(tp, PHYstatus);
-+
-+	if (!(phyStatus & LinkStatus))
-+		return 0;
-+
-+	/* BMSR */
-+	if (tp->ocp_base == OCP_STD_PHY_BASE && reg == MII_BMSR)
-+		return BMSR_ANEGCOMPLETE | BMSR_LSTATUS;
-+
-+	/* PHYSR */
-+	if (tp->ocp_base == 0xa430 && reg == 0x12)
-+	{	if (phyStatus & _1000bpsF)
-+			return 0x0028;
-+		else if (phyStatus & _100bps)
-+			return 0x0018;
-+	}
-+
-+	return 0;
-+}
-+
-+static int r8116af_mdio_read(struct rtl8169_private *tp, int reg)
-+{
-+	return r8168g_mdio_read(tp, reg) | r8116af_mdio_read_quirk(tp, reg);
-+}
-+
- static void mac_mcu_write(struct rtl8169_private *tp, int reg, int value)
- {
- 	if (reg == 0x1f) {
-@@ -1285,6 +1313,13 @@ static int r8168dp_2_mdio_read(struct rtl8169_private *tp, int reg)
- 	return value;
- }
- 
-+static bool rtl_is_8116af(struct rtl8169_private *tp)
-+{
-+	return tp->mac_version == RTL_GIGA_MAC_VER_52 &&
-+		(r8168_mac_ocp_read(tp, 0xdc00) & 0x0078) == 0x0030 &&
-+		(r8168_mac_ocp_read(tp, 0xd006) & 0x00ff) == 0x0000;
-+}
-+
- static void rtl_writephy(struct rtl8169_private *tp, int location, int val)
- {
- 	switch (tp->mac_version) {
-@@ -1308,7 +1343,10 @@ static int rtl_readphy(struct rtl8169_private *tp, int location)
- 	case RTL_GIGA_MAC_VER_31:
- 		return r8168dp_2_mdio_read(tp, location);
- 	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_LAST:
--		return r8168g_mdio_read(tp, location);
-+		if (rtl_is_8116af(tp))
-+			return r8116af_mdio_read(tp, location);
-+		else
-+			return r8168g_mdio_read(tp, location);
- 	default:
- 		return r8169_mdio_read(tp, location);
- 	}
--- 
-2.43.0
+On 7/10/25 8:10 PM, Yonghong Song wrote:
+>
+>
+> On 7/10/25 12:08 AM, Menglong Dong wrote:
+>> For now, we lookup the address of the attach target in
+>> bpf_check_attach_target() with find_kallsyms_symbol_value or
+>> kallsyms_lookup_name, which is not accurate in some cases.
+>>
+>> For example, we want to attach to the target "t_next", but there are
+>> multiple symbols with the name "t_next" exist in the kallsyms, which 
+>> makes
+>> the attach target ambiguous, and the attach should fail.
+>>
+>> Introduce the function bpf_lookup_attach_addr() to do the address 
+>> lookup,
+>> which will return -EADDRNOTAVAIL when the symbol is not unique.
+>>
+>> We can do the testing with following shell:
+>>
+>> for s in $(cat /proc/kallsyms | awk '{print $3}' | sort | uniq -d)
+>> do
+>>    if grep -q "^$s\$" 
+>> /sys/kernel/debug/tracing/available_filter_functions
+>>    then
+>>      bpftrace -e "fentry:$s {printf(\"1\");}" -v
+>>    fi
+>> done
+>>
+>> The script will find all the duplicated symbols in /proc/kallsyms, which
+>> is also in /sys/kernel/debug/tracing/available_filter_functions, and
+>> attach them with bpftrace.
+>>
+>> After this patch, all the attaching fail with the error:
+>>
+>> The address of function xxx cannot be found
+>> or
+>> No BTF found for xxx
+>>
+>> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+>
+> Maybe we should prevent vmlinux BTF generation for such symbols
+> which are static and have more than one instances? This can
+> be done in pahole and downstream libbpf/kernel do not
+> need to do anything. This can avoid libbpf/kernel runtime overhead
+> since bpf_lookup_attach_addr() could be expensive as it needs
+> to go through ALL symbols, even for unique symbols.
+
+There is a multi-link effort:
+   https://lore.kernel.org/bpf/20250703121521.1874196-1-dongml2@chinatelecom.cn/
+which tries to do similar thing for multi-kprobe. For example, for fentry,
+multi-link may pass an array of btf_id's to the kernel. For such cases,
+this patch may cause significant performance overhead.
+
+>
+>
+>> ---
+>> v3:
+>> - reject all the duplicated symbols
+>> v2:
+>> - Lookup both vmlinux and modules symbols when mod is NULL, just like
+>>    kallsyms_lookup_name().
+>>
+>>    If the btf is not a modules, shouldn't we lookup on the vmlinux only?
+>>    I'm not sure if we should keep the same logic with
+>>    kallsyms_lookup_name().
+>>
+>> - Return the kernel symbol that don't have ftrace location if the 
+>> symbols
+>>    with ftrace location are not available
+>> ---
+>>   kernel/bpf/verifier.c | 71 ++++++++++++++++++++++++++++++++++++++++---
+>>   1 file changed, 66 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+>> index 53007182b46b..bf4951154605 100644
+>> --- a/kernel/bpf/verifier.c
+>> +++ b/kernel/bpf/verifier.c
+>> @@ -23476,6 +23476,67 @@ static int 
+>> check_non_sleepable_error_inject(u32 btf_id)
+>>       return btf_id_set_contains(&btf_non_sleepable_error_inject, 
+>> btf_id);
+>>   }
+>>   +struct symbol_lookup_ctx {
+>> +    const char *name;
+>> +    unsigned long addr;
+>> +};
+>> +
+>> +static int symbol_callback(void *data, unsigned long addr)
+>> +{
+>> +    struct symbol_lookup_ctx *ctx = data;
+>> +
+>> +    if (ctx->addr)
+>> +        return -EADDRNOTAVAIL;
+>> +    ctx->addr = addr;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int symbol_mod_callback(void *data, const char *name, 
+>> unsigned long addr)
+>> +{
+>> +    if (strcmp(((struct symbol_lookup_ctx *)data)->name, name) != 0)
+>> +        return 0;
+>> +
+>> +    return symbol_callback(data, addr);
+>> +}
+>> +
+>> +/**
+>> + * bpf_lookup_attach_addr: Lookup address for a symbol
+>> + *
+>> + * @mod: kernel module to lookup the symbol, NULL means to lookup 
+>> both vmlinux
+>> + * and modules symbols
+>> + * @sym: the symbol to resolve
+>> + * @addr: pointer to store the result
+>> + *
+>> + * Lookup the address of the symbol @sym. If multiple symbols with 
+>> the name
+>> + * @sym exist, -EADDRNOTAVAIL will be returned.
+>> + *
+>> + * Returns: 0 on success, -errno otherwise.
+>> + */
+>> +static int bpf_lookup_attach_addr(const struct module *mod, const 
+>> char *sym,
+>> +                  unsigned long *addr)
+>> +{
+>> +    struct symbol_lookup_ctx ctx = { .addr = 0, .name = sym };
+>> +    const char *mod_name = NULL;
+>> +    int err = 0;
+>> +
+>> +#ifdef CONFIG_MODULES
+>> +    mod_name = mod ? mod->name : NULL;
+>> +#endif
+>> +    if (!mod_name)
+>> +        err = kallsyms_on_each_match_symbol(symbol_callback, sym, 
+>> &ctx);
+>> +
+>> +    if (!err && !ctx.addr)
+>> +        err = module_kallsyms_on_each_symbol(mod_name, 
+>> symbol_mod_callback,
+>> +                             &ctx);
+>> +
+>> +    if (!ctx.addr)
+>> +        err = -ENOENT;
+>> +    *addr = err ? 0 : ctx.addr;
+>> +
+>> +    return err;
+>> +}
+>> +
+>>   int bpf_check_attach_target(struct bpf_verifier_log *log,
+>>                   const struct bpf_prog *prog,
+>>                   const struct bpf_prog *tgt_prog,
+>> @@ -23729,18 +23790,18 @@ int bpf_check_attach_target(struct 
+>> bpf_verifier_log *log,
+>>               if (btf_is_module(btf)) {
+>>                   mod = btf_try_get_module(btf);
+>>                   if (mod)
+>> -                    addr = find_kallsyms_symbol_value(mod, tname);
+>> +                    ret = bpf_lookup_attach_addr(mod, tname, &addr);
+>>                   else
+>> -                    addr = 0;
+>> +                    ret = -ENOENT;
+>>               } else {
+>> -                addr = kallsyms_lookup_name(tname);
+>> +                ret = bpf_lookup_attach_addr(NULL, tname, &addr);
+>>               }
+>> -            if (!addr) {
+>> +            if (ret) {
+>>                   module_put(mod);
+>>                   bpf_log(log,
+>>                       "The address of function %s cannot be found\n",
+>>                       tname);
+>> -                return -ENOENT;
+>> +                return ret;
+>>               }
+>>           }
+>
+>
 
 
