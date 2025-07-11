@@ -1,162 +1,100 @@
-Return-Path: <linux-kernel+bounces-728277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801BBB025C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:26:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750E9B025C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936753AB08D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:26:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 884901CA6580
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCF71F8BA6;
-	Fri, 11 Jul 2025 20:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A571FCFEF;
+	Fri, 11 Jul 2025 20:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZty94Ez"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktfnEpU6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD71B1F3B83;
-	Fri, 11 Jul 2025 20:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F6319CC11;
+	Fri, 11 Jul 2025 20:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752265591; cv=none; b=M94BTcZPTO/ao9LSRhwEv/VKoiT8/iW3GNXV+z5zkgc/7xEViJOVRufkc6EcSj3G0ZyEy8QZiCc2M/hVjkY0wimuZ7xCidytOX0JigXhdp5krrrKJmYy225a5JH95bmnrMOAlS8ea3FT7HL5C8JebRiD167Oho959CizFYI7wVE=
+	t=1752265684; cv=none; b=KtkRBjGfglHOl/KL//Iqna/MH28WBSXynsITmVgsTCoLVMpTymHkw4b/1s50ot6w4psqMZHtIsMuGsFfRVc9LuITHsSwHCF0OQLbqsTPzItTQzHjrCFh1faa5McWBGnY21CyVWYjxvsWCUpVSWqdSXcI1yc5N0B6FKourftqY8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752265591; c=relaxed/simple;
-	bh=zKrzcOnCHUbj1zpcoKwKR8VG4KSswYK1nelmipRVgEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lkHT2HCRAihdKqS0qxGjyypKcIemC5Dk3I2u2VlPPnxtWN8XEl4fxeBLwsXd0XIb9tU9Y/VE7kBhAx8kebYrbFoaN5eK4DgU7DyI+21xDlS+YwaQRYsJLrmrNqV89HnC8VrFRaLPF+W75t1U6LprW7xxJE36/OsVdFNj3WY7/a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZty94Ez; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80926C4CEED;
-	Fri, 11 Jul 2025 20:26:30 +0000 (UTC)
+	s=arc-20240116; t=1752265684; c=relaxed/simple;
+	bh=nmvju27kEL3rjgH7XfdyPwyl6WgZl50gxdJJMMXCt8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AMw2oFC9YPlcTWZbufUZ1mPVk/dIyT9lf23pwtwkqlXeVZ1YxKpcjF22vunuIQMPQCEEJ87Hs1LFxH4KTrBEDdMD5Q7jDs1QtQi9nZvlJHwAQ4zx64u213+xQtGIJP+gmVVXMEhQInTC2mNlXMwn1G3muj9f7gbSNrGlsMwFMzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktfnEpU6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C239C4CEED;
+	Fri, 11 Jul 2025 20:28:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752265591;
-	bh=zKrzcOnCHUbj1zpcoKwKR8VG4KSswYK1nelmipRVgEo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sZty94EzXu9ZGA3d79jnP7xeZIQ+FddaAmdFFBCuYZasAlqflfiw8zpn62X+Pu6oz
-	 /SrDhdiyMvf/OIiQHoCdGr1KT32HAR0NSKMHca42W6xnOAC2vyOCb4/J87Ds1WgoRB
-	 AUUp5w8dDMjBsfs5NNPJHG0mWVWYtkBXxnzlBLhYOKUX1DQKTmKqueeZ0B9nt9qhMi
-	 tXvbd7wgK6K4nDKLIFWkYHoAKrGPBswnH/n6NDqs9G9a+a2R3+skjjSryVm4pHPhpF
-	 sxNDzQo3Dz/+1avKMPQh1PeMGXV4sywDvrRNbJVCOHjGbUy/ce/ZXlncPfRN1XrPsC
-	 dhRFQoYswVdog==
-Date: Fri, 11 Jul 2025 13:26:28 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-	Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v13 00/11] perf: Support the deferred unwinding
- infrastructure
-Message-ID: <aHFzdCv3-BRw9btW@google.com>
-References: <20250708020003.565862284@kernel.org>
+	s=k20201202; t=1752265683;
+	bh=nmvju27kEL3rjgH7XfdyPwyl6WgZl50gxdJJMMXCt8k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ktfnEpU6RVyYojDLhTLD3lbbiV6oSjMgzYH9ZV1eJhlDNDbi/h8Y4uwdgl78ho15B
+	 a8dbFqLV7Nl+DLITzl8nV82JU39vFwmCflxuNQBxamtNBPG9dVTtc/cMMGO1Wq9rpo
+	 2OYT0APHloFgSjTg+RZHsCrixEiUnVYSH6ZuFvaz1oj6jaGleX7SXR4H4Qt34dtyBP
+	 dhD90aH/hqvfKYYHJPB154xl9syu4krFKwoukLJw35QGCBsIs562YjEAt3DFYTyMzs
+	 B/pxw/7JMowXzYeUZLbFutuen2I83aoHxNlbWWdMXCrkSCn4GNACmAi43TSmG7CqS5
+	 8Gu+SwZ33OeEQ==
+Date: Fri, 11 Jul 2025 15:28:02 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] PCI fixes for v6.16
+Message-ID: <20250711202802.GA2304110@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250708020003.565862284@kernel.org>
 
-Hi Steve,
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
-On Mon, Jul 07, 2025 at 10:00:03PM -0400, Steven Rostedt wrote:
-> This is based on top of the deferred unwind core patch series:
-> 
->  https://lore.kernel.org/linux-trace-kernel/20250708012239.268642741@kernel.org/
->    git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
->      unwind/core
-> 
-> This series implements the perf interface to use deferred user space stack
-> tracing.
-> 
-> The code for this series is located here:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-> unwind/perf
-> 
-> Changes since v12: https://lore.kernel.org/linux-trace-kernel/20250701180410.755491417@goodmis.org/
-> 
-> - Also check against PF_USER_WORKER as io workers do not have PF_KTHREAD
->   set.
-> 
-> - Removed deferred_request_nmi() and have NMIs just use the normal
->   deferred_request() function. As Peter Zijlstra has stated, in_nmi() can
->   nest because some exceptions set in_nmi() and another NMI could come in.
-> 
-> - Removed use of timestamp. The deferred unwind has gone back to using
->   cookies, and perf doesn't use the cookie. This means the
->   struct perf_callchain_deferred_event is not modified.
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 
-What about adding the cookies in the records to handle lost data?  Even
-if it's not necessary to match callchains to samples, it still needs to
-reject invalid callchains across the losts.  Maybe it can just flush
-pending samples when it sees LOST records and not try to match them but
-having the cookies will handle it more accurately as some callchains may
-be valid after the LOST.
+are available in the Git repository at:
 
-Thanks,
-Namhyung
+  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.16-fixes-3
 
-> 
-> Head SHA1: 3d88d03d533ede8d2d513942e768607aa9279c4b
-> 
-> 
-> Josh Poimboeuf (5):
->       perf: Remove get_perf_callchain() init_nr argument
->       perf: Have get_perf_callchain() return NULL if crosstask and user are set
->       perf: Simplify get_perf_callchain() user logic
->       perf: Skip user unwind if the task is a kernel thread
->       perf: Support deferred user callchains
-> 
-> Namhyung Kim (4):
->       perf tools: Minimal CALLCHAIN_DEFERRED support
->       perf record: Enable defer_callchain for user callchains
->       perf script: Display PERF_RECORD_CALLCHAIN_DEFERRED
->       perf tools: Merge deferred user callchains
-> 
-> Steven Rostedt (2):
->       perf: Use current->flags & PF_KTHREAD|PF_USER_WORKER instead of current->mm == NULL
->       perf: Support deferred user callchains for per CPU events
-> 
-> ----
->  include/linux/perf_event.h                |  13 +-
->  include/uapi/linux/perf_event.h           |  19 +-
->  kernel/bpf/stackmap.c                     |   8 +-
->  kernel/events/callchain.c                 |  49 ++--
->  kernel/events/core.c                      | 407 +++++++++++++++++++++++++++++-
->  tools/include/uapi/linux/perf_event.h     |  19 +-
->  tools/lib/perf/include/perf/event.h       |   7 +
->  tools/perf/Documentation/perf-script.txt  |   5 +
->  tools/perf/builtin-script.c               |  92 +++++++
->  tools/perf/util/callchain.c               |  24 ++
->  tools/perf/util/callchain.h               |   3 +
->  tools/perf/util/event.c                   |   1 +
->  tools/perf/util/evlist.c                  |   1 +
->  tools/perf/util/evlist.h                  |   1 +
->  tools/perf/util/evsel.c                   |  39 +++
->  tools/perf/util/evsel.h                   |   1 +
->  tools/perf/util/machine.c                 |   1 +
->  tools/perf/util/perf_event_attr_fprintf.c |   1 +
->  tools/perf/util/sample.h                  |   3 +-
->  tools/perf/util/session.c                 |  78 ++++++
->  tools/perf/util/tool.c                    |   2 +
->  tools/perf/util/tool.h                    |   4 +-
->  22 files changed, 742 insertions(+), 36 deletions(-)
+for you to fetch changes up to ba74278c638df7c333a970a265dfcc258e70807b:
+
+  Revert "PCI: ecam: Allow cfg->priv to be pre-populated from the root port device" (2025-06-30 12:30:03 -0500)
+
+----------------------------------------------------------------
+
+- Track apple Root Ports explicitly and look up the driver data from the
+  struct device instead of using dev->driver_data, which is used by
+  pci_host_common_init() for the generic host bridge pointer (Marc Zyngier)
+
+- Set dev->driver_data before pci_host_common_init() calls gen_pci_init()
+  because some drivers need it to set up ECAM mappings; this fixes a
+  regression on MicroChip MPFS Icicle (Geert Uytterhoeven)
+
+- Revert the now-unnecessary use of ECAM pci_config_window.priv to store a
+  copy of dev->driver_data (Marc Zyngier)
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      PCI: host-generic: Set driver_data before calling gen_pci_init()
+
+Marc Zyngier (2):
+      PCI: apple: Add tracking of probed root ports
+      Revert "PCI: ecam: Allow cfg->priv to be pre-populated from the root port device"
+
+ drivers/pci/controller/pci-host-common.c |  4 +--
+ drivers/pci/controller/pcie-apple.c      | 53 +++++++++++++++++++++++++++++---
+ drivers/pci/ecam.c                       |  2 --
+ 3 files changed, 51 insertions(+), 8 deletions(-)
 
