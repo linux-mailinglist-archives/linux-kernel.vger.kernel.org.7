@@ -1,116 +1,229 @@
-Return-Path: <linux-kernel+bounces-727560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85D0B01C11
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:32:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4AE3B01C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D921CA5D28
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:32:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 477467B48CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C7429ACD4;
-	Fri, 11 Jul 2025 12:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201D32BD589;
+	Fri, 11 Jul 2025 12:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="X3Vn7gIQ"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="E/pjBBTo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449671DDA24;
-	Fri, 11 Jul 2025 12:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F286B28F50F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752237126; cv=none; b=RGkR+EubWGx4mL8o9wfxWEstLOiycTBioH1jalwClbOcqatqQnR6KcWHm9vLzIGI0hi/NV4Qnb3VUWH6ohja2PeGpZP8ryA7TSEskgi6iqZyIe94f33mILiI4YrVFH4wb7Z6aJ1WYW7BzmCtQ6iERIPg+xoXraVT2DBSkKn17cg=
+	t=1752237153; cv=none; b=C3u2RRqMCrxB7dqBPPzDOD1LMbyNKy5Dbs+6D0GoQ/HTa/U9hGWMyP2NoQwAsJguuu87cjm2KjUEDfzuEwrz+3C4btASO7Ghw1KyAZvPktyTRfm/DrnZ2g82Lge+96VlSvnwsr8UnQZHH35jnRFlMoxxvOzK604aJcqWpvIfEV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752237126; c=relaxed/simple;
-	bh=1FdCuGpSpNiCe7VxjRk9mX+t3oo9BOrw63kPw2edi0s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DK6McMiwlRd7GXTP+6dM7FvOHPt5hDuDd94XVuMOo18jzEB7WrqkVXPn6GCZxRq/TS58UFlYdm3LO0b25YvHPp3d5jG9o/t3Z6+fTpuyJFjmN2wT/ucQnXkXB6vHegLa37s7A18iQ1aOqvBQnDtRRxw2lEtpvI2xgWl8pxo30CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=X3Vn7gIQ; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1752237123;
-	bh=1FdCuGpSpNiCe7VxjRk9mX+t3oo9BOrw63kPw2edi0s=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=X3Vn7gIQmtfdKMYkNtGW9lJzY7j1Mu+AjTzpIKBet/vvl32Wn6Wrp+5/SA75Bw80G
-	 kVtZzcVUdmMn/bXD9zTbECghubt6B5shtHugiyny2MObYelYXA/isSR/fmwqZq/n0s
-	 YO+aybA5QNUS8laitZyGrDX/Hf7CuWwyjO7wgmkk=
-Received: from [192.168.22.147] (unknown [50.204.214.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 358911C0229;
-	Fri, 11 Jul 2025 08:32:02 -0400 (EDT)
-Message-ID: <bed58d57f3d2aa2a5a3c1498d24d109be5717612.camel@HansenPartnership.com>
-Subject: Re: [PATCH V3] efi/tpm: Fix the issue where the CC platforms event
- log header can't be correctly identified
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Ge Yang <yangge1116@126.com>, ardb@kernel.org
-Cc: jarkko@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com, 
-	ilias.apalodimas@linaro.org, jgg@ziepe.ca, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, liuzixing@hygon.cn
-Date: Fri, 11 Jul 2025 05:32:00 -0700
-In-Reply-To: <ec847802-5189-461a-a372-f81839938579@126.com>
-References: <1751858087-10366-1-git-send-email-yangge1116@126.com>
-	 <0925430dad9e55179be0df89d8af1df72dfa0c89.camel@HansenPartnership.com>
-	 <ec847802-5189-461a-a372-f81839938579@126.com>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1752237153; c=relaxed/simple;
+	bh=jskRVxDVP/S7EV7/YxIs2gggxobMl3QXDo9NH63okro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MoydRcN6WPl3A/As9KMwP6GcVDPQxtPIYpe+icbbGufxX4unZTqIaaB0+hS86ij4VQM8WHdABbXl5vBEWr6AkuuhAE311a+6W+ZXTHn4Mw3vuITqshOP43Z4hetSin0fE0AxfHSswuYuxGFPpSd1EHKnTCrRzsBK1j/ZSwIj0K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=E/pjBBTo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BB3B4S012862
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:32:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	I+uJUa0zDVqqPkW/P6ZNncfaiD0Ik/YbmbIwujNrzqc=; b=E/pjBBToKGzsD7Nd
+	aP/K0oulwHPlxsH9QDB5UjkokGaSTwp+ppzV3nPC+zT0BAr1G2IsxtUchb0/O1r6
+	IXdkA7CV8TuW/2M6R1CGUEA9OTppGialSdxTjdC5tlulcQFhsGbFUpxIAY5Wdejn
+	A3ym7h3zKXy/RBGl6G/H77MKPrI7+QLrsSlDnCZJN7KV9rsIRPzDY02eapz7lveF
+	aZ7oKzOgavVo3GAdhfV6WxApnbgw0XnrD2vuizxgp7T753m8zZZmrSlR6jxDNbDC
+	4rgx/9s1/zjlN4vrW6g+s0VCJ+K5kIBA7byNQu6EUv95pcKztrKQZlEfD0AxWhx4
+	apS7jQ==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47sm9e0h8q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:32:29 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-748f13ef248so1984342b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:32:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752237148; x=1752841948;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I+uJUa0zDVqqPkW/P6ZNncfaiD0Ik/YbmbIwujNrzqc=;
+        b=gw7xGlxyaJtJKNqmCjtyAUgxqqZhRfEn4vUiv6Wf+6fj6R1yZnH2f1lnynR6sntXKI
+         TthSsEKEavIDsn1NmRqJELUmvYwGps6oC9rHwYTVMUTiansppQLzv+NW3uPMdi7zGOFv
+         OGG2DA0ndWOgzK6bXPNJ4hrGE/a3buk2E9FLy6sCUbz9CMCbqPuNVWmYvtPCvwNGXKrv
+         hdEnr7yyHN14BKy/jtfpFBC8KBhxjBZXoqbIWPrSSafNvyQWwY1ebdhbDphEOmkuoiy/
+         Tvy6r8K54ksC7RtGK6HyHVujx4cs/jw7VIQn7MPxH4mgABhNdI2PRsVYKWbevqT5vYCo
+         OyGA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/XNQHL+4hhphib/AAEv2dF7BaBcvSHYD0WguoEyusYV9gGgd9n1LIFQUxPJVkJWP0u5nCkIFJZRS2ZXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUnBwo1+lgVLD8wEzF6sEc5V54bl9Ry0kzUVapfNjbF/ds2lwm
+	YdbTCtNrX9MixqvlPogZjKvbDm+rxAcgDydflMvdnW4n5UYMWigEhJ0dIlU7dWL/Wwed4lW6jpO
+	4Gj6tIPaEN0jc2XtPtlKctGrAU0dUgHeK2nCd82CmzUqhOeparhs9IcByiaZtCu24m08=
+X-Gm-Gg: ASbGncu5r7rElEx9YVhyD49PfDMMtt77Hdlm7iMh7n4JEGOyn1pdAhlN4vGzkOWqpU6
+	L8zFz+mQTNMP9I5xGIG2EqIluNz+bFadcgU64gP2+8HZ5DB73SKT2PYFDFQNQagdfuCRZWVPgDt
+	A78SI6XsOOk/ylGZiCCtME17Qu7P/Loze9CwMmHYOWH4Ozblcei87EFiRma9LVW2enZVVM7l3mj
+	aI51xLMUGbXRd15De/+gA5VJ8rgxg/cFSTyLrGJ0cFoByPwxIXBKtNipIwiRdQPi7r93uN9BWQG
+	W1bPRkxBbdzYJ/hJJDloPVKU1Hsc07487tZtvr5TPDosFC7ie7lch+dB31096oyby8HQQvo=
+X-Received: by 2002:a05:6a00:1151:b0:74c:f1d8:c402 with SMTP id d2e1a72fcca58-74ee07bb96dmr4845191b3a.8.1752237148308;
+        Fri, 11 Jul 2025 05:32:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9gsUsqbiWSyynICyXIvV85uCk9/J6nn3GoQC+GKfjb1N1fCIuGevD1MSbYwD9kXnui8JeEw==
+X-Received: by 2002:a05:6a00:1151:b0:74c:f1d8:c402 with SMTP id d2e1a72fcca58-74ee07bb96dmr4845108b3a.8.1752237147622;
+        Fri, 11 Jul 2025 05:32:27 -0700 (PDT)
+Received: from [10.219.56.108] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9f90d66sm5040981b3a.173.2025.07.11.05.32.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 05:32:27 -0700 (PDT)
+Message-ID: <cdadd6cf-18c9-15c7-c58a-b5d56b53452a@oss.qualcomm.com>
+Date: Fri, 11 Jul 2025 18:02:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v10 02/10] dt-bindings: power: reset: Document reboot-mode
+ cookie
+To: Rob Herring <robh@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Elliot Berman <elliotb317@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        Andre Draszik <andre.draszik@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
+        linux-rockchip@lists.infradead.org,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+        Macpaul Lin <macpaul.lin@mediatek.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Srinivas Kandagatla <srini@kernel.org>
+References: <20250710-arm-psci-system_reset2-vendor-reboots-v10-0-b2d3b882be85@oss.qualcomm.com>
+ <20250710-arm-psci-system_reset2-vendor-reboots-v10-2-b2d3b882be85@oss.qualcomm.com>
+ <20250710224740.GA15385-robh@kernel.org>
+Content-Language: en-US
+From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+In-Reply-To: <20250710224740.GA15385-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: KmVFvD9atl_oCsIxL8ZnGBEvi84ruadb
+X-Authority-Analysis: v=2.4 cv=W7k4VQWk c=1 sm=1 tr=0 ts=6871045d cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=s8YR1HE3AAAA:8
+ a=PKmmUXB_vcMajKhYsGEA:9 a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+ a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-ORIG-GUID: KmVFvD9atl_oCsIxL8ZnGBEvi84ruadb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA4OCBTYWx0ZWRfX5mDnKh54UNw5
+ nWixK3tRUpnMKV3gSdtBuCXPQiLEkj8tWB0xMBnV1jhwNCT0qefAUvYLIX46cluUkDMGXWba/0L
+ zvPCfICJtBTU9aeuucF/XFb6ywWmGbfSd/5JvvwsLzfDfBrgPtPispvYNPY4ZZQZYkMuOM0MA6H
+ 88xh9TYjJY7oXmIA7AUEagZZ4GAtTBKUCzRYOUZQBjeSMIL8mQjI74PqDHuUI/ppj1dFPtqaExs
+ 1BiRRMxCmsRhkk0kNITkYUkEflBoDZJntYq5sdc6ubHXvhehbbrioYTmKobI7651uZx81x2kEcn
+ HW8hWtEGqDeg4/Yh+U6mtjM99zeMrRAYZfCcNw9g1H2FPc5Y4b0OVXZluuexhilHKzpI64w6jfz
+ Mip32wQw3dzt3VVBe/9JF3n0+hFmq0Z1IaeLXcAfsmWAXRInXvl9EE9+uB1G5/j1MMA9O+GT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 phishscore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507110088
 
-On Fri, 2025-07-11 at 09:23 +0800, Ge Yang wrote:
-> =E5=9C=A8 2025/7/11 5:58, James Bottomley =E5=86=99=E9=81=93:
-[...]
-> > I think someone has misread the spec.=C2=A0 EV_NO_ACTION events produce
-> > no PCR extension.=C2=A0 So the PCR value zero is conventional (and
-> > required by the TCG) since nothing gets logged.=C2=A0 Therefore even if
-> > you're technically using PCR0 for something else EV_NO_ACTION
-> > events should still have the conventional PCR =3D 0 value to conform
-> > to the TCG spec. I assume it's too late to correct this in the
-> > implementation?
-> >=20
->=20
-> According to Table 14 in Section 10.4.1 of the TCG PC Client=20
-> Specification, for EV_NO_ACTION events, the PCR (Platform
-> Configuration Register) value can be 0 or other values, such as 6.
->=20
-> Link:=20
-> https://trustedcomputinggroup.org/wp-content/uploads/TCG_PCClient_PFP_r1p=
-05_v23_pub.pdf
-
-You're selectively quoting one part of the spec out of context.=20
-Section 10.4.5 (which is the normative one about EV_NO_ACTION events)
-says:
-
-   1. All EV_NO_ACTION events SHALL set TCG_PCR_EVENT2.pcrIndex =3D 0,
-   unless otherwise specified.
-
-And the only update to this is in 10.4.5.4 where it says a vendor
-specific EV_NO_ACTION event may set pcrIndex to 6.  Since the log
-header is not vendor specific, it must have pcr =3D 0.
-
-Regards,
-
-James
 
 
+On 7/11/2025 4:17 AM, Rob Herring wrote:
+> On Thu, Jul 10, 2025 at 02:45:44PM +0530, Shivendra Pratap wrote:
+>> Update the reboot-mode binding to support an optional cookie
+>> value in mode-<cmd> properties. The cookie is used to supply
+>> additional data for reboot modes that accept two arguments.
+>>
+>> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+>> ---
+>>  .../devicetree/bindings/power/reset/reboot-mode.yaml         | 12 +++++++-----
+>>  1 file changed, 7 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml b/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
+>> index 3ddac06cec7277789b066d8426ea77d293298fac..a4d2fe1db51e0c1f34ebefddaad82b8cc0b1b34a 100644
+>> --- a/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
+>> +++ b/Documentation/devicetree/bindings/power/reset/reboot-mode.yaml
+>> @@ -10,14 +10,15 @@ maintainers:
+>>    - Andy Yan <andy.yan@rock-chips.com>
+>>  
+>>  description: |
+>> -  This driver get reboot mode arguments and call the write
+>> -  interface to store the magic value in special register
+>> -  or ram. Then the bootloader can read it and take different
+>> -  action according to the argument stored.
+>> +  This driver gets reboot mode arguments and calls the write
+>> +  interface to store the magic and an optional cookie value
+>> +  in special register or ram. Then the bootloader can read it
+>> +  and take different action according to the argument stored.
+>>  
+>>    All mode properties are vendor specific, it is a indication to tell
+>>    the bootloader what to do when the system reboots, and should be named
+>> -  as mode-xxx = <magic> (xxx is mode name, magic should be a non-zero value).
+>> +  as mode-xxx = <magic cookie> (xxx is mode name, magic should be a
+>> +  non-zero value, cookie is optional).
+> 
+> I don't understand the distinction between magic and cookie... Isn't all 
+> just magic values and some platform needs more than 32-bits of it?
+Need two different arguments. Will try to clarify a bit below.
+PSCI defines SYSTEM_RESET2 vendor-specific resets which takes two
+parameters - reset_type and cookie. Both parameters are independent and
+used by firmware to define different types of resets or shutdown.
+As per spec:
+reset_type: Values in the range 0x80000000-0xFFFFFFFF of the reset_type parameter
+can be used to request vendor-specific resets or shutdowns.
+cookie: the cookie parameter can be used to pass additional data to the 
+implementation.
 
+Now to implement SYSTEM_RESET2 vendor-specific resets using reboot-mode
+driver, we will need two separate arguments. reboot-mode already defines a
+magic, which will be used as reset_type. For the second parameter requirement of
+SYSTEM_RESET2, we add support for additional argument cookie.
+> 
+>>  
+>>    For example, modes common Android platform are:
+>>      - normal: Normal reboot mode, system reboot with command "reboot".
+>> @@ -45,5 +46,6 @@ examples:
+>>        mode-recovery = <1>;
+>>        mode-bootloader = <2>;
+>>        mode-loader = <3>;
+>> +      mode-edl = <1 2>;
+>>      };
+>>  ...
+>>
+>> -- 
+>> 2.34.1
+>>
 
