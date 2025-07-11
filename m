@@ -1,167 +1,178 @@
-Return-Path: <linux-kernel+bounces-727683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67371B01E02
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31560B01E04
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3690A3A4551
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5CA23ACE48
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536302D949C;
-	Fri, 11 Jul 2025 13:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4292DCF50;
+	Fri, 11 Jul 2025 13:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fY1bE8Nv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KrExhKKa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10042C17A8;
-	Fri, 11 Jul 2025 13:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CB12D23A8;
+	Fri, 11 Jul 2025 13:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752241234; cv=none; b=N9gugotSaMoqOY5XaHMNFzu+VfcTxLViZz0RCl/FbvqtOde0Tg3sniSQ6mZRu7vY58JagD4C+WgfsdmlZhYJcgC+X6CahUuaqT+edYAaJ3rXsXOzV21iA5y7vDaD7JUABoXdaxyqVU30eDjOO8R+rUNa7GTCIwLnW3DOe3NXrHc=
+	t=1752241243; cv=none; b=AjW6qRMAVy/6IqntZ0pFZs053JkzJbA57OeSZ+NL4RRQb8RjXjIg+V04I8UUTDJHwp46PPTJSS400oYl4kB3S+uRH0ysa1TP8G8m4ZaTZ2aFuO7lYdti+QBg1c6qgXkefoV6ee/HP5nIwT1+fxV2mjI6BIRZo1XQXIu/WXR/KzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752241234; c=relaxed/simple;
-	bh=kHW409c2TBaU4M7cj18B4wU4/Ok8QufCBhSsllw1mk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VxaFuTKlX4rU1BtNuZsls4+KksWuZ/eabuJD68C/7b63ncxYDkqVQq2oEyZ7Jl9EJmQXyFAkIINHW9hpbQT8CuX0yjA8G3Qp3McpGsgpym/JSO51i4OzsCsByVCmRyMdQIPpZl+myinc/mCjvQ5fY6R85HwEx2lkEFMvUk9v4iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fY1bE8Nv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 104D3C4CEED;
-	Fri, 11 Jul 2025 13:40:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752241234;
-	bh=kHW409c2TBaU4M7cj18B4wU4/Ok8QufCBhSsllw1mk8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fY1bE8NvnLL5UtjPBZhAdg3r0S8sKIQ3rgm9YDUo6lG65fE8GoJJlTof54/LMPkj4
-	 c1lebIDA1Ht2DL1JJgUC+A4xSa4jywU/nEDJKhTPAZsksWU2pymVqIberRWI9GzDL8
-	 jFV8zraxRIOjY/J2YNANAhECfNEHOM1XtgBveXW4AUVpyIvEwbBOWBHc9ZyaMZpaMo
-	 Pym38AUYs5UQgUI2MVEccpAz4ECI9i/MDhyhreSHwQnblzoBJl2mXf1acNbwqcftPI
-	 eJi1Y8kNAwojyCi9QnJI2o4ytSPnZoXRhZjSa15oS+pA6P6RBlkvfp2j8pWsq77seP
-	 w0jdvGrkGzHVA==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-61208b548e8so572580eaf.3;
-        Fri, 11 Jul 2025 06:40:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVHQJwKwPTeq4XL/ipJnMk6W2Gc5zc8VgGBZejt656SdNMxb73q49X75lROJbH4Ff2iGrbsw0luIWg=@vger.kernel.org, AJvYcCXFeLAG8j99EmF/Yu1zqXQpBTWUe+Yzos/Km/ZcZNc3o3hcBqKVugoaaO2LMa0mZEyCH+pV+VzoTBY=@vger.kernel.org, AJvYcCXp6TokOlTji9z/xUOenSueqfTv03nb9GC7B+YjabFdwAtfISRU+V0um1uR30CQoCdtFuYlixJnQYqtN9aI@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi9m5TJcmTkbZLxJG1jevcwtfJxfchALGCc0F+eQqgfWZIhnyb
-	XIaWgE8ADq3AaNbbS+VknB1SNqLvKKIKaYcp4HtZJZqj1R9OM0dOwr87vDLyuNc98eLKaxqkBvF
-	yuedWnAY/9ztZIicL/6mU+22vceLUQGE=
-X-Google-Smtp-Source: AGHT+IHYWUrT5/T8j5mPbE9LSBXdxoqRH1k/FXMiOLTMeg6kls7Rig+ps7//jB2hu/AhIcv3YM+yywrmdImt64YZ0L4=
-X-Received: by 2002:a05:6820:2913:b0:613:cd27:2fe0 with SMTP id
- 006d021491bc7-613e5efcb97mr2478213eaf.1.1752241233380; Fri, 11 Jul 2025
- 06:40:33 -0700 (PDT)
+	s=arc-20240116; t=1752241243; c=relaxed/simple;
+	bh=EBt9gGW1TAOYC9qx6L/o8/rbeB4z1Wz05fhzW4EdrBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qEt5UXMrPf6ZCF4t4EtML9NtVcBUskxgphe7SaTA16k3ureT6bN6ciogBv3yfoXuzO6bSwA+en5QeKS3WUKq8rfJ493rdqMN5NlGb6f3oRVOWzknA/2iK3YD9orY5K0wJcbPSwRoM+wit40LO+mZt3Q/JDbvDfsIScsIpEI3v6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KrExhKKa; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752241242; x=1783777242;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=EBt9gGW1TAOYC9qx6L/o8/rbeB4z1Wz05fhzW4EdrBM=;
+  b=KrExhKKa7xHN+lhTATRdDH5oF3alucgPTUSoVPYeDCABTMhEsY86Ywsc
+   F5oaWIpdK5pXOYUW7E4rd/+mQXjD/VVA17rHv4Yy3sh/dA0wfhUIjxEbu
+   d0trJIS+vkL8Tr3gHpuZQDaFx88ZtiB+X9D2K+s8832754ZNOFIHUpcx3
+   q3DyvRe/gSOzF1ufzHZr70aPGwb0lBopTAlcGMnkPz2PwBJJSPrHVzmBI
+   ymlIx0M+nOZVuqv3pnkPIz47BdZijwEFX8+hyRYrN+GUiMwXx7c5S6imD
+   FS97WUZuXTZWmRugA1mfKLupCflviGOyRVEae3l0xKqaj7Ul7oSC2qDql
+   A==;
+X-CSE-ConnectionGUID: 1XEH+H8GTbyFGOBc5dZGZg==
+X-CSE-MsgGUID: zc7xtv6MSZODzZ3LP5Ubkg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54476939"
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="54476939"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 06:40:41 -0700
+X-CSE-ConnectionGUID: /BPaOl2BRyKfPAOcE4Ov4w==
+X-CSE-MsgGUID: 7yPTvQdtRaeGVbVl6EVhKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="180067842"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 06:40:36 -0700
+Message-ID: <3989f123-6888-459b-bb65-4571f5cad8ce@intel.com>
+Date: Fri, 11 Jul 2025 21:40:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709-pm-async-off-v3-1-cb69a6fc8d04@linaro.org> <b3de1e2b-973f-4b4a-83f3-6015808b3772@linaro.org>
-In-Reply-To: <b3de1e2b-973f-4b4a-83f3-6015808b3772@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 11 Jul 2025 15:40:21 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hJjbp0qBZh1Jj3hVHrZV1CLeCgrOVseSGS+7=1r7onYA@mail.gmail.com>
-X-Gm-Features: Ac12FXzDgl_lWOpU6WHqno1wGO4QZHusIJZc9tKNWFd40y80OKUoGkHCmJLRyUA
-Message-ID: <CAJZ5v0hJjbp0qBZh1Jj3hVHrZV1CLeCgrOVseSGS+7=1r7onYA@mail.gmail.com>
-Subject: Re: [PATCH v3] PM: add kernel parameter to disable asynchronous suspend/resume
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Len Brown <len.brown@intel.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	peter.griffin@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
-	kernel-team@android.com, rdunlap@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 0/1] KVM: TDX: Decrease TDX VM shutdown time
+To: Sean Christopherson <seanjc@google.com>
+Cc: pbonzini@redhat.com, Adrian Hunter <adrian.hunter@intel.com>,
+ kvm@vger.kernel.org, rick.p.edgecombe@intel.com,
+ kirill.shutemov@linux.intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
+ binbin.wu@linux.intel.com, isaku.yamahata@intel.com,
+ linux-kernel@vger.kernel.org, yan.y.zhao@intel.com, chao.gao@intel.com
+References: <20250611095158.19398-1-adrian.hunter@intel.com>
+ <175088949072.720373.4112758062004721516.b4-ty@google.com>
+ <aF1uNonhK1rQ8ViZ@google.com>
+ <7103b312-b02d-440e-9fa6-ba219a510c2d@intel.com>
+ <aHEMBuVieGioMVaT@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <aHEMBuVieGioMVaT@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 3:21=E2=80=AFPM Tudor Ambarus <tudor.ambarus@linaro=
-.org> wrote:
->
->
->
-> On 7/9/25 1:31 PM, Tudor Ambarus wrote:
-> > On some platforms, device dependencies are not properly represented by
-> > device links, which can cause issues when asynchronous power management
-> > is enabled. While it is possible to disable this via sysfs, doing so
-> > at runtime can race with the first system suspend event.
-> >
-> > This patch introduces a kernel command-line parameter, "pm_async", whic=
-h
-> > can be set to "off" to globally disable asynchronous suspend and resume
-> > operations from early boot. It effectively provides a way to set the
-> > initial value of the existing pm_async sysfs knob at boot time. This
-> > offers a robust method to fall back to synchronous (sequential) operati=
-on,
-> > which can stabilize platforms with problematic dependencies and also
-> > serve as a useful debugging tool.
-> >
-> > The default behavior remains unchanged (asynchronous enabled). To disab=
-le
-> > it, boot the kernel with the "pm_async=3Doff" parameter.
-> >
-> > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> > ---
-> > Dealing with the pixel6 downstream drivers to cope with the changes fro=
-m
-> > https://lore.kernel.org/linux-pm/10629535.nUPlyArG6x@rjwysocki.net/.
-> >
-> > Similar to what people already reported it seems pixel6 lacks proper
-> > device links dependencies downstream causing i2c and spi client drivers
-> > to fail to suspend. Add kernel param to disable async suspend/resume.
-> > ---
-> > Changes in v3:
-> > - update documentation with "pm_async=3D" and "Format: off" (Randy)
-> > - reword documentation to make it clear "on" isn't a selectable option
-> >   for pm_async because it's the default behavior.
-> > - Link to v2: https://lore.kernel.org/r/20250708-pm-async-off-v2-1-7fad=
-a54f01c0@linaro.org
-> >
-> > Changes in v2:
-> > - update the documentation and the commit message to describe that the
-> >   "pm_async" kernel parameter provides a way to change the initial valu=
-e
-> >   of the existing /sys/power/pm_async sysfs knob.
-> > - Link to v1: https://lore.kernel.org/r/20250708-pm-async-off-v1-1-1b20=
-0cc03d9c@linaro.org
-> > ---
-> >  Documentation/admin-guide/kernel-parameters.txt | 12 ++++++++++++
-> >  kernel/power/main.c                             |  9 +++++++++
-> >  2 files changed, 21 insertions(+)
-> >
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
-ation/admin-guide/kernel-parameters.txt
-> > index f1f2c0874da9ddfc95058c464fdf5dabaf0de713..06beacf208de3242a3b4bb2=
-413ab6cd3e0083f15 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -5000,6 +5000,18 @@
-> >                       that number, otherwise (e.g., 'pmu_override=3Don'=
-), MMCR1
-> >                       remains 0.
-> >
-> > +     pm_async=3D       [PM]
-> > +                     Format: off
-> > +                     This parameter sets the initial value of the
-> > +                     /sys/power/pm_async sysfs knob at boot time.
-> > +                     If set to "off", disables asynchronous suspend an=
-d
-> > +                     resume of devices during system-wide power transi=
-tions.
-> > +                     This can be useful on platforms where device
-> > +                     dependencies are not well-defined, or for debuggi=
-ng
-> > +                     power management issues. Asynchronous operations =
-are
-> > +                     enabled by default.
-> > +
-> > +
->
-> I just noticed an extra new line here, that checkpatch didn't catch.
-> Please let me know if I have to resubmit, or it can be amended
-> when/if applied.
+On 7/11/2025 9:05 PM, Sean Christopherson wrote:
+> On Fri, Jul 11, 2025, Xiaoyao Li wrote:
+>> On 6/26/2025 11:58 PM, Sean Christopherson wrote:
+>>> On Wed, Jun 25, 2025, Sean Christopherson wrote:
+>>>> On Wed, 11 Jun 2025 12:51:57 +0300, Adrian Hunter wrote:
+>>>>> Changes in V4:
+>>>>>
+>>>>> 	Drop TDX_FLUSHVP_NOT_DONE change.  It will be done separately.
+>>>>> 	Use KVM_BUG_ON() instead of WARN_ON().
+>>>>> 	Correct kvm_trylock_all_vcpus() return value.
+>>>>>
+>>>>> Changes in V3:
+>>>>> 	Refer:
+>>>>>               https://lore.kernel.org/r/aAL4dT1pWG5dDDeo@google.com
+>>>>>
+>>>>> [...]
+>>>>
+>>>> Applied to kvm-x86 vmx, thanks!
+>>>>
+>>>> [1/1] KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
+>>>>         https://github.com/kvm-x86/linux/commit/111a7311a016
+>>>
+>>> Fixed up to address a docs goof[*], new hash:
+>>>
+>>>         https://github.com/kvm-x86/linux/commit/e4775f57ad51
+>>>
+>>> [*] https://lore.kernel.org/all/20250626171004.7a1a024b@canb.auug.org.au
+>>
+>> Hi Sean,
+>>
+>> I think it's targeted for v6.17, right?
+>>
+>> If so, do we need the enumeration for the new TDX ioctl? Yes, the userspace
+>> could always try and ignore the failure. But since the ship has not sailed,
+>> I would like to report it and hear your opinion.
+> 
+> Bugger, you're right.  It's sitting at the top of 'kvm-x86 vmx', so it should be
+> easy enough to tack on a capability.
+> 
+> This?
 
-No worries, I've already applied the patch.
+I'm wondering if we need a TDX centralized enumeration interface, e.g., 
+new field in struct kvm_tdx_capabilities. I believe there will be more 
+and more TDX new features, and assigning each a KVM_CAP seems wasteful.
 
-The extra new line can be removed separately.
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index f0d961436d0f..dcb879897cab 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -9147,6 +9147,13 @@ KVM exits with the register state of either the L1 or L2 guest
+>   depending on which executed at the time of an exit. Userspace must
+>   take care to differentiate between these cases.
+>   
+> +8.46 KVM_CAP_TDX_TERMINATE_VM
+> +-----------------------------
+> +
+> +:Architectures: x86
+> +
+> +This capability indicates that KVM supports the KVM_TDX_TERMINATE_VM sub-ioctl.
+> +
+>   9. Known KVM API problems
+>   =========================
+>   
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index b58a74c1722d..e437a50429d3 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -4823,6 +4823,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>          case KVM_CAP_READONLY_MEM:
+>                  r = kvm ? kvm_arch_has_readonly_mem(kvm) : 1;
+>                  break;
+> +       case KVM_CAP_TDX_TERMINATE_VM:
+> +               r = !!(kvm_caps.supported_vm_types & BIT(KVM_X86_TDX_VM));
+> +               break;
+>          default:
+>                  break;
+>          }
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 7a4c35ff03fe..54293df4a342 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -960,6 +960,7 @@ struct kvm_enable_cap {
+>   #define KVM_CAP_ARM_EL2 240
+>   #define KVM_CAP_ARM_EL2_E2H0 241
+>   #define KVM_CAP_RISCV_MP_STATE_RESET 242
+> +#define KVM_CAP_TDX_TERMINATE_VM 243
+>   
+>   struct kvm_irq_routing_irqchip {
+>          __u32 irqchip;
 
-Thanks!
 
