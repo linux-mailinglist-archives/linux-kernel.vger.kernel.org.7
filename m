@@ -1,56 +1,87 @@
-Return-Path: <linux-kernel+bounces-727830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C32B02049
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:19:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9386B0204D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB761C87904
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:19:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1A63168595
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB54E274658;
-	Fri, 11 Jul 2025 15:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9969F283140;
+	Fri, 11 Jul 2025 15:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="X7shbcxo"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="feoqx0+M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E351552E0
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E2E18B47E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752247167; cv=none; b=Ote+RV2OzVuTwomonsWKRxyGOwalKxRjb+e8jMtp+CG7pnqIrCh7w9ZWKskQoRwWRCW8ye6wuaTo+2Sy57ivQDuw0RlRXeoA2qDHjCfe2D3rYrEktvjdQoqEiTXR/N7czEsEaFDKLjB1xNjhaJf0xw0MxhGsN0mWhkE10RwAE1s=
+	t=1752247184; cv=none; b=ZY3eV6jMmvdaKpMUhrr8FfoVL7NGyE0oh6dADca4RfW4b42P/b/lwChHtc3B+KP0Ajftyo6h8AHCqPFeX4VU4nKBUOcSbuuqcxDptoq8RuKW9kSnk1K0nWWHzeI769+cZ8+PrhnL3eeW+9OCdxameompJuzYPaDcchJEuMpsU/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752247167; c=relaxed/simple;
-	bh=6eTk+Rez1Dx2t25BtPQK5sIIRmyaEOyXGPPSgCgLmA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=gvnvmo3s0l9ynxnan6iaIkHdahYHb8rnLFU8ofD6KqLh3f4JBZt7kG/lgD7p43rLOURPSCLXzK4MpLaLYGrMqBPlwXxP92K3EqRelOX2M1NvsEDl77+s6+aaLU2nJ1CpO7ZrrzBppkmKgdE9vFu7BnMMMF+7GukAx5A7Vb6kjp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=X7shbcxo; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250711151922euoutp01471272a2f80f6e8101ef9938fea26ef6~RO4LC3h9I2239022390euoutp01J
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:19:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250711151922euoutp01471272a2f80f6e8101ef9938fea26ef6~RO4LC3h9I2239022390euoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752247162;
-	bh=fcewOa5OLVmZ08COtX/6ELxglwPgWvCAwEjTgpYJRbc=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=X7shbcxoHz4/uuqF31DM3XkNqucBXTZUladGlprSDimOpHNXkHJJ3JjmjhCu+/fFb
-	 wmMNyvRmvQNaPuS9ZhG1VC2An5K1xFx+I+4LV6xE6UvvQ8pWIFb8F+z2W+2Sh4Icz9
-	 lVSSRl43P5tpHNLREEzpRtG1cSMv7z/r1YS4Hah8=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250711151922eucas1p14c32b8004eb7275d4af8efe31dd9c678~RO4Kgc8GB1992419924eucas1p1J;
-	Fri, 11 Jul 2025 15:19:22 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250711151921eusmtip1884570ece80ba5dfe41229c79334008b~RO4JY_dRl2903329033eusmtip1f;
-	Fri, 11 Jul 2025 15:19:21 +0000 (GMT)
-Message-ID: <8acb5b54-c01b-4427-9ada-596897b96a10@samsung.com>
-Date: Fri, 11 Jul 2025 17:19:20 +0200
+	s=arc-20240116; t=1752247184; c=relaxed/simple;
+	bh=pqrm32islkh4Y2vJ8ehOBHXPAu6/bVZjFZ3KkoHZHx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MePofBEHT43jNg4sl9ZcLFR/nwOVGtrvV6KBB+b2FAfn9/OtP4aROT+QGExnhAzD5+t4EY47uxW6oneK7bDxy0FbFJjZCNo4h6Jtw32JwsqpIDklCOwbK/ztLvY95UPEpGeFr9tzGOiYc56Pv/afbl5nkPf9K/pzsQMHnHuV05k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=feoqx0+M; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752247181;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=00niZRA42QozTn1VVi8RS9c50/np/J5zd59pq/4irQ0=;
+	b=feoqx0+MUN+wVgTiuTQh/QONprMdLCfeHji3e9ymyCGKP+j9JKrJIz5tBMuob4oDwlOO0l
+	z2X3gaqAI80qdLWy0P6Sgl5OZC7AtXbw1Z4ZXZgY1MPQ2wq4Ako87QvkE6DDVJDU1EO4O9
+	YJaNm3jjEkzPg3BAQK8enwMhJKn1KLw=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-608-UjWhEwB7M5SAap6g_IjW3A-1; Fri, 11 Jul 2025 11:19:39 -0400
+X-MC-Unique: UjWhEwB7M5SAap6g_IjW3A-1
+X-Mimecast-MFC-AGG-ID: UjWhEwB7M5SAap6g_IjW3A_1752247179
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3af3c860ed7so1092830f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:19:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752247178; x=1752851978;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=00niZRA42QozTn1VVi8RS9c50/np/J5zd59pq/4irQ0=;
+        b=hYDynu+05lSX3dzylYOfCg5zjJp4tvd94+pZ3gneZCUY9g6jnLxa66Iq5n+nFAQgbI
+         ptawfmO4svHqmAbq4FcMLtSu28qAn2RfGCYal8u3Ri310yxgdaF9cG6huvjJmy2NasBq
+         cNrE54mOOBlnaBKtr0Q8pZA5L9dIX7y9vx0kuveIdoQRC3veo/Q+Zn9dD/wY9Tgr1j2V
+         h/Mi4oenSVl6iBGbs/AYM0BpWLSh0UekZuR7Vh1NFXM+7eFxNMJ9VSqFN/IljhtDXyA6
+         t4U2S1f0Mj+EDWoVE1AlEB2YL7zzfsTFmYS2adS5JWBt9MYhSnjhvGjhLFfdvHgRshmI
+         WeEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqFvWb55he2XcmtD5UM1DC+8HqmBANP1vcrihT8v8rcitFXly6iMv4Eacl0sLiHYe/8uGp7m5BpNZ5Lr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwipcM2deNYfYCEWrOw+7buVlZiZdl437SUHGOMO+V3J4JJsMYH
+	f2PuG9G/gAwA7p0gyYp9Lw51SnTXtcj0Fb1SX8W5akkqE+GIk47oj8Zfgao2T0Y41xZ5sjag5Mj
+	TQI0S2g0tPFOQG9W3z08bMWdXBd4RTHEdyeNsdhjiKJ8EzYrStN6c9V/BNCDLT1TU2Q==
+X-Gm-Gg: ASbGncvz719AgFl/HlEe1xBwb6HIduFwbp1ETtcBF383BysBiH40qYFOj2isoIe1lTB
+	fowJfKx2pd/DCyp7HH22F+rwr/yDP5F3Ytx8BTxhrAtbmTKkyV5ZabJXCRUPLCRN88U5FBrsHnQ
+	YlLUxaX3kz2gqSz+4UUrMOkVhP4dG92iRV0AVG8FwqacYvst3hlUaQATuyUxz+fidq7PQUeZ1hf
+	DhguFbeFdD6HWey4ISYhLCOGwFnfTVzJZKWxLAYoC2Ut0q6jRE0jYQah25ffLhmAJ50TUMYGp6N
+	u+0YPoKXrvqVjulF9P7Xh6YMd+3Q1cSvA7cIkKN31xv9LevreNJZl7b98Hiaz7zYo/dRsJX3ih2
+	vbjyaSkkCh9Mn5R06AQXbveqApLsiO/CsvtvxR4ELEi8eo3IcFBELFxMb84u4ib5mSjs=
+X-Received: by 2002:adf:9dc1:0:b0:3a5:25e0:ab53 with SMTP id ffacd0b85a97d-3b5f2dfd725mr2510224f8f.32.1752247178528;
+        Fri, 11 Jul 2025 08:19:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG7S9JKeeKNNYphsrKWaudZSKODItxMUx/IDkhuFl55aF46Hho8OcqsAyD48XHyymEVyekDdw==
+X-Received: by 2002:adf:9dc1:0:b0:3a5:25e0:ab53 with SMTP id ffacd0b85a97d-3b5f2dfd725mr2510187f8f.32.1752247178054;
+        Fri, 11 Jul 2025 08:19:38 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-455f7b86bfasm5867215e9.9.2025.07.11.08.19.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 08:19:37 -0700 (PDT)
+Message-ID: <da3c6039-c7e6-4282-961f-7140e3f53dea@redhat.com>
+Date: Fri, 11 Jul 2025 17:19:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,147 +89,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 0/7] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren
-	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
-	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
-	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, Benno
-	Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Drew Fustini <fustini@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, Krzysztof
-	Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] mm/page_owner: convert set_page_owner_migrate_reason() to
+ folios
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, willy@infradead.org,
+ muchun.song@linux.dev, osalvador@suse.de, ziy@nvidia.com, vbabka@suse.cz
+References: <20250711145910.90135-1-sidhartha.kumar@oracle.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <i5ee2u45kmcb2su743th744ofnmk4lkfq44iqvfwdjwscv3bz7@pjakppae22na>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250711151922eucas1p14c32b8004eb7275d4af8efe31dd9c678
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6
-X-EPHeader: CA
-X-CMS-RootMailID: 20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6
-References: <CGME20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6@eucas1p1.samsung.com>
-	<20250707-rust-next-pwm-working-fan-for-sending-v10-0-d0c5cf342004@samsung.com>
-	<e8a4a821-e7e4-4bcd-a2ac-f6b684b6ceea@samsung.com>
-	<ipvaegqlkco5qinhvn33mqvg7ev2walvs74xtzvhimxsfsfzhv@gcmpxcdtetdn>
-	<e77eab1c-446f-4620-95be-d343684d1e95@samsung.com>
-	<4hmb3di5x2iei43nmrykrj5wzlltrf3vrnqvexiablonbscn57@4bbsz5c76t63>
-	<ad17dc8a-80b7-4344-a1be-6cf780567aaa@samsung.com>
-	<i5ee2u45kmcb2su743th744ofnmk4lkfq44iqvfwdjwscv3bz7@pjakppae22na>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250711145910.90135-1-sidhartha.kumar@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 7/10/25 22:39, Uwe Kleine-König wrote:
-> Hello,
+On 11.07.25 16:59, Sidhartha Kumar wrote:
+> Both callers of set_page_owner_migrate_reason() use folios. Convert the
+> function to take a folio directly and move the &folio->page conversion
+> inside __set_page_owner_migrate_reason().
 > 
-> On Thu, Jul 10, 2025 at 06:58:41PM +0200, Michal Wilczynski wrote:
->> On 7/10/25 17:25, Uwe Kleine-König wrote:
->>> On Thu, Jul 10, 2025 at 03:48:08PM +0200, Michal Wilczynski wrote:
->>>> On 7/10/25 15:10, Uwe Kleine-König wrote:
->>>>> On Thu, Jul 10, 2025 at 10:42:07AM +0200, Michal Wilczynski wrote:
->>>>>> On 7/7/25 11:48, Michal Wilczynski wrote:
->>>>>>> The series is structured as follows:
->>>>>>>  - Expose static function pwmchip_release.
->>>>>
->>>>> Is this really necessary? I didn't try to understand the requirements
->>>>> yet, but I wonder about that. If you get the pwmchip from
->>>>> __pwmchip_add() the right thing to do to release it is to call
->>>>> pwmchip_remove(). Feels like a layer violation.
->>>>
->>>> It's required to prevent a memory leak in a specific, critical failure
->>>> scenario. The sequence of events is as follows:
->>>>
->>>>     pwm::Chip::new() succeeds, allocating both the C struct pwm_chip and
->>>>     the Rust drvdata.
->>>>
->>>>     pwm::Registration::register() (which calls pwmchip_add()) fails for
->>>>     some reason.
->>>
->>> If you called pwmchip_alloc() but not yet pwmchip_add(), the right
->>> function to call for cleanup is pwmchip_put().
->>>
->>>>     The ARef<Chip> returned by new() is dropped, its reference count
->>>>     goes to zero, and our custom release_callback is called.
->>>>
->>>> [...]
->>>>>>> ---
->>>>>>> base-commit: 47753b5a1696283930a78aae79b29371f96f5bca
->>>>>
->>>>> I have problems applying this series and don't have this base commit in
->>>>> my repo.
->>>>
->>>> Sorry for the confusion. Base commit doesn't exist in the mainline
->>>> kernel or linux-next, cause I've added some dependecies for compilation,
->>>> like IoMem for the driver (uploaded full branch on github [1]). The
->>>> bindings however doesn't depend on anything that's not in linux-next.
->>>
->>> The series didn't apply to my pwm/for-next branch.
->>>
->>> Note that the base-commit should always be a publically known commit.
->>> See the chapter about "Base Tree Information" in git-format-patch(1).
->>
->> Hello Uwe,
->>
->> Okay, thank you for the clarification. I understand the requirement for
->> a public base commit.
->>
->> My intention was to include the TH1520 driver primarily as a practical
->> demonstration of the new abstractions. However the driver can't be
->> merged as is, since it depends on the unmerged IoMem series and won't
->> compile against a public commit.
->>
->> I will rebase the series on pwm/for-next and drop the driver and its
->> associated device tree patches for now. I'll send a new version
->> containing just the core PWM abstraction patches, which apply cleanly.
->>
->> I will resubmit the driver patches once their dependencies are available
->> in a public tree.
-> 
-> If you base your tree on (say) v6.16-rc1, then add some Rust
-> dependencies up to 47753b5a1696283930a78aae79b29371f96f5bca and then add
-> your series, you just do:
-> 
-> 	git format-patch --base v6.16-rc1 47753b5a1696283930a78aae79b29371f96f5bca..
-> 
-> . This results in a base-commit line that I (and maybe also build bots)
-> can use and a bunch of further lines listing the commits between
-> v6.16-rc1 and 47753b5a1696283930a78aae79b29371f96f5bca that might be
-> findable on lore.k.o.
+> Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+> ---
 
-Hi Uwe,
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Thank you very much for the detailed advice on using git format-patch
---base. I appreciate you taking the time to explain the workflow.
-
-I investigated this approach, and the difficulty is that the IoMem
-series [1], which my driver depends on, is itself based on an
-integration tree rather than a clean public tag.
-
-This means that to create a series based on v6.16-rc1, I would have to
-include a very large number of intermediate commits from linux-next,
-which, would not be helpful for review.
-
-Therefore, I believe that dropping the driver and its device tree
-patches for now is the best path forward. This will result in a much
-smaller, self contained series for the core PWM abstractions that
-applies cleanly to your pwm/for-next branch.
-
-
-[1] - https://lore.kernel.org/rust-for-linux/20250704-topics-tyr-platform_iomem-v12-0-1d3d4bd8207d@collabora.com/
-> 
-> Best regards
-> Uwe
-
-Best regards,
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Cheers,
+
+David / dhildenb
+
 
