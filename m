@@ -1,117 +1,193 @@
-Return-Path: <linux-kernel+bounces-726755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DEEB010CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21065B010CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 651175C2914
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:26:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DDF75C296D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2F081741;
-	Fri, 11 Jul 2025 01:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3396C12C499;
+	Fri, 11 Jul 2025 01:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJf/j2N5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8EavvGU"
+Received: from mail-yw1-f193.google.com (mail-yw1-f193.google.com [209.85.128.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDAF6F073;
-	Fri, 11 Jul 2025 01:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9035E6F073;
+	Fri, 11 Jul 2025 01:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752197192; cv=none; b=tugRKl7ZBfFX3CLa8nm2ThLtKqsLQHJlgxQ4agcEo5B8p9RI86L9ROGr96TWCyHrYQmCNf/NkmzEntwEf3lROoaK0xgWKU3O96ddXspfoeYYIe/L/kp7PR88dPxrk0jQ27IxD6h71DRDSW18xTh7iRL+VBfykYDMnq6yO2opyPU=
+	t=1752197270; cv=none; b=Dz4U2zMUaxouyO8dIZwcDQlpjXGGZWGQcjFJQkWAFv4AsZdHsC3nlolKbAimig49+kwfC0S72B56EhiPi3YcsGeMrUnnLaB95lb2uEDG2pfisnPi1LoK2sTQIpv4InPvAE5kX008U5vlQNMqTrjU7jhaFizJIcR8i7EUoJPg0cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752197192; c=relaxed/simple;
-	bh=RfxQfmg2Dd887FUvfCHez0x+Wjj1R3iRmWBqk9ugQCA=;
+	s=arc-20240116; t=1752197270; c=relaxed/simple;
+	bh=HFS+1dLZCMXLbRXybWkTOfr7F8qCGRXS+XIjE566oZ4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uNYhM42WXbG39Rcy7V60nVcz1wA6llz8LvHG4xWyA6w0ln+mcmviI94LvUMgEik8FUzI4jsweKxWhWg4REiRhbXC01a8qExsNTxtKM6jqhYjHv1f/7gI96Q1/BxgSxU9pgfnGJrtJw8Ill/VA+BcJmiwGOLJOyAUqpes45ugHZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJf/j2N5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF880C4CEF4;
-	Fri, 11 Jul 2025 01:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752197191;
-	bh=RfxQfmg2Dd887FUvfCHez0x+Wjj1R3iRmWBqk9ugQCA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rJf/j2N5Q07CWlnP1M4BmFz+2uM8GwTbXMe4Z0A27pXRY4lShSKueYZ7JLD7Jf9Dj
-	 SAFT1DClPlKSk07Vvqcx+eebmjjZaqkA5a96eDeSim+VhOITOEjLkVfThC52B6apT5
-	 raRNrns+3fugjK3MfvRlNV5JU90vpQMeSXNyeSeh5B7/7yuB7+1e5zcLW1oZ1eaEZu
-	 qsV0RAyL1dfV35pEKNoNFvIrs8EH90J7EukkJcj7TxTJP8RX/9oWn41RnIHL6htcbF
-	 Acqbf47NSVxyjBTiCDNfXMUWpCWf/AjdQOrAZEBUDlQ13laCrG1CG9vRdK3WC+4x+3
-	 0MF5rncxvmIxQ==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-553c31542b1so1538312e87.2;
-        Thu, 10 Jul 2025 18:26:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4RkhArmKxKRx0egU4kb9lW1I13Yzniu1IvlHLqrEwEsOf8S1pimhWrAdULQttz8u7+qWR+gVxep9poKIo@vger.kernel.org, AJvYcCUlKAvcYUlw4ZGeFTt6gty3EGDbFalyPYAsCAvSY9MX6tw6wmM211R3O9Hg/CJ3pT06SJA3MhrMZQ+4@vger.kernel.org, AJvYcCV+7r3YEUBBm7fVALBZebkv33p4BX0U2DktXsWib7eHDGiSdh/3KZr7ZwcYTMXh0Ul7I7ZNUFIwWEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrIoBtJtVgVAOuUbyOPUASkoPXFubiShKTeUSqbgwrRwyXQOom
-	YJd8mHbPnm7B9jHZ8tHp2GfbMJf/7TrGwqzIoD+k1q9BN7bXTUFvJCt+wWHPSX2RjtkOv9S9DG4
-	Ani3cjV2YKjkN1N9U+TbOc2RIFV+ySSE=
-X-Google-Smtp-Source: AGHT+IGGzPWQHD569ufcCOEYTYZwdRC3705oAS6A4zsc48S475Ka2iXU/TxJZAgksgyT8EOmAOqmiGHegF6pdf2KlGk=
-X-Received: by 2002:a05:6512:10d6:b0:554:f9cc:bea5 with SMTP id
- 2adb3069b0e04-55a04603ce3mr277116e87.34.1752197190066; Thu, 10 Jul 2025
- 18:26:30 -0700 (PDT)
+	 To:Cc:Content-Type; b=UrSmENRorONL6Pz1fj9hXoPP25Ilw3IV1TpmX/FmAud8cYk0O7kShHXuDce32IMp/w5gPALVG5hG3e0OgUDmdDSDYJaeVHVVxBPi3HzMeG8tY4fySazhaa9+VdSegtEO1pAs/0ydIdzTXkAYpNrJgKk1soCqddARVPQx3deSRQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f8EavvGU; arc=none smtp.client-ip=209.85.128.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f193.google.com with SMTP id 00721157ae682-70e767ce72eso15828687b3.1;
+        Thu, 10 Jul 2025 18:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752197267; x=1752802067; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KG9lxpLURaWwhvz42ij9wTJRd68a4iePoTZxhClKIzI=;
+        b=f8EavvGUTzmlNo2nVtCahPKM1lCenuGT8JUbFjJc+niObPcSTu0FuGGX5hzMW5oSeR
+         Esd+IEzszO0r9ePVH6eZE7pkkKVYeur9rfZC1I1DzBKdP9CVkj5onbF5LywxUflkD0G5
+         HYOdpE/Jz/m5XjKzni3SdB8+aKfRiGSv9odzxzoh+LWp/7QDeeLERm2H9cvc2tji6dyM
+         zGqy6zeELCipMw2RbJPjPTi/MJgCI6u5Tew9CDNgzt/pUVt9k4S+wfXce+ibiY+9N+sT
+         KM+w6T4QCut+UOPWR2rZOJTYJQhSw4BySbnBK5YXcK0bBZbhbfGZXP2U3oPCPHkGWhxb
+         afpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752197267; x=1752802067;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KG9lxpLURaWwhvz42ij9wTJRd68a4iePoTZxhClKIzI=;
+        b=AWfe5Bgtwzlii/lAaKwwIzN26751fJo6jvDSPnBVW9ozBTZuXUMDI7ERExNpidAt8V
+         5rT+QHILCp2+zC4b9XMiVZk+mq6aW3HepIXJ0N+lDkj22euia/5ad9HRXV1cDTnU3DlF
+         T2fytdNRNMC/14HlJDygiJtflLyDWDz61PhHjWlEuT3s0wtSGAFJWIfg8mUbms9nKrLg
+         yM/AK2tP4RaMirNDG/hVmzeKRfGXxtm9vGsWkCSmc2PmMD7ID0++fJh2RCkvoL3tnbuj
+         BGyMLudApJ8WSeQlNItpz9NqHay1OHtVvfpVOscr8URFIifINashuXsFn3Q/39nArTik
+         QNzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbIIGjgYKmna6tZdBCt2G8Pqbv5mbYY2ZDvVOaSUOxEraPNVqcTMY6lemkAt1UWR72aN77jGU/uoQIkL/c@vger.kernel.org, AJvYcCWQPkHch8+O5DwGBbPBd3n491ZsQ7s9tQ2YInprtXukyKo9heoRMZvYewRPFO/jyuHK1F4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWVnsS36NH2uSnWKHS78n07iM+27J0k4F06i5OgCvHe7Ijtw9k
+	uP7kQ8NdgrX1/rmnxLjRxfTEUvuGhAwPz3jFCiYUTFuV8ViXnWTZrlV7a3LuXIWLQB43wBVwSoD
+	6nP0eRTN5ak+y8d6xGPtWIzyI4Wo2z1Q=
+X-Gm-Gg: ASbGnctBV5YbaTOJ9h4UOx3SK8UP9ByF/6Zp4trjKw/TT2yTkwiRruJWefV/XsyevIT
+	yVxdkGrc1xRQZb07D42kOn7/dmNC+KhqLeqC0gaHVBfXgSqP8ANk5N32Wx2GvU3m/ibWI6aZdK7
+	lOzTHTby2RwUdJQw9oPIlQ9Q+FECDs3pEKA6Jm6nERnrIuj2+qrRG4ee1dIA7fJm5styk1BKLs1
+	XTbSsk=
+X-Google-Smtp-Source: AGHT+IHA8KO4vFXJVj+xo0ubtjuUOVGSX3QHRDGnhbjsuAMjg9EJ9NlFwR2VmPglkjK8rdMruuD6J60xFlc4DxChEeU=
+X-Received: by 2002:a05:690c:1d:b0:70e:1474:63f2 with SMTP id
+ 00721157ae682-717d5b8aee0mr25663137b3.7.1752197267199; Thu, 10 Jul 2025
+ 18:27:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710084151.55003-1-feng.tang@linux.alibaba.com> <CAMj1kXHDFq3FZj4134CTcQZnke4t1=u6iRNNsQBvuhb3F6KurQ@mail.gmail.com>
-In-Reply-To: <CAMj1kXHDFq3FZj4134CTcQZnke4t1=u6iRNNsQBvuhb3F6KurQ@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 11 Jul 2025 11:26:18 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXGiixvwsSmOz65F=OXQuHovO4DMAsJaPZ2sL3PBbMHh8A@mail.gmail.com>
-X-Gm-Features: Ac12FXwEVJ2X_qJfiRJv28DHyB9KSTVoj5V-JDQNvsUzFlu0sloXdMqexP7ENj4
-Message-ID: <CAMj1kXGiixvwsSmOz65F=OXQuHovO4DMAsJaPZ2sL3PBbMHh8A@mail.gmail.com>
-Subject: Re: [PATCH] rtc: efi: Add runtime check for the wakeup service capability
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250710070835.260831-1-dongml2@chinatelecom.cn> <CAEf4BzZZRk0Ko64wy5E34wAa3psk07UhGg9DENU-CQYfLwT1ig@mail.gmail.com>
+In-Reply-To: <CAEf4BzZZRk0Ko64wy5E34wAa3psk07UhGg9DENU-CQYfLwT1ig@mail.gmail.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Fri, 11 Jul 2025 09:27:44 +0800
+X-Gm-Features: Ac12FXyodyEcAzVBGP9SODuexdqRjklpsY2SoNP4_DywxeGM8SW-JtdFG9IyHFk
+Message-ID: <CADxym3Y16eeQJtd0yi1nT28=NJHmsokuzQx+JuGNsf22vBUxNw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3] bpf: make the attach target more accurate
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Menglong Dong <dongml2@chinatelecom.cn>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 11 Jul 2025 at 11:06, Ard Biesheuvel <ardb@kernel.org> wrote:
+On Fri, Jul 11, 2025 at 7:25=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
 >
-> On Thu, 10 Jul 2025 at 18:41, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+> On Thu, Jul 10, 2025 at 12:10=E2=80=AFAM Menglong Dong <menglong8.dong@gm=
+ail.com> wrote:
 > >
-> > The kernel selftest of rtc reported a error on an ARM server which
-> > use rtc-efi device:
+> > For now, we lookup the address of the attach target in
+> > bpf_check_attach_target() with find_kallsyms_symbol_value or
+> > kallsyms_lookup_name, which is not accurate in some cases.
 > >
-> >         RUN           rtc.alarm_alm_set ...
-> >         rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
-> >         rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
-> >         alarm_alm_set: Test terminated by assertion
-> >                  FAIL  rtc.alarm_alm_set
-> >         not ok 5 rtc.alarm_alm_set
+> > For example, we want to attach to the target "t_next", but there are
+> > multiple symbols with the name "t_next" exist in the kallsyms, which ma=
+kes
+> > the attach target ambiguous, and the attach should fail.
 > >
-> > The root cause is, the underlying EFI firmware doesn't support wakeup
-> > service (get/set alarm), while it doesn't have the EFI RT_PROP table
-> > either. As Ard Biesheuvel clarified [1], this breaks the UEFI spec,
-> > which requires EFI firmware to provide a 'RT_PROP' table if it doesn't
-> > support all runtime services (Section 4.6.2, UEFI spec 2.10).
+> > Introduce the function bpf_lookup_attach_addr() to do the address looku=
+p,
+> > which will return -EADDRNOTAVAIL when the symbol is not unique.
 > >
-> > This issue was also reproduced on ARM server from another vendor, which
-> > doesn't have RT_PROP table either. This means, in real world, there are
-> > quite some platforms having this issue, that it doesn't support wakeup
-> > service while not providing a correct RT_PROP table, which makes it
-> > wrongly claimed to support it.
+> > We can do the testing with following shell:
 > >
-> > Add a runtime check for the wakeup service to detect and correct this
-> > kind of cases.
+> > for s in $(cat /proc/kallsyms | awk '{print $3}' | sort | uniq -d)
+> > do
+> >   if grep -q "^$s\$" /sys/kernel/debug/tracing/available_filter_functio=
+ns
+> >   then
+> >     bpftrace -e "fentry:$s {printf(\"1\");}" -v
+> >   fi
+> > done
 > >
-> > [1]. https://lore.kernel.org/lkml/CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com/
+> > The script will find all the duplicated symbols in /proc/kallsyms, whic=
+h
+> > is also in /sys/kernel/debug/tracing/available_filter_functions, and
+> > attach them with bpftrace.
 > >
-> > Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+> > After this patch, all the attaching fail with the error:
+> >
+> > The address of function xxx cannot be found
+> > or
+> > No BTF found for xxx
+> >
+> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 > > ---
-> >  drivers/rtc/rtc-efi.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > v3:
+> > - reject all the duplicated symbols
+> > v2:
+> > - Lookup both vmlinux and modules symbols when mod is NULL, just like
+> >   kallsyms_lookup_name().
 > >
+> >   If the btf is not a modules, shouldn't we lookup on the vmlinux only?
+> >   I'm not sure if we should keep the same logic with
+> >   kallsyms_lookup_name().
+> >
+> > - Return the kernel symbol that don't have ftrace location if the symbo=
+ls
+> >   with ftrace location are not available
+> > ---
+> >  kernel/bpf/verifier.c | 71 ++++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 66 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index 53007182b46b..bf4951154605 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
+> > @@ -23476,6 +23476,67 @@ static int check_non_sleepable_error_inject(u3=
+2 btf_id)
+> >         return btf_id_set_contains(&btf_non_sleepable_error_inject, btf=
+_id);
+> >  }
+> >
+> > +struct symbol_lookup_ctx {
+> > +       const char *name;
+> > +       unsigned long addr;
+> > +};
+> > +
+> > +static int symbol_callback(void *data, unsigned long addr)
+> > +{
+> > +       struct symbol_lookup_ctx *ctx =3D data;
+> > +
+> > +       if (ctx->addr)
+> > +               return -EADDRNOTAVAIL;
 >
-> Thanks, I've queued this up now.
+> #define ENOTUNIQ        76     /* Name not unique on network */
 >
+> fits a bit better, no?
 
-Actually, we might just remove the EFI get/set wakeup time
-functionality altogether, as it seems rather pointless to me to begin
-with.
+Yeah, this looks much better. I'll use it instead of
+EADDRNOTAVAIL in the next version.
 
-I'll send out an RFC shortly.
+Thanks!
+Menglong Dong
+
+>
+> > +       ctx->addr =3D addr;
+> > +
+> > +       return 0;
+> > +}
+> > +
+>
+> [...]
 
