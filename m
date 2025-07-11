@@ -1,443 +1,243 @@
-Return-Path: <linux-kernel+bounces-727760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24485B01F4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:37:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C94B01F50
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A6E16B2C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:37:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE88A586C96
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA1518DB24;
-	Fri, 11 Jul 2025 14:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E14727990C;
+	Fri, 11 Jul 2025 14:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mlgtVkrs"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2u4UAgP"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92A42A8C1
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752244637; cv=fail; b=otSdYK4I5LG2KrLOJDbout4mOWlfi9LYiKZ4gQn1BEHFac7boBZOpZc+guwdHHZ+LbU9ZGCjVfXjQBV+et+ABqLSvxpM+JQaFJztDse4xTjxLiFJNbx26cWb/Bgnu/QJuKzURc48MbRqkoy9ESW4I6S2irtV88AVZDpA5Ev6uvY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752244637; c=relaxed/simple;
-	bh=yiAfMoHBtR1OUvIB9X3wkEJHr9EfvrfWvyxDiGGlHN4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iVKfxFRut2U81PJnsYd6KYmUYTnjUeJmKMi75IS6U7OEzHcMltlkMG5uMCQ5nDgdv8fxlezgUWMQ3UFn+DBUogLjLP2mIVl/v3advhQFSegbcXKw7+UtP4uNud984i9CfyVnZ5ByEWKVE1FgOmBRr40hG8SKxyha/26ZAWFg2dY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mlgtVkrs; arc=fail smtp.client-ip=40.107.236.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jv+qgeRzJKRn+Ld+ajXrhn8NveyYxWkardyCVBIpKcevVglJoSHX7TTyIOLmTUa2EUjiKzmMxPFi8FIuWSiCGoUYpEocGA2Wr1bmQNxw15Y7ziJ1HIPg9eQwg3llrHDSV+uH935idicNGr0LetUV2qnkMNVlnUAd3t0u3F8TL5tSmx/z8Te7XPL4X7o7YmLcG1xCWW0MLoWE7py2SLk489Qghajo6Cqy+C7rc99mLSONYs13akK3iXV/4USwifpJ+6RN6ftjJYwBz5HRCQKYpgIMdxORddPewUZas1GqyRn585vE7znp21WYJacbaWv7jH+UcBURSDSZ+7jDToraNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qzTS+iTUyLd8G6/KA+rEQhGGQpG1cOvV2qquIGGan3M=;
- b=hKhPHCV/8C/rhNQj2d2FA9bhYDbrVllM4AzFMJQTYff56ABV35cj1IzGQQWtThOJhEdGMnGgtZuBGigTXLxZFZ+fRT0obb8fb+VqKrm+Dr3OrfEaH0cXmVeBHKaBxXWC3E+1SpdHPZ711ki5m2Deos57JT7oolmkN/p6hIuNhoqXjLiWZ2mlkYWo3tDi8j3HdkKB4YLtWI8rUgQPJIGSzp3S+/TnWHp5PFJnnWIDLsV6jLG+dTWuqcgZDZlg1MpvxW7Yotij6g54n4Ykl7oMB+Qyu963tQ9jWik3KLL4Q05NU/G9tmKOgDuoT40h9odqDfjJtTweYRpxUf3gfxVD+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qzTS+iTUyLd8G6/KA+rEQhGGQpG1cOvV2qquIGGan3M=;
- b=mlgtVkrsgh8P5DS9A/NKE243yw8K3eLfDM33GONRMP/S6BAv2Ka572AVAFU25wlCc5bP2tF54Oge9S4bB638bZEIZhFki+gp/rgTNr+9thuOfFhctuWIw9xtx/xOzo8jXLGOpWrnxqL+5f1sD4tFFzcCC0BXR/JpBR+4yU9pySznlYRhq5Id4GbtVec2POgMUSagP+HFPGlWhPD4VBl0FJEhXkviGIYQhiHk6eRhgqrWN+0msVo7rbEZbesuahba87FmsD0bK064Xbekl2sWIa5kzaFBVCAbVCv2OHVCXpUnNHV0xJCTSaAWuBLoN3iyIl/vSIvs2Z08JDCx6q9tBA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- LV3PR12MB9142.namprd12.prod.outlook.com (2603:10b6:408:198::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.31; Fri, 11 Jul
- 2025 14:37:11 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.8922.023; Fri, 11 Jul 2025
- 14:37:11 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/huge_memory: move unrelated code out of
- __split_unmapped_folio()
-Date: Fri, 11 Jul 2025 10:37:08 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <2AE055C4-BFFE-4B61-A96A-6DE227422C7B@nvidia.com>
-In-Reply-To: <c7e82a13-aa93-4eb3-8679-29cd32692bd0@redhat.com>
-References: <20250711030259.3574392-1-ziy@nvidia.com>
- <c7e82a13-aa93-4eb3-8679-29cd32692bd0@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BL1PR13CA0356.namprd13.prod.outlook.com
- (2603:10b6:208:2c6::31) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AFA167DB7;
+	Fri, 11 Jul 2025 14:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752244762; cv=none; b=jyRsigsSxmVKuAkOir6jvM9To4I4MA0tZuzMRP5OsS/hOMmdYkGJ5Ki9v7DnZr6uG27yoPo/WMtSo03+rmxukYJCAWDJhc/zi+Ez8V5nzwqSoW3MpFZ5pull2fUjlhTj47Xlu3kmWj55k/Na98Spe/AewZvo90mouH7sYlYf9hk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752244762; c=relaxed/simple;
+	bh=M7+e+e1rmKuD/oko475gmT7iuj8HXmG3rZODkspkF08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QV4soe47FAb6eda7GGSvx/BOLPoyqj7XAXAPVzo3TGjN6FuINRqrBVoKPdwtNqsYn/qwEr3hMiDlpTRkHRFox6/UU5M79aHvER2SKT1mviGTyVQ6OcGCrk5PRgtlnLO3uD8VcZxzynsk/QMa+CGn08SiYRvzDpkbfzK9E/tR4Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2u4UAgP; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4a9bf46adedso22186791cf.2;
+        Fri, 11 Jul 2025 07:39:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752244760; x=1752849560; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FafGssQJy1j7DrCNrsdYFCExWgvC1bwETw0T/9WZrW4=;
+        b=Z2u4UAgP/uDzJawE/yMHCQnN+2fGVV5DXnLkrXWPBCKFKjkuXyoPuhe/T/6nX5MM65
+         MBYK2C9hcDbnxwu1LN717KBqHhzYkfIUs/Z9ZEzxlaSGrnRHSiJKlgLV0tT8bCSEvGZE
+         o0aJBa3J9zlZiq8g9v1Wza4f0raAyYnSY5GzBNHQTO/h+1Ou09/F040juWYgeKG8N6Il
+         eHyQuhw67S1IDlzC+DtzPH15QjWVP5dfTf1Zuqjp1DXpZl/5PW4AMs78jvJVZxIEzYgy
+         7C1H2nTApGazc0cBnf88t6/hWk6Oiq4jH92Q5eE+6K1X9R6iYI3eOAdaFCcUj+UA2RMc
+         1pdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752244760; x=1752849560;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FafGssQJy1j7DrCNrsdYFCExWgvC1bwETw0T/9WZrW4=;
+        b=c0gmgBbD/0l6SGrf89jGH6ahOU8a6Rt4rtVzu69Wz58O1TMnIkvZi0jbloSYs8r87V
+         biu5Kt0RCQzIEwm9C96VCE+Lb5yccaEbO3Csx4wHMOq6jT+EIXhCUuun88vS1s7DzfQl
+         3TXPDL+0imBmgqPgwk4rXJwJRDigkLlIdyi3+6RSWCneEPao7ujJdqYBTGiHJog6HQRz
+         Y8Riy1qlTYiDKQsMZm4g17rOdVFfUHzEH2soVdV6cl9JAE3xj1PYo97TObWpeEPtE640
+         LXS2Ovbu7wvDiYsXLhUxrHomipIOUezMO/YzhwvWbh9uKVUFj9ym1dWBqQbRrdNb3Ygu
+         CMuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjiMKr/ksvn846ALNp7D3rtO5aYULxx+SPYWe8elkjm2W0bG3BNv4zKwfhEocTbjzFHm0i3+rmkflA3mURtOE=@vger.kernel.org, AJvYcCVSVnJeYJfmHWKHa3x3ibiOrVhGDa5YK0I+Z7H3YUajiwwCRrT0g5u3GSfzZqtdjc9I7Dz/cMqlFFCp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVIWOlPguokHti1lYg0uzsCrVGnvgKyZhPjOuGxEH0X8aa6bT4
+	xwHGtQm/ZUeSokj8/XyXrE2vqwA4GelUryHSRbvAMi6FN3N+7ipSZs+D
+X-Gm-Gg: ASbGncsvBsQi63xeio8xqLxBp96M3uch1r719sfNtWHK+XLmO30FVbf1SNiYO1krbav
+	QpkG3sz+Fs2ub43vE9nR12n38GHzZxjan8SGTlAjPbue1QIiTn8IiZYZ2XU5C1Ur2MKs5OccB4N
+	5zSwjT5DGmPv5XNovmmggi/cjnFLfd38t2IG3Em/KPJlgn/9XVd1KbpRGRW6sML0p8yeeMQofYQ
+	7TbAv8bROaKIkQYjHN2/JynD/9y3V7dCxD66+yqpEQKdF6WlNCKfdWBxix9I62p9nWE3UEuEm2E
+	pY/iWIA/xvF7lSpHOc4cLWtPHD34vPDYQJCC538rRyzPISXACjdO2mcjm+ukvm9gnHUzBXPyBU6
+	WB01qANPiQW7XCaxltq7yVqyK61nx6q97XODTffMaKFAvxpTkyhTACpGtpX+XBHRAOKMN1UzrFN
+	EZDOYfOfn+KyrA
+X-Google-Smtp-Source: AGHT+IG7i69rdabJU4rCgv47216T/BQiZX74rLkmqajWAIdu3sM+sbPVU9v9PkHjIiFax5nwv660QQ==
+X-Received: by 2002:ac8:7d0a:0:b0:4a7:14c3:7405 with SMTP id d75a77b69052e-4aa35e677c6mr57233671cf.27.1752244759405;
+        Fri, 11 Jul 2025 07:39:19 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9ede76d65sm22250241cf.41.2025.07.11.07.39.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 07:39:18 -0700 (PDT)
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id DD947F4006A;
+	Fri, 11 Jul 2025 10:39:17 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Fri, 11 Jul 2025 10:39:17 -0400
+X-ME-Sender: <xms:FSJxaPomWN0RXF4YL3OPPbNk0-4TlQoNQGmaP654lZ7Idwn7VJTzQw>
+    <xme:FSJxaLKd1nVamV4_WdbqpYfSr4_0VTYpxTe7XT6VKNkgc43DjolEdxqbxr7Rrt7l2
+    ARAK7-w1A4ez5fieQ>
+X-ME-Received: <xmr:FSJxaAxwNv7SF_RvT1nWAFqlll7HRqzPfNP-R07dV0pqXoODAfgXJl-LjA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfeehkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdq
+    fhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkh
+    hmmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgt
+    hhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjoh
+    hrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:FSJxaCYn2nwj2LJUfEy6CFRGqD1Qo_cViDz7slCYE6CuQ2MG9CtNpA>
+    <xmx:FSJxaM4mDusLEsrKkZR-mRnhkzgCanL2F9Jl9fI25Nyn0aHBPio_lA>
+    <xmx:FSJxaDCwb78MsA66_pNzY4yDY416kLdfNaa930Zc92wuL-nDDOaL_g>
+    <xmx:FSJxaCsuyjaSIP9EQO5e7j13oI_1UvTszZZWSodCFwSoLKhZmWmE5w>
+    <xmx:FSJxaIsr4tClwP__41Ow6u40S9uL87BCRUxIW8zIVtKuchr3DA606lEB>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Jul 2025 10:39:17 -0400 (EDT)
+Date: Fri, 11 Jul 2025 07:39:15 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 6/9] rust: sync: atomic: Add the framework of
+ arithmetic operations
+Message-ID: <aHEiE0OoA3w1FmCp@Mac.home>
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-7-boqun.feng@gmail.com>
+ <DB93KSS3F3AK.3R9RFOHJ4FSAQ@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|LV3PR12MB9142:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7f770cd6-947d-4bd5-1311-08ddc0886bf6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UkFHY0ZNOFM0VnErcEFEN3JLcVhXYWJoazJSZjNXUHhPd0RSM01kNysvNWJ6?=
- =?utf-8?B?Q0prT1pvTEdJVGF4ODU5VTRSdG05aVEwZ2ZESUdFQjY2NkNDZmg1aGh5NWJD?=
- =?utf-8?B?TStML3NNd2JXUmJxckUxZkVFMUhvTk13NXVmMmFYWE1UaG5NTnNBUXgwT3Mx?=
- =?utf-8?B?UlppV0c2RitPMGxHUWVWeE1zMU93bXgyZDZmYWpvODgrdW9ORGRiMXRveEpZ?=
- =?utf-8?B?TXozSEhZR1lPTk5lem05bDRVUWNlODJEMktPR3AwR2tobUdrRjhzYWkxTnBM?=
- =?utf-8?B?TUd0QjBNWThvUENUNDQyUlYwdzVoWUk4ZldsWHdhc013TUo4SDRHTjhEdUJ4?=
- =?utf-8?B?UlNpd3JkQjIzQ3V6eVprdENnUHlvSTJiWXRzUGhZc0RkbUxFS3RNSkRnWjdH?=
- =?utf-8?B?SEFkT1hQdkhVY05xclB4SUd2dUUycG45eTNGN251WjZiZWg0cVRDN3NtVUVP?=
- =?utf-8?B?a2FkeklKeFZjSTg0Vi9NZE5HWHVPSGsva2FMbGl5Qm0wTEFMYTlYbTczYjVi?=
- =?utf-8?B?YVVQODN6aVVOV3Y2NXU2ZWdBZVBaMjdYWWNxQzYwcjliajhCVjU0U1h1Z3ZJ?=
- =?utf-8?B?WXFONGROZ1VrMW1ZamNiaktKWkU3NlNJU3ZpY1U2UWhNN0JsWUd4TlRhWnpx?=
- =?utf-8?B?MkY2VmNyVjZFYWU4OUJjczdaMUpDOFZzWDBzQUR6RkVBWFVyT1lIZlAvQ0g3?=
- =?utf-8?B?WU50Ym5UVjVBc2JJZlZ6S0QzM0pzdm8zWDNhcTh0ZHFyWk9ZZVVqaVFEeVgv?=
- =?utf-8?B?a1laME9hN3FubDNTUmJoSGVvMFFXcWZ3cDJZYjNKcTZIbDFoQXhBajJFRnZM?=
- =?utf-8?B?WmVKdFZnSWVGUFZkZU9Ub2NRQ1llbWJVR3QrK2NyMXROSXpMbUN2YW1xVUJ5?=
- =?utf-8?B?MFhXaVVjM0QrcjJTV1dOY1ZxaW1CcVZ5RUlLSDRUOUh4YUV2V0QzRk85UEVt?=
- =?utf-8?B?MUp3QVdud00vV3B6dkN4WjRNU1VWNFFSQlVDSTNpeTdKRTcyT1VqemFGYVRG?=
- =?utf-8?B?ajFjcG1FSnloZnpBRHBjdkZjNjVEa3pQZlhIaElZVXVIUExsaHJ0Y1dHTGFs?=
- =?utf-8?B?L0RFME11K2N4ZXFkcWpGTVpmc1NCTUpVdWxjVmlVZnRxQjhoY3ppdFVDcVFp?=
- =?utf-8?B?dXZmNkJZYTFOVC9rVGxNZ1JFT3ZieWt1elpKNXJPSFlxcHF5WlR5bXlRNy9u?=
- =?utf-8?B?c1pzZXROQUN5WkdmdFk1R25ZZUZMR21aV1hIMVBvZC9BN083dmVDNCtRRXpQ?=
- =?utf-8?B?eWU4ZlRlWC9LancwVloza0JRM21xUU9qWmZ4ZjBrUWNnT0w2NzIvMXNJdHlC?=
- =?utf-8?B?NE10NWlSWk9CVDV5OU94Y1l0OEZhRTdQaXQ3Y29OVWh6Y0M2NUVZZnd3S3Fy?=
- =?utf-8?B?S09WZGFyZ3ZzUE1zdnJqWkpHOGU4UTRSblRWcTUzaHBuNlZsYnVBRWpUMHds?=
- =?utf-8?B?WVpYdmVRajNNTGJwaXRNejVGMjI4N1Z5WWlKVVRvTEpYbjN2VmNvb0RsZ2FV?=
- =?utf-8?B?dmh1WVlkRWZlVHJzZnZHbUtSU0xGWkwvUmQzQWFHcllZY0JWZ29XbU1aaXNZ?=
- =?utf-8?B?eHl2aUpPTWJqZmZGaCtRbWVrVGJwMS8xNHpRcy9NVU5sUTNoakNlTTFvMWht?=
- =?utf-8?B?REluZ0RwaGpFM1pRQkFRNmNCV1ZJRHV2cFlhZWMwaEFmdUtPaW42V1BpZzl1?=
- =?utf-8?B?UmluYTlxNGhNTVA3VEZKSy9Qai80SWozWkdBYkNlbEFLNjdMZ1VDMFZVYzZC?=
- =?utf-8?B?Z003Y2kydWN5enFiOGtOaTl5NTdra3I5bXBHbzV4MjF1VCtpbDZIa0IzcGtR?=
- =?utf-8?B?OEpNdGlCUWZ5bnE1emJSQmFoOENtUEZOZXFZa01LOWVIVWhmd2xIQ1RGamhi?=
- =?utf-8?B?RzB6WjVGdG5QTExBaGpUTHBIcnk3SGlVQ25sdXU5SkFwTlJoSFcrNmlXNGl2?=
- =?utf-8?Q?m+OgMmQAAfM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SjJlNWFrWm9iSnd0SFFxZGJ1b2liNWZ6aEtpcVFiR015dTR5SzVJZXpkN0pM?=
- =?utf-8?B?ZC9EYjB1TksyNXNFeTFQTzlaWkpSa3RXL21XalJ4YThaSGs1WWt6clRNQi9T?=
- =?utf-8?B?eWRleENSdFdJbHFnR0lrV0FodTF2YzRQSnNXdHB5K3V5KzBjdUxSa1lUcERa?=
- =?utf-8?B?di9TdFp3dmRiNzJpaDZGbnl3QU85ZFJHTEdUSjRaRW00TFdkcFVKUFFiSGFS?=
- =?utf-8?B?MC9hb0p6a3RJaG1vaWtNd0d1aWVjWmF4RDRIaytYVXNjS2NzZmRLd2dxdnhX?=
- =?utf-8?B?bHZ1WGU2RDB6ZWVIS1dteUVhYW5Obm12eG4xZ004d2c1alZFSFY5Y20rbkxr?=
- =?utf-8?B?RkI0TEVSYzNNRjNGNlVqR3Q0M0F3bWZLTTVRcXdIZ3laUjB3TzVVY2VRTzNs?=
- =?utf-8?B?RWJhNlNYclZVbSs2OTNtNk0yZFdUdXFMSG9CdkR3bjQ4MFZxcGJOM0FVaHk5?=
- =?utf-8?B?TkpKY3ZRNFVKWjl3blFjYk5ZR1pBYUFOOEpxcWQyRldsTmZjVkFHRE8xNm1I?=
- =?utf-8?B?MW5vY0twTEVXNVVac3k5YTV4MlB5Yi9nUDJWNlBuSEVsb3lZRFFTWTZydDNU?=
- =?utf-8?B?dUUrbmtJbDNXQ0lacXZwTjZBZFl2d2t6SEVNZXMxdDFSc0NvTmd5YWhnMW5z?=
- =?utf-8?B?c2ZYcG5xbDRjQ3FJVmhDMXM3UEg0Q1B6OUErU2FVZTVtUi8rRnRTMC8yejVy?=
- =?utf-8?B?SlFtRHdYZWpvTzRLVGtvQlF1WGwwbFo1bWwxRE80cTNKbzdrdUFLdnhkRjl6?=
- =?utf-8?B?U2NDQnR6QjNjc0RGSzZWdmNjVUpBVitaSkJnWkhsUVlSYldPdGVnWUtrZEVJ?=
- =?utf-8?B?MDl4R3RyV0swdjU1R0JSOXNKS0ZucktVL05yZ1R5RFNjTWZqUmxuc2VMTWRw?=
- =?utf-8?B?R1FDRHB1VGQ5MGViZXRnZVoyWVBYd21kQjZaekZqSGU1eGhSZmluYnkxR3pt?=
- =?utf-8?B?eDh4eURkQ3VLSkUvWHo1aytBZkVZZmovRkVtcFpQSWtBd084cTdxMUsrRGV2?=
- =?utf-8?B?QTVCS3REWko0YVd1cmNUTjZFS2RNTFVQWW85MjAydkp3OXdsT3Mrd1puQ0hN?=
- =?utf-8?B?T1lOMjRsQyt4UFJkK25sTkZsRXZtaUE0dUJkTkNuR1BOcnZISGpsNElyMDFw?=
- =?utf-8?B?UTJYWE1HK3RaRmVvT0NjbUdMUjZOYTVXbmdUcnprNHc0UUNSTFBMak50UVdC?=
- =?utf-8?B?WndqbkVTWElPOVpqSEQwQkNFRm1hOHViSTV6NktOZ2tqamcyUHcxdDhjbW9j?=
- =?utf-8?B?WENXRTFxMUpncEg0WGRJYm5LekVrSVUxMWgxV3dVeUNLM3oxMVBJamN5b1hQ?=
- =?utf-8?B?QzFlVmNDa3JBYi95RnBCZitGbk9EZXBiZzlhNkRoMW1UUFBWZWRNLzJObXZK?=
- =?utf-8?B?VFVWUkliNFo0OUFkbE45ZWh1R0wzN1YrTWd1YVU3V2VpUDg4YURmTFFCRkZn?=
- =?utf-8?B?Z1dyUngyYXZxZDRpZHVqWldKeHlpWkhqSU9tMlhPNGkvM1pldDZwTGZyd2pX?=
- =?utf-8?B?dkZxOS9ZTHJQUjhMa0p1dEQyNU9OSFRUYW4xUU1UUGNIQWY5MXdKWjdJOXJr?=
- =?utf-8?B?RmN4VXdvWlIvTlNjSmZneGR0YWFIQ3RRVkN6Zlo0cERwUHBxNE16OHd0ZGtm?=
- =?utf-8?B?eVU2V042cFgweGZkWkttaEM1ZnNua1Z4R1RsWjExcEZjYVBnZ3NMWVFkNkc1?=
- =?utf-8?B?V0ZpVU85S3lqYkFlUHlvTmxqRXFJdjV5Wk9DT3dVcXF4M24yWmdxQ0cweERl?=
- =?utf-8?B?c0loeUR5cXp3d21GUlgzeVErNmJoM1IyU0FIQnJqNnNnNG5TU3VMWExrdzFl?=
- =?utf-8?B?cThlRmFLUG1BcXNxMW00YUVxSVBCaVIvZVZqS0NhazR3WkMraHlYZ3VYVjRB?=
- =?utf-8?B?SHYzSnRlZHp3d2FHSHFHUmEyM2lOMTAza0UvTnBhUmsrNG9ib3RoeWVUTWtu?=
- =?utf-8?B?TWJXR2hYdDlyYzFQWWdXRGpiUGtkRCt5NGJ2ekx0NW9ib2Y2dnZqd0VNKzFE?=
- =?utf-8?B?V054RnhXeXg0Tk9WUXFhY2dyV3ROTllpMERuYTJUV3NMajZQMnFEWWF3MzZt?=
- =?utf-8?B?dWZzd0ErR1dPMDc0TExTMmZTTWF3Y1czdWpOUGR0cXMyVU1nZG9hQ2oxbVdO?=
- =?utf-8?Q?0qQ6WWarWmqJD1A6S8sSXS4b3?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f770cd6-947d-4bd5-1311-08ddc0886bf6
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 14:37:11.6959
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pBfrQltZGcpf9ERVKKTwRD/3mcGkH0KumFlUtHV6FMleueTPS+LAx2XHYgs0Ml+i
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9142
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB93KSS3F3AK.3R9RFOHJ4FSAQ@kernel.org>
 
-On 11 Jul 2025, at 2:41, David Hildenbrand wrote:
+On Fri, Jul 11, 2025 at 10:53:45AM +0200, Benno Lossin wrote:
+> On Thu Jul 10, 2025 at 8:00 AM CEST, Boqun Feng wrote:
+> > One important set of atomic operations is the arithmetic operations,
+> > i.e. add(), sub(), fetch_add(), add_return(), etc. However it may not
+> > make senses for all the types that `AllowAtomic` to have arithmetic
+> > operations, for example a `Foo(u32)` may not have a reasonable add() or
+> > sub(), plus subword types (`u8` and `u16`) currently don't have
+> > atomic arithmetic operations even on C side and might not have them in
+> > the future in Rust (because they are usually suboptimal on a few
+> > architecures). Therefore add a subtrait of `AllowAtomic` describing
+> > which types have and can do atomic arithemtic operations.
+> >
+> > Trait `AllowAtomicArithmetic` has an associate type `Delta` instead of
+> > using `AllowAllowAtomic::Repr` because, a `Bar(u32)` (whose `Repr` is
+> > `i32`) may not wants an `add(&self, i32)`, but an `add(&self, u32)`.
+> >
+> > Only add() and fetch_add() are added. The rest will be added in the
+> > future.
+> >
+> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > ---
+> >  rust/kernel/sync/atomic.rs         |  18 +++++
+> >  rust/kernel/sync/atomic/generic.rs | 108 +++++++++++++++++++++++++++++
+> >  2 files changed, 126 insertions(+)
+> 
+> I think it's better to name this trait `AtomicAdd` and make it generic:
+> 
+>     pub unsafe trait AtomicAdd<Rhs = Self>: AllowAtomic {
+>         fn rhs_into_repr(rhs: Rhs) -> Self::Repr;
+>     }
+> 
+> `sub` and `fetch_sub` can be added using a similar trait.
+> 
 
-> On 11.07.25 05:02, Zi Yan wrote:
->> remap(), folio_ref_unfreeze(), lru_add_split_folio() are not related to
->> splitting unmapped folio operations. Move them out to the caller, so tha=
-t
->> __split_unmapped_folio() only splits unmapped folios. This makes
->> __split_unmapped_folio() reusable.
->>
->> Convert VM_BUG_ON(mapping) to use VM_WARN_ON_ONCE_FOLIO().
->>
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
->> ---
->> Based on the prior discussion[1], this patch makes
->> __split_unmapped_folio() reusable for splitting unmapped folios without
->> adding a new boolean unmapped parameter to guard mapping related code.
->>
->> Another potential benefit is that __split_unmapped_folio() could be
->> called on after-split folios by __folio_split() to perform new split
->> methods. For example, at deferred split time, unmapped subpages can
->> scatter arbitrarily within a large folio, neither uniform nor non-unifor=
-m
->> split can maximize after-split folio orders for mapped subpages.
->> Hopefully, performing __split_unmapped_folio() multiple times can
->> achieve the optimal split result.
->>
->> It passed mm selftests.
->>
->> [1] https://lore.kernel.org/linux-mm/94D8C1A4-780C-4BEC-A336-7D3613B5484=
-5@nvidia.com/
->> ---
->>
->>   mm/huge_memory.c | 275 ++++++++++++++++++++++++-----------------------
->>   1 file changed, 139 insertions(+), 136 deletions(-)
->>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 3eb1c34be601..d97145dfa6c8 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -3396,10 +3396,6 @@ static void __split_folio_to_order(struct folio *=
-folio, int old_order,
->>    *             order - 1 to new_order).
->>    * @split_at: in buddy allocator like split, the folio containing @spl=
-it_at
->>    *            will be split until its order becomes @new_order.
->> - * @lock_at: the folio containing @lock_at is left locked for caller.
->> - * @list: the after split folios will be added to @list if it is not NU=
-LL,
->> - *        otherwise to LRU lists.
->> - * @end: the end of the file @folio maps to. -1 if @folio is anonymous =
-memory.
->>    * @xas: xa_state pointing to folio->mapping->i_pages and locked by ca=
-ller
->>    * @mapping: @folio->mapping
->>    * @uniform_split: if the split is uniform or not (buddy allocator lik=
-e split)
->> @@ -3425,51 +3421,27 @@ static void __split_folio_to_order(struct folio =
-*folio, int old_order,
->>    *    @page, which is split in next for loop.
->>    *
->>    * After splitting, the caller's folio reference will be transferred t=
-o the
->> - * folio containing @page. The other folios may be freed if they are no=
-t mapped.
->> - *
->> - * In terms of locking, after splitting,
->> - * 1. uniform split leaves @page (or the folio contains it) locked;
->> - * 2. buddy allocator like (non-uniform) split leaves @folio locked.
->> - *
->> + * folio containing @page. The caller needs to unlock and/or free after=
--split
->> + * folios if necessary.
->>    *
->>    * For !uniform_split, when -ENOMEM is returned, the original folio mi=
-ght be
->>    * split. The caller needs to check the input folio.
->>    */
->>   static int __split_unmapped_folio(struct folio *folio, int new_order,
->> -		struct page *split_at, struct page *lock_at,
->> -		struct list_head *list, pgoff_t end,
->> -		struct xa_state *xas, struct address_space *mapping,
->> -		bool uniform_split)
->> +				  struct page *split_at, struct xa_state *xas,
->> +				  struct address_space *mapping,
->> +				  bool uniform_split)
->
-> Use two-tabs indent please (like we already do, I assume).
+Seems a good idea, I will see what I can do. Thanks!
 
-OK. I was using clang-format. It gave me this indentation.
->
-> [...]
->
->> @@ -3706,11 +3599,14 @@ static int __folio_split(struct folio *folio, un=
-signed int new_order,
->>   {
->>   	struct deferred_split *ds_queue =3D get_deferred_split_queue(folio);
->>   	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
->> +	struct folio *next_folio =3D folio_next(folio);
->>   	bool is_anon =3D folio_test_anon(folio);
->>   	struct address_space *mapping =3D NULL;
->>   	struct anon_vma *anon_vma =3D NULL;
->>   	int order =3D folio_order(folio);
->> +	struct folio *new_folio, *next;
->>   	int extra_pins, ret;
->> +	int nr_shmem_dropped =3D 0;
->>   	pgoff_t end;
->>   	bool is_hzp;
->>  @@ -3833,13 +3729,18 @@ static int __folio_split(struct folio *folio, u=
-nsigned int new_order,
->>   		 */
->>   		xas_lock(&xas);
->>   		xas_reset(&xas);
->> -		if (xas_load(&xas) !=3D folio)
->> +		if (xas_load(&xas) !=3D folio) {
->> +			ret =3D -EAGAIN;
->>   			goto fail;
->> +		}
->>   	}
->>    	/* Prevent deferred_split_scan() touching ->_refcount */
->>   	spin_lock(&ds_queue->split_queue_lock);
->>   	if (folio_ref_freeze(folio, 1 + extra_pins)) {
->> +		struct address_space *swap_cache =3D NULL;
->> +		struct lruvec *lruvec;
->> +
->>   		if (folio_order(folio) > 1 &&
->>   		    !list_empty(&folio->_deferred_list)) {
->>   			ds_queue->split_queue_len--;
->> @@ -3873,18 +3774,120 @@ static int __folio_split(struct folio *folio, u=
-nsigned int new_order,
->>   			}
->>   		}
->>  -		ret =3D __split_unmapped_folio(folio, new_order,
->> -				split_at, lock_at, list, end, &xas, mapping,
->> -				uniform_split);
->> +		if (folio_test_swapcache(folio)) {
->> +			if (mapping) {
->> +				VM_WARN_ON_ONCE_FOLIO(mapping, folio);
->> +				ret =3D -EINVAL;
->> +				goto fail;
->> +			}
->> +
->> +			/*
->> +			 * a swapcache folio can only be uniformly split to
->> +			 * order-0
->> +			 */
->> +			if (!uniform_split || new_order !=3D 0) {
->> +				ret =3D -EINVAL;
->> +				goto fail;
->> +			}
->> +
->> +			swap_cache =3D swap_address_space(folio->swap);
->> +			xa_lock(&swap_cache->i_pages);
->> +		}
->> +
->> +		/* lock lru list/PageCompound, ref frozen by page_ref_freeze */
->> +		lruvec =3D folio_lruvec_lock(folio);
->> +
->> +		ret =3D __split_unmapped_folio(folio, new_order, split_at, &xas,
->> +					     mapping, uniform_split);
->> +
->> +		/*
->> +		 * Unfreeze after-split folios and put them back to the right
->> +		 * list. @folio should be kept frozon until page cache entries
->> +		 * are updated with all the other after-split folios to prevent
->> +		 * others seeing stale page cache entries.
->> +		 */
->> +		for (new_folio =3D folio_next(folio); new_folio !=3D next_folio;
->> +		     new_folio =3D next) {
->> +			next =3D folio_next(new_folio);
->> +
->> +			folio_ref_unfreeze(
->> +				new_folio,
->> +				1 + ((mapping || swap_cache) ?
->> +					     folio_nr_pages(new_folio) :
->> +					     0));
->
-> While we are at it, is a way to make this look less than an artistic mast=
-erpiece? :)
->
-> expected_refs =3D ...
-> folio_ref_unfreeze(new_folio, expected_refs).
->
->
-> Can we already make use of folio_expected_ref_count() at that point? Mapc=
-ount should be 0 and the folio should be properly setup (e.g., anon, swapca=
-che) IIRC.
->
-> So maybe
->
-> expected_refs =3D folio_expected_ref_count(new_folio) + 1;
-> folio_ref_unfreeze(new_folio, expected_refs).
->
-> Would do?
+> The generic allows you to implement it multiple times with different
+> meanings, for example:
+> 
+>     pub struct Nanos(u64);
+>     pub struct Micros(u64);
+>     pub struct Millis(u64);
+> 
+>     impl AllowAtomic for Nanos {
+>         type Repr = i64;
+>     }
+> 
+>     impl AtomicAdd<Millis> for Nanos {
+>         fn rhs_into_repr(rhs: Millis) -> i64 {
+>             transmute(rhs.0 * 1000_000)
 
-I think so. Even further, I think we probably can get rid of can_split_foli=
-o()=E2=80=99s
-pextra_pins and use folio_expected_ref_count() too.
+We probably want to use `as` in real code?
 
-Before split:
+>         }
+>     }
+> 
+>     impl AtomicAdd<Micros> for Nanos {
+>         fn rhs_into_repr(rhs: Micros) -> i64 {
+>             transmute(rhs.0 * 1000)
+>         }
+>     }
+> 
+>     impl AtomicAdd<Nanos> for Nanos {
+>         fn rhs_into_repr(rhs: Nanos) -> i64 {
+>             transmute(rhs.0)
+>         }
+>     }
+> 
+> For the safety requirement on the `AtomicAdd` trait, we might just
+> require bi-directional transmutability... Or can you imagine a case
+> where that is not guaranteed, but a weaker form is?
 
-if (!can_split_folio(folio, 1))
+I have a case that I don't think it's that useful, but it's similar to
+the `Micros` and `Millis` above, an `Even<T>` where `Even<i32>` is a
+`i32` but it's always an even number ;-) So transmute<i32, Even<i32>>()
+is not always sound. Maybe we could add a "TODO" in the safety section
+of `AtomicAdd`, and revisit this later? Like:
 
-unmap_folio();
+/// (in # Safety)
+/// TODO: The safety requirement may be tightened to bi-directional
+/// transmutability. 
 
-extra_pins =3D folio_expected_ref_count(folio) + 1;
+And maybe also add the `Even` example there?
 
-After split:
+Thoughts?
 
-1. new folio:
-expected_refs =3D folio_expected_ref_count(new_folio) + 1;
-folio_ref_unfreeze(new_folio, expected_refs).
+Regards,
+Boqun
 
-2: original folio (it can be split, so need to check ref again):
-expected_refs =3D folio_expected_ref_count(folio) + 1;
-folio_ref_unfreeze(folio, expected_refs).
-
-
->
->> +
->> +			lru_add_split_folio(folio, new_folio, lruvec, list);
->> +
->> +			/* Some pages can be beyond EOF: drop them from cache */
->> +			if (new_folio->index >=3D end) {
->> +				if (shmem_mapping(mapping))
->> +					nr_shmem_dropped +=3D
->> +						folio_nr_pages(new_folio);
->
-> Keep that on a single line.
-
-OK.
-
->
->> +				else if (folio_test_clear_dirty(new_folio))
->> +					folio_account_cleaned(
->> +						new_folio,
->> +						inode_to_wb(mapping->host));
->> +				__filemap_remove_folio(new_folio, NULL);
->> +				folio_put_refs(new_folio,
->> +					       folio_nr_pages(new_folio));
->> +			} else if (mapping) {
->> +				__xa_store(&mapping->i_pages, new_folio->index,
->> +					   new_folio, 0);
->> +			} else if (swap_cache) {
->> +				__xa_store(&swap_cache->i_pages,
->> +					   swap_cache_index(new_folio->swap),
->> +					   new_folio, 0);
->> +			}
->> +		}
->> +		/*
->> +		 * Unfreeze @folio only after all page cache entries, which
->> +		 * used to point to it, have been updated with new folios.
->> +		 * Otherwise, a parallel folio_try_get() can grab origin_folio
->> +		 * and its caller can see stale page cache entries.
->> +		 */
->> +		folio_ref_unfreeze(folio, 1 +
->> +			((mapping || swap_cache) ? folio_nr_pages(folio) : 0));
->
-> Same as above probably.
-Sure.
-
-Thank you for the feedback. Will make all these changes and send v2.
-
-Best Regards,
-Yan, Zi
+> 
+> ---
+> Cheers,
+> Benno
 
