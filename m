@@ -1,139 +1,92 @@
-Return-Path: <linux-kernel+bounces-727224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F546B016B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:45:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A43DB016B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27967487A0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:44:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B9653B94C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042B621C19F;
-	Fri, 11 Jul 2025 08:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5942E21504E;
+	Fri, 11 Jul 2025 08:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="f+M6x8Y0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TZ8qZah+"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="troOG8RC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0525221ADA2
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55C8B660;
+	Fri, 11 Jul 2025 08:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752223488; cv=none; b=s8Ubza7F1TGJHafFTS4MJ4Wx/r7hYI2lVe6Kv6ruYKKparIm48Tae/fha13dVSbj0q00TydYUxi6P2zL3EqSAWn+0kp2li0tsokGZwMxV91HuIQbN8LTyWmeR9AptNuRsL3Zdk9gBikwyZ7syU6GwQ0BN111IaHIf706gw8/dWo=
+	t=1752223604; cv=none; b=c2CcuDvq8OLmnhi4Wr0HN2B0LfkoRsf7I2qI6ncpO0ukKd9LQv5fI3yoAoGpqIRWAKz0Pczch+r1SV52W8xVG96aZtYWFpKxXBXIOjTsNXUS5sS360rwSUMUwG/zaDBsEmDVRYfnjsMamx+Jgskgw8gyTKEHJ006+3n+JbzsNrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752223488; c=relaxed/simple;
-	bh=QYqt/VQXRENIw8ufzkxah/mgLiscWn2l8eiPLaEqdtA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Kyoj+gCBwzhLw6GDvhzUXDIhZJQvCsd1Q9tmbwmukio8QGc9kB64dqoLnb9SLuWhOeM6ecjdYyyTP11NcIqYvdtYCLRHWmrwNfjLrrFw1+uU0lSQpLVoJFoCxgYj+5D6t0X+WCLwat78rGeJJgjRvzCxmHHDf7i4ZxhrDFyeR8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=f+M6x8Y0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TZ8qZah+; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id B79D51D00196;
-	Fri, 11 Jul 2025 04:44:44 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 11 Jul 2025 04:44:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752223484;
-	 x=1752309884; bh=WF9+3lnjfRQwgjXKff+rlIuGBtZEcHO9FtUjx6kias8=; b=
-	f+M6x8Y0HndHChIkB8MeA9N8XNUieosjoUTIRKrau18t/2QYFOlQWoYitW1TmEb+
-	rTEhX9DgfWQ3Cyi3d1ib8e0KlG7F4/+K/hWAgh/3zLciRW1CaG+P7fMV82f9qj4F
-	GRsrUGq8/egpnDsrcJm10KjBF2+mIkOyqDv85tJuQgVQWOZSpi5MMuoFfbygHZ6g
-	eufDRX88veq5Yaz0mMnP0ywyLPVu35Dd1V4LLocpQyctzzYdBImDHuzDI5jas1mM
-	+eeFJSDYttr1h5esvRuZQZVMQefAfG7pcAxpDSo8jQVe+pugKJ9gj4S95CHaSvYd
-	znXFzkrMMQbh2ipK0G8U0w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752223484; x=
-	1752309884; bh=WF9+3lnjfRQwgjXKff+rlIuGBtZEcHO9FtUjx6kias8=; b=T
-	Z8qZah+Cmf8xJp574+jQX3xXwYoX29M3NDYTDUn2Dnh9wSr4LxiC+ginx345EiUj
-	GVomuFeA+AffIM9kApK1kcQqA3RP2LjOqCPVuqKiW6YkLqbFfEDzM3nW7cKloCek
-	8Ixu0TXh7NaNQos5qmRvN7Zci4WLM+2bVNTDzfqGuCKW4Kv7xiez8tVblgZmlSc7
-	/AAW2Bdk4QhjZO9ZUDMIer692BwVlW6EMwowk/wqIH3wC8/Y/7JVPgG4mvUpMQfa
-	pGPqvdnYbrJrSiDn4DTuE/Fsyg+YMJc0I1iVx1fIWxt9Fo2aDj2O3dWNVRp3Q114
-	6dfbC6iPQLy/+qJKc/S7w==
-X-ME-Sender: <xms:_M5waMgf0kLBZEvO31KLd-ufnzkzdKZceigRcicAKX-Vy62LOAcAJw>
-    <xme:_M5waFBUW0B_ADYmdYZXkA5MohRKGXfbL_E8Z54xvNfU6_EKqZ4JcSbetfhTB4cqi
-    OSHDSqwIvXEu7OcZhE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegvdekjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtph
-    htthhopehjrghmvghsrdhmohhrshgvsegrrhhmrdgtohhmpdhrtghpthhtohepjhhovgih
-    rdhgohhulhihsegrrhhmrdgtohhmpdhrtghpthhtohepshhuiihukhhirdhpohhulhhosh
-    gvsegrrhhmrdgtohhmpdhrtghpthhtohephihuiigvnhhghhhuiheshhhurgifvghirdgt
-    ohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrh
-    hoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrgiisehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:_M5waMWQuoGjN1oG0tLpj-JLUAa5yoEhNFbvncX31tnlEFQnhnZHDA>
-    <xmx:_M5waAsz2GgojV1bHBhimTh3axof-BXQv5qfKy-t-hxJJQDWZ1e8Cg>
-    <xmx:_M5waH2yQgEEGDfEMJo06TofDflV849Gz6G1Bew4f9JZRmXn4bLo_w>
-    <xmx:_M5waB7txBNOs5S3ip5-OOQqV4xX1iGrbRURCimKl6Al1RKENIgU6A>
-    <xmx:_M5waCU8xS5oq00KRT1drlLUekAtItX4rNohIRUt8bTEetT13qtPTEzf>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id E762F700068; Fri, 11 Jul 2025 04:44:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752223604; c=relaxed/simple;
+	bh=zz+PKe2EsN0dWLcgsiYIFzIKc+Zya4xi9vnyYf/TK/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FiTGSbWUixOh0M8tRaNQ67pQKTj/DLHon08KIOqDQCHrsNv3p9gLjKqLm4F/wHrJy/FicBtygMdd35Wcdm1Ni3hCie4wnNqtiHmO81453mwAY5RT8N8N+MITcqik9WTwqTymZOIC5F3Z8peBKD4Ho3xjogR5pDxzDrdEhimYufY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=troOG8RC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CADA2C4CEED;
+	Fri, 11 Jul 2025 08:46:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752223604;
+	bh=zz+PKe2EsN0dWLcgsiYIFzIKc+Zya4xi9vnyYf/TK/w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=troOG8RClEjyGE8ygTNPlfsvcY+w+84KlZr+jaTgh/8x2kjC6+qlnol2gTDtGQdaL
+	 qfr1mxxDPNkaRRrKy24Ynpx+ZNL329fgILm6pgNFTIDOnZvBiXef+oqW2XWCthZsYi
+	 7zk80MrmKItxlxsMSbxPkBkUW9iUBFEqnHmVEDH7zjVhyEkF3Vkrv0mdM2u2AmJLiZ
+	 NEa5FME1qmKsF3nbC8iw+ZHmoqtJVStTKYUjVxfuJ9bmF9SUezddmEkC37nkO7SxSX
+	 JzDrliniDmL0lADcXEQ4VDylcCmQmQ3OqM7c0N1scPV66droDmBAbPAPef/F7jMtAs
+	 r6vq6CBycSGmQ==
+Message-ID: <f80713ec-fef1-4a33-b7bf-820ca69cb6ce@kernel.org>
+Date: Fri, 11 Jul 2025 17:44:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T7965fc80e983b7bf
-Date: Fri, 11 Jul 2025 10:44:23 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Marc Zyngier" <maz@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Oliver Upton" <oliver.upton@linux.dev>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- "Joey Gouly" <joey.gouly@arm.com>,
- "Suzuki K Poulose" <suzuki.poulose@arm.com>,
- "Zenghui Yu" <yuzenghui@huawei.com>, "Mark Brown" <broonie@kernel.org>,
- "James Morse" <james.morse@arm.com>, "Sebastian Ott" <sebott@redhat.com>,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Message-Id: <4befb9eb-96e6-4a7c-9746-286144564f4e@app.fastmail.com>
-In-Reply-To: <86h5zj9laj.wl-maz@kernel.org>
-References: <20250711072752.2781647-1-arnd@kernel.org>
- <86h5zj9laj.wl-maz@kernel.org>
-Subject: Re: [PATCH] KVM: arm64: fix u64_replace_bits() usage
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/6] block/md/dm: set chunk_sectors from stacked dev
+ stripe size
+To: John Garry <john.g.garry@oracle.com>, agk@redhat.com, snitzer@kernel.org,
+ mpatocka@redhat.com, song@kernel.org, yukuai3@huawei.com, hch@lst.de,
+ nilay@linux.ibm.com, axboe@kernel.dk, cem@kernel.org
+Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
+ ojaswin@linux.ibm.com, martin.petersen@oracle.com,
+ akpm@linux-foundation.org, linux-xfs@vger.kernel.org, djwong@kernel.org
+References: <20250711080929.3091196-1-john.g.garry@oracle.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250711080929.3091196-1-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025, at 10:36, Marc Zyngier wrote:
-> On Fri, 11 Jul 2025 08:27:47 +0100, Arnd Bergmann <arnd@kernel.org> wrote:
->>  	if (hpmn > vcpu->kvm->arch.nr_pmu_counters) {
->>  		hpmn = vcpu->kvm->arch.nr_pmu_counters;
->> -		u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
->> +		val = u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
->>  	}
->>  
->>  	__vcpu_assign_sys_reg(vcpu, MDCR_EL2, val);
->
-> This is only in -next, right? Because I have a fix for this already
-> queued for 6.16, as per [1].
+On 7/11/25 5:09 PM, John Garry wrote:
+> This value in io_min is used to configure any atomic write limit for the
+> stacked device. The idea is that the atomic write unit max is a
+> power-of-2 factor of the stripe size, and the stripe size is available
+> in io_min.
+> 
+> Using io_min causes issues, as:
+> a. it may be mutated
+> b. the check for io_min being set for determining if we are dealing with
+> a striped device is hard to get right, as reported in [0].
+> 
+> This series now sets chunk_sectors limit to share stripe size.
 
-Yes, as far as I can tell, the warning only showed up in linux-next
-after f66f9c3d09c1 ("bitfield: Ensure the return values of helper
-functions are checked").
+Hmm... chunk_sectors for a zoned device is the zone size. So is this all safe
+if we are dealing with a zoned block device that also supports atomic writes ?
+Not that I know of any such device, but better be safe, so maybe for now do not
+enable atomic write support on zoned devices ?
 
-As far as I can tell, Ben added the check in linux/bitfield.h
-when he sent you his version of the fix, they just ended up
-in linux-next in the wrong order, so I ended up recreating his
-original fix slightly differently.
 
-      Arnd
+
+-- 
+Damien Le Moal
+Western Digital Research
 
