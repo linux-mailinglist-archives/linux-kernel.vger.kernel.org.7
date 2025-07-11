@@ -1,106 +1,176 @@
-Return-Path: <linux-kernel+bounces-727813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4811EB0200F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:05:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 484DAB02011
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 560CE1890C82
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:06:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E9EDB4192F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B185A2EA16B;
-	Fri, 11 Jul 2025 15:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BF82EA475;
+	Fri, 11 Jul 2025 15:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N0C2p0t2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fqi/32ml"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AD31FFC49
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A432E9EAC
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752246351; cv=none; b=jrciVCYShphZUGGuVAtJIHf5P40y9a1PpjuNeXBvLLqKeOf2JQob8k5rYyjPdiHJ8qlqxVYXonod54h+v/JEMBhoqSXqhZIMoEI1pszHOSl0WyRDN7e330hqW4FyF+V6F+5bkCaQUsUmuBWMwrP654tQv+WstRpO2j727eLprmw=
+	t=1752246564; cv=none; b=o/FBSThgs0b8tspv6YeU40z5/Y7aAqTDQd8/k7yv3/60IAzzyt+FvWmAf3bRbBscmk+md2A1wg2B41O5ccSwqoRiHvv/v7u5fsZg6rdAN/m1N0oQ/iDcXuAHVjGbN7eKMNdepQld0UMTvLUQiPJzXKZYCLl4jTRlGhBcP2r3ICk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752246351; c=relaxed/simple;
-	bh=YO1CjG2z6wXnT2h3BArpAXnGDtqMHBK2ZwcKG6HQE1o=;
+	s=arc-20240116; t=1752246564; c=relaxed/simple;
+	bh=c0QG91nXD6uWs9AtRjzcXxjXSdJgq5tP6Jomtf1ATJs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DgqfefTsomhEnoOrrmkA3JZhvA4bi37AcdVKFiq86IqdYsCmVZaYaeJANZ1i8080mxNOduubBt8eo8O0J9/BBSFu3vCKnPcHciDUX4vexE5VMA3ajf0I+iD+ruGybU0P7NpqbAOgJAzcaGAPccospZ1Hn2m6Wb7mDoIULh1LxHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N0C2p0t2; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752246350; x=1783782350;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YO1CjG2z6wXnT2h3BArpAXnGDtqMHBK2ZwcKG6HQE1o=;
-  b=N0C2p0t2KTM/d4yEMcTyPBSiZhbIhbO5Pe92UMyXc3YYKjwu0Xu9BjoL
-   jnSHbYQKFa2TLG8oDCq6OaJ027bq5/k+I49xK4BEWDkaSM79wHXik4wnl
-   56JxcqT/f/ZWjeTXTjzwGYZb+8X7+Wt8y7wzvlqXsPNuBpya9vEoPH8St
-   yaWsRkdRFOVfCHvGlBvcGlvp3ynSd35psPWAi5FncHIeFpz+Bu81mIEnN
-   5peWhDFumXUKf4x0OVbcrgKMHL+ENzP/hQCotpT0IcwelmUDeZT38vz5z
-   a8CEMCWFvvoO+Q/0fmSxPuDP5uQvc4/bnijhy9xclVUGIt1PIrgxKWHub
-   g==;
-X-CSE-ConnectionGUID: Zn0FxCKvSfODz7V5hJPHCA==
-X-CSE-MsgGUID: zHre0VViSeGlES4CxUZzSA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="65612744"
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="65612744"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 08:05:49 -0700
-X-CSE-ConnectionGUID: beXYdPj7Tv+K4YuWSxi5pQ==
-X-CSE-MsgGUID: 1vBAXm/CS1aqTv9bs8C+aA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="156016169"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 08:05:47 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uaFJo-0000000EYoM-3iTh;
-	Fri, 11 Jul 2025 18:05:44 +0300
-Date: Fri, 11 Jul 2025 18:05:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Feng Tang <feng.tang@linux.alibaba.com>, Petr Mladek <pmladek@suse.com>
-Cc: Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=sIdXa9R/rn0r7/feHuc8WesDbBTxJRSzBfQG4Bc5m5j6PqWMxirF7wpMkIr1HbggcKgZnK0S+KvoCVFk7B9Pk93jesxjoYPoMAGo6K98Prz/ClovS4RUiNiZLk28XLZFDp8hXxUsTRI7GvrJr6E8Qr68gLUVtyKHFYlAHAPwY+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fqi/32ml; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752246557; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=ODtWHFNcHhdiD6bL5WKwotebt6sv6eO+EG8OfRrD7LY=;
+	b=fqi/32mlOmpmWy8Gro4/8yg0qPCubVhtkQG+CDqPizWIPixkT6nLBcM8ePPuiZ2jKXcjk9+HG25RecKXIKUETBaLBiznXkTSdJysxq2yeVytWnnpzyIyoPlD+T5+iAOCbsEqKWKHAiZVweQiTg8aZ5nvVzOj3D+t3y9GaMaLhpI=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WihMlaV_1752246556 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 11 Jul 2025 23:09:17 +0800
+Date: Fri, 11 Jul 2025 23:09:16 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
 	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH v1 3/7] panic: sys_info: Capture si_bits_global before
- iterating over it
-Message-ID: <aHEoSJihnyfuVx5Q@smile.fi.intel.com>
+Subject: Re: [PATCH v1 7/7] panic: sys_info: Factor out read and write
+ handlers
+Message-ID: <aHEpHEtnPms2LUi-@U-2FWC9VHC-2323.local>
 References: <20250711095413.1472448-1-andriy.shevchenko@linux.intel.com>
- <20250711095413.1472448-4-andriy.shevchenko@linux.intel.com>
- <aHEmIdgXvOeHtgMM@U-2FWC9VHC-2323.local>
+ <20250711095413.1472448-8-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aHEmIdgXvOeHtgMM@U-2FWC9VHC-2323.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250711095413.1472448-8-andriy.shevchenko@linux.intel.com>
 
-+Cc: Petr (as requested by Feng).
+On Fri, Jul 11, 2025 at 12:51:13PM +0300, Andy Shevchenko wrote:
+> For the sake of the code readability and easier maintenance
+> factor out read and write sys_info handlers.
 
-On Fri, Jul 11, 2025 at 10:56:33PM +0800, Feng Tang wrote:
+IIRC, I did implement separate 'write' handler, but chose not
+to do that to save some common definition. I guess it's personal
+preference, and I'm fine with either one. 
+
+Thanks,
+Feng
+
 > 
-> Thanks for the patch! please cc Petr Mladek <pmladek@suse.com> for changes
-> as I mentioned in the cover letter, he contributed a lot to the code and arch
-> from RFC to v3.
-
-Sure, I can do that in next version if that one will be needed (otherwise I
-would wait for your new version, depending of what we decide to do, because it
-seems to me the 7 patches on a brand new feature which even doesn't compile is
-too many).
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  lib/sys_info.c | 72 ++++++++++++++++++++++++++++++--------------------
+>  1 file changed, 44 insertions(+), 28 deletions(-)
+> 
+> diff --git a/lib/sys_info.c b/lib/sys_info.c
+> index 7483b6e9b30b..32bf639c4de2 100644
+> --- a/lib/sys_info.c
+> +++ b/lib/sys_info.c
+> @@ -40,13 +40,52 @@ unsigned long sys_info_parse_param(char *str)
+>  }
+>  
+>  #ifdef CONFIG_SYSCTL
+> +static int sys_info_write_handler(struct ctl_table *table,
+> +				  void *buffer, size_t *lenp, loff_t *ppos,
+> +				  unsigned long *si_bits_global)
+> +{
+> +	unsigned long si_bits;
+> +	int ret;
+> +
+> +	ret = proc_dostring(table, 1, buffer, lenp, ppos);
+> +	if (ret)
+> +		return ret;
+> +
+> +	si_bits = sys_info_parse_param(table->data);
+> +
+> +	/* The access to the global value is not synchronized. */
+> +	WRITE_ONCE(*si_bits_global, si_bits);
+> +
+> +	return 0;
+> +}
+> +
+> +static int sys_info_read_handler(struct ctl_table *table,
+> +				 void *buffer, size_t *lenp, loff_t *ppos,
+> +				 unsigned long *si_bits_global)
+> +{
+> +	unsigned long si_bits;
+> +	unsigned int len = 0;
+> +	char *delim = "";
+> +	unsigned int i;
+> +
+> +	/* The access to the global value is not synchronized. */
+> +	si_bits = READ_ONCE(*si_bits_global);
+> +
+> +	for_each_set_bit(i, &si_bits, ARRAY_SIZE(si_names)) {
+> +		len += scnprintf(table->data + len, table->maxlen - len,
+> +				 "%s%s", delim, si_names[i]);
+> +		delim = ",";
+> +	}
+> +
+> +	return proc_dostring(table, 0, buffer, lenp, ppos);
+> +}
+> +
+>  int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
+>  					  void *buffer, size_t *lenp,
+>  					  loff_t *ppos)
+>  {
+>  	struct ctl_table table;
+>  	unsigned long *si_bits_global;
+> -	unsigned long si_bits;
+>  	unsigned int i;
+>  	size_t maxlen;
+>  
+> @@ -64,33 +103,10 @@ int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
+>  	table.data = names;
+>  	table.maxlen = maxlen;
+>  
+> -	if (write) {
+> -		int ret;
+> -
+> -		ret = proc_dostring(&table, write, buffer, lenp, ppos);
+> -		if (ret)
+> -			return ret;
+> -
+> -		si_bits = sys_info_parse_param(names);
+> -		/* The access to the global value is not synchronized. */
+> -		WRITE_ONCE(*si_bits_global, si_bits);
+> -		return 0;
+> -	} else {
+> -		/* for 'read' operation */
+> -		unsigned int len = 0;
+> -		char *delim = "";
+> -
+> -		/* The access to the global value is not synchronized. */
+> -		si_bits = READ_ONCE(*si_bits_global);
+> -
+> -		for_each_set_bit(i, &si_bits, ARRAY_SIZE(si_names)) {
+> -			len += scnprintf(names + len, maxlen - len,
+> -					 "%s%s", delim, si_names[i]);
+> -			delim = ",";
+> -		}
+> -
+> -		return proc_dostring(&table, write, buffer, lenp, ppos);
+> -	}
+> +	if (write)
+> +		return sys_info_write_handler(&table, buffer, lenp, ppos, si_bits_global);
+> +	else
+> +		return sys_info_read_handler(&table, buffer, lenp, ppos, si_bits_global);
+>  }
+>  #endif
+>  
+> -- 
+> 2.47.2
 
