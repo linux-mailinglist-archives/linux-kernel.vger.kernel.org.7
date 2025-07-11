@@ -1,143 +1,158 @@
-Return-Path: <linux-kernel+bounces-728163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A41B0240A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0A6B0240D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187DF1CC5379
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6BB554731F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1711ADC7E;
-	Fri, 11 Jul 2025 18:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnDhrpue"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E1F2F2C6C;
-	Fri, 11 Jul 2025 18:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FAEB1D7E41;
+	Fri, 11 Jul 2025 18:45:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD22E13B590;
+	Fri, 11 Jul 2025 18:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752259273; cv=none; b=OzCBhtbZwBuyvgoAeZDip175YMTsQ83BEX//yl55PkJAioO+0GWzm8fLOfMKD6KpCk1fN9Ac8VjfNqugAEbODRdverXBITnjjwRJRv2lYrCepPfHM2bqOTqTWkwkUEd33OU3A/9XE9eBawXZymRazjN0xdq8PfwjseaDqHoUwXo=
+	t=1752259531; cv=none; b=mIMG4+v22X/1b0CqunYUyU3k+29P3e3+s5vU1yrlhHwEkW1vNhdO0E4RaAuEM7DNlGCSA3+O1gfKzjFcASMoyXg1LL3Vx9JNkIOKXFBsde+NlozEGM4FQaRi4kBHYXlBLVs6QOgdeZ0ara4dWQT3dq/4mVKVmgqq87cLTbm3H7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752259273; c=relaxed/simple;
-	bh=WXHDkLxeBuUVPCGJg8eX8a1HjZWeMU13tn+M9FkD3eo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MqesMcfPcBackJfbHS3+v1kKLMG3CJLexSViA+Z+4hvYFwjDu2hdVvH1VVBbFS7vEVUOg2N9eVPvM+IAfGOsZilfPX8q4sKFm/rWSUL8MctQRl23uLnesDMZFHVOJ5fdRA4znRT/UUMehzv8W+A5Jn+IQf6VhOcDa4BlMFkhxss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnDhrpue; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0A0EC4CEED;
-	Fri, 11 Jul 2025 18:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752259272;
-	bh=WXHDkLxeBuUVPCGJg8eX8a1HjZWeMU13tn+M9FkD3eo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=gnDhrpuemNSedot6Jm1hktyNQyYCoq++bcczEbVwwp9HaGp/+XqbLTimn1p1Rkfzs
-	 iRVXvl+HCtvokDTjW7H5poutg07x9VKAkGxVkPc/xX/11OalLxgQFrDlfmoBD1Coeg
-	 Qq3U9LLsX3D98y/t5SSifrnrCZLOY6+mE8Xyx64/ByGduR2IC9v4WJSWiaIlwvwbaq
-	 +Eb3vyAabcpcLxR32I1DHulQi/qv2K1zCOn7y6220zwfUrJmUCfWdaD8QFEe+ANtWx
-	 BI4i49mu5luqZfknDIU65Qi7cacXJzEe3OR+FJTpOIRJXAIUm6szDizMYUanu7xS5W
-	 iYcqG0Y7ZglSQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 59982CE0CB7; Fri, 11 Jul 2025 11:41:12 -0700 (PDT)
-Date: Fri, 11 Jul 2025 11:41:12 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang@linux.dev>, rcu@vger.kernel.org
-Subject: Re: [PATCH -rcu -next 4/7] rcu: Remove redundant check for irq state
- during unlock
-Message-ID: <6400b843-33b7-44fe-97dc-7a8c737ac6cc@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250708142224.3940851-1-joelagnelf@nvidia.com>
- <20250708142224.3940851-4-joelagnelf@nvidia.com>
- <9b67bbca-dfdc-470e-9a32-486300efa586@paulmck-laptop>
- <ebfa8f35-8ede-46c3-a865-384d12d11e90@nvidia.com>
- <c25c1084-ef70-409b-b38f-84c69e08e562@paulmck-laptop>
- <3d1217a9-2d22-4808-adca-0fdf78278a36@nvidia.com>
+	s=arc-20240116; t=1752259531; c=relaxed/simple;
+	bh=TXAh5cyeJbfSOXxY8gFolHNGXXjw3jndn5t9U7NmQ7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i7AAQmHsCtULnnvp1dyHStQW/PJap23dn1vQGaFwdyhRD4K8VPMBlVBlmdoRI3/MP8lFH1pmLDK0XO+tdD7k4qb0Q1pFNQH/YbjQOkf8H1rlHuggDppd0FVEXtJR/gxv54vzunEBnObTZPgYUKainIG2WLJc6F7JvfrZRH3xiEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BFCA16F8;
+	Fri, 11 Jul 2025 11:45:18 -0700 (PDT)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 037533F694;
+	Fri, 11 Jul 2025 11:45:26 -0700 (PDT)
+Date: Fri, 11 Jul 2025 19:43:38 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: iuncuim <iuncuim@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.or>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v2 3/3] arm64: dts: allwinner: a523: enable Mali GPU for
+ all boards
+Message-ID: <20250711194338.52532eca@minigeek.lan>
+In-Reply-To: <20250711035730.17507-4-iuncuim@gmail.com>
+References: <20250711035730.17507-1-iuncuim@gmail.com>
+	<20250711035730.17507-4-iuncuim@gmail.com>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d1217a9-2d22-4808-adca-0fdf78278a36@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 02:19:47PM -0400, Joel Fernandes wrote:
+On Fri, 11 Jul 2025 11:57:29 +0800
+iuncuim <iuncuim@gmail.com> wrote:
+
+> From: Mikhail Kalashnikov <iuncuim@gmail.com>
 > 
+> All devices based on the A523/A527/H728/T527 processors contain a G57 MC1 GPU.
 > 
-> On 7/11/2025 1:18 PM, Paul E. McKenney wrote:
-> > On Fri, Jul 11, 2025 at 12:30:08PM -0400, Joel Fernandes wrote:
-> >>
-> >>
-> >> On 7/10/2025 8:00 PM, Paul E. McKenney wrote:
-> >>> On Tue, Jul 08, 2025 at 10:22:21AM -0400, Joel Fernandes wrote:
-> >>>> The check for irqs_were_disabled is redundant in
-> >>>> rcu_unlock_needs_exp_handling() as the caller already checks for this.
-> >>>> This includes the boost case as well. Just remove the redundant check.
-> >>>
-> >>> But in the very last "if" statement in the context of the last hunk of
-> >>> this patch, isn't it instead checking for !irqs_were_disabled?
-> >>>
-> >>> Or is there something that I am missing that makes this work out OK?
-> >>
-> >> You are right, after going over all the cases I introduced a behavioral change.
-> >>
-> >> Say, irqs_were_disabled was false. And say we are RCU-boosted. needs_exp might
-> >> return true now, but previously it was returning false. Further say, we are not
-> >> in hardirq.
-> >>
-> >> New code will raise softirq, old code would go to the ELSE and just set:
-> >>                 set_tsk_need_resched(current);
-> >> set_preempt_need_resched();
-> >>
-> >> But preempt_bh_were_disabled that's why we're here.
-> >>
-> >> So we need to only set resched and not raise softirq, because the preempt enable
-> >> would reschedule.
-> >>
-> >> Sorry I missed this, but unless this behavior is correct or needs further work,
-> >> lets drop this patch. Thanks and kudos on the catch!
-> > 
-> > Not a problem!
-> > 
-> > You can use cbmc to check these sorts of transformations, as described
-> > here: https://paulmck.livejournal.com/38997.html
+> Enable the DT nodes for this GPU and specify a regulator that supplies power
+> to the SoC's VDD_GPU pins. The other parameters are set in the SoC dtsi,
+> so are board independent.
+
+Checked the schematics of the three boards where those are available,
+and it's indeed DCDC2 there providing the voltage. For the X96QPro+,
+regulators.txt in debugs confirms this as well.
+
+> Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Cheers,
+Andre
+
+> ---
+>  arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts   | 5 +++++
+>  arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dts    | 5 +++++
+>  arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts   | 5 +++++
+>  arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts | 5 +++++
+>  4 files changed, 20 insertions(+)
 > 
-> Much appreciated! Does the tool automatically create stubs for dependent
-> structures or is that upto the CBMC user? I see in your example in the blog you
-> did create an rcu_node :). I wonder if for large number of dependencies on the
-> code base, how it does in terms of overhead for the user.
+> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts b/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> index 8bc0f2c72..553ad774e 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> @@ -66,6 +66,11 @@ &gmac0 {
+>  	status = "okay";
+>  };
+>  
+> +&gpu {
+> +	mali-supply = <&reg_dcdc2>;
+> +	status = "okay";
+> +};
+> +
+>  &mdio0 {
+>  	ext_rgmii_phy: ethernet-phy@1 {
+>  		compatible = "ethernet-phy-ieee802.3-c22";
+> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dts b/arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dts
+> index 59db10354..a96927fbd 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dts
+> @@ -54,6 +54,11 @@ &ehci1 {
+>  	status = "okay";
+>  };
+>  
+> +&gpu {
+> +	mali-supply = <&reg_dcdc2>;
+> +	status = "okay";
+> +};
+> +
+>  &mmc0 {
+>  	vmmc-supply = <&reg_vcc3v3>;
+>  	cd-gpios = <&pio 5 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; /* PF6 */
+> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts b/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts
+> index 142177c1f..b9eeb6753 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts
+> @@ -76,6 +76,11 @@ &gmac0 {
+>  	status = "okay";
+>  };
+>  
+> +&gpu {
+> +	mali-supply = <&reg_dcdc2>;
+> +	status = "okay";
+> +};
+> +
+>  &mdio0 {
+>  	ext_rgmii_phy: ethernet-phy@1 {
+>  		compatible = "ethernet-phy-ieee802.3-c22";
+> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts b/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
+> index 5f97505ec..d07bb9193 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
+> @@ -95,6 +95,11 @@ &ehci1 {
+>  	status = "okay";
+>  };
+>  
+> +&gpu {
+> +	mali-supply = <&reg_dcdc2>;
+> +	status = "okay";
+> +};
+> +
+>  &mmc0 {
+>  	vmmc-supply = <&reg_cldo3>;
+>  	cd-gpios = <&pio 5 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; /* PF6 */
 
-You do need to create the stubs.  But you also have the option of
-simplifying the code, for example, by removing structure fields that
-you are not using and providing static instances of the needed structures.
-
-> But perhaps for simpler examples (such as perhaps the above), manually mocking
-> data structures and dependent code is reasonable?
-
-That is what I do.  ;-)
-
-> We'd have to stub irq_work and raise_softirq and functions too and also the
-> CONFIG option values.
-
-Agreed.  But in this case, we only need to know whether or not they
-were called, so a very simple stub suffices.
-
-You can also speed things up by replacing the Kconfig options with
-variables, thus allowing full exploration in one run.  And dispensing
-with the dazzling implementation of IS_ENABLED().  ;-)
-
-							Thanx, Paul
 
