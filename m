@@ -1,84 +1,125 @@
-Return-Path: <linux-kernel+bounces-727863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40780B020CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:46:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C754B020CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91D78B4537E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:43:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB69616DFE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC03146593;
-	Fri, 11 Jul 2025 15:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651FC2ED167;
+	Fri, 11 Jul 2025 15:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="MjOn9wTd"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="Sk6Bi764"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77CD2ED85D;
-	Fri, 11 Jul 2025 15:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752248669; cv=none; b=DpkCy6CR3KP05VEKsH8t/GINAMyuzuUAK3XRY6cfPB3OzS8GEht34byTZnN3TJPEygN/iKsbLGmw3gPlqaM1ZkZf4Z4EC0NHnfg2YqArR2awY8Ko6fSWBqPXQF1Xz/H31fr5uVwTPjfH6LMI+gMKas+gusiF8lBwXuQd6vlJ3r4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752248669; c=relaxed/simple;
-	bh=4wLd3qXMcVR/rKQcfGIxYV2jfHi6HY3xdIDh71H99mo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aidg4Lk1Yh708Lb+ZTD1XRzYQyB28D5NBLMQgLShvdRM1j8epq5l1jB+W01R1gSon3ByHlDyQAchrzMkX697QjqfWy//b+viIXurzqNffn8zk/TusRGOnrFIL13XCwqUPTrQ+xiit2Z/CoZ20u+WqOOxa0gbtuqHx+KhQ8x29uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=MjOn9wTd; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=4sp96fAx8brrNBKQIi3t0E9PlnzlKfIPS+tdQ+PkDKg=; b=MjOn9wTdnBMzZtyHIJCDiCPkoD
-	BcTkob9i+TaCF1jCnl/E4RtIWxYx/9s3rRyqiXrJC6lpKlPtB/gEBM1iFXMmlzPUwMkdJwXABBa0D
-	ylFY4leQ9wUMlLHct5ZslO/hsh5KYA9qNebx2ajiXp8CfjwpFW6uQnu0HzOSTggoJhNWnQREsGT3N
-	q2niR8ug/VNZS9OJs5lDV6WFESEanstNcAUQVsV8wDvZs5gj2mwK8OQmgC2nOkk+VEDrRvpSdUQd5
-	6dVzxWXqvOzE1Ih/f3Rs1Ym/O0rB6JitEg+Et3DrDMdn61KCOd9A1dE3PqOAJvsLolTPNNAhICf1U
-	5N1NPk0Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uaFvD-000000008qY-0v7g;
-	Fri, 11 Jul 2025 15:44:23 +0000
-Date: Fri, 11 Jul 2025 16:44:23 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Kees Cook <kees@kernel.org>, Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/15] fs,fork,exit: export symbols necessary for
- KUnit UAPI support
-Message-ID: <20250711154423.GW1880847@ZenIV>
-References: <20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de>
- <20250626-kunit-kselftests-v4-6-48760534fef5@linutronix.de>
- <20250711123215-12326d5f-928c-40cd-8553-478859d9ed18@linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2885A2AE6D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752248801; cv=pass; b=RhWaPOCpqG5fWzLUbOWdV7Vk38X+cddMxBeBoptoN68qd1P9FaSrAbpnVoN+IMVQuYJOPN7En9B2lfNAS5y3iiZJbztGp/s1M9wbPXkCGp/UelJiIrcK3ccS2PD5MCDejiTTMqgHZ9tThlm3lSF1rmdVjDob8CpUOGbRfV8mpjo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752248801; c=relaxed/simple;
+	bh=TumVvbYsWMvjktAMtnSywA47/WYLh/rGoZqWNNAEYLQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KUcrE9BjX1J7waRDBxK446g3hfQBUFetADJVzIRAgxeoTJJgvNvbEWDZqN3rilj1PyC0/WxiSLn8qn7f5QZHw8figNtz0Qznp6pkn9kA2lLt9ephrGEq2vPhvU+4iO2LBYkrXkmchcriiiqHEJknxHc23K8qnzUKLLKKPfvK+2A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=Sk6Bi764; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752248779; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=iDtDZbWsnekV0rCvmUANxNaCWNje5kWmBJ/Tlns63hgzvzP9jOTQcbnP25e8rnfSBAQFUvWojFgo03N2fu58oX59ifZKFY+cED3Fxcrc7JWILEPLHMdZpRaVMArTulwxIRGfgaQkVwmuAFdsP19zWUU0HSqWLmhsNxuhL+vaqaY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752248779; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ASHpOI276JmL7bsVLc1cZjd5B6X1k3J9nQa6Rj8VCzU=; 
+	b=Di8ifHeTPLulgSrXYybvTd0+usoF2BRXoi8c1aE6edVMN/kwR9mwwFtO8kpgjeyd6rcXd1tPDg0s5UgUnyf/3/lk2ZM2i2Cm+gbMuR5F4Jm7VfEjydv8SMua69nTxutM7PTvdsuskhgkQ9F/gGlwMLKhWxQqVrldJzdj+SQA+HY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752248779;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=ASHpOI276JmL7bsVLc1cZjd5B6X1k3J9nQa6Rj8VCzU=;
+	b=Sk6Bi764BwsghtdlkliSfS9kxUUozEgg0xHF1heUEmx8E+aGE8V9RPwGDfuv3rVG
+	A424FKbq5ec2B5D1yZr+/KFy/BFiPsKLOXldE6f+xeXZOc6RUtDqu7OQHiJUNlmWR1a
+	N4AoEHGvGLPPoS4CDyjEiyHlzQgv7ErUCRT+4DDU=
+Received: by mx.zohomail.com with SMTPS id 1752248777868590.8325993297874;
+	Fri, 11 Jul 2025 08:46:17 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/panthor: Remove dead VM flushing code
+Date: Fri, 11 Jul 2025 16:45:53 +0100
+Message-ID: <20250711154557.739326-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250711123215-12326d5f-928c-40cd-8553-478859d9ed18@linutronix.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Jul 11, 2025 at 12:35:59PM +0200, Thomas Weiﬂschuh wrote:
-> Hi Kees, Al, Christian and Honza,
-> 
-> On Thu, Jun 26, 2025 at 08:10:14AM +0200, Thomas Weiﬂschuh wrote:
-> > The KUnit UAPI infrastructure starts userspace processes.
-> > As it should be able to be built as a module, export the necessary symbols.
+Commit ec62d37d2c0d("drm/panthor: Fix the fast-reset logic") did away
+with the only reference to panthor_vm_flush_all(), so let's get rid
+of the orphaned definition.
 
-What's wrong with kernel/umh.c?
+Signed-off-by: Adri√°n Larumbe <adrian.larumbe@collabora.com>
+---
+ drivers/gpu/drm/panthor/panthor_mmu.c | 11 -----------
+ drivers/gpu/drm/panthor/panthor_mmu.h |  1 -
+ 2 files changed, 12 deletions(-)
 
-> could you take a look at these new symbol exports?
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+index b39ea6acc6a9..ed3712f8d6a9 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.c
++++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+@@ -885,17 +885,6 @@ static int panthor_vm_flush_range(struct panthor_vm *vm, u64 iova, u64 size)
+ 	return ret;
+ }
+ 
+-/**
+- * panthor_vm_flush_all() - Flush L2 caches for the entirety of a VM's AS
+- * @vm: VM whose cache to flush
+- *
+- * Return: 0 on success, a negative error code if flush failed.
+- */
+-int panthor_vm_flush_all(struct panthor_vm *vm)
+-{
+-	return panthor_vm_flush_range(vm, vm->base.mm_start, vm->base.mm_range);
+-}
+-
+ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
+ {
+ 	struct panthor_device *ptdev = vm->ptdev;
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.h b/drivers/gpu/drm/panthor/panthor_mmu.h
+index fc274637114e..0e268fdfdb2f 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.h
++++ b/drivers/gpu/drm/panthor/panthor_mmu.h
+@@ -33,7 +33,6 @@ int panthor_vm_active(struct panthor_vm *vm);
+ void panthor_vm_idle(struct panthor_vm *vm);
+ u32 panthor_vm_page_size(struct panthor_vm *vm);
+ int panthor_vm_as(struct panthor_vm *vm);
+-int panthor_vm_flush_all(struct panthor_vm *vm);
+ 
+ struct panthor_heap_pool *
+ panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create);
+-- 
+2.50.0
 
-> > +EXPORT_SYMBOL_GPL_FOR_MODULES(put_filesystem, "kunit-uapi");
-
-What's that one for???
 
