@@ -1,204 +1,101 @@
-Return-Path: <linux-kernel+bounces-726979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF53B01392
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:29:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB03B01395
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B862F765A55
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:28:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08CC76682E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DA61DBB3A;
-	Fri, 11 Jul 2025 06:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A180B1DF98F;
+	Fri, 11 Jul 2025 06:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f7KZVhBi";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P/C1yBrC"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IY9KDizh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7661A92E;
-	Fri, 11 Jul 2025 06:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5BB1DE3B7;
+	Fri, 11 Jul 2025 06:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752215350; cv=none; b=Qio8YcBTZl6npyS0l+R1zDqhc01Ip/bNhQ22zdvZ5wbyb0HbPMB4XmLTg5JjLjkDgErakpkYsXT7/7Q8YvcGLbKh1XI1U9/OViuf4URbXgbWfmICS54QPWfkCsoZOeX22GACs0FcMANOzuW2ntOEVxIGh9ygV4MUJYtiLnIMUzA=
+	t=1752215367; cv=none; b=hw1+XKBJzIIRVIpcZVVtc514rbFILzm/jS5v8/qLIBa5lOaMNCsxdxEi2WMAS8U7mCxzhl8lVO5hJoIJSRWA8JWcnoDMok/mgqY+OdoM1F7Am6sDaftI3vcdIW406coRDQWabL/Ash9JOUshDnLj1jvw2gS0DPWFHa0sCNrYJM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752215350; c=relaxed/simple;
-	bh=WYOIK6GVMqapmq065fCiDBgTvxy0j7JyBvG8D0bAQ5A=;
+	s=arc-20240116; t=1752215367; c=relaxed/simple;
+	bh=MHa1Y3V4zkTo+04EK3/Ac7PRtZ8VpUwI0WOK/fJ3Idk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TD+bHogYafJ/OupMkacLy+IV04Uts1WwA100LuZ/B/YMbIsXkgHrS2MIJMRy6w6qeN/Kua/mlDUzQoJW8qcazZAA6lcNTb07T8dSLdPBrJ7ifYOGfZIgFsPUlkDKpm2O14FcQe+DxQc8GP3RHWuSZMUSWK7Wk9ckNKtCghL3CyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f7KZVhBi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P/C1yBrC; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 11 Jul 2025 08:29:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752215346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2LpGMm1o7zQgu78tbfllcqNpB+021zUZQxffxbGNBeE=;
-	b=f7KZVhBiKW/ToUXjyooJTXextQQJ1lbQBw+ZGZ8NX+EAH5LWrFE9zm7xsP4sGNgotWZD9/
-	kzw+eeJJtnCw+sqj9fHtS8307S6NbRSYjg8Gq35VdYZG0ofiKwEyJJAdgILjT3UFBn/pV0
-	By1/SdnbGOtR5Ug3A31ZtwIGeBZzDKpEUMw5qzj3UeXOSaal1jPPgnPWs0gCubdLiac3pL
-	yWC6LkDfxngXPd1VHKvqsjiiybxdw+/6d+uffb1QvGJKW9Yv67ffN2W/tlWVefUsc98e2Y
-	koZu3cqQ4dQ7KMAeekcIcJiQXJZHQnNGDJrOm/59qwu/oTZnRY/0VJLFa7xPLw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752215346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2LpGMm1o7zQgu78tbfllcqNpB+021zUZQxffxbGNBeE=;
-	b=P/C1yBrCppCXTk7jTRetWspPADUr2fAtZz2Bj24U1MK3CIWcRSiDC/TdXzNMrQktssn6/b
-	Hi2u9PJZBAoQyBDg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Daniel Gomez <da.gomez@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com
-Subject: Re: [PATCH 2/3] module: make structure definitions always visible
-Message-ID: <20250711081047-ea2c1e83-1b87-4331-acad-cbbfe6be67d8@linutronix.de>
-References: <20250612-kunit-ifdef-modules-v1-0-fdccd42dcff8@linutronix.de>
- <20250612-kunit-ifdef-modules-v1-2-fdccd42dcff8@linutronix.de>
- <a9eade27-9b77-431f-b7c8-24c3fb891673@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gt7OcO4dkdz+VuKf6X473znZFeXbXIil7vTz3ZDfdTaqUW1U4e3zQ1DvHzeHn5S8f5xa4/vkE2MDe+nwaV8aniYp3nKCBPJ2LxYSMMJNcmmZuT8SUQa+a2+WOzIYhajXphuIM5+cRS4n4cFKE9xEHiZLrLfuvOJk1qxyoPm1i4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IY9KDizh; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752215366; x=1783751366;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MHa1Y3V4zkTo+04EK3/Ac7PRtZ8VpUwI0WOK/fJ3Idk=;
+  b=IY9KDizh8fcajzJDoCxQC5c2/UhlsfqtjT/95NPDEvpHVTtkat8TuSrG
+   DHtAO/YOSkLpWBwHfbYoW13i9hz1x/w3GUMMOVtW6g4sVGxuvLbsUTKEh
+   BVU6CJXDHeZ1KurpcCIpUPJqe4qNNeROm7yIzrU0L9ZrkigoIUetDgP0a
+   pZ+3tnXxBEqCH6OV8CW8PNG+aaBy8jeOr++i71UXFQAv37pvkiC/1TOIc
+   46JRnWExOSi/WS8keJTtQnj4zyYy/DeMPd9hhUhtf6BRjqahmMybTMgjZ
+   kcbqLwr+u4+LgvQ1yCUYVKUhsYPLN6tL42y+Ymao5XU8FZTPPtT86U/BR
+   Q==;
+X-CSE-ConnectionGUID: 2II1uJi4TOyQc9KF62550A==
+X-CSE-MsgGUID: Hzhpx9YSQlqOruwhhI950w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54663438"
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="54663438"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 23:29:25 -0700
+X-CSE-ConnectionGUID: hXds7d/YQzmcffA8sKfhUg==
+X-CSE-MsgGUID: 8Dw7aOx1Q4W1xxKHqprWaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="155706519"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 23:29:23 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ua7G4-0000000ERDO-0wE4;
+	Fri, 11 Jul 2025 09:29:20 +0300
+Date: Fri, 11 Jul 2025 09:29:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: accel: bma180: use stack allocated buffer for scan
+Message-ID: <aHCvP7O2PRI3WE0P@smile.fi.intel.com>
+References: <20250710-iio-use-more-iio_declare_buffer_with_ts-v1-1-df6498f54095@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a9eade27-9b77-431f-b7c8-24c3fb891673@kernel.org>
+In-Reply-To: <20250710-iio-use-more-iio_declare_buffer_with_ts-v1-1-df6498f54095@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Jul 07, 2025 at 09:11:05PM +0200, Daniel Gomez wrote:
-> On 12/06/2025 16.53, Thomas Wei√schuh wrote:
-> > To write code that works with both CONFIG_MODULES=y and CONFIG_MODULES=n
-> > it is convenient to use "if (IS_ENABLED(CONFIG_MODULES))" over raw #ifdef.
-> > The code will still fully typechecked but the unreachable parts are
-> > discarded by the compiler. This prevents accidental breakage when a certain
-> > kconfig combination was not specifically tested by the developer.
-> > This pattern is already supported to some extend by module.h defining
-> > empty stub functions if CONFIG_MODULES=n.
-> > However some users of module.h work on the structured defined by module.h.
-> > 
-> > Therefore these structure definitions need to be visible, too.
-> 
-> We are missing here which structures are needed. + we are making more things
-> visible than what we actually need.
-> 
-> > 
-> > Many structure members are still gated by specific configuration settings.
-> > The assumption for those is that the code using them will be gated behind
-> > the same configuration setting anyways.
-> 
-> I think code and kconfig need to reflect the actual dependencies. For example,
-> if CONFIG_LIVEPATCH depends on CONFIG_MODULES, we need to specify that in
-> Kconfig with depends on, as well as keep the code gated by these 2 configs with
-> ifdef/IS_ENABLED.
+On Thu, Jul 10, 2025 at 06:00:05PM -0500, David Lechner wrote:
+> Use IIO_DECLARE_BUFFER_WITH_TS() to declare a stack allocated buffer
+> in bma180_trigger_handler(). Since the scan buffer isn't used outside
+> of this function, it doesn't need to be in struct bma180_data.
 
-If CONFIG_LIVEPATCH depends on CONFIG_MODULES in kconfig then
-IS_ENABLED(CONFIG_LIVEPATCH) will depend on CONFIG_MODULES automatically.
-There is no need for another explicit IS_ENABLED(CONFIG_MODULES).
+LGTM as we don't use scan buffer directly in IO, we just assign a value
+from somewhere else which is already on stack.
 
-> > 
-> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> > ---
-> >  include/linux/module.h | 23 ++++++++++++-----------
-> >  1 file changed, 12 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/include/linux/module.h b/include/linux/module.h
-> > index 52f7b0487a2733c56e2531a434887e56e1bf45b2..7f783e71636542b99db3dd869a9387d14992df45 100644
-> > --- a/include/linux/module.h
-> > +++ b/include/linux/module.h
-> > @@ -302,17 +302,6 @@ static typeof(name) __mod_device_table__##type##__##name		\
-> >  
-> >  struct notifier_block;
-> >  
-> > -#ifdef CONFIG_MODULES
-> > -
-> > -extern int modules_disabled; /* for sysctl */
-> > -/* Get/put a kernel symbol (calls must be symmetric) */
-> > -void *__symbol_get(const char *symbol);
-> > -void *__symbol_get_gpl(const char *symbol);
-> > -#define symbol_get(x)	({ \
-> > -	static const char __notrim[] \
-> > -		__used __section(".no_trim_symbol") = __stringify(x); \
-> > -	(typeof(&x))(__symbol_get(__stringify(x))); })
-> > -
-> >  enum module_state {
-> >  	MODULE_STATE_LIVE,	/* Normal state. */
-> >  	MODULE_STATE_COMING,	/* Full formed, running module_init. */
-> > @@ -598,6 +587,18 @@ struct module {
-> >  	struct _ddebug_info dyndbg_info;
-> >  #endif
-> >  } ____cacheline_aligned __randomize_layout;
-> > +
-> > +#ifdef CONFIG_MODULES
-> > +
-> > +extern int modules_disabled; /* for sysctl */
-> > +/* Get/put a kernel symbol (calls must be symmetric) */
-> > +void *__symbol_get(const char *symbol);
-> > +void *__symbol_get_gpl(const char *symbol);
-> > +#define symbol_get(x)	({ \
-> > +	static const char __notrim[] \
-> > +		__used __section(".no_trim_symbol") = __stringify(x); \
-> > +	(typeof(&x))(__symbol_get(__stringify(x))); })
-> > +
-> 
-> The patch exposes data structures that are not needed. + breaks the
-> config dependencies.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-If we want to expose 'struct module' to !CONFIG_MODULES code, all it's
-effective member types also need to be included.
-With my patch these member types are actually still implictly gated behind
-CONFIG_MODULES as they depend on it through kconfig.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> 
-> For example, before this patch:
-> 
-> #ifdef CONFIG_MODULES
-> 
-> {...}
-> 
-> struct mod_tree_node {
-> 
-> {...}
-> 
-> struct module_memory {
-> 	void *base;
-> 	bool is_rox;
-> 	unsigned int size;
-> 
-> #ifdef CONFIG_MODULES_TREE_LOOKUP
-> 	struct mod_tree_node mtn;
-> #endif
-> };
-> 
-> {...}
-> #endif /* CONFIG_MODULES */
-> 
-> After the patch, mod_tree_node is not needed externally.
 
-Can you explain what you mean with "not needed externally"?
-'struct mod_tree_node' is only ever used by core module code.
-It is only public because it is embedded in the public 'struct module'
-
-> And the mtn field
-> in module_memory is exposed only under MODULES_TREE_LOOKUP and not MODULES
-> + MODULES_TREE_LOOKUP.
-
-As mentioned above, MODULES_TREE_LOOKUP && !MODULES can never happen.
-
-> I general, I see the issues I mentioned with LIVEPATCH, mod_tree_node, macros,
-> and LOOKUP.
-> 
-> >  #define MODULE_ARCH_INIT {}
-> >  #endif
-> > 
 
