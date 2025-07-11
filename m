@@ -1,209 +1,132 @@
-Return-Path: <linux-kernel+bounces-726820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEAAB01199
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:19:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17724B0119B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C8441C42401
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:20:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D2765C0A2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8789019CD0B;
-	Fri, 11 Jul 2025 03:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DED19D884;
+	Fri, 11 Jul 2025 03:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c7rbsbfQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="RuNI59Fg"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9873179A7
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 03:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AABA933;
+	Fri, 11 Jul 2025 03:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752203980; cv=fail; b=j666j1kPLP605mblGi2oChILHea+YWjaQEsfGHiIJI+1ENZ0sDixux396ilUUdxgd3xBFjkbNxPEkSXhVgVwD1dGXg6rice15nj6dP8XRQkDKHfzNt/OP1/3kM/Wu7tLUdAFZ3wwrw54PgQxW4vuJvYPEVL2ZQqs8pz/oQEK69I=
+	t=1752204096; cv=pass; b=jL6NA/e3OvQDcMpKkHVAf9G6Z3zq4fzgRo5khVCPUd1FdXdvhzmkmR9czt/euLFZhf9Sz2A0NCVPASNDP0zo0DPKJDwVdcA6RiH4Mcq5DJCVQ22oq+MJn5uoZ9UpDRMFZ0LjYNDEcRonhjHDR0qLy0tQ8RiVUAxPCkE3ciXbWEE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752203980; c=relaxed/simple;
-	bh=ax0Xf3RMS+YbPAgw9ITndohhOLPXsJ//Neu1q+oAF4A=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MiQGE4NiEfii87n+gJwcYnJDM4vaSz+qesr8gZtc1cfKK7MV94XHXy2cQegmQc3SeufVnr7p4DElA0+iNnIIYvfpf0yhKnlPZ2TaB3GH0VzAoYVqHFpjtCZVkcxRizJTQ1oa8RXOozzHhjWlrkrrqewLD4IxeR1u78tcBWdJje4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c7rbsbfQ; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752203979; x=1783739979;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=ax0Xf3RMS+YbPAgw9ITndohhOLPXsJ//Neu1q+oAF4A=;
-  b=c7rbsbfQUOmkLDNQJ+Y38pu9lX+psQiJRmwwIIuw5IPHKPzq7g6h5Klx
-   Jgbe0lMvXJ8Zs9NVZHPqRM26+qTw5AjBb8VoyivRiSlxjzDxbuHqUwyYz
-   BDUEtrZnHNbQizeLTvaoM2GGybjWYqw6K/alTvxhsdScEul2kSGS6W4Cq
-   SaORi1pQsJzqhRVVi6uGFduK2+GkhxpCi/VxFXUqwxvT/k64dx94Ss5qf
-   clocuZxvWJ0VwRyKu1SlDWuWoIfi2aWHV73D1jD2C2OjrYB7u/uwZbFhp
-   tJHgn/wurcgkqWsNRfXWjTdGJiNQpaeDCnGZsvQOLtrnZ64T2g0h9JAOX
-   w==;
-X-CSE-ConnectionGUID: fCz3y4VVSZqCP4NJpJ4spg==
-X-CSE-MsgGUID: Ucq4vxBAS2yh4qeM8Jj5SQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="65848658"
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="65848658"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 20:18:57 -0700
-X-CSE-ConnectionGUID: v8HSYQBrRfSbf/wUklZWJQ==
-X-CSE-MsgGUID: ahEWHxt9R6ylVg0P3dtjvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="156816012"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 20:18:57 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 10 Jul 2025 20:18:56 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 10 Jul 2025 20:18:56 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.60)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 10 Jul 2025 20:18:55 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KkvJj30PcbnFgtmY9zSqwRTn0BqfU0lSeQ6lIOug4J8sBObnNp/eg1SC998mVH9rnZOrLOawnZtTUkky3QqtRWyGYJR38UnxaWfI/iErcenXVJ+CzGinsNpyElBP69CTuPsd2euAgTJDAboQjaJVh4M9FRsLPtB4n3h5gSDhOfjYiFoKFnEa9ZaJq4v/m1l0fknhYj7s7juuLSUBA5DImeRAd4W+p9Oa735kvuc0wjrxoILjn5TWY9NJFZ7/nL6rAn5iS6OIrC1UYCiK1rRQfteBWBh/sbNEAR3M7kzp/7MBDpPq13reP8cQq38TVoTxcP+2drH9kMWkw6p2C9FZjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ax0Xf3RMS+YbPAgw9ITndohhOLPXsJ//Neu1q+oAF4A=;
- b=IrwHdE3LxhQB0NgTF9393UVR+7z0SUKusL5WIh+A6rLKwAK7eMKWe878oLxzzZqlBv3u9T4q0ikLNYm1JqmxUISwzeifF5zDmRJtnnkZ5b0MdThIKUZdRE4V0Lo29+WXknV7FVYHKtjsnCmIV/ewX0gvXtoY2YGVWv4/QQhTLDDruigw1RYEgeTtnPJK0qp4PVqDqp+SKaXH3MCuTae/F+pLDBg3EVzZC+jrMoeGnM3UtRyQjjiWDB3qzcW6EnetSyVYlIbPyDKU5SerIvpktEHM3M2e34eqewMEo8b1yMIqYVYJkSRtj8+IfcHuTzdSE0V7eXJmjeOn5crRF0OXRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by SJ2PR11MB7715.namprd11.prod.outlook.com (2603:10b6:a03:4f4::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Fri, 11 Jul
- 2025 03:18:54 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
- 03:18:53 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>
-CC: "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] iommufd: Do not allow _iommufd_object_alloc_ucmd if abort
- op is set
-Thread-Topic: [PATCH] iommufd: Do not allow _iommufd_object_alloc_ucmd if
- abort op is set
-Thread-Index: AQHb8dimlP4bZVa3DUmznjBx6AnD5bQsQTqQ
-Date: Fri, 11 Jul 2025 03:18:53 +0000
-Message-ID: <BN9PR11MB5276E1CE6E46DFC61B982D3F8C4BA@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20250710202354.1658511-1-nicolinc@nvidia.com>
-In-Reply-To: <20250710202354.1658511-1-nicolinc@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SJ2PR11MB7715:EE_
-x-ms-office365-filtering-correlation-id: c1c159ec-7a0e-4d37-3497-08ddc029aa4b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?BhFgAfdLuiK/aWv1bArMzAGngSEBwBNUrBvdGNvSnkMaDn5X9UWd6q1g0+xv?=
- =?us-ascii?Q?Z90nF0srZ9j7CewxXBZNuyr99cN7Q6/wTsPLg4syiAJwuyeRiSWyMeEDZzhK?=
- =?us-ascii?Q?3y4AVVTFxeTKpg6SP6Xuq3RGgXCd6s5cUZhbhMMgnqcHfGgB0CX5420dwkSh?=
- =?us-ascii?Q?rIQRa9oZcSUT/kBxFIpLfValjaZdhzub3oOljTXs/FO+RMnfQdtOl5Enapm5?=
- =?us-ascii?Q?ZLcidw/yJRcWrLZVJyDzAxD2jOdCvqyok9hDUiTwgEPkB4sniodJRPYm6DKy?=
- =?us-ascii?Q?PJg9GgkRhmgciWlyNGWcw0LaANK25VIMALT62leyaSkHuzEOZBOGiKj4N8sz?=
- =?us-ascii?Q?Hy+SXHjjQbN7S54okeHMXSu7+7jXDW2+GaiU9XN6u5T8bufWj93fsyUVl6bh?=
- =?us-ascii?Q?S7J3ovQxICsu/ycPlD96LsG8lH9P+aZMvwbdcMbYNE1947IyaGv81EEDJ7Ig?=
- =?us-ascii?Q?4CpV1CSPSVh2uxrEdop0nzp6kSnqlJ9kbYt3UYCMG3Uln/IjOonKEhPfMAUn?=
- =?us-ascii?Q?dmw1ev2PyqUB7H6yypLC8KzP3WWvormyalLygxJ72E4kEhjAFKhUPs0DLi0P?=
- =?us-ascii?Q?EJwLSvSjmzTqdCNhZ3yN0NWaIN0J+Jt8LFljB7Ap6dHaFrL+FJ6+amgysW57?=
- =?us-ascii?Q?IvcE1SZ9Yba/Z8UKj3LSvy13pyQPdqi1OnTHZ+r3lTFia8cuwxVTs11T/gDP?=
- =?us-ascii?Q?TYX54wQAcdxLNBknP7U/GeYCjU4bJSBUDbGUJgO1UrZoL2+UTzDbP2VzBsyD?=
- =?us-ascii?Q?vhVcfWBPUruU7WKjU95O59culwpWGE/HUKCY9k2u6h7D3WWwFLsMEipw4/vY?=
- =?us-ascii?Q?iYPebLMGV1VWIbWgEpziSGcllkQLTxIT8JSbeIBtz252lsJWk5bl6hbxdIaM?=
- =?us-ascii?Q?8DC1jVmtNz/I3931RBQJTL42Yvzx8tQctqfCy2zTNXdM1xVB4J0yD8e8pTkd?=
- =?us-ascii?Q?BiF+bNgtkqX2c4xM2eihevM9So9SE5yTYaoxhYzCgSBqAXAJMolWxBzQnuMf?=
- =?us-ascii?Q?Ze0+er4/XBKVcr50vem5+metmfYBQMl2UkNa+26ZGisz8KflHwfXrm2qAAY1?=
- =?us-ascii?Q?Hmu3renoAbwvab0Hw8sP5Ibx7dHTZWFQistrBpYGs7Y2AWAHe9KwLFiYOJLL?=
- =?us-ascii?Q?xqf3C5N+vvzGgNcQVKWCFP6CB0vccQGvmFfyAYEwf7lzsmeIEL9fM6kRdJro?=
- =?us-ascii?Q?oAH8SjkjNb03dV0aZALeSLhg3PUxlLdK70teFBZ9RRmGpsekdL+vjwS9gvpq?=
- =?us-ascii?Q?9c1lAQ0R4uWmcQWnE4mhw8reCDAPUw+HYJ7Hglvj0GF27orgaBOszZFLane+?=
- =?us-ascii?Q?oEdKNY57GaqU+7jz2SAB8auBMSPLv8EHp+Q51DJ4MHuHbvLRP3ySGvf3BUoX?=
- =?us-ascii?Q?44KzJy8EjeTxIRibU0BFji3jbd4xDgMIt08wlV7BMhPhhZ/ZQrezB1FpXcG7?=
- =?us-ascii?Q?VZbM+CjOLt81CUcV+4aWFq/NWNCXS27ageBxeYisi6gydD5UJPk6g8OF11ir?=
- =?us-ascii?Q?xk7JISptPF3sz70=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?vFgTFz90T+cclWIIwA5ZILMdDqDO8xWZuuldhhSCijmIfhtBmUeag+knM9u5?=
- =?us-ascii?Q?0+afhagk9NEDRS8DTDSh4KpfD6o6/67cF19KNFfFSp5y6+GKBahK0RAJABp9?=
- =?us-ascii?Q?wS7rXqx93+JtUoj8adhxT2ZDcHJ2zW/YlT51R6nZserUUA6N1JuYbpn5AsaZ?=
- =?us-ascii?Q?Kht5iP2oYhhkqm0LXycHM43iWfJ5psaWqz9JBAEeopDXyIKrZFXz+56+AJjI?=
- =?us-ascii?Q?VCd9uqI3BvAs1/gJUDHreNF79PFAl1N3Nxm+MwEWvbL2CXlHeP9/ZeSYW5j3?=
- =?us-ascii?Q?D02fB1edG+35k2ZedDEsr9uNQzG9DpNfgcQp9BbYr0+rZUCZJ6fn1EANnrtq?=
- =?us-ascii?Q?AF6Ar7If7PLxc9k6Nq4NCu6HPkE62WW95A8KI1MBacrhfcv6oEcndVu8LYCO?=
- =?us-ascii?Q?vD+WwRPMsdw9aEd7dxz4Ul+uTdCW8vy3t4+6S3qEdW647T+x7hlziAYsIxXS?=
- =?us-ascii?Q?EtPFVVNap24AecpHQV7R1g2eI5izf9T0asTUMRbSEbgEdZuanhA6Th33euQA?=
- =?us-ascii?Q?DFI9GbLdoi10gmS4+vi9bjnjoX1v/dK9JTLgpCuIbCcBMCUxkU9cDH+tdBeq?=
- =?us-ascii?Q?UnDajiDtEmio3FnCQrUHGaWNqtmT7ZE7yHvsMTysjjA4VZEZ5xOt+Gi4GXi8?=
- =?us-ascii?Q?hKUuXL+alxncx0DX4BQ/jt80QAeEiSnIlz/HQzklDhn2kBxIICTTTrfB1gOn?=
- =?us-ascii?Q?5/M41FNIhIPKo70bkK4XgGAZET2cJUyFnNbqJpxiHZ2AkJZkIqoEz3rGD4U0?=
- =?us-ascii?Q?W3nYhIB42u38lg8LyLI+ExMJncdz0ZcyNM5XhyECtfGVlJe5hibyXoI07uR1?=
- =?us-ascii?Q?2mzdHdQMc4b471AHN9Gb5spExfqN1a0tKYYmRPgSFyK9ii4f4JeWQ3fcUzNO?=
- =?us-ascii?Q?1+J61ELp4pjYwaO57dB8UtO/poOve+aKy8jRWA9ssb+UPV5QkYFjmK5MgwLj?=
- =?us-ascii?Q?UoEqx5W2rkH1t5lJigqvppHbfuvICDXEQF2l8jTQUQDdjjFaW4lqaJjEVQqm?=
- =?us-ascii?Q?wfxR6oizW3zuwpkZuDNJEJMSgIEv4klV1TfIt+gf1KhVSNFcxqwaW9HtQKIn?=
- =?us-ascii?Q?bCehy+PFJBOQPH+s+4TUS1WF7oQJAqH5hULW6L5GrzScNhWwj+97Q3Z7l6TN?=
- =?us-ascii?Q?dIHUld14vRcAYPUqdtmyM9Lf0YTmMvbMuXoLUPrmHfdBbqqUT3BIz5BSRSlU?=
- =?us-ascii?Q?VJAv2g8m0vmVXGr/JCvmUibF9HjvH3q8PNAsuRML7Ict1P1zbSwW1GBZDwrW?=
- =?us-ascii?Q?CppK29giAC6p7YMTg141H3Aja8Ov5aLy+GIN+MAIphD3kx/H4tAoylWwjSn6?=
- =?us-ascii?Q?VinjJ3EeRZRYk+4hkDG18fBp9cvQkPN6u3tdWMEzalggUMp9bCuuMJfuDD92?=
- =?us-ascii?Q?gWEHQE+4lntbzQbRMiro5KDG7GRHBMT28HlcoXcIayLhfUqY9/hFHJAERr0T?=
- =?us-ascii?Q?3DdZv434j359JnRQ+gE2vh4RQU2vFcejKFef9jGsI7NFk94ttKvdaWbdx8I/?=
- =?us-ascii?Q?Mg+Q7ogmXCm8RvXxc0/klFAFDRSztfgHxjn8juU1JEmdIrm6llOJ+9HdfxKs?=
- =?us-ascii?Q?8qgVeymKVZ9xF3ZEz6V6xBEZHgXU0TaVUvUu7S3U?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1752204096; c=relaxed/simple;
+	bh=Yp0nTMDOWNFv8xsyqrqX/eJ7fDCBpHvdfXKgKhx67/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q1H0VRjRrgZbtU3xBKAFpTqShptP3S7eqKApKkZ/NBTmICwv6KjQdKy9PlI+Fq36VgiofeEDRQODJGhgXNyfgTYciMkW4gCAASVVSe9Z5/984EnI+TGooYdiPYtMpzorY1SkVDxnYFSR+h1z1QNFKv7HO0ncf1uCh8gj87PHATs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=RuNI59Fg; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752203956; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=FHF1IlWTgeNIBFTHQlP/iRk5ycki0xO7TuWhdjTTMW+5SbK6MM7+KCO5qZNqRTp0hNiVSuv88rbkD1V4vJZuzaWsCPD1+uDgAfo4i3sfGkuCRiS7ibRpXGm72B02L6BZHUn+/0vjtj9IaMJ0DUFfZ6IFbaxutCrI0+nk8KXGSTI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752203956; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=vVEH4yQRs/uYYX1WeK003/TXB9IWCF976d+LQr111CQ=; 
+	b=Quo5lHCdwJgSiNaJ8/KPwpWJZ44GA623yE8EcxrWgFfwaLBwHWdFbemra7E4n+jKgtXoeiAe11Cf95z/DBkrCEQBVLBsoE445yAAj/qsqopjs3MepWkoZHIHmRYeCB15BY7iEfaMFZYOLvtPSltFlexvzYQxK5GKHpeEK2sLJz0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752203956;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=vVEH4yQRs/uYYX1WeK003/TXB9IWCF976d+LQr111CQ=;
+	b=RuNI59Fg4qxr0L2R9p83NzVxb2GXnj7qSa3yHPQslMsAayg405hy/ntTLEkWfqoS
+	wtghJl7X40SVFAHCfdSzNoTMv1AukL2ltBCVuaZ3LcHYJ0WACu72GtzVe1ApT7MsvvP
+	MVOgdgOAlcY55xq2wmxh7IePZmQzL+TGsfOHBfy4=
+Received: by mx.zohomail.com with SMTPS id 175220395452834.989640811052254;
+	Thu, 10 Jul 2025 20:19:14 -0700 (PDT)
+Message-ID: <64fcf4b7-b5c1-4983-b4e3-c490a461e8a0@zohomail.com>
+Date: Fri, 11 Jul 2025 11:19:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1c159ec-7a0e-4d37-3497-08ddc029aa4b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2025 03:18:53.9482
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: q5eR82xad2Ur9MYbRzFS4GggR/4DfRae0Ox+TGvcjRNGZXCtgG2rtAkyCCt1VO3VuX3suSHnTaoLDBx5cbvHHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7715
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/3] cxl/core: Introduce a new helper
+ cxl_resource_contains_addr()
+To: linux-cxl@vger.kernel.org
+Cc: andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org,
+ dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
+ dan.j.williams@intel.com, shiju.jose@huawei.com
+References: <20250711031101.126990-1-ming.li@zohomail.com>
+ <20250711031101.126990-2-ming.li@zohomail.com>
+From: Li Ming <ming.li@zohomail.com>
+In-Reply-To: <20250711031101.126990-2-ming.li@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr080112276c761464beada33c2247d4a800004672d82109d605b6f531d1792cf338ac7031878fb39bccd4da:zu08011227ae45c79bdc0ba9cca9cf6eea00007652cef06d4aa577d87617fa5c581098dea9c6842589b098a7:rf0801122d717bf382b7e798b107ac988100002877533e2ba3074a2a24302d9946d0e226bbc3558c1d7b01a9ce5982193b09:ZohoMail
+X-ZohoMailClient: External
 
-> From: Nicolin Chen <nicolinc@nvidia.com>
-> Sent: Friday, July 11, 2025 4:24 AM
->=20
-> An abort op was introduced to allow its caller to invoke it within a lock
-> in the caller's function. On the other hand, _iommufd_object_alloc_ucmd()
-> would invoke the abort op in iommufd_object_abort_and_destroy() that
-> must
-> be outside the caller's lock. So, these two cannot work together.
->=20
-> Add a validation in the _iommufd_object_alloc_ucmd(). Pick -EOPNOTSUPP
-> to
-> reject the function call, indicating that the object allocator is buggy.
->=20
-> Suggested-by: Xu Yilun <yilun.xu@linux.intel.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+On 7/11/2025 11:10 AM, Li Ming wrote:
+> In CXL subsystem, many functions need to check an address availability
+> by checking if the resource range contains the address. Providing a new
+> helper function cxl_resource_contains_addr() to check if the resource
+> range contains the input address.
+>
+> Suggested-by: Alison Schofield <alison.schofield@intel.com>
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
+> Tested-by: Shiju Jose <shiju.jose@huawei.com>
+> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+I added a wrong reviewed-by tag here, it should be for Andy not Alison, Will send another version to fix it.
+
+
+Ming
+
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/cxl/core/core.h | 1 +
+>  drivers/cxl/core/hdm.c  | 7 +++++++
+>  2 files changed, 8 insertions(+)
+>
+> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+> index 29b61828a847..6b78b10da3e1 100644
+> --- a/drivers/cxl/core/core.h
+> +++ b/drivers/cxl/core/core.h
+> @@ -80,6 +80,7 @@ int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, u64 size);
+>  int cxl_dpa_free(struct cxl_endpoint_decoder *cxled);
+>  resource_size_t cxl_dpa_size(struct cxl_endpoint_decoder *cxled);
+>  resource_size_t cxl_dpa_resource_start(struct cxl_endpoint_decoder *cxled);
+> +bool cxl_resource_contains_addr(const struct resource *res, const resource_size_t addr);
+>  
+>  enum cxl_rcrb {
+>  	CXL_RCRB_DOWNSTREAM,
+> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+> index ab1007495f6b..088caa6b6f74 100644
+> --- a/drivers/cxl/core/hdm.c
+> +++ b/drivers/cxl/core/hdm.c
+> @@ -547,6 +547,13 @@ resource_size_t cxl_dpa_resource_start(struct cxl_endpoint_decoder *cxled)
+>  	return base;
+>  }
+>  
+> +bool cxl_resource_contains_addr(const struct resource *res, const resource_size_t addr)
+> +{
+> +	struct resource _addr = DEFINE_RES_MEM(addr, 1);
+> +
+> +	return resource_contains(res, &_addr);
+> +}
+> +
+>  int cxl_dpa_free(struct cxl_endpoint_decoder *cxled)
+>  {
+>  	struct cxl_port *port = cxled_to_port(cxled);
+
+
 
