@@ -1,334 +1,176 @@
-Return-Path: <linux-kernel+bounces-728215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9355B024B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:40:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 212DBB024B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10BBBA62FD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:40:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44B2E587F9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F13B2EF656;
-	Fri, 11 Jul 2025 19:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2118E2153CB;
+	Fri, 11 Jul 2025 19:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h4IFLRru"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TKJAmGol"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2068.outbound.protection.outlook.com [40.107.223.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266C01E47A8
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752262816; cv=none; b=TdjgvlW0qmRYmIfyxRv7RwNHUx9uBCHMt5jEYjBIaGRYcDb8V+N0q8EqrPfQKqETSyXVfwA13r7RJS/R6PcsdOBTbC7tm80xRCSpclrV0WWvJ/hskkdu6XPqRG800P3hVkIOWalWfIBUUp+rIfOVeuQR5sj8uevIDevCAQ5/LqM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752262816; c=relaxed/simple;
-	bh=fTSsVw307/IhVUB6nmlk5kiLbB9+XjCXO0Yz6uvKT2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mEMBsw7lUD2TnSkcL1LAfboetI6EFjmEuJmd2kYTfTAyqFQ0Cs8VuGJpA4zvVLYEbxSI1GCBOxDxW3jhrjfDx9tZIFK8Vg/DFmOMPq3DS+bb6tMfAmbdcOzt22pSTLu8C1iX0BLS7s/DtCcwlQGMwSE4UF2XysJ+RkiX/im8k4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h4IFLRru; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 11 Jul 2025 12:39:50 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752262801;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9Zhck/rOf1TsKn/sLukuI+2Jhtq1hlKXQKKyBss4j7k=;
-	b=h4IFLRrum4DGnMgcj570rWlK55BqT0Tn1Iu2sfRUzzd0OJim+Cyjw7afBHf390mLVS/Cwj
-	4i/97s4qtnB9JHo3DdZe/Qj+aA5jcfQaCXfamCgk8qmiIvuMddlqg2uDda1pT0tHUCPCeo
-	azXccTRzmOwVmKsXhpaM0ch/2+kl1oI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Jiaqi Yan <jiaqiyan@google.com>
-Cc: maz@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
-	pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org,
-	kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	duenwen@google.com, rananta@google.com, jthoughton@google.com
-Subject: Re: [PATCH v2 1/6] KVM: arm64: VM exit to userspace to handle SEA
-Message-ID: <aHFohmTb9qR_JG1E@linux.dev>
-References: <20250604050902.3944054-1-jiaqiyan@google.com>
- <20250604050902.3944054-2-jiaqiyan@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13291D61BC
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752262867; cv=fail; b=WKm/eDztGkDZd/U4mGreFMzGBsoZwya6fDPpf+NUGZC1lXLuY7/FotCdNWA0PiVt4Zel4lXP3y8fFuBdO0f5P1wr+NYpbalXX+dB2w8MdlVPaQtRQTtRQ3qssMRIfa8/mGG4LZwCUZ9k2mBXxf3pK5uUQXsCvBeH1En8zqXlBEM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752262867; c=relaxed/simple;
+	bh=057pjwFwSYwnGtfViiOAeISF6TsjUf2/l4BT89uxy1c=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tJwY4eOn/e2Cxahg+fghooKs3+4tf9jamHPNYI4tqFM6dc4U3h4OBdKBNCOpz8xnws1k2/zd4tqFMc6crKqIj5EurLMVEYoXjYxHbDkLBdapzpP4BzVx5VHyOVT6M39rMsPlZ+TT1Eo1oS/c5IlYzKF6jPGjyrnbcFGVHbqTTos=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TKJAmGol; arc=fail smtp.client-ip=40.107.223.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Mj+dqKISFqnfaeIl5NThJIABGpdJ2hSdWfkJF6A6WHw54dri2S1TackPgHOL5YKDZ01xOmEjSpWzC9TcIi9oR3GKwu60d1vhTXFkPfp199hlf0qIIHryaURDajtb2Zsy06S5QmbZHCorULcOYxRIkesnSB5TzYJVUdpFpNiYZxnQ5AdXWy3Oaw4dLYxBgxva26sYLmNeHGNmedPb4LXfuNJ4AtkFCMG8T3LAwI07vRS559LRmPpdAHDiKJm3rmiehKxOVXsK2MtrTy7GcFmqM1cqmI4Tjun5ZLVo7A8fBcxR7G++URY61FFp3g3qgsDIPBJbZ2wZsrCRMXXN2gEraQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1HDpD8cEwX3VGV2PGnBcQNJmIZcdlOeX7Zo+E4EV5yw=;
+ b=nrVvf7Nq6QQe2+46P0/0sctIMDre0/M3UjH+Q6uIM9SkY2PQ2gV4R+wZ04UM28wIOv/YjrycElkFEETzkezH2ne+P5uILBv4ULqP1BKCtJXow0DsUFt+CXO/4ZjmEEAl7U18uWqB977JSkMVO9wmbSN0C20wUrb4MW1RZclPt2xIksbCvPP+8hleCJZrJplMTASr8IrSzbYPgnHBDtj6LKot2W+wzw15Z09X7Nj/XdUngWK6k9yRlBGNCx/W5N6SGcVjAUXb69nr52zwX0AEXG0gi7SA8NLQoJkRrdAAys3WUUwVRJe6+JGpJv8D0oDK7RHH1tz6abQcy4PNG6D+3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1HDpD8cEwX3VGV2PGnBcQNJmIZcdlOeX7Zo+E4EV5yw=;
+ b=TKJAmGolThoV4ZQ4UvdINXduwX7iy1+46Mq7PFh8zw29HwFO7yT1uVOAqiY9/ZR//pez2Gx3SpESmaqy9UlaBs/XfFN1Vyg8CailzoTyMIRbdcrFqVEO+0FafPNgWpOXEqgJ2HnLb48TBxhrRACBkJqvGlEyMZUPJTwuL19vxaHhv1yDY+yaKXxwY+S5dJde+8lCAs4RDMIPDMvRTQzz42Jg6k/OmoKHtTrUEbFO7O5skrEYijb55eXgBnHEF9gY0jbC+hbhMIvcCZjMMC2PgrpfAE0zEIqV676pltXmJ6aYPWesKOguXMrMn/oCmSRr7McvcFh7/iCRUhK+Ejk/pQ==
+Received: from CH0PR03CA0213.namprd03.prod.outlook.com (2603:10b6:610:e7::8)
+ by IA1PR12MB6065.namprd12.prod.outlook.com (2603:10b6:208:3ef::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.24; Fri, 11 Jul
+ 2025 19:41:02 +0000
+Received: from CH2PEPF00000147.namprd02.prod.outlook.com
+ (2603:10b6:610:e7:cafe::ad) by CH0PR03CA0213.outlook.office365.com
+ (2603:10b6:610:e7::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.23 via Frontend Transport; Fri,
+ 11 Jul 2025 19:41:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH2PEPF00000147.mail.protection.outlook.com (10.167.244.104) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.22 via Frontend Transport; Fri, 11 Jul 2025 19:41:01 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 11 Jul
+ 2025 12:40:45 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 11 Jul
+ 2025 12:40:45 -0700
+Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 11 Jul 2025 12:40:44 -0700
+Date: Fri, 11 Jul 2025 12:40:42 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <will@kernel.org>, <joro@8bytes.org>, <kevin.tian@intel.com>,
+	<baolu.lu@linux.intel.com>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH rc] iommu/arm-smmu-v3: Revert vmaster in the error path
+Message-ID: <aHFoulc0HBUKQWzm@Asurada-Nvidia>
+References: <20250710233003.1662029-1-nicolinc@nvidia.com>
+ <20250711164226.GE1951027@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250604050902.3944054-2-jiaqiyan@google.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250711164226.GE1951027@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000147:EE_|IA1PR12MB6065:EE_
+X-MS-Office365-Filtering-Correlation-Id: eabbe004-434f-4637-93fa-08ddc0b2ddc4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jHE9eeWOwLO2RejcaD+aU0IZ2vtPi6ECcUOZsoBuUnYJIKK9wtmFTBaII+Ij?=
+ =?us-ascii?Q?+VEzeMiCvlf76Iyljk06HTyizkzALjJ+PlI5mBwz7ahwO3/wGRTnUQoYF6eR?=
+ =?us-ascii?Q?BWLHnEXLvx+6POko6AeWVv+MzsNDhh+lR/6ybpHcgpBJDKRiAbnx26wErsjL?=
+ =?us-ascii?Q?Nu3RQWThc6bi9BAhCcCCagCd5vrgDog6QcGLXYjnzgdrbySmsUfH9dTy78Q1?=
+ =?us-ascii?Q?z8AnqbNtT+H7mevCnUcD9qeLmcyNdVl0FeKfkqVZGX6VbrA4VejtlphmDWeM?=
+ =?us-ascii?Q?sauyAgLn9i8EuUYTURgW6LpLdQzoFAZBRZ7SdkH/O01IUoNul+eGuTjcUBLN?=
+ =?us-ascii?Q?ljAuVc+GjQH8SKUD/6DxJYcJE7GopPa9H/JwPqXOCZHWB7dqbw1i2hByttuH?=
+ =?us-ascii?Q?2LBuPNNPQIU3jGoL0Vej+wZ2aIlFsoAsaBml+YuHTem7ZZZGoqrYNx3EYDmu?=
+ =?us-ascii?Q?A0j4B32v10G6Am1qGuwiq9NKHJbtv5pa1HtkzYUXvzqPTYoiP7w8ol5clk4A?=
+ =?us-ascii?Q?29wknlZkpEknmhkh7nxoODKUPISl0YMH+Ege9PidjElRAkozkgD529dFszNw?=
+ =?us-ascii?Q?eTv0cC15wnDyjS9cmcL5hnStoZW1SfIx9phld5dnKcWTnD/0zlSX68+yg8lx?=
+ =?us-ascii?Q?OfRSzXra3cO/ID9qvFVGTT2oSqNd4ZFL8LtG2P7yWitbcOY7+/dBW9Z+P0yb?=
+ =?us-ascii?Q?mS4oIkti5Mm5p2ON9SFuZFdDh44GrCU/rVCFupmXWZ8biLw63GrYLGEPWky1?=
+ =?us-ascii?Q?IW5sKUIcBYKOIq8YFG+fldRWvlk204cH3vdQzKXCia1Goj98ybqz++5HpJNG?=
+ =?us-ascii?Q?n/GD2snDIOoltH4LobvBdMTIrYwTbHk5oaIrJhqO3FOh6p2DpZhkVpfq50Fj?=
+ =?us-ascii?Q?JZHNcOx2NJh25nArNuRnt+2O9er/5jW8L1DSnhsJ6aJa/0R2qVN/7dX1omT2?=
+ =?us-ascii?Q?/B+L0QT+CHR2fZu539qkrkeEBl4O47upmiVIaB/l6rAh6XdjEBtCmL3PTUvs?=
+ =?us-ascii?Q?gs6T3woesM97vbIgV2tbtgnhehWE3HbUXKuW/PzC/vJW7QyBeaUBXdHb3D/Y?=
+ =?us-ascii?Q?/grOKvF7K8/E46mSTR+zJu1251sUrZmzqeG7vIVxcoTIEEPaWuadOi7oeTKe?=
+ =?us-ascii?Q?FXFrYbig1THov4bMr6dp+pPflzecA1B5FWyfEUokqP6AUf5Ihs5Z9FneT9l9?=
+ =?us-ascii?Q?rHVhOgQzT6CpNt02nYNp2oteYqC5P+yuhEqrGRT7YP0jTNP/nr7Ssk4zre1Y?=
+ =?us-ascii?Q?3LQ4bgc7T44joTwZxZbNg26yyLe9FKEPZKF/aHD3HBb/Kt7SnjVSUh9hu07Y?=
+ =?us-ascii?Q?wNMMGKH9G3ZHNd/M/GwA56jNJbXHVIpM0P3ySwos21RguDVlzaAfIoxdrtFa?=
+ =?us-ascii?Q?9KwUXasQry8haV7DtRZTQeP3hTeRv6Aw2SKnzJejdIICouAu6G+JYKdzF1PF?=
+ =?us-ascii?Q?8/Z/gsvgyqhbNiMemcxB36gQ0epH7fgTwESQKSCa63Qiy3T0FvvooHV1CM6k?=
+ =?us-ascii?Q?uypVTmttrYdE6aqhj7CoROlhrp2FktROwTiv?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 19:41:01.2275
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: eabbe004-434f-4637-93fa-08ddc0b2ddc4
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000147.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6065
 
-Hi Jiaqi,
-
-On Wed, Jun 04, 2025 at 05:08:56AM +0000, Jiaqi Yan wrote:
-> When APEI fails to handle a stage-2 synchronous external abort (SEA),
-> today KVM directly injects an async SError to the VCPU then resumes it,
-> which usually results in unpleasant guest kernel panic.
+On Fri, Jul 11, 2025 at 01:42:26PM -0300, Jason Gunthorpe wrote:
+> On Thu, Jul 10, 2025 at 04:30:03PM -0700, Nicolin Chen wrote:
+> > The error path in the arm_smmu_attach_prepare() was introduced with the
+> > arm_smmu_enable_iopf(). Due to a rebase issue, it forgot to include the
+> > revert of the vmaster.
+> > 
+> > Move kfree(state->vmaster) to the error path, to prevent memory leak.
+> > 
+> > Fixes: cfea71aea921 ("iommu/arm-smmu-v3: Put iopf enablement in the domain attach path")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> > ---
+> >  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> One major situation of guest SEA is when vCPU consumes recoverable
-> uncorrected memory error (UER). Although SError and guest kernel panic
-> effectively stops the propagation of corrupted memory, there is room
-> to recover from an UER in a more graceful manner.
+> The patch is fine but the commit message is a bit confusing
 > 
-> Alternatively KVM can redirect the synchronous SEA event to VMM to
-> - Reduce blast radius if possible. VMM can inject a SEA to VCPU via
->   KVM's existing KVM_SET_VCPU_EVENTS API. If the memory poison
->   consumption or fault is not from guest kernel, blast radius can be
->   limited to the triggering thread in guest userspace, so VM can
->   keep running.
-> - VMM can protect from future memory poison consumption by unmapping
->   the page from stage-2, or interrupt guest of the poisoned guest page
->   so guest kernel can unmap it from stage-1.
-> - VMM can also track SEA events that VM customers care about, restart
->   VM when certain number of distinct poison events have happened,
->   provide observability to customers in log management UI.
+> The error path for err_free_master_domain leaks the vmaster. Move all
+> the kfrees for vmaster into the goto error section..
 > 
-> Introduce an userspace-visible feature to enable VMM to handle SEA:
-> - KVM_CAP_ARM_SEA_TO_USER. As the alternative fallback behavior
->   when host APEI fails to claim a SEA, userspace can opt in this new
->   capability to let KVM exit to userspace during SEA if it is not
->   caused by access on memory of stage-2 translation table.
-> - KVM_EXIT_ARM_SEA. A new exit reason is introduced for this.
->   KVM fills kvm_run.arm_sea with as much as possible information about
->   the SEA, enabling VMM to emulate SEA to guest by itself.
->   - Sanitized ESR_EL2. The general rule is to keep only the bits
->     useful for userspace and relevant to guest memory. See code
->     comments for why bits are hidden/reported.
->   - If faulting guest virtual and physical addresses are available.
->   - Faulting guest virtual address if available.
->   - Faulting guest physical address if available.
-> 
-> Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-I was reviewing this locally and wound up making enough changes where it
-just made more sense to share the diff. General comments:
+OK. I will respin one fixing that.
 
- - Avoid adding helpers to headers when they're used in a single
-   callsite / compilation unit
-
- - Add some detail about FEAT_RAS where we may still exit to userspace
-   for host-controlled memory, as we cannot differentiate between a
-   stage-1 or stage-2 TTW SEA when taken on the descriptor PA
-
- - Explicitly handle SEAs due to VNCR (I have a separate prereq patch)
-
-From aac0bb8f90c43b5b17c3b4e50379cb8ca828812c Mon Sep 17 00:00:00 2001
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Wed, 4 Jun 2025 05:08:56 +0000
-Subject: [PATCH] KVM: arm64: VM exit to userspace to handle SEA
-
-When APEI fails to handle a stage-2 synchronous external abort (SEA),
-today KVM directly injects an async SError to the VCPU then resumes it,
-which usually results in unpleasant guest kernel panic.
-
-One major situation of guest SEA is when vCPU consumes recoverable
-uncorrected memory error (UER). Although SError and guest kernel panic
-effectively stops the propagation of corrupted memory, there is room
-to recover from an UER in a more graceful manner.
-
-Alternatively KVM can redirect the synchronous SEA event to VMM to
-- Reduce blast radius if possible. VMM can inject a SEA to VCPU via
-  KVM's existing KVM_SET_VCPU_EVENTS API. If the memory poison
-  consumption or fault is not from guest kernel, blast radius can be
-  limited to the triggering thread in guest userspace, so VM can
-  keep running.
-- VMM can protect from future memory poison consumption by unmapping
-  the page from stage-2, or interrupt guest of the poisoned guest page
-  so guest kernel can unmap it from stage-1.
-- VMM can also track SEA events that VM customers care about, restart
-  VM when certain number of distinct poison events have happened,
-  provide observability to customers in log management UI.
-
-Introduce an userspace-visible feature to enable VMM to handle SEA:
-- KVM_CAP_ARM_SEA_TO_USER. As the alternative fallback behavior
-  when host APEI fails to claim a SEA, userspace can opt in this new
-  capability to let KVM exit to userspace during SEA if it is not
-  caused by access on memory of stage-2 translation table.
-- KVM_EXIT_ARM_SEA. A new exit reason is introduced for this.
-  KVM fills kvm_run.arm_sea with as much as possible information about
-  the SEA, enabling VMM to emulate SEA to guest by itself.
-  - Sanitized ESR_EL2. The general rule is to keep only the bits
-    useful for userspace and relevant to guest memory. See code
-    comments for why bits are hidden/reported.
-  - If faulting guest virtual and physical addresses are available.
-  - Faulting guest virtual address if available.
-  - Faulting guest physical address if available.
-
-Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
-Link: https://lore.kernel.org/r/20250604050902.3944054-2-jiaqiyan@google.com
-Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
----
- arch/arm64/include/asm/kvm_host.h |  2 +
- arch/arm64/kvm/arm.c              |  5 +++
- arch/arm64/kvm/mmu.c              | 67 ++++++++++++++++++++++++++++++-
- include/uapi/linux/kvm.h          | 10 +++++
- 4 files changed, 83 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index e54d29feb469..98ce2d58ac8d 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -349,6 +349,8 @@ struct kvm_arch {
- #define KVM_ARCH_FLAG_GUEST_HAS_SVE			9
- 	/* MIDR_EL1, REVIDR_EL1, and AIDR_EL1 are writable from userspace */
- #define KVM_ARCH_FLAG_WRITABLE_IMP_ID_REGS		10
-+	/* Unhandled SEAs are taken to userspace */
-+#define KVM_ARCH_FLAG_EXIT_SEA				11
- 	unsigned long flags;
- 
- 	/* VM-wide vCPU feature set */
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index 7a1a8210ff91..aec6034db1e7 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -133,6 +133,10 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 		}
- 		mutex_unlock(&kvm->lock);
- 		break;
-+	case KVM_CAP_ARM_SEA_TO_USER:
-+		r = 0;
-+		set_bit(KVM_ARCH_FLAG_EXIT_SEA, &kvm->arch.flags);
-+		break;
- 	default:
- 		break;
- 	}
-@@ -322,6 +326,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_IRQFD_RESAMPLE:
- 	case KVM_CAP_COUNTER_OFFSET:
- 	case KVM_CAP_ARM_WRITABLE_IMP_ID_REGS:
-+	case KVM_CAP_ARM_SEA_TO_USER:
- 		r = 1;
- 		break;
- 	case KVM_CAP_SET_GUEST_DEBUG2:
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index a34924d75069..26b2e71994be 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -1813,8 +1813,48 @@ static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
- 	read_unlock(&vcpu->kvm->mmu_lock);
- }
- 
-+/*
-+ * Returns true if the SEA should be handled locally within KVM if the abort is
-+ * caused by a kernel memory allocation (e.g. stage-2 table memory).
-+ */
-+static bool host_owns_sea(struct kvm_vcpu *vcpu, u64 esr)
-+{
-+	/*
-+	 * Without FEAT_RAS HCR_EL2.TEA is RES0, meaning any external abort
-+	 * taken from a guest EL to EL2 is due to a host-imposed access (e.g.
-+	 * stage-2 PTW).
-+	 */
-+	if (!cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
-+		return true;
-+
-+	/* KVM owns the VNCR when the vCPU isn't in a nested context. */
-+	if (is_hyp_ctxt(vcpu) && (esr & ESR_ELx_VNCR))
-+		return true;
-+
-+	/*
-+	 * Determining if an external abort during a table walk happened at
-+	 * stage-2 is only possible with S1PTW is set. Otherwise, since KVM
-+	 * sets HCR_EL2.TEA, SEAs due to a stage-1 walk (i.e. accessing the PA
-+	 * of the stage-1 descriptor) can reach here and are reported with a
-+	 * TTW ESR value.
-+	 */
-+	return esr_fsc_is_sea_ttw(esr) && (esr & ESR_ELx_S1PTW);
-+}
-+
- int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
- {
-+	u64 esr = kvm_vcpu_get_esr(vcpu);
-+	struct kvm_run *run = vcpu->run;
-+	struct kvm *kvm = vcpu->kvm;
-+	u64 esr_mask = ESR_ELx_EC_MASK	|
-+		       ESR_ELx_FnV	|
-+		       ESR_ELx_EA	|
-+	               ESR_ELx_CM	|
-+		       ESR_ELx_WNR	|
-+		       ESR_ELx_FSC;
-+	u64 ipa;
-+
-+
- 	/*
- 	 * Give APEI the opportunity to claim the abort before handling it
- 	 * within KVM. apei_claim_sea() expects to be called with IRQs
-@@ -1824,7 +1864,32 @@ int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
- 	if (apei_claim_sea(NULL) == 0)
- 		return 1;
- 
--	return kvm_inject_serror(vcpu);
-+	if (host_owns_sea(vcpu, esr) || !test_bit(KVM_ARCH_FLAG_EXIT_SEA, &kvm->arch.flags))
-+		return kvm_inject_serror(vcpu);
-+
-+	/* ESR_ELx.SET is RES0 when FEAT_RAS isn't implemented. */
-+	if (kvm_has_ras(kvm))
-+		esr_mask |= ESR_ELx_SET_MASK;
-+
-+	/*
-+	 * Exit to userspace, and provide faulting guest virtual and physical
-+	 * addresses in case userspace wants to emulate SEA to guest by
-+	 * writing to FAR_EL1 and HPFAR_EL1 registers.
-+	 */
-+	memset(&run->arm_sea, 0, sizeof(run->arm_sea));
-+	run->exit_reason = KVM_EXIT_ARM_SEA;
-+	run->arm_sea.esr = esr & esr_mask;
-+
-+	if (!(esr & ESR_ELx_FnV))
-+		run->arm_sea.gva = kvm_vcpu_get_hfar(vcpu);
-+
-+	ipa = kvm_vcpu_get_fault_ipa(vcpu);
-+	if (ipa != INVALID_GPA) {
-+		run->arm_sea.flags |= KVM_EXIT_ARM_SEA_FLAG_GPA_VALID;
-+		run->arm_sea.gpa = ipa;
-+	}
-+
-+	return 0;
- }
- 
- /**
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index e4e566ff348b..b2cc3d74d769 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -179,6 +179,7 @@ struct kvm_xen_exit {
- #define KVM_EXIT_LOONGARCH_IOCSR  38
- #define KVM_EXIT_MEMORY_FAULT     39
- #define KVM_EXIT_TDX              40
-+#define KVM_EXIT_ARM_SEA          41
- 
- /* For KVM_EXIT_INTERNAL_ERROR */
- /* Emulate instruction failed. */
-@@ -469,6 +470,14 @@ struct kvm_run {
- 				} get_tdvmcall_info;
- 			};
- 		} tdx;
-+		/* KVM_EXIT_ARM_SEA */
-+		struct {
-+#define KVM_EXIT_ARM_SEA_FLAG_GPA_VALID	(1ULL << 0)
-+			__u64 flags;
-+			__u64 esr;
-+			__u64 gva;
-+			__u64 gpa;
-+		} arm_sea;
- 		/* Fix the size of the union. */
- 		char padding[256];
- 	};
-@@ -957,6 +966,7 @@ struct kvm_enable_cap {
- #define KVM_CAP_ARM_EL2_E2H0 241
- #define KVM_CAP_RISCV_MP_STATE_RESET 242
- #define KVM_CAP_ARM_CACHEABLE_PFNMAP_SUPPORTED 243
-+#define KVM_CAP_ARM_SEA_TO_USER 244
- 
- struct kvm_irq_routing_irqchip {
- 	__u32 irqchip;
--- 
-2.39.5
+Thanks!
+Nicolin
 
