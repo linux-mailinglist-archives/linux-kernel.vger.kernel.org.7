@@ -1,381 +1,263 @@
-Return-Path: <linux-kernel+bounces-727464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE5F3B01A9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:33:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACEBBB01A9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6AE76219E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:33:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B011762207
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090ED1DED5B;
-	Fri, 11 Jul 2025 11:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF6728BAB0;
+	Fri, 11 Jul 2025 11:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CvIz7+4g"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EoUAnjOH";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wkpvrCfh"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C70280CC1
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752233615; cv=none; b=GSJbp7XegyYMUNucqV0wKeAuhYM81NRkLBGTxFTB+DNZf+BtciJcBilH4P4nvCI/VISFpZKnEtAdSuCW/UzG29q5vz6caSl8l/gfZfUNMFLT6xbZy9BFA1mKzkHHT/IDhtA65EGIUePxjcf/Q3xH5IunrXuMYvH8RYSC0g2WKiY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752233615; c=relaxed/simple;
-	bh=EwQjI8MnTvPTBqU//ZqZnKU+OSO9+/lyAirDRR/spS8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G6annR6vwvlPjADlxPWmp67qfN2cxLdclURs5tJanTFKd1HZVfSyxrvRowgX4TgOLf6ffpinkXfcXsgVguQbEfD2fGoZilB6KZxZ+louM4k6FvbwcNSU9ybEKhcWxQBJnbwUZtM8kd/oUFQw7HS+I+3D7Cz0HEyBRqk0tiiDd+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CvIz7+4g; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BB1piW006635
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:33:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=KHI0tjV5CMC6f/xhGzS9zzi6
-	aRBkHdOUCa58RJ34Wr4=; b=CvIz7+4g7q7RXlT+VKFB4NFk4sS0OlPLHeRV7Jc2
-	f5AcuuT1EyM+fjE4xGrdoQAIZBCtq+jXWeJXuWF/JG1NZTwF5oZymO4ZqmSvq5PK
-	/UhoeP3GIz8OrPxmqFnOHc2s+56g9hpyE4t79Bf4eSlyR95wQkfloTxSeu1OmD7s
-	RYEE0fXoSjijf+kJfiPJFQPJo3FMbAQ7jVOgr5pSC6W6rU+VuMV41iUym78Xf8J3
-	aAbbJ72/rtYID7CRax03fbE0zG0epvGTeS9Mc63OQwZEhYUj7guu6huJ8ZY5lgPp
-	NsH7xZasVdipipzzn+aVwqdLyXoANMGJ/i7LCACHYKPGhQ==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47u1c582sd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:33:31 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d446ce0548so316604085a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 04:33:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752233610; x=1752838410;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KHI0tjV5CMC6f/xhGzS9zzi6aRBkHdOUCa58RJ34Wr4=;
-        b=M5bd3dlho7q7tiuA6XdZygQa/BLVoKp+0k+VwWn0+IX7Id6xPKprUWQ3ycESP0KjEB
-         4R89U7VVUOyCWVXVXm39NMddEhrAgGBNzsvgGM0FloH0zsF8f2Cy06kL8NqH5rOHRDFx
-         fGyduskFDvAoNPyzH0LcBkI+uOBXAO85OKuYNarAgxJYLrtIxcurw7f/EuEuckKtG3XC
-         A0WkEl1+ltQ/sf+obFH8vtNNmOJLCBYvQC5XIU62hXdHJwGZuqmHbfNFty0WreP0ghQd
-         j5N+np9SQn7+9uRN0Y/aKvZ68NxGFB1jaXufr8o4+Qu1YKeNp+lTcBSSsp3jWHGboxoI
-         zkPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcEiN3GgRBpHhq5qipm1SjGluUVhhdWyaxelTfQiS7n7TjQc1HBj34IQIT85nicWRF3TqI6svwe4pDdLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8xNf+RH1lB+edbL/pDdtMrAPZfRuznK970fJMkeFWVihC/Mj/
-	AfKUd8xo3d7DVhAEr/t8MHrSendJzC06xUoZecDXlYxTQiRDTUWsBwdjLg4Fy+Pkoa5I1ManmTB
-	8wjKduydGraABXYRLbpyLrbG/cwTibzanWdHnuPG+RJzHBDD2zLd8UUxQFleN1jI2n7Q=
-X-Gm-Gg: ASbGncuwF1+v+/PIkN07c8LQjkdNHwBmirEcXG0pyKU5AxNvzOyX7xV0j1DKwOa8RuK
-	4WqowLPYgnge3aRUMkOw8JssTIjIQUfCRPyoyV7STUZUAFGoFtE6ltin8AgSk+oFORVJ1lnqwrd
-	LcxACSytJsOYzGlCZAzB+3F76URxP27K1+93eqTjk/hAq91LumA6uE7NQCGSbubuEfx9C6/RDdg
-	P88fk73l+vnWru+NxKCeWa0DavxngVRNeDBt9Dh5/jiyG/RAJxz56PiFCNInlsSu6lkdKapvIxl
-	FtkXB8baaJSQrlhrJ+aPSzIZFTEliZzc/88Q2sZpOiEylPV3qXqHKjF6VTep+peKwhuCueCvhIc
-	=
-X-Received: by 2002:a05:620a:172c:b0:7d5:e3c8:b580 with SMTP id af79cd13be357-7de04fafb47mr403204585a.17.1752233610059;
-        Fri, 11 Jul 2025 04:33:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGXybY2FXJvGwe5+kvYDZa8EWlXkVD4DxRLu7XCO2hhPf93QL4th9Vo5HhzzGCy8uGCX3yu5Q==
-X-Received: by 2002:a05:620a:172c:b0:7d5:e3c8:b580 with SMTP id af79cd13be357-7de04fafb47mr403199785a.17.1752233609418;
-        Fri, 11 Jul 2025 04:33:29 -0700 (PDT)
-Received: from trex (153.red-79-144-197.dynamicip.rima-tde.net. [79.144.197.153])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d5062119sm85985365e9.18.2025.07.11.04.33.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 04:33:28 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Fri, 11 Jul 2025 13:33:27 +0200
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>, krzk+dt@kernel.org,
-        bryan.odonoghue@linaro.org, quic_vgarodia@quicinc.com,
-        mchehab@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-        konradybcio@kernel.org, andersson@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] media: venus: vdec: AR50_LITE video core support
-Message-ID: <aHD2h9/LqSZ4ru6K@trex>
-References: <20250626135931.700937-1-jorge.ramirez@oss.qualcomm.com>
- <20250626135931.700937-3-jorge.ramirez@oss.qualcomm.com>
- <c0e8460d-1c94-d398-38a0-f63395256f27@quicinc.com>
- <aF62Msej5LvY51D6@trex>
- <8c7232a3-8c49-d77e-e8e4-6d86a33e2b42@quicinc.com>
- <aG1uINWPwvl505zG@trex>
- <55125121-5349-3b8b-2e81-29eec95d8337@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F21146585;
+	Fri, 11 Jul 2025 11:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752233669; cv=fail; b=RPhHUfOSyXmnwZH8VavllMfPPRHahz7OAmOYtJVZ/sNyd6PhG+4OA8h6JGQCNQhHQnsYxou4Rw9br9/8k/yIIcy05WQc94IIoI0nscmgq+QlU2a8JYEIvX6XYFBH94M0ta0qGjs3Ngb+sPX5DO1Aw8F0MSPvSKBTENPfURKNHwI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752233669; c=relaxed/simple;
+	bh=bqVw1MR7bff/PKLi5+PM/K3UZTKU/H3iOhqHokiO/ho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eFNGh2ozqWsqf1HPqfRPYZVTw5tnvN1ch8aeBa3R4jX7s7ibuCCE/uRHteU1vP7ueGl3ipcHW3ivMn6E5xDOC9VX/Zw+n+8dPQxDalOC+7hU4kWpHalf519hZmC51bwdBkASu9uFO3GCuyfuIsPWNWwEHZYGFEuWoRM709qcwxY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EoUAnjOH; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wkpvrCfh; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BAvEAn005892;
+	Fri, 11 Jul 2025 11:34:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=bqVw1MR7bff/PKLi5+
+	PM/K3UZTKU/H3iOhqHokiO/ho=; b=EoUAnjOHlNcE7Vs/9xRqu9o7SrZ00Ab1/E
+	tlYO6Z5NroVbpXqw/i4QMjY1yazTA3+Rk7qPjpk0wtx+ZHKKMSbFzOf+mEBJb1rb
+	sr7A6Za5Q5URjo2NV+SmBwsP2KVS0LDB3nmOfloJJKUuohAs8gEeVH2GUd+uMJIj
+	7QZrfKDWnuDgMxXDAms8ZWpNXj8p19D3SVCxDSite0Ujyl1AJn9qblNRt32ZCOSf
+	iM7Kw0R4oSKRnjBkRnMzAQuwZm3ykK+KAa06Qrezvg84A1l+VzUIKs2DlEeirTzv
+	QlBbT7K1Zabj9EysyMuhsybURH8sdrGHwKG//ANPYQ9NqTr/ZUNw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47u1abg1j7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Jul 2025 11:34:01 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56BAKabS023658;
+	Fri, 11 Jul 2025 11:34:01 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02on2069.outbound.protection.outlook.com [40.107.212.69])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ptgdpj70-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Jul 2025 11:34:01 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f4oGZwJ7oJJOkkQxb7xEzTyGrW1ZuA39BHMkam63uC9AOuOC0MdecYTMoAdCVqVY3XusHBFdeaMwYmkV/NFK3A6KnZPgFZrX3LTVok3raln8Fb4tuvBfchAGsyFc5cbJWsSc78uehaNc1t2g0uDx4ZCWSk9RUgEnY9a0la4ohC/oSNDFvim1T2zggig3bgof1HTNOoI7I8DUWNhYIXpwzVm5GmGucmMcvlm61Bm75ChVNuJDKTbCCIYimph+nuPxs8MgcGEOhIFxOctU9TcLT5SorhBVONGLBVl+MD7CGoP3++Vbkd3YeYRMrTrPe/kQPWRRk4J1teRsSz2pEP+0pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bqVw1MR7bff/PKLi5+PM/K3UZTKU/H3iOhqHokiO/ho=;
+ b=wlnKHPbDKbgj/6Oxt/pmn9H8XPfO7skVDFtq1B1j5CYU+RE/d86iN4XdDL5tNt6WPG6wTfnauUM/G2IRfmCT5jLjxuRfoq+VwXB8felPDZDN+gIvhAzuvF6JGHBbscegAZl6Cie4oZK13W4OjxjdGSX0Ssk36dhoS7NeD0i0q4HPJNd81dTxblrGu8i73MKYD681UCZvTMm5Pt1y/l8aJwyChHzC2yP2c5VFO9upCafPxTw/fdAAasQ+2BvSV3C4JB2pXXRaPiDBK5rRviDQa2kKxOyL0ct6lN8LbIDe+D9nUlB6felSbJGCgHOkS2HW+/zgr3+V93uObjribHp0Qg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bqVw1MR7bff/PKLi5+PM/K3UZTKU/H3iOhqHokiO/ho=;
+ b=wkpvrCfhVbJy/s1BGIMxam9ze3k4TOJ1eCy/wVFbmjoDhYLEn0mEp7QTgzE5b3WHBsfaxPp07js3osKWoVJJhmQaP1c7ZydWQ3VEMvzStZ4+/tRRSPrl5X9JpyQPrVYuUEXs3n4xE18v3Ip2+b9srEmEJPDdQ1QHtzH7eqIWjSg=
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
+ by BN0PR10MB5174.namprd10.prod.outlook.com (2603:10b6:408:126::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Fri, 11 Jul
+ 2025 11:33:57 +0000
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582%4]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
+ 11:33:57 +0000
+Date: Fri, 11 Jul 2025 12:33:55 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: wang lian <lianux.mm@gmail.com>
+Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, brauner@kernel.org,
+        broonie@kernel.org, david@redhat.com, gkwang@linx-info.com,
+        jannh@google.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        p1ucky0923@gmail.com, ryncsn@gmail.com, shuah@kernel.org,
+        sj@kernel.org, vbabka@suse.cz, zijing.zhang@proton.me, ziy@nvidia.com
+Subject: Re: [PATCH v4] selftests/mm: add process_madvise() tests
+Message-ID: <a6c8e519-69a5-4de8-a857-64459581233f@lucifer.local>
+References: <81f9a104-6d7d-4552-851e-8690d4a1b723@lucifer.local>
+ <20250711111600.3989-1-lianux.mm@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711111600.3989-1-lianux.mm@gmail.com>
+X-ClientProxiedBy: LO4P265CA0098.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2bc::15) To BL4PR10MB8229.namprd10.prod.outlook.com
+ (2603:10b6:208:4e6::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55125121-5349-3b8b-2e81-29eec95d8337@quicinc.com>
-X-Proofpoint-ORIG-GUID: 5NTZeplmExwSDd-NkorbjpsZOcp6s8Lf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA4MSBTYWx0ZWRfX8wLjkwcc5OFh
- Dx9GcKYfwDtGfSBkXTQ2BaqpEofnqvuCCwTUqki7vVXIcZO4G3vz7gwD6XU4Kz/MiKIpfYv22IE
- lTLmZ3RWR7gPfFYgj90EWq2hj/kI1L4MYw5JQeY1R951wFZCYpi/ler9y1v4k1qr8qjgazsCTdL
- JQPSBNVzPSK2DSdvg9ltxIj+2mDXE5EmAZXOkfPNkm4MPO5Mo645hOmpEQYW8bxwjf18thc0U+v
- arr1G7SZpysMeHvelesEif4VxnMwEj/1s51S6bOsPTMPtdkwUjzaXcKSfpmVz24hF+qX+05KQ86
- acP5fab/COANNDDCHO4qlFHNNdlf83kD8BRqUngbcdMgby6gNxKeWNufFF7it++uR7CQwciTiiU
- 9ceNfc6xbIjn7Zy+LLKfdliZRHMcQloyu6Eg329L9/4Nw8ahR1omHWtmQsKJq9rZhfpOenz0
-X-Proofpoint-GUID: 5NTZeplmExwSDd-NkorbjpsZOcp6s8Lf
-X-Authority-Analysis: v=2.4 cv=N9MpF39B c=1 sm=1 tr=0 ts=6870f68b cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=Ki5fnJvzvo7yLsyA0quaxQ==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=yvcqnb2xCap4B2vlBTUA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
- a=cvBusfyB2V15izCimMoJ:22
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|BN0PR10MB5174:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a3b9303-a279-466b-baf2-08ddc06ed31b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lRYTwXx/pdtxiDd60DWhn+bn087fMlatdzfcS2V4GfvgKYNtAujjXIXYRIT8?=
+ =?us-ascii?Q?H8rHHmMxtgEJcbTx6gnIq9AgA3zkN/DKjddmhD43AWTK73T50KmOjQNHQQ92?=
+ =?us-ascii?Q?QcFvYNiY6h6a/g8egyEC/Wi0ZFZWIwU4Ccj6/4iggd4FKmXO9CYqMHTM1NZu?=
+ =?us-ascii?Q?SB0S1Yy+/zqlzTWLeP0GvS1kSG3hFvTZONiGrwAdZhD+8tpCAzkUIHe7/YeV?=
+ =?us-ascii?Q?XZlqddPGVNKP2ysIvTGo+ftbaKL0tOciGx/ciqYGAsTCvQ1IfE0xBNTN3ok5?=
+ =?us-ascii?Q?ppX6kWMyIYjGGy0zCCD27uFRd/MaamMeHUIpoYX7gxj+PuwvTvm0xZfJ4q92?=
+ =?us-ascii?Q?yzt459T92r61g1vhWNH7zxVljhkQhqtro4oS0KQp0V0xxMttV8PzuzfvJ206?=
+ =?us-ascii?Q?qEwKeP3NJomOMbMaUCVWyRN/JmDtD+uVi5xq0Xc1Jpt4fS+gGE5FQUdG1lbs?=
+ =?us-ascii?Q?Erhcsc54LknbLh/g3SL7w37aOEMd28RJ+mhXR+pgrP+eXm4STjHHvFwDDQq9?=
+ =?us-ascii?Q?Rs8Rh8/lBDHYRUgbDmGUP8/M5quVgaLTI9CJkf2Hu2xZE7y8uus8VVxAS1Mf?=
+ =?us-ascii?Q?OTCuJ444zTGoCT9SrozExf35+I/BCYFr7ayfRnVaB8UYciYo4uX01aU74k4e?=
+ =?us-ascii?Q?MfcGomyyP6NNtRlbjgGRzOSBr8isunLree41/5A5HtkjkdPTvOglM2vgy5UA?=
+ =?us-ascii?Q?2rWgh7Skp/rpOE+PypVR3RnipQrNIinhhYKEOzbLMOVsfwmm6ekj6FAUK9gI?=
+ =?us-ascii?Q?vR9WBwaGbAPreeBpfqacZrR3SqOuBqtTDhog8TyG6OUJf8cmWTY53fuJJKbL?=
+ =?us-ascii?Q?r6aguvGmG7tif3hGy6/hz9+vaVjbcgGcgW+mMjijeorhKpL1Q22Jbbg/35iI?=
+ =?us-ascii?Q?2Vey0ku8bo5A2ofayirPzVYZhdPDqMU37izTuA8wh1NE8LSUStx9/9GmWJNP?=
+ =?us-ascii?Q?ayBBTxUDr/OBEsXy7eb4gUTPrHli9SLWXtAtuThK6ZU7zrUZ/3Bz6ZDCNjgK?=
+ =?us-ascii?Q?FP8ElMds1KKMtJWds2gfhRE7URT3z63VNIZUZg6sMK9yuNmxq1K7eEQn79ph?=
+ =?us-ascii?Q?KjUwXtWyYzMZ2+O1zMweMm5LXCK/nvpj5+cZUMlap/FcwfpcWXrMlFTUgY8O?=
+ =?us-ascii?Q?5u1dshUJD5sQQIiuiTdUgsTyDlqWQVGRvHgPXIBGtokoePXwUlcsGaRTByri?=
+ =?us-ascii?Q?rI9G4axkvhMtpScO+iRyftKWiYjaR0skha7GamfDNyiEaxbOlG3uKzuXCzpb?=
+ =?us-ascii?Q?L/m/GiAMRZeP5OKQyWgcOHOncPfKHRuRWEtT2sxdqe+7gDc//ePvrixrcsc+?=
+ =?us-ascii?Q?LjzL/DfY+VXV+PRkY9NVNMvLh2wUfg74ggThy2gAFx9q2PaVuly0zDjn3RWw?=
+ =?us-ascii?Q?cX0UNlum29TPPI8FXYAyqaJYee3u7fu/olVBzwP1CVATmTGIH47PJSz87ALL?=
+ =?us-ascii?Q?s5izh6AFUzE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?TB+WUc9cBL6Fd2jwNTBZvUYUUx0LUOhcGY7Ag/jL7+YX+PjZfDqcJdYFM2Rn?=
+ =?us-ascii?Q?DRZYEc+M+Dd3mlRCBHdx6EjeBfu/OlgymRDdQbDmC86/nMF8Bx/rP/hXUj59?=
+ =?us-ascii?Q?KQ2rBPrM7FZEyQpyAdaxqL69Gg4zmwCzcEbe1egsLtrLFHa94kCC6pmz1wJ3?=
+ =?us-ascii?Q?UdrcphJUuURxUOVOBoerip7xkuDvB8zvuWLR1MjJr8Y+vGG4+d5t3Vh9Ddpa?=
+ =?us-ascii?Q?dr3S73Q+8HJOhSG1g8O8y7BpwiD8lGx3P3tUJ8MmWBexhDaagy/xTh/LVzHl?=
+ =?us-ascii?Q?YWYGQL2TRFd6nbPwGJTDNu+KjYVr3m0A/KcuqRPMMXUnLVGH9ZZLqUqikCK3?=
+ =?us-ascii?Q?iRwJ0x9v3I2oukJYkaSsUulSbpPDBYxpmcvWZ2ZYNcJj0xytsYvohlhxVnzy?=
+ =?us-ascii?Q?SNZYYbmGUqTVOWkFKhIhXXpTCDuI5PRjRZfEDLat/q38Nqbsw+N9o2MV2xFJ?=
+ =?us-ascii?Q?3xVnU33IokbgC2ogJ4iA7iNDPCeD0ZY8uDGnS3Z0sMQQUW6Nyj73bLNSwZXp?=
+ =?us-ascii?Q?WkRZ7xth4s7Dz5ELdaTaSS866TZemVd7ChuRTfsqBiyU6jHJCtuzHMnE7Zz+?=
+ =?us-ascii?Q?p4q8iNPmiEHFvhpuM65X+x+Duuw70cVnR27zkRoeAtAladGEdsi3EOvyhpI3?=
+ =?us-ascii?Q?V5YXkAWXqDmd/ZCKVqnLB2dQ67SSxbz+vitPEs/URuYiBYKJ1gYI5uEXvE4f?=
+ =?us-ascii?Q?qM/oy4gtlrDBfLIe9+kpT52b61a2vQJANmWF6AL1zMRWizYdKyNJW53fzAnL?=
+ =?us-ascii?Q?1hRVfCN97dbItelLrLE7LbsDKfVShUq6DE2HmlZwJo3n/M8aSPCwIooupTyT?=
+ =?us-ascii?Q?CMoQRdt81mAfV00R9MdQj2RJZCYDsi2Nm2oxcw78uPjp9Q+kKkLEx6gcCwC9?=
+ =?us-ascii?Q?pOLiGzZqb3W241bVSMd0RBqG93jaO4uPA8zw489YcHo7lr69eQ1EIqwJHhB7?=
+ =?us-ascii?Q?9P855MJ84DJRQkKNE1uvMuY3GtOPfhD1kvZOAHQExPRxvg37Ckzf39ykoinO?=
+ =?us-ascii?Q?nb1H7ZgxLebw5uw489Os48dldMZfwlS2ZEz81tqWbV3AgRZpoFrfedlufc9T?=
+ =?us-ascii?Q?o/0b9CKa+xeDGoEKjqpMdG+jGMHVC+Kr9miHSE8erAb6j4D4bCc+Zb2neeKf?=
+ =?us-ascii?Q?+u8K2jzgfMOUtkox9FtfJOGMohzoyow827A/daTuyj7mBYIpSalE7rjcW9Ik?=
+ =?us-ascii?Q?Ri4+yNvFPQqaxzwaLGNBKwKXQ7g7AowDbEdkr3/YGDuKVniPZxJMlCk8jrm4?=
+ =?us-ascii?Q?FCR1Z1mzreKlA2nzP8sdnrKxSbNK7ABKzd5uBQCYXeO195+rDmMQ8WBn20sK?=
+ =?us-ascii?Q?xo7eHdzkIKzCEGgVi6926ACgV+t8mXxPXuaKSG7LgUy0wWo/ayhbHFYldG+S?=
+ =?us-ascii?Q?zdhykf7R+YtP/NmN2yeWv4VuUNQKmrq/VlfX5YFQ28qX8VSLmnrfvJKoxSPG?=
+ =?us-ascii?Q?82iEqdJOCHXLtFaFfQ6iE8cc7euT59QyylgvAmPeBcwVm8VQNXmBBr4YDOyb?=
+ =?us-ascii?Q?bRSUTV7u+F9vi1jTzC6qFO8ZlQBWpDJk3ClfkeQy5G/JlkvkIt1JpkXOofoQ?=
+ =?us-ascii?Q?F8cyNwnjXlywda6OdXBocZ1VMfaVrW2P0AGoQQKGxVObqTPsUcxvHPb8WnYf?=
+ =?us-ascii?Q?Yw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	sE53sRkqt8hUz8qYWwqXraD5Lf4RaSMRmx1zodNwK90KQud2wPiCk+fBoEG96X4A1s0MytcK1RmRwvqwn82+T9t42kofRUdz5G2+dgrxLYv8ju4SzRCiac3ltat7XtUyx4QSHD5Q0ml/kQY8gTRGZ1KiDyED5ioaWdj9+oAC6kZqX0UDBFwyg5v6/a+oPT6VqwmAWQCQaG3X1G6nncssQjYMQw4SOuuN+pAHi790VJf53tiAsPZ2kFsyJCGXeLukzUgNlQXjuZ9ctyjamzXLqVjM6OwmmwArVslKvgf/dsX5FrBzvyiqzPwpuTnDai7JA+GYEY3o04ipJZVBUBsKI9Lr7ByYMkeTfcRe3WtZJ2i05Je2NQhcn0Q1FQUQAH8o/4wdOpXEt605/s3ouLaE0V2E6/I8fSMBrqLdJQdo7+kO/q3bY/fq+p+X2i92AW+779wJ0aMyrNB3bSY/MMR7RAiusbhURr/4tozKeogcNmN+NVWgybRVPmoVvXH5bIhjlYWpq1tOgksE3CGexE2lHq3qXyST19l8/bK2WVfhpbSzVHjLyQZWchW7iACI1F92W8gyqZ6/xfg84YV7Uzvkc6jRg6+RlipKc5C83WIkPX4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a3b9303-a279-466b-baf2-08ddc06ed31b
+X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 11:33:57.8037
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nTXOiU9jsrhgzPyVOInK0O19A15OHbhCZsrM6QzrZybZElzEXIsmg6YJENfJTcTkA1w7na1SEm4klSciSa7Cfs0itXJ4wEdGitmXwsjB5UA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5174
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 mlxscore=0 bulkscore=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 suspectscore=0 adultscore=0
- mlxlogscore=999 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507110081
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=999 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507110082
+X-Proofpoint-GUID: i4eHR9G8D-lJVny6x3SNhpifjbigjOM6
+X-Authority-Analysis: v=2.4 cv=JoHxrN4C c=1 sm=1 tr=0 ts=6870f6aa b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=ag6DPllaGg_9a4COlocA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA4MiBTYWx0ZWRfXwL8W+yND5j05 gx01I3/deVBlqdf1KueMmAiDJbfRO3xF87FkWykpdaLCXiJDx456G4JFM0WN4lyF6nAw28zLVrp jN8uYV1GsOlguMrdBnoPiY4vjdtAznPnkwHw8w+sgVRZJ8flI3XKAQDlGULbLhP5oeUFkxMbbwK
+ ya6YTULO3DhgfzsEgapQtT7Mvsunf/Yq3u1l1b525aq2iKdwi79Iyot/Z9MuRNKi+BCxna+wBIb o/yvsBklReydJ/7g2ZtVVfKe6MopOL7ID4n/PTvF2sTkQGpgrHOPLKF+hGQlTFbo2oIDbf0i9XI GDmkBGlyPKKzhXER6aC6xv+NTsaj/5A0aPSRnq2GYtYngfq8MhwBt6EI8PSq1M9B0XX+WyBTdym
+ BxzDrplQkfZFhDKB9O/bfuiICPzPiHBVM929ByanPcVMfH0/ngZ8es1UzicyJSEVtQ2yfYWv
+X-Proofpoint-ORIG-GUID: i4eHR9G8D-lJVny6x3SNhpifjbigjOM6
 
-On 10/07/25 14:25:33, Dikshita Agarwal wrote:
-> 
-> 
-> On 7/9/2025 12:44 AM, Jorge Ramirez wrote:
-> > On 30/06/25 12:17:32, Dikshita Agarwal wrote:
-> >>
-> >>
-> >> On 6/27/2025 8:48 PM, Jorge Ramirez wrote:
-> >>> On 27/06/25 18:17:27, Dikshita Agarwal wrote:
-> >>>>
-> >>>>
-> >>>> On 6/26/2025 7:29 PM, Jorge Ramirez-Ortiz wrote:
-> >>>>> The AR50_LITE is a streamlined variant of the AR50 video core, designed
-> >>>>> for power and cost-efficient platforms.
-> >>>>>
-> >>>>> It supports hardware-accelerated decoding of H.264, HEVC, and VP9
-> >>>>> formats.
-> >>>>>
-> >>>>> Co-developed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> >>>>> Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> >>>>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> >>>>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> >>>>> ---
-> >>>>>  drivers/media/platform/qcom/venus/core.c      | 11 ++-
-> >>>>>  drivers/media/platform/qcom/venus/core.h      | 11 ++-
-> >>>>>  drivers/media/platform/qcom/venus/firmware.c  |  8 +-
-> >>>>>  drivers/media/platform/qcom/venus/helpers.c   | 80 +++++++++++++++++++
-> >>>>>  drivers/media/platform/qcom/venus/helpers.h   |  2 +
-> >>>>>  .../media/platform/qcom/venus/hfi_helper.h    | 10 ++-
-> >>>>>  drivers/media/platform/qcom/venus/hfi_venus.c | 14 ++--
-> >>>>>  .../media/platform/qcom/venus/pm_helpers.c    |  1 +
-> >>>>>  drivers/media/platform/qcom/venus/vdec.c      | 15 ++--
-> >>>>>  9 files changed, 128 insertions(+), 24 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> >>>>> index d305d74bb152..736ef53d988d 100644
-> >>>>> --- a/drivers/media/platform/qcom/venus/core.c
-> >>>>> +++ b/drivers/media/platform/qcom/venus/core.c
-> >>>>> @@ -254,14 +254,19 @@ static int venus_enumerate_codecs(struct venus_core *core, u32 type)
-> >>>>>  
-> >>>>>  static void venus_assign_register_offsets(struct venus_core *core)
-> >>>>>  {
-> >>>>> -	if (IS_IRIS2(core) || IS_IRIS2_1(core)) {
-> >>>>> -		core->vbif_base = core->base + VBIF_BASE;
-> >>>>> +	if (IS_IRIS2(core) || IS_IRIS2_1(core) || IS_AR50_LITE(core)) {
-> >>>>>  		core->cpu_base = core->base + CPU_BASE_V6;
-> >>>>>  		core->cpu_cs_base = core->base + CPU_CS_BASE_V6;
-> >>>>>  		core->cpu_ic_base = core->base + CPU_IC_BASE_V6;
-> >>>>>  		core->wrapper_base = core->base + WRAPPER_BASE_V6;
-> >>>>>  		core->wrapper_tz_base = core->base + WRAPPER_TZ_BASE_V6;
-> >>>>> -		core->aon_base = core->base + AON_BASE_V6;
-> >>>>> +		if (IS_AR50_LITE(core)) {
-> >>>>> +			core->vbif_base = NULL;
-> >>>>> +			core->aon_base = NULL;
-> >>>>> +		} else {
-> >>>>> +			core->vbif_base = core->base + VBIF_BASE;
-> >>>>> +			core->aon_base = core->base + AON_BASE_V6;
-> >>>>> +		}
-> >>>>>  	} else {
-> >>>>>  		core->vbif_base = core->base + VBIF_BASE;
-> >>>>>  		core->cpu_base = core->base + CPU_BASE;
-> >>>>> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> >>>>> index b412e0c5515a..e755a28e919b 100644
-> >>>>> --- a/drivers/media/platform/qcom/venus/core.h
-> >>>>> +++ b/drivers/media/platform/qcom/venus/core.h
-> >>>>> @@ -382,6 +382,7 @@ enum venus_inst_modes {
-> >>>>>   * @lock:	instance lock
-> >>>>>   * @core:	a reference to the core struct
-> >>>>>   * @clk_data:	clock data per core ID
-> >>>>> + * @eosbufs:	a lit of EOS buffers
-> >>>>>   * @dpbbufs:	a list of decoded picture buffers
-> >>>>>   * @internalbufs:	a list of internal bufferes
-> >>>>>   * @registeredbufs:	a list of registered capture bufferes
-> >>>>> @@ -450,6 +451,7 @@ struct venus_inst {
-> >>>>>  	struct mutex lock;
-> >>>>>  	struct venus_core *core;
-> >>>>>  	struct clock_data clk_data;
-> >>>>> +	struct list_head eosbufs;
-> >>>>>  	struct list_head dpbbufs;
-> >>>>>  	struct list_head internalbufs;
-> >>>>>  	struct list_head registeredbufs;
-> >>>>> @@ -520,7 +522,14 @@ struct venus_inst {
-> >>>>>  #define IS_V1(core)	((core)->res->hfi_version == HFI_VERSION_1XX)
-> >>>>>  #define IS_V3(core)	((core)->res->hfi_version == HFI_VERSION_3XX)
-> >>>>>  #define IS_V4(core)	((core)->res->hfi_version == HFI_VERSION_4XX)
-> >>>>> -#define IS_V6(core)	((core)->res->hfi_version == HFI_VERSION_6XX)
-> >>>>> +static inline bool IS_V6(struct venus_core *core)
-> >>>>> +{
-> >>>>> +	if (WARN_ON_ONCE(!core))
-> >>>>> +		return false;
-> >>>>> +
-> >>>>> +	return core->res->hfi_version == HFI_VERSION_6XX ||
-> >>>>> +	       core->res->hfi_version == HFI_VERSION_6XX_LITE;
-> >>>>> +}
-> >>>> It should be HFI_VERSION_4XX_LITE for AR50_LITE. 4XX represents SC7280 and
-> >>>> SDM845 which are AR50.
-> >>>
-> >>> ah good information - where is this documented? I never found this
-> >>> information... I'd appreciate if you could confirm with some document
-> >>> for future reference.
-> >>>
-> >>>>>  
-> >>>>>  #define IS_AR50(core)		((core)->res->vpu_version == VPU_VERSION_AR50)
-> >>>>>  #define IS_AR50_LITE(core)	((core)->res->vpu_version == VPU_VERSION_AR50_LITE)
-> >>>>> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-> >>>>> index 66a18830e66d..f8dcef0426ac 100644
-> >>>>> --- a/drivers/media/platform/qcom/venus/firmware.c
-> >>>>> +++ b/drivers/media/platform/qcom/venus/firmware.c
-> >>>>> @@ -30,7 +30,7 @@ static void venus_reset_cpu(struct venus_core *core)
-> >>>>>  	u32 fw_size = core->fw.mapped_mem_size;
-> >>>>>  	void __iomem *wrapper_base;
-> >>>>>  
-> >>>>> -	if (IS_IRIS2_1(core))
-> >>>>> +	if (IS_IRIS2_1(core) || IS_AR50_LITE(core))
-> >>>>>  		wrapper_base = core->wrapper_tz_base;
-> >>>>>  	else
-> >>>>>  		wrapper_base = core->wrapper_base;
-> >>>>> @@ -42,7 +42,7 @@ static void venus_reset_cpu(struct venus_core *core)
-> >>>>>  	writel(fw_size, wrapper_base + WRAPPER_NONPIX_START_ADDR);
-> >>>>>  	writel(fw_size, wrapper_base + WRAPPER_NONPIX_END_ADDR);
-> >>>>>  
-> >>>>> -	if (IS_IRIS2_1(core)) {
-> >>>>> +	if (IS_IRIS2_1(core) || IS_AR50_LITE(core)) {
-> >>>>>  		/* Bring XTSS out of reset */
-> >>>>>  		writel(0, wrapper_base + WRAPPER_TZ_XTSS_SW_RESET);
-> >>>>>  	} else {
-> >>>>> @@ -68,7 +68,7 @@ int venus_set_hw_state(struct venus_core *core, bool resume)
-> >>>>>  	if (resume) {
-> >>>>>  		venus_reset_cpu(core);
-> >>>>>  	} else {
-> >>>>> -		if (IS_IRIS2_1(core))
-> >>>>> +		if (IS_IRIS2_1(core) || IS_AR50_LITE(core))
-> >>>>>  			writel(WRAPPER_XTSS_SW_RESET_BIT,
-> >>>>>  			       core->wrapper_tz_base + WRAPPER_TZ_XTSS_SW_RESET);
-> >>>>>  		else
-> >>>>> @@ -181,7 +181,7 @@ static int venus_shutdown_no_tz(struct venus_core *core)
-> >>>>>  	void __iomem *wrapper_base = core->wrapper_base;
-> >>>>>  	void __iomem *wrapper_tz_base = core->wrapper_tz_base;
-> >>>>>  
-> >>>>> -	if (IS_IRIS2_1(core)) {
-> >>>>> +	if (IS_IRIS2_1(core) || IS_AR50_LITE(core)) {
-> >>>>>  		/* Assert the reset to XTSS */
-> >>>>>  		reg = readl(wrapper_tz_base + WRAPPER_TZ_XTSS_SW_RESET);
-> >>>> No need to handle no-tz case. Pls drop.
-> >>>
-> >>> ok
-> >>>
-> >>>>>  		reg |= WRAPPER_XTSS_SW_RESET_BIT;
-> >>>>> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-> >>>>> index 8295542e1a7c..812bec9a05be 100644
-> >>>>> --- a/drivers/media/platform/qcom/venus/helpers.c
-> >>>>> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> >>>>> @@ -230,6 +230,79 @@ int venus_helper_alloc_dpb_bufs(struct venus_inst *inst)
-> >>>>>  }
-> >>>>>  EXPORT_SYMBOL_GPL(venus_helper_alloc_dpb_bufs);
-> >>>>>  
-> >>>>> +static void free_eos_buf(struct venus_inst *inst, struct intbuf *buf)
-> >>>>> +{
-> >>>>> +	list_del_init(&buf->list);
-> >>>>> +	dma_free_attrs(inst->core->dev, buf->size, buf->va, buf->da,
-> >>>>> +		       buf->attrs);
-> >>>>> +	kfree(buf);
-> >>>>> +}
-> >>>>> +
-> >>>>> +int venus_helper_free_eos_bufs(struct venus_inst *inst)
-> >>>>> +{
-> >>>>> +	struct intbuf *buf, *n;
-> >>>>> +
-> >>>>> +	list_for_each_entry_safe(buf, n, &inst->eosbufs, list) {
-> >>>>> +		free_eos_buf(inst, buf);
-> >>>>> +	}
-> >>>>> +
-> >>>>> +	if (list_empty(&inst->eosbufs))
-> >>>>> +		INIT_LIST_HEAD(&inst->eosbufs);
-> >>>>> +
-> >>>>> +	return 0;
-> >>>>> +}
-> >>>>> +EXPORT_SYMBOL_GPL(venus_helper_free_eos_bufs);
-> >>>>> +
-> >>>>> +int venus_helper_alloc_eos_buf(struct venus_inst *inst,
-> >>>>> +			       struct hfi_frame_data *data)
-> >>>>> +{
-> >>>>> +	struct venus_core *core = inst->core;
-> >>>>> +	struct device *dev = core->dev;
-> >>>>> +	struct intbuf *buf;
-> >>>>> +	int ret = 0;
-> >>>>> +
-> >>>>> +	memset(data, 0, sizeof(*data));
-> >>>>> +
-> >>>>> +	data->buffer_type = HFI_BUFFER_INPUT;
-> >>>>> +	data->flags = HFI_BUFFERFLAG_EOS;
-> >>>>> +
-> >>>>> +	if (IS_AR50_LITE(inst->core)) {
-> >>>>> +		/* We must send valid sizes and addresses */
-> >>>>> +		buf = kzalloc(sizeof(*buf), GFP_KERNEL);
-> >>>>> +		if (!buf) {
-> >>>>> +			ret = -ENOMEM;
-> >>>>> +			goto fail;
-> >>>>> +		}
-> >>>>> +
-> >>>>> +		buf->type = HFI_BUFFER_INPUT;
-> >>>>> +		buf->size = SZ_4K;
-> >>>>> +		buf->attrs = DMA_ATTR_NO_KERNEL_MAPPING;
-> >>>>> +		buf->va = dma_alloc_attrs(dev, buf->size, &buf->da, GFP_KERNEL,
-> >>>>> +					  buf->attrs);
-> >>>>> +		if (!buf->va) {
-> >>>>> +			ret = -ENOMEM;
-> >>>>> +			goto fail;
-> >>>>> +		}
-> >>>>> +
-> >>>>> +		list_add_tail(&buf->list, &inst->eosbufs);
-> >>>>> +
-> >>>>> +		data->alloc_len = buf->size;
-> >>>>> +		data->device_addr = buf->da;
-> >>>>> +
-> >>>> why this special handling for eos buffer is needed for AR50_LITE?
-> >>>
-> >>> this _fix_ was develope through testing: without it there is no EOS and
-> >>> errors are reporting upon killing the player
-> >>>
-> >> Would be better to see why there is no EOS from firmware,
-> >> there shouldn't be the need to have a dma allocation for this dummy
-> >> buffers, as there is no useful info in the buffer. Having the device
-> >> address as 0 or 0xdeadb000 should be enough.
-> >>
-> > 
-> > hi dikshita,
-> > 
-> > I am still keeping this on v6 as per our internal discussions and
-> > because v6 is quite different from v5 so wanted to provide early access
-> > to users.
-> > 
-> > if the firwmare is fixed to address this issue on time, I might revert
-> > the EOS page buffer. 
-> > 
-> I'd prefer to resolve this via correct EOS handling or gain clarity on why
-> AR50_LITE requires special treatment, instead of proceeding with new patch
-> sets built around this design.
+On Fri, Jul 11, 2025 at 07:16:00PM +0800, wang lian wrote:
+> Hi Lorenzo Stoakes,
 >
-Fully agree.
+> >> + *
+> >> + * This test deterministically validates process_madvise() with MADV_COLLAPSE
+> >> + * on a remote process, other advices are difficult to verify reliably.
+> >> + *
+> >> + * The test verifies that a memory region in a child process, initially
+> >> + * backed by small pages, can be collapsed into a Transparent Huge Page by a
+> >> + * request from the parent. The result is verified by parsing the child's
+> >> + * /proc/<pid>/smaps file.
+> >> + */
+>
+> > This is clever and you've put a lot of effort in, but this just seems
+> > absolutely prone to flaking and you're essentially testing something that's
+> > highly automated.
+>
+> > I think you're also going way outside of the realms of testing
+> > process_madvise() and are getting into testing essentially MADV_COLLAPSE
+> > here.
+>
+> > We have to try to keep the test specific to what it is you're testing -
+> > which is process_madvise() itself.
+>
+> > So for me, and I realise you've put a ton of work into this and I'm really
+> > sorry to say it, I think you should drop this specific test.
+>
+> > For me simply testing the remote MADV_DONTNEED is enough.
+>
+> My motivation for this complex test came from the need to verify that
+> the process_madvise operation was actually successful. Without checking
+> the outcome, the test would only validate that the syscall returns the
+> correct number of bytes, not that the advice truly took effect on the
+> target process's memory.
+>
+> For remote calls, process_madvise is intentionally limited to
+> non-destructive advice: MADV_COLD, MADV_PAGEOUT, MADV_WILLNEED,
+> and MADV_COLLAPSE. However, verifying the effects of COLD, PAGEOUT,
+> and WILLNEED is very difficult to do reliably in a selftest. This left
+> MADV_COLLAPSE as what seemed to be the only verifiable option.
+>
+> But, as you correctly pointed out, MADV_COLLAPSE is too dependent on
+> the system's THP state and prone to races with khugepaged. This is the
+> very issue I tried to work around in v4 after the v3 test failures.
+> So I think this test is necessary.
+> As for your other opinions, I completely agree.
 
-However this patch is the actual proper implementation - it follows the
-HFI spec - while the current code upstream is not.
+MADV_COLLAPSE is not a reliable test and we're going to end up with flakes. The
+implementation as-is is unreliable, and I"m not sure there's any way to make it
+not-unreliable.
 
-We should revert over time the current implementation to avoid hitting
-issues when the firmware stops checking for things like 0xdeadb000.
+This is especially true as we change THP behaviour over time. I don't want to
+see failed test reports because of this.
 
+I think it might be best to simply assert that the operation succesfully
+completes without checking whether it actually executes the requested task - it
+would render this functionality completely broken if it were not to actually do
+what was requested.
+
+>
+>
+>
+> Best regards,
+> Wang Lian
 
