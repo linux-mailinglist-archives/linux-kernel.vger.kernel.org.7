@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-728095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27956B0239D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:28:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29ED3B0239E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A078E5C2C2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1525A45F21
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71C32F3C20;
-	Fri, 11 Jul 2025 18:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348A82F2C59;
+	Fri, 11 Jul 2025 18:28:07 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5392F2C59
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6904F2F2735
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752258485; cv=none; b=PYBelQ7llYAJlvkhjMrwRs5xcXq0TgP5RhFDSN8em9ot5RcdRIq91JaPLW4w0sN7o1L03OmWRSV9Sj+FHkjgEAOPhB34BUJJNuiIIsCp/yg2pW4LvMAXXpL7WYFTDuO21oWq8LTRAEYnu/WJBoXmR6T9Z+5Cs/h/09gtaG2xFQs=
+	t=1752258486; cv=none; b=DHzSp6lNbSkwNECOll9PhjklxOpRMs/QErB7pIYoD3QJ2mPRbwSZpYGCqU6jK3icXaVLYI+Z1CdL/ZmOU3XKhKzc9r0irP439H/lS9dr8OYZPK3Jor3GaGP4hE4RY+G49J/c4MYDn1S8GAf/2+NblZs874Y7CfZPtLF354e37Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752258485; c=relaxed/simple;
-	bh=9x9PilFONQWWYbv66+95zCNvRtyXLcqG3l47B6IPVWQ=;
+	s=arc-20240116; t=1752258486; c=relaxed/simple;
+	bh=HhO0vZzQeCk5EqLreeMWz0xGjraCaocXoe2rSjgbtL0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iMQCBdXUEBgU9ykE88eVB2BV6Nukg1jWf34qTHVT0lLgVC56YE7nfuspHbNUN/2Y9zQQmiTbvAJQr16hrunAbE0AK3AvoOwuL28ccGTYB8l2A+1aWI/nhcTVj0YzJKGtOq54y2X2rrElSfIey4A1eRi4R7HM3/XPrD2exArds8k=
+	 MIME-Version; b=c0jCMscn6mMmHXep9PVLhudmu1IROLSFGTvhVO67Q3QkP7Df1pflWQdYW++M0p4cUMy/U1VzUjQjzxuXH0Mprz1A2CD39DjthrBlvzGWGzZGbBBbYMcFnU4N2xqpRHERLI/Vqy5/GqbJnn/c9s2mXpvqzgB1JCWj+PwdoPKLHfM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FD592682;
-	Fri, 11 Jul 2025 11:27:52 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A95F16F8;
+	Fri, 11 Jul 2025 11:27:54 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A77063F694;
-	Fri, 11 Jul 2025 11:28:01 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70C1B3F694;
+	Fri, 11 Jul 2025 11:28:03 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
@@ -45,9 +45,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Will Deacon <will@kernel.org>,
 	James Morse <james.morse@arm.com>,
 	Gavin Shan <gshan@redhat.com>
-Subject: [PATCH v3 2/3] cacheinfo: Add arch hook to compress CPU h/w id into 32 bits for cache-id
-Date: Fri, 11 Jul 2025 18:27:42 +0000
-Message-Id: <20250711182743.30141-3-james.morse@arm.com>
+Subject: [PATCH v3 3/3] arm64: cacheinfo: Provide helper to compress MPIDR value into u32
+Date: Fri, 11 Jul 2025 18:27:43 +0000
+Message-Id: <20250711182743.30141-4-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250711182743.30141-1-james.morse@arm.com>
 References: <20250711182743.30141-1-james.morse@arm.com>
@@ -62,49 +62,61 @@ Content-Transfer-Encoding: 8bit
 Filesystems like resctrl use the cache-id exposed via sysfs to identify
 groups of CPUs. The value is also used for PCIe cache steering tags. On
 DT platforms cache-id is not something that is described in the
-device-tree, but instead generated from the smallest CPU h/w id of the
-CPUs associated with that cache.
+device-tree, but instead generated from the smallest MPIDR of the CPUs
+associated with that cache. The cache-id exposed to user-space has
+historically been 32 bits.
 
-CPU h/w ids may be larger than 32 bits.
+MPIDR values may be larger than 32 bits.
 
-Add a hook to allow architectures to compress the value from the devicetree
-into 32 bits. Returning the same value is always safe as cache_of_set_id()
-will stop if a value larger than 32 bits is seen.
+MPIDR only has 32 bits worth of affinity data, but the aff3 field lives
+above 32bits. The corresponding lower bits are masked out by
+MPIDR_HWID_BITMASK and contain an SMT flag and Uni-Processor flag.
 
-For example, on arm64 the value is the MPIDR affinity register, which only
-has 32 bits of affinity data, but spread accross the 64 bit field. An
-arch-specific bit swizzle gives a 32 bit value.
+Swizzzle the aff3 field into the bottom 32 bits and using that.
+
+In case more affinity fields are added in the future, the upper RES0
+area should be checked. Returning a value greater than 32 bits from
+this helper will cause the caller to give up on allocating cache-ids.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 Reviewed-by: Gavin Shan <gshan@redhat.com>
 ---
- drivers/base/cacheinfo.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Changes since v1:
+ * Removal of unrelated changes.
+ * Added a comment about how the RES0 bit safety net works.
+---
+ arch/arm64/include/asm/cache.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index 4e2f60c85e74..613410705a47 100644
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -203,6 +203,10 @@ static bool match_cache_node(struct device_node *cpu,
- 	return false;
- }
+diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
+index 99cd6546e72e..09963004ceea 100644
+--- a/arch/arm64/include/asm/cache.h
++++ b/arch/arm64/include/asm/cache.h
+@@ -87,6 +87,23 @@ int cache_line_size(void);
  
-+#ifndef arch_compact_of_hwid
-+#define arch_compact_of_hwid(_x)	(_x)
-+#endif
+ #define dma_get_cache_alignment	cache_line_size
+ 
++/* Compress a u64 MPIDR value into 32 bits. */
++static inline u64 arch_compact_of_hwid(u64 id)
++{
++	u64 aff3 = MPIDR_AFFINITY_LEVEL(id, 3);
 +
- static void cache_of_set_id(struct cacheinfo *this_leaf,
- 			    struct device_node *cache_node)
- {
-@@ -212,6 +216,7 @@ static void cache_of_set_id(struct cacheinfo *this_leaf,
- 	for_each_of_cpu_node(cpu) {
- 		u64 id = of_get_cpu_hwid(cpu, 0);
- 
-+		id = arch_compact_of_hwid(id);
- 		if (FIELD_GET(GENMASK_ULL(63, 32), id)) {
- 			of_node_put(cpu);
- 			return;
++	/*
++	 * These bits are expected to be RES0. If not, return a value with
++	 * the upper 32 bits set to force the caller to give up on 32 bit
++	 * cache ids.
++	 */
++	if (FIELD_GET(GENMASK_ULL(63, 40), id))
++		return id;
++
++	return (aff3 << 24) | FIELD_GET(GENMASK_ULL(23, 0), id);
++}
++#define arch_compact_of_hwid	arch_compact_of_hwid
++
+ /*
+  * Read the effective value of CTR_EL0.
+  *
 -- 
 2.39.5
 
