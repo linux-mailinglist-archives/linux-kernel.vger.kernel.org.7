@@ -1,120 +1,151 @@
-Return-Path: <linux-kernel+bounces-728205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EEB1B0249E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:31:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ABF0B024A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2D341CA5E82
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:31:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E662D17E390
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7A41E47A8;
-	Fri, 11 Jul 2025 19:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145261E0E08;
+	Fri, 11 Jul 2025 19:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IJiXPFIV"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVzUTfcx"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA554C79
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F65469D;
+	Fri, 11 Jul 2025 19:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752262250; cv=none; b=b0/cJrlHaPQphQSqJgmVb8RbBnt69bfp6+gtiQJA9bHqfOgGuE4aArJXN5qSBuyO4SOvPLXkwjqA+PUiOdf9UjuPtqeey1Ys/sBM6zE/M96YRN+lgwWqnxA7XfhuAQjElsw2yrQQmfZw4MXJ3TUYj7vHKLdRidkxLwhsdl0OdTI=
+	t=1752262346; cv=none; b=iK3iZtgbTI3fTigD2NHa3i/Lo4GIVjdM0ZqauLnyGRyVVrb1bNTxviNd1rJ88Tr+RnloOvSczC2uAbfPURGuCyIytDLm+Xa1qBbK1axXT2Rt1hGvb90YkLbX28cJql1jb6Omvo1A+GjQkuY7+lH9GDPJbG4qszMinhaYq8RH/yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752262250; c=relaxed/simple;
-	bh=fFeiBWFwEu6yivVJrS3VCjAHsiIzHVVSjwe6FIgy23I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r4CvNNjt51LoBUKrAb+oV5nQDwr9G6fji0sYED9llVpZ3QGL+ptqzTmUZyNf27dAdVq0iJB9gZLTwpubOIbRw670iKfJG/+C80mM/NXCjJolpfMjEccjrx/qyZj9uD2AXnmpk8i/3RDMeh1UjXsB3jUua3J7V7Q2NhOyBNpCZ7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IJiXPFIV; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae0dad3a179so403415466b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:30:48 -0700 (PDT)
+	s=arc-20240116; t=1752262346; c=relaxed/simple;
+	bh=AV1GOzsvYZpFI+vT5vnkh4+JP2p8asFzq4kKOl8oYwc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=TWB5LcVr7Co3uOUqiFQZ/28u1pdJ4PoaONtgTgsD6kMCA4PAVENXH+jFwNzRqstJ+pEGf3Eem7T6xMStGsS5E7I1PXU5h+4dcuba2khIdD51CYJOSu2m7PR9eq8Jf4LtABOprmXXxJJUz1fvKSqr3KxDMnnsURfxZW7dtG46h4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVzUTfcx; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e8187601f85so2226006276.2;
+        Fri, 11 Jul 2025 12:32:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1752262246; x=1752867046; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=W42wqNZ6CmAMcEVUi0DgirOnpBMSt1r3eJzW5nHOkPQ=;
-        b=IJiXPFIV4nLUlO0Na3colxhV3qwNgy3S7s1i/NXZe5dDnP7NH6io8lb5hDrWPntILf
-         T7s1QvZkzLu/Yly3fmV9BDGyVKmwFmvw71wL+ur2UoSqIE28/m7ngRZr/3T7Y05b+37D
-         tKio/rMUQC65mwrcZWK1lVfrqzGus+cuoEzCU=
+        d=gmail.com; s=20230601; t=1752262344; x=1752867144; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wej+oXDuCOb9Uaq9h24VfVr5AhGVyzTnDepMc4aIfm8=;
+        b=MVzUTfcxBsPIvlM8v7uybSdbzgzRNd4D4cs5Jo5BKdwH/xqnCby924cmx/VwsoBLVD
+         WIIWIJ1oSe3WbiWbRQXMFeA8XIt/w9Egt1dPsjM1lGHYslL73w0nTvXowLZ+ECT/usHI
+         lqLYySGCwrsLd81/6bMOjmTYb3B/sZJDEPJsIwkJ+DC4FeE+O4c0G+MuU/R6NI5lWzvY
+         c3z8GdLqxgz3IwjxyENh/qUlfQ7m667myU3lAJtwROXeWAFDeTTfThyDmBKIm85jqdIy
+         bagkYNGoqr7tm4omDIhdxQ6uorgfmV9JOYeV+Prcz7gexkIMPP4ilIyf0vxq9jX26SV/
+         SbMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752262246; x=1752867046;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W42wqNZ6CmAMcEVUi0DgirOnpBMSt1r3eJzW5nHOkPQ=;
-        b=EF84cQC8vQ7NdQBc2QXWSetvNQQwk44LouawrQY2YdPGyOKHBqYOF3LHcCjkkUZiwD
-         aFUnMrLfaPUOgtSUNps1r5oVCj84CAtWjvWxpzJtE+3rs48NILtBuFRpxB2RkCA9XkL4
-         F0+cwurzkLoBDqfvXYcOfhvpdI7qyh8PTDf6lI4ucVoH25yaLkt5e8WccSMFCZWBexde
-         VvX+hgUV1Bk6gWGYBkNTlAFNPKqnSXBAI9gNLq8YwjmzIHcUI8DQAwYUMNOe4S9QS41r
-         Fch4rZTDcs1FxKJBKZusb1TLUTkmph33hn67sEc4F0mIN7kgWik2f44mnpq4OJF+szR6
-         wj8w==
-X-Forwarded-Encrypted: i=1; AJvYcCW7+qk2A4Lx1fI4Z/4Ys7CNLbM+atBIBqFj1cNxi+naBOYUHYmRu8nrvCHICQ2IVJzgnLXdeU4mI1Q2oYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcYQny3B+ONNwYkiNXoah4+Eku6OpNA7poeqDAEy0Nu9Dn6N3A
-	Vxs3RTY6PTE3RL1bp0fkOLDe6ve+oQuB7cK43vELGjp3acryIkLAzmU/Mr9Mn5TJb2u9k8PFrnz
-	+1iF+/eGCsQ==
-X-Gm-Gg: ASbGncu74khmFgjkJiCDm/InkBzIon4HoiDxBlaZM33ZubXlBOHzuOCBmNZ1uGPiBWB
-	flWArwTAufXmjK40scRfPpPliS7cXut48Oe4Z8cTa2hHTDTm9GLQRnU0O+yljTyQtG/4xoytsYK
-	qTscNsFyIFPagpQUqjAKR+/3nwZG0KBPfQGiiRqKlMC1nC/hjHipmQjh4Wctnc3BBdpTYSecXz3
-	qkM9U7u7nrVh5qj3cfbPt+RorEp0dgk+cmEVXDwMtbY112gSwPgrju+ah7YY5YBe/IfFeMOLr3z
-	Zl3ABHPN787b8yXSqcSYVrCXmnDTOmnDB3wm4TrN/ajhCutYGzwsNOr4Ovf3fuPZKmU85zYz4F2
-	pCVy7MG8FoBn7W5hGSHloaEPNfzens5Mmn16U73ZzBnc8TtmFZTLcqF8PYLNSo6kBzWJYakoOvk
-	20Hk7mKO0=
-X-Google-Smtp-Source: AGHT+IHk1EZ0u6zQI3bU9KInPmA0LtI5e/jbK4cGq9kTq364JKbZH9tbo2nSbLW2zFRoA9wnebXamg==
-X-Received: by 2002:a17:907:3c90:b0:ae0:1fdf:ea65 with SMTP id a640c23a62f3a-ae6fbc8859emr528087466b.17.1752262246400;
-        Fri, 11 Jul 2025 12:30:46 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8294bc2sm346118966b.135.2025.07.11.12.30.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 12:30:45 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a16e5so4693173a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:30:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWY6xIH8uJgHSYRQrCB6KPvVvoNVIro4O4c1Fbz5Ojdxa2PudleukzeuWtbCjamx4BRwPEiJmw1qqyY2S0=@vger.kernel.org
-X-Received: by 2002:a05:6402:13d5:b0:601:e99c:9b19 with SMTP id
- 4fb4d7f45d1cf-611eefbd8ccmr2998361a12.1.1752262244860; Fri, 11 Jul 2025
- 12:30:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752262344; x=1752867144;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wej+oXDuCOb9Uaq9h24VfVr5AhGVyzTnDepMc4aIfm8=;
+        b=A+WBdl3D2pP2u9utfc76AA5/qL7B2IeA0kmU5DVavm07S1Kcs5h6w4s59ert7ZldU5
+         ZuaeM/4sKCN+jA0ee40Jzh1YwNBp6M2QS+kGCb6/tLKlBtx3Cgcw4V1nILOhEQzoNp4P
+         rCenW/1jJOLIGW6CXYqOrBGwpHwIuq7lvkUNrWPsVcu+VpUXqxkBJiHuBa5ny/W3CR7G
+         sFLen3oM0dFlbPOtESfDLqLtXIhcIpj937UZ+l3Ss/2FRcFs5bhU+UTRqYZ15u4prU+6
+         hIAHT7JeZeM2WnztzczW/TE6msODtSTtqvEXVxO77NqwWy73zp4+4+5Wi9y5omqy6wZ1
+         TEWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeMsHqZZ5rgPjeqwDU0SlgWTv5IbDO63p4HHfgDNCDIHocXZjbwSBxMEMTbXWgQQLxkt8fXzemcMtLbvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW5Uloc9ztvXCvBLEoLm6uiRob0KM/Grumc70a4ePbNJtLiyIZ
+	R1bpEx861575Xg/zD5YwJaBfZZjjPKyX5kYKVZ3aYM6TCVMnRS1rwxah
+X-Gm-Gg: ASbGncvdBFoIv4anY+hGZJ/5bjVsZIbvacxQu6A1HMfXQoGp2aJcuavLWQcG6C5Mi6l
+	Cd9L4ntRcrqGrS73v6ZkDCPB9GvF/g3uYK39fCxuli+81rsFK/cKfXjRH4YieKcwfiWenS05w3a
+	H1TekV8NAyiMqT6jAFQZ2En3hV3RrXfiGEClCEPFm9DKvgIqCi8lDb6JXZpafjb7G+9tShtaJuS
+	uwWzDxj5XMXdPAWruYxvGa2fWAQxen4GzCqU9NXulFn4oKyvrbzNUC20lPLlM+mECLoI46ylo9Q
+	TJB+whzZswPGGwmgAgf9mqsZ+X0gbCjJyPBdguRy+9CuX/vBcz+E1TvW8Ry+YFk6LS88xPmQkKF
+	70xDEn/xycaIwxm/MN1vOC/Rpue42AIRsk3iZoZz6Q8iX2W3e3Jg1FIXoqqhtGKoxAQOSXawwKZ
+	Y=
+X-Google-Smtp-Source: AGHT+IHbXPkwP7hhlNP40QD5GBFnYAhlzzWMVa+9u5CqDherPla7am9mptlVeM+rsqNvxUnTRIylAg==
+X-Received: by 2002:a05:690c:45c2:b0:70e:7503:1181 with SMTP id 00721157ae682-717d5e944a0mr80568067b3.18.1752262343753;
+        Fri, 11 Jul 2025 12:32:23 -0700 (PDT)
+Received: from localhost (234.207.85.34.bc.googleusercontent.com. [34.85.207.234])
+        by smtp.gmail.com with UTF8SMTPSA id 00721157ae682-717c5d6d8c7sm8756727b3.38.2025.07.11.12.32.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 12:32:23 -0700 (PDT)
+Date: Fri, 11 Jul 2025 15:32:22 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Yun Lu <luyun_611@163.com>, 
+ willemdebruijn.kernel@gmail.com, 
+ davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org
+Cc: netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <687166c6cbc8c_168265294ba@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20250711093300.9537-3-luyun_611@163.com>
+References: <20250711093300.9537-1-luyun_611@163.com>
+ <20250711093300.9537-3-luyun_611@163.com>
+Subject: Re: [PATCH v5 2/2] af_packet: fix soft lockup issue caused by
+ tpacket_snd()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250711151002.3228710-1-kuba@kernel.org> <CAHk-=wj1Y3LfREoHvT4baucVJ5jvy0cMydcPVQNXhprdhuE2AA@mail.gmail.com>
- <20250711114642.2664f28a@kernel.org> <CAHk-=wjb_8B85uKhr1xuQSei_85u=UzejphRGk2QFiByP+8Brw@mail.gmail.com>
- <CAHk-=wiwVkGyDngsNR1Hv5ZUqvmc-x0NUD9aRTOcK3=8fTUO=Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wiwVkGyDngsNR1Hv5ZUqvmc-x0NUD9aRTOcK3=8fTUO=Q@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 11 Jul 2025 12:30:28 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whMyX44=Ga_nK-XUffhFH47cgVd2M_Buhi_b+Lz1jV5oQ@mail.gmail.com>
-X-Gm-Features: Ac12FXz05ddJJmdKtsU0c732bvFnqaJPd5imXrgLsnwoQ6msxaZ9czwbq-1pfJM
-Message-ID: <CAHk-=whMyX44=Ga_nK-XUffhFH47cgVd2M_Buhi_b+Lz1jV5oQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Networking for v6.16-rc6 (follow up)
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, 
-	Dave Airlie <airlied@gmail.com>, davem@davemloft.net, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pabeni@redhat.com, 
-	dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 11 Jul 2025 at 12:18, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I spent several hours yesterday chasing all the wrong things (because
-> I thought it was in drm), and often thought "Oh, that fixed it". Only
-> to then realize that nope, the problem still happens.
->
-> I will test the reverts. Several times.
+Yun Lu wrote:
+> From: Yun Lu <luyun@kylinos.cn>
+> 
+> When MSG_DONTWAIT is not set, the tpacket_snd operation will wait for
+> pending_refcnt to decrement to zero before returning. The pending_refcnt
+> is decremented by 1 when the skb->destructor function is called,
+> indicating that the skb has been successfully sent and needs to be
+> destroyed.
+> 
+> If an error occurs during this process, the tpacket_snd() function will
+> exit and return error, but pending_refcnt may not yet have decremented to
+> zero. Assuming the next send operation is executed immediately, but there
+> are no available frames to be sent in tx_ring (i.e., packet_current_frame
+> returns NULL), and skb is also NULL, the function will not execute
+> wait_for_completion_interruptible_timeout() to yield the CPU. Instead, it
+> will enter a do-while loop, waiting for pending_refcnt to be zero. Even
+> if the previous skb has completed transmission, the skb->destructor
+> function can only be invoked in the ksoftirqd thread (assuming NAPI
+> threading is enabled). When both the ksoftirqd thread and the tpacket_snd
+> operation happen to run on the same CPU, and the CPU trapped in the
+> do-while loop without yielding, the ksoftirqd thread will not get
+> scheduled to run. As a result, pending_refcnt will never be reduced to
+> zero, and the do-while loop cannot exit, eventually leading to a CPU soft
+> lockup issue.
+> 
+> In fact, skb is true for all but the first iterations of that loop, and
+> as long as pending_refcnt is not zero, even if incremented by a previous
+> call, wait_for_completion_interruptible_timeout() should be executed to
+> yield the CPU, allowing the ksoftirqd thread to be scheduled. Therefore,
+> the execution condition of this function should be modified to check if
+> pending_refcnt is not zero, instead of check skb.
+> 
+> -	if (need_wait && skb) {
+> +	if (need_wait && packet_read_pending(&po->tx_ring)) {
+> 
+> As a result, the judgment conditions are duplicated with the end code of
+> the while loop, and packet_read_pending() is a very expensive function.
+> Actually, this loop can only exit when ph is NULL, so the loop condition
+> can be changed to while (1), and in the "ph = NULL" branch, if the
+> subsequent condition of if is not met,  the loop can break directly. Now,
+> the loop logic remains the same as origin but is clearer and more obvious.
+> 
+> Fixes: 89ed5b519004 ("af_packet: Block execution of tasks waiting for transmit to complete in AF_PACKET")
+> Cc: stable@kernel.org
+> Suggested-by: LongJun Tang <tanglongjun@kylinos.cn>
+> Signed-off-by: Yun Lu <luyun@kylinos.cn>
 
-Well, the first boot with those three commits reverted shows no problem at all.
-
-But as mentioned, I've now had "Oh, that fixed it" about ten times.
-
-So that "Oh, it worked this time" has been tainted by past experience.
-Will do several more boots now in the hope that it's gone for good.
-
-            Linus
+Reviewed-by: Willem de Bruijn <willemb@google.com>
 
