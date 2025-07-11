@@ -1,173 +1,170 @@
-Return-Path: <linux-kernel+bounces-727484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733A1B01AE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:44:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7582B01AE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A3135814BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:43:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0523A5A1075
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712CF29B8E2;
-	Fri, 11 Jul 2025 11:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143EA28D82F;
+	Fri, 11 Jul 2025 11:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RmCpVRSY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgCM8+gL"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A05629A9D2
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6111146585;
+	Fri, 11 Jul 2025 11:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752234048; cv=none; b=Xk76YrSFvaG6DH46//12wVE+yFCMbsN17QC1ZJGgpIEwYCvaxMs8CCw5e8/A9dbDpOmJ6uKHWu7J1dG2IxvPWGdB4DdGN9lYtjX/xrR03x8bQA14lCwxqO/Bs7JVaJ3x2YOdlsJVch7698aSKhJiG4tsNoX1c502MyzlZhCy4is=
+	t=1752234138; cv=none; b=czGh7bn8avO2OPkfB1VjYhAF3hd7usKF11DzBmOJD5HhPu2sTCTuxBzco4iRabU4MqbJrZxYBCiGjuVfsE1emKcul8zJAI/e9Dtx6qW7DBpU2+PN4105k6LPdt+03ttZeKb8zVmz8Cn8HpoglJBrdo4KzDuSLebddzm/PVATLhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752234048; c=relaxed/simple;
-	bh=UJexkU3SZxlwXuwlqA9h8WDbdSz0pCUgNBCY8fCr+Sw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gghPC7q/mvSl2DkbzEHcFMa+ax+jqNMpX2WPZofci85XYtxir4r7O2DiGWoXmFFnfjvGs6s22/2c0QzDTFx9mOvqICYDcnxxbb7jTll2HcV/axm4zs7BaeooXZ1N2hCsWknnRvXMKHmoPK1FI7xZzped8vG/Vv65BA2Wh1vPm8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RmCpVRSY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752234046;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JxNvOa4I1lVwZjisn9NutG86CttWSUJdgFsU+YoJILE=;
-	b=RmCpVRSY9g8y1z6AOomjt0s4cXvzjkhIvCnn1/+QoMWc2VLPQQbYFJpKs7ZYHDMYBWTqlh
-	NZCxw+Brcsm2cztzJUAdqqReNuGCzMWegLOwhNwOHykW2g2oR5iMoxpyKMniFHk8MIGZBM
-	6vtS3M7HEfdSiJVdVtMaSV26unmGa1g=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-407-ZK-TMy3OMOexI80Kdee4YQ-1; Fri, 11 Jul 2025 07:40:43 -0400
-X-MC-Unique: ZK-TMy3OMOexI80Kdee4YQ-1
-X-Mimecast-MFC-AGG-ID: ZK-TMy3OMOexI80Kdee4YQ_1752234042
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45526dec16fso3769885e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 04:40:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752234042; x=1752838842;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+	s=arc-20240116; t=1752234138; c=relaxed/simple;
+	bh=6SZreWucgLG5AdBZcpBS07qgDu47uQvtBMF3P6lkWqA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=muSndPdFM3986BAeH+5Zs7PbdJGcPe2ilKMYElpKMHz+KrFi41sU2HsJtNMNNRgTXM9PAaG2tyopl5U5zAodjae235DqN/K9dotz8265C+xir0xgZY71GXBOIGJzTY2AgaEBabqKteT/1Zj9j9MP1SXpLtoUFXaR9MpQIqYo4u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgCM8+gL; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-237311f5a54so17792625ad.2;
+        Fri, 11 Jul 2025 04:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752234136; x=1752838936; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=JxNvOa4I1lVwZjisn9NutG86CttWSUJdgFsU+YoJILE=;
-        b=wZxXHH5j+/2MXIPfcBkzfjzzvcL4A7j6Ah0xAqKHmtCWqCL6YcXDsNhYr0EtRVt4VA
-         xQUnkhSU9VxyhyAXVf/1qQcU6vFdZkYCQ+dLnw9u68xzrlcqbCXqfQYUXfg1rPo/lQfz
-         QRXK7PCB7ch9kqbbGggdlo2tvPmyqJ0SSt9kjHhkGPdPg1Uh2TZe1R96drIAne/eb/cw
-         hMXnshR+41vV6PzVkjnMcnkcSbE1oJ3mG9sS7fXImT2si7RnogH9VNzDdyzKZzodNSNe
-         X2WzHaDRZU+vAToL4K47lQPxU3GuQXr7Gakv0Lo9EmK8avmWHXXhcH+9GeQItR0et0jX
-         CJCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtrKrPefrnU7k4s7e3lCDMV3P6qz3uGEphgURJTFV+KPDzafBn96HWPQyyhnHCAop8acGNdoDTg6KHxvo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBOcn7+r2VoIUOBGdglMwakjHQYDPj59MKDpAIKzVrRl4Zv7ZN
-	wbJHf99CBV+5dYIqwHF2SDRXrpeUH6CJ66O1AsdlKZ13uGcdOVKyJ4FP8U5Pj6KZprjt0ely+hI
-	a1OHN1oniUsqLJKCsjF6znV+4VlA9GTj439OaDnnE4Yjj2oKi6UGX6FOjo7tlyRRwlw==
-X-Gm-Gg: ASbGnct9QJzbanj2aJQHfyUD5IemFbluf87flGyaoA6OLT2utD97Y2B6qlHMEDVp864
-	wDPlC6lsgxsS0HmNlBhuxz73mPQCbb7WW9r4kf7Zs+N0iH+Yp+xYvXw08ovu8YVbBoHWJzRupVc
-	umaVJnQtzzdWvhdI3BhxZnAFbyONHuXhAeYNHXs+cWVtoDVhXpK3fj6fbuXBSlnJDVhl1JyBgWx
-	fUd3Ea9gUzuCm4zHmfFn33t4GjWWu1CZaae1LJA7lOkWSjVlb4IVdUPO55Po78ZslWIkUYv5zwa
-	5vOth13Qg5gtp6TRVDPg0fJpgzVlUv0IP0xtfUOU6N6MPi5g1UCOstAXINFl+PpTSh2cPUplCLe
-	6LvZVQ1/u7hmWLiRrc0Wi2ae73tCa0CRv5dSgIVRcy5LVAGx1QGBn/2Xfu8Ij4ZhhsQo=
-X-Received: by 2002:a05:600c:a301:b0:455:f187:6203 with SMTP id 5b1f17b1804b1-455f187666bmr6014455e9.27.1752234041764;
-        Fri, 11 Jul 2025 04:40:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFyNsyT+A2blP2ZWUR7EykNn1A8pk660lkD6z0yQ/zgmWN+MwD0hFcllj25is0rmjoSLvocwA==
-X-Received: by 2002:a05:600c:a301:b0:455:f187:6203 with SMTP id 5b1f17b1804b1-455f187666bmr6014195e9.27.1752234041359;
-        Fri, 11 Jul 2025 04:40:41 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d727sm4280998f8f.51.2025.07.11.04.40.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 04:40:40 -0700 (PDT)
-Message-ID: <fe138d11-e0fe-4e57-8e51-a5521bad1b88@redhat.com>
-Date: Fri, 11 Jul 2025 13:40:39 +0200
+        bh=6SZreWucgLG5AdBZcpBS07qgDu47uQvtBMF3P6lkWqA=;
+        b=bgCM8+gL5WdKXnVUKtGaiKMSJtZEdQqCqGL7JMNYEGNWqE7myuOIWwPNd5Mx1nv94F
+         RUjFeEbId86+5xG2ROj4I6aEQZxLvwKhQ609YRY9Poek+pVf5de4lu/eXTPatDkgVLkm
+         1eovu9oZhNXp7LwnauiY+YeQYkJeH0w5/tkj/0wsJsspDEBATNRphfmVKp5TDNuumvXR
+         jE4aVyJ3/Gwn854iCdqacIF8iUESKKJsLNJ8AdOsePEVEchzPFtl7U+BRgt7YoPEX+r9
+         dV7VnsfPgHU6pGaro7pdOmU3e/IqcZxYCd+uOzXJPJbctocd2K7iuJx0FQLF1ao/00U+
+         5PIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752234136; x=1752838936;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6SZreWucgLG5AdBZcpBS07qgDu47uQvtBMF3P6lkWqA=;
+        b=kuRX3F4srXPvZQrhbFQHbiFzoMmTXr5N6QmSISImt0u0ZL5VubThL4DIYLEclU7VHz
+         WvR0CeeHSMOpdnTEtWjSZH4FbyB7XofCmMeZahq6seFaEB2aLVh9tWYnZj2UuPyTUFxU
+         u6+Rl12LSX8+bKhzHSuiQM4mzXKmMX/WYeDoVeZK90bj3fHIzJYQP4boC18RDPTATTsN
+         HLeVidymA5FbJ62ajUCOhIlERuFNpu5LpunE7folcka+OWyHct8XdGKAb92BHDW/T+1k
+         +F5BLr4LIzD3Hm6+PD1rKHRiS3KpFu2ZeLVQQ+v+GbShwmWZDORXJmKbTtAq3bMfJXp9
+         Y7KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCP4Qvm8y9AaVKOY125Qw/CoIDyVrOPhp5zGcRfEFHn9dfF1hCwDXFznFPGnT/1UHm2RG1GV5qUb0TZ1eh@vger.kernel.org, AJvYcCWKKEz/sp4LzSLgAzseMDfoxE3wEIKfk8UN8SvxCEmAIoV3OefpZNRlMagKTYDeEgvdqTk=@vger.kernel.org, AJvYcCXqhLO7rxiI99s4ot46zupeBOT1mtY3hLB8RhFtV2bhDaO7RuR64S8j9w2GglwxUdDKUYXkT08E+BZdq41GSxw+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBVRSF0oh5xPzqlski639KvHW+w9gQH0cwuApLgjh6XnLbq2/Y
+	2iB/y4XFqnxuF+dh/F8Ujgf0br4B3jcfbrBStGP3muJhN2pjjR0DuGuj
+X-Gm-Gg: ASbGncsXO/PGGi3Whfyavao+yrzncENJL4p9tOpl6VRI1rk+NHGPrUp4NGnXSrkjg4z
+	3RmSG3sLYWbC8UI1i0OKSf8ZUrCHMSSlCdwW9izPkNbpUacoxfAYB4rtjyvsMqVezPt9cwgPYdv
+	lcFgEy2QfpKEirpkRgzNEGneve5VVC4oXvWjFoxsH/Ds9ALSRMLUtVosgj3RmwTFB4TY8ja71r2
+	8UbktbtY7/AXLP/F+zJVrf+6oabI7sMBcd88tJJNvPsU3guKeE2zpfc4e0aEjzGCqM2bqOne903
+	DRobyQ/ltMs5Y5H2bYaZeauuilp08V56puKOr1c7N6KwV5XjLO2/kd4wPg7HTu4XE/Trm/f8KNW
+	UK+/J/4UoARE/GXXi05Uoyg==
+X-Google-Smtp-Source: AGHT+IEkde7KjAzbJlgznBKOn+MUWvTrM5P+KMMIK9fLaXz00KMUZpyweRR2USQoiKgiLry7sqoH5Q==
+X-Received: by 2002:a17:902:ebc1:b0:234:ef42:5d69 with SMTP id d9443c01a7336-23dee1a991emr29867215ad.13.1752234135997;
+        Fri, 11 Jul 2025 04:42:15 -0700 (PDT)
+Received: from [127.0.0.1] ([62.192.175.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de4365ef7sm44608985ad.249.2025.07.11.04.42.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 04:42:14 -0700 (PDT)
+Message-ID: <c8a1f651ebb6e0f0f1c0459c9dadc4d01dfa2662.camel@gmail.com>
+Subject: Re: [PATCH bpf-next 2/3] bpf: Show precise rejected function when
+ attaching to __btf_id functions
+From: KaFai Wan <mannkafai@gmail.com>
+To: Yafang Shao <laoar.shao@gmail.com>, Alexei Starovoitov
+	 <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>,  John Fastabend <john.fastabend@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,  Yonghong Song
+ <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>,  Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,  Shuah Khan
+ <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf
+ <bpf@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK"
+ <linux-kselftest@vger.kernel.org>
+Date: Fri, 11 Jul 2025 19:42:05 +0800
+In-Reply-To: <CALOAHbCMCnYe=d04Ong5GzdMjK553CooF5XrBi0kQUwoh0oDrA@mail.gmail.com>
+References: <20250710162717.3808020-1-mannkafai@gmail.com>
+	 <20250710162717.3808020-3-mannkafai@gmail.com>
+	 <CAADnVQ+Ca43c757zaT80B+4RJesRozx39mLoz3hOdKXEaXLBLg@mail.gmail.com>
+	 <CALOAHbCMCnYe=d04Ong5GzdMjK553CooF5XrBi0kQUwoh0oDrA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.0-1build2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 12/14] mm: add config option for clearing page-extents
-To: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, x86@kernel.org
-Cc: akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
- peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
- tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
- boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
- <20250710005926.1159009-13-ankur.a.arora@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250710005926.1159009-13-ankur.a.arora@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 10.07.25 02:59, Ankur Arora wrote:
-> Add CONFIG_CLEAR_PAGE_EXTENT to allow clearing of page-extents
-> where architecturally supported.
-> 
-> This is only available with !CONFIG_HIGHMEM because the intent is to
-> use architecture support to clear contiguous extents in a single
-> operation (ex. via FEAT_MOPS on arm64, string instructions on x86)
-> which excludes any possibility of interspersing kmap()/kunmap().
-> 
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> ---
+On Fri, 2025-07-11 at 17:57 +0800, Yafang Shao wrote:
+> On Fri, Jul 11, 2025 at 1:19=E2=80=AFAM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> >=20
+> > On Thu, Jul 10, 2025 at 9:27=E2=80=AFAM KaFai Wan <mannkafai@gmail.com>
+> > wrote:
+> > >=20
+> > > Show the precise rejected function name when attaching tracing to
+> > > __btf_id functions.
+> > >=20
+> > > $ ./fentry
+> > > libbpf: prog 'migrate_disable': BPF program load failed: -EINVAL
+> > > libbpf: prog 'migrate_disable': -- BEGIN PROG LOAD LOG --
+> > > Attaching tracing to __btf_id function 'migrate_disable' is
+> > > rejected.
+> > >=20
+> > > Signed-off-by: KaFai Wan <mannkafai@gmail.com>
+> > > ---
+> > > =C2=A0kernel/bpf/verifier.c | 2 ++
+> > > =C2=A01 file changed, 2 insertions(+)
+> > >=20
+> > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > > index 275d82fb1a1a..2779d63e1f8b 100644
+> > > --- a/kernel/bpf/verifier.c
+> > > +++ b/kernel/bpf/verifier.c
+> > > @@ -23938,6 +23938,8 @@ static int check_attach_btf_id(struct
+> > > bpf_verifier_env *env)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retur=
+n ret;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else if (prog->type =3D=
+=3D BPF_PROG_TYPE_TRACING &&
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 btf_id_set_contains(&btf_id_deny, b=
+tf_id)) {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 verbose(env, "Attaching tracing to __btf_id
+> > > function '%s' is rejected.\n",
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tgt_info=
+.tgt_name);
+> >=20
+> > "Attaching tracing to __btf_id" ?! What does it mean?
+>=20
+> The term "tracing" refers to BPF_PROG_TYPE_TRACING. I believe it is
+> useful because it helps identify which functions cannot be attached
+> by
+> a given BPF program type.
 
-Staring at the next patch, I think this can easily be squashed into the 
-next patch where you add actual MM core support.
+Thanks, this is what I want to express.
 
--- 
-Cheers,
+> Perhaps we should replace "tracing" with "a tracing prog" for
+> clarity?
 
-David / dhildenb
+Looks good, may be 'tracing programs' could be fine.
 
+>=20
+> > Drop "__btf_id" and "tracing" bits.
+>=20
+
+--=20
+Thanks,
+KaFai
 
