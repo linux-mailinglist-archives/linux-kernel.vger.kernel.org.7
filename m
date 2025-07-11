@@ -1,58 +1,51 @@
-Return-Path: <linux-kernel+bounces-726942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB0CB01316
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:56:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A7AB01314
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8338A1CA167D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE571CA0A99
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461151CEAA3;
-	Fri, 11 Jul 2025 05:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0D51CF5C0;
+	Fri, 11 Jul 2025 05:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jrAkh1/Z"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="krqTzltB"
+Received: from mail-m19731109.qiye.163.com (mail-m19731109.qiye.163.com [220.197.31.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CACB1B87C9
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1777469D;
+	Fri, 11 Jul 2025 05:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752213392; cv=none; b=utYcA+80S8yNK+TQb9M56o4NRrgU5Qic9sqEGEnB4Qi5cEh/SChliM78Qo9ln3BsmC6OOXkUzYPEhuOI+LwnPMqRZm+jCZGNvgNIMeo0C/e7AE8vkLwditbgq5dx84HFcpiMzBt+fGEO895sxwrlUsmvqk6ksRTXqb2hpXUTW9U=
+	t=1752213342; cv=none; b=jh6fzMuX4CS3FRzS4/9ruf3sO1Xucv/pp1KaCZNkutegh96JGviGg/wu4YGuGqgwq0lgiSzsRXX+JfUpw9Uo8rmqrz7bhH3x7MZ8dzJAgR96krO9/W2gWsBbYbABiPDivqi0G6J2g2nxQh6jppHIxKZHJb2JPM7Wfjubau/1oQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752213392; c=relaxed/simple;
-	bh=E1uqYY1smKK/3YssRHuwbYZ2z7OHLkmojyBrinRHozg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dLu0Ac60iQFQdxrtm3Hfl93GrovwI0BXXBit4PnCUFLf/jOw01qPol8hPP8lKstsYDzSHfODm08S3eGS5wpcYGWlgyq0dKGiETYLfmvxG2CiZu6qTpsRjsC8iMigWQjVcWaZTggO9mqAMMw5YA8C37FFLb2Q48AWYoFww0He8uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jrAkh1/Z; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752213378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hm+HZ9v47mDt2xf4klE6BqylD3gvRDVDrg6ZEcP7nTg=;
-	b=jrAkh1/ZPPqVij9ltNshn1/iP/1H/ZAWWSDdVHgm9RPpCPeHLGVZ4ySyA0vAcQ+oOcyefc
-	zmRKGikgoNerEp4s4NP984rSbjRf6M8M8oi7eCZ/zm7VLCkP05scvLWq+FYvjcxE4r/dPt
-	uslPM7KPoBTLnVeKtZrnDWiWlUTO7h0=
-From: Youling Tang <youling.tang@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	chizhiling@163.com,
-	youling.tang@linux.dev,
-	Youling Tang <tangyouling@kylinos.cn>,
-	Chi Zhiling <chizhiling@kylinos.cn>
-Subject: [PATCH] mm/filemap: Align last_index to folio size
-Date: Fri, 11 Jul 2025 13:55:09 +0800
-Message-Id: <20250711055509.91587-1-youling.tang@linux.dev>
+	s=arc-20240116; t=1752213342; c=relaxed/simple;
+	bh=ryT+XYho9bF/4V/++q4QOBHcZEKXqBVzYUTq/yWVWaM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PAgptQOTZ5bTsd6rTe34TVWo2EMn+y9ITdCOBGhQZAp1oB59TeLXhaXxgHwCNvxwLF1+e+R4F6QqLmZHSk2guIPvxhRl3PnqYan+cIX/4a040sJdK5E2+Wy4s4jl65hvEismnxBEHMA33uWwZJlWWNweWJcSoX1W+3MV3+1QjmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=krqTzltB; arc=none smtp.client-ip=220.197.31.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
+Received: from localhost.localdomain (unknown [117.184.129.134])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1baa85b36;
+	Fri, 11 Jul 2025 13:55:30 +0800 (GMT+08:00)
+From: Albert Yang <yangzh0906@thundersoft.com>
+To: arnd@arndb.de
+Cc: adrian.hunter@intel.com,
+	ulf.hansson@linaro.org,
+	gordon.ge@bst.ai,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/8] mmc: sdhci: add Black Sesame Technologies BST C1200 controller driver
+Date: Fri, 11 Jul 2025 13:55:29 +0800
+Message-Id: <20250711055529.1321072-1-yangzh0906@thundersoft.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <53ba18c1-4554-4d77-84fd-d921febb7559@app.fastmail.com>
+References: <53ba18c1-4554-4d77-84fd-d921febb7559@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,145 +53,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSUNCVh5NGR9CGh4fTUlOSFYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSk
+	tLVUpCS0tZBg++
+X-HM-Tid: 0a97f80d995609cckunm40278df013f2e34
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OEk6Fgw5SzExDRgeMkgZQ1YL
+	QhEKChVVSlVKTE5JSUpISEhKT0hJVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
+	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQU5JSk83Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=krqTzltBSK6R8iO/sIkcsNNJtF/9LFNZ9dkm/hq5CACZ1JSLnmPlXtlG6uCV6TNuEByyvVwJKIH1CJxcDIIwVACnPPb2aLgXMADuelG3Mgm8IEgCFSq5FiwpeWjHS4FcaeBR0tigl7KlKkue+Eog6X/TZ+0rxGylLjymKlj5fqo=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=8JI3v8SEkCUiC8EaufkNhA7P5YwSp0PygxDPJd1s0z8=;
+	h=date:mime-version:subject:message-id:from;
 
-From: Youling Tang <tangyouling@kylinos.cn>
+Hi Arnd,
 
-On XFS systems with pagesize=4K, blocksize=16K, and CONFIG_TRANSPARENT_HUGEPAGE
-enabled, We observed the following readahead behaviors:
- # echo 3 > /proc/sys/vm/drop_caches
- # dd if=test of=/dev/null bs=64k count=1
- # ./tools/mm/page-types -r -L -f  /mnt/xfs/test
- foffset	offset	flags
- 0	136d4c	__RU_l_________H______t_________________F_1
- 1	136d4d	__RU_l__________T_____t_________________F_1
- 2	136d4e	__RU_l__________T_____t_________________F_1
- 3	136d4f	__RU_l__________T_____t_________________F_1
- ...
- c	136bb8	__RU_l_________H______t_________________F_1
- d	136bb9	__RU_l__________T_____t_________________F_1
- e	136bba	__RU_l__________T_____t_________________F_1
- f	136bbb	__RU_l__________T_____t_________________F_1   <-- first read
- 10	13c2cc	___U_l_________H______t______________I__F_1   <-- readahead flag
- 11	13c2cd	___U_l__________T_____t______________I__F_1
- 12	13c2ce	___U_l__________T_____t______________I__F_1
- 13	13c2cf	___U_l__________T_____t______________I__F_1
- ...
- 1c	1405d4	___U_l_________H______t_________________F_1
- 1d	1405d5	___U_l__________T_____t_________________F_1
- 1e	1405d6	___U_l__________T_____t_________________F_1
- 1f	1405d7	___U_l__________T_____t_________________F_1
- [ra_size = 32, req_count = 16, async_size = 16]
+Thank you for your detailed review and suggestions. I have addressed all the 
+issues you raised in v2 of the patch series.
 
- # echo 3 > /proc/sys/vm/drop_caches
- # dd if=test of=/dev/null bs=60k count=1
- # ./page-types -r -L -f  /mnt/xfs/test
- foffset	offset	flags
- 0	136048	__RU_l_________H______t_________________F_1
- ...
- c	110a40	__RU_l_________H______t_________________F_1
- d	110a41	__RU_l__________T_____t_________________F_1
- e	110a42	__RU_l__________T_____t_________________F_1   <-- first read
- f	110a43	__RU_l__________T_____t_________________F_1   <-- first readahead flag
- 10	13e7a8	___U_l_________H______t_________________F_1
- ...
- 20	137a00	___U_l_________H______t_______P______I__F_1   <-- second readahead flag (20 - 2f)
- 21	137a01	___U_l__________T_____t_______P______I__F_1
- ...
- 3f	10d4af	___U_l__________T_____t_______P_________F_1
- [first readahead: ra_size = 32, req_count = 15, async_size = 17]
+On Wed, Jul 2, 2025, at 11:44, Arnd Bergmann wrote:
 
-When reading 64k data (same for 61-63k range, where last_index is page-aligned
-in filemap_get_pages()), 128k readahead is triggered via page_cache_sync_ra()
-and the PG_readahead flag is set on the next folio (the one containing 0x10 page).
+> The description does not mention the actual device it's for
+> but only DesignWare.
+> 
+> Try to keep this sorted alphabetically between the other
+> CONFIG_MMC_SDHCI_* backends
 
-When reading 60k data, 128k readahead is also triggered via page_cache_sync_ra().
-However, in this case the readahead flag is set on the 0xf page. Although the
-requested read size (req_count) is 60k, the actual read will be aligned to
-folio size (64k), which triggers the readahead flag and initiates asynchronous
-readahead via page_cache_async_ra(). This results in two readahead operations
-totaling 256k.
+Fixed. Updated the Kconfig description to mention "Black Sesame Technologies 
+BST C1200 controller" and moved the config entry to the correct alphabetical 
+position between MMC_SDHCI_BCM_KONA and MMC_SDHCI_F_SDH30.
 
-The root cause is that when the requested size is smaller than the actual read
-size (due to folio alignment), it triggers asynchronous readahead. By changing
-last_index alignment from page size to folio size, we ensure the requested size
-matches the actual read size, preventing the case where a single read operation
-triggers two readahead operations.
+> You are only using the first member here, the phy_crm_reg_base
+> and phy_crm_reg_size are assigned during probe but not referenced
+> later. devm_platform_ioremap_resource() should help simplify
+> that code further.
 
-After applying the patch:
- # echo 3 > /proc/sys/vm/drop_caches
- # dd if=test of=/dev/null bs=60k count=1
- # ./page-types -r -L -f  /mnt/xfs/test
- foffset	offset	flags
- 0	136d4c	__RU_l_________H______t_________________F_1
- 1	136d4d	__RU_l__________T_____t_________________F_1
- 2	136d4e	__RU_l__________T_____t_________________F_1
- 3	136d4f	__RU_l__________T_____t_________________F_1
- ...
- c	136bb8	__RU_l_________H______t_________________F_1
- d	136bb9	__RU_l__________T_____t_________________F_1
- e	136bba	__RU_l__________T_____t_________________F_1   <-- first read
- f	136bbb	__RU_l__________T_____t_________________F_1
- 10	13c2cc	___U_l_________H______t______________I__F_1   <-- readahead flag
- 11	13c2cd	___U_l__________T_____t______________I__F_1
- 12	13c2ce	___U_l__________T_____t______________I__F_1
- 13	13c2cf	___U_l__________T_____t______________I__F_1
- ...
- 1c	1405d4	___U_l_________H______t_________________F_1
- 1d	1405d5	___U_l__________T_____t_________________F_1
- 1e	1405d6	___U_l__________T_____t_________________F_1
- 1f	1405d7	___U_l__________T_____t_________________F_1
- [ra_size = 32, req_count = 16, async_size = 16]
+Agreed. Removed the unused phy_crm_reg_base and phy_crm_reg_size fields from 
+dwcmshc_priv structure and replaced the manual platform_get_resource() + 
+ioremap() calls with devm_platform_ioremap_resource().
 
-The same phenomenon will occur when reading from 49k to 64k. Set the readahead
-flag to the next folio.
+> You always pass priv->crm_reg_base into this helper, so
+> it would be simpler to make it take the sdhci_pltfm_host
+> pointer and the offset instead of the address.
 
-Because the minimum order of folio in address_space equals the block size (at
-least in xfs and bcachefs that already support bs > ps), having request_count
-aligned to block size will not cause overread.
+Good suggestion. Replaced bst_write_phys_bst() and bst_read_phys_bst() with 
+bst_crm_write() and bst_crm_read() that take sdhci_pltfm_host pointer and 
+offset parameters for better encapsulation.
 
-Co-developed-by: Chi Zhiling <chizhiling@kylinos.cn>
-Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
-Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
----
- include/linux/pagemap.h | 6 ++++++
- mm/filemap.c            | 5 +++--
- 2 files changed, 9 insertions(+), 2 deletions(-)
+> The comment says 64K, but the size you use is 32K.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index e63fbfbd5b0f..447bb264fd94 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -480,6 +480,12 @@ mapping_min_folio_nrpages(struct address_space *mapping)
- 	return 1UL << mapping_min_folio_order(mapping);
- }
- 
-+static inline unsigned long
-+mapping_min_folio_nrbytes(struct address_space *mapping)
-+{
-+	return mapping_min_folio_nrpages(mapping) << PAGE_SHIFT;
-+}
-+
- /**
-  * mapping_align_index() - Align index for this mapping.
-  * @mapping: The address_space.
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 765dc5ef6d5a..56a8656b6f86 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2584,8 +2584,9 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
- 	unsigned int flags;
- 	int err = 0;
- 
--	/* "last_index" is the index of the page beyond the end of the read */
--	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
-+	/* "last_index" is the index of the folio beyond the end of the read */
-+	last_index = round_up(iocb->ki_pos + count, mapping_min_folio_nrbytes(mapping));
-+	last_index >>= PAGE_SHIFT;
- retry:
- 	if (fatal_signal_pending(current))
- 		return -EINTR;
--- 
-2.34.1
+Fixed the comment to correctly state 32KB.
 
+> Having an explanation here makes sense, but I don't think this
+> captures what is actually going on, in particular:
+> 
+> - dma_alloc_coherent() being backed by an SRAM that is under
+>   the 4GB boundary
+> - the problem that the SoC is configured that all of DRAM
+>   is outside of ZONE_DMA32
+> - The type of hardware bug that leads to 64-bit DMA being
+>   broken in this SoC.
+
+You're absolutely right. I've enhanced the comment with a detailed explanation 
+of our specific hardware constraints:
+
+1. System memory uses 64-bit bus, eMMC controller uses 32-bit bus
+2. eMMC controller cannot access memory through SMMU due to hardware bug
+3. Our SRAM-based bounce buffer solution works within 32-bit address space
+
+> I still have some hope that the hardware is not actually
+> that broken and you can get it working normally, in one
+> of these ways:
+> - enabling 64-bit addressing in the parent bus
+> - enabling SMMU translation for the parent bus
+> - configuring the parent bus or the sdhci itself to
+>   access the first 4GB of RAM, and describing the
+>   offset in dma-ranges
+> - moving the start of RAM in a global SoC config
+
+I appreciate your optimism about finding alternative solutions. Unfortunately, 
+we have thoroughly investigated these approaches:
+
+Regarding these last two suggestions, I'm not very familiar with the implementation 
+details. Could you provide more guidance on:
+
+1. **dma-ranges approach**: We tried adding these properties to the device tree:
+   ```
+   dma-ranges = <0x00000000 0x00000000 0x100000000>;
+   dma-mask = <0xffffffff>;
+   ```
+   However, we still encounter DMA addressing issues. Are there specific 
+   examples in other drivers we could reference for similar hardware constraints?
+
+2. **Moving RAM start position**: Which component would control this configuration? 
+   Would this require bootloader parameter changes or SoC-level configuration?
+
+We're certainly interested in exploring these alternatives if they could provide 
+a more elegant solution than our current bounce buffer approach.
+
+The v3 patch addresses all your code structure and documentation concerns 
+while providing a clear explanation of why this approach is necessary for 
+our platform. I have also fixed compilation warnings about unused variables 
+that resulted from the refactoring.
+
+**Current DMA Issues**: Despite setting DMA32_ZONE, we still encounter DMA 
+addressing warnings. Key error messages include:
+```
+DMA addr 0x00000008113e2200+512 overflow (mask ffffffff, bus limit 0)
+software IO TLB: swiotlb_memblock_alloc: Failed to allocate [various sizes]
+```
+
+This confirms our hardware limitation where the eMMC controller cannot access 
+memory above 32-bit boundaries, even with ZONE_DMA32 configured.
+
+The complete kernel log with detailed DMA allocation failures and warnings
+is available at: https://pastebin.com/eJgtuHDh
+
+Please let me know if you need any additional information or have suggestions
+for alternative approaches.
+
+Best regards,
+Albert
 
