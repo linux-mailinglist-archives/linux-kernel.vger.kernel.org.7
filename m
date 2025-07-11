@@ -1,168 +1,91 @@
-Return-Path: <linux-kernel+bounces-728021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28551B0229B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:27:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24FFBB022A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0D2B3BF12E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:27:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD391CC1AF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393562F0E28;
-	Fri, 11 Jul 2025 17:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yfUUI/I1"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E8B2F198E;
+	Fri, 11 Jul 2025 17:30:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3586E1B424F
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1782A2F0C78
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752254871; cv=none; b=WvQ5wqNrNkwJVJG1sNj1BFbVZh/rGs+mPdhWm8zs/6KoTyTa3aKGksmxOIJY+FqEaHP9q/17oZbzvTagbfWQQeQ5vjD8Ef7B9E8Goa4Q8FO8M2BYg/QP5l8ZXz7Tq76TZ549nWbctJeApQNg/bW9sIv4HsZjKf43r1EZ3G9EdOE=
+	t=1752255004; cv=none; b=amLcVlmjS6QkE5nYeU5dTZnqfyPjBTlp2DIbwrCWjklVhlu3KVMFsF7ceOsaesaCWxUEnKKYVOvwCGIO0vvC1tURV9pc5Q1+NQ9CK8nW+UOQQRgCs6jFBqIDvDeDD130EaW+9Q2tZFy0L9US6SrS9GWKewjtgKPjZgXxMnaQzyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752254871; c=relaxed/simple;
-	bh=7BbUPB9TjY3KuvvQ6BbKobh16Cwwe89p7CDfJ7ken3A=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LQT5H49ueL16e7t6nV1dgfpbNVb/TzWhPiaUoI8z43tkg6wA4G1c8wiBPpOjSc6XQw3rt71cL+ZGQr19DFr0e35R0F6+9y3lYMpc4PbQXTm3Hfy8ZuSz+gadLtS11AN9mhnQMVqReyhgTpBCwIQkrpf2B/K3pxu51bCbVzcZYMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yfUUI/I1; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-311ef4fb5fdso2820045a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:27:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752254869; x=1752859669; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dI5WZRE/XKn5RiXkAHQA8EKA/1nrWe3w//THUYOXiG8=;
-        b=yfUUI/I1WCKPTuzkDu6rBVL3/ucbdoWXmlNch2ZBWD8OMGdy05NHIkPZ0sQWycqxD6
-         XFodlKZQ98b8zuC/EgkAox0uwVuRrrdR/1Gh5+Lgpb7AnUf/U7A018dZGw+wqRVpwO/Y
-         XbH3MgW8Fzb66fAJATUoWYBrD83ihYxgenAAuOmtTC/Tuxr6v5988VkV0oCPW5JXBV9V
-         zt6KiSeAM5Qq0hf2s/ITw7u6mc0BghCMLIUR80fUZJz4FFbqgb9I9HLsAdX8xRGvMQ4H
-         w9lRToVBnf5zEXc9O527W1ElQzhNiObjZo9sb6+gjQWURInAw0WUzh61gPve2NKroO1m
-         +LHQ==
+	s=arc-20240116; t=1752255004; c=relaxed/simple;
+	bh=5wIUFH3p3hc8B6Ka7CMxGym9Tziz+cragojfTnvgQOc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ftcZ28dYu/+F3Unkt8vDGFcWhK5/R76OHzMQgwec9OY6MJHJH7NfWjL5XpT8tqA1Dfaht7czywkqK+zPz3Vi5BhGNAH/fUfuFhmCJlG1gkuqvq570FTmFFxIv18jCsF8dVHvQguyeAWqiUT0YyoNLoabyEuma7NjHMN8OozoqH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e05997f731so47204795ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:30:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752254869; x=1752859669;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+        d=1e100.net; s=20230601; t=1752255002; x=1752859802;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dI5WZRE/XKn5RiXkAHQA8EKA/1nrWe3w//THUYOXiG8=;
-        b=g4yDFr4CEpqCxbQcUBUOOE8FQJPdCz9GeEpyTz731Uj3IziaxlGPIPCL1YeqXTZFOY
-         +krYFjBNDT4zytkKVyqiSKlsmO3QQpI+gVCMw4HN7MRVm6P1ifmC5uqp0Png2Z/MyNt7
-         RqbwT2gVjQPMYV7DrV4eafVdOgT0HHCHp2GHvsmTEGxI7Nj1TOcKXAGJXIb2nyqmR+Yu
-         +1hv8/fi8DMEgIGjLcdovM5Hl9NzaUZrKhiRdVfxU1erwXyAWbOMN/w9R1fXwA4SlllL
-         4OVhhcHtbqLTUgt7D0cJ0eb629xN7/0phEk9zL17dRFg5XSbT5Mx1mGqdBO7HyscBoUl
-         JQSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwDGiT/iE5EZb4JaQo/rFh/RirebqSl4XZezoARi1IaslWZ7bQDntCJonMANdV2l3WGXhfEPBGJ4l6Hf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj1rIaZCBPcDMXeDKC1TomgR028KGffVbCHwRw/4yqY4BrkWgI
-	Fpux9Dw98ZT7FFsjzsxLH3tanSisELT8uNqS13UXUD/Kj/B2yCFx59LDm8eFcqRak6AiQ1xW0/t
-	Eh/X9aA==
-X-Google-Smtp-Source: AGHT+IGxwIvpw9fUAW0Mwbq5ilN49YnbmM7rGv1RwroHtxVkw4tibaMArvZDoQXRDnjprNhgZh4DLVyTols=
-X-Received: from pjbof15.prod.google.com ([2002:a17:90b:39cf:b0:2fe:800f:23a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:fc4e:b0:315:b07a:ac12
- with SMTP id 98e67ed59e1d1-31c4ccc1c1cmr6694127a91.14.1752254869481; Fri, 11
- Jul 2025 10:27:49 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 11 Jul 2025 10:27:46 -0700
+        bh=KtYj5NrUJYfCiYvUPXTxIhWupGeSnswC1vMADMD4/6E=;
+        b=hc02JN1BEMaFVt19CSKVm8+HKxyGbLq8/4s2guAblwjTiliy8cZvgeqiSpS9WMUXwL
+         6rzA29uDopd8C9Byde+ldk3cGuAQm4w67u/XbtGO1VdpYpTCjK5R0XrPsC7aAQooA2PX
+         /8J+P89AqTNME82GgAV55uKsNg+Kg+TwW45ioliIVtmB7LCtUDRuF6DLjmYbRttfNU/T
+         cEHLS74L2LpS+V4VBnQEj8ReVCd24febfQ0weLkkuZRrPTAqgEyequ4eVjooqqGPTJJO
+         kaC8YvSe9AjCkuf3vIAwBtWnmHxWR9/WzqA8C+FyzdCwf9WlrH0GXnT+bgqTKH5HYJ7T
+         mZkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeP5GQWi+ROVLH7BQVgaRrN/7jjbpcQsV4DEfyu9cKjOBaHMYyAom05nIWWWiA9abFeHMJ0niZZ2maKaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmFljGNETxgAFdHTWz637iNiRcis3blF7nWbgObDBRs3nI+tBI
+	8FIAcVrUtAy/D4ahS2nTBr+nRgExvqlpSNTVi1Xz8ume8NPIMnJ5Y4UrmGd5fFdldOogPliwy3N
+	+/b3knFVrhISQSNo45jfOzAj4Vib/ldLfjShPYMoRE7xjH1kLxjHK9oX2WOI=
+X-Google-Smtp-Source: AGHT+IHzRB2BUsrViLN0NCJNyjkK8/XfSLHMn0mIEK6+ILPjJzMMqz5TTV41Eh8cSECo1M/2sndo3Feu2SABg0xx1Qq2f1RrQxs5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250711172746.1579423-1-seanjc@google.com>
-Subject: [PATCH] KVM: SVM: Emulate PERF_CNTR_GLOBAL_STATUS_SET for PerfMonV2
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sandipan Das <sandipan.das@amd.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:2163:b0:3e0:51bb:6e42 with SMTP id
+ e9e14a558f8ab-3e254313c42mr45683925ab.6.1752255002208; Fri, 11 Jul 2025
+ 10:30:02 -0700 (PDT)
+Date: Fri, 11 Jul 2025 10:30:02 -0700
+In-Reply-To: <okx6a3ngonajh7jrzc65ybd4i6bcnkc7gm4mggyo3jlm6s2ojx@yy5jcipsnd3l>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68714a1a.a00a0220.26a83e.005a.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] WARNING in bdev_getblk
+From: syzbot <syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, anna.luese@v-bien.de, brauner@kernel.org, 
+	jack@suse.cz, jfs-discussion@lists.sourceforge.net, libaokun1@huawei.com, 
+	linkinjeon@kernel.org, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	p.raghav@samsung.com, shaggy@kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
 
-Emulate PERF_CNTR_GLOBAL_STATUS_SET when PerfMonV2 is enumerated to the
-guest, as the MSR is supposed to exist in all AMD v2 PMUs.
+Hello,
 
-Fixes: 4a2771895ca6 ("KVM: x86/svm/pmu: Add AMD PerfMonV2 support")
-Cc: stable@vger.kernel.org
-Cc: Sandipan Das <sandipan.das@amd.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/asm/msr-index.h | 1 +
- arch/x86/kvm/pmu.c               | 5 +++++
- arch/x86/kvm/svm/pmu.c           | 1 +
- arch/x86/kvm/x86.c               | 2 ++
- 4 files changed, 9 insertions(+)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index fa878b136eba..ea5366b733c3 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -732,6 +732,7 @@
- #define MSR_AMD64_PERF_CNTR_GLOBAL_STATUS	0xc0000300
- #define MSR_AMD64_PERF_CNTR_GLOBAL_CTL		0xc0000301
- #define MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR	0xc0000302
-+#define MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET	0xc0000303
- 
- /* AMD Last Branch Record MSRs */
- #define MSR_AMD64_LBR_SELECT			0xc000010e
-diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-index 75e9cfc689f8..a84fb3d28885 100644
---- a/arch/x86/kvm/pmu.c
-+++ b/arch/x86/kvm/pmu.c
-@@ -650,6 +650,7 @@ int kvm_pmu_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		msr_info->data = pmu->global_ctrl;
- 		break;
- 	case MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR:
-+	case MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET:
- 	case MSR_CORE_PERF_GLOBAL_OVF_CTRL:
- 		msr_info->data = 0;
- 		break;
-@@ -711,6 +712,10 @@ int kvm_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		if (!msr_info->host_initiated)
- 			pmu->global_status &= ~data;
- 		break;
-+	case MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET:
-+		if (!msr_info->host_initiated)
-+			pmu->global_status |= data & ~pmu->global_status_rsvd;
-+		break;
- 	default:
- 		kvm_pmu_mark_pmc_in_use(vcpu, msr_info->index);
- 		return kvm_pmu_call(set_msr)(vcpu, msr_info);
-diff --git a/arch/x86/kvm/svm/pmu.c b/arch/x86/kvm/svm/pmu.c
-index 288f7f2a46f2..aa4379e46e96 100644
---- a/arch/x86/kvm/svm/pmu.c
-+++ b/arch/x86/kvm/svm/pmu.c
-@@ -113,6 +113,7 @@ static bool amd_is_valid_msr(struct kvm_vcpu *vcpu, u32 msr)
- 	case MSR_AMD64_PERF_CNTR_GLOBAL_STATUS:
- 	case MSR_AMD64_PERF_CNTR_GLOBAL_CTL:
- 	case MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR:
-+	case MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET:
- 		return pmu->version > 1;
- 	default:
- 		if (msr > MSR_F15H_PERF_CTR5 &&
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 2806f7104295..15c34fbac22a 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -367,6 +367,7 @@ static const u32 msrs_to_save_pmu[] = {
- 	MSR_AMD64_PERF_CNTR_GLOBAL_CTL,
- 	MSR_AMD64_PERF_CNTR_GLOBAL_STATUS,
- 	MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR,
-+	MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET,
- };
- 
- static u32 msrs_to_save[ARRAY_SIZE(msrs_to_save_base) +
-@@ -7353,6 +7354,7 @@ static void kvm_probe_msr_to_save(u32 msr_index)
- 	case MSR_AMD64_PERF_CNTR_GLOBAL_CTL:
- 	case MSR_AMD64_PERF_CNTR_GLOBAL_STATUS:
- 	case MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR:
-+	case MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET:
- 		if (!kvm_cpu_cap_has(X86_FEATURE_PERFMON_V2))
- 			return;
- 		break;
+Reported-by: syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com
+Tested-by: syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com
 
-base-commit: 6c7ecd725e503bf2ca69ff52c6cc48bb650b1f11
--- 
-2.50.0.727.gbf7dc18ff4-goog
+Tested on:
 
+commit:         a62b7a37 Add linux-next specific files for 20250711
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b87a8c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bb4e3ec360fcbd0f
+dashboard link: https://syzkaller.appspot.com/bug?extid=01ef7a8da81a975e1ccd
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14c6c68c580000
+
+Note: testing is done by a robot and is best-effort only.
 
