@@ -1,208 +1,102 @@
-Return-Path: <linux-kernel+bounces-727342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3032B018C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:52:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1836EB018BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14DB1B474E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8C45586A1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE2127F16A;
-	Fri, 11 Jul 2025 09:49:22 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C03727EFE6;
+	Fri, 11 Jul 2025 09:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K0O2EOHu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zXNl0BF8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB7727C854
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251C427E075;
+	Fri, 11 Jul 2025 09:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752227362; cv=none; b=q2IWu09no13oMtVm++KCwp1NpWE2VZ+I+6YtNYMSL/hDQ7iOODYQypf23To2m0Otda5+DlcJOU07ZA+BmHXK8N8a1LXWcm732/zZZ7IOEA8u/AyAOeGcXMjTAAUvUCi6rISckFPvoyczmtPzswy4o7RYZUqJYk6JpA0fbR96070=
+	t=1752227413; cv=none; b=c/+q3ptxpmKTQprKLqHKmhHOgX4TQSmqkEOfz+fMZ4WvnGX4Q94sfJ7gwai1N4AEcodpSW8VCB+bBpxRiVGZoBHpiTgoeC41skwyLw1AtTpHM/jNv4O59vIINuPjq2QjLmySRS+ZXwEfFXyIOZzkJ55wr/1P80zZtfGh0m8/yik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752227362; c=relaxed/simple;
-	bh=KBBCA4ST0AIfZMPfEBu51s+rw1J0kOK14uQSN909J8M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cONMbsDS5FHVPS6Sq3ZxC5FBJrgzjbhR6DU3W9QpNEmV6ddXUirPjAzVOusB/Y7ZhXnT9LmCUriD/uC4RiiTwx81WCF/rzfWntcfewhbtHXD+LthpTsYDF2GcQFoW2WxNRoBbnW97WIcBIG69raSnfZC15B0PJo5niQJmmCFPyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uaANU-0007fX-6X; Fri, 11 Jul 2025 11:49:12 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uaANS-007tqK-1V;
-	Fri, 11 Jul 2025 11:49:10 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uaANS-004Ygb-1H;
-	Fri, 11 Jul 2025 11:49:10 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Lukas Wunner <lukas@wunner.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	netdev@vger.kernel.org,
-	Andre Edich <andre.edich@microchip.com>
-Subject: [PATCH net v3 3/3] net: phy: smsc: recover missed link-up IRQs on LAN8700 with adaptive polling
-Date: Fri, 11 Jul 2025 11:49:09 +0200
-Message-Id: <20250711094909.1086417-4-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250711094909.1086417-1-o.rempel@pengutronix.de>
-References: <20250711094909.1086417-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1752227413; c=relaxed/simple;
+	bh=fW1NnlF1yw7WFSGTMF/b4xSOPsEU5pODFRCx1PUeiqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZR81sKDdaosse/qnahkuZDT8m1TjZYggGetvzp4/SqRh8+qCoehjldQg0IPYi/aGtB63N+DSv8mJ4V/tu8N8jExDWbqrV6EFddzxSIrrj2EUhmI4A7VA5vyVaXvfIeNTTQcHQHcbICn9P0+WQducbTJvNkQYZV0nBlJdIS4JEis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K0O2EOHu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zXNl0BF8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 11 Jul 2025 11:50:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752227410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fW1NnlF1yw7WFSGTMF/b4xSOPsEU5pODFRCx1PUeiqs=;
+	b=K0O2EOHuzUPWhmP4zny1ofpcedMSdv09xdBGpVDp+2UC92dcsT/yy8jRi4D5aYgZ3EvW47
+	yvmNsI//YfkM1yjSdHvXDHbHqrbU0S1PH3iofcOEmNqcQPqy4bHBCLIWfXe6J3n9NQoA6D
+	B4mqWUKUJ6eBlkf8MUDbmLHtJ0DJAgLxOWCg/qpUp7Faa1/yz4ypRHGog/91fRpFaYrerV
+	6uXmqi2FRTMSGPnq2uHDdPpHIe0XI7RSuty6CRG9V9svZTUJ8o5tKw3NFGHKJPwPH5RHli
+	jeVaCBhpwjmaw9V5pRpmnTHsHunZWE55oha8RW/DS7tqkABSdrz143Ohf+mFjw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752227410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fW1NnlF1yw7WFSGTMF/b4xSOPsEU5pODFRCx1PUeiqs=;
+	b=zXNl0BF85i9QM+tSVf/L8Qg0ITyOSVteI6J79Cp/fXCOJAXs2c64Yz5vwd3mIfu5wYMgC2
+	wc7ysHst148kgRAg==
+From: Nam Cao <namcao@linutronix.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Xi Ruoyao <xry111@xry111.site>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+Message-ID: <20250711095008.lBxtWQh6@linutronix.de>
+References: <cda3b07998b39b7d46f10394c232b01a778d07a9.camel@xry111.site>
+ <20250710034805.4FtG7AHC@linutronix.de>
+ <20250710040607.GdzUE7A0@linutronix.de>
+ <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
+ <20250710062127.QnaeZ8c7@linutronix.de>
+ <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
+ <20250710083236.V8WA6EFF@linutronix.de>
+ <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
+ <20250711050217.OMtx7Cz6@linutronix.de>
+ <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
 
-Fix unreliable link detection on the LAN8700 PHY (integrated in LAN9512
-and related USB adapters) when configured for 10 Mbit/s half- or
-full-duplex with autonegotiation disabled, and connected to a link
-partner that still advertises autonegotiation.
+On Fri, Jul 11, 2025 at 11:44:28AM +0200, Christian Brauner wrote:
+> I think we should revert the fix so we have time to fix it properly
+> during v6.17+. This patch was a bit too adventurous for a fix in the
+> first place tbh.
 
-In this scenario, the PHY may emit several link-down interrupts during
-negotiation but fail to raise a final link-up interrupt. As a result,
-phylib never observes the transition and the kernel keeps the network
-interface down, even though the link is actually up.
+Agreed. I did feel a bit uneasy when I saw the patch being applied to
+vfs.fixes.
 
-To handle this, add a get_next_update_time() callback that performs 1 Hz
-polling for up to 30 seconds after the last interrupt, but only while
-the PHY is in this problematic configuration and the link is still down.
-This ensures link-up detection without unnecessary long delays or
-full-time polling.
+Let me know if you want me to send a patch, otherwise I assume you will do
+the revert yourself.
 
-After 30 seconds with no further interrupt, the driver switches back to
-IRQ-only mode. In all other configurations, IRQ-only mode is used
-immediately.
-
-This patch depends on:
-- commit 8bf47e4d7b87 ("net: phy: Add support for driver-specific next
-  update time")
-- a prior patch in this series:
-  net: phy: enable polling when driver implements get_next_update_time
-  net: phy: allow drivers to disable polling via get_next_update_time()
-
-Fixes: 1ce8b37241ed ("usbnet: smsc95xx: Forward PHY interrupts to PHY driver to avoid polling")
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Lukas Wunner <lukas@wunner.de>
----
-changes v2:
-- Switch to hybrid approach: 1 Hz polling for 30 seconds after last IRQ
-  instead of relaxed 30s polling while link is up
-- Only enable polling in problematic 10M autoneg-off mode while link is down
-- Return PHY_STATE_IRQ in all other configurations
-- Updated commit message and comments to reflect new logic
----
- drivers/net/phy/smsc.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
-diff --git a/drivers/net/phy/smsc.c b/drivers/net/phy/smsc.c
-index b6489da5cfcd..88eb15700dbd 100644
---- a/drivers/net/phy/smsc.c
-+++ b/drivers/net/phy/smsc.c
-@@ -39,6 +39,9 @@
- /* interval between phylib state machine runs in ms */
- #define PHY_STATE_MACH_MS		1000
- 
-+/* max retry window for missed link-up */
-+#define SMSC_IRQ_MAX_POLLING_TIME	secs_to_jiffies(30)
-+
- struct smsc_hw_stat {
- 	const char *string;
- 	u8 reg;
-@@ -54,6 +57,7 @@ struct smsc_phy_priv {
- 	unsigned int edpd_mode_set_by_user:1;
- 	unsigned int edpd_max_wait_ms;
- 	bool wol_arp;
-+	unsigned long last_irq;
- };
- 
- static int smsc_phy_ack_interrupt(struct phy_device *phydev)
-@@ -100,6 +104,7 @@ static int smsc_phy_config_edpd(struct phy_device *phydev)
- 
- irqreturn_t smsc_phy_handle_interrupt(struct phy_device *phydev)
- {
-+	struct smsc_phy_priv *priv = phydev->priv;
- 	int irq_status;
- 
- 	irq_status = phy_read(phydev, MII_LAN83C185_ISF);
-@@ -113,6 +118,8 @@ irqreturn_t smsc_phy_handle_interrupt(struct phy_device *phydev)
- 	if (!(irq_status & MII_LAN83C185_ISF_INT_PHYLIB_EVENTS))
- 		return IRQ_NONE;
- 
-+	WRITE_ONCE(priv->last_irq, jiffies);
-+
- 	phy_trigger_machine(phydev);
- 
- 	return IRQ_HANDLED;
-@@ -684,6 +691,38 @@ int smsc_phy_probe(struct phy_device *phydev)
- }
- EXPORT_SYMBOL_GPL(smsc_phy_probe);
- 
-+static unsigned int smsc_phy_get_next_update(struct phy_device *phydev)
-+{
-+	struct smsc_phy_priv *priv = phydev->priv;
-+
-+	/* If interrupts are disabled, fall back to default polling */
-+	if (phydev->irq == PHY_POLL)
-+		return PHY_STATE_TIME;
-+
-+	/*
-+	 * LAN8700 may miss the final link-up IRQ when forced to 10 Mbps
-+	 * (half/full duplex) and connected to an autonegotiating partner.
-+	 *
-+	 * To recover, poll at 1 Hz for up to 30 seconds after the last
-+	 * interrupt - but only in this specific configuration and while
-+	 * the link is still down.
-+	 *
-+	 * This keeps link-up latency low in common cases while reliably
-+	 * detecting rare transitions. Outside of this mode, rely on IRQs.
-+	 */
-+	if (phydev->autoneg == AUTONEG_DISABLE && phydev->speed == SPEED_10 &&
-+	    !phydev->link) {
-+		unsigned long last_irq = READ_ONCE(priv->last_irq);
-+
-+		if (!time_is_before_jiffies(last_irq +
-+					    SMSC_IRQ_MAX_POLLING_TIME))
-+			return PHY_STATE_TIME;
-+	}
-+
-+	/* switching to IRQ without polling */
-+	return PHY_STATE_IRQ;
-+}
-+
- static struct phy_driver smsc_phy_driver[] = {
- {
- 	.phy_id		= 0x0007c0a0, /* OUI=0x00800f, Model#=0x0a */
-@@ -749,6 +788,7 @@ static struct phy_driver smsc_phy_driver[] = {
- 	/* IRQ related */
- 	.config_intr	= smsc_phy_config_intr,
- 	.handle_interrupt = smsc_phy_handle_interrupt,
-+	.get_next_update_time = smsc_phy_get_next_update,
- 
- 	/* Statistics */
- 	.get_sset_count = smsc_get_sset_count,
--- 
-2.39.5
-
+Nam
 
