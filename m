@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-727060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B062DB01488
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:25:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D74CB0148B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3613B3BB8C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:24:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 289B81AA1C97
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE131EB1AA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF15D1EB5E1;
 	Fri, 11 Jul 2025 07:25:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pgZ8WbA7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DD61DC98C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD131E834B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752218706; cv=none; b=MBcr31wqDne+PWZ/034A/e6T3fZ8ksyWyCfXAOsPjNafBh8q/LqTONr0cjEwcpaHvIbg3MYYa/H/qDMvuDa4LHKqMoMmolbdjStLinVrPrfmW5JbGXMDpxUnE6ZNkz+jroJA4Gm94dTgRTO4bazceJpDqWqqRpVtj6IgxudmnTQ=
+	t=1752218706; cv=none; b=nOGa471cQbKB83cy/GRBM/08/HI/00/a0hwXGibltJPOQQkoSlw6AINa8JYmu3m8AV2KOUA1qGFHeuAwPMpnKGJ79oc+v8S5HgtlUxGH6riyOSYl4dIgQijSqU7ieOBbbOiYwnBQU+trFjISk1LICKk2TYOxMjvMV+4rKqFN+pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752218706; c=relaxed/simple;
-	bh=icHxeGLHJ+2GLRLVIeoFlPlPPZQSo9aSWmNufjIdbgs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OBEBzntaU8IwFzLHZy8XvPdPf6mck5fNX3QpfpTzyxquBEegeqF3HWrnvvTm5BBHL6GIjjeAc8ZABK8WiysWu4RX30cygvjyfYBeZsPuh9tjg/R/aMfCdAJZCIyzECNnqaEpg86+9cM8xZQbMhVGmiaAyn0i8AicV41NkSAKuyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ua87n-0001bS-PA; Fri, 11 Jul 2025 09:24:51 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ua87m-007sjf-1G;
-	Fri, 11 Jul 2025 09:24:50 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ua87m-003Mpa-11;
-	Fri, 11 Jul 2025 09:24:50 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH net-next v2 1/1] net: selftests: add PHY-loopback test for bad TCP checksums
-Date: Fri, 11 Jul 2025 09:24:49 +0200
-Message-Id: <20250711072449.802677-1-o.rempel@pengutronix.de>
+	bh=qPMlPEUHasRhfrBOHDDaZo3TRKfCZ37IbFpQ9rOiGe4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BFdTxjjMyjkmCbqctwdMBb5i54pwvI1p50jKj/MVW5Yi0fn1VfIW0c3T9/JoXHas5hTTLXpxB8so+ZRn/16s0pqS0Lx9/CmrJiwlWZJ9PhsQXnVivEc+S0a7a1hFo+L5/te53TucbUgFiFx/EPNk+G0Jxap4k1YoH89+HRACw1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pgZ8WbA7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 040BFC4CEED;
+	Fri, 11 Jul 2025 07:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752218705;
+	bh=qPMlPEUHasRhfrBOHDDaZo3TRKfCZ37IbFpQ9rOiGe4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pgZ8WbA7/Bq9U0ukiV55otfOvwZgPBBioQ/G4y/je8S7gI/QTQMyn12CuONYrXHFb
+	 dhNhNAQGZnTAb95KRgD3qLrM01lSP3tDKZ0e+7ibD8yFUS37R6JLFrKK64HmLcRMS4
+	 w3e7EwgWe6///Ileli0cZLLKqmbtSoZ+/ZuGMlc20GjT8wtLZqDkY2HdT1SU+eijLT
+	 JMYjODCPXuM0rtz276g+sklH2QmgH80GYswN/K2wJSXiSHId0lciNHN1463ICdP3zM
+	 DvekFp1Y/l36hLkVPMEQRa92xGrbLwapoPXHLCs05kgSToleA/oQjEWJo3fw+tPpUO
+	 YydSDXgpha74g==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Ben Skeggs <bskeggs@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Ben Skeggs <bskeggs@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	Dave Airlie <airlied@redhat.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/nouveau: check ioctl command codes better
+Date: Fri, 11 Jul 2025 09:24:53 +0200
+Message-Id: <20250711072458.2665325-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,161 +63,54 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Detect NICs and drivers that either drop frames with a corrupted TCP
-checksum or, worse, pass them up as valid.  The test flips one bit in
-the checksum, transmits the packet in internal loopback, and fails when
-the driver reports CHECKSUM_UNNECESSARY.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Discussed at:
-https://lore.kernel.org/all/20250625132117.1b3264e8@kernel.org/
+nouveau_drm_ioctl() only checks the _IOC_NR() bits in the DRM_NOUVEAU_NVIF
+command, but ignores the type and direction bits, so any command with
+'7' in the low eight bits gets passed into nouveau_abi16_ioctl() instead
+of drm_ioctl().
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Check for all the bits except the size that is handled inside of the handler.
+
+Fixes: 27111a23d01c ("drm/nouveau: expose the full object/event interfaces to userspace")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-changes v2:
-- Replaced manual calculation of TCP checksum with standard kernel helper
-  skb_checksum_help().
-- add test documentation
----
- net/core/selftests.c | 84 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 82 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_drm.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/net/core/selftests.c b/net/core/selftests.c
-index 406faf8e5f3f..513c8b5f7c46 100644
---- a/net/core/selftests.c
-+++ b/net/core/selftests.c
-@@ -27,6 +27,7 @@ struct net_packet_attrs {
- 	int max_size;
- 	u8 id;
- 	u16 queue_mapping;
-+	bool bad_csum;
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index 1527b801f013..506eeb44f0d4 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -1284,6 +1284,9 @@ nouveau_ioctls[] = {
+ 	DRM_IOCTL_DEF_DRV(NOUVEAU_EXEC, nouveau_exec_ioctl_exec, DRM_RENDER_ALLOW),
  };
  
- struct net_test_priv {
-@@ -165,6 +166,37 @@ static struct sk_buff *net_test_get_skb(struct net_device *ndev,
- 		thdr->check = ~tcp_v4_check(l4len, ihdr->saddr, ihdr->daddr, 0);
- 		skb->csum_start = skb_transport_header(skb) - skb->head;
- 		skb->csum_offset = offsetof(struct tcphdr, check);
++#define DRM_IOCTL_NOUVEAU_NVIV _IOC(_IOC_READ|_IOC_WRITE, DRM_IOCTL_BASE, \
++				    DRM_COMMAND_BASE + DRM_NOUVEAU_NVIF, 0)
 +
-+		if (attr->bad_csum) {
-+			u16 csum;
-+
-+			/* Force mangled checksum */
-+			if (skb_checksum_help(skb)) {
-+				kfree_skb(skb);
-+				return NULL;
-+			}
-+
-+			/* To avoid sparse warnings about operating on
-+			 * restricted __sum16/__be16 types, explicitly cast the
-+			 * checksum to a plain u16, perform the manipulation,
-+			 * and then cast the result back.
-+			 */
-+			csum = (__force u16)thdr->check;
-+
-+			/* Mangle the checksum by flipping the LSB. */
-+			csum ^= 1;
-+			/* If mangling resulted in 0, use the raw value for a
-+			 * mangled-zero checksum. We use the literal 0xffff
-+			 * because CSUM_MANGLED_0 has a restricted type.
-+			 */
-+			if (!csum)
-+				csum = 0xffff;
-+
-+			/* Cast the final integer value back to the restricted
-+			 * type
-+			 */
-+			thdr->check = (__force __sum16)csum;
-+		}
- 	} else {
- 		udp4_hwcsum(skb, ihdr->saddr, ihdr->daddr);
+ long
+ nouveau_drm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+@@ -1297,14 +1300,10 @@ nouveau_drm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		return ret;
  	}
-@@ -239,7 +271,11 @@ static int net_test_loopback_validate(struct sk_buff *skb,
- 	if (tpriv->packet->id != shdr->id)
- 		goto out;
  
--	tpriv->ok = true;
-+	if (tpriv->packet->bad_csum && skb->ip_summed == CHECKSUM_UNNECESSARY)
-+		tpriv->ok = -EIO;
+-	switch (_IOC_NR(cmd) - DRM_COMMAND_BASE) {
+-	case DRM_NOUVEAU_NVIF:
++	if ((cmd & ~IOCSIZE_MASK) == DRM_IOCTL_NOUVEAU_NVIV)
+ 		ret = nouveau_abi16_ioctl(filp, (void __user *)arg, _IOC_SIZE(cmd));
+-		break;
+-	default:
 +	else
-+		tpriv->ok = true;
-+
- 	complete(&tpriv->comp);
- out:
- 	kfree_skb(skb);
-@@ -285,7 +321,12 @@ static int __net_test_loopback(struct net_device *ndev,
- 		attr->timeout = NET_LB_TIMEOUT;
+ 		ret = drm_ioctl(file, cmd, arg);
+-		break;
+-	}
  
- 	wait_for_completion_timeout(&tpriv->comp, attr->timeout);
--	ret = tpriv->ok ? 0 : -ETIMEDOUT;
-+	if (tpriv->ok < 0)
-+		ret = tpriv->ok;
-+	else if (!tpriv->ok)
-+		ret = -ETIMEDOUT;
-+	else
-+		ret = 0;
- 
- cleanup:
- 	dev_remove_pack(&tpriv->pt);
-@@ -345,6 +386,42 @@ static int net_test_phy_loopback_tcp(struct net_device *ndev)
- 	return __net_test_loopback(ndev, &attr);
- }
- 
-+/**
-+ * net_test_phy_loopback_tcp_bad_csum - PHY loopback test with a deliberately
-+ *					corrupted TCP checksum
-+ * @ndev: the network device to test
-+ *
-+ * Builds the same minimal Ethernet/IPv4/TCP frame as
-+ * net_test_phy_loopback_tcp(), then flips the least-significant bit of the TCP
-+ * checksum so the resulting value is provably invalid (neither 0 nor 0xFFFF).
-+ * The frame is transmitted through the device’s internal PHY loopback path:
-+ *
-+ *   test code -> MAC driver -> MAC HW -> xMII -> PHY ->
-+ *   internal PHY loopback -> xMII -> MAC HW -> MAC driver -> test code
-+ *
-+ * Result interpretation
-+ * ---------------------
-+ *  0            The frame is delivered to the stack and the driver reports
-+ *               ip_summed as CHECKSUM_NONE or CHECKSUM_COMPLETE - both are
-+ *               valid ways to indicate “bad checksum, let the stack verify.”
-+ *  -ETIMEDOUT   The MAC/PHY silently dropped the frame; hardware checksum
-+ *               verification filtered it out before the driver saw it.
-+ *  -EIO         The driver returned the frame with ip_summed ==
-+ *               CHECKSUM_UNNECESSARY, falsely claiming a valid checksum and
-+ *               indicating a serious RX-path defect.
-+ *
-+ * Return: 0 on success or a negative error code on failure.
-+ */
-+static int net_test_phy_loopback_tcp_bad_csum(struct net_device *ndev)
-+{
-+	struct net_packet_attrs attr = { };
-+
-+	attr.dst = ndev->dev_addr;
-+	attr.tcp = true;
-+	attr.bad_csum = true;
-+	return __net_test_loopback(ndev, &attr);
-+}
-+
- static const struct net_test {
- 	char name[ETH_GSTRING_LEN];
- 	int (*fn)(struct net_device *ndev);
-@@ -368,6 +445,9 @@ static const struct net_test {
- 	}, {
- 		.name = "PHY internal loopback, TCP    ",
- 		.fn = net_test_phy_loopback_tcp,
-+	}, {
-+		.name = "PHY loopback, bad TCP csum    ",
-+		.fn = net_test_phy_loopback_tcp_bad_csum,
- 	}, {
- 		/* This test should be done after all PHY loopback test */
- 		.name = "PHY internal loopback, disable",
+ 	pm_runtime_mark_last_busy(dev->dev);
+ 	pm_runtime_put_autosuspend(dev->dev);
 -- 
 2.39.5
 
