@@ -1,136 +1,148 @@
-Return-Path: <linux-kernel+bounces-726809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9456B01184
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:08:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22505B0118A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3128161802
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F350E5C21CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21E61991C9;
-	Fri, 11 Jul 2025 03:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C894219994F;
+	Fri, 11 Jul 2025 03:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZsjurWvL"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hbtmI+4T"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B9618D;
-	Fri, 11 Jul 2025 03:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E81A195B1A;
+	Fri, 11 Jul 2025 03:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752203283; cv=none; b=jYmCBx9tVwhE0OpGevv+YAGDno3dvCvKVX96MfFWXWj4YP0bsCz/2p+67tB2HZRwQ/Y8pU3MJemblww1+FXsWx3eg3++2yiOwxRnsGnyKf1ah1C6yGmuDCLZUy6WzBbbdg33i6PDepEqX5JWsVqM9MlpNnpJuvU6WKB4tOjn3Gw=
+	t=1752203450; cv=none; b=dxixJFjY9nRqj/gK31hJXH3z4N0o+CDu06VGQmVkBYJt24RUuc8gRw4OZNiLR+HxXJbFAtnIoEp+bmjra0ZURlKozGEWUH7C5U0SrX2ScZxukrr5g1ka3cdzjskP1nWIAYBG4CGNyvqdFXExwr2lycxR1K/XcWqLhbXyoXjpT6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752203283; c=relaxed/simple;
-	bh=CQMxU6opKrE0gtd03DqHhHVg+06IqQKCGWRruvwfvUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qPtMIh6vDjVe+MXYyVboXPHiCcWa+2oq2QFFZmQ9OoM2TpNuPbKOk4Q7irUMUkNyark5KR5ltNsSIT5xO1edzHMFMbvKeVYhv2kazFZCk+SY/lCfGkb2ewZrrDxSetBDXE00NF0yUL28+L8k0cgrq6eRggXBCq8rmcVOKcsMa5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZsjurWvL; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752203197;
-	bh=nzGCrWBxu7LxT1519Z6Jy+ivfVDpPMLSetGsisXUtks=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZsjurWvLDnDHx5kF87KfRDjTro+R8YJwVG90f8LNgjNaPlKVjA6ItnkR8iwAVCbvf
-	 x0ttibTOB8RguC5hTKYREf/Kg8CHY5edE0IMkoCegDqCSHlF2vcsuOPb2WXEywqeFV
-	 8ZTDblancK0HuFltFgLxm/+p8ChoG2GZLE6N/3yX8Vo0vnlJWt00MtiPp5CSK/IeLj
-	 hfjAVKevYeEi+yYsdlOzEJZQPy5OJUoDiZAt+HO+iUcap3ZiMl3lozVINnsEwnvpln
-	 0R6UFhCGft6nBIsekwENxHBXwPqonDGnRtIDJQOM12PkSNl70uLj0KNzWhcASUoaH4
-	 I+wUZNX0gfNvA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bdc7J4wvFz4x5Z;
-	Fri, 11 Jul 2025 13:06:35 +1000 (AEST)
-Date: Fri, 11 Jul 2025 13:07:52 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Networking <netdev@vger.kernel.org>, Wei
- Liu <wei.liu@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Naman Jain
- <namjain@linux.microsoft.com>, Shradha Gupta
- <shradhagupta@linux.microsoft.com>
-Subject: linux-next: manual merge of the net-next tree with the hyperv-fixes
- tree
-Message-ID: <20250711130752.23023d98@canb.auug.org.au>
+	s=arc-20240116; t=1752203450; c=relaxed/simple;
+	bh=L63yaiPGvJ249Id/2RRbHTTI3GJEvsSTxsPiKmpWjPM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N9ZIVRL7aAv90orAA/WerDtHZ+5uSRDUWbbAOGBWyunvyN6qjwlVyk30oMe24maOL8sb1dbO/M8h/DIYMHliuE56yhOsIOMjohSaQZRoJab0BTE3prqGxeczHz0VH42C+HPdhN9pHf5fXrWi3jN13yK8E0qNZXSdZZaBFPrZEVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hbtmI+4T; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752203448; x=1783739448;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=L63yaiPGvJ249Id/2RRbHTTI3GJEvsSTxsPiKmpWjPM=;
+  b=hbtmI+4TVlHVTwd5TKmHpRi/YGIcHYrygR7nhkTVwvUO/gx1c7K7lEj/
+   X6iM7wmEyC4F0Sp2gAztShsNU4wkWjQaNds37L4Gcu7Fpgd7AF11G4Mil
+   MaPcjatWT2Z6OZ3FZrWyVyt0pSZfrAsOkhw1xZM49itWH9X/bmlBWVRF7
+   S6rn1UOjIP3/195h6YsPYVpqO/IbYubIGm0kM6mBGNsZGZL07AoYKqq8i
+   8vmeq/E53sysVde16wL48MRxRg/MamdPOXzZJLR1rV60mcD6zts3MRE0O
+   evPI1ou7hBJgvWJh90eLfnFPozKrIGCnMIQmzyRIxVo64AODv6W3xKhIm
+   Q==;
+X-CSE-ConnectionGUID: acAr4UO3QIaU5LqxGaZ4CA==
+X-CSE-MsgGUID: 931CjZoRRBue9xwd1eD31w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="42129636"
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="42129636"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 20:10:48 -0700
+X-CSE-ConnectionGUID: nDP+ywDzQuySZNBwEIv3mQ==
+X-CSE-MsgGUID: NHeP0DHvRL6QFpIo7d1iqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="155675431"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 20:10:43 -0700
+Message-ID: <e00587f2-ebfa-436b-a17a-198ff9c02f4a@linux.intel.com>
+Date: Fri, 11 Jul 2025 11:09:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/cmJgXqToxFCkl8lTdAN_s/5";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ Jason Gunthorpe <jgg@nvidia.com>, Jann Horn <jannh@google.com>,
+ Vasant Hegde <vasant.hegde@amd.com>, Dave Hansen <dave.hansen@intel.com>,
+ Alistair Popple <apopple@nvidia.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Tested-by : Yi Lai" <yi1.lai@intel.com>,
+ iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
+ <20250710135432.GO1613376@noisy.programming.kicks-ass.net>
+ <20250710155319.GK1613633@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250710155319.GK1613633@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/cmJgXqToxFCkl8lTdAN_s/5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 7/10/25 23:53, Peter Zijlstra wrote:
+> On Thu, Jul 10, 2025 at 03:54:32PM +0200, Peter Zijlstra wrote:
+> 
+>>> @@ -132,8 +136,15 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
+>>>   	if (ret)
+>>>   		goto out_free_domain;
+>>>   	domain->users = 1;
+>>> -	list_add(&domain->next, &mm->iommu_mm->sva_domains);
+>>>   
+>>> +	if (list_empty(&iommu_mm->sva_domains)) {
+>>> +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
+>>> +			if (list_empty(&iommu_sva_mms))
+>>> +				static_branch_enable(&iommu_sva_present);
+>>> +			list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
+>>> +		}
+>>> +	}
+>>> +	list_add(&domain->next, &iommu_mm->sva_domains);
+>>>   out:
+>>>   	refcount_set(&handle->users, 1);
+>>>   	mutex_unlock(&iommu_sva_lock);
+>>> @@ -175,6 +186,15 @@ void iommu_sva_unbind_device(struct iommu_sva *handle)
+>>>   		list_del(&domain->next);
+>>>   		iommu_domain_free(domain);
+>>>   	}
+>>> +
+>>> +	if (list_empty(&iommu_mm->sva_domains)) {
+>>> +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
+>>> +			list_del(&iommu_mm->mm_list_elm);
+>>> +			if (list_empty(&iommu_sva_mms))
+>>> +				static_branch_disable(&iommu_sva_present);
+>>> +		}
+>>> +	}
+>>> +
+>>>   	mutex_unlock(&iommu_sva_lock);
+>>>   	kfree(handle);
+>>>   }
+>>
+>> This seems an odd coding style choice; why the extra unneeded
+>> indentation? That is, what's wrong with:
+>>
+>> 	if (list_empty()) {
+>> 		guard(spinlock_irqsave)(&iommu_mms_lock);
+>> 		list_del();
+>> 		if (list_empty()
+>> 			static_branch_disable();
+>> 	}
+> 
+> Well, for one, you can't do static_branch_{en,dis}able() from atomic
+> context...
+> 
+> Was this ever tested?
 
-Hi all,
+I conducted unit tests for vmalloc()/vfree() scenarios, and Yi performed
+fuzzing tests. We have not observed any warning messages. Perhaps
+static_branch_disable() is not triggered in the test cases?
 
-Today's linux-next merge of the net-next tree got a conflict in:
-
-  drivers/net/ethernet/microsoft/mana/gdma_main.c
-
-between commit:
-
-  9669ddda18fb ("net: mana: Fix warnings for missing export.h header inclus=
-ion")
-
-from the hyperv-fixes tree and commit:
-
-  755391121038 ("net: mana: Allocate MSI-X vectors dynamically")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/ethernet/microsoft/mana/gdma_main.c
-index 58f8ee710912,d6c0699bc8cf..000000000000
---- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-+++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@@ -6,9 -6,11 +6,12 @@@
-  #include <linux/pci.h>
-  #include <linux/utsname.h>
-  #include <linux/version.h>
- +#include <linux/export.h>
-+ #include <linux/msi.h>
-+ #include <linux/irqdomain.h>
- =20
-  #include <net/mana/mana.h>
-+ #include <net/mana/hw_channel.h>
- =20
-  struct dentry *mana_debugfs_root;
- =20
-
---Sig_/cmJgXqToxFCkl8lTdAN_s/5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhwgAgACgkQAVBC80lX
-0GwMiAf/YxRVNFfPCz0lEwBVyjZYcoHqxqx+GyWaksiD7zqZibC1siOS8pxe4eAJ
-Q0+INLdK5QAgJWW/sFpBf7aPIDYccEcIl1Uh6CF1QKPFth4t0lE25S0DsNTp86w3
-EB1wL6RP98z0MHKfnvPaqA5QI6A4VGk8X8hvr/kxJkrGuc5r621jNYlr3bd17Uhp
-psbhIIXNoaQoDHmmWdltchphQeHRzV2475dL9RRrXkKJv4UVddiTJs8hML9JYQNe
-+yrD/iZwte04PZW31XDttBufFfc+pQ/Tt8KrOceDmFNO0NVgf3njsYhp4tgaoeft
-B4eYQ4mZ5r9U5ya4kmp/0WkSfW4isw==
-=m7sS
------END PGP SIGNATURE-----
-
---Sig_/cmJgXqToxFCkl8lTdAN_s/5--
+Thanks,
+baolu
 
