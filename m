@@ -1,193 +1,114 @@
-Return-Path: <linux-kernel+bounces-726927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C3DB012F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:46:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C824B012F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38FFA764E6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:45:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 880AA1C8308B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFBD1C84A1;
-	Fri, 11 Jul 2025 05:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBAD1C84B3;
+	Fri, 11 Jul 2025 05:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h7+43k3t"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cTeaLxeX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E63208CA
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892BB469D;
+	Fri, 11 Jul 2025 05:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752212758; cv=none; b=vCS+Q0hon1YgpzCC4MLIKNiFymTcztlFzXOiLi7BqgqFlSae/ECA/j0PTVkOLFdwZg20BEhi9zTTSdU5AwUu2hlyeIwWUbNX0EnFpFlqqIfSgNpToKQ0AnQXGpLMg1mwSuft9i8Jp3/mGUhf7eYmIzq8yJJOkBbaD/AEYXAM/Aw=
+	t=1752212994; cv=none; b=kkbQBzrfG6ebF+9Ph7U2rcRiWnDT0tG5LIqiHn7Jc9ZquuuFqHpsZSYT5k0v6NIMS9XQdbhv4RcdkGVaES0OzRZOC+QhwcN5zZUt61pmlN20UeAH4zyN3gQE1QtrDuhv3/AODnkdW90ofQihFSnY6rxo5utCwbbYjie1kxTFCvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752212758; c=relaxed/simple;
-	bh=hh2viuw6/CvRpR3oJ1xx03ZuIBGwZAIq26Z/R1oJzXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zx1Zjjc6bqw5xYidEl/rAT8T4P32t5Hn3nnQqqm/VTrJmTQfR3mg4zKy1vIc5hQmpAXs1vnyvtdjD3C066eOMdIx74MhxixucjgTz7+pIA9LckkUhJlENnTa5sRnnZKMqX+tYiJvWl5xo262Bg0RubjFi6F36qwmd2GPancwnro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h7+43k3t; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752212755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0qtyNVJKoY4vUM6H0HNH1aeGZFsWkPI7ERqDS6nK5Jk=;
-	b=h7+43k3t6aTMArK7cv1wKKNYEqw4aTrXQxqidfAYihJHmvitc8s3WgdQjmajAp1myWMAa0
-	J4amgjOLZjQqPAUN918RdmaAXditf0+joiipJON6pARKLYeApbwqjE2nPjibRfxo4UA0Cu
-	LY918oblK3mjiJ0UiYzziSdvqtecQXA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-98-2u2-2BgzPRK2RpKllGoKuQ-1; Fri,
- 11 Jul 2025 01:45:54 -0400
-X-MC-Unique: 2u2-2BgzPRK2RpKllGoKuQ-1
-X-Mimecast-MFC-AGG-ID: 2u2-2BgzPRK2RpKllGoKuQ_1752212753
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E40D419560A6;
-	Fri, 11 Jul 2025 05:45:52 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.45.224.54])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 206751977000;
-	Fri, 11 Jul 2025 05:45:49 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-spdx@vger.kernel.org
-Subject: [PATCH] LICENSES: Replace the obsolete address of the FSF
-Date: Fri, 11 Jul 2025 07:45:48 +0200
-Message-ID: <20250711054548.195276-1-thuth@redhat.com>
+	s=arc-20240116; t=1752212994; c=relaxed/simple;
+	bh=N547kb+EDzrWedKEp0F4foA8weUWsuctW/SSslhI4H0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PxLP9TOS2yAkcCIzYQ5Tcjm70Yez/5DK06yzrg/kLquMBDePI8/E/aIdHMde8CdTGnSkQOku+P3M14P1GKm5Q+bLIwRshVOdYdqj7Aj5toPLn6HRy79/BZAVCaSjDMrnn5xKa/DMOzfp2h9REud+/nAdltCTbp936j3ecW7KWuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cTeaLxeX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1316FC4CEED;
+	Fri, 11 Jul 2025 05:49:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752212994;
+	bh=N547kb+EDzrWedKEp0F4foA8weUWsuctW/SSslhI4H0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cTeaLxeXuAF9A79hastFo2SzBvR4ZWrW6bjDiYf65JUz8dTW2D6KZ35AEH8Sozzqz
+	 sHHz2a4klDnV75wBvRZmvC5RurxKTFqfge8iVdYc4w0vTegjXUIJS3/+zBpUEm9wLU
+	 kPl1EKvPYuz7OemngbV+M6v/JZyxGtV8j8Gzj8Z66vMOQgtSjL8/yZpIXw+dEHZrrQ
+	 4tFIyXKTD1E2Xzzf2yRkH4gupP/N7vmaLiiuBaR/o612YBS48KlO+ESDikjdxiKe36
+	 c5ejDiehZKTFOrmeKcdZT7qJd/HUOwA9pO34hb9PgsD2qjQ1dVHp/iO3uTLS0087LN
+	 Ofeh0ypW0Jbjg==
+Date: Fri, 11 Jul 2025 07:49:50 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH v2 12/12] docs: kdoc: emit a warning for ancient
+ versions of Python
+Message-ID: <20250711074950.3e1ea8ce@foz.lan>
+In-Reply-To: <20250710233142.246524-13-corbet@lwn.net>
+References: <20250710233142.246524-1-corbet@lwn.net>
+	<20250710233142.246524-13-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Thomas Huth <thuth@redhat.com>
+Em Thu, 10 Jul 2025 17:31:42 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-The FSF does not reside in the Franklin street anymore. Let's update
-the address with the link to their website, as suggested in the latest
-revisions of their licenses.
-(See https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt for example)
+> Versions of Python prior to 3.7 do not guarantee to remember the insertion
+> order of dicts; since kernel-doc depends on that guarantee, running with
+> such older versions could result in output with reordered sections.
+> 
+> Python 3.9 is the minimum for the kernel as a whole, so this should not be
+> a problem, but put in a warning just in case somebody tries to use
+> something older.
+> 
+> Suggested-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index fdde14b045fe..23ac4ad204f4 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -12,6 +12,7 @@ Read a C language source or header FILE and extract embedded
+>  documentation comments
+>  """
+>  
+> +import sys
+>  import re
+>  from pprint import pformat
+>  
+> @@ -238,6 +239,14 @@ class KernelDoc:
+>          # Place all potential outputs into an array
+>          self.entries = []
+>  
+> +        #
+> +        # We need Python 3.7 for its "dicts remember the insertion
+> +        # order" guarantee
+> +        #
+> +        if sys.version_info.major == 3 and sys.version_info.minor < 7:
+> +            self.emit_message(0,
+> +                              'Python 3.7 or later is required for correct results')
+> +
+>      def emit_msg(self, ln, msg, warning=True):
+>          """Emit a message"""
+>  
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- LICENSES/deprecated/GPL-1.0 |  6 +++---
- LICENSES/preferred/GPL-2.0  | 10 ++++------
- LICENSES/preferred/LGPL-2.0 |  5 ++---
- LICENSES/preferred/LGPL-2.1 |  8 ++++----
- 4 files changed, 13 insertions(+), 16 deletions(-)
 
-diff --git a/LICENSES/deprecated/GPL-1.0 b/LICENSES/deprecated/GPL-1.0
-index 3a4fa969e4c29..8d0a75431f06d 100644
---- a/LICENSES/deprecated/GPL-1.0
-+++ b/LICENSES/deprecated/GPL-1.0
-@@ -14,7 +14,8 @@ License-Text:
- 	     Version 1, February 1989
- 
-  Copyright (C) 1989 Free Software Foundation, Inc.
--                    675 Mass Ave, Cambridge, MA 02139, USA
-+                    <https://fsf.org/>
-+
-  Everyone is permitted to copy and distribute verbatim copies
-  of this license document, but changing it is not allowed.
- 
-@@ -227,8 +228,7 @@ the exclusion of warranty; and each file should have at least the
-     GNU General Public License for more details.
- 
-     You should have received a copy of the GNU General Public License
--    along with this program; if not, write to the Free Software
--    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-+    along with this program; if not, see <https://www.gnu.org/licenses/>.
- 
- Also add information on how to contact you by electronic and paper mail.
- 
-diff --git a/LICENSES/preferred/GPL-2.0 b/LICENSES/preferred/GPL-2.0
-index ff0812fd89cc4..ea8e93dc44bc4 100644
---- a/LICENSES/preferred/GPL-2.0
-+++ b/LICENSES/preferred/GPL-2.0
-@@ -20,8 +20,8 @@ License-Text:
- 		    GNU GENERAL PUBLIC LICENSE
- 		       Version 2, June 1991
- 
-- Copyright (C) 1989, 1991 Free Software Foundation, Inc.
--                       51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-+ Copyright (C) 1989, 1991 Free Software Foundation, Inc.,
-+ <https://fsf.org/>
-  Everyone is permitted to copy and distribute verbatim copies
-  of this license document, but changing it is not allowed.
- 
-@@ -322,10 +322,8 @@ the "copyright" line and a pointer to where the full notice is found.
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     GNU General Public License for more details.
- 
--    You should have received a copy of the GNU General Public License
--    along with this program; if not, write to the Free Software
--    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
--
-+    You should have received a copy of the GNU General Public License along
-+    with this program; if not, see <https://www.gnu.org/licenses/>.
- 
- Also add information on how to contact you by electronic and paper mail.
- 
-diff --git a/LICENSES/preferred/LGPL-2.0 b/LICENSES/preferred/LGPL-2.0
-index 957d798fe0372..dc629746eb726 100644
---- a/LICENSES/preferred/LGPL-2.0
-+++ b/LICENSES/preferred/LGPL-2.0
-@@ -16,7 +16,7 @@ GNU LIBRARY GENERAL PUBLIC LICENSE
- Version 2, June 1991
- 
- Copyright (C) 1991 Free Software Foundation, Inc.
--51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-+<https://fsf.org/>
- 
- Everyone is permitted to copy and distribute verbatim copies of this
- license document, but changing it is not allowed.
-@@ -468,8 +468,7 @@ FITNESS FOR A PARTICULAR PURPOSE. See the GNU Library General Public
- License for more details.
- 
- You should have received a copy of the GNU Library General Public License
--along with this library; if not, write to the Free Software Foundation,
--Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
-+along with this library; if not, see <https://www.gnu.org/licenses/>.
- 
- Also add information on how to contact you by electronic and paper mail.
- 
-diff --git a/LICENSES/preferred/LGPL-2.1 b/LICENSES/preferred/LGPL-2.1
-index b73f9b6230f52..105b9f3c5ba12 100644
---- a/LICENSES/preferred/LGPL-2.1
-+++ b/LICENSES/preferred/LGPL-2.1
-@@ -18,7 +18,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
- Version 2.1, February 1999
- 
- Copyright (C) 1991, 1999 Free Software Foundation, Inc.
--51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-+<https://fsf.org/>
- 
- Everyone is permitted to copy and distribute verbatim copies of this
- license document, but changing it is not allowed.
-@@ -488,9 +488,9 @@ FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
- for more details.
- 
- You should have received a copy of the GNU Lesser General Public License
--along with this library; if not, write to the Free Software Foundation,
--Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA Also add
--information on how to contact you by electronic and paper mail.
-+along with this library; if not, see <https://www.gnu.org/licenses/>.
-+
-+Also add information on how to contact you by electronic and paper mail.
- 
- You should also get your employer (if you work as a programmer) or your
- school, if any, to sign a "copyright disclaimer" for the library, if
--- 
-2.50.0
 
+Thanks,
+Mauro
 
