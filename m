@@ -1,98 +1,175 @@
-Return-Path: <linux-kernel+bounces-728328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9029FB026D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 00:13:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE66B026D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 00:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE58B5C20E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:13:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A505C227D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB35221290;
-	Fri, 11 Jul 2025 22:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6A721FF4D;
+	Fri, 11 Jul 2025 22:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eY7Nc23L"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oj0ZnnpU"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F181621E0BA;
-	Fri, 11 Jul 2025 22:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B90B13B590
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 22:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752271979; cv=none; b=eD/XhogcIsgAAZhl+hHa/2SWsQSklWlXbD6THMEUiqdd/j2HoPKoC0+fdqR+i8jzAfepYO18DbJrRNwppkUGxRFae8RccqchJqRzaHOfzSoCIbzyXn8XLnH8NfpRgGk5UTrq4bViNaORkz23MP6hayhnH7JWW0Ny1jqdX3etx08=
+	t=1752272022; cv=none; b=i0hwKTH4T0IsgPsbVXtkPAYpFZyZjsd+isWlQzAurZ2NB4cYHCFyYeadp9tS5FTFOS+NuddgCWCpBfjLIvJ4AtS8yrwHbKGER7Ml/uNveKqAExQRXF2Gw45LGRRWX/E2Tem/q2GymCKAsjikt4DN6AQBD898ATJyNgEVYjS76EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752271979; c=relaxed/simple;
-	bh=SH1hT2BdZTLCljhfAoe4DjRGA0IxsqRiFeQ0moHmdR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QQ1pdSKZl0AOgaHKxLBSKJI0MGVt9FMjx2OeKux5L8MHbX1teKHhhuffwsbVovr4CxBmi9a7jC6CqzyRWtJ7d1Y5iFSipN9lVKyhPjV0SglG3hdAvAm5/nouqECo81Y7CWhiGt+bGOB4KTs69tqzHSNgTfmGwqDeCyQOnBXGRyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eY7Nc23L; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=cA89VBNrB6GjbQ3qCWib8lcT9Z2OuEVMWLg33JleEDs=; b=eY7Nc23Lx+NRDgMT3dbj3D32VN
-	5iVDtQUrp/O6ivrRYhcsY3Za9kU7CssN3SD1N7s9BXCWKRRMp6bvyHZJOIy/OSDbpVeyLgbKwVZf0
-	s1T7Y6W67WFZyXkF8OeAd3981/tjKUjiUhB4KzoESNitcJgEKkXn6yPQjpL8uGg+uZHuPp4+G4Jh5
-	acWNsfuwSQQtuUgf1djdnhEbIwSsKxqGZp/OWkcrNb24YyVuTGqLt7nRpOI3n3dYzqQpggCyimJTz
-	zgJHMZ1WwkTQchytYlPNzMr5+PKYdnjH2BkSt8Z8eJIYVXAtoLZhZO+Mpl2Ad08p5O4nQcYSbQZFL
-	i0NXfVnQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uaLzB-0000000EbTa-3QPV;
-	Fri, 11 Jul 2025 22:12:54 +0000
-Message-ID: <a1745a9b-d0a6-4c72-9096-6f9d15274b9a@infradead.org>
-Date: Fri, 11 Jul 2025 15:12:46 -0700
+	s=arc-20240116; t=1752272022; c=relaxed/simple;
+	bh=DV/Vih/DO7F+zd/SpqjFtPvKmIS6pOWu9mI2t3TLKL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Okbq++drwHEm5zNMOpEUxpakFBqfLj+PTP+foPTWva4HfBYrKrgmI/ThEcRQgooigZ4CMmaPHiDfVFNRSGv0maPd1nocvGFXZHU4dRKRp/CASaBo60CYI8LCu4KfZ+nd+3i6feq8F1/QdkqtWp6eMCzgRTeX2QDXqdGZtEydXDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oj0ZnnpU; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6fac7147cb8so36244586d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:13:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752272020; x=1752876820; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jh0vMNxlPOeSMOhUf/BXn4w6B7Y4VFUfXRXP3fqqHI8=;
+        b=Oj0ZnnpUtbreJJcYwMeANK2K1eY/A7HNzz51i7SFXkr1vQ4JemDQ0LBzuoX3HDI3b9
+         8LqFmAKrzq4z0uSK2uvD6Nb3sznzqFNhmEeeTa29+FQOhplTBTbHD9q3WWxTc2UKDZds
+         aGPZOqf+uvsudtmCmPQCJR+k7cr72Uhq1UY4Vem+zkaEwCdTCymQJTrCRMm8CNLWHLgW
+         7zZWRw+uZq5I0x+N5++AzXlsCOLCUTR8mfNumQNF3PCOdsarl3xgQyEUmf3wMzkA0VGH
+         fANTXN3OyPdscrNw9YKWoCSoSk4IBVpY2r7hnvYxw5ev9M9IdwvAcjS0BdTmboBz6tNo
+         msOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752272020; x=1752876820;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jh0vMNxlPOeSMOhUf/BXn4w6B7Y4VFUfXRXP3fqqHI8=;
+        b=blKQIdts9oIx3BizY79q41NwouWWE1gqPu3HA3RhsQXq16yWl6sYGSH3LYElC7iXgV
+         2YCLVWxX5fteacY8l+TAqbrsXgdCok6LlTrlGKrwoQzhdpz7iQ9lIJkZhFjhMnU3P+KO
+         Bd3bJ4UMlb8NtXlQYD2MT1F+1PBkV0bCcxq97n3xI0Bq4MhgA6I3iAY9VGo4n1oNSyJL
+         TFyNbGk0nlh83zEfx/59RnuMaojTE/TTfwOJVr2GgvXEUxAtTdQfc+BGqkxXxlDZdS45
+         Chqlw1nco5SblM8FOBaZJyzRxwSrmmYt1kSODLpJ6yArpMBGV7JRJaWMmD0iaoomklXK
+         /oow==
+X-Forwarded-Encrypted: i=1; AJvYcCU5ePlpZYkZdbjlqNyPN1tfo8fmP/kkJv542e9XCEAWP2QsR3w24hsqcb+PRjECQpdTH6aHz3/SgwMy3Iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNxEcD8f6qloVoj8ztN3iREPi3rWpFPsuO8tCYcZSFtLyWhYEX
+	17fFG8vZZcd+PtGLseFj+QZj5PVarzW4xXw+C0JrkZfaFai4EmLr+wb2
+X-Gm-Gg: ASbGncuNxI1pS5y3e73QB9umuqQPXgQZeaWJ9QouuPLSYlxgA0dMtClUeSyt9qS83Sn
+	xlgyEabgsi3aTtx9KiHsb2oENlt5ZfXEdpMRUKXrhDsqDfyTmsMYFWl3u7pLnMd2sKqafYNncKk
+	mZMv6fD6u92PYgYC2YVx3trtJaB4jEVogJAHu9hKaEF2Z5y6FNIinISNA2MolLQx9nz9RPtE/lS
+	lXFguI3s/TJidnByWnT3QdqD9ld4eRgTN8aNEv8gapr6pIigO4Qp6+clImBsWHxsJA1NqhaMGTs
+	ywNpRvfMSW/5c9Yn1rPI5QeJzA6akX48d5Byhf+moyCE+yZVd6mDcnIgDvfSwRqEv+LGxmoJDRa
+	s2iHpyayZLnIibUHa9jqab/xeixkdO0bPl4r+oRF0ie0H0f8ZWJ2vjMNVI2xov8BAMAuBWtTcJV
+	SOw+gXuE0mczWg
+X-Google-Smtp-Source: AGHT+IG/5ZvbPKKY1+QnoEFUnpHg8GPFGq1MEgCqaFVOkk+r70cYHjelvIp8ZaBRKymAqBOgsvf6BQ==
+X-Received: by 2002:a05:6214:e6c:b0:704:761a:13d3 with SMTP id 6a1803df08f44-704a36114c6mr91549826d6.32.1752272019895;
+        Fri, 11 Jul 2025 15:13:39 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcd8ef047fsm266824085a.0.2025.07.11.15.13.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 15:13:39 -0700 (PDT)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id E712FF40066;
+	Fri, 11 Jul 2025 18:13:38 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Fri, 11 Jul 2025 18:13:38 -0400
+X-ME-Sender: <xms:koxxaMw9G5ULlk6EimCMAthVnyNvKV5eCllVclpqS4dVErk-tS5oEQ>
+    <xme:koxxaFwuuRytxHvwfr92hVTcqyWyGgMQdnXS8qlpzhg-FEojxIY8G4Sv-aJpVZhtA
+    E63yqT0EcNDtZaHXg>
+X-ME-Received: <xmr:koxxaNY2TkrMW0rUGpaBY30JI_5_DlS79sDI9Gr2GXa2tHIbTYV6twK9NVuq>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeggeegkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtg
+    homhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgv
+    thgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepmhhinhhgohesrhgvug
+    hhrghtrdgtohhmpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehkrhiihihsiihtohhfrdhkohiilhhofihskhhisehlihhnrghrohdrohhrghdprh
+    gtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtoheplhhonhhgmhgrnhes
+    rhgvughhrghtrdgtohhmpdhrtghpthhtoheptghmlhhlrghmrghssehgohhoghhlvgdrtg
+    homh
+X-ME-Proxy: <xmx:koxxaO2qctPhMpQWAbZOS6kmF3b-fN7x4XVm9ATBCwIySWRn-bmaDg>
+    <xmx:koxxaHczSniXEA-D7xbfteNWeHoZ1yTAQCO7lIG3auuaKDoxT62LDA>
+    <xmx:koxxaDL1eAJWxeu5i3YTdf9zA9IC7eo-Y6Jv93Q8REq8VEVfbExpHg>
+    <xmx:koxxaNrxUIV2dhLSl1Lz1VZVtiVZp_YqD_MmSdkJu3Sq8MUghQEKkA>
+    <xmx:koxxaJvgohbGpwruV6YmjjGBvvQIn-tBgmWG3VQxgQY_oigFMFnVjuj->
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Jul 2025 18:13:38 -0400 (EDT)
+Date: Fri, 11 Jul 2025 15:13:37 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Waiman Long <longman@redhat.com>,
+	Carlos Llamas <cmllamas@google.com>,
+	Ying Huang <huang.ying.caritas@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/10] [RESEND] lockdep: change 'static const' variables
+ to enum values
+Message-ID: <aHGMkczXH3zxugmD@tardis-2.local>
+References: <20250409122131.2766719-1-arnd@kernel.org>
+ <20250409122314.2848028-1-arnd@kernel.org>
+ <20250409122314.2848028-6-arnd@kernel.org>
+ <aBTQjnB8ej3z_van@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Jul 11
- (drivers/platform/x86/lenovo/wmi-gamezone.o)
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- platform-driver-x86@vger.kernel.org,
- "Derek J. Clark" <derekjohn.clark@gmail.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20250711191014.12a64210@canb.auug.org.au>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250711191014.12a64210@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBTQjnB8ej3z_van@black.fi.intel.com>
 
-
-
-On 7/11/25 2:10 AM, Stephen Rothwell wrote:
-> Hi all,
+On Fri, May 02, 2025 at 05:02:54PM +0300, Andy Shevchenko wrote:
+> On Wed, Apr 09, 2025 at 02:22:58PM +0200, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > gcc warns about 'static const' variables even in headers when building
+> > with -Wunused-const-variables enabled:
+> > 
+> > In file included from kernel/locking/lockdep_proc.c:25:
+> > kernel/locking/lockdep_internals.h:69:28: error: 'LOCKF_USED_IN_IRQ_READ' defined but not used [-Werror=unused-const-variable=]
+> >    69 | static const unsigned long LOCKF_USED_IN_IRQ_READ =
+> >       |                            ^~~~~~~~~~~~~~~~~~~~~~
+> > kernel/locking/lockdep_internals.h:63:28: error: 'LOCKF_ENABLED_IRQ_READ' defined but not used [-Werror=unused-const-variable=]
+> >    63 | static const unsigned long LOCKF_ENABLED_IRQ_READ =
+> >       |                            ^~~~~~~~~~~~~~~~~~~~~~
+> > kernel/locking/lockdep_internals.h:57:28: error: 'LOCKF_USED_IN_IRQ' defined but not used [-Werror=unused-const-variable=]
+> >    57 | static const unsigned long LOCKF_USED_IN_IRQ =
+> >       |                            ^~~~~~~~~~~~~~~~~
+> > kernel/locking/lockdep_internals.h:51:28: error: 'LOCKF_ENABLED_IRQ' defined but not used [-Werror=unused-const-variable=]
+> >    51 | static const unsigned long LOCKF_ENABLED_IRQ =
+> >       |                            ^~~~~~~~~~~~~~~~~
+> > 
+> > This one is easy to avoid by changing the generated constant definition
+> > into an equivalent enum.
 > 
-> Changes since 20250710:
+> Any news here, please? The problem still exists in v6.15-rc4.
 > 
 
-on i386, when
-CONFIG_LENOVO_WMI_EVENTS=y
-CONFIG_LENOVO_WMI_HELPERS=y
-CONFIG_LENOVO_WMI_GAMEZONE=y
-# CONFIG_LENOVO_WMI_TUNING is not set
+Queued for v6.17, thanks!
 
-ld: drivers/platform/x86/lenovo/wmi-gamezone.o: in function `lwmi_gz_probe':
-wmi-gamezone.c:(.text+0x63c): undefined reference to `devm_lwmi_om_register_notifier'
+Regards,
+Boqun
 
-Adding
-+	select LENOVO_WMI_TUNING
-for config LENOVO_WMI_GAMEZONE fixes the build error.
-Is that the right fix?
-If so, please go ahead with it.
-
-
--- 
-~Randy
-
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
