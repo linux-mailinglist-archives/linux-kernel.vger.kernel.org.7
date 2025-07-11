@@ -1,155 +1,263 @@
-Return-Path: <linux-kernel+bounces-727838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74CF6B0206E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:29:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B93B02072
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E44EC5C0AA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:29:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9337A5478DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36E82E4252;
-	Fri, 11 Jul 2025 15:28:37 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D5D2ECEBE;
+	Fri, 11 Jul 2025 15:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pd6gt/kr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE692EAB76
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C270415C158
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752247717; cv=none; b=eilYoL6LYwTwfc6sUPAcW+K2et8e3+IK9hwNig4KDPvkCu7G2FKVL56rhwCmX8YJisPTjXmiyCvaj/nBwgr5+x8IYxBKOs5ARM+8BlbQGpbFypi5e7Iv30ZGLs8TGtkM0rwSY9OF8FWlsH7Pn4S1+ZIkGRewT0Qsb6+O9/M2wI8=
+	t=1752247833; cv=none; b=psFS65jJauMMhbGJaL/8jTlgTq1Z8jBYKd70hPWdRfVKY8sjhIGYvEjD87j0N2NiewuigYxQSJcJ/FZNOSREtu4TVCqA7StQQvI1aD1PWzcF+oWZsxHfzlF1TJtRdq09uAkpAeJ9S40FkYrCr5fZZdRvXgCnC3y92x6NQPoMkVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752247717; c=relaxed/simple;
-	bh=R8bzj8BnA7xeu1Ejvt/BsrBAhec9/uuK7hWClDnpXTk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fHhUfCYuV4Dgswrwu/a0GOiMTrLs20nGoyZAXh3XzCOhtDVAxPlT4lE4ZrOkt0EZMTyMzrz/2LTgULAkZDcUaPDi8JBkRO3+X6MiASEDuqoabUSTsUGN0cVw4OsxKWRFmfXyZlA6SaL7EYflHZOMINu+HvXsXLbxdmbfJA9SqBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-86d07ccc9ecso170433739f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:28:35 -0700 (PDT)
+	s=arc-20240116; t=1752247833; c=relaxed/simple;
+	bh=LwyP5RQEZvwJGkwUiKrsVQ3Rs0j9aTdx6Qt1qMEY+ow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sM8z850HQV6g703Waw2XickhrHh8eEwhismGp5riqfGuYT8Ow37x1xFdl8RK96p6Qw5MeS7ByxC9NjlgZJ9tNi7kWXTpbap//nmTq71uIz8zxDMdTERcRifTdZCDgKDoktMLJW9Fgtg6xTA5FaSa8aXTrxlJThDqGEUuIIeIGjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pd6gt/kr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752247830;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rsik21whPZOqyHBc6OLT/nSyW/8eOcGoHSMTkTuXGd0=;
+	b=Pd6gt/krfLFiUdwyDSEbXGB5HOmLise6yM+TMqnbuRQ8nTUFpTl6Z90VZv52S1Si1ek7ER
+	gdIsQiYYqBN3XDMHUSkR5DcWVvPCAul+gIvZUPoV/CqlDU7bA8C5YtGb0UiF5ilchia+ZU
+	EFHRzyXp5lNwF1sXKgfZE052WCyfQJE=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-omOY-WBPM2-1x7kVhraaGg-1; Fri, 11 Jul 2025 11:30:29 -0400
+X-MC-Unique: omOY-WBPM2-1x7kVhraaGg-1
+X-Mimecast-MFC-AGG-ID: omOY-WBPM2-1x7kVhraaGg_1752247828
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4f7f1b932so1428330f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:30:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752247715; x=1752852515;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qUNjYbfnIGUDJ+fH4l34rKGE25OHoqzo1g6K2n9c1ag=;
-        b=sJ/eQW51r30M6Ka/HQnyWl8sO5l9ROcUgZQdlzvOlDJPihTYgEc1CwDP0voB6nbBlM
-         EP3tAhdazzLTdhOdlRMrsT9wFUcs+9HFX560EtO3uk7Tec/HP4u9Dqf0WFRqfeTQl8Y6
-         OS31cyGw7CMwnVqxbjwchO/CCW2IkWf6IOtoCkzF1rJihJD+MhFEi5fAfdF/Yw6v/bgM
-         1EvNNoX40JwoWMUBz7hTUV/YHOsLpr8LwaUCx1+YPz8BCBL+na/pk5UM5Wylwp/rejRS
-         5UybZxYD7ZBJy1wPo5McdI9cJ8zFbtXPkeUnmffGYkuA4nHl8c1M8o/I0MwyMy9mDsjO
-         xrnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxY4UKCQB1JVJtWlywoaqOzdjtud8gt0/DvpcuUBDSF6KFbBqtuT0ZXC9eQMwfb9fNwjvjujo1j9brmmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLGCalumIMiPZhWLGydtsOJPY4bS/tkSzUUfJGKdw60c12v/VB
-	GRBkcog0+vDWR5AbTw/+vSDgG3RuwPtiQAvdkpmA7vDfGbWeyzrxK85adesqgd/DLA5WkfQkKw6
-	ZANmevW8z4qNCBh88/ONwhQ9A3fCXyOpqr6L5WZwqrzZ4vbEoGJr3Dvl2O6g=
-X-Google-Smtp-Source: AGHT+IGYZn4X48OCo8kCHHADiKQ5Dln3PDwFXiplHCO//8GCHwE1OHJRDwnBPZ6U8h8w0sqyFj7hWoJrDVyjppe8t0yks4IxL3sv
+        d=1e100.net; s=20230601; t=1752247828; x=1752852628;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rsik21whPZOqyHBc6OLT/nSyW/8eOcGoHSMTkTuXGd0=;
+        b=hGwMdp4Pb8h9hY5p2UflFbD8SAbOr3CJAFtyl6y2xi+5HnDLJG8+weWjxcmCaNBLlQ
+         88SM74bULVKVY8TsZ3WY5tLW6L/hj/z3hkgIG8UlUUTVRRYibyY6Gjzz2mRpZpG50goF
+         32pijKhZKNkM8Sv9DSJQHIpLtCml/FyGRCMTA37q07xWEssxMvcLHhYtlyL3quZQ/wtE
+         qmL1uTEv0D4lWlzxzY7wO2teliRiOUITBz6685HzMwZypDrLU1UsLvZ1KW9d1dpAU5ay
+         OOcqccoK6ZYDSlAd6t0UesBcn9hdRECPKg5yrwSkXZ0SeQthS6AdwMLM8qnI1HS66elI
+         E0nA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgn3dA1Udcy56ZvIcJKYmruKaFrlExfOTq3Hjmw0qO6fZ4dVGj38Rb9TxgULayc8c7vmkjbQMpKXawK0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWOOa0eid4U1bdZ1eM8ZIWJ5LDBgqVhkNN5x3fknm8ncaG6fQV
+	uSL2ZQrO36ph+Jut87FzanubUDjVM9joQhOHRXY6eBcm/IKqM1lxDOKR9jl6kZWWU5pNwS77bo0
+	lqf6zP/Z88L1M3LtHAsfF7k6JwLcQ5RHyO55Fpunsr3BfaTuA6B4yvgLa20AVNTsP5Q==
+X-Gm-Gg: ASbGncsoxQpkKaQN+TLlZ3nrD4vDo7DpK37K9BkYM6VMvz6DEuMAuKxFQslbKN0p1Zi
+	Fv4eH8PEW89wWQObyjzTCn9CV/15x5q35jpqm3Y2xgR1vRF7PSE95lBL1CWkyS9GXwVW6ZIqD/5
+	8iIOyHzPL/zha6twg2043R4FZOiLdGsILu8tVPmlsZ3lG+olob8OFzFgsLKPYLdTbZZAFcDD5vp
+	dZRzmDgVsVI99awrPBnAicD/vQtIPRCgRP45dOH6EL2gmfMzK6/egxxEjdYfth6l3vOcoUYHsLc
+	Qqxg7iCl/dnDlKid606XfbUsTPiHMwDuc8c2wKlPmS/8Jw0uA+izhj4kUanCHSC2DS5v9bcW/kd
+	UFm6JdMvfewqtgtD7Wz412/r1IfVhZrNvJQ+2ETkBDgpBGE4tQQtDlauGIQNCUWrH4+I=
+X-Received: by 2002:a05:6000:2003:b0:3a4:fc07:f453 with SMTP id ffacd0b85a97d-3b5f2db184cmr2547755f8f.8.1752247828025;
+        Fri, 11 Jul 2025 08:30:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjBwRPCaPOq1srqFxwL5schSZeTVmYXsug+wnI1Ro36cTzqPp74WyM9cOGS69i0RjHYOa7HQ==
+X-Received: by 2002:a05:6000:2003:b0:3a4:fc07:f453 with SMTP id ffacd0b85a97d-3b5f2db184cmr2547716f8f.8.1752247827522;
+        Fri, 11 Jul 2025 08:30:27 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8bd18ffsm4664264f8f.9.2025.07.11.08.30.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 08:30:26 -0700 (PDT)
+Message-ID: <056787ba-eed1-4517-89cd-20c7cc9935dc@redhat.com>
+Date: Fri, 11 Jul 2025 17:30:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1589:b0:86d:60:702f with SMTP id
- ca18e2360f4ac-87977e8b783mr477224139f.0.1752247714648; Fri, 11 Jul 2025
- 08:28:34 -0700 (PDT)
-Date: Fri, 11 Jul 2025 08:28:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68712da2.a00a0220.26a83e.0052.GAE@google.com>
-Subject: [syzbot] [hams?] WARNING: refcount bug in ax25_setsockopt
-From: syzbot <syzbot+0ee4da32f91ae2a3f015@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jreuter@yaina.de, kuba@kernel.org, linux-hams@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 01/14] mm/memory: drop highest_memmap_pfn sanity check
+ in vm_normal_page()
+To: Hugh Dickins <hughd@google.com>
+Cc: Lance Yang <lance.yang@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Lance Yang <ioworker0@gmail.com>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-2-david@redhat.com>
+ <aFVZCvOpIpBGAf9w@localhost.localdomain>
+ <c88c29d2-d887-4c5a-8b4e-0cf30e71d596@redhat.com>
+ <CABzRoyZtxBgJUZK4p0V1sPAqbNr=6S-aE1S68u8tKo=cZ2ELSw@mail.gmail.com>
+ <5e5e8d79-61b1-465d-ab5a-4fa82d401215@redhat.com>
+ <aa977869-f93f-4c2b-a189-f90e2d3bc7da@linux.dev>
+ <b6d79033-b887-4ce7-b8f2-564cad7ec535@redhat.com>
+ <b0984e6e-eabd-ed71-63c3-4c4d362553e8@google.com>
+ <36dd6b12-f683-48a2-8b9c-c8cd0949dfdc@redhat.com>
+ <0b1cb496-4e50-252e-5bcf-74a89a78a8c0@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <0b1cb496-4e50-252e-5bcf-74a89a78a8c0@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 08.07.25 04:52, Hugh Dickins wrote:
+> On Mon, 7 Jul 2025, David Hildenbrand wrote:
+>> On 07.07.25 08:31, Hugh Dickins wrote:
+>>> On Fri, 4 Jul 2025, David Hildenbrand wrote:
+>>>> On 03.07.25 16:44, Lance Yang wrote:
+>>>>> On 2025/7/3 20:39, David Hildenbrand wrote:
+>>>>>> On 03.07.25 14:34, Lance Yang wrote:
+>>>>>>> On Mon, Jun 23, 2025 at 10:04 PM David Hildenbrand <david@redhat.com>
+>>>>>>> wrote:
+>>>>>>>>
+>>>>>>>> On 20.06.25 14:50, Oscar Salvador wrote:
+>>>>>>>>> On Tue, Jun 17, 2025 at 05:43:32PM +0200, David Hildenbrand wrote:
+>>>>>>>>>> In 2009, we converted a VM_BUG_ON(!pfn_valid(pfn)) to the current
+>>>>>>>>>> highest_memmap_pfn sanity check in commit 22b31eec63e5 ("badpage:
+>>>>>>>>>> vm_normal_page use print_bad_pte"), because highest_memmap_pfn was
+>>>>>>>>>> readily available.
+> 
+> highest_memmap_pfn was introduced by that commit for this purpose.
+> 
 
-syzbot found the following issue on:
+Oh, somehow I thought it was around before that.
 
-HEAD commit:    faeefc173be4 sock: Correct error checking condition for (a..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=157b9c04580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eecd7902e39d7933
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ee4da32f91ae2a3f015
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15875398580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137b9c04580000
+[...]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/25a813551e04/disk-faeefc17.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/06484bfac01b/vmlinux-faeefc17.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/df48cbb45ee8/bzImage-faeefc17.xz
+>> We catch corruption in a handful of PTE bits, and that's about it. You neither
+>> detect corruption of flags nor of PFN bits that result in another valid PFN.
+> 
+> Of course it's limited in what it can catch (and won't even get called
+> if the present bit was not set - a more complete patch might unify with
+> those various "Bad swap" messages). Of course. But it's still useful for
+> stopping pfn_to_page() veering off the end of the memmap[] (in some configs).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0ee4da32f91ae2a3f015@syzkaller.appspotmail.com
+Right, probably in the configs we both don't care that much about 
+nowadays :)
 
-------------[ cut here ]------------
-refcount_t: addition on 0; use-after-free.
-WARNING: CPU: 1 PID: 6151 at lib/refcount.c:25 refcount_warn_saturate+0x13a/0x1d0 lib/refcount.c:25
-Modules linked in:
-CPU: 1 UID: 0 PID: 6151 Comm: syz-executor223 Not tainted 6.15.0-rc1-syzkaller-00209-gfaeefc173be4 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:refcount_warn_saturate+0x13a/0x1d0 lib/refcount.c:25
-Code: 00 6b a1 8c e8 17 87 7d fc 90 0f 0b 90 90 eb b9 e8 0b 65 be fc c6 05 94 dc 44 0b 01 90 48 c7 c7 60 6b a1 8c e8 f7 86 7d fc 90 <0f> 0b 90 90 eb 99 e8 eb 64 be fc c6 05 75 dc 44 0b 01 90 48 c7 c7
-RSP: 0018:ffffc900046afc68 EFLAGS: 00010246
-RAX: 975256fdc5619000 RBX: ffff888034835ac8 RCX: ffff888078041e00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000002 R08: ffffffff81828a12 R09: fffffbfff1d7a978
-R10: dffffc0000000000 R11: fffffbfff1d7a978 R12: 1ffff110069bac05
-R13: ffff888034835a00 R14: ffff888013018000 R15: ffff888034dd6028
-FS:  000055556b9c9380(0000) GS:ffff888125093000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffdd88feca8 CR3: 0000000029122000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ax25_setsockopt+0xbb7/0xf00 net/ax25/af_ax25.c:705
- do_sock_setsockopt+0x3b1/0x710 net/socket.c:2296
- __sys_setsockopt net/socket.c:2321 [inline]
- __do_sys_setsockopt net/socket.c:2327 [inline]
- __se_sys_setsockopt net/socket.c:2324 [inline]
- __x64_sys_setsockopt+0x1ee/0x280 net/socket.c:2324
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f59be6f7969
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 31 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdd88feda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000200000000000 RCX: 00007f59be6f7969
-RDX: 0000000000000019 RSI: 0000000000000101 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000010 R09: 00007f59be745214
-R10: 0000200000000000 R11: 0000000000000246 R12: 00007ffdd88fedcc
-R13: 00007ffdd88fee00 R14: 00007ffdd88fede0 R15: 0000000000000036
- </TASK>
+> And it's still useful for printing out a series of "Bad page map" messages
+> when the page table is corrupted: from which a picture can sometimes be
+> built up (isolated instance may just be a bitflip; series of them can
+> sometimes show e.g. ascii text, occasionally helpful for debugging).
 
+It's kind of a weird thing, because we do something very different 
+opposed to other areas where we detect that something serious is going 
+wrong (e.g., WARN).
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+But another thread just sparked whether we should WARN here, so I'll 
+leave that discussion to the other thread.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+>>
+>> Corruption of the "special" bit might be fun.
+>>
+>> When I was able to trigger this during development once, the whole machine
+>> went down shortly after -- mostly because of use-after-free of something that
+>> is now a page table, which is just bad for both users of such a page!
+>>
+>> E.g., quit that process and we will happily clear the PTE, corrupting data of
+>> the other user. Fun.
+>>
+>> I'm sure I could find a way to unify the code while printing some comparable
+>> message, but this check as it stands is just not worth it IMHO: trying to
+>> handle something gracefully that shouldn't happen, when really we cannot
+>> handle it gracefully.
+> 
+> So, you have experience of a time when it didn't help you. Okay. And we
+> have had experience of other times when it has helped, if only a little.
+> Like with other "Bad page"s: sometimes helpful, often not; but tending to
+> build up a big picture from repeated occurrences.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Okay. I was rather curious how often we would actually hit this one 
+here: from my recollection, the mapcount underflows are much more 
+frequent than the ones from vm_normal_page().
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> We continue to disagree. I can't argue more than append the 2.6.29
+> commit message, which seems to me as valid now as it was then.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Not that I agree that performing these sanity checks in each and every 
+config is something reasonable, but apparently you think that they are 
+still useful, 16 years after they were introduced.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+So, let me try finding a way to unify the code while keeping that error 
+handling for now in place.
 
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Cheers,
+
+David / dhildenb
+
 
