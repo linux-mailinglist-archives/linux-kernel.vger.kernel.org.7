@@ -1,114 +1,125 @@
-Return-Path: <linux-kernel+bounces-727448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85020B01A59
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:10:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2F6B01A5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 358C1543100
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:10:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D30501CA7092
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE991289354;
-	Fri, 11 Jul 2025 11:10:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43819A920;
-	Fri, 11 Jul 2025 11:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E0F289E04;
+	Fri, 11 Jul 2025 11:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DLkvah+C"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EC2A920;
+	Fri, 11 Jul 2025 11:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752232239; cv=none; b=M2m9jnWJMcmATsdgoMlsimEPkZJZYhpZhK3eh0HL9dzorfNMSXv+2aEDVgDUddTBlgHe1K4g5V2iCr3EvObLrkhCRYx1FNAhRUSYhWExouir7KhZiSa7D/SIrVbUn++/ell/XMED49VqxrhaZ9iw06O2x08t65VZgSPH9Y8HcLc=
+	t=1752232342; cv=none; b=IgG08yUqXsfblGwlJbLfavDubO7bMseWiUC9csOf6BqLasnOHSikXmR2CsJUvcNtRsDwaU2RWZirMlPXcSvDOjeUSVhQzCHf4w3LUu+Wweal+32nMDI9yS1UcGDoDDNOcyqOak10HBSY4zeMCaCf45hGmKwZjBngJE3FYklhCjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752232239; c=relaxed/simple;
-	bh=CgL1+6wjU/0sifUGCXKQs6R8RhsCYq3Lork5T6y6lc8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=t16gtbVWTYyrt6F/8DeRl5YjY+njIyjqcq+zxEqrgNq7XjQX9AYsK5NKuC3TJQcOVQbCb1HoePyNQO3EQlBgCw8PDJc/t5sb4P3OYxVeDvGzwRqnFre+My4V692qwzO8i2x8hvtn1cAPVTpHklEUAFgt0BeL8XNqaP5ZFyj4b9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F094E106F;
-	Fri, 11 Jul 2025 04:10:23 -0700 (PDT)
-Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7BCF83F6A8;
-	Fri, 11 Jul 2025 04:10:33 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-Date: Fri, 11 Jul 2025 12:10:15 +0100
-Subject: [PATCH] perf tests bp_account: Fix leaked file descriptor
+	s=arc-20240116; t=1752232342; c=relaxed/simple;
+	bh=i1zamw8OxrbK1pmX8AUAnMJhV/OqLlLcVIZD8H6BljY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t2u6mevjERgmKr0Zpq9k6npk/UDBib/v9MMZOpHK6ba4vEVDgEJqlmzDe2ohhS8EhY4cJN0tOBwp2jwlLpSh/YKem4hHxnoqcK5seqYSaoBFhJjyYT4zypaCk4dVUqYXcVGHt6TM5C+MAHOAezbj4szF/U/eG0LCLphjU7YGDpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DLkvah+C; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 11 Jul 2025 07:11:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752232326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hmvwVX29UC54z92FzAiIHfQJoLjVbikCZHEZdUt1Xvc=;
+	b=DLkvah+Ci1VSJWI4/B4C7WOGb5TdMdc9dSeZ9dK00ZecpACf0ZdEUCsqcGwjBYJHYjIaoZ
+	KEXe5G1id1Mo7NIyyIBpd/+vk1z25JzlHziVBL6phT9ji3SwNxXBtBcKCx6lnkPXEGAu3q
+	2XwN2jD7fl3/bU8/nzOqQrS3+Gn1n+w=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm@kvack.org, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	Uladzislau Rezki <urezki@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Vlastimil Babka <vbabka@suse.cz>, rust-for-linux@vger.kernel.org, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	linux-bcachefs@vger.kernel.org, bpf@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>
+Subject: Re: [PATCH v12 2/4] mm/slub: allow to set node and align in
+ k[v]realloc
+Message-ID: <2hiakuk5r3daujixvriejrc3nfqo4oiwmdygvyoxprsec3p6wv@k5i6nckj5tcu>
+References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
+ <20250709172441.1032006-1-vitaly.wool@konsulko.se>
+ <aHDSLyHZ8b1ELeWe@hyeyoo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250711-perf_fix_breakpoint_accounting-v1-1-b314393023f9@arm.com>
-X-B4-Tracking: v=1; b=H4sIABbxcGgC/x2NUQqDMBAFryL7bcCkSKVXKRJi+qKLsAkbWwri3
- Rv6OTDMnFShjEqP7iTFhytnaWD7juIWZIXhV2NygxuHu7WmQJNP/PWLIuwlsxw+xJjfcrCsBuG
- GaXGY0mipRYqiyf/Bc76uH+OITZtwAAAA
-X-Change-ID: 20250711-perf_fix_breakpoint_accounting-ea3e8b2e8f51
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
- Ian Rogers <irogers@google.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Aishwarya TCV <aishwarya.tcv@arm.com>, Leo Yan <leo.yan@arm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752232233; l=1618;
- i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=CgL1+6wjU/0sifUGCXKQs6R8RhsCYq3Lork5T6y6lc8=;
- b=eea71U+Try/OjsPsZvneLdaW7diAp6t5mn53j8K2jpssi5Q5ebRCxHzDNMzMX4c2i12KPWCkD
- 8Oh572FW1siBZ2VfskWhkc5IdRCfS6XPh99g0eSOayIoTcsDv+cnQtv
-X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
- pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHDSLyHZ8b1ELeWe@hyeyoo>
+X-Migadu-Flow: FLOW_OUT
 
-Since the commit e9846f5ead26 ("perf test: In forked mode add check that
-fds aren't leaked"), the test "Breakpoint accounting" reports the error:
+On Fri, Jul 11, 2025 at 05:58:23PM +0900, Harry Yoo wrote:
+> On Wed, Jul 09, 2025 at 07:24:41PM +0200, Vitaly Wool wrote:
+> > Reimplement k[v]realloc_node() to be able to set node and
+> > alignment should a user need to do so. In order to do that while
+> > retaining the maximal backward compatibility, add
+> > k[v]realloc_node_align() functions and redefine the rest of API
+> > using these new ones.
+> > 
+> > While doing that, we also keep the number of  _noprof variants to a
+> > minimum, which implies some changes to the existing users of older
+> > _noprof functions, that basically being bcachefs.
+> > 
+> > With that change we also provide the ability for the Rust part of
+> > the kernel to set node and alignment in its K[v]xxx
+> > [re]allocations.
+> > 
+> > Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+> > ---
+> >  fs/bcachefs/darray.c   |  2 +-
+> >  fs/bcachefs/util.h     |  2 +-
+> >  include/linux/bpfptr.h |  2 +-
+> >  include/linux/slab.h   | 38 +++++++++++++++----------
+> >  lib/rhashtable.c       |  4 +--
+> >  mm/slub.c              | 64 +++++++++++++++++++++++++++++-------------
+> >  6 files changed, 72 insertions(+), 40 deletions(-)
+>  
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index c4b64821e680..6fad4cdea6c4 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -4845,7 +4845,7 @@ void kfree(const void *object)
+> >  EXPORT_SYMBOL(kfree);
+> >  
+> >  static __always_inline __realloc_size(2) void *
+> > -__do_krealloc(const void *p, size_t new_size, gfp_t flags)
+> > +__do_krealloc(const void *p, size_t new_size, unsigned long align, gfp_t flags, int nid)
+> >  {
+> >  	void *ret;
+> >  	size_t ks = 0;
+> > @@ -4859,6 +4859,20 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+> >  	if (!kasan_check_byte(p))
+> >  		return NULL;
+> >  
+> > +	/* refuse to proceed if alignment is bigger than what kmalloc() provides */
+> > +	if (!IS_ALIGNED((unsigned long)p, align) || new_size < align)
+> > +		return NULL;
+> 
+> Hmm but what happens if `p` is aligned to `align`, but the new object is not?
+> 
+> For example, what will happen if we  allocate object with size=64, align=64
+> and then do krealloc with size=96, align=64...
+> 
+> Or am I missing something?
 
-  # perf test -vvv "Breakpoint accounting"
-  20: Breakpoint accounting:
-  --- start ---
-  test child forked, pid 373
-  failed opening event 0
-  failed opening event 0
-  watchpoints count 4, breakpoints count 6, has_ioctl 1, share 0
-  wp 0 created
-  wp 1 created
-  wp 2 created
-  wp 3 created
-  wp 0 modified to bp
-  wp max created
-  ---- end(0) ----
-  Leak of file descriptor 7 that opened: 'anon_inode:[perf_event]'
-
-A watchpoint's file descriptor was not properly released. This patch
-fixes the leak.
-
-Fixes: 032db28e5fa3 ("perf tests: Add breakpoint accounting/modify test")
-Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- tools/perf/tests/bp_account.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/tests/bp_account.c b/tools/perf/tests/bp_account.c
-index 4cb7d486b5c178c622be4fc7e9c8c5a924df9d9b..047433c977bc9de4f8984268a2a9826d6bfa6f17 100644
---- a/tools/perf/tests/bp_account.c
-+++ b/tools/perf/tests/bp_account.c
-@@ -104,6 +104,7 @@ static int bp_accounting(int wp_cnt, int share)
- 		fd_wp = wp_event((void *)&the_var, &attr_new);
- 		TEST_ASSERT_VAL("failed to create max wp\n", fd_wp != -1);
- 		pr_debug("wp max created\n");
-+		close(fd_wp);
- 	}
- 
- 	for (i = 0; i < wp_cnt; i++)
-
----
-base-commit: a62b7a37e6fcf4a675b1548e7c168b96ec836442
-change-id: 20250711-perf_fix_breakpoint_accounting-ea3e8b2e8f51
-
-Best regards,
--- 
-Leo Yan <leo.yan@arm.com>
-
+You generally need size to be a multiple of align...
 
