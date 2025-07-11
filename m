@@ -1,88 +1,118 @@
-Return-Path: <linux-kernel+bounces-727958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391B0B021C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:29:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FD8B021C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 058E1B4573F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:28:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF923AD044
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106DC2EF2B8;
-	Fri, 11 Jul 2025 16:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b2kH2iyn"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E941C2EF677;
+	Fri, 11 Jul 2025 16:29:44 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD0D2ED161
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22282ED161;
+	Fri, 11 Jul 2025 16:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752251378; cv=none; b=nUmUl9mhhbcMzhlpa9BDEfA1Ynpren5+GRfJrCuEgtT/ec+Zw+nd72IrXwK+zSTvJ4eURfX0ySJdTZHcEp0lPDCuSffeBsLLzQ4lfSRlA2W7FbwoUV0XdF3JR+lRpuEc0otk+WkK46teEzJwyxsbT5y7G3TheYSCVI1oshBJJ10=
+	t=1752251384; cv=none; b=p7NtWvKrMm1Tl0PTIkDFLj5ci2dOZOy4AW252jpG6dm29aRHIEMutRfUL8lqsQ/GHupMMcoNi4eBqn+OAZylafJIL3UggJGfphaYanxV8pnARzIbUtfxCusNoRkSQNKSaqNkRCsbSYOdhLLFcY3ZGKOXoqeDyvrBCLiE5wI5nOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752251378; c=relaxed/simple;
-	bh=aZH1xiaromS+i12xH9TFJCnMhRtsOTSRAhpwtTQZvmU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=q6/S9P4GPI+WVPsRzMKVyi2QrPM9qBvrQO/5SmOSkx4ILc8aYdAU3l8gvp5ilO7/U7zvVP89HUL0Pf+F7Gwrkh3f9Vj5/HR64E3USKuaHU9z+Sa5h+kObkTAycOhQD72F+cV3jyn10CmSvcAch7+aGQUYxl091RAfRGXdN0arig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b2kH2iyn; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752251370;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WhuGDLFC4gRIGmhrJvIxGirWHjMh71q+8beAXtBUQOo=;
-	b=b2kH2iynvNunCAs/PZJqW0pEp3JTTlV0Aageh0UBokaogIboKSCl8x0RRjWuij7ZJsTfT+
-	z3K+V7iGnMwCR6rysOxgBDilxxHoOjy4QEatVzaplfoja57Yxsjl3D5u3tI7xrY+DOAGWd
-	LqXZP8waRIrPYNznRv+/WYHheRybywM=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Jan Kara <jack@suse.cz>,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,  Liu Shixin
- <liushixin2@huawei.com>
-Subject: Re: [PATCH] mm: consider disabling readahead if there are signs of
- thrashing
-In-Reply-To: <aHA0GBVJmAt-WS2j@casper.infradead.org> (Matthew Wilcox's message
-	of "Thu, 10 Jul 2025 22:43:52 +0100")
-References: <20250710195232.124790-1-roman.gushchin@linux.dev>
-	<aHA0GBVJmAt-WS2j@casper.infradead.org>
-Date: Fri, 11 Jul 2025 09:29:25 -0700
-Message-ID: <87ikjywv16.fsf@linux.dev>
+	s=arc-20240116; t=1752251384; c=relaxed/simple;
+	bh=Ultbj5aAvjf2i2FBVeLspqO/Pt6abvUu+kiGcpxdHEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvFhPqpjvxX3ZQ3LhfmpKyftjEHkpwIgXjgcPnt1zdqN1OfFk7P8BpV25CNnK0NyfLAUpQcD0OnctlezkGcBm5tEjsfahC+LmX8xhREphVxmjLwXy48ghd3Nh16FnnLOsKnNMqarZj6iBOfRRGJH/8urxh8792DMnsGNHuE/Pcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so4367326a12.2;
+        Fri, 11 Jul 2025 09:29:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752251381; x=1752856181;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WOf42JVX0DNZGJ6nN0ZcSyKq/2lB3CkluzXYH2APlPs=;
+        b=E7jO8B8ZO1c61GhamkuWq5YomhlSJm7q/u9avKmY+fN4i+aBaM3mBZrGdHZm3djzIg
+         pHSDW+LZNRiVTlo42tZ7Gbyt7ubgJ/b4p6K5HHuxT4dfPX5dDJzS24eNhWDYFkGm89I0
+         ceI7BXI8EPgp0Csd4TQXsegIUCo6Q90oIJnWJ4acwhpQi5XSfKhN2E2w4DZCsXBejGxO
+         bz/1294ko17dNBFgKYLY5/5ZUqLo/8RFe/d2Ewrj22WVkLZfalmihuQwBb0jq4r5uKPE
+         WsBG4zox7iqUGCYj3sb+BBBDg36ysdaXXQ08SXLntluEaQ7tUkWsguqkSpszZ+EnAifT
+         VuAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxP0qx11FwrQQyN9gVqZhUO/ynOvt3GFzn5SeADAobJ+IXb8xApedk8BGttlHZzLrdT7Pb2GVcBs4qRqQ=@vger.kernel.org, AJvYcCVTUfy1wv9YMDgEN9zAlBsa+uvx+HEOxbl5IJeQlsmjy0uM2SDjBthKQDH7SVstgd42N9VGYYzv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxfo/ncAF5vD1aGY1Jz1C+vkYgJJoZsj4ChVVX1CtrzFNXDusN+
+	7l2s50aVaGbcc9hgsB2FRM/fFAqGcNGl8kRmuGdBnXKaQ9UFE5G48aAn
+X-Gm-Gg: ASbGncuodAWEitcBUB9m64LlODyg3jJdU4iH7yI0UUXoWa6U7kHLKIBc9+1civAVYuR
+	2d2GXG3piQlgf7XFsKt3C0BNdZFJriHxay9+Ky7XFFUp2r8scF4QoDQ5bqPq8Eu6OF0Klgpzq7F
+	bIWVvrJ7RQuK/FrEbnHyIf4rVKXXVnGCZbG8eKUclJL3gB4Ehi3D+Mu+GTd1EuIdfaFSWQGNWQR
+	fJCkjyD5olLRYb0fafEt+YcwYYGqKGekZVOSkKR5u8oiUwxgHW0UK71AIi4V17KiAH5/eNCJV8Y
+	/cfapc4WcPm9Pc9gMZEgr06Ke2BOVzbsf2LUGEWt/FFQtVUCauUHw0IBE9qxTe5Vjhzbbk5tTVT
+	nDG6BRiX5Z41Pf2jgSW8J3tA=
+X-Google-Smtp-Source: AGHT+IFTR/x2rOzjfShJFDjaTJRRDT/KRfp5F8jOeyMsaXdaQpXQ6Zfy72nSIupUE0YuKFTtsUwA+w==
+X-Received: by 2002:a17:906:730b:b0:ad5:4a43:5ae8 with SMTP id a640c23a62f3a-ae6fbc63f70mr440148166b.12.1752251380802;
+        Fri, 11 Jul 2025 09:29:40 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:2::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e91c81sm323374166b.37.2025.07.11.09.29.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 09:29:40 -0700 (PDT)
+Date: Fri, 11 Jul 2025 09:29:38 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, dw@davidwei.uk
+Subject: Re: [PATCH net-next v2] netdevsim: implement peer queue flow control
+Message-ID: <p22efbdqaaypgp7wu4csohhtzowpgrzrtelev7waumidabryty@lq4txzalfbfl>
+References: <20250703-netdev_flow_control-v2-1-ab00341c9cc1@debian.org>
+ <20250708182718.29c4ae45@kernel.org>
+ <aG5FrObkP+S8cRZh@gmail.com>
+ <20250709143627.5ddbf456@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709143627.5ddbf456@kernel.org>
 
-Matthew Wilcox <willy@infradead.org> writes:
+On Wed, Jul 09, 2025 at 02:36:27PM -0700, Jakub Kicinski wrote:
+> On Wed, 9 Jul 2025 03:34:20 -0700 Breno Leitao wrote:
+> > 	+
+> > 	+	synchronize_net();
+> > 	+       netif_tx_wake_all_queues(dev);
+> > 	+       rcu_read_lock();
+> > 	+       peer = rcu_dereference(ns->peer);
+> > 	+       if (peer)
+> > 	+               netif_tx_wake_all_queues(peer->netdev);
+> > 	+       rcu_read_unlock();
+> 
+> That's sufficiently orthogonal to warrant a dedicated function / helper.
+> 
+> In terms of code I think we can skip the whole dance if peer is NULL?
 
-> On Thu, Jul 10, 2025 at 12:52:32PM -0700, Roman Gushchin wrote:
->> We've noticed in production that under a very heavy memory pressure
->> the readahead behavior becomes unstable causing spikes in memory
->> pressure and CPU contention on zone locks.
->> 
->> The current mmap_miss heuristics considers minor pagefaults as a
->> good reason to decrease mmap_miss and conditionally start async
->> readahead. This creates a vicious cycle: asynchronous readahead
->> loads more pages, which in turn causes more minor pagefaults.
->
-> Is the correct response to turn off faultaround, or would we be better
-> off scaling it down (eg as low as 64k)?
+Sure. We can use rcu_access_pointer() to check if the value is set, and
+then get into the slow path.
 
-I think at this point it better to turn it off entirely.
+       if (rcu_access_pointer(ns->peer))
+               nsim_wake_queues(dev);
 
-For scaling I wonder if we want to scale it depending on PSI numbers?
+> > Also, with this patch, we will eventually get the following critical
+> > message:
+> > 
+> > 	net_crit_ratelimited("Virtual device %s asks to queue packet!\n", dev->name);
+> > 
+> > I am wondering if that alert is not valid anymore, and I can simply
+> > remove it.
+> 
+> Ah. In nsim_setup() we should remove IFF_NO_QUEUE and stop setting
+> tx_queue_len to 0
 
->
-> I like the signal you're using; I think that makes a lot of sense.
-
-Thanks!
+That makes sense, thanks!
+--breno
 
