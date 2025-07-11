@@ -1,110 +1,112 @@
-Return-Path: <linux-kernel+bounces-727150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70F4B015BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:22:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0882B015F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:27:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E3DF5A129C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:22:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D3BB1887BDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0172343C2;
-	Fri, 11 Jul 2025 08:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A65223817A;
+	Fri, 11 Jul 2025 08:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EaT0U+td"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9811A5B99;
-	Fri, 11 Jul 2025 08:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="I3EbB0/B"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647E52376FD;
+	Fri, 11 Jul 2025 08:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752221724; cv=none; b=Xt76YNvXt+V38PvHBFdlZo/vvMjbLDkvkRk3Twk4sHaT9L1Xh4qcS5aFcmuerYUMC0Pf3vPvxP9home2Gi4qmm2jcW3GVxNcfk27Qz9REoyCLOAmJu07RS70eZAZNN3zcsWqnhwGYIg+rnOB9xG4IYqs+N7hWNQZ8J0LwcPhQ3Y=
+	t=1752221830; cv=none; b=kAVQq9eNE2569DIkD/RlF43ti34N1ublqqb2GdAK9737ZIT1f8ga6m1Bb7K3nFgoV7GVtktUvvHsDGc4rPwhfcmFq/fm+U0JAE6blQ9ohbnyDwRT4SSOB+6kjsOsNzDbexSWDquhSQIf16T/TiVXQFB6hE+8QOOI4IrR30N8O1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752221724; c=relaxed/simple;
-	bh=MdlvamzqR242whEfiL7qVmBGWnd92BiQRP9xljkyRVM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=GZbG++adxwrpVDSSB/02O1qpPGK1C87QLA7/YCFK3suVY5KoKqNOV87eEDCG5ODZ+DejDk8SJ9aqR2oeGnDt32VQqEd27MCuBp99NlowsAxkUk6xye9E6UBa1u1nYcwH3l3/xLuwFLvuOwSYCc2a+iGlq0JuFwd0IuNSRnxmRLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EaT0U+td; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE862C4CEED;
-	Fri, 11 Jul 2025 08:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752221724;
-	bh=MdlvamzqR242whEfiL7qVmBGWnd92BiQRP9xljkyRVM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=EaT0U+tdfBpDCGPtDKQKdvVxcnrOIpjzTJm6UEmUMwxPR2XaFzGbkho3DtsJiyVTE
-	 cGaqFt/OK9b6VCrYwDdnDP3zkp7gwJ1bX+EjCR2O2CXzyWOTep5jxW5VsIFtJtxXke
-	 cH6y6yNVvN7mI2i9p9LlBn2/oHL4NAcw7iqZeSpG7LkgaPI56GCumaWaXAp+oigRe1
-	 AZMcI4sfIKLIdgIaKgt9QacVKuswGoRHEp8q+mPB5nccOmV3wtMn8xZCk9tS4xo4lp
-	 ioW572vK21Ju30YwMY7mFXKhDvlb4noC7g47iYREbargre8QWKEvxZfz0d/cTnlXjm
-	 OaJAX7i6xWXhQ==
+	s=arc-20240116; t=1752221830; c=relaxed/simple;
+	bh=Ke7L+41wFbFBzuixd1ZJ5CmdlwqS9YunWTD9zUBFclk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDMYSNs+QeLEvmJ6dEgaq1UiL4ih+2RwHcOWIiKg8m62CntLyXYIMm65uw2zLn5owlUx6oC2dX+LET4ysXKydDD/IRUV9Ih25LN4RoUAk8YxPo+lWgZt48lq1PH29UPYG3K4pKmVQ6IT19plmeiTKdH4vjeFrugMg/hZ1byr2c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=I3EbB0/B; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from localhost (unknown [167.220.232.230])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 88AFF201A4DA;
+	Fri, 11 Jul 2025 01:17:08 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 88AFF201A4DA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752221828;
+	bh=pMxWlgE2n/38wP+uBzLBo9danfvbk7bMc1DZjHftJHw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I3EbB0/BWBsMrXvEuoXJMpspEPiy5UrZdegu7w/AdqEqtu4HlV389Gbf/Ol4GKFsh
+	 nUhmvmwsdncC664oWE7OjFtSCY/0duLUIOxdjokkJKWW73SNuUgRE9yOLF0Ii1M7ZW
+	 QG6M6C0jn50hZfS8+u9cRpYxqgPgGbGjvqxs4K+A=
+Date: Fri, 11 Jul 2025 16:17:06 +0800
+From: Yu Zhang <zhangyu1@linux.microsoft.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Baolu Lu <baolu.lu@linux.intel.com>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>, 
+	Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>, 
+	Jean-Philippe Brucker <jean-philippe@linaro.org>, Andy Lutomirski <luto@kernel.org>, 
+	"Tested-by : Yi Lai" <yi1.lai@intel.com>, iommu@lists.linux.dev, security@kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+Message-ID: <6dn5n5cge7acmmfgb5zi7ctcbn5hiqyr2xhmgbdxohqydhgmtt@47nnr4tnzlnh>
+References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
+ <ee7585bd-d87c-4f93-9c8e-b8c1d649cdfe@intel.com>
+ <228cd2c9-b781-4505-8b54-42dab03f3650@linux.intel.com>
+ <326c60aa-37f3-458d-a534-6e0106cc244b@intel.com>
+ <20250710132234.GL1599700@nvidia.com>
+ <62580eab-3e68-4132-981a-84167d130d9f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 11 Jul 2025 10:15:17 +0200
-Message-Id: <DB92RCJX0C6E.352SUWSV7VBE9@kernel.org>
-Subject: Re: [PATCH v6 2/9] rust: sync: Add basic atomic operation mapping
- framework
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
- <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
- "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Alan Stern" <stern@rowland.harvard.edu>
-X-Mailer: aerc 0.20.1
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-3-boqun.feng@gmail.com>
- <DB8BQGJNFDAY.BGQ8CZSFFOLH@kernel.org> <aG_Yah5FFHcA3IZy@Mac.home>
- <DB8HQLY48DFX.3PBBUTQLV14PC@kernel.org> <aG_nT3H8J-h2qwr5@Mac.home>
- <DB8MAQC4V57F.1GGYO1PNPOV2X@kernel.org> <aHAiqhPe5OwVioUe@tardis-2.local>
-In-Reply-To: <aHAiqhPe5OwVioUe@tardis-2.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62580eab-3e68-4132-981a-84167d130d9f@intel.com>
 
-On Thu Jul 10, 2025 at 10:29 PM CEST, Boqun Feng wrote:
-> On Thu, Jul 10, 2025 at 09:21:17PM +0200, Benno Lossin wrote:
->> On Thu Jul 10, 2025 at 6:16 PM CEST, Boqun Feng wrote:
->> > At least the rustdoc has safety section for each function. ;-)
->>=20
->> I don't usually use rustdoc to read function safety sections. Instead I
->> jump to their definition and read the code.
->>=20
->
-> Understood. It's probalby the first time we use macros to generate a few
-> unsafe functions, so this is something new.
->
-> But let me ask you a question, as a programmer yourself, when you run
-> into a code base, and see something repeat in a similar pattern for 10+
-> times, what's your instinct? You would try to combine the them together,
-> right? That's why duplication seems not compelling to me. But surely, we
-> don't need to draw conclusion right now, however that's my opinion.
+On Thu, Jul 10, 2025 at 08:26:06AM -0700, Dave Hansen wrote:
+> On 7/10/25 06:22, Jason Gunthorpe wrote:
+> >> Why does this matter? We flush the CPU TLB in a bunch of different ways,
+> >> _especially_ when it's being done for kernel mappings. For example,
+> >> __flush_tlb_all() is a non-ranged kernel flush which has a completely
+> >> parallel implementation with flush_tlb_kernel_range(). Call sites that
+> >> use _it_ are unaffected by the patch here.
+> >>
+> >> Basically, if we're only worried about vmalloc/vfree freeing page
+> >> tables, then this patch is OK. If the problem is bigger than that, then
+> >> we need a more comprehensive patch.
+> > I think we are worried about any place that frees page tables.
+> 
+> The two places that come to mind are the remove_memory() code and
+> __change_page_attr().
+> 
+> The remove_memory() gunk is in arch/x86/mm/init_64.c. It has a few sites
+> that do flush_tlb_all(). Now that I'm looking at it, there look to be
+> some races between freeing page tables pages and flushing the TLB. But,
+> basically, if you stick to the sites in there that do flush_tlb_all()
+> after free_pagetable(), you should be good.
+> 
+> As for the __change_page_attr() code, I think the only spot you need to
+> hit is cpa_collapse_large_pages() and maybe the one in
+> __split_large_page() as well.
+> 
+> This is all disturbingly ad-hoc, though. The remove_memory() code needs
+> fixing and I'll probably go try to bring some order to the chaos in the
+> process of fixing it up. But that's a separate problem than this IOMMU fun.
+> 
 
-It all depends, if the definition never changes for a long time, I don't
-mind the duplication. It's probably more effort to write macros to then
-have less overall code.
+Could we consider to split the flush_tlb_kernel_range() into 2 different
+versions:
+- the one which only flushes the CPU TLB
+- the one which flushes the CPU paging structure cache and then notifies
+  IOMMU to do the same(e.g., in pud_free_pmd_page()/pmd_free_pte_page())?
 
-It also makes it harder to read especially wrt safety docs. So if you
-think you will have to make constant tweaks & additions to these, then
-we should go a macro-heavy route. But if not, then I think making it
-more readable is the way to go.
 
----
-Cheers,
-Benno
+B.R.
+Yu
 
