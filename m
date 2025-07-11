@@ -1,119 +1,129 @@
-Return-Path: <linux-kernel+bounces-727244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE84B016FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:57:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BEDBB016FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E21833ADE31
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97209580D47
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13493217666;
-	Fri, 11 Jul 2025 08:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1E62147E5;
+	Fri, 11 Jul 2025 08:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fWvrRbEM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MRndLyM9"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF7F1F239B;
-	Fri, 11 Jul 2025 08:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183A61F239B;
+	Fri, 11 Jul 2025 08:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752224223; cv=none; b=Ho5KEb7Eyb55xSS5d1iGdw4hg/WTvPsCTZHmPcFprxSwHdZChxzMY7QvXRBdcehHSufVvzvSPzo8+gx8ZSOZ+S/gQQYoWfvZLxkHuf/4L7swDTztCOCA0WieQ72fKasPL9RCMh9qOeJIJ8ySKE2S6JF9EifdHLhb3C0gpucDXns=
+	t=1752224173; cv=none; b=KzKz2LQkSNoYZjkEWl24Q/gv9EVNVAY7Hw1IEomRm8+C7E3GGdOXvL4cXd/YxKMC3WulqSF+aWeNcs+pwR1xO/mqyjhPxselUNN5L4LjVhXz6IGyfKMxJYQ7UmLYHoIk9I/rp/R52ia1Kr1HPuWBeICaf/ZFrhPcsl69EwITLWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752224223; c=relaxed/simple;
-	bh=zbfjWmjznnLXYocXOSEYiAaGJmiOgBuKAm4AEmaWrqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rSc++YWc6Hg5M6avONvmqXoItHWaGnThE7p8YfMYto8jUrI5mPeP6YiaOuhpQ/OLEAhYfxkl1pzGdneFajWTlGQOHku6img+cjyPVMd23p0/bezGhetNHEAvNRx3j+rnW8YZoiCmsgS/x460fYIEYUZ3BWbE5G+jZZDJXmTM3Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fWvrRbEM; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752224221; x=1783760221;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zbfjWmjznnLXYocXOSEYiAaGJmiOgBuKAm4AEmaWrqU=;
-  b=fWvrRbEMKWjiG5jUrfy3tCudMyZDg8U+8nvsE2zO6k/8taVTQsqE7Fn8
-   kclu7E+ZuG3yKmZ+H8bKxSoB8bwySHLbrTm2HSguKRsBof92TYsxdfVxo
-   ss/pOokh0LEbUq+SkU69melfaZ8h+xn8id552jLbUdtFVxkTlhcnVCeeu
-   MuqIs/DGy390mDkzKmpos8Q+S2dPg240T0CKtX3Qm6WP/BvOCecB8VSol
-   +TKzlh79lDEWHr/P1AQxc9yFMTXcZCDzmJcrVDr2WyOvaKUIjGgi45AJ6
-   oQdMnprQtZ5NaHaOzsKko/Um0Rzu+BTa6bnZhRs7oDb5piC8FjYTw7l1/
-   Q==;
-X-CSE-ConnectionGUID: N0Z2+0mMTQWPHfHLfFLwXw==
-X-CSE-MsgGUID: p0rNkwmtTuyL1lH/CzNegA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54373633"
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="54373633"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 01:55:53 -0700
-X-CSE-ConnectionGUID: 0693nmyjRsWVDkocPJvbKA==
-X-CSE-MsgGUID: muzAU0w6R1OFtDXsjkeJfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="155737088"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 01:55:50 -0700
-Message-ID: <7103b312-b02d-440e-9fa6-ba219a510c2d@intel.com>
-Date: Fri, 11 Jul 2025 16:55:46 +0800
+	s=arc-20240116; t=1752224173; c=relaxed/simple;
+	bh=nGZxBPgcyvIXg3cWoL9n7n609A6VK6iikw5GRM1A1mw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TC3PnAK7Xb6CuKkSYinc7qLV7MtFGix1RC2oOqDQ+2/H1QzyzFyRJuCi7j7VYWsOxiXmFCwnx83FVd4Ah86j2qhik8JZvr1SJl9sBCqgswaLLRGtOtQMo+PFP0rWG6MgnT1BLcaOkUWDqSZbeOOJPKeR2JVmxUh1jV+DjZJ9wY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MRndLyM9; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7DD9A205B6;
+	Fri, 11 Jul 2025 08:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752224169;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h3s4Z6xT0P2MBx5071F2O5vZS5sxJmlJEOi3WGKuQ1M=;
+	b=MRndLyM9KDDN2xOekjN5Fucibl4QMHrF4zp83Cu96ZGwegXXOXl/bo3+oJYx4Fc46ThJbC
+	hUO0lgFZIuVQQ4os4qgc1HM3cixgBOz0htA0AcA4JjQmPddlb+k4Tcq2m8h13S9Zx/tyS0
+	MLGAh7xyQHMIdDbEH62Yvu4o1ygX+ILqMUjxZc+I2vMZ34//vhkqrh8bGggWAQ5Kpith7L
+	d6mp2Nop54xeakqep10lQCq4H4QeVkA+pUGgaDPlAiewI2EBPl3FahtieCnn5ASotCvy0k
+	H3yAY61SHaAGEw0VHjxe0kgMxkIHKvqTgQtziaHaIUiV7KwV9c6Z3t94W+ddkg==
+Date: Fri, 11 Jul 2025 10:56:08 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Feng Tang <feng.tang@linux.alibaba.com>, linux-rtc@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: efi: Add runtime check for the wakeup service
+ capability
+Message-ID: <20250711085608f4146d99@mail.local>
+References: <20250710084151.55003-1-feng.tang@linux.alibaba.com>
+ <CAMj1kXHDFq3FZj4134CTcQZnke4t1=u6iRNNsQBvuhb3F6KurQ@mail.gmail.com>
+ <CAMj1kXGiixvwsSmOz65F=OXQuHovO4DMAsJaPZ2sL3PBbMHh8A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 0/1] KVM: TDX: Decrease TDX VM shutdown time
-To: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com,
- Adrian Hunter <adrian.hunter@intel.com>
-Cc: kvm@vger.kernel.org, rick.p.edgecombe@intel.com,
- kirill.shutemov@linux.intel.com, kai.huang@intel.com,
- reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
- binbin.wu@linux.intel.com, isaku.yamahata@intel.com,
- linux-kernel@vger.kernel.org, yan.y.zhao@intel.com, chao.gao@intel.com
-References: <20250611095158.19398-1-adrian.hunter@intel.com>
- <175088949072.720373.4112758062004721516.b4-ty@google.com>
- <aF1uNonhK1rQ8ViZ@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <aF1uNonhK1rQ8ViZ@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXGiixvwsSmOz65F=OXQuHovO4DMAsJaPZ2sL3PBbMHh8A@mail.gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegvdeklecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeijeefhfffkeejueehveeuveejvdelveejteduffehuedtffdufeejudffuedvtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemvgdtfhgvmeegfhdvfhemvdelvgegmeehudejtgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemvgdtfhgvmeegfhdvfhemvdelvgegmeehudejtgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohephedprhgtphhtthhopegrrhgusgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhgvnhhgrdhtrghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdpr
+ hgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqvghfihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 6/26/2025 11:58 PM, Sean Christopherson wrote:
-> On Wed, Jun 25, 2025, Sean Christopherson wrote:
->> On Wed, 11 Jun 2025 12:51:57 +0300, Adrian Hunter wrote:
->>> Changes in V4:
->>>
->>> 	Drop TDX_FLUSHVP_NOT_DONE change.  It will be done separately.
->>> 	Use KVM_BUG_ON() instead of WARN_ON().
->>> 	Correct kvm_trylock_all_vcpus() return value.
->>>
->>> Changes in V3:
->>> 	Refer:
->>>              https://lore.kernel.org/r/aAL4dT1pWG5dDDeo@google.com
->>>
->>> [...]
->>
->> Applied to kvm-x86 vmx, thanks!
->>
->> [1/1] KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
->>        https://github.com/kvm-x86/linux/commit/111a7311a016
+On 11/07/2025 11:26:18+1000, Ard Biesheuvel wrote:
+> On Fri, 11 Jul 2025 at 11:06, Ard Biesheuvel <ardb@kernel.org> wrote:
+> >
+> > On Thu, 10 Jul 2025 at 18:41, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+> > >
+> > > The kernel selftest of rtc reported a error on an ARM server which
+> > > use rtc-efi device:
+> > >
+> > >         RUN           rtc.alarm_alm_set ...
+> > >         rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
+> > >         rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
+> > >         alarm_alm_set: Test terminated by assertion
+> > >                  FAIL  rtc.alarm_alm_set
+> > >         not ok 5 rtc.alarm_alm_set
+> > >
+> > > The root cause is, the underlying EFI firmware doesn't support wakeup
+> > > service (get/set alarm), while it doesn't have the EFI RT_PROP table
+> > > either. As Ard Biesheuvel clarified [1], this breaks the UEFI spec,
+> > > which requires EFI firmware to provide a 'RT_PROP' table if it doesn't
+> > > support all runtime services (Section 4.6.2, UEFI spec 2.10).
+> > >
+> > > This issue was also reproduced on ARM server from another vendor, which
+> > > doesn't have RT_PROP table either. This means, in real world, there are
+> > > quite some platforms having this issue, that it doesn't support wakeup
+> > > service while not providing a correct RT_PROP table, which makes it
+> > > wrongly claimed to support it.
+> > >
+> > > Add a runtime check for the wakeup service to detect and correct this
+> > > kind of cases.
+> > >
+> > > [1]. https://lore.kernel.org/lkml/CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com/
+> > >
+> > > Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+> > > ---
+> > >  drivers/rtc/rtc-efi.c | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > >
+> >
+> > Thanks, I've queued this up now.
+> >
 > 
-> Fixed up to address a docs goof[*], new hash:
+> Actually, we might just remove the EFI get/set wakeup time
+> functionality altogether, as it seems rather pointless to me to begin
+> with.
 > 
->        https://github.com/kvm-x86/linux/commit/e4775f57ad51
-> 
-> [*] https://lore.kernel.org/all/20250626171004.7a1a024b@canb.auug.org.au
+> I'll send out an RFC shortly.
 
-Hi Sean,
+I guess this is going to also solve the issue reported by loongson
+https://lore.kernel.org/linux-rtc/20250613061747.4117470-1-wangming01@loongson.cn/
 
-I think it's targeted for v6.17, right?
+However, please let me take care of patches in my subsystem...
 
-If so, do we need the enumeration for the new TDX ioctl? Yes, the 
-userspace could always try and ignore the failure. But since the ship 
-has not sailed, I would like to report it and hear your opinion.
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
