@@ -1,114 +1,168 @@
-Return-Path: <linux-kernel+bounces-726921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6B12B012CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5243CB012D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E18681C83A23
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172463A5B7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F9B1C84D9;
-	Fri, 11 Jul 2025 05:40:46 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75806192D83;
-	Fri, 11 Jul 2025 05:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544AE1CF5C0;
+	Fri, 11 Jul 2025 05:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HumDKL0v";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FB+ou8Kf"
+Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58981C6FF4;
+	Fri, 11 Jul 2025 05:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752212446; cv=none; b=LP/OK0R1AKPbQT/HyM9HgXChrG6Q2MGAgy66iOlHsL0zbz9D4ciBLjNq75Z3UUWBJ+F4J73IQu67alXnDlN3WcW66Z0VSFh1JVitkASmCt3HcW6KEsKKBEEkaMrBoJN387+YxMuUSTekyz3IiUaylJq2mrMg3H6Yaef9fu/Phwg=
+	t=1752212482; cv=none; b=RluuDbZLkulTUIvlpc4g0VWrzCzXoWUkh5+m9ZQalet0gELkzyKlXfMht1R1YFRsQCJxN1BhsJSN78LEBfpv7X/LIcgm+Iq2e2y1ojip2eSXyKQVAQREjs4I2HZ1IffM+eQnD0B4u4bOeYAI0I90j+Cf4ykTpSWjYlIbLagKnik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752212446; c=relaxed/simple;
-	bh=cLcSoW4RHFm1zNpR3N8xD4FvB98ZNkaDU1D2fYe6qoE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S+MH7ThJtaadhVWHStjTPVaE0zd8c2qUBClA0+3nbvhfgVYvQtdW0BDzRdn2ek90vrZ1XbHqpyAtOu1KAuITHZimlwFoNiHS4BEye/pM5nxa11UNq0HRvk1lD4ZqShEIo/uL5T13oBovvsxByrbGI9r3R87WNh2aLbkD/pWvQuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 8ouIrc07RPWR8qAsOQQyXw==
-X-CSE-MsgGUID: 5T/umF0RT5ygupuhHbcXYQ==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Jul 2025 14:40:36 +0900
-Received: from localhost.localdomain (unknown [10.226.92.72])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 58B70413B428;
-	Fri, 11 Jul 2025 14:40:32 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Russell King <linux@armlinux.org.uk>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next v2] net: phy: micrel: Add ksz9131_resume()
-Date: Fri, 11 Jul 2025 06:40:21 +0100
-Message-ID: <20250711054029.48536-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752212482; c=relaxed/simple;
+	bh=ESJfwhw0SdQ8axF0pAvMzTZFD8Z78/rfZuPLHzl0B3s=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=AMZBFw9C6eETFVF+D5GzceHBzf89lEmpHunSNBC7/Iv3lIPtFhFPKT6ioLwAo6DXeWvoGsBGLsdoQuCAjaaKRwQuHWVCUCjNykfJhxPMFieGa7Ad9/McDGK9GC3O1NSlWpkRILSKH6npfTnhFmqqLn1YJM+GKx7diLy0DMwKqtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HumDKL0v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FB+ou8Kf; arc=none smtp.client-ip=202.12.124.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailflow.stl.internal (Postfix) with ESMTP id B7630130002D;
+	Fri, 11 Jul 2025 01:41:18 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 11 Jul 2025 01:41:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752212478;
+	 x=1752219678; bh=K+c4cfk5bIIVixUFmq0Bup+UjA5hE+VOmmk++Lxu70M=; b=
+	HumDKL0v0T1NJLhwr7jorqx1vvP05PA4e7HznW7B5DO5PxN8083rX9TxWizbtOZO
+	u/xFeEad3A9mupqIZOGe+F1zbfBf/gpc2t/WShiOY89OmC0pR9wzgzqR7cn8rftT
+	4Aib3kQwmJy2raUNW61UEjiwa028RW2yuc2bMl3UIxxZsyllZ630SZGVLKCalfRw
+	E3mWXuBeJpQCX18MM3BmtGe2DVN2wtPRkX9unVbs1mQoZP8KMvE/QdqDWk0oAClE
+	unvhalCoUSqD5KtjP/RwaDcwvzNYtZV6zWPFH2MwW1MXaETwubbd7ONLzshV49LH
+	5isCvpJWKsNacACiTXxgkA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752212478; x=
+	1752219678; bh=K+c4cfk5bIIVixUFmq0Bup+UjA5hE+VOmmk++Lxu70M=; b=F
+	B+ou8KfW0Z2ZwTJ6TD76msOg4vedRCHv+T7arkXqrDXZHbgpZ/TpbfwfFyQtxs9T
+	Dh7ikS34egNK2DHtsMkRm+hiHlPb0L6iwiAFiNQIebGr4ic/An4CpykugrL8avLf
+	ecRqzDIOOtB29CR1x9ZCB2r44btykK6otD6XLlbjaFl5LcOX6ar3MQNOeK5vU1uO
+	USX5PNSn8rRil0XB2WigpBZ4waf5+J8RXdScV/uq/4KAUeKOZHMU4tCkE4YhbYJd
+	l+W2YfJbBo8sX6ZZp577t2IkSE5lN1eyaL6CC1Ztc5xfKTQU+EX2XqMd0s6wczGD
+	wHk5kbDRz6Kct6TmgNBTA==
+X-ME-Sender: <xms:-6NwaE9lod84s0CXMHkWfZC0AO7TO311GcRRwtgrwS1_5zEsM_swlg>
+    <xme:-6NwaMs4h2clYaMgfLfM6-evGe8bWGyOpzKbQ4XqdLBrZ5Hy9U4xyxWBT6fxFrHxr
+    ln44xztCgiO9ZIM3t8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegvdehudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeggedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepshhouhhvihhkrdgthhgrkhhrrghvrghrthihsegrrhhmrdgtohhmpd
+    hrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphht
+    thhopehmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopehsuhguvg
+    gvphdrhhholhhlrgesrghrmhdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgs
+    vghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepsggtmhdqkhgvrhhnvg
+    hlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthho
+    pehflhhorhhirghnrdhfrghinhgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpth
+    htoheprhhjuhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopehssghrrghnuggv
+    nhessghrohgruggtohhmrdgtohhm
+X-ME-Proxy: <xmx:-6NwaAKKFPiix-Afsub2jew7TZkSNHqvQc0vt7cI6doA_m_pMEoBNg>
+    <xmx:-6NwaAUUPtPEsWr3Hikpbe4OZuFzJ04UMTX_-_fCFZIGyordVvxKjQ>
+    <xmx:-6NwaKNtpq6HXvZORQd_4Are9OXcNBqTFMAhhOHgg7tM0TbYGY-U0Q>
+    <xmx:-6NwaMfVeIX68FhwV5CX_NT4Go1KiFOsqTBQmFgwSIpixngJ2Yvd-Q>
+    <xmx:_qNwaAWvRqSa4EGy36-XT2ZxBnr1FJDRZBtWxWMPy17gkSSWTXSfNgi1>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id ADDDD700068; Fri, 11 Jul 2025 01:41:15 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T17e904bff5b9beaf
+Date: Fri, 11 Jul 2025 07:40:55 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Shivendra Pratap" <shivendra.pratap@oss.qualcomm.com>,
+ "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+ "Bjorn Andersson" <andersson@kernel.org>,
+ "Sebastian Reichel" <sre@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Sudeep Holla" <sudeep.holla@arm.com>,
+ "Souvik Chakravarty" <Souvik.Chakravarty@arm.com>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Andy Yan" <andy.yan@rock-chips.com>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ "Olof Johansson" <olof@lixom.net>, "Konrad Dybcio" <konradybcio@kernel.org>,
+ cros-qcom-dts-watchers@chromium.org, "Vinod Koul" <vkoul@kernel.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ "Florian Fainelli" <florian.fainelli@broadcom.com>,
+ "Elliot Berman" <elliotb317@gmail.com>
+Cc: "Stephen Boyd" <swboyd@chromium.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, "Wei Xu" <xuwei5@hisilicon.com>,
+ linux-rockchip@lists.infradead.org,
+ "Baolin Wang" <baolin.wang@linux.alibaba.com>,
+ "Sen Chu" <sen.chu@mediatek.com>, "Sean Wang" <sean.wang@mediatek.com>,
+ "Macpaul Lin" <macpaul.lin@mediatek.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Ray Jui" <rjui@broadcom.com>, "Scott Branden" <sbranden@broadcom.com>,
+ bcm-kernel-feedback-list@broadcom.com,
+ "Nicolas Ferre" <nicolas.ferre@microchip.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Elliot Berman" <quic_eberman@quicinc.com>,
+ "Srinivas Kandagatla" <srini@kernel.org>,
+ "Elliot Berman" <elliot.berman@oss.qualcomm.com>
+Message-Id: <23e0f0d5-c0f6-4fc5-9775-c0ae73681d31@app.fastmail.com>
+In-Reply-To: <9bd63c0b-cf14-d00b-c600-9582061e3afc@oss.qualcomm.com>
+References: 
+ <20250710-arm-psci-system_reset2-vendor-reboots-v10-0-b2d3b882be85@oss.qualcomm.com>
+ <20250710-arm-psci-system_reset2-vendor-reboots-v10-4-b2d3b882be85@oss.qualcomm.com>
+ <2d8e17ad-6bd6-47a9-b5ab-0a91689684ee@app.fastmail.com>
+ <9bd63c0b-cf14-d00b-c600-9582061e3afc@oss.qualcomm.com>
+Subject: Re: [PATCH v10 04/10] dt-bindings: arm: Document reboot mode magic
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The Renesas RZ/G3E SMARC EVK uses KSZ9131RNXC phy. On deep power state,
-PHY loses the power and on wakeup the rgmii delays are not reconfigured
-causing it to fail.
+On Thu, Jul 10, 2025, at 18:53, Shivendra Pratap wrote:
+> On 7/10/2025 9:00 PM, Arnd Bergmann wrote:
+>> On Thu, Jul 10, 2025, at 11:15, Shivendra Pratap wrote:
+>> 
+>>> +  reset-types:
+>>> +    type: object
+>>> +    $ref: /schemas/power/reset/reboot-mode.yaml#
+>> 
+>> The other users of the reboot-mode.yaml binding all call this
+>> node 'reboot-mode' instead of 'reset-types', can you change that
+>> here for consistency?
+> nvmem-reboot-mode and syscon-reboot-mode use reboot-mode in the
+> device tree node name.
+> qcom-pon does not uses reboot-mode at its device tree node name, it
+> uses pon.
+> Kept it reset-types as this patch was already reviewed earlier and
+> the name makes it closer to vendor-specific reset-type.
+> Should we make it reboot-mode? Please suggest.
 
-Replace the callback kszphy_resume()->ksz9131_resume() for reconfiguring
-the rgmii_delay when it exits from PM suspend state.
+Yes, I would still change that. At least all the platform-independent
+drivers are consistent that way.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Added ksz9131-specific phy_driver->resume to reconfigure the rgmii
-   delays on exit from PM suspend state.
- * Replaced 'priv->is_suspended'->'phydev->suspended' for checking
-   exit from PM state.
- * Updated commit description.
-Ref:
- https://patchwork.kernel.org/project/linux-renesas-soc/patch/20250705170326.106073-1-biju.das.jz@bp.renesas.com/#26459627
----
- drivers/net/phy/micrel.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 74fd6ff32c6c..f678c1bdacdf 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -5633,6 +5633,14 @@ static int lan8841_suspend(struct phy_device *phydev)
- 	return kszphy_generic_suspend(phydev);
- }
- 
-+static int ksz9131_resume(struct phy_device *phydev)
-+{
-+	if (phydev->suspended && phy_interface_is_rgmii(phydev))
-+		ksz9131_config_rgmii_delay(phydev);
-+
-+	return kszphy_resume(phydev);
-+}
-+
- static struct phy_driver ksphy_driver[] = {
- {
- 	.phy_id		= PHY_ID_KS8737,
-@@ -5879,7 +5887,7 @@ static struct phy_driver ksphy_driver[] = {
- 	.get_strings	= kszphy_get_strings,
- 	.get_stats	= kszphy_get_stats,
- 	.suspend	= kszphy_suspend,
--	.resume		= kszphy_resume,
-+	.resume		= ksz9131_resume,
- 	.cable_test_start	= ksz9x31_cable_test_start,
- 	.cable_test_get_status	= ksz9x31_cable_test_get_status,
- 	.get_features	= ksz9477_get_features,
--- 
-2.43.0
-
+      Arnd
 
