@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-728290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89FDB0260C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:00:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F4CB0260E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55CC1CA83DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:00:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372475C394F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710B021A453;
-	Fri, 11 Jul 2025 21:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A388B21B9F5;
+	Fri, 11 Jul 2025 21:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NWzil8Wv"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IXJ4+PjY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6E51CD1E1;
-	Fri, 11 Jul 2025 21:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1F2F510
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 21:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752267613; cv=none; b=iuW9FTfqwU6/kjpqnlK57iYuDeu5KpFbEtfr09p45c5ZIOJGWh+/KeEiu0BQDEYIERhetNEmGDX9VdizsPwZCvsOlPWt2s05Up5+DEvDPtGOfg4R8uSp41SCgKnj8+S07kprib7q0W7+f2GyLEezl2qA4FYD6QS+wQfOTXVTWf4=
+	t=1752267635; cv=none; b=dJpkvcap0d496RJYfC9Miy5HsjGJpY96AYiRnbvzq15dUaYhf3gI6NZUqRAHZ5qnWSYJw7It1+lNUV/ZfREjh+qg7sHrat3ppVMOANJjY/j4WyTbD6I6qdqWndz3UeSDj5csCqMBQ9x6ih4JBmiag/YVC3XlbI2cWnuHGc6racg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752267613; c=relaxed/simple;
-	bh=DIRg2BafSkVIAWigWqujt6qWehlaim95i3/AqLpoyLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdvfc4bkvPAPdUURGGTxkUGs5PCvrVK21QeQ45JKZ5iUafGHQw2ckfedOlLhig8GILLY03ev7rGE6adHntKiymv+dWwaVcTZmvry3NEKiQGtKsGsGxBfzz1oqOQTNXxBF4mFg+uX03n9kSrZstDAZOK/sXXvyfMyuaqXwqYbD7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NWzil8Wv; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 955A540E020E;
-	Fri, 11 Jul 2025 21:00:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id cUH0d5BrqvET; Fri, 11 Jul 2025 21:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752267603; bh=kkSqQ2zFL5EdclmacrA43LPTYZ2bb1EaCYl+FapfbpU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NWzil8WvDuSb7dpNDyPfXNff+m9T+3Ept5xFu5H2qosuQnGIzoUWJAfpju7znRAZN
-	 9DKu2zUzRnMmNnRYItryiQ3yENZ1S2ZrVKSK9nasxQ7gfClcR/Ae5lol2juBip9mGt
-	 m22+caPIwBku2qUVx5otV6Y+dfoMfNXoUomwE0Sw/aLWjnOiPjx/eYhRPf4gGg2iPA
-	 xWY1I9c5z6koyOOaAVeS44/fifff+qOe6J3B/7F+JfTI0uVMaXDmeeoTZLo1RHixwY
-	 AJx4XKvMOmP6O4VIHVTF7aqR8EhpOmMc/ZuNZ5y0N7w6KBvKrtoCQz6/MUnL2d2K/4
-	 iVC83wglERWnpodOs6B7siGMmTcCTNiPbE9aQDhLno44uyke+GMhwIcgs/snxRWj5t
-	 JmEXP4EzOvvQ4voHXp3kCmG6T31wsPZbdPIe5mIRpkB6kY9pPP8zVUhvcSY+EbEwIY
-	 FchV6QmHBiddwHipLM0y3MalpykW30M4/6Wmjv7FoGGXHK7wGdB03hV8iHG1nkPIS4
-	 6F2+4CIPH2bxFgcLgj9qTYX8QFQ5sEOuJNaIn4ql0f4RDP7UTqE/Pw6EHEShUhae3r
-	 6V7I9gkrC89AHq9K4qZANrqynBGJhZz+yCRKbw48ayRpzag+GJY/COi0hxDUPfQ70o
-	 E3ea929ZEez9THBxFWHQ3sdU=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8013440E00CE;
-	Fri, 11 Jul 2025 20:59:52 +0000 (UTC)
-Date: Fri, 11 Jul 2025 22:59:44 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org, x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Dionna Amalie Glaze <dionnaglaze@google.com>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v4 01/24] x86/sev: Separate MSR and GHCB based
- snp_cpuid() via a callback
-Message-ID: <20250711205944.GDaHF7QAvRhPZOWMX_@fat_crate.local>
-References: <20250709080840.2233208-26-ardb+git@google.com>
- <20250709080840.2233208-27-ardb+git@google.com>
- <74889161-adfa-3547-d8a9-3ff154098c7a@amd.com>
+	s=arc-20240116; t=1752267635; c=relaxed/simple;
+	bh=jvLnJOirTp/xRYA4btkG5bfclApJS6l3rkthMF/Az64=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e60pMnpFiB6HnYI5lPJN0jCBNo+aAuNnuTCnmnQzpg1D/c82IHfRj62txA2R8nkAAaky84fcfAdkcvdzM0W+jDZ4a7bsymYdPEM1CtyvqFEY8ScaJUVddR8fxgoLAG7hG6e4raIr2zgixBBflcJJSWnn7w4InkJ0SeUVMop2vfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IXJ4+PjY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752267632;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+k5Kf2aCZd0TUr7Eba5a8FIqCkFy3kz8bRsUhqWADsM=;
+	b=IXJ4+PjY7zSzAWqy44TzduStqV8ip33o7uGEspl5F+0pj4/81fGCi18g+Dfu+Q2TmVW28r
+	TzKp4ZRj+7wAw5gI+jrwyG2yZG+jL/DYiJUo/rXskalXLyJjMNwb8nhomrChnPSiB53FOz
+	jhr03fq/oVZDO0sBs/iM+V0CuHuGevQ=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-207-UTKehuFtOZSeEwkH3KBujQ-1; Fri, 11 Jul 2025 17:00:29 -0400
+X-MC-Unique: UTKehuFtOZSeEwkH3KBujQ-1
+X-Mimecast-MFC-AGG-ID: UTKehuFtOZSeEwkH3KBujQ_1752267629
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-86cfa305eb6so10578839f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:00:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752267629; x=1752872429;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+k5Kf2aCZd0TUr7Eba5a8FIqCkFy3kz8bRsUhqWADsM=;
+        b=B12VM8d2g7JVtTYfI7lIKw183TpFChVg5G2hi5Aiu5SLjfOL+kc9eT5jP/3nTWQiXu
+         GOXl24cx3a7+CPhlFdC6N6xt8Ig0fu3jKRIaYThPdyvHjbZ2CtAYoeKVEWu3uPeEOJf/
+         JROuMAnNEVRFDfHFTYm1fgZ8heXXXGFY1hpKCDFippB9UGB3hHUTUSRo+qCvpD5P7KXF
+         y9RLVCIwAvH3LPuV1VBJ9Cq3gNg/zL91vQvy4mo2JvvVsUYJOFaYPpenuMwW8i+IWHug
+         EuQxGusnbPKRfzqu9iwfbcg013cinZErOFM5n1PJ2p12WgDuITD0DCEIgzR7HTofviLY
+         BS4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXUCIYbA+hByoHTa4/piI6T38BkOoyyR7kqwDnEuaH+hsgdwuf7tE+b+HVDKSMCA8d6SWpL53/y8lSow3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHNHZ/VcYlI4cOpkg/rz8ZKPzsetCCDCRS3e6JhFiav4XdA7NO
+	QOBu9bS74gQqY8nG+HNTLl+UwBFem83RCiYTAkbnlyW3TaL/TsHjN7hbam5CPyqb1nmnF84wv8a
+	2PyfjuW2MJ7qbdlfOXArdtJV7RMhOa7B+MRf/q+VqQJFgnXk8LO4IDZ180Dxo1UGkmg==
+X-Gm-Gg: ASbGnctvjx5twtsbWlURW9xctgNJfGsxT9by9h+BSixEIBmL5Rv7xhs7x//5fJw7Kwm
+	DO8dcbxDnyIq0yV/kP+wvz+RExAxkNnlopN/c7qYuuPNP5gaKdnDxGInRKhk2pJM1ozirA4CCZj
+	oL+/HEHRnMRq4/vmSWmHMNNS17u7jKNsJBbu4G3qG4qA0IlJoD6mRJKLWwypwGumqdN/AR+8806
+	0eHYAuxSoSdL8y6uRg3bMliX6kJBE0mOhRSvVG5+aVgQ7m9b3JRfuwGoeUfSXii668vMhyvvBi+
+	aytgokq9rBdYxnpqGuOlBTXTgo9LT1Fl/BK7mVVkmkE=
+X-Received: by 2002:a05:6e02:2489:b0:3dc:87c7:a5a5 with SMTP id e9e14a558f8ab-3e2543def86mr17790655ab.5.1752267628738;
+        Fri, 11 Jul 2025 14:00:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGako33wjOvTa0EzFSB/ZXx9i7F0QzpG+pjUcSbdRvxlqcki3WNixgJXwNk5hEcX3PINDImAg==
+X-Received: by 2002:a05:6e02:2489:b0:3dc:87c7:a5a5 with SMTP id e9e14a558f8ab-3e2543def86mr17790485ab.5.1752267628325;
+        Fri, 11 Jul 2025 14:00:28 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e24620aad0sm14180805ab.34.2025.07.11.14.00.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 14:00:27 -0700 (PDT)
+Date: Fri, 11 Jul 2025 15:00:26 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Artem Sadovnikov <a.sadovnikov@ispras.ru>
+Cc: kvm@vger.kernel.org, Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe
+ <jgg@ziepe.ca>, Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+ Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2] vfio/mlx5: fix possible overflow in tracking max
+ message size
+Message-ID: <20250711150026.19818a98.alex.williamson@redhat.com>
+In-Reply-To: <20250701144017.2410-2-a.sadovnikov@ispras.ru>
+References: <20250701144017.2410-2-a.sadovnikov@ispras.ru>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <74889161-adfa-3547-d8a9-3ff154098c7a@amd.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 10:12:48AM -0500, Tom Lendacky wrote:
-> Not sure the renaming makes it read any easier or say anything more. It
-> does add extra changes to the diff that have to be read through, though,
-> so I don't think it is beneficial.
+On Tue,  1 Jul 2025 14:40:17 +0000
+Artem Sadovnikov <a.sadovnikov@ispras.ru> wrote:
 
-So it really comes natural to split them into a msr_prot and a ghcb_prot
-variant. If we added a separate patch ontop that does only the renaming, then
-that would probably be more churn than necessary.
+> MLX cap pg_track_log_max_msg_size consists of 5 bits, value of which is
+> used as power of 2 for max_msg_size. This can lead to multiplication
+> overflow between max_msg_size (u32) and integer constant, and afterwards
+> incorrect value is being written to rq_size.
+> 
+> Fix this issue by extending integer constant to u64 type.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Suggested-by: Alex Williamson <alex.williamson@redhat.com>
+> Signed-off-by: Artem Sadovnikov <a.sadovnikov@ispras.ru>
+> ---
+> Changes from v1:
+> - The constant type was changed instead of variable type.
+> - The patch name was accidentally cut and is now fixed.
+> - LKML: https://lore.kernel.org/all/20250629095843.13349-1-a.sadovnikov@ispras.ru/
+> ---
+>  drivers/vfio/pci/mlx5/cmd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/vfio/pci/mlx5/cmd.c b/drivers/vfio/pci/mlx5/cmd.c
+> index 5b919a0b2524..a92b095b90f6 100644
+> --- a/drivers/vfio/pci/mlx5/cmd.c
+> +++ b/drivers/vfio/pci/mlx5/cmd.c
+> @@ -1523,8 +1523,8 @@ int mlx5vf_start_page_tracker(struct vfio_device *vdev,
+>  	log_max_msg_size = MLX5_CAP_ADV_VIRTUALIZATION(mdev, pg_track_log_max_msg_size);
+>  	max_msg_size = (1ULL << log_max_msg_size);
+>  	/* The RQ must hold at least 4 WQEs/messages for successful QP creation */
+> -	if (rq_size < 4 * max_msg_size)
+> -		rq_size = 4 * max_msg_size;
+> +	if (rq_size < 4ULL * max_msg_size)
+> +		rq_size = 4ULL * max_msg_size;
+>  
+>  	memset(tracker, 0, sizeof(*tracker));
+>  	tracker->uar = mlx5_get_uars_page(mdev);
 
-> Maybe rename this parameter to snp_cpuid or snp_cpuid_fn or similar,
-> because it can be very confusing to see "cpuid" on its own like this.a
+LGTM, Yishai?  Thanks,
 
-Yeah, that's a good point - snp_cpuid_fn clearly states that it is a function
-pointer and not *the* cpuid() function.
+Alex
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
