@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-728118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C3ECB023D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:37:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354B3B023D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 813F11CC2F13
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:37:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E1C5B46453
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2407B2F2C6B;
-	Fri, 11 Jul 2025 18:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD2E2F2C6B;
+	Fri, 11 Jul 2025 18:37:09 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3452AEF1
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73944199FAB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752259023; cv=none; b=VnxrOyo/vLF5a7yThinNCcyajvW2dLyh1br60LZNb8DWBcuEOZBymfduAAhicioWEmhspajUsT6MGEq1DFxeret4MDkZCRtTam9Wt9Ry0mytLJOh2l+/DVZUsUOzMFwoFlvPg0HgE9SioP38mnzG8OvjuqciJcj7p8BO8uLBzTU=
+	t=1752259028; cv=none; b=qyjLOdeGy7wfx+9IEsiwx6WMpZ7UUGt+B3CxYYy1uU76wMq9xu0y8tZspoyCdOMJi9oapLgQYAS14BIBC6NlKj6PQ0dfZfJ86CFqPFR6+1Th30aHdNJzg+C5EsODNcpG7Rwnfyo5zm8AP7OCzwraMvT6XgQD/gl8KHBSTWV3C+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752259023; c=relaxed/simple;
-	bh=YWMyc+oycUw/ozY0S2KllvXtYDON02dvS4LPUyV1aoI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DAoq1/FP4sGfQSClQwWR4/sxT0fNQL35MwYkv1Rv6OGCxfSO3/ktZZHA1fkMRrFSCBaASrDag1Uhy2OummmrcpdzxLVPiDcnlDE85qNXpBqTkSqWtmuJ5raeWH8Hq14BUP5b/kFq8U9+7qDt/ygCkMVHYffFUra/pN1jl1Rif08=
+	s=arc-20240116; t=1752259028; c=relaxed/simple;
+	bh=y6aD52A/GXoakeVI754gL5ggJpeMARSE2Wq/EOMb1y0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DEDOMPdUd4KDGPsjVkQ+xARhWAKqMzkuX5TAMCcEEltb6t7FyTINX+Sm13Sy+vor0w8QKCmkuRw69QGovPbPYWGb3QAV0sAHBH6IvileRNd2dGPdGHd+S6QCFm7cNgY6ZQW62K3pJbGUCsNbL9sNOOtjN+Bxg4fq/iyTO2BBjtE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E08916F8;
-	Fri, 11 Jul 2025 11:36:50 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B6D016F8;
+	Fri, 11 Jul 2025 11:36:56 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 343F53F694;
-	Fri, 11 Jul 2025 11:36:58 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C1963F694;
+	Fri, 11 Jul 2025 11:37:03 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
@@ -56,11 +57,17 @@ Cc: Rob Herring <robh@kernel.org>,
 	Rex Nie <rex.nie@jaguarmicro.com>,
 	Dave Martin <dave.martin@arm.com>,
 	Koba Ko <kobak@nvidia.com>,
-	James Morse <james.morse@arm.com>
-Subject: [RFC PATCH 00/36] arm_mpam: Add basic mpam driver
-Date: Fri, 11 Jul 2025 18:36:12 +0000
-Message-Id: <20250711183648.30766-1-james.morse@arm.com>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Gavin Shan <gshan@redhat.com>
+Subject: [RFC PATCH 01/36] cacheinfo: Set cache 'id' based on DT data
+Date: Fri, 11 Jul 2025 18:36:13 +0000
+Message-Id: <20250711183648.30766-2-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20250711183648.30766-1-james.morse@arm.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,151 +76,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Rob Herring <robh@kernel.org>
 
-This is just enough MPAM driver for the ACPI and DT pre-requisites.
-It doesn't contain any of the resctrl code, meaning you can't actually drive it
-from user-space yet.
+Use the minimum CPU h/w id of the CPUs associated with the cache for the
+cache 'id'. This will provide a stable id value for a given system. As
+we need to check all possible CPUs, we can't use the shared_cpu_map
+which is just online CPUs. As there's not a cache to CPUs mapping in DT,
+we have to walk all CPU nodes and then walk cache levels.
 
-This is the initial group of patches that allows the resctrl code to be built
-on top. Including that will increase the number of trees that may need to
-coordinate, so breaking it up make sense.
+The cache_id exposed to user-space has historically been 32 bits, and
+is too late to change. This value is parsed into a u32 by user-space
+libraries such as libvirt:
+https://github.com/libvirt/libvirt/blob/master/src/util/virresctrl.c#L1588
 
-The locking looks very strange - but is influenced by the 'mpam-fb' firmware
-interface specification that is still alpha. That thing needs to wait for an
-interrupt after every system register write, which significantly impacts the
-driver. Some features just won't work, e.g. reading the monitor registers via
-perf.
-The aim is to not have to make invasive changes to the locking to support the
-firmware interface, hence it looks strange from day-1.
+Give up on assigning cache-id's if a CPU h/w id greater than 32 bits
+is found.
 
-I've not found a platform that can test all the behaviours around the monitors,
-so this is where I'd expect the most bugs.
+match_cache_node() does not make use of the __free() cleanup helpers
+because of_find_next_cache_node(prev) does not drop a reference to prev,
+and its too easy to accidentally drop the reference on cpu, which belongs
+to for_each_of_cpu_node().
 
-It's unclear where in the tree this should be put. It affects memory bandwidth
-and cache allocation, but doesn't (yet) interact with perf. The main interaction
-is with resctrl in fs/resctrl - but there will be no filesystem code in here.
-Its also likely there will be other in-kernel users. (in-kernel MSC emulation by
-KVM being an obvious example).
-(I'm not a fan of drivers/resctrl or drivers/mpam - its not the sort of thing
- that justifies being a 'subsystem'.)
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
+[ ben: converted to use the __free cleanup idiom ]
+Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+[ morse: Add checks to give up if a value larger than 32 bits is seen. ]
+Signed-off-by: James Morse <james.morse@arm.com>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+Reviewed-by: Gavin Shan <gshan@redhat.com>
+---
+Use as a 32bit value has also been seen in DPDK patches here:
+http://inbox.dpdk.org/dev/20241021015246.304431-2-wathsala.vithanage@arm.com/
 
-For now, I've put this under drivers/platform/arm64. Other ideas welcome.
+Changes since v2:
+ * Removed broken use of cleanup in the match helper
 
-The first three patches are currently a series on the list, the PPTT stuff
-has previously been posted - this is where the users of those helpers appear.
+Changes since v1:
+ * Remove the second loop in favour of a helper.
+---
+ drivers/base/cacheinfo.c | 45 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-
-The MPAM spec that describes all the system and MMIO registers can be found
-here:
-https://developer.arm.com/documentation/ddi0598/db/?lang=en
-(Ignored the 'RETIRED' warning - that is just arm moving the documentation
- around. This document has the best overview)
-
-This series is based on v6.16-rc4, and can be retrieved from:
-https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/driver/rfc
-
-The rest of the driver can be found here:
-https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/snapshot/v6.16-rc4
-
-What is MPAM? Set your time-machine to 2020:
-https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.com/
-
-
-Bugs welcome,
-Thanks,
-
-James Morse (31):
-  cacheinfo: Add arch hook to compress CPU h/w id into 32 bits for
-    cache-id
-  arm64: cacheinfo: Provide helper to compress MPIDR value into u32
-  cacheinfo: Expose the code to generate a cache-id from a device_node
-  ACPI / PPTT: Add a helper to fill a cpumask from a processor container
-  ACPI / PPTT: Stop acpi_count_levels() expecting callers to clear
-    levels
-  ACPI / PPTT: Find cache level by cache-id
-  ACPI / PPTT: Add a helper to fill a cpumask from a cache_id
-  arm64: kconfig: Add Kconfig entry for MPAM
-  ACPI / MPAM: Parse the MPAM table
-  platform: arm64: Move ec devices to an ec subdirectory
-  arm_mpam: Add probe/remove for mpam msc driver and kbuild boiler plate
-  arm_mpam: Add the class and component structures for ris firmware
-    described
-  arm_mpam: Add MPAM MSC register layout definitions
-  arm_mpam: Add cpuhp callbacks to probe MSC hardware
-  arm_mpam: Probe MSCs to find the supported partid/pmg values
-  arm_mpam: Add helpers for managing the locking around the mon_sel
-    registers
-  arm_mpam: Probe the hardware features resctrl supports
-  arm_mpam: Merge supported features during mpam_enable() into
-    mpam_class
-  arm_mpam: Reset MSC controls from cpu hp callbacks
-  arm_mpam: Add a helper to touch an MSC from any CPU
-  arm_mpam: Extend reset logic to allow devices to be reset any time
-  arm_mpam: Register and enable IRQs
-  arm_mpam: Use a static key to indicate when mpam is enabled
-  arm_mpam: Allow configuration to be applied and restored during cpu
-    online
-  arm_mpam: Probe and reset the rest of the features
-  arm_mpam: Add helpers to allocate monitors
-  arm_mpam: Add mpam_msmon_read() to read monitor value
-  arm_mpam: Track bandwidth counter state for overflow and power
-    management
-  arm_mpam: Add helper to reset saved mbwu state
-  arm_mpam: Add kunit test for bitmap reset
-  arm_mpam: Add kunit tests for props_mismatch()
-
-Rob Herring (2):
-  cacheinfo: Set cache 'id' based on DT data
-  dt-bindings: arm: Add MPAM MSC binding
-
-Rohit Mathew (2):
-  arm_mpam: Probe for long/lwd mbwu counters
-  arm_mpam: Use long MBWU counters if supported
-
-Shanker Donthineni (1):
-  arm_mpam: Add support for memory controller MSC on DT platforms
-
- .../devicetree/bindings/arm/arm,mpam-msc.yaml |  227 ++
- MAINTAINERS                                   |    6 +-
- arch/arm64/Kconfig                            |   19 +
- arch/arm64/include/asm/cache.h                |   17 +
- drivers/acpi/arm64/Kconfig                    |    3 +
- drivers/acpi/arm64/Makefile                   |    1 +
- drivers/acpi/arm64/mpam.c                     |  365 +++
- drivers/acpi/pptt.c                           |  240 +-
- drivers/acpi/tables.c                         |    2 +-
- drivers/base/cacheinfo.c                      |   57 +
- drivers/platform/arm64/Kconfig                |   73 +-
- drivers/platform/arm64/Makefile               |   10 +-
- drivers/platform/arm64/ec/Kconfig             |   73 +
- drivers/platform/arm64/ec/Makefile            |   10 +
- .../platform/arm64/{ => ec}/acer-aspire1-ec.c |    0
- .../arm64/{ => ec}/huawei-gaokun-ec.c         |    0
- .../arm64/{ => ec}/lenovo-yoga-c630.c         |    0
- drivers/platform/arm64/mpam/Kconfig           |   23 +
- drivers/platform/arm64/mpam/Makefile          |    4 +
- drivers/platform/arm64/mpam/mpam_devices.c    | 2910 +++++++++++++++++
- drivers/platform/arm64/mpam/mpam_internal.h   |  697 ++++
- .../platform/arm64/mpam/test_mpam_devices.c   |  390 +++
- include/linux/acpi.h                          |   17 +
- include/linux/arm_mpam.h                      |   56 +
- include/linux/cacheinfo.h                     |    1 +
- 25 files changed, 5117 insertions(+), 84 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml
- create mode 100644 drivers/acpi/arm64/mpam.c
- create mode 100644 drivers/platform/arm64/ec/Kconfig
- create mode 100644 drivers/platform/arm64/ec/Makefile
- rename drivers/platform/arm64/{ => ec}/acer-aspire1-ec.c (100%)
- rename drivers/platform/arm64/{ => ec}/huawei-gaokun-ec.c (100%)
- rename drivers/platform/arm64/{ => ec}/lenovo-yoga-c630.c (100%)
- create mode 100644 drivers/platform/arm64/mpam/Kconfig
- create mode 100644 drivers/platform/arm64/mpam/Makefile
- create mode 100644 drivers/platform/arm64/mpam/mpam_devices.c
- create mode 100644 drivers/platform/arm64/mpam/mpam_internal.h
- create mode 100644 drivers/platform/arm64/mpam/test_mpam_devices.c
- create mode 100644 include/linux/arm_mpam.h
-
+diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+index cf0d455209d7..4e2f60c85e74 100644
+--- a/drivers/base/cacheinfo.c
++++ b/drivers/base/cacheinfo.c
+@@ -8,6 +8,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/acpi.h>
++#include <linux/bitfield.h>
+ #include <linux/bitops.h>
+ #include <linux/cacheinfo.h>
+ #include <linux/compiler.h>
+@@ -183,6 +184,49 @@ static bool cache_node_is_unified(struct cacheinfo *this_leaf,
+ 	return of_property_read_bool(np, "cache-unified");
+ }
+ 
++static bool match_cache_node(struct device_node *cpu,
++			     const struct device_node *cache_node)
++{
++	struct device_node *prev, *cache = of_find_next_cache_node(cpu);
++
++	while (cache) {
++		if (cache == cache_node) {
++			of_node_put(cache);
++			return true;
++		}
++
++		prev = cache;
++		cache = of_find_next_cache_node(cache);
++		of_node_put(prev);
++	}
++
++	return false;
++}
++
++static void cache_of_set_id(struct cacheinfo *this_leaf,
++			    struct device_node *cache_node)
++{
++	struct device_node *cpu;
++	u32 min_id = ~0;
++
++	for_each_of_cpu_node(cpu) {
++		u64 id = of_get_cpu_hwid(cpu, 0);
++
++		if (FIELD_GET(GENMASK_ULL(63, 32), id)) {
++			of_node_put(cpu);
++			return;
++		}
++
++		if (match_cache_node(cpu, cache_node))
++			min_id = min(min_id, id);
++	}
++
++	if (min_id != ~0) {
++		this_leaf->id = min_id;
++		this_leaf->attributes |= CACHE_ID;
++	}
++}
++
+ static void cache_of_set_props(struct cacheinfo *this_leaf,
+ 			       struct device_node *np)
+ {
+@@ -198,6 +242,7 @@ static void cache_of_set_props(struct cacheinfo *this_leaf,
+ 	cache_get_line_size(this_leaf, np);
+ 	cache_nr_sets(this_leaf, np);
+ 	cache_associativity(this_leaf);
++	cache_of_set_id(this_leaf, np);
+ }
+ 
+ static int cache_setup_of_node(unsigned int cpu)
 -- 
 2.39.5
 
