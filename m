@@ -1,195 +1,99 @@
-Return-Path: <linux-kernel+bounces-726700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32F7B0102C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:26:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B19C3B0102D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0779A3AB7B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF46C1C80992
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 00:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9591946F;
-	Fri, 11 Jul 2025 00:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975D8BE4E;
+	Fri, 11 Jul 2025 00:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="SwX7Ky0Z"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EOowp1f8"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35252DF42;
-	Fri, 11 Jul 2025 00:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752193595; cv=pass; b=LmmmcIQ8hDzH64yojVZ0zkdibpSJFF6nLCQ6Tx1+ZSa4NliJuGNXUFhj5ykQob2h9k6bVArlNdfEeVe3dAU2PlILvy+JIfAegOrqXI+x8h7WRjeMr45UuvwlcY0EZpYIObza2jhiHwCUvjWwK5NeqzjklSAyURA0Qxt0txqjtPI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752193595; c=relaxed/simple;
-	bh=qGaSIfaAyNW7dVwNfHz6VldhcAIWtpLeNfZhRrkdONw=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=LWesIXz7yjGwy976FviCewlBkuFqgSOFrN39lwGCZuJSU+WBfkfzGrMcj5OwcepBog7Ghi5w+N2+b3bSGHjSae2v40s4/erV1mNXiGZRjJ55m9dhHc0+2p84rYAviTSWbYm5rQ202HN2b6JF1yp8zmk6P6WVPffCHY3plsOVCr8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=SwX7Ky0Z; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1752193502; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Y7iShuCKuWRtC1eSfY8suvhgtBlX1OLua0p+xXXP4ngfWcNSIdFTFRM+cHuvStnV2kzcmX7h3bAY7S0V1Tg7Oy+uRn9v/pm2c/65sWtYHsAZiiM3QZ7HJEEmndhEBf3iU/j4ttoU3GO/KF6aNu+wy1UGp1oXwjA+Gg+/PSaz1fY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752193502; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Cso21EcGT/s8s2wk1z/Mf8lcRLKY5dQSvb6M9DdLo+w=; 
-	b=Kc1galt7OOo4SfDw6GAmMJm6W8k5AF3nJO3PsnRCtsDXC4+i79GB6XhH+bgzSNJBZK2FuNBQzbQ2ggMNhSfKYfaiCV0U3c3RVHqMvwAVzxhP9hnC3u4vhO3Prc1aswwB45edX/W2aWHn7TP1O67bpRQHDykPiVCA3WIJuQSiPdk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752193502;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Cso21EcGT/s8s2wk1z/Mf8lcRLKY5dQSvb6M9DdLo+w=;
-	b=SwX7Ky0ZXjAojYyMiIJ5PBtLOgT97rgGLACle/VZpOHSqbKx4PxnGF3mtyhEorrd
-	Gl3SgstpU9z5VldnMnCvMVTnm/2BLChe/Lwroti0oViFjbaBO0MHupozj2wTdwJyMFT
-	myxGUAZtKxsoAzaFugsXgK6nD03/xxhcGehVUqmk=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1752193499988464.8625971507744; Thu, 10 Jul 2025 17:24:59 -0700 (PDT)
-Date: Fri, 11 Jul 2025 08:24:59 +0800
-From: Li Chen <me@linux.beauty>
-To: "K Prateek Nayak" <kprateek.nayak@amd.com>
-Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
-	"Borislav Petkov" <bp@alien8.de>,
-	"Dave Hansen" <dave.hansen@linux.intel.com>, "x86" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	"Peter Zijlstra" <peterz@infradead.org>,
-	"Sohil Mehta" <sohil.mehta@intel.com>,
-	"Brian Gerst" <brgerst@gmail.com>,
-	"Patryk Wlazlyn" <patryk.wlazlyn@linux.intel.com>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"Madhavan Srinivasan" <maddy@linux.ibm.com>,
-	"Michael Ellerman" <mpe@ellerman.id.au>,
-	"Nicholas Piggin" <npiggin@gmail.com>,
-	"Christophe Leroy" <christophe.leroy@csgroup.eu>,
-	"Heiko Carstens" <hca@linux.ibm.com>,
-	"Vasily Gorbik" <gor@linux.ibm.com>,
-	"Alexander Gordeev" <agordeev@linux.ibm.com>,
-	"Christian Borntraeger" <borntraeger@linux.ibm.com>,
-	"Sven Schnelle" <svens@linux.ibm.com>,
-	"Juri Lelli" <juri.lelli@redhat.com>,
-	"Vincent Guittot" <vincent.guittot@linaro.org>,
-	"Dietmar Eggemann" <dietmar.eggemann@arm.com>,
-	"Steven Rostedt" <rostedt@goodmis.org>,
-	"Ben Segall" <bsegall@google.com>, "Mel Gorman" <mgorman@suse.de>,
-	"Valentin Schneider" <vschneid@redhat.com>,
-	=?UTF-8?Q?=22Thomas_Wei=C3=9Fschuh=22?= <thomas.weissschuh@linutronix.de>,
-	"Bibo Mao" <maobibo@loongson.cn>,
-	"Li Chen" <chenl311@chinatelecom.cn>,
-	"Huacai Chen" <chenhuacai@kernel.org>,
-	"Tobias Huschle" <huschle@linux.ibm.com>,
-	"Mete Durlu" <meted@linux.ibm.com>,
-	"Joel Granados" <joel.granados@kernel.org>,
-	"Guo Weikang" <guoweikang.kernel@gmail.com>,
-	"Swapnil Sapkal" <swapnil.sapkal@amd.com>,
-	"linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>,
-	"linux-s390" <linux-s390@vger.kernel.org>
-Message-ID: <197f6df0342.5b351ed5512924.4548698833385126603@linux.beauty>
-In-Reply-To: <f391491d-f886-4579-9b40-78a57f2ed1b5@amd.com>
-References: <20250706030636.397197-1-me@linux.beauty>
- <20250706030636.397197-2-me@linux.beauty> <f391491d-f886-4579-9b40-78a57f2ed1b5@amd.com>
-Subject: Re: [PATCH v4 1/4] smpboot: introduce SDTL() helper to tidy sched
- topology setup
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A608F6C
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 00:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752193797; cv=none; b=l4vhu7gnM7lcA3/z9Ik7L+VHs1TJ7O+yXb7mtlryhlBFSPAH+ZmbjY8WaPgyu7Rq6LcsdiWyW7fWUoVfoUzNooiDLesxfRtc2dnZgqnJwmhqLRP3yuM5Q9M/WibYZC7hflRQJbOPJg67ZYeqfrGYdDtqw7FoQbQTSLrWwFtEpGQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752193797; c=relaxed/simple;
+	bh=r0lPHxvs43uR+dHXcIrd5JAul1oKL023d8VVoNs5Xqk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c+lBmTLWiVdb2affEXjwrg/vuTjgpQdRfJdDncL36X95rZRKJqYRACwdPVhNk1D1rf0kxeX2OJsdB17aADeJpPQUCwHYiumiahkaL69YZrJOGlUEvdxN6bq80aquIT5juExm+v7+t2hrpwFI+JC0I8bTEihif1/aWd2a5Gkhrx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EOowp1f8; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e8b3ec5c82eso2237658276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 17:29:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752193794; x=1752798594; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r0lPHxvs43uR+dHXcIrd5JAul1oKL023d8VVoNs5Xqk=;
+        b=EOowp1f8ECHDega+HXidInFVYyVXOPGTJmAqlOau+hIRS1qPbq+/u86DEnodphUkGE
+         oU0eZAC7ADM9pG69HxOvrzdFLT30vAXYkrQFosAL7PtmkroZJHLFYLDzrCLQPYfJHbSf
+         S6lPjVHx+wE1Xhu3p6MzCSerjPMimJbEygfjitIwuPfos0yph8JAny/kJLEjAIDc4/S0
+         bDsLIVfaHh11bkHmuLvrKIZ/kBpbCJOlIYLRdO/u2oWi3KLqlrmIckZbJtcIUvAHA7Ug
+         FO4QRF0FVViixtDUBmaemoAU14QPOZOaR/N8/vFG3Mw2yCO3tl+i/HBirh/qpLWScJU1
+         M24A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752193794; x=1752798594;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r0lPHxvs43uR+dHXcIrd5JAul1oKL023d8VVoNs5Xqk=;
+        b=QtZ7jnBgdS51IiZJSuKjgNUxrBFkE8hyUUr1K3k3Tb2D5T4g0zXFEzAGpuutpPSAKL
+         I0lmpbVesuMUjWfBo+8Se0JCZddq35Nw83sX+VzXlAxfjXoGt50mgOb9wn58HSDMY6bL
+         25UtMyxnWTnDeGddg9lzF3Z/yFoIktWCosJ++PySYv0wiwu/3PB31lx/HX3qq/ylH2Ff
+         TepJiu3jgXzW8c113mIkYqNuv5fyuEzrELWAPbysc1Zfg7DjNHHiG4qtAofA81mKkAnU
+         FR1ZnKYodG8q+scdyr/6vsb4ARug2QsRCr+t+kNrVFQ9hzyVN+l+jJOXqlQ8MClsMDDi
+         aKng==
+X-Forwarded-Encrypted: i=1; AJvYcCXHb5/pXTIMInVkQSGqpxsqyCSdXWFvu38skl2EfgcGQfpucqfDeLoOEHh38PVEvh9d7V0BrFUqZ2dWVpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqJc9qDUwwIrvIl9p/IHZWXYPBqUHoqv8AVuPZJSX4zmigQTyP
+	falkoX+4gCdO5Vd1KJSM2XDnDBPo7XMvzhs6Yk8T44VXNKx/fHEziK9VMtCk77Vz+ni6p0rdONZ
+	Pa4OkadaCJCJ3wm6SlTazsBV+rQnezRU7pJRpNkKA
+X-Gm-Gg: ASbGncvsbGUHRtiyDaZe9jyd5VQlk8WbxkU/u8KYNpGzMhfGzJMt9+LdaOk6imaVCBA
+	coy+SYR/UcE0xoBVvpDiDlNeaner6X7NrGKy4VnVhlB3dgM93XdDBut5DUKoc+eVkVoUsEzoipU
+	aMHO0sNk5h9OxKJjpkmIxBBP0wL4wt+cmOZ/K1R6L4ncOc2ogzbqJok2ZJbOrj0eVNNOidOVqEl
+	WHUor3pbIPBMPdKY4Oj8/RFnBcZ3VeNAo/u
+X-Google-Smtp-Source: AGHT+IHo5wOXiLQsn/5Sf9V/dYLksjYkGC6K5+8xIfEcLBdrtFqnS93Qdoy+B89S9yKZhvHKYo4pICjWraZMAWP5GVU=
+X-Received: by 2002:a05:690c:23c2:b0:712:e082:4300 with SMTP id
+ 00721157ae682-717d69d151emr22793207b3.14.1752193794242; Thu, 10 Jul 2025
+ 17:29:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250711001742.1965347-1-jthoughton@google.com>
+In-Reply-To: <20250711001742.1965347-1-jthoughton@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Thu, 10 Jul 2025 17:29:18 -0700
+X-Gm-Features: Ac12FXwp99zxVbMC_VhJYh2XiCFZAUQ9b0PyTNfZpbH7kwWeLapvYsalM8A6msk
+Message-ID: <CADrL8HXQBfT2MLUEW+0w4P0weCjCOWdDpp3kSu5uta4-vtXn2Q@mail.gmail.com>
+Subject: Re: [PATCH] KVM: selftests: Fix signedness issue with vCPU mmap size check
+To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
+Cc: Venkatesh Srinivas <venkateshs@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
 
-Hi K,
+On Thu, Jul 10, 2025 at 5:17=E2=80=AFPM James Houghton <jthoughton@google.c=
+om> wrote:
+>
+> Check that the return value of KVM_GET_VCPU_MMAP_SIZE is non-negative
+> before comparing with sizeof(vcpu_run). If KVM_GET_VCPU_MMAP_SIZE fails,
+> it will return -1, and `-1 > sizeof(vcpu_run)` is true, so the ASSERT
+> passes.
 
-Thanks for your reviews and test! I have addressed all issues in v5:
-https://www.spinics.net/lists/kernel/msg5761848.html
-
- ---- On Mon, 07 Jul 2025 13:33:53 +0800  K Prateek Nayak <kprateek.nayak@a=
-md.com> wrote ---=20
- > Hello Li,
- >=20
- > Apart from few comments inline below, feel free to include:
- >=20
- > Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
- >=20
- > for the entire series.
- >=20
- > On 7/6/2025 8:36 AM, Li Chen wrote:
- > > diff --git a/include/linux/sched/topology.h b/include/linux/sched/topo=
-logy.h
- > > index 198bb5cc1774b..0b53e372c445c 100644
- > > --- a/include/linux/sched/topology.h
- > > +++ b/include/linux/sched/topology.h
- > > @@ -197,9 +197,9 @@ struct sched_domain_topology_level {
- > >  extern void __init set_sched_topology(struct sched_domain_topology_le=
-vel *tl);
- > >  extern void sched_update_asym_prefer_cpu(int cpu, int old_prio, int n=
-ew_prio);
- > > =20
- > > -
- > > -# define SD_INIT_NAME(type)        .name =3D #type
- > > -
- > > +#define SDTL(maskfn, flagsfn, dname) \
- > > +    ((struct sched_domain_topology_level) \
- > > +        { .mask =3D maskfn, .sd_flags =3D flagsfn, .name =3D #dname, =
-.numa_level =3D 0 })
- >=20
- > I prefer the following alignment:
- >=20
- > #define SDTL(maskfn, flagsfn, dname) ((struct sched_domain_topology_leve=
-l) \
- >     { .mask =3D maskfn, .sd_flags =3D flagsfn, .name =3D #dname })
- >=20
- > instead of having 3 lines. "numa_level" is 0 by default so I don't think
- > we need to explicitly specify it again.
- >=20
- > Also perhaps the macro can be named "SDTL_INIT()" to keep consistent
- > with the naming convention.
- >=20
- > >  #else /* CONFIG_SMP */
- >=20
- > A bunch of the CONFIG_SMP related ifdeffry is being removed for the
- > next cycle. You can perhaps rebase the series on top of the tip tree
- > (git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git)
- >=20
- > > =20
- > >  struct sched_domain_attr;
- >=20
- > [..snip..]
- >=20
- > > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
- > > index b958fe48e0205..e6ec65ae4b75d 100644
- > > --- a/kernel/sched/topology.c
- > > +++ b/kernel/sched/topology.c
- > > @@ -2025,7 +2021,7 @@ void sched_init_numa(int offline_node)
- > >              .sd_flags =3D cpu_numa_flags,
- > >              .flags =3D SDTL_OVERLAP,
- > >              .numa_level =3D j,
- > > -            SD_INIT_NAME(NUMA)
- > > +            .name =3D "NUMA",
- >=20
- > This can use SDTL() macro too. Just explicitly set "tl[i].numa_level" to
- > "j" after.
- >=20
- > >          };
- > >      }
- > > =20
- >=20
- > --=20
- > Thanks and Regards,
- > Prateek
- >=20
- >=20
-Regards,
-
-Li=E2=80=8B
-
+:%s/vcpu_run/kvm_run/
 
