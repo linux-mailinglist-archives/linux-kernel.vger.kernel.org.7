@@ -1,200 +1,94 @@
-Return-Path: <linux-kernel+bounces-727935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E2DB02197
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:21:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4FC5B02193
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8F91C4516D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:20:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCBB83BE696
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DBF2F0059;
-	Fri, 11 Jul 2025 16:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96EC2EF641;
+	Fri, 11 Jul 2025 16:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R2tNqdPz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWNZcYEO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E220A2F0051
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458B62E92A2
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752250732; cv=none; b=ndybXh2MN7V9BYV7MInXfnPLoKDLRcdc5WMuOYCeeLmtl1R2sRypKhOiUY9syTtd30mWRaKlX+Y1jP4nr25koVzX2BFYs1ytGAosKvoHhTQxQuFo2SR83xjCohIk0T1WZWO2BXrzmZtjZblMdj+x9DyWlTNgQheY2C6o5+LgCyM=
+	t=1752250798; cv=none; b=Z/svblu9ym8qJXOMPLv9+Iaa5PPFzk/auN48JtHv4qoXZQk2KAAYsBa4romIbt/uiU8titZ3dNcyKF0V8bDOu8ziyG1v+H8KJpdX9z7fUC874YQjdOS/tgp6MZ5/sKrnH7VzsKJxMo7rtkyagx10YClIW2W2jwNlqd64lIfl4hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752250732; c=relaxed/simple;
-	bh=RmuyxikP3jhhp0nnQevk5CM+a6W6OZAcoIpkbcZxKzc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BHPZv30cb/u11Izu8ocQLPx6gQ+guBN0m59AVLRj3d+hhLDbrm7V+Zuhq6AXUdGScS9doK9+VUdF0GT9OyJx0TfH4AjyNP5Yuq+F9+oBMYMEVYNjQzVBjCsLvMTvt+pjoW5VY+5VvGQTdWQPdY1bz6KEvof/KzDtdzCMd7jp/G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R2tNqdPz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752250729;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Nn/tyjLuDZQnek6uqzyr2XAecXIQlMAuAiSgJfPbL7U=;
-	b=R2tNqdPz8lmcYLZGNsTa/hkOgQjIRF9cTU0/zXrXYipYI5VEajpmTxNH3AwV+OMQHTCxrv
-	Sj5V1Hx53NsCgt4loU7gBciU95WbkKXulKoMwgt8/gqvTu17rY8E4aGauchy6uuOJiS4A3
-	SzbAaWP9mPZTuIOKU7tLuIZrji50VSM=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-399-hEuSMAD2MC2NI88sD4rrrQ-1; Fri, 11 Jul 2025 12:18:48 -0400
-X-MC-Unique: hEuSMAD2MC2NI88sD4rrrQ-1
-X-Mimecast-MFC-AGG-ID: hEuSMAD2MC2NI88sD4rrrQ_1752250727
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f7f1b932so1452364f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:18:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752250727; x=1752855527;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Nn/tyjLuDZQnek6uqzyr2XAecXIQlMAuAiSgJfPbL7U=;
-        b=dcN4iEoVdKsDgtjhsWWkKejxoexQ8Jzwq3nuGidR0/AlUZBMJ2HxsKL48mAA9Yfmq/
-         CU5olqjNTyYUS/r7FEYYwQOhfPKYGYsEelqAjKhadpZL7hheR841fOxbb1KGO/DPo58o
-         2tH92eMc2yplbxmteK2lQOAntzOhH5xV6hIAYYcmdQ8igrUfCC99WQ2fyFYhnhUC+mqu
-         Z+nW6s3xJEGdK+vkPugSPonWZv/Grsfi3rH69jNPezmlsgIPwBU210gziiAW673leXhT
-         gCbmlfO38syGhFJe+wcuWo83/Znc/gb420MPLHfX/rB+OMIdnrVD8lu0k6I52bacbnSU
-         i5sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmS/3+PKZ5kOX/5fE8v/ZvWvkECHxxWbaK2e+4H1nQaZTemMhlHl6XY8UF3rH8tLLWuAinok1wNcqP2+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjSrOLSt5s6x1Vyfp6W5kD5XugGDspp9cJwJjtdeGp9JpGv4Mz
-	vbbdg6VAlReuZagyG2W+RSUAcUGDRaSrsnT54gni/EAnDvXP7RWwwGx1ehZFtPKYkPlUMqUkarx
-	rCEthuetSOTNauwD2jbzwixQJTEjjEOSwQNr0GNO0u6ZhpvDu+Jp0mzgGFjKpv+1dmw==
-X-Gm-Gg: ASbGncv9pEOEl34NrFPymDifONwMjYrxGeeDO/m8RpEb+86zb82yU76DAXb2kKrBTH4
-	U5f2xF+CeLI9WSfUEJUDl1d8aFwL7DkcUQRR0UZZYmaJp8J15o3sEW9eGtLncCqOH54PFZQAfQI
-	i5V7judXSTMkFLDVkHuJVx5ZpjmyTSeRC2yvbUiyDtEQhvx3SWQ8wIZuzDOWmrZOFmnsOgFa7Q9
-	0dgPgL8kMXyJz7zwEkO8TNSyKDbtTPYPCXy9+HdGTUz3QcD4Z1uEbZihd+l5yHHrV6TikD5mfOk
-	ghc8AO0fkwaWRaoDl3sM/eXXvplfcFmOnx5HLFdC/0GABJ/wDP67mmTk6hqiZv4IYfDc+HakrMs
-	k6ra+rCLOPU2HV/K0cx67rL+rx23llc4IS+ATNgL9e4tKcbfPY/31SVd85LduH3Q2+HM=
-X-Received: by 2002:a05:6000:1acb:b0:3a4:ef36:1f4d with SMTP id ffacd0b85a97d-3b5f2dfe068mr3165971f8f.38.1752250727345;
-        Fri, 11 Jul 2025 09:18:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNEjxN0hZ8U7KjaRWXdNv8tLd+TjKw2qwDu6OkeGx6IP2NJytzdTy4QA+AXWSLgx0V7mfpjQ==
-X-Received: by 2002:a05:6000:1acb:b0:3a4:ef36:1f4d with SMTP id ffacd0b85a97d-3b5f2dfe068mr3165906f8f.38.1752250726806;
-        Fri, 11 Jul 2025 09:18:46 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d732sm4957680f8f.52.2025.07.11.09.18.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 09:18:46 -0700 (PDT)
-Message-ID: <02146c79-a4de-430f-8357-0608e796fa60@redhat.com>
-Date: Fri, 11 Jul 2025 18:18:44 +0200
+	s=arc-20240116; t=1752250798; c=relaxed/simple;
+	bh=1Cc4/JfdEwYxt9wDCzQswq8lMP1iCeM+kgPAm365koM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=JO5ib9c9526j+VizdrxwUsZSG86MaFkYXKW6FA9C+Qgt2u/eMSAcz+9qviTAADkrhl4Kk68mjkpG/5LYTmPZ69NyzGlAj9r1JGNzaifkvm029euFTX6ugG7VF3bG/hM5nDKbvCd2GCGhjWkhJVbanYhTwOv6uDdKjLYDFO7w3xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RWNZcYEO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28F0C4CEED;
+	Fri, 11 Jul 2025 16:19:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752250797;
+	bh=1Cc4/JfdEwYxt9wDCzQswq8lMP1iCeM+kgPAm365koM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=RWNZcYEOQkKajxdfntCy4fNxtgO8cTjwrYtATtWgSn//qj5ZYENkJsJTn2yyWEOES
+	 8nxjJY2QYTCVVc2G9Ee1774aI6WTfEZ2oCKyb7QJOKh7eIG/Qt+QIwEpF+7gWQWx3K
+	 GdIbmI3PirIjSPEqKEf79U5bNmYY3RX/d+ehIe9EkrE0wcwqNfywMLkG7Hw7yuIHW+
+	 4iFfX6fsWogdGiqM9BCdlBrE4MZ8MpyDiYbYcPEm4IrdAQfkDaMSaXHpqHibchCOb4
+	 /SA+coo1TCIdF+7pXgUiY+FcYRqbK2oAa+0kGF9OwWtlls4xaMDD7gODXU0O/miemg
+	 Gg9Z7jkA02eJg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFBB383B275;
+	Fri, 11 Jul 2025 16:20:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC V1 PATCH mm-hotfixes 1/3] mm: introduce and use
- {pgd,p4d}_populate_kernel()
-To: Harry Yoo <harry.yoo@oracle.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
- <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- Andrew Morton <akpm@linux-foundation.org>, Dennis Zhou <dennis@kernel.org>,
- Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@gentwo.org>
-Cc: "H . Peter Anvin" <hpa@zytor.com>, Alexander Potapenko
- <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
- Dmitry Vyukov <dvyukov@google.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Juergen Gross <jgross@suse.com>, Kevin Brodsky <kevin.brodsky@arm.com>,
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- Joao Martins <joao.m.martins@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jane Chu
- <jane.chu@oracle.com>, Alistair Popple <apopple@nvidia.com>,
- Mike Rapoport <rppt@kernel.org>, Gwan-gyeong Mun
- <gwan-gyeong.mun@intel.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@linux.ibm.com>, x86@kernel.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org, stable@vger.kernel.org
-References: <20250709131657.5660-1-harry.yoo@oracle.com>
- <20250709131657.5660-2-harry.yoo@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250709131657.5660-2-harry.yoo@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid out-of-boundary access in
+ devs.path
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <175225081949.2325425.16515007956966725798.git-patchwork-notify@kernel.org>
+Date: Fri, 11 Jul 2025 16:20:19 +0000
+References: <20250711071450.207302-1-chao@kernel.org>
+In-Reply-To: <20250711071450.207302-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
-On 09.07.25 15:16, Harry Yoo wrote:
-> Intrdocue and use {pgd,p4d}_pouplate_kernel() in core MM code when
-> populating PGD and P4D entries corresponding to the kernel address
-> space. The main purpose of these helpers is to ensure synchronization of
-> the kernel portion of the top-level page tables whenever such an entry
-> is populated.
+Hello:
+
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
+
+On Fri, 11 Jul 2025 15:14:50 +0800 you wrote:
+> - touch /mnt/f2fs/012345678901234567890123456789012345678901234567890123
+> - truncate -s $((1024*1024*1024)) \
+>   /mnt/f2fs/012345678901234567890123456789012345678901234567890123
+> - touch /mnt/f2fs/file
+> - truncate -s $((1024*1024*1024)) /mnt/f2fs/file
+> - mkfs.f2fs /mnt/f2fs/012345678901234567890123456789012345678901234567890123 \
+>   -c /mnt/f2fs/file
+> - mount /mnt/f2fs/012345678901234567890123456789012345678901234567890123 \
+>   /mnt/f2fs/loop
 > 
-> Until now, the kernel has relied on each architecture to handle
-> synchronization of top-level page tables in an ad-hoc manner.
-> For example, see commit 9b861528a801 ("x86-64, mem: Update all PGDs for
-> direct mapping and vmemmap mapping changes").
-> 
-> However, this approach has proven fragile, as it's easy to forget to
-> perform the necessary synchronization when introducing new changes.
-> 
-> To address this, introduce _kernel() varients of the page table
+> [...]
 
-s/varients/variants/
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to avoid out-of-boundary access in devs.path
+    https://git.kernel.org/jaegeuk/f2fs/c/65eeef059d04
 
-> population helpers that invoke architecture-specific hooks to properly
-> synchronize the page tables.
-
-I was expecting to see the sync be done in common code -- such that it 
-cannot be missed :)
-
-But it's really just rerouting to the arch code where the sync can be 
-done, correct?
-
+You are awesome, thank you!
 -- 
-Cheers,
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-David / dhildenb
 
 
