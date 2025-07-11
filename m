@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-728172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070AEB0242B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:53:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D72B0242D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2FF93BE375
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:52:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82B16A47989
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B082ED842;
-	Fri, 11 Jul 2025 18:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C075C2D12F6;
+	Fri, 11 Jul 2025 18:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lwgFoPz2"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="akjxkGsS"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218261DE3B7
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E7B1DE2CC
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752259999; cv=none; b=kZgUyefftTJD4Y16J0h1LfmUPwwWRyHvjQAQzNx8Ki5yrDUcTZBxhkSW5Wae2CsZi2PHqn+ZUvdc8hIVN5VYhV8Jcuw1w0rUAQa9f9kQFVsHKb3Q6U4tvgaObUhYw7oA2lAHmAvDnJBM8xVEjebrZvzti9l+Tov+CDj28I82uw8=
+	t=1752260076; cv=none; b=JGhMBHu2vBh1riJRXD/YBGGKy3+9rS9g1U0Qkpa9zOnUteRChuHPI1Y3Vz3W9FXRRyaVQUPoScTO1KMfGfivCl4w7AHKo8M/G/L8THScYyKQ3mQbu9R1KjoZND61/v5ihFow8YsHtAuZGxn0tfVN5IVUC3KUIcR8aJt9Zy0r9lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752259999; c=relaxed/simple;
-	bh=6oa0VmGb0K5iYELBtraMc+ym3sVQgZnaB1e6wip7Kyg=;
+	s=arc-20240116; t=1752260076; c=relaxed/simple;
+	bh=NK5BNgE/WS+Rnbr3Oglk6axm+5znEKQ09/LeulVtaY8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kPCKbtII4+uZCRWWYd+wfC4fTQqysele+5Uxh51XXQcmp0k1Ul/iiHGdW8MJxakJVp/fAoGHntnpLMGPmffkQ4ea+Z6CUoq4wSs/wtaurGZik6bCSusPkBYCrWPkOm7KVYyr6uU7/LMscWPv5OtCY3h/9aq24NUyHHYOO3d6jtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lwgFoPz2; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e812fc35985so2152222276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:53:16 -0700 (PDT)
+	 To:Cc:Content-Type; b=OFmpSYVzySMbqbk3itRYm61NAa9K8HKqwRV+fLgQZCGlTaYo4PujwJKCy5DKjG1GBw95CaxedRjM6mQ6qI0NErSJq+Mij4SCgvo7STLVohcwm5T1cQ4rtc43patl4xpwi7lhJz6pkSZQNytcwPv4YJzdP0zPTiAU9p4yMdxaV+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=akjxkGsS; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so4016754a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:54:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752259996; x=1752864796; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lnMNvTF+R8ofXhs9BIQ7FQl/jHKBWLPO/PBptuTPHgQ=;
-        b=lwgFoPz2EVHuxJIHsoIfsNZnVcYxxE1kRoZhOs417OHb3eubPlOeWTiWEsmyI8XoYS
-         uwjidk62k7FV1mWq2B9sVO9eamU+Ml+4r61lV4eX2gBeJnYCmr1v803RqgGEAMQB2MSg
-         0S90oLmCea4CaQSFvjnK5/mi0g22cHlkIuQ9dhnf4Ipdz6Ew20xnjXzmZn6Y+cuhATwW
-         OUTzC6ZUqeRi/V/E929+DrdLPqt1JNGMjnZL9l7fjfVobB1PXpXOjQW7jb2D4q8umDZU
-         0+GjgJ9Qh6+SiTYCfASAypGLUy3ak2h97GkQSBNVUTpbE9fwBvHtZXK2vqUW5hpSQZVC
-         SQhQ==
+        d=linux-foundation.org; s=google; t=1752260072; x=1752864872; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=h8DF3TN4LDXw2ml6xO8e2jD+Euu91yv1fKkxI9RSJ/c=;
+        b=akjxkGsSmHAdd61yv4oP1c5FcdD8W0gyvkoQUR7mJUgz7Qmx4pULHpfRnAaQdnTVbe
+         7W6ZqFn8U+zRYidl+t/F2hPuNdEF1c0S6qa0S9mxWO8xQ5sPi9dtTfXHsx/qcJU7Os6q
+         n8MbsHF9h2yOsd0zmQr4zaS29EytveAp1pOM8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752259996; x=1752864796;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lnMNvTF+R8ofXhs9BIQ7FQl/jHKBWLPO/PBptuTPHgQ=;
-        b=h93g8/MlepGZYL/eCkHJ4QGJcZ4KAsxhdo3hleUnLSuGiv3dzNThxDmezuGJ3MidYb
-         rshb9GCRISGVIjDjLWZsA5/rv4yv568YBY06pTzTn0OsOg00krUKi6oMuCGyHbqN9lSJ
-         GD1qiH9e/kUgxHCpADcpR8TdCNGFdzo+z0ktynJkqeulgo+vR6bg+fW9oN4nrgm022EN
-         uK3C1udwWNUdBB5jCOu4xmHMLJPf7wMp+EWHuSEm30d/RisXNhiSz9Vax74IIKTOBPTD
-         DfjF5Tt44CHeLz3ENI8dEaexoZxTIo9Fl5XMYOLqLP1QWG5OvnFT6BKH2S703jZewjUJ
-         UB+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXMUfGc71NjN/0JlGiBKvUiXWCD8Oq9QHez98z810p9JD+Q3jk1IrVHXzlk7DOVb0HSGrY0YCa3OAQi8P4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7MnXrGvnYUYAfeQ+vWFpBj3onKokGpIE+Kz6EXIz/Wu9Dfjgz
-	E9m/1/s7VH2ECpBW9sD+1TKSXiPbi7c2Q1aIpXKnanP2XLnQ/wp4AyUlhuP5EUQAKuAFS02gohZ
-	o2RXBkVFVboBlRTvQHuvEngXHPTofdCgZlQB/vx9c+Q==
-X-Gm-Gg: ASbGncshYnO9gFdYU29iPaaJc+5oDH2nYseZLkzAnCKPUz8FGd4W05joTgTeyiL/iCh
-	hPxybZ/i09U0SElroeeCuUyoDTTDdiAy31xICNMWU7/6VPRqj9Mi1B4yHB9dfoAdbG3W+xQRzE3
-	lDiOttS7sMHl8FhQZC6uLoeuNa0xTLg2d5FUhIcior0+D7ZOPe7iLBeSvV5uy7ekSR9u6l0BnmP
-	6xHOnCS2BQxdt9+2Q==
-X-Google-Smtp-Source: AGHT+IHNGHaJapXfEwRUcTXNTWlTsMHXEiPIQ/b0KTpye4KQsUdp1sxBRmAZdNG++EC1bw7xLSQza58HYJgLAxUXYQU=
-X-Received: by 2002:a05:690c:6282:b0:70f:87c5:5270 with SMTP id
- 00721157ae682-717d5daccbfmr86777077b3.19.1752259996008; Fri, 11 Jul 2025
- 11:53:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752260072; x=1752864872;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h8DF3TN4LDXw2ml6xO8e2jD+Euu91yv1fKkxI9RSJ/c=;
+        b=npIeNgofo4rnr/uY0uxRlRFXQOlXrZzQRJb+2s+pXCuLs1z/nFuUFX1H5AracnyyqO
+         wsuqF7IuUftJ3iO7Z9fXJVkLj81O2cxHxNlPPv94XfIc7cqaWnNAsvA+79Iw750PqG+3
+         pqR3biw2tW36srX88E/3TPpTFYGozooD0C3tSYZDO+AQx9acNmWi4+NR93EohSHlvC5F
+         UeyEF5Vpb7fbQGBJVxjh+l2HPzcI//efWLqZb/MbG4X2Lmr14W8Bd0F7xjUGWTK8aGyU
+         9VxznUEU4bNwxWnFbUVZRlenaao+H3O+kzXnsbeQNF/rKA3WJsG4C0Uu9qP7ZtC3neYk
+         OwzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJhUTv5ETEDWtNa8RIQLqABhDOXjHSuD5/qqj+/ST0HZKE1XrXV9By0nwEK+m3snCBLTpCbGyqDg+SeGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKKcLg4z5y4IswO0iXTkq8ObrlNs9h+aE5GTYbEl5oj3JZXZFN
+	mehND2jnFv4Dt5oj5M/TPUx/daRnEL+/FnTRyc+JDTAAmrGUdxE1UnMDFKsOS8CcwU7PSQmHuYa
+	/n/s0lvrtyQ==
+X-Gm-Gg: ASbGnctIq7ERpA6iHqQ7zLpcSj/MVu3iFNOFp/FgoUZV5piXP4pvg3CBiB1yLHNWIeZ
+	VnMwjmjgawHKPyMH6yTsoFYF1PTqA03VLvmlASoHjEMH/8HlSXf3ChacMqVuH90FKCceXH8+/A/
+	ErBBP0Y3T5dwrl6XsXCWpw6KB2OmMN+SEUO29ZabmvVeRsk9BbRG4+MQbJqEQltzpCfZ55ExuNf
+	1zMAJFcsmUFUNrhkQVfDnuh46ug3iyg5eo+ZtWbag+u9sdTftS0VrGfC/igXr//5hMYkY4ts4u9
+	WW3VUuFUHMgYYzQFKjnpG5fd0gNvPa39p/T0hAmJSZOk5/vFtHYWq93rN2G0eAY3hfQtCCJ89+q
+	vR8qtPGe07fHJAn1iT792R+W3pbg9gRFraO11BXLnGVFvES9taecWUK+L5n7aV5BoG80PInBI
+X-Google-Smtp-Source: AGHT+IHFxRrBmgO4e/XN0dedLInfG66Nrvqa183IwApEngvPvlVCdCSWVTsWnroRQEdaIp/yAN8IEA==
+X-Received: by 2002:a05:6402:5187:b0:607:35d8:4cf8 with SMTP id 4fb4d7f45d1cf-611e76383a7mr3880474a12.11.1752260072026;
+        Fri, 11 Jul 2025 11:54:32 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c95256d0sm2545019a12.24.2025.07.11.11.54.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 11:54:31 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-607cc1a2bd8so3979563a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:54:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX0Pn2TuI/XI731q0/9AgsZ/SVytNRoS2/tzhakQZwDIg95s2wQXtkNuCLy/4HSJ4nqwadtPLs6AGFm3y4=@vger.kernel.org
+X-Received: by 2002:a05:6402:909:b0:609:9115:60f8 with SMTP id
+ 4fb4d7f45d1cf-611e847f9e0mr3480426a12.21.1752260070618; Fri, 11 Jul 2025
+ 11:54:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711-hdp-upstream-v7-0-faeecf7aaee1@foss.st.com>
-In-Reply-To: <20250711-hdp-upstream-v7-0-faeecf7aaee1@foss.st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 11 Jul 2025 20:52:58 +0200
-X-Gm-Features: Ac12FXxLjA7peUDZIWJhb4cndI_Q2FwVXxO2uVEd8E-6LJKHyzTLqNgXqkM6VhY
-Message-ID: <CACRpkda9M6R_vi5FMGvo6PyThB8OJjX7PMMusHjjs5HcX0OF4g@mail.gmail.com>
-Subject: Re: [PATCH v7 0/8] Introduce HDP support for STM32MP platforms
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Antonio Borneo <antonio.borneo@foss.st.com>, 
-	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250711151002.3228710-1-kuba@kernel.org> <CAHk-=wj1Y3LfREoHvT4baucVJ5jvy0cMydcPVQNXhprdhuE2AA@mail.gmail.com>
+ <20250711114642.2664f28a@kernel.org>
+In-Reply-To: <20250711114642.2664f28a@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 11 Jul 2025 11:54:14 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjb_8B85uKhr1xuQSei_85u=UzejphRGk2QFiByP+8Brw@mail.gmail.com>
+X-Gm-Features: Ac12FXz6F4j9YIJKyGAUwYcgpVBje1DHMNB65HFrbPl9F9fpay_RiZxgMldk13w
+Message-ID: <CAHk-=wjb_8B85uKhr1xuQSei_85u=UzejphRGk2QFiByP+8Brw@mail.gmail.com>
+Subject: Re: [GIT PULL] Networking for v6.16-rc6 (follow up)
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, 
+	Dave Airlie <airlied@gmail.com>, davem@davemloft.net, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pabeni@redhat.com, 
+	dri-devel <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 9:43=E2=80=AFAM Cl=C3=A9ment Le Goffic
-<clement.legoffic@foss.st.com> wrote:
+On Fri, 11 Jul 2025 at 11:46, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> Hm. I'm definitely okay with reverting. So if you revert these three:
+>
+> a3c4a125ec72 ("netlink: Fix rmem check in netlink_broadcast_deliver().")
+> a3c4a125ec72 ("netlink: Fix rmem check in netlink_broadcast_deliver().")
+> ae8f160e7eb2 ("netlink: Fix wraparounds of sk->sk_rmem_alloc.")
+>
+> everything is just fine?
 
-> Cl=C3=A9ment Le Goffic (8):
->       dt-bindings: pinctrl: stm32: Introduce HDP
->       pinctrl: stm32: Introduce HDP driver
->       MAINTAINERS: add Cl=C3=A9ment Le Goffic as STM32 HDP maintainer
+I'm assuming you mean
 
-The three patches applied to the pinctrl tree.
+  a215b5723922 netlink: make sure we allow at least one dump skb
+  a3c4a125ec72 netlink: Fix rmem check in netlink_broadcast_deliver().
+  ae8f160e7eb2 netlink: Fix wraparounds of sk->sk_rmem_alloc.
 
->       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp13
->       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp15
->       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp25
->       ARM: dts: stm32: add alternate pinmux for HDP pin and add HDP pinct=
-rl node
->       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp157c-dk2 b=
-oard
+Will do more testing.
 
-Please apply these through the SoC tree.
-
-Yours,
-Linus Walleij
+             Linus
 
