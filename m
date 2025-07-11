@@ -1,209 +1,197 @@
-Return-Path: <linux-kernel+bounces-727643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB5B7B01D78
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:29:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8909CB01D7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0296D560E59
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:29:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1085A43EEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395AA2D3A60;
-	Fri, 11 Jul 2025 13:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F1B2D3A60;
+	Fri, 11 Jul 2025 13:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="idm+1zLI"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LeMpy3Oa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA77C2D3746
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A732D3233
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752240570; cv=none; b=iIxaDgxe+bcwwfGHdjxNgHGXMVTI4mHit4qdwNygeWFNL/0bKPGSoDuJNS7C/RndLow+FtPtGv6FowbooVNg6cQiCQKV1t8tRavf9I5suULdM/ql4x2szpEzRObeXc/C0I9+uTyanFSDRAg2SQK9kU0fG3zwuKLesTkiA0cFxMs=
+	t=1752240584; cv=none; b=u3k8GJRAyXrPxt4JnpyCOyhD/lZUmtGiblH9npIEnGdk4ANxiYM/+XUZxSX7jRq6cowVajqz7UVNW8QBT/NKazu662FKGwS/CJkbUHg8EW35goEYJcEjUBqdCNGU2ZlmPif6awNWOakc+yd0jvPQP26NXT4vzy1nu/mStYHQfRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752240570; c=relaxed/simple;
-	bh=WDiPIjuqiChPX+asKp37/ByLWlXgZKPqmpcoStrHRxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hc8tG031GHvqRiDG3CDUzIp+fxd/hLGG0oXHTGCAuFy0vZEPShZqQFSY3+MeTJwy+fhPhPXJ8HE55CkcsXcdPooIwByzVPx7nTaetCFt8uFT8U+cz+vxIphnVWm1soVhbEwnCBdpn89nEzGkra9bPDaISqV7SH6U/mfrrBKIyLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=idm+1zLI; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23aeac7d77aso18464335ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752240567; x=1752845367; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pPQRVC+gYXzA0BtSE8rtHH/2+eUDBChSDQmEkeHBXgE=;
-        b=idm+1zLI9/PsnIdNl2AjPQmXZRdGyJf4BmfeAe0FmCmw3CfOCb5XcK56fFNOyW9bKN
-         9hLHYqM/i4dS9ifqsHHEUsDrDl34xwMjHufMPq4cAlAhGqPg9VqYih2F/gY/LTmiGIRY
-         zMJgcrB+QxAf/nzzS0Hj7B3ygDIrQon2YRQGCND0ktvK9KySusQ9V3XiJOnduOr8hMNA
-         jMoYUiiMcFzixAqeIyRVgyVya/G75h+4Qj8p0i1vybz/BGt53Kea5KmaeIb3oqrKB7z3
-         9pmw0YAtfooThSpEMQsMPv/YGQZo4jRW/A2Vrk/82rWD2/8CAbNMn6SNbha6pm+cz4yU
-         z3Rg==
+	s=arc-20240116; t=1752240584; c=relaxed/simple;
+	bh=eYmplTCBSWmf+MNM6ID1QnTvrR+0cydgP05O/5AnqdE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=adcBbzdojpQyNSDh1cF9tVuoTb25pVUauoJQoIaHQyEgtl0YtFMLQ7N768bXpD6CvfO+KnzfOKH8/IJtXHiYL4rV5e220ET8uzXcOJwJU57oSp52nYJQ47yZ7+EfcM7xz9l0MVmiTv0qG/UlaLQdqyZhVwBgyNP/azlJOl4bhW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LeMpy3Oa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752240582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=FWayNqEof3CPboKcwRiBzu8zVRh187wq4qLQtMB2hoc=;
+	b=LeMpy3OaYYcnEHN0fl1SJ9kVeMYNvm2+34twkseKtuc27rbTj3v3fNb9/vpIh2ESU+Ybmg
+	K+DZTTTAN+lzYiMlpZdVqLy3m9ZrbhZDulsnS3JPjY1Qn/3tXTBoIb5IH73imM6ApxUBtH
+	ggV5iosYzZTtw8ybopHUpa+xNQxq4k8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-13-3YAhU4O6NeGK8FH63sH-vA-1; Fri, 11 Jul 2025 09:29:39 -0400
+X-MC-Unique: 3YAhU4O6NeGK8FH63sH-vA-1
+X-Mimecast-MFC-AGG-ID: 3YAhU4O6NeGK8FH63sH-vA_1752240578
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45546d44936so3213285e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:29:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752240567; x=1752845367;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pPQRVC+gYXzA0BtSE8rtHH/2+eUDBChSDQmEkeHBXgE=;
-        b=mOhiTl5PpddVs0Hv6nppwZ13oqI1QjtuKdzExz7jeARt01OA9oWW7Dp9ko4v0O0OFK
-         bXCglx1mi9BUMc0rhg+c+oYgWqYM3m+g+nAcMyV7c/A0abYG0k4zaA3ICAYnHPHdRdRH
-         /1dI+Vs8KF69nFjC3cw296+4jXpmLhyyD+GAbxvRDLx6ViTN38q1ngAUPkBkunVmInC5
-         2NTh4pWdJUTpTKfNGzoLBI7btvtt4RST4uyYE/M55khDOUpgBzbgxWWsE0qOmbVj87J7
-         yzMHxWrmedqaYvnRtQDpxG0n71YpibbSjvp86XJm3xRFZkyBB3GpWFx3X0stoIrmuV9v
-         juVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzbtFUh2xxOn8omFpPe+TbKDMM8j6xaRdf6xqGYN2K4LJtSNeajDbdm88bkcFab73NYp0VhXJSiM1fedY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvzFa/3MFqMp8QGFRs3uLOOAlXQhE3u1e0HpVajMECmOKU/349
-	OKGW4tPVGBmlKUUfao+5qc1mLmb6eCYAXP7t6fm2EZibN5DJQdFWUVG6zptYH3HcSFCd8hDNQzL
-	24e2p7JBetXGCHrBVinif3nV5qkxAX0gTm1dybKHRkA==
-X-Gm-Gg: ASbGncsx/wPEzvxi22u45ENbPBXqeLmbJcK5Tjc8OKWcZ5P5QAJRkaf3YEwbvG7Szop
-	4lVznyJf76Xy7Ul0lpr7c4dRD7b649O5Vq2FhKHK98TY9+gfc6XIQFQbKUMIyvz1G8F6rW0PHnF
-	p4XjBAAAVE9lsXY7JiNmyMoGyaYViqGdbU4Y0UQcmsCezUNFRvjWkKLf/S6FqOjiqEgQDwvIpkl
-	aVtLt03ckSunIXgtj7xbZI3pb4sTEr6mDfSGEmQ
-X-Google-Smtp-Source: AGHT+IG4zXliACGrQprvEQ5wj7JsyfYLrvCmNiaEH+tMrZ+FZGuEDY+CASzdByOLlOs/WswgsUHGYzyvgG94wPmljLk=
-X-Received: by 2002:a17:90b:4b8d:b0:313:b1a:3939 with SMTP id
- 98e67ed59e1d1-31c50da140amr3325921a91.15.1752240566909; Fri, 11 Jul 2025
- 06:29:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752240578; x=1752845378;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FWayNqEof3CPboKcwRiBzu8zVRh187wq4qLQtMB2hoc=;
+        b=mLlEfxf78JVjwgYm8mdMdQ4rgKam5TGsEUxvb/XHmtill2tkeQj4FInM/YBmMibP5r
+         MC2xAAOyfP2UMTpIsteR2us57hVJqg40kM51yZTzM+ZzhEwER9zgMCZl/pUT9SjCa/e8
+         XK+VKQE/FWzIGdItNNbTYRM0OKbHbx9loW1eDyBD7DNUD3mCT+z4btygsD73TQ1MbuPc
+         js08TI5CqivJSX9VmKfjVpsdrmD7Buq6e8q62VhkrJsWJT0aANW0fVlmYl8C8S0/fn+k
+         gK56/yLOct8WbULheYpo0r7s5u+TuwYCefr2jiMBdRaRi8RuNByn6IgiLrNG7oC87wvd
+         FbQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXmZaYOVHQ59UTpKCRwnJB/yOU43A8JflalQ+SpIiqASUb8bE2ue/WWsZ3+0qN5V9La12uS69LWt49DIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6sPfjQf0b9Ld7eb/h3viZDiTiKCUWt0oYD/iRn3sytqrOTSle
+	mT77MEuGR4957zLHCSwZ//9mOG7iu6JMp4gujQ6EHfN1ql64hYsQSOfeUdHg2kYAjB1Ws2uXcIJ
+	2nI90J3vdgDBwwr2juN/WiGm+96B5hbfL4FacMB/GhFnPnc8l1q622kkK2dUuq+Y00Q==
+X-Gm-Gg: ASbGncsAJVz6wLFyZtSeJnRu3Ig7YDKFHbO7nAT++2F1UrHEGF7yP016+p3ArlcCoBb
+	wZDgUlN4oPxD/j84r24cSvQ1MVLY/oT7oYGzHfHnzxrYg0T2RdLs89650qq+GpPZJ8v0x/+SOQJ
+	nuSus206FvUNK+mrhzwGDzXhKx4gLGtRYRYlDGmqjQDVHqdPZFxZBg6vLzoOTZaDa9SmjJ6HoDL
+	FUOK4Ghbx0fSQgZraQy30iQLG+I+Po957yy0Y5KFe//WNxP14xRPsYv7p9BsiaiFCBvSQfPO/hx
+	GOg+8Nok4aaK005yUamlCv6m5ZMRtx12vwGrWsFymJuIzZmmir4lO4hxv+tdWzNnB14vcFiCTYh
+	AzSrAhAp8plNKMqdJjt0SK4HqIUHGWPqdXsVoRPzBBeYSKzAbc8okgB32YzlUyDx/Gj4=
+X-Received: by 2002:a05:600c:8289:b0:43d:26e3:f2f6 with SMTP id 5b1f17b1804b1-454ec1516b8mr30227095e9.5.1752240577731;
+        Fri, 11 Jul 2025 06:29:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHVapk8szymRwH8B2XrHeKjUHAvOctlqenT0WRp5OlN8BT5l3R1n4X9nsu/EyRKLbJS0bzhIw==
+X-Received: by 2002:a05:600c:8289:b0:43d:26e3:f2f6 with SMTP id 5b1f17b1804b1-454ec1516b8mr30226815e9.5.1752240577292;
+        Fri, 11 Jul 2025 06:29:37 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc9349sm4418063f8f.45.2025.07.11.06.29.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 06:29:36 -0700 (PDT)
+Message-ID: <e2f32bdb-e4a4-447c-867c-31405cbba151@redhat.com>
+Date: Fri, 11 Jul 2025 15:29:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711094031.4171091-1-quic_jinlmao@quicinc.com>
-In-Reply-To: <20250711094031.4171091-1-quic_jinlmao@quicinc.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Fri, 11 Jul 2025 14:29:14 +0100
-X-Gm-Features: Ac12FXz2yLkWQDmM32aTY0N8Gj1hFRU1asfRpnUpH_TzU92dKa2GOxAV8v2hkGM
-Message-ID: <CAJ9a7VhmHooDpht-gU7eAA5O028Tn=CVmCNHU6Qg+UYXp6kUQg@mail.gmail.com>
-Subject: Re: [PATCH v6 0/5] coresight: Add remote etm support
-To: Mao Jinlong <quic_jinlmao@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, coresight@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/mm: fix split_huge_page_test for folio_split()
+ tests.
+To: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-mm@kvack.org
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250709012800.3225727-1-ziy@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250709012800.3225727-1-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 09.07.25 03:27, Zi Yan wrote:
+> PID_FMT does not have an offset field, so folio_split() tests are not
+> performed. Add PID_FMT_OFFSET with an offset field and use it to perform
+> folio_split() tests.
+> 
+> Fixes: 80a5c494c89f ("selftests/mm: add tests for folio_split(), buddy allocator like split")
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>   tools/testing/selftests/mm/split_huge_page_test.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+> index aa7400ed0e99..f0d9c035641d 100644
+> --- a/tools/testing/selftests/mm/split_huge_page_test.c
+> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
+> @@ -31,6 +31,7 @@ uint64_t pmd_pagesize;
+>   #define INPUT_MAX 80
+>   
+>   #define PID_FMT "%d,0x%lx,0x%lx,%d"
+> +#define PID_FMT_OFFSET "%d,0x%lx,0x%lx,%d,%d"
+>   #define PATH_FMT "%s,0x%lx,0x%lx,%d"
+>   
+>   #define PFN_MASK     ((1UL<<55)-1)
+> @@ -483,7 +484,7 @@ void split_thp_in_pagecache_to_order_at(size_t fd_size, const char *fs_loc,
+>   		write_debugfs(PID_FMT, getpid(), (uint64_t)addr,
+>   			      (uint64_t)addr + fd_size, order);
+>   	else
+> -		write_debugfs(PID_FMT, getpid(), (uint64_t)addr,
+> +		write_debugfs(PID_FMT_OFFSET, getpid(), (uint64_t)addr,
+>   			      (uint64_t)addr + fd_size, order, offset);
+>   
+>   	for (i = 0; i < fd_size; i++)
 
-The majority of this code should not be in the coresight drivers
-directory as it is not actually coresight.
+So I assume the tests still passed. Would there be a way to have made 
+them fail? (IOW, detect that the wrong kind-of split was performed)
 
-This seems to be a communications bus system for various SoC
-components - one of which happens to be a remote etm. It really needs
-to be in a qcom-qmi subdirectory - which would also remove your
-reliance on the coresight maintainers for getting all the qmi drivers
-upstreamed. I note that there is a CONFIG dependency of
-QCOM_QMI_HELPERS, which implies there is already a set of QMI
-functionality not in the coresight directory.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-We already have  a dummy coresight driver to cover these cases where
-the actual etm source or sink might be in a different subsystem. This
-could be extended in a generic manner to have an associated driver /
-component, with the dummy source then forwarding the enable / disable
-commands and acting as the coresight device for the purposes of
-enabling the trace path from source to sink.
+-- 
+Cheers,
 
-Thus the "coresight-remote-etm" driver becomes "qmi-node-etm" driver,
-with the proprietary comms info, instance IDs etc encapsulated away
-from any generic coresight information, and has an associated
-coresight-dummy-source to handle the connection to the coresight trace
-framework. I imagine the association could easily be modeled in device
-tree using a phandle reference.
+David / dhildenb
 
-This would not change your usage model, but would give better
-separation between what is clearly the QMI comms subsystem, and what
-is needed to handle coresight connectivity.
-
-Moreover, having the generic coresight dummy driver extended in this
-way would allow other underlying communication systems to be used on
-other devices in future.
-
-Best Regards
-
-Mike
-
-
-On Fri, 11 Jul 2025 at 10:40, Mao Jinlong <quic_jinlmao@quicinc.com> wrote:
->
-> The system on chip (SoC) consists of main APSS(Applications processor
-> subsytem) and additional processors like modem, lpass. There is
-> coresight-etm driver for etm trace of APSS. Coresight remote etm driver
-> is for enabling and disabling the etm trace of remote processors.
-> It uses QMI interface to communicate with remote processors' software
-> and uses coresight framework to configure the connection from remote
-> etm source to TMC sinks.
->
-> Example to capture the remote etm trace:
->
-> Enable source:
-> echo 1 > /sys/bus/coresight/devices/tmc_etf0/enable_sink
-> echo 1 > /sys/bus/coresight/devices/remote_etm0/enable_source
->
-> Capture the trace:
-> cat /dev/tmc_etf0 > /data/remote_etm.bin
->
-> Disable source:
-> echo 0 > /sys/bus/coresight/devices/remote_etm0/enable_source
->
-> Changes since V5:
-> 1. Fix the warning and error when compile.
-> 2. Add traceid for remote etm.
-> 3. Change qcom,qmi-id tp qcom,qmi-instance-id.
->
-> Changes since V4:
-> 1. Add coresight QMI driver
-> 2. Add coresight qmi node and qcom,qmi-id of modem-etm in msm8996 dtsi
-> V5: https://lwn.net/ml/all/20250424115854.2328190-1-quic_jinlmao@quicinc.com/
->
-> Changes since V3:
-> 1. Use different compatible for different remote etms in dt.
-> 2. Get qmi instance id from the match table data in driver.
->
-> Change since V2:
-> 1. Change qcom,inst-id to qcom,qmi-id
-> 2. Fix the error in code for type of remote_etm_remove
-> 3. Depend on QMI helper in Kconfig
->
-> Changes since V1:
-> 1. Remove unused content
-> 2. Use CORESIGHT_DEV_SUBTYPE_SOURCE_OTHERS as remote etm source type.
-> 3. Use enabled instead of enable in driver data.
-> 4. Validate instance id value where it's read from the DT.
->
-> Mao Jinlong (5):
->   dt-bindings: arm: Add CoreSight QMI component description
->   coresight: Add coresight QMI driver
->   dt-bindings: arm: Add qcom,qmi-id for remote etm
->   coresight: Add remote etm support
->   arm64: dts: qcom: msm8996: Add coresight qmi node
->
->  .../bindings/arm/qcom,coresight-qmi.yaml      |  65 +++++
->  .../arm/qcom,coresight-remote-etm.yaml        |   9 +
->  arch/arm64/boot/dts/qcom/msm8996.dtsi         |  11 +
->  drivers/hwtracing/coresight/Kconfig           |  23 ++
->  drivers/hwtracing/coresight/Makefile          |   2 +
->  drivers/hwtracing/coresight/coresight-qmi.c   | 198 +++++++++++++
->  drivers/hwtracing/coresight/coresight-qmi.h   | 101 +++++++
->  .../coresight/coresight-remote-etm.c          | 262 ++++++++++++++++++
->  8 files changed, 671 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-qmi.yaml
->  create mode 100644 drivers/hwtracing/coresight/coresight-qmi.c
->  create mode 100644 drivers/hwtracing/coresight/coresight-qmi.h
->  create mode 100644 drivers/hwtracing/coresight/coresight-remote-etm.c
->
-> --
-> 2.25.1
->
-
-
---
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
 
