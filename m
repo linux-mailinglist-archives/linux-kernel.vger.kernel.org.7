@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-728176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7E4B02435
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:57:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557EAB02439
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6DED1787EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0BB6542733
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAED32EF64A;
-	Fri, 11 Jul 2025 18:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5992D3ED6;
+	Fri, 11 Jul 2025 19:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gALLjl2/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NmDt2XwK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6FF1D61BC
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3651D8E07
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752260262; cv=none; b=ebMLnhXiUw3AotXp2DkcL20xlXjdq6qzmJt+7S9WxqGWAfHTRDzr+B3d5O8LKZwpGanAaQRtENtKIU9Fulptw8ibxc/k7y7NnTDvW5TTTFa8Y5Ud/Xu6iMyhHl2+f6PFpOPyUgHg3+GiVTzbvj/YiKZhnrLgB79Ha6N15oAIChs=
+	t=1752260599; cv=none; b=l9ppEk1q3EFlKvqFMqUMtaaJcow+lfr3Eom0NK8P1zIKhkpBLfUHNWYOrJJJhjXzREXDGbNpjazVsSFkryOa5fq1okNYMkq+L0L4GJ0DBbRs+o1jrLV9/HSBs/CLTrxBFvaYa9LnMB2Km1lNFaA2Ol9Jk1on25gkCuZiAZNptDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752260262; c=relaxed/simple;
-	bh=R4KOVvt/FCWP6gRCC0GZxjeyZOsKBBBECyJoWTZIt5U=;
+	s=arc-20240116; t=1752260599; c=relaxed/simple;
+	bh=YtPJBSuNF/CMPLCRd5CVGiFXARpGpAf/wlPIPPEqRNo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eJCTyYRxJwS1+hRvN4Z3UD+Vg8fhgeA6tnqPk2mI8u3lWr+MoEw2oJRJ00pMInfR+PqDZW3egZLE42ZBJffNxNU7ZA9qND9KgKTJr3xYO2ygYb5GTtL5SOX6t5udbblKjlrhrvCuDLISYAF/+2YNaXyzqE2E/PpJQFY76mG1RH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gALLjl2/; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=LTVaua+z9zd4kdoMzyXoxwpCGBFIR/P3MEef3Xdf6ZCowV335oBqdWyqqr/PYn8i9HpUE8AeXm+mYKy7Ld4EEQXY/bidPZ3HVHxTsA4R9pizWDduUhaHD6DQcObtNpkVywn0i6DwDCBxXbUd1c7+rMl35oQpnF0E6yardBPndRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NmDt2XwK; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752260259;
+	s=mimecast20190719; t=1752260596;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VbL3LlciXrx5usUof/F7sG/X7kZUjQJ0y4avrgolLvM=;
-	b=gALLjl2/69KpLdydwNZte7ubVKX4YlwqVCF5pnfGIuhp0/Gm0rQKwtkkeFMca7aC8yNq8J
-	TLRhLh9FLJCFfqRW0G+XFg4xUaMJWB6aA7ZnzsT77BIeeQeVL3a3tZusx19PesaXl9/Oio
-	wu/YOZ6Uj5kFf7SviP40KSzz/y4POls=
+	bh=/lngge7cM1MpsUh2i1RV/CXO4O0gq48AADt8QP7yiyA=;
+	b=NmDt2XwK3tJj4isivStG1DvbXOXdQHzudZ/saMXPRoVDsUv+akOKUPTGgOfBJAoIj5NKB5
+	Nqv3ItHC8xzZ9yg2joi/mVjylj9EPkqYvUzBEHC3P2HeFfkzOjH6YKmDyjynpkGyqankkg
+	gozWUtQwXCOsRoNg7CUinRXHbPmCB5A=
 Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
  [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-201-qulzc9TwPAa_ZjtHgvUdMQ-1; Fri, 11 Jul 2025 14:57:38 -0400
-X-MC-Unique: qulzc9TwPAa_ZjtHgvUdMQ-1
-X-Mimecast-MFC-AGG-ID: qulzc9TwPAa_ZjtHgvUdMQ_1752260257
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b20f50da27so1663384f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:57:38 -0700 (PDT)
+ us-mta-64-gEyiVtBvPdyJBZuEuCBeHg-1; Fri, 11 Jul 2025 15:03:15 -0400
+X-MC-Unique: gEyiVtBvPdyJBZuEuCBeHg-1
+X-Mimecast-MFC-AGG-ID: gEyiVtBvPdyJBZuEuCBeHg_1752260594
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b5f97cb8fbso22984f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:03:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752260257; x=1752865057;
+        d=1e100.net; s=20230601; t=1752260594; x=1752865394;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=VbL3LlciXrx5usUof/F7sG/X7kZUjQJ0y4avrgolLvM=;
-        b=s5noCJgQPfXBClWGzM4Avf3vGVW7y6kXq2jMIoWzzpV+iJP9N2PtPBydCUFuyEQR4G
-         74s4OHrJH5CQPxdnpvEBD/Vx0X68h3c7IwuTnoIr1M05VRG2/RdJB/rMgH34j6A4/QFD
-         56eDTiyHRA0TMgqOFRIFbHhsXgQo93ZaKtBn9BOO1eqwAqKoVvWQWz0XVmzheC1/IKSV
-         hB9ivWZD8mDZ2ULqbzzy2r84Jqy/PPjxYIATkpNs/UALFnUybj2N2xJW6IrGq6Cx5jW3
-         lCTBxQScP6w3jLg3hvjyu4yZNLZMn4nIaEGkx/0QbhOSfmSY7sPuYHZ6BykBKs4miKXg
-         2AWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSvXJTtLrvAvMXGD79lZiV9ZOXRmd0px6k8bw9zikEytVvl9JcZ5UBImLTWDCjzLpGO2hok/K8LGsD7gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt2VS7y+FwKwRLTmj/kny1/ivxd5OC+Gy/KusuVnvysO5abkSA
-	wd+4G4gdpkpiy0FVw/Ue+0IPC63TJB7R3Hdl3x37tqUf5yTW2PYH9rZ3bsjnB94HMayZq11VkpI
-	WF8vm7p2ibAChtFHIdJLkdltj3tV5niUNS+NcHKF20VArKejNlkklfuSuhH6zdN2sdA==
-X-Gm-Gg: ASbGnctfDDdQu0woNZEapWrZQD7D2Xxw3SMmYHwM4ZTfLRifvAqfmBxOEECvLtuejHv
-	FJcHu30fOPefwqfOFk6Pt2pkx07YoJEkQudUSzuPVfAzRP4K8q5f03Pm12QejCnZUr+BxhoSmnq
-	90GzPGrapa+u+hM9NdAzEg3FfXNHhmlitQnHLsW93Tg20Qwh8s/XT1Lys6xlOM9Tp3Umxfqatx9
-	eqYQW85E3NZbMJdxgI+by3rMD/dq646mh1UXEL6LK6Mc03S/o7A5Koy4ksd0YPEayV0yzKOkv+Q
-	PRW9RrA+OQtA0iV2n6SEs1vkurJ5+O9iTz0coX5Z1g3GEar44NN1/u7es4FDRRLmB24szjnMUD7
-	RfaZ5Wu8VAxOukduPuZITpwBKCc2J3GO5ZyNxO/eWvrP/HyNSKR5KOzNdDkzRHDedzyE=
-X-Received: by 2002:a05:6000:2c0f:b0:3a5:3993:3427 with SMTP id ffacd0b85a97d-3b5f1e95fb8mr4724536f8f.26.1752260257172;
-        Fri, 11 Jul 2025 11:57:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGwKEUQLbh/zY6545eP9xFg7a7s2kPU1xUA4JG52ouaTweDCumvMrk6zcF1Opz8ywnEmQoVg==
-X-Received: by 2002:a05:6000:2c0f:b0:3a5:3993:3427 with SMTP id ffacd0b85a97d-3b5f1e95fb8mr4724490f8f.26.1752260256647;
-        Fri, 11 Jul 2025 11:57:36 -0700 (PDT)
+        bh=/lngge7cM1MpsUh2i1RV/CXO4O0gq48AADt8QP7yiyA=;
+        b=Tv+lkbeDivnRpfMOzRohEJDTM8AQa5/tMV4pBY1fo/DqoHmfDe4TNI5g+SYL/qQ3/s
+         EKnvfufSp7vfw3vrmL5sZy7HzGgxb4Soz/PsvNmrQ/gVP+AjKnNrL0RddBRNed5voCqg
+         agLySzvzH4QupGpd4ao16GPLQe17IcXkvXMdBPii+CwKtb9ZQKV4FJE9aaxNtb6BPiNH
+         xMD8gr8jMKRjofcjZBnQV+Vhx2hxtNhNO2CzGinJhLrNZYvfL/ME7nMPpinktK2gqMDq
+         DBY33jVnjIRVDfFsC0HaECJBRYtsKtRu2cutmFsPRG+aWA5iiKR/ZLhC76inWo2pzrRe
+         RvNw==
+X-Gm-Message-State: AOJu0Yx20aR2Qh4kRL3ABaF2wnjDDWYkje6WFUrXHkiyMECzQraUqYUX
+	w5JAp1FuKqIBPv2vLSmDc1OZFg8Q7wwBIUrETLy1a+acqeQm0w3b5nY6JMhmWIxkxrnlCm2hux/
+	VwngVphTb6DxJ7g7crBwp6rgUsuY8eTTnvE1a4Q9Vd7N9OVOs/QyGnnaPHHJt81hGYQ==
+X-Gm-Gg: ASbGnct22jJCY234iBW/HzVEQdILCXUTha5xm7CjEcPwq8lrnyatOij7quQhf36sT27
+	mUzMPq3HkaDjOpfGAF4S3mlv4LvY5Fc4HHQxANomt52XCRYWyRFoKHr3FukdkFBocEAZa7w+qUM
+	Ex2khHm3eAm36lqU7oN2g5nfdScAh5DQXP3gnzAanbmPL3koDQstjhOe3lGRQpzx7SH7kSfeTN4
+	cjZZ1I0R6+KQt9ArShHVRuX5DXlcrnHrmTT/ETyMNyrXj/UgQ2eGNSmZ3iodBOeVaLl2MY1etyn
+	2x8dPJU6QwyJrQg0jhuejcVLyxGllHaKyUbEQS0xbsTLNe1jdY3RRed1Zl7AqhjI+ykCkjOp8fF
+	BpnQ4fKHp5h9y16kracPUftr4hjzwVKXKW87nQcYDCIh2ky/QbdgRtmHvL4AneHcERBQ=
+X-Received: by 2002:a05:6000:4402:b0:3b5:dafc:1525 with SMTP id ffacd0b85a97d-3b5f18dc96emr3257692f8f.33.1752260593785;
+        Fri, 11 Jul 2025 12:03:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3xDIEgx30kkknBrLV2LVIr52Wad/TmaqKJIxkhU6edDETOEFTCXyz+a0/g6zni08RX/ga6w==
+X-Received: by 2002:a05:6000:4402:b0:3b5:dafc:1525 with SMTP id ffacd0b85a97d-3b5f18dc96emr3257648f8f.33.1752260593340;
+        Fri, 11 Jul 2025 12:03:13 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f0a:2e00:89cb:c7f0:82f2:e43c? (p200300d82f0a2e0089cbc7f082f2e43c.dip0.t-ipconnect.de. [2003:d8:2f0a:2e00:89cb:c7f0:82f2:e43c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1e8b1sm5171588f8f.82.2025.07.11.11.57.34
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1f4edsm5112095f8f.83.2025.07.11.12.03.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 11:57:35 -0700 (PDT)
-Message-ID: <aad59217-0763-473e-bdc8-d0d47bec35bf@redhat.com>
-Date: Fri, 11 Jul 2025 20:57:33 +0200
+        Fri, 11 Jul 2025 12:03:12 -0700 (PDT)
+Message-ID: <d258c487-29c5-4e1b-b5ec-911def6c850c@redhat.com>
+Date: Fri, 11 Jul 2025 21:03:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,40 +88,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 01/14] mm/memory: drop highest_memmap_pfn sanity check
- in vm_normal_page()
-To: Hugh Dickins <hughd@google.com>
-Cc: Lance Yang <lance.yang@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, nvdimm@lists.linux.dev,
- Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Dan Williams <dan.j.williams@intel.com>, Alistair Popple
- <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
- Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, Lance Yang <ioworker0@gmail.com>
-References: <20250617154345.2494405-1-david@redhat.com>
- <20250617154345.2494405-2-david@redhat.com>
- <aFVZCvOpIpBGAf9w@localhost.localdomain>
- <c88c29d2-d887-4c5a-8b4e-0cf30e71d596@redhat.com>
- <CABzRoyZtxBgJUZK4p0V1sPAqbNr=6S-aE1S68u8tKo=cZ2ELSw@mail.gmail.com>
- <5e5e8d79-61b1-465d-ab5a-4fa82d401215@redhat.com>
- <aa977869-f93f-4c2b-a189-f90e2d3bc7da@linux.dev>
- <b6d79033-b887-4ce7-b8f2-564cad7ec535@redhat.com>
- <b0984e6e-eabd-ed71-63c3-4c4d362553e8@google.com>
- <36dd6b12-f683-48a2-8b9c-c8cd0949dfdc@redhat.com>
- <0b1cb496-4e50-252e-5bcf-74a89a78a8c0@google.com>
- <056787ba-eed1-4517-89cd-20c7cc9935dc@redhat.com>
- <5e439af4-6281-43b2-cbd2-616f5d115fdf@google.com>
+Subject: Re: [PATCH v5 10/14] x86/mm: Simplify clear_page_*
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+ akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
+ peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
+ tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
+ boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
+ <20250710005926.1159009-11-ankur.a.arora@oracle.com>
+ <377d74d6-a7f9-4e94-9276-168a26d49210@redhat.com> <874iviprkf.fsf@oracle.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -170,34 +146,55 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <5e439af4-6281-43b2-cbd2-616f5d115fdf@google.com>
+In-Reply-To: <874iviprkf.fsf@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11.07.25 20:49, Hugh Dickins wrote:
-> On Fri, 11 Jul 2025, David Hildenbrand wrote:
->> On 08.07.25 04:52, Hugh Dickins wrote:
->>>
->>> Of course it's limited in what it can catch (and won't even get called
->>> if the present bit was not set - a more complete patch might unify with
->>> those various "Bad swap" messages). Of course. But it's still useful for
->>> stopping pfn_to_page() veering off the end of the memmap[] (in some
->>> configs).
+On 11.07.25 19:26, Ankur Arora wrote:
+> 
+> David Hildenbrand <david@redhat.com> writes:
+> 
+>> On 10.07.25 02:59, Ankur Arora wrote:
+>>> clear_page_rep() and clear_page_erms() are wrappers around "REP; STOS"
+>>> variations. Inlining gets rid of an unnecessary CALL/RET (which isn't
+>>> free when using RETHUNK speculative execution mitigations.)
+>>> Fixup and rename clear_page_orig() to adapt to the changed calling
+>>> convention.
+>>> And, add a comment from Dave Hansen detailing various clearing mechanisms
+>>> used in clear_page().
+>>> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+>>> ---
+>>>    arch/x86/include/asm/page_32.h |  6 +++++
+>>>    arch/x86/include/asm/page_64.h | 42 ++++++++++++++++++++++++++--------
+>>>    arch/x86/lib/clear_page_64.S   | 39 +++++++------------------------
+>>>    3 files changed, 46 insertions(+), 41 deletions(-)
+>>> diff --git a/arch/x86/include/asm/page_32.h b/arch/x86/include/asm/page_32.h
+>>> index 0c623706cb7e..a8ff43bb9652 100644
+>>> --- a/arch/x86/include/asm/page_32.h
+>>> +++ b/arch/x86/include/asm/page_32.h
+>>> @@ -17,6 +17,12 @@ extern unsigned long __phys_addr(unsigned long);
+>>>      #include <linux/string.h>
+>>>    +/*
 >>
->> Right, probably in the configs we both don't care that much about nowadays :)
+>> /** if this was supposed to be kernel doc (which it looks like it is)
+>>
+>>> + * clear_page() - clear kernel page.
+>>
+>> "clear a kernel page"
+>>
+>> Although I am not sure what a "kernel page" is.
+>>
+>> Did you mean "clear a page using a kernel virtual address" ?
 > 
-> I thought it was the other way round: it's useful for stopping
-> pfn_to_page() veering off the end of the memmap[] if it's a memory model
-> where pfn_to_page() is a simple linear conversion.
-> 
-> As with SPARSEMEM_VMEMMAP, which I thought was the favourite nowadays.
+> Thanks. Yes, this makes way more sense.
 
-Yes, you're right, I had the !SPARSEMEM model in mind, but obviously, 
-the same applies for the SPARSEMEM_VMEMMAP case as well.
+FWIW, most clear_user_page() will just call clear_page(). The ones that 
+don't, have to deal with the dcache flushing, as the page might have 
+cache alias from another (mm) address space.
 
-Only the SPARSEMEM && !SPARSEMEM_VMEMMAP model is weird. IIRC, it will 
-dereference NULL when given a non-existant PFN. (__nr_to_section 
-returning NULL and pfn_to_section_nr() not beeing happy about that)
+So clear_page() is just about clearing page content using a kernel 
+virtual address, and clear_user_page() is additionally taking care of 
+any dcache aliases.
 
 -- 
 Cheers,
