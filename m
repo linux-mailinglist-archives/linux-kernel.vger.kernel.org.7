@@ -1,244 +1,147 @@
-Return-Path: <linux-kernel+bounces-727439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D715B01A38
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:58:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2242B01A44
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1113A7B55
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D94C3BFAAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B0D288C1F;
-	Fri, 11 Jul 2025 10:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9283D288C3F;
+	Fri, 11 Jul 2025 11:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVxsZK0X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C91tenZg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F46026D4F1;
-	Fri, 11 Jul 2025 10:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832F92836B5;
+	Fri, 11 Jul 2025 11:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752231521; cv=none; b=kb5d9c4u7TQzfjcsDhBKllatWEwUbCiRC2sZFJebjCO12xq4wI7/T+G8Rh6UQgfVPpqKBLdha1fWVjAWrs07Ca3M4xVYvCPrM34ZUAl641v+eYOADLmubO7vBKprgiN4z2In+x23o38DkESYiQSwn6wvvl00Xi5AncxzYIQ8Am8=
+	t=1752231873; cv=none; b=YGk/RsGaUtNSYLxhVfNvtVjHYnYOYH1zIMDsDH9PLV+/MGgP3FwGxR8yNOyBWbq0oWAucdSBAU4BGOsYkMzvUd+gzpPR2sgD0vyDMb/605QClMIGube1VbcCxldHXQ61A2Cplkkyg4PDfM642KQSl01/eaV2NHi2kk0FJ4U4guY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752231521; c=relaxed/simple;
-	bh=aVsLb2cOuBff/SLrZpyW5DOCj+eMBrtqOyVzejo0ScA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kPqP2lrpNIvm7EtM7mYg+XNcagaSmjMQHJPo1eb9WT9IRW5uB06Dd2Fqm4h+GFJMomp29Eim2sT8sQ3LGavDkrtCxU6BbQbay3P1ZDZgw53DNsvRDau6YrX9FFvTK/xwiISOrrITanT7JnZCSgMSy5ha4sed323jvgI8H9iUuyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DVxsZK0X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34DADC4CEED;
-	Fri, 11 Jul 2025 10:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752231520;
-	bh=aVsLb2cOuBff/SLrZpyW5DOCj+eMBrtqOyVzejo0ScA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DVxsZK0XRSjXpQJpWRfnHuOnwV4FBCnv/azvC47iebNT5QD386axCXJ4Bk8Soc0bL
-	 sY1XkBQ3B/youNi31Z5TMB5aN06HTPJw/3wl31xw2GRZ+wg/EkTc9BrxJmYXDUMNWv
-	 tKwX++L33hacwhYY0Vla7v3zWkHQrtP07eGDeh37f1LULXUzfJiRaePKiNZ+G2fJBc
-	 l0jEE6Fu7bNJ+7O4sTOuXcQhdHZyIhNBiij5H+TxwbRuFtmycJkJ3YE4xxeJmij4Ln
-	 cM50934kr9jWVGtA7+Hkewtu+oS7Oa+Wy80wQ/4aV0zfsIqloRqPj6MtpJ7uVXspIm
-	 0CiYKH008wdlQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] tracing: Remove "__attribute__()" from the type field of event format
-Date: Fri, 11 Jul 2025 19:58:38 +0900
-Message-ID:  <175223151834.2878276.11017360679500958621.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-In-Reply-To:  <175223150823.2878276.5814683250353215724.stgit@mhiramat.tok.corp.google.com>
-References:  <175223150823.2878276.5814683250353215724.stgit@mhiramat.tok.corp.google.com>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1752231873; c=relaxed/simple;
+	bh=nFLgi7//BECQmXxDWxXRsQ3oWB5Qx+laxM0VeYpYygc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M1hRm3bIuhOsCOolrp1/+QicSJqzlv/az9SIhkCB5vvw5zUa8bT3Rh322a02v9Kbn9e+ws9LVsRjRcdY3hrCSIkqJnyHZ3+GJ3/1veDXqYa9lFaprhkNr+uXQJK7a7HSKqXR2si0cKXkeK1YFsfD/SpqHGTajpiaW9SCbStNbnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C91tenZg; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752231872; x=1783767872;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nFLgi7//BECQmXxDWxXRsQ3oWB5Qx+laxM0VeYpYygc=;
+  b=C91tenZgC6MpStFkIdbr9DFp5o7iu9gVCRl1XaEejv+jHwvHDpmh2A/t
+   7iILBiW537X9MsYavYjVlCRYK41O0Rz4fdibQuJRGRlYLPFeGxKYt5DJd
+   aZrRZoqCjS8WKL4iwp/bTFE/xFyC94dUkhSS/N1y3OvIL6iFFK6LUYWAl
+   kSyiNlRZ62OC12JvqdG2L7YjJyp4P262HuzCm+hsb5HPeJHFMg+YaPNcb
+   iFVHjCdh1uDbihsq0ZmswzKQB7J11wYBKauWKmHuZLo5SYE5LABH08/I9
+   8In8PNFyoxCmXyE4PxjztG1mFne1sMNEgqAu02IX4s2xTsjMYDYC1pEgQ
+   A==;
+X-CSE-ConnectionGUID: TKurDnhsShCsoUpUY+lNvA==
+X-CSE-MsgGUID: Qw7531H0RRy7u4v53Es6NA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="58291536"
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="58291536"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 04:03:23 -0700
+X-CSE-ConnectionGUID: k8Eh6q1JQ1KZfBO6cJAURA==
+X-CSE-MsgGUID: xfwK3S46RCGxcTshm6tHJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="156837141"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 11 Jul 2025 04:03:20 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uaBXB-0006Hf-1v;
+	Fri, 11 Jul 2025 11:03:17 +0000
+Date: Fri, 11 Jul 2025 19:02:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH net-next v22 2/2] mctp pcc: Implement MCTP over PCC
+ Transport
+Message-ID: <202507111843.OV6uA3Jr-lkp@intel.com>
+References: <20250710191209.737167-3-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710191209.737167-3-admiyo@os.amperecomputing.com>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Hi,
 
-With CONFIG_DEBUG_INFO_BTF=y and PAHOLE_HAS_BTF_TAG=y, `__user` is
-converted to `__attribute__((btf_type_tag("user")))`. In this case,
-some syscall events have it for __user data, like below;
+kernel test robot noticed the following build warnings:
 
-/sys/kernel/tracing # cat events/syscalls/sys_enter_openat/format
-name: sys_enter_openat
-ID: 720
-format:
-        field:unsigned short common_type;       offset:0;       size:2; signed:0;
-        field:unsigned char common_flags;       offset:2;       size:1; signed:0;
-        field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
-        field:int common_pid;   offset:4;       size:4; signed:1;
+[auto build test WARNING on net-next/main]
 
-        field:int __syscall_nr; offset:8;       size:4; signed:1;
-        field:int dfd;  offset:16;      size:8; signed:0;
-        field:const char __attribute__((btf_type_tag("user"))) * filename;      offset:24;      size:8; signed:0;
-        field:int flags;        offset:32;      size:8; signed:0;
-        field:umode_t mode;     offset:40;      size:8; signed:0;
+url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mailbox-pcc-support-mailbox-management-of-the-shared-buffer/20250711-031525
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250710191209.737167-3-admiyo%40os.amperecomputing.com
+patch subject: [PATCH net-next v22 2/2] mctp pcc: Implement MCTP over PCC Transport
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20250711/202507111843.OV6uA3Jr-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250711/202507111843.OV6uA3Jr-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507111843.OV6uA3Jr-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/mctp/mctp-pcc.c:71:8: warning: variable 'skb_buf' set but not used [-Wunused-but-set-variable]
+      71 |         void *skb_buf;
+         |               ^
+   1 warning generated.
 
 
-Then the trace event filter fails to set the string acceptable flag
-(FILTER_PTR_STRING) to the field and rejects setting string filter;
+vim +/skb_buf +71 drivers/net/mctp/mctp-pcc.c
 
- # echo 'filename.ustring ~ "*ftracetest-dir.wbx24v*"' \
-    >> events/syscalls/sys_enter_openat/filter
- sh: write error: Invalid argument
- # cat error_log
- [  723.743637] event filter parse error: error: Expecting numeric field
-   Command: filename.ustring ~ "*ftracetest-dir.wbx24v*"
+    65	
+    66	static void *mctp_pcc_rx_alloc(struct mbox_client *c, int size)
+    67	{
+    68		struct mctp_pcc_mailbox *box;
+    69		struct mctp_pcc_ndev *mctp_pcc_ndev;
+    70		struct sk_buff *skb;
+  > 71		void *skb_buf;
+    72	
+    73		box = container_of(c, struct mctp_pcc_mailbox, client);
+    74		mctp_pcc_ndev = container_of(c, struct mctp_pcc_ndev, inbox.client);
+    75		if (size > mctp_pcc_ndev->mdev.dev->mtu)
+    76			return NULL;
+    77		mctp_pcc_ndev = container_of(c, struct mctp_pcc_ndev, inbox.client);
+    78		skb = netdev_alloc_skb(mctp_pcc_ndev->mdev.dev, size);
+    79		if (!skb)
+    80			return NULL;
+    81		skb_buf = skb_put(skb, size);
+    82		skb->protocol = htons(ETH_P_MCTP);
+    83	
+    84		skb_queue_head(&box->packets, skb);
+    85	
+    86		return skb->data;
+    87	}
+    88	
 
-Since this __attribute__ makes format parsing complicated and not
-needed, remove the __attribute__(.*) from the type string.
-
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
-Changes in v2:
- - Add memory allocation check flag.
- - Check the flag in update_event_fields() to avoid memory leak.
- - Fix 'static const int ... strlen()' issue.
- - Fix to find 2nd __attribute__ correctly. (adjust next after strcpy)
----
- kernel/trace/trace.h        |    1 +
- kernel/trace/trace_events.c |   74 ++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 67 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index bd084953a98b..cd7be4ce6ee9 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1468,6 +1468,7 @@ struct ftrace_event_field {
- 	int			size;
- 	unsigned int		is_signed:1;
- 	unsigned int		needs_test:1;
-+	unsigned int		alloc_type:1;
- 	int			len;
- };
- 
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 120531268abf..2e607afefff3 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -112,22 +112,74 @@ trace_find_event_field(struct trace_event_call *call, char *name)
- 	return __find_event_field(&ftrace_common_fields, name);
- }
- 
--static int __trace_define_field(struct list_head *head, const char *type,
-+#define ATTRIBUTE_STR "__attribute__"
-+#define ATTRIBUTE_STR_LEN (sizeof(ATTRIBUTE_STR) - 1)
-+
-+/* Remove all __attribute__() from type */
-+static void sanitize_field_type(char *type)
-+{
-+	char *attr, *tmp, *next;
-+	int depth;
-+
-+	next = type;
-+	while ((attr = strstr(next, ATTRIBUTE_STR))) {
-+		next = attr + ATTRIBUTE_STR_LEN;
-+
-+		/* Retry if __attribute__ is a part of type name. */
-+		if ((attr != type && !isspace(attr[-1])) ||
-+		    *next != '(')
-+			continue;
-+
-+		depth = 0;
-+		while ((tmp = strpbrk(next, "()"))) {
-+			if (*tmp == '(')
-+				depth++;
-+			else
-+				depth--;
-+			next = tmp + 1;
-+			if (depth == 0)
-+				break;
-+		}
-+		next = skip_spaces(next);
-+		strcpy(attr, next);
-+		next = attr;
-+	}
-+}
-+
-+static bool need_sanitize_field_type(const char *type)
-+{
-+	return !!strstr(type, ATTRIBUTE_STR);
-+}
-+
-+static int __trace_define_field(struct list_head *head, const char *__type,
- 				const char *name, int offset, int size,
- 				int is_signed, int filter_type, int len,
- 				int need_test)
- {
- 	struct ftrace_event_field *field;
-+	char *type;
- 
- 	field = kmem_cache_alloc(field_cachep, GFP_TRACE);
- 	if (!field)
- 		return -ENOMEM;
- 
- 	field->name = name;
--	field->type = type;
-+	if (need_sanitize_field_type(__type)) {
-+		type = kstrdup(__type, GFP_KERNEL);
-+		if (!type) {
-+			kfree(field);
-+			return -ENOMEM;
-+		}
-+		sanitize_field_type(type);
-+		field->type = type;
-+		field->alloc_type = 1;
-+	} else {
-+		field->type = __type;
-+		field->alloc_type = 0;
-+	}
- 
- 	if (filter_type == FILTER_OTHER)
--		field->filter_type = filter_assign_type(type);
-+		field->filter_type = filter_assign_type(field->type);
- 	else
- 		field->filter_type = filter_type;
- 
-@@ -225,6 +277,8 @@ static void trace_destroy_fields(struct trace_event_call *call)
- 	head = trace_get_fields(call);
- 	list_for_each_entry_safe(field, next, head, link) {
- 		list_del(&field->link);
-+		if (field->alloc_type)
-+			kfree(field->type);
- 		kmem_cache_free(field_cachep, field);
- 	}
- }
-@@ -3290,10 +3344,14 @@ static void update_event_fields(struct trace_event_call *call,
- 		if (strncmp(map->eval_string, ptr, len) != 0)
- 			continue;
- 
--		str = kstrdup(field->type, GFP_KERNEL);
--		if (WARN_ON_ONCE(!str))
--			return;
--		ptr = str + (ptr - field->type);
-+		if (!field->alloc_type) {
-+			str = kstrdup(field->type, GFP_KERNEL);
-+			if (WARN_ON_ONCE(!str))
-+				return;
-+			ptr = str + (ptr - field->type);
-+		} else
-+			str = (char *)field->type;
-+
- 		ptr = eval_replace(ptr, map, len);
- 		/* enum/sizeof string smaller than value */
- 		if (WARN_ON_ONCE(!ptr)) {
-@@ -3306,7 +3364,7 @@ static void update_event_fields(struct trace_event_call *call,
- 		 * when the module is removed. Otherwise, it will stay allocated
- 		 * until a reboot.
- 		 */
--		if (call->module)
-+		if (!field->alloc_type && call->module)
- 			add_str_to_module(call->module, str);
- 
- 		field->type = str;
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
