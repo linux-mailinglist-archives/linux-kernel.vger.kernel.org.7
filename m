@@ -1,135 +1,143 @@
-Return-Path: <linux-kernel+bounces-726740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631B3B01094
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:06:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC70B01096
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800903A5F71
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:06:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B860316D4A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CD646447;
-	Fri, 11 Jul 2025 01:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782C53C463;
+	Fri, 11 Jul 2025 01:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkOboRK+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="QpqmL3Wn"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A39A625;
-	Fri, 11 Jul 2025 01:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268292770B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 01:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752195987; cv=none; b=tuxLTQeyIoXgINp9ivKOtpRT8bVTtIiAswmvawzcOEupHcnOd1lag8UMklaVYDNhcJFKzKFk8LfFJ0vMhHdpTzsa0tT9P0CmQi2WOweOElNRTdksSNutl9I4BGkLJs7QB2CmgcN12gf4kEnotSbpmYNXV1E6vYVRDH2Y5cUhK1w=
+	t=1752196046; cv=none; b=qC4PDw9fZrAN7NzsHrMackPNaM37sim5fp4hE1AsDTj9nCLAVu3YTCCzf7iQorlB1HHKUJq6Cp8s4/tFY7y6OvSQz9BqoPxqpULSGEwL3l5KjiY23AYQzQl2rPkgqLSa4S29NNdthCdj062ECMOKJCg4x5178f3qgrHv+QoPouU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752195987; c=relaxed/simple;
-	bh=3s9ya70fRuAtMbeXNZqI/wI3mNNpFXrGUgHz7iC5FZs=;
+	s=arc-20240116; t=1752196046; c=relaxed/simple;
+	bh=YRvwCC2Ha4y1rPhJk146f/loFd2WpTlx2lEwZSYmXVQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QJKFvdXG21Sp35XyBaCLYpYuQHEhbt0OfAg+c5Kg83Az4ihLwwfquKxnxpOq5I+ka0UEJpNHPx+QJACTChTEUUUfrfEHuxPQGPFr0EjePrgVrwpqEivgImVcJ35qNy0EpIJKs/SKoyngtNDwhno7ZTqsnMPjM0Hnt4bnD/d4QIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkOboRK+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0151C4CEF4;
-	Fri, 11 Jul 2025 01:06:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752195986;
-	bh=3s9ya70fRuAtMbeXNZqI/wI3mNNpFXrGUgHz7iC5FZs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DkOboRK+dzbQcbXSb6ZM4srfdImE3uoWJ0JA6knuDWitO+udLU2EehGG8fIQgHX3J
-	 gkvpnqQ6+XVAtvkLpcKnOZTDFMv2iHkUmrEv2VI5kEsztx+JhZmtQZhbT4JIqPv12I
-	 bZ4vVw/s/j/Rb9RD9ZWzOU3yFHUqRBGkFmFZpouz4QobAMVa57QzIgRHwavrtrTXEv
-	 0rzqYKyx1WPj9mRBushGqtm0pb8axvGwquP3AUC8wyE5XBSsn9NFnkzRcasfF2x/8Q
-	 JnUV6+fDrKw+sRDJnjJzKanWDG5nWaXA5qx8zdAUfE0hIRHBu3I7nsHznEoCHvkxwG
-	 FYTCw1xF+h4uQ==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-555024588b1so1757296e87.1;
-        Thu, 10 Jul 2025 18:06:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVGmN/BrofNBo6qrtvowpHlxj2QqZrsgWr+UdAWOJ3t9I0SqlzGpPqYmN1M+nfM02SymXZjI1l0hOKw@vger.kernel.org, AJvYcCVNXh5uj7R7kc7gZdUMcGHC5AK/grHIxP6kS8K8S+Gf+6OkQcomil6HhGEEVqkhknVI7vfCZInjkfZIrxer@vger.kernel.org, AJvYcCXDsuPEEb3VDvsVsRIaLLn6b8cuyLS+hTiySMDgxYSOMA/5oTX67KGsqzoj6pkaED+QAi3Jy7pVYd4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVxDPHUalAIs1YCkvTXO5RSf2RHgV1MV7C1OikkWzYVPyd4MMD
-	x4bi4Ad7uWRmjTN085sASsC8HHFjAHjGPHuCa7XnoM2lRfmCSyvfQ8x/s7DZ/ft6K4oSEZPmdPe
-	Y8XIzYjgYRdDzBDew/YgJk2UwdOypz+w=
-X-Google-Smtp-Source: AGHT+IE+3CUYH/gD3T7zT/PvUdYk4B6Ktm/C8FGrfNnQrO0FD/zBA/r82egJK1xA6pV6KiuBRkMaxwF2g3Dpml5Qj2E=
-X-Received: by 2002:a05:6512:39d1:b0:553:a60d:6898 with SMTP id
- 2adb3069b0e04-55a04645b4fmr271265e87.45.1752195985093; Thu, 10 Jul 2025
- 18:06:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=OFnt/1SjnGw+34v6zdYHl4nwHj8Zlb+i4reJHQTSZVB3DTxycQ6WZMFjApFgAbIUO0lF4sOvXPLlsaeCoBmg2Ztk1tPTJSH0OTRjsK+rCoajAhdY5Lb8pSTx+K9t+6s4Iv8z2unCTUL6jZUjrd8Mzig58l61E7etXrw+wssl9n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=QpqmL3Wn; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-313336f8438so236299a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 18:07:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1752196044; x=1752800844; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pTpOdXsMQLzrcYHow8zySMbXm3VVzD+3w6bdwbkL+9A=;
+        b=QpqmL3WnTWY+aaZ+yV4l7EgGxPehD6XOjs6EH7y0GrZjD8yooRqtleAsbpvZyZCkxL
+         TiSFp9LXn3bT6TydLbO4DZmGlyWBaTAuFDjILoCkvnCcf5jAIUq9tT3ttuPXfWyzv86E
+         Aio6eznbgcs00LgmqLxWEQiqCSXHqMeLyyIo2nR8gqUHmF0PX6j9aDs/y+IXSykxtT7c
+         v+Vnl4gQwmib8+qQYbARNwvsZEEt3+OBholzuMUA4katZR5m+/2OB3GISvwxVaMEyyEM
+         LtxGVg0DXTuKEpVu9KlJu/go6FGz6BNaIAxE9XOXIcjVjLqT9BfPtPKxwTvx9e45VM1v
+         A5fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752196044; x=1752800844;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pTpOdXsMQLzrcYHow8zySMbXm3VVzD+3w6bdwbkL+9A=;
+        b=KJCx60gTI1sVuGpMBFKpBP8QvnUj6I7EmTAjnVGNcnxp57Ct0G1O2VQFRCsM3N4sqh
+         q0dJd4njxTZlz+iXVri6/d+bn/9FCAUThp6nSHg+6m8MYkU6sI1lEFG5pm/jTcwsAimv
+         uEsMGVab3V1q6PEEXibMqTO7VO+oxMUHOCP52ymasLvG/1yE+pV3CVjQEIokOm6+YqyK
+         K0sCuzyfSV/erQBd7N1c/VlxBzkwqv+wgLW81VgIEXpGEJ9NgViZZFHpTZaB4N0AOQmX
+         YFwk4riaeGtHerO2GyRESqQitsUj8PI6bgpdsu+qYTC9eau4BqtMSXZFcuKcIDq9mXJw
+         c9+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXfzc5FGElee/EYt9RkBCFfhzzyVMRFMV7jE7OStNY8QZ/1MHhzVuwB1asygfL5XhKaUy+qDgJezk5Xcmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK9hV4LBv51Qwe4I+xqfHUubWcH6I+QnL/SV8fzRwY8uMya2Uy
+	49lBMkQ3LSElhgGPuAfGwIYSu9sD1wtT8L4PWZtXHfJVEe0WoEVEl5pL6/iv7MGmNTJ1+E579HT
+	85Olqh+S5Vivw0K9M+8gh7T0+KfoHgMAGBPXh12FCyg==
+X-Gm-Gg: ASbGnctg2PgDjHw2QobvN8B773DFn8xbl/+7Sa+KXnrpGS2xWbcm1NDafKqSLcU0GpG
+	F/MGSPup14wxTIwyI7Qq8hyh6yt9ioMMnzKdbzMChg5RmDhPRtU3qUx85WwAmvip5J8b/nKfJco
+	8Qa9ccL6dXjg5TrrgsXStPmXoyAdCvY6XqDknQZwfITCo0PV8AUrr/E9ildxjbFVXMGL+dlqyCY
+	b8pnqY=
+X-Google-Smtp-Source: AGHT+IG152UMqrIIRd2Xd90YPDSf5pEnbfvoOgqoYDrpOcF3WJk5ojY35gB4oWHE2yxNeXBAd3hQBEsb+k4GAvmvpHo=
+X-Received: by 2002:a17:90b:2711:b0:311:9c9a:58e2 with SMTP id
+ 98e67ed59e1d1-31c4f563077mr309964a91.7.1752196044222; Thu, 10 Jul 2025
+ 18:07:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710084151.55003-1-feng.tang@linux.alibaba.com>
-In-Reply-To: <20250710084151.55003-1-feng.tang@linux.alibaba.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 11 Jul 2025 11:06:13 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXHDFq3FZj4134CTcQZnke4t1=u6iRNNsQBvuhb3F6KurQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwlQMse1-xThF4QL3jSKxOhXMTEqDoi5hfv1fq0LHWKI1bQr6CujMt1wgA
-Message-ID: <CAMj1kXHDFq3FZj4134CTcQZnke4t1=u6iRNNsQBvuhb3F6KurQ@mail.gmail.com>
-Subject: Re: [PATCH] rtc: efi: Add runtime check for the wakeup service capability
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250711002322.1303421-1-cachen@purestorage.com>
+ <CALCePG3a6wG+3Nu7-JHha+LMtyRRNF3sXp13sS-=Xv1pvsX09Q@mail.gmail.com> <fhy4rcjrwwmlebgoiwepmga3fovxdvqeylsub6lk3opl2fi2td@ucuwdpu4ua7r>
+In-Reply-To: <fhy4rcjrwwmlebgoiwepmga3fovxdvqeylsub6lk3opl2fi2td@ucuwdpu4ua7r>
+From: Casey Chen <cachen@purestorage.com>
+Date: Thu, 10 Jul 2025 18:07:13 -0700
+X-Gm-Features: Ac12FXw6y-q8rSNhM9jBT1X4xydypPX-JJoJktrjXOfl29h8h5Mx4Q3MEQyzFt0
+Message-ID: <CALCePG1h8NE010EGpBh8CxhiWqr4-GantEJ4P0Dnck+cnioBiw@mail.gmail.com>
+Subject: Re: [PATCH v3] alloc_tag: add per-NUMA node stats
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: akpm@linux-foundation.org, surenb@google.com, corbet@lwn.net, 
+	dennis@kernel.org, tj@kernel.org, cl@gentwo.org, vbabka@suse.cz, 
+	mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, 
+	rientjes@google.com, roman.gushchin@linux.dev, harry.yoo@oracle.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	yzhong@purestorage.com, souravpanda@google.com, 00107082@163.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 10 Jul 2025 at 18:41, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+On Thu, Jul 10, 2025 at 5:54=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
 >
-> The kernel selftest of rtc reported a error on an ARM server which
-> use rtc-efi device:
+> On Thu, Jul 10, 2025 at 05:42:05PM -0700, Casey Chen wrote:
+> > Hi All,
+> >
+> > Thanks for reviewing my previous patches. I am replying some comments
+> > in our previous discussion
+> > https://lore.kernel.org/all/CAJuCfpHhSUhxer-6MP3503w6520YLfgBTGp7Q9Qm9k=
+gN4TNsfw@mail.gmail.com/T/#u
+> >
+> > Most people care about the motivations and usages of this feature.
+> > Internally, we used to have systems having asymmetric memory to NUMA
+> > nodes. Node 0 uses a lot of memory but node 1 is pretty empty.
+> > Requests to allocate memory on node 0 always fail. With this patch, we
+> > can find the imbalance and optimize the memory usage. Also, David
+> > Rientjes and Sourav Panda provide their scenarios in which this patch
+> > would be very useful. It is easy to turn on an off so I think it is
+> > nice to have, enabling more scenarios in the future.
+> >
+> > Andrew / Kent,
+> > * I agree with Kent on using for_each_possible_cpu rather than
+> > for_each_online_cpu, considering CPU online/offline.
+> > * When failing to allocate counters for in-kernel alloc_tag, panic()
+> > is better than WARN(), eventually the kernel would panic at invalid
+> > memory access.
+> > * percpu stats would bloat data structures quite a bit.
+> >
+> > David Wang,
+> > I don't really understand what is 'granularity of calling sites'. If
+> > NUMA imbalance is found, the calling site could request memory
+> > allocation from different nodes. Other factors can affect NUMA
+> > balance, those information can be implemented in a different patch.
 >
->         RUN           rtc.alarm_alm_set ...
->         rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
->         rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
->         alarm_alm_set: Test terminated by assertion
->                  FAIL  rtc.alarm_alm_set
->         not ok 5 rtc.alarm_alm_set
+> Let's get this functionality in.
 >
-> The root cause is, the underlying EFI firmware doesn't support wakeup
-> service (get/set alarm), while it doesn't have the EFI RT_PROP table
-> either. As Ard Biesheuvel clarified [1], this breaks the UEFI spec,
-> which requires EFI firmware to provide a 'RT_PROP' table if it doesn't
-> support all runtime services (Section 4.6.2, UEFI spec 2.10).
->
-> This issue was also reproduced on ARM server from another vendor, which
-> doesn't have RT_PROP table either. This means, in real world, there are
-> quite some platforms having this issue, that it doesn't support wakeup
-> service while not providing a correct RT_PROP table, which makes it
-> wrongly claimed to support it.
->
-> Add a runtime check for the wakeup service to detect and correct this
-> kind of cases.
->
-> [1]. https://lore.kernel.org/lkml/CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com/
->
-> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
-> ---
->  drivers/rtc/rtc-efi.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
+> We've already got userspace parsing and consuming /proc/allocinfo, so we
+> just need to do it without changing that format.
 
-Thanks, I've queued this up now.
+You mean keep the format without per-NUMA info the same as before ?
+My patch v3 changed the header and the alignment of bytes and calls. I
+can restore them back.
 
-> diff --git a/drivers/rtc/rtc-efi.c b/drivers/rtc/rtc-efi.c
-> index fa8bf82df948..8d1b9bde6f66 100644
-> --- a/drivers/rtc/rtc-efi.c
-> +++ b/drivers/rtc/rtc-efi.c
-> @@ -259,6 +259,7 @@ static int __init efi_rtc_probe(struct platform_device *dev)
->         struct rtc_device *rtc;
->         efi_time_t eft;
->         efi_time_cap_t cap;
-> +       efi_bool_t enabled, pending;
->
->         /* First check if the RTC is usable */
->         if (efi.get_time(&eft, &cap) != EFI_SUCCESS)
-> @@ -272,7 +273,8 @@ static int __init efi_rtc_probe(struct platform_device *dev)
->
->         rtc->ops = &efi_rtc_ops;
->         clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->features);
-> -       if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES))
-> +       if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES) &&
-> +               efi.get_wakeup_time(&enabled, &pending, &eft) == EFI_SUCCESS)
->                 set_bit(RTC_FEATURE_ALARM_WAKEUP_ONLY, rtc->features);
->         else
->                 clear_bit(RTC_FEATURE_ALARM, rtc->features);
-> --
-> 2.39.5 (Apple Git-154)
->
->
+-       seq_buf_printf(buf, "#     <size>  <calls> <tag info>\n");
++       seq_buf_printf(buf, "<size> <calls> <tag info>\n");
+
+-       seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
++       seq_buf_printf(out, "%-12lli %-8llu ", bytes, counter.calls);
 
