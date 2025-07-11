@@ -1,155 +1,167 @@
-Return-Path: <linux-kernel+bounces-727128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1944BB01562
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:05:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80675B01570
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2EDD1C452EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:05:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06E476422B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4CB20298C;
-	Fri, 11 Jul 2025 08:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2B220D500;
+	Fri, 11 Jul 2025 08:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MTM1bxph"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="f3ABdV+J"
+Received: from mail-m21467.qiye.163.com (mail-m21467.qiye.163.com [117.135.214.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA15D1F8690
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03291A2632;
+	Fri, 11 Jul 2025 08:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752221086; cv=none; b=naZXov2ExiIrvlAWCna89uJ/iXivn+jrk4GyEFJ85gRNPwM/Lp+ZajpI04srha21iIv0yrsKNUtlQDE2xofA6qh7tRVWyWogDnjkMVGjFIgNsoRS3UhlsKFTH/mDxCJSHNRggedADmliqKMq9xK+F2snzTKPNjuKnCy5P86nX9I=
+	t=1752221147; cv=none; b=ta8Az8H4zeg5kDiZqKwIitKSlQJTioF3QwTyisfIm5olItIENbjK6skHeK9VS2U4i472GgVqkIXMYjNCwI0g0YHqt9rq15x7vbsmI9LmcCDddRWc1yfEEzPyvJx78AXtNnamzs6TTTAQip7Fw/cjnu3dpoDFb/7A1HzUJ0i57PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752221086; c=relaxed/simple;
-	bh=pkRDOWebUNM4JiyGTyFlT0hsoPMAV1wZl01/hxrceCs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QjwUAF7F8wy/FOraIAnHJNkf+kN0tFm1SyNx6VXbosjDUT+v20y+JZYvDJibyKU+OQoULg+CSEJOKrOe1WIE5xWObt73xq4n/SoQlLltAXDqoQQzFhUYj34CbyEVnlR5QmdxPebxgKTXWsEvZDd25uevnbL7DwjyI4QsMnC3J94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MTM1bxph; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-451d30992bcso13795365e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 01:04:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752221083; x=1752825883; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3M2iap2RfddA/05gTNnW43uL4IxbrFPZmKO6UgPVVnU=;
-        b=MTM1bxphIVLOhWSm+M1FfqfVIZVuprb0T5RImwHnk6zsTl1xJz1DNIlLBl9z2bV5r5
-         z3Ujiji8EfM6VkI/kyEy1BwtjIRGFANs/7oa0D6PhY+6DT9lqoXvTdKRV2cfgXMRrE9F
-         7PBSdBklrQTN6G+Hiz90qhN2ay0rLqj2qlxmyuseDPlv1qdztYkPibyzYtvpFwVXBKS7
-         bZ3Yd1lQTKvJpmWqrlJK86KExVvyKeIcLIE9n7tmdDga2VZ1/XUlwwRbCHAO7pA4Um1h
-         tkTfGCpwV6CD7naGRPRNUQizDHOW7b6tzBZcb03M/4pV9NAB3PVx8Y68xUW/E3c7If0w
-         Qmdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752221083; x=1752825883;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3M2iap2RfddA/05gTNnW43uL4IxbrFPZmKO6UgPVVnU=;
-        b=jRMGC4TV1wzRtw/HzUeEQcVPik+vxcbaGynUexYsDjnCsHAdmCt3vgrTu3NJuqhUw+
-         dJgcp9s9dda+ggmPrJmD+cTIjStIqMgs1PKwnqRuHYtTL3RSMf5ASPcPe0GKh/1DodMu
-         JxlJXQWRjt0y8btn2q2rZs0taaxQHLUSfaGbX3dTwQ57gEEvFqNF/8u1PmAbbAsM51NH
-         gYt+snmjIJwNUU9wSoxcAw5kDJYFFq4Eook4p8F3lnYRfCMsCZiviqoMeVmhLCaNFl6Q
-         Clwnk5cDBiZ1ZZwQ0LMvwaKFl584IuXY8/GPNA146ArcaT/lvuAr7zehnhXfJm+dwJ74
-         zORw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUmWCgIsiaDKPNmfIQ/QHs3m+znGCEl3+9keXFkArYsPAH4O6sOpLYpKhMb76Y2zpmcn6HV4nr4JrtT94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzMC+EmQj/Jal4TmLI1c8Xgsp7xo6Lw/J/5lX4GUUGqNB0bjAb
-	uTfEChmI9eIwW+Ab9PxSp/HS9azP8zxIChVuq+pjIKrbXYiqB3VBwU5RrDc+pnkMxoIxCpF+9sy
-	pWGvudJArsL15Pg8hJw==
-X-Google-Smtp-Source: AGHT+IFlSXEzAMov8oFdISNNULpSYKLnI6k/Wg/M0Dmh3F1GHL/zhYS6s31XC9cw+cBAGqFATVlq5a1YqgWWoCQ=
-X-Received: from wmbel6.prod.google.com ([2002:a05:600c:3e06:b0:451:edc8:7816])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1547:b0:453:5c30:a1d0 with SMTP id 5b1f17b1804b1-454f4257f2fmr14179655e9.21.1752221083194;
- Fri, 11 Jul 2025 01:04:43 -0700 (PDT)
-Date: Fri, 11 Jul 2025 08:04:36 +0000
+	s=arc-20240116; t=1752221147; c=relaxed/simple;
+	bh=YNgM2YUegra+JJIhbeMsctb/xCYn3P/Rg4e68nZ+iyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gRIh8B3X3056sHw2rG4iSh32ELDnapqqTqBm/pRTl71MAVktBtLJbJ1nZNek+LBYRgABg76bDmWzK/1Q3Zcm6wQbE5xIIEo4NDwETyQ2P5ZnnohWnWoa9SqeYNnWVrSq8tpyO6MBxiyN9yefNnIWRyUC/nH8HgWsSIXIedeN6rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=f3ABdV+J; arc=none smtp.client-ip=117.135.214.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1baf32046;
+	Fri, 11 Jul 2025 15:50:18 +0800 (GMT+08:00)
+Message-ID: <84b8fe6e-0d33-42a9-9f8f-ed10998429e8@rock-chips.com>
+Date: Fri, 11 Jul 2025 15:50:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAJTFcGgC/3WMQQ7CIBBFr9LM2jFAQ0hdeQ/TBYWBkmgxYIim4
- e6O3bt8L/+/HSqVRBUuww6FWqopbwzqNIBb7RYJk2cGJZQWRkzoeeQIbcVCAUct/KJHabyXwJ8 ny/Q+ereZeU31lcvnyDf5s/9KTaJEWoIRegrBTu4ac453Orv8gLn3/gXhNWXJqwAAAA==
-X-Change-Id: 20250709-device-as-ref-350db5317dd1
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1570; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=pkRDOWebUNM4JiyGTyFlT0hsoPMAV1wZl01/hxrceCs=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBocMWZf5DwFAkNMr1bNJ+/LMsbDNp8asHUALJEC
- 96m97gaYBuJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaHDFmQAKCRAEWL7uWMY5
- Rg1iEACj7tHOtxXbhYlloF3PdDFqYVx0uxVObHLIawoVwlm0qOu7jgYFt5twhGd67vpOLuPR1Nv
- d90grP/NrXGdRDadA1J56Y8XLaX13MqGkcQGrZAUN0VCuMCLx/qEjccQ5B8JSD+lOwVV26gsFub
- C5prv8LaELZ422a8iXkKb+VTpTtUa4arPcbmFsa5bvvPzOqGwYwLI8KDVlZU0NW8bczQz2JXPx3
- OUNMqZ3HjTWxll55DZBdWG5cHliBdZG0J+Ox4P6m509s/46m/M37U1O0SpJlI/PEaJoLlPH9e4B
- wuaqGfR5uEgwf5o1oPXvVU0gILQpodJfnxg9XJtTEaT/cOlbeEbhyU+kiuMcankJfb9ACf/s+vC
- R2iRQM6iyzTMO4rGmYY+IUZ2sR7Ob7vUfO9laUr8QgAZBCCwhll6IOk0bWyyQHLGjIcUu/Wqk/T
- lF35wHgXYJ+VrlUQryynKkAfTdgejexjBADJ0KoL+cjOr5vCLpHValhlXEr6XX5pCnFABK/WJ8C
- YLDzqGUbUtF75+hrJbOKDPsvpc4FSRyISEC1JgwYOoxi76WNJSaTa0Ks/n+xVaptZZ0xlFQMSxR
- YUQ2jeFDP2hMS+S4YpDhCmRrNP3t9w/6gd4ELfkIIbaEL+JD1o9vOCNbdWxB+NznrCp+CMIuGts W7AxjNqzkAB+zmg==
-X-Mailer: b4 0.14.2
-Message-ID: <20250711-device-as-ref-v2-0-1b16ab6402d7@google.com>
-Subject: [PATCH v2 0/2] Rename Device::as_ref() to from_raw()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, 
-	"=?utf-8?q?Krzysztof_Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/12] drm/bridge: analogix_dp: Apply
+ drm_bridge_connector helper
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, andy.yan@rock-chips.com,
+ dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+ dianders@chromium.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250709070139.3130635-1-damon.ding@rock-chips.com>
+ <20250709070139.3130635-13-damon.ding@rock-chips.com>
+ <6140569.FjKLVJYuhi@diego>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <6140569.FjKLVJYuhi@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUIeS1YYSUJKSUpMQkgfTxhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a97f876b52003a3kunm13db4e75f3c74a
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PxA6GCo*KjE2Lx8SUSk5EgEj
+	C08wCj5VSlVKTE5JSUlLSUlLTEJNVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFPT0lMNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=f3ABdV+J9ZF4Xh4dDg/WOg07CApS5rihUgUFAvDfOc0Q3Sk0KKlc5dUnKK0B8PkH67LddM3XLMInqreiNp6Iq4k45NkImv8eCKuNN/9Qarq/wNQ452zop5AwY0dB2gNx8FzkKokv0WlZypir9qZ2d0Pl+UxU4dsxr9HRKS+eZqs=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=ugJYj+exyps/6wR5MX4czRxtXgkmuqVMFOJv2QPxESU=;
+	h=date:mime-version:subject:message-id:from;
 
-The prefix as_* should not be used for a constructor. Constructors
-usually use the prefix from_* instead.
+Hi Heiko,
 
-Some prior art in the stdlib: Box::from_raw, CString::from_raw,
-Rc::from_raw, Arc::from_raw, Waker::from_raw, File::from_raw_fd.
+On 2025/7/10 4:11, Heiko Stübner wrote:
+> Am Mittwoch, 9. Juli 2025, 09:01:39 Mitteleuropäische Sommerzeit schrieb Damon Ding:
+>> Apply drm_bridge_connector helper for Analogix DP driver.
+>>
+>> The following changes have been made:
+>> - Remove &analogix_dp_device.connector and change
+>>    &analogix_dp_device.bridge from a pointer to an instance.
+>> - Apply devm_drm_bridge_alloc() to allocate &analogix_dp_device that
+>>    contains &drm_bridge.
+>> - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
+>>    and &drm_connector_helper_funcs.
+>>
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>>
+>> ------
+>>
+>> Changes in v2:
+>> - For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
+>>    DRM_BRIDGE_OP_EDID.
+>> - Add analogix_dp_bridge_edid_read().
+>> - Move &analogix_dp_plat_data.skip_connector deletion to the previous
+>>    patches.
+>> ---
+>>   .../drm/bridge/analogix/analogix_dp_core.c    | 169 ++++++++----------
+>>   .../drm/bridge/analogix/analogix_dp_core.h    |   4 +-
+>>   2 files changed, 80 insertions(+), 93 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index abc64cc17e4c..fb510e55ef06 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -23,6 +23,7 @@
+>>   #include <drm/drm_atomic.h>
+>>   #include <drm/drm_atomic_helper.h>
+>>   #include <drm/drm_bridge.h>
+>> +#include <drm/drm_bridge_connector.h>
+>>   #include <drm/drm_crtc.h>
+>>   #include <drm/drm_device.h>
+>>   #include <drm/drm_edid.h>
+>> @@ -948,23 +949,13 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
+>>   	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
+>>   }
+>>   
+>> -static int analogix_dp_get_modes(struct drm_connector *connector)
+>> +static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struct drm_connector *connector)
+>>   {
+>> -	struct analogix_dp_device *dp = to_dp(connector);
+>> -	const struct drm_edid *drm_edid;
+>> +	struct analogix_dp_device *dp = to_dp(bridge);
+>>   	int num_modes = 0;
+>>   
+>>   	if (dp->plat_data->panel) {
+>>   		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
+> 
+> here is one example where a panel_bridge would help :-)
+> 
+> I.e. I'd think without it the code would need some sort of
+> 
+>    	if (dp->plat_data->bridge) {
+>    		num_modes += drm_bridge_get_modes(dp->plat_data->bridge, connector);
+> 
+> thing?
+> 
 
-There is also prior art in the kernel crate: cpufreq::Policy::from_raw,
-fs::File::from_raw_file, Kuid::from_raw, ARef::from_raw,
-SeqFile::from_raw, VmaNew::from_raw, Io::from_raw.
+Oh, the handling of bridge here is indeed not well thought out. I will 
+implement the panel-bridge in the next version.
 
-For more, see: https://lore.kernel.org/r/aCd8D5IA0RXZvtcv@pollux
-
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
-Changes in v2:
-- Split into two patches.
-- Use a different lore link.
-- Link to v1: https://lore.kernel.org/r/20250709-device-as-ref-v1-1-ebf7059ffa9c@google.com
-
----
-Alice Ryhl (2):
-      device: rust: rename Device::as_ref() to Device::from_raw()
-      drm: rust: rename as_ref() to from_raw() for drm constructors
-
- rust/kernel/auxiliary.rs   |  2 +-
- rust/kernel/cpu.rs         |  2 +-
- rust/kernel/device.rs      |  6 +++---
- rust/kernel/drm/device.rs  |  4 ++--
- rust/kernel/drm/file.rs    |  8 ++++----
- rust/kernel/drm/gem/mod.rs | 16 ++++++++--------
- rust/kernel/drm/ioctl.rs   |  4 ++--
- rust/kernel/faux.rs        |  2 +-
- rust/kernel/miscdevice.rs  |  2 +-
- rust/kernel/net/phy.rs     |  2 +-
- rust/kernel/pci.rs         |  2 +-
- rust/kernel/platform.rs    |  2 +-
- 12 files changed, 26 insertions(+), 26 deletions(-)
----
-base-commit: 86731a2a651e58953fc949573895f2fa6d456841
-change-id: 20250709-device-as-ref-350db5317dd1
+>> -	} else {
+>> -		drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
+>> -
+>> -		drm_edid_connector_update(&dp->connector, drm_edid);
+>> -
+>> -		if (drm_edid) {
+>> -			num_modes += drm_edid_connector_add_modes(&dp->connector);
+>> -			drm_edid_free(drm_edid);
+>> -		}
+>>   	}
+>>   
+>>   	if (dp->plat_data->get_modes)
+> 
 
 Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
+Damon
 
 
