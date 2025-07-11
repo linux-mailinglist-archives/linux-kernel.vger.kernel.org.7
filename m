@@ -1,89 +1,101 @@
-Return-Path: <linux-kernel+bounces-727086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D1AB014CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:37:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0A2B014D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 718885A1E51
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A09C1C21394
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12F21EFF8B;
-	Fri, 11 Jul 2025 07:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6224B1F0E24;
+	Fri, 11 Jul 2025 07:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vqdOhGHw"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJ21gcZ6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074751DDC15
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B051DDC15;
+	Fri, 11 Jul 2025 07:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752219454; cv=none; b=X0M//m9ajkmYqyihg+2EvtcLJFpILEVeL0MIwUfVsE8CD3zPwgW/xUpb7yT1fflTq2Lr2YTeAMVsKA5qtYOEg7VhecgNvwo3aHjVM5LFTMd9T2/FYZT6BPTHvr2GOKL8Q49vAnYb2Pnqp1mKi34LUrZxxjRrqC0hUrcR1ghWu5k=
+	t=1752219476; cv=none; b=pTFmFka84srtCFv4b8wrOZy4YCguR0LQwdtjtcznxY3qGA4RT18saxmNQy8JLvUOnk9qIyIaH+pU69majbRJ00TjSi5Tq+0sLHXWf7MxkMDH8OrSMuZPqPvDterZoPMfGkMiwlFXU2OBkrg3DV7Idsakw8hV7CPFH655W7eF5AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752219454; c=relaxed/simple;
-	bh=VQSOBblDnH8Nu/vrW+KEgqDWdWu/ONzBiULEcqToVqk=;
+	s=arc-20240116; t=1752219476; c=relaxed/simple;
+	bh=hlaTSOfwU5t5uUBJH15EMSZMX/iXkdPXO1i1im6HrmY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0ZoytYVyvl11hw/3/DyMT7g8eeEt5PYvpm0BHpR7Coku8DcjNoLcpqEKQq+Td1PyTvV/uCRvEt3E/UJ/gHGAqy/P8WUgp5GUujxvX5qoF9KDAr3EEMlg129+PALrYpOlTuhWtsufwhBCGUonRQ7KNms8BHItqW62HUjTOLLul4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vqdOhGHw; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KqPiowxiYTxo0biT0p4CeawYRZdkUE5oW6VYmcMOZII=; b=vqdOhGHwJIOPLv/zuAsRV8sNta
-	2jT+vWaZsMKSkK8l9c2Wcl2vLOA8ZTawD6sW1HdzkZfeWcmOcnMsve68847DTMZ8zBLDbBbpnGHjE
-	2FK7bXoDkaYo6I3WghRwmKYKSr4eaTI8kXWD126M1mjcARn3aETMc24/C+AOg05cb1zpHxGVZvVoY
-	yzTjSvBMMFfyXPCQP+GJb1Yntw4a7M6/P/rQuxb36crlG6G8U+bBEuoNFDPWRkNOw6ZFhvae3wAuz
-	UptBTs5nEOUy6Xb7AkPFgIdWGgPKbHaNdb8V3Lr6cbQ0TovDObj1vTAgdnsom5A1g9NJDNRRbWo4I
-	fsEJ4mQw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ua8K4-0000000DzwI-1OcS;
-	Fri, 11 Jul 2025 07:37:32 +0000
-Date: Fri, 11 Jul 2025 00:37:32 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] unwind deferred: Introduce
- unwind_user_trace_cached
-Message-ID: <aHC_PFyC11ewcdB_@infradead.org>
-References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
- <20250709212556.32777-4-mathieu.desnoyers@efficios.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rs3WQ5M9MndK/M8iEeg3IqooURpmFbeNmlX1mEhFclb8o7SX6A1p/2eIjKX3Q0RpoA4Q3NhZAVk8YaZ1v+Q38PQxHEe+tuCID++9TRcEHEq/mbGWVpYT6SaPVJpiJ4bnjTsa4hs58clQSo2MZcocV+IF/GHebjGqVg/Q7L/zRcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJ21gcZ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF13BC4CEED;
+	Fri, 11 Jul 2025 07:37:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752219476;
+	bh=hlaTSOfwU5t5uUBJH15EMSZMX/iXkdPXO1i1im6HrmY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EJ21gcZ6wG8Uj0HdA04vOksRm0n2/UU4SoJfCNz3NmrhNV24uv9zxFXii8sKLVNsF
+	 m5Rh6w1zUQTpkVJ9HyCfSpFEmRrTJVXUQf2AAAe1P/5dPD6/o8wXhhcVJ5eZ/FoMn4
+	 Fq52ac5fiXga0CofTseD3XacSQs3FADD8hmgVHT+KSbm57/u9WPDrCT4uqguPk0GL1
+	 t54Z43UWfWMTQthbWjWwB1DmU/bNbVU7t9TN+FKgVqAlpikG0MggjHm8/UNFEN3jaR
+	 YIVdQs0LoW+Qz4ZCcItWXfbs9tcjH136a6cOD+VlNjHO7BrcZWtpUPWucg66dF69hS
+	 rGyIlMUNsP1DA==
+Date: Fri, 11 Jul 2025 09:37:53 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, chester62515@gmail.com, mbrugger@suse.com, 
+	Ghennadi.Procopciuc@nxp.com, larisa.grigore@nxp.com, lee@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com, ping.bai@nxp.com, 
+	gregkh@linuxfoundation.org, rafael@kernel.org, srini@kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, s32@nxp.com, clizzi@redhat.com, aruizrui@redhat.com, 
+	eballetb@redhat.com, echanude@redhat.com, kernel@pengutronix.de, imx@lists.linux.dev, 
+	vincent.guittot@linaro.org
+Subject: Re: [PATCH v7 01/12] dt-bindings: mfd: add support for the NXP SIUL2
+ module
+Message-ID: <20250711-lean-burrowing-jacamar-38fcc5@krzk-bin>
+References: <20250710142038.1986052-1-andrei.stefanescu@oss.nxp.com>
+ <20250710142038.1986052-2-andrei.stefanescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250709212556.32777-4-mathieu.desnoyers@efficios.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250710142038.1986052-2-andrei.stefanescu@oss.nxp.com>
 
-On Wed, Jul 09, 2025 at 05:25:50PM -0400, Mathieu Desnoyers wrote:
-> Introduce unwind_user_trace_cached which copies the stack trace if it
-> was previously stored into the cache since the last reset of the cache.
-> 
-> The expected use-case is sampling a stack trace from a faultable context
-> at system call entry (coping it into the cache), and then copying the
-> stack trace from the cache from non-faultable context to a ring buffer.
+On Thu, Jul 10, 2025 at 05:20:24PM +0300, Andrei Stefanescu wrote:
+> +        properties:
+> +          bias-disable: true
+> +          bias-high-impedance: true
+> +          bias-pull-up: true
+> +          bias-pull-down: true
+> +          drive-open-drain: true
+> +          input-enable: true
+> +          output-enable: true
+> +
+> +          pinmux:
+> +            description: |
+> +              An integer array for representing pinmux configurations of
+> +              a device. Each integer consists of a PIN_ID and a 4-bit
+> +              selected signal source(SSS) as IOMUX setting, which is
+> +              calculated as: pinmux = (PIN_ID << 4 | SSS)
+> +
+> +          slew-rate:
+> +            description: Supported slew rate based on Fmax values (MHz)
+> +            enum: [83, 133, 150, 166, 208]
+> +        required:
+> +          - pinmux
+> +
+> +        unevaluatedProperties: false
 
-Why is this and the following patches adding unused code?
+I noticed Frank's comment and he pointed out that this changed, so all
+':true' lines before should be removed as well.
+
+Best regards,
+Krzysztof
 
 
