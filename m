@@ -1,179 +1,108 @@
-Return-Path: <linux-kernel+bounces-728179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2F2B0243C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:05:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF2DB0243E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DA9C16E482
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:05:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2061C46A53
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B372F1FF4;
-	Fri, 11 Jul 2025 19:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5AE2F1FFA;
+	Fri, 11 Jul 2025 19:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IzADCheh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxuYiciB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F9A1D6DB9;
-	Fri, 11 Jul 2025 19:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A4B1D6DB9;
+	Fri, 11 Jul 2025 19:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752260710; cv=none; b=RiCQOITWVc1clivNQSn58PT4pI5cMvo45DPiE+wj4pUU+06B9NzoDB1o55Px4NP9luFVtegZHsn74p0h+hKPbq79PrzGjYbBknvDCvoN878mWbdNJAxawsvcng2/8WuyFBn8+fJvcyydN/airUHAYv2jYMN5UO1sp6r9FbRUwmo=
+	t=1752260748; cv=none; b=svbf9cpV7VyUP2E/KZq1WFdoV1dVZDibsTyXpZE607oJBes65JaCgMNwvgwdgeRNF6TN656RNUT4fYwBDM/dssnmm6IPZ34OGZ8ujkkfa7Ga1XBeXZlhAFCVYRFeHs3eUWhdunXDQN48yCpgx04aDRw0kIlnkksPbjRBaGW07yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752260710; c=relaxed/simple;
-	bh=cKTQJqlbK5jLF7JDcnv5IFN2c5RvEhAGNKXwRnCLtUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YhG11VGXREi/Zlb+gXtdJiGUD3SmlGrkAHrJuFuRYUjVFb09LzqnDntO6A7XcD9pZ0KhETW92yxMu6upQhz6wu7q/4AwSOGvs9b60jAh8Pv1fAcJI98BbwKNCKvtvhRmAgsXGPceMjyQhvNeENpJwc+ZbYQG7wd7d0NEhBNEHD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IzADCheh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12F2AC4CEED;
-	Fri, 11 Jul 2025 19:05:09 +0000 (UTC)
+	s=arc-20240116; t=1752260748; c=relaxed/simple;
+	bh=wYw3KntEIjnnKDQic6EnlE/rMhMk+g9BmeUPdvfUmiM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=B0kQIdBmCmi/VG/NOMxOEquYbTPqWTECTwK2Z2Dwc2b9SK/suSYtK6Ud4IOzk02F/MBCZ1Gh9o/ZwvFNF8VB3L+DqCv/4XOvgXC9X51fk9ZKAMm9AF3rUTpSXk9nVebwSq3nzVB9xx9LiFvMSqZKrWkYRs/1ghIBd27e3IiS6V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxuYiciB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBC4FC4CEED;
+	Fri, 11 Jul 2025 19:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752260709;
-	bh=cKTQJqlbK5jLF7JDcnv5IFN2c5RvEhAGNKXwRnCLtUI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IzADChehhf6poYpejX3ebepi6BgHYHJDNqRW+uDGiZAgCyr5LI2u4tpV72V7/xkHT
-	 KH2/n47bhU3f5eVKxngxhr8zzn/IuWRU7xfpDN2V6Dc2UShQYOj/Oad1UCqOvJkg+p
-	 RnLGxFhXBJZAYNusTWChtF4walRxFFHTrsNGnSPfg/IkHQQKkYU6Zo/77hZkX6OdC/
-	 NkqBK+EBnYoHARdpIzMZ0GjexvwhoZtcUo1eAu3LYTSDs1h1FVh3kzhiBWhSFasMTW
-	 txVgKvfLXBEoYSnWM3R0TrGuOfUIOwQeoUBHQs2Oy8hmWEy08OXaAFTomZ8V9SitW4
-	 gSU42qL/Am8Tg==
-Date: Fri, 11 Jul 2025 14:05:07 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Prahlad Valluru <venkata.valluru@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Shashank Maurya <quic_ssmaurya@quicinc.com>
-Subject: Re: [PATCH] arm64: dts: qcom: qcs9075-iq-9075-evk: Enable Display
- Port
-Message-ID: <iayioqm3tqutbjswt24p65o4demfdaqcakfbwohnaqueuuqtng@azhxjno4ofia>
-References: <20250711-enable-iq9-dp-v1-1-6d381e105473@oss.qualcomm.com>
+	s=k20201202; t=1752260747;
+	bh=wYw3KntEIjnnKDQic6EnlE/rMhMk+g9BmeUPdvfUmiM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=pxuYiciBlNbXGUU1UnglQFG0EVGPy3L8ixx58mRR4MKyZe5faNf4XHRm3KmaEHcOa
+	 3Tg2P7EgvUYyPxsoLUCyduE9BkKFaLnWm9Agkc3DIupZoF9udPMKy9wc7gdhGHHGXM
+	 r2Yu4Z6dMAgq87gkx8n884mrmmEvGojaT2CeqHmLKH7mK9l4UT0J0BcM3TlDrUJkEC
+	 HEOIuirJnN4Nmbn4pcPn3eISUG1pDaduEwiZUx2H5afxJGrhyZml0Lufsc9S0/mLFR
+	 Jce5Z0X27K2nwUBVlsYjYGSmuoEJ3rL7+4S9YgaoPZ04arPQGLW68CkrqPtRmpBL1q
+	 1kNJ19mBCxcbQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711-enable-iq9-dp-v1-1-6d381e105473@oss.qualcomm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 11 Jul 2025 21:05:34 +0200
+Message-Id: <DB9GL8R8BBDJ.2ZDO26DR404JL@kernel.org>
+Subject: Re: [PATCH v6 9/9] rust: sync: atomic: Add Atomic<{usize,isize}>
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <lkmm@lists.linux.dev>,
+ <linux-arch@vger.kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Will Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Wedson Almeida Filho"
+ <wedsonaf@gmail.com>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude
+ Paul" <lyude@redhat.com>, "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Alan Stern" <stern@rowland.harvard.edu>, "Matthew Wilcox"
+ <willy@infradead.org>
+X-Mailer: aerc 0.20.1
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-10-boqun.feng@gmail.com>
+ <DB93Q0CXTA0G.37LQP5VCP9IGP@kernel.org>
+ <CANiq72m9AeqFKHrRniQ5Nr9vPv2MmUMHFTuuj5ydmqo+OYn60A@mail.gmail.com>
+In-Reply-To: <CANiq72m9AeqFKHrRniQ5Nr9vPv2MmUMHFTuuj5ydmqo+OYn60A@mail.gmail.com>
 
-On Fri, Jul 11, 2025 at 09:13:47PM +0530, Prahlad Valluru wrote:
-> From: Shashank Maurya <quic_ssmaurya@quicinc.com>
-> 
-> Enable DPTX0 and DPTX1 along with their corresponding PHYs for
-> qcs9075-iq-9075-evk platform.
+On Fri Jul 11, 2025 at 3:45 PM CEST, Miguel Ojeda wrote:
+> On Fri, Jul 11, 2025 at 11:00=E2=80=AFAM Benno Lossin <lossin@kernel.org>=
+ wrote:
+>>
+>> Do we have a static assert with these cfgs that `isize` has the same
+>> size as these?
+>>
+>> If not, then it would probably make sense to add them now.
+>
+> Yeah, according to e.g. Matthew et al., we may end up with 128-bit
+> pointers in the kernel fairly soon (e.g. a decade):
+>
+>     https://lwn.net/Articles/908026/
+>
+> I rescued part of what I wrote in the old `mod assumptions` which I
+> never got to send back then -- most of the `static_asserts` are
+> redundant now that we define directly the types in the `ffi` crate (I
+> mean, we could still assert that `size_of::<c_char>() =3D=3D 1` and so on=
+,
+> but they are essentially a tautology now), so I adapted the comments.
+> Please see below (draft).
 
-I prefer that you actually describe what these are connected to. I
-presume there will be more DPTX instances enabled for this board? If
-that's the case, let's mention here that this is just a subset.
+Ahhh yes the `mod assumptions` was the thing I remembered! I think it's
+still useful as a file where we can put other global assumptions as
+well.
 
-> 
-> Signed-off-by: Shashank Maurya <quic_ssmaurya@quicinc.com>
-> Signed-off-by: Prahlad Valluru <venkata.valluru@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts | 52 ++++++++++++++++++++++++
-
-Please wait with resubmitting this patch until the base dtsi has landed
-(with its new name).
-
->  1 file changed, 52 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts b/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
-> index ab161180d1d5a670a68c0903e85f24a91faa2b71..110e08db3ad82e3aa88aa4c4ed4b2beb607385ad 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
-> @@ -252,6 +252,44 @@ vreg_l8e: ldo8 {
->  	};
->  };
->  
-> +&mdss0 {
-> +	status = "okay";
-> +};
-> +
-> +&mdss0_dp0 {
-> +	status = "okay";
-
-status last please.
-
-> +	pinctrl-0 = <&dp0_hot_plug_det>;
-> +	pinctrl-names = "default";
-
-I prefer that you actually describe the connectors, like I did on
-sa8295p-adp. In particular if there's a bunch of connectors on this
-board.
-
-Regards,
-Bjorn
-
-> +};
-> +
-> +&mdss0_dp0_out {
-> +	data-lanes = <0 1 2 3>;
-> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-> +};
-> +
-> +&mdss0_dp0_phy {
-> +	status = "okay";
-> +	vdda-phy-supply = <&vreg_l1c>;
-> +	vdda-pll-supply = <&vreg_l4a>;
-> +};
-> +
-> +&mdss0_dp1 {
-> +	status = "okay";
-> +	pinctrl-0 = <&dp1_hot_plug_det>;
-> +	pinctrl-names = "default";
-> +};
-> +
-> +&mdss0_dp1_out {
-> +	data-lanes = <0 1 2 3>;
-> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-> +};
-> +
-> +&mdss0_dp1_phy {
-> +	status = "okay";
-> +	vdda-phy-supply = <&vreg_l1c>;
-> +	vdda-pll-supply = <&vreg_l4a>;
-> +};
-> +
->  &qupv3_id_1 {
->  	status = "okay";
->  };
-> @@ -260,6 +298,20 @@ &sleep_clk {
->  	clock-frequency = <32768>;
->  };
->  
-> +&tlmm {
-> +	dp0_hot_plug_det: dp0-hot-plug-det-state {
-> +		pins = "gpio101";
-> +		function = "edp0_hot";
-> +		bias-disable;
-> +	};
-> +
-> +	dp1_hot_plug_det: dp1-hot-plug-det-state {
-> +		pins = "gpio102";
-> +		function = "edp1_hot";
-> +		bias-disable;
-> +	};
-> +};
-> +
->  &uart10 {
->  	compatible = "qcom,geni-debug-uart";
->  	pinctrl-0 = <&qup_uart10_default>;
-> 
-> ---
-> base-commit: 7f3a635117b377cb90b67757cb46de12ce8aa24e
-> change-id: 20250711-enable-iq9-dp-addc9c7195c9
-> prerequisite-message-id: <20250612155437.146925-1-quic_wasimn@quicinc.com>
-> prerequisite-patch-id: 22eee78c5507c3105e0c74d1128b3db803879d7a
-> prerequisite-patch-id: cf52fc82e606ab87458339f71596ca31253e91ee
-> prerequisite-patch-id: 3617ce3b1790bc5b8e50dca6c3ae482759dcc684
-> 
-> Best regards,
-> -- 
-> Prahlad Valluru <venkata.valluru@oss.qualcomm.com>
-> 
+---
+Cheers,
+Benno
 
