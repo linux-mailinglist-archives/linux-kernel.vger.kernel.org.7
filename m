@@ -1,197 +1,113 @@
-Return-Path: <linux-kernel+bounces-727644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8909CB01D7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:29:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B0EB01D7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1085A43EEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:29:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D3DFA43C92
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F1B2D3A60;
-	Fri, 11 Jul 2025 13:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74352D3747;
+	Fri, 11 Jul 2025 13:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LeMpy3Oa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h3LjkIH/"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A732D3233
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEAA3A1CD
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752240584; cv=none; b=u3k8GJRAyXrPxt4JnpyCOyhD/lZUmtGiblH9npIEnGdk4ANxiYM/+XUZxSX7jRq6cowVajqz7UVNW8QBT/NKazu662FKGwS/CJkbUHg8EW35goEYJcEjUBqdCNGU2ZlmPif6awNWOakc+yd0jvPQP26NXT4vzy1nu/mStYHQfRM=
+	t=1752240615; cv=none; b=sZxLufpIt4/4a3WfmwwQcpYFl/wLmCIc9HRK4Gj/yIChIqHXiBG+IK4gfAVdn7F18FU+4dJRgvhE8UoWX/kGTirK39Eqmt19nJu1mnN3lQdL0NNKGocILbUCnshJIJYnmSF5B02FCfQeGUD6quaULWhk5iqCUXE1nnILKwny8GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752240584; c=relaxed/simple;
-	bh=eYmplTCBSWmf+MNM6ID1QnTvrR+0cydgP05O/5AnqdE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=adcBbzdojpQyNSDh1cF9tVuoTb25pVUauoJQoIaHQyEgtl0YtFMLQ7N768bXpD6CvfO+KnzfOKH8/IJtXHiYL4rV5e220ET8uzXcOJwJU57oSp52nYJQ47yZ7+EfcM7xz9l0MVmiTv0qG/UlaLQdqyZhVwBgyNP/azlJOl4bhW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LeMpy3Oa; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752240582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=FWayNqEof3CPboKcwRiBzu8zVRh187wq4qLQtMB2hoc=;
-	b=LeMpy3OaYYcnEHN0fl1SJ9kVeMYNvm2+34twkseKtuc27rbTj3v3fNb9/vpIh2ESU+Ybmg
-	K+DZTTTAN+lzYiMlpZdVqLy3m9ZrbhZDulsnS3JPjY1Qn/3tXTBoIb5IH73imM6ApxUBtH
-	ggV5iosYzZTtw8ybopHUpa+xNQxq4k8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-13-3YAhU4O6NeGK8FH63sH-vA-1; Fri, 11 Jul 2025 09:29:39 -0400
-X-MC-Unique: 3YAhU4O6NeGK8FH63sH-vA-1
-X-Mimecast-MFC-AGG-ID: 3YAhU4O6NeGK8FH63sH-vA_1752240578
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45546d44936so3213285e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:29:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752240578; x=1752845378;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FWayNqEof3CPboKcwRiBzu8zVRh187wq4qLQtMB2hoc=;
-        b=mLlEfxf78JVjwgYm8mdMdQ4rgKam5TGsEUxvb/XHmtill2tkeQj4FInM/YBmMibP5r
-         MC2xAAOyfP2UMTpIsteR2us57hVJqg40kM51yZTzM+ZzhEwER9zgMCZl/pUT9SjCa/e8
-         XK+VKQE/FWzIGdItNNbTYRM0OKbHbx9loW1eDyBD7DNUD3mCT+z4btygsD73TQ1MbuPc
-         js08TI5CqivJSX9VmKfjVpsdrmD7Buq6e8q62VhkrJsWJT0aANW0fVlmYl8C8S0/fn+k
-         gK56/yLOct8WbULheYpo0r7s5u+TuwYCefr2jiMBdRaRi8RuNByn6IgiLrNG7oC87wvd
-         FbQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXmZaYOVHQ59UTpKCRwnJB/yOU43A8JflalQ+SpIiqASUb8bE2ue/WWsZ3+0qN5V9La12uS69LWt49DIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6sPfjQf0b9Ld7eb/h3viZDiTiKCUWt0oYD/iRn3sytqrOTSle
-	mT77MEuGR4957zLHCSwZ//9mOG7iu6JMp4gujQ6EHfN1ql64hYsQSOfeUdHg2kYAjB1Ws2uXcIJ
-	2nI90J3vdgDBwwr2juN/WiGm+96B5hbfL4FacMB/GhFnPnc8l1q622kkK2dUuq+Y00Q==
-X-Gm-Gg: ASbGncsAJVz6wLFyZtSeJnRu3Ig7YDKFHbO7nAT++2F1UrHEGF7yP016+p3ArlcCoBb
-	wZDgUlN4oPxD/j84r24cSvQ1MVLY/oT7oYGzHfHnzxrYg0T2RdLs89650qq+GpPZJ8v0x/+SOQJ
-	nuSus206FvUNK+mrhzwGDzXhKx4gLGtRYRYlDGmqjQDVHqdPZFxZBg6vLzoOTZaDa9SmjJ6HoDL
-	FUOK4Ghbx0fSQgZraQy30iQLG+I+Po957yy0Y5KFe//WNxP14xRPsYv7p9BsiaiFCBvSQfPO/hx
-	GOg+8Nok4aaK005yUamlCv6m5ZMRtx12vwGrWsFymJuIzZmmir4lO4hxv+tdWzNnB14vcFiCTYh
-	AzSrAhAp8plNKMqdJjt0SK4HqIUHGWPqdXsVoRPzBBeYSKzAbc8okgB32YzlUyDx/Gj4=
-X-Received: by 2002:a05:600c:8289:b0:43d:26e3:f2f6 with SMTP id 5b1f17b1804b1-454ec1516b8mr30227095e9.5.1752240577731;
-        Fri, 11 Jul 2025 06:29:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHVapk8szymRwH8B2XrHeKjUHAvOctlqenT0WRp5OlN8BT5l3R1n4X9nsu/EyRKLbJS0bzhIw==
-X-Received: by 2002:a05:600c:8289:b0:43d:26e3:f2f6 with SMTP id 5b1f17b1804b1-454ec1516b8mr30226815e9.5.1752240577292;
-        Fri, 11 Jul 2025 06:29:37 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc9349sm4418063f8f.45.2025.07.11.06.29.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 06:29:36 -0700 (PDT)
-Message-ID: <e2f32bdb-e4a4-447c-867c-31405cbba151@redhat.com>
-Date: Fri, 11 Jul 2025 15:29:35 +0200
+	s=arc-20240116; t=1752240615; c=relaxed/simple;
+	bh=NALJA9tLYinoQWUIjchNdsnTGOYWXZZVsdJNJs2qfhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Msy1gWsRuWY63FAI1hfB9A+TWbxOwkDtjx2kJ3uRhr/M7M15zsEEjDXpf+BtKUSD4eGoU13091RHFctvwkbjtO/rVNQUj3den/X/5l58X8jc4ojbR7LHCXAn7puT6RCIfmvylN2XWkkaN7WfGtCYDBlmmgIoBImbSianJPHsObg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h3LjkIH/; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LF6lm7aBBAfk0wCQ1pvywRLLvXoTlrBZLSCuRZkY3sY=; b=h3LjkIH/NUD9kjhM6kcq+qEizl
+	megYEgxzrswWdMTcpH5Aai25hWcOpf3vg/IYMEs2A4TJ5ePWm51Sy8bZeLJXMe+B4I1kGW6/CWvTn
+	zzZLP5EAQ7xYp02O8x2zlx4wDzTFgsyaSdM5HKL08LEyDGuElBoiylq3PLkXvbcOZK1p5khajcBwo
+	637lgkYOiLAjiBua4Z6Jq9uXxoPLy9RRgcrJQ3kG1qjhkQU0pK6fMcGOn/irb2+HAjbcaLfjtLCo3
+	0hRk//5CZsIuXlxV6qwjN5rvKg311g2JUinZZ79jTp1P3nwEISfHSXeknUaxjHwdu6/BD3+KdzEcM
+	BiuSmRSQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uaDpD-0000000D8Hv-3g7C;
+	Fri, 11 Jul 2025 13:30:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6C7A530023C; Fri, 11 Jul 2025 15:30:03 +0200 (CEST)
+Date: Fri, 11 Jul 2025 15:30:03 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
+	kernel-team@android.com
+Subject: Re: [RESEND][PATCH v18 6/8] sched: Add an initial sketch of the
+ find_proxy_task() function
+Message-ID: <20250711133003.GH905792@noisy.programming.kicks-ass.net>
+References: <20250707204409.1028494-1-jstultz@google.com>
+ <20250707204409.1028494-7-jstultz@google.com>
+ <20250710100206.GI1613376@noisy.programming.kicks-ass.net>
+ <CANDhNCoMvY0s0AyePNouWqxdRpXCYJE=28E_b8RdmJ_2px_OBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mm: fix split_huge_page_test for folio_split()
- tests.
-To: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
- linux-mm@kvack.org
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250709012800.3225727-1-ziy@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250709012800.3225727-1-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANDhNCoMvY0s0AyePNouWqxdRpXCYJE=28E_b8RdmJ_2px_OBA@mail.gmail.com>
 
-On 09.07.25 03:27, Zi Yan wrote:
-> PID_FMT does not have an offset field, so folio_split() tests are not
-> performed. Add PID_FMT_OFFSET with an offset field and use it to perform
-> folio_split() tests.
+On Thu, Jul 10, 2025 at 05:43:36PM -0700, John Stultz wrote:
+
+> > > @@ -6648,6 +6652,89 @@ static bool try_to_block_task(struct rq *rq, struct task_struct *p,
+> > >       return true;
+> > >  }
+> > >
+> > > +#ifdef CONFIG_SCHED_PROXY_EXEC
+> > > +static inline struct task_struct *proxy_resched_idle(struct rq *rq)
+> > > +{
+> > > +     put_prev_set_next_task(rq, rq->donor, rq->idle);
+> > > +     rq_set_donor(rq, rq->idle);
+> > > +     set_tsk_need_resched(rq->idle);
+> > > +     return rq->idle;
+> > > +}
+> >
+> > Nothing cares about the return value.
 > 
-> Fixes: 80a5c494c89f ("selftests/mm: add tests for folio_split(), buddy allocator like split")
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
->   tools/testing/selftests/mm/split_huge_page_test.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-> index aa7400ed0e99..f0d9c035641d 100644
-> --- a/tools/testing/selftests/mm/split_huge_page_test.c
-> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
-> @@ -31,6 +31,7 @@ uint64_t pmd_pagesize;
->   #define INPUT_MAX 80
->   
->   #define PID_FMT "%d,0x%lx,0x%lx,%d"
-> +#define PID_FMT_OFFSET "%d,0x%lx,0x%lx,%d,%d"
->   #define PATH_FMT "%s,0x%lx,0x%lx,%d"
->   
->   #define PFN_MASK     ((1UL<<55)-1)
-> @@ -483,7 +484,7 @@ void split_thp_in_pagecache_to_order_at(size_t fd_size, const char *fs_loc,
->   		write_debugfs(PID_FMT, getpid(), (uint64_t)addr,
->   			      (uint64_t)addr + fd_size, order);
->   	else
-> -		write_debugfs(PID_FMT, getpid(), (uint64_t)addr,
-> +		write_debugfs(PID_FMT_OFFSET, getpid(), (uint64_t)addr,
->   			      (uint64_t)addr + fd_size, order, offset);
->   
->   	for (i = 0; i < fd_size; i++)
+> Well, nothing in this patch, but the last patch in this series I sent
+> here uses it.  But if you think it makes the series easier to grok and
+> I can drop it here and add the return in that later patch.
 
-So I assume the tests still passed. Would there be a way to have made 
-them fail? (IOW, detect that the wrong kind-of split was performed)
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
-
+I found it in the later patch; I meant to reply here, but promptly
+forgot. It can stay here I suppose, no harm done.
 
