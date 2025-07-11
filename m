@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-726823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29AB4B0119E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:22:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA007B011A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74B365C0B18
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:22:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B3DC7B988E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE2019DF62;
-	Fri, 11 Jul 2025 03:22:47 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFB619D8BC;
+	Fri, 11 Jul 2025 03:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="RxRlDaj7"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1139419C556;
-	Fri, 11 Jul 2025 03:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752204167; cv=none; b=W2hxCC5ijSlrSJQ2TyQFdYQEZqRV05XxZ9W+2dbXCJ//VgzUbZU4DTXxccXfKMdy6FzjCImY+hrDV5VYWL87V5daGoXtQkvhvKjc/xrv2OgNfKIzICXpFlNIEi1xHEUtvfLStkia/FJFgBy/n62OsEfB153zZ0CzbcupzrifrIg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752204167; c=relaxed/simple;
-	bh=AOMERvCwHn+nDByLA1zBfaEarNOSftfY+xvP8R8XKvE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=fgAQMaJUzSlHVsxz4O80U8Mbmr4mcPxnAQ7afoU3JRFd6vd7n2fpeq8KHxf/DgJPOUmAg37ynDyo9qgP7+Qh2w4wUIoJgv7UYSHopsJ13mAGlUlofyqvXrm8u3Ei3LKIDbbCl6D0/eqT4ONzNUpkeCvaevoGlgthh47CLiMWUWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 7B89F110CE2;
-	Fri, 11 Jul 2025 03:22:37 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 97CAB2000D;
-	Fri, 11 Jul 2025 03:22:35 +0000 (UTC)
-Date: Thu, 10 Jul 2025 23:22:34 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tengda Wu <wutengda@huaweicloud.com>
-CC: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Shuah Khan <shuah@kernel.org>, Yuanhe Shu <xiangzao@linux.alibaba.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_-next=5D_selftests/ftrace=3A_Prevent_p?=
- =?US-ASCII?Q?otential_failure_in_subsystem-enable_test_case?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <2bf277fb-a1b8-47f8-9133-e3ca27327eda@huaweicloud.com>
-References: <20250710130134.591066-1-wutengda@huaweicloud.com> <20250710153409.3135fb17@batman.local.home> <2bf277fb-a1b8-47f8-9133-e3ca27327eda@huaweicloud.com>
-Message-ID: <17189AF8-34DC-4E5C-9233-ECADAECBBD26@goodmis.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D408625;
+	Fri, 11 Jul 2025 03:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752204285; cv=pass; b=IxCWMErgp8egyABw0MQsm+xDPuUFaaWYsYLy7h7LptFigtp+v2m88kSPQziIWQKZPDBl+Xs20eSzlfHX7dVcmYog/iAv2MkyfeqlLlAOpKD7invFrKZy/yCWMrAn1Z5eXmZ+AK6xspJ5Cs6pYf7R5bX+mt9ip95yMAnRtJytMeA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752204285; c=relaxed/simple;
+	bh=Oi0WThDTz7oxscDgMG+B0X4n0CVWhgp4F/CPSsJUgIU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O7V7Xu6G6Uq+zW/7ah9vlTlfN7ADhGlGmg+CfyYjU7hT6Y4HwSuNucFEOD1S/vxvy40XlR6dMgmCM8IW9WriMiLQrCFVCoBCZyx1ClIxWgIpdHKz5nyR3XnfE2slvKtmoX1+rucrxJNXKhaXp52Ppl6xrYlRtCccj+/mP7PURuo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=RxRlDaj7; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752204266; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bdJLLbh7ngA/bsu43q/YLw8NEkwI++ki4IUkEh4J9mQgNeym7MySGdALybVHs4MtiPy/nlmM6UXJSYnAY/g9QCqNyVQrRQ3L/nlW5Adsn4n8qJAA0WV6w5S0NrbCyGgV+VwlXKs1p9k2H0wQPRg7oeCte11StoeYEQ+LGPdQhww=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752204266; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=oOHKoalO8btsJD+VLTbNZ0lY6t1aKJ1Pwn43u186p30=; 
+	b=SNCUlFAnw67QVNJh8MGDgzqpyrVg+MxKVSbxJavIHdBZaZAkV1gPC6CoR3wh2oYDBf5CuYvnDTp44M2mAqgYOXlUAQDQtv7tbR30gjaoIcM0DFp5aJ6Qd3AdKlWsIy9mMgl4fiR9Ii5NihMUkUwSGocaZJWFdQsVmmIAPt7xq4I=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752204266;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=oOHKoalO8btsJD+VLTbNZ0lY6t1aKJ1Pwn43u186p30=;
+	b=RxRlDaj74RDikg5EY134JQ0yHKz/ckHT6+bO5hp3qViUCMCcV2Hyfom9NVRfqZTI
+	PI86dhf2+5WJcv1rWFF+WT66YpWXQHgirmOqIFCiK8z0bAoivZnRKHpOgOZxB7fGzZ/
+	JDN47krq8PllFjaEVALe8B/79OiLZmg6eLMdkZ58=
+Received: by mx.zohomail.com with SMTPS id 1752204265443223.6339959818855;
+	Thu, 10 Jul 2025 20:24:25 -0700 (PDT)
+From: Li Ming <ming.li@zohomail.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	shiju.jose@huawei.com
+Cc: andriy.shevchenko@linux.intel.com,
+	linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Ming <ming.li@zohomail.com>
+Subject: [PATCH v6 0/3] Fix wrong dpa checking in PPR operation
+Date: Fri, 11 Jul 2025 11:23:54 +0800
+Message-Id: <20250711032357.127355-1-ming.li@zohomail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 97CAB2000D
-X-Stat-Signature: rsybpaqecasmewttfb7hque4sw3nmd4c
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+jeMYjTDi2JaJ5j5GAHF08erVJMS/K1Kk=
-X-HE-Tag: 1752204155-110836
-X-HE-Meta: U2FsdGVkX1+ezatnzjfsETpKVj2ysZSUlftTfPcdsnJymo1vta4pcBVQla7FuSgHwhgzARc7k591EzkdEOdrd5v3DOqh8GuzjDWZAFPF5zQkZenXP073HwCpbJB+gIAWIJmcZ0f7mEkrWfIo6BmYnajgIRsbOirlQ2Bm21r0ZU2thMX8DgtW6l73Xg5MJhBpCR/dRLt5m4Yl4m4ZOQk6fVlvcAcgKXMDkWNiz0lTmE5Ez+lbSL0W+pxvOJDQxLlsg/wowvT7LQx7Gc0bfz8g1F5wtrYrblRFnbxasaH0ij0I23fVHPKJvZmyDMaZUHp5XzuRit+28et/xfnhFCyDh5XQm4N9l6yX+9y+2ea6K4ePw5rh4SyJSD/U5pcBBaPj7NI3YGp26pY=
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr08011227b5e1f2de3361f710528e4ce000005ff400629c028dc796abe63bb3ef9fdd1502cb4272e171707a:zu08011227d48ac31883290a1465d603f90000852c9f31e17b749ef7f1b71abdda585be07c9b810734a796e5:rf0801122d47855e27d70615e71b7455cd0000f037de2bef5ba9d1c6fe941bbcd6e14bd0670f699907f51f13697df6f99841:ZohoMail
+X-ZohoMailClient: External
 
+In cxl_do_ppr(), there is a checking to check if a DPA is valid, the
+implementation of the checking is check if the DPA is 0, if yes,
+consider that DPA is valid. the checking is not right, the correct
+implementation is checking if the DPA is in the CXL device DPA range, if
+yes, it is valid.
 
+The patchset also includes another part implementing a general helper
+function cxl_resource_contains_addr() in cxl core so that cxl drivers
+can use it for all DPA/HPA/SPA availability checking.
 
-On July 10, 2025 10:48:54 PM EDT, Tengda Wu <wutengda@huaweicloud=2Ecom> w=
-rote:
->
+v6:
+- Fix reviewed-by tag mistake.
 
->The patch works well - after ~50 test iterations, we haven't observed any
->recurrence of the test case failures=2E
->
->However, I'm concerned that using 'cat trace_pipe' (like the original
->'cat trace' method) could bring back the stopping problem [1] on slower
->systems=2E
->
->Could a slow trace_pipe reader (slower than sched event generation rate)
->reintroduce the original race condition?
->
+v5:
+- Reverse checkings order in cxl_do_ppr(). (Alison)
 
-Only if it doesn't find three different events, in which case the test wou=
-ld fail regardless=2E
+v4:
+- Add cxl_ prefix to resource_contains_addr().	(Andy & Alison)
+- Add impact statement to the commit log of Patch #2. (Alison)
+- Add review tags.
 
-The awk script exits out as soon as it finds 3: unique events=2E It won't =
-go forever, even on slower machines=2E
+v3:
+- Move resource_contains_addr() from include/linux/ioport.h to
+cxl/core/hdm.c. (Andy)
 
--- Steve
+v2:
+- Implement a general helper resource_contains_addr() for DPA/HPA
+resource. (Alison)
 
->[1] https://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/torvalds/linux=2E=
-git/commit/?id=3D1a4ea83a6e67f1415a1f17c1af5e9c814c882bb5
->
->Some test details:
->
->$ =2E/ftracetest -vvv subsystem-enable=2Etc
->[=2E=2E=2E]
->+ echo sched:*
->+ yield
->+ ping 127=2E0=2E0=2E1 -c 1
->PING 127=2E0=2E0=2E1 (127=2E0=2E0=2E1) 56(84) bytes of data=2E
->64 bytes from 127=2E0=2E0=2E1: icmp_seq=3D1 ttl=3D64 time=3D0=2E538 ms
->
->--- 127=2E0=2E0=2E1 ping statistics ---
->1 packets transmitted, 1 received, 0% packet loss, time 1ms
->rtt min/avg/max/mdev =3D 0=2E538/0=2E538/0=2E538/0=2E000 ms
->+ check_unique
->+ cat trace_pipe
->+ grep -v ^#
->+ awk=20
->        BEGIN { cnt =3D 0; }
->        {
->            for (i =3D 0; i < cnt; i++) {
->                if (event[i] =3D=3D $5) {
->                    break;
->                }
->            }
->            if (i =3D=3D cnt) {
->                event[cnt++] =3D $5;
->                if (cnt > 2) {
->                    exit;
->                }
->            }
->        }
->        END {
->            printf "%d", cnt;
->        }
->+ count=3D3
->+ [ 3 -lt 3 ]
->+ do_reset
->[=2E=2E=2E]
->
->Regards,
->Tengda
+base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af cxl/fixes
+
+Li Ming (3):
+  cxl/core: Introduce a new helper cxl_resource_contains_addr()
+  cxl/edac: Fix wrong dpa checking for PPR operation
+  cxl/core: Using cxl_resource_contains_addr() to check address
+    availability
+
+ drivers/cxl/core/core.h   | 1 +
+ drivers/cxl/core/edac.c   | 9 ++++++---
+ drivers/cxl/core/hdm.c    | 7 +++++++
+ drivers/cxl/core/memdev.c | 2 +-
+ drivers/cxl/core/region.c | 6 +++---
+ 5 files changed, 18 insertions(+), 7 deletions(-)
+
+-- 
+2.34.1
+
 
