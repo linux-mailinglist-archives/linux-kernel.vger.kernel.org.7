@@ -1,183 +1,309 @@
-Return-Path: <linux-kernel+bounces-728017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC64B0227F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:21:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922E3B0227D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39F83B21C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:21:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E50C1CC114D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534CA2F19B6;
-	Fri, 11 Jul 2025 17:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB682F1994;
+	Fri, 11 Jul 2025 17:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="WaQhzIeE"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R4NCe4rh"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C922EE271
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752254477; cv=none; b=sRdC49ibLlNe3jdAaO4raDY+ul7hRk5I2btLadwPZzY5B3hKvEqyS0fWVnj2XThtbwFamXjILujiMl+MewtGLHBjcnWnJGa21po5fT27yRqblWaVILFtLHwFyZbYNV3gTOTb2i8y3jo+n9GpwphYyrUHQDLzSvgsc34AuMVjl5Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752254477; c=relaxed/simple;
-	bh=5OcUmVtiEjxnZTw3Itjx3/5kv9ubOpczFhYnXszj+Ik=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=X+IG40yX2ocrM2AgFuvgpvecn5Q3Xd2OP/4HGXWaRJQ52mpFxHeBXALlTpzaCdyMf3SR6oPHESHYACyZV7lluI8M660Q3wKK3pbiXggrrINrQRu3Vs3Ud50hZFzmc40brDk8YJnKPjxKd9j1k7Cf8nfYAAXL7hTSb8zQE/zy3pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=WaQhzIeE; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 2012B240105
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:21:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
-	s=1984.ea087b; t=1752254468;
-	bh=LuSXOyWGP7McQ7VKfYPZafZMxFTE7ZQePqFfS4hjYB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 From;
-	b=WaQhzIeE8B1xG2evj5IpmYdNDs3GaYF7qE7YqTh1V2dJWAly14kZLVT6yc+R+sYl9
-	 Kwru2AQRCiNAkqqK5HlmnPp7IzcY2pEEaNzw2rY3eCD82ywOweEtrfW0AG2h7qU4cX
-	 UA+MFx05LwCq8HKUZ0a5A1oPdDbG8OgddDm/3G4dVKp+TC7wGMaUbVgPKpPQOjTiCc
-	 0JEr9XwYHg56Uc9T91uVbO/w9C34HNvrU38lUlrP1nF0W9nVWLnEJVjeY7Xto7JxKc
-	 FdrN8caXTwW5tpUtCyo5kHp1OfgQs4UCc+M6gEcg7W6V5SBjckrj+TjHbDuz2BYtKq
-	 2xTcEOI8CfdqI83fojHyVr/wsudAuUhfKL9IahfjzjWzAegHu8WgtQPoj/xm5Papu9
-	 z6lnNYNQOKVLObVucG67GgH0jo843me4M3YdKags1BzPr/euo3TxH+dW+S3dVcpAe6
-	 rIWhZKiEFghHCNuZg2XBZ5mHP52C10QghsZDfgthhYqalOJCRq7
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4bdz5F0r8Rz9rxD;
-	Fri, 11 Jul 2025 19:21:05 +0200 (CEST)
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-To: syzbot <syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net,  dsahern@kernel.org,  edumazet@google.com,
-  herbert@gondor.apana.org.au,  horms@kernel.org,  kuba@kernel.org,
-  linux-kernel@vger.kernel.org,  netdev@vger.kernel.org,
-  pabeni@redhat.com,  steffen.klassert@secunet.com,
-  syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] WARNING in ah6_output
-In-Reply-To: <683265d3.a70a0220.253bc2.0079.GAE@google.com>
-References: <683265d3.a70a0220.253bc2.0079.GAE@google.com>
-Date: Fri, 11 Jul 2025 17:21:07 +0000
-Message-ID: <87sej2ve2n.fsf@posteo.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595A21AF0AF
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752254475; cv=fail; b=DE8ogrElamYOtwRwRhyE0TApRa+Zg5Ekv2ROqcbEHqUQBO32XfpDni1FHocFHIoYFooOPnPvtlH8lRnosxlIdoD9ZsqJPxdeL/8xlisIPWkxAoKKCjTxsHMylm/kSsOzZ5vBsymQwS1QPe1W6+DYHKPYzm8G5HDJxUQoM8SEXU4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752254475; c=relaxed/simple;
+	bh=ACv9AnrOMVxh9rXrbcdLv6VzFJyi4n5FlBG42tLbPZk=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=hQeufjpz1TGsx2iK54JrvfPF6WxQ8KYW960DaKQYuYFt5hRqLBaA3VMO7nRheIh0icS5UAcHc7X1C30EnM4dNHqIEN+LZOGkwJJT/5VTvYfAFphjR5KzgCaiXupje1RPZ7RPOV8hDZdlEJ4PuCEMR20YBb2mrCmFujlnLc9a5zY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=R4NCe4rh; arc=fail smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B8U63N013032
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:21:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp1; bh=f2kIrVdY6yNafR3bH9nZPukOHabqVc2tgCW+M8bTP9U=; b=R4NCe4rh
+	q8OFcyLG6eTfZ1tMLEttp5pn4Yi8VisAOJWQ5HuuvEcxUuafo8tVn24KCmK50IQ0
+	bbg/UrJ5UY+Sms7I2Zw1Gtc301iKkTFWodO+8ANfyaMTJxjQRDq9263j6xzY2TaF
+	C/cv8kR7SiZ/XLkwy36IOjU+IJHk9/xD808XHpKewHIz9UqBUolcnVFmX3qgrFem
+	+u7q8T84SkKeDcLqsPRznwAI+XQs+w1vcD+mYm+AnaS5N1SNnsm5Z343iMa8YC+6
+	bePigKQOMoNofxyReiwKNZ/aj5RmPGN8ntbOLEmmPSJOs/np2A+58eXnQjer09Od
+	cmTpbb+KI8ZmxA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47t3xdja7b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:21:13 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56BHHLgS008713
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:21:13 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2072.outbound.protection.outlook.com [40.107.236.72])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47t3xdja6r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 17:21:12 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Siy0gqFOD5xG+QTq+YZqrEYSyw7n479azV7mPkeBoE8MNLxOe2sxJrs7MzetOuYSdSM0uFIA9opekS1FZtVZceTs+ItwI75xj7iiuVdXCCwPHKd5gyWEikOTle5Uf6YX1Tg6i1YjROjiRlQXEpkV2Ny/5R2qpgFkhZcO+k91NpIHJGsG3WkXKKfu9/9l6GInbpVtucUz3CmBGk50XgtVm6Ik6asszGPZ0AjDTXfdvVMQXkeTD6sKu4+M4/tRO+LzindrDTQyfCnvTsVSfxuxU0tRWC9aSHh3v7x1dS9ae5X7qtgkxNC3PwPCbp+N+i1KzNQrWz9keph7qYkmitCWbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7VuV7sU/7nOnteCwJj1Qzcmm46P+PYHBtP7sHqBGofc=;
+ b=sJ7QvATZYS3FMLlIfOOBxfYbSEpwQZJuOLAgGmQ1QG++41Hh25CZGVKcyfgvKKYSyem0oZIBNJyiUXKX7Tgupj7vNVRDa1eZKatI0zGe0yurQaY9C92rkjt3TperKdAedNXZFtVd7IvkJsvWqdOiWJH9bcdCQlMIOvfoei1eqSPW9WrTv0MTA1Hy6nGvDkGVQ/RiW/KRGll8RFwlHqCZcl4Oymw31xcKtdMENwCQryC9MQ9X+VY97hxhyC7Im7ofE38VCxcZVyHAPdgqqrHm+rWntIpyRQMQmgIOs0aU/QomLo3iLY+Ewwz3ZOsapcqB0rl+SbgaO2esS/M/cUhang==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
+ header.d=ibm.com; arc=none
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
+ by PH0PR15MB4398.namprd15.prod.outlook.com (2603:10b6:510:80::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Fri, 11 Jul
+ 2025 17:21:10 +0000
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::6fd6:67be:7178:d89b%7]) with mapi id 15.20.8880.026; Fri, 11 Jul 2025
+ 17:21:09 +0000
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+To: "frank.li@vivo.com" <frank.li@vivo.com>,
+        "glaubitz@physik.fu-berlin.de"
+	<glaubitz@physik.fu-berlin.de>,
+        "penguin-kernel@I-love.SAKURA.ne.jp"
+	<penguin-kernel@I-love.SAKURA.ne.jp>,
+        "slava@dubeyko.com"
+	<slava@dubeyko.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Thread-Topic: [EXTERNAL] Re: [PATCH] hfsplus: don't use BUG_ON() in
+ hfsplus_create_attributes_file()
+Thread-Index:
+ AQHb70qjLuneU93t80+qPqT+jd4L9rQmvPcAgABIC4CAAtCIAIAAS+wAgAA6ggCAAnVPgIAAYIWA
+Date: Fri, 11 Jul 2025 17:21:09 +0000
+Message-ID: <ead8611697a8a95a80fb533db86c108ff5f66f6f.camel@ibm.com>
+References: <54358ab7-4525-48ba-a1e5-595f6b107cc6@I-love.SAKURA.ne.jp>
+	 <4ce5a57c7b00bbd77d7ad6c23f0dcc55f99c3d1a.camel@ibm.com>
+	 <72c9d0c2-773c-4508-9d2d-e24703ff26e1@vivo.com>
+	 <427a9432-95a5-47a8-ba42-1631c6238486@I-love.SAKURA.ne.jp>
+	 <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
+	 <dc0add8a-85fc-41dd-a4a6-6f7cb10e8350@I-love.SAKURA.ne.jp>
+	 <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
+	 <3efa3d2a-e98f-43ee-91dd-5aeefcff75e1@I-love.SAKURA.ne.jp>
+	 <244c8da9-4c5e-42ed-99c7-ceee3e039a9c@I-love.SAKURA.ne.jp>
+In-Reply-To: <244c8da9-4c5e-42ed-99c7-ceee3e039a9c@I-love.SAKURA.ne.jp>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|PH0PR15MB4398:EE_
+x-ms-office365-filtering-correlation-id: ffc2159e-fe8f-4a61-4fed-08ddc09f540e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|10070799003|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?b016REJRRGprVHdyUmxBRE8wTmswbUljcEQ3Q05VU29sYnBRampLMVNuS0FC?=
+ =?utf-8?B?UXhoUE8zK3BJUTI3b1lDbzFiY0wrSkdueHEvbDAwUTZNMEpTYVNzT1cranIr?=
+ =?utf-8?B?dVorM0JFK3l5ZUU5LzBaZ2ZlWmJpcG9MV21PODV1Z0h5OVYzVEdWNlZWOEpn?=
+ =?utf-8?B?a0s1OUdqTjBlVnhJTUlxYUZEY2hxVXBBdHY3eVpoblhKV3hoUGkyeGpWM1lm?=
+ =?utf-8?B?ZGg5RFhTeVp4Y0c4Q2FSTnJQTE5ITTd1bVlibTlIQnByaUduTUkzN3I2a2h3?=
+ =?utf-8?B?cTlhR3ZzMnpoQU1kNHBreVJFQnJZRWpWRWZqeHk1K2VUNURVaktNbjU3OSt3?=
+ =?utf-8?B?TERBS3NSek1GUnJpQUpOWUdjbzUvWjkweXNYMTU4dWNDTDB2eTVVaWdiN256?=
+ =?utf-8?B?QjVyckg2alVHcDRGM2JFT0lHNDRtcklLWlU3M1ZaVmhSTllWUm5maHlHTmRV?=
+ =?utf-8?B?TndTdVc2QjEycHRYMHFnU2RneCsxT0s1ZnFqanZscFU1bzh3S243T1Y3aGRU?=
+ =?utf-8?B?cnovWGcxNlZ0Vzlha2lXVmtSQ2k1c0pCYTE4MmRpQUNPc015elhLdkJRVzZM?=
+ =?utf-8?B?MGZPRCtOR3FZeEJOYkVOb2JkY2tqSlAyZm1pcExST2hWYStLSHQ1Sk1MbVFp?=
+ =?utf-8?B?UkFWSEtiWHNIYjhXOXp0clRRZi91YjBiVWRJa2c0RmdSMmwreEZLcE5taXA2?=
+ =?utf-8?B?dVRqSFcvRkM5UWFqcDV4bzkrU2tISmFKMERhdjV0VUE4bmlwT3J0cEZNd3o2?=
+ =?utf-8?B?NUV2bHpHaDBjeWFEcXNBVkpzM3BXQVBlZjVBN1Brd2xna3lENFV4ZmlCbVBy?=
+ =?utf-8?B?anZGSWpGRFhGbWp1ZGZTYTdZNTBiMkVlVVVvL1NTcmQrWU04WEVPY1FpOUZ6?=
+ =?utf-8?B?dGFsTEprQ2FhY3VtNTdzSUJ4WW9mQW5sN3dwVEllRDRGS3EycEZhcnNPVmtp?=
+ =?utf-8?B?MGtXWXU2Tkd6aC9Ta3Qya0UvWHY2VW9WdnR3OEg1Y29qMVNIQUVTV0g3R2ps?=
+ =?utf-8?B?dXplUEJ3Q2VyN1pxSW9PeFc5Mm5BUWpBd0g4U2JPSzNJZXVhTWxFQ1YxbVV6?=
+ =?utf-8?B?a1FvY2NvaW1YczNyK3lJM1lHa2pFbngzQm00cjBvQUFTVTd1WWFock9iTFpj?=
+ =?utf-8?B?SVpUa0tNMGtCMW5GK3VESmVSd3BpYzVWVGJoV0IwNmpjWlFuSXhGOTd2ZkVn?=
+ =?utf-8?B?MEhoWE1VMjJnYWJjVUdHU05pOGZMVGM4dmY0emxMQmwvRnpuM0Fxd3JoaUxS?=
+ =?utf-8?B?ZGt5bGwxVmUwQWhRK1ppTnpkVUV1NEFPZU11TDhaOW0yVkFYTGZZS3FxY3V3?=
+ =?utf-8?B?Z1ZTR21ZYlZYNUp3WmtZUTNlNWlYS2hUdDB2WG9MOUNuU1V2K044cW9DT1lP?=
+ =?utf-8?B?VVNSWDFWOEFwYmphMndwbS9JanRPUkdlZzBDUFVNcjI2YkFWTExjaFpvV0pq?=
+ =?utf-8?B?N2pRdXRielo0cVY5aFVZaUpCOG9MTkdRalpsRDR1QVAvRGNxdzJtTk50U3hI?=
+ =?utf-8?B?bmppMTQ2bEtCSTBNQ25zMURQYlFmUFE4MStLZTdUc2lVSThHRC9OSjEzcXhW?=
+ =?utf-8?B?RUI2aW1lZUZYZjNrQU1NNXdiamZEa2FpQjR1K3pPeHJGQWsySW9QZHROLzNI?=
+ =?utf-8?B?d0JidXRFUmErY3k3UmhXbFJzTVNUaFYyelFqNmRtenF0MXMwNkZJd01IQ2lj?=
+ =?utf-8?B?QWNGa08wNTRvWkJZdHBGVjI1NmphUkw4ZXV3Zkw5UllLellIMkJCTHVDaDly?=
+ =?utf-8?B?Q25zL05JUEFhaVpPSnY4MWk0b3c1UnZlNklLa0JxUEp5QmxBWDhNWktrMjJE?=
+ =?utf-8?B?MDFVS2VNYjAwUkErMFVldEZHR0hUY1dxdWROOVJERkdRMzRIb1VDRE1SNHhI?=
+ =?utf-8?B?WXhOd2lwdkZ2dkx0enJoZzJDaWNObzBFRkMva0VIaE5Bdk5xajk2eWJReW45?=
+ =?utf-8?Q?gcLOGRdM6XA=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?S3RkVnZ4eTRyWWFLNGZJUlZmK1JZZjdBbGVWNmFNSmsyWU56TG1wOGFZQXNt?=
+ =?utf-8?B?d0VaMm45YjU5bmFoMXp0WTBCd0JqaFVNMjR2VkpNWEsvazdyRjYwenlYQnZM?=
+ =?utf-8?B?THRVNzJKUWhQdzg0ZEppTWhoWkR6VWN6YmN6OWFPOW95b2V2T0svbDFxMnBF?=
+ =?utf-8?B?T3hLVGF6dVcyeEt0eWVkZkZjRy9sOUsycUtoZ2IzdytNNTJHaVRUVGt5TlVH?=
+ =?utf-8?B?bld1T09oMFkxcWV5RXNOU0o5UUVPb2plbkFWUFhOaVNQM3RJOEg1T2lBbDRD?=
+ =?utf-8?B?OVN3U3ZuVno3cER0d245OXExV1I4NytoRDZ5VEdYNWZyblJGMnVFa1ZaQVVp?=
+ =?utf-8?B?RE1SbGE3bWgvN3U2ZVU2a2hwbGlwL0xua0VobTRsZ2Z5U1piRnhGQWV4eERP?=
+ =?utf-8?B?cEZTTjlvNlhmbEViaWdYeVBteGp1cDdJM1FnbVcyUm1RQmwzTzEwSzZjdGhh?=
+ =?utf-8?B?ZisxWnlnYTJVeTZsYWlWZTVwODFHdFpGUGgzc0dSUFR0U1pycy8xSEpmMXVR?=
+ =?utf-8?B?Y2ZmNy8vcVViQW9PNlp3OE1TSWNWMllJYXV6VC9Na0JubWZQalUydnYzTHNE?=
+ =?utf-8?B?L1pCdDNVWE1TclNmWVoxMGFzZEZxblFpemg1N2R2dmxVTVBDaWNWTEtoOGRq?=
+ =?utf-8?B?T0hBSW8yMmJkcjZQRnYwTEdpRXhlSk5tMHVtcW8zb2Qyd21IY3VBb3k3OENx?=
+ =?utf-8?B?SFBMOVg5OVF0Vk9EWkZ1QTJXdWpCR3hZSk16Z3NBMEJTbURXSDFQQmlBUXpL?=
+ =?utf-8?B?NFdqYlluVkhENHcrZ3JMVDhCem5FS3FXVkZHWU8xcityN3VMbDJqcE1vZGdO?=
+ =?utf-8?B?UXRKK0xuajFuVy9vcTJrdVg3TnBEbVhETmc5bWdIeHlRemtkTTlLMDgrc1NF?=
+ =?utf-8?B?NTA2eTVLNzN5a21lVWZTYUZpWEFZMDQ5eHFROVl3VVJlQjVFME9LMW9zWlRh?=
+ =?utf-8?B?a0dBZGxQTE1PYUNiUTRILy9OSTJ5cW1haW1JZit6T2dKWXFqMkJtallpOHlS?=
+ =?utf-8?B?MUloVGJ1MGViQ0JTa3VTcnptZG9XTzlJQlNmU1pFeVFmS0o0L1dTWS9scE5D?=
+ =?utf-8?B?RElOY0lQL21vNEJvZWV6N3pkdWdZSjJIbDAvWWlVQVl4Mkc3QmJYaU9VazBh?=
+ =?utf-8?B?R0FFL3FoZHRsQ3doUWxVb2czTTVWSnJUMElua21PQ3ZoY3lWV2tpbktvUnVq?=
+ =?utf-8?B?ck1LSXB1T2lBQUpLRFd4RFJPZjV3ZnM1TzBRdnRJWjBDLzRvYmRmNitlWnU3?=
+ =?utf-8?B?M3phSWpCTU9ndmx5L1Y3eEpZR1dQa1J2ZWt5Y2hTR1o3MXZrUzd6dWJFZG5G?=
+ =?utf-8?B?WnQvOG9HV1dOZnhldmJWWWwxOWYvOEp3VnBHbVd4ZDg0b29pVWQ2QVFqcG8w?=
+ =?utf-8?B?Q2tJeHhwZnQyNm5qR1h5QkdFVEQyRjN6dzBtd01CZExVaVgreld0OEFHVVFj?=
+ =?utf-8?B?NndYaUxob1h1TWlsZnZIWkJScmFRZytYUlM4Rm5iaUJFS0RvSURrUUhrN25y?=
+ =?utf-8?B?RmpPdEFSTXlabHRNNG5nVEE3WGxvTm9PYW9kS1hhdjJoNEFEVnFXNzVBRFdI?=
+ =?utf-8?B?cmFsYzEyRDJFSFcwZWozdzNpSmNZU01LeWNqTU5UOVRUTi9YdjVlNCtjTmc4?=
+ =?utf-8?B?bHNQN3BiOGgwaTU3LzhJY0RDc0Zkc3ZENXJDMHJ3VytsZFg3aVNjQWY5MTJZ?=
+ =?utf-8?B?bTJJSmwyaWM5bDUwanlZazhLaDgwYkRaekJYZ1h6UEJ2WllRVzY1L0ZYeDFo?=
+ =?utf-8?B?TnRFWjhPaCtOS0VFTlIxQWtlb1kxWU82bFprOERJbC9qdjVGclFlOGpkQ1VB?=
+ =?utf-8?B?azJIQzkxL1hoc2JQRnZDTkpqcFFsWEVPemNycFFwTUZLeXRCV3hMeWx3bG5D?=
+ =?utf-8?B?NFhsT3UxbGVPNlJYN0Q5ajhBU1ZGQnFLUHlRbkN1enM0d3Nrd29WdHBxcERC?=
+ =?utf-8?B?bTVyYTlZWU5KaEoyUGFZQlpIaUZJQVRCWWhFdFdxUTNkL3ZFOXh3ckI3LzZ1?=
+ =?utf-8?B?NEF6OFN1WklyeGQ4ZEx2ODdvU3g5TG56STVCVTFDeElVc0h1L1N5dDlqSXhh?=
+ =?utf-8?B?Vm5uWFJieWllUWJ5aTNhREJhWXJWM2pvTmd4Rkw4eDc4cFBPSEdTRHRsWkFE?=
+ =?utf-8?B?MHJna2xEb09oczhsZkxrQzVrQ1drM1k4R3FwcGQ2U1hPRzFmcEZUL3k1TGEx?=
+ =?utf-8?Q?rz4WC+nDXt1FkCOIvPK/d7o=3D?=
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffc2159e-fe8f-4a61-4fed-08ddc09f540e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2025 17:21:09.8639
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hICov5B4aP+x+EhdyYjBzlfGx71Ox47szf9X1w2ZuL2FipbBVvJAW4JCj4Hv6V6pdxtPeAbNzaCu2z8D6xjVWQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR15MB4398
+X-Proofpoint-ORIG-GUID: 0xbgLONcbCeXYwI0DjEJcRnAyla-tQ8L
+X-Proofpoint-GUID: 0xbgLONcbCeXYwI0DjEJcRnAyla-tQ8L
+X-Authority-Analysis: v=2.4 cv=MLRgmNZl c=1 sm=1 tr=0 ts=68714808 cx=c_pps a=iNbKu3seLnfQiesHBt/AFA==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Wb1JkmetP80A:10 a=P-IC7800AAAA:8 a=bCcR_JO2k2wBJaW3oxoA:9 a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDEyMiBTYWx0ZWRfX/eeRiE9AN19Y 4l1mxB4R0celhPG6XKEw20Qx1OV5kXqD6QJOAIdMlMJSmPdVu5DL6taop2a1LuCz0ithZlWk1iN 5Iwzkc5y9Ce/i+Zb2G5iR+3fYLAHO3QvWB3ItSium0HbElk07L5vYxgbXvCNlsJmDYdmy+JVAG5
+ 1fJX1jW4QYsxuSFYDeimGjwVIr6507heHnYahzybjuxO2oFyNZP0PTskPyo9cqeKaisKwi/i709 ymLtwSJ//37nrMItIP1gwsZsdSisma+42j+kp8tehKE+p5AiaqjHegwKzO0Sx1221Y1p/nmE5+B /O5yXv5aYCTtUVEKq0HIwkKuNhsqsVNBobofclAi6NXHrdigPmf8SUq1PZU5BAmgdFzWLxl3SuM
+ CsDC7opwX5qdatoOcGJFSn0/GQjnUTEQi/GlbvGW5H9HCpfgQ5yel4M1BJKdgaB/LaQuNj42
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <387B1770A2CB3A4DB80A9A9D8F75DF13@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Subject: RE: [PATCH] hfsplus: don't use BUG_ON() in hfsplus_create_attributes_file()
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_04,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ adultscore=0 priorityscore=1501 mlxscore=0 clxscore=1015 impostorscore=0
+ malwarescore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0 spamscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=2 engine=8.19.0-2505280000
+ definitions=main-2507110122
 
-syzbot <syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com> writes:
+On Fri, 2025-07-11 at 20:35 +0900, Tetsuo Handa wrote:
+> On 2025/07/10 7:03, Tetsuo Handa wrote:
+> > On 2025/07/10 3:33, Viacheslav Dubeyko wrote:
+> > > My worry that we could have a race condition here. Let's imagine that=
+ two
+> > > threads are trying to call __hfsplus_setxattr() and both will try to =
+create the
+> > > Attributes File. Potentially, we could end in situation when inode co=
+uld have
+> > > not zero size during hfsplus_create_attributes_file() in one thread b=
+ecause
+> > > another thread in the middle of Attributes File creation. Could we do=
+uble check
+> > > that we don't have the race condition here? Otherwise, we need to mak=
+e much
+> > > cleaner fix of this issue.
+> >=20
+> > I think that there is some sort of race window, for
+> > https://elixir.bootlin.com/linux/v6.15.5/source/fs/hfsplus/xattr.c#L145=
+ =20
+> > explains that if more than one thread concurrently reached
+> >=20
+> > 	if (!HFSPLUS_SB(inode->i_sb)->attr_tree) {
+> > 		err =3D hfsplus_create_attributes_file(inode->i_sb);
+> > 		if (unlikely(err))
+> > 			goto end_setxattr;
+> > 	}
+> >=20
+> > path, all threads except one thread will fail with -EAGAIN.
+> >=20
+>=20
+> Do you prefer stricter mount-time validation shown below?
+> Is vhdr->attr_file.total_blocks =3D=3D 0 when sbi->attr_tree exists and i=
+s empty?
+>=20
+> diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+> index 948b8aaee33e..f6324a0458f3 100644
+> --- a/fs/hfsplus/super.c
+> +++ b/fs/hfsplus/super.c
+> @@ -482,13 +482,17 @@ static int hfsplus_fill_super(struct super_block *s=
+b, struct fs_context *fc)
+>  		goto out_close_ext_tree;
+>  	}
+>  	atomic_set(&sbi->attr_tree_state, HFSPLUS_EMPTY_ATTR_TREE);
+> -	if (vhdr->attr_file.total_blocks !=3D 0) {
+> -		sbi->attr_tree =3D hfs_btree_open(sb, HFSPLUS_ATTR_CNID);
+> -		if (!sbi->attr_tree) {
+> -			pr_err("failed to load attributes file\n");
+> -			goto out_close_cat_tree;
+> +	sbi->attr_tree =3D hfs_btree_open(sb, HFSPLUS_ATTR_CNID);
+> +	if (sbi->attr_tree) {
+> +		if (vhdr->attr_file.total_blocks !=3D 0) {
+> +			atomic_set(&sbi->attr_tree_state, HFSPLUS_VALID_ATTR_TREE);
+> +		} else {
+> +			pr_err("found attributes file despite total blocks is 0\n");
+> +			goto out_close_attr_tree;
+>  		}
+> -		atomic_set(&sbi->attr_tree_state, HFSPLUS_VALID_ATTR_TREE);
+> +	} else if (vhdr->attr_file.total_blocks !=3D 0) {
+> +		pr_err("failed to load attributes file\n");
+> +		goto out_close_cat_tree;
+>  	}
+>  	sb->s_xattr =3D hfsplus_xattr_handlers;
+> =20
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    9e89db3d847f Merge tag 'linux-can-fixes-for-6.15-20250520'..
-> git tree:       net
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1476d1f4580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c3f0e807ec5d1268
-> dashboard link: https://syzkaller.appspot.com/bug?extid=01b0667934cdceb4451c
-> compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/8b09322b598e/disk-9e89db3d.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/23ed08e707b5/vmlinux-9e89db3d.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/be78b62450e7/bzImage-9e89db3d.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com
->
-> ------------[ cut here ]------------
-> memcpy: detected field-spanning write (size 40) of single field "&top_iph->saddr" at net/ipv6/ah6.c:439 (size 16)
+Frankly speaking, I still don't see the whole picture here. If we have crea=
+ted
+the Attribute File during mount operation, then why should we try to create=
+ the
+Attributes File during __hfsplus_setxattr() call? If we didn't create the
+Attributes File during the mount time and HFSPLUS_SB(inode->i_sb)->attr_tre=
+e is
+NULL, then how i_size_read(attr_file) !=3D 0? Even if we are checking vhdr-
+>attr_file.total_blocks, then it doesn't provide guarantee that
+i_size_read(attr_file) is zero too. Something is wrong in this situation and
+more stricter mount time validation cannot guarantee against the situation =
+that
+you are trying to solve in the issue. We are missing something here.
 
-This could be happening because
-
-     memcpy(&top_iph->saddr, iph_ext, extlen)
-
-tries to copy extension headers (40 bytes) into the IPv6 saddr field (16
-bytes), when extension headers should be at
-
-      (u8*)top_iph + sizeof(*top_iph)
-
-if I'm not mistaken.
-
-C. Mitrodimas
-
-> WARNING: CPU: 0 PID: 8838 at net/ipv6/ah6.c:439 ah6_output+0xe7e/0x14e0 net/ipv6/ah6.c:439
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 8838 Comm: syz.1.814 Not tainted 6.15.0-rc6-syzkaller-00173-g9e89db3d847f #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> RIP: 0010:ah6_output+0xe7e/0x14e0 net/ipv6/ah6.c:439
-> Code: ff e8 36 80 9f f7 c6 05 bb 97 48 05 01 90 b9 10 00 00 00 48 c7
-> c7 a0 56 7e 8c 4c 89 fe 48 c7 c2 00 59 7e 8c e8 a3 dc 63 f7 90 <0f> 0b
-> 90 90 e9 b5 fe ff ff e8 74 e4 35 01 48 8b 4c 24 10 80 e1 07
-> RSP: 0018:ffffc900049f70e0 EFLAGS: 00010246
-> RAX: 3fffcb5d3bcc7c00 RBX: 0000000000000028 RCX: 0000000000080000
-> RDX: ffffc9000ece1000 RSI: 00000000000052e8 RDI: 00000000000052e9
-> RBP: ffffc900049f7250 R08: 0000000000000003 R09: 0000000000000004
-> R10: dffffc0000000000 R11: fffffbfff1bba944 R12: dffffc0000000000
-> R13: 1ffff9200093ee38 R14: ffff8881452e8800 R15: 0000000000000028
-> FS:  00007fc3a1d2c6c0(0000) GS:ffff8881260c7000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000555569628808 CR3: 000000005cf4e000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  xfrm_output_one net/xfrm/xfrm_output.c:555 [inline]
->  xfrm_output_resume+0x2c55/0x6170 net/xfrm/xfrm_output.c:590
->  __xfrm6_output+0x2eb/0x1070 net/ipv6/xfrm6_output.c:103
->  NF_HOOK_COND include/linux/netfilter.h:303 [inline]
->  xfrm6_output+0x1c6/0x4f0 net/ipv6/xfrm6_output.c:108
->  ip6_send_skb+0x1d5/0x390 net/ipv6/ip6_output.c:1981
->  l2tp_ip6_sendmsg+0x1378/0x1870 net/l2tp/l2tp_ip6.c:661
->  sock_sendmsg_nosec net/socket.c:712 [inline]
->  __sock_sendmsg+0x19c/0x270 net/socket.c:727
->  ____sys_sendmsg+0x505/0x830 net/socket.c:2566
->  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
->  __sys_sendmsg net/socket.c:2652 [inline]
->  __do_sys_sendmsg net/socket.c:2657 [inline]
->  __se_sys_sendmsg net/socket.c:2655 [inline]
->  __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fc3a0f8e969
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48
-> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-> 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fc3a1d2c038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00007fc3a11b6080 RCX: 00007fc3a0f8e969
-> RDX: 0000000000000800 RSI: 0000200000000540 RDI: 0000000000000004
-> RBP: 00007fc3a1010ab1 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00007fc3a11b6080 R15: 00007ffc18a80a58
->  </TASK>
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+Thanks,
+Slava.
 
