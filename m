@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-727231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8684B016D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:51:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17DAB016D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40E22566345
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:51:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9661CA0BCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F3420D500;
-	Fri, 11 Jul 2025 08:51:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBCC18DF6E;
-	Fri, 11 Jul 2025 08:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC33E1F3FC8;
+	Fri, 11 Jul 2025 08:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaKvlyOg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F76F18DF6E;
+	Fri, 11 Jul 2025 08:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752223908; cv=none; b=M+K+MYT+32MDTloryijf1n4MdbAknfavh9Sa79YsnmjdoOJ75si8KiFCsFBDXEcJ92OJtOmkRx794qbG8ncXzVIDxlMliBpM1dm45a9QhaRLKCyI3YbxonfcmRa/MLotAzMoA1v7WqnDSgBtFFwSZr6K5abX6rSb+3Ay7hhsDgw=
+	t=1752223937; cv=none; b=c0D6kfLDqH/OKPeS0jN1UeAqTYNcCGdU3c0xf6Sq5afzbZ6v1nmggv7Jw3bBbi4duB3rO1MZT0R9YMKay6T86sor0jSGCsvQlnXsZmGyYfG0y7CrFdhMn2vWA+XDfV6QwOxrih+rJtRwTgf48dvYHlrcuZgiGnHA+k0O0IzmlQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752223908; c=relaxed/simple;
-	bh=BVo7j5DGUp5cax0t1bvbZwiXqosmMCAmt2dyA2wY4Ng=;
+	s=arc-20240116; t=1752223937; c=relaxed/simple;
+	bh=aF+JJEZsequpHm+YtISush4RgOCy6i5U0IrNZGWxTnw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ds1NL0HDgXm+N3GZz/p1qqu0mFwjPFF/eOs1/garFxS83g0NLsEzoDNUKfmxCzE17dlnN4w0MCDkX99i0js6YQ7P5AqQ0HyJ743ocEKnpIbcfk683lvgbx6I/gkbqEcE2aHlszwjDrKYo5KDZJVSqyf6ogIv2Oap0rC137E+grY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D699516F2;
-	Fri, 11 Jul 2025 01:51:34 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D9C93F6A8;
-	Fri, 11 Jul 2025 01:51:42 -0700 (PDT)
-Date: Fri, 11 Jul 2025 09:51:39 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ARM: versatile: clock: convert from round_rate() to
- determine_rate()
-Message-ID: <20250711-invaluable-enchanted-baboon-53fb4f@sudeepholla>
-References: <20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com>
- <20250710-arm32-clk-round-rate-v1-3-a9146b77aca9@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K7d6S0JpgnW+5wnE5nQzfUkiTUJt/7+KEOnU7y3OSQnj9OaMxCh9IICUOLkBb1dVu3DCbV8GAbPq6DmTBYUu6s6oTMpfuCq9IQ5Ywv+Ts/5UH05kFvg6OTwPBBLVWsNSwenndLlGB+LgUxZ5E8uKyzWrwXIo9TS+j1JGJqqqCFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaKvlyOg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAF37C4CEED;
+	Fri, 11 Jul 2025 08:52:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752223936;
+	bh=aF+JJEZsequpHm+YtISush4RgOCy6i5U0IrNZGWxTnw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DaKvlyOglpBFvzsRfEvLY6I3+fF0FHnGZTK5n6yuk/bg8DCaKFBekxMMrxdp5IBGB
+	 fwQX53KyGSnL8Ye1cgY5dUhaGx/TaDKOt+HmorActcomy9lGgzbWi9ca8PkFGq/AJX
+	 P+2MNI2mkBjXd7kfN8mDExxziQ9uQFxczWf+7VBh6SV2Xk7ASIWtzXh47KLImImvw6
+	 /VN7fYVz9RfrY1pUZKApj62nuPOouEdDbcBMfsnaq3TsscHARkaNK6PCtc5tI28zJf
+	 Usc4vJEx+6Ci3oB9a95+xnpWzPLB6tERsgOYu9Q1qCyl0NQaQ1uO+tCfroVvmV86dp
+	 lvdoXo53URgZA==
+Date: Fri, 11 Jul 2025 01:52:15 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+	Yangtao Li <frank.li@vivo.com>, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: thead: th1520-ap: Correctly refer the parent
+ of c910-i0
+Message-ID: <aHDQv81WqlYzzpL4@x1>
+References: <20250710092135.61049-1-ziyao@disroot.org>
+ <20250710092135.61049-3-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,57 +61,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250710-arm32-clk-round-rate-v1-3-a9146b77aca9@redhat.com>
+In-Reply-To: <20250710092135.61049-3-ziyao@disroot.org>
 
-On Thu, Jul 10, 2025 at 07:42:18PM -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
+On Thu, Jul 10, 2025 at 09:21:35AM +0000, Yao Zi wrote:
+> The correct parent of c910, c910-i0, is registered with
+> devm_clk_hw_register_mux_parent_data_table(), which creates a clk_hw
+> structure from scratch. But it's assigned as c910's parent by
+> referring &c910_i0_clk.common.hw, confusing the CCF since this clk_hw
+> structure is never registered.
 > 
-
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> Refer c910-i0 by its name instead to avoid turning c910 into an orphan
+> clock.
+> 
+> Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
 > ---
->  arch/arm/mach-versatile/spc.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
+>  drivers/clk/thead/clk-th1520-ap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm/mach-versatile/spc.c b/arch/arm/mach-versatile/spc.c
-> index 790092734cf6155daa63c44a1e5af00ecef30737..812db32448fcd415fa1a60f8bb971661369151e1 100644
-> --- a/arch/arm/mach-versatile/spc.c
-> +++ b/arch/arm/mach-versatile/spc.c
-> @@ -497,12 +497,13 @@ static unsigned long spc_recalc_rate(struct clk_hw *hw,
->  	return freq * 1000;
->  }
->  
-> -static long spc_round_rate(struct clk_hw *hw, unsigned long drate,
-> -		unsigned long *parent_rate)
-> +static int spc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
->  {
->  	struct clk_spc *spc = to_clk_spc(hw);
->  
-> -	return ve_spc_round_performance(spc->cluster, drate);
-> +	req->rate = ve_spc_round_performance(spc->cluster, req->rate);
-> +
-> +	return 0;
->  }
->  
->  static int spc_set_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -515,7 +516,7 @@ static int spc_set_rate(struct clk_hw *hw, unsigned long rate,
->  
->  static struct clk_ops clk_spc_ops = {
->  	.recalc_rate = spc_recalc_rate,
-> -	.round_rate = spc_round_rate,
-> +	.determine_rate = spc_determine_rate,
->  	.set_rate = spc_set_rate,
+> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+> index 42feb4bb6329..41ed72b1a915 100644
+> --- a/drivers/clk/thead/clk-th1520-ap.c
+> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> @@ -427,7 +427,7 @@ static struct ccu_mux c910_i0_clk = {
 >  };
 >  
-> 
-> -- 
-> 2.50.0
-> 
+>  static const struct clk_parent_data c910_parents[] = {
+> -	{ .hw = &c910_i0_clk.common.hw },
+> +	{ .index = -1, .name = "c910-i0" },
 
--- 
-Regards,
-Sudeep
+Thanks for the patch. Unfortunately, I chatted with Stephen about this
+on irc and we need to avoid using strings in clk_parent_data. I'm trying
+to see how to correctly assign the pointer in the c910_parents[] after
+c910_io_clk has been registered.
+
+Thanks,
+Drew
 
