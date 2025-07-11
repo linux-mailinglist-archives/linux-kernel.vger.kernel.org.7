@@ -1,220 +1,276 @@
-Return-Path: <linux-kernel+bounces-726904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086E3B012A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:20:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE28BB0129F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD417762A5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73175762A2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03281BE23F;
-	Fri, 11 Jul 2025 05:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485021BFE00;
+	Fri, 11 Jul 2025 05:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PxVf1y+H"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elDTEEWQ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8A551022
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7D051022;
+	Fri, 11 Jul 2025 05:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752211192; cv=none; b=SE/Kh12r0KM9yzfK9eE2kSE3+pp2Mkyub5WiuL6of1hMu5oEPEaMbxN5+vPh1HgFbj8UN6rqmxfAM+rCGLSu57lEG2iuJ7bGytlnddIClGa9UUuPaNd98/PzAqDkDoRuJFDXBRpGPb0KbbiSnsGdA2RlcZQD1Xm1OI72cHePgtQ=
+	t=1752211170; cv=none; b=rUCdc83VcMgamlIrbMc4IqueDW753wS0GARohblcKinMdz4LuhMgs8ula30ApXCOG9Ha/1dJ9S9ElO7meE8LAGz6sHwfzKBRUrQpYxkliBiqQKUHoDef5aXsIx453duaAlHrNYIzGEBBa/q6oNofCeV2YGup0d3MqKZK/0KabHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752211192; c=relaxed/simple;
-	bh=Gl7BWTMG7L9ENrTs+uZGBMMib9ehBZnrbfosOksV5ww=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bvr4aJEmorem+3cY6t78qJ1g/yHHq4+KGJXrEOrdaBZWpvYhde1G0ZAEiH4t/NtAE+32cS+Y2oYhUz/YTOE2REpl7uRuG6RqC1r4LfOVsMxzWjMAnOrBCOoNLifuPk5FsKncPgtJRfzVCVubvxS2L/s/Ru2wEHIAfw6cgkuMdkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PxVf1y+H; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752211189;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r6vIHjG+X+ooer0kPEbKBb824B/b+sl4l3mrZB9ZZto=;
-	b=PxVf1y+H08LxavdEGBnr1ko0JGGCrIqYS1sjYN4vcTCvpbQWtveGZAsY36CEIY5DHwDAVF
-	ifnwP9YQNqyZXvUWdhYUCZkK+WuiLqPK+xbrfNcZTADjJZvoJUWJpBMKsxtrkEU04wzyXJ
-	ld4MjEfmryGA7XUu5r3HF5031SW2rsA=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-1VKPBG-SNESaGgqPJof04g-1; Fri, 11 Jul 2025 01:19:47 -0400
-X-MC-Unique: 1VKPBG-SNESaGgqPJof04g-1
-X-Mimecast-MFC-AGG-ID: 1VKPBG-SNESaGgqPJof04g_1752211187
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-711136ed77fso25502057b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 22:19:47 -0700 (PDT)
+	s=arc-20240116; t=1752211170; c=relaxed/simple;
+	bh=ExzT0bejSjcEKYPVbRUrKqX5CPBpy8ZC50Hl/KaxFHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DhCt0g8GmsocDlTjItpaSitkfcgliKy5KKF4o87VXjDokiWAp2OXFvbCo3UCA0AWnHiRmJ3Dq7vXDB7/QIrwqznd80KMQPeMZ/eo9Xc8/Kd5wpw0QtIIRqK01HzlAOc10XahCexNupknOycraBIyM93iUlkI0pvUdFs5DyYdeRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=elDTEEWQ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23c8f179e1bso19695465ad.1;
+        Thu, 10 Jul 2025 22:19:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752211168; x=1752815968; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5Ekbe5FEWshdukQ3fwsHTQK/ZvTeyG0cxRu5+RyWZFU=;
+        b=elDTEEWQvv0li8DKpV88UdGvjMGC30gfcdEhzbMg37QpwOIKY2l9UM1Q8r7jNPBiWj
+         D+JCcPhMHnIVSaFCamHWEvUaWr1MJcG5iRjw7EgqisGU4JrbjAJT13F6ZY96OAapvS+n
+         9qwIkNovypVEw9/HEzl2/uW2tkF5wuvPyCIEw8Ehyg6I1PJwb/LEzjO085bNtYlIJCjv
+         6H3SDzrOVbtejiw5TPHNshRi1z30HBT48lnWHPbUOd97/PkwvA0r1HmsCMhf7DQva5Zh
+         WER/wOLJ92OxgY356MQQA1y/NOmPGGuKXYLczd0zbX+AwsZQJHrLhgnjW/Q9P2tnnFTL
+         lNcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752211187; x=1752815987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r6vIHjG+X+ooer0kPEbKBb824B/b+sl4l3mrZB9ZZto=;
-        b=tN4EmedVH0p6qGipmjbyseUpkL4fG/ig+K/gEd//vrzRNulJH2ZaZVtsAjXOM/2bCG
-         Uu04fLnkJzunX+B/0GqHaIG6h3TdtMBHHs9mM9jITzw4df3bOIcxcmdWkj24TKJF4Dkg
-         HU/VPrtFo0qdnMjaBkGkzuVR68Y/3Y93Cvg3khZomzVFY1tfYxJCXG+ItbjNrwof6OIu
-         +qaCGGFXdLKYxfT0IfqxWAZlCT4qtCxJHRzk5NVhuTIBNrVNXTNpA+Yvt/tp9C/d0WCg
-         NsbB+ZhTyvQQIek//9IZMYv/JZ9pp7gCgmGe9rEMIHq0mZttopKaPGcAhX+b7zSUrXoB
-         pWnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfHxZC1egY4oafO9Ke+OcfMKQD5A/07sZG35zAQk2jvHu8BfdxNKgDEhkJexuowyz7hdDFsO1P2SPmSw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytUajCEwJGZXtAbAFdxMmJWaaVTpNhouBXYBl1w6+JxG1dsT3t
-	gBZ42B3Kukaw0IlyDT9siI6upEF+WMEUmR7Pf4dH901qxOHtkxV8BZYdxUBZdWTsfLDSn1hBaiK
-	mS2rLbyP6IVv49BGHnhhij6pumSbKZuQaxOiGBOohgBJC1Ac1nYiBQybePU91mIw0CP7nPf5SEy
-	6QAXzK/IEp+ZBkGVi4IeUe0TASZ+g0hrLMKcwI6IOE
-X-Gm-Gg: ASbGncsdFoDnS9bTYHUDmRXiOvc6sKfJQV2dJu3jWXy63/Liuqy/pV6J74xgSz8hFoR
-	WrNe2JXeo3eWVHXOGXiTMxqDD8u9ktcplGi8v/6Bl6b1ecKRUhOflGLpDEZpVhtdBgr1qWSktxg
-	ktI/brXi1gk4woaScYn3X4TyQ=
-X-Received: by 2002:a05:690c:3708:b0:6fb:9280:5bf4 with SMTP id 00721157ae682-717d7a60360mr30286937b3.30.1752211187000;
-        Thu, 10 Jul 2025 22:19:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGcWVC3GcSeJkTDnF3C9rnrmpzpkOrmkTr88hOUgI4ozfXlLJUBFIOZ+k63jCty+yYVBl88zRUE6c3Ln7c+0to=
-X-Received: by 2002:a05:690c:3708:b0:6fb:9280:5bf4 with SMTP id
- 00721157ae682-717d7a60360mr30286697b3.30.1752211186572; Thu, 10 Jul 2025
- 22:19:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752211168; x=1752815968;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Ekbe5FEWshdukQ3fwsHTQK/ZvTeyG0cxRu5+RyWZFU=;
+        b=p2qUrlZ8sezk01/Gcxmx2Tr9QJ3qO9EzVHyZajB1sLaivOZ3Enp0S5UlLSK0M6rcw+
+         zzyPIqUnXI8cPd+zpPbJQtb+qS40dju+kv3hhN8n75+luJol7lK/CJdvh8E6wMo+OvvD
+         uPUAyOUn+U7aNa4ERFXQO0lPE5LC+qcoVHVP+JdtKvmHX6vtK6q1hZQ4JXEcE+nuiVVm
+         GGwbROoUIME3g6ZzY70NOOl6MVO0phzX2loWX9+hFDqkfcZ955KKbiaeijv3N4PjuLKM
+         I0m4fs1QAWamyMKeTZK3JZJ+Zlai/LA28echVV+3ESSjpc4frGJH4uZyDSrm6apftoA1
+         FqwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW89v6kKRb6n8nJKdMb1YadGa/HFzl9rrua+HBJsW+tRX1qFlFfHYOPjn2Q4VUkZoR8yi5uMl8CHU2pm1w=@vger.kernel.org, AJvYcCXZogLsSnrXh5vZz69KlNmqd14o+7Li736bkcXK/i7U6a6lLZR9lnbXN0OhCloE5LCvzsFZjmdt@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe3KUmCODjAPDF0LEBj5h311dgAt27qd3ePPx3UdsN2Af3OY+Z
+	O1T3V5WkXjJp3MAvRi+0vmb+yfN8TWtVZuV1jTM8QfI15H2hOl0nSi5y
+X-Gm-Gg: ASbGncvWNPXQ9/BIOxIqyn86KQDNBvurJCeqJ94GBQyFjxig5Ji0uu4TawcYV4Em7mt
+	WZdjyEnXM4RIv6i/PvPGgKw0xauSfcO4Hdthn9U1XwuIzJwlk5SrD+cyiqtfa302JyIObbrpvA1
+	iPy7iGR1CyMIvgzObd33M8t3W2NYkJ8b/zr1+mT4BC9en4/X/KOPNNLT66Bsz/9mUaQI0EDARAB
+	+hJOjXSY4Xv+8/enaccGUTeGrWXOnhdt8p9Khjup9mgxbuvFRXrOqL6wiM1Kuj5PFgDLbQwvcwn
+	xv8w7EhrI3QMakyrWFG644aGOoInRTp2eKY9QMxRf2oZ9CyOj4+POQfqaUbbRkUQHWJmoCRjBZb
+	FztBgaMJtZCoNN9aq2EWfcQufCaIiP7q4Or8BOw==
+X-Google-Smtp-Source: AGHT+IGbEAcPvJEE/FhJY+qB8gAdP9EGmHxP+DAAY2p1AVPh/SE1+ZUDO1lCXZ38d/HS99fVtntiuQ==
+X-Received: by 2002:a17:902:d509:b0:234:c549:da10 with SMTP id d9443c01a7336-23dee2844damr27992985ad.47.1752211168048;
+        Thu, 10 Jul 2025 22:19:28 -0700 (PDT)
+Received: from localhost ([2601:647:6881:9060:86b6:8b81:3098:418])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23de42ad948sm41688755ad.61.2025.07.10.22.19.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 22:19:27 -0700 (PDT)
+Date: Thu, 10 Jul 2025 22:19:26 -0700
+From: Cong Wang <xiyou.wangcong@gmail.com>
+To: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: William Liu <will@willsroot.io>, netdev@vger.kernel.org,
+	victor@mojatatu.com, pctammela@mojatatu.com, pabeni@redhat.com,
+	kuba@kernel.org, stephen@networkplumber.org, dcaratti@redhat.com,
+	savy@syst3mfailure.io, jiri@resnulli.us, davem@davemloft.net,
+	edumazet@google.com, horms@kernel.org, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org
+Subject: Re: This breaks netem use cases
+Message-ID: <aHCe3nznEtF/1MHq@pop-os.localdomain>
+References: <20250708164141.875402-1-will@willsroot.io>
+ <aG10rqwjX6elG1Gx@pop-os.localdomain>
+ <CAM0EoMmP5SBzhoKGGxfdkfvMEZ0nFCiKNJ8hBa4L-0WTCqC5Ww@mail.gmail.com>
+ <aG2OUoDD2m5MqdSz@pop-os.localdomain>
+ <CAM0EoMmuL7-pOqQZMA6Y0WW_zDzpbyRsw0HRHzn0RV=An9gsRw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702055742.102808-1-npache@redhat.com> <20250702055742.102808-15-npache@redhat.com>
- <342d5fe1-cd39-462c-b2a4-b5d6979a8a21@linux.alibaba.com>
-In-Reply-To: <342d5fe1-cd39-462c-b2a4-b5d6979a8a21@linux.alibaba.com>
-From: Nico Pache <npache@redhat.com>
-Date: Thu, 10 Jul 2025 23:19:20 -0600
-X-Gm-Features: Ac12FXyWnkdFgO0eSnxKkRQ5LAIk8ZEY6SDq1ck6We4zFjeQk_isSPFYEbCbMbo
-Message-ID: <CAA1CXcA9-JzToPQM4X9qB3sdXBYs3n9Sx4DWyM2i3qFtvu6w0g@mail.gmail.com>
-Subject: Re: [PATCH v8 14/15] khugepaged: add per-order mTHP khugepaged stats
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	david@redhat.com, ziy@nvidia.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com, 
-	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
-	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
-	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
-	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
-	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
-	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
-	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
-	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAM0EoMmuL7-pOqQZMA6Y0WW_zDzpbyRsw0HRHzn0RV=An9gsRw@mail.gmail.com>
 
-On Tue, Jul 8, 2025 at 12:10=E2=80=AFAM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
->
->
-> On 2025/7/2 13:57, Nico Pache wrote:
-> > With mTHP support inplace, let add the per-order mTHP stats for
-> > exceeding NONE, SWAP, and SHARED.
+On Tue, Jul 08, 2025 at 06:26:28PM -0400, Jamal Hadi Salim wrote:
+> On Tue, Jul 8, 2025 at 5:32 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
 > >
-> > Signed-off-by: Nico Pache <npache@redhat.com>
-> > ---
-> >   include/linux/huge_mm.h |  3 +++
-> >   mm/huge_memory.c        |  7 +++++++
-> >   mm/khugepaged.c         | 15 ++++++++++++---
-> >   3 files changed, 22 insertions(+), 3 deletions(-)
+> > (Cc Linus Torvalds)
 > >
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index a6ea89fdaee6..6034b4c9dae5 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -141,6 +141,9 @@ enum mthp_stat_item {
-> >       MTHP_STAT_SPLIT_DEFERRED,
-> >       MTHP_STAT_NR_ANON,
-> >       MTHP_STAT_NR_ANON_PARTIALLY_MAPPED,
-> > +     MTHP_STAT_COLLAPSE_EXCEED_SWAP,
->
-> This stat seems never used.
-Ah good catch, I somehow dropped that piece on the V5->v6/7
->
-> > +     MTHP_STAT_COLLAPSE_EXCEED_NONE,
-> > +     MTHP_STAT_COLLAPSE_EXCEED_SHARED,
-> >       __MTHP_STAT_COUNT
-> >   };
->
-> Please also update the 'Documentation/admin-guide/mm/transhuge.rst' for
-> these new statistics.
-Will do thanks :)
->
+> > On Tue, Jul 08, 2025 at 04:35:37PM -0400, Jamal Hadi Salim wrote:
+> > > On Tue, Jul 8, 2025 at 3:42 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
+> > > >
+> > > > (Cc LKML for more audience, since this clearly breaks potentially useful
+> > > > use cases)
+> > > >
+> > > > On Tue, Jul 08, 2025 at 04:43:26PM +0000, William Liu wrote:
+> > > > > netem_enqueue's duplication prevention logic breaks when a netem
+> > > > > resides in a qdisc tree with other netems - this can lead to a
+> > > > > soft lockup and OOM loop in netem_dequeue, as seen in [1].
+> > > > > Ensure that a duplicating netem cannot exist in a tree with other
+> > > > > netems.
+> > > >
+> > > > As I already warned in your previous patchset, this breaks the following
+> > > > potentially useful use case:
+> > > >
+> > > > sudo tc qdisc add dev eth0 root handle 1: mq
+> > > > sudo tc qdisc add dev eth0 parent 1:1 handle 10: netem duplicate 100%
+> > > > sudo tc qdisc add dev eth0 parent 1:2 handle 20: netem duplicate 100%
+> > > >
+> > > > I don't see any logical problem of such use case, therefore we should
+> > > > consider it as valid, we can't break it.
+> > > >
+> > >
+> > > I thought we are trying to provide an intermediate solution to plug an
+> > > existing hole and come up with a longer term solution.
 > >
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 69777a35e722..3eb1c34be601 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -632,6 +632,10 @@ DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLI=
-T_FAILED);
-> >   DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
-> >   DEFINE_MTHP_STAT_ATTR(nr_anon, MTHP_STAT_NR_ANON);
-> >   DEFINE_MTHP_STAT_ATTR(nr_anon_partially_mapped, MTHP_STAT_NR_ANON_PAR=
-TIALLY_MAPPED);
-> > +DEFINE_MTHP_STAT_ATTR(collapse_exceed_swap_pte, MTHP_STAT_COLLAPSE_EXC=
-EED_SWAP);
-> > +DEFINE_MTHP_STAT_ATTR(collapse_exceed_none_pte, MTHP_STAT_COLLAPSE_EXC=
-EED_NONE);
-> > +DEFINE_MTHP_STAT_ATTR(collapse_exceed_shared_pte, MTHP_STAT_COLLAPSE_E=
-XCEED_SHARED);
-> > +
+> > Breaking valid use cases even for a short period is still no way to go.
+> > Sorry, Jamal. Since I can't convince you, please ask Linus.
 > >
-> >   static struct attribute *anon_stats_attrs[] =3D {
-> >       &anon_fault_alloc_attr.attr,
-> > @@ -648,6 +652,9 @@ static struct attribute *anon_stats_attrs[] =3D {
-> >       &split_deferred_attr.attr,
-> >       &nr_anon_attr.attr,
-> >       &nr_anon_partially_mapped_attr.attr,
-> > +     &collapse_exceed_swap_pte_attr.attr,
-> > +     &collapse_exceed_none_pte_attr.attr,
-> > +     &collapse_exceed_shared_pte_attr.attr,
-> >       NULL,
-> >   };
+> > Also, I don't see you have proposed any long term solution. If you
+> > really have one, please state it clearly and provide a clear timeline to
+> > users.
 > >
-> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > index 2c0962637c34..636b84bf1ca1 100644
-> > --- a/mm/khugepaged.c
-> > +++ b/mm/khugepaged.c
-> > @@ -594,7 +594,10 @@ static int __collapse_huge_page_isolate(struct vm_=
-area_struct *vma,
-> >                               continue;
-> >                       } else {
-> >                               result =3D SCAN_EXCEED_NONE_PTE;
-> > -                             count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-> > +                             if (order =3D=3D HPAGE_PMD_ORDER)
-> > +                                     count_vm_event(THP_SCAN_EXCEED_NO=
-NE_PTE);
-> > +                             else
-> > +                                     count_mthp_stat(order, MTHP_STAT_=
-COLLAPSE_EXCEED_NONE);
-> >                               goto out;
-> >                       }
-> >               }
-> > @@ -623,8 +626,14 @@ static int __collapse_huge_page_isolate(struct vm_=
-area_struct *vma,
-> >               /* See khugepaged_scan_pmd(). */
-> >               if (folio_maybe_mapped_shared(folio)) {
-> >                       ++shared;
-> > -                     if (order !=3D HPAGE_PMD_ORDER || (cc->is_khugepa=
-ged &&
-> > -                         shared > khugepaged_max_ptes_shared)) {
-> > +                     if (order !=3D HPAGE_PMD_ORDER) {
-> > +                             result =3D SCAN_EXCEED_SHARED_PTE;
-> > +                             count_mthp_stat(order, MTHP_STAT_COLLAPSE=
-_EXCEED_SHARED);
-> > +                             goto out;
-> > +                     }
-> > +
-> > +                     if (cc->is_khugepaged &&
-> > +                             shared > khugepaged_max_ptes_shared) {
-> >                               result =3D SCAN_EXCEED_SHARED_PTE;
-> >                               count_vm_event(THP_SCAN_EXCEED_SHARED_PTE=
-);
-> >                               goto out;
->
+> 
+> I explained my approach a few times: We need to come up with a long
+> term solution that looks at the sanity of hierarchies.
 
+I interpret as you have no long term solution, so without any long term
+solution, how do you convince users you will unbreak them after breaking
+them? This looks more and more concerning.
+
+
+> Equivalent to init/change()
+> Today we only look at netlink requests for a specific qdisc. The new
+> approach (possibly an ops) will also look at the sanity of configs in
+> relation to hierarchies.
+> You can work on it or come with an alternative proposal.
+
+You misunderstood this. It is never about me, mentioning me is not even
+relevant. I defend users, please think for users, not me (or youself).
+
+If you think from users' perspective, you wouldn't even suggest breaking
+any of their use cases for any time. All what you said here is from your
+own perspective, surely you understand all the TC details, but users
+don't.
+
+> That is not the scope of this discussion though
+> 
+> > > If there are users of such a "potential setup" you show above we are
+> > > going to find out very quickly.
+> >
+> > Please read the above specific example. It is more than just valid, it
+> > is very reasonable, installing netem for each queue is the right way of
+> > using netem duplication to avoid the global root spinlock in a multiqueue
+> > setup.
+> >
+> 
+> In all my years working on tc I have never seen _anyone_ using
+> duplication where netem is _not the root qdisc_. And i have done a lot
+> of "support" in this area.
+> You can craft any example you want but it needs to be practical - I
+> dont see the practicality in your example.
+
+The example I provide is real and practical, in fact, it is _the only_
+reasonable way to use netem duplication directly on multiqueue NIC.
+
+I bet you don't have another way (unless you don't care about the global
+spinlock) in such setup.
+
+
+> Just because we allow arbitrary crafting of hierarchies doesnt mean
+> they are correct.
+
+Can we let users decide? Why do we have the priviledge to decide
+everything for users? Users are usually more correct us, this is why so
+many bugs actually became features, it is just simply not up to us.
+
+We serve users, not vice versa, apparently. Let's be humble.
+
+> The choice is between complicating things to fix a "potential" corner
+> use case vs simplicity (especially of a short term approach that is
+> intended to be obsoleted in the long term).
+
+I don't see any simplicity from your patch, it is not maintainable at
+all (I already explained why and suggested a better way). 40-LOC vs
+4+/4-,  you call the 40LOC simplicity?
+
+And this case is not corner, nor potential, it is valid and reasonable.
+Downplaying use cases only hurts users.
+
+> 
+> 
+> > Breaking users and letting them complain is not a good strategy either.
+> >
+> > On the other hand, thanks for acknowledging it breaks users, which
+> > confirms my point.
+> >
+> > I will wait for Linus' response.
+> >
+> > > We are working against security people who are finding all sorts of
+> > > "potential use cases" to create CVEs.
+> >
+> > I seriouly doubt the urgency of those CVE's, because none of them can be
+> > triggered without root. Please don't get me wrong, I already fixed many of
+> > them, but I believe they can wait, false urgency does not help anything.
+> >
+> 
+> All tc rules require root including your example  - afaik, bounties
+> are being given for unprivileged user namespaces
+
+Sure, many CVE's have bounties. This does not mean all of them are
+urgent. They are important, but just not urgent. Creating false urgency
+is harmful for decision making.
+
+> > >
+> > > > >
+> > > > > Previous approaches suggested in discussions in chronological order:
+> > > > >
+> > > > > 1) Track duplication status or ttl in the sk_buff struct. Considered
+> > > > > too specific a use case to extend such a struct, though this would
+> > > > > be a resilient fix and address other previous and potential future
+> > > > > DOS bugs like the one described in loopy fun [2].
+> > > >
+> > > > The link you provid is from 8 years ago, since then the redirection
+> > > > logic has been improved. I am not sure why it helps to justify your
+> > > > refusal of this approach.
+> > > >
+> > > > I also strongly disagree with "too specific a use case to extend such
+> > > > a struct", we simply have so many use-case-specific fields within
+> > > > sk_buff->cb. For example, the tc_skb_cb->zone is very specific
+> > > > for act_ct.
+> > > >
+> > > > skb->cb is precisely designed to be use-case-specific and layer-specific.
+> > > >
+> > > > None of the above points stands.
+> > > >
+> > >
+> > > I doubt you have looked at the code based on how you keep coming back
+> > > with the same points.
+> >
+> > Please avoid personal attacks. It helps nothing to your argument here,
+> > in fact, it will only weaken your arguments.
+> >
+> 
+> How is this a personal attack? You posted a patch that breaks things further.
+> I pointed it to you _multiple times_. You still posted it as a solution!
+
+Maybe you are not helping at all? You kept mentioning "issues" without
+even explaining what issues are.
+
+Here, you keep mentioning I didn't look at the code base without saying
+anything helpful. The fact is I looked at all the qdisc_skb_cb and
+tc_skb_cb use cases, I tried to place a new field/bit in at least 3
+different locations with multiple failures.
+
+Maybe you need to be helpful and respectful?
+
+Thanks.
 
