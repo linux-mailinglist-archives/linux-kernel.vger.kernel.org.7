@@ -1,125 +1,242 @@
-Return-Path: <linux-kernel+bounces-728207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6CC0B024A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:33:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 994C1B024A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23E0DA43AF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:33:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE5E7A669E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210B81E3DCD;
-	Fri, 11 Jul 2025 19:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E432F2359;
+	Fri, 11 Jul 2025 19:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YA/Unteg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VW+1RGew"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790BE197A8E;
-	Fri, 11 Jul 2025 19:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FBA2EF655;
+	Fri, 11 Jul 2025 19:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752262412; cv=none; b=fuZmruaj0v6G5ScYjw1xWaiqH1gczl1KNjXF1Gdus0LXdEAAsmqtCRsJWsRUAfpuNd2VG/ST5u4Ev02Csy+KwkFATCORMj1lCH/J8ZB4HPepZePY5jauwNqpYZGiHpCVWa95JvXcf8csvC+pAHeBhbcbl4MyWCL7onHIglhup1I=
+	t=1752262416; cv=none; b=HHEgx3SD2Z9fI7f8ueizQpvpEzXmi+EZYzIwLtFCiHnPyXyXU3SQzd5wuN73JzAAlwvmma0ZdSS4yNvhFoI6thArT+s1B1HBLlk6hRmM/ZEeJr0LcRIV7wvP+ZXWFCX8by8Ec0k3Yl2f4du9ecdTx0TNrxPCZvwhRNOWBQgbyDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752262412; c=relaxed/simple;
-	bh=LywabPEu9d7NRWO11xLovXQdvhGxvblOkxJVWM8BGqs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=QR0iAuGfp0kHxuRzUi1lMXKsaj+qyDnnoqvZyzXDTTU65xTVp2WQ6nyZDpWwV4fwfWCeiW8CwBkd0CCR8Gt5zF3aj08dB23o/9RMWn/8iwsw2kWZp3my3XG5PpHM5F5YK/OJ19pmuSa/hYM/Wqcfu56Mb82AOWoNOxXbjoCx8Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YA/Unteg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 997B3C4CEED;
-	Fri, 11 Jul 2025 19:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752262412;
-	bh=LywabPEu9d7NRWO11xLovXQdvhGxvblOkxJVWM8BGqs=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=YA/UntegWkyVtkEGNWeq/PMKaCzfiSk8tXOC+EBlgRnP0VrgunJU4DWkJNIEjWHQF
-	 hxpVT/4fNU83t+ABRUKVqDJuhLGrSypY3byFZ08alp9u15SUz4gIwOl3S8WAQkVkAb
-	 DwBwKy5xovWhT1DjSEBZfIMg2I1nGLMKgBsOnQb6XansGxtOh0CApWUgKnjdDCoV3W
-	 qKTpxZl9KaeSlxCNx+8ZkJ+K/swOAdueJkfsTJGTrKjtIbf5Ozk11Z+tnm9odgrzQ4
-	 ku9bmWwtMJ9iXDQdrXtG/TfbsSgTx+6ywJdSupBwC7XMuT+hDxoUO5AmlaW8ebfpmd
-	 hC1bydfy1t4lQ==
+	s=arc-20240116; t=1752262416; c=relaxed/simple;
+	bh=HqVVzddUWtwAzEJxp6f2T1dyAY+ESFrt70EqEcYIXTM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=imG7cAQGY9UPJ1F1Rqp1M3FOrv8XCPN+ms/8gtC7TIOjj0uOtJKdWnHEQKdHzkS+m9S58GDMQxegUGw4GI2JnltyR6DJyz7uE5tO5asy5a0tchrTVEvQJKgkJyBG5pFI40yJownHQmNOm2Ry+eYoy/JcEguaaxR2lBVFNo3J06I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VW+1RGew; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e81826d5b72so2222229276.3;
+        Fri, 11 Jul 2025 12:33:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752262413; x=1752867213; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PbWyoWiU5vFDucZZ/gUFfjXZSzaDgjtkrOgdfR/Rv8E=;
+        b=VW+1RGewZWguKF7QVnjuEOoAlo05H1My0n+++qv/VGXvEqbT9YLbs51oOcA4a15w8p
+         SGvyTEmpvIyNEGyyPdDiRcgE/64c3iwJpLlhEeNBIfr/BQ8AbC+GIpwbo5ZIpXRkuVV1
+         pG4B4LSajHn4R7wk2Owtw7PV+2qBpcppdakgjVGaeFWsjVFF7Cy6azBajkvMhly0clB5
+         xLkeUrZTiZMuMVi4ov8SjUkRlXXaYdsipZhPwfVP/5cHA+gbOaJnx7DXeyHpY3KLIeQ2
+         jEfbhHrFtsf2wxx7NddgolWiWCXkltm8R+LCbbqIaUExbFefb2VkgdV2YrICNkNMwu9k
+         sY6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752262413; x=1752867213;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PbWyoWiU5vFDucZZ/gUFfjXZSzaDgjtkrOgdfR/Rv8E=;
+        b=ViD9kH4lOenV/cHNyx1NDSOibHzg7lIQ9UNeDYAFOqq5TI0ozWQWO3vlgHbTUfJMlk
+         5qSDAlajeHoRbWTHRYWZNKGhsts0wt2jeI+fPzfL98/Q1LS9CnR4hE6F+5odVxhehn+2
+         7lofd/j13gnWAQY061Z7LFMhn4DJZpeF7nHS+UGB1UnRkkUph+6L43Y4DVPDS9YerZv2
+         BdgtBtcbnhRLXq3CsLhhJnzuogjYm9lndz/qhkV7nPOA9GRr7PTKfhUQqy79IKdOE/HR
+         vvrqJRlISoIQgcKACOurPF/VDvn0wXBdm9upM55W8S2GLBmOb05VM7axXpfXnQ9UJF6d
+         MeGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8adD5jq+cTBUIXcB5Nug/BLbEatWb+zbV9RkdwSMyLoUjXKnKb7r9RaWt3LwxA15cCpU19vSZ6BKv7Y8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZypDMKDktzalKvPFGSOgnGEP05w7V4dP8YeYAarmEbIpndNBM
+	azHKqapEsxU0Ye+QiJee1JFDruJt4owYOJDgkd6e7goKRAkrrOorXGxK
+X-Gm-Gg: ASbGnctCMOkhwKzXvywZcTWQMyludhPuQFglAxpIxN2tOCSO6D3sVieCbjp+u7uGjMp
+	XF1Ym8HJGLKlW5xfbRM+NgPvC8DTqAUb/as0W8shH8ba21+xFctG0QaCUNzpIKaVbC6EpjgQnkF
+	0kHP+E+JTkJ+ywlzvrobO1mPw5FnfeY42cvar7ZuBoJuVX+VvwILXk03TMN9QUstVev1o/nSey3
+	T6IJjj9hMzQJSOpEX2c2UfWcYSLaVkizbaHcL2cgdrqGPAP5ZfXNmMcaybZs68bIpUoykWV1ow2
+	Sf1OLah08pj1qF5hZYW2lQrsijTL8dz8/A4Jjg6BC3j+Df0yi2VazsB5gmsFTbE3VsoaPKaHrx2
+	FyhfgsKM9WuQZUbOAzG/7Icc/ekRjuGteHX5sQdIwirG8bG53p1OuWPeNcpO2JocY0KbngeWWpC
+	M=
+X-Google-Smtp-Source: AGHT+IHnRo+DEvjyP5XmUCwUyxgjN9C9vo8EC9owxgidK1B/gzAaiuQmbztk7lNj65Rd5ftKXCXzug==
+X-Received: by 2002:a05:690c:3403:b0:70d:f237:6a60 with SMTP id 00721157ae682-717d5b76eb9mr70160887b3.7.1752262413507;
+        Fri, 11 Jul 2025 12:33:33 -0700 (PDT)
+Received: from localhost (234.207.85.34.bc.googleusercontent.com. [34.85.207.234])
+        by smtp.gmail.com with UTF8SMTPSA id 00721157ae682-717d33e81ecsm6265557b3.112.2025.07.11.12.33.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 12:33:32 -0700 (PDT)
+Date: Fri, 11 Jul 2025 15:33:32 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: luyun <luyun_611@163.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org
+Cc: netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <6871670c9f9a5_168265294c9@willemb.c.googlers.com.notmuch>
+In-Reply-To: <515fc9c6-a4a2-4fdf-8d91-396e42c95767@163.com>
+References: <20250710102639.280932-1-luyun_611@163.com>
+ <20250710102639.280932-3-luyun_611@163.com>
+ <686fc5051bdb8_fd38829485@willemb.c.googlers.com.notmuch>
+ <515fc9c6-a4a2-4fdf-8d91-396e42c95767@163.com>
+Subject: Re: [PATCH v4 2/3] af_packet: fix soft lockup issue caused by
+ tpacket_snd()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 11 Jul 2025 21:33:19 +0200
-Message-Id: <DB9H6HEF9CKG.2SAPXM8F9KOO3@kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: Update PCI binding safety comments and add
- inline compiler hint
-Cc: "Alistair Popple" <apopple@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-References: <20250710022415.923972-1-apopple@nvidia.com>
- <DB87TX9Y5018.N1WDM8XRN74K@kernel.org>
- <DB9BF6WK8KMH.1RQOOMYBL6UAO@kernel.org>
- <DB9FUEJUOH3L.14CYPZ8YQT52E@kernel.org>
-In-Reply-To: <DB9FUEJUOH3L.14CYPZ8YQT52E@kernel.org>
 
-On Fri Jul 11, 2025 at 8:30 PM CEST, Benno Lossin wrote:
-> On Fri Jul 11, 2025 at 5:02 PM CEST, Danilo Krummrich wrote:
->> On Thu Jul 10, 2025 at 10:01 AM CEST, Benno Lossin wrote:
->>> On Thu Jul 10, 2025 at 4:24 AM CEST, Alistair Popple wrote:
->>>> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
->>>> index 8435f8132e38..5c35a66a5251 100644
->>>> --- a/rust/kernel/pci.rs
->>>> +++ b/rust/kernel/pci.rs
->>>> @@ -371,14 +371,18 @@ fn as_raw(&self) -> *mut bindings::pci_dev {
->>>> =20
->>>>  impl Device {
->>>>      /// Returns the PCI vendor ID.
->>>> +    #[inline]
->>>>      pub fn vendor_id(&self) -> u16 {
->>>> -        // SAFETY: `self.as_raw` is a valid pointer to a `struct pci_=
-dev`.
->>>> +        // SAFETY: by its type invariant `self.as_raw` is always a va=
-lid pointer to a
->>>
->>> s/by its type invariant/by the type invariants of `Self`,/
->>> s/always//
->>>
->>> Also, which invariant does this refer to? The only one that I can see
->>> is:
->>>
->>>     /// A [`Device`] instance represents a valid `struct device` create=
-d by the C portion of the kernel.
->>>
->>> And this doesn't say anything about the validity of `self.as_raw()`...
->>
->> Hm...why not? If an instance of Self always represents a valid struct pc=
-i_dev,
->> then consequently self.as_raw() can only be a valid pointer to a struct =
-pci_dev,
->> no?
->
-> While it's true, you need to look into the implementation of `as_raw`.
-> It could very well return a null pointer...
->
-> This is where we can use a `Guarantee` on that function. But since it's
-> not shorter than `.0.get()`, I would just remove it.
+luyun wrote:
+> =
 
-We have 15 to 20 as_raw() methods of this kind in the tree. If this really =
-needs
-a `Guarantee` to be clean, we should probably fix it up in a treewide chang=
-e.
+> =E5=9C=A8 2025/7/10 21:49, Willem de Bruijn =E5=86=99=E9=81=93:
+> > Yun Lu wrote:
+> >> From: Yun Lu <luyun@kylinos.cn>
+> >>
+> >> When MSG_DONTWAIT is not set, the tpacket_snd operation will wait fo=
+r
+> >> pending_refcnt to decrement to zero before returning. The pending_re=
+fcnt
+> >> is decremented by 1 when the skb->destructor function is called,
+> >> indicating that the skb has been successfully sent and needs to be
+> >> destroyed.
+> >>
+> >> If an error occurs during this process, the tpacket_snd() function w=
+ill
+> >> exit and return error, but pending_refcnt may not yet have decrement=
+ed to
+> >> zero. Assuming the next send operation is executed immediately, but =
+there
+> >> are no available frames to be sent in tx_ring (i.e., packet_current_=
+frame
+> >> returns NULL), and skb is also NULL, the function will not execute
+> >> wait_for_completion_interruptible_timeout() to yield the CPU. Instea=
+d, it
+> >> will enter a do-while loop, waiting for pending_refcnt to be zero. E=
+ven
+> >> if the previous skb has completed transmission, the skb->destructor
+> >> function can only be invoked in the ksoftirqd thread (assuming NAPI
+> >> threading is enabled). When both the ksoftirqd thread and the tpacke=
+t_snd
+> >> operation happen to run on the same CPU, and the CPU trapped in the
+> >> do-while loop without yielding, the ksoftirqd thread will not get
+> >> scheduled to run. As a result, pending_refcnt will never be reduced =
+to
+> >> zero, and the do-while loop cannot exit, eventually leading to a CPU=
+ soft
+> >> lockup issue.
+> >>
+> >> In fact, skb is true for all but the first iterations of that loop, =
+and
+> >> as long as pending_refcnt is not zero, even if incremented by a prev=
+ious
+> >> call, wait_for_completion_interruptible_timeout() should be executed=
+ to
+> >> yield the CPU, allowing the ksoftirqd thread to be scheduled. Theref=
+ore,
+> >> the execution condition of this function should be modified to check=
+ if
+> >> pending_refcnt is not zero, instead of check skb.
+> >>
+> >> As a result, packet_read_pending() may be called twice in the loop. =
+This
+> >> will be optimized in the following patch.
+> >>
+> >> Fixes: 89ed5b519004 ("af_packet: Block execution of tasks waiting fo=
+r transmit to complete in AF_PACKET")
+> >> Cc: stable@kernel.org
+> >> Suggested-by: LongJun Tang <tanglongjun@kylinos.cn>
+> >> Signed-off-by: Yun Lu <luyun@kylinos.cn>
+> >>
+> >> ---
+> >> Changes in v4:
+> >> - Split to the fix alone. Thanks: Willem de Bruijn.
+> >> - Link to v3: https://lore.kernel.org/all/20250709095653.62469-3-luy=
+un_611@163.com/
+> >>
+> >> Changes in v3:
+> >> - Simplify the code and reuse ph to continue. Thanks: Eric Dumazet.
+> >> - Link to v2: https://lore.kernel.org/all/20250708020642.27838-1-luy=
+un_611@163.com/
+> >>
+> >> Changes in v2:
+> >> - Add a Fixes tag.
+> >> - Link to v1: https://lore.kernel.org/all/20250707081629.10344-1-luy=
+un_611@163.com/
+> >> ---
+> >> ---
+> >>   net/packet/af_packet.c | 2 +-
+> >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> >> index 7089b8c2a655..581a96ec8e1a 100644
+> >> --- a/net/packet/af_packet.c
+> >> +++ b/net/packet/af_packet.c
+> >> @@ -2846,7 +2846,7 @@ static int tpacket_snd(struct packet_sock *po,=
+ struct msghdr *msg)
+> >>   		ph =3D packet_current_frame(po, &po->tx_ring,
+> >>   					  TP_STATUS_SEND_REQUEST);
+> >>   		if (unlikely(ph =3D=3D NULL)) {
+> >> -			if (need_wait && skb) {
+> >> +			if (need_wait && packet_read_pending(&po->tx_ring)) {
+> > Unfortunately I did not immediately fully appreciate Eric's
+> > suggestion.
+> >
+> > My comments was
+> >
+> >      If [..] the extra packet_read_pending() is already present, not
+> >      newly introduced with the fix
+> >
+> > But of course that expensive call is newly introduced, so my
+> > suggestion was invalid.
+> >
+> > It's btw also not possible to mix net and net-next patches in a singl=
+e
+> > series like this (see Documentation/process/maintainer-netdev.rst).
+> =
 
-as_raw() is a common pattern and everyone knows what it does, `.0.get()` se=
-ems
-much less obvious.
+> Sorry, I misunderstood your comments. In the next version, I will =
+
+> combine the second and third patches together.
+
+My original suggestion was just wrong, sorry. Thanks for revising again.
+ =
+
+> >
+> > But, instead of going back entirely to v2, perhaps we can make the
+> > logic a bit more obvious by just having a while (1) at the end to sho=
+w
+> > that the only way to exit the loop (except errors) is in the ph =3D=3D=
+ NULL
+> > branch. And break in that loop directly.
+> >
+> > There are two other ways to reach that while statement. A continue
+> > on PACKET_SOCK_TP_LOSS, or by regular control flow. In both cases, ph=
+
+> > is non-zero, so the condition is true anyway.
+> =
+
+> Following your suggestion, I tried modifying the code (as shown below),=
+=C2=A0 =
+
+> now the loop condition is still the same as origin, but the logic is no=
+w =
+
+> clearer and more obvious.
 
