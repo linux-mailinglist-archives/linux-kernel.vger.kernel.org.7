@@ -1,153 +1,185 @@
-Return-Path: <linux-kernel+bounces-727387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5393CB01978
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:13:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4994FB0199A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A42B54A1005
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:13:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B681C47A06
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183F627FD45;
-	Fri, 11 Jul 2025 10:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E8C27FB14;
+	Fri, 11 Jul 2025 10:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="Dt4bBXYK";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="C81Q7tJ/"
-Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="DVgLreXp"
+Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF1827FB0C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027CE279DC3
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752228813; cv=none; b=OctYwysUNASDy2phX+5UoQ7+a5ZnylcBJRWyImGXmonGwGXa3fjEUzjMLrJrWPc41lKZo6+arvh/sMzZpAc/y6YDobBKYooSHHLRhb2TdkCOaKMlh2Crz6MQtP+xubryaKWGrMEwhfO8e8yk0jFHOhBLWLxgB06sc5Fb5E6kXW8=
+	t=1752229287; cv=none; b=a3OP+jLjr797MaObnx3Ydv+FA6laRL5re4nd82U1NLaY4lza/QXn0yUJ/1b+bXkUAgT6FSylPSWnawtZPexWnZb1MhDX0BqOsn0As743N3j9A1t5ZJSPel3YP92c1qgEqPDk65yQBB8jhKhFjJfPwJo4bUsLeDIRGuKhhnnjMEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752228813; c=relaxed/simple;
-	bh=wZRySA4lz28cjksFVP733NJp4H6+uYUyG7offN581Wg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=naUch3ZNruoSXRwUtZ3DGONYZT0nFWJVCBYVg4DwBYd9ufgjkJG/37uKSF/pA7saeXEiKW5jbXIAQoZcn30+Vm7/x1rOTStc+8GgNUJStE02XTC1fegWh8I5I/mb0WgyveRKY1aprTk2/jjzMYBJ1LcJab56/+h6nf8TDzh/zzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=Dt4bBXYK reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=C81Q7tJ/; arc=none smtp.client-ip=103.2.141.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+	s=arc-20240116; t=1752229287; c=relaxed/simple;
+	bh=iG36eEHiq74QunglITmI+fgFVpqSr0lVvn46UT1KGYI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lTAOGk2v034b5OZN9c7p3FIVbkj86NveXlCwYEvoE5VrnHGCqVocQAAyJS3r6BCNRTkq3jDQ8eIs0MGXaDdCw4LLBolukLFPSm+veveVyVtjU3Iocn2/esQ9WJV47vo1XdSPzoWmublz85gCWIrahXjL+qWyxbA5Gij0lPaYYkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=DVgLreXp; arc=none smtp.client-ip=78.40.148.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1752229712; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-Id:Date:Subject:To:From:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=K5i9iQTovVSe0BiRNCldsIl2QT/Jg4d39IT5+8FPoo4=; b=Dt4bBXYKS5L9SSKIDhe2Xj9x+W
-	dkGukrvjKu+w2/YxJUVnRaPqKb1bNChBvfg5rHdah/4CnFmvOoqwPSMkl7AKtmT2H0gKtSSFr9pBA
-	WsZzQXOEpoO2Ld7IfpV2Z713D9rUpWmatFQcLarX4YTHTwCnB/J/HxfNAg43YoZXhbN5k24tM52Ou
-	iwMBlimsI/3F+xALe1mpu5npFcZnaN0AQa/Yi6+uqjwwn50qX1htTYdSj4Jgt2KN2tSwv/WFKalVf
-	C5Yc81PJtCEztvtjgkH0E4XugNnI26wLl5y34h1Zl9hIaglJ6ogGRcOZcWTJjz/jeCL0UVBl0S3Um
-	pr6TkPbA==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1752228812; h=from : subject
- : to : message-id : date;
- bh=K5i9iQTovVSe0BiRNCldsIl2QT/Jg4d39IT5+8FPoo4=;
- b=C81Q7tJ/2/4i5j60l2cZ078FBW+loOCJBqquvp+kqbuZilKiTExaoGdW1L0koB1kNuJBY
- CCBbtjAPtDZX0B13fk81EoJxzuo6e0+YfS/w/79yJohH44BEZgGJ41tJAVwtFtUciCICfD1
- nahzTxhozkMINlczfboM2ONsNwBYqrU2S9JBQWiFOioJqyV/svEzAIHhkqFDCjU1YjGsdSA
- e0NpdMLIQdrJMqAom2j+/X9pZ7nRPCMo8OMLDDsi30BTKs7q7WaJNk145PTUJTzGgPIeiyo
- /b73B8jT0scFQfZWF9MgxmveL3t7+lesZ4mXsT5XtIO59yG14VW4MMLUaDaQ==
-Received: from [10.176.58.103] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
- id 1uaAkw-TRk6Ep-Cd; Fri, 11 Jul 2025 10:13:26 +0000
-Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.98.1-S2G) (envelope-from <repk@triplefau.lt>)
- id 1uaAkw-4o5NDgrka66-oyAz; Fri, 11 Jul 2025 10:13:26 +0000
-From: Remi Pommarel <repk@triplefau.lt>
-To: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Johannes Berg <johannes@sipsolutions.net>,
- Remi Pommarel <repk@triplefau.lt>
-Subject: [RFC PATCH v2 wireless-next 3/3] wifi: mac80211: Check link id at
- station removal
-Date: Fri, 11 Jul 2025 12:03:20 +0200
-Message-Id: <ce42107117526535474cf81d514fd030c7376e85.1752225123.git.repk@triplefau.lt>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <cover.1752225123.git.repk@triplefau.lt>
-References: <cover.1752225123.git.repk@triplefau.lt>
+	d=codethink.co.uk; s=imap5-20230908; h=Sender:MIME-Version:
+	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
+	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=iG36eEHiq74QunglITmI+fgFVpqSr0lVvn46UT1KGYI=; b=DVgLreXpneHG1aw6/3WjHTsmFj
+	NuLzHkdlJ9w3NiczGtQJUwCio4+JW+M4Y8z+0Vms6by26fCEXZ7UTN8X1bb3gAyhCXKgbpgvmliWB
+	3VON4NDdyhOZvMESSKEIKJ/5dxg8pgB6fL6+QEhP9Qw4tWam1tCze+G9rM8MTZrgbRKVfaJBQ7D9P
+	YXzCFlNEXF9g07hK/2ulwNOUgYppAyduQQDT65ewY3YUFASXUiOjv2owFY8CLUH3/P4jotukQmCyM
+	qdwHx8CgCOU4aNHti3WEIOeGlExRnIXoU+GmBf2L/ESennlFICYPZYPGeJNXyTqaCHjqFh+PsIJmJ
+	w++93nyg==;
+Received: from [167.98.27.226] (helo=[10.17.2.70])
+	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1uaAct-00FWjH-7l; Fri, 11 Jul 2025 11:05:07 +0100
+Message-ID: <0b51789f52323f92a7f42aa351563dc65537c089.camel@codethink.co.uk>
+Subject: Re: [PATCH 0/5] sched/deadline: Fix GRUB accounting
+From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
+To: Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann	 <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall	 <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>, Valentin Schneider	 <vschneid@redhat.com>, Waiman
+ Long <llong@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Luca Abeni <luca.abeni@santannapisa.it>
+Date: Fri, 11 Jul 2025 12:05:01 +0200
+In-Reply-To: <20250627115118.438797-1-juri.lelli@redhat.com>
+References: <20250627115118.438797-1-juri.lelli@redhat.com>
+Organization: Codethink
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Smtpcorp-Track: JAhK-vQaQhF5.tbMelu8K9EC6.KacG2Qrg7fa
-Feedback-ID: 510616m:510616apGKSTK:510616sZr30L41yo
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
+Sender: marcel.ziswiler@codethink.co.uk
 
-hostapd can remove a non-MLD sta connected to one link of one MLD AP
-several times. If the sta roamed to another link of the same MLD AP
-between two of those removals the wrong sta_info could be removed.
+Hi everybody
 
-To fix that remove sta only if it is currently using the link specified
-in NL80211_CMD_DEL_STATION if they are any.
+On Fri, 2025-06-27 at 13:51 +0200, Juri Lelli wrote:
+> Hi All,
 
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
- net/mac80211/cfg.c      | 3 ++-
- net/mac80211/sta_info.c | 7 ++++++-
- net/mac80211/sta_info.h | 2 +-
- 3 files changed, 9 insertions(+), 3 deletions(-)
+Any more progress on this?
 
-diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
-index 56540c3701ed..727eea74bd37 100644
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -2217,7 +2217,8 @@ static int ieee80211_del_station(struct wiphy *wiphy, struct net_device *dev,
- 	sdata = IEEE80211_DEV_TO_SUB_IF(dev);
- 
- 	if (params->mac)
--		return sta_info_destroy_addr_bss(sdata, params->mac);
-+		return sta_info_destroy_addr_bss(sdata, params->mac,
-+						 params->link_id);
- 
- 	sta_info_flush(sdata, params->link_id);
- 	return 0;
-diff --git a/net/mac80211/sta_info.c b/net/mac80211/sta_info.c
-index 8c550aab9bdc..f43ebc97134f 100644
---- a/net/mac80211/sta_info.c
-+++ b/net/mac80211/sta_info.c
-@@ -1579,13 +1579,18 @@ int sta_info_destroy_addr(struct ieee80211_sub_if_data *sdata, const u8 *addr)
- }
- 
- int sta_info_destroy_addr_bss(struct ieee80211_sub_if_data *sdata,
--			      const u8 *addr)
-+			      const u8 *addr, int link_id)
- {
- 	struct sta_info *sta;
- 
- 	lockdep_assert_wiphy(sdata->local->hw.wiphy);
- 
- 	sta = sta_info_get_bss(sdata, addr);
-+
-+	if (sta && link_id >= 0 && sta->sta.valid_links &&
-+	    !(sta->sta.valid_links & BIT(link_id)))
-+		return -EINVAL;
-+
- 	return __sta_info_destroy(sta);
- }
- 
-diff --git a/net/mac80211/sta_info.h b/net/mac80211/sta_info.h
-index 5288d5286651..a6d2c847a91c 100644
---- a/net/mac80211/sta_info.h
-+++ b/net/mac80211/sta_info.h
-@@ -932,7 +932,7 @@ int __must_check __sta_info_destroy(struct sta_info *sta);
- int sta_info_destroy_addr(struct ieee80211_sub_if_data *sdata,
- 			  const u8 *addr);
- int sta_info_destroy_addr_bss(struct ieee80211_sub_if_data *sdata,
--			      const u8 *addr);
-+			      const u8 *addr, int link_id);
- 
- void sta_info_recalc_tim(struct sta_info *sta);
- 
--- 
-2.40.0
+As this is a bug it would be really nice to land a fix sooner than later : =
+)
 
+Thanks!
+
+> This patch series addresses a significant regression observed in
+> `SCHED_DEADLINE` performance, specifically when `SCHED_FLAG_RECLAIM`
+> (Greedy Reclamation of Unused Bandwidth - GRUB) is enabled alongside
+> overrunning jobs. This issue was reported by Marcel [1].
+>=20
+> Marcel's team extensive real-time scheduler (`SCHED_DEADLINE`) tests on
+> mainline Linux kernels (amd64-based Intel NUCs and aarch64-based RADXA
+> ROCK5Bs) typically show zero deadline misses for 5ms granularity tasks.
+> However, with reclaim mode enabled and the same two overrunning jobs in
+> the mix, they observed a dramatic increase in deadline misses: 43
+> million on NUC and 600 thousand on ROCK55B. This highlights a critical
+> accounting issue within `SCHED_DEADLINE` when reclaim is active.
+>=20
+> This series fixes the issue by doing the following.
+>=20
+> - 1/5: sched/deadline: Initialize dl_servers after SMP
+> =C2=A0 Currently, `dl-servers` are initialized too early during boot, bef=
+ore
+> =C2=A0 all CPUs are online. This results in an incorrect calculation of
+> =C2=A0 per-runqueue `DEADLINE` variables, such as `extra_bw`, which rely =
+on a
+> =C2=A0 stable CPU count. This patch moves the `dl-server` initialization =
+to a
+> =C2=A0 later stage, after SMP initialization, ensuring all CPUs are onlin=
+e and
+> =C2=A0 correct `extra_bw` values can be computed from the start.
+>=20
+> - 2/5: sched/deadline: Reset extra_bw to max_bw when clearing root domain=
+s
+> =C2=A0 The `dl_clear_root_domain()` function was found to not properly ac=
+count
+> =C2=A0 for the fact that per-runqueue `extra_bw` variables retained stale
+> =C2=A0 values computed before root domain changes. This led to broken
+> =C2=A0 accounting. This patch fixes the issue by resetting `extra_bw` to
+> =C2=A0 `max_bw` before restoring `dl-server` contributions, ensuring a cl=
+ean
+> =C2=A0 state.
+>=20
+> - 3/5: sched/deadline: Fix accounting after global limits change
+> =C2=A0 Changes to global `SCHED_DEADLINE` limits (handled by
+> =C2=A0 `sched_rt_handler()` logic) were found to leave stale or incorrect
+> =C2=A0 values in various accounting-related variables, including `extra_b=
+w`.
+> =C2=A0 This patch properly cleans up per-runqueue variables before implem=
+enting
+> =C2=A0 the global limit change and then rebuilds the scheduling domains. =
+This
+> =C2=A0 ensures that the accounting is correctly restored and maintained a=
+fter
+> =C2=A0 such global limit adjustments.
+>=20
+> - 4/5 and 5/5 are simple drgn scripts I put together to help debugging
+> =C2=A0 this issue. I have the impression that they might be useful to hav=
+e
+> =C2=A0 around for the future.
+>=20
+> Please review and test.
+>=20
+> The set is also availabe at
+>=20
+> git@github.com:jlelli/linux.git upstream/fix-grub-tip
+>=20
+> 1 - https://lore.kernel.org/lkml/ce8469c4fb2f3e2ada74add22cce4bfe61fd5bab=
+.camel@codethink.co.uk/
+>=20
+> Thanks,
+> Juri
+>=20
+> Juri Lelli (5):
+> =C2=A0 sched/deadline: Initialize dl_servers after SMP
+> =C2=A0 sched/deadline: Reset extra_bw to max_bw when clearing root domain=
+s
+> =C2=A0 sched/deadline: Fix accounting after global limits change
+> =C2=A0 tools/sched: Add root_domains_dump.py which dumps root domains inf=
+o
+> =C2=A0 tools/sched: Add dl_bw_dump.py for printing bandwidth accounting i=
+nfo
+>=20
+> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 1 +
+> =C2=A0kernel/sched/core.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +
+> =C2=A0kernel/sched/deadline.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 61 +++++++++++++++++++---------
+> =C2=A0kernel/sched/rt.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 +++
+> =C2=A0kernel/sched/sched.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> =C2=A0tools/sched/dl_bw_dump.py=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ | 57 ++++++++++++++++++++++++++
+> =C2=A0tools/sched/root_domains_dump.py | 68 +++++++++++++++++++++++++++++=
++++
+> =C2=A07 files changed, 177 insertions(+), 19 deletions(-)
+> =C2=A0create mode 100755 tools/sched/dl_bw_dump.py
+> =C2=A0create mode 100755 tools/sched/root_domains_dump.py
+
+Cheers
+
+Marcel
 
