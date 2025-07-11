@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-727378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8451FB0194D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C95B0194B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9DC645301
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:04:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D4F26435AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9104427FB02;
-	Fri, 11 Jul 2025 10:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B5727F01C;
+	Fri, 11 Jul 2025 10:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="ExkwTmor"
-Received: from mail-10624.protonmail.ch (mail-10624.protonmail.ch [79.135.106.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pr6pZxYa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAA0279DC6;
-	Fri, 11 Jul 2025 10:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE29227EFEA;
+	Fri, 11 Jul 2025 10:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752228290; cv=none; b=mqU1xNDXA9k3tLf7+2alINg0Yh2Q2aiQPLlNDk0wNCnkpNBe2OWu+wxrqsD7m1cdEwFMcJD3k59bV52IWCOxKMM5zPo5ey3cgm08wJamR2ZWRHJWfgQpHx3hF57iLH3FqXN2smZhT0KT9ov1ozNoIar52koRAhtvqmFN06yMNcA=
+	t=1752228290; cv=none; b=NcZM8byFUW/o0ulhJYggF68wViUJtHWGs8RM0nJT8OYDTzOyFiRef6TM6hZg3HntgCkqZfZdBwLQJNjCqanjZlDVdnmRQCD7UZa/tgEIXYCyG97AnjdOjPxfEjvXB4JsYunZL+sri+6j7XTmU35k7gOzf51N/zrilJrxXyG63aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752228290; c=relaxed/simple;
-	bh=y6SFqHAsZ+1U0g+VQ10xtYYL0E22g1zsauVndKyBnmI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tAfYsZ/WMhZ7/bgC+CgVO5eD/fMyIg5A/CsLO/mrYOLwS4Z9sreQe11bdijC7ETMqswCQFvKnfB0i8wyBGH+2FcIHiI/7otZhbZ9M7lnDx1jkZ0avTFHPPD3nuA/aTr+fJDok/f+3+dwLM/K0VJxIFfeYumoaMMBhc0uGmxwNsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=ExkwTmor; arc=none smtp.client-ip=79.135.106.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
-	s=protonmail; t=1752228284; x=1752487484;
-	bh=y6SFqHAsZ+1U0g+VQ10xtYYL0E22g1zsauVndKyBnmI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=ExkwTmorolutl9yXI6Y6f121KdON4optTi7BFgVYWDpu1r8l4OzkcKMq1CtHCpZ1+
-	 rerw/LMWyVY0Y4DQnGFG0LQVivfTYPS3XXO9p07v+SVtPKQuK9nNLhCzb7jgysy/In
-	 ue6nnnZpSFangiLRpIFwkwdadR0EMUtZjm7vgPotf9MHP6IcF+eHOu8ZaoGdjcfbcu
-	 YzQ41fk8WGap0SpyP4ayowPQVPJcnrurwpNnc5uzCKxL9fuULCDF8sqI+5hwAeiGZ1
-	 tyidWHvtlpXo8aIqot37nGHQjVkIc0lEMFs7dwaSt/ryYnjzwZ4UdyCTppbbvNydol
-	 BmYEGoZh8I/Ug==
-Date: Fri, 11 Jul 2025 10:04:40 +0000
-To: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-From: Sean Nyekjaer <sean@geanix.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>, imx@lists.linux.dev, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>, Robin Gong <yibin.gong@nxp.com>, Enric Balletbo i Serra <eballetbo@gmail.com>
-Subject: Re: [PATCH v8 3/6] regulator: pf1550: add support for regulator
-Message-ID: <qnaduioo2qqt25k5zv5dpwne7s4a6zph6ma2dsnospex7fnrar@drnpfuel7ipe>
-In-Reply-To: <20250707-pf1550-v8-3-6b6eb67c03a0@savoirfairelinux.com>
-References: <20250707-pf1550-v8-0-6b6eb67c03a0@savoirfairelinux.com> <20250707-pf1550-v8-3-6b6eb67c03a0@savoirfairelinux.com>
-Feedback-ID: 134068486:user:proton
-X-Pm-Message-ID: 888c58051b555ccdfcba7c9369c9eab466ff9121
+	bh=HA6odsRfvuXb37XCf1ZynNmgsx3zfWYCrcUWbP1YRUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mRP1lRU9P82hZc8E2KuT4OEl4nOX+R2kGep+DZ+eLHcSIxsfD7b1AQQhDUusVkNs3tEzV+WKq1NiUH+spfdFM3vO/LFmyA8mrsf9EqARqef2LuRzEB0QqmxuB3zEhXBEBqC9O8OOqIZRUytLi9w+EL5y0XnGfG6G3lpJGqIx1Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pr6pZxYa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D35C4CEED;
+	Fri, 11 Jul 2025 10:04:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752228289;
+	bh=HA6odsRfvuXb37XCf1ZynNmgsx3zfWYCrcUWbP1YRUc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pr6pZxYadE/l0QdMqbqEomQm0PiupYaiCFt8V7IYJq7YsOOILOastKQIxSsXfwrp7
+	 ZUi6FrG/ZVD7//8/F6mx2QvRsYuzfOMFk0NA3n4rmf2AdbOAtXgRfRRgcvtw5BXBUf
+	 Eb2QVl3nSNXbo4ORRpXoaUNTCQmVo4ClYZ5JgZP9RmlVwA24SJ6qKGR5vz4ntOOt8D
+	 dBkjT9QtkwohylMQoLQduCnwUj3ZqXm3TsSTrtePH6f1V9y5XRxVpKm7dfBSuY1sps
+	 IdrCG/LWcBDTf+G8O+FtoNw8mnEVZ5c5cus21ki/XGkjLAtI1+YFMjb5mQE/C6UYsN
+	 sNPlH6rSWhwkg==
+Date: Fri, 11 Jul 2025 12:04:43 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Anuj Gupta <anuj20.g@samsung.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Kanchan Joshi <joshi.k@samsung.com>, 
+	Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
+	Caleb Sander Mateos <csander@purestorage.com>, Pavel Begunkov <asml.silence@gmail.com>, 
+	Alexey Dobriyan <adobriyan@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] block: fix FS_IOC_GETLBMD_CAP parsing in
+ blkdev_common_ioctl()
+Message-ID: <20250711-ohren-hebel-4790bafe4bb4@brauner>
+References: <20250711084708.2714436-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,33 +62,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20250711084708.2714436-1-arnd@kernel.org>
 
-On Mon, Jul 07, 2025 at 05:37:22PM +0100, Samuel Kayode wrote:
-> Add regulator support for the pf1550 PMIC.
->=20
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+On Fri, Jul 11, 2025 at 10:46:51AM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Anders and Naresh found that the addition of the FS_IOC_GETLBMD_CAP
+> handling in the blockdev ioctl handler breaks all ioctls with
+> _IOC_NR==2, as the new command is not added to the switch but only
+> a few of the command bits are check.
+> 
+> Move the check into the blk_get_meta_cap() function itself and make
+> it return -ENOIOCTLCMD for any unsupported command code, including
+> those with a smaller size that previously returned -EINVAL.
+> 
+> For consistency this also drops the check for NULL 'arg' that
+> is really useless, as any invalid pointer should return -EFAULT.
+> 
+> Fixes: 9eb22f7fedfc ("fs: add ioctl to query metadata and protection info capabilities")
+> Link: https://lore.kernel.org/all/CA+G9fYvk9HHE5UJ7cdJHTcY6P5JKnp+_e+sdC5U-ZQFTP9_hqQ@mail.gmail.com/
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Cc: Anders Roxell <anders.roxell@linaro.org>
+> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
+> v2: add the check in blk-integrity.c instead of ioctl.c
+> 
+> I've left out the maximum-size check this time, as there was no
+> consensus on whether there should be one, or what value.
+> 
+> We still need to come up with a better way of handling these in
+> general, for now the patch just addresses the immediate regression
+> that Naresh found.
+> 
+> I have also sent a handful of patches for other drivers that have
+> variations of the same bug.
 
-[...]
-
-> +
-> +struct pf1550_desc {
-> +=09struct regulator_desc desc;
-> +=09unsigned char stby_reg;
-> +=09unsigned char stby_mask;
-> +};
-> +
-
-I would suggest doing support for the stby voltages. We are using them
-to lower consumption in suspend.
-
-From the devicetree we configure:
-regulator-suspend-min-microvolt, regulator-suspend-max-microvolt,
-regulator-off-in-suspend and/or regulator-on-in-suspend
-
-/Sean
-
+Arnd, let me know how I can help!
 
