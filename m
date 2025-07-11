@@ -1,263 +1,86 @@
-Return-Path: <linux-kernel+bounces-727730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC077B01EB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:08:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50D97B01EB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 748276416D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:07:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F143D645F93
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A822DE71C;
-	Fri, 11 Jul 2025 14:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kBF+XYeG"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58252292B36;
+	Fri, 11 Jul 2025 14:09:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBF02836B5;
-	Fri, 11 Jul 2025 14:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDC114884C
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752242872; cv=none; b=SuT7FtDgUInKYGphoi0mEvcHfabyqlqdEksG7TMRxi4tYPPLWsBUeSqn2OnGDcvm47NnUJtCk025flowoF9psOtuNiNRhXEwGXEMp/n3EcfLwIop1nKVxgYrlzrDuuoubiEbtgofjng1JhKppUgyDZ7qpZgThTmkKEgACn65kZs=
+	t=1752242944; cv=none; b=PfimeqMpyXye3gLNZdCqM0x6VIIokQiWJDWWDHbmP+yRoVKVzvjxBMq1GzhYbKcL69Jz3T9ee50JgWMZVu2IgpL85VtJRWf49KqSq+Q6rVRgonruspyWNF9UV/zuUUgLo5oc7jV9WtGgC4FSuuVSZfA6QHguQI9zNeWqnsq1Mp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752242872; c=relaxed/simple;
-	bh=BF2OSTIla5z7+/j39xtNnONebboZGK4PpqpWRQ9Eavc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f67FIb19g9J1v52Dr2fGROXSk45m+shl1w7rSwcA00DMME48KNQs1XQ3s5N2StEbOz1Gt2KwickwET+gPf+KBRpWBnv4zNekkQXaZxZGYBhTqHyeeNLdQuGZz8ndsbWXS3/MZBy59gG8XhMy+0BaQjhPYyBzvnAdt8R2kb0Wx1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kBF+XYeG; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7d21cecc11fso378350185a.3;
-        Fri, 11 Jul 2025 07:07:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752242870; x=1752847670; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1o4QOJvgTDr/+qtVAfA8JyDjjkgNnLqLh+c7VGsh8O0=;
-        b=kBF+XYeGp3OFo7zpgF0oLH4+IH2og45JsDCtHMraI7IkI+Pqj5QlauqJFF7PPOH/tr
-         a9EiDWGSzCMaY7onRJaAT8M9TyNfGNQZGbYlQ6PaJWRwVg2PARPvw5qd71MdiRmQPVZk
-         +TWk6Z7PA3ut4Sdq6XbAxvVskuibYu5p4HtsZ21xT6m72rk/Cz2CELt4VRtTo/EuslZW
-         OjBcodewS6uiGsAjX1fYxCJ/ghkrKbVWImwHZ7J2SgwHhDvhgIy5n+CTaK0FEU/jUYhr
-         3aTZkkhFLES+2xa04jEb7wAllQIY2Vz0tA9ajIV9a+IV9VagXBn7EETAXTprzM1/RCBB
-         jIog==
+	s=arc-20240116; t=1752242944; c=relaxed/simple;
+	bh=JKeb9yeEjB4sfYVEc4lH2JYkwaQ26CIkzWXbCSTYGMk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=aTzsprO7biUwQwh8JWqXoKess1ilQeCknNPKpkZjXOmO5dE0C/wIp1gFgnkhJTbnv5CcgqMgqMESi/oD6NwMY0Xa6XuwKVmlK3+2zvBjK/Wt71E8OMFMuFHod7cdnKGwGBWfg5YuzdII36QOKQDu40u0HGCh13pfZRNKuOrwk0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8760733a107so246167639f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:09:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752242870; x=1752847670;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1o4QOJvgTDr/+qtVAfA8JyDjjkgNnLqLh+c7VGsh8O0=;
-        b=Qji9ZU8TP77/TBZQBah0CjFG/b4B4QAE6bYgTPCzaHgPmpJT4ymdYdWauI0koMbatH
-         6a45COLT2KZnnVwESOAhYVfvsg+LKylywxobJ86AMlszwuN605F48fsbKKw2pX7v7qQW
-         hPiROCuHT1T1I0oBnbnrWcGM6X6/aGprje2nAY1jX9YARB4jsAsQsSbKDjAXJ7icdNd3
-         GHE4GDn+HdjRSH5C3iDSYSCe6Rcbaw4gSy88P+Co6FbaKjugZ9ibERZv27GWvhg1f+4p
-         ZyojSdFpnYAi+rdx0D2SE22kVsvm0h1W58Qx2pfJmOUt1Pjmu3gUDnGICqa6wXYtZ//h
-         V2WA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyUWV8C//ib+pVAh3KGWnrpe+62AKx/nWOMzR693CeEXpZ9RyP2tR/eLjPYqAnlSLNXzwcF3wZ94LRTww/@vger.kernel.org, AJvYcCWH+z/kNQZYJJqpJuyeiiBLyd3R4IBcnmQe9Sc6NLnIT92HJcFiAHk3g8aK6Si+s+lSWeKHvqP8DT2x@vger.kernel.org, AJvYcCXCF1cr7rHc45NAIvGP/EDmOudDVW1hQ4y4CDSUhIkTyQp+kyNH5NJhyRMGZC4fOQ7Cz9Aa7knrZegO51eNJz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxftzuoamHjW+Ay2hr5oubx38/CnEnzUcPnCBP894RoNcoKOWEa
-	QpzsQ7/VjniAB9s8dm/woO12uEEJi4oNyn9zDyYsf6P7FZzQry0tBwQ2
-X-Gm-Gg: ASbGncuyLyXUIQJR+EYzqbvgTEBxA9ZflrtmFXXpY/f+tsHxrhAJgu8DmKk9W/x1ZI+
-	JzqGXyx6GBWtSEb/K3JU4aezAnHYyBBCG9z3cGZVdVLq+CpqeHYuRf10ZwZ45YPfUFDkDrkYEsu
-	ygouv7h6TOhmkRFZMwv+fNxUf539gJAiHUZdJjxpnEsmqgjH/1+n1gGz14JYs90hMEtrcPgFJQw
-	Ucz6OWGoRCIFIeJWbRE5ox0vXqFyF8XV3z5rTuzwxO/hgzdlXkOrhQrdDqiqOOfwH8pv+TLhL8A
-	GEAzuJniPXKp3t9nASMqzr+aAHpoL3pemzGv4UybfgHtZ1E3z59hYRND+478V0HBwsdgWh9l4cg
-	6la9DJOEaCGRqg8o+gmokdyCcradoUxAL+pjPS3hjIyQRAC76/53eK4z6+lXca33VlKALe820cc
-	18OsHc3Z96zzLd
-X-Google-Smtp-Source: AGHT+IF6+2c6drwssbbyHedPCqYFE+1P3N4Vq4VaZMC4+LDbN999+fCyzgp647vBzgj+pkwfnRJ4KA==
-X-Received: by 2002:a05:620a:4049:b0:7d3:f68c:5778 with SMTP id af79cd13be357-7ddece114camr723075885a.54.1752242869934;
-        Fri, 11 Jul 2025 07:07:49 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcde421c82sm223903685a.56.2025.07.11.07.07.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 07:07:48 -0700 (PDT)
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 25215F40066;
-	Fri, 11 Jul 2025 10:07:48 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Fri, 11 Jul 2025 10:07:48 -0400
-X-ME-Sender: <xms:tBpxaFdOOFeX2emfJHq_7At8LNuoLKEFgX6g3IEz3ITtzny5Syy08g>
-    <xme:tBpxaD_jZV53gl-IBhcZs5meDWin9TxwdqwOi8MQKdjY9P7jYwOkMyjp9F6FwhSqC
-    gpfcMdK4uJWX8RY1Q>
-X-ME-Received: <xmr:tBpxaCWblW_K-9L7XgpYdL_09wzIXNDsll--LMwKiLanjZSA7kazqoVxfQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfeehvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekrodttddtjeenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpeejjeeuieegueekheekffejgefhjeeuvdetfeefjeegfeeigfdugeeujeduvdek
-    gfenucffohhmrghinheplhifnhdrnhgvthdpfhhfihdrrhhsnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghu
-    thhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqh
-    hunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgt
-    phhtthhopedvledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhighhuvghlrd
-    hojhgvuggrrdhsrghnughonhhishesghhmrghilhdrtghomhdprhgtphhtthhopehlohhs
-    shhinheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhn
-    uhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhkmhhmsehlihhsth
-    hsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthho
-    pehgrghrhiesghgrrhihghhuohdrnhgvth
-X-ME-Proxy: <xmx:tBpxaAj7S2IUdaCBj_ThkVwBhYHUTMmVxGpCgg4tCKCJqsptuBra9g>
-    <xmx:tBpxaAwGySgKEYdOtkMBZdsdTdAwCljuasEVb0D7Ghxgh47OJ2CtIg>
-    <xmx:tBpxaGqBiNeR6cExwZDLESfXb0TGlPR3XWUStzBr1hUA4cPgZclHzQ>
-    <xmx:tBpxaLlXr5znpt8fwYHhCaFjXtlmoSXXO1V7OuZYWvNM-3iuOKkVHQ>
-    <xmx:tBpxaBo7xRdOCOPtvWkcy7VczTrNKVHJBf-hbzHgMpuNpPjjYcqTcT8n>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 11 Jul 2025 10:07:47 -0400 (EDT)
-Date: Fri, 11 Jul 2025 07:07:46 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, lkmm@lists.linux.dev,
-	linux-arch@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,	Lyude Paul <lyude@redhat.com>,
- Ingo Molnar <mingo@kernel.org>,	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v6 9/9] rust: sync: atomic: Add Atomic<{usize,isize}>
-Message-ID: <aHEasoyGKJrjYFzw@Mac.home>
-References: <20250710060052.11955-1-boqun.feng@gmail.com>
- <20250710060052.11955-10-boqun.feng@gmail.com>
- <DB93Q0CXTA0G.37LQP5VCP9IGP@kernel.org>
- <CANiq72m9AeqFKHrRniQ5Nr9vPv2MmUMHFTuuj5ydmqo+OYn60A@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1752242941; x=1752847741;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yAYRTfTeARSWg/s1fTbUHMy7DTlOEH44pLxeEKfablQ=;
+        b=Y4Pnm1wqERKd9QueSo6QWaGJSiRMCbwuzuYWlub8Lf0PFWRT7MFc5XE51NT94UvFzd
+         LLpAYgk6xTB70QtDtm04XcZAAY97oxGKyt+TR06lJXtm29lDt3zDVZjqovp6USwIxPwe
+         0MTwVzH1HL0in3+DUyngNZHRe9hTLFia6+wB3AIkNBU1dqZrjR3mjJDybtnOZvA82k/G
+         qeKSFK1pI3cmRaRmxIa4q8OXRXga4s4loewxbAjzB0N9zJC16IJDclJ6p3grw59jbqUw
+         3x/6BCP8nCUnZmJzaPrlOPaw9fYA8EKWygAaib5zOVAH1UAKc5Ogip46NYj3vQ0EsK1L
+         QQOw==
+X-Gm-Message-State: AOJu0Yw8N23j1/NcNrR6bHbpypr2PxvqgGka29FGTqNnzyGpT42ISwOX
+	8eXnmeA3rdUoGULHt3nUFZYkQRxGrvH79sCbGXcyYI9/KRMgHNBGflZV1/02kImk6g6CxC98WgH
+	23ygeqz2B9M1kF0HSSwHTXUbgQtHYYJ1eIQZb4qCRgpizodWqVtZWOHjuCsw=
+X-Google-Smtp-Source: AGHT+IGNH0GGKIqH4ZTazeOsJRLovu6xe0zBJSdiyhzqQ00UqI28H58TdP50KeFcqopr2FU8jGgewBS1ttk3lu5/XYHNYu0WQSGY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72m9AeqFKHrRniQ5Nr9vPv2MmUMHFTuuj5ydmqo+OYn60A@mail.gmail.com>
+X-Received: by 2002:a05:6602:6d15:b0:86c:f0d9:553 with SMTP id
+ ca18e2360f4ac-87977f74cc2mr448801939f.5.1752242941649; Fri, 11 Jul 2025
+ 07:09:01 -0700 (PDT)
+Date: Fri, 11 Jul 2025 07:09:01 -0700
+In-Reply-To: <40417f2a-e0d8-4f3c-9a37-a0068b6f268a@I-love.SAKURA.ne.jp>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68711afd.a00a0220.26a83e.004f.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] INFO: task hung in uevent_show (2)
+From: syzbot <syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 11, 2025 at 03:45:32PM +0200, Miguel Ojeda wrote:
-> On Fri, Jul 11, 2025 at 11:00 AM Benno Lossin <lossin@kernel.org> wrote:
-> >
-> > Do we have a static assert with these cfgs that `isize` has the same
-> > size as these?
-> >
-> > If not, then it would probably make sense to add them now.
-> 
-> Yeah, according to e.g. Matthew et al., we may end up with 128-bit
-> pointers in the kernel fairly soon (e.g. a decade):
-> 
->     https://lwn.net/Articles/908026/
-> 
-> I rescued part of what I wrote in the old `mod assumptions` which I
-> never got to send back then -- most of the `static_asserts` are
-> redundant now that we define directly the types in the `ffi` crate (I
-> mean, we could still assert that `size_of::<c_char>() == 1` and so on,
-> but they are essentially a tautology now), so I adapted the comments.
-> Please see below (draft).
-> 
+Hello,
 
-Thanks Miguel.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Maybe we can do even better: having a type alias mapping to the exact
-i{32,64,128} based on kernel configs? Like
+Reported-by: syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com
+Tested-by: syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com
 
-(in kernel/lib.rs or ffi.rs)
+Tested on:
 
-// Want to buy a better name ;-)
-#[cfg(CONFIG_128BIT)]
-type isize_mapping = i128;
-#[cfg(CONFIG_64BIT)]
-type isize_mapping = i64;
-#[cfg(not(any(CONFIG_128BIT, CONFIG_64BIT)))]
-type isize_mapping = i32;
+commit:         bc9ff192 Merge tag 'net-6.16-rc6' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=115fa0f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f481202e4ff2d138
+dashboard link: https://syzkaller.appspot.com/bug?extid=592e2ab8775dbe0bf09a
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1650c68c580000
 
-similar for usize.
-
-Thoughts?
-
-Regards,
-Boqun
-
-> Cheers,
-> Miguel
-
-> From afd58f3808bd41cfb92bf1acdf2a19081a439ca3 Mon Sep 17 00:00:00 2001
-> From: Miguel Ojeda <ojeda@kernel.org>
-> Date: Fri, 11 Jul 2025 15:27:27 +0200
-> Subject: [PATCH] rust: ffi: assert sizes and clarify 128-bit situation
-> 
-> Link: https://lwn.net/Articles/908026/
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->  rust/ffi.rs | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/rust/ffi.rs b/rust/ffi.rs
-> index d60aad792af4..bbda56c28ca8 100644
-> --- a/rust/ffi.rs
-> +++ b/rust/ffi.rs
-> @@ -38,11 +38,43 @@ macro_rules! alias {
->  
->      // In the kernel, `intptr_t` is defined to be `long` in all platforms, so we can map the type to
->      // `isize`.
-> +    //
-> +    // It is likely that the assumption that `long` is the size of a CPU register/pointer will stay
-> +    // when support for 128-bit architectures is added, thus these will still mapped to `{i,u}size`.
->      c_long = isize;
->      c_ulong = usize;
->  
-> +    // Since `long` will likely be 128-bit for 128-bit architectures, `long long` will likely be
-> +    // increased. Thus these may happen to be either 64-bit or 128-bit in the future, and thus new
-> +    // code should avoid relying on them being 64-bit.
->      c_longlong = i64;
->      c_ulonglong = u64;
->  }
->  
-> +// Thus, `long` may be 32-bit, 64-bit or 128-bit.
-> +const _: () = {
-> +    assert!(
-> +        core::mem::size_of::<c_long>()
-> +            == if cfg!(CONFIG_128BIT) {
-> +                core::mem::size_of::<u128>()
-> +            } else if cfg!(CONFIG_64BIT) {
-> +                core::mem::size_of::<u64>()
-> +            } else {
-> +                core::mem::size_of::<u32>()
-> +            }
-> +    );
-> +};
-> +
-> +// And `long long` may be 64-bit or 128-bit.
-> +const _: () = {
-> +    assert!(
-> +        core::mem::size_of::<c_longlong>()
-> +            == if cfg!(CONFIG_64BIT) {
-> +                core::mem::size_of::<u64>()
-> +            } else {
-> +                core::mem::size_of::<u128>()
-> +            }
-> +    );
-> +};
-> +
->  pub use core::ffi::c_void;
-> 
-> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> -- 
-> 2.50.1
-> 
-
+Note: testing is done by a robot and is best-effort only.
 
