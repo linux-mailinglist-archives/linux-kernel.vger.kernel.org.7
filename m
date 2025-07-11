@@ -1,104 +1,95 @@
-Return-Path: <linux-kernel+bounces-727553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26102B01BF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:27:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89F7B01BF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 341FE1C28265
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:27:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB0F47AB980
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412052989A2;
-	Fri, 11 Jul 2025 12:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hNApxfJH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811AE2BE057;
+	Fri, 11 Jul 2025 12:27:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F394A24;
-	Fri, 11 Jul 2025 12:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2E029C35C
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752236820; cv=none; b=BpWvlW2ojXAJoAvvqAH16ifj3hEyHSMsXsJifKTjPO+V0Jx9ZYdlORtLj5ce1daq3+3+vHi6uyJvvZhhyR8ONNwSDt7ZQQfnCQiEKPkGtie0nil9ka6k0EnXMOxZq1jv+bR3abYcrHXkBjH9itsLRz08tBuSHFZhcZyAK0Ja5w8=
+	t=1752236824; cv=none; b=q+nJDUeA8KbkSY1Kb9WymYoflT2b9XGqiebMHQMfuF70i8ceDOGUti+9TR6SiiSXXqymZo5T9gGx2ANHmB9ghmq+SF3GOTrf1VSipdB8m6x0Q86ks1QTbYRL2m0ImyDsUuTy98Y/SKongkopUjFWFLitme/M70r/jQMvboe29IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752236820; c=relaxed/simple;
-	bh=PwPblxCQiG8QR9cpfkd31MjigdRdcRoUtdKO5axKO/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JP5Hld2mNlciiOzSg51OuoOU4a2ihFRldfqdv1jTHX0dUbP4oQMNODR4sPEkRTtbYrTMkvtB7wmGItT+KCodjpqR3JYVOQg/pP5suSmLY8+KJSFRxN9PD3TN8xsHxpy3Hbhvdp4ydX5N6zgp3Zegv1h5QInmWTZdMFeLVBwPss0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hNApxfJH; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752236820; x=1783772820;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PwPblxCQiG8QR9cpfkd31MjigdRdcRoUtdKO5axKO/A=;
-  b=hNApxfJHzgE6yN79GmEW259jGNCd35fWZ2QliKbnXkj+b0fnvuL+1GUQ
-   epJ1QivTKie1FGipfv/UqujHlFKOzdu9zbcagBeFlDhbzHDJ1JQsgBtVn
-   WxECePWaRPITlqa+nuO2EIUQX6so+ST5axRLPQ39sOQt9fqzEdTF0Ma/2
-   gmLgjycUXilrKUHN7hKcmpTODj11dk6fFc1ctFiL0ps8+eeKxdmgZI4X5
-   Urio1UUGblXWlta7M/n/1Kk/7bMRjCqH2eyJJTWUdxUmJBCerK7Nvnd/U
-   RQ8v03GVyUfl1Uj5hf92zVODSenGjcG3L0DgR0kCaeqRQ50siMLYRwl+S
-   g==;
-X-CSE-ConnectionGUID: LwqWdZj/QDSK0q+i1UwLxg==
-X-CSE-MsgGUID: LisvGWw4QXaqEIC8pBDPjQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54250651"
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="54250651"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 05:26:59 -0700
-X-CSE-ConnectionGUID: 7GL8snfGRKmGw+Qdsgi3eg==
-X-CSE-MsgGUID: mrYMQaYnSiWpiu7DkY/k5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="160657843"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 05:26:56 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uaCq5-0000000EWO6-209g;
-	Fri, 11 Jul 2025 15:26:53 +0300
-Date: Fri, 11 Jul 2025 15:26:53 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: LiangCheng Wang <zaq14760@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v9 3/3] staging: media: atomisp: fix indentation in bh
-Message-ID: <aHEDDc1CPDDwwtsH@smile.fi.intel.com>
-References: <20250711-new_atomisp-v9-0-a9dd62425ef6@gmail.com>
- <20250711-new_atomisp-v9-3-a9dd62425ef6@gmail.com>
+	s=arc-20240116; t=1752236824; c=relaxed/simple;
+	bh=5RThLuz3tFL7phwFf/QiuipK2M04eM3fXnIvO+PM6js=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UeH0dQ8TDTeKDv7m1AleoAn2H4v1nbl7LgaSefZxxFG901dAIWPYRHLGgwJqFVm8OZaLeHz4zC2oWxfqP+84jmLCrDvCznvClm2UDuPmC67X1fLx/FiiITX9ImwKe/q/pwNX5CiyOANqrdJAEra+IVeMVEF2ufTRRqNoeCgIxsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8760733a107so235057639f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:27:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752236822; x=1752841622;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VLiCgbUvpuHgSzedG/d0dkj2/LzDFoEPV2dlBZwd1TU=;
+        b=VwOX/38SaqstzEteI/nnARTe9L0Pwyf7wVJ9Ipb8w/s/jWXCBehpWlRrOE6fsQgBwS
+         Lm7jx6TQyRYg3TTFKSpW+zdyfnlDv2DhMsZnZEipL+mtzDfMTLAFGc1LgAbifV85ZuRh
+         eMM4VKVctG8HoOTeVRp8S/apMWJw3sx7dSafVJdeHCgt7A4vNs5BalN0+1nEE9qCGK8V
+         dBvXK0WcRwTLXIeDjpQtyn/X8A+/S/z+PCZhNL17QlJw3foSiSSpxUxziPCe14mG4Mgl
+         5ZCxz7EM1tiwUeccSIB4KJQqzc2Dm6yNWrnNuIwkiFV6nbFUWuM0UJpwQZt/xOYhYKVg
+         lD9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXG4jnHvLu9RaZtS2TvgAtN7x9RFRy2/jV8ALF0OfDPTgDFRRUYKyxIKZeHqeuXIjYwSPbEYlAuIa74Jto=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxyhP6+Js5c8Vfi4UVzq0K2zapcZBT6M+2t7aNyFRqnT2qzghs
+	SlOUHC2JXEAuezJKu+G50qnPpq6RHD0hZvq5WmBhI56o/ks63E3XbJYX7VeQMW21Z18z6LMa1Pt
+	dCYMRE71c3tSnr+t6+wLgDjRIswaTKygw/MtOWTtRSftPNeUG//NfYFFzX2Q=
+X-Google-Smtp-Source: AGHT+IGRhMJOZvny5MX2PRrEbROR2nl61a5ERscS0MwH2MJL0/EaCuaUyH5lY/Hs0+U19HgsshuS2Lmy22Yo/U4JhtOYqknQ/OW7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250711-new_atomisp-v9-3-a9dd62425ef6@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-Received: by 2002:a05:6602:b90:b0:86c:f2c1:70d1 with SMTP id
+ ca18e2360f4ac-87977f521e7mr361411839f.1.1752236821815; Fri, 11 Jul 2025
+ 05:27:01 -0700 (PDT)
+Date: Fri, 11 Jul 2025 05:27:01 -0700
+In-Reply-To: <686a8143.a00a0220.c7b3.005b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68710315.a00a0220.26a83e.004a.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] WARNING in bdev_getblk
+From: syzbot <syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, anna.luese@v-bien.de, brauner@kernel.org, 
+	jack@suse.cz, jfs-discussion@lists.sourceforge.net, libaokun1@huawei.com, 
+	linkinjeon@kernel.org, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	p.raghav@samsung.com, shaggy@kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 11, 2025 at 07:54:38PM +0800, LiangCheng Wang wrote:
-> This patch fixes tab/space indentation issues in bh
-> following kernel coding style guidelines.
-> 
-> No functional logic changes were made.
+syzbot has bisected this issue to:
 
-Since the changes are all similar, I suggest to squash all three to one patch.
-I hope Hnas won't object this. The code looks good to me in all three with
-the small nit-picks and Link tag usage.
+commit 77eb64439ad52d8afb57bb4dae24a2743c68f50d
+Author: Pankaj Raghav <p.raghav@samsung.com>
+Date:   Thu Jun 26 11:32:23 2025 +0000
 
--- 
-With Best Regards,
-Andy Shevchenko
+    fs/buffer: remove the min and max limit checks in __getblk_slow()
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=127d8d82580000
+start commit:   835244aba90d Add linux-next specific files for 20250709
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=117d8d82580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=167d8d82580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8396fd456733c122
+dashboard link: https://syzkaller.appspot.com/bug?extid=01ef7a8da81a975e1ccd
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=115c40f0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11856a8c580000
 
+Reported-by: syzbot+01ef7a8da81a975e1ccd@syzkaller.appspotmail.com
+Fixes: 77eb64439ad5 ("fs/buffer: remove the min and max limit checks in __getblk_slow()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
