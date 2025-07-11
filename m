@@ -1,159 +1,242 @@
-Return-Path: <linux-kernel+bounces-728253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40218B02575
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32977B0257F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953251CC44C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57E981885B39
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2DB2F5092;
-	Fri, 11 Jul 2025 19:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCE11E834B;
+	Fri, 11 Jul 2025 19:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWlGpwZC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="amxXxYx6"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F041F03C5;
-	Fri, 11 Jul 2025 19:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497901A265E;
+	Fri, 11 Jul 2025 19:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752263669; cv=none; b=Meu9dC1eSpiqsh+Am2+KSgWyFcEJggT37jNTrj46MKpJ+cFIY36dLtNczcVvUwYBtsR7VjgMJowTS9wZ6A+toYDwdvcMXLIVNCf3PRAOQNkvf04YaFKwWuuj7vXyAutkuS6VqKSVAZxJBffb6Aiyk+04j72PY/nxXLunBY3ykYo=
+	t=1752263931; cv=none; b=TImyj95tnvXV85S5USGevMkPWrkrg2UpkRfvJPADQ4TF1rAqVjWthEKuUOu9dZETgv/E1K1ZvCp3Tg/avToE+xbECxkLT085X/4PI4zPiF5v9mSml4WtM/roRbZiH5GH8BFd5lsPHGDEVJHFx9rrBHNVJXk5DOHwgIhMbHE/m8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752263669; c=relaxed/simple;
-	bh=PqDZ52E91jh6aD9+8vsMna/zDDeoowu+ExCjFmSk7wc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=fENekiODRHq9XtwVoCoqvpxcjxO8qG/fyEKLr/6qEEOygHnCRKZIUzRgvr3O7Vsy/ouCU4lhmLowOR/l0/TZno6e4FB1uWn3lPdqXOPX47WDtTPFL0B34aOFVeD05ttuN1h12jhi65+K2FI/d8fMlDH3KFEujFzjbplP/BZK3RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWlGpwZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C7A4C4CEED;
-	Fri, 11 Jul 2025 19:54:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752263669;
-	bh=PqDZ52E91jh6aD9+8vsMna/zDDeoowu+ExCjFmSk7wc=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=YWlGpwZClBvzJvVaJCw7YzJ+MYWL5zdZcqqLskM+hhJbt0OBqNoAAJIVK1vpEguDa
-	 UHUDLCBDZ1Ee63MGGjRfE4CPhytedPavAJSOj/fj4w9//csXWpGkBur/UAScUP+shN
-	 JV8x/VeqpyUuIL0tAWB37oL0ogigSsxVU9TwVlXFuoSWxbUrLfggA6dwPneGwnubIo
-	 3fVVff19lykeddMD2JlejKy9TKTQflc+QqlcJhaArx4lZEVuIcf3Hy7iyTD4b+22ui
-	 S4DKipScHhxlwPtbyJlDE1CbfbYnAPA9c8Bh/KZK/lRpqUXOPbnHvTY3mETyzI5PAA
-	 xl3tu6Gz9dB9A==
+	s=arc-20240116; t=1752263931; c=relaxed/simple;
+	bh=yDjEyqdh2Nu8fnXNDs0/bSB/ijsOw0I1FCO4hajAPmM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OuAmXkP6cPToQ7YGN2cshglsaT3kPvAiM/6DploWveCPPgcuNFcHJqu2yQLYOQ9HyfLxINYYbPorkL6EiodbXKrRBPHkoRj21Na2MsMYIbRRIm8IryL7SB1nlBcPfZF4sbCyf3sedQ5SkkFqKM4FE+YHfIVp/42mskVBMLbfzqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=amxXxYx6; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 4D9A42B3;
+	Fri, 11 Jul 2025 21:58:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1752263896;
+	bh=yDjEyqdh2Nu8fnXNDs0/bSB/ijsOw0I1FCO4hajAPmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=amxXxYx6KG7u8msiONvn726FygfQe7B54IbsE2ZeOFawP7f34gHrE1EeO/CprTc6R
+	 z+Ihxx+wCtSMqySRdwObYbhHImy5G/zi11BG3JBIcN1lNPeqrhjCWX9rYV2mmx2scP
+	 oHX94ScKqIaeg6ldPMd60DM2iUvIqHE9PCqn38ok=
+Date: Fri, 11 Jul 2025 22:58:15 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans de Goede <hansg@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v8 5/5] media: uvcvideo: Auto-set UVC_QUIRK_MSXU_META
+Message-ID: <20250711195815.GH27674@pendragon.ideasonboard.com>
+References: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
+ <20250707-uvc-meta-v8-5-ed17f8b1218b@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 11 Jul 2025 21:54:23 +0200
-Message-Id: <DB9HMM5M24FE.1VR5ZE5YJ66CK@kernel.org>
-Subject: Re: [PATCH 2/5] rust: dma: add DMA addressing capabilities
-Cc: <abdiel.janulgue@gmail.com>, <daniel.almeida@collabora.com>,
- <robin.murphy@arm.com>, <a.hindborg@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <aliceryhl@google.com>,
- <tmgross@umich.edu>, <bhelgaas@google.com>, <kwilczynski@kernel.org>,
- <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250710194556.62605-1-dakr@kernel.org>
- <20250710194556.62605-3-dakr@kernel.org> <20250711193537.GA935333@joelbox2>
-In-Reply-To: <20250711193537.GA935333@joelbox2>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250707-uvc-meta-v8-5-ed17f8b1218b@chromium.org>
 
-On Fri Jul 11, 2025 at 9:35 PM CEST, Joel Fernandes wrote:
-> It looks good to me. A few high-level comments:
->
-> 1. If we don't expect the concurrency issue for this in C code, why do we
-> expect it to happen in rust?=20
+On Mon, Jul 07, 2025 at 06:34:05PM +0000, Ricardo Ribalda wrote:
+> If the camera supports the MSXU_CONTROL_METADATA control, auto set the
+> MSXU_META quirk.
+> 
+> Reviewed-by: Hans de Goede <hansg@kernel.org>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c   |  7 +++-
+>  drivers/media/usb/uvc/uvc_metadata.c | 75 +++++++++++++++++++++++++++++++++++-
+>  drivers/media/usb/uvc/uvcvideo.h     |  2 +-
+>  include/linux/usb/uvc.h              |  3 ++
+>  4 files changed, 84 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index 56ea20eeb7b9d5d92f3d837c15bdf11d536e9f2d..9de5abb43e19d9e876cddc5d7124592953db89ac 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -2315,7 +2315,12 @@ static int uvc_probe(struct usb_interface *intf,
+>  		goto error;
+>  	}
+>  
+> -	uvc_meta_init(dev);
+> +	ret = uvc_meta_init(dev);
+> +	if (ret < 0) {
+> +		dev_err(&dev->udev->dev,
+> +			"Error initializing the metadata formats (%d)\n", ret);
+> +		goto error;
+> +	}
+>  
+>  	if (dev->quirks & UVC_QUIRK_NO_RESET_RESUME)
+>  		udev->quirks &= ~USB_QUIRK_RESET_RESUME;
+> diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
+> index 77e03273d3cf6b00cac6ebb9b29b941f1cbfd9f7..59bb133baf9a73ef6a30fa8ead85aa90653d60f4 100644
+> --- a/drivers/media/usb/uvc/uvc_metadata.c
+> +++ b/drivers/media/usb/uvc/uvc_metadata.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/list.h>
+>  #include <linux/module.h>
+>  #include <linux/usb.h>
+> +#include <linux/usb/uvc.h>
+>  #include <linux/videodev2.h>
+>  
+>  #include <media/v4l2-ioctl.h>
+> @@ -166,6 +167,71 @@ static const struct v4l2_file_operations uvc_meta_fops = {
+>  	.mmap = vb2_fop_mmap,
+>  };
+>  
+> +static struct uvc_entity *uvc_meta_find_msxu(struct uvc_device *dev)
+> +{
+> +	static const u8 uvc_msxu_guid[16] = UVC_GUID_MSXU_1_5;
+> +	struct uvc_entity *entity;
+> +
+> +	list_for_each_entry(entity, &dev->entities, list) {
+> +		if (!memcmp(entity->guid, uvc_msxu_guid, sizeof(entity->guid)))
+> +			return entity;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +#define MSXU_CONTROL_METADATA 0x9
+> +static int uvc_meta_detect_msxu(struct uvc_device *dev)
+> +{
+> +	u32 *data __free(kfree) = NULL;
+> +	struct uvc_entity *entity;
+> +	int ret;
+> +
+> +	entity = uvc_meta_find_msxu(dev);
+> +	if (!entity)
+> +		return 0;
+> +
+> +	/*
+> +	 * USB requires buffers aligned in a special way, simplest way is to
+> +	 * make sure that query_ctrl will work is to kmalloc() them.
+> +	 */
+> +	data = kmalloc(sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	/* Check if the metadata is already enabled. */
+> +	ret = uvc_query_ctrl(dev, UVC_GET_CUR, entity->id, dev->intfnum,
+> +			     MSXU_CONTROL_METADATA, data, sizeof(*data));
+> +	if (ret)
+> +		return 0;
+> +
+> +	if (*data) {
+> +		dev->quirks |= UVC_QUIRK_MSXU_META;
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * We have seen devices that require 1 to enable the metadata, others
+> +	 * requiring a value != 1 and others requiring a value >1. Luckily for
 
-The race can happen in C as well, but people would probably argue that no o=
-ne
-ever calls the mask setter function concurrently to DMA allocation and mapp=
-ing
-primitives.
+I'm confused here. If those are three different behaviours, then value
+!= 1 would be value == 0 (as the third behaviour is value > 1). You test
+for !*data below, so 0 is not accepted as a valid value for this
+purpose. What am I missing ?
 
-> 2. Since the Rust code is wrapping around the C code, the data race is
-> happening entirely on the C side right? So can we just rely on KCSAN to c=
-atch
-> concurrency issues instead of marking the callers as unsafe? I feel the
-> unsafe { } really might make the driver code ugly.
+> +	 * us, the value from GET_MAX seems to work all the time.
+> +	 */
+> +	ret = uvc_query_ctrl(dev, UVC_GET_MAX, entity->id, dev->intfnum,
+> +			     MSXU_CONTROL_METADATA, data, sizeof(*data));
+> +	if (ret || !*data)
+> +		return 0;
+> +
+> +	/*
+> +	 * If we can set MSXU_CONTROL_METADATA, the device will report
+> +	 * metadata.
+> +	 */
+> +	ret = uvc_query_ctrl(dev, UVC_SET_CUR, entity->id, dev->intfnum,
+> +			     MSXU_CONTROL_METADATA, data, sizeof(*data));
+> +	if (!ret)
+> +		dev->quirks |= UVC_QUIRK_MSXU_META;
+> +
+> +	return 0;
+> +}
+> +
+>  int uvc_meta_register(struct uvc_streaming *stream)
+>  {
+>  	struct uvc_device *dev = stream->dev;
+> @@ -185,9 +251,14 @@ int uvc_meta_register(struct uvc_streaming *stream)
+>  					 &uvc_meta_fops, &uvc_meta_ioctl_ops);
+>  }
+>  
+> -void uvc_meta_init(struct uvc_device *dev)
+> +int uvc_meta_init(struct uvc_device *dev)
+>  {
+>  	unsigned int i = 0;
+> +	int ret;
+> +
+> +	ret = uvc_meta_detect_msxu(dev);
+> +	if (ret)
+> +		return ret;
+>  
+>  	dev->meta_formats[i++] = V4L2_META_FMT_UVC;
+>  
+> @@ -201,4 +272,6 @@ void uvc_meta_init(struct uvc_device *dev)
+>  
+>  	 /* IMPORTANT: for new meta-formats update UVC_MAX_META_DATA_FORMATS. */
+>  	dev->meta_formats[i++] = 0;
+> +
+> +	return 0;
+>  }
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index 616adc417c62a58686beccbc440a5dfac0a2d588..a4c064c5e046f2a4adba742c8777a10619569606 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -757,7 +757,7 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
+>  void uvc_video_clock_update(struct uvc_streaming *stream,
+>  			    struct vb2_v4l2_buffer *vbuf,
+>  			    struct uvc_buffer *buf);
+> -void uvc_meta_init(struct uvc_device *dev);
+> +int uvc_meta_init(struct uvc_device *dev);
+>  int uvc_meta_register(struct uvc_streaming *stream);
+>  
+>  int uvc_register_video_device(struct uvc_device *dev,
+> diff --git a/include/linux/usb/uvc.h b/include/linux/usb/uvc.h
+> index bce95153e5a65613a710d7316fc17cf5462b5bce..ee19e9f915b8370c333c426dc1ee4202c7b75c5b 100644
+> --- a/include/linux/usb/uvc.h
+> +++ b/include/linux/usb/uvc.h
+> @@ -29,6 +29,9 @@
+>  #define UVC_GUID_EXT_GPIO_CONTROLLER \
+>  	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
+>  	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03}
+> +#define UVC_GUID_MSXU_1_5 \
+> +	{0xdc, 0x95, 0x3f, 0x0f, 0x32, 0x26, 0x4e, 0x4c, \
+> +	 0x92, 0xc9, 0xa0, 0x47, 0x82, 0xf4, 0x3b, 0xc8}
+>  
+>  #define UVC_GUID_FORMAT_MJPEG \
+>  	{ 'M',  'J',  'P',  'G', 0x00, 0x00, 0x10, 0x00, \
+> 
 
-If the function is declared safe in Rust it means that we have to guarantee=
- that
-any possible use won't lead to undefined behavior. This isn't the case here
-unfortunately.
+-- 
+Regards,
 
-> 3. Maybe we could document this issue than enforce it via unsafe? My conc=
-ern
-> is wrapping unsafe { } makes the calling code ugly.
-
-Not possible, that's exactly what unsafe is for. We can't violate the "safe
-functions can't cause UB" guarantee.
-
-> 4. Are there other kernel APIs where Rust wraps potentially racy C code a=
-s
-> unsafe?
-
-Sure, but we usually don't expose those to drivers. We always try to make t=
-hings
-safe for drivers.
-
-This case is a bit special though. There is a way to avoid unsafe for the D=
-MA
-mask setter methods, but it would involve at least three new type states fo=
-r
-device structures and duplicated API interfaces for types that expect certa=
-in
-type states.
-
-The conclusion was to go with unsafe for now, since introducing this kind o=
-f
-complexity is not worth for something that is (not entirely, but more of) a
-formal problem.
-
-In the long term I'd like to get those setters safe, e.g. by making the DMA=
- mask
-fields atomics.
-
-> 5. In theory, all rust bindings wrappers are unsafe and we do mark it aro=
-und
-> the bindings call, right? But in this case, we're also making the calling
-> code of the unsafe caller as unsafe. C code is 'unsafe' obviously from Ru=
-st
-> PoV but I am not sure we worry about the internal implementation-unsafety=
- of
-> the C code because then maybe most bindings wrappers would need to be uns=
-afe,
-> not only these DMA ones.
-
-No, the key is to design Rust APIs in a way that the abstraction can't call=
- C
-functions in a way that potentially causes undefined behavor.
-
-As an example, let's have a look at a PCI device function:
-
-	/// Enable bus-mastering for this device.
-	pub fn set_master(&self) {
-	    // SAFETY: `self.as_raw` is guaranteed to be a pointer to a valid `str=
-uct pci_dev`.
-	    unsafe { bindings::pci_set_master(self.as_raw()) };
-	}
-
-pci_set_master() is unsafe because it takes a pointer value, so the caller =
-can
-easily cause UB by passing an invalid pointer.
-
-pci::Device::set_master() is safe, because once you have a pci::Device inst=
-ance, there is no way
-(other than due to a bug) that you obtain an invalid pointer from it to
-subsequently call pci_set_master().
-
-This means for the caller there is no way to call pci::Device::set_master()=
- such
-that it can cause UB.
+Laurent Pinchart
 
