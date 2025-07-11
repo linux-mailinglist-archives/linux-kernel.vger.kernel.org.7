@@ -1,333 +1,187 @@
-Return-Path: <linux-kernel+bounces-728113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710A0B023CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:35:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F25B023CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E242FA81006
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:34:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF63EB460B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E172F3C0F;
-	Fri, 11 Jul 2025 18:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68022F2C78;
+	Fri, 11 Jul 2025 18:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rJh0uUYt"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2083.outbound.protection.outlook.com [40.107.243.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsTHyEQh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95F12F2C75;
-	Fri, 11 Jul 2025 18:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752258842; cv=fail; b=BRxbPuN+AosdvjrP/qR18g9wwW2MU/VnfqS4jHA05x7tL9gry9Cx1SDkO5J79qSj3Zpw0f4hjq1oh/XRsW6kFWSGpZOyXF7pA/2UqQ3iCEEU9lNLR4MeeUk67UHu6Lz7gumJ9Wecp1I6nzfT7ufA0drIqDdo+v7lAV6MGdZm7sI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752258842; c=relaxed/simple;
-	bh=BPB/ZIb9NHNbUEyIbvkge68NMGo/oOO2cEnVijKc5Ns=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fOY2W62CLufb6hsrO9c9LPwrjqpzVMxlLJ4TEI+ACqW8IJLHMj8FhvyObsrz03SH6nqzTKaA2iEPr/4sQc/Nfr0DbrmwIZEAx90KW+tuoEkBgweycdYNHlduBzlytKQ1Dgfo+wJefybDxqBHS7ZzA88RzqDXGT4Gw/1yTb9RFYc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rJh0uUYt; arc=fail smtp.client-ip=40.107.243.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mqcmw+PzqqhxKs4XgkgK8LcB9JRaOhNwD+Ipx8ZptnCDVXhxnHwDq0/WD5FkELTlL2IeuspI15oHaDTVGL/nUEzFxrd4RdUoMNT+xexuTOLXk2mqOWCnLZ4WpKdLNf2WwtR4nZE7QcLPm9ST+OLwils44SSTip6j2dmulXUXkcgNup3g+/oiXbZ1bMR9C2HE2QVPMMPBr8buBCpvOTuOK6h9cHAoXl70Sh27/GwzyxhsQB2PlDpIzcoOx6GVz9jewsiRxlZ0FFR8f10S5FGseLX77HHrtPtBsZXCRMi9uUdgMzzFfhBKFlfaRfQU5fwIBV8HHSJX1DHGtqYuCfv74Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=53UqdzBKUZSfuEftpQUW0ABCZjbd57hYbnnBvyDyOeI=;
- b=GsNY0R4sWCRveqYAV5Fg/rIKTTXtIpxz1q6wVMRLhiWyJBoMaFL9ik3iKpPdOpPXuUiZ2kNd1ztNkCJ/tHyGQQhTGJjGuliM/EPtLt4c0i1FotjqV/md+Q2Urn01VPHCHRx/SBFOxwPgN9PGGi9fI+hTVBMaJn1L1dvXN0/NAHisxp/A0oo5X3rteNQFvtSVB1cb+1Py3Lcz9IiTy0ylqS1R919tRhq2HQxw5I7kDYJM6mXxDRQWHVBcAI3UeRlT3bRni3OeXqOjgyEHJIAPpKjcGUC4uzxpiBdxMqHuvcRFNCogndjw+5vssZuwrcMZuMLOZQC4THlWL67NL3F8DA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=53UqdzBKUZSfuEftpQUW0ABCZjbd57hYbnnBvyDyOeI=;
- b=rJh0uUYtsEiHzn4sV0Jn/aqnaSKNPzHDV7Sri0AVF/dpSud5TL2oPPybU7BbMMQPEl5ngJMp4QCXcQn2k03Udx4XVMokRc82qw4sCmEohLZAvAMqsK+SHiivpxU3xrLoOk/P8baOk28PmcYRQN0A0R6l0dKtyOjF+mYvAN+dNiw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL3PR12MB6642.namprd12.prod.outlook.com (2603:10b6:208:38e::15)
- by MN2PR12MB4423.namprd12.prod.outlook.com (2603:10b6:208:24f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Fri, 11 Jul
- 2025 18:33:58 +0000
-Received: from BL3PR12MB6642.namprd12.prod.outlook.com
- ([fe80::aacd:a6d8:e180:46bc]) by BL3PR12MB6642.namprd12.prod.outlook.com
- ([fe80::aacd:a6d8:e180:46bc%5]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
- 18:33:58 +0000
-Message-ID: <349be13c-fef5-4fc2-b4c9-e85e28cbc06a@amd.com>
-Date: Fri, 11 Jul 2025 12:33:55 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 4/9] dt-bindings: soc: xilinx: Add AI engine DT binding
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Gregory Williams <gregory.williams@amd.com>, ogabbay@kernel.org,
- michal.simek@amd.com, robh@kernel.org
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250702155630.1737227-1-gregory.williams@amd.com>
- <20250702155630.1737227-5-gregory.williams@amd.com>
- <7533fd56-aeef-4685-a25f-d64b3f6a2d78@kernel.org>
- <eb3c843a-6762-4ac0-b863-3f500fb15b6f@amd.com>
- <504f6660-4938-47b4-b1db-0a6fe0214e5f@kernel.org>
-Content-Language: en-US
-From: "Williams, Gregory" <gregoryw@amd.com>
-In-Reply-To: <504f6660-4938-47b4-b1db-0a6fe0214e5f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7PR04CA0002.namprd04.prod.outlook.com
- (2603:10b6:806:f2::7) To BL3PR12MB6642.namprd12.prod.outlook.com
- (2603:10b6:208:38e::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2988C2F3C2D;
+	Fri, 11 Jul 2025 18:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752258855; cv=none; b=d87AlS+Q8+ZKc+H4NlqsS1pW7HsvpjydMKq7G6rMRnqNskGpc+tCJkNK98wWKHYRgiN9+02OSK0iPfxVC8qliHKKAMF5D3GaIIzoi195I4ZRoAH4obdSltLK8AQcB3lWx+xDisenWK50LHH0SL1tr0eYS3BmLjbjyUWy7Pa4f34=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752258855; c=relaxed/simple;
+	bh=It/+GohocGAsvEMF/zvsp6BbZBv/a9T1VVszUI+GGqI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=nVjs2n6T6nC0WwED+zmHoYHgSxD9TswfPtGu3fJkL2CfuCL0m4PsHftQdMUbhC+6AzW7gaasuYxEYMWw2ME0dFhvFEQMAXXR/gGjiDkMo73xfDCzh9mwBG1udDHxxfPNsRuY2FHg3lOan6vAoZ8iB2wb1Zl386ea9miNDqaWfoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsTHyEQh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDB14C4CEED;
+	Fri, 11 Jul 2025 18:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752258854;
+	bh=It/+GohocGAsvEMF/zvsp6BbZBv/a9T1VVszUI+GGqI=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=JsTHyEQh/g9uryvO7vC85leXnjShJBaLn/c0qEyKXapNFSZBWK28QrPQC+z+/46rw
+	 Cb3khfyxlUkHutoIbyWQXkYGuth3r+B449/hAeN0LMIg+Y1aIatDfs5RR482agUMlP
+	 33QxFBzc+rn6IuS9t4UiiJ+f2Fq9PF7aEbOqPqrmN8OYm8RzRqvkSi/ZCBFKd9pol9
+	 dgvBCQvLeXJT5Noy5QTMwZgCfJEWv0nviuchH5y/eJwtCmOhCdymNeWEHoPfp8d83z
+	 JkSnL0xg0G3edjfmscmc13ZeryWltqHfdnIWDd6/V5Te0g2iJAbj8moBLrhtR6HJOp
+	 9VEewnApye/Lg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR12MB6642:EE_|MN2PR12MB4423:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a9f841b-46bf-42fc-c518-08ddc0a97faa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K01jR21mMG9qQjRVVkMxTzkvNWYzNFpjaDk2UG9zMWZOSENlVmpJV1JlNkJN?=
- =?utf-8?B?S3Z6NjI1WElDak4vd3FaanRGSmVRczFZSnZEWjhlUk0vOEU5aGhQVlZES29U?=
- =?utf-8?B?SjRTQXVJYm5WQmppK2xLWG5aNHFmVjBTR1BhOHFkOEc4cXcrMmZjVkptN3kr?=
- =?utf-8?B?NlBIL0xpTnIwM2FRbkVhditoMUcvNVFJQ3ZBNXJDWTd1SWF0c1RhVXBickEv?=
- =?utf-8?B?Mm1JUTFTQnJTTm9hR0czbmdSdkwwN0haQjJUTXFDMlFSZjFEaTQwdDNteU44?=
- =?utf-8?B?M0tUZFplMjJKQ0V5QU1ZYXlMNHA2ZHkrbDcyU2VJSzJmdUZsZmx2TzFZcTNJ?=
- =?utf-8?B?bnZ4aUtrekVaYmNtc3dVM2RxZDRhNWFadzh0UzU3RWxndENkNnlkei95YzFm?=
- =?utf-8?B?MzA2d0srSlFkZllqZ1ZPbm0wNmVGM3JDeTZMRVhEZVpwT2FnL1ByQmZSZGVW?=
- =?utf-8?B?Qk95OUNyc2ZJWWR1b0QzRmQreVMza2VNdFliaUFLU1Y1Y0FhREpsTWFsTHVL?=
- =?utf-8?B?SWhqckwwYlJFOHU4V2VjYVdsUnREQStTZWlNM2o4clIxRldLcHdWRmJORE8w?=
- =?utf-8?B?N2p1cDlnUkdSUGFtOWtWdEVZQ2UzaGFON01DQlRBRHFiKzlqYW1pWE8wQkZX?=
- =?utf-8?B?bFQwL1YrNzliSWJNTDBQcGVmMEgxQVdLS056TVBLTTRhYkRCWVcyRWJBdVFM?=
- =?utf-8?B?U0VBZ0ZKUlRwSnp3bDd0RXE2ZUZSaVpOTWo2aFFxbVZoNENKQjJ2dDU5emg4?=
- =?utf-8?B?bWgyV0tXTHc2cisxRGsvSnpIL05pRmlxODErSUpBY2pSei9OSHhHdWFBak9s?=
- =?utf-8?B?Njd5RGFaeWdQdzNGY0FoUnhVTkFNRHRIVmNHRE1tNTd6a0NEOTRYVk1TZk93?=
- =?utf-8?B?cTFZcGJoTDhUVVBTRVlWWjBBbGpFMlJRUSt0RU5OUnNMb1cwMElSY1BZL0lp?=
- =?utf-8?B?VncyN3oxSHpPd3YxTlUyRGsyMzJvZ2tNTlhMTlJocTFWMnZLREJmUEpYVDB6?=
- =?utf-8?B?dmZkT3U1aU96N21BVkdaczhQNDlvTFI1NzlHYWNHamtBVWlmdDc4eGZIeXl3?=
- =?utf-8?B?R3JCUVJ0Nm1tZThTZEt1KysyS014cXNnKzRPYWJOa25OTG1iemdxODlONGto?=
- =?utf-8?B?ZXVJMk52eWhFek1FYittWHZsTkFsS0s1Z29qQmgxMHhVMkNvQzVNMTltbWJq?=
- =?utf-8?B?R2JrVmdEbHVTalhoL2pBWjR1OExvcy9kUU1YMUx3eHFFcnhSVkpTZjUwajFT?=
- =?utf-8?B?TXpWb1lJU3IyT3VGRzRrYUh0V21xd2gxV2F6ZzBrZ2dVVDZ5NzZ2NVNuZTdl?=
- =?utf-8?B?OWIzSnRiTkdqL1I0R0hZRWhOVkZ5V3doWklQY3ljZUhacUhRQlAzWm1DNXFz?=
- =?utf-8?B?MkVJOFQ3L2o2ZGZ5VU5CbGxHYjNtM3RiZFJHRXN1VmU1aXZQWU0xTVlWNHl5?=
- =?utf-8?B?YjR4TjNYS2sxTndVakppYUF4OWo1L3NEbGorNkduQW9wMngrODJyTVhQNkpJ?=
- =?utf-8?B?VWowZHNDOUJZbndxRXJ4MkFUa0NyVjhOSTBiYjVQanUvNTIxL3JNd2pkYXNN?=
- =?utf-8?B?R0ZFaFo4T092a0lKYUU0cElvU1FodXA3N2N0aTZBSG52REU4RmlPUkZOcGxs?=
- =?utf-8?B?amJRR3o1bXRHQ2ZYMElnazNieUpaRVV0TnhTazE1Q01WMGcwK3hvQ0ZEaWh2?=
- =?utf-8?B?dVJzWGt1U0Z4Mmk1Rld0cDlDM0w5MVpqNG9lNXFUSjM4V2pZUXl2bDNTSUcw?=
- =?utf-8?B?V28xSVhBRE9pMUdMNGRUazYwa3RRaDRaRUVmV01uVFpwSWdmU29oV2lYY2dR?=
- =?utf-8?B?UjYvbFRONG1FR2hZVnlENWJoZWRaUEpKSUNkb1dYeS9POHhyMEI4UzdjcS93?=
- =?utf-8?Q?djfB379wKynKL?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6642.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RHVLa1dJT2pPOFEwV24zeG0xekdRbFhGZjU5STBBVmVNMVZ6MWhKbFpkUE1x?=
- =?utf-8?B?VG9QVDc4QjZteFI5VmMrbnJXZGRDVFNFUDRFQnE0S1R5YThyTmV2a3ZBeHpn?=
- =?utf-8?B?SnVwV1NDOVZTMjc2UXFoalNxelB6YitUSzVsLzVTZCtJMnNBUHNSTzBzeTBH?=
- =?utf-8?B?ZTJaTjBKT1diU3NTSGxNWlZJck43SHRkK0dVT1dLTWZUT2JkVVBITVdTSWhS?=
- =?utf-8?B?S2pYblBkQzBhd25ZNkNHNmJFOGhZQ2x6R3NXWStTL3A5NGJIbWtMUFVPZWRv?=
- =?utf-8?B?eEFmdTFsajVvQ1cvQy9aTnNTOGQ2VnJmaTlOTGR5ZXZ5NUR4M2lPM2NpM1ov?=
- =?utf-8?B?OGN4WCtPODQ3UmtrRzBMK2E3R2o5Q3pOMEFNc2VPbnFjUGJJdGVVK0hMbFhJ?=
- =?utf-8?B?c3FUWE8xS2VqcWZwZlZUbnVmRUswcFVKRFM0eSt2VndERGFpNzY3anN5bkQ4?=
- =?utf-8?B?RkZNR2pIaEtYQWY5bVg1QWxKSnpyNUdPWi9jRjZYT0Zpem1wdDNZMjQ1Tm9E?=
- =?utf-8?B?VG9ndkpETjJpKzdwRGFPV2FPL0ZpZDIyR3pnMFcyOC9CRms3dzFTZzB0ZEZY?=
- =?utf-8?B?OS9TRE8ycEpYbmlxM2RVTEtJNTdiK3Qwbm9odURwODJydkpISmNsM0ljNmk4?=
- =?utf-8?B?WEx2S3RoRXpyczZ1VnlZRFRvS0RJU2lLTUxjcVZCVm0zLzhhd3NhOVEzcmtO?=
- =?utf-8?B?TEtmVC9NcW93elQrZ2JMUzhnVWw0SGhyLzU1QThtVkVjcndJb0pPMmNDcVhi?=
- =?utf-8?B?TjRhdVN0dFl1RWh3dDl3UFA0OWRJUUVNaXhtb2tmQmZwckNJNUN0ZXNXVk9D?=
- =?utf-8?B?NnE0U1lWbUExSzlpQXhvRDZ1Z1FZN2x3bXNuRG5pWW92UjZHM2RaUE95cnBj?=
- =?utf-8?B?akttdC95WGI3U2x6SlZnQjNDbHFCU2cxM2tjZGpHWHVFLzc1WlFpeEVuL0dp?=
- =?utf-8?B?eXluZ2NOVDdWeDdxa0x3YWZWVE1xWHVwT0wxdnoyTzNleFQvVWd4OTdpYksx?=
- =?utf-8?B?WXJTWVM3WlVycVUvR3NVSVRxOEMyVGVlNWtEaEJIR0ovMHpaL1p4bUhPZDVu?=
- =?utf-8?B?UW4wZ2FDWVZrV3FXRHdSbzNUSGhoVDc4SmI0aXpFNmU0OXBFcTkwaUpxU3NT?=
- =?utf-8?B?VEJaM0hwZEJPQldjWlE2SEtwSzZ0RVdWQ3Aza1N1blZBbGpzYXRUYkNOMith?=
- =?utf-8?B?a2VLYko3MXQ0US9zc3doYTkyQ2ovcitVUGw4dmI1cVBWVzkxcVcwVVh3Qy9C?=
- =?utf-8?B?cncvUitNdVZVSTBML0lnNVEyVXVjOEprVEUrcVZmblUreGZMK2VCK1NIVTJR?=
- =?utf-8?B?QVN3eUtzM1M3cnJzajVmdStlQmFkeUM5N2JheTM5b3VBa1hCZ0ZSMEYyTDJk?=
- =?utf-8?B?cDNETFIrN2E1TEJvOHN0WXhFVnY4bHNBb0c2SUdFVDlMWTl0VDV6RUdzeU93?=
- =?utf-8?B?ZW1Ibk0yeEI4RlZteXN1aXFPeFExTHczeHJMR3AxSzdDWndHVVVob3NGYUdh?=
- =?utf-8?B?RzRQcXBpYnpKdE9QQnNoK3Q2TXFNVTUrWkowNlhSTUJmN2NZSzRhVVE2dnRV?=
- =?utf-8?B?N3lhc2dsbkJaaWJ4Z0E2ZHJSWG1lOTdkVVR3aDdudW1XY3h0VjRXRWlzQ28w?=
- =?utf-8?B?WlN6MkFvKzVjYlFoSFcyWjAydWZ0WGgrS3VQMmJSaTh5WnpYVzkvN0xlczJ5?=
- =?utf-8?B?NjgyT3VhVHZTbk8vY1pOejBsdHNtWmQrZGdkcmVHaWYxUThUQmdxYm5CT1Vo?=
- =?utf-8?B?UHRGOEg2bk5jYWE3L3VjcVdOMXhydFRxRmJwdTFvTmxSQmwyZ0lCWnFTdVBo?=
- =?utf-8?B?M21UMHFDUm9OMWNGajloanZhb2U5QlYxLzdLODRlbEhBUTdXdk4weVNYQjhx?=
- =?utf-8?B?WVJFcFB3dWZXL3h4MEFsQU5oYjJUSW9yREJjNnhuTmZQYjlSUTR0akVDRm92?=
- =?utf-8?B?TlV5TGd1bUN4enFmVTJhZzBZUm91eU9KN29aNFZCL2d6NklDeFFBU05iY202?=
- =?utf-8?B?L2J5dENocnhLRVRNOTBKRTQ1VjFnQW5zVHY1cEs1YStoK0I5SzV5WkhteGg0?=
- =?utf-8?B?Z1ROazQ1Y3hUSlZUK3RnaURFVXNSRVVtbUxjUEFxNGVTelN5bTVGdDJKZ0Qx?=
- =?utf-8?Q?HF+dAgwglBhru1PS5ic1vqlPy?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a9f841b-46bf-42fc-c518-08ddc0a97faa
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6642.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 18:33:58.2275
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Rt35OIRNc8bfdbSKHlGFAv0M5kHteEbxz+mBBsdcZVH7uSJeQTQY6v/TyFLsrhdtuiOyuSWYwnknlMFu1oTpeQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4423
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 11 Jul 2025 20:34:07 +0200
+Message-Id: <DB9FX5XAK4JJ.3GTCC6Z5EHARV@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
+ <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
+ "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Alan Stern" <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 4/9] rust: sync: atomic: Add generic atomics
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-5-boqun.feng@gmail.com>
+ <DB92I10114UN.33MAFJVWIX4AB@kernel.org> <aHEQKBT68xvqIIjW@Mac.home>
+ <DB99JZ3XMHZS.3N0GLG94JJSA9@kernel.org> <aHEWze8p40qeNBr_@Mac.home>
+In-Reply-To: <aHEWze8p40qeNBr_@Mac.home>
 
-On 7/10/2025 3:38 PM, Krzysztof Kozlowski wrote:
-> On 10/07/2025 21:03, Williams, Gregory wrote:
->> On 7/3/2025 12:48 AM, Krzysztof Kozlowski wrote:
->>> On 02/07/2025 17:56, Gregory Williams wrote:
->>>> In the device tree, there will be device node for the AI engine device,
->>>> and device nodes for the statically configured AI engine apertures.
->>>
->>> No, describe the hardware, not DTS.
->>>
->>>> Apertures are an isolated set of columns with in the AI engine device
->>>> with their own address space and interrupt.
->>>>
->>>> Signed-off-by: Gregory Williams <gregory.williams@amd.com>
->>>> ---
->>>>  .../bindings/soc/xilinx/xlnx,ai-engine.yaml   | 151 ++++++++++++++++++
->>>>  1 file changed, 151 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml b/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
->>>> new file mode 100644
->>>> index 000000000000..7d9a36c56366
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
->>>
->>> Filename matching compatible.
->>>
->>>> @@ -0,0 +1,151 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/soc/xilinx/xlnx,ai-engine.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: AMD AI Engine
->>>
->>> That's really too generic...
-> 
-> You did not answer to other comments here and other patches, so I just
-> assume you did not ignore them.
+On Fri Jul 11, 2025 at 3:51 PM CEST, Boqun Feng wrote:
+> On Fri, Jul 11, 2025 at 03:34:47PM +0200, Benno Lossin wrote:
+>> On Fri Jul 11, 2025 at 3:22 PM CEST, Boqun Feng wrote:
+>> > On Fri, Jul 11, 2025 at 10:03:07AM +0200, Benno Lossin wrote:
+>> > [...]
+>> >> > +
+>> >> > +    /// Returns a pointer to the underlying atomic variable.
+>> >> > +    ///
+>> >> > +    /// Extra safety requirement on using the return pointer: the =
+operations done via the pointer
+>> >> > +    /// cannot cause data races defined by [`LKMM`].
+>> >>=20
+>> >> I don't think this is correct. I could create an atomic and then shar=
+e
+>> >> it with the C side via this function, since I have exclusive access, =
+the
+>> >> writes to this pointer don't need to be atomic.
+>> >>=20
+>> >
+>> > that's why it says "the operations done via the pointer cannot cause
+>> > data races .." instead of saying "it must be atomic".
+>>=20
+>> Ah right I misread... But then the safety requirement is redundant? Data
+>> races are already UB...
+>>=20
+>> >> We also don't document additional postconditions like this... If you
+>> >
+>> > Please see how Rust std document their `as_ptr()`:
+>> >
+>> > 	https://doc.rust-lang.org/std/sync/atomic/struct.AtomicI32.html#metho=
+d.as_ptr
+>> >
+>> > It mentions that "Doing non-atomic reads and writes on the resulting
+>> > integer can be a data race." (although the document is a bit out of
+>> > date, since non-atomic read and atomic read are no longer data race no=
+w,
+>> > see [1])
+>>=20
+>> That's very different from the comment you wrote though. It's not an
+>> additional safety requirement, but rather a note to users of the API
+>> that they should be careful with the returned pointer.
+>>=20
+>> > I think we can use the similar document structure here: providing more
+>> > safety requirement on the returning pointers, and...
+>> >
+>> >> really would have to do it like this (which you shouldn't given the
+>> >> example above), you would have to make this function `unsafe`, otherw=
+ise
+>> >> there is no way to ensure that people adhere to it (since it isn't pa=
+rt
+>> >> of the safety docs).
+>> >>=20
+>> >
+>> > ...since dereferencing pointers is always `unsafe`, users need to avoi=
+d
+>> > data races anyway, hence this is just additional information that help=
+s
+>> > reasoning.
+>>=20
+>> I disagree.
+>>=20
+>> As mentioned above, data races are already forbidden for raw pointers.
+>> We should indeed add a note that says that non-atomic operations might
+>> result in data races. But that's very different from adding an
+>> additional safety requirement for using the pointer.
+>>=20
+>> And I don't think that we can add additional safety requirements to
+>> dereferencing a raw pointer without an additional `unsafe` block.
+>>=20
+>
+> So all your disagreement is about the "extra safety requirement" part?
+> How about I drop that:
+>
+>     /// Returns a pointer to the underlying atomic `T`.
+>     pub const fn as_ptr(&self) -> *mut T {
+>         self.0.get()
+>     }
 
-No, they were not ignored. I will make sure to address in a V2 patch.
+Yes that's what I had in mind.
 
-> 
->>>
->>>> +
->>>> +maintainers:
->>>> +  - Gregory Williams <gregory.williams@amd.com>
->>>> +
->>>> +description:
->>>> +  The AMD AI Engine is a tile processor with many cores (up to 400) that
->>>> +  can run in parallel. The data routing between cores is configured through
->>>> +  internal switches, and shim tiles interface with external interconnect, such
->>>> +  as memory or PL. One AI engine device can have multiple apertures, each
->>>> +  has its own address space and interrupt. At runtime application can create
->>>> +  multiple partitions within an aperture which are groups of columns of AI
->>>> +  engine tiles. Each AI engine partition is the minimum resetable unit for an
->>>> +  AI engine application.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: xlnx,ai-engine-v2.0
->>>
->>> What does v2.0 stands for? Versioning is discouraged, unless mapping is
->>> well documented.
->>
->> Sure, I will remove the versioning in V2 patch.
-> 
-> This should be specific to product, so use the actual product/model name.
-> 
-> Is this part of a Soc? Then standard rules apply... but I could not
-> deduce it from the descriptions or commit msgs.
+> ? I tried to add something additional information:
+>
+> /// Note that non-atomic reads and writes via the returned pointer may
+> /// cause data races if racing with atomic reads and writes per [LKMM].
+>
+> but that seems redundant, because as you said, data races are UB anyway.
 
-Yes this is part of an SoC. I will be more descriptive in V2 patch.
+Yeah... I don't think the stdlib docs are too useful on this function:
 
-> 
-> 
->>
->>>
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  '#address-cells':
->>>> +    const: 2
->>>> +
->>>> +  '#size-cells':
->>>> +    const: 2
->>>> +
->>>> +  power-domains:
->>>
->>> Missing constraints.
->>>
->>>> +    description:
->>>> +      Platform management node id used to request power management services
->>>> +      from the firmware driver.
->>>
->>> Drop description, redundant.
->>>
->>>> +
->>>> +  xlnx,aie-gen:
->>>> +    $ref: /schemas/types.yaml#/definitions/uint8
->>>
->>> Why uint8?
->>>
->>>> +    description:
->>>> +      Hardware generation of AI engine device. E.g. the current values supported
->>>> +      are 1 (AIE) and 2 (AIEML).
->>>
->>> No clue what's that, but it is implied by compatible, isn't it?
->>
->> The driver supports multiple hardware generations. During driver probe, this value is read from the device tree and hardware generation specific
-> 
-> Bindings are about hardware, not driver, so your driver arguments are
-> not valid.
+    Doing non-atomic reads and writes on the resulting integer can be a dat=
+a
+    race. This method is mostly useful for FFI, where the function signatur=
+e
+    may use *mut i32 instead of &AtomicI32.
+   =20
+    Returning an *mut pointer from a shared reference to this atomic is saf=
+e
+    because the atomic types work with interior mutability. All
+    modifications of an atomic change the value through a shared reference,
+    and can do so safely as long as they use atomic operations. Any use of
+    the returned raw pointer requires an unsafe block and still has to
+    uphold the same restriction: operations on it must be atomic.
 
-Understood.
+You can mention the use of this function for FFI. People might then be
+discouraged from using it for other things where it doesn't make sense.
 
-> 
->> data structures are loaded based on this value. The compatible string is the same between devices.
-> 
-> No. See writing bindings.
-
-Ok so there should be a different compatible strings based on hardware
-generation. I will fix this for a V2 patch.
-
-> 
->>
->>>
->>> Missing constraints.
->>>
->>>> +
->>>> +  xlnx,shim-rows:
->>>> +    $ref: /schemas/types.yaml#/definitions/uint8-array
->>>> +    description:
->>>> +      start row and the number of rows of SHIM tiles of the AI engine device
->>>
->>> Implied by compatible.
->>
->> The AI Engine device can have different configurations for number of rows and column (even if it is the same hardware generation). This property
->> tells the driver the size and layout of the array, this is not implied by compatible.
-> 
-> Wrap your emails correctly.
-> 
-> Again driver.. no, please describe the hardware, not your drivers.
-
-I see in 'writing bindings' that I should use device-based compatible
-string. I will do this and remove these nodes for V2 patch. 
-
-Thanks again for your time,
-Greg
-
-> 
-> 
-> Best regards,
-> Krzysztof
-
+---
+Cheers,
+Benno
 
