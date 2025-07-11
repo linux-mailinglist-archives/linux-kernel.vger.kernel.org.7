@@ -1,145 +1,129 @@
-Return-Path: <linux-kernel+bounces-728318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A71BB02685
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:46:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BF1B02694
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 819DA171B77
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:46:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD69C4A69CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB5021B9FF;
-	Fri, 11 Jul 2025 21:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2F9220F23;
+	Fri, 11 Jul 2025 21:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HwfEjbRc"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0fzv1J/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C2D155389
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 21:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6FC149DFF;
+	Fri, 11 Jul 2025 21:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752270385; cv=none; b=gr6c2Rp6dEZ1NUxvt7wTmpfA3Xalx2FOO8Nk4Njf3HobcIW0Dtpg+qApspIj7+DIZQlG+etKxnC/xqVeuV4TI8I5INvyg5TBzWVAYmtNUlMGSVrVTji7cl5J3C4tPWVdebdC6MqkW/uxi21EjEym3tR+k3iVkxMTp9RK89DL2aU=
+	t=1752271042; cv=none; b=EbC3Yn4DfFvpvrE4HcHhCo1u0lfnA5l0FYP9xprZ0VPr/PjphZPjCnd2lxJwJZrY++IqcksYO6J3MCGpjQlhn4rUGSDCeUGl+FqJkS8ZqgbKRsKni9K2cUD0bUrGc16aSt4qNjd2Ykp8XEIX2Ev/YZ+iL/pofL/BkJ3eaTEHvxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752270385; c=relaxed/simple;
-	bh=H/zPEzC8h/rhWeEV39tcr+XT+TN9zJHsawYYmLNzQ0Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hayh28V7tTsPgxHEgqs6sUwSPfd2NhROmFi+KVOqcEqPKXlVEAgEwIu7hredeEFqaOCw+WnB90QbT2jiPmmG8G9+NcPcm5Bcy3M0HvsZOf3YkVkzP7Y3MPydFWNuKzHxrccbLjbrtXmMeb2pvAP0h1XYw3FQdd4TeZ6Z7aliB7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HwfEjbRc; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60c01b983b6so4783649a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:46:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1752270381; x=1752875181; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LWl0ZCeXiXBuL5nfGt864S3rVP453Egy/lQ9GBy3dco=;
-        b=HwfEjbRcPHf1GqZOgi3MjyDkDYhUUjOSUY6tizY8ZcgXyxEw8+7AewG3g9qb6VFSHC
-         vUsOqyWG/1wi/fC7S6L3iInETF3jo1kanvkg3NsVQXalVpC5qzRBs6faxGOt90+TaHK+
-         xg/bi2SSgUAF1R4k0MvYXMG63sbdZtkieMeXw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752270381; x=1752875181;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LWl0ZCeXiXBuL5nfGt864S3rVP453Egy/lQ9GBy3dco=;
-        b=EBlAz4dMXa98p5+RAOmFiygEqdHrw/eIDjTZgvCkkOEdB1SWWyHx/6Hj6rXQlnk6+Z
-         V/Gt7t+2bQFwkx9W04hHrRpaqd5xbal1yhLST6DczOyyOnIRq2ZrIyZesj9bLbB9Ce69
-         nS8FBqI8D//geRuqfqw34lHDTil/SwioOkWc3Xd9BDGuCOFP+sYTw4RdxHbjUsaWUvJY
-         Hfn/WcUp9uea9ot4pqLSCP7tSfS8aUwx+Ila4boNmcgQkIDhgNTguCT3/stvSTrAX7xD
-         wuovvyLgndgY8Tpi0ekIgVgSvvnHWrW21u84VYhC/w/pOYDp617RD600hvTEzoXzPkR9
-         rBug==
-X-Forwarded-Encrypted: i=1; AJvYcCXC54IFiHnjW8oZTaQD4HaGvrBUMynfXac3zqZWlJ1HYLgI+TeOre7mv6s7rjqiHgcXEwcBmfqs9OCtLS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU9XC5DxgOG6fg4txstD3AebsiuzbF3IdMvX8vGhPNVinSZi2d
-	YzYR16LpP6zDjEbWiP2HcUpjTFEHdEXXTUAQpYSQOsg3Tr2guXNXMWRr2ubbBAvW92wndvz60IE
-	VbsAtHhbcSQ==
-X-Gm-Gg: ASbGncs2TH0Iu6CUITXSk4QgnLGUCXpfYayQY6uDUoijyv7ttbnkdrlXINv2zP9WOiA
-	Zif4+ytAD5D9R1SL3w6ZVHg3oMxakTzWu5GCmUi/RywYtzSbprZaCDsfWiLcE2DJfw0vuVdRHT1
-	hZ9vhGq5Mduu7dcrFyDmtwarUbTmVaaUZw2F6VrxmUq4MDhrp3SYoSXI9rvR/7HlLXLgmUS7J71
-	mM3xoZBdFBHJ85OXBTdr8DRugDDoHHvb+/St1JZveAE69u9zbKyBQiA7+AbuqAJeCag9Pl1mdcO
-	RFMzII2cWukKFkNrfcO/HnhQcN3vSrIWZzfbJp4GhlClNmf2xuHBsZbrv/3GbPXrlwu16Tr+32I
-	I13tGHXD+zqMsWZ6e7XkYCqkryPHu1rjNypMJagC2Zhx6a0AoqFx4gXAQc7ZK3dyPUb6AH3tOvA
-	/1/Uju12A=
-X-Google-Smtp-Source: AGHT+IFbRjSrhOXTvzRDWg9bRND+oxJ8OCWBne1XsPxlqL1uxHXAtZSz5ScRLKSrnQzaK42l8w5pjw==
-X-Received: by 2002:a05:6402:5252:b0:607:ea4e:251c with SMTP id 4fb4d7f45d1cf-611e62da804mr4442417a12.8.1752270381487;
-        Fri, 11 Jul 2025 14:46:21 -0700 (PDT)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c976ec04sm2677088a12.60.2025.07.11.14.46.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 14:46:20 -0700 (PDT)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60cc11b34f6so6198083a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:46:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVqQVf2E930xsT31tcqRlwYJlEvp40Z5eBBqbaR8iv+wh73XLiN6LkhXTtxWnwyJ1nWjj7ObNKzQ1Bk2bg=@vger.kernel.org
-X-Received: by 2002:a05:6402:350b:b0:608:ce7d:c3b8 with SMTP id
- 4fb4d7f45d1cf-611c1df53aamr7638873a12.17.1752270379368; Fri, 11 Jul 2025
- 14:46:19 -0700 (PDT)
+	s=arc-20240116; t=1752271042; c=relaxed/simple;
+	bh=rKK6/zAeDGlf2Rcw+XgRGzGg1wLNDrZiOXO05uwH78I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r/MpoT5nrNiFT8NpR/cUYQGegX+yeMZlwSRb+whzQL8BjTayKJ/STQTuQFBksDyfGFUjZhcLFL4v19awMKmd1qf5VNLYRxamqFCiz6wMr9DPZKCW+rJ3YxVE8H9iGXt2V2uN5tyRmV3axl5/f94u/b26wZjpoo06/LryZQ+YawI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0fzv1J/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E708AC4CEED;
+	Fri, 11 Jul 2025 21:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752271042;
+	bh=rKK6/zAeDGlf2Rcw+XgRGzGg1wLNDrZiOXO05uwH78I=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=C0fzv1J/J1OS2rZ8cREfFFwlyuwaUdPYY6YfQVJku7fQJMUe3hDMvrP6cdjytJmsb
+	 T0F+d+derx/9PxhuUHck8ivlq5D+33XlUumgQWon/YKev1in7Mt0++If8KQpwC2Mq1
+	 fLWx2DnOsZm7yK4y3K7BM5DUDdn2cYGJz7+OTBGPvKbUQlJ87Sx5OmJqtyImDFMLqa
+	 76Uru8EIfuUSvgSeLbIDWvz8HI/C8pV2e3xtKJkx7/3SI4fFrzX+JVFfyT/uR6H0At
+	 oE5h1o9a78cf4sXvwyW83mxviXOMqUiWRSH/1d/UQGYRf24URZt1cb910fs1DH0iqu
+	 qx/RxqzcLyY2A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D643DC83F21;
+	Fri, 11 Jul 2025 21:57:21 +0000 (UTC)
+From: Aleksa Paunovic via B4 Relay <devnull+aleksa.paunovic.htecgroup.com@kernel.org>
+Subject: [PATCH v5 0/2] riscv: Use GCR.U timer device as clocksource
+Date: Fri, 11 Jul 2025 23:56:44 +0200
+Message-Id: <20250711-riscv-time-mmio-v5-0-9ed1f825ad5e@htecgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711151002.3228710-1-kuba@kernel.org> <CAHk-=wj1Y3LfREoHvT4baucVJ5jvy0cMydcPVQNXhprdhuE2AA@mail.gmail.com>
- <20250711114642.2664f28a@kernel.org> <CAHk-=wjb_8B85uKhr1xuQSei_85u=UzejphRGk2QFiByP+8Brw@mail.gmail.com>
- <CAHk-=wiwVkGyDngsNR1Hv5ZUqvmc-x0NUD9aRTOcK3=8fTUO=Q@mail.gmail.com>
- <CAHk-=whMyX44=Ga_nK-XUffhFH47cgVd2M_Buhi_b+Lz1jV5oQ@mail.gmail.com>
- <CAHk-=whxjOfjufO8hS27NGnRhfkZfXWTXp1ki=xZz3VPWikMgQ@mail.gmail.com>
- <20250711125349.0ccc4ac0@kernel.org> <CAHk-=wjp9vnw46tJ_7r-+Q73EWABHsO0EBvBM2ww8ibK9XfSZg@mail.gmail.com>
- <CAHk-=wjv_uCzWGFoYZVg0_A--jOBSPMWCvdpFo0rW2NnZ=QyLQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wjv_uCzWGFoYZVg0_A--jOBSPMWCvdpFo0rW2NnZ=QyLQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 11 Jul 2025 14:46:01 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi8+Ecn9VJH8WYPb7BR4ECYRZGKiiWdhcCjTKZbNkbTkQ@mail.gmail.com>
-X-Gm-Features: Ac12FXz-E7TSeMs6PS6FH7HeMIkvC5P9gc2EaFCqanu5QU51-la_uVcLprbUluM
-Message-ID: <CAHk-=wi8+Ecn9VJH8WYPb7BR4ECYRZGKiiWdhcCjTKZbNkbTkQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Networking for v6.16-rc6 (follow up)
-To: Jakub Kicinski <kuba@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, 
-	Valentin Schneider <vschneid@redhat.com>, Nam Cao <namcao@linutronix.de>, 
-	Christian Brauner <brauner@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, 
-	Dave Airlie <airlied@gmail.com>, davem@davemloft.net, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pabeni@redhat.com, 
-	dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJyIcWgC/2WNQQ6CMBBFr0K6dkydtARdeQ/CAocpzKKUtNhoC
+ He34tLle8l/f1OJo3BSt2pTkbMkCXMBe6oUTf08MshQWKFGqw0aiJIowyqewXsJYGtsWDvqm96
+ psloiO3kdxbYrPElaQ3wfB9l87a9lL/+tbEADPTQ5vCIOdX2fVqYxhudypuBVt+/7BzH0MY6yA
+ AAA
+X-Change-ID: 20250424-riscv-time-mmio-5628e0fca8af
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, 
+ Djordje Todorovic <djordje.todorovic@htecgroup.com>, 
+ Aleksa Paunovic <aleksa.paunovic@htecgroup.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752271040; l=1798;
+ i=aleksa.paunovic@htecgroup.com; s=20250514; h=from:subject:message-id;
+ bh=rKK6/zAeDGlf2Rcw+XgRGzGg1wLNDrZiOXO05uwH78I=;
+ b=KytOxScst8FlcaqhCNUXLNgl4U+YRyv7Yo59CwjWeu9RGKO7KU14DknmC2ThSZqyiN+EJWQ1u
+ i925hQY2QoLCIseXEBHReLzdPoZyna1zQlpJcjdIQHTIeO/BV4wy6H7
+X-Developer-Key: i=aleksa.paunovic@htecgroup.com; a=ed25519;
+ pk=gFVSVYLKAgJiS5qCnDyUMGOFuczv8C6o0UmRs+fgisA=
+X-Endpoint-Received: by B4 Relay for aleksa.paunovic@htecgroup.com/20250514
+ with auth_id=403
+X-Original-From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+Reply-To: aleksa.paunovic@htecgroup.com
 
-On Fri, 11 Jul 2025 at 13:35, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Indeed. It turns out that the problem actually started somewhere
-> between rc4 and rc5, and all my previous bisections never even came
-> close, because kernels usually work well enough that I never realized
-> that it went back that far.
+This series adds bindings for the GCR.U timer device and corresponding
+driver support. Accessing the memory mapped mtime register in the GCR.U
+region should be faster than trapping to M mode each time the timer
+needs to be read.
 
-It looks like it's actually due to commit 8c44dac8add7 ("eventpoll:
-Fix priority inversion problem"), and it's been going on for a while
-now and the behavior was just too subtle for me to have noticed.
+Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+---
+Changes in v5:
+- Fixed build issues on 32-bit RISC-V and sparse warnings
+- Remove clint_time_val and clint.h, replace with riscv_time_val
+- Depend on RISCV_TIMER in Kconfig
+Changes in v4:
+- Remove "select" from mti,gcru.yaml.
+- Refactor the driver to use function pointers instead of static keys.
 
-Does not look hardware-specific, except in the sense that it probably
-needs several CPU's along with the odd startup pattern to trigger
-this.
+Previous versions:
+v1: https://lore.kernel.org/lkml/20241227150056.191794-1-arikalo@gmail.com/#t
+v2: https://lore.kernel.org/linux-riscv/20250409143816.15802-1-aleksa.paunovic@htecgroup.com/
+v3: https://lore.kernel.org/linux-riscv/DU0PR09MB61968695A2A3146EE83B7708F6BA2@DU0PR09MB6196.eurprd09.prod.outlook.com/
+v4: https://lore.kernel.org/r/20250514-riscv-time-mmio-v4-0-cb0cf2922d66@htecgroup.com
 
-It's possible that the bisection ended up wrong, and when it appeared
-to start going off in the weeds I was like "this is broken again", but
-before I marked a kernel "good" I tested it several times, and then in
-the end that "eventpoll: Fix priority inversion problem" kind of makes
-sense after all.
+---
+Aleksa Paunovic (2):
+      dt-bindings: timer: mti,gcru
+      riscv: Allow for riscv-clock to pick up mmio address.
 
-I would never have guessed at that commit otherwise (well, considering
-that I blamed both the drm code and the netlink code first, that goes
-without saying), but at the same time, that *is* the kind of change
-that would certainly make user space get hung up with odd timeouts.
+ .../devicetree/bindings/timer/mti,gcru.yaml        | 38 +++++++++++++
+ arch/riscv/include/asm/clint.h                     | 26 ---------
+ arch/riscv/include/asm/timex.h                     | 63 ++++++++++++----------
+ drivers/clocksource/Kconfig                        | 12 +++++
+ drivers/clocksource/timer-clint.c                  | 20 ++++---
+ drivers/clocksource/timer-riscv.c                  | 34 ++++++++++++
+ 6 files changed, 128 insertions(+), 65 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250424-riscv-time-mmio-5628e0fca8af
 
-I've only tested the previous commit being good twice now, but I'll go
-back to the head of tree and try a revert to verify that this is
-really it. Because maybe it's the now Nth time I found something that
-hides the problem, not the real issue.
+Best regards,
+-- 
+Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
 
-Fingers crossed that this very timing-dependent odd problem really did
-bisect right finally, after many false starts.
 
-                 Linus
 
