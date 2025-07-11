@@ -1,157 +1,85 @@
-Return-Path: <linux-kernel+bounces-728374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C0EB02794
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:19:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EAF4B02799
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Jul 2025 01:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50221CA602C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:19:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F237B40F22
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB1421771F;
-	Fri, 11 Jul 2025 23:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FJe31KoQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4956719E7F9;
-	Fri, 11 Jul 2025 23:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0643223323;
+	Fri, 11 Jul 2025 23:20:19 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E3EB665;
+	Fri, 11 Jul 2025 23:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752275932; cv=none; b=E0OOMRoesahZqey9YOququxDVkgcBA8gxxulx9zkgIUFrZPek0Vi2Yg9jlxO7rmb5Dr3gS6YzWwfQbaEHiSwkikxuVtw5PvqATQeGK8LRjf65utGODSH4RS/qb9Q1IzROF1jEh+/g9VtGHO79ySHMHrlkiEdAnuSu2Y8a1kc/h8=
+	t=1752276019; cv=none; b=kJyDyTQQbCtyRqOegYQ2qRxFaUAO8jY7v3gwFPENdXug3Ka5IDWJI56aVjW08w1pmLRV9hmROuN3SN6n483oRpSRmuJxgO/GBtJrhFxsOpiv+zqiYqE02Hg42qf2s74m0LWxTFRkxRG+WQVAQ6ejcOVUBwUBvC3p9au7jvZS2d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752275932; c=relaxed/simple;
-	bh=8/sM6gFYX94+sHDfgekSw0dkB7hQT1Gs8PFRkrIVh+8=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=jzFnD760I1cOeHw0jXowALykBbrlbsKXdXGfhz4/jNB2wAR2tRd8LpPwe8z+T4HQ/A55n32jbIGiZ6NhtE+p9zE0+qgVr20EMHlWq0Ap4BAWnPStV2/loPHvKm93jzIWSPTiZMoL/TPlXOCF6jMif4ii02XwlaGMeCPEeNlu968=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FJe31KoQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFCFBC4CEED;
-	Fri, 11 Jul 2025 23:18:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752275931;
-	bh=8/sM6gFYX94+sHDfgekSw0dkB7hQT1Gs8PFRkrIVh+8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=FJe31KoQ0AgHiPvAYOTdxjiwY0Kdk4QjsVj63KaUJBH07LjrPGMZ+dRjmxP7iaHK1
-	 CqkzjDWZLcqSiF2ISQ9esGrHUMheB4d5OcLVS6YvlksHfjuCv/ZPJzUII7LscxaHUV
-	 ZOdtS3pDHoxJKMFaKr+0XvO2gQPOgE4OmqfLwuwY=
-Date: Fri, 11 Jul 2025 16:18:51 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hotfixes for 6.16-rc6
-Message-Id: <20250711161851.7b0e9d2d962b79f38c2f67d1@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752276019; c=relaxed/simple;
+	bh=pNsFVG/FLnwtKUkOiwlrea6wLLnXFQVnlBGzsZkNWpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G1/UDjbXOqMYoA7j2yH02ROC7lawquNrrXwsmRzV4RiTyV78dPn0GQuLICBOVLZa/ZslL3GNR2f97UV1ULHfftKE+yYWHukK8qeOieo9SHT1siEX81TI8xrgCxy/ZW3mLI4OtuqrVT8yXqOZCl+8nq82KJqYXfV3koSMs+c/IaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost [127.0.0.1])
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 56BNJptK624605;
+	Fri, 11 Jul 2025 18:19:51 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.18.1/8.18.1/Submit) id 56BNJjtJ624601;
+	Fri, 11 Jul 2025 18:19:45 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Fri, 11 Jul 2025 18:19:45 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Huth <thuth@redhat.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-spdx@vger.kernel.org
+Subject: Re: [PATCH v2] powerpc: Replace the obsolete address of the FSF
+Message-ID: <aHGcEdTmhlsfx7Tz@gate>
+References: <20250711053509.194751-1-thuth@redhat.com>
+ <2025071125-talon-clammy-4971@gregkh>
+ <9f7242e8-1082-4a5d-bb6e-a80106d1b1f9@redhat.com>
+ <2025071152-name-spoon-88e8@gregkh>
+ <aHC-Ke2oLri_m7p6@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHC-Ke2oLri_m7p6@infradead.org>
+
+On Fri, Jul 11, 2025 at 12:32:57AM -0700, Christoph Hellwig wrote:
+> On Fri, Jul 11, 2025 at 09:30:31AM +0200, Greg Kroah-Hartman wrote:
+> > That's a crazy exception, and one that should probably be talked about
+> > with the FSF to determine exactly what the SPDX lines should be.
+> 
+> It is called the libgcc exception and has been around forever for the
+> files in libgcc.a that a lot of these low-level kernel helpers were
+> copied from as the kernel doesn't link libgcc.
+
+Almost.  It is called the "GCC Runtime Library Exception", and it is
+about a lot more than libgcc, although that of course is one of the most
+important things it covers :-)
+
+Not linking to libgcc is a foolish thing btw.  The main reason for it
+originally is to not have long divisions in the kernel (for x86
+anyway!), but not using libgcc is neither sufficient nor necessary for
+that goal.
 
 
-Linus, please pull this batch of hotfixes for the next -rc release,
-thanks.
-
-
-The following changes since commit d7b8f8e20813f0179d8ef519541a3527e7661d3a:
-
-  Linux 6.16-rc5 (2025-07-06 14:10:26 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-07-11-16-16
-
-for you to fetch changes up to db6cc3f4ac2e6cdc898fc9cbc8b32ae1bf56bdad:
-
-  Revert "sched/numa: add statistics of numa balance task" (2025-07-09 21:07:56 -0700)
-
-----------------------------------------------------------------
-19 hotfixes.  A whopping 16 are cc:stable and the remainder address
-post-6.15 issues or aren't considered necessary for -stable kernels.
-
-14 are for MM.  Three gdb-script fixes and a kallsyms build fix.
-
-----------------------------------------------------------------
-Achill Gilgenast (1):
-      kallsyms: fix build without execinfo
-
-Alexander Gordeev (1):
-      mm/vmalloc: leave lazy MMU mode on PTE mapping error
-
-Baolin Wang (1):
-      mm: fix the inaccurate memory statistics issue for users
-
-Chen Yu (1):
-      Revert "sched/numa: add statistics of numa balance task"
-
-Christoph Berg (1):
-      mm/migrate: fix do_pages_stat in compat mode
-
-Florian Fainelli (3):
-      scripts/gdb: fix interrupts display after MCP on x86
-      scripts/gdb: fix interrupts.py after maple tree conversion
-      scripts/gdb: de-reference per-CPU MCE interrupts
-
-Harry Yoo (1):
-      lib/alloc_tag: do not acquire non-existent lock in alloc_tag_top_users()
-
-Honggyu Kim (4):
-      samples/damon: fix damon sample prcl for start failure
-      samples/damon: fix damon sample wsse for start failure
-      samples/damon: fix damon sample mtier for start failure
-      mm/damon: fix divide by zero in damon_get_intervals_score()
-
-Illia Ostapyshyn (1):
-      scripts: gdb: vfs: support external dentry names
-
-Lance Yang (1):
-      mm/rmap: fix potential out-of-bounds page table access during batched unmap
-
-SeongJae Park (1):
-      mm/damon/core: handle damon_call_control as normal under kdmond deactivation
-
-Vivek Kasireddy (1):
-      mm/hugetlb: don't crash when allocating a folio if there are no resv
-
-Wei Yang (1):
-      maple_tree: fix mt_destroy_walk() on root leaf node
-
-Yeoreum Yun (1):
-      kasan: remove kasan_find_vm_area() to prevent possible deadlock
-
- Documentation/admin-guide/cgroup-v2.rst |   6 -
- fs/proc/task_mmu.c                      |  14 +-
- include/linux/mm.h                      |   5 +
- include/linux/sched.h                   |   4 -
- include/linux/vm_event_item.h           |   2 -
- kernel/sched/core.c                     |   9 +-
- kernel/sched/debug.c                    |   4 -
- lib/alloc_tag.c                         |   3 +
- lib/maple_tree.c                        |   1 +
- mm/damon/core.c                         |   8 +-
- mm/hugetlb.c                            |   9 +-
- mm/kasan/report.c                       |  45 +-----
- mm/memcontrol.c                         |   2 -
- mm/migrate.c                            |  14 +-
- mm/rmap.c                               |  46 +++---
- mm/vmalloc.c                            |  22 ++-
- mm/vmstat.c                             |   2 -
- samples/damon/mtier.c                   |   8 +-
- samples/damon/prcl.c                    |   8 +-
- samples/damon/wsse.c                    |   8 +-
- scripts/gdb/linux/constants.py.in       |   7 +
- scripts/gdb/linux/interrupts.py         |  16 +-
- scripts/gdb/linux/mapletree.py          | 252 ++++++++++++++++++++++++++++++++
- scripts/gdb/linux/vfs.py                |   2 +-
- scripts/gdb/linux/xarray.py             |  28 ++++
- tools/include/linux/kallsyms.h          |   4 +
- 26 files changed, 399 insertions(+), 130 deletions(-)
- create mode 100644 scripts/gdb/linux/mapletree.py
- create mode 100644 scripts/gdb/linux/xarray.py
-
+Segher
 
