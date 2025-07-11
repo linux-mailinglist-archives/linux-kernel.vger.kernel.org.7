@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-727084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F29BB014CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:36:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0713EB014CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BD6F1C208B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 607DE5A12A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5C81EF397;
-	Fri, 11 Jul 2025 07:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318D41DDC15;
+	Fri, 11 Jul 2025 07:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lWb/wlhc"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pDiyKLTj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6043C1DDC15
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA5D1EE7A1;
+	Fri, 11 Jul 2025 07:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752219391; cv=none; b=Ey+6FL0AO4pst8yyBSR4fwnczFLAM6RQXfir+1AOlQ61z4rSd8piyjtfGCLAhW9FtLhVWgHTNNRHCp4hSxVWd63KZk+zboPg1rBgHk/BfXHw//9O1X4XExEKBUHaxa6re3zgSU3cExstPWVqiArqwZFkTPkdVOCJNTaCCYG9/wo=
+	t=1752219404; cv=none; b=A4LFswNRR5dkEH0GDUgZoVTZygSMZA14iM3+OKa8KRMy6D0R9bhgZJ8KXqyzDY1IWFFaUZp3btttyhAPNLiquP9vbcopMs8OvL3F+Dp3bOwWkfv8+J0BQPYVav6677XxmtmLExjkftzOHjnYl6i/m2wh1U9kA6gAEvMFL1fOnQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752219391; c=relaxed/simple;
-	bh=DK3E25LOT1I8kE2BN5rTaX4nmSkOnCyxbWuZlf1AcqM=;
+	s=arc-20240116; t=1752219404; c=relaxed/simple;
+	bh=a0wdQROj3hyxjpHmI3TPp1B/1v9dnKkpod7Q3zxg27o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dtpuStZtueh5uNs9Q+7ECktig+acTKzfGHKKu9JyG1SZSg9byFiIHgr6PnvjXTGjkM0ienJC0ovrVlmwCIzRLlC9GL1qqvdFrlmb+Hmugy9RiISGxAQxSI8K2HZDJvdLJROYk4z2x+96LSh+PsbCJo5h+AN8xnfx9KXX9IJ1Wc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lWb/wlhc; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DK3E25LOT1I8kE2BN5rTaX4nmSkOnCyxbWuZlf1AcqM=; b=lWb/wlhcL9odqxj3S70XlJ/Mw4
-	3ZeUPzrreWXbI4P9klhNiNL8e8DY1S62/B2dQQ8h7wzPmeRBi6I1wo0udMx45qTLVghVOA/lpGSt/
-	BM3RCBRLJzFsCHiGP/drhb+3qewAMgCCn3y4dhWSUAabG7cqLPsW6/hC+IlEXGCkSbYBHj5RDNUko
-	OXppRdweMM0getK5nUG+iAYWa+zth+0xdGAmfkQqog0CAIRkkrP1/ifg098zRM0j4y1cM4xN7PBNI
-	MLmYXao847inWmMpHBf8TR8oh+VyVZy8eD0P6mw21+bSVeg6VvATmerOy8FzPU0mN8XdLdRXg/5sn
-	ENaPE1KQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ua8J2-0000000Dzle-3W52;
-	Fri, 11 Jul 2025 07:36:28 +0000
-Date: Fri, 11 Jul 2025 00:36:28 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL modules
-Message-ID: <aHC-_HWR2L5kTYU5@infradead.org>
-References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
- <20250709212556.32777-3-mathieu.desnoyers@efficios.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ou7dClAW4i9Etu2VgHSC9yQFojiHxF+gUrjk9t7xwG/H1PCZakEJn0wlOz4U1hL4/1qP05Rfg/DiVT+ycojZ1cXrxVdiHEh/FP1mYTCbb4DhvEKDWj+3QyMsVjUGApTCaPy2cqIo6evkDqdY4kPyVFT4Z6mNdOhkqMj255Z9Tqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pDiyKLTj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A59FC4CEED;
+	Fri, 11 Jul 2025 07:36:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752219404;
+	bh=a0wdQROj3hyxjpHmI3TPp1B/1v9dnKkpod7Q3zxg27o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pDiyKLTj2+sXbOPoA09zNCj+YoGUJjOjlVrtsiy2CXqLzoOX57nGU7EqPOQre5vS5
+	 SA9h4C+3e0Itmc0CPM/zi7oX76RjAbolfE8D1d8V6CHKfAbiXJnudy5TmDfu2QMuNP
+	 y5L9Ese8GdUsfdKg9WekbMeczMdcyvsPUBBsN9boSbSzQovZVqAsCBRiWoINqgINJ7
+	 vYFi2Pexu7Sl1acSNEPKZiYH/RUIQjzmcNmIxTcnDXIiZM28G/+QHuqjpiEmKSpvqR
+	 QzR9ipvKvQR7nUJh2Sq2wINeUPQO3Y0XtsJGgt20qywberxIUO1y6y8sXM93YskG9H
+	 2d+YQDEjcDTZg==
+Date: Fri, 11 Jul 2025 09:36:41 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, chester62515@gmail.com, mbrugger@suse.com, 
+	Ghennadi.Procopciuc@nxp.com, larisa.grigore@nxp.com, lee@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com, ping.bai@nxp.com, 
+	gregkh@linuxfoundation.org, rafael@kernel.org, srini@kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, s32@nxp.com, clizzi@redhat.com, aruizrui@redhat.com, 
+	eballetb@redhat.com, echanude@redhat.com, kernel@pengutronix.de, imx@lists.linux.dev, 
+	vincent.guittot@linaro.org
+Subject: Re: [PATCH v7 01/12] dt-bindings: mfd: add support for the NXP SIUL2
+ module
+Message-ID: <20250711-fluorescent-malamute-of-glory-b1c585@krzk-bin>
+References: <20250710142038.1986052-1-andrei.stefanescu@oss.nxp.com>
+ <20250710142038.1986052-2-andrei.stefanescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250709212556.32777-3-mathieu.desnoyers@efficios.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250710142038.1986052-2-andrei.stefanescu@oss.nxp.com>
 
-On Wed, Jul 09, 2025 at 05:25:49PM -0400, Mathieu Desnoyers wrote:
-> Allow the unwind_user symbol to be used by GPL modules, for instance
-> LTTng.
+On Thu, Jul 10, 2025 at 05:20:24PM +0300, Andrei Stefanescu wrote:
+> Add the dt-bindings for the NXP SIUL2 module which is a multi
+> function device. It can export information about the SoC, configure
+> the pinmux&pinconf for pins and it is also a GPIO controller with
+> interrupt capability.
+> 
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> ---
+>  .../bindings/mfd/nxp,s32g2-siul2.yaml         | 163 ++++++++++++++++++
+>  1 file changed, 163 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/nxp,s32g2-siul2.yaml
 
-I don't see a LTTng submission or any other user in this series.
-So the usual prohibition against adding unused exports applies here
-as usual.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
