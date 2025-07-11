@@ -1,117 +1,84 @@
-Return-Path: <linux-kernel+bounces-726950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3CCEB01355
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA570B01356
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F84188F995
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:10:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D21611CA04DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9DA1D61B7;
-	Fri, 11 Jul 2025 06:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03261D5ABF;
+	Fri, 11 Jul 2025 06:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GBgVQp/V"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sbquC2wX"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43200944F;
-	Fri, 11 Jul 2025 06:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B091D54FE
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752214184; cv=none; b=TW8Ftc+aE5IPGqUndOK61ABz88aJ/FofE4/LvSB30e3dBNJEUgcucS0ECB5tlprguLUjy5V23UUqcgWbGxSKtw7l4NzSPfODOB9iCaM8LefmmI+ZdKX60uejLSb3wjbebJpwsWQqZ0eWhBtyoOp5ySNOmdSvC+JwaI56YzrGvsg=
+	t=1752214216; cv=none; b=X4QkOeV12WeACSbGN9nZefSpPe9aptAW7yGCQbUcVW/f757TsTZTZB4el9EoyjwUGfELfJ0cDHKs36w/Ho7HUn7uPrYl96L/Y1a17gZRWFWbaYvNU+mgJB+kX5iKXzRcr7mWJ5bNKhLt26sFbGoSM6jLhF9uT59N84QURnHzWlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752214184; c=relaxed/simple;
-	bh=R9Fpa73buHZaMDm/CypJX9RwDyO2X2psftk0JY+YOi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jvzGaNipdAT+q4IWam2X437i179u6bWMb3cWT6D6U5t6r6Ldr7K55FUKvvhZlyTSX9aIfyKqqRHOAGFqq27LaYG7j0Wf5Ce3KCMEWTSGr6FPvUq5dSy1HnwBVcToAf7+sYcMs4y8fKy/4wfb4RmTavqUO5OJln7OrJutA8YxDEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GBgVQp/V; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752214183; x=1783750183;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=R9Fpa73buHZaMDm/CypJX9RwDyO2X2psftk0JY+YOi4=;
-  b=GBgVQp/VmJH/3ykLlXD/fsZNm9nuuqd3KIZ7zt7KRhAdZ1F9Q2GG8+x6
-   fpoj3tWe5zL00zKHrJUvkFg1xJ7xwul4ObbasyrRc1QfgZbCKJvEMQzFh
-   krsMTlvPClspUOf2/3yaCnQ4wf42TG4l7xovW3pFqLvD3uASNW1LUvO/I
-   uLZFGzMLwzvbZBcgSVopGxRrIicFrSoM0GY67XVGnlFokRNZhLtRd12nu
-   mf0BoUVro/MFvbgTQh3MXxzHXTfyBM5a8c2DhK50WAjiuO+Z2c9cbBn0z
-   1QV3yHLP65s+8LvGfc5A01OqnscE2ffhNZ8H2K7fmNV8iVrDjLckDQMon
-   Q==;
-X-CSE-ConnectionGUID: RAH/8VVORCCpgEDOXvW8Hg==
-X-CSE-MsgGUID: Zg6UEqNDTomWz8Z4el35uQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="58314908"
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="58314908"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 23:09:43 -0700
-X-CSE-ConnectionGUID: hCnUPyLSTaGJ6KOAoXbx+A==
-X-CSE-MsgGUID: hPsMswBqS8ejXImduMjRTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="156377505"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 23:09:39 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ua6wy-0000000EQvn-2Uh4;
-	Fri, 11 Jul 2025 09:09:36 +0300
-Date: Fri, 11 Jul 2025 09:09:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: kernel test robot <lkp@intel.com>
-Cc: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, Remi Buisson <remi.buisson@tdk.com>
-Subject: Re: [PATCH v2 6/8] iio: imu: inv_icm45600: add SPI driver for
- inv_icm45600 driver
-Message-ID: <aHCqoCNhXPqdKZId@smile.fi.intel.com>
-References: <20250710-add_newport_driver-v2-6-bf76d8142ef2@tdk.com>
- <202507111201.r62j5rb6-lkp@intel.com>
+	s=arc-20240116; t=1752214216; c=relaxed/simple;
+	bh=MxK4UIQDMHRZzOzYbMfO57exppis0GDO31/E3L0QhYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JS8Beh56PTcqFmbajSjldevN+OsMrI/5IQ2QPqkMUhIw30wTJjjbytJqTOYdJsjF58WYXlvELE1m11WFW9uhINcOhqM8+/DAMyOej3TVHQuurwowAMJQWWcIS4ZvZmjNC1l7pcTK/GyS0NoUsNKEuRRh3hFbegQ/FUglflLWw9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sbquC2wX; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752214203; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=GviDtt0HM/H/nsHgI4GLwCPioqjPub/0QBTaXoqCufk=;
+	b=sbquC2wXrOYC1Ddcq4iguxQOZusYoRS+zo2fBN91WaBK2nS6nlbBJDc7bBB583d09Lyud+mfcif0TRGPQtCBRMckk9jJUik1jmff7wAoZNzcOPyIh5H3JM4ZvFxByWsowJ/NKkfSnD15MJTQYlIf1Ku+x36ZnyjXiRExldHQiec=
+Received: from 30.74.144.131(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WifmNlO_1752214200 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 11 Jul 2025 14:10:01 +0800
+Message-ID: <1fe97413-03eb-433a-91b3-b53e58c65622@linux.alibaba.com>
+Date: Fri, 11 Jul 2025 14:10:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202507111201.r62j5rb6-lkp@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/8] mm/shmem, swap: never use swap cache and readahead
+ for SWP_SYNCHRONOUS_IO
+To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
+ Kemeng Shi <shikemeng@huaweicloud.com>, Chris Li <chrisl@kernel.org>,
+ Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
+ Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
+References: <20250710033706.71042-1-ryncsn@gmail.com>
+ <20250710033706.71042-6-ryncsn@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250710033706.71042-6-ryncsn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 12:55:25PM +0800, kernel test robot wrote:
-> Hi Remi,
+
+
+On 2025/7/10 11:37, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
 > 
+> For SWP_SYNCHRONOUS_IO devices, if a cache bypassing THP swapin failed
+> due to reasons like memory pressure, partially conflicting swap cache
+> or ZSWAP enabled, shmem will fallback to cached order 0 swapin.
+> 
+> Right now the swap cache still has a non-trivial overhead, and readahead
+> is not helpful for SWP_SYNCHRONOUS_IO devices, so we should always skip
+> the readahead and swap cache even if the swapin falls back to order 0.
+> 
+> So handle the fallback logic without falling back to the cached read.
+> 
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 
->    drivers/iio/imu/inv_icm45600/inv_icm45600_accel.c:100:20: note: initialize the variable 'sleep' to silence this warning
->      100 |         unsigned int sleep;
->          |                           ^
->          |                            = 0
-
-For the record, this is usually bad advice by the compiler. You need to either
-check for errors, or do something else.
-
->    drivers/iio/imu/inv_icm45600/inv_icm45600_gyro.c:100:20: note: initialize the variable 'sleep' to silence this warning
->      100 |         unsigned int sleep;
->          |                           ^
->          |                            = 0
-
-Ditto.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+LGTM. Thanks.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
