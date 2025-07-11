@@ -1,221 +1,169 @@
-Return-Path: <linux-kernel+bounces-727071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81487B014AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:29:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A1AB014B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15E6E54432B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:28:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E40D1C2177D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355B51E570D;
-	Fri, 11 Jul 2025 07:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6666B1EFF9B;
+	Fri, 11 Jul 2025 07:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghy3fGgs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sr2JNfMH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9D71EFF8D;
-	Fri, 11 Jul 2025 07:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DA01E9B08;
+	Fri, 11 Jul 2025 07:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752218933; cv=none; b=aecxkBsgxWXyjy+IKv73/RyhILhR+0AG8llhO5pzGEgc+BVnl+5h7DlWa/r+LNlRSMXjWsoyVayY15+WFJtP3KMfDGtxrPic1AC7qdyL14P/mOT2jkyQOZ0WV3Uj6pNCXaxsnBYCSuDE85oMdR4VknH/0ZLWWRozel53cTc/wt8=
+	t=1752218962; cv=none; b=UVA/qTcfKJvQ0wQp6ETMTwQP1PdkCvA12E6pgMNJsilxuNMI+7OsFGiaE+2bTsR8IGzPb/bmAzAOTReC43scNR0HUExNANR5VM1gK9iJpa1wmcFmMIi+IyNFUtB7Puf8eOHHhB1LGCvAEorYy7ZAfrSdXzaWKv2Y5DDIrKBM1T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752218933; c=relaxed/simple;
-	bh=3avOzIa3vglyeV7w0A35p2T13TGg3Po/DkJErYZD8Ok=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WcgsRpPTh+wLVfiCk5wmbJ4/ReTVoPJC79ojhOfTj/15PxXgGj0mvJNf2jwBTvBPearFVFVQIidclEwzZ2XF30OBknPjPnZfs5G9VZZpnAd9R84DVJg2wacjusM6WHa7BhbMIF3jIN7viEnv8si8FeWRw7RWFA0ghR2N6tqYaUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghy3fGgs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44DDCC4CEF7;
-	Fri, 11 Jul 2025 07:28:51 +0000 (UTC)
+	s=arc-20240116; t=1752218962; c=relaxed/simple;
+	bh=1bYQFKIcAn0s1xDS2MgBRnt8iLRkzAExHI5zhkCBABA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C9TylIC8w8fpflOXX1sj+9/lFkcNwhTDoTuLsG+xNKwI6IqmE6m4gBg+rf7i4khyDEVeO72pZp28aujtSjjoR4k5XbO+CZkpBI5jmS+vO621wpwK5fGPaIvl9gOtM1WvNBAobotAE0L28rSm7RHj5/C0J6S5sGrw/P57rfMWhpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sr2JNfMH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44311C4CEED;
+	Fri, 11 Jul 2025 07:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752218932;
-	bh=3avOzIa3vglyeV7w0A35p2T13TGg3Po/DkJErYZD8Ok=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ghy3fGgsz0Ahkg92NtTOZ233fHDetbm+eMgFd1grRNbdVcSwoLEvHQ0WYbWsL+j1F
-	 uTanhGiov6q/38Nr6qmmvGeDqcyHvfnUjMCNLKo/eQP8VevAO9eiUGyBrzLgHTuJPc
-	 864jMfpL13igtio1vbVQBu619eEUy3MZ339s9/MDrl1JdaJB16/vciwjxS+QN1vj6u
-	 p3opm+jbDs6PUnHW8KZI7yhc852yqHXjnq5UkhJeGhEBSCTDcBswb37I5vUTKoxRI2
-	 2QNxMhJvtfwxTP6RxHXTggkfxA4cLx3IVDG74AgHZ9WuAqKkiY5hVw0HyqiZMrekEi
-	 LKWNMDPnGH0bg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Peter Hutterer <peter.hutterer@who-t.net>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: tighten ioctl command parsing
-Date: Fri, 11 Jul 2025 09:28:43 +0200
-Message-Id: <20250711072847.2836962-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1752218961;
+	bh=1bYQFKIcAn0s1xDS2MgBRnt8iLRkzAExHI5zhkCBABA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Sr2JNfMHO8x4Zvt10+1DTJTVI3SbUWuUb8UNKm5iDpElYTN1tNSGQPewefAPXNHi1
+	 K5JFOhzSpqpUxob1nIi2iIA5iCI0+5vLhWrd6+tvXLb/+VyQ0tSUE07QPg5aUnPxJW
+	 DlfK1ta2W2pZIk5TMBb75sg5RwvkgLL7uYfbkP161tk3vAYrYLAsiIMxCjpBgg2o+b
+	 +RSev1lt1JQ4vbUIKgwFvFZcBj5rphtd3JUrFm4dnlBtajx8+aXA0uJDfBtg7liStf
+	 1L8fFKAdqYeZP1rjT5IzP0lsu+3oiVvyncReT3n0pkG5Typii/i4PbqhD0qynqgtNW
+	 duedNyJmZVgMg==
+Date: Fri, 11 Jul 2025 09:29:17 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/12] Thrash up the parser/output interface
+Message-ID: <20250711092917.229bcc89@foz.lan>
+In-Reply-To: <92ff26c0-6952-4f7e-965e-2f020adb859b@gmail.com>
+References: <20250710233142.246524-1-corbet@lwn.net>
+	<92ff26c0-6952-4f7e-965e-2f020adb859b@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+Em Fri, 11 Jul 2025 13:29:00 +0900
+Akira Yokosawa <akiyks@gmail.com> escreveu:
 
-The handling for variable-length ioctl commands in hidraw_ioctl() is
-rather complex and the check for the data direction is incomplete.
+> On Thu, 10 Jul 2025 17:31:30 -0600, Jonathan Corbet wrote:
+> [...]
+> 
+> > Changes since v1:
+> > - Coding-style tweaks requested by Mauro
+> > - Drop the reworking of output-text accumulation for now
+> > - Add a warning for prehistoric Python versions  
+> 
+> Serious review of python code is beyond my background, but I did a test
+> on this against opensuse/leap:15.6's python3-Sphinx_4_2_0, which comes with
+> python 3.6.15.
+> 
+> Running "./scripts/kernel-doc.py -none include/linux/rcupdate.h" emits this:
+> 
+> ------------------------------------------------------------------------
+> Traceback (most recent call last):
+>   File "./scripts/kernel-doc.py", line 315, in <module>
+>     main()
+>   File "./scripts/kernel-doc.py", line 286, in main
+>     kfiles.parse(args.files, export_file=args.export_file)
+>   File "/linux/scripts/lib/kdoc/kdoc_files.py", line 222, in parse
+>     self.parse_file(fname)
+>   File "/linux/scripts/lib/kdoc/kdoc_files.py", line 119, in parse_file
+>     doc = KernelDoc(self.config, fname)
+>   File "/linux/scripts/lib/kdoc/kdoc_parser.py", line 247, in __init__
+>     self.emit_message(0,
+> AttributeError: 'KernelDoc' object has no attribute 'emit_message'
+> ------------------------------------------------------------------------
+> 
+> This error appeared in 12/12.  No errors with python3 >=3.9.
 
-Simplify this code using a switch() statement with the size masked
-out, to ensure the rest of the command is correctly matched.
+This is actually a bug. See:
 
-Fixes: 9188e79ec3fd ("HID: add phys and name ioctls to hidraw")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/hid/hidraw.c | 123 ++++++++++++++++++-------------------------
- 1 file changed, 50 insertions(+), 73 deletions(-)
+	+        #
+	+        # We need Python 3.7 for its "dicts remember the insertion
+	+        # order" guarantee
+	+        #
+	+        if sys.version_info.major == 3 and sys.version_info.minor < 7:
+	+            self.emit_message(0,
+	+                              'Python 3.7 or later is required for correct results')
+	+
+	     def emit_msg(self, ln, msg, warning=True):
+	         """Emit a message"""
 
-diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
-index c887f48756f4..cc657d60d689 100644
---- a/drivers/hid/hidraw.c
-+++ b/drivers/hid/hidraw.c
-@@ -403,6 +403,8 @@ static long hidraw_ioctl(struct file *file, unsigned int cmd,
- 	struct hidraw *dev;
- 	struct hidraw_list *list = file->private_data;
- 	void __user *user_arg = (void __user*) arg;
-+	struct hid_device *hid;
-+	int len;
- 
- 	down_read(&minors_rwsem);
- 	dev = hidraw_table[minor];
-@@ -453,81 +455,56 @@ static long hidraw_ioctl(struct file *file, unsigned int cmd,
- 				break;
- 			}
- 		default:
--			{
--				struct hid_device *hid = dev->hid;
--				if (_IOC_TYPE(cmd) != 'H') {
--					ret = -EINVAL;
--					break;
--				}
--
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCSFEATURE(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_send_report(file, user_arg, len, HID_FEATURE_REPORT);
--					break;
--				}
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGFEATURE(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_get_report(file, user_arg, len, HID_FEATURE_REPORT);
--					break;
--				}
--
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCSINPUT(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_send_report(file, user_arg, len, HID_INPUT_REPORT);
--					break;
--				}
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGINPUT(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_get_report(file, user_arg, len, HID_INPUT_REPORT);
--					break;
--				}
--
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCSOUTPUT(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_send_report(file, user_arg, len, HID_OUTPUT_REPORT);
--					break;
--				}
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGOUTPUT(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_get_report(file, user_arg, len, HID_OUTPUT_REPORT);
--					break;
--				}
--
--				/* Begin Read-only ioctls. */
--				if (_IOC_DIR(cmd) != _IOC_READ) {
--					ret = -EINVAL;
--					break;
--				}
--
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGRAWNAME(0))) {
--					int len = strlen(hid->name) + 1;
--					if (len > _IOC_SIZE(cmd))
--						len = _IOC_SIZE(cmd);
--					ret = copy_to_user(user_arg, hid->name, len) ?
--						-EFAULT : len;
--					break;
--				}
--
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGRAWPHYS(0))) {
--					int len = strlen(hid->phys) + 1;
--					if (len > _IOC_SIZE(cmd))
--						len = _IOC_SIZE(cmd);
--					ret = copy_to_user(user_arg, hid->phys, len) ?
--						-EFAULT : len;
--					break;
--				}
--
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGRAWUNIQ(0))) {
--					int len = strlen(hid->uniq) + 1;
--					if (len > _IOC_SIZE(cmd))
--						len = _IOC_SIZE(cmd);
--					ret = copy_to_user(user_arg, hid->uniq, len) ?
--						-EFAULT : len;
--					break;
--				}
--			}
-+			break;
-+	}
- 
-+	hid = dev->hid;
-+	switch (cmd & ~IOCSIZE_MASK) {
-+	case HIDIOCSFEATURE(0):
-+		len = _IOC_SIZE(cmd);
-+		ret = hidraw_send_report(file, user_arg, len, HID_FEATURE_REPORT);
-+		break;
-+	case HIDIOCGFEATURE(0):
-+		len = _IOC_SIZE(cmd);
-+		ret = hidraw_get_report(file, user_arg, len, HID_FEATURE_REPORT);
-+		break;
-+	case HIDIOCSINPUT(0):
-+		len = _IOC_SIZE(cmd);
-+		ret = hidraw_send_report(file, user_arg, len, HID_INPUT_REPORT);
-+		break;
-+	case HIDIOCGINPUT(0):
-+		len = _IOC_SIZE(cmd);
-+		ret = hidraw_get_report(file, user_arg, len, HID_INPUT_REPORT);
-+		break;
-+	case HIDIOCSOUTPUT(0):
-+		len = _IOC_SIZE(cmd);
-+		ret = hidraw_send_report(file, user_arg, len, HID_OUTPUT_REPORT);
-+		break;
-+	case HIDIOCGOUTPUT(0):
-+		len = _IOC_SIZE(cmd);
-+		ret = hidraw_get_report(file, user_arg, len, HID_OUTPUT_REPORT);
-+		break;
-+	case HIDIOCGRAWNAME(0):
-+		len = strlen(hid->name) + 1;
-+		if (len > _IOC_SIZE(cmd))
-+			len = _IOC_SIZE(cmd);
-+		ret = copy_to_user(user_arg, hid->name, len) ?  -EFAULT : len;
-+		break;
-+	case HIDIOCGRAWPHYS(0):
-+		len = strlen(hid->phys) + 1;
-+		if (len > _IOC_SIZE(cmd))
-+			len = _IOC_SIZE(cmd);
-+		ret = copy_to_user(user_arg, hid->phys, len) ?  -EFAULT : len;
-+		break;
-+	case HIDIOCGRAWUNIQ(0):
-+		len = strlen(hid->uniq) + 1;
-+		if (len > _IOC_SIZE(cmd))
-+			len = _IOC_SIZE(cmd);
-+		ret = copy_to_user(user_arg, hid->uniq, len) ?  -EFAULT : len;
-+		break;
-+	default:
- 		ret = -ENOTTY;
-+		break;
- 	}
- out:
- 	up_read(&minors_rwsem);
--- 
-2.39.5
+The answer is just below the modified code: the function name is actually:
+	self.emit_msg()
 
+> I'm not sure but asking compatibility with python <3.9 increases
+> maintainers/testers' burden.  Obsoleting <3.9 all together would
+> make everyone's life easier, wouldn't it?
+
+I'd say that the best is to have:
+
+scripts/sphinx-pre-install:
+
+- be compatible with Python 3.6, as it is needed to detect and
+  request Python upgrades where needed.
+
+- For the doc build, based on my tests with the pre-install tool,
+  all distros on my testlist have at least Python >= 3.9 as optional
+  packages.
+
+Now, kernel-doc is a special case, as it is called during Kernel
+builds, with "-none". In the specific case of this patchset, running
+Python 3.6 would randomize the order of struct and function arguments.
+Not a problem when "-none" is used. So, compilation should not
+break.
+
+Shifting kernel-doc minimal version to Python >= 3.9, will
+require an extra logic at kerneldoc to abort early if "-none"
+is used with too old Python, as otherwise it will break kernel
+builds for RHEL8, OpenSUSE Leap, OpenMandriva Lx 4.3 and to 
+other distros (those three comes with 3.6).
+
+Jon,
+
+I sent a two-patches series addressing such issues with kernel-doc
+exec file.
+
+I would keep patch 12/12, fixing it from:
+
+	 self.emit_message -> self.emit_msg
+
+as the warning is emitted when using kdoc classes, which is now the
+default.
+
+-
+
+Btw, if you use Fedora, you can easily install python 3.6 there via 
+dnf:
+
+	$ dnf search python 3.6
+	Updating and loading repositories:
+	Repositories loaded.
+	Matched fields: name, summary
+	 python3.6.i686: Version 3.6 of the Python interpreter
+	 python3.6.x86_64: Version 3.6 of the Python interpreter
+
+	(Fedora 42 also have all python versions from 3.9 to 3.14 beta also
+	 via dnf)
+
+Regards,
+Mauro
 
