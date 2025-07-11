@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-727656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2B3B01DAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:35:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55DCB01D9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46690B43890
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:31:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFE19A4644D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337092D6628;
-	Fri, 11 Jul 2025 13:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4A52D7813;
+	Fri, 11 Jul 2025 13:31:48 +0000 (UTC)
 Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3438F2D77EB
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939BD2D3A7C
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752240700; cv=none; b=FdhYqZjJhCW+r0mIJ0yv7HqSCtY1pSxhUfGg0MjufCEerMDorD453ytroITL+EMAEbfcpC47XE/g5R11bwEv3DCo8idQ/g83B7fBrnkdVrQ4F1oyCev+bf2CgT/fnLNmsWnRZQbLivo+lWLGERcBGg6DLSrcXdAC0KtPL6Ehh48=
+	t=1752240708; cv=none; b=H2M1EzCkviYQAl3SykGYf/kdZErePmwqQ4qWkzShH1b0Q9OQmsrkWNtzXACYacWTJP+LiLv48nz4rxr6YnvnWnASXRm4S4ljfP67JW21MBOmrcBklS3C9A6jNnVvnbN+nc/PAiHCiZLFtowh3gzYu+/xO+i5WGczs0gbAY8dSjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752240700; c=relaxed/simple;
-	bh=63SOELCORMxrKVDUUIzKKFTRBqKDHRIy+LUddzrAvg4=;
+	s=arc-20240116; t=1752240708; c=relaxed/simple;
+	bh=GI90PMG6oLQIFp7nu69CEzicczRXgBh1hr6PYZ2QH+4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iFqqN6gcf64aZbuRFGHd10duHNV6vDRWfgeBSRdPJzEpsKwjm+tWGEbSkzhtcuc2Ng59NqmPoOwfTZkQCsSrqH+xbAvepSUakqO78fCbZquqTquKFjiWRDVc0cdSlRlDJVc4lDQIf9vCQXelAv/nRNDYwPdukVFGaIDYxYgSA3g=
+	 MIME-Version:Content-Type; b=Fz+UUU11XonrMBIR0uihMzRF7o3NcH/uygxaHt+HTAu/VIRvLNrsspB4eRJyn+h8MuXYdPl4Yqf4YzQHHz0qpfS+FRGbp96nYSuNC58lVn88fGn4SYepxS3vruuRYoB7FB/ck1sodvfDD4YheCINolDMHtuhUwt3L1vC5irUJek=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
 Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 56BDUhoV014685
+	by Atcsqr.andestech.com with ESMTPS id 56BDUiZS014964
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 21:30:43 +0800 (+08)
+	Fri, 11 Jul 2025 21:30:44 +0800 (+08)
 	(envelope-from ben717@andestech.com)
 Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS31.andestech.com
  (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Fri, 11 Jul 2025
- 21:30:42 +0800
+ 21:30:44 +0800
 From: Ben Zong-You Xie <ben717@andestech.com>
 To:
 CC: <arnd@arndb.de>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
@@ -44,10 +44,12 @@ CC: <arnd@arndb.de>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
         <daniel.lezcano@linaro.org>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <soc@lists.linux.dev>,
-        <tim609@andestech.com>, Ben Zong-You Xie <ben717@andestech.com>
-Subject: [PATCH v2 7/9] riscv: dts: andes: add Voyager board device tree
-Date: Fri, 11 Jul 2025 21:30:23 +0800
-Message-ID: <20250711133025.2192404-8-ben717@andestech.com>
+        <tim609@andestech.com>, Ben Zong-You Xie <ben717@andestech.com>,
+        Conor Dooley
+	<conor.dooley@microchip.com>
+Subject: [PATCH v2 8/9] riscv: defconfig: enable Andes SoC
+Date: Fri, 11 Jul 2025 21:30:24 +0800
+Message-ID: <20250711133025.2192404-9-ben717@andestech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250711133025.2192404-1-ben717@andestech.com>
 References: <20250711133025.2192404-1-ben717@andestech.com>
@@ -62,75 +64,29 @@ Content-Type: text/plain
 X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
 X-DNSRBL: 
 X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 56BDUhoV014685
+X-MAIL:Atcsqr.andestech.com 56BDUiZS014964
 
-Introduce the device tree support for Voyager development board.
+Enable Andes SoC config in defconfig to allow the default
+upstream kernel to boot on Voyager board.
 
-Currently only support booting into console with only uart,
-other features will be added later.
-
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
 ---
- arch/riscv/boot/dts/Makefile                |  1 +
- arch/riscv/boot/dts/andes/Makefile          |  2 ++
- arch/riscv/boot/dts/andes/qilai-voyager.dts | 28 +++++++++++++++++++++
- 3 files changed, 31 insertions(+)
- create mode 100644 arch/riscv/boot/dts/andes/Makefile
- create mode 100644 arch/riscv/boot/dts/andes/qilai-voyager.dts
+ arch/riscv/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
-index 64a898da9aee..3b99e91efa25 100644
---- a/arch/riscv/boot/dts/Makefile
-+++ b/arch/riscv/boot/dts/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- subdir-y += allwinner
-+subdir-y += andes
- subdir-y += canaan
- subdir-y += microchip
- subdir-y += renesas
-diff --git a/arch/riscv/boot/dts/andes/Makefile b/arch/riscv/boot/dts/andes/Makefile
-new file mode 100644
-index 000000000000..c545c668ef70
---- /dev/null
-+++ b/arch/riscv/boot/dts/andes/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+dtb-$(CONFIG_ARCH_ANDES) += qilai-voyager.dtb
-diff --git a/arch/riscv/boot/dts/andes/qilai-voyager.dts b/arch/riscv/boot/dts/andes/qilai-voyager.dts
-new file mode 100644
-index 000000000000..fa7d2b32a9b4
---- /dev/null
-+++ b/arch/riscv/boot/dts/andes/qilai-voyager.dts
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2025 Andes Technology Corporation. All rights reserved.
-+ */
-+
-+#include "qilai.dtsi"
-+
-+/ {
-+	model = "Voyager";
-+	compatible = "andestech,voyager", "andestech,qilai";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@400000000 {
-+		device_type = "memory";
-+		reg = <0x4 0x00000000 0x4 0x00000000>;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index fe8bd8afb418..12f5f6ec00fa 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -22,6 +22,7 @@ CONFIG_USER_NS=y
+ CONFIG_CHECKPOINT_RESTORE=y
+ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_PROFILING=y
++CONFIG_ARCH_ANDES=y
+ CONFIG_ARCH_MICROCHIP=y
+ CONFIG_ARCH_SIFIVE=y
+ CONFIG_ARCH_SOPHGO=y
 -- 
 2.34.1
 
