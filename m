@@ -1,264 +1,135 @@
-Return-Path: <linux-kernel+bounces-727452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFCF4B01A62
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:15:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F93B01977
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB3468E179C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E69A4A0D43
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A63828B7DA;
-	Fri, 11 Jul 2025 11:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182AE27FD41;
+	Fri, 11 Jul 2025 10:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0xg6L34"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="xpqXM3qN";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="H0EjvsKf"
+Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E623028B7E6;
-	Fri, 11 Jul 2025 11:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B551F27FB05
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752232511; cv=none; b=tE9HWK94MhPRVo6a3PNkj9vFYiJ3dE+fs8gM9vwG3rQYlyREqeQEDnVJz/1d90shiMCxeNfaljMiPIFkWLX7BVDPSbZ5L10q7Zl8aWzodI2aYy+xFjpKZEY7ttdmrSpn1kMZr+edhBP1GnuhjnCct1glUXRSvM8wEI83niC2IDU=
+	t=1752228813; cv=none; b=o1tBr1X8KNfy+6YWhbY37yRRZNGUvLnTA9rbwWaA2D+fNuXziQYdwdBQwfkdb+niyhExHMsx+3aYJvalwD0QSLG4EFrCiuIQ1hix5VrP7HaSMXkz8Re8HdGdh0rFZujBY5MmNo+WJmhfckC0dwyAs5SEH783KeNYwV2dBw7ywh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752232511; c=relaxed/simple;
-	bh=uRVELgRW5ZYzlSpEJR0P6N1J9NFxpV2TWeTwAHBtgDk=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=iYWO79iwM51mCwjepGZtivW/wLH0tQxUsy5674PIaI/jmFlINA/RPxY7XYsvDxD7enVcQb1hUgLbMUSTknqvppMxE+PIG1RV0JLdV2zZi0z7KBOoLfQuxpgA4W9rxDLGdsCvr0nd8WY0ntEp2wAU46wXlYpCF1/Tq+1P3W1C/F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0xg6L34; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-455ecacfc32so1692815e9.3;
-        Fri, 11 Jul 2025 04:15:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752232508; x=1752837308; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zQ6vVLhKfs0npq6T/CCDFR1z9xriix4gqXPfUihkmJ4=;
-        b=g0xg6L3417l/LU2xYSjHi+HCi2wpKM69VOqIarDseBFjTW828YvjU/odpVELE+oS0f
-         EoPn9BbxOjj/hg2H/zB3g66LgY2+onZfFlqKyemKhUWZs2MR1Yt1Xj+V3Wwwhh//uLw/
-         O5HDxq4BdRjWnLfUOhlxeEh3wKIFjk5BM/q5MmlZGnn8OpzaCu6qhmxqFouPpCHsat9H
-         kQoMde6dsWp7HRYsIeS4HAptQ4XqCs+S/DlzNI58Ql5/CfrH4af1M7h+y+sl4bj47mG0
-         xY0jlKTN9aa3bwi4KUES8e1ljEvl09a/xWf7PW4OnSA408a/YEHmJMu7aP9h2E5/Yc32
-         MgZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752232508; x=1752837308;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zQ6vVLhKfs0npq6T/CCDFR1z9xriix4gqXPfUihkmJ4=;
-        b=V4eGwGiM/MJphg3IbJKSNck/zcZx5sppIsvngfAfkmIr5iC0EMzYNt71FU7nYyDRee
-         3CjbSE7INwiip1lZlIlQS+MpouT9/P2gcTfTCHiL7ogHVXQRO1DhbU3foEEChRYUJchb
-         U1kUZo8RveyAd5HW9y3BguyCdUrs4eINHecI1IfmA8/gqe00Ii+Go21ufuLAixgutSf8
-         rbPJDr77wvF2iCOif7bFfe/lwvwiSH/je56SuKmd6N3Gogs0UCfA5F3mKdq+PadaPzI3
-         ijpRynxZdZGfg3HwnQOO0ithC2BFoXltHHHO2vP2IL6apAS781qdKuaXdxxWNshvUJTf
-         rOPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzvY8SZnNoqpapbr9Q1xskLmvR0SKbieKsIIOJBc85eknSraPZU/g85wl78gi1olOOPLNmCd8c@vger.kernel.org, AJvYcCWAsEb1yBxWRrxJy2744btHdXOPbg1P752uZERg89E81rznlfhazpnTjN0kje+IPG09LkbajwNEOfMw9Yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys6645GHT+xRkh+RZiqiB23nJWf9oGeqMzcesN2Er9VuKzazOR
-	cPw8RPwMpEwGUoPU3SMCpqiQwxc0YYOZOPrTUrxMKCa+a/f2ak5Kw/uA
-X-Gm-Gg: ASbGncu6kC/Y9UVW/owACFy0Dsa1xhk5A4oYCHxMs6KJ0Ce8Ttnd3KIH1J2jaU81aQk
-	ID0vtuczg23+dqMT+rqvWEgi8qaYvoWSe/Qa7J2kXokcXcWznGGbI4IZ0dPqltIcJxCPZjqA5KL
-	/oM4IidtGWeo+nzpp0Pz1IflXz/kxXFXO1fDB7SI/KCBfptEPpAhmwKLRgCFbCqAk2PKirEgDf3
-	XwcFO7Jy+RzdvMjEfr5ekebIH+Jtwir9dxs6AhRGS+8vK03r6cXwLt8aNijij154geShLR/wROf
-	9e3NKuR6FGcNZ0+6tmrfvbpB9Pfz0q+YzCJeG9bjHMI0gtH0iIEzHp0vcKv3KkFYNBWU16MbLiU
-	D/hHPgwjKF6hnDdMsqkFBxe+MTXtP3Wolv4I=
-X-Google-Smtp-Source: AGHT+IHfWOXs/DQWPgcsYx/QQ97AdyzdjpEj41AjPGIMDl3KDPOv7Lr5iAfD6MZXLS+UtNQxmkt6GA==
-X-Received: by 2002:a05:600c:a00e:b0:43c:fe90:1279 with SMTP id 5b1f17b1804b1-45565ed62e0mr15833755e9.21.1752232507853;
-        Fri, 11 Jul 2025 04:15:07 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:4586:9b2f:cef2:6790])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc23cfsm4263566f8f.37.2025.07.11.04.15.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 04:15:07 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
- <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
- <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
- Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
- Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Randy
- Dunlap" <rdunlap@infradead.org>,  "Ruben Wauters" <rubenru09@aol.com>,
-  "Shuah Khan" <skhan@linuxfoundation.org>,  Jakub Kicinski
- <kuba@kernel.org>,  Simon Horman <horms@kernel.org>,
-  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
-  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
-  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
-Subject: Re: [PATCH v9 12/13] docs: parser_yaml.py: add support for line
- numbers from the parser
-In-Reply-To: <20250710195757.02e8844a@sal.lan>
-Date: Fri, 11 Jul 2025 10:51:37 +0100
-Message-ID: <m2ecun5a3a.fsf@gmail.com>
-References: <cover.1752076293.git.mchehab+huawei@kernel.org>
-	<3b18b30b1b50b01a014fd4b5a38423e529cde2fb.1752076293.git.mchehab+huawei@kernel.org>
-	<m2zfdc5ltn.fsf@gmail.com> <m2ms9c5din.fsf@gmail.com>
-	<20250710195757.02e8844a@sal.lan>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1752228813; c=relaxed/simple;
+	bh=ImKq2rn+4T7uQY59CuD2QZLaohTp66nHrgzJOoPpZlY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fqetfCr1lizxWb/6P8KvArxLsNkrG5hJHdV8nbM89OYLiamGam8S8n/2sWMNA7ZPDARXYzLMQuCNT/iH0ZrqJp4LBHqLVdP68V6uo/5WKZ9Jm8WSaoJC/bg/Bjzlp3OGUR/UbY4YAR7UHvF/SJDdgfvwMLBsGgLGIcFIDFWkVRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=xpqXM3qN reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=H0EjvsKf; arc=none smtp.client-ip=103.2.141.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1752229711; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-Id:Date:Subject:To:From:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=LWttc/saTpTqPkGokRytJGpWQYncHL0xmTev5i5twbU=; b=xpqXM3qNcttFGUbd6+dRVmN1oL
+	uegwSeKOZ38gJ3pFAet5b8DXbV7yJ084z4cXRpRcjc2lY9fhMxqRX8kdgnGkrGueF4eSM+LNVq2im
+	JvBTMVVeGy6r/dZ5E+v5pI09vzCy1GLwmiQ64PONqjVOt/wqyDbsdTz65ESdlnQXxqq7l4xYlP7Tn
+	exc+kAPj/4gU1iPp93ieb2eqm8vjwkIgY75oRmTtXabF7yrOWP8mkjkPgI6qxVkmn5t75ZZ0GW4SW
+	xiVv9KuK/Q0D7kw1W1g12U5DoWV7fZu8wn6ukns98N/W7puoYBHUOcX8N+WhEcF8n4wfkVVfVt3F1
+	bwQdBbhA==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1752228811; h=from : subject
+ : to : message-id : date;
+ bh=LWttc/saTpTqPkGokRytJGpWQYncHL0xmTev5i5twbU=;
+ b=H0EjvsKf94+mGN6NPkR1QQiVt3vu3fQkHA8CBN44PN57oaGW9QwlbtDmY8i/POvsu8Rih
+ QkF+fsZzdm+8phmlIUE3p6KHfHK8JuExOxDK+OzYaBCSAsFUxWBqBWu1Sysrmpz029nD3Rf
+ mwCfW1PYgCKg0/Lfwb5i5yKjqXfKz1Tqmtr6haE8nJJRAtp0+5XT6zHrfiXZiU8ZIBnvSrM
+ NmzsOZ/JzkiYTNIdEjLvsSzL6JyQd+xj7opTvpgfmngbzBqKZNcg8NjxHQtdMf25Nl2EsHm
+ Y/sqAGBer2Oxhat2RGGiqAjs4HwBus9fM8pvwBu9oPngpurJgisex+nwLHTA==
+Received: from [10.172.233.45] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1uaAku-TRk66u-B2; Fri, 11 Jul 2025 10:13:24 +0000
+Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.98.1-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1uaAku-AIkwcC8mMi3-Gz1i; Fri, 11 Jul 2025 10:13:24 +0000
+From: Remi Pommarel <repk@triplefau.lt>
+To: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+ Remi Pommarel <repk@triplefau.lt>
+Subject: [RFC PATCH v2 wireless-next 0/3] Allow non-MLD sta to roam between
+ MLD AP links
+Date: Fri, 11 Jul 2025 12:03:17 +0200
+Message-Id: <cover.1752225123.git.repk@triplefau.lt>
+X-Mailer: git-send-email 2.40.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Smtpcorp-Track: xASNJyEO5_C7.DK4d6Mtbhyor.X1fLuwI8FAC
+Feedback-ID: 510616m:510616apGKSTK:510616sr38dkfA4L
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+This serie aims to allow non-MLD sta to roam between same MLD AP links
+as if they were two BSSs belonging to the same ESS.
 
-> Em Thu, 10 Jul 2025 15:25:20 +0100
-> Donald Hunter <donald.hunter@gmail.com> escreveu:
->
->> Donald Hunter <donald.hunter@gmail.com> writes:
->> 
->> >>              # Parse message with RSTParser
->> >> -            for i, line in enumerate(msg.split('\n')):
->> >> -                result.append(line, document.current_source, i)
->> >> +            lineoffset = 0;
->> >> +            for line in msg.split('\n'):
->> >> +                match = self.re_lineno.match(line)
->> >> +                if match:
->> >> +                    lineoffset = int(match.group(1))
->> >> +                    continue
->> >> +
->> >> +                result.append(line, document.current_source, lineoffset)  
->> >
->> > I expect this would need to be source=document.current_source, offset=lineoffset  
->> 
->> Ignore that. I see it's not kwargs. It's just the issue below.
->> 
->> >>              rst_parser = RSTParser()
->> >>              rst_parser.parse('\n'.join(result), document)  
->> >
->> > But anyway this discards any line information by just concatenating the
->> > lines together again.  
->> 
->> Looks to me like there's no Parser() API that works with ViewList() so
->> it would be necessary to directly use the docutils RSTStateMachine() for
->> this approach to work.
->
-> It sounds so.
->
-> The enclosed patch seems to address it:
->
-> 	$ make cleandocs; make SPHINXDIRS="netlink/specs" htmldocs
-> 	...
-> 	Using alabaster theme
-> 	source directory: netlink/specs
-> 	Using Python kernel-doc
-> 	/new_devel/v4l/docs/Documentation/netlink/specs/rt-neigh.yaml:13: ERROR: Unknown directive type "bogus".
->
-> 	.. bogus:: [docutils]
->
-> Please notice that I added a hunk there to generate the error, just
-> to make easier to test - I'll drop it at the final version, and add
-> the proper reported-by/closes/... tags once you test it.
->
-> Regards,
-> Mauro
+The first issue is that when a non-MLD STA is connected to one MLD AP
+link all received management frames are reported to userland with the
+current associated link id even if STA sent those frames on one of the
+other links (e.g. offchannel probe request). Because hostapd relies on
+this link id information to select the proper link for answering those
+management frames, probe responses to offchannel requests are sent
+through the wrong link and the sta misses them.
 
-Awesome!
+To fix that, the first patch of this serie tries to match reported
+management frames link id with the received frequency. In case no
+suitable link is found, frames are reported without link information
+(link id == -1) and hostapd does the freq to link conversion to respond.
 
-Tested-by: Donald Hunter <donald.hunter@gmail.com>
+The second issue comes from the fact that hostapd queries a sta removal
+for the previous association even after the sta has successfully roamed
+to the new link, causing the current sta to be removed. To avoid that
+the second patch checks the sta removal link id parameter. If a link id
+is supplied and the sta is not currently using this link, this removal
+is ignored. An additionnal hostapd patch is needed so that a link id
+parameter is added with NL80211_CMD_DEL_STATION requests, and will be
+sent to hostapd mailing if it appears that this serie makes sense.
 
-Patch comments below.
+The third patch fixes the link id information initialization when tx
+frame with 802.11 HW offloading, this will be needed later to get sta
+roaming working with ath12k. An additionnal ath12k fix will also be
+provided in order to get non-MLD sta roaming working with this driver.
 
-> [PATCH RFC] sphinx: parser_yaml.py: preserve line numbers
->
-> Instead of converting viewlist to text, use it directly, if
-> docutils supports it.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
->
-> diff --git a/Documentation/netlink/specs/rt-neigh.yaml b/Documentation/netlink/specs/rt-neigh.yaml
-> index e9cba164e3d1..937d2563f151 100644
-> --- a/Documentation/netlink/specs/rt-neigh.yaml
-> +++ b/Documentation/netlink/specs/rt-neigh.yaml
-> @@ -11,6 +11,7 @@ doc:
->  definitions:
->    -
->      name: ndmsg
-> +    doc: ".. bogus::"
->      type: struct
->      members:
->        -
-> diff --git a/Documentation/sphinx/parser_yaml.py b/Documentation/sphinx/parser_yaml.py
-> index 1602b31f448e..2a2faaf759ef 100755
-> --- a/Documentation/sphinx/parser_yaml.py
-> +++ b/Documentation/sphinx/parser_yaml.py
-> @@ -11,7 +11,9 @@ import sys
->  
->  from pprint import pformat
->  
-> +from docutils import nodes, statemachine
+This serie along with the mentionned hostapd patch allowes a non-MLD
+STA to successfully roam between several MLD AP links with hwsim.
 
-nodes is not used
+--- 
+Changes v1 -> v2:
+   - Moving this serie as RFC. I am not fully satisfied with Patch 1/3
+     but can't find a leaner way to handle off channel mgmt frames.
 
->  from docutils.parsers.rst import Parser as RSTParser
+Remi Pommarel (3):
+  wifi: mac80211: Get link_id from freq for received management frame
+  wifi: mac80211: Correctly init MLO link in ieee80211_8023_xmit()
+  wifi: mac80211: Check link id at station removal
 
-This import is no longer needed
+ net/mac80211/cfg.c      |  3 ++-
+ net/mac80211/rx.c       | 41 ++++++++++++++++++++++++++++++++++++++++-
+ net/mac80211/sta_info.c |  7 ++++++-
+ net/mac80211/sta_info.h |  2 +-
+ net/mac80211/tx.c       |  2 ++
+ 5 files changed, 51 insertions(+), 4 deletions(-)
 
-> +from docutils.parsers.rst import states
->  from docutils.statemachine import ViewList
->  
->  from sphinx.util import logging
-> @@ -66,10 +68,24 @@ class YamlParser(Parser):
+--
+2.40.0
 
-I'm wondering if it makes much sense for this to inherit from Parser any
-more?
-
->  
->          result = ViewList()
->  
-> +        tab_width = 8
-> +
-> +        self.state_classes = states.state_classes
-> +        self.initial_state = 'Body'
-> +
-> +        self.statemachine = states.RSTStateMachine(
-> +              state_classes=self.state_classes,
-> +              initial_state=self.initial_state,
-> +              debug=document.reporter.debug_flag)
-
-I don't think 'self.' is needed for any of these. They can be local to
-the method. You could just inline states.state_classes and 'Body' into
-the parameter list.
-
-> +
->          try:
->              # Parse message with RSTParser
-
-Comment is out of date.
-
->              lineoffset = 0;
-
-Rogue semicolon
-
-> -            for line in msg.split('\n'):
-> +
-> +            lines = statemachine.string2lines(msg, tab_width,
-> +                                            convert_whitespace=True)
-> +
-> +            for line in lines:
->                  match = self.re_lineno.match(line)
->                  if match:
->                      lineoffset = int(match.group(1))
-> @@ -77,12 +93,7 @@ class YamlParser(Parser):
->  
->                  result.append(line, document.current_source, lineoffset)
->  
-> -            # Fix backward compatibility with docutils < 0.17.1
-> -            if "tab_width" not in vars(document.settings):
-> -                document.settings.tab_width = 8
-> -
-> -            rst_parser = RSTParser()
-> -            rst_parser.parse('\n'.join(result), document)
-> +            self.statemachine.run(result, document, inliner=None)
->  
->          except Exception as e:
-
-I think you could catch StateMachineError here.
-
->              document.reporter.error("YAML parsing error: %s" % pformat(e))
-
-Can you change this to an f"" string.
 
