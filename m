@@ -1,305 +1,262 @@
-Return-Path: <linux-kernel+bounces-728192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BBFEB02480
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:23:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA484B02481
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EF677AEC84
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:22:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61671892BB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC972F2C76;
-	Fri, 11 Jul 2025 19:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7751E0DE8;
+	Fri, 11 Jul 2025 19:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SO/yxq0/"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="avQ8EG+d";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="SEnCT/Yz"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACD51DE4E0
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752261800; cv=none; b=IZmVPNzYG1JtGJV78hkbr7y17Y3YsuwzF2gPCnBMx6gGtQQsvU49tp30iigWWkDUbG6X52V/8GjXYlBxnuga4DMG3HtnfZeZi8/HnT+pNC+rWUJ1qOmYIU3O5WEiOU0c9v+ZAjs8uN86f6Ar5AcmVphFPnfP+Jyc/tPr34x6pDE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752261800; c=relaxed/simple;
-	bh=CT8j4G71nN8Lnzk6rXI/vvQAsHcH1biWkLypZw72nnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XghvS27R7iSAT3O3/C5CY5Vr88z9Vd0uAfdvkGc5RxW0XW8OBkTVfIY5qG2UWNtuI/miH1MmvRO96gfx+6YcwQag+JotFuuX9iky1z6sXa/gF8D86tP3gl7XeTIPbgNY2uYuYzWUciR5mB+ok9T73NQWOrw9SUckep/Q4C0So2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SO/yxq0/; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2c6ed7efb1dso1534643fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:23:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3C01DE4E0
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752261834; cv=fail; b=HzfDiQr0E/+AczyTfrNRJ8GwWHbCI4wAZXGF4xaW9Kly+AcyKMuwn15TiCzC3I8t9gx7VtpTJLSxy1NLGF4CBg2gkEid38G1UjtNxkmRacTCvjiA/Vy9BaPeYqswMnIrLn16mpNYstxUG5jNANQ9c8168DpsczUxhKnNptexeWU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752261834; c=relaxed/simple;
+	bh=5tpb4hs8QquOGlOci2LKl6aaiC7sOe2w2CU5sE+yh+Y=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XBXgntG/nZrNmuVAn61yDUSt4flBiWZVdk6SGQ83G4qGsyoFqZWTkRfPbSIwninvCu/Vm99n8kOOJKEH/IFh5YoMd6dPUFT8i/63HgDrPaicVgbxiWgRHqoPd3CINQoJIDUTvPkpPWcuztaA6zbkGwj35NISJzE78FhsODv7IQk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=avQ8EG+d; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=SEnCT/Yz; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BIq5bI003779;
+	Fri, 11 Jul 2025 19:23:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=wO4bm5HBRYXKyMWNbBsZmtxayuONzIC54aQW0ZMDT40=; b=
+	avQ8EG+d/4OOmzYWfs/+oMwHX5GRxnrEj3gFRvny89kkedMbatzzaLCMGPoDgCmJ
+	DI229Nvmb6HMigsQykIOkwLjR1XajCLWTo4EPn82HyE6gK6/HATb5b7m/QV8Ch7n
+	cuAYQrumtGjSOPJ/kOcEzXskgTU7gzyiDbqTRdCNd/EbIUuy1LYXv9QOwsiJFX3O
+	8lPFiYRGVcJ03+oatpHtQMYvdcTf+fEXKAnC+nDAVOc0M3aOkbLF+Nw8wz0259vc
+	MVAsu5Vds5t9IIGMtUCzl0US7jgxDNIy6mWyqy3bNy5iN8byuxfRyga4qVBcZPVt
+	iYP7TB/H/Bu4+af9wugudg==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47u88x01rk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Jul 2025 19:23:32 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56BJFn2X013590;
+	Fri, 11 Jul 2025 19:23:31 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2062.outbound.protection.outlook.com [40.107.236.62])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ptger11k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Jul 2025 19:23:31 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=feqNFNUWznwmT3MgVIhiw8xfrBHspuc7Ou21m26Q86LLKy1A/UDqPrftSoc+q8rodG6juAZhcOW9T6i2YMSEQok4SAv6TjeTYp6e05PcrroRqb1BSgFo3oRJyRnid/5DIqiUp31H1FI+pDbcVOn+P+ANKXxe1KqavyKOxPeeWzSRe45aS/b+fi0x1XG4KFrmfUQUw6eHdDZH+jWHP+mkhft8npqSAXpwB6g4uouCz5RArUZdFRxqJOkZFHKTQK8xwY2aN5rFWHtK38ZV6D5jOPXLSQ33RsvyH4oZI15p9ab69rlzmPTD8sbKAzuZxm3NsecT9mEV0eM9i/YaAJlLhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wO4bm5HBRYXKyMWNbBsZmtxayuONzIC54aQW0ZMDT40=;
+ b=ykMs1zbEUGoPWyL7iqL/ERPV7ft3IXFxbm58mj9AXYOOvRZsvunLB01TE2afmbd2cTkDFyCXscDM4m9VzT+VpiC86r1wGPQS6YY8wo4T++sEJbhmE2F3SlWCyqY7PW2Z1lRh1mY+u8Ad7lLRO1zocjc1kGb2tTL0zCH2p5EpdvSXo1vZrbLm+ahOm9eJdHdDyVHIA91d02EemH2myRICVGy8yEOzvrh9SNIihsjLjiqeJK6u2+8aeC9mK0imiLZLd+H4RZ+fTcA/OHJJXoDNbv8FpOOvN4QH9+9pZDuvuUlH8ABxvsJaLbmDcCNu2a5kXYdoft9HDYiuU7o7iyhJDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752261796; x=1752866596; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xbQ4gjhcKf1FV36kcI6WczoSoNZh07OMTR5d0NMFKgo=;
-        b=SO/yxq0/FRnxLsWSB0dHlPrVIoH7rvokZ0CzCMznRyEWj/b/i7hfgImcY8V+8euTmT
-         nS2YBQ4Jj6ZtPo6j+NDOVsJPq057qNI4i0hE27Z+KYexi57+kWDB4XWm1VCY1qCOKNCy
-         49YFfbKEqkbQ0lVaU2LfZaRreGmGMQRNpGZJ32vNbSIVM78IesYYQvncddXFXyOJWPgU
-         4yF6g71RYm2BhiYL8O7xWxOs+DkAzJdwe/KfnwmsYSD7vY/Qhmi+BiokalCeSzRruX9x
-         NDVIZ+59ypj2R15B3vJF1BM/CJgofmiiVsOlDy7MiQrYwjA8Ir3AVQoBNlm8bHgq0mei
-         1DMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752261796; x=1752866596;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xbQ4gjhcKf1FV36kcI6WczoSoNZh07OMTR5d0NMFKgo=;
-        b=Q77ClOfvo3rEyRcILN3r0CpiB9ywlTPu5SkwsNkKjr7R6PVA1mFZUIJVFEQYccZxnM
-         H19b+d3n2nXg8rB9KaFMTXuWc3grxO2T6y6ZAkFXe6hBQCGZU9TLgpKwLow/Itdhsi+a
-         AUjW1Q6+QngWCfNgzsZLmdUryhnuDg3VHjEMB9CSjSorPQj0Rd8OxNZFkwkSg2nmNye2
-         HFtkwElYkK34GFfa+woOk6ihOha9qDUZtGfjJf9LFnXqj0jgxfvJcE57ddi6RZGXqLX/
-         srJuOCX573xTYQloo9Pz/NnEa4H40eouywmM0j/8jn4pJfitGWDpFJAUj4ugftxSmiUh
-         UfEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgY+9fMNvLL1jZNtOyQrEe8bzkKpXMlaAG0HtMOGNp98vYyu/c4GT26TVM44ItXoInwecJRLu4GKnuVn8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvDHkDRZL3aHwbaau1qWpopfnq/X2GBarqUOr0xXGjH3gvK29r
-	0k3fMkgSVkG3qXYPyzMHKQo3jJ1BRbaOABtGMsvP1gR4RohTc5VWdlF5BIg++smU/Mo=
-X-Gm-Gg: ASbGncuK1WPheNXn978fms2eqNlFHa8bAcppuJX6k9B0Dtbpp+VIkrqFIOa7JywA0Uq
-	6R/LSX7QR78bSxC0W/lXU0u+mHOLEfoyETlCx1O8UmRJUGtX8OBlo7JUk4kfF3q4RjWpYNIpkD9
-	sQWHX74o4h+8tT3mTgYvwGkSNBpIg31JrXjXAkVIIbXnLQYg2hZdKBEcxpVptTK2Ll9VY36JHFx
-	rHOlWVsZN45sn2oB65HbMhsvWPE6M6J4/zKeKHNNem+dLyvhhS9qNDxglBCdS6j/+Ozarbr1YXS
-	vJbZd8bK6slmzPk8orJpvKoEhZl60PnxDc9qB9fosw93MccScD5Vj7BVnx4NFinGulAJtm/3F+j
-	AN4UZ7aWlpiZ0sHcuvSV17Yd3XQByM3c9BY0H9HjVBpvsbXUt/LiryV635mE0rxVti2Sv14Sj5O
-	rrv090K/+71g==
-X-Google-Smtp-Source: AGHT+IHJJG1pjfMfHbXCiP2mYhrjtaG+ds4ATps3yE0wgdEBzivun4Aw8g8ipsQFhpaLwTypjmt8jw==
-X-Received: by 2002:a05:6871:3518:b0:29e:69a9:8311 with SMTP id 586e51a60fabf-2ff27099808mr3221078fac.36.1752261796031;
-        Fri, 11 Jul 2025 12:23:16 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:4601:15f9:b923:d487? ([2600:8803:e7e4:1d00:4601:15f9:b923:d487])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff116d3550sm846917fac.34.2025.07.11.12.23.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 12:23:14 -0700 (PDT)
-Message-ID: <1ead013c-56ef-4f11-afb9-2b11e0de7eb2@baylibre.com>
-Date: Fri, 11 Jul 2025 14:23:14 -0500
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wO4bm5HBRYXKyMWNbBsZmtxayuONzIC54aQW0ZMDT40=;
+ b=SEnCT/Yzn3CrQmnJUK1+e1U1Z8tudn2kut4Tws7VwU57cQ93q38B1Y4UqUISewhMX88J4Bv9AHpDI1o10C2pGFnRtRDmJBFiD9pzz/NPxv6vk9WCa9PaKCIVaYXe9nDpXrTkHXN1qsp4U3/TvAcXs5SofJ+bmfFNbG43PIVMyZw=
+Received: from PH3PPF517B7003F.namprd10.prod.outlook.com
+ (2603:10b6:518:1::79d) by DS0PR10MB8053.namprd10.prod.outlook.com
+ (2603:10b6:8:1f3::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Fri, 11 Jul
+ 2025 19:23:29 +0000
+Received: from PH3PPF517B7003F.namprd10.prod.outlook.com
+ ([fe80::943c:5ede:5076:73d4]) by PH3PPF517B7003F.namprd10.prod.outlook.com
+ ([fe80::943c:5ede:5076:73d4%6]) with mapi id 15.20.8922.025; Fri, 11 Jul 2025
+ 19:23:29 +0000
+Message-ID: <e7b79c66-22b4-4d01-be5f-adfc5ba7e50b@oracle.com>
+Date: Fri, 11 Jul 2025 14:23:27 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Jfs-discussion] [PATCH] jfs: upper bound check of tree index in
+ dbAllocAG
+To: Arnaud Lecomte <contact@arnaud-lcm.com>, Dave Kleikamp <shaggy@kernel.org>
+Cc: jfs-discussion@lists.sourceforge.net,
+        syzbot+cffd18309153948f3c3e@syzkaller.appspotmail.com,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+References: <20250424-ubsan-jfs-v1-1-2eab57c1ac50@arnaud-lcm.com>
+Content-Language: en-US
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+In-Reply-To: <20250424-ubsan-jfs-v1-1-2eab57c1ac50@arnaud-lcm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH2PR11CA0013.namprd11.prod.outlook.com
+ (2603:10b6:610:54::23) To PH3PPF517B7003F.namprd10.prod.outlook.com
+ (2603:10b6:518:1::79d)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] iio: add power and energy measurement modifiers
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250711130241.159143-1-antoniu.miclaus@analog.com>
- <20250711130241.159143-2-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250711130241.159143-2-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH3PPF517B7003F:EE_|DS0PR10MB8053:EE_
+X-MS-Office365-Filtering-Correlation-Id: 56b64f14-5df2-4ac7-a4cd-08ddc0b06ad6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d0lNUm1vRU53aVRMUUZLM2NsR0ZyWkc5SnNaeFk3WnMxWVJ1Y21lOTEvY2ZK?=
+ =?utf-8?B?dWdLaElPT1lWNUtWRDRSNG1MendBWWRjb1ZUazl0ZnMrdnQ1d0F1RHNmeTJn?=
+ =?utf-8?B?RlNYNEx4OFlxaGJXQTFWbE5SbW92Y1pKNVplcjZwL3pvQjVPbG44cFlQd3pV?=
+ =?utf-8?B?UXUwTmxYUms2djRlUEtnR2R3ZjJRZXQ5NXJ2UkQ1NVNGUWE5SzdRM0VLT1NN?=
+ =?utf-8?B?aWhvRnVLcjdTNEpYTFlrVkx0Sm5YV0NhTmVBUi83SEdodnVoM2tiMFV5eUh3?=
+ =?utf-8?B?ZGx0V1JJa1YrTG1ISDFPOHB0WmUwaERZQkRBZ0pMeEtJb3FsLzZ5RlZYREZ6?=
+ =?utf-8?B?TVpvcHZqM0tYaEdhMlg2QkZtT3Y0WHFycTY4cTl6NnM1c2xyZDZFZEIrM1lV?=
+ =?utf-8?B?d1ZnU3IxY0FhMmh3UHpRelJnWkswSi9FNG9JN2xpTStyaGdPbDN1MFcreGYx?=
+ =?utf-8?B?MDNLUW1uTDhzSElVN2VNWHBBMmZ3WVdoY1oxZDNKR2dxQVQ5V0k3cjNocUdv?=
+ =?utf-8?B?UVo1WEpVQnV5bExtT0R0MEl4R0E0NUx5akc0MDBwNHNrTWU1U2lzWkN2Z0ox?=
+ =?utf-8?B?bktVaW5GcDg3L3RMZFBEaVYrQTN3dUQvS0N6WmRlVWNaeDYwS0FhNkNFYkZv?=
+ =?utf-8?B?U0FRUVduRkZNQm9aRUVXRFdSY3dabmFjRENJYUJ4bFhzUWNwZ3RCZTJ4aVlM?=
+ =?utf-8?B?VHgzdlVWOHY2VWhCZmFIb0pmTDJqYkNTaEhuZm1pakdqUUxjRFJteEJYRzcy?=
+ =?utf-8?B?NEpFREVidUc3UTY2TFlyOWZEeWFBVjM1T2QrQzF2RDRMQURSTkVRMkhScU1R?=
+ =?utf-8?B?ODdXbjRtNGFxN2U2M2xIMk1VVVNhT1grOHZvT3haMU0zVDdpUkQ2MzlrQkN5?=
+ =?utf-8?B?Rk1pSDhzMDZFNkZodkhScVd1d1VhdCsxRUZIK0lGRXlXMzI0cWRxMkxqREdM?=
+ =?utf-8?B?VGFra0VmbXlJL3hhUVdqN0QrWHNEN3ZPemxielc0N21pWG5qcFBWcFhwM2Zy?=
+ =?utf-8?B?ZGJpV1dBbHJPZ1NpYk5SYm5EUmd5MXdUNUtGUUhWeE1nZ2F2cEFXcU85eTFu?=
+ =?utf-8?B?SHlBcTFtNElKODU2OC9HWm5ubjRzVXg1ekw3VmRGbXNwTndJdnBPWDBmNi9M?=
+ =?utf-8?B?QXBkSEJLM1E4ejdkZlJRQnFKSmFGNXBvT3FFc25qTDlmekdyMHNjdHowS0VH?=
+ =?utf-8?B?a0I4eHU5ZDJaRXJNZHVFdU4xWTE1VGEyemwrcXk2ZEdteUF6Nyt3NnhtQVJI?=
+ =?utf-8?B?bmNLTnlDMkZnYmVLMCtmd3JxS2J3MUZNaHhVUzRQNFBvaUxLZjZDU3E4Qmty?=
+ =?utf-8?B?c3F6NWcwb1VjZXFKanJhUy9NYjliN0xhaHU1dzdmZVNQK1VtYVdsNXRaeUU2?=
+ =?utf-8?B?eW9JUk1jRWpuNVE4MHFGclZsOW1BWm1MNS9abXAydnQwTlhoZm5DYkRzVFMr?=
+ =?utf-8?B?eGJ5dU5rc1dQUEdZUzA0MG43Z2ZQdXBjR2luTXpWVUkraFhBR3V1cmlIeG82?=
+ =?utf-8?B?OC9id3FYMXVKVTA4azZybFRUV1pwQnM1M0xKQXd3YVdDNVBmS3IweEwzZ2hx?=
+ =?utf-8?B?NkcrUWtVWCs4VllOVXl4TVZPK3l6ZmFuRFZYZUQ4OVlTYnpVMy9USlFqQjhh?=
+ =?utf-8?B?Qk5UQUpHN21DTy90ZEJoM3plV3BGVlNIN1JyOU4vaENDL0pVTlpUMHJvT1A0?=
+ =?utf-8?B?RHNONzJNRVZWTHZNVjVHR0g2TXExeEg2ZkxObXdoSGFrQWhSU1BWV1JsUzJ4?=
+ =?utf-8?B?Ulord09wMkhrajA5SVRlYk5Fdlg0ZHVEOWxvR0pPbmNzSWU1dDd0UWt3aTRJ?=
+ =?utf-8?Q?rhQ7bPCS1r96c4CbfIrIfQEu5tOmDHABd9RPU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF517B7003F.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TCtzNWZCS0JYdnphUDF2c2VtYjB0RFJVejQ5eXNjanNnVkluUEs2d2NvNVdP?=
+ =?utf-8?B?RWg5MFhIU09kaWtCRitQUWlLSGh2RlRQNzJWZm1nSXlIZmgwNnQ2bjIrUk1H?=
+ =?utf-8?B?ZGVSUTArVDRya0NSUWRkVDVha1JaVnVTeExzQzRUU2pnbTdYbmk3V3lRbzFB?=
+ =?utf-8?B?bHFMT2NycUNoTlZLVXNhRExaV3B6UHVQVFNwQXBBRyt0Zkh2ZDMzcE12OGNV?=
+ =?utf-8?B?bG1keXlyLy9NWGNGaks4NFdYdVFPc0xIY0NGMlZFSVFzcHRGSlVYYWcyUk5E?=
+ =?utf-8?B?TE1VdlJsSXUzaTFqU2tpZkFLanl4bHhVNVQyVkVEUEdITWxuTS9xZ1RESEVq?=
+ =?utf-8?B?Q2Jwd002WWJBTURBWEVrQzFqZUZ1SWRadDR2Wktqd3M4K3lKbWRLbzdSNGRB?=
+ =?utf-8?B?c1NYRUVodWVmNFZVTGNIdXZCeDEvZHlwVVB5b09jWmZVbTJjVTFPQmh3d1hK?=
+ =?utf-8?B?L1dncmxCODZGVnFOUzZRZjBPb3VZZ1BReUI5WTZYazhqNkJEZXdnTm4rUHlr?=
+ =?utf-8?B?SXlCSmxFWWZoWUhoYnFaT29HTE9McHc5WFptN2NWMjFmQi9jK2tlSHdpQWgy?=
+ =?utf-8?B?YlhrQW5EMnRqUVNOclNITmdTSFcwWEJtcFgvamhOeHNDQVk0Qzl1MnJhVGVs?=
+ =?utf-8?B?RlJPQVRyNWxzRld5MjEvZ29ncXh5aUNPMTJDVVQzcXRub3RFYTRpTUNhbkpY?=
+ =?utf-8?B?akNwcUVkVHlpaHVmckxXNEREVGVxbVMzOHlUZ2RpU3UvZTlQZERqdGIrdVlz?=
+ =?utf-8?B?dnY3NTg4VDY0WXBUK0l0eFBuZ24zOEZ0TTN1U3h3V1F2dysxM1duV2wrT1Zy?=
+ =?utf-8?B?N2Zid2M3R1hZQzM3MUtwNi9BeEM0M0R4SkxraFAvbzhacVBXajQ1ZU40TG8z?=
+ =?utf-8?B?UXF6UUtpR054b0EyVjVXQm5FMmtjS3RmNVJ4aUJNSTBhV0hCNFdpWGJCUWJs?=
+ =?utf-8?B?RGJsN25yZDcwbHlSdjlGV3VEMnV3T2VTRmg2N2lVV3d4NlRSM0g0bWxyZlRq?=
+ =?utf-8?B?TXUzbWtpaUVTcjA0N0tZNVgrcjNTUlhiam0xK1FYRExlMGprZ2I4S0VOeGxL?=
+ =?utf-8?B?N2VBa29vbFUvZWh6emxuWjNPeDBMYVp5MnhEcWxTQS9CNWdNbzVERktPVkpw?=
+ =?utf-8?B?TFNENFZIcnZJNGFaMDZzYnVnbVZTN3U5MUZwSCs1eXJDcXlRS0p5T2t3bUxo?=
+ =?utf-8?B?RGhYYVA4R1JNMkRMVGZJZks1Q1NGWGozZTBMZzF5ZmwwMjJrV1VSU0Rwcm9u?=
+ =?utf-8?B?QS9CeU5yWWttelFMZEVDalQ3Wnh0NnVCWkNjRWd2VXhCSW5uZW8vVERiSGU1?=
+ =?utf-8?B?ZjM4d010K1ZFVnFibUFtdjR1dWErcjVYTkJubVlySWhPMFFoeUhkelJyTENO?=
+ =?utf-8?B?SEZRazZ2Nis2MUF5eUlES0lPMno5L1Q4cmpqU2xDMHFhdjRuTjNnR1BOWXpi?=
+ =?utf-8?B?dnRubTM4TUFSVWxJMUtCOVVTVjBZdFNHQ0hNRlg3K05TaWkrVk9NRDNLKzdP?=
+ =?utf-8?B?cjQrNmNaaU0zb0lDVi9DNy9nL3Nma1JabG4wM2JJNkVPa01vQUpBMk5vcnpy?=
+ =?utf-8?B?WGVsRkxoNGFweVVGc0RoeTA2N2xLOW1ndFZuTUJyUGNuL1NrUnpaUndaSCty?=
+ =?utf-8?B?SnJWT1grRS95U0hML1c2QWZKcEttYXdyOHhRMlhsM2RFNlUzS21INS9hdDZ1?=
+ =?utf-8?B?clZaNS9ZZjlISFJrNm1ZNW1WUDFMV0Y0SEJGUGhkQkE2QjBuN1NkSExLWito?=
+ =?utf-8?B?Qi9aYTVOMFV3UVFoNnYzaXRWMVB2UmxZRWtpeXlPMHdVcmxLK2VnSEUrV0t3?=
+ =?utf-8?B?U2piNkxBT2JzWE1BZmxNcjhkb0tTZFdBK2l1VEFYSU1IUHFCNXJxbUlySGhy?=
+ =?utf-8?B?U0RNOEdWODE4ZFJ4c3dYZnFZT2xGUjlPdW5rSndKVkk3bTlzZ2J0Zi9TZWQr?=
+ =?utf-8?B?VEN3NllvUjR6dUJ0TzlIZHpKcVBTN1Zab0MzUFRma1FReUxGRGtxUWFFcTBU?=
+ =?utf-8?B?MlBvRFFmYjlZMU5KY2JweTAvUGhQNWQydnNnNWtkWkZid0ZzdDdMY0tPa1hh?=
+ =?utf-8?B?YWh0YitqSVl0NFNaMTMvelpIdGhYc3FpOE5YQ1ZzOVhUaVpPNit3QlYvSXpB?=
+ =?utf-8?B?bXAzVDB4UCttUXdXbTdJZFZGN2lKWGdtQkRhZmlwMWUrdGxycXhQVmJIbERv?=
+ =?utf-8?B?eGc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	3UGALXttvyKjQSMo7dUzMl2WhrtjpufG/dyK2Qrf+2rE40xKP5WgyJMzJdugMrV7YtKiZSdllaO4TS7vm8ewN1s3TyoU1Yw6TDrGfGE04rGJKqJ7giTbldXbmJBc5ABmR4ZOjUz8/ZlVqg1wc8HX2xmttIXU2o929ieN1MXFxr1p+OSwvm+CplQiYiQn+aJakBlIa6rUsxiSSlXaejRFMTy3XWvAjkvSDjPLUMEAPhkIb1OshjWCFspTivIrsWoeZN6cdb0r8Z4uqwJf/0XddQFNEDLTsxit4q7RZVeQj8LRk7TAqAjNaT4pR4m23xL9imHdAyUuev8PHxQ8UIQoaIqvzoZLaS9KgfBsaOdEWiV+GnhTbUVorMcj6qYhHpIZAvPJxFLXkBUDQG9tDGkM3HS8pN+CI8gULHzPtm8BGaZqtQs1KMtnGvXgHhCoTqIO14ZZPsHs/BdNYiRAPOXGpUCUTWs9vl2nX+vylpbylvcX6DomNwp+LK4SEzMT3TYTF/7JGFXbzIjEr3D6nWnwk9p8iFZg9xCy14tNl0EmCFc/TlXTF6X7WJBpDvifqVXU4yd7ufsjVgFwa8XAmDHAhY91zuTTz+LZId3CpHv/X7o=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56b64f14-5df2-4ac7-a4cd-08ddc0b06ad6
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPF517B7003F.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 19:23:29.7543
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DvKeUoMiyCr8bcqNqtGx2PwuSWhd1DXhzlZxI3B5KOBg0AbiY1hf2pzLLLcRqUTx/Rb71/nJBwvJkJmRrWiYKKDNhtYWYt57MiAaD48oAJQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB8053
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_05,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507110144
+X-Authority-Analysis: v=2.4 cv=BYbY0qt2 c=1 sm=1 tr=0 ts=687164b5 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=WWoXvQQ0AAAA:8 a=XdHHFyE6wWtMDUGmxncA:9 a=QEXdDO2ut3YA:10 a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22
+ a=jSEAb1kaveHxcfb6UDw8:22 cc=ntf awl=host:13600
+X-Proofpoint-GUID: gJMofpak9O-B45JT-LcMeSL7SWW6Mg8q
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDE0NCBTYWx0ZWRfX8VdnPMbVKgeM gWGMHagbdCQ8vnka+zP0sccw9boa75+d26WA2BYjXEzPN7zppnLECcN2CTMczRo4JSRKK4yXStD YSH6H6DRxrg95c46g26ZohoCoAqxTI3yGFtDwEDRqd6Nntq5ofUzlNcLWR17Q1OnAieT+Z3ogWO
+ SYk7BpwhN+X4QsKcfeytXP2FyUl2AM5WOFEKHzmfVIGySDzWWAD3sTT2U4XqK/g1Yk1ATx+WtCG b5zaCNhRh5RYOWfqyeX+NYshZPcHu1InD2ybL+EeuIZl7bqSRvu7rHsxHcA7PKQa5Ti8R1UHBcC K7Bdj0weqlyeEfdAi+dzRL2ahKTwXNxQWXp0Q4PF5+TZSan5fdYRZVJZutv3LOYDa2LJapkLt7d
+ 8PXAjQyE91s8/gk3b+JWRcKjuXyuRrM/fRdxgFmTd03RBqW8Vhgs3ZPqc/eaIiAPRiw8cSzC
+X-Proofpoint-ORIG-GUID: gJMofpak9O-B45JT-LcMeSL7SWW6Mg8q
 
-On 7/11/25 8:02 AM, Antoniu Miclaus wrote:
-> Add new IIO modifiers to support power and energy measurement devices:
+I'm finally trying to catch up.
+
+On 4/23/25 5:13PM, Arnaud Lecomte via Jfs-discussion wrote:
+> When computing the tree index in dbAllocAG, we never check we are not
+> out of bounds from the size of the stree.
+> This could happen in a scenario where the filesystem metadata are
+> corrupted.
+
+Looks good. I'll apply and test this.
+
 > 
-> Power modifiers:
-> - IIO_MOD_ACTIVE: Real power consumed by the load
-> - IIO_MOD_REACTIVE: Power that oscillates between source and load
-> - IIO_MOD_APPARENT: Magnitude of complex power
+> Reported-by: syzbot+cffd18309153948f3c3e@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=cffd18309153948f3c3e
+> Tested-by: syzbot+cffd18309153948f3c3e@syzkaller.appspotmail.com
+> Fixes: 263e55949d89 ("x86/cpu/amd: Fix workaround for erratum 1054")
 
-These make sense a modifiers since they are components of a single
-measured value.
+Removing the Fixes: line. This doesn't make sense.
 
-> - IIO_MOD_FUND_REACTIVE: Reactive power at fundamental frequency
-
-This one seems like there should just be a separate channel
-with IIO_POWER + IIO_MOD_REACTIVE since it is measuring a different
-value.
-
-> - IIO_MOD_FACTOR: Power factor (ratio of active to apparent power)
-
-Power factor seems like it should be a IIO_CHAN_INFO_ rather than
-IIO_MOD_. It is also unitless, so doesn't make sense to be part
-of power_raw which would imply that it shuold be converted to Watts.
-
-> 
-> Energy modifiers:
-> - IIO_MOD_ACTIVE_ACCUM: Accumulated active energy
-> - IIO_MOD_APPARENT_ACCUM: Accumulated apparent energy
-> - IIO_MOD_REACTIVE_ACCUM: Accumulated reactive energy
-
-As below, this one seems like there should be a separate
-energy channel for accumulated energy.
-
-> 
-> Signal quality modifiers:
-> - IIO_MOD_RMS: Root Mean Square value
-
-Suprised we don't have something like this already. altvoltageY isn't
-clear about if the value is peak-to-peak or RMS.
-
-> - IIO_MOD_SWELL: Voltage swell detection
-> - IIO_MOD_DIP: Voltage dip (sag) detection
-
-These sound like events, not modifiers.
-
-> 
-> These modifiers enable proper representation of power measurement
-> devices like energy meters and power analyzers.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
 > ---
->  Documentation/ABI/testing/sysfs-bus-iio | 19 +++++++++++++++++++
->  drivers/iio/industrialio-core.c         | 11 +++++++++++
->  include/uapi/linux/iio/types.h          | 11 +++++++++++
->  3 files changed, 41 insertions(+)
+>   fs/jfs/jfs_dmap.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-> index 3bc386995fb6..d5c227c03589 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-iio
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> @@ -143,6 +143,9 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_raw
->  What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_supply_raw
->  What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_i_raw
->  What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_q_raw
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_rms_raw
-
-This should be on altvoltage, not voltage.
-
-Also, the exisiting i and q are wrong for the same reason.
-
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_swell_raw
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_dip_raw
->  KernelVersion:	2.6.35
->  Contact:	linux-iio@vger.kernel.org
->  Description:
-> @@ -158,6 +161,7 @@ Description:
->  		component of the signal while the 'q' channel contains the quadrature
->  		component.
->  
+> diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+> index 26e89d0c69b6..7acebb9a21b0 100644
+> --- a/fs/jfs/jfs_dmap.c
+> +++ b/fs/jfs/jfs_dmap.c
+> @@ -1385,6 +1385,12 @@ dbAllocAG(struct bmap * bmp, int agno, s64 nblocks, int l2nb, s64 * results)
+>   	    (1 << (L2LPERCTL - (bmp->db_agheight << 1))) / bmp->db_agwidth;
+>   	ti = bmp->db_agstart + bmp->db_agwidth * (agno & (agperlev - 1));
+>   
+> +	if (ti < 0 || ti >= le32_to_cpu(dcp->nleafs)) {
+> +		jfs_error(bmp->db_ipbmap->i_sb, "Corrupt dmapctl page: ti out of bounds\n");
+> +		release_metapage(mp);
+> +		return -EIO;
+> +	}
 > +
->  What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY-voltageZ_raw
->  KernelVersion:	2.6.35
->  Contact:	linux-iio@vger.kernel.org
-> @@ -170,6 +174,11 @@ Description:
->  		of scale and offset are millivolts.
->  
->  What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_raw
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_active_raw
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_reactive_raw
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_apparent_raw
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_fund_reactive_raw
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_factor_raw
-
-As above, power factor doesn't have units of watts so doesn't belong here.
-
->  KernelVersion:	4.5
->  Contact:	linux-iio@vger.kernel.org
->  Description:
-> @@ -178,6 +187,7 @@ Description:
->  		unique to allow association with event codes. Units after
->  		application of scale and offset are milliwatts.
->  
-> +
->  What:		/sys/bus/iio/devices/iio:deviceX/in_capacitanceY_raw
->  KernelVersion:	3.2
->  Contact:	linux-iio@vger.kernel.org
-> @@ -1593,6 +1603,12 @@ Description:
->  
->  What:		/sys/.../iio:deviceX/in_energy_input
->  What:		/sys/.../iio:deviceX/in_energy_raw
-> +What:		/sys/.../iio:deviceX/in_energyY_active_raw
-> +What:		/sys/.../iio:deviceX/in_energyY_reactive_raw
-> +What:		/sys/.../iio:deviceX/in_energyY_apparent_raw
-> +What:		/sys/.../iio:deviceX/in_energyY_active_accum_raw
-> +What:		/sys/.../iio:deviceX/in_energyY_reactive_accum_raw
-> +What:		/sys/.../iio:deviceX/in_energyY_apparent_accum_raw
-
-I think the accumulated would just be a separate channel, not a modifier.
-
->  KernelVersion:	4.0
->  Contact:	linux-iio@vger.kernel.org
->  Description:
-> @@ -1600,6 +1616,7 @@ Description:
->  		device (e.g.: human activity sensors report energy burnt by the
->  		user). Units after application of scale are Joules.
->  
-> +
-
-Stray blank line.
-
->  What:		/sys/.../iio:deviceX/in_distance_input
->  What:		/sys/.../iio:deviceX/in_distance_raw
->  KernelVersion:	4.0
-> @@ -1718,6 +1735,7 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_raw
->  What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_supply_raw
->  What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_i_raw
->  What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_q_raw
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_rms_raw
-
-Interesting that we don't have altcurrent like we do altvoltage.
-
-And there don't appeary to be any users of i and q modifiers on current
-so that can be dropped.
-
->  KernelVersion:	3.17
->  Contact:	linux-iio@vger.kernel.org
->  Description:
-> @@ -1733,6 +1751,7 @@ Description:
->  		component of the signal while the 'q' channel contains the quadrature
->  		component.
->  
-> +
-
-Stray blank line.
-
->  What:		/sys/.../iio:deviceX/in_energy_en
->  What:		/sys/.../iio:deviceX/in_distance_en
->  What:		/sys/.../iio:deviceX/in_velocity_sqrt(x^2+y^2+z^2)_en
-> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> index f13c3aa470d7..daf486cbe0bd 100644
-> --- a/drivers/iio/industrialio-core.c
-> +++ b/drivers/iio/industrialio-core.c
-> @@ -152,6 +152,17 @@ static const char * const iio_modifier_names[] = {
->  	[IIO_MOD_PITCH] = "pitch",
->  	[IIO_MOD_YAW] = "yaw",
->  	[IIO_MOD_ROLL] = "roll",
-> +	[IIO_MOD_RMS] = "rms",
-> +	[IIO_MOD_ACTIVE] = "active",
-> +	[IIO_MOD_REACTIVE] = "reactive",
-> +	[IIO_MOD_APPARENT] = "apparent",
-> +	[IIO_MOD_FUND_REACTIVE] = "fund_reactive",
-> +	[IIO_MOD_FACTOR] = "factor",
-> +	[IIO_MOD_ACTIVE_ACCUM] = "active_accum",
-> +	[IIO_MOD_APPARENT_ACCUM] = "apparent_accum",
-> +	[IIO_MOD_REACTIVE_ACCUM] = "reactive_accum",
-
-If we end up keeping any of the two-word modifiers, the actual string
-needs to omit the "_". The readability isn't so great, but it makes it
-much easier to machine parse if we can assume the modifier is always
-"oneword".
-
-> +	[IIO_MOD_SWELL] = "swell",
-> +	[IIO_MOD_DIP] = "dip",
->  };
->  
->  /* relies on pairs of these shared then separate */
-> diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
-> index 3eb0821af7a4..9e05bbddcbe2 100644
-> --- a/include/uapi/linux/iio/types.h
-> +++ b/include/uapi/linux/iio/types.h
-> @@ -108,6 +108,17 @@ enum iio_modifier {
->  	IIO_MOD_ROLL,
->  	IIO_MOD_LIGHT_UVA,
->  	IIO_MOD_LIGHT_UVB,
-> +	IIO_MOD_RMS,
-> +	IIO_MOD_ACTIVE,
-> +	IIO_MOD_REACTIVE,
-> +	IIO_MOD_APPARENT,
-> +	IIO_MOD_FUND_REACTIVE,
-> +	IIO_MOD_FACTOR,
-> +	IIO_MOD_ACTIVE_ACCUM,
-> +	IIO_MOD_APPARENT_ACCUM,
-> +	IIO_MOD_REACTIVE_ACCUM,
-> +	IIO_MOD_SWELL,
-> +	IIO_MOD_DIP,
->  };
->  
->  enum iio_event_type {
+>   	/* dmap control page trees fan-out by 4 and a single allocation
+>   	 * group may be described by 1 or 2 subtrees within the ag level
+>   	 * dmap control page, depending upon the ag size. examine the ag's
+> 
+> ---
+> base-commit: 8560697b23dc2f405cb463af2b17256a9888129d
+> change-id: 20250423-ubsan-jfs-3a58acae5e57
+> 
+> Best regards,
 
 
