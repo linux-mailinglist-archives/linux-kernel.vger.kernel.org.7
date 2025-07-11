@@ -1,111 +1,104 @@
-Return-Path: <linux-kernel+bounces-726952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9C8B01358
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:12:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B46AB0135B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459131CA1010
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:12:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A133A3B873F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC78F1D5AB5;
-	Fri, 11 Jul 2025 06:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0B91D618E;
+	Fri, 11 Jul 2025 06:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="PwNmVTE9"
-Received: from r3-22.sinamail.sina.com.cn (r3-22.sinamail.sina.com.cn [202.108.3.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/kBexQq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA26944F
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9611A944F;
+	Fri, 11 Jul 2025 06:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752214325; cv=none; b=CD6DzCssZshRiCkYP95JabtEeyVLa50o+N/UXICY2D+OfSJKGCT+wzBjP/xRYFc3T25BzdW60iPWPH0BT6GBuAeHiRaIted85DNw9z8k2G/z/AvGcHps1KL8gQGslBsY3QbOrwT2tNfN3+Bpl4CCb6runK12QR5GoZgQoVZOZVc=
+	t=1752214441; cv=none; b=HAeWEJ4sEIFfbNDGuNod4D1dCwTEsof5xscIJXCm/l5zPq4rRg04uIUTTar6aH2QiCiBhRlMCGAhZCcxhOFDDjHxVaRLrp99Ypqrkfc/BmzcIr4c8MMLThu2PcWyWYu3J+5Uc2satgl2OSQgZVOfYukR+VG69S+Rnvpoe93l6eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752214325; c=relaxed/simple;
-	bh=cauHnPV1F2TEV1cB3oL211Ehy7VwBXAjO04HXibOA5M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Sj7O4rR2vDNcu66hZpg9Z1Y9xn8F8CVO/aRhwe3qA1wkgK7b8UjsF2Xl3ryRYsgEtCl/U2byvTh0xIN1Y9NwYN6ehKgHYW+eYJpXBOiWAFLM+CeeQtbtCc5L7562I7fHd9HCHqkETG0fhEeH7SxURBAma7X3F2rWtHqEZXYseGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=PwNmVTE9; arc=none smtp.client-ip=202.108.3.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752214320;
-	bh=vgsM/uAE7S7vGyAx1tHmf5yQrhOM0rQBf3nNoAAkiMs=;
-	h=From:Subject:Date:Message-ID;
-	b=PwNmVTE9Tv9XgIKXnXwoQIsLHC1+4GqtcXxXo8SXqaaML0OgMIm/uz1OdotXSnA6V
-	 SqpoGiQyar2S+xwa3tl2DCg/sFJU5mvQffb5mzhv0sXZ+CRum/VBw2E1c8C9S/9Km4
-	 FAnhkD5fob81sPEjsu7ZkiCFpSz/GPLo5bMogbEs=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 6870AB2B0000223F; Fri, 11 Jul 2025 14:11:57 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5184246685183
-X-SMAIL-UIID: 3DDEEA9E8441489294A32A9706BA9096-20250711-141157-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
-Date: Fri, 11 Jul 2025 14:11:45 +0800
-Message-ID: <20250711061146.3438-1-hdanton@sina.com>
-In-Reply-To: <686d9b50.050a0220.1ffab7.0020.GAE@google.com>
-References: 
+	s=arc-20240116; t=1752214441; c=relaxed/simple;
+	bh=pxyh/DkUib7pi6dop/it5OeNrxrB04KysXzdojBfGgo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=J25uCcFBi5GnsMHfwg0B/IRvjOLrL71ACFhs/9ctpV8ms8NTX1g1VqSF571TQ6GS0C9hgTmYap+dnmAV+YGTLO7Q7qxusxsdRG9ZJZkKEjxCY8p4yN4EH204CNBhXzY2JwPOTSRDke8gR+XE0pa8JH3EMcqsjMsJ7JNNyNgMonM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/kBexQq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88B9CC4CEED;
+	Fri, 11 Jul 2025 06:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752214441;
+	bh=pxyh/DkUib7pi6dop/it5OeNrxrB04KysXzdojBfGgo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Y/kBexQq3sDwqRDLwBlD0IN8AaYcVZ6iSRm59jNNEzfPYVhtTOzCynh54BWNe1+gC
+	 WhjhfMaJjZ/nPgC0n0+TzEIJveF4rs6F5JXRcAzilPx4Gp3OtvOetNW48zhLLg4qd7
+	 gC1U5bNabieY/u1RjyJHcYwiAUN28Cv19JptVWmfNMjyyUGLI0MkAFddJnHMULWdDM
+	 xcKhH9/23tXIDdn7hOQTpBUoC7vJTGgASqJ989cxO2NpB9X38issLoBBYlwxDvP9wN
+	 s+FXRL+I90nJfL7IDMyzPaCvK20qI4w/fO6zHZBzbE34pLrgO/OY59GNmL7YmY1vjF
+	 /Eaj6ntKssZXQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
+Cc: <miguel.ojeda.sandonis@gmail.com>,  <alex.gaynor@gmail.com>,
+  <ojeda@kernel.org>,  <aliceryhl@google.com>,  <anna-maria@linutronix.de>,
+  <bjorn3_gh@protonmail.com>,  <boqun.feng@gmail.com>,  <dakr@kernel.org>,
+  <frederic@kernel.org>,  <gary@garyguo.net>,  <jstultz@google.com>,
+  <linux-kernel@vger.kernel.org>,  <lossin@kernel.org>,
+  <lyude@redhat.com>,  <rust-for-linux@vger.kernel.org>,
+  <sboyd@kernel.org>,  <tglx@linutronix.de>,  <tmgross@umich.edu>
+Subject: Re: [PATCH v3 0/5] rust: time: Convert hrtimer to use Instant and
+ Delta
+In-Reply-To: <20250711.080013.1402268636571271744.fujita.tomonori@gmail.com>
+	(FUJITA Tomonori's message of "Fri, 11 Jul 2025 08:00:13 +0900")
+References: <20250626.091248.526065656918619245.fujita.tomonori@gmail.com>
+	<87h5zstoaq.fsf@kernel.org> <871pqojlyi.fsf@kernel.org>
+	<7kUMSi1wTeYVq8p7t6lUe8rugGRXZu39tbD9FdcLqepQEJv0k7q7s2VOLeVZPiLLcpLf2GL5vj9ilWhDKtC9UQ==@protonmail.internalid>
+	<20250711.080013.1402268636571271744.fujita.tomonori@gmail.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Fri, 11 Jul 2025 08:13:51 +0200
+Message-ID: <87ple7i7a8.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-> Date: Tue, 08 Jul 2025 15:27:28 -0700	[thread overview]
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    7482bb149b9f Merge branch 'for-next/core' into for-kernelci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=130c528c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3c06e3e2454512b3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1257428c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15fe9582580000
+"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
 
-#syz test
+> On Thu, 10 Jul 2025 13:59:17 +0200
+> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>
+>> This was discussed [1] and consensus was reached that `as_*` iwth pass
+>> by value plus a `Copy` bound on the trait is the way to go for this
+>> method.
+>>
+>> [1] https://hackmd.io/ZXXSbxxQRpiWzX61sJFlcg?view#API-Naming-guidelines-=
+for-conversion-functions
+>
+> Great, thanks!
+>
+> Would you like me to send a patch for something =E2=80=95 for example, a =
+patch
+> that applies the above changes to the current timekeeping-next tree?
+>
+> Or would you prefer to reset timekeeping-next to an earlier commit for
+> a cleaner history, and have me send a patchset based on that?
 
---- x/net/ipv4/cipso_ipv4.c
-+++ y/net/ipv4/cipso_ipv4.c
-@@ -1848,6 +1848,7 @@ static int cipso_v4_get_actual_opt_len(c
-  * values on failure.
-  *
-  */
-+static DEFINE_SPINLOCK(setattr_spinlock);
- int cipso_v4_sock_setattr(struct sock *sk,
- 			  const struct cipso_v4_doi *doi_def,
- 			  const struct netlbl_lsm_secattr *secattr,
-@@ -1899,6 +1900,7 @@ int cipso_v4_sock_setattr(struct sock *s
- 	kfree(buf);
- 	buf = NULL;
- 
-+	spin_lock(&setattr_spinlock);
- 	sk_inet = inet_sk(sk);
- 
- 	old = rcu_dereference_protected(sk_inet->inet_opt, sk_locked);
-@@ -1912,6 +1914,7 @@ int cipso_v4_sock_setattr(struct sock *s
- 	rcu_assign_pointer(sk_inet->inet_opt, opt);
- 	if (old)
- 		kfree_rcu(old, rcu);
-+	spin_unlock(&setattr_spinlock);
- 
- 	return 0;
- 
---
+Yes, we should align the code, so if you can change all the `as_nanos`
+to take by value, that would be great.
+
+I already sent the PR for the 6.17 merge window, so please send a new
+patch, then we can get it in the next cycle.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
