@@ -1,118 +1,278 @@
-Return-Path: <linux-kernel+bounces-727959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FD8B021C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:29:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAEF4B021CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF923AD044
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:29:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9E867B18FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E941C2EF677;
-	Fri, 11 Jul 2025 16:29:44 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30822EF2A8;
+	Fri, 11 Jul 2025 16:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Af7RxVMy"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22282ED161;
-	Fri, 11 Jul 2025 16:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752251384; cv=none; b=p7NtWvKrMm1Tl0PTIkDFLj5ci2dOZOy4AW252jpG6dm29aRHIEMutRfUL8lqsQ/GHupMMcoNi4eBqn+OAZylafJIL3UggJGfphaYanxV8pnARzIbUtfxCusNoRkSQNKSaqNkRCsbSYOdhLLFcY3ZGKOXoqeDyvrBCLiE5wI5nOs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752251384; c=relaxed/simple;
-	bh=Ultbj5aAvjf2i2FBVeLspqO/Pt6abvUu+kiGcpxdHEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AvFhPqpjvxX3ZQ3LhfmpKyftjEHkpwIgXjgcPnt1zdqN1OfFk7P8BpV25CNnK0NyfLAUpQcD0OnctlezkGcBm5tEjsfahC+LmX8xhREphVxmjLwXy48ghd3Nh16FnnLOsKnNMqarZj6iBOfRRGJH/8urxh8792DMnsGNHuE/Pcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so4367326a12.2;
-        Fri, 11 Jul 2025 09:29:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752251381; x=1752856181;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WOf42JVX0DNZGJ6nN0ZcSyKq/2lB3CkluzXYH2APlPs=;
-        b=E7jO8B8ZO1c61GhamkuWq5YomhlSJm7q/u9avKmY+fN4i+aBaM3mBZrGdHZm3djzIg
-         pHSDW+LZNRiVTlo42tZ7Gbyt7ubgJ/b4p6K5HHuxT4dfPX5dDJzS24eNhWDYFkGm89I0
-         ceI7BXI8EPgp0Csd4TQXsegIUCo6Q90oIJnWJ4acwhpQi5XSfKhN2E2w4DZCsXBejGxO
-         bz/1294ko17dNBFgKYLY5/5ZUqLo/8RFe/d2Ewrj22WVkLZfalmihuQwBb0jq4r5uKPE
-         WsBG4zox7iqUGCYj3sb+BBBDg36ysdaXXQ08SXLntluEaQ7tUkWsguqkSpszZ+EnAifT
-         VuAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxP0qx11FwrQQyN9gVqZhUO/ynOvt3GFzn5SeADAobJ+IXb8xApedk8BGttlHZzLrdT7Pb2GVcBs4qRqQ=@vger.kernel.org, AJvYcCVTUfy1wv9YMDgEN9zAlBsa+uvx+HEOxbl5IJeQlsmjy0uM2SDjBthKQDH7SVstgd42N9VGYYzv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfo/ncAF5vD1aGY1Jz1C+vkYgJJoZsj4ChVVX1CtrzFNXDusN+
-	7l2s50aVaGbcc9hgsB2FRM/fFAqGcNGl8kRmuGdBnXKaQ9UFE5G48aAn
-X-Gm-Gg: ASbGncuodAWEitcBUB9m64LlODyg3jJdU4iH7yI0UUXoWa6U7kHLKIBc9+1civAVYuR
-	2d2GXG3piQlgf7XFsKt3C0BNdZFJriHxay9+Ky7XFFUp2r8scF4QoDQ5bqPq8Eu6OF0Klgpzq7F
-	bIWVvrJ7RQuK/FrEbnHyIf4rVKXXVnGCZbG8eKUclJL3gB4Ehi3D+Mu+GTd1EuIdfaFSWQGNWQR
-	fJCkjyD5olLRYb0fafEt+YcwYYGqKGekZVOSkKR5u8oiUwxgHW0UK71AIi4V17KiAH5/eNCJV8Y
-	/cfapc4WcPm9Pc9gMZEgr06Ke2BOVzbsf2LUGEWt/FFQtVUCauUHw0IBE9qxTe5Vjhzbbk5tTVT
-	nDG6BRiX5Z41Pf2jgSW8J3tA=
-X-Google-Smtp-Source: AGHT+IFTR/x2rOzjfShJFDjaTJRRDT/KRfp5F8jOeyMsaXdaQpXQ6Zfy72nSIupUE0YuKFTtsUwA+w==
-X-Received: by 2002:a17:906:730b:b0:ad5:4a43:5ae8 with SMTP id a640c23a62f3a-ae6fbc63f70mr440148166b.12.1752251380802;
-        Fri, 11 Jul 2025 09:29:40 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:2::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e91c81sm323374166b.37.2025.07.11.09.29.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 09:29:40 -0700 (PDT)
-Date: Fri, 11 Jul 2025 09:29:38 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, dw@davidwei.uk
-Subject: Re: [PATCH net-next v2] netdevsim: implement peer queue flow control
-Message-ID: <p22efbdqaaypgp7wu4csohhtzowpgrzrtelev7waumidabryty@lq4txzalfbfl>
-References: <20250703-netdev_flow_control-v2-1-ab00341c9cc1@debian.org>
- <20250708182718.29c4ae45@kernel.org>
- <aG5FrObkP+S8cRZh@gmail.com>
- <20250709143627.5ddbf456@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F812EF9B4;
+	Fri, 11 Jul 2025 16:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752251415; cv=fail; b=OVhImh9rDjW4mMFbg7rlnkc2JnHX5ccWbjFJfa+HrpBitiJB+fIdtrF7QC1IdWbeVK1yNwLfzQxz0aUCPsF5G2xnnwtolDL4NuPoBarm9kzV1CW1mIS6EuvhrEsWWqeyo32PMMqmc4u19CHjvlOHlLxt5z1N1Vl0CJjC/RR4xRI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752251415; c=relaxed/simple;
+	bh=+h2Ya/2bAvF3LMFYLJFflZq4kB8PpBVLZr56ILU79kU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=R3TmFUNVVk+/VtzsM2j6v2Y/MYG29uSZMVV+PfEYG2kUNqcvfEeFbAQocGi5HVrlMEjk/SL7nUmZIVWlwuh2AxFQF2jcNPSv86E1XEYNsaEqbmAVzx35NSBOFSbB1kPOXlEjZto/be0reYNVMGHqlSkfQVIH/QLTYNaQ5ghW6WQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Af7RxVMy; arc=fail smtp.client-ip=40.107.223.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O0VrsTKXHy6U7rBdnTeORV/fw/Zkhx8GIhu2ZXhXmVdchvriw6XElbyR54yfTUzvFEoQfiiOkbNd2NRqmqPmNuE9Hqhsli1gRt1PuJmRx0X4NdjWC4Hb2KyBG+zNLdi+1B4crJZa4++OcBkyeKpRuQfu6hjXwaa4PgLn+WaQNBKj61eqSp+iGjcQM3AugVsYCc40A8l5u/fWzig64TU0AMTDMt9Sjck+vCJY4i5vw0bLpor+on+WS/+0TlwOoLv4bCcK00UFg6WRVC2VbynhKFZeAFbr4CEj1nOWZLhcr8HbBPXxOhhw1FyXx7OwIRt3Z4OuIbufbqFYlNrUNN2Xng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=J8PE5FT7HucUrEPBByOWW2HuDmPgFDwo9PtZd4DkNdQ=;
+ b=d56f37HBgJRPCdW8NPlBt86hsY4R2xmAptJIKBnnsXHKawuNNyQ2Upi6SiMtougNMndx8PWm1EQVshzdruUD/zjscSckAwnv9m4xnHGdmmuvOlZqr9+Ks2nT0nbq2XA9UNT9daGoqNyWMGXhiChPKxmTtAcPm/XYr7Dl7nNXiN9E0oPdzqhjH5Zr7TquMAB+VVdcjav0DtGaf3gxJsr5aGX7rPWIhjpH0P/INSBtUqxwoCQDUggTmRBYmkmOmAx9QuPk6KNOnANABAOBQ29V67Q6fvkkEdGtyew+mELKEOCNWAH4l7azHW1IrE/O7jhlGIXQMlgSvvvYCxgzuYEpxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J8PE5FT7HucUrEPBByOWW2HuDmPgFDwo9PtZd4DkNdQ=;
+ b=Af7RxVMyRQrzgTu1UKJ4pEb3Bs8fLGGdnV3iPjUehGoKusl04QfLM0IcI/UbGW3CHyCsFEZLprH6NHeX49V4M/VyKMSXqo5pY+diZKmEoSh+gZZsR3f8y6yGIq25JAqgbJBeJhthV2/K3RXbYnpPy0WSxW92nPwYICEj1jvgxkpwtlI3prvrtvbPKIWJ2/DR3xYoom4THdZWgc/U6Q2brWjcyWlJ+iVfweUJXdoL0wVlbLuCIn3I4yPNp6k57fHPPlq1g57U1ZpNFj8jZMUdqQc4LTsk3fkuK+c9YNdxGWEZCcLenjDwx2Fu5hEbzEWYLVInWbpYy75CqALcCPvJ/g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by MW6PR12MB8998.namprd12.prod.outlook.com (2603:10b6:303:249::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.20; Fri, 11 Jul
+ 2025 16:30:11 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%7]) with mapi id 15.20.8901.018; Fri, 11 Jul 2025
+ 16:30:11 +0000
+Message-ID: <ebfa8f35-8ede-46c3-a865-384d12d11e90@nvidia.com>
+Date: Fri, 11 Jul 2025 12:30:08 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -rcu -next 4/7] rcu: Remove redundant check for irq state
+ during unlock
+To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Uladzislau Rezki <urezki@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang@linux.dev>,
+ rcu@vger.kernel.org
+References: <20250708142224.3940851-1-joelagnelf@nvidia.com>
+ <20250708142224.3940851-4-joelagnelf@nvidia.com>
+ <9b67bbca-dfdc-470e-9a32-486300efa586@paulmck-laptop>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <9b67bbca-dfdc-470e-9a32-486300efa586@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BLAPR03CA0168.namprd03.prod.outlook.com
+ (2603:10b6:208:32f::6) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709143627.5ddbf456@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|MW6PR12MB8998:EE_
+X-MS-Office365-Filtering-Correlation-Id: d6d9f915-4e67-4d74-4b83-08ddc09834dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MVk4K0VqNGVJNFdQUWxZcWtsWWsvR01VZXhJVXljTXluZGhncmtzazZUeG1s?=
+ =?utf-8?B?ck1ITCtmOURtYzlJVXIzaXVUa2RYeDZrb3pJTVMzcGV5SjlLd3lsblhDU3lx?=
+ =?utf-8?B?Q1VLcDJQZTBPQndOWE1xeVp5TVRMazVhKzRYVE1Dbmt0MklWZU9xeWYvRDdR?=
+ =?utf-8?B?WGhlV1NFcFFEaFp4dGI0dXpva09Qbm9GRXlSVUY5dzU2RU90ZXdtVklLSTF3?=
+ =?utf-8?B?MHF4bmlKUlV6Z21yUlZPQ0RpaXc0eTNlSVRYeWxwMUtJU3ZrTW44cXpMRG1v?=
+ =?utf-8?B?dFlmYlMvT0FhNzdUTDVvaWNpZHdzcWxWbTRBUXNYN1hFekx6SE1lMUIxOU1H?=
+ =?utf-8?B?VE9veWhiWDVoaHFLMUpVcHdlWkltN2IwQVF3WjhTVkxxZmkvTVQ3ajcvY2ZP?=
+ =?utf-8?B?OGs0RFhXQ3ltNUZsbXVlSWNYYXVqWlVrZnY0c0JTTW9BRHhNMHVTeHpwY3h2?=
+ =?utf-8?B?aG80K2E3aXZ6T05DUWNOVWxuMUQwM1U4b1IzdEFJQkNBMXV5R05JbFAwNGtF?=
+ =?utf-8?B?akFYWng5TWFYR3RvYmxXZ1Y1RWNiUlN6Ny9Vajd5dFhxNnJlcWdBWmcvWEEy?=
+ =?utf-8?B?ZXhwcU5ZZ2drQUFsL3U1cjFpT0ZiaUVzL21MTExNQmhRbnRJNGRCOVNqQnZX?=
+ =?utf-8?B?c2lGWm9YSDVRU2V3RGR3Yng3anhjMzIzSDhxTE5zOHl4bHowRVVTYzRoNGtF?=
+ =?utf-8?B?TUI1ZnlGYmdtS09jMkN5ZTMzRTVJelZHU2dUZ3RhdHk5THJyQUNQeUNLcGNO?=
+ =?utf-8?B?bnF4dWpOa0VsRll1M0xWOFlyNXFIdTQ5L2FyVjJka2V5QkRTYjQzRW1nVXMv?=
+ =?utf-8?B?WVlLSlRmck9MdXVXNVYrM1BPQ21VcTRwbWdzemFDTkI2TUlheHppdGN3TmUy?=
+ =?utf-8?B?M0dRMm5yZytVdFJKZGNTVjhYUE51WXhrSFpqWmZ6K2g4cVJHNWJzWDFNUkxm?=
+ =?utf-8?B?U3lZTElsNkFlQWpnNU10d1g3V1ZZT1JkMkRwNkl4VElHYlJTTFkwZUt3NS9m?=
+ =?utf-8?B?TEhyeEVYTkFTeDNyc2oySGo1OXJpOWtlVEdsZmlsNGkwU05xaHJjM2haUkRz?=
+ =?utf-8?B?c2tNeGdDcHNXdmZ2Y25QK2t4K0pSVkVrcCtQNXJwMFU5cUlpeUsyN2UySkxv?=
+ =?utf-8?B?QzFqeGp4NG1YdzRDTld4VXBybWNBMDVZUlVHWTIzRzk2UlFDYkRPTml6ejA3?=
+ =?utf-8?B?bHIrTm5UdHJWcXZaYVhYVTRIbDNLOFJNa2UrWGI5Y3I0bUVjaW53dGdyQ3Ez?=
+ =?utf-8?B?WHpkSGNKYnlRTVQ3eXlnSjVZeUZ0WWpMYnFjNGQwcVorYmJCdHlUNEIrVDV2?=
+ =?utf-8?B?SWFyeityVHlTSWJNbVduU0FhOE85djRUWlZDeW1EbmRkYzkrWHltZmdvYUVa?=
+ =?utf-8?B?cU1MNy96UVkxSUo4K1ZKMHR4S0paYzFyU0tSbnZSVHQwV2F4K2llS3NOenZP?=
+ =?utf-8?B?TkkvMHd1TmYyOThKNWZHajJxR0lld2xZMFhzTjJBSGVpaTNrSlprR2R2Z1lK?=
+ =?utf-8?B?NERGSjRQQ2pTM1hEalY3aEE0RU1ESDZqSzFBdVg3UC96OGhFY3RidFBLbHFB?=
+ =?utf-8?B?R3JjRmJPaUtLZXYrQ05Hcm45cTlpcUx4RVdQUlZaU1VLd1V5eWU2ZS9oRGF2?=
+ =?utf-8?B?em53WFM3ZUlJSGxuRXZ6L0xMakVmVEVrRXNpdmlKbkdEb0x2RmZucU5mN1Nj?=
+ =?utf-8?B?T09xSFpYZzd6M0F1a0VsNy80V0htckdtZmR1bCtPSDVSU3RYVVdkeEZ5bU1v?=
+ =?utf-8?B?dmRtRHR5dlphUDZvZkc4L2dlc3I1YUdHV0U1NDZIcDkxWDlpZy95NnFiS2w4?=
+ =?utf-8?B?UFNjMEMyWkkyQUthbFpUbkpTVGwyRkJPelBlM21LeDNaRGx3VmxiYkVFaHRq?=
+ =?utf-8?B?VmJhQnAwdTRBY0t4QlZOUXlTbUhIcWtaYWoyQk5XR2xxYmc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZEZQZUhTdjI0OTM2aGw1N0g2bkRqN2RoM3JTaUQ3MXh3cXVMSVV5ZnZXeTBs?=
+ =?utf-8?B?M1o5TmNHVVlZd1k3bDZqckFjQ2NKMkFjV3loL0s5anBTRTVSTHVrOVgxN2dV?=
+ =?utf-8?B?UEw2dFdjTVczNnd2MnMrZlhIVU5RVnY3aEIxL1ZFM2FRYWlUU0hmYldNUjlV?=
+ =?utf-8?B?MWlQWmpwK2pmNFFOL3BsNWI2ZUUvNHFmT2tkK252UlgxUDRPU1JPd2hrck1N?=
+ =?utf-8?B?eWNqK1poYjQwUmhaamtMUnZMVXlLN2dwbTdqSnE0ZVNOblc0QnlPYm1WSS9D?=
+ =?utf-8?B?S2lza1RNK242SDhHK3VRMUNnWXZZQVlHRkIzZnRYU2o2ZmtpN2U1Qkwvc3RB?=
+ =?utf-8?B?TDVuaVZZSkRKZVkva1ZJendPV3Bra3pROTVMS1dvWE9DSXNLZEV5ZGJQeUZi?=
+ =?utf-8?B?L2REMnNVc25qcGJONWRQa3RhWXV2WXFDWHJxcmErZUtxMnp6RmRyZTdXVUNV?=
+ =?utf-8?B?MzR0dHZid3dSYUZoZGVlejBTT25jUm9HZUUrV3c2N3YwR0VXWTNveWxVRDJ1?=
+ =?utf-8?B?aUw1Z1BtV1Mxb3V6cVdJcG5UNlVJd1FCcXZ0SUJGUkFMYjd3cmRQVllSRkx4?=
+ =?utf-8?B?ckg5dy9XZUlZeGlla1NMTW9IbVRmNngybkw1aHFLT3kzOVVyWGpFeFpzNW5F?=
+ =?utf-8?B?R0pEc01GM213ZHhYeDl0NTRWejNkbTJ3VTJ0QUMrdTdScncySGhwRldxL2ln?=
+ =?utf-8?B?ekd0a0ZQRG8yd3JwUFdzcXJSWlBuVWhYVUJ5dlJuTTJFOHZPUGtBamkwUGpr?=
+ =?utf-8?B?Wnd4cS9hMUoxNnpjYzRKcGsvVkVoUWVFRytvdHo0ZUJLTjhJajFKRll3dEdG?=
+ =?utf-8?B?WTFwTmhJZ2J6cHdLdlJQa2ZSZDZWKy9udE9hcTMvMUdqOG9kY0hrTEdxRFRG?=
+ =?utf-8?B?Q1hSNGI3c0JnU3djOFBIQjFvdFN2RUJUc0VZdW5MOGhZMzlTTTV5Y21DN0xQ?=
+ =?utf-8?B?YXhBSWJRSE5xY1VPN2s4aisyNGJobkxiVkFUa05lWWpmbzdPaWdiT2tYbFZI?=
+ =?utf-8?B?QkxSbXdGcUpqUC9sc3UxU282QTdZQlhKNFc5bTRFUEJWWUFkcUIzd3R4Kzlt?=
+ =?utf-8?B?MVdPeEcwSVlLZDc3UHJJT1ZmMEhNU21qRTUwNStTdkxNRTlQbmZUSFlMM3dH?=
+ =?utf-8?B?eTZuV0hlc1hrL1ZaNjRWa0wwR1dYR0Z6eitDazRHT0w4T1dzWTlKZHVEOVAx?=
+ =?utf-8?B?eWpVc3lWTFBZVXZ0eFhJUGRBYXRibjF0WnBhTk1OYzhNZFJEMkkxZWZnRWEr?=
+ =?utf-8?B?MmQzNmNaZ0prOER0YVdBbTFmTCtBZmlGaHoydG9lQlZWdG5rQytwQlhjVlVR?=
+ =?utf-8?B?ajRDSXBOYk51bFl4SXQ2dnVSN0hiNXhUNEhYTDBMKzhENlpyTEpkcmI3YXJz?=
+ =?utf-8?B?S0FSdjRLbGNyb2tQN00wcnlnZXRheEIzdFlja2pndDRXdm9zejM5WjkwMEhm?=
+ =?utf-8?B?S2JaSmFUV04zVU9tajdYbktxeEVPeTg1TS8rNjRkczdqWlBXbTU5QnZnVWJx?=
+ =?utf-8?B?bDJ3eHRzemc4NUdrNmw5Q0M2VUg3VTB1cnUxZmJoOHVmN28rUnpsTHZNMVk1?=
+ =?utf-8?B?R2QyYnlzVXhhRTc5R1htS0xqTzdCczRvOWFvR1Z0NWtGQXlSS2VxaWVNdE14?=
+ =?utf-8?B?ZlQ3ZUdqNnROWEkyTUpYb1BISU9PVUIyRnlZb2gxVWJUblRMUmhlSGc1WDF3?=
+ =?utf-8?B?endNSGhvZmh3V2I2S2YrakdXRGZSRitwZFVmMlpLTDcvMTJ6UlRJejNPVEtC?=
+ =?utf-8?B?VDhlNlhuT0dEVHIzMWV4MkhoZWJjZGh0TFBwVWtxc21xWGhnakQxOU11T2xE?=
+ =?utf-8?B?cGF0eTEzZUVnN3Mxcjd5eGxjaGdRN2ZGV2NLcjFRc1VyT1hzWFJOdUZWYnB6?=
+ =?utf-8?B?cVZ1MytGNTJoeHBVUGIxTHR2QmNFZ0ZpbXczTWM0SXZ5NTU5NUVkMndEN3Zv?=
+ =?utf-8?B?b3lyS3ZKbllLRnRFUkVWdkFKczZTcDZsWkNWSUJBb0RUckVMY1VIRUxQOWxT?=
+ =?utf-8?B?VEZTNStyRDIzUHJSNGE2K2E2SW1ZcEVqaUM1N09lOUJleWZac0l0Zm9XaDVI?=
+ =?utf-8?B?aGhHbVV0ODM0dkJVa3R4OGxBbkwyZjVRMjhlSE54RW11Z29uYjNFaDcrUzhL?=
+ =?utf-8?Q?EcQ8PSGCIAH4H1v4BloYi6P5b?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6d9f915-4e67-4d74-4b83-08ddc09834dc
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 16:30:11.2791
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TWgnC5J+C6cEsS/a72G564vC7KRK2toTX8wbNlJQDaLnGoKjpk3GkM60CVCrS+uFN8ReZ3moz8TqlyoDuZoXCA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8998
 
-On Wed, Jul 09, 2025 at 02:36:27PM -0700, Jakub Kicinski wrote:
-> On Wed, 9 Jul 2025 03:34:20 -0700 Breno Leitao wrote:
-> > 	+
-> > 	+	synchronize_net();
-> > 	+       netif_tx_wake_all_queues(dev);
-> > 	+       rcu_read_lock();
-> > 	+       peer = rcu_dereference(ns->peer);
-> > 	+       if (peer)
-> > 	+               netif_tx_wake_all_queues(peer->netdev);
-> > 	+       rcu_read_unlock();
+
+
+On 7/10/2025 8:00 PM, Paul E. McKenney wrote:
+> On Tue, Jul 08, 2025 at 10:22:21AM -0400, Joel Fernandes wrote:
+>> The check for irqs_were_disabled is redundant in
+>> rcu_unlock_needs_exp_handling() as the caller already checks for this.
+>> This includes the boost case as well. Just remove the redundant check.
 > 
-> That's sufficiently orthogonal to warrant a dedicated function / helper.
+> But in the very last "if" statement in the context of the last hunk of
+> this patch, isn't it instead checking for !irqs_were_disabled?
 > 
-> In terms of code I think we can skip the whole dance if peer is NULL?
+> Or is there something that I am missing that makes this work out OK?
 
-Sure. We can use rcu_access_pointer() to check if the value is set, and
-then get into the slow path.
+You are right, after going over all the cases I introduced a behavioral change.
 
-       if (rcu_access_pointer(ns->peer))
-               nsim_wake_queues(dev);
+Say, irqs_were_disabled was false. And say we are RCU-boosted. needs_exp might
+return true now, but previously it was returning false. Further say, we are not
+in hardirq.
 
-> > Also, with this patch, we will eventually get the following critical
-> > message:
-> > 
-> > 	net_crit_ratelimited("Virtual device %s asks to queue packet!\n", dev->name);
-> > 
-> > I am wondering if that alert is not valid anymore, and I can simply
-> > remove it.
+New code will raise softirq, old code would go to the ELSE and just set:
+                set_tsk_need_resched(current);
+set_preempt_need_resched();
+
+But preempt_bh_were_disabled that's why we're here.
+
+So we need to only set resched and not raise softirq, because the preempt enable
+would reschedule.
+
+Sorry I missed this, but unless this behavior is correct or needs further work,
+lets drop this patch. Thanks and kudos on the catch!
+
+ - Joel
+
 > 
-> Ah. In nsim_setup() we should remove IFF_NO_QUEUE and stop setting
-> tx_queue_len to 0
+> 							Thanx, Paul
+> 
+>> This is a first win for the refactor of the needs_exp (formerly
+>> expboost) condition into a new rcu_unlock_needs_exp_handling() function,
+>> as the conditions became more easier to read.
+>>
+>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>> ---
+>>  kernel/rcu/tree_plugin.h | 16 +++++++---------
+>>  1 file changed, 7 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+>> index e20c17163c13..7d03d81e45f6 100644
+>> --- a/kernel/rcu/tree_plugin.h
+>> +++ b/kernel/rcu/tree_plugin.h
+>> @@ -659,14 +659,12 @@ static void rcu_preempt_deferred_qs_handler(struct irq_work *iwp)
+>>   * @t: The task being checked
+>>   * @rdp: The per-CPU RCU data
+>>   * @rnp: The RCU node for this CPU
+>> - * @irqs_were_disabled: Whether interrupts were disabled before rcu_read_unlock()
+>>   *
+>>   * Returns true if expedited processing of the rcu_read_unlock() is needed.
+>>   */
+>>  static bool rcu_unlock_needs_exp_handling(struct task_struct *t,
+>>  				      struct rcu_data *rdp,
+>> -				      struct rcu_node *rnp,
+>> -				      bool irqs_were_disabled)
+>> +				      struct rcu_node *rnp)
+>>  {
+>>  	/*
+>>  	 * Check if this task is blocking an expedited grace period. If the
+>> @@ -702,14 +700,14 @@ static bool rcu_unlock_needs_exp_handling(struct task_struct *t,
+>>  
+>>  	/*
+>>  	 * RCU priority boosting case: If a task is subject to RCU priority
+>> -	 * boosting and exits an RCU read-side critical section with interrupts
+>> -	 * disabled, we need expedited handling to ensure timely deboosting.
+>> -	 * Without this, a low-priority task could incorrectly run at high
+>> -	 * real-time priority for an extended period degrading real-time
+>> +	 * boosting and exits an RCU read-side critical section, we need
+>> +	 * expedited handling to ensure timely deboosting. Without this,
+>> +	 * a low-priority task could incorrectly run at high real-time
+>> +	 * priority for an extended period degrading real-time
+>>  	 * responsiveness. This applies to all CONFIG_RCU_BOOST=y kernels,
+>>  	 * not just to PREEMPT_RT.
+>>  	 */
+>> -	if (IS_ENABLED(CONFIG_RCU_BOOST) && irqs_were_disabled && t->rcu_blocked_node)
+>> +	if (IS_ENABLED(CONFIG_RCU_BOOST) && t->rcu_blocked_node)
+>>  		return true;
+>>  
+>>  	return false;
+>> @@ -738,7 +736,7 @@ static void rcu_read_unlock_special(struct task_struct *t)
+>>  		struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
+>>  		struct rcu_node *rnp = rdp->mynode;
+>>  
+>> -		needs_exp = rcu_unlock_needs_exp_handling(t, rdp, rnp, irqs_were_disabled);
+>> +		needs_exp = rcu_unlock_needs_exp_handling(t, rdp, rnp);
+>>  	
+>>  		// Need to defer quiescent state until everything is enabled.
+>>  		if (use_softirq && (in_hardirq() || (needs_exp && !irqs_were_disabled))) {
+>> -- 
+>> 2.34.1
+>>
 
-That makes sense, thanks!
---breno
 
