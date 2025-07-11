@@ -1,122 +1,186 @@
-Return-Path: <linux-kernel+bounces-726791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6EA7B01151
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:39:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C76B01153
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47C383B61CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:39:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 660771C26F46
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F72191F92;
-	Fri, 11 Jul 2025 02:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E72318E377;
+	Fri, 11 Jul 2025 02:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qnfi2vVi"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ll+v4e8z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAC218DF6E;
-	Fri, 11 Jul 2025 02:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F294F10E9;
+	Fri, 11 Jul 2025 02:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752201574; cv=none; b=CbDdXn/a6u/16pncw5c9bRo9lYYFMcNWEqFP0XDmgao7GZR9Xz7LCQuB7m3RW8FtLUr/NP5UmWeFiXAcT6cMV85tiL3769MLVUcfhnERVG1nuOWSJBiavlU4qnw0xryFxkdMAaW0Hg9ECQ+vcyY5fBixpRcHmWXr3+mZ8St7WQ0=
+	t=1752201654; cv=none; b=PA5hNr+l26qXRgwPPiAcJoySIJQvROasdFUGVBiXo8ZnCODcaOVZo3ILHhBi4cQPXUcBk0GQRLEVFP+UoaV01UM01w8nWoqO7W9B7iGnOzWEtI+4aKoahamhBg06nAeKkl1sW1qbAvtP0XKAevFP2GliQec/6+tDEjggWfCBYfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752201574; c=relaxed/simple;
-	bh=b8SXmUk34NlTJ0OPMnPfP6dSsyuT4RLa0qZZqAuSzrY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NKOUGawytxPAb+ZiCv4Vdqp3W8fORswHi2RIe2q/7GvLJmRq0AiLhms4R66BIpAvSl6dE+IJibzQQp40gQEO5nh15AngqnNkSa20VymTK294cEmXtSmEEr2Ktvx10xZTiSpJ/t18IomJGyc3S4VKH3pqrdKSfE0kcGHOAWAfIdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qnfi2vVi; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-558fc8f0750so1994498e87.2;
-        Thu, 10 Jul 2025 19:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752201570; x=1752806370; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5YhjQC50gah28UyUV1gJ4N7IPHgzmfVNY2YtsOVSd2A=;
-        b=Qnfi2vViXrp5bgEB+xXxgLAIybyKDDAA/mta89FVhrXPs2mAPEyJ8HoW9IjZU6fi2n
-         XW1qxY0Ljt69EOyU3DGRT4KOGil/wJGhlsoS3KQMNkbIO3thv2h3WcHzSzNZgq80o5BS
-         tNM9CPVjofQ9Qt5ahBXVaKXzkjidTPccSJ+r2TiY9MQrHyk3KYbOzUmChefCRbM0iug4
-         RGKx44wg+cjuhZIBKyU32j/ZZDtx1zdYHp7LoSzbGpxYwSBvqIGshy0CnF9dNejURAJN
-         p7NFu/GYadgpd/E3Hmd+rCkF03M9fiRCpBJL1Jv05no5PE9732hTiq6uwLtqCf35pLpk
-         aIgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752201570; x=1752806370;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5YhjQC50gah28UyUV1gJ4N7IPHgzmfVNY2YtsOVSd2A=;
-        b=b5KJF67XGx3dfRSjlt7Mg7l0sPGhQb1mjiBlt635yheeVdGCWrmX8JjjaFPJeBa1PY
-         UL5OGJOwANYJHQKthhPObRykzbX8PB3sCzjG1z2fr9K7EphFmqIpE1Z+Ixfv/ra2CEc0
-         vVG44rRdvv784EZ9N4xxHsa/uFtHY81H7t5jl6O/SVaYkCut6qWvf3gfU6AvBdXilcyT
-         DtvgEiPQkzQk4N3bWgM/pLGCWGKkgWXK81VqUHTjioW76Eg5gDZEdMaAJ9yGO3dSYxff
-         bJ4LSHZSppPXYAQEQlM439MWXxQ3Xnl8YLKydPdkbwRcO61LPMOPve2RyuYL9dk6tfdj
-         CkZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrxC9TvN3A8xFMT/uzm33oT+wC7gtCsQfIytidzNWyj7xE49FiTCAtcZo7aWE4iqGW5fRY5kK9sDKFUFJe@vger.kernel.org, AJvYcCXGr2R4ZDp8ehVZ17iXcGfq+ickHABSM0vf8DH7YDAwlkD3VXWQu7tD+tMtnqbuVQRQj4rdBqUXsODX@vger.kernel.org, AJvYcCXIVQoY6T5A3j7Z7lRildZLnv9uVtT/t/kH7LTZUDWqVk8zor7MsKw31Xv6wHimnAXpdw5obCyyq5W1MA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YySrUvqw5ERF67sruYmhXKfV040+AS2Q2T3DwNNjWxfOMkcN9Vv
-	o3zl0u5uETN7yxTpL5gyCTWciZiq25u+40bzbEIV3azJZSsW/yQKwGWTnINYPIp6nK4GoMjPIEV
-	2qokIDaSkXPJn/29jyBxqU+StX2niyBFeEglQ
-X-Gm-Gg: ASbGnctlBhcwuCwObcrY8jwxR0xgR2ISllV4LGiDMlA0p45tHfDJRZvC3fT0docHARg
-	enymYfRPjBoTxAGVtAFFa6Gub4od4QhmOqtQwryfZfmZE5TeP9AdLWl7MAjCc0EassQNJQYcQTw
-	RL6s5NgLHJXxC9isdOYxnjZxisiWm+JBCyRiTSjx5uUXLhMsiznThFD1ofRAqwTWfB1oC//advH
-	M0QZSwTcd2IJGugKrM=
-X-Google-Smtp-Source: AGHT+IESn6qKVxd0vG6t1V/8SUoZ0k1VXjtTG70YEDSMjsJpp9rx6UEk1qV6NnTIFS2ypnhbddHk0z7SktgyFPjIPeM=
-X-Received: by 2002:a05:6512:23a7:b0:553:2f33:ac04 with SMTP id
- 2adb3069b0e04-55a04608eb9mr361877e87.26.1752201570073; Thu, 10 Jul 2025
- 19:39:30 -0700 (PDT)
+	s=arc-20240116; t=1752201654; c=relaxed/simple;
+	bh=EqTFkcL8+rFdHnzr2I9rPopuWyhzYtXbK+hIjaQKgdA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EGZvpEZRtixvhAIoD9p/3vTp0N2M6H0Xi/Yd+iCJ/5q9R31N91MufvpIOqmCopVLk+vSOI4foUoi36krEV9tAUYibp1g3RVToMH3MxLD3SuxVjeN9rd0P4oP3rkb9c+rIDCrFrZOv3xLmTnugJ4oU5M+3ffP7dIy6jsH2IwuU/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ll+v4e8z; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752201643; x=1783737643;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=EqTFkcL8+rFdHnzr2I9rPopuWyhzYtXbK+hIjaQKgdA=;
+  b=Ll+v4e8zuNqZKqgFiNTgts0k6Khh2/54os0IYgCXlTzTqBflFlmX5p9u
+   KZ3Gzr9+ybYuzFr3WmrIj+ko7PRqWqctCbvoAek9hLkZT1ZHWH+JRSZQg
+   CC65166q1vIQz3iP7JtDdltNmNvDJBACkS1m8gkn+JsgBDP1xwNVMfJ/c
+   RNtnaNn3ZwZ/kzEqyhe6vlIvVGTSMX0wP5FRf07t3bMB7uAoL7vy4Uthw
+   VjAC85O5ZFc5MAb1p7hk6YUMuCapnbGjBjO5Xxrw24pWl3q6Uj9AW1CcA
+   PsgSlWvN95ayOQPF8uDhQY5Jmq2EdWFsCTHfIOW6JDxmgw28QVMPyPNZD
+   g==;
+X-CSE-ConnectionGUID: 9NtAiaX7RpG5tRm+dXyDQQ==
+X-CSE-MsgGUID: QFxlb3wFQDyq/bFogFqRcA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="77041979"
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="77041979"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 19:40:41 -0700
+X-CSE-ConnectionGUID: aLwshpBCTCexjAN9ikXvRg==
+X-CSE-MsgGUID: QIUc78r/Sf+442r9cYWI3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="156039209"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.37]) ([10.124.240.37])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 19:40:37 -0700
+Message-ID: <9904c202-5300-49e9-ae15-326c0c7f3c11@linux.intel.com>
+Date: Fri, 11 Jul 2025 10:40:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709-loongson1-arch-v2-0-bcff6e518c09@gmail.com>
- <20250709-loongson1-arch-v2-2-bcff6e518c09@gmail.com> <20250710-wondrous-nebulous-ermine-9c3fdb@krzk-bin>
-In-Reply-To: <20250710-wondrous-nebulous-ermine-9c3fdb@krzk-bin>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-Date: Fri, 11 Jul 2025 10:38:53 +0800
-X-Gm-Features: Ac12FXxHPKpfDBJJXc2OWsPjPNQXwhmzLcqR8m1s2IlT0rZkvWQ4t2-7jNQDtHY
-Message-ID: <CAJhJPsXOREQE43tq+6pUyjNxM6J=4D8m4jVBsZL4_XjQA=58nA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/9] dt-bindings: mips: loongson: Add CQ-T300B board
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] perf/x86/intel: Fix IA32_PMC_x_CFG_B MSRs access
+ error
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250529080236.2552247-1-dapeng1.mi@linux.intel.com>
+ <aDq3S9lwO1YadCKT@gmail.com>
+ <15e4f7a6-7c68-4d89-8813-cd142eb4c416@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <15e4f7a6-7c68-4d89-8813-cd142eb4c416@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 8:22=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+Kindly ping.
+
+@Ingo @Peter, not sure if you have bandwidth to review this change? Thanks.
+
+On 6/3/2025 10:14 AM, Mi, Dapeng wrote:
+> On 5/31/2025 4:01 PM, Ingo Molnar wrote:
+>> * Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
+>>
+>>> When running perf_fuzzer on PTL, sometimes the below "unchecked MSR
+>>>  access error" is seen when accessing IA32_PMC_x_CFG_B MSRs.
+>>>
+>>> [   55.611268] unchecked MSR access error: WRMSR to 0x1986 (tried to write 0x0000000200000001) at rIP: 0xffffffffac564b28 (native_write_msr+0x8/0x30)
+>>> [   55.611280] Call Trace:
+>>> [   55.611282]  <TASK>
+>>> [   55.611284]  ? intel_pmu_config_acr+0x87/0x160
+>>> [   55.611289]  intel_pmu_enable_acr+0x6d/0x80
+>>> [   55.611291]  intel_pmu_enable_event+0xce/0x460
+>>> [   55.611293]  x86_pmu_start+0x78/0xb0
+>>> [   55.611297]  x86_pmu_enable+0x218/0x3a0
+>>> [   55.611300]  ? x86_pmu_enable+0x121/0x3a0
+>>> [   55.611302]  perf_pmu_enable+0x40/0x50
+>>> [   55.611307]  ctx_resched+0x19d/0x220
+>>> [   55.611309]  __perf_install_in_context+0x284/0x2f0
+>>> [   55.611311]  ? __pfx_remote_function+0x10/0x10
+>>> [   55.611314]  remote_function+0x52/0x70
+>>> [   55.611317]  ? __pfx_remote_function+0x10/0x10
+>>> [   55.611319]  generic_exec_single+0x84/0x150
+>>> [   55.611323]  smp_call_function_single+0xc5/0x1a0
+>>> [   55.611326]  ? __pfx_remote_function+0x10/0x10
+>>> [   55.611329]  perf_install_in_context+0xd1/0x1e0
+>>> [   55.611331]  ? __pfx___perf_install_in_context+0x10/0x10
+>>> [   55.611333]  __do_sys_perf_event_open+0xa76/0x1040
+>>> [   55.611336]  __x64_sys_perf_event_open+0x26/0x30
+>>> [   55.611337]  x64_sys_call+0x1d8e/0x20c0
+>>> [   55.611339]  do_syscall_64+0x4f/0x120
+>>> [   55.611343]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>>
+>>> On PTL, GP counter 0 and 1 doesn't support auto counter reload feature,
+>>> thus it would trigger a #GP when trying to write 1 on bit 0 of CFG_B MSR
+>>> which requires to enable auto counter reload on GP counter 0.
+>>>
+>>> The root cause of causing this issue is the check for auto counter
+>>> reload (ACR) counter mask from user space is incorrect in
+>>> intel_pmu_acr_late_setup() helper. It leads to an invalid ACR counter
+>>> mask from user space could be set into hw.config1 and then written into
+>>> CFG_B MSRs and trigger the MSR access warning.
+>>>
+>>> e.g., User may create a perf event with ACR counter mask (config2=0xcb),
+>>> and there is only 1 event created, so "cpuc->n_events" is 1.
+>>>
+>>> The correct check condition should be "i + idx >= cpuc->n_events"
+>>> instead of "i + idx > cpuc->n_events" (it looks a typo). Otherwise,
+>>> the counter mask would traverse twice and an invalid "cpuc->assign[1]"
+>>> bit (bit 0) is set into hw.config1 and cause MSR accessing error.
+>>>
+>>> Besides, also check if the ACR counter mask corresponding events are
+>>> ACR events. If not, filter out these counter mask. If a event is not a
+>>> ACR event, it could be scheduled to an HW counter which doesn't support
+>>> ACR. It's invalid to add their counter index in ACR counter mask.
+>>>
+>>> Furthermore, remove the WARN_ON_ONCE() since it's easily triggered as
+>>> user could set any invalid ACR counter mask and the warning message
+>>> could mislead users.
+>>>
+>>> Fixes: ec980e4facef ("perf/x86/intel: Support auto counter reload")
+>>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>>> ---
+>>>  arch/x86/events/intel/core.c | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+>>> index 3a319cf6d364..8d046b1a237e 100644
+>>> --- a/arch/x86/events/intel/core.c
+>>> +++ b/arch/x86/events/intel/core.c
+>>> @@ -2994,7 +2994,8 @@ static void intel_pmu_acr_late_setup(struct cpu_hw_events *cpuc)
+>>>  			if (event->group_leader != leader->group_leader)
+>>>  				break;
+>>>  			for_each_set_bit(idx, (unsigned long *)&event->attr.config2, X86_PMC_IDX_MAX) {
+>>> -				if (WARN_ON_ONCE(i + idx > cpuc->n_events))
+>>> +				if (i + idx >= cpuc->n_events ||
+>>> +				    !is_acr_event_group(cpuc->event_list[i + idx]))
+>>>  					return;
+>> Is this a normal condition?
+>>
+>>  - If it's normal then the 'return' is destructive, isn't it? Shouldn't 
+>>    it be a 'break', if this condition is legitimate?
+>>
+>>  - If it's not normal, then the WARN_ON_ONCE() was justified, right?
+> It's not normal.Strictly speaking, it's an invalid user configuration. It
+> looks not reasonable to trigger a kernel space warning for an invalid user
+> space configuration. It would mislead users and let users think there is
+> something wrong in kernel. That's why to remove the WARN_ON_ONCE(). Thanks.
 >
-> On Wed, Jul 09, 2025 at 07:05:53PM +0800, Keguang Zhang wrote:
-> > Document loongson,cq-t300b, a board based on Loongson-1C.
-> >
-> > Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
-> > ---
-> >  Documentation/devicetree/bindings/mips/loongson/devices.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
 >
-> Adding these one by one is quite a churn. Just squash them.
-
-Will do.
-Thanks for the review!
-
->
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
-> Best regards,
-> Krzysztof
->
-
-
---
-Best regards,
-
-Keguang Zhang
+>> Thanks,
+>>
+>> 	Ingo
 
