@@ -1,164 +1,165 @@
-Return-Path: <linux-kernel+bounces-728184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE5BB02461
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:17:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA2EB02465
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53A35413BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:17:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05FBB7A589B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7EB1DE2BC;
-	Fri, 11 Jul 2025 19:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18CB2EF9CC;
+	Fri, 11 Jul 2025 19:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqcQoHXn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HSfxSvmE"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952BA2AEF1;
-	Fri, 11 Jul 2025 19:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3562A1D63E8
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752261448; cv=none; b=t0MoG2/p+A2WY3teTwZnJCP9EznbV6uh4rh6SfYlBhzf6YKLHHQKJynRBCDlfos7d6uWO/6pROWHQKgLT5NDpREuPkYaeAYgTDIg9fvpe1M/Kz2TVVJZPYAm8BxyddpqlreEJ0Ptrdze9cnkWwvkA9WO2ccj9oJeJoMZ+ZILgKA=
+	t=1752261504; cv=none; b=oIH+PK5JC9ao3rRMtDdKiofmixDzr5RiXoSiZcSQ9Dc6eKgwj5GEvXtzBHSQ50/Pb1lGuIrAmaxGCscShapt/pq2hsF9aLs42WFXeTwDWxaSFrTEGsVVD7gI4OIK14fzkyqdV5PaeeYSvID3xAzHtv7HXQuGhg3jrjIAWU0bs4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752261448; c=relaxed/simple;
-	bh=cnwXPm+/VNTBwjjvNe6tPqkD4dF66c733bbdlBZZNUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECXrJtPRppgjGzD3ZyXk6bNOLkQm6zgscr3PqO3b3eveLgvMdiDhnpsHh3Yj+Rk0Vgc97Yc4sGz9gvr1hkMM4D8WFFdasE8mzQkQcHFF0pbt7kfEKa2S1IW+Kz1Kyo3m9sNVY/dmxuaqWMlT36147xCaAYDJLaVqmSFxPYlK8+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqcQoHXn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C1DC4CEED;
-	Fri, 11 Jul 2025 19:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752261448;
-	bh=cnwXPm+/VNTBwjjvNe6tPqkD4dF66c733bbdlBZZNUA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VqcQoHXnKdfggPdW7n5guANWD5ndb/jrsaz0GwPn5c+oGfLUKx+9N7vGNViLnCx5N
-	 F7BUqiwvDjP8Zzpee2lr+F859rAMzUuuAgSbqTAkv0T2d9QD3Rb4kFpWpOTIHdjYm8
-	 s0iOvroIM2aLuCx0Eg1Ed9ScxbfgrTexwAq0T/waNzFZCjp5LzYaRx+YT1At69tAQg
-	 JJ4ujuJGGiJiTedoUkN2tjfeM6cnKF7bq1h0AsFw4dBVd1/PtZmHbnCLLFgxIxc928
-	 rszWuN431xni2f8dJtz31gaRi3voyVeL3TIX9OFFv5fPrulYxjYYgh3/Z6SUu1Cn0i
-	 0gKNswrayJzuw==
-Date: Fri, 11 Jul 2025 21:17:20 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Martin Uecker <uecker@tugraz.at>, Sam James <sam@gentoo.org>, Andrew Pinski <pinskia@gmail.com>
-Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
-Message-ID: <uipobgcwwyzsq5dtq3wf6haoae7zgwjfefokbwx5nx6wfx5uq2@vgpl36ryhkel>
-References: <cover.1751823326.git.alx@kernel.org>
- <cover.1752182685.git.alx@kernel.org>
- <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
- <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
- <krmt6a25gio6ing5mgahl72nvw36jc7u3zyyb5dzbk4nfjnuy4@fex2h7lqmfwt>
- <20250711184343.5eabd457@pumpkin>
+	s=arc-20240116; t=1752261504; c=relaxed/simple;
+	bh=i17k3LttSodPsplzghCSZRXhBNaUwArUo5/h6u1tcjI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NUCClIcwYBajQkJXlJ0+wbvhSfvF8gbHEC3t8WBlzrzD/AiZqoFlCKhRBPaV6KnKwB8LKspONsiEXlMHzxUKbusel14bw+KWpt2UzDERcO2pT/TUtmLS9tXiBS4MLAzK/fIRGRLq/ZFqoshazfgWOS8CTG7mgh+IBIx4RtrmiIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HSfxSvmE; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0dd7ac1f5so491627266b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:18:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1752261499; x=1752866299; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OGIcMUli3ztNAnPUcFhR5bM9fuY+7pKG/dEA+I+ib0I=;
+        b=HSfxSvmE7OkxedRh5A5RCX96Y7xM9JBJL1gkSfa+ocUpnI5KSq3KnGVTIexxCzNNmY
+         XGu1vCzi403yBRGU4c091TCOzCHDGjuqsMqbeWoHRHBtnHmaN6EdY4zpjmFqkKrw+xUC
+         vTCEzAfu3MDNcm/SgGL/xNZKTgUc7pKw+IvVw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752261499; x=1752866299;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OGIcMUli3ztNAnPUcFhR5bM9fuY+7pKG/dEA+I+ib0I=;
+        b=ud672LmGKdD4ut+Petj8NuZm6FgV0Vvc/0931r6W/U3VvGVZz7UM7Ptn4aDLw2j/cT
+         v+/URO4bF7Mog55UpEUHz4zkOJy0MQgAjXQ7A8dVg/loPLWtCoDFOQg5JwNdvuAOYYzi
+         F9UeOFJFfNXenWaT9wznnOuYWn1ENxYvpGHejr4LM/OSVxBfJ7OJN7TaK9l49C0OkaPw
+         dONtw67pkylKVzv/zH7tHnmtUSJiODv3eO+3Vkr7eyGyyoHJPDkLlqI2izxtY/d6rR71
+         MegkKCe/bbpz9hlddoqBPNGBAscw08PnD9tn0+lmxSz3Dx1LzMn2QfzzhcsoPSWH5RO/
+         E/zA==
+X-Forwarded-Encrypted: i=1; AJvYcCVP9enSQMb+yoQbsjX+qyVhwrycTKehD9xv1E44OiAX3xMXGDDEjBIgpojdpEBU0WgCrQ6Ft29BSEC6ULo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI4Vi0iPfWMVEytjWU8gqCQPNGs64ipNOo5ALt+qS3PwhALnlh
+	exXCyFt2DGkRuz3WL7o49API6MbSQ687zi6h9yXcTO3i3ZFXOutwn5Eoc+R1WWCvyVQlSalnTgl
+	Rq4njw+pHBg==
+X-Gm-Gg: ASbGncuMgyiZiZUNxbqmiVBO4c3r48UlCgDX361Ut2CVSwyRDOhkCvP8OY5JC6czEQp
+	3oYTYBGyvagaMCFSzOvlwTsJ1Sa1sTNch9nQTew1EsObYA+1ZKD5tfyLR73tNSJHcG2zHtPFUoC
+	kCMRUxFzYhbfFAk6uQ3li+U6n3UdTvJ2EgCvDupkQxiGu/SuXv4kzOffvUJknd8rvgnsywOxGk6
+	VicQNeaGdRg0x7kqil/onfyU+9Ngl0zu6JjqJokmAgXoKCApM8EMzNqVTkFTDFQjQKbyu2Pg305
+	bqlYjMN/MG167OqySq5Zy2z9bdJzxND8bt57kKHTob0IbROuLw/5TSA4hK7jnH4nP6R18Y3QbOB
+	QWSuD5IoTnWMUimjgC8HlAYFKs6kFuvFo9c4jAB9cbsrcs7TM+9gB6JGY6xXC92LwrnHqTigc
+X-Google-Smtp-Source: AGHT+IHoph10SuR7wzZ99Y0+vmv+LBir4pJxAUR6MH9uQmFdZ7MMYR7gqrRSubTDsTfbsxUBwj+/9g==
+X-Received: by 2002:a17:907:9612:b0:ae3:d200:6dea with SMTP id a640c23a62f3a-ae6fbfa5a24mr447549666b.33.1752261499282;
+        Fri, 11 Jul 2025 12:18:19 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7ee4860sm335623666b.47.2025.07.11.12.18.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 12:18:18 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-611f74c1837so1513537a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:18:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQI6viI3mLgaEsqUJvXIi4EIGDR2Ev/t+TCk+L7athFU3uXs9DiawtXy5mkLybjhYZtmKjiibtbn9gegE=@vger.kernel.org
+X-Received: by 2002:a05:6402:11c7:b0:60b:fb2c:b789 with SMTP id
+ 4fb4d7f45d1cf-611e84907ddmr3562736a12.21.1752261497669; Fri, 11 Jul 2025
+ 12:18:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="744n7ojxglqyswg3"
-Content-Disposition: inline
-In-Reply-To: <20250711184343.5eabd457@pumpkin>
+References: <20250711151002.3228710-1-kuba@kernel.org> <CAHk-=wj1Y3LfREoHvT4baucVJ5jvy0cMydcPVQNXhprdhuE2AA@mail.gmail.com>
+ <20250711114642.2664f28a@kernel.org> <CAHk-=wjb_8B85uKhr1xuQSei_85u=UzejphRGk2QFiByP+8Brw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjb_8B85uKhr1xuQSei_85u=UzejphRGk2QFiByP+8Brw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 11 Jul 2025 12:18:01 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiwVkGyDngsNR1Hv5ZUqvmc-x0NUD9aRTOcK3=8fTUO=Q@mail.gmail.com>
+X-Gm-Features: Ac12FXyQ_YSMvJEi4nfPYDndHOPluuiAs0LoNS1cD3a_Bb9k_MZNqvkWl-g86Aw
+Message-ID: <CAHk-=wiwVkGyDngsNR1Hv5ZUqvmc-x0NUD9aRTOcK3=8fTUO=Q@mail.gmail.com>
+Subject: Re: [GIT PULL] Networking for v6.16-rc6 (follow up)
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, Simona Vetter <simona@ffwll.ch>, 
+	Dave Airlie <airlied@gmail.com>, davem@davemloft.net, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pabeni@redhat.com, 
+	dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 11 Jul 2025 at 11:54, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Will do more testing.
 
---744n7ojxglqyswg3
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Martin Uecker <uecker@tugraz.at>, Sam James <sam@gentoo.org>, Andrew Pinski <pinskia@gmail.com>
-Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
-References: <cover.1751823326.git.alx@kernel.org>
- <cover.1752182685.git.alx@kernel.org>
- <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
- <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
- <krmt6a25gio6ing5mgahl72nvw36jc7u3zyyb5dzbk4nfjnuy4@fex2h7lqmfwt>
- <20250711184343.5eabd457@pumpkin>
-MIME-Version: 1.0
-In-Reply-To: <20250711184343.5eabd457@pumpkin>
+Bah. What I thought was a "reliable hang" isn't actually that at all.
+It ends up still being very random indeed.
 
-Hi David,
+That said, I do think it's related to this netlink issue, because the
+symptoms end up being random delays.
 
-On Fri, Jul 11, 2025 at 06:43:43PM +0100, David Laight wrote:
-> On Fri, 11 Jul 2025 01:23:49 +0200
-> Alejandro Colomar <alx@kernel.org> wrote:
->=20
-> > Hi Linus,
-> >=20
-> > [I'll reply to both of your emails at once]
-> >=20
-> > On Thu, Jul 10, 2025 at 02:58:24PM -0700, Linus Torvalds wrote:
-> > > You took my suggestion, and then you messed it up.
-> > >=20
-> > > Your version of sprintf_array() is broken. It evaluates 'a' twice.
-> > > Because unlike ARRAY_SIZE(), your broken ENDOF() macro evaluates the
-> > > argument. =20
-> >=20
-> > An array has no issue being evaluated twice (unless it's a VLA).  On the
-> > other hand, I agree it's better to not do that in the first place.
-> > My bad for forgetting about it.  Sorry.
->=20
-> Or a function that returns an array...
+I've seen it at boot before even logging in (I saw that twice in a row
+after the latest networking pull, which is why I thought it was
+reliable).
 
-Actually, I was forgetting that the array could be gotten from a pointer
-to array:
+But the much more common situation is that some random gnome app ends
+up hanging and then timing out.
 
-	int (*ap)[42] =3D ...;
+Sometimes it's gnome-shell itself, so when I log in nothing happens,
+and then after a 30s timeout gnome-shell times out and I get back the
+login window.
 
-	ENDOF(ap++);  // Evaluates ap++
+That was what I *thought* was the common failure case, but it turns
+out that I've now several times seen just random other applications
+having that issue. This boot, for example, things "worked", except
+starting gnome-terminal took a long time, and then I get a random
+crash report for gsd-screensaver-proxy.
 
-Anyway, fixed in v6.
+The backtrace for that was
 
+  g_bus_get_sync ->
+    initable_init ->
+      g_data_input_stream_read_line ->
+        g_buffered_input_stream_fill ->
+          g_buffered_input_stream_real_fill ->
+            g_input_stream_read ->
+              g_socket_receive_with_timeout ->
+                g_socket_condition_timed_wait ->
+                  poll ->
+                    __syscall_cancel
 
-Cheers,
-Alex
+and I suspect these are all symptoms of the same thing.
 
---=20
-<https://www.alejandro-colomar.es/>
+My *guess* is that all of these things use a netlink socket, and
+presumably it's the *other* end of the socket has filled up its
+receive queue and is dropping packets as a result, and never
+answering, so then - entirely randomly - depending on how overworked
+things got, and which requests got dropped, some poor gnome process
+never gets a reply and times out and the thing fails.
 
---744n7ojxglqyswg3
-Content-Type: application/pgp-signature; name="signature.asc"
+And sometimes the things that fail are not very critical (like some
+gsd-screensaver-proxy) and I can log in happily. And sometimes they
+are rather more critical and nothing works.
 
------BEGIN PGP SIGNATURE-----
+Anyway, because it's so damn random, it's neither bisectable nor easy
+to know when something is "fixed".
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhxYzoACgkQ64mZXMKQ
-wqkjfQ/7B1Jy0fUNlWDy/S4747BI6FB8QvtJDXSmUh+9JUnYeA3/UC+7bZqstMwk
-GNhbO5oX4r84xDPdJIpjEtKv7qkA9VkBWVG13PS6irDPYfqXblRyzEV6U9bissR2
-Qc+WUC7mmpZvUXCjQXyVTsw4SHsfot41d2A+45wpof5Nc3lZXgzQD4Z56iH9PV6Z
-/iyu8MGKu+eiso+/DaPStdC7xXj3acrjZK2L+JUuVmq28TBJnRcl6cUsvZITFg69
-rq/XCYTJGjMEa9tLrn51Q2/TNTV+okSrLJl+0txHm1vCsVZ9L+GJ8VTIMkhAZft6
-m3nYday4EgSz7QXrXYvj/LcpVfwrMRosgiEfHY4zL/7V55sObXyhrukHIpyaUfxu
-q9E2T9FertPMmgKdNSadfJSht+uoRR8evxf8Xtry13aUqi7E3tIGL8/tCymdZAPq
-6nANf7I8A8m/FBAMVtyg0mZS233L0oRG4hhWcG+umzzH6wwX9fDdNpB4X0FQMRJG
-32U3uJbXK6GKcKU+igB9QpTW1DZlqXIGpT3rfLMweKoXOtfyNzZs51g7DMzVoYWh
-Gl2Y0AO/rvYjwKhQydwVxukWpdtqJ9j3wiegSl2EKQx+4nZH0z7eKiRvOaG1N0TO
-wEFZe8rebmqPxSLrJX6mKcTvOfvU4+5y/tStHrgRZ2ONh5BiGsg=
-=Ka9G
------END PGP SIGNATURE-----
+I spent several hours yesterday chasing all the wrong things (because
+I thought it was in drm), and often thought "Oh, that fixed it". Only
+to then realize that nope, the problem still happens.
 
---744n7ojxglqyswg3--
+I will test the reverts. Several times.
+
+             Linus
 
