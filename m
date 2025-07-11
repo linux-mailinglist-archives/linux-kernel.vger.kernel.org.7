@@ -1,150 +1,108 @@
-Return-Path: <linux-kernel+bounces-728145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8416B023F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:42:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38994B023F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D36E41CC42BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:42:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDF01173638
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663872F85D8;
-	Fri, 11 Jul 2025 18:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132F42F8C54;
+	Fri, 11 Jul 2025 18:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uz+SxpuO"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O9/YF3ZZ"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFBC2F3C2F
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCCB2F8C3A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752259104; cv=none; b=C8pd4hEETx0r0OtPD5s3J5Zc5aw3LhHUquQEe/BZFHOSChx71OqbqN3ZWHPOh9fEtqKumULjtXWTqq3xZkfa2IyfRGB2rKWB9TkYLrhcXVDgoSVehTf8la+W6JVRL9bzh71HKSfw8MpPVdx2K8pyLMH6PrxS7O36afekowk6K3M=
+	t=1752259111; cv=none; b=m69PW2XU4R8BQyFL/Yrxc+AgKFg78QD6Gs1unhTkRbGlqM7Rycj4quW4dZ3oYvriZIeENNq8QUH2UgiSk//xHz7EVkjG7u9UqZCvXTM9bpruyL9gk6TEKLVfEWbqU/WP62x0nCjhrFx94GE5MbVkrNdIr6d3AQV8DzOTJBWgf7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752259104; c=relaxed/simple;
-	bh=KsKnsKGUi1F4lD4jyihaduxyCksjkhEdPI8sb5wYzkw=;
+	s=arc-20240116; t=1752259111; c=relaxed/simple;
+	bh=2bGsXgH3DvixXtGmpviPe2FgjUQnTgNIUrHSZYwu9Ks=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=drVVqZ9fXiaYjNVBBgjHcBwgKFRpHDAIZGDwaKqh+FCHitXaWXR6AV618MOnCY+x00AdHretPLW7BrF1C4W2nlq8ykpq/bUVLkWgf5Y1IZFoKCnSZweWr30+jJtA3RyxSzQth8FqeSRveafXG8uQKBbNaxe14qiQ++/vKz08DuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uz+SxpuO; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235e389599fso27245ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:38:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=PycN1dTIRNulkCjm7lFch0ic4nnCJy4xDJbU0bIZZ0ZaD2NdESue/pLaJU5qY2SKYM19Y7BNjK43xv1Vu8C++IYWBPcM8L896FcfTK5f24Nfg71Aou0Dn2KrBMSvVy15TTMxWmBOfpgpZXdkPFxXhFmoxvFHSHxrue90D2uVuio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O9/YF3ZZ; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-70e5d953c0bso27942657b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:38:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752259102; x=1752863902; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752259108; x=1752863908; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y75aBbK6qJ4jIj5tJXhEU3PzErB73/x9/veiIRAROC4=;
-        b=uz+SxpuOqvCybR+FYYLtEuS4QfvZnJwhFe7sfNCwWzrTlTNJ1F8Jc22qfHgZHhq5Cc
-         CmiNSHZCPQwGdNF1jQGJ8uUZusVxcryZh0TO6cyKxaRXbYlMQq/Yra5HQiQvlmloi5IA
-         qZapyn/cPEqm2bX2ppXapJMZ97hU4eBQLXZnBZ46L+h9tcyfT4rHevjxObomGVYy43IW
-         xo7r6/yAu5pzjceb1VKk0dumF9sZTT4QNI4p+chyjUcz+7HoCJF7vjTGhciZciagEScJ
-         AS8i6fY/hhGcTM4+vOpkJ8XEDMuqg4DIrkN79r5a3Ojee1sPTlLUbUtEGSvHn0qbhNF+
-         cEDw==
+        bh=2bGsXgH3DvixXtGmpviPe2FgjUQnTgNIUrHSZYwu9Ks=;
+        b=O9/YF3ZZZexjg+p3ZweJ5j7u1Xsj2i5R/RgZ+PWDCDuq3IRosbSsvwnz1mxD2/jGTM
+         pXWcAyWMqqc78om0BHtuAcyKQ7nZe/uF83jXFtKyMP9F8gBVjuQq+2bhxw4wNCVXilFh
+         G9lPQYzzqTO9axpKip7uegN7w6jIt0xQ0rHgN8rmwmX8Ed9kidtRjaM+Pyw10GJRMGUu
+         ph6Mg4adhA4ojkFNAJLh9ftty/+mPbA3xfS2mwqtEaB/7E6485NZkZcldwRjjrB4/pUm
+         WEQLbCSqn+pW7sbM/J3VHzvueo1oYTWEvsH7g+xof35MfRt7blQe4EVIlu960geRun03
+         9RvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752259102; x=1752863902;
+        d=1e100.net; s=20230601; t=1752259108; x=1752863908;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=y75aBbK6qJ4jIj5tJXhEU3PzErB73/x9/veiIRAROC4=;
-        b=gHnUSEctmFRZudgXGZ2b/KL94GYOdeOYSQWwqyv9vgYlcWrk7vncb5vIaENgDmvdbI
-         CGo2uVNK1IJSEeVssa383QCPql9T67RP1gjUKZ1KE+tGl/Tz8GU5Y069u64dx3gOiRkA
-         MTct1oULq/F8MxKwclJRgGXAojRv7hwW75t3dvkqg9KSz9ZikTCkJpxqz4qazPlqFEUT
-         DjC638ory7krXNXWtmcHW7djdKP/f4jLNHLFnROLM8ndAFLrnMy1OVFvGabk2/+bxZAy
-         BbXOzl/OZuzy4UyD8Gi7I6TfYOGHTbwyHfEULqMsmU8Ng6pdAWb5H34f1L039jG0eozk
-         jZfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgkC8uL0Zh33hQtuCQf9BAxf3Y8ley6ZL78wFX9FWKgIAf+QvmRGpZNY+YAniEmsm0TQhirRMiUdCdcNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdORmmgJTZv0ozMFdLdUdv7dIaESao9wUe4KW1ZRrtPdmgLr+G
-	JnuariGmSYuXXvaacYa/dPuh7qY7ChWH6J+w6R8alMHIJ9PHGYayro+s2LtHd9PLRewZxc+MVLl
-	zYCMeZudlkMU9sjjqf9cLHfHh12p3NxSU+RUJIQnq
-X-Gm-Gg: ASbGncthb9MeehWq17c4uMUNwMkUknUymOKap02SaLfVK1Rt+elWDhIxjBff0JJTHUW
-	rkrSTK/AWu2ci0nggt9FNoRMyu/1K6Aw99RfH138oIh/m0pXAVfMJw3gzLz9ETdifi5VHK2UhuB
-	Km0DfqMF7Ts0ui1n67B3XNB0QxfXt44m46UcejbRUOjrqMR4SaPEmjsKZ2MeozzbRMXJoIF3IEH
-	Mm6wjm+NBg2X62xsMRUFtmX3cPSU1wrTadRPA==
-X-Google-Smtp-Source: AGHT+IGsu8dSs8HJE5goCzoJkCBjTvbHWuRcDJlMXLNqwNbWfzgwWgKINnvVish1bZEUN4Zyz8kT0A+nnxPAT2pqPWY=
-X-Received: by 2002:a17:903:1a28:b0:231:d0ef:e8ff with SMTP id
- d9443c01a7336-23df6954266mr236965ad.8.1752259102079; Fri, 11 Jul 2025
- 11:38:22 -0700 (PDT)
+        bh=2bGsXgH3DvixXtGmpviPe2FgjUQnTgNIUrHSZYwu9Ks=;
+        b=reaDnUeeujSVlhzyCnbfOVl7s6qpyuc8a5ennOh0vTJGtYl/3ebrBzu/Ys2r/uT1WS
+         Cjp6q4CwZYL+3C1dQjuzitAVu3ZNDgH3nrFH8Qh2KX/CH5BpPy0nt1SP/fPoBa38plZh
+         EGOf/3UT+Ep/DWZx49aw0CQ2hz19i2tEbuV1dP5wxkLwlomnLWGS4Hc01XaK80Yt9Un5
+         w0B/k8XIzDwqEdwqszdCgQTyLyWCkPWioTA5BbWyecSBWWxDTbZPaSRHIBBl6viG83Jx
+         TnM/SXvpYIaYhxHPn2CnAhbbo7JO4XWN5UYVUP6K/dLj3/KD3BivdbGflOlsuvIwN+Xz
+         mo4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVKxBLp4Dgo85BiSXEDc8v9V/V1XcqAlwXjSuVYwKrOFRd4TJiOnO/lYV8MlBbRuvrYGARPVUoLQa/6kOQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2A4lbj0Zh4aQTtygnzXKGmTQcAldK5fbMZ9VIJd3VacwYVmxi
+	foSMzXc36AwOcdbFeuUJXz9GTQYC8htIt9kKghsahTbJMcDRjcCHTVSq6KM/Qbw7kq1/odYx+wk
+	IsZnLJuVpl41l01WefVRXz9aFxtPmKAJFVcGZSUm+gg==
+X-Gm-Gg: ASbGncu2LaEPmHI0nQhHdJvg2YUDlUx/DHkvQkCCbTZv7vNGh/lpK9EDHVMwQaFtvHq
+	y/UQR423uvUhclQ86brT3HGU4qPJWde6lUvcB6aOQPKjOW8FX325sukppCx4IWgA9RNp8juGRok
+	ufix51IuxxL1DsBIccBNaAWYPE/8UsgSIHsWVh3rQsaqqANwKvmjdYtUfUN9KU47EHdo+3SR+Vp
+	CUVcg4=
+X-Google-Smtp-Source: AGHT+IFzTF2BxLSt9iuKshVeWEKTGIk56Q8yBg21xl/RCRmgu7B4ttCYb5cRb58w2puUDMxo3sDj9HkP4vtfxFSxKMk=
+X-Received: by 2002:a05:690c:6108:b0:70f:83af:7db1 with SMTP id
+ 00721157ae682-717d5dc956emr75028347b3.19.1752259108283; Fri, 11 Jul 2025
+ 11:38:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703062641.3247-1-yan.y.zhao@intel.com> <20250709232103.zwmufocd3l7sqk7y@amd.com>
- <aG_pLUlHdYIZ2luh@google.com> <aHCUyKJ4I4BQnfFP@yzhao56-desk>
- <20250711151719.goee7eqti4xyhsqr@amd.com> <aHEwT4X0RcfZzHlt@google.com> <20250711163440.kwjebnzd7zeb4bxt@amd.com>
-In-Reply-To: <20250711163440.kwjebnzd7zeb4bxt@amd.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Fri, 11 Jul 2025 11:38:10 -0700
-X-Gm-Features: Ac12FXwD76UGHX5gmLSUps735MnaXyS3ozgzuTfC8AJyvzOHbfbFx5Je1WNljjM
-Message-ID: <CAGtprH9dCCxK=GwVZTUKCeERQGbYD78-t4xDzQprmwtGxDoZXw@mail.gmail.com>
-Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
-To: Michael Roth <michael.roth@amd.com>
-Cc: Sean Christopherson <seanjc@google.com>, Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, 
-	kai.huang@intel.com, adrian.hunter@intel.com, reinette.chatre@intel.com, 
-	xiaoyao.li@intel.com, tony.lindgren@intel.com, binbin.wu@linux.intel.com, 
-	dmatlack@google.com, isaku.yamahata@intel.com, ira.weiny@intel.com, 
-	david@redhat.com, ackerleytng@google.com, tabba@google.com, 
-	chao.p.peng@intel.com
+References: <20250710-asoc-gpio-1-v2-0-2233b272a1a6@nxp.com> <20250710-asoc-gpio-1-v2-1-2233b272a1a6@nxp.com>
+In-Reply-To: <20250710-asoc-gpio-1-v2-1-2233b272a1a6@nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 11 Jul 2025 20:38:11 +0200
+X-Gm-Features: Ac12FXxYkcaMNayRRd6fAY4Lr5pyDgoW-GrE4Px5E8aOoHIoAtE2XDd36yJo0YU
+Message-ID: <CACRpkdYOUUn6H3=F8Kqeb65giFkfo+7Zz0ozeG_6Ay725q9NaQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] ASoC: codec: tlv320aic32x4: Drop aic32x4_pdata usage
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Markus Niebel <Markus.Niebel@ew.tq-group.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 9:37=E2=80=AFAM Michael Roth <michael.roth@amd.com>=
- wrote:
->
-> >
-> > static long __kvm_gmem_populate(struct kvm *kvm, struct kvm_memory_slot=
- *slot,
-> >                               struct file *file, gfn_t gfn, void __user=
- *src,
-> >                               kvm_gmem_populate_cb post_populate, void =
-*opaque)
-> > {
-> >       pgoff_t index =3D kvm_gmem_get_index(slot, gfn);
-> >       struct page *src_page =3D NULL;
-> >       bool is_prepared =3D false;
-> >       struct folio *folio;
-> >       int ret, max_order;
-> >       kvm_pfn_t pfn;
-> >
-> >       if (src) {
-> >               ret =3D get_user_pages((unsigned long)src, 1, 0, &src_pag=
-e);
-> >               if (ret < 0)
-> >                       return ret;
-> >               if (ret !=3D 1)
-> >                       return -ENOMEM;
-> >       }
->
-> One tricky part here is that the uAPI currently expects the pages to
-> have the private attribute set prior to calling kvm_gmem_populate(),
-> which gets enforced below.
->
-> For in-place conversion: the idea is that userspace will convert
-> private->shared to update in-place, then immediately convert back
-> shared->private; so that approach would remain compatible with above
-> behavior. But if we pass a 'src' parameter to kvm_gmem_populate(),
-> and do a GUP or copy_from_user() on it at any point, regardless if
-> it is is outside of filemap_invalidate_lock(), then
-> kvm_gmem_fault_shared() will return -EACCES.
+On Thu, Jul 10, 2025 at 2:42=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
 
-I think that's a fine way to fail the initial memory population, this
-simply means userspace didn't pass the right source address. Why do we
-have to work around this error? Userspace should simply pass the
-source buffer that is accessible to the host or pass null to indicate
-that the target gfn already has the needed contents.
-
-That is, userspace can still bring a separate source buffer even with
-in-place conversion available.
-
-> The only 2 ways I see
-> around that are to either a) stop enforcing that pages that get
-> processed by kvm_gmem_populate() are private for in-place conversion
-> case, or b) enforce that 'src' is NULL for in-place conversion case.
+> There is no machine is using aic32x4_pdata as platform_data, so
+> remove the dead code.
 >
+> Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+> Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
