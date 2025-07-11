@@ -1,170 +1,238 @@
-Return-Path: <linux-kernel+bounces-726948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA36BB0134A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:05:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B64B01352
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869A8761B92
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:05:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8EEA483155
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859B81D514E;
-	Fri, 11 Jul 2025 06:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285991D5178;
+	Fri, 11 Jul 2025 06:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VLew2Tdj"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F731A2632;
-	Fri, 11 Jul 2025 06:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="meY0HnVD"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CCF944F;
+	Fri, 11 Jul 2025 06:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752213945; cv=none; b=fWHpTLuWkN8l+L7U0GzJTemaRTlR12D/mQi0+M5JYaDKXIOZfaZeVBEUKNxnYpBCh+ckwZ2KfIP7YODHfmIU1uY+uoPpm3XcUqMzjZ9CYn0Pl3r4meltXfvr+E1a6LaxmQD7Ab6ul3sjAUrhralXnRTAX+10aQY/EPf1NQ4BzVo=
+	t=1752214137; cv=none; b=A9+uV/kmasqS4h0EcEsIAKyOFrc5i0rZraFwDaWZib10d4/yuBFqO3wjU0k6mMjWYCVyj3+VqI3LWuTLBSePVg0lpY+x6eD6yT+qwTLLZFwoabx4wVMcvQX98elQgp12T99co+4szQp/ernpo0YSIMj4nnHxGXwhHokUsI5LIrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752213945; c=relaxed/simple;
-	bh=MjxfwYEYBr+4mbmREl73sMVm1dodWYzbd02P687uMY8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uiDAGWbMMi7nhskOHxQsXxItVe3zmMBW/am9Q5pd4w9U715YJJoziyfAsyZMhZwBifFd87hTan4bByoWbSn6aZLXiytuiGzl4u/nmjKyYptD0YPDWr6fFkSU5S4bBlS55nWDyVSXjKAxVffrAwEYieZarvt/fvJqUKgUGau8GCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VLew2Tdj; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so9840265e9.2;
-        Thu, 10 Jul 2025 23:05:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752213942; x=1752818742; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=E7DKDfxJvck0LHqqh3ys40NEXmDsPAV+8zsSFbCeAIw=;
-        b=VLew2Tdjg1cWOP+vzaijiaMri6FfZAgSouiSLI1l/kStBZyGZFd3fa26FR8LISomns
-         mb2PQsLazsUz6Q0C+ABsZ8rEFzNlQ7Q7IhO8q/lMvKgQ3FFfCb3QcHZRakMGHbRbKAVs
-         fK/O+2I++JFqyXjXPzXGHzbHAo9a+wDgXr5pCXXHHNwnZYYiBaFS5Ab/Zcy3sp5owP2s
-         o/jRPTB26A+Z10dx+RefZnc5eheyLJE65DgwVdPWzQXOp6LDU/Acn4E+rvT2YCFp8WIp
-         yXKYaFpfly9wJKhSseB87UtFQYFvxUQmcr1TvSU4ubJYmWuyKCxiH6lBsQZq6lFPr67t
-         5sFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752213942; x=1752818742;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E7DKDfxJvck0LHqqh3ys40NEXmDsPAV+8zsSFbCeAIw=;
-        b=hEpJ1tnezmYYNqazii4jDTF3ynIaeQlrQC/uglHBquIGKKHjulIWByN1OeGkjJJ68k
-         CoOLGRStHa5cf65Zgmrk30Qo9fNnE8c6YBNVuYwvaSJatM5L3faYJLCi79riIwOMUOtc
-         LDFLPeeb+KfulSEpqKRgn08KZvAMQDextuWsAms3pMVgMPq/gbERpLOF8Y6nsIPuBG2j
-         VqM1F1ScYnF1zwE5cxVfJ+IafYvxXkBBAiPIdQWZfNYu9Ll/S+ahuaU2wVYvqNxlryIt
-         0LXNwW2ZYCZyCFFCM0CSJTr6APyeVDSEoejUaYExjr+UBjVzc4o0J0SIlbPF1LhX0ZPC
-         qojQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9ugfZ5QYSRAhYRZnfRne2ElWSq8WLW4nCtfrY0jnxdTYmtDHh2lE4KulsYU+SS8LFwsh9I1EMdqu0i5vEE5U=@vger.kernel.org, AJvYcCXUD/0GADeg+5I/AB6JhVJTjejM7I00nZFgDcO6WKXmnsOuxf1LBr/Asy0f0x66KNeh5MsbFMTQt2zbiV+L@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4BOwGARC/s3nQt6yuyf4k7TyB+rvpMdy9p+mpedISSkrYBW2m
-	mG4wrGj5YYD0Iwt0HZk4g3LibF4sEevfoprFIFe4aHibHDLFL4L0PB/A
-X-Gm-Gg: ASbGnctYElSEqmdLYcfmKs4i31qAgnI5El2gLJ0G5ivOZEPwryivqQnhCg9jcUKh+Xv
-	7lx/FzXn6vwhIMhKBXqvOodJ4aslLjJD3wBpa9GUZojwP0pm7esKQnifGmjrozQ0XdzdDbK6+dm
-	pgbFxAZvaaHYiZYBJpA72BfWYxiJ3MTsZwfDFqTTQ+xpQdqLc5LLxqrdwCovpV73UEEgq6YSTwj
-	LZGse2PhXbePa3h4TZhwJK3iaaZrh0BaemoqxS48ZR5/zsT8Rya1CI/0+pWo+9uGKKdlEepBWUU
-	ocoDb/h3l1lokY1iGZPdgBUMAKV159yUdIFAoXklibFm6CmBjZ7g70AAza1JJRxw7GRPyRoQ9m9
-	KthDB1ISebA1jqfQXBD3pKn3yoTWY4uOGRgrEJjSz+NONxpc058axWwzswDsZcc9t6fjwdA2y4E
-	i+7avb8J2gXThLS46Okwq7SCHqn09vm7Wrd551ACx43dvIWvJykIq5GICAu5C/+1Kc2lbUXz9Ps
-	0DIemCmMhq3fFOwqHS3+0D0xlT90uw=
-X-Google-Smtp-Source: AGHT+IEPSi1cBie5t7j4xTlaeJrycuFUQH/Q0RNOKDhAy5xhyS385IO1szs2WDv8sTlLuVuy3iohZQ==
-X-Received: by 2002:a05:6000:42c4:b0:3a3:7ba5:93a5 with SMTP id ffacd0b85a97d-3b5f188e76amr1361043f8f.26.1752213941380;
-        Thu, 10 Jul 2025 23:05:41 -0700 (PDT)
-Received: from 2a02-8388-e6bb-e300-2ae5-f1e1-5796-cbba.cable.dynamic.v6.surfer.at (2a02-8388-e6bb-e300-2ae5-f1e1-5796-cbba.cable.dynamic.v6.surfer.at. [2a02:8388:e6bb:e300:2ae5:f1e1:5796:cbba])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc21e7sm3597085f8f.36.2025.07.10.23.05.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jul 2025 23:05:40 -0700 (PDT)
-Message-ID: <28c8689c7976b4755c0b5c2937326b0a3627ebf6.camel@gmail.com>
-Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
-From: Martin Uecker <ma.uecker@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>, Alejandro Colomar
-	 <alx@kernel.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, Kees Cook
- <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow
- <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, Andrew Morton
- <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov
- <dvyukov@google.com>, Alexander Potapenko <glider@google.com>, Marco Elver
- <elver@google.com>, Christoph Lameter <cl@linux.com>, David Rientjes
- <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin
- <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, Andrew
- Clayton <andrew@digital-domain.net>, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>,  Michal Hocko <mhocko@suse.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Sam James <sam@gentoo.org>, Andrew Pinski
- <pinskia@gmail.com>
-Date: Fri, 11 Jul 2025 08:05:38 +0200
-In-Reply-To: <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
-References: <cover.1751823326.git.alx@kernel.org>
-	 <cover.1752182685.git.alx@kernel.org>
-	 <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
-	 <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1752214137; c=relaxed/simple;
+	bh=QjF5BzSgzj78DANOKaT+lShHyk0cn1rnyxGWfTHM9hM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CBbjvrZXxcQfbu18hmBMcu4i1pYObXkKDEkcegN3G8r+PiyuRY9DbH4EXeKDWIm8OWkD+cPoLmGNU+sQSjzNLyCGwyksSJ35Pg/uFVZX6w+WsHRGgnDlkhEggMK9muHUapQCkib0i7cVDNqJW7YNYRTDsGnngdrRllOVB6uGHHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=meY0HnVD; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from namjain-Virtual-Machine.mshome.net (unknown [4.213.232.44])
+	by linux.microsoft.com (Postfix) with ESMTPSA id CA450201A4AC;
+	Thu, 10 Jul 2025 23:08:52 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CA450201A4AC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752214135;
+	bh=/Q7idzf4FKj6hEbdYzmxDNSg5CWgPUcvcwaIQhXEWpU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=meY0HnVDxv6oAeuT1E0Wh5y+TOqdFtuf9Oc39rSZGROliVT6YhRlRG2OK5mxbEsiO
+	 lfaRWTs1qxlOb+lUFqne+AKQOTSWkRXpt6PchFpCVbiiCjn8eDhyc3ODgwasfa/7RI
+	 bhvbbLnt7ybb0OkJgUPSWBzsOSrYVVmgEFTKnThE=
+From: Naman Jain <namjain@linux.microsoft.com>
+To: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Long Li <longli@microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>
+Cc: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Olaf Hering <olaf@aepfle.de>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Naman Jain <namjain@linux.microsoft.com>
+Subject: [PATCH v4] tools/hv: fcopy: Fix irregularities with size of ring buffer
+Date: Fri, 11 Jul 2025 11:38:46 +0530
+Message-Id: <20250711060846.9168-1-namjain@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Am Donnerstag, dem 10.07.2025 um 14:58 -0700 schrieb Linus Torvalds:
-> On Thu, 10 Jul 2025 at 14:31, Alejandro Colomar <alx@kernel.org> wrote:
-> >=20
-> > These macros are essentially the same as the 2-argument version of
-> > strscpy(), but with a formatted string, and returning a pointer to the
-> > terminating '\0' (or NULL, on error).
->=20
-> No.
->=20
-> Stop this garbage.
->=20
-> You took my suggestion, and then you messed it up.
->=20
-> Your version of sprintf_array() is broken. It evaluates 'a' twice.
-> Because unlike ARRAY_SIZE(), your broken ENDOF() macro evaluates the
-> argument.
->=20
-> And you did it for no reason I can see. You said that you wanted to
-> return the end of the resulting string, but the fact is, not a single
-> user seems to care, and honestly, I think it would be wrong to care.
-> The size of the result is likely the more useful thing, or you could
-> even make these 'void' or something.
->=20
-> But instead you made the macro be dangerous to use.
->=20
-> This kind of churn is WRONG. It _looks_ like a cleanup that doesn't
-> change anything, but then it has subtle bugs that will come and bite
-> us later because you did things wrong.
->=20
-> I'm NAK'ing all of this. This is BAD. Cleanup patches had better be
-> fundamentally correct, not introduce broken "helpers" that will make
-> for really subtle bugs.
->=20
-> Maybe nobody ever ends up having that first argument with a side
-> effect. MAYBE. It's still very very wrong.
->=20
->                 Linus
+Size of ring buffer, as defined in uio_hv_generic driver, is no longer
+fixed to 16 KB. This creates a problem in fcopy, since this size was
+hardcoded. With the change in place to make ring sysfs node actually
+reflect the size of underlying ring buffer, it is safe to get the size
+of ring sysfs file and use it for ring buffer size in fcopy daemon.
+Fix the issue of disparity in ring buffer size, by making it dynamic
+in fcopy uio daemon.
 
-What I am puzzled about is that - if you revise your string APIs -,
-you do not directly go for a safe abstraction that combines length
-and pointer and instead keep using these fragile 80s-style string
-functions and open-coded pointer and size computations that everybody
-gets wrong all the time.
+Cc: stable@vger.kernel.org
+Fixes: 0315fef2aff9 ("uio_hv_generic: Align ring size to system page")
+Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+---
+ tools/hv/hv_fcopy_uio_daemon.c | 91 ++++++++++++++++++++++++++++++----
+ 1 file changed, 81 insertions(+), 10 deletions(-)
 
-String handling could also look like this:
+diff --git a/tools/hv/hv_fcopy_uio_daemon.c b/tools/hv/hv_fcopy_uio_daemon.c
+index 0198321d14a2..7d9bcb066d3f 100644
+--- a/tools/hv/hv_fcopy_uio_daemon.c
++++ b/tools/hv/hv_fcopy_uio_daemon.c
+@@ -35,7 +35,10 @@
+ #define WIN8_SRV_MINOR		1
+ #define WIN8_SRV_VERSION	(WIN8_SRV_MAJOR << 16 | WIN8_SRV_MINOR)
+ 
+-#define FCOPY_UIO		"/sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/uio"
++#define FCOPY_DEVICE_PATH(subdir) \
++	"/sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/" #subdir
++#define FCOPY_UIO_PATH          FCOPY_DEVICE_PATH(uio)
++#define FCOPY_CHANNELS_PATH     FCOPY_DEVICE_PATH(channels)
+ 
+ #define FCOPY_VER_COUNT		1
+ static const int fcopy_versions[] = {
+@@ -47,9 +50,62 @@ static const int fw_versions[] = {
+ 	UTIL_FW_VERSION
+ };
+ 
+-#define HV_RING_SIZE		0x4000 /* 16KB ring buffer size */
++static uint32_t get_ring_buffer_size(void)
++{
++	char ring_path[PATH_MAX];
++	DIR *dir;
++	struct dirent *entry;
++	struct stat st;
++	uint32_t ring_size = 0;
++	int retry_count = 0;
++
++	/* Find the channel directory */
++	dir = opendir(FCOPY_CHANNELS_PATH);
++	if (!dir) {
++		usleep(100 * 1000); /* Avoid race with kernel, wait 100ms and retry once */
++		dir = opendir(FCOPY_CHANNELS_PATH);
++		if (!dir) {
++			syslog(LOG_ERR, "Failed to open channels directory: %s", strerror(errno));
++			return 0;
++		}
++	}
++
++retry_once:
++	while ((entry = readdir(dir)) != NULL) {
++		if (entry->d_type == DT_DIR && strcmp(entry->d_name, ".") != 0 &&
++		    strcmp(entry->d_name, "..") != 0) {
++			snprintf(ring_path, sizeof(ring_path), "%s/%s/ring",
++				 FCOPY_CHANNELS_PATH, entry->d_name);
++
++			if (stat(ring_path, &st) == 0) {
++				/*
++				 * stat returns size of Tx, Rx rings combined,
++				 * so take half of it for individual ring size.
++				 */
++				ring_size = (uint32_t)st.st_size / 2;
++				syslog(LOG_INFO, "Ring buffer size from %s: %u bytes",
++				       ring_path, ring_size);
++				break;
++			}
++		}
++	}
+ 
+-static unsigned char desc[HV_RING_SIZE];
++	if (!ring_size && retry_count == 0) {
++		retry_count = 1;
++		rewinddir(dir);
++		usleep(100 * 1000); /* Wait 100ms and retry once */
++		goto retry_once;
++	}
++
++	closedir(dir);
++
++	if (!ring_size)
++		syslog(LOG_ERR, "Could not determine ring size");
++
++	return ring_size;
++}
++
++static unsigned char *desc;
+ 
+ static int target_fd;
+ static char target_fname[PATH_MAX];
+@@ -406,7 +462,7 @@ int main(int argc, char *argv[])
+ 	int daemonize = 1, long_index = 0, opt, ret = -EINVAL;
+ 	struct vmbus_br txbr, rxbr;
+ 	void *ring;
+-	uint32_t len = HV_RING_SIZE;
++	uint32_t ring_size, len;
+ 	char uio_name[NAME_MAX] = {0};
+ 	char uio_dev_path[PATH_MAX] = {0};
+ 
+@@ -437,7 +493,20 @@ int main(int argc, char *argv[])
+ 	openlog("HV_UIO_FCOPY", 0, LOG_USER);
+ 	syslog(LOG_INFO, "starting; pid is:%d", getpid());
+ 
+-	fcopy_get_first_folder(FCOPY_UIO, uio_name);
++	ring_size = get_ring_buffer_size();
++	if (!ring_size) {
++		ret = -ENODEV;
++		goto exit;
++	}
++
++	desc = malloc(ring_size * sizeof(unsigned char));
++	if (!desc) {
++		syslog(LOG_ERR, "malloc failed for desc buffer");
++		ret = -ENOMEM;
++		goto exit;
++	}
++
++	fcopy_get_first_folder(FCOPY_UIO_PATH, uio_name);
+ 	snprintf(uio_dev_path, sizeof(uio_dev_path), "/dev/%s", uio_name);
+ 	fcopy_fd = open(uio_dev_path, O_RDWR);
+ 
+@@ -445,17 +514,17 @@ int main(int argc, char *argv[])
+ 		syslog(LOG_ERR, "open %s failed; error: %d %s",
+ 		       uio_dev_path, errno, strerror(errno));
+ 		ret = fcopy_fd;
+-		goto exit;
++		goto free_desc;
+ 	}
+ 
+-	ring = vmbus_uio_map(&fcopy_fd, HV_RING_SIZE);
++	ring = vmbus_uio_map(&fcopy_fd, ring_size);
+ 	if (!ring) {
+ 		ret = errno;
+ 		syslog(LOG_ERR, "mmap ringbuffer failed; error: %d %s", ret, strerror(ret));
+ 		goto close;
+ 	}
+-	vmbus_br_setup(&txbr, ring, HV_RING_SIZE);
+-	vmbus_br_setup(&rxbr, (char *)ring + HV_RING_SIZE, HV_RING_SIZE);
++	vmbus_br_setup(&txbr, ring, ring_size);
++	vmbus_br_setup(&rxbr, (char *)ring + ring_size, ring_size);
+ 
+ 	rxbr.vbr->imask = 0;
+ 
+@@ -472,7 +541,7 @@ int main(int argc, char *argv[])
+ 			goto close;
+ 		}
+ 
+-		len = HV_RING_SIZE;
++		len = ring_size;
+ 		ret = rte_vmbus_chan_recv_raw(&rxbr, desc, &len);
+ 		if (unlikely(ret <= 0)) {
+ 			/* This indicates a failure to communicate (or worse) */
+@@ -492,6 +561,8 @@ int main(int argc, char *argv[])
+ 	}
+ close:
+ 	close(fcopy_fd);
++free_desc:
++	free(desc);
+ exit:
+ 	return ret;
+ }
 
-
-https://godbolt.org/z/dqGz9b4sM
-
-and be completely bounds safe.
-
-(Note that those function abort() on allocation failure, but this
-is an unfinished demo and also not for kernel use. Also I need to
-rewrite this using string views.)
-
-
-Martin
-
-
+base-commit: b551c4e2a98a177a06148cf16505643cd2108386
+-- 
+2.34.1
 
 
