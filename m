@@ -1,275 +1,214 @@
-Return-Path: <linux-kernel+bounces-728197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CDDBB0248D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:26:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7F8B0248C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AAE77B5309
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:24:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFF5A1CA13DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853262F2C4A;
-	Fri, 11 Jul 2025 19:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13492F1FFA;
+	Fri, 11 Jul 2025 19:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="CBNMepAW"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02olkn2017.outbound.protection.outlook.com [40.92.43.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6oeQFzb"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47FF1DDA14;
-	Fri, 11 Jul 2025 19:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.43.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752261934; cv=fail; b=L81VFyo+YuXmqQyPNJ4SzCO/NxEE89MPbc7/H06dB9/8JwAWQxV9MzEJb9b1Z1ePFzprm+VA+1uMoTUj4ccTipZdQov/1hyDnMMyCkODs4XMHljF32T621GVOpf0E1DXMLqxeyXDs37uxxCTss5K7aMH+UIVrZIA5G3QG6icmMI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752261934; c=relaxed/simple;
-	bh=FEKB2ERtwtfn5WjNcXu29cTfK5GhaJpFTWFixspsW1g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MJbW0Y80zD9uSE33qMm09GS2lgQAojMwZYDWZ+vsHoSUh0KU7BWLe35MLCxAWOoGCltEDZeXwAp6XPRz1Y+W17JUnRZwN2Gez8hQNjJ0Bk2Ax6gDfXTknVHDvCF4IdqUOjrYRGlpLpGUJ4lmdACoWT2shsD7C/QlHPCa4cBqrbI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=CBNMepAW; arc=fail smtp.client-ip=40.92.43.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pjd+7ErW53Dzat65p8aRRV9OO5mZAGnYun6isaE0i2LRfrMbRdp3eK8oGwaLlv82SuoWnb6OAFMrFhYqpn+N8DOPlnHl0rSaE2nYWb5mWrV06DENnMW02RdnDWggbdsxIaPj5Haks4RFGz82aKUt0V2jHCnLOgPQJBYwbQwmQXXW3aJ2ojuselAv0fbCFaXkAUutUiZuCMWluFcq4N7KCEqzER+N+VzgBupnTf8ibN8EN4T/AemMZ4Hw9u6XjYZFMCtEd0rI7IVH4RuNlFSGbFtpS/IhB+8o04dTNIzJCezguTUhbAinSpy5X9vfSbp388s3EFtavNjaMZF7hf02ww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uNvvkskXp7Cg+F+CbxxvFURzasXWU7IBDnvWLNqRbkA=;
- b=Li9BcmvBGsMtXLUQkGWckk4PJmtod6Wf20uMIzRb+jdbeVeimLaoG0dVS+mOI8jjCkl8fvPh75zyK+d4/woV5nwDbRHcEGthXMmv2f/ytcRkcCln69/h2wvGP3iJqz4WRJMlMKAS6aU7Gw8lUZKzeW/LUA3xqSh5J5WbYJVXlaCDS9lWDLyh+8D8AYqY8Mua0VbuPkqdw4R5Fdh4RY1KO+BML9R54flL1PuXMTMQLf3ZYyLbf4jYoVch0yVQMciW0CjJ7XUkHJbAKqKQHSKnTCQl1dkVG+Onl6EeXYuqPU0X11lXp4Y+3j/5KDziyiULzRf87DxXB6LQViprhGILBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uNvvkskXp7Cg+F+CbxxvFURzasXWU7IBDnvWLNqRbkA=;
- b=CBNMepAWgzAflW53SQqq1/G+87TV6VhNFK9JGQPnkioUywqEfTZwyDxVgOtnN7kM3Rk5XMRSgoyLHdFJWpJo6bOW1bG24nKDtUp0awghgf0W9euZSAQNKe/WhG2fDHqCLcqgqfpJgpe34MTEc7YrOa5lUdWYC+r+LyMM3yAeZbDnn1WRKfRVpFCuYibJz7cP3CbKZNAiEy0T3cpYIaMm++L2kbXn18L58gReZM1EhvPmOog1rtg8OQcFwriHje2y6NlWhkOER77ZSDd07CwNWVFRS8PWtrZdldj7+3h35FXp1xmDlTcoRxChsVgv9GL/R1zJHZsMrIb9WQoJOJn1NQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by CH0PR02MB8058.namprd02.prod.outlook.com (2603:10b6:610:107::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.27; Fri, 11 Jul
- 2025 19:25:30 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8901.018; Fri, 11 Jul 2025
- 19:25:30 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "bhelgaas@google.com"
-	<bhelgaas@google.com>, "romank@linux.microsoft.com"
-	<romank@linux.microsoft.com>
-CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
-	<haiyangz@microsoft.com>, "decui@microsoft.com" <decui@microsoft.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org"
-	<will@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
-	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "lpieralisi@kernel.org"
-	<lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>, "robh@kernel.org"
-	<robh@kernel.org>, "jinankjain@linux.microsoft.com"
-	<jinankjain@linux.microsoft.com>, "skinsburskii@linux.microsoft.com"
-	<skinsburskii@linux.microsoft.com>, "mrathor@linux.microsoft.com"
-	<mrathor@linux.microsoft.com>, "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH v3 1/3] Drivers: hv: Use nested hypercall for post message
- and signal event
-Thread-Topic: [PATCH v3 1/3] Drivers: hv: Use nested hypercall for post
- message and signal event
-Thread-Index: AQHb8pinAf9oVnDbFE6auSrIod2ERrQtTXZQ
-Date: Fri, 11 Jul 2025 19:25:30 +0000
-Message-ID:
- <SN6PR02MB41578D12A564ECC32BEFD6F1D44BA@SN6PR02MB4157.namprd02.prod.outlook.com>
-References:
- <1752261532-7225-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1752261532-7225-2-git-send-email-nunodasneves@linux.microsoft.com>
-In-Reply-To:
- <1752261532-7225-2-git-send-email-nunodasneves@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CH0PR02MB8058:EE_
-x-ms-office365-filtering-correlation-id: 7b56ade6-ae8d-43ea-7756-08ddc0b0b2c2
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|15080799012|41001999006|440099028|40105399003|51005399003|3412199025|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?SXbPwa/dr7Zo7bNvsCmPDa3AKEdu+jsw8p7NfzDSNw8195ic8gHO0hBhtq+N?=
- =?us-ascii?Q?cZb2cXJ4PjlLg4u0p19YtGtkp87hDV3A8vkGXeecGfzmqC8YaUGcrEDWYOHj?=
- =?us-ascii?Q?rmoajJ4qS8CFFd+BRbYkJu6wGIHYBcqZoA89s+aw1avx3tJywuXoCvdDDlLw?=
- =?us-ascii?Q?KMIteGIjASI+a3uu+u08L06pzhGqUyp3Ofwfc7vjxRYjxu/ulvrAIbg4ZDMx?=
- =?us-ascii?Q?f9/QP3lnVa5B1efIL7rhL2buj7mWvYOK2AghIjmq1KcSXW4vD9JSlVgBECYL?=
- =?us-ascii?Q?LM1MXPr0gWu74W9PuOAec5L733ATChPtC3hnQdk1vjOifzZBDXuZanR2Ljf2?=
- =?us-ascii?Q?mOS+0438CWAl31I/B16qgGPyn92ZpvkiOH5VyPNdaN0cEDu6BB0wzq+jQBFx?=
- =?us-ascii?Q?h1d3gSghX0bBu4E16l1xYIxCDgACZOveCXhnnMssthV1GZG0MDxUijVZsLfI?=
- =?us-ascii?Q?saaiIg1d1e+uzkoMwH+Kqoxy2qESp8Dt63Z8HLzYjJS+XAPwUv/ZwYz6AgNW?=
- =?us-ascii?Q?Jy6l6VLE4o35PWQUwOlpZENEAjaYe70RwcbPeJjhCCMw2P83ZW4RqDvXur0L?=
- =?us-ascii?Q?KLRvouVWDiv1iOlTA7sYspjMQXY6irQz5E+vUpkP4U8osE17CKo7YiaTw8eW?=
- =?us-ascii?Q?T1JpAbMpLI4soY0inbZt5zkr/5SzFQZGE+B7NqCOi3O+AbFLKnhmb/HMNS3y?=
- =?us-ascii?Q?pMr41WMtVXWPm8/4HswI0zcts15BasHzhQX8PNcJXTyqmjgNS8al9YEVGudW?=
- =?us-ascii?Q?cY3L8NwlzBi6ctefTnFbCp7cs7RArSGEkSAKbBzHYrmfniJ4T3WS+SuA5iYf?=
- =?us-ascii?Q?MW37U9L+9I2/NQvBm+a9CL3s2suT/toJANUtKkT4vtXpv5vnf4rryde8vbYI?=
- =?us-ascii?Q?XCybKnkeZGVOPtcKsqt1MfOw0nrvHnAtvWReBo/hq5heWvtS6PaKcbuwobua?=
- =?us-ascii?Q?3kldBKnsyy35jRCev+8Db/frlKmW8+cd6uqJ73GcuDFhEzzwndTu77et1/rH?=
- =?us-ascii?Q?08riUPZYIGrpD8CS99C0LvXt7YGqLPyV24y9RzfTXh0McSlPLv+lUph8Ewzt?=
- =?us-ascii?Q?K6dCcZNJBsiivYCa8xOu9Oh9oKzv7A=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?yD2ocXiuq+U96AyiimJjRUkB0rMOrunxYATUDojH3ERHafO4gtDZRDC6AE9M?=
- =?us-ascii?Q?nV35Xv5LmVEMl+Ex9b5wL1yoEdSQQQb/ds1BFRmHIwGX4sORavsVYx3K6HjX?=
- =?us-ascii?Q?1ctfZAjcDU+bgAdAmVwn429W7Axf6D9I1+CKRXLSWImCXg2uQce23zHSqnwv?=
- =?us-ascii?Q?LyNPIcBpkDgI735a9uASRe2KTNRwWWMAglpq6iT8lAvLnjZXoWf5Q05AHrin?=
- =?us-ascii?Q?JF2l0XvEX/20CeyQ68nUfp8DTWPmXeAPER1rpB6yl8vZ+oM2vU0JSqnlNJAh?=
- =?us-ascii?Q?By2ILH67MfIPvomTtYrobOZMTSi3KmSKOB1sgXV2I5eHY4PFYepTfZobvJo7?=
- =?us-ascii?Q?2NogX+mpWC8AzN+cIJeLy5SC4oAaDSU4QXDDj1G+C0H7ouEfKo+F4s9xTi8z?=
- =?us-ascii?Q?O6NPKFh921n++dgnXl7JR2DdObETAN06O2IFkiZXE4RhUwrEc+w9miEfroAF?=
- =?us-ascii?Q?DgeYqgSTmsDwCeEWxmLqPJBTETLdrtkMUPjvsoETXinp5Aof0ZQviGg0vmaK?=
- =?us-ascii?Q?XM09B4EUgTdNtgflFEixQsiYfnALY31uRnVFNZt60Hyhz/0TlNNQCUhTWwXD?=
- =?us-ascii?Q?fOjYbL120E7H2zOKDPQwltlB21Ttoy/DLja5Hdzyt+ZfSEgLnZNPhcA+xhE3?=
- =?us-ascii?Q?vFD6WhJau2XgmI2N32VghGU7mF6QlDoyAmYOMH9YPtNhp3vax/EP8HQNzWVt?=
- =?us-ascii?Q?bFYg2LVfYD04dgVzg0h0TYwvIzQV7H/zRN7PIw0jJlsxQZA+2wEPOzA9c5RC?=
- =?us-ascii?Q?9EqtCb0tKA1v7K+WQiyd6cwfVloB45+Z8xOq9VWnd+htt4fuMejA9C50/Q2L?=
- =?us-ascii?Q?it44gSdUbznmsFOCi9GJWUOCGkCFghICedxmEC62+INhbT4TFe8OeRbyrNHO?=
- =?us-ascii?Q?SeL9M/PcLqJkQoVxAyFMAY1pVj59yCwX9oyg6IhgSh73jsBeRfLPH0Qsz6k0?=
- =?us-ascii?Q?VvzZoXho5oTulgvva4Rmw29hQ2QQLHzOUuGT8uJfwAC5VSWQcbMOWd8OeWJa?=
- =?us-ascii?Q?BeUic1GhXs4b4vMe6/qL/aFz1ay6G0Fun+qHQlThGdgBQirEm0m6m0kUTvTP?=
- =?us-ascii?Q?63AqpxRXoXh6kgIKp9r+gqSKUN3NMgVsqq/tvzk3sQbpSk9jKdZcpcZ2lXFw?=
- =?us-ascii?Q?bLGAA3kVwvdMWYn3yNiJvmRsph0hXH0dvVaXfitlEKYWs6TSQZD8/grILAfk?=
- =?us-ascii?Q?CzzaaHZvLWoGTjjJuEhtSui3XqIKWtg5OpSZWF86QuccZfRj37edAdMrh/8?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD991DE4E0;
+	Fri, 11 Jul 2025 19:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752261969; cv=none; b=eHmBsdU9S4dY6/kFnEZKi+xPMpY6ZFe6I+FBiztsmt2CTemw/2uD0o+h3bBdIoQSCK/vPLxueLsarKv289X78jtpKSmWQTF3/5ZQ/sG+mKeLBh4jAtnaKglCYKeV344fWQL0w4ooK1TMME0gLAqeDV9B0I2c+zHPAQU+h6KkU0A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752261969; c=relaxed/simple;
+	bh=Nj2/9SXax7e+BLCGe4rwQQy+Qk8F42MdceTDjpf/rDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c6U5WeMIcRtYwTZZRrGqBrSG1vFdqActbJGWpJsnz3eyueEButMJpX0VK280b6B/LKWZ1iTd7Njk5WedyLnu+Z3Bf2qS0LLPUtLLOzS2PNYgLYmu0/QsQpPuadtc5ru5auP1k8uZ+EFOX/HZHwZMwnroaoAnSfX1SjkWpvKnSc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6oeQFzb; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7d3dd14a7edso354326685a.2;
+        Fri, 11 Jul 2025 12:26:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752261966; x=1752866766; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JwfSF5Ou0Fh5wm9fluMBnRsZ0sojeKWafBTdf2xAt2w=;
+        b=U6oeQFzbsMgNq7HeP+qR/wy519sUTIPnlM5tEAOMs0Q0luJwrD4EnCT5OQ5V6Cym/9
+         GekWAJqMI6THL13QGF9TFo7o9Glo63do9avjjBgORS+zmA/Oj9Cf0xMVklkQ0krXHd7j
+         llgZmV6Pjq3BinsZtozzRk4oFYbVkzxV83hPG/Qm/Hdxw8btretAJSGfDdCrW0168Uo9
+         KD0aWXTjBGv0reeqaidgtNKhZJUArpW68dj4Yg0jMmJm+Kaq3evhkz/SCmiHFVg0CE84
+         zdap8iCgTaOpIEVMoXiYIvtqGIFvk7PLd9ckiQRPD3OBvMWABb3vBCzKdnx0HmCyYWJn
+         qZ1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752261966; x=1752866766;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JwfSF5Ou0Fh5wm9fluMBnRsZ0sojeKWafBTdf2xAt2w=;
+        b=iU9Yjbsohk6m+5BJQ4SrhNidodUh4oKsBgnTbXnTfxBEBkqTNhtS1YhPDrjaksMysY
+         NYp3BF4fmkBYygG0k+0aqMTrxZWykC8qRpXlw82wx2cIfh5UD3teh83h27/qC+UPenJk
+         Ojy6aTPxkm1oQnya4hZDrRWjhRcPbmbhbEEfZB3pQzcpHFsfgDMjbOrvkBo3gMOrzcpF
+         75922HxqDNzYfoum5meZtGk+mHb6LrkaHZmLLdANpx2UVwvjLhWW9GhTyqxWkUeHCVdj
+         t2VDeW96V/D0hNIzDXasekVaIvHxfOEJYljIHl0E/pYihr1rWUmBVsAhX06u/3L7cPIe
+         2SBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKj2wIE+2NKx8ZHueLIvv5jaWV/hv2aTBbXCzxQ8ZhgoeQ7aOuPxuteYK68WC8arZ0ogiz3MXkOZWV@vger.kernel.org, AJvYcCWMeq0oR6khyH5I799zG18Ge8nNj2nDVd8/Fu5igkJCO8oLC2niCI1GKKcJiTuiiTq8oNEG1+wUgQ5LhiH7oCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAHIR9O5Ej8ppVoX/5H2NrcJikppQZo1Vybq6eMhPi26UJKo7y
+	eXYK2iB6EkkiqLn5M3iQLz+A8UgLU4WvFG6eYStc1dViGOoC2o3VxrHx
+X-Gm-Gg: ASbGncvbvRWFs7EtfNp9c/2rr9lcBm7nz2vGibAJbnRQL7Yyuk3/4y6NY/srYnHrWv8
+	QO5apHG7GuCqTMhIYctmx4IayML/WAdAH5FmYV9ZsUSMdJuH0kH39UcR/np3hndM092gf3RW4pE
+	CMJH2vvTVMscrm85bcMuqkm3SLu8RwknO8HOuQrbWSZaQm74xD2XHzZbPNkETlpN6oEyTwlFe0c
+	gAWyWD/UMDXsJhcKdaI23Qslq1gWpipa5awZc1IZ8EqGC/Eb6fsgPwfRBjqewYj9T7tvTJX+Lx0
+	YahNyPutcF8bR1QZJATqyWUhnGB1tdFAiQozfqOYbBJCQttkSz50UOuokp2fUeRsmNtEqHYsxHN
+	YIHZkCOdehP6mxrL5ArCAKsji5Ckf5VqrTgOrkOfuyQ52k51nfc+YFKvWI19yc3qy1DnQn2BQ/V
+	8Bnpd6RtmwMNNK
+X-Google-Smtp-Source: AGHT+IEe54GCWKEIEGuTF82+GhJW28o7mntY39+AcMUpIh0AY0EaceOmMdD3EnQvJES3Xw4UwW2hfg==
+X-Received: by 2002:a05:620a:1a2a:b0:7cd:ca60:7bdc with SMTP id af79cd13be357-7ddec83adfdmr874233285a.48.1752261966090;
+        Fri, 11 Jul 2025 12:26:06 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-704979b48bdsm23045806d6.28.2025.07.11.12.26.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 12:26:05 -0700 (PDT)
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfauth.phl.internal (Postfix) with ESMTP id CAABEF40066;
+	Fri, 11 Jul 2025 15:26:04 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Fri, 11 Jul 2025 15:26:04 -0400
+X-ME-Sender: <xms:TGVxaEr3t-y0z3XbQJS5uzsszc86CQxpphas6KuDseyXVuXOyGTPGQ>
+    <xme:TGVxaMIvioDaOOA2igtomooNDMlwuGV8q2LGQbo8SHxVB1Bmuyp_vqXBVq4U20Ec4
+    GQMpfZsBLY5iiwdcw>
+X-ME-Received: <xmr:TGVxaNwApmjLEjY-H2oQhTCl8aZ9BiXyygvgn9IY9m0TB9uIbV34KgN6CyvLhFPnoChCzFwX7SUzXtgHBxvO99D7h3U>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeggeduhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdq
+    fhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkh
+    hmmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgt
+    hhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjoh
+    hrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:TGVxaLavNepknuDm-QvASV8tWdMIZsevdvKaRVxnaEcKLJFeR0BX2Q>
+    <xmx:TGVxaB6seHyJc022EtIc6Y1isic1FIUjMOdneqUcH56R8LiXkz6F-g>
+    <xmx:TGVxaEBTUKPM-iqLtc-n_fBKjSj91raYcofBFUmbu4mD9Sv2JweqNQ>
+    <xmx:TGVxaPv7r0ITUwP3NzMR5WT11V0J5EREL9VJwknJ_eeTgIsSx18KsA>
+    <xmx:TGVxaButY3S48qkXy9UX3a6JPI8IckyslmdVOOwu-jkXHFz6nzGBVeUd>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Jul 2025 15:26:04 -0400 (EDT)
+Date: Fri, 11 Jul 2025 12:26:03 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 8/9] rust: sync: Add memory barriers
+Message-ID: <aHFlS96FTRgS0dH_@tardis-2.local>
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-9-boqun.feng@gmail.com>
+ <DB93NWEAK46D.2YW5P9MSAWVCN@kernel.org>
+ <aHESYzVOTCwADqpP@Mac.home>
+ <DB9GF0U3JJWL.3FQFMRTBO52C1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b56ade6-ae8d-43ea-7756-08ddc0b0b2c2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2025 19:25:30.2252
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR02MB8058
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB9GF0U3JJWL.3FQFMRTBO52C1@kernel.org>
 
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Friday, July =
-11, 2025 12:19 PM
->=20
-> When running nested, these hypercalls must be sent to the L0 hypervisor
-> or VMBus will fail.
->=20
-> Remove hv_do_nested_hypercall() and hv_do_fast_nested_hypercall8()
-> altogether and open-code these cases, since there are only 2 and all
-> they do is add the nested bit.
->=20
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+On Fri, Jul 11, 2025 at 08:57:27PM +0200, Benno Lossin wrote:
+> On Fri Jul 11, 2025 at 3:32 PM CEST, Boqun Feng wrote:
+> > On Fri, Jul 11, 2025 at 10:57:48AM +0200, Benno Lossin wrote:
+> > [...]
+> >> > +}
+> >> > +
+> >> > +/// A full memory barrier.
+> >> > +///
+> >> > +/// A barrier that prevents compiler and CPU from reordering memory accesses across the barrier.
+> >> > +pub fn smp_mb() {
+> >> > +    if cfg!(CONFIG_SMP) {
+> >> > +        // SAFETY: `smp_mb()` is safe to call.
+> >> > +        unsafe {
+> >> > +            bindings::smp_mb();
+> >> 
+> >> Does this really work? How does the Rust compiler know this is a memory
+> >> barrier?
+> >> 
+> >
+> > - Without INLINE_HELPER, this is an FFI call, it's safe to assume that
+> >   Rust compiler would treat it as a compiler barrier and in smp_mb() a
+> >   real memory barrier instruction will be executed. 
+> >
+> > - With INLINE_HELPER, this will be inlined as an asm block with "memory"
+> >   as clobber, and LLVM will know it's a compiler memory barrier, and the
+> >   real memory barrier instruction guarantees it's a memory barrier at
+> >   CPU reordering level as well.
+> >
+> > Think about this, SpinLock and Mutex need memory barriers for critical
+> > section, if this doesn't work, then SpinLock and Mutex don't work
+> > either, then we have a bigger problem ;-)
+> 
+> By "this not working" I meant that he barrier would be too strong :)
+> 
+> So essentially without INLINE_HELPER, all barriers in this file are the
+> same, but with it, we get less strict ones?
+
+Not the same, each barrier function may generate a different hardware
+instruction ;-)
+
+I would say for a Rust function (e.g. smp_mb()), the difference between
+with and without INLINE_HELPER is:
+
+- with INLINE_HELPER enabled, they behave exactly like a C function
+  calling a C smp_mb().
+
+- without INLINE_HELPER enabled, they behave like a C function calling 
+  a function that never inlined:
+
+  void outofline_smp_mb(void)
+  {
+    smp_mb();
+  }
+
+  It might be stronger than the "with INLINE_HELPER" case but both are
+  correct regarding memory ordering.
+
+Regards,
+Boqun
+
+> 
 > ---
->  arch/x86/include/asm/mshyperv.h | 20 --------------------
->  drivers/hv/connection.c         |  5 ++++-
->  drivers/hv/hv.c                 |  6 ++++--
->  3 files changed, 8 insertions(+), 23 deletions(-)
->=20
-> diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyp=
-erv.h
-> index e1752ba47e67..ab097a3a8b75 100644
-> --- a/arch/x86/include/asm/mshyperv.h
-> +++ b/arch/x86/include/asm/mshyperv.h
-> @@ -112,12 +112,6 @@ static inline u64 hv_do_hypercall(u64 control, void =
-*input, void *output)
->  	return hv_status;
->  }
->=20
-> -/* Hypercall to the L0 hypervisor */
-> -static inline u64 hv_do_nested_hypercall(u64 control, void *input, void =
-*output)
-> -{
-> -	return hv_do_hypercall(control | HV_HYPERCALL_NESTED, input, output);
-> -}
-> -
->  /* Fast hypercall with 8 bytes of input and no output */
->  static inline u64 _hv_do_fast_hypercall8(u64 control, u64 input1)
->  {
-> @@ -165,13 +159,6 @@ static inline u64 hv_do_fast_hypercall8(u16 code, u6=
-4 input1)
->  	return _hv_do_fast_hypercall8(control, input1);
->  }
->=20
-> -static inline u64 hv_do_fast_nested_hypercall8(u16 code, u64 input1)
-> -{
-> -	u64 control =3D (u64)code | HV_HYPERCALL_FAST_BIT | HV_HYPERCALL_NESTED=
-;
-> -
-> -	return _hv_do_fast_hypercall8(control, input1);
-> -}
-> -
->  /* Fast hypercall with 16 bytes of input */
->  static inline u64 _hv_do_fast_hypercall16(u64 control, u64 input1, u64 i=
-nput2)
->  {
-> @@ -223,13 +210,6 @@ static inline u64 hv_do_fast_hypercall16(u16 code, u=
-64 input1, u64 input2)
->  	return _hv_do_fast_hypercall16(control, input1, input2);
->  }
->=20
-> -static inline u64 hv_do_fast_nested_hypercall16(u16 code, u64 input1, u6=
-4 input2)
-> -{
-> -	u64 control =3D (u64)code | HV_HYPERCALL_FAST_BIT | HV_HYPERCALL_NESTED=
-;
-> -
-> -	return _hv_do_fast_hypercall16(control, input1, input2);
-> -}
-> -
->  extern struct hv_vp_assist_page **hv_vp_assist_page;
->=20
->  static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned i=
-nt cpu)
-> diff --git a/drivers/hv/connection.c b/drivers/hv/connection.c
-> index be490c598785..1fe3573ae52a 100644
-> --- a/drivers/hv/connection.c
-> +++ b/drivers/hv/connection.c
-> @@ -519,7 +519,10 @@ void vmbus_set_event(struct vmbus_channel *channel)
->  		else
->  			WARN_ON_ONCE(1);
->  	} else {
-> -		hv_do_fast_hypercall8(HVCALL_SIGNAL_EVENT, channel->sig_event);
-> +		u64 control =3D HVCALL_SIGNAL_EVENT;
-> +
-> +		control |=3D hv_nested ? HV_HYPERCALL_NESTED : 0;
-> +		hv_do_fast_hypercall8(control, channel->sig_event);
->  	}
->  }
->  EXPORT_SYMBOL_GPL(vmbus_set_event);
-> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-> index 308c8f279df8..b14c5f9e0ef2 100644
-> --- a/drivers/hv/hv.c
-> +++ b/drivers/hv/hv.c
-> @@ -85,8 +85,10 @@ int hv_post_message(union hv_connection_id connection_=
-id,
->  		else
->  			status =3D HV_STATUS_INVALID_PARAMETER;
->  	} else {
-> -		status =3D hv_do_hypercall(HVCALL_POST_MESSAGE,
-> -					 aligned_msg, NULL);
-> +		u64 control =3D HVCALL_POST_MESSAGE;
-> +
-> +		control |=3D hv_nested ? HV_HYPERCALL_NESTED : 0;
-> +		status =3D hv_do_hypercall(control, aligned_msg, NULL);
->  	}
->=20
->  	local_irq_restore(flags);
-> --
-> 2.34.1
-
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-
+> Cheers,
+> Benno
 
