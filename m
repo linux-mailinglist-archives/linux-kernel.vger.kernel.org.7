@@ -1,158 +1,155 @@
-Return-Path: <linux-kernel+bounces-728060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1CCB02332
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 318B7B02338
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67CB1892730
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:56:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A436C189BEF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DFE2F198D;
-	Fri, 11 Jul 2025 17:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D259F2F1FF2;
+	Fri, 11 Jul 2025 17:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PQ+6q71P"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="e84vmfS/"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BD019E82A
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2AC41760
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752256559; cv=none; b=m/oQE0eWObauYrjBqhnaFaB9WdyWvw+XnHcfVD6Is5dQLx4EiXr2PoqOgt5roj3ivQ417fglDvvevQZMpUlfHd3vMygpIOgdIo2urxq9uJiqEsJccFhQ38IuqogVavuhPdmG7qKUNjyCLzbbmumFkHQKpYx7y0uinPsRgiA5nj0=
+	t=1752256758; cv=none; b=Pi0j/hYTRBsx7kUHLyASvRHBUkO9bhAEpPYtwfjoF6t/epfJCGwIK7h2NtttPIvBVs9E7Cv9gQuU/wtlRrKlL8Rb0fxsBdHCzAjyQp5Envg3qbTUxzMztkU294TC3bUfKtIogV7idfy4ozrVAanS8HbcshA98NkCRxPAOIrc+I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752256559; c=relaxed/simple;
-	bh=By+aOu6/h9lPpjtWeD7XIQONx6OKMRuvadlk7LOIevA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=b5kHGDUJn2JZ6/WY7woVQgyrTzqFX3UZGwyw96gyUlFa9Tx3XclNag3vGP1a/sJpymbsi9CwmEV/lloaQYQIbdsT+4qiaEzc5U3Fo4Gv6+4q0vaZD6Pdg3T9kLVZKy4yiPMakh+8j1lxNrByBovi3GwMER6sQgAaup0K0nC915c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PQ+6q71P; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752256554;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SSjeOZLyeiOPwpEsxQkp3Er7192dg8pTZOxPaQMpH9Y=;
-	b=PQ+6q71PJESszXAu+siQctemYyi+5RKnvX4uq6+JhSZFtxzyzbQBW/maKSVbjpG+1CO+k2
-	ssWAtZsEQALQkUVKtvpzvpUt6bn/b7fC52A4DUneV1wGPYy6zOQ8yEO5PKsmnYKWp+hvTs
-	k7XGojQ1EA1kfSNGhAcUaKrSFA6GvO4=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Shakeel Butt
- <shakeel.butt@linux.dev>,  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-  Michal Hocko <mhocko@kernel.org>,  David Hildenbrand <david@redhat.com>,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: skip lru_note_cost() when scanning only file or anon
-In-Reply-To: <20250711172028.GA991@cmpxchg.org> (Johannes Weiner's message of
-	"Fri, 11 Jul 2025 13:20:28 -0400")
-References: <20250711155044.137652-1-roman.gushchin@linux.dev>
-	<20250711172028.GA991@cmpxchg.org>
-Date: Fri, 11 Jul 2025 10:55:48 -0700
-Message-ID: <8734b2vcgr.fsf@linux.dev>
+	s=arc-20240116; t=1752256758; c=relaxed/simple;
+	bh=kJPTgPdH0OPrTn/YGSgGWpc1xCCW5T5ErXZFEUacy4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZTG1iOwGke1QqsPgTEMjsH0Z09TmVDjaM0BSkvTTopcOGXNjND4+RYqmaspPyZ/ex0GPAQJfXOirIx9tihWwbynIVN3oAU44BulsypX07h7Mcc+BTOv73h5iYsU7bhaEnEH0s+iVgM8jrsUDgmH393Tv0tTmh7Tz2N4/43eTb+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=e84vmfS/; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a169bso3970964a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1752256754; x=1752861554; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HO86Lx8//8hSyzYLerKKeVnItqg9SoMBkOdjNB0C6us=;
+        b=e84vmfS/uvJd4/7X9x9JaZqS7k53tkpjlFfTh956f9UYkN0iEsN4RUnhwm+GEhTleH
+         aC35uCL288fvWaHkxq3WSDZGWMtpie/ZxuHaqmQBfzlu9cUll2ECAJfie1+xkuSjFBT1
+         nIhTYvwv1VzPUOCcHQkqS4nbupaiquHTToLNw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752256754; x=1752861554;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HO86Lx8//8hSyzYLerKKeVnItqg9SoMBkOdjNB0C6us=;
+        b=Q+vix4GN0MHQEMCpAZEjfq4c0dwzlkzKxPukj0YO/6QdKoVLsr1elRIt0Ct747BO3t
+         XHRWPqzQEqX6LFb+alkiEsKJKQU86Tfh57MYIUB3oqGMcHzvfP+XfBaJKEUL4vkUZJWv
+         xihZMi2tSs5lN0Jd77zh/nsC0Xe51juxWp6DSS5Dp8Wo5tPlXn4PQZXI/jlTq+EmdYy2
+         bRdARc+9ZSnxh5BdLXstg2oruspE2NPV9pVPKt4A6ZeEi354ivRedPTM78QilPWKMdaU
+         qTDmY97t1oMKG5dgqsY+CTGch/1YGudUy5lio9Bihwj5V2ir/BKSzm4xwqH5ep8iXxUR
+         WLuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWE6PpJH91TLrIAUpGf/qUghRtrudHHbdahNNEeKS3OQSlB+OfxyRQsyp8PIaDW7W8QyC3e+kAg6lZfCjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3WSnWmC+EPmX3vVKMET9J9ql2vD3yeiVtJJZFrW1VSSkaj71w
+	yohzp4FrKKVVFMzZROKhK/xOq4N52c4xiAB4zBz+QwxRf4naO9cFgeBwmtOwJcobOaz3sOsKR+U
+	3z3dn/kLrxA==
+X-Gm-Gg: ASbGncuCSaqZpzlqqaOAmQJXx1EpyithXckbLqyt/oGNCphTZT6Q//pUdg317zPPOcO
+	/M2DvyY/EOhaP2uEyicvezkFnJmMjeNH2IeIOikehBRyiN1o3x+wmJwwKM5sWC+f3cjquj5Chiq
+	QcxuVVJQqNjjpZv+rSknnciz9uH7mxN965VPmfyJE5DBSNXuM24DD6EHeOjDA/KefRV8mfpJTxe
+	d2v1n83Q/JJDRf5s2+qomlRzCzZ1ZqVgesuiwBzvOIpW132OWR+WvUuyrKIP9yeEnPB4aowLh49
+	jvhNP6IWZSwcSu7AVkmZILpjNvpon60ndH8k3Y8rQMFby+yGDnhTKHMUoouM5ltoqkQji6y0qfB
+	OlJK0Jt+ZyjQXMmKmsrc1tS1qI1P7Isb5BV81zU0E/O1shFFNBHfI6Aa4gIB+IIiqkqDiyAlq
+X-Google-Smtp-Source: AGHT+IENv5qWA3H80XmKhozj7/Bl9I2Z6WX5vPwzgikDEC3PCej4pTu8Yu43A9oTIvpgnh5Ya2sLGQ==
+X-Received: by 2002:a05:6402:518d:b0:60c:40bd:8843 with SMTP id 4fb4d7f45d1cf-611e764f6e5mr3668433a12.11.1752256754134;
+        Fri, 11 Jul 2025 10:59:14 -0700 (PDT)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612067f7ca6sm186068a12.55.2025.07.11.10.59.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 10:59:13 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60707b740a6so3557842a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:59:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUS/LKsmaujALbE0/bhDv9nIJiTxw6zznBl4gJ8ZjClV16BFbzlg8LSC3lZ7U4vMD907MK8R0Xig1L3TA8=@vger.kernel.org
+X-Received: by 2002:a05:6402:518d:b0:60c:40bd:8843 with SMTP id
+ 4fb4d7f45d1cf-611e764f6e5mr3668397a12.11.1752256753054; Fri, 11 Jul 2025
+ 10:59:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+References: <cover.1751823326.git.alx@kernel.org> <cover.1752182685.git.alx@kernel.org>
+ <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
+ <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
+ <28c8689c7976b4755c0b5c2937326b0a3627ebf6.camel@gmail.com> <20250711184541.68d770b9@pumpkin>
+In-Reply-To: <20250711184541.68d770b9@pumpkin>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 11 Jul 2025 10:58:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjC0pAFfMBHKtCLOAcUvLs30PpjKoMfN9aP1-YwD0MZ5Q@mail.gmail.com>
+X-Gm-Features: Ac12FXy_-gvqQgEDwxrh9_yUhPGT4NZn2yvYc_wfrsBVUNUS1D4_tzcLfdrYbJI
+Message-ID: <CAHk-=wjC0pAFfMBHKtCLOAcUvLs30PpjKoMfN9aP1-YwD0MZ5Q@mail.gmail.com>
+Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Martin Uecker <ma.uecker@gmail.com>, Alejandro Colomar <alx@kernel.org>, linux-mm@kvack.org, 
+	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, 
+	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, Sam James <sam@gentoo.org>, 
+	Andrew Pinski <pinskia@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Johannes Weiner <hannes@cmpxchg.org> writes:
-
-> On Fri, Jul 11, 2025 at 08:50:44AM -0700, Roman Gushchin wrote:
->> lru_note_cost() records relative cost of incurring io and cpu spent
->> on lru rotations, which is used to balance the pressure on file and
->> anon memory. The applied pressure is inversely proportional to the
->> recorded cost of reclaiming, but only within 2/3 of the range
->> (swappiness aside).
->> 
->> This is useful when both anon and file memory is reclaimable, however
->> in many cases it's not the case: e.g. there might be no swap,
->> proactive reclaim can target anon memory specifically,
->> the memory pressure can come from cgroup v1's memsw limit, etc.
->> In all these cases recording the cost will only bias all following
->> reclaim, also potentially outside of the scope of the original memcg.
->> 
->> So it's better to not record the cost if it comes from the initially
->> biased reclaim.
->> 
->> lru_note_cost() is a relatively expensive function, which traverses
->> the memcg tree up to the root and takes the lruvec lock on each level.
->> Overall it's responsible for about 50% of cycles spent on lruvec lock,
->> which might be a non-trivial number overall under heavy memory
->> pressure. So optimizing out a large number of lru_note_cost() calls
->> is also beneficial from the performance perspective.
+On Fri, 11 Jul 2025 at 10:45, David Laight <david.laight.linux@gmail.com> wrote:
 >
-> Does it actually help? It's under elevated pressure, when lru locks
-> are the most contended, that we also usually scan both lists.
+> What does that actually look like behind all the #defines and generics?
+> It it continually doing malloc/free it is pretty much inappropriate
+> for a lot of system/kernel code.
 
-It does, but it's mostly about !swap or memsw limit case.
-It's also mostly pronounced only during high memory pressure
-when there are many rotations.
+Honestly, the kernel approximately *never* has "string handling" in
+the traditional sense.
 
-And it's pretty significant in our case: I'm actually trying to address
-a production regression caused by commit 0538a82c39e9 ("mm: vmscan: make
-rotations a secondary factor in balancing anon vs file"), which
-added another lru_note_cost() call.
+But we do have "buffers with text". The difference typically exactly
+being that allocation has to happen separately from any text
+operation.
 
+It's why I already suggested people look at our various existing
+buffer abstractions: we have several, although they tend to often be
+somewhat specialized.
 
-> The caveat with this patch is that, aside from the static noswap
-> scenario, modes can switch back and forth abruptly or even overlap.
->
-> So if you leave a pressure scenario and go back to cache trimming, you
-> will no longer age the cost information anymore. The next spike could
-> be starting out with potentially quite stale information.
->
-> Or say proactive reclaim recently already targeted anon, and there
-> were rotations and pageouts; that would be useful data for a reactive
-> reclaimer doing work at around the same time, or shortly thereafter.
+So, for example, we have things like "struct qstr" for path
+components: it's specialized not only in having an associated hash
+value for the string, but because it's a "initialize once" kind of
+buffer that gets initialized at creation time, and the string contents
+are constant (it literally contains a "const char *" in addition to
+the length/hash).
 
-Agree, but at the same time it's possible to come up with the scenario
-when it's not good.
-  A
- / \
-B  C  memory.max=X
-  / \
- D   E
+That kind of "string buffer" obviously isn't useful for things like
+the printf family, but we do have others. Like "struct seq_buf", which
+already has "seq_buf_printf()" helpers.
 
-Let's say we have a cgroup structure like this, we apply a lot
-of proactive anon pressure on E, then the pressure from on D from
-C's limit will be biased towards file without a good reason.
+That's the one you probably should use for most kernel "print to
+buffer", but it has very few users despite not being complicated to
+use:
 
-Or as in my case, if a cgroup has memory.memsw.limit set and is
-thrashing, does it makes sense to bias the rest of the system
-into anon reclaim? The recorded cost can really large.
+        struct seq_buf s;
+        seq_buf_init(&s, buf, szie);
 
->
-> So for everything but the static noswap case, the patch makes me
-> nervous. And I'm not sure it actually helps in the cases where it
-> would matter the most.
+and you're off to the races, and can do things like
 
-I understand, but do you think it's acceptable with some additional
-conditions: e.g. narrow it down to only very high scanning priorities?
-Or !sc.may_swap case?
+        seq_buf_printf(&s, ....);
 
-In the end, we have the following code in get_scan_count(), so at
-least on priority 0 we ignore all costs anyway.
-        if (!sc->priority && swappiness) {
-                scan_balance = SCAN_EQUAL;
-                goto out;
-        }
+without ever having to worry about overflows etc.
 
-Wdyt?
+So we already do *have* good interfaces. But they aren't the
+traditional ones that everybody knows about.
 
->
-> It might make more sense to look into the cost (ha) of the cost
-> recording itself. Can we turn it into a vmstat item? That would make
-> it lockless, would get rstat batching up the cgroup tree etc. This
-> doesn't need to be 100% precise and race free after all.
-
-Idk, maybe yes, but rstat flushing was a source of the issues as well
-and now it's mostly ratelimited, so I'm concerned that because of that
-we'll have sudden changes in the reclaim behavior every 2 seconds.
+                   Linus
 
