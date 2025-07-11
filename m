@@ -1,143 +1,314 @@
-Return-Path: <linux-kernel+bounces-728003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC51B0224E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:06:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F11C3B02250
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D47A7B38B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:04:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D548EA4020F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633212EF9B5;
-	Fri, 11 Jul 2025 17:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMwT/msm"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41DD2EFD8E;
+	Fri, 11 Jul 2025 17:07:08 +0000 (UTC)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CDB2E7165;
-	Fri, 11 Jul 2025 17:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43757219A91;
+	Fri, 11 Jul 2025 17:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752253572; cv=none; b=OefphHDFNsZgr3Ycd5Uj7/UIHACi3dJwYb45DN3Mg2JhEnorZ/l/xl8M8KUti2BmAA6a1zcTvNUIAXf39pc4Eq6iMT54BGT7f0XvIsbYXzx8LYbmN/yT4H1uUt47W3g8Xj/vPnJ84Z2iOotTbffyhjaUQJDrGM+VSYDmZypA9U4=
+	t=1752253628; cv=none; b=DtEzTZAmFCzvN06CWZ+JVUabfyN3Wz68ORsyRcPOhhCYCu2KLouclK/9418ZAXckaU08ZGMj966o0DqAh2BvrvVPgu/hL57LkTIvnAiFc3/Y5kzmhjNiN1Vbp/ertTF6kg4aB2Rl5VWwsIjhKKEIFrTabXvB0zWCKKYm7WTcmiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752253572; c=relaxed/simple;
-	bh=WrvB8GsIeIreYnuKoMq5URVLOHQy+PAHYcyx6LKjwSU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LUMkMDSuvJv2U5q/rzhMIQDh/g4PZ0LX0Gw0R6PHuC6747FwPwjUDeAqMbYP9X84PQxoX7gbCeo+KUEkmu00Xl/MuhDOeXBsMhUF8foWtDPkebav2kNeNApMeEebZeMuESJHRAxr6J3bT8piHOCHE7AbMCTBK4FX/X+d3VBwkHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMwT/msm; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1752253628; c=relaxed/simple;
+	bh=4+q2RrFArN5BUaP53yFVzUX1RuoXv58PDG9QO9loeNQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AYN78XNJYAY/ujLd+p9PXIoqvE3BV08Yc36Q7z26nlfjeI3Q/TRJ0ojv1FWGdlVFiYFbV/fWB5U8HR5R4AxZrzXGAp9vI8+ZcSY+vAVD4QLZeeHvK+EPWRGDm7htkYVb2CRxeS2pNpHvW2etJ5XMSybKhTmVp7HdCZz1Qs6QjiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553e5df44f8so2118269e87.3;
-        Fri, 11 Jul 2025 10:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752253569; x=1752858369; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PNAWGrPiwj3E1EhTq5Tl1CO6rinMEagBkU9r1o4zi7U=;
-        b=QMwT/msmcMnpJRSHW17BZSqZokjvgeGiBzk5PTL3oL5ybb9yCAioDXFvqvTmg8p7Fl
-         BBgAEOdf7xKCWsmlqfbTHyLeOhLOuo79usKoMmQqIVhqTgAHxxk3m8vJCd0N4pOfcHI2
-         YG1PbtavdKAMeBsI/1VwOe0VQAwTSO0pM7vHS1XLhjeo1p3c9Q1ncp2ClEr795PO32HP
-         SKim3YfezNQ2swazLGt1Vp8zt2hxrsc6P1ehle250GpOEIUdBJdHS/GL85jIpsZyQDKh
-         fXDdkeRTZUQCT1x6GUNwyPerlXfT8Lfb/6+i7DApR4/h8viuRLfpQVQdeteGNVn6ovhp
-         lZhQ==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0b2ead33cso415969466b.0;
+        Fri, 11 Jul 2025 10:07:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752253569; x=1752858369;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PNAWGrPiwj3E1EhTq5Tl1CO6rinMEagBkU9r1o4zi7U=;
-        b=xC0Go30WuBHI8U9f7ZoCWe7+MtSZePAmkUZtwu5K9yCXLyT2IKztdNJ1G7qSpGPSfc
-         wwI2bXr6SZLPhzSWm75h2rfVPh7gjZY4LAS9b6QS3ZSB5QUqPqYg9wUaMztOsycgjd1A
-         C50q4nzOnnLDIuUSP6yRXagQip5C3tshYTAmASNydEsE7Q63J7HmeQUKxDONGIlvFmE9
-         fO1SR5B9Fc9if2hIAEF1hRAly5VXdac7Bl/KgU8KrmYPk+qQvFB/rYG9LtWUBDjWRXnh
-         76raLGDVN0wMdAFkvK6SRd+Lc56nMnhrVfw2gVH9TDle1KD+TwPeXbD8UjGMPSvvjHq7
-         +MqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXH0RkrosdEK8HmFCCMtC+HBrbWoMu5ychszG7qqznSWtUnnajPOuFh1Sar4Jxa2y/J36yrmeDJZPiW3HI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyxFEvSMUvHQBKlfeX4IQxHkHcGIRFnO/93sKiuC29g7t3TtXE
-	Hjo8U3IYvqkodhA5ydA7SrhUPyEHGSRfFd3U0AmiteSHdQiJBoiDW5Gk
-X-Gm-Gg: ASbGnctPeiQQ3hUTujE8Dqw3jqGTvsycKlg0dv+g6SKAusFutBvRizb38uTTvkf4Rzj
-	aVx5yX0yOr1sKdy6ZjtX+i+jfbPJ3CL0/I0tdqHoHjb0ao0PD8xz2WVIYEMgXWxn+DQUaJ4ezeX
-	mPihTnHd2m3TVJyOwQTT60tQAezkfyGKv4fMoLmhc+d4EJmsHXH5S+EdB48ODgixZ2xRbEWcdB6
-	wiQGdIJ7B9yEgkGciSSzX+XZfDt801viSyrrNjuJ1bnoUnr32nKuwlJMRw2MgLZVaoGBXDQfmHG
-	mV7XkD5cOnoC2xZAN4sP4uPZyurcmpIWedikoTpaQqj8vbyQW8HUJvj/kDn88NBuf4gYZdhYwk0
-	v/gCsnrt7Ld/VAeVi6nEePidF5DUEQSVNNZWPd2fvIa9r1HIGqbyy12HhM99FXlJ3vIszZKBNVW
-	NVeGe6oGinDm9Cl4IrIZ+RHjghwl6ltAOCzCfGNL5oM5tpfC8aSdb02YqIZBzb3Q==
-X-Google-Smtp-Source: AGHT+IGXo0leNEZOdpcDo5mboEAsYRR7bsRSf0EC+JdFXlc+xOggVj+ftQvTd/RTlrxgZhW5tHX3RQ==
-X-Received: by 2002:a05:6512:ea1:b0:553:2c58:f973 with SMTP id 2adb3069b0e04-55a046733b8mr1503974e87.52.1752253568879;
-        Fri, 11 Jul 2025 10:06:08 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:6e:3100:ed74:9560:782d:a190? (2001-14ba-6e-3100-ed74-9560-782d-a190.rev.dnainternet.fi. [2001:14ba:6e:3100:ed74:9560:782d:a190])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c9d0f2asm1009210e87.131.2025.07.11.10.05.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 10:05:55 -0700 (PDT)
-Message-ID: <6b872eb0-22ca-408e-9c4e-8f094c3580ae@gmail.com>
-Date: Fri, 11 Jul 2025 20:05:51 +0300
+        d=1e100.net; s=20230601; t=1752253624; x=1752858424;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FKPWFxQCXKDcGznRpXbuav95dpMmtVl5vm+395N2KKc=;
+        b=RQHzCvMs5y2aekVf3VWYMC41hZozDaqrEMGt7jfuhHwm9OAmD5EeLTezDUy0TaZmLm
+         ZvsSDqGnvbXH+iMghSKLJmfylrGXBhLivXKVqf9yEekgssMIXYWvFgmOCoo/ueKjdnXx
+         7IGDWUJAoAb3jSTDE1p2hV8rGZSX3YUOUsJfGHs7AWSHE6BX3s/JQUnFgwD04BeUA2es
+         c/vcPaYPiJVyqWVKxW0hpliAtyRphqIH3UubX4iqt8UT4LO8pimaQ9n8jtr+ExYRJiRB
+         enw748UrtZcmhs7i+Wh14An0p6/GPSIbpg0LPGu8psZ3JR58m28R6q+7jfiRKTPBjDMh
+         p5AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSW1mLE8MHeFRtEUJNGVLZSM7wUC/K891lr2MLGUuNhzwQSJcmoKMMDa820/4da3qwgEXY7QxVts6hNVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuEY9FN0psk/NhYpmUVwabnB1EEBGYUNl1Qh5WNEv73rWdKb64
+	vVmFJ9cGTq2QawDmbwfXaho8zD689kUwmh4aFNgFD6K7NdLWlRgLeW+T
+X-Gm-Gg: ASbGnctuZ8TkhNyPGSySmQMzEb0IouPM2H7E49mzd5x7a9yjPu3xRNHqrnyIUUzYOZN
+	StHzXt5KUeYP6/4gABW05eDMfS/PzvApeuh66TOuBBYurgS9dPDzH9uSekKiEJNx2pohF0WcHEs
+	M6PUwNTOatuam/+bGrkyZTZq5O8XbT9US+saOd4N1izy723SfP56w8Jr6tAY4jalXjJ8lVNohQz
+	/CkYtfNUr+ZPyQYNi43jV0bRt/iC8keGBU7+D25sQiYu55zXVfMnSsd5tPbXPI5X+3jkkpS56Wr
+	1yP9u/85QKkdp36GtgskTGmUdk64wYetEV8/x47xsxouKzQiTXARTl0dkBwBIQDkXQ68+mEtoAi
+	bmv+jc0Mxp3ZWZB3EnXpsWC4d
+X-Google-Smtp-Source: AGHT+IHth8tcEIRt6ZDS2lF+RWeEr7Pa+YSnxYIDlJWFtPSSbMO601EB9AqJxQevbqyNwwdYItef/g==
+X-Received: by 2002:a17:907:3d0b:b0:ae0:b7f6:9d76 with SMTP id a640c23a62f3a-ae6e253ffd7mr892692466b.28.1752253624084;
+        Fri, 11 Jul 2025 10:07:04 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:71::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e829629dsm325561266b.138.2025.07.11.10.07.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 10:07:03 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Fri, 11 Jul 2025 10:06:59 -0700
+Subject: [PATCH net-next v3] netdevsim: implement peer queue flow control
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] media: Documentation: Improve grammar in DVB API
-To: Brigham Campbell <me@brighamcampbell.com>,
- David Hunter <david.hunter.linux@gmail.com>, mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org
-References: <20250708155206.91281-1-hannelotta@gmail.com>
- <680b91c0-0fae-4230-9fa1-da988cb82e65@gmail.com>
- <DB8S4WLTG1SS.NVODTL6KNFXF@brighamcampbell.com>
-Content-Language: en-US
-From: =?UTF-8?B?SGFubmUtTG90dGEgTcOkZW5ww6TDpA==?= <hannelotta@gmail.com>
-In-Reply-To: <DB8S4WLTG1SS.NVODTL6KNFXF@brighamcampbell.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250711-netdev_flow_control-v3-1-aa1d5a155762@debian.org>
+X-B4-Tracking: v=1; b=H4sIALJEcWgC/23N3QqDIBiA4VuR7ziHP5XY0e5jjCj7KiF0qLhGd
+ O8Djzbo+IXnPSBisBihIwcEzDZa76AjsiJg1sEtSO0EHQHBRMNayajDNGHu582/e+NdCn6jYhS
+ TVLptpFJQEXgFnO1e1Ac4TNThnuBZEVhtTD58yi7z0ousGL+UM6ecippJoWej+cjvE452cDcfl
+ gJm8YvIa0RQToeRMVlzo435R87z/AIzvTVABgEAAA==
+X-Change-ID: 20250630-netdev_flow_control-2b2d37965377
+To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, dw@davidwei.uk, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7072; i=leitao@debian.org;
+ h=from:subject:message-id; bh=4+q2RrFArN5BUaP53yFVzUX1RuoXv58PDG9QO9loeNQ=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBocUS29xSkLXx9Y0Zad+bOjHtSHXgIcvMUUiD2C
+ 2DE+X1NrWyJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaHFEtgAKCRA1o5Of/Hh3
+ bWAaEACUU0U0wTDVf8n9sX6Hdck0G7dk1vCE2hNSAM+D64liMce2r1d6QemveorgYHlZjKNWGdN
+ /f4XczbNCCruLLV/3SyEpJ/+jS+/9a8cAPsBechbkZlmTNYAYw5keWj8N8IcP04186sGqBDTA8g
+ kf1NTM7ZXa2Bzgzt/OpTzg48GW7D9yt8etYes4usZl5e8mUeILr6h4eTHiZKDvV5CZ0Y5zDXReP
+ sNICO/CEiEGG6yzGaaOHB+g1QQLmQPpRcOcOZMhg5ewM+HdB+6G1cvv2fo5N8JHeLKklFmgwtEg
+ t3+DiN6MjzDTsLI6azmR6u/Zw09XeDB3lhg72DqeIAGnIsWeYP82/+lf7qJvhUxhKT041F7odHL
+ g7/1JrLc7zZ5YdAQoAUd5UFs3Gw3/HQU3XAWmQ/pq59Mibnz5YIHOey6XLEQ+eCgArCT4OSBo1O
+ QIyOaHGl7mz0fOc8uerbkYVJJHPr6rMCBd2fMWsO/1re7OHSzHs3dnxIyQIbjrepYmIKMjVuzTY
+ OHow+CpmOxQ/srwpiA0exYaFTHmrUKaKXa0RM5KazWyiYfH4teJyggONV8cxwqfOXkqQx8nwBqy
+ ft02fMVAWoIc0IkslVAELsXR4+zXl2j+zLWBqEEhLB1Fe3FcibdEeyGRZ27TTjw401eHAM80lJr
+ wdch00wsXiSj5eg==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Hello,
+Add flow control mechanism between paired netdevsim devices to stop the
+TX queue during high traffic scenarios. When a receive queue becomes
+congested (approaching NSIM_RING_SIZE limit), the corresponding transmit
+queue on the peer device is stopped using netif_subqueue_try_stop().
 
-On 7/11/25 2:55 AM, Brigham Campbell wrote:
-> On Wed Jul 9, 2025 at 10:22 PM MDT, David Hunter wrote:
->> On 7/8/25 11:52, Hanne-Lotta Mäenpää wrote:
->>> Fix typos and punctuation and improve grammar in documentation.
->>>
->>> Signed-off-by: Hanne-Lotta Mäenpää <hannelotta@gmail.com>
->>
->> Overall, good work. Here is a suggestion for future patch series:
->>
->> Subsequent versions of patch series should be posted as replies in the same thread. Currently, each version is its own independent thread, which makes it hard to track changes. This link has the documentation for the proper way to handle subsequent patches:
->>
->> https://www.kernel.org/pub/software/scm/git/docs/SubmittingPatches.html
->>
->> The relevant part starts at "To that end, send them as replies to either..."
-> 
-> This documentation you've linked is specific to git, not the linux
-> kernel.
-> 
-> The kernel documentation argues against doing what you suggest [1]: "for
-> a multi-patch series, it is generally best to avoid using In-Reply-To:
-> to link to older versions of the series. This way multiple versions of
-> the patch don’t become an unmanageable forest of references in email
-> clients."
-> 
-> [1]: https://www.kernel.org/doc/html/latest/process/submitting-patches.html
-> 
+Once the receive queue has sufficient capacity again, the peer's
+transmit queue is resumed with netif_tx_wake_queue().
 
-Right, that clears it up. On a closer look, the URL indicates which 
-documentation is for git development.
+Key changes:
+  * Add nsim_stop_peer_tx_queue() to pause peer TX when RX queue is full
+  * Add nsim_start_peer_tx_queue() to resume peer TX when RX queue drains
+  * Implement queue mapping validation to ensure TX/RX queue count match
+  * Wake all queues during device unlinking to prevent stuck queues
+  * Use RCU protection when accessing peer device references
+  * wake the queues when changing the queue numbers
+  * Remove IFF_NO_QUEUE given it will enqueue packets now
 
-> 
-> Nice work, as usual, Hanne-Lotta.
-> 
-> Brigham
-> 
+The flow control only activates when devices have matching TX/RX queue
+counts to ensure proper queue mapping.
 
-I really appreciate this comment. Thank you for your encouragement!
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v3:
+- Wake the queues if we need to in nsim_set_channels() (Jakub)
+- Remove IFF_NO_QUEUE (Jakub)
+- Improve function parameters (Jakub) 
+- Link to v2: https://lore.kernel.org/r/20250703-netdev_flow_control-v2-1-ab00341c9cc1@debian.org
+
+Changes in v2:
+- Move the RCU locks inside the function (David)
+- Use better helpers for waking up all the queues (Jakub)
+- Link to v1: https://lore.kernel.org/r/20250701-netdev_flow_control-v1-1-240329fc91b1@debian.org
+---
+ drivers/net/netdevsim/bus.c     |  3 ++
+ drivers/net/netdevsim/ethtool.c | 21 +++++++++++++
+ drivers/net/netdevsim/netdev.c  | 68 ++++++++++++++++++++++++++++++++++++-----
+ 3 files changed, 85 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/netdevsim/bus.c b/drivers/net/netdevsim/bus.c
+index 64c0cdd31bf85..1ba52471f3fbc 100644
+--- a/drivers/net/netdevsim/bus.c
++++ b/drivers/net/netdevsim/bus.c
+@@ -366,6 +366,9 @@ static ssize_t unlink_device_store(const struct bus_type *bus, const char *buf,
+ 	err = 0;
+ 	RCU_INIT_POINTER(nsim->peer, NULL);
+ 	RCU_INIT_POINTER(peer->peer, NULL);
++	synchronize_net();
++	netif_tx_wake_all_queues(dev);
++	netif_tx_wake_all_queues(peer->netdev);
+ 
+ out_put_netns:
+ 	put_net(ns);
+diff --git a/drivers/net/netdevsim/ethtool.c b/drivers/net/netdevsim/ethtool.c
+index 4d191a3293c74..f631d90c428ac 100644
+--- a/drivers/net/netdevsim/ethtool.c
++++ b/drivers/net/netdevsim/ethtool.c
+@@ -101,6 +101,22 @@ nsim_get_channels(struct net_device *dev, struct ethtool_channels *ch)
+ 	ch->combined_count = ns->ethtool.channels;
+ }
+ 
++static void
++nsim_wake_queues(struct net_device *dev)
++{
++	struct netdevsim *ns = netdev_priv(dev);
++	struct netdevsim *peer;
++
++	synchronize_net();
++	netif_tx_wake_all_queues(dev);
++
++	rcu_read_lock();
++	peer = rcu_dereference(ns->peer);
++	if (peer)
++		netif_tx_wake_all_queues(peer->netdev);
++	rcu_read_unlock();
++}
++
+ static int
+ nsim_set_channels(struct net_device *dev, struct ethtool_channels *ch)
+ {
+@@ -113,6 +129,11 @@ nsim_set_channels(struct net_device *dev, struct ethtool_channels *ch)
+ 		return err;
+ 
+ 	ns->ethtool.channels = ch->combined_count;
++
++	/* Only wake up queues if devices are linked */
++	if (rcu_access_pointer(ns->peer))
++		nsim_wake_queues(dev);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
+index e36d3e846c2dc..48da5d4b3a89a 100644
+--- a/drivers/net/netdevsim/netdev.c
++++ b/drivers/net/netdevsim/netdev.c
+@@ -37,7 +37,53 @@ MODULE_IMPORT_NS("NETDEV_INTERNAL");
+ 
+ #define NSIM_RING_SIZE		256
+ 
+-static int nsim_napi_rx(struct nsim_rq *rq, struct sk_buff *skb)
++static void nsim_start_peer_tx_queue(struct net_device *dev, struct nsim_rq *rq)
++{
++	struct netdevsim *ns = netdev_priv(dev);
++	struct net_device *peer_dev;
++	struct netdevsim *peer_ns;
++	struct netdev_queue *txq;
++	u16 idx;
++
++	idx = rq->napi.index;
++	rcu_read_lock();
++	peer_ns = rcu_dereference(ns->peer);
++	if (!peer_ns)
++		goto out;
++
++	/* TX device */
++	peer_dev = peer_ns->netdev;
++	if (dev->real_num_tx_queues != peer_dev->num_rx_queues)
++		goto out;
++
++	txq = netdev_get_tx_queue(peer_dev, idx);
++	if (!(netif_tx_queue_stopped(txq)))
++		goto out;
++
++	netif_tx_wake_queue(txq);
++out:
++	rcu_read_unlock();
++}
++
++static void nsim_stop_tx_queue(struct net_device *tx_dev,
++			       struct net_device *rx_dev,
++			       struct nsim_rq *rq,
++			       u16 idx)
++{
++	/* If different queues size, do not stop, since it is not
++	 * easy to find which TX queue is mapped here
++	 */
++	if (rx_dev->real_num_tx_queues != tx_dev->num_rx_queues)
++		return;
++
++	/* rq is the queue on the receive side */
++	netif_subqueue_try_stop(tx_dev, idx,
++				NSIM_RING_SIZE - skb_queue_len(&rq->skb_queue),
++				NSIM_RING_SIZE / 2);
++}
++
++static int nsim_napi_rx(struct net_device *tx_dev, struct net_device *rx_dev,
++			struct nsim_rq *rq, struct sk_buff *skb)
+ {
+ 	if (skb_queue_len(&rq->skb_queue) > NSIM_RING_SIZE) {
+ 		dev_kfree_skb_any(skb);
+@@ -45,13 +91,22 @@ static int nsim_napi_rx(struct nsim_rq *rq, struct sk_buff *skb)
+ 	}
+ 
+ 	skb_queue_tail(&rq->skb_queue, skb);
++
++	/* Stop the peer TX queue avoiding dropping packets later */
++	if (skb_queue_len(&rq->skb_queue) >= NSIM_RING_SIZE)
++		nsim_stop_tx_queue(tx_dev, rx_dev, rq,
++				   skb_get_queue_mapping(skb));
++
+ 	return NET_RX_SUCCESS;
+ }
+ 
+-static int nsim_forward_skb(struct net_device *dev, struct sk_buff *skb,
++static int nsim_forward_skb(struct net_device *tx_dev,
++			    struct net_device *rx_dev,
++			    struct sk_buff *skb,
+ 			    struct nsim_rq *rq)
+ {
+-	return __dev_forward_skb(dev, skb) ?: nsim_napi_rx(rq, skb);
++	return __dev_forward_skb(rx_dev, skb) ?:
++		nsim_napi_rx(tx_dev, rx_dev, rq, skb);
+ }
+ 
+ static netdev_tx_t nsim_start_xmit(struct sk_buff *skb, struct net_device *dev)
+@@ -86,7 +141,7 @@ static netdev_tx_t nsim_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		skb_linearize(skb);
+ 
+ 	skb_tx_timestamp(skb);
+-	if (unlikely(nsim_forward_skb(peer_dev, skb, rq) == NET_RX_DROP))
++	if (unlikely(nsim_forward_skb(dev, peer_dev, skb, rq) == NET_RX_DROP))
+ 		goto out_drop_cnt;
+ 
+ 	if (!hrtimer_active(&rq->napi_timer))
+@@ -351,6 +406,7 @@ static int nsim_rcv(struct nsim_rq *rq, int budget)
+ 			dev_dstats_rx_dropped(dev);
+ 	}
+ 
++	nsim_start_peer_tx_queue(dev, rq);
+ 	return i;
+ }
+ 
+@@ -864,10 +920,8 @@ static void nsim_setup(struct net_device *dev)
+ 	ether_setup(dev);
+ 	eth_hw_addr_random(dev);
+ 
+-	dev->tx_queue_len = 0;
+ 	dev->flags &= ~IFF_MULTICAST;
+-	dev->priv_flags |= IFF_LIVE_ADDR_CHANGE |
+-			   IFF_NO_QUEUE;
++	dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
+ 	dev->features |= NETIF_F_HIGHDMA |
+ 			 NETIF_F_SG |
+ 			 NETIF_F_FRAGLIST |
+
+---
+base-commit: 5fa1fa9184ef1af929ae49c715d4a25667e84df5
+change-id: 20250630-netdev_flow_control-2b2d37965377
 
 Best regards,
-
-Hanne-Lotta Mäenpää
+--  
+Breno Leitao <leitao@debian.org>
 
 
