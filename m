@@ -1,227 +1,105 @@
-Return-Path: <linux-kernel+bounces-726964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F6EB01373
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:23:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A39B01374
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5E847BC291
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF051C476C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7851D619F;
-	Fri, 11 Jul 2025 06:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECBE1D618C;
+	Fri, 11 Jul 2025 06:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NueQOndR"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2081.outbound.protection.outlook.com [40.107.243.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZytUhUt"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDCEA92E;
-	Fri, 11 Jul 2025 06:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752214983; cv=fail; b=ijaLhzyFOt7lOiMsGqTUH3QAn8/rtBGPKtBZV2Z23i/k6p6ON3mvffVnhz32sNdSiVUzYiu0ssvrKYgWUkNdHWkXXIDTkCohiPV7DB9DguJQCtTA/Ytzw3CakIBJjIB4gwWu6vEKZo2EIKPvqtg5HZPpHz0xxPHZ/HLpwGRkkKA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752214983; c=relaxed/simple;
-	bh=40xntxtsxbUf9PvQx1VLCo/Nkeg/ZdGbL1srP3eD/jg=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=W2ocMJO+Z8nE+/+/iomK9k/SrEZOMzRySM4UGe9D1vVO+FD3M1REFBsrDryKDz5aZ3ioh9yt1Vuvp43gqXB0LDWqrJTteN4PZR5pHsHnmt5ukwqszV1geDStSGvGNXiiBQ8SY8Yre5eDgQO0WZd9CvkJEp2okIZNOrZpBhtN8q0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NueQOndR; arc=fail smtp.client-ip=40.107.243.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ph/leo4PQ6w0fTzB1P6uc7pCiH8r/QZXuZQ6mV99giO/5dJPGsxHDUjYZejIBpl6YHqLlA+Gch4JvZRoVlDMbujEXTAAF/cYAUpb1GCE6z92vJxsg8TERZ0GVrHb6DFEGzUBt+TeBKkJu1BasZDjChMs6akSnCVJS39F+0j7TRb2QDBlLyTTQOou25SCZppxVFQIwvGJIJFtVm6ukB76HetCPIZUH7Dm00ywGsB6C5NAP610Lh9mbTmeQdPplzG73AZFZSoQcEutUBcImynV+6qCzlBR2sXvmXo3UeX6RaSbYQPb4Gi57LFGnbVgbHa1QUu02CzButu1U9qvfF+7zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I/RB7N1dVJxitvD9vGFlQ+NHYVpAN7gw0PpdY1WF27o=;
- b=NIENhWCiNoJFBQDQIohXeDQFdVHOGlhn0uHmeZX/Rg2V82tboDSX/7J8qytXNaG6GlBEcPVG2ItSG9vaqozcbOw7HNxg6/xVJxT4vb6lZIRtxKmQTuxO8xhZh86p/dFk6hDVxnE/ANGF4DYGuumaEX66fJq0DHbK7ksAMNE2QEAVXloReJ886YJdGLIxGbyNSmW5FO9j32Qy3iM2HGlonNu4PL7D7tbBV9zouxThsLqz8Ob3MMiAWBXJgem3F1LuQAGHA3S22QnDe2Jur7/jfW+wOg++iFtXMkZ6Rj0E3b0Tc8bP6a9j0XJi3QEZOb5zL1X6y4pxOrZSOFrMZ/d2gQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I/RB7N1dVJxitvD9vGFlQ+NHYVpAN7gw0PpdY1WF27o=;
- b=NueQOndR7GyU9Br9vqlNALBrLJQbQOOkSj8SlDW+gpxgZYNODNdO0VoFwuOUQUaHFQwtMh8Rzew/c1UydgT8RRc9bvHPs6TR4npA5/rtwSFiUEjP082PIG2YtLM8elZjexP/Aa3Ej6b7QHKxHA9/7MTc8Tgm98m/OehCwYf8XmE=
-Received: from MW4PR04CA0348.namprd04.prod.outlook.com (2603:10b6:303:8a::23)
- by LV9PR12MB9830.namprd12.prod.outlook.com (2603:10b6:408:2ec::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Fri, 11 Jul
- 2025 06:22:57 +0000
-Received: from SJ1PEPF00001CDE.namprd05.prod.outlook.com
- (2603:10b6:303:8a:cafe::9e) by MW4PR04CA0348.outlook.office365.com
- (2603:10b6:303:8a::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.23 via Frontend Transport; Fri,
- 11 Jul 2025 06:22:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00001CDE.mail.protection.outlook.com (10.167.242.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.22 via Frontend Transport; Fri, 11 Jul 2025 06:22:56 +0000
-Received: from BLR-L1-NDADHANI (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Jul
- 2025 01:22:52 -0500
-From: Nikunj A Dadhania <nikunj@amd.com>
-To: "Huang, Kai" <kai.huang@intel.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>
-CC: "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "Li, Xiaoyao" <xiaoyao.li@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Edgecombe,
- Rick P" <rick.p.edgecombe@intel.com>, "bp@alien8.de" <bp@alien8.de>,
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>
-Subject: Re: [PATCH 1/2] KVM: x86: Reject KVM_SET_TSC_KHZ vCPU ioctl for TSC
- protected guest
-In-Reply-To: <9b2e872b1948df129e5f893c2fbd9b11d0920696.camel@intel.com>
-References: <cover.1752038725.git.kai.huang@intel.com>
- <8aebb276ab413f2e4a6512286bd8b6def3596dfe.1752038725.git.kai.huang@intel.com>
- <e3da1c7e-fa47-415f-99bf-f372057f0a75@amd.com>
- <9b2e872b1948df129e5f893c2fbd9b11d0920696.camel@intel.com>
-Date: Fri, 11 Jul 2025 06:22:44 +0000
-Message-ID: <85ms9btfez.fsf@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BC5A92E;
+	Fri, 11 Jul 2025 06:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752215004; cv=none; b=Vw1j8xiHUMjDa52I041JmuiVqwKHTV4LK/SS8GiFXef1QwKRy2Cb9CBFsBJRzsPGmE5lESGPSpgWPsh7bl3cqM45cIXLCx/GksBwxn0qQU673yKj+YgopgSTjSnd6THaddvEu3uG4hPL7BBsw4VmcNg4Dgi7B099pEHRv0kG47E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752215004; c=relaxed/simple;
+	bh=szAjdjboQ5FwGSMhN8orxJJF4cMCxbolT75MC3iNp5k=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=sBQoMH6q8Ab6tRdtJM+cVuJyTHO667299nuPzduHvnpw4YUDlDi4cWyGDEcimwl7lVN/93XHNPycLfyd6aG5OH7ETKwdtA8PCbkqDxBN9IBhLWEnzffZv8YWUTf3KKqsym2HlIpUP9/jL4Ngj0kmyslOvZyPEHNcG4Q5pEMrc5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZytUhUt; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-553d2eb03a0so3272065e87.1;
+        Thu, 10 Jul 2025 23:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752215000; x=1752819800; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=73xlXjihTyB3gi8nwM7Cu3RHQ4fBs8QJHOkXmIfesdQ=;
+        b=BZytUhUtnXqFcusbYukIMFyp/xBfn5L/ypHEz/gUpH2zZojg/gA5oE74ymwRht9tAO
+         jnB9s2CrNbzB4GJEuQ6MCvSMNzZxi25nsjlt4C4JDJ7KyU6E1nv31xc9PuM49hx+bzpE
+         2nEKdCpjgnWmYk6bJ7u27iThg8Nfq4zdnUyx+QDo0AdedMSpICWKDqxHdJKpW3S036CD
+         lErjxXl3+TzIhRi1DUS+Gpv/SXCfOj9fPIC3+wkrPiSS/nCx/BcBlhlte0h3TC4V7d6b
+         Lg3KESYVbwNnl2Ya02ajj1FdGkqFtYHdTOCn2uO9nqgw4Ed4kPEgeB+2au4fTojnBQc7
+         gulw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752215000; x=1752819800;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=73xlXjihTyB3gi8nwM7Cu3RHQ4fBs8QJHOkXmIfesdQ=;
+        b=CEQtCvVWPxeqeDImCcTEW2YQ/H6LB3yUtNBZVF+BicHlGXoyR2g6xZ3v2Jdwag9rbj
+         cHoIJWT2w4RGGSRzwQL8sc6qXbhifJTug5pisnwU1d3z2MzNdfUhEsiDrsiAdbfuBtzK
+         M1J5TRs6BCPmJVoFSRHZzDuLBYwgGaj/mpIwUXjSHkJaQLGFDXtlec5FEVPofs/MlpbO
+         OprER5l82YREqq2bkubnL92CWDYuTpiBTyjU9cGYwxZScEw2RItlyIjGQHHpbIGFmIkQ
+         IJELvbfJEPAwThxYBUYz4AP+ulAJzcuZqbPUKl4RR4hMWbCDSzfAJT8fq+WLkg6h3Msk
+         Nulg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxAmmdf+XH6/n3WniIbby/MO8XYNBSn9DUn40fHzOdA5MHorEmkxUtZDSY5qf+MTkzsmCTzpCZ0FD/cXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFqFBJFy6osRJYcWqF1FGhGhfv3u0VynWfz9OQK8iHcUjdUHfI
+	oQSKKlJR0k8uu9lwmqOcnUhmbXcME1q9QWm2+KrI4v2tzpiZcqaCKSCF/v5AViHJ7Z/RICUpTUT
+	fGnXLejKs/6poWEKEwzsk064xCOKQ4jnfBRXy
+X-Gm-Gg: ASbGncu0+H2i2P+hH4wI3wzxJxaSB5MrnTf0E2YF30E775nPLh6D5CXv9n58s/ZPbJ9
+	9sZ8HkHhJFwxsbQUp03M8sW85rwCOjrHBehE5zhpRzuT2rbdxZSuC9VpPLXHY+7vRFkmVPL1ADb
+	SbqQdG3us/wdYE5uEv2PdsWawY1pEMt1aue2mgxwPPiYXmNTQgqVpy6PTclKtfJGLjLbb1HKNSJ
+	sBCq7Qes8VXtUKT7KQ=
+X-Google-Smtp-Source: AGHT+IF0Fa/eG1jKsN+7I1rnUtH4sziIRMdckfTOC3v5CP/wNmUpQQkJ6m0PQWnh0hliPOF/KzfH4WwOFkSAG78pyu0=
+X-Received: by 2002:a05:6512:3f11:b0:554:e7ce:97f8 with SMTP id
+ 2adb3069b0e04-55a039bf0f5mr734133e87.15.1752215000073; Thu, 10 Jul 2025
+ 23:23:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDE:EE_|LV9PR12MB9830:EE_
-X-MS-Office365-Filtering-Correlation-Id: 74317033-1bc3-4828-fd88-08ddc043604b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VYFfP575HFs7NY4qaT0YWdt3CCR/wqWpJNge+JsSqV1dBstxpWee1wGKO/98?=
- =?us-ascii?Q?UZZau8klhY+AovjmvuWx3QKW/kOgxeLfHny3Hu2sLVgIHJIBzNi2FtQ0nT8O?=
- =?us-ascii?Q?YUZD2OnNLjz92UgZo1LorBuyIHD7i05NhWFVOE4UGqoIEi1Y1Od4LjuslA95?=
- =?us-ascii?Q?w54S6m9Ftk04wUgKzlr0g0efR/e1M+xctCd/6YmUZuos4AXYY19vnjoe7y+G?=
- =?us-ascii?Q?H17qik/b76g1uUgzurgdU7Yz/AFWjqWDzn/q9sfYBIdQFmuoakUsX+fHg+rE?=
- =?us-ascii?Q?o3H+uezqQldre6GVoGZ03qjs3PF83+JBfHKoAHcZ4sEkQYcfn8nYUfI5HhBO?=
- =?us-ascii?Q?es+eAM6YYaY/9uohfxFCEzVyV19uaXe7bQWHWUkTAU/kR8AgAr+bL8i4xR36?=
- =?us-ascii?Q?iLJcu48e+uKPgn1nNNI4o+qNzb8OtKHYZf6kdKZ/VpdWHHmxzmhigoinuNJz?=
- =?us-ascii?Q?OvOA3zGpgjTb7QVZCLxW+wBBh0v4XO00pTCdYfIY1UEPOEvOUw0qaJqdMso5?=
- =?us-ascii?Q?/4GJuLVuFnjsEaDeEB/C+tyq7CQoXro5Hk1Zby4Af8RxwLS1bGAxiVqcrqwy?=
- =?us-ascii?Q?xgVyHBHw38LJe84gLQGFB5eSITtLPrT8OuFzkPFcmEEid54Q26Y+8YUP4DNs?=
- =?us-ascii?Q?2tTvucdklAdOIGzYXWv1HD80J1AAZMotjZ6HC/nU/1KE2OIUp6yyOnFJx6av?=
- =?us-ascii?Q?5/EozqPnIEFmnXRDwoe2BvTE7UYlBtw7FrPJDn2tQWRwFDtbaYlU7yl5FczR?=
- =?us-ascii?Q?94/QDhtsHvHJdad0AReFU+gh+gWmf8Hf/rCwJ9v70l8q+TKq2rAJkdgisbai?=
- =?us-ascii?Q?Sd7dsGOcuMaHg6iY4TWcfWa5OFthZqtlJ/UK+DLkxduMZpLDgasq7YYMtvN2?=
- =?us-ascii?Q?2X0hfve7+GgFmcJ6Ry8zx/HOqPmhyddgWpTsu823kV55av/IxjXgdYqp96v/?=
- =?us-ascii?Q?KXGA+Jw+9R+ybaBwxp02wfSRZhrcAsqrF4X8VuFGb0pZmguJSKYBbEN/7Bwg?=
- =?us-ascii?Q?8gjAB8LSECItGaQUODJKJKzfVfnWc4QZQH6NcFdrd35HJFksnWQWrQTtp5g+?=
- =?us-ascii?Q?5GHgK7OmPkfjBX6alYBlPP17Hdjb/AueFzlSb8V+DcDjBRa77nB7pdEWjZpe?=
- =?us-ascii?Q?K8gaUU6RQ57VSCaRirMWQ5jGfH2nHKWjattlMxLqGUiwCnkmy59fQhH/clSt?=
- =?us-ascii?Q?rx8GzbKA0vSRpWz/E8puBQK6DqJWuuOutwtiUJbodOHCGkG8GvHuRd/SunhN?=
- =?us-ascii?Q?9hsbNdHHPmqDCukiflnB3HFA6ZBd9Ovule0Tf3CZbkXzPY80kHgRpHG8nAkE?=
- =?us-ascii?Q?bdVSMwo4UakXZuWwRPynSD0UwuXmfdLdJaOBzRt3X7lf7c/Jkx1OSoPZHbxn?=
- =?us-ascii?Q?bw3gQt4OCbnc4eRD7axpt9MSpKIScyu8DPPcTBbHxql2kFwR2oM3BkG3xtJB?=
- =?us-ascii?Q?IX/Bjudt8abIax2vlUUvxvRGKCAhAP49SjiOdKXMb44P9ZXAazfo0vJp9nr9?=
- =?us-ascii?Q?Tcm5tvSBQf/geLJDnHP/Mp+d2njZCdMRhALU?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 06:22:56.6078
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74317033-1bc3-4828-fd88-08ddc043604b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CDE.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV9PR12MB9830
+From: Sharan Kumar Muthu Saravanan <sharweshraajan@gmail.com>
+Date: Fri, 11 Jul 2025 11:53:09 +0530
+X-Gm-Features: Ac12FXytmDmkt6r0R3muScu3mvNULbCCdsKttqblHJ4F1VYpWmRd08uE-bZMTUI
+Message-ID: <CAGo=CcKZOz=HHWQtM+GQEeyqGVEo+4EgWSET5FJzKTMEMtJDew@mail.gmail.com>
+Subject: [PATCH] ALSA: hda/realtek: Enable Mute LED on HP OMEN 16 Laptop xd000xx
+To: tiwai@suse.com
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-"Huang, Kai" <kai.huang@intel.com> writes:
+this patch makes the mute led brighter since the previous patch i
+submitted was dim
 
-> On Wed, 2025-07-09 at 14:09 +0530, Nikunj A. Dadhania wrote:
->> 
->> On 7/9/2025 11:07 AM, Kai Huang wrote:
->> > Reject KVM_SET_TSC_KHZ vCPU ioctl if guest's TSC is protected and not
->> > changeable by KVM.
->> > 
->> > For such TSC protected guests, e.g. TDX guests, typically the TSC is
->> > configured once at VM level before any vCPU are created and remains
->> > unchanged during VM's lifetime.  KVM provides the KVM_SET_TSC_KHZ VM
->> > scope ioctl to allow the userspace VMM to configure the TSC of such VM.
->> > After that the userspace VMM is not supposed to call the KVM_SET_TSC_KHZ
->> > vCPU scope ioctl anymore when creating the vCPU.
->> > 
->> > The de facto userspace VMM Qemu does this for TDX guests.  The upcoming
->> > SEV-SNP guests with Secure TSC should follow.
->> > 
->> > Note this could be a break of ABI.  But for now only TDX guests are TSC
->> > protected and only Qemu supports TDX, thus in practice this should not
->> > break any existing userspace.
->> > 
->> > Suggested-by: Sean Christopherson <seanjc@google.com>
->> > Signed-off-by: Kai Huang <kai.huang@intel.com>
->> 
->> Need to add this in Documentation/virt/kvm/api.rst as well, saying that
->> for TDX and SecureTSC enabled SNP guests, KVM_SET_TSC_KHZ vCPU ioctl is
->> not valid.
->> 
->> 
->
-> Good point.  Thanks for bringing it up.
->
-> I will add below to the doc unless someone has comments?
->
-> I'll probably split the doc diff into two parts and merge each to the
-> respective code change patch, since the change to the doc contains change
-> to both vm ioctl and vcpu ioctl.
->
-> Btw, I think I'll not mention Secure TSC enabled SEV-SNP guests for now
-> because it is not in upstream yet.  But I tried to make the text in a way
-> that could be easily extended to cover Secure TSC guests.
+Tested on 6.15.5-arch1-1
 
-Sure, I can add that later.
+Signed-off-by: Sharan Kumar M <sharweshraajan@gmail.com>
 
->
-> diff --git a/Documentation/virt/kvm/api.rst
-> b/Documentation/virt/kvm/api.rst
-> index 43ed57e048a8..ad61bcba3791 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -2006,7 +2006,13 @@ frequency is KHz.
->  
->  If the KVM_CAP_VM_TSC_CONTROL capability is advertised, this can also
->  be used as a vm ioctl to set the initial tsc frequency of subsequently
-> -created vCPUs.
-> +created vCPUs.  It must be called before any vCPU is created.
-
-s/It/The VM Scope ioctl/
-
-> +
-> +For TSC protected CoCo VMs where TSC is configured once at VM scope
-> and
-
-s/CoCo/Confidential Computing (CoCo)/
-s/TSC is/TSC frequency is/
-
-> +remains unchanged during VM's lifetime, the VM ioctl should be used to
-> +configure the TSC and the vCPU ioctl fails.
-
-s/TSC/TSC frequency/
-
-s/vcpu ioctl fails/vcpu ioctl is not supported/
-
-> +
-> +
-> +Example of such CoCo VMs: TDX guests.
-
-Regards
-Nikunj
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 060db37eab83..062d439e753d 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4753,7 +4753,7 @@ static void
+alc245_fixup_hp_mute_led_v1_coefbit(struct hda_codec *codec,
+        if (action == HDA_FIXUP_ACT_PRE_PROBE) {
+                spec->mute_led_polarity = 0;
+                spec->mute_led_coef.idx = 0x0b;
+-               spec->mute_led_coef.mask = 1 << 3;
++               spec->mute_led_coef.mask = 3 << 2;
+                spec->mute_led_coef.on = 1 << 3;
+                spec->mute_led_coef.off = 0;
+                snd_hda_gen_add_mute_led_cdev(codec, coef_mute_led_set);
+---
 
