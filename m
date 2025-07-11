@@ -1,119 +1,116 @@
-Return-Path: <linux-kernel+bounces-726993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7FCB013BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:37:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC3EB013D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A76F546F37
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 834571C40769
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7351E8348;
-	Fri, 11 Jul 2025 06:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18851A08A3;
+	Fri, 11 Jul 2025 06:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZGGjAEiu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CaaJbyoP"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFEA1DFD84;
-	Fri, 11 Jul 2025 06:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22FF1D7E4A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752215809; cv=none; b=S2C/1AX4kiQ+AK7WUO1r99QDURrfGdxqoaFnyDpWHez+jeXsq4iuyVvrCJMGyoRKfjNeN+MUtJbTc+w9yjNHUvYAB+nAw2nQjMgYSWZNQci29O6LuTx3pkONAZmL49V30oe2QHVOd4SnKyZPaAC2eRxU7OGdDPmZxmjOrL1QuyY=
+	t=1752216118; cv=none; b=awTogRY+3PJU7hfjp0jqdWr0IbcoMLc08a8nMjuoZgbm6KvJlwfq0IbvSp2gwbf8NOikt/elwuOegrqHVRRcjQEFHOzhGw2S3VAY6X8Ad5yWKM4zLj4CjNk7oAwCBCZ21470ZKDbwf5n7cgUqW9qawq9vHqLckMbdA73BdHKj3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752215809; c=relaxed/simple;
-	bh=9zt2R482VjqDFpGLu4K8dFNTfKUGK2Pxp+dpiGIf3+c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YhHtMrBxX64pBcHMbB1cARSXR5LHbnj1PIQPhVxkXvYq9rTAS5+mtjkf8+mHiLWxhtcqnHUdKPhLStX/X2Rt66hRAwGsSU5wiFtskZRgWeuaCMeUINMeG0eyajL1Z6j5mwSzq0wbsg3CE8IJdf047SQPLKexdmwuWpLHyNZEZIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZGGjAEiu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2FEEC4CEF6;
-	Fri, 11 Jul 2025 06:36:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752215809;
-	bh=9zt2R482VjqDFpGLu4K8dFNTfKUGK2Pxp+dpiGIf3+c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZGGjAEiuyGVQdBfDE9WRHk0kgT+ZbsVdeTQppZGYokLYkph+B8sTpINnHMdRA8O60
-	 yaNPSP2cMpjILtpupYLnyMc/eUbumLjqaSfIA1gLxVFMAI9i6LfnveA7pjIZWCfJIU
-	 hHjeWEh8U6x4gU3OjNTy80wfKtaW2RGK57ssqIE3zSs1me8Wu46M/iihFC7o3kkTsz
-	 oAdzO8y0e80LgY6B4FmT2HBFm4IKXkgqpjZKb5CsdvaihLd00EhTmEagYjhko/gWwi
-	 QqAlXBLjPb5RYi2HvgVCyGjohh3P1zARvsAjqMkpLsTqUnz44iz8DbZGQS1c+/xJiX
-	 F6Iz3s80xDygQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Fri, 11 Jul 2025 08:35:49 +0200
-Subject: [PATCH v17 7/7] modules: add rust modules files to MAINTAINERS
+	s=arc-20240116; t=1752216118; c=relaxed/simple;
+	bh=TR4a22Aec0arZqdoKInZqVExLxMv7JPP1babqcNrkQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=urLyJXRqvV7+NJ+2xg8fIPv8AIxYpPBdKJLGEg0aCazefWv8fSgvdjF1F92GB85sLEvIMM6R2TzlaKPB783SFERRjT4r/wuMpjrU9c3B+dcVy6Mhz5x9hPQNMJMsQbAeegWZ+8BIMI+jGxSpVGg6GEcQEC379c16KEHoSSZdw0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CaaJbyoP; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752216112; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=RC+FmMVj7xVlpmIjHs3ZqgR59n3WvScw9naDpqXWnbg=;
+	b=CaaJbyoP4Fr6g8fTKAXpX1t98Em++VdgyzH/KqYuEdoGWSfos1NEUW5441WfcbJP66Ykxztfx3z/atHGrg//nw44XR2gBhAZEN8WPs3p0Q2ihXTHHggPBY4EiJRuGic60a+StufLoSQ/fip/0a0WW+9WxX/oeuP3niPpLw8Upi8=
+Received: from 30.74.144.131(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wifun88_1752215794 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 11 Jul 2025 14:36:34 +0800
+Message-ID: <6d6feb41-5cdd-4591-8e19-d9c247e16fcb@linux.alibaba.com>
+Date: Fri, 11 Jul 2025 14:36:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 7/8] mm/shmem, swap: rework swap entry and index
+ calculation for large swapin
+To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
+ Kemeng Shi <shikemeng@huaweicloud.com>, Chris Li <chrisl@kernel.org>,
+ Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
+ Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
+References: <20250710033706.71042-1-ryncsn@gmail.com>
+ <20250710033706.71042-8-ryncsn@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250710033706.71042-8-ryncsn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250711-module-params-v3-v17-7-cf9b10d4923d@kernel.org>
-References: <20250711-module-params-v3-v17-0-cf9b10d4923d@kernel.org>
-In-Reply-To: <20250711-module-params-v3-v17-0-cf9b10d4923d@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Alice Ryhl <aliceryhl@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
- Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>, 
- Benno Lossin <lossin@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>
-Cc: Trevor Gross <tmgross@umich.edu>, 
- Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
- Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
- Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- linux-modules@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=808; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=9zt2R482VjqDFpGLu4K8dFNTfKUGK2Pxp+dpiGIf3+c=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBocLDa57mfKillk8qBYVlI9D3IUbIcaOFwtpneK
- D62ptB9ekqJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaHCw2gAKCRDhuBo+eShj
- dyKAEACmjMn7IrTB4sEkLzRkmPfnnf1u56JklWFL6ZXInd2THjvsCJYxwUsu6VHkPJLmHgwdYLW
- iVmK/kYmlvaDwCQPlM0oCtQcQuMgg3I7DxmXcdcCBV9E1Qch4cuckXHS6A/NmTMnQB5Xjjefa9O
- hTT9yIQ5vTPWsWz715i1WXyYTEPjCcjakoKQoqreL6Ot0JSXCdNv5uCK6QFgVvEKT09khGC23qA
- vKLLOZquoaEORsEkvjlCiVy5B/e6cfMRdKX0kupIGAZvp4AsMjTYrfTerAZlhm9bTb0o2LQQh6T
- pL1ije7oRyy3adbLCxop8yO1RV9x3sqbLtlFHvOswqKuppnbPrQLPlxL7anbmqVZiCtX0pSAVmR
- eoXNf/nnV3ZCHGRK5oWj/ISYIpdyyKRntqOhnX5tmRoKMl04ZKSraPROlADMR0ABSYV9hjULfIk
- J26oDBCWfY0/CkOB//5RI36JObS//hToKmJ9Zyo/KximHkK5UJ60VvX/Mwt+q+EgHOzo2MsuT6J
- 80VTkrPN+eyRbVxaipPVB2EFhvVyTqDOnYXPXRCE7qoKu4R34zPNFT+BW4wGuVNk3DbeHE0Vo5A
- rsfqdfJ1S9VWZWk0d5r4jY0bdfvqldSgAVNS4f4KyvFfBDQyMioj04cbg2k2QkxFBlohhb8iGI2
- CN1fJjpBNjzACHg==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
-
-The module subsystem people agreed to maintain rust support for modules
-[1]. Thus, add entries for relevant files to modules entry in MAINTAINERS.
-
-Link: https://lore.kernel.org/all/0d9e596a-5316-4e00-862b-fd77552ae4b5@suse.com/ [1]
-
-Acked-by: Daniel Gomez <da.gomez@samsung.com>
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d431320ed3b2..afa385ecc5c4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16835,6 +16835,8 @@ F:	include/linux/module*.h
- F:	kernel/module/
- F:	lib/test_kmod.c
- F:	lib/tests/module/
-+F:	rust/kernel/module_param.rs
-+F:	rust/macros/module.rs
- F:	scripts/module*
- F:	tools/testing/selftests/kmod/
- F:	tools/testing/selftests/module/
-
--- 
-2.47.2
 
 
+
+On 2025/7/10 11:37, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
+> 
+> Instead of calculating the swap entry differently in different swapin
+> paths, calculate it early before the swap cache lookup and use that
+> for the lookup and later swapin. And after swapin have brought a folio,
+> simply round it down against the size of the folio.
+> 
+> This is simple and effective enough to verify the swap value. A folio's
+> swap entry is always aligned by its size. Any kind of parallel split or
+> race is acceptable because the final shmem_add_to_page_cache ensures
+> that all entries covered by the folio are correct, and thus there
+> will be no data corruption.
+> 
+> This also prevents false positive cache lookup. If a shmem read
+> request's index points to the middle of a large swap entry,
+> previously, shmem will try the swap cache lookup using the large swap
+> entry's starting value (which is the first sub swap entry of this
+> large entry). This will lead to false positive lookup results if only
+> the first few swap entries are cached but the actual requested swap
+> entry pointed by the index is uncached. This is not a rare event,
+> as swap readahead always tries to cache order 0 folios when possible.
+> 
+> And this shouldn't cause any increased repeated faults. Instead, no
+> matter how the shmem mapping is split in parallel, as long as the
+> mapping still contains the right entries, the swapin will succeed.
+> 
+> The final object size and stack usage are also reduced due to
+> simplified code:
+> 
+> ./scripts/bloat-o-meter mm/shmem.o.old mm/shmem.o
+> add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-233 (-233)
+> Function                                     old     new   delta
+> shmem_swapin_folio                          4040    3807    -233
+> Total: Before=33152, After=32919, chg -0.70%
+> 
+> Stack usage (Before vs After):
+> mm/shmem.c:2277:12:shmem_swapin_folio   264     static
+> mm/shmem.c:2277:12:shmem_swapin_folio   256     static
+> 
+> And while at it, round down the index too if swap entry is round down.
+> The index is used either for folio reallocation or confirming the
+> mapping content. In either case, it should be aligned with the swap
+> folio.
+> 
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+
+Overall, I don't see any obvious issues, but please give me some time to 
+run some tests and then get back to you. Thanks.
 
