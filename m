@@ -1,128 +1,99 @@
-Return-Path: <linux-kernel+bounces-726943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE731B01317
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:56:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F118CB01341
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937B43A9606
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:56:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CC3758034B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EF41D619F;
-	Fri, 11 Jul 2025 05:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C961CDA3F;
+	Fri, 11 Jul 2025 06:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yWkWH/Mc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="OPRoqBjL"
+Received: from mail3-167.sinamail.sina.com.cn (mail3-167.sinamail.sina.com.cn [202.108.3.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2373B1D432D;
-	Fri, 11 Jul 2025 05:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820501C84D5
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.167
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752213394; cv=none; b=iG9lbOOmGJBAheTrLC+809cTqlf8gCCub5Iwqw3BjHl+5eyXZPUyQx4ghGOZ6DcY6dQH24s12CDHUMr5Ek0F64qTMMDCBsVT1nhFbpsfXPxzb+9ZlWigLfFoNUhQcCTeAn0fZnVcPlPgLvzIesTfO0XrfFhcxHBaXrRZDvKIaTU=
+	t=1752213625; cv=none; b=QyPgXi/eVum+6QBV0HbC7U1kgRY1LOP4DhZvo9UcGY2GO23bijouth9TILclFBytGmbAsCJcCa3pMvfRvkTMQSQFznN9bMeln8BboZFhVyPL7l2aOOyKSyTl3urliWuqYR7oPpYnmLm+uWoDzxhB2dlOgXwpqJDfTXL3mnMZBYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752213394; c=relaxed/simple;
-	bh=RklvekZM8ya+o53KfTg7gBznMNjJWkT8FhgMwAcycfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDUnF9ripc/ALhC/91Q/P5+h/e9Ldz9lnXyUu2qWfawcaCca1h17YmIEJmH8iNJCWWuT6FleGS9clZDGhMRcLPjCoedRFBSPmw8cqVhc9dA+g5bndv2mBSsGrwUa7ZHuyxM/OambAstyGXcu14/r2ta9zLvXEUbllvi8C6W8J5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yWkWH/Mc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE10C4CEED;
-	Fri, 11 Jul 2025 05:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752213393;
-	bh=RklvekZM8ya+o53KfTg7gBznMNjJWkT8FhgMwAcycfk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yWkWH/McTKYAXQtqUFU0BNRctKOq1AxK/xwimJQurSl1RMomm7vWlpIY2kM8RFP28
-	 MEpgOcPUfO7uAv4uTgRdZW1oUgY2mnrrqncGpLAsEqfVQZdO8Uz56vhSfHlpSb5aRp
-	 LBeCVXC0G7UEPDp2tUMF3ZNdW6tgQBRPYBzTrQlc=
-Date: Fri, 11 Jul 2025 07:56:29 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Zongmin Zhou <min_halo@163.com>,
-	shuah@kernel.org, valentina.manea.m@gmail.com, i@zenithal.me,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	zhouzongmin@kylinos.cn
-Subject: Re: [PATCH v2] usbip: convert to use faux_device
-Message-ID: <2025071125-islamic-retype-fadf@gregkh>
-References: <1a13cf53-ffed-4521-917e-9c2856a5e348@linuxfoundation.org>
- <4fc877f0-b55b-4fa3-8df4-2de4ba1ac51b@163.com>
- <2a901b8a-9052-41d9-a70d-76508ebd819b@linuxfoundation.org>
- <4759911b-8c35-4ca9-bc34-09dd41b14582@163.com>
- <2025070949-activist-mammal-b806@gregkh>
- <dd3659dd-7e45-479d-ab65-9f5c1bab26a0@rowland.harvard.edu>
- <ce96291b-c0b2-41cf-a71c-c13bd8d0f139@linuxfoundation.org>
- <4478924b-fbd7-4a5a-ad0d-4fe0569b4971@linuxfoundation.org>
- <a735f877-e13b-498f-9eee-53ebefa8ebc9@rowland.harvard.edu>
- <9be8b1dc-9af2-4135-9a0f-db2eb7d10f06@linuxfoundation.org>
+	s=arc-20240116; t=1752213625; c=relaxed/simple;
+	bh=viR5sCpMCovkWso9QSh5yW+aCYCywBbDAkKZpSH42oc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VTVskm5evJ1t3R5CgRCsLlde5/2+p4z4ofEkpqw60kmKxyLl1SMJj4eJhnItB8Im7mTzRasd8LaxjNGThfnSoemX1Y4rbKdgx/yAGH0GAQqKm12dxKPk+qZLmxObKTxnpMAbFTP3+i1qUAgPRuga6vygmzyUSOm1Qqw6YuimfHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=OPRoqBjL; arc=none smtp.client-ip=202.108.3.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752213620;
+	bh=iA75JEK9qBVzW8qdLN0P4DaokWl3KKk9Tq0qimdiEuk=;
+	h=From:Subject:Date:Message-ID;
+	b=OPRoqBjL+YHU38BPuuhDBxRl1OdnWYTUfTEuvkkjBgSnxxJWBIIhJnouicK6m+7KN
+	 1mDW1lAO+IjxTG2o6sYxVbsMXlELtWQd4HNprOGGPk7KUnVN+PbEt7y4jm8+Zcxejc
+	 kIAT6DU6SBvORAqVvG+MWWXvn8oYfve9DFMH2tWU=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 6870A86A0000625C; Fri, 11 Jul 2025 14:00:11 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 7002216685331
+X-SMAIL-UIID: 903A4E37A5F04913939332C653CAD98A-20250711-140011-1
+From: Hillf Danton <hdanton@sina.com>
+To: Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma lock
+Date: Fri, 11 Jul 2025 13:59:58 +0800
+Message-ID: <20250711060000.3413-1-hdanton@sina.com>
+In-Reply-To: <f38cef22-d3e8-4f73-a8ba-1a2cb0f4808e@suse.cz>
+References: <20250704060727.724817-1-surenb@google.com> <20250704060727.724817-8-surenb@google.com> <f532558b-b19a-40ea-b594-94d1ba92188d@lucifer.local> <CAJuCfpGegZkgmnGd_kAsR8Wh5SRv_gtDxKbfHdjpG491u5U5fA@mail.gmail.com> <f60a932f-71c0-448f-9434-547caa630b72@suse.cz> <CAJuCfpE2H9-kRz6xSC43Ja0dmW+drcJa29hwQwQ53HRsuqRnwg@mail.gmail.com> <3b3521f6-30c8-419e-9615-9228f539251e@suse.cz> <CAJuCfpEgwdbEXKoMyMFiTHJMV15_g77-7N-m6ykReHLjD9rFLQ@mail.gmail.com> <bulkje7nsdfikukca4g6lqnwda6ll7eu2pcdn5bdhkqeyl7auh@yzzc6xkqqllm> <CAJuCfpFKNm6CEcfkuy+0o-Qu8xXppCFbOcYVXUFLeg10ztMFPw@mail.gmail.com> <CAJuCfpG_dRLVDv1DWveJWS5cQS0ADEVAeBxJ=5MaPQFNEvQ1+g@mail.gmail.com> <CAJuCfpH0HzM97exh92mpkuimxaen2Qh+tj_tZ=QBHQfi-3ejLQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9be8b1dc-9af2-4135-9a0f-db2eb7d10f06@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 10, 2025 at 02:33:42PM -0600, Shuah Khan wrote:
-> On 7/10/25 08:06, Alan Stern wrote:
-> > On Wed, Jul 09, 2025 at 03:57:35PM -0600, Shuah Khan wrote:
-> > > On 7/9/25 15:49, Shuah Khan wrote:
-> > > > Right. We have a few too many moving pieces here:
-> > > > 
-> > > > usbipd (user-space)
-> > > > vhci_hcd and the usb devices it creates
-> > > > 
-> > > > usbip_host, stub driver that proxies between the device
-> > > > on the server and vhci_client.
-> > > > 
-> > > > PM can be complex and it has to do lot more than it currently
-> > > > does on both server and client end to support seamlessly.
-> > > > 
-> > > > The current suspend took the approach of refusing suspend
-> > > > which doesn't work since usb devices underneath hang in
-> > > > usb_dev_resume(). Looks like this usb device is treated like
-> > > > a real device bu usb core. Is there a way to have usb core
-> > > > PM (suspend and resume) handle them as virtual? Would it
-> > > > help to use "supports_autosuspend" to disable suspend and
-> > > > resume?
-> > > 
-> > > Would it work if usb_disable_autosuspend() on the devices
-> > > that hang off its vitual bus?
+On Thu, 10 Jul 2025 19:42:16 +0200  Vlastimil Babka wrote:
+> On 7/10/25 19:02, Suren Baghdasaryan wrote:
+> > On Thu, Jul 10, 2025 at 12:03 AM Suren Baghdasaryan <surenb@google.com> wrote:
+> >>
+> >>
+> >> I have the patchset ready but would like to test it some more. Will
+> >> post it tomorrow.
 > > 
-> > You have to consider PM on both the host and client.  And you have to
-> > consider both runtime PM and system PM (that is, suspend to RAM,
-> > hibernate, etc.).
+> > Ok, I found a couple of issues using the syzbot reproducer [1] (which
+> > is awesome BTW!):
+> > 1. rwsem_acquire_read() inside vma_start_read() at [2] should be moved
+> > after the last check, otherwise the lock is considered taken on
+> > vma->vm_refcnt overflow;
+> > 2. query_matching_vma() is missing unlock_vma() call when it does
+> > "goto next_vma;" and re-issues query_vma_find_by_addr(). The previous
+> > vma is left locked;
 > 
-> This would be as a fix for the existing suspend hang issue.
+> How does that happen? query_vma_find_by_addr() does get_next_vma() which
+> does unlock_vma()?
 > 
-> > 
-> > On the server, any sort of suspend will interrupt the connection.
-> > usb_disable_autosuspend() will prevent runtime suspends, but you
-> > shouldn't try to prevent system suspends.  Instead, the usbip driver on
-> > the server should have its suspend routine close the connection to the
-> > client (rather as if the server's user had unplugged the device).
-> > 
-> > On the client, you've got a choice for how to handle runtime PM.  You
-> > can leave it enabled, and when the client decides to suspend the device,
-> > tell the server's driver.  The server driver can then attempt to do a
-> > runtime suspend on the physical device.  (You might need to add a new
-> > type of message to the USBIP protocol to accomplish this; I don't know
-> > the details.)  Alternatively, you can forbid runtime suspend on the
-> > client entirely, although it would be nice if you could avoid this.
-> > 
-> > System PM on the client can be handled more less the same as runtime PM.
-> 
-> Correct. This has to be a complete solution that syncs up server and client
-> side. I am going to look into implementing this - it might be possible to
-> do this in user-space. Either way this will require changes to the protocol
-> very likely.
-> 
-> Greg, Zongmin Zhou, let's hold off on this conversion yo faux bus for now.
-> I will spend time looking at if we can find PM solution that works end to end
-> for server and client.
+Adding a mutex that protects do_procmap_query() survived the syzbot test [1,2].
+That sounds like a bad news as locking vma alone is not enough to query the map.
 
-Ok, thanks!
+[1] https://lore.kernel.org/lkml/687092d6.a00a0220.26a83e.0036.GAE@google.com/
+[2] https://lore.kernel.org/lkml/6870a4a4.a00a0220.26a83e.003c.GAE@google.com/
 
