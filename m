@@ -1,143 +1,143 @@
-Return-Path: <linux-kernel+bounces-726779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D207B0111D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:11:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD05B01124
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E83465C11E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:11:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 230467AD2A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BF41482E7;
-	Fri, 11 Jul 2025 02:11:10 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C12B665
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 02:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9386A14B96E;
+	Fri, 11 Jul 2025 02:14:45 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEF9B665;
+	Fri, 11 Jul 2025 02:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752199870; cv=none; b=gqhRlFrQlcljAL6mntUFmSR6rEKiMWsu4B7ZGBnwOAZiR54rDVDE4HBgZHb0DDqjru1QXYCRgjnDv9C2DCedaDlHt7sbmWkOMdWgRf2xCZI++o1VM4R3tsgtw4Bx4GrYJ6XPm9nohgkoM/V4Xti/Mc8InuaNhdPyh7knO5IPCx4=
+	t=1752200085; cv=none; b=s0qlKJKXkZuRh8AR64O5qHakToqU3a++r2L0amocdY0t7UreM9NBYIKrv1Cdl12m6SOJ1e1/zpPEZrLeZ5wBSTS2zkB1wI4YolgbUQR69Lt4/XIJgEfZ6fJ7pU3/kamCvNI3N86QbYPFWXSCtqXmYucpNY/nQfOYvhCSlx87Avs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752199870; c=relaxed/simple;
-	bh=oyqpaHCXNtnH2AyieviUSp/gVpxZ/bNXm0FM0r7skuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QMbS7Lx1PcqDZfZ8WumkG1pHyEvzzjIROLxlwWZzRm2U2veUY1WInaJP661Dvb6LJ3g44bi45svn7kDLAz49cHxzJWigzQhh+4HqhcYpL+FRbx57AkKWIQ00hUYw6Dopn+LZ1FM92D0cBCtMTBHCAilkM9fhnOBMNu3MeGL+nwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-17-687072b9b6c9
-Date: Fri, 11 Jul 2025 11:11:00 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, akpm@linux-foundation.org,
-	glider@google.com, dvyukov@google.com, vincenzo.frascino@arm.com,
-	bigeasy@linutronix.de, clrkwllms@kernel.org, rostedt@goodmis.org,
-	max.byungchul.park@gmail.com, ysk@kzalloc.com,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	kernel_team@skhynix.com
-Subject: Re: [PATCH v2] kasan: remove kasan_find_vm_area() to prevent
- possible deadlock
-Message-ID: <20250711021100.GA4320@system.software.com>
-References: <20250703181018.580833-1-yeoreum.yun@arm.com>
- <CA+fCnZcMpi6sUW2ksd_r1D78D8qnKag41HNYCHz=HM1-DL71jg@mail.gmail.com>
- <20250711020858.GA78977@system.software.com>
+	s=arc-20240116; t=1752200085; c=relaxed/simple;
+	bh=HsCivigBSU9t2P+tGWBlpWxJJpKVlbwpxZlqF8U0KVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SJJi8uogayuGID0Gu8UFuUUFlOfymGIWJF4TEcPbjJJaM2LwXXkT9bxxdf5spaKvhS8d6RSiLYphVzmOTSgQtDAGu8gHG8UL5zfm8cMLMGw7QVEk8tgeZpGaFasTAfXma56APJ5sFleL5/CNj53hsDswD+qnYi9CMR/5CAGIGYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bdZtX72Whz2Cdk8;
+	Fri, 11 Jul 2025 10:10:28 +0800 (CST)
+Received: from kwepemh100007.china.huawei.com (unknown [7.202.181.92])
+	by mail.maildlp.com (Postfix) with ESMTPS id 90F0A140278;
+	Fri, 11 Jul 2025 10:14:33 +0800 (CST)
+Received: from [10.67.111.31] (10.67.111.31) by kwepemh100007.china.huawei.com
+ (7.202.181.92) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 11 Jul
+ 2025 10:14:32 +0800
+Message-ID: <3654a091-053a-4330-a019-a681d06166be@huawei.com>
+Date: Fri, 11 Jul 2025 10:14:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/4] Reintroduce the sm2 algorithm
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>, David Howells
+	<dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, Lukas Wunner
+	<lukas@wunner.de>, Ignat Korchagin <ignat@cloudflare.com>, "David S . Miller"
+	<davem@davemloft.net>, Jarkko Sakkinen <jarkko@kernel.org>, Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Tianjia
+ Zhang <tianjia.zhang@linux.alibaba.com>, Dan Carpenter
+	<dan.carpenter@linaro.org>, <keyrings@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, Lu Jialin <lujialin4@huawei.com>,
+	GONG Ruiqi <gongruiqi1@huawei.com>
+References: <20250630133934.766646-1-gubowen5@huawei.com>
+ <aGaCTOJ30KNPOBIC@zx2c4.com>
+Content-Language: en-US
+From: Gu Bowen <gubowen5@huawei.com>
+In-Reply-To: <aGaCTOJ30KNPOBIC@zx2c4.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250711020858.GA78977@system.software.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsXC9ZZnoe7OooIMg6/fNS3mrF/DZvF94nR2
-	i2kXJzFbLHvyj8liwsM2dov2j3uZLVY8u89kcXnXHDaLe2v+s1pcWn2BxeLCxF5Wi30dD5gs
-	9v77yWIx94uhxZfVq9gc+D3WzFvD6LFz1l12j5Z9t9g9Fmwq9dgz8SSbx6ZVnUDi0yR2j4W/
-	XzB7vDt3jt3jxIzfLB4vNs9k9Pi8SS6AJ4rLJiU1J7MstUjfLoEr4/WUSWwFJ4QrOtYdZG5g
-	3MfbxcjJISFgInH52RoWGHvz8dvMIDaLgKrE7J/vmEBsNgF1iRs3foLFRQS0JSbc+AVUz8XB
-	LNDGLPFn811WkISwQKRE87ZrYA28AuYSzU9nghUJCaxnlPj16idUQlDi5MwnYNuYgab+mXcJ
-	aCoHkC0tsfwfB0RYXqJ562ywZZwClhKvp2xlB7FFBZQlDmw7zgQyU0JgGbvE8/NLmSGulpQ4
-	uOIGywRGwVlIVsxCsmIWwopZSFYsYGRZxSiUmVeWm5iZY6KXUZmXWaGXnJ+7iREYoctq/0Tv
-	YPx0IfgQowAHoxIPr8Pq/Awh1sSy4srcQ4wSHMxKIrzrfAsyhHhTEiurUovy44tKc1KLDzFK
-	c7AoifMafStPERJITyxJzU5NLUgtgskycXBKNTBKeBz6yvDh+PZ8DdbUkoN8iw5FzH4Vlc0l
-	MmH219LrNoopYnXpC+6pm1dyr9zLHq7NdvvXhWnSHx9sWr7HY9Lm20uLz++NWDrB47/G+kd3
-	tmxxPfn01NmFJ126196uC5vzQFa8Sr4jOztZpbnzckZx5or1+q3TK7dOTJx89JmHyrLLlVcz
-	TUPuK7EUZyQaajEXFScCAB4frvrMAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsXC5WfdrLuzqCDDoPuktMWc9WvYLL5PnM5u
-	Me3iJGaLZU/+MVlMeNjGbtH+cS+zxYpn95ksDs89yWpxedccNot7a/6zWlxafYHF4sLEXlaL
-	fR0PmCz2/vvJYjH3i6HFl9Wr2BwEPNbMW8PosXPWXXaPln232D0WbCr12DPxJJvHplWdQOLT
-	JHaPhb9fMHu8O3eO3ePEjN8sHi82z2T0WPziA5PH501yAbxRXDYpqTmZZalF+nYJXBmvp0xi
-	KzghXNGx7iBzA+M+3i5GTg4JAROJzcdvM4PYLAKqErN/vmMCsdkE1CVu3PgJFhcR0JaYcOMX
-	SxcjFwezQBuzxJ/Nd1lBEsICkRLN266BNfAKmEs0P50JViQksJ5R4tern1AJQYmTM5+wgNjM
-	QFP/zLsENJUDyJaWWP6PAyIsL9G8dTbYMk4BS4nXU7ayg9iiAsoSB7YdZ5rAyDcLyaRZSCbN
-	Qpg0C8mkBYwsqxhFMvPKchMzc0z1irMzKvMyK/SS83M3MQLjbVntn4k7GL9cdj/EKMDBqMTD
-	67A6P0OINbGsuDL3EKMEB7OSCO8634IMId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxe4akJQgLp
-	iSWp2ampBalFMFkmDk6pBsY718TSjfVnFbI07tWb/Jj77yyxzhvpdYqHVRizjy94rv5+l8tJ
-	Ywe9STF39VZLvY8QWVUnaW55LCBWWkY9aYmmgdb0k2F63oz1jNIXefxUWq4tavfuC565/nu+
-	9HnvqCkF1iktiwT2+QesrlqjsvbA1Y6WhYt/7KxPO95du4tr87WY2SGy15VYijMSDbWYi4oT
-	AQ9n3/KzAgAA
-X-CFilter-Loop: Reflected
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemh100007.china.huawei.com (7.202.181.92)
 
-On Fri, Jul 11, 2025 at 11:08:58AM +0900, Byungchul Park wrote:
-> On Thu, Jul 10, 2025 at 02:43:15PM +0200, Andrey Konovalov wrote:
-> > On Thu, Jul 3, 2025 at 8:10 PM Yeoreum Yun <yeoreum.yun@arm.com> wrote:
-> > >
-> > > find_vm_area() couldn't be called in atomic_context.
-> > > If find_vm_area() is called to reports vm area information,
-> > > kasan can trigger deadlock like:
-> > >
-> > > CPU0                                CPU1
-> > > vmalloc();
-> > >  alloc_vmap_area();
-> > >   spin_lock(&vn->busy.lock)
-> > >                                     spin_lock_bh(&some_lock);
-> > >    <interrupt occurs>
-> > >    <in softirq>
-> > >    spin_lock(&some_lock);
-> > >                                     <access invalid address>
-> > >                                     kasan_report();
-> > >                                      print_report();
-> > >                                       print_address_description();
-> > >                                        kasan_find_vm_area();
-> > >                                         find_vm_area();
-> > >                                          spin_lock(&vn->busy.lock) // deadlock!
-> > >
-> > > To prevent possible deadlock while kasan reports, remove kasan_find_vm_area().
-> > >
-> > > Fixes: c056a364e954 ("kasan: print virtual mapping info in reports")
-> > > Reported-by: Yunseong Kim <ysk@kzalloc.com>
-> > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > 
-> > As a fix:
-> > 
-> > Acked-by: Andrey Konovalov <andreyknvl@gmail.com>
-> > 
-> > But it would be great to figure out a way to eventually restore this
-> > functionality; I'll file a bug for this once this patch lands. The
-> > virtual mapping info helps with real issues: e.g. just recently it
-> > helped me to quickly see the issue that caused a false-positive report
-> 
-> I checked the critical section by &vn->busy.lock in find_vm_area().  The
-> time complextity looks O(log N).  I don't think an irq disabled section
-> of O(log N) is harmful.  I still think using
-> spin_lock_irqsave(&vn->busy.lock) can resolve this issue with no worry
-> of significant irq delay.  Am I missing something?
+Hi,
 
-I prefer this one tho.
+On 7/3/2025 9:14 PM, Jason A. Donenfeld wrote:
+> Hi,
+> 
+> On Mon, Jun 30, 2025 at 09:39:30PM +0800, Gu Bowen wrote:
+>> To reintroduce the sm2 algorithm, the patch set did the following:
+>>   - Reintroduce the mpi library based on libgcrypt.
+>>   - Reintroduce ec implementation to MPI library.
+>>   - Rework sm2 algorithm.
+>>   - Support verification of X.509 certificates.
+>>
+>> Gu Bowen (4):
+>>    Revert "Revert "lib/mpi: Extend the MPI library""
+>>    Revert "Revert "lib/mpi: Introduce ec implementation to MPI library""
+>>    crypto/sm2: Rework sm2 alg with sig_alg backend
+>>    crypto/sm2: support SM2-with-SM3 verification of X.509 certificates
+> 
+> I am less than enthusiastic about this. Firstly, I'm kind of biased
+> against the whole "national flag algorithms" thing. But I don't know how
+> much weight that argument will have here. More importantly, however,
+> implementing this atop MPI sounds very bad. The more MPI we can get rid
+> of, the better.
+> 
+> Is MPI constant time? Usually the good way to implement EC algorithms
+> like this is to very carefully work out constant time (and fast!) field
+> arithmetic routines, verify their correctness, and then implement your
+> ECC atop that. At this point, there's *lots* of work out there on doing
+> fast verified ECC and a bunch of different frameworks for producing good
+> implementations. There are also other implementations out there you
+> could look at that people have presumably studied a lot. This is old
+> news. (In 3 minutes of scrolling around, I noticed that
+> count_leading_zeros() on a value is used as a loop index, for example.
+> Maybe fine, maybe not, I dunno; this stuff requires analysis.)
 
-	Byungchul
+Actually, I wasn't very familiar with MPI in the past. Previously, the 
+implementation of sm2 was done through MPI, so I used it as well. 
+Perhaps I could try using the ecc algorithm in the kernel.
+
+> On the other hand, maybe you don't care because you only implement
+> verification, not signing, so all info is public? If so, the fact that
+> you don't care about CT should probably be made pretty visible. But
+> either way, you should still be concerned with having an actually good &
+> correct implementation of which you feel strongly about the correctness.
 > 
-> If it's unacceptable for some reasons, why don't we introduce kind of
-> try_find_vm_area() using trylock so as to go ahead only if there's no
-> lock contention?
+> Secondly, the MPI stuff you're proposing here adds a 25519 and 448
+> implementation, and support for weierstrauss, montgomery, and edwards,
+> and... surely you don't need all of this for SM-2. Why add all this
+> unused code? Presumably because you don't really understand or "own" all
+> of the code that you're proposing to add. And that gives me a lot of
+> hesitation, because somebody is going to have to maintain this, and if
+> the person sending patches with it isn't fully on top of it, we're not
+> off to a good start.
 > 
-> 	Byungchul
-> 
-> > [1].
-> > 
-> > [1] https://lore.kernel.org/all/CA+fCnZfzHOFjVo43UZK8H6h3j=OHjfF13oFJvT0P-SM84Oc4qQ@mail.gmail.com/
+> Lastly, just to nip in the bud the argument, "but weierstrauss is all
+> the same, so why not just have one library to do all possible
+> weierstrauss curves?" -- the fact that this series reintroduces the
+> removed "generic EC library" indicates there's actually not another user
+> of it, even before we get into questions of whether it's a good idea.
+
+Thank you for your advice, it has been very beneficial for me as I just 
+started participating in the community. I will try to implement the 
+functionality with more robust code and only submit parts that I fully 
+understand.
+
+Best Regards，
+Guber
+
+
 
