@@ -1,133 +1,163 @@
-Return-Path: <linux-kernel+bounces-726864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CEE7B01227
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:29:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B95B0122F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78EA641E45
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A90115463E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BE71A23B6;
-	Fri, 11 Jul 2025 04:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B535119644B;
+	Fri, 11 Jul 2025 04:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0diEgnt"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZNc2WbMa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C06AA933;
-	Fri, 11 Jul 2025 04:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670A717741
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 04:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752208145; cv=none; b=IayeAJJV4bqt6WU+S++My0cp1M2+V9a8pwv33WC6CrOQhnFAOVOl6fRWCVy3JJaANhLRA08j3XnEmoNO2tQ46G/LUZBB0BdH7j0bilbhmAn/XQNOaPZjSFWVaw8McWixtaToaMXCxdZRZjwTn6lRhwLmGJ+WXV9NoZ/Br7aOKE4=
+	t=1752208353; cv=none; b=SC7MIrmuhWS450hOg7O3kFdYtDyc4S7bfsvN2pIN35j/tu3vmHg37nTwP/4LYdfA2V8csf0iBYC8qmMEUFcLMiO4VvG6jVdothHFYit1cShG5e0Z1ja+NX1pCZsxdBdB69WFLR+zPOSjhV+puzgHWIRYJ7/85EYEDIKkr4XRxGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752208145; c=relaxed/simple;
-	bh=XjMkPaDLUEXmnWYWJFJpunnRj1nYjQOU+Vs80ZT9Ncc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TjQnmWC2EWZ5kGDqPyXkiaAnuuxoq7zv0qInq+xgG2GtPUxkfBVt9Zisnkw9cv5/fDCXmZUNb5UENbGKCqCSPEvgETDQZsJ9UikLPK4otFB72KcBqhGmGgkTvZnIcY3HoFaM8egJKwfYH6lhumSWwDDrM0GaIvB0kUnkiV74pS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0diEgnt; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-74b52bf417cso1222506b3a.0;
-        Thu, 10 Jul 2025 21:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752208143; x=1752812943; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5TWupXdIrDPQsYywPixImzAtxDIdN4drh546kbi5oAY=;
-        b=B0diEgntU6QqEEyZTem17vxuhfpo8PMVZ0iInaSB//SnTuN4XXQWo18OnqCCpsQDf+
-         U/ZNOd6XUH10Ghq/J4QFAcPUR7VJ0OIpocoshwS8jg/Sip6B3nPSFKHaYijlia8gVCXA
-         nyLVBD41mMgInHfw41m9jhfDwQh7Kqe4qbfw7vQG0ZpkRlOMap2h+6/0IzLo4K+9ILp1
-         v2mjYjyfTlf0d1UmQbp7/o8p8ak+6ezfzWLyQeA5nDAx25LAI5vMTEADvShoS//TyFkf
-         DB6ZCB562SXgRn4VcVaaM3w5y89zAKVQ2lcGPTKqsWaYWqmHqVJt31lWBe7DAZKPl+q7
-         emPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752208143; x=1752812943;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5TWupXdIrDPQsYywPixImzAtxDIdN4drh546kbi5oAY=;
-        b=qkJ/EEGk8cCX78GbHLXW66jreVfDHjaNbtEIJBzMZRNYR1lHqNcMm8A0P4ld/ctF6G
-         9aPunkZuGzmce4ev+ASqpUt1feI1xa7rN6tdQGui4F4pazP5BORWnBHAXb8wLyTF+AvD
-         NV1+A9Qzz9V9SHKT3I14Qn2tfYS+JB0r4ACR+Rbggu39qENaOZNJDRKZQogy5RenlTXJ
-         Dg6XCrNDKDQt6B6KnBPdAdFEyIwkwEhRgyWhl+sAZ9yCsTVlCGqHud3nSoV3bn1wvJGM
-         jieZ7Lo+J0xEQdrkj96hvz27tv/BkWuHAPmUDGRXM4+7bQNjNL7WVz7l1fsIyJI/Ke6j
-         25rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjoH2hQM8VAysDsB5pOtfOtwa4/8NgsV3wCYMDaI0r0XHQ+f9YsiR4gv/HP1GAU/JdowSzAm24BUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaEmyn/DU9u42oQGDdWWGXchmnEzgkIaHUrzero5DoeLMAKF0k
-	9DDxL8bN06orI6g7h2Jri4q4TL1fjPAWRypfqQzcRab1VX48TymAIYOq
-X-Gm-Gg: ASbGnctjYDp4Zhn451tvWe6ul+X742ExeVN1uN8SUhnB8Isaalqi0GxgKs8MLn6QghL
-	DqmJ/9Ahh/lU3D1ailjvywGEZul1oSweUDeOixzodBy+YSm4nVRhAReciXfdJN0Tv+8ZVp+zvB1
-	ekb6eZ2mRA/uJZZ+Jxf9fcHRUG1DFtmc/caO95qjIG1e55/mvs9GrHJ5XSFgop7lQq7phnApXR8
-	eQiKED55qYbudvB7JAly/DLQ+h08qSuAmdzG6eEmDVAUk4s9wJe8QlbUpW3A4nfTrrBJisfSnWx
-	kc0jKE/nY55AuZuF5hnVMM3FkAYoSy/1apV4w4u5EFqfP1pLEDQ714h8XfbPA7gDX24eUFrc59K
-	JmyYAJhFkug0gumAs22xniRjX478wk7OVqWzinuO5432SPVMI/7Aff2GoMAyleTorjlk9
-X-Google-Smtp-Source: AGHT+IHFYb1vxmkDULuNKIS7QoSFl+2tfuF/PYECCNbNlltvEkGcZPW7zxcSpdAQxm7TMxfIBFedcQ==
-X-Received: by 2002:a05:6a20:3c90:b0:20a:bde0:beb9 with SMTP id adf61e73a8af0-2311e04b20dmr3081872637.1.1752208143577;
-        Thu, 10 Jul 2025 21:29:03 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe731effsm3426618a12.77.2025.07.10.21.29.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Jul 2025 21:29:02 -0700 (PDT)
-Message-ID: <92ff26c0-6952-4f7e-965e-2f020adb859b@gmail.com>
-Date: Fri, 11 Jul 2025 13:29:00 +0900
+	s=arc-20240116; t=1752208353; c=relaxed/simple;
+	bh=eUIWk726v+M/KGMh85jwLqDMcIQEgBCGm+2tVRYQnXk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ae3FJUkPZ7RVCo+tgav5IdjI9C9ZroRKFDO/DYmGb3Btm7ioE7ry+RV8zKG1GfOnBFWtWrmoGFkqRhtufRdhI89Q+yJWq6WFSomicsjDhPjtkXsuo5G8qWoLX0xFRrWQVb+OpIEssDL33DyVEz9EzEvTIiauoMBf63Vg/k2xNEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZNc2WbMa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752208350;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kGKnKSqmFoncY/VFaVr1B/bk0NjVO6YxCz0oeOIIZx8=;
+	b=ZNc2WbMa3TEbcJglitKjl7AziIHYoOwNJXk3hRaDw8LBGF+e9XMgGoZ7nr2e8CfA2BdEdU
+	R9e2s9IUZjkWuyfl99+uNOPcKq7ThEvrCvZFv7v05eRPm13EzK6GQgXFLhs0q6l4gqwZWD
+	+unpUEfMI/9snSXZYGSXq4iXqZGpm/M=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-563-FZv3N2m2OGGFD-R7qLVXFQ-1; Fri,
+ 11 Jul 2025 00:32:27 -0400
+X-MC-Unique: FZv3N2m2OGGFD-R7qLVXFQ-1
+X-Mimecast-MFC-AGG-ID: FZv3N2m2OGGFD-R7qLVXFQ_1752208345
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 358F0180028A;
+	Fri, 11 Jul 2025 04:32:24 +0000 (UTC)
+Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.240])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 36B09180045B;
+	Fri, 11 Jul 2025 04:32:20 +0000 (UTC)
+From: Anusha Srivatsa <asrivats@redhat.com>
+Subject: [PATCH 00/14] drm/panel: Use refcounted allocation in place of
+ devm_kzalloc() - Part5
+Date: Thu, 10 Jul 2025 23:31:11 -0500
+Message-Id: <20250710-b4-driver-convert-last-part-july-v1-0-de73ba81b2f5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/12] Thrash up the parser/output interface
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Akira Yokosawa <akiyks@gmail.com>
-References: <20250710233142.246524-1-corbet@lwn.net>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20250710233142.246524-1-corbet@lwn.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI+TcGgC/x2NSwqDQBAFryK9TsOMHyS5SshiPq12kFF6RjGId
+ 0/jql5tXp2QSZgyvKoThHbOvCQV+6ggTC6NhBzVoTZ1Z3pr0LcYhXcSDEtSFJxdLrg6Xd9t/mH
+ TRv+0wcehd6A3q9DAx514f67rD3XOxZNyAAAA
+X-Change-ID: 20250710-b4-driver-convert-last-part-july-34db91cbdf7a
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ Casey Connolly <casey.connolly@linaro.org>, 
+ Jerry Han <hanxu5@huaqin.corp-partner.google.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ Anusha Srivatsa <asrivats@redhat.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752208280; l=3615;
+ i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
+ bh=eUIWk726v+M/KGMh85jwLqDMcIQEgBCGm+2tVRYQnXk=;
+ b=38hQRfOGGclA6FW/2g7fnz6dS/hrEhjEqLJ5nfziKuWZ+hF78CDy8AHl2TB1AX9xo1yYtpkxS
+ E8b6jlrsVTRDW1sLUxzIZTEJ2I/ba8+5trZNni9jAIFtag14iF24/kY
+X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
+ pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, 10 Jul 2025 17:31:30 -0600, Jonathan Corbet wrote:
-[...]
+Use the new API devm_drm_panel_alloc() for panel allocations.
+A major chunk of driver conversion was sent in a 3 part series
+which is already merged. The coccinelle patch that was used to
+identify unsafe panel allocations didnt flag about 20 drivers.
 
-> Changes since v1:
-> - Coding-style tweaks requested by Mauro
-> - Drop the reworking of output-text accumulation for now
-> - Add a warning for prehistoric Python versions
+Not using any semantic patch for the remaining drivers.
+This series does the conversion by not passing explicit type
+to the helper and maintaining type safety suggested by Geert.
 
-Serious review of python code is beyond my background, but I did a test
-on this against opensuse/leap:15.6's python3-Sphinx_4_2_0, which comes with
-python 3.6.15.
+Link to part 1, 2 and 3 of driver conversion:
+https://patchwork.freedesktop.org/series/147082/
+https://patchwork.freedesktop.org/series/147157/
+https://patchwork.freedesktop.org/series/147246/
 
-Running "./scripts/kernel-doc.py -none include/linux/rcupdate.h" emits this:
+Link to part 4 that incorporates type safety:
+https://patchwork.freedesktop.org/series/151355/
 
-------------------------------------------------------------------------
-Traceback (most recent call last):
-  File "./scripts/kernel-doc.py", line 315, in <module>
-    main()
-  File "./scripts/kernel-doc.py", line 286, in main
-    kfiles.parse(args.files, export_file=args.export_file)
-  File "/linux/scripts/lib/kdoc/kdoc_files.py", line 222, in parse
-    self.parse_file(fname)
-  File "/linux/scripts/lib/kdoc/kdoc_files.py", line 119, in parse_file
-    doc = KernelDoc(self.config, fname)
-  File "/linux/scripts/lib/kdoc/kdoc_parser.py", line 247, in __init__
-    self.emit_message(0,
-AttributeError: 'KernelDoc' object has no attribute 'emit_message'
-------------------------------------------------------------------------
+Geert's suggestion
+https://lore.kernel.org/dri-devel/CAN9Xe3TXZa1nrCLkHadiBkOO=q1ue8Jwc3V13pXcbAc9AFS2-Q@mail.gmail.com/
 
-This error appeared in 12/12.  No errors with python3 >=3.9.
+This is the final set of drivers.
 
-I'm not sure but asking compatibility with python <3.9 increases
-maintainers/testers' burden.  Obsoleting <3.9 all together would
-make everyone's life easier, wouldn't it?
+A total of 86 drivers covered in part 1, 2 and 3 are converted
+by passing explicit type and is not type safe. Changes to those
+will be addressed in the upcoming series.
 
-    Thanks, Akira
+Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+---
+Anusha Srivatsa (14):
+      drm/panel/lq101r1sx01:  Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/raspberrypi: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/vvx10f034n00: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/osd101t2587-53ts: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/novatek-nt36672a: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/lg-sw43408: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/kd097d04: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/khadas-ts050: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/jdi-lt070me05000: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/lpm102a188a: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/ilitek-ili9882t: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/himax-hx83102: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/boe-tv101wum-nl6: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/boe-himax8279d: Use refcounted allocation in place of devm_kzalloc()
+
+ drivers/gpu/drm/panel/panel-boe-himax8279d.c          | 11 +++++------
+ drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c        | 10 +++++-----
+ drivers/gpu/drm/panel/panel-himax-hx83102.c           | 10 +++++-----
+ drivers/gpu/drm/panel/panel-ilitek-ili9882t.c         | 10 +++++-----
+ drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c         | 12 ++++++------
+ drivers/gpu/drm/panel/panel-jdi-lt070me05000.c        | 11 +++++------
+ drivers/gpu/drm/panel/panel-khadas-ts050.c            | 13 ++++++-------
+ drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c    | 12 ++++++------
+ drivers/gpu/drm/panel/panel-lg-sw43408.c              | 10 +++++-----
+ drivers/gpu/drm/panel/panel-novatek-nt36672a.c        | 10 +++++-----
+ drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c    | 12 ++++++------
+ drivers/gpu/drm/panel/panel-panasonic-vvx10f034n00.c  | 12 ++++++------
+ drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 12 ++++++------
+ drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c       | 11 +++++------
+ 14 files changed, 76 insertions(+), 80 deletions(-)
+---
+base-commit: bead8800222768dab1a421206350d530b0c45254
+change-id: 20250710-b4-driver-convert-last-part-july-34db91cbdf7a
+
+Best regards,
+-- 
+Anusha Srivatsa <asrivats@redhat.com>
 
 
