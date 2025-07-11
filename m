@@ -1,267 +1,223 @@
-Return-Path: <linux-kernel+bounces-727130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A60B01569
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:05:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD907B01576
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E0677B540C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:04:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DE615A56F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B5B2192E1;
-	Fri, 11 Jul 2025 08:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA3E1F63CD;
+	Fri, 11 Jul 2025 08:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d4EypiBA"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k6seDfwM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58204201033
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752221089; cv=none; b=lNJd4bFD8IGsVnh/ah9o2LjWGwkFS94y/RG1SRw5hv4cA41dgPkfKT+qKwawkwHfBkxion4JAkCfG4G3nc+PdgD3GVIaIQo+E3knWybjnHTuBh8Uz7+FM4KbVBRWw6G5GZJlyXNEeLjMElPLDE2Du0r0LfJIF+cwyvJ9wkOG1kQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752221089; c=relaxed/simple;
-	bh=t988JggshCl/htP4ob36mi+IVMMG0yo27e+JcGENNPM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qCqIVRQtHl2pG6JM6Hiy3SOb9KLBgVpK0zUs2qMDwqhVl/qOoBu85iYfsYVCI9enuodZVd34tKD2U3zdO/KgjxwH02u6wnEGJK2uoWPVMM2vTASbXJWuC9Lzw/UhmLlL3tMVQg5Jc9JWG3WU09MflwgJJLoltPGr6r+0dgvsQiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d4EypiBA; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45320bfc18dso10447275e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 01:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752221086; x=1752825886; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xZ/bfo6Xgsu6JxDs2/h3oFS+uiOoF0damWh//URaq6A=;
-        b=d4EypiBAe8wI8UggsO5oVueCwq4cbLUXfbKk3D8x9fGW/HDurSwqAjbUg1qly0oyyQ
-         iNHNyjJDUSJz7+rp+fyvCXm3T2nel1yDoae9nubJx989r7j1/QY63COvy5GQjaVYBbOi
-         je6ssrIk/bY4VZvFzBd70yUGEJK5GnFd95rzUa80vNpTEEPtM9BYmJdeQoChsekDajU9
-         wMrKp0osBo+iWEAsDBIsXpJSzq5pbiXfPt5m9Phm7F6nNPuI6Jbf+0hOUWLjnwSlcyiO
-         FfmQ605AOwcusFcg/S8x3bgH4NxsOWqBglZjkr2ZedaTXVAm3BKymegLTzOFV5Ciaz8x
-         6hYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752221086; x=1752825886;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xZ/bfo6Xgsu6JxDs2/h3oFS+uiOoF0damWh//URaq6A=;
-        b=RhoxoQnyiv+J3Xdz8DA0Uow4C6hBdRTFzeXNEUTPHSr7xOgqTeYoiWZf94A9+xn/YT
-         M+cyCokys/scnJ7e68sImn2eDJY1u3o0AjwXqhC97Ha/Fbb2HrYj8MDrdUHAsCtWPElv
-         WD3bGM+lATfhajfG7kUlBcnTi2IjeMFvGHpqZCntyJeplY/UGX2vbzlfSllSF/cAqQcb
-         +mZrOlYFE5TfHNtX9+y1PrmAvsKEZPLIV7iP9L6ZCwChjs1Vr1N2Ky3nzlkYm85NMCJe
-         WUXX5xuY8duGJQYd8NNDZ3IEC/xBe7Ssw2qUpqKoEp6DGjV6MDI73WH+z32Ls1HF2yQA
-         O27w==
-X-Forwarded-Encrypted: i=1; AJvYcCU914EGX7CL8Y3HKqgSzVD+QSpBBSXhJF3KoMrz0he3fePfUFvKNFQk6S60zXlbvia34ZYrLyYbzAJkadQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFFdIEXqqS6Ll385S69NSz5DQqUuuoKjeEooxLj5h5I535mDMt
-	tllrUpLHlKzRBvWesUU6vIz+Kl02uMNOdQwMR1jvs0jSq20N2eZgUtgNYfvjcuLAZFfQkHCL97K
-	D2nDk0HqFqbzTkbPgnw==
-X-Google-Smtp-Source: AGHT+IGK14uZ963XhzZQTY0uLN96HzDFpfZQooCEFcPT4rsCekbciiSkhX1zVvqJT+2G/2X6NyN1IcUUMNiYncA=
-X-Received: from wmbay9.prod.google.com ([2002:a05:600c:1e09:b0:450:cf3f:2a89])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:8207:b0:43b:c857:e9d7 with SMTP id 5b1f17b1804b1-454e2addac7mr20698785e9.5.1752221085765;
- Fri, 11 Jul 2025 01:04:45 -0700 (PDT)
-Date: Fri, 11 Jul 2025 08:04:38 +0000
-In-Reply-To: <20250711-device-as-ref-v2-0-1b16ab6402d7@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953DA1FE451;
+	Fri, 11 Jul 2025 08:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752221174; cv=fail; b=pQZmb81yNvBoScFRbE7+9X7T8ZjsyCB1ZGFlZ/f5CZ/lYqE8ce4fuqNHzum2m1+wB3vpp8UQbrMywGW7/PTqC4CdtWjnXJHD/r7B0y+4OTJP5uWLVjVtHqkKsZz0q3oawqFSTuE+HyeAxnUSpKlDJQHuug4DPEf8HVYVhGLXW3I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752221174; c=relaxed/simple;
+	bh=J2fzZFAZBduISYJ3VL0As+KklMYMzUtzfcATWCHRAYk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ap34MEP/YUZTbvW8olwWE6OUJLEwJxoeL05Q7FkGctOphbub1dv874ETjRrBFK+yFxsQP5gM3kfovSEh8m7DbtZ1ZBbuJp3FWgWAqug1PauDK5EpWe4zaYsz2raeJkZpqdi7bUyseYQf+n4AYZIE88ouD9p1L3qK5aZYT3iQlYU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k6seDfwM; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752221172; x=1783757172;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=J2fzZFAZBduISYJ3VL0As+KklMYMzUtzfcATWCHRAYk=;
+  b=k6seDfwMlm//ZAqqW7Edx1ZDqgWA4iJb416Bz38PqxvnmWpCJ4c7QvXd
+   CIXb65lu9NOcZm+rPBRags00nuvWcITG/MAxVHjJCIV4qNdPwu3tpfpKP
+   mqsg31jeclNolBMxB6eSVXMjOhB6dw6tVi7lwGf5x9SIoBhkpmpPDKzCR
+   rNhq4iRUizpeuqQC3rub4DOd228hajFgTERf4BZG7g11vsMSee6w1zbfL
+   HJVsdUsn0nSEzrjyFoXpc/FZW6F+IqMDYUlo1Ug/1yVI/RpAqTak1L/fr
+   e1NE7xviz1gYSE9FWnQ4gNSHR1z2jGE8NwR6TyrfGbI2XAS8fXWcxwxVR
+   A==;
+X-CSE-ConnectionGUID: uTdFYyUFSwamDz4vbndQ8Q==
+X-CSE-MsgGUID: Rwcuy1WXSNeiX8fC2KhyTg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="53619828"
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="53619828"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 01:05:03 -0700
+X-CSE-ConnectionGUID: TL04DqPaQ2azYxr/zmFP0w==
+X-CSE-MsgGUID: iRISG3zoRqyLuxdjy/Vq1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="156798215"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 01:05:04 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 11 Jul 2025 01:05:02 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Fri, 11 Jul 2025 01:05:02 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.44) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 11 Jul 2025 01:05:02 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P1AOUqJxctYLkUVPi1/NuaXw4AtX4HJK8XX+hmAtR65GKhWttMPU8dlC0GzaTLh0/T3625CyUK+zePNyCInopsI+1kAcv18HW4+8as/FhpfOIa80CCO+gOdTuNH0YPapwRsiurRE45GEb5gKfjNWBeWwuTL05lhOpxVQHdENw8ygTB4GMElyAtRBryl+Uko/I1sQNUNN2+dNYeeUZEYID0g/49UH1jig4mhbAhK3wYKEQ9+MJD6wEv3lCm1Ym6WfvDZWpGtIdmKbaSW8RHjozCUMG6lhI2Fks+PI4ePPVaJmucR7RzK2y2gQywgaruo8RdEWfRk/bOu8eqncmKBGXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wnsviIkezmwmwqoucEqZSfJHjhKcNS7v6+spNwvbjWk=;
+ b=adhrCEwQoNfUDpErU63L5YDlZmFnZhBT7iEQYOv1mpEv1l7A4PAsXFijsjpCBQxR50nFhoFWb+OdTq4oiljVowuXraZCTnS44QFxM9MDosu8JHWnHaI8XIMUYqin5cu+dt44cNAGhuXX7v+pqgUauo+50ujsQMCINJXBIV2tGrvlquTEwlMgbgcprW/FUdRcmhOIU70SJ9edTsX7rBf7s/CHG4l82yILXkXQ7uevu1kU//uQijjet5MQNmeKXvfBMkoKk0a2rUP975EIffg4nLgdCvAcSs6xY6XstQpsxIlo8EqZBvGQCgwK1F4pR1n3Je2zw8KWLSkjnE6xWlqDRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by CY8PR11MB7291.namprd11.prod.outlook.com (2603:10b6:930:9b::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Fri, 11 Jul
+ 2025 08:05:01 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%6]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
+ 08:05:01 +0000
+Date: Fri, 11 Jul 2025 16:04:48 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: <linux-coco@lists.linux.dev>, <x86@kernel.org>, <kvm@vger.kernel.org>,
+	<paulmck@kernel.org>
+CC: <seanjc@google.com>, <pbonzini@redhat.com>, <eddie.dong@intel.com>,
+	<kirill.shutemov@intel.com>, <dave.hansen@intel.com>,
+	<dan.j.williams@intel.com>, <kai.huang@intel.com>,
+	<isaku.yamahata@intel.com>, <elena.reshetova@intel.com>,
+	<rick.p.edgecombe@intel.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar
+	<mingo@redhat.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 00/20] TD-Preserving updates
+Message-ID: <aHDFoIvB5+33blGp@intel.com>
+References: <20250523095322.88774-1-chao.gao@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250523095322.88774-1-chao.gao@intel.com>
+X-ClientProxiedBy: SG2PR02CA0134.apcprd02.prod.outlook.com
+ (2603:1096:4:188::14) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250711-device-as-ref-v2-0-1b16ab6402d7@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8793; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=t988JggshCl/htP4ob36mi+IVMMG0yo27e+JcGENNPM=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBocMWa1bN3ivtpQ42zwCcYrtyT+6XzfA+T/vZ4r
- JjpRjv7Q8aJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaHDFmgAKCRAEWL7uWMY5
- RkRDD/4+syUqXHnMUJ62gdTHn/L5qK+pIKPUcTOSTRL2HV8TII2owxBmhgAM0tUsVA7P4O6jIRI
- R5Vs0arcahHmjYcoCs4nNWzKmZ83JoSpEjAU1P5j+TvsjJBarENs7ocxR1aKmfcV/A9AOzjX3kR
- DfI7+3nCs/I9eoxnt3kQBAQG7PN8Qd1gnwuGYoWmujMQqz4gplYZly6YxZ9FHSNpdcmcc1WPB5J
- 2bu+SKoicYixfY0mYLu2rITpSgl8V8WzXNywOGl9zPkMdnUaxUlCRAZY52GdJ5DBUY37Yk8W9qj
- NvRy4Sd4dW9tIh0Ih5iM50Zl5dT6idLtd64VcE2HHtB0WrtTBe4JDIRKkQdbCAhZ62T8Py+VrSC
- qgDHZPsKhrgm93lpaQDGIA2vVj0ChooeFit/7Bcgv/coxuykfvB/KeeRtNAWRtyJHtD0XbRdfqG
- E5A5n63B3C6erO5A25Xj5sEYJKZjSnHmBXPxx0OHjKzmoj60uFihNwvKeq57AxCxwjSfjku4AZ1
- FNnvLhHmfxW5cN3kJ3ujW61KaNkp0dHSskufNSrVYeDEP0qTXzWO0ufxIthbyMIUclgyLfxLV0P
- j8lzesAtWNcTjrTgtSO0W98YIMhXTpSKRsVafSAi+D7DMfjDrlXttBq8UlGNsb2Z8iywr+EiWF+ 3ey5Tnv7z17LMXA==
-X-Mailer: b4 0.14.2
-Message-ID: <20250711-device-as-ref-v2-2-1b16ab6402d7@google.com>
-Subject: [PATCH v2 2/2] drm: rust: rename as_ref() to from_raw() for drm constructors
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, 
-	"=?utf-8?q?Krzysztof_Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|CY8PR11MB7291:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2182920-cc8c-4d0d-a3b0-08ddc051a2a8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?wQw2tlasQgo0kcCtdo3Ln3WnxuCzWnRefv2DPwX5TWn6yzgJIkZrCyMpxqrE?=
+ =?us-ascii?Q?5WoO0q0LW1Kx1l3Cd1CY26PCatyA/BprGbckD38Jj9J7iG6Gx03ARZQ1uzYf?=
+ =?us-ascii?Q?Mq2HI59Y3SLjioChs8VyqDwsFwlOLxSsmTlZQ9yUIkva76IdfvwrpyrPbcx4?=
+ =?us-ascii?Q?ArUNwzCI5+JIp2dhCWfda8IBFLUS+kfLkR2EEx8fvp/YFQJeXr28yM7oE2JL?=
+ =?us-ascii?Q?F30dBDYiUEjTIHN35pzaPhesHE1pzFIaMyD+YU0PYm16JKCqT0t8C3WlCyd9?=
+ =?us-ascii?Q?qxJJMQhHdt2bDIrlKUs7c8VM6eN2lige+rtNnwQExoND0UDUaINNciz+3dJ+?=
+ =?us-ascii?Q?Dz33SQ8Ri33M2uPPac0ux+8HyKml06jFXJjyMwAKqEOjCN3fcj45kxdaUrIs?=
+ =?us-ascii?Q?zxc2qP89WFOHYLtC5WbfAC4EMX9O1j4T+4zmxiFJo/irIfN+cvJqvaI5izSR?=
+ =?us-ascii?Q?gVIgpkWp+7ttrRZ7Um/JG1X6Dq19K8N3SuTbuokC5OLMC+xduI3/ujEY1hb0?=
+ =?us-ascii?Q?vz3pzJUOBZnx/bRDQC1+hGegcEisHk1di3rkeyHYEtjoJbefFftfsiWHMeqO?=
+ =?us-ascii?Q?BS5wLV3Zvpq98LTXaybHp4LIMlw/k42PU5TQb8ek6dqhXoAv6ShT1PjKJVFs?=
+ =?us-ascii?Q?KQuiIcy39lu1nBvIXO3S0C9DSQ88bm9+LEani2BydlJjnjLay5aYwTo5fzRh?=
+ =?us-ascii?Q?zFy8KjDh/5t5UIN8tC/4LaVZY5YyQCHREUFYuuxU0wqhB81l27Qo8o1NmTGm?=
+ =?us-ascii?Q?JPPyLGNc3xp8AjzunjN0j7n/VamKnefTx7yk67UmmHuMtghNP/lMyNw0FSUx?=
+ =?us-ascii?Q?GOnQJTJwWVMsazY10gnPF5f8OjmhvYTMtxBhYWZvt6wY2Lw+Hob9fKbc7M0B?=
+ =?us-ascii?Q?jCNv0Mc+7D+SlFCRHz3qgYYTtxTF5DukvIIfIcokrOGumssNZxkHzKA2LY5k?=
+ =?us-ascii?Q?XP3KmQfOdAX/iYPFTkVlQhTvLUEGQn4lWA5RfOFkUeTOoBCI3SMMP0VARkoe?=
+ =?us-ascii?Q?YjcT5OqVPPqFlnA2Ut1QNByQZ1aPf2xGGiMPd1QQRGOj6xSAQpvzR8l1lR5T?=
+ =?us-ascii?Q?ACuv17CAq69sEWvMT9lzvjJKtJF8GVVAbEE4YBfLCTNIzmcX5v/iTPcWzpAu?=
+ =?us-ascii?Q?UZwPKdvApH4Aeo6odtxYov2GVG561XzgwgBwOuKU2yFgy4mik8OazsTL4Y4F?=
+ =?us-ascii?Q?u+mPFQkUc6OuITMPGoEzqG2q976jF/5B49ZakQ+XTtBM3RtkTpoiHxhA0ml4?=
+ =?us-ascii?Q?TDNVFAf1DbETCcRz+oGRlfDRYPHJyam8QGs4NLIKPkQk2NINqYE7NSoaK5Ei?=
+ =?us-ascii?Q?a7jLtCqQS+l6hddYWFqSzwzuPhv1rvuKN83ESw45zXPrWwDmDiy/XtNowxx7?=
+ =?us-ascii?Q?Glh8kmN3D32+ce1INkrCdfBxYQOKL2HlkEjSm0iIE8X86NErAx5FlORkxs9k?=
+ =?us-ascii?Q?WnLqkyeA6YA=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Jbkk7VXrTYTVVPaz2+ysmFcQyYSUyD2sHiuPrRWiGw510ld+TpXleWDD57OS?=
+ =?us-ascii?Q?+9TcPxVsaFBI0R1YwjV7z7WoE/8Tp3Puq3nz0MsosVgOQ8HkliqxJ36v3aui?=
+ =?us-ascii?Q?y3/s1cl1BUhJGCug438LtZUzsjTMqZWejTuDmmvtnh03dWP4CRQAraNsIvJo?=
+ =?us-ascii?Q?fPueGdpm45LJM1E3SoAavcIyBOPY6SGSUG8GqfOgSaS24uQDeNFfN1UwAExB?=
+ =?us-ascii?Q?OlN7Jl9PQFABLyWvtVkXMzh2APeqoJYcyhbG4CJOUm8o9G1iKsIxJ0C2m3ah?=
+ =?us-ascii?Q?4Fib9leUoYHor94yS5xRgUt0w9RNlTm8YWEpA/XohrpjCJ2Ksifo6CUaFumI?=
+ =?us-ascii?Q?fOpC11vILXEZ+4YQrdeIvRnERjGHU4YbiELlcFljfJKNuRZ8AkYTs73Krkd6?=
+ =?us-ascii?Q?BRjn6qw/zuqMMMQzDjuoMyN8Rk3PYTOW+1IO85k6/S5PkwHk/t4oNFgGyV0Y?=
+ =?us-ascii?Q?WmZpCn6bsTR3Ies1bbOhGk0T34dCfiAZirIpUdZlCZVp2bQdpih+YeQ3W/JL?=
+ =?us-ascii?Q?kMrCb6GJ9x8mrSgpgZZDdWCKwYvUDvHanQUAVxGtL27VVdT5sCmOjl8cZvgQ?=
+ =?us-ascii?Q?vK/jMZLLcncDFJggaSpADp3k3JEean0paroQTmG00aqAXMQwbBFiA8mvoPuY?=
+ =?us-ascii?Q?Y0/SFspOkm06ra3+kOl5L8MMLLss4IpAX4IguM6d86CTBeLuumyJazmMt/Tz?=
+ =?us-ascii?Q?FMv0RyCSsXxh/DZmHOhHSPZtnnKZ7U3pT5YnWnRjLWdmaEOtjDChvmp2s/s1?=
+ =?us-ascii?Q?VBi1TnX34SQD3/v+wHUTLnJ9tNmtDZvCWL7YkfESvM0879vUB0OW9UkJ/X+u?=
+ =?us-ascii?Q?hi4Cg+cLilK9Uj8NWFH1nASzWLnbyjKOx6fQMuCVZf54nCAsYG2B5Lkma/c9?=
+ =?us-ascii?Q?hzcHwsumKQkkHN/K0g2zjI+07x4U+WYHyDLA7n5yDYHpHIrTZvwGkrxI5N2l?=
+ =?us-ascii?Q?vn7MTxYxTFDt8CWpC3QgvLgDjRZUKItz+4lHCdcd4YZ0+ExnjhpMhasfH11X?=
+ =?us-ascii?Q?AeamG0NZUDMXPMG2u0sy5OZ48S4QVE6xpw4biirX7olqukKd4ZCClQbsXPoZ?=
+ =?us-ascii?Q?JFEYIioXEiP/06EZBU5W5s76BxMXtApGox0Kf91II7Euhxq3xcPdUbrlubMF?=
+ =?us-ascii?Q?jHHdvdBjJoC0Umy2nO07wR+i3NR83tLy5Hra1tlkNeZcM7k2FIzY6Iq42uqw?=
+ =?us-ascii?Q?EVD7TU+4V2wZvriA76ef1hZ0YbCZwf4QszV/i4EYwWSgs1su8IuJow6fN2Hj?=
+ =?us-ascii?Q?IxvG8OquKJDWiAcT204ONkUNGFXLZTsqovdUKYWhhbZDWKmxCMrG4e+20Zim?=
+ =?us-ascii?Q?uRLxJAjtadKh/TgkEkostOb0Oj9AtXOUkmYy0ktr6T6MubHTb2IKxC2feMYA?=
+ =?us-ascii?Q?3IWf9nEoNWfRpDuzjwpbYWtn2BMt2/OJ+SZpbxfI08OtezJ534rTAuQzYBX2?=
+ =?us-ascii?Q?lGCB+vqP1LJ1Y6pqK6vYlxp+Pk6Eb9FAnFYq/qqfQL0GwrgS3/jgI5WMPqCV?=
+ =?us-ascii?Q?DCVaQOk5S3rkR6kMzhQDQibKiruJ1Uctv9ozknQJRpEJXgiS5s2CqUiswyKG?=
+ =?us-ascii?Q?hfkdX0J4NzCGxaNCKQUxv0ZGS01gcsZdJnKqonam?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2182920-cc8c-4d0d-a3b0-08ddc051a2a8
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 08:05:01.2304
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SIcjxQLHbnfuQgjtOBN4lo0RDJyft4rKDeVqtQmg9lKNBQRZD/i2EJpqvSgRAZV4ozrQ5t3lDmlTntpScmwxtw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7291
+X-OriginatorOrg: intel.com
 
-The prefix as_* should not be used for a constructor. Constructors
-usually use the prefix from_* instead.
+On Fri, May 23, 2025 at 02:52:23AM -0700, Chao Gao wrote:
+>Hi Reviewers,
+>
+>This series adds support for runtime TDX module updates that preserve
+>running TDX guests (a.k.a, TD-Preserving updates). The goal is to gather
+>feedback on the feature design. Please pay attention to the following items:
+>
+>1. TD-Preserving updates are done in stop_machine() context. it copy-pastes
+>   part of multi_cpu_stop() to guarantee step-locked progress on all CPUs.
+>   But, there are a few differences between them. I am wondering whether
+>   these differences have reached a point where abstracting a common
+>   function might do more harm than good. See more details in patch 10.
+>
+>2. P-SEAMLDR seamcalls (specificially SEAMRET from P-SEAMLDR) clear current
+>   VMCS pointers, which may disrupt KVM. To prevent VMX instructions in IRQ
+>   context from encountering NULL current-VMCS pointers, P-SEAMLDR
+>   seamcalls are called with IRQ disabled. I'm uncertain if NMIs could
+>   cause a problem, but I believe they won't. See more information in patch 3.
+>
+>3. Two helpers, cpu_vmcs_load() and cpu_vmcs_store(), are added in patch 3
+>   to save and restore the current VMCS. KVM has a variant of cpu_vmcs_load(),
+>   i.e., vmcs_load(). Extracting KVM's version would cause a lot of code
+>   churn, and I don't think that can be justified for reducing ~16 LoC
+>   duplication. Please let me know if you disagree.
 
-Some prior art in the stdlib: Box::from_raw, CString::from_raw,
-Rc::from_raw, Arc::from_raw, Waker::from_raw, File::from_raw_fd.
+Gentle ping!
 
-There is also prior art in the kernel crate: cpufreq::Policy::from_raw,
-fs::File::from_raw_file, Kuid::from_raw, ARef::from_raw,
-SeqFile::from_raw, VmaNew::from_raw, Io::from_raw.
+There are three open issues: one regarding stop_machine() and two related to
+interactions with KVM.
 
-Link: https://lore.kernel.org/r/aCd8D5IA0RXZvtcv@pollux
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/kernel/drm/device.rs  |  2 +-
- rust/kernel/drm/file.rs    |  8 ++++----
- rust/kernel/drm/gem/mod.rs | 16 ++++++++--------
- rust/kernel/drm/ioctl.rs   |  4 ++--
- 4 files changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
-index 11ce1e7f2d52ae4ddfbd4e47dfb17e390653bc45..d4906675c8d59f838a15388d1dad6b2960696ebb 100644
---- a/rust/kernel/drm/device.rs
-+++ b/rust/kernel/drm/device.rs
-@@ -154,7 +154,7 @@ unsafe fn from_drm_device(ptr: *const bindings::drm_device) -> *mut Self {
-     /// Additionally, callers must ensure that the `struct device`, `ptr` is pointing to, is
-     /// embedded in `Self`.
-     #[doc(hidden)]
--    pub unsafe fn as_ref<'a>(ptr: *const bindings::drm_device) -> &'a Self {
-+    pub unsafe fn from_raw<'a>(ptr: *const bindings::drm_device) -> &'a Self {
-         // SAFETY: By the safety requirements of this function `ptr` is a valid pointer to a
-         // `struct drm_device` embedded in `Self`.
-         let ptr = unsafe { Self::from_drm_device(ptr) };
-diff --git a/rust/kernel/drm/file.rs b/rust/kernel/drm/file.rs
-index b9527705e5514f00ed5a9c459f3c4161daf5b61d..e8789c9110d654df2561a88a53bc6b1cfa709fdd 100644
---- a/rust/kernel/drm/file.rs
-+++ b/rust/kernel/drm/file.rs
-@@ -32,7 +32,7 @@ impl<T: DriverFile> File<T> {
-     /// # Safety
-     ///
-     /// `raw_file` must be a valid pointer to an open `struct drm_file`, opened through `T::open`.
--    pub unsafe fn as_ref<'a>(ptr: *mut bindings::drm_file) -> &'a File<T> {
-+    pub unsafe fn from_raw<'a>(ptr: *mut bindings::drm_file) -> &'a File<T> {
-         // SAFETY: `raw_file` is valid by the safety requirements of this function.
-         unsafe { &*ptr.cast() }
-     }
-@@ -61,10 +61,10 @@ pub(crate) extern "C" fn open_callback(
-         // SAFETY: A callback from `struct drm_driver::open` guarantees that
-         // - `raw_dev` is valid pointer to a `struct drm_device`,
-         // - the corresponding `struct drm_device` has been registered.
--        let drm = unsafe { drm::Device::as_ref(raw_dev) };
-+        let drm = unsafe { drm::Device::from_raw(raw_dev) };
- 
-         // SAFETY: `raw_file` is a valid pointer to a `struct drm_file`.
--        let file = unsafe { File::<T>::as_ref(raw_file) };
-+        let file = unsafe { File::<T>::from_raw(raw_file) };
- 
-         let inner = match T::open(drm) {
-             Err(e) => {
-@@ -89,7 +89,7 @@ pub(crate) extern "C" fn postclose_callback(
-         raw_file: *mut bindings::drm_file,
-     ) {
-         // SAFETY: This reference won't escape this function
--        let file = unsafe { File::<T>::as_ref(raw_file) };
-+        let file = unsafe { File::<T>::from_raw(raw_file) };
- 
-         // SAFETY: `file.driver_priv` has been created in `open_callback` through `KBox::into_raw`.
-         let _ = unsafe { KBox::from_raw(file.driver_priv()) };
-diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-index 4cd69fa84318c3ff2cec57949e9bab05559a3c2f..a24c9a2fc201b69cc31b76282a68aec188aaac73 100644
---- a/rust/kernel/drm/gem/mod.rs
-+++ b/rust/kernel/drm/gem/mod.rs
-@@ -51,7 +51,7 @@ pub trait IntoGEMObject: Sized + super::private::Sealed + AlwaysRefCounted {
-     /// - `self_ptr` must be a valid pointer to `Self`.
-     /// - The caller promises that holding the immutable reference returned by this function does
-     ///   not violate rust's data aliasing rules and remains valid throughout the lifetime of `'a`.
--    unsafe fn as_ref<'a>(self_ptr: *mut bindings::drm_gem_object) -> &'a Self;
-+    unsafe fn from_raw<'a>(self_ptr: *mut bindings::drm_gem_object) -> &'a Self;
- }
- 
- // SAFETY: All gem objects are refcounted.
-@@ -86,12 +86,12 @@ extern "C" fn open_callback<T: BaseDriverObject<U>, U: BaseObject>(
- ) -> core::ffi::c_int {
-     // SAFETY: `open_callback` is only ever called with a valid pointer to a `struct drm_file`.
-     let file = unsafe {
--        drm::File::<<<U as IntoGEMObject>::Driver as drm::Driver>::File>::as_ref(raw_file)
-+        drm::File::<<<U as IntoGEMObject>::Driver as drm::Driver>::File>::from_raw(raw_file)
-     };
-     // SAFETY: `open_callback` is specified in the AllocOps structure for `Object<T>`, ensuring that
-     // `raw_obj` is indeed contained within a `Object<T>`.
-     let obj = unsafe {
--        <<<U as IntoGEMObject>::Driver as drm::Driver>::Object as IntoGEMObject>::as_ref(raw_obj)
-+        <<<U as IntoGEMObject>::Driver as drm::Driver>::Object as IntoGEMObject>::from_raw(raw_obj)
-     };
- 
-     match T::open(obj, file) {
-@@ -106,12 +106,12 @@ extern "C" fn close_callback<T: BaseDriverObject<U>, U: BaseObject>(
- ) {
-     // SAFETY: `open_callback` is only ever called with a valid pointer to a `struct drm_file`.
-     let file = unsafe {
--        drm::File::<<<U as IntoGEMObject>::Driver as drm::Driver>::File>::as_ref(raw_file)
-+        drm::File::<<<U as IntoGEMObject>::Driver as drm::Driver>::File>::from_raw(raw_file)
-     };
-     // SAFETY: `close_callback` is specified in the AllocOps structure for `Object<T>`, ensuring
-     // that `raw_obj` is indeed contained within a `Object<T>`.
-     let obj = unsafe {
--        <<<U as IntoGEMObject>::Driver as drm::Driver>::Object as IntoGEMObject>::as_ref(raw_obj)
-+        <<<U as IntoGEMObject>::Driver as drm::Driver>::Object as IntoGEMObject>::from_raw(raw_obj)
-     };
- 
-     T::close(obj, file);
-@@ -124,7 +124,7 @@ fn as_raw(&self) -> *mut bindings::drm_gem_object {
-         self.obj.get()
-     }
- 
--    unsafe fn as_ref<'a>(self_ptr: *mut bindings::drm_gem_object) -> &'a Self {
-+    unsafe fn from_raw<'a>(self_ptr: *mut bindings::drm_gem_object) -> &'a Self {
-         let self_ptr: *mut Opaque<bindings::drm_gem_object> = self_ptr.cast();
- 
-         // SAFETY: `obj` is guaranteed to be in an `Object<T>` via the safety contract of this
-@@ -170,9 +170,9 @@ fn lookup_handle(
-         // - A `drm::Driver` can only have a single `File` implementation.
-         // - `file` uses the same `drm::Driver` as `Self`.
-         // - Therefore, we're guaranteed that `ptr` must be a gem object embedded within `Self`.
--        // - And we check if the pointer is null befoe calling as_ref(), ensuring that `ptr` is a
-+        // - And we check if the pointer is null befoe calling from_raw(), ensuring that `ptr` is a
-         //   valid pointer to an initialized `Self`.
--        let obj = unsafe { Self::as_ref(ptr) };
-+        let obj = unsafe { Self::from_raw(ptr) };
- 
-         // SAFETY:
-         // - We take ownership of the reference of `drm_gem_object_lookup()`.
-diff --git a/rust/kernel/drm/ioctl.rs b/rust/kernel/drm/ioctl.rs
-index 445639404fb7fe2cf3276890b1236f611ded9f3f..fdec01c371687c79d660457bd2bd6e09b2400d35 100644
---- a/rust/kernel/drm/ioctl.rs
-+++ b/rust/kernel/drm/ioctl.rs
-@@ -134,7 +134,7 @@ macro_rules! declare_drm_ioctls {
-                             // FIXME: Currently there is nothing enforcing that the types of the
-                             // dev/file match the current driver these ioctls are being declared
-                             // for, and it's not clear how to enforce this within the type system.
--                            let dev = $crate::drm::device::Device::as_ref(raw_dev);
-+                            let dev = $crate::drm::device::Device::from_raw(raw_dev);
-                             // SAFETY: The ioctl argument has size `_IOC_SIZE(cmd)`, which we
-                             // asserted above matches the size of this type, and all bit patterns of
-                             // UAPI structs must be valid.
-@@ -142,7 +142,7 @@ macro_rules! declare_drm_ioctls {
-                                 &*(raw_data as *const $crate::types::Opaque<$crate::uapi::$struct>)
-                             };
-                             // SAFETY: This is just the DRM file structure
--                            let file = unsafe { $crate::drm::File::as_ref(raw_file) };
-+                            let file = unsafe { $crate::drm::File::from_raw(raw_file) };
- 
-                             match $func(dev, data, file) {
-                                 Err(e) => e.to_errno(),
-
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+Sean and Paul, do you have any preferences or insights on these matters?
 
