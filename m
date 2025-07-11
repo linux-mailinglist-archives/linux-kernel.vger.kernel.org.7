@@ -1,131 +1,105 @@
-Return-Path: <linux-kernel+bounces-727466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D4CB01AA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:36:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E426B01AA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970F71C80EE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2825C3B8771
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55F428C016;
-	Fri, 11 Jul 2025 11:36:15 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFCF28BAB9;
+	Fri, 11 Jul 2025 11:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P1a5KHI0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D68146585;
-	Fri, 11 Jul 2025 11:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10387146585;
+	Fri, 11 Jul 2025 11:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752233775; cv=none; b=nmSe9v/NEXTU4aL12ZoJO7u0B7ByiexI7kTf2kLtSM4JgYg7N/nG7dpISXREeDBG2VupAtvQTj7HqGHsR/zxWj7X47EKZr9r30k1MIK28G6ot3CKQd894xO1BTWo2Fo6sVqL639qUGeICOWaoWlj80WSoyPlxAmEdlnR0Dpl0MA=
+	t=1752233829; cv=none; b=ehNoNZv0qQgjxRMjNbGnyH3GMlosvkX0rON0AYdsrj6sCYtr5WZ5kTxn2J4KoXm9K+aYWb4xlHjVLSIdqII2GdqNboSB7ANTwlsLxVZzzoGy+qZOlRCvhOkOUQV1vuO6/qxiUcBB7OGpoHF158Q3yC/eX/kjNcwIjYTchGtbXTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752233775; c=relaxed/simple;
-	bh=PkVmWijxIcb7J2bR8KJZd6f6Zt0pBeplT/ckojlUg+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lhQvwYjNePS5nBI2RZdv5t++ZhHjYog+XVn1v8Ta2bYjMDOZ8JkVHEXTlVcH6iHaf937MzPGZPh1GiPdI+mtWzQmfsASuIRpbNoH7GZnaDlUPedU6GqI7mikAW8FdAXzfXqeA+Z2wEzxHKBI6vNt/vQbZsRujTRfoOXaYThvSZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56BBZiSV056479;
-	Fri, 11 Jul 2025 20:35:44 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56BBZijP056476
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 11 Jul 2025 20:35:44 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <244c8da9-4c5e-42ed-99c7-ceee3e039a9c@I-love.SAKURA.ne.jp>
-Date: Fri, 11 Jul 2025 20:35:41 +0900
+	s=arc-20240116; t=1752233829; c=relaxed/simple;
+	bh=cecSWB+HZVJT/b0dYkOthiSGy4tvUgtjTM32IfmWHx4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UeOG4vyV9S9PYcFgsflFSFZgUJ/VcLNrUY9Coa20Gm0OMcfFgx8R54IamUoCFlLIMJUZMYT8LZutQiWDiRs9cKqml7KCPiIVcZX89dVIAM0YGjwbBdoGBs8H2c7IlZoN3tNGlTr7T2wwXrEXCc9a6yFy+zUozJNZ7JNxQ8VSAeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P1a5KHI0; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752233828; x=1783769828;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=cecSWB+HZVJT/b0dYkOthiSGy4tvUgtjTM32IfmWHx4=;
+  b=P1a5KHI0AEg4XUlWAt0tJb+i6d9y6Sf3AVjynFumvctZULCh7MMEnq9z
+   1QQEgtsC0CondkdsjMg6cEGR1ZtvjQQGE27uNJ292JC3X2O7sGKMni2yF
+   qUEHeJPbgeEmlkk8V+3IoumI0OD/60RkFi6U5CkrxMAxgMGALSBADJJn/
+   A56iND+T1UkJod72zZFCnmVGV7R49Kc1ywwu8iBFx9Wr/2APCz2OhKPaN
+   hQ2E2rPIEPCAQ7U8pyy4/+N9BqTfPD9J58G+6m2COm1M53ab/agRgsrwn
+   iD+TXAxJM14/ak9u9Qr6Ncir/OPw7w/zvCfAT0ba0cFwmlQfeHBncjmPs
+   A==;
+X-CSE-ConnectionGUID: VlsQB8HmQvWur3fPFiNFMA==
+X-CSE-MsgGUID: HhwvV1kwT3q8V0KXQHh5Kw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="71979766"
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="71979766"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 04:36:54 -0700
+X-CSE-ConnectionGUID: 5AKPcXAPRNio0LuOJgS58A==
+X-CSE-MsgGUID: Xz5jWvJwQSWCrEj7xw2QRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="156683333"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP; 11 Jul 2025 04:36:52 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id EAA1D1A1; Fri, 11 Jul 2025 14:36:50 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] pata_rdc: Use registered definition for the RDC vendor
+Date: Fri, 11 Jul 2025 14:36:50 +0300
+Message-ID: <20250711113650.1475307-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hfsplus: don't use BUG_ON() in
- hfsplus_create_attributes_file()
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <54358ab7-4525-48ba-a1e5-595f6b107cc6@I-love.SAKURA.ne.jp>
- <4ce5a57c7b00bbd77d7ad6c23f0dcc55f99c3d1a.camel@ibm.com>
- <72c9d0c2-773c-4508-9d2d-e24703ff26e1@vivo.com>
- <427a9432-95a5-47a8-ba42-1631c6238486@I-love.SAKURA.ne.jp>
- <127b250a6bb701c631bedf562b3ee71eeb55dc2c.camel@ibm.com>
- <dc0add8a-85fc-41dd-a4a6-6f7cb10e8350@I-love.SAKURA.ne.jp>
- <316f8d5b06aed08bd979452c932cbce2341a8a56.camel@ibm.com>
- <3efa3d2a-e98f-43ee-91dd-5aeefcff75e1@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <3efa3d2a-e98f-43ee-91dd-5aeefcff75e1@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav103.rs.sakura.ne.jp
+Content-Transfer-Encoding: 8bit
 
-On 2025/07/10 7:03, Tetsuo Handa wrote:
-> On 2025/07/10 3:33, Viacheslav Dubeyko wrote:
->> My worry that we could have a race condition here. Let's imagine that two
->> threads are trying to call __hfsplus_setxattr() and both will try to create the
->> Attributes File. Potentially, we could end in situation when inode could have
->> not zero size during hfsplus_create_attributes_file() in one thread because
->> another thread in the middle of Attributes File creation. Could we double check
->> that we don't have the race condition here? Otherwise, we need to make much
->> cleaner fix of this issue.
-> 
-> I think that there is some sort of race window, for
-> https://elixir.bootlin.com/linux/v6.15.5/source/fs/hfsplus/xattr.c#L145
-> explains that if more than one thread concurrently reached
-> 
-> 	if (!HFSPLUS_SB(inode->i_sb)->attr_tree) {
-> 		err = hfsplus_create_attributes_file(inode->i_sb);
-> 		if (unlikely(err))
-> 			goto end_setxattr;
-> 	}
-> 
-> path, all threads except one thread will fail with -EAGAIN.
-> 
+Convert to PCI_VDEVICE() and use registered definition for RDC vendor
+from pci_ids.h.
 
-Do you prefer stricter mount-time validation shown below?
-Is vhdr->attr_file.total_blocks == 0 when sbi->attr_tree exists and is empty?
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/ata/pata_rdc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-index 948b8aaee33e..f6324a0458f3 100644
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -482,13 +482,17 @@ static int hfsplus_fill_super(struct super_block *sb, struct fs_context *fc)
- 		goto out_close_ext_tree;
- 	}
- 	atomic_set(&sbi->attr_tree_state, HFSPLUS_EMPTY_ATTR_TREE);
--	if (vhdr->attr_file.total_blocks != 0) {
--		sbi->attr_tree = hfs_btree_open(sb, HFSPLUS_ATTR_CNID);
--		if (!sbi->attr_tree) {
--			pr_err("failed to load attributes file\n");
--			goto out_close_cat_tree;
-+	sbi->attr_tree = hfs_btree_open(sb, HFSPLUS_ATTR_CNID);
-+	if (sbi->attr_tree) {
-+		if (vhdr->attr_file.total_blocks != 0) {
-+			atomic_set(&sbi->attr_tree_state, HFSPLUS_VALID_ATTR_TREE);
-+		} else {
-+			pr_err("found attributes file despite total blocks is 0\n");
-+			goto out_close_attr_tree;
- 		}
--		atomic_set(&sbi->attr_tree_state, HFSPLUS_VALID_ATTR_TREE);
-+	} else if (vhdr->attr_file.total_blocks != 0) {
-+		pr_err("failed to load attributes file\n");
-+		goto out_close_cat_tree;
- 	}
- 	sb->s_xattr = hfsplus_xattr_handlers;
+diff --git a/drivers/ata/pata_rdc.c b/drivers/ata/pata_rdc.c
+index 09792aac7f9d..19cbb5c94b42 100644
+--- a/drivers/ata/pata_rdc.c
++++ b/drivers/ata/pata_rdc.c
+@@ -359,8 +359,8 @@ static void rdc_remove_one(struct pci_dev *pdev)
+ }
  
+ static const struct pci_device_id rdc_pci_tbl[] = {
+-	{ PCI_DEVICE(0x17F3, 0x1011), },
+-	{ PCI_DEVICE(0x17F3, 0x1012), },
++	{ PCI_VDEVICE(RDC, 0x1011) },
++	{ PCI_VDEVICE(RDC, 0x1012) },
+ 	{ }	/* terminate list */
+ };
+ 
+-- 
+2.47.2
 
 
