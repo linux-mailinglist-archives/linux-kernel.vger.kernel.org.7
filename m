@@ -1,146 +1,225 @@
-Return-Path: <linux-kernel+bounces-727374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F9C8B01939
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:03:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1375BB0193C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319FA3A909C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:02:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A2D1CA800F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F77280002;
-	Fri, 11 Jul 2025 10:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A9027F01C;
+	Fri, 11 Jul 2025 10:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="URKRHCBG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hkxethWv"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sDHjN/0H"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0039327F724;
-	Fri, 11 Jul 2025 10:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3839427F015
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752228130; cv=none; b=Dn0pbDYs1MbVtvcQP5CWXICk1sW03Syw3lf7jp3ZjZp3VcPrJoSvONzuwGB7flWjxQ+FX+AzrjIOIx/tZRnH9s/1F5o7EHDxkd+7v2GqG8tVpVAOSDmGl4adGmMqu8y55H3PPXpTiCOjSZm81hJlp6IOKCDdfFjk+jJNd0HO2PQ=
+	t=1752228156; cv=none; b=bUJNAtLXAePgsYQT8CfvGBSSrihG6LYxzskzHGCSaMg5AvifyvFbBZBaVUlO+UrSmQfI4ZmReFav3JWariD975/ViQEA0AmX6BhO07yYoBP2xo1/dWa22n+fzDDBWVwT6BdZybKPpBvcVzhohpbgeuOZXRTOla1SYjWaPxJGApg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752228130; c=relaxed/simple;
-	bh=w0gx5jAmjodIyEeSESqRnYEC3p3T6ybvwWC3o8V1nb8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=aUyrd/dETju3kwYAIdUgNG1/aSs+QXRoghQL0f59Xqt75rJ19I+HCcBVOsU3/wz+Jx9H9J08X2GJufyqtrk5iikyXHbPeTlOZGxK3fPxjm9MyY5pwHsaiU/OOWy7wfu1PU0O4s/QYWJiP82zds/bAimVIZqG8KWRqeyOP0LfUKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=URKRHCBG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hkxethWv; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id D53C91D0007C;
-	Fri, 11 Jul 2025 06:02:06 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 11 Jul 2025 06:02:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752228126;
-	 x=1752314526; bh=01ScwmtLZwUozZDXWHHiPwHig2+ib+jXHxICbk2YkJ0=; b=
-	URKRHCBGNh+TxoezmTAD/p76lgmPEIzP9HmN9lPgeX0TeaspkeT+lg9UlWpzYlcw
-	IxS9MvERO3YjTyJjdHX5sxrjl57r0uevksKuYFF2vTIQHpNZLphGOfc04IUatCE9
-	LtNRkgyw3W/xXvPYsE65ZUnFbfnlND15MUW0KnNs4BHhBSBdeSlffPAITUamo3sh
-	RosLnxSXR2aGdUiXkidRo5tGjdoD0YUF2yFOE3Qh//ohWyATpVwqhfvhHkxUApfb
-	bkICuaxIMUmXDJgmaelHnOw1Vu5/gxQS45vxS5X0mVJ6rjVceDa90F7/jW+rvIOV
-	TYwA9YcrocCWXH8s6v5qOg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752228126; x=
-	1752314526; bh=01ScwmtLZwUozZDXWHHiPwHig2+ib+jXHxICbk2YkJ0=; b=h
-	kxethWv/AjN+KAXCP9eTxWwGJ15d4WiCbisIshq889A20sMbTyykzif2RZu4bsri
-	6h8G/z5aNW9UvK5Q7Y96EtvJajIa7MCm9uWxkHeJE7FMhHyjLn7e6wjTt33t5cnx
-	v8iepNF4jIdFQHfjR0H81qyB7F6G3Adr1fTt6DtXJemZIeESjWb2u7d3J921B2Lq
-	SWOuSu1+CQpAjfVr4Zb7KxKdNfA7Y5ik6hTmq0SPblDKto2UYC/75u5QeotwQB4s
-	4imGpNUJ7v69D0cIAIh0YQnYAsdr1ubrAbE6I4LegQVi3Wm7Yf0jV/fVROBUCRpf
-	ZOVizGIdyp62+V0pdqQdg==
-X-ME-Sender: <xms:HuFwaHi_hbVbaLJwZL6Jf1TifJc5yYEtPyLkRJFJBM803qiyHzsSUw>
-    <xme:HuFwaEByjk46iJb_gXDyEQDBamGzVB89RX9H1qlfZPtP3SwM7yPu1YBaC85EMhfMm
-    EeBHuytwtmyffuWZcs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfedtvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdp
-    rhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggvnhhtih
-    hssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvth
-X-ME-Proxy: <xmx:HuFwaHIoyOLSFVspXd3DxNNhsTdzRRxPNxDcJMbASHpBAlRlZ342TA>
-    <xmx:HuFwaCgbsJaA22Rwf4B6lBnnOvkR1xjD2teVcXT6X84hbRsJLYR1Bw>
-    <xmx:HuFwaFSEDxkzLnnOf-01a5jKkAAUyimtinGpyb5RaVwKiC5I8v1bAg>
-    <xmx:HuFwaMWrMl2t2lvYARCgZrkPv8v7SBcU9azfDCoxrwRfvxwSu-cVOg>
-    <xmx:HuFwaPv5YLa3Ds2cA1hrsftHfj1kFFUltvvzVWSH8mOBoIhvIPGUceTT>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6ED6F700065; Fri, 11 Jul 2025 06:02:06 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752228156; c=relaxed/simple;
+	bh=YykaaxSK319lKEMyhZZtukxic2rJfvQhL2mSEvHDGQ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KVicugODj5SmDiBZdq8X7lVORM2BtP8aOIVLBEtIpUnfSB2QHGj+lx4o7MfhiwVnDpSfEF5swEB+7fsMUzCsUPHQkZwRxgosapGh6kiJjAkTrFhdpzRv30vLSbiWDUvx2PYWRGNaGjHnoCgWTDngnJGALyAmT0oWAAwnZSeZa1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sDHjN/0H; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-455b00339c8so2569775e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 03:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752228151; x=1752832951; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t3XCYABFMBC1fHadbt0BASB51W8QW6xg/j/nDStR70c=;
+        b=sDHjN/0H436DIaUwFDtKqxFiNEY5bCr4/RD9eW0eJfAbOTfUA3Xnjb3e3FAEg026FZ
+         clfiMsBjvkdeIk9XPMbchUEVY0sKomrzXxTCKkz72v6GEPcUkF3c672BriYsYhaXHgeg
+         Nfdn2DzpLEeavRwG3E7Pf0sM/uVhg+tC8O9eh9owMLMIHiF8lsiWfI69Fs2JB8D0MeA6
+         LvNPsaSDaA+zSyIz0zrh14BjfBDfaeuJp56CfekD8qrdGcDjVPAOrhcbfoFss4BRZppT
+         0HjFXM3j5/Mm8xIGsuP9ljRYyXgP6gf3TrVWGSXIq5R7dsI9eALB/U3aKD38ulzw1uey
+         EKtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752228151; x=1752832951;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t3XCYABFMBC1fHadbt0BASB51W8QW6xg/j/nDStR70c=;
+        b=wiSzgcxOgH15zxCh8RzQdW/vOHrGZ3RnCaSUrdeYEpidTWUjoAtWVgmhbAETJJSWpP
+         opHbdOqfzp6RF80WKiPrVRqv+PgOgnlFUg20/KTQLMfGTeVIEy1bKN+GHTBD0QRb6ss7
+         OZtiodt8F0ujjAIrc/U9FFM3Roh0FVmQSb68KjAPAt7ctNSP9fl5VHMjKmI9sY86P3j0
+         uo8v5clKtGjUawQCDnO3UzhBzXFwX0ZGjPtfqecMnNoY8JyCHT2sIn8oAivP2Nd3kc/Z
+         QMbAR7gDgk8bP+VpN/nlaALETkfU/wIhOTxVsV0UGgbl6sAcaAMjJHcPgCM4hVl0OfM/
+         /uLg==
+X-Forwarded-Encrypted: i=1; AJvYcCULN4rnBF/8XMUiMkdobzndasjJHu2TkCrJdvdy0Om8mhjh0+fpkd8YphXCV2KdQf26e2ybA8jgMAOxfU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4WbR7Ve1pYDP8wQ4CCeIeODkQv3Z8ZNlwEX8qb0iqLkvLzSWo
+	2CghuCBQ9mwJVaRaEMwRgJEYM5yX6804Cn/xBlRvp6ruYSnwCsaHJ/w4j5UsKAmUWbUJJJlE0Y3
+	r0QC3/KafSM2s1HnC7CrlNT9wDB+krL0QPyvCmwhX
+X-Gm-Gg: ASbGnct092MzmULItgCCi6gO1T933vowOuEBC5I91RFfPDr0ZE9R+cYfQEJjx/0JjCb
+	OdextY+oqcUL9NbS4uV8swtnVUC7e/E7JxWZHInKXNWHoqHYkTw8xI4PfbBnA3PsGGeIa01B3FK
+	q2WGf5KoNruG2OBpa5EMqf8Zb6Ny6Z1K2NL5L4rkFLDo3dfN9QNcIEAfF4v8K4QFEFOsWeNSokA
+	RU/W2zFGHuY/iSZekY=
+X-Google-Smtp-Source: AGHT+IGUQIrtfVItwM5tfYsJuZwsz9X67ZfbXHpoiNYzH5FRyT3WE8B4aAME5Tzz2IbykJRHbQAYa9NR2ZyDDp7Ds+g=
+X-Received: by 2002:a05:600c:468d:b0:441:b3eb:570a with SMTP id
+ 5b1f17b1804b1-454ec151c5dmr24053175e9.2.1752228151317; Fri, 11 Jul 2025
+ 03:02:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T7273da0c48a59e38
-Date: Fri, 11 Jul 2025 12:01:45 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Benjamin Tissoires" <bentiss@kernel.org>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Jiri Kosina" <jikos@kernel.org>,
- "Peter Hutterer" <peter.hutterer@who-t.net>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <6432a849-512d-4abb-b15a-c2f1b7dd6533@app.fastmail.com>
-In-Reply-To: 
- <cznzhmuizk6r3tv7ze6lqp3qoyfnu6ktmbwxbjpsf5phthsjoj@x46mthdr66l7>
-References: <20250711072847.2836962-1-arnd@kernel.org>
- <cznzhmuizk6r3tv7ze6lqp3qoyfnu6ktmbwxbjpsf5phthsjoj@x46mthdr66l7>
-Subject: Re: [PATCH] HID: tighten ioctl command parsing
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250708-rnull-up-v6-16-v2-0-ab93c0ff429b@kernel.org>
+ <20250708-rnull-up-v6-16-v2-5-ab93c0ff429b@kernel.org> <1RnkSkM82_BGKhOM4PKNTPqEQdSFQhpr6UlkVOD7EDhmTJxZ_hlNFhVuiqpUtKKW1uFUFSB7Ow3LJ31nvHUnDQ==@protonmail.internalid>
+ <aG5ttHBYW3SQlSv7@google.com> <878qkvhy7p.fsf@kernel.org>
+In-Reply-To: <878qkvhy7p.fsf@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 11 Jul 2025 12:02:19 +0200
+X-Gm-Features: Ac12FXxr-8pN5bwGCwORG6U45Emsz82nZAIPI7oH6OS8Ef91_XrzptO86C551CE
+Message-ID: <CAH5fLgjwmXJP2LcE8UKP1gdqbsTA5QyynLcw5iG93hXeLuOBAA@mail.gmail.com>
+Subject: Re: [PATCH v2 05/14] rust: block: use `NullBorrowFormatter`
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025, at 11:40, Benjamin Tissoires wrote:
+On Fri, Jul 11, 2025 at 11:29=E2=80=AFAM Andreas Hindborg <a.hindborg@kerne=
+l.org> wrote:
 >
-> On Jul 11 2025, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> The handling for variable-length ioctl commands in hidraw_ioctl() is
->> rather complex and the check for the data direction is incomplete.
->> 
->> Simplify this code using a switch() statement with the size masked
->> out, to ensure the rest of the command is correctly matched.
+> "Alice Ryhl" <aliceryhl@google.com> writes:
 >
-> How much "urgent" you believe this patch is. I would say 6.17 material,
-> but I'm not sure if your analysis regarding "the check for the data
-> direction is incomplete." would justify a 6.16 late fix.
+> > On Tue, Jul 08, 2025 at 09:45:00PM +0200, Andreas Hindborg wrote:
+> >> Use the new `NullBorrowFormatter` to write the name of a `GenDisk` to =
+the
+> >> name buffer. This new formatter automatically adds a trailing null mar=
+ker
+> >> after the written characters, so we don't need to append that at the c=
+all
+> >> site any longer.
+> >>
+> >> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> >> ---
+> >>  rust/kernel/block/mq/gen_disk.rs   | 8 ++++----
+> >>  rust/kernel/block/mq/raw_writer.rs | 1 +
+> >>  rust/kernel/str.rs                 | 7 -------
+> >>  3 files changed, 5 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/rust/kernel/block/mq/gen_disk.rs b/rust/kernel/block/mq/g=
+en_disk.rs
+> >> index 679ee1bb21950..e0e42f7028276 100644
+> >> --- a/rust/kernel/block/mq/gen_disk.rs
+> >> +++ b/rust/kernel/block/mq/gen_disk.rs
+> >> @@ -7,9 +7,10 @@
+> >>
+> >>  use crate::{
+> >>      bindings,
+> >> -    block::mq::{raw_writer::RawWriter, Operations, TagSet},
+> >> +    block::mq::{Operations, TagSet},
+> >>      error::{self, from_err_ptr, Result},
+> >>      static_lock_class,
+> >> +    str::NullBorrowFormatter,
+> >>      sync::Arc,
+> >>  };
+> >>  use core::fmt::{self, Write};
+> >> @@ -143,14 +144,13 @@ pub fn build<T: Operations>(
+> >>          // SAFETY: `gendisk` is a valid pointer as we initialized it =
+above
+> >>          unsafe { (*gendisk).fops =3D &TABLE };
+> >>
+> >> -        let mut raw_writer =3D RawWriter::from_array(
+> >> +        let mut writer =3D NullBorrowFormatter::from_array(
+> >>              // SAFETY: `gendisk` points to a valid and initialized in=
+stance. We
+> >>              // have exclusive access, since the disk is not added to =
+the VFS
+> >>              // yet.
+> >>              unsafe { &mut (*gendisk).disk_name },
+> >>          )?;
+> >> -        raw_writer.write_fmt(name)?;
+> >> -        raw_writer.write_char('\0')?;
+> >> +        writer.write_fmt(name)?;
+> >
+> > Although this is nicer than the existing code, I wonder if it should
+> > just be a function rather than a whole NullBorrowFormatter struct? Take
+> > a slice and a fmt::Arguments and write it with a nul-terminator. Do you
+> > need anything more complex than what you have here?
+>
+> I don't need anything more complex right now. But I think the
+> `NullTerminatedFormatter` could be useful anyway:
+>
+>   +/// A mutable reference to a byte buffer where a string can be written=
+ into.
+>   +///
+>   +/// The buffer will be automatically null terminated after the last wr=
+itten character.
+>   +///
+>   +/// # Invariants
+>   +///
+>   +/// `buffer` is always null terminated.
+>   +pub(crate) struct NullTerminatedFormatter<'a> {
+>   +    buffer: &'a mut [u8],
+>   +}
+>   +
+>   +impl<'a> NullTerminatedFormatter<'a> {
+>   +    /// Create a new [`Self`] instance.
+>   +    pub(crate) fn new(buffer: &'a mut [u8]) -> Option<NullTerminatedFo=
+rmatter<'a>> {
+>   +        *(buffer.first_mut()?) =3D 0;
+>   +
+>   +        // INVARIANT: We null terminated the buffer above.
+>   +        Some(Self { buffer })
+>   +    }
+>   +
+>   +    pub(crate) fn from_array<const N: usize>(
+>   +        buffer: &'a mut [crate::ffi::c_char; N],
+>   +    ) -> Option<NullTerminatedFormatter<'a>> {
+>   +        Self::new(buffer)
+>   +    }
+>   +}
+>   +
+>   +impl Write for NullTerminatedFormatter<'_> {
+>   +    fn write_str(&mut self, s: &str) -> fmt::Result {
+>   +        let bytes =3D s.as_bytes();
+>   +        let len =3D bytes.len();
+>   +
+>   +        // We want space for a null terminator. Buffer length is alway=
+s at least 1, so no overflow.
+>   +        if len > self.buffer.len() - 1 {
+>   +            return Err(fmt::Error);
+>   +        }
+>   +
+>   +        let buffer =3D core::mem::take(&mut self.buffer);
+>   +        // We break the null termination invariant for a short while.
+>   +        buffer[..len].copy_from_slice(bytes);
+>   +        self.buffer =3D &mut buffer[len..];
+>   +
+>   +        // INVARIANT: We null terminate the buffer.
+>   +        self.buffer[0] =3D 0;
+>   +
+>   +        Ok(())
+>   +    }
+>   +}
+>   +
+>
+> If you insist, I can write something like
+>
+>   fn format_to_buffer(buffer: &mut [u8], args: fmt::Arguments) -> fmt::Re=
+sult
+>
+> although I am not sure I see the point of this change.
 
-I'm not aware of anything being actively broken without my patch,
-the driver just accepts extra commands that it should reject instead.
+I don't mind. I just thought it was simpler since you only need to
+support a single write instead of having to support multiple writes.
 
-My feeling is that we still want the change backported to stable
-kernels as it does address incorrect behavior, and based on that
-it should be in a fixes branch for the current release rather than
-wait for the merge window.
-
-On the other hand, it needs to be properly tested to ensure
-I'm not breaking things.
-
-> Also, lately I added a new tools/testing/selftests/hid/hidraw.c to test
-> the latest HIDIOCREVOKE addition. I wonder if we should not add a couple
-> of checks there to ensure we get the different kind of other ioctls
-> tested before and after this patch.
-
-Yes, makes sense, e.g. testing HIDIOCGFEATURE with incorrect _IOC_DIR
-bits would be a useful addition.
-
-     Arnd
+Alice
 
