@@ -1,164 +1,199 @@
-Return-Path: <linux-kernel+bounces-727552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8F41B01BF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:26:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 820E0B01BE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95A017A7EB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:24:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B0655A4ECA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773E42989A2;
-	Fri, 11 Jul 2025 12:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DDF290092;
+	Fri, 11 Jul 2025 12:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PaExWWTu"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="rFglEcXq"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5CB290092;
-	Fri, 11 Jul 2025 12:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DE5295519;
+	Fri, 11 Jul 2025 12:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752236774; cv=none; b=jRIZYT/noWDrKWEGaDpFnqR3LurYeY7s3/VvXQq5nkYs5T3ImQKrTGFbw9Z6zVaukO2vQC/+THAQfmUSWAAYuLrtdqYSjUVmU+xeKtBvQMtKEfcpo9wowBgp2uWdzMqlgOjgvLiIUnVpxoZqd7r7WAnx1ZladUnYsl/wi4PGUmc=
+	t=1752236746; cv=none; b=ed/46qzFchbPHM6Vd8irTrBXyQL4K7Svqsu7eN7wkdcTSfj0sDqGEticBLnS38MDiVIjC7cwyougcDCVIj1krLTSqVRCNpn064FXaQU+PJVQrcnJnKjsrKYY2tEKAUusSYWZITNKi1onvTGi1RITprl4TYSMdknBHGTMvI+TIqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752236774; c=relaxed/simple;
-	bh=CBZeXdUUgFL+TPTegk8H1qs7POEc3HTSo3JRf2whjoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P+VSfF4BCqXYTq17RFD6tflxa/hjAytSTtoOWzsu2ibZNyQSKy9n0MoWtqeiLvL9soD/cpx8p1TV0/1Bfn9dMeBwr3oSD5i3/upZnRmFHcrmKtAxkdWqGdPCAUMaYeLisu+6fbZ2ZQpNmaHP8usOBlL4S5PMhfKiq0GlU/Ryn2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PaExWWTu; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vGjGW/PtJqBFBruMN5J6ADYZtMINuph/UDezRVBHu1Y=; b=PaExWWTu6LCWc//YsZkBXUY3qB
-	OhRcnm1raovoM5kv8uOVijsT/tUZyQM82IAAMgZVZWwPht3FD0gePK+so8z+iLW5V24Sdat5Yx2mU
-	+vGUD2xwNKHxG9MoCvV+hUYL+u45hQBujCuTkz7HQwlB0T98xHl0AY+LGI63i+tP2F7HC2zX7xaCF
-	8cv44QWL96iNFXy2QjuzOul6m/GtUhM6S1KJV6cGHv4ATQWy5EmxxvIhYPUdyMMF5b/vbp6wreTi7
-	0p5woQ/tOGYzNNZUH0pMdgOC4iR4GlDpuNSpg7JM6Lb6wUh3lWAfmOV9IM4l0c0aRDZZhXTkigVnR
-	lnzUcaSg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uaCoj-00000009G4q-1Htk;
-	Fri, 11 Jul 2025 12:25:29 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 489EA3001AA; Fri, 11 Jul 2025 14:25:28 +0200 (CEST)
-Date: Fri, 11 Jul 2025 14:25:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Li Chen <me@linux.beauty>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Thomas Wei??schuh <thomas.weissschuh@linutronix.de>,
-	Li Chen <chenl311@chinatelecom.cn>,
-	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
-	Tobias Huschle <huschle@linux.ibm.com>,
-	Mete Durlu <meted@linux.ibm.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Guo Weikang <guoweikang.kernel@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] smpboot: introduce SDTL_INIT() helper to tidy
- sched topology setup
-Message-ID: <20250711122528.GB905792@noisy.programming.kicks-ass.net>
-References: <20250710105715.66594-1-me@linux.beauty>
- <20250710105715.66594-2-me@linux.beauty>
+	s=arc-20240116; t=1752236746; c=relaxed/simple;
+	bh=OMuD8/98Wa0jZ/HLse0m8NTh56qssmOQ10uJKDUti8w=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=sKZsHjYLjOGyyKn7t927uuVV0nasnxOQNTH795cEoKzs9KJcz/PbHg2Ht8Sottn/QJbwjT17WeR4TKpx5oSWNjLdZp5s1NblCJXSlgU5iAD6HgCcszjULSCTRQ5BBLNBoD1UoZrzeGsKyBYNP1P092tySQr78Ntuf11RcTBfr4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=rFglEcXq; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=U+RihokjvyPuvKH5MulYPFUcnHHoo2u+0AmNKF5bVVY=; b=rFglEcXqMxNFTAqq64EhkIlUw9
+	AMGhKeNTAIqfB9pPlcxexOeudL2StxE/cE3Y5t3T6ETvpshnq+I0LhOnBQvhfyw8Xi8Cu0fXHX1rM
+	ghcAwLB8pFS9HM/w7i5eZeHWa9Kz89MRF3CvXouJsnbv0kMISULddN7Wo1BZWbupDDA4WX2bPjEmS
+	fzrk+Xm5M/1MlCLjLZYqIUddZ9v12552UaKRH5Uiy5kN1DBmJ6s5q168JrDk51Bh/3AGChzG4vYMu
+	htL/miijg3KPCQ5sIUEZ3G5/cj3AhY/P0sFNQNhTxUHNU7S9RAtOaSyjsnOf6MlnF2sNEQAV7kyHx
+	9HyEgb2g==;
+Received: from [122.175.9.182] (port=21690 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1uaCos-0000000CkxB-2S48;
+	Fri, 11 Jul 2025 08:25:38 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id C7AC91781A71;
+	Fri, 11 Jul 2025 17:55:32 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id A831917820AC;
+	Fri, 11 Jul 2025 17:55:32 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id rXhTqoIdqvVc; Fri, 11 Jul 2025 17:55:32 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 653241781A71;
+	Fri, 11 Jul 2025 17:55:32 +0530 (IST)
+Date: Fri, 11 Jul 2025 17:55:32 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: kuba <kuba@kernel.org>
+Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
+	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
+	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
+	pabeni <pabeni@redhat.com>, robh <robh@kernel.org>, 
+	krzk+dt <krzk+dt@kernel.org>, conor+dt <conor+dt@kernel.org>, 
+	ssantosh <ssantosh@kernel.org>, 
+	richardcochran <richardcochran@gmail.com>, 
+	s hauer <s.hauer@pengutronix.de>, m-karicheri2 <m-karicheri2@ti.com>, 
+	glaroque <glaroque@baylibre.com>, afd <afd@ti.com>, 
+	saikrishnag <saikrishnag@marvell.com>, m-malladi <m-malladi@ti.com>, 
+	jacob e keller <jacob.e.keller@intel.com>, 
+	diogo ivo <diogo.ivo@siemens.com>, 
+	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
+	horms <horms@kernel.org>, s-anna <s-anna@ti.com>, 
+	basharath <basharath@couthit.com>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	netdev <netdev@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
+	mohan <mohan@couthit.com>
+Message-ID: <1614106230.1712453.1752236732227.JavaMail.zimbra@couthit.local>
+In-Reply-To: <20250708174449.3e8744c5@kernel.org>
+References: <20250702140633.1612269-1-parvathi@couthit.com> <20250702140633.1612269-3-parvathi@couthit.com> <20250708174449.3e8744c5@kernel.org>
+Subject: Re: [PATCH net-next v10 02/11] net: ti: prueth: Adds ICSSM Ethernet
+ driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710105715.66594-2-me@linux.beauty>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
+Thread-Topic: prueth: Adds ICSSM Ethernet driver
+Thread-Index: s1QDkc+Y2MblZ4jGceIpvmHgdXfxgQ==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Thu, Jul 10, 2025 at 06:57:07PM +0800, Li Chen wrote:
-> From: Li Chen <chenl311@chinatelecom.cn>
-> 
-> Define a small SDTL_INIT(maskfn, flagsfn, name) macro and use it to build the
-> sched_domain_topology_level array. Purely a cleanup; behaviour is unchanged.
-> 
-> Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> ---
->  arch/powerpc/kernel/smp.c      | 34 +++++++++++++---------------------
->  arch/s390/kernel/topology.c    | 10 +++++-----
->  arch/x86/kernel/smpboot.c      | 21 ++++++---------------
->  include/linux/sched/topology.h |  4 ++--
->  kernel/sched/topology.c        | 24 ++++++++----------------
->  5 files changed, 34 insertions(+), 59 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-> index 5ac7084eebc0b..0b7ab7d2eb142 100644
-> --- a/arch/powerpc/kernel/smp.c
-> +++ b/arch/powerpc/kernel/smp.c
-> @@ -1700,28 +1700,20 @@ static void __init build_sched_topology(void)
->  #ifdef CONFIG_SCHED_SMT
->  	if (has_big_cores) {
->  		pr_info("Big cores detected but using small core scheduling\n");
-> -		powerpc_topology[i++] = (struct sched_domain_topology_level){
-> -			smallcore_smt_mask, powerpc_smt_flags, SD_INIT_NAME(SMT)
-> -		};
-> -	} else {
-> -		powerpc_topology[i++] = (struct sched_domain_topology_level){
-> -			cpu_smt_mask, powerpc_smt_flags, SD_INIT_NAME(SMT)
-> -		};
-> -	}
-> +		powerpc_topology[i++] =
-> +			SDTL_INIT(smallcore_smt_mask, powerpc_smt_flags, SMT);
-> +	} else
-> +		powerpc_topology[i++] = SDTL_INIT(cpu_smt_mask, powerpc_smt_flags, SMT);
->  #endif
-> -	if (shared_caches) {
-> -		powerpc_topology[i++] = (struct sched_domain_topology_level){
-> -			shared_cache_mask, powerpc_shared_cache_flags, SD_INIT_NAME(CACHE)
-> -		};
-> -	}
-> -	if (has_coregroup_support()) {
-> -		powerpc_topology[i++] = (struct sched_domain_topology_level){
-> -			cpu_mc_mask, powerpc_shared_proc_flags, SD_INIT_NAME(MC)
-> -		};
-> -	}
-> -	powerpc_topology[i++] = (struct sched_domain_topology_level){
-> -		cpu_cpu_mask, powerpc_shared_proc_flags, SD_INIT_NAME(PKG)
-> -	};
-> +	if (shared_caches)
-> +		powerpc_topology[i++] =
-> +			SDTL_INIT(shared_cache_mask, powerpc_shared_cache_flags, CACHE);
-> +
-> +	if (has_coregroup_support())
-> +		powerpc_topology[i++] =
-> +			SDTL_INIT(cpu_mc_mask, powerpc_shared_proc_flags, MC);
-> +
-> +	powerpc_topology[i++] = SDTL_INIT(cpu_cpu_mask, powerpc_shared_proc_flags, PKG);
+Hi,
 
-You wrecked coding-style here and lost a bunch of curlies. I've fixed
-that up for you.
+> On Wed,  2 Jul 2025 19:36:24 +0530 Parvathi Pudi wrote:
+>> +=09=09if (ret < 0) {
+>> +=09=09=09dev_err(dev, "%pOF error reading port_id %d\n",
+>> +=09=09=09=09eth_node, ret);
+>> +=09=09}
+>=20
+> unnecessary parenthesis, but also did you mean to error out here?
+>=20
+
+Yes, we will address this in the next version.
+
+>> +=09=09=09dev_err(dev, "port reg should be 0 or 1\n");
+>> +=09=09=09of_node_put(eth_node);
+>=20
+> this error will also trigger if same port is specified multiple times
+>=20
+
+We will check and add appropriate code changes in the next version.
+
+> +=09=09=09ret =3D PTR_ERR(prueth->pru1);
+> +=09=09=09if (ret !=3D -EPROBE_DEFER)
+> +=09=09=09=09dev_err(dev, "unable to get PRU1: %d\n", ret);
+> +=09=09=09goto put_pru;
+>=20
+> dev_err_probe() ?
+>=20
+
+Sure, we will replace =E2=80=9Cdev_err()=E2=80=9D with =E2=80=9Cdev_err_pro=
+be()=E2=80=9D to make it
+simple.
+
+>> +/**
+>> + * struct prueth_private_data - PRU Ethernet private data
+>> + * @fw_pru: firmware names to be used for PRUSS ethernet usecases
+>> + * @support_lre: boolean to indicate if lre is enabled
+>> + * @support_switch: boolean to indicate if switch is enabled
+>=20
+> Please improve or remove this, adding kdoc which doesn't explain
+> anything is discouraged per kernel coding style.
+>=20
+> This one is actually more confusing than helpful the fields are
+> called "support" but kdoc says "enabled". Maybe name the fields
+> 'enabled' ?
+>=20
+
+Sure, we will address this in the next version.
+
+>> + */
+>> +struct prueth_private_data {
+>> +=09const struct prueth_firmware fw_pru[PRUSS_NUM_PRUS];
+>> +=09bool support_lre;
+>> +=09bool support_switch;
+>> +};
+>> +
+>> +/* data for each emac port */
+>> +struct prueth_emac {
+>> +=09struct prueth *prueth;
+>> +=09struct net_device *ndev;
+>> +
+>> +=09struct rproc *pru;
+>> +=09struct phy_device *phydev;
+>> +
+>> +=09int link;
+>> +=09int speed;
+>> +=09int duplex;
+>> +
+>> +=09enum prueth_port port_id;
+>> +=09const char *phy_id;
+>> +=09u8 mac_addr[6];
+>> +=09phy_interface_t phy_if;
+>> +=09spinlock_t lock;=09/* serialize access */
+>=20
+> 'serialize access' to what? Which fields does it protect?
+
+We will update with more detailed explanation.
+
+
+Thanks and Regards,
+Parvathi.
 
