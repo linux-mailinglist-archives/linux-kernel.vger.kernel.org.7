@@ -1,186 +1,156 @@
-Return-Path: <linux-kernel+bounces-727284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD0C6B017B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:30:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C09B017E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93F41640970
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:29:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6E045A2047
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F9E27A46A;
-	Fri, 11 Jul 2025 09:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55B928136E;
+	Fri, 11 Jul 2025 09:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lE9NDK9O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XhxFWazl"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C494C279DB8;
-	Fri, 11 Jul 2025 09:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D8A27CCCD;
+	Fri, 11 Jul 2025 09:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752226196; cv=none; b=jwMXnN61KVHwi4O7/QlxbAjatrBRd+9TuB/ciKzEhXzrXW8XzCzdcm06wo1U2Ugakyx7EOXSYSVB0fgRNVlbcVwksv4MuhTt35tkqCR0IgxJEobQXrZsI/AHcdg4rwYFDUEksJSgCqGmGVogYeTf/k2sXzvXNa39gZYWR7n7JdI=
+	t=1752226240; cv=none; b=AYcbHet6OPRtw9ne9/rgAWKpXDDGRsUGBAdEM5sEFR5ftmcFb0zPyOQ4Tpa4LlkAoZWGBbmtHVxXYKaN30/mvxLuuR0PY/speTWgRBaqbFHMkSuZd+b0uiqBxpSICvhP59bVX7pHs5km0x2unBxMc2O6AFm2Z5ZCCpDz8OM8tXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752226196; c=relaxed/simple;
-	bh=g635AuROiIJUsnlRuPb0NpgIXG9FJEv+7lx2i4prxN8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DAiWFeVyk14VUyv2uMY+D4Lu5n/duvhneEkyGSQPlOLFbtkgUVJtshKm1bm4UT44104fPpbIvwOS461SrVaML0nwZp328hnVhl+OSVNRwAq+ugC+TGNYVtHEpiUBTHqbegQssyNADj17f6GQCGT8cTvH622RvVJW7U90do6AMVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lE9NDK9O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D190FC4CEF5;
-	Fri, 11 Jul 2025 09:29:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752226196;
-	bh=g635AuROiIJUsnlRuPb0NpgIXG9FJEv+7lx2i4prxN8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lE9NDK9Oqx9H593Fkd6BUGxrwcePtgfvnCJ4HjUbRKYaTOlnHH4m7zdDIVhH7pJU0
-	 bjC70qQg+2NhJvwfgAsO9aGW2BsMASEhzugg6Ysy2RCCBfuXsmZ7tKtYVepA9ADVf4
-	 paI5r7yCC4wmNrdH6yvyASgWKIrIjoHqU58pqHcuugsPhVoDYdgkkBz07tFZgZk004
-	 eWcQLgZ7+IGRPCfCn+x1tg4vu6Nx7MuiHV3HNu8a09D8ITF3jo8ywkjnw+p3W1urS+
-	 jTgCHvo+YD3dzx/JDGZl51bEMGHpgxUnuOBVAFMdq1BrxFOknyxkWNqoLA58EGpFFS
-	 JKbeTyJ5VWD1Q==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>,  "Miguel Ojeda" <ojeda@kernel.org>,
-  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
- Lossin"
- <lossin@kernel.org>,  "Trevor Gross" <tmgross@umich.edu>,  "Danilo
- Krummrich" <dakr@kernel.org>,  "Jens Axboe" <axboe@kernel.dk>,
-  <linux-block@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 05/14] rust: block: use `NullBorrowFormatter`
-In-Reply-To: <aG5ttHBYW3SQlSv7@google.com> (Alice Ryhl's message of "Wed, 09
-	Jul 2025 13:25:08 +0000")
-References: <20250708-rnull-up-v6-16-v2-0-ab93c0ff429b@kernel.org>
-	<20250708-rnull-up-v6-16-v2-5-ab93c0ff429b@kernel.org>
-	<1RnkSkM82_BGKhOM4PKNTPqEQdSFQhpr6UlkVOD7EDhmTJxZ_hlNFhVuiqpUtKKW1uFUFSB7Ow3LJ31nvHUnDQ==@protonmail.internalid>
-	<aG5ttHBYW3SQlSv7@google.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
+	s=arc-20240116; t=1752226240; c=relaxed/simple;
+	bh=zir2OPwyW4bBN24qymo8eRzifRgx80iFtJEIr1HVw9E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=W6HgWgjgtdvimro+d9aAZ7m+ILxDWqk2bZ5tH/JfHkvifoR/dswitwViqVr6hYu+4x4wlDQ6Lrb1gjb+KycFlY52HNpWGs36IUYP8hS5y/mblOCALXorXvvwTaglfZvZUhM7Zo1/FhVjHXRXXwRoVgLsLcjPuvMlb7XVkX4l+JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XhxFWazl; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 31C3043A21;
+	Fri, 11 Jul 2025 09:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752226231;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IrI+eqYF1HchsNKCg9CghNontX5ta0tdSFqHpYdIKuY=;
+	b=XhxFWazlAf4XlIIpv7kOcENMTq2Mg8LhPQlU6cPc22aubApxO9A37ESFyM0kum8nKWbpJR
+	Q/7gflWRdPG8YPSL0dt5wv8GQqIHKLN6vgL1uybHA2LM+y/PRNrcGlc5m1hUM2X8gO8jIw
+	AmnNF4YmXUJk2NFxkiRpnUB9nAyDwrFALk0x7nSbDgfYg0FXEf8lVZbPc7bvSQiTkrUb9a
+	dkqnnAWdLWCf98quX4lNwISL1Sr4l7j7+jzqh8C26WwA7yQEfWZxmYHIo7yXgv27v0oZuP
+	tvd2m1cljy2KD7hsxTjB2fPxV/JdufwZAs9Zqhan3p/A0ZGNkgR68Xge+ChOyA==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 Date: Fri, 11 Jul 2025 11:29:46 +0200
-Message-ID: <878qkvhy7p.fsf@kernel.org>
+Subject: [PATCH v11 06/10] gpio: regmap: Allow to provide init_valid_mask
+ callback
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250711-mdb-max7360-support-v11-6-cf1dee2a7d4c@bootlin.com>
+References: <20250711-mdb-max7360-support-v11-0-cf1dee2a7d4c@bootlin.com>
+In-Reply-To: <20250711-mdb-max7360-support-v11-0-cf1dee2a7d4c@bootlin.com>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Kamel Bouhara <kamel.bouhara@bootlin.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, andriy.shevchenko@intel.com, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752226224; l=2233;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=zir2OPwyW4bBN24qymo8eRzifRgx80iFtJEIr1HVw9E=;
+ b=pRjp3dqC0/jYgTHLKWRoklJqYRHSv4bOORTmK5iyVJqgtA6E7rhIyLBJLX7K4iiUg5/cJnGAx
+ Tn70PvZ56eQCpCXNVZA7rExw+bgqLnayxd4TYXBoTdvTSP00soTkFmQ
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegvdeliecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeforghthhhivghuucffuhgsohhishdquehrihgrnhguuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdfhgeetvddvheejieehheehueetjeelkedtfeehhefgfeeglefhteegtddthfetnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpeegnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdehpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpfihmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvl
+ hdrohhrghdprhgtphhtthhopehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+Allows to populate the gpio_regmap_config structure with
+init_valid_mask() callback to set on the final gpio_chip structure.
 
-> On Tue, Jul 08, 2025 at 09:45:00PM +0200, Andreas Hindborg wrote:
->> Use the new `NullBorrowFormatter` to write the name of a `GenDisk` to the
->> name buffer. This new formatter automatically adds a trailing null marker
->> after the written characters, so we don't need to append that at the call
->> site any longer.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> ---
->>  rust/kernel/block/mq/gen_disk.rs   | 8 ++++----
->>  rust/kernel/block/mq/raw_writer.rs | 1 +
->>  rust/kernel/str.rs                 | 7 -------
->>  3 files changed, 5 insertions(+), 11 deletions(-)
->>
->> diff --git a/rust/kernel/block/mq/gen_disk.rs b/rust/kernel/block/mq/gen_disk.rs
->> index 679ee1bb21950..e0e42f7028276 100644
->> --- a/rust/kernel/block/mq/gen_disk.rs
->> +++ b/rust/kernel/block/mq/gen_disk.rs
->> @@ -7,9 +7,10 @@
->>
->>  use crate::{
->>      bindings,
->> -    block::mq::{raw_writer::RawWriter, Operations, TagSet},
->> +    block::mq::{Operations, TagSet},
->>      error::{self, from_err_ptr, Result},
->>      static_lock_class,
->> +    str::NullBorrowFormatter,
->>      sync::Arc,
->>  };
->>  use core::fmt::{self, Write};
->> @@ -143,14 +144,13 @@ pub fn build<T: Operations>(
->>          // SAFETY: `gendisk` is a valid pointer as we initialized it above
->>          unsafe { (*gendisk).fops = &TABLE };
->>
->> -        let mut raw_writer = RawWriter::from_array(
->> +        let mut writer = NullBorrowFormatter::from_array(
->>              // SAFETY: `gendisk` points to a valid and initialized instance. We
->>              // have exclusive access, since the disk is not added to the VFS
->>              // yet.
->>              unsafe { &mut (*gendisk).disk_name },
->>          )?;
->> -        raw_writer.write_fmt(name)?;
->> -        raw_writer.write_char('\0')?;
->> +        writer.write_fmt(name)?;
->
-> Although this is nicer than the existing code, I wonder if it should
-> just be a function rather than a whole NullBorrowFormatter struct? Take
-> a slice and a fmt::Arguments and write it with a nul-terminator. Do you
-> need anything more complex than what you have here?
+Reviewed-by: Michael Walle <mwalle@kernel.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+---
+ drivers/gpio/gpio-regmap.c  | 1 +
+ include/linux/gpio/regmap.h | 7 +++++++
+ 2 files changed, 8 insertions(+)
 
-I don't need anything more complex right now. But I think the
-`NullTerminatedFormatter` could be useful anyway:
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index 039dbe70d009..cf1413fa950d 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -261,6 +261,7 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 	chip->names = config->names;
+ 	chip->label = config->label ?: dev_name(config->parent);
+ 	chip->can_sleep = regmap_might_sleep(config->regmap);
++	chip->init_valid_mask = config->init_valid_mask;
+ 
+ 	chip->request = gpiochip_generic_request;
+ 	chip->free = gpiochip_generic_free;
+diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
+index 19b52ac03a5d..622a2939ebe0 100644
+--- a/include/linux/gpio/regmap.h
++++ b/include/linux/gpio/regmap.h
+@@ -6,6 +6,7 @@
+ struct device;
+ struct fwnode_handle;
+ struct gpio_regmap;
++struct gpio_chip;
+ struct irq_domain;
+ struct regmap;
+ 
+@@ -40,6 +41,8 @@ struct regmap;
+  * @drvdata:		(Optional) Pointer to driver specific data which is
+  *			not used by gpio-remap but is provided "as is" to the
+  *			driver callback(s).
++ * @init_valid_mask:	(Optional) Routine to initialize @valid_mask, to be used
++ *			if not all GPIOs are valid.
+  * @regmap_irq_chip:	(Optional) Pointer on an regmap_irq_chip structure. If
+  *			set, a regmap-irq device will be created and the IRQ
+  *			domain will be set accordingly.
+@@ -93,6 +96,10 @@ struct gpio_regmap_config {
+ 			      unsigned int offset, unsigned int *reg,
+ 			      unsigned int *mask);
+ 
++	int (*init_valid_mask)(struct gpio_chip *gc,
++			       unsigned long *valid_mask,
++			       unsigned int ngpios);
++
+ 	void *drvdata;
+ };
+ 
 
-  +/// A mutable reference to a byte buffer where a string can be written into.
-  +///
-  +/// The buffer will be automatically null terminated after the last written character.
-  +///
-  +/// # Invariants
-  +///
-  +/// `buffer` is always null terminated.
-  +pub(crate) struct NullTerminatedFormatter<'a> {
-  +    buffer: &'a mut [u8],
-  +}
-  +
-  +impl<'a> NullTerminatedFormatter<'a> {
-  +    /// Create a new [`Self`] instance.
-  +    pub(crate) fn new(buffer: &'a mut [u8]) -> Option<NullTerminatedFormatter<'a>> {
-  +        *(buffer.first_mut()?) = 0;
-  +
-  +        // INVARIANT: We null terminated the buffer above.
-  +        Some(Self { buffer })
-  +    }
-  +
-  +    pub(crate) fn from_array<const N: usize>(
-  +        buffer: &'a mut [crate::ffi::c_char; N],
-  +    ) -> Option<NullTerminatedFormatter<'a>> {
-  +        Self::new(buffer)
-  +    }
-  +}
-  +
-  +impl Write for NullTerminatedFormatter<'_> {
-  +    fn write_str(&mut self, s: &str) -> fmt::Result {
-  +        let bytes = s.as_bytes();
-  +        let len = bytes.len();
-  +
-  +        // We want space for a null terminator. Buffer length is always at least 1, so no overflow.
-  +        if len > self.buffer.len() - 1 {
-  +            return Err(fmt::Error);
-  +        }
-  +
-  +        let buffer = core::mem::take(&mut self.buffer);
-  +        // We break the null termination invariant for a short while.
-  +        buffer[..len].copy_from_slice(bytes);
-  +        self.buffer = &mut buffer[len..];
-  +
-  +        // INVARIANT: We null terminate the buffer.
-  +        self.buffer[0] = 0;
-  +
-  +        Ok(())
-  +    }
-  +}
-  +
-
-If you insist, I can write something like
-
-  fn format_to_buffer(buffer: &mut [u8], args: fmt::Arguments) -> fmt::Result
-
-although I am not sure I see the point of this change.
-
-
-Best regards,
-Andreas Hindborg
-
+-- 
+2.39.5
 
 
