@@ -1,273 +1,191 @@
-Return-Path: <linux-kernel+bounces-728042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC8AB022EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:44:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03698B022FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273DA189CD76
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:44:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75CAE5870DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E6E2F1FE3;
-	Fri, 11 Jul 2025 17:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497942F273E;
+	Fri, 11 Jul 2025 17:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IDeUHQb6"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="R7Qb46Ko"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2083.outbound.protection.outlook.com [40.107.93.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605752EA480;
-	Fri, 11 Jul 2025 17:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752255829; cv=none; b=pGUiJoFY+H/Qf4LdeuYpAtASTAhJoTIH7bUb0uAkyyaOApusAFi7MIUv9qtW/fDL29HWKjMmiE9AMxhLoiw3meamoH0Pp8vPatVBvw2ov4baMb8ExttRLXMZsVbIq6YKlpP79eva6imnef4Lf/OwMDCEWJ631tjdwMHq/Fettiw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752255829; c=relaxed/simple;
-	bh=35BcY/6Q80oE3lxSzcJnrlGt2obqeaKDof8caRPjbBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pmUEcTdvBPoRu02GXasMlIHI1c3REe8nMx1bo7U32O7hzYE6FcfmIR+wMnPfFrZ2LvSmKkuzsg8VYZ7IPWqoz42RztKeMiEpRco3OVKoqgjknkXODJieSUF3c8n9Wr9Vf6xSL2bfQUgrb5ioUecRMsTEep8xiGGeTTlp3L2I29k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IDeUHQb6; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so2229283f8f.1;
-        Fri, 11 Jul 2025 10:43:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752255825; x=1752860625; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VknUmgzMCiBefIq6vhslDBLHtoemuumEdTr+qyL4BSs=;
-        b=IDeUHQb63YGJ5ZhvVMU9+YzZsGO7XcjjMQCwWWholCEcaAAk6hDydqxYTBLWt8AH3K
-         jTavBd8DVFSg4dokL822VOl6T9dJnUNv/eQBJvyTEa4IARV6EEj4g19mFJf805HryzCK
-         9LAdG69pmuTreXX5t35w87wLTWR7O1sDUPey/xdHQH5QXV1+UXvmUC3/OjhG5dCCOIaY
-         IeHjunMJLq5pTUOSJxCrmNULKy6IoahyXmZqcv7Itv+WvDzlZkkCzpe3Hx2JZNR6CbHI
-         o7X8AQzW2HQBfknUn4XPh9pmTkGbU2BYTQnbP+uKun1/ov6CkqJ4MH+N6xozm4yS41At
-         Q3Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752255825; x=1752860625;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VknUmgzMCiBefIq6vhslDBLHtoemuumEdTr+qyL4BSs=;
-        b=m/O9i8hZs75zfdzcw0M8nv010QjtoyRP5k2lY+fFrck5BchwG/LZFyhPscUbxwducv
-         Uaf05tsk2HlarjEAuhhKTWhQI5Rr/471kh7QaTkUKZ8u3kCong3nVNWC0cjFWieN+jKT
-         1+D1SLB4Qo3C4XXQrGlm3BS27wrcGDOvHyXxvRvYvpuLmwx512Z9/CuMNu7+CRiXGeRh
-         LwtlITvFGdqoICdvKrhztelmFNESsTxfYTPW9yZ5i4uOnM/mNgpUgJBq/Y/A+pNAspWO
-         NGX1HAPDT82PvYPTf7jAIWs57UhC4xtz2bZt3bnHhzNI1qLIBsf/CEZjamCozH2yBIDX
-         X4tA==
-X-Forwarded-Encrypted: i=1; AJvYcCXALCsUwTuPFrkRWYM916Y+dXxL8g4wH9TgfEwxzfHnM1IOoDqaHbzJ96cZqHkCinilN0Z0MTFzG6IO384u@vger.kernel.org, AJvYcCXFyoMzljP9AlNapymsdSYd4jaH4VlZPIkzQaLXId26wh2Ptoudacw6+cYBD+u9wXv7slKQRwemEZqccFviiew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQgCTyx8+fMkzkg/ChXbgEJBbEn1SOzYURm06hguDyFCj1SpMt
-	4e6pZTiVqUzkdq4J28uG4gDrnTh5qC3jvfry0e9fzilPC77F0c2ejIZC
-X-Gm-Gg: ASbGncuIhyXbvpQcEX0SWAhnCNhOf4u6Z2U3HwslAjugaF1sVexKlsEsyXthsGlDLkA
-	h2Nog/CDnwBXMLs7+xoC/xsN0tQSe5rU/o+zZ3xabaYYMt6jPVuRCtyft1K3WbKRTZm7Nw47dyS
-	WJ7CyuB8/jg6FMh9FYSaZ0McbdmgTFMX1EWGVCEu8dwzGu7tx0NMf9vqgyKDmbFlLwzgnHoxAiW
-	x2zmOFBnrO1BvkdJLOAfcNjMIJuWtQeoDviZE2F5TRstcV2UtsDl6Ro/Kqqf4gcbI8SeuTsZ7Ci
-	2yQvLmwEg7Venl1tb0ufkKndfytHPbz0RSUrsgGQLabJm9KjwmF7fTglrxKLRKClqx+8knDEAwb
-	e0kPrwhNVF/wQLAX6aFNbyBo6u+wLaUsVRINvJz1g7JTwCTvF4A7I4g==
-X-Google-Smtp-Source: AGHT+IF2FUJm50SIImAtnkLfjpZxfOQ0V8XNcp8oj0UXtEvNIKIo/bW01pizDxqtXrEQGSaKXvDafw==
-X-Received: by 2002:a05:6000:2f86:b0:3a0:b565:a2cb with SMTP id ffacd0b85a97d-3b5f1c67becmr3586044f8f.1.1752255825300;
-        Fri, 11 Jul 2025 10:43:45 -0700 (PDT)
-Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e1e1a5sm4954576f8f.74.2025.07.11.10.43.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 10:43:45 -0700 (PDT)
-Date: Fri, 11 Jul 2025 18:43:43 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
- linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, Christopher
- Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, Alexander
- Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph
- Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Vlastimil
- Babka <vbabka@suse.cz>, Roman Gushchin <roman.gushchin@linux.dev>, Harry
- Yoo <harry.yoo@oracle.com>, Andrew Clayton <andrew@digital-domain.net>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Michal Hocko
- <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, Martin Uecker
- <uecker@tugraz.at>, Sam James <sam@gentoo.org>, Andrew Pinski
- <pinskia@gmail.com>
-Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
-Message-ID: <20250711184343.5eabd457@pumpkin>
-In-Reply-To: <krmt6a25gio6ing5mgahl72nvw36jc7u3zyyb5dzbk4nfjnuy4@fex2h7lqmfwt>
-References: <cover.1751823326.git.alx@kernel.org>
-	<cover.1752182685.git.alx@kernel.org>
-	<04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
-	<CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
-	<krmt6a25gio6ing5mgahl72nvw36jc7u3zyyb5dzbk4nfjnuy4@fex2h7lqmfwt>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F272F3C26
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752255848; cv=fail; b=e2kPPzF5HQvNEla2w+Oms5qoyEd1NqFU/fSfKtIvSC4wu4hckbujhwJCHvTmHn98WTPM45orq/zWHnOQeUk3+tJ3H12uXKDqHkksQYcXTOc68CJampMSTIjRzd9Z7BHrkkQg/N5bV/qqb858Su3KCkYww/0yiIN2O99FAJ3KzAI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752255848; c=relaxed/simple;
+	bh=PY7v/bg6YzLcwEJiIq13HUfAAV9bR7FhG+6ChgLZ090=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LoKCxJEGeAqjtyVWyBgFevRwhU7jsh9dhaLnMQ1XJ5vsmn5kBDB6Mp61NGRISIE2AsUZAJyqcXk1XL3EZl8m5c22xGYz5IgxFbVd77FZPPijadLvCajU8ZTWyb2xWkempImGkmi+c4vlAvLPc/6o0QEt50WUERSzL2Bk8x/FVFk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=R7Qb46Ko; arc=fail smtp.client-ip=40.107.93.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h+YdK9GlipJSN122Kqr6W6Y084j0Tl01ziTh+LQPwPb6K/6GUhf19/KLLZYaUCh03+jlQx5KyQRR/xWlnuTSKmOMCccNpzO/YT2ydNf+4WOPw5wIgLkRwG+nT1PG6O7tDO8Q7XT59Ux82/qLy7XEmsv0j9dlrpsksCGqSY8PqIglbsEe6yRJi+3Pi08fUWbRj29686D0eMTtjZLsFeqZsokv6+7RtRJiI/pquilErZMocbrqskVywPTqdloAae6qaDzMlX7AoOKz6JcWTleq+6eYNZgKQP20aCnT51IIYhnIYKdgq1i7nI/YTDRkByoqULNNW60gQaBy1GX1BTk7Yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Rc4BDtY7eDqAby97yNXG8Dt/Fyulun8uC4HFn2Xn2sc=;
+ b=XzGX8BZGZGYE47e2dLxpLwVrEO1mDlDunHJbhnzZ7LeamAxYSzLI1MVbqXXayKfN6jfFboKHfT9X08CDZ8zyXJT6k8VD08f7Ub4lfmXcrXQt3gi7yxABApUBTJYjCyl/PDGMBJkVRPqYx8ZG44HZ/vjjw8qujtWZlrBiZ7IN14BNTZiYRmLXYmpCKk1m7b4rdTcmHDsTs34HnuXZm4+hmg5amKZakG5Nk5VFLkBEpmFR3Jc7WZVXbBoPGNKNLqjHlUvRbq8lm9IkraWWCJNCKhkCLOy1Jr2OBABNSZVN8ZdJHWVaPlfypeAC5aT0jV4G3gi5T4HWM5BZ1l6dhSptiQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Rc4BDtY7eDqAby97yNXG8Dt/Fyulun8uC4HFn2Xn2sc=;
+ b=R7Qb46KoNk5nQ0g+kOXHN6qrisNQDBUNMj2glh39QjNAooODP8cCW0jC2NBwVggqhm74+zyHSg56oETAkpVWAmBj1lwrFUA1xO3Z/FP3wv7kXC+UNxCE8J+97ywcn8x0NZ+6CljPHfJfSHjNrFREkr8Pq7nLY/pMtQU/yvAoVFw5Gmk+qqIFQdRox2+rQJqBqscbw/QAWT/YMsSgZKOgMZiFjP7JzNc4a4ymP0vEi2Gjv/gOaC/KfQZALTKWEC1bSNreT9EJUqmRp2C35dpyiKtU+FuuVU+oVNU38izM6nia+CETr/G2OoudIkBVM3Y2Coml+Sq7XENm2Zill+9g1w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SJ1PR12MB6123.namprd12.prod.outlook.com (2603:10b6:a03:45a::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Fri, 11 Jul
+ 2025 17:44:03 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
+ 17:44:03 +0000
+Date: Fri, 11 Jul 2025 14:44:02 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: kevin.tian@intel.com, will@kernel.org, aneesh.kumar@kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	joro@8bytes.org, robin.murphy@arm.com, shuah@kernel.org,
+	nicolinc@nvidia.com, aik@amd.com, dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v4 2/7] iommufd: Add iommufd_object_tombstone_user()
+ helper
+Message-ID: <20250711174402.GG1951027@nvidia.com>
+References: <20250709040234.1773573-1-yilun.xu@linux.intel.com>
+ <20250709040234.1773573-3-yilun.xu@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709040234.1773573-3-yilun.xu@linux.intel.com>
+X-ClientProxiedBy: MN0PR03CA0029.namprd03.prod.outlook.com
+ (2603:10b6:208:52f::34) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SJ1PR12MB6123:EE_
+X-MS-Office365-Filtering-Correlation-Id: e74f4073-2a12-4b36-ca9e-08ddc0a2869b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|7416014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hs95w9EvDU8nX4ZKugoULkPN0Cka2JP5UxOEpy8OQ9CBbo4mYGJ/Dkhzq+8m?=
+ =?us-ascii?Q?HpHW3+uZaRiKV7kTkkDYIJXdIc9vwQVLdEqimezZJRPk/Phk+JaaSXIHVvq7?=
+ =?us-ascii?Q?wQpdGC2KxC4B2PSBiilqtgowjEh+oHCFh/jojLqquFsrplEIT44BZI/749mo?=
+ =?us-ascii?Q?gA3dM9YbmBOR/V+FtCt/kHpIuJJNg9xpbhaPJZfjCK2CpyqHfIoKVNuZWx0K?=
+ =?us-ascii?Q?AuOikGaShGWc4eLw+d8YPy5qEFZF9ZVS+vkxfNyX+/s85+NSpEUJXOIHXY64?=
+ =?us-ascii?Q?BigOwDaqUIA77rNg1VjC0XvCzxsfJf/mffbQ4aDUJVKbvfC2CZW/ld/rcjrA?=
+ =?us-ascii?Q?rnABOYfGRFrdxkzEWpKVdaB5aC/S148nUJnJhACNPSRpjUxUxQy81Iq2sFXW?=
+ =?us-ascii?Q?6domoMs4kG3Z9GkVUAdGAbNrvL0jxsI5XkgzRf+NTisApEufZbqUkKCuwyE/?=
+ =?us-ascii?Q?4TbbQr34FjNTgkwVLJXfiK7g8CwXpGaotQ2APQi7NLoX2asr5KJ9FTCHQBha?=
+ =?us-ascii?Q?ZDstt2L34UBIWyKX1Y5e+xNVuEukLDCP5Dl2TKIKYlp2WImBi2ABiEWVuHM6?=
+ =?us-ascii?Q?vGkeMYvzyW/gDF4S3rVHkAzixa07Fsc2W/DwsDypttiKJYnXqk90j6Vsh4Wo?=
+ =?us-ascii?Q?GPT66YqsYRg94YYTEe3EgSqVERDfD5jKPEyJQipSQku+T5uaczgmseftEep6?=
+ =?us-ascii?Q?1sZaNVqohwJdpMdv7RX7CCWJ23WGzAlmzojCWLJy5rlJ54hgpix3BoNGocxq?=
+ =?us-ascii?Q?rI8Cj5W46KGeLc9IFN48BeD7T1ATZqhbTtqFXe33HW07hmmLNbpTqEFJ01Ah?=
+ =?us-ascii?Q?mEkK/an3AigWuLZCsEliRvydWLB3c87AdD3yeS8TeMUv0aM4LqDf9uK8TZuw?=
+ =?us-ascii?Q?lmnnm7Crg+p7vTsJcIzEVXUg+hdZ2GFS2yT9jUaWwfiSQWXZHpV3mFkuPiI2?=
+ =?us-ascii?Q?IiFRloV2ri7VD1rTpKVNyXWarVWeNhLKRR7PTMlz4iHx9Oh9JVio47icEk0R?=
+ =?us-ascii?Q?r00HXRgJ6IB3mjWoOFisQ0qYDuhJWilL41iwJWGr4vQbMO/MPjFZKU3Ai+ll?=
+ =?us-ascii?Q?dKiHhXbz5P5Eb9ncqED4w9Lk6b2r4pglS75HXGJNpLAw2pDzzjAL49KjZv54?=
+ =?us-ascii?Q?zWziblI9AX0SiUSAhi+wtlfLW6hT8EXT7FkzebWE/1SfReBKoVP3eub3mbLM?=
+ =?us-ascii?Q?hRFz6IIcX2LgZYfTK5nlM9ZpTjS/zkJI+kNVol6KWY0RV0r2hMkxjoodJgVD?=
+ =?us-ascii?Q?iHkilQbNjNuxBV6N8l7XTINLuZkwnlWM0aUWrHbMTcnVptkkRcR9CRZp4T5Y?=
+ =?us-ascii?Q?lEpnqYJ7ev4s2pOe71QK9xz/ULi6jZvqTJZPmjNzbIBIa7lln7ruztxEHazb?=
+ =?us-ascii?Q?v6Gmkp04QYD4ht/2gHvix+krYa+tX/+v9EaljROqHTF2hG+ZVWEgZI8lbbEP?=
+ =?us-ascii?Q?CHoEIt2Gi3s=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xy8t3L3hERC3UXhz/6/8Qb+lRQqpNPd1Yo1H2zvq5pAF/zsHXsti0u1AnYBI?=
+ =?us-ascii?Q?j8oLhsZA09oKqHkzwL1aDXZJ/oPkhzwavrkxt8eFqChq/vG6XVMdWFd9k8F+?=
+ =?us-ascii?Q?IAKFaoMIAl2K4d7BRbMknCHxmS2UNru806wDrLmN1uIrmHRI14XWy9P8xim7?=
+ =?us-ascii?Q?/yxubLos4B5iodINzYijAo+dNP+IWKghiLzLPZH5Cn+pOyChnARbgekSsYGw?=
+ =?us-ascii?Q?dhvOBgz3chCAeXrk7nUVPkLfE5Tk7erCP3jHBhov9xTlgf5rHEPK1O/usDAr?=
+ =?us-ascii?Q?4kQ1m3Oe6BO535u5M+izvwB2PyA4BDSS+Q+SzRcIUIpZzs8Z3zl327JEbgiq?=
+ =?us-ascii?Q?un2Ze+ce1JvAPIf5tXxqAKVql1GZBpxMlnChyCMc1d58RrhaZ24TPsoeDqY1?=
+ =?us-ascii?Q?xdFmWqOyYkvjILumpxmeJ1pJ/s50EX+2D0haKbT54L4+uzENlkwqMcxoF3LZ?=
+ =?us-ascii?Q?K4D6PRbaCL4vM+s1bvcyUMoTSgyCFDmBg7nAE8T9dqtP/nkFb/68/adkAf5w?=
+ =?us-ascii?Q?2liW2kG4pvDggA2/59hUx72a3LU4m4il55Nqh1bB6CtG9YQy+Vb+nEuCdeF9?=
+ =?us-ascii?Q?pzeVgSBV+PIVVeY6BTovAYFStBPlglIvF8p5OwZEq+3VdyUJDKla8tlGUePO?=
+ =?us-ascii?Q?VpVcw+i6QjFsea1p6OIxwGosFIcWVMJgWcjslByzT2puY5BJM9FXPdAwGKk2?=
+ =?us-ascii?Q?BEnoVWGHjsFdlARgX3sEdio3/nJYyJzQSd5ONRuUB8n+feIdMzzJY7l4RA5H?=
+ =?us-ascii?Q?iddydzQket/Habp3YRmIvE8NmBQkQ3nyMbgcpYQ9IGys5rgmXf8sRlta8HHQ?=
+ =?us-ascii?Q?8VCqh1Gp5uL9NcXkmcPZZrEzoffFtSabAtnNI6k6G/NnnXjlU06vbR1uCR0u?=
+ =?us-ascii?Q?tripVDeqFo7PReuf8d6JUby4vubi3LTmPpwOgG0SXHI9jxlu7JIGCpD3Dzon?=
+ =?us-ascii?Q?e8/5nczo9S8PCuO6KevTdzXBJ795M0r8xK0JBTMxFoMmlDbqp6uhZl1twu9z?=
+ =?us-ascii?Q?2O0p2B6R+SkObpu0S3QLL4FTT+/I60ASaS6aXNT3n5RTMyL/AlrvlPnO0m+7?=
+ =?us-ascii?Q?MBnHSKZo8SgamaqRqZagEwhgNU2jy2E2CzB2fLSbmovQCcJ9028Kcc4/M9Z4?=
+ =?us-ascii?Q?PZ0OpkTbaerkxzyD0a6/hl07mmKRrJV3CLCBKcpnBcVbUOOzK/pPxHNLGf/5?=
+ =?us-ascii?Q?jOykvK36iS46AQzoAWM6vebBGj62B0aecW2HPWDHrusQmcj6Aoe6PLQ/pCt+?=
+ =?us-ascii?Q?O5GK2HXKY8gIO5+BG8vDuQe+2RXJR++iT/0l8Vj06Wgt/TE0CZpNWbEahuM3?=
+ =?us-ascii?Q?31SUOVZyxveU/Vd6tNbcQBJ2V4ZLphUDcjMh3ALnCMI3pLCkg3gyMjMD9EXS?=
+ =?us-ascii?Q?ZviyGA9SHt1AMtOtVoRGJAl91C+EZztkZcrY4taodC9gXnodfqzC1LVsxESP?=
+ =?us-ascii?Q?X4CkcdZcavSuiiHff3AiglqnVNbtARO9zvx14wJ9M9AdV/I9UMEqdT6451Iy?=
+ =?us-ascii?Q?2LZUCWbJMpN5IEapBNi8YOzF+uXMNsQEQjPKjJK98VWdmtbBMm7lQgG6aHGc?=
+ =?us-ascii?Q?Mu3C7t4b6OZ1lnkc33XE53OeJdf3XeUE7flRbGHD?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e74f4073-2a12-4b36-ca9e-08ddc0a2869b
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 17:44:03.5510
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sjpgw3jbMfTMqYZk0QQt2nVkdwPb8SVFiNIO6B1l173DY8L/H3BwX3hiG5YwVXhI
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6123
 
-On Fri, 11 Jul 2025 01:23:49 +0200
-Alejandro Colomar <alx@kernel.org> wrote:
+On Wed, Jul 09, 2025 at 12:02:29PM +0800, Xu Yilun wrote:
+> Add the iommufd_object_tombstone_user() helper, which allows the caller
+> to destroy an iommufd object created by userspace.
+> 
+> This is useful on some destroy paths when the kernel caller finds the
+> object should have been removed by userspace but is still alive. With
+> this helper, the caller destroys the object but leave the object ID
+> reserved (so called tombstone). The tombstone prevents repurposing the
+> object ID without awareness of the original user.
+> 
+> Since this happens for abnormal userspace behavior, for simplicity, the
+> tombstoned object ID would be permanently leaked until
+> iommufd_fops_release(). I.e. the original user gets an error when
+> calling ioctl(IOMMU_DESTROY) on that ID.
+> 
+> The first use case would be to ensure the iommufd_vdevice can't outlive
+> the associated iommufd_device.
+> 
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Co-developed-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
+> ---
+>  drivers/iommu/iommufd/iommufd_private.h | 23 ++++++++++++++++++++++-
+>  drivers/iommu/iommufd/main.c            | 24 ++++++++++++++++++++++--
+>  2 files changed, 44 insertions(+), 3 deletions(-)
 
-> Hi Linus,
-> 
-> [I'll reply to both of your emails at once]
-> 
-> On Thu, Jul 10, 2025 at 02:58:24PM -0700, Linus Torvalds wrote:
-> > You took my suggestion, and then you messed it up.
-> > 
-> > Your version of sprintf_array() is broken. It evaluates 'a' twice.
-> > Because unlike ARRAY_SIZE(), your broken ENDOF() macro evaluates the
-> > argument.  
-> 
-> An array has no issue being evaluated twice (unless it's a VLA).  On the
-> other hand, I agree it's better to not do that in the first place.
-> My bad for forgetting about it.  Sorry.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Or a function that returns an array...
-
-	David
-
-> 
-> On Thu, Jul 10, 2025 at 03:08:29PM -0700, Linus Torvalds wrote:
-> > If you want to return an error on truncation, do it right.  Not by
-> > returning NULL, but by actually returning an error.  
-> 
-> Okay.
-> 
-> > For example, in the kernel, we finally fixed 'strcpy()'. After about a
-> > million different versions of 'copy a string' where every single
-> > version was complete garbage, we ended up with 'strscpy()'. Yeah, the
-> > name isn't lovely, but the *use* of it is:  
-> 
-> I have implemented the same thing in shadow, called strtcpy() (T for
-> truncation).  (With the difference that we read the string twice, since
-> we don't care about threads.)
-> 
-> I also plan to propose standardization of that one in ISO C.
-> 
-> >  - it returns the length of the result for people who want it - which
-> > is by far the most common thing people want  
-> 
-> Agree.
-> 
-> >  - it returns an actual honest-to-goodness error code if something
-> > overflowed, instead of the absoilutely horrible "source length" of the
-> > string that strlcpy() does and which is fundamentally broken (because
-> > it requires that you walk *past* the end of the source,
-> > Christ-on-a-stick what a broken interface)  
-> 
-> Agree.
-> 
-> >  - it can take an array as an argument (without the need for another
-> > name - see my earlier argument about not making up new names by just
-> > having generics)  
-> 
-> We can't make the same thing with sprintf() variants because they're
-> variadic, so you can't count the number of arguments.  And since the
-> 'end' argument is of the same type as the formatted string, we can't
-> do it with _Generic reliably either.
-> 
-> > Now, it has nasty naming (exactly the kind of 'add random character'
-> > naming that I was arguing against), and that comes from so many
-> > different broken versions until we hit on something that works.
-> > 
-> > strncpy is horrible garbage. strlcpy is even worse. strscpy actually
-> > works and so far hasn't caused issues (there's a 'pad' version for the
-> > very rare situation where you want 'strncpy-like' padding, but it
-> > still guarantees NUL-termination, and still has a good return value).  
-> 
-> Agree.
-> 
-> > Let's agree to *not* make horrible garbage when making up new versions
-> > of sprintf.  
-> 
-> Agree.  I indeed introduced the mistake accidentally in v4, after you
-> complained of having too many functions, as I was introducing not one
-> but two APIs: seprintf() and stprintf(), where seprintf() is what now
-> we're calling sprintf_end(), and stprintf() we could call it
-> sprintf_trunc().  So I did the mistake by trying to reduce the number of
-> functions to just one, which is wrong.
-> 
-> So, maybe I should go back to those functions, and just give them good
-> names.
-> 
-> What do you think of the following?
-> 
-> 	#define sprintf_array(a, ...)  sprintf_trunc(a, ARRAY_SIZE(a), __VA_ARGS__)
-> 	#define vsprintf_array(a, ap)  vsprintf_trunc(a, ARRAY_SIZE(a), ap)
-> 
-> 	char *sprintf_end(char *p, const char end[0], const char *fmt, ...);
-> 	char *vsprintf_end(char *p, const char end[0], const char *fmt, va_list args);
-> 	int sprintf_trunc(char *buf, size_t size, const char *fmt, ...);
-> 	int vsprintf_trunc(char *buf, size_t size, const char *fmt, va_list args);
-> 
-> 	char *sprintf_end(char *p, const char end[0], const char *fmt, ...)
-> 	{
-> 		va_list args;
-> 
-> 		va_start(args, fmt);
-> 		p = vseprintf(p, end, fmt, args);
-> 		va_end(args);
-> 
-> 		return p;
-> 	}
-> 
-> 	char *vsprintf_end(char *p, const char end[0], const char *fmt, va_list args)
-> 	{
-> 		int len;
-> 
-> 		if (unlikely(p == NULL))
-> 			return NULL;
-> 
-> 		len = vsprintf_trunc(p, end - p, fmt, args);
-> 		if (unlikely(len < 0))
-> 			return NULL;
-> 
-> 		return p + len;
-> 	}
-> 
-> 	int sprintf_trunc(char *buf, size_t size, const char *fmt, ...)
-> 	{
-> 		va_list args;
-> 		int len;
-> 
-> 		va_start(args, fmt);
-> 		len = vstprintf(buf, size, fmt, args);
-> 		va_end(args);
-> 
-> 		return len;
-> 	}
-> 
-> 	int vsprintf_trunc(char *buf, size_t size, const char *fmt, va_list args)
-> 	{
-> 		int len;
-> 
-> 		if (WARN_ON_ONCE(size == 0 || size > INT_MAX))
-> 			return -EOVERFLOW;
-> 
-> 		len = vsnprintf(buf, size, fmt, args);
-> 		if (unlikely(len >= size))
-> 			return -E2BIG;
-> 
-> 		return len;
-> 	}
-> 
-> sprintf_trunc() is like strscpy(), but with a formatted string.  It
-> could replace uses of s[c]nprintf() where there's a single call (no
-> chained calls).
-> 
-> sprintf_array() is like the 2-argument version of strscpy().  It could
-> replace s[c]nprintf() calls where there's no chained calls, where the
-> input is an array.
-> 
-> sprintf_end() would replace the chained calls.
-> 
-> Does this sound good to you?
-> 
-> 
-> Cheers,
-> Alex
-> 
-
+Jason
 
