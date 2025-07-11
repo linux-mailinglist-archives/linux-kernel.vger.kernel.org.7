@@ -1,164 +1,261 @@
-Return-Path: <linux-kernel+bounces-728034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3236BB022D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:41:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C62B022CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C4D3A721E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:41:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AB781C28649
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90C12F1FE3;
-	Fri, 11 Jul 2025 17:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C4F2F1FDB;
+	Fri, 11 Jul 2025 17:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MfxRnRrK"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEvXuqzN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7256C2F1991;
-	Fri, 11 Jul 2025 17:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8B4219A91;
+	Fri, 11 Jul 2025 17:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752255676; cv=none; b=CnoR/2SbiHJ8hB/lKhYKay+sR/pIFD4RA3qu39y8nPiVqG+k5OEuo4RE2alEDcS+IpSFI8m3cfO8jUuIrS3UUNgJylH2pUNiNKJCGjP5OFkOu9+MbUn2sbzvuhAhX/alx5FjmF6eZYLeXaddwgVnYJbC1j2pS8JuBRTGrN5B8qY=
+	t=1752255655; cv=none; b=MPCN7zQS8zZWn0OET7pAyUeaEw1Zr8spx8IhZ9wBRBxvHRZ46bDkykM8fOuJQXdxSmnzar8koogCRmFgUDGEH9AA4S5foswBXc84AhX1yx3av8djthHpxcImRuLD5WDIvt3m1HeazpxN9KyZwv960sVsfBrcukYoEC8w+D3OYSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752255676; c=relaxed/simple;
-	bh=A+IZMmbCmHFz7LA5U90SHkR83aX68N0xOOmAhTQfdps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lgMAVqy913t/8HMojoP8HR427pl38aGBjbIT0QmCvu4wHANJEInGQbGY1PJ7CmAn2Yi9lN2da1RFD5aZFaZIsehdtTcUTsGbR1+Sj1JuqpcQRIvdupELZCqEo+aIJRrj9tc3a0MJ/khpB+tDC7AI5a6IMhlZ4Zh4vFS76uUptTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MfxRnRrK; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56BHemug1861107;
-	Fri, 11 Jul 2025 12:40:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752255648;
-	bh=avkCSBI/cy3dHICmDxAzJXYe1H+unqcSXKS5zVohgaE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=MfxRnRrKgfCUgO2J9UsENDPiXwTOrv7M+KRQK4+WubWagVc1t8P07KW7Eqp+XtZUK
-	 kEbQVJRSEM/E4NEI1bAIugDacmCrpCTnuo/gdgQp7j9MAA3mc4VLjM+KuTu0R+rRO6
-	 ZiN1UFF5JJS6uX5fPKjBaY5Yzkevs1GL6yNSaKfk=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56BHem8U533293
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 11 Jul 2025 12:40:48 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 11
- Jul 2025 12:40:47 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 11 Jul 2025 12:40:47 -0500
-Received: from [10.250.35.60] ([10.250.35.60])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56BHekf83588411;
-	Fri, 11 Jul 2025 12:40:46 -0500
-Message-ID: <7178abc9-8f92-4bba-9b50-ffdf5f8d1279@ti.com>
-Date: Fri, 11 Jul 2025 12:40:46 -0500
+	s=arc-20240116; t=1752255655; c=relaxed/simple;
+	bh=Z5h8RYJc6k17AEf7UTbWHnSOM2I8FCkIKpXNIERJo78=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XR1LaYu3pLN0X+0iupIRFSRtBRvdGSZlWNWQ8UZ0wSCgCQeiYpTCAcS3Yxohi03Lus9F9PWx3Qi3FB8a1rHdIjhfBOET6VwjMyEI+5Vf+3h5o1XPWe/4k/8wZkQo2k4oOty6piEaegxLVAL6FWCwvHv4EB0gj4HAv4ZdFdnIih0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEvXuqzN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37011C4CEED;
+	Fri, 11 Jul 2025 17:40:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752255654;
+	bh=Z5h8RYJc6k17AEf7UTbWHnSOM2I8FCkIKpXNIERJo78=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UEvXuqzNsjkR9n9ms5hU7W4gRqcQOTFDIMNJfU/Mk4UVCDaKfkzCI893GKZx9DIAo
+	 qdt4OvG0eBTuEjiINckV9baYfNAgqRE2a2pqn1yoDRHy7nD7eO/7I80Q1LJ2jtSIsI
+	 vlkx7iHkzfOc1q3umC23An6lHW2kRxmnAIiz9KUTCy4wi2XifdjsQg9y49fgyfSZ6y
+	 TvvEOCYZgZit6f/jFA2PwTV5h0be8ZewiOWw31vMyYRc+mTz5joOrbbucZgBNBjuc3
+	 zxLgsNCW9R3CltpYWl0vtEQlvShg/v01SXWTlv8AFFrL6BQpzssSO7M3qmRJioVfps
+	 mP3tvhoeldj0g==
+Date: Fri, 11 Jul 2025 19:40:47 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Donald Hunter <donald.hunter@gmail.com>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, "Akira Yokosawa" <akiyks@gmail.com>, "Breno Leitao"
+ <leitao@debian.org>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>, "Jan Stancek" <jstancek@redhat.com>, "Marco Elver"
+ <elver@google.com>, "Paolo Abeni" <pabeni@redhat.com>, "Randy Dunlap"
+ <rdunlap@infradead.org>, "Ruben Wauters" <rubenru09@aol.com>, "Shuah Khan"
+ <skhan@linuxfoundation.org>, Jakub Kicinski <kuba@kernel.org>, Simon Horman
+ <horms@kernel.org>, joel@joelfernandes.org,
+ linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
+ lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org,
+ stern@rowland.harvard.edu
+Subject: Re: [PATCH v9 12/13] docs: parser_yaml.py: add support for line
+ numbers from the parser
+Message-ID: <20250711194047.4be0df4c@foz.lan>
+In-Reply-To: <m2ecun5a3a.fsf@gmail.com>
+References: <cover.1752076293.git.mchehab+huawei@kernel.org>
+	<3b18b30b1b50b01a014fd4b5a38423e529cde2fb.1752076293.git.mchehab+huawei@kernel.org>
+	<m2zfdc5ltn.fsf@gmail.com>
+	<m2ms9c5din.fsf@gmail.com>
+	<20250710195757.02e8844a@sal.lan>
+	<m2ecun5a3a.fsf@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 03/10] accel/rocket: Add IOCTL for BO creation
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-        Oded Gabbay <ogabbay@kernel.org>, Jonathan
- Corbet <corbet@lwn.net>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Sebastian
- Reichel <sebastian.reichel@collabora.com>,
-        Nicolas Frattaroli
-	<nicolas.frattaroli@collabora.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Daniel Stone <daniel@fooishbar.org>, Da
- Xue <da@libre.computer>,
-        Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-doc@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>
-References: <20250606-6-10-rocket-v7-0-dc16cfe6fe4e@tomeuvizoso.net>
- <20250606-6-10-rocket-v7-3-dc16cfe6fe4e@tomeuvizoso.net>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250606-6-10-rocket-v7-3-dc16cfe6fe4e@tomeuvizoso.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 6/6/25 1:28 AM, Tomeu Vizoso wrote:
-> This uses the SHMEM DRM helpers and we map right away to the CPU and NPU
-> sides, as all buffers are expected to be accessed from both.
-> 
-> v2:
-> - Sync the IOMMUs for the other cores when mapping and unmapping.
-> 
-> v3:
-> - Make use of GPL-2.0-only for the copyright notice (Jeff Hugo)
-> 
-> v6:
-> - Use mutexes guard (Markus Elfring)
-> 
-> v7:
-> - Assign its own IOMMU domain to each client, for isolation (Daniel
->    Stone and Robin Murphy)
-> 
-> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> ---
->   drivers/accel/rocket/Makefile        |   3 +-
->   drivers/accel/rocket/rocket_device.c |   4 ++
->   drivers/accel/rocket/rocket_device.h |   2 +
->   drivers/accel/rocket/rocket_drv.c    |   7 ++-
->   drivers/accel/rocket/rocket_gem.c    | 115 +++++++++++++++++++++++++++++++++++
->   drivers/accel/rocket/rocket_gem.h    |  27 ++++++++
->   include/uapi/drm/rocket_accel.h      |  44 ++++++++++++++
->   7 files changed, 200 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/accel/rocket/Makefile b/drivers/accel/rocket/Makefile
-> index abdd75f2492eaecf8bf5e78a2ac150ea19ac3e96..4deef267f9e1238c4d8bd108dcc8afd9dc8b2b8f 100644
-> --- a/drivers/accel/rocket/Makefile
-> +++ b/drivers/accel/rocket/Makefile
-> @@ -5,4 +5,5 @@ obj-$(CONFIG_DRM_ACCEL_ROCKET) := rocket.o
->   rocket-y := \
->   	rocket_core.o \
->   	rocket_device.o \
-> -	rocket_drv.o
-> +	rocket_drv.o \
-> +	rocket_gem.o
-> diff --git a/drivers/accel/rocket/rocket_device.c b/drivers/accel/rocket/rocket_device.c
-> index a05c103e117e3eaa6439884b7acb6e3483296edb..5e559104741af22c528914c96e44558323ab6c89 100644
-> --- a/drivers/accel/rocket/rocket_device.c
-> +++ b/drivers/accel/rocket/rocket_device.c
-> @@ -4,6 +4,7 @@
->   #include <linux/array_size.h>
->   #include <linux/clk.h>
->   #include <linux/dev_printk.h>
-> +#include <linux/mutex.h>
->   
->   #include "rocket_device.h"
->   
-> @@ -16,10 +17,13 @@ int rocket_device_init(struct rocket_device *rdev)
->   	if (err)
->   		return err;
->   
-> +	mutex_init(&rdev->iommu_lock);
+Em Fri, 11 Jul 2025 10:51:37 +0100
+Donald Hunter <donald.hunter@gmail.com> escreveu:
 
-devm_mutex_init() again keeps you from needing rocket_device_fini().
-Same in the next patch even if you don't end up needing the iommu_lock.
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> 
+> > Em Thu, 10 Jul 2025 15:25:20 +0100
+> > Donald Hunter <donald.hunter@gmail.com> escreveu:
+> >  
+> >> Donald Hunter <donald.hunter@gmail.com> writes:
+> >>   
+> >> >>              # Parse message with RSTParser
+> >> >> -            for i, line in enumerate(msg.split('\n')):
+> >> >> -                result.append(line, document.current_source, i)
+> >> >> +            lineoffset = 0;
+> >> >> +            for line in msg.split('\n'):
+> >> >> +                match = self.re_lineno.match(line)
+> >> >> +                if match:
+> >> >> +                    lineoffset = int(match.group(1))
+> >> >> +                    continue
+> >> >> +
+> >> >> +                result.append(line, document.current_source, lineoffset)    
+> >> >
+> >> > I expect this would need to be source=document.current_source, offset=lineoffset    
+> >> 
+> >> Ignore that. I see it's not kwargs. It's just the issue below.
+> >>   
+> >> >>              rst_parser = RSTParser()
+> >> >>              rst_parser.parse('\n'.join(result), document)    
+> >> >
+> >> > But anyway this discards any line information by just concatenating the
+> >> > lines together again.    
+> >> 
+> >> Looks to me like there's no Parser() API that works with ViewList() so
+> >> it would be necessary to directly use the docutils RSTStateMachine() for
+> >> this approach to work.  
+> >
+> > It sounds so.
+> >
+> > The enclosed patch seems to address it:
+> >
+> > 	$ make cleandocs; make SPHINXDIRS="netlink/specs" htmldocs
+> > 	...
+> > 	Using alabaster theme
+> > 	source directory: netlink/specs
+> > 	Using Python kernel-doc
+> > 	/new_devel/v4l/docs/Documentation/netlink/specs/rt-neigh.yaml:13: ERROR: Unknown directive type "bogus".
+> >
+> > 	.. bogus:: [docutils]
+> >
+> > Please notice that I added a hunk there to generate the error, just
+> > to make easier to test - I'll drop it at the final version, and add
+> > the proper reported-by/closes/... tags once you test it.
+> >
+> > Regards,
+> > Mauro  
+> 
+> Awesome!
+> 
+> Tested-by: Donald Hunter <donald.hunter@gmail.com>
+> 
+> Patch comments below.
+> 
+> > [PATCH RFC] sphinx: parser_yaml.py: preserve line numbers
+> >
+> > Instead of converting viewlist to text, use it directly, if
+> > docutils supports it.
+> >
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> >
+> > diff --git a/Documentation/netlink/specs/rt-neigh.yaml b/Documentation/netlink/specs/rt-neigh.yaml
+> > index e9cba164e3d1..937d2563f151 100644
+> > --- a/Documentation/netlink/specs/rt-neigh.yaml
+> > +++ b/Documentation/netlink/specs/rt-neigh.yaml
+> > @@ -11,6 +11,7 @@ doc:
+> >  definitions:
+> >    -
+> >      name: ndmsg
+> > +    doc: ".. bogus::"
+> >      type: struct
+> >      members:
+> >        -
+> > diff --git a/Documentation/sphinx/parser_yaml.py b/Documentation/sphinx/parser_yaml.py
+> > index 1602b31f448e..2a2faaf759ef 100755
+> > --- a/Documentation/sphinx/parser_yaml.py
+> > +++ b/Documentation/sphinx/parser_yaml.py
+> > @@ -11,7 +11,9 @@ import sys
+> >  
+> >  from pprint import pformat
+> >  
+> > +from docutils import nodes, statemachine  
+> 
+> nodes is not used
 
-Andrew
+I dropped it on patch 14/13.
+
+> 
+> >  from docutils.parsers.rst import Parser as RSTParser  
+> 
+> This import is no longer needed
+
+I'll drop on a next spin.
+> 
+> > +from docutils.parsers.rst import states
+> >  from docutils.statemachine import ViewList
+> >  
+> >  from sphinx.util import logging
+> > @@ -66,10 +68,24 @@ class YamlParser(Parser):  
+> 
+> I'm wondering if it makes much sense for this to inherit from Parser any
+> more?
+
+Yes. It still needs other things from the Parser class.
+
+> >          result = ViewList()
+> >  
+> > +        tab_width = 8
+> > +
+> > +        self.state_classes = states.state_classes
+> > +        self.initial_state = 'Body'
+> > +
+> > +        self.statemachine = states.RSTStateMachine(
+> > +              state_classes=self.state_classes,
+> > +              initial_state=self.initial_state,
+> > +              debug=document.reporter.debug_flag)  
+> 
+> I don't think 'self.' is needed for any of these. They can be local to
+> the method. You could just inline states.state_classes and 'Body' into
+> the parameter list.
+
+I dropped from most stuff, but self.statemachine is still needed.
+
+I suspect that because of some other stuff inside the Parser class.
+
+> 
+> > +
+> >          try:
+> >              # Parse message with RSTParser  
+> 
+> Comment is out of date.
+> 
+> >              lineoffset = 0;  
+> 
+> Rogue semicolon
+
+I dropped at patch 14/13.
+
+> 
+> > -            for line in msg.split('\n'):
+> > +
+> > +            lines = statemachine.string2lines(msg, tab_width,
+> > +                                            convert_whitespace=True)
+> > +
+> > +            for line in lines:
+> >                  match = self.re_lineno.match(line)
+> >                  if match:
+> >                      lineoffset = int(match.group(1))
+> > @@ -77,12 +93,7 @@ class YamlParser(Parser):
+> >  
+> >                  result.append(line, document.current_source, lineoffset)
+> >  
+> > -            # Fix backward compatibility with docutils < 0.17.1
+> > -            if "tab_width" not in vars(document.settings):
+> > -                document.settings.tab_width = 8
+> > -
+> > -            rst_parser = RSTParser()
+> > -            rst_parser.parse('\n'.join(result), document)
+> > +            self.statemachine.run(result, document, inliner=None)
+> >  
+> >          except Exception as e:  
+> 
+> I think you could catch StateMachineError here.
+
+Good point. will try that.
+
+> >              document.reporter.error("YAML parsing error: %s" % pformat(e))  
+> 
+> Can you change this to an f"" string.
+
+I prefer f-strings as well, but usually logger classes are recommended
+to use the old way. I guess this came from a previous check with pylint.
+
+Thanks,
+Mauro
 
