@@ -1,110 +1,93 @@
-Return-Path: <linux-kernel+bounces-727727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E23D5B01EB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:07:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7700B01EAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0003AB425D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:05:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05AAD3BF98F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5232E2F18;
-	Fri, 11 Jul 2025 14:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843792882AA;
+	Fri, 11 Jul 2025 14:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLdx/4Ht"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZmS8DE4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF442E5B2A;
-	Fri, 11 Jul 2025 14:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB4C2DCF6C;
+	Fri, 11 Jul 2025 14:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752242787; cv=none; b=FCd7h0tOhzgNAZCNi3Ay32absyeSK8gdQni331aepCfz2LaboSyVmM+uBntRnZq+uHSRYGuONtA+fC320/vfA5jdmxpuX7tACmodIuLTypGxfjaz3qneUF8UW388uMEyP6mKuwRRhJELdUhX/OShJwNNEvsy6kzyaEJlhWja6vU=
+	t=1752242829; cv=none; b=glt0CgEYx1C8sA3HYadWl6wMunQx/bLiEtAGmq/l2Gu0owGl/2+V4VREnb/V1sTl8dfpJ8qrhrARsO2DMLFd9lv86olu3lFwQ6gM+5HE0awbZHh/3HVuxYHUFO8hYQgDfDtkx4GV8hts7qUIgplPQNf9vesw4AsxN0CQBUjxygU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752242787; c=relaxed/simple;
-	bh=rha5rNd/+/z1arNhONh6XrU13+BFec0/iI8Uq17rXic=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kSB18/UlmKJNCjOepyc9Sw5piBbSOVDpyfnZeH9Vro/UoHQi9fdlhWe4HeAOqJY1h3MhfxuiJvYRBqmmfSRcHXKGG/Q/kt1dWvS9c8UdHdPL2zv3DG+sdZfWB/z1lWPbmfl+4IMZUGgfKyUnmnIJ+/Aq/i5gT4gWXPRw76/x4qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLdx/4Ht; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0512CC4CEED;
-	Fri, 11 Jul 2025 14:06:24 +0000 (UTC)
+	s=arc-20240116; t=1752242829; c=relaxed/simple;
+	bh=dVpXeqmLRonURvzfr0IQwPPm++MfCDKX7tUK2E3Xgpg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=kgU+eLayjsudxclek8nUH0bw3BameGRjJPoamfpZL+21GdCPVJ7/HwbLVwy5tudeOHksa6RRoK5jd2v2OZT5JtGdJwBuZbTP3JhfSEAEy1ZVgemNIRHlA5qCAFphUguKp+lFZNUvYEXXDgDJkBlwmJcK2jG18fgqf0RgAMqMoj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZmS8DE4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FCE3C4CEED;
+	Fri, 11 Jul 2025 14:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752242787;
-	bh=rha5rNd/+/z1arNhONh6XrU13+BFec0/iI8Uq17rXic=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PLdx/4Htfxna1tnlXVPnyLI6Z2pQUJAyWz4Scj3eP5P9+viOIwVQE4MdVt8ru9HUY
-	 Nzbb6CTVVGOe4H1J7jcn+g/wwHV+KTb9yJdRZ4AYnyj4qXPHN2YpMuY31+ytxJqt3A
-	 Bxgasc+mCTAO3y3mkapu2hj+/dLedbir4aaFbBrmh3bOTWiBA5WkmSI1ocJR73PSOB
-	 Ua52gJAWd/9R3Z1drRHFs2yGfs+GCU3AUPnOzzVTcDXYP5Gqqtc7xSY55EbTJItjHk
-	 +lf3VUS5zYNc6nuTX9pw07E9i3v5K1Ok015iENHrfevGwNbVSpYhZ0jlo5UCrX7kdX
-	 btO+hAWBsz6Ig==
-Message-ID: <2acf7211-e481-4320-b6dd-08b3fa2e48c6@kernel.org>
-Date: Fri, 11 Jul 2025 16:06:23 +0200
+	s=k20201202; t=1752242828;
+	bh=dVpXeqmLRonURvzfr0IQwPPm++MfCDKX7tUK2E3Xgpg=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=IZmS8DE4qSbtKmTm1CG914y6A2XQ96csOKsJuE4nxVidbviSw3OSPnFKzWoPRzrsF
+	 Xn7jYNBD2Dzvw74a4FpmiCNARJ5pBpN3yMzOQ+MaJTcyDAd2CoWBLBSDF+Jhfdqirw
+	 RYRrOy+opSvoix/5YBC818q3YcRYpAJzbj99nxpoLYrC2G2KE0UoXKf88nrv5ONSJa
+	 /cu6lHwqSwoduXXWo+KWuNO2xumnLdNZGlOK0mdVr4ilK0DZzYE++Kaz5qeSGYEPhd
+	 TafLJYqg9IVZpWmNGqLZbLM6IVdFxBFBDmL+SEEi0iWv5LKWfYsYzCDXt4lJck4KKr
+	 tqsL6WgiNjWyg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH v2 0/3] module: make structure definitions always visible
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Daniel Gomez <da.gomez@samsung.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-References: <20250711-kunit-ifdef-modules-v2-0-39443decb1f8@linutronix.de>
- <175224114462.57001.15162198119283395382.b4-ty@samsung.com>
- <20250711155016-f403d5b2-478d-4666-913d-45318cdaa3cf@linutronix.de>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20250711155016-f403d5b2-478d-4666-913d-45318cdaa3cf@linutronix.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Fri, 11 Jul 2025 16:07:04 +0200
+Message-Id: <DB9A8OPZK3DZ.YVQPQQSD12MU@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v3] workqueue: rust: add delayed work items
+Cc: "Tejun Heo" <tj@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Lai
+ Jiangshan" <jiangshanlai@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Tamir Duberstein" <tamird@gmail.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Benno
+ Lossin" <lossin@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+References: <20250711-workqueue-delay-v3-1-3fe17b18b9d1@google.com>
+In-Reply-To: <20250711-workqueue-delay-v3-1-3fe17b18b9d1@google.com>
 
-On 11/07/2025 15.51, Thomas WeiÃschuh wrote:
-> On Fri, Jul 11, 2025 at 03:39:04PM +0200, Daniel Gomez wrote:
->>
->> On Fri, 11 Jul 2025 15:31:35 +0200, Thomas Weißschuh wrote:
->>> Code using IS_ENABLED(CONFIG_MODULES) as a C expression may need access
->>> to the module structure definitions to compile.
->>> Make sure these structure definitions are always visible.
->>>
->>> This will conflict with commit 6bb37af62634 ("module: Move modprobe_path
->>> and modules_disabled ctl_tables into the module subsys") from the sysctl
->>> tree, but the resolution is trivial.
->>>
->>> [...]
->>
->> Applied, thanks!
->>
->> [1/3] module: move 'struct module_use' to internal.h
->>       commit: bb02f22eaabc4d878577e2b8c46ed7b6be5f5459
->> [2/3] module: make structure definitions always visible
->>       commit: 02281b559cd1fdfdc8f7eb05bbbe3ab7b35246f0
->> [3/3] kunit: test: Drop CONFIG_MODULE ifdeffery
->>       commit: dffcba8acea3a80b3478750ac32f17bd5345b68e
-> 
-> Thanks!
-> 
-> FYI If you apply a patch you need to add yourself to the Signed-off-by chain.
-> And Link tags are nice. For example:
-> 
-> b4 shazam --add-my-sob --add-link
+Hi Alice,
 
-You're correct. I had a lapse there. Branch updated. Thanks!
+On Fri Jul 11, 2025 at 9:59 AM CEST, Alice Ryhl wrote:
+> This patch is being sent for use in the various Rust GPU drivers that
+> are under development. It provides the additional feature of work items
+> that are executed after a delay.
 
-[1/3] module: move 'struct module_use' to internal.h
-      commit: 6633d3a45a8c075193304d12ba10a1771d1dbf10
-[2/3] module: make structure definitions always visible
-      commit: a55842991352a8b512f40d1424b65c911ffbf6fa
-[3/3] kunit: test: Drop CONFIG_MODULE ifdeffery
-      commit: 699657e8e50ae967ae26f704f6fbfa598fcb0cef
+I thought I commented on this in a previous version already, but apparently=
+ I
+haven't (was it a different thread maybe?).
+
+For drivers, we should also support 'scoped' work items and worqueues, wher=
+e
+'scoped' means limit the lifetime to the driver being bound to a device.
+
+For better understanding, in C one would call this devm_alloc_workqueue(), =
+which
+would guarantee that the workqueue is terminated on device unbind. Similar =
+for
+individual work items on shared workqueues (such as the system ones), which
+would be canceled synchronously on driver unbind.
+
+This is very useful for drivers, since it allows to provide a &Device<Bound=
+>
+within the work's callback, which allows drivers to access device resources
+safely and directly without additional overhead.
 
