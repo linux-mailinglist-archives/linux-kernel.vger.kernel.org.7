@@ -1,157 +1,253 @@
-Return-Path: <linux-kernel+bounces-727825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D38FB02039
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:16:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772D2B0203C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 615E87AA8B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:14:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 001C21C27F2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD48619C55E;
-	Fri, 11 Jul 2025 15:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXQg5Ts3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD8A2E9EB1;
+	Fri, 11 Jul 2025 15:16:34 +0000 (UTC)
+Received: from mail-pl1-f208.google.com (mail-pl1-f208.google.com [209.85.214.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441511442E8;
-	Fri, 11 Jul 2025 15:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BB7274658
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752246976; cv=none; b=hSXfD31sbYu3hsXaritZOJ3CA450J8+YmaGPkwKpIgBJELAkeNVLzKfwPn7ipw5Sb+YuWsVLEZ/QoZLua8UEwMJRs7UkY3B3ZRCDD6LXtefXTP79XU5elhqWmL87uefn55A7VL/BJCm183+qgxJ711iw24CeRWonq/RPTjawvM4=
+	t=1752246993; cv=none; b=EkMvVqrgbKN7ly7LL/EEJd3Fx4k9UIlXBgs5PdPG/YwuYUHxFUBUvm/K1Y6wMiYTlGJ00JT7vihRkiqFkmNI1vWzVBYVz/PLv4b+5O3Azzv/JWvZcDDSH/PKG7fGtZLwc/f9LtHt6sW7HZtw/umU6IAC+uG2GtU+SqFYUYJZ/Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752246976; c=relaxed/simple;
-	bh=dK4M9uBPxqDrfMVxnPZkLcSIMXrTxzxvvSQ7wb4uqbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VKUnVAGVkwGU6f7sEhOeG8Z7fNsyo9DuGD76Y+rmEHbam9uDRd7CqcxeiD7HYBe/5VqxS5pSraVRiOu6gQuCzUl8GUPYXBNpTfeJ6c7gY2KMPt6Hr45Uppr9kpsSVHLJadhRFnCEnTbjzwsFFsvt56n3vCNuQ9hncQlUEyNcFU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXQg5Ts3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD35C4CEED;
-	Fri, 11 Jul 2025 15:16:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752246975;
-	bh=dK4M9uBPxqDrfMVxnPZkLcSIMXrTxzxvvSQ7wb4uqbg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iXQg5Ts3IrsbbjjSFPKGVDejC9h+eWfW6B6lymOICjdMqvZMystoiJ/5rHxJ5pOzf
-	 JCDmctGd+pQPeIOyd3M4+h4HSegH+98ZM+j2+4e6VUZ2tR0BjGur+IGS6I1IqarUQx
-	 iAdNkzRmA7eTsUERje7NPM7rbN0ZVAFrwG8DIh/E3iyRyOXgIFw/b+C4wQP1t/VfTw
-	 XFqI3KvIgVmNWSAQj66XSXgYdbjbODKMEYMWxhdlCu+WZbNwzuoznPf914oBYMKVT0
-	 JVFoG1SqHnsoTFmqGfP0e8mFAHCi0CC4DECIWnA6na2kYGzzVsmnV5hqKPiu2yWQSC
-	 HCkqRecou2UOA==
-Date: Fri, 11 Jul 2025 16:16:11 +0100
-From: Will Deacon <will@kernel.org>
-To: Stefano Stabellini <stefano.stabellini@amd.com>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-	Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	iommu@lists.linux.dev,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"Sarangi, Anirudha" <anirudha.sarangi@amd.com>, maz@kernel.org,
-	xueqi.zhang@mediatek.com
-Subject: Re: SMMUv3 interrupt handling via custom logic
-Message-ID: <aHEqu5mGannB0w6D@willie-the-truck>
-References: <0482d84e-871b-4522-b94b-29a97c87ff66@amd.com>
- <43acfcd8-b359-448f-bbb6-da1b71a64f45@arm.com>
- <alpine.DEB.2.22.394.2506271219070.862517@ubuntu-linux-20-04-desktop>
+	s=arc-20240116; t=1752246993; c=relaxed/simple;
+	bh=UpvZQtXCDFz5gBW6i3A5Vt/uMDeCmwRJKT9XZytFNzg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jFU8eiJPXFWk6Dod3JuYIW12mp0XN7aZ7Pw//snGQkLQzJnk9Yyil/wpl87A9iP9WbyLIOLOej810GpeMbLvj9b5m1Fk8hfuSLOKTme3SwV9eKTeos+C1yClsS1y/NR+qvWWbGQVpvHMXyZI6fwYARNasiDbhHqsvX/9d7ceD38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.214.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-pl1-f208.google.com with SMTP id d9443c01a7336-23494a515e3so18814035ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:16:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752246991; x=1752851791;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SEqtSagKnSQ3Z1AJ4nFbbLV9GTdirgxlTdtuWtdMwPQ=;
+        b=X6Jko6KxOx+KoT2+pYgMz0S64g1j1SwKY9hiXq8tdlDXP5d1Q9ONan27eAWVi3qul7
+         u9tIITvWgisIUnkw/6khdtzzKjJJIW17fsDs57OSDTcwe/bCNhCVoAGfzkIFpCXm3XMF
+         C5oW/q+bmVdNWfkDyCqkzHZ0wD424zcYTn3u59pWP+g3XVYp1hXbUcCjDJaDr/5YqIwD
+         m2fFIq90mQN7wlhGi5cmO9Vel9w7ZwVSRRY3BNycCQDt3P/hu5K7u37mcwtEfCbmBo9Y
+         yUvNlZwy3anNlO/R13zbM29AXmWkFBYizcCJEyJkNMLRsA4Aim9P13TnFfc+dtOKuA11
+         5PyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhXEXOwY1i2aZ7i9g7Rv+afJUF8oOwAiFBoT9meYvI2Ev2FN5eoj0bzntlZF/DP+oU6kprZ677C0FfPdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyue553xRFdm1BlyIQU15iiLMs8S7CeWPDZmHeMHo+hHqObBbyd
+	mdO0MkHaFPwhS0eg7OSn/XpJ1Hbd9P6qR9m7+f83XabQHuiu6+agdxG1GTXNLYUbZV7ZD5IJGWj
+	7FZursw+W21v2iwQoJWWAyGNwQ6dKRNWzf9Bg2NKyKCevui0FWNJ2g4je59w=
+X-Google-Smtp-Source: AGHT+IExYroLLFRL63nLJP91Ex/q56BtuX/anMbWrocZ4SIP107gTNDWmGW86BCEb0/8X7dQXUOvpjQq/uNDIu3zIBXIcWXRCnW5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <alpine.DEB.2.22.394.2506271219070.862517@ubuntu-linux-20-04-desktop>
+X-Received: by 2002:a17:902:d48d:b0:234:f825:b2c3 with SMTP id
+ d9443c01a7336-23df082e380mr42032275ad.17.1752246991186; Fri, 11 Jul 2025
+ 08:16:31 -0700 (PDT)
+Date: Fri, 11 Jul 2025 08:16:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68712acf.a00a0220.26a83e.0051.GAE@google.com>
+Subject: [syzbot] [net?] BUG: sleeping function called from invalid context in
+ team_change_rx_flags (2)
+From: syzbot <syzbot+8182574047912f805d59@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hey Stefano, [+Marc]
+Hello,
 
-On Fri, Jun 27, 2025 at 12:20:37PM -0700, Stefano Stabellini wrote:
-> On Fri, 27 Jun 2025, Robin Murphy wrote:
-> > On 2025-06-27 8:19 am, Michal Simek wrote:
-> > > We are using smmu-v3 in our SOC and I would like to ask you for
-> > > recommendation how to handle our interrupt cases.
-> > > 
-> > > here is description which we are using
-> > > 
-> > > smmu: iommu@ec000000 {
-> > >      compatible = "arm,smmu-v3";
-> > >      reg = <...>;
-> > >      #iommu-cells = <1>;
-> > >      interrupt-names = "combined";
-> > >      interrupts = <0 169 4>;
-> > > };
-> > > 
-> > > but it is missing one important detail which just arise that actually there
-> > > is additional HW logic which deals with SMMU interrupts separately.
-> > > There is a secure part (global, cmd, event - gerror, cmdq-sync, eventq in
-> > > DT)
-> > > and non secure part (pri, global, cmd, event - priq, gerror, cmdq-sync,
-> > > eventq in DT).
-> > > Based on my information all these interrupts should be acked once handled to
-> > > be able to get another one.
-> > > The driver itself is able to handle them separately but we didn't create any
-> > > solution to reach custom HW to do it.
-> > > 
-> > > I looked at f935448acf46 ("iommu/arm-smmu-v3: Add workaround for Cavium
-> > > ThunderX2 erratum #126") which introduced combined IRQs but it looks like
-> > > that there is no need for additional ACK of that IRQs.
-> > 
-> > Per the architecture, SMMU interrupts are logically edge-triggered so there is
-> > nothing to clear at the SMMU end (the "interrupt status" is implicit in
-> > whatever condition caused an interrupt to be sent, e.g. the event queue
-> > becoming non-empty, SMMU_GERROR becoming different from SMMU_GERRORN, etc.)
-> > 
-> > If this is an Arm SMMU IP (MMU-600/700/S3) then the physical interrupt outputs
-> > are most definitely rising-edge. If somone's stuck some interrupt combiner in
-> > between those and the main interrupt controller, then yes, that interrupt
-> > combiner really should have its own driver.
-> > 
-> > > The HW logic itself is handling secure and non secure settings for SMMU
-> > > that's why would be the best to avoid directly mapping it in Linux.
-> > > 
-> > > One way to go is to create secondary interrupt controller driver
-> > > a) ioremap one with notice about secure part because we are using SMMU only
-> > > with NS world
-> > > b) firmware based to tunnel accesses via SMCs and allow only access to
-> > > limited amount of registers
-> > > 
-> > > The second way is likely create any hooks in the driver to be able to
-> > > provide additional SOC specific hooks.
-> > 
-> > If this thing is munging *all* the SMMU interrupt outputs as I suspect, then
-> > the big problem with that idea is that "the driver" is at least two separate
-> > drivers (SMMU and PMU), 3 if it has RAS and you ever want to entertain the
-> > idea of kernel-first handling.
-> 
-> Yeah... I tend to favor simple solutions when possible and the secondary
-> interrupt controller driver approach is looking increasingly complex.
+syzbot found the following issue on:
 
-I think that's probably the right way to go, though. Moving the
-configuration to firmware just means you now have two problems instead
-of one.
+HEAD commit:    dd831ac8221e net/sched: sch_qfq: Fix null-deref in agg_deq..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=13245bd4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b29b1a0d7330d4a8
+dashboard link: https://syzkaller.appspot.com/bug?extid=8182574047912f805d59
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-It looks like MTK may have done something similar:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-https://lore.kernel.org/r/20250616025628.25454-7-xueqi.zhang@mediatek.com
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b7b63815bf2a/disk-dd831ac8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f857222aabbb/vmlinux-dd831ac8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9071ec6016d0/bzImage-dd831ac8.xz
 
-so if changes are needed to irqchip to handle the limited capabilities
-of the extra logic (as per Marc's comments in the thread above), it
-would be good to make sure that's reusable. What I really _don't_ want
-is a half-baked, custom interrupt handling mechanism in the IOMMU code.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8182574047912f805d59@syzkaller.appspotmail.com
 
-> In addition to what Robin mentioned, I understand that this email is
-> directed to linux-arm-kernel and the LKML, so the focus is naturally to
-> solve the problem for Linux. However, let me point out that this issue
-> also affects Xen, all hypervisors, and proprietary operating systems.
-> The "big problem" is even bigger :-(  Complexity will multiply very
-> quickly.
+netlink: 8 bytes leftover after parsing attributes in process `syz.1.1814'.
+macsec0: entered promiscuous mode
+team0: entered promiscuous mode
+BUG: sleeping function called from invalid context at kernel/locking/mutex.c:579
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 12326, name: syz.1.1814
+preempt_count: 201, expected: 0
+RCU nest depth: 0, expected: 0
+3 locks held by syz.1.1814/12326:
+ #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4054
+ #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: netif_addr_lock_bh include/linux/netdevice.h:4805 [inline]
+ #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: dev_uc_add+0x67/0x120 net/core/dev_addr_lists.c:689
+Preemption disabled at:
+[<ffffffff895a7d26>] local_bh_disable include/linux/bottom_half.h:20 [inline]
+[<ffffffff895a7d26>] netif_addr_lock_bh include/linux/netdevice.h:4804 [inline]
+[<ffffffff895a7d26>] dev_uc_add+0x56/0x120 net/core/dev_addr_lists.c:689
+CPU: 0 UID: 0 PID: 12326 Comm: syz.1.1814 Not tainted 6.16.0-rc4-syzkaller-00153-gdd831ac8221e #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x495/0x610 kernel/sched/core.c:8800
+ __mutex_lock_common kernel/locking/mutex.c:579 [inline]
+ __mutex_lock+0x106/0xe80 kernel/locking/mutex.c:747
+ team_change_rx_flags+0x38/0x220 drivers/net/team/team_core.c:1781
+ dev_change_rx_flags net/core/dev.c:9241 [inline]
+ __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
+ netif_set_promiscuity+0x50/0xe0 net/core/dev.c:9305
+ dev_set_promiscuity+0x126/0x260 net/core/dev_api.c:287
+ dev_change_rx_flags net/core/dev.c:9241 [inline]
+ __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
+ __dev_set_rx_mode+0x17c/0x260 net/core/dev.c:-1
+ dev_uc_add+0xc8/0x120 net/core/dev_addr_lists.c:693
+ macsec_dev_open+0xd9/0x530 drivers/net/macsec.c:3634
+ __dev_open+0x470/0x880 net/core/dev.c:1683
+ __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9458
+ rtnl_configure_link net/core/rtnetlink.c:3577 [inline]
+ rtnl_newlink_create+0x555/0xb00 net/core/rtnetlink.c:3833
+ __rtnl_newlink net/core/rtnetlink.c:3940 [inline]
+ rtnl_newlink+0x16d6/0x1c70 net/core/rtnetlink.c:4055
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6944
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2551
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x75c/0x8e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:727
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+ __sys_sendmsg net/socket.c:2652 [inline]
+ __do_sys_sendmsg net/socket.c:2657 [inline]
+ __se_sys_sendmsg net/socket.c:2655 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2785b8e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f27869d6038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f2785db5fa0 RCX: 00007f2785b8e929
+RDX: 0000000000000800 RSI: 0000200000000280 RDI: 0000000000000009
+RBP: 00007f2785c10b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f2785db5fa0 R15: 00007ffe1c84aa28
+ </TASK>
 
-Sounds like you need to feed that back to the geniuses who designed this
-hardware :). If you want your hardware to work well with existing
-software, it's generally best to build it to spec.
+=============================
+[ BUG: Invalid wait context ]
+6.16.0-rc4-syzkaller-00153-gdd831ac8221e #0 Tainted: G        W          
+-----------------------------
+syz.1.1814/12326 is trying to lock:
+ffff88802715ce00 (team->team_lock_key#2){+.+.}-{4:4}, at: team_change_rx_flags+0x38/0x220 drivers/net/team/team_core.c:1781
+other info that might help us debug this:
+context-{5:5}
+3 locks held by syz.1.1814/12326:
+ #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4054
+ #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: netif_addr_lock_bh include/linux/netdevice.h:4805 [inline]
+ #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: dev_uc_add+0x67/0x120 net/core/dev_addr_lists.c:689
+stack backtrace:
+CPU: 0 UID: 0 PID: 12326 Comm: syz.1.1814 Tainted: G        W           6.16.0-rc4-syzkaller-00153-gdd831ac8221e #0 PREEMPT(full) 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_lock_invalid_wait_context kernel/locking/lockdep.c:4833 [inline]
+ check_wait_context kernel/locking/lockdep.c:4905 [inline]
+ __lock_acquire+0xbcb/0xd20 kernel/locking/lockdep.c:5190
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+ __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+ __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
+ team_change_rx_flags+0x38/0x220 drivers/net/team/team_core.c:1781
+ dev_change_rx_flags net/core/dev.c:9241 [inline]
+ __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
+ netif_set_promiscuity+0x50/0xe0 net/core/dev.c:9305
+ dev_set_promiscuity+0x126/0x260 net/core/dev_api.c:287
+ dev_change_rx_flags net/core/dev.c:9241 [inline]
+ __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
+ __dev_set_rx_mode+0x17c/0x260 net/core/dev.c:-1
+ dev_uc_add+0xc8/0x120 net/core/dev_addr_lists.c:693
+ macsec_dev_open+0xd9/0x530 drivers/net/macsec.c:3634
+ __dev_open+0x470/0x880 net/core/dev.c:1683
+ __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9458
+ rtnl_configure_link net/core/rtnetlink.c:3577 [inline]
+ rtnl_newlink_create+0x555/0xb00 net/core/rtnetlink.c:3833
+ __rtnl_newlink net/core/rtnetlink.c:3940 [inline]
+ rtnl_newlink+0x16d6/0x1c70 net/core/rtnetlink.c:4055
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6944
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2551
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x75c/0x8e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:727
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+ __sys_sendmsg net/socket.c:2652 [inline]
+ __do_sys_sendmsg net/socket.c:2657 [inline]
+ __se_sys_sendmsg net/socket.c:2655 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2785b8e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f27869d6038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f2785db5fa0 RCX: 00007f2785b8e929
+RDX: 0000000000000800 RSI: 0000200000000280 RDI: 0000000000000009
+RBP: 00007f2785c10b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f2785db5fa0 R15: 00007ffe1c84aa28
+ </TASK>
 
-Will
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
