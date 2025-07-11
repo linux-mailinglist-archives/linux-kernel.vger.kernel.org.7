@@ -1,126 +1,142 @@
-Return-Path: <linux-kernel+bounces-728169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33DD4B0241C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:51:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61AEB0241F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BED85A038F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:51:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E636F1CC367C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23B81DDA14;
-	Fri, 11 Jul 2025 18:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13A52F2352;
+	Fri, 11 Jul 2025 18:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IFgFuuUR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iOWiCejV"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B011A42A9D;
-	Fri, 11 Jul 2025 18:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F6B42A9D;
+	Fri, 11 Jul 2025 18:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752259856; cv=none; b=AW+JKS0+Kg40OVK/v2JHpimcEl4y5T8ZC5Qwzh5fRir+iKF+HdvplWtYUtaFMGHbwbz5O3nsAVdX873tosaWswlVzAYbPeNc5JeXVhuHR2uuANgpVasU/veGTzlfvkw+TfI6GcHmyFi3n/u0g2KqSC5JxVid5HUVMy52QWvftBE=
+	t=1752259863; cv=none; b=loZa4dvIJJiCNbOR7LgDSmI3HF1VP37n6wTmIl9YsX3XERrQPLy8M7YMUHl8klHXEcFdTjePV3fI5BBprKlsPo5R7KCxVdSz/8MK2GQjzT5AMWsOL0PCARQKeSowiXS7cPUJ9KQ7Eo0EYikZ5VUIe2zIQ3fH1FYKKEZyxw/piKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752259856; c=relaxed/simple;
-	bh=wtp/a/NrJctPTE/lPv3KvPB67di8uviIwusYH+ddavg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lifWUOI1HfxN14Bcyo7mTgzCyfy0b7mBWQDD0dmh8vdSRsq6XGBCJsPJDAemjTdL6t/Q+CGEKobQ18BSKc2IVFjy2MDpxbxLJCNYg923PjO3D7tF1szelLtwWrPij6TK+rHE2T5+sJ9UcVziwdmLcztEAwhzra6GyAONwAgHfwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IFgFuuUR; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752259855; x=1783795855;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wtp/a/NrJctPTE/lPv3KvPB67di8uviIwusYH+ddavg=;
-  b=IFgFuuURDaM8Wl5jnzXI3GuHa/zziqz2BGzhUGjRjqr/k8yjpxc10zrY
-   Gfsylxr4MJWPsHB2ZzQZsPd2cjt7TEF2oT23Z6pn7dy56wXXDV25Sn9Rd
-   0lvCZayLCxz/6Kt1j1xoUAvEQm98Sfili4y9jNn5m8M5nSLWfXsuKYllA
-   qEym9CpI01ITAC2Qy52NDuuOeobG9rr9QXyRAP2DoBxo2vQWqxbMBfLNH
-   MgO1K/mJADsDdt4k1PRIU75AMVCJMPMkicZXNUH0NkPpWcxfomA/J92i/
-   OEvfPtY/V9XmBZKB42Hmn+je4t/hDmYmOIEKTJKnSs9fnbAmpyrPRHvx7
-   A==;
-X-CSE-ConnectionGUID: AjiX14FhQ7GV+VzJPv66FQ==
-X-CSE-MsgGUID: 4hILPWRFQpysrKw6Wu9GgA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="58327717"
-X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
-   d="scan'208";a="58327717"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 11:50:54 -0700
-X-CSE-ConnectionGUID: 2WAds0giQxCPMO4Qd3EDOg==
-X-CSE-MsgGUID: mRJD4d+tSsy1HigTxa0eeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
-   d="scan'208";a="160765823"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 11:50:53 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uaIpd-0000000Ec7Z-0ifj;
-	Fri, 11 Jul 2025 21:50:49 +0300
-Date: Fri, 11 Jul 2025 21:50:48 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: temperature: maxim_thermocouple: use
- IIO_DECLARE_DMA_BUFFER_WITH_TS()
-Message-ID: <aHFdCBGWDs-IRMTC@smile.fi.intel.com>
-References: <20250711-iio-use-more-iio_declare_buffer_with_ts-3-v1-1-f6dd3363fd85@baylibre.com>
- <aHE-o5_TvGtUyHoI@smile.fi.intel.com>
- <b564a925-1d17-43fc-86fb-8db0d845de44@baylibre.com>
- <aHFO7LhWXOuglaoz@smile.fi.intel.com>
- <4d41eafc-46b1-48c7-982a-1a3566f9b423@baylibre.com>
+	s=arc-20240116; t=1752259863; c=relaxed/simple;
+	bh=W9lBABHVu1ZqV5tgAeODhf823CeWjZ+bm3tKrupqntc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=byiYVriwHM0iNOJNP/SWzNMmm0c+nOEK0kyneMdyM6jvdBmLC4B+pqSK8aqqRR1AVAgH6BGQqukSwvHkpCztDf1d4fFJF3ll760jXhr41joCLS/u9txuHfXuj1TyRepksaVBkyn1aHq4VhaXrC6ykHY4HdB5bQEBagv9MjSb5DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iOWiCejV; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae6f8d3bcd4so296612266b.1;
+        Fri, 11 Jul 2025 11:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752259859; x=1752864659; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kZQHanT8tZIknmdWw3icjNoNbayNbgeABsx8BPJoAwU=;
+        b=iOWiCejVgCscR5D2VNIXLNlTn2A9X4E+qTaLilJhQ0skPk8ErEVRw6mPIueRTdHHng
+         rkFxbC+ig9KnonW2OGrUHXmKibLWKTnuLzSZ/AhmOz3XLDllPsgKU/XQcjhP0UsKmOFr
+         /+0Nubv1Y/9f/zREy3PF+YVc0GHQGBLN/NxFHeHICvdDcBAqRv1fXCUDm2a5oynmCz7e
+         EHv3Tj3j3Owg+l8aiyMpN2Sn2L51WzGP9EdURQF0b3d1dBif/HCkLOwF5k6vUUo0EzhZ
+         3XnMPdA7r2+oqBRYNYG4l2yU2bf+4cyKgm/sUKl6Lwkrylna9CIkt9IbhMcHFPFHeXHG
+         5cOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752259859; x=1752864659;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kZQHanT8tZIknmdWw3icjNoNbayNbgeABsx8BPJoAwU=;
+        b=Eo5CqGHlCpDycbBn8hlZXQwTH/n4imbArbJP7+TkkiKse6jy0I/jH1ramD+v0vhsO5
+         8d8f2nglR4TkdZHwbFRKtlMZoOz9Ar0tqofiGaoXZ9Iu8CVu3mTcMCyBcDXexshDcEP7
+         YwWrvGhB1oxTLpT9rO2Hl++igZPRbsfkk1QQv2qMMeN0pYPcZxgZQ12KC99ZzGc66iJg
+         Se2Rjd2btVXN/3svbGfGVor+8L6UYru/KNBtDABsWLXXTCLbzonzdPH07Oj3vt6KpZcH
+         ni2O6hkRUrYQ4YLQf5vXeNbKuDHQF4c7rvrvEyE2aQR4EMMj/zsmLYJP/l3ITLXem/vW
+         E2gw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3/ISQDtZCFtQDmWEIClHc1yELjJrfZu3Xepob5NTzI554Z+m3E/cvCLRBP0GFAP87iGGSCtKJLYDx@vger.kernel.org, AJvYcCXYhr/+3mcCVM63OAWXwevy5HlCmIZHZLw+TGo5t0tmW26u52cnVI6JvH4VVrHPcL8j77f7llycHSZIuHsz4g==@vger.kernel.org, AJvYcCXbjY9Zqlm9mzulhHt/zwWmZ23ES/HX5xXebH9CxVHnVojkfRX5msROJGwvRg/sCxJ0ij8lPSssju4sI1o7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3b76yIxClA4cZmEKr7jDv0Wi2f5RmAL6WSZOozDSLMKwurlT+
+	wyz9LM2ctXvGbkFBiMhBZxnhoZViW1BpB3XrVcuXEdS7qAU3aEf6K6Jy
+X-Gm-Gg: ASbGnctHoAHSsaXBVRN3tdgE4H4YRiH7hyFrdkkXdk22zIHpiTKhLntxdNvApef/HQa
+	WxxUOMbZnlILAp4vJzsKTaMrnFV8mUYa9qFZiDP3qyJSBe1SJEEqYLAssJ5D0QeUaMpNmWeoS+r
+	4BVyoOxvuklnRFN+8pIO9r9lyOuvuElZn/tybJqdKV1ZzR9rX4KXvKYXXRB8yucm1L3d7QwZYfx
+	4fcmaKUISmfJ8cHOxlVkcGeMS1J7YDkMZjNwCAiirUWiQEGg4awrvauadX5r2CoOGqTOLqF0OLC
+	hswprGqr9el7ohClkyhnCQpbqk7AjlwLf5zVe1cf71kKdTH/Usc1LoJePRtDEoenGpWgXJ6gCrr
+	j8B50+iVfh8GuAELolbQjEhz5qzPuwRu9kAE0ySE=
+X-Google-Smtp-Source: AGHT+IH+vujR6naTWSXF9WmG4xCAWzeyYNtLeQFYRnwqOcARMgZVrqiQ65jzWDB7+1qCip8+TNucXg==
+X-Received: by 2002:a17:907:3e91:b0:ad2:2fe3:7074 with SMTP id a640c23a62f3a-ae7010feeeemr414117366b.14.1752259859329;
+        Fri, 11 Jul 2025 11:50:59 -0700 (PDT)
+Received: from [192.168.1.140] ([86.127.44.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8264636sm333703666b.86.2025.07.11.11.50.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 11:50:59 -0700 (PDT)
+Message-ID: <88d46d36-bbc2-4f61-8f9c-8fb0ece32ed9@gmail.com>
+Date: Fri, 11 Jul 2025 21:50:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d41eafc-46b1-48c7-982a-1a3566f9b423@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Add Dell Inspiron 7441 / Latitude 7455
+ (X1E-80-100)
+To: Val Packett <val@packett.cool>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250706205723.9790-2-val@packett.cool>
+Content-Language: en-US
+From: Laurentiu Tudor <tudor.laurentiu.oss@gmail.com>
+In-Reply-To: <20250706205723.9790-2-val@packett.cool>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 11, 2025 at 01:38:17PM -0500, David Lechner wrote:
-> On 7/11/25 12:50 PM, Andy Shevchenko wrote:
-> > On Fri, Jul 11, 2025 at 12:04:03PM -0500, David Lechner wrote:
-> >> On 7/11/25 11:41 AM, Andy Shevchenko wrote:
-> >>> On Fri, Jul 11, 2025 at 10:33:55AM -0500, David Lechner wrote:
+Hi Val,
 
-...
-
-> >>>> +#include <asm/byteorder.h>
-> >>>
-> >>> Hmm... I see nothing about this change in the commit message.
-> >>
-> >> It is for __be16. I kind of assumed that would be obvious, but sure,
-> >> better to be explicit about it.
-> > 
-> > Isn't it in types.h?
+On 7/6/25 23:50, Val Packett wrote:
+> The unified series for Dell Thena laptops.
 > 
-> No, only CPU-endian types are in types.h. The actual #define for
->  __be16 is in include/uapi/linux/byteorder/big_endian.h.
+> Changes since v2[1]:
+> 
+> - Fixed From/Co-developed-by on the big patch
+> - Fixed one remaining "inspirIon"
+> - Fixed codec/cpu alphabetical order in audio nodes (copy-paste..)
+> - Made the common dtsi an 'x1-' one in preparation for x1p models
+> 
+> [1]: https://lore.kernel.org/all/20250701231643.568854-1-val@packett.cool/
+> 
+> Bryan O'Donoghue (2):
+>    dt-bindings: arm: qcom: Add Dell Inspiron 14 Plus 7441
+>    arm64: dts: qcom: Add support for Dell Inspiron 7441 / Latitude 7455
+> 
+> Val Packett (3):
+>    dt-bindings: arm: qcom: Add Dell Latitude 7455
+>    firmware: qcom: scm: Allow QSEECOM on Dell Inspiron 7441 / Latitude
+>      7455
+>    drm/panel-edp: Add BOE NE14QDM panel for Dell Latitude 7455
+> 
+>   .../devicetree/bindings/arm/qcom.yaml         |    2 +
+>   arch/arm64/boot/dts/qcom/Makefile             |    4 +
+>   arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi   | 1657 +++++++++++++++++
+>   .../x1e80100-dell-inspiron-14-plus-7441.dts   |   52 +
+>   .../dts/qcom/x1e80100-dell-latitude-7455.dts  |   53 +
+>   drivers/firmware/qcom/qcom_scm.c              |    2 +
+>   drivers/gpu/drm/panel/panel-edp.c             |    1 +
+>   7 files changed, 1771 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi
+>   create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-dell-inspiron-14-plus-7441.dts
+>   create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-dell-latitude-7455.dts
+> 
 
-Huh?!
+Thanks much for the effort!
+For the series:
 
-> This is
-> included in one driver in staging, otherwise it is only included
-> in arch/*/include/uapi/asm/byteorder.h. And asm/byteorder.h is what
-> Jonathan used for similar in some of his recent IWYU patches as well,
-> so I assume that is the preferred way to do it.
-
-include/uapi/linux/types.h:37:typedef __u16 __bitwise __be16;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Reviewed-by: Laurentiu Tudor <laurentiu.tudor1@dell.com>
 
