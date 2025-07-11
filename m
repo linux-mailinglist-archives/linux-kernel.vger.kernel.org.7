@@ -1,106 +1,127 @@
-Return-Path: <linux-kernel+bounces-727769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5490B01F6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:47:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBD5B01F6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF2E1C487BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71351A422C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71E42E975D;
-	Fri, 11 Jul 2025 14:47:23 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49862E9EB0;
+	Fri, 11 Jul 2025 14:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VXYxD055"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE922E92C4;
-	Fri, 11 Jul 2025 14:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D1A2E974A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752245243; cv=none; b=BOfGTJTW4oK4w8YBx1IbVNs0MMtR6WVDOKc7lmbD+bINzP4C1uDszDTpfMDYvUIMN3bow4r6vXXn8kUhy1ZRAL5bB+gGhznTzF6cGL97nW7f2WFbKXwqirTaojKR+x0A2vcjuOk1OFh3ugr2uSIrXO67Ousj35FErUeaItgv/nY=
+	t=1752245257; cv=none; b=gQDb1K43Sxvx5Af4DDHB/oMEunQ7zWQ0tU1Ckxg0otv/xBQK+TobFvxpjCmiN6zIDVmAG4RnpNkTPOczDdmPHN9XxzUSalrZqt5Go4WvkrpCozhm2oc01Jpw4BelXWW7tp4+NVAjXSunL0W6042yqFSHB+9ue5HDWjrpTtOaytY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752245243; c=relaxed/simple;
-	bh=akB4FuBnbjLM/h59UZnhNYKInZ3+sj2sgrqMFqSCvY8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dLP6KCvrbkURpouw/FqrJyztlv7DVHvNdsy1HucMx59F2is/yUpA1vvAMkZlmfEkYF76wBLWE3GULBYoL/6n7eGGeInjXW7operAuY1PegOWzo5/uJ5DoLZ1uTG0+X0oX9jQc629J2OKC3g7dAAZ3eSMyVtQoultyleod/Z6xUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bdvfm31Byz6L5J0;
-	Fri, 11 Jul 2025 22:46:24 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9A5041402EF;
-	Fri, 11 Jul 2025 22:47:19 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Jul
- 2025 16:47:19 +0200
-Date: Fri, 11 Jul 2025 15:47:17 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-CC: Qianfeng Rong <rongqianfeng@vivo.com>, <wsa+renesas@sang-engineering.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] i2c: busses: Use min() to improve code
-Message-ID: <20250711154717.00000319@huawei.com>
-In-Reply-To: <tinhpctintv5okjfdzljg4q6tnfmmcsohywy4oqxxaqzmti3r7@3otlpzbypemz>
-References: <20250709042347.550993-1-rongqianfeng@vivo.com>
-	<tinhpctintv5okjfdzljg4q6tnfmmcsohywy4oqxxaqzmti3r7@3otlpzbypemz>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1752245257; c=relaxed/simple;
+	bh=40YLiJGtlMV75vim5GTwj8WRKEQtxPlQPilZVhGD5Vo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cGm1xUwwt4G+n8iB3hgVPTdG5Ww0GanbTsjW167jmOmMGA9b7WR7tIbzf15cBH5/NF7GRjdBlyBo33RLGckpd7600SRjxTWaZTBaz348vUN2HSQF8gXXeVnQLPbZlOtpCaivPR6X4Sk+zLuaEa3jcBCMfp9ta6Upl4+5bBaJSsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VXYxD055; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3de18fde9cfso13491515ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1752245253; x=1752850053; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Zcd/YQds+2VAgDHHik/Mx+4kMgTfoFA0V9ZGlHTyX8Y=;
+        b=VXYxD055b4Dyv5c6uiHkCkNBXbe6OtAH85SXrXCDidViW8PJw1ynj+f/Y7o76Tm+Lc
+         kB4F4DuxiECjGttJ0GmwZXYLLxXGDDG0Wds47/R08zTjMExObmsYv7hORVmJQB2Ezp5I
+         dbaJ1zZ52Do65Jd+AkO9pUI+YYnQee9xKigdfQSv+h4xxK88een8swj3rgSl4lXrWTqz
+         tB/aPE6gnhakf2lUJNg9SaJd8a/JhMOk6GG+LbK2YtqUPAF98WlsuKAdaMZ4+RhXZEDh
+         QQ0XTD3r1TAH8ebQJ7+UUPUjTE1K9TI4FocmPWsoQO8Uc+jeHU9JHwVbwl1691QvxIg6
+         ljAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752245253; x=1752850053;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zcd/YQds+2VAgDHHik/Mx+4kMgTfoFA0V9ZGlHTyX8Y=;
+        b=cTrbCZxGnl3JYIktABDQ2lkUw/iYM8Ky5rGoUn0/lN8ul5ruE8xDJZ06Ba1BgSlFCc
+         k3Kabu461AATfXxzf7YJv7+VJkbBzqiBdaiRtqgKE4iTQonlKY63zDFmQI6tcAthTBq0
+         v44oRunrDNzw0ETtd3yvM+PDe0sfminDO79pN62zNG2zuQYds/pb16GW+cwedFS3M1pU
+         UsDiCEpEPEWlSUPDhzh8pptmm16bq2uRdwjQ36VFHlEu+fljQmtRZHHK7eYC4tbL4z1/
+         24zj7KWjtn8PQuWIKDOkH2U1W1XRH8JdMCnX4695TDNbhI7ZfofRQ6DZxKtGFm+AeRhF
+         GjHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEUqV+TgvaJ2uvyRDQZHs7bm+SbTC/lPzSJWHBJ/deXGz3SqcS0h8QXejOiKU1ukxa6izVMAUlZJAQP2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysPGcD6646bzUCgAfMx2gm1GzWvMlRPhZAIETBn6b40u6jGGgt
+	HHcXw7mecpH4mj/AiCPp2BZ5D7t4yyvJAECrO73oo6fkZorVrjj/uIehF71V9BRZAoA=
+X-Gm-Gg: ASbGncuUydmWnt4C6ggSRH1KmTino5fJT6Ppk0smsbL6XBKtosriZPSovvumPAKuRCx
+	oox0JFzItGr9ZPpWf8bwaNYofsy8eiSDR7ERvkcCofltv6d0AE2GcFVfVBYQiDfAY9qKznvUrIi
+	Jt4aIhTtpbxO4pNtyxlZ8uMoAEMcWYGSXIL9if+O5VKKh0HdzU41BLPUfbVXlpKzpGe5rpnMJEl
+	Ip5k4HPcOLtskzmoGvqU3g7Zwc5Nkv9FsZ0c1HWqi2ATYm0scnVs7YhraBnHf9aNcA4/NA0bhqG
+	1Ey2aXXomI/zU+IsNoWl4SgVemyEDqvykLY4VM24UNCZSo3yYFw88iYTt/7mNsuqWwWgePFBeOr
+	fcpbyQ9oia9/WGIs/p44=
+X-Google-Smtp-Source: AGHT+IFHa21P15JH0dsJFMLE6O6OM/qUMychTO2XSL+yzRmWrNM0AfUhxkqN0w44VxXhBk955nhVuw==
+X-Received: by 2002:a92:cda8:0:b0:3df:2cd5:80c1 with SMTP id e9e14a558f8ab-3e2541dc704mr32741355ab.4.1752245252959;
+        Fri, 11 Jul 2025 07:47:32 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e24613447asm12376765ab.17.2025.07.11.07.47.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 07:47:32 -0700 (PDT)
+Message-ID: <e3450519-dbeb-4741-9772-7e33462155f9@kernel.dk>
+Date: Fri, 11 Jul 2025 08:47:31 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] [v2] block: fix FS_IOC_GETLBMD_CAP parsing in
+ blkdev_common_ioctl()
+To: Arnd Bergmann <arnd@kernel.org>, Anuj Gupta <anuj20.g@samsung.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Kanchan Joshi <joshi.k@samsung.com>, Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>,
+ Anders Roxell <anders.roxell@linaro.org>, Keith Busch <kbusch@kernel.org>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Pavel Begunkov <asml.silence@gmail.com>,
+ Alexey Dobriyan <adobriyan@gmail.com>, "Darrick J. Wong"
+ <djwong@kernel.org>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250711084708.2714436-1-arnd@kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <20250711084708.2714436-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, 10 Jul 2025 22:42:26 +0200
-Andi Shyti <andi.shyti@kernel.org> wrote:
+On 7/11/25 2:46 AM, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Anders and Naresh found that the addition of the FS_IOC_GETLBMD_CAP
+> handling in the blockdev ioctl handler breaks all ioctls with
+> _IOC_NR==2, as the new command is not added to the switch but only
+> a few of the command bits are check.
+> 
+> Move the check into the blk_get_meta_cap() function itself and make
+> it return -ENOIOCTLCMD for any unsupported command code, including
+> those with a smaller size that previously returned -EINVAL.
+> 
+> For consistency this also drops the check for NULL 'arg' that
+> is really useless, as any invalid pointer should return -EFAULT.
+> 
+> Fixes: 9eb22f7fedfc ("fs: add ioctl to query metadata and protection info capabilities")
 
-> Hi Qianfeng,
-> 
-> On Wed, Jul 09, 2025 at 12:23:46PM +0800, Qianfeng Rong wrote:
-> > Use min() to reduce the code and improve its readability.
-> > 
-> > The type of the max parameter in the st_i2c_rd_fill_tx_fifo()
-> > was changed from int to u32, because the max parameter passed
-> > in is always greater than 0.
-> > 
-> > Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> > Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
-> > Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>  
-> 
-> The 'Suggested-by' tag implies that the patch was suggested by
-> Jonathan, which is not the case here. Jonathan reviewed the patch
-> and proposed improvements, but the patch itself comes from you.
-> 
-> For this reason, I will remove the 'Suggested-by' tag. If
-> Jonathan wants to add his Acked-by or Reviewed-by, I will gladly
-> include it.
+Since this isn't from my tree:
 
-Trivial enough that I don't care ;)  Was a drive by review at
-best.
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-Thanks for asking though.
-
-J
-
-> 
-> Thanks, Jonathan, for the helpful reviews, and thanks to Qianfeng
-> for promptly following up on the feedback.
-> 
-> Merged to i2c/i2c-host.
-> 
-> Thanks,
-> Andi
-> 
-
+-- 
+Jens Axboe
 
