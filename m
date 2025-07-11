@@ -1,154 +1,336 @@
-Return-Path: <linux-kernel+bounces-726986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF557B013A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01CEFB013BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A46001C26EA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA1DD1C270C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D536E1DE881;
-	Fri, 11 Jul 2025 06:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0692A1EB5D0;
+	Fri, 11 Jul 2025 06:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="ZwL+IM1u"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D3517A30F;
-	Fri, 11 Jul 2025 06:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DAdqe2BZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CCE1DF98F;
+	Fri, 11 Jul 2025 06:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752215754; cv=none; b=AuS6tAfpyxGm3ZdZE2kU0QSvOnKdk9kkVxpJVyad5ZJ7Joua6eD93xaWDcfL6TsK+L42rZ8V0YRPROn52mfqgH6oJZQTIk9nePt6aAsgyPVvyqaGwZ2NnHECtvopdNFSE2kJHraRfRXYxUqDcEtjYFE7YQous7Rr+ApwtTbz1VU=
+	t=1752215815; cv=none; b=Mbra/sAFB4mLsFOZ68Y1k+tgNA84OsSFPZjaaEtnsMWvmWuHF661NDPxFFS0+aEw9GW8VLt3TSXOfBrItEeruMCNghWW9ERZNOjq6010UfWnyQ0ihGSH9eQfXbNZd0TGUohXht6YnH8/vDYu+kWDiNgxQaNH8dWo300VlRngVBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752215754; c=relaxed/simple;
-	bh=TkW4ZBMkg0KvqNRlbg7FOOUQC/bFexVycCX10tuWNeo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=a+19DQ9gmCF/ha8QMJlN9iwBtykQGeFchW0hHXsm1khB7B94piR9CiH/GnmE28DrvTNoZXGA7xChXQ1zz+6BYOrITWAmRgYo7WB5e9abrnfxdcITUgW4VnsYYsSdwdckWZnGQiaXDX72tILSij8CiRf5xgzLuZs7rhBEGPLy/ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=ZwL+IM1u reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=VYEl5tVsaxzFEpvtu9ha3wi3993OHaFTkFx4uRQ0A9w=; b=Z
-	wL+IM1uamcFeYFM2ZU1m5THxZatEkSWOJnYXHd5nGqff9So8bRWafZ8cq5ws1ZlX
-	MDd5Ru3bHR/Ni+1QAX7N1y6pCKMI3iKCjVbC3ncNqiQsLDDbquoLQkpWaX/mOocz
-	R0KxcAPHOXpZykT5j3PmYtf9/VkzFkts9UfJb9gYfg=
-Received: from chenyuan_fl$163.com ( [116.128.244.171] ) by
- ajax-webmail-wmsvr-40-134 (Coremail) ; Fri, 11 Jul 2025 14:35:18 +0800
- (CST)
-Date: Fri, 11 Jul 2025 14:35:18 +0800 (CST)
-From: chenyuan  <chenyuan_fl@163.com>
-To: "Quentin Monnet" <qmo@kernel.org>
-Cc: ast@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Yuan Chen" <chenyuan@kylinos.cn>, "Jiri Olsa" <jolsa@kernel.org>
-Subject: Re:Re: [PATCH v3] bpftool: Add CET-aware symbol matching for x86_64
- architectures
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <a3e42c2d-0a43-4fe7-8be5-96a3dff723d2@kernel.org>
-References: <20250626061158.29702-1-chenyuan_fl@163.com>
- <20250626074930.81813-1-chenyuan_fl@163.com>
- <a3e42c2d-0a43-4fe7-8be5-96a3dff723d2@kernel.org>
-X-NTES-SC: AL_Qu2eAP6auk8q7iaeZOkfmUoRhOY5UcK1s/kl1YBUOpp+jALo3S0qe2VSIkXa8Ma0BQKImgmGaiNc4/5TRbhaerMqrjSBav+ka9M07GD70Q17aQ==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1752215815; c=relaxed/simple;
+	bh=e/RGpwywts7n4bk8tdgyYlU7ZM1r77d5Diz9ubfSqIg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OXpESF0jCvvxVBkpUB8+y26/mtsly/zz+yVD5kmG/v4BTjGphL6Icu3/K1didABvLv1p/z7LqhmZUgbJg1WkTUM0cb1QL6ncrvT/ap3PUs+15W76anFcaMDe+OKlSrXybuxGRqDHZSK8vzrpUWt/lsgvbWuwMgl2mPRTWIHtYU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DAdqe2BZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6648C4CEED;
+	Fri, 11 Jul 2025 06:36:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752215814;
+	bh=e/RGpwywts7n4bk8tdgyYlU7ZM1r77d5Diz9ubfSqIg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=DAdqe2BZ4EBr4ozmTa94RC88xTDiLsYo5/XbDtzv7rPY7ohErDV035I7B847GXQNj
+	 d+SPj3HV3u31+hhEjTWHUxZkDb6lpZvKVybHPuYMPrwgtEydjmXwP5RAMXiwFHUDTL
+	 C1EmdDi1OryNH+xiJcVq5dqYMTQCJoTXXYFTcI2L7dolwmn5aIPptTUdsIwLu4CmPj
+	 mUHERnKyy/A6lnFrcK6C9hbYIyyC/Gp+m5wtNJd0l3jnW6rdKYLjeEROqUkyGq1r/c
+	 6FgVpeOynuhE10ddZ2NB2ma0jtK/dDqVMV5GfprU9JnbUEli4pihVy52eQMIR4wQXy
+	 Q36gA39RQr+Bw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Subject: [PATCH v17 0/7] rust: extend `module!` macro with integer
+ parameter support
+Date: Fri, 11 Jul 2025 08:35:42 +0200
+Message-Id: <20250711-module-params-v3-v17-0-cf9b10d4923d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <3ca286c7.5fe6.197f8320b0a.Coremail.chenyuan_fl@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:higvCgD3p_OnsHBoZJ0BAA--.12179W
-X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/xtbBiB6HvWhwqZ0vHwADsz
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL6wcGgC/23U24rbMBAA0F8Jfq6DZnQPpex/lD7omjWN7V07M
+ S3L/ntHCUtcJOMXCXQkzUUf3ZqWIa3d6fDRLWkb1mGeaAD626ELr246p36INNEhQwEI0I9zvF1
+ S/+YWN679xnuXdJLBROOl62jZ25Ly8Odu/vxF49dhvc7L3/sWGy+zXxivMfpZL4x0DKQLGPLL7
+ 7RM6XKcl3NXtE18CZIBsw1BkBCQGR+yTwC1IJ8CMtEQJAk+y0SKAIWyEtROaIVkUySg8Gh1jEH
+ wWAl6L5iGoEmQCVx2PrgAvhLMTkDdEEyJQ6LPyGi50JVgnwLH1i1suYXxlsmMiYs6DsCeBKWjQ
+ QAr+YyOUho5BaJhwN7AlgFkKGaV0dKh16Y2cG+oloElGkxEw4IhBGqDPw0FzXOU2vQBwYYIjuf
+ GOXbFqdt3KdUpPYTAkQOltzbk3mglFkp9BsgClXVSe1sbam+0mgRKhYpsUfkQgpfsP+Pz0cZLe
+ r/Ri3B99HLn3Zr6MI/jcD0dNnUkYwmytPyY1tXdn4rT4ftjV2BMMSbxCGCl7KH38/ttOuY0nV/
+ OoxsuR5J+0Faf/wDsj23zhAQAAA==
+X-Change-ID: 20241211-module-params-v3-ae7e5c8d8b5a
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Alice Ryhl <aliceryhl@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+ Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>, 
+ Benno Lossin <lossin@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>
+Cc: Trevor Gross <tmgross@umich.edu>, 
+ Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
+ Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
+ Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ linux-modules@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11432;
+ i=a.hindborg@kernel.org; h=from:subject:message-id;
+ bh=e/RGpwywts7n4bk8tdgyYlU7ZM1r77d5Diz9ubfSqIg=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBocLDRu80MRSB0rR55dcn4NEbMFNb6MjAW5BbDQ
+ 56SeD2xq5eJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaHCw0QAKCRDhuBo+eShj
+ d5jND/9yQGOOx3vV5MJQ1aGHEb5zD5601dAMVboOz00XKK8CD8ZeudHRFmiwWjmkCJKMa4Ms4Hv
+ Kmlys3xYtitfT9Jf5CbS1wGqRJhfkr7do4sQgDnwMAeZXkDjOXXfs4U4R2+ifZWAC1JpPRPodL+
+ zLChtkO9zt2CUxF0bP4/fbBgaLUcvr54PlvgTzeZ7HbAkc9sQGhhIEt6CHWOkhxVykMygHKQZBH
+ fFEO6Q+MdLgzEE3uNSjVyelcp6leYZ7LgVl+qfrv+L4MMqicA3PZIcxJ8Bjagf22GERWhDfEF37
+ N7JllNSWbGcHM4BiT9cnjkPweoz7yUTJT996rc44OY9eMa9OvF5z1MIv4ENLHpsH/WK0ivLFSji
+ xHSHEEsDDb4UVzoJK4gtI96faTa6OO0LZDayNob79i3+siWuzvHwxnr8rhrMDFpBNmoqTIespb9
+ tTuJHYZnUGbMHDinXfv2K2VPciZHJd30u/e+wc7AI2LMmriTnGU+RofrrJTj36Z9fD4clICIaUl
+ CsdtvDgqDN/+phNqOUjk5nZ6gdR/HgKDjnsFImd5XbTBVz4zjHJQMGOiyo6ZxgG5pSFXdp48wEU
+ kkbOkdO1bjPwDr0aIBI/eL9oELUyFsskVpm6G06Bh7KfN5VN5ue/nGfCp5B8VNcsOjgj6eW8wac
+ NLpj9mjM5+3tBEQ==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-VGhhbmsgeW91IGZvciByZXZpZXdpbmcgdGhlIHBhdGNoIGFuZCBwcm92aWRpbmcgdmFsdWFibGUg
-ZmVlZGJhY2shwqAgIEkgYXBwcmVjaWF0ZSB5b3VyIGluc2lnaHRzIG9uIENFVMKgCmNvbXBhdGli
-aWxpdHkgYW5kIGNvZGUgc3RydWN0dXJlLiBIZXJlIGFyZSBteSByZXNwb25zZXMgdG8geW91ciBw
-b2ludHM6CjEuIE1haW50YWluZXIgTGlzdAoKSSBjb25maXJtIHRoYXQgaW4gZnV0dXJlIHN1Ym1p
-c3Npb25zLCBJIHdpbGwgcnVuOgouL3NjcmlwdHMvZ2V0X21haW50YWluZXIucGwgLWYgdG9vbHMv
-YnBmL2JwZnRvb2wvbGluay5jCnRvIGVuc3VyZSBhbGwgcmVsZXZhbnQgbWFpbnRhaW5lcnMgYXJl
-IGluY2x1ZGVkIGluIHRoZSByZWNpcGllbnQgbGlzdCAuIFRoaXMgd2FzIGFuIG92ZXJzaWdodCBp
-biB0aGUgaW5pdGlhbCBzdWJtaXNzaW9uLgoKMi4gRmFsc2UgUG9zaXRpdmVzIG9uIE9sZGVyIENQ
-VXMKWW91ciBjb25jZXJuIGFib3V0IG9sZGVyIENQVXMgaXMgdmFsaWQuIFRvIGFkZHJlc3MgdGhp
-czoKQ3VycmVudCBBcHByb2FjaDogVGhlIHBhdGNoIHJlbGllcyBvbiBhZGRyZXNzIG9mZnNldCBt
-YXRjaGluZyAoc3ltYm9sX2FkZHIgPT0gdGFyZ2V0X2FkZHIgLSA0KSwgd2hpY2ggaXMgc2FmZSBi
-ZWNhdXNlOgpOb24tQ0VUIGZ1bmN0aW9ucyB3b27igJl0IGhhdmUgYSB2YWxpZCBzeW1ib2wgYXQg
-dGFyZ2V0X2FkZHIgLSA0IC4KU3ltYm9sIHRhYmxlcyBhcmUgZGV0ZXJtaW5pc3RpYywgc28gYWNj
-aWRlbnRhbCBtYXRjaGVzIGF0IGFkZHIgLSA0IGFyZSBzdGF0aXN0aWNhbGx5IG5lZ2xpZ2libGUu
-Ckluc3RydWN0aW9uIFZlcmlmaWNhdGlvbjogV2hpbGUgY2hlY2tpbmcgZm9yIGVuZGJyMzIvZW5k
-YnI2NCB3b3VsZCBiZSBpZGVhbCwgdXNlci1zcGFjZSBjYW5ub3QgZGlyZWN0bHkgaW5zcGVjdCBr
-ZXJuZWwgaW5zdHJ1Y3Rpb24gbWVtb3J5IGZvciBzZWN1cml0eSBhbmQgcG9ydGFiaWxpdHkgcmVh
-c29ucy7CoApDb3VsZCB5b3UgYWR2aXNlIGlmIHRoZXJlIGFyZSBhbnkgc2FmZSBtZXRob2RzIHRv
-IHZlcmlmeSB0aGUgcHJlc2VuY2Ugb2YgZW5kYnIzMi9lbmRicjY0IGluc3RydWN0aW9ucyBhdCBr
-ZXJuZWwgc3ltYm9sIGFkZHJlc3NlcyBmcm9tIHVzZXIgc3BhY2U/CgoKCgoKQXQgMjAyNS0wNi0y
-NyAxOTowODo0OCwgIlF1ZW50aW4gTW9ubmV0IiA8cW1vQGtlcm5lbC5vcmc+IHdyb3RlOgo+VGhh
-bmtzISBOZXh0IHRpbWUsIHBsZWFzZSB0cnkgdG8gYWRkIGFsbCByZWxldmFudCBtYWludGFpbmVy
-cyBhcwo+cmVjaXBpZW50cyBvciBpbiBjb3B5IG9mIHlvdXIgbWVzc2FnZSB3aGVuIHN1Ym1pdHRp
-bmcgcGF0Y2hlcy4gWW91IGNhbgo+Z2V0IHRoZSBsaXN0IHdpdGggZ2V0X21haW50YWluZXIucGws
-IHRyeSBydW5uaW5nIGl0IG9uIHlvdXIgcGF0Y2ggb3Igd2l0aAo+Ii4vc2NyaXB0cy9nZXRfbWFp
-bnRhaW5lci5wbCAtZiB0b29scy9icGYvYnBmdG9vbC9saW5rLmMiCj4KPjIwMjUtMDYtMjYgMTU6
-NDkgVVRDKzA4MDAgfiBZdWFuIENoZW4gPGNoZW55dWFuX2ZsQDE2My5jb20+Cj4+IEZyb206IFl1
-YW4gQ2hlbiA8Y2hlbnl1YW5Aa3lsaW5vcy5jbj4KPj4gCj4+IEFkanVzdCBzeW1ib2wgbWF0Y2hp
-bmcgbG9naWMgdG8gYWNjb3VudCBmb3IgQ29udHJvbC1mbG93IEVuZm9yY2VtZW50Cj4+IFRlY2hu
-b2xvZ3kgKENFVCkgb24geDg2XzY0IHN5c3RlbXMuIENFVCBwcmVmaXhlcyBmdW5jdGlvbnMgd2l0
-aCBhIDQtYnl0ZQo+PiAnZW5kYnInIGluc3RydWN0aW9uLCBzaGlmdGluZyB0aGUgYWN0dWFsIGVu
-dHJ5IHBvaW50IHRvIHN5bWJvbCArIDQuCj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBZdWFuIENoZW4g
-PGNoZW55dWFuQGt5bGlub3MuY24+Cj4+IC0tLQo+PiAgdG9vbHMvYnBmL2JwZnRvb2wvbGluay5j
-IHwgMzAgKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tCj4+ICAxIGZpbGUgY2hhbmdlZCwg
-MjggaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPj4gCj4+IGRpZmYgLS1naXQgYS90b29s
-cy9icGYvYnBmdG9vbC9saW5rLmMgYi90b29scy9icGYvYnBmdG9vbC9saW5rLmMKPj4gaW5kZXgg
-MDM1MTNmZmZmYjc5Li5kZmQxOTJiNGM1YWQgMTAwNjQ0Cj4+IC0tLSBhL3Rvb2xzL2JwZi9icGZ0
-b29sL2xpbmsuYwo+PiArKysgYi90b29scy9icGYvYnBmdG9vbC9saW5rLmMKPj4gQEAgLTMwNyw4
-ICszMDcsMjEgQEAgc2hvd19rcHJvYmVfbXVsdGlfanNvbihzdHJ1Y3QgYnBmX2xpbmtfaW5mbyAq
-aW5mbywganNvbl93cml0ZXJfdCAqd3RyKQo+PiAgCQlnb3RvIGVycm9yOwo+PiAgCj4+ICAJZm9y
-IChpID0gMDsgaSA8IGRkLnN5bV9jb3VudDsgaSsrKSB7Cj4+IC0JCWlmIChkZC5zeW1fbWFwcGlu
-Z1tpXS5hZGRyZXNzICE9IGRhdGFbal0uYWRkcikKPj4gKwkJaWYgKGRkLnN5bV9tYXBwaW5nW2ld
-LmFkZHJlc3MgIT0gZGF0YVtqXS5hZGRyKSB7Cj4+ICsjaWYgZGVmaW5lZChfX3g4Nl82NF9fKSB8
-fCBkZWZpbmVkKF9fYW1kNjRfXykKPgo+Cj5JJ20gbm90IGZhbWlsaWFyIHdpdGggQ0VULCBidXQg
-ZnJvbSB3aGF0IEkgcmVhZCwgaXQncyBiZWVuIGFyb3VuZCBzaW5jZQo+VGlnZXIgTGFrZSBwcm9j
-ZXNzb3JzICgyMDIwKS4gRG8gd2UgaGF2ZSBhIHJpc2sgb2YgZmFsc2UgcG9zaXRpdmUgd2l0aAo+
-b2xkZXIgQ1BVcz8gTWF5YmUgY2hlY2sgdGhhdCB0aGUgaW5zdHJ1Y3Rpb24gYXQKPmRkLnN5bV9t
-YXBwaW5nW2ldLmFkZHJlc3MgaXMgZW5kYnIzMiBvciBlbmRicjM0Pwo+Cj4KPj4gKwkJCS8qCj4+
-ICsJCQkgKiBPbiB4ODZfNjQgYXJjaGl0ZWN0dXJlcyB3aXRoIENFVCAoQ29udHJvbC1mbG93IEVu
-Zm9yY2VtZW50IFRlY2hub2xvZ3kpLAo+PiArCQkJICogZnVuY3Rpb24gZW50cnkgcG9pbnRzIGhh
-dmUgYSA0LWJ5dGUgJ2VuZGJyJyBpbnN0cnVjdGlvbiBwcmVmaXguCj4+ICsJCQkgKiBUaGlzIGNh
-dXNlcyB0aGUgYWN0dWFsIGZ1bmN0aW9uIGFkZHJlc3MgPSBzeW1ib2wgYWRkcmVzcyArIDQuCj4+
-ICsJCQkgKiBIZXJlIHdlIGNoZWNrIGlmIHRoaXMgc3ltYm9sIG1hdGNoZXMgdGhlIHRhcmdldCBh
-ZGRyZXNzIG1pbnVzIDQsCj4+ICsJCQkgKiBpbmRpY2F0aW5nIHdlJ3ZlIGZvdW5kIGEgQ0VULWVu
-YWJsZWQgZnVuY3Rpb24gZW50cnkgcG9pbnQuCj4+ICsJCQkgKi8KPj4gKwkJCWlmIChkZC5zeW1f
-bWFwcGluZ1tpXS5hZGRyZXNzID09IGRhdGFbal0uYWRkciAtIDQpCj4+ICsJCQkJZ290byBmb3Vu
-ZDsKPj4gKyNlbmRpZgo+PiAgCQkJY29udGludWU7Cj4+ICsJCX0KPj4gK2ZvdW5kOgo+PiAgCQlq
-c29ud19zdGFydF9vYmplY3QoanNvbl93dHIpOwo+PiAgCQlqc29ud191aW50X2ZpZWxkKGpzb25f
-d3RyLCAiYWRkciIsIGRkLnN5bV9tYXBwaW5nW2ldLmFkZHJlc3MpOwo+Cj4KPkkgc3VwcG9zZSB3
-ZSBzdGlsbCB3YW50IHRvIHByaW50IGRkLnN5bV9tYXBwaW5nW2ldLmFkZHJlc3MgKGFuZCBub3QK
-PmRhdGFbal0uYWRkcikgd2hlbiB3ZSBmb3VuZCBpdCB3aXRoIHRoZSBDRVQgb2Zmc2V0IGhlcmUg
-LSBqdXN0Cj5kb3VibGUtY2hlY2tpbmcuCj4KPgo+PiAgCQlqc29ud19zdHJpbmdfZmllbGQoanNv
-bl93dHIsICJmdW5jIiwgZGQuc3ltX21hcHBpbmdbaV0ubmFtZSk7Cj4+IEBAIC03NDQsOCArNzU3
-LDIxIEBAIHN0YXRpYyB2b2lkIHNob3dfa3Byb2JlX211bHRpX3BsYWluKHN0cnVjdCBicGZfbGlu
-a19pbmZvICppbmZvKQo+PiAgCj4+ICAJcHJpbnRmKCJcblx0JS0xNnMgJS0xNnMgJXMiLCAiYWRk
-ciIsICJjb29raWUiLCAiZnVuYyBbbW9kdWxlXSIpOwo+PiAgCWZvciAoaSA9IDA7IGkgPCBkZC5z
-eW1fY291bnQ7IGkrKykgewo+PiAtCQlpZiAoZGQuc3ltX21hcHBpbmdbaV0uYWRkcmVzcyAhPSBk
-YXRhW2pdLmFkZHIpCj4+ICsJCWlmIChkZC5zeW1fbWFwcGluZ1tpXS5hZGRyZXNzICE9IGRhdGFb
-al0uYWRkcikgewo+PiArI2lmIGRlZmluZWQoX194ODZfNjRfXykgfHwgZGVmaW5lZChfX2FtZDY0
-X18pCj4+ICsJCQkvKgo+PiArCQkJICogT24geDg2XzY0IGFyY2hpdGVjdHVyZXMgd2l0aCBDRVQg
-KENvbnRyb2wtZmxvdyBFbmZvcmNlbWVudCBUZWNobm9sb2d5KSwKPj4gKwkJCSAqIGZ1bmN0aW9u
-IGVudHJ5IHBvaW50cyBoYXZlIGEgNC1ieXRlICdlbmRicicgaW5zdHJ1Y3Rpb24gcHJlZml4Lgo+
-PiArCQkJICogVGhpcyBjYXVzZXMgdGhlIGFjdHVhbCBmdW5jdGlvbiBhZGRyZXNzID0gc3ltYm9s
-IGFkZHJlc3MgKyA0Lgo+PiArCQkJICogSGVyZSB3ZSBjaGVjayBpZiB0aGlzIHN5bWJvbCBtYXRj
-aGVzIHRoZSB0YXJnZXQgYWRkcmVzcyBtaW51cyA0LAo+PiArCQkJICogaW5kaWNhdGluZyB3ZSd2
-ZSBmb3VuZCBhIENFVC1lbmFibGVkIGZ1bmN0aW9uIGVudHJ5IHBvaW50Lgo+PiArCQkJICovCj4+
-ICsJCQlpZiAoZGQuc3ltX21hcHBpbmdbaV0uYWRkcmVzcyA9PSBkYXRhW2pdLmFkZHIgLSA0KQo+
-PiArCQkJCWdvdG8gZm91bmQ7Cj4+ICsjZW5kaWYKPgo+Cj5HaXZlbiB0aGF0IHdlIGhhdmUgdHdp
-Y2UgdGhlIHNhbWUgY2hlY2ssIEknZCBtb3ZlIHRoaXMgdG8gYSBkZWRpY2F0ZWQKPndyYXBwZXIg
-ZnVuY3Rpb24gdGhhdCB3ZSBjb3VsZCBjYWxsIGZyb20gYm90aCBzaG93X2twcm9iZV9tdWx0aV9q
-c29uKCkKPmFuZCBzaG93X2twcm9iZV9tdWx0aV9wbGFpbigpLgo+Cj4KPj4gIAkJCWNvbnRpbnVl
-Owo+PiArCQl9Cj4+ICtmb3VuZDoKPj4gIAkJcHJpbnRmKCJcblx0JTAxNmx4ICUtMTZsbHggJXMi
-LAo+PiAgCQkgICAgICAgZGQuc3ltX21hcHBpbmdbaV0uYWRkcmVzcywgZGF0YVtqXS5jb29raWUs
-IGRkLnN5bV9tYXBwaW5nW2ldLm5hbWUpOwo+PiAgCQlpZiAoZGQuc3ltX21hcHBpbmdbaV0ubW9k
-dWxlWzBdICE9ICdcMCcpCgo=
+Extend the `module!` macro with support module parameters. Also add some
+string to integer parsing functions.
+
+Based on the original module parameter support by Miguel [1],
+later extended and generalized by Adam for more types [2][3].
+Originally tracked at [4].
+
+Link: https://github.com/Rust-for-Linux/linux/pull/7 [1]
+Link: https://github.com/Rust-for-Linux/linux/pull/82 [2]
+Link: https://github.com/Rust-for-Linux/linux/pull/87 [3]
+Link: https://github.com/Rust-for-Linux/linux/issues/11 [4]
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+---
+Changes in v17:
+- Fix drop impl of `SetOnce` so that it works with `UnsafeCell<MaybeUninit<_>>`.
+- Slightly reword safety framework in `SetOnce`.
+- Rebase on atomic series v6.
+- Link to v16: https://lore.kernel.org/r/20250709-module-params-v3-v16-0-4f926bcccb50@kernel.org
+
+Changes in v16:
+- Normalize imports in `set_once.rs`.
+- Use `UnsafeCell<MaybeUninit<T>>` rather than `Opaque<T>` for `SetOnce`.
+- Use regular load in drop of `SetOnce`.
+- Update attribution paragraph in cover letter with details from Miguel.
+- Remove stray TODO in `set_once.rs`
+- Link to v15: https://lore.kernel.org/r/20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org
+
+Changes in v15:
+- Rebase on v6.16-rc5.
+- Dedent code in module macro for better formatting.
+- Rename `OnceLock` to `SetOnce`.
+- Use "being initialized" rather than "being mutably accessed" when
+  describing initialization state of `OnceLock`.
+- Use `Relaxed` ordering when transitioning to exclusive access in
+  `OnceLock`.
+- Add drop implementation for `OnceLock`.
+- Re-export `OnceLock` from `kernel::sync` module.
+- Improve indentation of in macro code. Prefix `cfg` to `::core::cfg` in
+  macro code.
+- Use `core::ptr::from_ref` rather than `as` casts.
+- Hide `KernelParam` instances behind `const _: ()` blocks.
+- Rename `ModuleParamAccess::get` to `ModuleParamAccess::value`.
+- Rename `RacyKernelParam` to `KernelParam`.
+- Remove `ModuleParam::Value`.
+- Move `copy` implementation of `OnceLock`.
+- Update safety comments and invariants of `OnceLock`.
+- Link to v14: https://lore.kernel.org/r/20250702-module-params-v3-v14-0-5b1cc32311af@kernel.org
+
+Note: This series now depends on the atomics series [1].
+
+[1] https://lore.kernel.org/all/20250618164934.19817-1-boqun.feng@gmail.com
+
+Changes in v14:
+- Remove unnecessary `crate::` prefix from `module_param::set_param`.
+- Make `FromStrRadix` safe again by moving unsafe blocks to macro implementation (thanks Benno).
+- Use `core::ptr::write` in `set_param` and drop safety requirement regarding initialization.
+- Add a TODO to use `SyncUnsafeCell` for `ModuleParamAccess` when available.
+- Add a NOTE regarding `Copy` bound on `ModuleParam`.
+- Remove `'static` lifetime qualifier from `ModuleParam::try_from_param_arg` argument.
+- Fix a typo in the safety requirements for `set_param`.
+- Remove unused `#[macro_export]` attribute.
+- Remove obsolete documentation for `ModuleParam::try_from_param_arg`.
+- Make `RacyKernelParam` tuple field private.
+- Introduce `OnceLock` and use that to synchronize population of parameter values.
+- Link to v13: https://lore.kernel.org/r/20250612-module-params-v3-v13-0-bc219cd1a3f8@kernel.org
+
+Changes in v13:
+- remove absolute path for `ffi` types.
+- Split patch 2 into 4 separate patches.
+- Overhaul safety framework for `set_param`.
+- Remove generated docs for `kernel_param_ops`.
+- Move `parse_int` to separate file.
+- Rebase on v6.16-rc1
+- Link to v12: https://lore.kernel.org/r/20250506-module-params-v3-v12-0-c04d80c8a2b1@kernel.org
+
+Changes in v12:
+- Assign through pointer rather than using `core::ptr::replace`.
+- Prevent a potential use-after-free during module teardown.
+- Link to v11: https://lore.kernel.org/r/20250502-module-params-v3-v11-0-6096875a2b78@kernel.org
+
+Changes in v11:
+- Apply a few nits from Miguel.
+- Link to v10: https://lore.kernel.org/r/20250501-module-params-v3-v10-0-4da485d343d5@kernel.org
+
+Changes in v10:
+- Apply fixups from Miguel:
+  - Add integer type suffixes to `assert!` in tests.
+  - Fix links to docs.kernel.org.
+  - Applyy markdown and intra-doc links where possible.
+  - Change to `///` for `mod` docs.
+  - Slightly reword a comment.
+  - Pluralize "Examples" section name.
+  - Hide `use`s in example.
+  - Removed `#[expect]` for the `rusttest` target.
+- Link to v9: https://lore.kernel.org/r/20250321-module-params-v3-v9-0-28b905f2e345@kernel.org
+
+Changes in v9:
+- Remove UB when parsing the minimum integer values.
+- Make `FromStr` trait unsafe, since wrong implementations can cause UB.
+- Drop patches that were applied to rust-next.
+- Link to v8: https://lore.kernel.org/r/20250227-module-params-v3-v8-0-ceeee85d9347@kernel.org
+
+Changes in v8:
+- Change print statement in sample to better communicate parameter name.
+- Use imperative mode in commit messages.
+- Remove prefix path from `EINVAL`.
+- Change `try_from_param_arg` to accept `&BStr` rather than `&[u8]`.
+- Parse integers without 128 bit integer types.
+- Seal trait `FromStrRadix`.
+- Strengthen safety requirement of `set_param`.
+- Remove comment about Display and `PAGE_SIZE`.
+- Add note describing why `ModuleParamAccess` is pub.
+- Typo and grammar fixes for documentation.
+- Update MAINTAINERS with rust module files.
+- Link to v7: https://lore.kernel.org/r/20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org
+
+Changes in v7:
+- Remove dependency on `pr_warn_once` patches, replace with TODO.
+- Rework `ParseInt::from_str` to avoid allocating.
+- Add a comment explaining how we parse "0".
+- Change trait bound on `Index` impl for `BStr` to match std library approach.
+- Link to v6: https://lore.kernel.org/r/20250211-module-params-v3-v6-0-24b297ddc43d@kernel.org
+
+Changes in v6:
+- Fix a bug that prevented parsing of negative default values for
+  parameters in the `module!` macro.
+- Fix a bug that prevented parsing zero in `strip_radix`. Also add a
+  test case for this.
+- Add `AsRef<BStr>` for `[u8]` and `BStr`.
+- Use `impl AsRef<BStr>` as type of prefix in `BStr::strip_prefix`.
+- Link to v5: https://lore.kernel.org/r/20250204-module-params-v3-v5-0-bf5ec2041625@kernel.org
+
+Changes in v5:
+- Fix a typo in a safety comment in `set_param`.
+- Use a match statement in `parse_int::strip_radix`.
+- Add an implementation of `Index` for `BStr`.
+- Fix a logic inversion bug where parameters would not be parsed.
+- Use `kernel::ffi::c_char` in `set_param` rather than the one in `core`.
+- Use `kernel::c_str!` rather than `c"..."` literal in module macro.
+- Rebase on v6.14-rc1.
+- Link to v4: https://lore.kernel.org/r/20250109-module-params-v3-v4-0-c208bcfbe11f@kernel.org
+
+Changes in v4:
+- Add module maintainers to Cc list (sorry)
+- Add a few missing [`doc_links`]
+- Add panic section to `expect_string_field`
+- Fix a typo in safety requirement of `module_params::free`
+- Change `assert!` to `pr_warn_once!` in `module_params::set_param`
+- Remove `module_params::get_param` and install null pointer instead
+- Remove use of the unstable feature `sync_unsafe_cell`
+- Link to v3: https://lore.kernel.org/r/20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org
+
+Changes in v3:
+- use `SyncUnsafeCell` rather than `static mut` and simplify parameter access
+- remove `Display` bound from `ModuleParam`
+- automatically generate documentation for `PARAM_OPS_.*`
+- remove `as *const _ as *mut_` phrasing
+- inline parameter name in struct instantiation in  `emit_params`
+- move `RacyKernelParam` out of macro template
+- use C string literals rather than byte string literals with explicit null
+- template out `__{name}_{param_name}` in `emit_param`
+- indent template in `emit_params`
+- use let-else expression in `emit_params` to get rid of an indentation level
+- document `expect_string_field`
+- move invication of `impl_int_module_param` to be closer to macro def
+- move attributes after docs in `make_param_ops`
+- rename `impl_module_param` to impl_int_module_param`
+- use `ty` instead of `ident` in `impl_parse_int`
+- use `BStr` instead of `&str` for string manipulation
+- move string parsing functions to seperate patch and add examples, fix bugs
+- degrade comment about future support from doc comment to regular comment
+- remove std lib path from `Sized` marker
+- update documentation for `trait ModuleParam`
+- Link to v2: https://lore.kernel.org/all/20240819133345.3438739-1-nmi@metaspace.dk/
+
+Changes in v2:
+- Remove support for params without values (`NOARG_ALLOWED`).
+- Improve documentation for `try_from_param_arg`.
+- Use prelude import.
+- Refactor `try_from_param_arg` to return `Result`.
+- Refactor `ParseInt::from_str` to return `Result`.
+- Move C callable functions out of `ModuleParam` trait.
+- Rename literal string field parser to `expect_string_field`.
+- Move parameter parsing from generation to parsing stage.
+- Use absolute type paths in macro code.
+- Inline `kparam`and `read_func` values.
+- Resolve TODO regarding alignment attributes.
+- Remove unnecessary unsafe blocks in macro code.
+- Improve error message for unrecognized parameter types.
+- Do not use `self` receiver when reading parameter value.
+- Add parameter documentation to `module!` macro.
+- Use empty `enum` for parameter type.
+- Use `addr_of_mut` to get address of parameter value variable.
+- Enabled building of docs for for `module_param` module.
+- Link to v1: https://lore.kernel.org/rust-for-linux/20240705111455.142790-1-nmi@metaspace.dk/
+
+---
+Andreas Hindborg (7):
+      rust: sync: add `SetOnce`
+      rust: str: add radix prefixed integer parsing functions
+      rust: introduce module_param module
+      rust: module: use a reference in macros::module::module
+      rust: module: update the module macro with module parameter support
+      rust: samples: add a module parameter to the rust_minimal sample
+      modules: add rust modules files to MAINTAINERS
+
+ MAINTAINERS                  |   2 +
+ rust/kernel/lib.rs           |   1 +
+ rust/kernel/module_param.rs  | 181 +++++++++++++++++++++++++++++++++++++++
+ rust/kernel/str.rs           |   2 +
+ rust/kernel/str/parse_int.rs | 148 ++++++++++++++++++++++++++++++++
+ rust/kernel/sync.rs          |   2 +
+ rust/kernel/sync/set_once.rs | 125 +++++++++++++++++++++++++++
+ rust/macros/helpers.rs       |  25 ++++++
+ rust/macros/lib.rs           |  31 +++++++
+ rust/macros/module.rs        | 198 ++++++++++++++++++++++++++++++++++++++-----
+ samples/rust/rust_minimal.rs |  10 +++
+ 11 files changed, 705 insertions(+), 20 deletions(-)
+---
+base-commit: 47633099a672fc7bfe604ef454e4f116e2c954b1
+change-id: 20241211-module-params-v3-ae7e5c8d8b5a
+prerequisite-message-id: <20250710060052.11955-1-boqun.feng@gmail.com>
+prerequisite-patch-id: 28896267479b4eb64b31c7f0369398c3d45381d5
+prerequisite-patch-id: d2f889e59033a98b2939ec8b1f73b82026eeca57
+prerequisite-patch-id: 820b700bc77f6ab3b7ab41056675f8e8f27ca924
+prerequisite-patch-id: 8050edc4035cf1b57251d8de496b890b87918cb9
+prerequisite-patch-id: ce22d95bad2cf5b701db6d62ec3dd8e5f47d8af0
+prerequisite-patch-id: 5755c226b2678a53a8cfd7d09f90743c1d6f6ae4
+prerequisite-patch-id: 766b6439b20cb954b3434830603cf88626a35310
+prerequisite-patch-id: 98fffa4e658617923ab1c360dc40bacb9d741e3c
+prerequisite-patch-id: b393394acd88dae6dfe76ac10af2e9469a08fdc4
+
+Best regards,
+-- 
+Andreas Hindborg <a.hindborg@kernel.org>
+
+
 
