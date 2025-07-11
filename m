@@ -1,183 +1,168 @@
-Return-Path: <linux-kernel+bounces-727807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE50B02006
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:02:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3ECB02004
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E1A7163452
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:00:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C4FE3AD1CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3362EA14A;
-	Fri, 11 Jul 2025 15:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608622EA493;
+	Fri, 11 Jul 2025 15:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WcwNocXK"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cRJ1fIcG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C7315A87C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAE62EA48B;
+	Fri, 11 Jul 2025 15:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752246033; cv=none; b=VNgl5cQJ3GsrJHwx/vHfTFeStsdH0Re2PCwfV5BGSJFXeeQFW9BIHzo7FlsumJQYhzHeisIoovtAEwRI1evrCz8dAgv9IxwvS60wxDttdG3EtylDCjnbPClIy5xQNp6hAuGCsSHUZnsTR5MXiodTJhCiL+ZSlHWO1qHV526nZrk=
+	t=1752246119; cv=none; b=rfJCFuuWVdez/t0hzo+OG6zMou5QD/cH64pvVbmzDvBECro5bTqd/8EMdBxRFDJ4szh7jvGy/xJEjZVnhUu8YZuIlnuO0hqPIRat/9OIHiDeKc6lOQMhhiGx3rvInpnN1GL0n27+uCC6+uCUCV2/Y03oJeH1lpTQjzDa2uEo4xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752246033; c=relaxed/simple;
-	bh=nZM+q9BkVWLbX/PWq7+dzyAt5apo4kilw7WFvM2Tvzs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZTsC41ZsLmZjO+pwrzzPiAvWQ4imUjKmIvQCIvyzyZB/ZqKWSVQ8Yhkegz8ezBKASd5wL2oQweIyWDwaCXzC9NlfolFhfijcbLHXjpZ9R3eujPOLQCpUwaecEnLZWCKyLGmOd9mVzurgzM2Rnu0g31CzRhTrtriK1LsajAzL8H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WcwNocXK; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BElLoc019810;
-	Fri, 11 Jul 2025 14:59:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=OC8jRvneJ6/43biZvYI7yILAKug/U
-	NKBxDHEJaVGoO8=; b=WcwNocXKgXuY7SPo/WGli/8pBU4XMbbmLSL2Zbnf17Mk/
-	XQ+Yco26f8D2OT2OK8SZLiG4TF+wAb57A+9DmE7bnjg39z4blfXi3oUJmGR45kmo
-	JoALSsB490sIa3cmatVuiP6Jx7vIvMCbsgw1sATwD70brGC5K7JV3xLDV3xhdTGY
-	civfwOis9Z3YSu5dA2T8jbij8+Iw4/nbaSKn8mEP2ClYCjopgqvcxVO5D7oVozmw
-	sXaEtMtAPKusqqjF9/d71rTK6RX4L1qY2NAwFhHoFToYBUlpfiXtEUHvL7STx0ax
-	6/HDrWzzSDJq20aApSgtUmVa2hDuc693ngEtOn0Fw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47u4nyr0wd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 14:59:14 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56BEaXbJ013546;
-	Fri, 11 Jul 2025 14:59:13 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ptgeenfj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 14:59:13 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56BExCbR009344;
-	Fri, 11 Jul 2025 14:59:12 GMT
-Received: from sidkumar-mac.us.oracle.com (dhcp-10-43-115-219.usdhcp.oraclecorp.com [10.43.115.219])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 47ptgeenf1-1;
-	Fri, 11 Jul 2025 14:59:12 +0000
-From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, willy@infradead.org,
-        muchun.song@linux.dev, osalvador@suse.de, ziy@nvidia.com,
-        vbabka@suse.cz, Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Subject: [PATCH] mm/page_owner: convert set_page_owner_migrate_reason() to folios
-Date: Fri, 11 Jul 2025 10:59:10 -0400
-Message-ID: <20250711145910.90135-1-sidhartha.kumar@oracle.com>
+	s=arc-20240116; t=1752246119; c=relaxed/simple;
+	bh=j3OVLr0LSiuE4TUBEpAGHAdIT/3phHQ2DKa4B07s1ww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UfielyfT4cbp1XscNDbEDf9BgJ6R+Ak3N7buHMS0TQLMmVSLfWh8kKO6CKAVcnRW6FebGuWia1nv06tcR57qq2vBaBmqDDD86xTXhW+B41onLT70XNVZ4GNvgMFOSmq1bABoyhf5tM0ij+6R3lVGz3KaED/oYMiExGJnXeOu1ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cRJ1fIcG; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752246118; x=1783782118;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=j3OVLr0LSiuE4TUBEpAGHAdIT/3phHQ2DKa4B07s1ww=;
+  b=cRJ1fIcGlq3EXlIxX9k7htrJZsRK/tkLu0qJVnIiidqmBzgTMboqAlFU
+   /YapM6XwBqsimAgcCsIE8wdC/5Pf2TIjPAvHLe89+xRub1uM8/aurVl4y
+   CnWtZQ5FvV0oVmXVmYWgnXZJodkkoJtpJalSq+mTkPztyvVPpgcT7uS/Q
+   RFdMjjigsEw8A9yWxLYd2b0pZ9yMOHE6h9BEnAtRob6W+mk93q0rCVnbf
+   iXEzHysd97fhihwuhvMJQ2I4Nz6wQVyaXh9TzXdN9QH3e6FKA45xfuNyH
+   K8tpeUoVPc1oy7gBMT82/DzppwFbv036+T9I0YiiszGVDFkZuHHFVqeBf
+   w==;
+X-CSE-ConnectionGUID: Z9hy3DgdSCSLjMIaLyoalA==
+X-CSE-MsgGUID: /MVB0G+YRu+SuDIDnXCJHQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="58209323"
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="58209323"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 08:01:46 -0700
+X-CSE-ConnectionGUID: p2dciu18Qk+nmDx+m/ru6w==
+X-CSE-MsgGUID: Uh59VyliR7WkBwn4IzQo0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="156173112"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 08:01:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uaFFu-0000000EYjo-0ASJ;
+	Fri, 11 Jul 2025 18:01:42 +0300
+Date: Fri, 11 Jul 2025 18:01:41 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Marcos Del Sol Vives <marcos@orca.pet>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2] gpio: vortex: add new GPIO device driver
+Message-ID: <aHEnVTCSwfdijvzQ@smile.fi.intel.com>
+References: <20250709091542.968968-1-marcos@orca.pet>
+ <CAMRc=MdLXP=DgHEh6hoNYhDgB4aESmC29VH6hsH=AONNgsjXQQ@mail.gmail.com>
+ <e00c97c2-04f4-4683-9c56-8894617998fa@orca.pet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_04,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
- phishscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507110107
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDEwNyBTYWx0ZWRfX3g5hrdRzupDX UN0/bOoRWhh7VkxdRB1rLLlNwydeaqH9zQr9RRq3juy9ESiAlFuEJoT6TkhsFThH2dv+BNdwb+7 1LlhvHRCgWCvlszCLUz6TzJcnuo/FqWTC8vqfslULU2rh0voZQe1upJntvBnE3tjEuaaBOAuUpw
- mpEDPFuRyw9t48/LVXj+yKWndQ9fwFdeWXiR7mdvlL7pJfwVR5xat/wRNVMTbZk9up4PbiHzJ7o 2wpamWogriCAU20IoE8lcsD/xnSSeB0LUlqFYc7cZyeeJMPUGhELMKhkz1sngpDdyTbMhG0jJBJ HivqKA1oi9qeJcwKmmqw3WGeY3g37ys185dhG4bxilI0+RU6CfF04kkKWz0ZIiMhGT4FRwhFqd+
- vYuUE293u65++MFXXbWTiehGcYvXydwpceE7vJYOj0VB9vNVFP5DhWZSh051y6YzXX9RjAZi
-X-Authority-Analysis: v=2.4 cv=PJYP+eqC c=1 sm=1 tr=0 ts=687126c2 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=lhtuWcDGdh8_Uon09ZIA:9 cc=ntf awl=host:13600
-X-Proofpoint-GUID: oQ0pdj0eRRum9yPlth_Og9cocbsjsnNZ
-X-Proofpoint-ORIG-GUID: oQ0pdj0eRRum9yPlth_Og9cocbsjsnNZ
+In-Reply-To: <e00c97c2-04f4-4683-9c56-8894617998fa@orca.pet>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Both callers of set_page_owner_migrate_reason() use folios. Convert the
-function to take a folio directly and move the &folio->page conversion
-inside __set_page_owner_migrate_reason().
+On Fri, Jul 11, 2025 at 04:24:41PM +0200, Marcos Del Sol Vives wrote:
+> El 11/07/2025 a las 12:19, Bartosz Golaszewski escribió:
 
-Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
----
- include/linux/page_owner.h | 8 ++++----
- mm/hugetlb.c               | 2 +-
- mm/migrate.c               | 2 +-
- mm/page_owner.c            | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+> > This looks better but I admit I'm not an expert in x86 platforms so
+> > I'll allow myself to Cc Andy. Is this how it's typically done in x86?
+> > Is this module visible in ACPI in any way that would allow us to
+> > leverage the platform device core? Or do we need to try to register
+> > the device unconditionally on all Vortex platforms?
+> 
+> Again I want to point out I am not an expert by any means. This is my first
+> kernel driver and I am writting it as a hobbyst, not as a company employee.
 
-diff --git a/include/linux/page_owner.h b/include/linux/page_owner.h
-index debdc25f08b9..3328357f6dba 100644
---- a/include/linux/page_owner.h
-+++ b/include/linux/page_owner.h
-@@ -14,7 +14,7 @@ extern void __set_page_owner(struct page *page,
- extern void __split_page_owner(struct page *page, int old_order,
- 			int new_order);
- extern void __folio_copy_owner(struct folio *newfolio, struct folio *old);
--extern void __set_page_owner_migrate_reason(struct page *page, int reason);
-+extern void __folio_set_owner_migrate_reason(struct folio *folio, int reason);
- extern void __dump_page_owner(const struct page *page);
- extern void pagetypeinfo_showmixedcount_print(struct seq_file *m,
- 					pg_data_t *pgdat, struct zone *zone);
-@@ -43,10 +43,10 @@ static inline void folio_copy_owner(struct folio *newfolio, struct folio *old)
- 	if (static_branch_unlikely(&page_owner_inited))
- 		__folio_copy_owner(newfolio, old);
- }
--static inline void set_page_owner_migrate_reason(struct page *page, int reason)
-+static inline void folio_set_owner_migrate_reason(struct folio *folio, int reason)
- {
- 	if (static_branch_unlikely(&page_owner_inited))
--		__set_page_owner_migrate_reason(page, reason);
-+		__folio_set_owner_migrate_reason(folio, reason);
- }
- static inline void dump_page_owner(const struct page *page)
- {
-@@ -68,7 +68,7 @@ static inline void split_page_owner(struct page *page, int old_order,
- static inline void folio_copy_owner(struct folio *newfolio, struct folio *folio)
- {
- }
--static inline void set_page_owner_migrate_reason(struct page *page, int reason)
-+static inline void folio_set_owner_migrate_reason(struct folio *folio, int reason)
- {
- }
- static inline void dump_page_owner(const struct page *page)
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index f13fa5aa6624..753f99b4c718 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -7835,7 +7835,7 @@ void move_hugetlb_state(struct folio *old_folio, struct folio *new_folio, int re
- 	struct hstate *h = folio_hstate(old_folio);
- 
- 	hugetlb_cgroup_migrate(old_folio, new_folio);
--	set_page_owner_migrate_reason(&new_folio->page, reason);
-+	folio_set_owner_migrate_reason(new_folio, reason);
- 
- 	/*
- 	 * transfer temporary state of the new hugetlb folio. This is
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 36b2764204b6..425401b2d4e1 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1367,7 +1367,7 @@ static int migrate_folio_move(free_folio_t put_new_folio, unsigned long private,
- 
- out_unlock_both:
- 	folio_unlock(dst);
--	set_page_owner_migrate_reason(&dst->page, reason);
-+	folio_set_owner_migrate_reason(dst, reason);
- 	/*
- 	 * If migration is successful, decrease refcount of dst,
- 	 * which will not free the page because new page owner increased
-diff --git a/mm/page_owner.c b/mm/page_owner.c
-index 9928c9ac8c31..c3ca21132c2c 100644
---- a/mm/page_owner.c
-+++ b/mm/page_owner.c
-@@ -333,9 +333,9 @@ noinline void __set_page_owner(struct page *page, unsigned short order,
- 	inc_stack_record_count(handle, gfp_mask, 1 << order);
- }
- 
--void __set_page_owner_migrate_reason(struct page *page, int reason)
-+void __folio_set_owner_migrate_reason(struct folio *folio, int reason)
- {
--	struct page_ext *page_ext = page_ext_get(page);
-+	struct page_ext *page_ext = page_ext_get(&folio->page);
- 	struct page_owner *page_owner;
- 
- 	if (unlikely(!page_ext))
+Oh, I see. Sorry that I'm asking too much (do I?) Unfortunately the review
+might be not well appreciated process by the author, but we are all for
+having the better solutions. That's the part of learning and R&D process.
+
+As for this discussion it seems you already committed into enormous work
+to gather all pieces and knowledge, but we need more.
+
+> Regarding ACPI: I have just now decompiled the DSDT for the Vortex86DX3
+> machine and I do not see any Device() claiming ownership of 0x78 or 0x98,
+> or mentioning GPIO at all:
+> 
+> root@vdx3:/home/marcos/acpi# ls -l *.dsl
+> -rw-r--r-- 1 root root   3459 Jul 11 16:05 APIC.dsl
+> -rw-r--r-- 1 root root 196800 Jul 11 16:05 DSDT.dsl
+> -rw-r--r-- 1 root root   9211 Jul 11 16:22 FACP.dsl
+> -rw-r--r-- 1 root root   1364 Jul 11 16:22 FACS.dsl
+> -rw-r--r-- 1 root root   1552 Jul 11 16:23 MSDM.dsl
+> -rw-r--r-- 1 root root      0 Jul 11 16:07 OEMB.dsl
+> -rw-r--r-- 1 root root   3957 Jul 11 16:07 SLIC.dsl
+> root@vdx3:/home/marcos/acpi# grep -Ri gpio *.dsl
+> root@vdx3:/home/marcos/acpi# grep -Ri 0x0078 *.dsl
+
+Oh, it's not as easy as grepping. One need to read and understand the ACPI
+language for that.
+
+> Manually skimming through DSDT does not yield anything useful either.
+> 
+> This kinda confirms what the company told me: the machine does not properly
+> support ACPI, it has a set of fake tables enough to convince Windows 7 into
+> booting.
+
+Let's see! As I asked in the previous mail, please share some information in
+full.
+
+> The Vortex86MX board does not even have those, and has no ACPI tables
+> whatsoever.
+
+Yeah, but you can create them from scratch if you wish. I once have done
+this for Intel Merrifield (in U-Boot) and it went pretty well. From that
+time we use that board as regular PC.
+
+> And regarding something I forgot to answer on the previous email about the
+> future of these machines: the Vortex86MX is a i586 processor, and this
+> Vortex86DX3 is a dual-core i686 processor with SSE1 support that I myself
+> bought brand new from the manufacturer, indicating they are still making
+> and supporting them.
+
+Would be nice to get the updated documentation... But it might be not available
+or at best under NDA.
+
+> The company is seemingly launching next year also a Vortex86EX3 with proper
+> i686 and SSE2 support, I guess because Intel's patents have finally expired.
+> 
+> So I do not think removing i486 support is gonna be an issue except for
+> very ancient processors that the company is not making anymore anyway.
+
+Thanks for clarifications here!
+
+And thank you for your efforts, I would like to help as much as I can.
+Again, sorry, if my first messages looked a bit rejecting. I do not mean
+that, it's just a professional deformation due to tons of reviews I have
+done in the past.
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
 
 
 
