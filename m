@@ -1,114 +1,143 @@
-Return-Path: <linux-kernel+bounces-728027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786E3B022B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:38:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB992B022AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61B945820BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:38:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25F9AA443B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E075F2F1FF5;
-	Fri, 11 Jul 2025 17:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380292F19A3;
+	Fri, 11 Jul 2025 17:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8JZ6VU4"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mn46eXaz"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBABA2F1997;
-	Fri, 11 Jul 2025 17:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529401B4242
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 17:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752255487; cv=none; b=qRgIeQW0Hszc5J8N86VU3tRJo9rAobT940SA1dT8wwfe+BJDHbFmBDovfsWKog1tnNqG+TtS0hIhd8gnoF7z8PkDuUUfLs2qoPSojfbAC2GIG6qTrQ3BTwKEZAdxdYw+vu0eDKoV/nJ2Q08GuPFzKYxZ6/CVjXXz2di43iP4vic=
+	t=1752255485; cv=none; b=R6tKkPC/maQFBT9Pzh+XbSpEXjNxvvhwyW6yE1xFRdP6UtHLWUCOMKqJ6dTRiwIGiZRJVvH/WK7gi/IFIo2pX+9vTVzxQK1VnsQLjChYOB/1Gylwumse1sbdp4JDqZIwhQLpVtZqXCGrbWBQHF3tKhqa2wb6q76s69fLsz+EQLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752255487; c=relaxed/simple;
-	bh=VUH6NlLAyCfyhZB52sXzXQruzhIssmN6iMcI+FM7aQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ricgvKgWohfgoylIfNz1QJYoNBKivDl3+poSYxsapgHSYTpnMeq2UK3AHwRl9tWKZYI2oyDJD/bghHGWUNHNlRYNDDG+tr4z0lDxBQfUAcxPSGV37meKm4bmnSufK4eC796Zjt8dK6Ls5OOrAk3qdZqZfgZwFnRENhFpe+5zhgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i8JZ6VU4; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-749068b9b63so1687924b3a.0;
-        Fri, 11 Jul 2025 10:38:05 -0700 (PDT)
+	s=arc-20240116; t=1752255485; c=relaxed/simple;
+	bh=27qRB0esI060a4/jw1Adcpqa0B9pgnupwADBMBp8Ayg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=IgJL6DdoSHwdVyBdbPknFeHh8gFc77V+/NlIYBkgutGq1X/6HGCvj15qjJjK2S5w2zcYi/nLe2x4LP/ML3PMPX1o9wVIKb+1JH7RZfLtozKZKhoeep4OQ3/ywXcb92lwfolgqPN9GcJqxh/HJdkeUyG/9JYu7QScwng/6mjnqak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mn46eXaz; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-235c897d378so23846735ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:38:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752255485; x=1752860285; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tcp1q3eJtn4RvXXFfNrI5IhZ5HGzP24EtfNVHh3pe30=;
-        b=i8JZ6VU4IWJ6yshwGEcKRPVfl9znRyBezDSBZ688IZXrmzWNA6uCTpjsZzGtb8WSk2
-         TlKepAxTRbe/YCVpG8gND2Z7rVI47ZS+oF9Kt2qSoE8kX5EkdWnWFZJ5bzXYKIkYop1L
-         msPL0A37tBOmhTYczwk6RBc4xDc1PTpdbQI88ow3/WMeYYdUeoWMK21rO/Ba3kRziF8b
-         QjbpODM6CZRU3P7MNI/WKg2winw0LS6BkfXcLnUuO6+qcQsv5u1O1x/4gGcdI0jPqqat
-         oIn07hMR7RjL6kyKdVlBj4wB0yk0nHwN8JGS6rQ2znk/MgNKrZx10bY4JNoKSFfFTVqS
-         XmAQ==
+        d=google.com; s=20230601; t=1752255483; x=1752860283; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sbuIKyi+MfgvMKfyXYj7WNH0ie5ZWZEBBT5ECwepWTY=;
+        b=mn46eXazLUgjmze51M2qudTezy4cV/vBMpkd9nLPCSReZK6hAKn1qd4TIjBaU26zo7
+         fM5BbJYUU8Ewg1pJnx104cGyQyUhutyO+kTopkbb7SNuz6ksdqhF6g3Jih3m4b7Q0U2a
+         bkBLBahSASGx7vT3kLz9gks3jdNFp6TvGkb0rAdeCGkbDi/3NppC7PXbNmxGZNcEP24B
+         GArxpPgknkAg8et3G5/zuUm6862XCq5F8Ia/Cyr8VcUp9+ADIA68PoA74dR4r3LxHCuw
+         9T747zzv8BxzbRzLHN0tlTct8WfN9Qjr4SyLuV0snLg/SGv4KllzaAJ3SawPyzakpGXR
+         RYGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752255485; x=1752860285;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tcp1q3eJtn4RvXXFfNrI5IhZ5HGzP24EtfNVHh3pe30=;
-        b=R7kme073BJnqUcueQRq5l8vvTYXWzab4Pf9tiGflHdRB3JHW0WuPofmP6JKaQt0b0N
-         W5+XkKvs7jVvaUwznILcY9PAUoh3IMx5mtx5HJ/I+se6RtCixP5v1xNg+T4F2D2imisb
-         N8yHjbm84y03tdCR5rTF0IqIoLDqzefdZYG6Y5iu5Hsyf9FfHm2aZ6X6l5UdWD8ecuwM
-         QnSS9dwO3vJKQWeZbc9fGSr+UmdAbSST8nmGsb9E0Dq8mR/YqpJDbyN7prnPuS/ftuCl
-         UHJ9vsuhAMfRKmlVJ7GLeQGVY50cPhfaLTa4EiKvfhUgXLWVXS+7XhDos0reBELTZIak
-         M4Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnviGrBIr2jv2HV7kY8fSSAT5Gqy0q1GhOEUn1N1xQOlHLNrwhCsVcOBtcgd+ElXr+GQo=@vger.kernel.org, AJvYcCVy3tNqdQjBra2olkVEXywNZ/ook8pbjk5NlumrebRqnBw3E5Ctw+eNr6fRyw3L0gAEPVoofhkU7r4vg2P6@vger.kernel.org, AJvYcCWENXmtjkXGqWIc2mmSLol5GJpu906kJ4EO1V3rk6OBITfSuJvUkNytYX/zEW9/nQuywL60mivU8RpEf0x461VqXWKQ@vger.kernel.org, AJvYcCWUItiDGJrLxOnIrqRpGgAS+NuVg+oDRtVCIWBPD5tqdLmOwxOYfndrZhDk7Y3qYtM9hPJIg8UGgRoL2S/qMO43@vger.kernel.org, AJvYcCX/utiRvVXxhUDEBbtfr9uEyny6H8XlIuyJ8qxVuG280aRKRCjoMlLi6iyxVZMtFR88C4UmeJJr@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjAs4KvD5dHST8S0Qaw4aAMMu01N4d5dk5pRoM8MTFubdx/k6d
-	5HYuZfCcKMqqcFO5etx0RmcWaJmU/hqBUthEw+lAYleX4WkeY6ILneTu
-X-Gm-Gg: ASbGnctAFkeLVxogtfxnXqLSaf0/SQcCoZWWjbmuOKEtS76bmX+geRkdhyTPByTaaeV
-	LXVoCjKcUKLbnnWpFPlbzcp6AlbyjO+PFjs6dPYFyd1qx5IhAQTkNbKo3h8yCmWcLolDoA0Ghoh
-	mt8ua1sQG+O6QPpNQUtlm0nq+d5gkY6RvRfsgW6J8s8m6cgwhG/8jtAy0/3VmA3ZjDGDn4LsO/G
-	8PBjl8H7ejoJlGBJcDuQ0pDlTvm/cEiKi8RgBVRdRnJ9pMc1wGxfmr1JuViTsoPIQeMSyoy1nlS
-	uLz//QG8XsnK2AjP6fiLl8qZo4ESB9CIHgQc0E7Erhg8viGuldJgp3bJ8wiDnvf0llsSfGMZ30Z
-	+4B0Uq2V454ZhGoGRK902QhE=
-X-Google-Smtp-Source: AGHT+IGJbwFQH56VXL0M9um3HUdIb4haabnjbvaowHGGvlG+5zNyV1YZ+Wpapkx9WznqUu292jb7ww==
-X-Received: by 2002:a17:90b:4c0d:b0:315:af43:12ee with SMTP id 98e67ed59e1d1-31c50e1763cmr3739058a91.16.1752255485099;
-        Fri, 11 Jul 2025 10:38:05 -0700 (PDT)
-Received: from gmail.com ([98.97.39.174])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c3eb62056sm5764526a91.38.2025.07.11.10.38.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 10:38:04 -0700 (PDT)
-Date: Fri, 11 Jul 2025 10:37:48 -0700
-From: John Fastabend <john.fastabend@gmail.com>
-To: Tao Chen <chen.dylane@linux.dev>
-Cc: daniel@iogearbox.net, razor@blackwall.org, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, ast@kernel.org, andrii@kernel.org,
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
-	haoluo@google.com, jolsa@kernel.org, mattbobrowski@google.com,
-	rostedt@goodmis.org, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, horms@kernel.org,
-	willemb@google.com, jakub@cloudflare.com, pablo@netfilter.org,
-	kadlec@netfilter.org, hawk@kernel.org, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org
-Subject: Re: [PATCH bpf-next v4 4/7] bpf: Remove location field in tcx_link
-Message-ID: <20250711173748.ojinljlncddm2c43@gmail.com>
-References: <20250710032038.888700-1-chen.dylane@linux.dev>
- <20250710032038.888700-5-chen.dylane@linux.dev>
+        d=1e100.net; s=20230601; t=1752255483; x=1752860283;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sbuIKyi+MfgvMKfyXYj7WNH0ie5ZWZEBBT5ECwepWTY=;
+        b=Z7Aiwo3ggsp5O6Xj2CKz2lPiejq9mA1jsu3UxQJBH/P4vomTS5i4n8TAiKM/yiI4Vm
+         6K1v9W676A4rQQFO4CktzV8ryS7gcbFK983/njOQzKvCbAfaUqMTFCiDZS351WuR6sEb
+         1WuR6Lnlnx35F2W0Zzjr3WezP/q0ADbvhFQWUEP/52FxFJH2SG4+jqnObnzRAa+swvsz
+         aTa4ADIWaX5fol7C2XjGX9kSUnbxmI5HnTI9z5CYjF7Z4HAkkREYp+Yehlrfj+CQm4CX
+         NfYhiNhxLPktyS/8+76cOuP7VC1HsxgrWgGcrIX05Lpsbw888Z8VtsRnjMGfBeIGkBWx
+         Fc8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUkUibLCWlPRugxtZNswGUcsBCIpPNPhyRalxhabiXNRHQygNpMuoYf+yuG0SaY5ZS/Zay4SEUMymcLTcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSR2Sjy9vyTDjOAW95VpfKeAhyPgQCjpvfXvvZZhUcUUipDBSF
+	RlXfeIwOdGW63LCQ4bwDbG5FanxkJIMa1MEvzi1VMvNsrnY0MatAX7395hM/TEIOk3ggigPD1sl
+	62lXM0w==
+X-Google-Smtp-Source: AGHT+IHPZf2sNFkisUa9X3++bUjxOogTN/IzAXZHWztCupoH08hlXsip0gsryYc3EdrVWikP1DkEvsEbOgU=
+X-Received: from pjtu13.prod.google.com ([2002:a17:90a:c88d:b0:312:1e70:e233])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:244a:b0:232:1daf:6f06
+ with SMTP id d9443c01a7336-23dede94c3fmr61666755ad.47.1752255482578; Fri, 11
+ Jul 2025 10:38:02 -0700 (PDT)
+Date: Fri, 11 Jul 2025 10:38:01 -0700
+In-Reply-To: <20250711172746.1579423-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710032038.888700-5-chen.dylane@linux.dev>
+Mime-Version: 1.0
+References: <20250711172746.1579423-1-seanjc@google.com>
+Message-ID: <aHFL-QjqG4hDVV4I@google.com>
+Subject: Re: [PATCH] KVM: SVM: Emulate PERF_CNTR_GLOBAL_STATUS_SET for PerfMonV2
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sandipan Das <sandipan.das@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 2025-07-10 11:20:35, Tao Chen wrote:
-> Use attach_type in bpf_link to replace the location filed, and
-> remove location field in tcx_link.
+On Fri, Jul 11, 2025, Sean Christopherson wrote:
+> Emulate PERF_CNTR_GLOBAL_STATUS_SET when PerfMonV2 is enumerated to the
+> guest, as the MSR is supposed to exist in all AMD v2 PMUs.
 > 
-> Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> Fixes: 4a2771895ca6 ("KVM: x86/svm/pmu: Add AMD PerfMonV2 support")
+> Cc: stable@vger.kernel.org
+> Cc: Sandipan Das <sandipan.das@amd.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
 
-Acked-by: John Fastabend <john.fastabend@gmail.com>
+...
+
+> @@ -711,6 +712,10 @@ int kvm_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>  		if (!msr_info->host_initiated)
+>  			pmu->global_status &= ~data;
+>  		break;
+> +	case MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET:
+> +		if (!msr_info->host_initiated)
+> +			pmu->global_status |= data & ~pmu->global_status_rsvd;
+> +		break;
+>  	default:
+>  		kvm_pmu_mark_pmc_in_use(vcpu, msr_info->index);
+>  		return kvm_pmu_call(set_msr)(vcpu, msr_info);
+
+Tested with a hacky KUT test to verify I got the semantics correct.  I think I did?
+
+  static void test_pmu_msrs(void)
+  {
+	const unsigned long long rsvd = GENMASK_ULL(63, 6);
+
+	wrmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR, -1ull);
+	report(!rdmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS),
+	       "Wanted '0', got 0x%" PRIx64, rdmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS));
+
+	wrmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET, -1ull);
+	report(rdmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS) == ~rsvd,
+	       "Wanted '0x%llx', got 0x%" PRIx64,
+	       ~rsvd, rdmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS));
+
+	wrmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR, -1ull);
+	report(!rdmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS),
+	       "Wanted '0', got 0x%" PRIx64, rdmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS));
+
+	wrmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET, 0);
+	report(!rdmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS),
+	       "Wanted '0', got 0x%" PRIx64, rdmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS));
+  }
+
+One oddity is that the test fails when run on the mediated PMU on Turin, i.e. when
+the guest can write MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET directly.
+
+  FAIL: Wanted '0x3f', got 0xc000000000000ff
+
+Bits 59:58 failing is expected, because lack of KVM support for DebugCtl[FPCI]
+and DebugCtl[FLBRI] doesn't remove them from hardware.  Disabling interception
+of MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET creates a virtualization hole on that
+front, but I don't know that it's worth closing.  Letting the guest manually
+freeze its counters doesn't seem terribly interesting.
+
+Bits 7:6 being set is _much_ more interesting, at least to me.  They're allegedly
+reserved per the APM, and CPUID 0x80000022 says there are only 6 counters, so...
 
