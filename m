@@ -1,341 +1,233 @@
-Return-Path: <linux-kernel+bounces-727522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33FEB01B47
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:57:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8BB7B01B49
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D716B41CF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:55:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E668658824A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A7928E575;
-	Fri, 11 Jul 2025 11:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02D128D82F;
+	Fri, 11 Jul 2025 11:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BKopnqPe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="im01OQgG";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="j4ZvAGuT"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02011175D47
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752235001; cv=none; b=QM2FHh+q7pmfWuQ4c9053M0aNA329OR1X0hQCdFP6dg3VNASygBqNE/Nr5A5E9xl8C3woYXzdJhhNuIMtuY6qLL9uqziM8StAR+4F/GZaw0HfVYB2v2DDNm/dVe1EPmC9zdsb5ojavTt52TEHp6N7aR3lailwd1iAMKUu/xFXqI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752235001; c=relaxed/simple;
-	bh=xuqFTaY+B18PA1D08AT0Cwp7X/6BfwsiWmrMknuLR+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WA+ORLmuTXP4jgpSgTeFLhd1rKdtFDuJLfUMA6WgFwe+H0JvgGsN1hDQkSKcIdMJI2A3OGu+rR1O5b7uSQikG9vkIfIX3issI+OLfUy1BjSZ+ykspQz+Y5P+toZ1xqlq+fBdxbTUMz9E1g/ggFB5ERqDv+1PXbhluVddy4PVOsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BKopnqPe; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752234998;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BZxYI/9wIUBgFT+OSGp9NvxtvS4cZKRz8rn5ILEqRaE=;
-	b=BKopnqPeIEsy5iol205iGLJHE648FZxVWkEDF9cENu4uXTUI68hPi4xrGZGQXMWEe7pXdF
-	FQGyV72BoqxKxl6WFC+I+B/6r605tmBW+0nhHKmaltfuvqqlyhfjEJ3QWZUV14eSLqYLzw
-	qqLzt8Ex703vYJmant5JKjSXuE8gLMI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-494zBUcyPa69ZIuWcY4B2g-1; Fri, 11 Jul 2025 07:56:37 -0400
-X-MC-Unique: 494zBUcyPa69ZIuWcY4B2g-1
-X-Mimecast-MFC-AGG-ID: 494zBUcyPa69ZIuWcY4B2g_1752234996
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-454acc74f22so13014635e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 04:56:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752234996; x=1752839796;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BZxYI/9wIUBgFT+OSGp9NvxtvS4cZKRz8rn5ILEqRaE=;
-        b=EXFpSCVuBNbqls1e4E8wL24wVFn3Sy1n72YA0Wg4ONMl7nFfGK67RpwcarhvksincJ
-         ZllpzQSqKeGZo3gSbv83SlefHh+BqZTV3tPU7JZootAin+39PkmCzihyqop8pzRhTLm/
-         f6zoZKTY0kVB0VXqjOXIiutsRsxEzqvzDxuSuww64HHk2thMhzxjPcDfWBgMhZPrbPAA
-         wSDs2o7PSBjnpDzN7O31TlU+tEkVcmIYoMt2pBt0/wgqRwtpT6hjAGslHzpjnPe/DHQ4
-         gC+IRFj3dWiNP04bxR8R4Z/sYjrYT+Z2bn/EHN6zc9CTugvoRD93lHaWrayzK1GEpzXH
-         IAvg==
-X-Gm-Message-State: AOJu0Yyaq3WaMVBonz/LyBcqImVKhjMficqtwP3fJOtNOSPXcYf4vKxU
-	bppaTUg1qdESBbVjQVah8Jq8FVDkJpMG1eMCHi8/fh0JH1YRAaQKzI/VFI8PYOJBH1aqx2+LeIF
-	VmFNBYE2xClcHUvH9iwxpxze2xGrSQv8qTYIwOs/5P+3Wt229BpVlmcbXNsAWdy/N5w==
-X-Gm-Gg: ASbGncuDp89Q1K5gHbfCRhNE5wvAurtHyPlRcEdKpSC1mpo541TmoEqRB2CbHfMKzpg
-	xn8WU6ZLpa5gyy0eVsdkfsGG0RNLLR/kUqZD1zOrgCcm/gPrDFIXoKVEiLO3+/br/3JP9pIEq2O
-	+Lixc3sq9Ul1Ab4fv12ApkDCFK5GP6jwtm1u9KyneuOiBlFjVPwHDLerF7272uiSQvnZnaT/o3E
-	Fb2kdY0gX8gkFC9Sx3ZSkjmFY4D1M2uhiYIiJBmd+28oGDIN2KTwtfmRE5fwyeMfGdmmzZMnF3r
-	zcLRtkIkk46kjZgLaq9ysd6y2ev8tPNJbdP1m0cxz1spSE4rXcxBs6qLXS+WFr+DSVgl4hjkdbH
-	vWLhk2orxEUeFcictyixT0JWLTw7zKcV/hVda+qqySN5JnFiw/AhmsIz5eMqH/Ef5cmE=
-X-Received: by 2002:a05:600c:34c5:b0:43c:fe5e:f040 with SMTP id 5b1f17b1804b1-45565edc8f4mr20078635e9.23.1752234996227;
-        Fri, 11 Jul 2025 04:56:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJupiNvYJVh7JrpQF1MrlV6PbQYiv7lXZ9WrSatpba31oH5MBEJUnIt4ILpVV2n+71+b6Mvg==
-X-Received: by 2002:a05:600c:34c5:b0:43c:fe5e:f040 with SMTP id 5b1f17b1804b1-45565edc8f4mr20078315e9.23.1752234995668;
-        Fri, 11 Jul 2025 04:56:35 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-455f6794a00sm2066425e9.37.2025.07.11.04.56.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 04:56:35 -0700 (PDT)
-Message-ID: <40d3d56a-e434-4d3d-ba0e-3f1204edbda5@redhat.com>
-Date: Fri, 11 Jul 2025 13:56:34 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F62175D47;
+	Fri, 11 Jul 2025 11:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752235072; cv=fail; b=TxM7F7wCFI3gVwKv2E26DOThuFRWY/Qi1RDQ2or6DiuZjJ+mVO1PBcO/9iiWhZ876Ovzir1q8X8/9NoG/ydaHH5zxevFQFKPY6aDbe5w8DUQAIPRugrdNmIWge7XK//dW5c4E6ycvOlqcRIvJsRbSmu97gReNfo0NwSt9VVqoc4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752235072; c=relaxed/simple;
+	bh=rwve9LKcq+VmUNfdZsaysmrheBqGCS7SAAbGSJIGZm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k+kyeifZ7z5hi91c+Md2vF4LHpTAgs0c06WqmvAqIuPkxfFUpdL4iWTkLMSf2KO4BwaqXC3/E0sc1s+82PmJOsXU6UGVFzAdAekYr8XZjD2CoZRxAg50lf834XVJn/Kbp8vToFzTZ4d/DYW5ScMGRnwiANB8ZdJNEwsrT+n1uZw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=im01OQgG; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=j4ZvAGuT; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B5jANf028134;
+	Fri, 11 Jul 2025 06:56:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=zHVw/+U99kmdZnxQQH
+	nbwtjxEFmcpyu3cFVskZr4c0Y=; b=im01OQgGxyYNlwGbR0+j5rvjOlvLKN+HJs
+	CRqL6NdtSegC7j5b3OHOHopnZek/d99ZeAMqAgzdPUg5Y6kAQN2KAlKOpDnxcszO
+	KNKmNbhmuguL31F2/+0Rg7ICB0KQ5rHwv9AkZfIUUrzGky/wXHU39dOH66eH+ufh
+	lG9ZUdnTVTGmiLkhjCtcz8qShRNUn6Z+BWTQDo6lcWuCAqoEzHEKUbGQrxSv3JBT
+	uVdMDgx9a3+svHdr+7KuC4yEEj9CSwTmGi9xOnAQMhAlsfEQEyX33ZGITiJP+e3u
+	CQ/tKbVhx8LVP28pb5seXsoUm46HvctF7RJpcVxvmCjToLSuitvg==
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2135.outbound.protection.outlook.com [40.107.93.135])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 47sev6e5p6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Jul 2025 06:56:58 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y/VW2deWFjd6GZ0kgvEJMnU9aCnKu7+EjB90LJjZ0hM/YHGtaGS0J9FU5fXnWfI6WB60ag+8BSocLx3Bn5sYAcVftVYq1xkjNcIO51UfTFBi+xHD7pTdXCxlVY7vC3oinGd1R8wamMj1KmTsey0OiW7hUbh8xiWtSuxWk1oMFuS1NEmn7xrwXo7TpVjKNyHq59p3XL9ktJh2JAuy8cmMmllpauiNUd4kuTVvJkkAuHKtDvcA6elb9W0or+LJv93jxzVyDIZw0UwFdNgCWTHpmQLYqlK5znkDCJxhuj0s1A4Jlm5bQ0kGG/4z9MjKO+2tELJePBThPGYSvtSTc1KyVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zHVw/+U99kmdZnxQQHnbwtjxEFmcpyu3cFVskZr4c0Y=;
+ b=e3kKGSdkQ4mQh6iJgiyaq/bpXl5H2xQWopLXWoNuzxOwDWp0du0me2WbxHM/nj7xVw9LRm6WibWAzhqKMCQTF7VA+o1PQrRX2Gw7OrVk5CfA6a7oKe/PL0gots7IWiRfHZziqExa24GXDBSc8vtxFvcWdU3tDiOAZl/hRtM/rSKS2zrqWtYMbcHUNhptdYf2Fg8EeR2uf29GsdnbnALu3k/Cv5fnDJe747L9+kAuPJY24VxFhRSxH+zxy0u449My+b8JCrlh1SC7IgoGsXbkRqIIToWFPYWsNl+P7vDPSuSf1W9BQOXoS2kx6AkhTZ5JQfO4oMx1hLMMbgc098yBJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=alsa-project.org
+ smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
+ action=oreject header.from=opensource.cirrus.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zHVw/+U99kmdZnxQQHnbwtjxEFmcpyu3cFVskZr4c0Y=;
+ b=j4ZvAGuTTCCxZHFhLkfnNaBGaHwtwlssH8cYiloR3Y8KjHnIAfoJd1s69miyzMNQMoPRMUptp335B3lUu+wRrDYSZzxbR9tuValIh5BjPqpA1hRtQjtFdbdMgb9MYFuABJIxfkmBA/UXF000gLAZFg4GhZXhbBASkKSCBrGZLas=
+Received: from BYAPR21CA0022.namprd21.prod.outlook.com (2603:10b6:a03:114::32)
+ by LV1PR19MB8897.namprd19.prod.outlook.com (2603:10b6:408:2b4::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Fri, 11 Jul
+ 2025 11:56:52 +0000
+Received: from CO1PEPF000044EF.namprd05.prod.outlook.com
+ (2603:10b6:a03:114:cafe::5d) by BYAPR21CA0022.outlook.office365.com
+ (2603:10b6:a03:114::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.9 via Frontend Transport; Fri,
+ 11 Jul 2025 11:56:51 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ CO1PEPF000044EF.mail.protection.outlook.com (10.167.241.69) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22
+ via Frontend Transport; Fri, 11 Jul 2025 11:56:49 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 63F9D406545;
+	Fri, 11 Jul 2025 11:56:48 +0000 (UTC)
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 3F1AF82024B;
+	Fri, 11 Jul 2025 11:56:48 +0000 (UTC)
+Date: Fri, 11 Jul 2025 12:56:47 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Joris Verhaegen <verhaegen@google.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@android.com,
+        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com, linux-arm-msm@vger.kernel.org,
+        sound-open-firmware@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/4] ALSA: compress_offload: Add 64-bit safe timestamp
+ API
+Message-ID: <aHD7/9MZbcOmn+08@opensource.cirrus.com>
+References: <20250711093636.28204-1-verhaegen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] mm/util: introduce snapshot_page()
-To: Luiz Capitulino <luizcap@redhat.com>, willy@infradead.org,
- akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, shivankg@amd.com,
- sj@kernel.org
-References: <cover.1751914235.git.luizcap@redhat.com>
- <88d956248f7528b7998ef00ca8742061839d1036.1751914235.git.luizcap@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <88d956248f7528b7998ef00ca8742061839d1036.1751914235.git.luizcap@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711093636.28204-1-verhaegen@google.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044EF:EE_|LV1PR19MB8897:EE_
+X-MS-Office365-Filtering-Correlation-Id: e6ef4809-919b-4612-fafd-08ddc072052f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|61400799027|36860700013|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ixqj/RRfamR4KpelTlhy2DKVx/+G8cGEhWekrNf1JNr4mUp2iTIQj5A4AJu9?=
+ =?us-ascii?Q?UqVtDpyzhKPXFSF1yc2B9QbNJ9Vq0Mc8OYo2not+2r8aVxt5jbaEWvxOXO9b?=
+ =?us-ascii?Q?XMnNcv8TjpCIGodundV20rIoASkXqpG2ua0TnSPYrhWggrQbDun9DVUUxQwS?=
+ =?us-ascii?Q?n6TrQHY7fXrcDt6lGYzZsxIsoqBevONJVR+ByuO9ixNhKkxTmJXDS+3bHQ3T?=
+ =?us-ascii?Q?o2uHlxvSZEU8jQ2E+JkZXNHS2Ewjf/Qy+xfZlK+j8NzjpUFyc/hf0i6p2Rz8?=
+ =?us-ascii?Q?CDYW0QiVEukyA5bHf001ZBX7tmsusis0//tDE7KYjojro9Ldi/4qeg4nv1gX?=
+ =?us-ascii?Q?wNmpoF5dyXw/oaAaGS2c506hJc2xjBzrv536EM8mJcpFW82ppR+fIXJN5JgO?=
+ =?us-ascii?Q?LMffF4PMfdD1rEbMktQAw6Aq6Amy2dLsqSOVf1Tthl0QP7w1vEN3XWDO8mxZ?=
+ =?us-ascii?Q?FgGKZyuTuvwE+iwucDdGrcCxR83JFN9/0/w54Bwgtf0cCgYNVeikNbE7FeB+?=
+ =?us-ascii?Q?eRCzYGD5vbTKsJ0lTjCkkQSmpIaOkyvD8DvP0QfT5jxvRIU+vZslzRJYUzrp?=
+ =?us-ascii?Q?2ZgGJlFMehJGEFEMaZVVYQGixlvSXkUqJxwaRXg+FjvwCyVNj1FQKYVse5v+?=
+ =?us-ascii?Q?116pArKlGjt4aOI49KkXFC0eOrikvbdpmOIFI7PE+6nJ44mliPPIjArb7tPd?=
+ =?us-ascii?Q?0SsPrprc2hhQmUVMZXRbzA+pZzi84yqu/B7fbk4rbWROwD/NGKgfnQzXxG1Y?=
+ =?us-ascii?Q?axBoYIH7GA2AiffvVJPHz8TkZ1iy2reeDWEQqr8+tb77m85Wbr+YNO8dGiWT?=
+ =?us-ascii?Q?g/SiRHS6Zk+taAQmflaXaeUgJ3BgUttBsg2sc2mX6G8IG2K5UOm1fjGF5oI6?=
+ =?us-ascii?Q?iiX2zzqC/dX9ao830ztXdBtdSEsFfG1x7GzK4ZvWHsq88ShepNWc0a60ZA9T?=
+ =?us-ascii?Q?zzscwrsdhjptoOcGPmFNo6dB/WOcVlTRiOYfAekBrUj30t5j9cLJRXvFFzUt?=
+ =?us-ascii?Q?g0Tq5gq411mTEOC0B1wWocsKcyDmOn3pKYgx+Pum7sqnNzpGT/ApU7tfjDVn?=
+ =?us-ascii?Q?VA8ExDI7bpkchbz0l9m3poICuVr7ev5264AF9TM+5NDqKj6YdyLPOSoPl94n?=
+ =?us-ascii?Q?afG3XVxpkueilSOVNIiVTdCWxyu1bZa9oAHYUv4AbpH3HCrNLpFpsQiTIbP8?=
+ =?us-ascii?Q?zFvEQBUM842rjXtxW8ism0hVcR47JmkMZGZiOg+uZzI6l5s/pQr2NuYv7qQk?=
+ =?us-ascii?Q?yOmpxaFNF2YGhG1JQ3fEWddvtiNGnqnUAiocrKFvxOLPPxz7dd66z7bPuVRN?=
+ =?us-ascii?Q?iJvQZmqtdrshueQRcgJg6D8MzKgOLWdChnGiKf7Y8ceVQ+k66Fpprgkp+wVF?=
+ =?us-ascii?Q?VycFcG7qsa2CywR8sYq8slBROBbgewJx6LXSZ6tVSZLHUkzk3iuBkhIOtjld?=
+ =?us-ascii?Q?GiYSo+sIXec3WFaXstl02lOgZ4mmvDSdZl1Ev8KF072NHF3LC3kWMkOdelfm?=
+ =?us-ascii?Q?dfFaOtFRX8x8pzk0VisFzWW5kQT67jasQzK4?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(61400799027)(36860700013)(7416014)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 11:56:49.9035
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6ef4809-919b-4612-fafd-08ddc072052f
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044EF.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV1PR19MB8897
+X-Authority-Analysis: v=2.4 cv=Zb8dNtVA c=1 sm=1 tr=0 ts=6870fc0a cx=c_pps a=dGDOtd2Dv01GEEMIE2KOfQ==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=RWc_ulEos4gA:10 a=1XWaLZrsAAAA:8 a=yTA4N2hPbYLOA8DzoToA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA4NCBTYWx0ZWRfX+n+e0fnWYVTe nu/Zb8wOWpcWj8yuPBB7uxfu/DPei6WI8vZktclwP4glfQ4QoSBhPsZZUrWcruuq/078NgQaAJQ cDORMtaNuWlO9X6ajGJziF/9dLRLt0VktiieIcaK28A8zPHWc9t4P+Y5zFevUBD7DqJTUtM8sHh
+ wNCW6gIsy3l4yF77w4JFPDF+FrUt1dLLIwyTbjAEIqUbpYJom2JwspqZfp6r68Mqi7Sm1r9fZ9t 8u4kRPLexwCKkYGfzUuMFvW9Rs3jMaWCAYdpRP/CAZ176BrByfe2ntZZPLsWKq7vhcVYSLH7VvH tuzQi/aUV+pA5EX2AEcZT1usMklI4QCKVEcYSejNbdNAYT8XFL7JZF9XTYMRpSdeBn79tCduGRj
+ EqKdOPdSWOPFiXY5d1uK7XEY5+AhhdKqf16wVFDORklJ5CYk6eJFLKIQdcNnYyPYMyidNrkR
+X-Proofpoint-ORIG-GUID: HxLCNpyoA4M4UyWffPvECUjWd08qTNGT
+X-Proofpoint-GUID: HxLCNpyoA4M4UyWffPvECUjWd08qTNGT
+X-Proofpoint-Spam-Reason: safe
 
-On 07.07.25 20:50, Luiz Capitulino wrote:
-> This commit refactors __dump_page() into snapshot_page().
+On Fri, Jul 11, 2025 at 10:36:26AM +0100, Joris Verhaegen wrote:
+> The current compress offload timestamping API relies on
+> struct snd_compr_tstamp, whose cumulative counters like
+> copied_total are defined as __u32. On long-running high-resolution
+> audio streams, these 32-bit counters can overflow,
+> causing incorrect availability calculations.
 > 
-> snapshot_page() tries to take a faithful snapshot of a page and its
-> folio representation. The snapshot is returned in the struct
-> page_snapshot parameter along with additional flags that are best
-> retrieved at snapshot creation time to reduce race windows.
+> This patch series introduces a parallel, 64-bit safe API to solve
+> this problem while maintaining perfect backward compatibility with the
+> existing UAPI. A new pointer64 operation and corresponding ioctls
+> are added to allow the kernel to track counters using u64 and expose
+> these full-width values to user-space.
 > 
-> This function is intended to be used by callers that need a stable
-> representation of a struct page and struct folio so that pointers
-> or page information doesn't change while working on a page.
+> The series is structured as follows:
 > 
-> The idea and original implementation of snapshot_page() comes from
-> Matthew Wilcox with suggestions for improvements from David Hildenbrand.
-> All bugs and misconceptions are mine.
+> Patch 1: Introduces the new internal pointer64 op, refactors the
+> core logic to use it, and defines the new UAPI structs.
 > 
-> Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
+> Patch 2: Exposes the SNDRV_COMPRESS_TSTAMP64 ioctl.
+> 
+> Patch 3: Exposes the corresponding SNDRV_COMPRESS_AVAIL64 ioctl.
+> 
+> Patch 4: Implements the new .pointer64 operation in various ASoC
+> drivers that support compress offload.
+> 
+> This series has been tested on a Pixel 9 device. All compress offload
+> use cases, including long-running playback, were verified to work
+> correctly with the new 64-bit API, and no regressions were observed
+> when using the legacy API.
+> 
+> Thanks,
+> Joris (George) Verhaegen
+> 
+> Signed-off-by: Joris Verhaegen <verhaegen@google.com>
+> 
 > ---
->   include/linux/mm.h | 19 ++++++++++++
->   mm/debug.c         | 42 +++----------------------
->   mm/util.c          | 77 ++++++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 100 insertions(+), 38 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 0ef2ba0c667a..090968c6eebb 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4184,4 +4184,23 @@ static inline bool page_pool_page_is_pp(struct page *page)
->   }
->   #endif
->   
-> +#define PAGE_SNAPSHOT_FAITHFUL     (1 << 0)
-> +#define PAGE_SNAPSHOT_PG_FREE      (1 << 1)
 
-Can we call this "BUDDY" instead of FREE
+Would it not be slightly simpler to just update all the in kernel
+bits to use 64-bit and then only convert to 32-bit for the
+existing 32-bit IOCTLs? Why do we need 32-bit callbacks into the
+drivers for example?
 
-There are other types of free pages -- in particular free hugetlb folios 
--- which won't be covered by this check. We really only care about 
-"buddy" pages, which correspond to "free" pages.
-
-That's what we check and alter expose :)
-
-> +#define PAGE_SNAPSHOT_PG_IDLE      (1 << 2)
- > +> +struct page_snapshot {
-> +	struct folio folio_snapshot;
-> +	struct page page_snapshot;
-> +	unsigned long pfn;
-> +	unsigned long idx;
-> +	unsigned long flags;
-> +};
-> +
-> +static inline bool snapshot_page_is_faithful(const struct page_snapshot *ps)
-> +{
-> +	return ps->flags & PAGE_SNAPSHOT_FAITHFUL;
-> +}
-> +
-> +void snapshot_page(struct page_snapshot *ps, const struct page *page);
-> +
->   #endif /* _LINUX_MM_H */
-> diff --git a/mm/debug.c b/mm/debug.c
-> index 907382257062..7349330ea506 100644
-> --- a/mm/debug.c
-> +++ b/mm/debug.c
-> @@ -129,47 +129,13 @@ static void __dump_folio(struct folio *folio, struct page *page,
->   
->   static void __dump_page(const struct page *page)
->   {
-> -	struct folio *foliop, folio;
-> -	struct page precise;
-> -	unsigned long head;
-> -	unsigned long pfn = page_to_pfn(page);
-> -	unsigned long idx, nr_pages = 1;
-> -	int loops = 5;
-> -
-> -again:
-> -	memcpy(&precise, page, sizeof(*page));
-> -	head = precise.compound_head;
-> -	if ((head & 1) == 0) {
-> -		foliop = (struct folio *)&precise;
-> -		idx = 0;
-> -		if (!folio_test_large(foliop))
-> -			goto dump;
-> -		foliop = (struct folio *)page;
-> -	} else {
-> -		foliop = (struct folio *)(head - 1);
-> -		idx = folio_page_idx(foliop, page);
-> -	}
-> +	struct page_snapshot ps;
->   
-> -	if (idx < MAX_FOLIO_NR_PAGES) {
-> -		memcpy(&folio, foliop, 2 * sizeof(struct page));
-> -		nr_pages = folio_nr_pages(&folio);
-> -		if (nr_pages > 1)
-> -			memcpy(&folio.__page_2, &foliop->__page_2,
-> -			       sizeof(struct page));
-> -		foliop = &folio;
-> -	}
-> -
-> -	if (idx > nr_pages) {
-> -		if (loops-- > 0)
-> -			goto again;
-> +	snapshot_page(&ps, page);
-> +	if (!snapshot_page_is_faithful(&ps))
->   		pr_warn("page does not match folio\n");
-> -		precise.compound_head &= ~1UL;
-> -		foliop = (struct folio *)&precise;
-> -		idx = 0;
-> -	}
->   
-> -dump:
-> -	__dump_folio(foliop, &precise, pfn, idx);
-> +	__dump_folio(&ps.folio_snapshot, &ps.page_snapshot, ps.pfn, ps.idx);
->   }
->   
->   void dump_page(const struct page *page, const char *reason)
-> diff --git a/mm/util.c b/mm/util.c
-> index 0b270c43d7d1..c38d213be83f 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -25,6 +25,7 @@
->   #include <linux/sizes.h>
->   #include <linux/compat.h>
->   #include <linux/fsnotify.h>
-> +#include <linux/page_idle.h>
->   
->   #include <linux/uaccess.h>
->   
-> @@ -1171,3 +1172,79 @@ int compat_vma_mmap_prepare(struct file *file, struct vm_area_struct *vma)
->   	return 0;
->   }
->   EXPORT_SYMBOL(compat_vma_mmap_prepare);
-> +
-> +static void set_flags(struct page_snapshot *ps, const struct folio *folio,
-> +		      const struct page *page)
-> +{
-> +	/*
-> +	 * Caveats on high order pages: PG_buddy and PG_slab will only be set
-> +	 * on the head page.
-> +	 */
-
-Talking about slab here is a bit misleading, IIRC they are proper 
-compound pages today. For PG_buddy (which was renamed to PGTY_buddy), we
-are dealing with non-compound higher allocations.
-
-So talking about "head" is also a bit misleading.
-
-/*
-  * Only the first page of a high-order buddy page has PageBuddy() set.
-  * So we have to check manually whether this page is part of a high-
-  * order buddy page.
-  */
-
-> +	if (PageBuddy(page))
-> +		ps->flags |= PAGE_SNAPSHOT_PG_FREE;
-> +	else if (page_count(page) == 0 && is_free_buddy_page(page))
-> +		ps->flags |= PAGE_SNAPSHOT_PG_FREE;
-> +
-> +	if (folio_test_idle(folio))
-> +		ps->flags |= PAGE_SNAPSHOT_PG_IDLE;
-> +}
-> +
-> +/*
-
-I would suggest writing proper kernel doc (you mostly have that already)
-
-Something like
-
-/**
-  * snapshot_page() - Create a snapshot of a "struct page"
-  * @ps: struct page_snapshot to store the page snapshot
-  * @page: the page we want to snapshot
-  *
-  * Create a snapshot of a page and store its struct page and struct
-  * folio ...
-
-> + * Create a snapshot of a page and store its struct page and struct folio
-> + * representations in a struct page_snapshot.
-> + *
-> + * @ps: struct page_snapshot to store the page snapshot
-> + * @page: the page we want to snapshot
-> + *
-> + * Note that creating a faithful snapshot of a page may fail if the page
-> + * compound keeps changing (eg. due to folio split). In this case we set
-> + * ps->faithful to false and the snapshot will assume that @page refers
-> + * to a single page.
-> + */
-
--- 
-Cheers,
-
-David / dhildenb
-
+Thanks,
+Charles
 
