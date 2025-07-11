@@ -1,119 +1,109 @@
-Return-Path: <linux-kernel+bounces-727326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB7CB0188A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:44:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B2EB018B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B26A28E071E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:44:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 930D9B46583
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EAC27AC24;
-	Fri, 11 Jul 2025 09:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BB827E066;
+	Fri, 11 Jul 2025 09:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gt9U/94y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="jYYsPlUT"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C49235355;
-	Fri, 11 Jul 2025 09:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D0820F07C;
+	Fri, 11 Jul 2025 09:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752227075; cv=none; b=tZUv1syT8ZB6K+86KyGCWghY7Bl6paLB5O5NFcINjbpeuD7IwoN0DtG7DAVIRjXwKi1lvxvN8XXyIg7SxRetEA/lA802CoZSAq82xrpSG7K4/xQaC94bfyaMJ+H6gIdBdgTTBv6niyJB8GMesiURoYGdWJWdABrP+QDzK9BuBzI=
+	t=1752227131; cv=none; b=lEMx/CBkXUcpndi2iRYOWPGOS6QZ1m1coI6KT0G9iiqitV4Tg3L2wDy+HTS3m8uwsjk1cJuJ/nM2wRYmcv7+D3MLseYltiPFmNo+Zw88Xk5zR9/4uKVSPetvlG1Z3dZ20yZm90657Dvna/p5XekVGGpeFvHEcwmiXJ9c1HxQWAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752227075; c=relaxed/simple;
-	bh=dDLsw2QWBJMqk3U+NXhrdQfOWLfZ0NvzXCSorxrMkWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YFROXKJ/NGhH2CGQODjbbx7aZX56DHeTAehIbsWu75e+RHGbvXC6mJMTas/tbjvSUQ6jKnQqhCAE/yWhUJiXSz7EhK//5P5wK9OfIARLwOCypcCcGy2hSK372TBtFue3bKpjErwfwtIKSCxYxgGdhBRDdyjyrc05mR2sOqnUdj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gt9U/94y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4A3C4CEED;
-	Fri, 11 Jul 2025 09:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752227074;
-	bh=dDLsw2QWBJMqk3U+NXhrdQfOWLfZ0NvzXCSorxrMkWY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gt9U/94y3LYlQ0Eh5PRqpE7c4ypYCc94a3ARqLdePcdDycdpe9tlZJgFledWnMal4
-	 kTMxOv/qTj8SDAkGa0oT9kRtbN0MO8h9yCnYuE9EpwcfDli9mgF0qYF5QPF1ayQyEn
-	 otizuj4120vubhUVyZF5KgNsv8Zw49mNc4oZ2ipYz6kD5kofrlt81dMey02R+bGqGR
-	 4F9XVZH69gMgIY1oXa+/qeMhnsBpUSEacfU4L8uf3ceBT8P8Vi22rs7B9jvRSN42gf
-	 QPyOq6MDXYa6OAvBkwsq5miUFj5hMZLbaYxsDoL2h62EJxDJuTxEWo75CZwBzVgRq0
-	 YZN7oufDGjHrA==
-Date: Fri, 11 Jul 2025 11:44:28 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Xi Ruoyao <xry111@xry111.site>, 
-	Frederic Weisbecker <frederic@kernel.org>, Valentin Schneider <vschneid@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, John Ogness <john.ogness@linutronix.de>, 
-	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>, 
-	Martin Karsten <mkarsten@uwaterloo.ca>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
-Message-ID: <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
-References: <20250701-wochen-bespannt-33e745d23ff6@brauner>
- <cda3b07998b39b7d46f10394c232b01a778d07a9.camel@xry111.site>
- <20250710034805.4FtG7AHC@linutronix.de>
- <20250710040607.GdzUE7A0@linutronix.de>
- <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
- <20250710062127.QnaeZ8c7@linutronix.de>
- <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
- <20250710083236.V8WA6EFF@linutronix.de>
- <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
- <20250711050217.OMtx7Cz6@linutronix.de>
+	s=arc-20240116; t=1752227131; c=relaxed/simple;
+	bh=9pQfytPzzOeBUo37Fje/p+jXJ9D8dzhqa3GSTAPdyoQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b2Ll6UJoc9hMQjTMBMkWhebQMmCOTU0F0GhuOFreBzXHYzgV0oHTXBa5FtLjLi+ZRCekypg343aDSDefwi4ZNqeZD5w7d0uGgldDkuw6TIaNXHtSamMe1qpN49xj57NDVLYl+yCAyQgZ3BX4STwguxwKEajUrXR81qmr2yrVm1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=jYYsPlUT; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: c2fbbd345e3b11f0b1510d84776b8c0b-20250711
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ugswZi9v4nFVpgCGJexfIal8N3se7IPyZh1DkN9RTwQ=;
+	b=jYYsPlUTyb6XCBAqkoNIkgpHV5ouToWYT814RsExmOFyTbLHq3K/qJKiDwTplqZm1a6FPMPkzuN1eFHgnn8o0zjwV52osIUAwOr+oW8IDTYbWCDavHPCz9ws055+VdqbWIhSrPM1iIvycdEqmMQZstviyJrJqqy1BhTudSCDrQg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.2,REQID:3c0adb97-35a3-4bd0-b5bd-dc004385f7a9,IP:0,UR
+	L:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-30
+X-CID-META: VersionHash:9eb4ff7,CLOUDID:2aee19d8-b768-4ffb-8a44-cd8427608ba6,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:2,IP:nil
+	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: c2fbbd345e3b11f0b1510d84776b8c0b-20250711
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
+	(envelope-from <ot_cathy.xu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1608721168; Fri, 11 Jul 2025 17:45:21 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Fri, 11 Jul 2025 17:45:19 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Fri, 11 Jul 2025 17:45:18 +0800
+From: Cathy Xu <ot_cathy.xu@mediatek.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>
+CC: Lei Xue <lei.xue@mediatek.com>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Yong Mao <yong.mao@mediatek.com>, Wenbin Mei <Wenbin.Mei@mediatek.com>, Axe
+ Yang <Axe.Yang@mediatek.com>, Cathy Xu <ot_cathy.xu@mediatek.com>
+Subject: [PATCH v2 0/3] pinctrl: mediatek: Add pinctrl driver on mt8189
+Date: Fri, 11 Jul 2025 17:44:56 +0800
+Message-ID: <20250711094513.17073-1-ot_cathy.xu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250711050217.OMtx7Cz6@linutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, Jul 11, 2025 at 07:02:17AM +0200, Nam Cao wrote:
-> On Thu, Jul 10, 2025 at 05:47:57PM +0800, Xi Ruoyao wrote:
-> > It didn't work :(.
-> 
-> Argh :(
-> 
-> Another possibility is that you are running into event starvation problem.
-> 
-> Can you give the below patch a try? It is not the real fix, the patch hurts
-> performance badly. But if starvation is really your problem, it should
-> ameliorate the situation:
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 895256cd2786..0dcf8e18de0d 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -1764,6 +1764,8 @@ static int ep_send_events(struct eventpoll *ep,
->  		__llist_add(n, &txlist);
->  	}
->  
-> +	struct llist_node *shuffle = llist_del_all(&ep->rdllist);
-> +
->  	llist_for_each_entry_safe(epi, tmp, txlist.first, rdllink) {
->  		init_llist_node(&epi->rdllink);
->  
-> @@ -1778,6 +1780,13 @@ static int ep_send_events(struct eventpoll *ep,
->  		}
->  	}
->  
-> +	if (shuffle) {
-> +		struct llist_node *last = shuffle;
-> +		while (last->next)
-> +			last = last->next;
-> +		llist_add_batch(shuffle, last, &ep->rdllist);
-> +	}
-> +
->  	__pm_relax(ep->ws);
->  	mutex_unlock(&ep->mtx);
->  
+This patch series introduces support for the MT8189 pinctrl driver,
+include the driver implementation, new binding document and pinctrl header file.
 
-I think we should revert the fix so we have time to fix it properly
-during v6.17+. This patch was a bit too adventurous for a fix in the
-first place tbh.
+Changes in v2:
+- Modify the coding style of dt-binding.
+
+Cathy Xu (3):
+  dt-bindings: pinctrl: mediatek: Add support for mt8189
+  arm64: dts: mediatek: mt8189: Add pinmux macro header file
+  pinctrl: mediatek: Add pinctrl driver on mt8189
+
+ .../pinctrl/mediatek,mt8189-pinctrl.yaml      |  213 ++
+ arch/arm64/boot/dts/mediatek/mt8189-pinfunc.h | 1125 ++++++++
+ drivers/pinctrl/mediatek/Kconfig              |   12 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt8189.c     | 1700 ++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt8189.h | 2452 +++++++++++++++++
+ 6 files changed, 5503 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt8189-pinctrl.yaml
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8189-pinfunc.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8189.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8189.h
+
+-- 
+2.45.2
+
 
