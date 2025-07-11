@@ -1,132 +1,179 @@
-Return-Path: <linux-kernel+bounces-727425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3280B01A00
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:53:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9DBB019FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A3A1CA4D28
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:53:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07550767FAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15CF288C0E;
-	Fri, 11 Jul 2025 10:53:13 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2057E288C09;
+	Fri, 11 Jul 2025 10:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dW5Xl+n1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4590B2853F7
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758F52853F7;
+	Fri, 11 Jul 2025 10:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752231193; cv=none; b=mvrbtrFu54nW9ytaYA2f0GEKeUHH2B2eBoMq1PbWVnZPXjrCgu5pz04czDNTkwu6Is/XjwHREaa6i60Sn0gbMVOUHS6CQn2BxfeVOUFdXYDu38mpV1vu2pLlHDoFkPusHNMbJAm+efvpJXewF68sJzFkOBu0GA4lzqITeX3hFuA=
+	t=1752231152; cv=none; b=fKrmiW4E9oYdi+qVLrjvxLVCxgfs8I4mGFcMrKgRXp93X1Q5owjIKtk/x1QDdb3BgLYKX7qgRIDQhCm52dPS9Uuy285R+O9iiDfsjPUwm1+9T/FxLqKtlmEBLp4eKur5dzcc7SlDeu3nle0wLFx9Ybr5WGdEKfTDTJAS3nYW1yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752231193; c=relaxed/simple;
-	bh=U1IxpQc/YzLZ4HlV89An5zCtzvT5qjRVQDhbyk4gcqc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNKIquNpXk160QbAKJm6hxYVh7PVGC+t+qP+/DcaKa+PmyXMLCNV1qzOfT5oWTai/iGpCOayIvp6Jnwc9gE7kzVYqNjwPlFPWw+KCtPLJv/LTzSfr+63jlmyBw8k8jzy2hDIUXWmgD8A4nv+9eRkK5nVGJcW2jRG9zBPn2Qh8C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
-	by Atcsqr.andestech.com with ESMTPS id 56BApeFe051347
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
-	Fri, 11 Jul 2025 18:51:40 +0800 (+08)
-	(envelope-from ben717@andestech.com)
-Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS34.andestech.com
- (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Jul
- 2025 18:51:40 +0800
-Date: Fri, 11 Jul 2025 18:51:40 +0800
-From: Ben Zong-You Xie <ben717@andestech.com>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-CC: <arnd@arndb.de>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-        <aou@eecs.berkeley.edu>, <alex@ghiti.fr>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <tglx@linutronix.de>,
-        <daniel.lezcano@linaro.org>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <soc@lists.linux.dev>,
-        <tim609@andestech.com>
-Subject: Re: [PATCH 1/8] riscv: add Andes SoC family Kconfig support
-Message-ID: <aHDsvMgSm87/wHpg@atctrx.andestech.com>
-References: <20250704081451.2011407-1-ben717@andestech.com>
- <20250704081451.2011407-2-ben717@andestech.com>
- <CA+V-a8unFMmA2NdwuofTL1fx8vVHtD8Y9QbW2ec8B656DK6AAw@mail.gmail.com>
+	s=arc-20240116; t=1752231152; c=relaxed/simple;
+	bh=M51lj7BhNQgLWOL2VBV3JnDPQ+P71zt4sn2H1SiZ01k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9YMQyVl4SiQRcljM0nrv9+hT/fog0UxfSxIP2XJoWLmj+L3q+xLt5IvAu4fkSLFpgASmvqQFEhIkMIS1hEQqQHQvVVtNIEW6tkkfAa9AXXjdGSxy4WX0AMS8edtYl+AHLskqCKL8HAiUMiWSNauW9yFjBFVNeVJfGroW1ZLgcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dW5Xl+n1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC727C4CEF4;
+	Fri, 11 Jul 2025 10:52:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752231150;
+	bh=M51lj7BhNQgLWOL2VBV3JnDPQ+P71zt4sn2H1SiZ01k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dW5Xl+n1UWCve0DbjL1gGjqbkZgtCtumG4TQEwJLn7/b8Bera3FmDuAeOcTMEfBNv
+	 zgXipFnvaIVsQCaJkFrMaOSTvX6sNeGE2nGCGcVwJK07mq7rQYVvNXtTHMTc5fGY5e
+	 GyjXs576cdOia3DCbl/wmUCmxlo6okOfQDZ+yRT8PKRx/P66Ef6PuaSgpoXzGugkJZ
+	 q/jae2KGOP4nyiGuBU086a7snUmBjHwiUZdFmpRNN8hXAI7yggQvVwcYqB6GO+hEU+
+	 nJLnDWthdh9eII7cRTs/kltsaWVGzHCT1/cK9mPvjq2jwk64Fc26ZhNIaGzrtUvr1/
+	 Zt64/WBpDqXNQ==
+Date: Fri, 11 Jul 2025 12:52:25 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Shuah Khan <shuah@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] selftests/hid: add a test case for the recent
+ syzbot underflow
+Message-ID: <o57fhjeipgeb37e2pr6z6qtv3uuon3jsbejj37hgazqxqtklis@c6mumvsempsa>
+References: <20250710-report-size-null-v2-0-ccf922b7c4e5@kernel.org>
+ <20250710-report-size-null-v2-4-ccf922b7c4e5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+V-a8unFMmA2NdwuofTL1fx8vVHtD8Y9QbW2ec8B656DK6AAw@mail.gmail.com>
-User-Agent: Mutt/2.1.4 (2021-12-11)
-X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
- ATCPCS34.andestech.com (10.0.1.134)
-X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 56BApeFe051347
+In-Reply-To: <20250710-report-size-null-v2-4-ccf922b7c4e5@kernel.org>
 
-On Mon, Jul 07, 2025 at 10:50:38AM +0100, Lad, Prabhakar wrote:
-> [EXTERNAL MAIL]
+On Jul 10 2025, Benjamin Tissoires wrote:
+> Syzbot found a buffer underflow in __hid_request(). Add a related test
+> case for it.
 > 
-> Hi Ben,
+> It's not perfect, but it allows to catch a corner case when a report
+> descriptor is crafted so that it has a size of 0.
 > 
-> Thank you for the patch.
+> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+> ---
+>  tools/testing/selftests/hid/tests/test_mouse.py | 70 +++++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
 > 
-> On Fri, Jul 4, 2025 at 10:02 AM Ben Zong-You Xie <ben717@andestech.com> wrote:
-> >
-> > The first SoC in the Andes series is QiLai. It includes a high-performance
-> > quad-core RISC-V AX45MP cluster and one NX27V vector processor.
-> >
-> > For further information, refer to [1].
-> >
-> > [1] https://www.andestech.com/en/products-solutions/andeshape-platforms/qilai-chip/
-> >
-> > Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
-> > ---
-> >  arch/riscv/Kconfig.errata | 2 +-
-> >  arch/riscv/Kconfig.socs   | 9 +++++++++
-> >  2 files changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
-> > index e318119d570d..be76883704a6 100644
-> > --- a/arch/riscv/Kconfig.errata
-> > +++ b/arch/riscv/Kconfig.errata
-> > @@ -12,7 +12,7 @@ config ERRATA_ANDES
-> >
-> >  config ERRATA_ANDES_CMO
-> >         bool "Apply Andes cache management errata"
-> > -       depends on ERRATA_ANDES && ARCH_R9A07G043
-> > +       depends on ERRATA_ANDES && (ARCH_R9A07G043 || ARCH_ANDES)
-> >         select RISCV_DMA_NONCOHERENT
-> >         default y
-> >         help
-> > diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-> > index a9c3d2f6debc..1bf5637f2601 100644
-> > --- a/arch/riscv/Kconfig.socs
-> > +++ b/arch/riscv/Kconfig.socs
-> > @@ -1,5 +1,14 @@
-> >  menu "SoC selection"
-> >
-> > +config ARCH_ANDES
-> > +       bool "Andes SoCs"
-> > +       depends on MMU && !XIP_KERNEL
-> > +       select ERRATA_ANDES
-> > +       select ERRATA_ANDES_CMO
-> > +       select AX45MP_L2_CACHE
-> Do all the Andes SoCs require all the above three configs? (If not I
-> would add it based on the SoC which requires it.)
-> 
+> diff --git a/tools/testing/selftests/hid/tests/test_mouse.py b/tools/testing/selftests/hid/tests/test_mouse.py
+> index 66daf7e5975ca50f0b065080669d7f6123fb177f..eb4e15a0e53bd5f3c8e0ea02365ff9da7eead93d 100644
+> --- a/tools/testing/selftests/hid/tests/test_mouse.py
+> +++ b/tools/testing/selftests/hid/tests/test_mouse.py
+> @@ -439,6 +439,68 @@ class BadResolutionMultiplierMouse(ResolutionMultiplierMouse):
+>          return 32  # EPIPE
+>  
+>  
+> +class BadReportDescriptorMouse(BaseMouse):
+> +    """
+> +    This "device" was one autogenerated by syzbot. There are a lot of issues in
+> +    it, and the most problematic is that it declares features that have no
+> +    size.
+> +
+> +    This leads to report->size being set to 0 and can mess up with usbhid
+> +    internals.  Fortunately, uhid merely passes the incoming buffer, without
+> +    touching it so a buffer of size 0 will be translated to [] without
+> +    triggering a kernel oops.
+> +
+> +    Because the report descriptor is wrong, no input are created, and we need
+> +    to tweak a little bit the parameters to make it look correct.
+> +    """
+> +
+> +    # fmt: off
+> +    report_descriptor = [
+> +        0x96, 0x01, 0x00,              # Report Count (1)                    0
+> +        0x06, 0x01, 0x00,              # Usage Page (Generic Desktop)        3
+> +        # 0x03, 0x00, 0x00, 0x00, 0x00,  # Ignored by the kernel somehow
+> +        0x2a, 0x90, 0xa0,              # Usage Maximum (41104)               6
+> +        0x27, 0x00, 0x00, 0x00, 0x00,  # Logical Maximum (0)                 9
+> +        0xb3, 0x81, 0x3e, 0x25, 0x03,  # Feature (Cnst,Arr,Abs,Vol)          14
+> +        0x1b, 0xdd, 0xe8, 0x40, 0x50,  # Usage Minimum (1346431197)          19
+> +        0x3b, 0x5d, 0x8c, 0x3d, 0xda,  # Designator Index                    24
+> +    ]
+> +    # fmt: on
+> +
+> +    def __init__(
+> +        self, rdesc=report_descriptor, name=None, input_info=(3, 0x045E, 0x07DA)
+> +    ):
+> +        super().__init__(rdesc, name, input_info)
+> +        self.high_resolution_report_called = False
+> +
+> +    def get_evdev(self, application=None):
+> +        assert self._input_nodes is None
+> +        return (
+> +            "Ok"  # should be a list or None, but both would fail, so abusing the system
+> +        )
+> +
+> +    def next_sync_events(self, application=None):
+> +        # there are no evdev nodes, so no events
+> +        return []
+> +
+> +    def is_ready(self):
+> +        # we wait for the SET_REPORT command to come
+> +        return self.high_resolution_report_called
+> +
+> +    def set_report(self, req, rnum, rtype, data):
+> +        if rtype != self.UHID_FEATURE_REPORT:
+> +            raise InvalidHIDCommunication(f"Unexpected report type: {rtype}")
+> +        if rnum != 0x0:
+> +            raise InvalidHIDCommunication(f"Unexpected report number: {rnum}")
+> +
+> +        if len(data) != 1:
+> +            raise InvalidHIDCommunication(f"Unexpected data: {data}, expected '[0]'")
 
-Hi Prabhakar,
+For the record, while thinking more about this, I realized that I
+changed the API for uhid with the previous patches.
 
-Thanks for your suggestion. QiLai SoC does not need below two configs
-since it has IOCP. I will remove below two configs in the next version.
+*But* after second thoughts, every request to a HID device made through
+hid_hw_request() would see that change, but every request made through
+hid_hw_raw_request() already has the new behaviour. So that means that
+the users are already facing situations where they might have or not the
+first byte being the null report ID when it is 0, so, maybe we are
+making things more straightforward in the end.
 
-Thanks,
-Ben
+Cheers,
+Benjamin
+
+> +
+> +        self.high_resolution_report_called = True
+> +
+> +        return 0
+> +
+> +
+>  class ResolutionMultiplierHWheelMouse(TwoWheelMouse):
+>      # fmt: off
+>      report_descriptor = [
+> @@ -975,3 +1037,11 @@ class TestMiMouse(TestWheelMouse):
+>              # assert below print out the real error
+>              pass
+>          assert remaining == []
+> +
+> +
+> +class TestBadReportDescriptorMouse(base.BaseTestCase.TestUhid):
+> +    def create_device(self):
+> +        return BadReportDescriptorMouse()
+> +
+> +    def assertName(self, uhdev):
+> +        pass
+> 
+> -- 
+> 2.49.0
+> 
 
