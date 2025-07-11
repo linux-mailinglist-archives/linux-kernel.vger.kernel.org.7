@@ -1,189 +1,307 @@
-Return-Path: <linux-kernel+bounces-726912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E17FB012B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:31:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F410B012B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E841C452D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2EC3AD6B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D829B1C6FF9;
-	Fri, 11 Jul 2025 05:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C8A1B424D;
+	Fri, 11 Jul 2025 05:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZDk4x4WP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="AiFW+nEb"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011057.outbound.protection.outlook.com [52.101.70.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF58625;
-	Fri, 11 Jul 2025 05:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752211866; cv=none; b=RbljmOCJKGzvu8cgaxrJmgz1jRzvbAohSn3HU6K7CMvC3Ot0RAgUVT0+phjvSoDwnMIIPTsB8IZypnPYigM6SQLvzK/U6Fv6qgTCTPSvcVunZJd+T+Qz9krv8hBYQ68Zd6zatRmbEzL8bzB/kf/xkZ234mHQ/PrwMaPRqdEgsC0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752211866; c=relaxed/simple;
-	bh=bxhhsYwdnmaeDB2B9KaP+DVLndj+FDu2bBuVHV+YbN4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jyEwnFv7HDgpXzxlrmeuOD2Csto0KAsRpt2+m6df/Bmpk6YkQDT9gn57qAz93emx/I0MmqsjlyklqYdmbS+2akKq4pa8batm6yN3xGfaVCz6X9s7trp+Fhf4Adp5ndtsSg6gJaGBxBoby6F0i5kkXSLyji1QmGtCiCALzmbQnVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZDk4x4WP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B1XUHC023233;
-	Fri, 11 Jul 2025 05:30:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rK5U51orc+S23BlwipdLeLzAr4JgT/RfGpjhEpw0e7o=; b=ZDk4x4WPWPgatB+4
-	TQde96VtzeZM54j8aDk3S1mnbxg+vliVnvJix7KA4Mm3OdVYGJCdInq2S0mxeU6a
-	8C91XppvnsjPzaSJdKZMXE1jcwemW43NbEZilawFI8DDR2D92y7yTUZcKPaK4LbQ
-	StPbTk8/BhwCv2BJ7QtEmpoRRZBCnwR3RCiEtrRkfIhAhxnqui4ZRtBT8bmXEDj8
-	sQtRpx3iW3czoER9XdvAP7ikcaMf7AODrfLp2ATh55GamRVUSiLBs4MOpVzpHFAl
-	wZjIXUYorGoDWD30ew9L5fm+N/5fPkFV42+yvTIeOSYbmO3U0WNuL8/eFrqV963a
-	w9qaMg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47r9b18bmn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 05:30:54 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56B5UriR003652
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 05:30:53 GMT
-Received: from [10.50.36.189] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 10 Jul
- 2025 22:30:51 -0700
-Message-ID: <ecbb7ea8-11f6-30c1-ad77-bd984c52ca33@quicinc.com>
-Date: Fri, 11 Jul 2025 11:00:40 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1338625
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752211827; cv=fail; b=R7nTf8T++rUrX9PAFaDH8iaF+B6aON5OJk3os+BwY104kTaBv8SqcFA7YwGpeqYA7fKZgNs2atddHI8lHsdRlblq0v7VQB5eB9QVt3bwXCMopzWf6q+AF+kUtiexdut48ZhOHi3KuIrcSviJPV5X0dC1Q+tGzY9l9SrObmGREpk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752211827; c=relaxed/simple;
+	bh=nHA9QOaR25IsdHSBkjD0s1u6xDFu0tJEqj3/tBnCql4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NyFJraDjEQ9in7teuWsDwZB2Q4INzs7qSPNxw7YaMbSYW4F4hiQ4mTSy3kaKHK0GSqW+vZ1z7Jted1bG70LDvNLUsOkXlvjG1Zg/3Pc8ZF0UMq4VE/j5KTPgPrJ3eOHrXcTXh9iOyUj8URmUXkr5V2YMJzMEWla8NsoeTSh9ugA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=AiFW+nEb; arc=fail smtp.client-ip=52.101.70.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AnVLOqWsTnE7Z+RV2AL04LmW4C2zAcee2QhwpCDch0EBFMUGnaVmjf4aRzgaWaM+upbjeKBl5vO35I0OXKJh+Dl5d65SXcnexOhzs2wxb0CDmq3OJehdwmouMBphrstWON52NHUKuc1QLICrGXrXskom5BT4cZrL0cFZn8WoQ8UTzixTqcuIw8TNnrFO6Bbec1t2ZEhPuVFexLb77F9oFujgO/kgK8K4/zgq+sHTA52krUey5aHD15yjV9abxbs5pvHpNCIpaI6k1oTg8o+Cccjakwy95cU/O0IbTre7WRIJpxaQybbjwY4Z4E0efKquhaPN9m0LmfancP09AR6ipQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ibv7BW20KSe3Ex8IQRW+8R34PoTjqVMlkbySRBfsKPk=;
+ b=xGkDYutYCN2wbdJ0VtfQh15aKWBXvwJELFBW4rjrfeBiD7nxK2qwBKWAA9gX8hF7/pqGWlupqXh35sd5P91Lwu4JAHg/S3R+skDhV0r+OTe/laaM/CVm1AU/KGvBJfso0IloiOsCyMIM1gnc757/XvXYVJn7Gt7A+LCwsYX99dbOYlvPAQccSlYxaXpihGAO4MaET5TBxjfhEKB+8LmQbPJ5D2W35A2zL5HOI5F85Lg+8s3ZPEJUCMXjrQzOrX0htC5ew78KqoI8bfOpdZEV5QTR8pxEqKZATbilYwBOBZvL6UW91ySwHUuQZAJc9zoADIh6KfEKfoewOImPB3EspA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ibv7BW20KSe3Ex8IQRW+8R34PoTjqVMlkbySRBfsKPk=;
+ b=AiFW+nEb8Jd6SQUO/BUMYcLeGWXCgjsUhx8XPuAiCzwEapzaNw8lAp/iH+WtJwDYRv5BWsLaEDUWfK7eOJ2E6pRYs1OiVbfeKy+GL65H1jSjktRXCelfGvsCf8aRDxg6tkklKzGQ7Jcqqt0hDfcVHvOfrD75/v6nTGAG2AJMH08sqbxHY2uTkHIwP6ub8Z0ZAKlknpiRto2JnQVALcdF0MO33ipj0ZhVSdZgWspXF6BO+cLBOk7znhO5Nd0RdqtFj3+0phWNKJE0hBeEgDQ6xR4lGJuAYHkaOT1wYKf/wjp6JgX3jX+3JJDaKwghu5A7yJyjSt9wQnruAuST/BcJXg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Fri, 11 Jul
+ 2025 05:30:22 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.8922.023; Fri, 11 Jul 2025
+ 05:30:22 +0000
+Message-ID: <f971b9cc-0eec-43e9-b58f-a343660bdf13@nxp.com>
+Date: Fri, 11 Jul 2025 13:31:55 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] drm/bridge: fsl-ldb: Get the next non-panel bridge
+To: Frank Li <Frank.li@nxp.com>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: imx@lists.linux.dev, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250709122332.2874632-1-laurentiu.palcu@oss.nxp.com>
+ <20250709122332.2874632-4-laurentiu.palcu@oss.nxp.com>
+ <aHCQyRiPIcOhd7/K@lizhi-Precision-Tower-5810>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <aHCQyRiPIcOhd7/K@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR02CA0127.apcprd02.prod.outlook.com
+ (2603:1096:4:188::7) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [RFC PATCH v2 2/2] dm-inlinecrypt: add target for inline block
- device encryption
-Content-Language: en-US
-To: Adrian Vovk <adrianvovk@gmail.com>, Eric Biggers <ebiggers@kernel.org>,
-        <dm-devel@lists.linux.dev>
-CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Israel
- Rukshin <israelr@nvidia.com>, Milan Broz <gmazyland@gmail.com>,
-        Mikulas
- Patocka <mpatocka@redhat.com>
-References: <20241016232748.134211-1-ebiggers@kernel.org>
- <20241016232748.134211-3-ebiggers@kernel.org>
- <681a6d2e-a80a-4e81-a049-841d7e8582ba@gmail.com>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <681a6d2e-a80a-4e81-a049-841d7e8582ba@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=dYuA3WXe c=1 sm=1 tr=0 ts=6870a18e cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=1XWaLZrsAAAA:8
- a=AcQ4Ai9qnt-bWPWtfq8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDAzNiBTYWx0ZWRfX88SA32wYyUgq
- gD6XQG2EzcG86bunBTsfNX+Y1AhAkU+CnImkOPWa5YpcxGaOcB1LfF1SAGSGkXpLRyXQIkcaxqy
- Lb0kK2uEcsMZopJBwlaFmnwsZPl8SbhtLtxNeNxUcXPr4FLnAZZIH0BO3FwLQ1Gy7wTGjtlAfBN
- qVJToqMqKnLW37xEE6LHQSkr9q7JTfht7GgYhRINE6rAz53pahWOpxWz/7RMGDF9+y8u21FX9JN
- bESFwWmYVj+cAjsmb1v54xJf9kJbwb6JofYTLTnPMkNERGN+eCQAu0qmJutvecOhH8stgX9GREF
- Iw41wQ5GBZu2zmd2QV6qL3rnP8lxWzgYZR/dKZASwDxos79Slaoz9Rr8Guw9Ou65tFrxM8FfJsU
- nQ+3Y/mNFbQbORmyGquWli2gzQ/XdwgR4lo1/nnHgLLsekXQdMirdUuLH0P2so7t0Hi2Ubuj
-X-Proofpoint-GUID: 4FDLsZ_3FqT8GIpXPwDludjAVtljVtHj
-X-Proofpoint-ORIG-GUID: 4FDLsZ_3FqT8GIpXPwDludjAVtljVtHj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_01,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 clxscore=1011 impostorscore=0 lowpriorityscore=0
- priorityscore=1501 spamscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
- mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507110036
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PAXPR04MB9642:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75acd365-20f8-4bd7-5ad4-08ddc03c07b7
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|19092799006|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?d2hiKzU3ekgwYXRGdWFobm5sNStSQ2FudWRPcmxyS0pWeFFnZ2NhMVJ0aFYx?=
+ =?utf-8?B?MWI4dHUyYUUxUFRtNjd6dmdlRVk0NDFoYVJFTndSa0d2ampiWmpsYksyMVBi?=
+ =?utf-8?B?dzlMM1RuQnFSeVlYZjVsRWpuRElGNjJ3WnBKWUQ4LzVKNWJpQTQvcXJuVkp0?=
+ =?utf-8?B?dFhmcG1aUlpZWE1EL2FlYXRveU4yMkpvUTFnSXpqdTFiV21oQThUVlFRMlJZ?=
+ =?utf-8?B?VzE4ejJJS2cxUER5dTMzRm5ZenV2Vk05amEyYkJNd2pXYmdzSllzYkp6RzlK?=
+ =?utf-8?B?cHkyN3puVHVIeWQxRVpwWnJGMXRxNWxtL2VEaDRIUVVneWNxUEtSRkE5WEsv?=
+ =?utf-8?B?Tit3LzhlQVhQZFZTQW5BL0h3Q0xtK3ZkSFNMUVZIQUpSSThlR1lCem4rZFdJ?=
+ =?utf-8?B?SHhPTE1hR3JQN3ZCOTE3aGhJeFJXSkxKUEdJZFdUM3RJOS92MkFYWDJsUUlw?=
+ =?utf-8?B?V1dQSTI5ZklXeGllV0ZBVkZEa1crb3lkUHUxK2NkbzZwU2Y3NTgxaUZDTldi?=
+ =?utf-8?B?N2t6c0JNNzQ2YU5kZ0pvT28xNHNaSWlZUm54akVKUTI1eStpdW5XSDVQWGlH?=
+ =?utf-8?B?b1RQWFFKWHBnbFpWVFVSVkJBREx6KzVnVDhKeWRvYmZBV0ZGL3lnV2s4NmVS?=
+ =?utf-8?B?MlVRcHo1cWh4WVBDdHl3OVdKYTdGM2UyRTB5M2Z5M2JoSzIzZTlqdXdsUTRN?=
+ =?utf-8?B?R1lnM0pJZlhwb3ZSMUtKaWVUQzR4SC9ZMzFjVnFYKy9zS3dKWWdSTVhlWnYx?=
+ =?utf-8?B?TlF3bUU4eGUrWldobURsK1FiUVlXSU4ybTVkQlltMUgvcC9ETmI1UkFvR0VS?=
+ =?utf-8?B?U1EzNzBXM3hPM1NNcTMvcUNMcno0S1hLTXRZVFhveUJoVzRjZ2VxcEdHckxu?=
+ =?utf-8?B?WDhkMm14TGNmTUF5SmRJSEZ1N0d0UU8rdWQ3bjB6VGZHZ25JSVhGcW90RU13?=
+ =?utf-8?B?U1VjSEhWTmRUZjhLaktKeS9wM0FaSGd2Z2wyV2lIL040SExRZEhYcWplcGc5?=
+ =?utf-8?B?RElFSkJhMU9HMG5nMTBtMk5MeXN4YjdNZi96YWRNeis2Q05oOU9TSFNXQTNO?=
+ =?utf-8?B?Y1BGclFUSFZZbGg0VFZKaEpTOURZenB5T3k1RXRiWkxmaUpSakhuZnRNR0hr?=
+ =?utf-8?B?emxCWlVGZHFIQUp0dVBDS3lyVUNUb2ZjTFI5Vmo0aG9qRG01Tjg2VS9VQ2VS?=
+ =?utf-8?B?Y1I0dklQM2dOcUZNcm5SNGk4RFYzM2FCU1hVUFVFMW9yZW0xd2J1UGppMUhL?=
+ =?utf-8?B?TnE0ZU40ekJ4Z3h2VzZPWEtHems4K0pwR2xlMHB2ejZlWUtoK3ZYRzFQeVVt?=
+ =?utf-8?B?VkMvMFFSTWRzdkY1M0FJVlNHZHBrdEZJbjkyNXl1ZzY1eU1JUGJ5N3JLZXpa?=
+ =?utf-8?B?WGdCZU5QU01yL1dKM2h4c3BlV2tISkVkQzA1dUliYmdlUUo0STBrSlhFdnFq?=
+ =?utf-8?B?TDVUOTRyM2p2ZWdyZFJqTFh0T1ZxRXFPZ1J4T3BhT3B0SGwzSHZibkExcWNY?=
+ =?utf-8?B?L0huWDEyY2RyekdzRHhZTUowWW5XN1NPNDhlejZ6OWZ5WmNRRzZIeVB6SVBs?=
+ =?utf-8?B?UWE5a1hFUHF0ZWxvTHpFdVJ3TVBMREFhQnNiYzRnc2xvUGREeW44TGhPOGhn?=
+ =?utf-8?B?TUNQVGw1UnJVdzlWekR2Q083RUY1VFhVSzkyalJtWnl5d20vTXRhS0gvY3U3?=
+ =?utf-8?B?eHV4VUZxQzJaNnlHSGc3MXVzL2QxRFdIdXlOOXE5RExoTWQrTWRZTERsVElm?=
+ =?utf-8?B?dmVUdnFJUDNRREZ1SnZpOUJPcjl5Kzd5eDFJL1U3K3RpYXRBbXRVdkZqZzl1?=
+ =?utf-8?B?UC9VZi9qQmJaMlRSenhzSEZYKzNpWElJQTBiQ1pUY2M1QnBnRS9kTDBwTnZh?=
+ =?utf-8?B?MWltenI2WTAwbVFWMW05cFArMUNZSHRBbHNUMGZUakhjOURSdkNpaTdVZ0xU?=
+ =?utf-8?Q?PjjLfhpBuLs=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?YmFMemxJTGp5MGh5bm10TTJTUjcwM2ZlT0p3bWpYeGpVNnJlUlJ1U0FvSWN4?=
+ =?utf-8?B?NVdsem1wdXlXTVZkdDZDd3hxKzZCcE01MEpZdzJFL1RxTngxZUxDdENncVlJ?=
+ =?utf-8?B?akEvdFhQQzdaLzRwK1E0cnZGc1BUVVVKd1I1cmhPSDd0QVQ1b2MyNlAvLzNt?=
+ =?utf-8?B?aGhHSnBPMytPRVM0ZHJ6N1REdmVQMG5lTVo4NE5EdVgwVlF0RWVVTGhGWnpK?=
+ =?utf-8?B?eVR5SHR6ZlFmTHBDSk1CellYRHZWd3VvQlRLUUYxOTdIM2VMcFdSdzg2ajRt?=
+ =?utf-8?B?L1hVWTJ1TUVFUGpsWnp5SkowRCtKS1pRTkhQeHhjZUtLeXlMNjJPSUdPK3FV?=
+ =?utf-8?B?eE55cGZDUXVzUXFOeTBtSDVXYVNyVVV5ZVlxQWVpSkJLOHBuVGgwWWJ4T3Bx?=
+ =?utf-8?B?dDVsN0tYaVQrU0o4RFJYK1Flb1cwMGcrbzZJenc5U3lyblFrcnluK1hFOWxG?=
+ =?utf-8?B?dUFHaDNGVFdrd2lqdWdYZ0R5N3ZyS2RzVU0ybnNnZDIzS2k4Y2RSZlpEZXFz?=
+ =?utf-8?B?RHNORGRqWGJsS2lMUENvdGV2QjZJOGpydTZleXJMVTRKMUZBK21iUjZ2Njds?=
+ =?utf-8?B?NEpMenQxT2ZNNjhzOHdpZUYwckRoUXYxaHl3SkJwcWl0V2ViRjBmdmZuRWEx?=
+ =?utf-8?B?OTZJcmNIUFBRQytDekY0LzZ3NEg4aXd4QStKbVhGMSsvLzBjdHlzWC9xOG5h?=
+ =?utf-8?B?ak96M3pBcmxSQUo0Q2lGeDd2dmZEcC9TckZKb3gxYWx2bG9IaHlady9YRXRp?=
+ =?utf-8?B?Yjk3Q3BES1ZpRm9ZZUJrNjJ4ZWtHNXRLb3ZUU3RJZjlJSmpORTJIeWkxUW9I?=
+ =?utf-8?B?V2F0UXVXRzMvRW90bFNCVDFIczI0Mm0yMVpZczB1YkxZOU82TU5UL29jM2JJ?=
+ =?utf-8?B?cHpPbDVmTDNZekhKU3dGMFVrQ0lMZXZFb2xaVWtwOU91VmNOUjlORDZyRVFY?=
+ =?utf-8?B?c1d4OGVkQk1VR3d3dXVIeUxVL21nVzRXaE5uRXFwd2VyVG5Gdm9JZzhGRmRz?=
+ =?utf-8?B?SGp0TVZyOW0rN3hoSk5ZeGRvU0ZQNmZTUmJ6aVl6MFI5aTVLeklNckhuU3dt?=
+ =?utf-8?B?M1I5dTVLbHJ0dk9zSmp4eWFLNDdmOXdFVzZ0M0tPbDBqd3lic09TSlVtaEg2?=
+ =?utf-8?B?R2lpTFJhTUtJQzBlNjJHUm1MM1Zob05tSHR4V2F0L2lETmxaYTNMUFhCaHhx?=
+ =?utf-8?B?dWQ4RHNvVVJPNi9IVHJvVStnK1FYem80SXJwd2MzSmFxV3NXZko0VzRITEps?=
+ =?utf-8?B?WWhsZHpXUStSMUJ0emlZamFuZXF1am9wYWk1b0ZpYks0UGQzSkZWLzYyS2Ns?=
+ =?utf-8?B?NkdtNWlCNnFHRDYycVJ4Z3hxYWpQV3hNR0trMDlPT3R5SldDRnNRSHRLZ0Fz?=
+ =?utf-8?B?Um8xYllRUWc1TEZLL2VFcm1HZEVkS20wV2ZVYysxZ0YvakZPQ1dIWlRMNG5l?=
+ =?utf-8?B?WVVFcXI2cWJ5ajE4R1gvRkVCMXFIMFZjNFN6OURmdEg1d1hPNUJkaVFVZVBt?=
+ =?utf-8?B?b1piM0JGQWtmcjFxYjFXbzhRQXdXWmhlaHZwUXJvdk5XV0hnV1VMKzZNQm0x?=
+ =?utf-8?B?YWJZa2NUaGI3RHVwSllCQzA2ZW5IcXNHTjY1STl3L2VORmNqS05wMisyQTRk?=
+ =?utf-8?B?SjduRXNLcmZQV1JKdlkrUll3TE9MM0NUV3lvbFRvakh1aFBnZVV4SndiYVNH?=
+ =?utf-8?B?YlJlMzZXMGtONjF4RFdDZ0ZadFB3dTNyWjFOUTR3RWgrSE80TkROYTNMK2s3?=
+ =?utf-8?B?bkJ6VVRxZDM0eWZvQ1NUY0hmVW4rWGVZMDV2RFMwcHdORUJUV3NBM0VNWStP?=
+ =?utf-8?B?WjNQKzhJU3ZjKzhOT2lGREl0ZnM0MjFvcC9RRHVnbVVqRmNoWmxzeGdlbUlv?=
+ =?utf-8?B?RW93d2g4ZlFUOER2Q3RnTEF5RGlMTVJzVTVmanFXMU8wdEMxMEJjR09BdlBj?=
+ =?utf-8?B?UGFMb210RVp3S1B4aDdoSm0yZjg4aEJtNzBlOHYwNjYwL2ZLelN5c3UyNXB1?=
+ =?utf-8?B?MGpRL0c3ZFI0cGU1UnlrRTRmQWZ6NnV4ZXlnM1UrRld0WWpzbnBka0prakh0?=
+ =?utf-8?B?VDdudlJKN0l1NUlUYXpBTDJpU29xc29GVzhkSFNPbG9ZMGVKcWFIY0xWa3FW?=
+ =?utf-8?Q?Dq2jcHUYNLNGbP11d9Yi5H+Ic?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75acd365-20f8-4bd7-5ad4-08ddc03c07b7
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 05:30:22.2282
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vR9uUoSP11Hv+J+loIrq0RYgzsHp5NTsAZM2/4YyNCGI6/SC1/8fAKOIs+JUhi9mzfVqMdizpdfh5qLwLywY3Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9642
 
-Hi Eric,
+On 07/11/2025, Frank Li wrote:
+> On Wed, Jul 09, 2025 at 03:23:22PM +0300, Laurentiu Palcu wrote:
+>> From: Liu Ying <victor.liu@nxp.com>
+>>
+>> The next bridge in bridge chain could be a panel bridge or a non-panel
+>> bridge.  Use devm_drm_of_get_bridge() to replace the combination
+>          ^ extra space.
 
-On 10/18/2024 8:22 AM, Adrian Vovk wrote:
-> Hello,
+It's intentional for readers to be aware of the start of a next sentence
+easily.  It's not uncommon in kernel commit messages.
+
 > 
-> On 10/16/24 19:27, Eric Biggers wrote:
->> From: Eric Biggers <ebiggers@google.com>
+>> function calls of of_drm_find_panel() and devm_drm_panel_bridge_add()
+>> to get either a panel bridge or a non-panel bridge, instead of getting
+>> a panel bridge only.
+> 
+> According to code change, devm_drm_of_get_bridge() replace
+> devm_drm_panel_bridge_add(of_drm_find_panel()).
+> 
+> what relationship with panel bridge or a non-panel bridge?
+
+Here, the former represents a panel with only video sink, and the latter
+represents a bridge with both video sink and video source.
+
+> 
+> Frank
+> 
 >>
->> Add a new device-mapper target "dm-inlinecrypt" that is similar to
->> dm-crypt but uses the blk-crypto API instead of the regular crypto API.
->> This allows it to take advantage of inline encryption hardware such as
->> that commonly built into UFS host controllers.
-> 
-> Wow! Thank you for this patch! This is something we really want in 
-> systemd and in GNOME, and I came across this patchset on accident while 
-> trying to find a way to get someone to work on it for us.
-> 
->> The table syntax matches dm-crypt's, but for now only a stripped-down
->> set of parameters is supported.  For example, for now AES-256-XTS is the
->> only supported cipher.
+>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+>> ---
+>>  drivers/gpu/drm/bridge/fsl-ldb.c | 31 +++++++++++--------------------
+>>  1 file changed, 11 insertions(+), 20 deletions(-)
 >>
->> dm-inlinecrypt is based on Android's dm-default-key with the
->> controversial passthrough support removed.
-> 
-> That's quite unfortunate. I'd say this passthrough support is probably 
-> the most powerful thing about dm-default-key.
-> 
-> Could you elaborate on why you removed it? I think it's a necessary 
-> feature. Enabling multiple layers of encryption stacked on top of each 
-> other, without paying the cost of double (or more...) encryption, is 
-> something we really want over in userspace. It'll enable us to stack 
-> full-disk encryption with encrypted /home directories for each user and 
-> then stack encrypted per-app data dirs on top of that. I'd say that the 
-> passthrough support is more important for us than the performance 
-> benefit of using inline encryption hardware.
-> 
-> Without a solution to layer encryption we can't do a lot of good things 
-> we want to do in userspace.
-> 
-> As far as I understand, the passthrough support was controversial only 
-> because previous upstreaming attempts tried to punch holes into dm-crypt 
-> to make this work. I don't know of an attempt to upstream dm-default-key 
-> as-is, with passthrough support. As far as I can tell, people even 
-> seemed open to that idea...
-> 
-> Is there some context I'm missing? Information would be appreciated.
-> 
->> Note that due to the removal
->> of passthrough support, use of dm-inlinecrypt in combination with
->> fscrypt causes double encryption of file contents (similar to dm-crypt +
->> fscrypt), with the fscrypt layer not being able to use the inline
->> encryption hardware.  This makes dm-inlinecrypt unusable on systems such
->> as Android that use fscrypt and where a more optimized approach is
->> needed.
-> 
-> Yeah, sadly you've removed the use-case we're very interested in. 
-> Generic PC hardware doesn't have blk-crypto hardware as far as I can 
-> tell, so we don't get the performance benefit of replacing dm-crypt with 
-> dm-inlinecrypt. However, we do get the performance benefit of the 
-> passthrough support (if we run this on top of the blk-crypto software 
-> emulation mode, for instance)
-> 
-> 
-> Best,
-> 
-> Adrian Vovk
-> 
->> It is however suitable as a replacement for dm-crypt.
+>> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+>> index 5c3cf37200bce..665053d0cb79d 100644
+>> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
+>> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+>> @@ -15,7 +15,6 @@
+>>  #include <drm/drm_atomic_helper.h>
+>>  #include <drm/drm_bridge.h>
+>>  #include <drm/drm_of.h>
+>> -#include <drm/drm_panel.h>
 >>
->> Signed-off-by: Eric Biggers <ebiggers@google.com>
+>>  #define LDB_CTRL_CH0_ENABLE			BIT(0)
+>>  #define LDB_CTRL_CH0_DI_SELECT			BIT(1)
+>> @@ -86,7 +85,7 @@ static const struct fsl_ldb_devdata fsl_ldb_devdata[] = {
+>>  struct fsl_ldb {
+>>  	struct device *dev;
+>>  	struct drm_bridge bridge;
+>> -	struct drm_bridge *panel_bridge;
+>> +	struct drm_bridge *next_bridge;
+>>  	struct clk *clk;
+>>  	struct regmap *regmap;
+>>  	const struct fsl_ldb_devdata *devdata;
+>> @@ -118,7 +117,7 @@ static int fsl_ldb_attach(struct drm_bridge *bridge,
+>>  {
+>>  	struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
+>>
+>> -	return drm_bridge_attach(encoder, fsl_ldb->panel_bridge,
+>> +	return drm_bridge_attach(encoder, fsl_ldb->next_bridge,
+>>  				 bridge, flags);
+>>  }
+>>
+>> @@ -292,9 +291,7 @@ static const struct drm_bridge_funcs funcs = {
+>>  static int fsl_ldb_probe(struct platform_device *pdev)
+>>  {
+>>  	struct device *dev = &pdev->dev;
+>> -	struct device_node *panel_node;
+>>  	struct device_node *remote1, *remote2;
+>> -	struct drm_panel *panel;
+>>  	struct fsl_ldb *fsl_ldb;
+>>  	int dual_link;
+>>
+>> @@ -317,33 +314,27 @@ static int fsl_ldb_probe(struct platform_device *pdev)
+>>  	if (IS_ERR(fsl_ldb->regmap))
+>>  		return PTR_ERR(fsl_ldb->regmap);
+>>
+>> -	/* Locate the remote ports and the panel node */
+>> +	/* Locate the remote ports. */
+>>  	remote1 = of_graph_get_remote_node(dev->of_node, 1, 0);
+>>  	remote2 = of_graph_get_remote_node(dev->of_node, 2, 0);
+>>  	fsl_ldb->ch0_enabled = (remote1 != NULL);
+>>  	fsl_ldb->ch1_enabled = (remote2 != NULL);
+>> -	panel_node = of_node_get(remote1 ? remote1 : remote2);
+>>  	of_node_put(remote1);
+>>  	of_node_put(remote2);
+>>
+>> -	if (!fsl_ldb->ch0_enabled && !fsl_ldb->ch1_enabled) {
+>> -		of_node_put(panel_node);
+>> -		return dev_err_probe(dev, -ENXIO, "No panel node found");
+>> -	}
+>> +	if (!fsl_ldb->ch0_enabled && !fsl_ldb->ch1_enabled)
+>> +		return dev_err_probe(dev, -ENXIO, "No next bridge node found");
+>>
+>>  	dev_dbg(dev, "Using %s\n",
+>>  		fsl_ldb_is_dual(fsl_ldb) ? "dual-link mode" :
+>>  		fsl_ldb->ch0_enabled ? "channel 0" : "channel 1");
+>>
+>> -	panel = of_drm_find_panel(panel_node);
+>> -	of_node_put(panel_node);
+>> -	if (IS_ERR(panel))
+>> -		return PTR_ERR(panel);
+>> -
+>> -	fsl_ldb->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
+>> -	if (IS_ERR(fsl_ldb->panel_bridge))
+>> -		return PTR_ERR(fsl_ldb->panel_bridge);
+>> -
+>> +	fsl_ldb->next_bridge = devm_drm_of_get_bridge(dev, dev->of_node,
+>> +						      fsl_ldb->ch0_enabled ? 1 : 2,
+>> +						      0);
+>> +	if (IS_ERR(fsl_ldb->next_bridge))
+>> +		return dev_err_probe(dev, PTR_ERR(fsl_ldb->next_bridge),
+>> +				     "failed to get next bridge\n");
+>>
+>>  	if (fsl_ldb_is_dual(fsl_ldb)) {
+>>  		struct device_node *port1, *port2;
+>> --
+>> 2.46.1
 >>
 
-Is there any plan to update this series ? IPQ9574 needs this 
-dm-inlinecrypt driver for secure eMMC feature.
-
-Thanks,
-Alam.
+-- 
+Regards,
+Liu Ying
 
