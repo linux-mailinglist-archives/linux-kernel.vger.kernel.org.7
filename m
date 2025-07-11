@@ -1,56 +1,63 @@
-Return-Path: <linux-kernel+bounces-727068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295E0B014A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:29:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A4FB0149E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A0373A5DE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:27:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269FE3AC316
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF301F4261;
-	Fri, 11 Jul 2025 07:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1AE1EFF8B;
+	Fri, 11 Jul 2025 07:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACU1Fqjr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6wWHyBL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D981EDA0F;
-	Fri, 11 Jul 2025 07:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66AE1E9B08;
+	Fri, 11 Jul 2025 07:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752218843; cv=none; b=ZKMDVQZaXi19uBIpP4Vvaf01fCEmfvpKRHl0ZmjAGH7epCXZYzJQ5FbWzv17W5QELjRtPBl7ZOUkWzd08kC8GaROXPVl7AnjAaHxoTANj4hyPW3IxVSMUN6u9yo7W5PB6uYIizyt0yOpc15vE77jzMuiGvOIldAFnD6AC7JJsOo=
+	t=1752218836; cv=none; b=gx3S7gMgnaXUwrXPNYU1Fx65NIHmxOPfed0R9jkZ6bXJYxJe34WcYii9Mt5A9Td0kXb8J8r7w+RcvO8VTT6DR+eeAei6eG6tv030/bAyXldIB0WUW4LsdS2JZgnzVKBsJhzxSXbf2LTYwLOKndCLGJdaRvjvv9Cduz3rucAzZvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752218843; c=relaxed/simple;
-	bh=vQRwotoAgVJ0lAndow9DIf367RcCHh0hiNp7rDPCxCA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YbZsLq5K4Lo6rlUeeyuccrvh8iU1qEvQUfwnZvSup0g3Y/G0KT6NzssfW9Ns4iZIPz+Cn1P5DKrQBCSRGafMTQwQtg3LnekB7DONSOrhtFk/FoTPP3CRxkkiifFRSRYT8KhueW2d7gAKgNQZ6yXsAjts2fdGt5aXQcaK/S9cwGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACU1Fqjr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4760C4CEED;
-	Fri, 11 Jul 2025 07:27:20 +0000 (UTC)
+	s=arc-20240116; t=1752218836; c=relaxed/simple;
+	bh=nBkQTkDhZsnzFFW82qYBM0kzGOHtVEnCtN29bE/ppyI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DmbM9JGDHfSG393C3nBPJ6tXsgv7cisbfQmgFbd6/wjDGfaj2ayv10twtly/OcBrgvPMm68OGLYQY7Cl2O4FRX4o2LsobUoh0iZIZZnG8llslP1CfDq6epdBc3g/osaxVPvI3z0HDYoARj1Relo6AcnlKFv+KF1HXIS8I6KWP3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6wWHyBL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE67BC4CEED;
+	Fri, 11 Jul 2025 07:27:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752218842;
-	bh=vQRwotoAgVJ0lAndow9DIf367RcCHh0hiNp7rDPCxCA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ACU1FqjryQZdlspB0+czXPZGMsrXQHhz2YH+gZf248YvYoJsMCyxW35hDx9toZbPI
-	 jnSib3r7aQYwvRdQDCXvfvc4lSDhGamSygw4hZhsPIujW/7Fs3w70QTgm4pavArMqv
-	 hlwPFithhgG9VuPHGanR0f01DN76EYSyysRazGf+Hjo0nnUsB7Ycku8FL/W/xhfkCO
-	 YkYLYyuW72mAAoHqaDlD8NyXZ0AJMWlr4gT9Yqzc7dvPO2M52HGPybWwXx7/JkJxZp
-	 ludpVi96N2HqyQCOBcGrHo0G+o5A3qW3bswdII0Qx52c2Jlv73IRiYCMfKJVU64mzT
-	 JvzekYqdhDmhA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: "David E. Box" <david.e.box@linux.intel.com>,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	platform-driver-x86@vger.kernel.org,
+	s=k20201202; t=1752218836;
+	bh=nBkQTkDhZsnzFFW82qYBM0kzGOHtVEnCtN29bE/ppyI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=l6wWHyBLm879opsQjQhj5oTUoT5nOVp0YySKdjwu4XfL4JshB7+BRDo3+4xUPxmlX
+	 OIBGhrT/MCXfhddusElEhYm+1onc0J03TPNenBMTraHAgPtfCnVqSHVbgJlgTV3BI3
+	 r6LUnP3Ev0r2iZUTd4XkAMcLBZRC9zjAxt1VdFhrPjUsrzjxgY8gWWnT1NaqeJlzsY
+	 /t2/hZv8GNZ2HAXiuwsWccQ8KZplxMkONlp4tqXsC1Odk44/++8x7x3MrJ5cgoZ4at
+	 tjXkDwZ5xwCXzwX1PQNtT/YusCtOHegk2oAZhiKu2GSgUpxVObxoSrRqWChQlccAQe
+	 F9PUVF4hhnVSA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1ua8A6-0000000FSSv-3VEV;
+	Fri, 11 Jul 2025 09:27:14 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Akira Yokosawa" <akiyks@gmail.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86/intel/pmt/discovery: fix format string warning
+Subject: [PATCH 2/2] scripts: kdoc: make it backward-compatible with Python 3.7
 Date: Fri, 11 Jul 2025 09:27:09 +0200
-Message-Id: <20250711072718.2748415-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+Message-ID: <d13058d285838ac2bc04c492e60531c013a8a919.1752218291.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <cover.1752218291.git.mchehab+huawei@kernel.org>
+References: <cover.1752218291.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,35 +65,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+There was a change at kdoc that ended breaking compatibility
+with Python 3.7: str.removesuffix() was introduced on version
+3.9.
 
-When -Wformat-security is enabled, this new code triggers it:
+Restore backward compatibility.
 
-drivers/platform/x86/intel/pmt/discovery.c: In function 'pmt_features_discovery':
-drivers/platform/x86/intel/pmt/discovery.c:505:36: error: format not a string literal and no format arguments [-Werror=format-security]
-  505 |                                    pmt_feature_names[feature->id]);
-
-Fixes: d9a078809356 ("platform/x86/intel/pmt: Add PMT Discovery driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reported-by: Akira Yokosawa <akiyks@gmail.com>
+Closes: https://lore.kernel.org/linux-doc/57be9f77-9a94-4cde-aacb-184cae111506@gmail.com/
+Fixes: 27ad33b6b349 ("kernel-doc: Fix symbol matching for dropped suffixes")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/platform/x86/intel/pmt/discovery.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/lib/kdoc/kdoc_parser.py | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/intel/pmt/discovery.c b/drivers/platform/x86/intel/pmt/discovery.c
-index 1a680a042a98..32713a194a55 100644
---- a/drivers/platform/x86/intel/pmt/discovery.c
-+++ b/drivers/platform/x86/intel/pmt/discovery.c
-@@ -502,7 +502,7 @@ static int pmt_features_discovery(struct pmt_features_priv *priv,
- 	}
- 
- 	ret = kobject_init_and_add(&feature->kobj, ktype, &priv->dev->kobj,
--				   pmt_feature_names[feature->id]);
-+				   "%s", pmt_feature_names[feature->id]);
- 	if (ret)
- 		return ret;
+diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+index 831f061f61b8..6273141033a8 100644
+--- a/scripts/lib/kdoc/kdoc_parser.py
++++ b/scripts/lib/kdoc/kdoc_parser.py
+@@ -1214,7 +1214,9 @@ class KernelDoc:
+         # Found an export, trim out any special suffixes
+         #
+         for suffix in suffixes:
+-            symbol = symbol.removesuffix(suffix)
++            # Be backward compatible with Python < 3.9
++            if symbol.endswith(suffix):
++                symbol = symbol[:-len(suffix)]
+         function_set.add(symbol)
+         return True
  
 -- 
-2.39.5
+2.50.0
 
 
