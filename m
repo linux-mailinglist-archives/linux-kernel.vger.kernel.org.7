@@ -1,99 +1,111 @@
-Return-Path: <linux-kernel+bounces-727400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1C2B01999
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:21:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FEAEB0199E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18A3A7B95C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92F311C47A36
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC9C287274;
-	Fri, 11 Jul 2025 10:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6BC28033E;
+	Fri, 11 Jul 2025 10:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RCy8PAN8"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="BFT9BjnE"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04AB287247;
-	Fri, 11 Jul 2025 10:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E6827FD45
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752229225; cv=none; b=HOKW9vwf/prV02Gyoc8afzJTyQo4dk7fh99dieZ9Pp7w6rEm8VWEBsZhAttSeIIHm1G0gP9ZZr9M9ULpOMy2U16d67YECtUNQtW0VR7z3eVy7uj01A0ms5r+Qaj08Q8D2F8twhXbMpmjtjOLSOllL/7Ep8ui4PkHFFSToUX2a2Q=
+	t=1752229374; cv=none; b=IsWXebgxxq/vVR+QhqcJt4hZS9F9ofYTz0RTqI6JuznKbPJ3MNpiTOaOi1LgpUghF4ei5JU0eZ+1Wbj7cdh2maVfcmFxnHz64ELhhoJCOZb1DY+irw4OCUWfM2rq2i/FMOHmdv29PMosuH6fNZVrquI9KHr5gcqFb2Cl6ooUN4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752229225; c=relaxed/simple;
-	bh=ZLLmIKtHD32BHKSjrmb27QgNt/hb6BAJ7uNG1ceFDyw=;
+	s=arc-20240116; t=1752229374; c=relaxed/simple;
+	bh=JGW8MvKUfKhaOjVnbMWj91aDHU9szYu+5s37tDdARUA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=apL5q2JetLZ+nDFSWsrF7AR3HZGPr5KdS5xtIUHCF+zdLivFLZfoZZrpMGZb0oM0VkDApsi1BO1+aK/OF29hUsrDyerKB3Bn8mrxg27YRAX1/cdCNO982ju3LN+Y2oo0OSoX380pwkQjoi0LgXgNabTA+NKUXUPu7izHayVI3bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RCy8PAN8; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-315f6b20cf9so2159065a91.2;
-        Fri, 11 Jul 2025 03:20:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=mTb2K6qtw3IeApR7qIGeHwYEH1UyqQEV/CrcvRjOHSWcIr94eds7+zlExT2+v5WlDXbyJ5KJ8P+VPjRq5Wzwc/bH1McbRLLCsBtcg4srJEUDVbq1dxeM/lh+OFFBL8GNYuQdJJpeUMCx7nJ4nVFVQ39ePc/TjTImnaTdHkrJKC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=BFT9BjnE; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54b10594812so1981952e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 03:22:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752229223; x=1752834023; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4PxmmoD8ljBsL9GD+gzuD61HLwRQpZlooMbeZ6fygS8=;
-        b=RCy8PAN8n/XSAumLBqi8G1nGitoUjM7RQQKoKJTnNyIomBAk+t0GIY8uavUl5RImrj
-         eBpo24O1ExRjz2izgfBOnXivsu068Vckp9ojCgEVcl8mF4C3DJR+OyFPFzcnFiQsP8in
-         51E86//gYDfu0zBciPxuU/5y6kJ1+VDYkB8WWZVdJfjdD+SC8PY3+WGBmNNkBkeEjin8
-         4NWRQx239humRXiLJ+efcl5Tp2GqyFgq21S/ztzk0VwohJHM3JMEuZSPeiSsSesE6mCm
-         72jO9bc/DO4mExXW4kE/f3Ehhfqfj1yH/QXEC63MAFfvgKJcnXoayqq6iy8Tn2U7uxgu
-         QJOA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752229371; x=1752834171; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JGW8MvKUfKhaOjVnbMWj91aDHU9szYu+5s37tDdARUA=;
+        b=BFT9BjnE7QmCOOxJAYTlvWOQexW2T+QvVHwhTpzS3+hHKSzLqHWqP8pMmz4awqmoQo
+         mpqgjbm8j4LTXt6qIGw1jsWSseURD0ej5IFU27RcWmF7qg28wYTp4Ehlm0Wy1r5/YZtx
+         5rJEehzDlH6q3svoT01BV2x03anMSMSvB3/nVjGntNTcu3RdzQ2tJCISpymvbjlwdmwR
+         ZUa9aPGDXQqc18jgRewC4FCrfzsGvSUCJabFm+FG6z6IafuA2qljm4UfkJxarEeLXP/e
+         v+WRPtuRKbTJK6hY63MQUCTiz7p1Yq9uNhl32Nf0FwGedXdclYWA5gg0SpEyg34Py1Wo
+         IFTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752229223; x=1752834023;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4PxmmoD8ljBsL9GD+gzuD61HLwRQpZlooMbeZ6fygS8=;
-        b=j/hAclbLDjNXGJblLhreff9JG1HYuZX/7cM9YGbkKQPrwlJfYhhWinbmQvasfDvvkI
-         wKxYA6DcLXBHldySpUQnd0snJrdjBQ72pMUSp5gNeSuDJDpfcjEWVrMtJNdJw4NEOLgT
-         K54VzB8frduRtPvk3oXq+tTi37EXKMnYbSTpQVGoMfg1N92PACCHqdf3zBXdA7TtedgR
-         W9tWZm3JzkpFU1fJ5DpayHhcN2mUDqUAJX6K4xVVfe0JNicX64OfIP8HpqeXkRa+AF7M
-         5srMUQEUD5HQa8gxblLB09X1elhrDvfXl57/gqEppy94si7jcqGl6J5l9mBVZR54vEUe
-         UZGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhIeHBR4ulxm9Vs6+DY4slq0/UOirQ4jeZ+i2teSMcKYukRIhxTwzzBIX0NNOhB4W/jHEje047gnbnwGytozXIoQ==@vger.kernel.org, AJvYcCXrW1sZlko5DtTHPaKPN685gpWhb7EPGcp21zuPMs18Iz/8HBSFy4eVRfGZxyx2mgCnypBuS531xBB3Fe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRr7bB+vNUaSTlw+uORjBke+bc1uMLhNTSyTKqkuXdLR5J6Ahf
-	m2gNu6wajaX70ffx2fdzk4qzHpHN5RhTdNmRpudYwLc3uetIkdbfDDfAmbAtTqkZeoVwQarZkF9
-	rU3Q+qxcQ5sbzYKt3VKaM0j2Wpdpu9Tk=
-X-Gm-Gg: ASbGncvaNZsiuUeg5Pg+VrMMepiC4aQdhZDsL/iDZTCeVJFopsHLlHpdKo+TDhMmgSE
-	+xCG0I9uRTONwpPNzk0jjrHWUmpkqHuVa71Vbt9Meqwd7vaH8dAc9SL+7je+Y7ZxVq+Bf3ZLa1R
-	eJkLfkDqz9+77i3kQsTBdULSOCxqS1mICTOZL2cO8NMwGlvatgbaYS5BHlAn9qpWnWBpvnStaP/
-	T8V
-X-Google-Smtp-Source: AGHT+IGcUF2IeFq5d6oOuNzBnemSIDWy3XN/AET4pna7uIiA0s1d9ETHya4xD6sh/N4FeyNQJ2PHRpWfbJp7eAqc7/0=
-X-Received: by 2002:a17:90b:280c:b0:315:6f2b:ce5a with SMTP id
- 98e67ed59e1d1-31c4f4ca9ccmr3107104a91.11.1752229223013; Fri, 11 Jul 2025
- 03:20:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752229371; x=1752834171;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JGW8MvKUfKhaOjVnbMWj91aDHU9szYu+5s37tDdARUA=;
+        b=fVl813C7+yHvuAmc21KW2IBJ69FoFuwF/IVK1e0HyjQnL+Wu8LnU0Q2GjS6UM5kkcD
+         E8ex5woHZypRVlAd817046ZoHCLQuFHrLar79JvcMn3v4fFbsd2VkROz0XuRrRlBCxCr
+         pLcc/HKmxhzD7p207wk19D9QyPnv74xZAmY/YO5TM0TCby6Y1vuUDfO61w7WC9akM/Xe
+         YmlDMtjQrCNU4Epad3a8DfWz9LfbYizn9qACHoqT8nmP5dloJCXT/9d5EmxZJyo9q43j
+         nv28VvQEQT8t+SEaEu3YXyeDkbInA1PDohezzyAI6WKv4PKUYMca2ipyVhJ0842+xZBu
+         KGDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtPCr0h4U8Lxrvg91XRJfYIYa/iPmPx6D58fEx0v3yogD1LrRNuRqjKNgJAlSUE1XC/EvZN0/6dSfwoiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyFmIHt+OLLv6thzWtnF0VnWSNA4hC0kQQqz44RfM52Jxp0UVH
+	hKWP2BqVESn1UkbCFQMKxgytuEtc1v7wokKBw9u8u4S5P4KQsOteOyAYvDAT1YQySLbeIWte1Y7
+	oWT4ojABDYhhsrAAtToFlxgaPi8GbgSsuwWgAx5yr1A==
+X-Gm-Gg: ASbGnctLYiuOByEIt/AYhE9mfxW2gZEcZIgmYo7FxeuC5rab37GstpxOy35PsH8Azpl
+	i0L/YJpfwYEgkNZXPvhKIuEhe+HomIjC0HuagPYlMaKfzFxrLtuQAqrGFD5SM9SYHji7Pqo92Fs
+	pU4fgfRpV9jGY/W0NAnFKv605n+rHLOrPjg8dWjQW5safajyZVEzgaA4liC/7R7Sn9jqgVHqKmv
+	HE7knEEQ4rgUwTQDgWzd7SMg1k8z1oyaK8L2scjxb9hAkfe
+X-Google-Smtp-Source: AGHT+IErWz8+Owck/Svh0/uZ+pVAPhKAf17395GWgH3vgmlAH8ppyvsQp+0Fhf/VpR4wd9Akgu08i+W2C6AnG8M3FpI=
+X-Received: by 2002:a05:6512:3091:b0:553:2375:c6d9 with SMTP id
+ 2adb3069b0e04-55a04646a60mr740650e87.55.1752229371037; Fri, 11 Jul 2025
+ 03:22:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704052529.1040602-1-shengjiu.wang@nxp.com>
- <20250704052529.1040602-2-shengjiu.wang@nxp.com> <aG_SosukEqUxrHvH@p14s>
-In-Reply-To: <aG_SosukEqUxrHvH@p14s>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Fri, 11 Jul 2025 13:22:24 +0300
-X-Gm-Features: Ac12FXz1oAWR7AzXrdUqZkykZa3V1NEpvtctgewTWRCMsKsQX5xRmXpD9W21dGo
-Message-ID: <CAEnQRZB9r8-HqSJAJJc6iebZcen0CrpWL3n5YXPJOZr=-SZrqg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] remoteproc: imx_dsp_rproc: Add support of recovery process
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, iuliana.prodan@nxp.com, daniel.baluta@nxp.com, 
-	andersson@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, linux-remoteproc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <20250709201028.2175903-1-hugo@hugovil.com>
+In-Reply-To: <20250709201028.2175903-1-hugo@hugovil.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 11 Jul 2025 12:22:40 +0200
+X-Gm-Features: Ac12FXyPqcMLXdEsGxj8xKlPSpc2z1povCiPDwzBYexnq2JfIGWR0RRUr218NtI
+Message-ID: <CAMRc=MeJh2H0zYg5mfkuZreNoRAOWar9oR68+xrAar+-W2gJqg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: pca953x: use regmap_update_bits() to improve efficiency
+To: Hugo Villeneuve <hugo@hugovil.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> This is a much better approach.  During my last review I said that I would not
-> move forward with this work until Daniel or Iuliana provide their R-B and yet,
-> they have not been added to the recipient list.
+On Wed, Jul 9, 2025 at 10:10=E2=80=AFPM Hugo Villeneuve <hugo@hugovil.com> =
+wrote:
+>
+> From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+>
+> Using regmap_update_bits() allows to reduce the number of I2C transfers
+> when updating bits that haven't changed on non-volatile registers.
+>
+> For example on a PCAL6416, when changing a GPIO direction from input to
+> output, the number of I2C transfers can be reduced from 4 to just 1 if
+> the pull resistors configuration hasn't changed and the output value
+> is the same as before.
+>
+> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> ---
 
-Thanks Mathieu, we will have a look at this asap.
+Nice! Can you rebase it on top of gpio/for-next, it doesn't apply
+after recent changes to the driver.
 
-We are part of imx@lists.linux.dev so we got the mail.
+Thanks!
+Bart
 
