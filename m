@@ -1,105 +1,101 @@
-Return-Path: <linux-kernel+bounces-726965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A39B01374
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:23:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C894B0138E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF051C476C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:23:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D2E17B3926
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECBE1D618C;
-	Fri, 11 Jul 2025 06:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4185F1D6DDD;
+	Fri, 11 Jul 2025 06:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZytUhUt"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ndyMqOhB"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BC5A92E;
-	Fri, 11 Jul 2025 06:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B342F5E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752215004; cv=none; b=Vw1j8xiHUMjDa52I041JmuiVqwKHTV4LK/SS8GiFXef1QwKRy2Cb9CBFsBJRzsPGmE5lESGPSpgWPsh7bl3cqM45cIXLCx/GksBwxn0qQU673yKj+YgopgSTjSnd6THaddvEu3uG4hPL7BBsw4VmcNg4Dgi7B099pEHRv0kG47E=
+	t=1752215320; cv=none; b=nnonMqDr/ARkslwdzL8jOhXWcFs6UpYQupDUhUJiK1ZqqJwZ0WvQEsVcFoStzirSV07FSfo5ZCETDY5Ako/A6owyhUDMdpQdR52VRsGmlaMB+H3WpBYhsEscgq3cfw6ncBdX+sFjDC7/SK8A2UjLvWUdjoKaTgJ71308GawKHJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752215004; c=relaxed/simple;
-	bh=szAjdjboQ5FwGSMhN8orxJJF4cMCxbolT75MC3iNp5k=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=sBQoMH6q8Ab6tRdtJM+cVuJyTHO667299nuPzduHvnpw4YUDlDi4cWyGDEcimwl7lVN/93XHNPycLfyd6aG5OH7ETKwdtA8PCbkqDxBN9IBhLWEnzffZv8YWUTf3KKqsym2HlIpUP9/jL4Ngj0kmyslOvZyPEHNcG4Q5pEMrc5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZytUhUt; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-553d2eb03a0so3272065e87.1;
-        Thu, 10 Jul 2025 23:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752215000; x=1752819800; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=73xlXjihTyB3gi8nwM7Cu3RHQ4fBs8QJHOkXmIfesdQ=;
-        b=BZytUhUtnXqFcusbYukIMFyp/xBfn5L/ypHEz/gUpH2zZojg/gA5oE74ymwRht9tAO
-         jnB9s2CrNbzB4GJEuQ6MCvSMNzZxi25nsjlt4C4JDJ7KyU6E1nv31xc9PuM49hx+bzpE
-         2nEKdCpjgnWmYk6bJ7u27iThg8Nfq4zdnUyx+QDo0AdedMSpICWKDqxHdJKpW3S036CD
-         lErjxXl3+TzIhRi1DUS+Gpv/SXCfOj9fPIC3+wkrPiSS/nCx/BcBlhlte0h3TC4V7d6b
-         Lg3KESYVbwNnl2Ya02ajj1FdGkqFtYHdTOCn2uO9nqgw4Ed4kPEgeB+2au4fTojnBQc7
-         gulw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752215000; x=1752819800;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=73xlXjihTyB3gi8nwM7Cu3RHQ4fBs8QJHOkXmIfesdQ=;
-        b=CEQtCvVWPxeqeDImCcTEW2YQ/H6LB3yUtNBZVF+BicHlGXoyR2g6xZ3v2Jdwag9rbj
-         cHoIJWT2w4RGGSRzwQL8sc6qXbhifJTug5pisnwU1d3z2MzNdfUhEsiDrsiAdbfuBtzK
-         M1J5TRs6BCPmJVoFSRHZzDuLBYwgGaj/mpIwUXjSHkJaQLGFDXtlec5FEVPofs/MlpbO
-         OprER5l82YREqq2bkubnL92CWDYuTpiBTyjU9cGYwxZScEw2RItlyIjGQHHpbIGFmIkQ
-         IJELvbfJEPAwThxYBUYz4AP+ulAJzcuZqbPUKl4RR4hMWbCDSzfAJT8fq+WLkg6h3Msk
-         Nulg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxAmmdf+XH6/n3WniIbby/MO8XYNBSn9DUn40fHzOdA5MHorEmkxUtZDSY5qf+MTkzsmCTzpCZ0FD/cXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFqFBJFy6osRJYcWqF1FGhGhfv3u0VynWfz9OQK8iHcUjdUHfI
-	oQSKKlJR0k8uu9lwmqOcnUhmbXcME1q9QWm2+KrI4v2tzpiZcqaCKSCF/v5AViHJ7Z/RICUpTUT
-	fGnXLejKs/6poWEKEwzsk064xCOKQ4jnfBRXy
-X-Gm-Gg: ASbGncu0+H2i2P+hH4wI3wzxJxaSB5MrnTf0E2YF30E775nPLh6D5CXv9n58s/ZPbJ9
-	9sZ8HkHhJFwxsbQUp03M8sW85rwCOjrHBehE5zhpRzuT2rbdxZSuC9VpPLXHY+7vRFkmVPL1ADb
-	SbqQdG3us/wdYE5uEv2PdsWawY1pEMt1aue2mgxwPPiYXmNTQgqVpy6PTclKtfJGLjLbb1HKNSJ
-	sBCq7Qes8VXtUKT7KQ=
-X-Google-Smtp-Source: AGHT+IF0Fa/eG1jKsN+7I1rnUtH4sziIRMdckfTOC3v5CP/wNmUpQQkJ6m0PQWnh0hliPOF/KzfH4WwOFkSAG78pyu0=
-X-Received: by 2002:a05:6512:3f11:b0:554:e7ce:97f8 with SMTP id
- 2adb3069b0e04-55a039bf0f5mr734133e87.15.1752215000073; Thu, 10 Jul 2025
- 23:23:20 -0700 (PDT)
+	s=arc-20240116; t=1752215320; c=relaxed/simple;
+	bh=bk0I0OO7Ide9pbnrVs4F/jv4jlkDs4EFODVG/sHS+2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WwS5PBznjNLdG4b7b6zJMzJ8Sk/hqW0AZpVdl5iPa7/awRnRoJmQK+KpQcuhJPx6J/HWYpDtKbFL2VZDWcydXrc3IuY8xEBdhXS344ZuVfO2TsFkbdObQZI75wGX+jMPmnJMwVoareu0TVnQ2pYzipZKioAcXSBWAHBKztNiEV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ndyMqOhB; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752215309; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=rtpI047k16F6WKVc1Nno4+p1oxOQn3UL3hgRRvrDrFw=;
+	b=ndyMqOhBi79Od2+oAF4eKh4BrRS+VRIJ9Im3cjihQLY/n27H0cl1MdrV34N32J9affNqEFrupozRna628WgYjBQPBtfxIHW9lzAqM0kHW3Ih2f1N3Jl9m1/DWOMEm1o7uU7iAc5TkPvfa+NusuykxvmdvsGM4uj43k5XSwEdB7Y=
+Received: from 30.74.144.131(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wifv0NS_1752214989 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 11 Jul 2025 14:23:10 +0800
+Message-ID: <57e82add-b8d5-49cb-8a3e-58c7c65768d0@linux.alibaba.com>
+Date: Fri, 11 Jul 2025 14:23:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Sharan Kumar Muthu Saravanan <sharweshraajan@gmail.com>
-Date: Fri, 11 Jul 2025 11:53:09 +0530
-X-Gm-Features: Ac12FXytmDmkt6r0R3muScu3mvNULbCCdsKttqblHJ4F1VYpWmRd08uE-bZMTUI
-Message-ID: <CAGo=CcKZOz=HHWQtM+GQEeyqGVEo+4EgWSET5FJzKTMEMtJDew@mail.gmail.com>
-Subject: [PATCH] ALSA: hda/realtek: Enable Mute LED on HP OMEN 16 Laptop xd000xx
-To: tiwai@suse.com
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/8] mm/shmem, swap: simplify swapin path and result
+ handling
+To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
+ Kemeng Shi <shikemeng@huaweicloud.com>, Chris Li <chrisl@kernel.org>,
+ Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
+ Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
+References: <20250710033706.71042-1-ryncsn@gmail.com>
+ <20250710033706.71042-7-ryncsn@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250710033706.71042-7-ryncsn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-this patch makes the mute led brighter since the previous patch i
-submitted was dim
 
-Tested on 6.15.5-arch1-1
 
-Signed-off-by: Sharan Kumar M <sharweshraajan@gmail.com>
+On 2025/7/10 11:37, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
+> 
+> Slightly tidy up the different handling of swap in and error handling
+> for SWP_SYNCHRONOUS_IO and non-SWP_SYNCHRONOUS_IO devices. Now swapin
+> will always use either shmem_swap_alloc_folio or shmem_swapin_cluster,
+> then check the result.
+> 
+> Simplify the control flow and avoid a redundant goto label.
+> 
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 060db37eab83..062d439e753d 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -4753,7 +4753,7 @@ static void
-alc245_fixup_hp_mute_led_v1_coefbit(struct hda_codec *codec,
-        if (action == HDA_FIXUP_ACT_PRE_PROBE) {
-                spec->mute_led_polarity = 0;
-                spec->mute_led_coef.idx = 0x0b;
--               spec->mute_led_coef.mask = 1 << 3;
-+               spec->mute_led_coef.mask = 3 << 2;
-                spec->mute_led_coef.on = 1 << 3;
-                spec->mute_led_coef.off = 0;
-                snd_hda_gen_add_mute_led_cdev(codec, coef_mute_led_set);
----
+LGTM, with a nit as follows.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+> ---
+>   mm/shmem.c | 45 +++++++++++++++++++--------------------------
+>   1 file changed, 19 insertions(+), 26 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 847e6f128485..80f5b8c73eb8 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2320,40 +2320,33 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+>   			count_memcg_event_mm(fault_mm, PGMAJFAULT);
+>   		}
+>   
+> -		/* Skip swapcache for synchronous device. */
+>   		if (data_race(si->flags & SWP_SYNCHRONOUS_IO)) {
+> +			/* Direct mTHP swapin skipping swap cache & readhaed */
+>   			folio = shmem_swap_alloc_folio(inode, vma, index, swap, order, gfp);
+
+Nit: the 'mTHP' word can be confusing, since we will skip swapcache for 
+order 0 too. Please drop it.
 
