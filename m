@@ -1,94 +1,100 @@
-Return-Path: <linux-kernel+bounces-727983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36245B02215
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:43:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716C1B02219
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FDD5A73EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:43:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33565A65E48
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90D52F0021;
-	Fri, 11 Jul 2025 16:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEFB2EF9AD;
+	Fri, 11 Jul 2025 16:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boaL7Oh5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SihlU3lV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038FA2EA15D;
-	Fri, 11 Jul 2025 16:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A07A2EF29A;
+	Fri, 11 Jul 2025 16:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752252164; cv=none; b=gmKwGge5m89dTrQzimy83DKgaQpsLRiHNXnx26ZY7BfSplyN4dWKwRj747Mwd+FtHccYdsKCSf1dhUUpxEG79ysTyObZqqVak/bi+8x7jsyGy8fbPI73kJL1yY6FXMcOB3Cg9gNtEMXnc38cv8GTbEqvQJJey7uxepDAZD2Lv3k=
+	t=1752252181; cv=none; b=iIcrmJYCzR3X3ZoyuN00gC2U192C7CyuES3b5su7NomYhS4+ZCUKFUr9GTQE+YRy2xB37166WZIhCZVtcO0VsrmfGYMx+ilIoKlfJZG604UjRTtn6JYsTROh2b5uj93KbEMCN1fmLbQzHs97MgBRJ6vGBNG9CwXS0c79OC2RF4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752252164; c=relaxed/simple;
-	bh=eV0bXu0s/ddHR0HdGKgiSiUP56+lEzZpkmznMpgiK90=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aQxIzzfeSId053J07o7Afk5P5MyUEK3NdVZNzDt8yMgqpFXI/f8YLsJx877MO4xi0BtoTrzXp+bCdMdp7d1Ohp05h33JImA8X0tpr9f2VS4JAwggammgaEXNuNDkSChzrXGJqpL35lhtmGxIKIa1LYuTDapLeZF0gsrf/RBqxE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boaL7Oh5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C7CAC4CEED;
-	Fri, 11 Jul 2025 16:42:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752252163;
-	bh=eV0bXu0s/ddHR0HdGKgiSiUP56+lEzZpkmznMpgiK90=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=boaL7Oh5uFTJc5XNOsKYGpgRXWYYqO+5tJ9zlsmEtmitNvf17xAzHf3NJTSM9VpWT
-	 Thu3qngZ8CWlriz9qVNUFysV/cuw3upRpTC58L4DhtMKye9AUO97rHtXyhURfbZlak
-	 P6+1a+oLkZcFxtX29waqUtePgd3A4dkaLAR2+2H6UB04nuqTskKNSI4Nsz4KOsP6T1
-	 gBLOF6OQLOywkP8erliyTOrgjWqzx15hfGWR6fxP6X4VMcsukXcPUXCuXqGjbnaDrs
-	 YYr+5reZ8tH1LGltVCRpb9//kHpUxwi50qXEC8fohubCKlE3EUrhKATWV7Of/WMJGi
-	 2vZbqd3aMPkpA==
-From: Srinivas Kandagatla <srini@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, 
- "Rafael J . Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- iuncuim <iuncuim@gmail.com>
-In-Reply-To: <20250703151132.2642378-1-iuncuim@gmail.com>
-References: <20250703151132.2642378-1-iuncuim@gmail.com>
-Subject: Re: (subset) [PATCH v2 0/8] Allwinner: A523: add support for A523
- THS0/1 controllers
-Message-Id: <175225215900.5938.11774376916669080411.b4-ty@kernel.org>
-Date: Fri, 11 Jul 2025 17:42:39 +0100
+	s=arc-20240116; t=1752252181; c=relaxed/simple;
+	bh=V18VHNC3dz0yIznCjQKV/OQqEvw9YzkaO4pU/94mC70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HTsXjfhSFbiDMhdx15Sf9ymYbndVXu5mB/MvGz8RdYkYIq28D3WuEHgMg1D+W6ZIq3z+oOPFp0/JQCRHOkjbOTtT6X9pzc1YfmIAo5b5iKL+BI41mMT637rT8Z+Afkcv0Ad51my5n50RFeSj/tkSo9lDR3aD06OgcDs6IHHj9GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SihlU3lV; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752252180; x=1783788180;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=V18VHNC3dz0yIznCjQKV/OQqEvw9YzkaO4pU/94mC70=;
+  b=SihlU3lVE/YXN4sijzQI27VjYCb6IpI4+e+xB/+QH5CxNSEqBNoxJjs6
+   XgLznNpGbvMCveP/Ix+clPEcBEjjBrvrDPuDH4UgCVvTbuux/of23Dw+C
+   Rj5TJlmZP0qsO3UtLFCWqfJun1nyH2+jW4TRsmWNHsjMwrvwATVEkeCT+
+   4Qwas9VXIoJ8FRpomRNwYmsZVxygaqhZqnqsiaJwhRIygTAWrNyqJukQy
+   QWmFgjKZ4cjd2KuAa8GCVQ1ol7KkF0tcq6qgnOP2c+NYU9ObYuISCpU19
+   0crXlxGVyvg2vwmGt/8qz12i9EOd4b5cewmifXXc1v++mpqoiiwZfOKTq
+   g==;
+X-CSE-ConnectionGUID: QFZl3M1BT5e+aoGwJ9FtlQ==
+X-CSE-MsgGUID: uzzii3WMQ3yp4QPkHPhzRw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="53664522"
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="53664522"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:43:00 -0700
+X-CSE-ConnectionGUID: G5WucEtgSVWfK0ZfYKYguA==
+X-CSE-MsgGUID: QpwSBHPeTwKZItswR0+t5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="156039743"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 09:42:57 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uaGpr-0000000EaLf-0yrX;
+	Fri, 11 Jul 2025 19:42:55 +0300
+Date: Fri, 11 Jul 2025 19:42:54 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: proximity: sx_common: use stack allocated buffer
+ for scan data
+Message-ID: <aHE_DjbYzyW7CL10@smile.fi.intel.com>
+References: <20250711-iio-use-more-iio_declare_buffer_with_ts-5-v1-1-4209f54e010f@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711-iio-use-more-iio_declare_buffer_with_ts-5-v1-1-4209f54e010f@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+On Fri, Jul 11, 2025 at 10:55:07AM -0500, David Lechner wrote:
+> Use IIO_DECLARE_BUFFER_WITH_TS() to declare a stack allocated buffer
+> in sx_common_trigger_handler(). Since the scan buffer isn't used outside
+> of this function and doesn't need to be DMA-safe, it doesn't need to be
+> in struct sx_common_data.
 
-On Thu, 03 Jul 2025 23:11:24 +0800, iuncuim wrote:
-> From: Mikhail Kalashnikov <iuncuim@gmail.com>
-> 
-> This patch series adds temperature sensor support for the Allwinner A523
-> family of processors (same die with H728/A527/T527)
-> 
-> Changes:
-> 1) dt-bindings: nvmem: SID: Add binding for A523 SID controller
->  - added new patch
-> 
-> [...]
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Applied, thanks!
-
-[1/8] dt-bindings: nvmem: SID: Add binding for A523 SID controller
-      commit: 68d386fb1ca01ddb4f70f07e3e7b8d51ef9743ac
-
-Best regards,
 -- 
-Srinivas Kandagatla <srini@kernel.org>
+With Best Regards,
+Andy Shevchenko
+
 
 
