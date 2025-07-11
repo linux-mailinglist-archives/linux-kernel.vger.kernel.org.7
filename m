@@ -1,92 +1,139 @@
-Return-Path: <linux-kernel+bounces-727174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B9EAB01600
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:28:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F0EB01604
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ECCE1C86AC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:28:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C941887B0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CACC20E702;
-	Fri, 11 Jul 2025 08:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520DA20E71C;
+	Fri, 11 Jul 2025 08:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GN0B6ROM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A/Whj7Gs"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55AD20D4E1;
-	Fri, 11 Jul 2025 08:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB24F1FE470;
+	Fri, 11 Jul 2025 08:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752222448; cv=none; b=Gn/X/HnqO5UTI5lsZUeU9xW6e32QDvk9dv7uLDxGhQ2zWoRqBIuhRurxof60WhdBdZP84uWCW8UCz8Ao/q37oeGIg6kRNdRpe+o5LZEyBwlZu0XoH3qNkEEYiB9yvyTXbUpvbYg6D1ttDr1IrhZbBi1uAc8SI7hS532dvbjpZaY=
+	t=1752222479; cv=none; b=a+FTTIeQ3vad5bj2oPacHmT/8K4CPbrkWS2Oy150vQs2bcbqnGZGw+0E8JRSw9erYhi5pE9HFEZklOqw1bJeKq2BNcP1isw4zSpH5j+b+3Q1p0jvkE8P94CAfLP3+eH57J3ZBk90qBytPqdfhCT39dislDzLRmwPYTXVWLE/4do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752222448; c=relaxed/simple;
-	bh=6NbTCylW/Y/DUu/iQp96wAyOt/AMrQ2gJj6Sr/SI/Vw=;
+	s=arc-20240116; t=1752222479; c=relaxed/simple;
+	bh=RRdsqdC1y2DalFWiED+DTOQVdsPj1GGQ/CMLDGZlysU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZiYszeSQj5uaqU8ZmOB65pnYgspYEJJ7Z4apmiMp2FWiSbpfl+eCC5nGhF8vEAgFaVxV/PU7l/hOsaAu0myQr4VUJxs5VkIoev8R1AqcGF8YYWCQmMb+GQcHvpu4b+Gx4U2VQc38gQYiTPaIYtmLAGamMLISXHki6LbzxqXrozc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GN0B6ROM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E7CC4CEED;
-	Fri, 11 Jul 2025 08:27:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752222448;
-	bh=6NbTCylW/Y/DUu/iQp96wAyOt/AMrQ2gJj6Sr/SI/Vw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GN0B6ROM8SDKGlryvs9BtzpmthA+5wv3Eb2c5yZhZ5E+bVxrnRNRquLos1oMg+WpH
-	 A3Mm+JYHb/Zl+002toOGEfgHno6HUQWk2PkvArIm5cThwIldPSBfg/CgARZoeGOGS2
-	 c67OqggXgBvmbrEwg2MMVKApCS6XJ2noe0qEBj0ySvQt6fDbWJUPFiJt1397RqGuvF
-	 H1GE53E2gXOygIhaT/vyux3cKMBhsD+c8eFR3vcy5YcIPaRP7YKHDydXuG8KoxBwYN
-	 BFNTlnU83uWoP4PNFbVqJ7uIAAxW9NJa91hyay20B4BL7RXBV1RffjxCfwGEU29Svp
-	 rnsUVsmNO0z+Q==
-Date: Fri, 11 Jul 2025 10:27:25 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: sound: add bindings for pm4125 audio
- codec
-Message-ID: <20250711-cuddly-cassowary-of-poetry-58b102@krzk-bin>
-References: <20250711-pm4125_audio_codec_v1-v2-0-13e6f835677a@linaro.org>
- <20250711-pm4125_audio_codec_v1-v2-1-13e6f835677a@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fpxqYfiQLhOciejky0Iz1dBfoDmApkvlHEjbPDs9xwjW412rU2I2y4wn1RLdFl5NP6PqQhWI6o79SiWp+ghY/g3V11N7dXB4U10z4tGDsVSu54Odu5mGdl7YkdTaeGFxj5Dz8QeEXQTBPJyPvGvIQ0ICSYzUD3BaVp0y77kbOtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A/Whj7Gs; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=J62mNrOujt+BmROjTiUeIdLj3EuDVmgaDfceNzUrnVc=; b=A/Whj7GsjX3G85qcHzAvDBE4Ge
+	XGDCjf1uAg8yPZtnlKTn9J1B1rBqAAlgZkAynhooEmFoFWCez2lWysiGFfmmt43+2NNFlxCsfTsg9
+	jcvIKEaIF/zSn51/9BvzZGftL9MN4O1Mzj9nxplkGsgRYApDn96Wvp67Xw2xjaVG9KUB1GT3OxMsK
+	iFnQ8C5do9Qny4NLMNwH+Z2I5UFaF6rrvK/hFZMB+klTfeMDsa4R3OAXR17S4V9JDsYcYy0mn5wuG
+	rABXS4uwVy8CT/Mls7A89dLfbuO3FgZMagznKBDeu6rySp5NoMDcZurdUDsuDdSWepoQ0l0TKmq+d
+	w6IuUPlQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ua96j-00000009E2r-0Mpj;
+	Fri, 11 Jul 2025 08:27:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B67B23001AA; Fri, 11 Jul 2025 10:27:47 +0200 (CEST)
+Date: Fri, 11 Jul 2025 10:27:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Tested-by : Yi Lai" <yi1.lai@intel.com>, iommu@lists.linux.dev,
+	security@kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+Message-ID: <20250711082747.GD1099709@noisy.programming.kicks-ass.net>
+References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
+ <20250710135432.GO1613376@noisy.programming.kicks-ass.net>
+ <20250710155319.GK1613633@noisy.programming.kicks-ass.net>
+ <e00587f2-ebfa-436b-a17a-198ff9c02f4a@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250711-pm4125_audio_codec_v1-v2-1-13e6f835677a@linaro.org>
+In-Reply-To: <e00587f2-ebfa-436b-a17a-198ff9c02f4a@linux.intel.com>
 
-On Fri, Jul 11, 2025 at 04:00:10AM +0100, Alexey Klimov wrote:
-> The audio codec IC is found on Qualcomm PM4125/PM2250 PMIC.
-> It has TX and RX soundwire slave devices hence two files are added.
+On Fri, Jul 11, 2025 at 11:09:00AM +0800, Baolu Lu wrote:
+> On 7/10/25 23:53, Peter Zijlstra wrote:
+> > On Thu, Jul 10, 2025 at 03:54:32PM +0200, Peter Zijlstra wrote:
+> > 
+> > > > @@ -132,8 +136,15 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
+> > > >   	if (ret)
+> > > >   		goto out_free_domain;
+> > > >   	domain->users = 1;
+> > > > -	list_add(&domain->next, &mm->iommu_mm->sva_domains);
+> > > > +	if (list_empty(&iommu_mm->sva_domains)) {
+> > > > +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
+> > > > +			if (list_empty(&iommu_sva_mms))
+> > > > +				static_branch_enable(&iommu_sva_present);
+> > > > +			list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
+> > > > +		}
+> > > > +	}
+> > > > +	list_add(&domain->next, &iommu_mm->sva_domains);
+> > > >   out:
+> > > >   	refcount_set(&handle->users, 1);
+> > > >   	mutex_unlock(&iommu_sva_lock);
+> > > > @@ -175,6 +186,15 @@ void iommu_sva_unbind_device(struct iommu_sva *handle)
+> > > >   		list_del(&domain->next);
+> > > >   		iommu_domain_free(domain);
+> > > >   	}
+> > > > +
+> > > > +	if (list_empty(&iommu_mm->sva_domains)) {
+> > > > +		scoped_guard(spinlock_irqsave, &iommu_mms_lock) {
+> > > > +			list_del(&iommu_mm->mm_list_elm);
+> > > > +			if (list_empty(&iommu_sva_mms))
+> > > > +				static_branch_disable(&iommu_sva_present);
+> > > > +		}
+> > > > +	}
+> > > > +
+> > > >   	mutex_unlock(&iommu_sva_lock);
+> > > >   	kfree(handle);
+> > > >   }
+> > > 
+> > > This seems an odd coding style choice; why the extra unneeded
+> > > indentation? That is, what's wrong with:
+> > > 
+> > > 	if (list_empty()) {
+> > > 		guard(spinlock_irqsave)(&iommu_mms_lock);
+> > > 		list_del();
+> > > 		if (list_empty()
+> > > 			static_branch_disable();
+> > > 	}
+> > 
+> > Well, for one, you can't do static_branch_{en,dis}able() from atomic
+> > context...
+> > 
+> > Was this ever tested?
 > 
-> While at this, also add pattern for respecive node in mfd
-> qcom,spmi-pmic schema so the devicetree for this audio block of
-> PMIC can be validated properly.
-> 
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  .../devicetree/bindings/mfd/qcom,spmi-pmic.yaml    |   4 +-
->  .../bindings/sound/qcom,pm4125-codec.yaml          | 134 +++++++++++++++++++++
->  .../devicetree/bindings/sound/qcom,pm4125-sdw.yaml |  79 ++++++++++++
->  3 files changed, 216 insertions(+), 1 deletion(-)
+> I conducted unit tests for vmalloc()/vfree() scenarios, and Yi performed
+> fuzzing tests. We have not observed any warning messages. Perhaps
+> static_branch_disable() is not triggered in the test cases?
 
-Incorrect subject prefix.
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-(or git log...)
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+Same with static_branch_enable(). These functions start with
+cpus_read_lock(), which is percpu_down_read(), which has might_sleep().
 
