@@ -1,100 +1,170 @@
-Return-Path: <linux-kernel+bounces-727021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D266BB01402
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:05:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA36BB0134A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A71C3A9002
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:04:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869A8761B92
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3EF1E7C32;
-	Fri, 11 Jul 2025 07:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859B81D514E;
+	Fri, 11 Jul 2025 06:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jx3bW+Pp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VLew2Tdj"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0CA1E521E
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F731A2632;
+	Fri, 11 Jul 2025 06:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752217468; cv=none; b=jssITrG8XkB1r46fOjKJag64sqTjFc40zUP6nkV3l2J1NL4OKcUsr7hfa4isX1qdiGO6+RKmca1454p8GjFVF51L+JLFylIBaOtDq9wzeb0jB94RhUBp9Vx1zD0UctF7sQ0wMI9ajsyMqFXXOudcG6KkC5skUVQxhOkcDQHxtfQ=
+	t=1752213945; cv=none; b=fWHpTLuWkN8l+L7U0GzJTemaRTlR12D/mQi0+M5JYaDKXIOZfaZeVBEUKNxnYpBCh+ckwZ2KfIP7YODHfmIU1uY+uoPpm3XcUqMzjZ9CYn0Pl3r4meltXfvr+E1a6LaxmQD7Ab6ul3sjAUrhralXnRTAX+10aQY/EPf1NQ4BzVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752217468; c=relaxed/simple;
-	bh=qY+9hOJvt3smSdifJr60WwKCGN7aBvnCE1D6D2NWtug=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vBOqhbGgovw74l/WmjWHe8A/x/H0nn/4xjipsUpBMRs0MOimix4Y9tX4TiJfGydntMrlGwVVhQWzGmpVfQSjGE+u/95sudKRbHm30kz9iklRLN5z5MqeStCoX7fni5Sf43DF6aIsFbNq5kZahwhe9HOJGYrbSRImhKDENoUWaGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jx3bW+Pp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752217465;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9Mb5TKDQZ34m4zy+JEIT+Wrxi+rmT6FW7pNHMJM2OTM=;
-	b=Jx3bW+PpevIWkdRaFrb3rWd6upBShXRdMY5cqctFSVaqNrloSkAyVl2czbdZaqP5krvyCw
-	5ePfBAdXahRy17w5OfeRsjL0bTfKaPn5dL4/T5vyIoo1qTFrUH1ORX6LA6Y9TK2j6JmQI2
-	pcPHCUWsLAL9KfMWkg4kVOiAp6kdakc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-581-KmRaUBegOLessUeWWwUSwA-1; Fri,
- 11 Jul 2025 03:04:21 -0400
-X-MC-Unique: KmRaUBegOLessUeWWwUSwA-1
-X-Mimecast-MFC-AGG-ID: KmRaUBegOLessUeWWwUSwA_1752217460
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 785481956094;
-	Fri, 11 Jul 2025 07:04:20 +0000 (UTC)
-Received: from sirius.home.kraxel.org (unknown [10.45.224.214])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E08C019560A3;
-	Fri, 11 Jul 2025 07:04:19 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-	id AC55818009DD; Fri, 11 Jul 2025 07:44:46 +0200 (CEST)
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: linux-efi@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] efi: add API doc entry for ovmf_debug_log
-Date: Fri, 11 Jul 2025 07:44:46 +0200
-Message-ID: <20250711054446.1537700-1-kraxel@redhat.com>
+	s=arc-20240116; t=1752213945; c=relaxed/simple;
+	bh=MjxfwYEYBr+4mbmREl73sMVm1dodWYzbd02P687uMY8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uiDAGWbMMi7nhskOHxQsXxItVe3zmMBW/am9Q5pd4w9U715YJJoziyfAsyZMhZwBifFd87hTan4bByoWbSn6aZLXiytuiGzl4u/nmjKyYptD0YPDWr6fFkSU5S4bBlS55nWDyVSXjKAxVffrAwEYieZarvt/fvJqUKgUGau8GCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VLew2Tdj; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so9840265e9.2;
+        Thu, 10 Jul 2025 23:05:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752213942; x=1752818742; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=E7DKDfxJvck0LHqqh3ys40NEXmDsPAV+8zsSFbCeAIw=;
+        b=VLew2Tdjg1cWOP+vzaijiaMri6FfZAgSouiSLI1l/kStBZyGZFd3fa26FR8LISomns
+         mb2PQsLazsUz6Q0C+ABsZ8rEFzNlQ7Q7IhO8q/lMvKgQ3FFfCb3QcHZRakMGHbRbKAVs
+         fK/O+2I++JFqyXjXPzXGHzbHAo9a+wDgXr5pCXXHHNwnZYYiBaFS5Ab/Zcy3sp5owP2s
+         o/jRPTB26A+Z10dx+RefZnc5eheyLJE65DgwVdPWzQXOp6LDU/Acn4E+rvT2YCFp8WIp
+         yXKYaFpfly9wJKhSseB87UtFQYFvxUQmcr1TvSU4ubJYmWuyKCxiH6lBsQZq6lFPr67t
+         5sFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752213942; x=1752818742;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E7DKDfxJvck0LHqqh3ys40NEXmDsPAV+8zsSFbCeAIw=;
+        b=hEpJ1tnezmYYNqazii4jDTF3ynIaeQlrQC/uglHBquIGKKHjulIWByN1OeGkjJJ68k
+         CoOLGRStHa5cf65Zgmrk30Qo9fNnE8c6YBNVuYwvaSJatM5L3faYJLCi79riIwOMUOtc
+         LDFLPeeb+KfulSEpqKRgn08KZvAMQDextuWsAms3pMVgMPq/gbERpLOF8Y6nsIPuBG2j
+         VqM1F1ScYnF1zwE5cxVfJ+IafYvxXkBBAiPIdQWZfNYu9Ll/S+ahuaU2wVYvqNxlryIt
+         0LXNwW2ZYCZyCFFCM0CSJTr6APyeVDSEoejUaYExjr+UBjVzc4o0J0SIlbPF1LhX0ZPC
+         qojQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9ugfZ5QYSRAhYRZnfRne2ElWSq8WLW4nCtfrY0jnxdTYmtDHh2lE4KulsYU+SS8LFwsh9I1EMdqu0i5vEE5U=@vger.kernel.org, AJvYcCXUD/0GADeg+5I/AB6JhVJTjejM7I00nZFgDcO6WKXmnsOuxf1LBr/Asy0f0x66KNeh5MsbFMTQt2zbiV+L@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4BOwGARC/s3nQt6yuyf4k7TyB+rvpMdy9p+mpedISSkrYBW2m
+	mG4wrGj5YYD0Iwt0HZk4g3LibF4sEevfoprFIFe4aHibHDLFL4L0PB/A
+X-Gm-Gg: ASbGnctYElSEqmdLYcfmKs4i31qAgnI5El2gLJ0G5ivOZEPwryivqQnhCg9jcUKh+Xv
+	7lx/FzXn6vwhIMhKBXqvOodJ4aslLjJD3wBpa9GUZojwP0pm7esKQnifGmjrozQ0XdzdDbK6+dm
+	pgbFxAZvaaHYiZYBJpA72BfWYxiJ3MTsZwfDFqTTQ+xpQdqLc5LLxqrdwCovpV73UEEgq6YSTwj
+	LZGse2PhXbePa3h4TZhwJK3iaaZrh0BaemoqxS48ZR5/zsT8Rya1CI/0+pWo+9uGKKdlEepBWUU
+	ocoDb/h3l1lokY1iGZPdgBUMAKV159yUdIFAoXklibFm6CmBjZ7g70AAza1JJRxw7GRPyRoQ9m9
+	KthDB1ISebA1jqfQXBD3pKn3yoTWY4uOGRgrEJjSz+NONxpc058axWwzswDsZcc9t6fjwdA2y4E
+	i+7avb8J2gXThLS46Okwq7SCHqn09vm7Wrd551ACx43dvIWvJykIq5GICAu5C/+1Kc2lbUXz9Ps
+	0DIemCmMhq3fFOwqHS3+0D0xlT90uw=
+X-Google-Smtp-Source: AGHT+IEPSi1cBie5t7j4xTlaeJrycuFUQH/Q0RNOKDhAy5xhyS385IO1szs2WDv8sTlLuVuy3iohZQ==
+X-Received: by 2002:a05:6000:42c4:b0:3a3:7ba5:93a5 with SMTP id ffacd0b85a97d-3b5f188e76amr1361043f8f.26.1752213941380;
+        Thu, 10 Jul 2025 23:05:41 -0700 (PDT)
+Received: from 2a02-8388-e6bb-e300-2ae5-f1e1-5796-cbba.cable.dynamic.v6.surfer.at (2a02-8388-e6bb-e300-2ae5-f1e1-5796-cbba.cable.dynamic.v6.surfer.at. [2a02:8388:e6bb:e300:2ae5:f1e1:5796:cbba])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8dc21e7sm3597085f8f.36.2025.07.10.23.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Jul 2025 23:05:40 -0700 (PDT)
+Message-ID: <28c8689c7976b4755c0b5c2937326b0a3627ebf6.camel@gmail.com>
+Subject: Re: [RFC v5 6/7] sprintf: Add [v]sprintf_array()
+From: Martin Uecker <ma.uecker@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Alejandro Colomar
+	 <alx@kernel.org>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, Kees Cook
+ <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow
+ <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, Andrew Morton
+ <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov
+ <dvyukov@google.com>, Alexander Potapenko <glider@google.com>, Marco Elver
+ <elver@google.com>, Christoph Lameter <cl@linux.com>, David Rientjes
+ <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin
+ <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, Andrew
+ Clayton <andrew@digital-domain.net>, Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>,  Michal Hocko <mhocko@suse.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Sam James <sam@gentoo.org>, Andrew Pinski
+ <pinskia@gmail.com>
+Date: Fri, 11 Jul 2025 08:05:38 +0200
+In-Reply-To: <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
+References: <cover.1751823326.git.alx@kernel.org>
+	 <cover.1752182685.git.alx@kernel.org>
+	 <04c1e026a67f1609167e834471d0f2fe977d9cb0.1752182685.git.alx@kernel.org>
+	 <CAHk-=wiNJQ6dVU8t7oM0sFpSqxyK8JZQXV5NGx7h+AE0PY4kag@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- Documentation/ABI/testing/sysfs-firmware-efi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Am Donnerstag, dem 10.07.2025 um 14:58 -0700 schrieb Linus Torvalds:
+> On Thu, 10 Jul 2025 at 14:31, Alejandro Colomar <alx@kernel.org> wrote:
+> >=20
+> > These macros are essentially the same as the 2-argument version of
+> > strscpy(), but with a formatted string, and returning a pointer to the
+> > terminating '\0' (or NULL, on error).
+>=20
+> No.
+>=20
+> Stop this garbage.
+>=20
+> You took my suggestion, and then you messed it up.
+>=20
+> Your version of sprintf_array() is broken. It evaluates 'a' twice.
+> Because unlike ARRAY_SIZE(), your broken ENDOF() macro evaluates the
+> argument.
+>=20
+> And you did it for no reason I can see. You said that you wanted to
+> return the end of the resulting string, but the fact is, not a single
+> user seems to care, and honestly, I think it would be wrong to care.
+> The size of the result is likely the more useful thing, or you could
+> even make these 'void' or something.
+>=20
+> But instead you made the macro be dangerous to use.
+>=20
+> This kind of churn is WRONG. It _looks_ like a cleanup that doesn't
+> change anything, but then it has subtle bugs that will come and bite
+> us later because you did things wrong.
+>=20
+> I'm NAK'ing all of this. This is BAD. Cleanup patches had better be
+> fundamentally correct, not introduce broken "helpers" that will make
+> for really subtle bugs.
+>=20
+> Maybe nobody ever ends up having that first argument with a side
+> effect. MAYBE. It's still very very wrong.
+>=20
+>                 Linus
 
-diff --git a/Documentation/ABI/testing/sysfs-firmware-efi b/Documentation/ABI/testing/sysfs-firmware-efi
-index 5e4d0b27cdfe..927e362d4974 100644
---- a/Documentation/ABI/testing/sysfs-firmware-efi
-+++ b/Documentation/ABI/testing/sysfs-firmware-efi
-@@ -36,3 +36,10 @@ Description:	Displays the content of the Runtime Configuration Interface
- 		Table version 2 on Dell EMC PowerEdge systems in binary format
- Users:		It is used by Dell EMC OpenManage Server Administrator tool to
- 		populate BIOS setup page.
-+
-+What:		/sys/firmware/efi/ovmf_debug_log
-+Date:		July 2025
-+Contact:	Gerd Hoffmann <kraxel@redhat.com>, linux-efi@vger.kernel.org
-+Description:	Displays the content of the OVMF debug log buffer.  The file is
-+		only present in case the firmware supports logging to a memory
-+		buffer.
--- 
-2.50.1
+What I am puzzled about is that - if you revise your string APIs -,
+you do not directly go for a safe abstraction that combines length
+and pointer and instead keep using these fragile 80s-style string
+functions and open-coded pointer and size computations that everybody
+gets wrong all the time.
+
+String handling could also look like this:
+
+
+https://godbolt.org/z/dqGz9b4sM
+
+and be completely bounds safe.
+
+(Note that those function abort() on allocation failure, but this
+is an unfinished demo and also not for kernel use. Also I need to
+rewrite this using string views.)
+
+
+Martin
+
+
 
 
