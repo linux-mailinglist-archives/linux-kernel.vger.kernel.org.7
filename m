@@ -1,255 +1,200 @@
-Return-Path: <linux-kernel+bounces-726781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2B7B01126
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:18:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 404AAB0112C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36FFF7B1BF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:16:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02EE864673E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 02:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A6617A2EC;
-	Fri, 11 Jul 2025 02:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF9017A2EC;
+	Fri, 11 Jul 2025 02:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jOIg9oHj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="czD+YZ4O"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C6F4A0A;
-	Fri, 11 Jul 2025 02:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752200265; cv=fail; b=NksVpuNwj/ghjI8LRUW4GwFGAOHOZPd/BQBSfdcDXden9oF5m5Aweer/dbzQYccapfrmFxuSe3cihWjWIScPlz9ZP44EFEqGXf5g+MltSSVLkwESDJGkGlDXBlTQtEguvsN9CHpN3/X+pF79uOi9w0tQIIm0//LEZVJaT7ofYi8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752200265; c=relaxed/simple;
-	bh=oRxksUcwoAeKDPrRFawTFyI9Vzl5i6yIBHNn++JpOpI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FuEsGfxnD4ObwmNcws4S22UHyQzTvJ3FuUbwsuoRP3KiQuOPir10+Ej0cIhnBlbd7qHaIATmwBejs0nQE8tjqvgahF9kJV9o6kP8iXQqYCK4OSPNTruZyPxCCdZhj0Un2M7/BTeFrr261KiRSDksuxQqBfIR1MSMiuoLDo+o9cY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jOIg9oHj; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752200264; x=1783736264;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=oRxksUcwoAeKDPrRFawTFyI9Vzl5i6yIBHNn++JpOpI=;
-  b=jOIg9oHjDa4bQVXExfgMSD8gK1wHPUShhUAp+OMZs2QUr07DU6W/d89Q
-   s8TIcT9ZDCkCaAKw9/Sw6U1X41LmdZttG/xOmA6V7jQw5Oe3OlbXAMqKM
-   l3PsKC5ub0U1kuF6Lsb/cmHmMR4lReKpJ4NW/cdQKr5wtvBIV0jCcCQRa
-   19HivhYOtaPt+gGm9TWbaSuGXF0cKRllrvVySJ5IOi8t/fe1I+KOb9ILa
-   RofesVeWtaAGMABHGsDjtzQpzZQEEeymjxkIEIUVx84NePICOb+WSULOO
-   LfLU8VXsigecYSzkAD6R/PyjgrTJlPyjg+J9MuvvtBaGHA26wQKS2lmSL
-   A==;
-X-CSE-ConnectionGUID: 9D9azsihTfejuyMs0mpplQ==
-X-CSE-MsgGUID: hSqaTLYZRn2d9RVReF5qiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="58155914"
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="58155914"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 19:17:42 -0700
-X-CSE-ConnectionGUID: LchPlHDYSv+dXp8T6/saDQ==
-X-CSE-MsgGUID: b67o1LTYSSykOxx+2fETXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
-   d="scan'208";a="187237752"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 19:17:42 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 10 Jul 2025 19:17:41 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 10 Jul 2025 19:17:41 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.82) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 10 Jul 2025 19:17:40 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XEtdolsSfhvT2OVXfZUwKu5Sqrsj3O5Zg9D/nIWlZQKxqvUGynbecLgY5qzB73NvGfU62MBAKduGtaD4Q4LiQpvrEIv5xnftufYh+z7ofMBzu+viijpieIoQqfpKGVjJD1ReX1RItYvpUiq6FcREHzefO8XNpbGG/OkyGt0NyVTvH9kzsudh8BJcnF1TwPotHTix/ZxaanN07pYRBOmkpSuRLtecbcSo+TROen2jl1Pny1/RR75oaRq05ts+hWcYFj2+oJ9sgC9ucrRpvkePYs2T0JDJo4HUyBEgve/BydYHfvLIwTEVKW977AJTDIfIa5G46SpvdskzNIku6DyOEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/MbX6IxQRxP4Lj6yFPqYeRiNe8dfw1PT07lEUqS9vqs=;
- b=nP3CNoze9RiESs4XQ7CrNwNipyDU6stj60pEGMLrLQhkvnETn4rud5SCjsm7zNWutPFzylreclqHTyNjq63gO4oROifwO5HJcTT3hnkNzezS6QzeWp1wPz2UF9UUvtPLKcA7krMu19MTPkE/r3nTOYKcizHhzswJbyg7AeqxNgjXY6eru9W/zuPUrDV8sEHXN+8/+16HRJmIgwoo3tabSBVVv9tIvSMZIMw+QTDYfvAcMyDZGZ25Henmpnyw9n2AqQa/ABKq5cXPC/VFtG1xYIxrtx4bhXYhLn7FgnZUJEVkXZXsLpwOspen2lwuF6UFrurL8ozE38ZNSnV7Ex1h3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by PH8PR11MB7965.namprd11.prod.outlook.com (2603:10b6:510:25c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Fri, 11 Jul
- 2025 02:17:34 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%6]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
- 02:17:34 +0000
-Date: Fri, 11 Jul 2025 10:17:23 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-CC: "seanjc@google.com" <seanjc@google.com>, "Edgecombe, Rick P"
-	<rick.p.edgecombe@intel.com>, "bp@alien8.de" <bp@alien8.de>, "Li, Xiaoyao"
-	<xiaoyao.li@intel.com>, "nikunj@amd.com" <nikunj@amd.com>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] KVM: x86: Reject KVM_SET_TSC_KHZ VM ioctl when vCPU
- has been created
-Message-ID: <aHB0M/aJwzuqYBG4@intel.com>
-References: <cover.1752038725.git.kai.huang@intel.com>
- <1eaa9ba08d383a7db785491a9bdf667e780a76cc.1752038726.git.kai.huang@intel.com>
- <aG4ph7gNK4o3+04i@intel.com>
- <aG501qKTDjmcLEyV@google.com>
- <78614df5fad7b1deb291501c9b6db7be81b0a157.camel@intel.com>
- <2fa327b84b56c1abe00c4f713412bace722de44c.camel@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <2fa327b84b56c1abe00c4f713412bace722de44c.camel@intel.com>
-X-ClientProxiedBy: SG2PR02CA0136.apcprd02.prod.outlook.com
- (2603:1096:4:188::16) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006D316DC28
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 02:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752200370; cv=none; b=b+fHpq3Al4Niq7iGWdg+QfRxVjwxtEUpSycOW2jrhXWrGkyYwulpCD3SkT/tFfYGJdxINGZ3DFPnWmOUg9Wrnf+CjeHvALgQpzQMBIX+ZVZZsbrsKSojXv4aLNsVZ6XbuaaeUavtejLqXNUDYqCNz+rHOCR/07eWElgx59x2Kx0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752200370; c=relaxed/simple;
+	bh=y4jCcuJN7yjOr2y3cVPXJ+KAMqtUM1NbU0hlYIYhLMM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WL5fiBKxa9Jj+6yggNC1mTYpPQRM8caYp09cqQV4tFPA3t+DLuEPTYsF38TYbuvHn1CHH5e6hNapM3MHUW5Lr+FvGRXWxp4aKSCDD/C+zDqALHfOfcXXrkFtwAfhoaiDiW/uTKmWSeIpLgsp40scsXENVS8X0iRWCSQRYuHOq6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=czD+YZ4O; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-40ba3d91c35so930870b6e.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 19:19:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1752200368; x=1752805168; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7LguYWqKU69s8fXl+FAzLjDH/VFGVUbcH34uXEnvqnA=;
+        b=czD+YZ4Og7rcEYzX78IQFVIEmFmxyFmKllaVmoCvFSxG62wcF8+7rJlGMnM8tezkJM
+         3JvUJ2il+Z9ud0FX3cyWL3e1mrcTljkjvaL4lFvkZWNmaXiYUTd4LS+LH2BL7FbcY0t1
+         MArj91zZQALa/TkLw0VPzHFJby/4H9awlWXjFcY9XSeybGNtE3bPNV7yj6mb2sF7Vv1A
+         larPhjm/5b+ldI+qO8UQF/XThJ2UJSJ8Kq/xJju5x3XUFlqbZuUmoUOE1AxYSX2hTIbA
+         q3esIf/HOwM94sRyuWH/1/iIkiqR6V41ZixzTxY12zYTTNcf7TdU+jYHAbMRrT71oaSn
+         pPIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752200368; x=1752805168;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7LguYWqKU69s8fXl+FAzLjDH/VFGVUbcH34uXEnvqnA=;
+        b=PQhVYwN4WHG6kao/tRI6YGytPsH3vtdEk0r+qH3XFRji4FeXoJcR8pHPGFhARIv+sx
+         5Qf5GOcNZEnH/Vh61PV5+amGanOGUzO/PTRuQhwYEcwbkxxotzpwGsQS0Kb+yHBIvMMp
+         UqYR8FcpVJRXBTEMDJDoMH6KOs2eQTaxK9PaGZJXwJmCBQSTL/FXGzCdgsuaBKnSU+AX
+         K/F9k13bkxjycO58i4vm9JjEEsTzQsLonxdJKa/lgX6dZQbyUkLo+ds5ZK4GI47CV3fC
+         XFJCulM7HT3z+/I1DoqDTRmxep7j+5yA2orj3weoje3ytMCwpi/yJiGpQTcXEV7WTqei
+         eDsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWW1LAdRz7i8RiZdXP8PbrkUQqR3liHAoBE70R3Fbono8IdRNKcq9hsEELUTMrvSoEdKWUctQ7ZrbkXrAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqhur6tDafWxZTG/paBDgB55fYMA7OMhOKqu8JMpiG0WmMSHbA
+	0TlPpObNOMMASVxX6FJADhTJvktlPzN99hHjDxRdCwl0Kr8tYTrJF4M7/nQZEeIb3TPzBC+EJds
+	awuDUAzgm8cb9CdanxvrpgCMMfnEl2YQoea8TdYjqEA==
+X-Gm-Gg: ASbGnct6sH5Wa5mqkhAZXS7zIT4JNKgVzH5gCL3eHg18Os9JYPYXnx/2gtCBx/0sD4e
+	ItIR3hqdDCC/+1g8zhwhGrpfKoQzYSVqlGj+mmjzN83vfjK/KMlsB/h78a3Y6tXEPExi/lcnCJg
+	7g++yFUX6HbKkQ65zQoS4OLOrFC4oPoWPdZ2xd2ckFvAGLrYRvQXqmi4zO/pFMwnfXyqUFT2OtF
+	Lc4mYa5IQ==
+X-Google-Smtp-Source: AGHT+IFBh7LzTFN9rD6gbXHF6ywmERfYcfitKd7WVxt6xE3tRn5i23AvprpdjVhHYknMIA3w2g9HGwRoOBZcHNEc3MQ=
+X-Received: by 2002:a05:6808:16aa:b0:40b:1222:8fd8 with SMTP id
+ 5614622812f47-41539f925c2mr885406b6e.35.1752200367955; Thu, 10 Jul 2025
+ 19:19:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|PH8PR11MB7965:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f7a61e1-0705-4a71-276a-08ddc02118ac
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3ZqwYFPwtRgUSCrbkPoue5CbOnFYG7tGLxnNY4BTeFvBFcggsFa1RUkSKsqO?=
- =?us-ascii?Q?Y94zlKQWMC4jY52N9zYAN5L8zQ1UN7wdSBNtosVkiKetsJgJGoafkJLrQrnw?=
- =?us-ascii?Q?zYD0jqQv2ka50dw+q/zWhCsEYD4JJgCyQzTNzjsbMTk9wFWL2olxc8vTlZx7?=
- =?us-ascii?Q?apMiNa4y8FyIvjEoujXkY6xe04bmH5f2BdIuWuxVwYSyabfJPJHxhiyKbcEe?=
- =?us-ascii?Q?1OPzARtORftj0wx0+rV4nrYbbRbccUCCms/1DNBfMJLnvLyIBkS14Sc4blW7?=
- =?us-ascii?Q?rk+KccJzxwze4UAqQE4v2KhyPDW/wz5vJcfKzAnajwWDkfoU4b/zF+AIG0HM?=
- =?us-ascii?Q?64UgxOjnnK/PFzLEROZvizdp/mrTR1ELeZs2K2xvAbMnwSzE9A6a9cdwbvNP?=
- =?us-ascii?Q?ifOzZiVMg3bHmPP4Fl93lX3+QCQnSlxuYaLp5ARDKi5EzKJZgp3lGmm/sggV?=
- =?us-ascii?Q?iQfbRml688RNXSyXgswwjHv7B11Q37AtyF/YXjTNPsB2qQ4wGduF+uP4B60Z?=
- =?us-ascii?Q?7KsjS1RJZOaCf7gnpNvrqVHCR02fB9ObPaIV/r/mWrtXpG1CGFbN3TcGUXxU?=
- =?us-ascii?Q?2rKuqiIwXYb4OzC7lrVVS+id24dr2hWS0pnnZv09dN0qFznLeL05hqJSpjh6?=
- =?us-ascii?Q?XgzdNRi8WkC5vRNWuX+xHmAzd8TMfj9Z5frwILujxnrUyc7kplVGobZQlRyo?=
- =?us-ascii?Q?dVcAimUqVliIGWno/9o+cJ/LcU9p5wP6/IHeFXrTW/s4btpTEX0ULA4xzWg7?=
- =?us-ascii?Q?trk+TJYWOAu9sP9t/763jH9xCQ6/G40EgTJdAILu4Rlq7ER2hS1JInSSW579?=
- =?us-ascii?Q?ri3LscyKi4UoXPK+1ZE7eBBF+lFUVQpnRjXUDLocZwPRq3yYrjhL67B3BcOW?=
- =?us-ascii?Q?w4GoZ7lZqbOZ8lmsTJgP+UkJfyvSuEfgTbcP2bF1p9BoY7V0P4EMTwQDqnKA?=
- =?us-ascii?Q?skNUG97zlw1N7ZUxttWebTcnKauesH8d0WhBVCzJXNZCHUoP3LX9J7Zm1pZy?=
- =?us-ascii?Q?HGHK/jxQhWtcHSTU5KDlSXf5fqAdc8Axklt8j1eXPh6tE2n0/EgLYhjjxQ7+?=
- =?us-ascii?Q?h2dJLO+9bUTc97CZZ2DfxMHcIpKOnXuktgIDDWW02UnN0EB2WX+l+12cfil5?=
- =?us-ascii?Q?XMsRCMnbij7rT9d7albKD7WhZn1gPkLtALwNQqdXnXqBi4AKjDn2AqA+bRh8?=
- =?us-ascii?Q?CKm2tq9o1rYhQITT0Dz3Pyc8v0u7s+uJqkr5rri9MUsa8YmMsE94SmkreWPi?=
- =?us-ascii?Q?BgW+rwydxGWEXB38e9GKDgrTOg1qTvXydvElbqhIpyWLvQJ7dcDk3SeMX3qa?=
- =?us-ascii?Q?rJHn6uFInDr91OlqmuxncwQON4fbHgaCUnPrzWChuCLKfV5YX7uh6P39jXzz?=
- =?us-ascii?Q?TG+NFeCJbjOu9ZHC1Bsq3VQ56+BHGgixbkH6icItcTp+namd4VEZAuBw1yq4?=
- =?us-ascii?Q?BnN97Rv4Ggk=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?KvlwZJWnhaLtr5HCoy2JiUeSFprt5P4yXz8saFg1ZIctOhxpI7kXzzp4urzg?=
- =?us-ascii?Q?N9OLW0HErNaCUdJtGLIUDXfFpO4hZGBddOuL/oqPI6TdgxsnvWg9ER7WCMMA?=
- =?us-ascii?Q?7OSvPRfYeKpKIKNQgJF2UnNWC+Cp20T6FZ0rLvKLy4YtTA8VtXAWJB03FET/?=
- =?us-ascii?Q?CL1mteT6fdH//DkuknngzofuL8gtltqgJ+uqw7GhnyN8Ip4UHoYFDL2HuJaN?=
- =?us-ascii?Q?cVJbhawTq/iZ9EE6RmqsexYJka3AdUjd35Sn+Vah7zvqkXf0wvM6RtoeBej/?=
- =?us-ascii?Q?KHJuPsySjHypGV2JfAP2Vwp+I0VCujFOeGLE9Cj8Z3dB5IDvRHHR/aTI4Ska?=
- =?us-ascii?Q?EMTeUWilSo+LzVzif36jSuEuU3ojuMaJ+FaWv3w8Q+Xt/Vhozy6E7nnAXwCb?=
- =?us-ascii?Q?vsMH1jOKQz/N9qLOIwHmQx+ywoVwLlFkmjKoOGcCj9ECo2wprvfgcIfBEa9O?=
- =?us-ascii?Q?6T0uUfSpYTWjSlPm0r6fTdv74zHBAZQKrQPNaZ9AvJ6qbjac6xl9nCI5hcwb?=
- =?us-ascii?Q?pFZ72lUK7XGkhdhS/VbTcQdN25KPkJ88Vd6DcXZc06vjT0vKetwcZ75pnv9K?=
- =?us-ascii?Q?UeEsMs9COMdDa+MiBvWb+y1j2yJFr8ddCXpYPkbADv1VDbub1oDu76FYFQzd?=
- =?us-ascii?Q?+U6GKUq8gyJVoavmR1ejGkck48pJ2HAzPpwDn99z15x5txw99yFWU3SWDEuQ?=
- =?us-ascii?Q?95O2dkaDaxTO2G6WaIPzXj2BKufe+O/I0rQILoqqHSwHcs+Zt8NMx3EYrj2s?=
- =?us-ascii?Q?coPJqMBzTKFju1ox8oDo7JOZfkZN6lsdZk9rUzRKF5AqNX8UqX7tvUPGl0HN?=
- =?us-ascii?Q?U3yHM3H8LX2oA034x/piX0wSlgFfH22hkR2Dc3jO258MrmRlVisa5b537SOO?=
- =?us-ascii?Q?TNRk2c4eATqV2q77TUb4W3ub2rj4p1GonlmhuBHNuiWfKhVjrPlwm3BRgbt3?=
- =?us-ascii?Q?56sbCUPl6oJVIWY9d0iLZTh4qEwNAjOWDS7ilPX6HYY48M/7AfJkwHBPOghz?=
- =?us-ascii?Q?Q6AVNlp0rGoNmZgBsWanGEldsHbcL/Zv76xke008pMXxcxuim1nJkUUu0kbQ?=
- =?us-ascii?Q?wM+2m1hENWx9p8psKx8Lp7bs1PRC1CmpiMNj8PcpU65h3LcVmAwShJ5yJwzY?=
- =?us-ascii?Q?dwUj8pYQJE6UcmVRqV663YRClEl1QuwTYVtTRPav/HESPSXeUYCNhVpCGMHb?=
- =?us-ascii?Q?bvqDDVdKu8r74F+dbdCz0t4KVOxnYUWCqdq2M3iHKYUri1v3dvHfTYh+59tZ?=
- =?us-ascii?Q?DnEstA0tTrff8t4kSHOFpNf7X7aq9vtJPhU5zI+Jcxy36lLNxOknxzUAbUUl?=
- =?us-ascii?Q?85TiHpWJ6wCy6sfoZeUGzXxuDfpn73ezb1yn1rWhY9ZxC+jm/HN6o/ZZ94Qi?=
- =?us-ascii?Q?ThzA3vaOd59d019RxM2JsoUQASYMvRamQuHbVFrGqmts4L5fkvaq3FZsxpbK?=
- =?us-ascii?Q?O1+9u/+7Uu7jzBvA+RE7630vSM17SgrKTIInQg7BL0sv1ozE24Bcp147h1DU?=
- =?us-ascii?Q?nS1vYdvw61/rPt8pnt1UjMA+206FkZIq4CICKElO6NO7PKf7Z05aKDlHhbVZ?=
- =?us-ascii?Q?E3XLP1buJ+aitORK6vhgKFAHeWWShY5e2+93LBkc?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f7a61e1-0705-4a71-276a-08ddc02118ac
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 02:17:33.9651
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /zxAjOadNQ3QHKrc1GoMOcv/rwkIhxkTCSTXqVCCIo/qt9WTQsmSMKe3VhKetYNKdt0/G2i/gPY/S8BbpHPPhg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB7965
-X-OriginatorOrg: intel.com
+References: <20250610092135.28738-1-cuiyunhui@bytedance.com>
+ <20250610092135.28738-3-cuiyunhui@bytedance.com> <CAEEQ3w=pUPEVOM4fG6wr06eOD_uO6_ZBzORaG1zhtPswD8HLNQ@mail.gmail.com>
+ <84cyauq2nc.fsf@jogness.linutronix.de>
+In-Reply-To: <84cyauq2nc.fsf@jogness.linutronix.de>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Fri, 11 Jul 2025 10:19:16 +0800
+X-Gm-Features: Ac12FXxBhZNNUH-29Cczmz3xlktD2RZw1X21GwvxVue8j6YX6ffOS8u3DsWgqNU
+Message-ID: <CAEEQ3w==dO2i+ZSsRZG0L1S+ccHSJQ-aUa9KE638MwnBM4+Jvw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v9 2/4] serial: 8250_dw: fix PSLVERR on RX_TIMEOUT
+To: John Ogness <john.ogness@linutronix.de>
+Cc: arnd@arndb.de, andriy.shevchenko@linux.intel.com, 
+	benjamin.larsson@genexis.eu, gregkh@linuxfoundation.org, 
+	heikki.krogerus@linux.intel.com, ilpo.jarvinen@linux.intel.com, 
+	jirislaby@kernel.org, jkeeping@inmusicbrands.com, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	markus.mayer@linaro.org, matt.porter@linaro.org, namcao@linutronix.de, 
+	paulmck@kernel.org, pmladek@suse.com, schnelle@linux.ibm.com, 
+	sunilvl@ventanamicro.com, tim.kryger@linaro.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->AFAICT the actual updating of kvm->arch.default_tsc_khz needs to be in the
->kvm->lock mutex too.
+Hi John,
 
-Yep.
-
->Please let me know if you found any issue?
+On Mon, Jun 23, 2025 at 4:32=E2=80=AFPM John Ogness <john.ogness@linutronix=
+.de> wrote:
 >
->diff --git a/Documentation/virt/kvm/api.rst
->b/Documentation/virt/kvm/api.rst
->index 43ed57e048a8..86ea1e2b2737 100644
->--- a/Documentation/virt/kvm/api.rst
->+++ b/Documentation/virt/kvm/api.rst
->@@ -2006,7 +2006,7 @@ frequency is KHz.
+> Hi Yunhui,
 >
-> If the KVM_CAP_VM_TSC_CONTROL capability is advertised, this can also
-> be used as a vm ioctl to set the initial tsc frequency of subsequently
->-created vCPUs.
->+created vCPUs.  It must be called before any vCPU is created.
+> On 2025-06-23, yunhui cui <cuiyunhui@bytedance.com> wrote:
+> >> The DW UART may trigger the RX_TIMEOUT interrupt without data
+> >> present and remain stuck in this state indefinitely. The
+> >> dw8250_handle_irq() function detects this condition by checking
+> >> if the UART_LSR_DR bit is not set when RX_TIMEOUT occurs. When
+> >> detected, it performs a "dummy read" to recover the DW UART from
+> >> this state.
+> >>
+> >> When the PSLVERR_RESP_EN parameter is set to 1, reading the UART_RX
+> >> while the FIFO is enabled and UART_LSR_DR is not set will generate a
+> >> PSLVERR error, which may lead to a system panic. There are two methods
+> >> to prevent PSLVERR: one is to check if UART_LSR_DR is set before readi=
+ng
+> >> UART_RX when the FIFO is enabled, and the other is to read UART_RX whe=
+n
+> >> the FIFO is disabled.
+> >>
+> >> Given these two scenarios, the FIFO must be disabled before the
+> >> "dummy read" operation and re-enabled afterward to maintain normal
+> >> UART functionality.
+> >>
+> >> Fixes: 424d79183af0 ("serial: 8250_dw: Avoid "too much work" from bogu=
+s rx timeout interrupt")
+> >> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> >> Cc: stable@vger.kernel.org
+> >> ---
+> >>  drivers/tty/serial/8250/8250_dw.c | 10 +++++++++-
+> >>  1 file changed, 9 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/82=
+50/8250_dw.c
+> >> index 1902f29444a1c..082b7fcf251db 100644
+> >> --- a/drivers/tty/serial/8250/8250_dw.c
+> >> +++ b/drivers/tty/serial/8250/8250_dw.c
+> >> @@ -297,9 +297,17 @@ static int dw8250_handle_irq(struct uart_port *p)
+> >>                 uart_port_lock_irqsave(p, &flags);
+> >>                 status =3D serial_lsr_in(up);
+> >>
+> >> -               if (!(status & (UART_LSR_DR | UART_LSR_BI)))
+> >> +               if (!(status & (UART_LSR_DR | UART_LSR_BI))) {
+> >> +                       /* To avoid PSLVERR, disable the FIFO first. *=
+/
+> >> +                       if (up->fcr & UART_FCR_ENABLE_FIFO)
+> >> +                               serial_out(up, UART_FCR, 0);
+> >> +
+> >>                         serial_port_in(p, UART_RX);
+> >>
+> >> +                       if (up->fcr & UART_FCR_ENABLE_FIFO)
+> >> +                               serial_out(up, UART_FCR, up->fcr);
+> >> +               }
+> >> +
+> >>                 uart_port_unlock_irqrestore(p, flags);
+> >>         }
+> >>
+> >> --
+> >> 2.39.5
+> >
+> > Any comments on this patch?
+>
+> I do not know enough about the hardware. Is a dummy read really the only
+> way to exit the RX_TIMEOUT state?
+>
+> What if there are bytes in the TX-FIFO. Are they in danger of being
+> cleared?
+>
+> From [0] I see:
+>
+> "Writing a "0" to bit 0 will disable the FIFOs, in essence turning the
+>  UART into 8250 compatibility mode. In effect this also renders the rest
+>  of the settings in this register to become useless. If you write a "0"
+>  here it will also stop the FIFOs from sending or receiving data, so any
+>  data that is sent through the serial data port may be scrambled after
+>  this setting has been changed. It would be recommended to disable FIFOs
+>  only if you are trying to reset the serial communication protocol and
+>  clearing any working buffers you may have in your application
+>  software. Some documentation suggests that setting this bit to "0" also
+>  clears the FIFO buffers, but I would recommend explicit buffer clearing
+>  instead using bits 1 and 2."
+>
+> Have you performed tests where you fill the TX-FIFO and then
+> disable/enable the FIFO to see if the TX-bytes survive?
 
-		^^ remove one space here.
-
-"must be" sounds like a mandatory action, but IIUC the vm ioctl is optional for
-non-CC VMs. I'm not sure if this is just a problem of my interpretation.
-
-To make the API documentation super clear, how about:
-
-If the KVM_CAP_VM_TSC_CONTROL capability is advertised, this can also
-be used as a vm ioctl to set the initial tsc frequency of vCPUs before
-any vCPU is created. Attempting to call this vm ioctl after vCPU creation
-will return an EINVAL error.
+Sorry, I haven't conducted relevant tests. The reason I made this
+modification is that it clearly contradicts the logic of avoiding
+PSLVERR. Disabling the FIFO can at least prevent the Panic() caused by
+PSVERR.
 
 >
-> 4.56 KVM_GET_TSC_KHZ
-> --------------------
->diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->index 2806f7104295..4051c0cacb92 100644
->--- a/arch/x86/kvm/x86.c
->+++ b/arch/x86/kvm/x86.c
->@@ -7199,9 +7199,12 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned
->int ioctl, unsigned long arg)
->                if (user_tsc_khz == 0)
->                        user_tsc_khz = tsc_khz;
+> John Ogness
 >
->-               WRITE_ONCE(kvm->arch.default_tsc_khz, user_tsc_khz);
->-               r = 0;
->-
->+               mutex_lock(&kvm->lock);
->+               if (!kvm->created_vcpus) {
->+                       WRITE_ONCE(kvm->arch.default_tsc_khz,
->user_tsc_khz);
->+                       r = 0;
->+               }
->+               mutex_unlock(&kvm->lock);
+> [0] https://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programmin=
+g
 
-LGTM.
-
->                goto out;
->        }
->        case KVM_GET_TSC_KHZ: {
+Thanks,
+Yunhui
 
