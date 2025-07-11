@@ -1,136 +1,138 @@
-Return-Path: <linux-kernel+bounces-728074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB436B02371
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:17:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819D5B02374
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64C2B3BC887
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:16:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21A5A7A59D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29262F2352;
-	Fri, 11 Jul 2025 18:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9CC1B4242;
+	Fri, 11 Jul 2025 18:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XMTuUxYA"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CzjWWBqA"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBADD5383
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9650F5383
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752257814; cv=none; b=a0y6M2oxVIYw9zXR9zna6TavBvKPoFDy+HScdfN2IJteq2hQlyCUkaloBRWI/6rAtT1G/o+X9YaXe/wESVxcDDe1eu68g1TF7uuyJDp8gnixAuEt/8h+VVgv7Pvy/CkdvuoW/6ujDaSClziKhmnRkdJJWDIQQmehD5Ljb+TtTT8=
+	t=1752257836; cv=none; b=C6d7BxvYfLcVlq401ILrXOBu33kNUJq5f63YleeG+kqAm2S6gpS0BDYv/bkcvsNtue13QCMH7n+dNEVBuTFu9IbV+NIccqYk64rnCEsoaA5Sf/xtCgLoyIKZbEJmF0nsFDR/4vhSUTzwxUGqq+AMVvqGYcd/R326VqAv4IUjOHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752257814; c=relaxed/simple;
-	bh=NeJocBfdOpLqvXpiJ6aLAWQ15xXfqG5i0CXXacTxLio=;
+	s=arc-20240116; t=1752257836; c=relaxed/simple;
+	bh=QYvEVyisu7Z6GreZjW4tCms0hBLpxnPiggZ/J2R6LGU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QwJPzmAhXU3CSfSeOmLXZ+eaYySmM0ACAQEtmme7KCU4eZ+wB7YNoe+f32os9En5rL+6vudFYPHrjUCbsFbiVdYLip03UWibnzczu6oASLuVVQTZk+LYsdQXZjJUaaDMAZ0Vvq0v1TrtBF1+hH9MiLwkcpPwustybUGnAuVws7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XMTuUxYA; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60c93c23b08so4556470a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:16:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=nQ8KpvQNXQkyRJMWkNRh/yaV49+rIJAKu7GbFjIkR/zKoE/Oo02KAejsiurGWU6x1ekWfSSLdMgm346k/iRMFnpCXLfRZDGkzWRefQYl3uksZGRlsENXNS3XTQgvLnirOsyKNKZsTZKKkwjEwqUFPGr/CUtdhm917/JrdOEAjJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CzjWWBqA; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b4876dfecso35489531fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:17:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1752257810; x=1752862610; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GrN2boTDwdY7zzXQMC0DmC8Xqjzwg7Z5l0fiFiA7274=;
-        b=XMTuUxYAuu/6YnrAUuBpbyChCus/mrvDTIVjvmctIBXMm0FHlIuT47gwwf1IwSqfU6
-         N4afYu5XQ1VKhYetUagLw+cFf4CDIFM5vSog7X7UmRgkgTCQclyCm91tut7w/4ZAmgS/
-         9Fky1Fu42bEvatd9ffamnVIRRBUoOa81WSaZc=
+        d=linaro.org; s=google; t=1752257833; x=1752862633; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Y+y1NjMQjnO8BX6d3MKapk59N+eGmMqtyYDPUlr7Xc=;
+        b=CzjWWBqAWUrc42ZpPtNzTft+4+5MsESaOZwkhQrLtRgcDWIVgA3golo//CvNKAYlqA
+         LitC8c6rSn1OL2MqSVRkdU8cNwI6IO6r3N2bVKMsJ+rKzjVpz3u0yjKAjBX+S0DXJTre
+         SEIio+GbBVjyVNi8RM9+uQVdJDcg7hzCBpUGtnwgFeIgLUNXn775aI2z1RuxGhATzc0+
+         BIPEWfMNA+0EtHK3VjWor2fWSKYg93R1j1BdM4BfnTEZxkrbZPgssjo4jhiZOx35L6R2
+         /vHGEKDEYoJiQjBnbr96OwMcfHD58nDacz2N7TsoMUQUfJH4yl2XNFq82sjVf6EAogal
+         Xx8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752257810; x=1752862610;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GrN2boTDwdY7zzXQMC0DmC8Xqjzwg7Z5l0fiFiA7274=;
-        b=BPaFX9vbHSXeuqa8Kn0uA3xd+By5b8r6l4e+i+C0CB0eme3J/fTjil9vtTMgWmHodd
-         sXuYrDiM83/CVOFdHBoWQF4SY/Rg82ilvyrcbzZnDFLD+lHB5pPqi7lJ3D6pooMnTian
-         y2KPNfgld2rp3JQBCGtczJuJ43/6kfYnwrNFW+sEbUwGFBXzOJYI+hKOq9WPgTDR2DCX
-         dxJLL8NNiLS8hRgiIXAMMCrcZYdM+IOiwx8afjkkc7je3H28MB1kk8oAiInqmWIVdyQz
-         9XwV/tkt5kPu2EcXdqDubQrPVF9dZHBfBzkPaWEjtA0yY99GEPwLHV9cUFZgV+8JSN1C
-         ZFag==
-X-Forwarded-Encrypted: i=1; AJvYcCVCDXWiKaqeF7NaJzvazwXC2mKOaHhxBQcVl4Duoat9gSzQ3NUX/GsPU21qrNNxAMqRLDhI9Pek/Wobc10=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcyp1+ZywWJeNi4iCG2II1mKWLlXzEvL7GFg+xOn6J/etOUGTN
-	DR1Wy0B6RqZMWpkQ0fN+xyl9aaR+X1siV9jeJYi/AGuSAMtoOpXpJDlAR3vdk7aVGLAgHvYVe7a
-	ii2vGGYur1Q==
-X-Gm-Gg: ASbGncsoO2smgfsnWcX58/W7wedm2Zetie0HDJ8CeQGTE2BxOK/aUWjAiBiuKX4Creg
-	UrHEWuLAuXktvP+dJlqQeaJFICc7DdWVRrMweFkK7+0pS8YJ5kathGjPrtS3UaUdSju4E4bD+nO
-	cP1q0PJEop15EaghD827isfULf8r8NwMvF/4ubVBgwD4XEITSmQ0LCA7YsPUEK1AaW9ZZoDp0di
-	qPMDcmAuoXwWQ6z/DlWEFWJ6baydrosGTVZMVlc2Ke9LGPERRsRnYyiDDbC4LgZdhh0SjTiHUhf
-	6DOlX9wr6Ukoerm/fIwuHqMsO/4RHD9d8JIghjptfvbDimD1wJ0Rse5jDTB5EXdV+UvNIn9W3Ph
-	I8K01u2aVwPE9KEhAlRsEPAyznJu+w40xX6OyuEDEBKN01m4537TaTYD2KHDXf4QDqi0tvOVl
-X-Google-Smtp-Source: AGHT+IHx+pGFn8GiYlIIW6OLzey8ixN5yUdOJA8oMUSWPGcHNIzca87x9FGHXda6zrhLdgFI5j4XRg==
-X-Received: by 2002:a05:6402:34c8:b0:60b:af9a:726c with SMTP id 4fb4d7f45d1cf-611e84ce60fmr3858408a12.25.1752257809902;
-        Fri, 11 Jul 2025 11:16:49 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611e4c3c756sm1472991a12.8.2025.07.11.11.16.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 11:16:49 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-60768f080d8so4460201a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:16:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUt6uogiOPEiut+GNgqTNRDSmSenfTTqQ9waeC11T4/Uf3jE1Uh0e9ALf65sI6yF3kR+lCGdxx75udHJww=@vger.kernel.org
-X-Received: by 2002:a05:6402:454b:b0:604:e85d:8bb4 with SMTP id
- 4fb4d7f45d1cf-611e84a3613mr2945462a12.21.1752257808496; Fri, 11 Jul 2025
- 11:16:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752257833; x=1752862633;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Y+y1NjMQjnO8BX6d3MKapk59N+eGmMqtyYDPUlr7Xc=;
+        b=FsMmOh/Ix5XptTZsAv6uh5wrKqMXk8Zir3bls0itVGRjlFBqixmu1Vmnb6gZI+RQnh
+         LKeX+aUJlf7GQBPX1UNXJdE8OYhEjuIUqzJJTQlARAc56RSaecQilskSkmANNfjvm8dn
+         nlzlu4nBfRajpIXxnV6O//CAFUnZjXB/HRhCim14r911sE1js2SR+Gmlpy/vH2ad0FN+
+         8HFYDnL7TRQX39Jr2YGmKM7Tf+JidQ2DVxm6Z3MxHV/0zyy5A8/Tmqw/JlZgfwBAdZMc
+         kOP4OQKVb0E5FUU26rs6urZ45SvFsr9mHMWWQUyjvTkaULqN7tLDlsEUQLomCmWySaNu
+         Jn5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUDXm+1hoBQMFF4CjjNd/pypqIeZVkhQJSswakm8ILiATZ6VEYHyVZTQaBaqgoVDwb9fb/omfQ7ATjqgHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxoih1y/p1b6qqcfaBCGQoDhFeR/tWplD+0NW4HLoasr3ybRCav
+	T8xsLsxGW3q83ApmcFF7szvMc+upk45vfgwKtTWB5I2bM5DcJGwUyn9MM0zGI6w2x/NELObE1gv
+	tVyVnsIteJWfk2t76j3uwgNJZcpEdIS/jZ6H2i3snK8GVHW2X9XX/
+X-Gm-Gg: ASbGncvsVQSA4GM8Z05om90HcJhRmHtxTcGx6RN1Aqeqg9mxBK18w8SKSaW4tnLXdTL
+	Vl34Gi3W1eK2aNwSRR7qNzmPYdOm3WwaqW02F0gZrQzV2dn4d6WwfCyPEwUXpVQ0LyNAoYJNHyY
+	f210YyUqX7FIpnTq2Xegi73zi1fM9/KNIf4oNSeik+Dq7iCt6wT+9axXy6+JwXg/KdsAineFg5L
+	emiyV4=
+X-Google-Smtp-Source: AGHT+IFTXdPK5ouoC7CNop7rcdpVbgm/PLpNuMA/4LUKjGc3j/t/RJTnxOeKBYlPmUQiKz1UBrh6piJAWvjJQb85Qjg=
+X-Received: by 2002:a2e:9dd7:0:b0:32a:6cab:fd75 with SMTP id
+ 38308e7fff4ca-3305225fddemr10781141fa.11.1752257832712; Fri, 11 Jul 2025
+ 11:17:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711161732.384-1-will@kernel.org> <20250711161732.384-11-will@kernel.org>
-In-Reply-To: <20250711161732.384-11-will@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 11 Jul 2025 11:16:32 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wijmAO=-dWc8HUMdUbkdGqgNtiO6mntAcTekWc5qN3YjQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzHjD0wng1ky85XRCcFPrfFYtoOUVtma4lAy9KVvuoCMzEgKe72-0_IGfY
-Message-ID: <CAHk-=wijmAO=-dWc8HUMdUbkdGqgNtiO6mntAcTekWc5qN3YjQ@mail.gmail.com>
-Subject: Re: [PATCH 10/10] arm64: mm: Re-implement the __flush_tlb_range_op
- macro in C
-To: Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
+References: <20250708-pinmux-race-fix-v2-1-8ae9e8a0d1a1@oss.qualcomm.com>
+In-Reply-To: <20250708-pinmux-race-fix-v2-1-8ae9e8a0d1a1@oss.qualcomm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 11 Jul 2025 20:17:01 +0200
+X-Gm-Features: Ac12FXyhRoIM2kVVfeKGSARAFkZflXxQbi1Sz62x4a5cymVKfg1ewyjnPOhC1Kk
+Message-ID: <CACRpkdY-4qHvYYDC39Z5K1mUkeMvpy0b4S-az673OdqxE6uPtQ@mail.gmail.com>
+Subject: Re: [PATCH v2] pinmux: fix race causing mux_owner NULL with active mux_usecount
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 11 Jul 2025 at 09:18, Will Deacon <will@kernel.org> wrote:
+On Tue, Jul 8, 2025 at 9:59=E2=80=AFAM Mukesh Ojha <mukesh.ojha@oss.qualcom=
+m.com> wrote:
+
+> commit 5a3e85c3c397 ("pinmux: Use sequential access to access
+> desc->pinmux data") tried to address the issue when two client of the
+> same gpio calls pinctrl_select_state() for the same functionality, was
+> resulting in NULL pointer issue while accessing desc->mux_owner.
+> However, issue was not completely fixed due to the way it was handled
+> and it can still result in the same NULL pointer.
 >
-> The __flush_tlb_range_op() macro is horrible and has been a previous
-> source of bugs thanks to multiple expansions of its arguments (see
-> commit f7edb07ad7c6 ("Fix mmu notifiers for range-based invalidates")).
+> The issue occurs due to the following interleaving:
 >
-> Rewrite the thing in C.
+>      cpu0 (process A)                   cpu1 (process B)
+>
+>       pin_request() {                   pin_free() {
+>
+>                                          mutex_lock()
+>                                          desc->mux_usecount--; //becomes =
+0
+>                                          ..
+>                                          mutex_unlock()
+>
+>   mutex_lock(desc->mux)
+>   desc->mux_usecount++; // becomes 1
+>   desc->mux_owner =3D owner;
+>   mutex_unlock(desc->mux)
+>
+>                                          mutex_lock(desc->mux)
+>                                          desc->mux_owner =3D NULL;
+>                                          mutex_unlock(desc->mux)
+>
+> This sequence leads to a state where the pin appears to be in use
+> (`mux_usecount =3D=3D 1`) but has no owner (`mux_owner =3D=3D NULL`), whi=
+ch can
+> cause NULL pointer on next pin_request on the same pin.
+>
+> Ensure that updates to mux_usecount and mux_owner are performed
+> atomically under the same lock. Only clear mux_owner when mux_usecount
+> reaches zero and no new owner has been assigned.
+>
+> Fixes: 5a3e85c3c397 ("pinmux: Use sequential access to access desc->pinmu=
+x data")
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 
-So I do think this is better than the old case, but I think you could
-go one step further...
+Thanks Mukesh, patch applied!
 
-> +static __always_inline void __flush_tlb_range_op(const enum tlbi_op op,
-> +                                                u64 start, size_t pages,
-> +                                                u64 stride, u16 asid,
-> +                                                u32 level, bool lpa2)
-
-If you replaced that "enum tlbi_op op" with two function pointers
-instead (for "the invalidate range" and "invalidate one" cases
-respectively), I think you could make this code much more obvious.
-
-And exactly like how you depend on that 'op' value being
-constant-folded because all the different levels are inline functions,
-the same thing ends up happening with function pointers where inlining
-will result in a constant function pointer becoming just a static call
-(and in turn inlined as well).
-
-And then the actual *callers* would use the "look up op" thing, but I
-suspect that in many cases those could then be in turn also simplified
-to not use that op-number at all, but just end up using the op-name.
-
-I didn't try to actually create that series - and I think you'd want
-to do it in multiple steps just to make each individual step small and
-obvious - but I think it would end up looking nicer.
-
-            Linus
+Yours,
+Linus Walleij
 
