@@ -1,84 +1,118 @@
-Return-Path: <linux-kernel+bounces-727157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46B1B015C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1523B015CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E601C85B78
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:23:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524AE1C85BF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6561D5ADC;
-	Fri, 11 Jul 2025 08:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AD9217736;
+	Fri, 11 Jul 2025 08:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWfNc/3I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BfBctm63"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601B61FBE8A;
-	Fri, 11 Jul 2025 08:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14AD212FB7;
+	Fri, 11 Jul 2025 08:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752222135; cv=none; b=bDTmggZd7/vIcaslMSoWLsKfq1x3s+K2UOcVKeCZJnnbwyeN3KjxqJ9tpmdU9NytY6wc+qOOOqQjYRp5TlApPbxziXvw5v8ZsBiTWp9gfFYyKBrLi5Y28gQdAZhF2m0Uyvx2tZN8xwX89UB9ukY0Z1kvj0Dp2RUSbP2RvKSeNms=
+	t=1752222140; cv=none; b=nQcxi+PuWrsukNq8o+EhIo3ETGEdTNbLqi9/wlrerOAGHJCeJVSDmmFJGJeO+TMBmcH40ENI+WPK4sdVID+5VLmTTFI1OpUciYnOlD37SWdl7L9H3hFCzYIO98bJO7fpTFOwo8OiJItn7p8M4pj29ywmThBbMeZuabLlag3Ahrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752222135; c=relaxed/simple;
-	bh=V0vPUEIisTa6mtflTRv2e4S7Ta+SaccNSSFcmicIeeE=;
+	s=arc-20240116; t=1752222140; c=relaxed/simple;
+	bh=aCQDIoBEG6rh0a3y1ZmSE3HCA5dPK8KA75u2/Txqr5Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AcKNeGF0dI+ALfI8HDfHBSnG9/zAcgxTvoig0bHH2ri3OZELBkqr6zByA9+FbiMK0mz7qzxF7XfmMCbEvFH/1eA3IXbElkxBDf5nSPkspCBhgagh4Bsb/lPLydZ2MWX/jFBZM3Z5/iPYfpAyQCgtSS5FipGZzgq7K9IZtpY3Vcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWfNc/3I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92992C4CEED;
-	Fri, 11 Jul 2025 08:22:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uJe83LRJEllcu3ph3V80kyDx5+hWvNSZP/2XHp4JnG6WDTW8vaXyUZiYapGSneTJ3xRDQJsNnCW+KwpoeBVluGzKfS6VUfFak3seEOFC9cOCAsGDq/i0330inKTeXvroWq96FQj6s9Lw4HJyp0DITAK8a2Pb7G9t5mzFSG+wCvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BfBctm63; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B99C4CEED;
+	Fri, 11 Jul 2025 08:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752222135;
-	bh=V0vPUEIisTa6mtflTRv2e4S7Ta+SaccNSSFcmicIeeE=;
+	s=k20201202; t=1752222137;
+	bh=aCQDIoBEG6rh0a3y1ZmSE3HCA5dPK8KA75u2/Txqr5Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mWfNc/3IX9QBE778jmKcZgu3d3usjMtmaD3yQMlf24TBG+b7vQZw0rRe98p3QHFDX
-	 lVvJdsicnnB+XJZSW7mSRjZaM26uF9Pv473eZ3sJaDx5oLYZNXj9EYByBeeRut6zdc
-	 2uC3sIeXIKPrk5ixEnX90A0Ethia6GFJfqDGWvLKQJXR3csoTbnaOrCNYmBRFARR6J
-	 Wu8FW1o8qbpjJXoO03NY+I/rq4GVR37Lx02kGdu/YrLBuv4PwFMppxlVJWOFW0d5jY
-	 L9Hx7ru7hgoG+VR5fOjupa13qEN0Y7V7w1B75Q6vXcmPVsRMhcVXE0kx8JXCWqyRRt
-	 iJBMR60kbLZyA==
-Date: Fri, 11 Jul 2025 10:22:12 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>, 
-	Chukun Pan <amadeus@jmu.edu.cn>, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] dt-bindings: arm: rockchip: Add FriendlyElec
- NanoPi Zero2
-Message-ID: <20250711-jumping-macho-pillbug-43fcd1@krzk-bin>
-References: <20250710202958.3717181-1-jonas@kwiboo.se>
- <20250710202958.3717181-6-jonas@kwiboo.se>
+	b=BfBctm63Kyo+CDz3SuG/5U7ROei5M4ZUmnvu4C+hzkcjWNRxQ8espyI/WHu0x1+28
+	 IGDNmcTA/pxEdhyQwxgvwT/yIdvmSz6dwJiJLn35Kol94qFNA0TQg158SH/ZOeWUvV
+	 YlL0aLYeXjCpjq4+fEEDt6xZ0TW4aj1l51d3wuomeuzMy3rHfD8l/u5zqoVznrmnZq
+	 eUGl7+e/vHovzw9YdeQJGLbYXWTtmK7zlc+tiyKKRqEtJU3iJLGHwKcDNCRypBcXPk
+	 WSJod2GHB2tDK/6Lbr4tXEd3z0+aVl68+NcqiQvGh/HneldR2e693e64hG7+y7L3qu
+	 wkBRWx3pDwRBQ==
+Date: Fri, 11 Jul 2025 09:22:13 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 09/10] mm/mremap: permit mremap() move of multiple VMAs
+Message-ID: <aHDJtSKEGWJlMnzz@finisterre.sirena.org.uk>
+References: <cover.1751865330.git.lorenzo.stoakes@oracle.com>
+ <6797c4613e2b65f64def79acc4621e0fe42ef311.1751865330.git.lorenzo.stoakes@oracle.com>
+ <aHDIk6bKzI5kf_be@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OhsYcJ1yAk6xwHgs"
 Content-Disposition: inline
-In-Reply-To: <20250710202958.3717181-6-jonas@kwiboo.se>
+In-Reply-To: <aHDIk6bKzI5kf_be@finisterre.sirena.org.uk>
+X-Cookie: Q:	How do you keep a moron in suspense?
 
-On Thu, Jul 10, 2025 at 08:29:44PM +0000, Jonas Karlman wrote:
-> The NanoPi Zero2 is small single board computer developed by
-> FriendlyElec, based on the Rockchip RK3528A SoC.
-> 
-> Add devicetree binding documentation for the FriendlyElec NanoPi Zero2
-> board.
-> 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> ---
-> v2: No change
-> ---
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+--OhsYcJ1yAk6xwHgs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Fri, Jul 11, 2025 at 09:17:27AM +0100, Mark Brown wrote:
+> On Mon, Jul 07, 2025 at 06:27:52AM +0100, Lorenzo Stoakes wrote:
+> > Historically we've made it a uAPI requirement that mremap() may only
+> > operate on a single VMA at a time.
+> >=20
+> > For instances where VMAs need to be resized, this makes sense, as it
+> > becomes very difficult to determine what a user actually wants should t=
+hey
+> > indicate a desire to expand or shrink the size of multiple VMAs (trunca=
+te?
+> > Adjust sizes individually? Some other strategy?).
+>=20
+> I'm seeing failures in the mremap_dontunmap test in -next on Rasperry Pi
+> 4 which bisect down to this patch.  The test logging isn't super helpful
+> here sadly:
 
+Same thing on Orion O6 (a more modern ARM v9 system with more RAM than
+my Pi):
+
+    https://lava.sirena.org.uk/scheduler/job/1556807
+
+and Avenger 96 (which is 32 bit arm):
+
+    https://lava.sirena.org.uk/scheduler/job/1556479
+
+--OhsYcJ1yAk6xwHgs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhwybQACgkQJNaLcl1U
+h9CJpQgAgwLVjCZS3Zxeo/jZ4NJ0PdxS0hy14AwBM5bRiO2fCk1sPgX/GEqzDv/a
+wp5mPbf6/jhVV9/M0JEXqnMehC5p5WJznGMJiLFwgLiHTlYvcu+qe/oZUob5sl0V
+33dIUIAvF+AO3oIs2bzdso5GlVXpbHNRIb76GDFDODymYAxoH1HE7BtmHyOJFqgR
+BHwatpv7Ex+XTnKH0wTEfqQBEBNYOW4d9zyOagt9mD8aPvFmGm+VlutybFey7NLj
+3z085gylNeffmKAXGLFycaO/SxJduPNyYPVZ81PigoXwOvDUT5FkFBagc/C58I1M
+9pJiJK5SD6YkxHn52TQR7IRiFNgq/g==
+=DJar
+-----END PGP SIGNATURE-----
+
+--OhsYcJ1yAk6xwHgs--
 
