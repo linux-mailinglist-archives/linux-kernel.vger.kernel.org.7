@@ -1,145 +1,144 @@
-Return-Path: <linux-kernel+bounces-727146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1916EB015BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:23:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F3BB015C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000961C857E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3108167E84
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9974F20D50B;
-	Fri, 11 Jul 2025 08:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EB2221544;
+	Fri, 11 Jul 2025 08:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCS7dZcU"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="P32IEVOy"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DBC1FECB4;
-	Fri, 11 Jul 2025 08:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF70220698
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752221533; cv=none; b=LouZqeJWkUfOaGgVXnoHEOfbJ3/nbt/GL6Lj4Y5mAXfaPB5J7BvD5EirG1lCMzAqv1/WXuXmX0LIXq/SFTbAE5adbjQzL5ERakA7mAf8z2TA6pgIZ1gyvTm/vh+Kq/Re/AIZDTSRSjZxMV3pLys0E6u1abAhX+1XSrl3elI6Y04=
+	t=1752221595; cv=none; b=oUKy4n7noaA8HnJ89WQsc+28taryAU+zqxyV4KX5I9p9G+a8e7XVJoXxTotOmPIK5Kx116TZczByMdXml7rPVBMpgHF2mcOFzGu1FSdwj6c6R/b37YAdROwmXlPVP1wLIdve/4hYkvU/1MBjQHRdBGWn6yzp6CyceCwSqAdUZwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752221533; c=relaxed/simple;
-	bh=P/WRYOeJmMfJ9uLcgWCRbsDmLIZYYisRO4sgPekjSMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fviMuUY0kVlBpU9Imfqa09GPLv8Kh1ZsJBi3Y1QjQWATU2fjcrq9Uk94j/Na+6GMrz4VfhorsjBQckKRT7LXuVkFrjPN/T0j6pW4oR02Hk3OHiakGvrXv6+Uwgw1uO94RU0qxS926c+LZ84SYW1NkTjVO+NPVBC84xYJpv9Hl1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QCS7dZcU; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-747fba9f962so1636893b3a.0;
-        Fri, 11 Jul 2025 01:12:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752221531; x=1752826331; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JfnEX4CV8vat7MsTbzHXWZHUFjNxkpFlCdgj6sJoyGA=;
-        b=QCS7dZcUuNZiHHMcOCInlQUoOtkQ2veBO1+QUd/p/Sg8RBrSxpTLMkTa6dP6hi2lql
-         5Tzl/aE5BlrG6k5UpYT0Kjebb1kOEw+UGQUDMug7vzCRWqC6P18HbfjUxOZpf6HLwCyh
-         HsTsKxvW8UksjDDmjkXZWUFCLFSz0jLMBxwaIX4oxQ917MVpC7xrDH9012C3lJyvbF5x
-         Y/V8fndhnYFTs/NbZAfnXu9EUy+6dOfXaReZp9EFnrNEnd2nbypdITMeMwH/ffcctpKz
-         Up7GM2lBI4oiOEzYOb+Uxil4JmJkVx9GzTXvHPvp7407lzUd5aREdquyoOBOYz2imV/n
-         RWig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752221531; x=1752826331;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JfnEX4CV8vat7MsTbzHXWZHUFjNxkpFlCdgj6sJoyGA=;
-        b=tyT7v+IrI2BqQfx1VN5Hd1KWIykfWaCOkwv7Sj2ClfGW9Jg9OCyUl7AJYfhnnZMYut
-         piT3u3FFcx+GVI66AhtVSl0dqdRuPbgwuD1nvNj4X6MLLpXws1ncidZb9stqYuVM8S/s
-         FALBTa2YsAt6WVjFDmvDfilplaLCHatWRZNJ1+De9RX2QHYOTapJ5j4b6MuXepfszmCB
-         m7F2RdxyNeHESDkQwll+WRbQW1FKX8SXiRmrmjyuWk4YxqkSuNxRNwo4b6uLVw4N/sGx
-         oe2ZOBvrVNUDwWQGzGivBEeLzsCFlhFScls8Scl9CnP+Tv43rFyr5/9DBGbxfMMkDzRm
-         vq1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVEAkZRJdFsdvcWGb+s7BRkDMdWDAWW54LbE1m/Ro65FxpF2I6f2Q/5BZ4NbDALbfTLpLs+To6MzNQpgJZc@vger.kernel.org, AJvYcCVZMvy5A24vpokHsqINN1SC/qWzHV4yg4JgDLXRjmm3VydVFQlvS9qDRfZCM4HXwvGddrLwQkMHH2zLWwU/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJzqU3t6ksLcty7w57l2w3Hmq/4ZDcvKzmCNoeCTICfoFW0t7Z
-	1HfL/XWhzuVVukO8FTz5+33S2hjtbgyf6Dyd4BrLURGuaw8JF3AK8TNnrV7x3Q==
-X-Gm-Gg: ASbGncu6tM9OF67I+k/C04Ux76YWfLdgI6cCYS91Tu5lllWSTli9QNAq4q439mmF0BM
-	npEWwnL/c5WCxMqHWd2+Uf7XeEtTBffUBp4svSE/onLKx7Xbxf6U4SvX6kB0wvri4MJKjPlW2SM
-	9WrvmglFA829opF+EvtBgt2APpkwVG1/7vrUZLRdYgjhdCEQtjdZQKp+h4VQEZ+U085iiApXQGR
-	EwN6hoMHhi+mTYVmRbAtTzhpNCGRBRmplRLNaRZytqm8L+EzpV2flwmOwQ+MG56Vjar9TdtDww9
-	KMihkZiZmZ57spBoO/WysTngF9CJL19A4oYC1TDtxNKIvYX8OD/amlvp3pZmKP35q2a4Ii4gSSu
-	IWgWu0fwQcMq6BkSCaDd15NPmObC7xpAMRuE=
-X-Google-Smtp-Source: AGHT+IGIqOP5Nw9y/ybnCinHPlCO2D8U3ySjuxjHPQX1gFrGGxpPyOUoQG9vOk1+p0H9mxeufU9UZg==
-X-Received: by 2002:a05:6a00:9086:b0:742:b928:59cb with SMTP id d2e1a72fcca58-74eb5a8d604mr7685707b3a.7.1752221530545;
-        Fri, 11 Jul 2025 01:12:10 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9e058fesm4820381b3a.40.2025.07.11.01.12.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 01:12:10 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: brauner@kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	willy@infradead.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH v2] iomap: avoid unnecessary ifs_set_range_uptodate() with locks
-Date: Fri, 11 Jul 2025 16:12:07 +0800
-Message-ID: <20250711081207.1782667-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1752221595; c=relaxed/simple;
+	bh=It/yphRANUlJSlQ/pjrS7u1qQe6YLFeX6f/hFkv/BuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LOf0phMdxW4vHxKaN8FwbYjCk5Cm0YQUjQk4lgw7FR3g27xE78alLt/01y/XfI5xYfd7xgzy5lmcSbj3TIHgZgSjtubTLrFPRKonlez6qhs+7M4qM2UKnESzTH3vqZzdJeYk+e2ukDpNSBrpWsBnJAW4TILaJZVyXuwpZCfGUi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=P32IEVOy; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56B8Cgee1984752;
+	Fri, 11 Jul 2025 03:12:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752221562;
+	bh=WMD3xrgiF98me+Yp3/1SVavZPEcDUvxBFb64BI/zS2w=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=P32IEVOyFAD8NZJz9gZyCjxXBR4MF9E8XCNrJ3VTWPqXR+a+tZNRbATgglGDDBqj7
+	 BP+mvEd9w7r/CMoBxuwFWupEgf7iMndyTUiUK+x2nG+DWdWddJIdWEt6KtvDRWksWz
+	 SKNv9ynD6HGEk3a0ZY+CCGFeeXK6WTTiQBjhVozk=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56B8Cg1J126244
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 11 Jul 2025 03:12:42 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 11
+ Jul 2025 03:12:41 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 11 Jul 2025 03:12:41 -0500
+Received: from [172.24.227.12] (hkshenoy.dhcp.ti.com [172.24.227.12])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56B8CbQ33138235;
+	Fri, 11 Jul 2025 03:12:38 -0500
+Message-ID: <c2576c2f-2e19-40e8-bfea-27cf0acdc686@ti.com>
+Date: Fri, 11 Jul 2025 13:42:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] phy: cadence: cdns-dphy: Update calibration wait
+ time for startup state machine
+To: Devarsh Thakkar <devarsht@ti.com>, <vkoul@kernel.org>, <kishon@kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <aradhya.bhatia@linux.dev>, <s-jain1@ti.com>, <r-donadkar@ti.com>,
+        <tomi.valkeinen@ideasonboard.com>, <j-choudhary@ti.com>,
+        "Shenoy,
+ Harikrishna" <h-shenoy@ti.com>
+References: <20250704125915.1224738-1-devarsht@ti.com>
+ <20250704125915.1224738-3-devarsht@ti.com>
+Content-Language: en-US
+From: Harikrishna Shenoy <a0512644@ti.com>
+In-Reply-To: <20250704125915.1224738-3-devarsht@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+Hi Devarsh,
 
-In the buffer write path, iomap_set_range_uptodate() is called every
-time iomap_end_write() is called. But if folio_test_uptodate() holds, we
-know that all blocks in this folio are already in the uptodate state, so
-there is no need to go deep into the critical section of state_lock to
-execute bitmap_set().
+Thank you for the patch.
 
-This is because the folios always creep towards ifs_is_fully_uptodate()
-state and once they've gotten there folio_mark_uptodate() is called, which
-means the folio is uptodate.
+On 04/07/25 18:29, Devarsh Thakkar wrote:
+> Do read-modify-write so that we re-use the characterized reset value as
+> specified in TRM [1] to program calibration wait time which defines number
+> of cycles to wait for after startup state machine is in bandgap enable
+> state.
+>
+> This fixes PLL lock timeout error faced while using RPi DSI Panel on TI's
+> AM62L and J721E SoC since earlier calibration wait time was getting
+> overwritten to zero value thus failing the PLL to lockup and causing
+> timeout.
+>
+> [1] AM62P TRM (Section 14.8.6.3.2.1.1 DPHY_TX_DPHYTX_CMN0_CMN_DIG_TBIT2):
+> Link: https://www.ti.com/lit/pdf/spruj83
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 7a343c8bf4b5 ("phy: Add Cadence D-PHY support")
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 
-Then once a folio is uptodate, there is no route back to !uptodate without
-going through the removal of the folio from the page cache. Therefore, it's
-fine to use folio_test_uptodate() to short-circuit unnecessary code paths.
 
-Although state_lock may not have significant lock contention due to
-folio lock, this patch at least reduces the number of instructions,
-especially the expensive lock-prefixed instructions.
+Tested-by: Harikrishna Shenoy <h-shenoy@ti.com>
 
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@infradead.org>
----
-Changelog:
 
-V2: Update commit message
-
-V1: https://lore.kernel.org/linux-xfs/20250701144847.12752-1-alexjlzheng@tencent.com/
----
- fs/iomap/buffered-io.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 3729391a18f3..fb4519158f3a 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -71,6 +71,9 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
- 	unsigned long flags;
- 	bool uptodate = true;
- 
-+	if (folio_test_uptodate(folio))
-+		return;
-+
- 	if (ifs) {
- 		spin_lock_irqsave(&ifs->state_lock, flags);
- 		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
--- 
-2.49.0
-
+> ---
+> V4: No change
+> V3:
+> - Do read-modify-write to preserve reset value for calibration wait
+>    time
+> V2:
+> Introduced this as as separate patch
+>
+>   drivers/phy/cadence/cdns-dphy.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/cadence/cdns-dphy.c b/drivers/phy/cadence/cdns-dphy.c
+> index da8de0a9d086..24a25606996c 100644
+> --- a/drivers/phy/cadence/cdns-dphy.c
+> +++ b/drivers/phy/cadence/cdns-dphy.c
+> @@ -30,6 +30,7 @@
+>   
+>   #define DPHY_CMN_SSM			DPHY_PMA_CMN(0x20)
+>   #define DPHY_CMN_SSM_EN			BIT(0)
+> +#define DPHY_CMN_SSM_CAL_WAIT_TIME	GENMASK(8, 1)
+>   #define DPHY_CMN_TX_MODE_EN		BIT(9)
+>   
+>   #define DPHY_CMN_PWM			DPHY_PMA_CMN(0x40)
+> @@ -410,7 +411,8 @@ static int cdns_dphy_power_on(struct phy *phy)
+>   	writel(reg, dphy->regs + DPHY_BAND_CFG);
+>   
+>   	/* Start TX state machine. */
+> -	writel(DPHY_CMN_SSM_EN | DPHY_CMN_TX_MODE_EN,
+> +	reg = readl(dphy->regs + DPHY_CMN_SSM);
+> +	writel((reg & DPHY_CMN_SSM_CAL_WAIT_TIME) | DPHY_CMN_SSM_EN | DPHY_CMN_TX_MODE_EN,
+>   	       dphy->regs + DPHY_CMN_SSM);
+>   
+>   	ret = cdns_dphy_wait_for_pll_lock(dphy);
+>
 
