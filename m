@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-727636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 675A2B01D67
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:26:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE894B01CF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774FE1CA5C8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:26:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0B13189A003
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230CF2D374A;
-	Fri, 11 Jul 2025 13:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3312D9797;
+	Fri, 11 Jul 2025 13:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="zSErziQG"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="jKE0drOe"
+Received: from r3-24.sinamail.sina.com.cn (r3-24.sinamail.sina.com.cn [202.108.3.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95D770810;
-	Fri, 11 Jul 2025 13:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54A72D9788
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752240394; cv=none; b=aqru70koZ6E8S5cdGdBFwQXErlmRO5y8zkTIr9F9aPyIf1ASW3TpRbj4Nvrr37pZ4ak+eSLlcaQ0iYdeCBxo+Zk13XA9A8/4CDmJgN4sqQe5GvwvHxvg6m3dmJbxLrJKrtW+25ugcTs4rvIhCBrDG8QwJqO/2fNuP6QCHiUk/J4=
+	t=1752239144; cv=none; b=U4NLxF5seWbz+Y59iN2mVI6oO9jtMpus2P46saQyRHfoev5xH/tgYMCVBrd85BUgrWK51wMcz0sGemiBOSNC0XTGS7yxrHgduBxCL8IVLsgzlxbPou3HHtefszXu9baB8Y3us05RYBHbe8ZexV6eb1d0l6OlqcHnD/66LmPvBCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752240394; c=relaxed/simple;
-	bh=Jl/vU5lJC9S0oeOQ6YknUU2pLPlX3/BkkLX3JiVHe/E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KHioOjDLjfR5TsSwTG9pkeOWOgLxERQcqq6dvW8TP+v6ws1Mz+X7JEvC8UpW4UDsYuf9dQHJMR05J/djoAGVFn4vvbYkqp82EhcV1GcF/i4UtrlGOCBSW7Ejt8QrNlzJQO2GMJcVFfe3h2P1YmfiYqhV+KpOBKS60Kup2glHAM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=zSErziQG; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BBxKk4015882;
-	Fri, 11 Jul 2025 09:03:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=MzrXBBg7elftyNlRdd2fDLtgh+l
-	+x3GeP6CWd2zgxOo=; b=zSErziQGrQ1zEeze+7LFlDRlIqKWlZ0gU3ZkbDC8CKv
-	COTcJgaGT9HzODdmcJWXZsFtx3uFRfxuCERH7kh8YWTLEnONVLUBI7J5Q9hjTlLz
-	4g8UjyxXuW+CYxC7HrqCjP8a5BOXm9j8Uln9vV31WiQWf3l6F9Q2BDCy6sQII/k4
-	qoEEBs8XG1eWnfylIcc2SksQlWiCJOGk+Op0FxlnIktSDz/94N0TBWkKa/8y821w
-	qhMiXycHxaXypsZc/KxgMjGrrLoB09QzVPAYYSVw/vSNKps9h3dZ/PsAmxUN3XMb
-	kBMmLxhS7WuDAB3bIBlGW59pCR8Rr7up57PUstYhAuw==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 47tt54ac0v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 09:03:28 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 56BD3RNX026783
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 11 Jul 2025 09:03:27 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 11 Jul
- 2025 09:03:27 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 11 Jul 2025 09:03:27 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.132])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 56BD3Jqq027484;
-	Fri, 11 Jul 2025 09:03:22 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH 0/3] iio: adc: add support for ADE9000 Energy Monitoring IC
-Date: Fri, 11 Jul 2025 16:02:34 +0300
-Message-ID: <20250711130241.159143-1-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1752239144; c=relaxed/simple;
+	bh=2Thi8tcRuPyskRWxEmAqkMvxWYfp5D0TF7qSCfbJqNc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=afn8YhNmtk1eh4hifBPgBqXqZGXN1/opfDJV015i2zz0Tja+Zthc7q351MsOGqfLUEN+sdpEzH2Z7VWUdgBP7dNhuMugaAV1KjV+llwLT9MrpTs3axN7AQCaWMeVR4Fzb1J+xpnnaG+jzGrQ8h7eTTLpd1ZRfeiBoPFv4I5UeJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=jKE0drOe; arc=none smtp.client-ip=202.108.3.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752239140;
+	bh=1omNYjJ6riU6ByMU5McbKDW2Vi0lR2stv3vFtfP43g4=;
+	h=From:Subject:Date:Message-ID;
+	b=jKE0drOe9hFALVwymap8kbbtguT6BEt98RP0LWUqmo/KEo1Hrevjc2qMNzfLu0NOt
+	 RtJfg0kYO2Xl8ZKL33rS3E86b8gd+H9vGOAHyZSND5gXu6d924cRX3TyHHkGtkdxGW
+	 EHpfs2flOkrTJ8/Hvd8b298t7F/fBW/gOecBT18M=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 68710BFB00001401; Fri, 11 Jul 2025 21:05:01 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1085316816205
+X-SMAIL-UIID: 72D3A27834DA402ABCAB73B010231145-20250711-210501-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
+Date: Fri, 11 Jul 2025 21:04:48 +0800
+Message-ID: <20250711130450.3505-1-hdanton@sina.com>
+In-Reply-To: <686d9b50.050a0220.1ffab7.0020.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,76 +64,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA5MiBTYWx0ZWRfX0WR0VjnvW/Jn
- QVob3DQ3pBd3KH4r1kpbTgWBpnAv3fQiM3RIuUJQKa6bTniCYpYNzkW3sVuAbTq1iAnMLSbckr7
- dhXdlOcDNdWPaM8GPupKphaHWVD35pYe2enAGmKZXocBHpgWQ2Ra9qn79E1HehrLYI+F6qADh9n
- Vr2ceC+DrmaxOQNAbrqA30zh1cyws3ctagolAI1cX4DcIXjVxbnOUaeloWVRjF5uoUqPS6YPz70
- X2egbg7+NcA9yoBLoc1yQZpB7SFs+1h8xKR9uYINsdyXROmZJDoZ2sn3Vd8ol9GYjUDbFWcFmqM
- ZBWxASvvcDfBZ8vuQCZWOyVbGqBHFJm46PwrXnj6zZsG6whJmjAgFBGdq949cTI9adU7Zrd7/5n
- 5bqy9h2RTmLtkejKDuOuojuIMBQyqZ44zf9pcv4phNvycR3LdqSlNinDh395JTo34eZm54ge
-X-Authority-Analysis: v=2.4 cv=QZ5mvtbv c=1 sm=1 tr=0 ts=68710ba0 cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=Wb1JkmetP80A:10 a=MilyVcYQlkyFfA35S9cA:9
-X-Proofpoint-GUID: IXQ3riGyR0bE73Mn9qbE6ozor0nPhwJs
-X-Proofpoint-ORIG-GUID: IXQ3riGyR0bE73Mn9qbE6ozor0nPhwJs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0 malwarescore=0
- bulkscore=0 lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0
- spamscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507110092
 
-This patch series adds support for the Analog Devices ADE9000, a highly
-accurate, fully integrated, multiphase energy and power quality monitoring
-device. The ADE9000 is capable of measuring energy consumption and power
-quality parameters in industrial and commercial applications.
+> Date: Tue, 08 Jul 2025 15:27:28 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    7482bb149b9f Merge branch 'for-next/core' into for-kernelci
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=130c528c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3c06e3e2454512b3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1257428c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15fe9582580000
 
-The series includes:
+#syz test
 
-1. New IIO modifiers for power and energy measurement devices, including
-   support for active/reactive/apparent power, energy accumulation, RMS
-   measurements, and power quality indicators (swell/dip detection).
-
-2. Device tree bindings for the ADE9000, supporting waveform buffer
-   configuration, phase configuration, and trigger settings.
-
-3. Complete driver implementation supporting:
-   - Multi-phase energy measurement (3-phase support)
-   - Power quality monitoring (voltage swell/dip detection)
-   - Waveform buffer capture with configurable triggering
-   - Energy accumulation with configurable time windows
-   - IIO buffer interface for continuous data streaming
-   - Event-based notifications for power quality events
-
-The driver provides a comprehensive interface for energy monitoring
-applications through the IIO framework, enabling userspace applications
-to monitor power consumption, quality, and waveform data.
-
-The driver will be extended in the future to support multiple parts such as
-ade9039.
-
-Antoniu Miclaus (3):
-  iio: add power and energy measurement modifiers
-  dt-bindings: iio: adc: add ade9000
-  iio: adc: add ade9000 support
-
- Documentation/ABI/testing/sysfs-bus-iio       |   19 +
- .../bindings/iio/adc/adi,ade9000.yaml         |  157 ++
- drivers/iio/adc/Kconfig                       |   13 +
- drivers/iio/adc/Makefile                      |    1 +
- drivers/iio/adc/ade9000.c                     | 2187 +++++++++++++++++
- drivers/iio/industrialio-core.c               |   11 +
- include/uapi/linux/iio/types.h                |   11 +
- 7 files changed, 2399 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
- create mode 100644 drivers/iio/adc/ade9000.c
-
--- 
-2.49.0
-
+--- x/net/ipv4/cipso_ipv4.c
++++ y/net/ipv4/cipso_ipv4.c
+@@ -1848,6 +1848,7 @@ static int cipso_v4_get_actual_opt_len(c
+  * values on failure.
+  *
+  */
++static DEFINE_SPINLOCK(setattr_spinlock);
+ int cipso_v4_sock_setattr(struct sock *sk,
+ 			  const struct cipso_v4_doi *doi_def,
+ 			  const struct netlbl_lsm_secattr *secattr,
+@@ -1899,6 +1900,7 @@ int cipso_v4_sock_setattr(struct sock *s
+ 	kfree(buf);
+ 	buf = NULL;
+ 
++	spin_lock(&setattr_spinlock);
+ 	sk_inet = inet_sk(sk);
+ 
+ 	old = rcu_dereference_protected(sk_inet->inet_opt, sk_locked);
+@@ -1912,6 +1914,7 @@ int cipso_v4_sock_setattr(struct sock *s
+ 	rcu_assign_pointer(sk_inet->inet_opt, opt);
+ 	if (old)
+ 		kfree_rcu(old, rcu);
++	spin_unlock(&setattr_spinlock);
+ 
+ 	return 0;
+ 
+@@ -1975,10 +1978,12 @@ int cipso_v4_req_setattr(struct request_
+ 	kfree(buf);
+ 	buf = NULL;
+ 
++	spin_lock(&setattr_spinlock);
+ 	req_inet = inet_rsk(req);
+ 	opt = unrcu_pointer(xchg(&req_inet->ireq_opt, RCU_INITIALIZER(opt)));
+ 	if (opt)
+ 		kfree_rcu(opt, rcu);
++	spin_unlock(&setattr_spinlock);
+ 
+ 	return 0;
+ 
+@@ -1998,13 +2003,19 @@ req_setattr_failure:
+  * values on failure.
+  *
+  */
+-static int cipso_v4_delopt(struct ip_options_rcu __rcu **opt_ptr)
++static int cipso_v4_delopt(struct sock *sk)
+ {
+-	struct ip_options_rcu *opt = rcu_dereference_protected(*opt_ptr, 1);
++	struct ip_options_rcu *opt;
++	struct inet_sock *sk_inet;
+ 	int hdr_delta = 0;
+ 
+-	if (!opt || opt->opt.cipso == 0)
++	spin_lock(&setattr_spinlock);
++	sk_inet = inet_sk(sk);
++	opt = rcu_dereference_protected(sk_inet->inet_opt, 1);
++	if (!opt || opt->opt.cipso == 0) {
++		spin_unlock(&setattr_spinlock);
+ 		return 0;
++	}
+ 	if (opt->opt.srr || opt->opt.rr || opt->opt.ts || opt->opt.router_alert) {
+ 		u8 cipso_len;
+ 		u8 cipso_off;
+@@ -2036,10 +2047,11 @@ static int cipso_v4_delopt(struct ip_opt
+ 	} else {
+ 		/* only the cipso option was present on the socket so we can
+ 		 * remove the entire option struct */
+-		*opt_ptr = NULL;
++		rcu_assign_pointer(sk_inet->inet_opt, NULL);
+ 		hdr_delta = opt->opt.optlen;
+ 		kfree_rcu(opt, rcu);
+ 	}
++	spin_unlock(&setattr_spinlock);
+ 
+ 	return hdr_delta;
+ }
+@@ -2054,12 +2066,9 @@ static int cipso_v4_delopt(struct ip_opt
+  */
+ void cipso_v4_sock_delattr(struct sock *sk)
+ {
+-	struct inet_sock *sk_inet;
+ 	int hdr_delta;
+ 
+-	sk_inet = inet_sk(sk);
+-
+-	hdr_delta = cipso_v4_delopt(&sk_inet->inet_opt);
++	hdr_delta = cipso_v4_delopt(sk);
+ 	if (inet_test_bit(IS_ICSK, sk) && hdr_delta > 0) {
+ 		struct inet_connection_sock *sk_conn = inet_csk(sk);
+ 		sk_conn->icsk_ext_hdr_len -= hdr_delta;
+@@ -2077,7 +2086,7 @@ void cipso_v4_sock_delattr(struct sock *
+  */
+ void cipso_v4_req_delattr(struct request_sock *req)
+ {
+-	cipso_v4_delopt(&inet_rsk(req)->ireq_opt);
++	cipso_v4_delopt(req_to_sk(req));
+ }
+ 
+ /**
+--
 
