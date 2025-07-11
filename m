@@ -1,147 +1,135 @@
-Return-Path: <linux-kernel+bounces-726739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12AFB0108F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:04:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 631B3B01094
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 03:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50601C20196
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:04:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800903A5F71
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 01:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C12DDBC;
-	Fri, 11 Jul 2025 01:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CD646447;
+	Fri, 11 Jul 2025 01:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGUNVeLM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkOboRK+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B373A1B6;
-	Fri, 11 Jul 2025 01:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A39A625;
+	Fri, 11 Jul 2025 01:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752195842; cv=none; b=PVHcN7AHgwz7h3mCE77x6SgHATC4v0/0Sf7mUGKcXYZOzAhNxxy3KkutgR9JsnRyQY28ZazwmncUJpRvVJ7bg0tg6BSE2UAlWgBHz5m5J0+2oherDza2lzMWA1oUGicPuUDusDdjyInaVsDzWWEvKeC2yIu3T54eiYN8xr4zw/Y=
+	t=1752195987; cv=none; b=tuxLTQeyIoXgINp9ivKOtpRT8bVTtIiAswmvawzcOEupHcnOd1lag8UMklaVYDNhcJFKzKFk8LfFJ0vMhHdpTzsa0tT9P0CmQi2WOweOElNRTdksSNutl9I4BGkLJs7QB2CmgcN12gf4kEnotSbpmYNXV1E6vYVRDH2Y5cUhK1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752195842; c=relaxed/simple;
-	bh=iMAAkWvqir9PO2U6AoWLhY3TnktwSdRhH6L3AJVP0Og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=If+vIJKkot/bMl+GzXXLhiIL+eyBG9V1r5HZVPZbQDKUvVo+/4ftIfHVF8w/tvnv2CBwOpQtdVtiMGPPUK/VPHxwwHfPv2VT27PWAPLj7KYl0KSQFoSD7HLGeuB8QKsD1BuFgS64vH2MK+yAj1hDguon5UnFHi5g7GoJYGAkY6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGUNVeLM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C07C4CEE3;
-	Fri, 11 Jul 2025 01:04:01 +0000 (UTC)
+	s=arc-20240116; t=1752195987; c=relaxed/simple;
+	bh=3s9ya70fRuAtMbeXNZqI/wI3mNNpFXrGUgHz7iC5FZs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QJKFvdXG21Sp35XyBaCLYpYuQHEhbt0OfAg+c5Kg83Az4ihLwwfquKxnxpOq5I+ka0UEJpNHPx+QJACTChTEUUUfrfEHuxPQGPFr0EjePrgVrwpqEivgImVcJ35qNy0EpIJKs/SKoyngtNDwhno7ZTqsnMPjM0Hnt4bnD/d4QIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkOboRK+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0151C4CEF4;
+	Fri, 11 Jul 2025 01:06:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752195841;
-	bh=iMAAkWvqir9PO2U6AoWLhY3TnktwSdRhH6L3AJVP0Og=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=WGUNVeLMo2V/NqP+Lh0RR/Fey+SSipVV0LvRRN7nAyZVNoQem+VTJU0THlgbPBcny
-	 6h/74641rTHYdTejMap2giXNRC6ep2eb0UqicxH/BKJf7OzqF3rw9L3dxkPB3OOax1
-	 buVMq5zGdUX7B3d6cmuuUE2zsabj+PWQg7ddzZdeCJ0cC8zyIKfp9IdrFjeeA6IEeM
-	 lzdY4GpV4y3WlxHOUvdHUTzQrFBS8Vs+dN9GznwHA1s6Ad+OIOSFU3k0WMAaWnGvDx
-	 glBnShXIH/3T0+X0+MwZJDF1Kn9dkCWmcnHP8d2Y10ILrNU2bjBSL3BfbNsBa4qVdg
-	 OLcKtUgEcCz7g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6309ACE0A44; Thu, 10 Jul 2025 18:04:01 -0700 (PDT)
-Date: Thu, 10 Jul 2025 18:04:01 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Breno Leitao <leitao@debian.org>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, aeh@meta.com,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	edumazet@google.com, jhs@mojatatu.com, kernel-team@meta.com,
-	Erik Lundgren <elundgren@meta.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Uladzislau Rezki <urezki@gmail.com>, rcu@vger.kernel.org
-Subject: Re: [RFC PATCH 8/8] locking/lockdep: Use shazptr to protect the key
- hashlist
-Message-ID: <06bf79cc-bd0d-487c-bcde-44464d17225d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250414060055.341516-1-boqun.feng@gmail.com>
- <20250414060055.341516-9-boqun.feng@gmail.com>
+	s=k20201202; t=1752195986;
+	bh=3s9ya70fRuAtMbeXNZqI/wI3mNNpFXrGUgHz7iC5FZs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DkOboRK+dzbQcbXSb6ZM4srfdImE3uoWJ0JA6knuDWitO+udLU2EehGG8fIQgHX3J
+	 gkvpnqQ6+XVAtvkLpcKnOZTDFMv2iHkUmrEv2VI5kEsztx+JhZmtQZhbT4JIqPv12I
+	 bZ4vVw/s/j/Rb9RD9ZWzOU3yFHUqRBGkFmFZpouz4QobAMVa57QzIgRHwavrtrTXEv
+	 0rzqYKyx1WPj9mRBushGqtm0pb8axvGwquP3AUC8wyE5XBSsn9NFnkzRcasfF2x/8Q
+	 JnUV6+fDrKw+sRDJnjJzKanWDG5nWaXA5qx8zdAUfE0hIRHBu3I7nsHznEoCHvkxwG
+	 FYTCw1xF+h4uQ==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-555024588b1so1757296e87.1;
+        Thu, 10 Jul 2025 18:06:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVGmN/BrofNBo6qrtvowpHlxj2QqZrsgWr+UdAWOJ3t9I0SqlzGpPqYmN1M+nfM02SymXZjI1l0hOKw@vger.kernel.org, AJvYcCVNXh5uj7R7kc7gZdUMcGHC5AK/grHIxP6kS8K8S+Gf+6OkQcomil6HhGEEVqkhknVI7vfCZInjkfZIrxer@vger.kernel.org, AJvYcCXDsuPEEb3VDvsVsRIaLLn6b8cuyLS+hTiySMDgxYSOMA/5oTX67KGsqzoj6pkaED+QAi3Jy7pVYd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVxDPHUalAIs1YCkvTXO5RSf2RHgV1MV7C1OikkWzYVPyd4MMD
+	x4bi4Ad7uWRmjTN085sASsC8HHFjAHjGPHuCa7XnoM2lRfmCSyvfQ8x/s7DZ/ft6K4oSEZPmdPe
+	Y8XIzYjgYRdDzBDew/YgJk2UwdOypz+w=
+X-Google-Smtp-Source: AGHT+IE+3CUYH/gD3T7zT/PvUdYk4B6Ktm/C8FGrfNnQrO0FD/zBA/r82egJK1xA6pV6KiuBRkMaxwF2g3Dpml5Qj2E=
+X-Received: by 2002:a05:6512:39d1:b0:553:a60d:6898 with SMTP id
+ 2adb3069b0e04-55a04645b4fmr271265e87.45.1752195985093; Thu, 10 Jul 2025
+ 18:06:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414060055.341516-9-boqun.feng@gmail.com>
+References: <20250710084151.55003-1-feng.tang@linux.alibaba.com>
+In-Reply-To: <20250710084151.55003-1-feng.tang@linux.alibaba.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 11 Jul 2025 11:06:13 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXHDFq3FZj4134CTcQZnke4t1=u6iRNNsQBvuhb3F6KurQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwlQMse1-xThF4QL3jSKxOhXMTEqDoi5hfv1fq0LHWKI1bQr6CujMt1wgA
+Message-ID: <CAMj1kXHDFq3FZj4134CTcQZnke4t1=u6iRNNsQBvuhb3F6KurQ@mail.gmail.com>
+Subject: Re: [PATCH] rtc: efi: Add runtime check for the wakeup service capability
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Apr 13, 2025 at 11:00:55PM -0700, Boqun Feng wrote:
-> Erik Lundgren and Breno Leitao reported [1] a case where
-> lockdep_unregister_key() can be called from time critical code pathes
-> where rntl_lock() may be held. And the synchronize_rcu() in it can slow
-> down operations such as using tc to replace a qdisc in a network device.
-> 
-> In fact the synchronize_rcu() in lockdep_unregister_key() is to wait for
-> all is_dynamic_key() callers to finish so that removing a key from the
-> key hashlist, and we can use shazptr to protect the hashlist as well.
-> 
-> Compared to the proposed solution which replaces synchronize_rcu() with
-> synchronize_rcu_expedited(), using shazptr here can achieve the
-> same/better synchronization time without the need to send IPI. Hence use
-> shazptr here.
-> 
-> Reported-by: Erik Lundgren <elundgren@meta.com>
-> Reported-by: Breno Leitao <leitao@debian.org>
-> Link: https://lore.kernel.org/lkml/20250321-lockdep-v1-1-78b732d195fb@debian.org/
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-
-From an RCU and shazptr viewpoint:
-
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-
+On Thu, 10 Jul 2025 at 18:41, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+>
+> The kernel selftest of rtc reported a error on an ARM server which
+> use rtc-efi device:
+>
+>         RUN           rtc.alarm_alm_set ...
+>         rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
+>         rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
+>         alarm_alm_set: Test terminated by assertion
+>                  FAIL  rtc.alarm_alm_set
+>         not ok 5 rtc.alarm_alm_set
+>
+> The root cause is, the underlying EFI firmware doesn't support wakeup
+> service (get/set alarm), while it doesn't have the EFI RT_PROP table
+> either. As Ard Biesheuvel clarified [1], this breaks the UEFI spec,
+> which requires EFI firmware to provide a 'RT_PROP' table if it doesn't
+> support all runtime services (Section 4.6.2, UEFI spec 2.10).
+>
+> This issue was also reproduced on ARM server from another vendor, which
+> doesn't have RT_PROP table either. This means, in real world, there are
+> quite some platforms having this issue, that it doesn't support wakeup
+> service while not providing a correct RT_PROP table, which makes it
+> wrongly claimed to support it.
+>
+> Add a runtime check for the wakeup service to detect and correct this
+> kind of cases.
+>
+> [1]. https://lore.kernel.org/lkml/CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com/
+>
+> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
 > ---
->  kernel/locking/lockdep.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> index 58d78a33ac65..c5781d2dc8c6 100644
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -58,6 +58,7 @@
->  #include <linux/context_tracking.h>
->  #include <linux/console.h>
->  #include <linux/kasan.h>
-> +#include <linux/shazptr.h>
->  
->  #include <asm/sections.h>
->  
-> @@ -1265,14 +1266,18 @@ static bool is_dynamic_key(const struct lock_class_key *key)
->  
->  	hash_head = keyhashentry(key);
->  
-> -	rcu_read_lock();
-> +	/* Need preemption disable for using shazptr. */
-> +	guard(preempt)();
-> +
-> +	/* Protect the list search with shazptr. */
-> +	guard(shazptr)(hash_head);
-> +
->  	hlist_for_each_entry_rcu(k, hash_head, hash_entry) {
->  		if (k == key) {
->  			found = true;
->  			break;
->  		}
->  	}
-> -	rcu_read_unlock();
->  
->  	return found;
->  }
-> @@ -6614,7 +6619,7 @@ void lockdep_unregister_key(struct lock_class_key *key)
->  		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
->  
->  	/* Wait until is_dynamic_key() has finished accessing k->hash_entry. */
-> -	synchronize_rcu();
-> +	synchronize_shazptr(keyhashentry(key));
->  }
->  EXPORT_SYMBOL_GPL(lockdep_unregister_key);
->  
-> -- 
-> 2.47.1
-> 
+>  drivers/rtc/rtc-efi.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+
+Thanks, I've queued this up now.
+
+> diff --git a/drivers/rtc/rtc-efi.c b/drivers/rtc/rtc-efi.c
+> index fa8bf82df948..8d1b9bde6f66 100644
+> --- a/drivers/rtc/rtc-efi.c
+> +++ b/drivers/rtc/rtc-efi.c
+> @@ -259,6 +259,7 @@ static int __init efi_rtc_probe(struct platform_device *dev)
+>         struct rtc_device *rtc;
+>         efi_time_t eft;
+>         efi_time_cap_t cap;
+> +       efi_bool_t enabled, pending;
+>
+>         /* First check if the RTC is usable */
+>         if (efi.get_time(&eft, &cap) != EFI_SUCCESS)
+> @@ -272,7 +273,8 @@ static int __init efi_rtc_probe(struct platform_device *dev)
+>
+>         rtc->ops = &efi_rtc_ops;
+>         clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->features);
+> -       if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES))
+> +       if (efi_rt_services_supported(EFI_RT_SUPPORTED_WAKEUP_SERVICES) &&
+> +               efi.get_wakeup_time(&enabled, &pending, &eft) == EFI_SUCCESS)
+>                 set_bit(RTC_FEATURE_ALARM_WAKEUP_ONLY, rtc->features);
+>         else
+>                 clear_bit(RTC_FEATURE_ALARM, rtc->features);
+> --
+> 2.39.5 (Apple Git-154)
+>
+>
 
