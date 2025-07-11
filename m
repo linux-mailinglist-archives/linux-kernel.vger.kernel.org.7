@@ -1,98 +1,195 @@
-Return-Path: <linux-kernel+bounces-727471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9926FB01AB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:39:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888A7B01AB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 881C11C832FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:40:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCA09765667
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE5828C87B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3B528C2C1;
 	Fri, 11 Jul 2025 11:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="aMUC643m"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gw68/niq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9389146585;
-	Fri, 11 Jul 2025 11:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752233974; cv=pass; b=Fp1/667XRIcdYQLjfq6G+1X2QMob4q4LgWt+BOXr30FN9TGxYirn1mtDG6srZU69l+a2oqy+cXsjB6w8z/0EL374AAiuTO/F2qQPlUOJA7JPpr8R0fvvFxZYa5O7Pj+kj34NJd0EE+rokFqJQIOIDn+s6Zb6uAYUDTwYBnMfY8U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F347028BAB0
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752233974; cv=none; b=MONYlH7tRXEWZuV7tdrLIPIxz2JAXDyHoXRULmKqVVgkdLPF2nLNAKY8Hg2iKOZZ3n079kwkqEI3Fb0ZA3/ZbAD6mK0UTng7H84iyUfElYQ/9MYDt4M35mDZ4qTz459P4eFrNtQs9rNcqUvLuT85AIvAoPitAwgk+4pcbE3+T/U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752233974; c=relaxed/simple;
-	bh=+Yp/9vXJnuS15q7Ws402XZPZ922d6uO4iW3tyf60u1k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KLws4zGfmEl47LZXK684q26tE3EJjntSe47dFB4j/74PoybIrCFLDDv1yM0o/y+QoZwAkApUJRT3P5+51kO/mF36XU8ijSHuOI4wPs9eMcZPUo3TEneQ6rv2eZr36aEz0OdIx4KnbqsmcaT+7BjVEnxMNWcn4H5SDlGnmS/kvw4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=aMUC643m; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752233965; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Zq3U5WsnB6luMlxmGM7W7VRgJ69tLs8p2fyy6RA61sB2PJlOa/TvF14VxPmZScG6FMTkfnW7EJouMIHOwYSE7CWtdLExmgsxMjeoqkOkL8IGTTwZgtTLSDQlk9wa4XcNcSXfrS8yMIrzxIFaLPaX8a0dCCG5LDOa6mrCqsSZrNs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752233965; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=T8MIuW08C8koONJfmm3jnIPFf9fQ9pRVLTB81egtRnY=; 
-	b=mhOlr5tSbQK4sGWuQdCWwbAITTDnC3pi28On748NuiaNoSaXo+SI2DCP6wsSJchP1DWsZ26i7aHFWC54pZAE1Ix1vDsFdZXAYV79p59K0WKupydS+AGfpv4HgHGJCqF6MnohrUsJsRwvaXuSFB5ZNJn/CZRJ4JF7BA3fuleysio=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752233965;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=T8MIuW08C8koONJfmm3jnIPFf9fQ9pRVLTB81egtRnY=;
-	b=aMUC643muaYql7lmeDIbbtYBj+eQxTTiHAyiS/lFhak1Rfp7izMmaexbM46fymnX
-	1oKgcZ7hNpZd4/0yZrlGpi+xOMdH/1nU4c1PZCCNOc2bISUjzPi8Dg+NzJXrAHPVAjv
-	GffBCZEUUE4FMW2GlVEyb+BgZqMIGBwzI9SP7uMc=
-Received: by mx.zohomail.com with SMTPS id 1752233963651916.9375382365815;
-	Fri, 11 Jul 2025 04:39:23 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Heiko Stuebner <heiko@sntech.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the rockchip tree
-Date: Fri, 11 Jul 2025 13:39:20 +0200
-Message-ID: <3455912.mvXUDI8C0e@workhorse>
-In-Reply-To: <20250711082614.69765ef3@canb.auug.org.au>
-References: <20250711082614.69765ef3@canb.auug.org.au>
+	bh=GjwBdGZkritGSLlEAMPXzRmegqcueDHnmfsDuwOhErg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PsSDJY1dSg3o8YNRDTjeXTmQbn1yGJl5LBJCv4vPKwcO2O1OqU+BTk2gYhKIEuTgO8qV/XCfd8VrfvdvpI7jVp7OgkR24PKFF+os28EBNwr7xrDXhUFyr018/XufWJUpCwBn6UHwlIxmq4sowBmAjqZgndxkG+cjIGcMGmr2afA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gw68/niq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752233971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=s8kTQZi/JvElVSnVZYZxq8DDrBQqMmFGpp95e0g0Mgc=;
+	b=gw68/niquO8bjudE9cOZ1+K/hoB0LoR4+2exUqnhnu6wQ5gK+iiWHtNz1Gt/pJJizg6JLT
+	uhTjYFO671bu8qbhKbz296ax7g/wDy6Alm6i2NGJdQk2FGHDRzXhn7fO0e1r6PTZJAjqsk
+	sd7eYPhA8c52cNQiX6YOLty/9ct1Rwk=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-180-IPMPHdGJOJSiRy4TubVJmw-1; Fri, 11 Jul 2025 07:39:30 -0400
+X-MC-Unique: IPMPHdGJOJSiRy4TubVJmw-1
+X-Mimecast-MFC-AGG-ID: IPMPHdGJOJSiRy4TubVJmw_1752233969
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a5281ba3a4so739224f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 04:39:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752233969; x=1752838769;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=s8kTQZi/JvElVSnVZYZxq8DDrBQqMmFGpp95e0g0Mgc=;
+        b=lbR4ZHi5YDkwJGFSrQl3Hz8bsxnYDMXDwGphmrAVlnQMAOBmxBopxkxqfxnOUu+P2O
+         t28hchRgXUdKIwCT6j70wUIPtw/tk5/ooIZQAWHUcaWmFAaYsQtMIDA9GA3SqA70Gvu5
+         bAL7Ot1VsJ2/5iolbrJfBXAVmzkLHd4Sosa1qDPg+k3uSR1VdHPNcfDdN2kQDPDptn36
+         RcwOhPaSEah/azNvY6cOJ0pvnpX/DMIuVxNS26rnd3isFWVy5dwsol21jOGT5ZBWmuZW
+         Ex37XPE/xbL+E8YmKxEltuyouFBIILj77nf9+ToIjD7BYGBIvdEOC6xYN+CkMGkwCpu/
+         7kAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCCvXdgEv2sn9fQ0Gng5mFgm70vLAfFik5ddV7BXQBq0bQKCqmODmHwGEN+smH0d+0uYdzrRHCu20+3d8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBqm/MQiclpEsWdauOdCCvYSH2SseXc0RaiToITZQazr1NX/7F
+	AtlNMmL3iblud2seVEn8Va7Q/aYR4U8W/eeqSItpU6tZjXGDDb/t3q9p6KYvbiTuh4zEhU3YwpM
+	uZCuBiUFZYdVW/gQ+k59fFzrnpxkYj5xcWiVNS5F6d3GKIopWj+/Y+d5agQL+x1W98g==
+X-Gm-Gg: ASbGncuGXlmp4WJfWBvngOz8WAuKj6vBugMY7d7Yc9AQN6yAVnGLxumW9agcCBqu4nJ
+	5mtVS3K5TGLRADRgEc8zotVv8xsL14vTntXYaqTtocv8XUOp3/Q+Zd1xnYYvYj0nF7dHHK4AKWz
+	5UMH6LSugxx0g9L398iQFa9OUtTo3Oawt6opZPisT4wL3tpJgJKPBDiex5ZibrjG4aYvTdxop14
+	3fpPfhZW0RT65HUTThA+NSpYpjJMCqQHI5FP80R+dxhjt+Sk/e0krFyppcKfQlYTM32wHDInD2f
+	uIcSSa3FdMBrjJmVn2lgwYWm1PXXCDwC737JAlixXGJa4XS38uPrnF/zVs+kdsJ3lkjF5xR8LF8
+	+ITgz8DGFBtMTrs8BElsVVnOq2iuxpv0f2lmwMjFB86RgMIXc/hznaREabuMN3bnqB7A=
+X-Received: by 2002:a5d:64a8:0:b0:3a5:1c71:432a with SMTP id ffacd0b85a97d-3b5f1880597mr2335190f8f.14.1752233969230;
+        Fri, 11 Jul 2025 04:39:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpKpAWEefYAd9Ydymwt/ALe7yD6LTuTB/uNYrZQpXbk5Tb+0z7t+YdaAnDj/jt29tCnRjOzg==
+X-Received: by 2002:a5d:64a8:0:b0:3a5:1c71:432a with SMTP id ffacd0b85a97d-3b5f1880597mr2335171f8f.14.1752233968759;
+        Fri, 11 Jul 2025 04:39:28 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd541a59sm44199145e9.32.2025.07.11.04.39.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 04:39:28 -0700 (PDT)
+Message-ID: <a1575434-77eb-4358-896a-6d0e62feef4c@redhat.com>
+Date: Fri, 11 Jul 2025 13:39:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 12/14] mm: add config option for clearing page-extents
+To: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, x86@kernel.org
+Cc: akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
+ peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
+ tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
+ boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+References: <20250710005926.1159009-1-ankur.a.arora@oracle.com>
+ <20250710005926.1159009-13-ankur.a.arora@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250710005926.1159009-13-ankur.a.arora@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Friday, 11 July 2025 00:26:14 Central European Summer Time Stephen Rothwell wrote:
-> Hi all,
+On 10.07.25 02:59, Ankur Arora wrote:
+> Add CONFIG_CLEAR_PAGE_EXTENT to allow clearing of page-extents
+> where architecturally supported.
 > 
-> In commit
+> This is only available with !CONFIG_HIGHMEM because the intent is to
+> use architecture support to clear contiguous extents in a single
+> operation (ex. via FEAT_MOPS on arm64, string instructions on x86)
+> which excludes any possibility of interspersing kmap()/kunmap().
 > 
->   fc276de7b63e ("arm64: dts: rockchip: adjust dcin regulator on ROCK 4D")
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+> ---
+>   mm/Kconfig | 9 +++++++++
+>   1 file changed, 9 insertions(+)
 > 
-> Fixes tag
-> 
->   Fixes: tag because there is no functional change here. I don't think
-> 
-> has these problem(s):
-> 
->   - No SHA1 recognised
-> 
-> It looks like that Fixes tag was incorrectly picked up by automation
-> from the mail thread and should be removed.
-> 
-> 
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 781be3240e21..a74a5e02de28 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -910,6 +910,15 @@ config NO_PAGE_MAPCOUNT
+>   
+>   endif # TRANSPARENT_HUGEPAGE
+>   
+> +config CLEAR_PAGE_EXTENT
+> +	def_bool y
+> +	depends on !HIGHMEM && ARCH_HAS_CLEAR_PAGES
+> +	depends on TRANSPARENT_HUGEPAGE || HUGETLBFS
+> +
+> +	help
+> +	  Use architectural support for clear_pages() to zero page-extents.
+> +	  This is likely to be faster than zeroing page-at-a-time.
+> +
 
-In the future I'll be sure to never mention the tag by its name
-followed by a colon even mid sentence ever again, since tooling is
-apparently a little over-eager here.
+IIRC, adding a help text will make this option be configurable by the 
+user, no?
 
-Good stuff.
+This seems like something we can just keep internal, right?
 
+-- 
+Cheers,
+
+David / dhildenb
 
 
