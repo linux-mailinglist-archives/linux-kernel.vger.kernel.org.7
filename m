@@ -1,111 +1,215 @@
-Return-Path: <linux-kernel+bounces-726918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6B82B012C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:38:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A92ADB012BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90CC1C80C18
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:38:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F02F640A7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1986D1C84A0;
-	Fri, 11 Jul 2025 05:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3EE1C5F2C;
+	Fri, 11 Jul 2025 05:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="H62B/Bbg"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hja3YdVN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB96188907;
-	Fri, 11 Jul 2025 05:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174472AE8B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752212290; cv=none; b=LJfX2bFhp5M0ZbNdCmq6oio6aMUcchhkDXOsaO8HItNpI7+JRdfEnyow/hExynteAUsE8g7lCUKbM/3ES+mIB/8rwGuUWIhsd1DdCqEGY/Tz5HLZFwoUvuMUwfyxOazO8qWSUijy9ugkQ8YByKaQMW8k1xXJ3echptLAst86z8E=
+	t=1752212128; cv=none; b=B6/kh5mwDDtWFrunY1mFIu8nvejyZi/D5udpzp1xI/G36r9WjF0NfWrZzv9mOecCRl9Z2zNDPyH2DsSgJvR2EVdva6Rj4ULUGRkSCBCsfjcZHOz7nGQxfNu+Q2VsIedupSv1jxUTPvgFbGhFxTSyop/wMbNLrpN1Qa0OHuo9eCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752212290; c=relaxed/simple;
-	bh=dSzZXBtaUtF6MwhCEZHgYoOFBwfwB4QKpkWElkUK1o4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VI0/Dt2iK8yuypLnXtzK5VsBSUhERqJlE1Teyc2sWtOAZmTsTFHMWXDVncX+wbFKaV76rtO2xq6TV+xA6JjnU11UezwKi+oy4S4ChBWxSaq/Sr2uajAqCJZpPNrQF5TxXgcpgTkyPDzGFqEnpIe42kNhQ4ANc0hlZnH95Lecgys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=H62B/Bbg; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=OhAsV/CBrgYXlLFY+8qkcKo/GadLSGwmgLi8pRb4QUk=;
-	b=H62B/Bbg/cEOgUnp7ap3h3tfUm7W4fQQmbCIIu7+/C38Ajeij8sKBhr6nwaiI3
-	03t8NYs71gCAxHhpYnrVzpereZLFz2CdbnKGk5w2MU1NOHSKh6rFJZ/0Id7N7Av8
-	e9mxbeNGEaKp/i3Nir3h+qEI66llfAv+KbFqy0+FEBZ7U=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgDHX52HonBobvdOAA--.742S3;
-	Fri, 11 Jul 2025 13:35:05 +0800 (CST)
-Date: Fri, 11 Jul 2025 13:35:03 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Frank Li <frank.li@nxp.com>
-Subject: Re: [EXT] Re: [PATCH v17 0/7] firmware: imx: driver for NXP
- secure-enclave
-Message-ID: <aHCihwHKVck-emEX@dragon>
-References: <20250426-imx-se-if-v17-0-0c85155a50d1@nxp.com>
- <aEqMSG8k+NpQ7ROH@dragon>
- <AM9PR04MB86048A698B03E974CFD3DB489574A@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <aEuB1qgd6aVl0i7i@dragon>
- <AM9PR04MB8604F77BCD3427B38CB9E664957DA@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <AM9PR04MB8604BFF7161570CD464723FA9549A@AM9PR04MB8604.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1752212128; c=relaxed/simple;
+	bh=sDt+OTmxEHfLoD5OFrfUxBTzRpnqDUeadnrh/wS1JXs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DrV9Fzdsouk23+QQ+jEgxATXzAaMpNRIbJHYCE6ezxxbyzEO9vyx9ZgFA7dCGNFK/4ol69mPV2slzGwoDieyay9QrXmZw3t553BJ7Hsc9Q7bQN1kszg070YjcXgtb7HvRDNYG6s/EzIEK6gdIphnH+J4bObSzFvzpuCLBLL8Am8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hja3YdVN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752212126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CUP6yUq85IP+SbffWiWOIbOd/lABj5i3O3SyytybOTE=;
+	b=Hja3YdVNeAL+gutQ3kl88E6w7V2PKf4rC76UP1yb4gxhhqKJtSlQfiov80E/++t/Wo1Sl0
+	g+mXg0LDMmRxZ83kSUznviJQNr57Rdod0uA/kOoS3XcFYxbgYpMLJfVU04xbjU/JX9TcCo
+	PT30Xn+mCQQoB5LJRyOYIBAF/Y7el7s=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-204--icJXwQgOw2IuU4FmKUyrw-1; Fri,
+ 11 Jul 2025 01:35:20 -0400
+X-MC-Unique: -icJXwQgOw2IuU4FmKUyrw-1
+X-Mimecast-MFC-AGG-ID: -icJXwQgOw2IuU4FmKUyrw_1752212118
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1B6EC1956080;
+	Fri, 11 Jul 2025 05:35:17 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.45.224.54])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B14EF18003FC;
+	Fri, 11 Jul 2025 05:35:11 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	linux-spdx@vger.kernel.org
+Subject: [PATCH v2] powerpc: Replace the obsolete address of the FSF
+Date: Fri, 11 Jul 2025 07:35:09 +0200
+Message-ID: <20250711053509.194751-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM9PR04MB8604BFF7161570CD464723FA9549A@AM9PR04MB8604.eurprd04.prod.outlook.com>
-X-CM-TRANSID:M88vCgDHX52HonBobvdOAA--.742S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JF4DurW5ZrWDuFWkGrWDCFg_yoW3KFc_CF
-	Wqv3ZrC3WUG3y7tFsxJryqyrnxK3yj93Wft3yUtrZIy3s3Ar4kZFWkGryfAw18JayrGF9r
-	Cr4DZa4DA34xZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUj7DGUUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNQkBZmhwookRsgAA3L
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Wed, Jul 09, 2025 at 10:23:45AM +0000, Pankaj Gupta wrote:
-> >>> Hi Shawn,
-> >>>
-> >>> To test it on MX93, you need additional patches on top of these.
-> >>>
-> >>> The plan was to send the next patch-set to enable the support for 
-> >>> MX93, once these got merged.
-> >>>
-> >>> If you suggest, I can share the patche-set to enable MX93, as an 
-> >>> attachment to you only.
-> 
-> >> Yes, please.  I would like to test the driver before it gets merged,
-> thanks!
-> 
-> > Please find attached the patches for enabling iMX93.
-> 
-> > I have also sent v18 to dispose off the comments:
-> > 1. documentation,
-> > 2. updating the commit message with collected reviewed by tags.
-> 
-> Are you able to test the driver on i.MX93?
-> Any help needed?
+From: Thomas Huth <thuth@redhat.com>
 
-I did not expect those additional patches (except i.MX93 DTS
-changes) for testing the series on i.MX93.  So, no, I didn't test,
-sorry!
+The FSF does not reside in the Franklin street anymore. Let's update
+the address with the link to their website, as suggested in the latest
+revision of the GPL-2.0 license.
+(See https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt for example)
 
-Shawn
+Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ v2: Resend with CC: linux-spdx@vger.kernel.org as suggested here:
+     https://lore.kernel.org/linuxppc-dev/e5de8010-5663-47f4-a2f0-87fd88230925@csgroup.eu
+     
+ arch/powerpc/boot/crtsavres.S            | 5 ++---
+ arch/powerpc/include/uapi/asm/eeh.h      | 5 ++---
+ arch/powerpc/include/uapi/asm/kvm.h      | 5 ++---
+ arch/powerpc/include/uapi/asm/kvm_para.h | 5 ++---
+ arch/powerpc/include/uapi/asm/ps3fb.h    | 3 +--
+ arch/powerpc/lib/crtsavres.S             | 5 ++---
+ arch/powerpc/xmon/ppc.h                  | 5 +++--
+ 7 files changed, 14 insertions(+), 19 deletions(-)
+
+diff --git a/arch/powerpc/boot/crtsavres.S b/arch/powerpc/boot/crtsavres.S
+index 085fb2b9a8b89..a710a49a5dbca 100644
+--- a/arch/powerpc/boot/crtsavres.S
++++ b/arch/powerpc/boot/crtsavres.S
+@@ -26,9 +26,8 @@
+  * General Public License for more details.
+  *
+  * You should have received a copy of the GNU General Public License
+- * along with this program; see the file COPYING.  If not, write to
+- * the Free Software Foundation, 51 Franklin Street, Fifth Floor,
+- * Boston, MA 02110-1301, USA.
++ * along with this program; see the file COPYING.  If not, see
++ * <https://www.gnu.org/licenses/>.
+  *
+  *    As a special exception, if you link this library with files
+  *    compiled with GCC to produce an executable, this does not cause
+diff --git a/arch/powerpc/include/uapi/asm/eeh.h b/arch/powerpc/include/uapi/asm/eeh.h
+index 28186071fafc4..4a117cc475299 100644
+--- a/arch/powerpc/include/uapi/asm/eeh.h
++++ b/arch/powerpc/include/uapi/asm/eeh.h
+@@ -9,9 +9,8 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++ * You should have received a copy of the GNU General Public License along
++ * with this program; if not, see <https://www.gnu.org/licenses/>.
+  *
+  * Copyright IBM Corp. 2015
+  *
+diff --git a/arch/powerpc/include/uapi/asm/kvm.h b/arch/powerpc/include/uapi/asm/kvm.h
+index eaeda001784eb..75c1d7a48ad52 100644
+--- a/arch/powerpc/include/uapi/asm/kvm.h
++++ b/arch/powerpc/include/uapi/asm/kvm.h
+@@ -9,9 +9,8 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++ * You should have received a copy of the GNU General Public License along
++ * with this program; if not, see <https://www.gnu.org/licenses/>.
+  *
+  * Copyright IBM Corp. 2007
+  *
+diff --git a/arch/powerpc/include/uapi/asm/kvm_para.h b/arch/powerpc/include/uapi/asm/kvm_para.h
+index a809b1b44ddfe..66d1e17e427a6 100644
+--- a/arch/powerpc/include/uapi/asm/kvm_para.h
++++ b/arch/powerpc/include/uapi/asm/kvm_para.h
+@@ -9,9 +9,8 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++ * You should have received a copy of the GNU General Public License along
++ * with this program; if not, see <https://www.gnu.org/licenses/>.
+  *
+  * Copyright IBM Corp. 2008
+  *
+diff --git a/arch/powerpc/include/uapi/asm/ps3fb.h b/arch/powerpc/include/uapi/asm/ps3fb.h
+index fd7e3a0d35d57..af6322042b3b0 100644
+--- a/arch/powerpc/include/uapi/asm/ps3fb.h
++++ b/arch/powerpc/include/uapi/asm/ps3fb.h
+@@ -13,8 +13,7 @@
+  * General Public License for more details.
+  *
+  * You should have received a copy of the GNU General Public License along
+- * with this program; if not, write to the Free Software Foundation, Inc.,
+- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ * with this program; if not, see <https://www.gnu.org/licenses/>.
+  */
+ 
+ #ifndef _ASM_POWERPC_PS3FB_H_
+diff --git a/arch/powerpc/lib/crtsavres.S b/arch/powerpc/lib/crtsavres.S
+index 8967903c15e99..c7e58b6614169 100644
+--- a/arch/powerpc/lib/crtsavres.S
++++ b/arch/powerpc/lib/crtsavres.S
+@@ -27,9 +27,8 @@
+  * General Public License for more details.
+  *
+  * You should have received a copy of the GNU General Public License
+- * along with this program; see the file COPYING.  If not, write to
+- * the Free Software Foundation, 51 Franklin Street, Fifth Floor,
+- * Boston, MA 02110-1301, USA.
++ * along with this program; see the file COPYING.  If not, see
++ * <https://www.gnu.org/licenses/>.
+  *
+  *    As a special exception, if you link this library with files
+  *    compiled with GCC to produce an executable, this does not cause
+diff --git a/arch/powerpc/xmon/ppc.h b/arch/powerpc/xmon/ppc.h
+index 1d98b8dd134ef..270097f6e905b 100644
+--- a/arch/powerpc/xmon/ppc.h
++++ b/arch/powerpc/xmon/ppc.h
+@@ -15,8 +15,9 @@ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
+ the GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+-along with this file; see the file COPYING.  If not, write to the Free
+-Software Foundation, 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.  */
++along with this file; see the file COPYING.  If not, see
++<https://www.gnu.org/licenses/>.
++*/
+ 
+ #ifndef PPC_H
+ #define PPC_H
+-- 
+2.50.0
 
 
