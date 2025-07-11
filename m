@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-727787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F71B01FC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:55:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C39B01F7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71E875A24D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:55:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA9DE7B31CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856232EBB82;
-	Fri, 11 Jul 2025 14:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F372B2E9EB1;
+	Fri, 11 Jul 2025 14:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="GLwIa/U4"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="87E+xoiU"
+Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378EF2EACF8;
-	Fri, 11 Jul 2025 14:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AEB2E975D;
+	Fri, 11 Jul 2025 14:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752245564; cv=none; b=jmlr8sVIi4MUPmlN5Da/QBJOQl8TxQ+XoWBgvitccIShNC7uamuKTHXrsCt8xadt2yRCrpVuuJ9HaMEkvxsnWtNadoVShTjbGouF6CSpOYNhCWHkIvUC/e1tv6yFNFFsY2mlnnvSELZ8q8IWtUDxGeIIL1euq5yhUg76V+Domy4=
+	t=1752245397; cv=none; b=iH7nyhtDOUUcUUdaLftam1r1ejXPiO0YgA1ipuG32g4q4Fun8EQ9Zy4LAjVOX1r2C6tjJDsptBrGlZcrtt0HFSNj8xGsR4XJoBvnD8IHkv6gv+cepnGwxymJwvqXhRL/fRLO4ulKLjGdWKjWWQ5ijT06bCMzZ1Ao4mZxqgmS94M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752245564; c=relaxed/simple;
-	bh=q/FVeQueIyKVrnp1NcfhHAttXLTMCRvWb2aBdG6Nx4o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=uT8z//fcLfjR8aAyMtoioqmkFhQ7c43JNvIV4PpV5FTV3n5b1q3UCv1wtTRIkS/uucsqhKwebeg+dsPQL6ZuaE3WV7EdmhEnZFlc36iInv+3ohbOtAUFI/1zkmiiG2epdkbHEl6b4su2QFDTEjoPwBxVVTuZpwaRbVjlTATU+Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=GLwIa/U4; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BEHQjM027785;
-	Fri, 11 Jul 2025 16:52:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	F0RaanQr/Y01Kr3e9l6yvosGEYhnzl8fsIwEj1CuG6c=; b=GLwIa/U4Pms3zJYJ
-	Vf6J02Gisg1Ta4puNDbzsRHGlPFLIH6DIxCks5O8Xa1cKnjO0hXVB7a4cISVoN1n
-	q8zYShB0re5FueScRBFZN1aQ5rdOfisRaiYktnzX+qK0abR4UCG1yuGbZJOtEV9I
-	X5W6esz3NDy1OWP4hO6pJLsQfdKxn9BMlNqA/DvYXUBaXY2zfZ+zVPtaL9SuiKU7
-	vgVx68hnzZUh5nbPyAhp5JPDt/IqI60gLjHi771kfkVnqRYSMjndzDKt1UYCrx0G
-	6XYxO8IrkeXgCrx0NygjkS++agXq9iYTFatMUGSRUdVHpvE/JGMMdIikmZN92LaN
-	t8o0ag==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47pud3qfjm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 16:52:28 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B7B5C4004D;
-	Fri, 11 Jul 2025 16:51:21 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E9575B56893;
-	Fri, 11 Jul 2025 16:49:26 +0200 (CEST)
-Received: from localhost (10.252.16.187) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Jul
- 2025 16:49:26 +0200
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Fri, 11 Jul 2025 16:49:08 +0200
-Subject: [PATCH v2 16/16] arm64: dts: st: support ddrperfm on
- stm32mp257f-ev1
+	s=arc-20240116; t=1752245397; c=relaxed/simple;
+	bh=d/G5Np4BjWAyQHDBYeRVvI+dHxs0oAifCvJZ7nhqN4I=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=IZZIpvkUvyL7hxY3nJUIpOoJg4NOPbVsCpRVbEXWL0tBmZwokbJiIiSBnxMsM24kMSft9DRVK+EndVjcEW/8td7Z+g+4rAGYrL7ZSRNQI4r7oHj9V5AJ5d13pyrALrY2ZYFlfs8I42DmcDGujSLD7XCFaTMoXZY9nf0SBddadHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=87E+xoiU; arc=none smtp.client-ip=143.255.12.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8brX1+ag4+ShccAgZ35yztbKtdrd3eYqr5p3qU932G8=; b=87E+xoiUbkW4T9VHu+od/ykDc7
+	fYwtJXCxYpana3HDwI+mHxGjag1LlCyK1wJDmqeJAZ6UYCcQ4IrFWO2N1PFqqF3UMOdO2XpC39Nb3
+	5BXM6tJx3GM+fnKEG3+NDIC5r/TKrjtGeVSgDFsc6OoSXgWQfGsSkIL6P1skGOrmPUilrJ97NRrM+
+	jfM1I9jp0BCbn80p+zj6+Fo6nG3qhsX/vpTPufZDgJZAzpuNU4vDYIdSb5PAIss4C8b6D2H0bf96N
+	nS73wmRSP4JWeUH8vvCBm/Lxt+Fl76hCjoVgAi+74nirgK0b9HnYWQ8SDCrIb/JLTOMGiClvlsmrU
+	aM+wpxgA==;
+Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
+	id 1uaF4Q-00000000BFH-29H4;
+	Fri, 11 Jul 2025 11:49:50 -0300
+Message-ID: <aa4ecd85deb859ad32ba7f649321084b@manguebit.org>
+From: Paulo Alcantara <pc@manguebit.org>
+To: Wang Zhaolong <wangzhaolong@huaweicloud.com>, sfrench@samba.org,
+ pshilov@microsoft.com, aaptel@suse.com
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] smb: client: fix use-after-free in cifs_oplock_break
+In-Reply-To: <20250707010926.31623-1-wangzhaolong@huaweicloud.com>
+References: <20250707010926.31623-1-wangzhaolong@huaweicloud.com>
+Date: Fri, 11 Jul 2025 11:49:49 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250711-ddrperfm-upstream-v2-16-cdece720348f@foss.st.com>
-References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
-In-Reply-To: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
-To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gatien Chevallier
-	<gatien.chevallier@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Le
- Goffic <legoffic.clement@gmail.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-7616d
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
+Content-Type: text/plain
 
-Configure DDRPERFM node on stm32mp257f-ev1 board.
-Disable the node as DDRPERFM will produce an error message if it's clock
-(shared with the DDRCTRL on STM32MP25x) is secured by common bootloaders.
+Wang Zhaolong <wangzhaolong@huaweicloud.com> writes:
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+> A race condition can occur in cifs_oplock_break() leading to a
+> use-after-free of the cinode structure when unmounting:
+>
+>   cifs_oplock_break()
+>     _cifsFileInfo_put(cfile)
+>       cifsFileInfo_put_final()
+>         cifs_sb_deactive()
+>           [last ref, start releasing sb]
+>             kill_sb()
+>               kill_anon_super()
+>                 generic_shutdown_super()
+>                   evict_inodes()
+>                     dispose_list()
+>                       evict()
+>                         destroy_inode()
+>                           call_rcu(&inode->i_rcu, i_callback)
+>     spin_lock(&cinode->open_file_lock)  <- OK
+>                             [later] i_callback()
+>                               cifs_free_inode()
+>                                 kmem_cache_free(cinode)
+>     spin_unlock(&cinode->open_file_lock)  <- UAF
+>     cifs_done_oplock_break(cinode)       <- UAF
+>
+> The issue occurs when umount has already released its reference to the
+> superblock. When _cifsFileInfo_put() calls cifs_sb_deactive(), this
+> releases the last reference, triggering the immediate cleanup of all
+> inodes under RCU. However, cifs_oplock_break() continues to access the
+> cinode after this point, resulting in use-after-free.
+>
+> Fix this by holding an extra reference to the superblock during the
+> entire oplock break operation. This ensures that the superblock and
+> its inodes remain valid until the oplock break completes.
+>
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=220309
+> Fixes: b98749cac4a6 ("CIFS: keep FileInfo handle live during oplock break")
+> Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+> ---
+>  fs/smb/client/file.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index f987d86d350f..7533b500135c 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -128,6 +128,11 @@ csi_source: endpoint {
- 	};
- };
- 
-+&ddrperfm {
-+	memory-channel = <&ddr_channel>;
-+	status = "disabled";
-+};
-+
- &dcmipp {
- 	status = "okay";
- 	port {
-
--- 
-2.43.0
-
+Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
 
