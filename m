@@ -1,109 +1,204 @@
-Return-Path: <linux-kernel+bounces-726939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25DA5B0130F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:54:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB0CB01316
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E73A61CA0AAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:55:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8338A1CA167D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 05:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200B61CF5C0;
-	Fri, 11 Jul 2025 05:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461151CEAA3;
+	Fri, 11 Jul 2025 05:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1gU7VAiH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jrAkh1/Z"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E7A1A072C;
-	Fri, 11 Jul 2025 05:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CACB1B87C9
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752213281; cv=none; b=cXERONs9GmTZprxVNDnyy68PuHtGSotatTRP3c9870B0PgLFrjtLYbArBLJM2d/f5ax6qmALvj9rAh8ZkL56Wd6JbHTwkwS8QzvG6X5pzOj8OmarVXSH8elMKMZTKrTE+kikNHjDRwe50LEFCS5l+NMwuhwluHb1tMIIx48cr44=
+	t=1752213392; cv=none; b=utYcA+80S8yNK+TQb9M56o4NRrgU5Qic9sqEGEnB4Qi5cEh/SChliM78Qo9ln3BsmC6OOXkUzYPEhuOI+LwnPMqRZm+jCZGNvgNIMeo0C/e7AE8vkLwditbgq5dx84HFcpiMzBt+fGEO895sxwrlUsmvqk6ksRTXqb2hpXUTW9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752213281; c=relaxed/simple;
-	bh=eqWnKG3MF5KX7NMIW+VON6kbeFOWkXB3/t3CEyagZQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XKUqn3mNLhVc+6excpSu/Rdv4ZZoWlacS2t8Tk5i7W5/NURAKrsC1csdjcV5K5ght1l88WCLUMB2fITbY7G+6DlEo3xCQBW2fIkZx3QxoNQIw0uhXv27VLcPp3aHhGzNvS+/Fwqd58j+h/Xo4KPz3w/YQW3avM+65jdUYqDVlkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1gU7VAiH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6514CC4CEED;
-	Fri, 11 Jul 2025 05:54:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752213280;
-	bh=eqWnKG3MF5KX7NMIW+VON6kbeFOWkXB3/t3CEyagZQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1gU7VAiHmEqHbbe0EAdPpiNprw1hh8vpeP6VlYSUy30kO5eAUaU3lG0F6GM3h6/Ci
-	 c94rveK5obAolJAvutAkfl+3SpgzFnAjETdcKJhBU5Ns0Zkt0V5Yat082u0ISLHudN
-	 kA//yNMDegHXcNkwsGEKwqqgOWw6wrAh+oPO7L1c=
-Date: Fri, 11 Jul 2025 07:54:36 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: jackysliu <1972843537@qq.com>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2] usb: gadget: functioni: Fix a oob problem in rndis
-Message-ID: <2025071150-removal-bullring-5649@gregkh>
-References: <2025071010-outlet-stencil-663d@gregkh>
- <tencent_19AE390D05232D1C97E336C05F35A9F1BD05@qq.com>
+	s=arc-20240116; t=1752213392; c=relaxed/simple;
+	bh=E1uqYY1smKK/3YssRHuwbYZ2z7OHLkmojyBrinRHozg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dLu0Ac60iQFQdxrtm3Hfl93GrovwI0BXXBit4PnCUFLf/jOw01qPol8hPP8lKstsYDzSHfODm08S3eGS5wpcYGWlgyq0dKGiETYLfmvxG2CiZu6qTpsRjsC8iMigWQjVcWaZTggO9mqAMMw5YA8C37FFLb2Q48AWYoFww0He8uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jrAkh1/Z; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752213378;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hm+HZ9v47mDt2xf4klE6BqylD3gvRDVDrg6ZEcP7nTg=;
+	b=jrAkh1/ZPPqVij9ltNshn1/iP/1H/ZAWWSDdVHgm9RPpCPeHLGVZ4ySyA0vAcQ+oOcyefc
+	zmRKGikgoNerEp4s4NP984rSbjRf6M8M8oi7eCZ/zm7VLCkP05scvLWq+FYvjcxE4r/dPt
+	uslPM7KPoBTLnVeKtZrnDWiWlUTO7h0=
+From: Youling Tang <youling.tang@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	chizhiling@163.com,
+	youling.tang@linux.dev,
+	Youling Tang <tangyouling@kylinos.cn>,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: [PATCH] mm/filemap: Align last_index to folio size
+Date: Fri, 11 Jul 2025 13:55:09 +0800
+Message-Id: <20250711055509.91587-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_19AE390D05232D1C97E336C05F35A9F1BD05@qq.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Jul 11, 2025 at 11:46:35AM +0800, jackysliu wrote:
-> On Thu, 10 Jul 2025 14:19:47 +0200, greg k-h wrote
-> 
-> >In digging in this further, I don't see how this actually changes
-> >anything.  BufLength is used for nothing that I can determine, except in
-> >some debugging code that is always compiled out (i.e. you can NOT enable
-> >it unless you modify the kernel source.)
-> >
-> >So what exactly is this check checking?
-> >
-> >I can see that we really should be checking if the buffer is too small,
-> >but that's not what you are doing here at all.
-> >
-> >And all this buffer is used for is to read a 32bit value out of, so
-> >verifying that the buffer really is big enough to hold that value SHOULD
-> >be what we do here, not check to see if the buffer is too big.
-> >
-> >Also, you can't trust that BufLength is even correct as it comes from
-> >the other side, right?  Because of that, we should just be ignoring it
-> >entirely and verifying that the message size really is as big as the
-> >structure is supposed to be.  But that means passing down the message
-> >size to the lower layers here, which gets into the issues that I have
-> >raised before many years ago about this protocol, and this
-> >implementation of this protocol.  I.e, it is COMPLETELY INSECURE and
-> >should ONLY be used on systems where you trust both sides of the wire.
-> >
-> >Again, how was this change tested?  And what exactly does it fix?  I'm
-> >missing how this change is going to actually catch anything, can you
-> >spell it out in detail for me?
-> 
-> BufOffset + BufLength can exceed buffer size even if each is < RNDIS_MAX_TOTAL_SIZE
+From: Youling Tang <tangyouling@kylinos.cn>
 
-Sure, but again, BufLength is not used for anything, so the value of
-that variable means nothing as far as I can tell.
+On XFS systems with pagesize=4K, blocksize=16K, and CONFIG_TRANSPARENT_HUGEPAGE
+enabled, We observed the following readahead behaviors:
+ # echo 3 > /proc/sys/vm/drop_caches
+ # dd if=test of=/dev/null bs=64k count=1
+ # ./tools/mm/page-types -r -L -f  /mnt/xfs/test
+ foffset	offset	flags
+ 0	136d4c	__RU_l_________H______t_________________F_1
+ 1	136d4d	__RU_l__________T_____t_________________F_1
+ 2	136d4e	__RU_l__________T_____t_________________F_1
+ 3	136d4f	__RU_l__________T_____t_________________F_1
+ ...
+ c	136bb8	__RU_l_________H______t_________________F_1
+ d	136bb9	__RU_l__________T_____t_________________F_1
+ e	136bba	__RU_l__________T_____t_________________F_1
+ f	136bbb	__RU_l__________T_____t_________________F_1   <-- first read
+ 10	13c2cc	___U_l_________H______t______________I__F_1   <-- readahead flag
+ 11	13c2cd	___U_l__________T_____t______________I__F_1
+ 12	13c2ce	___U_l__________T_____t______________I__F_1
+ 13	13c2cf	___U_l__________T_____t______________I__F_1
+ ...
+ 1c	1405d4	___U_l_________H______t_________________F_1
+ 1d	1405d5	___U_l__________T_____t_________________F_1
+ 1e	1405d6	___U_l__________T_____t_________________F_1
+ 1f	1405d7	___U_l__________T_____t_________________F_1
+ [ra_size = 32, req_count = 16, async_size = 16]
 
-> oob is triggered by a function call to gen_ndis_set_resp.
+ # echo 3 > /proc/sys/vm/drop_caches
+ # dd if=test of=/dev/null bs=60k count=1
+ # ./page-types -r -L -f  /mnt/xfs/test
+ foffset	offset	flags
+ 0	136048	__RU_l_________H______t_________________F_1
+ ...
+ c	110a40	__RU_l_________H______t_________________F_1
+ d	110a41	__RU_l__________T_____t_________________F_1
+ e	110a42	__RU_l__________T_____t_________________F_1   <-- first read
+ f	110a43	__RU_l__________T_____t_________________F_1   <-- first readahead flag
+ 10	13e7a8	___U_l_________H______t_________________F_1
+ ...
+ 20	137a00	___U_l_________H______t_______P______I__F_1   <-- second readahead flag (20 - 2f)
+ 21	137a01	___U_l__________T_____t_______P______I__F_1
+ ...
+ 3f	10d4af	___U_l__________T_____t_______P_________F_1
+ [first readahead: ra_size = 32, req_count = 15, async_size = 17]
 
-How exactly?  Again, BufLength isn't even used in that function.
+When reading 64k data (same for 61-63k range, where last_index is page-aligned
+in filemap_get_pages()), 128k readahead is triggered via page_cache_sync_ra()
+and the PG_readahead flag is set on the next folio (the one containing 0x10 page).
 
-> I supposed to add an additional boundry check to avoid this issue.But That 
-> doesn't seem to be enough to fix the bug.I'll try to figure it out.
+When reading 60k data, 128k readahead is also triggered via page_cache_sync_ra().
+However, in this case the readahead flag is set on the 0xf page. Although the
+requested read size (req_count) is 60k, the actual read will be aligned to
+folio size (64k), which triggers the readahead flag and initiates asynchronous
+readahead via page_cache_async_ra(). This results in two readahead operations
+totaling 256k.
 
-How was this tested?
+The root cause is that when the requested size is smaller than the actual read
+size (due to folio alignment), it triggers asynchronous readahead. By changing
+last_index alignment from page size to folio size, we ensure the requested size
+matches the actual read size, preventing the case where a single read operation
+triggers two readahead operations.
 
-And even more importantly, how did you find this bug?  What triggered
-it?
+After applying the patch:
+ # echo 3 > /proc/sys/vm/drop_caches
+ # dd if=test of=/dev/null bs=60k count=1
+ # ./page-types -r -L -f  /mnt/xfs/test
+ foffset	offset	flags
+ 0	136d4c	__RU_l_________H______t_________________F_1
+ 1	136d4d	__RU_l__________T_____t_________________F_1
+ 2	136d4e	__RU_l__________T_____t_________________F_1
+ 3	136d4f	__RU_l__________T_____t_________________F_1
+ ...
+ c	136bb8	__RU_l_________H______t_________________F_1
+ d	136bb9	__RU_l__________T_____t_________________F_1
+ e	136bba	__RU_l__________T_____t_________________F_1   <-- first read
+ f	136bbb	__RU_l__________T_____t_________________F_1
+ 10	13c2cc	___U_l_________H______t______________I__F_1   <-- readahead flag
+ 11	13c2cd	___U_l__________T_____t______________I__F_1
+ 12	13c2ce	___U_l__________T_____t______________I__F_1
+ 13	13c2cf	___U_l__________T_____t______________I__F_1
+ ...
+ 1c	1405d4	___U_l_________H______t_________________F_1
+ 1d	1405d5	___U_l__________T_____t_________________F_1
+ 1e	1405d6	___U_l__________T_____t_________________F_1
+ 1f	1405d7	___U_l__________T_____t_________________F_1
+ [ra_size = 32, req_count = 16, async_size = 16]
 
-thanks,
+The same phenomenon will occur when reading from 49k to 64k. Set the readahead
+flag to the next folio.
 
-greg k-h
+Because the minimum order of folio in address_space equals the block size (at
+least in xfs and bcachefs that already support bs > ps), having request_count
+aligned to block size will not cause overread.
+
+Co-developed-by: Chi Zhiling <chizhiling@kylinos.cn>
+Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+---
+ include/linux/pagemap.h | 6 ++++++
+ mm/filemap.c            | 5 +++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index e63fbfbd5b0f..447bb264fd94 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -480,6 +480,12 @@ mapping_min_folio_nrpages(struct address_space *mapping)
+ 	return 1UL << mapping_min_folio_order(mapping);
+ }
+ 
++static inline unsigned long
++mapping_min_folio_nrbytes(struct address_space *mapping)
++{
++	return mapping_min_folio_nrpages(mapping) << PAGE_SHIFT;
++}
++
+ /**
+  * mapping_align_index() - Align index for this mapping.
+  * @mapping: The address_space.
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 765dc5ef6d5a..56a8656b6f86 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2584,8 +2584,9 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ 	unsigned int flags;
+ 	int err = 0;
+ 
+-	/* "last_index" is the index of the page beyond the end of the read */
+-	last_index = DIV_ROUND_UP(iocb->ki_pos + count, PAGE_SIZE);
++	/* "last_index" is the index of the folio beyond the end of the read */
++	last_index = round_up(iocb->ki_pos + count, mapping_min_folio_nrbytes(mapping));
++	last_index >>= PAGE_SHIFT;
+ retry:
+ 	if (fatal_signal_pending(current))
+ 		return -EINTR;
+-- 
+2.34.1
+
 
