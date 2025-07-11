@@ -1,253 +1,419 @@
-Return-Path: <linux-kernel+bounces-727827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772D2B0203C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:16:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDEBB02044
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 001C21C27F2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:17:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9165167EA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD8A2E9EB1;
-	Fri, 11 Jul 2025 15:16:34 +0000 (UTC)
-Received: from mail-pl1-f208.google.com (mail-pl1-f208.google.com [209.85.214.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A768B2E92AD;
+	Fri, 11 Jul 2025 15:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kfgcLOzK"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2069.outbound.protection.outlook.com [40.107.92.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BB7274658
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.208
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752246993; cv=none; b=EkMvVqrgbKN7ly7LL/EEJd3Fx4k9UIlXBgs5PdPG/YwuYUHxFUBUvm/K1Y6wMiYTlGJ00JT7vihRkiqFkmNI1vWzVBYVz/PLv4b+5O3Azzv/JWvZcDDSH/PKG7fGtZLwc/f9LtHt6sW7HZtw/umU6IAC+uG2GtU+SqFYUYJZ/Vc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752246993; c=relaxed/simple;
-	bh=UpvZQtXCDFz5gBW6i3A5Vt/uMDeCmwRJKT9XZytFNzg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jFU8eiJPXFWk6Dod3JuYIW12mp0XN7aZ7Pw//snGQkLQzJnk9Yyil/wpl87A9iP9WbyLIOLOej810GpeMbLvj9b5m1Fk8hfuSLOKTme3SwV9eKTeos+C1yClsS1y/NR+qvWWbGQVpvHMXyZI6fwYARNasiDbhHqsvX/9d7ceD38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.214.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-pl1-f208.google.com with SMTP id d9443c01a7336-23494a515e3so18814035ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:16:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752246991; x=1752851791;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SEqtSagKnSQ3Z1AJ4nFbbLV9GTdirgxlTdtuWtdMwPQ=;
-        b=X6Jko6KxOx+KoT2+pYgMz0S64g1j1SwKY9hiXq8tdlDXP5d1Q9ONan27eAWVi3qul7
-         u9tIITvWgisIUnkw/6khdtzzKjJJIW17fsDs57OSDTcwe/bCNhCVoAGfzkIFpCXm3XMF
-         C5oW/q+bmVdNWfkDyCqkzHZ0wD424zcYTn3u59pWP+g3XVYp1hXbUcCjDJaDr/5YqIwD
-         m2fFIq90mQN7wlhGi5cmO9Vel9w7ZwVSRRY3BNycCQDt3P/hu5K7u37mcwtEfCbmBo9Y
-         yUvNlZwy3anNlO/R13zbM29AXmWkFBYizcCJEyJkNMLRsA4Aim9P13TnFfc+dtOKuA11
-         5PyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhXEXOwY1i2aZ7i9g7Rv+afJUF8oOwAiFBoT9meYvI2Ev2FN5eoj0bzntlZF/DP+oU6kprZ677C0FfPdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyue553xRFdm1BlyIQU15iiLMs8S7CeWPDZmHeMHo+hHqObBbyd
-	mdO0MkHaFPwhS0eg7OSn/XpJ1Hbd9P6qR9m7+f83XabQHuiu6+agdxG1GTXNLYUbZV7ZD5IJGWj
-	7FZursw+W21v2iwQoJWWAyGNwQ6dKRNWzf9Bg2NKyKCevui0FWNJ2g4je59w=
-X-Google-Smtp-Source: AGHT+IExYroLLFRL63nLJP91Ex/q56BtuX/anMbWrocZ4SIP107gTNDWmGW86BCEb0/8X7dQXUOvpjQq/uNDIu3zIBXIcWXRCnW5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF24C18DF8D;
+	Fri, 11 Jul 2025 15:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752247082; cv=fail; b=uLZio6WdAa4VRn6H9XMU/rKZGXE5rYNXczDfDqNH/jStxb3Er7oqZZjysvRVGE8DO2OyPOXq1vuyvHW9y3N/DC1Elmnei2DJUdbPzh60o1+SdShpqkDftppuAaCmu1PHlKgLbstM9pLdzhyBEXDKhxs4zgbMAlidEEjbqOpk/EY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752247082; c=relaxed/simple;
+	bh=ZciK/iG8LcmPdJUp/7Bm1h0LpPjvmCyl3iDHGgpkCOk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUPiI2Z4XdxUhJZOXuzMdZJXE4+cfijy5bglYcS7ZmrF3XH4llw/RFm9j8jFEG2+5oHyU222YGKxwk1owVUlWMYU1c90Nwr/rV+cv3jqwxtPU/BFY0BYlqEzqwtBGDGcr3qtVPnwVdbYNvsF+HWOUS1XG6VlZk7YvoC/tM8jE5g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kfgcLOzK; arc=fail smtp.client-ip=40.107.92.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Aw1R0sdF7OPUCmoaVsDhGZ1sVZ72qr4d1BzZaCe1k2Y129Vrm3M9kXjRtD2iycdoK7979nh6tTPxP1Y5bTgKyLDcZQQrveFnEmckLGFnJAVUXyHzxA4rLNjYlqcAEcU/Vg8UR3FfIc11N8eQJ2F3wofu9z44oQAYc9llxd5PvN9QUoDwDc5rpO8lf6U3RvaGRwua2Yhs5ywsMihjvzEaMHtqpuTO2gjtBFX6zsqfF6LTYtNu+Ao5uNtkJXDXWcQqNag/rmlxuee9T22vuaGpeE0YvWafcppRjtgBDP43Pd1bJUcKYn9yTH4JPtNUFiMEOjpOichAffBFZFPBrJuKcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TqEeewhd+fl0jnBcABeAMkEHdnmwhXLPOa4fWFl3jJY=;
+ b=QZrDTpm+axc3iKrjp2qLfRs3/JOrOeBXk/Mpd17kYnWUeZGWlJ6QUSaIhkfc2Vh+9NweM1PGuXVATUgJg2Hpt9FyESs8CP8xA1tadlqn2Y2w3luNnFL2CsWSyo/0mnBUFEDN98GjUY1pf98OLXALh7/8hDloAQBQWdKO+B/5vAdgKSXlUQykMrDSvwPbG1HMZRP/GxVUfnDXMiXNt23yqLB1Y1UhZ+iJbVeqizI5wsYqDMZS7VHadUxfbMTCk3JrN5wTLdjmsDZTVnmDMVch1F5f/Xp3EvTKbJ1w/cfMdQbGrw1jEiHaFRf6C62HicVtFnd8Bm5zP3Jri95WklEPaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TqEeewhd+fl0jnBcABeAMkEHdnmwhXLPOa4fWFl3jJY=;
+ b=kfgcLOzKCdT3vP9TygebbFqUfqqmf/tE4KSVergkCUiPtzgzipTyet4pIhZf8YULPu3JS3asQhdluDwPAX/Bn506bsUWSuZt+oEfYYrlZq1XttUHkS7kwjqaQ2xIf2tejOklIj1X4eXE9ldioqcP3TTTRItsNv4csIGoED3lUWI=
+Received: from BY5PR04CA0002.namprd04.prod.outlook.com (2603:10b6:a03:1d0::12)
+ by DS0PR12MB9039.namprd12.prod.outlook.com (2603:10b6:8:de::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Fri, 11 Jul
+ 2025 15:17:57 +0000
+Received: from SJ1PEPF00002321.namprd03.prod.outlook.com
+ (2603:10b6:a03:1d0:cafe::c2) by BY5PR04CA0002.outlook.office365.com
+ (2603:10b6:a03:1d0::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.23 via Frontend Transport; Fri,
+ 11 Jul 2025 15:17:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00002321.mail.protection.outlook.com (10.167.242.91) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.22 via Frontend Transport; Fri, 11 Jul 2025 15:17:56 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Jul
+ 2025 10:17:55 -0500
+Date: Fri, 11 Jul 2025 10:17:19 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+CC: Sean Christopherson <seanjc@google.com>, <pbonzini@redhat.com>,
+	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<rick.p.edgecombe@intel.com>, <kai.huang@intel.com>,
+	<adrian.hunter@intel.com>, <reinette.chatre@intel.com>,
+	<xiaoyao.li@intel.com>, <tony.lindgren@intel.com>,
+	<binbin.wu@linux.intel.com>, <dmatlack@google.com>,
+	<isaku.yamahata@intel.com>, <ira.weiny@intel.com>, <vannapurve@google.com>,
+	<david@redhat.com>, <ackerleytng@google.com>, <tabba@google.com>,
+	<chao.p.peng@intel.com>
+Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from
+ kvm_gmem_populate()
+Message-ID: <20250711151719.goee7eqti4xyhsqr@amd.com>
+References: <20250703062641.3247-1-yan.y.zhao@intel.com>
+ <20250709232103.zwmufocd3l7sqk7y@amd.com>
+ <aG_pLUlHdYIZ2luh@google.com>
+ <aHCUyKJ4I4BQnfFP@yzhao56-desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a17:902:d48d:b0:234:f825:b2c3 with SMTP id
- d9443c01a7336-23df082e380mr42032275ad.17.1752246991186; Fri, 11 Jul 2025
- 08:16:31 -0700 (PDT)
-Date: Fri, 11 Jul 2025 08:16:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68712acf.a00a0220.26a83e.0051.GAE@google.com>
-Subject: [syzbot] [net?] BUG: sleeping function called from invalid context in
- team_change_rx_flags (2)
-From: syzbot <syzbot+8182574047912f805d59@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aHCUyKJ4I4BQnfFP@yzhao56-desk>
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002321:EE_|DS0PR12MB9039:EE_
+X-MS-Office365-Filtering-Correlation-Id: 55555110-8968-482b-b21e-08ddc08e1d70
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?i0C43kaVCMXkTIjG/jgvMlytePyrkExHedQb6VBq86j3y0n+3EHERVSaZ4Mz?=
+ =?us-ascii?Q?GL4NnL7lRuhhTkISBTPszE6cLRSQU/itakpsBRZv0deZ6sjFs2vdQx7HHwv5?=
+ =?us-ascii?Q?1U3HVOcpTbOi/6mrve2d6yKnyyP18tQU6kq529qStZ5ilsHQ+kYryW8teDKT?=
+ =?us-ascii?Q?TsEreWAiBSSvv3xviXcDZS4Zjk9oqreaq6VapM6AmVOWCGN6QMa1fLHVdyKD?=
+ =?us-ascii?Q?baQDnYrZhkkceGEXDrxUiZc/3jsmbnBLSs1d9mlqoKChoiIIY2pEpofWxmeJ?=
+ =?us-ascii?Q?Ej2e7kkFDD2UxVWp2TWWGJHNNuHF3PrpaeePeRcSq8O/o9OefYaeqvt1XnAf?=
+ =?us-ascii?Q?YxqhJsjbqI7KM0Zy7sGEl8R9EZFC3rWy0fHH8/ff4Uy7pqBSu7XDXBs5csKU?=
+ =?us-ascii?Q?SrNQWqNLh5/WQPOzGQoF2osMP7q82k0wabggHHYxW3AD1kKCv25T+smc+WRz?=
+ =?us-ascii?Q?2f/pZhCxyWBmV/3GXE1ARGgSSIu0eBI7TqdOrTHb//ZBfA1LG8rG1s+4RUJE?=
+ =?us-ascii?Q?Y52PE2Acr1ydqIhOYcO9Qcr3hNPIfO/+nIy8tETyr68LGDcpvhURG4TG+l0O?=
+ =?us-ascii?Q?5IR4FxfbZPJ6oJ4mpnUiJnHpudsW/NxYTkRJQtTfDpkgdWQS9XWrmp40GXju?=
+ =?us-ascii?Q?Tol5wCsJESIo7eYD57lUDWfLf1pvS6OVSp4aceWoVhv1UotqL/I4ky0HZZ8t?=
+ =?us-ascii?Q?9+ukQQHK6HbYwpyyOhG283ULtgrz0LCc24xEH5eN33cz/ypxY6vtQJVLCykm?=
+ =?us-ascii?Q?brVNtQ4MxRJKqBjivvxTeOzmvKlziDZMiwJWSiimAxJhDto3cbKK8lbiML94?=
+ =?us-ascii?Q?eAr1/nFxUFQQaIkpxFooXyS9Il2p5v5SMvdi40NNQZdA9eDL56nw9KgS7XsC?=
+ =?us-ascii?Q?oDL8KSFBPqDRpgF3Xvn8f65LjKlHS6vxVQ00JthVuydpSHsD9+VL/Te426Wt?=
+ =?us-ascii?Q?sqxyYXOyJnCLNVEI02QzygCbBOQp34IOBIEfeygOnnyDOEjuL2WXgsd1zaIh?=
+ =?us-ascii?Q?OBxjzhy4Yj/kfWhj7stQHiipB3QVXmsmrAQ36/EixsUXevteLIw/0HpNedJJ?=
+ =?us-ascii?Q?E2A/KmuA+kFk8mjsrFeTLNW3D1VF/XTIHFwz5SxnfTinvThuLez1TRQh/lqV?=
+ =?us-ascii?Q?1dVuEzPeHbF7703KzGLFjdRGCCjIjvSD1kLmVMsAxc5mwvsE1c0ppE02NoUz?=
+ =?us-ascii?Q?fqjgjSPnVuusvKbnCjUGCO0gKXsH5J0FscCBxjoojNB2jun54i+6ghU0Gc1z?=
+ =?us-ascii?Q?cEHMvfuxH3ofsp8D2lASE9XS0hHyXLm3RftVurTYZg/K2F6LHtCQruwspWId?=
+ =?us-ascii?Q?xabyyDOP/T0pbm+kKPOVOy0NMPmrPsvzyzmzqbQW9RB4UPExRQ1CLSmv+zPJ?=
+ =?us-ascii?Q?BKy4z+tQ6pZqhtNedt9V+5iGvg/GFtA9aQAXwwYOBrcV/oyx88H9JLIozSTc?=
+ =?us-ascii?Q?xkkcsgQXfDjJ/MrVIgrNob99ip0sG/R5vYENSWlYxVfkCQ7Ky+uEgWW4hK5F?=
+ =?us-ascii?Q?cmb7KUOcWTnQ339/2oTL7JDM3IA+XoujH66b?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 15:17:56.6946
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55555110-8968-482b-b21e-08ddc08e1d70
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002321.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9039
 
-Hello,
+On Fri, Jul 11, 2025 at 12:36:24PM +0800, Yan Zhao wrote:
+> On Thu, Jul 10, 2025 at 09:24:13AM -0700, Sean Christopherson wrote:
+> > On Wed, Jul 09, 2025, Michael Roth wrote:
+> > > On Thu, Jul 03, 2025 at 02:26:41PM +0800, Yan Zhao wrote:
+> > > > Rather than invoking kvm_gmem_populate(), allow tdx_vcpu_init_mem_region()
+> > > > to use open code to populate the initial memory region into the mirror page
+> > > > table, and add the region to S-EPT.
+> > > > 
+> > > > Background
+> > > > ===
+> > > > Sean initially suggested TDX to populate initial memory region in a 4-step
+> > > > way [1]. Paolo refactored guest_memfd and introduced kvm_gmem_populate()
+> > > > interface [2] to help TDX populate init memory region.
+> > 
+> > I wouldn't give my suggestion too much weight; I did qualify it with "Crazy idea."
+> > after all :-)
+> > 
+> > > > tdx_vcpu_init_mem_region
+> > > >     guard(mutex)(&kvm->slots_lock)
+> > > >     kvm_gmem_populate
+> > > >         filemap_invalidate_lock(file->f_mapping)
+> > > >             __kvm_gmem_get_pfn      //1. get private PFN
+> > > >             post_populate           //tdx_gmem_post_populate
+> > > >                 get_user_pages_fast //2. get source page
+> > > >                 kvm_tdp_map_page    //3. map private PFN to mirror root
+> > > >                 tdh_mem_page_add    //4. add private PFN to S-EPT and copy
+> > > >                                          source page to it.
+> > > > 
+> > > > kvm_gmem_populate() helps TDX to "get private PFN" in step 1. Its file
+> > > > invalidate lock also helps ensure the private PFN remains valid when
+> > > > tdh_mem_page_add() is invoked in TDX's post_populate hook.
+> > > > 
+> > > > Though TDX does not need the folio prepration code, kvm_gmem_populate()
+> > > > helps on sharing common code between SEV-SNP and TDX.
+> > > > 
+> > > > Problem
+> > > > ===
+> > > > (1)
+> > > > In Michael's series "KVM: gmem: 2MB THP support and preparedness tracking
+> > > > changes" [4], kvm_gmem_get_pfn() was modified to rely on the filemap
+> > > > invalidation lock for protecting its preparedness tracking. Similarly, the
+> > > > in-place conversion version of guest_memfd series by Ackerly also requires
+> > > > kvm_gmem_get_pfn() to acquire filemap invalidation lock [5].
+> > > > 
+> > > > kvm_gmem_get_pfn
+> > > >     filemap_invalidate_lock_shared(file_inode(file)->i_mapping);
+> > > > 
+> > > > However, since kvm_gmem_get_pfn() is called by kvm_tdp_map_page(), which is
+> > > > in turn invoked within kvm_gmem_populate() in TDX, a deadlock occurs on the
+> > > > filemap invalidation lock.
+> > > 
+> > > Bringing the prior discussion over to here: it seems wrong that
+> > > kvm_gmem_get_pfn() is getting called within the kvm_gmem_populate()
+> > > chain, because:
+> > > 
+> > > 1) kvm_gmem_populate() is specifically passing the gmem PFN down to
+> > >    tdx_gmem_post_populate(), but we are throwing it away to grab it
+> > >    again kvm_gmem_get_pfn(), which is then creating these locking issues
+> > >    that we are trying to work around. If we could simply pass that PFN down
+> > >    to kvm_tdp_map_page() (or some variant), then we would not trigger any
+> > >    deadlocks in the first place.
+> > 
+> > Yes, doing kvm_mmu_faultin_pfn() in tdx_gmem_post_populate() is a major flaw.
+> > 
+> > > 2) kvm_gmem_populate() is intended for pre-boot population of guest
+> > >    memory, and allows the post_populate callback to handle setting
+> > >    up the architecture-specific preparation, whereas kvm_gmem_get_pfn()
+> > >    calls kvm_arch_gmem_prepare(), which is intended to handle post-boot
+> > >    setup of private memory. Having kvm_gmem_get_pfn() called as part of
+> > >    kvm_gmem_populate() chain brings things 2 things in conflict with
+> > >    each other, and TDX seems to be relying on that fact that it doesn't
+> > >    implement a handler for kvm_arch_gmem_prepare(). 
+> > > 
+> > > I don't think this hurts anything in the current code, and I don't
+> > > personally see any issue with open-coding the population path if it doesn't
+> > > fit TDX very well, but there was some effort put into making
+> > > kvm_gmem_populate() usable for both TDX/SNP, and if the real issue isn't the
+> > > design of the interface itself, but instead just some inflexibility on the
+> > > KVM MMU mapping side, then it seems more robust to address the latter if
+> > > possible.
+> > > 
+> > > Would something like the below be reasonable? 
+> > 
+> > No, polluting the page fault paths is a non-starter for me.  TDX really shouldn't
+> > be synthesizing a page fault when it has the PFN in hand.  And some of the behavior
+> > that's desirable for pre-faults looks flat out wrong for TDX.  E.g. returning '0'
+> > on RET_PF_WRITE_PROTECTED and RET_PF_SPURIOUS (though maybe spurious is fine?).
+> > 
+> > I would much rather special case this path, because it absolutely is a special
+> > snowflake.  This even eliminates several exports of low level helpers that frankly
+> > have no business being used by TDX, e.g. kvm_mmu_reload().
+> > 
+> > ---
+> >  arch/x86/kvm/mmu.h         |  2 +-
+> >  arch/x86/kvm/mmu/mmu.c     | 78 ++++++++++++++++++++++++++++++++++++--
+> >  arch/x86/kvm/mmu/tdp_mmu.c |  1 -
+> >  arch/x86/kvm/vmx/tdx.c     | 24 ++----------
+> >  4 files changed, 78 insertions(+), 27 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
+> > index b4b6860ab971..9cd7a34333af 100644
+> > --- a/arch/x86/kvm/mmu.h
+> > +++ b/arch/x86/kvm/mmu.h
+> > @@ -258,7 +258,7 @@ extern bool tdp_mmu_enabled;
+> >  #endif
+> >  
+> >  bool kvm_tdp_mmu_gpa_is_mapped(struct kvm_vcpu *vcpu, u64 gpa);
+> > -int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level);
+> > +int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn);
+> >  
+> >  static inline bool kvm_memslots_have_rmaps(struct kvm *kvm)
+> >  {
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index 6e838cb6c9e1..bc937f8ed5a0 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -4900,7 +4900,8 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+> >  	return direct_page_fault(vcpu, fault);
+> >  }
+> >  
+> > -int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level)
+> > +static int kvm_tdp_prefault_page(struct kvm_vcpu *vcpu, gpa_t gpa,
+> > +				 u64 error_code, u8 *level)
+> >  {
+> >  	int r;
+> >  
+> > @@ -4942,7 +4943,6 @@ int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code, u8 *level
+> >  		return -EIO;
+> >  	}
+> >  }
+> > -EXPORT_SYMBOL_GPL(kvm_tdp_map_page);
+> >  
+> >  long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
+> >  				    struct kvm_pre_fault_memory *range)
+> > @@ -4978,7 +4978,7 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
+> >  	 * Shadow paging uses GVA for kvm page fault, so restrict to
+> >  	 * two-dimensional paging.
+> >  	 */
+> > -	r = kvm_tdp_map_page(vcpu, range->gpa | direct_bits, error_code, &level);
+> > +	r = kvm_tdp_prefault_page(vcpu, range->gpa | direct_bits, error_code, &level);
+> >  	if (r < 0)
+> >  		return r;
+> >  
+> > @@ -4990,6 +4990,77 @@ long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
+> >  	return min(range->size, end - range->gpa);
+> >  }
+> >  
+> > +int kvm_tdp_mmu_map_private_pfn(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
+> > +{
+> > +	struct kvm_page_fault fault = {
+> > +		.addr = gfn_to_gpa(gfn),
+> > +		.error_code = PFERR_GUEST_FINAL_MASK | PFERR_PRIVATE_ACCESS,
+> > +		.prefetch = true,
+> > +		.is_tdp = true,
+> > +		.nx_huge_page_workaround_enabled = is_nx_huge_page_enabled(vcpu->kvm),
+> > +
+> > +		.max_level = KVM_MAX_HUGEPAGE_LEVEL,
+> > +		.req_level = PG_LEVEL_4K,
+> kvm_mmu_hugepage_adjust() will replace the PG_LEVEL_4K here to PG_LEVEL_2M,
+> because the private_max_mapping_level hook is only invoked in
+> kvm_mmu_faultin_pfn_gmem().
+> 
+> Updating lpage_info can fix it though.
+> 
+> > +		.goal_level = PG_LEVEL_4K,
+> > +		.is_private = true,
+> > +
+> > +		.gfn = gfn,
+> > +		.slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn),
+> > +		.pfn = pfn,
+> > +		.map_writable = true,
+> > +	};
+> > +	struct kvm *kvm = vcpu->kvm;
+> > +	int r;
+> > +
+> > +	lockdep_assert_held(&kvm->slots_lock);
+> > +
+> > +	if (KVM_BUG_ON(!tdp_mmu_enabled, kvm))
+> > +		return -EIO;
+> > +
+> > +	if (kvm_gfn_is_write_tracked(kvm, fault.slot, fault.gfn))
+> > +		return -EPERM;
+> > +
+> > +	r = kvm_mmu_reload(vcpu);
+> > +	if (r)
+> > +		return r;
+> > +
+> > +	r = mmu_topup_memory_caches(vcpu, false);
+> > +	if (r)
+> > +		return r;
+> > +
+> > +	do {
+> > +		if (signal_pending(current))
+> > +			return -EINTR;
+> > +
+> > +		if (kvm_test_request(KVM_REQ_VM_DEAD, vcpu))
+> > +			return -EIO;
+> > +
+> > +		cond_resched();
+> > +
+> > +		guard(read_lock)(&kvm->mmu_lock);
+> > +
+> > +		r = kvm_tdp_mmu_map(vcpu, &fault);
+> > +	} while (r == RET_PF_RETRY);
+> > +
+> > +	if (r != RET_PF_FIXED)
+> > +		return -EIO;
+> > +
+> > +	/*
+> > +	 * The caller is responsible for ensuring that no MMU invalidations can
+> > +	 * occur.  Sanity check that the mapping hasn't been zapped.
+> > +	 */
+> > +	if (IS_ENABLED(CONFIG_KVM_PROVE_MMU)) {
+> > +		cond_resched();
+> > +
+> > +		scoped_guard(read_lock, &kvm->mmu_lock) {
+> > +			if (KVM_BUG_ON(!kvm_tdp_mmu_gpa_is_mapped(vcpu, fault.addr), kvm))
+> > +				return -EIO;
+> > +		}
+> > +	}
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(kvm_tdp_mmu_map_private_pfn);
+> 
+> Besides, it can't address the 2nd AB-BA lock issue as mentioned in the patch
+> log:
+> 
+> Problem
+> ===
+> ...
+> (2)
+> Moreover, in step 2, get_user_pages_fast() may acquire mm->mmap_lock,
+> resulting in the following lock sequence in tdx_vcpu_init_mem_region():
+> - filemap invalidation lock --> mm->mmap_lock
+> 
+> However, in future code, the shared filemap invalidation lock will be held
+> in kvm_gmem_fault_shared() (see [6]), leading to the lock sequence:
+> - mm->mmap_lock --> filemap invalidation lock
 
-syzbot found the following issue on:
+I wouldn't expect kvm_gmem_fault_shared() to trigger for the
+KVM_MEMSLOT_SUPPORTS_GMEM_SHARED case (or whatever we end up naming it).
+There was some discussion during previous guest_memfd upstream call
+(May/June?) about whether to continue using kvm_gmem_populate() (or the
+callback you hand it) to handle initializing memory contents before
+in-place encryption, verses just expecting that userspace will
+initialize the contents directly via mmap() prior to issuing any calls
+that trigger kvm_gmem_populate().
 
-HEAD commit:    dd831ac8221e net/sched: sch_qfq: Fix null-deref in agg_deq..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=13245bd4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b29b1a0d7330d4a8
-dashboard link: https://syzkaller.appspot.com/bug?extid=8182574047912f805d59
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+I was planning on enforcing that the 'src' parameter to
+kvm_gmem_populate() must be NULL for cases where
+KVM_MEMSLOT_SUPPORTS_GMEM_SHARED is set, or otherwise it will return
+-EINVAL, because:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+1) it avoids this awkward path you mentioned where kvm_gmem_fault_shared()
+   triggers during kvm_gmem_populate()
+2) it makes no sense to have to have to copy anything from 'src' when we
+   now support in-place update
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b7b63815bf2a/disk-dd831ac8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f857222aabbb/vmlinux-dd831ac8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9071ec6016d0/bzImage-dd831ac8.xz
+For the SNP side, that will require a small API update for
+SNP_LAUNCH_UPDATE that mandates that corresponding 'uaddr' argument is
+ignored/disallowed in favor of in-place initialization from userspace via
+mmap(). Not sure if TDX would need similar API update.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8182574047912f805d59@syzkaller.appspotmail.com
+Would that work on the TDX side as well?
 
-netlink: 8 bytes leftover after parsing attributes in process `syz.1.1814'.
-macsec0: entered promiscuous mode
-team0: entered promiscuous mode
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:579
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 12326, name: syz.1.1814
-preempt_count: 201, expected: 0
-RCU nest depth: 0, expected: 0
-3 locks held by syz.1.1814/12326:
- #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4054
- #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: netif_addr_lock_bh include/linux/netdevice.h:4805 [inline]
- #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: dev_uc_add+0x67/0x120 net/core/dev_addr_lists.c:689
-Preemption disabled at:
-[<ffffffff895a7d26>] local_bh_disable include/linux/bottom_half.h:20 [inline]
-[<ffffffff895a7d26>] netif_addr_lock_bh include/linux/netdevice.h:4804 [inline]
-[<ffffffff895a7d26>] dev_uc_add+0x56/0x120 net/core/dev_addr_lists.c:689
-CPU: 0 UID: 0 PID: 12326 Comm: syz.1.1814 Not tainted 6.16.0-rc4-syzkaller-00153-gdd831ac8221e #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- __might_resched+0x495/0x610 kernel/sched/core.c:8800
- __mutex_lock_common kernel/locking/mutex.c:579 [inline]
- __mutex_lock+0x106/0xe80 kernel/locking/mutex.c:747
- team_change_rx_flags+0x38/0x220 drivers/net/team/team_core.c:1781
- dev_change_rx_flags net/core/dev.c:9241 [inline]
- __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
- netif_set_promiscuity+0x50/0xe0 net/core/dev.c:9305
- dev_set_promiscuity+0x126/0x260 net/core/dev_api.c:287
- dev_change_rx_flags net/core/dev.c:9241 [inline]
- __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
- __dev_set_rx_mode+0x17c/0x260 net/core/dev.c:-1
- dev_uc_add+0xc8/0x120 net/core/dev_addr_lists.c:693
- macsec_dev_open+0xd9/0x530 drivers/net/macsec.c:3634
- __dev_open+0x470/0x880 net/core/dev.c:1683
- __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9458
- rtnl_configure_link net/core/rtnetlink.c:3577 [inline]
- rtnl_newlink_create+0x555/0xb00 net/core/rtnetlink.c:3833
- __rtnl_newlink net/core/rtnetlink.c:3940 [inline]
- rtnl_newlink+0x16d6/0x1c70 net/core/rtnetlink.c:4055
- rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6944
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2551
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x75c/0x8e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2785b8e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f27869d6038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f2785db5fa0 RCX: 00007f2785b8e929
-RDX: 0000000000000800 RSI: 0000200000000280 RDI: 0000000000000009
-RBP: 00007f2785c10b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f2785db5fa0 R15: 00007ffe1c84aa28
- </TASK>
+Thanks,
 
-=============================
-[ BUG: Invalid wait context ]
-6.16.0-rc4-syzkaller-00153-gdd831ac8221e #0 Tainted: G        W          
------------------------------
-syz.1.1814/12326 is trying to lock:
-ffff88802715ce00 (team->team_lock_key#2){+.+.}-{4:4}, at: team_change_rx_flags+0x38/0x220 drivers/net/team/team_core.c:1781
-other info that might help us debug this:
-context-{5:5}
-3 locks held by syz.1.1814/12326:
- #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8fa21eb8 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4054
- #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: netif_addr_lock_bh include/linux/netdevice.h:4805 [inline]
- #2: ffff8880635e8368 (&macsec_netdev_addr_lock_key#2/2){+...}-{3:3}, at: dev_uc_add+0x67/0x120 net/core/dev_addr_lists.c:689
-stack backtrace:
-CPU: 0 UID: 0 PID: 12326 Comm: syz.1.1814 Tainted: G        W           6.16.0-rc4-syzkaller-00153-gdd831ac8221e #0 PREEMPT(full) 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_lock_invalid_wait_context kernel/locking/lockdep.c:4833 [inline]
- check_wait_context kernel/locking/lockdep.c:4905 [inline]
- __lock_acquire+0xbcb/0xd20 kernel/locking/lockdep.c:5190
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
- __mutex_lock_common kernel/locking/mutex.c:602 [inline]
- __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
- team_change_rx_flags+0x38/0x220 drivers/net/team/team_core.c:1781
- dev_change_rx_flags net/core/dev.c:9241 [inline]
- __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
- netif_set_promiscuity+0x50/0xe0 net/core/dev.c:9305
- dev_set_promiscuity+0x126/0x260 net/core/dev_api.c:287
- dev_change_rx_flags net/core/dev.c:9241 [inline]
- __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
- __dev_set_rx_mode+0x17c/0x260 net/core/dev.c:-1
- dev_uc_add+0xc8/0x120 net/core/dev_addr_lists.c:693
- macsec_dev_open+0xd9/0x530 drivers/net/macsec.c:3634
- __dev_open+0x470/0x880 net/core/dev.c:1683
- __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9458
- rtnl_configure_link net/core/rtnetlink.c:3577 [inline]
- rtnl_newlink_create+0x555/0xb00 net/core/rtnetlink.c:3833
- __rtnl_newlink net/core/rtnetlink.c:3940 [inline]
- rtnl_newlink+0x16d6/0x1c70 net/core/rtnetlink.c:4055
- rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6944
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2551
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x75c/0x8e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2785b8e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f27869d6038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f2785db5fa0 RCX: 00007f2785b8e929
-RDX: 0000000000000800 RSI: 0000200000000280 RDI: 0000000000000009
-RBP: 00007f2785c10b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f2785db5fa0 R15: 00007ffe1c84aa28
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Mike
 
