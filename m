@@ -1,251 +1,154 @@
-Return-Path: <linux-kernel+bounces-726984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63488B01399
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:31:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF557B013A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF0E174D64
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:31:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A46001C26EA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6F21D5ABF;
-	Fri, 11 Jul 2025 06:31:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997FFBA50
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D536E1DE881;
+	Fri, 11 Jul 2025 06:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="ZwL+IM1u"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D3517A30F;
+	Fri, 11 Jul 2025 06:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752215465; cv=none; b=N8RLBGeafB+ZkKvjFEtzVswTzjn1OHCYjF8G14knxYgvbxDrUDCIP7B5BEiMUbixCS5mI3STxBKDut2EdSxY5rUV+N1s/iGRP6LqWHpqdVEesrEEplhaBG/ZD8k9uKw7jebCVWU7HyUouw0T4jMKiQXiPaKilGP7Zb50BreX3CY=
+	t=1752215754; cv=none; b=AuS6tAfpyxGm3ZdZE2kU0QSvOnKdk9kkVxpJVyad5ZJ7Joua6eD93xaWDcfL6TsK+L42rZ8V0YRPROn52mfqgH6oJZQTIk9nePt6aAsgyPVvyqaGwZ2NnHECtvopdNFSE2kJHraRfRXYxUqDcEtjYFE7YQous7Rr+ApwtTbz1VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752215465; c=relaxed/simple;
-	bh=wESBP5VYY7a3QTcREKd3FKoQcQqoYT6q0uewOpFj6cs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ol9v1xec5cedDIAYcVGpOYs6Jwt5DwWRPRnEu9YJbKE/buKHkHdfgfXtQ2ZH3x8psxkMtWEYQkRXZeTJ0tLezUZYWQQOT7/QtHvcTK73QUsC4CpMoVEsH6SLDUc74ZUupSpAs3JXJGW3I0B2+1Z5Gc0P+iJ4QuTiJccE2lsa+N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3df2d0b7c7eso17352055ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 23:31:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752215463; x=1752820263;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=snqN0pQTJooiNXk/r3X1EVEBQCZs0ndGyzwk2y8GQOY=;
-        b=HsK9dgmFB5FTrQy+7pwF7xzTRZiC7hKLn3WesF+wSMURvsm11hx3OEF01kqHYTLko/
-         5ZtPjT+yuYKhWOADXRO1Mms79XVAdXcDlY9SMVHxyBHI+gNOFfVbNXegYRymDyzJESIO
-         Q/vZakGceZZ4xpbh6YQCyVsXFc+usQpQcSOyB+ZEpU4CC5euqmVsLx/2TdOpXYbPOh6K
-         g3n5r8OXCfxbVmjzW7ICi7TwIDicusJqBWRPVvoVoCBuGBX1s7ofDc9AoAXjuBcJpKtr
-         HBHCzvMMxY0e6dSANepF9FY/D5F3qD3zZU/+yR0a+qacD5pvYiC9M+ZnlFGRWll8UaRB
-         OR2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXS4/KARuiFx4u7uimV0gUuSivcZ3nfxA6b3yiLtqOst1OvCM5QMvp+67LNBMTsYYXH41/rNH96nY1de0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz42ReWHYR3o2iAr+a/WasYT1KAxGNCUys1ZDFnzav/J4m6s/6B
-	XkeOGDq6+ogFl3EN5ep/wgN7wRVu+JMBMYgbYje1OCHpPc4UdFRgsF/+pEKMbU4FwV3zG7AczLM
-	9U0uV21x4CVNnxQBncwKwJZS5ECmfeHzhURXvaQkOaXbnDnfY68WcVh6uprY=
-X-Google-Smtp-Source: AGHT+IHZgudUAop+0TWUZ3pVYa+SnAVu6Opv2k6lpIWjkthHPThZIxxRscfquwOGVi/s7VsQeE3yLbhyTr1c1CznfcyYi5NTBLe6
+	s=arc-20240116; t=1752215754; c=relaxed/simple;
+	bh=TkW4ZBMkg0KvqNRlbg7FOOUQC/bFexVycCX10tuWNeo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=a+19DQ9gmCF/ha8QMJlN9iwBtykQGeFchW0hHXsm1khB7B94piR9CiH/GnmE28DrvTNoZXGA7xChXQ1zz+6BYOrITWAmRgYo7WB5e9abrnfxdcITUgW4VnsYYsSdwdckWZnGQiaXDX72tILSij8CiRf5xgzLuZs7rhBEGPLy/ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=ZwL+IM1u reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=VYEl5tVsaxzFEpvtu9ha3wi3993OHaFTkFx4uRQ0A9w=; b=Z
+	wL+IM1uamcFeYFM2ZU1m5THxZatEkSWOJnYXHd5nGqff9So8bRWafZ8cq5ws1ZlX
+	MDd5Ru3bHR/Ni+1QAX7N1y6pCKMI3iKCjVbC3ncNqiQsLDDbquoLQkpWaX/mOocz
+	R0KxcAPHOXpZykT5j3PmYtf9/VkzFkts9UfJb9gYfg=
+Received: from chenyuan_fl$163.com ( [116.128.244.171] ) by
+ ajax-webmail-wmsvr-40-134 (Coremail) ; Fri, 11 Jul 2025 14:35:18 +0800
+ (CST)
+Date: Fri, 11 Jul 2025 14:35:18 +0800 (CST)
+From: chenyuan  <chenyuan_fl@163.com>
+To: "Quentin Monnet" <qmo@kernel.org>
+Cc: ast@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Yuan Chen" <chenyuan@kylinos.cn>, "Jiri Olsa" <jolsa@kernel.org>
+Subject: Re:Re: [PATCH v3] bpftool: Add CET-aware symbol matching for x86_64
+ architectures
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <a3e42c2d-0a43-4fe7-8be5-96a3dff723d2@kernel.org>
+References: <20250626061158.29702-1-chenyuan_fl@163.com>
+ <20250626074930.81813-1-chenyuan_fl@163.com>
+ <a3e42c2d-0a43-4fe7-8be5-96a3dff723d2@kernel.org>
+X-NTES-SC: AL_Qu2eAP6auk8q7iaeZOkfmUoRhOY5UcK1s/kl1YBUOpp+jALo3S0qe2VSIkXa8Ma0BQKImgmGaiNc4/5TRbhaerMqrjSBav+ka9M07GD70Q17aQ==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:398e:b0:3df:3598:7688 with SMTP id
- e9e14a558f8ab-3e25434f9bemr21055195ab.21.1752215462693; Thu, 10 Jul 2025
- 23:31:02 -0700 (PDT)
-Date: Thu, 10 Jul 2025 23:31:02 -0700
-In-Reply-To: <20250711061146.3438-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6870afa6.a00a0220.26a83e.003d.GAE@google.com>
-Subject: Re: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
-From: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <3ca286c7.5fe6.197f8320b0a.Coremail.chenyuan_fl@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:higvCgD3p_OnsHBoZJ0BAA--.12179W
+X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/xtbBiB6HvWhwqZ0vHwADsz
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in kvfree_call_rcu
-
-------------[ cut here ]------------
-ODEBUG: activate active (active state 1) object: 00000000d15d938c object type: rcu_head hint: 0x0
-WARNING: CPU: 0 PID: 7470 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
-WARNING: CPU: 0 PID: 7470 at lib/debugobjects.c:615 debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-Modules linked in:
-CPU: 0 UID: 0 PID: 7470 Comm: syz.0.17 Not tainted 6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : debug_print_object lib/debugobjects.c:612 [inline]
-pc : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-lr : debug_print_object lib/debugobjects.c:612 [inline]
-lr : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-sp : ffff80009c3b76d0
-x29: ffff80009c3b76d0 x28: ffff8000976d8000 x27: dfff800000000000
-x26: ffff80008afc2440 x25: 0000000000000001 x24: ffff8000891ac400
-x23: 0000000000000003 x22: ffff80008b5399e0 x21: 0000000000000000
-x20: ffff80008afc2440 x19: ffff8000891ac400 x18: 0000000000000000
-x17: 3833396435316430 x16: ffff80008aefc458 x15: 0000000000000001
-x14: 1fffe000337d40e2 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff6000337d40e3 x10: 0000000000ff0100 x9 : 5688875a670f5200
-x8 : 5688875a670f5200 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff80009c3b7018 x4 : ffff80008f766be0 x3 : ffff8000807bcfac
-x2 : 0000000000000001 x1 : 0000000100000202 x0 : 0000000000000000
-Call trace:
- debug_print_object lib/debugobjects.c:612 [inline] (P)
- debug_object_activate+0x344/0x460 lib/debugobjects.c:842 (P)
- debug_rcu_head_queue kernel/rcu/rcu.h:236 [inline]
- kvfree_call_rcu+0x4c/0x3f0 mm/slab_common.c:1953
- cipso_v4_sock_setattr+0x2fc/0x40c net/ipv4/cipso_ipv4.c:1916
- netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 183
-hardirqs last  enabled at (182): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (182): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (183): [<ffff80008aef6e24>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (138): [<ffff8000801fd5e4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (154): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-ODEBUG: active_state active (active state 1) object: 00000000d15d938c object type: rcu_head hint: 0x0
-WARNING: CPU: 0 PID: 7470 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
-WARNING: CPU: 0 PID: 7470 at lib/debugobjects.c:615 debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-Modules linked in:
-CPU: 0 UID: 0 PID: 7470 Comm: syz.0.17 Tainted: G        W           6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : debug_print_object lib/debugobjects.c:612 [inline]
-pc : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-lr : debug_print_object lib/debugobjects.c:612 [inline]
-lr : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-sp : ffff80009c3b76c0
-x29: ffff80009c3b76d0 x28: ffff80008f671000 x27: dfff800000000000
-x26: 0000000000000003 x25: 0000000000000000 x24: ffff0000d8051c08
-x23: 0000000000000001 x22: ffff80008afc2440 x21: ffff80008b5399e0
-x20: 0000000000000000 x19: ffff8000891ac400 x18: 0000000000000000
-x17: 3531643030303030 x16: ffff80008ae63d08 x15: ffff700011ede144
-x14: 1ffff00011ede144 x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff700011ede144 x10: 0000000000ff0100 x9 : 5688875a670f5200
-x8 : 5688875a670f5200 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff80009c3b7018 x4 : ffff80008f766be0 x3 : ffff80008054d314
-x2 : 0000000000000000 x1 : 0000000000000202 x0 : 0000000000000000
-Call trace:
- debug_print_object lib/debugobjects.c:612 [inline] (P)
- debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064 (P)
- debug_rcu_head_queue kernel/rcu/rcu.h:237 [inline]
- kvfree_call_rcu+0x64/0x3f0 mm/slab_common.c:1953
- cipso_v4_sock_setattr+0x2fc/0x40c net/ipv4/cipso_ipv4.c:1916
- netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 211
-hardirqs last  enabled at (210): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (210): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (211): [<ffff80008aef6e24>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (138): [<ffff8000801fd5e4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (154): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-kvfree_call_rcu(): Double-freed call. rcu_head 00000000d15d938c
-WARNING: CPU: 0 PID: 7470 at mm/slab_common.c:1956 kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-Modules linked in:
-CPU: 0 UID: 0 PID: 7470 Comm: syz.0.17 Tainted: G        W           6.16.0-rc5-syzkaller-00067-gec4801305969-dirty #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-lr : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-sp : ffff80009c3b7730
-x29: ffff80009c3b7730 x28: 00000000fffffff5 x27: 1fffe000199fd6e3
-x26: dfff800000000000 x25: ffff0000d20c136e x24: 0000000000000017
-x23: ffff8000891ac400 x22: 00000000ffffffea x21: ffff8000891ac400
-x20: ffff8000891ac400 x19: ffff80008afc2440 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff80008ae63d08 x15: ffff700011ede144
-x14: 1ffff00011ede144 x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff700011ede144 x10: 0000000000ff0100 x9 : 5688875a670f5200
-x8 : 5688875a670f5200 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff80009c3b7078 x4 : ffff80008f766be0 x3 : ffff80008054d314
-x2 : 0000000000000000 x1 : 0000000000000202 x0 : 0000000000000000
-Call trace:
- kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955 (P)
- cipso_v4_sock_setattr+0x2fc/0x40c net/ipv4/cipso_ipv4.c:1916
- netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 233
-hardirqs last  enabled at (232): [<ffff800080554800>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (232): [<ffff800080554800>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (233): [<ffff80008aef6e24>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (138): [<ffff8000801fd5e4>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (154): [<ffff800082c87490>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-
-
-Tested on:
-
-commit:         ec480130 Merge branches 'for-next/core' and 'for-next/..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=114d5bd4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9e99b6fcd403d050
-dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1080a0f0580000
-
+VGhhbmsgeW91IGZvciByZXZpZXdpbmcgdGhlIHBhdGNoIGFuZCBwcm92aWRpbmcgdmFsdWFibGUg
+ZmVlZGJhY2shwqAgIEkgYXBwcmVjaWF0ZSB5b3VyIGluc2lnaHRzIG9uIENFVMKgCmNvbXBhdGli
+aWxpdHkgYW5kIGNvZGUgc3RydWN0dXJlLiBIZXJlIGFyZSBteSByZXNwb25zZXMgdG8geW91ciBw
+b2ludHM6CjEuIE1haW50YWluZXIgTGlzdAoKSSBjb25maXJtIHRoYXQgaW4gZnV0dXJlIHN1Ym1p
+c3Npb25zLCBJIHdpbGwgcnVuOgouL3NjcmlwdHMvZ2V0X21haW50YWluZXIucGwgLWYgdG9vbHMv
+YnBmL2JwZnRvb2wvbGluay5jCnRvIGVuc3VyZSBhbGwgcmVsZXZhbnQgbWFpbnRhaW5lcnMgYXJl
+IGluY2x1ZGVkIGluIHRoZSByZWNpcGllbnQgbGlzdCAuIFRoaXMgd2FzIGFuIG92ZXJzaWdodCBp
+biB0aGUgaW5pdGlhbCBzdWJtaXNzaW9uLgoKMi4gRmFsc2UgUG9zaXRpdmVzIG9uIE9sZGVyIENQ
+VXMKWW91ciBjb25jZXJuIGFib3V0IG9sZGVyIENQVXMgaXMgdmFsaWQuIFRvIGFkZHJlc3MgdGhp
+czoKQ3VycmVudCBBcHByb2FjaDogVGhlIHBhdGNoIHJlbGllcyBvbiBhZGRyZXNzIG9mZnNldCBt
+YXRjaGluZyAoc3ltYm9sX2FkZHIgPT0gdGFyZ2V0X2FkZHIgLSA0KSwgd2hpY2ggaXMgc2FmZSBi
+ZWNhdXNlOgpOb24tQ0VUIGZ1bmN0aW9ucyB3b27igJl0IGhhdmUgYSB2YWxpZCBzeW1ib2wgYXQg
+dGFyZ2V0X2FkZHIgLSA0IC4KU3ltYm9sIHRhYmxlcyBhcmUgZGV0ZXJtaW5pc3RpYywgc28gYWNj
+aWRlbnRhbCBtYXRjaGVzIGF0IGFkZHIgLSA0IGFyZSBzdGF0aXN0aWNhbGx5IG5lZ2xpZ2libGUu
+Ckluc3RydWN0aW9uIFZlcmlmaWNhdGlvbjogV2hpbGUgY2hlY2tpbmcgZm9yIGVuZGJyMzIvZW5k
+YnI2NCB3b3VsZCBiZSBpZGVhbCwgdXNlci1zcGFjZSBjYW5ub3QgZGlyZWN0bHkgaW5zcGVjdCBr
+ZXJuZWwgaW5zdHJ1Y3Rpb24gbWVtb3J5IGZvciBzZWN1cml0eSBhbmQgcG9ydGFiaWxpdHkgcmVh
+c29ucy7CoApDb3VsZCB5b3UgYWR2aXNlIGlmIHRoZXJlIGFyZSBhbnkgc2FmZSBtZXRob2RzIHRv
+IHZlcmlmeSB0aGUgcHJlc2VuY2Ugb2YgZW5kYnIzMi9lbmRicjY0IGluc3RydWN0aW9ucyBhdCBr
+ZXJuZWwgc3ltYm9sIGFkZHJlc3NlcyBmcm9tIHVzZXIgc3BhY2U/CgoKCgoKQXQgMjAyNS0wNi0y
+NyAxOTowODo0OCwgIlF1ZW50aW4gTW9ubmV0IiA8cW1vQGtlcm5lbC5vcmc+IHdyb3RlOgo+VGhh
+bmtzISBOZXh0IHRpbWUsIHBsZWFzZSB0cnkgdG8gYWRkIGFsbCByZWxldmFudCBtYWludGFpbmVy
+cyBhcwo+cmVjaXBpZW50cyBvciBpbiBjb3B5IG9mIHlvdXIgbWVzc2FnZSB3aGVuIHN1Ym1pdHRp
+bmcgcGF0Y2hlcy4gWW91IGNhbgo+Z2V0IHRoZSBsaXN0IHdpdGggZ2V0X21haW50YWluZXIucGws
+IHRyeSBydW5uaW5nIGl0IG9uIHlvdXIgcGF0Y2ggb3Igd2l0aAo+Ii4vc2NyaXB0cy9nZXRfbWFp
+bnRhaW5lci5wbCAtZiB0b29scy9icGYvYnBmdG9vbC9saW5rLmMiCj4KPjIwMjUtMDYtMjYgMTU6
+NDkgVVRDKzA4MDAgfiBZdWFuIENoZW4gPGNoZW55dWFuX2ZsQDE2My5jb20+Cj4+IEZyb206IFl1
+YW4gQ2hlbiA8Y2hlbnl1YW5Aa3lsaW5vcy5jbj4KPj4gCj4+IEFkanVzdCBzeW1ib2wgbWF0Y2hp
+bmcgbG9naWMgdG8gYWNjb3VudCBmb3IgQ29udHJvbC1mbG93IEVuZm9yY2VtZW50Cj4+IFRlY2hu
+b2xvZ3kgKENFVCkgb24geDg2XzY0IHN5c3RlbXMuIENFVCBwcmVmaXhlcyBmdW5jdGlvbnMgd2l0
+aCBhIDQtYnl0ZQo+PiAnZW5kYnInIGluc3RydWN0aW9uLCBzaGlmdGluZyB0aGUgYWN0dWFsIGVu
+dHJ5IHBvaW50IHRvIHN5bWJvbCArIDQuCj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBZdWFuIENoZW4g
+PGNoZW55dWFuQGt5bGlub3MuY24+Cj4+IC0tLQo+PiAgdG9vbHMvYnBmL2JwZnRvb2wvbGluay5j
+IHwgMzAgKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tCj4+ICAxIGZpbGUgY2hhbmdlZCwg
+MjggaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPj4gCj4+IGRpZmYgLS1naXQgYS90b29s
+cy9icGYvYnBmdG9vbC9saW5rLmMgYi90b29scy9icGYvYnBmdG9vbC9saW5rLmMKPj4gaW5kZXgg
+MDM1MTNmZmZmYjc5Li5kZmQxOTJiNGM1YWQgMTAwNjQ0Cj4+IC0tLSBhL3Rvb2xzL2JwZi9icGZ0
+b29sL2xpbmsuYwo+PiArKysgYi90b29scy9icGYvYnBmdG9vbC9saW5rLmMKPj4gQEAgLTMwNyw4
+ICszMDcsMjEgQEAgc2hvd19rcHJvYmVfbXVsdGlfanNvbihzdHJ1Y3QgYnBmX2xpbmtfaW5mbyAq
+aW5mbywganNvbl93cml0ZXJfdCAqd3RyKQo+PiAgCQlnb3RvIGVycm9yOwo+PiAgCj4+ICAJZm9y
+IChpID0gMDsgaSA8IGRkLnN5bV9jb3VudDsgaSsrKSB7Cj4+IC0JCWlmIChkZC5zeW1fbWFwcGlu
+Z1tpXS5hZGRyZXNzICE9IGRhdGFbal0uYWRkcikKPj4gKwkJaWYgKGRkLnN5bV9tYXBwaW5nW2ld
+LmFkZHJlc3MgIT0gZGF0YVtqXS5hZGRyKSB7Cj4+ICsjaWYgZGVmaW5lZChfX3g4Nl82NF9fKSB8
+fCBkZWZpbmVkKF9fYW1kNjRfXykKPgo+Cj5JJ20gbm90IGZhbWlsaWFyIHdpdGggQ0VULCBidXQg
+ZnJvbSB3aGF0IEkgcmVhZCwgaXQncyBiZWVuIGFyb3VuZCBzaW5jZQo+VGlnZXIgTGFrZSBwcm9j
+ZXNzb3JzICgyMDIwKS4gRG8gd2UgaGF2ZSBhIHJpc2sgb2YgZmFsc2UgcG9zaXRpdmUgd2l0aAo+
+b2xkZXIgQ1BVcz8gTWF5YmUgY2hlY2sgdGhhdCB0aGUgaW5zdHJ1Y3Rpb24gYXQKPmRkLnN5bV9t
+YXBwaW5nW2ldLmFkZHJlc3MgaXMgZW5kYnIzMiBvciBlbmRicjM0Pwo+Cj4KPj4gKwkJCS8qCj4+
+ICsJCQkgKiBPbiB4ODZfNjQgYXJjaGl0ZWN0dXJlcyB3aXRoIENFVCAoQ29udHJvbC1mbG93IEVu
+Zm9yY2VtZW50IFRlY2hub2xvZ3kpLAo+PiArCQkJICogZnVuY3Rpb24gZW50cnkgcG9pbnRzIGhh
+dmUgYSA0LWJ5dGUgJ2VuZGJyJyBpbnN0cnVjdGlvbiBwcmVmaXguCj4+ICsJCQkgKiBUaGlzIGNh
+dXNlcyB0aGUgYWN0dWFsIGZ1bmN0aW9uIGFkZHJlc3MgPSBzeW1ib2wgYWRkcmVzcyArIDQuCj4+
+ICsJCQkgKiBIZXJlIHdlIGNoZWNrIGlmIHRoaXMgc3ltYm9sIG1hdGNoZXMgdGhlIHRhcmdldCBh
+ZGRyZXNzIG1pbnVzIDQsCj4+ICsJCQkgKiBpbmRpY2F0aW5nIHdlJ3ZlIGZvdW5kIGEgQ0VULWVu
+YWJsZWQgZnVuY3Rpb24gZW50cnkgcG9pbnQuCj4+ICsJCQkgKi8KPj4gKwkJCWlmIChkZC5zeW1f
+bWFwcGluZ1tpXS5hZGRyZXNzID09IGRhdGFbal0uYWRkciAtIDQpCj4+ICsJCQkJZ290byBmb3Vu
+ZDsKPj4gKyNlbmRpZgo+PiAgCQkJY29udGludWU7Cj4+ICsJCX0KPj4gK2ZvdW5kOgo+PiAgCQlq
+c29ud19zdGFydF9vYmplY3QoanNvbl93dHIpOwo+PiAgCQlqc29ud191aW50X2ZpZWxkKGpzb25f
+d3RyLCAiYWRkciIsIGRkLnN5bV9tYXBwaW5nW2ldLmFkZHJlc3MpOwo+Cj4KPkkgc3VwcG9zZSB3
+ZSBzdGlsbCB3YW50IHRvIHByaW50IGRkLnN5bV9tYXBwaW5nW2ldLmFkZHJlc3MgKGFuZCBub3QK
+PmRhdGFbal0uYWRkcikgd2hlbiB3ZSBmb3VuZCBpdCB3aXRoIHRoZSBDRVQgb2Zmc2V0IGhlcmUg
+LSBqdXN0Cj5kb3VibGUtY2hlY2tpbmcuCj4KPgo+PiAgCQlqc29ud19zdHJpbmdfZmllbGQoanNv
+bl93dHIsICJmdW5jIiwgZGQuc3ltX21hcHBpbmdbaV0ubmFtZSk7Cj4+IEBAIC03NDQsOCArNzU3
+LDIxIEBAIHN0YXRpYyB2b2lkIHNob3dfa3Byb2JlX211bHRpX3BsYWluKHN0cnVjdCBicGZfbGlu
+a19pbmZvICppbmZvKQo+PiAgCj4+ICAJcHJpbnRmKCJcblx0JS0xNnMgJS0xNnMgJXMiLCAiYWRk
+ciIsICJjb29raWUiLCAiZnVuYyBbbW9kdWxlXSIpOwo+PiAgCWZvciAoaSA9IDA7IGkgPCBkZC5z
+eW1fY291bnQ7IGkrKykgewo+PiAtCQlpZiAoZGQuc3ltX21hcHBpbmdbaV0uYWRkcmVzcyAhPSBk
+YXRhW2pdLmFkZHIpCj4+ICsJCWlmIChkZC5zeW1fbWFwcGluZ1tpXS5hZGRyZXNzICE9IGRhdGFb
+al0uYWRkcikgewo+PiArI2lmIGRlZmluZWQoX194ODZfNjRfXykgfHwgZGVmaW5lZChfX2FtZDY0
+X18pCj4+ICsJCQkvKgo+PiArCQkJICogT24geDg2XzY0IGFyY2hpdGVjdHVyZXMgd2l0aCBDRVQg
+KENvbnRyb2wtZmxvdyBFbmZvcmNlbWVudCBUZWNobm9sb2d5KSwKPj4gKwkJCSAqIGZ1bmN0aW9u
+IGVudHJ5IHBvaW50cyBoYXZlIGEgNC1ieXRlICdlbmRicicgaW5zdHJ1Y3Rpb24gcHJlZml4Lgo+
+PiArCQkJICogVGhpcyBjYXVzZXMgdGhlIGFjdHVhbCBmdW5jdGlvbiBhZGRyZXNzID0gc3ltYm9s
+IGFkZHJlc3MgKyA0Lgo+PiArCQkJICogSGVyZSB3ZSBjaGVjayBpZiB0aGlzIHN5bWJvbCBtYXRj
+aGVzIHRoZSB0YXJnZXQgYWRkcmVzcyBtaW51cyA0LAo+PiArCQkJICogaW5kaWNhdGluZyB3ZSd2
+ZSBmb3VuZCBhIENFVC1lbmFibGVkIGZ1bmN0aW9uIGVudHJ5IHBvaW50Lgo+PiArCQkJICovCj4+
+ICsJCQlpZiAoZGQuc3ltX21hcHBpbmdbaV0uYWRkcmVzcyA9PSBkYXRhW2pdLmFkZHIgLSA0KQo+
+PiArCQkJCWdvdG8gZm91bmQ7Cj4+ICsjZW5kaWYKPgo+Cj5HaXZlbiB0aGF0IHdlIGhhdmUgdHdp
+Y2UgdGhlIHNhbWUgY2hlY2ssIEknZCBtb3ZlIHRoaXMgdG8gYSBkZWRpY2F0ZWQKPndyYXBwZXIg
+ZnVuY3Rpb24gdGhhdCB3ZSBjb3VsZCBjYWxsIGZyb20gYm90aCBzaG93X2twcm9iZV9tdWx0aV9q
+c29uKCkKPmFuZCBzaG93X2twcm9iZV9tdWx0aV9wbGFpbigpLgo+Cj4KPj4gIAkJCWNvbnRpbnVl
+Owo+PiArCQl9Cj4+ICtmb3VuZDoKPj4gIAkJcHJpbnRmKCJcblx0JTAxNmx4ICUtMTZsbHggJXMi
+LAo+PiAgCQkgICAgICAgZGQuc3ltX21hcHBpbmdbaV0uYWRkcmVzcywgZGF0YVtqXS5jb29raWUs
+IGRkLnN5bV9tYXBwaW5nW2ldLm5hbWUpOwo+PiAgCQlpZiAoZGQuc3ltX21hcHBpbmdbaV0ubW9k
+dWxlWzBdICE9ICdcMCcpCgo=
 
