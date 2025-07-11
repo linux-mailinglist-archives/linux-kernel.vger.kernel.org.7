@@ -1,195 +1,109 @@
-Return-Path: <linux-kernel+bounces-727576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA847B01C52
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:45:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36536B01C54
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 175011754D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:45:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24EA51C2855A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF382C15BD;
-	Fri, 11 Jul 2025 12:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691822C3272;
+	Fri, 11 Jul 2025 12:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jssuio6t";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5hO5/8BT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jssuio6t";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5hO5/8BT"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="aRvZbFHB"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818262C08AB
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9DE2C158C;
+	Fri, 11 Jul 2025 12:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752237931; cv=none; b=KSAy1UegU+rKhknCf89HVfJYSCw8Z0WZ7iILq6/KoDQ1OO7F1vVNFlhvvk1CGcOhCWjM5mf8BXmMzGgX7H99mbUO7y4jfFpM/iOy+0qgXY3vKFD2RR0I04B7ibE6EdtgEJJm91SHKc2XHBwvTo0hodjc76jEloAlg5sDqPZEnvc=
+	t=1752237935; cv=none; b=SgwJVEYUKnCV2nyNBSaSX8UqslRip9QD5ceh5yFiPiZkLfN9BjrZ1fhBavIbmBQJyv+Uw/Ux00rbxHWLODaf5c574UEEvRk47n35x2h/xYE5t3aaq8oAEZetmpB85v0OEZq5tbPQl32KODmzm4jVgvepsNYYVZcEbFWsu8QL65k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752237931; c=relaxed/simple;
-	bh=vd9WR7WWBbqlPNnmBRhUW1rAtE74lYWoM2tmVWAGvms=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pou4ZnPoeZ1+jpYmh3zxc4m4v+VpxwMTPveQfAE1I+TkbbZl4Q2a5IKfs2+i3DPRMGXlniOdhEVF0tLlRgWCRnb3iVWlrbzBEFuF6UyRa2TpEGy3FEoMqfU4H/P1AtlGsXYFshKOgNH6Q2E2x+q6823ZhJVbxcH1pVag5IMT3y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jssuio6t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5hO5/8BT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jssuio6t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5hO5/8BT; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1752237935; c=relaxed/simple;
+	bh=4HatYBiqdBinwDxWxfCoK12EutCJf7054sLtDXTzcvA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IUt+5y9ltUn43ou4tY26QT/Z3g9gSi34p3UgwSfDoNDI+DWhXhRXytAD1Ugw4x/fZ2Fg+Xxn80inFfUsRFY3TSIp8TIk7U7P3vQqUkBtUr4m/nWTqh2VVe6zqa4wxLprlM5iJLsq2TATlJi3/Ivk32/Iua7LGCHbqcQKJaUUh3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=aRvZbFHB; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 55FA040AAB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1752237933; bh=AC2MxiZyl4bQDhm3Q1e86UyEfI0SVNKT6AX8i4TL+0E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=aRvZbFHBLXRzWUwGGyR0lhCaE/nDZRYQaVQ+RII7YcjhoQZJNkBc9o7l2pb8Fnt9a
+	 1bL7rgmkMvr9a72fadMLPrGKr4OvFT5ASWkmF1NECibgkaL6yAgd6rIzEwH51KzPRL
+	 OSC16WJDsEYZcTxVZS96C1xc6nMfcUCvway+bPTifZ9+L25Iz5JhPwyopYh/J/tOFX
+	 p4g2zxJnCRgnVPwKlVBleUKw7bIr8CtuFmmAVqqLmnLpiiTggPI0yN2lGNpJTbKaNx
+	 KK/vzcT4UN0EUv4Ab79q2SozmlDGtVDqGa4Bld/bEApoM1a8WNiw4dy4kPLANSV2XK
+	 h/7jwt+bAQK2w==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8EFE31F453;
-	Fri, 11 Jul 2025 12:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752237927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n9QOyGddPPJaljr4xCRagD2vcJ3JwZH0mhLiORQ5XOc=;
-	b=jssuio6tNgnHVwlkEa6FIRhudj+VYwsOB2xhNIUngKVRemgyuasRAezhLMVKKgg4KEicEl
-	e7EufgO1rDD/VmEbl3kViWVX1iaj1DTccNOx0jtTG4yuMW0lHjbXGTyNPr7FJirbHF4wSZ
-	FXKmVWY2ge4Dk+Ehqmmo5RefxHyvV5Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752237927;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n9QOyGddPPJaljr4xCRagD2vcJ3JwZH0mhLiORQ5XOc=;
-	b=5hO5/8BTOzWzxv/ng54VblrIVwaJktTYgbmLt0I+OgfxMKn3/JSDq8JpV+cvXDyDItnui+
-	eAYDrxls6v70B8DA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=jssuio6t;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="5hO5/8BT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752237927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n9QOyGddPPJaljr4xCRagD2vcJ3JwZH0mhLiORQ5XOc=;
-	b=jssuio6tNgnHVwlkEa6FIRhudj+VYwsOB2xhNIUngKVRemgyuasRAezhLMVKKgg4KEicEl
-	e7EufgO1rDD/VmEbl3kViWVX1iaj1DTccNOx0jtTG4yuMW0lHjbXGTyNPr7FJirbHF4wSZ
-	FXKmVWY2ge4Dk+Ehqmmo5RefxHyvV5Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752237927;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n9QOyGddPPJaljr4xCRagD2vcJ3JwZH0mhLiORQ5XOc=;
-	b=5hO5/8BTOzWzxv/ng54VblrIVwaJktTYgbmLt0I+OgfxMKn3/JSDq8JpV+cvXDyDItnui+
-	eAYDrxls6v70B8DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C5979138A5;
-	Fri, 11 Jul 2025 12:45:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Bsr+LmYHcWj0MQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 11 Jul 2025 12:45:26 +0000
-Date: Fri, 11 Jul 2025 14:45:26 +0200
-Message-ID: <871pqmhp5l.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Joris Verhaegen <verhaegen@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	kernel-team@android.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-arm-msm@vger.kernel.org,
-	sound-open-firmware@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	David Li <dvdli@google.com>,
-	Miller Liang <millerliang@google.com>
-Subject: Re: [PATCH v2 2/4] ALSA: compress_offload: Add SNDRV_COMPRESS_TSTAMP64 ioctl
-In-Reply-To: <20250711093636.28204-3-verhaegen@google.com>
-References: <20250711093636.28204-1-verhaegen@google.com>
-	<20250711093636.28204-3-verhaegen@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by ms.lwn.net (Postfix) with ESMTPSA id 55FA040AAB;
+	Fri, 11 Jul 2025 12:45:33 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH v2 07/12] docs: kdoc: Coalesce parameter-list handling
+In-Reply-To: <20250711075406.76ae06ec@foz.lan>
+References: <20250710233142.246524-1-corbet@lwn.net>
+ <20250710233142.246524-8-corbet@lwn.net> <20250711075406.76ae06ec@foz.lan>
+Date: Fri, 11 Jul 2025 06:45:32 -0600
+Message-ID: <8734b2yjyr.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[31];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,perex.cz,suse.com,gmail.com,opensource.cirrus.com,cirrus.com,intel.com,linux.intel.com,linux.dev,nxp.com,linux.alibaba.com,socionext.com,android.com,vger.kernel.org,alsa-project.org,lists.infradead.org,google.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLzj6aswpe58r68z1acwzd13oz)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 8EFE31F453
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.01
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Fri, 11 Jul 2025 11:36:28 +0200,
-Joris Verhaegen wrote:
-> @@ -1355,7 +1389,9 @@ static long snd_compr_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
->  
->  	switch (_IOC_NR(cmd)) {
->  	case _IOC_NR(SNDRV_COMPRESS_TSTAMP):
-> -		return snd_compr_tstamp(stream, arg);
-> +		return snd_compr_tstamp32(stream, arg);
-> +	case _IOC_NR(SNDRV_COMPRESS_TSTAMP64):
-> +		return snd_compr_tstamp64(stream, arg);
->  	case _IOC_NR(SNDRV_COMPRESS_AVAIL):
->  		return snd_compr_ioctl_avail(stream, arg);
->  	case _IOC_NR(SNDRV_COMPRESS_PAUSE):
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-This function was recently updated to evaluate the ioctl cmd value as
-is, as found in commit 19c4096ccdd809c6213e2e62b0d4f57c880138cd
-    ALSA: compress_offload: tighten ioctl command number checks
-in sound git tree (likely included in 6.16-rc7).
+> Em Thu, 10 Jul 2025 17:31:37 -0600
+> Jonathan Corbet <corbet@lwn.net> escreveu:
+>
+>> Callers to output_declaration() always pass the parameter information from
+>> self.entry; remove all of the boilerplate arguments and just get at that
+>> information directly.  Formalize its placement in the KdocItem class.
+>> 
+>> It would be nice to get rid of parameterlist as well, but that has the
+>> effect of reordering the output of function parameters and struct fields to
+>> match the order in the kerneldoc comment rather than in the declaration.
+>> One could argue about which is more correct, but the ordering has been left
+>> unchanged for now.
+>> 
+>> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+>> ---
+>>  scripts/lib/kdoc/kdoc_item.py   | 11 ++++-
+>>  scripts/lib/kdoc/kdoc_output.py | 75 +++++++++++++--------------------
+>>  scripts/lib/kdoc/kdoc_parser.py | 23 ++--------
+>>  3 files changed, 42 insertions(+), 67 deletions(-)
+>> 
+>> diff --git a/scripts/lib/kdoc/kdoc_item.py b/scripts/lib/kdoc/kdoc_item.py
+>> index f0b2b9082c56..beac5c70a881 100644
+>> --- a/scripts/lib/kdoc/kdoc_item.py
+>> +++ b/scripts/lib/kdoc/kdoc_item.py
+>> @@ -11,6 +11,9 @@ class KdocItem:
+>>          self.declaration_start_line = start_line
+>>          self.sections = {}
+>>          self.sections_start_lines = {}
+>
+>> +        self.parameterlist = self.parameterdesc_start_lines = []
+>
+> Please split it on two lines as well. With that, feel free to add:
+>
+> Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Please adjust your patch accordingly.
+Weird, I was sure I did that...will do it again...
 
+Thanks,
 
-thanks,
-
-Takashi
+jon
 
