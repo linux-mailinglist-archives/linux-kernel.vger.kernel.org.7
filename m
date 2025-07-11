@@ -1,207 +1,120 @@
-Return-Path: <linux-kernel+bounces-727705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B05BB01E67
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:54:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75344B01E82
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747F84A7F5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:54:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DA587BD924
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB0C2DCBF7;
-	Fri, 11 Jul 2025 13:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835532DCF69;
+	Fri, 11 Jul 2025 13:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XljhKiK6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DOwjTDiV"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244FB210F53;
-	Fri, 11 Jul 2025 13:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1F22D77EB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752242053; cv=none; b=PcPLcTTzPCa9fCw0uKV1Go+Axjv5fxfEU7vsVA8WtxxqCJDvgRGTn+IwEeTcZ8OOuLBpza87gL9Pn82bgWBdSxMTmGPHEbMaHKHyS5iyvSPQtiqViIWZtLixZj4Azys+eF+B4rPKopeYA09tJN3A6cSPR/WicHzug3/M0LiwSKs=
+	t=1752242311; cv=none; b=BkPQMdb7k4plYZujkYc2x1NtGlA2ekA2BencmSio44aCl5y54Ccj3bXMmxX8FRB2QOOAeEXX0brPZbislq1FT3uQQnlzna2itJiO+auoZ/L7mfxblOdHnxTntkEOpYddJTFYEfyUnPffG+Vbh0SEBtqE7oIDOliN8uF0kzGhfo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752242053; c=relaxed/simple;
-	bh=BBU7ghguCAyJiiRPZdR2uiWNVY8X666q1wqwPfC8xAo=;
+	s=arc-20240116; t=1752242311; c=relaxed/simple;
+	bh=pNqonM4UVtrsALbVQxE7BjqrmBap83H9yb8p9qwz7o4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rONk3dDv44hb2fOKdVMHtf8C98IaVvRo9Znar9iajdKYOiPqfeJZ34/PVIj041PofsTBf9j9iAhuf9vrtLDsteeHGKdTTZKG/bk6ZvjkydntXX9kHuihX/lWfDBrwrfTx2WuHNqIhlO2wcadV42OU0RE3Hl7lL65hflMyDoMFis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XljhKiK6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7BAFC4AF09;
-	Fri, 11 Jul 2025 13:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752242052;
-	bh=BBU7ghguCAyJiiRPZdR2uiWNVY8X666q1wqwPfC8xAo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XljhKiK6U5fag/L0cmG4rsXCqkzQZNfIpJxGfxIrJlsA8Af9z5TsyJROVbibGH1n1
-	 3ir0HHQiKaeH4eTAsvyRR0x/phv4P5zblA3dNiL6qQUeH7JWbzOPDivSUq57jI7GcI
-	 /Z5GyUzWbxSDp8EAKzXD+W0LNTqgrDAj63khWhqEXHKTNUn+B4KCsDvESEdoohMmrn
-	 VOMlbqtxU45YNT9+VhydGNyU92G0XI+yRJQswTv6go5F/Ybj1n3IPjk74aNADBjLer
-	 PZ25VFGVWdg57dBUywJ8HjEjCp3RmN1P4GVk7i+qG+EfSDrh0OK4M3AfzDIq1swqRK
-	 4IhaJnHvuiEDQ==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-613aaa2cf43so1035120eaf.3;
-        Fri, 11 Jul 2025 06:54:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVZ9Ol/PObhDfK3dymGRgfbvT5VKNsyTWBPwvHKooMS1wlp0DymYu37lcK6RH7LRqx5oaeKYnzJitNEXgM=@vger.kernel.org, AJvYcCXy+GQi5pUE+SYmzid4Cyn4GX6PaiH42zM6gf0qBHMgWlrhmJ7tOqhHzTrIjLQ0M7xEtQllCu/i1No=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlvflQqSPT1DTeyDG4xyYj69VAYDKFYUz8hSyCfY4NPFMiZrWB
-	UTevC74opeB+OWAAhiXfidh1SQoVU+cnfrD3qyJ8+uonnm/6Mobkz1yKjQgc/hMSELNUkKMas36
-	p/XtXy0yd5Slg/smODc/6R6nE1DATvDw=
-X-Google-Smtp-Source: AGHT+IHcbRx8zflYRK44B206ejqHvKHmceTOK6hhDtxpr315zHhIZ6i5cX09RLZ5Yuiix09dEGvoF1IPPJkkDNwZoYc=
-X-Received: by 2002:a4a:edc3:0:b0:613:c16e:9bd9 with SMTP id
- 006d021491bc7-613e6055771mr2388935eaf.6.1752242051967; Fri, 11 Jul 2025
- 06:54:11 -0700 (PDT)
+	 To:Cc:Content-Type; b=mCqdmt/q3GAY01M/rnR5ooP/eq6b0WNJuQiybv9uXcE7zx4jnxISMY2dTwuaZKI/MyT0MVt8aUIO6gu6I3Fkboll9vzOA2rFWuIX6gJ4BOtC+lJ0TIQhVXGd0YIE/uZNEBp3NDx3OXM5NSQ/pMOQkazNGavD8V3yD+/I8Mp/85Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DOwjTDiV; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7490acf57b9so1592128b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:58:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752242310; x=1752847110; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pNqonM4UVtrsALbVQxE7BjqrmBap83H9yb8p9qwz7o4=;
+        b=DOwjTDiV/nNBIE5obEmvtiPRS955V0t1VfTftQX9So+5sPYBiTaYcaSq+zj3bLy6bE
+         sFYvscgXurxNNTkDDf332Mr2nk2KHg7XsMGgGKlw4MtHLYMyhJSc77b4ac0+2cuVQuB+
+         RkPTB78ukfB1BtwxUtUK1ckCsZeMKm8FLGYX/PSO1aK+/PPnbMZJg0ClQ6qy5qr+8rej
+         gvvhs/3dE2YdVRLb4aSssWk2ax6uHd12V4p0pp3PWJOjHvPbBzt78q0TTzazeBlfufyR
+         pp2oPCBQWkBgwDDiVVcgimBWrhEM/Yx6LRDddFOZkt6Olj9MaPCcJSeREn499F4wV/KX
+         cXkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752242310; x=1752847110;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pNqonM4UVtrsALbVQxE7BjqrmBap83H9yb8p9qwz7o4=;
+        b=WcoKmi/v8rFBGZsAH/GxGdzpHtIWsDHXPcsoWoIbwk5Y0Jk+FB6F6TfL9RPra6cbkZ
+         SGlJVqy4KwNoyRO/KikaqjhM1wh9v9T0CW9AohBnNGRVoM58VEkV/QUz3MFlmHOLgPeS
+         TVJJCvhG/VUfsuQM0VCuFE9rmLkzZ7bDPQ6xdg0F1N84Bxc7KSY8BZtttX3c3wI+XKND
+         laXs80aqU9R39ac0J8aGt1FIsvNq9ijzFs9N4wdd4JtZgsPCfRrLvIOSq+p42Jj6gsjI
+         V1hHvLm6Lm97ne04kem7PEzset3eACml3A3jZqOz9bSwM5TWY8Qb25SsF2+f17I6+iqq
+         i4wA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTERfJ5yhjLzB0/dJQmEbfrN8zGMwTrBP8UnKjfqThw55K9LcuhnPLp+G5dCRccMLQb2d6IIkM1/t3tls=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb5ocNr5UNxgHrCs0MTxI9rfIGbUIfB+9x5r16nCQKGnVyfGLW
+	ZAcY2+vU1Mbh/Vi8qcebEj0u87z4QNV/LXoioR7oZkfTnKONBxLD1NNnB8w6TvBzh/nmHMYvwty
+	vQd63P55ESwcl74tyjcHc8+zt6gYgQkADShPeb8BM
+X-Gm-Gg: ASbGncuWII19tWk8isW84gUyPFL1NJRLNRXoPuv7LUNz6OQsOqZkF7Rr90WVBfziKVF
+	W8HLhliuE98qC5SFlFl3DTV06MnIGxuJbj9RGhetH9Rm6iIEm6QSljzazQT/LW0V7PahIrrrW8D
+	ZK+RSzlgooS3y7BiFat2eNw6+9j9o4NOQs5PqbdiNreMfe2CjnCmC7kmutDQABDfSnIzO7psqqu
+	DhrOX1AgWjxTwffQi4Xr+yK0KqVEY2bo3I1cad3
+X-Google-Smtp-Source: AGHT+IF9vpsS88cqwJvceZ3AVWYOHULHoLV6jnQ0fxFPUTnJrLpeVWrilV12HX6w7fKkYy/KsZQkRWej43wmqe/0mho=
+X-Received: by 2002:a17:90b:33c2:b0:313:2754:5910 with SMTP id
+ 98e67ed59e1d1-31c4cb8aa2dmr5577396a91.15.1752242308018; Fri, 11 Jul 2025
+ 06:58:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <10629535.nUPlyArG6x@rjwysocki.net> <22630663.EfDdHjke4D@rjwysocki.net>
- <e13740a0-88f3-4a6f-920f-15805071a7d6@linaro.org> <CAJZ5v0hpPOHNYCSTM1bb+p-wyAZkpg+k-huf9f5df9_S8MfvEg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hpPOHNYCSTM1bb+p-wyAZkpg+k-huf9f5df9_S8MfvEg@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 11 Jul 2025 15:54:00 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jFP2njw3ic47yyh_7u7evKQKQuqGp27Vj7X-FfDLH7uQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyz3J2tiOmW_RNP9CqOsWSDmplRGWYB5Pd7mingf33KckjNNRFtcfz5AeE
-Message-ID: <CAJZ5v0jFP2njw3ic47yyh_7u7evKQKQuqGp27Vj7X-FfDLH7uQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] PM: sleep: Resume children after resuming the parent
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>, 
-	Jon Hunter <jonathanh@nvidia.com>, Saravana Kannan <saravanak@google.com>, 
-	William McVicker <willmcvicker@google.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+References: <20250711082441.4193295-1-verhaegen@google.com> <aHEEu1eSSGRhITmW@vaman>
+In-Reply-To: <aHEEu1eSSGRhITmW@vaman>
+From: George Verhaegen <verhaegen@google.com>
+Date: Fri, 11 Jul 2025 14:58:01 +0100
+X-Gm-Features: Ac12FXwkr5vfJuzXyUzX28ecPpQ4ARo3qP5rhcHUhMh4j4kcitfjBXfbRa88hKs
+Message-ID: <CAAntYmKea1p=ao3OOWb=1Q+BXdyo1SCm9qGb_JMC5ry5DQVt-Q@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] ALSA: compress_offload: Add 64-bit safe timestamp API
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Cezary Rojewski <cezary.rojewski@intel.com>, Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+	Bard Liao <yung-chuan.liao@linux.intel.com>, 
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Srinivas Kandagatla <srini@kernel.org>, 
+	Daniel Baluta <daniel.baluta@nxp.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	kernel-team@android.com, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, 
+	linux-arm-msm@vger.kernel.org, sound-open-firmware@alsa-project.org, 
+	linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 3:38=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Fri, Jul 11, 2025 at 3:08=E2=80=AFPM Tudor Ambarus <tudor.ambarus@lina=
-ro.org> wrote:
-> >
-> >
-> > Hi, Rafael,
-> >
-> > On 3/14/25 12:50 PM, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > According to [1], the handling of device suspend and resume, and
-> > > particularly the latter, involves unnecessary overhead related to
-> > > starting new async work items for devices that cannot make progress
-> > > right away because they have to wait for other devices.
-> > >
-> > > To reduce this problem in the resume path, use the observation that
-> > > starting the async resume of the children of a device after resuming
-> > > the parent is likely to produce less scheduling and memory management
-> > > noise than starting it upfront while at the same time it should not
-> > > increase the resume duration substantially.
-> > >
-> > > Accordingly, modify the code to start the async resume of the device'=
-s
-> > > children when the processing of the parent has been completed in each
-> > > stage of device resume and only start async resume upfront for device=
-s
-> > > without parents.
-> > >
-> > > Also make it check if a given device can be resumed asynchronously
-> > > before starting the synchronous resume of it in case it will have to
-> > > wait for another that is already resuming asynchronously.
-> > >
-> > > In addition to making the async resume of devices more friendly to
-> > > systems with relatively less computing resources, this change is also
-> > > preliminary for analogous changes in the suspend path.
-> > >
-> > > On the systems where it has been tested, this change by itself does
-> > > not affect the overall system resume duration in a measurable way.
-> > >
-> > > Link: https://lore.kernel.org/linux-pm/20241114220921.2529905-1-sarav=
-anak@google.com/ [1]
-> > > Suggested-by: Saravana Kannan <saravanak@google.com>
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > I'd like to let you know of a suspend crash that I'm dealing with
-> > when using the OOT pixel6 drivers on top of v6.16-rc4.
->
-> Well, thanks, but there's not much I can do about it.
->
-> It is also better to start a new thread in such cases than to reply to
-> a patch submission.
->
-> > Similar to what Jon reported, everything gets back to normal if
-> > I disable pm_async or if I revert the following patches:
-> > 443046d1ad66 PM: sleep: Make suspend of devices more asynchronous
-> > aa7a9275ab81 PM: sleep: Suspend async parents after suspending children
-> > 0cbef962ce1f PM: sleep: Resume children after resuming the parent
-> >
-> > I also reverted their fixes when testing:
-> > 8887abccf8aa PM: sleep: Add locking to dpm_async_resume_children()
-> > d46c4c839c20 PM: sleep: Fix power.is_suspended cleanup for direct-compl=
-ete devices
-> > 079e8889ad13 PM: sleep: Fix list splicing in device suspend error paths
-> >
-> > It seems that the hang happens in dpm_suspend() at
-> > async_synchronize_full() time after a driver fails to suspend.
-> > The phone then naturally resets with an APC watchdog.
-> >
-> > [  519.142279][ T7917] lwis lwis-eeprom-m24c64x: Can't suspend because =
-eeprom-m24c64x is in use!
-> > [  519.143556][ T7917] lwis-i2c eeprom@2: PM: dpm_run_callback(): platf=
-orm_pm_suspend returns -16
-> > [  519.143872][ T7917] lwis-i2c eeprom@2: PM: platform_pm_suspend retur=
-ned -16 after 1596 usecs
-> > [  519.144197][ T7917] lwis-i2c eeprom@2: PM: failed to suspend: error =
--16
-> > [  519.144448][ T7917] PM: tudor: dpm_suspend: after while loop, list_e=
-mpty(&dpm_prepared_list)? 1
-> > [  519.144779][ T7917] PM: tudor: dpm_suspend: before async_synchronize=
-_full
-> >
-> > The extra prints are because of:
-> > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> > index d9d4fc58bc5a..3efe538c2ec2 100644
-> > --- a/drivers/base/power/main.c
-> > +++ b/drivers/base/power/main.c
-> > @@ -1967,10 +1967,15 @@ int dpm_suspend(pm_message_t state)
-> >                         break;
-> >                 }
-> >         }
-> > +       pr_err("tudor: %s: after while loop, list_empty(&dpm_prepared_l=
-ist)? %d\n",
-> > +              __func__, list_empty(&dpm_prepared_list));
-> >
-> >         mutex_unlock(&dpm_list_mtx);
-> >
-> > +       pr_err("tudor: %s: before async_synchronize_full\n", __func__);
-> >         async_synchronize_full();
-> > +       pr_err("tudor: %s: after async_synchronize_full();\n", __func__=
-);
-> > +
-> >         if (!error)
-> >                 error =3D async_error;
-> >
-> > The synchronous suspend works because its strict, one-by-one ordering
-> > ensures that device dependencies are met and that no device is suspende=
-d
-> > while another is still using it. The asynchronous suspend fails because
-> > it creates a race condition where the lwis-eeprom-m24c64x is called for
-> > suspension before the process using it has been suspended, leading to a
-> > fatal "device busy" error. Should the failure of a device suspend be
-> > fatal?
->
-> It shouldn't in principle, but it depends on what exactly is involved and=
- how.
->
-> It looks like something is blocking on power.completion somewhere.
-> I'll check the code, maybe a complete() is missing in an error path or
-> similar.
+On Fri, 11 Jul 2025 at 13:34, Vinod Koul <vkoul@kernel.org> wrote:
+> In your testing when did you observe the overflow condition?
 
-It doesn't look like anything is missing in the core, so the suspend
-failure seems to be triggering a deadlock of some sort.
+I observed an overflow after ~3.1 hours.
+I used a stream with bitrate =3D 3072 kbps.
+So the field copied_total in struct snd_compr_tstamp
+overflows after 4294967295=C3=B7(3072000/8)=C3=B760=C3=B760=3D ~3.10689 hou=
+rs.
 
-The remedy should be the same as usual in such cases: Find the device
-that is marked as "async" incorrectly and make it "sync".
+> Please share patches for tinycompress support too, we need those to test
+> this
 
-Thanks!
+I didn't make changes to tinycompress. The overflow happens in the
+kernel file compress_offload.c. As a test, I let it run for more than
+3.1 hours and observed that the overflow no longer occurs.
+The overflow is in
+stream->runtime->total_bytes_transferred =3D tstamp->copied_total
 
