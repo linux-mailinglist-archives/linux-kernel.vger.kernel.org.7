@@ -1,107 +1,224 @@
-Return-Path: <linux-kernel+bounces-727773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C39B01F7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:50:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D72FB01F7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA9DE7B31CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:48:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91F867B4ABE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F372B2E9EB1;
-	Fri, 11 Jul 2025 14:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6DB2E9EC2;
+	Fri, 11 Jul 2025 14:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="87E+xoiU"
-Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkdkEKbz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AEB2E975D;
-	Fri, 11 Jul 2025 14:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F2A28725E;
+	Fri, 11 Jul 2025 14:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752245397; cv=none; b=iH7nyhtDOUUcUUdaLftam1r1ejXPiO0YgA1ipuG32g4q4Fun8EQ9Zy4LAjVOX1r2C6tjJDsptBrGlZcrtt0HFSNj8xGsR4XJoBvnD8IHkv6gv+cepnGwxymJwvqXhRL/fRLO4ulKLjGdWKjWWQ5ijT06bCMzZ1Ao4mZxqgmS94M=
+	t=1752245444; cv=none; b=hfE7AsvkzEzfzDt/Vt3yls8fvwLCzpFNjZRWb33SGJNdzEC42LOQmUBcFUk3ZzLrjvgj2j/1rTQMl+RtAkWfIqAs1KOwaW+rj79cHiXC2fhZAZxHYuYflFfew0etp16B8UwM4SN8zJq3OGC0da0oHYQ+KyjU/1kLFN+UOpXrAo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752245397; c=relaxed/simple;
-	bh=d/G5Np4BjWAyQHDBYeRVvI+dHxs0oAifCvJZ7nhqN4I=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=IZZIpvkUvyL7hxY3nJUIpOoJg4NOPbVsCpRVbEXWL0tBmZwokbJiIiSBnxMsM24kMSft9DRVK+EndVjcEW/8td7Z+g+4rAGYrL7ZSRNQI4r7oHj9V5AJ5d13pyrALrY2ZYFlfs8I42DmcDGujSLD7XCFaTMoXZY9nf0SBddadHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=87E+xoiU; arc=none smtp.client-ip=143.255.12.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8brX1+ag4+ShccAgZ35yztbKtdrd3eYqr5p3qU932G8=; b=87E+xoiUbkW4T9VHu+od/ykDc7
-	fYwtJXCxYpana3HDwI+mHxGjag1LlCyK1wJDmqeJAZ6UYCcQ4IrFWO2N1PFqqF3UMOdO2XpC39Nb3
-	5BXM6tJx3GM+fnKEG3+NDIC5r/TKrjtGeVSgDFsc6OoSXgWQfGsSkIL6P1skGOrmPUilrJ97NRrM+
-	jfM1I9jp0BCbn80p+zj6+Fo6nG3qhsX/vpTPufZDgJZAzpuNU4vDYIdSb5PAIss4C8b6D2H0bf96N
-	nS73wmRSP4JWeUH8vvCBm/Lxt+Fl76hCjoVgAi+74nirgK0b9HnYWQ8SDCrIb/JLTOMGiClvlsmrU
-	aM+wpxgA==;
-Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
-	id 1uaF4Q-00000000BFH-29H4;
-	Fri, 11 Jul 2025 11:49:50 -0300
-Message-ID: <aa4ecd85deb859ad32ba7f649321084b@manguebit.org>
-From: Paulo Alcantara <pc@manguebit.org>
-To: Wang Zhaolong <wangzhaolong@huaweicloud.com>, sfrench@samba.org,
- pshilov@microsoft.com, aaptel@suse.com
-Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] smb: client: fix use-after-free in cifs_oplock_break
-In-Reply-To: <20250707010926.31623-1-wangzhaolong@huaweicloud.com>
-References: <20250707010926.31623-1-wangzhaolong@huaweicloud.com>
-Date: Fri, 11 Jul 2025 11:49:49 -0300
+	s=arc-20240116; t=1752245444; c=relaxed/simple;
+	bh=f7cDjsfYPdriIgbQb8YGdKasotUmE5cLXTOLFytF0io=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fGQiIoWSFu+ZDHjEcfIrTuGnr1SmJ9KiAvgeZ0tQIFMbumY/iRQC+foDDdV+61BkFzko5ni7v6PcAWdc7wCSmKk1q0GsSEaIxgfO8gctQp7JAPAw0silgSMxEFN0gXIALcqjO7ykp7KbcmJRmSR43e9e0R2QVYtjDJsXQ1vEW6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gkdkEKbz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92E27C4CEED;
+	Fri, 11 Jul 2025 14:50:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752245444;
+	bh=f7cDjsfYPdriIgbQb8YGdKasotUmE5cLXTOLFytF0io=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gkdkEKbzsDiMv4RtOFiBMMGIOCuL14UGF4GvAp0pra/zVrI9un62BvfuR+HbOvvkP
+	 CyubUoCgzdntLhzTrM+QVUTVUg9tUhaTaq8yR5VV9mndHZroNCbA0xruIvY/xWTCgY
+	 Oi0ItRuP/wMULghV4N5z/aXUuCgUM/CGt9RBOui3JhIAvtDvMxISvooZw9A4qwlYxr
+	 XfvZ8ZoS+Sz5z0JNTTID4kxdeNNekl0NTvKuzDDcHyiM8DjRtaLjynaMmGYoPpp1d1
+	 zHOBJZGluzRw1VnRcMeh/b6YyZQh3CQXvbxf1GhN5v93Vz0MJwwYr1wXx+rjfN0jEs
+	 Te9Ev4z08EevQ==
+Date: Fri, 11 Jul 2025 16:50:41 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kamel Bouhara <kamel.bouhara@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	andriy.shevchenko@intel.com, =?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v11 04/10] pwm: max7360: Add MAX7360 PWM support
+Message-ID: <j6zavgfpiq7s7cnfkghn2y6fv4h4ziqtpyp7igwmovqlyuasoq@hozlyjcpsxth>
+References: <20250711-mdb-max7360-support-v11-0-cf1dee2a7d4c@bootlin.com>
+ <20250711-mdb-max7360-support-v11-4-cf1dee2a7d4c@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hzchddujgha2ujw2"
+Content-Disposition: inline
+In-Reply-To: <20250711-mdb-max7360-support-v11-4-cf1dee2a7d4c@bootlin.com>
 
-Wang Zhaolong <wangzhaolong@huaweicloud.com> writes:
 
-> A race condition can occur in cifs_oplock_break() leading to a
-> use-after-free of the cinode structure when unmounting:
->
->   cifs_oplock_break()
->     _cifsFileInfo_put(cfile)
->       cifsFileInfo_put_final()
->         cifs_sb_deactive()
->           [last ref, start releasing sb]
->             kill_sb()
->               kill_anon_super()
->                 generic_shutdown_super()
->                   evict_inodes()
->                     dispose_list()
->                       evict()
->                         destroy_inode()
->                           call_rcu(&inode->i_rcu, i_callback)
->     spin_lock(&cinode->open_file_lock)  <- OK
->                             [later] i_callback()
->                               cifs_free_inode()
->                                 kmem_cache_free(cinode)
->     spin_unlock(&cinode->open_file_lock)  <- UAF
->     cifs_done_oplock_break(cinode)       <- UAF
->
-> The issue occurs when umount has already released its reference to the
-> superblock. When _cifsFileInfo_put() calls cifs_sb_deactive(), this
-> releases the last reference, triggering the immediate cleanup of all
-> inodes under RCU. However, cifs_oplock_break() continues to access the
-> cinode after this point, resulting in use-after-free.
->
-> Fix this by holding an extra reference to the superblock during the
-> entire oplock break operation. This ensures that the superblock and
-> its inodes remain valid until the oplock break completes.
->
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=220309
-> Fixes: b98749cac4a6 ("CIFS: keep FileInfo handle live during oplock break")
-> Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-> ---
->  fs/smb/client/file.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+--hzchddujgha2ujw2
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v11 04/10] pwm: max7360: Add MAX7360 PWM support
+MIME-Version: 1.0
 
-Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+Hello Mathieu,
+
+On Fri, Jul 11, 2025 at 11:29:44AM +0200, Mathieu Dubois-Briand wrote:
+> diff --git a/drivers/pwm/pwm-max7360.c b/drivers/pwm/pwm-max7360.c
+> new file mode 100644
+> index 000000000000..0eb83135f658
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-max7360.c
+> @@ -0,0 +1,193 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2025 Bootlin
+> + *
+> + * Author: Kamel BOUHARA <kamel.bouhara@bootlin.com>
+> + * Author: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+> + *
+
+A link to the data sheet here would be awesome. I found it at
+
+https://www.analog.com/media/en/technical-documentation/data-sheets/MAX7360.pdf
+
+> [...]
+> +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
+> +					   struct pwm_device *pwm,
+> +					   const struct pwm_waveform *wf,
+> +					   void *_wfhw)
+> +{
+> +	struct max7360_pwm_waveform *wfhw = _wfhw;
+> +	u64 duty_steps;
+> +
+> +	/*
+> +	 * Ignore user provided values for period_length_ns and duty_offset_ns:
+> +	 * we only support fixed period of MAX7360_PWM_PERIOD_NS and offset of 0.
+> +	 */
+> +	if (wf->duty_length_ns >= MAX7360_PWM_PERIOD_NS)
+> +		duty_steps = MAX7360_PWM_MAX_RES;
+> +	else
+> +		duty_steps = (u32)wf->duty_length_ns * MAX7360_PWM_MAX_RES / MAX7360_PWM_PERIOD_NS;
+
+I read through the data sheet and I think the right formula for
+duty_steps is:
+
+	if (wf->duty_length_ns >= MAX7360_PWM_PERIOD_NS) {
+		duty_steps = 255;
+	} else {
+		duty_steps = (u32)wf->duty_length_ns * 256 / MAX7360_PWM_PERIOD_NS;
+		if (duty_steps == 255)
+			duty_steps = 254;
+	}
+
+(Using magic constants here, but in the end these should be cpp symbols
+of course.)
+
+> +	wfhw->duty_steps = min(MAX7360_PWM_MAX_RES, duty_steps);
+> +	wfhw->enabled = !!wf->period_length_ns;
+> +
+> +	return 0;
+> +}
+> +
+> +static int max7360_pwm_round_waveform_fromhw(struct pwm_chip *chip, struct pwm_device *pwm,
+> +					     const void *_wfhw, struct pwm_waveform *wf)
+> +{
+> +	const struct max7360_pwm_waveform *wfhw = _wfhw;
+> +
+> +	wf->period_length_ns = wfhw->enabled ? MAX7360_PWM_PERIOD_NS : 0;
+> +	wf->duty_offset_ns = 0;
+> +
+> +	if (wfhw->enabled)
+> +		wf->duty_length_ns = DIV_ROUND_UP(wfhw->duty_steps * MAX7360_PWM_PERIOD_NS,
+> +						  MAX7360_PWM_MAX_RES);
+> +	else
+> +		wf->duty_length_ns = 0;
+
+The matching code here is:
+
+	if (wfhw->duty_steps == 255)
+		wf->duty_length_ns = MAX7360_PWM_PERIOD_NS;
+	else
+		wf->duty_length_ns = DIV_ROUND_UP(wfhw->duty_steps * MAX7360_PWM_PERIOD_NS, 256)
+
+This is arguably a strange design, but f_OSC = 128 kHz and the fixed
+period being 2 ms is a strong indication that the divider is 256 and not
+255. If you don't agree to the manual (e.g. because you measured the
+output and saw your formula to be true), please add a code comment about
+that.
+
+When you have measureing equipment at hand it would be great if you
+could verify that the right fromhw implementation isn't:
+
+	wf->duty_length_ns = DIV_ROUND_UP(wfhw->duty_steps * MAX7360_PWM_PERIOD_NS, 256)
+
+even for wfhw->duty_steps == 255. (Which would mean that the PWM cannot
+provide a 100% duty cycle.)
+
+> +static int max7360_pwm_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct pwm_chip *chip;
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	regmap = dev_get_regmap(dev->parent, NULL);
+> +	if (!regmap)
+> +		return dev_err_probe(dev, -ENODEV, "could not get parent regmap\n");
+> +
+> +	/*
+> +	 * This MFD sub-device does not have any associated device tree node:
+> +	 * properties are stored in the device node of the parent (MFD) device
+> +	 * and this same node is used in phandles of client devices.
+> +	 * Reuse this device tree node here, as otherwise the PWM subsystem
+> +	 * would be confused by this topology.
+> +	 */
+> +	device_set_of_node_from_dev(dev, dev->parent);
+> +
+> +	chip = devm_pwmchip_alloc(dev, MAX7360_NUM_PWMS, 0);
+> +	if (IS_ERR(chip))
+> +		return PTR_ERR(chip);
+> +	chip->ops = &max7360_pwm_ops;
+> +
+> +	pwmchip_set_drvdata(chip, regmap);
+> +
+> +	ret = devm_pwmchip_add(dev, chip);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to add PWM chip\n");
+
+Please start error messages with a capital letter.
+
+Best regards
+Uwe
+
+--hzchddujgha2ujw2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhxJL4ACgkQj4D7WH0S
+/k4S6Af+OP9Xr/XyQhfCdozOq2IuZOzTvXZVWWn6sR7p0bRMZDSX1IfwDcvdb63z
+qRUXpBHJaW8grNb+hmwTbRxmHWUCGjhH4VBGUmtfP8fv+QfC35r8ie8Batp8VkOG
+N7+9Z0x5mqd7FLtoJ8TDmxgDzvMzEHyzMdEUmKL/53NxYXpIszBHtB9+5vYszxel
+DaIPmYHyU2JBBAEiSO3LRztZqLOpizDnjhdADLP8ZugJfCTpy5/vymIrc4u3oRxh
+1Mn85JaS8LNhFoVIzBLo35o7yD2eWdrmCRlcsyzExXi7aSJW2o5ZW6ilW4IhovVx
+q+Ox8XFxB7ol5KCtc69MrwYW8HrRAQ==
+=oqCg
+-----END PGP SIGNATURE-----
+
+--hzchddujgha2ujw2--
 
