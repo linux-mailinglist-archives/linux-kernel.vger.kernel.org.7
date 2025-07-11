@@ -1,108 +1,125 @@
-Return-Path: <linux-kernel+bounces-728148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38994B023F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:43:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750B5B023F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDF01173638
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:43:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 876571CC4200
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132F42F8C54;
-	Fri, 11 Jul 2025 18:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652092F7D0B;
+	Fri, 11 Jul 2025 18:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O9/YF3ZZ"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NPZhpJac"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCCB2F8C3A
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934C82F7CE7
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752259111; cv=none; b=m69PW2XU4R8BQyFL/Yrxc+AgKFg78QD6Gs1unhTkRbGlqM7Rycj4quW4dZ3oYvriZIeENNq8QUH2UgiSk//xHz7EVkjG7u9UqZCvXTM9bpruyL9gk6TEKLVfEWbqU/WP62x0nCjhrFx94GE5MbVkrNdIr6d3AQV8DzOTJBWgf7M=
+	t=1752259102; cv=none; b=ss+hfSiHJkUQYG8x7tFGSfz51oqiBfwnsxDvi3TbnWX5k/HGXdPP2XWmnCijS6l1DDzl2Da/peN+WYFBdtxuoY3MDd4s8Q1/QdiloI6KC7bEPyF7CTaJjNtGs2p5nxSnAoYBf8by+P2+/9ZTjEuC+zZbezVO1H0LFP0KFymuonw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752259111; c=relaxed/simple;
-	bh=2bGsXgH3DvixXtGmpviPe2FgjUQnTgNIUrHSZYwu9Ks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PycN1dTIRNulkCjm7lFch0ic4nnCJy4xDJbU0bIZZ0ZaD2NdESue/pLaJU5qY2SKYM19Y7BNjK43xv1Vu8C++IYWBPcM8L896FcfTK5f24Nfg71Aou0Dn2KrBMSvVy15TTMxWmBOfpgpZXdkPFxXhFmoxvFHSHxrue90D2uVuio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O9/YF3ZZ; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-70e5d953c0bso27942657b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:38:29 -0700 (PDT)
+	s=arc-20240116; t=1752259102; c=relaxed/simple;
+	bh=uvayD8eZ81ck5n6ha9xbibj3shBXHK7+L0e+p/CrWS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sddyLhA9fxC9tI0T4SrLcHGFQGXYFaSvS6IN6hWPkKxZIfLOam5AlCdAVfFTpi1XIzmFRdvBNI+Ynvc0d0fmo6hP2sHv7aYYBmLqgzEy/Bz34EBprINDnRflBKrF4ySAaz0aOSkHtWqGxJSjOK75Kr7vJDsev2ckPdRiRSzLnUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NPZhpJac; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-735b2699d5dso1254295a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:38:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752259108; x=1752863908; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2bGsXgH3DvixXtGmpviPe2FgjUQnTgNIUrHSZYwu9Ks=;
-        b=O9/YF3ZZZexjg+p3ZweJ5j7u1Xsj2i5R/RgZ+PWDCDuq3IRosbSsvwnz1mxD2/jGTM
-         pXWcAyWMqqc78om0BHtuAcyKQ7nZe/uF83jXFtKyMP9F8gBVjuQq+2bhxw4wNCVXilFh
-         G9lPQYzzqTO9axpKip7uegN7w6jIt0xQ0rHgN8rmwmX8Ed9kidtRjaM+Pyw10GJRMGUu
-         ph6Mg4adhA4ojkFNAJLh9ftty/+mPbA3xfS2mwqtEaB/7E6485NZkZcldwRjjrB4/pUm
-         WEQLbCSqn+pW7sbM/J3VHzvueo1oYTWEvsH7g+xof35MfRt7blQe4EVIlu960geRun03
-         9RvQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752259098; x=1752863898; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Cp5rlyuG/Vsl7s1cN9TVa6qAclD7pr5ydYSWsYjavKs=;
+        b=NPZhpJacv+Wjhaorv3IPwVvCetG1NqQ9KYjH4QuRYbohA3gc4b9yhG7zdpj+dxbFzB
+         wwrJQ06wHsa0SRDlKRcQfCRQ0O3kKfsibN4TJaC6W0kmifSF25eus+Od+lqCmL/WrmJ+
+         BXKbFJDjeL9cn7Mkf5/F5tELZK6ABwnzmARAefk21v5kAPOWwXOLXSYF7Mjfnv5+1Hx9
+         JdulxnK49klFlJ0gXpy+Y77YqbMfovOCfwUOFENG+uerJ816OkRGf3CZ9TOba59DrfDx
+         wts0zYHv0G9kTSa5tK7fdr0IB4N5r8BvWyNHDJPs7ouv1LPUQZQjMSiY3JeDlHstPQri
+         r8Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752259108; x=1752863908;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2bGsXgH3DvixXtGmpviPe2FgjUQnTgNIUrHSZYwu9Ks=;
-        b=reaDnUeeujSVlhzyCnbfOVl7s6qpyuc8a5ennOh0vTJGtYl/3ebrBzu/Ys2r/uT1WS
-         Cjp6q4CwZYL+3C1dQjuzitAVu3ZNDgH3nrFH8Qh2KX/CH5BpPy0nt1SP/fPoBa38plZh
-         EGOf/3UT+Ep/DWZx49aw0CQ2hz19i2tEbuV1dP5wxkLwlomnLWGS4Hc01XaK80Yt9Un5
-         w0B/k8XIzDwqEdwqszdCgQTyLyWCkPWioTA5BbWyecSBWWxDTbZPaSRHIBBl6viG83Jx
-         TnM/SXvpYIaYhxHPn2CnAhbbo7JO4XWN5UYVUP6K/dLj3/KD3BivdbGflOlsuvIwN+Xz
-         mo4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVKxBLp4Dgo85BiSXEDc8v9V/V1XcqAlwXjSuVYwKrOFRd4TJiOnO/lYV8MlBbRuvrYGARPVUoLQa/6kOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2A4lbj0Zh4aQTtygnzXKGmTQcAldK5fbMZ9VIJd3VacwYVmxi
-	foSMzXc36AwOcdbFeuUJXz9GTQYC8htIt9kKghsahTbJMcDRjcCHTVSq6KM/Qbw7kq1/odYx+wk
-	IsZnLJuVpl41l01WefVRXz9aFxtPmKAJFVcGZSUm+gg==
-X-Gm-Gg: ASbGncu2LaEPmHI0nQhHdJvg2YUDlUx/DHkvQkCCbTZv7vNGh/lpK9EDHVMwQaFtvHq
-	y/UQR423uvUhclQ86brT3HGU4qPJWde6lUvcB6aOQPKjOW8FX325sukppCx4IWgA9RNp8juGRok
-	ufix51IuxxL1DsBIccBNaAWYPE/8UsgSIHsWVh3rQsaqqANwKvmjdYtUfUN9KU47EHdo+3SR+Vp
-	CUVcg4=
-X-Google-Smtp-Source: AGHT+IFzTF2BxLSt9iuKshVeWEKTGIk56Q8yBg21xl/RCRmgu7B4ttCYb5cRb58w2puUDMxo3sDj9HkP4vtfxFSxKMk=
-X-Received: by 2002:a05:690c:6108:b0:70f:83af:7db1 with SMTP id
- 00721157ae682-717d5dc956emr75028347b3.19.1752259108283; Fri, 11 Jul 2025
- 11:38:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752259098; x=1752863898;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cp5rlyuG/Vsl7s1cN9TVa6qAclD7pr5ydYSWsYjavKs=;
+        b=duxI1Tm97ow+dJ7wxRnZrNQVSqYoybzH1/9Bwb2gRX/tkqQibuCvqgCpLNW8ELg3sv
+         Dw4uK43U3eCe5owF6f65Mb1qKg0AyXw+GXArcWoQDrHqjNNoRJIR06O76NGCNh7VxHCP
+         MyTdlsP8s5uZlc/sgRCrLoNo6eCvALAiYApjWxlFDfDZeXrnrvP4g3W6Qx+0vRV1zsEJ
+         SsdSSdyn4AzWXPvkGD/dyT1+b9wtXjvYT1U5ZKFVlfPJO4FDTLyS8nsYtqdJ+9wVheyz
+         zMVZT2GeMoVvMndhPgvsK6TLennJzDNsXIDZ0CJZ1syphrkgHAS1zO5Ham+FBoY6felS
+         CGoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUc+8U5Nc847gj6cj1wcC3nbF+Q7Iw1S147ut9WHLURydpwtBRW3g58V8l6WUn6BQmgqMY6+kpyck1B0qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2SRhdfuBwVohM8Pn/UK99Y1bemxEyQqp4uug0Dq6j16D29JvR
+	W8/qWvAqKS72wO5PFUZ8fB3GOXUfXD8TCTAqxIwtccoSEjTEXj8EpgLJT2Kz/VFir3w=
+X-Gm-Gg: ASbGncudsQaip/Fg8UWWqZwT4nNqzM9P0ZJvpSrq6FMf3w/QqhDcQnSnX0c5qZyKYTK
+	1qUvp0e6Jw3eryL/odN3QCcbHezUtosXYJcSpht7gkLArSfcOCiLyJUxMc3lHEAbhoVQkJz5Eej
+	x9JF0LK2Ur+B3NBjCCB+eKr2/YF/tgjI+XEbz7TbFh9ni1Fp8fy4HAeI52SbuyKyTcq2Jm9wdbT
+	GCyfxrUR5+oKsdeIqT8nDXF15H8PgZSfgDLpWeO6b9XrHioTe/QbR0YXdUpYTvW6iJgCVJGaZpS
+	TwGz3h2AqMlSQ/gXml2rnrpuNyEu0yRXuzZLFQ3tDIO53qXNUe4rQQGPdtwWF97ovx2k84DVabA
+	cxShVrZyBEjznsJ/fL1F4oDZn4BTEjlIU85wMTu5Wa+C4GNSr4dibZK0+1GzLZRyy+8Nr32tLZK
+	M=
+X-Google-Smtp-Source: AGHT+IEx2HrfCirqlgeXyqq1Oi8u5uicmdKq6gt86ygPDIvQhwOI10dt+GHcgiSojjgliobmTZb4NA==
+X-Received: by 2002:a05:6830:d1b:b0:739:fcb4:db17 with SMTP id 46e09a7af769-73cfb1d773dmr3028307a34.15.1752259098518;
+        Fri, 11 Jul 2025 11:38:18 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:4601:15f9:b923:d487? ([2600:8803:e7e4:1d00:4601:15f9:b923:d487])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73cf12b62e8sm649705a34.60.2025.07.11.11.38.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 11:38:18 -0700 (PDT)
+Message-ID: <4d41eafc-46b1-48c7-982a-1a3566f9b423@baylibre.com>
+Date: Fri, 11 Jul 2025 13:38:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710-asoc-gpio-1-v2-0-2233b272a1a6@nxp.com> <20250710-asoc-gpio-1-v2-1-2233b272a1a6@nxp.com>
-In-Reply-To: <20250710-asoc-gpio-1-v2-1-2233b272a1a6@nxp.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 11 Jul 2025 20:38:11 +0200
-X-Gm-Features: Ac12FXxYkcaMNayRRd6fAY4Lr5pyDgoW-GrE4Px5E8aOoHIoAtE2XDd36yJo0YU
-Message-ID: <CACRpkdYOUUn6H3=F8Kqeb65giFkfo+7Zz0ozeG_6Ay725q9NaQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] ASoC: codec: tlv320aic32x4: Drop aic32x4_pdata usage
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Markus Niebel <Markus.Niebel@ew.tq-group.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: temperature: maxim_thermocouple: use
+ IIO_DECLARE_DMA_BUFFER_WITH_TS()
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250711-iio-use-more-iio_declare_buffer_with_ts-3-v1-1-f6dd3363fd85@baylibre.com>
+ <aHE-o5_TvGtUyHoI@smile.fi.intel.com>
+ <b564a925-1d17-43fc-86fb-8db0d845de44@baylibre.com>
+ <aHFO7LhWXOuglaoz@smile.fi.intel.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <aHFO7LhWXOuglaoz@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 2:42=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
+On 7/11/25 12:50 PM, Andy Shevchenko wrote:
+> On Fri, Jul 11, 2025 at 12:04:03PM -0500, David Lechner wrote:
+>> On 7/11/25 11:41 AM, Andy Shevchenko wrote:
+>>> On Fri, Jul 11, 2025 at 10:33:55AM -0500, David Lechner wrote:
+> 
+> ...
+> 
+>>>> +#include <asm/byteorder.h>
+>>>
+>>> Hmm... I see nothing about this change in the commit message.
+>>
+>> It is for __be16. I kind of assumed that would be obvious, but sure,
+>> better to be explicit about it.
+> 
+> Isn't it in types.h?
+> 
 
-> There is no machine is using aic32x4_pdata as platform_data, so
-> remove the dead code.
->
-> Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-> Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+No, only CPU-endian types are in types.h. The actual #define for
+ __be16 is in include/uapi/linux/byteorder/big_endian.h. This is
+included in one driver in staging, otherwise it is only included
+in arch/*/include/uapi/asm/byteorder.h. And asm/byteorder.h is what
+Jonathan used for similar in some of his recent IWYU patches as well,
+so I assume that is the preferred way to do it.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
 
