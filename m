@@ -1,225 +1,129 @@
-Return-Path: <linux-kernel+bounces-727375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1375BB0193C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:03:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20416B01945
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A2D1CA800F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:03:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E958E1C2874F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A9027F01C;
-	Fri, 11 Jul 2025 10:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sDHjN/0H"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA3027D782;
+	Fri, 11 Jul 2025 10:04:35 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3839427F015
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155AC1CD215
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752228156; cv=none; b=bUJNAtLXAePgsYQT8CfvGBSSrihG6LYxzskzHGCSaMg5AvifyvFbBZBaVUlO+UrSmQfI4ZmReFav3JWariD975/ViQEA0AmX6BhO07yYoBP2xo1/dWa22n+fzDDBWVwT6BdZybKPpBvcVzhohpbgeuOZXRTOla1SYjWaPxJGApg=
+	t=1752228275; cv=none; b=bFilRi2YLph+8pCY9ix7VEHtQc3CKxJ4aeyso4p0NRJGbVIUIH2TdFDvZriU2AnzlobULYkcKoPJVrCDar0+RuJE/lpbkHgCU0ydSyipH8wggdg5xYHpwxBD28ZnWofwRbNsoIA0LbjOVTLUVtIC0hB24grFceTAyleyLwLwM64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752228156; c=relaxed/simple;
-	bh=YykaaxSK319lKEMyhZZtukxic2rJfvQhL2mSEvHDGQ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KVicugODj5SmDiBZdq8X7lVORM2BtP8aOIVLBEtIpUnfSB2QHGj+lx4o7MfhiwVnDpSfEF5swEB+7fsMUzCsUPHQkZwRxgosapGh6kiJjAkTrFhdpzRv30vLSbiWDUvx2PYWRGNaGjHnoCgWTDngnJGALyAmT0oWAAwnZSeZa1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sDHjN/0H; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-455b00339c8so2569775e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 03:02:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752228151; x=1752832951; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t3XCYABFMBC1fHadbt0BASB51W8QW6xg/j/nDStR70c=;
-        b=sDHjN/0H436DIaUwFDtKqxFiNEY5bCr4/RD9eW0eJfAbOTfUA3Xnjb3e3FAEg026FZ
-         clfiMsBjvkdeIk9XPMbchUEVY0sKomrzXxTCKkz72v6GEPcUkF3c672BriYsYhaXHgeg
-         Nfdn2DzpLEeavRwG3E7Pf0sM/uVhg+tC8O9eh9owMLMIHiF8lsiWfI69Fs2JB8D0MeA6
-         LvNPsaSDaA+zSyIz0zrh14BjfBDfaeuJp56CfekD8qrdGcDjVPAOrhcbfoFss4BRZppT
-         0HjFXM3j5/Mm8xIGsuP9ljRYyXgP6gf3TrVWGSXIq5R7dsI9eALB/U3aKD38ulzw1uey
-         EKtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752228151; x=1752832951;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t3XCYABFMBC1fHadbt0BASB51W8QW6xg/j/nDStR70c=;
-        b=wiSzgcxOgH15zxCh8RzQdW/vOHrGZ3RnCaSUrdeYEpidTWUjoAtWVgmhbAETJJSWpP
-         opHbdOqfzp6RF80WKiPrVRqv+PgOgnlFUg20/KTQLMfGTeVIEy1bKN+GHTBD0QRb6ss7
-         OZtiodt8F0ujjAIrc/U9FFM3Roh0FVmQSb68KjAPAt7ctNSP9fl5VHMjKmI9sY86P3j0
-         uo8v5clKtGjUawQCDnO3UzhBzXFwX0ZGjPtfqecMnNoY8JyCHT2sIn8oAivP2Nd3kc/Z
-         QMbAR7gDgk8bP+VpN/nlaALETkfU/wIhOTxVsV0UGgbl6sAcaAMjJHcPgCM4hVl0OfM/
-         /uLg==
-X-Forwarded-Encrypted: i=1; AJvYcCULN4rnBF/8XMUiMkdobzndasjJHu2TkCrJdvdy0Om8mhjh0+fpkd8YphXCV2KdQf26e2ybA8jgMAOxfU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4WbR7Ve1pYDP8wQ4CCeIeODkQv3Z8ZNlwEX8qb0iqLkvLzSWo
-	2CghuCBQ9mwJVaRaEMwRgJEYM5yX6804Cn/xBlRvp6ruYSnwCsaHJ/w4j5UsKAmUWbUJJJlE0Y3
-	r0QC3/KafSM2s1HnC7CrlNT9wDB+krL0QPyvCmwhX
-X-Gm-Gg: ASbGnct092MzmULItgCCi6gO1T933vowOuEBC5I91RFfPDr0ZE9R+cYfQEJjx/0JjCb
-	OdextY+oqcUL9NbS4uV8swtnVUC7e/E7JxWZHInKXNWHoqHYkTw8xI4PfbBnA3PsGGeIa01B3FK
-	q2WGf5KoNruG2OBpa5EMqf8Zb6Ny6Z1K2NL5L4rkFLDo3dfN9QNcIEAfF4v8K4QFEFOsWeNSokA
-	RU/W2zFGHuY/iSZekY=
-X-Google-Smtp-Source: AGHT+IGUQIrtfVItwM5tfYsJuZwsz9X67ZfbXHpoiNYzH5FRyT3WE8B4aAME5Tzz2IbykJRHbQAYa9NR2ZyDDp7Ds+g=
-X-Received: by 2002:a05:600c:468d:b0:441:b3eb:570a with SMTP id
- 5b1f17b1804b1-454ec151c5dmr24053175e9.2.1752228151317; Fri, 11 Jul 2025
- 03:02:31 -0700 (PDT)
+	s=arc-20240116; t=1752228275; c=relaxed/simple;
+	bh=bvLqlRYQdA4HPfEvOl7SrdrZwNiykoEAA+WLD/Pep3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZEFA5aoaOzeGMRVkWeMFImLCCXHV/soMGSOaoVXnhtPEXmJGseeLZtTLIeYOS5Q34nyTxZNaTS9vjiSrMy7fbRpHsHs/VWj4nO94QJnRmSUAoHgQlSVnzcoX/T8WAVfS8OOT94muzlIE7BM/u9nLQ55kVIrH+NHYDdhCevFm3Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uaAc9-0002yy-Lf; Fri, 11 Jul 2025 12:04:21 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uaAc8-007u4P-0E;
+	Fri, 11 Jul 2025 12:04:20 +0200
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id B1F5C43C7BD;
+	Fri, 11 Jul 2025 10:04:19 +0000 (UTC)
+Date: Fri, 11 Jul 2025 12:04:19 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Fengguang Wu <fengguang.wu@intel.com>, 
+	Varka Bhadram <varkabhadram@gmail.com>, Dong Aisheng <b29396@freescale.com>, linux-can@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] can: m_can: apply rate-limiting to lost msg in rx
+Message-ID: <20250711-sloppy-righteous-falcon-db09cc-mkl@pengutronix.de>
+References: <20250630-mcan_ratelimit-v2-1-6b7a01341ea9@geanix.com>
+ <20250711-astonishing-tentacled-tench-9fe229-mkl@pengutronix.de>
+ <ku5336aidq5j24dswy5egbuse6a6jpfmf5j7ochenifxzy7he7@lth6f55c4nz4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708-rnull-up-v6-16-v2-0-ab93c0ff429b@kernel.org>
- <20250708-rnull-up-v6-16-v2-5-ab93c0ff429b@kernel.org> <1RnkSkM82_BGKhOM4PKNTPqEQdSFQhpr6UlkVOD7EDhmTJxZ_hlNFhVuiqpUtKKW1uFUFSB7Ow3LJ31nvHUnDQ==@protonmail.internalid>
- <aG5ttHBYW3SQlSv7@google.com> <878qkvhy7p.fsf@kernel.org>
-In-Reply-To: <878qkvhy7p.fsf@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 11 Jul 2025 12:02:19 +0200
-X-Gm-Features: Ac12FXxr-8pN5bwGCwORG6U45Emsz82nZAIPI7oH6OS8Ef91_XrzptO86C551CE
-Message-ID: <CAH5fLgjwmXJP2LcE8UKP1gdqbsTA5QyynLcw5iG93hXeLuOBAA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/14] rust: block: use `NullBorrowFormatter`
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gacxx7ldutkahecw"
+Content-Disposition: inline
+In-Reply-To: <ku5336aidq5j24dswy5egbuse6a6jpfmf5j7ochenifxzy7he7@lth6f55c4nz4>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--gacxx7ldutkahecw
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] can: m_can: apply rate-limiting to lost msg in rx
+MIME-Version: 1.0
 
-On Fri, Jul 11, 2025 at 11:29=E2=80=AFAM Andreas Hindborg <a.hindborg@kerne=
-l.org> wrote:
->
-> "Alice Ryhl" <aliceryhl@google.com> writes:
->
-> > On Tue, Jul 08, 2025 at 09:45:00PM +0200, Andreas Hindborg wrote:
-> >> Use the new `NullBorrowFormatter` to write the name of a `GenDisk` to =
-the
-> >> name buffer. This new formatter automatically adds a trailing null mar=
-ker
-> >> after the written characters, so we don't need to append that at the c=
-all
-> >> site any longer.
-> >>
-> >> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> >> ---
-> >>  rust/kernel/block/mq/gen_disk.rs   | 8 ++++----
-> >>  rust/kernel/block/mq/raw_writer.rs | 1 +
-> >>  rust/kernel/str.rs                 | 7 -------
-> >>  3 files changed, 5 insertions(+), 11 deletions(-)
-> >>
-> >> diff --git a/rust/kernel/block/mq/gen_disk.rs b/rust/kernel/block/mq/g=
-en_disk.rs
-> >> index 679ee1bb21950..e0e42f7028276 100644
-> >> --- a/rust/kernel/block/mq/gen_disk.rs
-> >> +++ b/rust/kernel/block/mq/gen_disk.rs
-> >> @@ -7,9 +7,10 @@
-> >>
-> >>  use crate::{
-> >>      bindings,
-> >> -    block::mq::{raw_writer::RawWriter, Operations, TagSet},
-> >> +    block::mq::{Operations, TagSet},
-> >>      error::{self, from_err_ptr, Result},
-> >>      static_lock_class,
-> >> +    str::NullBorrowFormatter,
-> >>      sync::Arc,
-> >>  };
-> >>  use core::fmt::{self, Write};
-> >> @@ -143,14 +144,13 @@ pub fn build<T: Operations>(
-> >>          // SAFETY: `gendisk` is a valid pointer as we initialized it =
-above
-> >>          unsafe { (*gendisk).fops =3D &TABLE };
-> >>
-> >> -        let mut raw_writer =3D RawWriter::from_array(
-> >> +        let mut writer =3D NullBorrowFormatter::from_array(
-> >>              // SAFETY: `gendisk` points to a valid and initialized in=
-stance. We
-> >>              // have exclusive access, since the disk is not added to =
-the VFS
-> >>              // yet.
-> >>              unsafe { &mut (*gendisk).disk_name },
-> >>          )?;
-> >> -        raw_writer.write_fmt(name)?;
-> >> -        raw_writer.write_char('\0')?;
-> >> +        writer.write_fmt(name)?;
-> >
-> > Although this is nicer than the existing code, I wonder if it should
-> > just be a function rather than a whole NullBorrowFormatter struct? Take
-> > a slice and a fmt::Arguments and write it with a nul-terminator. Do you
-> > need anything more complex than what you have here?
->
-> I don't need anything more complex right now. But I think the
-> `NullTerminatedFormatter` could be useful anyway:
->
->   +/// A mutable reference to a byte buffer where a string can be written=
- into.
->   +///
->   +/// The buffer will be automatically null terminated after the last wr=
-itten character.
->   +///
->   +/// # Invariants
->   +///
->   +/// `buffer` is always null terminated.
->   +pub(crate) struct NullTerminatedFormatter<'a> {
->   +    buffer: &'a mut [u8],
->   +}
->   +
->   +impl<'a> NullTerminatedFormatter<'a> {
->   +    /// Create a new [`Self`] instance.
->   +    pub(crate) fn new(buffer: &'a mut [u8]) -> Option<NullTerminatedFo=
-rmatter<'a>> {
->   +        *(buffer.first_mut()?) =3D 0;
->   +
->   +        // INVARIANT: We null terminated the buffer above.
->   +        Some(Self { buffer })
->   +    }
->   +
->   +    pub(crate) fn from_array<const N: usize>(
->   +        buffer: &'a mut [crate::ffi::c_char; N],
->   +    ) -> Option<NullTerminatedFormatter<'a>> {
->   +        Self::new(buffer)
->   +    }
->   +}
->   +
->   +impl Write for NullTerminatedFormatter<'_> {
->   +    fn write_str(&mut self, s: &str) -> fmt::Result {
->   +        let bytes =3D s.as_bytes();
->   +        let len =3D bytes.len();
->   +
->   +        // We want space for a null terminator. Buffer length is alway=
-s at least 1, so no overflow.
->   +        if len > self.buffer.len() - 1 {
->   +            return Err(fmt::Error);
->   +        }
->   +
->   +        let buffer =3D core::mem::take(&mut self.buffer);
->   +        // We break the null termination invariant for a short while.
->   +        buffer[..len].copy_from_slice(bytes);
->   +        self.buffer =3D &mut buffer[len..];
->   +
->   +        // INVARIANT: We null terminate the buffer.
->   +        self.buffer[0] =3D 0;
->   +
->   +        Ok(())
->   +    }
->   +}
->   +
->
-> If you insist, I can write something like
->
->   fn format_to_buffer(buffer: &mut [u8], args: fmt::Arguments) -> fmt::Re=
-sult
->
-> although I am not sure I see the point of this change.
+On 11.07.2025 09:58:53, Sean Nyekjaer wrote:
+> > What about replacing the netdev_err() by netdev_dbg()?
+> >=20
+> > --- a/drivers/net/can/m_can/m_can.c
+> > +++ b/drivers/net/can/m_can/m_can.c
+> > @@ -665,7 +665,7 @@ static int m_can_handle_lost_msg(struct net_device =
+*dev)
+> >         struct can_frame *frame;
+> >         u32 timestamp =3D 0;
+> >=20
+> > -       netdev_err(dev, "msg lost in rxf0\n");
+> > +       netdev_dbg(dev, "msg lost in rxf0\n");
+> >=20
+> >         stats->rx_errors++;
+> >         stats->rx_over_errors++;
+> >=20
+>=20
+> Yeah that will do. V3 or?
 
-I don't mind. I just thought it was simpler since you only need to
-support a single write instead of having to support multiple writes.
+Yes, please.
 
-Alice
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--gacxx7ldutkahecw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmhw4aAACgkQDHRl3/mQ
+kZyQogf/U0p+sFC7xemKEG/fMP5ySKQTGKI1ZAec2lh0dnVmEIq0x/HQw6WGDlSa
+G872Tf59DPZSFynCSkIv9c7ivjBpLjGjNfwPpbZHDKirIvL3cxMkdy+gzf30vG68
+7IHa0hO0bZFY9omZqmCqRfstdAzDUkrTdw0m+G6hVbMv3tL6DTZz4AP5YLN+nAyr
++qCN5JBtqYIP4KcDYwUd2SQg79Yt/gMe4Tyrbjt0jPnTVSGIWr+fzgKoVNOJu+3K
+89Jm+SaeXtSXzEgK5NmflyyeRbPnpOhjaxKIzPdVPIawJ0R5BPni/5dPiCcgTtCo
+N4oihy/OYjg2DeCvpFt5CnvAK49ZMQ==
+=Dmlr
+-----END PGP SIGNATURE-----
+
+--gacxx7ldutkahecw--
 
