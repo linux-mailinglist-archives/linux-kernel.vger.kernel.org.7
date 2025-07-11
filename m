@@ -1,124 +1,103 @@
-Return-Path: <linux-kernel+bounces-727536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913E0B01B7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 726A6B01B86
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D36A51CA577D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:07:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ED071CA2D2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37C728F50F;
-	Fri, 11 Jul 2025 12:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D6D290D94;
+	Fri, 11 Jul 2025 12:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="QDF36VfX"
-Received: from nbd.name (nbd.name [46.4.11.11])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="NEvaFiRp"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C930E1F4C8C;
-	Fri, 11 Jul 2025 12:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A871F4C8C;
+	Fri, 11 Jul 2025 12:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752235639; cv=none; b=cVpuZXq1qLI+iv4o9rQw+oEqsmTOMivQJUaEL8vi3I2I0xqPZj/Qhs3Z2VZv8yrNKqfSBcKlZtmlq4dmiZRIaHBlRXCxNHMVwP/CYTGtBLh4zLT5HxvMjP/Uh68OC7kBUlCgJHpYtfvuYHnLIqhBD3GcDxuoEFHiuyWJ2wfPpKE=
+	t=1752235776; cv=none; b=RtfO3a3/N2n6FZfyFNftQJdSzh5SyoSWI7G7H/uPu+kIF1frLd/qugti8vh6rKPVOqSNKUVGI/SP0AbQMxkFensNgWuQWJPMAG/sStkG0fxH1Q91kpj1amCKT+AOe5yYzTY0rSJZRHB2rbK9dIHQoPlRt605ljXeaFhlGKk6TPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752235639; c=relaxed/simple;
-	bh=AerIy58F2mKyZGTVixF+HdoXIruvmQT/irkGVWnAmBQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pMMbhB9ibE5CrPKTqYp9fbDzfyhiXrYF/dny/lsPERe1oA+9iQtHaATug0cNZumZ4dxt8jVCPpCfOZrOYAmvze3TXqJLct5qAOxsROYpRDUgVLcw7mzxZAdu0vh0dPK2wMQHiTb798zXO1kMuvTR5VPpXoO6l9ki1pXHN/tvaCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=QDF36VfX; arc=none smtp.client-ip=46.4.11.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=JAPLs4JTtm6yZPE6BGHezf271ecxd012iwqsakCpiu0=; b=QDF36VfXLn68siDmzoKGYjRbwC
-	aprINtr/fDqge/PGDeR+Tbq1cZytAN5BC9slNXBAU2a0VzVf8+oWHmhiOJcyWHsoNhJcJ5nFQEMcp
-	YMpZkjqAl7QcU5QGOPXTFD2/2w+nFMZxTI7TbQoiDa5h5Ekh6YbrCWYKCJJOe6taUHd8=;
-Received: from p5b2062ed.dip0.t-ipconnect.de ([91.32.98.237] helo=nf.local)
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <nbd@nbd.name>)
-	id 1uaCWo-00A2pQ-0W;
-	Fri, 11 Jul 2025 14:06:58 +0200
-Message-ID: <2c84bde8-5d5a-467f-a7ac-791207e7903a@nbd.name>
-Date: Fri, 11 Jul 2025 14:06:57 +0200
+	s=arc-20240116; t=1752235776; c=relaxed/simple;
+	bh=OH6igIH0VnLlQeaehu/2rr7T/sYdx6rQbMfXPqkOURw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gklSDP+ByZcFhN14MUN7sNGr2Y0xzpYY79ew6K+HRO9wdL2fnfG3Qa6/Fo0ucnPfQIWYAP3f5b66mLiD6kvO/PKxlSXjuyhsHagYKbv81etsBirFh9y4REujehmmA7Vy+sNun/TrlzQY3uLbchEVfQjx6XCFYJNhylfM6Y7N8s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=NEvaFiRp; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1752235771;
+	bh=zLIhDjORDALPL1f9cxqC+vMuKXG/jVF8rfdI3FxxNNk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=NEvaFiRpEbrBCYqyx/55a4noUdEDJVZgX6jKZygUaSS9qBm0Rzs0AoKiD+FmAVBKn
+	 tm8K2a5is6GtAJNXug/VnJHzDvo8CAuMk8Y6soNjIhlpphMwyPa96KKPZo3HrDkq3I
+	 3rykmVxIqQNNSERNdJcQ1XD1YSfZ7bZJWfqmh/To=
+Received: from [IPv6:110::1f] (unknown [IPv6:2409:874d:200:3037::3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id B869C65F62;
+	Fri, 11 Jul 2025 08:09:22 -0400 (EDT)
+Message-ID: <7a50fd8af9d21aade901fe4d32e14e698378c82f.camel@xry111.site>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+From: Xi Ruoyao <xry111@xry111.site>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Christian Brauner <brauner@kernel.org>, Frederic Weisbecker	
+ <frederic@kernel.org>, Valentin Schneider <vschneid@redhat.com>, Alexander
+ Viro	 <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Sebastian Andrzej
+ Siewior	 <bigeasy@linutronix.de>, John Ogness <john.ogness@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, 	linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-rt-devel@lists.linux.dev,
+ linux-rt-users@vger.kernel.org, Joe Damato	 <jdamato@fastly.com>, Martin
+ Karsten <mkarsten@uwaterloo.ca>, Jens Axboe	 <axboe@kernel.dk>
+Date: Fri, 11 Jul 2025 20:09:12 +0800
+In-Reply-To: <20250711095830.048P551B@linutronix.de>
+References: <20250710034805.4FtG7AHC@linutronix.de>
+	 <20250710040607.GdzUE7A0@linutronix.de>
+	 <6f99476daa23858dc0536ca182038c8e80be53a2.camel@xry111.site>
+	 <20250710062127.QnaeZ8c7@linutronix.de>
+	 <d14bcceddd9f59a72ef54afced204815e9dd092e.camel@xry111.site>
+	 <20250710083236.V8WA6EFF@linutronix.de>
+	 <c720efb6a806e0ffa48e35d016e513943d15e7c0.camel@xry111.site>
+	 <20250711050217.OMtx7Cz6@linutronix.de>
+	 <20250711-ermangelung-darmentleerung-394cebde2708@brauner>
+	 <6856a981f0505233726af0301a1fb1331acdce1c.camel@xry111.site>
+	 <20250711095830.048P551B@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: fix segmentation after TCP/UDP fraglist GRO
-Content-Language: en-US
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>,
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Willem de Bruijn <willemb@google.com>,
- Richard Gobert <richardbgobert@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20250705150622.10699-1-nbd@nbd.name>
- <686a7e07728fc_3aa654294f9@willemb.c.googlers.com.notmuch>
-From: Felix Fietkau <nbd@nbd.name>
-Autocrypt: addr=nbd@nbd.name; keydata=
- xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
- ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
- Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
- AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
- vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
- wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
- TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
- l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
- dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
- HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
- VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
- CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
- VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
- Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
- DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
- wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
- f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
- aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
- FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
- TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
- GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
- cL98efvrjdstUfTCP2pfetyN
-In-Reply-To: <686a7e07728fc_3aa654294f9@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 06.07.25 15:45, Willem de Bruijn wrote:
-> Felix Fietkau wrote:
->> Since "net: gro: use cb instead of skb->network_header", the skb network
->> header is no longer set in the GRO path.
->> This breaks fraglist segmentation, which relies on ip_hdr()/tcp_hdr()
-> 
-> Only ip_hdr is in scope.
-> 
-> Reviewing TCP and UDP GSO, tcp_hdr/transport header is used also
-> outside segment list. Non segment list GSO also uses ip_hdr in case
-> pseudo checksum needs to be set.
-Will change that in v2, thanks.
-> The GSO code is called with skb->data at the relevant header, so L4
-> helpers are not strictly needed. The main issue is that data will be
-> at the L4 header, and some GSO code also needs to see the IP header
-> (e.g., for aforementioned pseudo checksum calculation).
-> 
->> to check for address/port changes.
-> 
-> If in GSO, then the headers are probably more correctly set at the end
-> of GRO, in gro_complete.
+On Fri, 2025-07-11 at 11:58 +0200, Nam Cao wrote:
+> On Fri, Jul 11, 2025 at 05:48:56PM +0800, Xi Ruoyao wrote:
+> > Sadly, still no luck.
+>=20
+> That's unfortunate.
+>=20
+> I'm still unable to reproduce the issue, so all I can do is staring at th=
+e
+> code and guessing. But I'm out of idea for now.
 
-Just to clarify, in inet/ipv6_gro_complete you want me to iterate over 
-all fragment skbs, calculate the header offset based on the first skb, 
-and set it?
+Same as I.  I tried to reproduce in a VM running Fedora Rawhide but
+failed.
 
-- Felix
+> This one is going to be hard to figure out..
+
+And I'm afraid this may be a bug in my userspace... Then I'd feel guilty
+if this is reverted because of an invalid bug report from I :(.
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
 
