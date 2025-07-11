@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-727281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4F3B017AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6782B017B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6619B171085
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:28:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DFC717838B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B681A27A127;
-	Fri, 11 Jul 2025 09:28:50 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1E727A12D;
+	Fri, 11 Jul 2025 09:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmQ+EmKZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5561C20C010;
-	Fri, 11 Jul 2025 09:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D881B279DAB;
+	Fri, 11 Jul 2025 09:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752226130; cv=none; b=aJG8St9Ss8fJkGCqEh0uiJ/cStfdJbxFKyEQTBWW+izQsrGQKBPKmroAhP/Ot7dKlJrHRc5zRpg+TeS/TTS1XUOujlRD+IRsCLJqOpEcYbg+RlouMFVcxKKFG5iXf3tNNoRWDvnrb8R3+J/K7vqjdJyus/WId58y9slE9Uw/WYc=
+	t=1752226155; cv=none; b=tKngpLHTA3LiYFJt/dofcFj2CvKu/g/GDwbFl5EynQ48f1LegKFCBmqhPV7+ND20x2blPF3Rqfq/kEkZW2acl5IcO9VtOAHyL6j7uOpSwhxFlwLUC+cYvsrqt9NG+FrweVPo00GB51nK/8qRcsxzaunBFRkL5OFyFT9a9B/xlEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752226130; c=relaxed/simple;
-	bh=rSprIdGWjTHC6TnfIZNhTFnPYKw6H5+iYgR4s9jbKWo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oNhJyHLlllY0Whp7BDg+C77dlY7bLn8LckC8GEI4qam53wI1L8aIQhshKcYDAxmJuaeuBY+chYMG+D8UaCpaFu7JpocG0PdmlQ17nkQWxm7HTo95CsUJSLCHiAdwpz6BhkkbWziMg4ch2wqOlFEdah72JC1TKf0NnGJaVjVmKSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bdmXS37K6z6L4yR;
-	Fri, 11 Jul 2025 17:25:28 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2177D14020C;
-	Fri, 11 Jul 2025 17:28:46 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Jul
- 2025 11:28:45 +0200
-Date: Fri, 11 Jul 2025 10:28:43 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Alireza Sanaee <alireza.sanaee@huawei.com>
-CC: <krzk@kernel.org>, <robh@kernel.org>, <coresight@lists.linaro.org>,
-	<devicetree@vger.kernel.org>, <dianders@chromium.org>,
-	<james.clark@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
-	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <mike.leach@linaro.org>,
-	<ruanjinjie@huawei.com>, <saravanak@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>, Suzuki K Poulose
-	<suzuki.poulose@arm.com>
-Subject: Re: [PATCH v2 3/5] coresight: cti: Use of_cpu_phandle_to_id for
- grabbing CPU id
-Message-ID: <20250711102843.000003e6@huawei.com>
-In-Reply-To: <20250708151502.561-4-alireza.sanaee@huawei.com>
-References: <20250708151502.561-1-alireza.sanaee@huawei.com>
-	<20250708151502.561-4-alireza.sanaee@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1752226155; c=relaxed/simple;
+	bh=iHZmzvg1Z0/oUDVf3XnhzHYjBdXj4X/zANqYMwOOwVY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N1et6PdPsIboAOsw+8OgApQEYbN4s1TjKJUC7aaYHI6w1KrHMgon54wRYGb/3xQsr01thuJfJ2vbLuXiTWFcMeNf90eFvhzte/xoFkDOjhVz42oYbzmUSz4yPvTNC2zfgSEXTLHJx5svzgmG5Zbap8bJ4oTQUK2Vu/oktoSW7Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmQ+EmKZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70901C4AF09;
+	Fri, 11 Jul 2025 09:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752226155;
+	bh=iHZmzvg1Z0/oUDVf3XnhzHYjBdXj4X/zANqYMwOOwVY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AmQ+EmKZ1CODy6GzLrc59sIDMGTEHOQOG/x0L8Nvv5ntyCOJluBRy+it6EBQTyZ17
+	 KgXewm3SlJ2afz53g+03Q0APObEz5AkRN8tNJ30S2O5x0FgEg2CC/BXz7rrLU1BvWx
+	 +u+yQY6S3Ix16J+mhEV3XlzSzQWfXLI9t2faqtr4kUTwMThkfBEUgnP7jM0VVEoHon
+	 15WiUVymJ2T9tADURQCynOYWg7+8LS4MWxh00TCO8tGPQJA2K2YovGEX7N0ihKizx4
+	 Xa1nzyrrBf+UVdzJ6xjov1KagVqaRsWT3GrA/oRgWArNwDeXyqLfIxPvZcB4zW0bAu
+	 i1dOwELPpOAkA==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-611e455116aso1092550eaf.1;
+        Fri, 11 Jul 2025 02:29:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVTOudG4nzv6OBay36G3kJ6QJUm9BIDCv80AX2uKOGXFKEGAUxGlZXnrFkg9g7giEvSledciqRevpf+Kks=@vger.kernel.org, AJvYcCWHr3N3ky7mbuje/ODNYvD9fiEqzT5Jgrsj/sMnw35BDp5OSR9IsTx1NDmuiLmbYbIQX4rAbQddkQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQG7nsCOkOtdyhhXKL9j+/DU5iZdD17zVLm4PHpNUMgUaA7Kra
+	KDl8uXAguyG8MdZLTevCDo+vDtNmfcLg4VU71aEDm6wJKQ/T65CqExkePKXJLnVJbIJn2RCyI7R
+	+1QKDbGnGHpmuszvfwtdFoUnNPDZB8hU=
+X-Google-Smtp-Source: AGHT+IHah/1nYPPCS226AsETgCQiVMx9hN5wz3RtNvupDeronRgy3EyjIlni8u4klecH0TlVtPdr1MRtZLHO16vIPZQ=
+X-Received: by 2002:a05:6820:20c:b0:611:b24d:c27b with SMTP id
+ 006d021491bc7-613e5ff6f4fmr1516730eaf.7.1752226154677; Fri, 11 Jul 2025
+ 02:29:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <5046396.31r3eYUQgx@rjwysocki.net> <2396879.ElGaqSPkdT@rjwysocki.net>
+ <aHCsUAhqRz5zJH2t@MiWiFi-R3L-srv>
+In-Reply-To: <aHCsUAhqRz5zJH2t@MiWiFi-R3L-srv>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 11 Jul 2025 11:29:03 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gMF_HS3pXDdXSLz9V3iZr6XvAgCZmu43Dx=oJjBJThsg@mail.gmail.com>
+X-Gm-Features: Ac12FXyKFz98IUnh2R9pHZzFjoCI8hWGXwPMgzheZQYu2jad9b8REvYXq3idXSg
+Message-ID: <CAJZ5v0gMF_HS3pXDdXSLz9V3iZr6XvAgCZmu43Dx=oJjBJThsg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] kexec_core: Fix error code path in the KEXEC_JUMP flow
+To: Baoquan He <bhe@redhat.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, kexec@lists.infradead.org, 
+	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Mario Limonciello <mario.limonciello@amd.com>, 
+	David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 8 Jul 2025 16:15:00 +0100
-Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
+On Fri, Jul 11, 2025 at 8:16=E2=80=AFAM Baoquan He <bhe@redhat.com> wrote:
+>
+> On 07/10/25 at 03:10pm, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > If dpm_suspend_start() fails, dpm_resume_end() must be called to
+> > recover devices whose suspend callbacks have been called, but this
+> > does not happen in the KEXEC_JUMP flow's error path due to a confused
+> > goto target label.
+> >
+> > Address this by using the correct target label in the goto statement in
+> > question.
+>
+> Sounds very reasonable, thanks for the fix.
+>
+> Acked-by: Baoquan He <bhe@redhat.com>
 
-> Use the newly created API to grab CPU id.
-> 
-> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
-> ---
->  .../hwtracing/coresight/coresight-cti-platform.c   | 14 +-------------
->  1 file changed, 1 insertion(+), 13 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-cti-platform.c b/drivers/hwtracing/coresight/coresight-cti-platform.c
-> index d0ae10bf6128..e1dc559d54aa 100644
-> --- a/drivers/hwtracing/coresight/coresight-cti-platform.c
-> +++ b/drivers/hwtracing/coresight/coresight-cti-platform.c
-> @@ -41,20 +41,8 @@
->   */
->  static int of_cti_get_cpu_at_node(const struct device_node *node)
->  {
-> -	int cpu;
-> -	struct device_node *dn;
-> +	int cpu = of_cpu_phandle_to_id(node, NULL, 0);
+Thanks!
 
-Could do a single line - kind of down to coresight maintainers preference though!
+I've queued it up for 6.17 along with the [2/2].
 
-	return (of_cpu_phandle_to_id(node, NULL, 0) < 0) ? -1; cpu;
-
-+CC Suzuki (you got the two reviewers in the +CC but not the maintainer)
-
-
->  
-> -	if (node == NULL)
-> -		return -1;
-> -
-> -	dn = of_parse_phandle(node, "cpu", 0);
-> -	/* CTI affinity defaults to no cpu */
-> -	if (!dn)
-> -		return -1;
-> -	cpu = of_cpu_node_to_id(dn);
-> -	of_node_put(dn);
-> -
-> -	/* No Affinity  if no cpu nodes are found */
->  	return (cpu < 0) ? -1 : cpu;
->  }
->  
-
+> >
+> > Fixes: 2965faa5e03d ("kexec: split kexec_load syscall from kexec core c=
+ode")
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  kernel/kexec_core.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > --- a/kernel/kexec_core.c
+> > +++ b/kernel/kexec_core.c
+> > @@ -1080,7 +1080,7 @@
+> >               console_suspend_all();
+> >               error =3D dpm_suspend_start(PMSG_FREEZE);
+> >               if (error)
+> > -                     goto Resume_console;
+> > +                     goto Resume_devices;
+> >               /*
+> >                * dpm_suspend_end() must be called after dpm_suspend_sta=
+rt()
+> >                * to complete the transition, like in the hibernation fl=
+ows
+> >
+> >
+> >
+>
 
