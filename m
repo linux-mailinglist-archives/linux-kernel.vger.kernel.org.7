@@ -1,164 +1,110 @@
-Return-Path: <linux-kernel+bounces-728272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F327B025AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:19:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228E5B025B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 22:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 302743BD579
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:19:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79201584981
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE601F4CA1;
-	Fri, 11 Jul 2025 20:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64331F4181;
+	Fri, 11 Jul 2025 20:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ucH3mN91"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a2H1odTE"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F97D19CC11
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D591E3DED
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 20:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752265182; cv=none; b=owxCmjkesSgNGpFUNfY5aGBtcJBQyuAvp0riA/t/85GBI8bUZgoGlhvoU6CudzUgNEmbvZrMDz7zN0wsx3Q5t1/uEH1FpbW2In1BYwQZoCAi/pXGx5bswKZfUzkK3NW9DBF5wnadNkl+RWuKjS6PT6JvzzytPcXPSzLU9FaU+9k=
+	t=1752265250; cv=none; b=qQcku6IeA4Ye2L4vTDDzyVv8fQg8D+/biw92xV1S3+vH+a5vMB1cCNQ1gFXZvYmL6RULa2iR7ZCEX9ePKbzhYgQsv0Fl2q7HYL5NRZLcJOrCSyb274v56E6Kg44xY6XSrpJ9TjZWwxHSIYwItQ4v2Zg11jTDEc/9LJwhuMG+wug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752265182; c=relaxed/simple;
-	bh=pnA59S//kLucI33SLPLNMt/VAXs6rqybvR8MkQ5JGmI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tcHFvUGUBJ3jlbVegwqVPfJAu7/Z1eO6ajDP1S1c2C22jTm6hrUqWofF9dbPARpzgumAN284tPLUnf8imhSK6WSUwxC5A7V9Q1356WJP+SAcsPdZF9ReT24EL9f/rUvI24GkZlU+VkLfNtkP90PzMIcgdYxon9Tu6cM5Kz8l+mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ucH3mN91; arc=none smtp.client-ip=209.85.216.73
+	s=arc-20240116; t=1752265250; c=relaxed/simple;
+	bh=E9M5LVZriBjPPfBospdk5yU2oDbUHaY85GbkjDHpjMI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=C2QlPQXS/6dKgWwAD02ngZmutnwQ4LdpDYVbgmNW2ckmHCoYsVhPpHxUnjoSadn2iKAl2YTy4MzR4ShTPiKk3UoPiUDd6PjjPW8zQDVWvMTABreJ94fY3oZSsNXNrdcAHS7Dc45l0EThIdeo7Y5d8OndcKe9BCF+uLShIJ5S+og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a2H1odTE; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3141f9ce4e2so3827577a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:19:41 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-748b4d5c045so2404622b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:20:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752265181; x=1752869981; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2JPIsTcGu3PzRjBRBPaSZ6h7JDJNM68m0YAet5vg2Ms=;
-        b=ucH3mN917I/pTJAHu+SGGpoeSy0RA4UuI56ekXWpKZJLdT5JQ03hlCu8Gba/1Oassd
-         Azmkcc/CsoWhG+zcgy43HrtfIJ+HnYB2DB+kc9dYbexdyWtm4NGTGjcCoXJBdAxVQLgX
-         YfsmgzG3BeyDQ24engxrFRFaQbBzA6Kz1ZTrllcM6MMaWTfUSDjRWckDSRzITdTjfVLl
-         dFPzUSdO0tMtihOcWDJ/GaMkbCxBL/0Puy5y2AWZ+0SX7KOtUuusmmwbd+aK5piZj9o3
-         eAPhh1CXRn3OCLI5O/G4AF29Y2QncIeAMazRcTmnhhxBZhdr4iAleKln8vybaZI/5/R+
-         IVQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752265181; x=1752869981;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+        d=google.com; s=20230601; t=1752265239; x=1752870039; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=2JPIsTcGu3PzRjBRBPaSZ6h7JDJNM68m0YAet5vg2Ms=;
-        b=HgpwXHuDH9BD1YH8jVBtiDrpoQiu6tNYQoXCR4D9yTquzbItrsiJJCI+49ScmIrj9r
-         gEnBBcnMmePrIIvy0x92vc4moFnjmGJXIkbvG9EV5EpVuGF1eAIrqX45n0l7/I3xNSDQ
-         5abZQD9c8pxb0lPA0q9ytTaPvMG+dw+NKavfHv2weJZ3jTW5rLQmFY1J10rpFagoJ7sb
-         jHQ+kz7cggKsNmfRyCroOnL65khQovfInu3fXsgUSvPCMVII4I6AEzt3XG48lgkYtbqN
-         bySXlK0BpAGtThoz3RK2unm0T+w1wcYkjekKEv5iHuAEiJe9tqQ1+rCdDnpaXGN9Itor
-         RFxw==
-X-Forwarded-Encrypted: i=1; AJvYcCW05i7n1mcjbpswac43/hqbgWCqRB0wFHSEH3iqX8uJXffT0I30Teei4tyQu3XpdCY79uNl1QI+83rhPkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5O6gByT/9HRFJ9wi5jhGtlaLt1eg+dLw0UbzjV5jA1o/ejBAb
-	I8qms7thVhPtMfMPjePboumzDrLU/ZNkdf5zPEYjTSsfT7FYUyvMuZel52DpVtt2J5CJJFZir/a
-	u8HzEkQ==
-X-Google-Smtp-Source: AGHT+IE6jEDwuGJPzaPjMy3zMp4wWJzRDJZe6xL+mp6zIDzjwiRhlPL5m4qyqH9zku8KZY/dtiqyIvbC7RA=
-X-Received: from pjbnd12.prod.google.com ([2002:a17:90b:4ccc:b0:311:c20d:676d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5105:b0:311:f2f6:44ff
- with SMTP id 98e67ed59e1d1-31c4f573304mr6033735a91.17.1752265180689; Fri, 11
- Jul 2025 13:19:40 -0700 (PDT)
-Date: Fri, 11 Jul 2025 13:19:39 -0700
-In-Reply-To: <20250711194952.ppzljx7sb6ouiwix@amd.com>
+        bh=b7qTPqSZKgznYOOrcEeVLOwnEg+Rvzuj1rjCF+e4+H0=;
+        b=a2H1odTEm3H7E4JOJ7SNLvOO6hUpbmL4Nq+6VZZUMu6LSUbG/fO4LTlGYqank6aV8n
+         QO23KzOaFFH5sR681xYrZ/Aintb0zVMvlabewWcpLvCaSvIJIzgZfEi98fnSw94WMqB9
+         TbZdFEtLABFA956dCpXos/MT20flo6YC3IMyOEafsiPMTwFH5RdT2+DLQ6XaYE11eCsn
+         BvKkODpPUV89+0U+ND5Ewu3DaQznGBbH/iLcXr2fVSoxg53qX3X0v5LJXCBMctEyjr+d
+         Y+g/eDZsFFEwlBga6yKBQODUvUQ7gqxEqMrkO6cc2RVivELwsMdNCc4Sl0UxzVGq1cwE
+         D01A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752265239; x=1752870039;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b7qTPqSZKgznYOOrcEeVLOwnEg+Rvzuj1rjCF+e4+H0=;
+        b=Fdkt8OLYSscMT7d7jlTa5VepcqxPTVVmMqidhaC2orGOZQc79CUf+CqAv9QmidvINJ
+         vjj1CcvT6/SJhKhyt9YvgCUVwVkTYw4Zr+P+3zipDVCgICQNB9MyUBefHSTGs8oX612Y
+         11STaEXztcIQKzL8jorTCPg/UOV518pEFXT2HWM3RZiimGP10UT0hlTWCyxsr3cezgUO
+         IULDyXmyR+ff3/uO3FFOM/+ccYuzobMs+5LS1XJ44FLN3dBte6XLjQq/zUZF8kWpDOCJ
+         WY+Kf1F6a7Jxlnqp038jtMIO2hoa2gv9uCkvUIPST8IjPKotNowur8sxRIMxzx/mlAei
+         wSlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvUJBYuRqYLInXKybG52MNYWxEaqtbiIHtFKWnZyZGrkDuWH+VIM78hG+DudeS14oywUxczGzx8O+liCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywtt+fncfWAmZXwMG0lOB9uUP4WtFUz5aZtNeeqSXibdx+MO5JY
+	RcDtuI734LeA4mv2vcYMAc1Es8/nc6B+VJg7Drz2QC10KslhzFmuvbFIktbzLfGmOrw1+7id36M
+	RGPkU8w==
+X-Google-Smtp-Source: AGHT+IFIqrP7jK/cjDCR7SM8TKcIRk17etqtWNnbv4GApH3TZfaWemB95AGSiBbYaq080RzIWmJYIBy0KGM=
+X-Received: from pge19.prod.google.com ([2002:a05:6a02:2d13:b0:b2f:dfa3:cb81])
+ (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:c6cd:b0:21f:ff2a:af83
+ with SMTP id adf61e73a8af0-231351481b7mr7503449637.15.1752265239088; Fri, 11
+ Jul 2025 13:20:39 -0700 (PDT)
+Date: Fri, 11 Jul 2025 20:20:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250703062641.3247-1-yan.y.zhao@intel.com> <20250709232103.zwmufocd3l7sqk7y@amd.com>
- <aG_pLUlHdYIZ2luh@google.com> <aHCUyKJ4I4BQnfFP@yzhao56-desk>
- <20250711151719.goee7eqti4xyhsqr@amd.com> <aHEwT4X0RcfZzHlt@google.com>
- <20250711163440.kwjebnzd7zeb4bxt@amd.com> <CAGtprH9dCCxK=GwVZTUKCeERQGbYD78-t4xDzQprmwtGxDoZXw@mail.gmail.com>
- <20250711194952.ppzljx7sb6ouiwix@amd.com>
-Message-ID: <aHFx2wtHcfimVKW_@google.com>
-Subject: Re: [RFC PATCH] KVM: TDX: Decouple TDX init mem region from kvm_gmem_populate()
-From: Sean Christopherson <seanjc@google.com>
-To: Michael Roth <michael.roth@amd.com>
-Cc: Vishal Annapurve <vannapurve@google.com>, Yan Zhao <yan.y.zhao@intel.com>, pbonzini@redhat.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com, 
-	kai.huang@intel.com, adrian.hunter@intel.com, reinette.chatre@intel.com, 
-	xiaoyao.li@intel.com, tony.lindgren@intel.com, binbin.wu@linux.intel.com, 
-	dmatlack@google.com, isaku.yamahata@intel.com, ira.weiny@intel.com, 
-	david@redhat.com, ackerleytng@google.com, tabba@google.com, 
-	chao.p.peng@intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250711202033.2201305-1-jthies@google.com>
+Subject: [PATCH v1] usb: typec: ucsi: Add poll_cci operation to cros_ec_ucsi
+From: Jameson Thies <jthies@google.com>
+To: abhishekpandit@chromium.org, ukaszb@chromium.org, bleung@chromium.org, 
+	heikki.krogerus@linux.intel.com
+Cc: akuchynski@chromium.org, mattedavis@google.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Jameson Thies <jthies@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 11, 2025, Michael Roth wrote:
-> On Fri, Jul 11, 2025 at 11:38:10AM -0700, Vishal Annapurve wrote:
-> > On Fri, Jul 11, 2025 at 9:37=E2=80=AFAM Michael Roth <michael.roth@amd.=
-com> wrote:
-> > >
-> > > >
-> > > > static long __kvm_gmem_populate(struct kvm *kvm, struct kvm_memory_=
-slot *slot,
-> > > >                               struct file *file, gfn_t gfn, void __=
-user *src,
-> > > >                               kvm_gmem_populate_cb post_populate, v=
-oid *opaque)
-> > > > {
-> > > >       pgoff_t index =3D kvm_gmem_get_index(slot, gfn);
-> > > >       struct page *src_page =3D NULL;
-> > > >       bool is_prepared =3D false;
-> > > >       struct folio *folio;
-> > > >       int ret, max_order;
-> > > >       kvm_pfn_t pfn;
-> > > >
-> > > >       if (src) {
-> > > >               ret =3D get_user_pages((unsigned long)src, 1, 0, &src=
-_page);
-> > > >               if (ret < 0)
-> > > >                       return ret;
-> > > >               if (ret !=3D 1)
-> > > >                       return -ENOMEM;
-> > > >       }
-> > >
-> > > One tricky part here is that the uAPI currently expects the pages to
-> > > have the private attribute set prior to calling kvm_gmem_populate(),
-> > > which gets enforced below.
-> > >
-> > > For in-place conversion: the idea is that userspace will convert
-> > > private->shared to update in-place, then immediately convert back
-> > > shared->private; so that approach would remain compatible with above
-> > > behavior. But if we pass a 'src' parameter to kvm_gmem_populate(),
-> > > and do a GUP or copy_from_user() on it at any point, regardless if
-> > > it is is outside of filemap_invalidate_lock(), then
-> > > kvm_gmem_fault_shared() will return -EACCES.
-> >=20
-> > I think that's a fine way to fail the initial memory population, this
-> > simply means userspace didn't pass the right source address. Why do we
-> > have to work around this error? Userspace should simply pass the
-> > source buffer that is accessible to the host or pass null to indicate
-> > that the target gfn already has the needed contents.
-> >=20
-> > That is, userspace can still bring a separate source buffer even with
-> > in-place conversion available.
+cros_ec_ucsi fails to allocate a UCSI instance in it's probe function
+because it does not define all operations checked by ucsi_create.
+Update cros_ec_ucsi operations to use the same function for read_cci
+and poll_cci.
 
-Yeah.  It might be superfluous to a certain extent, and it should be straig=
-ht up
-disallowed with PRESERVE, but I don't like the idea of taking a hard depend=
-ency
-on src being NULL.
+Signed-off-by: Jameson Thies <jthies@google.com>
+---
+ drivers/usb/typec/ucsi/cros_ec_ucsi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> I thought there was some agreement that mmap() be the 'blessed'
-> approach for initializing memory with in-place conversion to help
-> untangle some of these paths, so it made sense to enforce that in
-> kvm_gmem_populate() to make it 'official', but with Sean's suggested
-> rework I suppose we could support both approaches.
+diff --git a/drivers/usb/typec/ucsi/cros_ec_ucsi.c b/drivers/usb/typec/ucsi/cros_ec_ucsi.c
+index 4ec1c6d22310..eed2a7d0ebc6 100644
+--- a/drivers/usb/typec/ucsi/cros_ec_ucsi.c
++++ b/drivers/usb/typec/ucsi/cros_ec_ucsi.c
+@@ -137,6 +137,7 @@ static int cros_ucsi_sync_control(struct ucsi *ucsi, u64 cmd, u32 *cci,
+ static const struct ucsi_operations cros_ucsi_ops = {
+ 	.read_version = cros_ucsi_read_version,
+ 	.read_cci = cros_ucsi_read_cci,
++	.poll_cci = cros_ucsi_read_cci,
+ 	.read_message_in = cros_ucsi_read_message_in,
+ 	.async_control = cros_ucsi_async_control,
+ 	.sync_control = cros_ucsi_sync_control,
 
-Ya, my preference would be to not rely on subtly making two paths mutually
-exclusive in order to avoid deadlock, especially when there are ABI implica=
-tions.
+base-commit: b4b4dbfa96dea8e299a47ef877eb0cfe210a7291
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
-I'm not dead set against it, e.g. if for some reason we just absolutely nee=
-d to
-disallow a non-NULL src for the that case, but hopefully we can avoid that.
 
