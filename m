@@ -1,112 +1,101 @@
-Return-Path: <linux-kernel+bounces-727304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9B5B0181A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:37:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A4E7B01828
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAAD81CA009E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 824BB1CA3D71
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D5D22FDFD;
-	Fri, 11 Jul 2025 09:37:05 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC17627B4F2;
+	Fri, 11 Jul 2025 09:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="irDJu9ki"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC7C27A440;
-	Fri, 11 Jul 2025 09:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460BC205AD7;
+	Fri, 11 Jul 2025 09:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752226624; cv=none; b=sXJfBOx+hyboKM6xBfA5wadKu8BJwGCVRRQkYlG/z/sLgfe1oepJUOfpfjO/EtsL6POeHr6cEsXueVZgrjgM8NEwVEN+Yb5TwDKCk3q8ifbVxq30Cl3RUIJfs9BcR5s2gRlae5j30ChOzm9+gbybble/JYJA/KRnOtEypOnK7VA=
+	t=1752226694; cv=none; b=OQldJVmb/sqA4b7W4Vtg6Af37XrlrkO91jMr/a6fbmFSUTWyxoorEo+C7mMswdTnmq3yz9aynTl0NhdMeOETwyQD9iT2TnT5ioep6KRZQ+Cevchx7gxoi7XAJeaQl0UGshW3BYdQVAAUHbhnt2p+UT+x4/RgrhD7whUijnm2ybQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752226624; c=relaxed/simple;
-	bh=azFqSl+rwP6HQPg9/Q0Rq21ARBUHwm/gLzKRnhAV+HA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pFFleNgfPAk8FGwyo0n29WGxouZ8Zg4QE4cZCpeYnq5uuP5jmcZAPc2gidElwD7UgOBONW7aRm/+vA3tGrywkDO9Z5nHU1wgh1c1H/u5N5S9uDANXoDsE4kjw10IkPv71RAxuPUs4lrZ5gS8aUb/ebCAwEhb78eupSN4FzhTisc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bdmmj4y7Fz67kgS;
-	Fri, 11 Jul 2025 17:36:05 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 288A71402E9;
-	Fri, 11 Jul 2025 17:37:00 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Jul
- 2025 11:36:59 +0200
-Date: Fri, 11 Jul 2025 10:36:57 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Alireza Sanaee <alireza.sanaee@huawei.com>
-CC: <krzk@kernel.org>, <robh@kernel.org>, <coresight@lists.linaro.org>,
-	<devicetree@vger.kernel.org>, <dianders@chromium.org>,
-	<james.clark@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
-	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <mike.leach@linaro.org>,
-	<ruanjinjie@huawei.com>, <saravanak@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH v2 5/5] perf/arm-dsu: refactor cpu id retrieval via new
- API of_cpu_phandle_to_id
-Message-ID: <20250711103657.0000059c@huawei.com>
-In-Reply-To: <20250708151502.561-6-alireza.sanaee@huawei.com>
-References: <20250708151502.561-1-alireza.sanaee@huawei.com>
-	<20250708151502.561-6-alireza.sanaee@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1752226694; c=relaxed/simple;
+	bh=aGM5uu50OCGTiLPtbNszIi+73a80t2UdxvB3hZRy5dw=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=LI8sQXgfGFc3AI5dD1rDWC0xIZpOzcefDy0NpupwxOFfoHCgKtTbRHoTKsHEZ8zH+S47HGnFP+eZENTf0WexGZMn4Py2SCbLlqG6bJtahby3asRE8UECBju72/t9MOrq/+FXvk8ywbEI4oj1nOZzP40Z3EHYMM8frtltKBNOcTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=irDJu9ki; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA1C4C4CEF5;
+	Fri, 11 Jul 2025 09:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752226693;
+	bh=aGM5uu50OCGTiLPtbNszIi+73a80t2UdxvB3hZRy5dw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=irDJu9kiNfS/6vP4xx2p2WVpnH7ulpaTKr4lNX1UFk3b3qblmFHF8fvEvzpcm7ZTz
+	 rhA5F/TTzVA01IDMzfnl/MoU8WCXib+ocd4IEGfbcuXtrj7qmkqdj9w/LtJR5RbJhs
+	 v8cWpV5EmIjP8kyJPn54y5Z55FHT5JUHnhZhpMobICI5tEpBfG7OvMX5vH4T0bnrMu
+	 e3K7SYyAcXds2e91XBCoIGyErS4HmLjySnwu2mI5oLdT41QXRBOlNvrVxkK+q/KEd1
+	 bRjZQ6x1KQh4zRvmeCGqhmsfvMEfE1ErussCLq5FDh7I5wileAsK+BT+c7JU7hjBA+
+	 ATgTH4XgZehcg==
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-73cddf31c47so1376606a34.2;
+        Fri, 11 Jul 2025 02:38:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXVowEfy1jY+Kd9FSytHBWs1Pef16fTC3VsHJmrSLCLCwmZwYQSvqrqckqzXpxJ4iIGTWVDmfSt3FM10FI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziCFkCvll+XFypVXSGIAwGs+u0GnUOTPj25rS1sVo8w+z41YQ7
+	J8i/i1d1cB5jdzz7oZDaO5heMS/oqBshmtpsZBcuLMl3K7CUhR9KFtaiVfcF2TF6lgQzZPe5FoO
+	bSaZMJEFRWKGLrXWrsozrklF6jaTqxAU=
+X-Google-Smtp-Source: AGHT+IHYyJmTKPl/GRQgdoCf8lSk24u9dRYp7B5uEmqiXxoZFCW0e1Nc9Rqx0w83CzOj4mkE13lCVMgU5KWzmVNs2Gg=
+X-Received: by 2002:a05:6830:2d83:b0:73b:2df2:a84 with SMTP id
+ 46e09a7af769-73cfb0e4a7cmr1139354a34.4.1752226692925; Fri, 11 Jul 2025
+ 02:38:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- frapeml500008.china.huawei.com (7.182.85.71)
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 11 Jul 2025 11:38:02 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iCR5vqDgzibNa99oi3SvTt8qx50EEUJMoyfzMH5zaJtQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzH1P-ga3vZPqUuc72zPZitGfyOr5-aKL0IYgmkuQJzZ5go35IYk8qse34
+Message-ID: <CAJZ5v0iCR5vqDgzibNa99oi3SvTt8qx50EEUJMoyfzMH5zaJtQ@mail.gmail.com>
+Subject: [GIT PULL] Power management fix for v6.16-rc6
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 8 Jul 2025 16:15:02 +0100
-Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
+Hi Linus,
 
-> Update arm-dsu to use the new API, where both "cpus" and "cpu"
-> properties are supported.
+Please pull from the tag
 
-I'd gloss over that and just not mention support of "cpu" as
-it never applies here and we just queried the number of phandles
-for cpus a few lines up.
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-6.16-rc6
 
-> 
-> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
-> ---
->  drivers/perf/arm_dsu_pmu.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/perf/arm_dsu_pmu.c b/drivers/perf/arm_dsu_pmu.c
-> index cb4fb59fe04b..1014b92c0fd2 100644
-> --- a/drivers/perf/arm_dsu_pmu.c
-> +++ b/drivers/perf/arm_dsu_pmu.c
-> @@ -591,17 +591,13 @@ static struct dsu_pmu *dsu_pmu_alloc(struct platform_device *pdev)
->  static int dsu_pmu_dt_get_cpus(struct device *dev, cpumask_t *mask)
->  {
->  	int i = 0, n, cpu;
-> -	struct device_node *cpu_node;
->  
->  	n = of_count_phandle_with_args(dev->of_node, "cpus", NULL);
->  	if (n <= 0)
->  		return -ENODEV;
-> +
-Stray change - it's a valid one for readability but not in this patch.
+with top-most commit ec3cae639482a8da11a3ae30d28ceceb9d6a3f56
 
->  	for (; i < n; i++) {
-> -		cpu_node = of_parse_phandle(dev->of_node, "cpus", i);
-> -		if (!cpu_node)
-> -			break;
-> -		cpu = of_cpu_node_to_id(cpu_node);
-> -		of_node_put(cpu_node);
-> +		cpu = of_cpu_phandle_to_id(dev->of_node, NULL, i);
->  		/*
->  		 * We have to ignore the failures here and continue scanning
->  		 * the list to handle cases where the nr_cpus could be capped
+ PM: sleep: Call pm_restore_gfp_mask() after dpm_resume()
 
+on top of commit d7b8f8e20813f0179d8ef519541a3527e7661d3a
+
+ Linux 6.16-rc5
+
+to receive a power management fix for 6.16-rc6.
+
+This fixes a coding mistake in a previous fix related to system suspend
+and hibernation merged recently.
+
+Thanks!
+
+
+---------------
+
+Rafael J. Wysocki (1):
+      PM: sleep: Call pm_restore_gfp_mask() after dpm_resume()
+
+---------------
+
+ drivers/base/power/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
