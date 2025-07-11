@@ -1,217 +1,133 @@
-Return-Path: <linux-kernel+bounces-727569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7CAB01C31
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:41:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B94B01C34
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA9CC5807C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:41:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2CA47B8B3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388BD3C26;
-	Fri, 11 Jul 2025 12:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C392B2BEFF1;
+	Fri, 11 Jul 2025 12:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mvvfA2Gj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OyyJRv9S";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i+T+nIxW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ijim6fxu"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1Qkafy2K";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GtlZsni/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A5F2BE65A
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FFE2BE65A;
+	Fri, 11 Jul 2025 12:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752237671; cv=none; b=QSgXv08DDaivHjRWXXElzAImf58mTCdz1jNlWm+P3iffLBwONY1+WUkMy6g42f6sONFKB07D2gQ52fu6Ca+wWo2Orl4Eyix3U6C+7Tl+a4ysHTQXmgj15+CmPnWeRTubRhi3t8L38hbUQGDwnHs64ma4cOOOrk42GEIbi2y/6jw=
+	t=1752237681; cv=none; b=lD7mpJ9T5iLeHJam+w3sGZRuuSGRAbl5Z20nCDBpJwBDRHxifj7Kxfogc7JM1NsukYQ67oBqh1TRHqxsd4vO8s/hFWjGchAKXua+XQL7Nouv9zrRQE02Ta62u5xa56cjLDGBrp1m2C9k3lUar16tXjm8kQ2DYiga9VslTt9k7So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752237671; c=relaxed/simple;
-	bh=DXWkRDZnfNAPWBTgta9/chuCA5DEdyqeL7jssvuQzIU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uETWYWcVDIjQUPm4tfaZF40qR1hBBJl/EfcQ/ttMtrboBOk/wAkt9twSvsu1wsi5Yt3x4EL/wdRVeu1hYWMZXQLkABk3mlTRJ6ZsARxkm42pUn5YbPyOIwubf3MgsGRrAk/yy20U3kuEuXBDhoLuOkuEABg/ai1FBuhrhEqRpZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mvvfA2Gj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OyyJRv9S; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i+T+nIxW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ijim6fxu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 12995211D0;
-	Fri, 11 Jul 2025 12:41:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752237668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1752237681; c=relaxed/simple;
+	bh=1MPf0tIAjrwf4MYN+ck33b9nkdqqmz0Afr1jBEeTlZs=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=YuC4DCDXkLLR6Y+U7enaZWGl/oRPatGCxgD1zbKmaaW3OJUh4+yjDiOmhXCFrzTfc0v0eo4b3SzVOI45wMuY22n496kJjCU8ICivSRlcZeoGTUhoHnmGJihl9fdBYKs1fmGNSXE1VHmfJQeABqV0K/xYi3+IpSLQntvbF1CAlsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1Qkafy2K; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GtlZsni/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 11 Jul 2025 12:41:14 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752237675;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xSm+1q6uhZZEdjKVMT8Uenl84wjsiNI8TM2FeGexcvg=;
-	b=mvvfA2GjUK9B5BoVIq0LkOjcQ66Q8ndM3eE5q9FhZERXsNh+uBeAR3egTRXJaLCCrYgZud
-	CDQ+iW59hpZD4yk6rJILnbPxXbK6Y/ZmQTCFqmlcxTxvKPvB4MJGNMqQzJmCvjy567vYZw
-	AKx+hcJ+PqZu4YlDCrTuGRY+qiqBG8Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752237668;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=fmnMsCkwXU/b6I89BUyZs/ppqQUIFkHBte+emBNmWyA=;
+	b=1Qkafy2KsuxX9zLTSgDVoEXEQfZXowQ01KI/IQ9sfE47fYAqNNKpFJ1q7QsgNs/+50Bpfk
+	XAhtOjLglRyr60eyYrYgZBYW4ICdQzYkZdkTFylCxqU5PSb5guZTquBT6lhsm3+P3Sd6cl
+	apCyBxWwspDFiOTVoX8YwkRjiUznOq7OJllI5RPJQzRX6lRqijxw9GiEFomKfZCTGnkyTn
+	VzvvmoA2K9DBconuOCrXajlRRENRua0nuseV/+z81+teT1vxiGft1lfia8f1LUlCTMD9HA
+	7EqsO4T6rO7POHfIZtlc1zAi7TsdTzuM+G2jPewzywM86FXCW36iaPXacXfvwQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752237675;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xSm+1q6uhZZEdjKVMT8Uenl84wjsiNI8TM2FeGexcvg=;
-	b=OyyJRv9SNDM3TMyOwzYIV9u5M66jR7evWwzoL7zLsOSFsdxPeJFP9yoGRE/R8iPVmYSp7y
-	uH/z6Zmq2vlxDHBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1752237667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xSm+1q6uhZZEdjKVMT8Uenl84wjsiNI8TM2FeGexcvg=;
-	b=i+T+nIxWWlwfEqZ1zj/27kzojyXmRkFkc5UzKFURsZf3ZfV2jaHfoSw2n8SLTAAkmWB9yj
-	YuKAoXj9d4jy3O+A3kJ6ELVOMBBUuKHvav5GFfVvMJR1hwBU/IJxEQgPbrVMZ91ywhi9QV
-	5kNcq3gRNH/PlqRfA+fEHMQsEzSK7nI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1752237667;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xSm+1q6uhZZEdjKVMT8Uenl84wjsiNI8TM2FeGexcvg=;
-	b=ijim6fxusABPnaEAUSVIPHXj/xFyeRSa0F5mqZStfhhSLPFzektelsyjUANZkrAvu6xgiw
-	5haTlLR5mfeImrCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4ADB9138A5;
-	Fri, 11 Jul 2025 12:41:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Ku3rEGIGcWh4MAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 11 Jul 2025 12:41:06 +0000
-Date: Fri, 11 Jul 2025 14:41:05 +0200
-Message-ID: <8734b2hpcu.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Joris Verhaegen <verhaegen@google.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	kernel-team@android.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-arm-msm@vger.kernel.org,
-	sound-open-firmware@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/4] ALSA: compress_offload: Add 64-bit safe timestamp API
-In-Reply-To: <aHD7/9MZbcOmn+08@opensource.cirrus.com>
-References: <20250711093636.28204-1-verhaegen@google.com>
-	<aHD7/9MZbcOmn+08@opensource.cirrus.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	bh=fmnMsCkwXU/b6I89BUyZs/ppqQUIFkHBte+emBNmWyA=;
+	b=GtlZsni/V1hCZo66QtJXowvu/BSkJA9rNA4SWsAKW3h1sncQtG+3YDyO1GGJDSepSCgjq0
+	zcfRTrvHovuYkTCw==
+From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] lib/smp_processor_id: Make migration check
+ unconditional of SMP
+Cc: kernel test robot <oliver.sang@intel.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Chen Yu <yu.c.chen@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250710082748.-DPO1rjO@linutronix.de>
+References: <20250710082748.-DPO1rjO@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[29];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,kernel.org,perex.cz,suse.com,gmail.com,opensource.cirrus.com,cirrus.com,intel.com,linux.intel.com,linux.dev,nxp.com,linux.alibaba.com,socionext.com,android.com,vger.kernel.org,alsa-project.org,lists.infradead.org];
-	R_RATELIMIT(0.00)[to_ip_from(RLtwg9tyn6faipwn1aqsxq4m86)];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -1.80
+MIME-Version: 1.0
+Message-ID: <175223767448.406.12939120121143461982.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Fri, 11 Jul 2025 13:56:47 +0200,
-Charles Keepax wrote:
-> 
-> On Fri, Jul 11, 2025 at 10:36:26AM +0100, Joris Verhaegen wrote:
-> > The current compress offload timestamping API relies on
-> > struct snd_compr_tstamp, whose cumulative counters like
-> > copied_total are defined as __u32. On long-running high-resolution
-> > audio streams, these 32-bit counters can overflow,
-> > causing incorrect availability calculations.
-> > 
-> > This patch series introduces a parallel, 64-bit safe API to solve
-> > this problem while maintaining perfect backward compatibility with the
-> > existing UAPI. A new pointer64 operation and corresponding ioctls
-> > are added to allow the kernel to track counters using u64 and expose
-> > these full-width values to user-space.
-> > 
-> > The series is structured as follows:
-> > 
-> > Patch 1: Introduces the new internal pointer64 op, refactors the
-> > core logic to use it, and defines the new UAPI structs.
-> > 
-> > Patch 2: Exposes the SNDRV_COMPRESS_TSTAMP64 ioctl.
-> > 
-> > Patch 3: Exposes the corresponding SNDRV_COMPRESS_AVAIL64 ioctl.
-> > 
-> > Patch 4: Implements the new .pointer64 operation in various ASoC
-> > drivers that support compress offload.
-> > 
-> > This series has been tested on a Pixel 9 device. All compress offload
-> > use cases, including long-running playback, were verified to work
-> > correctly with the new 64-bit API, and no regressions were observed
-> > when using the legacy API.
-> > 
-> > Thanks,
-> > Joris (George) Verhaegen
-> > 
-> > Signed-off-by: Joris Verhaegen <verhaegen@google.com>
-> > 
-> > ---
-> 
-> Would it not be slightly simpler to just update all the in kernel
-> bits to use 64-bit and then only convert to 32-bit for the
-> existing 32-bit IOCTLs? Why do we need 32-bit callbacks into the
-> drivers for example?
+The following commit has been merged into the sched/core branch of tip:
 
-Right, it's a usual pattern to have only the 64bit ops in the kernel
-driver side while providing the 32bit stuff converted in the core
-layer.  Having two different ops are rather confusing and
-superfluous after conversions.
+Commit-ID:     2885daf47081dd1aaf1a588e9d001eb343df1f90
+Gitweb:        https://git.kernel.org/tip/2885daf47081dd1aaf1a588e9d001eb343df1f90
+Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate:    Thu, 10 Jul 2025 10:27:48 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Thu, 10 Jul 2025 17:52:13 +02:00
 
-If there are tons of users for this API, it'd be needed to convert
-gradually, and eventually drop the 32bit ops at the end.  But in this
-case, there doesn't seem so many relevant drivers, hence the
-conversion can be done in a shot as done in your patch 4.
+lib/smp_processor_id: Make migration check unconditional of SMP
 
+Commit cac5cefbade90 ("sched/smp: Make SMP unconditional")
+migrate_disable() even on UP builds.
+Commit 06ddd17521bf1 ("sched/smp: Always define is_percpu_thread() and
+scheduler_ipi()") made is_percpu_thread() check the affinity mask
+instead replying always true for UP mask.
 
-thanks,
+As a consequence smp_processor_id() now complains if invoked within a
+migrate_disable() section because is_percpu_thread() checks its mask and
+the migration check is left out.
 
-Takashi
+Make migration check unconditional of SMP.
+
+Fixes: cac5cefbade90 ("sched/smp: Make SMP unconditional")
+Closes: https://lore.kernel.org/oe-lkp/202507100448.6b88d6f1-lkp@intel.com
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Chen Yu <yu.c.chen@intel.com>
+Link: https://lore.kernel.org/r/20250710082748.-DPO1rjO@linutronix.de
+---
+ lib/smp_processor_id.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/lib/smp_processor_id.c b/lib/smp_processor_id.c
+index a2bb773..94b3f6b 100644
+--- a/lib/smp_processor_id.c
++++ b/lib/smp_processor_id.c
+@@ -22,10 +22,8 @@ unsigned int check_preemption_disabled(const char *what1, const char *what2)
+ 	if (is_percpu_thread())
+ 		goto out;
+ 
+-#ifdef CONFIG_SMP
+ 	if (current->migration_disabled)
+ 		goto out;
+-#endif
+ 
+ 	/*
+ 	 * It is valid to assume CPU-locality during early bootup:
 
