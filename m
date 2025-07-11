@@ -1,194 +1,208 @@
-Return-Path: <linux-kernel+bounces-727545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D86B01BD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:19:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D2AB01BD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 103597AA4BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:18:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D391CA5117
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20211295DB5;
-	Fri, 11 Jul 2025 12:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6EA295DB5;
+	Fri, 11 Jul 2025 12:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="V/6xW1ba"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSCVCpX+"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173A324676F
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B6C23ED6F;
+	Fri, 11 Jul 2025 12:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752236374; cv=none; b=ciVquh774hLa64062NmX11SWs3lyr62UGH/3k/lKRO/aJH8NJCkBjoaJtS28SE1ACoUeacympY5L5IobG90GoEZG54y6z/1SlLkLXBZpd8Kku9S1F7PnsSSqOYSjNps5azhz1Q64ttGenAz7TqNMpLuWQfFHP8Q5cEnQr9INNAI=
+	t=1752236401; cv=none; b=gj1dj85Edakf2QCiMWC5cjB1WmztJNyWxm5mCIMIeSJ/4Dq/FJpnZaccprF5zXDpaQads1MZ5ysxk/+P5KOILRCPL1CHiFX3GgPMBdQMXNgwjlionBfutZmrPGU0fVY66veeMrRrv6HriT8UNtvSnyouVrO/22GZHn+hgtmDhE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752236374; c=relaxed/simple;
-	bh=LLrYXoDSk+Z1qUZOicihZi7zP80fK++DmxBSWtA8aw8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QHHNrX7tt2s4q9N8OedcqQ22eYC+8gD4vJ1fLk7Xti4Po3nbK+V3zS/KGCtbCDpE5wrdg/QL2f04aGi+tC5CLkiGeiBUZTM8t/5moPGj8+zUC2Sa8HmGcXpIkAv2q0PLUTujtzLqwqZHChEb2NeKaN8XysGYkLK1kMaRjcNkSsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=V/6xW1ba; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BB7Zoe001770
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:19:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PgRbANHn+bv7tnW2+OxW/Wh9yvUY2jb9oebM1Hb2GEc=; b=V/6xW1bar7YxpMdz
-	jGzXZNSYsgNxdHU8lGqAXSpNawExd/RGkVrqkOD6mtiqWKNQpTilbpx0dNg7SO6l
-	b9nQMyOYUC7gVGE0mLzat8eFRnjfLmtjeM+gtdMh394CzMC8P4d9qe0YTEcJ02B6
-	v/uY1Vi6z8Qrt8M4SOwcX0n6pgsc4RJQpZmnJauGSFkhqknpoCnUnemdR9Yu5Lmb
-	wL2F/UYVdNDaW1+F4MMpprOjkHCy8xxMNtrwPpEYmgT9NYv0drQ0ddQBQ+YzvaS8
-	69imad4Z4wJ9MDC86nnIf3ghbFoHog7HnxWd4mZYdREUAvXClnF5q9q6oXEv7rkF
-	oSWndg==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pucnbynr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:19:30 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7de3c682919so20573085a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 05:19:30 -0700 (PDT)
+	s=arc-20240116; t=1752236401; c=relaxed/simple;
+	bh=5QrNAvXeMUk7y37R7Zu/tN58cr40TcjK1OVyDOV63P8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pVoCyh+Dk6dZFmQ3DeBTVB4wSc4WUbTYOj01Cw87TrdgTlxnBBdqNPEfCXco1cZ+gcCaAdktfJH3cgLPfm9XuuI1Bls2FqCBmiwX88GdgTHX7WQz8cyVXcVqXlNmORbvdQfHNQdBvPjxZuA4IJrUT0AIEo1pxSMD+0IXvggsl3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSCVCpX+; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-74264d1832eso2739527b3a.0;
+        Fri, 11 Jul 2025 05:20:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752236399; x=1752841199; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TtD/R9U6PRpAzS1nHpzjgk1+bYjlX29GjraDajvp0u0=;
+        b=hSCVCpX+ORNXMIKTl94ndv4vFRPmht6WOtRbAr+RLyv9wljOYKa9iWPt86wW2Bk1ff
+         1Sfwb9SQvE4nt0BHF3STrdDudgrfjsfsHjx07ZD3K1ptJqNzR078Wl0E9rzTLSlV7Sqy
+         Np278C1bsgbZk8djprt9iAx+rMIwpJTJV85FdPUrEUAeaT6nzr1lSB7zHm4KlU6rjk+N
+         +acKFeQj6UtxtvZa1ZcMAXM7SBnrAtyOnFj3GirZKXiTB6C8HVVCE2rqU5R+ip/ULIYx
+         kFKec3HfuWiDb//i7qLS0eFIUWkJZW/dM0fhu2qns6qjM2WQrJ3P5zp8jaj2i5ArDlX5
+         gKFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752236370; x=1752841170;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PgRbANHn+bv7tnW2+OxW/Wh9yvUY2jb9oebM1Hb2GEc=;
-        b=WskEw0nSad7m7wgtI21GUwt9F/jPwFco+HQPDzgudnNlHAeastePlPgdQo//nwf5cK
-         uv3kyIWd7DEzzCYnKctMsulmTgwzrzGjjbvMJZOBDe5DGj1WwPWFj49bJPq9pZIGymME
-         EUE1rUysqwmN3SRVH95hv3aeRcMCu5AtW6/ru8QL9mk2tRJaQL+S8IEQSr28OufJwtDJ
-         0FPhpxazROtzH3bQZsWMh2HVEqc50jk4pwJWzJBMkdHAvQiwuyxcXPRAIQMRJUSeR/ND
-         C4YnHZg1m9rMm8yoIKWjo2vX38PeiLmHsTtZ/NFrosl9cnGtjUhl44DIJASs8Ks7iIYi
-         DRoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmAw2CmbTUDWcM0YG74dFabWt1+rfUcgW9kOWQ32OBkK2X1H8hmRxM8nAhA8D9mHAgY/Nc1gg5CzWJgrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn4vTWjGVzOdklN/Dy4/M3t16z8XErADIwCxmMXlht9/8aHSKh
-	XPcg75/4/Ozn70BVSMYDr98muxelcFQs0mTvr9HrssYigxehBbj3V4PlESzjMNswTtIOGQW9adf
-	rjW9ZQ4uto5yLcTgY1xKWwNrNRCQZgs/NS4IFpXyO0WquKp3HJQLUrpfwRJX3eN2jl5Y=
-X-Gm-Gg: ASbGncv721ulk3iRyJ8bauDdwpiYgQVRWFQCL0tR8ki7gyOeh9FCGPU2pJG0F5n5TqX
-	DMbxlhUPKQUj5Pkb4cy6dDk4biPj5ZWHcVCmg90LybNUzkHzc8ArHhIIj+rj8/I/K4MztfZhxKO
-	sxrznOpgO8WC69xd4l419R7QbA+YXaHmIKaRD7DfDFXF15MJLFeNzQ9rvYsshz8pfZoYa7bOXhp
-	BecX6qLSkzIUv6GCTZEkR6q6008nP67SvMTwHfT8vUMM3FpPjR2nk3TEOT3YikzHXMwPYUfElL2
-	CS7uYBQb5t7nMmYwXMBD00gLPIjDXDQKWDg+DhpUUHSJBIPVRrmgbMZiHIvf1KTxCw/eEgPJH59
-	Z6dBb/qkmJBhrpFH6zgs0
-X-Received: by 2002:a05:620a:261e:b0:7d0:9ded:31e0 with SMTP id af79cd13be357-7dde704afd4mr193294785a.0.1752236369496;
-        Fri, 11 Jul 2025 05:19:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWdOt+nw01pFgLOuyNAAOJCd4H7cvcLSPFzBJPJCQX8U74WAVdoJLitJFP6NOrfYfrnxfZkw==
-X-Received: by 2002:a05:620a:261e:b0:7d0:9ded:31e0 with SMTP id af79cd13be357-7dde704afd4mr193291385a.0.1752236368710;
-        Fri, 11 Jul 2025 05:19:28 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e7e910e8sm292167866b.36.2025.07.11.05.19.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 05:19:28 -0700 (PDT)
-Message-ID: <b9f6f827-78bf-4fee-8be2-74a9c94d9722@oss.qualcomm.com>
-Date: Fri, 11 Jul 2025 14:19:26 +0200
+        d=1e100.net; s=20230601; t=1752236399; x=1752841199;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TtD/R9U6PRpAzS1nHpzjgk1+bYjlX29GjraDajvp0u0=;
+        b=ONQEaKGaoy+VAvgFdLs1PL8GbPmSrr6NBW2+4C72JbTNJkW+4AbXDtir6BSGopk9+B
+         F8+k89fMdiOX2Mv76PQhkN9hV+ao8ho4HOBgkhqAh9r36QGtecwTnXqrXaOceFpWfdPH
+         EZjfKZ06EzpcEnZ9gyURREAs/2kk2YFSjg8b3Ol/OLgPx41XsNIgcGaS5wT7IWqNUCkD
+         rNG2vO2vZ3Z4In1E1dJxbg9D1Mn8ylJ9aP35NDr2T4afMvOEF9zPSgc1VL6kpeY2w+pz
+         zZii4EmhxEM8CSdpfLGiYECQZtpukExfqd4ZOlfge0TM2MUdwolLOqsBAoztrqIv8E3o
+         2CWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXsP6Jw2pigMnDR2d8Ay58MedE7gCr6fVEWvDUTFvUv57qW0jMP3aesGn7JFSgVgHXz/k7BlcnplLN7jOg=@vger.kernel.org, AJvYcCXzLTC+tKa7df0tuWPxvny+C6kq2GsqAHZSliMvEAz1cH9ihD+LHkIHTb+CQz1yqRN3cSqEOPZtC1feCxlXtQ8H@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyPNM2Jk3cMjZ+g5a1PEolQFbCSrCr6vcWKykJAxiLE7V620TT
+	nAQ8x8hpuFHxIUxZkwLGBu3XBxfmI1sYjqisLxx5rRA3jAf5VHKbJ/ej
+X-Gm-Gg: ASbGnct2nz7760+4VKw/c2aDbNrEZTpUOvoB6sleNeGG6YKZ074EbltrB1ZPncPSPvg
+	0sK4vIt5tJyhhvy/zYAhxqADg6dKwOScML22yaxi26fcIzJTbAyswt/KxTg/0xJAj9MgIsKr6Cq
+	QjnXY/rY+hWK5jXw8C/PFDpalpcrQbZ7GixLHNzhqxfwW3/xn0j7FLHHFvY8pU9xLbNFdffgZJx
+	x3iyxe4n2h5seyKhAcC6R5+wy2PwStOzo2LZavLpmVMXwyQZ4ZQeaResGNOQ7BoyWJOZ/Ik2N0o
+	k4vicsYIeRHTPRSf9kLiyb6U9Td9uXcCcYKnYO0cwYdZuMKn+y+KZELa8+8DVhaB1HsnEA8D2D7
+	Dhi73uVSzCjN/QtPG2qPWNLaTfniYhqKyVkmZgiLSOdbhex7S
+X-Google-Smtp-Source: AGHT+IFir+KTTk8mgUXFq5lbtUVSMfktmgJYRFls6w9p8Eajyy/4y3kuXXHD32P4jlxeEkBaynv8ew==
+X-Received: by 2002:a05:6a21:3318:b0:1fa:9819:c0a5 with SMTP id adf61e73a8af0-231363657d3mr4445241637.11.1752236399289;
+        Fri, 11 Jul 2025 05:19:59 -0700 (PDT)
+Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe6bd97fsm4963163a12.36.2025.07.11.05.19.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 05:19:58 -0700 (PDT)
+From: wang lian <lianux.mm@gmail.com>
+To: broonie@kernel.org
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	brauner@kernel.org,
+	david@redhat.com,
+	gkwang@linx-info.com,
+	jannh@google.com,
+	lianux.mm@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	p1ucky0923@gmail.com,
+	ryncsn@gmail.com,
+	shuah@kernel.org,
+	sj@kernel.org,
+	vbabka@suse.cz,
+	zijing.zhang@proton.me,
+	ziy@nvidia.com
+Subject: Re: [PATCH v3] selftests/mm: add process_madvise() tests
+Date: Fri, 11 Jul 2025 20:19:48 +0800
+Message-ID: <20250711121952.17380-1-lianux.mm@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <aG_DPLhtZ5qDuWHY@finisterre.sirena.org.uk>
+References: <aG_DPLhtZ5qDuWHY@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/12] pinctrl: qcom: use generic pin function helpers
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Alexey Klimov <alexey.klimov@linaro.org>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Paul Cercueil <paul@crapouillou.net>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250709-pinctrl-gpio-pinfuncs-v2-0-b6135149c0d9@linaro.org>
- <20250709-pinctrl-gpio-pinfuncs-v2-8-b6135149c0d9@linaro.org>
- <46a506ee-0472-4c7a-8fd8-b3a1f39105b5@oss.qualcomm.com>
- <CAMRc=Mc7KSSTF=Jsu-_1C6eWrTXNKB=_Q9fnZor8K_4nnQ5m4g@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CAMRc=Mc7KSSTF=Jsu-_1C6eWrTXNKB=_Q9fnZor8K_4nnQ5m4g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=yes
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=GdQXnRXL c=1 sm=1 tr=0 ts=68710152 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=RgMTYWP1_r0sjz9xMRoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: D5PnAjjP77UzrFQaLaCvU6WyqvdZ_Ma_
-X-Proofpoint-ORIG-GUID: D5PnAjjP77UzrFQaLaCvU6WyqvdZ_Ma_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA4NyBTYWx0ZWRfX0uTBNVQONTBb
- vC5qCX6xQaTxmc/2YZVC62+S9I52sz6F6ZS+dUMomf59mM8f1yNdOAQ0oaffmcUOhwqBLnmo5SO
- NExMpOjMgHshdX4K/dFudF1PVUAZCwH5QW27i78iFV+2CHkYD974uNnD6j5R/FpJHoT+Fd/tNw3
- IjGCAEQQYbrqD2cxjsElTSzx4xMD9HLnXQwcb41qj5PVoU9CFBTt7hCOMSFfFnX9oiB2OyFma9w
- 2PzUeI7SfLdvw0heoas3OUfe75tx8Bt60/PRnExslnHm72vnwpJR7DJ4VwRiFNF84Yk3E3oxNZb
- N1ymUHjXa8haHh0rZ3jGcfs6ddUHC7lZTJLRWpIs8B5BgxXTn6IgZ9m3UrkLxJGcYyU8ZaXRXMn
- havEza+aVzZXxXXA7eCWH1TUAuGLJ/arm7h1sKDZZGuFskbzVSKKEaFrT54QM5g1ldij5WNs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 clxscore=1015
- spamscore=0 suspectscore=0 mlxlogscore=885 priorityscore=1501 impostorscore=0
- malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507110087
 
-On 7/10/25 3:38 PM, Bartosz Golaszewski wrote:
-> On Thu, Jul 10, 2025 at 2:25 PM Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
->>
->> On 7/9/25 4:39 PM, Bartosz Golaszewski wrote:
->>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>
->>> Use the existing infrastructure for storing and looking up pin functions
->>> in pinctrl core. Remove hand-crafted callbacks.
->>>
->>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>> ---
->>
->> [...]
->>
->>>  int msm_pinctrl_probe(struct platform_device *pdev,
->>>                     const struct msm_pinctrl_soc_data *soc_data)
->>>  {
->>> +     const struct pinfunction *func;
->>>       struct msm_pinctrl *pctrl;
->>>       struct resource *res;
->>>       int ret;
->>> @@ -1606,6 +1581,14 @@ int msm_pinctrl_probe(struct platform_device *pdev,
->>>               return PTR_ERR(pctrl->pctrl);
->>>       }
->>>
->>> +     for (i = 0; i < soc_data->nfunctions; i++) {
->>> +             func = &soc_data->functions[i];
->>> +
->>> +             ret = pinmux_generic_add_pinfunction(pctrl->pctrl, func, NULL);
->>> +             if (ret < 0)
->>> +                     return ret;
->>> +     }
->>
->> It's good in principle, but we're now going to house two copies of
->> the function data in memory... Can we trust __initconst nowadays?
->>
-> 
-> Well, if I annotate the functions struct with __initconst, then it
-> does indeed end up in the .init.rodata section if that's your
-> question. Then the kernel seems to be freeing this in
-> ./kernel/module/main.c so I sure hope we can trust it.
-> 
-> Do I understand correctly that you're implicitly asking to also
-> annotate all affected _functions structures across all tlmm drivers?
-> 
-> Alternatively: we can provide another interface:
-> pinmux_generic_add_const_pinfunction() which - instead of a deep-copy
-> - would simply store addresses of existing pinfunction structures in
-> the underlying radix tree.
+Hi Mark Brown,
 
-This option seems like less of a churn
+> On Thu, Jul 10, 2025 at 07:22:49PM +0800, wang lian wrote:
+>
+> > Add tests for process_madvise(), focusing on verifying behavior under
+> > various conditions including valid usage and error cases.
+>
+> > --- a/tools/testing/selftests/mm/guard-regions.c
+> > +++ b/tools/testing/selftests/mm/guard-regions.c
+>
+> > -static void handle_fatal(int c)
+> > -{
+> > -	if (!signal_jump_set)
+> > -		return;
+> > -
+> > -	siglongjmp(signal_jmp_buf, c);
+> > -}
 
-Konrad
+> I see from looking later in the patch that you're factoring this out of
+> the guard regions test into vm_util.c so that it can be used by your new
+> test.  This is good and sensible but it's a bit surprising, especially
+> since your changelog only said you were adding a new test.  It would be
+> better to split this out into a separate refactoring patch that just
+> does the code motion, as covered in submitting-patches.rst it's better
+> if changes just do one thing.
+
+Thanks for the suggestion. I’ll split this out into a separate patch
+that just moves the helper to vm_util.c, and follow up with the new
+test in a second patch.
+
+> > +#include <linux/pidfd.h>
+> > +#include <linux/uio.h>
+>
+> Does this work without 'make headers_install' for the systems that were
+> affectd by missing headers?  Lorenzo mentioned that we shouldn't depend
+> on that for the mm tests (I'm not enthusiastic about that approach
+> myself, but if it's what mm needs).
+
+You're right, and I’ve seen build issues due to that as well. I’ll drop
+<linux/pidfd.h> and define PIDFD_SELF locally to avoid requiring
+installed headers.
+
+> > +	ret = read(pipe_info[0], &info, sizeof(info));
+> > +	if (ret <= 0) {
+> > +		waitpid(self->child_pid, NULL, 0);
+> > +		ksft_exit_skip("Failed to read child info from pipe.\n");
+> > +	}
+
+> If you're using the harness you should use SKIP() rather than the ksft
+> APIs for reporting test results.  Don't mix and match the result
+> reporting APIs, harness will call the ksft_ APIs appropriately for you.
+
+Understood. I’ll convert this and other cases to use SKIP() and ensure
+the test consistently uses the test harness macros.
+
+> > +			if (errno == EAGAIN) {
+> > +				ksft_test_result_skip(
+> > +					"THP is 'always', process_madvise returned EAGAIN due to an expected race with khugepaged.\n");
+> > +			} else {
+> > +				ksft_test_result_fail(
+> > +					"process_madvise failed with unexpected errno %d in 'always' mode.\n",
+> > +					errno);
+> > +			}
+
+> Similarly, to fail use an ASSERT or EXPECT.  Note also that when using
+> the ksft_ API for reporting results each test should report a consistent
+> test name as the string, if you want to report an error message print it
+> separately to the test result.
+
+I’ll revise this to use ASSERT/EXPECT, and separate error output from
+test result strings, as you suggested.
+
+> > + * Test process_madvise() with various invalid pidfds to ensure correct
+> > + * error handling. This includes negative fds, non-pidfd fds, and pidfds for
+> > + * processes that no longer exist.
+
+> This sounds like it should be a series of small tests rather than a
+> single omnibus test, that'd result in clearer error reporting from test
+> frameworks since they will say which operation failed directly rather
+> than having to look at the logs then match them to the source.
+
+That makes sense. I’ll break this out into multiple smaller tests so
+each case reports independently.
+
+> > +	pidfd = syscall(__NR_pidfd_open, child_pid, 0);
+> > +	ASSERT_GE(pidfd, 0);
+
+> This is particularly the case given the use of ASSERTs, we'll not report
+> any issues other than the first one we hit.
+
+Thanks, I’ll switch to EXPECT_* where appropriate to allow multiple
+checks per test case.
+
+Thanks again for the detailed review!
+
+
+Best regards,
+Wang Lian
 
