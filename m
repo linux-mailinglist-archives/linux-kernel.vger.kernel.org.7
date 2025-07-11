@@ -1,110 +1,103 @@
-Return-Path: <linux-kernel+bounces-727213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E77FB01690
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:40:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A4BB0168E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B329F172645
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:38:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1435B3BF38A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9722222A1;
-	Fri, 11 Jul 2025 08:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1F041760;
+	Fri, 11 Jul 2025 08:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ip9QS0q1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="a3Tg5coT"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F611DED77;
-	Fri, 11 Jul 2025 08:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11020225403;
+	Fri, 11 Jul 2025 08:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752223077; cv=none; b=ARtBRD+GeWtHdcnyW5dO8Vlk/Mm9nzsJ+B1ACJPTb+TElSoNZnYatwr/yyv0gISlWEr1je4lonFMGyFxe871gAp4Di61d6gGfFzR3ka9Mi2UL2p4W3Vek85Zv3UBYeaPLu9c7uK+iOri9EKuG2hEhEIEe0NCLlVKcNI/hXofb3A=
+	t=1752223087; cv=none; b=JIl/qbqJplzIgun5JlPmb+MNWleSzHhZ6XJOVfwyO0fmX5pAAsudEqz6IuUPhAV+GAshVyCAech4lwAmpg+o4c3ec6KXUQW/d2VJe0DFm+7gB3Ak6V4xS5vzlPGLI9UQUhaIDlDPWzKMLAuGj44E5Exd/FvqRRad9o1hSQEKCKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752223077; c=relaxed/simple;
-	bh=eyV4X++/VGEzxaguebcqSjDqRWFXr+hAR8/E84bBbo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SjwoL0UYP08y3ftRM5fBeA1YXTr2PC/Q0xjC9v89E4uFw/4+9MjJzTcZP5cHufTFIyYgcaCWfNA/qOAGccY229tPeJKPhoo54syNXiwRVSI698ZeXE5z4uX+Yx+LQqIuRDJr1luGUb/OwLFGHp/rtxLzc2kliVXFf7Gtizms0kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ip9QS0q1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88DA7C4CEED;
-	Fri, 11 Jul 2025 08:37:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752223076;
-	bh=eyV4X++/VGEzxaguebcqSjDqRWFXr+hAR8/E84bBbo4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ip9QS0q1Oh7taDoQfGWcgwPMmN/hoN6SmTPcIcH9mZ1EjLwPjZC+5SxmrHICfI/Y+
-	 Hkyqi9EQoNA0FOfl6OBmW8rgypMiyHSGB8wRoVCbljOJ6eoUOZU7n1sT90PP9KrqZB
-	 akE6Oef7QNgRjYuqgumt3epv/VBaVmxVx3369AZqOM2t/5tmv/JsO3Z8EdkmIeD4tI
-	 gwnmD1cc94RLaa6jS667Zh7lkwj44Hy0Xkk7dGc/rekbhlz+FKVgOw7W3GKrFbSMSr
-	 4dATtbLHVxzxiS9Apilik6ayWhjZSVG62W50oTDV6NtWc95q2NycUTwM7nPoiLazlu
-	 85FwllO+rm4Fw==
-Date: Fri, 11 Jul 2025 09:37:52 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Support Opensource <support.opensource@diasemi.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Oder Chiou <oder_chiou@realtek.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/6] sound: convert from clk round_rate() to
- determine_rate()
-Message-ID: <aHDNYFdAefD0iiyM@finisterre.sirena.org.uk>
-References: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
+	s=arc-20240116; t=1752223087; c=relaxed/simple;
+	bh=xrqDgN2VyGkdOjANFc6phBNVGzxQuOsVWumE+RLeCI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=bFPEXwhC9TbdJxo1f49KfKMeb5ympeTnGp7QtGD1Wrsqy19M6bq5+GpI1ghOR90mSGRlliGrDisZ3Ge1NlAjMhJtpqsssIiZD4WL0bmRC2zE71FvsAcMXvWlMg2VzWydo99F9xs4FdHlbvAkVLzY5o7n4NMHgFCMoIKOvg2bvAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=a3Tg5coT; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752223003;
+	bh=lRfZeUKS0elLaQBjDpJfDlWCQ979aP3RQp5mcGJkQbo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=a3Tg5coTi3mRAiznGoXZ05sfCi27f4bvVuJTB52OwwTyTa75EM7+3C7A/YJAI3265
+	 xq7XnS1LrPKmDlX03vnoXM9t0ytOijcTGt0q8JS5Q6AKi/yGUNqICoahnpyRLMfikv
+	 mYvOVTqTaQSCEKm3n9eWo08bhajfstEDgliep1pt5c3Z+tOkcNzU55Hrpq0pes4sz2
+	 bx6lV+X5Hlve11HL3UwjwpI/HCWQVZtJRB5ASYsFIp4givEMzrPpyaalJkOdDsYkx/
+	 RT17lArvOsnJd84ANWaUJBmgGsxsztdqLj0QD5kA0Kzs5MPtLR4M7aogpkv+F0QbAO
+	 y61jTyETPEJ8A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bdlSC2FRgz4x6p;
+	Fri, 11 Jul 2025 18:36:43 +1000 (AEST)
+Date: Fri, 11 Jul 2025 18:38:02 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>
+Cc: Nam Cao <namcao@linutronix.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the ftrace tree
+Message-ID: <20250711183802.2d8c124d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YnpWRE/TMlIzvZ9t"
-Content-Disposition: inline
-In-Reply-To: <20250710-sound-clk-round-rate-v1-0-4a9c3bb6ff3a@redhat.com>
-X-Cookie: Do not cut switchbacks.
+Content-Type: multipart/signed; boundary="Sig_/e30ltj5Qmq7k5KC_tXo3STH";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/e30ltj5Qmq7k5KC_tXo3STH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---YnpWRE/TMlIzvZ9t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi all,
 
-On Thu, Jul 10, 2025 at 11:51:06AM -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() clk ops, so let's go ahead and convert the
-> drivers in the rtc subsystem using the Coccinelle semantic patch
-> posted below. I did a few minor cosmetic cleanups of the code in a
-> few cases.
+After merging the ftrace tree, today's linux-next build (htmldocs)
+produced this warning:
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+kernel/panic.c:366: warning: expecting prototype for panic(). Prototype was=
+ for vpanic() instead
 
---YnpWRE/TMlIzvZ9t
-Content-Type: application/pgp-signature; name="signature.asc"
+Introduced by commit
+
+  3f045de7f557 ("panic: Add vpanic()")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/e30ltj5Qmq7k5KC_tXo3STH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhwzV8ACgkQJNaLcl1U
-h9A6mQf+Mw4rOQ3YyKPyHMvM67lMhdwxJj81LDMaZnJrgOzRgYNwVehAF6z/3sjh
-qE9RvCkeO6G1c5ngoFta8gB3Ba2chjtNsYln9QP8sxMhhzsQ/7hiiykf6NxALakJ
-DR9tsOcL1vl2WKaCZ1HitICcSuWY6cLbTUpH0q85mv6rH1AJ0WdN8HHIw++p6m32
-NMwkqwyG8z677hO9RdI1QwT4itEoh83UzLWoORxBTto7L/WnyP4uFrT2XefgEjE2
-tBWfG9WPoG8Howvt2/8o+nnLbVwOnxeXkPE4TfC01MyK82f9voFg2EHSpuKiR9Gf
-Gu40mCfxcvb/iKz7V9zpon/05BytBQ==
-=OeRb
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhwzWoACgkQAVBC80lX
+0Gzdagf+N2gA/v/+DsU5viM2gnlHUtpDwANPzbTS0FdXBZ3qQrJAKjcoWI/0/tr9
+aFuhABAR4k7gyKmzW1tZCUTvXGGjrM1RUxYAh0W5B7Ho9OCCIWdz5VVNurQQlFFu
+3TID393KyzZCoJWNbIzjPV2IvMg/Fy8A2URGMATe3OQ0oxdSbzdCblkeH2aNcm/O
+jAON4QH6AMxZALHETI35RkKADhhbD4auO43JPuJnYZ0IJ0ykEnw5Z2Jt81k6WsEA
+NW5X65Dzmzsn3+5lltuKDP/ytpEkVX3jPm3KJHwOgXlCOPXGDwjCHwHr5RIc3z8g
+Fqu9nSMzhmrQUXsYfGWpNNwvA+h30g==
+=Bkou
 -----END PGP SIGNATURE-----
 
---YnpWRE/TMlIzvZ9t--
+--Sig_/e30ltj5Qmq7k5KC_tXo3STH--
 
