@@ -1,122 +1,104 @@
-Return-Path: <linux-kernel+bounces-727532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8500B01B74
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:05:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBCBB01B76
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A021797F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:05:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A8255A4479
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DC828DF16;
-	Fri, 11 Jul 2025 12:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085BC28C02C;
+	Fri, 11 Jul 2025 12:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iLifZW3h"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gHeh1jlB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AKJZmfcb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2FB1F4C8C;
-	Fri, 11 Jul 2025 12:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504671F4C8C;
+	Fri, 11 Jul 2025 12:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752235531; cv=none; b=EFlcA8mnZTCsXmlMlTQQQAnNTEqXzGnIKiD7xxv8pKvsPQItRgN2GSvCyIu3nhjDfIo+NxWUBN424rEWBxPetT1F82DJEaZyFwViZoiKqTnq5QFr6HystMGFTj1IS8ukqyyJnv2Kagu0brtYIsoBFSKZFhY9tw4N9XNfwCaRy0M=
+	t=1752235565; cv=none; b=XAurSeFOXuMF0s4prmXiWDy+nQ3SDPPjbWyuo2Vms+XkLwolLxOhS3eZi2eiNI8zxgT1CwBmKWmFsfwi6RajV3NWhPe5tp14W6jpQJNv7d2x6wetw3ShAEifa9cuDZtkCWC/TGqN/spu29/8Kpyh17IHhNcA+JTtMQOLvvyXTO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752235531; c=relaxed/simple;
-	bh=2AEASaq5CDzhb6ktnTbfQ22tIfOZRPSGaJHgFyQUuec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tYmtD9oprLp4UhdH3BqtDemrJ0cBMd3EPoQxWnfqrKErl/J8w3rNlwhOWYNKhoYExJ6E9AuQ09z21MwYQ7QtTE7v4kwKk6F3Kug5hwbxjHpGDc6Ze8qyXZ6afTjoqtTc3E7VsvopmesntAnt+Ic/erXkxwJnlKeYmFNiEUE5XsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iLifZW3h; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54b10594812so2064705e87.1;
-        Fri, 11 Jul 2025 05:05:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752235528; x=1752840328; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2AEASaq5CDzhb6ktnTbfQ22tIfOZRPSGaJHgFyQUuec=;
-        b=iLifZW3hfNPgld3SU2c+IW0B2Ks3OgBbCjXgiyppFYvYSuCXy/gtjpksCDvIGBAkRl
-         wNgqF4DqqqKJVHeLxdpjNiPn88AIycN5yK4qY4SS6YoUX3alkr2Hk0pTASMMaRqahB1t
-         ad2ejkG85kdOT74sFvUIGH21I8zuKa+iehMqX07SrHOskMRu9Llbsh65qTJmFLHU6vVb
-         oBFxLm1W+IoaovSdQjgPgM9wnU3inv6V+UDlDgdgI431HWlutRYpp8yCBpr58tFwAl/a
-         WCRHTR5h1oXPmk3dziBnqNuKnFNX2bkn2rRdetY4fI5jLSr3/uVZcmdAyxZImToSQ1hD
-         r3wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752235528; x=1752840328;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2AEASaq5CDzhb6ktnTbfQ22tIfOZRPSGaJHgFyQUuec=;
-        b=CmiwiD3KvTICyF8lffnhLcinpyvE8QysrZwEWr/soEtnZ/fArse6aP+HbXqkBbkJmp
-         8c3z4A3pkJm7xgreoRX7tOjuefKMnNp222jA9qeVAWa+ZRjqL8OIKkhb4lypbH6CuQqF
-         bFuNBfYEIGf25qFKD0da5NEM+7qIlMLOgukA07yora+0EKm+k6P+bb71qDRwi/bh+TOg
-         sirc/RtXQwYrG3/2oXY/+T5tzD+KkxnnHsaUg98sTtX4HcHvP5RW8wD+65jUvAHW+RFl
-         7PQ/YPFz2UqdUCkTkAtrk8Ie/oyDtyGBrhf2MZuZqtzQHVTKyBGvXxL3XWOhl97RtYRi
-         o9Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUat1+4MeQE6Dysz1bMGGSIq+zLi1CaKX60sPE6VWaLvL/8IY5Cj3rTSTk4nxuSw/J9OowCW4o@vger.kernel.org, AJvYcCWqS6AyMeLNB3KTrgE9nTeFvGWwRdmsgtMiKa1dHS8UWKefgGD03jxb94Hu6ZuMj0+zdujP4aZ7NL3iqdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtzXHh+F8SJbuwnqcCWyMlEQyYhPB0gZHNoUTBPdeblPMqdo92
-	ZkLe2NGTr2uRg8xJSGXeGube0wWbJiKn3XPpyVrMvnhf2nv3RtJpU2qTFPnLvAPfsztlrjLPfy6
-	waUBWP6YcOrYapJDYxfWL8pPXqXnDAyU=
-X-Gm-Gg: ASbGnctDKHqNgT0bNXacKwTwn6zywR8yy+cOOeqlg5R9eN+XICRhzJAYXrIm2h4N/DW
-	UezbeHz+nAVSUO3JVKoz83a+U07jEo/5PDoZ8MKoK1RzDiFO/1bbyVqLziEaFuOAppM5FUNGsYN
-	C54xMQLqIaU2Sh8SF5uG7RvNeUWW3CcQhtxUBI9a9JtVgVN2PIpR9CyEZ8UU0fs+kKN/8os4OA/
-	etwycdjOwxICBK1l9dUuPHO88u63mJ1JoLwEtc=
-X-Google-Smtp-Source: AGHT+IFl+IoLWuIaEOcASJ3YDYcH5iOQ7KM94YNp90zKqQwivksqlWt3cmzdDFclUAJWq5ZCcUCbfLJPflKvNsW1j6Q=
-X-Received: by 2002:a05:6512:234f:b0:553:2645:4e90 with SMTP id
- 2adb3069b0e04-55a046448c7mr1047920e87.52.1752235527861; Fri, 11 Jul 2025
- 05:05:27 -0700 (PDT)
+	s=arc-20240116; t=1752235565; c=relaxed/simple;
+	bh=w+C2sUjQwouIsFCsNgntt7YUSEbg7ZM2AJSFbZgLf/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RLdWZz8va+07zGSp+vnLV/Gq8Jgizd4dKJ5yeg7vgUWqjd2UZVI3wy1rUx7pVB9LJg5QEz0uHUculDEgZYGpMEyd11rAVtXihwpkOyBWg1PQ8MoXAa5V0mzlOhOF9r1lFSW3EXw6azlxKKfaCMAHZ8UxMw8QjLBLkw3Q6Fmwydo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gHeh1jlB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AKJZmfcb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 11 Jul 2025 14:06:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752235561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kvc+RvZAMi5L4w+1ft+c4pN/XBlm8iNMT/0QmnTIUFE=;
+	b=gHeh1jlBff4kNzcrsOcqJqZ3SiBpyWAcDrvMZsk+jj+yeWIBYmehvGrYcgyDzISIyN3Ufd
+	IR5ifz0JlwrGj7xUcMc3EMxo3km7ZT9taFr+/Sv7AnM+/5E+0xgF0G4KZ9N942vAhq38ZY
+	xlwplTL8oVnw87angdq8SIIQ/emP8kz1PgGYHs1g9A5avxBQv4eLOrtlE59q3Kib8PRBfg
+	zlnY2+6lZLL8WxaMMnF4TJ13kisdOUsgk2F+vkPt6l3zDXH8nS36c5JTb+Czol3vV656lg
+	DKAkZbOLpoHuggs/xb7/IsqODKzHSinXTW7D4bhp6atAFt2hwlszmeMTjiOIQQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752235561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kvc+RvZAMi5L4w+1ft+c4pN/XBlm8iNMT/0QmnTIUFE=;
+	b=AKJZmfcb8nY1cV+rE1kKcc0kFq1uy6tI7obvkMLjs0eBDnvOJWbGTCiBFBLB7vi7mPpw2O
+	6J9f4yHeAWjBTZBA==
+From: Nam Cao <namcao@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Fix up build issues with vpanic
+Message-ID: <20250711120600.fIZo17WG@linutronix.de>
+References: <cover.1752232374.git.namcao@linutronix.de>
+ <20250711112844.GG1099709@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711120110.12885-1-ceggers@arri.de> <20250711120110.12885-3-ceggers@arri.de>
-In-Reply-To: <20250711120110.12885-3-ceggers@arri.de>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 11 Jul 2025 09:05:16 -0300
-X-Gm-Features: Ac12FXxXhUl0pWyBQ1-EtucR0saC40xWMP_mrTY-Vw0EB65wy0G0ZSkmB17HgQ4
-Message-ID: <CAOMZO5BNgGao-+B_K8+7juBXTHVKr72NCRRk5NMpr2ew=t0+aQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] nvmem: imx: Swap only the first 6 bytes of the MAC address
-To: Christian Eggers <ceggers@arri.de>, =?UTF-8?Q?Steffen_B=C3=A4tz?= <steffen@innosonix.de>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Dmitry Baryshkov <lumag@kernel.org>, 
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Sasha Levin <sashal@kernel.org>, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711112844.GG1099709@noisy.programming.kicks-ass.net>
 
-Hi Christian,
+On Fri, Jul 11, 2025 at 01:28:44PM +0200, Peter Zijlstra wrote:
+> On Fri, Jul 11, 2025 at 01:20:41PM +0200, Nam Cao wrote:
+> > Hi,
+> > 
+> > The newly introduced vpanic() has some build issues. This series fix them
+> > up.
+> > 
+> > As the vpanic() is only in ftrace tree for now, it is probably best to let
+> > this series goes to ftrace tree, if everyone is okay with that.
+> 
+> Does it make sense to make panic a static inline?
 
-On Fri, Jul 11, 2025 at 9:01=E2=80=AFAM Christian Eggers <ceggers@arri.de> =
-wrote:
->
-> Since commit 55d4980ce55b ("nvmem: core: support specifying both: cell
-> raw data & post read lengths"), the aligned length (e.g. '8' instead of
-> '6') is passed to the read_post_process callback. This causes that the 2
-> bytes following the MAC address in the ocotp are swapped to the
-> beginning of the address. As a result, an invalid MAC address is
-> returned and to make it even worse, this address can be equal on boards
-> with the same OUI vendor prefix.
->
-> Fixes: 55d4980ce55b ("nvmem: core: support specifying both: cell raw data=
- & post read lengths")
-> Signed-off-by: Christian Eggers <ceggers@arri.de>
-> Cc: stable@vger.kernel.org
-> ---
-> Tested on i.MX6ULL, but I assume that this is also required for.
-> imx-ocotp-ele.c (i.MX93).
+I think no, code size increases by a few K:
 
-Steffen has recently sent a similar fix:
+text      data     bss     dec       hex      filename
+12222627  6097658  479669  18799954  11edd52  vmlinux.before
+12226703  6098618  479669  18804990  11ef0fe  vmlinux.after
 
-https://lore.kernel.org/linux-arm-kernel/20250708101206.70793-1-steffen@inn=
-osonix.de/
+(it's riscv64, I had issue converting on x86 because there's another
+definition of panic())
 
-Does this work for you?
+Maybe faster? But panic() doesn't need to be fast, it's not called in
+normal circumstances anyway.
+
+Best regards,
+Nam
 
