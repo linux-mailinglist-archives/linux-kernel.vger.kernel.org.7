@@ -1,78 +1,100 @@
-Return-Path: <linux-kernel+bounces-727971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6081B021F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:38:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61895B021F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C7BAA47F28
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB02A659B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDA52EF9B1;
-	Fri, 11 Jul 2025 16:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2976F2EF9B1;
+	Fri, 11 Jul 2025 16:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSgiCvwI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e04bJeVL"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8864824886C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51F32EF66E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752251881; cv=none; b=tERDP/HVicBKESvnl6HTR1w9gJ9pZEZXr/P6v/ssenujLQQZWwgXRpo4m7okRQ9EwUYe+2fD/Gd595MSWZJPrFLkM5fR7p5VLRjNMAImUmVpa8gLwPGoMvwJBHVuUFdSwT7qODbE9gK9AJKVamdh/yQPZej4KOE43YvBUIcrmvs=
+	t=1752251936; cv=none; b=HRZO8YX/T8+FQ+08QqC8n3yFAEs4slyPSj92dKjTczCWcfH7CFIkybNjqjVibgSGkfyKIOS96VwRS6Z17sVuFnj18DitPYgZ+rwQH3GJXL9HjkfAl4K4q1ie1nqjklo5zR3EUX6Zxf5wJxbxkR2NoyRUGrx94K7YBub2NvpJ/n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752251881; c=relaxed/simple;
-	bh=+LhpxaDaFneXMcBCB3s6VxYb18z5vlm0AbN9xklBKIs=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QtQ4tJ5Bagv6Iux1e8nW53J3qwgo6N5HBBIW5+BZU8ZIUxaAvWXvrO6Evf6saATOx/LRbGD2UOzV0K++kmTUCjYCQmhZL9Q+t8Xs9nEZHGO95Ja/VXnS7FSLvTmyOJqaymREZvNMt/ksgedF8ITya/tJbyRJAnvyiX3zkznK35U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSgiCvwI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A686BC4CEEF;
-	Fri, 11 Jul 2025 16:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752251881;
-	bh=+LhpxaDaFneXMcBCB3s6VxYb18z5vlm0AbN9xklBKIs=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=VSgiCvwIO5XDZ3jS0gjyniMNfP6IrN9z73HPDCaJR47fTVwmLv6kQaDMSLVr5D8Fp
-	 ShrkeiPWhL03O438YK6Y7XQVdtK9wc7hKTq3bxYeXVrEv2cXSJBlJ1uqMC+478UdSv
-	 xEn4Ihevxx/7LMHG6V2oGQi/jNQN3t+DaQXsCirDoYGV5v3MEljK0dxQwWq9bP39KQ
-	 6u9q4chudS0FVImOc0roplubWV3nFvdQz87eJjE0YqnuceV8dV++QyTzdNXzKYlLRD
-	 Qt5z1e+6SetYIwQbTd44afdf20iSOAR+geXMTR0TmtaKdoUjBRz4zALeG/LUtxQ0Ng
-	 qnan3gomWE7iQ==
-From: Srinivas Kandagatla <srini@kernel.org>
-To: linux-kernel@vger.kernel.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-In-Reply-To: <2025070123-spray-denatured-dda3@gregkh>
-References: <2025070123-spray-denatured-dda3@gregkh>
-Subject: Re: [PATCH] nvmem: make nvmem_bus_type constant
-Message-Id: <175225188043.5833.14661360054468410161.b4-ty@kernel.org>
-Date: Fri, 11 Jul 2025 17:38:00 +0100
+	s=arc-20240116; t=1752251936; c=relaxed/simple;
+	bh=GUHNdNzh4MVenPnIJ3b3PJlz94KSj55El0YY2Y5dRbo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JDuRbKmBdEI5ZxPHV+evJ39aUnkDpDsQ1ev7DNDTGt8OHXN9tV1TrGObfjaieT4RZSJ22pXs47cV4MeG3g2VzwFTC5tfyBT6PFI5cOO+8LPE+zN1T/aBIX6wbbZ4nP22oIiudVtnMbX0iovodIYQ74E23Fc7WMUueELJaQ7g3Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e04bJeVL; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-611d32903d5so259a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:38:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752251933; x=1752856733; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GUHNdNzh4MVenPnIJ3b3PJlz94KSj55El0YY2Y5dRbo=;
+        b=e04bJeVLhcRswe4mTIUzewlyQiA64c3rHvgp7J4vnEC8jv6gMUPdTIaaeqljIRXeMq
+         ttWFcFx0W7Me790mThOJdd5YNZCUYPPHGZjb/H0i7nUf8uf1xunGps8iWlCTbx5mtOmt
+         3FzXhKD3AOlvw51G30chEbIKtssSNuj12q4fECjRzDsa4XLq3X+H0z8wiBaOhVjyfDnY
+         Ghk9LVCnMgYMcvnPREauQcmj5wHeVOwnGqpDkKoXH3dHw/wC4RZ++kixW4H6hB1iQ5it
+         gdTpdLD/ozQFUkIiBKOEAQaU1AXDWkdAsWuZglaXz2IsygngyJHUh7QdZtGWVUo+v2jv
+         GsFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752251933; x=1752856733;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GUHNdNzh4MVenPnIJ3b3PJlz94KSj55El0YY2Y5dRbo=;
+        b=ZeKO+I5BiLezt1qLOvsR63LRL3miTAmRQGb84V2yUotcArYWyNPQPkcjXjMxZ9ggg8
+         ORMHtWCxdz4stZEdZJYxIcGfwYMzGfiwpAFhf8ujAkY+Xf+WdPbV2TXoFkwlUOkidX/l
+         qf9dVmMlg42d1ytYVuKIlh3ZlN1Zxnd7UT2l6wHq2evnm98p/VH7mqvfR7LWmkL8IeHk
+         ssE0E8K2B8xGeZ9cIkqUZ7SG13Orzc5u0r3Kr0jBSKVnSmHCaWgZgE4mS1e0RNkhcLv1
+         skRy+gSABprQFICs6Dxvsaq3pPZrjGOBWXur8SYkDr6oLu5aITcuXOI5En0oHBpQBfAo
+         7tyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXunR8frtoEoina1VxTDdUQ+qx8FhSi8yi3+0ZLjVBEKZfG7JlH/uHj5VVJ+t4L740iEhYLQzn26937lgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8YubFk8ENPh9zu6TbiiHLKnSeDMB1FhEVPx+wlzUcGjrDO4TT
+	1VDSo2H8cNpaXdDdqdFYScaC7qxW9k2qYWNFL1SsLIdxORGHZcBwLTkwM3ypnA3VDn5k0YtIVLz
+	VjfiGIbNQ6XfAU7TMFjEGYPxnyv2ikULmLSqoJfeT
+X-Gm-Gg: ASbGncvVunxNIVFQoKa/fxMC/v5z+1aCgsa6P/TMrMFT5lbSF5A/Z9uT1Mb6FQfYaW4
+	6FvZO7qtV2X6qZDoNrN6Vz/TGFLPUdkq4lip0KW7MPkOcL3LIQIKKo3BXFdXFkTVunOuQ3E5HAE
+	xOxdU6UKYekvwpN6zAMbj1mXJDn32EsTxEntqnFUXT8X0MUi8nE1GlNYd58SGDgG+3TxGx8o0eE
+	frJ3BdbesP7uUI96flGerwRD5Xj+0xuNw==
+X-Google-Smtp-Source: AGHT+IFMqWeUnIhM2GUfvqZasar43+JRQEzyaYqWWnI+VEdWQL/yjU8uiXyK3Tt6lYFu66zeKZ//khzG9Fk7nhUZTPA=
+X-Received: by 2002:a05:6402:5519:b0:606:f77b:7943 with SMTP id
+ 4fb4d7f45d1cf-611e66b19acmr119955a12.0.1752251932816; Fri, 11 Jul 2025
+ 09:38:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+References: <20250711-epoll-recursion-fix-v1-1-fb2457c33292@google.com>
+In-Reply-To: <20250711-epoll-recursion-fix-v1-1-fb2457c33292@google.com>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 11 Jul 2025 18:38:16 +0200
+X-Gm-Features: Ac12FXxBR0x-gWBXPHgR-w1y-RdUePMpUnV9bTKOU1Vmk9DbTBaD1sVhfK-yPDI
+Message-ID: <CAG48ez0fWFjw8-RCLfKGXR4aNaRfZ37-GdDH=Rw2TFupAhocVg@mail.gmail.com>
+Subject: Re: [PATCH] eventpoll: Fix semi-unbounded recursion
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Jul 11, 2025 at 6:33=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
+> A more thorough check is done in reverse_path_check() after the new graph
+> edge has already been created; this checks, among other things, that no
+> paths going upwards from any non-epoll file with a length of more than 5
+> edges exist. However, this check does not apply to non-epoll files.
 
-On Tue, 01 Jul 2025 14:02:24 +0200, Greg Kroah-Hartman wrote:
-> Now that the driver core can properly handle constant struct bus_type,
-> move the nvmem_bus_type variable to be a constant structure as well,
-> placing it into read-only memory which can not be modified at runtime.
-> 
-> 
+... of course directly after sending this I notice that I put one too
+many negations in this sentence.
 
-Applied, thanks!
-
-[1/1] nvmem: make nvmem_bus_type constant
-      commit: 40ae493d572497956b275f755dc80ee3b87a1559
-
-Best regards,
--- 
-Srinivas Kandagatla <srini@kernel.org>
-
+s/does not apply to non-epoll files/does not apply to epoll files/
 
