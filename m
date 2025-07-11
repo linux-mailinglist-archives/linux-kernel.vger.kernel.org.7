@@ -1,160 +1,135 @@
-Return-Path: <linux-kernel+bounces-727277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632ECB0179B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA60B0179F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F1B67B274B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB684767B9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014D521CFF6;
-	Fri, 11 Jul 2025 09:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lofho167"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF3527A108;
+	Fri, 11 Jul 2025 09:25:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46B5279903
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0362279DAB;
+	Fri, 11 Jul 2025 09:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752225925; cv=none; b=EFIq3KojStwqiF12XcGSP/gIOhh6dvMzX7q11AcxW7WlsMkfTJW8h9qvw1w4zgVFP3GrVOIQJyuo7ZaYrSVgB1N2/GteHAIPvVNHVpTBnFoAwnh+6Yisosh+OKdYO89uAG/h5pPVV5BQ98CzqDewzsqSj4Alui2AiQVD86hY+uU=
+	t=1752225948; cv=none; b=aGwVjFLI53P9GNp0+LDrF2L8QjO//BoeqMMBLc1ad7X8Y8fn0+ZB4amjdBoleEw0ZbFNRcVckiIsvYImW2PvdCV2FiPN+l/RXyK8sYzuJaE1QG1aegZU/oaNX0cbD39aLPZbeXw+IFLWISzPGpjmn8B+JLomOL/BOM1d2gbmP50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752225925; c=relaxed/simple;
-	bh=9LHxuTI8hpxcflNdLOKFQbbQPPlJdw91dYnBuAXCxn0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=TEVEIRNBO5MaB+wE/rX9/aAJcVX/YzUHN/I/i1CgEzkNULy0yK5JZ8k4VJiM2yg2msx6TAIOkGPcGIuNxJfaFxNdkcndZI6pHmF0wtCao2BRLP4kqteEKI6gJEZ23r7/kcru4FzQc88rrwbxq699rpe2jHyZG/WBjw+epzPE+Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lofho167; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250711092520euoutp023be90b007ea237ddd9e37dc31981573d~RKDDuZQvq1537915379euoutp02f
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:25:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250711092520euoutp023be90b007ea237ddd9e37dc31981573d~RKDDuZQvq1537915379euoutp02f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1752225920;
-	bh=HzPkVcD7EBpLB077YuBkrkHkCg7R8v/lMTm610TXX5M=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=lofho167lt5+OYJKtBe7YUJJ6Lp8NKwqQQRQ7gDsuC9W+lVy6exTq5fHdfWYhe22o
-	 vEyaZAuzdXF8zK35Ok8wiQ6GXPvEe3pOz7xS/3yD6eQjEVnIw9Y9fMfMKUsSta1ehf
-	 RtER64Nyp3VUGFlwOF8ft24Iy/Ad9RidLep8Ptjg=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250711092520eucas1p2c27be54c048556b3ce54242ab3d228e4~RKDDMne5X0267102671eucas1p2P;
-	Fri, 11 Jul 2025 09:25:20 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250711092518eusmtip1c7e57196a1c1e0613b9ecfbad261718a~RKDCD2bkB3095630956eusmtip1K;
-	Fri, 11 Jul 2025 09:25:18 +0000 (GMT)
-Message-ID: <e6d85387-b46e-4e4f-90a3-f60a800f1c2e@samsung.com>
-Date: Fri, 11 Jul 2025 11:25:18 +0200
+	s=arc-20240116; t=1752225948; c=relaxed/simple;
+	bh=pZXe7EaL9faZo/4DiGm0OMVMrkmDlydKZaceJn88f/k=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XBd75gJ01zkjMccvMNWBQhXhvLhjrkMeNS+GUmdHjYMYL/8f+T4H7nPN6j3pbroX3ppCX4SO+M7pqbn8mBGj5JqUUjZ8WnN6MU7h9otKMGMeBiBjCL3MwHL3Je06bDwP4zbtbbJq5sW8zthKMNmJ4VMrhfIK8UhVzHn+5sNSEzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bdmSw4Xb7z6L4yC;
+	Fri, 11 Jul 2025 17:22:24 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 546F21402CB;
+	Fri, 11 Jul 2025 17:25:42 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Jul
+ 2025 11:25:41 +0200
+Date: Fri, 11 Jul 2025 10:25:39 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Alireza Sanaee <alireza.sanaee@huawei.com>
+CC: <krzk@kernel.org>, <robh@kernel.org>, <coresight@lists.linaro.org>,
+	<devicetree@vger.kernel.org>, <dianders@chromium.org>,
+	<james.clark@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <mike.leach@linaro.org>,
+	<ruanjinjie@huawei.com>, <saravanak@google.com>,
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH v2 2/5] arch_topology: update CPU map to use the new API
+Message-ID: <20250711102539.000065b6@huawei.com>
+In-Reply-To: <20250708151502.561-3-alireza.sanaee@huawei.com>
+References: <20250708151502.561-1-alireza.sanaee@huawei.com>
+	<20250708151502.561-3-alireza.sanaee@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 1/3] pwm: Export `pwmchip_release` for external use
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini
-	<drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob
-	Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
-	Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, Michael
-	Turquette <mturquette@baylibre.com>, Drew Fustini <fustini@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <tepvopkizn4jezpqcbhwrcsnsrjacztv6kuv53hidcjbrnrs3c@pfcp45jarcoy>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250711092520eucas1p2c27be54c048556b3ce54242ab3d228e4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250710185439eucas1p2684255d83d807dfd6f8b9b3caea65df6
-X-EPHeader: CA
-X-CMS-RootMailID: 20250710185439eucas1p2684255d83d807dfd6f8b9b3caea65df6
-References: <20250710-rust-next-pwm-working-fan-for-sending-v11-0-93824a16f9ec@samsung.com>
-	<CGME20250710185439eucas1p2684255d83d807dfd6f8b9b3caea65df6@eucas1p2.samsung.com>
-	<20250710-rust-next-pwm-working-fan-for-sending-v11-1-93824a16f9ec@samsung.com>
-	<tepvopkizn4jezpqcbhwrcsnsrjacztv6kuv53hidcjbrnrs3c@pfcp45jarcoy>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Tue, 8 Jul 2025 16:14:59 +0100
+Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
 
-
-On 7/10/25 22:52, Uwe Kleine-König wrote:
-> Hello Michal,
+> Cleans up the cpu-map generation using the created API.
 > 
-> On Thu, Jul 10, 2025 at 08:54:28PM +0200, Michal Wilczynski wrote:
->> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
->> index 8cafc483db53addf95591d1ac74287532c0fa0ee..8f0698c09e62b893d63fc258da3c34781183056f 100644
->> --- a/include/linux/pwm.h
->> +++ b/include/linux/pwm.h
->> @@ -478,6 +478,7 @@ static inline bool pwm_might_sleep(struct pwm_device *pwm)
->>  
->>  /* PWM provider APIs */
->>  void pwmchip_put(struct pwm_chip *chip);
->> +void pwmchip_release(struct device *dev);
+> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
+> ---
+>  drivers/base/arch_topology.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 > 
-> I want this in a separate section because "normal" provider don't need
-> that. Please add a comment that this is only public for technical
-> reasons for the Rust wrappers.
+> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+> index 1037169abb45..ccc73bfae90d 100644
+> --- a/drivers/base/arch_topology.c
+> +++ b/drivers/base/arch_topology.c
+> @@ -473,19 +473,19 @@ static unsigned int max_smt_thread_num = 1;
+>   */
+>  static int __init get_cpu_for_node(struct device_node *node)
+>  {
+> +	struct device_node *cpu_node;
 
-OK, thanks !
+Initialize to NULL.  Whilst we can see that it will always be initalized
+static analysis tools and compilers probably can't.
 
-> 
-> I understand you are eager to get this merged, but still I'd ask you to
-> slow down your patch sending frequency. Currently I tend to not apply it
-> for v6.17-rc1 as I'd like to have that in next for some time.
+>  	int cpu;
+> -	struct device_node *cpu_node __free(device_node) =
+> -		of_parse_phandle(node, "cpu", 0);
+>  
+> -	if (!cpu_node)
+> -		return -1;
+> -
+> -	cpu = of_cpu_node_to_id(cpu_node);
+> -	if (cpu >= 0)
+> +	cpu = of_cpu_phandle_to_id(node, &cpu_node, 0);
+> +	if (cpu >= 0) {
+>  		topology_parse_cpu_capacity(cpu_node, cpu);
+> -	else
+> +		of_node_put(cpu_node);
+> +	} else if (cpu == -ENODEV) {
+>  		pr_info("CPU node for %pOF exist but the possible cpu range is :%*pbl\n",
+>  			cpu_node, cpumask_pr_args(cpu_possible_mask));
+> +		of_node_put(cpu_node);
+> +	} else
+> +		return -1;
 
-Thank you for the feedback. All of your points make perfect sense.
+I'd be tempted to make this more conventional with error path out of line.
 
-My apologies for the rapid pace of submissions; I will follow your
-suggestion and be sure to allow more time for discussion between future
-versions.
+	cpu = of_cpu_phandle_to_id(node, &cpu_node, 0);
+	if (cpu == -ENODEV) {
+  		pr_info("CPU node for %pOF exist but the possible cpu range is :%*pbl\n",
+  			cpu_node, cpumask_pr_args(cpu_possible_mask));
+		return -ENODEV;
+	} else if (cpu < 0) {
+`		return -1;  /* to keep ABI - it's odd but not something we should touch! */
+// note this avoids need for the helper to return -1, it can return -EINVAL to indicate
+// an invalid parameter.
+	}
 
-> 
-> With you waiting a bit longer before v11 I would have written that in
-> reply to the explanation in the v10 thread and we might have saved
-> one iteration ...
-> 
->>  struct pwm_chip *pwmchip_alloc(struct device *parent, unsigned int npwm, size_t sizeof_priv);
->>  struct pwm_chip *devm_pwmchip_alloc(struct device *parent, unsigned int npwm, size_t sizeof_priv);
->>  
->> @@ -551,6 +552,10 @@ static inline void pwmchip_put(struct pwm_chip *chip)
->>  {
->>  }
->>  
->> +static inline void pwmchip_release(struct device *dev)
->> +{
->> +}
->> +
-> 
-> Is this needed? There is no user of this function that doesn't depend
-> on CONFIG_PWM?!
+	topology_parse_cpu_capacity(cpu_node, cpu);
+	of_node_put(cpu_node);
 
-Since only Rust is using this it's not needed. Thanks !
+	return cpu;
+	
 
-> 
->>  static inline struct pwm_chip *pwmchip_alloc(struct device *parent,
->>  					     unsigned int npwm,
->>  					     size_t sizeof_priv)
->>
-> 
-> Best regards
-> Uwe
+>  
+>  	return cpu;
+>  }
 
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
 
