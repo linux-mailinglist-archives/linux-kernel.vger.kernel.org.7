@@ -1,110 +1,117 @@
-Return-Path: <linux-kernel+bounces-727796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D904B01FDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:57:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51DCDB01FE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DDA5762B5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:57:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E765B763BD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB36A2EAB8D;
-	Fri, 11 Jul 2025 14:56:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254512EA15A;
-	Fri, 11 Jul 2025 14:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB8F2EA485;
+	Fri, 11 Jul 2025 14:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s0hLXYe2"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28882E9EBF
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 14:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752245774; cv=none; b=iZm1FeuPJQRIf7H/OtqxaGBwP7n5EYeFVl6KjnB+8clXkXEYpEHktvUXC6occwD3D9G5o9EPixqEqTE0H8CaReXcGxDLu14KKBpImLos7ZWzBzpohYd01VK9P2F1sR36hJjmWdnak9iVFKJjxYzFPlfYGxFiC3+KsqvRxGJYGos=
+	t=1752245805; cv=none; b=XlszvfqB+sQahDO8VlyzHpUGpYXWtvHdvHiDt838YjBHCDvlXWEZqXktNZZ5yUu8Vss5IUxZUwioDbSHD88z6clH0iw2PIP5bQu0oppeoCkSV6sKuJXbLdLb/jQRMfOy1pf4N5DyYKaiEXTnqXwcbz5fdHbO4iay9FfAX+/PccQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752245774; c=relaxed/simple;
-	bh=mqntXbsoirZdvU1Ta9R5gQ5kKyL1InGSMEbWlNk90pM=;
+	s=arc-20240116; t=1752245805; c=relaxed/simple;
+	bh=5mr1aDtNGT9/lR8ahICjF7wy8bx2blUwkHSxUA2Oby0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vss2f6pMfBGxlS1JCRg+OUGa2EUpNb2Njgke6+2c30CkAqg5DWDqrUsEnPrbpFNZ2HKZP7GXAh/bQBa/0Npa6tBVAIzqhYLyT4t8s9/0QQ8ehRJuzGUyHxwrRxNkUfrZfmU4ixsK19t2DXTUpRHTEuholMlSoljRhvb0N7uJRS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D392D16F8;
-	Fri, 11 Jul 2025 07:56:01 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58D633F6A8;
-	Fri, 11 Jul 2025 07:56:10 -0700 (PDT)
-Date: Fri, 11 Jul 2025 15:56:07 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	William Mcvicker <willmcvicker@google.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-team@android.com>
-Subject: Re: [PATCH v6] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
-Message-ID: <aHEmB-K7Pf7WOswk@bogus>
-References: <20250711-gs101-cpuidle-v6-1-503ec55fc2f9@linaro.org>
- <aHElXbj4-T--QqKk@bogus>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QMHCHsBTHuH8aU6XisGHq1NsnJqZaPLtJekPf55Kqctqmg0Ll3QSSlCJoXlXAW1+iwjh5Y6pJWN7XdjOSCTwNKdF4dwRymyax4k4X2pmrRMpaU+FA8LFM7Cr7Q7T8C61IXSXn0AUUt3XKZtbnvwaQCG4CPf+iW3nzY8JjR8zfzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s0hLXYe2; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752245795; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=coA4qiWVT+RKqvwey9IFyaoAUEmOXNmxt9MXcVW2deA=;
+	b=s0hLXYe2sD9uAM/447y+0dQwcxTsowpWKgPAXUakhXc1gnGIF3CAs3fsciGXZz31CEhrKhZUgIex6tloyWzksLE9O20MOsQMOzS2G8nX7KRrxk8I9bG2l/zFR8+sFn/kuvgW1mokjLnvHP/FBkysozN+xPGTgIFFyQEtKVx6Tnw=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WihPbBJ_1752245793 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 11 Jul 2025 22:56:34 +0800
+Date: Fri, 11 Jul 2025 22:56:33 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Petr Mladek <pmladek@suse.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH v1 3/7] panic: sys_info: Capture si_bits_global before
+ iterating over it
+Message-ID: <aHEmIdgXvOeHtgMM@U-2FWC9VHC-2323.local>
+References: <20250711095413.1472448-1-andriy.shevchenko@linux.intel.com>
+ <20250711095413.1472448-4-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aHElXbj4-T--QqKk@bogus>
+In-Reply-To: <20250711095413.1472448-4-andriy.shevchenko@linux.intel.com>
 
-On Fri, Jul 11, 2025 at 03:53:17PM +0100, Sudeep Holla wrote:
-> On Fri, Jul 11, 2025 at 02:50:26PM +0100, Peter Griffin wrote:
-> > Register cpu pm notifiers for gs101 which call the
-> > gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
-> > C2 hint. This hint is required to actually enter the C2 idle state in
-> > addition to the PSCI calls due to limitations in the firmare.
-> > 
-> > A couple of corner cases are handled, namely when the system is rebooting
-> > or suspending we ignore the request. Additionally the request is ignored if
-> > the CPU is in CPU hot plug. Some common code is refactored so that it can
-> > be called from both the CPU hot plug callbacks and CPU PM notifier taking
-> > into account that CPU PM notifiers are called with IRQs disabled whereas
-> > CPU hotplug callbacks are not.
-> > 
-> > Additionally due to CPU PM notifiers using raw_spinlock the locking is
-> > updated to use raw_spinlock variants, this includes updating the pmu_regs
-> > regmap to use .use_raw_spinlock = true and additionally creating and
-> > registering a custom  pmu-intr-gen regmap instead of using the regmap
-> > provided by syscon.
-> > 
-> > Note: this patch has a runtime dependency on adding 'local-timer-stop' dt
-> > property to the CPU nodes. This informs the time framework to switch to a
-> > broadcast timer as the local timer will be shutdown. Without that DT
-> > property specified the system hangs in early boot with this patch applied.
-> > 
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> > Hi folks,
-> > 
-> > This patch adds support for CPU Idle on gs101. In particular it achieves
-> > this by registerring a cpu pm notifier and programming a ACPM hint. This is
-> > required in addition to the PSCI calls to enter the c2 idle state due to
-> > limitations in the el3mon/ACPM firmware.
-> > 
+Hi Andy,
+
+Thanks for the patch! please cc Petr Mladek <pmladek@suse.com> for changes
+as I mentioned in the cover letter, he contributed a lot to the code and arch
+from RFC to v3.
+
+On Fri, Jul 11, 2025 at 12:51:09PM +0300, Andy Shevchenko wrote:
+> The for-loop might re-read the content of the memory the si_bits_global
+> points to on each iteration. Instead, just capture it for the sake of
+> consistency and use that instead.
 > 
-> I would rather keep the above note as part of the commit message or the
-> code comment as this will get lost when the patch is applied which is not
-> something we want. I clearly want to loudly shout or shame the broken
-> firmware for not getting this right.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  lib/sys_info.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
+> diff --git a/lib/sys_info.c b/lib/sys_info.c
+> index 44bc6d96b702..5d98560f3f53 100644
+> --- a/lib/sys_info.c
+> +++ b/lib/sys_info.c
+> @@ -58,11 +58,11 @@ int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
+>  	char names[sizeof(sys_info_avail) + 1];
+>  	struct ctl_table table;
+>  	unsigned long *si_bits_global;
+> +	unsigned long si_bits;
+>  
+>  	si_bits_global = ro_table->data;
+>  
+>  	if (write) {
+> -		unsigned long si_bits;
+>  		int ret;
+>  
+>  		table = *ro_table;
+> @@ -81,8 +81,11 @@ int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
+>  		char *delim = "";
+>  		int i, len = 0;
+>  
+> +		/* The access to the global value is not synchronized. */
+> +		si_bits = READ_ONCE(*si_bits_global);
 
-I did see the comment but still thought it is worth adding the note in the
-commit log too. Sorry for referring code comment above which is wrong as it
-is already taken care.
+Good catch!
 
--- 
-Regards,
-Sudeep
+Thanks,
+Feng
+
+> +
+>  		for (i = 0; i < ARRAY_SIZE(si_names); i++) {
+> -			if (*si_bits_global & si_names[i].bit) {
+> +			if (si_bits & si_names[i].bit) {
+>  				len += scnprintf(names + len, sizeof(names) - len,
+>  					"%s%s", delim, si_names[i].name);
+>  				delim = ",";
+> -- 
+> 2.47.2
+>
 
