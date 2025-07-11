@@ -1,84 +1,271 @@
-Return-Path: <linux-kernel+bounces-727131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F52B0156B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:06:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B894B01566
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96D7D765224
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 410E7481AED
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F07C201033;
-	Fri, 11 Jul 2025 08:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C7621129D;
+	Fri, 11 Jul 2025 08:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="bxxLkygm"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KTEcPqKS"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43451F7554;
-	Fri, 11 Jul 2025 08:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3654F1FC7CB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752221109; cv=none; b=FMV1X3W7LYAV0DNgzDPCzZCXvnTa2TWN7vseTMGv+yIDRVHOx+gfq+fafBo8g1zd5Yq/geEgSWRCSFjLdqaev40lHFwly1/M4ZEmw1SxYwn93Anee8MoOOJcPsmuCYlyygoU17OAUJt7Vinbj3P0oLVBGR1eHYL8W1H0VhrwmRc=
+	t=1752221088; cv=none; b=Olx3NHJWBr0Ir4F1PJZjS2OblTv/Xe6iW3Y06Oj3v6cxRjMvYcPfeEhcE60xawq0bndMTGoWk6CETR0u9MnVelMyfWTDPkviY6SmAgJy9cgIJLZwLN9WAO83BBHetvhAx57Ao6bPzWMD7u6o4837EFNrgLhoz8rwYGVPWBjcrVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752221109; c=relaxed/simple;
-	bh=Yi/3ncmNYN80pXHGeCRaMiu+4IsrTaflk7tc+t5Ivts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XV7V3hpYQxEqEVBCTE+PhmDzV80vm+1GAFo4axKzGwbXw32tkLKKJ92DwYfdXKK3JJJfEJOEa1g9Zyb1fPKf2Mq9uFq1rftlXAXuE0H5sAprug60tIlvXSjn6Xzjs0xgrTuUe+6yQ7yGtjmepwT6RZfyhXuKjnLLGAEaeg+9pUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=bxxLkygm; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=GkZoduVqumtiEfQnQGzIJk1vG8qGeS4iGJFAehTc+vM=;
-	b=bxxLkygmhvHTXs+MXsZXUX1n4jDPnz24VHGmwURFEn7WNma7xzcYqGLCvFzH1i
-	K5Ci5gqr5HLCWaoAb20LyNlqAo9x/6r+JhZc9zYRyisvYYhLMfbUqLZsHfNZTXdx
-	hnNIBZ58CxDEdmDEiyQfnmhcK418bsc3xYLVXA9PeYApU=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3_ySIxXBoVFpTAA--.58278S3;
-	Fri, 11 Jul 2025 16:04:26 +0800 (CST)
-Date: Fri, 11 Jul 2025 16:04:24 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/7] arm64: dts: imx8mm-venice-gw700x: Increase HS400
- USDHC clock speed
-Message-ID: <aHDFiN8dn8zVnmZl@dragon>
-References: <20250707201702.2930066-1-tharvey@gateworks.com>
+	s=arc-20240116; t=1752221088; c=relaxed/simple;
+	bh=/sM7c3ZlcrID5iVlFoygw6rsnxEGvSLgt7TAXbZimTI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=PN/5VJIBlY9gw5DgRVUqn92hS0Ki+hT/Ct5NNpnqbmkS0gj4mRQkbNYFzlTic2cOOrhtoBZjPtwUSRP+ySGSlM7dIOYXrgOou5ZJLlkzI1W63DtDt/w3VOfXbPj4hCwTwdrvA9ae/+aec4KEUYj3GKtklyXHaHARKTz7QPGvzQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KTEcPqKS; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a4e713e05bso948888f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 01:04:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752221084; x=1752825884; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YeddRl2ZjPZG1iB3VuE6BCvJf0DWRoDr9MXVmboPWFw=;
+        b=KTEcPqKSwYiUZM0WA6Km4pEKVYDxBE6r+XhHicQkL6wAqd2VF+p+appAOzlGVJ8/OJ
+         8vfQk7jMPwa/WFG26DNXf+egQK1+70Wz8qiCWSE2/YCknfrQ57C9by5dwtp9kqI4eyCd
+         V5SWX9WTgHP2D5f8ZvIF9dy0St2cX5ylzSSM9kDWCNsVVWNghnBJK22P36/lRpSg882E
+         QskJHbvUwHVqf28E49C8MB2eSJUkH/t/D87CR2ZrI8ABmHcb2DuDAMpCBD6uQv5QiHML
+         HEsXvlbDi4XflRBO5xSDvl7TDkdNmnP5LCyNqzAag/nc91xYNX1/tD5VlnxYS5jaKiM2
+         89mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752221084; x=1752825884;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YeddRl2ZjPZG1iB3VuE6BCvJf0DWRoDr9MXVmboPWFw=;
+        b=BL5UtLnJeCXFKFgdRdj3g+42gM3xkzCPXNxNVt5P6VlHfxYyom79yMXYu5SIsGba6b
+         F2k8vAAq2SAy/SMYVbKvJWYwdCeq1co8TH6VfFDgOGGRhVpAtvK1ak5jAJe+OGArSMnD
+         LhUrW8CJwSD585sYA0mxPWD+nZhtk2Z3AwVNEI96TW+dBsopPnpGUajPXPdZGq7aiGQP
+         vcdVGJbETS+7/Li0ixLBetbcCGoyxiaPxCfqWctDgFyopgwCOmMeQERWN/ng8Xq8lCmP
+         6bMpKeeCyhlgKMiwmg8w+jiEvRJt5QpEJFkT2q9NmQB7YrpECSZ0M5R4cDrkEbdSMEAN
+         w3wg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwANRQ1nvnYlQpTPMZ/z1C3XuuLIz96zOdJxo7JmoVMKMoc0s8hpXRYXbgcsf2Oix7MZyk2wkk3TO9L3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWkPKqhBstI8r0FeGseiLf4qLcLf5okIKQ45kpl6tXgW/Qe9yP
+	DeAYhJOX1QbCqVT9KVtiXZnEIxw3DuWiNS+TwcapGjGJdIL6hEN5vDMkSnILv24XnTVmf9NiB08
+	b1e7LY2c9mumbKj/mmw==
+X-Google-Smtp-Source: AGHT+IG/XgF1fLGGyXshyCet6B/sQYLy7ohXFOqAGO6mIla8fi/6od2tPDsSefKFOrRxYDhDW/XtZherTVAYt0s=
+X-Received: from wrqh8.prod.google.com ([2002:a5d:4308:0:b0:3a6:dd7d:9cb8])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:4b11:b0:3a5:3b63:58f0 with SMTP id ffacd0b85a97d-3b5f2dc2cd1mr1247364f8f.18.1752221084546;
+ Fri, 11 Jul 2025 01:04:44 -0700 (PDT)
+Date: Fri, 11 Jul 2025 08:04:37 +0000
+In-Reply-To: <20250711-device-as-ref-v2-0-1b16ab6402d7@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707201702.2930066-1-tharvey@gateworks.com>
-X-CM-TRANSID:Ms8vCgD3_ySIxXBoVFpTAA--.58278S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU5g4SUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRGHZWhwiwXKEAAAs2
+Mime-Version: 1.0
+References: <20250711-device-as-ref-v2-0-1b16ab6402d7@google.com>
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7303; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=/sM7c3ZlcrID5iVlFoygw6rsnxEGvSLgt7TAXbZimTI=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBocMWaRIEy+we9THrmpSxj2hWR8Lw49HZvEH02W
+ /KlLzxaMt6JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaHDFmgAKCRAEWL7uWMY5
+ RqUnD/97xg55WZUfcoF6IkTgRF74u19GiaS/m4ptRtTjwEWsPlsSfXdZwVCl11AsH7Vka1TOWXF
+ 9BIPig1/8MgviPmubeCSl0nsPSgCxtUoBLIJkJ6Nfz+1QazS6AqLULUPo0Dn+PBVZDfcU3wV4ge
+ KR6uL3IxSa8moOXWU8i9z/IxeOpoHJOGXdcjPMT5FWGi8ZTJlVXj+h1D0Eaw5oAWWUZpylC8D5B
+ Jnhscr0fdP6X7C4xgh/AmF7fWuhDJW1Q+TFPbrFUYi4vrLgR+AgKWYSDjZaMaN96N5ThDm6gnwr
+ BU2EqI/CQHH5im0bChZWfcUTXoXaMFRQcEe51+GsRMFCwbau//ACU9HcGqKK/YxtRwM0Jd+IOHt
+ npTx4ygolfDsNTGzcGRIEXU4O3ivlMIMisHc2joZ1X3MviFvCmKIvXQSFvHY8FzuRm86FX2Vtqr
+ v91Vt5dBRpOQkLICTTMAxi0oeV11gWDWNhEKaD5+xoRjCZ7D6Mn0+HF2/CBqizEdgc6XxIBmUkh
+ EaD5mhdr1vQv+lx7Rvj8WBfl6QnHAtPJpBWnG3wNhkB3FK3nQA+hHbLTfXV6UcxhGJaQgo0GANm
+ lRJv1U81I9iu4wlqNBVBR7II1sjtVyQk1lg28BpLAspAGr+MjxkEbCgopXxbXhvc6PaG2aJW0a+ hqsp0UieNeVAvPw==
+X-Mailer: b4 0.14.2
+Message-ID: <20250711-device-as-ref-v2-1-1b16ab6402d7@google.com>
+Subject: [PATCH v2 1/2] device: rust: rename Device::as_ref() to Device::from_raw()
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	"=?utf-8?q?Krzysztof_Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Jul 07, 2025 at 01:16:56PM -0700, Tim Harvey wrote:
-> The IMX8M reference manuals indicate in the USDHC Clock generator section
-> that the clock rate for DDR is 1/2 the input clock therefore HS400 rates
-> clocked at 200Mhz require a 400Mhz SDHC clock.
-> 
-> This showed about a 1.5x improvement in read performance for the eMMC's
-> used on the various imx8m{m,n,p}-venice boards.
-> 
-> Fixes: 6f30b27c5ef5 ("arm64: dts: imx8mm: Add Gateworks i.MX 8M Mini Development Kits")
-> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+The prefix as_* should not be used for a constructor. Constructors
+usually use the prefix from_* instead.
 
-Applied all, thanks!
+Some prior art in the stdlib: Box::from_raw, CString::from_raw,
+Rc::from_raw, Arc::from_raw, Waker::from_raw, File::from_raw_fd.
+
+There is also prior art in the kernel crate: cpufreq::Policy::from_raw,
+fs::File::from_raw_file, Kuid::from_raw, ARef::from_raw,
+SeqFile::from_raw, VmaNew::from_raw, Io::from_raw.
+
+Link: https://lore.kernel.org/r/aCd8D5IA0RXZvtcv@pollux
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ rust/kernel/auxiliary.rs  | 2 +-
+ rust/kernel/cpu.rs        | 2 +-
+ rust/kernel/device.rs     | 6 +++---
+ rust/kernel/drm/device.rs | 2 +-
+ rust/kernel/faux.rs       | 2 +-
+ rust/kernel/miscdevice.rs | 2 +-
+ rust/kernel/net/phy.rs    | 2 +-
+ rust/kernel/pci.rs        | 2 +-
+ rust/kernel/platform.rs   | 2 +-
+ 9 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
+index d2cfe1eeefb6054a97fefd6e499772c3fc4c443e..a4ac00990a441f6f92ec6e6bdbd7699d2777da00 100644
+--- a/rust/kernel/auxiliary.rs
++++ b/rust/kernel/auxiliary.rs
+@@ -276,7 +276,7 @@ fn as_ref(&self) -> &device::Device<Ctx> {
+         let dev = unsafe { addr_of_mut!((*self.as_raw()).dev) };
+ 
+         // SAFETY: `dev` points to a valid `struct device`.
+-        unsafe { device::Device::as_ref(dev) }
++        unsafe { device::Device::from_raw(dev) }
+     }
+ }
+ 
+diff --git a/rust/kernel/cpu.rs b/rust/kernel/cpu.rs
+index b75403b0eb5614e5652e6cad9341ae217edbe5bb..5de730c8d81722873ba2349a1c9c4d6c17701134 100644
+--- a/rust/kernel/cpu.rs
++++ b/rust/kernel/cpu.rs
+@@ -147,5 +147,5 @@ pub unsafe fn from_cpu(cpu: CpuId) -> Result<&'static Device> {
+ 
+     // SAFETY: The pointer returned by `get_cpu_device()`, if not `NULL`, is a valid pointer to
+     // a `struct device` and is never freed by the C code.
+-    Ok(unsafe { Device::as_ref(ptr) })
++    Ok(unsafe { Device::from_raw(ptr) })
+ }
+diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+index dea06b79ecb536cee4d2b90c21b74658658417c7..f70d768351204d7f49c6bebbf27ee26f4d11cdfa 100644
+--- a/rust/kernel/device.rs
++++ b/rust/kernel/device.rs
+@@ -57,7 +57,7 @@ impl Device {
+     /// While not officially documented, this should be the case for any `struct device`.
+     pub unsafe fn get_device(ptr: *mut bindings::device) -> ARef<Self> {
+         // SAFETY: By the safety requirements ptr is valid
+-        unsafe { Self::as_ref(ptr) }.into()
++        unsafe { Self::from_raw(ptr) }.into()
+     }
+ }
+ 
+@@ -82,7 +82,7 @@ pub(crate) fn parent(&self) -> Option<&Self> {
+             // - Since `parent` is not NULL, it must be a valid pointer to a `struct device`.
+             // - `parent` is valid for the lifetime of `self`, since a `struct device` holds a
+             //   reference count of its parent.
+-            Some(unsafe { Self::as_ref(parent) })
++            Some(unsafe { Self::from_raw(parent) })
+         }
+     }
+ 
+@@ -94,7 +94,7 @@ pub(crate) fn parent(&self) -> Option<&Self> {
+     /// i.e. it must be ensured that the reference count of the C `struct device` `ptr` points to
+     /// can't drop to zero, for the duration of this function call and the entire duration when the
+     /// returned reference exists.
+-    pub unsafe fn as_ref<'a>(ptr: *mut bindings::device) -> &'a Self {
++    pub unsafe fn from_raw<'a>(ptr: *mut bindings::device) -> &'a Self {
+         // SAFETY: Guaranteed by the safety requirements of the function.
+         unsafe { &*ptr.cast() }
+     }
+diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
+index 624d7a4c83ead64b93325189f481d9b37c3c6eae..11ce1e7f2d52ae4ddfbd4e47dfb17e390653bc45 100644
+--- a/rust/kernel/drm/device.rs
++++ b/rust/kernel/drm/device.rs
+@@ -190,7 +190,7 @@ impl<T: drm::Driver> AsRef<device::Device> for Device<T> {
+     fn as_ref(&self) -> &device::Device {
+         // SAFETY: `bindings::drm_device::dev` is valid as long as the DRM device itself is valid,
+         // which is guaranteed by the type invariant.
+-        unsafe { device::Device::as_ref((*self.as_raw()).dev) }
++        unsafe { device::Device::from_raw((*self.as_raw()).dev) }
+     }
+ }
+ 
+diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
+index 8a50fcd4c9bbba1f894a09080446ca3173571b03..7a906099993f1bf8c8caf6ab64f920faf81cafb4 100644
+--- a/rust/kernel/faux.rs
++++ b/rust/kernel/faux.rs
+@@ -54,7 +54,7 @@ impl AsRef<device::Device> for Registration {
+     fn as_ref(&self) -> &device::Device {
+         // SAFETY: The underlying `device` in `faux_device` is guaranteed by the C API to be
+         // a valid initialized `device`.
+-        unsafe { device::Device::as_ref(addr_of_mut!((*self.as_raw()).dev)) }
++        unsafe { device::Device::from_raw(addr_of_mut!((*self.as_raw()).dev)) }
+     }
+ }
+ 
+diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+index 939278bc7b03489a647b697012e09223871c90cd..a6dc11935ee3fe495640e06509d86f89bd201ca1 100644
+--- a/rust/kernel/miscdevice.rs
++++ b/rust/kernel/miscdevice.rs
+@@ -92,7 +92,7 @@ pub fn device(&self) -> &Device {
+         // function tells the borrow-checker that the `&Device` reference must not outlive the
+         // `&MiscDeviceRegistration<T>` used to obtain it, so the last use of the reference must be
+         // before the underlying `struct miscdevice` is destroyed.
+-        unsafe { Device::as_ref((*self.as_raw()).this_device) }
++        unsafe { Device::from_raw((*self.as_raw()).this_device) }
+     }
+ }
+ 
+diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
+index 32ea43ece6465a7e09c9d2332ca83c4bc27b7104..bd43a726f7d398278dae2546fca702fa70c68cf0 100644
+--- a/rust/kernel/net/phy.rs
++++ b/rust/kernel/net/phy.rs
+@@ -285,7 +285,7 @@ impl AsRef<kernel::device::Device> for Device {
+     fn as_ref(&self) -> &kernel::device::Device {
+         let phydev = self.0.get();
+         // SAFETY: The struct invariant ensures that `mdio.dev` is valid.
+-        unsafe { kernel::device::Device::as_ref(addr_of_mut!((*phydev).mdio.dev)) }
++        unsafe { kernel::device::Device::from_raw(addr_of_mut!((*phydev).mdio.dev)) }
+     }
+ }
+ 
+diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+index 8435f8132e38129ccc3495e7c4d3237fcaa97ad9..d620902219d78191d744df6a8970c0a99dbd47da 100644
+--- a/rust/kernel/pci.rs
++++ b/rust/kernel/pci.rs
+@@ -454,7 +454,7 @@ fn as_ref(&self) -> &device::Device<Ctx> {
+         let dev = unsafe { addr_of_mut!((*self.as_raw()).dev) };
+ 
+         // SAFETY: `dev` points to a valid `struct device`.
+-        unsafe { device::Device::as_ref(dev) }
++        unsafe { device::Device::from_raw(dev) }
+     }
+ }
+ 
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index 5b21fa517e55348582622ec10471918919502959..76e09429cdc275354b3ce84da5e74f7b97660430 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -215,7 +215,7 @@ fn as_ref(&self) -> &device::Device<Ctx> {
+         let dev = unsafe { addr_of_mut!((*self.as_raw()).dev) };
+ 
+         // SAFETY: `dev` points to a valid `struct device`.
+-        unsafe { device::Device::as_ref(dev) }
++        unsafe { device::Device::from_raw(dev) }
+     }
+ }
+ 
+
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
 
