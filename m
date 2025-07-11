@@ -1,128 +1,186 @@
-Return-Path: <linux-kernel+bounces-727919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F37B02174
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9724DB02177
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B042B4255F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:13:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A48E1886928
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB4E2EF2A2;
-	Fri, 11 Jul 2025 16:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7892EF2B7;
+	Fri, 11 Jul 2025 16:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apaK87ld"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TSvrJguq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5573627A91D;
-	Fri, 11 Jul 2025 16:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE0419AD8B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752250475; cv=none; b=EYgE52+XwH8M6RK/kkDyq5CL4iT5ztCyHmrhxyOCJw8RE2BWUVqVE0SFNmsUiTqYC37MXg/eSmvmH3g7qhUBc/BB6r6szE636qJFCHafmkmI/RZx+qz8PR6dNHm9RFhrjIdXRi/CcgsNR7xvH8DMPUZzFJzZYLh+7iHSgmZJIFA=
+	t=1752250561; cv=none; b=usH3Gbds+Rur8/z53TvcnGrio+jFA/k24ULZXPLfnp/QJEEJ7Ota13lQXQHyAiMS4EKUUljhqPqE+795mghi5Bdl0uJ1LakqxgbsaNEzaAUaLwjMjsdHoRCxunQuj0FX8is2b/84Y02W1Rkl7HvBbXRrqvpWIJAVxqXhWShnx+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752250475; c=relaxed/simple;
-	bh=GmeNQXQW8OBcvcvO6HZildjusv3m9QHJ5AApHT58lZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEbV3Zo936yeDfKstY3qSl5Jn8x8+HyASDNN8T/sYYeDYWuzY6fDUzAXh3AyNqUCRA/zI3Ymqpfnj1FdiyyPq/Vl3tadOCADxxZiTrIxNaNFRCBoU7RjFT/OesvHGA7IxAoTw3xKYybWUpjviMU/8utjSawL0vyyh0xKODw7z4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apaK87ld; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C421C4CEF5;
-	Fri, 11 Jul 2025 16:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752250475;
-	bh=GmeNQXQW8OBcvcvO6HZildjusv3m9QHJ5AApHT58lZ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=apaK87ldOYn5FK2tDeGRDePprHq+beg+q9HsLOWJ2j13cMBCS6+mx0WcltPJsdS3w
-	 CzYun59+ByQ3TdmVIVWrGlL/W8WcIzaPbfTXsbA5FtiIxqz5ZbhVvShMT6Uf9cL0PN
-	 4ytZp94nPA10Y7DtWLizwiEYUSknZl+OyAs0DUYaItDecpCuVhE4QDWkqNIHSJi7sp
-	 LWi25pGc9/uHHZ07X+TmzULZC8hajpmCywurY5p6K7szAY7mgPFz6xddS8AdBVgpm6
-	 fmH0Ugvb/IhmTZU+IPSaCKy2NvVBQrpYO4pajykZ1XzB949TL/eMqMY5t9EE4AzX1R
-	 jyy6Psd53fAxQ==
-Date: Fri, 11 Jul 2025 17:14:27 +0100
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net,
-	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
-	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
-	praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v9 23/29] iommu/arm-smmu-v3-iommufd: Add vsmmu_size/type
- and vsmmu_init impl ops
-Message-ID: <aHE4Y-fbucm-j-yi@willie-the-truck>
-References: <cover.1752126748.git.nicolinc@nvidia.com>
- <375ac2b056764534bb7c10ecc4f34a0bae82b108.1752126748.git.nicolinc@nvidia.com>
+	s=arc-20240116; t=1752250561; c=relaxed/simple;
+	bh=GaTXTSHhNy3zov9cV9sYYuEC/xhj+9jFrbDYc2p4QMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mYw8s+ye0vC3DUPLn4gqYognk712kiAdlvQGO2ssJ/RAf3JM+oGFXE0rFwRdFo/58lvkAdhW4VkT5bbBPfmcU82wAFcHChsLKKNXVr13gAFWqupmJknRzyU95M9GM2a5WhwizWo8TzU2GV1CIKM6ZxbawGOASbPL+tPXJh+NA9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TSvrJguq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752250557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=B4PdbUTlAoNvyMFKR6OePMk99FSDqKOEu6bezLg3CZ0=;
+	b=TSvrJguq8OScg/QqQqOLgPS3rcai0efWVL8s7Ygn7X0Fy77U5QxlkgkyeCJaFyU64DmC2S
+	kZarP+Kp9UwPKaSnhYuH6XtEe/kT9EIKGCK3KCjMu1xarbShukqzI0s+e7hMckxOw67mcC
+	Xrg3tlbeaWe3EqEGvf4C+1zZZnHvnuc=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-80-qaULdDRYMs6JjsUJWtxL1g-1; Fri, 11 Jul 2025 12:15:56 -0400
+X-MC-Unique: qaULdDRYMs6JjsUJWtxL1g-1
+X-Mimecast-MFC-AGG-ID: qaULdDRYMs6JjsUJWtxL1g_1752250555
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4538f375e86so18157495e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:15:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752250555; x=1752855355;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=B4PdbUTlAoNvyMFKR6OePMk99FSDqKOEu6bezLg3CZ0=;
+        b=XUMQN8UXCOOAm3VS4jlLpJ9VgE2U4G2suxv4swmA9eKhBYOhxIRM3dfZrdk+UrwZh3
+         AqlVkG0E63KlcnV82zsYnWlNEKnilAfNKbTTqMhUg/5WZp/d6dwgiERxKz7jDrHp64b0
+         a71C3wmOSrmuy7VJ2GhnM6c0wfRoCbB6loDujioe7mncQFkTri+InTodfEmt9NfNaJn0
+         kwN+snWFufRNfnUNmtWgiICvrGQSxh3r8RBg1Dd3MiAcvozK9IKry/JkDDn6jMTcaXz2
+         ezWjW1N3b/82Vn++OWhzTXK3A0ASaCz1lXIK6oCamI4PyTwVtetyIuoTTACrp33cnGww
+         VI3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXHJkvHkhZD8KWE8L34wrk3ZJXmXX9u6lMh2C564hko0ABuDrQlC7q9dVXhlHPXKCB96aErVyq/MBeuHfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRXp5Q3fyY8dvltnKIG6WfctCcVLGB8cRhZSAV7MR/Ml3ke09Q
+	72gj0cy/cVnX1Rh/skiGSsJvPn+BX8SyDSJKVxR1I1hQsfrJGXf/uqHexUf7Nzwf6NHdTFT8TKU
+	wnNcLk+F/jETq5CcTAuKkDsKNwJ2KYIwRS16M7U11AYugFqXTNy+0D+L8PtMzUviwcwldPWQeCw
+	Wl
+X-Gm-Gg: ASbGncvcNVJ+Ii+dijNuT0+CzdX3zIjduomR4jEBAjsofF5iUAvDZejF/iSoGxGZjB9
+	M3SQ1gPEneh18EhSoskyTZAMjm6O0J75Py9HGwAeMpqsIEdNvSPnWf1uDE2O97NiLudzlOvAZjr
+	sEMQf4/KNm6f33YLCESKbqnu/QO9mZaHdUoY691v2hKUHozQsy9ffodvCN9M2hRymAUa+wl/PMn
+	nOd0lJogOggNiulmitxu9cJ2XynyUhmWbaI+as39RmQuYuKnsvj8WjgszfD2//XD97sGzEDdpVf
+	JQunYq3hqunW3rKvzpMTfx97/ejHl8fWycXSfV8cO68bl8iPmPePeHwd+uDdoQ0FOzKBRFWqQ7w
+	pqdzcsaBIJbtVIIlqppNBdtzQfzAeDO1CBXPJ+3C2FT2pGhUH75fmJBKWqJx2TfAucQo=
+X-Received: by 2002:a05:600c:4684:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-454ec276b88mr40690185e9.18.1752250554849;
+        Fri, 11 Jul 2025 09:15:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE1a5E76BIpgezsbveDVnmxTjzk9mC3/6Cc7fl4zhaGnS7tXf6VRuARN3jKkYuVE7SAT26gyA==
+X-Received: by 2002:a05:600c:4684:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-454ec276b88mr40689655e9.18.1752250554433;
+        Fri, 11 Jul 2025 09:15:54 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e8e0d5f5sm4888486f8f.56.2025.07.11.09.15.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 09:15:54 -0700 (PDT)
+Message-ID: <479b493c-92c4-424a-a5c0-1c29a4325d15@redhat.com>
+Date: Fri, 11 Jul 2025 18:15:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <375ac2b056764534bb7c10ecc4f34a0bae82b108.1752126748.git.nicolinc@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] readahead: Use folio_nr_pages() instead of shift
+ operation
+To: Chi Zhiling <chizhiling@163.com>, willy@infradead.org,
+ akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Chi Zhiling <chizhiling@kylinos.cn>,
+ Ryan Roberts <ryan.roberts@arm.com>
+References: <20250710060451.3535957-1-chizhiling@163.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250710060451.3535957-1-chizhiling@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hey Nicolin,
-
-On Wed, Jul 09, 2025 at 10:59:15PM -0700, Nicolin Chen wrote:
-> An impl driver might want to allocate its own type of vIOMMU object or the
-> standard IOMMU_VIOMMU_TYPE_ARM_SMMUV3 by setting up its own SW/HW bits, as
-> the tegra241-cmdqv driver will add IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV.
+On 10.07.25 08:04, Chi Zhiling wrote:
+> From: Chi Zhiling <chizhiling@kylinos.cn>
 > 
-> Add vsmmu_size/type and vsmmu_init to struct arm_smmu_impl_ops. Prioritize
-> them in arm_smmu_get_viommu_size() and arm_vsmmu_init().
+> folio_nr_pages() is faster helper function to get the number of pages
+> when NR_PAGES_IN_LARGE_FOLIO is enabled.
 > 
-> Reviewed-by: Pranjal Shrivastava <praan@google.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
 > ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h         | 5 +++++
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 8 ++++++++
->  2 files changed, 13 insertions(+)
+>   mm/readahead.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> index c1ced4d4b6d1..6183f212539a 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> @@ -16,6 +16,7 @@
->  #include <linux/sizes.h>
->  
->  struct arm_smmu_device;
-> +struct arm_vsmmu;
->  
->  /* MMIO registers */
->  #define ARM_SMMU_IDR0			0x0
-> @@ -720,6 +721,10 @@ struct arm_smmu_impl_ops {
->  	int (*init_structures)(struct arm_smmu_device *smmu);
->  	struct arm_smmu_cmdq *(*get_secondary_cmdq)(
->  		struct arm_smmu_device *smmu, struct arm_smmu_cmdq_ent *ent);
-> +	const size_t vsmmu_size;
-> +	const enum iommu_viommu_type vsmmu_type;
-> +	int (*vsmmu_init)(struct arm_vsmmu *vsmmu,
-> +			  const struct iommu_user_data *user_data);
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index 95a24f12d1e7..406756d34309 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -649,7 +649,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
+>   	 * Ramp up sizes, and push forward the readahead window.
+>   	 */
+>   	expected = round_down(ra->start + ra->size - ra->async_size,
+> -			1UL << folio_order(folio));
+> +			folio_nr_pages(folio));
+>   	if (index == expected) {
+>   		ra->start += ra->size;
+>   		/*
 
-It would be nice to avoid adding data members to the ops structure, if
-at all possible. The easiest thing would probably be to add a function
-for getting the vsmmu size and then pushing the two checks against
-'vsmmu_type' down into the impl_ops callbacks so that:
+This should probably get squashed in Ryans commit?
 
-  1. If the type is IOMMU_VIOMMU_TYPE_ARM_SMMUV3, we don't bother with
-     the impl_ops at all in arm_vsmmu_init() and arm_smmu_get_viommu_size()
+LGTM
 
-  2. Otherwise, we pass the type into the impl_ops and they can check it
-
-Of course, that can be a patch on top of the series as there's no point
-respinning the whole just for this.
-
+-- 
 Cheers,
 
-Will
+David / dhildenb
+
 
