@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-727333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C059B018A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:47:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C467B018A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE50762F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F5C11CA6DBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A93B27BF7C;
-	Fri, 11 Jul 2025 09:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744DD27F166;
+	Fri, 11 Jul 2025 09:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bysfg/b+"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wb65eGMM"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FA427C854;
-	Fri, 11 Jul 2025 09:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D972627E06C;
+	Fri, 11 Jul 2025 09:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752227203; cv=none; b=BlnkEiDAbflC8C/IjbwHiM9fBzXYOVplvVOosADaR5fzFFOkPh83sozqMu+tlG6k2KDRMOXIvbmwAuiwuveJKTgKj50v3vVzwG8eWWXcAZf0CRRQV9tCgUv/H4CrzrAqhVIP3ceuAin682jhN0N/Kmw7W4EizmOQZeP8fpmIiFg=
+	t=1752227206; cv=none; b=iHf8bNLwF5abJtBQScffxjgGsDJJZpTuYFr/y93chURIMAlJEgXc6XZuBcGFvz4obTw4eUrfJh3H6+dWZ6O3tnCe422bayrwyXWTNFaXvjEx8kAC5/AQgz8rJCHyixStfp9xfOnGIhMyYXI+jc6wZsRyJKfVx71M2O6Dv8szfb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752227203; c=relaxed/simple;
-	bh=nnRrQFs+x5dUi8UbtTL0Q1jPf5V80eBXTe9LNjC4hgQ=;
+	s=arc-20240116; t=1752227206; c=relaxed/simple;
+	bh=FhKULSqGBmvnGSH+FwP5V1mfWJ77eOEIiy6JATcKyQg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IWDl6s87+vTsKUyjYcJZ5mJcLQ6eY/eoK2gn97P6L7r0XcuzYbOVjUhhqtnVIQwn7SbQ5M6cvqXHLT+s3oL/Dz037yJ8RJUBZqBaocQvCgBVC3OLeO3muzfeBapZfpGcJ9HzxwAOq99R1jr9NB3dY98FYySzLgUa5RRWKF1O1rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bysfg/b+; arc=none smtp.client-ip=209.85.219.178
+	 To:Cc:Content-Type; b=Gtn24nLKN4nGSu4Sp5kwNO2LD6YjLTSQlgDMf0hqAuY6Quh301QiaEa19Da0YHP0p5u6bhIoOvQEC9fQvZ824r++bJFfCird8YK/6z6BWGxxoG6DA455ezJ5M96UB78hicpoolvP8tCi0vA2cYo+kDT/vWzQVOM8y0hp7g7t8Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wb65eGMM; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e8b62d09908so1729853276.2;
-        Fri, 11 Jul 2025 02:46:42 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0a0cd709bso630879966b.0;
+        Fri, 11 Jul 2025 02:46:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752227201; x=1752832001; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752227202; x=1752832002; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nnRrQFs+x5dUi8UbtTL0Q1jPf5V80eBXTe9LNjC4hgQ=;
-        b=Bysfg/b+p8VDU70wFhU9O6Bwk5SPvkNWRMVlwO/e0jxbYiXeKh6A4sWQEk906Hu6fm
-         9084paFVUYSjs5PH6HV9wfSuu0fx1Dj+gKY/g8bDO7Gt45P8bY2BGhYOCJm/fCql/ieI
-         eWZV+fVzW4eL9nEqolWO/0bj9nZiy62HTojdgAJGYnbNxIjmwlkOx/l5t9pxLbu8eB+f
-         UIW/ASpPAcifIOA3Ni1caPZGuxGU1Jwk0naOjny1Hu1ts7sUszb7J6w99R8hbUUlhdRg
-         A8+ofY6voy/BYqDgtkEWyABmmUFo0liddtiadGJ725gFw+XN6r6AckTAiOKwc640hQSz
-         Yn/g==
+        bh=VWxaFq6B1WhfohWAxkce96BoUL90ZeODa6IArkghQVg=;
+        b=Wb65eGMM0Ds2tgPB9qp1NfUU7mBz+mdkC1mkHcTuMZPp7p2VR5tsLXhMtP1s3Jd3vP
+         4nDNDMKR9m6tuwaPSdh/UfjkrgBaIYMocfOmhiHck293XTqyjHnCPf9f6SPR3zGQVpCm
+         ZBCxziStAdtXiwV4cPVBsvn1XtbYGhNZPLpKCp/NaOL9bs+rUJcjavJbm8leIEKWkhYn
+         mgcveUNWlX48tdoHLu1qSzAB0H06xKELqFH+g360uiee+Cg7OSHymfdS3qXyQ7b69HKM
+         xFW5Vfm+zA9BZSwKFFA5ALN6sWAR9GcpT4TQQNIkBU4/EyWBC0KxQGrR1ZiKNNgKnKZj
+         K0EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752227201; x=1752832001;
+        d=1e100.net; s=20230601; t=1752227202; x=1752832002;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nnRrQFs+x5dUi8UbtTL0Q1jPf5V80eBXTe9LNjC4hgQ=;
-        b=aRbGUTkw8B59FXd6oIkvArDHp7cs4UBiHfd38AFJfv5hpuK7Uw7XIoMyh4IYvm5gF0
-         vTqRx6P7GP+BXYFPBCZvjYQ3KBMMz/QkObl9TU9yhfbNTaBsgD4Gp5CL5RwUpuNqY9tp
-         lQAzxO/anHaavHCIPzhOaqYgbeO/Pgj1QJyDI8yFfQyi+H/E0Ib+zq7yWd6I2dfCMILp
-         bhV3v7iMgRUHBub9+s5wpEcR46hYxha2ogtiSzhYTDov+t3DWEY4LTHpHLJNjq1QMjqm
-         siyW0WQGcM7PwFBwUkpGLYoflEVdghHLVpcYxo32eyyfWuu4isCUziG8kYddPMEGbxkf
-         O1Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNHo4TAPqB+mZBXC9XhlfLmXm+OBQDtuzsoPdlU3KOWGD9YfVMMI8VjENDyL5hViM9eobqXf7V2Zl4zN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz10UkqRWT/9XIuH0mntlqO7u1XC0XvTVlKaMAWc/e1Ekeqcny
-	9s7uE5SgHB1D+T0YMdoXI3QfrHVVPrBzfLvb7b8+Sg5fKwhQnCi4l0ckXaFwEnVvZBGNbTakhVZ
-	qfzowzAILQXuiMEeLOcTMKHNVAKUJpq0=
-X-Gm-Gg: ASbGncts9ZuE8zLzP8eRhkK0gQmgqv+BYx+y5t7a5ObdcHsu/gmgC2nn7p9hn7V0Lm+
-	WyJdiVK/aYp+1Luim8aWgPjG4pgq0uw9SJj79dN2rXc33+xLjWlHwUO+Wzf6P7OR0pz3w5yOzea
-	ieU4lv+tTNlPIzp057JmbHKEXRz8/d4DeOI6akp4oDPcc1jHyHqZbl7KZ4qTuTeqaSoQngZfgwF
-	wMZcA==
-X-Google-Smtp-Source: AGHT+IG/hCWDwgsYUDxUNG/+JyruvcE1QSCcLnMNfeS9TcPz1j9SDBIOOE1J42zfnJmRJiePbS6ONLBHsY8GJt83mag=
-X-Received: by 2002:a05:690c:f06:b0:70e:923:2173 with SMTP id
- 00721157ae682-717d7861456mr32734437b3.5.1752227201280; Fri, 11 Jul 2025
+        bh=VWxaFq6B1WhfohWAxkce96BoUL90ZeODa6IArkghQVg=;
+        b=dTNd0LAgNgWzy4gtRqDAp8tQ/Z8rEJDScv+qidDTpOUqLbq5/s27lYocxnTHPGNDyV
+         9QNGSddfBExVbzvbsJbs/TDCvUdWaV2GMdAMDeBRBgRNWYm3AFDTSckTRxPaXIZ4AiCm
+         BYS0swAG88k24ADtXtyatE2KBgzO5edrF4fakn3Rh6W5ljgfTVXWuVPIjxmlUDmw02zQ
+         ixE8uHccTQdkzi4JVN+qOx/pM/B42U8Y1HkkBzWKWfOKgIB4kaFSGuzTJGooAoArU0Xv
+         tM0pmL4gG0MTUBAbZ0Az7/UZ4YXwVs/nPPD1uPy0niraWybBpG4g2Ikv0lQ8lv75iqIG
+         zDvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcS10fk1GiKda+2qm/Tnvida4f6Z0fYboI0YIoc2IlBVew64IYf70xkTk3VUvna8bdtkcEI73tQy2HjqxzhQ==@vger.kernel.org, AJvYcCVa/v7+NFAPbvK/Lufni6INOII4mepZ9eTepETORxcgTAsNYbmE8DqkRSedpMvIEDRgWXGOgjbB8RwCRYE6@vger.kernel.org, AJvYcCWzCN6a2WCihGHXBnITWzldEWmkcvGMh2es/S8vxT7Lf6Ns/YZ9ZSIJfa0nPOqgMoixtWN8D0ZOU912ZR8q@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ2sAvyv91qix0vvKETe/ipOoJUbsrTXMefSfi0GH8+kOflykm
+	po2EshwjNqV5FwaS2QCbSB/Uu56sEdCMcDWg459xP3WmBH68rWc0WuIls/dvDjogh93us5Lfkd4
+	zxOvoXuIAKjneiixV6DWcbIvQRGHlO1I=
+X-Gm-Gg: ASbGncv3h/75ET8TKREXjoVJyYA0Tx14ifQN80l6WxwjeMB3RJswxq78h5SljqBFwGp
+	oUQgM4XotZUy/VU9NZT8PyDKmXrGk6K4b0PXpKJ4PjCF6Sz+DEhakZHSf/ChuvVOh0XLsxfgJ09
+	h6vuWHE2IMJ7qwPaJZJtug4u8Jf46gpBjfU0O0SOZsNNWqZfCpne8SbIU04x2+jLIX6iM4GY19T
+	CuMiAY=
+X-Google-Smtp-Source: AGHT+IHiY3xa6kGWa2ZZx/ubPBkWo65H8kbbj2DkUhbZf4YWqT9FMnaC25+qUJjTgy1w80qmvk38mF4HYHRbYnCULoA=
+X-Received: by 2002:a17:906:9f91:b0:ae0:7e95:fb with SMTP id
+ a640c23a62f3a-ae6e227c889mr719410466b.5.1752227201542; Fri, 11 Jul 2025
  02:46:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,40 +74,146 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710162737.49679-1-stefano.radaelli21@gmail.com>
- <20250710162737.49679-3-stefano.radaelli21@gmail.com> <8b03b9d3-60f3-40de-af23-f943d3e2c9bc@ti.com>
-In-Reply-To: <8b03b9d3-60f3-40de-af23-f943d3e2c9bc@ti.com>
-From: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Date: Fri, 11 Jul 2025 11:46:25 +0200
-X-Gm-Features: Ac12FXwotqlTlexaghXcjeDsMDeOuHQ9_RnJ0m5EzLgVnZ-6_GlqIHBcx29d-NQ
-Message-ID: <CAK+owojqU3ubiynR+9F8rjMNRLDCZKVRPuKk1iYB7CZEUzJ1Qw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] arm64: dts: ti: Add support for Variscite VAR-SOM-AM62P
-To: Andrew Davis <afd@ti.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org
+References: <20250409-tonyk-overlayfs-v1-0-3991616fe9a3@igalia.com> <20250409-tonyk-overlayfs-v1-1-3991616fe9a3@igalia.com>
+In-Reply-To: <20250409-tonyk-overlayfs-v1-1-3991616fe9a3@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 11 Jul 2025 11:46:30 +0200
+X-Gm-Features: Ac12FXxZ3_W7PgUflUyUh3BPlyzS0a0otRjvpz7FCpnsZ38Tqeeglv4E0Ein8rU
+Message-ID: <CAOQ4uxjv199LB4XhgeSbTc9VkPB16S86vwcz9tq4GHVX4eVx-w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ovl: Make ovl_cache_entry_find support casefold
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 11, 2025 at 12:34=E2=80=AFAM Andrew Davis <afd@ti.com> wrote:
+On Wed, Apr 9, 2025 at 5:01=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@igal=
+ia.com> wrote:
 >
-> Why enable this interface without a codec to go with it? Looks like this
-> SOM has a WM8904. That could be modeled here also, or else maybe just lea=
-ve
-> this interface node disabled until you can add that support.
+> To add overlayfs support casefold filesystems, make
+> ovl_cache_entry_find() support casefold dentries.
 >
+> For the casefold support, just comparing the strings does not work
+> because we need the dentry enconding, so make this function find the
+> equivalent dentry for a giving directory, if any.
+>
+> Also, if two strings are not equal, strncmp() return value sign can be
+> either positive or negative and this information can be used to optimize
+> the walk in the rb tree. utf8_strncmp(), in the other hand, just return
+> true or false, so replace the rb walk with a normal rb_next() function.
 
-Hi Andrew,
+You cannot just replace a more performance implementation with a
+less performant one for everyone else just for your niche use case.
+Also it is the wrong approach.
 
-Thank you for your correction.
-You are absolutely right, the SOM has a WM8904 codec mounted, but we are
-planning to add support for it in the future due to some customizations
-that we need to make to the codec driver.
+This code needs to use utf8_normalize() to store the normalized
+name in the rbtree instead of doing lookup and d_same_name().
+and you need to do ovl_cache_entry_add_rb() with the normalized
+name anotherwise you break the logic of ovl_dir_read_merged().
 
-So I will keep the MCASP peripheral disabled until we add the codec support=
-.
+Gabriel,
 
-Best regards,
-Stefano
+Do you think it makes sense to use utf8_normalize() from this code
+directly to generate a key for "is this name found in another layer"
+search tree?
+
+I see that utf8_normalize() has zero users, so I guess there was
+an intention to use it for things like that?
+
+More nits below, but they will not be relevant once you use the normalized =
+name.
+
+Thanks,
+Amir.
+
+>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+>  fs/overlayfs/ovl_entry.h |  1 +
+>  fs/overlayfs/readdir.c   | 32 +++++++++++++++++++++-----------
+>  2 files changed, 22 insertions(+), 11 deletions(-)
+>
+> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+> index cb449ab310a7a89aafa0ee04ee7ff6c8141dd7d5..2ee52da85ba3e3fd704415a7e=
+e4e9b7da88bb019 100644
+> --- a/fs/overlayfs/ovl_entry.h
+> +++ b/fs/overlayfs/ovl_entry.h
+> @@ -90,6 +90,7 @@ struct ovl_fs {
+>         bool no_shared_whiteout;
+>         /* r/o snapshot of upperdir sb's only taken on volatile mounts */
+>         errseq_t errseq;
+> +       bool casefold;
+>  };
+>
+>  /* Number of lower layers, not including data-only layers */
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index 881ec5592da52dfb27a588496582e7084b2fbd3b..68f4a83713e9beab604fd2331=
+9d60567ef1feeca 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -92,21 +92,31 @@ static bool ovl_cache_entry_find_link(const char *nam=
+e, int len,
+>  }
+>
+>  static struct ovl_cache_entry *ovl_cache_entry_find(struct rb_root *root=
+,
+> -                                                   const char *name, int=
+ len)
+> +                                                   const char *name, int=
+ len,
+> +                                                   struct dentry *upper)
+
+This is not an "upper" it is an overlayfs dentry that we call "dentry"
+
+>  {
+> +       struct ovl_fs *ofs =3D OVL_FS(upper->d_sb);
+
+OVL_FS(upper) is never correct, because OVL_FS() is only applicable to
+ovl dentries.
+
+>         struct rb_node *node =3D root->rb_node;
+> -       int cmp;
+> +       struct qstr q =3D { .name =3D name, .len =3D len };
+>
+>         while (node) {
+>                 struct ovl_cache_entry *p =3D ovl_cache_entry_from_node(n=
+ode);
+> +               struct dentry *p_dentry, *real_dentry =3D NULL;
+> +
+> +               if (ofs->casefold && upper) {
+> +                       p_dentry =3D ovl_lookup_upper(ofs, p->name, upper=
+, p->len);
+
+and here you are mixing a helper to lookup in underlying upper fs with
+an overlayfs dentry. You should not do lookup in this context at all.
+
+> +                       if (!IS_ERR(p_dentry)) {
+> +                               real_dentry =3D ovl_dentry_real(p_dentry)=
+;
+> +                               if (d_same_name(real_dentry, real_dentry-=
+>d_parent, &q))
+> +                                       return p;
+> +                       }
+> +               }
+>
+> -               cmp =3D strncmp(name, p->name, len);
+> -               if (cmp > 0)
+> -                       node =3D p->node.rb_right;
+> -               else if (cmp < 0 || len < p->len)
+> -                       node =3D p->node.rb_left;
+> -               else
+> -                       return p;
+> +               if (!real_dentry)
+> +                       if (!strncmp(name, p->name, len))
+> +                               return p;
+> +
+> +               node =3D rb_next(&p->node);
+
+As I wrote this change is wrong and unneeded when using normalized names.
+
+Thanks,
+Amir.
 
