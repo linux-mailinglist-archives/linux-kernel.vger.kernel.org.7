@@ -1,147 +1,139 @@
-Return-Path: <linux-kernel+bounces-727222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10592B016AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:44:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F546B016B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241CF1AA06A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:44:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27967487A0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9487D21480B;
-	Fri, 11 Jul 2025 08:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042B621C19F;
+	Fri, 11 Jul 2025 08:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O46v/df6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="f+M6x8Y0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TZ8qZah+"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1052198A11;
-	Fri, 11 Jul 2025 08:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0525221ADA2
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752223467; cv=none; b=tAvxNFT7/CoA9Ffp6dqTOY6cFJOBg8WBkv+uE1MkLDR4xShnu4rl3lQprZAg1WsgFeIHivVEumkKW5j5IH3JDvoNGIt7CZY3OJChSyd3Q/MACd4hu9FkBENhtwW8w1tzowOaP++6Soc41LvFvhlQpjmV1W5XEE70UyhvJdDfvxk=
+	t=1752223488; cv=none; b=s8Ubza7F1TGJHafFTS4MJ4Wx/r7hYI2lVe6Kv6ruYKKparIm48Tae/fha13dVSbj0q00TydYUxi6P2zL3EqSAWn+0kp2li0tsokGZwMxV91HuIQbN8LTyWmeR9AptNuRsL3Zdk9gBikwyZ7syU6GwQ0BN111IaHIf706gw8/dWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752223467; c=relaxed/simple;
-	bh=5u0xj9NoUVsjv0Gy6s3BT/+6Ahjt0e6gF5rqU2CiDrw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IFCFO5tpVA3KhFt3gh2fvJDPBo1Oc6oXtRC5/kmYFXEIBdYn28kjroRypRleqrcUn/bSIEyDfMP3bQCbLmZVnelbVUOpb501afEQobLSJD46eJsI6hIzFGJ+knFhD9klKve7D/23jOjcX/fyzGFBFxkHWfgk7+GnF7FpRHc1LNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O46v/df6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9FDC4CEED;
-	Fri, 11 Jul 2025 08:44:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752223466;
-	bh=5u0xj9NoUVsjv0Gy6s3BT/+6Ahjt0e6gF5rqU2CiDrw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O46v/df6c2XPGTJKd946K0NJ/vsmd7HWlMvN6x+FIjeY17v+fXAD9qNpQw2hTh4Fb
-	 N2IzoxLR7QPNf7FWNquvQsAqKx42Wo1EWsessKwwzwRfX6hpcRAElOmEtWhDDKZda5
-	 ghnNOvFZPjFseLUiijjSZSnC7a+NCyAajwZOj6TA/ljqCnCYG5yxpTWlahvC4tSLE0
-	 aKXBc1JKy5UcGEDCvuVYXXHZCnFFQO+mQFGuqFmJT9Tb+Wmlwk3X8/SWulW1RQ+GBh
-	 wXlAM/hcOaBQv0NVbAufHT22P+rRR/uEXyS+UJVjnz5NdjWw4tgSd+4cLavC7xw++e
-	 +Up+5UohaPmpg==
-Message-ID: <1606591b-5707-48bf-8f60-44063ecf8f1a@kernel.org>
-Date: Fri, 11 Jul 2025 10:44:11 +0200
+	s=arc-20240116; t=1752223488; c=relaxed/simple;
+	bh=QYqt/VQXRENIw8ufzkxah/mgLiscWn2l8eiPLaEqdtA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Kyoj+gCBwzhLw6GDvhzUXDIhZJQvCsd1Q9tmbwmukio8QGc9kB64dqoLnb9SLuWhOeM6ecjdYyyTP11NcIqYvdtYCLRHWmrwNfjLrrFw1+uU0lSQpLVoJFoCxgYj+5D6t0X+WCLwat78rGeJJgjRvzCxmHHDf7i4ZxhrDFyeR8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=f+M6x8Y0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TZ8qZah+; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id B79D51D00196;
+	Fri, 11 Jul 2025 04:44:44 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 11 Jul 2025 04:44:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752223484;
+	 x=1752309884; bh=WF9+3lnjfRQwgjXKff+rlIuGBtZEcHO9FtUjx6kias8=; b=
+	f+M6x8Y0HndHChIkB8MeA9N8XNUieosjoUTIRKrau18t/2QYFOlQWoYitW1TmEb+
+	rTEhX9DgfWQ3Cyi3d1ib8e0KlG7F4/+K/hWAgh/3zLciRW1CaG+P7fMV82f9qj4F
+	GRsrUGq8/egpnDsrcJm10KjBF2+mIkOyqDv85tJuQgVQWOZSpi5MMuoFfbygHZ6g
+	eufDRX88veq5Yaz0mMnP0ywyLPVu35Dd1V4LLocpQyctzzYdBImDHuzDI5jas1mM
+	+eeFJSDYttr1h5esvRuZQZVMQefAfG7pcAxpDSo8jQVe+pugKJ9gj4S95CHaSvYd
+	znXFzkrMMQbh2ipK0G8U0w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752223484; x=
+	1752309884; bh=WF9+3lnjfRQwgjXKff+rlIuGBtZEcHO9FtUjx6kias8=; b=T
+	Z8qZah+Cmf8xJp574+jQX3xXwYoX29M3NDYTDUn2Dnh9wSr4LxiC+ginx345EiUj
+	GVomuFeA+AffIM9kApK1kcQqA3RP2LjOqCPVuqKiW6YkLqbFfEDzM3nW7cKloCek
+	8Ixu0TXh7NaNQos5qmRvN7Zci4WLM+2bVNTDzfqGuCKW4Kv7xiez8tVblgZmlSc7
+	/AAW2Bdk4QhjZO9ZUDMIer692BwVlW6EMwowk/wqIH3wC8/Y/7JVPgG4mvUpMQfa
+	pGPqvdnYbrJrSiDn4DTuE/Fsyg+YMJc0I1iVx1fIWxt9Fo2aDj2O3dWNVRp3Q114
+	6dfbC6iPQLy/+qJKc/S7w==
+X-ME-Sender: <xms:_M5waMgf0kLBZEvO31KLd-ufnzkzdKZceigRcicAKX-Vy62LOAcAJw>
+    <xme:_M5waFBUW0B_ADYmdYZXkA5MohRKGXfbL_E8Z54xvNfU6_EKqZ4JcSbetfhTB4cqi
+    OSHDSqwIvXEu7OcZhE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegvdekjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtph
+    htthhopehjrghmvghsrdhmohhrshgvsegrrhhmrdgtohhmpdhrtghpthhtohepjhhovgih
+    rdhgohhulhihsegrrhhmrdgtohhmpdhrtghpthhtohepshhuiihukhhirdhpohhulhhosh
+    gvsegrrhhmrdgtohhmpdhrtghpthhtohephihuiigvnhhghhhuiheshhhurgifvghirdgt
+    ohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrh
+    hoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrgiisehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:_M5waMWQuoGjN1oG0tLpj-JLUAa5yoEhNFbvncX31tnlEFQnhnZHDA>
+    <xmx:_M5waAsz2GgojV1bHBhimTh3axof-BXQv5qfKy-t-hxJJQDWZ1e8Cg>
+    <xmx:_M5waH2yQgEEGDfEMJo06TofDflV849Gz6G1Bew4f9JZRmXn4bLo_w>
+    <xmx:_M5waB7txBNOs5S3ip5-OOQqV4xX1iGrbRURCimKl6Al1RKENIgU6A>
+    <xmx:_M5waCU8xS5oq00KRT1drlLUekAtItX4rNohIRUt8bTEetT13qtPTEzf>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id E762F700068; Fri, 11 Jul 2025 04:44:43 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] dt-bindings: PCI: qcom,pcie-sa8775p: document
- link_down reset
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
- mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
- bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
- kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
- kw@linux.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
- quic_krichai@quicinc.com, quic_vbadigan@quicinc.com
-References: <20250625090048.624399-1-quic_ziyuzhan@quicinc.com>
- <20250625090048.624399-3-quic_ziyuzhan@quicinc.com>
- <20250627-flashy-flounder-of-hurricane-d4c8d8@krzk-bin>
- <ff2fb737-a833-474d-b402-120d4ed68d39@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ff2fb737-a833-474d-b402-120d4ed68d39@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+X-ThreadId: T7965fc80e983b7bf
+Date: Fri, 11 Jul 2025 10:44:23 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Marc Zyngier" <maz@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Oliver Upton" <oliver.upton@linux.dev>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ "Joey Gouly" <joey.gouly@arm.com>,
+ "Suzuki K Poulose" <suzuki.poulose@arm.com>,
+ "Zenghui Yu" <yuzenghui@huawei.com>, "Mark Brown" <broonie@kernel.org>,
+ "James Morse" <james.morse@arm.com>, "Sebastian Ott" <sebott@redhat.com>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Message-Id: <4befb9eb-96e6-4a7c-9746-286144564f4e@app.fastmail.com>
+In-Reply-To: <86h5zj9laj.wl-maz@kernel.org>
+References: <20250711072752.2781647-1-arnd@kernel.org>
+ <86h5zj9laj.wl-maz@kernel.org>
+Subject: Re: [PATCH] KVM: arm64: fix u64_replace_bits() usage
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 11/07/2025 10:26, Ziyue Zhang wrote:
-> 
-> On 6/27/2025 3:08 PM, Krzysztof Kozlowski wrote:
->> On Wed, Jun 25, 2025 at 05:00:46PM +0800, Ziyue Zhang wrote:
->>> Each PCIe controller on sa8775p includes 'link_down'reset on hardware,
->>> document it.
->> This is an ABI break, so you need to clearly express it and explain the
->> impact. Following previous Qualcomm feedback we cannot give review to
->> imperfect commits, because this would be precedent to accept such
->> imperfectness in the future.
->>
->> Therefore follow all standard rules about ABI.
->>
->> Best regards,
->> Krzysztof
-> 
-> Hi Krzysztof
-> 
-> 
-> This does not break the ABI. In the Qualcomm PCIe driver, we use the APIs
-> devm_reset_control_array_get_exclusive, reset_control_assert, and
+On Fri, Jul 11, 2025, at 10:36, Marc Zyngier wrote:
+> On Fri, 11 Jul 2025 08:27:47 +0100, Arnd Bergmann <arnd@kernel.org> wrote:
+>>  	if (hpmn > vcpu->kvm->arch.nr_pmu_counters) {
+>>  		hpmn = vcpu->kvm->arch.nr_pmu_counters;
+>> -		u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
+>> +		val = u64_replace_bits(val, hpmn, MDCR_EL2_HPMN);
+>>  	}
+>>  
+>>  	__vcpu_assign_sys_reg(vcpu, MDCR_EL2, val);
+>
+> This is only in -next, right? Because I have a fix for this already
+> queued for 6.16, as per [1].
 
-I see in the binding requirement of 1 reset before and after your patch:
-requirement of two reset lines.
+Yes, as far as I can tell, the warning only showed up in linux-next
+after f66f9c3d09c1 ("bitfield: Ensure the return values of helper
+functions are checked").
 
-This is an ABI change. My entire comment stays valid, so don't just
-deflect it but resolve it.
+As far as I can tell, Ben added the check in linux/bitfield.h
+when he sent you his version of the fix, they just ended up
+in linux-next in the wrong order, so I ended up recreating his
+original fix slightly differently.
 
-Best regards,
-Krzysztof
+      Arnd
 
