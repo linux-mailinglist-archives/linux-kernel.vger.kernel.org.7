@@ -1,282 +1,196 @@
-Return-Path: <linux-kernel+bounces-727887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54B9B0212F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:06:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CD1B02128
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BD887BA788
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:03:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE69AA626F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C2B2EF28C;
-	Fri, 11 Jul 2025 16:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="BIoo57Bs"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E682EF2A6;
+	Fri, 11 Jul 2025 16:05:24 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1129227E054;
-	Fri, 11 Jul 2025 16:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC332192B84;
+	Fri, 11 Jul 2025 16:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752249882; cv=none; b=jkJcLExzn6/8UiXgomF0PJ3Lhx6OxSleNQFSFySobo7SDu/ovkG0RGjUDsSDl3cyENmw0o4svPDQSdyeYG6qaI7vx0hW8lHmfLZnA0auklH/xUnK8maQqVeH7razuafBEzGJgsRVC9pX1BEk1CpfxSaVSlHDEYmilufIMh6v/6g=
+	t=1752249923; cv=none; b=Ctcxidfro6BsncoekhSOM5zo6BeAfHdDCQBYk6x/6vgS4lx3+zP8iys7JVTbQSLN/No8LdS9pOiDXWJGSITSfzi0d/43unJgqCDD67w2UAYTVkkPlRxYZUWOCJlMrOQrEQaEzFaSzZ1xlF6irtKaKs8dtbX72WEmeEDtRYZeIXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752249882; c=relaxed/simple;
-	bh=rMPl7osvpnDKIQsHWmkHxPuALl8UmId+rqkHr1SXsII=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VsFd7+dME2DHTzONzMFeVRq55ylF33xgRy/W5z38N8Z3XqexfNXwLiZT+IT52FHBBefb5nJpAdERW3NH19bo6p7VXLcvk25q8FGCWqUO4xHEsJaaEReZ8Id+1Pl00h0zSA7Ebp68i8uj/dYGoSDcPHLFI/+kAjaiajMWy+GU3zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=BIoo57Bs; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BAdTI2028522;
-	Fri, 11 Jul 2025 09:03:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=MxiLn
-	2Dq3GFG355z0/Nng/qsnOYXFufcv0jLL3WMs8w=; b=BIoo57BsScLoD7yrIblyM
-	AmKowQ+gkkQo3lh1FtDfN6pffX50OUITQryvPsN6ktiSMpfT+hwF4gUTD5YT0yH3
-	NRnOYPeo9ykUeX/j+O+kuK0KQ95T3SrBTB3eZVZ6BsSsC+10Wek3SgyS3fDOgpBf
-	VEz7+XfMj8aKsfhK4N7ELUppj6xV/nZW405YMPgIWLhCTlRlrt2Ss5tDClRtUUJR
-	5jEa174EA82R2d+WW8wvOwujx+cmJEcSTxvPZxOJbbTNpwns8vl6lhCw3ORmVZ58
-	+rOJAUTBVpiZ0yLB3UY4+o84b4NGbz8f7q8aBKy9WfvfvKfPDvqMqRsEAVbGtQiR
-	A==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 47t67qg6mh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 09:03:33 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 56BD3WT3026804
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 11 Jul 2025 09:03:32 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 11 Jul
- 2025 09:03:32 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 11 Jul 2025 09:03:32 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.132])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 56BD3Jqs027484;
-	Fri, 11 Jul 2025 09:03:26 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH 2/3] dt-bindings: iio: adc: add ade9000
-Date: Fri, 11 Jul 2025 16:02:36 +0300
-Message-ID: <20250711130241.159143-3-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250711130241.159143-1-antoniu.miclaus@analog.com>
-References: <20250711130241.159143-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1752249923; c=relaxed/simple;
+	bh=DyaRLSL3wtVvoPto8BZy228KqqNCIVs9JEwqJCCslNQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Tf1mN/hs/O7TVdGG7sBwmJxiecKAISeJ4roSCWQr4sZuZTo9E/nrsrbsJP4CTxP+IbuSPyzjHEV6GpBperuFqnHHtfx6+SMNYCUUbVK6PcOfeWbM0orX9V91xbLqJdLjb6BrMBzP/oxLXNa/bLsSrYqyQrSQOrjwTjsX0B/fWbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60dffae17f3so3337323a12.1;
+        Fri, 11 Jul 2025 09:05:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752249920; x=1752854720;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z0u1Nuau/v8sKJveSzb4nBKV8QzKO2475CmCFuNsGS4=;
+        b=QAuWOidSDXXptU1G4d1mt7dkLNuKzCX57JY9CIIhulDu9OREKvQtAOw5tt8nh1VxHw
+         fiH4ilsNIeRbL84qS6zDnD92P58l1lbH8NrtXgvfBCE7qiWZYT3HmUMSdBb6qRsnGs7b
+         YMgFTdZIrF/H6hdxtzDHCBs9D4/u4AVCmxU8xHfclR85CZg+ueti3sh3GO6LQVBF69If
+         WFgybnz2vnKG+xqoZn3b1kxzUa00NtLcrdD1dtY2PeDVGObMOdpbIWpK/L1v1qW/kIpW
+         VYhmYpUvxFxfN6ZBzA1/6F9sg2Yvv71AcW20eplodg2DjtAKjNW0ppAGvYP/hVmuQQvm
+         9eSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDcsVpNwWWZ+yTBDkCvjEDqXm/KhnMfMzhkFf9cTSRj+sKLCGfJOHMrC1yguFbIol5P/k=@vger.kernel.org, AJvYcCV723Tuo74oPFfY+G1VToyhj9ASKAVXGLGnlibB5xRSG17MiQquTheHoBFn+R7p+FBe0/JHibaa@vger.kernel.org, AJvYcCWaPH5ccST7qI+TzIIDc1JA/LhTzEhsQlhbkAG6ejFMMmkVgPZvlSgmyE6uhmD9FKcpyiSEvyAZTiGNMZcfGfQZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYpCLVu/fg+QwTiCxmH4muk22uVCCv26soaudTwecMHgO+UDP6
+	ZdatICA+pY75SrKtLLAvWgVM5TLnVrat9BYOHfaVslfJvKCqGnDNCLu3
+X-Gm-Gg: ASbGncvBrIcUI+ZyL8jvr/6Da1GeBPXQE8E/FkCcTku5N1lZq/TxFjDsqqzGL0rcsw0
+	0XhQ4Z6j831sqakcKfTMOT1lJxh+MFkMAu8z0WNZrSyHYja/yL+FawnQVZTSZ15PPRSLscr6J2j
+	ElkkzXuZ40aQgpnvLnlCW+MONGoS7K9ifQAH40zfTJTRKzLATg1StRYqFVxlS4VQQhms7FSt5OD
+	cU1VfCsnFjOeK+mkPwicZzc3z0F6amLb+vDcuMP1VDiNdqrPjrLHPLxd98yvZBpgZ07xtAl+C/0
+	yPgutktLk3ghQZx9/FfmfqZKnyDdD3sXH0BEGj9T8SZVYCvq8EJfWEZG7pYqkuWitNfmCqi/B63
+	HS4GI7QW2NXlZlOb6vAbcaZA=
+X-Google-Smtp-Source: AGHT+IF3c63figOWHH1WEdXqwA9w1zoB2cRRSFJTk5OVa14dE+nd2jEbCqEkC5EatMORgvQAZq7LuA==
+X-Received: by 2002:a05:6402:5111:b0:607:6b8d:1a7c with SMTP id 4fb4d7f45d1cf-611e76386e4mr3422522a12.12.1752249919512;
+        Fri, 11 Jul 2025 09:05:19 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:2::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c94f2c0fsm2360708a12.15.2025.07.11.09.05.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 09:05:19 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next v6 0/3] selftest: net: Add selftest for netpoll
+Date: Fri, 11 Jul 2025 09:05:08 -0700
+Message-Id: <20250711-netpoll_test-v6-0-130465f286a8@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA5MiBTYWx0ZWRfX8m0xBmwZPuPk
- SAhNZcj/uHxnAX7u5xLUiSX/ZhI+doDwuJLYvwSy5hfDIUca/TVf5fyxIWB8W1BmF+9rRCi6Nj1
- 49TeMbOlOH+F88i446pZ1MnhRKRFeP4xVCroM8YcBSTwwgslF0xb08T0+qEVWtyNBYd9VpLTzI9
- pq/3s8lASpy89Jcbf+KRDR1zFySEfzvDvMX7SBDGGI2rdbyN7AYIofbtEAQxWvTrBmInHKWADFa
- BzhXkBQmMwwGEeVT7Cr8cnj97x84ViMQxu2CXRneBQL8SGeAz7tLL+ha561eSU0CK6PKp3FsS6E
- XM5Sl3hzqQaGgccBJkqdf2o2jMX1uKcPpPktSCwDJs2rczVzrC0fyYk54Sqp8Bv4ryKmMB1LIz7
- Mly7/YYVOOL6Ac0UIHWH8t595YweECb9/B103zVDcJGbzyS8HRjoipX/E3f3a3zENbfLdhV3
-X-Proofpoint-GUID: fxzAegytvHms1fUkbp5wsjaGm3WSFtcq
-X-Authority-Analysis: v=2.4 cv=eZc9f6EH c=1 sm=1 tr=0 ts=68710ba5 cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=gEfo2CItAAAA:8 a=gAnH3GRIAAAA:8
- a=FvKjBdGZVvLRywz4negA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-ORIG-GUID: fxzAegytvHms1fUkbp5wsjaGm3WSFtcq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
- lowpriorityscore=4 malwarescore=0 mlxlogscore=999 phishscore=0 mlxscore=0
- adultscore=0 bulkscore=4 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507110092
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADQ2cWgC/23PQWrDMBCF4asIrTNFHkke2aveo5RiS6NEEORgC
+ 5MSfPcSd1HXznr43s885MRj4km24iFHntOUhixbUZ+E9JcunxlSkK2QqNCqukLIXG7D9fpVeCr
+ QVRpNQGXJO3kS8jZyTPd17kNmLpD5XuTnSchLmsowfq+duVrvryfnCiowRCaGxjZax/fAfery2
+ zCen4lfheqFsqp2TmMkjH6rnv0ZN020O42gwFBAIrKIeNR6q2mnNSiwZPuASnnXNQdt/jSp/b8
+ GFHj2iMTO1vqo7VY3O21BQa9Jk2tsFyP/08uy/AB6Gzry4QEAAA==
+X-Change-ID: 20250612-netpoll_test-a1324d2057c8
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, bpf@vger.kernel.org, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>, 
+ Willem de Bruijn <willemb@google.com>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3656; i=leitao@debian.org;
+ h=from:subject:message-id; bh=DyaRLSL3wtVvoPto8BZy228KqqNCIVs9JEwqJCCslNQ=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBocTY9MN+02dnHtqn3oOqeRY9TTwYlHSteb/Y8L
+ JYYndtZYfmJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaHE2PQAKCRA1o5Of/Hh3
+ bQ9pD/9oUCHb42npIk1WwG1orwcx6v36uLneQX2goD8eJnxYVcHXU8Z+/xFJ6IYu/5DMrWoeJ22
+ Ca6UEjOCOw53ewoguFUMR1IiqKzOvb/ZCsUkXeRra52W63fMGG0NTYmEctd/+dxJfhZ/YiQCv61
+ eJMhl6wWetAG98lzM5EV2glJyj5s7faoG/QCrTtbONuem5JN0UzGv7MsomZFBHeRnK4VJFBdb9v
+ nKmMDR4w4jfn0VYZIFgNvnwyOSG511hGv7xmwaigQ8MvCrZ61IIvxLtATG2hMTjcaAnm3t1rDnY
+ Q9rld6Kenb4k9yd74yQT1MBcQvoNSZQMkH7N3NFy8v07lcWKDtsrmyN2wgP0FbVxZmxT/EoxnNO
+ tgjmsSepaFg07zWWyVWpB7cOm/KAcQNlp4OrtiAW8Ovzx99H+buQzklp0wJ9scFjEj+g174K5a/
+ YPlZ5jzSpBLQMSib8RX83kyDNIsjzGrPoDDPexkxavZkR0neDX6gAz+QVYScGY/s80d9NUozfJ8
+ xj2YKfDYK3fl7l1Pgou11jq/VlSv3FeUoBrFJVY7GbkW5cE74mhWo/vMeTv7WZfJsb5u+v/jg4K
+ eiOHMjePUxHQ7AAN54QmffVG2uykQRL0Fwf69wfriq8mpoBW71k7fkPpEGas6vZ7rtOtrBDx7iK
+ PKS7sDtPRdKfjqg==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Add devicetree bindings support for ade9000.
+I am submitting a new selftest for the netpoll subsystem specifically
+targeting the case where the RX is polling in the TX path, which is
+a case that we don't have any test in the tree today. This is done when
+netpoll_poll_dev() called, and this test creates a scenario when that is
+probably.
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+The test does the following:
+
+ 1) Configuring a single RX/TX queue to increase contention on the
+    interface.
+ 2) Generating background traffic to saturate the network, mimicking
+    real-world congestion.
+ 3) Sending netconsole messages to trigger netpoll polling and monitor
+    its behavior.
+ 4) Using dynamic netconsole targets via configfs, with the ability to
+    delete and recreate targets during the test.
+ 5) Running bpftrace in parallel to verify that netpoll_poll_dev() is
+    called when expected. If it is called, then the test passes,
+    otherwise the test is marked as skipped.
+
+In order to achieve it, I stole Jakub's bpftrace helper from [1], and
+did some small changes that I found useful to use the helper.
+
+So, this patchset basically contains:
+
+ 1) The code stolen from Jakub
+ 2) Improvements on bpftrace() helper
+ 3) The selftest itself
+
+Link: https://lore.kernel.org/all/20250421222827.283737-22-kuba@kernel.org/ [1]
+
 ---
- .../bindings/iio/adc/adi,ade9000.yaml         | 157 ++++++++++++++++++
- 1 file changed, 157 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
+Changes in v6:
+- Remove the network toggled (Jakub)
+- Set ringsize and queue size (Jakub)
+- Some other general improvements (Jakub)
+- Link to v5: https://lore.kernel.org/r/20250709-netpoll_test-v5-0-b3737895affe@debian.org
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
-new file mode 100644
-index 000000000000..660dca4ea9b5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
-@@ -0,0 +1,157 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright 2025 Analog Devices Inc.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/bindings/iio/adc/adi,ade9000.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices ADE9000 High Performance, Polyphase Energy Metering driver
-+
-+maintainers:
-+  - Antoniu Miclaus <antoniu.miclaus@analog.com>
-+
-+description: |
-+  The ADE9000 s a highly accurate, fully integrated, multiphase energy and power
-+  quality monitoring device. Superior analog performance and a digital signal
-+  processing (DSP) core enable accurate energy monitoring over a wide dynamic
-+  range. An integrated high end reference ensures low drift over temperature
-+  with a combined drift of less than ±25 ppm/°C maximum for the entire channel
-+  including a programmable gain amplifier (PGA) and an analog-to- digital
-+  converter (ADC).
-+
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/ADE9000.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,ade9000
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+  spi-max-frequency:
-+    maximum: 20000000
-+
-+  interrupts:
-+    maxItems: 2
-+
-+  reset-gpios:
-+    description: |
-+      Must be the device tree identifier of the RESET pin. As the line is
-+      active low, it should be marked GPIO_ACTIVE_LOW.
-+    maxItems: 1
-+
-+  interrupt-names:
-+    items:
-+      - const: irq0
-+      - const: irq1
-+
-+  adi,wf-cap-en:
-+    description: Enable fixed data rate for waveform buffer instead of resampled data
-+    type: boolean
-+
-+  adi,wf-mode:
-+    description: |
-+      Waveform buffer filling and trigger mode.
-+      0 - Stop when waveform buffer is full
-+      1 - Continuous fill, stop only on enabled trigger events
-+      2 - Continuous filling, center capture around enabled trigger events
-+      3 - Streaming mode
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2, 3]
-+
-+  adi,wf-src:
-+    description: |
-+      Waveform buffer data source selection.
-+      0 - Sinc4 output, at 16 kSPS
-+      1 - Reserved
-+      2 - Sinc4 + IIR LPF output, at 4 kSPS
-+      3 - Current and voltage channel waveform samples, processed by the DSP at 4 kSPS
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 2, 3]
-+
-+  adi,wf-in-en:
-+    description: Enable IN waveform samples readout from waveform buffer
-+    type: boolean
-+
-+  adi,egy-time:
-+    description: Energy accumulation time setting for energy registers
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+required:
-+  - compatible
-+  - reg
-+  - reset-gpios
-+  - interrupts
-+  - interrupt-names
-+  - adi,wf-mode
-+  - adi,wf-src
-+
-+additionalProperties: false
-+
-+patternProperties:
-+  "^phase@[0-2]$":
-+    type: object
-+    description: |
-+      Represents the external phases which are externally connected. Each phase
-+      has a current, voltage and power component
-+
-+    properties:
-+      reg:
-+        description: |
-+          The phase represented by a number
-+          0 - Phase A
-+          1 - Phase B
-+          2 - Phase C
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [0, 1, 2]
-+
-+    required:
-+      - reg
-+
-+    additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        adc@0 {
-+            compatible = "adi,ade9000";
-+            reg = <0>;
-+            spi-max-frequency = <7000000>;
-+
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            reset-gpios = <&gpio 4 GPIO_ACTIVE_LOW>;
-+            interrupts = <2 IRQ_TYPE_EDGE_FALLING>, <3 IRQ_TYPE_EDGE_FALLING>;
-+            interrupt-names = "irq0", "irq1";
-+            interrupt-parent = <&gpio>;
-+
-+            adi,wf-cap-en;
-+            adi,wf-mode = <3>;
-+            adi,wf-src = <3>;
-+            adi,wf-in-en;
-+
-+            phase@0 {
-+                reg = <0>;
-+            };
-+            phase@1 {
-+                reg = <1>;
-+            };
-+            phase@2 {
-+                reg = <2>;
-+            };
-+        };
-+    };
-+...
--- 
-2.49.0
+Changes in v5:
+- Rebased on top of net-next.
+- Calling bpftrace_stop using the defer helper. (Willem)
+- Link to v4: https://lore.kernel.org/r/20250702-netpoll_test-v4-0-cec227e85639@debian.org
+
+Changes in v4:
+- Make the test XFail if it doesn't hit the function we are looking for
+- Toggle the interface while the traffic is flowing.
+- Bumped the number of messages from 10 to 40 per iterations.
+   * This is hitting ~15 times per run on my vng test.
+- Decreased the time from 15 seconds to 10 seconds, given that if
+  it didn't hit the function in 10 seconds, 5 seconds extra will not
+  help.
+- Link to v3: https://lore.kernel.org/r/20250627-netpoll_test-v3-0-575bd200c8a9@debian.org
+
+Changes in v3:
+- Make pylint happy (Simon)
+- Remove the unnecessary patch in bpftrace to raise an exception when it
+  fails. (Jakub)
+- Improved the bpftrace code (Willem)
+- Stop sending messages if bpftrace is not alive anymore.
+- Link to v2: https://lore.kernel.org/r/20250625-netpoll_test-v2-0-47d27775222c@debian.org
+
+Changes in v2:
+- Stole Jakub's helper to run bpftrace
+- Removed the DEBUG option and moved logs to logging
+- Change the code to have a higher chance of calling netpoll_poll_dev().
+  In my current configuration, it is hitting multiple times during the
+  test.
+- Save and restore TX/RX queue size (Jakub)
+- Link to v1: https://lore.kernel.org/r/20250620-netpoll_test-v1-1-5068832f72fc@debian.org
+
+---
+Breno Leitao (2):
+      selftests: drv-net: Strip '@' prefix from bpftrace map keys
+      selftests: net: add netpoll basic functionality test
+
+Jakub Kicinski (1):
+      selftests: drv-net: add helper/wrapper for bpftrace
+
+ tools/testing/selftests/drivers/net/Makefile       |   1 +
+ .../selftests/drivers/net/lib/py/__init__.py       |   3 +-
+ .../testing/selftests/drivers/net/netpoll_basic.py | 411 +++++++++++++++++++++
+ tools/testing/selftests/net/lib/py/utils.py        |  35 ++
+ 4 files changed, 449 insertions(+), 1 deletion(-)
+---
+base-commit: 0f26870a989bf69957ed69d10c7ffc57ca5a7f52
+change-id: 20250612-netpoll_test-a1324d2057c8
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
 
