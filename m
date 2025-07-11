@@ -1,131 +1,105 @@
-Return-Path: <linux-kernel+bounces-727632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480A8B01D57
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:24:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CAF5B01D5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BE651CA5279
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:25:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A836E3A992A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE312D3725;
-	Fri, 11 Jul 2025 13:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0EB2D3750;
+	Fri, 11 Jul 2025 13:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fGw/7bQ1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2LbzWxKs"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06BD70810;
-	Fri, 11 Jul 2025 13:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F2A70810;
+	Fri, 11 Jul 2025 13:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752240271; cv=none; b=S6uYlxSn6V5U6JumATeF5SqnwxRc8dAxUx7flOWyr52TWD0m5qT663MxWfud+WcTGzSRH+AS/8/7gZdUsFfxZhLaK4zRZfSuSGIMEJxUDJmC2YTC8c5aKXdINbQR2say9DzGpfAJ1eJlepOGnmzt84oP2E2GfNCo/D+CIC3+0SY=
+	t=1752240314; cv=none; b=nebqYf6ndEYXu3mn6VFOzCopJZ04CYHAfkD6Hy7vPVHUnCte+SAon/Lo9rEiB2Co4WJsEM7YZS+BPHuayQ63Pbut6WrjDLBkupFTRcjyq8OIkmxeeeglrlJvtXsHelKX52dF3ejc5CX/bN31c5XNVolh7iT9cXJEeQPNqq3EKsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752240271; c=relaxed/simple;
-	bh=+4NNW2YqeuzxeOwxdYm+u0ttWrOey3Yi9xQrrEUAR1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=asJmCmdocvA0a26k9VpmdhrX0mSBNQ1faKRvOcoRf2GJ8gztCXR1x/wJGXnv7Q3hDRGt51jmI+gqEaNrrbzDXgqc9c/Pe9aXl11HnuHFiTAbdqeogvAR8QMGG6bA/7p2eyVqV+0LgTN4jL0cC+I34PBo8KSDfH1kEMvXkW/AX3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fGw/7bQ1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03F53C4CEF6;
-	Fri, 11 Jul 2025 13:24:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752240271;
-	bh=+4NNW2YqeuzxeOwxdYm+u0ttWrOey3Yi9xQrrEUAR1I=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fGw/7bQ18cGvpwIqKknl7SqZbYd5xbiZdDPXh5uia3qg3lz+l58wPI0lN5bPUIER0
-	 HTiGNXENDNLx+9TQpB0pqb8D+lk01koQNAPcDRekPUhJAeTYgKfb0xuCG1T2AsIAql
-	 0hqw8XWtuq7dBVH0aP9P3xizCRsBV4iOe6Juo5fgsv4DTlWrKR1Yifax2p+yXe6gl2
-	 2ssix5Aj7pNKEf5tnhDFmiAXjTvrej8slFubOyS76xv4MtZ3CmCbOq42zKASO7HYVm
-	 z6DxxEAZSlZZSyaJvlW+rMilHWgb5xBZHGYs5cD0jIBhS0EhrqMXYwl98GOdLf53Eb
-	 vtmf94RIOyUJQ==
-Message-ID: <7ccb0a97-fc20-4493-8187-48ecfd07bac2@kernel.org>
-Date: Fri, 11 Jul 2025 15:24:25 +0200
+	s=arc-20240116; t=1752240314; c=relaxed/simple;
+	bh=TMxwU5OcMEsujj9nJKYk/hnws8kYEpNzWgcnKJGW4ck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ojpxHOas0UqhSSAx+qgRwKKMSrxHexN/39dc5zf0G0XanlJnCMHRN674lU/4ldZ/I8o1N/RsPEycohHSXPUq2T4PtURW93PXSB+bIxYoDqLQyCFab60iwKDWYEDfxJzsdO4wvUOUoD38JNcB7BQbG7fuQzBd4/s0DEmUhfIH5Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2LbzWxKs; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=HEwG9GJocIwY3rI8chyAhvZTbw2XLe9/YmKGzWNW0BQ=; b=2LbzWxKsOnQ+Li0cEyuTq2/c3C
+	5INP3q8iu6RLkkH9R+mcGB76yUtnDFZDeOcHjuOvsY+nTU90xFyEzoHzN/tokDXif9pkyGUr2Kk9Y
+	tFQ5Hnr6RiGxAwAXr+AYupCJ5+Da4xpdCVF3uDeDMdhzrHR0zpdNoMLtCzz0ybOFmtCQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uaDkN-001EdQ-5C; Fri, 11 Jul 2025 15:25:03 +0200
+Date: Fri, 11 Jul 2025 15:25:03 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	richardcochran@gmail.com, claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, fushi.peng@nxp.com,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH net-next 02/12] ptp: netc: add NETC Timer PTP driver
+ support
+Message-ID: <9f65fac0-e706-4a00-bac7-20c3ee727f69@lunn.ch>
+References: <20250711065748.250159-1-wei.fang@nxp.com>
+ <20250711065748.250159-3-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH 2/3] module: make structure definitions always visible
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Brendan Higgins <brendan.higgins@linux.dev>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-References: <20250612-kunit-ifdef-modules-v1-0-fdccd42dcff8@linutronix.de>
- <20250612-kunit-ifdef-modules-v1-2-fdccd42dcff8@linutronix.de>
- <a9eade27-9b77-431f-b7c8-24c3fb891673@kernel.org>
- <20250711081047-ea2c1e83-1b87-4331-acad-cbbfe6be67d8@linutronix.de>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20250711081047-ea2c1e83-1b87-4331-acad-cbbfe6be67d8@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711065748.250159-3-wei.fang@nxp.com>
 
-On 11/07/2025 08.29, Thomas WeiÃschuh wrote:
-> On Mon, Jul 07, 2025 at 09:11:05PM +0200, Daniel Gomez wrote:
->> On 12/06/2025 16.53, Thomas WeiÃschuh wrote:
->>> To write code that works with both CONFIG_MODULES=y and CONFIG_MODULES=n
->>> it is convenient to use "if (IS_ENABLED(CONFIG_MODULES))" over raw #ifdef.
->>> The code will still fully typechecked but the unreachable parts are
->>> discarded by the compiler. This prevents accidental breakage when a certain
->>> kconfig combination was not specifically tested by the developer.
->>> This pattern is already supported to some extend by module.h defining
->>> empty stub functions if CONFIG_MODULES=n.
->>> However some users of module.h work on the structured defined by module.h.
->>>
->>> Therefore these structure definitions need to be visible, too.
->>
->> We are missing here which structures are needed. + we are making more things
->> visible than what we actually need.
->>
->>>
->>> Many structure members are still gated by specific configuration settings.
->>> The assumption for those is that the code using them will be gated behind
->>> the same configuration setting anyways.
->>
->> I think code and kconfig need to reflect the actual dependencies. For example,
->> if CONFIG_LIVEPATCH depends on CONFIG_MODULES, we need to specify that in
->> Kconfig with depends on, as well as keep the code gated by these 2 configs with
->> ifdef/IS_ENABLED.
-> 
-> If CONFIG_LIVEPATCH depends on CONFIG_MODULES in kconfig then
-> IS_ENABLED(CONFIG_LIVEPATCH) will depend on CONFIG_MODULES automatically.
-> There is no need for another explicit IS_ENABLED(CONFIG_MODULES).
+> +	of_property_read_string(np, "clock-names", &clk_name);
+> +	if (clk_name) {
+> +		priv->src_clk = devm_clk_get_optional(dev, clk_name);
+> +		if (IS_ERR_OR_NULL(priv->src_clk)) {
+> +			dev_warn(dev, "Failed to get source clock\n");
+> +			priv->src_clk = NULL;
+> +			goto select_system_clk;
+> +		}
+> +
+> +		priv->clk_freq = clk_get_rate(priv->src_clk);
+> +		if (!strcmp(clk_name, "system")) {
+> +			/* There is a 1/2 divider */
+> +			priv->clk_freq /= 2;
+> +			priv->clk_select = NETC_TMR_SYSTEM_CLK;
+> +		} else if (!strcmp(clk_name, "ccm_timer")) {
+> +			priv->clk_select = NETC_TMR_CCM_TIMER1;
+> +		} else if (!strcmp(clk_name, "ext_1588")) {
+> +			priv->clk_select = NETC_TMR_EXT_OSC;
+> +		} else {
+> +			dev_warn(dev, "Unknown clock source\n");
+> +			priv->src_clk = NULL;
+> +			goto select_system_clk;
+> +		}
 
-This makes sense to me. My assessment before to reflect in code what we have in
-kconfig does not scale. Thanks.
+That is pretty unusual. Generally, a clock is a clock, and you only
+use the name to pick out a specific clock when there are multiple
+listed.
 
-> 
->>>
->>> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
->>> ---
->>>  include/linux/module.h | 23 ++++++++++++-----------
->>>  1 file changed, 12 insertions(+), 11 deletions(-)
+Please expand the binding documentation to include a description of
+how the clock name is used here.
 
-{...}
+I don't generally get involved with clock trees, but i'm wondering if
+the tree is correctly described. Maybe you need to add a clk-divider.c
+into the tree to represent the system clock being divided by two?
 
->>
->> After the patch, mod_tree_node is not needed externally.
-> 
-> Can you explain what you mean with "not needed externally"?
-> 'struct mod_tree_node' is only ever used by core module code.
-> It is only public because it is embedded in the public 'struct module'
-
-But only when MODULES_TREE_LOOKUP is enabled. Now, all kernels (regardless of
-that config) will define mod_tree_node data structure.
-
-However, Petr already stated that is harmless to do so. I was trying here to
-not be useless.
-
-With that, changes look good to me:
-
-Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
+	Andrew
 
