@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-727923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F56B0217F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:17:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C213B02180
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EA981886E80
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:18:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 752FA16653A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807F82E92A2;
-	Fri, 11 Jul 2025 16:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28FD3C30;
+	Fri, 11 Jul 2025 16:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eiF+dqKP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pu3CDGI7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C463C30
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBAB2EF2BE
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 16:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752250662; cv=none; b=fusSKeXzWuCRm1L0Du5yL6B6V54iqZp+uGvmKQKhapAam/is3UVTYRtFQmEXFp8g/XhTaBghat5ghngYcFrmxxdslUK2StsrROpTmGEXvMbTMdawT+sdIUMRLFioHjI1mEASAxwnGYrlckqqVqgGohvD2N4ml8JNEtG4nsVoLoE=
+	t=1752250664; cv=none; b=gbovGby6AWd2QGJUg0ZIPUKNWq0i4P8oGh5Bt5UN2hOH0HBAsw23JYAwaSP4VHcby9OQE1fqDq13WSAp4n5o5rzOOurLYEapAQqeTE8Yilqzc0LHa733kKSQkQT6FmMg4O3jtxA4QXob58zQArX5r8zPEB3peDq2PQb2Wv3LLDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752250662; c=relaxed/simple;
-	bh=ssqviJJdlPK7ukKCK3lJrf33765uDPISKy8fhWLffIw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pwB5mi4MDz6nrEz8p6cv31FJp5EyQDNLktMfAWvswatl4XBKN2SrPnvEruGfy6muKGczuCF1aUcwGoIg1PhoHt8+aL+BivCMdkpsz2JQcT377pkWP9oY7L6T77HMHfHGJhHDRjw0Xdf4i0rRiashGYbav9lLoaBr/RUpAS0CLO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eiF+dqKP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6951AC4CEF5;
-	Fri, 11 Jul 2025 16:17:39 +0000 (UTC)
+	s=arc-20240116; t=1752250664; c=relaxed/simple;
+	bh=OxLUcaS+mva8YPmoE0SCu30mpSKl3MfgIv/3sz5pLSc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=faQk4QFKW7lbSH4QnZpiOUkzuy3UWctnIJxVEeI4XumlFiC7OcAft5GFGrax5QaSU2vJZYz+5jgF5d7lp9BGQqw/gFqXgc+Y3q+ldNc1rjiMkU7T/kre0TIobll7paRtL6SNJ9vh6F1a53o+uQ2vGBn0WheJJ7RN5E3Z950cscI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pu3CDGI7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA647C4CEED;
+	Fri, 11 Jul 2025 16:17:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752250661;
-	bh=ssqviJJdlPK7ukKCK3lJrf33765uDPISKy8fhWLffIw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eiF+dqKP7uTJo85RpjhX5/oQPZga4hD5I7fma2cgcqbTU0HxJoqoYrnxfHkOC94PZ
-	 Gk4Ani1QThRE2Rgj/TLMVJxEfFlPA7Sp4bjSAaMe5dEcj03BleXV+O9q7/xnsYKN+N
-	 Zs3U8Cih95EC7L0OizuMgW8goCQsfRmYKtHygnmaPF/wA9EP490zZbHYhqyQDUxcrZ
-	 hMq9A6WbI87ilE6wgzPSxfgYe1dXQkOfb8gClSst0/W2drrfpxVBeA1p9B68MgMJlU
-	 HQuoILHlbR9fYGwgwsxR/yvh99YzalWIgylv1r8nRkTu/B8sq6fAkPwtrbbAvHHg2G
-	 xyBICNRWmEgVw==
+	s=k20201202; t=1752250663;
+	bh=OxLUcaS+mva8YPmoE0SCu30mpSKl3MfgIv/3sz5pLSc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Pu3CDGI7gtFmF+qiVxu4UuGFf0kYyLet7UFwqfJtrlybo5L+Aw5JYH6JhSUi4TUEP
+	 y5m2Ke1W0ppaxpDSdnJd+acjFjWKxp20q3eKPIb2ftjpJ4NfUbDSvfVDz435hOGCFS
+	 wovLcYQWByRaS+uoaEMWxkRlwfWVvENvWMxbuCbb8YVniNQ6dIcp8VPEoGVFy+Ts3F
+	 xJE7oJ9B+6wIrDfopjzrVq9Yg+fBm+8LVmFrZVe7UHCKo3RlaUugw2L7J1N3ZdF/Zc
+	 SVyFGzIfFH+xtnqHFxhj3AT52CJraXOPLlUb8bs+QVjk6nGv8YhbzAZG7/FilvET8E
+	 6BuzS8K5pzyYA==
 From: Will Deacon <will@kernel.org>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org,
@@ -50,10 +51,12 @@ Cc: linux-kernel@vger.kernel.org,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Oliver Upton <oliver.upton@linux.dev>,
 	Marc Zyngier <maz@kernel.org>
-Subject: [PATCH 00/10] arm64: Replace TLB invalidation preprocessor macros with C functions
-Date: Fri, 11 Jul 2025 17:17:22 +0100
-Message-Id: <20250711161732.384-1-will@kernel.org>
+Subject: [PATCH 01/10] arm64: mm: Introduce a C wrapper for by-level TLB invalidation helpers
+Date: Fri, 11 Jul 2025 17:17:23 +0100
+Message-Id: <20250711161732.384-2-will@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250711161732.384-1-will@kernel.org>
+References: <20250711161732.384-1-will@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,53 +65,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi all,
+In preparation for reducing our reliance on complex preprocessor macros
+for TLB invalidation routines, introduce a new C wrapper for by-level
+TLB invalidation helpers which can be used instead of the __tlbi() macro
+and can additionally be called from C code.
 
-I cooked this series following a complaint from Linus back in March
-about our range-based TLB invalidation macro after we fixed an
-over-invalidation bug thanks to incorrect handling of its arguments:
+Signed-off-by: Will Deacon <will@kernel.org>
+---
+ arch/arm64/include/asm/tlbflush.h | 33 ++++++++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
-  https://lore.kernel.org/all/CAHk-=wgiX0q0WCL+SFwVCYtG7JR3=2Rshse-5J3AO2Y4AgT7Jw@mail.gmail.com/
-
-Once I started trying to rework the range macro into a C function, I
-spotted a few other opportunities for cleanup and so I've ended up with
-this series.
-
-Testing and feedback welcome.
-
-Cheers,
-
-Will
-
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: Marc Zyngier <maz@kernel.org>
-
---->8
-
-Will Deacon (10):
-  arm64: mm: Introduce a C wrapper for by-level TLB invalidation helpers
-  arm64: mm: Introduce a C wrapper for by-range TLB invalidation helpers
-  arm64: mm: Implicitly invalidate user ASID based on TLBI operation
-  arm64: mm: Remove unused 'tlbi_user' argument from
-    __flush_tlb_range_op()
-  arm64: mm: Re-implement the __tlbi_level macro in C
-  arm64: mm: Simplify __TLBI_RANGE_NUM() macro
-  arm64: mm: Push __TLBI_VADDR() into __tlbi_level()
-  arm64: mm: Inline __TLBI_VADDR_RANGE() into __tlbi_range()
-  arm64: mm: Simplify __flush_tlb_range_limit_excess()
-  arm64: mm: Re-implement the __flush_tlb_range_op macro in C
-
- arch/arm64/include/asm/tlbflush.h | 230 ++++++++++++++++++------------
- arch/arm64/kernel/sys_compat.c    |   2 +-
- arch/arm64/kvm/hyp/nvhe/mm.c      |   2 +-
- arch/arm64/kvm/hyp/pgtable.c      |   4 +-
- 4 files changed, 140 insertions(+), 98 deletions(-)
-
+diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+index aa9efee17277..1c7548ec6cb7 100644
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -88,6 +88,16 @@ static inline unsigned long get_trans_granule(void)
+ 	}
+ }
+ 
++enum tlbi_op {
++	vae1is,
++	vae2is,
++	vale1is,
++	vale2is,
++	vaale1is,
++	ipas2e1,
++	ipas2e1is,
++};
++
+ /*
+  * Level-based TLBI operations.
+  *
+@@ -105,6 +115,27 @@ static inline unsigned long get_trans_granule(void)
+ 
+ #define TLBI_TTL_UNKNOWN	INT_MAX
+ 
++#define __GEN_TLBI_OP_CASE(op)						\
++	case op:							\
++		__tlbi(op, arg);					\
++		break
++
++static __always_inline void __tlbi_level_op(const enum tlbi_op op, u64 arg)
++{
++	switch (op) {
++	__GEN_TLBI_OP_CASE(vae1is);
++	__GEN_TLBI_OP_CASE(vae2is);
++	__GEN_TLBI_OP_CASE(vale1is);
++	__GEN_TLBI_OP_CASE(vale2is);
++	__GEN_TLBI_OP_CASE(vaale1is);
++	__GEN_TLBI_OP_CASE(ipas2e1);
++	__GEN_TLBI_OP_CASE(ipas2e1is);
++	default:
++		BUILD_BUG();
++	}
++}
++#undef __GEN_TLBI_OP_CASE
++
+ #define __tlbi_level(op, addr, level) do {				\
+ 	u64 arg = addr;							\
+ 									\
+@@ -116,7 +147,7 @@ static inline unsigned long get_trans_granule(void)
+ 		arg |= FIELD_PREP(TLBI_TTL_MASK, ttl);			\
+ 	}								\
+ 									\
+-	__tlbi(op, arg);						\
++	__tlbi_level_op(op, arg);					\
+ } while(0)
+ 
+ #define __tlbi_user_level(op, arg, level) do {				\
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
