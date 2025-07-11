@@ -1,378 +1,149 @@
-Return-Path: <linux-kernel+bounces-728319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ADAEB02695
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:57:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D5BFB02697
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 23:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AD731CA58B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:57:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEF3A614ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF96221281;
-	Fri, 11 Jul 2025 21:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE77D21D5BD;
+	Fri, 11 Jul 2025 21:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmnKmn1d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="c5OY+ThE"
+Received: from 11.mo533.mail-out.ovh.net (11.mo533.mail-out.ovh.net [87.98.181.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E76221B9F0;
-	Fri, 11 Jul 2025 21:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE901F417E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 21:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.98.181.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752271042; cv=none; b=Nd+I+S4O0A+PqwqvMJ07K/mvXl8XvTy+Jb5TbkQy0KsVuCok5j/IdzWxJ6w6uZzcGkFv7GfeNw9s6n/6MBbNvysXygTfmMlgwSl3P0wz51qWy31ADwvItDBiATwL/xwNIMV0cT9y9pb9rfN40LIHMTNY4doU2uocKN1U/TeAl9Q=
+	t=1752271121; cv=none; b=fohWKX/EzT+XqehNdyn3+7ITDd7gOijch67xqQdNmbAR10VgG4LzNN8hREH5vNG183q5yMny0HxTh1eunPk9c/F/PuQdXTjpwK+UHUN1Xl3be85RCaHTS5b8HE3Azcz76BF5swRKyjmMFPAKPVX93z+kTf7bkZm8gP4RB2r7bfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752271042; c=relaxed/simple;
-	bh=8wAxz1E6bPUhs9rxEh4pjVwAMVba0KxBPAEyU7pNWQY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O8AH4TGBW9a0xTX901l+z1Wfl1OT496OLvDOEQDEdPa3GR2pfdztuUPaoQy+Abh2L/FFcsb+3HTI9I+2G3N7u202mb0kAIzDTNaCGOe/ckMWHK7mFBqQPBAF6U6nlB578rJwjuStgtCkunq3JvKOduHDbwrHxMIdtJnE3dGdHk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KmnKmn1d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1584EC4CEF0;
-	Fri, 11 Jul 2025 21:57:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752271042;
-	bh=8wAxz1E6bPUhs9rxEh4pjVwAMVba0KxBPAEyU7pNWQY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=KmnKmn1dtrZ2qrqCeJEgzwdKNT6bhp4TUvzCAhiabGsxIy8Ux5NOzeTp0BTPgigWd
-	 wEPiuzsGEyqtJkjtqHAwuMdSA/i+EpuvC6e1Vbo0LFbanG8fGNW+MQc/pA4zbuaLTc
-	 69VuNGgeRm/evVHShpsL2sWhss8rJdONTyHyBZFWtndQpfjWQ+RsH9SjuZ4HtGEn19
-	 m/b3v7jR3xS+9N/kSZNGOj5uoIqECyxNr2Rr3pezHg44sC8mb0lWcDt8heWKmk5q6t
-	 gjOwtytWRyqV5MUG1EzUuTPuAMp9lQu0FBXMuPK8FcMt1+ttu/Sf5bCwXXD9x12l9S
-	 /XybMeFoizBCQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B935C83F1A;
-	Fri, 11 Jul 2025 21:57:22 +0000 (UTC)
-From: Aleksa Paunovic via B4 Relay <devnull+aleksa.paunovic.htecgroup.com@kernel.org>
-Date: Fri, 11 Jul 2025 23:56:46 +0200
-Subject: [PATCH v5 2/2] riscv: Allow for riscv-clock to pick up mmio
- address.
+	s=arc-20240116; t=1752271121; c=relaxed/simple;
+	bh=5ZpdH1e3Mnjz/edR4oQbt2lj8bvKNeEGbz1MEakwSBc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DSr8JYvEqEgkm6NKAPGXZK0VogQz8HF3lR/I0v9vLvH2rlJgk8z6GJgMDQ30XVZDIUAowv0UhIVnJVA8Y4yPecXmCyhgsg2a0deRTAwG5W7CpxSKguSjajOL064bOu5ty4XzFO1zJpK3PLpy+SeI5byv+iDNS7MZx+aib9MxeIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=c5OY+ThE; arc=none smtp.client-ip=87.98.181.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
+	by mo533.mail-out.ovh.net (Postfix) with ESMTPS id 4bf5FQ4Jx7z6VDs;
+	Fri, 11 Jul 2025 21:58:34 +0000 (UTC)
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
+        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <brgl@bgdev.pl>; Fri, 11 Jul 2025 21:58:34 +0000 (UTC)
+Received: from mta3.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.0.100])
+	by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4bf5FP72c8z5wGg;
+	Fri, 11 Jul 2025 21:58:33 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.6])
+	by mta3.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 3F6B43A42E9;
+	Fri, 11 Jul 2025 21:58:33 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-104R00583b81c07-b8ab-4c1b-865f-96b19cefac45,
+                    7A323F8B11C8C4ADDA8261290F78C257F5C293A5) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:79.117.112.86
+Message-ID: <03f3b414-e17a-4d84-b094-3e9937cd3417@orca.pet>
+Date: Fri, 11 Jul 2025 23:58:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250711-riscv-time-mmio-v5-2-9ed1f825ad5e@htecgroup.com>
-References: <20250711-riscv-time-mmio-v5-0-9ed1f825ad5e@htecgroup.com>
-In-Reply-To: <20250711-riscv-time-mmio-v5-0-9ed1f825ad5e@htecgroup.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, 
- Djordje Todorovic <djordje.todorovic@htecgroup.com>, 
- Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752271040; l=9234;
- i=aleksa.paunovic@htecgroup.com; s=20250514; h=from:subject:message-id;
- bh=Bzjjx1sgDxfB+/uMS7yCBRpnwZf7AhsfC/3RF55J9CM=;
- b=G12BmkcVo3EwlLP6EgupAW0v34XZsMnt42Pvdc22gNu9IG2RlzRYhPgdeggV/lvgouU4eCmFF
- jXy0CO6W2n1BIO4GmyaCobiibhWZ3Naw1FCKZ5bJIh9HAfW/5LsBeNz
-X-Developer-Key: i=aleksa.paunovic@htecgroup.com; a=ed25519;
- pk=gFVSVYLKAgJiS5qCnDyUMGOFuczv8C6o0UmRs+fgisA=
-X-Endpoint-Received: by B4 Relay for aleksa.paunovic@htecgroup.com/20250514
- with auth_id=403
-X-Original-From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
-Reply-To: aleksa.paunovic@htecgroup.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] gpio: vortex: add new GPIO device driver
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+References: <20250709091542.968968-1-marcos@orca.pet>
+ <CAMRc=MdLXP=DgHEh6hoNYhDgB4aESmC29VH6hsH=AONNgsjXQQ@mail.gmail.com>
+ <e00c97c2-04f4-4683-9c56-8894617998fa@orca.pet>
+ <aHEnVTCSwfdijvzQ@smile.fi.intel.com>
+Content-Language: es-ES
+From: Marcos Del Sol Vives <marcos@orca.pet>
+In-Reply-To: <aHEnVTCSwfdijvzQ@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 9874705137076688603
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeggeegiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepofgrrhgtohhsucffvghlucfuohhlucggihhvvghsuceomhgrrhgtohhssehorhgtrgdrphgvtheqnecuggftrfgrthhtvghrnhepueeigeetfffhhefgffekhfdvgeettddviedtfefhgeeiledtjeetieehffelkeevnecuffhomhgrihhnpehorhgtrgdrphgvthdptghomhhprggtthhptgdrtghomhdrthifpdhkvghrnhgvlhdrohhrghenucfkphepuddvjedrtddrtddruddpjeelrdduudejrdduuddvrdekieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohephedprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+ hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheeffegmpdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=CA93cMaoJ63k1Nl3nGykOIl/kyk1LNknHWjR5sb7/KA=;
+ c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1752271114;
+ v=1;
+ b=c5OY+ThEza8L487Cc+2EoUstfvHyWZ+43rGEQpRV0FIhjC785dlG6jKCMzokgdi2ZyBHJ7bl
+ +D7JbEwdt7xMx98DQMZy62Sw9WGRUgbZVO56j9tZGvi/Z3gp6kGbObo/az7/rqYH41rTBhKamJh
+ TKy09zvt9VuqBsvTgs6ubN2IyGvBNOxeJVKQsOfgMFbhKP0GbA/dDXIvYD1rk3RURhhkV8tK2Sc
+ 7uPe0NlEZDi+eJXaQzBz22z0eOPck2rsy5sY+/JPnh4W40j4J1lLWyMnG48nLz4mn2gSU58abAo
+ ywhgKafR6wOZ7Dxf5zTLXV7lJVjoW4BdHU7y+IYy67bSg==
 
-From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+El 11/07/2025 a las 16:53, Andy Shevchenko escribió:
+> Can you share (via some sharing resource) the following (as root user!):
+> 1) `dmesg` to the boot to shell when kernel command line has 'ignore_loglevel'
+> 2) `lspci -nk -vv`
+> 3) `acpidump -o vortex-dx3.dat` (the *.dat file)
+> 4) `grep -H 15 /sys/bus/acpi/devices/*/status`
+> 5) `cat /proc/interrupts`
+> 6) `cat /proc/iomem`
+> 7) `cat /proc/ioport`
 
-Allow faster rdtime access via GCR.U mtime shadow register on RISC-V
-devices. This feature can be enabled by setting GCRU_TIME_MMIO
-during configuration.
-Reformat the clint timer to use the same mechanism if RISCV_M_MODE is set.
+I have uploaded all the files to https://orca.pet/vortex/gpio-patch-files.tar.xz.
+I have also added the configuration file I used for the kernel, as well as
+the cmdline.
 
-Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
----
- arch/riscv/include/asm/clint.h    | 26 ----------------
- arch/riscv/include/asm/timex.h    | 63 ++++++++++++++++++++++-----------------
- drivers/clocksource/Kconfig       | 12 ++++++++
- drivers/clocksource/timer-clint.c | 20 ++++++-------
- drivers/clocksource/timer-riscv.c | 34 +++++++++++++++++++++
- 5 files changed, 90 insertions(+), 65 deletions(-)
+The machine is currently running Linux on commit
+d006330be3f782ff3fb7c3ed51e617e01f29a465 with this patch and another that
+builds upon it for poweroff applied.
 
-diff --git a/arch/riscv/include/asm/clint.h b/arch/riscv/include/asm/clint.h
-deleted file mode 100644
-index 0789fd37b40ae06a11f0b5cc0f01dba591b4cf16..0000000000000000000000000000000000000000
---- a/arch/riscv/include/asm/clint.h
-+++ /dev/null
-@@ -1,26 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Copyright (C) 2020 Google, Inc
-- */
--
--#ifndef _ASM_RISCV_CLINT_H
--#define _ASM_RISCV_CLINT_H
--
--#include <linux/types.h>
--#include <asm/mmio.h>
--
--#ifdef CONFIG_RISCV_M_MODE
--/*
-- * This lives in the CLINT driver, but is accessed directly by timex.h to avoid
-- * any overhead when accessing the MMIO timer.
-- *
-- * The ISA defines mtime as a 64-bit memory-mapped register that increments at
-- * a constant frequency, but it doesn't define some other constraints we depend
-- * on (most notably ordering constraints, but also some simpler stuff like the
-- * memory layout).  Thus, this is called "clint_time_val" instead of something
-- * like "riscv_mtime", to signify that these non-ISA assumptions must hold.
-- */
--extern u64 __iomem *clint_time_val;
--#endif
--
--#endif
-diff --git a/arch/riscv/include/asm/timex.h b/arch/riscv/include/asm/timex.h
-index a06697846e69521caceac2ae4d4e040d227d2ae7..fc8e18ad628e6d68bf9703688f42e76e1cd45559 100644
---- a/arch/riscv/include/asm/timex.h
-+++ b/arch/riscv/include/asm/timex.h
-@@ -7,31 +7,25 @@
- #define _ASM_RISCV_TIMEX_H
- 
- #include <asm/csr.h>
-+#include <asm/mmio.h>
-+
-+#include <linux/jump_label.h>
- 
- typedef unsigned long cycles_t;
- 
--#ifdef CONFIG_RISCV_M_MODE
-+/*
-+ * Used for directly accessing MMIO timers. For now
-+ * this includes the M-mode clint timer and the GCR.U mtime shadow copy.
-+ */
-+extern u64 __iomem *riscv_time_val;
- 
--#include <asm/clint.h>
-+extern cycles_t (*get_cycles_ptr)(void);
-+extern u32 (*get_cycles_hi_ptr)(void);
- 
--#ifdef CONFIG_64BIT
--static inline cycles_t get_cycles(void)
--{
--	return readq_relaxed(clint_time_val);
--}
--#else /* !CONFIG_64BIT */
--static inline u32 get_cycles(void)
--{
--	return readl_relaxed(((u32 *)clint_time_val));
--}
--#define get_cycles get_cycles
-+#define get_cycles get_cycles_ptr
-+#define get_cycles_hi get_cycles_hi_ptr
- 
--static inline u32 get_cycles_hi(void)
--{
--	return readl_relaxed(((u32 *)clint_time_val) + 1);
--}
--#define get_cycles_hi get_cycles_hi
--#endif /* CONFIG_64BIT */
-+#ifdef CONFIG_RISCV_M_MODE
- 
- /*
-  * Much like MIPS, we may not have a viable counter to use at an early point
-@@ -40,34 +34,47 @@ static inline u32 get_cycles_hi(void)
-  */
- static inline unsigned long random_get_entropy(void)
- {
--	if (unlikely(clint_time_val == NULL))
-+	if (unlikely(riscv_time_val == NULL))
- 		return random_get_entropy_fallback();
- 	return get_cycles();
- }
-+
- #define random_get_entropy()	random_get_entropy()
-+#endif
- 
--#else /* CONFIG_RISCV_M_MODE */
-+#ifdef CONFIG_64BIT
-+static inline cycles_t __maybe_unused mmio_get_cycles(void)
-+{
-+	return readq_relaxed(riscv_time_val);
-+}
-+#else /* !CONFIG_64BIT */
-+static inline cycles_t __maybe_unused mmio_get_cycles(void)
-+{
-+	return readl_relaxed(((u32 __iomem *)riscv_time_val));
-+}
-+#endif /* CONFIG_64BIT */
- 
--static inline cycles_t get_cycles(void)
-+static inline cycles_t __maybe_unused get_cycles_csr(void)
- {
- 	return csr_read(CSR_TIME);
- }
--#define get_cycles get_cycles
- 
--static inline u32 get_cycles_hi(void)
-+static inline u32 __maybe_unused mmio_get_cycles_hi(void)
- {
--	return csr_read(CSR_TIMEH);
-+	return readl_relaxed(((u32 __iomem *)riscv_time_val) + 1);
- }
--#define get_cycles_hi get_cycles_hi
- 
--#endif /* !CONFIG_RISCV_M_MODE */
-+static inline u32 __maybe_unused get_cycles_hi_csr(void)
-+{
-+	return csr_read(CSR_TIMEH);
-+}
- 
- #ifdef CONFIG_64BIT
- static inline u64 get_cycles64(void)
- {
- 	return get_cycles();
- }
--#else /* CONFIG_64BIT */
-+#else /* !CONFIG_64BIT */
- static inline u64 get_cycles64(void)
- {
- 	u32 hi, lo;
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 645f517a1ac26d0c12d4b2b46591321ddf6e20b3..fbe4d0d6183ea24f557ce692b8c18e88dcf58155 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -669,6 +669,18 @@ config CLINT_TIMER
- 	  This option enables the CLINT timer for RISC-V systems.  The CLINT
- 	  driver is usually used for NoMMU RISC-V systems.
- 
-+config GCRU_TIME_MMIO
-+	bool "GCR.U timer support for RISC-V platforms"
-+	depends on !RISCV_M_MODE && RISCV && RISCV_TIMER
-+	default n
-+	help
-+        Access GCR.U shadow copy of the RISC-V mtime register
-+        on platforms that provide a compatible device, instead of
-+        reading the time CSR. Since reading the time CSR
-+        traps to M mode on certain platforms, this may be more efficient.
-+
-+        If you don't know what to do here, say n.
-+
- config CSKY_MP_TIMER
- 	bool "SMP Timer for the C-SKY platform" if COMPILE_TEST
- 	depends on CSKY
-diff --git a/drivers/clocksource/timer-clint.c b/drivers/clocksource/timer-clint.c
-index 0bdd9d7ec545839109cf82ad36632889f5b2d2ef..d6ab794741a6b59227827323017a7e6ff830963c 100644
---- a/drivers/clocksource/timer-clint.c
-+++ b/drivers/clocksource/timer-clint.c
-@@ -24,10 +24,6 @@
- #include <linux/smp.h>
- #include <linux/timex.h>
- 
--#ifndef CONFIG_RISCV_M_MODE
--#include <asm/clint.h>
--#endif
--
- #define CLINT_IPI_OFF		0
- #define CLINT_TIMER_CMP_OFF	0x4000
- #define CLINT_TIMER_VAL_OFF	0xbff8
-@@ -41,8 +37,14 @@ static unsigned long clint_timer_freq;
- static unsigned int clint_timer_irq;
- 
- #ifdef CONFIG_RISCV_M_MODE
--u64 __iomem *clint_time_val;
--EXPORT_SYMBOL(clint_time_val);
-+u64 __iomem *riscv_time_val __ro_after_init;
-+EXPORT_SYMBOL(riscv_time_val);
-+
-+cycles_t (*get_cycles_ptr)(void) = mmio_get_cycles;
-+EXPORT_SYMBOL(get_cycles_ptr);
-+
-+u32 (*get_cycles_hi_ptr)(void) = mmio_get_cycles_hi;
-+EXPORT_SYMBOL(get_cycles_hi_ptr);
- #endif
- 
- #ifdef CONFIG_SMP
-@@ -218,11 +220,7 @@ static int __init clint_timer_init_dt(struct device_node *np)
- 	clint_timer_freq = riscv_timebase;
- 
- #ifdef CONFIG_RISCV_M_MODE
--	/*
--	 * Yes, that's an odd naming scheme.  time_val is public, but hopefully
--	 * will die in favor of something cleaner.
--	 */
--	clint_time_val = clint_timer_val;
-+	riscv_time_val = clint_timer_val;
- #endif
- 
- 	pr_info("%pOFP: timer running at %ld Hz\n", np, clint_timer_freq);
-diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
-index 4d7cf338824a3b21461c2756a002236dedc48f5f..b30e8aad0b2495ce5b6ebf8b753ec947041f7c7c 100644
---- a/drivers/clocksource/timer-riscv.c
-+++ b/drivers/clocksource/timer-riscv.c
-@@ -22,6 +22,7 @@
- #include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/interrupt.h>
- #include <linux/of_irq.h>
-+#include <linux/of_address.h>
- #include <linux/limits.h>
- #include <clocksource/timer-riscv.h>
- #include <asm/smp.h>
-@@ -32,6 +33,15 @@
- static DEFINE_STATIC_KEY_FALSE(riscv_sstc_available);
- static bool riscv_timer_cannot_wake_cpu;
- 
-+u64 __iomem *riscv_time_val __ro_after_init;
-+EXPORT_SYMBOL(riscv_time_val);
-+
-+cycles_t (*get_cycles_ptr)(void) = get_cycles_csr;
-+EXPORT_SYMBOL(get_cycles_ptr);
-+
-+u32 (*get_cycles_hi_ptr)(void) = get_cycles_hi_csr;
-+EXPORT_SYMBOL(get_cycles_hi_ptr);
-+
- static void riscv_clock_event_stop(void)
- {
- 	if (static_branch_likely(&riscv_sstc_available)) {
-@@ -209,6 +219,11 @@ static int __init riscv_timer_init_dt(struct device_node *n)
- 	int cpuid, error;
- 	unsigned long hartid;
- 	struct device_node *child;
-+#if defined(CONFIG_GCRU_TIME_MMIO)
-+	u64 mmio_addr;
-+	u64 mmio_size;
-+	struct device_node *gcru;
-+#endif
- 
- 	error = riscv_of_processor_hartid(n, &hartid);
- 	if (error < 0) {
-@@ -226,6 +241,25 @@ static int __init riscv_timer_init_dt(struct device_node *n)
- 	if (cpuid != smp_processor_id())
- 		return 0;
- 
-+#if defined(CONFIG_GCRU_TIME_MMIO)
-+	gcru = of_find_compatible_node(NULL, NULL, "mti,gcru");
-+	if (gcru) {
-+		if (!of_property_read_reg(gcru, 0, &mmio_addr, &mmio_size)) {
-+			riscv_time_val = ioremap((long)mmio_addr, mmio_size);
-+			if (riscv_time_val) {
-+				pr_info("Using mmio time register at 0x%llx\n",
-+					mmio_addr);
-+				get_cycles_ptr = &mmio_get_cycles;
-+				get_cycles_hi_ptr = &mmio_get_cycles_hi;
-+			} else {
-+				pr_warn("Unable to use mmio time at 0x%llx\n",
-+					mmio_addr);
-+			}
-+			of_node_put(gcru);
-+		}
-+	}
-+#endif
-+
- 	child = of_find_compatible_node(NULL, NULL, "riscv,timer");
- 	if (child) {
- 		riscv_timer_cannot_wake_cpu = of_property_read_bool(child,
+The cmdline has pci=nomsi due to a hardware issue acknowledged by DM&P
+(https://2018.compactpc.com.tw/2014%20DMP%20Webiste/Linux%20Support%20List/debian_9.4_installation_guide.pdf)
+for which I have already submited another patch to the PCI mailing list to
+disable it automatically
+(https://lore.kernel.org/all/20250705233209.721507-1-marcos@orca.pet/).
 
--- 
-2.34.1
+If you need any other files please let me know :)
 
+> Is that the only datasheet you have?
 
+Yes. I guess I could ask DM&P or ICOP for another under NDA but as of today
+I do not have access to anything else.
+
+El 11/07/2025 a las 17:01, Andy Shevchenko escribió:
+>> Again I want to point out I am not an expert by any means. This is my first
+>> kernel driver and I am writting it as a hobbyst, not as a company employee.
+> 
+> Oh, I see. Sorry that I'm asking too much (do I?) Unfortunately the review
+> might be not well appreciated process by the author, but we are all for
+> having the better solutions. That's the part of learning and R&D process.
+
+Not at all, you're not asking for too much at all! I understand you don't
+want to merge a half baked driver in the kernel.
+
+I was just mentioning that to clarify that if the driver looks sloppy at
+the moment is not because of a lack of care, it's rather because of a lack
+of experience - I am not familiar with neither the Linux driver model nor
+the technologies that are deprecated and should be avoided.
+
+Also and to clarify that, as I said above, I do not have access to the
+documentation an employee would have about the SoC's inner workings.
+
+>> The company is seemingly launching next year also a Vortex86EX3 with proper
+>> i686 and SSE2 support, I guess because Intel's patents have finally expired.
+>>
+>> So I do not think removing i486 support is gonna be an issue except for
+>> very ancient processors that the company is not making anymore anyway.
+> 
+> Thanks for clarifications here!
+> 
+> And thank you for your efforts, I would like to help as much as I can.
+> Again, sorry, if my first messages looked a bit rejecting. I do not mean
+> that, it's just a professional deformation due to tons of reviews I have
+> done in the past.
+> 
+
+No problem, sir! :)
 
