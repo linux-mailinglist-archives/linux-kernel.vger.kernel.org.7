@@ -1,171 +1,198 @@
-Return-Path: <linux-kernel+bounces-727629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D845B01D44
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:22:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298BBB01D4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5652D16DC06
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:22:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2E531C87AC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0488E2D322D;
-	Fri, 11 Jul 2025 13:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C932D3725;
+	Fri, 11 Jul 2025 13:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gjnmRR8t"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cGubWbc6"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C86929AAFC
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C538370810;
+	Fri, 11 Jul 2025 13:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752240118; cv=none; b=qhVAXrSxalbXSujCquDfe7nq7mM6z9+La7782WszDKfu8U3MVbghddck5O+/FBShd8VYQw4YFL7VfMSBzaxwzVamomn+I5zysKisl6uDbHacDac+sGKhRlIbpq1oRLQZODQQA5p5xXs6Ey9sh9cGnvHIuNGKGIloa8aLIpdvkMw=
+	t=1752240174; cv=none; b=IitN+ehx1VdiAv2G6aoIcVuDrVcKRg8zuOeJ2I5ZnrkVWkF9aAabkeU6RUofglDf/8ZKmsp7Vq+hCQkIoENk9e3midoZsRVInOovSYhaWSh8WrgBSHGD9/LattpbE7A2Evp1tR3iT+fioJO4j2KoYMFSf8z0EkeEmhKucC8XvO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752240118; c=relaxed/simple;
-	bh=8jLN3VZCDWiz300MGRDmfjBkchE7cBbAjFIEj2bshrI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sWk9VgPxITV/CBF1pQrleftqMyhKEEJip4lvWg1/34v/RKcCsrhRPMWUsEvDWjQPUi7PZVxqZ7xSd6Bdm66jgptOc6mJsQSO9Ubg+fsVgWe4hQhUAtfxRyg290Ah3iIocrs67ltI2xIdtNlRrrX6h0sZP0qmtWNLdwQpwyuDHqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gjnmRR8t; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-607cf70b00aso3992152a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:21:55 -0700 (PDT)
+	s=arc-20240116; t=1752240174; c=relaxed/simple;
+	bh=Z8xQn+iT3A5r4r5jVPej3tH0r1ytgXiZ3ITRDRty50c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YojsqugFBv5Qlb0lx75zaTcMwKfenmiiLmBga4SjDU4aSs/7OVauEla+8bgu+Pifh76NB2AutLndjsOCMl6mkgbrgX6lNlb2fVKMmZdtttKWhOVjvZyaMNSwrwUN7IMW6Q5e0Mv72ATDTIYZmgE0n2gDLgBmZVj9orD+q3QToN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cGubWbc6; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a76ea97cefso21639361cf.2;
+        Fri, 11 Jul 2025 06:22:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752240114; x=1752844914; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vSqbWCx5pmMJhs42gMdWbuhtuhEPLEOyZUmlt10BWP0=;
-        b=gjnmRR8tJHmoSIIdteeVixY1RzopS8+WN0DLdzTUi5dT1wO69iEfs2Ssk72qvVo1Jq
-         Bmxb96Wan5dn03Q5Ab1RJmDXiCwEzTrH7Va9cGEvZaaiMgcududPBDNP+S5oUAyC7d9z
-         eKTUMYKTbVD+6dA0OvDiBzX+9hm+Pz0JFAaqoocudrHLorT1OlEKOV0XKxC0xFQj+9Ge
-         6G3Cli8P6I3K3gatWQMj4UU2q4O3WyMPf+woGrUzAS6ngTz100Ws2JvHXjxyXzl1zn9Z
-         w8g9fpG/RD7DPUGNf/y0fF0dOa9C6gPhZunxEvrhWuCZW/L8DjPcwKenGt0QNjP7Y4+Q
-         rzcg==
+        d=gmail.com; s=20230601; t=1752240171; x=1752844971; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sYtOPsEZ+CQsVOIfnHqDEBe70N1WUVtu0akdEwqTHbE=;
+        b=cGubWbc6CYl7O6Qeo3KH7lOWQHRqKX2+Aq8HT2m8nrugAdWdDKWhbVWLYvs77uiy5B
+         bKG+Ab89I/nZcizvUnIU4BkTlDBquqb8/GSHx5rKenf8OSEuGdJgFXL78GK/T+FlHRF+
+         F0kkzYK/4nOPsSClMu5adMI9MECDuXERqoU3HMOx40WwebAZQ26hdML80ZxNkgD5afCF
+         ghyamKfVChZp/FwE434uyp77+gZE9Vn1zsjSxlP8TmxCcEWjvnMHWGrq/9QG2uiFSQmR
+         bJgIbYCeSiDDaRnFD/9iSGdvrFVXEIXjKLZOK8KxlP1qEdCPLvPD6youNFjwN2Y075LX
+         PBFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752240114; x=1752844914;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vSqbWCx5pmMJhs42gMdWbuhtuhEPLEOyZUmlt10BWP0=;
-        b=FAwGCVS0SG8AfyejQTqqzD09ivaKftcI9tSXXTuGHT/IrV1nOBOkrqbwKJw38qaZew
-         OZ/i0w/Y/kc3PVEznnMvfvb88d5tPwVBMUqvW5uQ4/WfvlM2+eRqwakUc/tQM5xqpPsa
-         4byo+IgVJfmxvLt5ck2YGPSvB6dEHNOfNHCGZ6URliGuVTjLq8thek4Za8aTqE0LuKSj
-         wZpE8UKOQaEcMeUjplV5VejO8zRzlVxHDvPSmTBCsO/jt6S0vCqJiXuNCCkN/GfI1L1J
-         6Zw6+N1mEbt0pH8dU86AyfivIKUO4u7UzlWXBLIgXva0swOVp237aFY9NIIJjMPrzlST
-         /0nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnuldkz6lqoxLHYAzZ1pAiE2fOvS/u3p/fGKSG/LE0Z0PMb4dWRNDAmazFUBannEy7hLc/AcP5s5n1Tvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKYjyxpxLEAV8VByYF73v8iNCjoJgLm6C6xKM9Vlx63fW0TVj/
-	kw6cgW+J3JZH9e/VKEN7Q37NaOb+0yPZOxU2xna+en9R6uhEYPprrL6fZgbzYoSGj8o=
-X-Gm-Gg: ASbGncs2f5W5MkC76y7ZsW2uagfzL25EARAiL6n+OoB++5Lhvna34TIVrNjF7KulcDs
-	Tgy8GrMLpKi5Y/vfEvifKzUDpvMavdmlSUHFp+rH1izxgYVg05ulAx3Lc29MogCpZzA/nkD+U81
-	9XNlaVLJk0t6aZ5nzQNnQt0sgzjzCFUFmdsrL3PuKhGNjyTCHboadXK/58EjTPlIEnZD23b6HnO
-	r2SSSIwOnmhrLLddUBNoVo22oAz+qoi0LiBkAjOBOY8F28axDhQIvS9sBGwcs8H2IHwWV7XSyCp
-	EBqzSu1c/tNFyPmggp/L+OmBIsLq+nSVAOi6fVGcyems3JKrV/Br+66BOdHdo22IyE0LQQRHg/y
-	xxePTSbqiIpHxvmiblYIt0PLzNCeSL/QW
-X-Google-Smtp-Source: AGHT+IESlM3QZpNn5nGs57f0DHmGN/JSKJJfdYT4k8FVbPsu+vncRpIcT3st+meVCcFx31rG3EVMcA==
-X-Received: by 2002:a05:6402:26d5:b0:606:c48c:fb8e with SMTP id 4fb4d7f45d1cf-611e7655f5fmr2860534a12.11.1752240113639;
-        Fri, 11 Jul 2025 06:21:53 -0700 (PDT)
-Received: from [192.168.0.251] ([188.27.143.49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-611c976f41asm2174574a12.63.2025.07.11.06.21.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Jul 2025 06:21:53 -0700 (PDT)
-Message-ID: <b3de1e2b-973f-4b4a-83f3-6015808b3772@linaro.org>
-Date: Fri, 11 Jul 2025 14:21:51 +0100
+        d=1e100.net; s=20230601; t=1752240171; x=1752844971;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sYtOPsEZ+CQsVOIfnHqDEBe70N1WUVtu0akdEwqTHbE=;
+        b=nMODfdKj1JRZybMYM06SeQpi+VOKx3RBixnzmc1xteyVumXqkHAz7lsNezc1ugmCwB
+         Wv+kuSvTqnEsmrz2i1aoDsYJr7qnfh7v267AwuxKiON0Nv2ZvBgcYW12sdmF5iTzMjTf
+         GfGo68wuL/9BChjuOcoHrk5EM6L6WFK8SUqi3nrUHMG7ouU2Gpoc+An81RjRUJZcYEbE
+         vfJoB33qDhEjeBtN4/pEcPRml5/yDt4V5hqUX00Jv+NmRSdizPa5OU1O73L+HqJ9yhqk
+         UF2VCVDRpQoMabSXYGif8sfnWxbdFIMNvmw9dTIR1wwuUg8plNF6HA8HR6P7zzbzym3a
+         gj4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmJtbSSQYegij3bFAaNoGsgbaLJ41f4wesePZbPRpRIrG/urBHYf3e0u4A4WuAqXDK4f3TP375N7Ij@vger.kernel.org, AJvYcCV1/PcTeVTTqHg3f6kXXy35NcFi39hfQhNmY9FYowwuh0WuN80ZYrRsZ/074ySSw6wyRf0av52ZUMFtdKYIt+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+kDFKftNy1HhPyPNrcyvZuZNCV9SM7YGbH9UZYiiCyBPw/sFS
+	mvtxHqfp6cwDwYrLSRVU/RlfloNGf/22AYTBf2PBrsdCa0ZYMVmEsTgj
+X-Gm-Gg: ASbGnctWcxiDPnhb69544G58kWH1e/5TFW8CRGE2vg0PtN4NMic3tdW39YmGHcLqvaG
+	un5Fus1gReT1POgDBUjk2uWn/pjiUuKJnOsJ/F3/FaHN0JLFk1Giw2ccOVJ+jyZZtGvCfQQIZ6+
+	ACzl779cc0CzOtc26EL8uIQ1v27Cbo/085kVMrNcXheICThp5EcmPhVZDOnxPFUMWHAW+FRvny1
+	k6GXvaf9Rek+uJAE4vnpBPm1YXXMNND13wWHmsvldVSybw+n803tC04JbqBWP2trE0KVHFPUqTK
+	A3PVnX7CxXqVy0Hg91e5sSx6UqTXsHW4hUAqcZYX8cRoQ94RySqBigjhFjZmapJrYL/2DBHCI4R
+	Sqgt+GscrOjgjEGTr+qIcHk6lSWhN/5cTO03cmqSYrm1lhDz1FC8/MMZsoH3Q/MYpVcJAvXLtkY
+	mnMOf2WP9/fSH8
+X-Google-Smtp-Source: AGHT+IGmUHLQtt4/Ao6E8L4tLE0MefjpXF7XEULDetINGFZ/Jy/Bf0GiAFzHKLdLVH4nwoSXYOFI1w==
+X-Received: by 2002:ac8:5d47:0:b0:4a7:6215:37f5 with SMTP id d75a77b69052e-4aa4158b43cmr37499891cf.48.1752240171472;
+        Fri, 11 Jul 2025 06:22:51 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9edea8e66sm21040151cf.54.2025.07.11.06.22.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Jul 2025 06:22:50 -0700 (PDT)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 2C2E8F40066;
+	Fri, 11 Jul 2025 09:22:50 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Fri, 11 Jul 2025 09:22:50 -0400
+X-ME-Sender: <xms:KhBxaMQbn9roFh1stN7y4wNzPoAgB95S-EdDhrqKjYKglgHvAlMd_Q>
+    <xme:KhBxaLRTMuOkOdpunXWir1nZHZsn1A5_oOIr2DoFDAoMQsOP_j8PdIXrnzUFjiUyn
+    12tmFklFsttZ8rdDw>
+X-ME-Received: <xmr:KhBxaOa6oHlf5rEjRYt0nrvYKuR5mtCpa0sNhbfyyfzF8ZeJzY1GJzKZLg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfeegfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhepjeeihfdtuedvgedvtddufffggeefhefgtdeivdevveelvefhkeehffdtkeeihedv
+    necuffhomhgrihhnpehruhhsthdqlhgrnhhgrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
+    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
+    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphht
+    thhopedvjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhoshhsihhnsehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkhhmmheslhhishhtshdrlhhinhhu
+    gidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihse
+    hgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhn
+    mhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:KhBxaPjhU5V0uxs42b41h0X8L75Gg_ZolvNTIBBShC26NW4v-xGHgg>
+    <xmx:KhBxaDheUwpn0JHcg24jSRJwCN0JgA2-PGMr4y76DqB_FOe35e0w3Q>
+    <xmx:KhBxaFKEaUG4yGuG6kPbY8dPU534TRt6meUhVxf7sNuvyERonwi_fA>
+    <xmx:KhBxaKUMGA7aQBjZp8woKmSUqsC8ZKPDCJMqrVPZ_ebGh114O4pgLw>
+    <xmx:KhBxaH2BY1eZZSH11TvWrxvNYITjGxmmvqOF7Lb2l40y42pf5aIJVXms>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Jul 2025 09:22:49 -0400 (EDT)
+Date: Fri, 11 Jul 2025 06:22:48 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	lkmm@lists.linux.dev, linux-arch@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 4/9] rust: sync: atomic: Add generic atomics
+Message-ID: <aHEQKBT68xvqIIjW@Mac.home>
+References: <20250710060052.11955-1-boqun.feng@gmail.com>
+ <20250710060052.11955-5-boqun.feng@gmail.com>
+ <DB92I10114UN.33MAFJVWIX4AB@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] PM: add kernel parameter to disable asynchronous
- suspend/resume
-To: Jonathan Corbet <corbet@lwn.net>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Len Brown <len.brown@intel.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, peter.griffin@linaro.org,
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com,
- rdunlap@infradead.org
-References: <20250709-pm-async-off-v3-1-cb69a6fc8d04@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250709-pm-async-off-v3-1-cb69a6fc8d04@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB92I10114UN.33MAFJVWIX4AB@kernel.org>
 
+On Fri, Jul 11, 2025 at 10:03:07AM +0200, Benno Lossin wrote:
+[...]
+> > +
+> > +    /// Returns a pointer to the underlying atomic variable.
+> > +    ///
+> > +    /// Extra safety requirement on using the return pointer: the operations done via the pointer
+> > +    /// cannot cause data races defined by [`LKMM`].
+> 
+> I don't think this is correct. I could create an atomic and then share
+> it with the C side via this function, since I have exclusive access, the
+> writes to this pointer don't need to be atomic.
+> 
 
+that's why it says "the operations done via the pointer cannot cause
+data races .." instead of saying "it must be atomic".
 
-On 7/9/25 1:31 PM, Tudor Ambarus wrote:
-> On some platforms, device dependencies are not properly represented by
-> device links, which can cause issues when asynchronous power management
-> is enabled. While it is possible to disable this via sysfs, doing so
-> at runtime can race with the first system suspend event.
-> 
-> This patch introduces a kernel command-line parameter, "pm_async", which
-> can be set to "off" to globally disable asynchronous suspend and resume
-> operations from early boot. It effectively provides a way to set the
-> initial value of the existing pm_async sysfs knob at boot time. This
-> offers a robust method to fall back to synchronous (sequential) operation,
-> which can stabilize platforms with problematic dependencies and also
-> serve as a useful debugging tool.
-> 
-> The default behavior remains unchanged (asynchronous enabled). To disable
-> it, boot the kernel with the "pm_async=off" parameter.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
-> Dealing with the pixel6 downstream drivers to cope with the changes from
-> https://lore.kernel.org/linux-pm/10629535.nUPlyArG6x@rjwysocki.net/.
-> 
-> Similar to what people already reported it seems pixel6 lacks proper
-> device links dependencies downstream causing i2c and spi client drivers
-> to fail to suspend. Add kernel param to disable async suspend/resume.
-> ---
-> Changes in v3:
-> - update documentation with "pm_async=" and "Format: off" (Randy)
-> - reword documentation to make it clear "on" isn't a selectable option
->   for pm_async because it's the default behavior.
-> - Link to v2: https://lore.kernel.org/r/20250708-pm-async-off-v2-1-7fada54f01c0@linaro.org
-> 
-> Changes in v2:
-> - update the documentation and the commit message to describe that the
->   "pm_async" kernel parameter provides a way to change the initial value
->   of the existing /sys/power/pm_async sysfs knob.
-> - Link to v1: https://lore.kernel.org/r/20250708-pm-async-off-v1-1-1b200cc03d9c@linaro.org
-> ---
->  Documentation/admin-guide/kernel-parameters.txt | 12 ++++++++++++
->  kernel/power/main.c                             |  9 +++++++++
->  2 files changed, 21 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index f1f2c0874da9ddfc95058c464fdf5dabaf0de713..06beacf208de3242a3b4bb2413ab6cd3e0083f15 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -5000,6 +5000,18 @@
->  			that number, otherwise (e.g., 'pmu_override=on'), MMCR1
->  			remains 0.
->  
-> +	pm_async=	[PM]
-> +			Format: off
-> +			This parameter sets the initial value of the
-> +			/sys/power/pm_async sysfs knob at boot time.
-> +			If set to "off", disables asynchronous suspend and
-> +			resume of devices during system-wide power transitions.
-> +			This can be useful on platforms where device
-> +			dependencies are not well-defined, or for debugging
-> +			power management issues. Asynchronous operations are
-> +			enabled by default.
-> +
-> +
+> We also don't document additional postconditions like this... If you
 
-I just noticed an extra new line here, that checkpatch didn't catch.
-Please let me know if I have to resubmit, or it can be amended
-when/if applied.
+Please see how Rust std document their `as_ptr()`:
 
-Cheers,
-ta
+	https://doc.rust-lang.org/std/sync/atomic/struct.AtomicI32.html#method.as_ptr
+
+It mentions that "Doing non-atomic reads and writes on the resulting
+integer can be a data race." (although the document is a bit out of
+date, since non-atomic read and atomic read are no longer data race now,
+see [1])
+
+I think we can use the similar document structure here: providing more
+safety requirement on the returning pointers, and...
+
+> really would have to do it like this (which you shouldn't given the
+> example above), you would have to make this function `unsafe`, otherwise
+> there is no way to ensure that people adhere to it (since it isn't part
+> of the safety docs).
+> 
+
+...since dereferencing pointers is always `unsafe`, users need to avoid
+data races anyway, hence this is just additional information that helps
+reasoning.
+
+Regards,
+Boqun
+
+> > +    ///
+> > +    /// [`LKMM`]: srctree/tools/memory-model
+> > +    pub const fn as_ptr(&self) -> *mut T {
+> > +        self.0.get()
+> > +    }
+[...]
 
