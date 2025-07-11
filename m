@@ -1,72 +1,74 @@
-Return-Path: <linux-kernel+bounces-727855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08EEB020AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:42:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1ACB020AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 17:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4A81CA4E8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:43:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA562765786
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2425D2ED853;
-	Fri, 11 Jul 2025 15:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F13E2ED171;
+	Fri, 11 Jul 2025 15:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IgLLuKsJ"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gtHREV1U"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581E92ED861
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D902EE26F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 15:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752248551; cv=none; b=o4Hsp4e8slP6+HkZAmyWqtPAHEZLk6YfzdwrQ8kdsJC9Syw9kk3w19SW/FCFYEnUCnDImqo/qv08uzaF4eCNFd2F4BdZDKMGAzw+bJX8h46Pza2sw8sS3WBN7msdPSLEVImAXt5xEFnLJrytxpmnahvUnt1/xzbZHg/sNE2e158=
+	t=1752248555; cv=none; b=QmOsfM4W1VRmjnuiR99N8aoA0YgkHUV7ySfUGCKbG1igN06O6j2C4yxE+pJgO5DAOMHk8EZe9YfvaASOxSo93OuLmpuJEsLK05A5J8bvNILMQ9pNP4deHfkWP7hJuNwl/NAptYY+srqrZD1bZV2cF0JSmEvFFTlbv4h9mkX2gTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752248551; c=relaxed/simple;
-	bh=p0QT4HPaY8OBtTEZP93RtyKH7AZULc6D1K35xfZC+fY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mFuTVG+kXZIZHgSMUy2k5YPPr5zytZnf6RWpGEG6lmNDj8YBDZLntSQOmJkCkwtnuxMyfJjMAnzNUE3IfAGfIS/XksSipUyClA57GlJKrO7OehQATv8DdK6snvh2Hdgq3yW7sbyKBbZlasLuVnqPxC+GxRX8vp6vbiz7dw+HK4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=IgLLuKsJ; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1752248555; c=relaxed/simple;
+	bh=iF8ihvJBIUayCH7M+0g/FxeDaHneCHPNV7PdfMD3EjA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=lLRiKiX+XCK47oVa1E2CYbD7cLLPc777/9OpNvGMKgyFvxM6WwpeX1MA733+e56263cs1QAozD9Ofo0hCa1x0ZRSY+H6r9bGSB6kGpGc0522Bum/ptmIZ5PUyWbdKEnScN0Bf0VU2QzWMY+D5++SD9Z4VV/UZFt3xLWVPMwQyL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gtHREV1U; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-73c17c770a7so3030301b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:42:28 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so2206982b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:42:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1752248548; x=1752853348; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pUwufIkKlgwPmaoI7EtkILOQ2opwehMJ+nCT/MIXFWY=;
-        b=IgLLuKsJ+ZdAXWukZ1LeM5iq4bn05qezw/cYJXSBFnR4nvtGpHJv0cI/uojRkNe2jQ
-         GBSR6JyehL5tvQ2XFHvszQ82U/mXJGKE7VCGjqIb18KzSzIvklGbvqSW0yz73w3VV/5l
-         U+KoESFtIa5GavgsVpXEu6hRdS7hJY9b+uONs=
+        d=broadcom.com; s=google; t=1752248553; x=1752853353; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k7skpOByzW+hOTXagKwoSr9X/HjtkTFtxhdBwxlew5M=;
+        b=gtHREV1UN0iNImAXaqVLfkwOSS0oYfzXpQdsx35pW498V5lEPuY5ytmaRLMym/+6lr
+         vzNtxX+Mlf6xiiOeN3eYbs41DVi6z6DjHvshe6cpO//imMI1sHb6jlEFPjdmz2OhYFu8
+         oLAUArWh18dVFFtRV+yfLdHbGhsz40n5Hq7WA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752248548; x=1752853348;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pUwufIkKlgwPmaoI7EtkILOQ2opwehMJ+nCT/MIXFWY=;
-        b=lhmDCTq4VOG94kWCtdhHWg176SpMCOxunbmgcdTOKqeo654BRiaM9uvpnKZsNyMbMJ
-         tODdQas6SLm69IPWCcsFnmA53UXCYaVbI7XG24rsAZDmQ/fmJuZZGhdd+L9DmmPL8O/u
-         q+Oxuw1ZzNuBZp1n1dycoPBt2GvVA38ybUJCjdDCHsL6lANSwHDWU3yi7eh+rBUc9VGQ
-         ZbNz/G2gt6IA3s7tXGCcks25eLJaHcDapt9fEzujvEGjNit/v4qPwMq6K26mS6wa4hDb
-         6+bIl1E39aqbKciDB7lPtYaDJDUl+pRaS09m4ZYEyPwsZsfqi2GVUFuQHGqGEeEjSdaC
-         MhUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtWYSqt/RKO2qgLYdyRk3u1wykFFOJtYI+7dtwtvKc7He/1tKtiUskIfHOeKNHKk2DZZEUHafFyombuFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq30Ul8qFhNu7zEy7zypiCJ3sWeynicMK5E29lkFhcSzahP3/P
-	uqwa27hOv6p5MMJ5b+077y/0i+4AKNE3G3Ep9rwVLyRMs0uIxgLb43kyaQtUNAWGmw==
-X-Gm-Gg: ASbGnctxCuPURcLPT1pbITlfnZm5sEAN8n+Az5lrLKyYTDE8WwAeYks6jBg9p5PH39h
-	9n15+3DvpNNq1cyt/ZiB/dJsFjqG2zvGHZq37uR/f2Pn1BGLqLKgPzvC3pseey0YVRgDdIcKZQa
-	zbZBD8KKk1H0xejquWNxrS3cZX/JxIlSccLuyXVZ3+D/xyxksgaWGPS1EH0yOAP8mnMjTirtqXn
-	TVPKoRftgXHF3iIkx0Kwaeo6HZ5n6bssWs51+cuSL61j+gri5QgjJsBWfDUXOTdyHZPDVh+HfRW
-	YcZLXmtDzmtuP8kyfTd2s3M+kTyQYwTuBLDzWmv7NrhpG37M+dL9wXmMKsJphOKEawxwB5AO3CL
-	eqEFy6UX7jkIm5f3DBpmDIdd3HVplD0rx8131GHeh6FCm9tUVmHVyA4971w==
-X-Google-Smtp-Source: AGHT+IHFZKUgGL0wxuQrtMVNJArFfFZ4ZiEznQy74X/s9Jn/0gsJzLOGIMGF63s8wwcASQkDocGp0g==
-X-Received: by 2002:a05:6a00:1743:b0:74a:e29c:287d with SMTP id d2e1a72fcca58-74ee244a366mr5107688b3a.11.1752248547651;
-        Fri, 11 Jul 2025 08:42:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752248553; x=1752853353;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k7skpOByzW+hOTXagKwoSr9X/HjtkTFtxhdBwxlew5M=;
+        b=rlQG+gWUUl6g5wyUKlGCny1f2vTQgk83o2fEJkX0MrJfw08XljXMCJG4hnAS0Ghs2m
+         aLCjseH7opkw6moaWMELN+6MkrMN1AbNjTiqia3Y6nxHh+iCHURyAMbabKk2hKtuV4aW
+         AvOQgQB5Vh3wnqFtc4hxror8FLqYQ0aAm+GxUOunpxnU/f4rFJGglve3L4IjbHF/JOo3
+         FIjTCX5my4gClNrydjoEmZt5xLbE5hK+ExvL9qoE0F5obn6zKhBzRKvaT5duW1YYkDV0
+         rLWoUN4b0TOXYf+/B5c6rHftSCo5TWQMghd5frg+MHTLaR03AW5SF7ikrma2QUXtB1DO
+         EjXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpvgaFVM0oq2ojBxm1PF7gJ6E8qoiCcz5bIWBnXkJyKKNfLbuKx2KbgeOCbDJ+IQS6RNnhyjVsNjCxx7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNDBB6IWNJrZsnXDl7Xl4KGNdTuJ5lMF78xRV9f+fB1L4H98jE
+	lI1eN38qSPJ8n68pgZ6Ux5gozdbM6Ceyb4mzGB2RfnukyxNOqkE83QfL+f9HdRe5Dw==
+X-Gm-Gg: ASbGncvnOMej/L8iOX+JAZOimAAL9UaGhUflkkks0LXscxewjFxcsWKaeloSRIXMpNm
+	B58Xvr2HEipEtOHPL3cnhoeC6w0I9dJqwAt8N4wTRfnpZVkrr7OsnT0pHrOBl2kY9PFEiifoHnC
+	OY1ecGvONv3AiP271CcRG/ph0tpxG1Tk4eYXW2m0oQH9ydTnWMtrnNs1nYw7P8rjd5Y3/8jiIoU
+	FB+P1pN/phuZo0D/KsQYWGYfOyT1wcwN2NAgb0Uv6DwLf7zseAgan5W/Squ0EtbjUdUJQYLNPo+
+	hmlu0Ps0puvvt5mcXDT5tzK6FSQTWpalMC98Mad0Bo8OPGBaPTJyypMi4tyu4qxWko+eMG9qUyJ
+	4SPwAX2VK9/x1PR32XBaUBaAVH2KRXrTEfxb6zmtOZ7ypjHM4ypOHQtxX2A==
+X-Google-Smtp-Source: AGHT+IGDEkar+diQDXAFzWseo9mmENOlTrd0V0FLWObaE74a9KCtE2gcym2rmo5BmC5WxmqYeQa0ow==
+X-Received: by 2002:a05:6a00:188c:b0:74d:3a57:81d9 with SMTP id d2e1a72fcca58-74ee0ab538cmr5458867b3a.8.1752248553448;
+        Fri, 11 Jul 2025 08:42:33 -0700 (PDT)
 Received: from mail.broadcom.net ([192.19.144.250])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd5ccesm5762420b3a.27.2025.07.11.08.42.25
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74eb9dd5ccesm5762420b3a.27.2025.07.11.08.42.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 08:42:27 -0700 (PDT)
+        Fri, 11 Jul 2025 08:42:32 -0700 (PDT)
 From: Kamal Dasu <kamal.dasu@broadcom.com>
 To: andersson@kernel.org,
 	baolin.wang@linux.alibaba.com,
@@ -84,9 +86,11 @@ Cc: bcm-kernel-feedback-list@broadcom.com,
 	linux-kernel@vger.kernel.org,
 	linux-mmc@vger.kernel.org
 Subject: [PATCH 0/4] mmc: sdhci-brcmstb: rpmb sharing by claiming host for TZOS
-Date: Fri, 11 Jul 2025 11:42:16 -0400
-Message-Id: <20250711154221.928164-1-kamal.dasu@broadcom.com>
+Date: Fri, 11 Jul 2025 11:42:17 -0400
+Message-Id: <20250711154221.928164-2-kamal.dasu@broadcom.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250711154221.928164-1-kamal.dasu@broadcom.com>
+References: <20250711154221.928164-1-kamal.dasu@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,10 +116,6 @@ interrupts between linux and secure world are used to indicate completion of
 transaction to the waiting OS. TZOS has its own RPMB driver which accesses
 partition when it wants to read/write RPMB frames. Current implementation
 assumes Linux and TZOS as the two work agents.
-
-This patchset is an alternative method to initial RFC patch:
-[PATCH RFC 0/3] mmc: sdhci-brcmstb: Add rpmb sharing support	
-https://lkml.org/lkml/2025/2/6/1711
 
 Kamal Dasu (4):
   dt-bindings: brcmstb-hwspinlock: support for hwspinlock
