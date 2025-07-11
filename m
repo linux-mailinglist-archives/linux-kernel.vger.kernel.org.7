@@ -1,188 +1,129 @@
-Return-Path: <linux-kernel+bounces-727436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F15EB01A35
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2213AB01A34
 	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2992E7B3E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:56:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67446188E89C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DA5288C3D;
-	Fri, 11 Jul 2025 10:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTyk2R/A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDC7288C10;
+	Fri, 11 Jul 2025 10:57:44 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F53B146585;
-	Fri, 11 Jul 2025 10:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85815146585
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752231447; cv=none; b=qAo/9QxnCYKRFE8Gh621/uDNSgBNxVu/Nv6cmDu8JCiqc9oNI+QvHRLwPkGEKPhrOJJkGOzvSfYYDlxrR+aosBZjAyMHVPLgm3a/7NmVDOvz7YlhQc/jqCOVw9TQSQB8h2eAcp+BGwTCLQb+WtV+mrcR5JSZwga6e722ruu2MRk=
+	t=1752231463; cv=none; b=fSpeRkpi7fAJGG7Eu9nR4+VFOA/akkxO4rUzAG9gMPjosyecB164ULIBBKkLtLb0PIWFsajBBMao5xxoRtOuLWeulDwxIeJLdj4WkmW7fRsrt0xPoSoEbHpSXQgKc+PUD9O/znOrk//FVAiM+6nRqMKCNNo2BsaWXiLWLKbRPAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752231447; c=relaxed/simple;
-	bh=uEGvEdHU3YHVHFAHSUyXTMKFtV+GvYcrRc5BebHP2fc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uzh/oKajtC9J446APN8NxhaONgLI9Cr+AwoRsVPrXLVXDQxM9xiQM33j9fYGE6tSfEqwU6zA2/BWLSoOaI1lWWbQSSulnQXFm8SFYvCz1XL5UpxoPZ7Vebg5vnAwDVYz1KvDNGbpQlBUohiHhfNR6zqA/FANDZddS/OCVZQNVA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTyk2R/A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD2DC4CEED;
-	Fri, 11 Jul 2025 10:57:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752231446;
-	bh=uEGvEdHU3YHVHFAHSUyXTMKFtV+GvYcrRc5BebHP2fc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FTyk2R/AQog2P5s+uEnb9q6grec2CCJKy49vYyy9MpvovJBKtNA0W3dTEUcPpA3mk
-	 ar9ehVfPGaGOQCx/OZk/2OQrUXs2xOoJXqYHINWQdcflxKTUD/6grZvF6tHHGn5QgX
-	 l40aQdHsZMU0mlUDvL9h7hhe6tq376YCKM9A0Unja9zX7VVmGYTQSo8jZIwravnaW8
-	 TBcDt1kPQNl5oltze0ideyVw6Ix22gUIFo83xcz4+GaTa6BsU7X1DvQKAQcDtV1dlc
-	 Wv6yDRQVN4vW1t3AHOJ/IwpXG4ppxliBdq2LGbJ7tyudcp8v2kOuIcGWQjkiwL3k5I
-	 jtd41XPFVv5Tw==
-Date: Fri, 11 Jul 2025 11:57:21 +0100
-From: Simon Horman <horms@kernel.org>
-To: Michael Dege <michael.dege@renesas.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Paul Barker <paul@pbarker.dev>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: Re: [PATCH v2 3/4] net: renesas: rswitch: add offloading for L2
- switching
-Message-ID: <20250711105721.GU721198@horms.kernel.org>
-References: <20250708-add_l2_switching-v2-0-f91f5556617a@renesas.com>
- <20250708-add_l2_switching-v2-3-f91f5556617a@renesas.com>
- <20250708104740.GF452973@horms.kernel.org>
- <TY4PR01MB142826BE20FB23122B72A96348248A@TY4PR01MB14282.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1752231463; c=relaxed/simple;
+	bh=n2v+V7Dt5M2kG11EP0+UJi01N1/LUvq1qS6h71wI9/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HNkRttZFZ7o/EQQmaVS7srWge64OSkmFvtFmOI9qdQzfpV5R01By6CcYoKhk9SBXICxTw7SMC630Pv7eBVOXsCDorouyMbocLZO2V067GMU1jxj5iS1nntvUxfugP605OsPmrsMNg1pm9yjhU/mlETCpQYN424fZhmm0g9BtU78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 0BA9610E1EB;
+	Fri, 11 Jul 2025 10:57:39 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 5740880014;
+	Fri, 11 Jul 2025 10:57:35 +0000 (UTC)
+Date: Fri, 11 Jul 2025 06:57:42 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ tech-board-discuss@lists.linuxfoundation.org
+Subject: Re: [RFC PATCH 2/5] unwind: Export unwind_user symbol to GPL
+ modules
+Message-ID: <20250711065742.00d6668b@gandalf.local.home>
+In-Reply-To: <aHC-_HWR2L5kTYU5@infradead.org>
+References: <20250709212556.32777-1-mathieu.desnoyers@efficios.com>
+	<20250709212556.32777-3-mathieu.desnoyers@efficios.com>
+	<aHC-_HWR2L5kTYU5@infradead.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <TY4PR01MB142826BE20FB23122B72A96348248A@TY4PR01MB14282.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 9xeuxq7er38yowmu6nukaz3jz8o4s8rp
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 5740880014
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18pS6T2o/rogsMPwNJqEbkqQQgCokmTmn8=
+X-HE-Tag: 1752231455-45601
+X-HE-Meta: U2FsdGVkX1+O0EXwju0hS6rR7KizxI864GA0/mDCEcd8H7demm1Caf3R/wYOP8but1VUfszLgsIMa9VrTTkiyfPA01t8GsLnl4UI74afdVn2hGjQln7QyrpQyupopvFTKtV7xxOdpmZRAdts6BPF6V0W4p/LKC1aHdkxPiBc9BxKkvWTwlulNAaR5e/HHX/PL2OwygnKHFHNTyBFdt5QnlU6zq0VQDRvN4utaTSWIT33fd3a8w8Cr97xK+7XirneATcciSHhXKNowi+LLoAHTIaCb1yOlqUETccpkBwoojBMCYF5dqXKvBv8KZG+4Z+Hd006R7Qx9gMdoL5Bx3i45Vqo3IQdEL0tJ8WB79AhE7d2k88pPuH0paZUtIeXDuHDLG37olZ8Q0gh/I3RtI+wwma1DUPfkQSE
 
-On Thu, Jul 10, 2025 at 12:36:10PM +0000, Michael Dege wrote:
-> Hello Simon,
-> 
-> > -----Original Message-----
-> > From: Simon Horman <horms@kernel.org>
-> > Sent: Tuesday, July 8, 2025 12:48 PM
-> > To: Michael Dege <michael.dege@renesas.com>
-> > Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>; Niklas Söderlund
-> > <niklas.soderlund@ragnatech.se>; Paul Barker <paul@pbarker.dev>; Andrew Lunn <andrew+netdev@lunn.ch>;
-> > David S. Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>; Jakub Kicinski
-> > <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; netdev@vger.kernel.org; linux-renesas-
-> > soc@vger.kernel.org; linux-kernel@vger.kernel.org; Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> > Subject: Re: [PATCH v2 3/4] net: renesas: rswitch: add offloading for L2 switching
-> >
-> > On Tue, Jul 08, 2025 at 11:27:39AM +0200, Michael Dege wrote:
-> > > This commit adds hardware offloading for L2 switching on R-Car S4.
-> > >
-> > > On S4 brdev is limited to one per-device (not per port). Reasoning is
-> > > that hw L2 forwarding support lacks any sort of source port based
-> > > filtering, which makes it unusable to offload more than one bridge
-> > > device. Either you allow hardware to forward destination MAC to a
-> > > port, or you have to send it to CPU. You can't make it forward only if
-> > > src and dst ports are in the same brdev.
-> > >
-> > > Signed-off-by: Michael Dege <michael.dege@renesas.com>
-> > > Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> >
-> > ...
-> >
-> > > diff --git a/drivers/net/ethernet/renesas/rswitch_l2.c
-> > > b/drivers/net/ethernet/renesas/rswitch_l2.c
-> >
-> > ...
-> >
-> > > +static void rswitch_update_offload_brdev(struct rswitch_private *priv,
-> > > +                                    bool force_update_l2_offload)
-> > > +{
-> > > +   struct net_device *offload_brdev = NULL;
-> > > +   struct rswitch_device *rdev, *rdev2;
-> > > +
-> > > +   rswitch_for_all_ports(priv, rdev) {
-> > > +           if (!rdev->brdev)
-> > > +                   continue;
-> > > +           rswitch_for_all_ports(priv, rdev2) {
-> > > +                   if (rdev2 == rdev)
-> > > +                           break;
-> > > +                   if (rdev2->brdev == rdev->brdev) {
-> > > +                           offload_brdev = rdev->brdev;
-> > > +                           break;
-> > > +                   }
-> > > +           }
-> > > +           if (offload_brdev)
-> > > +                   break;
-> > > +   }
-> > > +
-> > > +   if (offload_brdev == priv->offload_brdev) {
-> > > +           if (offload_brdev && force_update_l2_offload)
-> > > +                   rswitch_update_l2_offload(priv);
-> > > +           return;
-> > > +   }
-> > > +
-> > > +   if (offload_brdev && !priv->offload_brdev)
-> > > +           dev_dbg(&priv->pdev->dev, "starting l2 offload for %s\n",
-> > > +                   netdev_name(offload_brdev));
-> > > +   else if (!offload_brdev && priv->offload_brdev)
-> > > +           dev_dbg(&priv->pdev->dev, "stopping l2 offload for %s\n",
-> > > +                   netdev_name(priv->offload_brdev));
-> > > +   else
-> > > +           dev_dbg(&priv->pdev->dev,
-> > > +                   "changing l2 offload from %s to %s\n",
-> > > +                   netdev_name(priv->offload_brdev),
-> > > +                   netdev_name(offload_brdev));
-> >
-> > Smatch flags a false-positive about possible NULL references by the
-> > netdev_name() calls on the line above.
-> >
-> > Due to the previous if statement it seems to me that cannot occur.
-> > But it did take me a few moments to convince myself of that.
-> >
-> > So while I don't think we should write our code to static analysis tooling.
-> > I did play around a bit to see if I could come up with something that is both easier on the eyes and
-> > keeps Smatch happy.
-> >
-> > Perhaps it isn't easier on the eyes, but rather I'm just more familiar with the code now. But in any
-> > case, I'm sharing what I came up with in case it is useful. (Compile tested only!).
-> >
-> >
-> >         if (!offload_brdev && !priv->offload_brdev)
-> >                 return;
-> >
-> >         if (!priv->offload_brdev)
-> >                 dev_dbg(&priv->pdev->dev, "starting l2 offload for %s\n",
-> >                         netdev_name(offload_brdev));
-> >         else if (!offload_brdev)
-> >                 dev_dbg(&priv->pdev->dev, "stopping l2 offload for %s\n",
-> >                         netdev_name(priv->offload_brdev));
-> >         else if (offload_brdev != priv->offload_brdev)
-> >                 dev_dbg(&priv->pdev->dev,
-> >                         "changing l2 offload from %s to %s\n",
-> >                         netdev_name(priv->offload_brdev),
-> >                         netdev_name(offload_brdev));
-> >         else if (!force_update_l2_offload)
-> >                 return;
-> >
-> 
-> I updated the code, I hope it is OK, because I had to do it differently from your suggestion, because
-> not all cases worked as expected.
-> 
-> The reworked code is tested.
 
-Thanks. FWIIW, Smatch still complains.
+[ Adding the TAB to this as well ]
 
-But if your code is correct and tested, then I think we should not
-update it a 2nd time to make the tooling happy.
+On Fri, 11 Jul 2025 00:36:28 -0700
+Christoph Hellwig <hch@infradead.org> wrote:
+
+> On Wed, Jul 09, 2025 at 05:25:49PM -0400, Mathieu Desnoyers wrote:
+> > Allow the unwind_user symbol to be used by GPL modules, for instance
+> > LTTng.  
+> 
+> I don't see a LTTng submission or any other user in this series.
+> So the usual prohibition against adding unused exports applies here
+> as usual.
+
+I want to bring up this discussion. I understand there's a policy not to
+add EXPORT_SYMBOL_GPL() unless there's a current user of it in the kernel
+proper. My question is, does this policy have to be draconian?
+
+The LTTng project and specifically its maintainer Mathieu has a long
+history of working along side of the Linux kernel and actively adding
+enhancements to the code. This is not an Nvidia or VMware situation where
+the modules add special secret sauce that they do not want to share. This
+is a long standing kernel contributor and maintainer that has proved
+himself time and time again to be an asset to the Linux kernel community.
+
+It's not even that LTTng wants to be out of tree. There's been several
+attempts to get LTTng merged. But they all failed due to disagreements in
+approaches and other aspects of the design. With perf and ftrace already in
+the kernel which focus toward helping kernel developers debug their issue,
+several maintainers do not see the point of LTTng. But LTTng focuses more
+on non kernel developers. Mathieu and I have come to a conclusion that
+LTTng and ftrace have two different audiences. And we actively work with
+each other to improve both ftrace and LTTng.
+
+LTTng was redesigned to work as a very non-intrusive external kernel module
+that could be ported to newer kernels without much pain. This approach has
+worked for both Mathieu and the kernel maintainers for several years.
+
+It is not because Mathieu doesn't want LTTng in the kernel that is keeping
+it out of the tree. He would very much like it in-tree! LTTng is not in the
+kernel because the kernel maintainers themselves have been blocking it. I
+do not feel that we should be also add the extra burden to prevent any call
+it could use from being EXPORT_SYMBOL_GPL().
+
+Mathieu has been very helpful in the work to develop this deferred unwind
+code that will help ftrace, perf and BPF. I would also like it to help
+LTTng. The only way to do so is to have an EXPORT_SYMBOL_GPL() for it.
+
+Now you can argue that we need to get LTTng into mainline before it can use
+this new work that the maintainer of LTTng has been very involved in to
+develop. But that would probably take a long time and from past
+experiences, may fail completely. So for now, I am saying that we give
+LTTng an exception to the rule that functions can not be
+EXPORT_SYMBOL_GPL() unless there's a in-tree kernel module that requires it.
+
+-- Steve
 
