@@ -1,169 +1,165 @@
-Return-Path: <linux-kernel+bounces-727573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D8D8B01C4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:44:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7440BB01C4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 039557A8695
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2ED3A8492
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021572C159D;
-	Fri, 11 Jul 2025 12:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8914028B7E4;
+	Fri, 11 Jul 2025 12:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJDmPs2c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="imq2rDJn"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2048.outbound.protection.outlook.com [40.107.220.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326653209;
-	Fri, 11 Jul 2025 12:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752237861; cv=none; b=fFjwmTz/952O8NvuXl177kLxm2V5Q26DHniGBmW5lBHi6ynZ8Su4Xnp/7/ny8UPjDarp5KO+SUrZ0kKNfZrY5oy0f1JgMe3CBnUX7f0kIfpSw4m17pMc4ErfyIB2b6Glcti5S1pArXQYLXcQtbRQayoqK1BafNAemGrbWHfWcEo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752237861; c=relaxed/simple;
-	bh=teZJaqxYI5b4Zi5Q3t/5mosyvGb3FX+DYiKRW0d6N6s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=boeNj87B25QnNn94n0ufDiJHOZ5laYoBd+TLCRqnLoasFuVNdOdFmYv/BDybyucAL0huboW6HmfJ7HtrDRNk60kMCevbm0yjOQyM2F8NzQFsfDcneOl3u3UkFHDYomKDBMWYSAvAq2fQ9qKckSdYeqV6adDRKHQObx6Y64eSH+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJDmPs2c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 244B9C4CEED;
-	Fri, 11 Jul 2025 12:44:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752237860;
-	bh=teZJaqxYI5b4Zi5Q3t/5mosyvGb3FX+DYiKRW0d6N6s=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=IJDmPs2c3NbqO3wxva11UXJLk9zZYU+B2fZtvtfwnFwoEOyxy64podMGkXpF4Srr3
-	 3GctEfA87rhazleam3+lU8Q7ILT1r5aaQAIGUeaQMKwml83rX69qG61ch5ThQyXrfr
-	 gPjD9Nb7q3B3sHaOfG16wjiXJpZwHmHh4BnSbqysc8Xl91V0iLPjwhf5mZ4Ii3AJr3
-	 ALKh/mpgnKqGHTLc+6he887VpV6qrxjkJe0D57+XI880GRuTPANwid4VbJbkUPpjyl
-	 umhId6gP+TabFKBnQ2H8FvO2WONWNIJtxCD87joyUgyy0ukGUP/qAUsGwkTBOM2wb6
-	 qUYmv0wyaRYhQ==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B6E2BDC0F;
+	Fri, 11 Jul 2025 12:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752237917; cv=fail; b=lKURZkkW55diFSY96HIvybveDxIGiMNAOyhAWdFOsUwRzbebw2tFUTbSMmh9SkuITedkPQ7UKhS2w1+gCLjVv0FAPcp9mRFdQzpLnP5QBAMf0xfLBGrjgcTQF16MCxIAk0Nx/EdBXI8ZUvTk3ZNIUKZmyXhm3sKdj5nLfTX+drE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752237917; c=relaxed/simple;
+	bh=oCvD+Y5Agj2Uam7x1h1JXWJF9g5kR09g0G7VKLKYPPA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HzUOmd+EbbWyrT7z1AYT4LRewPbs6SCp7CDfRwFNdt+PnW+EKZtwQrUkaw9HQ1ROgq31+6dOjSVSJSIks4Dunv9I/ascENsnpXP1E/2yyKo+OSgA5tWzQGF/vRN1VJVuzuss6RqCathgxrJ36jRi/gwXLduVQfnxLEHhhRQpHGY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=imq2rDJn; arc=fail smtp.client-ip=40.107.220.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GeTpGkb0IGE8PXOIQmLrAODYnb6cKuwQs1TaX+Euuz7wtWUAtV6Yfs9FMCdYCy44QEHN1I+EDB045PAwnc7zccuQk6dSyWWaPClvQhBuyW93iREwz0Takduh2QShcwBJjFRdhEXXtgGU9rZSIJqhNra+pYkn7VrS29JmR1X47VodrFWclGsL7MSzp4toEB+jGlAMehvhvCefhWCN+BcUnuSgukBSD2FIh1Y644RzulY4SGmmu1Z40q7re4nsnfEOToBvOjdeBKY/4TI53EDSJfA7wUf3FsrBrVc685vThihEK0Um3BjNRzXsLemdm0ZkAzI4SCPilinP/uJvAAylQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zS7iqTnBOvznp7WuSW8kA3i2x2M/16wYkerk/+SGEgI=;
+ b=f/ppFe33uwk6ycToMQUFvOIeIjd8EJH3WR8g7IdUTPBMiHDjkKeY3LrFOU8yzZpn9W+1P8M7Ce5ihheoVF4Tw+q8MUjhyvWsPXNpAKKOGwpJAD9CcM7hn1Y4JGneZI1P2P+W8mc77Szya5t0ZtsBPL9xHnQVPe4ncan+uz4bkejsDSHbjsTwOK5fUFNZLEBBR3bdioiypLaPZ3hmqxwrIajgpOHNFr3183Uyut5zwt1Q05Ox7y71Xo4w7zREOHtsDrN87vo7PbrJZXRRht1FL3HkjLcW4K8NenXJlwyADNmoGowcaULqvnxk0EIPBfmMrckUpt40zr1lhiKcavIIbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=axentia.se smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zS7iqTnBOvznp7WuSW8kA3i2x2M/16wYkerk/+SGEgI=;
+ b=imq2rDJn8iPGLuiI+pm4PuR2nN8+xJkhyw6JBXGqN6PfV6daAE81L/iEDe1sM/49gb75np7xutXOu62BpLQ6sclQaHzplOwI1VKJLlR+VnCtg35I4hJEBCiwBY3VNhyU6vojPnCs6Q1T3k7f1waZWPfLhz9NEL8bWM5jMSUREiE=
+Received: from DM6PR02CA0139.namprd02.prod.outlook.com (2603:10b6:5:332::6) by
+ CH3PR12MB8459.namprd12.prod.outlook.com (2603:10b6:610:139::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Fri, 11 Jul
+ 2025 12:45:12 +0000
+Received: from DS2PEPF00003448.namprd04.prod.outlook.com
+ (2603:10b6:5:332:cafe::23) by DM6PR02CA0139.outlook.office365.com
+ (2603:10b6:5:332::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.23 via Frontend Transport; Fri,
+ 11 Jul 2025 12:45:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ DS2PEPF00003448.mail.protection.outlook.com (10.167.17.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.22 via Frontend Transport; Fri, 11 Jul 2025 12:45:11 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Jul
+ 2025 07:45:10 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Jul
+ 2025 07:45:08 -0500
+Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 11 Jul 2025 07:45:06 -0500
+From: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+To: <git@amd.com>, <michal.simek@amd.com>, <peda@axentia.se>,
+	<linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <radhey.shyam.pandey@amd.com>, <srinivas.goud@amd.com>,
+	<shubhrajyoti.datta@amd.com>, <manikantaguntupalli09@gmail.com>, "Manikanta
+ Guntupalli" <manikanta.guntupalli@amd.com>
+Subject: [PATCH 0/1] Increase I2C bus arbitration timeout in the PCA9541 driver
+Date: Fri, 11 Jul 2025 18:15:02 +0530
+Message-ID: <20250711124503.3390451-1-manikanta.guntupalli@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 11 Jul 2025 14:44:09 +0200
-Message-Id: <DB98H7EGG96J.2FC3ZWDENYWW5@kernel.org>
-Cc: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
- <linux-block@vger.kernel.org>
-Subject: Re: [PATCH 00/17] rust: replace `kernel::c_str!` with C-Strings
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "FUJITA
- Tomonori" <fujita.tomonori@gmail.com>, "Andrew Lunn" <andrew@lunn.ch>,
- "Heiner Kallweit" <hkallweit1@gmail.com>, "Russell King"
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Breno Leitao" <leitao@debian.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Russ Weight" <russ.weight@linux.dev>, "Dave Ertman"
- <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
- Romanovsky" <leon@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Arnd
- Bergmann" <arnd@arndb.de>, "Brendan Higgins" <brendan.higgins@linux.dev>,
- "David Gow" <davidgow@google.com>, "Rae Moar" <rmoar@google.com>, "Jens
- Axboe" <axboe@kernel.dk>
-X-Mailer: aerc 0.20.1
-References: <20250710-core-cstr-cstrings-v1-0-027420ea799e@gmail.com>
-In-Reply-To: <20250710-core-cstr-cstrings-v1-0-027420ea799e@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: manikanta.guntupalli@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003448:EE_|CH3PR12MB8459:EE_
+X-MS-Office365-Filtering-Correlation-Id: 407b44d0-b1c9-4284-a543-08ddc078c634
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OGeSJLbqUY5og69PNc+VlBFAs3GWbCr2ZGKOaRtOp136is3TehTsi+rzFYdr?=
+ =?us-ascii?Q?HNbkKn4nWlWgQR6DFj0Z1nY4MRIKzs7CHuzeQAktG3MUW1xGDnecpIPixYjp?=
+ =?us-ascii?Q?bRaKv64bAhdE2a9a6aRprp77amzyMz61YYphlubgoQ3mCC0DcL8PkGfbl9HQ?=
+ =?us-ascii?Q?+5YPSGWkQSZD/ZctCB14PxpmozyuEKCK26FKGyCo0Oib9Uw8ygbmI2LJLbJ8?=
+ =?us-ascii?Q?2VtVgkOXQatMsGjRomEGn4X/sjsZmz4jysKIh2ZoC/nhbOtl4GY62wGlv3p0?=
+ =?us-ascii?Q?24IHaQ+x9gERHRtPb3ypO08/iQzo3/BiyVsufldQAWDdAg5vNG0Gl1MwuAvZ?=
+ =?us-ascii?Q?kAszriMcNspXYjI7KiDYtZdS9y2bzKx3fSBx/+GZq53DXmjQsWvT3hVqF9ab?=
+ =?us-ascii?Q?dJN/bW3kTQLMus0bxPeitVOSLJGp1EuXyg37WLlUEHNqA9agSa+QchHXF1zM?=
+ =?us-ascii?Q?jEI2jS+gGCQ0vITKBsvWYWPCGV5Vnxk2ywg3alNE+DOjnBUxCfbVIMCRrqfz?=
+ =?us-ascii?Q?H54RJPnMu8J55420HPE3z5qPybQWaGGxHfxlBgQCi94W2VUODsmav7p76VWt?=
+ =?us-ascii?Q?aI0t7SVQa4ewHw57pr24ZzZmWcM4NoPP+Tk9WQ+iFLbq9YB4VMNveqLerF/9?=
+ =?us-ascii?Q?xYrct1/OL9DGEuwwb7Ouj9ur6I1TJPNbC1CTzidvXJ0HXHSpRUpqMSHwk37y?=
+ =?us-ascii?Q?CDAdkoSvfqUmodhyDI+dgZOt+DzAOZnVYuYQRDL8foKAT+mcRX5Y9E6t5czW?=
+ =?us-ascii?Q?I54bQHQZxzs1Fd1pwUhbsZ3Rcy443sm+80JhchGIX3tDHtucb1AX19NOnNam?=
+ =?us-ascii?Q?3GcB7cztxVycC3176r6Mx2Y+TWGGhnxCiZhYtldmmPc4mg6KpTgk3iaFrNMJ?=
+ =?us-ascii?Q?H9Kp25/XyjpGP+G9MbpaFV79nr7lQaZNIHnomYm6fpoiteCMNHp2bc45H1xx?=
+ =?us-ascii?Q?AYpenl1SvNAp69BR55/lM7qLqHTcwCpWl7nUikVXKgR7qDQJI0867tvLOlLM?=
+ =?us-ascii?Q?xiIGJ0KGrfv0zUydRVi0bAeEcRuQD1KrVbNb1Eu50NFF0TIcCwDplgPcFypP?=
+ =?us-ascii?Q?vRhkWm2XHqnibo8m3n/CTxHMx5Lsi35+7aCXdhgmxrwn3GXeYFYIvbQiMbaC?=
+ =?us-ascii?Q?e/6vJsnBm39jwhFsOdIK6LdYMSwMY5505twNN7S7UgFRP7eBYF8vDvUe60ca?=
+ =?us-ascii?Q?1II3AqImT/ULkk/qR+qJQZ2ObzlFkAt1wZ+iw37kht9KySElk9mP1ZExnomF?=
+ =?us-ascii?Q?FQg32oNCIWXLaUHzwf40jTBJJDx2gjjySJ19ewqk9KhxKdFKMQQCEpoTGfmS?=
+ =?us-ascii?Q?Dsl6TDHPiaEEoVNcbRo4MUa7qo/sADu3GuWWoi8+uTXPLR8cSz4PDgKTlM0j?=
+ =?us-ascii?Q?ITA8+RWp+8sPdedP3Nl8kc/fRZIwsTfhKga7WfUThjvvgH9bVz1rqWnAXd2E?=
+ =?us-ascii?Q?z61VCR9u1Qx95ajJawWKAZM/JLBaafaeBRC4HEG9Ga8loZbTO3urIRNGRH3k?=
+ =?us-ascii?Q?Y+I/ZwgGGqmorUIxU+nDG9AIV4j0xPKDgjyy?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 12:45:11.0024
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 407b44d0-b1c9-4284-a543-08ddc078c634
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003448.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8459
 
-On Thu Jul 10, 2025 at 5:31 PM CEST, Tamir Duberstein wrote:
-> This series depends on step 3[0] which depends on steps 2a[1] and 2b[2]
-> which both depend on step 1[3].
->
-> This series also has a minor merge conflict with a small change[4] that
-> was taken through driver-core-testing. This series is marked as
-> depending on that change; as such it contains the post-conflict patch.
->
-> Subsystem maintainers: I would appreciate your `Acked-by`s so that this
-> can be taken through Miguel's tree (where the previous series must go).
->
-> Link  https://lore.kernel.org/all/20250710-cstr-core-v14-0-ca7e0ca82c82@g=
-mail.com/ [0]
-> Link: https://lore.kernel.org/all/20250709-core-cstr-fanout-1-v1-0-64308e=
-7203fc@gmail.com/ [1]
-> Link: https://lore.kernel.org/all/20250709-core-cstr-fanout-1-v1-0-fd793b=
-3e58a2@gmail.com/ [2]
-> Link: https://lore.kernel.org/all/20250704-core-cstr-prepare-v1-0-a915240=
-37783@gmail.com/ [3]
-> Link: https://lore.kernel.org/all/20250704-cstr-include-aux-v1-1-e1a404ae=
-92ac@gmail.com/ [4]
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> Tamir Duberstein (17):
->       drivers: net: replace `kernel::c_str!` with C-Strings
->       gpu: nova-core: replace `kernel::c_str!` with C-Strings
->       rust: auxiliary: replace `kernel::c_str!` with C-Strings
->       rust: clk: replace `kernel::c_str!` with C-Strings
->       rust: configfs: replace `kernel::c_str!` with C-Strings
->       rust: cpufreq: replace `kernel::c_str!` with C-Strings
->       rust: device: replace `kernel::c_str!` with C-Strings
->       rust: firmware: replace `kernel::c_str!` with C-Strings
->       rust: kunit: replace `kernel::c_str!` with C-Strings
->       rust: macros: replace `kernel::c_str!` with C-Strings
->       rust: miscdevice: replace `kernel::c_str!` with C-Strings
->       rust: net: replace `kernel::c_str!` with C-Strings
->       rust: pci: replace `kernel::c_str!` with C-Strings
->       rust: platform: replace `kernel::c_str!` with C-Strings
->       rust: seq_file: replace `kernel::c_str!` with C-Strings
->       rust: str: replace `kernel::c_str!` with C-Strings
->       rust: sync: replace `kernel::c_str!` with C-Strings
->
->  drivers/block/rnull.rs                |  2 +-
->  drivers/cpufreq/rcpufreq_dt.rs        |  5 ++---
->  drivers/gpu/drm/nova/driver.rs        | 10 +++++-----
->  drivers/gpu/nova-core/driver.rs       |  6 +++---
->  drivers/net/phy/ax88796b_rust.rs      |  7 +++----
->  drivers/net/phy/qt2025.rs             |  5 ++---
->  rust/kernel/clk.rs                    |  6 ++----
->  rust/kernel/configfs.rs               |  5 ++---
->  rust/kernel/cpufreq.rs                |  3 +--
->  rust/kernel/device.rs                 |  4 +---
->  rust/kernel/firmware.rs               |  6 +++---
->  rust/kernel/kunit.rs                  | 11 ++++-------
->  rust/kernel/net/phy.rs                |  6 ++----
->  rust/kernel/platform.rs               |  4 ++--
->  rust/kernel/seq_file.rs               |  4 ++--
->  rust/kernel/str.rs                    |  5 ++---
->  rust/kernel/sync.rs                   |  5 ++---
->  rust/kernel/sync/completion.rs        |  2 +-
->  rust/kernel/workqueue.rs              |  8 ++++----
->  rust/macros/kunit.rs                  | 10 +++++-----
->  rust/macros/module.rs                 |  2 +-
->  samples/rust/rust_configfs.rs         |  5 ++---
->  samples/rust/rust_driver_auxiliary.rs |  4 ++--
->  samples/rust/rust_driver_faux.rs      |  4 ++--
->  samples/rust/rust_driver_pci.rs       |  4 ++--
->  samples/rust/rust_driver_platform.rs  |  4 ++--
->  samples/rust/rust_misc_device.rs      |  3 +--
->  scripts/rustdoc_test_gen.rs           |  4 ++--
->  28 files changed, 63 insertions(+), 81 deletions(-)
+This patch increases the I2C bus arbitration timeout in the PCA9541 driver
+to improve robustness during multi-master scenarios.
 
-For the entire series:
+If it makes more sense to make this arbitration timeout configurable via
+a module parameter instead, we would be happy to revise the patch
+accordingly. Please advise.
 
-Reviewed-by: Benno Lossin <lossin@kernel.org>
+Looking forward to your feedback.
 
----
-Cheers,
-Benno
+Jonathan Stroud (1):
+  PCA9541: Increase I2C bus arbitration timeout
+
+ drivers/i2c/muxes/i2c-mux-pca9541.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
 
