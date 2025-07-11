@@ -1,197 +1,259 @@
-Return-Path: <linux-kernel+bounces-727177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B96B01614
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:30:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1393B0161C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8F25188F3B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:29:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06041CA1F56
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B1F1E1DE7;
-	Fri, 11 Jul 2025 08:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D7E20AF98;
+	Fri, 11 Jul 2025 08:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="NVM00Gkt"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0MgCYy2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230FE1FF61E
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 08:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8A9202976;
+	Fri, 11 Jul 2025 08:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752222527; cv=none; b=VpeU3jb44/UZq1NZ2bdI1F4MURfhEoNbSxqXLVwp2CD1lnPc34hGxTsBEW5xaKZiX56tmZrXrRiwNQRHF9sTZdFYcxGPb3WklKXeFRRq87NmTh6QbjB1nEBzJWJQy8KakbTuY0aSv4dQlqTCBNs1MQn1qYynh3VqXxhUXRnvQNw=
+	t=1752222584; cv=none; b=gtBWvedVmo3Tw/fDfWGgC8a8gX00gSi1bbfDZGjvVYxCHgrP3WjA0+jnJ9egBzNWOkZ2LmOgvmxM2ShSZmvqkJckUFwRJqeWcy9E0HYnGUWdAfAop4I5Ib/a/sLVZSvvb11Yqi/f/OBK+OJEGdtXxmNDq9T0l5BAhtNRHFQfnRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752222527; c=relaxed/simple;
-	bh=C63gSTJaFjfjDN2UWFDRtg1QOpvYxMR7H4rF2lT5drI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qXFUQmOChOMZiZpAPkFDDlZiiVq+4Vf5Ap5qVNCE6p+2NaKR2wajuxsVhtC2PtqucW35JSatOHmvHS9/LUYAd6vjSZf2xBgvNMdktLYdadXrhoWcNv86iXZs2wLdsAVykM78OQt2p/OCBpdiFrKppkTVlY6/jF54WCK/ytjYSPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=NVM00Gkt; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-553dceb342aso1572799e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 01:28:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1752222522; x=1752827322; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0V0DETkdpP2SJ8ZAwZpM11qaGZR3zWsJjRJIwEWhwAQ=;
-        b=NVM00GktKXif7zA+3bfsJqNLb36npTdPBOQ7b0L+cwOKTmOEwBQZRarmWdK8DOx1dN
-         iAgJ7dtMdvT6/9/Z4iGkcgp2dsN+hKU4qx0fv7km6Ye7YMcleJNUFKp0vSSDJ9/EDdpT
-         fe73CtMHhFWI0NGtnVQdc54UVNDee0Tc7DYftlQsLWT/LDLpK+qyDAieSLkTQgTNF9TB
-         9+JpuHcf2vdXbWTfzk4LMksJGke/XvEqv9CTm4P7jScizwa0mWHXl1tCvOgoBphUDjs5
-         gRKhWwMwRaJcGj1eOziVTVrfCyuRwWiHAdMeZTJUb++5sU+Dn33jOHWGLF9wO6dOwPbl
-         2fHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752222522; x=1752827322;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0V0DETkdpP2SJ8ZAwZpM11qaGZR3zWsJjRJIwEWhwAQ=;
-        b=ZpkyvSOPUFyLVB3poO/URUYEiZpyYenixnXmptgwE5KypeIDbysKJ5HhSLAAcUcagy
-         /gDiAhJ8P3JKreTuPVM7FvWybdh9Ef4NRX/J9se02Nk4yGsQlkF/D+kBkfIRw61QsASm
-         ECIoFJ63Y5qu03x6gp3k61wEpX+qGJ4gkJulAON/OBn1yljrR3F7lLq5Y7ZOC71bZRyO
-         pmPQ9aYaItJMs+tYWVDwSsqGA0dTzZq9PGpZ0KJ6l2udgOe1RRULOll0Hiqvrh+LWOFL
-         EV9UIUSXB1UepJYyjCFa1PhNIDTz06iA4u+WCEYxrrMdQuDDKV01NqDHcYmGucrw+yJL
-         CzqA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6zEeRRq4a/FyRZ8DW4pBhtAkAmx6pZoTpCwqPtx1I/EuYMkP6EBN32UciFrpB11wMwHnm9xpRdnbPlGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9EXYjFffuuIxkiwByZf1xuwbrBSViXsNnqE3KTyTYlj9fatha
-	4kUcGirDvUil6FZslDkhnRuGKJG+AbNxqF8RDL9ImZcBm0JaZ5GFoA6Im7xYZpPfkLv2XzLE3pr
-	2LvfUmAqRzzEq6SUvfNNtmINJDxrgwtldjycLBI0C6w==
-X-Gm-Gg: ASbGnctsIp5RkD8u31URF1vOy9bBT4Of0E1vOyvHqrcHk8+1YUYpWYHlnJ+PVdiskDt
-	x3ZM/cWMBM01BRLSHLpxHwsgxeDQ3dsITPvU7PK6LY6uF/eXrPppA2GzB6l3+rji1kNl1KBzEWH
-	rIXkXTs90ym1fuzuT3p3L7r3eZk9WJoi/o7HEgzvLXT5vkJOdtFJjjockuRvKr1VCKILmI4vgHG
-	W3w6BmA/ilNGoscvqE=
-X-Google-Smtp-Source: AGHT+IGtSsp8vscJn4tzXANU6jXxzJIchtHLYA0CLdSkilBhXH8dJCPNqfw6YPZF2NmYpG1AnNSZ4hh9Y0QgbqWWiuk=
-X-Received: by 2002:a05:6512:3da3:b0:553:268e:5019 with SMTP id
- 2adb3069b0e04-55a044c9ba0mr720126e87.11.1752222522119; Fri, 11 Jul 2025
- 01:28:42 -0700 (PDT)
+	s=arc-20240116; t=1752222584; c=relaxed/simple;
+	bh=9bh7znodlw8FlXp/na//YSh9kRdbfbFY0AFANoOPt+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F13bCtGW8UnygeBrU6euI4yA9Tpbsf9koQyP/G1X11/o+JHrgBIMvJeX1Gkm6/awY63X4GWMOGTlVwyQdhY58NFpnJLZku1XRQ7UqBrXu/6q/H7FIbJx8vIzhQVND9w2Zw2u1tXI8Dmek/9qCvdGWnsWhSehU9zaBn7k5SQjzg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0MgCYy2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D635BC4CEFC;
+	Fri, 11 Jul 2025 08:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752222583;
+	bh=9bh7znodlw8FlXp/na//YSh9kRdbfbFY0AFANoOPt+Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=T0MgCYy2yD58wkhMifpgEp1TXMyDvKtayNpsOxtRiwjmbfNEXyK2LDZzF/yPtzox2
+	 LyqNd1O+/lbR2fvJOW8194IVHuUXUCgGlIj9cvnit00ZpRXmLTzsa0/i1cIbTeWoc6
+	 NY7tJTkO44CFbE09uTUaZvh2vVfEujE9xZHv7qoFKPF18LpU++MgKlao3Rh7N4Hr3J
+	 AWP6vzzl6WSaOpp6BLVN9S/iy9kh+Y+y7+zOSF5tf+1sfC8RxWqihmcBx4+5qVLP5W
+	 bqRgl1Scpg3vcs6Q9ftZ1AmGUXQmKFhzZuGySvf0+MhBOXeEEmc/Vd5hl1AV50y7tz
+	 D1QRfPmXVKEew==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Alejandro Colomar <alx@kernel.org>,
+	Eyal Birger <eyal.birger@gmail.com>,
+	kees@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@ACULAB.COM>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCHv5 perf/core 00/22] uprobes: Add support to optimize usdt probes on x86_64
+Date: Fri, 11 Jul 2025 10:29:08 +0200
+Message-ID: <20250711082931.3398027-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710133030.88940-1-luxu.kernel@bytedance.com>
-In-Reply-To: <20250710133030.88940-1-luxu.kernel@bytedance.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Fri, 11 Jul 2025 13:58:29 +0530
-X-Gm-Features: Ac12FXwuJjdqyUgP0BGYuxw7gbsx-L955BFg8zTc93L-MwymMDnq-8tfsptw_tg
-Message-ID: <CAK9=C2W60a2otfJKucJc_d4=X9YBTep1zSp+wa8E7-kL7tJR0Q@mail.gmail.com>
-Subject: Re: [PATCH v2] RISC-V: KVM: Delegate kvm unhandled faults to VS mode
-To: Xu Lu <luxu.kernel@bytedance.com>
-Cc: rkrcmar@ventanamicro.com, cleger@rivosinc.com, anup@brainfault.org, 
-	atish.patra@linux.dev, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 10, 2025 at 7:00=E2=80=AFPM Xu Lu <luxu.kernel@bytedance.com> w=
-rote:
->
-> Delegate faults which are not handled by kvm to VS mode to avoid
-> unnecessary traps to HS mode. These faults include illegal instruction
-> fault, instruction access fault, load access fault and store access
-> fault.
->
-> The delegation of illegal instruction fault is particularly important
-> to guest applications that use vector instructions frequently. In such
-> cases, an illegal instruction fault will be raised when guest user thread
-> uses vector instruction the first time and then guest kernel will enable
-> user thread to execute following vector instructions.
->
-> The fw pmu event counters remain undeleted so that guest can still get
-> these events via sbi call. Guest will only see zero count on these
-> events and know 'firmware' has delegated these faults.
+hi,
+this patchset adds support to optimize usdt probes on top of 5-byte
+nop instruction.
 
-Currently, we don't delegate illegal instruction faults and various
-access faults to Guest because we allow Guest to count PMU
-firmware events. Refer, [1] and [2] for past discussions.
+The generic approach (optimize all uprobes) is hard due to emulating
+possible multiple original instructions and its related issues. The
+usdt case, which stores 5-byte nop seems much easier, so starting
+with that.
 
-[1] http://lists.infradead.org/pipermail/linux-riscv/2024-August/059658.htm=
-l
-[2] https://lore.kernel.org/all/20241224-kvm_guest_stat-v2-0-08a77ac36b02@r=
-ivosinc.com/
+The basic idea is to replace breakpoint exception with syscall which
+is faster on x86_64. For more details please see changelog of patch 8.
 
-I do understand that additional redirection hoop can slow down
-lazy enabling of vector state so drop delegating various access
-faults.
+The run_bench_uprobes.sh benchmark triggers uprobe (on top of different
+original instructions) in a loop and counts how many of those happened
+per second (the unit below is million loops).
 
-Regards,
-Anup
+There's big speed up if you consider current usdt implementation
+(uprobe-nop) compared to proposed usdt (uprobe-nop5):
 
->
-> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
-> ---
->  arch/riscv/include/asm/kvm_host.h |  4 ++++
->  arch/riscv/kvm/vcpu_exit.c        | 18 ------------------
->  2 files changed, 4 insertions(+), 18 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/k=
-vm_host.h
-> index 85cfebc32e4cf..e04851cf0115c 100644
-> --- a/arch/riscv/include/asm/kvm_host.h
-> +++ b/arch/riscv/include/asm/kvm_host.h
-> @@ -44,7 +44,11 @@
->  #define KVM_REQ_STEAL_UPDATE           KVM_ARCH_REQ(6)
->
->  #define KVM_HEDELEG_DEFAULT            (BIT(EXC_INST_MISALIGNED) | \
-> +                                        BIT(EXC_INST_ACCESS)     | \
-> +                                        BIT(EXC_INST_ILLEGAL)    | \
->                                          BIT(EXC_BREAKPOINT)      | \
-> +                                        BIT(EXC_LOAD_ACCESS)     | \
-> +                                        BIT(EXC_STORE_ACCESS)    | \
->                                          BIT(EXC_SYSCALL)         | \
->                                          BIT(EXC_INST_PAGE_FAULT) | \
->                                          BIT(EXC_LOAD_PAGE_FAULT) | \
-> diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
-> index 6e0c184127956..6e2302c65e193 100644
-> --- a/arch/riscv/kvm/vcpu_exit.c
-> +++ b/arch/riscv/kvm/vcpu_exit.c
-> @@ -193,11 +193,6 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, struc=
-t kvm_run *run,
->         ret =3D -EFAULT;
->         run->exit_reason =3D KVM_EXIT_UNKNOWN;
->         switch (trap->scause) {
-> -       case EXC_INST_ILLEGAL:
-> -               kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_ILLEGAL_INSN)=
-;
-> -               vcpu->stat.instr_illegal_exits++;
-> -               ret =3D vcpu_redirect(vcpu, trap);
-> -               break;
->         case EXC_LOAD_MISALIGNED:
->                 kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_MISALIGNED_LO=
-AD);
->                 vcpu->stat.load_misaligned_exits++;
-> @@ -208,19 +203,6 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, struc=
-t kvm_run *run,
->                 vcpu->stat.store_misaligned_exits++;
->                 ret =3D vcpu_redirect(vcpu, trap);
->                 break;
-> -       case EXC_LOAD_ACCESS:
-> -               kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_ACCESS_LOAD);
-> -               vcpu->stat.load_access_exits++;
-> -               ret =3D vcpu_redirect(vcpu, trap);
-> -               break;
-> -       case EXC_STORE_ACCESS:
-> -               kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_ACCESS_STORE)=
-;
-> -               vcpu->stat.store_access_exits++;
-> -               ret =3D vcpu_redirect(vcpu, trap);
-> -               break;
-> -       case EXC_INST_ACCESS:
-> -               ret =3D vcpu_redirect(vcpu, trap);
-> -               break;
->         case EXC_VIRTUAL_INST_FAULT:
->                 if (vcpu->arch.guest_context.hstatus & HSTATUS_SPV)
->                         ret =3D kvm_riscv_vcpu_virtual_insn(vcpu, run, tr=
-ap);
-> --
-> 2.20.1
->
->
+current:
+        usermode-count :  152.501 ± 0.012M/s
+        syscall-count  :   14.463 ± 0.062M/s
+-->     uprobe-nop     :    3.160 ± 0.005M/s
+        uprobe-push    :    3.003 ± 0.003M/s
+        uprobe-ret     :    1.100 ± 0.003M/s
+        uprobe-nop5    :    3.132 ± 0.012M/s
+        uretprobe-nop  :    2.103 ± 0.002M/s
+        uretprobe-push :    2.027 ± 0.004M/s
+        uretprobe-ret  :    0.914 ± 0.002M/s
+        uretprobe-nop5 :    2.115 ± 0.002M/s
+
+after the change:
+        usermode-count :  152.343 ± 0.400M/s
+        syscall-count  :   14.851 ± 0.033M/s
+        uprobe-nop     :    3.204 ± 0.005M/s
+        uprobe-push    :    3.040 ± 0.005M/s
+        uprobe-ret     :    1.098 ± 0.003M/s
+-->     uprobe-nop5    :    7.286 ± 0.017M/s
+        uretprobe-nop  :    2.144 ± 0.001M/s
+        uretprobe-push :    2.069 ± 0.002M/s
+        uretprobe-ret  :    0.922 ± 0.000M/s
+        uretprobe-nop5 :    3.487 ± 0.001M/s
+
+I see bit more speed up on Intel (above) compared to AMD. The big nop5
+speed up is partly due to emulating nop5 and partly due to optimization.
+
+The key speed up we do this for is the USDT switch from nop to nop5:
+	uprobe-nop     :    3.160 ± 0.005M/s
+	uprobe-nop5    :    7.286 ± 0.017M/s
+
+Changes from v4:
+- reworked search for trampoline page, dropped Oleg's ack from that patch
+  because of the change [Masami]
+
+Changes from v3:
+- rebased on top of tip/master + bpf-next/master + mm/mm-nonmm-unstable
+- reworked patch#8 to lookup trampoline trampoline every 4GB so we don't
+  waste page frames in some cases [Masami]
+- several minor fixes [Masami]
+- added acks [Oleg, Alejandro, Masami]
+
+Changes from v2:
+- rebased on top of tip/master + mm/mm-stable + 1 extra change [1]
+- added acks [Oleg,Andrii]
+- more details changelog for patch 1 [Masami]
+- several tests changes [Andrii]
+- add explicit PAGE_SIZE low limit to vm_unmapped_area call [Andrii]
+
+
+This patchset is adding new syscall, here are notes to check list items
+in Documentation/process/adding-syscalls.rst:
+
+- System Call Alternatives
+  New syscall seems like the best way in here, because we need
+  just to quickly enter kernel with no extra arguments processing,
+  which we'd need to do if we decided to use another syscall.
+
+- Designing the API: Planning for Extension
+  The uprobe syscall is very specific and most likely won't be
+  extended in the future.
+
+- Designing the API: Other Considerations
+  N/A because uprobe syscall does not return reference to kernel
+  object.
+
+- Proposing the API
+  Wiring up of the uprobe system call is in separate change,
+  selftests and man page changes are part of the patchset.
+
+- Generic System Call Implementation
+  There's no CONFIG option for the new functionality because it
+  keeps the same behaviour from the user POV.
+
+- x86 System Call Implementation
+  It's 64-bit syscall only.
+
+- Compatibility System Calls (Generic)
+  N/A uprobe syscall has no arguments and is not supported
+  for compat processes.
+
+- Compatibility System Calls (x86)
+  N/A uprobe syscall is not supported for compat processes.
+
+- System Calls Returning Elsewhere
+  N/A.
+
+- Other Details
+  N/A.
+
+- Testing
+  Adding new bpf selftests.
+
+- Man Page
+  Attached.
+
+- Do not call System Calls in the Kernel
+  N/A
+
+pending todo (or follow ups):
+- use PROCMAP_QUERY in tests
+- alloc 'struct uprobes_state' for mm_struct only when needed [Andrii]
+- use mm_cpumask(vma->vm_mm) in text_poke_sync
+
+thanks,
+jirka
+
+
+Cc: Alejandro Colomar <alx@kernel.org>
+Cc: Eyal Birger <eyal.birger@gmail.com>
+Cc: kees@kernel.org
+
+[1] https://lore.kernel.org/linux-trace-kernel/20250514101809.2010193-1-jolsa@kernel.org/T/#u
+---
+Jiri Olsa (21):
+      uprobes: Remove breakpoint in unapply_uprobe under mmap_write_lock
+      uprobes: Rename arch_uretprobe_trampoline function
+      uprobes: Make copy_from_page global
+      uprobes: Add uprobe_write function
+      uprobes: Add nbytes argument to uprobe_write
+      uprobes: Add is_register argument to uprobe_write and uprobe_write_opcode
+      uprobes: Add do_ref_ctr argument to uprobe_write function
+      uprobes/x86: Add mapping for optimized uprobe trampolines
+      uprobes/x86: Add uprobe syscall to speed up uprobe
+      uprobes/x86: Add support to optimize uprobes
+      selftests/bpf: Import usdt.h from libbpf/usdt project
+      selftests/bpf: Reorg the uprobe_syscall test function
+      selftests/bpf: Rename uprobe_syscall_executed prog to test_uretprobe_multi
+      selftests/bpf: Add uprobe/usdt syscall tests
+      selftests/bpf: Add hit/attach/detach race optimized uprobe test
+      selftests/bpf: Add uprobe syscall sigill signal test
+      selftests/bpf: Add optimized usdt variant for basic usdt test
+      selftests/bpf: Add uprobe_regs_equal test
+      selftests/bpf: Change test_uretprobe_regs_change for uprobe and uretprobe
+      seccomp: passthrough uprobe systemcall without filtering
+      selftests/seccomp: validate uprobe syscall passes through seccomp
+
+ arch/arm/probes/uprobes/core.c                              |   2 +-
+ arch/x86/entry/syscalls/syscall_64.tbl                      |   1 +
+ arch/x86/include/asm/uprobes.h                              |   7 ++
+ arch/x86/kernel/uprobes.c                                   | 554 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/syscalls.h                                    |   2 +
+ include/linux/uprobes.h                                     |  20 +++-
+ kernel/events/uprobes.c                                     | 100 ++++++++++++-----
+ kernel/fork.c                                               |   1 +
+ kernel/seccomp.c                                            |  32 ++++--
+ kernel/sys_ni.c                                             |   1 +
+ tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c     | 518 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ tools/testing/selftests/bpf/prog_tests/usdt.c               |  38 ++++---
+ tools/testing/selftests/bpf/progs/uprobe_syscall.c          |   4 +-
+ tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c |  60 +++++++++-
+ tools/testing/selftests/bpf/test_kmods/bpf_testmod.c        |  11 +-
+ tools/testing/selftests/bpf/usdt.h                          | 545 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/seccomp/seccomp_bpf.c               | 107 ++++++++++++++----
+ 17 files changed, 1891 insertions(+), 112 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/usdt.h
+
+Jiri Olsa (1):
+      man2: Add uprobe syscall page
+
+ man/man2/uprobe.2    |  1 +
+ man/man2/uretprobe.2 | 36 ++++++++++++++++++++++++------------
+ 2 files changed, 25 insertions(+), 12 deletions(-)
+ create mode 100644 man/man2/uprobe.2
 
