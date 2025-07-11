@@ -1,65 +1,66 @@
-Return-Path: <linux-kernel+bounces-727790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DAFB01FC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92151B01FB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 16:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C1B3BAC5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ACEC3AA917
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB142EBDFD;
-	Fri, 11 Jul 2025 14:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346ED2EA748;
+	Fri, 11 Jul 2025 14:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="zUm3Eqtb"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="8Hd9VdV8"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E92A2EACF8;
-	Fri, 11 Jul 2025 14:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012D22EAB9F;
+	Fri, 11 Jul 2025 14:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752245570; cv=none; b=Wor0gOpf4+a/sO3wVuVnhtQaIT44HYaEvv3Mk10h8gtiZVXRcIxQXfIkEZr3wcfKfJPPJ7kqEtUyEgApNl1c8VgDs6NofL2pqCe2qGbARylCOHe79CDuPMPYzsBV58RwdgDzLj6lmtp0eiW4TIyb63Ph8zaCp5B0mQ47fG7z7Sg=
+	t=1752245563; cv=none; b=VSJI3uGZwnqFSr2gYQ0mmUPr9pNC7BZZYZFwIMU9ERuZd1kZrgt2v1Lr7mMtAwsEkp446TeGR+wyUCA7n+fsqFjy4IG+/2mDrb7LQbFrDxyB9FO8e6oHcBj2IYdCFgxclmDv0U70aSPCYWere1p9DpN4bUPhDcyM32rLUgqoN4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752245570; c=relaxed/simple;
-	bh=jDxrKSVKGmymiWgFfc3XLLghQxyNU894E3heEmmTqGc=;
+	s=arc-20240116; t=1752245563; c=relaxed/simple;
+	bh=APnITFI2OlF73fYQnE5tGk6hf/PmhIgfi1CHjJJSw1M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=OICoAQA7k604hVN5KBROJEBPvCtgGkwrHT604FjAJJ5qna6tBzjZxu0gGCflAjmYXLLPp9sHageb3f2uywezP6HK0wFXCzxjZLSuUwjXCc3q2s/lgHoc4TTtUFaFMaShyWw91sLa3phmesQN0Uf+kuz0NGXCGOJgwrPerX40JaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=zUm3Eqtb; arc=none smtp.client-ip=185.132.182.106
+	 In-Reply-To:To:CC; b=BzNZAqH74FNi9em3xOiSHc+8XujvPIyNi+QJaQSC0Z/H57TOx7np9wtO6bTSZodZgg7TrqxWhr8S2incIIOtrLAfTU34Qh4H9gecqwX2L8FskqsCypg7gn7KOhrVgc9u2q5WDDHuivZKJrUAO4JwrsKsmB2BaLBs++BatMX/eiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=8Hd9VdV8; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BEno0u026464;
-	Fri, 11 Jul 2025 16:52:34 +0200
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BBCecB004273;
+	Fri, 11 Jul 2025 16:52:28 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	SuBSodyyqcKAz1sJaFnr1XdxWrUs+npg1uqS49q9/0Y=; b=zUm3Eqtb/608j2Xc
-	NSBMn+1ICCJx9el4l5BnJr8HgsqU/2eCahIebmKTyzVemnDjf6eZnDPWlid14eN3
-	HqbWr2RVuJSdAN/MudGb45CAF5PCBAhJd7pYYZv63tX4yQvDh/l8Bj3xahOMKoBx
-	8uJ/KqLNW6YoCbUXDpdpeGlcBOLx7FWhtjYKTY6f988+64ksrEVgjYP55yjXhktl
-	efEdc3gIc9Z1yfkzXw+5zSACdANGLOArpNaLa7gUYejOQ54k018hfQcM+fenmq1v
-	DhyMvnzmVmR0COb863VJF9V4HaxlupWVC552QE5HtazAVFonDGUUfeMCB4+NidyA
-	OUFjfw==
+	UlvgFLkq2jemy3eeMnwVN+pbz6Mlls5h0vESyT1iEYI=; b=8Hd9VdV8ctD+bDJz
+	0gNvrZDTZWQAZN80szPcIQP6ybDSN4IS75EBq4IhYKctMGGpLhsuBzr9XTcdXW9e
+	hr619bgFvR/CkHrwnuMfTtfrCyZhY7Iiad5BdIYBorIuiQEBbgAxRi8Vq9OhA+VJ
+	dc3/0V4W7B7i81ODN3gRNUYW61B0gdlvu9D6z+jvDcN6rwFcx4G9uYyR0trjZUek
+	UV4KsPru/r/bcHOOEfXzRD3oVupugbTg69RlOmui04lBYKGyNnNAPmsxtc/g/GpD
+	FdZJENHqIbn4E4X0ka+RPdbQsLksuBdbAKGoUIWeKQ0sLuW3fNLq507efx0u9lE6
+	hlAWNw==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47psfmyt8t-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47ptxjpwyw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Jul 2025 16:52:34 +0200 (MEST)
+	Fri, 11 Jul 2025 16:52:27 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D01974004C;
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D00E84004B;
 	Fri, 11 Jul 2025 16:51:19 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1812FB56076;
-	Fri, 11 Jul 2025 16:49:25 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 083DBB56890;
+	Fri, 11 Jul 2025 16:49:26 +0200 (CEST)
 Received: from localhost (10.252.16.187) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Jul
- 2025 16:49:24 +0200
+ 2025 16:49:25 +0200
 From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Fri, 11 Jul 2025 16:49:06 +0200
-Subject: [PATCH v2 14/16] arm64: dts: st: add ddrperfm on stm32mp251
+Date: Fri, 11 Jul 2025 16:49:07 +0200
+Subject: [PATCH v2 15/16] arm64: dts: st: support ddrperfm on
+ stm32mp257f-dk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,7 +69,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250711-ddrperfm-upstream-v2-14-cdece720348f@foss.st.com>
+Message-ID: <20250711-ddrperfm-upstream-v2-15-cdece720348f@foss.st.com>
 References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
 In-Reply-To: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
 To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -104,33 +105,31 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-11_03,2025-07-09_01,2025-03-28_01
 
-The DDRPERFM is the DDR Performance Monitor embedded in STM32MP251 SoC.
-
-Keep the node disabled at SoC level as it requires the property
-`st,dram-type` which is provided in board dtsi file.
+Configure DDRPERFM node on stm32mp257f-dk board.
+Disable the node as DDRPERFM will produce an error message if it's clock
+(shared with the DDRCTRL on STM32MP25x) is secured by common bootloaders.
 
 Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 ---
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/st/stm32mp257f-dk.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index 0683c2d5cb6f..7f138324610a 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -1577,5 +1577,12 @@ exti2: interrupt-controller@46230000 {
- 				<0>,
- 				<&intc GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>;	/* EXTI_70 */
- 		};
-+
-+		ddrperfm: perf@48041000 {
-+			compatible = "st,stm32mp251-ddr-pmu";
-+			reg = <0x48041000 0x400>;
-+			access-controllers = <&rcc 104>;
-+			status = "disabled";
-+		};
- 	};
+diff --git a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+index a97b41f14ecc..d236ebf2bb10 100644
+--- a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
++++ b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+@@ -84,6 +84,11 @@ &arm_wdt {
+ 	status = "okay";
  };
+ 
++&ddrperfm {
++	memory-channel = <&lpddr_channel>;
++	status = "disabled";
++};
++
+ &scmi_regu {
+ 	scmi_vddio1: regulator@0 {
+ 		regulator-min-microvolt = <1800000>;
 
 -- 
 2.43.0
