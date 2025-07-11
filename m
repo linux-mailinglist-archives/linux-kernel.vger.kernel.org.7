@@ -1,188 +1,305 @@
-Return-Path: <linux-kernel+bounces-728191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E201B0247D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:23:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBFEB02480
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 21:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11FFDA4023B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:22:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EF677AEC84
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 19:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77881E1A05;
-	Fri, 11 Jul 2025 19:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC972F2C76;
+	Fri, 11 Jul 2025 19:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="QXP3eiyr"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SO/yxq0/"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848DE1DDA14
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752261798; cv=pass; b=t0p2u3v3IUTuc9VGNvb1i49buk+UsxcwqB3pPGIqFHyBByh0VKuqdo29OLiH15azrgxP5dGByxRoL6FCjAYLMER+HqfjiRz9Im50XF8pt37+D9gCLiaDUiepzmWMxBImBKqhSqYoWyTakKw6alFW8JHM7oAcAGCj/Juh12Zg+hU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752261798; c=relaxed/simple;
-	bh=OSirYDp+5zCh30TTlCuEyePGr7VeextkOcXYjcHqaEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+z0y90P1aF6tiNE9JAowxi44NJHXFt2wHAU0bjj5s3VYgmYdxueM09vtbQpWqRIQATepcdEpea7BNROyauLWgQ2DsdfrXgoK2hEcIjvPkfyK5cyiyKmOi+GQJHtqpGoWt4xYfs0de9dLeAhjHNDYUpzZJk5HGB2pgOt/HwDPng=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=QXP3eiyr; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752261772; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gm6PlPZ42mUuc0lCnaO/BMAIqal5iq0BBm2iJ0FgQ5vP4k4MxYFFLL2E0vQG9QJ7wzNgMYx700i7idr/MFIjXB+fSPUXX9hcVAFenK3pGoe4Mo0l6GqCJbDoXAuI0Cmk6Iy4sWQgEJzOFaFfC8tUuR1DOnNv2iJ1vZFhpS/scPo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752261772; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=CmFNQAJc/QuWXkyf69RAtnA9lwTAM02Mtxim41lVFgc=; 
-	b=dL5/gKrb9hoYw3QsYU6musqJ6sGq3BeJFgqiQTAndU104CgM9ctnwKtmzmR035wjKJZ12SyyBMjP0dY2+a+OolEXxUJEs+DoqRQqxperoZIXMxoYc8XOBbGbAOJofobwweHcWtgvWN3nlw9IJbzK2d7sytaATMnk6dnKsHwNbbQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752261772;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=CmFNQAJc/QuWXkyf69RAtnA9lwTAM02Mtxim41lVFgc=;
-	b=QXP3eiyry4PyRzliZvxSjay5qGQ26pL4mGDRO6433bmimc1PA7nj083Quxnk+/26
-	MIHqK1ldiS4zz0Mkp6l582wwsJfOzQNT7uMYbvPe7BqJJ4p78JPuZroIdb5n5qRabxX
-	mRf3ADNYAKx15bU4xIT7l1HdoO6A1SjP/KGJcXG0=
-Received: by mx.zohomail.com with SMTPS id 1752261769997706.4157126654749;
-	Fri, 11 Jul 2025 12:22:49 -0700 (PDT)
-Date: Fri, 11 Jul 2025 20:22:46 +0100
-From: Adrian Larumbe <adrian.larumbe@collabora.com>
-To: Caterina Shablia <caterina.shablia@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com, 
-	Boris Brezillon <boris.brezillon@collabora.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] drm/gpuvm: Add a helper to check if two VA can be
- merged
-Message-ID: <cb7h7u4roxm3xmmb2eagjw3uedy346v5diwjnxaljzqvibve7y@mcb6whvrigur>
-References: <20250703152908.16702-2-caterina.shablia@collabora.com>
- <20250703152908.16702-6-caterina.shablia@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACD51DE4E0
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 19:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752261800; cv=none; b=IZmVPNzYG1JtGJV78hkbr7y17Y3YsuwzF2gPCnBMx6gGtQQsvU49tp30iigWWkDUbG6X52V/8GjXYlBxnuga4DMG3HtnfZeZi8/HnT+pNC+rWUJ1qOmYIU3O5WEiOU0c9v+ZAjs8uN86f6Ar5AcmVphFPnfP+Jyc/tPr34x6pDE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752261800; c=relaxed/simple;
+	bh=CT8j4G71nN8Lnzk6rXI/vvQAsHcH1biWkLypZw72nnM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XghvS27R7iSAT3O3/C5CY5Vr88z9Vd0uAfdvkGc5RxW0XW8OBkTVfIY5qG2UWNtuI/miH1MmvRO96gfx+6YcwQag+JotFuuX9iky1z6sXa/gF8D86tP3gl7XeTIPbgNY2uYuYzWUciR5mB+ok9T73NQWOrw9SUckep/Q4C0So2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SO/yxq0/; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2c6ed7efb1dso1534643fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 12:23:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752261796; x=1752866596; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xbQ4gjhcKf1FV36kcI6WczoSoNZh07OMTR5d0NMFKgo=;
+        b=SO/yxq0/FRnxLsWSB0dHlPrVIoH7rvokZ0CzCMznRyEWj/b/i7hfgImcY8V+8euTmT
+         nS2YBQ4Jj6ZtPo6j+NDOVsJPq057qNI4i0hE27Z+KYexi57+kWDB4XWm1VCY1qCOKNCy
+         49YFfbKEqkbQ0lVaU2LfZaRreGmGMQRNpGZJ32vNbSIVM78IesYYQvncddXFXyOJWPgU
+         4yF6g71RYm2BhiYL8O7xWxOs+DkAzJdwe/KfnwmsYSD7vY/Qhmi+BiokalCeSzRruX9x
+         NDVIZ+59ypj2R15B3vJF1BM/CJgofmiiVsOlDy7MiQrYwjA8Ir3AVQoBNlm8bHgq0mei
+         1DMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752261796; x=1752866596;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xbQ4gjhcKf1FV36kcI6WczoSoNZh07OMTR5d0NMFKgo=;
+        b=Q77ClOfvo3rEyRcILN3r0CpiB9ywlTPu5SkwsNkKjr7R6PVA1mFZUIJVFEQYccZxnM
+         H19b+d3n2nXg8rB9KaFMTXuWc3grxO2T6y6ZAkFXe6hBQCGZU9TLgpKwLow/Itdhsi+a
+         AUjW1Q6+QngWCfNgzsZLmdUryhnuDg3VHjEMB9CSjSorPQj0Rd8OxNZFkwkSg2nmNye2
+         HFtkwElYkK34GFfa+woOk6ihOha9qDUZtGfjJf9LFnXqj0jgxfvJcE57ddi6RZGXqLX/
+         srJuOCX573xTYQloo9Pz/NnEa4H40eouywmM0j/8jn4pJfitGWDpFJAUj4ugftxSmiUh
+         UfEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgY+9fMNvLL1jZNtOyQrEe8bzkKpXMlaAG0HtMOGNp98vYyu/c4GT26TVM44ItXoInwecJRLu4GKnuVn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvDHkDRZL3aHwbaau1qWpopfnq/X2GBarqUOr0xXGjH3gvK29r
+	0k3fMkgSVkG3qXYPyzMHKQo3jJ1BRbaOABtGMsvP1gR4RohTc5VWdlF5BIg++smU/Mo=
+X-Gm-Gg: ASbGncuK1WPheNXn978fms2eqNlFHa8bAcppuJX6k9B0Dtbpp+VIkrqFIOa7JywA0Uq
+	6R/LSX7QR78bSxC0W/lXU0u+mHOLEfoyETlCx1O8UmRJUGtX8OBlo7JUk4kfF3q4RjWpYNIpkD9
+	sQWHX74o4h+8tT3mTgYvwGkSNBpIg31JrXjXAkVIIbXnLQYg2hZdKBEcxpVptTK2Ll9VY36JHFx
+	rHOlWVsZN45sn2oB65HbMhsvWPE6M6J4/zKeKHNNem+dLyvhhS9qNDxglBCdS6j/+Ozarbr1YXS
+	vJbZd8bK6slmzPk8orJpvKoEhZl60PnxDc9qB9fosw93MccScD5Vj7BVnx4NFinGulAJtm/3F+j
+	AN4UZ7aWlpiZ0sHcuvSV17Yd3XQByM3c9BY0H9HjVBpvsbXUt/LiryV635mE0rxVti2Sv14Sj5O
+	rrv090K/+71g==
+X-Google-Smtp-Source: AGHT+IHJJG1pjfMfHbXCiP2mYhrjtaG+ds4ATps3yE0wgdEBzivun4Aw8g8ipsQFhpaLwTypjmt8jw==
+X-Received: by 2002:a05:6871:3518:b0:29e:69a9:8311 with SMTP id 586e51a60fabf-2ff27099808mr3221078fac.36.1752261796031;
+        Fri, 11 Jul 2025 12:23:16 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:4601:15f9:b923:d487? ([2600:8803:e7e4:1d00:4601:15f9:b923:d487])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ff116d3550sm846917fac.34.2025.07.11.12.23.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 12:23:14 -0700 (PDT)
+Message-ID: <1ead013c-56ef-4f11-afb9-2b11e0de7eb2@baylibre.com>
+Date: Fri, 11 Jul 2025 14:23:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250703152908.16702-6-caterina.shablia@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] iio: add power and energy measurement modifiers
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250711130241.159143-1-antoniu.miclaus@analog.com>
+ <20250711130241.159143-2-antoniu.miclaus@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250711130241.159143-2-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 03.07.2025 15:28, Caterina Shablia wrote:
-> From: Boris Brezillon <boris.brezillon@collabora.com>
->
-> We are going to add flags/properties that will impact the VA merging
-> ability. Instead of sprinkling tests all over the place in
-> __drm_gpuvm_sm_map(), let's add a helper aggregating all these checks
-> can call it for every existing VA we walk through in the
-> __drm_gpuvm_sm_map() loop.
->
-> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-> Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
+On 7/11/25 8:02 AM, Antoniu Miclaus wrote:
+> Add new IIO modifiers to support power and energy measurement devices:
+> 
+> Power modifiers:
+> - IIO_MOD_ACTIVE: Real power consumed by the load
+> - IIO_MOD_REACTIVE: Power that oscillates between source and load
+> - IIO_MOD_APPARENT: Magnitude of complex power
+
+These make sense a modifiers since they are components of a single
+measured value.
+
+> - IIO_MOD_FUND_REACTIVE: Reactive power at fundamental frequency
+
+This one seems like there should just be a separate channel
+with IIO_POWER + IIO_MOD_REACTIVE since it is measuring a different
+value.
+
+> - IIO_MOD_FACTOR: Power factor (ratio of active to apparent power)
+
+Power factor seems like it should be a IIO_CHAN_INFO_ rather than
+IIO_MOD_. It is also unitless, so doesn't make sense to be part
+of power_raw which would imply that it shuold be converted to Watts.
+
+> 
+> Energy modifiers:
+> - IIO_MOD_ACTIVE_ACCUM: Accumulated active energy
+> - IIO_MOD_APPARENT_ACCUM: Accumulated apparent energy
+> - IIO_MOD_REACTIVE_ACCUM: Accumulated reactive energy
+
+As below, this one seems like there should be a separate
+energy channel for accumulated energy.
+
+> 
+> Signal quality modifiers:
+> - IIO_MOD_RMS: Root Mean Square value
+
+Suprised we don't have something like this already. altvoltageY isn't
+clear about if the value is peak-to-peak or RMS.
+
+> - IIO_MOD_SWELL: Voltage swell detection
+> - IIO_MOD_DIP: Voltage dip (sag) detection
+
+These sound like events, not modifiers.
+
+> 
+> These modifiers enable proper representation of power measurement
+> devices like energy meters and power analyzers.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 > ---
->  drivers/gpu/drm/drm_gpuvm.c | 47 +++++++++++++++++++++++++++++--------
->  1 file changed, 37 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-> index ae201d45e6b8..2df04dfcb6ef 100644
-> --- a/drivers/gpu/drm/drm_gpuvm.c
-> +++ b/drivers/gpu/drm/drm_gpuvm.c
-> @@ -2098,12 +2098,48 @@ op_unmap_cb(const struct drm_gpuvm_ops *fn, void *priv,
->  	return fn->sm_step_unmap(&op, priv);
->  }
->
-> +static bool can_merge(struct drm_gpuvm *gpuvm, const struct drm_gpuva *a,
-> +		      const struct drm_gpuva *b)
-> +{
-> +	/* Only GEM-based mappings can be merged, and they must point to
-> +	 * the same GEM object.
-> +	 */
-> +	if (a->gem.obj != b->gem.obj || !a->gem.obj)
-> +		return false;
-> +
-> +	/* Let's keep things simple for now and force all flags to match. */
-> +	if (a->flags != b->flags)
-> +		return false;
-> +
-> +	/* Order VAs for the rest of the checks. */
-> +	if (a->va.addr > b->va.addr)
-> +		swap(a, b);
-> +
-> +	/* We assume the caller already checked that VAs overlap or are
-> +	 * contiguous.
-> +	 */
-> +	if (drm_WARN_ON(gpuvm->drm, b->va.addr > a->va.addr + a->va.range))
-> +		return false;
-> +
-> +	/* We intentionally ignore u64 underflows because all we care about
-> +	 * here is whether the VA diff matches the GEM offset diff.
-> +	 */
-> +	return b->va.addr - a->va.addr == b->gem.offset - a->gem.offset;
-> +}
-> +
->  static int
->  __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
->  		   const struct drm_gpuvm_ops *ops, void *priv,
->  		   const struct drm_gpuvm_map_req *req)
->  {
->  	struct drm_gpuva *va, *next;
-> +	struct drm_gpuva reqva = {
-> +		.va.addr = req->va.addr,
-> +		.va.range = req->va.range,
-> +		.gem.offset = req->gem.offset,
-> +		.gem.obj = req->gem.obj,
-> +		.flags = req->flags,
+>  Documentation/ABI/testing/sysfs-bus-iio | 19 +++++++++++++++++++
+>  drivers/iio/industrialio-core.c         | 11 +++++++++++
+>  include/uapi/linux/iio/types.h          | 11 +++++++++++
+>  3 files changed, 41 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+> index 3bc386995fb6..d5c227c03589 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-iio
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio
+> @@ -143,6 +143,9 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_raw
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_supply_raw
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_i_raw
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_q_raw
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_rms_raw
 
-struct drm_gpuvm_map_req::flags is not added until the next commit in the series
-("drm/gpuvm: Add a flags field to drm_gpuva_op_map") so maybe you could reorder
-the series and have Lina's commits come earlier than this one. Otherwise this is
-going to break the build and make the series unbisectable.
+This should be on altvoltage, not voltage.
 
-> +	};
->  	u64 req_end = req->va.addr + req->va.range;
->  	int ret;
->
-> @@ -2116,12 +2152,9 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
->  		u64 addr = va->va.addr;
->  		u64 range = va->va.range;
->  		u64 end = addr + range;
-> -		bool merge = !!va->gem.obj;
-> +		bool merge = can_merge(gpuvm, va, &reqva);
->
->  		if (addr == req->va.addr) {
-> -			merge &= obj == req->gem.obj &&
-> -				 offset == req->gem.offset;
-> -
->  			if (end == req_end) {
->  				ret = op_unmap_cb(ops, priv, va, merge);
->  				if (ret)
-> @@ -2163,8 +2196,6 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
->  			};
->  			struct drm_gpuva_op_unmap u = { .va = va };
->
-> -			merge &= obj == req->gem.obj &&
-> -				 offset + ls_range == req->gem.offset;
->  			u.keep = merge;
->
->  			if (end == req_end) {
-> @@ -2196,10 +2227,6 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
->  				break;
->  			}
->  		} else if (addr > req->va.addr) {
-> -			merge &= obj == req->gem.obj &&
-> -				 offset == req->gem.offset +
-> -					   (addr - req->va.addr);
-> -
->  			if (end == req_end) {
->  				ret = op_unmap_cb(ops, priv, va, merge);
->  				if (ret)
-> --
-> 2.47.2
+Also, the exisiting i and q are wrong for the same reason.
 
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_swell_raw
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY_dip_raw
+>  KernelVersion:	2.6.35
+>  Contact:	linux-iio@vger.kernel.org
+>  Description:
+> @@ -158,6 +161,7 @@ Description:
+>  		component of the signal while the 'q' channel contains the quadrature
+>  		component.
+>  
+> +
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY-voltageZ_raw
+>  KernelVersion:	2.6.35
+>  Contact:	linux-iio@vger.kernel.org
+> @@ -170,6 +174,11 @@ Description:
+>  		of scale and offset are millivolts.
+>  
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_raw
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_active_raw
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_reactive_raw
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_apparent_raw
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_fund_reactive_raw
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_factor_raw
 
-Adrian Larumbe
+As above, power factor doesn't have units of watts so doesn't belong here.
+
+>  KernelVersion:	4.5
+>  Contact:	linux-iio@vger.kernel.org
+>  Description:
+> @@ -178,6 +187,7 @@ Description:
+>  		unique to allow association with event codes. Units after
+>  		application of scale and offset are milliwatts.
+>  
+> +
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_capacitanceY_raw
+>  KernelVersion:	3.2
+>  Contact:	linux-iio@vger.kernel.org
+> @@ -1593,6 +1603,12 @@ Description:
+>  
+>  What:		/sys/.../iio:deviceX/in_energy_input
+>  What:		/sys/.../iio:deviceX/in_energy_raw
+> +What:		/sys/.../iio:deviceX/in_energyY_active_raw
+> +What:		/sys/.../iio:deviceX/in_energyY_reactive_raw
+> +What:		/sys/.../iio:deviceX/in_energyY_apparent_raw
+> +What:		/sys/.../iio:deviceX/in_energyY_active_accum_raw
+> +What:		/sys/.../iio:deviceX/in_energyY_reactive_accum_raw
+> +What:		/sys/.../iio:deviceX/in_energyY_apparent_accum_raw
+
+I think the accumulated would just be a separate channel, not a modifier.
+
+>  KernelVersion:	4.0
+>  Contact:	linux-iio@vger.kernel.org
+>  Description:
+> @@ -1600,6 +1616,7 @@ Description:
+>  		device (e.g.: human activity sensors report energy burnt by the
+>  		user). Units after application of scale are Joules.
+>  
+> +
+
+Stray blank line.
+
+>  What:		/sys/.../iio:deviceX/in_distance_input
+>  What:		/sys/.../iio:deviceX/in_distance_raw
+>  KernelVersion:	4.0
+> @@ -1718,6 +1735,7 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_raw
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_supply_raw
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_i_raw
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_q_raw
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_currentY_rms_raw
+
+Interesting that we don't have altcurrent like we do altvoltage.
+
+And there don't appeary to be any users of i and q modifiers on current
+so that can be dropped.
+
+>  KernelVersion:	3.17
+>  Contact:	linux-iio@vger.kernel.org
+>  Description:
+> @@ -1733,6 +1751,7 @@ Description:
+>  		component of the signal while the 'q' channel contains the quadrature
+>  		component.
+>  
+> +
+
+Stray blank line.
+
+>  What:		/sys/.../iio:deviceX/in_energy_en
+>  What:		/sys/.../iio:deviceX/in_distance_en
+>  What:		/sys/.../iio:deviceX/in_velocity_sqrt(x^2+y^2+z^2)_en
+> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> index f13c3aa470d7..daf486cbe0bd 100644
+> --- a/drivers/iio/industrialio-core.c
+> +++ b/drivers/iio/industrialio-core.c
+> @@ -152,6 +152,17 @@ static const char * const iio_modifier_names[] = {
+>  	[IIO_MOD_PITCH] = "pitch",
+>  	[IIO_MOD_YAW] = "yaw",
+>  	[IIO_MOD_ROLL] = "roll",
+> +	[IIO_MOD_RMS] = "rms",
+> +	[IIO_MOD_ACTIVE] = "active",
+> +	[IIO_MOD_REACTIVE] = "reactive",
+> +	[IIO_MOD_APPARENT] = "apparent",
+> +	[IIO_MOD_FUND_REACTIVE] = "fund_reactive",
+> +	[IIO_MOD_FACTOR] = "factor",
+> +	[IIO_MOD_ACTIVE_ACCUM] = "active_accum",
+> +	[IIO_MOD_APPARENT_ACCUM] = "apparent_accum",
+> +	[IIO_MOD_REACTIVE_ACCUM] = "reactive_accum",
+
+If we end up keeping any of the two-word modifiers, the actual string
+needs to omit the "_". The readability isn't so great, but it makes it
+much easier to machine parse if we can assume the modifier is always
+"oneword".
+
+> +	[IIO_MOD_SWELL] = "swell",
+> +	[IIO_MOD_DIP] = "dip",
+>  };
+>  
+>  /* relies on pairs of these shared then separate */
+> diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
+> index 3eb0821af7a4..9e05bbddcbe2 100644
+> --- a/include/uapi/linux/iio/types.h
+> +++ b/include/uapi/linux/iio/types.h
+> @@ -108,6 +108,17 @@ enum iio_modifier {
+>  	IIO_MOD_ROLL,
+>  	IIO_MOD_LIGHT_UVA,
+>  	IIO_MOD_LIGHT_UVB,
+> +	IIO_MOD_RMS,
+> +	IIO_MOD_ACTIVE,
+> +	IIO_MOD_REACTIVE,
+> +	IIO_MOD_APPARENT,
+> +	IIO_MOD_FUND_REACTIVE,
+> +	IIO_MOD_FACTOR,
+> +	IIO_MOD_ACTIVE_ACCUM,
+> +	IIO_MOD_APPARENT_ACCUM,
+> +	IIO_MOD_REACTIVE_ACCUM,
+> +	IIO_MOD_SWELL,
+> +	IIO_MOD_DIP,
+>  };
+>  
+>  enum iio_event_type {
+
 
