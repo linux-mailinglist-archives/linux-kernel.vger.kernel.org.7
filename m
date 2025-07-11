@@ -1,257 +1,217 @@
-Return-Path: <linux-kernel+bounces-728102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E6FB023AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:31:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1226AB023A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DCC65C24A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 514455A0324
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824BA1ADC7E;
-	Fri, 11 Jul 2025 18:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0192F3620;
+	Fri, 11 Jul 2025 18:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lMal3bcb"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KMaM/TOc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040B12F2C5C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752258658; cv=none; b=Q6yqC2+vIJqHvgx5fiiLNDz4wg6ggiO9pWpfN1xkdmmQtGswF9xlDQS11sEsRVxhXW9wDd8fWy944aFffiuxwG2621L97hXR7xw+inkL7xCGXFYpTGJjbwIL4dcRs5OuuzFcqExuMQW0TQN1j1kFISR4BvMHH9N1zhetFkr9LI0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752258658; c=relaxed/simple;
-	bh=Nmg55UacNAt1MCkhGyguzInl29Fwjzoiq7ro0EkLYEA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n8I83DTNPfksmtKaJgwhc71p3T/sFLdhwMoIF+lyTkmAku1WZBGw7zsscJc53C+pehq1+gQZxW4/DI5gPfL8DlyxKfqtNOJfhWO/oBj5igqFkjLVIX+2HmlKtwcKlhG8fQdaZMJ/c2Ylt09o8T7ACE9epgikT+J1ur6I/Xt/inc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lMal3bcb; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5315acf37b6so1006986e0c.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 11:30:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752258656; x=1752863456; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qE8nn0HHw9/47yIri3Y+l9GYg+RPDKGws82z0RKSszU=;
-        b=lMal3bcbq+rLprZNxwArt6tp/TzN1/4IowGlvfA7HufPnbLHcSQ7fDxzLIpbunfPn/
-         J4t+oPphFxwenIfm4h4c0m7lQkRNGEwOUw2ScTv8gP1C/tanzYW+B8dGwXf17yNPbZk0
-         dBhY50XtakGuQoWE2qMTLPjtHvugWJ8An7CtTZ4eJi8clNt8ZYwN6z/timb+NLXJu0cM
-         U8mo8tAnKYNrNn4nhnZ0klmFcEvXhGYkMNBinmXHxv8YkLBfvG3NEI2Zjg51X20cYM8x
-         SmArqWut18gv5pvKlDpbmQwczF8ZoZkTHa64YCfME3KAwGTQjkub3LO69negGG8z4E+b
-         Bi/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752258656; x=1752863456;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qE8nn0HHw9/47yIri3Y+l9GYg+RPDKGws82z0RKSszU=;
-        b=lmOy2aLAsaL0ket7LP+UxIKVgCJS7v5sXoAAyXY+xpNLbPRqBgSWbcCKPaz5SOEsJI
-         /sNvGbwkh/LCYaiJ76pDJwgIcaKP2wy2Auqc43rw1WjWLRQ25RYweQAOJZWUKfCNwgTv
-         mLX0KXMg8i/pWNST6ZPK0Uu9N6g6b3tcLCGU+vxGMkVjZtaeowSdFQVTSZnoVUl9RIoQ
-         Nk3NJ+Xsq3YctkPVzp/zIvzTQIQMm/gPTp/59IoCRqF+ZnDhWZHnoUBEstJAhGjX7T79
-         fceTARQoABGTJV1BG/kKZZ+f2XK+5XaUO6X4fFifgllY+bCTXmXvxrNBaU+mrxgvbHs1
-         9afQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXqjpjhusbnHmtCW/VDOyHE/OeGfHbosAXK2l01UkvH3UDqKZcI1865+nHoNNXKr++vO9tSgo+MfeYtng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH2Yl5qhexBlKY5nYv6ctfzb1GKBzxCM1CuulUzxb0/gKfYhwJ
-	IoiSrNG6aF4QIqQDsDOAVOcJJrDgCEKnkRqc9AOvIwZuBFLWidyzopQvK1hU4lGXfeH7qlyKq1E
-	2TucovhQkflIBMJX2pxWJxcmOPC2F+BXy8J6qRjAd
-X-Gm-Gg: ASbGncvO8LdOrZuNsHp/cVI8/le0jH+UBEuWsa1y+0GLkuZEtVS9QcmrgmpilHq9Y1x
-	YX8OGV8RQgmw8p89g0WmajYVA+NthXJngY/nPOKr6T0wBBBgTi+kLszkC6uecSdDDURVHhtXd53
-	mChXsUEHAzTZ+J49KARPo/mZbuL7QKPsLZpJib+4QkMBAN/U7jsmqUZvFmdpfm9QTgHy2U5Eazu
-	5+3lg==
-X-Google-Smtp-Source: AGHT+IEnIchNt9XXYjk8FflZHLYiuvT9hoitNJFrSaxPQeTPnk+uOC5uvDHLC9XkdNS6ptSNZRj89FbPoLaz28sCihA=
-X-Received: by 2002:a05:6102:6d3:b0:4e6:d995:94f9 with SMTP id
- ada2fe7eead31-4f64275c1f2mr4367050137.12.1752258655328; Fri, 11 Jul 2025
- 11:30:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80482E92D9;
+	Fri, 11 Jul 2025 18:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752258635; cv=fail; b=a9GP7/9YDKfcBRnDaDIia+zbR7g9xV/FVGqPwZQFfQH7tPWJZfa5dxpvs6x+P3WJGlE+TveQjsoaXjXd58Mn1iiiqfZFCq7MgiGTzAf4kK3Wx0yR++X2T94jAg3LNOCZn2HEeQNRGmx5qZoC0cWH1YlL+qDsPntPxOujnBnCemM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752258635; c=relaxed/simple;
+	bh=egnvUwQr63q9k86Wf8IQzpZTaFmDti8xVL32oPFDZQM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hk6gG1PAIEe6bsY6LcN6vsVNdEAXX9WubeDrIhXCAGAMLTVbbSoWD70n0/hhNJ14US50mQdrArpFaSK86DZ1xnKDO5RWNC4FuHTmZdw3Eo0B+SdrDmwMQdAgZOhz/TuVzmoFQe8aMhdCJVWkatFNj9BUWWqw3aSgYx0BcoT4rP8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KMaM/TOc; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752258634; x=1783794634;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=egnvUwQr63q9k86Wf8IQzpZTaFmDti8xVL32oPFDZQM=;
+  b=KMaM/TOcE6EawSF89zK39RHIS+xTsh7Cp7NQ1gR3Yqf3tcfH+ZIZCcjH
+   RvggdQ2palt9mLHbqmpOGoStjyhaaNbDOor97chg4bhIfqbjOqmkE4z4R
+   Z5j4uXxr8dao0k0e8+Wm5DNJBOUj9Up5PvMsjweQUHhA0jc7AMSEuzgnb
+   nXheTi//Cp3sxsp7VjaV/GYxbIlvfpR6cp17wUvsbUa1nmrgAfAn5Xn7A
+   9CWA45kcIOI6MXZh1ITgjrwZ5F5wbgtwfLi8Ioj1Snij8wGNPtpLtUk5h
+   JAH+lTpIwnZ/Y9EL9FrYLNWYlGfxduadbswPuOXtbvxFphPpid4qEh/Rn
+   w==;
+X-CSE-ConnectionGUID: 69gtci35SK2/KUUE1+atyw==
+X-CSE-MsgGUID: 4fjQvxpFQpGAVib+dFBfRA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="54532423"
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="54532423"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 11:30:32 -0700
+X-CSE-ConnectionGUID: 0+ceeR3eRdynI+Nq4kSI6Q==
+X-CSE-MsgGUID: shvjJIScTYqDzqf6tvBHdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,304,1744095600"; 
+   d="scan'208";a="156987074"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 11:30:29 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 11 Jul 2025 11:30:26 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Fri, 11 Jul 2025 11:30:26 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.77) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 11 Jul 2025 11:30:25 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UgntCuS6pN7bQ60Dk9ZQnnf9jvF+H0pWqUb9ypyCH/GW3cZh6hYySxLm/RwYIzueFPPyehX1z6NN53GChg7KT0yuN3Ts7SdKbzl2zrfMPUXDf8JhkHLGvilyRyOB07FS6ehRZJ68o4YkFIR1DwdWJ81UhNSomgFvsN9zGqJ8O4Lm40tZMDvt2w0RIAIJm45QJDV0NrUO+GJube5goHvGMeGjDn1Fu5wF6Nwt/wYqdwsilVXwrfyFpVVAwb/VCb1KtJjikn9AoZGfrGI9Rz76Sj2jf6cVTcPtPNkueQud39Ff5H2hidIrQysXg9HRrUW/raT0tmgLTZq2PKezgyj0aA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4B6rdEHEG8z9pkUqO+CugOWbWDWiPu7icUydm3n7Ld4=;
+ b=vNgu63LUlcVM32Nszmb+RwljzxjJdtAXqxNGtU9+APta+qtbQ4mmWQ3Yx+dvR9MDq2oBtIfgaELHojArfzHaDMTDYDeS9RuDSvAiOuH/HIIb8h+sk1TdJItFlU7AbrWTxodVgEZ5qCgZjiczu8v6iR5FJT2L53FGl6EgFvc9xFgpf4AKt+kwO71tO4KKYXvL5LX/MpEyyLh+ZmA4pjbtVe35oKjx0ZKM8fh5BxQvXqPDvymcyBP2ExaBH8J2nYSedByM+PpfzOda63dPEA4ctPejPde9lX+ryZ1g++lXVvSlJPrJNLoTmxschzs4K418EoW7w3LgR2ik4PI6zl3lqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com (2603:10b6:f:fc02::9)
+ by DS7PR11MB6062.namprd11.prod.outlook.com (2603:10b6:8:75::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Fri, 11 Jul
+ 2025 18:30:22 +0000
+Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com
+ ([fe80::8254:d7be:8a06:6efb]) by DS4PPF0BAC23327.namprd11.prod.outlook.com
+ ([fe80::8254:d7be:8a06:6efb%7]) with mapi id 15.20.8769.022; Fri, 11 Jul 2025
+ 18:30:22 +0000
+Date: Fri, 11 Jul 2025 11:30:18 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, "Vishal
+ Verma" <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, "Dan
+ Williams" <dan.j.williams@intel.com>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>
+Subject: Re: [PATCH] cxl: Remove core/acpi.c and cxl core dependency on ACPI
+Message-ID: <aHFYOrxu2gDJkCVL@aschofie-mobl2.lan>
+References: <20250711151529.787470-1-rrichter@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250711151529.787470-1-rrichter@amd.com>
+X-ClientProxiedBy: SJ0PR03CA0272.namprd03.prod.outlook.com
+ (2603:10b6:a03:39e::7) To DS4PPF0BAC23327.namprd11.prod.outlook.com
+ (2603:10b6:f:fc02::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <10629535.nUPlyArG6x@rjwysocki.net> <22630663.EfDdHjke4D@rjwysocki.net>
- <e13740a0-88f3-4a6f-920f-15805071a7d6@linaro.org> <CAJZ5v0hpPOHNYCSTM1bb+p-wyAZkpg+k-huf9f5df9_S8MfvEg@mail.gmail.com>
- <CAJZ5v0jFP2njw3ic47yyh_7u7evKQKQuqGp27Vj7X-FfDLH7uQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jFP2njw3ic47yyh_7u7evKQKQuqGp27Vj7X-FfDLH7uQ@mail.gmail.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Fri, 11 Jul 2025 11:30:17 -0700
-X-Gm-Features: Ac12FXxPhiTgQ7Xfo8HHWb4xtysDMU6yLS13OIYnZe5bVvAlPBVJWskWEcDJ_4w
-Message-ID: <CAGETcx98iQqA_EOWjkFCkgtrt0JppMQE98OTuCXj2zZa2S1yPA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] PM: sleep: Resume children after resuming the parent
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Johan Hovold <johan@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, 
-	William McVicker <willmcvicker@google.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS4PPF0BAC23327:EE_|DS7PR11MB6062:EE_
+X-MS-Office365-Filtering-Correlation-Id: fcbccec7-5f42-47ff-e348-08ddc0a8feea
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?fnDqJtsoSggg2t/M6A6YyFWp/2BVmmGz9ng8jIhUr1gsciLovZeQOUb2GuLg?=
+ =?us-ascii?Q?2sKKzAlNpu8VZzVWjcB3fX626DfjY4k1q0USF5s0TVFMBVftm4KP9AFnl+fb?=
+ =?us-ascii?Q?+ADalPChBs0b7bKys7o6Vq08l0GZCZARQlQq+Un+6epARIrVQCutkFXySjs+?=
+ =?us-ascii?Q?LTKQHjlWg6R0kpAND8Iuf07QeokSjyDWjq05rDisUbYI9G4cpIEdM2K+9lYK?=
+ =?us-ascii?Q?RVkyTKCqtQgfbRqnYPIJ+GwFuD30mx/e5I9suDTPDKU4mR+F44i5jWFaCs3r?=
+ =?us-ascii?Q?x+FXb8IC5Fu1Go+fa1PB64IlglPCf0cV+sUZyLlPLRSuZ9U/mdKp5Zcd1yLm?=
+ =?us-ascii?Q?P59qADYI0fx36Ne0ph9zuAMuCwcmdB0b60TNjqACDO4c9iu2ma0W/XHiVB+S?=
+ =?us-ascii?Q?lt9EJsgmyf/6byAmO+STg0rB8cUJkm3T4oabw+MKcAls2pGqzRkF1pWVT+bx?=
+ =?us-ascii?Q?t7gYeDgiDEquko8BB9figzXbJTvIvXaCTAEo8adsIx01TG3c6CMFKm5NFoBX?=
+ =?us-ascii?Q?Ll7Yx7MOmnTNjbnuiMAYDLVVnFcO3s//h63Pug/2m4fNWzJqgniSewxBMk5B?=
+ =?us-ascii?Q?38k8Oy773eRiZAFVzplt5PUEkToUdjkpsEs4AH2DK2Sz1Xa+1o0v+Ax63q01?=
+ =?us-ascii?Q?zth6DueRNd62gmXOcd4GGky+QbWY+DzGG3VmxnrBceACIqlmUyk8ngtlErM6?=
+ =?us-ascii?Q?w7zWGwGq3LY+7z99xDS4Ca/w/MS8/8GA0FXtgcwzlw3NhYE2xrjcOcuoYSMT?=
+ =?us-ascii?Q?q6+4Oxfm5CDTz3sBX41HWkJtA/UzDqLn47KOINliq4RGPpNnt33Kq4aIVIGV?=
+ =?us-ascii?Q?VhCfG3yVG5mEDW7qRvzRY6AZWX0eH0aebtCnQiNr1xCLi7EyWfHbMxzEc5YL?=
+ =?us-ascii?Q?fK0k/2qW3Y4AEVIdqWgND0HdeBtTY2PgSwFg4BWBXfpMoiOZgh/2TgZIyaYx?=
+ =?us-ascii?Q?XoH8pKwwdvUcv5NT4qR2OOarPQ5Zw72v9/UHaQYO41Vyb64RmVUrcLG3BsWA?=
+ =?us-ascii?Q?IO8DZaqQeBOBL2aLA3lgtfFgkKyFXc45aGTB7RnEXBKnz5GJOGmCXKxVxdsk?=
+ =?us-ascii?Q?Tcctt0uTu2CAF2oSg4lEffKk2624Slz8iKev0VO2S5HUv5dYJjbdqflnPdfi?=
+ =?us-ascii?Q?E4rImitqe6T9+Vih/PBUNgaCYWGLanTE2ikJhrL47BcHSbbVBm7iDZ8FjwlS?=
+ =?us-ascii?Q?cedxXj9VPRS/BRJt/1wYW6vGBWfBb2quAepTMoA5TbudUI9nDx+DQxtzCqoK?=
+ =?us-ascii?Q?P7rXCnB1Ex/a4UyAdTdYeu3bLY8yTwdyBRhlDqm7tPbUuA8TOCH//KRbEQ4L?=
+ =?us-ascii?Q?hmo3+twQjcbXsfc7KqhDnvG4ertvYQl9AOS9Jm2VLep7jZTp3N3iQOtBbf6P?=
+ =?us-ascii?Q?j2hIbpM=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPF0BAC23327.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FLJ9jojLgVh4p4aLtHIsnI/uZP+f3v60QatFOu3EEIyP+nJdEe0OmVuCCoe9?=
+ =?us-ascii?Q?mWB/6GGZ6ld81lYQuf+MS9td/sAihHsU8m3x23UFUmdJuyvkjuwQjtQVKWTb?=
+ =?us-ascii?Q?In9WnaC6vsmAzWjZTK7j1L8hig5SCCU8bW+VYNqI8fOGwsVMc8lR6WWnOuok?=
+ =?us-ascii?Q?uzXvF5QQfJug/80vd91QDEnEGZ/vNu6dmAJsunY6Dx5yISpRkOnH2nWjZX5C?=
+ =?us-ascii?Q?w360nHjNlfqtEz5wnDNFCbvPGyouGAoQocoD/hspu6SXbeQP4WT6rPz1SbCO?=
+ =?us-ascii?Q?XAnYWXC1kU9pK4QdOlbJFYYBBhGU9SIwftvsRSYTCuFhPXdo2zx7tJid//FT?=
+ =?us-ascii?Q?J1jbSrGSCKaKRGtcxXRSDLRxj7MLX5/iwng4PKTJgQ39E8TPyagKGSC8wkT5?=
+ =?us-ascii?Q?XMwK/QGR7FUUpw7XiRwCwkOPPdQaEPxrLBhkEQJq1I/FoqkuWmopuHHtUdy4?=
+ =?us-ascii?Q?5dOC2ISB8fJlh+lDwmx1hciouZIE+dswrf4jBuSwAQY2PdtzyXvg7W9Xm4co?=
+ =?us-ascii?Q?4kW+/dZzM6JWj9D2yHEjJETH0UpRYKyBcgC5Ie+hiGZYCn/8ZUfxna0SI6eg?=
+ =?us-ascii?Q?j8H0OIrW/g/NMU95NczvGNCbXWwAnjpDdK9zqI/FaSUMPLDSxGMNA2qTRahp?=
+ =?us-ascii?Q?u7ilKdE40tMGHDvkk2tM6ZMc9iQycDBqato+q1JzZSapyL5jxe4V5QKrWcJz?=
+ =?us-ascii?Q?POuG0wbH4DiZbhmOSxJLBSflmnD0ptdFsqCGh6si7MhAtn2Q1LI2zGRaufMn?=
+ =?us-ascii?Q?5ysu6L/LUnIjdQWXjFkLIK+00UN5u3rAXNP46dDVwXfaPuXhv0JkD2EJV94m?=
+ =?us-ascii?Q?1xz83ahHRsEsrIsBKwWpOsHHBUcCHzB1olaeqhZ7wiaNceTezfaUCYF5xRvp?=
+ =?us-ascii?Q?WncXsClnbEAx1nrPdFFYIEIw40rvwy+NR1qQZysGfSHrxH8IsixL4thzSrsr?=
+ =?us-ascii?Q?I+oqoeXDpTcDvmPickn+as2nchnXcA1zuRyvoAoqHfmbAGZ2BbKdHV7UNpUx?=
+ =?us-ascii?Q?OCQRYRmvP5iPmQzOkn6yq7C+zZzfO/sopdgkmBeLpTbnzRhDq0oK8mYXPHIe?=
+ =?us-ascii?Q?e7d4WZRNJz//Y0VMeT4+FNjAIkvrUe8xiam5qxgvxiVSaVlYijmTh8IAQrgh?=
+ =?us-ascii?Q?G0IY0EMlKM6nycBqupNUqVzx3Ix86BEVqnmB05fMNgyYqC1LXrkKkP4/IaU5?=
+ =?us-ascii?Q?ua3TSQwVI7HGSoHCeL0kgACjjVxpnKAknzLi0uF6LjbxZk3Sdr9rwCU9x8GO?=
+ =?us-ascii?Q?NveJPfNDR7kEeA7DyMjFfIO0pVnGq2RYuxkUW4n8+6r8L/ftOU/+RBxIjO54?=
+ =?us-ascii?Q?cPX1yyOOUSvwO5JKpmBMNgPO2v7STW1Vo6Ucow+ruQmjBkl7DEhyNahmoxGC?=
+ =?us-ascii?Q?TaEJ8gxsodaGoWshhN4ATHPRzfJ9EucNMv0ckJM9/Cg1xmkTBT4G8Gfhf4fi?=
+ =?us-ascii?Q?3Ex6X4nYO7IpS5DvXhd7D83UAaKmBI1ROP63CmhMOwK4BvHw13VdyTHrxQEs?=
+ =?us-ascii?Q?89Z8cpxO2Qpcp9IGIFhUKPZ9mw0GIqaLxfZS021vC5Dl+ZzwGnrIIBHi6ymg?=
+ =?us-ascii?Q?JmVdHlDnuUJq+PajtTUmG+te6caxtFg3/do1bFxGcgxTcHn0iu9sJkT7lBqI?=
+ =?us-ascii?Q?Sw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcbccec7-5f42-47ff-e348-08ddc0a8feea
+X-MS-Exchange-CrossTenant-AuthSource: DS4PPF0BAC23327.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 18:30:22.2394
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QW+0aIkKHZDICCTASO5b2Iymo5xM++u5MBBNkc3Pj10myrIMLiRVjLeISccLYlDFLYC5Y/bNYkCBn6RWz+YNaku/yxbKqbR2yMjalX3ebTo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6062
+X-OriginatorOrg: intel.com
 
-On Fri, Jul 11, 2025 at 6:54=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Fri, Jul 11, 2025 at 3:38=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
-org> wrote:
-> >
-> > On Fri, Jul 11, 2025 at 3:08=E2=80=AFPM Tudor Ambarus <tudor.ambarus@li=
-naro.org> wrote:
-> > >
-> > >
-> > > Hi, Rafael,
-> > >
-> > > On 3/14/25 12:50 PM, Rafael J. Wysocki wrote:
-> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > >
-> > > > According to [1], the handling of device suspend and resume, and
-> > > > particularly the latter, involves unnecessary overhead related to
-> > > > starting new async work items for devices that cannot make progress
-> > > > right away because they have to wait for other devices.
-> > > >
-> > > > To reduce this problem in the resume path, use the observation that
-> > > > starting the async resume of the children of a device after resumin=
-g
-> > > > the parent is likely to produce less scheduling and memory manageme=
-nt
-> > > > noise than starting it upfront while at the same time it should not
-> > > > increase the resume duration substantially.
-> > > >
-> > > > Accordingly, modify the code to start the async resume of the devic=
-e's
-> > > > children when the processing of the parent has been completed in ea=
-ch
-> > > > stage of device resume and only start async resume upfront for devi=
-ces
-> > > > without parents.
-> > > >
-> > > > Also make it check if a given device can be resumed asynchronously
-> > > > before starting the synchronous resume of it in case it will have t=
-o
-> > > > wait for another that is already resuming asynchronously.
-> > > >
-> > > > In addition to making the async resume of devices more friendly to
-> > > > systems with relatively less computing resources, this change is al=
-so
-> > > > preliminary for analogous changes in the suspend path.
-> > > >
-> > > > On the systems where it has been tested, this change by itself does
-> > > > not affect the overall system resume duration in a measurable way.
-> > > >
-> > > > Link: https://lore.kernel.org/linux-pm/20241114220921.2529905-1-sar=
-avanak@google.com/ [1]
-> > > > Suggested-by: Saravana Kannan <saravanak@google.com>
-> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > I'd like to let you know of a suspend crash that I'm dealing with
-> > > when using the OOT pixel6 drivers on top of v6.16-rc4.
-> >
-> > Well, thanks, but there's not much I can do about it.
-> >
-> > It is also better to start a new thread in such cases than to reply to
-> > a patch submission.
-> >
-> > > Similar to what Jon reported, everything gets back to normal if
-> > > I disable pm_async or if I revert the following patches:
-> > > 443046d1ad66 PM: sleep: Make suspend of devices more asynchronous
-> > > aa7a9275ab81 PM: sleep: Suspend async parents after suspending childr=
-en
-> > > 0cbef962ce1f PM: sleep: Resume children after resuming the parent
-> > >
-> > > I also reverted their fixes when testing:
-> > > 8887abccf8aa PM: sleep: Add locking to dpm_async_resume_children()
-> > > d46c4c839c20 PM: sleep: Fix power.is_suspended cleanup for direct-com=
-plete devices
-> > > 079e8889ad13 PM: sleep: Fix list splicing in device suspend error pat=
-hs
-> > >
-> > > It seems that the hang happens in dpm_suspend() at
-> > > async_synchronize_full() time after a driver fails to suspend.
-> > > The phone then naturally resets with an APC watchdog.
-> > >
-> > > [  519.142279][ T7917] lwis lwis-eeprom-m24c64x: Can't suspend becaus=
-e eeprom-m24c64x is in use!
-> > > [  519.143556][ T7917] lwis-i2c eeprom@2: PM: dpm_run_callback(): pla=
-tform_pm_suspend returns -16
-> > > [  519.143872][ T7917] lwis-i2c eeprom@2: PM: platform_pm_suspend ret=
-urned -16 after 1596 usecs
-> > > [  519.144197][ T7917] lwis-i2c eeprom@2: PM: failed to suspend: erro=
-r -16
-> > > [  519.144448][ T7917] PM: tudor: dpm_suspend: after while loop, list=
-_empty(&dpm_prepared_list)? 1
-> > > [  519.144779][ T7917] PM: tudor: dpm_suspend: before async_synchroni=
-ze_full
-> > >
-> > > The extra prints are because of:
-> > > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> > > index d9d4fc58bc5a..3efe538c2ec2 100644
-> > > --- a/drivers/base/power/main.c
-> > > +++ b/drivers/base/power/main.c
-> > > @@ -1967,10 +1967,15 @@ int dpm_suspend(pm_message_t state)
-> > >                         break;
-> > >                 }
-> > >         }
-> > > +       pr_err("tudor: %s: after while loop, list_empty(&dpm_prepared=
-_list)? %d\n",
-> > > +              __func__, list_empty(&dpm_prepared_list));
-> > >
-> > >         mutex_unlock(&dpm_list_mtx);
-> > >
-> > > +       pr_err("tudor: %s: before async_synchronize_full\n", __func__=
-);
-> > >         async_synchronize_full();
-> > > +       pr_err("tudor: %s: after async_synchronize_full();\n", __func=
-__);
-> > > +
-> > >         if (!error)
-> > >                 error =3D async_error;
-> > >
-> > > The synchronous suspend works because its strict, one-by-one ordering
-> > > ensures that device dependencies are met and that no device is suspen=
-ded
-> > > while another is still using it. The asynchronous suspend fails becau=
-se
-> > > it creates a race condition where the lwis-eeprom-m24c64x is called f=
-or
-> > > suspension before the process using it has been suspended, leading to=
- a
-> > > fatal "device busy" error. Should the failure of a device suspend be
-> > > fatal?
-> >
-> > It shouldn't in principle, but it depends on what exactly is involved a=
-nd how.
-> >
-> > It looks like something is blocking on power.completion somewhere.
-> > I'll check the code, maybe a complete() is missing in an error path or
-> > similar.
->
-> It doesn't look like anything is missing in the core, so the suspend
-> failure seems to be triggering a deadlock of some sort.
->
-> The remedy should be the same as usual in such cases: Find the device
-> that is marked as "async" incorrectly and make it "sync".
->
+On Fri, Jul 11, 2025 at 05:15:27PM +0200, Robert Richter wrote:
+> From Dave [1]:
+> 
+> """
+> It was a mistake to introduce core/acpi.c and putting ACPI dependency on
+> cxl_core when adding the extended linear cache support.
+> """
+> 
+> Current implementation calls hmat_get_extended_linear_cache_size() of
+> the ACPI subsystem. That external reference causes issue running
+> cxl_test as there is no way to "mock" that function and ignore it when
+> using cxl test.
+> 
+> Instead of working around that using cxlrd ops and extensively
+> expanding cxl_test code [1], just move HMAT calls out of the core
+> module to cxl_acpi. Implement this by adding a @cache_size member to
+> struct cxl_root_decoder. During initialization the cache size is
+> determined and added to the root decoder object in cxl_acpi. Later on
+> in cxl_core the cache_size parameter is used to setup extended linear
+> caching.
+> 
+> [1] https://patch.msgid.link/20250610172938.139428-1-dave.jiang@intel.com
+> 
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> ---
 
-I'm very behind on this thread, but the patches I sent out were well
-tested on Pixel 6 OOT drivers and didn't cause any issues. So I think
-the rewrite is missing some condition my patches accounted for.
+Reviewed-by: Alison Schofield <alison.schofield@intel.com>
 
-Also, comment on some questions earlier in the thread, fw_devlink=3Don
-ensures none of the device links have any circular dependencies (as
-does the device_link_add()) API itself. So, there shouldn't be any
-cyclic dependencies. The only cycles that fw_devlink creates are
-SYNC_STATE_ONLY device links that are deleted as soon as a consumer
-probes.
-
-Also, people facing cyclic dependency issues, if fw_devlink is not
-discarding the "bad" link in the cycle, you can give it extra info in
-DT if you use post-init-providers. Please try that out.
-
--Saravana
-
--Saravana
 
