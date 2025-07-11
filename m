@@ -1,208 +1,134 @@
-Return-Path: <linux-kernel+bounces-727546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D2AB01BD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:20:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D879AB01C09
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 14:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D391CA5117
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 494AD567DC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6EA295DB5;
-	Fri, 11 Jul 2025 12:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEF22BD589;
+	Fri, 11 Jul 2025 12:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSCVCpX+"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="29TjSso5"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B6C23ED6F;
-	Fri, 11 Jul 2025 12:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5803299A82;
+	Fri, 11 Jul 2025 12:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752236401; cv=none; b=gj1dj85Edakf2QCiMWC5cjB1WmztJNyWxm5mCIMIeSJ/4Dq/FJpnZaccprF5zXDpaQads1MZ5ysxk/+P5KOILRCPL1CHiFX3GgPMBdQMXNgwjlionBfutZmrPGU0fVY66veeMrRrv6HriT8UNtvSnyouVrO/22GZHn+hgtmDhE4=
+	t=1752237007; cv=none; b=R6yKJqVTYs2nL2GImC4ycSdjbeSra+8M4/UVu+l1+YwiQ3l/il5rWJG6EPbzcIUx13gIypPhlI3xa1iMKQ9wr7Tsj1BMBd/r0rzB4l8uP1rO5sbJI5HVd/7ro9u5JBoSCTYPG9ESi1qX+IaDC0Iv1NjAErXzsVkgbu9JQ2XkPtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752236401; c=relaxed/simple;
-	bh=5QrNAvXeMUk7y37R7Zu/tN58cr40TcjK1OVyDOV63P8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pVoCyh+Dk6dZFmQ3DeBTVB4wSc4WUbTYOj01Cw87TrdgTlxnBBdqNPEfCXco1cZ+gcCaAdktfJH3cgLPfm9XuuI1Bls2FqCBmiwX88GdgTHX7WQz8cyVXcVqXlNmORbvdQfHNQdBvPjxZuA4IJrUT0AIEo1pxSMD+0IXvggsl3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSCVCpX+; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-74264d1832eso2739527b3a.0;
-        Fri, 11 Jul 2025 05:20:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752236399; x=1752841199; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TtD/R9U6PRpAzS1nHpzjgk1+bYjlX29GjraDajvp0u0=;
-        b=hSCVCpX+ORNXMIKTl94ndv4vFRPmht6WOtRbAr+RLyv9wljOYKa9iWPt86wW2Bk1ff
-         1Sfwb9SQvE4nt0BHF3STrdDudgrfjsfsHjx07ZD3K1ptJqNzR078Wl0E9rzTLSlV7Sqy
-         Np278C1bsgbZk8djprt9iAx+rMIwpJTJV85FdPUrEUAeaT6nzr1lSB7zHm4KlU6rjk+N
-         +acKFeQj6UtxtvZa1ZcMAXM7SBnrAtyOnFj3GirZKXiTB6C8HVVCE2rqU5R+ip/ULIYx
-         kFKec3HfuWiDb//i7qLS0eFIUWkJZW/dM0fhu2qns6qjM2WQrJ3P5zp8jaj2i5ArDlX5
-         gKFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752236399; x=1752841199;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TtD/R9U6PRpAzS1nHpzjgk1+bYjlX29GjraDajvp0u0=;
-        b=ONQEaKGaoy+VAvgFdLs1PL8GbPmSrr6NBW2+4C72JbTNJkW+4AbXDtir6BSGopk9+B
-         F8+k89fMdiOX2Mv76PQhkN9hV+ao8ho4HOBgkhqAh9r36QGtecwTnXqrXaOceFpWfdPH
-         EZjfKZ06EzpcEnZ9gyURREAs/2kk2YFSjg8b3Ol/OLgPx41XsNIgcGaS5wT7IWqNUCkD
-         rNG2vO2vZ3Z4In1E1dJxbg9D1Mn8ylJ9aP35NDr2T4afMvOEF9zPSgc1VL6kpeY2w+pz
-         zZii4EmhxEM8CSdpfLGiYECQZtpukExfqd4ZOlfge0TM2MUdwolLOqsBAoztrqIv8E3o
-         2CWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsP6Jw2pigMnDR2d8Ay58MedE7gCr6fVEWvDUTFvUv57qW0jMP3aesGn7JFSgVgHXz/k7BlcnplLN7jOg=@vger.kernel.org, AJvYcCXzLTC+tKa7df0tuWPxvny+C6kq2GsqAHZSliMvEAz1cH9ihD+LHkIHTb+CQz1yqRN3cSqEOPZtC1feCxlXtQ8H@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyPNM2Jk3cMjZ+g5a1PEolQFbCSrCr6vcWKykJAxiLE7V620TT
-	nAQ8x8hpuFHxIUxZkwLGBu3XBxfmI1sYjqisLxx5rRA3jAf5VHKbJ/ej
-X-Gm-Gg: ASbGnct2nz7760+4VKw/c2aDbNrEZTpUOvoB6sleNeGG6YKZ074EbltrB1ZPncPSPvg
-	0sK4vIt5tJyhhvy/zYAhxqADg6dKwOScML22yaxi26fcIzJTbAyswt/KxTg/0xJAj9MgIsKr6Cq
-	QjnXY/rY+hWK5jXw8C/PFDpalpcrQbZ7GixLHNzhqxfwW3/xn0j7FLHHFvY8pU9xLbNFdffgZJx
-	x3iyxe4n2h5seyKhAcC6R5+wy2PwStOzo2LZavLpmVMXwyQZ4ZQeaResGNOQ7BoyWJOZ/Ik2N0o
-	k4vicsYIeRHTPRSf9kLiyb6U9Td9uXcCcYKnYO0cwYdZuMKn+y+KZELa8+8DVhaB1HsnEA8D2D7
-	Dhi73uVSzCjN/QtPG2qPWNLaTfniYhqKyVkmZgiLSOdbhex7S
-X-Google-Smtp-Source: AGHT+IFir+KTTk8mgUXFq5lbtUVSMfktmgJYRFls6w9p8Eajyy/4y3kuXXHD32P4jlxeEkBaynv8ew==
-X-Received: by 2002:a05:6a21:3318:b0:1fa:9819:c0a5 with SMTP id adf61e73a8af0-231363657d3mr4445241637.11.1752236399289;
-        Fri, 11 Jul 2025 05:19:59 -0700 (PDT)
-Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3bbe6bd97fsm4963163a12.36.2025.07.11.05.19.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 05:19:58 -0700 (PDT)
-From: wang lian <lianux.mm@gmail.com>
-To: broonie@kernel.org
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	brauner@kernel.org,
-	david@redhat.com,
-	gkwang@linx-info.com,
-	jannh@google.com,
-	lianux.mm@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	p1ucky0923@gmail.com,
-	ryncsn@gmail.com,
-	shuah@kernel.org,
-	sj@kernel.org,
-	vbabka@suse.cz,
-	zijing.zhang@proton.me,
-	ziy@nvidia.com
-Subject: Re: [PATCH v3] selftests/mm: add process_madvise() tests
-Date: Fri, 11 Jul 2025 20:19:48 +0800
-Message-ID: <20250711121952.17380-1-lianux.mm@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <aG_DPLhtZ5qDuWHY@finisterre.sirena.org.uk>
-References: <aG_DPLhtZ5qDuWHY@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1752237007; c=relaxed/simple;
+	bh=0dxJOqsvNf9YI6ttikFKyQFzL+BZ/9qDNKVRZ9z1T0U=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=ZBgWbtqEYSDqYnbwRqr9WhZ/du+zSD5D7Ai5VGScKyOEOHzfi5WyQSH+ZjDOKNHYPxUNqElwNA60R7ISjWPB6va7aK7UMJ4+oJnpIsAg7xHQJUq64AvT1dmgRTLc/EePnsY2bMUkYQUMusEpUKDDo3F5i+EVtBG8Cs9dMPJ0TYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=29TjSso5; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=+mZwtOnORz1zUe5SEHz2Hy5URcUgxMWga++pbIoA72M=; b=29TjSso5NUVzpIbIMeTLBFozU8
+	a/49n3lqFqyPoZFcLVNitCd+/vq9uiOFbubAN8iDwg5m4e+cxvhtom09NZ1q9eHbjMFqOHLaTDCPz
+	KSAbXgDlI7CkLrVI13E0HXOn77ZOEZok5wQW7DnsipF9UrzVtxEwHMvmhv7ll6ztrtXPatwUxUeoo
+	EvjgQ9ztRyOUQIywqKTkqO+8gMOyfsPN4VGqlJMyhpz7Q2XT6exugj/pOT91A89sKCrPCFXQDln4G
+	PbDkmZ4kbPo1TMW0kQMakfLJSBi50+6tUSm2BmZrQirU1XLAdCidVB/rOXnckLCrgmii3Jy5QhBfp
+	DZScMP5g==;
+Received: from [122.175.9.182] (port=57395 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1uaCjj-0000000CkrI-2Xqr;
+	Fri, 11 Jul 2025 08:20:19 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id 998741781A71;
+	Fri, 11 Jul 2025 17:50:11 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id 7262017820AC;
+	Fri, 11 Jul 2025 17:50:11 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 4htU6JcfYILf; Fri, 11 Jul 2025 17:50:11 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 3020C1781A71;
+	Fri, 11 Jul 2025 17:50:11 +0530 (IST)
+Date: Fri, 11 Jul 2025 17:50:10 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: kuba <kuba@kernel.org>
+Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
+	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
+	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
+	pabeni <pabeni@redhat.com>, robh <robh@kernel.org>, 
+	krzk+dt <krzk+dt@kernel.org>, conor+dt <conor+dt@kernel.org>, 
+	ssantosh <ssantosh@kernel.org>, 
+	richardcochran <richardcochran@gmail.com>, 
+	s hauer <s.hauer@pengutronix.de>, m-karicheri2 <m-karicheri2@ti.com>, 
+	glaroque <glaroque@baylibre.com>, afd <afd@ti.com>, 
+	saikrishnag <saikrishnag@marvell.com>, m-malladi <m-malladi@ti.com>, 
+	jacob e keller <jacob.e.keller@intel.com>, 
+	diogo ivo <diogo.ivo@siemens.com>, 
+	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
+	horms <horms@kernel.org>, s-anna <s-anna@ti.com>, 
+	basharath <basharath@couthit.com>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	netdev <netdev@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
+	mohan <mohan@couthit.com>
+Message-ID: <1001900168.1712445.1752236410964.JavaMail.zimbra@couthit.local>
+In-Reply-To: <20250708173310.5415b635@kernel.org>
+References: <20250702140633.1612269-1-parvathi@couthit.com> <20250708173310.5415b635@kernel.org>
+Subject: Re: [PATCH net-next v10 00/11] PRU-ICSSM Ethernet Driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=yes
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
+Thread-Topic: PRU-ICSSM Ethernet Driver
+Thread-Index: TXP7pHbOvWv5H2YAdaWH+8TjmJE3lA==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Hi Mark Brown,
+Hi,
 
-> On Thu, Jul 10, 2025 at 07:22:49PM +0800, wang lian wrote:
->
-> > Add tests for process_madvise(), focusing on verifying behavior under
-> > various conditions including valid usage and error cases.
->
-> > --- a/tools/testing/selftests/mm/guard-regions.c
-> > +++ b/tools/testing/selftests/mm/guard-regions.c
->
-> > -static void handle_fatal(int c)
-> > -{
-> > -	if (!signal_jump_set)
-> > -		return;
-> > -
-> > -	siglongjmp(signal_jmp_buf, c);
-> > -}
+> On Wed,  2 Jul 2025 19:36:22 +0530 Parvathi Pudi wrote:
+>>  17 files changed, 4957 insertions(+), 4 deletions(-)
+> 
+> Please try to remove some features from the series.
+> The chances that a maintainer will have time to look thru 5kLoC
+> in one sitting are quite low.
 
-> I see from looking later in the patch that you're factoring this out of
-> the guard regions test into vm_util.c so that it can be used by your new
-> test.  This is good and sensible but it's a bit surprising, especially
-> since your changelog only said you were adding a new test.  It would be
-> better to split this out into a separate refactoring patch that just
-> does the code motion, as covered in submitting-patches.rst it's better
-> if changes just do one thing.
+We are refactoring and limiting features without affecting
+fundamental functionality for AM33x, AM43x and AM57x platforms.
 
-Thanks for the suggestion. I’ll split this out into a separate patch
-that just moves the helper to vm_util.c, and follow up with the new
-test in a second patch.
-
-> > +#include <linux/pidfd.h>
-> > +#include <linux/uio.h>
->
-> Does this work without 'make headers_install' for the systems that were
-> affectd by missing headers?  Lorenzo mentioned that we shouldn't depend
-> on that for the mm tests (I'm not enthusiastic about that approach
-> myself, but if it's what mm needs).
-
-You're right, and I’ve seen build issues due to that as well. I’ll drop
-<linux/pidfd.h> and define PIDFD_SELF locally to avoid requiring
-installed headers.
-
-> > +	ret = read(pipe_info[0], &info, sizeof(info));
-> > +	if (ret <= 0) {
-> > +		waitpid(self->child_pid, NULL, 0);
-> > +		ksft_exit_skip("Failed to read child info from pipe.\n");
-> > +	}
-
-> If you're using the harness you should use SKIP() rather than the ksft
-> APIs for reporting test results.  Don't mix and match the result
-> reporting APIs, harness will call the ksft_ APIs appropriately for you.
-
-Understood. I’ll convert this and other cases to use SKIP() and ensure
-the test consistently uses the test harness macros.
-
-> > +			if (errno == EAGAIN) {
-> > +				ksft_test_result_skip(
-> > +					"THP is 'always', process_madvise returned EAGAIN due to an expected race with khugepaged.\n");
-> > +			} else {
-> > +				ksft_test_result_fail(
-> > +					"process_madvise failed with unexpected errno %d in 'always' mode.\n",
-> > +					errno);
-> > +			}
-
-> Similarly, to fail use an ASSERT or EXPECT.  Note also that when using
-> the ksft_ API for reporting results each test should report a consistent
-> test name as the string, if you want to report an error message print it
-> separately to the test result.
-
-I’ll revise this to use ASSERT/EXPECT, and separate error output from
-test result strings, as you suggested.
-
-> > + * Test process_madvise() with various invalid pidfds to ensure correct
-> > + * error handling. This includes negative fds, non-pidfd fds, and pidfds for
-> > + * processes that no longer exist.
-
-> This sounds like it should be a series of small tests rather than a
-> single omnibus test, that'd result in clearer error reporting from test
-> frameworks since they will say which operation failed directly rather
-> than having to look at the logs then match them to the source.
-
-That makes sense. I’ll break this out into multiple smaller tests so
-each case reports independently.
-
-> > +	pidfd = syscall(__NR_pidfd_open, child_pid, 0);
-> > +	ASSERT_GE(pidfd, 0);
-
-> This is particularly the case given the use of ASSERTs, we'll not report
-> any issues other than the first one we hit.
-
-Thanks, I’ll switch to EXPECT_* where appropriate to allow multiple
-checks per test case.
-
-Thanks again for the detailed review!
+We will post the updated patch series shortly.
 
 
-Best regards,
-Wang Lian
+Thanks and Regards,
+Parvathi.
 
