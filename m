@@ -1,147 +1,202 @@
-Return-Path: <linux-kernel+bounces-727025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA52B01414
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:08:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF79B01417
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51BD57B6084
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:07:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E05D1CA04F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 07:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00C61E3775;
-	Fri, 11 Jul 2025 07:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610741E51FA;
+	Fri, 11 Jul 2025 07:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="IXuCEOYl"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E3FA32;
-	Fri, 11 Jul 2025 07:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VBZNiG+t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABEA1E32A2
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 07:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752217704; cv=none; b=AO38Nr7GSqUH5ZLkyuQaheg6F8fW4NAbE30Q8Rychp25L5dErmsqNFgO4FHxEp8v1t8n0xqibjUzORsIRffV4Focu3dG4tUZ8VfpfJhHajX0yJKWE+UvsGh28yxQSdmWuZWsgjKyfS3dDpE65NeaLfEjYCslKbacU8j/oHbuFe4=
+	t=1752217757; cv=none; b=iaXW7d1h65Nl5J1BplD/PYdaAs77tOlVbYZ0r+0N5qJZDoEnhLu7H2lMBDmkhAzoIKAnYbI1iVXEwVkf60Cw7NBuehuTOWjOtQHVfzKf16O3f94BEl1QGcV8+daQocyfAxs3zVnB/0Q8sWXrF1qRxe0L5CTpeMqbboITalAsPnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752217704; c=relaxed/simple;
-	bh=RCfcN6QseSBhWb6QjrhT/kTItNPL0qWa+LWsVlSwpgU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Qh7VuZJVngzcy6cRewKPlT8ClU03cY5fQ7OatnhlhrX1wCBAwNWmF0RPig7DwktcwJ3KRaYD2bIRmVQY8/5KcX+YKjr5nB+sLSWd/ykIxAwlufKDe4IBw16zIU0OIfmsKu/jyoE4IvFNQQRkL0dnO8AieUTsiNZz+rIPnsHk9bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=IXuCEOYl reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=sxbzHltCfwfXEeNyeIgEiJFlR2TiSUx9OskRrkFY8Xg=; b=I
-	XuCEOYlsH6qZMZjyUvfntQ57qxPv5duYDzBttvfJY2/RyV5nVvGu6QByvdrVdWy5
-	KFCArqEFJW6xSWxKYCiWNHnxKZt0ACisvCV1sdChpmDf7ixcpHvPXcV7sebEgTPJ
-	XG3z2wpqZvzSO9LP8cdqZNDmqOrumBq2nshenszyac=
-Received: from chenyuan_fl$163.com ( [116.128.244.171] ) by
- ajax-webmail-wmsvr-40-134 (Coremail) ; Fri, 11 Jul 2025 15:07:40 +0800
- (CST)
-Date: Fri, 11 Jul 2025 15:07:40 +0800 (CST)
-From: chenyuan  <chenyuan_fl@163.com>
-To: "Yonghong Song" <yonghong.song@linux.dev>
-Cc: ast@kernel.org, qmo@qmon.net, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, "Yuan Chen" <chenyuan@kylinos.cn>
-Subject: Re:Re: [PATCH v3] bpftool: Add CET-aware symbol matching for x86_64
- architectures
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <21fbb0ba-25bc-4457-9f12-b5a8f6988e4c@linux.dev>
-References: <20250626061158.29702-1-chenyuan_fl@163.com>
- <20250626074930.81813-1-chenyuan_fl@163.com>
- <21fbb0ba-25bc-4457-9f12-b5a8f6988e4c@linux.dev>
-X-NTES-SC: AL_Qu2eAP6auE4t5iWbZukfmUoRhOY5UcK1s/kl1YBUOpp+jALo3S0qe2VSIkXa8Ma0BQKImgmGaiNc4/5TRbhaerMqTR6jXXTNKx6T++mRHX3doA==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1752217757; c=relaxed/simple;
+	bh=bETnLwmqaijMFkik+F4Wsz2XGYFd+5UAIq5aNY2jDXI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ounU/5+fxFTUV73YpowdzmZgrfdz6kOZmF269MYdJA73O+2rldzcM6uDr3YLFUDIMQctuTPB53B74Yv6nzew2SdSQpuxNEMR5YvDm0D3gy1o66kJjuNpKZhQEsesLq08NouuqZ3UTOwweccyuumKdMAVye+ENmNZgWVxMeycIcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VBZNiG+t; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752217754;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Tjn8ea09hAYyGZY05rFnfwzbxRm2j2QdgLyEwncWfLM=;
+	b=VBZNiG+tOJTORqmU+oeEOUMtoFBDqK/hS3ZXpMR4BMuikR5qEFHCLJ2YoJFUOUEwBkoVrK
+	4RIXH3ZJvhorcbNaif+09So4Vna79PmF3emoMQSzEzXpUkeLnIFqRHzyTVlrTdYwY8mEvb
+	FXNNBgpvaUBfpjQ2gIIFGI9GHrQIu7w=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-621-y4dJP22aMaOMle_KCA3qtQ-1; Fri, 11 Jul 2025 03:09:12 -0400
+X-MC-Unique: y4dJP22aMaOMle_KCA3qtQ-1
+X-Mimecast-MFC-AGG-ID: y4dJP22aMaOMle_KCA3qtQ_1752217751
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45320bfc18dso10137295e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 00:09:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752217751; x=1752822551;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tjn8ea09hAYyGZY05rFnfwzbxRm2j2QdgLyEwncWfLM=;
+        b=C0yzZISIKr4gb7Nf68yk1tcsz+ITux6pv3qEB/rHNOtHszya9eIPURRyDXEecWW8fM
+         K7CY/TWE0+NYB+I3Ye12AIibQtkZrXBTQRWAm/oH+zSNYwJR/DsQLz2xrzFWg8N2bc4h
+         PcsFvIe/gZvuxo1a4Rf6rCfuVIjQFEKUbRo+LcD7eRDP1ADhrf5QH/ctBXInjUEqCxZ6
+         mZWFEa69HDjKux5p/6EdrkdlqsSzaF44znux4X/xL5vZjVERftJylIyrUW5sV5EhDNvM
+         80UlF2NV7dOMRV47RYO+jcwN8mfSp68DS00ZRDZcKloLn24tSNXBl8WF7pPNaFpEmIwh
+         yYBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfwQS6ov8b0J2yv69QqtbuzUEHpFlmfGh/Pbo3BemumsGWllSlbqKwito2VDKdg+w6W2aPnHQ4lre8d4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxruvaaBqhxxbvS2lJ4cwGW1q7KmroXU2hZ0hAM9cL0cDM3lbeD
+	8K37Gk6cyNhKLgYD1UUVixhc8DitbHStbP+57gNA6JzW0gfb5rdnQdIYzEM+hr6CDx352tygx0g
+	stygHTlsl6xyPNXvJu/p52r+Hzv+5jJnM+lvfAuXCBlMcYuaeGcZm9icdTD4fEhBSdg==
+X-Gm-Gg: ASbGncvkHFDTkQL1iOD7MRaAA4wypit5NLknYtN9DlNurRVcVhVg4d6w1qKxqyn+zt/
+	WTjoP6NrKhU4EAEbTpzu1gICt8vz25Kw9A41H8WZ12yzpL1pW3jsJvP2xyMp5I1A1kW8V6gIosR
+	/IkBee/+CUt7BkkJ0wfrWia3tsfPotGjQT7Y4RSR5vnt6ol1cbVHIzICkQ1wu1UI+0X/upClqVz
+	Bqu5CPk9SuycOE61iVjKM+96R4uxWAJR/AoFS20NZzJbwyKrGXs70V/68lyyrcs7qbuFuJNdg2l
+	xy8Rm4zak8pNu7uG227VSyjdpPH2bg5D/WNfer0Q3yScPm89UvFuLYdhoaJLlsHtnH6+WlFoXRa
+	SPrQe
+X-Received: by 2002:a05:600c:1e02:b0:450:c9e3:91fe with SMTP id 5b1f17b1804b1-454e2a426afmr18492685e9.0.1752217750990;
+        Fri, 11 Jul 2025 00:09:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyLKqZyYTcKdieu4HXWBw9vMWmwczdsUxrQjWlMbBHxItodaJAHPJRLciB88X4EIKhTPKSpQ==
+X-Received: by 2002:a05:600c:1e02:b0:450:c9e3:91fe with SMTP id 5b1f17b1804b1-454e2a426afmr18492375e9.0.1752217750577;
+        Fri, 11 Jul 2025 00:09:10 -0700 (PDT)
+Received: from [192.168.0.6] (ltea-047-064-115-149.pools.arcor-ip.net. [47.64.115.149])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd4660c5sm38083405e9.11.2025.07.11.00.09.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 00:09:10 -0700 (PDT)
+Message-ID: <9f7242e8-1082-4a5d-bb6e-a80106d1b1f9@redhat.com>
+Date: Fri, 11 Jul 2025 09:09:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172453cd.68e1.197f84fac7c.Coremail.chenyuan_fl@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:higvCgDXfxQ9uHBoG6kBAA--.14745W
-X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/1tbiUQCHvWhwsHgJGgACsq
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] powerpc: Replace the obsolete address of the FSF
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Thomas Gleixner <tglx@linutronix.de>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, linux-spdx@vger.kernel.org
+References: <20250711053509.194751-1-thuth@redhat.com>
+ <2025071125-talon-clammy-4971@gregkh>
+Content-Language: en-US
+From: Thomas Huth <thuth@redhat.com>
+Autocrypt: addr=thuth@redhat.com; keydata=
+ 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
+In-Reply-To: <2025071125-talon-clammy-4971@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-VGhhbmsgeW91IGZvciB5b3VyIGZlZWRiYWNrISBEb2VzIEFSTTY0IHJlcXVpcmUgc2ltaWxhciBh
-ZGRyZXNzIGFkanVzdG1lbnQgZGV0ZWN0aW9uPyBJbiBteSBBUk02NAogZW52aXJvbm1lbnQgd2l0
-aCBCVEkgZW5hYmxlZCwgYnBmdG9vbCBjb3JyZWN0bHkgcmV0cmlldmVzIGFuZCBwcmludHMgZnVu
-Y3Rpb24gc3ltYm9scy4gQ291bGQgbXkgdmVyaWZpY2F0aW9uCiBtZXRob2QgYmUgZmxhd2VkPwpI
-ZXJloa9zIGEgZGV0YWlsZWQgZXhwbGFuYXRpb246CgpBUk02NCBCVEkgdnMuIHg4NiBDRVQ6IEZ1
-bmRhbWVudGFsIERpZmZlcmVuY2VzCgogICAgeDg2IENFVCAoQ29udHJvbC1mbG93IEVuZm9yY2Vt
-ZW50IFRlY2hub2xvZ3kpOgogICAgICAgIFJlcXVpcmVzIGVuZGJyMzIvZW5kYnI2NCBhdCBmdW5j
-dGlvbiBlbnRyaWVzLiBPdmVyd3JpdGluZyB0aGVzZSBpbnN0cnVjdGlvbnMgYnJlYWtzIENFVCBw
-cm90ZWN0aW9uIC4KICAgICAgICBLZXJuZWwgbG9naWMgKGUuZy4sIGJwZl90cmFjZS5jKSBhZGp1
-c3RzIHN5bWJvbCBhZGRyZXNzZXMgYnkgLTQgdG8gc2tpcCB0aGUgZW5kYnIgcHJlZml4IC4KICAg
-IEFSTTY0IEJUSSAoQnJhbmNoIFRhcmdldCBJZGVudGlmaWNhdGlvbik6CiAgICAgICAgVXNlcyBC
-VEkgaW5zdHJ1Y3Rpb25zIGFzICJsYW5kaW5nIHBhZHMiIGZvciBpbmRpcmVjdCBqdW1wcy4gS3By
-b2JlcyBjYW4gc2FmZWx5IG92ZXJ3cml0ZSBCVEkgaW5zdHJ1Y3Rpb25zIHdpdGhvdXQgdHJpZ2dl
-cmluZyBmYXVsdHMgYmVjYXVzZToKICAgICAgICAgICAgRXhlY3V0aW5nIEJUSSwgU0csIG9yIFBB
-Q0JUSSBjbGVhcnMgRVBTUi5CICh0aGUgZW5mb3JjZW1lbnQgZmxhZyksIGFsbG93aW5nIHN1YnNl
-cXVlbnQgbm9uLUJUSSBpbnN0cnVjdGlvbnMgLgogICAgICAgICAgICBOb24tbGFuZGluZy1wYWQg
-aW5zdHJ1Y3Rpb25zIChlLmcuLCBwcm9iZXMpIG9ubHkgZmF1bHQgaWYgZXhlY3V0ZWQgYmVmb3Jl
-IEVQU1IuQiBpcyBjbGVhcmVkIKhDIHdoaWNoIGRvZXNuoa90IG9jY3VyIHdoZW4gcHJvYmVzIHJl
-cGxhY2UgQlRJIC4KCmh0dHBzOi8vY29tbXVuaXR5LmFybS5jb20vYXJtLWNvbW11bml0eS1ibG9n
-cy9iL2FyY2hpdGVjdHVyZXMtYW5kLXByb2Nlc3NvcnMtYmxvZy9wb3N0cy9hcm12OC0xLW0tcG9p
-bnRlci1hdXRoZW50aWNhdGlvbi1hbmQtYnJhbmNoLXRhcmdldC1pZGVudGlmaWNhdGlvbi1leHRl
-bnNpb24KCgoKCgoKCgoKQXQgMjAyNS0wNy0wMSAxMDozMTo0MSwgIllvbmdob25nIFNvbmciIDx5
-b25naG9uZy5zb25nQGxpbnV4LmRldj4gd3JvdGU6Cj4KPgo+T24gNi8yNi8yNSAxMjo0OSBBTSwg
-WXVhbiBDaGVuIHdyb3RlOgo+PiBGcm9tOiBZdWFuIENoZW4gPGNoZW55dWFuQGt5bGlub3MuY24+
-Cj4+Cj4+IEFkanVzdCBzeW1ib2wgbWF0Y2hpbmcgbG9naWMgdG8gYWNjb3VudCBmb3IgQ29udHJv
-bC1mbG93IEVuZm9yY2VtZW50Cj4+IFRlY2hub2xvZ3kgKENFVCkgb24geDg2XzY0IHN5c3RlbXMu
-IENFVCBwcmVmaXhlcyBmdW5jdGlvbnMgd2l0aCBhIDQtYnl0ZQo+PiAnZW5kYnInIGluc3RydWN0
-aW9uLCBzaGlmdGluZyB0aGUgYWN0dWFsIGVudHJ5IHBvaW50IHRvIHN5bWJvbCArIDQuCj4+Cj4+
-IFNpZ25lZC1vZmYtYnk6IFl1YW4gQ2hlbiA8Y2hlbnl1YW5Aa3lsaW5vcy5jbj4KPj4gLS0tCj4+
-ICAgdG9vbHMvYnBmL2JwZnRvb2wvbGluay5jIHwgMzAgKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKy0tCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDI4IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
-KC0pCj4+Cj4+IGRpZmYgLS1naXQgYS90b29scy9icGYvYnBmdG9vbC9saW5rLmMgYi90b29scy9i
-cGYvYnBmdG9vbC9saW5rLmMKPj4gaW5kZXggMDM1MTNmZmZmYjc5Li5kZmQxOTJiNGM1YWQgMTAw
-NjQ0Cj4+IC0tLSBhL3Rvb2xzL2JwZi9icGZ0b29sL2xpbmsuYwo+PiArKysgYi90b29scy9icGYv
-YnBmdG9vbC9saW5rLmMKPj4gQEAgLTMwNyw4ICszMDcsMjEgQEAgc2hvd19rcHJvYmVfbXVsdGlf
-anNvbihzdHJ1Y3QgYnBmX2xpbmtfaW5mbyAqaW5mbywganNvbl93cml0ZXJfdCAqd3RyKQo+PiAg
-IAkJZ290byBlcnJvcjsKPj4gICAKPj4gICAJZm9yIChpID0gMDsgaSA8IGRkLnN5bV9jb3VudDsg
-aSsrKSB7Cj4+IC0JCWlmIChkZC5zeW1fbWFwcGluZ1tpXS5hZGRyZXNzICE9IGRhdGFbal0uYWRk
-cikKPj4gKwkJaWYgKGRkLnN5bV9tYXBwaW5nW2ldLmFkZHJlc3MgIT0gZGF0YVtqXS5hZGRyKSB7
-Cj4+ICsjaWYgZGVmaW5lZChfX3g4Nl82NF9fKSB8fCBkZWZpbmVkKF9fYW1kNjRfXykKPj4gKwkJ
-CS8qCj4+ICsJCQkgKiBPbiB4ODZfNjQgYXJjaGl0ZWN0dXJlcyB3aXRoIENFVCAoQ29udHJvbC1m
-bG93IEVuZm9yY2VtZW50IFRlY2hub2xvZ3kpLAo+PiArCQkJICogZnVuY3Rpb24gZW50cnkgcG9p
-bnRzIGhhdmUgYSA0LWJ5dGUgJ2VuZGJyJyBpbnN0cnVjdGlvbiBwcmVmaXguCj4+ICsJCQkgKiBU
-aGlzIGNhdXNlcyB0aGUgYWN0dWFsIGZ1bmN0aW9uIGFkZHJlc3MgPSBzeW1ib2wgYWRkcmVzcyAr
-IDQuCj4+ICsJCQkgKiBIZXJlIHdlIGNoZWNrIGlmIHRoaXMgc3ltYm9sIG1hdGNoZXMgdGhlIHRh
-cmdldCBhZGRyZXNzIG1pbnVzIDQsCj4+ICsJCQkgKiBpbmRpY2F0aW5nIHdlJ3ZlIGZvdW5kIGEg
-Q0VULWVuYWJsZWQgZnVuY3Rpb24gZW50cnkgcG9pbnQuCj4+ICsJCQkgKi8KPj4gKwkJCWlmIChk
-ZC5zeW1fbWFwcGluZ1tpXS5hZGRyZXNzID09IGRhdGFbal0uYWRkciAtIDQpCj4+ICsJCQkJZ290
-byBmb3VuZDsKPj4gKyNlbmRpZgo+Cj5JbiBrZXJuZWwvdHJhY2UvYnBmX3RyYWNlLmMsIEkgc2Vl
-Cj4KPnN0YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZyBnZXRfZW50cnlfaXAodW5zaWduZWQgbG9u
-ZyBmZW50cnlfaXApCj57Cj4jaWZkZWYgQ09ORklHX1g4Nl9LRVJORUxfSUJUCj4gICAgICAgICBp
-ZiAoaXNfZW5kYnIoKHZvaWQgKikoZmVudHJ5X2lwIC0gRU5EQlJfSU5TTl9TSVpFKSkpCj4gICAg
-ICAgICAgICAgICAgIGZlbnRyeV9pcCAtPSBFTkRCUl9JTlNOX1NJWkU7Cj4jZW5kaWYKPiAgICAg
-ICAgIHJldHVybiBmZW50cnlfaXA7Cj59Cj4KPkNvdWxkIHlvdSBleHBsYWluIHdoeSBhcm02NCBh
-bHNvIG5lZWQgdG8gZG8gY2hlY2tpbmcKPiAgICAgaWYgKGRkLnN5bV9tYXBwaW5nW2ldLmFkZHJl
-c3MgPT0gZGF0YVtqXS5hZGRyIC0gNCkKPmxpa2UgeDg2XzY0Pwo+Cj4+ICAgCQkJY29udGludWU7
-Cj4+ICsJCX0KPj4gK2ZvdW5kOgo+PiAgIAkJanNvbndfc3RhcnRfb2JqZWN0KGpzb25fd3RyKTsK
-Pj4gICAJCWpzb253X3VpbnRfZmllbGQoanNvbl93dHIsICJhZGRyIiwgZGQuc3ltX21hcHBpbmdb
-aV0uYWRkcmVzcyk7Cj4+ICAgCQlqc29ud19zdHJpbmdfZmllbGQoanNvbl93dHIsICJmdW5jIiwg
-ZGQuc3ltX21hcHBpbmdbaV0ubmFtZSk7Cj4+IEBAIC03NDQsOCArNzU3LDIxIEBAIHN0YXRpYyB2
-b2lkIHNob3dfa3Byb2JlX211bHRpX3BsYWluKHN0cnVjdCBicGZfbGlua19pbmZvICppbmZvKQo+
-PiAgIAo+PiAgIAlwcmludGYoIlxuXHQlLTE2cyAlLTE2cyAlcyIsICJhZGRyIiwgImNvb2tpZSIs
-ICJmdW5jIFttb2R1bGVdIik7Cj4+ICAgCWZvciAoaSA9IDA7IGkgPCBkZC5zeW1fY291bnQ7IGkr
-Kykgewo+PiAtCQlpZiAoZGQuc3ltX21hcHBpbmdbaV0uYWRkcmVzcyAhPSBkYXRhW2pdLmFkZHIp
-Cj4+ICsJCWlmIChkZC5zeW1fbWFwcGluZ1tpXS5hZGRyZXNzICE9IGRhdGFbal0uYWRkcikgewo+
-PiArI2lmIGRlZmluZWQoX194ODZfNjRfXykgfHwgZGVmaW5lZChfX2FtZDY0X18pCj4+ICsJCQkv
-Kgo+PiArCQkJICogT24geDg2XzY0IGFyY2hpdGVjdHVyZXMgd2l0aCBDRVQgKENvbnRyb2wtZmxv
-dyBFbmZvcmNlbWVudCBUZWNobm9sb2d5KSwKPj4gKwkJCSAqIGZ1bmN0aW9uIGVudHJ5IHBvaW50
-cyBoYXZlIGEgNC1ieXRlICdlbmRicicgaW5zdHJ1Y3Rpb24gcHJlZml4Lgo+PiArCQkJICogVGhp
-cyBjYXVzZXMgdGhlIGFjdHVhbCBmdW5jdGlvbiBhZGRyZXNzID0gc3ltYm9sIGFkZHJlc3MgKyA0
-Lgo+PiArCQkJICogSGVyZSB3ZSBjaGVjayBpZiB0aGlzIHN5bWJvbCBtYXRjaGVzIHRoZSB0YXJn
-ZXQgYWRkcmVzcyBtaW51cyA0LAo+PiArCQkJICogaW5kaWNhdGluZyB3ZSd2ZSBmb3VuZCBhIENF
-VC1lbmFibGVkIGZ1bmN0aW9uIGVudHJ5IHBvaW50Lgo+PiArCQkJICovCj4+ICsJCQlpZiAoZGQu
-c3ltX21hcHBpbmdbaV0uYWRkcmVzcyA9PSBkYXRhW2pdLmFkZHIgLSA0KQo+PiArCQkJCWdvdG8g
-Zm91bmQ7Cj4+ICsjZW5kaWYKPj4gICAJCQljb250aW51ZTsKPj4gKwkJfQo+PiArZm91bmQ6Cj4+
-ICAgCQlwcmludGYoIlxuXHQlMDE2bHggJS0xNmxseCAlcyIsCj4+ICAgCQkgICAgICAgZGQuc3lt
-X21hcHBpbmdbaV0uYWRkcmVzcywgZGF0YVtqXS5jb29raWUsIGRkLnN5bV9tYXBwaW5nW2ldLm5h
-bWUpOwo+PiAgIAkJaWYgKGRkLnN5bV9tYXBwaW5nW2ldLm1vZHVsZVswXSAhPSAnXDAnKQo=
+On 11/07/2025 07.52, Greg Kroah-Hartman wrote:
+> On Fri, Jul 11, 2025 at 07:35:09AM +0200, Thomas Huth wrote:
+>> From: Thomas Huth <thuth@redhat.com>
+>>
+>> The FSF does not reside in the Franklin street anymore. Let's update
+>> the address with the link to their website, as suggested in the latest
+>> revision of the GPL-2.0 license.
+>> (See https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt for example)
+>>
+>> Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
+>> Signed-off-by: Thomas Huth <thuth@redhat.com>
+>> ---
+>>   v2: Resend with CC: linux-spdx@vger.kernel.org as suggested here:
+>>       https://lore.kernel.org/linuxppc-dev/e5de8010-5663-47f4-a2f0-87fd88230925@csgroup.eu
+>>       
+>>   arch/powerpc/boot/crtsavres.S            | 5 ++---
+>>   arch/powerpc/include/uapi/asm/eeh.h      | 5 ++---
+>>   arch/powerpc/include/uapi/asm/kvm.h      | 5 ++---
+>>   arch/powerpc/include/uapi/asm/kvm_para.h | 5 ++---
+>>   arch/powerpc/include/uapi/asm/ps3fb.h    | 3 +--
+>>   arch/powerpc/lib/crtsavres.S             | 5 ++---
+>>   arch/powerpc/xmon/ppc.h                  | 5 +++--
+>>   7 files changed, 14 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/arch/powerpc/boot/crtsavres.S b/arch/powerpc/boot/crtsavres.S
+>> index 085fb2b9a8b89..a710a49a5dbca 100644
+>> --- a/arch/powerpc/boot/crtsavres.S
+>> +++ b/arch/powerpc/boot/crtsavres.S
+>> @@ -26,9 +26,8 @@
+>>    * General Public License for more details.
+>>    *
+>>    * You should have received a copy of the GNU General Public License
+>> - * along with this program; see the file COPYING.  If not, write to
+>> - * the Free Software Foundation, 51 Franklin Street, Fifth Floor,
+>> - * Boston, MA 02110-1301, USA.
+>> + * along with this program; see the file COPYING.  If not, see
+>> + * <https://www.gnu.org/licenses/>.
+>>    *
+>>    *    As a special exception, if you link this library with files
+>>    *    compiled with GCC to produce an executable, this does not cause
+> 
+> Please just drop all the "boilerplate" license text from these files,
+> and use the proper SPDX line at the top of them instead.  That is the
+> overall goal for all kernel files.
+
+Ok, I can do that for the header files ... not quite sure about the *.S 
+files though since they contain some additional text about exceptions.
+I'll drop those *.S files from the next version of the patch, I think these 
+likely need to be discussed separately.
+
+  Thomas
+
 
