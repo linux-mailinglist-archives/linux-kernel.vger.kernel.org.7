@@ -1,266 +1,193 @@
-Return-Path: <linux-kernel+bounces-727413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C22B019DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:33:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9454AB019D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A115E561DD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:33:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73CD51CA84D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E456228643F;
-	Fri, 11 Jul 2025 10:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D9E286439;
+	Fri, 11 Jul 2025 10:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NzKPsAWy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fZEATfmY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oEFEDgOa"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB2C283C8E
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEDF1C4A13;
+	Fri, 11 Jul 2025 10:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752230010; cv=none; b=NiKKFlccjudiKl48fpJSZWl8/HDjCpP93c6V933HpHdeJpARE06zqpFsueauuLfaG7St/I9h6EgahJ1bEiQ7GjR1XInsh42SWpqLkdbpzltO7EPXgTo3iebSTX+mLm8KiAtd4etT0SMV/h38DTRgNdOhIaVz7YahR218HhKlyy0=
+	t=1752229930; cv=none; b=ETtGclO6GrnthLyS0Ag6cNlK3D7QhKOlP+pp+Bk/5IP0ShzZ1sGGlRnO1lSGItg1UzGhuOkZ2g3Dl3CKqRQr/cSoUlAvkQK2c0ZEYuZ+fW49YDGAzZUaco7ugPbLymTMSiotFi5sFs21LzdYN0lDTY8ltP08pDu07DfeGVXpos8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752230010; c=relaxed/simple;
-	bh=wIn+WptI4DqPix65QQCKTCB0GSIOdAeYVCKcpVSeVr8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=o2cCBuMQLCRNP/qu+fRGIbFbypNQSFDj8Z/1oOoF3T3hNyO+mGOukBGLQINgCly0y3BcM51XliwR4BmfNP7D0qLAosiXRDcV12GaCc25ys/hBV/KychkT0tkBe1oGp2bY4TVqxKVkBTYtTfeKHZI0y2TXMT6ew+hqPpjTLlFn3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NzKPsAWy; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752230008; x=1783766008;
-  h=date:from:to:cc:subject:message-id;
-  bh=wIn+WptI4DqPix65QQCKTCB0GSIOdAeYVCKcpVSeVr8=;
-  b=NzKPsAWyoQiZmXHS+yvdKiLCDFmYwIClRrA9rRkxf9Co+F0URamcHMMn
-   CGKhrdfOj5YduI6URhlZSJ2pMNC4S5Bss9mS4ru4QYnjps6/kdOac4vnY
-   fuuDJ1bN4CaQNpeAp5HhVjTsdVdNB4xBXpssDzDYha6UHhehKacDypaBa
-   tnTzoJS9FYGuTNdI4N4avRrs9yq4W3Bd+Q3tTtvBSsff3C1Rv1MYA9G0l
-   rrIx9Eeuz05A0wdVU4vnMqF9t1csSqgF0//Itf/vWD+TC2rTVNpE5hlv3
-   RDsbSy4qKsZdFsU+p/NpG4EDidhcoeuEXQCGulQWQ8wSkUE6VluTYiUZz
-   A==;
-X-CSE-ConnectionGUID: WfRZPZj4TE+K96tm1Bsu4w==
-X-CSE-MsgGUID: BhcXZi9zT/69y4YD0qDkTg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="54243192"
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="54243192"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 03:32:19 -0700
-X-CSE-ConnectionGUID: BlYe8+GlQdWnyA6p3hWgIQ==
-X-CSE-MsgGUID: /iE6104zRFiiobZqivhnxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
-   d="scan'208";a="160353894"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 11 Jul 2025 03:32:17 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uaB39-0006Gg-0y;
-	Fri, 11 Jul 2025 10:32:15 +0000
-Date: Fri, 11 Jul 2025 18:31:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/core] BUILD SUCCESS
- 4fdc3431e03b9c11803f399f91837fca487029a1
-Message-ID: <202507111818.jVehZQRx-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1752229930; c=relaxed/simple;
+	bh=dIQn2pv7EN6SkOG9ve2T2rjY4pjxpvg/oC0ABrkmK9M=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=uMYe+pLrmXgskMchYOCLe5jW3LUz3+5Mjjnn/FF6MYNFbiYRHvqfURr8JHeCQTU+YOFWGNjTEH7ztP6ZpqY4RN6xHk+hkKDd2s8gJJAD+nEMa8iQyP6rjcMhFrYqlKl8VUTclDAmwbVXjIRmr/xdJbOkwoncU2kxYmIBuSS9g4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fZEATfmY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oEFEDgOa; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id EC03A7A01C5;
+	Fri, 11 Jul 2025 06:32:06 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 11 Jul 2025 06:32:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752229926;
+	 x=1752316326; bh=07dLlqwr6Zm9+s/ZNinIfLXqKr7NYvxJ3Yp+RgA+Heg=; b=
+	fZEATfmY7vvL7eElXg5Uuy6eZI4b5zQ5jR2CtaT946Uk5OevF0Gfs9UPCT/iYg8a
+	YeW4nQL4NfmVYrhx1pTZ59bkBijlgDUpLe+yWsSV7OnTUhw+AEIL5WagpVftaHhV
+	nw3Y6FiSgr9IXFkuzzV6juNhh5aALre2e1wmcNlsvyvINpkfw/ybGiDpM+kG5/i+
+	mD8XDwPpDKNrawguR8duzQ3sDb/ref9hV8nb14HZ21lfanLRosy30r3lowXGS3CD
+	ewR2Up4jK0KjJQvcDfWQT1HWofXAAxTu5wEkvW69q1y27pW9wQuIdiv4u7VCiWzo
+	jtt6oznFIWLCD8BHmQ0tlw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752229926; x=
+	1752316326; bh=07dLlqwr6Zm9+s/ZNinIfLXqKr7NYvxJ3Yp+RgA+Heg=; b=o
+	EFEDgOaXebBzfvd5ZHG8MA+itVhxi4N0s4VSEpvy9McStgSeQ5ZJyK7s2iIPsL3+
+	PyH99hACuuaDQMYCG0Vcu2y/lVmufVnH778k8ylPX5r5GuNI8NBQ6lZD7rCOd8j2
+	I329ZU2qfMQ/sXmYzp8yU99QARGswP8zLchhVx74NHz7whuo1oK4Wph/Ylwb0UaF
+	O0STAswTNXN6osoqvneqjUh1FEQQ2OFeh6w2VBDrgMt3RUEhA1uLTl1oM7XjwHpB
+	noNk44JItPJVVS8QYXNhSp+g0KAkdZhW3THsLlZnLl/iDLYqcmhu5S7BFuxwnqNA
+	N/M5ie0aPUWYQSrHxS/ig==
+X-ME-Sender: <xms:JuhwaHoKIHF6CkA-U8WqJbp9aZ_bXNpQtpKWrJc48k19k2SZ-NaT6Q>
+    <xme:JuhwaBoufLARoGKmLivTCfDYFE6Z1E6KlBtE8rEnBYvL1oxvxMxZlZxJ_LDKnJuUU
+    2lj2gL6ess32jnyvEg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfedtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtph
+    htthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtohhmpdhrtghpthht
+    ohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvrg
+    hssehgrghishhlvghrrdgtohhmpdhrtghpthhtohepvggsihhgghgvrhhssehgohhoghhl
+    vgdrtghomhdprhgtphhtthhopehjshhtuhhlthiisehgohhoghhlvgdrtghomhdprhgtph
+    htthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhrvgguvghrihgt
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:JuhwaIYjiziD3DuUx8O-oWdPHj-M318q7n_fe_EeJ0isILuf06YDsg>
+    <xmx:JuhwaEwby2rYZl2kauJlfb0p5oWzyEv_Mq37mA8qHhT9d_-PmxM1HQ>
+    <xmx:JuhwaMOmx6DkP2lMbmqKKxGJ6AQbS1IYf5ZLIV-CQsLU_Vdmpqq_5g>
+    <xmx:JuhwaK7pj672cK8NebTY1CHgaCb7z_dDUA4jg113R2kuKANP_eNZXA>
+    <xmx:JuhwaLcx8w-Jusuz4vYVZJ7nqP26aK9Sne6oD3JrsjjxSdqS6cIF4F0E>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 394E4700065; Fri, 11 Jul 2025 06:32:06 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-ThreadId: T47b27644593db411
+Date: Fri, 11 Jul 2025 12:31:44 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Andreas Larsson" <andreas@gaisler.com>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Arnd Bergmann" <arnd@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ "David S . Miller" <davem@davemloft.net>
+Cc: "Andy Lutomirski" <luto@kernel.org>,
+ "Vincenzo Frascino" <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>,
+ "Anna-Maria Gleixner" <anna-maria@linutronix.de>,
+ "Frederic Weisbecker" <frederic@kernel.org>,
+ "John Stultz" <jstultz@google.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ "Eric Biggers" <ebiggers@google.com>, sparclinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <ba62bc7b-fa3e-4f34-a966-cc734468b8ef@app.fastmail.com>
+In-Reply-To: <7e29bcc1-3dc7-40f8-84f0-fbe497fb01bf@gaisler.com>
+References: <20250707144726.4008707-1-arnd@kernel.org>
+ <a2cfee1a725f24f90937f070eacdedd2716ef307.camel@physik.fu-berlin.de>
+ <5c479b4d-65f1-466e-a79e-43f6dfc9345c@app.fastmail.com>
+ <6b77e7da8c0bd6f211685bda9f624f8db971bbe1.camel@physik.fu-berlin.de>
+ <7e29bcc1-3dc7-40f8-84f0-fbe497fb01bf@gaisler.com>
+Subject: Re: [PATCH 1/2] vdso: sparc: stub out custom vdso implementation
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
-branch HEAD: 4fdc3431e03b9c11803f399f91837fca487029a1  x86/lib: Add WBINVD and WBNOINVD helpers to target multiple CPUs
+On Thu, Jul 10, 2025, at 18:22, Andreas Larsson wrote:
+> On 2025-07-07 18:05, John Paul Adrian Glaubitz wrote:
+>> On Mon, 2025-07-07 at 17:45 +0200, Arnd Bergmann wrote:
+>>> On Mon, Jul 7, 2025, at 17:22, John Paul Adrian Glaubitz wrote:
+>>>>
+>>>> On Mon, 2025-07-07 at 16:46 +0200, Arnd Bergmann wrote:
+>>>>> Rip out the whole thing and replace it with a minimal stub as we do
+>>>>> on parisc and uml. This introduces a small performance regression =
+when
+>>>>> using a libc that is aware of the vdso (glibc-2.29 or higher).
+>>>>
+>>>> Can this performance hit quantified in any way?
+>>>
+>>> It's trivial to test calling glibc clock_gettime() in a loop
+>>> on a specific piece of hardware, the difference should largely
+>>> depend on how long the timer hardware access takes compared
+>>> to the syscall overhead.
+>>>
+>>> On machines that have neither TICK nor STICK clocksource, the
+>>> simpler version should even be minimally faster, on those that
+>>> have one of the two, there is an added cost for entering the
+>>> syscall on every clock_gettime() as we do on architectures without
+>>> vdso.
+>>=20
+>> OK, thanks. Since Andreas has access to a SPARC T4 as of recently, he=
+ should
+>> be able to test this. Please allow some time for him to review and te=
+st the
+>> changes, so we can be sure this doesn't cause any serious regressions.
+>
+> I tested this patch (running Linux in an LDOM under Solaris) and
+> measuring the cost of clock_gettime(), running millions of calls. The
+> calls takes around 13-15 times as long (from around 82-94 nanoseconds
+> per call to around 1220 nanoseconds per call) with this patch compared
+> to without, so not an insignificant performance regression in this
+> environment.
 
-elapsed time: 1194m
+Ok, thanks a lot for testing! I guess the good news is that I didn't
+break functionality here.
 
-configs tested: 174
-configs skipped: 4
+Obviously 15x slowdown sounds like a lot, but what I don't know is
+whether 1.2=C2=B5s is actually too slow. Is this CLOCK_REALTIME or some
+other clock? I would expect to see a larger difference for the
+COARSE version since that saves the hardware access as well.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+From what I remember, the original driver for having a VDSO
+clock_gettime/gettimeofday was Java applications that call it
+too often. Do you know of anyone using Java on performance-critical
+sparc64 servers any more, or any other type of workload that
+depends on these functions being small?
 
-tested configs:
-alpha                             allnoconfig    clang-21
-alpha                            allyesconfig    clang-19
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    clang-19
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    clang-21
-arc                              allyesconfig    clang-19
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20250711    gcc-8.5.0
-arc                   randconfig-002-20250711    gcc-8.5.0
-arm                              allmodconfig    clang-19
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    clang-19
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20250711    clang-19
-arm                   randconfig-002-20250711    clang-21
-arm                   randconfig-003-20250711    gcc-15.1.0
-arm                   randconfig-004-20250711    clang-20
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    clang-21
-arm64                 randconfig-001-20250711    clang-18
-arm64                 randconfig-002-20250711    clang-21
-arm64                 randconfig-003-20250711    gcc-12.3.0
-arm64                 randconfig-004-20250711    clang-21
-csky                              allnoconfig    clang-21
-csky                  randconfig-001-20250711    gcc-14.3.0
-csky                  randconfig-002-20250711    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                          allmodconfig    clang-19
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-19
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250711    clang-19
-hexagon               randconfig-002-20250711    clang-21
-i386                             allmodconfig    clang-20
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    clang-20
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    clang-20
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250711    gcc-12
-i386        buildonly-randconfig-002-20250711    gcc-12
-i386        buildonly-randconfig-003-20250711    clang-20
-i386        buildonly-randconfig-004-20250711    clang-20
-i386        buildonly-randconfig-005-20250711    gcc-11
-i386        buildonly-randconfig-006-20250711    clang-20
-i386                                defconfig    clang-20
-i386                  randconfig-001-20250711    gcc-12
-i386                  randconfig-002-20250711    gcc-12
-i386                  randconfig-003-20250711    gcc-12
-i386                  randconfig-004-20250711    gcc-12
-i386                  randconfig-005-20250711    gcc-12
-i386                  randconfig-006-20250711    gcc-12
-i386                  randconfig-007-20250711    gcc-12
-i386                  randconfig-011-20250711    gcc-12
-i386                  randconfig-012-20250711    gcc-12
-i386                  randconfig-013-20250711    gcc-12
-i386                  randconfig-014-20250711    gcc-12
-i386                  randconfig-015-20250711    gcc-12
-i386                  randconfig-016-20250711    gcc-12
-i386                  randconfig-017-20250711    gcc-12
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-21
-loongarch             randconfig-001-20250711    clang-21
-loongarch             randconfig-002-20250711    clang-21
-m68k                             allmodconfig    clang-19
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    clang-19
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    clang-19
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    clang-19
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-15.1.0
-nios2                               defconfig    gcc-14.2.0
-nios2                               defconfig    gcc-15.1.0
-nios2                 randconfig-001-20250711    gcc-10.5.0
-nios2                 randconfig-002-20250711    gcc-14.2.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-12
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250711    gcc-12.4.0
-parisc                randconfig-002-20250711    gcc-14.3.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-21
-powerpc               randconfig-001-20250711    clang-18
-powerpc               randconfig-002-20250711    clang-21
-powerpc               randconfig-003-20250711    clang-21
-powerpc64             randconfig-001-20250711    clang-21
-powerpc64             randconfig-002-20250711    clang-21
-powerpc64             randconfig-003-20250711    gcc-13.4.0
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    gcc-12
-riscv                 randconfig-001-20250711    gcc-8.5.0
-riscv                 randconfig-002-20250711    gcc-12.4.0
-s390                             allmodconfig    clang-18
-s390                             allmodconfig    gcc-15.1.0
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    gcc-12
-s390                  randconfig-001-20250711    clang-21
-s390                  randconfig-002-20250711    gcc-10.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-12
-sh                    randconfig-001-20250711    gcc-12.4.0
-sh                    randconfig-002-20250711    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250711    gcc-10.3.0
-sparc                 randconfig-002-20250711    gcc-12.4.0
-sparc64                             defconfig    gcc-12
-sparc64               randconfig-001-20250711    gcc-8.5.0
-sparc64               randconfig-002-20250711    gcc-8.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    clang-19
-um                               allyesconfig    gcc-12
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250711    clang-20
-um                    randconfig-002-20250711    clang-19
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250710    gcc-12
-x86_64      buildonly-randconfig-002-20250710    gcc-12
-x86_64      buildonly-randconfig-003-20250710    gcc-12
-x86_64      buildonly-randconfig-004-20250710    clang-20
-x86_64      buildonly-randconfig-005-20250710    clang-20
-x86_64      buildonly-randconfig-006-20250710    clang-20
-x86_64                              defconfig    clang-20
-x86_64                              defconfig    gcc-11
-x86_64                                  kexec    clang-20
-x86_64                randconfig-001-20250711    clang-20
-x86_64                randconfig-002-20250711    clang-20
-x86_64                randconfig-003-20250711    clang-20
-x86_64                randconfig-004-20250711    clang-20
-x86_64                randconfig-005-20250711    clang-20
-x86_64                randconfig-006-20250711    clang-20
-x86_64                randconfig-007-20250711    clang-20
-x86_64                randconfig-008-20250711    clang-20
-x86_64                randconfig-071-20250711    clang-20
-x86_64                randconfig-072-20250711    clang-20
-x86_64                randconfig-073-20250711    clang-20
-x86_64                randconfig-074-20250711    clang-20
-x86_64                randconfig-075-20250711    clang-20
-x86_64                randconfig-076-20250711    clang-20
-x86_64                randconfig-077-20250711    clang-20
-x86_64                randconfig-078-20250711    clang-20
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-12
-x86_64                         rhel-9.4-kunit    gcc-12
-x86_64                           rhel-9.4-ltp    gcc-12
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250711    gcc-9.3.0
-xtensa                randconfig-002-20250711    gcc-14.3.0
+It is probably not all that hard to convert the VDSO to use the
+generic implementation if you remove the runtime patching between
+TICK and STICK mode. From the code and the documentation, it
+seems that any JPS1 compatible CPU (or newer) uses STICK,
+this would be UltraSPARC III (Cheetah), SPARC64 V (Zeus)
+and all UltraSPARC T. If you want to give it a try to do the
+conversion to the generic VDSO, I could respin my patch to only
+remove the older TICK version and the runtime patching but leave
+the STICK one. I don't think it's worth my time trying to convert
+STICK myself since I have no way of testing it.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Another option would be to start by adding a VDSO for LEON
+CPUs using the ASR22:23 upcounter register. This should be
+fairly easy to do if you copy the CSR_TIME code from riscv
+and replace their __arch_get_hw_counter(), and this is probably more
+relevant than the sparc64 version. Once that works, you
+can extend it to use STICK on JPS1.
+
+     Arnd
 
