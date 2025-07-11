@@ -1,138 +1,209 @@
-Return-Path: <linux-kernel+bounces-727642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9EF0B01D75
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:29:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB5B7B01D78
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 15:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A5B51882388
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:29:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0296D560E59
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 13:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155DE2D3754;
-	Fri, 11 Jul 2025 13:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395AA2D3A60;
+	Fri, 11 Jul 2025 13:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XGf2vTeK"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="idm+1zLI"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FF32882AA
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA77C2D3746
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 13:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752240538; cv=none; b=ErpJOnvtj5yhuY7yLIMLfRyKK2Jqskva8bcX0csKv84hBhBRr9RPzjTFiwWG8lcVr4NIDAmgjzJeH67ATD4Qdvd590S3B37+B0lsuJI90RCBI2SX3LiJpDIYldtiw9NBtInsjzYR+UovWJkaqeNW8eoQTWOqKxRiMOi8xtJ+YpY=
+	t=1752240570; cv=none; b=iIxaDgxe+bcwwfGHdjxNgHGXMVTI4mHit4qdwNygeWFNL/0bKPGSoDuJNS7C/RndLow+FtPtGv6FowbooVNg6cQiCQKV1t8tRavf9I5suULdM/ql4x2szpEzRObeXc/C0I9+uTyanFSDRAg2SQK9kU0fG3zwuKLesTkiA0cFxMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752240538; c=relaxed/simple;
-	bh=NNYSpfoYhvMUwN47wdh+SiKRzOPfsLp7BsUHFcweUzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIYmGSHoAOdf7zNqlTmHIONiGNtkb1Nu1BMTXva3PKubckyn8y21P6kZc4zMuD+r/i8ggiBFGY+auDnUeT6/TTWcQFBKcpGvJv6OWbu2bVviNp/FJSZqHzE5L3m8k0ZC34ISI07sywr+zHD5ZbJXPcT4lhSEGez2zC9PiZOSIsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XGf2vTeK; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=TKhoFis58EaUC1NN2qtSGAvGZOKBymUVDZkgzs0wK/E=; b=XGf2vTeKLaMhUdlA9MleLY8WSV
-	wwMweHRuJ3on8AcZvPa0Jt0o/dkUIUen5hbNhVSJo+b8T/p3rrqgCS5qt6t/gjrPeJfeGIWpmaJ77
-	hfTeF5cDbjHXyLPa3gCvMMBjtlbMJunIW3hDz8QXeJoMZs0sYqKqiiyxQyAopB0c5Muk3w27tpXf4
-	c30BfR+EhMbhoYyDy5d+tFtzH/+KAHRBd9iG2hWmw2aJSqMvTNvJPdvtvxPviL1a9v5ysrCS0sEnc
-	fV2hAGzEeLsJJUvEsv3T2xrq6/595SRau91XxGtiFBrehqbuKhzI5JwIH+0v7VWPWSvQrKxBVigp3
-	W9NH1BNQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uaDnv-0000000D84T-1d74;
-	Fri, 11 Jul 2025 13:28:43 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BD3063001AA; Fri, 11 Jul 2025 15:28:42 +0200 (CEST)
-Date: Fri, 11 Jul 2025 15:28:42 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
-	kernel-team@android.com
-Subject: Re: [RESEND][PATCH v18 5/8] sched: Fix runtime accounting w/ split
- exec & sched contexts
-Message-ID: <20250711132842.GG905792@noisy.programming.kicks-ass.net>
-References: <20250707204409.1028494-1-jstultz@google.com>
- <20250707204409.1028494-6-jstultz@google.com>
- <20250710094506.GH1613376@noisy.programming.kicks-ass.net>
- <CANDhNCo0u4bdvMxCpoDaZtFFJw5s2KJU=FOeho116p_8LujAfA@mail.gmail.com>
+	s=arc-20240116; t=1752240570; c=relaxed/simple;
+	bh=WDiPIjuqiChPX+asKp37/ByLWlXgZKPqmpcoStrHRxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hc8tG031GHvqRiDG3CDUzIp+fxd/hLGG0oXHTGCAuFy0vZEPShZqQFSY3+MeTJwy+fhPhPXJ8HE55CkcsXcdPooIwByzVPx7nTaetCFt8uFT8U+cz+vxIphnVWm1soVhbEwnCBdpn89nEzGkra9bPDaISqV7SH6U/mfrrBKIyLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=idm+1zLI; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23aeac7d77aso18464335ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:29:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752240567; x=1752845367; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pPQRVC+gYXzA0BtSE8rtHH/2+eUDBChSDQmEkeHBXgE=;
+        b=idm+1zLI9/PsnIdNl2AjPQmXZRdGyJf4BmfeAe0FmCmw3CfOCb5XcK56fFNOyW9bKN
+         9hLHYqM/i4dS9ifqsHHEUsDrDl34xwMjHufMPq4cAlAhGqPg9VqYih2F/gY/LTmiGIRY
+         zMJgcrB+QxAf/nzzS0Hj7B3ygDIrQon2YRQGCND0ktvK9KySusQ9V3XiJOnduOr8hMNA
+         jMoYUiiMcFzixAqeIyRVgyVya/G75h+4Qj8p0i1vybz/BGt53Kea5KmaeIb3oqrKB7z3
+         9pmw0YAtfooThSpEMQsMPv/YGQZo4jRW/A2Vrk/82rWD2/8CAbNMn6SNbha6pm+cz4yU
+         z3Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752240567; x=1752845367;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pPQRVC+gYXzA0BtSE8rtHH/2+eUDBChSDQmEkeHBXgE=;
+        b=mOhiTl5PpddVs0Hv6nppwZ13oqI1QjtuKdzExz7jeARt01OA9oWW7Dp9ko4v0O0OFK
+         bXCglx1mi9BUMc0rhg+c+oYgWqYM3m+g+nAcMyV7c/A0abYG0k4zaA3ICAYnHPHdRdRH
+         /1dI+Vs8KF69nFjC3cw296+4jXpmLhyyD+GAbxvRDLx6ViTN38q1ngAUPkBkunVmInC5
+         2NTh4pWdJUTpTKfNGzoLBI7btvtt4RST4uyYE/M55khDOUpgBzbgxWWsE0qOmbVj87J7
+         yzMHxWrmedqaYvnRtQDpxG0n71YpibbSjvp86XJm3xRFZkyBB3GpWFx3X0stoIrmuV9v
+         juVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzbtFUh2xxOn8omFpPe+TbKDMM8j6xaRdf6xqGYN2K4LJtSNeajDbdm88bkcFab73NYp0VhXJSiM1fedY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvzFa/3MFqMp8QGFRs3uLOOAlXQhE3u1e0HpVajMECmOKU/349
+	OKGW4tPVGBmlKUUfao+5qc1mLmb6eCYAXP7t6fm2EZibN5DJQdFWUVG6zptYH3HcSFCd8hDNQzL
+	24e2p7JBetXGCHrBVinif3nV5qkxAX0gTm1dybKHRkA==
+X-Gm-Gg: ASbGncsx/wPEzvxi22u45ENbPBXqeLmbJcK5Tjc8OKWcZ5P5QAJRkaf3YEwbvG7Szop
+	4lVznyJf76Xy7Ul0lpr7c4dRD7b649O5Vq2FhKHK98TY9+gfc6XIQFQbKUMIyvz1G8F6rW0PHnF
+	p4XjBAAAVE9lsXY7JiNmyMoGyaYViqGdbU4Y0UQcmsCezUNFRvjWkKLf/S6FqOjiqEgQDwvIpkl
+	aVtLt03ckSunIXgtj7xbZI3pb4sTEr6mDfSGEmQ
+X-Google-Smtp-Source: AGHT+IG4zXliACGrQprvEQ5wj7JsyfYLrvCmNiaEH+tMrZ+FZGuEDY+CASzdByOLlOs/WswgsUHGYzyvgG94wPmljLk=
+X-Received: by 2002:a17:90b:4b8d:b0:313:b1a:3939 with SMTP id
+ 98e67ed59e1d1-31c50da140amr3325921a91.15.1752240566909; Fri, 11 Jul 2025
+ 06:29:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCo0u4bdvMxCpoDaZtFFJw5s2KJU=FOeho116p_8LujAfA@mail.gmail.com>
+References: <20250711094031.4171091-1-quic_jinlmao@quicinc.com>
+In-Reply-To: <20250711094031.4171091-1-quic_jinlmao@quicinc.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Fri, 11 Jul 2025 14:29:14 +0100
+X-Gm-Features: Ac12FXz2yLkWQDmM32aTY0N8Gj1hFRU1asfRpnUpH_TzU92dKa2GOxAV8v2hkGM
+Message-ID: <CAJ9a7VhmHooDpht-gU7eAA5O028Tn=CVmCNHU6Qg+UYXp6kUQg@mail.gmail.com>
+Subject: Re: [PATCH v6 0/5] coresight: Add remote etm support
+To: Mao Jinlong <quic_jinlmao@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 10, 2025 at 10:25:46AM -0700, John Stultz wrote:
-> On Thu, Jul 10, 2025 at 2:45 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Mon, Jul 07, 2025 at 08:43:52PM +0000, John Stultz wrote:
-> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > index edcc7d59ecc3b..c34e0891193a7 100644
-> > > --- a/kernel/sched/fair.c
-> > > +++ b/kernel/sched/fair.c
-> > > @@ -1143,30 +1143,40 @@ static void update_tg_load_avg(struct cfs_rq *cfs_rq)
-> > >  }
-> > >  #endif /* CONFIG_SMP */
-> > >
-> > > +static s64 update_se(struct rq *rq, struct sched_entity *se)
-> > >  {
-> > >       u64 now = rq_clock_task(rq);
-> > >       s64 delta_exec;
-> > >
-> > > +     delta_exec = now - se->exec_start;
-> > >       if (unlikely(delta_exec <= 0))
-> > >               return delta_exec;
-> > >
-> > > +     se->exec_start = now;
-> > > +     if (entity_is_task(se)) {
-> > > +             struct task_struct *donor = task_of(se);
-> > > +             struct task_struct *running = rq->curr;
-> > > +             /*
-> > > +              * If se is a task, we account the time against the running
-> > > +              * task, as w/ proxy-exec they may not be the same.
-> > > +              */
-> > > +             running->se.exec_start = now;
-> > > +             running->se.sum_exec_runtime += delta_exec;
-> > >
-> > > +             trace_sched_stat_runtime(running, delta_exec);
-> > > +             account_group_exec_runtime(running, delta_exec);
-> > >
-> > > +             /* cgroup time is always accounted against the donor */
-> > > +             cgroup_account_cputime(donor, delta_exec);
-> > > +     } else {
-> > > +             /* If not task, account the time against donor se  */
-> > > +             se->sum_exec_runtime += delta_exec;
-> > >       }
-> >
-> > Bah.. this is all terrible :-) But yeah, I suppose this wil do.
-> 
-> Yeah, :/ I'm happy to rework it further if you have ideas.
+Hi,
 
-Not really; I stared at this for a bit yesterday. Its a confusing mess,
-but I didn't come up with anything better.
+The majority of this code should not be in the coresight drivers
+directory as it is not actually coresight.
+
+This seems to be a communications bus system for various SoC
+components - one of which happens to be a remote etm. It really needs
+to be in a qcom-qmi subdirectory - which would also remove your
+reliance on the coresight maintainers for getting all the qmi drivers
+upstreamed. I note that there is a CONFIG dependency of
+QCOM_QMI_HELPERS, which implies there is already a set of QMI
+functionality not in the coresight directory.
+
+We already have  a dummy coresight driver to cover these cases where
+the actual etm source or sink might be in a different subsystem. This
+could be extended in a generic manner to have an associated driver /
+component, with the dummy source then forwarding the enable / disable
+commands and acting as the coresight device for the purposes of
+enabling the trace path from source to sink.
+
+Thus the "coresight-remote-etm" driver becomes "qmi-node-etm" driver,
+with the proprietary comms info, instance IDs etc encapsulated away
+from any generic coresight information, and has an associated
+coresight-dummy-source to handle the connection to the coresight trace
+framework. I imagine the association could easily be modeled in device
+tree using a phandle reference.
+
+This would not change your usage model, but would give better
+separation between what is clearly the QMI comms subsystem, and what
+is needed to handle coresight connectivity.
+
+Moreover, having the generic coresight dummy driver extended in this
+way would allow other underlying communication systems to be used on
+other devices in future.
+
+Best Regards
+
+Mike
+
+
+On Fri, 11 Jul 2025 at 10:40, Mao Jinlong <quic_jinlmao@quicinc.com> wrote:
+>
+> The system on chip (SoC) consists of main APSS(Applications processor
+> subsytem) and additional processors like modem, lpass. There is
+> coresight-etm driver for etm trace of APSS. Coresight remote etm driver
+> is for enabling and disabling the etm trace of remote processors.
+> It uses QMI interface to communicate with remote processors' software
+> and uses coresight framework to configure the connection from remote
+> etm source to TMC sinks.
+>
+> Example to capture the remote etm trace:
+>
+> Enable source:
+> echo 1 > /sys/bus/coresight/devices/tmc_etf0/enable_sink
+> echo 1 > /sys/bus/coresight/devices/remote_etm0/enable_source
+>
+> Capture the trace:
+> cat /dev/tmc_etf0 > /data/remote_etm.bin
+>
+> Disable source:
+> echo 0 > /sys/bus/coresight/devices/remote_etm0/enable_source
+>
+> Changes since V5:
+> 1. Fix the warning and error when compile.
+> 2. Add traceid for remote etm.
+> 3. Change qcom,qmi-id tp qcom,qmi-instance-id.
+>
+> Changes since V4:
+> 1. Add coresight QMI driver
+> 2. Add coresight qmi node and qcom,qmi-id of modem-etm in msm8996 dtsi
+> V5: https://lwn.net/ml/all/20250424115854.2328190-1-quic_jinlmao@quicinc.com/
+>
+> Changes since V3:
+> 1. Use different compatible for different remote etms in dt.
+> 2. Get qmi instance id from the match table data in driver.
+>
+> Change since V2:
+> 1. Change qcom,inst-id to qcom,qmi-id
+> 2. Fix the error in code for type of remote_etm_remove
+> 3. Depend on QMI helper in Kconfig
+>
+> Changes since V1:
+> 1. Remove unused content
+> 2. Use CORESIGHT_DEV_SUBTYPE_SOURCE_OTHERS as remote etm source type.
+> 3. Use enabled instead of enable in driver data.
+> 4. Validate instance id value where it's read from the DT.
+>
+> Mao Jinlong (5):
+>   dt-bindings: arm: Add CoreSight QMI component description
+>   coresight: Add coresight QMI driver
+>   dt-bindings: arm: Add qcom,qmi-id for remote etm
+>   coresight: Add remote etm support
+>   arm64: dts: qcom: msm8996: Add coresight qmi node
+>
+>  .../bindings/arm/qcom,coresight-qmi.yaml      |  65 +++++
+>  .../arm/qcom,coresight-remote-etm.yaml        |   9 +
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi         |  11 +
+>  drivers/hwtracing/coresight/Kconfig           |  23 ++
+>  drivers/hwtracing/coresight/Makefile          |   2 +
+>  drivers/hwtracing/coresight/coresight-qmi.c   | 198 +++++++++++++
+>  drivers/hwtracing/coresight/coresight-qmi.h   | 101 +++++++
+>  .../coresight/coresight-remote-etm.c          | 262 ++++++++++++++++++
+>  8 files changed, 671 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-qmi.yaml
+>  create mode 100644 drivers/hwtracing/coresight/coresight-qmi.c
+>  create mode 100644 drivers/hwtracing/coresight/coresight-qmi.h
+>  create mode 100644 drivers/hwtracing/coresight/coresight-remote-etm.c
+>
+> --
+> 2.25.1
+>
+
+
+--
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
