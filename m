@@ -1,156 +1,155 @@
-Return-Path: <linux-kernel+bounces-727301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18DBCB017F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:35:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A15B01883
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 11:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3023B242D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:34:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 025B5179AC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 09:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9229C258CFA;
-	Fri, 11 Jul 2025 09:34:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302AD27EFEC;
+	Fri, 11 Jul 2025 09:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O3EEP0+F"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB80520C010
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 09:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6C027E1D0;
+	Fri, 11 Jul 2025 09:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752226446; cv=none; b=FB0j/WvKdzMv+PZWlrnD4skBrHns6x8vCJcbd0+YHG2F9s64wGSQHc27sqNvz5UCyI0V8uMeOKQxUGona8XdAEBIYZ66p+iv78x9ChwEaozmYZkhKaPS6M7g5dT7NJDXv7eXkbAChX5twQnCoUuReukAxk1ALsKi3fOjJFKMB3Q=
+	t=1752226965; cv=none; b=Rr3+QLC4tZ6PKS9JZ7KsrvE1bL/y8m5SJUTBIr+XADvK+UPf8PbD3mp3sFnGsTFoYp3lkZcXhiazZAOl6EZCNmGqWFsX1WVq4x9LFu1bxyl3BmJxsypWEirOf1gMYSwulb4L+FiGUt4keBfAKRzkUHsAFzBOAdXpch5QMEcgbYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752226446; c=relaxed/simple;
-	bh=Ta5GjM9SSUFo+zaONrfM2NcvqjadSAMqcbhQquMVlFE=;
+	s=arc-20240116; t=1752226965; c=relaxed/simple;
+	bh=oDBY8JF9G1/mTrz3j3EAZiovopcRWBuv++8VUSjyj/4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HvgGwy2filileiQJ7bn/gSUej41wuQl/rxBVNwma1drGSpI6zkVhF3QwIB6A4mGnQxw/K6lKoZJic4vkbqQ/Z1ycH5ZBPYa/zQWsMVKgitXD3o0rNFqa7JezWCVDfK45Shj4Y0BvyBi1rVJbaUvbRwiyD/hz794X/Tu+KLqvKPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uaA8P-0004kr-Ox; Fri, 11 Jul 2025 11:33:37 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uaA8N-007tjw-38;
-	Fri, 11 Jul 2025 11:33:36 +0200
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 93B6A43C755;
-	Fri, 11 Jul 2025 09:33:35 +0000 (UTC)
-Date: Fri, 11 Jul 2025 11:33:35 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Fengguang Wu <fengguang.wu@intel.com>, 
-	Varka Bhadram <varkabhadram@gmail.com>, Dong Aisheng <b29396@freescale.com>, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] can: m_can: apply rate-limiting to lost msg in rx
-Message-ID: <20250711-astonishing-tentacled-tench-9fe229-mkl@pengutronix.de>
-References: <20250630-mcan_ratelimit-v2-1-6b7a01341ea9@geanix.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nHt7EFuGZZ5TQi4YEchURQkvpNM9q96jZjcHrPxVAXXVtbLPfEOHP1gQtTmD62kkSx20CVc4+xusi2bR7c/aZXkr4pRneVpzDDuIj3HgRWARXj8IZM0K598j5z9QN9FFB2cfZ1WcTHaZ6hAeFacIHC+5JhMV5IMg1QG41FZuh8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O3EEP0+F; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752226964; x=1783762964;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oDBY8JF9G1/mTrz3j3EAZiovopcRWBuv++8VUSjyj/4=;
+  b=O3EEP0+Fli3oGZiJTfwqInFUAbYWL2JXcIg/QPj8uEo2cP+FTIPE5USN
+   WF+w+ulAqPPque52y4g+WsuLBwwtR/oynkZhTdxk8rHxukEdLxwTvjpWK
+   O9S+y3ALWFe2RD1eSiwjxk+RF+4VwicZOUnTXotqdjirjsVkZKKfuEylo
+   m1gbLGWo1XAqkxZ5Hpl88MowfPx59AOq8pi0bzEJZRU3Y3dcjn9FXLP9e
+   XGIacUuZkIahebJ6k3zFYDbpb9emGTU0NxFTlf5ck3KZ5cTlSCRRd/kCP
+   A+mcL3qBf7wnRDDOXhmgkMewSoRQZaxvnMND5eFDJTiF6K/i2FGIKLi7s
+   Q==;
+X-CSE-ConnectionGUID: eWj/przoSqyuSf3lM67htw==
+X-CSE-MsgGUID: 8wQdi5VITQK9POby+y93Gg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="65104697"
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="65104697"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2025 02:42:42 -0700
+X-CSE-ConnectionGUID: Ry1VIS8iTJqgroNk8yFFkw==
+X-CSE-MsgGUID: QqzhhYC7SZuEOXM1tMmJxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; 
+   d="scan'208";a="162019431"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa005.jf.intel.com with ESMTP; 11 Jul 2025 02:42:22 -0700
+Date: Fri, 11 Jul 2025 17:33:59 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Vishal Annapurve <vannapurve@google.com>,
+	Yan Zhao <yan.y.zhao@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
+	Fuad Tabba <tabba@google.com>,
+	Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com,
+	akpm@linux-foundation.org, amoorthy@google.com,
+	anthony.yznaga@oracle.com, anup@brainfault.org,
+	aou@eecs.berkeley.edu, bfoster@redhat.com,
+	binbin.wu@linux.intel.com, brauner@kernel.org,
+	catalin.marinas@arm.com, chao.p.peng@intel.com,
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
+	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
+	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com,
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
+	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
+	rick.p.edgecombe@intel.com, rientjes@google.com,
+	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
+	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
+	suzuki.poulose@arm.com, thomas.lendacky@amd.com,
+	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com,
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
+ KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
+Message-ID: <aHDah15CN7Y16Lxx@yilunxu-OptiPlex-7050>
+References: <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
+ <20250624130811.GB72557@ziepe.ca>
+ <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
+ <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
+ <CAGtprH9-njcgQjGZvGbbVX+i8D-qPUOkKFHbOWA20962niLTcw@mail.gmail.com>
+ <20250702141321.GC904431@ziepe.ca>
+ <CAGtprH948W=5fHSB1UnE_DbB0L=C7LTC+a7P=g-uP0nZwY6fxg@mail.gmail.com>
+ <aG+a4XRRc2fMrEZc@yilunxu-OptiPlex-7050>
+ <20250710175449.GA1870174@ziepe.ca>
+ <aHCTvAAtvE4Mofy2@yilunxu-OptiPlex-7050>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="myshn7loduw7tdyg"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250630-mcan_ratelimit-v2-1-6b7a01341ea9@geanix.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <aHCTvAAtvE4Mofy2@yilunxu-OptiPlex-7050>
 
+> > > 
+> > > Only *guest permitted* conversion should change the page. I.e only when
+> > > VMM is dealing with the KVM_HC_MAP_GPA_RANGE hypercall. Not sure if we
+> > > could just let QEMU ensure this or KVM/guestmemfd should ensure this.
+> > 
+> > I think it should not be part of the kernel, no need. From a kernel
+> > perspective userspace has requested a shared/private conversion and if
+> > it wasn't agreed with the VM then it will explode.
+> 
+> I'm OK with it now. It's simple if we don't try to recover from the
+> explosion. Although I see the after explosion processing in kernel is
+> complex and not sure how it will advance.
 
---myshn7loduw7tdyg
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] can: m_can: apply rate-limiting to lost msg in rx
-MIME-Version: 1.0
+I see the discussion in another thread about similar issue. That TDX
+Module BUG causes S-EPT unmap impossible and just KVM_BUG_ON(). But this
+conversion issue is a little different, usually it's not decent to panic
+because of userspace request. So may need further error handling, or a
+KVM/gmemfd kAPI to disallow/allow conversion and prevent more complex
+error.
 
-On 30.06.2025 09:52:44, Sean Nyekjaer wrote:
-> Wrap the "msg lost in rxf0" error in m_can_handle_lost_msg() with
-> a call to net_ratelimit() to prevent flooding the kernel log
-> with repeated debug messages.
->
-> Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
-> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> ---
-> Changes in v2:
-> - Changed to dbg msg
-> - Link to v1: https://lore.kernel.org/r/20250620-mcan_ratelimit-v1-1-e747=
-ee30f71f@geanix.com
-> ---
->  drivers/net/can/m_can/m_can.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-> index 6c656bfdb3235e1f5d6405c49b07b821ddacc1b9..9f43111609d364c01c6df1048=
-9fc4708deab9fbb 100644
-> --- a/drivers/net/can/m_can/m_can.c
-> +++ b/drivers/net/can/m_can/m_can.c
-> @@ -665,7 +665,8 @@ static int m_can_handle_lost_msg(struct net_device *d=
-ev)
->  	struct can_frame *frame;
->  	u32 timestamp =3D 0;
->
-> -	netdev_err(dev, "msg lost in rxf0\n");
-> +	if (net_ratelimit())
-> +		netdev_dbg(dev, "msg lost in rxf0\n");
+Thanks,
+Yilun
 
-This has some subtle side effects. Even if debugging is not enabled, you
-will still get the "... output lines suppressed due to ratelimiting"
-message, which is IMHO very confusing :)
-
-What about replacing the netdev_err() by netdev_dbg()?
-
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -665,7 +665,7 @@ static int m_can_handle_lost_msg(struct net_device *dev)
-        struct can_frame *frame;
-        u32 timestamp =3D 0;
-
--       netdev_err(dev, "msg lost in rxf0\n");
-+       netdev_dbg(dev, "msg lost in rxf0\n");
-
-        stats->rx_errors++;
-        stats->rx_over_errors++;
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---myshn7loduw7tdyg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmhw2msACgkQDHRl3/mQ
-kZzbNgf+I17X+decbgDxV9wzfsT8Zdk54vZDmImS6/M/yWaYgO0I9vz0zfTEk0Qk
-XViSutCZEgEzOX5Um6DtvL39XRSB7wpWoHlk6cA4YQJLYAPyl83cD6FC9oPPkHgV
-2ozpb2+l/v1ZBKLzX/tS1R3bhLYkzfx8YsQZSTodGIr4p2Eitzih5eGd/Ey451yI
-M5xKMXlhZ4Jz6gF1lai55H3EJvZB+a6CPc1dFwlHpjbNq8iRAFv7Ut5GC08CsJAW
-3pN8O5U1tn/K75v75fub0iRyxuSxxPeOpGzk1uinPogAhpJfBNmuXyP8RRxf3HUF
-bl8Ri2syy2Ga3X576/qsBRWIkOFd0w==
-=R6JF
------END PGP SIGNATURE-----
-
---myshn7loduw7tdyg--
+> 
+> Thanks,
+> Yilun
+> 
+> > 
+> > Jason
+> 
 
