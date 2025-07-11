@@ -1,99 +1,131 @@
-Return-Path: <linux-kernel+bounces-726944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F118CB01341
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FFA9B01346
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CC3758034B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FBC55881AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C961CDA3F;
-	Fri, 11 Jul 2025 06:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807991CEAA3;
+	Fri, 11 Jul 2025 06:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="OPRoqBjL"
-Received: from mail3-167.sinamail.sina.com.cn (mail3-167.sinamail.sina.com.cn [202.108.3.167])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oDBbG17E"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820501C84D5
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2433B155A4D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 06:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752213625; cv=none; b=QyPgXi/eVum+6QBV0HbC7U1kgRY1LOP4DhZvo9UcGY2GO23bijouth9TILclFBytGmbAsCJcCa3pMvfRvkTMQSQFznN9bMeln8BboZFhVyPL7l2aOOyKSyTl3urliWuqYR7oPpYnmLm+uWoDzxhB2dlOgXwpqJDfTXL3mnMZBYw=
+	t=1752213708; cv=none; b=URsq/AdEIEyTNC1vp0V6Y1EIqYSiQE+TZEthN6QdV1XjYYHTdvsm9ZDE/FpIu+vLl2ff1TwA1Bqp/4Fy1A06o4/mMRfx9U01ArUDLAff9y2YVchbZ3muSo13ZBPfzN/JA5wdLpK7W1JSmrEFS6m0xX+nFMR0MsSXaganv1EPSMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752213625; c=relaxed/simple;
-	bh=viR5sCpMCovkWso9QSh5yW+aCYCywBbDAkKZpSH42oc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VTVskm5evJ1t3R5CgRCsLlde5/2+p4z4ofEkpqw60kmKxyLl1SMJj4eJhnItB8Im7mTzRasd8LaxjNGThfnSoemX1Y4rbKdgx/yAGH0GAQqKm12dxKPk+qZLmxObKTxnpMAbFTP3+i1qUAgPRuga6vygmzyUSOm1Qqw6YuimfHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=OPRoqBjL; arc=none smtp.client-ip=202.108.3.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752213620;
-	bh=iA75JEK9qBVzW8qdLN0P4DaokWl3KKk9Tq0qimdiEuk=;
-	h=From:Subject:Date:Message-ID;
-	b=OPRoqBjL+YHU38BPuuhDBxRl1OdnWYTUfTEuvkkjBgSnxxJWBIIhJnouicK6m+7KN
-	 1mDW1lAO+IjxTG2o6sYxVbsMXlELtWQd4HNprOGGPk7KUnVN+PbEt7y4jm8+Zcxejc
-	 kIAT6DU6SBvORAqVvG+MWWXvn8oYfve9DFMH2tWU=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 6870A86A0000625C; Fri, 11 Jul 2025 14:00:11 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7002216685331
-X-SMAIL-UIID: 903A4E37A5F04913939332C653CAD98A-20250711-140011-1
-From: Hillf Danton <hdanton@sina.com>
-To: Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v6 7/8] fs/proc/task_mmu: read proc/pid/maps under per-vma lock
-Date: Fri, 11 Jul 2025 13:59:58 +0800
-Message-ID: <20250711060000.3413-1-hdanton@sina.com>
-In-Reply-To: <f38cef22-d3e8-4f73-a8ba-1a2cb0f4808e@suse.cz>
-References: <20250704060727.724817-1-surenb@google.com> <20250704060727.724817-8-surenb@google.com> <f532558b-b19a-40ea-b594-94d1ba92188d@lucifer.local> <CAJuCfpGegZkgmnGd_kAsR8Wh5SRv_gtDxKbfHdjpG491u5U5fA@mail.gmail.com> <f60a932f-71c0-448f-9434-547caa630b72@suse.cz> <CAJuCfpE2H9-kRz6xSC43Ja0dmW+drcJa29hwQwQ53HRsuqRnwg@mail.gmail.com> <3b3521f6-30c8-419e-9615-9228f539251e@suse.cz> <CAJuCfpEgwdbEXKoMyMFiTHJMV15_g77-7N-m6ykReHLjD9rFLQ@mail.gmail.com> <bulkje7nsdfikukca4g6lqnwda6ll7eu2pcdn5bdhkqeyl7auh@yzzc6xkqqllm> <CAJuCfpFKNm6CEcfkuy+0o-Qu8xXppCFbOcYVXUFLeg10ztMFPw@mail.gmail.com> <CAJuCfpG_dRLVDv1DWveJWS5cQS0ADEVAeBxJ=5MaPQFNEvQ1+g@mail.gmail.com> <CAJuCfpH0HzM97exh92mpkuimxaen2Qh+tj_tZ=QBHQfi-3ejLQ@mail.gmail.com>
+	s=arc-20240116; t=1752213708; c=relaxed/simple;
+	bh=a0G8Yq0Ke1qOBetrXDyUUddRY5vG1x7jY0BZw7V1Ap4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+d7dPUJtlv3PRvGUrjw8z/y4T/ButAuYiGXY8mjX3b/bA/qkZ0EYrRMWNczoD9jkTy6LBiDmVpmtMnNKLHvYGVvzdFH0/oWulvxeXdVvv98NwE2O5hSoBfHs6uqvVf65o+Jw3dvW34mbc5UZpkcOHTzTqfGii5f+n2gJYh73kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oDBbG17E; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752213707; x=1783749707;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=a0G8Yq0Ke1qOBetrXDyUUddRY5vG1x7jY0BZw7V1Ap4=;
+  b=oDBbG17EDdBaSVNE/dhIgcBpJVHBDOAxaefAFwCslt1Dg0TYFb1yOYbE
+   XXkdoJtb8C+3UdgAx7sCBVG3GZgbKkfHv3Z6s5zFLVYtXBSY5KBDSFYGm
+   czn29BhoJ9FoCwGDnQD72gcWMJRYHPHcNAiWi+GdNkjWZwEOMSDTJ29fI
+   yNSSAgEM+XHIP7Dwk8u+EDQSJ9ikjhP7grDevDmfPe0mxLtrBx38i7wKP
+   lSwJ0v2xk62njZU8uhGw2B0BZRroJsad7/AzQhW3y2dWDGVxWX1LwvZ5O
+   31JY6X7rqrijBAgenE5azuuiE948GjMK3upNGm9qnegU8Jaxs5ZoLbhpU
+   g==;
+X-CSE-ConnectionGUID: kNvaSYKXR7qlMMMekNFDDw==
+X-CSE-MsgGUID: n/KmnCCXTZODqJqszBlMxg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="72086585"
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="72086585"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 23:01:46 -0700
+X-CSE-ConnectionGUID: ecdxnWMvR2GuMUIAt//P7w==
+X-CSE-MsgGUID: H0D1KJk6RWyhsBiKg88XzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,302,1744095600"; 
+   d="scan'208";a="187285090"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2025 23:01:44 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ua6pJ-0000000EQpV-0Q1M;
+	Fri, 11 Jul 2025 09:01:41 +0300
+Date: Fri, 11 Jul 2025 09:01:40 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Petr Mladek <pmladek@suse.com>
+Subject: Re: [PATCH v1 1/1] panic: Fix compilation error (`make W=1`)
+Message-ID: <aHCoxOK3WlouqbA_@smile.fi.intel.com>
+References: <20250710094816.771656-1-andriy.shevchenko@linux.intel.com>
+ <20250710150133.680679cf8a0f6b2f0bf3369f@linux-foundation.org>
+ <aHBgwRrFfmEWcp-T@U-2FWC9VHC-2323.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHBgwRrFfmEWcp-T@U-2FWC9VHC-2323.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, 10 Jul 2025 19:42:16 +0200  Vlastimil Babka wrote:
-> On 7/10/25 19:02, Suren Baghdasaryan wrote:
-> > On Thu, Jul 10, 2025 at 12:03 AM Suren Baghdasaryan <surenb@google.com> wrote:
-> >>
-> >>
-> >> I have the patchset ready but would like to test it some more. Will
-> >> post it tomorrow.
+On Fri, Jul 11, 2025 at 08:54:25AM +0800, Feng Tang wrote:
+> On Thu, Jul 10, 2025 at 03:01:33PM -0700, Andrew Morton wrote:
+> > On Thu, 10 Jul 2025 12:48:16 +0300 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+...
+
+> > > -	char names[sizeof(sys_info_avail) + 1];
+> > > +	char names[sizeof("tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks") + 1];
 > > 
-> > Ok, I found a couple of issues using the syzbot reproducer [1] (which
-> > is awesome BTW!):
-> > 1. rwsem_acquire_read() inside vma_start_read() at [2] should be moved
-> > after the last check, otherwise the lock is considered taken on
-> > vma->vm_refcnt overflow;
-> > 2. query_matching_vma() is missing unlock_vma() call when it does
-> > "goto next_vma;" and re-issues query_vma_find_by_addr(). The previous
-> > vma is left locked;
+> > Yes, that's neater than the fix we currently have.  I'll grab, thanks.
 > 
-> How does that happen? query_vma_find_by_addr() does get_next_vma() which
-> does unlock_vma()?
+> sys_info_avail[] has another purpose for being a counterpart of si_names[],
+> which could be extended in future, so we make it obviously stand-alone. As
+> for definition of si_names[], we explicitly added comment:  
 > 
-Adding a mutex that protects do_procmap_query() survived the syzbot test [1,2].
-That sounds like a bad news as locking vma alone is not enough to query the map.
+> 	/*
+> 	 * When 'si_names' gets updated,  please make sure the 'sys_info_avail'
+> 	 * below is updated accordingly.
+> 	 */
+> 	static const struct sys_info_name  si_names[] = {
+> 		{ SYS_INFO_TASKS,		"tasks" },
+> 		{ SYS_INFO_MEM,			"mem" },
+> 		
+> which has also been discussed in another thread:
+> https://lore.kernel.org/lkml/aG3o2RFHc5iXnJef@U-2FWC9VHC-2323.local/
 
-[1] https://lore.kernel.org/lkml/687092d6.a00a0220.26a83e.0036.GAE@google.com/
-[2] https://lore.kernel.org/lkml/6870a4a4.a00a0220.26a83e.003c.GAE@google.com/
+Ah, this is interesting. Let's rethink about the solution.
+
+> And I suggest to keep sys_info_avail[], and either Nathan or Sergey's patch
+> works for me.
+
+I definitely not suggest to leave build broken
+(try with CONFOG_WERROR=y, which is default).
+
+> Sorry for the inconvenience, and I should upgrade my gcc :) 
+
+I have compiled with clang-19.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
