@@ -1,354 +1,247 @@
-Return-Path: <linux-kernel+bounces-727229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1D57B016CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:50:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1544CB016CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FEC054816D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059A31887AFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EE1221561;
-	Fri, 11 Jul 2025 08:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B408621C18E;
+	Fri, 11 Jul 2025 08:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kwoyn3qJ"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Nz5jFXan";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="WSHVWrn6"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E024E21CA1F;
-	Fri, 11 Jul 2025 08:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752223798; cv=none; b=S6L+lf3mdC2xQCqYDNpJUE6vCwgj1c3utIsTl9IwdAWr0Cz2m6bCDUaZJLovvmR3ep1dbGUw6A5BK8JihlKhK3ZuGzqr8Gi0mpxOTHKraAieG9A/MwZAABKLrc6CznGiABEhhTJNOianqkhYYNjYk5ZvsJZn7HZxe1tYma9VHlY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752223798; c=relaxed/simple;
-	bh=mzLDNdeiYwNjPPn1UOsfOKrllEh4CpboX14l/mMDhEE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KC6Vg2np5crx3I89WkBD4IUK9VcQhQd/+Orfb/n4k+keFVoaRDa8xpCEKvlF3lPUygvx0ljWbL9Polzn5rEMPpJjPuiKl+HEKe2Y2ujaQBVHNy2/u+wyyB5kV//eVv93Ug9wdCoEQ9WefvAgsVybb22xasgU8D9dc5y/E5rK/4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kwoyn3qJ; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-553ba7f11cbso1846258e87.1;
-        Fri, 11 Jul 2025 01:49:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562657DA6C;
+	Fri, 11 Jul 2025 08:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752223794; cv=fail; b=PeKTUtVGcs+MLwg4RoLGKC6AeLJIM51ciCiqP6MmgkaofA/AVkTjGG93YdPOQleqRxMmZNN27bbO7FBy0JtKVG9Kjm1Zw1JPi87mk/FIFG5z0QURp8qnCeDT8ExlOpf+hHTjOkMw6B9ZHJ7dgJEVrZlmrAZwXujzM4ANLNmE9V8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752223794; c=relaxed/simple;
+	bh=Ia8nqXcvjcVMtlb09phZgJ7dNeYGc7iY5X/AqEpjGNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=qylvjIKcSeLX4DnvaYOaoqiwpEA3EgYnU1mdekVARSsKXtutdlD8n+yO7qCY83CArZK0VP5rCbZw/52UMVZwJ8KnwmPSNsZuWOdHyI7hm7xlmUihrHTPlDDijL8U+UXJyuiWhmNHll3vyA/VUnXggNVjSLHLDgkACX4xuEDMfoc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Nz5jFXan; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=WSHVWrn6; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56B87KOY022874;
+	Fri, 11 Jul 2025 08:49:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=P5MTaRTAGyBgNf2eiR
+	BODcgd2Jq7Nv5QEnDavvVrfUI=; b=Nz5jFXanbJn0J1rxHULu44qdrXRmaZdO3C
+	ZKoFfayDTkbJi534eB28M8Io01TOWSshWFdDn3A80ql6cYdAVX75oI8ZJtlyla20
+	fPoiHSQjpHf0lRVk6k7dVuScqY1MgvC6KpETipyyL4ik/6hxNFA7KjBHUHkLYic/
+	mVoDz9fCz9F1HjtyrKMStfv7QUopN2SA+VxUWaaxW5PLlkqMnxarEIwA1/8bnq6M
+	gCnC2mF46ls6ojmiTOWg+smqwns5iS00PQD6dxROUlqGb3nOfGcrTqM1xS78LMwd
+	qMAJVskSyOOCk6GxQJ+W1t6Wsg6rGjw7ahdmO+OGxuWAilObFpmQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47txtn02fx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Jul 2025 08:49:20 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56B7CAmF014058;
+	Fri, 11 Jul 2025 08:49:19 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2075.outbound.protection.outlook.com [40.107.223.75])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ptgdbdn5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Jul 2025 08:49:19 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oh4xuzCmw+540cWvJZSxAJYqoJULZ89ww4R1bTptqP1ZMD5fUW4x06kqB7hWPIp9oKUeeuOr6UxQg47sY1QxCkgYksKWGxjZSH06TzqwAlhVUbi+kEL6TZZ8ZF+49PYdM83fB0Z/PtHVRFBWnPP9OZr2533RjjxQtVeGMC1sC6iUMOn+zNP04EnpcqY63HaNeW6QvmLNCrJFfTHjmpJ82TTzDPfRylAuVCj3i75I2YBW3iMrkLAla4N8w6qtmlqAM2I0wKwdV3we97fa4MYvn9gvuV8+W+BO/8l28zrJXrdh6cixuPFnl586GTh1vHrekmwWiflXnezC8UP8PcUUUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P5MTaRTAGyBgNf2eiRBODcgd2Jq7Nv5QEnDavvVrfUI=;
+ b=zRAzT+uoLpLAfiQvYKqyFfX9zrFdPhPrNROXd6OB+AH0Wfkjkyl3ZYYQ5tSeJl8HKiypvI0gjko3lLaSwsKQqm5S/CEKzuqWgjFDt7BVRZ+//b4mh9ocqZktovyon8149jbx2F+Rno35fBL/sfWi9IPSY7EwO8uXd2/7msBXiMCqKcLTcamawlMh3zjvSGD5T/ep6OHey+2p6tbX6dIO2Y/tm3ohiSU/YpalctzGbnhGu0xi1NQiBCx/qz+Kge4WcEV+SeLF++vpepNvK2Z1aL5ucUaa5WEa7ECDoPztWMSi+tG4G95aDTrICoL2bVpHX1hAoCt8UxMFxNj1UjQEYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752223793; x=1752828593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bxKi9opXiTJ3CDj+KbpcJEzcbrlXBBIPp0CvXM8Ar8A=;
-        b=Kwoyn3qJZG3SeXZ2pyg1PUSck+bbVwVVLt6K0cz9wLuQs6S2Lc7JSJWlku03yfS57u
-         ejEprJ9ZnAsGuBYdduNJWKenedsGHc/lVJA85z66ZJNNCYt4bnAfycchN8L1j2Han0Es
-         lB6PpZrJFLxCBR2tJlFRYlgqstItJw1wzsOrQhED8gkV0OXQYkGDzcYza3yCsdpxdfLf
-         aoQa++kAYgq/kFyEi2/h5I7HNwoJqrZqaOCNloke2MmDf5Fp2QstgdhIkw6lMC1G30sr
-         RFPJDdBu1fU9UFYLfbJ29XHr+JsIC6GYxA/s0uR1kU9zVMKOegSQD+MiKXNngFK5urtB
-         85AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752223793; x=1752828593;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bxKi9opXiTJ3CDj+KbpcJEzcbrlXBBIPp0CvXM8Ar8A=;
-        b=UHZYCAfpuBVE4mewY5M+BjpjN6AS4RRFbqj2lWI5I6OGaPXpM8/QTswrc5JGloY5vZ
-         kzkTVEJXlbqkbW7qup20Ux9HXeFmTYE2qQv1Ay0o/nzAQ35CJSqhLcJrQ2HTmPeYxYaw
-         OqQIE9HK6yrSRdfuIvc3f7Eax9kdwEO9So8R65jrCOou8qG8uFnF5GZklZxZjF4zqQM8
-         bU8eYeLM+7p3FXP9J+vaAs4b7KkzkHsLopMdI7PUzgsOgRvJA+mADB48qmyPCkqB3Hyl
-         6CTjjDE93aYsxOgueK+PI00xVDYdk5RN4YFTvG+lo4NBLW6M0+gZdnI4uAGk8UmhehIH
-         0Hyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWX2UtO9hTotGSvFlNaNeKjtDJmQ1ZaTvyQFiqZRagysrFax8fdDqWQAfzTuFKkjGkhY+tdjazZJwXy+Hk=@vger.kernel.org, AJvYcCXHdYLzg33qvJp3hYbzSSYmXNqQ2dSWV2WT4FfHpNjVLBkF2auLhQ2CoiHh/RRB5ZtCO5Fu/vzckQ/rEIkToMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6QdpRbIHNe10s/WG4irPsRo5bxsapy1eb8LK4NjdilNacsHm2
-	rExfo9O0AlJ/lrRRKuP9dLFrldb9tVDfk1fKwOp+RX3PFa38CXGd6kpB
-X-Gm-Gg: ASbGncuH0/ycONDquMbI4qvnPc9Yj+Zfb3fmJJz49JBliJMa1HdSMG+H4r5VogsdLIr
-	KnYJ5VjuG9WjmarFTxhXpgJ/WVInh/qVv48AeqtlkESvHNXxWE9+FUjyWisiDM9nz4b2gLWL3aV
-	4CvNiI1bZL+qkF+AQm5J18ym8pCfB6q20Cx3F2Jh2cimWMwxs8pMu7NYyqXm3HjB9bejLwS9j6b
-	rR+wsOARCRACwIaMI/HVbRM0Uu7SIiQPE4LVnFo/kGG9rP1ZWRnpa2EOs3ZlmCp6H148LTx7jbv
-	S212GOmlJQtQKstbQyT2kCwW3rUHE5Gva/Yq/a94X8e93iP8zlMwyA6azlWl2bJSYpUJK2Z12q7
-	nr+Qlpr5F4OzC0zqgt02UG3PhScCDl4Zwav05ALrhSaA=
-X-Google-Smtp-Source: AGHT+IGXeQJBPPar+WbdrJX+EUk7WlBpn2r/+Zx7dcz9XyuDydBh4QVkO9qSsj/KbaYe7fgw1/39RQ==
-X-Received: by 2002:a05:6512:1388:b0:553:381f:c45b with SMTP id 2adb3069b0e04-55a044d43b3mr714045e87.19.1752223792437;
-        Fri, 11 Jul 2025 01:49:52 -0700 (PDT)
-Received: from localhost.localdomain ([94.19.228.143])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5593c7f37e8sm824507e87.85.2025.07.11.01.49.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Jul 2025 01:49:52 -0700 (PDT)
-From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-To: Ping-Ke Shih <pkshih@realtek.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bitterblue Smith <rtl8821cerfe2@gmail.com>,
-	Fiona Klute <fiona.klute@gmx.de>
-Cc: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-Subject: [PATCH v4] wifi: rtw88: enable TX reports for the management queue
-Date: Fri, 11 Jul 2025 11:47:40 +0300
-Message-ID: <20250711084740.3396766-1-andrej.skvortzov@gmail.com>
-X-Mailer: git-send-email 2.47.2
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P5MTaRTAGyBgNf2eiRBODcgd2Jq7Nv5QEnDavvVrfUI=;
+ b=WSHVWrn6mRZ84hsWKR8fYPN1ZUV5HxWONbftvcGccRm8ymi+ol55DA23Arv5n4l8sujwKUkDBSP9mcS1I3034mF6XPGU0d1ZQq7b+b8gk0jLIl6vV2PqbvjtdeUsOSAbA3EdYWjGm+KFI6K9mfD1xtSGzNw6koQrUuruNvvmab8=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by IA1PR10MB7335.namprd10.prod.outlook.com (2603:10b6:208:3d8::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Fri, 11 Jul
+ 2025 08:49:16 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
+ 08:49:16 +0000
+Date: Fri, 11 Jul 2025 09:49:14 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Zi Yan <ziy@nvidia.com>, wang lian <lianux.mm@gmail.com>,
+        Liam.Howlett@oracle.com, akpm@linux-foundation.org, brauner@kernel.org,
+        david@redhat.com, gkwang@linx-info.com, jannh@google.com,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm@kvack.org, p1ucky0923@gmail.com, ryncsn@gmail.com,
+        shuah@kernel.org, sj@kernel.org, vbabka@suse.cz,
+        zijing.zhang@proton.me
+Subject: Re: [PATCH v3] selftests/mm: add process_madvise() tests
+Message-ID: <e05e7e0d-02e3-435c-bb82-91200a868448@lucifer.local>
+References: <48D7AAD0-07C9-4E2D-9171-081A503B47AF@nvidia.com>
+ <20250709123224.6593-1-lianux.mm@gmail.com>
+ <A1603D53-03B1-412F-8FE8-851A37E4C08C@nvidia.com>
+ <aG9889HWQ8K24z5w@finisterre.sirena.org.uk>
+ <D536C704-BE27-43CD-AB58-4F55A7C97C9E@nvidia.com>
+ <aHDMnogm_EOx4oMU@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aHDMnogm_EOx4oMU@finisterre.sirena.org.uk>
+X-ClientProxiedBy: LNXP265CA0047.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:5c::35) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA1PR10MB7335:EE_
+X-MS-Office365-Filtering-Correlation-Id: df7573ea-f577-4e16-be6d-08ddc057d14a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rddqyeB20wwhInJSPHQdsQ5gr4Vm8iOhElnZ1mrC2kMV5PViNiDc1O0ot737?=
+ =?us-ascii?Q?6+5pnAyb3eX55po1fkFrso6LrIyveL+2crmMXnSkv8ZCGZnYTFZbL3QgxD96?=
+ =?us-ascii?Q?7WJBrMbmDVat697WA4zO6BpCWEiFOqtOuqNCfVXyJ6uLGqENBlIs/vOovEsO?=
+ =?us-ascii?Q?uX1zNjqSWeUhhctdK9fCZOZPwBsAIivFGurNwvFbB3h7KmnGI1a1KeZu7Kw1?=
+ =?us-ascii?Q?uda3DeaxutXfjElHMcPokEHD0rQ5PfPD6ERBHQNYqmV3X15ivXhA5obrYfwu?=
+ =?us-ascii?Q?XIocWTs0xa7mbjjFFZwCgPzXxgkWDAfrVLV6+jQ2PF045Hrihprl9m0gzYQ+?=
+ =?us-ascii?Q?cpRtzbNPVaPIIsaOno2l5LF6my1K67BdZ7IInaAc9o4xlH7mowWH8mCiC/PU?=
+ =?us-ascii?Q?RideNDqkkI9U2b+tgBR2i5fJAEW6MqgLpEQBNBPobpjerW7Qfby+XqImnm1Z?=
+ =?us-ascii?Q?Woj6HVFoPuHYfkydkSlOZkRmTIjDiyycibdXMDqO1pOvQTolg/v0JPxj4cUO?=
+ =?us-ascii?Q?m6TVkU8xtJ7yb+LNzmFPHk3zv5zbmolF//qrhFp1bsXzwqdJwwe4luLCU4Cu?=
+ =?us-ascii?Q?q65fvndAL9hcCRRHKJ4sh8dkmK74hJnuDAODpS/MtoAINE95Sy6hZjeMeAjL?=
+ =?us-ascii?Q?Tl3Q4Vv+OCWExpKzeXpRHRpuAns3loN3qKi4TOKIml3CsfCCYmXhO3ZyLzAV?=
+ =?us-ascii?Q?VA1oCNkARVMk5GAcbgmG6otV08pGRHUUgigTNqQjkBB+lmYC2BBBHgu2Olg2?=
+ =?us-ascii?Q?z0cqHE6yqsy6YKNY1VYZWL3XUJxxUX9k9P9nBEGOImz7w29m9cfyIBzMdV6w?=
+ =?us-ascii?Q?yZuoH+UNgjtPD8+MZsiInomTq0a1ZPyRXkXqKVbM5ctYA1YnIqlR0ESgwIIP?=
+ =?us-ascii?Q?yAWFTkxB5u57+gRG7Ig0IDwwEoy8z+Itpvxj/fc+EO5iGsunYhpQ+4SCjwQW?=
+ =?us-ascii?Q?1Tmi+alw1JOEYIaOftmJG8cp4P4fz5438jcaqcVw004ieYz9FrgN68uX0+TD?=
+ =?us-ascii?Q?9x3D82oVhwnK8b+zgf+g4ZRO/IE/qJe2JqNFLTqnTHEDNejJyLCamZMGRSp3?=
+ =?us-ascii?Q?8fxnaoAkhkaFdyBDrcPS8BP+ht6ydSaWUZWRWnolxUUS7FvswJAIMB3Lxi4c?=
+ =?us-ascii?Q?ITun65AmqROw4xcLZlzvuVu5waEBcNuIPdREkOHwyvKu/qsQYydzYANpzA5/?=
+ =?us-ascii?Q?TJRymm2eJ/lnKutmxYEr7Dpn49eMDJY/2/XZAVCX/2Ec6BmtQU+ZFiUIpqBp?=
+ =?us-ascii?Q?fUIe5KnG3y1chlUh3E5YAtmKgjec0BQN6zaWB7G306DFAA86aFzp35VRppHa?=
+ =?us-ascii?Q?4HxkvIDWOaUwggkD8futiiVMA9eotZh2I//0pkMl7qLarPGbYLYGKF4ebb+M?=
+ =?us-ascii?Q?LIjFTBrxKYubUzP5ZkQz4iW5ilgX3FXNB5PQvXPcwmBgtnDF4OH58Gz1Szte?=
+ =?us-ascii?Q?YRbY63DJCfQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?M+htZNy+qHJeuqqTXUvwfcQZJpMUIjxhzpbHVpNXIbpmoOHdcXinINfXtKEq?=
+ =?us-ascii?Q?uxftskc53Qnk7RijdIvzz3rkWaIC5NTYzis09gMZxkksWLo26ZBRXcouKdtG?=
+ =?us-ascii?Q?vGXztR2c8SATYnKX3zgOxPddw3uBWZeryo5Viy5mafKFvQtIjl92IXUVnMMU?=
+ =?us-ascii?Q?CXZgJZ0OsYKAqujWdGcmxBXW6fM/GkTNfe4hrj/+jfmQmCohRKyODmgN2CZX?=
+ =?us-ascii?Q?RuIW2A9e8emgVT6t5yGqgESEGLVB1VNJ18d57jL/pqhBXpHltTiCYMSnSqM7?=
+ =?us-ascii?Q?1CeRPoLJIYTkM4YdS/H5UH+lETEOo4DaWsPKimcvnU7SlhmNDH4YhNHpkw+N?=
+ =?us-ascii?Q?W+GhqHWd7RiyVmJLPiapW97VP7drFkyFBuq3T1MUm6F0OBv/JCRAB7z5q53i?=
+ =?us-ascii?Q?KiFKbF2Pqyttqe/CmCv1qnsFCKqrI1Cy3PjAKb/WVUgDGuK78t7UbtLqISPV?=
+ =?us-ascii?Q?j81sPBeJW0FAd7L7QCoTLuROdgpPa7aLx5gbklqXGeQNZd5916haf0m76qqQ?=
+ =?us-ascii?Q?zMoVrSv/kZg9O/pqMs4KjJlFwMlleAE+TE7uqas+uvN9HecdK6/7Ftg2KukE?=
+ =?us-ascii?Q?5ENAPelbYvMfBj8Un14AnCvv6TWeSOksinZJzJUMDMPuy+g9yR3N1UoZcoLP?=
+ =?us-ascii?Q?xqQfc3E6U+OJIfsqaq0uJcM+kP+/yFkg+D2md6uoADucbpnBH7XvparMvRt0?=
+ =?us-ascii?Q?VrMzA/iEqvzoDWlKp7T/7xuLtq4Lfl2DkBTNu+IHcxysrNvB5CSL4ZGugr0x?=
+ =?us-ascii?Q?CAkPFCgzdaCMAG5RRRvUhuJn7WP8QBk/VzP8KrnEI/L0q+pgdm6hIaLtxu8H?=
+ =?us-ascii?Q?q3Dacc3DBNotZyv2fyJ8kC7V8Ya/aqGb3YHhRMhRLOYfEPy1lnHSLTsAa/l2?=
+ =?us-ascii?Q?Zxit//bJlI7+ihbn48DYjPKy6hWvb64V5Cr6hXI/wsc5DGABrc8lZeIrfoz2?=
+ =?us-ascii?Q?eYyhbzhvN5D8nh6cWU/qlUdE2yDM+PJi4pliXgbaHaK2CSs5EwchSVz+7noh?=
+ =?us-ascii?Q?Aag5/CDl/xTzqgmPsXBbTny09nKHC0HhOQUYfNWBenE2eUlwAMyLLpE9YOR5?=
+ =?us-ascii?Q?9Byga7Zr0iDeC9xIG/RZ5jEJBm35TDLAkgKzjmuPmq7NpfXYW7IbtwcRpvZs?=
+ =?us-ascii?Q?dJy4qFIQgvxLiossQUgCuncNZ668Pk2KiXK/6OtdmKH8ZB70aujQ8CDGN53d?=
+ =?us-ascii?Q?T8p/Xw9U5FgYYF7CAZcacRKFlCrJYpRchpEkP4LgmUjVzvGQQ4h7vCOJLqns?=
+ =?us-ascii?Q?sA/uhCW/Osh0699CArXUnrwz11UqS1zmHDuGMcvyiqm8x9eOx32DDUd6Z1DN?=
+ =?us-ascii?Q?MaCT6rf6sJt67goY6MrostCUUyFOJ14Yu3lKgmmdZQa2EwUc8KqNCja0M/Jq?=
+ =?us-ascii?Q?L6U9SlxzRTJ0N4b3KWE2sz2/+QuDR6nwtNa80unuItNJnzku59Ez9qmz8gMH?=
+ =?us-ascii?Q?LEgrYJZGPUV99L5yaD12buuc4eO1mBufRD9zZBHc+7txWrNB9vZpPrwCUV3G?=
+ =?us-ascii?Q?TNqhopwaTydNOQ2uYVVICzuhZ3YdiA77cZi5T4AyoJaZx4W/EQrMowdtH6Qw?=
+ =?us-ascii?Q?DmPjKW+Yq8Fok3KISTuBhg2B0FyyXB3JYUddYD/CSR7M5swebl0a01o/bR3i?=
+ =?us-ascii?Q?lQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	nYVG6WTvILLBmG7N7xUY2ZCKBRWCw6LwjMVus1GtOQdiYN21Uq3l9RmLdbsb4DE/WPJOb3dv9tzUPEq8fUHx1r9ScMt/AilCXt/HA4q2G1R8TFq/E0ALUerGuEnpnleRMqxRocdVDFR6nEHxTAU//jQTfW0VAAn3H12p8Hf3GkRgFlpNFGoHrqsspRe1JfZVULyBDNR03XpTtwe32ibZFyd/jesMjBuspw11p4MbtMFlk8mroCalS2KaX3zUWwLwW/EHqheUI9GWbrPMkWboUcidi9Ghu96JKfukluBAV63uIScFwGKZVv4Oq4c2J/7cEgdTw1FJIDsvpnD4vL5SXIgQ1mQQmeTYf8dEMofeuE/uMzwOCm6BjJ0Ov3/5RKJuKaI97XRCW2qwbBrfbspyiXx88BhEB8QSnoaSIYHDc02k5tHlxa/FY3+ESIh11ZG9qO4Ma7yzUI4YOG06x5Mv9MK/84581zsiDWDgEpChnSOg0n2DcfkbWYlUA/pIYV2hhFQn8qvqK2AGIxTJAfENhjEXHGNQFwlfA8/pEhGBsMpUIEZyX0AVH59cRQgQebgaqlpPttY0rpNiI/9ogg3e/76K8OoFixuf9ZrBhJzngPk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: df7573ea-f577-4e16-be6d-08ddc057d14a
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 08:49:16.3127
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lyDIq6oncB4vBF5rpRFxiHyPOocmRGS476UxYiFU1JsNel3/tyzKdYlWKGZ+wrsPxQY5UCMj6krzHctk8iBj6OSZUctXrVhNyg5oXQ9nkFg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7335
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-11_02,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
+ suspectscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2507110061
+X-Proofpoint-GUID: aHc-2srN_PRVoMHIWg07IXj45xw5ZSOs
+X-Authority-Analysis: v=2.4 cv=FucF/3rq c=1 sm=1 tr=0 ts=6870d010 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=rjNzJ-5dvgE4mmTVUIIA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12062
+X-Proofpoint-ORIG-GUID: aHc-2srN_PRVoMHIWg07IXj45xw5ZSOs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDA2MSBTYWx0ZWRfX48h2dUJJ09mN Dh5i4h0NZ8gR+oNfzXb1IYBREkGkfTKtfy2DAObH9xgYFQeCIXSewZrhwSws85VTRgayoBFsAUu AxjQlPOykvObtnFcfAiFSq1hR0gW6g78zhA1fKQWbWK89eySRRklejhwQZRcjkN+1yUlxsYo0Pp
+ E6jqYuYUxgWD1Y4mvjE+tBcC2woHcK6qCk5vnmZ+cARmjX++I+0t/+iBrnkkYastEajy0nzHuT2 fy1j7s5mg8ZSBobEY7THcu8+FjOHa40l1SzDztl5oY8X0B9tn7Qeq6vmxY3jczCSXU82dZstKjG Uysqf/3XEBuObn7B2/hoEs8SELYTMfLjqBSvpoOmdD2x5g5ZjLZZzR3Zr/b8caAjOvmZIW7gjgD
+ EoFuNgv8EBLNIrhmMQSS3Z85/evRPStuqEeiA+BTgDEM/tO8sx8nFDEjCWH8knCzPJQHYKQ8
 
-This is needed for AP mode. Otherwise client sees the network, but
-can't connect to it.
+On Fri, Jul 11, 2025 at 09:34:38AM +0100, Mark Brown wrote:
+> On Thu, Jul 10, 2025 at 12:28:13PM -0400, Zi Yan wrote:
+> > On 10 Jul 2025, at 4:42, Mark Brown wrote:
+> > > On Wed, Jul 09, 2025 at 10:46:07AM -0400, Zi Yan wrote:
+>
+> > >> Right. My /usr/include/sys does not have pidfd.h. IMHO selftests
+> > >> should not rely on userspace headers, otherwise we cannot test
+> > >> latest kernel changes.
+>
+> > > That's not realistic, we need to be able to use things like libc and for
+> > > many areas you'd just end up copying or reimplmenenting the userspace
+> > > libraries.  There's some concerns for sure, for example we used to have
+>
+> > Sure. For libraries like libc, it is unrealistic to not rely on it.
+> > But for header files, are we expecting to install any kernel headers
+> > to the running system to get selftests compiled? If we are testing
+> > RC versions and header files might change before the actual release,
+> > that would pollute the system header files, right?
+>
+> Right, for the kernel's headers there's two things - we use a
+> combination of tools/include and 'make headers_install' which populates
+> usr/include in the kernel tree (apparently mm rejects the latter but it
+> is widely used in the selftests, especially for architecture specifics).
+> These install locally and used before the system headers.
+>
+> > > OTOH in a case like this where we can just refer directly to a kernel
+> > > header for some constants or structs then it does make sense to use the
+> > > kernel headers, or in other cases where we're testing things that are
+>
+> > That is exactly my point above.
+>
+> What was said was a bit stronger though, and might lead people down a
+> wheel reinvention path.
 
-REG_FWHW_TXQ_CTRL+1 is set to WLAN_TXQ_RPT_EN (0x1F) in common mac
-init function (__rtw8723x_mac_init), but the value was overwritten
-from mac table later.
+Let's PLEASE not rehash all this again...
 
-Tables with register values for phy parameters initialization are
-copied from vendor driver usually. When table will be regenerated,
-manual modifications to it may be lost. To avoid regressions in this
-case new callback mac_postinit is introduced, that is called after
-parameters from table are set.
+This patch literally just needs PIDFD_SELF, I've provided a couple of ways
+of doing that without introducing this requirement.
 
-Tested on rtl8723cs, that reuses rtw8703b driver.
+We already have a test that uses this with no problems ever reported on
+which this patch was based.
 
-Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
----
-
-Changes in v2:
- - introduce mac_postinit callback to avoid changing register tables
-
-Changes in v3:
- - merge two patches back together
- - remove unused initialization in rtw_mac_postinit
- - init unused .mac_postinit fields in drivers with NULL
-
-Changes in v4:
- - fixed unused ret variable
-
- drivers/net/wireless/realtek/rtw88/mac.c      | 10 ++++++++++
- drivers/net/wireless/realtek/rtw88/mac.h      |  1 +
- drivers/net/wireless/realtek/rtw88/main.c     |  6 ++++++
- drivers/net/wireless/realtek/rtw88/main.h     |  1 +
- drivers/net/wireless/realtek/rtw88/rtw8703b.c |  1 +
- drivers/net/wireless/realtek/rtw88/rtw8723d.c |  1 +
- drivers/net/wireless/realtek/rtw88/rtw8723x.c |  9 ++++++++-
- drivers/net/wireless/realtek/rtw88/rtw8723x.h |  6 ++++++
- drivers/net/wireless/realtek/rtw88/rtw8812a.c |  1 +
- drivers/net/wireless/realtek/rtw88/rtw8814a.c |  1 +
- drivers/net/wireless/realtek/rtw88/rtw8821a.c |  1 +
- drivers/net/wireless/realtek/rtw88/rtw8821c.c |  1 +
- drivers/net/wireless/realtek/rtw88/rtw8822b.c |  1 +
- drivers/net/wireless/realtek/rtw88/rtw8822c.c |  1 +
- 14 files changed, 40 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/realtek/rtw88/mac.c b/drivers/net/wireless/realtek/rtw88/mac.c
-index 011b81c82f3ba..eaa928bab240c 100644
---- a/drivers/net/wireless/realtek/rtw88/mac.c
-+++ b/drivers/net/wireless/realtek/rtw88/mac.c
-@@ -1409,3 +1409,13 @@ int rtw_mac_init(struct rtw_dev *rtwdev)
- 
- 	return 0;
- }
-+
-+int rtw_mac_postinit(struct rtw_dev *rtwdev)
-+{
-+	const struct rtw_chip_info *chip = rtwdev->chip;
-+
-+	if (!chip->ops->mac_postinit)
-+		return 0;
-+
-+	return chip->ops->mac_postinit(rtwdev);
-+}
-diff --git a/drivers/net/wireless/realtek/rtw88/mac.h b/drivers/net/wireless/realtek/rtw88/mac.h
-index e92b1483728d5..b73af90ee1d7f 100644
---- a/drivers/net/wireless/realtek/rtw88/mac.h
-+++ b/drivers/net/wireless/realtek/rtw88/mac.h
-@@ -38,6 +38,7 @@ void rtw_write_firmware_page(struct rtw_dev *rtwdev, u32 page,
- 			     const u8 *data, u32 size);
- int rtw_download_firmware(struct rtw_dev *rtwdev, struct rtw_fw_state *fw);
- int rtw_mac_init(struct rtw_dev *rtwdev);
-+int rtw_mac_postinit(struct rtw_dev *rtwdev);
- void rtw_mac_flush_queues(struct rtw_dev *rtwdev, u32 queues, bool drop);
- int rtw_set_trx_fifo_info(struct rtw_dev *rtwdev);
- int rtw_ddma_to_fw_fifo(struct rtw_dev *rtwdev, u32 ocp_src, u32 size);
-diff --git a/drivers/net/wireless/realtek/rtw88/main.c b/drivers/net/wireless/realtek/rtw88/main.c
-index 97756bdf57b27..b706c5a21a6c5 100644
---- a/drivers/net/wireless/realtek/rtw88/main.c
-+++ b/drivers/net/wireless/realtek/rtw88/main.c
-@@ -1412,6 +1412,12 @@ int rtw_power_on(struct rtw_dev *rtwdev)
- 
- 	chip->ops->phy_set_param(rtwdev);
- 
-+	ret = rtw_mac_postinit(rtwdev);
-+	if (ret) {
-+		rtw_err(rtwdev, "failed to configure mac in postinit\n");
-+		goto err_off;
-+	}
-+
- 	ret = rtw_hci_start(rtwdev);
- 	if (ret) {
- 		rtw_err(rtwdev, "failed to start hci\n");
-diff --git a/drivers/net/wireless/realtek/rtw88/main.h b/drivers/net/wireless/realtek/rtw88/main.h
-index b42538cce3598..43ed6d6b42919 100644
---- a/drivers/net/wireless/realtek/rtw88/main.h
-+++ b/drivers/net/wireless/realtek/rtw88/main.h
-@@ -858,6 +858,7 @@ struct rtw_chip_ops {
- 	int (*power_on)(struct rtw_dev *rtwdev);
- 	void (*power_off)(struct rtw_dev *rtwdev);
- 	int (*mac_init)(struct rtw_dev *rtwdev);
-+	int (*mac_postinit)(struct rtw_dev *rtwdev);
- 	int (*dump_fw_crash)(struct rtw_dev *rtwdev);
- 	void (*shutdown)(struct rtw_dev *rtwdev);
- 	int (*read_efuse)(struct rtw_dev *rtwdev, u8 *map);
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8703b.c b/drivers/net/wireless/realtek/rtw88/rtw8703b.c
-index 03475af973b52..821c28d9cb5d4 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8703b.c
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8703b.c
-@@ -1832,6 +1832,7 @@ static const struct rtw_chip_ops rtw8703b_ops = {
- 	.power_on		= rtw_power_on,
- 	.power_off		= rtw_power_off,
- 	.mac_init		= rtw8723x_mac_init,
-+	.mac_postinit		= rtw8723x_mac_postinit,
- 	.dump_fw_crash		= NULL,
- 	.shutdown		= NULL,
- 	.read_efuse		= rtw8703b_read_efuse,
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8723d.c b/drivers/net/wireless/realtek/rtw88/rtw8723d.c
-index bf69f5b06ce26..8715e0435f173 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8723d.c
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8723d.c
-@@ -1397,6 +1397,7 @@ static const struct rtw_chip_ops rtw8723d_ops = {
- 	.query_phy_status	= query_phy_status,
- 	.set_channel		= rtw8723d_set_channel,
- 	.mac_init		= rtw8723x_mac_init,
-+	.mac_postinit		= rtw8723x_mac_postinit,
- 	.shutdown		= rtw8723d_shutdown,
- 	.read_rf		= rtw_phy_read_rf_sipi,
- 	.write_rf		= rtw_phy_write_rf_reg_sipi,
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8723x.c b/drivers/net/wireless/realtek/rtw88/rtw8723x.c
-index 4c77963fdd370..3f3e9b0c44e80 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8723x.c
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8723x.c
-@@ -353,7 +353,6 @@ static int __rtw8723x_read_efuse(struct rtw_dev *rtwdev, u8 *log_map)
- 
- static int __rtw8723x_mac_init(struct rtw_dev *rtwdev)
- {
--	rtw_write8(rtwdev, REG_FWHW_TXQ_CTRL + 1, WLAN_TXQ_RPT_EN);
- 	rtw_write32(rtwdev, REG_TCR, BIT_TCR_CFG);
- 
- 	rtw_write16(rtwdev, REG_RXFLTMAP0, WLAN_RX_FILTER0);
-@@ -370,6 +369,13 @@ static int __rtw8723x_mac_init(struct rtw_dev *rtwdev)
- 	return 0;
- }
- 
-+static int __rtw8723x_mac_postinit(struct rtw_dev *rtwdev)
-+{
-+	rtw_write8(rtwdev, REG_FWHW_TXQ_CTRL + 1, WLAN_TXQ_RPT_EN);
-+
-+	return 0;
-+}
-+
- static void __rtw8723x_cfg_ldo25(struct rtw_dev *rtwdev, bool enable)
- {
- 	u8 ldo_pwr;
-@@ -760,6 +766,7 @@ const struct rtw8723x_common rtw8723x_common = {
- 	.lck = __rtw8723x_lck,
- 	.read_efuse = __rtw8723x_read_efuse,
- 	.mac_init = __rtw8723x_mac_init,
-+	.mac_postinit = __rtw8723x_mac_postinit,
- 	.cfg_ldo25 = __rtw8723x_cfg_ldo25,
- 	.set_tx_power_index = __rtw8723x_set_tx_power_index,
- 	.efuse_grant = __rtw8723x_efuse_grant,
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8723x.h b/drivers/net/wireless/realtek/rtw88/rtw8723x.h
-index a99af527c92cf..0fc70dfdfc8b2 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8723x.h
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8723x.h
-@@ -137,6 +137,7 @@ struct rtw8723x_common {
- 	void (*lck)(struct rtw_dev *rtwdev);
- 	int (*read_efuse)(struct rtw_dev *rtwdev, u8 *log_map);
- 	int (*mac_init)(struct rtw_dev *rtwdev);
-+	int (*mac_postinit)(struct rtw_dev *rtwdev);
- 	void (*cfg_ldo25)(struct rtw_dev *rtwdev, bool enable);
- 	void (*set_tx_power_index)(struct rtw_dev *rtwdev);
- 	void (*efuse_grant)(struct rtw_dev *rtwdev, bool on);
-@@ -383,6 +384,11 @@ static inline int rtw8723x_mac_init(struct rtw_dev *rtwdev)
- 	return rtw8723x_common.mac_init(rtwdev);
- }
- 
-+static inline int rtw8723x_mac_postinit(struct rtw_dev *rtwdev)
-+{
-+	return rtw8723x_common.mac_postinit(rtwdev);
-+}
-+
- static inline void rtw8723x_cfg_ldo25(struct rtw_dev *rtwdev, bool enable)
- {
- 	rtw8723x_common.cfg_ldo25(rtwdev, enable);
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8812a.c b/drivers/net/wireless/realtek/rtw88/rtw8812a.c
-index 03b441639611f..2078eb6e36280 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8812a.c
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8812a.c
-@@ -919,6 +919,7 @@ static const struct rtw_chip_ops rtw8812a_ops = {
- 	.query_phy_status	= rtw8812a_query_phy_status,
- 	.set_channel		= rtw88xxa_set_channel,
- 	.mac_init		= NULL,
-+	.mac_postinit		= NULL,
- 	.read_rf		= rtw88xxa_phy_read_rf,
- 	.write_rf		= rtw_phy_write_rf_reg_sipi,
- 	.set_antenna		= NULL,
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8814a.c b/drivers/net/wireless/realtek/rtw88/rtw8814a.c
-index 4a1f850d05c87..ca1079e120235 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8814a.c
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8814a.c
-@@ -2055,6 +2055,7 @@ static const struct rtw_chip_ops rtw8814a_ops = {
- 	.query_phy_status	= rtw8814a_query_phy_status,
- 	.set_channel		= rtw8814a_set_channel,
- 	.mac_init		= rtw8814a_mac_init,
-+	.mac_postinit		= NULL,
- 	.read_rf		= rtw_phy_read_rf,
- 	.write_rf		= rtw_phy_write_rf_reg_sipi,
- 	.set_tx_power_index	= rtw8814a_set_tx_power_index,
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8821a.c b/drivers/net/wireless/realtek/rtw88/rtw8821a.c
-index 1d02ea400b2e6..414b77eef07c6 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8821a.c
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8821a.c
-@@ -865,6 +865,7 @@ static const struct rtw_chip_ops rtw8821a_ops = {
- 	.query_phy_status	= rtw8821a_query_phy_status,
- 	.set_channel		= rtw88xxa_set_channel,
- 	.mac_init		= NULL,
-+	.mac_postinit		= NULL,
- 	.read_rf		= rtw88xxa_phy_read_rf,
- 	.write_rf		= rtw_phy_write_rf_reg_sipi,
- 	.set_antenna		= NULL,
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8821c.c b/drivers/net/wireless/realtek/rtw88/rtw8821c.c
-index a2a358d6033f6..2078b067562e7 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8821c.c
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8821c.c
-@@ -1663,6 +1663,7 @@ static const struct rtw_chip_ops rtw8821c_ops = {
- 	.query_phy_status	= query_phy_status,
- 	.set_channel		= rtw8821c_set_channel,
- 	.mac_init		= rtw8821c_mac_init,
-+	.mac_postinit		= NULL,
- 	.read_rf		= rtw_phy_read_rf,
- 	.write_rf		= rtw_phy_write_rf_reg_sipi,
- 	.set_antenna		= NULL,
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8822b.c b/drivers/net/wireless/realtek/rtw88/rtw8822b.c
-index bb5c41905afe1..89b6485b229a8 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8822b.c
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8822b.c
-@@ -2154,6 +2154,7 @@ static const struct rtw_chip_ops rtw8822b_ops = {
- 	.query_phy_status	= query_phy_status,
- 	.set_channel		= rtw8822b_set_channel,
- 	.mac_init		= rtw8822b_mac_init,
-+	.mac_postinit		= NULL,
- 	.read_rf		= rtw_phy_read_rf,
- 	.write_rf		= rtw_phy_write_rf_reg_sipi,
- 	.set_tx_power_index	= rtw8822b_set_tx_power_index,
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8822c.c b/drivers/net/wireless/realtek/rtw88/rtw8822c.c
-index 58c1958e6170d..28c121cf1e683 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8822c.c
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8822c.c
-@@ -4964,6 +4964,7 @@ static const struct rtw_chip_ops rtw8822c_ops = {
- 	.query_phy_status	= query_phy_status,
- 	.set_channel		= rtw8822c_set_channel,
- 	.mac_init		= rtw8822c_mac_init,
-+	.mac_postinit		= NULL,
- 	.dump_fw_crash		= rtw8822c_dump_fw_crash,
- 	.read_rf		= rtw_phy_read_rf,
- 	.write_rf		= rtw_phy_write_rf_reg_mix,
--- 
-2.47.2
-
+Thanks.
 
