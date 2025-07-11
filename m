@@ -1,156 +1,87 @@
-Return-Path: <linux-kernel+bounces-726863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A72B01226
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:28:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87490B01222
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74AF8562183
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:28:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D94A5439F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 04:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84791A5BA4;
-	Fri, 11 Jul 2025 04:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EM9K4lNx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BE91865EB;
-	Fri, 11 Jul 2025 04:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752208099; cv=none; b=jcw5MU9AjlKIAoGXyqz4VnOGM66evX6xD1u8fBjf2idG5xkM6ppB95Y9Lz92b+MQesXRnSAVrFQGXAc3OquMDhTG+8RXkiufLIMZG9v1VT+cW9EkED8KnHQXOdt3qCY2t2dqXlm+CN2RD2iBWo9/h/krRFkcX21DKVvKjqR0yVA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752208099; c=relaxed/simple;
-	bh=0C/vTM5o8IziGLnZ32LREb0cwoermYkw/D2NJ31Q1Kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gPJE4nzPNS4wXeMpVFjgNGxahsrPzCQpYQisfdDZmMz+pedMRKIth4PXDo0XKylTCMgGoHa2H/RGU5eJMx4av5DRlN14UR2eQvIeeDkJIywx4EpIg24P0+3LF3wFrEMwzCfSJuGanbi3UGs2Mu8mzqY+hNQaTL4fRXMwN8a0qjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EM9K4lNx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F05D6C4CEF0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB141A08A3;
 	Fri, 11 Jul 2025 04:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752208096;
-	bh=0C/vTM5o8IziGLnZ32LREb0cwoermYkw/D2NJ31Q1Kw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EM9K4lNx63NPSpJcWku7gT+TNpc/STC2mPEwXLxkY6CNZFu3oHUeQpQJTPJ7yh/BG
-	 vVfKwUW1YnCt9l2SWBhwIDcq+fOWLtf/jz4y6wBiYzK84HKnNGG5tZbLMQZsNM+0d4
-	 +CC4CQnXB2QZK6cvSWydVEhZVdXu1X3ZAcxvZO9UKHOhNPtyvjfgfQv7JMO1PSXsH5
-	 RpPiUuRMM898YgxNMagM1cykHlL+9D64GaMlIpKxmst2VCpRURptimLoFJQDj7L+I8
-	 3HuxEKFFuqgwiynVx34jdQCS+x6kY/OUwMnhPreAFRpj6BjIbIacn0k+eputxVO9cW
-	 OwmD1qzHwTpRw==
-Date: Fri, 11 Jul 2025 09:58:05 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev, linux-wireless@vger.kernel.org, 
-	ath11k@lists.infradead.org, qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, 
-	quic_vpernami@quicinc.com, quic_mrana@quicinc.com, 
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Subject: Re: [PATCH v4 06/11] PCI/ASPM: Clear aspm_disable as part of
- __pci_enable_link_state()
-Message-ID: <irnkdlrmlozp7joydgnawfuivl2nnuxsb2t4osgxzbtyrfzd3n@7dhzjcd42aiw>
-References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
- <20250609-mhi_bw_up-v4-6-3faa8fe92b05@qti.qualcomm.com>
- <qo6mb3qlt3xpuvhepwcv6be4wd53neee2t6buzk4tdiy22xsub@vu7lykp3rnu2>
- <226bab3a-54e5-94ad-9d84-0b82f9dc4e2f@linux.intel.com>
- <2a18cf9e-1dd2-4e09-81f4-eb1d07324c8e@oss.qualcomm.com>
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBDBA933
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 04:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752208089; cv=none; b=T8l8JAzqqij1l+BPZJFABSfs4w0gjpKW8bJVgaF4MvQoZUkAEuXhhUB7kc/71G7lCFVqLJa/kHsaxsqL+x/WtI0N6FAztdz/XjcmydduYGJf6FKqzNRKRZ3bBZ3PAa7R53AmgK4w3UBGg8C/OalmDuMg+fZzhkg6UleKOqWzsXE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752208089; c=relaxed/simple;
+	bh=NvY9guXs5P3gXmOPnwhKNlfQ883gWUSgS17jfFWKcUs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HN3jwzp6ZvPvqZnZaSlAC1vXp8yzWTnT5Wwb7Y/i+7esPU2eFyBl/riE2Po6TS3XkgKC1YRDPtR9j3ZzBqDSDgrAH0EtHXX3+xe8OHkDKq6IBt7W+mA6ko8Lew/e7EnbRGdDrw75nTcgUFJhOF/ErVwDYV3ynVA+7P+jo3fIvYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-86463467dddso180050839f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jul 2025 21:28:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752208087; x=1752812887;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iChg5Xiq8SYRy5eZqU1B/24VOR1KRhdHUM1AOqDBCpw=;
+        b=DnUTPZtT86ox/fTiTj+Lnu4NvoMsz0Y8/3Tb+HitygaYWwb1dALCSRJecYUkmqc/Uw
+         96r3ZXM4RmoZKRfvK3nYYiPD9EmY6PGEbMuU7IH6bGMJ5q915Vh6m4gg/P13XJCYUwm0
+         6YBN7Q3eOT0gUMEjJol55l37r8gOr9jGFs9LebjQ7OCsh0rk36A0R5ATLIfiredvt6M0
+         5T3Rz+vWctA8o8TbwGy9ZhkGUoFq+z0cLQshagd/5w3dGTjJi1dQh+EViAlSOQsgzw49
+         v+BMShpaYRHsIXgRDcKXcQwZuB/z88PHNQ7+uljHIreVbHl1vBPXxhr0NIWFYcicxGh5
+         r1ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiY9Qgdx9wPlkpspjsGLM9Ts71YivGys8GXH5lRV3bNqQWRAyh2DrbwUjLbcpoN3ESvteMwSXMinf9J1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjQgmglD/jIMlllS4AV+JydQToesAFLX6sFeBbGgM2yGppjzFP
+	RPBK9XRgf3otnTtTZGCUXl27KTcUDaVLB6UF27gLrbyIF9d+aviyVK/iG3XnJj+Sy1gvISgsmHs
+	iG7BDRJhRmD7tb+HS0Vw3SYsDkDifNPsNF4TSSEdGaH6P0frApiOAxdeRP40=
+X-Google-Smtp-Source: AGHT+IGJbWqC9rR+uQ8RFAllZqNmaexsvRqP4rKt0ZrvL6W1up4xxMQJzJ045/VuLdsP5QKTR/p4dBOT9j09iw7EURZMynFpqO5q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a18cf9e-1dd2-4e09-81f4-eb1d07324c8e@oss.qualcomm.com>
+X-Received: by 2002:a05:6602:3941:b0:86d:9ec7:267e with SMTP id
+ ca18e2360f4ac-879787e9615mr251332739f.4.1752208086928; Thu, 10 Jul 2025
+ 21:28:06 -0700 (PDT)
+Date: Thu, 10 Jul 2025 21:28:06 -0700
+In-Reply-To: <20250711040302.3352-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687092d6.a00a0220.26a83e.0036.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING: lock held when returning to user space in lock_next_vma
+From: syzbot <syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 09, 2025 at 06:01:22PM GMT, Krishna Chaitanya Chundru wrote:
-> 
-> 
-> On 7/9/2025 2:40 PM, Ilpo Järvinen wrote:
-> > On Tue, 8 Jul 2025, Manivannan Sadhasivam wrote:
-> > 
-> > > On Mon, Jun 09, 2025 at 04:21:27PM GMT, Krishna Chaitanya Chundru wrote:
-> > > > ASPM states are not being enabled back with pci_enable_link_state() when
-> > > > they are disabled by pci_disable_link_state(). This is because of the
-> > > > aspm_disable flag is not getting cleared in pci_enable_link_state(), this
-> > > > flag is being properly cleared when ASPM is controlled by sysfs.
-> > > > 
-> > > 
-> > > A comment in pcie_config_aspm_link() says:
-> > > 
-> > >   /* Enable only the states that were not explicitly disabled */
-> > > 
-> > > But the function is called from both aspm_attr_store_common() and
-> > > __pci_enable_link_state(). So I don't know if this is behavior is intentional
-> > > or wrong.
-> > 
-> > Hi,
-> > 
-> > I think it's intentional. Whether the behavior is useful is another good
-> > question but the current behavior aligns with the explanation in the
-> > comment.
-> > 
-> > My understanding of the situation is:
-> > 
-> > pci_disable_link_state() and pci_enable_link_state() are not symmetric
-> > despite the names, never have been (this is one of those many quirks ASPM
-> > driver has which should be eventually cleaned up, IMO).
-> > 
-> > It might be appropriate to rename pci_enable_link_state() to
-> > pci_set_default_link_state() to match the name to its functionality (and
-> > the function comment):
-> > 
-> >   * pci_enable_link_state - Clear and set the default device link state
-> > 
-> > Note: "the default ... link state".
-> > 
-> > 
-> > I've already raised this concern earlier! As you see, my comment are
-> > not getting addressed. I'd like to see the author does one of these:
-> > 
-> Hi llpo,
-> 
-> I replied to your comment on v3 patch[1], and I feel instead of having
-> new function() we can use same API to our purpose.
+Hello,
 
-You replied to Ilpo, but never got an agreement. Please try to close the
-discussions before posting next rev. If reviewers forgot to reply to your query,
-feel free to ping them in the same thread itself.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> > 1) Renames pci_enable_link_state() to pci_set_default_link_state()
-> > 
-> > 1b) If pci_enable_link_state() is still needed after that, a new function
-> > is added to symmetrically pair with pci_disable_link_state().
-> > 
-> > or alternatively,
-> > 
-> > 2) Changelog justifies very clearly why this change is okay with the
-> > existing callers. (And obviously the function comment should be altered to
-> > match the functionality in that case too).
-> > 
-> > If approach 2 is chosen, it should be very carefully reviewed when it
-> > comes to the callers.
-> > 
-> I am in favor of approach 2 which you suggested, but lets wait for other
-> reviewers feedback on this. Based up on the response i will make
-> necessary changes in v5.
-> 
+Reported-by: syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com
+Tested-by: syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com
 
-I would go for (1). It is always going to be a problem to change a legacy API
-like this. We might end up causing regressions. So it is safe to rename to
-reflect the purpose and try to come up with a new API that does what you want.
-If callers want to migrate to the new API, they can also do it in the future.
+Tested on:
 
-- Mani
+commit:         b551c4e2 Add linux-next specific files for 20250710
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1498ba8c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=90b2e63e925474ab
+dashboard link: https://syzkaller.appspot.com/bug?extid=80011ad33eec39e6ce42
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16ef868c580000
 
--- 
-மணிவண்ணன் சதாசிவம்
+Note: testing is done by a robot and is best-effort only.
 
