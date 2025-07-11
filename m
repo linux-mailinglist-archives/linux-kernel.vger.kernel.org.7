@@ -1,272 +1,227 @@
-Return-Path: <linux-kernel+bounces-726963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-726964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B30CB01371
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:22:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F6EB01373
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 08:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A72F176360
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:22:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5E847BC291
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 06:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E941D618C;
-	Fri, 11 Jul 2025 06:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7851D619F;
+	Fri, 11 Jul 2025 06:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SMUz1Llx"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NueQOndR"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2081.outbound.protection.outlook.com [40.107.243.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E3AA92E;
-	Fri, 11 Jul 2025 06:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752214948; cv=none; b=AHni6Uq3BAm1yXZQTyqRWjWMd+5aBaE94EgWNGYtOqqHoYT5p2xOdzczxo01pD6aXA/OyNX7nt0Hr7/Yb62Sbo2fkdcVM8MHKMRdXHK8nXPtGmnW2gwslfWhEw76p0BrT0m65Kmn/4Qf4KlkTM46hjkCuBAaTrNOzdIVzVxtFa8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752214948; c=relaxed/simple;
-	bh=Qr/tu/MUy3g8DLiF28kYywEjEyxEvrphkT23hCYbHUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3REDUQg7Ldx11ekR6Y+XQLYkmbC081jdVBqfavb3y0itLliXgOtrGc0zw5/SjDkpILnXcpGMBJGQZ+vFDsINQ3oWub5XYk4kICPZZv0xZXXbPZBj5SlVzyRLSctmkOO+wDkYs2hvjyC3Da7KGcsehyuE1Asx/MIoHJ95qCzd9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SMUz1Llx; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-137-205.net.vodafone.it [5.90.137.205])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6FC3D4A4;
-	Fri, 11 Jul 2025 08:21:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752214914;
-	bh=Qr/tu/MUy3g8DLiF28kYywEjEyxEvrphkT23hCYbHUk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SMUz1LlxMIRjHm8hbsOjl/OEPHATRkpGVPpWG6DZHnaBqZcy8nILFTxIUv2ygW8Qb
-	 y+2pyRikqZB/KzqG1IrHgZk8c0tAN0RUjFiU+HjDnQGnhQ6V/t9dYc1aHmdb4B23JO
-	 oQIwNR8kxyzZzIXfSgSuCv4vKUGTE8fGvR9aZvJ8=
-Date: Fri, 11 Jul 2025 08:22:18 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Dan Scally <dan.scally@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Dafna Hirschfeld <dafna@fastmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/8] media: uapi: Introduce V4L2 extensible params
-Message-ID: <z3zfobgsw4jltsescfvrlgpjg5skagrdiehhsdjsl6qjnyhye3@wpnhbt5vesnt>
-References: <20250710-extensible-parameters-validation-v2-0-7ec8918ec443@ideasonboard.com>
- <20250710-extensible-parameters-validation-v2-1-7ec8918ec443@ideasonboard.com>
- <8fee18e6-9955-4b51-8b6b-e70029ec47eb@ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDCEA92E;
+	Fri, 11 Jul 2025 06:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752214983; cv=fail; b=ijaLhzyFOt7lOiMsGqTUH3QAn8/rtBGPKtBZV2Z23i/k6p6ON3mvffVnhz32sNdSiVUzYiu0ssvrKYgWUkNdHWkXXIDTkCohiPV7DB9DguJQCtTA/Ytzw3CakIBJjIB4gwWu6vEKZo2EIKPvqtg5HZPpHz0xxPHZ/HLpwGRkkKA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752214983; c=relaxed/simple;
+	bh=40xntxtsxbUf9PvQx1VLCo/Nkeg/ZdGbL1srP3eD/jg=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=W2ocMJO+Z8nE+/+/iomK9k/SrEZOMzRySM4UGe9D1vVO+FD3M1REFBsrDryKDz5aZ3ioh9yt1Vuvp43gqXB0LDWqrJTteN4PZR5pHsHnmt5ukwqszV1geDStSGvGNXiiBQ8SY8Yre5eDgQO0WZd9CvkJEp2okIZNOrZpBhtN8q0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NueQOndR; arc=fail smtp.client-ip=40.107.243.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ph/leo4PQ6w0fTzB1P6uc7pCiH8r/QZXuZQ6mV99giO/5dJPGsxHDUjYZejIBpl6YHqLlA+Gch4JvZRoVlDMbujEXTAAF/cYAUpb1GCE6z92vJxsg8TERZ0GVrHb6DFEGzUBt+TeBKkJu1BasZDjChMs6akSnCVJS39F+0j7TRb2QDBlLyTTQOou25SCZppxVFQIwvGJIJFtVm6ukB76HetCPIZUH7Dm00ywGsB6C5NAP610Lh9mbTmeQdPplzG73AZFZSoQcEutUBcImynV+6qCzlBR2sXvmXo3UeX6RaSbYQPb4Gi57LFGnbVgbHa1QUu02CzButu1U9qvfF+7zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I/RB7N1dVJxitvD9vGFlQ+NHYVpAN7gw0PpdY1WF27o=;
+ b=NIENhWCiNoJFBQDQIohXeDQFdVHOGlhn0uHmeZX/Rg2V82tboDSX/7J8qytXNaG6GlBEcPVG2ItSG9vaqozcbOw7HNxg6/xVJxT4vb6lZIRtxKmQTuxO8xhZh86p/dFk6hDVxnE/ANGF4DYGuumaEX66fJq0DHbK7ksAMNE2QEAVXloReJ886YJdGLIxGbyNSmW5FO9j32Qy3iM2HGlonNu4PL7D7tbBV9zouxThsLqz8Ob3MMiAWBXJgem3F1LuQAGHA3S22QnDe2Jur7/jfW+wOg++iFtXMkZ6Rj0E3b0Tc8bP6a9j0XJi3QEZOb5zL1X6y4pxOrZSOFrMZ/d2gQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I/RB7N1dVJxitvD9vGFlQ+NHYVpAN7gw0PpdY1WF27o=;
+ b=NueQOndR7GyU9Br9vqlNALBrLJQbQOOkSj8SlDW+gpxgZYNODNdO0VoFwuOUQUaHFQwtMh8Rzew/c1UydgT8RRc9bvHPs6TR4npA5/rtwSFiUEjP082PIG2YtLM8elZjexP/Aa3Ej6b7QHKxHA9/7MTc8Tgm98m/OehCwYf8XmE=
+Received: from MW4PR04CA0348.namprd04.prod.outlook.com (2603:10b6:303:8a::23)
+ by LV9PR12MB9830.namprd12.prod.outlook.com (2603:10b6:408:2ec::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.25; Fri, 11 Jul
+ 2025 06:22:57 +0000
+Received: from SJ1PEPF00001CDE.namprd05.prod.outlook.com
+ (2603:10b6:303:8a:cafe::9e) by MW4PR04CA0348.outlook.office365.com
+ (2603:10b6:303:8a::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.23 via Frontend Transport; Fri,
+ 11 Jul 2025 06:22:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00001CDE.mail.protection.outlook.com (10.167.242.6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.22 via Frontend Transport; Fri, 11 Jul 2025 06:22:56 +0000
+Received: from BLR-L1-NDADHANI (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Jul
+ 2025 01:22:52 -0500
+From: Nikunj A Dadhania <nikunj@amd.com>
+To: "Huang, Kai" <kai.huang@intel.com>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>
+CC: "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "Li, Xiaoyao" <xiaoyao.li@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Edgecombe,
+ Rick P" <rick.p.edgecombe@intel.com>, "bp@alien8.de" <bp@alien8.de>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>
+Subject: Re: [PATCH 1/2] KVM: x86: Reject KVM_SET_TSC_KHZ vCPU ioctl for TSC
+ protected guest
+In-Reply-To: <9b2e872b1948df129e5f893c2fbd9b11d0920696.camel@intel.com>
+References: <cover.1752038725.git.kai.huang@intel.com>
+ <8aebb276ab413f2e4a6512286bd8b6def3596dfe.1752038725.git.kai.huang@intel.com>
+ <e3da1c7e-fa47-415f-99bf-f372057f0a75@amd.com>
+ <9b2e872b1948df129e5f893c2fbd9b11d0920696.camel@intel.com>
+Date: Fri, 11 Jul 2025 06:22:44 +0000
+Message-ID: <85ms9btfez.fsf@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8fee18e6-9955-4b51-8b6b-e70029ec47eb@ideasonboard.com>
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDE:EE_|LV9PR12MB9830:EE_
+X-MS-Office365-Filtering-Correlation-Id: 74317033-1bc3-4828-fd88-08ddc043604b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VYFfP575HFs7NY4qaT0YWdt3CCR/wqWpJNge+JsSqV1dBstxpWee1wGKO/98?=
+ =?us-ascii?Q?UZZau8klhY+AovjmvuWx3QKW/kOgxeLfHny3Hu2sLVgIHJIBzNi2FtQ0nT8O?=
+ =?us-ascii?Q?YUZD2OnNLjz92UgZo1LorBuyIHD7i05NhWFVOE4UGqoIEi1Y1Od4LjuslA95?=
+ =?us-ascii?Q?w54S6m9Ftk04wUgKzlr0g0efR/e1M+xctCd/6YmUZuos4AXYY19vnjoe7y+G?=
+ =?us-ascii?Q?H17qik/b76g1uUgzurgdU7Yz/AFWjqWDzn/q9sfYBIdQFmuoakUsX+fHg+rE?=
+ =?us-ascii?Q?o3H+uezqQldre6GVoGZ03qjs3PF83+JBfHKoAHcZ4sEkQYcfn8nYUfI5HhBO?=
+ =?us-ascii?Q?es+eAM6YYaY/9uohfxFCEzVyV19uaXe7bQWHWUkTAU/kR8AgAr+bL8i4xR36?=
+ =?us-ascii?Q?iLJcu48e+uKPgn1nNNI4o+qNzb8OtKHYZf6kdKZ/VpdWHHmxzmhigoinuNJz?=
+ =?us-ascii?Q?OvOA3zGpgjTb7QVZCLxW+wBBh0v4XO00pTCdYfIY1UEPOEvOUw0qaJqdMso5?=
+ =?us-ascii?Q?/4GJuLVuFnjsEaDeEB/C+tyq7CQoXro5Hk1Zby4Af8RxwLS1bGAxiVqcrqwy?=
+ =?us-ascii?Q?xgVyHBHw38LJe84gLQGFB5eSITtLPrT8OuFzkPFcmEEid54Q26Y+8YUP4DNs?=
+ =?us-ascii?Q?2tTvucdklAdOIGzYXWv1HD80J1AAZMotjZ6HC/nU/1KE2OIUp6yyOnFJx6av?=
+ =?us-ascii?Q?5/EozqPnIEFmnXRDwoe2BvTE7UYlBtw7FrPJDn2tQWRwFDtbaYlU7yl5FczR?=
+ =?us-ascii?Q?94/QDhtsHvHJdad0AReFU+gh+gWmf8Hf/rCwJ9v70l8q+TKq2rAJkdgisbai?=
+ =?us-ascii?Q?Sd7dsGOcuMaHg6iY4TWcfWa5OFthZqtlJ/UK+DLkxduMZpLDgasq7YYMtvN2?=
+ =?us-ascii?Q?2X0hfve7+GgFmcJ6Ry8zx/HOqPmhyddgWpTsu823kV55av/IxjXgdYqp96v/?=
+ =?us-ascii?Q?KXGA+Jw+9R+ybaBwxp02wfSRZhrcAsqrF4X8VuFGb0pZmguJSKYBbEN/7Bwg?=
+ =?us-ascii?Q?8gjAB8LSECItGaQUODJKJKzfVfnWc4QZQH6NcFdrd35HJFksnWQWrQTtp5g+?=
+ =?us-ascii?Q?5GHgK7OmPkfjBX6alYBlPP17Hdjb/AueFzlSb8V+DcDjBRa77nB7pdEWjZpe?=
+ =?us-ascii?Q?K8gaUU6RQ57VSCaRirMWQ5jGfH2nHKWjattlMxLqGUiwCnkmy59fQhH/clSt?=
+ =?us-ascii?Q?rx8GzbKA0vSRpWz/E8puBQK6DqJWuuOutwtiUJbodOHCGkG8GvHuRd/SunhN?=
+ =?us-ascii?Q?9hsbNdHHPmqDCukiflnB3HFA6ZBd9Ovule0Tf3CZbkXzPY80kHgRpHG8nAkE?=
+ =?us-ascii?Q?bdVSMwo4UakXZuWwRPynSD0UwuXmfdLdJaOBzRt3X7lf7c/Jkx1OSoPZHbxn?=
+ =?us-ascii?Q?bw3gQt4OCbnc4eRD7axpt9MSpKIScyu8DPPcTBbHxql2kFwR2oM3BkG3xtJB?=
+ =?us-ascii?Q?IX/Bjudt8abIax2vlUUvxvRGKCAhAP49SjiOdKXMb44P9ZXAazfo0vJp9nr9?=
+ =?us-ascii?Q?Tcm5tvSBQf/geLJDnHP/Mp+d2njZCdMRhALU?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 06:22:56.6078
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74317033-1bc3-4828-fd88-08ddc043604b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CDE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV9PR12MB9830
 
-Hi Dan
+"Huang, Kai" <kai.huang@intel.com> writes:
 
-On Thu, Jul 10, 2025 at 03:49:30PM +0100, Dan Scally wrote:
-> Hi Jacopo
+> On Wed, 2025-07-09 at 14:09 +0530, Nikunj A. Dadhania wrote:
+>> 
+>> On 7/9/2025 11:07 AM, Kai Huang wrote:
+>> > Reject KVM_SET_TSC_KHZ vCPU ioctl if guest's TSC is protected and not
+>> > changeable by KVM.
+>> > 
+>> > For such TSC protected guests, e.g. TDX guests, typically the TSC is
+>> > configured once at VM level before any vCPU are created and remains
+>> > unchanged during VM's lifetime.  KVM provides the KVM_SET_TSC_KHZ VM
+>> > scope ioctl to allow the userspace VMM to configure the TSC of such VM.
+>> > After that the userspace VMM is not supposed to call the KVM_SET_TSC_KHZ
+>> > vCPU scope ioctl anymore when creating the vCPU.
+>> > 
+>> > The de facto userspace VMM Qemu does this for TDX guests.  The upcoming
+>> > SEV-SNP guests with Secure TSC should follow.
+>> > 
+>> > Note this could be a break of ABI.  But for now only TDX guests are TSC
+>> > protected and only Qemu supports TDX, thus in practice this should not
+>> > break any existing userspace.
+>> > 
+>> > Suggested-by: Sean Christopherson <seanjc@google.com>
+>> > Signed-off-by: Kai Huang <kai.huang@intel.com>
+>> 
+>> Need to add this in Documentation/virt/kvm/api.rst as well, saying that
+>> for TDX and SecureTSC enabled SNP guests, KVM_SET_TSC_KHZ vCPU ioctl is
+>> not valid.
+>> 
+>> 
 >
-> On 10/07/2025 14:52, Jacopo Mondi wrote:
-> > Introduce v4l2-extensible-params.h in the Linux kernel uAPI.
-> >
-> > The header defines two types that all drivers that use the extensible
-> > parameters format for ISP configuration shall use to build their own
-> > format versions.
-> >
-> > The newly introduce type v4l2_params_block represent the
-> > header to be prepend to each ISP configuration block and the
-> > v4l2_params_buffer type represent the base type for the configuration
-> > parameters buffer.
-> >
-> > The v4l2_params_buffer represents the container for the ISP
-> > configuration data block. The generic type is defined with a 0-sized
-> > data block that specific ISP implementation shall properly size
-> > according to their capabilities.
-> >
-> > [Add v4l2_params_buffer_size()]
-> > Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
-> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > ---
-> >   MAINTAINERS                                       |   6 +
-> >   include/uapi/linux/media/v4l2-extensible-params.h | 144 ++++++++++++++++++++++
-> >   2 files changed, 150 insertions(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 658543062bba3b7e600699d7271ffc89250ba7e5..49a9329e5fe8874bdbaca13946ea28bd80134cb3 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -25968,6 +25968,12 @@ F:	drivers/media/i2c/vd55g1.c
-> >   F:	drivers/media/i2c/vd56g3.c
-> >   F:	drivers/media/i2c/vgxy61.c
-> > +V4L2 EXTENSIBLE PARAMETERS FORMAT
-> > +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > +L:	linux-media@vger.kernel.org
-> > +S:	Maintained
-> > +F:	include/uapi/linux/media/v4l2-extensible-params.h
-> > +
-> >   VF610 NAND DRIVER
-> >   M:	Stefan Agner <stefan@agner.ch>
-> >   L:	linux-mtd@lists.infradead.org
-> > diff --git a/include/uapi/linux/media/v4l2-extensible-params.h b/include/uapi/linux/media/v4l2-extensible-params.h
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..ace89299a4b37e428c0bc9a72fbc079b1dcda91a
-> > --- /dev/null
-> > +++ b/include/uapi/linux/media/v4l2-extensible-params.h
-> > @@ -0,0 +1,144 @@
-> > +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR MIT) */
-> > +/*
-> > + * Video4Linux2 extensible configuration parameters base types
-> > + *
-> > + * Copyright (C) 2025 Ideas On Board Oy
-> > + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > + */
-> > +
-> > +#ifndef _UAPI_V4L2_PARAMS_H_
-> > +#define _UAPI_V4L2_PARAMS_H_
-> > +
-> > +#include <linux/types.h>
-> > +
-> > +#define V4L2_PARAMS_FL_BLOCK_DISABLE	(1U << 0)
-> > +#define V4L2_PARAMS_FL_BLOCK_ENABLE	(1U << 1)
+> Good point.  Thanks for bringing it up.
 >
+> I will add below to the doc unless someone has comments?
 >
-> Actually I wonder if a "V4L2_PARAMS_BLOCK_FL_NONE    0" is worthwhile to clear them explicitly?
+> I'll probably split the doc diff into two parts and merge each to the
+> respective code change patch, since the change to the doc contains change
+> to both vm ioctl and vcpu ioctl.
 >
+> Btw, I think I'll not mention Secure TSC enabled SEV-SNP guests for now
+> because it is not in upstream yet.  But I tried to make the text in a way
+> that could be easily extended to cover Secure TSC guests.
 
-Personally I wouldn't but if that's desired I can add it!
+Sure, I can add that later.
 
-> > +
-> > +/*
-> > + * Reserve the first 8 bits for V4L2_PARAMS_FL_* flag. Platform-specific flags
-> > + * should be defined as:
-> > + * #define PLATFORM_SPECIFIC_FLAG0	((1U << V4L2_PARAMS_FL_PLATFORM_FLAGS(0))
-> > + * #define PLATFORM_SPECIFIC_FLAG1	((1U << V4L2_PARAMS_FL_PLATFORM_FLAGS(1))
-> > + */
-> > +#define V4L2_PARAMS_FL_PLATFORM_FLAGS(n)	((n) << 8)
-> > +
-> > +/**
-> > + * struct v4l2_params_block_header - V4L2 extensible parameters block header
-> > + *
-> > + * This structure represents the common part of all the ISP configuration
-> > + * blocks. Each parameters block shall embed an instance of this structure type
-> > + * as its first member, followed by the block-specific configuration data. The
-> > + * driver inspects this common header to discern the block type and its size and
-> > + * properly handle the block content by casting it to the correct block-specific
-> > + * type.
-> > + *
-> > + * The @type field is one of the values enumerated by each platform-specific ISP
-> > + * block types which specifies how the data should be interpreted by the driver.
-> > + * The @size field specifies the size of the parameters block and is used by the
-> > + * driver for validation purposes.
-> > + *
-> > + * The @flags field is a bitmask of per-block flags V4L2_PARAMS_FL_* and
-> > + * platform-specific flags specified by the platform-specific header.
-> > + *
-> > + * Documentation of the platform-specific flags handling is specified by the
-> > + * platform-specific block header type:
-> > + *
-> > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_block_type`
-> > + * - Amlogic C3: :c:type:`c3_isp_params_block_type`
-> > + *
-> > + * Userspace is responsible for correctly populating the parameters block header
-> > + * fields (@type, @flags and @size) and the block-specific parameters.
-> > + *
-> > + * @type: The parameters block type (platform-specific)
-> > + * @flags: A bitmask of block flags (platform-specific)
-> > + * @size: Size (in bytes) of the parameters block, including this header
-> > + */
-> > +struct v4l2_params_block_header {
-> > +	__u16 type;
-> > +	__u16 flags;
-> > +	__u32 size;
-> > +} __attribute__((aligned(8)));
-> > +
-> > +/**
-> > + * v4l2_params_buffer_size - Calculate size of v4l2_params_buffer for a platform
-> > + *
-> > + * Users of the v4l2 extensible parameters will have differing sized data arrays
-> > + * depending on their specific parameter buffers. Drivers and userspace will
-> > + * need to be able to calculate the appropriate size of the struct to
-> > + * accommodate all ISP configuration blocks provided by the platform.
-> > + * This macro provides a convenient tool for the calculation.
-> > + *
-> > + * Each driver shall provide a definition of their extensible parameters
-> > + * implementation data buffer size. As an example:
-> > + *
-> > + * #define PLATFORM_BLOCKS_MAX_SIZE		\
-> > + *	sizeof(platform_block_0)	+	\
-> > + *	sizeof(platform_block_1)
-> > + *
-> > + * #define PLATFORM_BUFFER_SIZE			\
-> > + *	v4l2_params_buffer_size(PLATFORM_BLOCKS_MAX_SIZE)
-> > + *
-> > + * Drivers are then responsible for allocating buffers of the proper size
-> > + * by assigning PLATFORM_BUFFER_SIZE to the per-plane size of the videobuf2
-> > + * .queue_setup() operation and userspace shall use PLATFORM_BUFFER_SIZE
-> > + * when populating the ISP configuration data buffer.
-> > + *
-> > + * @max_params_size: The total size of the ISP configuration blocks
-> > + */
-> > +#define v4l2_params_buffer_size(max_params_size) \
-> > +	(offsetof(struct v4l2_params_buffer, data) + (max_params_size))
-> > +
-> > +/**
-> > + * struct v4l2_params_buffer - V4L2 extensible parameters configuration
-> > + *
-> > + * This struct contains the configuration parameters of the ISP algorithms,
-> > + * serialized by userspace into a data buffer. Each configuration parameter
-> > + * block is represented by a block-specific structure which contains a
-> > + * :c:type:`v4l2_params_block_header` entry as first member. Userspace populates
-> > + * the @data buffer with configuration parameters for the blocks that it intends
-> > + * to configure. As a consequence, the data buffer effective size changes
-> > + * according to the number of ISP blocks that userspace intends to configure and
-> > + * is set by userspace in the @data_size field.
-> > + *
-> > + * The parameters buffer is versioned by the @version field to allow modifying
-> > + * and extending its definition. Userspace shall populate the @version field to
-> > + * inform the driver about the version it intends to use. The driver will parse
-> > + * and handle the @data buffer according to the data layout specific to the
-> > + * indicated version and return an error if the desired version is not
-> > + * supported.
-> > + *
-> > + * For each ISP block that userspace wants to configure, a block-specific
-> > + * structure is appended to the @data buffer, one after the other without gaps
-> > + * in between nor overlaps. Userspace shall populate the @data_size field with
-> > + * the effective size, in bytes, of the @data buffer.
-> > + *
-> > + * Drivers shall take care of properly sizing of the extensible parameters
-> > + * buffer @data array. The v4l2_params_buffer type is defined with a
-> > + * flexible-array-member at the end, which resolves to a size of 0 bytes when
-> > + * inspected with sizeof(struct v4l2_params_buffer). This of course is not
-> > + * suitable for neither buffer allocation in the kernel driver nor for proper
-> > + * handling in userspace of the @data buffer it has to populate.
-> > + *
-> > + * Drivers using this type in their userspace API definition are responsible
-> > + * for providing the exact definition of the @data buffer size using the
-> > + * v4l2_params_buffer_size() macro. The size shall be used
-> > + * by the driver for buffers allocation and by userspace for populating the
-> > + * @data buffer before queueing it to the driver
-> > + *
-> > + * Drivers that were already using extensible-parameters before the introduction
-> > + * of this file define their own type-convertible implementation of this
-> > + * type, see:
-> > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_cfg`
-> > + * - Amlogic C3: :c:type:`c3_isp_params_cfg`
-> > + *
-> > + * @version: The parameters buffer version (platform-specific)
-> > + * @data_size: The configuration data effective size, excluding this header
-> > + * @data: The configuration data
-> > + */
-> > +struct v4l2_params_buffer {
-> > +	__u32 version;
-> > +	__u32 data_size;
-> > +	__u8 data[];
-> > +};
-> > +
-> > +#endif /* _UAPI_V4L2_PARAMS_H_ */
-> >
+>
+> diff --git a/Documentation/virt/kvm/api.rst
+> b/Documentation/virt/kvm/api.rst
+> index 43ed57e048a8..ad61bcba3791 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -2006,7 +2006,13 @@ frequency is KHz.
+>  
+>  If the KVM_CAP_VM_TSC_CONTROL capability is advertised, this can also
+>  be used as a vm ioctl to set the initial tsc frequency of subsequently
+> -created vCPUs.
+> +created vCPUs.  It must be called before any vCPU is created.
+
+s/It/The VM Scope ioctl/
+
+> +
+> +For TSC protected CoCo VMs where TSC is configured once at VM scope
+> and
+
+s/CoCo/Confidential Computing (CoCo)/
+s/TSC is/TSC frequency is/
+
+> +remains unchanged during VM's lifetime, the VM ioctl should be used to
+> +configure the TSC and the vCPU ioctl fails.
+
+s/TSC/TSC frequency/
+
+s/vcpu ioctl fails/vcpu ioctl is not supported/
+
+> +
+> +
+> +Example of such CoCo VMs: TDX guests.
+
+Regards
+Nikunj
 
