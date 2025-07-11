@@ -1,179 +1,203 @@
-Return-Path: <linux-kernel+bounces-727420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-727421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490D5B019F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:50:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B091CB019F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 12:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A42D46485F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:50:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6F087A89DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 10:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CCD288524;
-	Fri, 11 Jul 2025 10:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5505A2877E8;
+	Fri, 11 Jul 2025 10:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/2w+G9J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hm9b+2nT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0252853F7;
-	Fri, 11 Jul 2025 10:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9475A2853F7
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 10:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752231040; cv=none; b=TYR23rmXpa98w3DH6U6JEVzpIY8eYIwr+oqphkgzIB+JDBdXIS+CuN4Xbf6i6dwezSi54K8DSo4EA+7nqm8zwurZ85JJL3mdqa0/DoQlX7Z+dfN/CfHRpIjWUq+PatTu/YbtqyU26doYPJ/a5x43K8D7Z85/U/mtE77Khmjyi+A=
+	t=1752231046; cv=none; b=R9Zk6bk5q2wZz9DutORSJJM+kqj/3u/aKubGFMhuJ9toM0H9kMyv9Udv7JDuTtkvct9/RSEsz/4uxIZtWf55xrFMsljLeBJRRaYvPnIvPm/MLHkcUM68zYFn2PEnNuHiKITIpCBlXGv4Ww6diHcuN4jVzHp9CgpzdpYu5iq5EFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752231040; c=relaxed/simple;
-	bh=dD8GS8ul7phy4LdinMkrKS1K1DjQK6F/gbzcXGnRx0w=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A8SJy0Gd488u67v0igxIXZ51khUd6aV+Ug+0IeVeU/Sk0beiXC2y6fEYNURvYlME6WCENSexhhtnUVl4F5cj3GR+lD4B18LEejRl0XedPUjDY9ixT4XwJWoBajCYym6/gdSkQdRwVASTLJHIa9pYUfQfz4zNgiMiWidclPUBIE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/2w+G9J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFC15C4CEF5;
-	Fri, 11 Jul 2025 10:50:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752231039;
-	bh=dD8GS8ul7phy4LdinMkrKS1K1DjQK6F/gbzcXGnRx0w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=W/2w+G9JMQnc4kkJpJyoCK5jU06t5x1vF8oxlB86Hcyo4bRcllrdGg6GVAn+NQH9w
-	 uqATVRfXV1ELh91RJTJk3cwGqu/iAHX8OAL7HN2Evn+/sCoedgolL4qskzt7m15hXq
-	 N7qd3U7s4Cm2Q5FoxHtgN9AljbZN5JS4NAcoO4/brkevISzLNGo/fRamN0CbI+B0NE
-	 lUI8wRqFHwk0j33Rm1xaiPLdTrhtEdhpjKYipJHawkZb6hBl3nvHRdNmDM5M5vPaGQ
-	 wdpk90I7QOxycAVjOdhT4DCNPUM2Gz5bRiorA1VEQNG/d0MlgxubK5RcZ7NOMpDW6j
-	 Cyzx46LzrNURg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uaBKv-00EqV9-Qe;
-	Fri, 11 Jul 2025 11:50:38 +0100
-Date: Fri, 11 Jul 2025 11:50:37 +0100
-Message-ID: <86ecun9f2a.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-pci@vger.kernel.org,	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,	Toan Le <toan@os.amperecomputing.com>,
-	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,	Manivannan
- Sadhasivam <mani@kernel.org>,	Rob Herring <robh@kernel.org>,	Bjorn Helgaas
- <bhelgaas@google.com>,	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 09/13] PCI: xgene-msi: Sanitise MSI allocation and affinity setting
-In-Reply-To: <aHDfhVRa1lhu7qPg@lpieralisi>
-References: <20250708173404.1278635-1-maz@kernel.org>
-	<20250708173404.1278635-10-maz@kernel.org>
-	<aHDfhVRa1lhu7qPg@lpieralisi>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1752231046; c=relaxed/simple;
+	bh=2qa4VPUuvS8ArBYp9wXlXYpFGhIkwwSkMvsByTLeTQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tf20nfh9N4EQyobT6y9+ePZhyofSgSdmnJ0ZcidhsqSOkO16m871EBj+tolrkHhf74zcAsG3+sQ7CorlH7g66We8XwwxAp013iSVe1DyNMUV3VnZbZIFlZSQ2CHrIpFccJxQ/C87DYpK8ujGo8LBlFVClU6nj0sd5ALUqyK+FNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hm9b+2nT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752231043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IaNhrf1vDIB1tcZYpLbfYHlYcscO1h0tIvRYBHcyJS8=;
+	b=Hm9b+2nTluzunwlWi+N6OjOg/Z4RwW/ayUKAvSen/8REuz0R6zVyaBjG08zrS6P126IA/f
+	H2dIF/4f/RSt0AcIr40sKwzpesvvxe28edhgjbVzYsrk1/eQRL/oT+SAYM2TPmfLkkV3lW
+	AdwTj+OEXGlLXKZn3OcJL2iWUGCg4wA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-635-TUag6RBxMYm8EbqjCfu-4A-1; Fri, 11 Jul 2025 06:50:42 -0400
+X-MC-Unique: TUag6RBxMYm8EbqjCfu-4A-1
+X-Mimecast-MFC-AGG-ID: TUag6RBxMYm8EbqjCfu-4A_1752231041
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4538f375e86so15371775e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 03:50:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752231040; x=1752835840;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IaNhrf1vDIB1tcZYpLbfYHlYcscO1h0tIvRYBHcyJS8=;
+        b=W9193p3KKR1q+A8ayFOaIOGGIOoe72hRl1tQZLdtzHE1/h9LgjuEJNis7iiQY85m7P
+         ykBD+B+UANj5SHWlzbpVj+aiIfhCnwZOnwwJm/pSKI6j0usaDZp9Mo6RdGKrmwH/YVxT
+         hvqlP9ImOSMP4P4KmQ2QqSM7dLGSmPUnhLsAro49wyRd+npNHqejZxQ0ypvNOao8XW1D
+         L9fLpC7DLKA3hnORrom7UJPHF0fJPgkjV9Gvf1SsMT7Pqc0TxgF75tfCJnJTCVyiFGwE
+         NpBDLrIo6J781KVFFtjGFPZnSBFQnqa92Pwazlc+94n7xhP5MJFtnG5aJqVDK24Pilhd
+         Knbg==
+X-Gm-Message-State: AOJu0Yzyuif5J3kxnyRlIiyTP30TIOwKGvPoGB9Ct6trCQEALVcrEuw0
+	wt0fbilBlZySA5bxcLUfkm/5W94tjBUAIQlEnnN0uYjYOnruLnwkB5Lhgd+6/YeKLjoTz9JwQTI
+	i/wlxGAAQZ+ZT6isiEgN6kue+8Mq0Q/KVl0vME39FIectmnrl3wLoVei2Al4n1osLPg==
+X-Gm-Gg: ASbGnct641R3qgszyuDhwvXryy0xkAQJhvwM7pNiKXn0ISf7LJhgiMGC0fCzKDFm4x0
+	n9JgL9rupjdQJHogwi3hUguP1c4tm+ThM2KSovodKHk0/rfygLT3Ry/54CGvWixuOIFMSXzL6l/
+	EkrAyzotkPMbi5Odz5XVMEzXDitTSfc1K/dvmpDzASgwTo35dzdFY3Ta7h149A+GuqwS0Gbf9ft
+	BMbnwwWO+GbbCIab1ofDR3+6h5WpVmR63elRVXPIjZlZX0AMoB/Y/ylXFuJKiZtcxLo0pEsBLiq
+	7uIn5k/Yg513RKcMgeryQoT9H6duCKYfUQX0ibigbKlg5E9HpfVV8P3MLrZOA3TX+0vDKUHyQM9
+	WS4o+wnJYtBhO0+QPMs5Z3PdsZh2hs1AwU+DmFKEDLhZFBEv0owJu1h1BJoZpZfTfZlA=
+X-Received: by 2002:a05:600c:350e:b0:450:b240:aaab with SMTP id 5b1f17b1804b1-454ec13e155mr23023405e9.8.1752231040545;
+        Fri, 11 Jul 2025 03:50:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8U71ECaPsCVjPVmqRpdPwRIokASxhL+QMhmtfISD+bMHDtWhYaJy/EGrxKUsA5eatuAcOMA==
+X-Received: by 2002:a05:600c:350e:b0:450:b240:aaab with SMTP id 5b1f17b1804b1-454ec13e155mr23023185e9.8.1752231040070;
+        Fri, 11 Jul 2025 03:50:40 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454dd439051sm44045995e9.8.2025.07.11.03.50.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jul 2025 03:50:39 -0700 (PDT)
+Message-ID: <39cfb01a-88f2-479a-898d-cbcbb869821d@redhat.com>
+Date: Fri, 11 Jul 2025 12:50:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, toan@os.amperecomputing.com, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, tglx@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] mm/memory.c: Use folios in __access_remote_vm()
+To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Jordan Rome <linux@jordanrome.com>, Andrew Morton <akpm@linux-foundation.org>
+References: <20250709194017.927978-3-vishal.moola@gmail.com>
+ <20250709194017.927978-5-vishal.moola@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250709194017.927978-5-vishal.moola@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 11 Jul 2025 10:55:17 +0100,
-Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+On 09.07.25 21:40, Vishal Moola (Oracle) wrote:
+> Use kmap_local_folio() instead of kmap_local_page().
+> Replaces 2 calls to compound_head() with one.
 > 
-> On Tue, Jul 08, 2025 at 06:34:00PM +0100, Marc Zyngier wrote:
-> >  static void xgene_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
-> >  {
-> >  	struct xgene_msi *msi = irq_data_get_irq_chip_data(data);
-> > -	u32 reg_set = hwirq_to_reg_set(data->hwirq);
-> > -	u32 group = hwirq_to_group(data->hwirq);
-> > -	u64 target_addr = msi->msi_addr + (((8 * group) + reg_set) << 16);
-> > +	u64 target_addr;
-> > +	u32 frame, msir;
-> > +	int cpu;
-> >  
-> > -	msg->address_hi = upper_32_bits(target_addr);
-> > -	msg->address_lo = lower_32_bits(target_addr);
-> > -	msg->data = hwirq_to_msi_data(data->hwirq);
-> > -}
-> > +	cpu	= cpumask_first(irq_data_get_effective_affinity_mask(data));
-> > +	msir	= FIELD_GET(GENMASK(6, 4), data->hwirq);
+> This prepares us for the removal of unmap_and_put_page().
 > 
-> We could use MSInRx_HWIRQ_MASK, I can update it.
-
-Yes, I appear to have missed that one. It'd be good if you could fix
-it up.
-
-> More importantly, what code would set data->hwirq[6:4] (and
-> data->hwirq[7:7] below) ?
-
-That's obviously driven by the hwirq allocation, which is guaranteed
-to happen in the 0:255 range.
-
-[...]
-
-> > @@ -173,23 +167,20 @@ static int xgene_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
-> >  				  unsigned int nr_irqs, void *args)
-> >  {
-> >  	struct xgene_msi *msi = domain->host_data;
-> > -	int msi_irq;
-> > +	irq_hw_number_t hwirq;
-> >  
-> >  	mutex_lock(&msi->bitmap_lock);
-> >  
-> > -	msi_irq = bitmap_find_next_zero_area(msi->bitmap, NR_MSI_VEC, 0,
-> > -					     num_possible_cpus(), 0);
-> > -	if (msi_irq < NR_MSI_VEC)
-> > -		bitmap_set(msi->bitmap, msi_irq, num_possible_cpus());
-> > -	else
-> > -		msi_irq = -ENOSPC;
-> > +	hwirq = find_first_zero_bit(msi->bitmap, NR_MSI_VEC);
-> > +	if (hwirq < NR_MSI_VEC)
-> > +		set_bit(hwirq, msi->bitmap);
-> >  
-> >  	mutex_unlock(&msi->bitmap_lock);
-> >  
-> > -	if (msi_irq < 0)
-> > -		return msi_irq;
-> > +	if (hwirq >= NR_MSI_VEC)
-> > +		return -ENOSPC;
-> >  
-> > -	irq_domain_set_info(domain, virq, msi_irq,
-> > +	irq_domain_set_info(domain, virq, hwirq,
-> >  			    &xgene_msi_bottom_irq_chip, domain->host_data,
-> >  			    handle_simple_irq, NULL, NULL);
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> ---
+>   mm/memory.c | 8 +++++---
+>   1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> This is something I don't get. We alloc an MSI, set a bit in the bitmap
-> and the hwirq to that value, when we handle the IRQ below in
-> 
-> xgene_msi_isr()
-> 
-> hwirq = compute_hwirq(msi_grp, msir_idx, intr_idx);
-> ret = generic_handle_domain_irq(xgene_msi->inner_domain, hwirq);
-> 
-> imagining that we changed the affinity for the IRQ so that the computed
-> HWIRQ does not have zeros in bits[7:4], how would the domain HWIRQ
-> matching work ?
+> diff --git a/mm/memory.c b/mm/memory.c
+> index d63f0d5abcc9..3dd6c57e6511 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -6691,6 +6691,7 @@ static int __access_remote_vm(struct mm_struct *mm, unsigned long addr,
+>   	while (len) {
+>   		int bytes, offset;
+>   		void *maddr;
+> +		struct folio *folio;
+>   		struct vm_area_struct *vma = NULL;
+>   		struct page *page = get_user_page_vma_remote(mm, addr,
+>   							     gup_flags, &vma);
+> @@ -6722,21 +6723,22 @@ static int __access_remote_vm(struct mm_struct *mm, unsigned long addr,
+>   			if (bytes <= 0)
+>   				break;
+>   		} else {
+> +			folio = page_folio(page);
+>   			bytes = len;
+>   			offset = addr & (PAGE_SIZE-1);
+>   			if (bytes > PAGE_SIZE-offset)
+>   				bytes = PAGE_SIZE-offset;
+>   
+> -			maddr = kmap_local_page(page);
+> +			maddr = kmap_local_folio(folio, folio_page_idx(folio, page) * PAGE_SIZE);
+>   			if (write) {
+>   				copy_to_user_page(vma, page, addr,
+>   						  maddr + offset, buf, bytes);
+> -				set_page_dirty_lock(page);
+> +				folio_mark_dirty_lock(folio);
+>   			} else {
+>   				copy_from_user_page(vma, page, addr,
+>   						    buf, maddr + offset, bytes);
+>   			}
+> -			unmap_and_put_page(page, maddr);
+> +			folio_release_kmap(folio, maddr);
 
-No. The whole point of this series is that hwirq is now *constant*, no
-matter what the affinity says.
-
-> Actually, how would an IRQ fire causing the hwirq[7:4] bits to be != 0
-> in the first place ?
-
-hwirq[7:4] is a function of what IRQ fired (giving you a register
-frame), and what register was accessed. That 's what allows you to
-*rebuild* hwirq as the HW doesn't give it you on a plate (only the
-bottom 4 bits are more or less given as a bitmap).
-
-> Forgive me if I am missing something obvious, the *current* MSI handling
-> is very hard to grok, it is certain I misunderstood it entirely.
-
-Ignore the current code, it does things that are completely forbidden
-by law in any civilised country (although I find it difficult to name
-a single civilised country these days).
-
-Thanks,
-
-	M.
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-Without deviation from the norm, progress is not possible.
+Cheers,
+
+David / dhildenb
+
 
