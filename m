@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-728119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-728120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354B3B023D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F036B023D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 20:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E1C5B46453
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:35:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 278CFB4669A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Jul 2025 18:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD2E2F2C6B;
-	Fri, 11 Jul 2025 18:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A602F3C16;
+	Fri, 11 Jul 2025 18:37:12 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73944199FAB
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC80199FAB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Jul 2025 18:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752259028; cv=none; b=qyjLOdeGy7wfx+9IEsiwx6WMpZ7UUGt+B3CxYYy1uU76wMq9xu0y8tZspoyCdOMJi9oapLgQYAS14BIBC6NlKj6PQ0dfZfJ86CFqPFR6+1Th30aHdNJzg+C5EsODNcpG7Rwnfyo5zm8AP7OCzwraMvT6XgQD/gl8KHBSTWV3C+s=
+	t=1752259032; cv=none; b=uggUeU5lqzVf0GH84PKSb3+wgEJJqfysOrUXii8UG99m4jgYlDah4nPFIdWoiBb90As0akMQQ1RhVK+YdaXWf5QZomycrQYAzVm1d5ucZc3ktC63yGcYMmCsB6lq3m5iAfv7ur72HVQ+iF+nXYuOy39+WDSSlX4wlKIHu9trnRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752259028; c=relaxed/simple;
-	bh=y6aD52A/GXoakeVI754gL5ggJpeMARSE2Wq/EOMb1y0=;
+	s=arc-20240116; t=1752259032; c=relaxed/simple;
+	bh=9x9PilFONQWWYbv66+95zCNvRtyXLcqG3l47B6IPVWQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DEDOMPdUd4KDGPsjVkQ+xARhWAKqMzkuX5TAMCcEEltb6t7FyTINX+Sm13Sy+vor0w8QKCmkuRw69QGovPbPYWGb3QAV0sAHBH6IvileRNd2dGPdGHd+S6QCFm7cNgY6ZQW62K3pJbGUCsNbL9sNOOtjN+Bxg4fq/iyTO2BBjtE=
+	 MIME-Version; b=N1gGYipwn6RjsryWpZTI2E+mPLviKEu5B6Wk99PNRXPawkJnl6yHRPu5GmWgOWmdq74zpuaRvg6O2Bmlp0SpVBh8FiQ1vwOGTvQLFvLScfE7ek1+dLCl1J9OrvvpFwsNiRQgT/d/kBd+gCo35PhMh8eBP4MqNEyAGqkFPHPcNeI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B6D016F8;
-	Fri, 11 Jul 2025 11:36:56 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 981FE2247;
+	Fri, 11 Jul 2025 11:36:59 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C1963F694;
-	Fri, 11 Jul 2025 11:37:03 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EFF863F694;
+	Fri, 11 Jul 2025 11:37:06 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
@@ -57,14 +57,12 @@ Cc: Rob Herring <robh@kernel.org>,
 	Rex Nie <rex.nie@jaguarmicro.com>,
 	Dave Martin <dave.martin@arm.com>,
 	Koba Ko <kobak@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
 	James Morse <james.morse@arm.com>,
 	Jonathan Cameron <jonathan.cameron@huawei.com>,
 	Gavin Shan <gshan@redhat.com>
-Subject: [RFC PATCH 01/36] cacheinfo: Set cache 'id' based on DT data
-Date: Fri, 11 Jul 2025 18:36:13 +0000
-Message-Id: <20250711183648.30766-2-james.morse@arm.com>
+Subject: [RFC PATCH 02/36] cacheinfo: Add arch hook to compress CPU h/w id into 32 bits for cache-id
+Date: Fri, 11 Jul 2025 18:36:14 +0000
+Message-Id: <20250711183648.30766-3-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20250711183648.30766-1-james.morse@arm.com>
 References: <20250711183648.30766-1-james.morse@arm.com>
@@ -76,119 +74,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Rob Herring <robh@kernel.org>
+Filesystems like resctrl use the cache-id exposed via sysfs to identify
+groups of CPUs. The value is also used for PCIe cache steering tags. On
+DT platforms cache-id is not something that is described in the
+device-tree, but instead generated from the smallest CPU h/w id of the
+CPUs associated with that cache.
 
-Use the minimum CPU h/w id of the CPUs associated with the cache for the
-cache 'id'. This will provide a stable id value for a given system. As
-we need to check all possible CPUs, we can't use the shared_cpu_map
-which is just online CPUs. As there's not a cache to CPUs mapping in DT,
-we have to walk all CPU nodes and then walk cache levels.
+CPU h/w ids may be larger than 32 bits.
 
-The cache_id exposed to user-space has historically been 32 bits, and
-is too late to change. This value is parsed into a u32 by user-space
-libraries such as libvirt:
-https://github.com/libvirt/libvirt/blob/master/src/util/virresctrl.c#L1588
+Add a hook to allow architectures to compress the value from the devicetree
+into 32 bits. Returning the same value is always safe as cache_of_set_id()
+will stop if a value larger than 32 bits is seen.
 
-Give up on assigning cache-id's if a CPU h/w id greater than 32 bits
-is found.
+For example, on arm64 the value is the MPIDR affinity register, which only
+has 32 bits of affinity data, but spread accross the 64 bit field. An
+arch-specific bit swizzle gives a 32 bit value.
 
-match_cache_node() does not make use of the __free() cleanup helpers
-because of_find_next_cache_node(prev) does not drop a reference to prev,
-and its too easy to accidentally drop the reference on cpu, which belongs
-to for_each_of_cpu_node().
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
-[ ben: converted to use the __free cleanup idiom ]
-Signed-off-by: Ben Horgan <ben.horgan@arm.com>
-[ morse: Add checks to give up if a value larger than 32 bits is seen. ]
 Signed-off-by: James Morse <james.morse@arm.com>
 Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 Reviewed-by: Gavin Shan <gshan@redhat.com>
 ---
-Use as a 32bit value has also been seen in DPDK patches here:
-http://inbox.dpdk.org/dev/20241021015246.304431-2-wathsala.vithanage@arm.com/
-
-Changes since v2:
- * Removed broken use of cleanup in the match helper
-
-Changes since v1:
- * Remove the second loop in favour of a helper.
----
- drivers/base/cacheinfo.c | 45 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ drivers/base/cacheinfo.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index cf0d455209d7..4e2f60c85e74 100644
+index 4e2f60c85e74..613410705a47 100644
 --- a/drivers/base/cacheinfo.c
 +++ b/drivers/base/cacheinfo.c
-@@ -8,6 +8,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/acpi.h>
-+#include <linux/bitfield.h>
- #include <linux/bitops.h>
- #include <linux/cacheinfo.h>
- #include <linux/compiler.h>
-@@ -183,6 +184,49 @@ static bool cache_node_is_unified(struct cacheinfo *this_leaf,
- 	return of_property_read_bool(np, "cache-unified");
+@@ -203,6 +203,10 @@ static bool match_cache_node(struct device_node *cpu,
+ 	return false;
  }
  
-+static bool match_cache_node(struct device_node *cpu,
-+			     const struct device_node *cache_node)
-+{
-+	struct device_node *prev, *cache = of_find_next_cache_node(cpu);
++#ifndef arch_compact_of_hwid
++#define arch_compact_of_hwid(_x)	(_x)
++#endif
 +
-+	while (cache) {
-+		if (cache == cache_node) {
-+			of_node_put(cache);
-+			return true;
-+		}
-+
-+		prev = cache;
-+		cache = of_find_next_cache_node(cache);
-+		of_node_put(prev);
-+	}
-+
-+	return false;
-+}
-+
-+static void cache_of_set_id(struct cacheinfo *this_leaf,
-+			    struct device_node *cache_node)
-+{
-+	struct device_node *cpu;
-+	u32 min_id = ~0;
-+
-+	for_each_of_cpu_node(cpu) {
-+		u64 id = of_get_cpu_hwid(cpu, 0);
-+
-+		if (FIELD_GET(GENMASK_ULL(63, 32), id)) {
-+			of_node_put(cpu);
-+			return;
-+		}
-+
-+		if (match_cache_node(cpu, cache_node))
-+			min_id = min(min_id, id);
-+	}
-+
-+	if (min_id != ~0) {
-+		this_leaf->id = min_id;
-+		this_leaf->attributes |= CACHE_ID;
-+	}
-+}
-+
- static void cache_of_set_props(struct cacheinfo *this_leaf,
- 			       struct device_node *np)
+ static void cache_of_set_id(struct cacheinfo *this_leaf,
+ 			    struct device_node *cache_node)
  {
-@@ -198,6 +242,7 @@ static void cache_of_set_props(struct cacheinfo *this_leaf,
- 	cache_get_line_size(this_leaf, np);
- 	cache_nr_sets(this_leaf, np);
- 	cache_associativity(this_leaf);
-+	cache_of_set_id(this_leaf, np);
- }
+@@ -212,6 +216,7 @@ static void cache_of_set_id(struct cacheinfo *this_leaf,
+ 	for_each_of_cpu_node(cpu) {
+ 		u64 id = of_get_cpu_hwid(cpu, 0);
  
- static int cache_setup_of_node(unsigned int cpu)
++		id = arch_compact_of_hwid(id);
+ 		if (FIELD_GET(GENMASK_ULL(63, 32), id)) {
+ 			of_node_put(cpu);
+ 			return;
 -- 
 2.39.5
 
